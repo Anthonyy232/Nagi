@@ -4,8 +4,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Nagi.Models;
+using Nagi.Services.Abstractions;
 
-namespace Nagi.Services;
+namespace Nagi.Services.Implementations;
 
 public class MusicPlaybackService : IMusicPlaybackService, IDisposable
 {

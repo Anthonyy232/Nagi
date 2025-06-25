@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using Microsoft.UI.Xaml.Controls;
+using Nagi.Services.Abstractions;
 
-namespace Nagi.Services;
+namespace Nagi.Services.Implementations;
 
 /// <summary>
 ///     A concrete implementation of INavigationService for WinUI 3 applications.

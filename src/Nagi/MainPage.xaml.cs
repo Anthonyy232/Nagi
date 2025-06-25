@@ -11,6 +11,7 @@ using Microsoft.UI.Xaml.Navigation;
 using Nagi.Interfaces;
 using Nagi.Pages;
 using Nagi.Services;
+using Nagi.Services.Abstractions;
 using Nagi.ViewModels;
 
 namespace Nagi;

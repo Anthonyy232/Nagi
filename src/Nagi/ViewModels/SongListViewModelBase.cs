@@ -15,6 +15,7 @@ using Nagi.Models;
 using Nagi.Navigation;
 using Nagi.Pages;
 using Nagi.Services;
+using Nagi.Services.Abstractions;
 
 namespace Nagi.ViewModels;
 

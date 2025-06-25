@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Nagi.Models;
 
-namespace Nagi.Services;
+namespace Nagi.Services.Abstractions;
 
 /// <summary>
 ///     Defines a service for managing application-wide settings.

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Nagi.Models;
 using Nagi.Services;
+using Nagi.Services.Abstractions;
 
 namespace Nagi.ViewModels;
 

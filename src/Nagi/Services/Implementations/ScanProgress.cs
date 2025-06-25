@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace Nagi.Services;
+namespace Nagi.Services.Implementations;
 
 /// <summary>
 ///     Represents the state of a music library scan operation at a point in time.

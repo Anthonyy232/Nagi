@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Nagi.Models;
 
-namespace Nagi.Services;
+namespace Nagi.Services.Abstractions;
 
 /// <summary>
 ///     Defines the available sorting orders for a list of songs.

@@ -9,7 +9,7 @@ using Nagi.Data;
 using Nagi.Models;
 using Nagi.Services.Abstractions;
 
-namespace Nagi.Services;
+namespace Nagi.Services.Implementations;
 
 /// <summary>
 ///     Implements the ILibraryService interface to provide data access and business logic

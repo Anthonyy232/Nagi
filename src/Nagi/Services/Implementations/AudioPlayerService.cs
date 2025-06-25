@@ -8,8 +8,9 @@ using Windows.Storage;
 using Windows.Storage.Streams;
 using Microsoft.UI.Dispatching;
 using Nagi.Models;
+using Nagi.Services.Abstractions;
 
-namespace Nagi.Services;
+namespace Nagi.Services.Implementations;
 
 /// <summary>
 ///     Implements IAudioPlayer using Windows.Media.Playback.MediaPlayer for WinUI 3,

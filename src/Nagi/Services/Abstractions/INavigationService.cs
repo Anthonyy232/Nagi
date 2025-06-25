@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.UI.Xaml.Controls;
 
-namespace Nagi.Services;
+namespace Nagi.Services.Abstractions;
 
 /// <summary>
 ///     Defines a contract for a service that handles view navigation.

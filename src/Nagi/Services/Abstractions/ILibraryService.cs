@@ -4,8 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Nagi.Models;
+using Nagi.Services.Implementations;
 
-namespace Nagi.Services;
+namespace Nagi.Services.Abstractions;
 
 /// <summary>
 ///     Defines the contract for a service that manages the music library.

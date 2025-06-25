@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 using Windows.Storage;
 using Microsoft.UI.Xaml;
 using Nagi.Models;
+using Nagi.Services.Abstractions;
 
-namespace Nagi.Services;
+namespace Nagi.Services.Implementations;
 
 /// <summary>
 ///     Manages application settings, persisting them to local storage.
