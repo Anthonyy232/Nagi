@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Nagi.Tests (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "Nagi.Tests (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

@@ -1,0 +1,113 @@
+<!-- Nagi/Pages/AlbumPage.xaml -->
+<Page
+    x:Class="Nagi.Pages.AlbumPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:ImageEx"
+    xmlns:converters="using:Nagi.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:Nagi.ViewModels"
+    Background="Transparent"
+    mc:Ignorable="d">
+
+    <!-- Page-level resources, including converters. -->
+    <Page.Resources>
+        <ResourceDictionary>
+            <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+            <converters:BooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" Invert="True" />
+            <converters:StringToUriConverter x:Key="StringToUriConverter" />
+        </ResourceDictionary>
+    </Page.Resources>
+
+    <Grid Padding="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Page title. -->
+        <TextBlock
+            Grid.Row="0"
+            Margin="0,0,0,28"
+            Style="{StaticResource AlbumPageTitleTextStyle}"
+            Text="Albums" />
+
+        <!-- Grid view for displaying the collection of albums. -->
+        <GridView
+            Grid.Row="1"
+            IsItemClickEnabled="True"
+            ItemClick="AlbumsGridView_ItemClick"
+            ItemContainerStyle="{StaticResource AlbumPageGridViewItemStyle}"
+            ItemsSource="{x:Bind ViewModel.Albums, Mode=OneWay}"
+            SelectionMode="None"
+            Visibility="{x:Bind ViewModel.HasAlbums, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+            <GridView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <ItemsWrapGrid ItemWidth="200" Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </GridView.ItemsPanel>
+            <GridView.ItemTemplate>
+                <DataTemplate x:DataType="vm:AlbumViewModelItem">
+                    <Grid
+                        Width="180"
+                        Height="220"
+                        Margin="8,16,8,16"
+                        Background="Transparent">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <controls:ImageEx
+                            Grid.Row="0"
+                            Width="160"
+                            Height="160"
+                            HorizontalAlignment="Center"
+                            CornerRadius="8"
+                            IsCacheEnabled="True"
+                            PlaceholderSource="ms-appx:///Assets/DefaultAlbumArt.png"
+                            Source="{x:Bind CoverArtUri, Mode=OneWay, Converter={StaticResource StringToUriConverter}}"
+                            Stretch="UniformToFill" />
+
+                        <TextBlock
+                            Grid.Row="1"
+                            Margin="0,12,0,0"
+                            HorizontalAlignment="Center"
+                            FontWeight="SemiBold"
+                            Text="{x:Bind Title, Mode=OneWay}"
+                            TextTrimming="CharacterEllipsis" />
+
+                        <TextBlock
+                            Grid.Row="2"
+                            Margin="0,4,0,0"
+                            HorizontalAlignment="Center"
+                            Opacity="0.7"
+                            Text="{x:Bind ArtistName, Mode=OneWay}"
+                            TextTrimming="CharacterEllipsis" />
+                    </Grid>
+                </DataTemplate>
+            </GridView.ItemTemplate>
+        </GridView>
+
+        <!-- Message displayed when the library contains no albums. -->
+        <StackPanel
+            Grid.Row="1"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Spacing="12"
+            Visibility="{x:Bind ViewModel.HasAlbums, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}">
+            <FontIcon FontSize="48" Glyph="" />
+            <TextBlock
+                HorizontalAlignment="Center"
+                Style="{ThemeResource SubtitleTextBlockStyle}"
+                Text="No albums found" />
+            <TextBlock
+                HorizontalAlignment="Center"
+                Opacity="0.7"
+                Style="{ThemeResource BodyTextBlockStyle}"
+                Text="Scan your music library to populate albums." />
+        </StackPanel>
+    </Grid>
+</Page>

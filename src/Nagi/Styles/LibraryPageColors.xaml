@@ -1,0 +1,146 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--
+    Style for the main title TextBlock on the Library page.
+    -->
+    <Style x:Key="LibraryTitleTextStyle" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{StaticResource AppPrimaryColorBrush}" />
+        <Setter Property="FontSize" Value="28" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <!--
+    Style for transparent, icon-only buttons used in the Library page header.
+    -->
+    <Style x:Key="LibraryIconButton" TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="MinWidth" Value="36" />
+        <Setter Property="Width" Value="36" />
+        <Setter Property="Height" Value="36" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{StaticResource AppPrimaryColorBrush}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
+    </Style>
+
+    <!--
+    Style for filled buttons with text and/or icons in the Library page header.
+    -->
+    <Style x:Key="LibraryFilledButtonStyle" TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
+        <Setter Property="Padding" Value="12,8,12,8" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="MinHeight" Value="40" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <!--
+    Style for the interactive album art button within each song item.
+    Displays a play icon on hover.
+    -->
+    <Style x:Key="SongPlayButtonStyle" TargetType="Button" BasedOn="{StaticResource LibraryIconButton}">
+        <Setter Property="Width" Value="42" />
+        <Setter Property="Height" Value="42" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Margin" Value="12,0,12,0" />
+        <Setter Property="ToolTipService.ToolTip" Value="Play song" />
+        <Setter Property="CornerRadius" Value="12" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}"
+                          CornerRadius="{TemplateBinding CornerRadius}">
+                        <ContentPresenter x:Name="ContentPresenter" Content="{TemplateBinding Content}"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          Padding="{TemplateBinding Padding}"
+                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        <Border x:Name="HoverOverlay" Background="#80000000"
+                                CornerRadius="{TemplateBinding CornerRadius}" Visibility="Collapsed" />
+                        <FontIcon x:Name="PlayIcon" FontFamily="{ThemeResource SymbolThemeFontFamily}" FontSize="20"
+                                  Foreground="White" Glyph="" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                  Visibility="Collapsed" />
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HoverOverlay"
+                                                                       Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlayIcon"
+                                                                       Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HoverOverlay"
+                                                                       Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlayIcon"
+                                                                       Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HoverOverlay"
+                                                                       Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="#A0000000" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
+                                                                       Storyboard.TargetProperty="Opacity">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource ListViewItemDisabledThemeOpacity}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--
+    Style for primary text elements, such as song titles.
+    -->
+    <Style x:Key="BodyStrongTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource BodyStrongTextBlockStyle}" />
+
+    <!--
+    Style for secondary text elements, such as artist and album names.
+    -->
+    <Style x:Key="SecondaryTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource CaptionTextBlockStyle}">
+        <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+    </Style>
+
+    <!--
+    Base style for ListViewItems in the library, defining hover/selection visuals.
+    -->
+    <Style x:Key="LibraryListViewItemStyle" TargetType="ListViewItem"
+           BasedOn="{StaticResource DefaultListViewItemStyle}">
+        <Setter Property="Padding" Value="0,4" />
+        <Setter Property="MinHeight" Value="52" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    </Style>
+
+    <!--
+    Specific style for ListViewItems on the LibraryPage, adding a margin.
+    -->
+    <Style x:Key="LibraryPageListViewItemStyle" TargetType="ListViewItem"
+           BasedOn="{StaticResource LibraryListViewItemStyle}">
+        <Setter Property="Margin" Value="0,4,0,4" />
+    </Style>
+
+</ResourceDictionary>

@@ -1,0 +1,134 @@
+﻿<Page
+    x:Class="Nagi.Pages.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:CommunityToolkit.WinUI.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:localConverters="using:Nagi.Converters"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mux="using:Microsoft.UI.Xaml"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <ResourceDictionary>
+            <localConverters:ElementThemeToFriendlyStringConverter x:Key="ThemeToStringConverter" />
+        </ResourceDictionary>
+    </Page.Resources>
+
+    <Grid x:Name="RootGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <TextBlock
+            x:Name="PageHeader"
+            Grid.Row="0"
+            MaxWidth="1064"
+            Margin="36,24,36,0"
+            Style="{StaticResource SettingsPageTitleTextStyle}"
+            Text="Settings" />
+
+        <ScrollView
+            Grid.Row="1"
+            Padding="36,0,36,24"
+            VerticalScrollBarVisibility="Auto"
+            VerticalScrollMode="Auto">
+            <StackPanel
+                MaxWidth="1064"
+                HorizontalAlignment="Stretch"
+                Spacing="{StaticResource SettingsCardSpacing}">
+                <StackPanel.ChildrenTransitions>
+                    <EntranceThemeTransition FromVerticalOffset="50" />
+                    <RepositionThemeTransition IsStaggeringEnabled="False" />
+                </StackPanel.ChildrenTransitions>
+
+                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="Appearance" />
+
+                <controls:SettingsCard Header="Theme" Description="Choose the application theme.">
+                    <controls:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE793;" />
+                    </controls:SettingsCard.HeaderIcon>
+                    <ComboBox
+                        x:Name="ThemeComboBox"
+                        MinWidth="300"
+                        ItemsSource="{x:Bind ViewModel.AvailableThemes}"
+                        SelectedItem="{x:Bind ViewModel.SelectedTheme, Mode=TwoWay}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="mux:ElementTheme">
+                                <TextBlock Text="{Binding Converter={StaticResource ThemeToStringConverter}}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </controls:SettingsCard>
+
+                <controls:SettingsCard
+                    Header="Dynamic Theming"
+                    Description="Enable and configure dynamic theming options.">
+                    <controls:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE790;" />
+                    </controls:SettingsCard.HeaderIcon>
+                    <ToggleSwitch
+                        x:Name="DynamicThemingToggle"
+                        IsOn="{x:Bind ViewModel.IsDynamicThemingEnabled, Mode=TwoWay}" />
+                </controls:SettingsCard>
+
+                <controls:SettingsCard Header="Collapsable Player"
+                                       Description="Animate the player bar to expand and collapse.">
+                    <controls:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE745;" />
+                    </controls:SettingsCard.HeaderIcon>
+                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsPlayerAnimationEnabled, Mode=TwoWay}" />
+                </controls:SettingsCard>
+
+                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="Data Management" />
+
+                <controls:SettingsCard
+                    Header="Reset Application"
+                    Description="This will delete all library data, playlists, and reset all settings to their defaults. The application will restart.">
+                    <controls:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE74D;" />
+                    </controls:SettingsCard.HeaderIcon>
+                    <!--
+                        The Button requires explicit right alignment.
+                        SettingsCard automatically right-aligns a ToggleSwitch, but not other controls.
+                    -->
+                    <Button
+                        HorizontalAlignment="Right"
+                        Command="{x:Bind ViewModel.ResetApplicationDataCommand}"
+                        Content="Reset All Data"
+                        Style="{StaticResource SettingsPageResetButtonStyle}" />
+                </controls:SettingsCard>
+
+                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="About" />
+
+                <controls:SettingsExpander
+                    Header="About Nagi"
+                    Description="Information about this application."
+                    IsExpanded="False">
+                    <controls:SettingsExpander.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
+                    </controls:SettingsExpander.HeaderIcon>
+                    <TextBlock
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        IsTextSelectionEnabled="True"
+                        Text="Version 1.0.0 (Example)" />
+                    <controls:SettingsExpander.Items>
+                        <controls:SettingsCard ContentAlignment="Left">
+                            <StackPanel Orientation="Vertical">
+                                <HyperlinkButton Content="View Licenses" NavigateUri="https://example.com/licenses" />
+                                <HyperlinkButton Content="Privacy Policy" NavigateUri="https://example.com/privacy" />
+                                <HyperlinkButton Content="Official Website" NavigateUri="https://example.com/" />
+                            </StackPanel>
+                        </controls:SettingsCard>
+                        <controls:SettingsCard Header="Acknowledgements" IsClickEnabled="True">
+                            <TextBlock Text="Thanks to the open-source community." />
+                        </controls:SettingsCard>
+                    </controls:SettingsExpander.Items>
+                </controls:SettingsExpander>
+
+                <HyperlinkButton Margin="0,8,0,0" Content="Send Feedback" NavigateUri="mailto:feedback@example.com" />
+            </StackPanel>
+        </ScrollView>
+    </Grid>
+</Page>

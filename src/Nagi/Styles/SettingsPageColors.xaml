@@ -1,0 +1,100 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Spacing resource for consistency between settings cards. -->
+    <x:Double x:Key="SettingsCardSpacing">4</x:Double>
+
+    <!-- Style for section headers (e.g., "Appearance", "About"). -->
+    <Style
+        x:Key="SettingsSectionHeaderTextBlockStyle"
+        BasedOn="{StaticResource BodyStrongTextBlockStyle}"
+        TargetType="TextBlock">
+        <Setter Property="Margin" Value="1,30,0,6" />
+    </Style>
+
+    <!-- Style for the main "Settings" page title. -->
+    <Style x:Key="SettingsPageTitleTextStyle" TargetType="TextBlock" BasedOn="{StaticResource TitleTextBlockStyle}">
+        <Setter Property="Foreground" Value="{ThemeResource AppPrimaryColorBrush}" />
+    </Style>
+
+    <!-- Define the accent color brushes for toggle switch at dictionary level -->
+    <SolidColorBrush x:Key="ToggleSwitchFillOn" Color="{Binding Color, Source={ThemeResource AppPrimaryColorBrush}}" />
+    <SolidColorBrush x:Key="ToggleSwitchFillOnPointerOver"
+                     Color="{Binding Color, Source={ThemeResource AppPrimaryColorBrush}}" Opacity="0.9" />
+    <SolidColorBrush x:Key="ToggleSwitchFillOnPressed"
+                     Color="{Binding Color, Source={ThemeResource AppPrimaryColorBrush}}" Opacity="0.8" />
+
+    <!--
+    Implicit style for all ToggleSwitch controls on the page.
+    - Removes the default "On"/"Off" text to integrate cleanly with the SettingsCard control.
+    -->
+    <Style TargetType="ToggleSwitch" BasedOn="{StaticResource DefaultToggleSwitchStyle}">
+        <Setter Property="OnContent" Value="" />
+        <Setter Property="OffContent" Value="" />
+    </Style>
+
+    <!--
+    Defines the appearance of the "Reset All Data" button.
+    This style provides custom visual feedback for different interaction states.
+    -->
+    <Style x:Key="SettingsPageResetButtonStyle" TargetType="Button" BasedOn="{StaticResource AccentButtonStyle}">
+        <Setter Property="Background" Value="{ThemeResource AppPrimaryColorBrush}" />
+        <Setter Property="Padding" Value="16,10" />
+        <Setter Property="CornerRadius" Value="{StaticResource ControlCornerRadius}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid x:Name="RootGrid" Background="Transparent">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonBackground"
+                                                                       Storyboard.TargetProperty="Opacity">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="0.8" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonBackground"
+                                                                       Storyboard.TargetProperty="Opacity">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="0.6" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
+                                                                       Storyboard.TargetProperty="Opacity">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="0.5" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+
+                        <Border
+                            x:Name="ButtonBackground"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}">
+                            <ContentPresenter
+                                x:Name="ContentPresenter"
+                                Padding="{TemplateBinding Padding}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                AutomationProperties.AccessibilityView="Raw"
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}" />
+                        </Border>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

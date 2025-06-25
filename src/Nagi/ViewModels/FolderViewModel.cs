@@ -1,0 +1,340 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Nagi.Models;
+using Nagi.Services;
+
+namespace Nagi.ViewModels;
+
+/// <summary>
+///     Represents a single music folder from the library in the user interface.
+/// </summary>
+public partial class FolderViewModelItem : ObservableObject
+{
+    public FolderViewModelItem(Folder folder, int songCount)
+    {
+        Id = folder.Id;
+        Name = folder.Name;
+        Path = folder.Path;
+        UpdateSongCount(songCount);
+    }
+
+    public Guid Id { get; }
+    public string Name { get; }
+    public string Path { get; }
+
+    [ObservableProperty] public partial int SongCount { get; set; }
+
+    [ObservableProperty] public partial string SongCountText { get; set; } = string.Empty;
+
+    /// <summary>
+    ///     Updates the song count and its corresponding display text.
+    /// </summary>
+    /// <remarks>
+    ///     This method avoids raising property change notifications if the count has not changed.
+    /// </remarks>
+    /// <param name="newSongCount">The new number of songs in the folder.</param>
+    public void UpdateSongCount(int newSongCount)
+    {
+        if (SongCount == newSongCount) return;
+
+        SongCount = newSongCount;
+        SongCountText = newSongCount == 1 ? "1 song" : $"{newSongCount} songs";
+    }
+}
+
+/// <summary>
+///     Manages the collection of music library folders and orchestrates library operations
+///     such as adding, deleting, and scanning folders.
+/// </summary>
+public partial class FolderViewModel : ObservableObject
+{
+    private readonly ILibraryService _libraryService;
+    private readonly PlayerViewModel _playerViewModel;
+
+    public FolderViewModel(ILibraryService libraryService, PlayerViewModel playerViewModel)
+    {
+        _libraryService = libraryService;
+        _playerViewModel = playerViewModel;
+
+        // Ensure the HasFolders property is updated whenever the collection changes.
+        Folders.CollectionChanged += (s, e) => OnPropertyChanged(nameof(HasFolders));
+    }
+
+    [ObservableProperty] public partial ObservableCollection<FolderViewModelItem> Folders { get; set; } = new();
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsAnyOperationInProgress))]
+    public partial bool IsAddingFolder { get; set; }
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsAnyOperationInProgress))]
+    public partial bool IsScanning { get; set; }
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsAnyOperationInProgress))]
+    public partial bool IsDeletingFolder { get; set; }
+
+    /// <summary>
+    ///     Gets a value indicating whether any long-running library operation is currently in progress.
+    /// </summary>
+    /// <remarks>
+    ///     This is used to disable UI elements to prevent concurrent conflicting operations.
+    /// </remarks>
+    public bool IsAnyOperationInProgress => IsAddingFolder || IsScanning || IsDeletingFolder;
+
+    /// <summary>
+    ///     Gets a value indicating whether there are any folders in the library.
+    /// </summary>
+    public bool HasFolders => Folders.Any();
+
+    /// <summary>
+    ///     Asynchronously loads all folders from the database and updates the UI.
+    /// </summary>
+    [RelayCommand]
+    private async Task LoadFoldersAsync()
+    {
+        try
+        {
+            // Fetch folder data and song counts concurrently for better performance.
+            var foldersFromDb = await _libraryService.GetAllFoldersAsync();
+            var folderItemTasks = foldersFromDb.Select(async folder =>
+            {
+                var songCount = await _libraryService.GetSongCountForFolderAsync(folder.Id);
+                return new FolderViewModelItem(folder, songCount);
+            });
+
+            var newItems = (await Task.WhenAll(folderItemTasks))
+                .OrderBy(item => item.Name, StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            // Update the UI collection efficiently.
+            SynchronizeCollection(newItems);
+        }
+        catch (Exception ex)
+        {
+            // Log errors for debugging. A production app might use a more robust logging framework.
+            Debug.WriteLine($"[ERROR] Failed to load folders: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    ///     Efficiently synchronizes the observable collection of folders with an updated list.
+    ///     This method avoids clearing and re-populating the entire collection, instead calculating
+    ///     the differences (add, remove, move, update) to minimize UI updates.
+    /// </summary>
+    /// <param name="newItems">The authoritative, sorted list of items that should be in the collection.</param>
+    private void SynchronizeCollection(IReadOnlyList<FolderViewModelItem> newItems)
+    {
+        var currentFoldersMap = Folders.ToDictionary(f => f.Id);
+        var newItemIdSet = newItems.Select(f => f.Id).ToHashSet();
+
+        // Step 1: Remove items from the UI that no longer exist in the new list.
+        // Iterate backwards to safely modify the collection while iterating.
+        for (var i = Folders.Count - 1; i >= 0; i--)
+        {
+            var currentItem = Folders[i];
+            if (!newItemIdSet.Contains(currentItem.Id)) Folders.RemoveAt(i);
+        }
+
+        // Step 2: Add, update, and move items to match the new list's state and order.
+        for (var i = 0; i < newItems.Count; i++)
+        {
+            var newItem = newItems[i];
+
+            if (i >= Folders.Count)
+            {
+                // If we are past the end of the current list, all remaining new items are added.
+                Folders.Add(newItem);
+                continue;
+            }
+
+            var currentItem = Folders[i];
+            if (currentItem.Id == newItem.Id)
+            {
+                // The item is in the correct position, so just update its data.
+                currentItem.UpdateSongCount(newItem.SongCount);
+            }
+            else
+            {
+                // The item at this position is incorrect. We need to either move an existing
+                // item here or insert a new one.
+                if (currentFoldersMap.TryGetValue(newItem.Id, out var existingItemToMove))
+                {
+                    var oldIndex = Folders.IndexOf(existingItemToMove);
+                    if (oldIndex != -1)
+                    {
+                        Folders.Move(oldIndex, i);
+                        Folders[i].UpdateSongCount(newItem.SongCount);
+                    }
+                }
+                else
+                {
+                    // This is a brand new item; insert it at the correct position.
+                    Folders.Insert(i, newItem);
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    ///     Adds a new folder to the library and initiates a scan for music files.
+    /// </summary>
+    [RelayCommand]
+    private async Task AddFolderAndScanAsync(string folderPath)
+    {
+        if (string.IsNullOrWhiteSpace(folderPath) || IsAnyOperationInProgress) return;
+
+        if (Folders.Any(f => f.Path.Equals(folderPath, StringComparison.OrdinalIgnoreCase)))
+        {
+            _playerViewModel.GlobalOperationStatusMessage = "This folder is already in the library.";
+            return;
+        }
+
+        IsAddingFolder = true;
+        _playerViewModel.IsGlobalOperationInProgress = true;
+        _playerViewModel.GlobalOperationStatusMessage = "Adding folder to library...";
+        _playerViewModel.GlobalOperationProgressValue = 0;
+
+        try
+        {
+            var folder = await _libraryService.AddFolderAsync(folderPath);
+            if (folder == null)
+            {
+                _playerViewModel.GlobalOperationStatusMessage = "Failed to add folder. The path may be invalid.";
+                _playerViewModel.GlobalOperationProgressValue = 100;
+                return;
+            }
+
+            IsScanning = true;
+            _playerViewModel.GlobalOperationStatusMessage = $"Scanning music in '{folder.Name}'...";
+
+            var progress = new Progress<ScanProgress>(p =>
+            {
+                _playerViewModel.GlobalOperationProgressValue = p.Percentage;
+                _playerViewModel.GlobalOperationStatusMessage = p.StatusText ?? p.Message;
+            });
+
+            await Task.Run(() => _libraryService.ScanFolderForMusicAsync(folder.Path, progress));
+
+            _playerViewModel.GlobalOperationStatusMessage = "Scan complete. Refreshing library...";
+            _playerViewModel.GlobalOperationProgressValue = 95;
+            await LoadFoldersAsync();
+
+            _playerViewModel.GlobalOperationStatusMessage = $"Successfully added and scanned '{folder.Name}'.";
+            _playerViewModel.GlobalOperationProgressValue = 100;
+        }
+        catch (Exception ex)
+        {
+            _playerViewModel.GlobalOperationStatusMessage = $"Error adding folder: {ex.Message}";
+            _playerViewModel.GlobalOperationProgressValue = 100;
+            Debug.WriteLine($"[ERROR] Failed to add and scan folder: {ex.Message}");
+        }
+        finally
+        {
+            IsAddingFolder = false;
+            IsScanning = false;
+            _playerViewModel.IsGlobalOperationInProgress = false;
+        }
+    }
+
+    /// <summary>
+    ///     Deletes a folder and all its associated songs from the library.
+    /// </summary>
+    [RelayCommand]
+    private async Task DeleteFolderAsync(Guid folderId)
+    {
+        if (IsAnyOperationInProgress) return;
+
+        var folderToDelete = Folders.FirstOrDefault(f => f.Id == folderId);
+        if (folderToDelete == null) return;
+
+        IsDeletingFolder = true;
+        _playerViewModel.IsGlobalOperationInProgress = true;
+        _playerViewModel.GlobalOperationStatusMessage = $"Deleting '{folderToDelete.Name}'...";
+        _playerViewModel.GlobalOperationProgressValue = 0;
+
+        try
+        {
+            var success = await _libraryService.RemoveFolderAsync(folderId);
+            if (success)
+            {
+                // Directly remove the item from the collection for an immediate UI update.
+                Folders.Remove(folderToDelete);
+                _playerViewModel.GlobalOperationStatusMessage = $"Successfully deleted '{folderToDelete.Name}'.";
+            }
+            else
+            {
+                _playerViewModel.GlobalOperationStatusMessage = $"Failed to delete '{folderToDelete.Name}'.";
+            }
+
+            _playerViewModel.GlobalOperationProgressValue = 100;
+        }
+        catch (Exception ex)
+        {
+            _playerViewModel.GlobalOperationStatusMessage = $"Error deleting folder: {ex.Message}";
+            _playerViewModel.GlobalOperationProgressValue = 100;
+            Debug.WriteLine($"[ERROR] Failed to delete folder: {ex.Message}");
+        }
+        finally
+        {
+            IsDeletingFolder = false;
+            _playerViewModel.IsGlobalOperationInProgress = false;
+        }
+    }
+
+    /// <summary>
+    ///     Rescans a specific folder for new, removed, or changed music files.
+    /// </summary>
+    [RelayCommand]
+    private async Task RescanFolderAsync(Guid folderId)
+    {
+        if (IsAnyOperationInProgress) return;
+
+        var folderItem = Folders.FirstOrDefault(f => f.Id == folderId);
+        if (folderItem == null) return;
+
+        IsScanning = true;
+        _playerViewModel.IsGlobalOperationInProgress = true;
+        _playerViewModel.GlobalOperationStatusMessage = $"Rescanning '{folderItem.Name}'...";
+        _playerViewModel.GlobalOperationProgressValue = 0;
+
+        try
+        {
+            var progress = new Progress<ScanProgress>(p =>
+            {
+                // Scale progress to 95% to leave room for the final refresh step.
+                _playerViewModel.GlobalOperationProgressValue = p.Percentage * 0.95;
+                _playerViewModel.GlobalOperationStatusMessage = p.StatusText ?? p.Message;
+            });
+
+            var changesDetected = await Task.Run(() => _libraryService.RescanFolderForMusicAsync(folderId, progress));
+
+            _playerViewModel.GlobalOperationStatusMessage = "Refreshing library state...";
+            _playerViewModel.GlobalOperationProgressValue = 95;
+
+            await LoadFoldersAsync();
+
+            _playerViewModel.GlobalOperationStatusMessage = changesDetected
+                ? $"Rescan of '{folderItem.Name}' complete."
+                : $"No changes detected for '{folderItem.Name}'.";
+            _playerViewModel.GlobalOperationProgressValue = 100;
+        }
+        catch (Exception ex)
+        {
+            _playerViewModel.GlobalOperationStatusMessage = $"Error rescanning folder: {ex.Message}";
+            _playerViewModel.GlobalOperationProgressValue = 100;
+            Debug.WriteLine($"[ERROR] Failed to rescan folder: {ex.Message}");
+        }
+        finally
+        {
+            IsScanning = false;
+            _playerViewModel.IsGlobalOperationInProgress = false;
+        }
+    }
+}

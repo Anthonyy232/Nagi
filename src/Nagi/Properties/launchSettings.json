@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Nagi (Package)": {
+      "commandName": "MsixPackage",
+      "alwaysReinstallApp": false,
+      "nativeDebugging": true
+    },
+    "Nagi (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
