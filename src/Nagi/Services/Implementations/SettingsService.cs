@@ -25,6 +25,7 @@ public class SettingsService : ISettingsService {
     private const string ThemeKey = "AppTheme";
     private const string DynamicThemingKey = "DynamicThemingEnabled";
     private const string PlayerAnimationEnabledKey = "PlayerAnimationEnabled";
+    private const string RestorePlaybackStateEnabledKey = "RestorePlaybackStateEnabled";
     private const string AutoLaunchEnabledKey = "AutoLaunchEnabled";
     private const string StartMinimizedEnabledKey = "StartMinimizedEnabled";
     private const string HideToTrayEnabledKey = "HideToTrayEnabled";
@@ -106,6 +107,9 @@ public class SettingsService : ISettingsService {
 
     public Task<bool> GetPlayerAnimationEnabledAsync() => Task.FromResult(GetValue(PlayerAnimationEnabledKey, true));
     public Task SetPlayerAnimationEnabledAsync(bool isEnabled) => SetValueAndNotifyAsync(PlayerAnimationEnabledKey, isEnabled, true, PlayerAnimationSettingChanged);
+
+    public Task<bool> GetRestorePlaybackStateEnabledAsync() => Task.FromResult(GetValue(RestorePlaybackStateEnabledKey, true));
+    public Task SetRestorePlaybackStateEnabledAsync(bool isEnabled) => SetValueAsync(RestorePlaybackStateEnabledKey, isEnabled);
 
     public Task<bool> GetAutoLaunchEnabledAsync() => Task.FromResult(GetValue(AutoLaunchEnabledKey, false));
     public Task SetAutoLaunchEnabledAsync(bool isEnabled) => SetValueAsync(AutoLaunchEnabledKey, isEnabled);

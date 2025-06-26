@@ -75,7 +75,7 @@
 
                 <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="Player Management" />
 
-                <controls:SettingsCard Header="Collapsable Player"
+                <controls:SettingsCard Header="Collapsable player"
                                        Description="Animate the player bar to expand and collapse.">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
@@ -83,10 +83,18 @@
                     <ToggleSwitch IsOn="{x:Bind ViewModel.IsPlayerAnimationEnabled, Mode=TwoWay}" />
                 </controls:SettingsCard>
 
+                <controls:SettingsCard Header="Restore playback state"
+                                       Description="Save the current playback state to resume on next launch.">
+                    <controls:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
+                    </controls:SettingsCard.HeaderIcon>
+                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsRestorePlaybackStateEnabled, Mode=TwoWay}" />
+                </controls:SettingsCard>
+
                 <controls:SettingsCard Header="Auto launch on startup"
                                        Description="Start Nagi automatically when you log into your computer.">
                     <controls:SettingsCard.HeaderIcon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7E8;" />
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
                     </controls:SettingsCard.HeaderIcon>
                     <ToggleSwitch IsOn="{x:Bind ViewModel.IsAutoLaunchEnabled, Mode=TwoWay}" />
                 </controls:SettingsCard>
@@ -94,7 +102,7 @@
                 <controls:SettingsCard Header="Start minimized"
                                        Description="When launched, the application window will be minimized by default.">
                     <controls:SettingsCard.HeaderIcon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE92C;" />
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
                     </controls:SettingsCard.HeaderIcon>
                     <ToggleSwitch IsOn="{x:Bind ViewModel.IsStartMinimizedEnabled, Mode=TwoWay}" />
                 </controls:SettingsCard>
@@ -102,7 +110,7 @@
                 <controls:SettingsCard Header="Hide to system tray"
                                        Description="When closed, hide to the system tray instead.">
                     <controls:SettingsCard.HeaderIcon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE78B;" />
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
                     </controls:SettingsCard.HeaderIcon>
                     <ToggleSwitch IsOn="{x:Bind ViewModel.IsHideToTrayEnabled, Mode=TwoWay}" />
                 </controls:SettingsCard>
@@ -115,10 +123,6 @@
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
                     </controls:SettingsCard.HeaderIcon>
-                    <!--
-                        The Button requires explicit right alignment.
-                        SettingsCard automatically right-aligns a ToggleSwitch, but not other controls.
-                    -->
                     <Button
                         HorizontalAlignment="Right"
                         Command="{x:Bind ViewModel.ResetApplicationDataCommand}"

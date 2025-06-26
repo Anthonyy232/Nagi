@@ -169,13 +169,24 @@ public partial class App : Application {
     }
 
     private async Task SaveApplicationStateAsync() {
-        if (Services.GetService<IMusicPlaybackService>() is { } musicPlaybackService) {
-            try {
+        if (Services.GetService<ISettingsService>() is not { } settingsService ||
+            Services.GetService<IMusicPlaybackService>() is not { } musicPlaybackService) {
+            Debug.WriteLine("[App] ERROR: Could not resolve required services to save application state.");
+            return;
+        }
+
+        try {
+            if (await settingsService.GetRestorePlaybackStateEnabledAsync()) {
+                // If the setting is enabled, save the current playback state.
                 await musicPlaybackService.SavePlaybackStateAsync();
             }
-            catch (Exception ex) {
-                Debug.WriteLine($"[App] ERROR: Failed to save playback state. {ex.Message}");
+            else {
+                // If the setting is disabled, clear any previously saved state to prevent restoration on next launch.
+                await settingsService.ClearPlaybackStateAsync();
             }
+        }
+        catch (Exception ex) {
+            Debug.WriteLine($"[App] ERROR: Failed to save or clear playback state. {ex.Message}");
         }
     }
 

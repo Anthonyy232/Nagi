@@ -45,6 +45,12 @@ public partial class SettingsViewModel : ObservableObject {
     private bool _isPlayerAnimationEnabled;
 
     /// <summary>
+    /// Gets or sets a value indicating whether the application should save and restore playback state across sessions.
+    /// </summary>
+    [ObservableProperty]
+    private bool _isRestorePlaybackStateEnabled;
+
+    /// <summary>
     /// Gets or sets a value indicating whether the application should launch automatically on system startup.
     /// </summary>
     [ObservableProperty]
@@ -77,6 +83,7 @@ public partial class SettingsViewModel : ObservableObject {
         SelectedTheme = await _settingsService.GetThemeAsync();
         IsDynamicThemingEnabled = await _settingsService.GetDynamicThemingAsync();
         IsPlayerAnimationEnabled = await _settingsService.GetPlayerAnimationEnabledAsync();
+        IsRestorePlaybackStateEnabled = await _settingsService.GetRestorePlaybackStateEnabledAsync();
         IsAutoLaunchEnabled = await _settingsService.GetAutoLaunchEnabledAsync();
         IsStartMinimizedEnabled = await _settingsService.GetStartMinimizedEnabledAsync();
         IsHideToTrayEnabled = await _settingsService.GetHideToTrayEnabledAsync();
@@ -108,6 +115,11 @@ public partial class SettingsViewModel : ObservableObject {
     partial void OnIsPlayerAnimationEnabledChanged(bool value) {
         if (_isInitializing) return;
         _ = _settingsService.SetPlayerAnimationEnabledAsync(value);
+    }
+
+    partial void OnIsRestorePlaybackStateEnabledChanged(bool value) {
+        if (_isInitializing) return;
+        _ = _settingsService.SetRestorePlaybackStateEnabledAsync(value);
     }
 
     partial void OnIsAutoLaunchEnabledChanged(bool value) {

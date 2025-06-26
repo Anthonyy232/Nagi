@@ -106,6 +106,18 @@ public interface ISettingsService {
     Task SetPlayerAnimationEnabledAsync(bool isEnabled);
 
     /// <summary>
+    /// Gets whether the application should restore playback state on launch.
+    /// </summary>
+    /// <returns>True if restoring playback state is enabled; otherwise, false.</returns>
+    Task<bool> GetRestorePlaybackStateEnabledAsync();
+
+    /// <summary>
+    /// Sets the restore playback state preference.
+    /// </summary>
+    /// <param name="isEnabled">The restore playback state preference to save.</param>
+    Task SetRestorePlaybackStateEnabledAsync(bool isEnabled);
+
+    /// <summary>
     /// Gets whether the application should launch automatically on system startup.
     /// </summary>
     /// <returns>True if auto-launch is enabled; otherwise, false.</returns>
