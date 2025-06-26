@@ -138,11 +138,9 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         }
     }
 
-    public async Task PlayAsync(IEnumerable<Song> songs, int startIndex = 0, bool startShuffled = false)
-    {
+    public async Task PlayAsync(IEnumerable<Song> songs, int startIndex = 0, bool startShuffled = false) {
         var songList = songs?.Distinct().ToList() ?? new List<Song>();
-        if (!songList.Any())
-        {
+        if (!songList.Any()) {
             await StopAsync();
             ClearQueuesInternal();
             QueueChanged?.Invoke();
@@ -152,16 +150,27 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
 
         await StopAsync();
         _playbackQueue = songList;
-        await SetShuffleAsync(startShuffled);
+
+        if (IsShuffleEnabled != startShuffled) {
+            IsShuffleEnabled = startShuffled;
+            await _settingsService.SaveShuffleStateAsync(IsShuffleEnabled);
+            ShuffleModeChanged?.Invoke();
+        }
+
+        if (IsShuffleEnabled) {
+            GenerateShuffledQueue();
+        }
+        else {
+            _shuffledQueue.Clear();
+        }
 
         var actualStartIndex = startIndex;
-        if (startShuffled && _shuffledQueue.Any())
-        {
+        if (IsShuffleEnabled && _shuffledQueue.Any()) {
+            // Pick a random starting point in the newly generated shuffled queue.
             _currentShuffledIndex = _random.Next(_shuffledQueue.Count);
             actualStartIndex = _playbackQueue.IndexOf(_shuffledQueue[_currentShuffledIndex]);
         }
-        else
-        {
+        else {
             if (actualStartIndex < 0 || actualStartIndex >= _playbackQueue.Count) actualStartIndex = 0;
             _currentShuffledIndex = -1;
         }
