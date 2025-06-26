@@ -129,7 +129,18 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable {
     }
 
     private void HideWindowInternal() => _appWindow?.Hide();
-    private void ShowWindowInternal() => _appWindow?.Show(true);
+
+    private void ShowWindowInternal() {
+        if (_appWindow == null) return;
+
+        // Show the window. The 'true' parameter attempts to activate it.
+        _appWindow.Show(true);
+
+        // To ensure the window is brought to the front and given focus,
+        // explicitly move it to the top of the Z-order. This is especially
+        // useful when restoring from a hidden state.
+        _appWindow.MoveInZOrderAtTop();
+    }
 
     /// <summary>
     /// Exits the application cleanly, ensuring all resources are disposed.
