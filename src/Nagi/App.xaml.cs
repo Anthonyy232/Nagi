@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
+using Windows.ApplicationModel.Core;
 using Windows.UI;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI;
@@ -24,6 +25,9 @@ using UnhandledExceptionEventArgs = Microsoft.UI.Xaml.UnhandledExceptionEventArg
 
 namespace Nagi;
 
+/// <summary>
+/// Provides application-specific behavior to supplement the default Application class.
+/// </summary>
 public partial class App : Application {
     private static readonly Color DefaultAccentColor = Color.FromArgb(255, 96, 198, 137);
     private MicaController? _micaController;
@@ -32,9 +36,29 @@ public partial class App : Application {
 
     /// <summary>
     /// Gets or sets a value indicating whether the application is in the process of exiting.
-    /// This is used to coordinate shutdown logic, especially for the "hide to tray" feature.
+    /// This is used to bypass certain behaviors, like hiding to the tray, during a deliberate shutdown.
     /// </summary>
     public static bool IsExiting { get; set; }
+
+    /// <summary>
+    /// Gets the main application window.
+    /// </summary>
+    public static Window? RootWindow { get; private set; }
+
+    /// <summary>
+    /// Gets the configured service provider.
+    /// </summary>
+    public static IServiceProvider Services { get; }
+
+    /// <summary>
+    /// Gets the current application instance.
+    /// </summary>
+    public static App? CurrentApp { get; private set; }
+
+    /// <summary>
+    /// Gets the dispatcher queue for the main UI thread.
+    /// </summary>
+    public static DispatcherQueue? MainDispatcherQueue { get; private set; }
 
     static App() {
         Services = ConfigureServices();
@@ -45,13 +69,12 @@ public partial class App : Application {
         CurrentApp = this;
         InitializeComponent();
         UnhandledException += OnAppUnhandledException;
+        CoreApplication.Suspending += OnSuspending;
     }
 
-    public static Window? RootWindow { get; private set; }
-    public static IServiceProvider Services { get; }
-    public static App? CurrentApp { get; private set; }
-    public static DispatcherQueue? MainDispatcherQueue { get; private set; }
-
+    /// <summary>
+    /// Configures the dependency injection container for the application.
+    /// </summary>
     private static IServiceProvider ConfigureServices() {
         var services = new ServiceCollection();
         services.AddSingleton<IAudioPlayer>(provider => {
@@ -100,9 +123,15 @@ public partial class App : Application {
 
         TrySetMicaBackdrop();
 
-        // The Window.Closed event is the definitive trigger for application cleanup.
         _window.Closed += async (sender, e) => {
-            await HandleAppShutdownAsync();
+            await SaveApplicationStateAsync();
+
+            _micaController?.Dispose();
+            _micaController = null;
+
+            if (Services.GetService<TrayIconViewModel>() is IDisposable disposableTrayViewModel) {
+                disposableTrayViewModel.Dispose();
+            }
         };
 
         var playbackService = Services.GetRequiredService<IMusicPlaybackService>();
@@ -129,40 +158,35 @@ public partial class App : Application {
         });
     }
 
-    private async Task HandleAppShutdownAsync() {
-        Debug.WriteLine("[App] Starting application shutdown cleanup...");
-
+    /// <summary>
+    /// Handles the application suspending event, which is a reliable trigger for saving state
+    /// before the OS terminates the application.
+    /// </summary>
+    private async void OnSuspending(object? sender, SuspendingEventArgs e) {
+        var deferral = e.SuspendingOperation.GetDeferral();
         await SaveApplicationStateAsync();
-
-        _micaController?.Dispose();
-        _micaController = null;
-
-        if (Services.GetService<TrayIconViewModel>() is IDisposable disposableTrayViewModel) {
-            disposableTrayViewModel.Dispose();
-        }
-
-        Debug.WriteLine("[App] Application shutdown cleanup finished.");
+        deferral.Complete();
     }
 
     private async Task SaveApplicationStateAsync() {
-        var musicPlaybackService = Services.GetService<IMusicPlaybackService>();
-        if (musicPlaybackService != null)
+        if (Services.GetService<IMusicPlaybackService>() is { } musicPlaybackService) {
             try {
                 await musicPlaybackService.SavePlaybackStateAsync();
             }
             catch (Exception ex) {
                 Debug.WriteLine($"[App] ERROR: Failed to save playback state. {ex.Message}");
             }
+        }
     }
 
     private void OnAppUnhandledException(object sender, UnhandledExceptionEventArgs e) {
-        Debug.WriteLine($"[App] UNHANDLED EXCEPTION: {e.Message}\n{e.Exception}");
-        // Setting e.Handled to true can prevent the application from crashing,
-        // but it should be used with caution as it may leave the app in an unstable state.
+        Debug.WriteLine($"[App] UNHANDLED EXCEPTION: {e.Exception}");
+        e.Handled = true;
     }
 
-
-
+    /// <summary>
+    /// Checks if the library has been configured and navigates to the appropriate initial page.
+    /// </summary>
     public async Task CheckAndNavigateToMainContent() {
         if (RootWindow == null) return;
 
@@ -185,6 +209,9 @@ public partial class App : Application {
         }
     }
 
+    /// <summary>
+    /// Applies the specified theme to the application's root element.
+    /// </summary>
     public void ApplyTheme(ElementTheme themeToApply) {
         if (RootWindow?.Content is FrameworkElement rootElement) {
             rootElement.RequestedTheme = themeToApply;
@@ -194,6 +221,9 @@ public partial class App : Application {
         }
     }
 
+    /// <summary>
+    /// Sets the color of the primary application brush resource.
+    /// </summary>
     public void SetAppPrimaryColorBrushColor(Color newColor) {
         if (Resources.TryGetValue("AppPrimaryColorBrush", out var brushObject) &&
             brushObject is SolidColorBrush appPrimaryColorBrush) {
@@ -204,10 +234,16 @@ public partial class App : Application {
         }
     }
 
+    /// <summary>
+    /// Resets the primary application color to its default value.
+    /// </summary>
     public void ActivateDefaultPrimaryColor() {
         SetAppPrimaryColorBrushColor(DefaultAccentColor);
     }
 
+    /// <summary>
+    /// Applies a dynamic theme color based on the provided color swatches and the current app theme.
+    /// </summary>
     public async void ApplyDynamicThemeFromSwatches(string? lightSwatchId, string? darkSwatchId) {
         var settingsService = Services.GetRequiredService<ISettingsService>();
         if (!await settingsService.GetDynamicThemingAsync()) {
@@ -229,6 +265,9 @@ public partial class App : Application {
             ActivateDefaultPrimaryColor();
     }
 
+    /// <summary>
+    /// Reapplies the dynamic theme based on the currently playing track.
+    /// </summary>
     public void ReapplyCurrentDynamicTheme() {
         var playbackService = Services.GetRequiredService<IMusicPlaybackService>();
         if (playbackService.CurrentTrack != null) {
@@ -263,37 +302,32 @@ public partial class App : Application {
     }
 
     private bool TrySetMicaBackdrop() {
-        if (MicaController.IsSupported()) {
-            _wsdqHelper = new WindowsSystemDispatcherQueueHelper();
-            _wsdqHelper.EnsureWindowsSystemDispatcherQueueController();
+        if (!MicaController.IsSupported()) return false;
 
-            var configurationSource = new SystemBackdropConfiguration();
-            configurationSource.IsInputActive = true;
+        _wsdqHelper = new WindowsSystemDispatcherQueueHelper();
+        _wsdqHelper.EnsureWindowsSystemDispatcherQueueController();
 
-            if (RootWindow?.Content is FrameworkElement rootElement) {
-                rootElement.ActualThemeChanged += (s, e) => {
-                    if (configurationSource != null) {
-                        configurationSource.Theme = rootElement.ActualTheme switch {
-                            ElementTheme.Dark => SystemBackdropTheme.Dark,
-                            ElementTheme.Light => SystemBackdropTheme.Light,
-                            _ => SystemBackdropTheme.Default
-                        };
-                    }
-                };
+        var configurationSource = new SystemBackdropConfiguration { IsInputActive = true };
+
+        if (RootWindow?.Content is FrameworkElement rootElement) {
+            Action updateTheme = () => {
                 configurationSource.Theme = rootElement.ActualTheme switch {
                     ElementTheme.Dark => SystemBackdropTheme.Dark,
                     ElementTheme.Light => SystemBackdropTheme.Light,
                     _ => SystemBackdropTheme.Default
                 };
-            }
-
-            _micaController = new MicaController();
-            _micaController.SetSystemBackdropConfiguration(configurationSource);
-            if (RootWindow != null) {
-                _micaController.AddSystemBackdropTarget(RootWindow.As<ICompositionSupportsSystemBackdrop>());
-                return true;
-            }
+            };
+            rootElement.ActualThemeChanged += (s, e) => updateTheme();
+            updateTheme();
         }
+
+        _micaController = new MicaController();
+        _micaController.SetSystemBackdropConfiguration(configurationSource);
+        if (RootWindow != null) {
+            _micaController.AddSystemBackdropTarget(RootWindow.As<ICompositionSupportsSystemBackdrop>());
+            return true;
+        }
+
         return false;
     }
 }

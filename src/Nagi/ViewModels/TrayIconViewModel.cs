@@ -19,6 +19,7 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable {
     private readonly DispatcherQueue _dispatcherQueue;
     private Microsoft.UI.Windowing.AppWindow? _appWindow;
     private TaskbarIcon? _taskbarIconUiElement;
+    private bool _isDisposed;
 
     private bool _isHideToTrayEnabledSetting;
 
@@ -29,6 +30,9 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable {
     [NotifyPropertyChangedFor(nameof(ToolTipText))]
     private bool _isTrayIconEffectivelyVisible;
 
+    /// <summary>
+    /// Gets the tooltip text for the tray icon, indicating the application name and window state.
+    /// </summary>
     public string ToolTipText => $"{GetAppName()} - {(IsWindowActuallyVisible ? "Window Visible" : "Hidden in Tray")}";
 
     public TrayIconViewModel(ISettingsService settingsService) {
@@ -39,7 +43,9 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable {
 
     /// <summary>
     /// Initializes the ViewModel with references to the main window and the tray icon UI element.
+    /// This should be called once the main window is available.
     /// </summary>
+    /// <param name="taskbarIconElement">The UI element for the tray icon.</param>
     public async Task InitializeAsync(TaskbarIcon taskbarIconElement) {
         _taskbarIconUiElement = taskbarIconElement ?? throw new ArgumentNullException(nameof(taskbarIconElement));
 
@@ -59,7 +65,9 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable {
         var startMinimized = await _settingsService.GetStartMinimizedEnabledAsync();
         if (startMinimized && IsWindowActuallyVisible) {
             _dispatcherQueue.TryEnqueue(() => {
-                if (IsWindowActuallyVisible) { HideWindowInternal(); }
+                if (IsWindowActuallyVisible) {
+                    HideWindowInternal();
+                }
             });
         }
     }
@@ -104,18 +112,29 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable {
         });
     }
 
+    /// <summary>
+    /// Toggles the main window's visibility between shown and hidden (in tray).
+    /// </summary>
     [RelayCommand]
     private void ShowHideWindow() {
         if (_appWindow == null) return;
+
         if (IsWindowActuallyVisible) {
-            if (_isHideToTrayEnabledSetting) { HideWindowInternal(); }
+            if (_isHideToTrayEnabledSetting) {
+                HideWindowInternal();
+            }
         }
-        else { ShowWindowInternal(); }
+        else {
+            ShowWindowInternal();
+        }
     }
 
     private void HideWindowInternal() => _appWindow?.Hide();
     private void ShowWindowInternal() => _appWindow?.Show(true);
 
+    /// <summary>
+    /// Exits the application cleanly, ensuring all resources are disposed.
+    /// </summary>
     [RelayCommand]
     private void ExitApplication() {
         // Signal that a deliberate exit is happening. This will bypass the
@@ -123,16 +142,25 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable {
         App.IsExiting = true;
 
         // Trigger the standard window closing process.
-        // All cleanup is handled in the App.xaml.cs Window.Closed event.
+        // Cleanup is handled in the App.xaml.cs Window.Closed event.
         App.RootWindow?.Close();
     }
 
     private string GetAppName() {
-        try { return Package.Current.DisplayName; }
-        catch { return "Nagi"; }
+        try {
+            return Package.Current.DisplayName;
+        }
+        catch {
+            return "Nagi";
+        }
     }
 
+    /// <summary>
+    /// Cleans up resources used by the ViewModel, such as event handlers and the tray icon.
+    /// </summary>
     public void Dispose() {
+        if (_isDisposed) return;
+
         if (_appWindow != null) {
             _appWindow.Closing -= AppWindow_Closing_Handler;
             _appWindow.Changed -= AppWindow_Changed_Handler;
@@ -142,6 +170,8 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable {
 
         _taskbarIconUiElement?.Dispose();
         _taskbarIconUiElement = null;
+
+        _isDisposed = true;
         GC.SuppressFinalize(this);
     }
 }
