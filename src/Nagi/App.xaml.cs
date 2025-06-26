@@ -32,7 +32,24 @@ namespace Nagi;
 /// Provides application-specific behavior to supplement the default Application class.
 /// </summary>
 public partial class App : Application {
-    private static readonly Color DefaultAccentColor = Color.FromArgb(255, 96, 198, 137);
+    private static Color? _systemAccentColor;
+
+    public static Color SystemAccentColor {
+        get {
+            if (_systemAccentColor == null) {
+                // Try to get the color from the application's resources.
+                if (Current.Resources.TryGetValue("SystemAccentColor", out var value) && value is Color color) {
+                    _systemAccentColor = color;
+                }
+                else {
+                    // Provide a sensible fallback color if the resource isn't available for some reason.
+                    Debug.WriteLine("[App] WARNING: Could not find SystemAccentColor resource. Using fallback.");
+                    _systemAccentColor = Colors.SlateGray;
+                }
+            }
+            return _systemAccentColor.Value;
+        }
+    }
 
     private Window? _window;
     private MicaController? _micaController;
@@ -279,10 +296,10 @@ public partial class App : Application {
     }
 
     /// <summary>
-    /// Resets the primary application color to its default value.
+    /// Resets the primary application color to the system's accent color.
     /// </summary>
     public void ActivateDefaultPrimaryColor() {
-        SetAppPrimaryColorBrushColor(DefaultAccentColor);
+        SetAppPrimaryColorBrushColor(SystemAccentColor);
     }
 
     /// <summary>
@@ -315,7 +332,7 @@ public partial class App : Application {
 
     /// <summary>
     /// Reapplies the dynamic theme based on the currently playing track. If no track is playing,
-    /// it reverts to the default accent color.
+    /// it reverts to the default system accent color.
     /// </summary>
     public void ReapplyCurrentDynamicTheme() {
         var playbackService = Services.GetRequiredService<IMusicPlaybackService>();
