@@ -1,13 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Globalization;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
-using Windows.ApplicationModel;
-using Windows.ApplicationModel.Core;
-using Windows.UI;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Composition.SystemBackdrops;
@@ -21,6 +12,16 @@ using Nagi.Services;
 using Nagi.Services.Abstractions;
 using Nagi.Services.Implementations;
 using Nagi.ViewModels;
+using System;
+using System.Diagnostics;
+using System.Globalization;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
+using Windows.ApplicationModel;
+using Windows.ApplicationModel.Activation;
+using Windows.ApplicationModel.Core;
+using Windows.UI;
 using WinRT;
 using WinRT.Interop;
 using UnhandledExceptionEventArgs = Microsoft.UI.Xaml.UnhandledExceptionEventArgs;
@@ -138,7 +139,10 @@ public partial class App : Application {
     /// <summary>
     /// Invoked when the application is launched.
     /// </summary>
-    protected override async void OnLaunched(LaunchActivatedEventArgs args) {
+    protected override async void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args) {
+        bool isStartupLaunch = Environment.GetCommandLineArgs().Any(arg =>
+            arg.Equals("--startup", StringComparison.OrdinalIgnoreCase));
+
         _window = new MainWindow();
         RootWindow = _window;
         MainDispatcherQueue = _window.DispatcherQueue;
@@ -156,8 +160,8 @@ public partial class App : Application {
         ReapplyCurrentDynamicTheme();
         await CheckAndNavigateToMainContent();
 
-        // Activate the window according to user settings (normal, minimized, or hidden).
-        await HandleWindowActivationAsync();
+        // Activate the window according to user settings and launch context.
+        await HandleWindowActivationAsync(isStartupLaunch);
 
         EnqueuePostLaunchTasks();
     }
@@ -358,25 +362,31 @@ public partial class App : Application {
     /// <summary>
     /// Determines how the main window should be displayed on startup based on user settings.
     /// </summary>
-    private async Task HandleWindowActivationAsync() {
+    /// <param name="isStartupLaunch">Indicates if the app was launched via a startup task.</param>
+    private async Task HandleWindowActivationAsync(bool isStartupLaunch = false) {
         if (_window == null) return;
 
         var settingsService = Services.GetRequiredService<ISettingsService>();
         var startMinimized = await settingsService.GetStartMinimizedEnabledAsync();
         var hideToTray = await settingsService.GetHideToTrayEnabledAsync();
 
-        if (startMinimized) {
+        // If launched at startup, or if the user has configured "Start Minimized",
+        // we will not activate the window normally.
+        if (isStartupLaunch || startMinimized) {
             if (hideToTray) {
                 // Start minimized to the system tray by not activating the window.
                 // The TrayIconViewModel ensures the icon is visible.
+                Debug.WriteLine("[App] Starting minimized to tray.");
             }
             else {
                 // Start minimized to the taskbar using a flicker-free method.
+                Debug.WriteLine("[App] Starting minimized to taskbar.");
                 WindowActivator.ShowMinimized(_window);
             }
         }
         else {
             // Standard launch: Activate and show the window normally.
+            Debug.WriteLine("[App] Starting normally.");
             _window.Activate();
         }
     }
