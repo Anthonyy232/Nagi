@@ -62,13 +62,12 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable {
 
         UpdateEffectiveTrayIconVisibility();
 
+        // If the app was launched with the "Start Minimized" setting, the window will be hidden.
+        // We must ensure the tray icon is visible so the user can interact with the app.
+        // This overrides the default visibility logic for the initial launch only.
         var startMinimized = await _settingsService.GetStartMinimizedEnabledAsync();
-        if (startMinimized && IsWindowActuallyVisible) {
-            _dispatcherQueue.TryEnqueue(() => {
-                if (IsWindowActuallyVisible) {
-                    HideWindowInternal();
-                }
-            });
+        if (startMinimized && !IsWindowActuallyVisible) {
+            IsTrayIconEffectivelyVisible = true;
         }
     }
 

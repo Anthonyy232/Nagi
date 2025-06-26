@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Core;
@@ -21,6 +22,7 @@ using Nagi.Services.Abstractions;
 using Nagi.Services.Implementations;
 using Nagi.ViewModels;
 using WinRT;
+using WinRT.Interop;
 using UnhandledExceptionEventArgs = Microsoft.UI.Xaml.UnhandledExceptionEventArgs;
 
 namespace Nagi;
@@ -30,9 +32,30 @@ namespace Nagi;
 /// </summary>
 public partial class App : Application {
     private static readonly Color DefaultAccentColor = Color.FromArgb(255, 96, 198, 137);
-    private MicaController? _micaController;
+
     private Window? _window;
+    private MicaController? _micaController;
     private WindowsSystemDispatcherQueueHelper? _wsdqHelper;
+
+    /// <summary>
+    /// Gets the singleton instance of the application.
+    /// </summary>
+    public static App? CurrentApp { get; private set; }
+
+    /// <summary>
+    /// Gets the main application window.
+    /// </summary>
+    public static Window? RootWindow { get; private set; }
+
+    /// <summary>
+    /// Gets the dependency injection service provider.
+    /// </summary>
+    public static IServiceProvider Services { get; }
+
+    /// <summary>
+    /// Gets the dispatcher queue for the main UI thread.
+    /// </summary>
+    public static DispatcherQueue? MainDispatcherQueue { get; private set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether the application is in the process of exiting.
@@ -41,30 +64,16 @@ public partial class App : Application {
     public static bool IsExiting { get; set; }
 
     /// <summary>
-    /// Gets the main application window.
+    /// Initializes the application's service provider and database.
     /// </summary>
-    public static Window? RootWindow { get; private set; }
-
-    /// <summary>
-    /// Gets the configured service provider.
-    /// </summary>
-    public static IServiceProvider Services { get; }
-
-    /// <summary>
-    /// Gets the current application instance.
-    /// </summary>
-    public static App? CurrentApp { get; private set; }
-
-    /// <summary>
-    /// Gets the dispatcher queue for the main UI thread.
-    /// </summary>
-    public static DispatcherQueue? MainDispatcherQueue { get; private set; }
-
     static App() {
         Services = ConfigureServices();
         InitializeDatabase();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="App"/> class.
+    /// </summary>
     public App() {
         CurrentApp = this;
         InitializeComponent();
@@ -77,9 +86,11 @@ public partial class App : Application {
     /// </summary>
     private static IServiceProvider ConfigureServices() {
         var services = new ServiceCollection();
+
+        // Core Services
         services.AddSingleton<IAudioPlayer>(provider => {
             if (MainDispatcherQueue == null)
-                throw new InvalidOperationException("MainDispatcherQueue must be initialized before creating the AudioPlayerService.");
+                throw new InvalidOperationException("MainDispatcherQueue must be initialized before creating AudioPlayerService.");
             return new AudioPlayerService(MainDispatcherQueue);
         });
         services.AddSingleton<IFileSystemService, FileSystemService>();
@@ -89,12 +100,16 @@ public partial class App : Application {
         services.AddSingleton<IMusicPlaybackService, MusicPlaybackService>();
         services.AddSingleton<ILibraryService, LibraryService>();
         services.AddSingleton<INavigationService, NavigationService>();
+
+        // Database
         services.AddTransient<MusicDbContext>();
+
+        // ViewModels
         services.AddSingleton<PlayerViewModel>();
+        services.AddSingleton<TrayIconViewModel>();
         services.AddTransient<LibraryViewModel>();
         services.AddTransient<PlaylistViewModel>();
         services.AddTransient<SettingsViewModel>();
-        services.AddSingleton<TrayIconViewModel>();
         services.AddTransient<OnboardingViewModel>();
         services.AddTransient<PlaylistSongListViewModel>();
         services.AddTransient<FolderViewModel>();
@@ -103,9 +118,13 @@ public partial class App : Application {
         services.AddTransient<ArtistViewViewModel>();
         services.AddTransient<AlbumViewViewModel>();
         services.AddTransient<AlbumViewModel>();
+
         return services.BuildServiceProvider();
     }
 
+    /// <summary>
+    /// Ensures that the application's database is created if it does not already exist.
+    /// </summary>
     private static void InitializeDatabase() {
         try {
             using var dbContext = Services.GetRequiredService<MusicDbContext>();
@@ -116,27 +135,16 @@ public partial class App : Application {
         }
     }
 
+    /// <summary>
+    /// Invoked when the application is launched.
+    /// </summary>
     protected override async void OnLaunched(LaunchActivatedEventArgs args) {
         _window = new MainWindow();
         RootWindow = _window;
         MainDispatcherQueue = _window.DispatcherQueue;
-
-        TrySetMicaBackdrop();
-
-        _window.Closed += async (sender, e) => {
-            await SaveApplicationStateAsync();
-
-            _micaController?.Dispose();
-            _micaController = null;
-
-            if (Services.GetService<TrayIconViewModel>() is IDisposable disposableTrayViewModel) {
-                disposableTrayViewModel.Dispose();
-            }
-        };
+        _window.Closed += OnWindowClosed;
 
         var playbackService = Services.GetRequiredService<IMusicPlaybackService>();
-        var audioPlayerService = Services.GetRequiredService<IAudioPlayer>();
-
         try {
             await playbackService.InitializeAsync();
         }
@@ -144,23 +152,18 @@ public partial class App : Application {
             Debug.WriteLine($"[App] CRITICAL: Failed to initialize MusicPlaybackService. {ex.Message}");
         }
 
+        TrySetMicaBackdrop();
         ReapplyCurrentDynamicTheme();
         await CheckAndNavigateToMainContent();
-        _window.Activate();
 
-        MainDispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, () => {
-            try {
-                audioPlayerService.InitializeSmtc();
-            }
-            catch (Exception ex) {
-                Debug.WriteLine($"[App] ERROR: Failed to initialize SMTC. {ex.Message}");
-            }
-        });
+        // Activate the window according to user settings (normal, minimized, or hidden).
+        await HandleWindowActivationAsync();
+
+        EnqueuePostLaunchTasks();
     }
 
     /// <summary>
-    /// Handles the application suspending event, which is a reliable trigger for saving state
-    /// before the OS terminates the application.
+    /// Handles the application suspending event, a reliable trigger for saving application state.
     /// </summary>
     private async void OnSuspending(object? sender, SuspendingEventArgs e) {
         var deferral = e.SuspendingOperation.GetDeferral();
@@ -168,6 +171,9 @@ public partial class App : Application {
         deferral.Complete();
     }
 
+    /// <summary>
+    /// Persists application state, such as playback position, based on user settings.
+    /// </summary>
     private async Task SaveApplicationStateAsync() {
         if (Services.GetService<ISettingsService>() is not { } settingsService ||
             Services.GetService<IMusicPlaybackService>() is not { } musicPlaybackService) {
@@ -177,11 +183,9 @@ public partial class App : Application {
 
         try {
             if (await settingsService.GetRestorePlaybackStateEnabledAsync()) {
-                // If the setting is enabled, save the current playback state.
                 await musicPlaybackService.SavePlaybackStateAsync();
             }
             else {
-                // If the setting is disabled, clear any previously saved state to prevent restoration on next launch.
                 await settingsService.ClearPlaybackStateAsync();
             }
         }
@@ -190,9 +194,26 @@ public partial class App : Application {
         }
     }
 
+    /// <summary>
+    /// Cleans up resources when the main window is closed.
+    /// </summary>
+    private async void OnWindowClosed(object sender, WindowEventArgs args) {
+        await SaveApplicationStateAsync();
+
+        _micaController?.Dispose();
+        _micaController = null;
+
+        if (Services.GetService<TrayIconViewModel>() is IDisposable disposableTrayViewModel) {
+            disposableTrayViewModel.Dispose();
+        }
+    }
+
+    /// <summary>
+    /// Central handler for unhandled exceptions.
+    /// </summary>
     private void OnAppUnhandledException(object sender, UnhandledExceptionEventArgs e) {
         Debug.WriteLine($"[App] UNHANDLED EXCEPTION: {e.Exception}");
-        e.Handled = true;
+        e.Handled = true; // Prevents the application from crashing.
     }
 
     /// <summary>
@@ -220,25 +241,33 @@ public partial class App : Application {
         }
     }
 
-    /// <summary>
-    /// Applies the specified theme to the application's root element.
-    /// </summary>
-    public void ApplyTheme(ElementTheme themeToApply) {
-        if (RootWindow?.Content is FrameworkElement rootElement) {
-            rootElement.RequestedTheme = themeToApply;
-            ReapplyCurrentDynamicTheme();
+    #region Theming and Color Management
 
-            if (RootWindow is MainWindow mainWindow) mainWindow.InitializeCustomTitleBar();
+    /// <summary>
+    /// Applies the specified theme to the application's root visual element.
+    /// </summary>
+    /// <param name="themeToApply">The theme to apply (Light, Dark, or Default).</param>
+    public void ApplyTheme(ElementTheme themeToApply) {
+        if (RootWindow?.Content is not FrameworkElement rootElement) return;
+
+        rootElement.RequestedTheme = themeToApply;
+        ReapplyCurrentDynamicTheme();
+
+        if (RootWindow is MainWindow mainWindow) {
+            mainWindow.InitializeCustomTitleBar();
         }
     }
 
     /// <summary>
     /// Sets the color of the primary application brush resource.
     /// </summary>
+    /// <param name="newColor">The new color to apply.</param>
     public void SetAppPrimaryColorBrushColor(Color newColor) {
         if (Resources.TryGetValue("AppPrimaryColorBrush", out var brushObject) &&
             brushObject is SolidColorBrush appPrimaryColorBrush) {
-            if (appPrimaryColorBrush.Color != newColor) appPrimaryColorBrush.Color = newColor;
+            if (appPrimaryColorBrush.Color != newColor) {
+                appPrimaryColorBrush.Color = newColor;
+            }
         }
         else {
             Debug.WriteLine("[App] CRITICAL: AppPrimaryColorBrush resource not found or is not a SolidColorBrush.");
@@ -255,6 +284,8 @@ public partial class App : Application {
     /// <summary>
     /// Applies a dynamic theme color based on the provided color swatches and the current app theme.
     /// </summary>
+    /// <param name="lightSwatchId">The hex color string for the light theme.</param>
+    /// <param name="darkSwatchId">The hex color string for the dark theme.</param>
     public async void ApplyDynamicThemeFromSwatches(string? lightSwatchId, string? darkSwatchId) {
         var settingsService = Services.GetRequiredService<ISettingsService>();
         if (!await settingsService.GetDynamicThemingAsync()) {
@@ -270,19 +301,23 @@ public partial class App : Application {
         var currentTheme = rootElement.ActualTheme;
         var swatchToUse = currentTheme == ElementTheme.Dark ? darkSwatchId : lightSwatchId;
 
-        if (!string.IsNullOrEmpty(swatchToUse) && TryParseHexColor(swatchToUse, out var targetColor))
+        if (!string.IsNullOrEmpty(swatchToUse) && TryParseHexColor(swatchToUse, out var targetColor)) {
             SetAppPrimaryColorBrushColor(targetColor);
-        else
+        }
+        else {
             ActivateDefaultPrimaryColor();
+        }
     }
 
     /// <summary>
-    /// Reapplies the dynamic theme based on the currently playing track.
+    /// Reapplies the dynamic theme based on the currently playing track. If no track is playing,
+    /// it reverts to the default accent color.
     /// </summary>
     public void ReapplyCurrentDynamicTheme() {
         var playbackService = Services.GetRequiredService<IMusicPlaybackService>();
         if (playbackService.CurrentTrack != null) {
-            ApplyDynamicThemeFromSwatches(playbackService.CurrentTrack.LightSwatchId,
+            ApplyDynamicThemeFromSwatches(
+                playbackService.CurrentTrack.LightSwatchId,
                 playbackService.CurrentTrack.DarkSwatchId);
         }
         else {
@@ -290,21 +325,25 @@ public partial class App : Application {
         }
     }
 
+    /// <summary>
+    /// Attempts to parse a hexadecimal color string into a <see cref="Color"/>.
+    /// Supports RRGGBB and AARRGGBB formats.
+    /// </summary>
     private bool TryParseHexColor(string hex, out Color color) {
         color = Colors.Transparent;
         if (string.IsNullOrEmpty(hex)) return false;
 
         hex = hex.TrimStart('#');
         if (uint.TryParse(hex, NumberStyles.HexNumber, null, out var argb)) {
-            if (hex.Length == 6) {
-                color = Color.FromArgb(255, (byte)((argb >> 16) & 0xFF), (byte)((argb >> 8) & 0xFF),
-                    (byte)(argb & 0xFF));
+            if (hex.Length == 6) // RRGGBB
+            {
+                color = Color.FromArgb(255, (byte)((argb >> 16) & 0xFF), (byte)((argb >> 8) & 0xFF), (byte)(argb & 0xFF));
                 return true;
             }
 
-            if (hex.Length == 8) {
-                color = Color.FromArgb((byte)((argb >> 24) & 0xFF), (byte)((argb >> 16) & 0xFF),
-                    (byte)((argb >> 8) & 0xFF), (byte)(argb & 0xFF));
+            if (hex.Length == 8) // AARRGGBB
+            {
+                color = Color.FromArgb((byte)((argb >> 24) & 0xFF), (byte)((argb >> 16) & 0xFF), (byte)((argb >> 8) & 0xFF), (byte)(argb & 0xFF));
                 return true;
             }
         }
@@ -312,6 +351,56 @@ public partial class App : Application {
         return false;
     }
 
+    #endregion
+
+    #region Window Activation and System Integration
+
+    /// <summary>
+    /// Determines how the main window should be displayed on startup based on user settings.
+    /// </summary>
+    private async Task HandleWindowActivationAsync() {
+        if (_window == null) return;
+
+        var settingsService = Services.GetRequiredService<ISettingsService>();
+        var startMinimized = await settingsService.GetStartMinimizedEnabledAsync();
+        var hideToTray = await settingsService.GetHideToTrayEnabledAsync();
+
+        if (startMinimized) {
+            if (hideToTray) {
+                // Start minimized to the system tray by not activating the window.
+                // The TrayIconViewModel ensures the icon is visible.
+            }
+            else {
+                // Start minimized to the taskbar using a flicker-free method.
+                WindowActivator.ShowMinimized(_window);
+            }
+        }
+        else {
+            // Standard launch: Activate and show the window normally.
+            _window.Activate();
+        }
+    }
+
+    /// <summary>
+    /// Enqueues tasks to be run after the application has launched and the UI is active.
+    /// </summary>
+    private void EnqueuePostLaunchTasks() {
+        if (MainDispatcherQueue == null) return;
+
+        MainDispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, () => {
+            try {
+                var audioPlayerService = Services.GetRequiredService<IAudioPlayer>();
+                audioPlayerService.InitializeSmtc();
+            }
+            catch (Exception ex) {
+                Debug.WriteLine($"[App] ERROR: Failed to initialize SMTC. {ex.Message}");
+            }
+        });
+    }
+
+    /// <summary>
+    /// Attempts to apply the Mica backdrop material to the main window.
+    /// </summary>
     private bool TrySetMicaBackdrop() {
         if (!MicaController.IsSupported()) return false;
 
@@ -334,6 +423,7 @@ public partial class App : Application {
 
         _micaController = new MicaController();
         _micaController.SetSystemBackdropConfiguration(configurationSource);
+
         if (RootWindow != null) {
             _micaController.AddSystemBackdropTarget(RootWindow.As<ICompositionSupportsSystemBackdrop>());
             return true;
@@ -341,4 +431,25 @@ public partial class App : Application {
 
         return false;
     }
+
+    /// <summary>
+    /// Private helper class to encapsulate Win32 API calls for window management.
+    /// </summary>
+    private static class WindowActivator {
+        // Shows a window.
+        [DllImport("user32.dll")]
+        private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        private const int SW_SHOWMINIMIZED = 2;
+
+        /// <summary>
+        /// Shows the specified window in a minimized state without flicker.
+        /// </summary>
+        public static void ShowMinimized(Window window) {
+            var windowHandle = WindowNative.GetWindowHandle(window);
+            ShowWindow(windowHandle, SW_SHOWMINIMIZED);
+        }
+    }
+
+    #endregion
 }
