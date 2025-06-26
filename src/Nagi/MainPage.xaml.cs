@@ -10,18 +10,16 @@ using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Interfaces;
 using Nagi.Pages;
-using Nagi.Services;
 using Nagi.Services.Abstractions;
 using Nagi.ViewModels;
 
 namespace Nagi;
 
 /// <summary>
-///     Represents the main shell of the application, hosting the primary navigation,
-///     content frame, and media player controls. It also provides the custom title bar.
+/// Represents the main shell of the application, hosting the primary navigation,
+/// content frame, and media player controls. It also provides the custom title bar.
 /// </summary>
-public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
-{
+public sealed partial class MainPage : UserControl, ICustomTitleBarProvider {
     private const double VolumeChangeStep = 5.0;
 
     // Maps detail page types to their parent navigation tag to keep the correct
@@ -49,8 +47,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     private bool _isPlayerAnimationEnabled = true;
     private bool _isPointerOverPlayer;
 
-    public MainPage()
-    {
+    public MainPage() {
         InitializeComponent();
         ViewModel = App.Services.GetRequiredService<PlayerViewModel>();
         _settingsService = App.Services.GetRequiredService<ISettingsService>();
@@ -67,31 +64,26 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
     public PlayerViewModel ViewModel { get; }
 
-    public Grid GetAppTitleBarElement()
-    {
+    public Grid GetAppTitleBarElement() {
         return AppTitleBar;
     }
 
-    private void InitializeNavigationService()
-    {
+    private void InitializeNavigationService() {
         var navigationService = App.Services.GetRequiredService<INavigationService>();
         navigationService.Initialize(ContentFrame);
     }
 
     /// <summary>
-    ///     Updates the visual state of the title bar based on window activation.
+    /// Updates the visual state of the title bar based on window activation.
     /// </summary>
     /// <param name="activationState">The current activation state of the window.</param>
-    public void UpdateActivationVisualState(WindowActivationState activationState)
-    {
+    public void UpdateActivationVisualState(WindowActivationState activationState) {
         var stateName = activationState == WindowActivationState.Deactivated ? "WindowIsInactive" : "WindowIsActive";
         VisualStateManager.GoToState(this, stateName, true);
     }
 
-    private void HandleNavigation(bool isSettings, object? selectedItem, NavigationTransitionInfo transitionInfo)
-    {
-        if (isSettings)
-        {
+    private void HandleNavigation(bool isSettings, object? selectedItem, NavigationTransitionInfo transitionInfo) {
+        if (isSettings) {
             if (ContentFrame.CurrentSourcePageType != typeof(SettingsPage))
                 ContentFrame.Navigate(typeof(SettingsPage), null, transitionInfo);
             return;
@@ -102,19 +94,16 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
                 ContentFrame.Navigate(pageType, null, transitionInfo);
     }
 
-    private void TryGoBack()
-    {
+    private void TryGoBack() {
         if (ContentFrame.CanGoBack) ContentFrame.GoBack();
     }
 
     /// <summary>
-    ///     Ensures the correct NavigationView item is selected after a navigation operation.
-    ///     This is especially important for keeping parent categories selected when on a detail page.
+    /// Ensures the correct NavigationView item is selected after a navigation operation.
+    /// This is especially important for keeping parent categories selected when on a detail page.
     /// </summary>
-    private void UpdateNavViewSelection(Type currentPageType)
-    {
-        if (currentPageType == typeof(SettingsPage))
-        {
+    private void UpdateNavViewSelection(Type currentPageType) {
+        if (currentPageType == typeof(SettingsPage)) {
             NavView.SelectedItem = NavView.SettingsItem;
             return;
         }
@@ -131,20 +120,18 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     }
 
     /// <summary>
-    ///     Applies a dynamic theme based on the album art of the currently playing track.
+    /// Applies a dynamic theme based on the album art of the currently playing track.
     /// </summary>
-    private void ApplyDynamicThemeForCurrentTrack()
-    {
+    private void ApplyDynamicThemeForCurrentTrack() {
         var song = ViewModel.CurrentPlayingTrack;
         if (App.Current is App app) app.ApplyDynamicThemeFromSwatches(song?.LightSwatchId, song?.DarkSwatchId);
     }
 
     /// <summary>
-    ///     Manages the visibility and state of the floating player controls.
-    ///     The player is expanded if music is playing, the user is hovering over it, or animations are disabled.
+    /// Manages the visibility and state of the floating player controls.
+    /// The player is expanded if music is playing, the user is hovering over it, or animations are disabled.
     /// </summary>
-    private void UpdatePlayerVisualState(bool useTransitions = true)
-    {
+    private void UpdatePlayerVisualState(bool useTransitions = true) {
         var isPlaying = ViewModel.CurrentPlayingTrack != null && ViewModel.IsPlaying;
         var shouldBeExpanded = !_isPlayerAnimationEnabled || isPlaying || _isPointerOverPlayer;
         var stateName = shouldBeExpanded ? "PlayerExpanded" : "PlayerCollapsed";
@@ -152,8 +139,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         VisualStateManager.GoToState(this, stateName, useTransitions);
     }
 
-    private async void OnMainPageLoaded(object sender, RoutedEventArgs e)
-    {
+    private async void OnMainPageLoaded(object sender, RoutedEventArgs e) {
         if (NavView.MenuItems.Any() && NavView.SelectedItem == null)
             NavView.SelectedItem = NavView.MenuItems.OfType<NavigationViewItem>().FirstOrDefault()
                                    ?? NavView.MenuItems.First();
@@ -165,84 +151,70 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         UpdatePlayerVisualState(false);
     }
 
-    private void OnMainPageUnloaded(object sender, RoutedEventArgs e)
-    {
+    private void OnMainPageUnloaded(object sender, RoutedEventArgs e) {
         _settingsService.PlayerAnimationSettingChanged -= OnPlayerAnimationSettingChanged;
         ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
     }
 
-    private void OnPlayerAnimationSettingChanged(bool isEnabled)
-    {
+    private void OnPlayerAnimationSettingChanged(bool isEnabled) {
         // Must run on the UI thread as the event may be raised from a background thread.
-        DispatcherQueue.TryEnqueue(() =>
-        {
+        DispatcherQueue.TryEnqueue(() => {
             _isPlayerAnimationEnabled = isEnabled;
             UpdatePlayerVisualState(false);
         });
     }
 
-    private void OnActualThemeChanged(FrameworkElement sender, object args)
-    {
+
+
+    private void OnActualThemeChanged(FrameworkElement sender, object args) {
         ApplyDynamicThemeForCurrentTrack();
         if (App.RootWindow is MainWindow mainWindow) mainWindow.UpdateCaptionButtonColors();
     }
 
-    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
+    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         if (e.PropertyName == nameof(PlayerViewModel.CurrentPlayingTrack))
-            // Ensure theme updates happen on the UI thread.
             DispatcherQueue.TryEnqueue(ApplyDynamicThemeForCurrentTrack);
 
         if (e.PropertyName is nameof(PlayerViewModel.CurrentPlayingTrack) or nameof(PlayerViewModel.IsPlaying))
-            // Ensure visual state updates happen on the UI thread.
             DispatcherQueue.TryEnqueue(() => UpdatePlayerVisualState());
     }
 
-    private void NavView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
-    {
+    private void NavView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args) {
         HandleNavigation(args.IsSettingsInvoked, args.InvokedItemContainer, args.RecommendedNavigationTransitionInfo);
     }
 
-    private void NavView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
-    {
+    private void NavView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args) {
         HandleNavigation(args.IsSettingsSelected, args.SelectedItem, args.RecommendedNavigationTransitionInfo);
     }
 
-    private void NavView_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
-    {
+    private void NavView_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args) {
         TryGoBack();
     }
 
-    private void CustomBackButton_Click(object sender, RoutedEventArgs e)
-    {
+    private void CustomBackButton_Click(object sender, RoutedEventArgs e) {
         TryGoBack();
     }
 
-    private void OnContentFrameNavigated(object sender, NavigationEventArgs e)
-    {
+    private void OnContentFrameNavigated(object sender, NavigationEventArgs e) {
         var isDetailPage = _detailPageToParentTagMap.ContainsKey(e.SourcePageType);
         CustomBackButton.Visibility =
             ContentFrame.CanGoBack && isDetailPage ? Visibility.Visible : Visibility.Collapsed;
         UpdateNavViewSelection(e.SourcePageType);
     }
 
-    private void VolumeControlsWrapper_PointerWheelChanged(object sender, PointerRoutedEventArgs e)
-    {
+    private void VolumeControlsWrapper_PointerWheelChanged(object sender, PointerRoutedEventArgs e) {
         var delta = e.GetCurrentPoint(sender as UIElement).Properties.MouseWheelDelta;
         var change = delta > 0 ? VolumeChangeStep : -VolumeChangeStep;
         ViewModel.CurrentVolume = Math.Clamp(ViewModel.CurrentVolume + change, 0, 100);
         e.Handled = true;
     }
 
-    private void FloatingPlayerContainer_PointerEntered(object sender, PointerRoutedEventArgs e)
-    {
+    private void FloatingPlayerContainer_PointerEntered(object sender, PointerRoutedEventArgs e) {
         _isPointerOverPlayer = true;
         UpdatePlayerVisualState();
     }
 
-
-    private void FloatingPlayerContainer_PointerExited(object sender, PointerRoutedEventArgs e)
-    {
+    private void FloatingPlayerContainer_PointerExited(object sender, PointerRoutedEventArgs e) {
         _isPointerOverPlayer = false;
         UpdatePlayerVisualState();
     }

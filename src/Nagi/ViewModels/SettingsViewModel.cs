@@ -8,19 +8,17 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Nagi.Services;
 using Nagi.Services.Abstractions;
 
 namespace Nagi.ViewModels;
 
 /// <summary>
-///     ViewModel for managing application settings.
+/// Provides properties and commands for the settings page, allowing users to configure the application.
 /// </summary>
 public partial class SettingsViewModel : ObservableObject {
     private readonly IServiceProvider _serviceProvider;
     private readonly ISettingsService _settingsService;
 
-    // Prevents settings from being saved while they are initially being loaded.
     private bool _isInitializing;
 
     public SettingsViewModel(ISettingsService settingsService, IServiceProvider serviceProvider) {
@@ -28,26 +26,50 @@ public partial class SettingsViewModel : ObservableObject {
         _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
     }
 
-    [ObservableProperty] public partial ElementTheme SelectedTheme { get; set; }
-
-    [ObservableProperty] public partial bool IsDynamicThemingEnabled { get; set; }
-
-    [ObservableProperty] public partial bool IsPlayerAnimationEnabled { get; set; }
-
-    [ObservableProperty] public partial bool IsAutoLaunchEnabled { get; set; }
-
-    [ObservableProperty] public partial bool IsStartMinimizedEnabled { get; set; }
-
-    [ObservableProperty] public partial bool IsHideToTrayEnabled { get; set; }
+    /// <summary>
+    /// Gets or sets the selected application theme (Light, Dark, or System Default).
+    /// </summary>
+    [ObservableProperty]
+    private ElementTheme _selectedTheme;
 
     /// <summary>
-    ///     Gets the list of available themes for the application.
+    /// Gets or sets a value indicating whether dynamic theming based on album art is enabled.
+    /// </summary>
+    [ObservableProperty]
+    private bool _isDynamicThemingEnabled;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether animations for the player bar are enabled.
+    /// </summary>
+    [ObservableProperty]
+    private bool _isPlayerAnimationEnabled;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the application should launch automatically on system startup.
+    /// </summary>
+    [ObservableProperty]
+    private bool _isAutoLaunchEnabled;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the application should start in a minimized state.
+    /// </summary>
+    [ObservableProperty]
+    private bool _isStartMinimizedEnabled;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the application should hide to the system tray when closed.
+    /// </summary>
+    [ObservableProperty]
+    private bool _isHideToTrayEnabled;
+
+    /// <summary>
+    /// Gets the list of available themes for binding to the UI.
     /// </summary>
     public List<ElementTheme> AvailableThemes { get; } =
         Enum.GetValues(typeof(ElementTheme)).Cast<ElementTheme>().ToList();
 
     /// <summary>
-    ///     Asynchronously loads settings from the settings service.
+    /// Asynchronously loads all settings from the settings service and populates the ViewModel properties.
     /// </summary>
     [RelayCommand]
     public async Task LoadSettingsAsync() {
@@ -63,7 +85,6 @@ public partial class SettingsViewModel : ObservableObject {
 
     partial void OnSelectedThemeChanged(ElementTheme value) {
         if (_isInitializing) return;
-        // Apply and persist the new theme setting without awaiting completion.
         _ = ApplyAndSaveThemeAsync(value);
     }
 
@@ -74,20 +95,18 @@ public partial class SettingsViewModel : ObservableObject {
 
     partial void OnIsDynamicThemingEnabledChanged(bool value) {
         if (_isInitializing) return;
-        // Apply and persist the new dynamic theming setting without awaiting completion.
         _ = ApplyAndSaveDynamicThemingAsync(value);
     }
 
     private async Task ApplyAndSaveDynamicThemingAsync(bool isEnabled) {
         await _settingsService.SetDynamicThemingAsync(isEnabled);
-        if (Application.Current is App appInstance)
-            // Re-evaluate the dynamic theme based on the current playback state and the new setting.
+        if (Application.Current is App appInstance) {
             appInstance.ReapplyCurrentDynamicTheme();
+        }
     }
 
     partial void OnIsPlayerAnimationEnabledChanged(bool value) {
         if (_isInitializing) return;
-        // Persist the new player animation setting.
         _ = _settingsService.SetPlayerAnimationEnabledAsync(value);
     }
 
@@ -107,19 +126,16 @@ public partial class SettingsViewModel : ObservableObject {
     }
 
     /// <summary>
-    ///     Resets all application data and settings to their defaults.
-    ///     The application will clear all data and navigate to the initial setup view.
+    /// Resets all application data, including settings and the music library, to their default states
+    /// after user confirmation.
     /// </summary>
     [RelayCommand]
     private async Task ResetApplicationDataAsync() {
-        if (App.RootWindow?.Content?.XamlRoot is not XamlRoot xamlRoot)
-            // Cannot show a dialog without a XamlRoot. Abort the operation.
-            return;
+        if (App.RootWindow?.Content?.XamlRoot is not { } xamlRoot) return;
 
         var confirmDialog = new ContentDialog {
             Title = "Confirm Reset",
-            Content =
-                "Are you sure you want to reset all application data and settings? This action cannot be undone. The application will return to the initial setup.",
+            Content = "Are you sure you want to reset all application data and settings? This action cannot be undone. The application will return to the initial setup.",
             PrimaryButtonText = "Reset",
             CloseButtonText = "Cancel",
             XamlRoot = xamlRoot
@@ -140,18 +156,15 @@ public partial class SettingsViewModel : ObservableObject {
             if (App.CurrentApp is App appInstance) await appInstance.CheckAndNavigateToMainContent();
         }
         catch (Exception ex) {
-            // A critical error occurred during the reset process. Log it and attempt to inform the user.
             Debug.WriteLine($"CRITICAL: Application reset failed. Error: {ex.Message}\n{ex.StackTrace}");
 
             if (xamlRoot.IsHostVisible) {
                 var errorDialog = new ContentDialog {
                     Title = "Reset Error",
-                    Content =
-                        $"An error occurred while resetting application data: {ex.Message}. Please try restarting the app manually.",
+                    Content = $"An error occurred while resetting application data: {ex.Message}. Please try restarting the app manually.",
                     CloseButtonText = "OK",
                     XamlRoot = xamlRoot
                 };
-                // We can't guarantee this dialog will show if the app is in a bad state, but we should try.
                 await errorDialog.ShowAsync();
             }
         }

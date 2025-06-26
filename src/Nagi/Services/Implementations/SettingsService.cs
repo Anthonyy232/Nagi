@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
@@ -11,12 +12,12 @@ using Nagi.Services.Abstractions;
 namespace Nagi.Services.Implementations;
 
 /// <summary>
-///     Manages application settings, persisting them to local storage.
+/// Manages application settings by persisting them to local storage.
+/// This class implements the <see cref="ISettingsService"/> interface.
 /// </summary>
 public class SettingsService : ISettingsService {
     private const string PlaybackStateFileName = "playback_state.json";
 
-    // Storage Keys
     private const string VolumeKey = "AppVolume";
     private const string MuteStateKey = "AppMuteState";
     private const string ShuffleStateKey = "MusicShuffleState";
@@ -27,15 +28,25 @@ public class SettingsService : ISettingsService {
     private const string AutoLaunchEnabledKey = "AutoLaunchEnabled";
     private const string StartMinimizedEnabledKey = "StartMinimizedEnabled";
     private const string HideToTrayEnabledKey = "HideToTrayEnabled";
+
     private static readonly JsonSerializerOptions _serializerOptions = new() { WriteIndented = false };
+    private readonly ApplicationDataContainer _localSettings = ApplicationData.Current.LocalSettings;
     private readonly StorageFolder _localFolder = ApplicationData.Current.LocalFolder;
 
-    private readonly ApplicationDataContainer _localSettings = ApplicationData.Current.LocalSettings;
+    /// <inheritdoc/>
     public event Action<bool>? PlayerAnimationSettingChanged;
+    /// <inheritdoc/>
+    public event Action<bool>? HideToTraySettingChanged;
 
+    /// <inheritdoc/>
     public async Task ResetToDefaultsAsync() {
         _localSettings.Values.Clear();
         await ClearPlaybackStateAsync();
+
+        // Notify subscribers that settings have been reset to their default values.
+        PlayerAnimationSettingChanged?.Invoke(true); // Default: true
+        HideToTraySettingChanged?.Invoke(false); // Default: false
+
         Debug.WriteLine("[SettingsService] All application settings have been reset to their default values.");
     }
 
@@ -45,131 +56,67 @@ public class SettingsService : ISettingsService {
             if (item != null) await item.DeleteAsync();
         }
         catch (Exception ex) {
-            Debug.WriteLine(
-                $"[SettingsService] Failed attempt to delete state file '{PlaybackStateFileName}': {ex.Message}");
+            Debug.WriteLine($"[SettingsService] Failed attempt to delete state file '{PlaybackStateFileName}': {ex.Message}");
         }
     }
 
-    // The 'Get' methods are fast enough and don't need to be offloaded.
-
-    #region Getters
-
-    public Task<double> GetInitialVolumeAsync() {
-        if (_localSettings.Values.TryGetValue(VolumeKey, out var value) && value is double volume)
-            return Task.FromResult(Math.Clamp(volume, 0.0, 1.0));
-        return Task.FromResult(0.5);
+    private T GetValue<T>(string key, T defaultValue) {
+        return _localSettings.Values.TryGetValue(key, out var value) && value is T v ? v : defaultValue;
     }
 
-    public Task<bool> GetInitialMuteStateAsync() {
-        if (_localSettings.Values.TryGetValue(MuteStateKey, out var value) && value is bool isMuted)
-            return Task.FromResult(isMuted);
-        return Task.FromResult(false);
+    private TEnum GetEnumValue<TEnum>(string key, TEnum defaultValue) where TEnum : struct, Enum {
+        return _localSettings.Values.TryGetValue(key, out var value) &&
+               value is string name &&
+               Enum.TryParse<TEnum>(name, out var result)
+            ? result
+            : defaultValue;
     }
 
-    public Task<bool> GetInitialShuffleStateAsync() {
-        if (_localSettings.Values.TryGetValue(ShuffleStateKey, out var value) && value is bool isEnabled)
-            return Task.FromResult(isEnabled);
-        return Task.FromResult(false);
+    private Task SetValueAsync<T>(string key, T value) {
+        return Task.Run(() => _localSettings.Values[key] = value);
     }
 
-    public Task<RepeatMode> GetInitialRepeatModeAsync() {
-        if (_localSettings.Values.TryGetValue(RepeatModeKey, out var value) &&
-            value is string modeName &&
-            Enum.TryParse<RepeatMode>(modeName, out var mode))
-            return Task.FromResult(mode);
-        return Task.FromResult(RepeatMode.Off);
+    private Task SetValueAndNotifyAsync<T>(string key, T newValue, T defaultValue, Action<T>? notifier) {
+        T currentValue = GetValue(key, defaultValue);
+
+        if (!EqualityComparer<T>.Default.Equals(currentValue, newValue)) {
+            notifier?.Invoke(newValue);
+        }
+
+        return SetValueAsync(key, newValue);
     }
 
-    public Task<ElementTheme> GetThemeAsync() {
-        if (_localSettings.Values.TryGetValue(ThemeKey, out var value) &&
-            value is string themeName &&
-            Enum.TryParse<ElementTheme>(themeName, out var theme))
-            return Task.FromResult(theme);
-        return Task.FromResult(ElementTheme.Default);
-    }
+    public Task<double> GetInitialVolumeAsync() => Task.FromResult(Math.Clamp(GetValue(VolumeKey, 0.5), 0.0, 1.0));
+    public Task SaveVolumeAsync(double volume) => SetValueAsync(VolumeKey, Math.Clamp(volume, 0.0, 1.0));
 
-    public Task<bool> GetDynamicThemingAsync() {
-        if (_localSettings.Values.TryGetValue(DynamicThemingKey, out var value) && value is bool isEnabled)
-            return Task.FromResult(isEnabled);
-        return Task.FromResult(true);
-    }
+    public Task<bool> GetInitialMuteStateAsync() => Task.FromResult(GetValue(MuteStateKey, false));
+    public Task SaveMuteStateAsync(bool isMuted) => SetValueAsync(MuteStateKey, isMuted);
 
-    public Task<bool> GetPlayerAnimationEnabledAsync() {
-        if (_localSettings.Values.TryGetValue(PlayerAnimationEnabledKey, out var value) && value is bool isEnabled)
-            return Task.FromResult(isEnabled);
-        return Task.FromResult(true);
-    }
+    public Task<bool> GetInitialShuffleStateAsync() => Task.FromResult(GetValue(ShuffleStateKey, false));
+    public Task SaveShuffleStateAsync(bool isEnabled) => SetValueAsync(ShuffleStateKey, isEnabled);
 
-    public Task<bool> GetAutoLaunchEnabledAsync() {
-        if (_localSettings.Values.TryGetValue(AutoLaunchEnabledKey, out var value) && value is bool isEnabled)
-            return Task.FromResult(isEnabled);
-        return Task.FromResult(false);
-    }
+    public Task<RepeatMode> GetInitialRepeatModeAsync() => Task.FromResult(GetEnumValue(RepeatModeKey, RepeatMode.Off));
+    public Task SaveRepeatModeAsync(RepeatMode mode) => SetValueAsync(RepeatModeKey, mode.ToString());
 
-    public Task<bool> GetStartMinimizedEnabledAsync() {
-        if (_localSettings.Values.TryGetValue(StartMinimizedEnabledKey, out var value) && value is bool isEnabled)
-            return Task.FromResult(isEnabled);
-        return Task.FromResult(false);
-    }
+    public Task<ElementTheme> GetThemeAsync() => Task.FromResult(GetEnumValue(ThemeKey, ElementTheme.Default));
+    public Task SetThemeAsync(ElementTheme theme) => SetValueAsync(ThemeKey, theme.ToString());
 
-    public Task<bool> GetHideToTrayEnabledAsync() {
-        if (_localSettings.Values.TryGetValue(HideToTrayEnabledKey, out var value) && value is bool isEnabled)
-            return Task.FromResult(isEnabled);
-        return Task.FromResult(false);
-    }
+    public Task<bool> GetDynamicThemingAsync() => Task.FromResult(GetValue(DynamicThemingKey, true));
+    public Task SetDynamicThemingAsync(bool isEnabled) => SetValueAsync(DynamicThemingKey, isEnabled);
 
-    #endregion
+    public Task<bool> GetPlayerAnimationEnabledAsync() => Task.FromResult(GetValue(PlayerAnimationEnabledKey, true));
+    public Task SetPlayerAnimationEnabledAsync(bool isEnabled) => SetValueAndNotifyAsync(PlayerAnimationEnabledKey, isEnabled, true, PlayerAnimationSettingChanged);
 
-    // The 'Set' and 'Save' methods now offload their synchronous I/O to a background thread.
+    public Task<bool> GetAutoLaunchEnabledAsync() => Task.FromResult(GetValue(AutoLaunchEnabledKey, false));
+    public Task SetAutoLaunchEnabledAsync(bool isEnabled) => SetValueAsync(AutoLaunchEnabledKey, isEnabled);
 
-    #region Setters
+    public Task<bool> GetStartMinimizedEnabledAsync() => Task.FromResult(GetValue(StartMinimizedEnabledKey, false));
+    public Task SetStartMinimizedEnabledAsync(bool isEnabled) => SetValueAsync(StartMinimizedEnabledKey, isEnabled);
 
-    public Task SaveVolumeAsync(double volume) {
-        return Task.Run(() => _localSettings.Values[VolumeKey] = Math.Clamp(volume, 0.0, 1.0));
-    }
+    public Task<bool> GetHideToTrayEnabledAsync() => Task.FromResult(GetValue(HideToTrayEnabledKey, false));
+    public Task SetHideToTrayEnabledAsync(bool isEnabled) => SetValueAndNotifyAsync(HideToTrayEnabledKey, isEnabled, false, HideToTraySettingChanged);
 
-    public Task SaveMuteStateAsync(bool isMuted) {
-        return Task.Run(() => _localSettings.Values[MuteStateKey] = isMuted);
-    }
-
-    public Task SaveShuffleStateAsync(bool isEnabled) {
-        return Task.Run(() => _localSettings.Values[ShuffleStateKey] = isEnabled);
-    }
-
-    public Task SaveRepeatModeAsync(RepeatMode mode) {
-        return Task.Run(() => _localSettings.Values[RepeatModeKey] = mode.ToString());
-    }
-
-    public Task SetThemeAsync(ElementTheme theme) {
-        return Task.Run(() => _localSettings.Values[ThemeKey] = theme.ToString());
-    }
-
-    public Task SetDynamicThemingAsync(bool isEnabled) {
-        return Task.Run(() => _localSettings.Values[DynamicThemingKey] = isEnabled);
-    }
-
-    public Task SetPlayerAnimationEnabledAsync(bool isEnabled) {
-        // The event must be invoked on the original (UI) thread before offloading the save operation.
-        PlayerAnimationSettingChanged?.Invoke(isEnabled);
-        return Task.Run(() => _localSettings.Values[PlayerAnimationEnabledKey] = isEnabled);
-    }
-
-    public Task SetAutoLaunchEnabledAsync(bool isEnabled) {
-        return Task.Run(() => _localSettings.Values[AutoLaunchEnabledKey] = isEnabled);
-    }
-
-    public Task SetStartMinimizedEnabledAsync(bool isEnabled) {
-        return Task.Run(() => _localSettings.Values[StartMinimizedEnabledKey] = isEnabled);
-    }
-
-    public Task SetHideToTrayEnabledAsync(bool isEnabled) {
-        return Task.Run(() => _localSettings.Values[HideToTrayEnabledKey] = isEnabled);
-    }
-
-    #endregion
-
-    #region Playback State Management
-
+    /// <inheritdoc/>
     public async Task SavePlaybackStateAsync(PlaybackState? state) {
         if (state == null) {
             await ClearPlaybackStateAsync();
@@ -177,8 +124,7 @@ public class SettingsService : ISettingsService {
         }
 
         try {
-            var stateFile =
-                await _localFolder.CreateFileAsync(PlaybackStateFileName, CreationCollisionOption.ReplaceExisting);
+            var stateFile = await _localFolder.CreateFileAsync(PlaybackStateFileName, CreationCollisionOption.ReplaceExisting);
             var jsonState = JsonSerializer.Serialize(state, _serializerOptions);
             await FileIO.WriteTextAsync(stateFile, jsonState);
         }
@@ -188,6 +134,7 @@ public class SettingsService : ISettingsService {
         }
     }
 
+    /// <inheritdoc/>
     public async Task<PlaybackState?> GetPlaybackStateAsync() {
         try {
             var stateFile = await _localFolder.GetFileAsync(PlaybackStateFileName);
@@ -211,6 +158,7 @@ public class SettingsService : ISettingsService {
         }
     }
 
+    /// <inheritdoc/>
     public async Task ClearPlaybackStateAsync() {
         try {
             var item = await _localFolder.TryGetItemAsync(PlaybackStateFileName);
@@ -220,6 +168,4 @@ public class SettingsService : ISettingsService {
             Debug.WriteLine($"[SettingsService] Error clearing PlaybackState file: {ex.Message}");
         }
     }
-
-    #endregion
 }

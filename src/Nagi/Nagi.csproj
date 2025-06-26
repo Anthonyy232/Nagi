@@ -13,41 +13,42 @@
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 	<ItemGroup>
-		<None Remove="Assets\Raws\AppLogo.ico"/>
-		<None Remove="Assets\Raws\AppLogo.png"/>
-		<None Remove="Assets\Raws\AppLogo.svg"/>
-		<None Remove="Pages\AlbumPage.xaml"/>
-		<None Remove="Pages\AlbumViewPage.xaml"/>
-		<None Remove="Pages\ArtistPage.xaml"/>
-		<None Remove="Pages\FolderPage.xaml"/>
-		<None Remove="Pages\FolderSongViewPage.xaml"/>
-		<None Remove="Pages\OnboardingPage.xaml"/>
-		<None Remove="Styles\AlbumPageColors.xaml"/>
-		<None Remove="Styles\AlbumViewPageColors.xaml"/>
-		<None Remove="Styles\ArtistPageColors.xaml"/>
-		<None Remove="Styles\ArtistViewPageColors.xaml"/>
-		<None Remove="Styles\Colors.xaml"/>
-		<None Remove="Styles\FolderPageColors.xaml"/>
-		<None Remove="Styles\FolderSongViewPageColors.xaml"/>
-		<None Remove="Styles\OnboardingPageColors.xaml"/>
-		<None Remove="Styles\PlaylistPageColors.xaml"/>
-		<None Remove="Styles\SettingsPageColors.xaml"/>
+		<None Remove="Assets\Raws\AppLogo.ico" />
+		<None Remove="Assets\Raws\AppLogo.png" />
+		<None Remove="Assets\Raws\AppLogo.svg" />
+		<None Remove="Controls\TrayIconUserControl.xaml" />
+		<None Remove="Pages\AlbumPage.xaml" />
+		<None Remove="Pages\AlbumViewPage.xaml" />
+		<None Remove="Pages\ArtistPage.xaml" />
+		<None Remove="Pages\FolderPage.xaml" />
+		<None Remove="Pages\FolderSongViewPage.xaml" />
+		<None Remove="Pages\OnboardingPage.xaml" />
+		<None Remove="Styles\AlbumPageColors.xaml" />
+		<None Remove="Styles\AlbumViewPageColors.xaml" />
+		<None Remove="Styles\ArtistPageColors.xaml" />
+		<None Remove="Styles\ArtistViewPageColors.xaml" />
+		<None Remove="Styles\Colors.xaml" />
+		<None Remove="Styles\FolderPageColors.xaml" />
+		<None Remove="Styles\FolderSongViewPageColors.xaml" />
+		<None Remove="Styles\OnboardingPageColors.xaml" />
+		<None Remove="Styles\PlaylistPageColors.xaml" />
+		<None Remove="Styles\SettingsPageColors.xaml" />
 	</ItemGroup>
 	<ItemGroup>
-		<Page Remove="LibraryPage.xaml"/>
-	</ItemGroup>
-
-	<ItemGroup>
-		<Content Include="Assets\SplashScreen.scale-200.png"/>
-		<Content Include="Assets\LockScreenLogo.scale-200.png"/>
-		<Content Include="Assets\Square150x150Logo.scale-200.png"/>
-		<Content Include="Assets\Square44x44Logo.scale-200.png"/>
-		<Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png"/>
-		<Content Include="Assets\Wide310x150Logo.scale-200.png"/>
+		<Page Remove="LibraryPage.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<Manifest Include="$(ApplicationManifest)"/>
+		<Content Include="Assets\SplashScreen.scale-200.png" />
+		<Content Include="Assets\LockScreenLogo.scale-200.png" />
+		<Content Include="Assets\Square150x150Logo.scale-200.png" />
+		<Content Include="Assets\Square44x44Logo.scale-200.png" />
+		<Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
+		<Content Include="Assets\Wide310x150Logo.scale-200.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Manifest Include="$(ApplicationManifest)" />
 	</ItemGroup>
 
 	<!--
@@ -56,29 +57,30 @@
       package has not yet been restored.
     -->
 	<ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
-		<ProjectCapability Include="Msix"/>
+		<ProjectCapability Include="Msix" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="ColorThief.ImageSharp" Version="$(ColorThiefImageSharpVersion)"/>
-		<PackageReference Include="CommunityToolkit.Mvvm" Version="$(CommunityToolkitMvvmVersion)"/>
-		<PackageReference Include="CommunityToolkit.WinUI.Controls.ColorPicker" Version="$(CommunityToolkitWinUIVersion)"/>
-		<PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="$(CommunityToolkitWinUIVersion)"/>
-		<PackageReference Include="ImageEx.WinUI" Version="$(ImageExWinUIVersion)"/>
-		<PackageReference Include="MaterialColorUtilities" Version="$(MaterialColorUtilitiesVersion)"/>
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="$(EntityFrameworkCoreVersion)"/>
+		<PackageReference Include="ColorThief.ImageSharp" Version="$(ColorThiefImageSharpVersion)" />
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="$(CommunityToolkitMvvmVersion)" />
+		<PackageReference Include="CommunityToolkit.WinUI.Controls.ColorPicker" Version="$(CommunityToolkitWinUIVersion)" />
+		<PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="$(CommunityToolkitWinUIVersion)" />
+		<PackageReference Include="H.NotifyIcon.WinUI" Version="2.3.0" />
+		<PackageReference Include="ImageEx.WinUI" Version="$(ImageExWinUIVersion)" />
+		<PackageReference Include="MaterialColorUtilities" Version="$(MaterialColorUtilitiesVersion)" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="$(EntityFrameworkCoreVersion)" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="$(EntityFrameworkCoreVersion)">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="$(EntityFrameworkCoreVersion)"/>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="$(EntityFrameworkCoreVersion)" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="$(EntityFrameworkCoreVersion)">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="$(DependencyInjectionVersion)"/>
-		<PackageReference Include="Microsoft.WindowsAppSDK" Version="$(WindowsAppSdkVersion)"/>
-		<PackageReference Include="TagLibSharp" Version="$(TagLibSharpVersion)"/>
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="$(DependencyInjectionVersion)" />
+		<PackageReference Include="Microsoft.WindowsAppSDK" Version="$(WindowsAppSdkVersion)" />
+		<PackageReference Include="TagLibSharp" Version="$(TagLibSharpVersion)" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -167,6 +169,11 @@
 		<Page Update="Styles\Colors.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</Page>
+	</ItemGroup>
+	<ItemGroup>
+	  <Page Update="Controls\TrayIconUserControl.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	</ItemGroup>
 
 	<!--

@@ -8,6 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:media="using:Microsoft.UI.Xaml.Media"
     xmlns:models="using:Nagi.Models"
+    xmlns:localControls="using:Nagi.Controls"
     mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -26,13 +27,7 @@
     </UserControl.Resources>
 
     <Grid x:Name="OverlayContainerGrid">
-
         <VisualStateManager.VisualStateGroups>
-            <!--
-            Manages the expand and collapse animations for the floating media player.
-            'PlayerExpanded' shows all controls, while 'PlayerCollapsed' provides a compact view.
-            Note: Uses dependent animations on MinHeight/MaxHeight to reflow layout, which can impact performance.
-            -->
             <VisualStateGroup x:Name="PlayerStateGroup">
                 <VisualState x:Name="PlayerExpanded">
                     <Storyboard>
@@ -255,11 +250,6 @@
                 <Grid>
                     <controls:Frame x:Name="ContentFrame" Padding="12,0,12,0" />
 
-                    <!--
-                    This container holds the entire floating player UI at the bottom of the screen.
-                    It uses an acrylic brush for its background and handles pointer events to
-                    trigger the expand/collapse animations.
-                    -->
                     <Border
                         x:Name="FloatingPlayerContainer"
                         Margin="12,0,12,12"
@@ -487,7 +477,11 @@
             </controls:NavigationView>
         </Grid>
 
-        <!--  An overlay to indicate a global, blocking operation is in progress.  -->
+        <localControls:TrayIconUserControl 
+            x:Name="AppTrayIconHost" 
+            VerticalAlignment="Top" HorizontalAlignment="Left" 
+            Width="1" Height="1" Opacity="0" IsTabStop="False"/>
+
         <Grid
             x:Name="ProgressOverlayGrid"
             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
