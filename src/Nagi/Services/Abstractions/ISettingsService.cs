@@ -8,8 +8,7 @@ namespace Nagi.Services.Abstractions;
 /// <summary>
 ///     Defines a service for managing application-wide settings.
 /// </summary>
-public interface ISettingsService
-{
+public interface ISettingsService {
     /// <summary>
     ///     Occurs when the player animation setting is changed.
     ///     The boolean parameter indicates whether the animation is enabled.
@@ -99,6 +98,42 @@ public interface ISettingsService
     /// </summary>
     /// <param name="isEnabled">The player animation preference to save.</param>
     Task SetPlayerAnimationEnabledAsync(bool isEnabled);
+
+    /// <summary>
+    ///     Gets whether the application should launch automatically on system startup.
+    /// </summary>
+    /// <returns>True if auto-launch is enabled, false otherwise.</returns>
+    Task<bool> GetAutoLaunchEnabledAsync();
+
+    /// <summary>
+    ///     Sets the auto-launch preference.
+    /// </summary>
+    /// <param name="isEnabled">The auto-launch preference to save.</param>
+    Task SetAutoLaunchEnabledAsync(bool isEnabled);
+
+    /// <summary>
+    ///     Gets whether the application should start minimized.
+    /// </summary>
+    /// <returns>True if start minimized is enabled, false otherwise.</returns>
+    Task<bool> GetStartMinimizedEnabledAsync();
+
+    /// <summary>
+    ///     Sets the start minimized preference.
+    /// </summary>
+    /// <param name="isEnabled">The start minimized preference to save.</param>
+    Task SetStartMinimizedEnabledAsync(bool isEnabled);
+
+    /// <summary>
+    ///     Gets whether the application should hide to the system tray when minimized.
+    /// </summary>
+    /// <returns>True if hide to tray is enabled, false otherwise.</returns>
+    Task<bool> GetHideToTrayEnabledAsync();
+
+    /// <summary>
+    ///     Sets the hide to tray preference.
+    /// </summary>
+    /// <param name="isEnabled">The hide to tray preference to save.</param>
+    Task SetHideToTrayEnabledAsync(bool isEnabled);
 
     /// <summary>
     ///     Resets all settings to their default values.

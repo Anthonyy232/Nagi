@@ -47,7 +47,7 @@
 
                 <controls:SettingsCard Header="Theme" Description="Choose the application theme.">
                     <controls:SettingsCard.HeaderIcon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE793;" />
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
                     </controls:SettingsCard.HeaderIcon>
                     <ComboBox
                         x:Name="ThemeComboBox"
@@ -66,19 +66,45 @@
                     Header="Dynamic Theming"
                     Description="Enable and configure dynamic theming options.">
                     <controls:SettingsCard.HeaderIcon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE790;" />
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
                     </controls:SettingsCard.HeaderIcon>
                     <ToggleSwitch
                         x:Name="DynamicThemingToggle"
                         IsOn="{x:Bind ViewModel.IsDynamicThemingEnabled, Mode=TwoWay}" />
                 </controls:SettingsCard>
 
+                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="Player Management" />
+
                 <controls:SettingsCard Header="Collapsable Player"
                                        Description="Animate the player bar to expand and collapse.">
                     <controls:SettingsCard.HeaderIcon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE745;" />
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
                     </controls:SettingsCard.HeaderIcon>
                     <ToggleSwitch IsOn="{x:Bind ViewModel.IsPlayerAnimationEnabled, Mode=TwoWay}" />
+                </controls:SettingsCard>
+
+                <controls:SettingsCard Header="Auto launch on startup"
+                                       Description="Start Nagi automatically when you log into your computer.">
+                    <controls:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7E8;" />
+                    </controls:SettingsCard.HeaderIcon>
+                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsAutoLaunchEnabled, Mode=TwoWay}" />
+                </controls:SettingsCard>
+
+                <controls:SettingsCard Header="Start minimized"
+                                       Description="When launched, the application window will be minimized by default.">
+                    <controls:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE92C;" />
+                    </controls:SettingsCard.HeaderIcon>
+                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsStartMinimizedEnabled, Mode=TwoWay}" />
+                </controls:SettingsCard>
+
+                <controls:SettingsCard Header="Hide to system tray"
+                                       Description="When closed, hide to the system tray instead.">
+                    <controls:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE78B;" />
+                    </controls:SettingsCard.HeaderIcon>
+                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsHideToTrayEnabled, Mode=TwoWay}" />
                 </controls:SettingsCard>
 
                 <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="Data Management" />
@@ -87,7 +113,7 @@
                     Header="Reset Application"
                     Description="This will delete all library data, playlists, and reset all settings to their defaults. The application will restart.">
                     <controls:SettingsCard.HeaderIcon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE74D;" />
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
                     </controls:SettingsCard.HeaderIcon>
                     <!--
                         The Button requires explicit right alignment.
