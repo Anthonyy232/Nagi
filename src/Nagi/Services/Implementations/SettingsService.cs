@@ -46,7 +46,7 @@ public class SettingsService : ISettingsService {
 
         // Notify subscribers that settings have been reset to their default values.
         PlayerAnimationSettingChanged?.Invoke(true); // Default: true
-        HideToTraySettingChanged?.Invoke(false); // Default: false
+        HideToTraySettingChanged?.Invoke(true); // Default: true
 
         Debug.WriteLine("[SettingsService] All application settings have been reset to their default values.");
     }
@@ -117,7 +117,7 @@ public class SettingsService : ISettingsService {
     public Task<bool> GetStartMinimizedEnabledAsync() => Task.FromResult(GetValue(StartMinimizedEnabledKey, false));
     public Task SetStartMinimizedEnabledAsync(bool isEnabled) => SetValueAsync(StartMinimizedEnabledKey, isEnabled);
 
-    public Task<bool> GetHideToTrayEnabledAsync() => Task.FromResult(GetValue(HideToTrayEnabledKey, false));
+    public Task<bool> GetHideToTrayEnabledAsync() => Task.FromResult(GetValue(HideToTrayEnabledKey, true));
     public Task SetHideToTrayEnabledAsync(bool isEnabled) => SetValueAndNotifyAsync(HideToTrayEnabledKey, isEnabled, false, HideToTraySettingChanged);
 
     /// <inheritdoc/>
