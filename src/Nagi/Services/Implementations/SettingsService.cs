@@ -1,4 +1,5 @@
-﻿using System;
+﻿// SettingsService.cs
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -30,6 +31,7 @@ public class SettingsService : ISettingsService {
     private const string RestorePlaybackStateEnabledKey = "RestorePlaybackStateEnabled";
     private const string StartMinimizedEnabledKey = "StartMinimizedEnabled";
     private const string HideToTrayEnabledKey = "HideToTrayEnabled";
+    private const string FetchMetadataFromLastFmKey = "FetchMetadataFromLastFmEnabled"; // New setting key
 
     private static readonly JsonSerializerOptions _serializerOptions = new() { WriteIndented = false };
     private readonly ApplicationDataContainer _localSettings = ApplicationData.Current.LocalSettings;
@@ -48,9 +50,17 @@ public class SettingsService : ISettingsService {
         // Disable the startup task on reset
         await SetAutoLaunchEnabledAsync(false);
 
-        // Notify subscribers
-        PlayerAnimationSettingChanged?.Invoke(true); // Default: true
-        HideToTraySettingChanged?.Invoke(true); // Default: true
+        // Explicitly set new settings to their default values
+        await SetPlayerAnimationEnabledAsync(true); // Default: true
+        await SetHideToTrayEnabledAsync(true); // Default: true
+        await SetFetchMetadataFromLastFmEnabledAsync(false); // New setting: Default: false
+
+        // Notify subscribers if current values (which are now cleared) differ from defaults.
+        // This is primarily for settings that trigger immediate UI/behavior changes.
+        // For PlayerAnimationEnabled and HideToTrayEnabled, the SetValueAndNotifyAsync handles the notification.
+        // For other settings, LoadSettingsAsync on app restart will apply the defaults.
+        PlayerAnimationSettingChanged?.Invoke(true);
+        HideToTraySettingChanged?.Invoke(true);
 
         Debug.WriteLine("[SettingsService] All application settings have been reset to their default values.");
     }
@@ -84,6 +94,7 @@ public class SettingsService : ISettingsService {
     private Task SetValueAndNotifyAsync<T>(string key, T newValue, T defaultValue, Action<T>? notifier) {
         T currentValue = GetValue(key, defaultValue);
 
+        // Only notify if the value actually changed
         if (!EqualityComparer<T>.Default.Equals(currentValue, newValue)) {
             notifier?.Invoke(newValue);
         }
@@ -142,7 +153,13 @@ public class SettingsService : ISettingsService {
     public Task SetStartMinimizedEnabledAsync(bool isEnabled) => SetValueAsync(StartMinimizedEnabledKey, isEnabled);
 
     public Task<bool> GetHideToTrayEnabledAsync() => Task.FromResult(GetValue(HideToTrayEnabledKey, true));
-    public Task SetHideToTrayEnabledAsync(bool isEnabled) => SetValueAndNotifyAsync(HideToTrayEnabledKey, isEnabled, false, HideToTraySettingChanged);
+    public Task SetHideToTrayEnabledAsync(bool isEnabled) => SetValueAndNotifyAsync(HideToTrayEnabledKey, isEnabled, true, HideToTraySettingChanged);
+
+    /// <inheritdoc/>
+    public Task<bool> GetFetchMetadataFromLastFmEnabledAsync() => Task.FromResult(GetValue(FetchMetadataFromLastFmKey, false));
+
+    /// <inheritdoc/>
+    public Task SetFetchMetadataFromLastFmEnabledAsync(bool isEnabled) => SetValueAsync(FetchMetadataFromLastFmKey, isEnabled);
 
     /// <inheritdoc/>
     public async Task SavePlaybackStateAsync(PlaybackState? state) {
@@ -158,7 +175,7 @@ public class SettingsService : ISettingsService {
         }
         catch (Exception ex) {
             Debug.WriteLine($"[SettingsService] Error saving PlaybackState to file: {ex.Message}");
-            await TryDeleteStateFileAsync();
+            await TryDeleteStateFileAsync(); // Attempt to clear potentially corrupt file
         }
     }
 
@@ -174,11 +191,12 @@ public class SettingsService : ISettingsService {
         }
         catch (FileNotFoundException) {
             // This is an expected case if no state has been saved yet.
+            Debug.WriteLine($"[SettingsService] Playback state file '{PlaybackStateFileName}' not found.");
             return null;
         }
         catch (JsonException ex) {
             Debug.WriteLine($"[SettingsService] Error deserializing PlaybackState (file may be corrupt): {ex.Message}");
-            await TryDeleteStateFileAsync();
+            await TryDeleteStateFileAsync(); // Clear corrupt file
             return null;
         }
         catch (Exception ex) {
@@ -191,7 +209,10 @@ public class SettingsService : ISettingsService {
     public async Task ClearPlaybackStateAsync() {
         try {
             IStorageItem? item = await _localFolder.TryGetItemAsync(PlaybackStateFileName);
-            if (item != null) await item.DeleteAsync();
+            if (item != null) {
+                await item.DeleteAsync();
+                Debug.WriteLine($"[SettingsService] Playback state file '{PlaybackStateFileName}' cleared successfully.");
+            }
         }
         catch (Exception ex) {
             Debug.WriteLine($"[SettingsService] Error clearing PlaybackState file: {ex.Message}");

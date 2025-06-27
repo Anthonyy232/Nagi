@@ -1,4 +1,5 @@
-﻿using System;
+﻿// ISettingsService.cs
+using System;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Nagi.Models;
@@ -152,6 +153,18 @@ public interface ISettingsService {
     /// </summary>
     /// <param name="isEnabled">The hide to tray preference to save.</param>
     Task SetHideToTrayEnabledAsync(bool isEnabled);
+
+    /// <summary>
+    /// Gets whether the application should fetch additional metadata (e.g., artist info, biographies) from Last.fm.
+    /// </summary>
+    /// <returns>True if fetching metadata from Last.fm is enabled; otherwise, false.</returns>
+    Task<bool> GetFetchMetadataFromLastFmEnabledAsync();
+
+    /// <summary>
+    /// Sets the preference for fetching additional metadata from Last.fm.
+    /// </summary>
+    /// <param name="isEnabled">The preference to save.</param>
+    Task SetFetchMetadataFromLastFmEnabledAsync(bool isEnabled);
 
     /// <summary>
     /// Resets all settings to their default values.

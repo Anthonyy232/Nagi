@@ -25,6 +25,7 @@ using Windows.UI;
 using WinRT;
 using WinRT.Interop;
 using UnhandledExceptionEventArgs = Microsoft.UI.Xaml.UnhandledExceptionEventArgs;
+using Microsoft.Extensions.Configuration;
 
 namespace Nagi;
 
@@ -105,6 +106,16 @@ public partial class App : Application {
     private static IServiceProvider ConfigureServices() {
         var services = new ServiceCollection();
 
+        // Application keys
+        var configuration = new ConfigurationBuilder()
+        .SetBasePath(AppContext.BaseDirectory)
+        .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+        .Build();
+        services.AddSingleton<IConfiguration>(configuration);
+
+        // HTTP Client
+        services.AddHttpClient();
+
         // Core Services
         services.AddSingleton<IAudioPlayer>(provider => {
             if (MainDispatcherQueue == null)
@@ -118,6 +129,8 @@ public partial class App : Application {
         services.AddSingleton<IMusicPlaybackService, MusicPlaybackService>();
         services.AddSingleton<ILibraryService, LibraryService>();
         services.AddSingleton<INavigationService, NavigationService>();
+        services.AddSingleton<IApiKeyService, ApiKeyService>();
+        services.AddSingleton<ILastFmService, LastFmService>();
 
         // Database
         services.AddTransient<MusicDbContext>();

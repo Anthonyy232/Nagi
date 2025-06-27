@@ -1,4 +1,5 @@
-﻿<Page
+﻿<!-- SettingsPage.xaml -->
+<Page
     x:Class="Nagi.Pages.SettingsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -116,6 +117,14 @@
                 </controls:SettingsCard>
 
                 <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="Data Management" />
+
+                <controls:SettingsCard Header="Integrate with Last.fm"
+                                       Description="Integrate with Last.fm to enable features like artist metadata.">
+                    <controls:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8EC;" />
+                    </controls:SettingsCard.HeaderIcon>
+                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsFetchMetadataFromLastFmEnabled, Mode=TwoWay}" />
+                </controls:SettingsCard>
 
                 <controls:SettingsCard
                     Header="Reset Application"

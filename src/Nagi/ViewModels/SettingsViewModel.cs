@@ -1,4 +1,5 @@
-﻿using System;
+﻿// SettingsViewModel.cs
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -69,6 +70,12 @@ public partial class SettingsViewModel : ObservableObject {
     private bool _isHideToTrayEnabled;
 
     /// <summary>
+    /// Gets or sets a value indicating whether the application should fetch additional metadata (e.g., artist info, biographies) from Last.fm.
+    /// </summary>
+    [ObservableProperty]
+    private bool _isFetchMetadataFromLastFmEnabled;
+
+    /// <summary>
     /// Gets the list of available themes for binding to the UI.
     /// </summary>
     public List<ElementTheme> AvailableThemes { get; } =
@@ -87,6 +94,7 @@ public partial class SettingsViewModel : ObservableObject {
         IsAutoLaunchEnabled = await _settingsService.GetAutoLaunchEnabledAsync();
         IsStartMinimizedEnabled = await _settingsService.GetStartMinimizedEnabledAsync();
         IsHideToTrayEnabled = await _settingsService.GetHideToTrayEnabledAsync();
+        IsFetchMetadataFromLastFmEnabled = await _settingsService.GetFetchMetadataFromLastFmEnabledAsync(); // New setting
         _isInitializing = false;
     }
 
@@ -135,6 +143,11 @@ public partial class SettingsViewModel : ObservableObject {
     partial void OnIsHideToTrayEnabledChanged(bool value) {
         if (_isInitializing) return;
         _ = _settingsService.SetHideToTrayEnabledAsync(value);
+    }
+
+    partial void OnIsFetchMetadataFromLastFmEnabledChanged(bool value) {
+        if (_isInitializing) return;
+        _ = _settingsService.SetFetchMetadataFromLastFmEnabledAsync(value);
     }
 
     /// <summary>

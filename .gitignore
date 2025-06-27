@@ -38,3 +38,7 @@ Bundle/
 Thumbs.db
 ehthumbs.db
 [Dd]esktop.ini
+
+# Secrets
+*.key
+[Aa]ppsettings.json
