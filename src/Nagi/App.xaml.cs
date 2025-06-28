@@ -108,9 +108,9 @@ public partial class App : Application {
 
         // Application keys
         var configuration = new ConfigurationBuilder()
-        .SetBasePath(AppContext.BaseDirectory)
-        .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-        .Build();
+            .SetBasePath(AppContext.BaseDirectory)
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .Build();
         services.AddSingleton<IConfiguration>(configuration);
 
         // HTTP Client
@@ -159,6 +159,7 @@ public partial class App : Application {
     private static void InitializeDatabase() {
         try {
             using var dbContext = Services.GetRequiredService<MusicDbContext>();
+            dbContext.RecreateDatabase();
             dbContext.Database.EnsureCreated();
         }
         catch (Exception ex) {

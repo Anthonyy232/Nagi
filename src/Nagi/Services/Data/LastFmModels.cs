@@ -1,13 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace Nagi.Services.Data.LastFm {
-    // Used to deserialize the root of the Last.fm response
+namespace Nagi.Services.Data {
+    /// <summary>
+    /// Represents the root object of a Last.fm artist.getinfo API response.
+    /// </summary>
     public class LastFmArtistResponse {
         [JsonPropertyName("artist")]
         public LastFmArtist? Artist { get; set; }
     }
 
+    /// <summary>
+    /// Represents the detailed artist information provided by the Last.fm API.
+    /// </summary>
     public class LastFmArtist {
         [JsonPropertyName("name")]
         public string Name { get; set; } = string.Empty;
@@ -19,6 +24,9 @@ namespace Nagi.Services.Data.LastFm {
         public LastFmBio? Bio { get; set; }
     }
 
+    /// <summary>
+    /// Represents an image URL for an artist, with a specific size.
+    /// </summary>
     public class LastFmImage {
         [JsonPropertyName("#text")]
         public string Url { get; set; } = string.Empty;
@@ -27,11 +35,17 @@ namespace Nagi.Services.Data.LastFm {
         public string Size { get; set; } = string.Empty;
     }
 
+    /// <summary>
+    /// Represents the biography of an artist.
+    /// </summary>
     public class LastFmBio {
         [JsonPropertyName("summary")]
         public string Summary { get; set; } = string.Empty;
     }
 
+    /// <summary>
+    /// Represents a structured error response from the Last.fm API.
+    /// </summary>
     public class LastFmErrorResponse {
         [JsonPropertyName("error")]
         public int ErrorCode { get; set; }

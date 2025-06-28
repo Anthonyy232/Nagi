@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:Nagi.ViewModels"
+    xmlns:controls="using:ImageEx"
     Background="Transparent"
     Loaded="Page_Loaded"
     mc:Ignorable="d">
@@ -13,6 +14,9 @@
     <Page.Resources>
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <converters:BooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" Invert="True" />
+        <converters:StringToUriConverter x:Key="StringToUriConverter" />
+        <converters:NullOrEmptyStringToVisibilityConverter x:Key="NullToCollapsedConverter" />
+        <converters:NullOrEmptyStringToVisibilityConverter x:Key="NullToVisibleConverter" Invert="True" />
     </Page.Resources>
 
     <Grid Padding="24">
@@ -21,13 +25,14 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
+        <!--  Page Header  -->
         <TextBlock
             Grid.Row="0"
             Margin="0,0,0,28"
             Style="{StaticResource ArtistPageTitleTextStyle}"
             Text="Artists" />
 
-        <!-- Grid view to display the list of artists. -->
+        <!--  Grid view to display the list of artists.  -->
         <GridView
             Grid.Row="1"
             IsItemClickEnabled="True"
@@ -53,18 +58,23 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <Grid
-                            Grid.Row="0"
-                            Width="160"
-                            Height="160"
-                            HorizontalAlignment="Center"
-                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                            CornerRadius="80">
-                            <FontIcon
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FontSize="48"
-                                Glyph="&#xE77B;" />
+                        <Grid Grid.Row="0" Width="160" Height="160" HorizontalAlignment="Center">
+                            <controls:ImageEx
+                                CornerRadius="80"
+                                IsCacheEnabled="True"
+                                Source="{x:Bind LocalImageCachePath, Mode=OneWay, Converter={StaticResource StringToUriConverter}}"
+                                Stretch="UniformToFill"
+                                Visibility="{x:Bind LocalImageCachePath, Mode=OneWay, Converter={StaticResource NullToCollapsedConverter}}" />
+                            <Grid
+                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                CornerRadius="80"
+                                Visibility="{x:Bind LocalImageCachePath, Mode=OneWay, Converter={StaticResource NullToVisibleConverter}}">
+                                <FontIcon
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    FontSize="48"
+                                    Glyph="" />
+                            </Grid>
                         </Grid>
 
                         <TextBlock
@@ -79,7 +89,7 @@
             </GridView.ItemTemplate>
         </GridView>
 
-        <!-- Message displayed when no artists are found in the library. -->
+        <!--  Message displayed when no artists are found in the library.  -->
         <StackPanel
             Grid.Row="1"
             HorizontalAlignment="Center"

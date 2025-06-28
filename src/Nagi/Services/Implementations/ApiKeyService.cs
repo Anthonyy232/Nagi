@@ -7,13 +7,15 @@ using Microsoft.Extensions.Configuration;
 using Nagi.Services.Abstractions;
 
 namespace Nagi.Services {
+    /// <summary>
+    /// Manages the retrieval and caching of the Last.fm API key from a secure server.
+    /// </summary>
     public class ApiKeyService : IApiKeyService {
         private readonly HttpClient _httpClient;
         private readonly IConfiguration _configuration;
         private string? _cachedLastFmKey;
 
-        // Use a SemaphoreSlim to prevent race conditions if multiple threads
-        // try to fetch the key simultaneously.
+        // A semaphore ensures thread-safe fetching of the API key on the first request.
         private readonly SemaphoreSlim _semaphore = new(1, 1);
 
         public ApiKeyService(IHttpClientFactory httpClientFactory, IConfiguration configuration) {
@@ -22,14 +24,14 @@ namespace Nagi.Services {
         }
 
         public async Task<string?> GetLastFmApiKeyAsync(CancellationToken cancellationToken = default) {
-            // Fast path: if the key is already cached, return it without locking.
+            // Return the cached key immediately if it's available.
             if (!string.IsNullOrEmpty(_cachedLastFmKey)) {
                 return _cachedLastFmKey;
             }
 
             await _semaphore.WaitAsync(cancellationToken);
             try {
-                // Double-check if another thread fetched the key while we were waiting.
+                // Double-check if another thread fetched the key while this one was waiting.
                 if (!string.IsNullOrEmpty(_cachedLastFmKey)) {
                     return _cachedLastFmKey;
                 }
@@ -44,9 +46,10 @@ namespace Nagi.Services {
         public async Task<string?> RefreshApiKeyAsync(CancellationToken cancellationToken = default) {
             await _semaphore.WaitAsync(cancellationToken);
             try {
-                Debug.WriteLine("[ApiKeyService] Invalidating cached API key and forcing refresh.");
-                _cachedLastFmKey = null; // Invalidate the cache
-                return await FetchAndCacheKeyAsync(cancellationToken); // Re-fetch the key
+                Debug.WriteLine("Invalidating cached API key and forcing refresh.");
+                // Invalidate the cache and re-fetch the key.
+                _cachedLastFmKey = null;
+                return await FetchAndCacheKeyAsync(cancellationToken);
             }
             finally {
                 _semaphore.Release();
@@ -54,47 +57,43 @@ namespace Nagi.Services {
         }
 
         /// <summary>
-        /// Contains the actual logic to fetch the key from your server.
-        /// This should only be called from within a semaphore lock.
+        /// Fetches the API key from the configured server endpoint.
+        /// This method should only be called from within a semaphore lock to prevent race conditions.
         /// </summary>
         private async Task<string?> FetchAndCacheKeyAsync(CancellationToken cancellationToken) {
-            // Read all three required values from configuration
             var serverUrl = _configuration["NagiApiServer:Url"];
             var serverKey = _configuration["NagiApiServer:ApiKey"];
             var subscriptionKey = _configuration["NagiApiServer:SubscriptionKey"];
 
-            // Update the check to ensure all values are present
-            if (string.IsNullOrEmpty(serverUrl) || string.IsNullOrEmpty(serverKey) || string.IsNullOrEmpty(subscriptionKey))
-            {
-                Debug.WriteLine("[ApiKeyService] CRITICAL: NagiApiServer URL, ApiKey, or SubscriptionKey is not configured.");
+            if (string.IsNullOrEmpty(serverUrl) || string.IsNullOrEmpty(serverKey) || string.IsNullOrEmpty(subscriptionKey)) {
+                Debug.WriteLine("CRITICAL: Nagi API Server URL, ApiKey, or SubscriptionKey is not configured.");
                 return null;
             }
 
             try {
                 using var request = new HttpRequestMessage(HttpMethod.Get, serverUrl);
-
                 request.Headers.Add("X-API-KEY", serverKey);
                 request.Headers.Add("Ocp-Apim-Subscription-Key", subscriptionKey);
 
                 var response = await _httpClient.SendAsync(request, cancellationToken);
 
-                if (response.IsSuccessStatusCode) {
-                    var key = await response.Content.ReadAsStringAsync(cancellationToken);
-                    // Trim whitespace and then quotes for robustness
-                    _cachedLastFmKey = key.Trim().Trim('"');
-                    Debug.WriteLine("[ApiKeyService] Successfully fetched and cached Last.fm API key.");
-                    return _cachedLastFmKey;
+                if (!response.IsSuccessStatusCode) {
+                    Debug.WriteLine($"Error fetching API key. Status: {response.StatusCode}");
+                    return null;
                 }
 
-                Debug.WriteLine($"[ApiKeyService] Error fetching API key. Status: {response.StatusCode}");
-                return null;
+                var key = await response.Content.ReadAsStringAsync(cancellationToken);
+                // The key may be returned with surrounding quotes, which should be removed.
+                _cachedLastFmKey = key.Trim().Trim('"');
+                Debug.WriteLine("Successfully fetched and cached Last.fm API key.");
+                return _cachedLastFmKey;
             }
             catch (OperationCanceledException) {
-                Debug.WriteLine("[ApiKeyService] API key fetch was canceled.");
-                return null;
+                // This is an expected exception, no need for an error log.
+                throw;
             }
             catch (Exception ex) {
-                Debug.WriteLine($"[ApiKeyService] Exception while fetching API key: {ex.Message}");
+                Debug.WriteLine($"Exception while fetching API key: {ex.Message}");
                 return null;
             }
         }

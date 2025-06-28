@@ -1,6 +1,4 @@
-﻿// Nagi/Services/ILibraryService.cs
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Nagi.Models;
@@ -12,8 +10,9 @@ namespace Nagi.Services.Abstractions;
 ///     Defines the contract for a service that manages the music library.
 ///     This includes handling folders, songs, artists, albums, playlists, and library scanning operations.
 /// </summary>
-public interface ILibraryService
-{
+public interface ILibraryService {
+    event EventHandler<ArtistMetadataUpdatedEventArgs> ArtistMetadataUpdated;
+
     //
     // --- Folder Management ---
     //
@@ -61,10 +60,12 @@ public interface ILibraryService
     // --- Artist Management ---
     //
     Task<Artist?> GetArtistByIdAsync(Guid artistId);
+    Task<Artist?> GetOrFetchArtistDetailsAsync(Guid artistId);
     Task<Artist?> GetArtistByNameAsync(string name);
     Task<IEnumerable<Artist>> GetAllArtistsAsync();
     Task<IEnumerable<Artist>> SearchArtistsAsync(string searchTerm);
     Task<Artist> GetOrCreateArtistAsync(string name, bool saveImmediate = false);
+    Task StartArtistMetadataBackgroundFetchAsync();
 
     //
     // --- Album Management ---

@@ -1,81 +1,90 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Nagi.Models;
-using Nagi.Services;
+using Microsoft.UI.Dispatching;
 using Nagi.Services.Abstractions;
 
 namespace Nagi.ViewModels;
 
 /// <summary>
-///     Represents a display-ready artist item for the UI.
+/// Represents a single artist item in the main artist grid.
 /// </summary>
-public partial class ArtistViewModelItem : ObservableObject
-{
-    public ArtistViewModelItem(Artist artist)
-    {
-        Id = artist.Id;
-        Name = artist.Name;
-    }
+public partial class ArtistViewModelItem : ObservableObject {
+    [ObservableProperty]
+    private Guid _id;
 
-    public Guid Id { get; }
+    [ObservableProperty]
+    private string _name = string.Empty;
 
-    [ObservableProperty] public partial string Name { get; set; }
+    [ObservableProperty]
+    private string? _localImageCachePath;
 }
 
 /// <summary>
-///     Manages the state and logic for the artist page.
+/// Provides data and logic for the ArtistPage.
 /// </summary>
-public partial class ArtistViewModel : ObservableObject
-{
+public partial class ArtistViewModel : ObservableObject {
     private readonly ILibraryService _libraryService;
+    private readonly DispatcherQueue _dispatcherQueue;
 
-    public ArtistViewModel(ILibraryService libraryService)
-    {
+    // A dictionary for fast O(1) lookups of artists by their ID.
+    private readonly Dictionary<Guid, ArtistViewModelItem> _artistLookup = new();
+
+    [ObservableProperty]
+    private bool _hasArtists;
+
+    public ObservableCollection<ArtistViewModelItem> Artists { get; } = new();
+
+    public ArtistViewModel(ILibraryService libraryService) {
         _libraryService = libraryService;
-
-        // Notifies the UI to re-evaluate the HasArtists property
-        // whenever the content of the Artists collection changes.
-        Artists.CollectionChanged += (s, e) => OnPropertyChanged(nameof(HasArtists));
+        _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+        _libraryService.ArtistMetadataUpdated += OnArtistMetadataUpdated;
     }
 
-    [ObservableProperty] public partial ObservableCollection<ArtistViewModelItem> Artists { get; set; } = new();
-
-    [ObservableProperty] public partial bool IsLoading { get; set; }
-
-    /// <summary>
-    ///     Gets a value indicating whether the artist collection is not empty.
-    /// </summary>
-    public bool HasArtists => Artists.Any();
-
-    /// <summary>
-    ///     Asynchronously loads all artists from the library into the collection.
-    /// </summary>
     [RelayCommand]
-    private async Task LoadArtistsAsync()
-    {
-        if (IsLoading) return;
+    private async Task LoadArtistsAsync() {
+        var artistsFromDb = await _libraryService.GetAllArtistsAsync();
 
-        IsLoading = true;
-        try
-        {
-            var artistsFromDb = await _libraryService.GetAllArtistsAsync();
+        // Build a temporary list first to avoid repeated 'Add' notifications on the UI thread.
+        var newArtistVms = artistsFromDb.Select(artist => new ArtistViewModelItem {
+            Id = artist.Id,
+            Name = artist.Name,
+            LocalImageCachePath = artist.LocalImageCachePath
+        }).ToList();
 
-            Artists.Clear();
-            foreach (var artist in artistsFromDb) Artists.Add(new ArtistViewModelItem(artist));
+        // Clear existing collections before populating.
+        Artists.Clear();
+        _artistLookup.Clear();
+
+        // Add new items efficiently.
+        foreach (var artistVm in newArtistVms) {
+            Artists.Add(artistVm);
+            _artistLookup.Add(artistVm.Id, artistVm);
         }
-        catch (Exception ex)
-        {
-            // In a production app, a more robust logging mechanism should be used.
-            Debug.WriteLine($"[ArtistViewModel] Error loading artists: {ex.Message}");
+
+        HasArtists = Artists.Any();
+
+        // After loading the artists, kick off the background process
+        // to find and download any missing metadata (like images).
+        await _libraryService.StartArtistMetadataBackgroundFetchAsync();
+    }
+
+    private void OnArtistMetadataUpdated(object? sender, ArtistMetadataUpdatedEventArgs e) {
+        // Use the dictionary for a fast O(1) lookup, which is much more
+        // efficient than searching the ObservableCollection.
+        if (_artistLookup.TryGetValue(e.ArtistId, out var artistVm)) {
+            // Ensure the UI update happens on the main thread.
+            _dispatcherQueue.TryEnqueue(() => {
+                artistVm.LocalImageCachePath = e.NewLocalImageCachePath;
+            });
         }
-        finally
-        {
-            IsLoading = false;
-        }
+    }
+
+    public void Cleanup() {
+        _libraryService.ArtistMetadataUpdated -= OnArtistMetadataUpdated;
     }
 }
