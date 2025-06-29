@@ -118,12 +118,12 @@
 
                 <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="Data Management" />
 
-                <controls:SettingsCard Header="Integrate with Last.fm"
-                                       Description="Integrate with Last.fm to enable features like artist metadata.">
+                <controls:SettingsCard Header="Retrieve Online Metadata"
+                                       Description="Fetch additional information like artist images and biographies from online services (e.g., Spotify, Last.fm).">
                     <controls:SettingsCard.HeaderIcon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8EC;" />
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
                     </controls:SettingsCard.HeaderIcon>
-                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsFetchMetadataFromLastFmEnabled, Mode=TwoWay}" />
+                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsFetchOnlineMetadataEnabled, Mode=TwoWay}" />
                 </controls:SettingsCard>
 
                 <controls:SettingsCard

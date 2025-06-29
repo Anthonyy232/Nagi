@@ -155,16 +155,16 @@ public interface ISettingsService {
     Task SetHideToTrayEnabledAsync(bool isEnabled);
 
     /// <summary>
-    /// Gets whether the application should fetch additional metadata (e.g., artist info, biographies) from Last.fm.
+    /// Gets whether the application should fetch additional metadata from online services.
     /// </summary>
-    /// <returns>True if fetching metadata from Last.fm is enabled; otherwise, false.</returns>
-    Task<bool> GetFetchMetadataFromLastFmEnabledAsync();
+    /// <returns>True if fetching online metadata is enabled; otherwise, false.</returns>
+    Task<bool> GetFetchOnlineMetadataEnabledAsync();
 
     /// <summary>
-    /// Sets the preference for fetching additional metadata from Last.fm.
+    /// Sets the preference for fetching additional metadata from online services.
     /// </summary>
     /// <param name="isEnabled">The preference to save.</param>
-    Task SetFetchMetadataFromLastFmEnabledAsync(bool isEnabled);
+    Task SetFetchOnlineMetadataEnabledAsync(bool isEnabled);
 
     /// <summary>
     /// Resets all settings to their default values.

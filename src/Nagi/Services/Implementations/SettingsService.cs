@@ -31,7 +31,7 @@ public class SettingsService : ISettingsService {
     private const string RestorePlaybackStateEnabledKey = "RestorePlaybackStateEnabled";
     private const string StartMinimizedEnabledKey = "StartMinimizedEnabled";
     private const string HideToTrayEnabledKey = "HideToTrayEnabled";
-    private const string FetchMetadataFromLastFmKey = "FetchMetadataFromLastFmEnabled"; // New setting key
+    private const string FetchOnlineMetadataKey = "FetchOnlineMetadataEnabled"; // Renamed from FetchMetadataFromLastFmKey
 
     private static readonly JsonSerializerOptions _serializerOptions = new() { WriteIndented = false };
     private readonly ApplicationDataContainer _localSettings = ApplicationData.Current.LocalSettings;
@@ -53,7 +53,7 @@ public class SettingsService : ISettingsService {
         // Explicitly set new settings to their default values
         await SetPlayerAnimationEnabledAsync(true); // Default: true
         await SetHideToTrayEnabledAsync(true); // Default: true
-        await SetFetchMetadataFromLastFmEnabledAsync(false); // New setting: Default: false
+        await SetFetchOnlineMetadataEnabledAsync(false); // New setting: Default: false
 
         // Notify subscribers if current values (which are now cleared) differ from defaults.
         // This is primarily for settings that trigger immediate UI/behavior changes.
@@ -156,10 +156,10 @@ public class SettingsService : ISettingsService {
     public Task SetHideToTrayEnabledAsync(bool isEnabled) => SetValueAndNotifyAsync(HideToTrayEnabledKey, isEnabled, true, HideToTraySettingChanged);
 
     /// <inheritdoc/>
-    public Task<bool> GetFetchMetadataFromLastFmEnabledAsync() => Task.FromResult(GetValue(FetchMetadataFromLastFmKey, false));
+    public Task<bool> GetFetchOnlineMetadataEnabledAsync() => Task.FromResult(GetValue(FetchOnlineMetadataKey, false));
 
     /// <inheritdoc/>
-    public Task SetFetchMetadataFromLastFmEnabledAsync(bool isEnabled) => SetValueAsync(FetchMetadataFromLastFmKey, isEnabled);
+    public Task SetFetchOnlineMetadataEnabledAsync(bool isEnabled) => SetValueAsync(FetchOnlineMetadataKey, isEnabled);
 
     /// <inheritdoc/>
     public async Task SavePlaybackStateAsync(PlaybackState? state) {

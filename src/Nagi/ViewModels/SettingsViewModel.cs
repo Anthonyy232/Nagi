@@ -70,10 +70,10 @@ public partial class SettingsViewModel : ObservableObject {
     public partial bool IsHideToTrayEnabled { get; set; }
 
     /// <summary>
-    /// Gets or sets a value indicating whether the application should fetch additional metadata (e.g., artist info, biographies) from Last.fm.
+    /// Gets or sets a value indicating whether the application should fetch additional online metadata (e.g., artist images from Spotify, biographies from Last.fm).
     /// </summary>
     [ObservableProperty]
-    public partial bool IsFetchMetadataFromLastFmEnabled { get; set; }
+    public partial bool IsFetchOnlineMetadataEnabled { get; set; }
 
     /// <summary>
     /// Gets the list of available themes for binding to the UI.
@@ -94,7 +94,7 @@ public partial class SettingsViewModel : ObservableObject {
         IsAutoLaunchEnabled = await _settingsService.GetAutoLaunchEnabledAsync();
         IsStartMinimizedEnabled = await _settingsService.GetStartMinimizedEnabledAsync();
         IsHideToTrayEnabled = await _settingsService.GetHideToTrayEnabledAsync();
-        IsFetchMetadataFromLastFmEnabled = await _settingsService.GetFetchMetadataFromLastFmEnabledAsync();
+        IsFetchOnlineMetadataEnabled = await _settingsService.GetFetchOnlineMetadataEnabledAsync();
         _isInitializing = false;
     }
 
@@ -145,9 +145,9 @@ public partial class SettingsViewModel : ObservableObject {
         _ = _settingsService.SetHideToTrayEnabledAsync(value);
     }
 
-    partial void OnIsFetchMetadataFromLastFmEnabledChanged(bool value) {
+    partial void OnIsFetchOnlineMetadataEnabledChanged(bool value) {
         if (_isInitializing) return;
-        _ = _settingsService.SetFetchMetadataFromLastFmEnabledAsync(value);
+        _ = _settingsService.SetFetchOnlineMetadataEnabledAsync(value);
     }
 
     /// <summary>
