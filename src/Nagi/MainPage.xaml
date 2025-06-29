@@ -201,7 +201,7 @@
             </VisualStateManager.VisualStateGroups>
 
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
+                <RowDefinition x:Name="AppTitleBarRow" Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 

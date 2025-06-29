@@ -11,8 +11,7 @@ using Windows.ApplicationModel;
 namespace Nagi.ViewModels;
 
 /// <summary>
-/// ViewModel for managing the application's tray icon, including its visibility,
-/// context menu commands, and interaction with the main application window.
+/// Manages the application's system tray icon, its context menu, and visibility logic.
 /// </summary>
 public partial class TrayIconViewModel : ObservableObject, IDisposable {
     private readonly ISettingsService _settingsService;
@@ -20,7 +19,6 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable {
     private Microsoft.UI.Windowing.AppWindow? _appWindow;
     private TaskbarIcon? _taskbarIconUiElement;
     private bool _isDisposed;
-
     private bool _isHideToTrayEnabledSetting;
 
     [ObservableProperty]
@@ -31,7 +29,7 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable {
     private bool _isTrayIconEffectivelyVisible;
 
     /// <summary>
-    /// Gets the tooltip text for the tray icon, indicating the application name and window state.
+    /// Gets the tooltip text for the tray icon.
     /// </summary>
     public string ToolTipText => $"{GetAppName()} - {(IsWindowActuallyVisible ? "Window Visible" : "Hidden in Tray")}";
 
@@ -42,15 +40,14 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable {
     }
 
     /// <summary>
-    /// Initializes the ViewModel with references to the main window and the tray icon UI element.
-    /// This should be called once the main window is available.
+    /// Initializes the view model with the application window and tray icon UI element.
     /// </summary>
     /// <param name="taskbarIconElement">The UI element for the tray icon.</param>
     public async Task InitializeAsync(TaskbarIcon taskbarIconElement) {
         _taskbarIconUiElement = taskbarIconElement ?? throw new ArgumentNullException(nameof(taskbarIconElement));
 
-        if (App.RootWindow == null || (_appWindow = App.RootWindow.AppWindow) == null) {
-            Debug.WriteLine("[TrayIconViewModel] CRITICAL: AppWindow not available on Initialize.");
+        if (App.RootWindow is null || (_appWindow = App.RootWindow.AppWindow) is null) {
+            Trace.TraceError("[TrayIconViewModel] CRITICAL: AppWindow not available on Initialize.");
             return;
         }
 
@@ -59,19 +56,12 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable {
 
         _isHideToTrayEnabledSetting = await _settingsService.GetHideToTrayEnabledAsync();
         IsWindowActuallyVisible = _appWindow.IsVisible;
-
         UpdateEffectiveTrayIconVisibility();
-
-        // If the app was launched with the "Start Minimized" setting, the window will be hidden.
-        // We must ensure the tray icon is visible so the user can interact with the app.
-        // This overrides the default visibility logic for the initial launch only.
-        var startMinimized = await _settingsService.GetStartMinimizedEnabledAsync();
-        if (startMinimized && !IsWindowActuallyVisible) {
-            IsTrayIconEffectivelyVisible = true;
-        }
     }
 
     private void UpdateEffectiveTrayIconVisibility() {
+        // The tray icon is visible only when the "hide to tray" feature is enabled
+        // and the main window is currently hidden.
         IsTrayIconEffectivelyVisible = _isHideToTrayEnabledSetting && !IsWindowActuallyVisible;
     }
 
@@ -81,9 +71,7 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable {
 
     private void AppWindow_Changed_Handler(Microsoft.UI.Windowing.AppWindow sender, Microsoft.UI.Windowing.AppWindowChangedEventArgs args) {
         if (args.DidVisibilityChange) {
-            _dispatcherQueue.TryEnqueue(() => {
-                IsWindowActuallyVisible = sender.IsVisible;
-            });
+            _dispatcherQueue.TryEnqueue(() => IsWindowActuallyVisible = sender.IsVisible);
         }
     }
 
@@ -93,10 +81,12 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable {
         _isHideToTrayEnabledSetting = await _settingsService.GetHideToTrayEnabledAsync();
 
         if (_isHideToTrayEnabledSetting) {
+            // Cancel the close operation and hide the window instead.
             args.Cancel = true;
             _dispatcherQueue.TryEnqueue(HideWindowInternal);
         }
         else {
+            // Allow the application to exit normally.
             App.IsExiting = true;
         }
     }
@@ -104,6 +94,8 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable {
     private void OnHideToTraySettingChanged(bool isEnabled) {
         _dispatcherQueue.TryEnqueue(() => {
             _isHideToTrayEnabledSetting = isEnabled;
+
+            // If the feature is disabled and the window is hidden, show the window.
             if (!isEnabled && !IsWindowActuallyVisible) {
                 ShowWindowInternal();
             }
@@ -112,13 +104,14 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable {
     }
 
     /// <summary>
-    /// Toggles the main window's visibility between shown and hidden (in tray).
+    /// Toggles the main window's visibility.
     /// </summary>
     [RelayCommand]
     private void ShowHideWindow() {
-        if (_appWindow == null) return;
+        if (_appWindow is null) return;
 
         if (IsWindowActuallyVisible) {
+            // Only hide the window if the setting is enabled.
             if (_isHideToTrayEnabledSetting) {
                 HideWindowInternal();
             }
@@ -131,28 +124,22 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable {
     private void HideWindowInternal() => _appWindow?.Hide();
 
     private void ShowWindowInternal() {
-        if (_appWindow == null) return;
+        if (_appWindow is null) return;
 
-        // Show the window. The 'true' parameter attempts to activate it.
         _appWindow.Show(true);
-
-        // To ensure the window is brought to the front and given focus,
-        // explicitly move it to the top of the Z-order. This is especially
-        // useful when restoring from a hidden state.
         _appWindow.MoveInZOrderAtTop();
     }
 
+
     /// <summary>
-    /// Exits the application cleanly, ensuring all resources are disposed.
+    /// Exits the application gracefully.
     /// </summary>
     [RelayCommand]
     private void ExitApplication() {
-        // Signal that a deliberate exit is happening. This will bypass the
-        // "hide to tray" logic in the AppWindow.Closing event handler.
+        // Signal a deliberate exit to bypass the hide-to-tray logic.
         App.IsExiting = true;
 
-        // Trigger the standard window closing process.
-        // Cleanup is handled in the App.xaml.cs Window.Closed event.
+        // This will trigger the standard window closing process, leading to a clean shutdown.
         App.RootWindow?.Close();
     }
 
@@ -161,12 +148,13 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable {
             return Package.Current.DisplayName;
         }
         catch {
+            // Fallback name if package information is unavailable.
             return "Nagi";
         }
     }
 
     /// <summary>
-    /// Cleans up resources used by the ViewModel, such as event handlers and the tray icon.
+    /// Cleans up resources, unregisters event handlers, and disposes the tray icon.
     /// </summary>
     public void Dispose() {
         if (_isDisposed) return;

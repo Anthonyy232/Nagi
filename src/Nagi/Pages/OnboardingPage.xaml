@@ -15,19 +15,45 @@
         </ResourceDictionary>
     </Page.Resources>
 
-    <Grid x:Name="RootGrid">
+    <Grid x:Name="RootGrid" Opacity="0">
         <Grid.RowDefinitions>
             <RowDefinition x:Name="AppTitleBarRow" Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="EntranceStates">
+                <VisualState x:Name="PageLoading" />
+                <VisualState x:Name="PageLoaded">
+                    <Storyboard>
+                        <DoubleAnimation Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.3" />
+                        <DoubleAnimation Storyboard.TargetName="MainCard" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" From="0.95" To="1" Duration="0:0:0.5">
+                            <DoubleAnimation.EasingFunction>
+                                <BackEase EasingMode="EaseOut" />
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
+                        <DoubleAnimation Storyboard.TargetName="MainCard" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" From="0.95" To="1" Duration="0:0:0.5">
+                            <DoubleAnimation.EasingFunction>
+                                <BackEase EasingMode="EaseOut" />
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
+                        <DoubleAnimation Storyboard.TargetName="MainCard" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.3" />
+                        <DoubleAnimation BeginTime="0:0:0.2" Storyboard.TargetName="CardContent" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)" From="20" To="0" Duration="0:0:0.5">
+                            <DoubleAnimation.EasingFunction>
+                                <CubicEase EasingMode="EaseOut" />
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
+                        <DoubleAnimation BeginTime="0:0:0.2" Storyboard.TargetName="CardContent" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.4" />
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+
             <VisualStateGroup x:Name="ActivityStates">
                 <VisualState x:Name="Idle">
                     <Storyboard>
                         <DoubleAnimation
                             Storyboard.TargetName="CallToActionPanel"
-                            Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
+                            Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.Y)"
                             From="20" To="0" Duration="0:0:0.4">
                             <DoubleAnimation.EasingFunction>
                                 <CubicEase EasingMode="EaseOut" />
@@ -35,23 +61,26 @@
                         </DoubleAnimation>
                         <DoubleAnimation Storyboard.TargetName="CallToActionPanel" Storyboard.TargetProperty="Opacity"
                                          From="0" To="1.0" Duration="0:0:0.3" />
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CallToActionPanel"
-                                                       Storyboard.TargetProperty="Visibility">
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CallToActionPanel" Storyboard.TargetProperty="Visibility">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
                         </ObjectAnimationUsingKeyFrames>
 
                         <DoubleAnimation
                             Storyboard.TargetName="ProgressPanel"
-                            Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
+                            Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.Y)"
                             To="-20" Duration="0:0:0.4">
                             <DoubleAnimation.EasingFunction>
                                 <CubicEase EasingMode="EaseIn" />
                             </DoubleAnimation.EasingFunction>
                         </DoubleAnimation>
-                        <DoubleAnimation Storyboard.TargetName="ProgressPanel" Storyboard.TargetProperty="Opacity"
-                                         To="0.0" Duration="0:0:0.3" />
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ProgressPanel"
-                                                       Storyboard.TargetProperty="Visibility">
+                        <DoubleAnimation Storyboard.TargetName="ProgressPanel" Storyboard.TargetProperty="Opacity" To="0.0" Duration="0:0:0.3" />
+                        <DoubleAnimation Storyboard.TargetName="ProgressPanel"
+                                         Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)"
+                                         To="0.9" Duration="0:0:0.4" />
+                        <DoubleAnimation Storyboard.TargetName="ProgressPanel"
+                                         Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)"
+                                         To="0.9" Duration="0:0:0.4" />
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ProgressPanel" Storyboard.TargetProperty="Visibility">
                             <DiscreteObjectKeyFrame KeyTime="0:0:0.3" Value="Collapsed" />
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
@@ -60,10 +89,10 @@
                     <Storyboard>
                         <DoubleAnimation
                             Storyboard.TargetName="CallToActionPanel"
-                            Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
-                            To="-20" Duration="0:0:0.4">
+                            Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.Y)"
+                            To="20" Duration="0:0:0.3">
                             <DoubleAnimation.EasingFunction>
-                                <CubicEase EasingMode="EaseIn" />
+                                <CubicEase EasingMode="EaseOut" />
                             </DoubleAnimation.EasingFunction>
                         </DoubleAnimation>
                         <DoubleAnimation Storyboard.TargetName="CallToActionPanel" Storyboard.TargetProperty="Opacity"
@@ -75,14 +104,19 @@
 
                         <DoubleAnimation
                             Storyboard.TargetName="ProgressPanel"
-                            Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
-                            From="20" To="0" Duration="0:0:0.4">
+                            Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.Y)"
+                            From="20" To="0" Duration="0:0:0.5">
                             <DoubleAnimation.EasingFunction>
-                                <CubicEase EasingMode="EaseOut" />
+                                <BackEase EasingMode="EaseOut" Amplitude="0.3" />
                             </DoubleAnimation.EasingFunction>
                         </DoubleAnimation>
-                        <DoubleAnimation Storyboard.TargetName="ProgressPanel" Storyboard.TargetProperty="Opacity"
-                                         From="0" To="1.0" Duration="0:0:0.3" />
+                        <DoubleAnimation Storyboard.TargetName="ProgressPanel" Storyboard.TargetProperty="Opacity" From="0" To="1.0" Duration="0:0:0.3" />
+                        <DoubleAnimation Storyboard.TargetName="ProgressPanel"
+                                         Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)"
+                                         From="0.9" To="1.0" Duration="0:0:0.5" />
+                        <DoubleAnimation Storyboard.TargetName="ProgressPanel"
+                                         Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)"
+                                         From="0.9" To="1.0" Duration="0:0:0.5" />
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ProgressPanel"
                                                        Storyboard.TargetProperty="Visibility">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
@@ -96,25 +130,30 @@
 
         <Grid Grid.Row="1" Padding="48">
             <Border
+                x:Name="MainCard"
                 Width="520"
                 Height="420"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                CornerRadius="12">
+                CornerRadius="12"
+                Opacity="0">
                 <Border.Background>
                     <SolidColorBrush Color="{ThemeResource LayerOnAcrylicFillColorDefault}" />
                 </Border.Background>
                 <Border.Shadow>
                     <ThemeShadow />
                 </Border.Shadow>
+                <Border.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform CenterX="260" CenterY="210" />
+                        <TranslateTransform />
+                    </TransformGroup>
+                </Border.RenderTransform>
 
-                <Border.Transitions>
-                    <TransitionCollection>
-                        <EntranceThemeTransition FromVerticalOffset="50" IsStaggeringEnabled="True" />
-                    </TransitionCollection>
-                </Border.Transitions>
-
-                <Grid VerticalAlignment="Center" Padding="48">
+                <Grid x:Name="CardContent" VerticalAlignment="Center" Padding="48" Opacity="0">
+                    <Grid.RenderTransform>
+                        <TranslateTransform/>
+                    </Grid.RenderTransform>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
@@ -149,19 +188,49 @@
                     <Grid Grid.Row="3" Margin="0,24,0,0" VerticalAlignment="Top" MinHeight="60">
                         <StackPanel
                             x:Name="CallToActionPanel"
-                            VerticalAlignment="Center">
+                            VerticalAlignment="Center"
+                            Opacity="0">
                             <StackPanel.RenderTransform>
-                                <TranslateTransform />
+                                <TransformGroup>
+                                    <ScaleTransform />
+                                    <TranslateTransform Y="20" />
+                                </TransformGroup>
                             </StackPanel.RenderTransform>
                             <Button
+                                x:Name="AddFolderButton"
                                 HorizontalAlignment="Center"
                                 Padding="24,12"
                                 Command="{Binding AddFolderCommand}"
                                 Style="{StaticResource BrandAccentButtonStyle}">
+                                <Button.RenderTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform CenterX="107" CenterY="25"/>
+                                        <TranslateTransform />
+                                    </TransformGroup>
+                                </Button.RenderTransform>
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup x:Name="CommonStates">
+                                        <VisualState x:Name="Normal" />
+                                        <VisualState x:Name="PointerOver">
+                                            <Storyboard>
+                                                <DoubleAnimation Storyboard.TargetName="AddFolderButton" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.Y)" To="-4" Duration="0:0:0.2" />
+                                                <DoubleAnimation Storyboard.TargetName="AddFolderButton" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" To="1.05" Duration="0:0:0.2" />
+                                                <DoubleAnimation Storyboard.TargetName="AddFolderButton" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" To="1.05" Duration="0:0:0.2" />
+                                            </Storyboard>
+                                        </VisualState>
+                                        <VisualState x:Name="Pressed">
+                                            <Storyboard>
+                                                <DoubleAnimation Storyboard.TargetName="AddFolderButton" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.Y)" To="-2" Duration="0:0:0.1" />
+                                                <DoubleAnimation Storyboard.TargetName="AddFolderButton" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)" To="1.02" Duration="0:0:0.1" />
+                                                <DoubleAnimation Storyboard.TargetName="AddFolderButton" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)" To="1.02" Duration="0:0:0.1" />
+                                            </Storyboard>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
+
                                 <StackPanel Orientation="Horizontal" Spacing="10">
                                     <SymbolIcon Symbol="Add" />
-                                    <TextBlock VerticalAlignment="Center" FontSize="16" FontWeight="SemiBold"
-                                               Text="Add Music Folder" />
+                                    <TextBlock VerticalAlignment="Center" FontSize="16" FontWeight="SemiBold" Text="Add Music Folder" />
                                 </StackPanel>
                             </Button>
                         </StackPanel>
@@ -173,7 +242,10 @@
                             Spacing="12"
                             Visibility="Collapsed">
                             <StackPanel.RenderTransform>
-                                <TranslateTransform />
+                                <TransformGroup>
+                                    <ScaleTransform />
+                                    <TranslateTransform />
+                                </TransformGroup>
                             </StackPanel.RenderTransform>
                             <ProgressRing
                                 Width="40" Height="40"

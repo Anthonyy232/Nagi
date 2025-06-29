@@ -1,11 +1,14 @@
-using System;
-using System.Diagnostics;
-using Windows.UI;
+// Nagi/MainWindow.xaml.cs
+
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls; // Required for GridLength
 using Nagi.Interfaces;
-using WinRT.Interop;
+using Nagi.Pages;
+using System;
+using System.Diagnostics;
+using Windows.UI;
 
 namespace Nagi;
 
@@ -18,12 +21,14 @@ public sealed partial class MainWindow : Window {
 
     public MainWindow() {
         InitializeComponent();
+        this.ExtendsContentIntoTitleBar = true;
         Activated += MainWindow_Activated;
         Closed += MainWindow_Closed;
     }
 
     /// <summary>
-    /// Initializes the custom title bar, extending the app's content into the title bar area.
+    /// Initializes the custom title bar based on the current page.
+    /// Hides the title bar on the OnboardingPage and shows it on all other pages.
     /// </summary>
     public void InitializeCustomTitleBar() {
         _appWindow ??= GetAppWindowForCurrentWindow();
@@ -34,38 +39,59 @@ public sealed partial class MainWindow : Window {
 
         _appWindow.SetIcon("Assets/AppLogo.ico");
 
-        var titleBar = _appWindow.TitleBar;
-        if (!AppWindowTitleBar.IsCustomizationSupported()) {
-            titleBar.ExtendsContentIntoTitleBar = false;
+        if (_appWindow.Presenter is not OverlappedPresenter presenter) {
+            Debug.WriteLine("[MainWindow] OverlappedPresenter is not available. Cannot customize title bar visibility.");
             return;
         }
 
-        if (Content is not ICustomTitleBarProvider titleBarProvider || titleBarProvider.GetAppTitleBarElement() is not
-                { } appTitleBarElement) {
-            titleBar.ExtendsContentIntoTitleBar = false;
-            return;
+        var provider = Content as ICustomTitleBarProvider;
+
+        if (Content is OnboardingPage) {
+            // Onboarding: Hide system title bar buttons.
+            presenter.SetBorderAndTitleBar(true, false);
+            Debug.WriteLine("[MainWindow] OnboardingPage detected. Hiding system title bar.");
+
+            // Onboarding: Collapse the title bar row to remove its space from the layout.
+            if (provider?.GetAppTitleBarRowElement() is { } titleBarRow) {
+                titleBarRow.Height = new GridLength(0);
+            }
         }
+        else {
+            // Other pages: Show system title bar buttons.
+            presenter.SetBorderAndTitleBar(true, true);
+            var titleBar = _appWindow.TitleBar;
+            Debug.WriteLine("[MainWindow] Standard page detected. Configuring custom title bar.");
 
-        titleBar.ExtendsContentIntoTitleBar = true;
-        titleBar.ButtonBackgroundColor = Colors.Transparent;
-        titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
-        ApplyThemeToCaptionButtons(titleBar);
-        SetTitleBar(appTitleBarElement);
-        UpdateTitleBarLayout(titleBar);
+            if (!AppWindowTitleBar.IsCustomizationSupported()) {
+                titleBar.ExtendsContentIntoTitleBar = false;
+                this.ExtendsContentIntoTitleBar = false; // Fallback
+                return;
+            }
 
-        if (!_isAppWindowListenerAttached) {
-            _appWindow.Changed += AppWindow_Changed;
-            _isAppWindowListenerAttached = true;
+            if (provider?.GetAppTitleBarElement() is not { } appTitleBarElement) {
+                titleBar.ExtendsContentIntoTitleBar = false;
+                this.ExtendsContentIntoTitleBar = false; // Revert
+                return;
+            }
+
+            // Other pages: Ensure the title bar row has its space restored.
+            if (provider.GetAppTitleBarRowElement() is { } titleBarRow) {
+                titleBarRow.Height = GridLength.Auto;
+            }
+
+            // Configure the custom title bar
+            titleBar.ExtendsContentIntoTitleBar = true;
+            titleBar.ButtonBackgroundColor = Colors.Transparent;
+            titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+            ApplyThemeToCaptionButtons(titleBar);
+            SetTitleBar(appTitleBarElement);
+            UpdateTitleBarLayout(titleBar);
+
+            if (!_isAppWindowListenerAttached) {
+                _appWindow.Changed += AppWindow_Changed;
+                _isAppWindowListenerAttached = true;
+            }
         }
-    }
-
-    /// <summary>
-    /// Re-applies the theme colors to the window's caption buttons.
-    /// This should be called when the application theme changes.
-    /// </summary>
-    public void UpdateCaptionButtonColors() {
-        if (_appWindow?.TitleBar != null && AppWindowTitleBar.IsCustomizationSupported())
-            DispatcherQueue.TryEnqueue(() => { ApplyThemeToCaptionButtons(_appWindow.TitleBar); });
     }
 
     private void MainWindow_Activated(object sender, WindowActivatedEventArgs args) {
@@ -121,9 +147,14 @@ public sealed partial class MainWindow : Window {
         titleBar.ButtonPressedBackgroundColor = pressedBgColor;
     }
 
+    public void UpdateCaptionButtonColors() {
+        if (_appWindow?.TitleBar != null && AppWindowTitleBar.IsCustomizationSupported())
+            DispatcherQueue.TryEnqueue(() => { ApplyThemeToCaptionButtons(_appWindow.TitleBar); });
+    }
+
     private AppWindow? GetAppWindowForCurrentWindow() {
         try {
-            var hWnd = WindowNative.GetWindowHandle(this);
+            var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
             if (hWnd == IntPtr.Zero) return null;
             var myWndId = Win32Interop.GetWindowIdFromWindow(hWnd);
             return AppWindow.GetFromWindowId(myWndId);
