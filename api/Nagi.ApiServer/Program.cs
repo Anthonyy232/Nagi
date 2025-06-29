@@ -9,23 +9,24 @@ builder.Services.AddCors(options => {
         });
 });
 
+// Add services to the container.
+// This is crucial for enabling endpoint discovery for Swagger.
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(); // <--- ADD THIS LINE
+
 var app = builder.Build();
 
 // --- Custom API Key Middleware (Now with a built-in fatal error check) ---
 var serverApiKey = app.Configuration["ServerAuth:ApiKey"];
 
 app.Use(async (context, next) => {
-    // FATAL CHECK FIRST: Is the server even configured correctly?
-    // This check runs on every request.
     if (string.IsNullOrEmpty(serverApiKey)) {
-        // Use 503 Service Unavailable, as the service is not configured to run.
         context.Response.StatusCode = 503;
         await context.Response.WriteAsync("CRITICAL ERROR: Server is misconfigured. The ServerAuth:ApiKey is missing from configuration. Check Key Vault references.");
-        return; // Stop processing this request.
+        return;
     }
 
-    // If the server is configured, proceed with the normal endpoint protection.
-    if (!context.Request.Path.StartsWithSegments("/api/key")) {
+    if (!context.Request.Path.StartsWithSegments("/api")) {
         await next();
         return;
     }
@@ -36,12 +37,17 @@ app.Use(async (context, next) => {
         return;
     }
 
-    // If all checks pass, proceed to the endpoint.
     await next();
 });
 
+// Configure the HTTP request pipeline.
+// UseSwagger and UseSwaggerUI should typically be called before UseHttpsRedirection or UseAuthorization
+// and usually within app.Environment.IsDevelopment() if you want to restrict them to dev environments.
+app.UseSwagger(); // <--- ADD THIS LINE
+app.UseSwaggerUI(); // <--- ADD THIS LINE (This enables the Swagger UI at /swagger)
+
 // --- API Endpoint Definition ---
-app.MapGet("/api/key", (IConfiguration config) => {
+app.MapGet("/api/lastfm-key", (IConfiguration config) => {
     var lastFmKey = config["LastFm:ApiKey"];
     if (string.IsNullOrEmpty(lastFmKey)) {
         return Results.Problem("Last.fm API Key not configured on the server.", statusCode: 500);
@@ -49,7 +55,15 @@ app.MapGet("/api/key", (IConfiguration config) => {
     return Results.Ok(lastFmKey);
 });
 
+app.MapGet("/api/spotify-key", (IConfiguration config) => {
+    var spotifyKey = config["Spotify:ApiKey"];
+    if (string.IsNullOrEmpty(spotifyKey)) {
+        return Results.Problem("Spotify API Key not configured on the server.", statusCode: 500);
+    }
+    return Results.Ok(spotifyKey);
+});
+
 // --- Standard Middleware ---
 app.UseHttpsRedirection();
 app.UseCors(myAppOrigin);
-app.Run(); // The one and only app.Run() call
+app.Run();
