@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Nagi.Data;
 using Nagi.Models;
 using Nagi.Services.Abstractions;
@@ -33,6 +34,7 @@ namespace Nagi.Services.Implementations {
         private readonly ISpotifyService _spotifyService;
         private readonly HttpClient _httpClient;
         private readonly int _parallelExtractionBatchSize;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
 
         private static bool _isMetadataFetchRunning;
         private static readonly object _metadataFetchLock = new();
@@ -43,13 +45,15 @@ namespace Nagi.Services.Implementations {
             IMetadataExtractor metadataExtractor,
             ILastFmService lastFmService,
             ISpotifyService spotifyService,
-            IHttpClientFactory httpClientFactory) {
+            IHttpClientFactory httpClientFactory,
+            IServiceScopeFactory serviceScopeFactory) { // Added dependency
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
             _metadataExtractor = metadataExtractor ?? throw new ArgumentNullException(nameof(metadataExtractor));
             _lastFmService = lastFmService ?? throw new ArgumentNullException(nameof(lastFmService));
             _spotifyService = spotifyService ?? throw new ArgumentNullException(nameof(spotifyService));
             _httpClient = httpClientFactory.CreateClient("ImageDownloader");
+            _serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
             _parallelExtractionBatchSize = Environment.ProcessorCount * 2;
         }
 
@@ -386,6 +390,7 @@ namespace Nagi.Services.Implementations {
         /// <summary>
         /// Retrieves artist details. If metadata (biography, image) is not available locally,
         /// it fetches it concurrently from external services and caches it.
+        /// This method is safe to call from the UI thread.
         /// </summary>
         /// <param name="artistId">The ID of the artist.</param>
         /// <returns>The Artist entity with details, or null if the artist is not found.</returns>
@@ -401,6 +406,8 @@ namespace Nagi.Services.Implementations {
             // If biography is already present, we assume the artist is fully populated.
             if (artist.Biography != null) return artist;
 
+            // This method now uses the class-level services, which is safe for a single,
+            // UI-driven operation.
             await FetchAndUpdateArtistFromRemoteAsync(artist);
 
             return artist;
@@ -409,10 +416,12 @@ namespace Nagi.Services.Implementations {
         /// <summary>
         /// Initiates a background task to fetch missing metadata for all artists in the library.
         /// This method returns immediately, allowing the UI to remain responsive.
+        /// It creates a dedicated DbContext scope to avoid concurrency issues.
         /// </summary>
         public Task StartArtistMetadataBackgroundFetchAsync() {
             lock (_metadataFetchLock) {
                 if (_isMetadataFetchRunning) {
+                    Debug.WriteLine("Metadata fetch is already running. Skipping new request.");
                     return Task.CompletedTask;
                 }
                 _isMetadataFetchRunning = true;
@@ -420,25 +429,37 @@ namespace Nagi.Services.Implementations {
 
             _ = Task.Run(async () => {
                 try {
-                    // Fetch artists needing an update, ensuring alphabetical processing order.
-                    var artistsToUpdate = await _context.Artists
+                    // Create a new DI scope for this background task to get a dedicated DbContext.
+                    using var scope = _serviceScopeFactory.CreateScope();
+                    var dbContext = scope.ServiceProvider.GetRequiredService<MusicDbContext>();
+                    var lastFmService = scope.ServiceProvider.GetRequiredService<ILastFmService>();
+                    var spotifyService = scope.ServiceProvider.GetRequiredService<ISpotifyService>();
+                    var fileSystemService = scope.ServiceProvider.GetRequiredService<IFileSystemService>();
+                    var httpClientFactory = scope.ServiceProvider.GetRequiredService<IHttpClientFactory>();
+                    var httpClient = httpClientFactory.CreateClient("ImageDownloader");
+
+                    // Fetch artists needing an update using the dedicated context.
+                    var artistsToUpdate = await dbContext.Artists
                         .Where(a => a.Biography == null)
                         .OrderBy(a => a.Name)
                         .Select(a => a.Id)
                         .ToListAsync();
 
-                    if (!artistsToUpdate.Any()) return;
+                    if (!artistsToUpdate.Any()) {
+                        Debug.WriteLine("No artists found needing metadata fetch.");
+                        return;
+                    }
 
                     Debug.WriteLine($"Starting background metadata fetch for {artistsToUpdate.Count} artists.");
 
                     foreach (var artistId in artistsToUpdate) {
-                        // This method will fetch, update, and save each artist.
-                        await GetOrFetchArtistDetailsAsync(artistId);
+                        // Call the dedicated background method, passing in the scoped services.
+                        await FetchAndUpdateSingleArtistInBackgroundAsync(artistId, dbContext, lastFmService, spotifyService, fileSystemService, httpClient);
                     }
                     Debug.WriteLine("Background metadata fetch completed.");
                 }
                 catch (Exception ex) {
-                    Debug.WriteLine($"An error occurred during the background metadata fetch: {ex.Message}");
+                    Debug.WriteLine($"An error occurred during the background metadata fetch: {ex.ToString()}");
                 }
                 finally {
                     lock (_metadataFetchLock) {
@@ -450,6 +471,9 @@ namespace Nagi.Services.Implementations {
             return Task.CompletedTask;
         }
 
+        /// <summary>
+        /// Fetches and updates a single artist's metadata. This version is for UI-driven, single-threaded use.
+        /// </summary>
         private async Task FetchAndUpdateArtistFromRemoteAsync(Artist artist) {
             Task<ArtistInfo?> lastFmTask = _lastFmService.GetArtistInfoAsync(artist.Name);
             Task<string?> spotifyImageTask = _spotifyService.GetArtistImageUrlAsync(artist.Name);
@@ -470,37 +494,74 @@ namespace Nagi.Services.Implementations {
                 Debug.WriteLine($"Error fetching Spotify image for '{artist.Name}': {ex.Message}");
             }
 
-            // The artist entity is already being tracked, so we just modify its properties.
             artist.Biography = lastFmArtistInfo?.Biography ?? string.Empty;
             artist.RemoteImageUrl = spotifyImageUrl;
 
             if (!string.IsNullOrWhiteSpace(spotifyImageUrl)) {
-                await DownloadAndCacheArtistImageAsync(artist, new Uri(spotifyImageUrl));
+                await DownloadAndCacheArtistImageAsync(artist, new Uri(spotifyImageUrl), _fileSystem, _httpClient);
             }
             else {
                 artist.LocalImageCachePath = null;
             }
 
-            // SaveChangesAsync will persist the modifications to the tracked artist entity.
             await _context.SaveChangesAsync();
 
-            // Fire the event to notify the UI that this artist has been processed and updated.
-            // This is crucial for progressive UI updates.
             ArtistMetadataUpdated?.Invoke(this, new ArtistMetadataUpdatedEventArgs(artist.Id, artist.LocalImageCachePath));
         }
 
-        private async Task DownloadAndCacheArtistImageAsync(Artist artist, Uri imageUrl) {
+        /// <summary>
+        /// Fetches and updates a single artist's metadata within a dedicated background scope.
+        /// </summary>
+        private async Task FetchAndUpdateSingleArtistInBackgroundAsync(Guid artistId, MusicDbContext context, ILastFmService lastFmService, ISpotifyService spotifyService, IFileSystemService fileSystem, HttpClient httpClient) {
+            var artist = await context.Artists.AsTracking().FirstOrDefaultAsync(a => a.Id == artistId);
+            if (artist == null || artist.Biography != null) return;
+
+            Task<ArtistInfo?> lastFmTask = lastFmService.GetArtistInfoAsync(artist.Name);
+            Task<string?> spotifyImageTask = spotifyService.GetArtistImageUrlAsync(artist.Name);
+
+            ArtistInfo? lastFmArtistInfo = null;
             try {
-                var localPath = GetArtistImageCachePath(artist.Id);
-                if (_fileSystem.FileExists(localPath) && artist.RemoteImageUrl == imageUrl.ToString()) {
+                lastFmArtistInfo = await lastFmTask;
+            }
+            catch (Exception ex) {
+                Debug.WriteLine($"[BG] Error fetching Last.fm info for '{artist.Name}': {ex.Message}");
+            }
+
+            string? spotifyImageUrl = null;
+            try {
+                spotifyImageUrl = await spotifyImageTask;
+            }
+            catch (Exception ex) {
+                Debug.WriteLine($"[BG] Error fetching Spotify image for '{artist.Name}': {ex.Message}");
+            }
+
+            artist.Biography = lastFmArtistInfo?.Biography ?? string.Empty;
+            artist.RemoteImageUrl = spotifyImageUrl;
+
+            if (!string.IsNullOrWhiteSpace(spotifyImageUrl)) {
+                await DownloadAndCacheArtistImageAsync(artist, new Uri(spotifyImageUrl), fileSystem, httpClient);
+            }
+            else {
+                artist.LocalImageCachePath = null;
+            }
+
+            await context.SaveChangesAsync();
+
+            ArtistMetadataUpdated?.Invoke(this, new ArtistMetadataUpdatedEventArgs(artist.Id, artist.LocalImageCachePath));
+        }
+
+        private async Task DownloadAndCacheArtistImageAsync(Artist artist, Uri imageUrl, IFileSystemService fileSystem, HttpClient httpClient) {
+            try {
+                var localPath = GetArtistImageCachePath(artist.Id, fileSystem);
+                if (fileSystem.FileExists(localPath) && artist.RemoteImageUrl == imageUrl.ToString()) {
                     return;
                 }
 
-                using var response = await _httpClient.GetAsync(imageUrl);
+                using var response = await httpClient.GetAsync(imageUrl);
                 response.EnsureSuccessStatusCode();
 
                 var imageBytes = await response.Content.ReadAsByteArrayAsync();
-                await _fileSystem.WriteAllBytesAsync(localPath, imageBytes);
+                await fileSystem.WriteAllBytesAsync(localPath, imageBytes);
 
                 artist.LocalImageCachePath = localPath;
             }
@@ -510,14 +571,14 @@ namespace Nagi.Services.Implementations {
             }
         }
 
-        private string GetArtistImageCachePath(Guid artistId) {
-            var baseCachePath = _fileSystem.Combine(
+        private string GetArtistImageCachePath(Guid artistId, IFileSystemService fileSystem) {
+            var baseCachePath = fileSystem.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 "Nagi",
                 ArtistImageCacheFolderName);
 
-            _fileSystem.CreateDirectory(baseCachePath);
-            return _fileSystem.Combine(baseCachePath, $"{artistId}.jpg");
+            fileSystem.CreateDirectory(baseCachePath);
+            return fileSystem.Combine(baseCachePath, $"{artistId}.jpg");
         }
 
         public async Task<Artist?> GetArtistByIdAsync(Guid artistId) {
@@ -592,8 +653,6 @@ namespace Nagi.Services.Implementations {
             var album = _context.Albums.Local.FirstOrDefault(a =>
                             a.Title.Equals(normalizedTitle, StringComparison.OrdinalIgnoreCase) &&
                             a.ArtistId == artistForAlbum.Id)
-                        // Add AsTracking() because we might modify the fetched entity (e.g., update the year).
-                        // This is necessary because the DbContext is configured for NoTracking by default.
                         ?? await _context.Albums.AsTracking().FirstOrDefaultAsync(a =>
                             a.Title == normalizedTitle && a.ArtistId == artistForAlbum.Id);
 
@@ -602,8 +661,6 @@ namespace Nagi.Services.Implementations {
                 _context.Albums.Add(album);
             }
             else if (year.HasValue && album.Year == null) {
-                // The entity is tracked, so we can just modify its properties.
-                // SaveChangesAsync will detect and persist this change.
                 album.Year = year;
             }
 
@@ -672,12 +729,9 @@ namespace Nagi.Services.Implementations {
         }
 
         public async Task<bool> DeletePlaylistAsync(Guid playlistId) {
-            // FindAsync implicitly tracks entities, which is correct for deletion.
             var playlist = await _context.Playlists.FindAsync(playlistId);
             if (playlist == null) return false;
 
-            // The relationship is configured with Cascade delete, so removing the playlist
-            // will automatically remove its associated PlaylistSong entries.
             _context.Playlists.Remove(playlist);
 
             try {
@@ -695,7 +749,6 @@ namespace Nagi.Services.Implementations {
             if (string.IsNullOrWhiteSpace(newName))
                 throw new ArgumentException("New playlist name cannot be empty.", nameof(newName));
 
-            // FindAsync implicitly tracks entities, which is correct for finding an entity to update.
             var playlist = await _context.Playlists.FindAsync(playlistId);
             if (playlist == null) return false;
 
@@ -801,8 +854,6 @@ namespace Nagi.Services.Implementations {
         }
 
         public async Task<bool> ReorderSongInPlaylistAsync(Guid playlistId, Guid songId, int newOrder) {
-            // Use AsTracking() to ensure the fetched entity can be modified and saved,
-            // as the DbContext default is NoTracking.
             var playlistSong = await _context.PlaylistSongs
                 .AsTracking()
                 .FirstOrDefaultAsync(ps => ps.PlaylistId == playlistId && ps.SongId == songId);
@@ -811,7 +862,6 @@ namespace Nagi.Services.Implementations {
 
             playlistSong.Order = newOrder;
 
-            // FindAsync implicitly tracks entities, so it's suitable for finding an entity to update.
             var playlist = await _context.Playlists.FindAsync(playlistId);
             if (playlist != null) {
                 playlist.DateModified = DateTime.UtcNow;
@@ -823,7 +873,6 @@ namespace Nagi.Services.Implementations {
             }
             catch (DbUpdateException ex) {
                 Debug.WriteLine($"ERROR: Database update failed for playlist '{playlistId}', song '{songId}'. Reason: {ex.InnerException?.Message ?? ex.Message}");
-                // Reload the entities to discard the failed changes from the context.
                 if (playlistSong != null) await _context.Entry(playlistSong).ReloadAsync();
                 if (playlist != null) await _context.Entry(playlist).ReloadAsync();
                 return false;
@@ -1011,21 +1060,18 @@ namespace Nagi.Services.Implementations {
                     progress?.Report(new ScanProgress { StatusText = $"Removing {pathsToRemove.Count} deleted songs..." });
                     changesMade = true;
 
-                    // Step 1: Before deleting the records, retrieve the paths of any associated album art files.
                     var artPathsToDelete = await _context.Songs
                         .Where(s => s.FolderId == folder.Id && pathsToRemove.Contains(s.FilePath) && s.AlbumArtUriFromTrack != null)
                         .Select(s => s.AlbumArtUriFromTrack!)
                         .Distinct()
                         .ToListAsync();
 
-                    // Step 2: Use ExecuteDeleteAsync for a high-performance bulk delete operation.
                     var deletedCount = await _context.Songs
                         .Where(s => s.FolderId == folder.Id && pathsToRemove.Contains(s.FilePath))
                         .ExecuteDeleteAsync();
 
                     Debug.WriteLine($"[Rescan] Bulk deleted {deletedCount} song records for folder '{folder.Path}'.");
 
-                    // Step 3: Clean up the orphaned album art files from the local cache.
                     foreach (var artPath in artPathsToDelete) {
                         if (_fileSystem.FileExists(artPath)) {
                             try {
@@ -1059,7 +1105,6 @@ namespace Nagi.Services.Implementations {
                     }
                 }
 
-                // Use AsTracking to fetch the folder for modification.
                 var updatedFolder = await _context.Folders.AsTracking().FirstOrDefaultAsync(f => f.Id == folder.Id);
                 if (updatedFolder != null) {
                     try {
@@ -1188,7 +1233,6 @@ namespace Nagi.Services.Implementations {
 
             if (scanContext.AlbumCache.TryGetValue(cacheKey, out var album)) {
                 if (year.HasValue && album.Year == null) {
-                    // The album from the cache is not tracked. We must explicitly update it.
                     album.Year = year;
                     _context.Albums.Update(album);
                 }
@@ -1221,7 +1265,6 @@ namespace Nagi.Services.Implementations {
         }
 
         private async Task<Folder?> GetOrCreateFolderForScanAsync(string folderPath) {
-            // Use AsTracking() because we may need to update the LastModifiedDate of an existing folder.
             var folder = await _context.Folders.AsTracking().FirstOrDefaultAsync(f => f.Path == folderPath);
             DateTime? fileSystemLastModified = null;
             try {
@@ -1240,7 +1283,6 @@ namespace Nagi.Services.Implementations {
                 _context.Folders.Add(folder);
             }
             else if (folder.LastModifiedDate != fileSystemLastModified) {
-                // The folder entity is already tracked, so we just modify its property.
                 folder.LastModifiedDate = fileSystemLastModified;
             }
 
@@ -1287,10 +1329,9 @@ namespace Nagi.Services.Implementations {
             try {
                 _context.ChangeTracker.AutoDetectChangesEnabled = false;
 
-                // Use high-performance bulk delete operations to clear tables efficiently.
                 await _context.PlaylistSongs.ExecuteDeleteAsync();
-                await _context.Playlists.ExecuteDeleteAsync();
                 await _context.Songs.ExecuteDeleteAsync();
+                await _context.Playlists.ExecuteDeleteAsync();
                 await _context.Albums.ExecuteDeleteAsync();
                 await _context.Artists.ExecuteDeleteAsync();
                 await _context.Folders.ExecuteDeleteAsync();

@@ -160,7 +160,7 @@ public partial class App : Application {
     private static void InitializeDatabase() {
         try {
             using var dbContext = Services.GetRequiredService<MusicDbContext>();
-            dbContext.RecreateDatabase();
+            //dbContext.RecreateDatabase();
             dbContext.Database.EnsureCreated();
         }
         catch (Exception ex) {
@@ -180,6 +180,10 @@ public partial class App : Application {
         MainDispatcherQueue = _window.DispatcherQueue;
         _window.Closed += OnWindowClosed;
 
+        // Activate the window BEFORE setting content. This is the critical fix.
+        // This ensures the window has a valid HWND before any UI that might need it is shown.
+        _window.Activate();
+
         var playbackService = Services.GetRequiredService<IMusicPlaybackService>();
         try {
             await playbackService.InitializeAsync();
@@ -190,9 +194,12 @@ public partial class App : Application {
 
         TrySetMicaBackdrop();
         ReapplyCurrentDynamicTheme();
+
+        // Now that the window is active and has a handle, it's safe to set content.
         await CheckAndNavigateToMainContent();
 
-        // Activate the window according to user settings and launch context.
+        // This will now correctly handle the "start minimized" or "start hidden" scenarios
+        // for a window that has already been activated once.
         await HandleWindowActivationAsync(isStartupLaunch);
 
         EnqueuePostLaunchTasks();
@@ -402,22 +409,21 @@ public partial class App : Application {
         var startMinimized = await settingsService.GetStartMinimizedEnabledAsync();
         var hideToTray = await settingsService.GetHideToTrayEnabledAsync();
 
-        // If launched at startup, or if the user has configured "Start Minimized",
-        // we will not activate the window normally.
         if (isStartupLaunch || startMinimized) {
             if (hideToTray) {
-                // Start minimized to the system tray by not activating the window.
-                // The TrayIconViewModel ensures the icon is visible.
+                // Hide the window completely if starting minimized to tray.
+                _window.AppWindow.Hide();
                 Debug.WriteLine("[App] Starting minimized to tray.");
             }
             else {
-                // Start minimized to the taskbar using a flicker-free method.
+                // Minimize to the taskbar.
                 Debug.WriteLine("[App] Starting minimized to taskbar.");
                 WindowActivator.ShowMinimized(_window);
             }
         }
         else {
-            // Standard launch: Activate and show the window normally.
+            // For a normal launch, the initial Activate() call is sufficient.
+            // This ensures the window is brought to the foreground.
             Debug.WriteLine("[App] Starting normally.");
             _window.Activate();
         }
