@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿// TrayIconViewModel.cs
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using H.NotifyIcon;
 using Microsoft.UI.Dispatching;
@@ -22,11 +23,11 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable {
     private bool _isHideToTrayEnabledSetting;
 
     [ObservableProperty]
-    private bool _isWindowActuallyVisible = true;
+    public partial bool IsWindowActuallyVisible { get; set; } = true;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ToolTipText))]
-    private bool _isTrayIconEffectivelyVisible;
+    public partial bool IsTrayIconEffectivelyVisible { get; set; }
 
     /// <summary>
     /// Gets the tooltip text for the tray icon.

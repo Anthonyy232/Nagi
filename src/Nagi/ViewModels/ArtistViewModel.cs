@@ -1,4 +1,5 @@
-﻿using System;
+﻿// ArtistViewModel.cs
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -15,13 +16,13 @@ namespace Nagi.ViewModels;
 /// </summary>
 public partial class ArtistViewModelItem : ObservableObject {
     [ObservableProperty]
-    private Guid _id;
+    public partial Guid Id { get; set; }
 
     [ObservableProperty]
-    private string _name = string.Empty;
+    public partial string Name { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private string? _localImageCachePath;
+    public partial string? LocalImageCachePath { get; set; }
 }
 
 /// <summary>
@@ -35,7 +36,7 @@ public partial class ArtistViewModel : ObservableObject {
     private readonly Dictionary<Guid, ArtistViewModelItem> _artistLookup = new();
 
     [ObservableProperty]
-    private bool _hasArtists;
+    public partial bool HasArtists { get; set; }
 
     public ObservableCollection<ArtistViewModelItem> Artists { get; } = new();
 

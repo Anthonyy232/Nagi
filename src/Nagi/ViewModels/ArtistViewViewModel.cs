@@ -1,4 +1,5 @@
-﻿using System;
+﻿// ArtistViewViewModel.cs
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -51,13 +52,13 @@ public partial class ArtistViewViewModel : SongListViewModelBase {
     }
 
     [ObservableProperty]
-    private string _artistName = "Artist";
+    public partial string ArtistName { get; set; } = "Artist";
 
     [ObservableProperty]
-    private string _artistBio = "Loading biography...";
+    public partial string ArtistBio { get; set; } = "Loading biography...";
 
     [ObservableProperty]
-    private string? _artistImageUri;
+    public partial string? ArtistImageUri { get; set; }
 
     public ObservableCollection<ArtistAlbumViewModelItem> Albums { get; } = new();
 

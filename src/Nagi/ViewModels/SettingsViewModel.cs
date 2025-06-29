@@ -31,49 +31,49 @@ public partial class SettingsViewModel : ObservableObject {
     /// Gets or sets the selected application theme (Light, Dark, or System Default).
     /// </summary>
     [ObservableProperty]
-    private ElementTheme _selectedTheme;
+    public partial ElementTheme SelectedTheme { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether dynamic theming based on album art is enabled.
     /// </summary>
     [ObservableProperty]
-    private bool _isDynamicThemingEnabled;
+    public partial bool IsDynamicThemingEnabled { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether animations for the player bar are enabled.
     /// </summary>
     [ObservableProperty]
-    private bool _isPlayerAnimationEnabled;
+    public partial bool IsPlayerAnimationEnabled { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether the application should save and restore playback state across sessions.
     /// </summary>
     [ObservableProperty]
-    private bool _isRestorePlaybackStateEnabled;
+    public partial bool IsRestorePlaybackStateEnabled { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether the application should launch automatically on system startup.
     /// </summary>
     [ObservableProperty]
-    private bool _isAutoLaunchEnabled;
+    public partial bool IsAutoLaunchEnabled { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether the application should start in a minimized state.
     /// </summary>
     [ObservableProperty]
-    private bool _isStartMinimizedEnabled;
+    public partial bool IsStartMinimizedEnabled { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether the application should hide to the system tray when closed.
     /// </summary>
     [ObservableProperty]
-    private bool _isHideToTrayEnabled;
+    public partial bool IsHideToTrayEnabled { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether the application should fetch additional metadata (e.g., artist info, biographies) from Last.fm.
     /// </summary>
     [ObservableProperty]
-    private bool _isFetchMetadataFromLastFmEnabled;
+    public partial bool IsFetchMetadataFromLastFmEnabled { get; set; }
 
     /// <summary>
     /// Gets the list of available themes for binding to the UI.
@@ -94,7 +94,7 @@ public partial class SettingsViewModel : ObservableObject {
         IsAutoLaunchEnabled = await _settingsService.GetAutoLaunchEnabledAsync();
         IsStartMinimizedEnabled = await _settingsService.GetStartMinimizedEnabledAsync();
         IsHideToTrayEnabled = await _settingsService.GetHideToTrayEnabledAsync();
-        IsFetchMetadataFromLastFmEnabled = await _settingsService.GetFetchMetadataFromLastFmEnabledAsync(); // New setting
+        IsFetchMetadataFromLastFmEnabled = await _settingsService.GetFetchMetadataFromLastFmEnabledAsync();
         _isInitializing = false;
     }
 
