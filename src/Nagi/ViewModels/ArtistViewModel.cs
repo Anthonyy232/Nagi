@@ -74,8 +74,6 @@ public partial class ArtistViewModel : ObservableObject {
     }
 
     private void OnArtistMetadataUpdated(object? sender, ArtistMetadataUpdatedEventArgs e) {
-        // Use the dictionary for a fast O(1) lookup, which is much more
-        // efficient than searching the ObservableCollection.
         if (_artistLookup.TryGetValue(e.ArtistId, out var artistVm)) {
             // Ensure the UI update happens on the main thread.
             _dispatcherQueue.TryEnqueue(() => {

@@ -131,6 +131,7 @@ public partial class App : Application {
         services.AddSingleton<INavigationService, NavigationService>();
         services.AddSingleton<IApiKeyService, ApiKeyService>();
         services.AddSingleton<ILastFmService, LastFmService>();
+        services.AddSingleton<ISpotifyService, SpotifyService>();
 
         // Database
         services.AddTransient<MusicDbContext>();
