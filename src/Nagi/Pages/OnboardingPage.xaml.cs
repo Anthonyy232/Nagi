@@ -8,10 +8,15 @@ using Nagi.ViewModels;
 namespace Nagi.Pages;
 
 /// <summary>
-///     A page that prompts the user to add their initial music library folder.
-///     It manages the UI state based on background operations in its ViewModel.
+/// A page that prompts the user to add their initial music library folder.
+/// It manages the UI state based on background operations in its ViewModel.
 /// </summary>
 public sealed partial class OnboardingPage : Page, ICustomTitleBarProvider {
+    /// <summary>
+    /// Gets the view model associated with this page.
+    /// </summary>
+    public OnboardingViewModel ViewModel { get; }
+
     public OnboardingPage() {
         InitializeComponent();
         ViewModel = App.Services.GetRequiredService<OnboardingViewModel>();
@@ -21,19 +26,14 @@ public sealed partial class OnboardingPage : Page, ICustomTitleBarProvider {
     }
 
     /// <summary>
-    ///     Gets the view model associated with this page.
-    /// </summary>
-    public OnboardingViewModel ViewModel { get; }
-
-    /// <summary>
-    ///     Provides access to the TitleBar element that serves as the custom title bar.
+    /// Provides access to the TitleBar element that serves as the custom title bar.
     /// </summary>
     public TitleBar GetAppTitleBarElement() {
         return AppTitleBar;
     }
 
     /// <summary>
-    ///     Provides access to the RowDefinition for the custom title bar.
+    /// Provides access to the RowDefinition for the custom title bar.
     /// </summary>
     public RowDefinition GetAppTitleBarRowElement() {
         return AppTitleBarRow;
@@ -44,6 +44,7 @@ public sealed partial class OnboardingPage : Page, ICustomTitleBarProvider {
         VisualStateManager.GoToState(this, "PageLoaded", true);
 
         ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+
         // Set the initial visual state based on the view model's current status.
         UpdateVisualState(ViewModel.IsAnyOperationInProgress);
     }
@@ -54,19 +55,20 @@ public sealed partial class OnboardingPage : Page, ICustomTitleBarProvider {
     }
 
     /// <summary>
-    ///     Listens for ViewModel property changes to trigger UI state transitions.
+    /// Listens for ViewModel property changes to trigger UI state transitions.
     /// </summary>
     private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        if (e.PropertyName == nameof(ViewModel.IsAnyOperationInProgress))
+        if (e.PropertyName == nameof(ViewModel.IsAnyOperationInProgress)) {
             UpdateVisualState(ViewModel.IsAnyOperationInProgress);
+        }
     }
 
     /// <summary>
-    ///     Transitions the page between the 'Idle' and 'Working' visual states
-    ///     based on whether an operation is in progress.
+    /// Transitions the page between the 'Idle' and 'Working' visual states
+    /// based on whether an operation is in progress.
     /// </summary>
     private void UpdateVisualState(bool isWorking) {
-        var stateName = isWorking ? "Working" : "Idle";
+        string stateName = isWorking ? "Working" : "Idle";
         VisualStateManager.GoToState(this, stateName, true);
     }
 }

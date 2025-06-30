@@ -11,100 +11,115 @@ using WinRT.Interop;
 namespace Nagi;
 
 /// <summary>
-///     The main window of the application, responsible for hosting content and managing the custom title bar.
+/// The main application window, responsible for hosting page content and managing the custom title bar.
 /// </summary>
 public sealed partial class MainWindow : Window {
     private AppWindow? _appWindow;
 
+    /// <summary>
+    /// A flag to ensure the title bar is initialized only once upon first activation.
+    /// This prevents race conditions during the application's startup sequence.
+    /// </summary>
+    private bool _isTitleBarInitialized = false;
+
     public MainWindow() {
         InitializeComponent();
+
+        // Signal the intent to use a custom title bar. The actual title bar is
+        // configured in InitializeCustomTitleBar based on the page content.
         ExtendsContentIntoTitleBar = true;
+
         Activated += MainWindow_Activated;
+        Closed += MainWindow_Closed;
     }
 
     /// <summary>
-    ///     Initializes the custom title bar based on the current page. It configures the title bar
-    ///     differently for the OnboardingPage (no system controls) versus the MainPage (full custom title bar).
+    /// Configures the window's title bar. This method adapts the title bar based on the
+    /// current page, using a fully custom title bar for most pages but a modified
+    /// version for special cases like the OnboardingPage.
+    /// This should be called after every navigation to ensure the title bar reflects the current page.
     /// </summary>
     public void InitializeCustomTitleBar() {
         _appWindow ??= GetAppWindowForCurrentWindow();
         if (_appWindow == null) {
-            Debug.WriteLine("[MainWindow] AppWindow is not available. Cannot initialize custom title bar.");
+            // This is a critical failure; a custom title bar cannot be configured without the AppWindow.
+            Debug.WriteLine("[CRITICAL] AppWindow is not available. Cannot initialize custom title bar.");
             return;
         }
 
         _appWindow.SetIcon("Assets/AppLogo.ico");
 
         if (_appWindow.Presenter is not OverlappedPresenter presenter) {
-            Debug.WriteLine(
-                "[MainWindow] OverlappedPresenter is not available. Cannot customize title bar visibility.");
-            return;
-        }
-
-        // Try to get the custom title bar provider from the current content.
-        if (Content is not ICustomTitleBarProvider provider) {
-            // If the current page doesn't provide a custom title bar, revert to the default.
+            Debug.WriteLine("[WARNING] OverlappedPresenter is not available. Cannot customize title bar.");
+            // Revert to default title bar if we can't customize it.
             ExtendsContentIntoTitleBar = false;
-            Debug.WriteLine("[MainWindow] No ICustomTitleBarProvider found. Reverting to default title bar.");
+            SetTitleBar(null);
             return;
         }
 
-        // Get the custom title bar element from the provider.
-        if (provider.GetAppTitleBarElement() is not { } appTitleBarElement) {
-            // If the provider exists but doesn't return an element, this is an issue. Revert.
+        // Revert to the default title bar if the page does not provide a custom one.
+        if (Content is not ICustomTitleBarProvider provider || provider.GetAppTitleBarElement() is not { } titleBarElement) {
             ExtendsContentIntoTitleBar = false;
-            Debug.WriteLine("[MainWindow] ICustomTitleBarProvider did not provide a TitleBar element. Reverting.");
+            SetTitleBar(null);
+            // Restore system-drawn border and caption buttons.
+            presenter.SetBorderAndTitleBar(false, true);
             return;
         }
 
-        // Ensure we are extending content into the title bar area.
+        // At this point, all prerequisites are met. Configure the custom title bar.
         ExtendsContentIntoTitleBar = true;
+        SetTitleBar(titleBarElement);
 
-        // This is the crucial step: designate the XAML element as the title bar.
-        // This makes it draggable and clickable. This must be done for ALL custom title bars.
-        SetTitleBar(appTitleBarElement);
-        Debug.WriteLine("[MainWindow] Custom title bar element set.");
+        // Show or hide the system caption buttons (minimize, maximize, close) based on the page.
+        // The OnboardingPage uses a cleaner look without these buttons.
+        bool showSystemButtons = Content is not OnboardingPage;
+        presenter.SetBorderAndTitleBar(true, showSystemButtons);
 
-        // Get the row definition to manage its visibility.
-        var titleBarRow = provider.GetAppTitleBarRowElement();
-
-        // Now, customize based on the specific page type.
-        if (Content is OnboardingPage) {
-            // On the Onboarding page, hide the system title bar buttons for a cleaner look.
-            presenter.SetBorderAndTitleBar(true, false);
-            Debug.WriteLine("[MainWindow] OnboardingPage detected. Hiding system caption buttons.");
-
-            // Ensure the title bar row is visible so it can be dragged.
-            // The row height is set to Auto in XAML, which is what we want.
-            // We no longer set it to 0.
-            if (titleBarRow is not null) titleBarRow.Height = GridLength.Auto;
-        }
-        else // For MainPage and any other pages
-        {
-            // On all other pages, show the system title bar buttons, which will be inserted into our custom title bar.
-            presenter.SetBorderAndTitleBar(true, true);
-            Debug.WriteLine("[MainWindow] Standard page detected. Showing system caption buttons.");
-
-            // Ensure the title bar row has its space restored if it was ever changed.
-            if (titleBarRow is not null) titleBarRow.Height = GridLength.Auto;
+        // As a safeguard, ensure the title bar's containing row has its height restored.
+        // Using a fixed height matching the XAML definition is safer than 'Auto'.
+        if (provider.GetAppTitleBarRowElement() is { } titleBarRow) {
+            titleBarRow.Height = new GridLength(48);
         }
     }
 
+    /// <summary>
+    /// Handles the window's activation state changes.
+    /// </summary>
     private void MainWindow_Activated(object sender, WindowActivatedEventArgs args) {
-        // Forward window activation changes to the MainPage to update its visual state.
-        if (Content is MainPage mainPage) mainPage.UpdateActivationVisualState(args.WindowActivationState);
+        // On the very first launch, the window is activated after the initial page has loaded.
+        // Calling SetTitleBar before the window is active can fail silently.
+        // This block ensures the title bar is correctly initialized upon first activation.
+        if (!_isTitleBarInitialized) {
+            InitializeCustomTitleBar();
+            _isTitleBarInitialized = true;
+        }
+
+        // Forward window activation changes to the MainPage if it is active.
+        // This allows the page to update its UI, for example, by dimming
+        // the title bar when the window loses focus.
+        if (Content is MainPage mainPage) {
+            mainPage.UpdateActivationVisualState(args.WindowActivationState);
+        }
+    }
+
+    /// <summary>
+    /// Unsubscribes from events when the window is closed to prevent memory leaks.
+    /// </summary>
+    private void MainWindow_Closed(object sender, WindowEventArgs args) {
+        Activated -= MainWindow_Activated;
+        Closed -= MainWindow_Closed;
     }
 
     private AppWindow? GetAppWindowForCurrentWindow() {
         try {
-            var hWnd = WindowNative.GetWindowHandle(this);
+            IntPtr hWnd = WindowNative.GetWindowHandle(this);
             if (hWnd == IntPtr.Zero) return null;
-            var myWndId = Win32Interop.GetWindowIdFromWindow(hWnd);
+            WindowId myWndId = Win32Interop.GetWindowIdFromWindow(hWnd);
             return AppWindow.GetFromWindowId(myWndId);
         }
         catch (Exception ex) {
-            // This can happen if the window is closing.
-            Debug.WriteLine($"[MainWindow] Failed to get AppWindow: {ex.Message}");
+            // This can fail if the window is being closed or is otherwise unavailable.
+            Debug.WriteLine($"[ERROR] Failed to retrieve AppWindow: {ex.Message}");
             return null;
         }
     }

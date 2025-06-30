@@ -18,7 +18,7 @@
 
     <Grid x:Name="RootGrid" Opacity="0">
         <Grid.RowDefinitions>
-            <RowDefinition x:Name="AppTitleBarRow" Height="Auto" />
+            <RowDefinition x:Name="AppTitleBarRow" Height="48" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
