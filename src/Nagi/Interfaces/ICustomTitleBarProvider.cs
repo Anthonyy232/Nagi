@@ -6,8 +6,7 @@ namespace Nagi.Interfaces;
 ///     Defines a contract for pages that provide custom XAML elements to be used
 ///     for the application's title bar.
 /// </summary>
-public interface ICustomTitleBarProvider
-{
+public interface ICustomTitleBarProvider {
     /// <summary>
     ///     Gets the TitleBar control that serves as the custom title bar's content and drag region.
     /// </summary>

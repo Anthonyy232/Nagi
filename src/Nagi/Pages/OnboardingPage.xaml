@@ -140,7 +140,6 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
-        <!-- MODIFIED: Changed Grid to controls:TitleBar -->
         <controls:TitleBar x:Name="AppTitleBar" Grid.Row="0" Background="Transparent" />
 
         <Grid Grid.Row="1" Padding="48">

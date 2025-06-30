@@ -19,8 +19,7 @@ namespace Nagi;
 ///     The main shell of the application, hosting navigation, content, and the media player.
 ///     This page also provides the custom title bar elements to the main window.
 /// </summary>
-public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
-{
+public sealed partial class MainPage : UserControl, ICustomTitleBarProvider {
     private const double VolumeChangeStep = 5.0;
 
     // Maps detail page types to their parent navigation tag for correct item selection in the NavView.
@@ -50,8 +49,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     /// <summary>
     ///     Initializes a new instance of the <see cref="MainPage" /> class.
     /// </summary>
-    public MainPage()
-    {
+    public MainPage() {
         InitializeComponent();
         ViewModel = App.Services.GetRequiredService<PlayerViewModel>();
         _settingsService = App.Services.GetRequiredService<ISettingsService>();
@@ -74,21 +72,18 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     /// <summary>
     ///     Provides the title bar UI element to the main window.
     /// </summary>
-    public TitleBar GetAppTitleBarElement()
-    {
+    public TitleBar GetAppTitleBarElement() {
         return AppTitleBar;
     }
 
     /// <summary>
     ///     Provides the title bar row definition to the main window.
     /// </summary>
-    public RowDefinition GetAppTitleBarRowElement()
-    {
+    public RowDefinition GetAppTitleBarRowElement() {
         return AppTitleBarRow;
     }
 
-    private void InitializeNavigationService()
-    {
+    private void InitializeNavigationService() {
         var navigationService = App.Services.GetRequiredService<INavigationService>();
         navigationService.Initialize(ContentFrame);
     }
@@ -97,18 +92,15 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     ///     Updates the visual state of the page based on window activation.
     /// </summary>
     /// <param name="activationState">The window's activation state.</param>
-    public void UpdateActivationVisualState(WindowActivationState activationState)
-    {
+    public void UpdateActivationVisualState(WindowActivationState activationState) {
         var stateName = activationState == WindowActivationState.Deactivated
             ? "WindowIsInactive"
             : "WindowIsActive";
         VisualStateManager.GoToState(this, stateName, true);
     }
 
-    private void HandleNavigation(bool isSettings, object? selectedItem, NavigationTransitionInfo transitionInfo)
-    {
-        if (isSettings)
-        {
+    private void HandleNavigation(bool isSettings, object? selectedItem, NavigationTransitionInfo transitionInfo) {
+        if (isSettings) {
             if (ContentFrame.CurrentSourcePageType != typeof(SettingsPage))
                 ContentFrame.Navigate(typeof(SettingsPage), null, transitionInfo);
             return;
@@ -120,8 +112,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
             ContentFrame.Navigate(pageType, null, transitionInfo);
     }
 
-    private void TryGoBack()
-    {
+    private void TryGoBack() {
         if (ContentFrame.CanGoBack) ContentFrame.GoBack();
     }
 
@@ -129,10 +120,8 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     ///     Synchronizes the NavigationView's selected item with the current page in the content frame.
     ///     This ensures the correct item is highlighted, even for detail pages that don't have a direct NavView item.
     /// </summary>
-    private void UpdateNavViewSelection(Type currentPageType)
-    {
-        if (currentPageType == typeof(SettingsPage))
-        {
+    private void UpdateNavViewSelection(Type currentPageType) {
+        if (currentPageType == typeof(SettingsPage)) {
             NavView.SelectedItem = NavView.SettingsItem;
             return;
         }
@@ -148,8 +137,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
                 .FirstOrDefault(menuItem => menuItem.Tag?.ToString() == tagToSelect);
     }
 
-    private void ApplyDynamicThemeForCurrentTrack()
-    {
+    private void ApplyDynamicThemeForCurrentTrack() {
         var song = ViewModel.CurrentPlayingTrack;
         if (App.Current is App app) app.ApplyDynamicThemeFromSwatches(song?.LightSwatchId, song?.DarkSwatchId);
     }
@@ -158,8 +146,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     ///     Transitions the player UI between its expanded and collapsed states.
     /// </summary>
     /// <param name="useTransitions">Whether to animate the state change.</param>
-    private void UpdatePlayerVisualState(bool useTransitions = true)
-    {
+    private void UpdatePlayerVisualState(bool useTransitions = true) {
         var isPlaying = ViewModel.CurrentPlayingTrack != null && ViewModel.IsPlaying;
 
         // The player should be expanded if music is playing, the user is hovering over it,
@@ -170,8 +157,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         VisualStateManager.GoToState(this, stateName, useTransitions);
     }
 
-    private async void OnMainPageLoaded(object sender, RoutedEventArgs e)
-    {
+    private async void OnMainPageLoaded(object sender, RoutedEventArgs e) {
         // Select the first item if nothing is selected.
         if (NavView.MenuItems.Any() && NavView.SelectedItem == null)
             NavView.SelectedItem = NavView.MenuItems.OfType<NavigationViewItem>().FirstOrDefault()
@@ -184,29 +170,24 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         UpdatePlayerVisualState(false);
     }
 
-    private void OnMainPageUnloaded(object sender, RoutedEventArgs e)
-    {
+    private void OnMainPageUnloaded(object sender, RoutedEventArgs e) {
         _settingsService.PlayerAnimationSettingChanged -= OnPlayerAnimationSettingChanged;
         ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
     }
 
-    private void OnPlayerAnimationSettingChanged(bool isEnabled)
-    {
+    private void OnPlayerAnimationSettingChanged(bool isEnabled) {
         // Ensure UI updates happen on the main thread.
-        DispatcherQueue.TryEnqueue(() =>
-        {
+        DispatcherQueue.TryEnqueue(() => {
             _isPlayerAnimationEnabled = isEnabled;
             UpdatePlayerVisualState(false);
         });
     }
 
-    private void OnActualThemeChanged(FrameworkElement sender, object args)
-    {
+    private void OnActualThemeChanged(FrameworkElement sender, object args) {
         ApplyDynamicThemeForCurrentTrack();
     }
 
-    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
+    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         if (e.PropertyName == nameof(PlayerViewModel.CurrentPlayingTrack))
             DispatcherQueue.TryEnqueue(ApplyDynamicThemeForCurrentTrack);
 
@@ -214,23 +195,19 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
             DispatcherQueue.TryEnqueue(() => UpdatePlayerVisualState());
     }
 
-    private void NavView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
-    {
+    private void NavView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args) {
         HandleNavigation(args.IsSettingsInvoked, args.InvokedItemContainer, args.RecommendedNavigationTransitionInfo);
     }
 
-    private void NavView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
-    {
+    private void NavView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args) {
         HandleNavigation(args.IsSettingsSelected, args.SelectedItem, args.RecommendedNavigationTransitionInfo);
     }
 
-    private void NavView_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
-    {
+    private void NavView_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args) {
         TryGoBack();
     }
 
-    private void OnContentFrameNavigated(object sender, NavigationEventArgs e)
-    {
+    private void OnContentFrameNavigated(object sender, NavigationEventArgs e) {
         // Show the title bar's back button only on detail pages where back navigation is logical.
         var isDetailPage = _detailPageToParentTagMap.ContainsKey(e.SourcePageType);
         AppTitleBar.IsBackButtonVisible = ContentFrame.CanGoBack && isDetailPage;
@@ -238,33 +215,28 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         UpdateNavViewSelection(e.SourcePageType);
     }
 
-    private void VolumeControlsWrapper_PointerWheelChanged(object sender, PointerRoutedEventArgs e)
-    {
+    private void VolumeControlsWrapper_PointerWheelChanged(object sender, PointerRoutedEventArgs e) {
         var delta = e.GetCurrentPoint(sender as UIElement).Properties.MouseWheelDelta;
         var change = delta > 0 ? VolumeChangeStep : -VolumeChangeStep;
         ViewModel.CurrentVolume = Math.Clamp(ViewModel.CurrentVolume + change, 0, 100);
         e.Handled = true;
     }
 
-    private void FloatingPlayerContainer_PointerEntered(object sender, PointerRoutedEventArgs e)
-    {
+    private void FloatingPlayerContainer_PointerEntered(object sender, PointerRoutedEventArgs e) {
         _isPointerOverPlayer = true;
         UpdatePlayerVisualState();
     }
 
-    private void FloatingPlayerContainer_PointerExited(object sender, PointerRoutedEventArgs e)
-    {
+    private void FloatingPlayerContainer_PointerExited(object sender, PointerRoutedEventArgs e) {
         _isPointerOverPlayer = false;
         UpdatePlayerVisualState();
     }
 
-    private void AppTitleBar_PaneToggleRequested(TitleBar sender, object args)
-    {
+    private void AppTitleBar_PaneToggleRequested(TitleBar sender, object args) {
         NavView.IsPaneOpen = !NavView.IsPaneOpen;
     }
 
-    private void AppTitleBar_BackRequested(TitleBar sender, object args)
-    {
+    private void AppTitleBar_BackRequested(TitleBar sender, object args) {
         TryGoBack();
     }
 }
