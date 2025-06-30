@@ -388,13 +388,14 @@ namespace Nagi.Services.Implementations {
         #region Artist Management
 
         /// <summary>
-        /// Retrieves artist details. If metadata (biography, image) is not available locally,
-        /// it fetches it concurrently from external services and caches it.
+        /// Retrieves artist details. If metadata (biography, image) is not available locally
+        /// and online fetching is allowed, it fetches data from external services and caches it.
         /// This method is safe to call from the UI thread.
         /// </summary>
         /// <param name="artistId">The ID of the artist.</param>
+        /// <param name="allowOnlineFetch">A flag indicating whether to fetch missing metadata from online services.</param>
         /// <returns>The Artist entity with details, or null if the artist is not found.</returns>
-        public async Task<Artist?> GetOrFetchArtistDetailsAsync(Guid artistId) {
+        public async Task<Artist?> GetArtistDetailsAsync(Guid artistId, bool allowOnlineFetch) {
             // Use AsTracking here because we intend to modify the artist entity with fetched metadata.
             var artist = await _context.Artists
                 .AsTracking()
@@ -403,8 +404,11 @@ namespace Nagi.Services.Implementations {
 
             if (artist == null) return null;
 
-            // If biography is already present, we assume the artist is fully populated.
-            if (artist.Biography != null) return artist;
+            // If online fetching is disabled or the biography is already present, return the artist as-is.
+            // We use the biography as a marker for whether a fetch has been attempted before.
+            if (!allowOnlineFetch || artist.Biography != null) {
+                return artist;
+            }
 
             // This method now uses the class-level services, which is safe for a single,
             // UI-driven operation.

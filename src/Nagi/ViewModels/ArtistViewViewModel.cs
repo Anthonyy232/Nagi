@@ -1,5 +1,4 @@
-﻿// ArtistViewViewModel.cs
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -40,11 +39,13 @@ public partial class ArtistAlbumViewModelItem : ObservableObject {
 public partial class ArtistViewViewModel : SongListViewModelBase {
     private Guid _artistId;
     private readonly DispatcherQueue _dispatcherQueue;
+    private readonly ISettingsService _settingsService;
 
     public ArtistViewViewModel(ILibraryService libraryService, IMusicPlaybackService playbackService,
-        INavigationService navigationService)
+        INavigationService navigationService, ISettingsService settingsService)
         : base(libraryService, playbackService, navigationService) {
         _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+        _settingsService = settingsService;
         CurrentSortOrder = SongSortOrder.AlbumAsc;
         UpdateSortOrderButtonText(CurrentSortOrder);
         Albums.CollectionChanged += (s, e) => OnPropertyChanged(nameof(HasAlbums));
@@ -71,7 +72,11 @@ public partial class ArtistViewViewModel : SongListViewModelBase {
         _artistId = artistId;
 
         try {
-            var artist = await _libraryService.GetOrFetchArtistDetailsAsync(artistId);
+            // Get the user's preference from settings.
+            bool shouldFetchOnline = await _settingsService.GetFetchOnlineMetadataEnabledAsync();
+
+            // Pass the preference to the library service.
+            var artist = await _libraryService.GetArtistDetailsAsync(artistId, shouldFetchOnline);
 
             if (artist != null) {
                 ArtistName = artist.Name;

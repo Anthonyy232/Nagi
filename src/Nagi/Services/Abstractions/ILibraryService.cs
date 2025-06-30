@@ -60,7 +60,7 @@ public interface ILibraryService {
     // --- Artist Management ---
     //
     Task<Artist?> GetArtistByIdAsync(Guid artistId);
-    Task<Artist?> GetOrFetchArtistDetailsAsync(Guid artistId);
+    Task<Artist?> GetArtistDetailsAsync(Guid artistId, bool allowOnlineFetch);
     Task<Artist?> GetArtistByNameAsync(string name);
     Task<IEnumerable<Artist>> GetAllArtistsAsync();
     Task<IEnumerable<Artist>> SearchArtistsAsync(string searchTerm);

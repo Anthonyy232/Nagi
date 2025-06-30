@@ -1,5 +1,4 @@
-﻿// ArtistViewModel.cs
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -30,6 +29,7 @@ public partial class ArtistViewModelItem : ObservableObject {
 /// </summary>
 public partial class ArtistViewModel : ObservableObject {
     private readonly ILibraryService _libraryService;
+    private readonly ISettingsService _settingsService;
     private readonly DispatcherQueue _dispatcherQueue;
 
     // A dictionary for fast O(1) lookups of artists by their ID.
@@ -40,8 +40,9 @@ public partial class ArtistViewModel : ObservableObject {
 
     public ObservableCollection<ArtistViewModelItem> Artists { get; } = new();
 
-    public ArtistViewModel(ILibraryService libraryService) {
+    public ArtistViewModel(ILibraryService libraryService, ISettingsService settingsService) {
         _libraryService = libraryService;
+        _settingsService = settingsService;
         _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
         _libraryService.ArtistMetadataUpdated += OnArtistMetadataUpdated;
     }
@@ -69,9 +70,11 @@ public partial class ArtistViewModel : ObservableObject {
 
         HasArtists = Artists.Any();
 
-        // After loading the artists, kick off the background process
+        // After loading the artists, check the setting before kicking off the background process
         // to find and download any missing metadata (like images).
-        await _libraryService.StartArtistMetadataBackgroundFetchAsync();
+        if (await _settingsService.GetFetchOnlineMetadataEnabledAsync()) {
+            await _libraryService.StartArtistMetadataBackgroundFetchAsync();
+        }
     }
 
     private void OnArtistMetadataUpdated(object? sender, ArtistMetadataUpdatedEventArgs e) {
