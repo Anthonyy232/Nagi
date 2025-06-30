@@ -1,207 +1,207 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<OutputType>WinExe</OutputType>
-		<TargetFramework>net$(NetVersion)-windows$(WindowsSdkVersion)</TargetFramework>
-		<TargetPlatformMinVersion>$(WindowsTargetPlatformMinVersion)</TargetPlatformMinVersion>
-		<RootNamespace>Nagi</RootNamespace>
-		<ApplicationManifest>app.manifest</ApplicationManifest>
-		<Platforms>x86;x64;ARM64</Platforms>
-		<RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
-		<PublishProfile>win-$(Platform).pubxml</PublishProfile>
-		<UseWinUI>true</UseWinUI>
-		<EnableMsixTooling>true</EnableMsixTooling>
-		<Nullable>enable</Nullable>
-		<DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
-	</PropertyGroup>
-	<ItemGroup>
-		<None Remove="Assets\Raws\AppLogo.ico" />
-		<None Remove="Assets\Raws\AppLogo.png" />
-		<None Remove="Assets\Raws\AppLogo.svg" />
-		<None Remove="Controls\TrayIconUserControl.xaml" />
-		<None Remove="Pages\AlbumPage.xaml" />
-		<None Remove="Pages\AlbumViewPage.xaml" />
-		<None Remove="Pages\ArtistPage.xaml" />
-		<None Remove="Pages\FolderPage.xaml" />
-		<None Remove="Pages\FolderSongViewPage.xaml" />
-		<None Remove="Pages\OnboardingPage.xaml" />
-		<None Remove="Styles\AlbumPageColors.xaml" />
-		<None Remove="Styles\AlbumViewPageColors.xaml" />
-		<None Remove="Styles\ArtistPageColors.xaml" />
-		<None Remove="Styles\ArtistViewPageColors.xaml" />
-		<None Remove="Styles\Colors.xaml" />
-		<None Remove="Styles\FolderPageColors.xaml" />
-		<None Remove="Styles\FolderSongViewPageColors.xaml" />
-		<None Remove="Styles\OnboardingPageColors.xaml" />
-		<None Remove="Styles\PlaylistPageColors.xaml" />
-		<None Remove="Styles\SettingsPageColors.xaml" />
-	</ItemGroup>
-	<ItemGroup>
-		<Page Remove="LibraryPage.xaml" />
-	</ItemGroup>
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net$(NetVersion)-windows$(WindowsSdkVersion)</TargetFramework>
+        <TargetPlatformMinVersion>$(WindowsTargetPlatformMinVersion)</TargetPlatformMinVersion>
+        <RootNamespace>Nagi</RootNamespace>
+        <ApplicationManifest>app.manifest</ApplicationManifest>
+        <Platforms>x86;x64;ARM64</Platforms>
+        <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+        <PublishProfile>win-$(Platform).pubxml</PublishProfile>
+        <UseWinUI>true</UseWinUI>
+        <EnableMsixTooling>true</EnableMsixTooling>
+        <Nullable>enable</Nullable>
+        <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
+    </PropertyGroup>
+    <ItemGroup>
+        <None Remove="Assets\Raws\AppLogo.ico"/>
+        <None Remove="Assets\Raws\AppLogo.png"/>
+        <None Remove="Assets\Raws\AppLogo.svg"/>
+        <None Remove="Controls\TrayIconUserControl.xaml"/>
+        <None Remove="Pages\AlbumPage.xaml"/>
+        <None Remove="Pages\AlbumViewPage.xaml"/>
+        <None Remove="Pages\ArtistPage.xaml"/>
+        <None Remove="Pages\FolderPage.xaml"/>
+        <None Remove="Pages\FolderSongViewPage.xaml"/>
+        <None Remove="Pages\OnboardingPage.xaml"/>
+        <None Remove="Styles\AlbumPageColors.xaml"/>
+        <None Remove="Styles\AlbumViewPageColors.xaml"/>
+        <None Remove="Styles\ArtistPageColors.xaml"/>
+        <None Remove="Styles\ArtistViewPageColors.xaml"/>
+        <None Remove="Styles\Colors.xaml"/>
+        <None Remove="Styles\FolderPageColors.xaml"/>
+        <None Remove="Styles\FolderSongViewPageColors.xaml"/>
+        <None Remove="Styles\OnboardingPageColors.xaml"/>
+        <None Remove="Styles\PlaylistPageColors.xaml"/>
+        <None Remove="Styles\SettingsPageColors.xaml"/>
+    </ItemGroup>
+    <ItemGroup>
+        <Page Remove="LibraryPage.xaml"/>
+    </ItemGroup>
 
-	<ItemGroup>
-		<Content Include="Assets\SplashScreen.scale-200.png" />
-		<Content Include="Assets\LockScreenLogo.scale-200.png" />
-		<Content Include="Assets\Square150x150Logo.scale-200.png" />
-		<Content Include="Assets\Square44x44Logo.scale-200.png" />
-		<Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
-		<Content Include="Assets\Wide310x150Logo.scale-200.png" />
-	</ItemGroup>
+    <ItemGroup>
+        <Content Include="Assets\SplashScreen.scale-200.png"/>
+        <Content Include="Assets\LockScreenLogo.scale-200.png"/>
+        <Content Include="Assets\Square150x150Logo.scale-200.png"/>
+        <Content Include="Assets\Square44x44Logo.scale-200.png"/>
+        <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png"/>
+        <Content Include="Assets\Wide310x150Logo.scale-200.png"/>
+    </ItemGroup>
 
-	<ItemGroup>
-		<Manifest Include="$(ApplicationManifest)" />
-	</ItemGroup>
+    <ItemGroup>
+        <Manifest Include="$(ApplicationManifest)"/>
+    </ItemGroup>
 
-	<!--
+    <!--
       Defining the "Msix" ProjectCapability here allows the Single-project MSIX Packaging
       Tools extension to be activated for this project even if the Windows App SDK Nuget
       package has not yet been restored.
     -->
-	<ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
-		<ProjectCapability Include="Msix" />
-	</ItemGroup>
+    <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
+        <ProjectCapability Include="Msix"/>
+    </ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="ColorThief.ImageSharp" Version="$(ColorThiefImageSharpVersion)" />
-		<PackageReference Include="CommunityToolkit.Mvvm" Version="$(CommunityToolkitMvvmVersion)" />
-		<PackageReference Include="CommunityToolkit.WinUI.Controls.ColorPicker" Version="$(CommunityToolkitWinUIVersion)" />
-		<PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="$(CommunityToolkitWinUIVersion)" />
-		<PackageReference Include="H.NotifyIcon.WinUI" Version="2.3.0" />
-		<PackageReference Include="ImageEx.WinUI" Version="$(ImageExWinUIVersion)" />
-		<PackageReference Include="MaterialColorUtilities" Version="$(MaterialColorUtilitiesVersion)" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="$(EntityFrameworkCoreVersion)" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="$(EntityFrameworkCoreVersion)">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="$(EntityFrameworkCoreVersion)" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="$(EntityFrameworkCoreVersion)">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.0-preview.5.25277.114" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="9.0.6" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.6" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="$(DependencyInjectionVersion)" />
-		<PackageReference Include="Microsoft.Extensions.Http" Version="9.0.6" />
-		<PackageReference Include="Microsoft.WindowsAppSDK" Version="$(WindowsAppSdkVersion)" />
-		<PackageReference Include="TagLibSharp" Version="$(TagLibSharpVersion)" />
-	</ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="ColorThief.ImageSharp" Version="$(ColorThiefImageSharpVersion)"/>
+        <PackageReference Include="CommunityToolkit.Mvvm" Version="$(CommunityToolkitMvvmVersion)"/>
+        <PackageReference Include="CommunityToolkit.WinUI.Controls.ColorPicker" Version="$(CommunityToolkitWinUIVersion)"/>
+        <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="$(CommunityToolkitWinUIVersion)"/>
+        <PackageReference Include="H.NotifyIcon.WinUI" Version="2.3.0"/>
+        <PackageReference Include="ImageEx.WinUI" Version="$(ImageExWinUIVersion)"/>
+        <PackageReference Include="MaterialColorUtilities" Version="$(MaterialColorUtilitiesVersion)"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="$(EntityFrameworkCoreVersion)"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="$(EntityFrameworkCoreVersion)">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="$(EntityFrameworkCoreVersion)"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="$(EntityFrameworkCoreVersion)">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.0-preview.5.25277.114"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="9.0.6"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.6"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="$(DependencyInjectionVersion)"/>
+        <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.6"/>
+        <PackageReference Include="Microsoft.WindowsAppSDK" Version="$(WindowsAppSdkVersion)"/>
+        <PackageReference Include="TagLibSharp" Version="$(TagLibSharpVersion)"/>
+    </ItemGroup>
 
-	<ItemGroup>
-		<Content Update="Assets\AppLogo.ico">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-		<Content Update="Assets\Raws\AppLogo.svg">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-		<Content Update="Assets\Raws\AppLogo.png">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-	</ItemGroup>
+    <ItemGroup>
+        <Content Update="Assets\AppLogo.ico">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Update="Assets\Raws\AppLogo.svg">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Update="Assets\Raws\AppLogo.png">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
 
-	<ItemGroup>
-	  <None Update="appsettings.json">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	</ItemGroup>
-	<ItemGroup>
-		<Page Update="Styles\OnboardingPageColors.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</Page>
-	</ItemGroup>
-	<ItemGroup>
-		<Page Update="Styles\AlbumViewPageColors.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</Page>
-		<Page Update="Styles\AlbumPageColors.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</Page>
-		<Page Update="Pages\AlbumViewPage.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</Page>
-		<Page Update="Pages\AlbumPage.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</Page>
-		<Page Update="Styles\SongListViewPageColors.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</Page>
-		<Page Update="Styles\ArtistViewPageColors.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</Page>
-		<Page Update="Styles\ArtistPageColors.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</Page>
-		<Page Update="Pages\ArtistPage.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</Page>
-		<Page Update="Pages\ArtistViewPage.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</Page>
-		<Page Update="Styles\FolderPageColors.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</Page>
-		<Page Update="Styles\FolderSongViewPageColors.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</Page>
-		<Page Update="Pages\FolderSongViewPage.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</Page>
-		<Page Update="Pages\FolderPage.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</Page>
-		<Page Update="Styles\SettingsPageColors.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</Page>
-		<Page Update="Styles\PlaylistPageColors.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</Page>
-		<Page Update="Styles\PlaylistSongViewPageColors.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</Page>
-		<Page Update="Pages\PlaylistSongViewPage.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</Page>
-	</ItemGroup>
-	<ItemGroup>
-		<Page Update="Pages\OnboardingPage.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</Page>
-	</ItemGroup>
-	<ItemGroup>
-		<Page Update="Styles\LibraryPageColors.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</Page>
-	</ItemGroup>
-	<ItemGroup>
-		<Page Update="Styles\MediaControlPlayerColors.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</Page>
-		<Page Update="Styles\Colors.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</Page>
-	</ItemGroup>
-	<ItemGroup>
-	  <Page Update="Controls\TrayIconUserControl.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </Page>
-	</ItemGroup>
+    <ItemGroup>
+        <None Update="appsettings.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+    <ItemGroup>
+        <Page Update="Styles\OnboardingPageColors.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+    </ItemGroup>
+    <ItemGroup>
+        <Page Update="Styles\AlbumViewPageColors.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="Styles\AlbumPageColors.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="Pages\AlbumViewPage.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="Pages\AlbumPage.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="Styles\SongListViewPageColors.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="Styles\ArtistViewPageColors.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="Styles\ArtistPageColors.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="Pages\ArtistPage.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="Pages\ArtistViewPage.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="Styles\FolderPageColors.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="Styles\FolderSongViewPageColors.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="Pages\FolderSongViewPage.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="Pages\FolderPage.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="Styles\SettingsPageColors.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="Styles\PlaylistPageColors.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="Styles\PlaylistSongViewPageColors.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="Pages\PlaylistSongViewPage.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+    </ItemGroup>
+    <ItemGroup>
+        <Page Update="Pages\OnboardingPage.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+    </ItemGroup>
+    <ItemGroup>
+        <Page Update="Styles\LibraryPageColors.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+    </ItemGroup>
+    <ItemGroup>
+        <Page Update="Styles\MediaControlPlayerColors.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+        <Page Update="Styles\Colors.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+    </ItemGroup>
+    <ItemGroup>
+        <Page Update="Controls\TrayIconUserControl.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </Page>
+    </ItemGroup>
 
-	<!--
+    <!--
       Defining the "HasPackageAndPublishMenuAddedByProject" property here allows the Solution
       Explorer "Package and Publish" context menu entry to be enabled for this project even if
       the Windows App SDK Nuget package has not yet been restored.
     -->
-	<PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
-		<HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
-	</PropertyGroup>
+    <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
+        <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
+    </PropertyGroup>
 
-	<!-- Publish Properties -->
-	<PropertyGroup>
-		<PublishReadyToRun Condition="'$(Configuration)' == 'Debug'">False</PublishReadyToRun>
-		<PublishReadyToRun Condition="'$(Configuration)' != 'Debug'">True</PublishReadyToRun>
-		<PublishTrimmed Condition="'$(Configuration)' == 'Debug'">False</PublishTrimmed>
-		<PublishTrimmed Condition="'$(Configuration)' != 'Debug'">True</PublishTrimmed>
-		<SupportedOSPlatformVersion>10.0.18362.0</SupportedOSPlatformVersion>
-	</PropertyGroup>
+    <!-- Publish Properties -->
+    <PropertyGroup>
+        <PublishReadyToRun Condition="'$(Configuration)' == 'Debug'">False</PublishReadyToRun>
+        <PublishReadyToRun Condition="'$(Configuration)' != 'Debug'">True</PublishReadyToRun>
+        <PublishTrimmed Condition="'$(Configuration)' == 'Debug'">False</PublishTrimmed>
+        <PublishTrimmed Condition="'$(Configuration)' != 'Debug'">True</PublishTrimmed>
+        <SupportedOSPlatformVersion>10.0.18362.0</SupportedOSPlatformVersion>
+    </PropertyGroup>
 </Project>

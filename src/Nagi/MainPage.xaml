@@ -468,10 +468,10 @@
             </controls:NavigationView>
         </Grid>
 
-        <localControls:TrayIconUserControl 
-            x:Name="AppTrayIconHost" 
-            VerticalAlignment="Top" HorizontalAlignment="Left" 
-            Width="1" Height="1" Opacity="0" IsTabStop="False"/>
+        <localControls:TrayIconUserControl
+            x:Name="AppTrayIconHost"
+            VerticalAlignment="Top" HorizontalAlignment="Left"
+            Width="1" Height="1" Opacity="0" IsTabStop="False" />
 
         <Grid
             x:Name="ProgressOverlayGrid"

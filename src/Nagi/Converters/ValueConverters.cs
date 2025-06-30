@@ -186,26 +186,27 @@ public class CollectionToVisibilityConverter : IValueConverter
 }
 
 /// <summary>
-/// Converts a string to a Visibility value. If the string is null or empty,
-/// it returns Collapsed; otherwise, it returns Visible. Can be inverted.
+///     Converts a string to a Visibility value. If the string is null or empty,
+///     it returns Collapsed; otherwise, it returns Visible. Can be inverted.
 /// </summary>
-public class NullOrEmptyStringToVisibilityConverter : IValueConverter {
+public class NullOrEmptyStringToVisibilityConverter : IValueConverter
+{
     /// <summary>
-    /// Gets or sets a value indicating whether to invert the logic.
-    /// If true, null/empty strings result in Visible, and non-empty strings result in Collapsed.
+    ///     Gets or sets a value indicating whether to invert the logic.
+    ///     If true, null/empty strings result in Visible, and non-empty strings result in Collapsed.
     /// </summary>
     public bool Invert { get; set; }
 
-    public object Convert(object value, Type targetType, object parameter, string language) {
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
         var isNullOrEmpty = string.IsNullOrEmpty(value as string);
 
-        if (Invert) {
-            return isNullOrEmpty ? Visibility.Visible : Visibility.Collapsed;
-        }
+        if (Invert) return isNullOrEmpty ? Visibility.Visible : Visibility.Collapsed;
         return isNullOrEmpty ? Visibility.Collapsed : Visibility.Visible;
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, string language) {
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
         throw new NotImplementedException();
     }
 }

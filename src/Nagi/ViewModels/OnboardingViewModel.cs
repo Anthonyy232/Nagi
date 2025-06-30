@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Windows.Storage.Pickers;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Nagi.Services;
 using Nagi.Services.Abstractions;
 using Nagi.Services.Implementations;
 using WinRT.Interop;
@@ -14,11 +13,13 @@ namespace Nagi.ViewModels;
 /// <summary>
 ///     Manages the state and logic for the initial user onboarding process.
 /// </summary>
-public partial class OnboardingViewModel : ObservableObject {
+public partial class OnboardingViewModel : ObservableObject
+{
     private const string InitialWelcomeMessage = "Let's set up your music library to get started.";
     private readonly ILibraryService _libraryService;
 
-    public OnboardingViewModel(ILibraryService libraryService) {
+    public OnboardingViewModel(ILibraryService libraryService)
+    {
         _libraryService = libraryService ?? throw new ArgumentNullException(nameof(libraryService));
     }
 
@@ -43,24 +44,29 @@ public partial class OnboardingViewModel : ObservableObject {
     ///     Initiates the folder selection and library scanning process.
     /// </summary>
     [RelayCommand]
-    private async Task AddFolder() {
+    private async Task AddFolder()
+    {
         if (IsAnyOperationInProgress) return;
 
         IsAddingFolder = true;
         StatusMessage = "Waiting for you to select a folder...";
 
-        try {
+        try
+        {
             var folderPicker = new FolderPicker();
 
             // Defensive check to ensure the window and its handle are ready.
-            if (App.RootWindow == null) {
+            if (App.RootWindow == null)
+            {
                 StatusMessage = "Application window not found. Cannot open folder picker.";
                 Debug.WriteLine("[OnboardingViewModel] App.RootWindow is null.");
                 IsAddingFolder = false;
                 return;
             }
+
             var hwnd = WindowNative.GetWindowHandle(App.RootWindow);
-            if (hwnd == IntPtr.Zero) {
+            if (hwnd == IntPtr.Zero)
+            {
                 StatusMessage = "Application window is not ready. Please try again.";
                 Debug.WriteLine("[OnboardingViewModel] Failed to get a valid window handle (HWND).");
                 IsAddingFolder = false;
@@ -72,16 +78,19 @@ public partial class OnboardingViewModel : ObservableObject {
 
             var selectedFolder = await folderPicker.PickSingleFolderAsync();
 
-            if (selectedFolder != null) {
+            if (selectedFolder != null)
+            {
                 StatusMessage = $"Adding folder: {selectedFolder.DisplayName}...";
                 var addedAppFolder =
                     await _libraryService.AddFolderAsync(selectedFolder.Path, selectedFolder.DisplayName);
 
-                if (addedAppFolder != null) {
+                if (addedAppFolder != null)
+                {
                     IsAddingFolder = false;
                     IsParsing = true;
 
-                    var progressReporter = new Progress<ScanProgress>(progress => {
+                    var progressReporter = new Progress<ScanProgress>(progress =>
+                    {
                         ParsingProgressValue = progress.Percentage;
                         StatusMessage = $"Scanning '{addedAppFolder.Name}'";
                     });
@@ -92,17 +101,20 @@ public partial class OnboardingViewModel : ObservableObject {
                     StatusMessage = "Library created successfully!";
                     App.CurrentApp?.CheckAndNavigateToMainContent();
                 }
-                else {
+                else
+                {
                     StatusMessage = "This folder is already in your library.";
                     IsAddingFolder = false;
                 }
             }
-            else {
+            else
+            {
                 StatusMessage = InitialWelcomeMessage;
                 IsAddingFolder = false;
             }
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             StatusMessage = "An unexpected error occurred.";
             Debug.WriteLine($"[OnboardingViewModel] Critical error during AddFolder: {ex.Message}");
             IsAddingFolder = false;

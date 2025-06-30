@@ -8,38 +8,43 @@ using Nagi.ViewModels;
 namespace Nagi.Pages;
 
 /// <summary>
-/// A page that prompts the user to add their initial music library folder.
-/// It manages the UI state based on background operations in its ViewModel.
+///     A page that prompts the user to add their initial music library folder.
+///     It manages the UI state based on background operations in its ViewModel.
 /// </summary>
-public sealed partial class OnboardingPage : Page, ICustomTitleBarProvider {
-    /// <summary>
-    /// Gets the view model associated with this page.
-    /// </summary>
-    public OnboardingViewModel ViewModel { get; }
-
-    public OnboardingPage() {
-        this.InitializeComponent();
+public sealed partial class OnboardingPage : Page, ICustomTitleBarProvider
+{
+    public OnboardingPage()
+    {
+        InitializeComponent();
         ViewModel = App.Services.GetRequiredService<OnboardingViewModel>();
-        this.DataContext = ViewModel;
-        this.Loaded += OnboardingPage_Loaded;
-        this.Unloaded += OnboardingPage_Unloaded;
+        DataContext = ViewModel;
+        Loaded += OnboardingPage_Loaded;
+        Unloaded += OnboardingPage_Unloaded;
     }
 
     /// <summary>
-    /// Provides access to the TitleBar element that serves as the custom title bar.
+    ///     Gets the view model associated with this page.
     /// </summary>
-    public TitleBar GetAppTitleBarElement() {
+    public OnboardingViewModel ViewModel { get; }
+
+    /// <summary>
+    ///     Provides access to the TitleBar element that serves as the custom title bar.
+    /// </summary>
+    public TitleBar GetAppTitleBarElement()
+    {
         return AppTitleBar;
     }
 
     /// <summary>
-    /// Provides access to the RowDefinition for the custom title bar.
+    ///     Provides access to the RowDefinition for the custom title bar.
     /// </summary>
-    public RowDefinition GetAppTitleBarRowElement() {
+    public RowDefinition GetAppTitleBarRowElement()
+    {
         return AppTitleBarRow;
     }
 
-    private void OnboardingPage_Loaded(object sender, RoutedEventArgs e) {
+    private void OnboardingPage_Loaded(object sender, RoutedEventArgs e)
+    {
         // Trigger the entrance animation when the page is loaded.
         VisualStateManager.GoToState(this, "PageLoaded", true);
 
@@ -48,26 +53,28 @@ public sealed partial class OnboardingPage : Page, ICustomTitleBarProvider {
         UpdateVisualState(ViewModel.IsAnyOperationInProgress);
     }
 
-    private void OnboardingPage_Unloaded(object sender, RoutedEventArgs e) {
+    private void OnboardingPage_Unloaded(object sender, RoutedEventArgs e)
+    {
         // Unsubscribe from the event to prevent memory leaks when the page is unloaded.
         ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
     }
 
     /// <summary>
-    /// Listens for ViewModel property changes to trigger UI state transitions.
+    ///     Listens for ViewModel property changes to trigger UI state transitions.
     /// </summary>
-    private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        if (e.PropertyName == nameof(ViewModel.IsAnyOperationInProgress)) {
+    private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(ViewModel.IsAnyOperationInProgress))
             UpdateVisualState(ViewModel.IsAnyOperationInProgress);
-        }
     }
 
     /// <summary>
-    /// Transitions the page between the 'Idle' and 'Working' visual states
-    /// based on whether an operation is in progress.
+    ///     Transitions the page between the 'Idle' and 'Working' visual states
+    ///     based on whether an operation is in progress.
     /// </summary>
-    private void UpdateVisualState(bool isWorking) {
-        string stateName = isWorking ? "Working" : "Idle";
+    private void UpdateVisualState(bool isWorking)
+    {
+        var stateName = isWorking ? "Working" : "Idle";
         VisualStateManager.GoToState(this, stateName, true);
     }
 }

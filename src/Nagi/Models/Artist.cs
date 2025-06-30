@@ -7,7 +7,8 @@ namespace Nagi.Models;
 /// <summary>
 ///     Represents a musical artist or band.
 /// </summary>
-public class Artist {
+public class Artist
+{
     /// <summary>
     ///     The unique identifier for the artist.
     /// </summary>
@@ -45,7 +46,8 @@ public class Artist {
     /// </summary>
     public virtual ICollection<Album> Albums { get; set; } = new List<Album>();
 
-    public override string ToString() {
+    public override string ToString()
+    {
         return Name;
     }
 }

@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Nagi.Models;
-using Nagi.Services;
 using Nagi.Services.Abstractions;
 
 namespace Nagi.ViewModels;

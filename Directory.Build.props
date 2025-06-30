@@ -1,27 +1,27 @@
 <Project>
-  <PropertyGroup>
-    <!-- 
-      This file defines shared properties and package versions for all projects in the solution.
-      MSBuild automatically imports this file.
-    -->
+    <PropertyGroup>
+        <!-- 
+          This file defines shared properties and package versions for all projects in the solution.
+          MSBuild automatically imports this file.
+        -->
 
-    <!-- General Project Properties -->
-    <LangVersion>preview</LangVersion>
-    
-    <!-- Target Framework Versions -->
-    <NetVersion>9.0</NetVersion>
-    <WindowsSdkVersion>10.0.26100</WindowsSdkVersion>
-    <WindowsTargetPlatformMinVersion>10.0.17763.0</WindowsTargetPlatformMinVersion>
+        <!-- General Project Properties -->
+        <LangVersion>preview</LangVersion>
 
-    <!-- NuGet Package Versions -->
-    <ColorThiefImageSharpVersion>1.0.0</ColorThiefImageSharpVersion>
-    <CommunityToolkitMvvmVersion>8.4.0</CommunityToolkitMvvmVersion>
-    <CommunityToolkitWinUIVersion>8.2.250402</CommunityToolkitWinUIVersion> <!-- For ColorPicker and SettingsControls -->
-    <ImageExWinUIVersion>4.0.0</ImageExWinUIVersion>
-    <MaterialColorUtilitiesVersion>0.3.0</MaterialColorUtilitiesVersion>
-    <EntityFrameworkCoreVersion>9.0.5</EntityFrameworkCoreVersion> <!-- For all EF Core packages -->
-    <DependencyInjectionVersion>10.0.0-preview.4.25258.110</DependencyInjectionVersion>
-    <WindowsAppSdkVersion>1.8.250515001-experimental2</WindowsAppSdkVersion>
-    <TagLibSharpVersion>2.3.0</TagLibSharpVersion>
-  </PropertyGroup>
+        <!-- Target Framework Versions -->
+        <NetVersion>9.0</NetVersion>
+        <WindowsSdkVersion>10.0.26100</WindowsSdkVersion>
+        <WindowsTargetPlatformMinVersion>10.0.17763.0</WindowsTargetPlatformMinVersion>
+
+        <!-- NuGet Package Versions -->
+        <ColorThiefImageSharpVersion>1.0.0</ColorThiefImageSharpVersion>
+        <CommunityToolkitMvvmVersion>8.4.0</CommunityToolkitMvvmVersion>
+        <CommunityToolkitWinUIVersion>8.2.250402</CommunityToolkitWinUIVersion> <!-- For ColorPicker and SettingsControls -->
+        <ImageExWinUIVersion>4.0.0</ImageExWinUIVersion>
+        <MaterialColorUtilitiesVersion>0.3.0</MaterialColorUtilitiesVersion>
+        <EntityFrameworkCoreVersion>9.0.5</EntityFrameworkCoreVersion> <!-- For all EF Core packages -->
+        <DependencyInjectionVersion>10.0.0-preview.4.25258.110</DependencyInjectionVersion>
+        <WindowsAppSdkVersion>1.8.250515001-experimental2</WindowsAppSdkVersion>
+        <TagLibSharpVersion>2.3.0</TagLibSharpVersion>
+    </PropertyGroup>
 </Project>

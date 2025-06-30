@@ -10,7 +10,6 @@ using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Nagi.Models;
-using Nagi.Services;
 using Nagi.Services.Abstractions;
 
 namespace Nagi.ViewModels;

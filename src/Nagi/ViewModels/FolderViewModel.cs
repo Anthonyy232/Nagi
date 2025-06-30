@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Nagi.Models;
-using Nagi.Services;
 using Nagi.Services.Abstractions;
 using Nagi.Services.Implementations;
 
