@@ -205,24 +205,14 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <Grid
+            <controls:TitleBar
                 x:Name="AppTitleBar"
                 Grid.Row="0"
-                Padding="6,0,0,0"
-                Background="Transparent">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <Button
-                    x:Name="CustomBackButton"
-                    Grid.Column="0"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Stretch"
-                    Click="CustomBackButton_Click"
-                    Style="{StaticResource NavigationBackButtonNormalStyle}"
-                    Visibility="Collapsed" />
-            </Grid>
+                Background="Transparent"
+                IsBackButtonVisible="False"
+                IsPaneToggleButtonVisible="True"
+                PaneToggleRequested="AppTitleBar_PaneToggleRequested"
+                BackRequested="AppTitleBar_BackRequested" />
 
             <controls:NavigationView
                 x:Name="NavView"
@@ -231,6 +221,7 @@
                 IsBackButtonVisible="Collapsed"
                 IsSettingsVisible="True"
                 IsTitleBarAutoPaddingEnabled="True"
+                IsPaneToggleButtonVisible="False"
                 ItemInvoked="NavView_ItemInvoked"
                 PaneDisplayMode="Left"
                 BackRequested="NavView_BackRequested"

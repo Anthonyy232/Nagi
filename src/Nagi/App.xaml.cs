@@ -20,7 +20,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
-using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
 using Windows.UI;
 using WinRT;
@@ -97,10 +96,13 @@ public partial class App : Application {
     public App() {
         CurrentApp = this;
         InitializeComponent();
-        UnhandledException += OnAppUnhandledException;
+        this.UnhandledException += OnAppUnhandledException;
         CoreApplication.Suspending += OnSuspending;
     }
 
+    /// <summary>
+    /// Sets up the dependency injection container with all application services and view models.
+    /// </summary>
     private static IServiceProvider ConfigureServices() {
         var services = new ServiceCollection();
 
@@ -194,6 +196,10 @@ public partial class App : Application {
         deferral.Complete();
     }
 
+    /// <summary>
+    /// Saves critical application state, such as the current playback queue and position,
+    /// before the application closes or is suspended.
+    /// </summary>
     private async Task SaveApplicationStateAsync() {
         if (Services.GetService<ISettingsService>() is not { } settingsService ||
             Services.GetService<IMusicPlaybackService>() is not { } musicPlaybackService) {
@@ -226,13 +232,15 @@ public partial class App : Application {
     }
 
     private void OnAppUnhandledException(object sender, UnhandledExceptionEventArgs e) {
+        // It's often better to log the exception and attempt to continue
+        // rather than letting the app crash.
         Debug.WriteLine($"[App] UNHANDLED EXCEPTION: {e.Exception}");
         e.Handled = true;
     }
 
     /// <summary>
     /// Navigates to the appropriate initial page (Onboarding or Main) based on
-    /// whether music folders have been configured.
+    /// whether music folders have been configured. Also initializes the theme and title bar.
     /// </summary>
     public async Task CheckAndNavigateToMainContent() {
         if (RootWindow is null) return;
@@ -342,6 +350,9 @@ public partial class App : Application {
         }
     }
 
+    /// <summary>
+    /// Parses a 6-digit (RRGGBB) or 8-digit (AARRGGBB) hex string into a Color object.
+    /// </summary>
     private bool TryParseHexColor(string hex, out Color color) {
         color = Colors.Transparent;
         if (string.IsNullOrEmpty(hex)) return false;
@@ -364,6 +375,10 @@ public partial class App : Application {
 
     #region Window Activation and System Integration
 
+    /// <summary>
+    /// Determines how the window should be shown on startup based on user settings
+    /// (e.g., start normally, minimized, or hidden to the tray).
+    /// </summary>
     private async Task HandleWindowActivationAsync(bool isStartupLaunch = false) {
         if (_window is null) return;
 
@@ -387,6 +402,10 @@ public partial class App : Application {
         }
     }
 
+    /// <summary>
+    /// Enqueues tasks that should run after the main UI is initialized and visible,
+    /// such as setting up the System Media Transport Controls (SMTC).
+    /// </summary>
     private void EnqueuePostLaunchTasks() {
         MainDispatcherQueue?.TryEnqueue(DispatcherQueuePriority.Normal, () => {
             try {
@@ -399,6 +418,9 @@ public partial class App : Application {
         });
     }
 
+    /// <summary>
+    /// Attempts to apply the Mica backdrop material to the main window if supported by the OS.
+    /// </summary>
     private bool TrySetMicaBackdrop() {
         if (!MicaController.IsSupported()) return false;
 
@@ -429,6 +451,9 @@ public partial class App : Application {
         return false;
     }
 
+    /// <summary>
+    /// Provides P/Invoke methods for controlling window states not directly available in WinUI.
+    /// </summary>
     private static class WindowActivator {
         [DllImport("user32.dll")]
         private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
