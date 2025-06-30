@@ -23,7 +23,6 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- Page header with title, item count, and action buttons. -->
         <Grid Grid.Row="0" Padding="24,20,24,20" VerticalAlignment="Center">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -52,30 +51,9 @@
                         <TextBlock Text="Shuffle and play" VerticalAlignment="Center" />
                     </StackPanel>
                 </Button>
-
-                <Button Style="{StaticResource SongListViewPageFilledButtonStyle}" ToolTipService.ToolTip="Sort items">
-                    <Button.Flyout>
-                        <MenuFlyout Placement="Bottom">
-                            <MenuFlyoutItem Text="A to Z" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                            CommandParameter="TitleAsc" />
-                            <MenuFlyoutItem Text="Z to A" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                            CommandParameter="TitleDesc" />
-                            <MenuFlyoutItem Text="Newest" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                            CommandParameter="DateAddedDesc" />
-                            <MenuFlyoutItem Text="Oldest" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                            CommandParameter="DateAddedAsc" />
-                            <MenuFlyoutItem Text="Album" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                            CommandParameter="AlbumAsc" />
-                            <MenuFlyoutItem Text="Artist" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                            CommandParameter="ArtistAsc" />
-                        </MenuFlyout>
-                    </Button.Flyout>
-                    <TextBlock Text="{x:Bind ViewModel.CurrentSortOrderText, Mode=OneWay}" VerticalAlignment="Center" />
-                </Button>
             </StackPanel>
         </Grid>
 
-        <!-- List of songs in the playlist. -->
         <ListView Grid.Row="1"
                   x:Name="SongsListView"
                   SelectionMode="Extended"
@@ -83,7 +61,10 @@
                   Padding="24,12,24,0"
                   ItemsSource="{x:Bind ViewModel.Songs, Mode=OneWay}"
                   ItemContainerStyle="{StaticResource SongListViewPageListViewItemStyle}"
-                  SelectionChanged="SongsListView_SelectionChanged">
+                  SelectionChanged="SongsListView_SelectionChanged"
+                  CanDragItems="True"
+                  CanReorderItems="True"
+                  AllowDrop="True">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="models:Song">
                     <Grid Height="54" ColumnSpacing="12" Background="Transparent">
