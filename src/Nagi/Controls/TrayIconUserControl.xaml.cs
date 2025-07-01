@@ -1,31 +1,30 @@
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Nagi.ViewModels;
 
 namespace Nagi.Controls;
 
-/// <summary>
-///     A UserControl that hosts the application's taskbar icon and its context menu.
-///     Its primary role is to initialize the associated ViewModel and provide the
-///     H.NotifyIcon.TaskbarIcon element from its XAML to the ViewModel.
-/// </summary>
-public sealed partial class TrayIconUserControl : UserControl
-{
-    public TrayIconUserControl()
-    {
+public sealed partial class TrayIconUserControl : UserControl {
+    /// <summary>
+    /// Gets the ViewModel for this control, which manages the tray icon's logic and state.
+    /// </summary>
+    public TrayIconViewModel ViewModel { get; }
+
+    public TrayIconUserControl() {
         InitializeComponent();
+
+        // Retrieve the shared ViewModel instance from the application's service provider.
         ViewModel = App.Services.GetRequiredService<TrayIconViewModel>();
 
-        Loaded += async (sender, args) =>
-        {
-            // The ViewModel requires the actual TaskbarIcon UI element to function.
-            // This is only available after the control has been loaded into the visual tree.
-            await ViewModel.InitializeAsync(AppTrayIcon);
-        };
+        Loaded += OnLoaded;
     }
 
     /// <summary>
-    ///     Gets the ViewModel associated with this control.
+    /// Initializes the ViewModel when the control is loaded into the visual tree.
     /// </summary>
-    public TrayIconViewModel ViewModel { get; }
+    private async void OnLoaded(object sender, RoutedEventArgs e) {
+        // The ViewModel initializes itself and hooks into application events.
+        await ViewModel.InitializeAsync();
+    }
 }

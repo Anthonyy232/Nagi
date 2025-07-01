@@ -14,9 +14,9 @@
 
     <tb:TaskbarIcon
         x:Name="AppTrayIcon"
-        Visibility="{x:Bind ViewModel.IsTrayIconEffectivelyVisible, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}"
+        Visibility="{x:Bind ViewModel.IsTrayIconVisible, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}"
         IconSource="ms-appx:///Assets/AppLogo.ico"
-        LeftClickCommand="{x:Bind ViewModel.ShowHideWindowCommand}"
+        LeftClickCommand="{x:Bind ViewModel.ShowPopupCommand}"
         NoLeftClickDelay="True"
         ToolTipText="{x:Bind ViewModel.ToolTipText, Mode=OneWay}"
         ContextMenuMode="SecondWindow">
@@ -24,7 +24,7 @@
         <tb:TaskbarIcon.ContextFlyout>
             <MenuFlyout AreOpenCloseAnimationsEnabled="True">
                 <MenuFlyoutItem
-                    Command="{x:Bind ViewModel.ShowHideWindowCommand}"
+                    Command="{x:Bind ViewModel.ToggleMainWindowVisibilityCommand}"
                     Text="Show Window"
                     Style="{StaticResource DefaultMenuFlyoutItemStyle}">
                     <MenuFlyoutItem.Icon>

@@ -1,13 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Globalization;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
-using Windows.ApplicationModel;
-using Windows.ApplicationModel.Core;
-using Windows.UI;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI;
 using Microsoft.UI.Composition;
@@ -22,33 +13,30 @@ using Nagi.Services;
 using Nagi.Services.Abstractions;
 using Nagi.Services.Implementations;
 using Nagi.ViewModels;
+using System;
+using System.Diagnostics;
+using System.Globalization;
+using System.Linq;
+using System.Threading.Tasks;
+using Windows.ApplicationModel;
+using Windows.ApplicationModel.Core;
+using Windows.UI;
 using WinRT;
-using WinRT.Interop;
 using UnhandledExceptionEventArgs = Microsoft.UI.Xaml.UnhandledExceptionEventArgs;
 
 namespace Nagi;
 
-/// <summary>
-///     Provides application-specific behavior, manages application lifecycle,
-///     and sets up dependency injection.
-/// </summary>
 public partial class App : Application {
     private static Color? _systemAccentColor;
-    private MicaController? _micaController;
     private Window? _window;
+    private MicaController? _micaController;
     private WindowsSystemDispatcherQueueHelper? _wsdqHelper;
 
-    /// <summary>
-    ///     Configures services and initializes the database.
-    /// </summary>
     static App() {
         Services = ConfigureServices();
         InitializeDatabase();
     }
 
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="App" /> class.
-    /// </summary>
     public App() {
         CurrentApp = this;
         InitializeComponent();
@@ -56,35 +44,18 @@ public partial class App : Application {
         CoreApplication.Suspending += OnSuspending;
     }
 
-    /// <summary>
-    ///     Gets the application's singleton instance.
-    /// </summary>
     public static App? CurrentApp { get; private set; }
-
-    /// <summary>
-    ///     Gets the main application window.
-    /// </summary>
     public static Window? RootWindow { get; private set; }
-
-    /// <summary>
-    ///     Gets the dependency injection service provider.
-    /// </summary>
     public static IServiceProvider Services { get; }
-
-    /// <summary>
-    ///     Gets the dispatcher queue for the main UI thread.
-    /// </summary>
     public static DispatcherQueue? MainDispatcherQueue { get; private set; }
-
-    /// <summary>
-    ///     Gets or sets a value indicating whether the application is performing a deliberate exit.
-    ///     This helps bypass certain behaviors, like hiding to the tray, during shutdown.
-    /// </summary>
     public static bool IsExiting { get; set; }
 
     /// <summary>
-    ///     Gets the user's system accent color, with a fallback.
+    /// Gets the system's accent color.
     /// </summary>
+    /// <remarks>
+    /// Caches the color on first access. Provides a fallback if the resource lookup fails.
+    /// </remarks>
     public static Color SystemAccentColor {
         get {
             if (_systemAccentColor is null) {
@@ -92,36 +63,39 @@ public partial class App : Application {
                     _systemAccentColor = color;
                 }
                 else {
-                    Debug.WriteLine("[App] WARNING: SystemAccentColor resource not found. Using fallback.");
+                    // This fallback is crucial for stability if theme resources are unavailable.
+                    Debug.WriteLine("[App] Warning: SystemAccentColor resource not found. Using fallback.");
                     _systemAccentColor = Colors.SlateGray;
                 }
             }
-
             return _systemAccentColor.Value;
         }
     }
 
     /// <summary>
-    ///     Sets up the dependency injection container with all application services and view models.
+    /// Configures the dependency injection container for the application.
     /// </summary>
     private static IServiceProvider ConfigureServices() {
         var services = new ServiceCollection();
 
         var configuration = new ConfigurationBuilder()
             .SetBasePath(AppContext.BaseDirectory)
-            .AddJsonFile("appsettings.json", false, true)
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
             .Build();
 
         services.AddSingleton<IConfiguration>(configuration);
         services.AddHttpClient();
 
+        // Services that depend on the UI thread dispatcher
         services.AddSingleton<IAudioPlayer>(provider => {
-            if (MainDispatcherQueue is null)
+            if (MainDispatcherQueue is null) {
                 throw new InvalidOperationException(
                     "MainDispatcherQueue must be initialized before creating AudioPlayerService.");
+            }
             return new AudioPlayerService(MainDispatcherQueue);
         });
 
+        // Application services
         services.AddSingleton<IFileSystemService, FileSystemService>();
         services.AddSingleton<IImageProcessor, ImageSharpProcessor>();
         services.AddSingleton<IMetadataExtractor, TagLibMetadataExtractor>();
@@ -129,12 +103,18 @@ public partial class App : Application {
         services.AddSingleton<IMusicPlaybackService, MusicPlaybackService>();
         services.AddSingleton<ILibraryService, LibraryService>();
         services.AddSingleton<INavigationService, NavigationService>();
+        services.AddSingleton<IWin32InteropService, Win32InteropService>();
+        services.AddSingleton<ITrayPopupService, TrayPopupService>();
+
+        // External API services
         services.AddSingleton<IApiKeyService, ApiKeyService>();
         services.AddSingleton<ILastFmService, LastFmService>();
         services.AddSingleton<ISpotifyService, SpotifyService>();
 
+        // Database context
         services.AddTransient<MusicDbContext>();
 
+        // ViewModels
         services.AddSingleton<PlayerViewModel>();
         services.AddSingleton<TrayIconViewModel>();
         services.AddTransient<LibraryViewModel>();
@@ -152,23 +132,25 @@ public partial class App : Application {
         return services.BuildServiceProvider();
     }
 
+    /// <summary>
+    /// Ensures the application's database is created on startup.
+    /// </summary>
     private static void InitializeDatabase() {
         try {
             using var dbContext = Services.GetRequiredService<MusicDbContext>();
             dbContext.Database.EnsureCreated();
         }
         catch (Exception ex) {
+            // A working database is critical. Log this failure prominently.
             Debug.WriteLine($"[App] CRITICAL: Failed to initialize database. {ex.Message}");
+            // In a production app, this might trigger a user-facing error dialog.
         }
     }
 
-    /// <summary>
-    ///     Invoked when the application is launched. Responsible for window creation,
-    ///     initialization, and activation.
-    /// </summary>
     protected override async void OnLaunched(LaunchActivatedEventArgs args) {
-        var isStartupLaunch = Environment.GetCommandLineArgs().Any(arg =>
-            arg.Equals("--startup", StringComparison.OrdinalIgnoreCase));
+        // Determine if the app was launched at startup to decide initial window state.
+        bool isStartupLaunch = Environment.GetCommandLineArgs()
+            .Any(arg => arg.Equals("--startup", StringComparison.OrdinalIgnoreCase));
 
         _window = new MainWindow();
         RootWindow = _window;
@@ -178,20 +160,24 @@ public partial class App : Application {
         TrySetMicaBackdrop();
         ReapplyCurrentDynamicTheme();
 
-        var playbackService = Services.GetRequiredService<IMusicPlaybackService>();
         try {
+            var playbackService = Services.GetRequiredService<IMusicPlaybackService>();
             await playbackService.InitializeAsync();
         }
         catch (Exception ex) {
-            Debug.WriteLine($"[App] CRITICAL: Failed to initialize MusicPlaybackService. {ex.Message}");
+            Debug.WriteLine($"[App] Error: Failed to initialize MusicPlaybackService. {ex.Message}");
         }
 
         await CheckAndNavigateToMainContent();
         await HandleWindowActivationAsync(isStartupLaunch);
 
+        // Defer non-critical initializations to avoid blocking UI rendering.
         EnqueuePostLaunchTasks();
     }
 
+    /// <summary>
+    /// Handles the application suspending event, typically triggered by the OS.
+    /// </summary>
     private async void OnSuspending(object? sender, SuspendingEventArgs e) {
         var deferral = e.SuspendingOperation.GetDeferral();
         await SaveApplicationStateAsync();
@@ -199,61 +185,74 @@ public partial class App : Application {
     }
 
     /// <summary>
-    ///     Saves critical application state, such as the current playback queue and position,
-    ///     before the application closes or is suspended.
+    /// Persists application state, such as playback position, before closing or suspending.
     /// </summary>
     private async Task SaveApplicationStateAsync() {
-        if (Services.GetService<ISettingsService>() is not { } settingsService ||
-            Services.GetService<IMusicPlaybackService>() is not { } musicPlaybackService) {
-            Debug.WriteLine("[App] ERROR: Could not resolve services to save application state.");
-            return;
-        }
-
-        try {
-            if (await settingsService.GetRestorePlaybackStateEnabledAsync())
-                await musicPlaybackService.SavePlaybackStateAsync();
-            else
-                await settingsService.ClearPlaybackStateAsync();
-        }
-        catch (Exception ex) {
-            Debug.WriteLine($"[App] ERROR: Failed to save or clear playback state. {ex.Message}");
+        if (Services.GetService<ISettingsService>() is not null and var settingsService &&
+            Services.GetService<IMusicPlaybackService>() is not null and var musicPlaybackService) {
+            try {
+                if (await settingsService.GetRestorePlaybackStateEnabledAsync()) {
+                    await musicPlaybackService.SavePlaybackStateAsync();
+                }
+                else {
+                    await settingsService.ClearPlaybackStateAsync();
+                }
+            }
+            catch (Exception ex) {
+                Debug.WriteLine($"[App] Error: Failed to save or clear playback state. {ex.Message}");
+            }
         }
     }
 
+    /// <summary>
+    /// Cleans up resources when the main window is closed.
+    /// </summary>
     private async void OnWindowClosed(object sender, WindowEventArgs args) {
         await SaveApplicationStateAsync();
 
         _micaController?.Dispose();
         _micaController = null;
 
-        if (Services.GetService<TrayIconViewModel>() is IDisposable disposableTrayViewModel)
+        _wsdqHelper?.Dispose();
+        _wsdqHelper = null;
+
+        if (Services.GetService<TrayIconViewModel>() is IDisposable disposableTrayViewModel) {
             disposableTrayViewModel.Dispose();
+        }
     }
 
+    /// <summary>
+    /// Global exception handler to log errors and prevent the application from crashing unexpectedly.
+    /// </summary>
     private void OnAppUnhandledException(object sender, UnhandledExceptionEventArgs e) {
-        // It's often better to log the exception and attempt to continue
-        // rather than letting the app crash.
         Debug.WriteLine($"[App] UNHANDLED EXCEPTION: {e.Exception}");
+
+        // Marking the exception as handled prevents the app from terminating.
+        // This should be used cautiously, but is often desirable for a better user experience.
         e.Handled = true;
     }
 
     /// <summary>
-    ///     Navigates to the appropriate initial page (Onboarding or Main) based on
-    ///     whether music folders have been configured. Also initializes the theme and title bar.
+    /// Checks application state (e.g., if library folders are configured) and navigates to the
+    /// appropriate initial page, either Onboarding or the main application interface.
     /// </summary>
     public async Task CheckAndNavigateToMainContent() {
         if (RootWindow is null) return;
 
         var libraryService = Services.GetRequiredService<ILibraryService>();
-        var hasFolders = (await libraryService.GetAllFoldersAsync()).Any();
+        bool hasFolders = (await libraryService.GetAllFoldersAsync()).Any();
 
         if (hasFolders) {
-            if (RootWindow.Content is not MainPage) RootWindow.Content = new MainPage();
+            if (RootWindow.Content is not MainPage) {
+                RootWindow.Content = new MainPage();
+            }
             var libraryViewModel = Services.GetRequiredService<LibraryViewModel>();
             await libraryViewModel.InitializeAndStartBackgroundScanAsync();
         }
         else {
-            if (RootWindow.Content is not OnboardingPage) RootWindow.Content = new OnboardingPage();
+            if (RootWindow.Content is not OnboardingPage) {
+                RootWindow.Content = new OnboardingPage();
+            }
         }
 
         if (RootWindow.Content is FrameworkElement currentContent && RootWindow is MainWindow mainWindow) {
@@ -265,44 +264,33 @@ public partial class App : Application {
 
     #region Theming and Color Management
 
-    /// <summary>
-    ///     Applies the specified theme to the application's root element.
-    /// </summary>
-    /// <param name="themeToApply">The theme to apply (Light, Dark, or Default).</param>
     public void ApplyTheme(ElementTheme themeToApply) {
         if (RootWindow?.Content is not FrameworkElement rootElement) return;
 
         rootElement.RequestedTheme = themeToApply;
         ReapplyCurrentDynamicTheme();
 
-        if (RootWindow is MainWindow mainWindow) mainWindow.InitializeCustomTitleBar();
+        if (RootWindow is MainWindow mainWindow) {
+            mainWindow.InitializeCustomTitleBar();
+        }
     }
 
-    /// <summary>
-    ///     Sets the color of the application's primary color brush.
-    /// </summary>
     public void SetAppPrimaryColorBrushColor(Color newColor) {
         if (Resources.TryGetValue("AppPrimaryColorBrush", out var brushObject) &&
             brushObject is SolidColorBrush appPrimaryColorBrush) {
-            if (appPrimaryColorBrush.Color != newColor) appPrimaryColorBrush.Color = newColor;
+            if (appPrimaryColorBrush.Color != newColor) {
+                appPrimaryColorBrush.Color = newColor;
+            }
         }
         else {
-            Debug.WriteLine("[App] CRITICAL: AppPrimaryColorBrush resource not found.");
+            Debug.WriteLine("[App] Critical: AppPrimaryColorBrush resource not found.");
         }
     }
 
-    /// <summary>
-    ///     Resets the application's primary color to the system accent color.
-    /// </summary>
     public void ActivateDefaultPrimaryColor() {
         SetAppPrimaryColorBrushColor(SystemAccentColor);
     }
 
-    /// <summary>
-    ///     Applies a dynamic theme based on color swatches from the current track's album art.
-    /// </summary>
-    /// <param name="lightSwatchId">The hex color string for the light theme swatch.</param>
-    /// <param name="darkSwatchId">The hex color string for the dark theme swatch.</param>
     public async void ApplyDynamicThemeFromSwatches(string? lightSwatchId, string? darkSwatchId) {
         var settingsService = Services.GetRequiredService<ISettingsService>();
         if (!await settingsService.GetDynamicThemingAsync()) {
@@ -315,46 +303,41 @@ public partial class App : Application {
             return;
         }
 
-        var swatchToUse = rootElement.ActualTheme == ElementTheme.Dark ? darkSwatchId : lightSwatchId;
+        string? swatchToUse = rootElement.ActualTheme == ElementTheme.Dark ? darkSwatchId : lightSwatchId;
 
-        if (!string.IsNullOrEmpty(swatchToUse) && TryParseHexColor(swatchToUse, out var targetColor))
+        if (!string.IsNullOrEmpty(swatchToUse) && TryParseHexColor(swatchToUse, out Color targetColor)) {
             SetAppPrimaryColorBrushColor(targetColor);
-        else
+        }
+        else {
             ActivateDefaultPrimaryColor();
+        }
     }
 
-    /// <summary>
-    ///     Reapplies the dynamic theme for the currently playing track, or the default
-    ///     theme if no track is playing.
-    /// </summary>
     public void ReapplyCurrentDynamicTheme() {
         var playbackService = Services.GetRequiredService<IMusicPlaybackService>();
-        if (playbackService.CurrentTrack != null)
+        if (playbackService.CurrentTrack is not null) {
             ApplyDynamicThemeFromSwatches(
                 playbackService.CurrentTrack.LightSwatchId,
                 playbackService.CurrentTrack.DarkSwatchId);
-        else
+        }
+        else {
             ActivateDefaultPrimaryColor();
+        }
     }
 
-    /// <summary>
-    ///     Parses a 6-digit (RRGGBB) or 8-digit (AARRGGBB) hex string into a Color object.
-    /// </summary>
     private bool TryParseHexColor(string hex, out Color color) {
         color = Colors.Transparent;
         if (string.IsNullOrEmpty(hex)) return false;
 
         hex = hex.TrimStart('#');
-        if (!uint.TryParse(hex, NumberStyles.HexNumber, null, out var argb)) return false;
+        if (!uint.TryParse(hex, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out uint argb)) return false;
 
         switch (hex.Length) {
             case 6: // RRGGBB
-                color = Color.FromArgb(255, (byte)((argb >> 16) & 0xFF), (byte)((argb >> 8) & 0xFF),
-                    (byte)(argb & 0xFF));
+                color = Color.FromArgb(255, (byte)((argb >> 16) & 0xFF), (byte)((argb >> 8) & 0xFF), (byte)(argb & 0xFF));
                 return true;
             case 8: // AARRGGBB
-                color = Color.FromArgb((byte)((argb >> 24) & 0xFF), (byte)((argb >> 16) & 0xFF),
-                    (byte)((argb >> 8) & 0xFF), (byte)(argb & 0xFF));
+                color = Color.FromArgb((byte)((argb >> 24) & 0xFF), (byte)((argb >> 16) & 0xFF), (byte)((argb >> 8) & 0xFF), (byte)(argb & 0xFF));
                 return true;
             default:
                 return false;
@@ -366,35 +349,32 @@ public partial class App : Application {
     #region Window Activation and System Integration
 
     /// <summary>
-    ///     Determines how the window should be shown on startup based on user settings
-    ///     (e.g., start normally, minimized, or hidden to the tray).
+    /// Manages the initial visibility of the main window based on user settings.
     /// </summary>
     private async Task HandleWindowActivationAsync(bool isStartupLaunch = false) {
         if (_window is null) return;
 
         var settingsService = Services.GetRequiredService<ISettingsService>();
-        var startMinimized = await settingsService.GetStartMinimizedEnabledAsync();
-        var hideToTray = await settingsService.GetHideToTrayEnabledAsync();
+        bool startMinimized = await settingsService.GetStartMinimizedEnabledAsync();
+        bool hideToTray = await settingsService.GetHideToTrayEnabledAsync();
 
         if (isStartupLaunch || startMinimized) {
             if (hideToTray) {
-                Debug.WriteLine("[App] Starting hidden in tray.");
-                _window.AppWindow.Hide();
+                // Start hidden; the tray icon will be the only visible UI.
             }
             else {
-                Debug.WriteLine("[App] Starting minimized to taskbar.");
+                // Start minimized to the taskbar.
                 WindowActivator.ShowMinimized(_window);
             }
         }
         else {
-            Debug.WriteLine("[App] Starting normally.");
+            // Normal activation.
             _window.Activate();
         }
     }
 
     /// <summary>
-    ///     Enqueues tasks that should run after the main UI is initialized and visible,
-    ///     such as setting up the System Media Transport Controls (SMTC).
+    /// Enqueues tasks to be run after the initial launch sequence is complete.
     /// </summary>
     private void EnqueuePostLaunchTasks() {
         MainDispatcherQueue?.TryEnqueue(DispatcherQueuePriority.Normal, () => {
@@ -403,23 +383,25 @@ public partial class App : Application {
                 audioPlayerService.InitializeSmtc();
             }
             catch (Exception ex) {
-                Debug.WriteLine($"[App] ERROR: Failed to initialize SMTC. {ex.Message}");
+                Debug.WriteLine(
+                    $"[App] Error: Failed to initialize System Media Transport Controls (SMTC). {ex.Message}");
             }
         });
     }
 
     /// <summary>
-    ///     Attempts to apply the Mica backdrop material to the main window if supported by the OS.
+    /// Attempts to apply the Mica backdrop material to the main window.
     /// </summary>
     private bool TrySetMicaBackdrop() {
         if (!MicaController.IsSupported()) return false;
 
         _wsdqHelper = new WindowsSystemDispatcherQueueHelper();
-        _wsdqHelper.EnsureWindowsSystemDispatcherQueueController();
+        _wsdqHelper.EnsureDispatcherQueue();
 
         var configurationSource = new SystemBackdropConfiguration { IsInputActive = true };
 
         if (RootWindow?.Content is FrameworkElement rootElement) {
+            // Ensure the backdrop theme updates with the app's theme.
             void UpdateTheme() {
                 configurationSource.Theme = rootElement.ActualTheme switch {
                     ElementTheme.Dark => SystemBackdropTheme.Dark,
@@ -435,27 +417,12 @@ public partial class App : Application {
         _micaController = new MicaController();
         _micaController.SetSystemBackdropConfiguration(configurationSource);
 
-        if (RootWindow != null) {
+        if (RootWindow is not null) {
             _micaController.AddSystemBackdropTarget(RootWindow.As<ICompositionSupportsSystemBackdrop>());
             return true;
         }
 
         return false;
-    }
-
-    /// <summary>
-    ///     Provides P/Invoke methods for controlling window states not directly available in WinUI.
-    /// </summary>
-    private static class WindowActivator {
-        private const int SW_SHOWMINIMIZED = 2;
-
-        [DllImport("user32.dll")]
-        private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-
-        public static void ShowMinimized(Window window) {
-            var windowHandle = WindowNative.GetWindowHandle(window);
-            ShowWindow(windowHandle, SW_SHOWMINIMIZED);
-        }
     }
 
     #endregion
