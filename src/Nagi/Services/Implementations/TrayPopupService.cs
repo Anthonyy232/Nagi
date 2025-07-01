@@ -78,9 +78,8 @@ public class TrayPopupService : ITrayPopupService {
         // Move the window to its final position first.
         appWindow.Move(finalPosition);
 
-        // Activate the window BEFORE the animation starts. This ensures the acrylic backdrop
-        // is in its "active" state from the beginning, preventing a visual flash.
-        WindowActivator.ShowAndActivate(_popupWindow, _win32);
+        // Use the "polite" activation method to prevent breaking the taskbar's open state.
+        WindowActivator.ActivatePopupWindow(_popupWindow);
 
         // Call the animation method that just handles the visual effects.
         PopupAnimation.AnimateIn(_popupWindow, () => {

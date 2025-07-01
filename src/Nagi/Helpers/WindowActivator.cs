@@ -16,6 +16,10 @@ internal static class WindowActivator {
     [DllImport("user32.dll", SetLastError = true)]
     private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool SetForegroundWindow(IntPtr hWnd);
+
     /// <summary>
     /// Brings a window to the foreground and activates it, ensuring it receives focus.
     /// </summary>
@@ -54,6 +58,19 @@ internal static class WindowActivator {
         if (foregroundThreadId != currentThreadId) {
             win32.AttachThreadInput(foregroundThreadId, currentThreadId, false);
         }
+    }
+
+    /// <summary>
+    /// Activates a popup window in a way that is less disruptive to the shell.
+    /// </summary>
+    /// <param name="window">The window to show and activate.</param>
+    public static void ActivatePopupWindow(Window window) {
+        IntPtr windowHandle = WindowNative.GetWindowHandle(window);
+        if (windowHandle == IntPtr.Zero) return;
+
+        // Show the window, which also brings it to the foreground.
+        window.AppWindow.Show();
+        SetForegroundWindow(windowHandle);
     }
 
     /// <summary>
