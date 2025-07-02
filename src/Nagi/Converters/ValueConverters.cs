@@ -210,3 +210,26 @@ public class NullOrEmptyStringToVisibilityConverter : IValueConverter
         throw new NotImplementedException();
     }
 }
+
+
+public class ObjectToVisibilityConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        bool invert = parameter is string s && s.Equals("Invert", StringComparison.OrdinalIgnoreCase);
+
+        if (value == null)
+        {
+            return invert ? Visibility.Visible : Visibility.Collapsed;
+        }
+        else
+        {
+            return invert ? Visibility.Collapsed : Visibility.Visible;
+        }
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
+        throw new NotImplementedException();
+    }
+}

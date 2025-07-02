@@ -13,6 +13,8 @@ public class TrayPopupService : ITrayPopupService {
     private const int VERTICAL_OFFSET = 24;
     // Debounce delay in milliseconds to prevent rapid toggling.
     private const uint DEACTIVATION_DEBOUNCE_MS = 200;
+    // Define the desired width of the popup in device-independent pixels (DIPs)
+    private const int POPUP_WIDTH_DIPS = 384;
 
     private readonly IWin32InteropService _win32;
     private readonly DispatcherQueue _dispatcherQueue;
@@ -49,15 +51,20 @@ public class TrayPopupService : ITrayPopupService {
         var appWindow = _popupWindow!.AppWindow;
         var windowHandle = WindowNative.GetWindowHandle(_popupWindow);
 
+        // Get the current DPI scale for the window
         var scale = _win32.GetDpiForWindow(windowHandle) / 96f;
 
-        appWindow.Resize(new SizeInt32(
-            (int)(370 * scale),
-            (int)(360 * scale)));
+        // Calculate desired dimensions in physical pixels
+        int desiredWidthPhysical = (int)(POPUP_WIDTH_DIPS * scale);
+        // Get the desired height from the XAML content itself.
+        // This will now be reliable due to UpdateLayout in the TrayPopup constructor.
+        int desiredHeightPhysical = (int)(_popupWindow.GetContentDesiredHeight(POPUP_WIDTH_DIPS) * scale);
+
+        appWindow.Resize(new SizeInt32(desiredWidthPhysical, desiredHeightPhysical));
 
         var cursorPosition = _win32.GetCursorPos();
         var workArea = _win32.GetWorkAreaForPoint(cursorPosition);
-        var popupSize = appWindow.Size;
+        var popupSize = appWindow.Size; // This will now reflect the calculated size
 
         // Center the popup horizontally on the cursor.
         int finalX = cursorPosition.X - (popupSize.Width / 2);

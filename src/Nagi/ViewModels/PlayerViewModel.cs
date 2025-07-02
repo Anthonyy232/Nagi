@@ -123,6 +123,32 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
 
     public string VolumeButtonToolTip => IsMuted ? "Unmute" : "Mute";
 
+    #region View State Management
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the queue view is visible instead of the main player view.
+    /// </summary>
+    [ObservableProperty]
+    private bool _isQueueViewVisible;
+
+    /// <summary>
+    /// Command to switch the popup's content to show the queue list.
+    /// </summary>
+    [RelayCommand]
+    private void ShowQueueView() {
+        IsQueueViewVisible = true;
+    }
+
+    /// <summary>
+    /// Command to switch the popup's content to show the player controls.
+    /// </summary>
+    [RelayCommand]
+    private void ShowPlayerView() {
+        IsQueueViewVisible = false;
+    }
+
+    #endregion
+
     public void Dispose()
     {
         UnsubscribeFromPlaybackServiceEvents();

@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Composition.SystemBackdrops;
@@ -5,8 +6,10 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using Nagi.ViewModels;
 using System;
 using System.Runtime.InteropServices;
+using Windows.Foundation; // Add this for Size
 using Windows.UI;
 using WinRT;
 using WinRT.Interop;
@@ -20,20 +23,55 @@ public sealed partial class TrayPopup : Window {
     private SystemBackdropConfiguration? _configurationSource;
     private WindowsSystemDispatcherQueueHelper? _wsdqHelper;
 
+    public PlayerViewModel ViewModel { get; }
+
     public TrayPopup() {
         this.InitializeComponent();
 
-        if (this.Content is Panel rootPanel) {
-            // The root panel must be transparent for the system backdrop to be visible.
-            rootPanel.Background = new SolidColorBrush(Colors.Transparent);
-            rootPanel.ActualThemeChanged += OnThemeChanged;
+        ViewModel = App.Services.GetRequiredService<PlayerViewModel>();
+
+        // The 'Content' of a Window is a FrameworkElement, which has a DataContext.
+        // We cast the Content and set the DataContext on it.
+        if (this.Content is FrameworkElement rootElement) {
+            rootElement.DataContext = ViewModel;
+
+            // Ensure the root element's background is transparent for the backdrop
+            // This is existing code, ensure it applies to the actual root element.
+            if (rootElement is Panel rootPanel) {
+                rootPanel.Background = new SolidColorBrush(Colors.Transparent);
+            }
+            else if (rootElement is Border rootBorder) {
+                rootBorder.Background = new SolidColorBrush(Colors.Transparent);
+            }
+            rootElement.ActualThemeChanged += OnThemeChanged;
+
+            // *** IMPORTANT FIX: Force an immediate layout pass after DataContext is set. ***
+            // This ensures that all UI elements inside the rootElement are measured
+            // and bindings are processed before we try to get the DesiredSize.
+            rootElement.UpdateLayout();
         }
 
         ConfigureWindowAppearance();
-
         TrySetAcrylicBackdrop(DesktopAcrylicKind.Base);
-
         Activated += OnActivated;
+    }
+
+    /// <summary>
+    /// Calculates the desired height of the window's XAML content
+    /// given a specific width in device-independent pixels (DIPs).
+    /// </summary>
+    /// <param name="targetWidthDips">The width to measure the content against.</param>
+    /// <returns>The calculated desired height in DIPs.</returns>
+    public double GetContentDesiredHeight(double targetWidthDips) {
+        if (this.Content is FrameworkElement rootElement) {
+            // Re-measure with the provided width constraint.
+            // At this point, thanks to UpdateLayout in constructor, DesiredSize should be accurate.
+            rootElement.Measure(new Size(targetWidthDips, double.PositiveInfinity));
+
+            // After Measure, DesiredSize should now be updated and reliable.
+            return rootElement.DesiredSize.Height;
+        }
+        return 0; // Should not happen if Content is a FrameworkElement
     }
 
     private void ConfigureWindowAppearance() {
@@ -71,8 +109,8 @@ public sealed partial class TrayPopup : Window {
             _acrylicController = null;
             _configurationSource = null;
             _wsdqHelper = null;
-            if (this.Content is Panel rootPanel) {
-                rootPanel.ActualThemeChanged -= OnThemeChanged;
+            if (this.Content is FrameworkElement rootElement) {
+                rootElement.ActualThemeChanged -= OnThemeChanged;
             }
         };
 

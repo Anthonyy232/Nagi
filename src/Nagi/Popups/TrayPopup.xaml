@@ -4,95 +4,154 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="using:Nagi.ViewModels"
+    xmlns:converters="using:Nagi.Converters"
+    xmlns:models="using:Nagi.Models"
+    xmlns:media="using:CommunityToolkit.WinUI.Media"
     mc:Ignorable="d">
 
-    <Border Padding="8"
-            Background="Transparent"
-            BorderThickness="1"
-            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+    <Border x:Name="OuterBorder"
+        BorderThickness="1"
+            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+            CornerRadius="8"
+            d:DataContext="{d:DesignInstance Type=viewmodels:PlayerViewModel}">
+
+        <Border.Resources>
+            <converters:TimeSpanToTimeStringConverter x:Key="TimeSpanToTimeStringConverter" />
+            <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+            <converters:BooleanToVisibilityConverter x:Key="InvertedBooleanToVisibilityConverter" Invert="True" />
+            <converters:ObjectToVisibilityConverter x:Key="ObjectToVisibilityConverter" />
+
+            <Style x:Key="QueueListViewItemStyle" TargetType="ListViewItem">
+                <Setter Property="Padding" Value="12,8" />
+                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            </Style>
+
+            <Style x:Key="BackButtonStyle" TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
+                <Setter Property="Padding" Value="0" />
+                <Setter Property="Width" Value="32" />
+                <Setter Property="Height" Value="32" />
+            </Style>
+        </Border.Resources>
+
         <Grid>
-            <Grid.Resources>
-                <Style x:Key="ButtonStyle" TargetType="Button">
-                    <Setter Property="MinHeight" Value="45"/>
-                    <Setter Property="VerticalAlignment" Value="Center"/>
-                    <Setter Property="HorizontalAlignment" Value="Stretch"/>
-                    <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}"/>
-                    <Setter Property="Margin" Value="4"/>
-                </Style>
-                <Style x:Key="LabelStyle" TargetType="TextBlock">
-                    <Setter Property="VerticalAlignment" Value="Center"/>
-                    <Setter Property="HorizontalAlignment" Value="Center"/>
-                    <Setter Property="Margin" Value="4,0,4,8"/>
-                    <Setter Property="TextWrapping" Value="Wrap"/>
-                    <Setter Property="TextAlignment" Value="Center"/>
-                    <Setter Property="FontSize" Value="12"/>
-                    <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}"/>
-                </Style>
-            </Grid.Resources>
+            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    CornerRadius="{Binding CornerRadius, ElementName=OuterBorder}"/>
+            <!-- Changed binding here -->
 
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
+            <Border Visibility="{Binding AlbumArtSource, Converter={StaticResource ObjectToVisibilityConverter}}"
+                    CornerRadius="{Binding CornerRadius, ElementName=OuterBorder}">
+                <!-- Changed binding here -->
+                <Border.Background>
+                    <media:ImageBlendBrush Source="{Binding AlbumArtSource}"
+                                           Mode="SoftLight"
+                                           Stretch="UniformToFill" />
+                </Border.Background>
+            </Border>
 
-            <Grid Grid.Row="0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="1*"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
+            <Border Background="{ThemeResource AcrylicBackgroundFillColorDefaultBrush}" Opacity="0.75"
+                    CornerRadius="{Binding CornerRadius, ElementName=OuterBorder}"/>
+            <!-- Changed binding here -->
 
-                <Button Grid.Row="0" Grid.Column="0" Style="{StaticResource ButtonStyle}">
-                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph=""/>
-                </Button>
-                <TextBlock Grid.Row="1" Grid.Column="0" Text="Play/Pause" Style="{StaticResource LabelStyle}"/>
+            <Grid>
+                <Grid Padding="16" RowSpacing="24"
+                      Visibility="{Binding IsQueueViewVisible, Converter={StaticResource InvertedBooleanToVisibilityConverter}}"
+                      Background="Transparent">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-                <Button Grid.Row="0" Grid.Column="1" Style="{StaticResource ButtonStyle}">
-                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph=""/>
-                </Button>
-                <TextBlock Grid.Row="1" Grid.Column="1" Text="Previous" Style="{StaticResource LabelStyle}"/>
+                    <StackPanel Grid.Row="0" HorizontalAlignment="Stretch" Spacing="2">
+                        <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}"
+                                   Text="{Binding SongTitle, FallbackValue='A Really Long Song Title That Might Need to be Clipped'}"
+                                   HorizontalAlignment="Center" TextAlignment="Center" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
+                        <TextBlock Style="{ThemeResource BodyTextBlockStyle}"
+                                   Text="{Binding ArtistName, FallbackValue='An Artist With an Equally Long Name'}"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                   HorizontalAlignment="Center" TextAlignment="Center" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
+                    </StackPanel>
 
-                <Button Grid.Row="0" Grid.Column="2" Style="{StaticResource ButtonStyle}">
-                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph=""/>
-                </Button>
-                <TextBlock Grid.Row="1" Grid.Column="2" Text="Next" Style="{StaticResource LabelStyle}"/>
+                    <Slider Grid.Row="1"
+                            Maximum="{Binding TotalDuration}" Value="{Binding CurrentPosition, Mode=TwoWay}"
+                            ThumbToolTipValueConverter="{StaticResource TimeSpanToTimeStringConverter}"
+                            IsThumbToolTipEnabled="True"
+                            Style="{StaticResource MediaSeekerSliderStyle}"/>
 
-                <Button Grid.Row="2" Grid.Column="0" Style="{StaticResource ButtonStyle}">
-                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph=""/>
-                </Button>
-                <TextBlock Grid.Row="3" Grid.Column="0" Text="Shuffle" Style="{StaticResource LabelStyle}"/>
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="8">
+                        <Button Command="{Binding ToggleMuteCommand}" Style="{StaticResource VolumeButtonStyle}" ToolTipService.ToolTip="{Binding VolumeButtonToolTip}">
+                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="{Binding VolumeIconGlyph}"/>
+                        </Button>
+                        <Button Command="{Binding ToggleShuffleCommand}" Style="{StaticResource ShuffleButtonStyle}" ToolTipService.ToolTip="{Binding ShuffleButtonToolTip}">
+                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="{Binding ShuffleIconGlyph}"/>
+                        </Button>
+                        <Button Command="{Binding PreviousCommand}" Style="{StaticResource PreviousButtonStyle}" ToolTipService.ToolTip="Previous">
+                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph=""/>
+                        </Button>
+                        <Button Command="{Binding PlayPauseCommand}" Style="{StaticResource PlayPauseButtonStyle}" ToolTipService.ToolTip="{Binding PlayPauseButtonToolTip}">
+                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" FontSize="24" Glyph="{Binding PlayPauseIconGlyph}"/>
+                        </Button>
+                        <Button Command="{Binding NextCommand}" Style="{StaticResource NextButtonStyle}" ToolTipService.ToolTip="Next">
+                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph=""/>
+                        </Button>
+                        <Button Command="{Binding CycleRepeatCommand}" Style="{StaticResource RepeatButtonStyle}" ToolTipService.ToolTip="{Binding RepeatButtonToolTip}">
+                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="{Binding RepeatIconGlyph}"/>
+                        </Button>
+                        <Button Command="{Binding ShowQueueViewCommand}" Style="{StaticResource QueueButtonStyle}" ToolTipService.ToolTip="Current Queue">
+                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph=""/>
+                        </Button>
+                    </StackPanel>
+                </Grid>
 
-                <Button Grid.Row="2" Grid.Column="1" Style="{StaticResource ButtonStyle}">
-                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph=""/>
-                </Button>
-                <TextBlock Grid.Row="3" Grid.Column="1" Text="Repeat" Style="{StaticResource LabelStyle}"/>
+                <Grid Padding="12,16,16,16"
+                    Visibility="{Binding IsQueueViewVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    Background="Transparent">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
 
-                <Button Grid.Row="2" Grid.Column="2" Style="{StaticResource ButtonStyle}">
-                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph=""/>
-                </Button>
-                <TextBlock Grid.Row="3" Grid.Column="2" Text="Volume" Style="{StaticResource LabelStyle}"/>
-            </Grid>
+                    <Grid Grid.Row="0">
+                        <Button HorizontalAlignment="Left"
+                                Command="{Binding ShowPlayerViewCommand}"
+                                Style="{StaticResource BackButtonStyle}"
+                                ToolTipService.ToolTip="Back to Player">
+                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph=""/>
+                        </Button>
 
-            <Grid Grid.Row="1" Margin="4,8,4,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
+                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center"
+                                   Style="{ThemeResource MediaControlSubtitleStyle}"
+                                   Text="Current Queue"
+                                   Margin="12,0,12,4"/>
+                    </Grid>
 
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <FontIcon FontSize="14" Glyph="" Margin="0,0,8,0"/>
-                    <TextBlock FontSize="11" VerticalAlignment="Center" Text="Now Playing: Song Title"/>
-                </StackPanel>
-
-                <Button Grid.Column="1" Width="40" Height="40" Background="Transparent" BorderBrush="Transparent">
-                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" FontSize="16" Glyph=""/>
-                </Button>
+                    <ListView Grid.Row="1"
+                              ItemsSource="{Binding CurrentQueue}"
+                              SelectionMode="None"
+                              ItemContainerStyle="{StaticResource QueueListViewItemStyle}"
+                              VirtualizingStackPanel.VirtualizationMode="Recycling">
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ItemsStackPanel ItemsUpdatingScrollMode="KeepItemsInView" />
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="models:Song">
+                                <StackPanel Margin="0,4">
+                                    <TextBlock
+                                        Style="{ThemeResource BodyStrongTextBlockStyle}"
+                                        Text="{x:Bind Title}"
+                                        TextTrimming="CharacterEllipsis" />
+                                    <TextBlock
+                                        Style="{ThemeResource CaptionTextBlockStyle}"
+                                        Text="{x:Bind Artist.Name}"
+                                        TextTrimming="CharacterEllipsis" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
             </Grid>
         </Grid>
     </Border>
