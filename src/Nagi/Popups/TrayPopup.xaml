@@ -8,10 +8,20 @@
     xmlns:converters="using:Nagi.Converters"
     xmlns:models="using:Nagi.Models"
     xmlns:media="using:CommunityToolkit.WinUI.Media"
+    xmlns:muxm="using:Microsoft.UI.Xaml.Media"
     mc:Ignorable="d">
 
+    <!--
+    This popup window serves as the primary user interface when interacting with the system tray icon.
+    It provides two main views: a player control view and a queue view.
+    -->
+
+    <Window.SystemBackdrop>
+        <muxm:DesktopAcrylicBackdrop/>
+    </Window.SystemBackdrop>
+
     <Border x:Name="OuterBorder"
-        BorderThickness="1"
+            BorderThickness="1"
             BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
             CornerRadius="8"
             d:DataContext="{d:DesignInstance Type=viewmodels:PlayerViewModel}">
@@ -35,25 +45,18 @@
         </Border.Resources>
 
         <Grid>
-            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                    CornerRadius="{Binding CornerRadius, ElementName=OuterBorder}"/>
-            <!-- Changed binding here -->
-
             <Border Visibility="{Binding AlbumArtSource, Converter={StaticResource ObjectToVisibilityConverter}}"
                     CornerRadius="{Binding CornerRadius, ElementName=OuterBorder}">
-                <!-- Changed binding here -->
                 <Border.Background>
                     <media:ImageBlendBrush Source="{Binding AlbumArtSource}"
                                            Mode="SoftLight"
-                                           Stretch="UniformToFill" />
+                                           Stretch="UniformToFill" 
+                                           Opacity="0.3"/>
                 </Border.Background>
             </Border>
 
-            <Border Background="{ThemeResource AcrylicBackgroundFillColorDefaultBrush}" Opacity="0.75"
-                    CornerRadius="{Binding CornerRadius, ElementName=OuterBorder}"/>
-            <!-- Changed binding here -->
-
             <Grid>
+                <!-- Player View: Contains track info, seek bar, and media controls. -->
                 <Grid Padding="16" RowSpacing="24"
                       Visibility="{Binding IsQueueViewVisible, Converter={StaticResource InvertedBooleanToVisibilityConverter}}"
                       Background="Transparent">
@@ -104,9 +107,10 @@
                     </StackPanel>
                 </Grid>
 
+                <!-- Queue View: Displays the list of upcoming tracks. -->
                 <Grid Padding="12,16,16,16"
-                    Visibility="{Binding IsQueueViewVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
-                    Background="Transparent">
+                      Visibility="{Binding IsQueueViewVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
+                      Background="Transparent">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
@@ -117,11 +121,11 @@
                                 Command="{Binding ShowPlayerViewCommand}"
                                 Style="{StaticResource BackButtonStyle}"
                                 ToolTipService.ToolTip="Back to Player">
-                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph=""/>
+                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph=""/>
                         </Button>
 
                         <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center"
-                                   Style="{ThemeResource MediaControlSubtitleStyle}"
+                                   Style="{ThemeResource SubtitleTextBlockStyle}"
                                    Text="Current Queue"
                                    Margin="12,0,12,4"/>
                     </Grid>

@@ -15,115 +15,123 @@ internal static class PopupAnimation {
     private static readonly Vector3 StartOffset = new(0, 20, 0);
 
     /// <summary>
-    /// Animates a window into view after it has been shown and activated.
+    /// Animates a window into view using a slide, scale, and fade-in effect.
     /// </summary>
     /// <param name="window">The XAML Window to animate.</param>
     /// <param name="onCompleted">An optional action to run when the animation finishes.</param>
     public static void AnimateIn(Window window, Action? onCompleted = null) {
         if (window.Content is not UIElement content) return;
 
-        var appWindow = window.AppWindow;
-        var compositor = window.Compositor;
-        var rootVisual = ElementCompositionPreview.GetElementVisual(content);
+        Compositor compositor = window.Compositor;
+        Visual rootVisual = ElementCompositionPreview.GetElementVisual(content);
 
-        // Prepare the visual for its entry animation.
-        rootVisual.CenterPoint = new Vector3(appWindow.Size.Width / 2.0f, appWindow.Size.Height / 2.0f, 0);
+        //
+        // Set the initial state of the visual for the entrance animation.
+        //
+        rootVisual.CenterPoint = new Vector3(window.AppWindow.Size.Width / 2.0f, window.AppWindow.Size.Height / 2.0f, 0);
         rootVisual.Opacity = 0.0f;
         rootVisual.Scale = new Vector3(0.7f, 0.7f, 1.0f);
-        rootVisual.Offset = StartOffset; // Set initial offset before animating
+        rootVisual.Offset = StartOffset;
 
+        //
         // This easing function creates a "back" effect, where the animation overshoots and then settles.
-        var easing = compositor.CreateCubicBezierEasingFunction(new Vector2(0.34f, 1.56f), new Vector2(0.64f, 1f));
+        //
+        CubicBezierEasingFunction easing = compositor.CreateCubicBezierEasingFunction(new Vector2(0.34f, 1.56f), new Vector2(0.64f, 1f));
 
-        // Opacity animation: Fades from 0 to 1.
-        var opacityAnimation = compositor.CreateScalarKeyFrameAnimation();
+        //
+        // Define animations for opacity, scale, and offset.
+        //
+        ScalarKeyFrameAnimation opacityAnimation = compositor.CreateScalarKeyFrameAnimation();
         opacityAnimation.InsertKeyFrame(1.0f, 1.0f);
         opacityAnimation.Duration = TimeSpan.FromMilliseconds(ShowDurationMs * 0.6f);
         opacityAnimation.Target = nameof(Visual.Opacity);
 
-        // Scale animation: Grows from 0.7 to 1.0 with an overshoot.
-        var scaleAnimation = compositor.CreateVector3KeyFrameAnimation();
+        Vector3KeyFrameAnimation scaleAnimation = compositor.CreateVector3KeyFrameAnimation();
         scaleAnimation.InsertKeyFrame(1.0f, Vector3.One, easing);
         scaleAnimation.Duration = TimeSpan.FromMilliseconds(ShowDurationMs);
         scaleAnimation.Target = nameof(Visual.Scale);
 
-        // Offset animation: Moves from its current offset to its final position (Vector3.Zero).
-        var offsetAnimation = compositor.CreateVector3KeyFrameAnimation();
+        Vector3KeyFrameAnimation offsetAnimation = compositor.CreateVector3KeyFrameAnimation();
         offsetAnimation.InsertKeyFrame(1.0f, Vector3.Zero, easing);
         offsetAnimation.Duration = TimeSpan.FromMilliseconds(ShowDurationMs);
         offsetAnimation.Target = nameof(Visual.Offset);
 
-        var animationGroup = compositor.CreateAnimationGroup();
+        //
+        // Group and start the animations.
+        //
+        CompositionAnimationGroup animationGroup = compositor.CreateAnimationGroup();
         animationGroup.Add(opacityAnimation);
         animationGroup.Add(scaleAnimation);
         animationGroup.Add(offsetAnimation);
 
-        // Use a scoped batch to run an action upon completion.
-        var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+        CompositionScopedBatch batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
         rootVisual.StartAnimationGroup(animationGroup);
         batch.End();
 
         batch.Completed += (s, a) => {
+            //
             // Reset the offset property after animation to avoid layout issues.
+            //
             rootVisual.Offset = Vector3.Zero;
             onCompleted?.Invoke();
         };
     }
 
     /// <summary>
-    /// Animates a window out of view with a quick fade-and-fall effect.
+    /// Animates a window out of view using a slide, scale, and fade-out effect.
     /// </summary>
     /// <param name="window">The XAML Window to animate.</param>
-    /// <param name="onCompleted">An optional action to run when the window is hidden.</param>
+    /// <param name="onCompleted">An optional action to run after the window is hidden.</param>
     public static void Hide(Window window, Action? onCompleted = null) {
-        var appWindow = window.AppWindow;
         if (window.Content is not UIElement content) {
-            // If there's no content to animate, just hide the window immediately.
-            appWindow.Hide();
+            window.AppWindow.Hide();
             onCompleted?.Invoke();
             return;
         }
 
-        var compositor = window.Compositor;
-        var rootVisual = ElementCompositionPreview.GetElementVisual(content);
+        Compositor compositor = window.Compositor;
+        Visual rootVisual = ElementCompositionPreview.GetElementVisual(content);
 
+        //
         // Use a sharp "ease-in" curve for a quick exit.
-        var easing = compositor.CreateCubicBezierEasingFunction(new Vector2(0.5f, 0.0f), new Vector2(0.9f, 0.5f));
+        //
+        CubicBezierEasingFunction easing = compositor.CreateCubicBezierEasingFunction(new Vector2(0.5f, 0.0f), new Vector2(0.9f, 0.5f));
+        rootVisual.CenterPoint = new Vector3(window.AppWindow.Size.Width / 2.0f, window.AppWindow.Size.Height / 2.0f, 0);
 
-        rootVisual.CenterPoint = new Vector3(appWindow.Size.Width / 2.0f, appWindow.Size.Height / 2.0f, 0);
-
-        // Opacity animation: Fades from 1 to 0.
-        var opacityAnimation = compositor.CreateScalarKeyFrameAnimation();
+        //
+        // Define animations for opacity, scale, and offset.
+        //
+        ScalarKeyFrameAnimation opacityAnimation = compositor.CreateScalarKeyFrameAnimation();
         opacityAnimation.InsertKeyFrame(1.0f, 0.0f, easing);
         opacityAnimation.Duration = TimeSpan.FromMilliseconds(HideDurationMs);
         opacityAnimation.Target = nameof(Visual.Opacity);
 
-        // Scale animation: Shrinks to match the show animation's start scale.
-        var scaleAnimation = compositor.CreateVector3KeyFrameAnimation();
+        Vector3KeyFrameAnimation scaleAnimation = compositor.CreateVector3KeyFrameAnimation();
         scaleAnimation.InsertKeyFrame(1.0f, new Vector3(0.7f, 0.7f, 1.0f), easing);
         scaleAnimation.Duration = TimeSpan.FromMilliseconds(HideDurationMs);
         scaleAnimation.Target = nameof(Visual.Scale);
 
-        // Offset animation: Moves down to the starting offset position.
-        var offsetAnimation = compositor.CreateVector3KeyFrameAnimation();
+        Vector3KeyFrameAnimation offsetAnimation = compositor.CreateVector3KeyFrameAnimation();
         offsetAnimation.InsertKeyFrame(1.0f, StartOffset, easing);
         offsetAnimation.Duration = TimeSpan.FromMilliseconds(HideDurationMs);
         offsetAnimation.Target = nameof(Visual.Offset);
 
-        var animationGroup = compositor.CreateAnimationGroup();
+        CompositionAnimationGroup animationGroup = compositor.CreateAnimationGroup();
         animationGroup.Add(opacityAnimation);
         animationGroup.Add(scaleAnimation);
         animationGroup.Add(offsetAnimation);
 
-        var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+        CompositionScopedBatch batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
         rootVisual.StartAnimationGroup(animationGroup);
         batch.End();
 
         batch.Completed += (s, a) => {
-            appWindow.Hide();
+            window.AppWindow.Hide();
 
+            //
             // Reset visual properties to their default state after hiding.
-            // This ensures the window appears correctly if shown again without re-creation.
+            // This ensures the window appears correctly if shown again.
+            //
             rootVisual.Opacity = 1.0f;
             rootVisual.Scale = Vector3.One;
             rootVisual.Offset = Vector3.Zero;

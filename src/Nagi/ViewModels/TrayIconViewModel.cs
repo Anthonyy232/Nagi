@@ -83,8 +83,7 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable {
     private void OnAppWindowChanged(AppWindow sender, AppWindowChangedEventArgs args) {
         if (args.DidVisibilityChange) {
             // Ensure property updates are on the UI thread.
-            _dispatcherQueue.TryEnqueue(() =>
-            {
+            _dispatcherQueue.TryEnqueue(() => {
                 IsWindowVisible = sender.IsVisible;
                 UpdateTrayIconVisibility();
             });
@@ -149,6 +148,11 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable {
         if (App.RootWindow is null) {
             return;
         }
+
+        // *** FIX: Explicitly hide the popup before showing the main window. ***
+        // This provides a more reliable and cleaner user experience than
+        // relying solely on the popup's deactivation event.
+        _trayPopupService.HidePopup();
 
         // Use the activator to ensure the window is brought to the foreground correctly.
         WindowActivator.ShowAndActivate(App.RootWindow, _win32InteropService);

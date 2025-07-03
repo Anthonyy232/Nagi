@@ -1,4 +1,5 @@
 ﻿using Microsoft.UI.Dispatching;
+using Microsoft.UI.Xaml;
 using Nagi.Helpers;
 using Nagi.Popups;
 using Nagi.Services.Abstractions;
@@ -8,12 +9,18 @@ using WinRT.Interop;
 
 namespace Nagi.Services.Implementations;
 
+/// <summary>
+/// Manages the lifecycle, positioning, and animation of the tray icon's popup window.
+/// </summary>
 public class TrayPopupService : ITrayPopupService {
-    // Vertical offset to position the popup above the cursor/taskbar.
+    //
+    // The vertical distance between the cursor and the popup window.
+    //
     private const int VERTICAL_OFFSET = 24;
-    // Debounce delay in milliseconds to prevent rapid toggling.
+    //
+    // Prevents the popup from reappearing immediately after being closed.
+    //
     private const uint DEACTIVATION_DEBOUNCE_MS = 200;
-    // Define the desired width of the popup in device-independent pixels (DIPs)
     private const int POPUP_WIDTH_DIPS = 384;
 
     private readonly IWin32InteropService _win32;
@@ -28,8 +35,11 @@ public class TrayPopupService : ITrayPopupService {
             ?? throw new InvalidOperationException("Cannot get DispatcherQueue for the current thread.");
     }
 
+    /// <summary>
+    /// Shows the popup if it is hidden, or hides it if it is visible.
+    /// Applies a debounce to prevent rapid toggling.
+    /// </summary>
     public void ShowOrHidePopup() {
-        // Prevent showing/hiding if an animation is in progress or if the window was just deactivated.
         if (_isAnimating || (_win32.GetTickCount() - _lastDeactivatedTime < DEACTIVATION_DEBOUNCE_MS)) {
             return;
         }
@@ -46,55 +56,10 @@ public class TrayPopupService : ITrayPopupService {
         }
     }
 
-    private void ShowPopup() {
-        _isAnimating = true;
-        var appWindow = _popupWindow!.AppWindow;
-        var windowHandle = WindowNative.GetWindowHandle(_popupWindow);
-
-        // Get the current DPI scale for the window
-        var scale = _win32.GetDpiForWindow(windowHandle) / 96f;
-
-        // Calculate desired dimensions in physical pixels
-        int desiredWidthPhysical = (int)(POPUP_WIDTH_DIPS * scale);
-        // Get the desired height from the XAML content itself.
-        // This will now be reliable due to UpdateLayout in the TrayPopup constructor.
-        int desiredHeightPhysical = (int)(_popupWindow.GetContentDesiredHeight(POPUP_WIDTH_DIPS) * scale);
-
-        appWindow.Resize(new SizeInt32(desiredWidthPhysical, desiredHeightPhysical));
-
-        var cursorPosition = _win32.GetCursorPos();
-        var workArea = _win32.GetWorkAreaForPoint(cursorPosition);
-        var popupSize = appWindow.Size; // This will now reflect the calculated size
-
-        // Center the popup horizontally on the cursor.
-        int finalX = cursorPosition.X - (popupSize.Width / 2);
-        // Clamp the horizontal position to stay within the work area.
-        finalX = Math.Max((int)workArea.Left, finalX);
-        finalX = Math.Min((int)workArea.Right - popupSize.Width, finalX);
-
-        // Position the popup above the cursor.
-        int finalY = cursorPosition.Y - popupSize.Height - VERTICAL_OFFSET;
-
-        // If positioning above the cursor would push it off-screen, position it below instead.
-        if (finalY < workArea.Top) {
-            finalY = cursorPosition.Y + VERTICAL_OFFSET;
-        }
-
-        var finalPosition = new PointInt32(finalX, finalY);
-
-        // Move the window to its final position first.
-        appWindow.Move(finalPosition);
-
-        // Use the "polite" activation method to prevent breaking the taskbar's open state.
-        WindowActivator.ActivatePopupWindow(_popupWindow);
-
-        // Call the animation method that just handles the visual effects.
-        PopupAnimation.AnimateIn(_popupWindow, () => {
-            _isAnimating = false;
-        });
-    }
-
-    private void HidePopup() {
+    /// <summary>
+    /// Hides the popup window if it is currently visible.
+    /// </summary>
+    public void HidePopup() {
         if (_popupWindow != null && _popupWindow.AppWindow.IsVisible && !_isAnimating) {
             _isAnimating = true;
             PopupAnimation.Hide(_popupWindow, () => {
@@ -103,11 +68,56 @@ public class TrayPopupService : ITrayPopupService {
         }
     }
 
+    private void ShowPopup() {
+        _isAnimating = true;
+        var appWindow = _popupWindow!.AppWindow;
+        var windowHandle = WindowNative.GetWindowHandle(_popupWindow);
+
+        var scale = _win32.GetDpiForWindow(windowHandle) / 96f;
+
+        int desiredWidthPhysical = (int)(POPUP_WIDTH_DIPS * scale);
+        int desiredHeightPhysical = (int)(_popupWindow.GetContentDesiredHeight(POPUP_WIDTH_DIPS) * scale);
+
+        appWindow.Resize(new SizeInt32(desiredWidthPhysical, desiredHeightPhysical));
+
+        //
+        // Calculate the optimal position for the popup near the cursor, ensuring it stays within the work area.
+        //
+        var cursorPosition = _win32.GetCursorPos();
+        var workArea = _win32.GetWorkAreaForPoint(cursorPosition);
+        var popupSize = appWindow.Size;
+
+        int finalX = cursorPosition.X - (popupSize.Width / 2);
+        finalX = Math.Max((int)workArea.Left, finalX);
+        finalX = Math.Min((int)workArea.Right - popupSize.Width, finalX);
+
+        //
+        // Position the popup above the cursor, but flip it below if there is not enough space.
+        //
+        int finalY = cursorPosition.Y - popupSize.Height - VERTICAL_OFFSET;
+        if (finalY < workArea.Top) {
+            finalY = cursorPosition.Y + VERTICAL_OFFSET;
+        }
+
+        appWindow.Move(new PointInt32(finalX, finalY));
+        WindowActivator.ActivatePopupWindow(_popupWindow);
+
+        PopupAnimation.AnimateIn(_popupWindow, () => {
+            _isAnimating = false;
+        });
+    }
+
     private void CreateWindow() {
-        _popupWindow = new TrayPopup();
+        //
+        // Determine the current theme from the main window's content to prevent a theme flash on popup creation.
+        // This assumes the App class exposes a reference to the main window.
+        //
+        var mainContent = (App.Current as App)?._window?.Content as FrameworkElement;
+        var currentTheme = mainContent?.ActualTheme ?? ElementTheme.Default;
+
+        _popupWindow = new TrayPopup(currentTheme);
         _popupWindow.Deactivated += OnPopupDeactivated;
         _popupWindow.Closed += (s, e) => {
-            // Nullify the reference so it can be garbage collected and re-created on next show.
             _popupWindow = null;
         };
     }

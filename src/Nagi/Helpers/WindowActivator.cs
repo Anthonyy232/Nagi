@@ -7,10 +7,9 @@ using WinRT.Interop;
 namespace Nagi.Helpers;
 
 /// <summary>
-/// Provides utility methods for managing window activation and state.
+/// Provides utility methods for managing window activation and state using Win32 APIs.
 /// </summary>
 internal static class WindowActivator {
-    // Win32 SW_ command to show a window minimized.
     private const int SW_SHOWMINIMIZED = 2;
 
     [DllImport("user32.dll", SetLastError = true)]
@@ -24,34 +23,26 @@ internal static class WindowActivator {
     /// Brings a window to the foreground and activates it, ensuring it receives focus.
     /// </summary>
     /// <remarks>
-    /// This method handles the complex Win32 logic required to steal focus from another application,
-    /// which involves attaching the input threads of the foreground window and the target window.
+    /// This method handles the Win32 logic required to steal focus from another application
+    /// by temporarily attaching the input threads of the foreground and target windows.
     /// </remarks>
     /// <param name="window">The window to show and activate.</param>
     /// <param name="win32">A service providing Win32 interoperability functions.</param>
     public static void ShowAndActivate(Window window, IWin32InteropService win32) {
-        // Retrieve the window handle.
         IntPtr windowHandle = WindowNative.GetWindowHandle(window);
-        if (windowHandle == IntPtr.Zero) {
-            // Cannot activate a window without a handle.
-            return;
-        }
+        if (windowHandle == IntPtr.Zero) return;
 
         IntPtr foregroundWindowHandle = win32.GetForegroundWindow();
-
-        // To bring a window to the foreground, we may need to attach our thread's input
-        // to the foreground window's thread. This is a common technique to steal focus.
         uint currentThreadId = win32.GetCurrentThreadId();
         uint foregroundThreadId = win32.GetWindowThreadProcessId(foregroundWindowHandle, IntPtr.Zero);
 
+        // To reliably bring a window to the foreground, we attach our thread's input
+        // to the foreground window's thread, which allows us to bypass certain focus restrictions.
         if (foregroundThreadId != currentThreadId) {
             win32.AttachThreadInput(foregroundThreadId, currentThreadId, true);
         }
 
-        // Place the window on top of the Z-order.
         win32.BringWindowToTop(windowHandle);
-
-        // Show the window if it's not already visible.
         window.AppWindow.Show();
 
         // Detach the threads to restore normal input processing.
@@ -61,14 +52,13 @@ internal static class WindowActivator {
     }
 
     /// <summary>
-    /// Activates a popup window in a way that is less disruptive to the shell.
+    /// Activates a popup window, bringing it to the foreground.
     /// </summary>
     /// <param name="window">The window to show and activate.</param>
     public static void ActivatePopupWindow(Window window) {
         IntPtr windowHandle = WindowNative.GetWindowHandle(window);
         if (windowHandle == IntPtr.Zero) return;
 
-        // Show the window, which also brings it to the foreground.
         window.AppWindow.Show();
         SetForegroundWindow(windowHandle);
     }

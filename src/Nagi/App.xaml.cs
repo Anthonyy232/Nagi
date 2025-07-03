@@ -28,7 +28,7 @@ namespace Nagi;
 
 public partial class App : Application {
     private static Color? _systemAccentColor;
-    private Window? _window;
+    internal Window? _window;
     private MicaController? _micaController;
     private WindowsSystemDispatcherQueueHelper? _wsdqHelper;
 
@@ -50,12 +50,8 @@ public partial class App : Application {
     public static DispatcherQueue? MainDispatcherQueue { get; private set; }
     public static bool IsExiting { get; set; }
 
-    /// <summary>
-    /// Gets the system's accent color.
-    /// </summary>
-    /// <remarks>
-    /// Caches the color on first access. Provides a fallback if the resource lookup fails.
-    /// </remarks>
+    // Gets the system's accent color, caching it on first access.
+    // Provides a fallback color for stability if the resource lookup fails.
     public static Color SystemAccentColor {
         get {
             if (_systemAccentColor is null) {
@@ -63,7 +59,7 @@ public partial class App : Application {
                     _systemAccentColor = color;
                 }
                 else {
-                    // This fallback is crucial for stability if theme resources are unavailable.
+                    // This fallback is crucial if theme resources are somehow unavailable.
                     Debug.WriteLine("[App] Warning: SystemAccentColor resource not found. Using fallback.");
                     _systemAccentColor = Colors.SlateGray;
                 }
@@ -72,9 +68,7 @@ public partial class App : Application {
         }
     }
 
-    /// <summary>
-    /// Configures the dependency injection container for the application.
-    /// </summary>
+    // Configures the dependency injection container for the application.
     private static IServiceProvider ConfigureServices() {
         var services = new ServiceCollection();
 
@@ -86,11 +80,11 @@ public partial class App : Application {
         services.AddSingleton<IConfiguration>(configuration);
         services.AddHttpClient();
 
-        // Services that depend on the UI thread dispatcher
+        // Services that depend on the UI thread dispatcher.
+        // The factory ensures the dispatcher is available before creating the service.
         services.AddSingleton<IAudioPlayer>(provider => {
             if (MainDispatcherQueue is null) {
-                throw new InvalidOperationException(
-                    "MainDispatcherQueue must be initialized before creating AudioPlayerService.");
+                throw new InvalidOperationException("MainDispatcherQueue must be initialized before creating AudioPlayerService.");
             }
             return new AudioPlayerService(MainDispatcherQueue);
         });
@@ -132,23 +126,20 @@ public partial class App : Application {
         return services.BuildServiceProvider();
     }
 
-    /// <summary>
-    /// Ensures the application's database is created on startup.
-    /// </summary>
+    // Ensures the application's database is created on startup.
     private static void InitializeDatabase() {
         try {
             using var dbContext = Services.GetRequiredService<MusicDbContext>();
             dbContext.Database.EnsureCreated();
         }
         catch (Exception ex) {
-            // A working database is critical. Log this failure prominently.
+            // A working database is critical. This failure should be logged prominently.
             Debug.WriteLine($"[App] CRITICAL: Failed to initialize database. {ex.Message}");
-            // In a production app, this might trigger a user-facing error dialog.
         }
     }
 
     protected override async void OnLaunched(LaunchActivatedEventArgs args) {
-        // Determine if the app was launched at startup to decide initial window state.
+        // Determine if the app was launched at startup to decide the initial window state.
         bool isStartupLaunch = Environment.GetCommandLineArgs()
             .Any(arg => arg.Equals("--startup", StringComparison.OrdinalIgnoreCase));
 
@@ -175,21 +166,17 @@ public partial class App : Application {
         EnqueuePostLaunchTasks();
     }
 
-    /// <summary>
-    /// Handles the application suspending event, typically triggered by the OS.
-    /// </summary>
+    // Handles the application suspending event, typically triggered by the OS.
     private async void OnSuspending(object? sender, SuspendingEventArgs e) {
         var deferral = e.SuspendingOperation.GetDeferral();
         await SaveApplicationStateAsync();
         deferral.Complete();
     }
 
-    /// <summary>
-    /// Persists application state, such as playback position, before closing or suspending.
-    /// </summary>
+    // Persists application state, such as playback position, before closing or suspending.
     private async Task SaveApplicationStateAsync() {
-        if (Services.GetService<ISettingsService>() is not null and var settingsService &&
-            Services.GetService<IMusicPlaybackService>() is not null and var musicPlaybackService) {
+        if (Services.GetService<ISettingsService>() is { } settingsService &&
+            Services.GetService<IMusicPlaybackService>() is { } musicPlaybackService) {
             try {
                 if (await settingsService.GetRestorePlaybackStateEnabledAsync()) {
                     await musicPlaybackService.SavePlaybackStateAsync();
@@ -204,9 +191,7 @@ public partial class App : Application {
         }
     }
 
-    /// <summary>
-    /// Cleans up resources when the main window is closed.
-    /// </summary>
+    // Cleans up resources when the main window is closed.
     private async void OnWindowClosed(object sender, WindowEventArgs args) {
         await SaveApplicationStateAsync();
 
@@ -221,27 +206,23 @@ public partial class App : Application {
         }
     }
 
-    /// <summary>
-    /// Global exception handler to log errors and prevent the application from crashing unexpectedly.
-    /// </summary>
+    // Global exception handler to log errors and prevent the application from crashing unexpectedly.
     private void OnAppUnhandledException(object sender, UnhandledExceptionEventArgs e) {
         Debug.WriteLine($"[App] UNHANDLED EXCEPTION: {e.Exception}");
 
-        // Marking the exception as handled prevents the app from terminating.
-        // This should be used cautiously, but is often desirable for a better user experience.
+        // Marking the exception as handled prevents the app from terminating,
+        // which can provide a better user experience for non-fatal errors.
         e.Handled = true;
     }
 
-    /// <summary>
-    /// Checks application state (e.g., if library folders are configured) and navigates to the
-    /// appropriate initial page, either Onboarding or the main application interface.
-    /// </summary>
+    // Checks application state and navigates to the appropriate initial page.
     public async Task CheckAndNavigateToMainContent() {
         if (RootWindow is null) return;
 
         var libraryService = Services.GetRequiredService<ILibraryService>();
         bool hasFolders = (await libraryService.GetAllFoldersAsync()).Any();
 
+        // Navigate to the main application if library folders are configured, otherwise show onboarding.
         if (hasFolders) {
             if (RootWindow.Content is not MainPage) {
                 RootWindow.Content = new MainPage();
@@ -255,6 +236,7 @@ public partial class App : Application {
             }
         }
 
+        // Apply the current theme and initialize the title bar for the new content.
         if (RootWindow.Content is FrameworkElement currentContent && RootWindow is MainWindow mainWindow) {
             var settingsService = Services.GetRequiredService<ISettingsService>();
             currentContent.RequestedTheme = await settingsService.GetThemeAsync();
@@ -325,6 +307,7 @@ public partial class App : Application {
         }
     }
 
+    // Parses a 6-digit (RRGGBB) or 8-digit (AARRGGBB) hex color string.
     private bool TryParseHexColor(string hex, out Color color) {
         color = Colors.Transparent;
         if (string.IsNullOrEmpty(hex)) return false;
@@ -348,9 +331,7 @@ public partial class App : Application {
 
     #region Window Activation and System Integration
 
-    /// <summary>
-    /// Manages the initial visibility of the main window based on user settings.
-    /// </summary>
+    // Manages the initial visibility of the main window based on user settings.
     private async Task HandleWindowActivationAsync(bool isStartupLaunch = false) {
         if (_window is null) return;
 
@@ -373,9 +354,7 @@ public partial class App : Application {
         }
     }
 
-    /// <summary>
-    /// Enqueues tasks to be run after the initial launch sequence is complete.
-    /// </summary>
+    // Enqueues tasks to be run after the initial launch sequence is complete.
     private void EnqueuePostLaunchTasks() {
         MainDispatcherQueue?.TryEnqueue(DispatcherQueuePriority.Normal, () => {
             try {
@@ -383,15 +362,12 @@ public partial class App : Application {
                 audioPlayerService.InitializeSmtc();
             }
             catch (Exception ex) {
-                Debug.WriteLine(
-                    $"[App] Error: Failed to initialize System Media Transport Controls (SMTC). {ex.Message}");
+                Debug.WriteLine($"[App] Error: Failed to initialize System Media Transport Controls (SMTC). {ex.Message}");
             }
         });
     }
 
-    /// <summary>
-    /// Attempts to apply the Mica backdrop material to the main window.
-    /// </summary>
+    // Attempts to apply the Mica backdrop material to the main window.
     private bool TrySetMicaBackdrop() {
         if (!MicaController.IsSupported()) return false;
 
