@@ -4,8 +4,10 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using Nagi.Services.Abstractions;
 using Nagi.ViewModels;
 using System;
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 using Windows.Foundation;
 using Windows.UI;
@@ -22,10 +24,14 @@ public sealed partial class TrayPopup : Window {
 
     public PlayerViewModel ViewModel { get; }
 
+    private readonly ISettingsService _settingsService;
+    private bool _isCoverArtInFlyoutEnabled;
+
     public TrayPopup(ElementTheme initialTheme) {
         this.InitializeComponent();
 
         ViewModel = App.Services.GetRequiredService<PlayerViewModel>();
+        _settingsService = App.Services.GetRequiredService<ISettingsService>();
 
         if (this.Content is Border rootBorder) {
             //
@@ -39,7 +45,28 @@ public sealed partial class TrayPopup : Window {
         }
 
         ConfigureWindowAppearance();
+        _ = InitializeSettingsAsync();
+
         Activated += OnActivated;
+        Closed += OnClosed;
+        ViewModel.PropertyChanged += OnViewModelPropertyChanged;
+        _settingsService.ShowCoverArtInTrayFlyoutSettingChanged += OnShowCoverArtSettingChanged;
+    }
+
+    /// <summary>
+    /// Loads the initial setting for cover art visibility and updates the UI.
+    /// </summary>
+    private async System.Threading.Tasks.Task InitializeSettingsAsync() {
+        _isCoverArtInFlyoutEnabled = await _settingsService.GetShowCoverArtInTrayFlyoutAsync();
+        UpdateCoverArtVisibility();
+    }
+
+    /// <summary>
+    /// Updates the visibility of the cover art background based on the current setting and album art availability.
+    /// </summary>
+    private void UpdateCoverArtVisibility() {
+        var shouldBeVisible = _isCoverArtInFlyoutEnabled && ViewModel.AlbumArtSource != null;
+        CoverArtBackground.Visibility = shouldBeVisible ? Visibility.Visible : Visibility.Collapsed;
     }
 
     /// <summary>
@@ -88,6 +115,33 @@ public sealed partial class TrayPopup : Window {
         if (args.WindowActivationState == WindowActivationState.Deactivated) {
             Deactivated?.Invoke(this, EventArgs.Empty);
         }
+    }
+
+    /// <summary>
+    /// Handles changes to the cover art setting, updating the UI on the dispatcher thread.
+    /// </summary>
+    private void OnShowCoverArtSettingChanged(bool isEnabled) {
+        DispatcherQueue.TryEnqueue(() => {
+            _isCoverArtInFlyoutEnabled = isEnabled;
+            UpdateCoverArtVisibility();
+        });
+    }
+
+    /// <summary>
+    /// Listens for changes to the ViewModel's AlbumArtSource to update visibility.
+    /// </summary>
+    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e) {
+        if (e.PropertyName == nameof(PlayerViewModel.AlbumArtSource)) {
+            UpdateCoverArtVisibility();
+        }
+    }
+
+    /// <summary>
+    /// Unsubscribes from events when the window is closed to prevent memory leaks.
+    /// </summary>
+    private void OnClosed(object sender, WindowEventArgs args) {
+        ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
+        _settingsService.ShowCoverArtInTrayFlyoutSettingChanged -= OnShowCoverArtSettingChanged;
     }
 
     #region Win32 Interop

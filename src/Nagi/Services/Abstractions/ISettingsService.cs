@@ -10,8 +10,7 @@ namespace Nagi.Services.Abstractions;
 /// <summary>
 ///     Defines a service for managing application-wide settings.
 /// </summary>
-public interface ISettingsService
-{
+public interface ISettingsService {
     /// <summary>
     ///     Occurs when the player animation setting is changed.
     ///     The boolean parameter indicates whether the animation is enabled.
@@ -23,6 +22,12 @@ public interface ISettingsService
     ///     The boolean parameter indicates whether hiding to tray is enabled.
     /// </summary>
     event Action<bool>? HideToTraySettingChanged;
+
+    /// <summary>
+    ///     Occurs when the "Show Cover Art in Tray Flyout" setting is changed.
+    ///     The boolean parameter indicates whether the cover art is visible.
+    /// </summary>
+    event Action<bool>? ShowCoverArtInTrayFlyoutSettingChanged;
 
     /// <summary>
     ///     Gets the initial volume level for the media player.
@@ -155,6 +160,18 @@ public interface ISettingsService
     /// </summary>
     /// <param name="isEnabled">The hide to tray preference to save.</param>
     Task SetHideToTrayEnabledAsync(bool isEnabled);
+
+    /// <summary>
+    ///     Gets whether cover art should be shown in the tray flyout.
+    /// </summary>
+    /// <returns>True if showing cover art is enabled; otherwise, false.</returns>
+    Task<bool> GetShowCoverArtInTrayFlyoutAsync();
+
+    /// <summary>
+    ///     Sets the preference for showing cover art in the tray flyout.
+    /// </summary>
+    /// <param name="isEnabled">The preference to save.</param>
+    Task SetShowCoverArtInTrayFlyoutAsync(bool isEnabled);
 
     /// <summary>
     ///     Gets whether the application should fetch additional metadata from online services.

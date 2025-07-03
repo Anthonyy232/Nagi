@@ -45,7 +45,7 @@
         </Border.Resources>
 
         <Grid>
-            <Border Visibility="{Binding AlbumArtSource, Converter={StaticResource ObjectToVisibilityConverter}}"
+            <Border x:Name="CoverArtBackground"
                     CornerRadius="{Binding CornerRadius, ElementName=OuterBorder}">
                 <Border.Background>
                     <media:ImageBlendBrush Source="{Binding AlbumArtSource}"

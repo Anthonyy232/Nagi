@@ -116,6 +116,14 @@
                     <ToggleSwitch IsOn="{x:Bind ViewModel.IsHideToTrayEnabled, Mode=TwoWay}" />
                 </controls:SettingsCard>
 
+                <controls:SettingsCard Header="Show Cover Art in Tray Flyout"
+                                       Description="Display the current track's album art in the compact player that appears when clicking the system tray icon.">
+                    <controls:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
+                    </controls:SettingsCard.HeaderIcon>
+                    <ToggleSwitch IsOn="{x:Bind ViewModel.IsShowCoverArtInTrayFlyoutEnabled, Mode=TwoWay}" />
+                </controls:SettingsCard>
+
                 <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="Data Management" />
 
                 <controls:SettingsCard Header="Retrieve Online Metadata"

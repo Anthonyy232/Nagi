@@ -17,15 +17,13 @@ namespace Nagi.ViewModels;
 /// <summary>
 ///     Provides properties and commands for the settings page, allowing users to configure the application.
 /// </summary>
-public partial class SettingsViewModel : ObservableObject
-{
+public partial class SettingsViewModel : ObservableObject {
     private readonly IServiceProvider _serviceProvider;
     private readonly ISettingsService _settingsService;
 
     private bool _isInitializing;
 
-    public SettingsViewModel(ISettingsService settingsService, IServiceProvider serviceProvider)
-    {
+    public SettingsViewModel(ISettingsService settingsService, IServiceProvider serviceProvider) {
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
         _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
     }
@@ -73,6 +71,12 @@ public partial class SettingsViewModel : ObservableObject
     public partial bool IsHideToTrayEnabled { get; set; }
 
     /// <summary>
+    ///     Gets or sets a value indicating whether cover art should be shown in the tray flyout.
+    /// </summary>
+    [ObservableProperty]
+    public partial bool IsShowCoverArtInTrayFlyoutEnabled { get; set; }
+
+    /// <summary>
     ///     Gets or sets a value indicating whether the application should fetch additional online metadata (e.g., artist
     ///     images from Spotify, biographies from Last.fm).
     /// </summary>
@@ -89,8 +93,7 @@ public partial class SettingsViewModel : ObservableObject
     ///     Asynchronously loads all settings from the settings service and populates the ViewModel properties.
     /// </summary>
     [RelayCommand]
-    public async Task LoadSettingsAsync()
-    {
+    public async Task LoadSettingsAsync() {
         _isInitializing = true;
         SelectedTheme = await _settingsService.GetThemeAsync();
         IsDynamicThemingEnabled = await _settingsService.GetDynamicThemingAsync();
@@ -99,66 +102,62 @@ public partial class SettingsViewModel : ObservableObject
         IsAutoLaunchEnabled = await _settingsService.GetAutoLaunchEnabledAsync();
         IsStartMinimizedEnabled = await _settingsService.GetStartMinimizedEnabledAsync();
         IsHideToTrayEnabled = await _settingsService.GetHideToTrayEnabledAsync();
+        IsShowCoverArtInTrayFlyoutEnabled = await _settingsService.GetShowCoverArtInTrayFlyoutAsync();
         IsFetchOnlineMetadataEnabled = await _settingsService.GetFetchOnlineMetadataEnabledAsync();
         _isInitializing = false;
     }
 
-    partial void OnSelectedThemeChanged(ElementTheme value)
-    {
+    partial void OnSelectedThemeChanged(ElementTheme value) {
         if (_isInitializing) return;
         _ = ApplyAndSaveThemeAsync(value);
     }
 
-    private async Task ApplyAndSaveThemeAsync(ElementTheme theme)
-    {
+    private async Task ApplyAndSaveThemeAsync(ElementTheme theme) {
         await _settingsService.SetThemeAsync(theme);
         if (Application.Current is App appInstance) appInstance.ApplyTheme(theme);
     }
 
-    partial void OnIsDynamicThemingEnabledChanged(bool value)
-    {
+    partial void OnIsDynamicThemingEnabledChanged(bool value) {
         if (_isInitializing) return;
         _ = ApplyAndSaveDynamicThemingAsync(value);
     }
 
-    private async Task ApplyAndSaveDynamicThemingAsync(bool isEnabled)
-    {
+    private async Task ApplyAndSaveDynamicThemingAsync(bool isEnabled) {
         await _settingsService.SetDynamicThemingAsync(isEnabled);
         if (Application.Current is App appInstance) appInstance.ReapplyCurrentDynamicTheme();
     }
 
-    partial void OnIsPlayerAnimationEnabledChanged(bool value)
-    {
+    partial void OnIsPlayerAnimationEnabledChanged(bool value) {
         if (_isInitializing) return;
         _ = _settingsService.SetPlayerAnimationEnabledAsync(value);
     }
 
-    partial void OnIsRestorePlaybackStateEnabledChanged(bool value)
-    {
+    partial void OnIsRestorePlaybackStateEnabledChanged(bool value) {
         if (_isInitializing) return;
         _ = _settingsService.SetRestorePlaybackStateEnabledAsync(value);
     }
 
-    partial void OnIsAutoLaunchEnabledChanged(bool value)
-    {
+    partial void OnIsAutoLaunchEnabledChanged(bool value) {
         if (_isInitializing) return;
         _ = _settingsService.SetAutoLaunchEnabledAsync(value);
     }
 
-    partial void OnIsStartMinimizedEnabledChanged(bool value)
-    {
+    partial void OnIsStartMinimizedEnabledChanged(bool value) {
         if (_isInitializing) return;
         _ = _settingsService.SetStartMinimizedEnabledAsync(value);
     }
 
-    partial void OnIsHideToTrayEnabledChanged(bool value)
-    {
+    partial void OnIsHideToTrayEnabledChanged(bool value) {
         if (_isInitializing) return;
         _ = _settingsService.SetHideToTrayEnabledAsync(value);
     }
 
-    partial void OnIsFetchOnlineMetadataEnabledChanged(bool value)
-    {
+    partial void OnIsShowCoverArtInTrayFlyoutEnabledChanged(bool value) {
+        if (_isInitializing) return;
+        _ = _settingsService.SetShowCoverArtInTrayFlyoutAsync(value);
+    }
+
+    partial void OnIsFetchOnlineMetadataEnabledChanged(bool value) {
         if (_isInitializing) return;
         _ = _settingsService.SetFetchOnlineMetadataEnabledAsync(value);
     }
@@ -168,12 +167,10 @@ public partial class SettingsViewModel : ObservableObject
     ///     after user confirmation.
     /// </summary>
     [RelayCommand]
-    private async Task ResetApplicationDataAsync()
-    {
+    private async Task ResetApplicationDataAsync() {
         if (App.RootWindow?.Content?.XamlRoot is not { } xamlRoot) return;
 
-        var confirmDialog = new ContentDialog
-        {
+        var confirmDialog = new ContentDialog {
             Title = "Confirm Reset",
             Content =
                 "Are you sure you want to reset all application data and settings? This action cannot be undone. The application will return to the initial setup.",
@@ -185,8 +182,7 @@ public partial class SettingsViewModel : ObservableObject
         var result = await confirmDialog.ShowAsync();
         if (result != ContentDialogResult.Primary) return;
 
-        try
-        {
+        try {
             await _settingsService.ResetToDefaultsAsync();
 
             var libraryService = _serviceProvider.GetRequiredService<ILibraryService>();
@@ -197,14 +193,11 @@ public partial class SettingsViewModel : ObservableObject
 
             if (App.CurrentApp is App appInstance) await appInstance.CheckAndNavigateToMainContent();
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             Debug.WriteLine($"CRITICAL: Application reset failed. Error: {ex.Message}\n{ex.StackTrace}");
 
-            if (xamlRoot.IsHostVisible)
-            {
-                var errorDialog = new ContentDialog
-                {
+            if (xamlRoot.IsHostVisible) {
+                var errorDialog = new ContentDialog {
                     Title = "Reset Error",
                     Content =
                         $"An error occurred while resetting application data: {ex.Message}. Please try restarting the app manually.",
