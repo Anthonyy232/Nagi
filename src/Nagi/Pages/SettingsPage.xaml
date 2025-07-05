@@ -151,7 +151,7 @@
 
                 <controls:SettingsExpander
                     Header="About Nagi"
-                    Description="Information about this application."
+                    Description="Rediscover your local music collection with Nagi, a music player focused on speed, simplicity, and privacy. Nagi is built with C# and WinUI 3 to offer a clean, native Fluent experience. It's beautiful, efficient, and respects your privacy."
                     IsExpanded="False">
                     <controls:SettingsExpander.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
@@ -159,13 +159,12 @@
                     <TextBlock
                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                         IsTextSelectionEnabled="True"
-                        Text="Version 1.0.0 (Example)" />
+                        Text="Version 1.0.0" />
                     <controls:SettingsExpander.Items>
                         <controls:SettingsCard ContentAlignment="Left">
                             <StackPanel Orientation="Vertical">
-                                <HyperlinkButton Content="View Licenses" NavigateUri="https://example.com/licenses" />
-                                <HyperlinkButton Content="Privacy Policy" NavigateUri="https://example.com/privacy" />
-                                <HyperlinkButton Content="Official Website" NavigateUri="https://example.com/" />
+                                <HyperlinkButton Content="View Licenses" NavigateUri="https://github.com/Anthonyy232/Nagi/blob/master/LICENSE" />
+                                <HyperlinkButton Content="Official Website" NavigateUri="https://github.com/Anthonyy232/Nagi" />
                             </StackPanel>
                         </controls:SettingsCard>
                         <controls:SettingsCard Header="Acknowledgements" IsClickEnabled="True">
@@ -174,7 +173,7 @@
                     </controls:SettingsExpander.Items>
                 </controls:SettingsExpander>
 
-                <HyperlinkButton Margin="0,8,0,0" Content="Send Feedback" NavigateUri="mailto:feedback@example.com" />
+                <HyperlinkButton Margin="0,8,0,0" Content="Send Feedback" NavigateUri="mailto:anthonyyla.dev@gmail.com" />
             </StackPanel>
         </ScrollView>
     </Grid>
