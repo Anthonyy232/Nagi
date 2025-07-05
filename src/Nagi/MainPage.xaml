@@ -28,6 +28,53 @@
 
     <Grid x:Name="OverlayContainerGrid">
         <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="PlayerVisibilityStates">
+                <VisualState x:Name="PlayerVisible">
+                    <Storyboard>
+                        <DoubleAnimation
+                            Storyboard.TargetName="FloatingPlayerContainer"
+                            Storyboard.TargetProperty="Opacity"
+                            To="1"
+                            Duration="0:0:0.3">
+                            <DoubleAnimation.EasingFunction>
+                                <CubicEase EasingMode="EaseOut" />
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
+                        <DoubleAnimation
+                            Storyboard.TargetName="FloatingPlayerContainer"
+                            Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)"
+                            To="0"
+                            Duration="0:0:0.3">
+                            <DoubleAnimation.EasingFunction>
+                                <CubicEase EasingMode="EaseOut" />
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="PlayerHidden">
+                    <Storyboard>
+                        <DoubleAnimation
+                            Storyboard.TargetName="FloatingPlayerContainer"
+                            Storyboard.TargetProperty="Opacity"
+                            To="0"
+                            Duration="0:0:0.3">
+                            <DoubleAnimation.EasingFunction>
+                                <CubicEase EasingMode="EaseIn" />
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
+                        <DoubleAnimation
+                            Storyboard.TargetName="FloatingPlayerContainer"
+                            Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)"
+                            To="150"
+                            Duration="0:0:0.3">
+                            <DoubleAnimation.EasingFunction>
+                                <CubicEase EasingMode="EaseIn" />
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+
             <VisualStateGroup x:Name="PlayerStateGroup">
                 <VisualState x:Name="PlayerExpanded">
                     <Storyboard>
@@ -250,6 +297,9 @@
                         CornerRadius="8"
                         PointerEntered="FloatingPlayerContainer_PointerEntered"
                         PointerExited="FloatingPlayerContainer_PointerExited">
+                        <Border.RenderTransform>
+                            <CompositeTransform />
+                        </Border.RenderTransform>
                         <Grid>
                             <Grid x:Name="MainControlsGrid" VerticalAlignment="Top">
                                 <Grid.ColumnDefinitions>

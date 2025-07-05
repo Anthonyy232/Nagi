@@ -213,6 +213,11 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider {
         AppTitleBar.IsBackButtonVisible = ContentFrame.CanGoBack && isDetailPage;
 
         UpdateNavViewSelection(e.SourcePageType);
+
+        // Animate the player in or out based on the current page.
+        var isSettingsPage = e.SourcePageType == typeof(SettingsPage);
+        var stateName = isSettingsPage ? "PlayerHidden" : "PlayerVisible";
+        VisualStateManager.GoToState(this, stateName, true);
     }
 
     private void VolumeControlsWrapper_PointerWheelChanged(object sender, PointerRoutedEventArgs e) {
