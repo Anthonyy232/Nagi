@@ -11,7 +11,7 @@
 
     <Identity
             Name="0e78498c-35ed-4782-a2e0-fce2ae1344ea"
-            Publisher="CN=Antho"
+            Publisher="CN=Anthony La"
             Version="1.0.0.0"/>
 
     <mp:PhoneIdentity PhoneProductId="0e78498c-35ed-4782-a2e0-fce2ae1344ea"
@@ -38,7 +38,7 @@
                      EntryPoint="$targetentrypoint$">
             <uap:VisualElements
                     DisplayName="Nagi"
-                    Description="Nagi"
+                    Description="Rediscover your local music collection with Nagi, a music player focused on speed, simplicity, and privacy. Nagi is built with C# and WinUI 3 to offer a clean, native Fluent experience. It&apos;s beautiful, efficient, and respects your privacy."
                     BackgroundColor="transparent"
                     Square150x150Logo="Assets\Square150x150Logo.png"
                     Square44x44Logo="Assets\Square44x44Logo.png">
