@@ -9,12 +9,10 @@ on:
 jobs:
   build:
     strategy:
-      # fail-fast: false will allow all platform builds to complete even if one fails.
-      # This is useful for seeing if an error is specific to one platform.
       fail-fast: false 
       matrix:
         configuration: [Release]
-        platform: [x64, x86, ARM64]
+        platform: [x64, x86, arm64]
 
     runs-on: windows-latest
 
@@ -32,7 +30,6 @@ jobs:
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v2
 
-    # Restore step now includes the RuntimeIdentifier
     - name: Restore NuGet packages
       run: >
         msbuild src/Nagi/Nagi.csproj 
@@ -54,7 +51,6 @@ jobs:
         $certificatePath = "GitHubActionsWorkflow.pfx"
         [IO.File]::WriteAllBytes("$certificatePath", $pfx_cert_byte)
 
-    # Publish step now includes the RuntimeIdentifier
     - name: Create the app package
       if: github.event_name == 'push'
       run: >
