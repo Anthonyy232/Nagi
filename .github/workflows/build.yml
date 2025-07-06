@@ -35,6 +35,7 @@ jobs:
         msbuild src/Nagi/Nagi.csproj 
         /t:Restore 
         /p:RuntimeIdentifier=win-${{ matrix.platform }}
+        /p:PublishReadyToRun=true
 
     - name: Build for PR Validation
       if: github.event_name == 'pull_request'
@@ -59,6 +60,7 @@ jobs:
         /p:Configuration=${{ matrix.configuration }}
         /p:Platform=${{ matrix.platform }}
         /p:RuntimeIdentifier=win-${{ matrix.platform }}
+        /p:PublishReadyToRun=true
         /p:UapAppxPackageBuildMode=SideloadOnly
         /p:AppxBundle=Never
         /p:AppxPackageDir="Packages\"
