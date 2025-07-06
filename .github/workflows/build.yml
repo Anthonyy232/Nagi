@@ -2,9 +2,9 @@ name: Build Nagi WinUI 3 App
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
 
 jobs:
   build:
