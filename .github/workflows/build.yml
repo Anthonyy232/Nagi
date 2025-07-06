@@ -9,6 +9,9 @@ on:
 jobs:
   build:
     strategy:
+      # fail-fast: false will allow all platform builds to complete even if one fails.
+      # This is useful for seeing if an error is specific to one platform.
+      fail-fast: false 
       matrix:
         configuration: [Release]
         platform: [x64, x86, ARM64]
@@ -29,19 +32,21 @@ jobs:
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v2
 
-    # This new step restores dependencies for all subsequent build/publish steps.
+    # Restore step now includes the RuntimeIdentifier
     - name: Restore NuGet packages
-      run: msbuild src/Nagi/Nagi.csproj /t:Restore
+      run: >
+        msbuild src/Nagi/Nagi.csproj 
+        /t:Restore 
+        /p:RuntimeIdentifier=win-${{ matrix.platform }}
 
-    # This step builds the project to validate PRs. It does not package or sign.
     - name: Build for PR Validation
       if: github.event_name == 'pull_request'
       run: >
         msbuild src/Nagi/Nagi.csproj
         /p:Configuration=${{ matrix.configuration }}
         /p:Platform=${{ matrix.platform }}
+        /p:RuntimeIdentifier=win-${{ matrix.platform }}
 
-    # The following steps create a signed package and only run on a push to the main branch.
     - name: Decode the PFX certificate
       if: github.event_name == 'push'
       run: |
@@ -49,6 +54,7 @@ jobs:
         $certificatePath = "GitHubActionsWorkflow.pfx"
         [IO.File]::WriteAllBytes("$certificatePath", $pfx_cert_byte)
 
+    # Publish step now includes the RuntimeIdentifier
     - name: Create the app package
       if: github.event_name == 'push'
       run: >
@@ -56,16 +62,13 @@ jobs:
         /t:Publish
         /p:Configuration=${{ matrix.configuration }}
         /p:Platform=${{ matrix.platform }}
+        /p:RuntimeIdentifier=win-${{ matrix.platform }}
         /p:UapAppxPackageBuildMode=SideloadOnly
         /p:AppxBundle=Never
         /p:AppxPackageDir="Packages\"
         /p:AppxPackageSigningEnabled=true
         /p:PackageCertificateKeyFile=GitHubActionsWorkflow.pfx
         /p:GenerateAppxPackageOnBuild=true
-        # No password parameter is needed if the PFX was created without one, per the guide.
-        # If this step fails with a signing error, your PFX has a password.
-        # You would then add a PFX_PASSWORD secret and uncomment the next line:
-        # /p:PackageCertificatePassword=${{ secrets.PFX_PASSWORD }}
 
     - name: Remove the PFX certificate
       if: always() && github.event_name == 'push'
