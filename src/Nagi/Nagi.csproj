@@ -208,5 +208,7 @@
         <PublishTrimmed Condition="'$(Configuration)' == 'Debug'">False</PublishTrimmed>
         <PublishTrimmed Condition="'$(Configuration)' != 'Debug'">True</PublishTrimmed>
         <SupportedOSPlatformVersion>10.0.18362.0</SupportedOSPlatformVersion>
+        <PackageCertificateThumbprint>5D87E584CDEE59613AFF90E5F7EC1F8D599BDC53</PackageCertificateThumbprint>
+        <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
     </PropertyGroup>
 </Project>
