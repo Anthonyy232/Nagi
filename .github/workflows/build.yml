@@ -49,7 +49,7 @@ jobs:
       if: github.event_name == 'push'
       run: |
         $pfx_cert_byte = [System.Convert]::FromBase64String("${{ secrets.BASE64_ENCODED_PFX }}")
-        $certificatePath = "GitHubActionsWorkflow.pfx"
+        $certificatePath = "${{ github.workspace }}/GitHubActionsWorkflow.pfx"
         [IO.File]::WriteAllBytes("$certificatePath", $pfx_cert_byte)
 
     - name: Create the app package
@@ -65,12 +65,12 @@ jobs:
         /p:AppxBundle=Never
         /p:AppxPackageDir="Packages\"
         /p:AppxPackageSigningEnabled=true
-        /p:PackageCertificateKeyFile=GitHubActionsWorkflow.pfx
+        /p:PackageCertificateKeyFile=${{ github.workspace }}/GitHubActionsWorkflow.pfx
         /p:GenerateAppxPackageOnBuild=true
 
     - name: Remove the PFX certificate
       if: always() && github.event_name == 'push'
-      run: Remove-Item -path GitHubActionsWorkflow.pfx -ErrorAction SilentlyContinue
+      run: Remove-Item -path ${{ github.workspace }}/GitHubActionsWorkflow.pfx -ErrorAction SilentlyContinue
 
     - name: Upload MSIX package artifact
       if: github.event_name == 'push'
