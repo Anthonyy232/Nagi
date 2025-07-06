@@ -29,6 +29,10 @@ jobs:
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v2
 
+    # This new step restores dependencies for all subsequent build/publish steps.
+    - name: Restore NuGet packages
+      run: msbuild src/Nagi/Nagi.csproj /t:Restore
+
     # This step builds the project to validate PRs. It does not package or sign.
     - name: Build for PR Validation
       if: github.event_name == 'pull_request'
