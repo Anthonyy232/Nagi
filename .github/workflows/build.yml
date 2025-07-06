@@ -1,0 +1,75 @@
+name: Build Nagi WinUI 3 App
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        configuration: [Release]
+        platform: [x64, x86, ARM64]
+
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Install .NET SDK
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 9.0.x
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
+
+    # This step builds the project to validate PRs. It does not package or sign.
+    - name: Build for PR Validation
+      if: github.event_name == 'pull_request'
+      run: >
+        msbuild src/Nagi/Nagi.csproj
+        /p:Configuration=${{ matrix.configuration }}
+        /p:Platform=${{ matrix.platform }}
+
+    # The following steps create a signed package and only run on a push to the main branch.
+    - name: Decode the PFX certificate
+      if: github.event_name == 'push'
+      run: |
+        $pfx_cert_byte = [System.Convert]::FromBase64String("${{ secrets.BASE64_ENCODED_PFX }}")
+        $certificatePath = "GitHubActionsWorkflow.pfx"
+        [IO.File]::WriteAllBytes("$certificatePath", $pfx_cert_byte)
+
+    - name: Create the app package
+      if: github.event_name == 'push'
+      run: >
+        msbuild src/Nagi/Nagi.csproj
+        /t:Publish
+        /p:Configuration=${{ matrix.configuration }}
+        /p:Platform=${{ matrix.platform }}
+        /p:UapAppxPackageBuildMode=SideloadOnly
+        /p:AppxBundle=Never
+        /p:AppxPackageDir="Packages\"
+        /p:AppxPackageSigningEnabled=true
+        /p:PackageCertificateKeyFile=GitHubActionsWorkflow.pfx
+        /p:GenerateAppxPackageOnBuild=true
+        # No password parameter is needed if the PFX was created without one, per the guide.
+        # If this step fails with a signing error, your PFX has a password.
+        # You would then add a PFX_PASSWORD secret and uncomment the next line:
+        # /p:PackageCertificatePassword=${{ secrets.PFX_PASSWORD }}
+
+    - name: Remove the PFX certificate
+      if: always() && github.event_name == 'push'
+      run: Remove-Item -path GitHubActionsWorkflow.pfx -ErrorAction SilentlyContinue
+
+    - name: Upload MSIX package artifact
+      if: github.event_name == 'push'
+      uses: actions/upload-artifact@v4
+      with:
+        name: MSIX-Package-${{ matrix.platform }}
+        path: src/Nagi/Packages/**/*.msix
