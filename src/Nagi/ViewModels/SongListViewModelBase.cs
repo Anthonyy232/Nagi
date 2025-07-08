@@ -22,41 +22,46 @@ namespace Nagi.ViewModels;
 ///     A base view model for pages that display a list of songs, providing common functionality
 ///     for loading, sorting, playback, and selection.
 /// </summary>
-public abstract partial class SongListViewModelBase : ObservableObject
-{
+public abstract partial class SongListViewModelBase : ObservableObject {
     protected readonly ILibraryService _libraryService;
     protected readonly INavigationService _navigationService;
     protected readonly IMusicPlaybackService _playbackService;
 
-    [ObservableProperty] private ObservableCollection<Playlist> _availablePlaylists = new();
+    [ObservableProperty]
+    public partial ObservableCollection<Playlist> AvailablePlaylists { get; set; } = new();
 
-    [ObservableProperty] private SongSortOrder _currentSortOrder = SongSortOrder.TitleAsc;
+    [ObservableProperty]
+    public partial SongSortOrder CurrentSortOrder { get; set; } = SongSortOrder.TitleAsc;
 
-    [ObservableProperty] private string _currentSortOrderText = "Sort By: A to Z";
+    [ObservableProperty]
+    public partial string CurrentSortOrderText { get; set; } = "Sort By: A to Z";
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(RefreshOrSortSongsCommand))]
     [NotifyCanExecuteChangedFor(nameof(PlayAllSongsCommand))]
     [NotifyCanExecuteChangedFor(nameof(ShuffleAndPlayAllSongsCommand))]
-    private bool _isOverallLoading;
+    public partial bool IsOverallLoading { get; set; }
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ShowInFileExplorerCommand))]
     [NotifyCanExecuteChangedFor(nameof(GoToAlbumCommand))]
     [NotifyCanExecuteChangedFor(nameof(GoToArtistCommand))]
-    private bool _isSingleSongSelected;
+    public partial bool IsSingleSongSelected { get; set; }
 
-    [ObservableProperty] private string _pageTitle = "Songs";
+    [ObservableProperty]
+    public partial string PageTitle { get; set; } = "Songs";
 
-    [ObservableProperty] private ObservableCollection<Song> _selectedSongs = new();
+    [ObservableProperty]
+    public partial ObservableCollection<Song> SelectedSongs { get; set; } = new();
 
-    [ObservableProperty] private ObservableCollection<Song> _songs = new();
+    [ObservableProperty]
+    public partial ObservableCollection<Song> Songs { get; set; } = new();
 
-    [ObservableProperty] private string _totalItemsText = "0 items";
+    [ObservableProperty]
+    public partial string TotalItemsText { get; set; } = "0 items";
 
     protected SongListViewModelBase(ILibraryService libraryService, IMusicPlaybackService playbackService,
-        INavigationService navigationService)
-    {
+        INavigationService navigationService) {
         _libraryService = libraryService ?? throw new ArgumentNullException(nameof(libraryService));
         _playbackService = playbackService ?? throw new ArgumentNullException(nameof(playbackService));
         _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
@@ -83,8 +88,7 @@ public abstract partial class SongListViewModelBase : ObservableObject
     ///     Loads or re-sorts the song list based on the current sort order.
     /// </summary>
     [RelayCommand(CanExecute = nameof(CanExecuteLoadCommands))]
-    public async Task RefreshOrSortSongsAsync(string? sortOrderString = null)
-    {
+    public async Task RefreshOrSortSongsAsync(string? sortOrderString = null) {
         if (IsOverallLoading) return;
 
         if (!string.IsNullOrEmpty(sortOrderString) &&
@@ -94,8 +98,7 @@ public abstract partial class SongListViewModelBase : ObservableObject
         IsOverallLoading = true;
         UpdateSortOrderButtonText(CurrentSortOrder);
 
-        try
-        {
+        try {
             var fetchedSongs = await LoadSongsAsync() ?? Enumerable.Empty<Song>();
 
             // Only perform an in-memory sort if the derived class indicates the data isn't already sorted.
@@ -108,13 +111,11 @@ public abstract partial class SongListViewModelBase : ObservableObject
 
             TotalItemsText = $"{Songs.Count} {(Songs.Count == 1 ? "item" : "items")}";
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             Debug.WriteLine($"[ERROR] SongListViewModelBase: Failed to load or sort songs. {ex.Message}");
             TotalItemsText = "Error loading items";
         }
-        finally
-        {
+        finally {
             IsOverallLoading = false;
         }
     }
@@ -122,16 +123,13 @@ public abstract partial class SongListViewModelBase : ObservableObject
     /// <summary>
     ///     Fetches all available playlists to populate UI elements like "Add to Playlist" menus.
     /// </summary>
-    public async Task LoadAvailablePlaylistsAsync()
-    {
-        try
-        {
+    public async Task LoadAvailablePlaylistsAsync() {
+        try {
             var playlists = await _libraryService.GetAllPlaylistsAsync();
             AvailablePlaylists = new ObservableCollection<Playlist>(playlists);
             AddSelectedSongsToPlaylistCommand.NotifyCanExecuteChanged();
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             Debug.WriteLine($"[ERROR] SongListViewModelBase: Failed to load available playlists. {ex.Message}");
         }
     }
@@ -139,8 +137,7 @@ public abstract partial class SongListViewModelBase : ObservableObject
     /// <summary>
     ///     Updates the collection of selected songs based on UI interaction.
     /// </summary>
-    public void OnSongsSelectionChanged(IEnumerable<object> selectedItems)
-    {
+    public void OnSongsSelectionChanged(IEnumerable<object> selectedItems) {
         SelectedSongs.Clear();
         foreach (var item in selectedItems.OfType<Song>()) SelectedSongs.Add(item);
         IsSingleSongSelected = SelectedSongs.Count == 1;
@@ -150,22 +147,19 @@ public abstract partial class SongListViewModelBase : ObservableObject
     #region Playback and Queue Commands
 
     [RelayCommand(CanExecute = nameof(CanExecutePlayAllCommands))]
-    private async Task PlayAllSongsAsync()
-    {
+    private async Task PlayAllSongsAsync() {
         await EnsureRepeatOneIsOffAsync();
         await _playbackService.PlayAsync(Songs.ToList());
     }
 
     [RelayCommand(CanExecute = nameof(CanExecutePlayAllCommands))]
-    private async Task ShuffleAndPlayAllSongsAsync()
-    {
+    private async Task ShuffleAndPlayAllSongsAsync() {
         await EnsureRepeatOneIsOffAsync();
         await _playbackService.PlayAsync(Songs.ToList(), 0, true);
     }
 
     [RelayCommand]
-    private async Task PlaySongAsync(Song? song)
-    {
+    private async Task PlaySongAsync(Song? song) {
         if (song == null) return;
         await EnsureRepeatOneIsOffAsync();
 
@@ -178,28 +172,24 @@ public abstract partial class SongListViewModelBase : ObservableObject
     }
 
     [RelayCommand(CanExecute = nameof(CanExecuteSelectedSongsCommands))]
-    private async Task PlaySelectedSongsAsync()
-    {
+    private async Task PlaySelectedSongsAsync() {
         await EnsureRepeatOneIsOffAsync();
         await _playbackService.PlayAsync(SelectedSongs.ToList());
     }
 
 
     [RelayCommand(CanExecute = nameof(CanExecuteSelectedSongsCommands))]
-    private async Task PlaySelectedSongsNextAsync()
-    {
+    private async Task PlaySelectedSongsNextAsync() {
         foreach (var song in SelectedSongs.Reverse()) await _playbackService.PlayNextAsync(song);
     }
 
     [RelayCommand(CanExecute = nameof(CanExecuteSelectedSongsCommands))]
-    private async Task AddSelectedSongsToQueueAsync()
-    {
+    private async Task AddSelectedSongsToQueueAsync() {
         await _playbackService.AddRangeToQueueAsync(SelectedSongs);
     }
 
     [RelayCommand(CanExecute = nameof(CanAddSelectedSongsToPlaylist))]
-    private async Task AddSelectedSongsToPlaylistAsync(Playlist? playlist)
-    {
+    private async Task AddSelectedSongsToPlaylistAsync(Playlist? playlist) {
         if (playlist == null || !SelectedSongs.Any()) return;
         var songIdsToAdd = SelectedSongs.Select(s => s.Id).ToList();
         await _libraryService.AddSongsToPlaylistAsync(playlist.Id, songIdsToAdd);
@@ -210,31 +200,26 @@ public abstract partial class SongListViewModelBase : ObservableObject
     #region Context Menu and Navigation Commands
 
     [RelayCommand(CanExecute = nameof(CanExecuteSingleSongCommands))]
-    private async Task ShowInFileExplorerAsync(Song? song)
-    {
+    private async Task ShowInFileExplorerAsync(Song? song) {
         var targetSong = song ?? SelectedSongs.FirstOrDefault();
         if (targetSong == null || string.IsNullOrEmpty(targetSong.FilePath) ||
             !File.Exists(targetSong.FilePath)) return;
 
-        try
-        {
+        try {
             var folder = await StorageFolder.GetFolderFromPathAsync(Path.GetDirectoryName(targetSong.FilePath));
             await Launcher.LaunchFolderAsync(folder);
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             Debug.WriteLine($"[ERROR] SongListViewModelBase: Failed to show file in explorer. {ex.Message}");
         }
     }
 
     [RelayCommand(CanExecute = nameof(CanExecuteSingleSongCommands))]
-    private void GoToAlbum(Song? song)
-    {
+    private void GoToAlbum(Song? song) {
         var targetSong = song ?? SelectedSongs.FirstOrDefault();
         if (targetSong?.AlbumId == null || targetSong.Album == null) return;
 
-        var navParam = new AlbumViewNavigationParameter
-        {
+        var navParam = new AlbumViewNavigationParameter {
             AlbumId = targetSong.Album.Id,
             AlbumTitle = targetSong.Album.Title,
             ArtistName = targetSong.Album.Artist?.Name ?? "Unknown Artist"
@@ -243,13 +228,11 @@ public abstract partial class SongListViewModelBase : ObservableObject
     }
 
     [RelayCommand(CanExecute = nameof(CanExecuteSingleSongCommands))]
-    private void GoToArtist(Song? song)
-    {
+    private void GoToArtist(Song? song) {
         var targetSong = song ?? SelectedSongs.FirstOrDefault();
         if (targetSong?.ArtistId == null || targetSong.Artist == null) return;
 
-        var navParam = new ArtistViewNavigationParameter
-        {
+        var navParam = new ArtistViewNavigationParameter {
             ArtistId = targetSong.Artist.Id,
             ArtistName = targetSong.Artist.Name
         };
@@ -260,36 +243,29 @@ public abstract partial class SongListViewModelBase : ObservableObject
 
     #region CanExecute and Helper Methods
 
-    private bool CanExecuteLoadCommands()
-    {
+    private bool CanExecuteLoadCommands() {
         return !IsOverallLoading;
     }
 
-    private bool CanExecutePlayAllCommands()
-    {
+    private bool CanExecutePlayAllCommands() {
         return !IsOverallLoading && Songs.Any();
     }
 
-    private bool CanExecuteSelectedSongsCommands()
-    {
+    private bool CanExecuteSelectedSongsCommands() {
         return HasSelectedSongs;
     }
 
-    private bool CanExecuteSingleSongCommands()
-    {
+    private bool CanExecuteSingleSongCommands() {
         return IsSingleSongSelected;
     }
 
 
-    private bool CanAddSelectedSongsToPlaylist()
-    {
+    private bool CanAddSelectedSongsToPlaylist() {
         return HasSelectedSongs && AvailablePlaylists.Any();
     }
 
-    protected void UpdateSortOrderButtonText(SongSortOrder sortOrder)
-    {
-        CurrentSortOrderText = sortOrder switch
-        {
+    protected void UpdateSortOrderButtonText(SongSortOrder sortOrder) {
+        CurrentSortOrderText = sortOrder switch {
             SongSortOrder.TitleAsc => "Sort By: A to Z",
             SongSortOrder.TitleDesc => "Sort By: Z to A",
             SongSortOrder.DateAddedDesc => "Sort By: Newest",
@@ -300,8 +276,7 @@ public abstract partial class SongListViewModelBase : ObservableObject
         };
     }
 
-    private void UpdateSelectionDependentCommands()
-    {
+    private void UpdateSelectionDependentCommands() {
         OnPropertyChanged(nameof(HasSelectedSongs));
         PlaySelectedSongsCommand.NotifyCanExecuteChanged();
         PlaySelectedSongsNextCommand.NotifyCanExecuteChanged();
@@ -309,16 +284,13 @@ public abstract partial class SongListViewModelBase : ObservableObject
         AddSelectedSongsToPlaylistCommand.NotifyCanExecuteChanged();
     }
 
-    private async Task EnsureRepeatOneIsOffAsync()
-    {
+    private async Task EnsureRepeatOneIsOffAsync() {
         if (_playbackService.CurrentRepeatMode == RepeatMode.RepeatOne)
             await _playbackService.SetRepeatModeAsync(RepeatMode.Off);
     }
 
-    protected static IEnumerable<Song> SortSongs(IEnumerable<Song> songs, SongSortOrder sortOrder)
-    {
-        return sortOrder switch
-        {
+    protected static IEnumerable<Song> SortSongs(IEnumerable<Song> songs, SongSortOrder sortOrder) {
+        return sortOrder switch {
             SongSortOrder.TitleDesc => songs.OrderByDescending(s => s.Title, StringComparer.OrdinalIgnoreCase),
             SongSortOrder.DateAddedDesc => songs.OrderByDescending(s => s.DateAddedToLibrary),
             SongSortOrder.DateAddedAsc => songs.OrderBy(s => s.DateAddedToLibrary),

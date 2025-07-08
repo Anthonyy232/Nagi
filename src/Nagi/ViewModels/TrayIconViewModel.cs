@@ -44,14 +44,14 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable {
     /// </summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ToolTipText))]
-    private bool _isWindowVisible = true;
+    public partial bool IsWindowVisible { get; set; } = true;
 
     /// <summary>
     /// Gets a value indicating whether the tray icon should be visible.
     /// This is controlled by the "Hide to Tray" user setting.
     /// </summary>
     [ObservableProperty]
-    private bool _isTrayIconVisible;
+    public partial bool IsTrayIconVisible { get; set; }
 
     /// <summary>
     /// Gets the text displayed when the user hovers over the tray icon.
