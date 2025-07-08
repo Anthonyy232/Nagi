@@ -53,7 +53,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
     private const double VolumeMediumThreshold = 66;
 
     // Constants for Image Effects
-    private const float AlbumArtBlurAmount = 15.0f;
+    private const float AlbumArtBlurAmount = 10.0f;
     private const float AlbumArtBlurScaleFactor = 1.05f;
 
     private readonly IMusicPlaybackService _playbackService;
@@ -61,12 +61,13 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
     private bool _isUpdatingFromService;
 
     // Manages cancellation for the asynchronous blur generation task.
-    // This is critical for preventing race conditions and unnecessary processing
-    // when the track changes quickly.
     private CancellationTokenSource? _blurGenerationCts;
 
     public PlayerViewModel(IMusicPlaybackService playbackService) {
         _playbackService = playbackService ?? throw new ArgumentNullException(nameof(playbackService));
+        // Ensure you get the DispatcherQueue from the UI thread context.
+        // For ViewModels, if created on the UI thread, this is fine.
+        // If created on a background thread, you'd need to pass it in or ensure it's accessed correctly.
         _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
         SubscribeToPlaybackServiceEvents();
@@ -136,7 +137,6 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
 
     [ObservableProperty]
     private string _globalOperationStatusMessage = string.Empty;
-
 
 
     [ObservableProperty]
@@ -309,27 +309,42 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
     }
 
     private void UpdateTrackDetails(Song? song) {
-        CurrentPlayingTrack = song;
-        AlbumArtSource = null;
-        AlbumArtBlurredSource = null;
+        CurrentPlayingTrack = song; // Update the current playing track object immediately
 
-        if (song != null) {
-            SongTitle = song.Title;
-            ArtistName = song.Artist?.Name ?? string.Empty;
+        // Always update text details immediately
+        SongTitle = song?.Title ?? "No track playing";
+        ArtistName = song?.Artist?.Name ?? string.Empty;
+
+        // Cancel any pending blur generation for the previous track.
+        // This is important to ensure the new blur generation starts clean.
+        _blurGenerationCts?.Cancel();
+        _blurGenerationCts?.Dispose();
+        _blurGenerationCts = new CancellationTokenSource();
+        var token = _blurGenerationCts.Token;
+
+        if (song != null && !string.IsNullOrEmpty(song.AlbumArtUriFromTrack)) {
             try {
-                if (!string.IsNullOrEmpty(song.AlbumArtUriFromTrack)) {
-                    var uri = new Uri(song.AlbumArtUriFromTrack);
-                    AlbumArtSource = new BitmapImage(uri);
-                    _ = GenerateBlurredImageAsync(uri);
-                }
+                var uri = new Uri(song.AlbumArtUriFromTrack);
+
+                // Update the non-blurred album art immediately.
+                // BitmapImage handles its own asynchronous loading.
+                AlbumArtSource = new BitmapImage(uri);
+
+                // Start generating the blurred image.
+                // Pass the song ID to ensure we only apply the blur if it's still the current track.
+                _ = GenerateBlurredImageAsync(uri, song.Id, token);
             }
             catch (Exception ex) {
                 Debug.WriteLine($"[{nameof(PlayerViewModel)}] Error processing album art URI '{song.AlbumArtUriFromTrack}': {ex.Message}");
+                // If there's an error, clear both to avoid showing incorrect art.
+                AlbumArtSource = null;
+                AlbumArtBlurredSource = null;
             }
         }
         else {
-            SongTitle = "No track playing";
-            ArtistName = string.Empty;
+            // If no song or no art URI, clear existing art.
+            AlbumArtSource = null;
+            AlbumArtBlurredSource = null;
         }
     }
 
@@ -337,13 +352,10 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
     /// Generates a blurred version of the album art asynchronously. This method is designed
     /// to be cancellable and artifact-free.
     /// </summary>
-    private async Task GenerateBlurredImageAsync(Uri imageUri) {
-        // Cancel any previous blur generation task to avoid unnecessary work.
-        _blurGenerationCts?.Cancel();
-        _blurGenerationCts?.Dispose();
-        _blurGenerationCts = new CancellationTokenSource();
-        var token = _blurGenerationCts.Token;
-
+    /// <param name="imageUri">The URI of the source image.</param>
+    /// <param name="songId">The ID of the song this image belongs to. Used to prevent applying old blur results.</param>
+    /// <param name="token">Cancellation token to stop processing if a new track starts.</param>
+    private async Task GenerateBlurredImageAsync(Uri imageUri, Guid songId, CancellationToken token) {
         try {
             var blurredBitmap = await Task.Run(async () => {
                 token.ThrowIfCancellationRequested();
@@ -354,20 +366,21 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
                     sourceStream = await file.OpenAsync(FileAccessMode.Read);
                 }
                 else {
+                    // For network or appx URIs
                     sourceStream = await RandomAccessStreamReference.CreateFromUri(imageUri).OpenReadAsync();
                 }
 
                 using (sourceStream) {
                     var device = CanvasDevice.GetSharedDevice();
 
-                    // Step 1: Load the image into a Win2D CanvasBitmap.
+                    // Load the image into a Win2D CanvasBitmap.
                     using var canvasBitmap = await CanvasBitmap.LoadAsync(device, sourceStream);
                     token.ThrowIfCancellationRequested();
 
-                    // Step 2: Create a render target with the exact same dimensions as the source.
+                    // Create a render target with the exact same dimensions as the source.
                     using var renderTarget = new CanvasRenderTarget(canvasBitmap, canvasBitmap.Size);
 
-                    // Step 3: Perform the blur using a multi-step process to avoid edge artifacts.
+                    // Perform the blur using a multi-step process to avoid edge artifacts.
                     using (var ds = renderTarget.CreateDrawingSession()) {
                         // First, clear the background. This prevents the blur's soft edges from
                         // blending with a transparent background, which can cause dark borders.
@@ -397,7 +410,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
                     }
                     token.ThrowIfCancellationRequested();
 
-                    // Step 4: Create a SoftwareBitmap from the result for UI display.
+                    // Create a SoftwareBitmap from the result for UI display.
                     var pixelBytes = renderTarget.GetPixelBytes();
                     return SoftwareBitmap.CreateCopyFromBuffer(
                         pixelBytes.AsBuffer(),
@@ -413,6 +426,15 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
             // Update the UI on the dispatcher thread.
             await _dispatcherQueue.EnqueueAsync(async () => {
                 if (token.IsCancellationRequested) return;
+
+                // IMPORTANT: Before applying the blur, check if the song it was generated for
+                // is still the currently playing track. This prevents race conditions where
+                // an older blur finishes after a new track has already started playing.
+                if (CurrentPlayingTrack?.Id != songId) {
+                    Debug.WriteLine($"[{nameof(PlayerViewModel)}] Skipping blur update for old track ID: {songId}. Current: {CurrentPlayingTrack?.Id}");
+                    return;
+                }
+
                 var source = new SoftwareBitmapSource();
                 await source.SetBitmapAsync(blurredBitmap);
                 AlbumArtBlurredSource = source;
@@ -423,6 +445,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
         }
         catch (Exception ex) {
             Debug.WriteLine($"[{nameof(PlayerViewModel)}] Failed to generate blurred image for URI '{imageUri}': {ex}");
+            // On error, ensure the blurred source is cleared
             _dispatcherQueue.TryEnqueue(() => AlbumArtBlurredSource = null);
         }
     }

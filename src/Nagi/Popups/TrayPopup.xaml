@@ -39,31 +39,16 @@
         </Border.Resources>
 
         <Grid>
-            <!--
-            ==================================================================================
-            THE FINAL FIX: ImageBrush with a ScaleTransform
-            This approach gives us the best of both worlds:
-            1. Layout: Using a Border with a Background brush does NOT affect the window size.
-               The window size is correctly determined by the UI controls in the foreground.
-            2. Visuals: The ScaleTransform on the ImageBrush acts as our "Overscan". It makes
-               the image inside the brush 10% larger, pushing any edge artifacts outside the
-               Border's clipping area. This fixes the visual bug while using UniformToFill.
-            ==================================================================================
-            -->
             <Border CornerRadius="{Binding CornerRadius, ElementName=OuterBorder}"
                     Visibility="{Binding AlbumArtBlurredSource, Converter={StaticResource ObjectToVisibilityConverter}}">
                 <Border.Background>
                     <ImageBrush ImageSource="{Binding AlbumArtBlurredSource}"
                                 Stretch="UniformToFill"
                                 Opacity="0.5">
-                        <ImageBrush.Transform>
-                            <ScaleTransform CenterX="0.5" CenterY="0.5" ScaleX="1.1" ScaleY="1.1"/>
-                        </ImageBrush.Transform>
                     </ImageBrush>
                 </Border.Background>
             </Border>
 
-            <!-- This Grid sits on top of the background and holds all the UI content. -->
             <Grid>
                 <!-- Player View: Contains track info, seek bar, and media controls. -->
                 <Grid Padding="16" RowSpacing="24"
