@@ -1,3 +1,4 @@
+# Workflow name for easy identification in the GitHub Actions UI.
 name: Create Nagi Release with Velopack
 
 # This workflow triggers on any push to the 'master' branch.
@@ -8,6 +9,7 @@ on:
 # Defines the jobs to be run.
 jobs:
   build-and-release:
+    # The type of runner that the job will run on.
     runs-on: windows-latest
 
     # A sequence of steps that make up the job.
@@ -16,17 +18,21 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
-        # Fetches all history for all branches and tags, necessary for versioning.
-        fetch-depth: 0 
+        # Fetches all history for all branches and tags. This is necessary for
+        # versioning tools that rely on Git history.
+        fetch-depth: 0
 
-    # Step 2: Extract the version number from a project file.
+    # Step 2: Extract and format the version number from a project file.
     - name: Get and Format Version from Project Properties
       id: get_version
       # Uses bash shell for compatibility with grep/sed commands.
       shell: bash
       run: |
+        # Extracts the four-part version (e.g., 1.2.3.4) from the .props file.
         four_part_version=$(grep -oE '<AppxPackageVersion>[^<]+' Directory.Build.props | sed 's/<AppxPackageVersion>//')
+        # Converts it to a three-part version (e.g., 1.2.3) for Velopack.
         three_part_version=$(echo "$four_part_version" | sed 's/\.[0-9]\+$//')
+        # Sets the version as an output variable for later steps.
         echo "version=$three_part_version" >> $GITHUB_OUTPUT
 
     # Step 3: Install the required .NET SDK.
@@ -36,13 +42,13 @@ jobs:
         dotnet-version: 9.0.x
 
     # Step 4: Install or update the Velopack command-line tool.
-    # Using 'update' prevents errors if the tool is already installed and ensures the latest version.
     - name: Install/Update vpk command-line tool
+      # Using 'update' prevents errors if the tool is already installed and ensures the latest version.
       run: dotnet tool update -g vpk --prerelease
 
     # Step 5: Create the appsettings.json file from GitHub Secrets.
-    # This keeps your API keys secure and out of the source code.
     - name: Create appsettings.json
+      # This keeps your API keys secure and out of the source code.
       shell: pwsh
       run: |
         echo '{
@@ -54,7 +60,6 @@ jobs:
         }' > src/Nagi/appsettings.json
 
     # Step 6: Build the application for all target platforms.
-    # This loop only performs the 'dotnet publish' command.
     - name: Build for All Platforms
       shell: pwsh
       run: |
@@ -70,13 +75,14 @@ jobs:
       run: |
         vpk pack -u Nagi -v ${{ steps.get_version.outputs.version }} `
           -p ./publish/win-x64 `
-          -p ./publish/win-x86 `
-          -p ./publish/win-arm64 `
+          ./publish/win-x86 `
+          ./publish/win-arm64 `
           -o ./Releases
 
     # Step 8: Upload the 'Releases' folder as a build artifact.
     - name: Upload Build Artifacts
       uses: actions/upload-artifact@v4
       with:
+        # The artifact will be named, for example, 'Nagi-Release-1.2.3'
         name: Nagi-Release-${{ steps.get_version.outputs.version }}
         path: ./Releases/
