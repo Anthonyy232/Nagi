@@ -18,6 +18,8 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using Velopack;
+using Velopack.Sources;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Core;
 using Windows.UI;
@@ -79,6 +81,12 @@ public partial class App : Application {
 
         services.AddSingleton<IConfiguration>(configuration);
         services.AddHttpClient();
+
+        // Velopack Update Manager
+        services.AddSingleton(provider => {
+            var source = new GithubSource("https://github.com/Anthonyy232/Nagi", null, false);
+            return new UpdateManager(source);
+        });
 
         // Services that depend on the UI thread dispatcher.
         // The factory ensures the dispatcher is available before creating the service.
@@ -161,6 +169,9 @@ public partial class App : Application {
 
         await CheckAndNavigateToMainContent();
         await HandleWindowActivationAsync(isStartupLaunch);
+
+        // Check for updates in the background.
+        _ = CheckForUpdatesAsync();
 
         // Defer non-critical initializations to avoid blocking UI rendering.
         EnqueuePostLaunchTasks();
@@ -399,6 +410,33 @@ public partial class App : Application {
         }
 
         return false;
+    }
+
+    #endregion
+
+    #region Velopack Updates
+
+    private async Task CheckForUpdatesAsync() {
+        try {
+            var um = Services.GetRequiredService<UpdateManager>();
+            var newVersion = await um.CheckForUpdatesAsync();
+
+            if (newVersion == null) {
+                Debug.WriteLine("[App] No updates found.");
+                return; // No updates available
+            }
+
+            Debug.WriteLine($"[App] New version {newVersion.TargetFullRelease.Version} found. Downloading...");
+            await um.DownloadUpdatesAsync(newVersion);
+
+            Debug.WriteLine("[App] Update downloaded. Applying and restarting.");
+            // This will close the app, apply the update, and restart the new version.
+            um.ApplyUpdatesAndRestart(newVersion);
+        }
+        catch (Exception ex) {
+            // It's important to catch exceptions here, otherwise the app may crash on startup.
+            Debug.WriteLine($"[App] Error checking for updates: {ex.Message}");
+        }
     }
 
     #endregion

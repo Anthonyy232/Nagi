@@ -1,16 +1,17 @@
 ﻿// SettingsViewModel.cs
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Nagi.Services.Abstractions;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
 using Windows.ApplicationModel;
 
 namespace Nagi.ViewModels;
@@ -95,9 +96,14 @@ public partial class SettingsViewModel : ObservableObject {
     /// </summary>
     public string ApplicationVersion {
         get {
-            // Retrieve the version from the application's package manifest
-            PackageVersion packageVersion = Package.Current.Id.Version;
-            return $"{packageVersion.Major}.{packageVersion.Minor}.{packageVersion.Build}";
+            var assembly = Assembly.GetEntryAssembly();
+            if (assembly != null) {
+                Version? version = assembly.GetName().Version;
+                if (version != null) {
+                    return $"{version.Major}.{version.Minor}.{version.Build}";
+                }
+            }
+            return "0.0.0";
         }
     }
 

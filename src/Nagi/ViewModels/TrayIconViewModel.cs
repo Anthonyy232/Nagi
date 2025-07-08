@@ -149,9 +149,6 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable {
             return;
         }
 
-        // *** FIX: Explicitly hide the popup before showing the main window. ***
-        // This provides a more reliable and cleaner user experience than
-        // relying solely on the popup's deactivation event.
         _trayPopupService.HidePopup();
 
         // Use the activator to ensure the window is brought to the foreground correctly.

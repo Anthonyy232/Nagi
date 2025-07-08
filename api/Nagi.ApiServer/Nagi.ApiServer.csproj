@@ -6,11 +6,12 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>117b9d65-9124-4222-aa80-d1640e9fd49c</UserSecretsId>
         <PreserveCompilationContext>true</PreserveCompilationContext>
+        <Configurations>Debug;Release;DebugUnpackaged;ReleaseUnpackaged</Configurations>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.5"/>
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.1"/>
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.5" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.1" />
     </ItemGroup>
 
 </Project>
