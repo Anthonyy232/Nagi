@@ -6,79 +6,65 @@ on:
   push:
     branches: [ master ]
 
-# Defines the jobs to be run.
 jobs:
   build-and-release:
-    # The type of runner that the job will run on.
     runs-on: windows-latest
-
-    # A sequence of steps that make up the job.
     steps:
-    # Step 1: Check out the repository code.
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      with:
-        # Fetches all history for all branches and tags. This is necessary for
-        # versioning tools that rely on Git history.
-        fetch-depth: 0
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          # Fetches all history for all branches and tags for versioning.
+          fetch-depth: 0
 
-    # Step 2: Extract and format the version number from a project file.
-    - name: Get and Format Version from Project Properties
-      id: get_version
-      # Uses bash shell for compatibility with grep/sed commands.
-      shell: bash
-      run: |
-        # Extracts the four-part version (e.g., 1.2.3.4) from the .props file.
-        four_part_version=$(grep -oE '<AppxPackageVersion>[^<]+' Directory.Build.props | sed 's/<AppxPackageVersion>//')
-        # Converts it to a three-part version (e.g., 1.2.3) for Velopack.
-        three_part_version=$(echo "$four_part_version" | sed 's/\.[0-9]\+$//')
-        # Sets the version as an output variable for later steps.
-        echo "version=$three_part_version" >> $GITHUB_OUTPUT
+      - name: Get and Format Version from Project Properties
+        id: get_version
+        shell: bash
+        run: |
+          four_part_version=$(grep -oE '<AppxPackageVersion>[^<]+' Directory.Build.props | sed 's/<AppxPackageVersion>//')
+          three_part_version=$(echo "$four_part_version" | sed 's/\.[0-9]\+$//')
+          echo "version=$three_part_version" >> $GITHUB_OUTPUT
 
-    # Step 3: Install the required .NET SDK.
-    - name: Install .NET SDK
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 9.0.x
+      - name: Install .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
 
-    # Step 4: Install or update the Velopack command-line tool.
-    - name: Install/Update vpk command-line tool
-      # Using 'update' prevents errors if the tool is already installed and ensures the latest version.
-      run: dotnet tool update -g vpk --prerelease
+      - name: Install/Update vpk command-line tool
+        run: dotnet tool update -g vpk --prerelease
 
-    # Step 5: Create the appsettings.json file from GitHub Secrets.
-    - name: Create appsettings.json
-      # This keeps your API keys secure and out of the source code.
-      shell: pwsh
-      run: |
-        echo '{
-          "NagiApiServer": {
-            "Url": "https://nagiappapi.azure-api.net/nagi",
-            "ApiKey": "${{ secrets.NAGI_API_KEY }}",
-            "SubscriptionKey": "${{ secrets.NAGI_SUBSCRIPTION_KEY }}"
+      - name: Create appsettings.json from Secrets
+        shell: pwsh
+        run: |
+          echo '{
+            "NagiApiServer": {
+              "Url": "https://nagiappapi.azure-api.net/nagi",
+              "ApiKey": "${{ secrets.NAGI_API_KEY }}",
+              "SubscriptionKey": "${{ secrets.NAGI_SUBSCRIPTION_KEY }}"
+            }
+          }' > src/Nagi/appsettings.json
+
+      - name: Build and Package for Each Platform
+        shell: pwsh
+        run: |
+          $platforms = "win-x64", "win-x86", "win-arm64"
+          foreach ($p in $platforms) {
+            $publishDir = "./publish/$p"
+            $releaseDir = "./Releases/$p"
+          
+            echo "Building for $p..."
+            dotnet publish src/Nagi/Nagi.csproj -c ReleaseUnpackaged -r $p --self-contained -o $publishDir
+          
+            echo "Packaging for $p..."
+            # The --channel flag is the key to preventing conflicts.
+            # It creates a separate release manifest for each platform.
+            vpk pack --packId Nagi --packVersion ${{ steps.get_version.outputs.version }} --mainExe Nagi.exe --packDir $publishDir -o $releaseDir --channel $p
           }
-        }' > src/Nagi/appsettings.json
 
-    # Step 6: Build the application for all target platforms.
-    - name: Build for All Platforms
-      shell: pwsh
-      run: |
-        $platforms = "win-x64", "win-x86", "win-arm64"
-        foreach ($p in $platforms) {
-          echo "Building for $p..."
-          dotnet publish src/Nagi/Nagi.csproj -c ReleaseUnpackaged -r $p --self-contained -o ./publish/$p
-        }
-
-    # Step 7: Package all builds into a single Velopack release.
-    - name: Package All Platforms with Velopack
-      shell: pwsh
-      # This command is now on a single line to avoid PowerShell line continuation issues.
-      run: vpk pack -u Nagi -v ${{ steps.get_version.outputs.version }} -p ./publish/win-x64 ./publish/win-x86 ./publish/win-arm64 -o ./Releases
-
-    # Step 8: Upload the 'Releases' folder as a build artifact.
-    - name: Upload Build Artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        # The artifact will be named, for example, 'Nagi-Release-1.2.3'
-        name: Nagi-Release-${{ steps.get_version.outputs.version }}
-        path: ./Releases/
+      - name: Upload All Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: Nagi-Release-${{ steps.get_version.outputs.version }}
+          # This uploads the entire Releases folder, which now contains
+          # sub-folders for win-x64, win-x86, and win-arm64, each with
+          # its own installer and release files.
+          path: ./Releases/
