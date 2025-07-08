@@ -53,7 +53,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
     private const double VolumeMediumThreshold = 66;
 
     // Constants for Image Effects
-    private const float AlbumArtBlurAmount = 10.0f;
+    private const float AlbumArtBlurAmount = 8.0f;
     private const float AlbumArtBlurScaleFactor = 1.05f;
 
     private readonly IMusicPlaybackService _playbackService;
@@ -77,70 +77,70 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(PlayPauseIconGlyph))]
     [NotifyPropertyChangedFor(nameof(PlayPauseButtonToolTip))]
-    private bool _isPlaying;
+    public partial bool IsPlaying { get; set; }
 
     [ObservableProperty]
-    private string _songTitle = "No track playing";
+    public partial string SongTitle { get; set; } = "No track playing";
 
     [ObservableProperty]
-    private string _artistName = string.Empty;
+    public partial string ArtistName { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private ImageSource? _albumArtSource;
+    public partial ImageSource? AlbumArtSource { get; set; }
 
     [ObservableProperty]
-    private ImageSource? _albumArtBlurredSource;
+    public partial ImageSource? AlbumArtBlurredSource { get; set; }
 
     [ObservableProperty]
-    private Song? _currentPlayingTrack;
+    public partial Song? CurrentPlayingTrack { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ShuffleIconGlyph))]
     [NotifyPropertyChangedFor(nameof(ShuffleButtonToolTip))]
-    private bool _isShuffleEnabled;
+    public partial bool IsShuffleEnabled { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(RepeatIconGlyph))]
     [NotifyPropertyChangedFor(nameof(RepeatButtonToolTip))]
-    private RepeatMode _currentRepeatMode;
+    public partial RepeatMode CurrentRepeatMode { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(VolumeButtonToolTip))]
-    private bool _isMuted;
+    public partial bool IsMuted { get; set; }
 
     [ObservableProperty]
-    private double _currentVolume = 50;
+    public partial double CurrentVolume { get; set; } = 50;
 
     [ObservableProperty]
-    private string _volumeIconGlyph = VolumeMediumIconGlyph;
+    public partial string VolumeIconGlyph { get; set; } = VolumeMediumIconGlyph;
 
     [ObservableProperty]
-    private ObservableCollection<Song> _currentQueue = new();
+    public partial ObservableCollection<Song> CurrentQueue { get; set; } = new();
 
     [ObservableProperty]
-    private double _currentPosition;
+    public partial double CurrentPosition { get; set; }
 
     [ObservableProperty]
-    private string _currentTimeText = "0:00";
+    public partial string CurrentTimeText { get; set; } = "0:00";
 
     [ObservableProperty]
-    private bool _isUserDraggingSlider;
+    public partial bool IsUserDraggingSlider { get; set; }
 
     [ObservableProperty]
-    private double _totalDuration;
+    public partial double TotalDuration { get; set; }
 
     [ObservableProperty]
-    private string _totalDurationText = "0:00";
+    public partial string TotalDurationText { get; set; } = "0:00";
 
     [ObservableProperty]
-    private bool _isGlobalOperationInProgress;
+    public partial bool IsGlobalOperationInProgress { get; set; }
 
     [ObservableProperty]
-    private string _globalOperationStatusMessage = string.Empty;
+    public partial string GlobalOperationStatusMessage { get; set; } = string.Empty;
 
 
     [ObservableProperty]
-    private double _globalOperationProgressValue;
+    public partial double GlobalOperationProgressValue { get; set; }
 
     public string PlayPauseIconGlyph => IsPlaying ? PauseIconGlyph : PlayIconGlyph;
     public string PlayPauseButtonToolTip => IsPlaying ? PauseTooltip : PlayTooltip;
@@ -160,7 +160,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
     public string VolumeButtonToolTip => IsMuted ? "Unmute" : "Mute";
 
     [ObservableProperty]
-    private bool _isQueueViewVisible;
+    public partial bool IsQueueViewVisible { get; set; }
 
     [RelayCommand]
     private void ShowQueueView() => IsQueueViewVisible = true;
