@@ -55,16 +55,12 @@ jobs:
             dotnet publish src/Nagi/Nagi.csproj -c ReleaseUnpackaged -r $p --self-contained -o $publishDir
           
             echo "Packaging for $p..."
-            # The --channel flag is the key to preventing conflicts.
-            # It creates a separate release manifest for each platform.
-            vpk pack --packId Nagi --packVersion ${{ steps.get_version.outputs.version }} --mainExe Nagi.exe --packDir $publishDir -o $releaseDir --channel $p
+            # Added --runtime $p to embed OS/architecture compatibility info into the installer.
+            vpk pack --packId Nagi --packVersion ${{ steps.get_version.outputs.version }} --mainExe Nagi.exe --packDir $publishDir -o $releaseDir --channel $p --runtime $p
           }
 
       - name: Upload All Build Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: Nagi-Release-${{ steps.get_version.outputs.version }}
-          # This uploads the entire Releases folder, which now contains
-          # sub-folders for win-x64, win-x86, and win-arm64, each with
-          # its own installer and release files.
           path: ./Releases/
