@@ -24,6 +24,7 @@
         <None Remove="Pages\FolderPage.xaml" />
         <None Remove="Pages\FolderSongViewPage.xaml" />
         <None Remove="Pages\OnboardingPage.xaml" />
+        <None Remove="Pages\LibraryPage.xaml" />
         <None Remove="Popups\TrayPopup.xaml" />
         <None Remove="Styles\AlbumPageColors.xaml" />
         <None Remove="Styles\AlbumViewPageColors.xaml" />
@@ -35,9 +36,6 @@
         <None Remove="Styles\OnboardingPageColors.xaml" />
         <None Remove="Styles\PlaylistPageColors.xaml" />
         <None Remove="Styles\SettingsPageColors.xaml" />
-    </ItemGroup>
-    <ItemGroup>
-        <Page Remove="LibraryPage.xaml" />
     </ItemGroup>
 
     <ItemGroup>
@@ -86,6 +84,7 @@
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.6" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="$(DependencyInjectionVersion)" />
         <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.6" />
+        <PackageReference Include="Microsoft.Graphics.Win2D" Version="1.3.2" />
         <PackageReference Include="Microsoft.WindowsAppSDK" Version="$(WindowsAppSdkVersion)" />
         <PackageReference Include="TagLibSharp" Version="$(TagLibSharpVersion)" />
     </ItemGroup>
@@ -210,5 +209,6 @@
         <SupportedOSPlatformVersion>10.0.18362.0</SupportedOSPlatformVersion>
         <PackageCertificateThumbprint>2F0E4C35DA52D5D98977D972B339A23DF2830386</PackageCertificateThumbprint>
         <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
+        <PackageCertificateKeyFile>Nagi_TemporaryKey.pfx</PackageCertificateKeyFile>
     </PropertyGroup>
 </Project>
