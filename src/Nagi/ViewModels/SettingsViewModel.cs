@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Nagi.Services.Abstractions;
+using Windows.ApplicationModel;
 
 namespace Nagi.ViewModels;
 
@@ -88,6 +89,17 @@ public partial class SettingsViewModel : ObservableObject {
     /// </summary>
     public List<ElementTheme> AvailableThemes { get; } =
         Enum.GetValues(typeof(ElementTheme)).Cast<ElementTheme>().ToList();
+
+    /// <summary>
+    ///     Gets the application version string.
+    /// </summary>
+    public string ApplicationVersion {
+        get {
+            // Retrieve the version from the application's package manifest
+            PackageVersion packageVersion = Package.Current.Id.Version;
+            return $"{packageVersion.Major}.{packageVersion.Minor}.{packageVersion.Build}";
+        }
+    }
 
     /// <summary>
     ///     Asynchronously loads all settings from the settings service and populates the ViewModel properties.
