@@ -1,142 +1,130 @@
-﻿using Microsoft.UI.Composition;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Hosting;
+﻿using Microsoft.UI.Windowing;
+using Nagi.Popups;
 using System;
-using System.Numerics;
+using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
+using Windows.Graphics;
 
 namespace Nagi.Helpers;
 
 /// <summary>
-/// Provides high-performance, composition-based animations for popup windows.
+/// Provides robust, cancellable, and smooth animations for pop-up windows.
+/// This implementation uses an async/await loop with cancellation handling to prevent
+/// conflicting animations and ensure a jank-free experience.
 /// </summary>
 internal static class PopupAnimation {
-    private const float ShowDurationMs = 300f;
-    private const float HideDurationMs = 150f;
-    private static readonly Vector3 StartOffset = new(0, 20, 0);
+    // Defines the duration and style of the animations.
+    private const float ShowDurationMs = 250f;
+    private const float HideDurationMs = 200f;
+    private const float StartScale = 0.85f;
+    private const int AnimationFrameDelayMs = 16; // 60 fps
+
+    // Manages the cancellation of ongoing animations to prevent conflicts.
+    private static CancellationTokenSource? _animationCts;
 
     /// <summary>
-    /// Animates a window into view using a slide, scale, and fade-in effect.
+    /// Animates a window into view with a scale and fade effect.
+    /// Cancels any previously running animation on the same window.
     /// </summary>
-    /// <param name="window">The XAML Window to animate.</param>
-    /// <param name="onCompleted">An optional action to run when the animation finishes.</param>
-    public static void AnimateIn(Window window, Action? onCompleted = null) {
-        if (window.Content is not UIElement content) return;
+    public static async Task AnimateIn(TrayPopup window, RectInt32 finalRect) {
+        // Cancel any existing animation and create a new cancellation token for this one.
+        _animationCts?.Cancel();
+        _animationCts = new CancellationTokenSource();
+        var token = _animationCts.Token;
 
-        Compositor compositor = window.Compositor;
-        Visual rootVisual = ElementCompositionPreview.GetElementVisual(content);
+        // Calculate the starting geometry, scaled down but centered on the final position.
+        int startWidth = (int)(finalRect.Width * StartScale);
+        int startHeight = (int)(finalRect.Height * StartScale);
+        int startX = finalRect.X + (finalRect.Width - startWidth) / 2;
+        int startY = finalRect.Y + (finalRect.Height - startHeight) / 2;
+        var startRect = new RectInt32(startX, startY, startWidth, startHeight);
 
-        //
-        // Set the initial state of the visual for the entrance animation.
-        //
-        rootVisual.CenterPoint = new Vector3(window.AppWindow.Size.Width / 2.0f, window.AppWindow.Size.Height / 2.0f, 0);
-        rootVisual.Opacity = 0.0f;
-        rootVisual.Scale = new Vector3(0.7f, 0.7f, 1.0f);
-        rootVisual.Offset = StartOffset;
+        // Set the window to its initial, invisible state and then show it.
+        window.SetWindowOpacity(0);
+        window.AppWindow.MoveAndResize(startRect);
+        WindowActivator.ActivatePopupWindow(window);
 
-        //
-        // This easing function creates a "back" effect, where the animation overshoots and then settles.
-        //
-        CubicBezierEasingFunction easing = compositor.CreateCubicBezierEasingFunction(new Vector2(0.34f, 1.56f), new Vector2(0.64f, 1f));
+        var stopwatch = Stopwatch.StartNew();
+        while (stopwatch.ElapsedMilliseconds < ShowDurationMs) {
+            if (token.IsCancellationRequested) return;
 
-        //
-        // Define animations for opacity, scale, and offset.
-        //
-        ScalarKeyFrameAnimation opacityAnimation = compositor.CreateScalarKeyFrameAnimation();
-        opacityAnimation.InsertKeyFrame(1.0f, 1.0f);
-        opacityAnimation.Duration = TimeSpan.FromMilliseconds(ShowDurationMs * 0.6f);
-        opacityAnimation.Target = nameof(Visual.Opacity);
+            float progress = (float)stopwatch.Elapsed.TotalMilliseconds / ShowDurationMs;
+            float easedProgress = EaseOutCubic(progress);
 
-        Vector3KeyFrameAnimation scaleAnimation = compositor.CreateVector3KeyFrameAnimation();
-        scaleAnimation.InsertKeyFrame(1.0f, Vector3.One, easing);
-        scaleAnimation.Duration = TimeSpan.FromMilliseconds(ShowDurationMs);
-        scaleAnimation.Target = nameof(Visual.Scale);
+            // Interpolate all geometric properties from start to final using the eased progress.
+            int newWidth = (int)(startRect.Width + (finalRect.Width - startRect.Width) * easedProgress);
+            int newHeight = (int)(startRect.Height + (finalRect.Height - startRect.Height) * easedProgress);
+            int newX = (int)(startRect.X + (finalRect.X - startRect.X) * easedProgress);
+            int newY = (int)(startRect.Y + (finalRect.Y - startRect.Y) * easedProgress);
+            byte newAlpha = (byte)(255 * easedProgress);
 
-        Vector3KeyFrameAnimation offsetAnimation = compositor.CreateVector3KeyFrameAnimation();
-        offsetAnimation.InsertKeyFrame(1.0f, Vector3.Zero, easing);
-        offsetAnimation.Duration = TimeSpan.FromMilliseconds(ShowDurationMs);
-        offsetAnimation.Target = nameof(Visual.Offset);
+            window.AppWindow.MoveAndResize(new RectInt32(newX, newY, newWidth, newHeight));
+            window.SetWindowOpacity(newAlpha);
 
-        //
-        // Group and start the animations.
-        //
-        CompositionAnimationGroup animationGroup = compositor.CreateAnimationGroup();
-        animationGroup.Add(opacityAnimation);
-        animationGroup.Add(scaleAnimation);
-        animationGroup.Add(offsetAnimation);
-
-        CompositionScopedBatch batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-        rootVisual.StartAnimationGroup(animationGroup);
-        batch.End();
-
-        batch.Completed += (s, a) => {
-            //
-            // Reset the offset property after animation to avoid layout issues.
-            //
-            rootVisual.Offset = Vector3.Zero;
-            onCompleted?.Invoke();
-        };
-    }
-
-    /// <summary>
-    /// Animates a window out of view using a slide, scale, and fade-out effect.
-    /// </summary>
-    /// <param name="window">The XAML Window to animate.</param>
-    /// <param name="onCompleted">An optional action to run after the window is hidden.</param>
-    public static void Hide(Window window, Action? onCompleted = null) {
-        if (window.Content is not UIElement content) {
-            window.AppWindow.Hide();
-            onCompleted?.Invoke();
-            return;
+            await Task.Delay(AnimationFrameDelayMs);
         }
 
-        Compositor compositor = window.Compositor;
-        Visual rootVisual = ElementCompositionPreview.GetElementVisual(content);
-
-        //
-        // Use a sharp "ease-in" curve for a quick exit.
-        //
-        CubicBezierEasingFunction easing = compositor.CreateCubicBezierEasingFunction(new Vector2(0.5f, 0.0f), new Vector2(0.9f, 0.5f));
-        rootVisual.CenterPoint = new Vector3(window.AppWindow.Size.Width / 2.0f, window.AppWindow.Size.Height / 2.0f, 0);
-
-        //
-        // Define animations for opacity, scale, and offset.
-        //
-        ScalarKeyFrameAnimation opacityAnimation = compositor.CreateScalarKeyFrameAnimation();
-        opacityAnimation.InsertKeyFrame(1.0f, 0.0f, easing);
-        opacityAnimation.Duration = TimeSpan.FromMilliseconds(HideDurationMs);
-        opacityAnimation.Target = nameof(Visual.Opacity);
-
-        Vector3KeyFrameAnimation scaleAnimation = compositor.CreateVector3KeyFrameAnimation();
-        scaleAnimation.InsertKeyFrame(1.0f, new Vector3(0.7f, 0.7f, 1.0f), easing);
-        scaleAnimation.Duration = TimeSpan.FromMilliseconds(HideDurationMs);
-        scaleAnimation.Target = nameof(Visual.Scale);
-
-        Vector3KeyFrameAnimation offsetAnimation = compositor.CreateVector3KeyFrameAnimation();
-        offsetAnimation.InsertKeyFrame(1.0f, StartOffset, easing);
-        offsetAnimation.Duration = TimeSpan.FromMilliseconds(HideDurationMs);
-        offsetAnimation.Target = nameof(Visual.Offset);
-
-        CompositionAnimationGroup animationGroup = compositor.CreateAnimationGroup();
-        animationGroup.Add(opacityAnimation);
-        animationGroup.Add(scaleAnimation);
-        animationGroup.Add(offsetAnimation);
-
-        CompositionScopedBatch batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-        rootVisual.StartAnimationGroup(animationGroup);
-        batch.End();
-
-        batch.Completed += (s, a) => {
-            window.AppWindow.Hide();
-
-            //
-            // Reset visual properties to their default state after hiding.
-            // This ensures the window appears correctly if shown again.
-            //
-            rootVisual.Opacity = 1.0f;
-            rootVisual.Scale = Vector3.One;
-            rootVisual.Offset = Vector3.Zero;
-
-            onCompleted?.Invoke();
-        };
+        // If not cancelled, ensure the final state is set perfectly.
+        if (!token.IsCancellationRequested) {
+            window.AppWindow.MoveAndResize(finalRect);
+            window.SetWindowOpacity(255);
+        }
     }
+
+    /// <summary>
+    /// Animates a window out of view with a reverse scale and fade effect.
+    /// Cancels any previously running animation on the same window.
+    /// </summary>
+    public static async Task AnimateOut(TrayPopup window) {
+        // Cancel any existing animation and create a new cancellation token for this one.
+        _animationCts?.Cancel();
+        _animationCts = new CancellationTokenSource();
+        var token = _animationCts.Token;
+
+        var startRect = new RectInt32(window.AppWindow.Position.X, window.AppWindow.Position.Y, window.AppWindow.Size.Width, window.AppWindow.Size.Height);
+
+        // The final state is scaled down and centered relative to the start position.
+        int finalWidth = (int)(startRect.Width * StartScale);
+        int finalHeight = (int)(startRect.Height * StartScale);
+        int finalX = startRect.X + (startRect.Width - finalWidth) / 2;
+        int finalY = startRect.Y + (startRect.Height - finalHeight) / 2;
+        var finalRect = new RectInt32(finalX, finalY, finalWidth, finalHeight);
+
+        var stopwatch = Stopwatch.StartNew();
+        while (stopwatch.ElapsedMilliseconds < HideDurationMs) {
+            if (token.IsCancellationRequested) return;
+
+            float progress = (float)stopwatch.Elapsed.TotalMilliseconds / HideDurationMs;
+            float easedProgress = EaseInCubic(progress);
+
+            // Interpolate all geometric properties from start to final.
+            int newWidth = (int)(startRect.Width + (finalRect.Width - startRect.Width) * easedProgress);
+            int newHeight = (int)(startRect.Height + (finalRect.Height - startRect.Height) * easedProgress);
+            int newX = (int)(startRect.X + (finalRect.X - startRect.X) * easedProgress);
+            int newY = (int)(startRect.Y + (finalRect.Y - startRect.Y) * easedProgress);
+            byte newAlpha = (byte)(255 * (1 - easedProgress));
+
+            window.AppWindow.MoveAndResize(new RectInt32(newX, newY, newWidth, newHeight));
+            window.SetWindowOpacity(newAlpha);
+
+            await Task.Delay(AnimationFrameDelayMs);
+        }
+
+        // If not cancelled, hide and reset the window for the next time it's shown.
+        if (!token.IsCancellationRequested) {
+            window.AppWindow.Hide();
+            window.SetWindowOpacity(255);
+        }
+    }
+
+    /// <summary>
+    /// Cubic easing function that starts fast and decelerates.
+    /// </summary>
+    private static float EaseOutCubic(float progress) => 1 - MathF.Pow(1 - progress, 3);
+
+    /// <summary>
+    /// Cubic easing function that starts slow and accelerates.
+    /// </summary>
+    private static float EaseInCubic(float progress) => progress * progress * progress;
 }
