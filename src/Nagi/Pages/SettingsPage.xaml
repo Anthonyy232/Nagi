@@ -8,6 +8,7 @@
     xmlns:localConverters="using:Nagi.Converters"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:mux="using:Microsoft.UI.Xaml"
+    xmlns:vm="using:Nagi.ViewModels"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -116,7 +117,7 @@
                     <ToggleSwitch IsOn="{x:Bind ViewModel.IsHideToTrayEnabled, Mode=TwoWay}" />
                 </controls:SettingsCard>
 
-                <controls:SettingsCard Header="Show Cover Art in Tray Flyout"
+                <controls:SettingsCard Header="Show cover art in flyout"
                                        Description="Display the cover art in the compact player that appears when clicking the tray icon.">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
@@ -126,7 +127,7 @@
 
                 <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="Data Management" />
 
-                <controls:SettingsCard Header="Retrieve Online Metadata"
+                <controls:SettingsCard Header="Retrieve online metadata"
                                        Description="Fetch additional information like artist images and biographies from online services (e.g., Spotify, Last.fm).">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
@@ -135,7 +136,7 @@
                 </controls:SettingsCard>
 
                 <controls:SettingsCard
-                    Header="Reset Application"
+                    Header="Reset application"
                     Description="This will delete all library data, playlists, and reset all settings to their defaults. The application will restart.">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
@@ -151,24 +152,23 @@
 
                 <controls:SettingsExpander
                     Header="About Nagi"
-                    Description="Rediscover your local music collection with Nagi, a music player focused on speed, simplicity, and privacy. Nagi is built with C# and WinUI 3 to offer a clean, native Fluent experience. It's beautiful, efficient, and respects your privacy."
+                    Description="Rediscover your local music collection with Nagi, a music player focused on speed, simplicity, and privacy."
                     IsExpanded="False">
                     <controls:SettingsExpander.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
                     </controls:SettingsExpander.HeaderIcon>
                     <TextBlock
                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                        IsTextSelectionEnabled="True"
-                        Text="Version 1.0.0" />
+                        IsTextSelectionEnabled="True">
+                        <Run Text="Version "/>
+                        <Run Text="{x:Bind ViewModel.ApplicationVersion}"/>
+                    </TextBlock>
                     <controls:SettingsExpander.Items>
                         <controls:SettingsCard ContentAlignment="Left">
-                            <StackPanel Orientation="Vertical">
+                            <StackPanel Orientation="Horizontal">
                                 <HyperlinkButton Content="View Licenses" NavigateUri="https://github.com/Anthonyy232/Nagi/blob/master/LICENSE" />
-                                <HyperlinkButton Content="Official Website" NavigateUri="https://github.com/Anthonyy232/Nagi" />
+                                <HyperlinkButton Content="Source Code" NavigateUri="https://github.com/Anthonyy232/Nagi" />
                             </StackPanel>
-                        </controls:SettingsCard>
-                        <controls:SettingsCard Header="Acknowledgements" IsClickEnabled="True">
-                            <TextBlock Text="Thanks to the open-source community." />
                         </controls:SettingsCard>
                     </controls:SettingsExpander.Items>
                 </controls:SettingsExpander>
