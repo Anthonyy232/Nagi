@@ -72,12 +72,8 @@ jobs:
     # Step 7: Package all builds into a single Velopack release.
     - name: Package All Platforms with Velopack
       shell: pwsh
-      run: |
-        vpk pack -u Nagi -v ${{ steps.get_version.outputs.version }} `
-          -p ./publish/win-x64 `
-          ./publish/win-x86 `
-          ./publish/win-arm64 `
-          -o ./Releases
+      # This command is now on a single line to avoid PowerShell line continuation issues.
+      run: vpk pack -u Nagi -v ${{ steps.get_version.outputs.version }} -p ./publish/win-x64 ./publish/win-x86 ./publish/win-arm64 -o ./Releases
 
     # Step 8: Upload the 'Releases' folder as a build artifact.
     - name: Upload Build Artifacts
