@@ -1,5 +1,9 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.WinUI;
+using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Effects;
+using Microsoft.UI;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
@@ -9,17 +13,27 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Numerics;
+using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading;
 using System.Threading.Tasks;
+using Windows.Graphics.Imaging;
+using Windows.Storage;
+using Windows.Storage.Streams;
 
 namespace Nagi.ViewModels;
 
-// Manages state and logic for the main media player controls and queue display.
+/// <summary>
+/// Manages the state and logic for the music player UI, including playback controls,
+/// track information, and the song queue. It interfaces with the IMusicPlaybackService
+/// to control playback and reflects its state to the UI.
+/// </summary>
 public partial class PlayerViewModel : ObservableObject, IDisposable {
+    // Constants for UI Glyphs
     private const string PlayIconGlyph = "\uE768";
     private const string PauseIconGlyph = "\uE769";
-    private const string PlayTooltip = "Play";
-    private const string PauseTooltip = "Pause";
     private const string RepeatOffIconGlyph = "\uE8EE";
     private const string RepeatAllIconGlyph = "\uE895";
     private const string RepeatOneIconGlyph = "\uE8ED";
@@ -30,12 +44,26 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
     private const string VolumeMediumIconGlyph = "\uE994";
     private const string VolumeHighIconGlyph = "\uE767";
 
+    // Constants for UI ToolTips
+    private const string PlayTooltip = "Play";
+    private const string PauseTooltip = "Pause";
+
+    // Constants for Volume Thresholds
+    private const double VolumeLowThreshold = 33;
+    private const double VolumeMediumThreshold = 66;
+
+    // Constants for Image Effects
+    private const float AlbumArtBlurAmount = 15.0f;
+    private const float AlbumArtBlurScaleFactor = 1.05f;
+
     private readonly IMusicPlaybackService _playbackService;
     private readonly DispatcherQueue _dispatcherQueue;
-
-    // This flag prevents re-entrant property updates when the ViewModel's state
-    // is being updated from the playback service.
     private bool _isUpdatingFromService;
+
+    // Manages cancellation for the asynchronous blur generation task.
+    // This is critical for preventing race conditions and unnecessary processing
+    // when the track changes quickly.
+    private CancellationTokenSource? _blurGenerationCts;
 
     public PlayerViewModel(IMusicPlaybackService playbackService) {
         _playbackService = playbackService ?? throw new ArgumentNullException(nameof(playbackService));
@@ -58,6 +86,9 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
 
     [ObservableProperty]
     private ImageSource? _albumArtSource;
+
+    [ObservableProperty]
+    private ImageSource? _albumArtBlurredSource;
 
     [ObservableProperty]
     private Song? _currentPlayingTrack;
@@ -106,10 +137,11 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
     [ObservableProperty]
     private string _globalOperationStatusMessage = string.Empty;
 
+
+
     [ObservableProperty]
     private double _globalOperationProgressValue;
 
-    // Computed properties for UI bindings
     public string PlayPauseIconGlyph => IsPlaying ? PauseIconGlyph : PlayIconGlyph;
     public string PlayPauseButtonToolTip => IsPlaying ? PauseTooltip : PlayTooltip;
     public string ShuffleIconGlyph => IsShuffleEnabled ? ShuffleOnIconGlyph : ShuffleOffIconGlyph;
@@ -127,8 +159,6 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
     };
     public string VolumeButtonToolTip => IsMuted ? "Unmute" : "Mute";
 
-    #region View State Management
-
     [ObservableProperty]
     private bool _isQueueViewVisible;
 
@@ -138,9 +168,9 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
     [RelayCommand]
     private void ShowPlayerView() => IsQueueViewVisible = false;
 
-    #endregion
-
     public void Dispose() {
+        _blurGenerationCts?.Cancel();
+        _blurGenerationCts?.Dispose();
         UnsubscribeFromPlaybackServiceEvents();
         GC.SuppressFinalize(this);
     }
@@ -176,9 +206,9 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
     partial void OnIsMutedChanged(bool value) => UpdateVolumeIconGlyph();
 
     partial void OnCurrentVolumeChanged(double value) {
-        // Only update the service if the change originated from the UI, not from the service itself.
         if (!_isUpdatingFromService) {
             var serviceVolume = Math.Clamp(value / 100.0, 0.0, 1.0);
+            // Check for a meaningful change to avoid a feedback loop with the service.
             if (Math.Abs(_playbackService.Volume - serviceVolume) > 0.001) {
                 _ = _playbackService.SetVolumeAsync(serviceVolume);
             }
@@ -188,9 +218,9 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
 
     partial void OnCurrentPositionChanged(double value) {
         CurrentTimeText = TimeSpan.FromSeconds(value).ToString(@"m\:ss");
-        // Only seek if the user is not dragging the slider and the change is significant.
         if (!_isUpdatingFromService && !IsUserDraggingSlider) {
             var newPosition = TimeSpan.FromSeconds(value);
+            // Only seek if the position has changed by a noticeable amount.
             if (Math.Abs(_playbackService.CurrentPosition.TotalSeconds - newPosition.TotalSeconds) > 0.5) {
                 _ = _playbackService.SeekAsync(newPosition);
             }
@@ -221,7 +251,6 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
         _playbackService.PositionChanged -= OnPlaybackService_PositionChanged;
     }
 
-    // Populates the ViewModel with the current state from the playback service.
     private void InitializeStateFromService() {
         RunOnUIThread(() => {
             IsPlaying = _playbackService.IsPlaying;
@@ -269,8 +298,6 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
         RunOnUIThread(() => CurrentRepeatMode = _playbackService.CurrentRepeatMode);
     }
 
-
-
     private void OnPlaybackService_QueueChanged() {
         RunOnUIThread(UpdateCurrentQueueDisplay);
     }
@@ -283,28 +310,127 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
 
     private void UpdateTrackDetails(Song? song) {
         CurrentPlayingTrack = song;
+        AlbumArtSource = null;
+        AlbumArtBlurredSource = null;
+
         if (song != null) {
             SongTitle = song.Title;
             ArtistName = song.Artist?.Name ?? string.Empty;
             try {
-                AlbumArtSource = !string.IsNullOrEmpty(song.AlbumArtUriFromTrack)
-                    ? new BitmapImage(new Uri(song.AlbumArtUriFromTrack))
-                    : null;
+                if (!string.IsNullOrEmpty(song.AlbumArtUriFromTrack)) {
+                    var uri = new Uri(song.AlbumArtUriFromTrack);
+                    AlbumArtSource = new BitmapImage(uri);
+                    _ = GenerateBlurredImageAsync(uri);
+                }
             }
             catch (Exception ex) {
-                Debug.WriteLine($"[{nameof(PlayerViewModel)}] Error loading album art '{song.AlbumArtUriFromTrack}': {ex.Message}");
-                AlbumArtSource = null;
+                Debug.WriteLine($"[{nameof(PlayerViewModel)}] Error processing album art URI '{song.AlbumArtUriFromTrack}': {ex.Message}");
             }
         }
         else {
             SongTitle = "No track playing";
             ArtistName = string.Empty;
-            AlbumArtSource = null;
         }
     }
 
-    // Efficiently updates the display queue by modifying the existing collection,
-    // which allows the UI to perform incremental updates instead of a full reload.
+    /// <summary>
+    /// Generates a blurred version of the album art asynchronously. This method is designed
+    /// to be cancellable and artifact-free.
+    /// </summary>
+    private async Task GenerateBlurredImageAsync(Uri imageUri) {
+        // Cancel any previous blur generation task to avoid unnecessary work.
+        _blurGenerationCts?.Cancel();
+        _blurGenerationCts?.Dispose();
+        _blurGenerationCts = new CancellationTokenSource();
+        var token = _blurGenerationCts.Token;
+
+        try {
+            var blurredBitmap = await Task.Run(async () => {
+                token.ThrowIfCancellationRequested();
+
+                IRandomAccessStream sourceStream;
+                if (imageUri.IsFile) {
+                    var file = await StorageFile.GetFileFromPathAsync(imageUri.LocalPath);
+                    sourceStream = await file.OpenAsync(FileAccessMode.Read);
+                }
+                else {
+                    sourceStream = await RandomAccessStreamReference.CreateFromUri(imageUri).OpenReadAsync();
+                }
+
+                using (sourceStream) {
+                    var device = CanvasDevice.GetSharedDevice();
+
+                    // Step 1: Load the image into a Win2D CanvasBitmap.
+                    using var canvasBitmap = await CanvasBitmap.LoadAsync(device, sourceStream);
+                    token.ThrowIfCancellationRequested();
+
+                    // Step 2: Create a render target with the exact same dimensions as the source.
+                    using var renderTarget = new CanvasRenderTarget(canvasBitmap, canvasBitmap.Size);
+
+                    // Step 3: Perform the blur using a multi-step process to avoid edge artifacts.
+                    using (var ds = renderTarget.CreateDrawingSession()) {
+                        // First, clear the background. This prevents the blur's soft edges from
+                        // blending with a transparent background, which can cause dark borders.
+                        ds.Clear(Colors.Black);
+
+                        // Second, scale the source image up slightly to create a "bleed" margin.
+                        // This gives the blur algorithm real pixel data to sample at the edges.
+                        var scaleEffect = new Transform2DEffect {
+                            Source = canvasBitmap,
+                            TransformMatrix = Matrix3x2.CreateScale(
+                                AlbumArtBlurScaleFactor,
+                                AlbumArtBlurScaleFactor,
+                                canvasBitmap.Size.ToVector2() / 2)
+                        };
+
+                        // Third, apply the blur to the scaled-up image.
+                        var blurEffect = new GaussianBlurEffect {
+                            Source = scaleEffect,
+                            BlurAmount = AlbumArtBlurAmount,
+                            Optimization = EffectOptimization.Quality,
+                            BorderMode = EffectBorderMode.Hard
+                        };
+
+                        // Finally, draw the result. This implicitly crops the oversized blurred
+                        // image to the original dimensions of the render target, trimming the bleed margin.
+                        ds.DrawImage(blurEffect);
+                    }
+                    token.ThrowIfCancellationRequested();
+
+                    // Step 4: Create a SoftwareBitmap from the result for UI display.
+                    var pixelBytes = renderTarget.GetPixelBytes();
+                    return SoftwareBitmap.CreateCopyFromBuffer(
+                        pixelBytes.AsBuffer(),
+                        BitmapPixelFormat.Bgra8,
+                        (int)renderTarget.SizeInPixels.Width,
+                        (int)renderTarget.SizeInPixels.Height,
+                        BitmapAlphaMode.Premultiplied);
+                }
+            }, token);
+
+            if (blurredBitmap == null || token.IsCancellationRequested) return;
+
+            // Update the UI on the dispatcher thread.
+            await _dispatcherQueue.EnqueueAsync(async () => {
+                if (token.IsCancellationRequested) return;
+                var source = new SoftwareBitmapSource();
+                await source.SetBitmapAsync(blurredBitmap);
+                AlbumArtBlurredSource = source;
+            }, DispatcherQueuePriority.Normal);
+        }
+        catch (OperationCanceledException) {
+            Debug.WriteLine($"[{nameof(PlayerViewModel)}] Blur generation for '{imageUri}' was cancelled. (This is normal)");
+        }
+        catch (Exception ex) {
+            Debug.WriteLine($"[{nameof(PlayerViewModel)}] Failed to generate blurred image for URI '{imageUri}': {ex}");
+            _dispatcherQueue.TryEnqueue(() => AlbumArtBlurredSource = null);
+        }
+    }
+
+    /// <summary>
+    /// Updates the observable collection for the queue view.
+    /// The queue is rotated so that the currently playing track is always at the top.
+    /// </summary>
     private void UpdateCurrentQueueDisplay() {
         var sourceQueue = _playbackService.IsShuffleEnabled
             ? _playbackService.ShuffledQueue
@@ -318,7 +444,9 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
             var currentTrackIndex = sourceQueueList.FindIndex(s => s.Id == currentTrack.Id);
 
             if (currentTrackIndex != -1) {
+                // Add tracks from the current one to the end.
                 newDisplayQueue.AddRange(sourceQueueList.Skip(currentTrackIndex));
+                // Wrap around and add tracks from the beginning.
                 newDisplayQueue.AddRange(sourceQueueList.Take(currentTrackIndex));
             }
             else {
@@ -329,8 +457,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
             newDisplayQueue.AddRange(sourceQueue);
         }
 
-        // By modifying the collection in-place, we avoid replacing the instance,
-        // which is significantly more performant for data-bound UI controls.
+        // Only update the collection if the content has actually changed.
         if (!CurrentQueue.SequenceEqual(newDisplayQueue)) {
             CurrentQueue.Clear();
             foreach (var song in newDisplayQueue) CurrentQueue.Add(song);
@@ -341,15 +468,18 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
         var newGlyph = IsMuted || CurrentVolume == 0
             ? MuteIconGlyph
             : CurrentVolume switch {
-                <= 33 => VolumeLowIconGlyph,
-                <= 66 => VolumeMediumIconGlyph,
+                <= VolumeLowThreshold => VolumeLowIconGlyph,
+                <= VolumeMediumThreshold => VolumeMediumIconGlyph,
                 _ => VolumeHighIconGlyph
             };
 
         if (VolumeIconGlyph != newGlyph) VolumeIconGlyph = newGlyph;
     }
 
-    // Safely executes an action on the UI thread and sets a flag to prevent re-entrancy from service events.
+    /// <summary>
+    /// Safely executes an action on the UI thread, wrapping it in a scope
+    /// that prevents property change feedback loops.
+    /// </summary>
     private void RunOnUIThread(Action action) {
         _dispatcherQueue.TryEnqueue(() => {
             using (new ServiceUpdateScope(this)) {
@@ -358,8 +488,11 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
         });
     }
 
-    // A helper struct to create an exception-safe scope for service updates.
-    // It sets _isUpdatingFromService to true on creation and false on disposal.
+    /// <summary>
+    /// A helper struct to temporarily set a flag that indicates the ViewModel
+    /// is being updated from the backing service, not by user interaction.
+    /// This prevents feedback loops where a UI update would trigger a command.
+    /// </summary>
     private readonly struct ServiceUpdateScope : IDisposable {
         private readonly PlayerViewModel _viewModel;
 
