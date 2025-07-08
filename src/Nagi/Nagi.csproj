@@ -37,7 +37,6 @@
 	<!-- =============================================================== -->
 	<PropertyGroup Condition="$(Configuration.Contains('Unpackaged'))">
 		<WindowsPackageType>None</WindowsPackageType>
-		<!-- This embeds the icon into the .exe for unpackaged builds -->
 		<ApplicationIcon>Assets\AppLogo.ico</ApplicationIcon>
 	</PropertyGroup>
 

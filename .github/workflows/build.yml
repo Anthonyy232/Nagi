@@ -4,10 +4,6 @@ on:
   push:
     branches: [ master ]
 
-# This permission is required to allow vpk to create a GitHub release using the automatic GITHUB_TOKEN
-permissions:
-  contents: write
-
 jobs:
   build-and-release:
     runs-on: windows-latest
@@ -44,12 +40,8 @@ jobs:
           vpk pack -u Nagi -v ${{ steps.get_version.outputs.version }} -p ./publish/$p -o ./Releases
         }
 
-    - name: Create and Deploy GitHub Release
-      # This uses the integrated Velopack commands to create a single, clean release
-      run: |
-        vpk download github --repoUrl https://github.com/${{ github.repository }} --token ${{ secrets.GITHUB_TOKEN }}
-        
-        vpk upload github --repoUrl https://github.com/${{ github.repository }} --token ${{ secrets.GITHUB_TOKEN }} `
-          --publish --releaseName "Nagi v${{ steps.get_version.outputs.version }}" `
-          --tag v${{ steps.get_version.outputs.version }} `
-          -p ./Releases
+    - name: Upload Build Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: Nagi-Release-${{ steps.get_version.outputs.version }}
+        path: ./Releases/
