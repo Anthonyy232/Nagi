@@ -7,20 +7,44 @@
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<Platforms>x86;x64;ARM64</Platforms>
 		<RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
-		<PublishProfile>win-$(Platform).pubxml</PublishProfile>
+		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 		<UseWinUI>true</UseWinUI>
 		<EnableMsixTooling>true</EnableMsixTooling>
 		<Nullable>enable</Nullable>
 		<DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
+		<Configurations>Debug;Release;DebugUnpackaged;ReleaseUnpackaged</Configurations>
+	</PropertyGroup>
+
+	<!-- =============================================================== -->
+	<!-- == Packaged (MSIX) Configuration Properties                    == -->
+	<!-- =============================================================== -->
+	<PropertyGroup Condition="!$(Configuration.Contains('Unpackaged'))">
+		<WindowsPackageType>MSIX</WindowsPackageType>
+		<PublishProfile>win-$(Platform).pubxml</PublishProfile>
 
 		<!-- These properties will override the values in Package.appxmanifest during build -->
 		<ApplicationDisplayVersion>$(AppxPackageVersion)</ApplicationDisplayVersion>
 		<ApplicationVersion>$(AppxPackageVersion.Replace('.', ''))</ApplicationVersion>
-		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
-		<WindowsPackageType>MSIX</WindowsPackageType>
+
+		<!-- Signing properties for MSIX -->
+		<PackageCertificateThumbprint>2F0E4C35DA52D5D98977D972B339A23DF2830386</PackageCertificateThumbprint>
+		<AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
+		<PackageCertificateKeyFile>Nagi_TemporaryKey.pfx</PackageCertificateKeyFile>
 	</PropertyGroup>
 
-	<ItemGroup>
+	<!-- =============================================================== -->
+	<!-- == Unpackaged Configuration Properties                         == -->
+	<!-- =============================================================== -->
+	<PropertyGroup Condition="$(Configuration.Contains('Unpackaged'))">
+		<WindowsPackageType>None</WindowsPackageType>
+		<!-- This embeds the icon into the .exe for unpackaged builds -->
+		<ApplicationIcon>Assets\AppLogo.ico</ApplicationIcon>
+	</PropertyGroup>
+
+	<!-- =============================================================== -->
+	<!-- == Packaged (MSIX) Specific Item Groups                        == -->
+	<!-- =============================================================== -->
+	<ItemGroup Condition="!$(Configuration.Contains('Unpackaged'))">
 		<Content Include="Assets\SplashScreen.scale-200.png" />
 		<Content Include="Assets\LockScreenLogo.scale-200.png" />
 		<Content Include="Assets\Square150x150Logo.scale-200.png" />
@@ -29,14 +53,14 @@
 		<Content Include="Assets\Wide310x150Logo.scale-200.png" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<Manifest Include="$(ApplicationManifest)" />
-	</ItemGroup>
-
-	<ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
+	<!-- The MsixProjectCapability is only needed for packaged builds -->
+	<ItemGroup Condition="!$(Configuration.Contains('Unpackaged')) and '$(EnableMsixTooling)'=='true'">
 		<ProjectCapability Include="Msix" />
 	</ItemGroup>
 
+	<!-- =============================================================== -->
+	<!-- == Common Item Groups                                          == -->
+	<!-- =============================================================== -->
 	<ItemGroup>
 		<PackageReference Include="ColorThief.ImageSharp" Version="$(ColorThiefImageSharpVersion)" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="$(CommunityToolkitMvvmVersion)" />
@@ -62,8 +86,10 @@
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="$(DependencyInjectionVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="$(MicrosoftExtensionsHttpVersion)" />
 		<PackageReference Include="Microsoft.Graphics.Win2D" Version="$(MicrosoftGraphicsWin2DVersion)" />
+		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.4188" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="$(WindowsAppSdkVersion)" />
 		<PackageReference Include="TagLibSharp" Version="$(TagLibSharpVersion)" />
+		<PackageReference Include="Velopack" Version="$(VelopackVersion)" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -84,24 +110,16 @@
 		</None>
 	</ItemGroup>
 
-	<!--
-      Defining the "HasPackageAndPublishMenuAddedByProject" property here allows the Solution
-      Explorer "Package and Publish" context menu entry to be enabled for this project even if
-      the Windows App SDK Nuget package has not yet been restored.
-    -->
-	<PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
+	<!-- The "Package and Publish" menu should only appear for packaged configurations -->
+	<PropertyGroup Condition="!$(Configuration.Contains('Unpackaged')) and '$(EnableMsixTooling)'=='true'">
 		<HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
 	</PropertyGroup>
 
 	<!-- Publish Properties -->
 	<PropertyGroup>
-		<PublishReadyToRun Condition="'$(Configuration)' == 'Debug'">False</PublishReadyToRun>
-		<PublishReadyToRun Condition="'$(Configuration)' != 'Debug'">True</PublishReadyToRun>
-		<PublishTrimmed Condition="'$(Configuration)' == 'Debug'">False</PublishTrimmed>
-		<PublishTrimmed Condition="'$(Configuration)' != 'Debug'">True</PublishTrimmed>
+		<PublishReadyToRun Condition="'$(Configuration)' == 'Debug' or '$(Configuration)' == 'DebugUnpackaged'">False</PublishReadyToRun>
+		<PublishReadyToRun Condition="'$(Configuration)' != 'Debug' and '$(Configuration)' != 'DebugUnpackaged'">True</PublishReadyToRun>
+		<PublishTrimmed>false</PublishTrimmed>
 		<SupportedOSPlatformVersion>10.0.18362.0</SupportedOSPlatformVersion>
-		<PackageCertificateThumbprint>2F0E4C35DA52D5D98977D972B339A23DF2830386</PackageCertificateThumbprint>
-		<AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
-		<PackageCertificateKeyFile>Nagi_TemporaryKey.pfx</PackageCertificateKeyFile>
 	</PropertyGroup>
 </Project>

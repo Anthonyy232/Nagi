@@ -1,80 +1,55 @@
-name: Build Nagi WinUI 3 App
+name: Create Nagi Release with Velopack
 
 on:
   push:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
+
+# This permission is required to allow vpk to create a GitHub release using the automatic GITHUB_TOKEN
+permissions:
+  contents: write
 
 jobs:
-  build:
-    strategy:
-      fail-fast: false 
-      matrix:
-        configuration: [Release]
-        platform: [x64, x86, arm64]
-
+  build-and-release:
     runs-on: windows-latest
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
-        fetch-depth: 0
+        fetch-depth: 0 
+
+    - name: Get and Format Version from Project Properties
+      id: get_version
+      shell: bash
+      run: |
+        four_part_version=$(grep -oE '<AppxPackageVersion>[^<]+' Directory.Build.props | sed 's/<AppxPackageVersion>//')
+        three_part_version=$(echo "$four_part_version" | sed 's/\.[0-9]\+$//')
+        echo "version=$three_part_version" >> $GITHUB_OUTPUT
 
     - name: Install .NET SDK
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 9.0.x
 
-    - name: Setup MSBuild
-      uses: microsoft/setup-msbuild@v2
+    - name: Install vpk command-line tool
+      run: dotnet tool install -g vpk
 
-    - name: Restore NuGet packages
-      run: >
-        msbuild src/Nagi/Nagi.csproj 
-        /t:Restore 
-        /p:RuntimeIdentifier=win-${{ matrix.platform }}
-        /p:PublishReadyToRun=true
-
-    - name: Build for PR Validation
-      if: github.event_name == 'pull_request'
-      run: >
-        msbuild src/Nagi/Nagi.csproj
-        /p:Configuration=${{ matrix.configuration }}
-        /p:Platform=${{ matrix.platform }}
-        /p:RuntimeIdentifier=win-${{ matrix.platform }}
-
-    - name: Decode the PFX certificate
-      if: github.event_name == 'push'
+    # This loop builds and packages for each platform into a common Releases folder
+    - name: Build and Package for All Platforms
       run: |
-        $pfx_cert_byte = [System.Convert]::FromBase64String("${{ secrets.BASE64_ENCODED_PFX }}")
-        $certificatePath = "${{ github.workspace }}/GitHubActionsWorkflow.pfx"
-        [IO.File]::WriteAllBytes("$certificatePath", $pfx_cert_byte)
+        $platforms = "win-x64", "win-x86", "win-arm64"
+        foreach ($p in $platforms) {
+          echo "Building for $p..."
+          dotnet publish src/Nagi/Nagi.csproj -c ReleaseUnpackaged -r $p --self-contained -o ./publish/$p
+          vpk pack -u Nagi -v ${{ steps.get_version.outputs.version }} -p ./publish/$p -o ./Releases
+        }
 
-    - name: Create the app package
-      if: github.event_name == 'push'
-      run: >
-        msbuild src/Nagi/Nagi.csproj
-        /t:Publish
-        /p:Configuration=${{ matrix.configuration }}
-        /p:Platform=${{ matrix.platform }}
-        /p:RuntimeIdentifier=win-${{ matrix.platform }}
-        /p:PublishReadyToRun=true
-        /p:UapAppxPackageBuildMode=SideloadOnly
-        /p:AppxBundle=Never
-        /p:AppxPackageDir="Packages\"
-        /p:AppxPackageSigningEnabled=true
-        /p:PackageCertificateKeyFile=${{ github.workspace }}/GitHubActionsWorkflow.pfx
-        /p:GenerateAppxPackageOnBuild=true
-
-    - name: Remove the PFX certificate
-      if: always() && github.event_name == 'push'
-      run: Remove-Item -path ${{ github.workspace }}/GitHubActionsWorkflow.pfx -ErrorAction SilentlyContinue
-
-    - name: Upload MSIX package artifact
-      if: github.event_name == 'push'
-      uses: actions/upload-artifact@v4
-      with:
-        name: MSIX-Package-${{ matrix.platform }}
-        path: src/Nagi/Packages/**/*.msix
+    - name: Create and Deploy GitHub Release
+      # This uses the integrated Velopack commands to create a single, clean release
+      run: |
+        vpk download github --repoUrl https://github.com/${{ github.repository }} --token ${{ secrets.GITHUB_TOKEN }}
+        
+        vpk upload github --repoUrl https://github.com/${{ github.repository }} --token ${{ secrets.GITHUB_TOKEN }} `
+          --publish --releaseName "Nagi v${{ steps.get_version.outputs.version }}" `
+          --tag v${{ steps.get_version.outputs.version }} `
+          -p ./Releases
