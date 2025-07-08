@@ -1,45 +1,80 @@
 name: Create Nagi Release with Velopack
 
+# This workflow triggers on any push to the 'master' branch.
 on:
   push:
     branches: [ master ]
 
+# Defines the jobs to be run.
 jobs:
   build-and-release:
     runs-on: windows-latest
 
+    # A sequence of steps that make up the job.
     steps:
+    # Step 1: Check out the repository code.
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
+        # Fetches all history for all branches and tags, necessary for versioning.
         fetch-depth: 0 
 
+    # Step 2: Extract the version number from a project file.
     - name: Get and Format Version from Project Properties
       id: get_version
+      # Uses bash shell for compatibility with grep/sed commands.
       shell: bash
       run: |
         four_part_version=$(grep -oE '<AppxPackageVersion>[^<]+' Directory.Build.props | sed 's/<AppxPackageVersion>//')
         three_part_version=$(echo "$four_part_version" | sed 's/\.[0-9]\+$//')
         echo "version=$three_part_version" >> $GITHUB_OUTPUT
 
+    # Step 3: Install the required .NET SDK.
     - name: Install .NET SDK
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 9.0.x
 
-    - name: Install vpk command-line tool
-      run: dotnet tool install -g vpk
+    # Step 4: Install or update the Velopack command-line tool.
+    # Using 'update' prevents errors if the tool is already installed and ensures the latest version.
+    - name: Install/Update vpk command-line tool
+      run: dotnet tool update -g vpk --prerelease
 
-    # This loop builds and packages for each platform into a common Releases folder
-    - name: Build and Package for All Platforms
+    # Step 5: Create the appsettings.json file from GitHub Secrets.
+    # This keeps your API keys secure and out of the source code.
+    - name: Create appsettings.json
+      shell: pwsh
+      run: |
+        echo '{
+          "NagiApiServer": {
+            "Url": "https://nagiappapi.azure-api.net/nagi",
+            "ApiKey": "${{ secrets.NAGI_API_KEY }}",
+            "SubscriptionKey": "${{ secrets.NAGI_SUBSCRIPTION_KEY }}"
+          }
+        }' > src/Nagi/appsettings.json
+
+    # Step 6: Build the application for all target platforms.
+    # This loop only performs the 'dotnet publish' command.
+    - name: Build for All Platforms
+      shell: pwsh
       run: |
         $platforms = "win-x64", "win-x86", "win-arm64"
         foreach ($p in $platforms) {
           echo "Building for $p..."
           dotnet publish src/Nagi/Nagi.csproj -c ReleaseUnpackaged -r $p --self-contained -o ./publish/$p
-          vpk pack -u Nagi -v ${{ steps.get_version.outputs.version }} -p ./publish/$p -o ./Releases
         }
 
+    # Step 7: Package all builds into a single Velopack release.
+    - name: Package All Platforms with Velopack
+      shell: pwsh
+      run: |
+        vpk pack -u Nagi -v ${{ steps.get_version.outputs.version }} `
+          -p ./publish/win-x64 `
+          -p ./publish/win-x86 `
+          -p ./publish/win-arm64 `
+          -o ./Releases
+
+    # Step 8: Upload the 'Releases' folder as a build artifact.
     - name: Upload Build Artifacts
       uses: actions/upload-artifact@v4
       with:
