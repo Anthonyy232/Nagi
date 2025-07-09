@@ -1,6 +1,4 @@
-﻿// SettingsService.cs
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -9,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.Win32;
+using Nagi.Helpers;
 using Nagi.Models;
 using Nagi.Services.Abstractions;
 using Windows.ApplicationModel;
@@ -18,14 +17,11 @@ namespace Nagi.Services.Implementations;
 
 /// <summary>
 ///     Manages application settings by persisting them to local storage.
-///     This implementation is suitable for both packaged and unpackaged applications,
-///     automatically selecting the correct storage and APIs.
+///     This implementation is suitable for both packaged and unpackaged applications.
 /// </summary>
 public class SettingsService : ISettingsService {
     // --- Constants ---
     private const string AppName = "Nagi";
-    private const string SettingsFileName = "settings.json";
-    private const string PlaybackStateFileName = "playback_state.json";
     private const string AutoLaunchRegistryValueName = AppName;
     private const string StartupTaskId = "NagiAutolaunchStartup"; // Must match the ID in Package.appxmanifest
 
@@ -43,10 +39,8 @@ public class SettingsService : ISettingsService {
     private const string ShowCoverArtInTrayFlyoutKey = "ShowCoverArtInTrayFlyout";
     private const string FetchOnlineMetadataKey = "FetchOnlineMetadataEnabled";
 
-    // --- Fields for Unpackaged App ---
-    private readonly string _unpackagedAppFolderPath;
-    private readonly string _unpackagedSettingsFilePath;
-    private readonly string _unpackagedPlaybackStateFilePath;
+    private readonly PathConfiguration _pathConfig;
+    private readonly bool _isPackaged;
     private Dictionary<string, object?> _settings;
     private static readonly SemaphoreSlim _settingsFileLock = new(1, 1);
     private bool _isInitialized;
@@ -56,40 +50,25 @@ public class SettingsService : ISettingsService {
 
     // --- Common Fields ---
     private static readonly JsonSerializerOptions _serializerOptions = new() { WriteIndented = true };
-    private static readonly bool _isPackaged = IsRunningInPackage();
 
-    /// <inheritdoc />
     public event Action<bool>? PlayerAnimationSettingChanged;
-    /// <inheritdoc />
     public event Action<bool>? HideToTraySettingChanged;
-    /// <inheritdoc />
     public event Action<bool>? ShowCoverArtInTrayFlyoutSettingChanged;
 
-    public SettingsService() {
+    public SettingsService(PathConfiguration pathConfig) {
+        _pathConfig = pathConfig ?? throw new ArgumentNullException(nameof(pathConfig));
+        _isPackaged = pathConfig.IsPackaged;
+        _settings = new Dictionary<string, object?>();
+
         if (_isPackaged) {
-            // Packaged: Use the WinRT ApplicationData APIs.
             _localSettings = ApplicationData.Current.LocalSettings;
-            _unpackagedAppFolderPath = string.Empty;
-            _unpackagedSettingsFilePath = string.Empty;
-            _unpackagedPlaybackStateFilePath = string.Empty;
-            _settings = new();
         }
         else {
-            // Unpackaged: Use standard .NET file IO in %LOCALAPPDATA%.
-            _unpackagedAppFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), AppName);
-            _unpackagedSettingsFilePath = Path.Combine(_unpackagedAppFolderPath, SettingsFileName);
-            _unpackagedPlaybackStateFilePath = Path.Combine(_unpackagedAppFolderPath, PlaybackStateFileName);
-            _settings = new Dictionary<string, object?>();
             _isInitialized = false;
         }
     }
 
     #region Core Helpers (GetValue, SetValue, etc.)
-
-    private static bool IsRunningInPackage() {
-        try { return Package.Current != null; }
-        catch { return false; }
-    }
 
     private async Task EnsureUnpackagedSettingsLoadedAsync() {
         if (_isPackaged || _isInitialized) return;
@@ -98,9 +77,9 @@ public class SettingsService : ISettingsService {
         try {
             if (_isInitialized) return;
 
-            Directory.CreateDirectory(_unpackagedAppFolderPath);
-            if (File.Exists(_unpackagedSettingsFilePath)) {
-                var json = await File.ReadAllTextAsync(_unpackagedSettingsFilePath);
+            // Directory is now created by PathConfiguration, so we just check for the file.
+            if (File.Exists(_pathConfig.SettingsFilePath)) {
+                var json = await File.ReadAllTextAsync(_pathConfig.SettingsFilePath);
                 _settings = JsonSerializer.Deserialize<Dictionary<string, object?>>(json) ?? new();
             }
             _isInitialized = true;
@@ -156,7 +135,7 @@ public class SettingsService : ISettingsService {
             await _settingsFileLock.WaitAsync();
             try {
                 var json = JsonSerializer.Serialize(_settings, _serializerOptions);
-                await File.WriteAllTextAsync(_unpackagedSettingsFilePath, json);
+                await File.WriteAllTextAsync(_pathConfig.SettingsFilePath, json);
             }
             finally {
                 _settingsFileLock.Release();
@@ -165,7 +144,7 @@ public class SettingsService : ISettingsService {
     }
 
     private async Task SetValueAndNotifyAsync<T>(string key, T newValue, T defaultValue, Action<T>? notifier) {
-        await EnsureUnpackagedSettingsLoadedAsync(); // Needed for GetValue in unpackaged case
+        await EnsureUnpackagedSettingsLoadedAsync();
         var currentValue = GetValue(key, defaultValue);
         if (!EqualityComparer<T>.Default.Equals(currentValue, newValue)) {
             notifier?.Invoke(newValue);
@@ -184,7 +163,7 @@ public class SettingsService : ISettingsService {
         else {
             await EnsureUnpackagedSettingsLoadedAsync();
             _settings.Clear();
-            if (File.Exists(_unpackagedSettingsFilePath)) File.Delete(_unpackagedSettingsFilePath);
+            if (File.Exists(_pathConfig.SettingsFilePath)) File.Delete(_pathConfig.SettingsFilePath);
         }
 
         await ClearPlaybackStateAsync();
@@ -206,9 +185,6 @@ public class SettingsService : ISettingsService {
 
         Debug.WriteLine("[SettingsService] All application settings have been reset to their default values.");
     }
-
-    // The rest of the public methods now correctly use the helpers,
-    // which handle the packaged/unpackaged branching internally.
 
     public async Task<double> GetInitialVolumeAsync() {
         await EnsureUnpackagedSettingsLoadedAsync();
@@ -317,8 +293,6 @@ public class SettingsService : ISettingsService {
         return GetValue(HideToTrayEnabledKey, true);
     }
 
-
-
     public Task SetHideToTrayEnabledAsync(bool isEnabled) => SetValueAndNotifyAsync(HideToTrayEnabledKey, isEnabled, true, HideToTraySettingChanged);
 
     public async Task<bool> GetShowCoverArtInTrayFlyoutAsync() {
@@ -344,12 +318,12 @@ public class SettingsService : ISettingsService {
         var jsonState = JsonSerializer.Serialize(state, _serializerOptions);
 
         if (_isPackaged) {
-            var stateFile = await ApplicationData.Current.LocalFolder.CreateFileAsync(PlaybackStateFileName, CreationCollisionOption.ReplaceExisting);
+            var stateFile = await ApplicationData.Current.LocalFolder.CreateFileAsync(
+                Path.GetFileName(_pathConfig.PlaybackStateFilePath), CreationCollisionOption.ReplaceExisting);
             await FileIO.WriteTextAsync(stateFile, jsonState);
         }
         else {
-            Directory.CreateDirectory(_unpackagedAppFolderPath);
-            await File.WriteAllTextAsync(_unpackagedPlaybackStateFilePath, jsonState);
+            await File.WriteAllTextAsync(_pathConfig.PlaybackStateFilePath, jsonState);
         }
     }
 
@@ -357,23 +331,26 @@ public class SettingsService : ISettingsService {
         try {
             string? jsonState = null;
             if (_isPackaged) {
-                var stateFile = await ApplicationData.Current.LocalFolder.GetFileAsync(PlaybackStateFileName);
-                jsonState = await FileIO.ReadTextAsync(stateFile);
+                var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(
+                    Path.GetFileName(_pathConfig.PlaybackStateFilePath));
+                if (item is not null and IStorageFile stateFile) {
+                    jsonState = await FileIO.ReadTextAsync(stateFile);
+                }
             }
             else {
-                if (!File.Exists(_unpackagedPlaybackStateFilePath)) return null;
-                jsonState = await File.ReadAllTextAsync(_unpackagedPlaybackStateFilePath);
+                if (!File.Exists(_pathConfig.PlaybackStateFilePath)) return null;
+                jsonState = await File.ReadAllTextAsync(_pathConfig.PlaybackStateFilePath);
             }
 
             if (string.IsNullOrEmpty(jsonState)) return null;
             return JsonSerializer.Deserialize<PlaybackState>(jsonState);
         }
         catch (FileNotFoundException) {
-            return null; // Expected if no state is saved
+            return null;
         }
         catch (Exception ex) {
             Debug.WriteLine($"[SettingsService] Error reading/deserializing PlaybackState: {ex.Message}");
-            await ClearPlaybackStateAsync(); // Clear potentially corrupt file
+            await ClearPlaybackStateAsync();
             return null;
         }
     }
@@ -381,11 +358,12 @@ public class SettingsService : ISettingsService {
     public async Task ClearPlaybackStateAsync() {
         try {
             if (_isPackaged) {
-                var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(PlaybackStateFileName);
+                var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(
+                    Path.GetFileName(_pathConfig.PlaybackStateFilePath));
                 if (item != null) await item.DeleteAsync();
             }
             else {
-                if (File.Exists(_unpackagedPlaybackStateFilePath)) File.Delete(_unpackagedPlaybackStateFilePath);
+                if (File.Exists(_pathConfig.PlaybackStateFilePath)) File.Delete(_pathConfig.PlaybackStateFilePath);
             }
         }
         catch (Exception ex) {
