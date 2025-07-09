@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
-using Velopack;
 using WinRT;
 
 namespace Nagi;
@@ -15,7 +14,6 @@ public static class Program {
     [STAThread]
     private static int Main(string[] args) {
         ComWrappersSupport.InitializeComWrappers();
-        VelopackApp.Build().Run();
 
         // Enforce single-instancing. If another instance is running, redirect
         // activation to it and then exit.
