@@ -1,5 +1,3 @@
-// Nagi/Pages/LibraryPage.xaml.cs
-
 using System.Diagnostics;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,10 +11,8 @@ namespace Nagi.Pages;
 /// <summary>
 ///     The page for displaying and interacting with the user's music library.
 /// </summary>
-public sealed partial class LibraryPage : Page
-{
-    public LibraryPage()
-    {
+public sealed partial class LibraryPage : Page {
+    public LibraryPage() {
         InitializeComponent();
         ViewModel = App.Services.GetRequiredService<LibraryViewModel>();
         DataContext = ViewModel;
@@ -27,68 +23,60 @@ public sealed partial class LibraryPage : Page
     /// <summary>
     ///     Loads necessary data when the page is navigated to.
     /// </summary>
-    protected override async void OnNavigatedTo(NavigationEventArgs e)
-    {
+    protected override async void OnNavigatedTo(NavigationEventArgs e) {
         base.OnNavigatedTo(e);
         Debug.WriteLine("[LibraryPage] Navigated to page. Loading data.");
-        if (ViewModel != null)
-        {
-            //
+        if (ViewModel != null) {
             // Load playlists first for context menu availability.
-            //
             await ViewModel.LoadAvailablePlaylistsAsync();
-            //
-            // This special method handles the initial UI load and a background rescan.
-            //
-            await ViewModel.InitializeAndStartBackgroundScanAsync();
+
+            // This method now handles the initial UI load and a background rescan.
+            await ViewModel.InitializeAsync();
         }
     }
 
     /// <summary>
     ///     Handles the opening of the context menu for a song item.
     /// </summary>
-    private void SongItemMenuFlyout_Opening(object sender, object e)
-    {
+    private void SongItemMenuFlyout_Opening(object sender, object e) {
         if (sender is not MenuFlyout menuFlyout) return;
 
-        //
         // Dynamically build the "Add to playlist" submenu.
-        //
         var addToPlaylistSubMenu = menuFlyout.Items.OfType<MenuFlyoutSubItem>()
             .FirstOrDefault(item => item.Name == "AddToPlaylistSubMenu");
-        if (addToPlaylistSubMenu != null)
-        {
+        if (addToPlaylistSubMenu != null) {
             addToPlaylistSubMenu.Items.Clear();
-            if (ViewModel.AvailablePlaylists.Any())
-                foreach (var playlist in ViewModel.AvailablePlaylists)
-                {
-                    var playlistMenuItem = new MenuFlyoutItem
-                    {
+            if (ViewModel.AvailablePlaylists.Any()) {
+                foreach (var playlist in ViewModel.AvailablePlaylists) {
+                    var playlistMenuItem = new MenuFlyoutItem {
                         Text = playlist.Name,
                         Command = ViewModel.AddSelectedSongsToPlaylistCommand,
                         CommandParameter = playlist
                     };
                     addToPlaylistSubMenu.Items.Add(playlistMenuItem);
                 }
-            else
+            }
+            else {
                 addToPlaylistSubMenu.Items.Add(
                     new MenuFlyoutItem { Text = "No playlists available", IsEnabled = false });
+            }
         }
 
         if (menuFlyout.Target?.DataContext is not Song rightClickedSong) return;
 
-        //
         // If the user right-clicks an item that is not already selected,
         // change the selection to that single item for a better user experience.
-        //
-        if (!SongsListView.SelectedItems.Contains(rightClickedSong)) SongsListView.SelectedItem = rightClickedSong;
+        if (!SongsListView.SelectedItems.Contains(rightClickedSong)) {
+            SongsListView.SelectedItem = rightClickedSong;
+        }
     }
 
     /// <summary>
     ///     Notifies the ViewModel when the ListView's selection has changed.
     /// </summary>
-    private void OnListViewSelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        if (sender is ListView listView) ViewModel.OnSongsSelectionChanged(listView.SelectedItems);
+    private void OnListViewSelectionChanged(object sender, SelectionChangedEventArgs e) {
+        if (sender is ListView listView) {
+            ViewModel.OnSongsSelectionChanged(listView.SelectedItems);
+        }
     }
 }

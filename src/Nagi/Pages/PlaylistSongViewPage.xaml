@@ -62,9 +62,9 @@
                   ItemsSource="{x:Bind ViewModel.Songs, Mode=OneWay}"
                   ItemContainerStyle="{StaticResource SongListViewPageListViewItemStyle}"
                   SelectionChanged="SongsListView_SelectionChanged"
-                  CanDragItems="True"
-                  CanReorderItems="True"
-                  AllowDrop="True">
+                  CanDragItems="False"
+                  CanReorderItems="False"
+                  AllowDrop="False">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="models:Song">
                     <Grid Height="54" ColumnSpacing="12" Background="Transparent">

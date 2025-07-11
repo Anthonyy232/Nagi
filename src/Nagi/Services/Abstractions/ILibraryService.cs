@@ -1,22 +1,18 @@
-﻿using System;
+﻿using Nagi.Models;
+using Nagi.Services.Implementations;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Nagi.Models;
-using Nagi.Services.Implementations;
 
 namespace Nagi.Services.Abstractions;
 
 /// <summary>
 /// Defines the contract for a service that manages the music library.
-/// This includes handling folders, songs, artists, albums, playlists, and library scanning operations.
 /// </summary>
 public interface ILibraryService {
-    /// <summary>
-    /// Occurs when an artist's metadata (e.g., image) has been updated.
-    /// </summary>
     event EventHandler<ArtistMetadataUpdatedEventArgs> ArtistMetadataUpdated;
 
-    // --- Folder Management ---
+    #region Folder Management
 
     Task<Folder?> AddFolderAsync(string path, string? name = null);
     Task<bool> RemoveFolderAsync(Guid folderId);
@@ -26,13 +22,17 @@ public interface ILibraryService {
     Task<bool> UpdateFolderAsync(Folder folder);
     Task<int> GetSongCountForFolderAsync(Guid folderId);
 
-    // --- Library Scanning & Refreshing ---
+    #endregion
+
+    #region Library Scanning
 
     Task ScanFolderForMusicAsync(string folderPath, IProgress<ScanProgress>? progress = null);
     Task<bool> RescanFolderForMusicAsync(Guid folderId, IProgress<ScanProgress>? progress = null);
     Task<bool> RefreshAllFoldersAsync(IProgress<ScanProgress>? progress = null);
 
-    // --- Song Management ---
+    #endregion
+
+    #region Song Management
 
     Task<Song?> AddSongAsync(Song songData);
     Task<Song?> AddSongWithDetailsAsync(
@@ -54,7 +54,9 @@ public interface ILibraryService {
     Task<IEnumerable<Song>> SearchSongsAsync(string searchTerm);
     Task<bool> UpdateSongAsync(Song songToUpdate);
 
-    // --- Artist Management ---
+    #endregion
+
+    #region Artist Management
 
     Task<Artist?> GetArtistByIdAsync(Guid artistId);
     Task<Artist?> GetArtistDetailsAsync(Guid artistId, bool allowOnlineFetch);
@@ -63,13 +65,17 @@ public interface ILibraryService {
     Task<IEnumerable<Artist>> SearchArtistsAsync(string searchTerm);
     Task StartArtistMetadataBackgroundFetchAsync();
 
-    // --- Album Management ---
+    #endregion
+
+    #region Album Management
 
     Task<Album?> GetAlbumByIdAsync(Guid albumId);
     Task<IEnumerable<Album>> GetAllAlbumsAsync();
     Task<IEnumerable<Album>> SearchAlbumsAsync(string searchTerm);
 
-    // --- Playlist Management ---
+    #endregion
+
+    #region Playlist Management
 
     Task<Playlist?> CreatePlaylistAsync(string name, string? description = null, string? coverImageUri = null);
     Task<bool> DeletePlaylistAsync(Guid playlistId);
@@ -77,16 +83,37 @@ public interface ILibraryService {
     Task<bool> UpdatePlaylistCoverAsync(Guid playlistId, string? newCoverImageUri);
     Task<bool> AddSongsToPlaylistAsync(Guid playlistId, IEnumerable<Guid> songIds);
     Task<bool> RemoveSongsFromPlaylistAsync(Guid playlistId, IEnumerable<Guid> songIds);
-    /// <summary>
-    /// Updates the order of all songs in a playlist based on a provided sequence of song IDs.
-    /// This is the preferred method for reordering as it's a single, atomic, and safe transaction.
-    /// </summary>
     Task<bool> UpdatePlaylistSongOrderAsync(Guid playlistId, IEnumerable<Guid> orderedSongIds);
     Task<Playlist?> GetPlaylistByIdAsync(Guid playlistId);
     Task<IEnumerable<Playlist>> GetAllPlaylistsAsync();
     Task<IEnumerable<Song>> GetSongsInPlaylistOrderedAsync(Guid playlistId);
 
-    // --- Data Reset ---
+    #endregion
+
+    #region Paged Loading
+
+    Task<PagedResult<Song>> GetAllSongsPagedAsync(int pageNumber, int pageSize, SongSortOrder sortOrder = SongSortOrder.TitleAsc);
+    Task<PagedResult<Song>> SearchSongsPagedAsync(string searchTerm, int pageNumber, int pageSize);
+    Task<PagedResult<Artist>> GetAllArtistsPagedAsync(int pageNumber, int pageSize);
+    Task<PagedResult<Artist>> SearchArtistsPagedAsync(string searchTerm, int pageNumber, int pageSize);
+    Task<PagedResult<Album>> GetAllAlbumsPagedAsync(int pageNumber, int pageSize);
+    Task<PagedResult<Album>> SearchAlbumsPagedAsync(string searchTerm, int pageNumber, int pageSize);
+    Task<PagedResult<Playlist>> GetAllPlaylistsPagedAsync(int pageNumber, int pageSize);
+    Task<PagedResult<Song>> GetSongsByAlbumIdPagedAsync(Guid albumId, int pageNumber, int pageSize, SongSortOrder sortOrder = SongSortOrder.TitleAsc);
+    Task<PagedResult<Song>> GetSongsByArtistIdPagedAsync(Guid artistId, int pageNumber, int pageSize, SongSortOrder sortOrder = SongSortOrder.TitleAsc);
+    Task<PagedResult<Song>> GetSongsByFolderIdPagedAsync(Guid folderId, int pageNumber, int pageSize, SongSortOrder sortOrder = SongSortOrder.TitleAsc);
+    Task<PagedResult<Song>> GetSongsByPlaylistPagedAsync(Guid playlistId, int pageNumber, int pageSize);
+    Task<List<Guid>> GetAllSongIdsAsync(SongSortOrder sortOrder);
+    Task<List<Guid>> GetAllSongIdsByFolderIdAsync(Guid folderId, SongSortOrder sortOrder);
+    Task<List<Guid>> GetAllSongIdsByArtistIdAsync(Guid artistId, SongSortOrder sortOrder);
+    Task<List<Guid>> GetAllSongIdsByAlbumIdAsync(Guid albumId, SongSortOrder sortOrder);
+    Task<List<Guid>> GetAllSongIdsByPlaylistIdAsync(Guid playlistId);
+
+    #endregion
+
+    #region Data Reset
 
     Task ClearAllLibraryDataAsync();
+
+    #endregion
 }
