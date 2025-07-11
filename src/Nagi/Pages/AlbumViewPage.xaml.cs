@@ -9,7 +9,7 @@ using Nagi.ViewModels;
 namespace Nagi.Pages;
 
 /// <summary>
-///     A page that displays detailed information for a specific album, including its track list.
+/// A page that displays detailed information for a specific album, including its track list.
 /// </summary>
 public sealed partial class AlbumViewPage : Page {
     public AlbumViewPage() {
@@ -18,8 +18,14 @@ public sealed partial class AlbumViewPage : Page {
         DataContext = ViewModel;
     }
 
+    /// <summary>
+    /// Gets the ViewModel associated with this page.
+    /// </summary>
     public AlbumViewViewModel ViewModel { get; }
 
+    /// <summary>
+    /// Initializes the ViewModel when the page is navigated to.
+    /// </summary>
     protected override async void OnNavigatedTo(NavigationEventArgs e) {
         base.OnNavigatedTo(e);
 
@@ -29,28 +35,43 @@ public sealed partial class AlbumViewPage : Page {
         }
     }
 
+    /// <summary>
+    /// Cleans up resources when the user navigates away from the page.
+    /// </summary>
     protected override void OnNavigatedFrom(NavigationEventArgs e) {
         base.OnNavigatedFrom(e);
         ViewModel.Cleanup();
     }
 
+    /// <summary>
+    /// Updates the ViewModel's selection when the song list selection changes.
+    /// </summary>
     private void SongsListView_SelectionChanged(object sender, SelectionChangedEventArgs e) {
-        if (sender is ListView listView)
+        if (sender is ListView listView) {
             ViewModel.OnSongsSelectionChanged(listView.SelectedItems);
+        }
     }
 
+    /// <summary>
+    /// Handles the opening of the context menu for a song item.
+    /// </summary>
     private void SongItemMenuFlyout_Opening(object sender, object e) {
         if (sender is not MenuFlyout menuFlyout) return;
 
         if (menuFlyout.Target?.DataContext is Song rightClickedSong &&
-            !SongsListView.SelectedItems.Contains(rightClickedSong))
+            !SongsListView.SelectedItems.Contains(rightClickedSong)) {
             SongsListView.SelectedItem = rightClickedSong;
+        }
 
         if (menuFlyout.Items.OfType<MenuFlyoutSubItem>()
-                .FirstOrDefault(item => item.Name == "AddToPlaylistSubMenu") is { } addToPlaylistSubMenu)
+                .FirstOrDefault(item => item.Name == "AddToPlaylistSubMenu") is { } addToPlaylistSubMenu) {
             PopulatePlaylistSubMenu(addToPlaylistSubMenu);
+        }
     }
 
+    /// <summary>
+    /// Populates the "Add to playlist" submenu with available playlists.
+    /// </summary>
     private void PopulatePlaylistSubMenu(MenuFlyoutSubItem subMenu) {
         subMenu.Items.Clear();
 

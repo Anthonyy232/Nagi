@@ -19,6 +19,9 @@ public sealed partial class FolderSongViewPage : Page {
         DataContext = ViewModel;
     }
 
+    /// <summary>
+    /// Gets the ViewModel associated with this page.
+    /// </summary>
     public FolderSongListViewModel ViewModel { get; }
 
     /// <summary>
@@ -31,9 +34,17 @@ public sealed partial class FolderSongViewPage : Page {
             await ViewModel.LoadAvailablePlaylistsAsync();
         }
         else {
-            Debug.WriteLine("[FolderSongViewPage] OnNavigatedTo: Invalid navigation parameter.");
+            Debug.WriteLine("[WARNING] FolderSongViewPage: OnNavigatedTo received invalid navigation parameter.");
             await ViewModel.InitializeAsync("Unknown Folder", null);
         }
+    }
+
+    /// <summary>
+    /// Cleans up resources when the user navigates away from the page.
+    /// </summary>
+    protected override void OnNavigatedFrom(NavigationEventArgs e) {
+        base.OnNavigatedFrom(e);
+        ViewModel.Cleanup();
     }
 
     /// <summary>
@@ -46,14 +57,14 @@ public sealed partial class FolderSongViewPage : Page {
     }
 
     /// <summary>
-    /// Handles the opening of the context menu for a song item.
+    /// Handles the opening of the context menu for a song item, populating submenus
+    /// and ensuring the correct item is selected.
     /// </summary>
     private void SongItemMenuFlyout_Opening(object sender, object e) {
         if (sender is not MenuFlyout menuFlyout) return;
 
-        var addToPlaylistSubMenu = menuFlyout.Items.OfType<MenuFlyoutSubItem>()
-            .FirstOrDefault(item => item.Name == "AddToPlaylistSubMenu");
-        if (addToPlaylistSubMenu != null) {
+        if (menuFlyout.Items.OfType<MenuFlyoutSubItem>()
+            .FirstOrDefault(item => item.Name == "AddToPlaylistSubMenu") is { } addToPlaylistSubMenu) {
             addToPlaylistSubMenu.Items.Clear();
             if (ViewModel.AvailablePlaylists.Any()) {
                 foreach (var playlist in ViewModel.AvailablePlaylists) {
@@ -76,10 +87,5 @@ public sealed partial class FolderSongViewPage : Page {
         if (!SongsListView.SelectedItems.Contains(rightClickedSong)) {
             SongsListView.SelectedItem = rightClickedSong;
         }
-    }
-
-    protected override void OnNavigatedFrom(NavigationEventArgs e) {
-        base.OnNavigatedFrom(e);
-        ViewModel.Cleanup();
     }
 }

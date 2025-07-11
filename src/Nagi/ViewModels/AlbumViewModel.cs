@@ -1,104 +1,121 @@
-﻿// Nagi/ViewModels/AlbumViewModel.cs
-
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Nagi.Models;
 using Nagi.Services.Abstractions;
+using System;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Nagi.ViewModels;
 
 /// <summary>
-///     Represents a display-optimized album item for the UI.
+/// A display-optimized representation of an album for the user interface.
 /// </summary>
-public partial class AlbumViewModelItem : ObservableObject
-{
-    public AlbumViewModelItem(Album album)
-    {
+public partial class AlbumViewModelItem : ObservableObject {
+    public AlbumViewModelItem(Album album) {
         Id = album.Id;
         Title = album.Title;
         ArtistName = album.Artist?.Name ?? "Unknown Artist";
-        // Use the first available track's art as the album cover.
-        CoverArtUri = album.Songs?.OrderBy(s => s.TrackNumber)
-            .FirstOrDefault(s => !string.IsNullOrEmpty(s.AlbumArtUriFromTrack))
-            ?.AlbumArtUriFromTrack;
+        CoverArtUri = album.CoverArtUri;
     }
 
     public Guid Id { get; }
-
-    [ObservableProperty] public partial string Title { get; set; }
-
-    [ObservableProperty] public partial string ArtistName { get; set; }
-
-    [ObservableProperty] public partial string? CoverArtUri { get; set; }
+    [ObservableProperty] private string _title;
+    [ObservableProperty] private string _artistName;
+    [ObservableProperty] private string? _coverArtUri;
 }
 
 /// <summary>
-///     Manages the state and logic for the page that displays a list of all albums.
+/// Manages the state and logic for the album list page, featuring gradual data fetching.
 /// </summary>
-public partial class AlbumViewModel : ObservableObject
-{
+public partial class AlbumViewModel : ObservableObject {
     private readonly ILibraryService _libraryService;
+    private int _currentPage = 1;
+    private const int PageSize = 250;
+    private bool _isFullyLoaded;
 
-    public AlbumViewModel(ILibraryService libraryService)
-    {
+    public AlbumViewModel(ILibraryService libraryService) {
         _libraryService = libraryService;
-        // Subscribes to collection changes to notify the UI to re-evaluate properties
-        // like HasAlbums, which controls the visibility of the "No albums found" message.
-        Albums.CollectionChanged += (s, e) => OnPropertyChanged(nameof(HasAlbums));
+        Albums.CollectionChanged += (sender, args) => OnPropertyChanged(nameof(HasAlbums));
     }
 
-    [ObservableProperty] public partial ObservableCollection<AlbumViewModelItem> Albums { get; set; } = new();
+    [ObservableProperty]
+    private ObservableCollection<AlbumViewModelItem> _albums = new();
 
-    [ObservableProperty] public partial bool IsLoading { get; set; }
+    [ObservableProperty]
+    private bool _isLoading;
 
-    /// <summary>
-    ///     Gets a value indicating whether the album collection contains any items.
-    /// </summary>
+    [ObservableProperty]
+    private bool _isLoadingMore;
+
+    [ObservableProperty]
+    private bool _hasLoadError;
+
     public bool HasAlbums => Albums.Any();
 
     /// <summary>
-    ///     Asynchronously loads all albums from the library.
-    ///     This method efficiently loads albums and songs separately and links them in memory
-    ///     to determine cover art without causing N+1 query performance issues.
+    /// Asynchronously loads albums with support for cancellation.
     /// </summary>
+    /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
     [RelayCommand]
-    public async Task LoadAlbumsAsync()
-    {
+    public async Task LoadAlbumsAsync(CancellationToken cancellationToken) {
         if (IsLoading) return;
 
         IsLoading = true;
-        try
-        {
-            var albumsFromDb = await _libraryService.GetAllAlbumsAsync();
-            var songsFromDb = await _libraryService.GetAllSongsAsync();
+        HasLoadError = false;
+        _currentPage = 1;
+        _isFullyLoaded = false;
+        Albums.Clear();
 
-            var songsByAlbumId = songsFromDb
-                .Where(s => s.AlbumId.HasValue)
-                .GroupBy(s => s.AlbumId!.Value)
-                .ToDictionary(g => g.Key, g => (ICollection<Song>)g.ToList());
+        try {
+            await LoadNextPageAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) return;
 
-            Albums.Clear();
-            foreach (var album in albumsFromDb)
-            {
-                // Manually attach songs to the album object to find cover art.
-                if (songsByAlbumId.TryGetValue(album.Id, out var songsForAlbum)) album.Songs = songsForAlbum;
+            // Continue loading subsequent pages in the background.
+            if (!_isFullyLoaded) {
+                IsLoadingMore = true;
+                while (!_isFullyLoaded && !cancellationToken.IsCancellationRequested) {
+                    _currentPage++;
+                    await LoadNextPageAsync(cancellationToken);
+                    await Task.Delay(250, cancellationToken);
+                }
+            }
+        }
+        catch (OperationCanceledException) {
+            // Log that the operation was intentionally canceled.
+            Debug.WriteLine("[AlbumViewModel] Album loading was canceled.");
+        }
+        catch (Exception ex) {
+            // Log any unexpected errors during the loading process.
+            Debug.WriteLine($"[AlbumViewModel] An error occurred while loading albums: {ex.Message}");
+            HasLoadError = true;
+        }
+        finally {
+            IsLoading = false;
+            IsLoadingMore = false;
+        }
+    }
+
+    /// <summary>
+    /// Fetches a single page of albums from the library service.
+    /// </summary>
+    private async Task LoadNextPageAsync(CancellationToken cancellationToken) {
+        var pagedResult = await _libraryService.GetAllAlbumsPagedAsync(_currentPage, PageSize);
+
+        if (cancellationToken.IsCancellationRequested) return;
+
+        if (pagedResult?.Items?.Any() == true) {
+            foreach (var album in pagedResult.Items) {
                 Albums.Add(new AlbumViewModelItem(album));
             }
         }
-        catch (Exception ex)
-        {
-            // Log the error for debugging purposes.
-            Debug.WriteLine($"[AlbumViewModel] Error loading albums: {ex.Message}");
-        }
-        finally
-        {
-            IsLoading = false;
+
+        // Determine if all albums have been loaded.
+        if (pagedResult == null || Albums.Count >= pagedResult.TotalCount) {
+            _isFullyLoaded = true;
         }
     }
 }

@@ -10,6 +10,9 @@ using Nagi.Services.Abstractions;
 
 namespace Nagi.ViewModels;
 
+/// <summary>
+/// ViewModel for the album details page, displaying album art, metadata, and the list of tracks.
+/// </summary>
 public partial class AlbumViewViewModel : SongListViewModelBase {
     private Guid _albumId;
     private int? _albumYear;
@@ -22,16 +25,16 @@ public partial class AlbumViewViewModel : SongListViewModelBase {
     }
 
     [ObservableProperty]
-    private string albumTitle = "Album";
+    private string _albumTitle = "Album";
 
     [ObservableProperty]
-    private string artistName = "Artist";
+    private string _artistName = "Artist";
 
     [ObservableProperty]
-    private string? coverArtUri;
+    private string? _coverArtUri;
 
     [ObservableProperty]
-    private string albumDetailsText = string.Empty;
+    private string _albumDetailsText = string.Empty;
 
     protected override bool IsPagingSupported => true;
 
@@ -39,10 +42,12 @@ public partial class AlbumViewViewModel : SongListViewModelBase {
         return Task.FromResult(Enumerable.Empty<Song>());
     }
 
+    /// <summary>
+    /// Loads a page of songs for the current album. On the first page load,
+    /// it also updates the album's metadata display text.
+    /// </summary>
     protected override async Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize, SongSortOrder sortOrder) {
-        if (_albumId == Guid.Empty) {
-            return new PagedResult<Song>();
-        }
+        if (_albumId == Guid.Empty) return new PagedResult<Song>();
 
         var result = await _libraryService.GetSongsByAlbumIdPagedAsync(_albumId, pageNumber, pageSize, sortOrder);
 
@@ -53,13 +58,18 @@ public partial class AlbumViewViewModel : SongListViewModelBase {
         return result;
     }
 
+    /// <summary>
+    /// Loads the complete list of song IDs for the current album.
+    /// </summary>
     protected override async Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder) {
-        if (_albumId == Guid.Empty) {
-            return new List<Guid>();
-        }
+        if (_albumId == Guid.Empty) return new List<Guid>();
         return await _libraryService.GetAllSongIdsByAlbumIdAsync(_albumId, sortOrder);
     }
 
+    /// <summary>
+    /// Loads the details for a specific album and then initiates loading its songs.
+    /// </summary>
+    /// <param name="albumId">The ID of the album to load.</param>
     [RelayCommand]
     public async Task LoadAlbumDetailsAsync(Guid albumId) {
         if (IsOverallLoading) return;
@@ -75,40 +85,47 @@ public partial class AlbumViewViewModel : SongListViewModelBase {
                 _albumYear = album.Year;
                 CoverArtUri = album.CoverArtUri;
 
-                try {
-                    await RefreshOrSortSongsCommand.ExecuteAsync(null);
-                }
-                catch (Exception ex) {
-                    Debug.WriteLine($"[ERROR] Failed to load songs for album '{album.Title}'. {ex.Message}");
-                    TotalItemsText = "Error loading songs";
-                }
+                await RefreshOrSortSongsCommand.ExecuteAsync(null);
             }
             else {
-                Debug.WriteLine($"Album with ID '{albumId}' not found.");
-                AlbumTitle = "Album Not Found";
-                PageTitle = "Not Found";
-                ArtistName = string.Empty;
-                CoverArtUri = null;
-                Songs.Clear();
-                TotalItemsText = "0 songs";
+                HandleAlbumNotFound(albumId);
             }
         }
         catch (Exception ex) {
-            Debug.WriteLine($"Error loading album with ID '{albumId}': {ex.Message}");
-            AlbumTitle = "Error Loading Album";
-            PageTitle = "Error";
-            ArtistName = string.Empty;
-            TotalItemsText = "Error";
-            Songs.Clear();
+            HandleLoadError(albumId, ex);
         }
     }
 
+    private void HandleAlbumNotFound(Guid albumId) {
+        Debug.WriteLine($"[AlbumViewViewModel] Album with ID '{albumId}' not found.");
+        AlbumTitle = "Album Not Found";
+        PageTitle = "Not Found";
+        ArtistName = string.Empty;
+        CoverArtUri = null;
+        Songs.Clear();
+        TotalItemsText = "0 songs";
+    }
+
+    private void HandleLoadError(Guid albumId, Exception ex) {
+        Debug.WriteLine($"[ERROR] Error loading album with ID '{albumId}': {ex.Message}");
+        AlbumTitle = "Error Loading Album";
+        PageTitle = "Error";
+        ArtistName = string.Empty;
+        TotalItemsText = "Error";
+        Songs.Clear();
+    }
+
+    /// <summary>
+    /// Constructs and sets the album details string (e.g., "2023 • 12 songs").
+    /// </summary>
     private void UpdateAlbumDetails(PagedResult<Song> pagedResult) {
-        if (pagedResult.Items == null) return;
+        if (pagedResult?.Items == null) return;
 
         var songCount = pagedResult.TotalCount;
         var detailsParts = new List<string>();
-        if (_albumYear.HasValue) detailsParts.Add(_albumYear.Value.ToString());
+        if (_albumYear.HasValue) {
+            detailsParts.Add(_albumYear.Value.ToString());
+        }
         detailsParts.Add($"{songCount} song{(songCount != 1 ? "s" : "")}");
 
         AlbumDetailsText = string.Join(" • ", detailsParts);

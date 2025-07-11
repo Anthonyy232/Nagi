@@ -1403,12 +1403,12 @@ public class LibraryService : ILibraryService {
         var query = context.PlaylistSongs
             .AsNoTracking()
             .Where(ps => ps.PlaylistId == playlistId)
+            .Include(ps => ps.Song).ThenInclude(s => s!.Artist)
+            .Include(ps => ps.Song).ThenInclude(s => s!.Album).ThenInclude(a => a!.Artist)
             .OrderBy(ps => ps.Order)
             .Select(ps => ps.Song)
             .Where(s => s != null)
-            .Cast<Song>()
-            .Include(s => s.Artist)
-            .Include(s => s.Album).ThenInclude(a => a!.Artist);
+            .Cast<Song>();
 
         var totalCount = await query.CountAsync();
 

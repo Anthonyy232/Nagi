@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
@@ -9,7 +8,7 @@ using Nagi.ViewModels;
 namespace Nagi.Pages;
 
 /// <summary>
-///     The page for displaying and interacting with the user's music library.
+/// The page for displaying and interacting with the user's music library.
 /// </summary>
 public sealed partial class LibraryPage : Page {
     public LibraryPage() {
@@ -18,33 +17,35 @@ public sealed partial class LibraryPage : Page {
         DataContext = ViewModel;
     }
 
+    /// <summary>
+    /// Gets the ViewModel associated with this page.
+    /// </summary>
     public LibraryViewModel ViewModel { get; }
 
     /// <summary>
-    ///     Loads necessary data when the page is navigated to.
+    /// Loads necessary data when the page is navigated to.
     /// </summary>
     protected override async void OnNavigatedTo(NavigationEventArgs e) {
         base.OnNavigatedTo(e);
-        Debug.WriteLine("[LibraryPage] Navigated to page. Loading data.");
         if (ViewModel != null) {
             // Load playlists first for context menu availability.
             await ViewModel.LoadAvailablePlaylistsAsync();
 
-            // This method now handles the initial UI load and a background rescan.
+            // This method handles the initial UI load and a background rescan.
             await ViewModel.InitializeAsync();
         }
     }
 
     /// <summary>
-    ///     Handles the opening of the context menu for a song item.
+    /// Handles the opening of the context menu for a song item. It dynamically populates
+    /// the "Add to playlist" submenu and ensures the right-clicked item is selected.
     /// </summary>
     private void SongItemMenuFlyout_Opening(object sender, object e) {
         if (sender is not MenuFlyout menuFlyout) return;
 
         // Dynamically build the "Add to playlist" submenu.
-        var addToPlaylistSubMenu = menuFlyout.Items.OfType<MenuFlyoutSubItem>()
-            .FirstOrDefault(item => item.Name == "AddToPlaylistSubMenu");
-        if (addToPlaylistSubMenu != null) {
+        if (menuFlyout.Items.OfType<MenuFlyoutSubItem>()
+            .FirstOrDefault(item => item.Name == "AddToPlaylistSubMenu") is { } addToPlaylistSubMenu) {
             addToPlaylistSubMenu.Items.Clear();
             if (ViewModel.AvailablePlaylists.Any()) {
                 foreach (var playlist in ViewModel.AvailablePlaylists) {
@@ -72,7 +73,7 @@ public sealed partial class LibraryPage : Page {
     }
 
     /// <summary>
-    ///     Notifies the ViewModel when the ListView's selection has changed.
+    /// Notifies the ViewModel when the ListView's selection has changed.
     /// </summary>
     private void OnListViewSelectionChanged(object sender, SelectionChangedEventArgs e) {
         if (sender is ListView listView) {

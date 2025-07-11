@@ -23,6 +23,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
+        <!-- Page Header -->
         <Grid Grid.Row="0" Padding="24,20,24,20" VerticalAlignment="Center">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -54,6 +55,7 @@
             </StackPanel>
         </Grid>
 
+        <!-- Song List -->
         <ListView Grid.Row="1"
                   x:Name="SongsListView"
                   SelectionMode="Extended"

@@ -9,8 +9,8 @@ using Nagi.ViewModels;
 namespace Nagi.Pages;
 
 /// <summary>
-///     A page that displays detailed information for a specific artist,
-///     including their albums and songs.
+/// A page that displays detailed information for a specific artist,
+/// including their albums and songs.
 /// </summary>
 public sealed partial class ArtistViewPage : Page {
     public ArtistViewPage() {
@@ -19,8 +19,14 @@ public sealed partial class ArtistViewPage : Page {
         DataContext = ViewModel;
     }
 
+    /// <summary>
+    /// Gets the ViewModel associated with this page.
+    /// </summary>
     public ArtistViewViewModel ViewModel { get; }
 
+    /// <summary>
+    /// Initializes the ViewModel when the page is navigated to.
+    /// </summary>
     protected override async void OnNavigatedTo(NavigationEventArgs e) {
         base.OnNavigatedTo(e);
 
@@ -30,23 +36,35 @@ public sealed partial class ArtistViewPage : Page {
         }
     }
 
+    /// <summary>
+    /// Cleans up resources when the user navigates away from the page.
+    /// </summary>
     protected override void OnNavigatedFrom(NavigationEventArgs e) {
         base.OnNavigatedFrom(e);
         ViewModel.Cleanup();
     }
 
+    /// <summary>
+    /// Handles clicks on the album grid, navigating to the selected album.
+    /// </summary>
     private void AlbumGridView_ItemClick(object sender, ItemClickEventArgs e) {
         if (e.ClickedItem is ArtistAlbumViewModelItem clickedAlbum) {
             ViewModel.ViewAlbumCommand.Execute(clickedAlbum.Id);
         }
     }
 
+    /// <summary>
+    /// Updates the ViewModel's selection when the song list selection changes.
+    /// </summary>
     private void SongsListView_SelectionChanged(object sender, SelectionChangedEventArgs e) {
         if (sender is ListView listView) {
             ViewModel.OnSongsSelectionChanged(listView.SelectedItems);
         }
     }
 
+    /// <summary>
+    /// Handles the opening of the context menu for a song item.
+    /// </summary>
     private void SongItemMenuFlyout_Opening(object sender, object e) {
         if (sender is not MenuFlyout menuFlyout) return;
 
@@ -63,6 +81,9 @@ public sealed partial class ArtistViewPage : Page {
         }
     }
 
+    /// <summary>
+    /// Populates the "Add to playlist" submenu with available playlists.
+    /// </summary>
     private void PopulatePlaylistSubMenu(MenuFlyoutSubItem subMenu) {
         subMenu.Items.Clear();
 

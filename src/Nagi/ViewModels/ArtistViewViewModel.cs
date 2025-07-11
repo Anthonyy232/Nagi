@@ -14,6 +14,9 @@ using Nagi.Services.Abstractions;
 
 namespace Nagi.ViewModels;
 
+/// <summary>
+/// A view model item representing an album in the artist's discography.
+/// </summary>
 public partial class ArtistAlbumViewModelItem : ObservableObject {
     public ArtistAlbumViewModelItem(Album album) {
         Id = album.Id;
@@ -28,6 +31,9 @@ public partial class ArtistAlbumViewModelItem : ObservableObject {
     public string YearText { get; }
 }
 
+/// <summary>
+/// ViewModel for the artist details page, displaying biography, albums, and all songs by the artist.
+/// </summary>
 public partial class ArtistViewViewModel : SongListViewModelBase {
     private readonly DispatcherQueue _dispatcherQueue;
     private readonly ISettingsService _settingsService;
@@ -53,8 +59,14 @@ public partial class ArtistViewViewModel : SongListViewModelBase {
     [ObservableProperty]
     private string? _artistImageUri;
 
+    /// <summary>
+    /// A collection of albums by the artist.
+    /// </summary>
     public ObservableCollection<ArtistAlbumViewModelItem> Albums { get; } = new();
 
+    /// <summary>
+    /// Gets a value indicating whether the artist has any albums in the library.
+    /// </summary>
     public bool HasAlbums => Albums.Any();
 
     protected override bool IsPagingSupported => true;
@@ -64,19 +76,19 @@ public partial class ArtistViewViewModel : SongListViewModelBase {
     }
 
     protected override async Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize, SongSortOrder sortOrder) {
-        if (_artistId == Guid.Empty) {
-            return new PagedResult<Song>();
-        }
+        if (_artistId == Guid.Empty) return new PagedResult<Song>();
         return await _libraryService.GetSongsByArtistIdPagedAsync(_artistId, pageNumber, pageSize, sortOrder);
     }
 
     protected override async Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder) {
-        if (_artistId == Guid.Empty) {
-            return new List<Guid>();
-        }
+        if (_artistId == Guid.Empty) return new List<Guid>();
         return await _libraryService.GetAllSongIdsByArtistIdAsync(_artistId, sortOrder);
     }
 
+    /// <summary>
+    /// Loads all details for a given artist, including metadata, albums, and their songs.
+    /// </summary>
+    /// <param name="artistId">The ID of the artist to load.</param>
     [RelayCommand]
     public async Task LoadArtistDetailsAsync(Guid artistId) {
         if (IsOverallLoading) return;
@@ -87,59 +99,65 @@ public partial class ArtistViewViewModel : SongListViewModelBase {
             var artist = await _libraryService.GetArtistDetailsAsync(artistId, shouldFetchOnline);
 
             if (artist != null) {
-                ArtistName = artist.Name;
-                PageTitle = artist.Name;
-                ArtistImageUri = artist.LocalImageCachePath;
-                ArtistBio = string.IsNullOrWhiteSpace(artist.Biography)
-                    ? "No biography available for this artist."
-                    : artist.Biography;
-
-                // Defensive check for null collection
-                if (artist.Albums != null) {
-                    var albumVms = artist.Albums
-                        .OrderByDescending(a => a.Year)
-                        .ThenBy(a => a.Title)
-                        .Select(album => new ArtistAlbumViewModelItem(album))
-                        .ToList();
-
-                    Albums.Clear();
-                    foreach (var albumVm in albumVms) Albums.Add(albumVm);
-                }
-                else {
-                    Albums.Clear();
-                }
-
-                try {
-                    await RefreshOrSortSongsCommand.ExecuteAsync(null);
-                }
-                catch (Exception ex) {
-                    Debug.WriteLine($"[ERROR] Failed to load songs for artist '{artist.Name}'. {ex.Message}");
-                    TotalItemsText = "Error loading songs";
-                }
+                PopulateArtistDetails(artist);
+                await RefreshOrSortSongsCommand.ExecuteAsync(null);
             }
             else {
-                Debug.WriteLine($"Artist with ID '{artistId}' not found.");
-                ArtistName = "Artist Not Found";
-                PageTitle = "Not Found";
-                ArtistBio = string.Empty;
-                ArtistImageUri = null;
-                Albums.Clear();
-                Songs.Clear();
-                TotalItemsText = "0 songs";
+                HandleArtistNotFound(artistId);
             }
         }
         catch (Exception ex) {
-            Debug.WriteLine($"Error loading artist with ID '{artistId}': {ex.Message}");
-            ArtistName = "Error Loading Artist";
-            PageTitle = "Error";
-            ArtistBio = "Could not load artist details.";
-            ArtistImageUri = null;
-            TotalItemsText = "Error";
-            Albums.Clear();
-            Songs.Clear();
+            HandleLoadError(artistId, ex);
         }
     }
 
+    private void PopulateArtistDetails(Artist artist) {
+        ArtistName = artist.Name;
+        PageTitle = artist.Name;
+        ArtistImageUri = artist.LocalImageCachePath;
+        ArtistBio = string.IsNullOrWhiteSpace(artist.Biography)
+            ? "No biography available for this artist."
+            : artist.Biography;
+
+        Albums.Clear();
+        if (artist.Albums != null) {
+            var albumVms = artist.Albums
+                .OrderByDescending(a => a.Year)
+                .ThenBy(a => a.Title)
+                .Select(album => new ArtistAlbumViewModelItem(album));
+
+            foreach (var albumVm in albumVms) {
+                Albums.Add(albumVm);
+            }
+        }
+    }
+
+    private void HandleArtistNotFound(Guid artistId) {
+        Debug.WriteLine($"[ArtistViewViewModel] Artist with ID '{artistId}' not found.");
+        ArtistName = "Artist Not Found";
+        PageTitle = "Not Found";
+        ArtistBio = string.Empty;
+        ArtistImageUri = null;
+        Albums.Clear();
+        Songs.Clear();
+        TotalItemsText = "0 songs";
+    }
+
+    private void HandleLoadError(Guid artistId, Exception ex) {
+        Debug.WriteLine($"[ERROR] Error loading artist with ID '{artistId}': {ex.Message}");
+        ArtistName = "Error Loading Artist";
+        PageTitle = "Error";
+        ArtistBio = "Could not load artist details.";
+        ArtistImageUri = null;
+        TotalItemsText = "Error";
+        Albums.Clear();
+        Songs.Clear();
+    }
+
+    /// <summary>
+    /// Navigates to the selected album's page.
+    /// </summary>
+    /// <param name="albumId">The ID of the album to view.</param>
     [RelayCommand(CanExecute = nameof(CanExecuteLoadCommands))]
     private void ViewAlbum(Guid albumId) {
         if (albumId == Guid.Empty) return;
@@ -152,12 +170,18 @@ public partial class ArtistViewViewModel : SongListViewModelBase {
             new AlbumViewNavigationParameter { AlbumId = album.Id, AlbumTitle = album.Name, ArtistName = ArtistName });
     }
 
+    /// <summary>
+    /// Handles the event fired when artist metadata (like the image) is updated.
+    /// </summary>
     private void OnArtistMetadataUpdated(object? sender, ArtistMetadataUpdatedEventArgs e) {
         if (e.ArtistId == _artistId) {
             _dispatcherQueue.TryEnqueue(() => { ArtistImageUri = e.NewLocalImageCachePath; });
         }
     }
 
+    /// <summary>
+    /// Cleans up resources, unsubscribing from events.
+    /// </summary>
     public override void Cleanup() {
         base.Cleanup();
         _libraryService.ArtistMetadataUpdated -= OnArtistMetadataUpdated;

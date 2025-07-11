@@ -15,13 +15,14 @@ using Nagi.Models;
 using Nagi.Navigation;
 using Nagi.Pages;
 using Nagi.Services.Abstractions;
+using DispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue;
 
 namespace Nagi.ViewModels;
 
 /// <summary>
-///     A base view model for pages that display a list of songs, providing common functionality
-///     for loading, sorting, playback, and selection.
-///     This base class supports both one-shot loading and automatic, continuous paged loading.
+/// A base view model for pages that display a list of songs, providing common functionality
+/// for loading, sorting, playback, and selection.
+/// This base class supports both one-shot loading and automatic, continuous paged loading.
 /// </summary>
 public abstract partial class SongListViewModelBase : ObservableObject {
     protected readonly ILibraryService _libraryService;
@@ -29,16 +30,29 @@ public abstract partial class SongListViewModelBase : ObservableObject {
     protected readonly IMusicPlaybackService _playbackService;
 
     private const int PageSize = 250;
+    private readonly DispatcherQueue _dispatcherQueue;
+    private readonly object _stateLock = new();
+
+    private CancellationTokenSource? _pagedLoadCts;
+    private List<Guid> _fullSongIdList = new();
     private int _currentPage;
     private bool _hasNextPage;
     private int _totalItemCount;
-    private CancellationTokenSource? _pagedLoadCts;
-    private readonly Microsoft.UI.Dispatching.DispatcherQueue _dispatcherQueue;
-    private readonly object _stateLock = new();
-    private List<Guid> _fullSongIdList = new();
+
+    [ObservableProperty]
+    private ObservableCollection<Song> _songs = new();
+
+    [ObservableProperty]
+    private ObservableCollection<Song> _selectedSongs = new();
 
     [ObservableProperty]
     private ObservableCollection<Playlist> _availablePlaylists = new();
+
+    [ObservableProperty]
+    private string _pageTitle = "Songs";
+
+    [ObservableProperty]
+    private string _totalItemsText = "0 items";
 
     [ObservableProperty]
     private SongSortOrder _currentSortOrder = SongSortOrder.TitleAsc;
@@ -61,44 +75,59 @@ public abstract partial class SongListViewModelBase : ObservableObject {
     [NotifyCanExecuteChangedFor(nameof(GoToArtistCommand))]
     private bool _isSingleSongSelected;
 
-    [ObservableProperty]
-    private string _pageTitle = "Songs";
-
-    [ObservableProperty]
-    private ObservableCollection<Song> _selectedSongs = new();
-
-    [ObservableProperty]
-    private ObservableCollection<Song> _songs = new();
-
-    [ObservableProperty]
-    private string _totalItemsText = "0 items";
-
     protected SongListViewModelBase(ILibraryService libraryService, IMusicPlaybackService playbackService,
         INavigationService navigationService) {
         _libraryService = libraryService ?? throw new ArgumentNullException(nameof(libraryService));
         _playbackService = playbackService ?? throw new ArgumentNullException(nameof(playbackService));
         _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
-        _dispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
+        _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
         UpdateSortOrderButtonText(CurrentSortOrder);
     }
 
+    /// <summary>
+    /// Gets a value indicating whether any songs are currently selected.
+    /// </summary>
     public bool HasSelectedSongs => SelectedSongs.Any();
 
+    /// <summary>
+    /// Gets a value indicating whether the data source provides pre-sorted data.
+    /// If false, the songs will be sorted client-side after being fetched.
+    /// </summary>
     protected virtual bool IsDataPreSortedAfterLoad => false;
 
+    /// <summary>
+    /// Gets a value indicating whether the view model should load songs in pages.
+    /// </summary>
     protected virtual bool IsPagingSupported => false;
 
+    /// <summary>
+    /// When implemented in a derived class, loads the complete list of songs.
+    /// This method is used when <see cref="IsPagingSupported"/> is false.
+    /// </summary>
     protected abstract Task<IEnumerable<Song>> LoadSongsAsync();
 
+    /// <summary>
+    /// When implemented in a derived class, loads a specific page of songs.
+    /// This method is used when <see cref="IsPagingSupported"/> is true.
+    /// </summary>
     protected virtual Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize, SongSortOrder sortOrder) {
         return Task.FromResult(new PagedResult<Song>());
     }
 
+    /// <summary>
+    /// When implemented in a derived class, loads the complete list of song IDs for the current view.
+    /// This is used for playback purposes when paging is enabled.
+    /// </summary>
     protected virtual Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder) {
         return Task.FromResult(new List<Guid>());
     }
 
+    /// <summary>
+    /// Loads or reloads the song list. If a sort order is provided, it sorts the list accordingly.
+    /// This method orchestrates both paged and non-paged loading strategies.
+    /// </summary>
+    /// <param name="sortOrderString">An optional string representing the <see cref="SongSortOrder"/> to apply.</param>
     [RelayCommand(CanExecute = nameof(CanExecuteLoadCommands))]
     public async Task RefreshOrSortSongsAsync(string? sortOrderString = null) {
         if (IsOverallLoading) return;
@@ -107,8 +136,9 @@ public abstract partial class SongListViewModelBase : ObservableObject {
         _pagedLoadCts?.Dispose();
 
         if (!string.IsNullOrEmpty(sortOrderString) &&
-            Enum.TryParse<SongSortOrder>(sortOrderString, true, out var newSortOrder))
+            Enum.TryParse<SongSortOrder>(sortOrderString, true, out var newSortOrder)) {
             CurrentSortOrder = newSortOrder;
+        }
 
         IsOverallLoading = true;
         UpdateSortOrderButtonText(CurrentSortOrder);
@@ -118,10 +148,13 @@ public abstract partial class SongListViewModelBase : ObservableObject {
                 _fullSongIdList = await LoadAllSongIdsAsync(CurrentSortOrder);
                 _pagedLoadCts = new CancellationTokenSource();
                 var token = _pagedLoadCts.Token;
+
                 var pagedResult = await LoadSongsPagedAsync(1, PageSize, CurrentSortOrder);
                 ProcessPagedResult(pagedResult, token);
+
                 bool hasMore;
                 lock (_stateLock) { hasMore = _hasNextPage; }
+
                 if (hasMore && !token.IsCancellationRequested) {
                     _ = StartAutomaticPagedLoadingAsync(token);
                 }
@@ -141,11 +174,13 @@ public abstract partial class SongListViewModelBase : ObservableObject {
         }
         finally {
             IsOverallLoading = false;
-            PlayAllSongsCommand.NotifyCanExecuteChanged();
-            ShuffleAndPlayAllSongsCommand.NotifyCanExecuteChanged();
         }
     }
 
+    /// <summary>
+    /// Initiates a background task that automatically loads subsequent pages of songs
+    /// until all pages are loaded or the operation is cancelled.
+    /// </summary>
     private async Task StartAutomaticPagedLoadingAsync(CancellationToken token) {
         try {
             bool hasMore;
@@ -159,21 +194,22 @@ public abstract partial class SongListViewModelBase : ObservableObject {
                 lock (_stateLock) { nextPage = _currentPage + 1; }
 
                 var pagedResult = await LoadSongsPagedAsync(nextPage, PageSize, CurrentSortOrder);
-
-                // FIX: Pass the cancellation token to prevent processing results from a cancelled operation.
                 ProcessPagedResult(pagedResult, token, append: true);
 
                 lock (_stateLock) { hasMore = _hasNextPage; }
             }
         }
         catch (TaskCanceledException) {
-            // This is expected when the operation is cancelled, so we can ignore it.
+            // This is expected when the operation is cancelled.
         }
         catch (Exception ex) {
             Debug.WriteLine($"[ERROR] SongListViewModelBase: Failed during automatic page loading. {ex.Message}");
         }
     }
 
+    /// <summary>
+    /// Fetches the list of all available playlists from the library.
+    /// </summary>
     public async Task LoadAvailablePlaylistsAsync() {
         try {
             var playlists = await _libraryService.GetAllPlaylistsAsync();
@@ -185,14 +221,19 @@ public abstract partial class SongListViewModelBase : ObservableObject {
         }
     }
 
+    /// <summary>
+    /// Updates the collection of selected songs based on the UI selection.
+    /// </summary>
+    /// <param name="selectedItems">The new collection of selected items.</param>
     public void OnSongsSelectionChanged(IEnumerable<object> selectedItems) {
         SelectedSongs.Clear();
-        foreach (var item in selectedItems.OfType<Song>()) SelectedSongs.Add(item);
+        foreach (var item in selectedItems.OfType<Song>()) {
+            SelectedSongs.Add(item);
+        }
         IsSingleSongSelected = SelectedSongs.Count == 1;
         UpdateSelectionDependentCommands();
     }
 
-    #region Playback and Queue Commands
     [RelayCommand(CanExecute = nameof(CanExecutePlayAllCommands))]
     private async Task PlayAllSongsAsync() {
         await EnsureRepeatOneIsOffAsync();
@@ -228,6 +269,7 @@ public abstract partial class SongListViewModelBase : ObservableObject {
     private async Task PlaySongAsync(Song? song) {
         if (song == null) return;
         await EnsureRepeatOneIsOffAsync();
+
         if (IsPagingSupported) {
             var startIndex = _fullSongIdList.IndexOf(song.Id);
             if (startIndex == -1) {
@@ -261,7 +303,9 @@ public abstract partial class SongListViewModelBase : ObservableObject {
 
     [RelayCommand(CanExecute = nameof(CanExecuteSelectedSongsCommands))]
     private async Task PlaySelectedSongsNextAsync() {
-        foreach (var song in SelectedSongs.Reverse()) await _playbackService.PlayNextAsync(song);
+        foreach (var song in SelectedSongs.Reverse()) {
+            await _playbackService.PlayNextAsync(song);
+        }
     }
 
     [RelayCommand(CanExecute = nameof(CanExecuteSelectedSongsCommands))]
@@ -275,9 +319,7 @@ public abstract partial class SongListViewModelBase : ObservableObject {
         var songIdsToAdd = SelectedSongs.Select(s => s.Id).ToList();
         await _libraryService.AddSongsToPlaylistAsync(playlist.Id, songIdsToAdd);
     }
-    #endregion
 
-    #region Context Menu and Navigation Commands
     [RelayCommand(CanExecute = nameof(CanExecuteSingleSongCommands))]
     private async Task ShowInFileExplorerAsync(Song? song) {
         var targetSong = song ?? SelectedSongs.FirstOrDefault();
@@ -291,12 +333,8 @@ public abstract partial class SongListViewModelBase : ObservableObject {
         }
     }
 
-    // FIX: Removed CanExecute from the command. The command now correctly uses the
-    // parameter from the clicked hyperlink, regardless of the current selection.
     [RelayCommand]
     private void GoToAlbum(Song? song) {
-        // The target is the song from the command parameter (from the clicked row)
-        // or the first selected song as a fallback.
         var targetSong = song ?? SelectedSongs.FirstOrDefault();
         if (targetSong?.AlbumId == null || targetSong.Album == null) return;
         var navParam = new AlbumViewNavigationParameter {
@@ -307,11 +345,8 @@ public abstract partial class SongListViewModelBase : ObservableObject {
         _navigationService.Navigate(typeof(AlbumViewPage), navParam);
     }
 
-    // FIX: Removed CanExecute from the command for the same reason as GoToAlbum.
     [RelayCommand]
     private void GoToArtist(Song? song) {
-        // The target is the song from the command parameter (from the clicked row)
-        // or the first selected song as a fallback.
         var targetSong = song ?? SelectedSongs.FirstOrDefault();
         if (targetSong?.ArtistId == null || targetSong.Artist == null) return;
         var navParam = new ArtistViewNavigationParameter {
@@ -320,9 +355,7 @@ public abstract partial class SongListViewModelBase : ObservableObject {
         };
         _navigationService.Navigate(typeof(ArtistViewPage), navParam);
     }
-    #endregion
 
-    #region CanExecute and Helper Methods
     protected bool CanExecuteLoadCommands() => !IsOverallLoading;
 
     private bool CanExecutePlayAllCommands() {
@@ -334,17 +367,18 @@ public abstract partial class SongListViewModelBase : ObservableObject {
 
     private bool CanExecuteSelectedSongsCommands() => HasSelectedSongs;
     private bool CanExecuteSingleSongCommands() => IsSingleSongSelected;
-
-    // The specific CanExecute methods for GoToAlbum and GoToArtist are no longer needed.
-
     private bool CanAddSelectedSongsToPlaylist() => HasSelectedSongs && AvailablePlaylists.Any();
 
-    // FIX: Added a CancellationToken parameter to check for cancellation before modifying the collection.
+    /// <summary>
+    /// Processes a page of song results, updating the main songs collection and pagination state.
+    /// </summary>
+    /// <param name="pagedResult">The paged result to process.</param>
+    /// <param name="token">The cancellation token to check before modifying collections.</param>
+    /// <param name="append">If true, appends items to the existing collection; otherwise, replaces it.</param>
     private void ProcessPagedResult(PagedResult<Song> pagedResult, CancellationToken token, bool append = false) {
         if (pagedResult?.Items == null || token.IsCancellationRequested) return;
 
         _dispatcherQueue.TryEnqueue(() => {
-            // Double-check the token on the UI thread right before the collection is modified.
             if (token.IsCancellationRequested) return;
 
             if (append) {
@@ -364,11 +398,6 @@ public abstract partial class SongListViewModelBase : ObservableObject {
         _dispatcherQueue.TryEnqueue(() => {
             TotalItemsText = $"{pagedResult.TotalCount} {(pagedResult.TotalCount == 1 ? "item" : "items")}";
         });
-    }
-
-    // Overload to maintain compatibility with the initial load in RefreshOrSortSongsAsync
-    private void ProcessPagedResult(PagedResult<Song> pagedResult, bool append = false) {
-        ProcessPagedResult(pagedResult, CancellationToken.None, append);
     }
 
     protected void UpdateSortOrderButtonText(SongSortOrder sortOrder) {
@@ -392,8 +421,9 @@ public abstract partial class SongListViewModelBase : ObservableObject {
     }
 
     private async Task EnsureRepeatOneIsOffAsync() {
-        if (_playbackService.CurrentRepeatMode == RepeatMode.RepeatOne)
+        if (_playbackService.CurrentRepeatMode == RepeatMode.RepeatOne) {
             await _playbackService.SetRepeatModeAsync(RepeatMode.Off);
+        }
     }
 
     protected static IEnumerable<Song> SortSongs(IEnumerable<Song> songs, SongSortOrder sortOrder) {
@@ -406,8 +436,10 @@ public abstract partial class SongListViewModelBase : ObservableObject {
             _ => songs.OrderBy(s => s.Title, StringComparer.OrdinalIgnoreCase)
         };
     }
-    #endregion
 
+    /// <summary>
+    /// Cleans up resources used by the view model, such as cancelling any ongoing load operations.
+    /// </summary>
     public virtual void Cleanup() {
         _pagedLoadCts?.Cancel();
         _pagedLoadCts?.Dispose();
