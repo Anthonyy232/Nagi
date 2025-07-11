@@ -55,6 +55,7 @@ public partial class App : Application {
         InitializeComponent();
         UnhandledException += OnAppUnhandledException;
         CoreApplication.Suspending += OnSuspending;
+        VelopackApp.Build().Run();
     }
 
     /// <summary>
