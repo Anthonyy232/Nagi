@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Nagi/Helpers/PathConfiguration.cs
+
+using System;
 using System.IO;
 using Windows.ApplicationModel;
 using Windows.Storage;
@@ -42,6 +44,11 @@ public class PathConfiguration {
     /// </summary>
     public string ArtistImageCachePath { get; }
 
+    /// <summary>
+    ///     Gets the full path to the SQLite database file.
+    /// </summary>
+    public string DatabasePath { get; }
+
     public PathConfiguration() {
         IsPackaged = IsRunningInPackage();
 
@@ -54,6 +61,7 @@ public class PathConfiguration {
         PlaybackStateFilePath = Path.Combine(AppDataRoot, "playback_state.json");
         AlbumArtCachePath = Path.Combine(AppDataRoot, "AlbumArt");
         ArtistImageCachePath = Path.Combine(AppDataRoot, "ArtistImages");
+        DatabasePath = Path.Combine(AppDataRoot, "nagi.db");
 
         // Ensure all necessary directories exist on startup.
         Directory.CreateDirectory(AppDataRoot);

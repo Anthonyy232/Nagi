@@ -18,7 +18,6 @@ namespace Nagi.ViewModels;
 /// Manages state and logic for the main media player controls and queue display.
 /// </summary>
 public partial class PlayerViewModel : ObservableObject, IDisposable {
-    // Constants for UI Glyphs
     private const string PlayIconGlyph = "\uE768";
     private const string PauseIconGlyph = "\uE769";
     private const string RepeatOffIconGlyph = "\uE8EE";
@@ -31,11 +30,9 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
     private const string VolumeMediumIconGlyph = "\uE994";
     private const string VolumeHighIconGlyph = "\uE767";
 
-    // Constants for UI ToolTips
     private const string PlayTooltip = "Play";
     private const string PauseTooltip = "Pause";
 
-    // Constants for Volume Thresholds
     private const double VolumeLowThreshold = 33;
     private const double VolumeMediumThreshold = 66;
 
@@ -57,68 +54,73 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(PlayPauseIconGlyph))]
     [NotifyPropertyChangedFor(nameof(PlayPauseButtonToolTip))]
-    private bool _isPlaying;
+    public partial bool IsPlaying { get; set; }
 
     [ObservableProperty]
-    private string _songTitle = "No track playing";
+    public partial string SongTitle { get; set; } = "No track playing";
 
     [ObservableProperty]
-    private string _artistName = string.Empty;
+    public partial string ArtistName { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private ImageSource? _albumArtSource;
+    public partial ImageSource? AlbumArtSource { get; set; }
 
     [ObservableProperty]
-    private Song? _currentPlayingTrack;
+    public partial Song? CurrentPlayingTrack { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ShuffleIconGlyph))]
     [NotifyPropertyChangedFor(nameof(ShuffleButtonToolTip))]
-    private bool _isShuffleEnabled;
+    public partial bool IsShuffleEnabled { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(RepeatIconGlyph))]
     [NotifyPropertyChangedFor(nameof(RepeatButtonToolTip))]
-    private RepeatMode _currentRepeatMode;
+    public partial RepeatMode CurrentRepeatMode { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(VolumeButtonToolTip))]
-    private bool _isMuted;
+    public partial bool IsMuted { get; set; }
 
     [ObservableProperty]
-    private double _currentVolume = 50;
+    public partial double CurrentVolume { get; set; } = 50;
 
     [ObservableProperty]
-    private string _volumeIconGlyph = VolumeMediumIconGlyph;
+    public partial string VolumeIconGlyph { get; set; } = VolumeMediumIconGlyph;
 
     [ObservableProperty]
-    private ObservableCollection<Song> _currentQueue = new();
+    public partial ObservableCollection<Song> CurrentQueue { get; set; } = new();
 
     [ObservableProperty]
-    private double _currentPosition;
+    public partial double CurrentPosition { get; set; }
 
     [ObservableProperty]
-    private string _currentTimeText = "0:00";
+    public partial string CurrentTimeText { get; set; } = "0:00";
 
     [ObservableProperty]
-    private bool _isUserDraggingSlider;
+    public partial bool IsUserDraggingSlider { get; set; }
 
     [ObservableProperty]
-    private double _totalDuration;
+    public partial double TotalDuration { get; set; }
 
     [ObservableProperty]
-    private string _totalDurationText = "0:00";
+    public partial string TotalDurationText { get; set; } = "0:00";
 
     [ObservableProperty]
-    private bool _isGlobalOperationInProgress;
+    public partial bool IsGlobalOperationInProgress { get; set; }
 
     [ObservableProperty]
-    private string _globalOperationStatusMessage = string.Empty;
+    public partial string GlobalOperationStatusMessage { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private double _globalOperationProgressValue;
+    public partial double GlobalOperationProgressValue { get; set; }
 
-    // Computed properties for UI bindings
+    [ObservableProperty]
+    public partial bool IsGlobalOperationIndeterminate { get; set; }
+
+    [ObservableProperty]
+    public partial bool IsQueueViewVisible { get; set; }
+
     public string PlayPauseIconGlyph => IsPlaying ? PauseIconGlyph : PlayIconGlyph;
     public string PlayPauseButtonToolTip => IsPlaying ? PauseTooltip : PlayTooltip;
     public string ShuffleIconGlyph => IsShuffleEnabled ? ShuffleOnIconGlyph : ShuffleOffIconGlyph;
@@ -136,19 +138,16 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
     };
     public string VolumeButtonToolTip => IsMuted ? "Unmute" : "Mute";
 
-    [ObservableProperty]
-    private bool _isQueueViewVisible;
+    public void Dispose() {
+        UnsubscribeFromPlaybackServiceEvents();
+        GC.SuppressFinalize(this);
+    }
 
     [RelayCommand]
     private void ShowQueueView() => IsQueueViewVisible = true;
 
     [RelayCommand]
     private void ShowPlayerView() => IsQueueViewVisible = false;
-
-    public void Dispose() {
-        UnsubscribeFromPlaybackServiceEvents();
-        GC.SuppressFinalize(this);
-    }
 
     [RelayCommand]
     private Task PlayPauseAsync() => _playbackService.PlayPauseAsync();
@@ -181,6 +180,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
     partial void OnIsMutedChanged(bool value) => UpdateVolumeIconGlyph();
 
     partial void OnCurrentVolumeChanged(double value) {
+        //
         // Only update the service if the change originated from the UI, not from the service itself.
         if (!_isUpdatingFromService) {
             var serviceVolume = Math.Clamp(value / 100.0, 0.0, 1.0);
@@ -193,6 +193,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
 
     partial void OnCurrentPositionChanged(double value) {
         CurrentTimeText = TimeSpan.FromSeconds(value).ToString(@"m\:ss");
+        //
         // Only seek if the user is not dragging the slider and the change is significant.
         if (!_isUpdatingFromService && !IsUserDraggingSlider) {
             var newPosition = TimeSpan.FromSeconds(value);
@@ -226,7 +227,9 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
         _playbackService.PositionChanged -= OnPlaybackService_PositionChanged;
     }
 
-    // Populates the ViewModel with the current state from the playback service.
+    /// <summary>
+    /// Populates the ViewModel with the current state from the playback service.
+    /// </summary>
     private void InitializeStateFromService() {
         RunOnUIThread(() => {
             IsPlaying = _playbackService.IsPlaying;
@@ -278,8 +281,6 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
         RunOnUIThread(UpdateCurrentQueueDisplay);
     }
 
-
-
     private void OnPlaybackService_PositionChanged() {
         RunOnUIThread(() => {
             if (!IsUserDraggingSlider) CurrentPosition = _playbackService.CurrentPosition.TotalSeconds;
@@ -297,6 +298,8 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
                     : null;
             }
             catch (Exception ex) {
+                //
+                // Log if album art fails to load, but don't crash the application.
                 Debug.WriteLine($"[{nameof(PlayerViewModel)}] Error loading album art '{song.AlbumArtUriFromTrack}': {ex.Message}");
                 AlbumArtSource = null;
             }
@@ -325,8 +328,10 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
             var currentTrackIndex = sourceQueueList.FindIndex(s => s.Id == currentTrack.Id);
 
             if (currentTrackIndex != -1) {
+                //
                 // Add tracks from the current one to the end.
                 newDisplayQueue.AddRange(sourceQueueList.Skip(currentTrackIndex));
+                //
                 // Wrap around and add tracks from the beginning.
                 newDisplayQueue.AddRange(sourceQueueList.Take(currentTrackIndex));
             }
@@ -338,7 +343,8 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
             newDisplayQueue.AddRange(sourceQueue);
         }
 
-        // Only update the collection if the content has actually changed.
+        //
+        // Only update the collection if the content has actually changed to avoid unnecessary UI refreshes.
         if (!CurrentQueue.SequenceEqual(newDisplayQueue)) {
             CurrentQueue.Clear();
             foreach (var song in newDisplayQueue) CurrentQueue.Add(song);

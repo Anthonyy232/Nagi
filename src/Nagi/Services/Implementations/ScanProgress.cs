@@ -1,22 +1,38 @@
-﻿using System.IO;
+﻿// Nagi/Services/Implementations/ScanProgress.cs
 
 namespace Nagi.Services.Implementations;
 
 /// <summary>
-///     Represents the state of a music library scan operation at a point in time.
+/// Represents the state of a music library scan operation, providing data for a user-friendly progress display.
 /// </summary>
-public class ScanProgress
-{
-    public int FilesProcessed { get; set; }
-    public int TotalFiles { get; set; }
-    public string? CurrentFilePath { get; set; }
-    public string? StatusText { get; set; }
+public class ScanProgress {
+    /// <summary>
+    /// A human-readable status message indicating the current phase of the scan.
+    /// </summary>
+    public string StatusText { get; set; } = string.Empty;
+
+    /// <summary>
+    /// The total number of new songs discovered during the current scan.
+    /// </summary>
+    public int NewSongsFound { get; set; }
+
+    /// <summary>
+    /// The overall completion percentage of the scan operation, typically reaching 100% at the end.
+    /// </summary>
     public double Percentage { get; set; }
 
     /// <summary>
-    ///     A computed message for display, combining the progress count and current file.
+    /// Indicates whether the UI should display an indeterminate busy indicator for the scan.
     /// </summary>
-    public string Message => CurrentFilePath != null
-        ? $"({FilesProcessed}/{TotalFiles}) {Path.GetFileName(CurrentFilePath)}"
-        : $"({FilesProcessed}/{TotalFiles})";
+    public bool IsIndeterminate { get; set; }
+
+    /// <summary>
+    /// The total number of files processed on disk during the scan.
+    /// </summary>
+    public int TotalFiles { get; set; }
+
+    /// <summary>
+    /// The path of the file currently being processed. Can be null if no specific file is being highlighted.
+    /// </summary>
+    public string? CurrentFilePath { get; set; }
 }
