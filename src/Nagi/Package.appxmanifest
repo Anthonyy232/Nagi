@@ -1,16 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package
-        xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
-        xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
-        xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
-        xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5"
-        xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
-        IgnorableNamespaces="uap rescap uap3 uap5">
+    xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+    xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+    xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
+    xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5"
+    xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+    xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
+    IgnorableNamespaces="uap uap3 uap5 rescap desktop">
 
 	<Identity
-            Name="0e78498c-35ed-4782-a2e0-fce2ae1344ea"
-            Publisher="CN=Anthony La"
-            Version="1.0.0.0"/>
+        Name="0e78498c-35ed-4782-a2e0-fce2ae1344ea"
+        Publisher="CN=Anthony La"
+        Version="1.0.0.0"/>
 
 	<Properties>
 		<DisplayName>Nagi</DisplayName>
@@ -32,11 +33,11 @@
                      Executable="$targetnametoken$.exe"
                      EntryPoint="$targetentrypoint$">
 			<uap:VisualElements
-                    DisplayName="Nagi"
-                    Description="Rediscover your local music collection with Nagi, a music player focused on speed, simplicity, and privacy. Nagi is built with C# and WinUI 3 to offer a clean, native Fluent experience. It's beautiful, efficient, and respects your privacy."
-                    BackgroundColor="transparent"
-                    Square150x150Logo="Assets\Square150x150Logo.png"
-                    Square44x44Logo="Assets\Square44x44Logo.png">
+                DisplayName="Nagi"
+                Description="Rediscover your local music collection with Nagi, a music player focused on speed, simplicity, and privacy. Nagi is built with C# and WinUI 3 to offer a clean, native Fluent experience. It's beautiful, efficient, and respects your privacy."
+                BackgroundColor="transparent"
+                Square150x150Logo="Assets\Square150x150Logo.png"
+                Square44x44Logo="Assets\Square44x44Logo.png">
 				<uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square71x71Logo="Assets\SmallTile.png"
                                  Square310x310Logo="Assets\LargeTile.png" ShortName="Nagi">
 					<uap:ShowNameOnTiles>
@@ -50,15 +51,19 @@
 					<uap:Rotation Preference="landscape"/>
 				</uap:InitialRotationPreference>
 			</uap:VisualElements>
+
 			<Extensions>
-				<uap5:Extension
-                        Category="windows.startupTask">
-					<uap5:StartupTask
-                            TaskId="NagiAutolaunchStartup"
-                            Enabled="false"
-                            DisplayName="Nagi"/>
-				</uap5:Extension>
+				<desktop:Extension
+                    Category="windows.startupTask"
+                    Executable="$targetnametoken$.exe"
+                    EntryPoint="$targetentrypoint$">
+					<desktop:StartupTask
+                        TaskId="NagiAutolaunchStartup"
+                        Enabled="false"
+                        DisplayName="Nagi"/>
+				</desktop:Extension>
 			</Extensions>
+
 		</Application>
 	</Applications>
 
