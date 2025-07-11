@@ -1,9 +1,8 @@
-﻿// Nagi/ViewModels/LibraryViewModel.cs
-
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using Nagi.Models;
 using Nagi.Services.Abstractions;
 
@@ -13,58 +12,67 @@ namespace Nagi.ViewModels;
 ///     ViewModel for the main library page, responsible for displaying all songs
 ///     and initiating library scans.
 /// </summary>
-public partial class LibraryViewModel : SongListViewModelBase
-{
-    //
-    // This flag ensures the background refresh is only triggered once per application session.
-    //
+public partial class LibraryViewModel : SongListViewModelBase {
     private static bool _isInitialScanTriggered;
 
     public LibraryViewModel(ILibraryService libraryService, IMusicPlaybackService playbackService,
         INavigationService navigationService)
-        : base(libraryService, playbackService, navigationService)
-    {
+        : base(libraryService, playbackService, navigationService) {
     }
 
     /// <summary>
-    ///     The data from GetAllSongsAsync is already sorted by the database query,
-    ///     so we prevent the base class from performing a redundant in-memory sort.
+    ///     Enables gradual, paged loading for the entire library view.
     /// </summary>
-    protected override bool IsDataPreSortedAfterLoad => true;
+    protected override bool IsPagingSupported => true;
 
     /// <summary>
-    ///     Loads all songs from the library, sorted according to the current user preference.
+    ///     This method is required by the base class but is not used when paging is supported.
+    ///     It returns an empty collection to satisfy the abstract contract.
     /// </summary>
-    protected override async Task<IEnumerable<Song>> LoadSongsAsync()
-    {
-        return await _libraryService.GetAllSongsAsync(CurrentSortOrder);
+    protected override Task<IEnumerable<Song>> LoadSongsAsync() {
+        return Task.FromResult(Enumerable.Empty<Song>());
+    }
+
+    /// <summary>
+    ///     Loads a specific page of songs from the entire library.
+    /// </summary>
+    protected override async Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize, SongSortOrder sortOrder) {
+        return await _libraryService.GetAllSongsPagedAsync(pageNumber, pageSize, sortOrder);
+    }
+
+    /// <summary>
+    ///     Loads the complete list of song IDs for the entire library.
+    /// </summary>
+    protected override async Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder) {
+        return await _libraryService.GetAllSongIdsAsync(sortOrder);
     }
 
     /// <summary>
     ///     Performs the initial load of songs for the UI and starts a background task
     ///     to scan for any changes in the library folders.
     /// </summary>
-    public async Task InitializeAndStartBackgroundScanAsync()
-    {
-        if (RefreshOrSortSongsCommand.CanExecute(null)) await RefreshOrSortSongsCommand.ExecuteAsync(null);
+    public async Task InitializeAsync() {
+        // This command will handle the initial paged load of songs for the UI.
+        await RefreshOrSortSongsCommand.ExecuteAsync(null);
 
         if (_isInitialScanTriggered) return;
         _isInitialScanTriggered = true;
 
-        _ = Task.Run(async () =>
-        {
-            Debug.WriteLine("[LibraryViewModel] Starting initial background library refresh...");
-            var libraryService = App.Services.GetRequiredService<ILibraryService>();
-            var changesFound = await libraryService.RefreshAllFoldersAsync();
-            if (changesFound)
-            {
-                Debug.WriteLine(
-                    "[LibraryViewModel] Background refresh found changes. Reloading song list on UI thread.");
-                await RefreshOrSortSongsCommand.ExecuteAsync(null);
+        // Start a background task to refresh the library folders for any changes.
+        _ = Task.Run(async () => {
+            try {
+                Debug.WriteLine("[LibraryViewModel] Starting initial background library refresh...");
+                var changesFound = await _libraryService.RefreshAllFoldersAsync();
+                if (changesFound) {
+                    Debug.WriteLine("[LibraryViewModel] Background refresh found changes. Reloading song list on UI thread.");
+                    await RefreshOrSortSongsCommand.ExecuteAsync(null);
+                }
+                else {
+                    Debug.WriteLine("[LibraryViewModel] Background refresh complete. No changes were found.");
+                }
             }
-            else
-            {
-                Debug.WriteLine("[LibraryViewModel] Background refresh complete. No changes were found.");
+            catch (Exception ex) {
+                Debug.WriteLine($"[ERROR] Background library refresh failed: {ex.Message}");
             }
         });
     }

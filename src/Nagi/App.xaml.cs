@@ -183,6 +183,7 @@ public partial class App : Application {
             // Use the factory to create a context for this one-time operation.
             var dbContextFactory = Services.GetRequiredService<IDbContextFactory<MusicDbContext>>();
             using var dbContext = dbContextFactory.CreateDbContext();
+            dbContext.RecreateDatabase();
             dbContext.Database.EnsureCreated();
         }
         catch (Exception ex) {
@@ -303,7 +304,8 @@ public partial class App : Application {
                 RootWindow.Content = new MainPage();
             }
             var libraryViewModel = Services.GetRequiredService<LibraryViewModel>();
-            await libraryViewModel.InitializeAndStartBackgroundScanAsync();
+            // FIX: Call the renamed InitializeAsync method.
+            await libraryViewModel.InitializeAsync();
         }
         else {
             if (RootWindow.Content is not OnboardingPage) {
@@ -526,10 +528,10 @@ public partial class App : Application {
     /// This method is skipped in DEBUG builds.
     /// </summary>
     private async Task CheckForUpdatesAsync() {
-        #if DEBUG
-            Debug.WriteLine("[App] Skipping update check in DEBUG mode.");
-            return;
-        #else
+#if DEBUG
+        Debug.WriteLine("[App] Skipping update check in DEBUG mode.");
+        return;
+#else
             try 
             {
                 var um = Services.GetRequiredService<UpdateManager>();
@@ -551,7 +553,7 @@ public partial class App : Application {
             {
                 Debug.WriteLine($"[App] Error checking for updates: {ex.Message}");
             }
-        #endif
+#endif
     }
 
     #endregion

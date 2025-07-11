@@ -9,8 +9,7 @@ namespace Nagi.Models;
 /// <summary>
 ///     Represents a music album, which is a collection of songs by an artist.
 /// </summary>
-public class Album
-{
+public class Album {
     /// <summary>
     ///     The unique identifier for the album.
     /// </summary>
@@ -27,6 +26,12 @@ public class Album
     ///     The release year of the album.
     /// </summary>
     public int? Year { get; set; }
+
+    /// <summary>
+    ///     A direct path or URI to the album's cover art.
+    ///     This is persisted in the database and is typically sourced from the first available track.
+    /// </summary>
+    public string? CoverArtUri { get; set; }
 
     /// <summary>
     ///     The foreign key for the album's primary artist.
@@ -50,20 +55,7 @@ public class Album
     [NotMapped]
     public string PrimaryArtistNameForDisplay => Artist?.Name ?? "Unknown Artist";
 
-    /// <summary>
-    ///     The cover art URI derived from the first available artwork among its songs.
-    ///     This property requires the Songs collection to be loaded.
-    /// </summary>
-    [NotMapped]
-    public string? CalculatedCoverArtUri => Songs
-        .OrderBy(s => s.DiscNumber ?? 1)
-        .ThenBy(s => s.TrackNumber ?? 1)
-        .ThenBy(s => s.Title)
-        .FirstOrDefault(s => !string.IsNullOrEmpty(s.AlbumArtUriFromTrack))
-        ?.AlbumArtUriFromTrack;
-
-    public override string ToString()
-    {
+    public override string ToString() {
         return $"{Title} by {PrimaryArtistNameForDisplay}";
     }
 }

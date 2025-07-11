@@ -14,19 +14,12 @@ using Nagi.Services.Abstractions;
 
 namespace Nagi.ViewModels;
 
-/// <summary>
-///     Represents a simplified album model for display within the artist view.
-/// </summary>
-public partial class ArtistAlbumViewModelItem : ObservableObject
-{
-    public ArtistAlbumViewModelItem(Album album)
-    {
+public partial class ArtistAlbumViewModelItem : ObservableObject {
+    public ArtistAlbumViewModelItem(Album album) {
         Id = album.Id;
         Name = album.Title;
         YearText = album.Year?.ToString() ?? string.Empty;
-        CoverArtUri = album.Songs?
-            .FirstOrDefault(s => !string.IsNullOrEmpty(s.AlbumArtUriFromTrack))
-            ?.AlbumArtUriFromTrack;
+        CoverArtUri = album.CoverArtUri;
     }
 
     public Guid Id { get; }
@@ -35,19 +28,14 @@ public partial class ArtistAlbumViewModelItem : ObservableObject
     public string YearText { get; }
 }
 
-/// <summary>
-///     Provides data and logic for the ArtistViewPage, managing artist details, albums, and songs.
-/// </summary>
-public partial class ArtistViewViewModel : SongListViewModelBase
-{
+public partial class ArtistViewViewModel : SongListViewModelBase {
     private readonly DispatcherQueue _dispatcherQueue;
     private readonly ISettingsService _settingsService;
     private Guid _artistId;
 
     public ArtistViewViewModel(ILibraryService libraryService, IMusicPlaybackService playbackService,
         INavigationService navigationService, ISettingsService settingsService)
-        : base(libraryService, playbackService, navigationService)
-    {
+        : base(libraryService, playbackService, navigationService) {
         _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
         _settingsService = settingsService;
         CurrentSortOrder = SongSortOrder.AlbumAsc;
@@ -56,33 +44,49 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         _libraryService.ArtistMetadataUpdated += OnArtistMetadataUpdated;
     }
 
-    [ObservableProperty] public partial string ArtistName { get; set; } = "Artist";
+    [ObservableProperty]
+    private string _artistName = "Artist";
 
-    [ObservableProperty] public partial string ArtistBio { get; set; } = "Loading biography...";
+    [ObservableProperty]
+    private string _artistBio = "Loading biography...";
 
-    [ObservableProperty] public partial string? ArtistImageUri { get; set; }
+    [ObservableProperty]
+    private string? _artistImageUri;
 
     public ObservableCollection<ArtistAlbumViewModelItem> Albums { get; } = new();
 
     public bool HasAlbums => Albums.Any();
 
+    protected override bool IsPagingSupported => true;
+
+    protected override Task<IEnumerable<Song>> LoadSongsAsync() {
+        return Task.FromResult(Enumerable.Empty<Song>());
+    }
+
+    protected override async Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize, SongSortOrder sortOrder) {
+        if (_artistId == Guid.Empty) {
+            return new PagedResult<Song>();
+        }
+        return await _libraryService.GetSongsByArtistIdPagedAsync(_artistId, pageNumber, pageSize, sortOrder);
+    }
+
+    protected override async Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder) {
+        if (_artistId == Guid.Empty) {
+            return new List<Guid>();
+        }
+        return await _libraryService.GetAllSongIdsByArtistIdAsync(_artistId, sortOrder);
+    }
+
     [RelayCommand]
-    public async Task LoadArtistDetailsAsync(Guid artistId)
-    {
+    public async Task LoadArtistDetailsAsync(Guid artistId) {
         if (IsOverallLoading) return;
 
-        _artistId = artistId;
-
-        try
-        {
-            // Get the user's preference from settings.
+        try {
+            _artistId = artistId;
             var shouldFetchOnline = await _settingsService.GetFetchOnlineMetadataEnabledAsync();
-
-            // Pass the preference to the library service.
             var artist = await _libraryService.GetArtistDetailsAsync(artistId, shouldFetchOnline);
 
-            if (artist != null)
-            {
+            if (artist != null) {
                 ArtistName = artist.Name;
                 PageTitle = artist.Name;
                 ArtistImageUri = artist.LocalImageCachePath;
@@ -90,19 +94,30 @@ public partial class ArtistViewViewModel : SongListViewModelBase
                     ? "No biography available for this artist."
                     : artist.Biography;
 
-                var albumVms = artist.Albums
-                    .OrderByDescending(a => a.Year)
-                    .ThenBy(a => a.Title)
-                    .Select(album => new ArtistAlbumViewModelItem(album))
-                    .ToList();
+                // Defensive check for null collection
+                if (artist.Albums != null) {
+                    var albumVms = artist.Albums
+                        .OrderByDescending(a => a.Year)
+                        .ThenBy(a => a.Title)
+                        .Select(album => new ArtistAlbumViewModelItem(album))
+                        .ToList();
 
-                Albums.Clear();
-                foreach (var albumVm in albumVms) Albums.Add(albumVm);
+                    Albums.Clear();
+                    foreach (var albumVm in albumVms) Albums.Add(albumVm);
+                }
+                else {
+                    Albums.Clear();
+                }
 
-                await RefreshOrSortSongsCommand.ExecuteAsync(null);
+                try {
+                    await RefreshOrSortSongsCommand.ExecuteAsync(null);
+                }
+                catch (Exception ex) {
+                    Debug.WriteLine($"[ERROR] Failed to load songs for artist '{artist.Name}'. {ex.Message}");
+                    TotalItemsText = "Error loading songs";
+                }
             }
-            else
-            {
+            else {
                 Debug.WriteLine($"Artist with ID '{artistId}' not found.");
                 ArtistName = "Artist Not Found";
                 PageTitle = "Not Found";
@@ -113,8 +128,7 @@ public partial class ArtistViewViewModel : SongListViewModelBase
                 TotalItemsText = "0 songs";
             }
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             Debug.WriteLine($"Error loading artist with ID '{artistId}': {ex.Message}");
             ArtistName = "Error Loading Artist";
             PageTitle = "Error";
@@ -126,29 +140,26 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         }
     }
 
-    [RelayCommand]
-    private void ViewAlbum(Guid albumId)
-    {
-        if (albumId != Guid.Empty)
-            _navigationService.Navigate(
-                typeof(AlbumViewPage),
-                new AlbumViewNavigationParameter { AlbumId = albumId });
+    [RelayCommand(CanExecute = nameof(CanExecuteLoadCommands))]
+    private void ViewAlbum(Guid albumId) {
+        if (albumId == Guid.Empty) return;
+
+        var album = Albums.FirstOrDefault(a => a.Id == albumId);
+        if (album == null) return;
+
+        _navigationService.Navigate(
+            typeof(AlbumViewPage),
+            new AlbumViewNavigationParameter { AlbumId = album.Id, AlbumTitle = album.Name, ArtistName = ArtistName });
     }
 
-    protected override async Task<IEnumerable<Song>> LoadSongsAsync()
-    {
-        if (_artistId == Guid.Empty) return Enumerable.Empty<Song>();
-        return await _libraryService.GetSongsByArtistIdAsync(_artistId);
-    }
-
-    private void OnArtistMetadataUpdated(object? sender, ArtistMetadataUpdatedEventArgs e)
-    {
-        if (e.ArtistId == _artistId)
+    private void OnArtistMetadataUpdated(object? sender, ArtistMetadataUpdatedEventArgs e) {
+        if (e.ArtistId == _artistId) {
             _dispatcherQueue.TryEnqueue(() => { ArtistImageUri = e.NewLocalImageCachePath; });
+        }
     }
 
-    public void Cleanup()
-    {
+    public override void Cleanup() {
+        base.Cleanup();
         _libraryService.ArtistMetadataUpdated -= OnArtistMetadataUpdated;
     }
 }

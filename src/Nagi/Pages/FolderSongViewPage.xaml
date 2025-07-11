@@ -1,4 +1,3 @@
-<!-- Nagi/Pages/FolderSongViewPage.xaml -->
 <Page
     x:Class="Nagi.Pages.FolderSongViewPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -24,7 +23,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- Page header with title, item count, and action buttons. -->
+        <!-- Page header -->
         <Grid Grid.Row="0" Padding="24,20,24,20" VerticalAlignment="Center">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -79,7 +78,7 @@
             </StackPanel>
         </Grid>
 
-        <!-- List of songs in the folder. -->
+        <!-- Songs list -->
         <ListView
             x:Name="SongsListView"
             Grid.Row="1"
@@ -171,3 +170,5 @@
         </ListView>
     </Grid>
 </Page>
+
+    

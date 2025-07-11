@@ -1,6 +1,4 @@
-﻿// Nagi/ViewModels/AlbumViewViewModel.cs
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -12,69 +10,80 @@ using Nagi.Services.Abstractions;
 
 namespace Nagi.ViewModels;
 
-/// <summary>
-///     Provides data and logic for the AlbumViewPage, which displays details for a single album.
-/// </summary>
-public partial class AlbumViewViewModel : SongListViewModelBase
-{
+public partial class AlbumViewViewModel : SongListViewModelBase {
     private Guid _albumId;
+    private int? _albumYear;
 
     public AlbumViewViewModel(ILibraryService libraryService, IMusicPlaybackService playbackService,
         INavigationService navigationService)
-        : base(libraryService, playbackService, navigationService)
-    {
-        // Default sort order for an album is by track number.
+        : base(libraryService, playbackService, navigationService) {
         CurrentSortOrder = SongSortOrder.TrackNumberAsc;
         UpdateSortOrderButtonText(CurrentSortOrder);
     }
 
-    [ObservableProperty] public partial string AlbumTitle { get; set; } = "Album";
+    [ObservableProperty]
+    private string albumTitle = "Album";
 
-    [ObservableProperty] public partial string ArtistName { get; set; } = "Artist";
+    [ObservableProperty]
+    private string artistName = "Artist";
 
-    [ObservableProperty] public partial string? CoverArtUri { get; set; }
+    [ObservableProperty]
+    private string? coverArtUri;
 
-    [ObservableProperty] public partial string AlbumDetailsText { get; set; } = string.Empty;
+    [ObservableProperty]
+    private string albumDetailsText = string.Empty;
 
-    /// <summary>
-    ///     Asynchronously loads the details for a specific album using its ID.
-    /// </summary>
-    /// <param name="albumId">The unique identifier of the album to load.</param>
+    protected override bool IsPagingSupported => true;
+
+    protected override Task<IEnumerable<Song>> LoadSongsAsync() {
+        return Task.FromResult(Enumerable.Empty<Song>());
+    }
+
+    protected override async Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize, SongSortOrder sortOrder) {
+        if (_albumId == Guid.Empty) {
+            return new PagedResult<Song>();
+        }
+
+        var result = await _libraryService.GetSongsByAlbumIdPagedAsync(_albumId, pageNumber, pageSize, sortOrder);
+
+        if (pageNumber == 1) {
+            UpdateAlbumDetails(result);
+        }
+
+        return result;
+    }
+
+    protected override async Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder) {
+        if (_albumId == Guid.Empty) {
+            return new List<Guid>();
+        }
+        return await _libraryService.GetAllSongIdsByAlbumIdAsync(_albumId, sortOrder);
+    }
+
     [RelayCommand]
-    public async Task LoadAlbumDetailsAsync(Guid albumId)
-    {
+    public async Task LoadAlbumDetailsAsync(Guid albumId) {
         if (IsOverallLoading) return;
 
-        _albumId = albumId;
-
-        try
-        {
+        try {
+            _albumId = albumId;
             var album = await _libraryService.GetAlbumByIdAsync(albumId);
-            if (album != null)
-            {
+
+            if (album != null) {
                 AlbumTitle = album.Title;
                 ArtistName = album.Artist?.Name ?? "Unknown Artist";
                 PageTitle = album.Title;
-                CoverArtUri = album.Songs?.OrderBy(s => s.TrackNumber)
-                    .FirstOrDefault(s => !string.IsNullOrEmpty(s.AlbumArtUriFromTrack))
-                    ?.AlbumArtUriFromTrack;
+                _albumYear = album.Year;
+                CoverArtUri = album.CoverArtUri;
 
-                var detailsParts = new List<string>();
-                if (album.Year.HasValue) detailsParts.Add(album.Year.Value.ToString());
-                var songCount = album.Songs?.Count ?? 0;
-                detailsParts.Add($"{songCount} song{(songCount != 1 ? "s" : "")}");
-
-                var totalDuration = TimeSpan.FromSeconds(album.Songs?.Sum(s => s.Duration.TotalSeconds) ?? 0);
-                if (totalDuration.TotalMinutes >= 1) detailsParts.Add($"{(int)totalDuration.TotalMinutes} min");
-
-                AlbumDetailsText = string.Join(" • ", detailsParts);
-
-                // This will trigger the base class to load the songs and manage the loading state.
-                await RefreshOrSortSongsCommand.ExecuteAsync(null);
+                try {
+                    await RefreshOrSortSongsCommand.ExecuteAsync(null);
+                }
+                catch (Exception ex) {
+                    Debug.WriteLine($"[ERROR] Failed to load songs for album '{album.Title}'. {ex.Message}");
+                    TotalItemsText = "Error loading songs";
+                }
             }
-            else
-            {
-                // Handle the case where the album is not found in the library.
+            else {
                 Debug.WriteLine($"Album with ID '{albumId}' not found.");
                 AlbumTitle = "Album Not Found";
                 PageTitle = "Not Found";
@@ -84,9 +93,7 @@ public partial class AlbumViewViewModel : SongListViewModelBase
                 TotalItemsText = "0 songs";
             }
         }
-        catch (Exception ex)
-        {
-            // Log the error and update the UI to inform the user.
+        catch (Exception ex) {
             Debug.WriteLine($"Error loading album with ID '{albumId}': {ex.Message}");
             AlbumTitle = "Error Loading Album";
             PageTitle = "Error";
@@ -96,14 +103,14 @@ public partial class AlbumViewViewModel : SongListViewModelBase
         }
     }
 
-    /// <summary>
-    ///     Loads all songs for the current album from the library service.
-    ///     This method is called by the base view model's song loading and sorting logic.
-    /// </summary>
-    /// <returns>A collection of songs belonging to the current album.</returns>
-    protected override async Task<IEnumerable<Song>> LoadSongsAsync()
-    {
-        if (_albumId == Guid.Empty) return Enumerable.Empty<Song>();
-        return await _libraryService.GetSongsByAlbumIdAsync(_albumId);
+    private void UpdateAlbumDetails(PagedResult<Song> pagedResult) {
+        if (pagedResult.Items == null) return;
+
+        var songCount = pagedResult.TotalCount;
+        var detailsParts = new List<string>();
+        if (_albumYear.HasValue) detailsParts.Add(_albumYear.Value.ToString());
+        detailsParts.Add($"{songCount} song{(songCount != 1 ? "s" : "")}");
+
+        AlbumDetailsText = string.Join(" • ", detailsParts);
     }
 }
