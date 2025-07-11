@@ -1,50 +1,58 @@
-// Nagi/Pages/AlbumPage.xaml.cs
-
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Navigation;
 using Nagi.ViewModels;
+using System.Threading;
 
 namespace Nagi.Pages;
 
 /// <summary>
-///     A page that displays a grid of all albums in the user's library.
+/// A page that displays a grid of all albums from the user's library.
 /// </summary>
-public sealed partial class AlbumPage : Page
-{
-    public AlbumPage()
-    {
+public sealed partial class AlbumPage : Page {
+    public AlbumViewModel ViewModel { get; }
+    private CancellationTokenSource? _cancellationTokenSource;
+
+    public AlbumPage() {
         InitializeComponent();
-        // Resolve the ViewModel from the dependency injection container.
         ViewModel = App.Services.GetRequiredService<AlbumViewModel>();
     }
 
-    public AlbumViewModel ViewModel { get; }
-
     /// <summary>
-    ///     Invoked when the page is navigated to. Initiates loading of the album list.
+    /// Handles the page's navigated-to event.
+    /// Initiates album loading if the collection is empty.
     /// </summary>
-    protected override async void OnNavigatedTo(NavigationEventArgs e)
-    {
+    protected override async void OnNavigatedTo(NavigationEventArgs e) {
         base.OnNavigatedTo(e);
-        await ViewModel.LoadAlbumsAsync();
+        _cancellationTokenSource = new CancellationTokenSource();
+
+        if (ViewModel.Albums.Count == 0) {
+            await ViewModel.LoadAlbumsAsync(_cancellationTokenSource.Token);
+        }
     }
 
     /// <summary>
-    ///     Handles clicks on album items, navigating to the detailed view for the selected album.
+    /// Handles the page's navigated-from event.
+    /// Cancels any ongoing data loading operations to prevent background work.
     /// </summary>
-    private void AlbumsGridView_ItemClick(object sender, ItemClickEventArgs e)
-    {
-        if (e.ClickedItem is AlbumViewModelItem clickedAlbum)
-        {
-            var navParam = new AlbumViewNavigationParameter
-            {
+    protected override void OnNavigatedFrom(NavigationEventArgs e) {
+        base.OnNavigatedFrom(e);
+        _cancellationTokenSource?.Cancel();
+        _cancellationTokenSource?.Dispose();
+    }
+
+    /// <summary>
+    /// Handles clicks on an album item in the grid.
+    /// Navigates to the detailed view for the selected album.
+    /// </summary>
+    private void AlbumsGridView_ItemClick(object sender, ItemClickEventArgs e) {
+        if (e.ClickedItem is AlbumViewModelItem clickedAlbum) {
+            var navParam = new AlbumViewNavigationParameter {
                 AlbumId = clickedAlbum.Id,
                 AlbumTitle = clickedAlbum.Title,
                 ArtistName = clickedAlbum.ArtistName
             };
-            // Use the Frame to navigate to the AlbumViewPage, passing album details.
             Frame.Navigate(typeof(AlbumViewPage), navParam);
         }
     }

@@ -183,7 +183,6 @@ public partial class App : Application {
             // Use the factory to create a context for this one-time operation.
             var dbContextFactory = Services.GetRequiredService<IDbContextFactory<MusicDbContext>>();
             using var dbContext = dbContextFactory.CreateDbContext();
-            dbContext.RecreateDatabase();
             dbContext.Database.EnsureCreated();
         }
         catch (Exception ex) {

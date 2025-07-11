@@ -24,7 +24,7 @@
     <ScrollViewer>
         <StackPanel Padding="24" Spacing="16">
 
-            <!--  Artist header section with image, name, and biography.  -->
+            <!-- Artist header section with image, name, and biography. -->
             <Grid Margin="0,0,0,16">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -64,7 +64,7 @@
                 </StackPanel>
             </Grid>
 
-            <!--  Grid of the artist's albums.  -->
+            <!-- Grid of the artist's albums. -->
             <StackPanel Spacing="16"
                         Visibility="{x:Bind ViewModel.HasAlbums, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
                 <TextBlock Style="{StaticResource SectionHeaderTextBlockStyle}" Text="Albums" />
@@ -119,7 +119,7 @@
                 </GridView>
             </StackPanel>
 
-            <!--  List of all songs by the artist, with playback and sorting controls.  -->
+            <!-- List of all songs by the artist, with playback and sorting controls. -->
             <StackPanel Margin="0,8,0,0" Spacing="8"
                         Visibility="{x:Bind ViewModel.Songs, Converter={StaticResource CollectionToVisibilityConverter}, Mode=OneWay}">
                 <Grid>

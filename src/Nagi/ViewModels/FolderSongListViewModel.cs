@@ -9,8 +9,7 @@ using Nagi.Services.Abstractions;
 namespace Nagi.ViewModels;
 
 /// <summary>
-/// ViewModel for the FolderSongViewPage, responsible for displaying songs
-/// from a specific library folder using incremental loading.
+/// ViewModel for displaying songs from a specific library folder using paged loading.
 /// </summary>
 public partial class FolderSongListViewModel : SongListViewModelBase {
     private Guid? _folderId;
@@ -67,7 +66,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase {
     }
 
     /// <summary>
-    /// This method is not used when IsPagingSupported is true, but must be implemented.
+    /// This method is not used because <see cref="SongListViewModelBase.IsPagingSupported"/> is true.
     /// </summary>
     protected override Task<IEnumerable<Song>> LoadSongsAsync() {
         return Task.FromResult(Enumerable.Empty<Song>());

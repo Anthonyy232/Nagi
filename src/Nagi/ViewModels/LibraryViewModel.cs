@@ -9,8 +9,8 @@ using Nagi.Services.Abstractions;
 namespace Nagi.ViewModels;
 
 /// <summary>
-///     ViewModel for the main library page, responsible for displaying all songs
-///     and initiating library scans.
+/// ViewModel for the main library page, responsible for displaying all songs
+/// and initiating library scans.
 /// </summary>
 public partial class LibraryViewModel : SongListViewModelBase {
     private static bool _isInitialScanTriggered;
@@ -21,44 +21,41 @@ public partial class LibraryViewModel : SongListViewModelBase {
     }
 
     /// <summary>
-    ///     Enables gradual, paged loading for the entire library view.
+    /// Enables gradual, paged loading for the entire library view.
     /// </summary>
     protected override bool IsPagingSupported => true;
 
     /// <summary>
-    ///     This method is required by the base class but is not used when paging is supported.
-    ///     It returns an empty collection to satisfy the abstract contract.
+    /// This method is not used because <see cref="SongListViewModelBase.IsPagingSupported"/> is true.
     /// </summary>
     protected override Task<IEnumerable<Song>> LoadSongsAsync() {
         return Task.FromResult(Enumerable.Empty<Song>());
     }
 
     /// <summary>
-    ///     Loads a specific page of songs from the entire library.
+    /// Loads a specific page of songs from the entire library.
     /// </summary>
     protected override async Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize, SongSortOrder sortOrder) {
         return await _libraryService.GetAllSongsPagedAsync(pageNumber, pageSize, sortOrder);
     }
 
     /// <summary>
-    ///     Loads the complete list of song IDs for the entire library.
+    /// Loads the complete list of song IDs for the entire library.
     /// </summary>
     protected override async Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder) {
         return await _libraryService.GetAllSongIdsAsync(sortOrder);
     }
 
     /// <summary>
-    ///     Performs the initial load of songs for the UI and starts a background task
-    ///     to scan for any changes in the library folders.
+    /// Performs the initial load of songs for the UI and, if it's the first time,
+    /// starts a background task to scan for any changes in the library folders.
     /// </summary>
     public async Task InitializeAsync() {
-        // This command will handle the initial paged load of songs for the UI.
         await RefreshOrSortSongsCommand.ExecuteAsync(null);
 
         if (_isInitialScanTriggered) return;
         _isInitialScanTriggered = true;
 
-        // Start a background task to refresh the library folders for any changes.
         _ = Task.Run(async () => {
             try {
                 Debug.WriteLine("[LibraryViewModel] Starting initial background library refresh...");
