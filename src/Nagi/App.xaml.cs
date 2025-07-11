@@ -527,6 +527,7 @@ public partial class App : Application {
     private async Task CheckForUpdatesAsync() {
         #if DEBUG
             Debug.WriteLine("[App] Skipping update check in DEBUG mode.");
+            return;
         #else
             try 
             {
