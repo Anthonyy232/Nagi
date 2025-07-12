@@ -14,6 +14,7 @@
     <UserControl.Resources>
         <converters:TimeSpanToTimeStringConverter x:Key="TimeSpanToTimeStringConverter" />
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <converters:ObjectToBooleanConverter x:Key="ObjectToBooleanConverter" />
         <media:AcrylicBrush
             x:Key="FloatingAcrylicInAppLuminosity"
             FallbackColor="{Binding Color, Source={StaticResource AppPrimaryColorBrush}}"
@@ -106,7 +107,7 @@
                         </DoubleAnimation>
                         <DoubleAnimation
                             BeginTime="0:0:0.1"
-                            Storyboard.TargetName="ArtistName"
+                            Storyboard.TargetName="ArtistNameHyperlink"
                             Storyboard.TargetProperty="MaxHeight"
                             To="20"
                             Duration="0:0:0.4"
@@ -117,7 +118,7 @@
                         </DoubleAnimation>
                         <DoubleAnimation
                             BeginTime="0:0:0.15"
-                            Storyboard.TargetName="ArtistName"
+                            Storyboard.TargetName="ArtistNameHyperlink"
                             Storyboard.TargetProperty="Opacity"
                             To="1"
                             Duration="0:0:0.25" />
@@ -178,7 +179,7 @@
                             </DoubleAnimation.EasingFunction>
                         </DoubleAnimation>
                         <DoubleAnimation
-                            Storyboard.TargetName="ArtistName"
+                            Storyboard.TargetName="ArtistNameHyperlink"
                             Storyboard.TargetProperty="MaxHeight"
                             To="0"
                             Duration="0:0:0.25"
@@ -188,7 +189,7 @@
                             </DoubleAnimation.EasingFunction>
                         </DoubleAnimation>
                         <DoubleAnimation
-                            Storyboard.TargetName="ArtistName"
+                            Storyboard.TargetName="ArtistNameHyperlink"
                             Storyboard.TargetProperty="Opacity"
                             To="0"
                             Duration="0:0:0.15" />
@@ -332,14 +333,17 @@
                                             Style="{ThemeResource BodyStrongTextBlockStyle}"
                                             Text="{Binding SongTitle}"
                                             TextTrimming="CharacterEllipsis" />
-                                        <TextBlock
-                                            x:Name="ArtistName"
+                                        <HyperlinkButton
+                                            x:Name="ArtistNameHyperlink"
                                             MaxHeight="0"
                                             Opacity="0"
-                                            Style="{ThemeResource BodyTextBlockStyle}"
-                                            Text="{Binding ArtistName}"
-                                            TextTrimming="CharacterEllipsis"
-                                            TextWrapping="NoWrap" />
+                                            Style="{StaticResource SongListHyperlinkButtonStyle}"
+                                            Content="{Binding ArtistName}"
+                                            Command="{Binding GoToArtistCommand}"
+                                            CommandParameter="{Binding CurrentPlayingTrack}"
+                                            Visibility="{Binding CurrentPlayingTrack, Converter={StaticResource ObjectToBooleanConverter}}"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Center" />
                                     </StackPanel>
                                 </Grid>
 

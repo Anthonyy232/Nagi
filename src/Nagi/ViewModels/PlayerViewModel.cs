@@ -5,6 +5,8 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Nagi.Models;
 using Nagi.Services.Abstractions;
+using Nagi.Pages;
+using Nagi.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -37,14 +39,16 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
     private const double VolumeMediumThreshold = 66;
 
     private readonly IMusicPlaybackService _playbackService;
+    private readonly INavigationService _navigationService;
     private readonly DispatcherQueue _dispatcherQueue;
 
     // This flag prevents re-entrant property updates when the ViewModel's state
     // is being updated from the playback service.
     private bool _isUpdatingFromService;
 
-    public PlayerViewModel(IMusicPlaybackService playbackService) {
+    public PlayerViewModel(IMusicPlaybackService playbackService, INavigationService navigationService) {
         _playbackService = playbackService ?? throw new ArgumentNullException(nameof(playbackService));
+        _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
         _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
         SubscribeToPlaybackServiceEvents();
@@ -177,6 +181,29 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
     [RelayCommand]
     private Task SeekAsync(double position) => _playbackService.SeekAsync(TimeSpan.FromSeconds(position));
 
+    // Command to navigate to the artist page
+    [RelayCommand(CanExecute = nameof(CanGoToArtist))]
+    private void GoToArtist(Song? song) {
+        var targetSong = song ?? CurrentPlayingTrack;
+        if (targetSong?.ArtistId == null || targetSong.Artist == null) {
+            Debug.WriteLine("[PlayerViewModel] Attempted to navigate to Artist, but target song or artist was null/invalid.");
+            return;
+        }
+
+        var navParam = new ArtistViewNavigationParameter {
+            ArtistId = targetSong.Artist.Id,
+            ArtistName = targetSong.Artist.Name
+        };
+        Debug.WriteLine($"[PlayerViewModel] Navigating to Artist: Name='{navParam.ArtistName}', ID='{navParam.ArtistId}'");
+        _navigationService.Navigate(typeof(ArtistViewPage), navParam);
+    }
+
+    // CanExecute method for GoToArtistCommand, now checks CurrentPlayingTrack
+    private bool CanGoToArtist(Song? song) {
+        var targetSong = song ?? CurrentPlayingTrack;
+        return targetSong?.Artist != null && targetSong.Artist.Id != Guid.Empty;
+    }
+
     partial void OnIsMutedChanged(bool value) => UpdateVolumeIconGlyph();
 
     partial void OnCurrentVolumeChanged(double value) {
@@ -288,10 +315,12 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
     }
 
     private void UpdateTrackDetails(Song? song) {
-        CurrentPlayingTrack = song;
+        CurrentPlayingTrack = song; // Set the observable property
         if (song != null) {
             SongTitle = song.Title;
             ArtistName = song.Artist?.Name ?? string.Empty;
+            // Notify CanExecuteChanged for GoToArtistCommand when CurrentPlayingTrack changes
+            GoToArtistCommand.NotifyCanExecuteChanged();
             try {
                 AlbumArtSource = !string.IsNullOrEmpty(song.AlbumArtUriFromTrack)
                     ? new BitmapImage(new Uri(song.AlbumArtUriFromTrack))
@@ -308,6 +337,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
             SongTitle = "No track playing";
             ArtistName = string.Empty;
             AlbumArtSource = null;
+            GoToArtistCommand.NotifyCanExecuteChanged(); // Also notify when no track is playing
         }
     }
 
@@ -365,7 +395,8 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
 
     /// <summary>
     /// Safely executes an action on the UI thread, wrapping it in a scope
-    /// that prevents property change feedback loops.
+    /// that indicates the ViewModel is being updated from the backing service.
+    /// This prevents feedback loops where a UI update would trigger a command.
     /// </summary>
     private void RunOnUIThread(Action action) {
         _dispatcherQueue.TryEnqueue(() => {
