@@ -175,3 +175,17 @@ public class ObjectToVisibilityConverter : IValueConverter {
         throw new NotImplementedException();
     }
 }
+
+
+/// <summary>
+/// Converts an object to a boolean, returning true if the object is not null, false otherwise.
+/// </summary>
+public class ObjectToBooleanConverter : IValueConverter {
+    public object Convert(object value, Type targetType, object parameter, string language) {
+        return value != null;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, string language) {
+        throw new NotImplementedException();
+    }
+}
