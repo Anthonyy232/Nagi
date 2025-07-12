@@ -116,7 +116,7 @@
                                             Command="{Binding DataContext.AddSelectedSongsToQueueCommand, ElementName=pageRoot}"
                                             Text="Add to Queue" />
                                         <MenuFlyoutSubItem x:Name="AddToPlaylistSubMenu" Text="Add to playlist" />
-                                        <MenuFlyoutSeparator />
+                                        <MenuFlyoutSeparator Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                         <MenuFlyoutItem
                                             Command="{Binding DataContext.GoToArtistCommand, ElementName=pageRoot}"
                                             Text="Go to artist"
