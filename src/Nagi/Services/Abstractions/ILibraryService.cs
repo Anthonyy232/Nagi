@@ -129,6 +129,7 @@ public interface ILibraryService {
     Task<List<Guid>> GetAllSongIdsByArtistIdAsync(Guid artistId, SongSortOrder sortOrder);
     Task<List<Guid>> GetAllSongIdsByAlbumIdAsync(Guid albumId, SongSortOrder sortOrder);
     Task<List<Guid>> GetAllSongIdsByPlaylistIdAsync(Guid playlistId);
+    Task<List<Guid>> GetAllSongIdsByGenreIdAsync(Guid genreId, SongSortOrder sortOrder);
 
     #endregion
 

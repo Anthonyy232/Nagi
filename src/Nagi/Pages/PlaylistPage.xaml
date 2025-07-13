@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:Nagi.ViewModels"
+    x:Name="PlaylistPageRoot"
     Background="Transparent"
     Loaded="Page_Loaded"
     mc:Ignorable="d">
@@ -75,6 +76,12 @@
                         Background="Transparent">
                         <Grid.ContextFlyout>
                             <MenuFlyout>
+                                <MenuFlyoutItem
+                                    Command="{Binding DataContext.PlayPlaylistCommand, ElementName=PlaylistPageRoot}"
+                                    CommandParameter="{x:Bind Id}"
+                                    IsEnabled="{Binding DataContext.IsAnyOperationInProgress, ElementName=PlaylistPageRoot, Converter={StaticResource BooleanToInverseBooleanConverter}}"
+                                    Text="Play">
+                                </MenuFlyoutItem>
                                 <MenuFlyoutItem Click="RenamePlaylist_Click" Text="Rename" />
                                 <MenuFlyoutItem Click="ChangeCover_Click" Text="Change Cover" />
                                 <MenuFlyoutItem Click="DeletePlaylist_Click" Text="Delete" />

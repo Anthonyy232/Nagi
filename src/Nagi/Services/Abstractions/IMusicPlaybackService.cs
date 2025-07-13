@@ -1,15 +1,14 @@
-﻿using System;
+﻿using Nagi.Models;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Nagi.Models;
 
 namespace Nagi.Services.Abstractions;
 
 /// <summary>
 ///     Defines the available sorting orders for a list of songs.
 /// </summary>
-public enum SongSortOrder
-{
+public enum SongSortOrder {
     TitleAsc,
     TitleDesc,
     DateAddedDesc,
@@ -22,8 +21,7 @@ public enum SongSortOrder
 /// <summary>
 ///     Defines playback repeat modes.
 /// </summary>
-public enum RepeatMode
-{
+public enum RepeatMode {
     Off,
     RepeatOne,
     RepeatAll
@@ -33,8 +31,7 @@ public enum RepeatMode
 ///     Defines the contract for a high-level music playback service,
 ///     managing the playback queue, playback state, and user settings like shuffle and repeat.
 /// </summary>
-public interface IMusicPlaybackService
-{
+public interface IMusicPlaybackService {
     #region Events
 
     /// <summary>
@@ -155,7 +152,7 @@ public interface IMusicPlaybackService
     Task PlayAsync(IEnumerable<Song> songs, int startIndex = 0, bool startShuffled = false);
 
     /// <summary>
-    ///     Plays a single song, replacing the current queue.
+    ///     Plays a single song, replacing the current queue, without changing the current shuffle mode.
     /// </summary>
     /// <param name="song">The song to play.</param>
     Task PlayAsync(Song song);
@@ -186,6 +183,45 @@ public interface IMusicPlaybackService
     /// </summary>
     /// <param name="position">The desired playback position.</param>
     Task SeekAsync(TimeSpan position);
+
+    #endregion
+
+    #region Playback Initiation
+
+    /// <summary>
+    ///     Clears the current queue and starts playing all songs from a specific album.
+    ///     Playback will begin with shuffle turned off, and songs are ordered by track number.
+    /// </summary>
+    /// <param name="albumId">The ID of the album to play.</param>
+    Task PlayAlbumAsync(Guid albumId);
+
+    /// <summary>
+    ///     Clears the current queue and starts playing all songs by a specific artist.
+    ///     Playback will begin with shuffle turned off, and songs are ordered alphabetically by title.
+    /// </summary>
+    /// <param name="artistId">The ID of the artist to play.</param>
+    Task PlayArtistAsync(Guid artistId);
+
+    /// <summary>
+    ///     Clears the current queue and starts playing all songs from a specific folder.
+    ///     Playback will begin with shuffle turned off, and songs are ordered alphabetically by title.
+    /// </summary>
+    /// <param name="folderId">The ID of the folder to play.</param>
+    Task PlayFolderAsync(Guid folderId);
+
+    /// <summary>
+    ///     Clears the current queue and starts playing a specific playlist.
+    ///     Playback will begin with shuffle turned off, and songs are in playlist order.
+    /// </summary>
+    /// <param name="playlistId">The ID of the playlist to play.</param>
+    Task PlayPlaylistAsync(Guid playlistId);
+
+    /// <summary>
+    ///     Clears the current queue and starts playing all songs from a specific genre.
+    ///     Playback will begin with shuffle turned off, and songs are ordered alphabetically by title.
+    /// </summary>
+    /// <param name="genreId">The ID of the genre to play.</param>
+    Task PlayGenreAsync(Guid genreId);
 
     #endregion
 

@@ -27,6 +27,7 @@ public partial class ArtistViewModelItem : ObservableObject {
 /// </summary>
 public partial class ArtistViewModel : ObservableObject {
     private readonly ILibraryService _libraryService;
+    private readonly IMusicPlaybackService _musicPlaybackService;
     private readonly ISettingsService _settingsService;
     private readonly DispatcherQueue _dispatcherQueue;
     private readonly Dictionary<Guid, ArtistViewModelItem> _artistLookup = new();
@@ -34,9 +35,10 @@ public partial class ArtistViewModel : ObservableObject {
     private const int PageSize = 250;
     private bool _isFullyLoaded;
 
-    public ArtistViewModel(ILibraryService libraryService, ISettingsService settingsService) {
+    public ArtistViewModel(ILibraryService libraryService, ISettingsService settingsService, IMusicPlaybackService musicPlaybackService) {
         _libraryService = libraryService;
         _settingsService = settingsService;
+        _musicPlaybackService = musicPlaybackService;
         _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
         Artists.CollectionChanged += (s, e) => OnPropertyChanged(nameof(HasArtists));
     }
@@ -54,6 +56,21 @@ public partial class ArtistViewModel : ObservableObject {
     private bool _hasLoadError;
 
     public bool HasArtists => Artists.Any();
+
+    /// <summary>
+    /// Clears the current queue and starts playing all songs by the selected artist.
+    /// </summary>
+    [RelayCommand]
+    private async Task PlayArtistAsync(Guid artistId) {
+        if (IsLoading || artistId == Guid.Empty) return;
+
+        try {
+            await _musicPlaybackService.PlayArtistAsync(artistId);
+        }
+        catch (Exception ex) {
+            Debug.WriteLine($"[ArtistViewModel] CRITICAL: Error playing artist {artistId}: {ex.Message}");
+        }
+    }
 
     /// <summary>
     /// Asynchronously loads artists with support for cancellation.

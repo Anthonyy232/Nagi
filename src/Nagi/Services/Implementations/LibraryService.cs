@@ -1235,24 +1235,36 @@ public class LibraryService : ILibraryService {
 
     public async Task<bool> UpdatePlaylistSongOrderAsync(Guid playlistId, IEnumerable<Guid> orderedSongIds) {
         await using var context = await _contextFactory.CreateDbContextAsync();
-        var playlist = await context.Playlists.FindAsync(playlistId);
-        if (playlist == null) return false;
+        var playlist = await context.Playlists.FirstOrDefaultAsync(p => p.Id == playlistId);
+        if (playlist == null) {
+            return false;
+        }
+        var playlistSongs = await context.PlaylistSongs
+            .Where(ps => ps.PlaylistId == playlistId)
+            .AsTracking()
+            .ToListAsync();
 
-        var playlistSongs = await context.PlaylistSongs.Where(ps => ps.PlaylistId == playlistId).AsTracking().ToListAsync();
         var playlistSongMap = playlistSongs.ToDictionary(ps => ps.SongId);
+
         var newOrderList = orderedSongIds.ToList();
         var changesMade = false;
 
         for (var i = 0; i < newOrderList.Count; i++) {
             var songId = newOrderList[i];
-            if (playlistSongMap.TryGetValue(songId, out var playlistSongToUpdate) && playlistSongToUpdate.Order != i) {
-                playlistSongToUpdate.Order = i;
-                changesMade = true;
+            if (playlistSongMap.TryGetValue(songId, out var playlistSongToUpdate)) {
+                if (playlistSongToUpdate.Order != i) {
+                    playlistSongToUpdate.Order = i;
+                    changesMade = true;
+                }
             }
         }
 
-        if (!changesMade) return true;
+        if (!changesMade) {
+            return true;
+        }
+
         playlist.DateModified = DateTime.UtcNow;
+
         try {
             await context.SaveChangesAsync();
             return true;
@@ -1681,6 +1693,16 @@ public class LibraryService : ILibraryService {
             .OrderBy(ps => ps.Order)
             .Select(ps => ps.SongId)
             .ToListAsync();
+    }
+
+    public async Task<List<Guid>> GetAllSongIdsByGenreIdAsync(Guid genreId, SongSortOrder sortOrder) {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        var query = context.Songs.AsNoTracking()
+            .Where(s => s.Genres.Any(g => g.Id == genreId));
+
+        var sortedQuery = ApplySongSortOrder(query, sortOrder);
+
+        return await sortedQuery.Select(s => s.Id).ToListAsync();
     }
 
     #endregion
