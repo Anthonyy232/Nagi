@@ -1,36 +1,15 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Nagi.Models;
+using System;
+using System.Diagnostics;
 
 namespace Nagi.Data;
 
 /// <summary>
-///     Manages the database session for the application, allowing querying and saving of data.
+/// The Entity Framework Core database context for the application's music library.
 /// </summary>
-public class MusicDbContext : DbContext
-{
-    /// <summary>
-    ///     This constructor is used by the application to connect to the default SQLite database.
-    /// </summary>
-    public MusicDbContext()
-    {
-        var folder = Environment.SpecialFolder.LocalApplicationData;
-        var path = Environment.GetFolderPath(folder);
-        DbPath = Path.Join(path, "local_music_app.db");
-    }
-
-    /// <summary>
-    ///     This constructor is used for dependency injection and unit testing,
-    ///     allowing the configuration (like using an in-memory database) to be passed in.
-    /// </summary>
-    /// <param name="options">The options for this context.</param>
-    public MusicDbContext(DbContextOptions<MusicDbContext> options) : base(options)
-    {
-        // When options are passed in, the DbPath is not determined by this constructor.
-        // We can leave it empty or get it from the options if needed, but it's not required here.
-        DbPath = string.Empty;
+public class MusicDbContext : DbContext {
+    public MusicDbContext(DbContextOptions<MusicDbContext> options) : base(options) {
     }
 
     public DbSet<Song> Songs { get; set; } = null!;
@@ -39,79 +18,81 @@ public class MusicDbContext : DbContext
     public DbSet<Folder> Folders { get; set; } = null!;
     public DbSet<Playlist> Playlists { get; set; } = null!;
     public DbSet<PlaylistSong> PlaylistSongs { get; set; } = null!;
+    public DbSet<Genre> Genres { get; set; } = null!;
+    public DbSet<ListenHistory> ListenHistory { get; set; } = null!;
 
-    /// <summary>
-    ///     The full path to the SQLite database file.
-    /// </summary>
-    public string DbPath { get; }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder options)
-    {
-        // This ensures that the context is configured to use the SQLite database
-        // ONLY if it hasn't already been configured elsewhere (e.g., by the unit tests).
-        if (!options.IsConfigured)
-            options.UseSqlite($"Data Source={DbPath}")
-                .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
-                .EnableSensitiveDataLogging(false)
-                .EnableDetailedErrors(false);
-    }
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
+    protected override void OnModelCreating(ModelBuilder modelBuilder) {
         base.OnModelCreating(modelBuilder);
 
-        // Song entity configuration
-        modelBuilder.Entity<Song>(entity =>
-        {
+        // Configure Song entity
+        modelBuilder.Entity<Song>(entity => {
+            // Use case-insensitive collation for text-based lookups.
             entity.Property(s => s.Title).UseCollation("NOCASE");
             entity.Property(s => s.FilePath).UseCollation("NOCASE");
 
+            // Define indexes for frequently queried columns.
             entity.HasIndex(s => s.Title);
             entity.HasIndex(s => s.FilePath).IsUnique();
             entity.HasIndex(s => s.ArtistId);
             entity.HasIndex(s => s.AlbumId);
             entity.HasIndex(s => s.FolderId);
+            entity.HasIndex(s => s.LastPlayedDate);
 
+            // Define relationships.
             entity.HasOne(s => s.Folder)
                 .WithMany(f => f.Songs)
                 .HasForeignKey(s => s.FolderId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasMany(s => s.ListenHistory)
+                .WithOne(lh => lh.Song)
+                .HasForeignKey(lh => lh.SongId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasMany(s => s.Genres)
+                .WithMany(g => g.Songs);
         });
 
-        // Album entity configuration
-        modelBuilder.Entity<Album>(entity =>
-        {
+        // Configure Album entity
+        modelBuilder.Entity<Album>(entity => {
             entity.Property(a => a.Title).UseCollation("NOCASE");
-
             entity.HasIndex(a => a.Title);
-            entity.HasIndex(a => new { a.Title, a.ArtistId }).IsUnique();
             entity.HasIndex(a => a.ArtistId);
+            entity.HasIndex(a => new { a.Title, a.ArtistId }).IsUnique();
         });
 
-        // Artist entity configuration
-        modelBuilder.Entity<Artist>(entity =>
-        {
+        // Configure Artist entity
+        modelBuilder.Entity<Artist>(entity => {
             entity.Property(a => a.Name).UseCollation("NOCASE");
             entity.HasIndex(a => a.Name).IsUnique();
         });
 
-        // Folder entity configuration
-        modelBuilder.Entity<Folder>(entity =>
-        {
+        // Configure Genre entity
+        modelBuilder.Entity<Genre>(entity => {
+            entity.Property(g => g.Name).UseCollation("NOCASE");
+            entity.HasIndex(g => g.Name).IsUnique();
+        });
+
+        // Configure ListenHistory entity
+        modelBuilder.Entity<ListenHistory>(entity => {
+            entity.HasIndex(lh => lh.SongId);
+            entity.HasIndex(lh => lh.ListenTimestampUtc);
+        });
+
+        // Configure Folder entity
+        modelBuilder.Entity<Folder>(entity => {
             entity.Property(f => f.Path).UseCollation("NOCASE");
             entity.HasIndex(f => f.Path).IsUnique();
         });
 
-        // Playlist entity configuration
-        modelBuilder.Entity<Playlist>(entity =>
-        {
+        // Configure Playlist entity
+        modelBuilder.Entity<Playlist>(entity => {
             entity.Property(p => p.Name).UseCollation("NOCASE");
             entity.HasIndex(p => p.Name).IsUnique();
         });
 
-        // PlaylistSong join entity configuration
-        modelBuilder.Entity<PlaylistSong>(entity =>
-        {
+        // Configure PlaylistSong (many-to-many join) entity
+        modelBuilder.Entity<PlaylistSong>(entity => {
             entity.HasKey(ps => new { ps.PlaylistId, ps.SongId });
 
             entity.HasOne(ps => ps.Playlist)
@@ -129,33 +110,22 @@ public class MusicDbContext : DbContext
     }
 
     /// <summary>
-    ///     Deletes the existing database file and recreates it based on the current model.
-    ///     This is a destructive operation intended for development and should not be used in production.
-    ///     For production schema changes, use EF Core Migrations.
+    /// WARNING: This is a destructive operation that deletes and recreates the database.
+    /// It should only be used for development, testing, or a user-initiated library reset.
     /// </summary>
-    public void RecreateDatabase()
-    {
-        try
-        {
-            // EnsureDeleted returns false if the database does not exist, so no prior check is needed.
+    public void RecreateDatabase() {
+        try {
             Database.EnsureDeleted();
         }
-        catch (Exception ex)
-        {
-            // Log a warning if deletion fails, as the file might be locked.
-            // This is not critical, as creation might still succeed or fail with a more specific error.
-            Debug.WriteLine(
-                $"[MusicDbContext] Warning: Failed to delete database. It may be in use. Error: {ex.Message}");
+        catch (Exception ex) {
+            // Log if deletion fails, as the database might be locked.
+            Debug.WriteLine($"[MusicDbContext] Warning: Failed to delete database. It may be in use. Error: {ex.Message}");
         }
-
-        try
-        {
-            // Creates the database and schema. Throws if the database exists but is not compatible.
+        try {
             Database.EnsureCreated();
         }
-        catch (Exception ex)
-        {
-            // This is a critical failure. Log the error and re-throw to alert the caller.
+        catch (Exception ex) {
+            // This is a critical failure if the database cannot be created.
             Debug.WriteLine($"[MusicDbContext] CRITICAL: Failed to create new database. Error: {ex.Message}");
             throw;
         }

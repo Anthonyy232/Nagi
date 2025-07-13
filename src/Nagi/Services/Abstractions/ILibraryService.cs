@@ -1,4 +1,5 @@
-﻿using Nagi.Models;
+﻿using Nagi.Helpers;
+using Nagi.Models;
 using Nagi.Services.Implementations;
 using System;
 using System.Collections.Generic;
@@ -7,10 +8,14 @@ using System.Threading.Tasks;
 namespace Nagi.Services.Abstractions;
 
 /// <summary>
-/// Defines the contract for a service that manages the music library.
+/// Defines the contract for a service that manages the music library,
+/// including scanning, metadata manipulation, and data access.
 /// </summary>
 public interface ILibraryService {
-    event EventHandler<ArtistMetadataUpdatedEventArgs> ArtistMetadataUpdated;
+    /// <summary>
+    /// Occurs when an artist's metadata (e.g., biography or image) has been updated.
+    /// </summary>
+    event EventHandler<ArtistMetadataUpdatedEventArgs>? ArtistMetadataUpdated;
 
     #region Folder Management
 
@@ -35,35 +40,36 @@ public interface ILibraryService {
     #region Song Management
 
     Task<Song?> AddSongAsync(Song songData);
-    Task<Song?> AddSongWithDetailsAsync(
-        Guid folderId,
-        string filePath, string title, string trackArtistName, string? albumTitle, string? albumArtistName,
-        TimeSpan duration, string? songSpecificCoverArtUri, string? lightSwatchId, string? darkSwatchId,
-        int? releaseYear = null, IEnumerable<string>? genres = null,
-        int? trackNumber = null, int? discNumber = null, int? sampleRate = null, int? bitrate = null,
-        int? channels = null,
-        DateTime? fileCreatedDate = null, DateTime? fileModifiedDate = null);
+    Task<Song?> AddSongWithDetailsAsync(Guid folderId, SongFileMetadata metadata);
     Task<bool> RemoveSongAsync(Guid songId);
     Task<Song?> GetSongByIdAsync(Guid songId);
     Task<Song?> GetSongByFilePathAsync(string filePath);
-    Task<IEnumerable<Song>> GetAllSongsAsync(SongSortOrder sortOrder = SongSortOrder.TitleAsc);
     Task<IReadOnlyDictionary<Guid, Song>> GetSongsByIdsAsync(IEnumerable<Guid> songIds);
+    Task<bool> UpdateSongAsync(Song songToUpdate);
+    Task<IEnumerable<Song>> GetAllSongsAsync(SongSortOrder sortOrder = SongSortOrder.TitleAsc);
     Task<IEnumerable<Song>> GetSongsByAlbumIdAsync(Guid albumId);
     Task<IEnumerable<Song>> GetSongsByArtistIdAsync(Guid artistId);
     Task<IEnumerable<Song>> GetSongsByFolderIdAsync(Guid folderId);
     Task<IEnumerable<Song>> SearchSongsAsync(string searchTerm);
-    Task<bool> UpdateSongAsync(Song songToUpdate);
+
+    #endregion
+
+    #region Song Metadata Updates
+
+    Task<bool> SetSongRatingAsync(Guid songId, int? rating);
+    Task<bool> SetSongLovedStatusAsync(Guid songId, bool isLoved);
+    Task<bool> UpdateSongLyricsAsync(Guid songId, string? lyrics);
 
     #endregion
 
     #region Artist Management
 
-    Task<Artist?> GetArtistByIdAsync(Guid artistId);
     Task<Artist?> GetArtistDetailsAsync(Guid artistId, bool allowOnlineFetch);
+    Task StartArtistMetadataBackgroundFetchAsync();
+    Task<Artist?> GetArtistByIdAsync(Guid artistId);
     Task<Artist?> GetArtistByNameAsync(string name);
     Task<IEnumerable<Artist>> GetAllArtistsAsync();
     Task<IEnumerable<Artist>> SearchArtistsAsync(string searchTerm);
-    Task StartArtistMetadataBackgroundFetchAsync();
 
     #endregion
 
@@ -90,19 +96,34 @@ public interface ILibraryService {
 
     #endregion
 
+    #region Genre Management
+
+    Task<IEnumerable<Genre>> GetAllGenresAsync();
+    Task<IEnumerable<Song>> GetSongsByGenreIdAsync(Guid genreId);
+
+    #endregion
+
+    #region Listen History
+
+    Task LogListenAsync(Guid songId);
+    Task LogSkipAsync(Guid songId);
+    Task<int> GetListenCountForSongAsync(Guid songId);
+
+    #endregion
+
     #region Paged Loading
 
     Task<PagedResult<Song>> GetAllSongsPagedAsync(int pageNumber, int pageSize, SongSortOrder sortOrder = SongSortOrder.TitleAsc);
     Task<PagedResult<Song>> SearchSongsPagedAsync(string searchTerm, int pageNumber, int pageSize);
+    Task<PagedResult<Song>> GetSongsByAlbumIdPagedAsync(Guid albumId, int pageNumber, int pageSize, SongSortOrder sortOrder);
+    Task<PagedResult<Song>> GetSongsByArtistIdPagedAsync(Guid artistId, int pageNumber, int pageSize, SongSortOrder sortOrder);
+    Task<PagedResult<Song>> GetSongsByPlaylistPagedAsync(Guid playlistId, int pageNumber, int pageSize);
     Task<PagedResult<Artist>> GetAllArtistsPagedAsync(int pageNumber, int pageSize);
     Task<PagedResult<Artist>> SearchArtistsPagedAsync(string searchTerm, int pageNumber, int pageSize);
     Task<PagedResult<Album>> GetAllAlbumsPagedAsync(int pageNumber, int pageSize);
     Task<PagedResult<Album>> SearchAlbumsPagedAsync(string searchTerm, int pageNumber, int pageSize);
     Task<PagedResult<Playlist>> GetAllPlaylistsPagedAsync(int pageNumber, int pageSize);
-    Task<PagedResult<Song>> GetSongsByAlbumIdPagedAsync(Guid albumId, int pageNumber, int pageSize, SongSortOrder sortOrder = SongSortOrder.TitleAsc);
-    Task<PagedResult<Song>> GetSongsByArtistIdPagedAsync(Guid artistId, int pageNumber, int pageSize, SongSortOrder sortOrder = SongSortOrder.TitleAsc);
     Task<PagedResult<Song>> GetSongsByFolderIdPagedAsync(Guid folderId, int pageNumber, int pageSize, SongSortOrder sortOrder = SongSortOrder.TitleAsc);
-    Task<PagedResult<Song>> GetSongsByPlaylistPagedAsync(Guid playlistId, int pageNumber, int pageSize);
     Task<List<Guid>> GetAllSongIdsAsync(SongSortOrder sortOrder);
     Task<List<Guid>> GetAllSongIdsByFolderIdAsync(Guid folderId, SongSortOrder sortOrder);
     Task<List<Guid>> GetAllSongIdsByArtistIdAsync(Guid artistId, SongSortOrder sortOrder);
@@ -114,6 +135,17 @@ public interface ILibraryService {
     #region Data Reset
 
     Task ClearAllLibraryDataAsync();
+
+    #endregion
+
+    #region Scoped Search
+
+    Task<IEnumerable<Song>> SearchSongsInFolderAsync(Guid folderId, string searchTerm);
+    Task<IEnumerable<Song>> SearchSongsInAlbumAsync(Guid albumId, string searchTerm);
+    Task<IEnumerable<Song>> SearchSongsInArtistAsync(Guid artistId, string searchTerm);
+    Task<PagedResult<Song>> SearchSongsInFolderPagedAsync(Guid folderId, string searchTerm, int pageNumber, int pageSize);
+    Task<PagedResult<Song>> SearchSongsInAlbumPagedAsync(Guid albumId, string searchTerm, int pageNumber, int pageSize);
+    Task<PagedResult<Song>> SearchSongsInArtistPagedAsync(Guid artistId, string searchTerm, int pageNumber, int pageSize);
 
     #endregion
 }
