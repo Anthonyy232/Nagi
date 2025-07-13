@@ -65,6 +65,12 @@
                         <Grid.ContextFlyout>
                             <MenuFlyout>
                                 <MenuFlyoutItem
+                                    Command="{Binding DataContext.PlayFolderCommand, ElementName=FolderPageRoot}"
+                                    CommandParameter="{x:Bind Id}"
+                                    IsEnabled="{Binding DataContext.IsAnyOperationInProgress, ElementName=FolderPageRoot, Converter={StaticResource BooleanToInverseBooleanConverter}}"
+                                    Text="Play">
+                                </MenuFlyoutItem>
+                                <MenuFlyoutItem
                                     Command="{Binding DataContext.RescanFolderCommand, ElementName=FolderPageRoot}"
                                     CommandParameter="{x:Bind Id}"
                                     IsEnabled="{Binding DataContext.IsAnyOperationInProgress, ElementName=FolderPageRoot, Converter={StaticResource BooleanToInverseBooleanConverter}}"

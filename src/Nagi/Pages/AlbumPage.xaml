@@ -7,10 +7,10 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:Nagi.ViewModels"
+    x:Name="AlbumPageRoot"
     Background="Transparent"
     mc:Ignorable="d">
 
-    <!-- Page-level resources -->
     <Page.Resources>
         <ResourceDictionary>
             <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
@@ -18,6 +18,7 @@
             <converters:StringToUriConverter x:Key="StringToUriConverter" />
             <converters:NullOrEmptyStringToVisibilityConverter x:Key="NullToCollapsedConverter" />
             <converters:NullOrEmptyStringToVisibilityConverter x:Key="NullToVisibleConverter" Invert="True" />
+            <converters:BooleanToInverseBooleanConverter x:Key="BooleanToInverseBooleanConverter" />
         </ResourceDictionary>
     </Page.Resources>
 
@@ -56,6 +57,16 @@
                             Height="220"
                             Margin="8,16,8,16"
                             Background="Transparent">
+                            <Grid.ContextFlyout>
+                                <MenuFlyout>
+                                    <MenuFlyoutItem
+                                        Command="{Binding ViewModel.PlayAlbumCommand, ElementName=AlbumPageRoot}"
+                                        CommandParameter="{x:Bind Id}"
+                                        IsEnabled="{Binding ViewModel.IsLoading, ElementName=AlbumPageRoot, Converter={StaticResource BooleanToInverseBooleanConverter}}"
+                                        Text="Play">
+                                    </MenuFlyoutItem>
+                                </MenuFlyout>
+                            </Grid.ContextFlyout>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*" />
                                 <RowDefinition Height="Auto" />

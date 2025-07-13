@@ -33,12 +33,14 @@ public partial class AlbumViewModelItem : ObservableObject {
 /// </summary>
 public partial class AlbumViewModel : ObservableObject {
     private readonly ILibraryService _libraryService;
+    private readonly IMusicPlaybackService _musicPlaybackService;
     private int _currentPage = 1;
     private const int PageSize = 250;
     private bool _isFullyLoaded;
 
-    public AlbumViewModel(ILibraryService libraryService) {
+    public AlbumViewModel(ILibraryService libraryService, IMusicPlaybackService musicPlaybackService) {
         _libraryService = libraryService;
+        _musicPlaybackService = musicPlaybackService;
         Albums.CollectionChanged += (sender, args) => OnPropertyChanged(nameof(HasAlbums));
     }
 
@@ -55,6 +57,21 @@ public partial class AlbumViewModel : ObservableObject {
     private bool _hasLoadError;
 
     public bool HasAlbums => Albums.Any();
+
+    /// <summary>
+    /// Clears the current queue and starts playing all songs from the selected album.
+    /// </summary>
+    [RelayCommand]
+    private async Task PlayAlbumAsync(Guid albumId) {
+        if (IsLoading || albumId == Guid.Empty) return;
+
+        try {
+            await _musicPlaybackService.PlayAlbumAsync(albumId);
+        }
+        catch (Exception ex) {
+            Debug.WriteLine($"[AlbumViewModel] CRITICAL: Error playing album {albumId}: {ex.Message}");
+        }
+    }
 
     /// <summary>
     /// Asynchronously loads albums with support for cancellation.

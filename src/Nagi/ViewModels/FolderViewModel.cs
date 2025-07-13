@@ -54,11 +54,13 @@ public partial class FolderViewModelItem : ObservableObject {
 /// </summary>
 public partial class FolderViewModel : ObservableObject {
     private readonly ILibraryService _libraryService;
+    private readonly IMusicPlaybackService _musicPlaybackService;
     private readonly PlayerViewModel _playerViewModel;
 
-    public FolderViewModel(ILibraryService libraryService, PlayerViewModel playerViewModel) {
+    public FolderViewModel(ILibraryService libraryService, PlayerViewModel playerViewModel, IMusicPlaybackService musicPlaybackService) {
         _libraryService = libraryService;
         _playerViewModel = playerViewModel;
+        _musicPlaybackService = musicPlaybackService;
 
         //
         // Ensure the HasFolders property is updated whenever the collection changes.
@@ -92,6 +94,22 @@ public partial class FolderViewModel : ObservableObject {
     /// Gets a value indicating whether there are any folders in the library.
     /// </summary>
     public bool HasFolders => Folders.Any();
+
+    /// <summary>
+    /// Clears the current queue and starts playing all songs from the selected folder.
+    /// </summary>
+    [RelayCommand]
+    private async Task PlayFolderAsync(Guid folderId) {
+        if (IsAnyOperationInProgress || folderId == Guid.Empty) return;
+
+        try {
+            await _musicPlaybackService.PlayFolderAsync(folderId);
+        }
+        catch (Exception ex) {
+            _playerViewModel.GlobalOperationStatusMessage = "Error starting playback for this folder.";
+            Debug.WriteLine($"[FolderViewModel] CRITICAL: Error playing folder {folderId}: {ex.Message}");
+        }
+    }
 
     /// <summary>
     /// Asynchronously loads all folders from the database and updates the UI.
