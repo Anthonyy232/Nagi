@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Nagi/Services/Implementations/TagLibMetadataExtractor.cs
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -25,9 +27,6 @@ public class TagLibMetadataExtractor : IMetadataExtractor {
     }
 
     public Task<SongFileMetadata> ExtractMetadataAsync(string filePath) {
-        //
-        // Offload synchronous file I/O to a background thread to prevent blocking the caller.
-        // The lambda is marked async to allow awaiting the asynchronous image processing call.
         return Task.Run(async () => {
             var metadata = new SongFileMetadata { FilePath = filePath };
             try {
@@ -39,30 +38,40 @@ public class TagLibMetadataExtractor : IMetadataExtractor {
                 var tag = tagFile.Tag;
                 var props = tagFile.Properties;
 
+                var artist = tag.Performers.FirstOrDefault()?.Trim() ?? UnknownArtistName;
+                var albumArtist = tag.AlbumArtists.FirstOrDefault()?.Trim() ?? artist;
+
                 metadata.Title = string.IsNullOrWhiteSpace(tag.Title) ? metadata.Title : tag.Title.Trim();
-                metadata.Artist = tag.Performers.FirstOrDefault()?.Trim() ?? UnknownArtistName;
+                metadata.Artist = artist;
                 metadata.Album = tag.Album?.Trim() ?? UnknownAlbumName;
-                metadata.AlbumArtist = tag.AlbumArtists.FirstOrDefault()?.Trim() ?? metadata.Artist;
+                metadata.AlbumArtist = albumArtist;
                 metadata.Duration = props.Duration;
                 metadata.Year = tag.Year > 0 ? (int)tag.Year : null;
                 metadata.Genres =
                     tag.Genres?.Where(g => !string.IsNullOrWhiteSpace(g)).Select(g => g.Trim()).ToList() ??
                     new List<string>();
+
                 metadata.TrackNumber = tag.Track > 0 ? (int)tag.Track : null;
+                metadata.TrackCount = tag.TrackCount > 0 ? (int)tag.TrackCount : null;
                 metadata.DiscNumber = tag.Disc > 0 ? (int)tag.Disc : null;
+                metadata.DiscCount = tag.DiscCount > 0 ? (int)tag.DiscCount : null;
+
                 metadata.SampleRate = props.AudioSampleRate;
                 metadata.Bitrate = props.AudioBitrate;
                 metadata.Channels = props.AudioChannels;
+
+                metadata.Lyrics = tag.Lyrics;
+                metadata.Bpm = tag.BeatsPerMinute > 0 ? tag.BeatsPerMinute : null;
+                metadata.Composer = tag.Composers.FirstOrDefault()?.Trim();
+
                 picture = tag.Pictures.FirstOrDefault();
 
-                //
-                // After synchronous metadata is read, process the album art asynchronously.
                 if (picture?.Data?.Data != null) {
                     var albumTitle = metadata.Album ?? UnknownAlbumName;
-                    var artistName = metadata.AlbumArtist ?? UnknownArtistName;
+                    var artistNameForArt = metadata.AlbumArtist ?? UnknownArtistName;
 
                     (metadata.CoverArtUri, metadata.LightSwatchId, metadata.DarkSwatchId) =
-                        await _imageProcessor.SaveCoverArtAndExtractColorsAsync(picture.Data.Data, albumTitle, artistName);
+                        await _imageProcessor.SaveCoverArtAndExtractColorsAsync(picture.Data.Data, albumTitle, artistNameForArt);
                 }
 
                 var fileInfo = _fileSystem.GetFileInfo(filePath);
@@ -72,8 +81,6 @@ public class TagLibMetadataExtractor : IMetadataExtractor {
                 return metadata;
             }
             catch (Exception ex) {
-                //
-                // Log extraction failures but allow the process to continue with other files.
                 Debug.WriteLine(
                     $"[MetadataExtractor] Warning: Metadata extraction failed for '{filePath}'. Reason: {ex.GetType().Name} - {ex.Message}");
                 metadata.ExtractionFailed = true;
