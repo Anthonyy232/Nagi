@@ -1,31 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
 using Microsoft.Win32;
 using Nagi.Helpers;
 using Nagi.Models;
 using Nagi.Services.Abstractions;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.Storage;
 
 namespace Nagi.Services.Implementations;
 
 /// <summary>
-///     Manages application settings by persisting them to local storage.
-///     This implementation is suitable for both packaged and unpackaged applications.
+/// Manages application settings by persisting them to local storage.
+/// This implementation is suitable for both packaged and unpackaged applications.
 /// </summary>
 public class SettingsService : ISettingsService {
-    // --- Constants ---
     private const string AppName = "Nagi";
     private const string AutoLaunchRegistryValueName = AppName;
-    private const string StartupTaskId = "NagiAutolaunchStartup"; // Must match the ID in Package.appxmanifest
+    private const string StartupTaskId = "NagiAutolaunchStartup";
 
-    // --- Setting Keys ---
     private const string VolumeKey = "AppVolume";
     private const string MuteStateKey = "AppMuteState";
     private const string ShuffleStateKey = "MusicShuffleState";
@@ -38,37 +37,31 @@ public class SettingsService : ISettingsService {
     private const string HideToTrayEnabledKey = "HideToTrayEnabled";
     private const string ShowCoverArtInTrayFlyoutKey = "ShowCoverArtInTrayFlyout";
     private const string FetchOnlineMetadataKey = "FetchOnlineMetadataEnabled";
+    private const string NavigationItemsKey = "NavigationItems";
 
     private readonly PathConfiguration _pathConfig;
     private readonly bool _isPackaged;
+    private readonly ApplicationDataContainer? _localSettings;
     private Dictionary<string, object?> _settings;
-    private static readonly SemaphoreSlim _settingsFileLock = new(1, 1);
+    private readonly SemaphoreSlim _settingsFileLock = new(1, 1);
     private bool _isInitialized;
 
-    // --- Fields for Packaged App ---
-    private readonly ApplicationDataContainer? _localSettings;
-
-    // --- Common Fields ---
     private static readonly JsonSerializerOptions _serializerOptions = new() { WriteIndented = true };
 
     public event Action<bool>? PlayerAnimationSettingChanged;
     public event Action<bool>? HideToTraySettingChanged;
     public event Action<bool>? ShowCoverArtInTrayFlyoutSettingChanged;
+    public event Action? NavigationSettingsChanged;
 
     public SettingsService(PathConfiguration pathConfig) {
         _pathConfig = pathConfig ?? throw new ArgumentNullException(nameof(pathConfig));
         _isPackaged = pathConfig.IsPackaged;
-        _settings = new Dictionary<string, object?>();
+        _settings = new();
 
         if (_isPackaged) {
             _localSettings = ApplicationData.Current.LocalSettings;
         }
-        else {
-            _isInitialized = false;
-        }
     }
-
-    #region Core Helpers (GetValue, SetValue, etc.)
 
     private async Task EnsureUnpackagedSettingsLoadedAsync() {
         if (_isPackaged || _isInitialized) return;
@@ -77,7 +70,6 @@ public class SettingsService : ISettingsService {
         try {
             if (_isInitialized) return;
 
-            // Directory is now created by PathConfiguration, so we just check for the file.
             if (File.Exists(_pathConfig.SettingsFilePath)) {
                 var json = await File.ReadAllTextAsync(_pathConfig.SettingsFilePath);
                 _settings = JsonSerializer.Deserialize<Dictionary<string, object?>>(json) ?? new();
@@ -85,9 +77,10 @@ public class SettingsService : ISettingsService {
             _isInitialized = true;
         }
         catch (Exception ex) {
-            Debug.WriteLine($"[SettingsService] Failed to read/parse settings file. Creating new one. Error: {ex.Message}");
+            Debug.WriteLine($"[ERROR] SettingsService: Failed to read settings file. A new one will be created. Error: {ex.Message}");
             _settings = new Dictionary<string, object?>();
-            _isInitialized = true; // Mark as initialized even on failure to avoid retries.
+            // Mark as initialized even on failure to avoid retrying in a loop.
+            _isInitialized = true;
         }
         finally {
             _settingsFileLock.Release();
@@ -101,33 +94,75 @@ public class SettingsService : ISettingsService {
         else {
             if (_settings.TryGetValue(key, out var value) && value != null) {
                 try {
+                    // When deserializing into object, numbers can become JsonElement.
                     if (value is JsonElement element) return element.Deserialize<T>() ?? defaultValue;
                     return (T)Convert.ChangeType(value, typeof(T));
                 }
-                catch { return defaultValue; }
+                catch {
+                    return defaultValue;
+                }
             }
             return defaultValue;
         }
     }
 
-    private TEnum GetEnumValue<TEnum>(string key, TEnum defaultValue) where TEnum : struct, Enum {
+    private async Task<T?> GetComplexValueAsync<T>(string key) where T : class {
+        string? json = null;
+
         if (_isPackaged) {
-            return _localSettings!.Values.TryGetValue(key, out var value) && value is string name && Enum.TryParse(name, out TEnum result)
-                ? result
-                : defaultValue;
+            if (_localSettings!.Values.TryGetValue(key, out var value) && value is string jsonString) {
+                json = jsonString;
+            }
+        }
+        else {
+            await EnsureUnpackagedSettingsLoadedAsync();
+            if (_settings.TryGetValue(key, out var value) && value != null) {
+                json = (value as JsonElement?)?.GetRawText() ?? value as string;
+            }
+        }
+
+        if (json != null) {
+            try {
+                return JsonSerializer.Deserialize<T>(json);
+            }
+            catch {
+                return null;
+            }
+        }
+
+        return null;
+    }
+
+    private TEnum GetEnumValue<TEnum>(string key, TEnum defaultValue) where TEnum : struct, Enum {
+        string? name = null;
+
+        if (_isPackaged) {
+            if (_localSettings!.Values.TryGetValue(key, out var value) && value is string stringValue) {
+                name = stringValue;
+            }
         }
         else {
             if (_settings.TryGetValue(key, out var value) && value != null) {
-                var name = (value as JsonElement?)?.GetString() ?? value as string;
-                if (name != null && Enum.TryParse(name, out TEnum result)) return result;
+                name = (value as JsonElement?)?.GetString() ?? value as string;
             }
-            return defaultValue;
         }
+
+        if (name != null && Enum.TryParse(name, out TEnum result)) {
+            return result;
+        }
+
+        return defaultValue;
     }
 
     private async Task SetValueAsync<T>(string key, T value) {
         if (_isPackaged) {
-            _localSettings!.Values[key] = value;
+            // For complex types, serialize them before storing in LocalSettings.
+            if (typeof(T).IsClass && typeof(T) != typeof(string)) {
+                _localSettings!.Values[key] = JsonSerializer.Serialize(value, _serializerOptions);
+            }
+            else {
+                _localSettings!.Values[key] = value;
+            }
         }
         else {
             await EnsureUnpackagedSettingsLoadedAsync();
@@ -152,9 +187,15 @@ public class SettingsService : ISettingsService {
         await SetValueAsync(key, newValue);
     }
 
-    #endregion
-
-    #region Public API Implementation
+    private List<NavigationItemSetting> GetDefaultNavigationItems() => new()
+    {
+        new() { DisplayName = "Library", Tag = "library", IconGlyph = "\uE1D3", IsEnabled = true },
+        new() { DisplayName = "Folders", Tag = "folders", IconGlyph = "\uE8B7", IsEnabled = true },
+        new() { DisplayName = "Playlists", Tag = "playlists", IconGlyph = "\uE90B", IsEnabled = true },
+        new() { DisplayName = "Artists", Tag = "artists", IconGlyph = "\uE77B", IsEnabled = true },
+        new() { DisplayName = "Albums", Tag = "albums", IconGlyph = "\uE93C", IsEnabled = true },
+        new() { DisplayName = "Genres", Tag = "genres", IconGlyph = "\uE8EC", IsEnabled = true }
+    };
 
     public async Task ResetToDefaultsAsync() {
         if (_isPackaged) {
@@ -163,13 +204,14 @@ public class SettingsService : ISettingsService {
         else {
             await EnsureUnpackagedSettingsLoadedAsync();
             _settings.Clear();
-            if (File.Exists(_pathConfig.SettingsFilePath)) File.Delete(_pathConfig.SettingsFilePath);
+            if (File.Exists(_pathConfig.SettingsFilePath)) {
+                File.Delete(_pathConfig.SettingsFilePath);
+            }
         }
 
         await ClearPlaybackStateAsync();
         await SetAutoLaunchEnabledAsync(false);
 
-        // Set all settings to their default values
         await SetPlayerAnimationEnabledAsync(true);
         await SetHideToTrayEnabledAsync(true);
         await SetShowCoverArtInTrayFlyoutAsync(true);
@@ -178,12 +220,13 @@ public class SettingsService : ISettingsService {
         await SetDynamicThemingAsync(true);
         await SetRestorePlaybackStateEnabledAsync(true);
         await SetStartMinimizedEnabledAsync(false);
+        await SetNavigationItemsAsync(GetDefaultNavigationItems());
         await SaveVolumeAsync(0.5);
         await SaveMuteStateAsync(false);
         await SaveShuffleStateAsync(false);
         await SaveRepeatModeAsync(RepeatMode.Off);
 
-        Debug.WriteLine("[SettingsService] All application settings have been reset to their default values.");
+        Debug.WriteLine("[INFO] SettingsService: All application settings have been reset to their default values.");
     }
 
     public async Task<double> GetInitialVolumeAsync() {
@@ -247,12 +290,11 @@ public class SettingsService : ISettingsService {
             var startupTask = await StartupTask.GetAsync(StartupTaskId);
             return startupTask.State is StartupTaskState.Enabled;
         }
-        else {
-            return await Task.Run(() => {
-                using var key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", false);
-                return key?.GetValue(AutoLaunchRegistryValueName) != null;
-            });
-        }
+
+        return await Task.Run(() => {
+            using var key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", false);
+            return key?.GetValue(AutoLaunchRegistryValueName) != null;
+        });
     }
 
     public async Task SetAutoLaunchEnabledAsync(bool isEnabled) {
@@ -260,22 +302,26 @@ public class SettingsService : ISettingsService {
             var startupTask = await StartupTask.GetAsync(StartupTaskId);
             if (isEnabled) {
                 var state = await startupTask.RequestEnableAsync();
-                Debug.WriteLine($"[SettingsService] StartupTask enable request returned: {state}");
+                Debug.WriteLine($"[INFO] SettingsService: StartupTask enable request returned: {state}");
             }
             else {
                 startupTask.Disable();
-                Debug.WriteLine("[SettingsService] StartupTask disabled.");
+                Debug.WriteLine("[INFO] SettingsService: StartupTask disabled.");
             }
         }
         else {
             await Task.Run(() => {
                 using var key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
+                if (key is null) return;
+
                 if (isEnabled) {
                     var exePath = Environment.ProcessPath;
-                    if (!string.IsNullOrEmpty(exePath)) key!.SetValue(AutoLaunchRegistryValueName, $"\"{exePath}\"");
+                    if (!string.IsNullOrEmpty(exePath)) {
+                        key.SetValue(AutoLaunchRegistryValueName, $"\"{exePath}\"");
+                    }
                 }
                 else {
-                    key?.DeleteValue(AutoLaunchRegistryValueName, false);
+                    key.DeleteValue(AutoLaunchRegistryValueName, false);
                 }
             });
         }
@@ -309,6 +355,26 @@ public class SettingsService : ISettingsService {
 
     public Task SetFetchOnlineMetadataEnabledAsync(bool isEnabled) => SetValueAsync(FetchOnlineMetadataKey, isEnabled);
 
+    public async Task<List<NavigationItemSetting>> GetNavigationItemsAsync() {
+        var items = await GetComplexValueAsync<List<NavigationItemSetting>>(NavigationItemsKey);
+
+        // If settings exist, ensure all default items are present in case new items were added in an app update.
+        if (items != null) {
+            var defaultItems = GetDefaultNavigationItems();
+            var loadedTags = new HashSet<string>(items.Select(i => i.Tag));
+            var missingItems = defaultItems.Where(d => !loadedTags.Contains(d.Tag));
+            items.AddRange(missingItems);
+            return items;
+        }
+
+        return GetDefaultNavigationItems();
+    }
+
+    public async Task SetNavigationItemsAsync(List<NavigationItemSetting> items) {
+        await SetValueAsync(NavigationItemsKey, items);
+        NavigationSettingsChanged?.Invoke();
+    }
+
     public async Task SavePlaybackStateAsync(PlaybackState? state) {
         if (state == null) {
             await ClearPlaybackStateAsync();
@@ -333,7 +399,7 @@ public class SettingsService : ISettingsService {
             if (_isPackaged) {
                 var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(
                     Path.GetFileName(_pathConfig.PlaybackStateFilePath));
-                if (item is not null and IStorageFile stateFile) {
+                if (item is IStorageFile stateFile) {
                     jsonState = await FileIO.ReadTextAsync(stateFile);
                 }
             }
@@ -349,7 +415,7 @@ public class SettingsService : ISettingsService {
             return null;
         }
         catch (Exception ex) {
-            Debug.WriteLine($"[SettingsService] Error reading/deserializing PlaybackState: {ex.Message}");
+            Debug.WriteLine($"[ERROR] SettingsService: Error reading PlaybackState: {ex.Message}");
             await ClearPlaybackStateAsync();
             return null;
         }
@@ -360,16 +426,16 @@ public class SettingsService : ISettingsService {
             if (_isPackaged) {
                 var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(
                     Path.GetFileName(_pathConfig.PlaybackStateFilePath));
-                if (item != null) await item.DeleteAsync();
+                await item?.DeleteAsync();
             }
             else {
-                if (File.Exists(_pathConfig.PlaybackStateFilePath)) File.Delete(_pathConfig.PlaybackStateFilePath);
+                if (File.Exists(_pathConfig.PlaybackStateFilePath)) {
+                    File.Delete(_pathConfig.PlaybackStateFilePath);
+                }
             }
         }
         catch (Exception ex) {
-            Debug.WriteLine($"[SettingsService] Error clearing PlaybackState file: {ex.Message}");
+            Debug.WriteLine($"[ERROR] SettingsService: Error clearing PlaybackState file: {ex.Message}");
         }
     }
-
-    #endregion
 }
