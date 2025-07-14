@@ -284,6 +284,7 @@
                             <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
                         </controls:NavigationViewItem.Icon>
                     </controls:NavigationViewItem>
+                    <controls:NavigationViewItem Content="Genres" Icon="Bookmarks" Tag="genres" />
                 </controls:NavigationView.MenuItems>
 
                 <Grid>

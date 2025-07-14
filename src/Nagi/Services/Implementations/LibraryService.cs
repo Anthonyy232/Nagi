@@ -1472,6 +1472,33 @@ public class LibraryService : ILibraryService {
         };
     }
 
+        public async Task<PagedResult<Song>> GetSongsByGenreIdPagedAsync(Guid genreId, int pageNumber, int pageSize, SongSortOrder sortOrder) {
+        if (pageNumber < 1) pageNumber = 1;
+        if (pageSize < 1) pageSize = 1;
+
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        var query = context.Songs.AsNoTracking()
+            .Where(s => s.Genres.Any(g => g.Id == genreId))
+            .Include(s => s.Artist)
+            .Include(s => s.Album).ThenInclude(a => a!.Artist);
+
+        var totalCount = await query.CountAsync();
+        var sortedQuery = ApplySongSortOrder(query, sortOrder);
+
+        var pagedData = await sortedQuery
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .AsSplitQuery()
+            .ToListAsync();
+
+        return new PagedResult<Song> {
+            Items = pagedData,
+            TotalCount = totalCount,
+            PageNumber = pageNumber,
+            PageSize = pageSize
+        };
+    }
+
     public async Task<PagedResult<Song>> GetSongsByPlaylistPagedAsync(Guid playlistId, int pageNumber, int pageSize) {
         if (pageNumber < 1) pageNumber = 1;
         if (pageSize < 1) pageSize = 1;

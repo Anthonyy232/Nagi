@@ -1,0 +1,97 @@
+<!-- Nagi/Pages/GenrePage.xaml -->
+<Page
+    x:Class="Nagi.Pages.GenrePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="using:Nagi.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:Nagi.ViewModels"
+    x:Name="GenrePageRoot"
+    Background="Transparent"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <!-- Converters are defined as page resources for use with x:Bind compiled bindings. -->
+        <converters:GenreToGradientConverter x:Key="GenreToGradientConverter" />
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <converters:BooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" Invert="True" />
+    </Page.Resources>
+
+    <Grid Padding="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <TextBlock
+            Grid.Row="0"
+            Margin="0,0,0,28"
+            Style="{StaticResource GenrePageTitleTextStyle}"
+            Text="Genres" />
+
+        <ProgressRing
+            Grid.Row="1"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
+            Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+        <Grid Grid.Row="1" Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+            <GridView
+                IsItemClickEnabled="True"
+                ItemClick="GenresGridView_ItemClick"
+                ItemsSource="{x:Bind ViewModel.Genres, Mode=OneWay}"
+                SelectionMode="None"
+                Visibility="{x:Bind ViewModel.HasGenres, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}"
+                ItemContainerStyle="{StaticResource GenrePageGridViewItemStyle}">
+                <GridView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <ItemsWrapGrid ItemHeight="120" ItemWidth="240" Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </GridView.ItemsPanel>
+                <GridView.ItemTemplate>
+                    <DataTemplate x:DataType="vm:GenreViewModelItem">
+                        <!-- The background is bound to the genre name, producing a unique gradient for each. -->
+                        <Grid Padding="16" Background="{x:Bind Name, Converter={StaticResource GenreToGradientConverter}, Mode=OneWay}">
+                            <Grid.ContextFlyout>
+                                <MenuFlyout>
+                                    <MenuFlyoutItem
+                                        Command="{Binding ViewModel.PlayGenreCommand, ElementName=GenrePageRoot}"
+                                        CommandParameter="{x:Bind Id}"
+                                        Text="Play">
+                                        <MenuFlyoutItem.Icon>
+                                            <FontIcon Glyph="" />
+                                        </MenuFlyoutItem.Icon>
+                                    </MenuFlyoutItem>
+                                </MenuFlyout>
+                            </Grid.ContextFlyout>
+
+                            <StackPanel VerticalAlignment="Bottom">
+                                <TextBlock
+                                    FontSize="22"
+                                    FontWeight="Bold"
+                                    Foreground="White"
+                                    Text="{x:Bind Name, Mode=OneWay}"
+                                    TextTrimming="CharacterEllipsis" />
+                            </StackPanel>
+                        </Grid>
+                    </DataTemplate>
+                </GridView.ItemTemplate>
+            </GridView>
+
+            <!-- This panel is shown when the genre list is empty after loading. -->
+            <StackPanel
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Spacing="12"
+                Visibility="{x:Bind ViewModel.HasGenres, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}">
+                <FontIcon FontSize="48" Glyph="" />
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    Style="{ThemeResource SubtitleTextBlockStyle}"
+                    Text="No genres found" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Page>
