@@ -109,6 +109,12 @@
 		</None>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Page Update="Styles\AlbumPageColors.xaml">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </Page>
+	</ItemGroup>
+
 	<!-- The "Package and Publish" menu should only appear for packaged configurations -->
 	<PropertyGroup Condition="!$(Configuration.Contains('Unpackaged')) and '$(EnableMsixTooling)'=='true'">
 		<HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>

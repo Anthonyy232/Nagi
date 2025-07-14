@@ -28,7 +28,8 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider {
         { typeof(PlaylistSongViewPage), "playlists" },
         { typeof(FolderSongViewPage), "folders" },
         { typeof(ArtistViewPage), "artists" },
-        { typeof(AlbumViewPage), "albums" }
+        { typeof(AlbumViewPage), "albums" },
+        { typeof(GenreViewPage), "genres" }
     };
 
     // Maps navigation view item tags to their corresponding page types for navigation.
@@ -39,7 +40,8 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider {
         { "playlists", typeof(PlaylistPage) },
         { "settings", typeof(SettingsPage) },
         { "artists", typeof(ArtistPage) },
-        { "albums", typeof(AlbumPage) }
+        { "albums", typeof(AlbumPage) },
+        { "genres", typeof(GenrePage) }
     };
 
     private readonly ISettingsService _settingsService;

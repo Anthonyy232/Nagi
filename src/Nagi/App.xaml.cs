@@ -144,6 +144,8 @@ public partial class App : Application {
         services.AddTransient<ArtistViewViewModel>();
         services.AddTransient<AlbumViewViewModel>();
         services.AddTransient<AlbumViewModel>();
+        services.AddTransient<GenreViewModel>();
+        services.AddTransient<GenreViewViewModel>();
 
         return services.BuildServiceProvider();
     }
@@ -155,8 +157,6 @@ public partial class App : Application {
         try {
             var dbContextFactory = Services.GetRequiredService<IDbContextFactory<MusicDbContext>>();
             using var dbContext = dbContextFactory.CreateDbContext();
-            // This ensures the database is created based on the model but will not
-            // delete or modify an existing database.
             dbContext.Database.EnsureCreated();
         }
         catch (Exception ex) {
