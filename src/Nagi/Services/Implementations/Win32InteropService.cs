@@ -1,8 +1,12 @@
-﻿using Nagi.Services.Abstractions;
+﻿using Microsoft.UI.Xaml;
+using Nagi.Services.Abstractions;
 using System;
+using System.Diagnostics;
+using System.IO;
 using System.Runtime.InteropServices;
 using Windows.Foundation;
 using Windows.Graphics;
+using WinRT.Interop;
 
 namespace Nagi.Services.Implementations;
 
@@ -10,6 +14,27 @@ namespace Nagi.Services.Implementations;
 /// Implements IWin32InteropService by calling native Win32 APIs.
 /// </summary>
 public class Win32InteropService : IWin32InteropService {
+    public void SetWindowIcon(Window window, string iconPath) {
+        IntPtr hwnd = WindowNative.GetWindowHandle(window);
+        if (hwnd == IntPtr.Zero) return;
+
+        string fullIconPath = Path.Combine(AppContext.BaseDirectory, iconPath);
+        if (!File.Exists(fullIconPath)) {
+            Debug.WriteLine($"[Win32InteropService] Icon file not found: {fullIconPath}");
+            return;
+        }
+
+        IntPtr hIconBig = LoadImage_Private(IntPtr.Zero, fullIconPath, IMAGE_ICON, 0, 0, LR_LOADFROMFILE);
+        if (hIconBig != IntPtr.Zero) {
+            SendMessage_Private(hwnd, WM_SETICON, (IntPtr)ICON_BIG, hIconBig);
+        }
+
+        IntPtr hIconSmall = LoadImage_Private(IntPtr.Zero, fullIconPath, IMAGE_ICON, 16, 16, LR_LOADFROMFILE);
+        if (hIconSmall != IntPtr.Zero) {
+            SendMessage_Private(hwnd, WM_SETICON, (IntPtr)ICON_SMALL, hIconSmall);
+        }
+    }
+
     public Rect GetPrimaryWorkArea() {
         IntPtr rectPtr = Marshal.AllocHGlobal(Marshal.SizeOf<RECT>());
         try {
@@ -17,7 +42,6 @@ public class Win32InteropService : IWin32InteropService {
                 var rect = Marshal.PtrToStructure<RECT>(rectPtr);
                 return new Rect(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
             }
-            // Fallback to a common resolution if the API call fails.
             return new Rect(0, 0, 1920, 1080);
         }
         finally {
@@ -40,7 +64,6 @@ public class Win32InteropService : IWin32InteropService {
             return new Rect(workRect.left, workRect.top, workRect.right - workRect.left, workRect.bottom - workRect.top);
         }
 
-        // Fallback to primary work area if monitor info fails.
         return GetPrimaryWorkArea();
     }
 
@@ -56,6 +79,11 @@ public class Win32InteropService : IWin32InteropService {
 
     private const int SPI_GETWORKAREA = 0x0030;
     private const int MONITOR_DEFAULTTONEAREST = 0x00000002;
+    private const uint IMAGE_ICON = 1;
+    private const uint LR_LOADFROMFILE = 0x0010;
+    private const uint WM_SETICON = 0x0080;
+    private const int ICON_SMALL = 0;
+    private const int ICON_BIG = 1;
 
     [StructLayout(LayoutKind.Sequential)]
     private struct RECT { public int left; public int top; public int right; public int bottom; }
@@ -70,6 +98,12 @@ public class Win32InteropService : IWin32InteropService {
         public RECT rcWork = new();
         public int dwFlags = 0;
     }
+
+    [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto, EntryPoint = "LoadImage")]
+    private static extern IntPtr LoadImage_Private(IntPtr hinst, string lpszName, uint uType, int cxDesired, int cyDesired, uint fuLoad);
+
+    [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto, EntryPoint = "SendMessage")]
+    private static extern IntPtr SendMessage_Private(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
     [DllImport("kernel32.dll", EntryPoint = "GetCurrentThreadId")]
     private static extern uint GetCurrentThreadId_Private();

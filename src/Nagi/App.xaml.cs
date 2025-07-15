@@ -176,6 +176,14 @@ public partial class App : Application {
         MainDispatcherQueue = _window.DispatcherQueue;
         _window.Closed += OnWindowClosed;
 
+        try {
+            var interopService = Services.GetRequiredService<IWin32InteropService>();
+            interopService.SetWindowIcon(_window, "Assets/AppLogo.ico");
+        }
+        catch (Exception ex) {
+            Debug.WriteLine($"[App] Error: Failed to set window icon. {ex.Message}");
+        }
+
         TrySetMicaBackdrop();
         ReapplyCurrentDynamicTheme();
 

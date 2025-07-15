@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml;
+using System;
 using Windows.Foundation;
 using Windows.Graphics;
 
@@ -9,6 +10,13 @@ namespace Nagi.Services.Abstractions;
 /// This abstraction isolates platform-specific code and allows for easier testing.
 /// </summary>
 public interface IWin32InteropService {
+    /// <summary>
+    /// Sets the icon for a given WinUI 3 window, used in the title bar and Alt+Tab switcher.
+    /// </summary>
+    /// <param name="window">The window to set the icon for.</param>
+    /// <param name="iconPath">The relative path to the .ico file.</param>
+    void SetWindowIcon(Window window, string iconPath);
+
     /// <summary>
     /// Gets the work area of the primary display monitor, excluding the taskbar.
     /// </summary>
