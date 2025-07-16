@@ -426,7 +426,9 @@ public class SettingsService : ISettingsService {
             if (_isPackaged) {
                 var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(
                     Path.GetFileName(_pathConfig.PlaybackStateFilePath));
-                await item?.DeleteAsync();
+                if (item != null) {
+                    await item.DeleteAsync();
+                }
             }
             else {
                 if (File.Exists(_pathConfig.PlaybackStateFilePath)) {
