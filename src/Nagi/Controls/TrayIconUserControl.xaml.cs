@@ -15,7 +15,7 @@ public sealed partial class TrayIconUserControl : UserControl {
         InitializeComponent();
 
         // Retrieve the shared ViewModel instance from the application's service provider.
-        ViewModel = App.Services.GetRequiredService<TrayIconViewModel>();
+        ViewModel = App.Services!.GetRequiredService<TrayIconViewModel>();
 
         Loaded += OnLoaded;
     }

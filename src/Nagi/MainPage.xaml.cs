@@ -58,8 +58,8 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider {
     /// </summary>
     public MainPage() {
         InitializeComponent();
-        ViewModel = App.Services.GetRequiredService<PlayerViewModel>();
-        _settingsService = App.Services.GetRequiredService<ISettingsService>();
+        ViewModel = App.Services!.GetRequiredService<PlayerViewModel>();
+        _settingsService = App.Services!.GetRequiredService<ISettingsService>();
         DataContext = ViewModel;
 
         InitializeNavigationService();
@@ -84,7 +84,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider {
     public RowDefinition GetAppTitleBarRowElement() => AppTitleBarRow;
 
     private void InitializeNavigationService() {
-        var navigationService = App.Services.GetRequiredService<INavigationService>();
+        var navigationService = App.Services!.GetRequiredService<INavigationService>();
         navigationService.Initialize(ContentFrame);
     }
 

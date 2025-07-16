@@ -20,7 +20,7 @@ public sealed partial class FolderSongViewPage : Page {
 
     public FolderSongViewPage() {
         InitializeComponent();
-        ViewModel = App.Services.GetRequiredService<FolderSongListViewModel>();
+        ViewModel = App.Services!.GetRequiredService<FolderSongListViewModel>();
         DataContext = ViewModel;
     }
 

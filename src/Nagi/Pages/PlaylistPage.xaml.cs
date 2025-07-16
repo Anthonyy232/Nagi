@@ -20,7 +20,7 @@ public sealed partial class PlaylistPage : Page
     public PlaylistPage()
     {
         InitializeComponent();
-        ViewModel = App.Services.GetRequiredService<PlaylistViewModel>();
+        ViewModel = App.Services!.GetRequiredService<PlaylistViewModel>();
         DataContext = ViewModel;
     }
 

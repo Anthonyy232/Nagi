@@ -18,9 +18,16 @@ public partial class AlbumViewViewModel : SongListViewModelBase {
     private Guid _albumId;
     private int? _albumYear;
 
-    public AlbumViewViewModel(ILibraryReader libraryReader, IPlaylistService playlistService,
-        IMusicPlaybackService playbackService, INavigationService navigationService)
-        : base(libraryReader, playlistService, playbackService, navigationService) {
+    // FIX: Add IDispatcherService and IUIService to the constructor signature
+    public AlbumViewViewModel(
+        ILibraryReader libraryReader,
+        IPlaylistService playlistService,
+        IMusicPlaybackService playbackService,
+        INavigationService navigationService,
+        IDispatcherService dispatcherService,
+        IUIService uiService)
+        // FIX: Pass the new services to the base constructor
+        : base(libraryReader, playlistService, playbackService, navigationService, dispatcherService, uiService) {
         CurrentSortOrder = SongSortOrder.TrackNumberAsc;
         UpdateSortOrderButtonText(CurrentSortOrder);
     }

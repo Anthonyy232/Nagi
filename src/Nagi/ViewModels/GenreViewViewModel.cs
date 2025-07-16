@@ -21,8 +21,10 @@ public partial class GenreViewViewModel : SongListViewModelBase {
         ILibraryReader libraryReader,
         IPlaylistService playlistService,
         IMusicPlaybackService playbackService,
-        INavigationService navigationService)
-        : base(libraryReader, playlistService, playbackService, navigationService) {
+        INavigationService navigationService,
+        IDispatcherService dispatcherService,
+        IUIService uiService)
+        : base(libraryReader, playlistService, playbackService, navigationService, dispatcherService, uiService) {
         CurrentSortOrder = SongSortOrder.TitleAsc;
         UpdateSortOrderButtonText(CurrentSortOrder);
     }

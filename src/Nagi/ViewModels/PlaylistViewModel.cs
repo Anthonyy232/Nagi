@@ -136,7 +136,6 @@ public partial class PlaylistViewModel : ObservableObject {
         StatusMessage = "Creating new playlist...";
 
         try {
-            // BUG FIX: Use named arguments to ensure coverImageUri is passed to the correct parameter.
             var newPlaylist =
                 await _libraryService.CreatePlaylistAsync(playlistName.Trim(), coverImageUri: coverImageUri);
             if (newPlaylist != null) {

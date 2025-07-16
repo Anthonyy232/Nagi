@@ -17,7 +17,7 @@ public sealed partial class GenrePage : Page {
 
     public GenrePage() {
         InitializeComponent();
-        ViewModel = App.Services.GetRequiredService<GenreViewModel>();
+        ViewModel = App.Services!.GetRequiredService<GenreViewModel>();
     }
 
     /// <summary>

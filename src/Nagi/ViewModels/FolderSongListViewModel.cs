@@ -14,9 +14,14 @@ namespace Nagi.ViewModels;
 public partial class FolderSongListViewModel : SongListViewModelBase {
     private Guid? _folderId;
 
-    public FolderSongListViewModel(ILibraryReader libraryReader, IPlaylistService playlistService,
-        IMusicPlaybackService playbackService, INavigationService navigationService)
-        : base(libraryReader, playlistService, playbackService, navigationService) {
+    public FolderSongListViewModel(
+        ILibraryReader libraryReader,
+        IPlaylistService playlistService,
+        IMusicPlaybackService playbackService,
+        INavigationService navigationService,
+        IDispatcherService dispatcherService,
+        IUIService uiService)
+        : base(libraryReader, playlistService, playbackService, navigationService, dispatcherService, uiService) {
     }
 
     protected override bool IsPagingSupported => true;
