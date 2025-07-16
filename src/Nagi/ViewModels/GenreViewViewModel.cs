@@ -12,16 +12,17 @@ using System.Threading.Tasks;
 namespace Nagi.ViewModels;
 
 /// <summary>
-/// ViewModel for the genre details page, displaying all songs within a specific genre.
+/// Provides data and commands for the genre details page, displaying all songs within a specific genre.
 /// </summary>
 public partial class GenreViewViewModel : SongListViewModelBase {
     private Guid _genreId;
 
     public GenreViewViewModel(
-        ILibraryService libraryService,
+        ILibraryReader libraryReader,
+        IPlaylistService playlistService,
         IMusicPlaybackService playbackService,
         INavigationService navigationService)
-        : base(libraryService, playbackService, navigationService) {
+        : base(libraryReader, playlistService, playbackService, navigationService) {
         CurrentSortOrder = SongSortOrder.TitleAsc;
         UpdateSortOrderButtonText(CurrentSortOrder);
     }
@@ -32,7 +33,6 @@ public partial class GenreViewViewModel : SongListViewModelBase {
     protected override bool IsPagingSupported => true;
 
     protected override Task<IEnumerable<Song>> LoadSongsAsync() {
-        // This method is not used for paged views.
         return Task.FromResult(Enumerable.Empty<Song>());
     }
 
@@ -41,19 +41,20 @@ public partial class GenreViewViewModel : SongListViewModelBase {
             return new PagedResult<Song>();
         }
 
-        return await _libraryService.GetSongsByGenreIdPagedAsync(_genreId, pageNumber, pageSize, sortOrder);
+        return await _libraryReader.GetSongsByGenreIdPagedAsync(_genreId, pageNumber, pageSize, sortOrder);
     }
 
     protected override async Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder) {
         if (_genreId == Guid.Empty) {
             return new List<Guid>();
         }
-        return await _libraryService.GetAllSongIdsByGenreIdAsync(_genreId, sortOrder);
+        return await _libraryReader.GetAllSongIdsByGenreIdAsync(_genreId, sortOrder);
     }
 
     /// <summary>
-    /// Loads the details for a specific genre based on navigation parameters.
+    /// Loads the details and songs for a specific genre.
     /// </summary>
+    /// <param name="navParam">The navigation parameter containing the genre's ID and name.</param>
     [RelayCommand]
     public async Task LoadGenreDetailsAsync(GenreViewNavigationParameter? navParam) {
         if (IsOverallLoading || navParam is null) return;
@@ -66,8 +67,7 @@ public partial class GenreViewViewModel : SongListViewModelBase {
             await RefreshOrSortSongsCommand.ExecuteAsync(null);
         }
         catch (Exception ex) {
-            // Log the error and update the UI to inform the user.
-            Debug.WriteLine($"[ERROR] Failed to load genre details for GenreId: {navParam?.GenreId}. Exception: {ex}");
+            Debug.WriteLine($"[GenreViewViewModel] ERROR: Failed to load details for GenreId: {navParam?.GenreId}. {ex.Message}");
             GenreName = "Error Loading Genre";
             PageTitle = "Error";
             TotalItemsText = "Error";

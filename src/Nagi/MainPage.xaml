@@ -527,7 +527,7 @@
                     Height="10"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
-                    IsIndeterminate="False"
+                    IsIndeterminate="{Binding IsGlobalOperationIndeterminate, Mode=OneWay}"
                     Maximum="100"
                     Value="{Binding GlobalOperationProgressValue, Mode=OneWay}" />
                 <TextBlock

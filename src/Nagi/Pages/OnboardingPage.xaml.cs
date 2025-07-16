@@ -40,19 +40,16 @@ public sealed partial class OnboardingPage : Page, ICustomTitleBarProvider {
     }
 
     private void OnboardingPage_Loaded(object sender, RoutedEventArgs e) {
-        //
         // Trigger the entrance animation when the page is loaded.
         VisualStateManager.GoToState(this, "PageLoaded", true);
 
         ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 
-        //
         // Set the initial visual state based on the view model's current status.
         UpdateVisualState(ViewModel.IsAnyOperationInProgress);
     }
 
     private void OnboardingPage_Unloaded(object sender, RoutedEventArgs e) {
-        //
         // Unsubscribe from the event to prevent memory leaks when the page is unloaded.
         ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
     }
@@ -61,10 +58,8 @@ public sealed partial class OnboardingPage : Page, ICustomTitleBarProvider {
     /// Listens for ViewModel property changes to trigger UI state transitions.
     /// </summary>
     private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        //
-        // We only need to listen for this property to switch between Idle and Working states.
+        // Switch between Idle and Working states based on the view model's operation status.
         if (e.PropertyName == nameof(ViewModel.IsAnyOperationInProgress)) {
-            //
             // This needs to be run on the UI thread to safely update the UI.
             DispatcherQueue.TryEnqueue(() => {
                 UpdateVisualState(ViewModel.IsAnyOperationInProgress);

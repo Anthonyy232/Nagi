@@ -15,39 +15,46 @@ using Nagi.Services.Abstractions;
 namespace Nagi.ViewModels;
 
 /// <summary>
-/// A view model item representing an album in the artist's discography.
+/// Represents a single album in the artist's discography list.
 /// </summary>
 public partial class ArtistAlbumViewModelItem : ObservableObject {
+    public Guid Id { get; }
+    public string Name { get; }
+    public string? CoverArtUri { get; }
+    public string YearText { get; }
+
     public ArtistAlbumViewModelItem(Album album) {
         Id = album.Id;
         Name = album.Title;
         YearText = album.Year?.ToString() ?? string.Empty;
         CoverArtUri = album.CoverArtUri;
     }
-
-    public Guid Id { get; }
-    public string Name { get; }
-    public string? CoverArtUri { get; }
-    public string YearText { get; }
 }
 
 /// <summary>
-/// ViewModel for the artist details page, displaying biography, albums, and all songs by the artist.
+/// Provides data and commands for the artist details page, which displays an artist's
+/// biography, albums, and a complete list of their songs.
 /// </summary>
 public partial class ArtistViewViewModel : SongListViewModelBase {
     private readonly DispatcherQueue _dispatcherQueue;
     private readonly ISettingsService _settingsService;
+    private readonly ILibraryScanner _libraryScanner;
     private Guid _artistId;
 
-    public ArtistViewViewModel(ILibraryService libraryService, IMusicPlaybackService playbackService,
-        INavigationService navigationService, ISettingsService settingsService)
-        : base(libraryService, playbackService, navigationService) {
+    public ArtistViewViewModel(
+        ILibraryReader libraryReader,
+        IPlaylistService playlistService,
+        ILibraryScanner libraryScanner,
+        IMusicPlaybackService playbackService,
+        INavigationService navigationService,
+        ISettingsService settingsService)
+        : base(libraryReader, playlistService, playbackService, navigationService) {
         _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
         _settingsService = settingsService;
+        _libraryScanner = libraryScanner;
         CurrentSortOrder = SongSortOrder.AlbumAsc;
         UpdateSortOrderButtonText(CurrentSortOrder);
         Albums.CollectionChanged += (s, e) => OnPropertyChanged(nameof(HasAlbums));
-        _libraryService.ArtistMetadataUpdated += OnArtistMetadataUpdated;
     }
 
     [ObservableProperty]
@@ -77,26 +84,32 @@ public partial class ArtistViewViewModel : SongListViewModelBase {
 
     protected override async Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize, SongSortOrder sortOrder) {
         if (_artistId == Guid.Empty) return new PagedResult<Song>();
-        return await _libraryService.GetSongsByArtistIdPagedAsync(_artistId, pageNumber, pageSize, sortOrder);
+        return await _libraryReader.GetSongsByArtistIdPagedAsync(_artistId, pageNumber, pageSize, sortOrder);
     }
 
     protected override async Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder) {
         if (_artistId == Guid.Empty) return new List<Guid>();
-        return await _libraryService.GetAllSongIdsByArtistIdAsync(_artistId, sortOrder);
+        return await _libraryReader.GetAllSongIdsByArtistIdAsync(_artistId, sortOrder);
     }
 
     /// <summary>
-    /// Loads all details for a given artist, including metadata, albums, and their songs.
+    /// Loads the artist's details, including metadata, albums, and songs.
+    /// This method also manages event subscriptions for metadata updates.
     /// </summary>
-    /// <param name="artistId">The ID of the artist to load.</param>
+    /// <param name="artistId">The unique identifier of the artist to load.</param>
     [RelayCommand]
     public async Task LoadArtistDetailsAsync(Guid artistId) {
         if (IsOverallLoading) return;
 
+        // Ensure event handlers are correctly wired for the current artist
+        // to receive live updates, e.g., for newly downloaded cover art.
+        _libraryScanner.ArtistMetadataUpdated -= OnArtistMetadataUpdated;
+        _libraryScanner.ArtistMetadataUpdated += OnArtistMetadataUpdated;
+
         try {
             _artistId = artistId;
             var shouldFetchOnline = await _settingsService.GetFetchOnlineMetadataEnabledAsync();
-            var artist = await _libraryService.GetArtistDetailsAsync(artistId, shouldFetchOnline);
+            var artist = await _libraryScanner.GetArtistDetailsAsync(artistId, shouldFetchOnline);
 
             if (artist != null) {
                 PopulateArtistDetails(artist);
@@ -133,7 +146,7 @@ public partial class ArtistViewViewModel : SongListViewModelBase {
     }
 
     private void HandleArtistNotFound(Guid artistId) {
-        Debug.WriteLine($"[ArtistViewViewModel] Artist with ID '{artistId}' not found.");
+        Debug.WriteLine($"[ArtistViewViewModel] INFO: Artist with ID '{artistId}' not found.");
         ArtistName = "Artist Not Found";
         PageTitle = "Not Found";
         ArtistBio = string.Empty;
@@ -144,7 +157,7 @@ public partial class ArtistViewViewModel : SongListViewModelBase {
     }
 
     private void HandleLoadError(Guid artistId, Exception ex) {
-        Debug.WriteLine($"[ERROR] Error loading artist with ID '{artistId}': {ex.Message}");
+        Debug.WriteLine($"[ArtistViewViewModel] ERROR: Failed to load artist with ID '{artistId}'. {ex.Message}");
         ArtistName = "Error Loading Artist";
         PageTitle = "Error";
         ArtistBio = "Could not load artist details.";
@@ -155,9 +168,9 @@ public partial class ArtistViewViewModel : SongListViewModelBase {
     }
 
     /// <summary>
-    /// Navigates to the selected album's page.
+    /// Navigates to the selected album's details page.
     /// </summary>
-    /// <param name="albumId">The ID of the album to view.</param>
+    /// <param name="albumId">The unique identifier of the album to view.</param>
     [RelayCommand(CanExecute = nameof(CanExecuteLoadCommands))]
     private void ViewAlbum(Guid albumId) {
         if (albumId == Guid.Empty) return;
@@ -171,7 +184,8 @@ public partial class ArtistViewViewModel : SongListViewModelBase {
     }
 
     /// <summary>
-    /// Handles the event fired when artist metadata (like the image) is updated.
+    /// Handles the <see cref="ILibraryScanner.ArtistMetadataUpdated"/> event to refresh
+    /// UI elements like the artist's image when new metadata is available.
     /// </summary>
     private void OnArtistMetadataUpdated(object? sender, ArtistMetadataUpdatedEventArgs e) {
         if (e.ArtistId == _artistId) {
@@ -180,10 +194,10 @@ public partial class ArtistViewViewModel : SongListViewModelBase {
     }
 
     /// <summary>
-    /// Cleans up resources, unsubscribing from events.
+    /// Cleans up resources by unsubscribing from library events to prevent memory leaks.
     /// </summary>
     public override void Cleanup() {
         base.Cleanup();
-        _libraryService.ArtistMetadataUpdated -= OnArtistMetadataUpdated;
+        _libraryScanner.ArtistMetadataUpdated -= OnArtistMetadataUpdated;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -12,108 +13,108 @@ using Nagi.Services.Data;
 namespace Nagi.Services;
 
 /// <summary>
-///     A service for fetching artist information from the Last.fm API.
+/// A service for fetching artist information from the Last.fm API.
 /// </summary>
-public class LastFmService : ILastFmService
-{
+public class LastFmService : ILastFmService {
     private const string LastFmApiBaseUrl = "https://ws.audioscrobbler.com/2.0/";
-    private const string GetInfoMethod = "artist.getinfo";
-    private const string ImageSizeExtraLarge = "extralarge";
-    private const string ImageSizeLarge = "large";
     private const int MaxRetries = 1;
     private const int InvalidApiKeyErrorCode = 10;
     private const string ApiKeyName = "lastfm";
-    private static readonly JsonSerializerOptions _jsonOptions = new() { PropertyNameCaseInsensitive = true };
-    private readonly IApiKeyService _apiKeyService;
 
+    private static readonly JsonSerializerOptions _jsonOptions = new() { PropertyNameCaseInsensitive = true };
+
+    private readonly IApiKeyService _apiKeyService;
     private readonly HttpClient _httpClient;
 
-    public LastFmService(IHttpClientFactory httpClientFactory, IApiKeyService apiKeyService)
-    {
+    public LastFmService(IHttpClientFactory httpClientFactory, IApiKeyService apiKeyService) {
         _httpClient = httpClientFactory.CreateClient();
         _apiKeyService = apiKeyService;
     }
 
-    public async Task<ArtistInfo?> GetArtistInfoAsync(string artistName, CancellationToken cancellationToken = default)
-    {
+    /// <inheritdoc />
+    public async Task<ArtistInfo?> GetArtistInfoAsync(string artistName, CancellationToken cancellationToken = default) {
         var apiKey = await _apiKeyService.GetApiKeyAsync(ApiKeyName, cancellationToken);
-        if (string.IsNullOrEmpty(apiKey))
-        {
-            Debug.WriteLine($"Cannot get artist info; API key '{ApiKeyName}' is unavailable.");
+        if (string.IsNullOrEmpty(apiKey)) {
+            Debug.WriteLine($"[LastFmService] Cannot get artist info; API key '{ApiKeyName}' is unavailable.");
             return null;
         }
 
-        for (var attempt = 0; attempt <= MaxRetries; attempt++)
-        {
+        for (var attempt = 0; attempt <= MaxRetries; attempt++) {
             cancellationToken.ThrowIfCancellationRequested();
 
-            try
-            {
-                var requestUrl =
-                    $"{LastFmApiBaseUrl}?method={GetInfoMethod}&artist={Uri.EscapeDataString(artistName)}&api_key={apiKey}&format=json";
+            var requestUrl = BuildRequestUrl(artistName, apiKey);
+            try {
                 using var response = await _httpClient.GetAsync(requestUrl, cancellationToken);
 
+                // Use a seekable stream for potential re-reads (e.g., for error parsing).
                 await using var memoryStream = new MemoryStream();
                 await response.Content.CopyToAsync(memoryStream, cancellationToken);
                 memoryStream.Position = 0;
 
-                if (response.IsSuccessStatusCode)
-                {
-                    var lastFmResponse =
-                        await JsonSerializer.DeserializeAsync<LastFmArtistResponse>(memoryStream, _jsonOptions,
-                            cancellationToken);
-                    if (lastFmResponse?.Artist == null) return null;
-                    return ProcessApiResponse(lastFmResponse.Artist);
+                if (response.IsSuccessStatusCode) {
+                    var lastFmResponse = await JsonSerializer.DeserializeAsync<LastFmArtistResponse>(memoryStream, _jsonOptions, cancellationToken);
+                    return lastFmResponse?.Artist != null ? ToArtistInfo(lastFmResponse.Artist) : null;
                 }
 
-                var errorResponse =
-                    await JsonSerializer.DeserializeAsync<LastFmErrorResponse>(memoryStream, _jsonOptions,
-                        cancellationToken);
-
-                if (errorResponse?.ErrorCode == InvalidApiKeyErrorCode && attempt < MaxRetries)
-                {
-                    Debug.WriteLine($"Invalid Last.fm API key detected. Refreshing key '{ApiKeyName}' and retrying.");
+                // If the request failed, attempt to parse an error response.
+                var errorResponse = await JsonSerializer.DeserializeAsync<LastFmErrorResponse>(memoryStream, _jsonOptions, cancellationToken);
+                if (errorResponse?.ErrorCode == InvalidApiKeyErrorCode && attempt < MaxRetries) {
+                    Debug.WriteLine($"[LastFmService] Invalid Last.fm API key. Refreshing and retrying.");
                     apiKey = await _apiKeyService.RefreshApiKeyAsync(ApiKeyName, cancellationToken);
-                    if (string.IsNullOrEmpty(apiKey))
-                    {
-                        Debug.WriteLine($"Failed to refresh API key '{ApiKeyName}'. Aborting.");
-                        return null;
-                    }
-
-                    continue;
+                    if (string.IsNullOrEmpty(apiKey)) return null; // Abort if refresh fails.
+                    continue; // Retry with the new key.
                 }
 
-                Debug.WriteLine(
-                    $"Last.fm API call for '{artistName}' failed. Status: {response.StatusCode}, Error: {errorResponse?.Message ?? "Unknown"}");
+                Debug.WriteLine($"[LastFmService] API call for '{artistName}' failed. Status: {response.StatusCode}, Error: {errorResponse?.Message ?? "Unknown"}");
                 return null;
             }
-            catch (JsonException ex)
-            {
-                Debug.WriteLine($"Failed to deserialize Last.fm response for '{artistName}': {ex.Message}");
-                return null;
+            catch (JsonException ex) {
+                Debug.WriteLine($"[LastFmService] Failed to deserialize Last.fm response for '{artistName}': {ex.Message}");
+                return null; // A deserialization error is not recoverable.
             }
         }
 
         return null;
     }
 
-    private ArtistInfo ProcessApiResponse(LastFmArtist artist)
-    {
-        var bio = artist.Bio?.Summary ?? string.Empty;
-        var linkIndex = bio.IndexOf("<a href=\"https://www.last.fm", StringComparison.Ordinal);
-        if (linkIndex > 0) bio = bio.Substring(0, linkIndex).Trim();
-        if (string.IsNullOrWhiteSpace(bio)) bio = "No biography available for this artist.";
+    /// <summary>
+    /// Builds the fully-qualified URL for the artist.getinfo API method.
+    /// </summary>
+    private static string BuildRequestUrl(string artistName, string apiKey) {
+        return $"{LastFmApiBaseUrl}?method=artist.getinfo&artist={Uri.EscapeDataString(artistName)}&api_key={apiKey}&format=json";
+    }
 
-        var imageUrl = artist.Image?.FirstOrDefault(i => i.Size == ImageSizeExtraLarge && !string.IsNullOrEmpty(i.Url))
-                           ?.Url
-                       ?? artist.Image?.FirstOrDefault(i => i.Size == ImageSizeLarge && !string.IsNullOrEmpty(i.Url))
-                           ?.Url
-                       ?? artist.Image?.LastOrDefault(i => !string.IsNullOrEmpty(i.Url))?.Url;
-
-        return new ArtistInfo
-        {
-            Biography = bio,
-            ImageUrl = imageUrl
+    /// <summary>
+    /// Maps the raw Last.fm API artist data to the application's ArtistInfo model.
+    /// </summary>
+    private static ArtistInfo ToArtistInfo(LastFmArtist artist) {
+        return new ArtistInfo {
+            Biography = SanitizeBiography(artist.Bio?.Summary),
+            ImageUrl = SelectBestImageUrl(artist.Image)
         };
+    }
+
+    /// <summary>
+    /// Cleans the biography text, removing the "Read more on Last.fm" link.
+    /// </summary>
+    private static string SanitizeBiography(string? rawBio) {
+        if (string.IsNullOrWhiteSpace(rawBio)) {
+            return "No biography available for this artist.";
+        }
+
+        var linkIndex = rawBio.IndexOf("<a href=\"https://www.last.fm", StringComparison.Ordinal);
+        return linkIndex > 0 ? rawBio.Substring(0, linkIndex).Trim() : rawBio;
+    }
+
+    /// <summary>
+    /// Selects the best available image URL from the list, preferring larger sizes.
+    /// </summary>
+    private static string? SelectBestImageUrl(IEnumerable<LastFmImage>? images) {
+        if (images == null) return null;
+
+        var imageList = images.ToList();
+        return imageList.FirstOrDefault(i => i.Size == "extralarge" && !string.IsNullOrEmpty(i.Url))?.Url
+            ?? imageList.FirstOrDefault(i => i.Size == "large" && !string.IsNullOrEmpty(i.Url))?.Url
+            ?? imageList.LastOrDefault(i => !string.IsNullOrEmpty(i.Url))?.Url;
     }
 }

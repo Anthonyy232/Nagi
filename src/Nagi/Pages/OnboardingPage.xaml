@@ -5,8 +5,13 @@
     xmlns:controls="using:Microsoft.UI.Xaml.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="using:Nagi.Converters"
     mc:Ignorable="d"
     Background="Transparent">
+
+    <Page.Resources>
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </Page.Resources>
 
     <Grid x:Name="RootGrid" Opacity="0">
         <Grid.RowDefinitions>
@@ -212,7 +217,7 @@
                         HorizontalAlignment="Center"
                         Foreground="{ThemeResource TextFillColorSecondary}"
                         Style="{ThemeResource BodyTextBlockStyle}"
-                        Text="{Binding StatusMessage}"
+                        Text="{Binding StatusMessage, Mode=OneWay}"
                         TextAlignment="Center"
                         TextWrapping="Wrap" />
 
@@ -301,11 +306,24 @@
                                     <TranslateTransform />
                                 </TransformGroup>
                             </StackPanel.RenderTransform>
+
                             <ProgressRing
                                 Width="48"
                                 Height="48"
                                 Foreground="{StaticResource AppPrimaryColorBrush}"
-                                IsActive="{Binding IsAnyOperationInProgress}" />
+                                IsActive="True"
+                                Visibility="{Binding IsAddingFolder, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                            <ProgressBar
+                                Width="300"
+                                Height="6"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Foreground="{StaticResource AppPrimaryColorBrush}"
+                                IsIndeterminate="{Binding IsProgressIndeterminate, Mode=OneWay}"
+                                Maximum="100"
+                                Value="{Binding ProgressValue, Mode=OneWay}"
+                                Visibility="{Binding IsParsing, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                         </StackPanel>
                     </Grid>
                 </Grid>

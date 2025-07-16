@@ -12,6 +12,11 @@ namespace Nagi.Pages;
 /// A page for displaying the list of songs within a specific playlist.
 /// </summary>
 public sealed partial class PlaylistSongViewPage : Page {
+    /// <summary>
+    /// Gets the view model associated with this page.
+    /// </summary>
+    public PlaylistSongListViewModel ViewModel { get; }
+
     public PlaylistSongViewPage() {
         InitializeComponent();
         ViewModel = App.Services.GetRequiredService<PlaylistSongListViewModel>();
@@ -19,27 +24,31 @@ public sealed partial class PlaylistSongViewPage : Page {
     }
 
     /// <summary>
-    /// Gets the ViewModel for this page.
-    /// </summary>
-    public PlaylistSongListViewModel ViewModel { get; }
-
-    /// <summary>
-    /// Initializes the ViewModel with navigation parameters when the page is navigated to.
+    /// Initializes the view model with navigation parameters when the page is navigated to.
     /// </summary>
     protected override async void OnNavigatedTo(NavigationEventArgs e) {
         base.OnNavigatedTo(e);
+
         if (e.Parameter is PlaylistSongViewNavigationParameter navParam) {
             await ViewModel.InitializeAsync(navParam.Title, navParam.PlaylistId);
         }
         else {
-            // Fallback if navigation parameter is missing or incorrect.
-            Debug.WriteLine("[WARNING] PlaylistSongViewPage: OnNavigatedTo received invalid or missing navigation parameter.");
+            // Log a warning and initialize with a fallback state if navigation parameters are invalid.
+            Debug.WriteLine($"[WARNING] {nameof(PlaylistSongViewPage)}: Received invalid navigation parameter. Type: {e.Parameter?.GetType().Name ?? "null"}");
             await ViewModel.InitializeAsync("Unknown Playlist", null);
         }
     }
 
     /// <summary>
-    /// Handles the SelectionChanged event of the song list to update the ViewModel's selected items.
+    /// Cleans up resources when the user navigates away from this page.
+    /// </summary>
+    protected override void OnNavigatedFrom(NavigationEventArgs e) {
+        base.OnNavigatedFrom(e);
+        ViewModel.Cleanup();
+    }
+
+    /// <summary>
+    /// Updates the view model with the current selection from the song list.
     /// </summary>
     private void SongsListView_SelectionChanged(object sender, SelectionChangedEventArgs e) {
         if (sender is ListView listView) {
@@ -49,14 +58,12 @@ public sealed partial class PlaylistSongViewPage : Page {
 
     /// <summary>
     /// Ensures the right-clicked song is selected before its context menu is opened.
-    /// This provides a better user experience by making the context menu operate on the
-    /// item under the cursor, rather than the previously selected items.
     /// </summary>
     private void SongItemMenuFlyout_Opening(object sender, object e) {
-        if (sender is not MenuFlyout menuFlyout || menuFlyout.Target?.DataContext is not Song rightClickedSong) return;
+        if (sender is not MenuFlyout { Target.DataContext: Song rightClickedSong }) return;
 
-        // If the item being right-clicked is not already in the selection,
-        // clear the current selection and select only the right-clicked item.
+        // For a more intuitive user experience, if the right-clicked item is not already selected,
+        // this clears the previous selection and selects only the right-clicked item.
         if (!SongsListView.SelectedItems.Contains(rightClickedSong)) {
             SongsListView.SelectedItem = rightClickedSong;
         }

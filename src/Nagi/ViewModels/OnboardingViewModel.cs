@@ -20,9 +20,6 @@ public partial class OnboardingViewModel : ObservableObject {
     /// </summary>
     private const string InitialWelcomeMessage = "Let's set up your music library to get started.";
 
-    /// <summary>
-    /// Service for managing the music library.
-    /// </summary>
     private readonly ILibraryService _libraryService;
 
     /// <summary>
@@ -34,24 +31,37 @@ public partial class OnboardingViewModel : ObservableObject {
     }
 
     /// <summary>
-    /// Gets or sets a value indicating whether a folder selection operation is in progress.
+    /// Gets or sets a value indicating whether the application is waiting for the user
+    /// to select a folder.
     /// </summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsAnyOperationInProgress))]
-    public partial bool IsAddingFolder { get; set; }
+    private bool _isAddingFolder;
 
     /// <summary>
-    /// Gets or sets a value indicating whether a music parsing/scanning operation is in progress.
+    /// Gets or sets a value indicating whether a music parsing or scanning operation is in progress.
     /// </summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsAnyOperationInProgress))]
-    public partial bool IsParsing { get; set; }
+    private bool _isParsing;
 
     /// <summary>
     /// Gets or sets the current status message displayed to the user.
     /// </summary>
     [ObservableProperty]
-    public partial string StatusMessage { get; set; } = InitialWelcomeMessage;
+    private string _statusMessage = InitialWelcomeMessage;
+
+    /// <summary>
+    /// Gets or sets the progress value (0-100) for the current scanning operation.
+    /// </summary>
+    [ObservableProperty]
+    private double _progressValue;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the current progress is indeterminate.
+    /// </summary>
+    [ObservableProperty]
+    private bool _isProgressIndeterminate;
 
     /// <summary>
     /// Gets a value indicating whether any background operation (folder selection or parsing) is currently active.
@@ -75,67 +85,52 @@ public partial class OnboardingViewModel : ObservableObject {
         try {
             var folderPicker = new FolderPicker();
 
-            // Ensure the application window is available for the folder picker to initialize.
+            // The window handle is required for the folder picker to be parented correctly.
             if (App.RootWindow == null) {
                 StatusMessage = "Application window not found. Cannot open folder picker.";
+                // Critical logging for a state that should not happen in a running app.
+                Debug.WriteLine("[OnboardingViewModel] App.RootWindow is null. Cannot show FolderPicker.");
                 return;
             }
 
             IntPtr hwnd = WindowNative.GetWindowHandle(App.RootWindow);
-            if (hwnd == IntPtr.Zero) {
-                StatusMessage = "Application window is not ready. Please try again.";
-                return;
-            }
-
-            // Initialize the folder picker with the application window handle.
             InitializeWithWindow.Initialize(folderPicker, hwnd);
             folderPicker.FileTypeFilter.Add("*");
 
-            // Show the folder picker and wait for user selection.
             var selectedFolder = await folderPicker.PickSingleFolderAsync();
 
             if (selectedFolder != null) {
                 IsAddingFolder = false;
                 IsParsing = true;
                 StatusMessage = "Building your library...";
+                IsProgressIndeterminate = true;
 
-                // Setup a progress reporter to update the UI during the scan.
                 var progressReporter = new Progress<ScanProgress>(progress => {
-                    if (progress.Percentage >= 100) {
-                        StatusMessage = $"Added {progress.NewSongsFound:N0} songs. Welcome!";
-                    }
-                    else if (progress.NewSongsFound == 0) {
-                        StatusMessage = "Scanning your music collection...";
-                    }
-                    else if (progress.NewSongsFound == 1) {
-                        StatusMessage = "Found 1 new song...";
-                    }
-                    else {
-                        StatusMessage = $"Found {progress.NewSongsFound:N0} new songs...";
-                    }
+                    StatusMessage = progress.StatusText;
+                    ProgressValue = progress.Percentage;
+                    IsProgressIndeterminate = progress.IsIndeterminate;
                 });
 
-                // Start the music library scan with the selected folder.
                 await _libraryService.ScanFolderForMusicAsync(selectedFolder.Path, progressReporter);
 
-                IsParsing = false;
-                // Navigate to the main application content after a successful scan.
+                // After the first successful scan, navigate to the main application content.
                 App.CurrentApp?.CheckAndNavigateToMainContent();
             }
             else {
-                // User cancelled the folder picker, reset status.
+                // User cancelled the folder picker.
                 StatusMessage = InitialWelcomeMessage;
             }
         }
         catch (Exception ex) {
             StatusMessage = "An unexpected error occurred. Please try again.";
-            // Log critical errors for debugging purposes.
             Debug.WriteLine($"[OnboardingViewModel] Critical error during AddFolder: {ex.Message}");
         }
         finally {
-            // Ensure all operation flags are reset regardless of success or failure.
+            // Ensure all operation flags are reset regardless of outcome.
             IsAddingFolder = false;
             IsParsing = false;
+            ProgressValue = 0;
+            IsProgressIndeterminate = false;
         }
     }
 }
