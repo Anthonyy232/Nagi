@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Net.Http;
 using System.Threading;
@@ -10,70 +10,52 @@ using Nagi.Services.Abstractions;
 namespace Nagi.Services;
 
 /// <summary>
-///     Manages the retrieval and caching of API keys from a secure server endpoint. This service is thread-safe.
+/// Manages the retrieval and caching of API keys from a secure server endpoint.
+/// This implementation is thread-safe using a ConcurrentDictionary.
 /// </summary>
-public class ApiKeyService : IApiKeyService
-{
-    private readonly Dictionary<string, string?> _cachedApiKeys = new();
+public class ApiKeyService : IApiKeyService {
+    private readonly ConcurrentDictionary<string, Lazy<Task<string?>>> _cachedApiKeys = new();
     private readonly IConfiguration _configuration;
     private readonly HttpClient _httpClient;
-    private readonly SemaphoreSlim _semaphore = new(1, 1);
 
-    public ApiKeyService(IHttpClientFactory httpClientFactory, IConfiguration configuration)
-    {
+    public ApiKeyService(IHttpClientFactory httpClientFactory, IConfiguration configuration) {
         _httpClient = httpClientFactory.CreateClient();
         _configuration = configuration;
     }
 
-    public async Task<string?> GetApiKeyAsync(string keyName, CancellationToken cancellationToken = default)
-    {
-        if (_cachedApiKeys.TryGetValue(keyName, out var cachedKey) && !string.IsNullOrEmpty(cachedKey))
-            return cachedKey;
+    /// <inheritdoc />
+    public Task<string?> GetApiKeyAsync(string keyName, CancellationToken cancellationToken = default) {
+        // GetOrAdd ensures the factory function is only ever executed once for a given key,
+        // even under concurrent access. The Lazy<T> wrapper handles the caching of the task result.
+        var lazyTask = _cachedApiKeys.GetOrAdd(keyName,
+            _ => new Lazy<Task<string?>>(() => FetchKeyFromServerAsync(keyName, cancellationToken)));
 
-        await _semaphore.WaitAsync(cancellationToken);
-        try
-        {
-            if (_cachedApiKeys.TryGetValue(keyName, out cachedKey) && !string.IsNullOrEmpty(cachedKey))
-                return cachedKey;
-
-            return await FetchAndCacheKeyAsync(keyName, cancellationToken);
-        }
-        finally
-        {
-            _semaphore.Release();
-        }
+        return lazyTask.Value;
     }
 
-    public async Task<string?> RefreshApiKeyAsync(string keyName, CancellationToken cancellationToken = default)
-    {
-        await _semaphore.WaitAsync(cancellationToken);
-        try
-        {
-            _cachedApiKeys.Remove(keyName);
-            return await FetchAndCacheKeyAsync(keyName, cancellationToken);
-        }
-        finally
-        {
-            _semaphore.Release();
-        }
+    /// <inheritdoc />
+    public async Task<string?> RefreshApiKeyAsync(string keyName, CancellationToken cancellationToken = default) {
+        // Invalidate the cached entry. The next call to GetApiKeyAsync will trigger a new fetch.
+        _cachedApiKeys.TryRemove(keyName, out _);
+        return await GetApiKeyAsync(keyName, cancellationToken);
     }
 
-    private async Task<string?> FetchAndCacheKeyAsync(string keyName, CancellationToken cancellationToken)
-    {
+    /// <summary>
+    /// Performs the actual HTTP request to fetch an API key from the server.
+    /// </summary>
+    private async Task<string?> FetchKeyFromServerAsync(string keyName, CancellationToken cancellationToken) {
         var serverUrl = _configuration["NagiApiServer:Url"];
         var serverKey = _configuration["NagiApiServer:ApiKey"];
         var subscriptionKey = _configuration["NagiApiServer:SubscriptionKey"];
 
-        if (string.IsNullOrEmpty(serverUrl) || string.IsNullOrEmpty(serverKey))
-        {
+        if (string.IsNullOrEmpty(serverUrl) || string.IsNullOrEmpty(serverKey)) {
             Debug.WriteLine("CRITICAL: Nagi API Server URL or ApiKey is not configured.");
             return null;
         }
 
         var endpoint = $"{serverUrl.TrimEnd('/')}/api/{keyName}-key";
 
-        try
-        {
+        try {
             using var request = new HttpRequestMessage(HttpMethod.Get, endpoint);
             request.Headers.Add("X-API-KEY", serverKey);
 
@@ -82,28 +64,20 @@ public class ApiKeyService : IApiKeyService
 
             var response = await _httpClient.SendAsync(request, cancellationToken);
 
-            if (!response.IsSuccessStatusCode)
-            {
+            if (!response.IsSuccessStatusCode) {
                 Debug.WriteLine(
                     $"Error fetching API key '{keyName}'. Status: {response.StatusCode}, Endpoint: {endpoint}");
-                _cachedApiKeys[keyName] = null;
                 return null;
             }
 
             var key = await response.Content.ReadAsStringAsync(cancellationToken);
-            var finalKey = key.Trim().Trim('"');
-
-            _cachedApiKeys[keyName] = finalKey;
-            return finalKey;
+            return key.Trim().Trim('"');
         }
-        catch (OperationCanceledException)
-        {
-            throw;
+        catch (OperationCanceledException) {
+            throw; // Re-throw cancellation exceptions to be handled by the caller.
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             Debug.WriteLine($"Exception while fetching API key '{keyName}': {ex.Message}");
-            _cachedApiKeys[keyName] = null;
             return null;
         }
     }

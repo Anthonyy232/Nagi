@@ -22,9 +22,6 @@ public sealed partial class MainWindow : Window {
 
     public MainWindow() {
         InitializeComponent();
-
-        // Signals the intent to use a custom title bar. The actual title bar is
-        // configured later based on the specific page being displayed.
         ExtendsContentIntoTitleBar = true;
 
         Activated += MainWindow_Activated;
@@ -56,12 +53,10 @@ public sealed partial class MainWindow : Window {
             SetTitleBar(titleBarElement);
 
             // Show or hide system caption buttons based on the page's preference.
-            // For example, the OnboardingPage may prefer a cleaner look without them.
             bool showSystemButtons = Content is not OnboardingPage;
             presenter.SetBorderAndTitleBar(true, showSystemButtons);
 
-            // As a safeguard, ensure the title bar's containing row has its height restored.
-            // Using a fixed height is safer than 'Auto' to prevent layout issues.
+            // Safeguard to ensure the title bar's containing row has its height restored.
             if (provider.GetAppTitleBarRowElement() is { } titleBarRow) {
                 titleBarRow.Height = new GridLength(48);
             }

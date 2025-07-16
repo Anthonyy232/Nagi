@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
@@ -9,10 +10,14 @@ using Nagi.ViewModels;
 namespace Nagi.Pages;
 
 /// <summary>
-/// A page that displays detailed information for a specific artist,
-/// including their albums and songs.
+/// A page that displays detailed information for a specific artist, including their albums and songs.
 /// </summary>
 public sealed partial class ArtistViewPage : Page {
+    /// <summary>
+    /// Gets the view model associated with this page.
+    /// </summary>
+    public ArtistViewViewModel ViewModel { get; }
+
     public ArtistViewPage() {
         InitializeComponent();
         ViewModel = App.Services.GetRequiredService<ArtistViewViewModel>();
@@ -20,12 +25,7 @@ public sealed partial class ArtistViewPage : Page {
     }
 
     /// <summary>
-    /// Gets the ViewModel associated with this page.
-    /// </summary>
-    public ArtistViewViewModel ViewModel { get; }
-
-    /// <summary>
-    /// Initializes the ViewModel when the page is navigated to.
+    /// Initializes the view model with navigation parameters when the page is navigated to.
     /// </summary>
     protected override async void OnNavigatedTo(NavigationEventArgs e) {
         base.OnNavigatedTo(e);
@@ -34,10 +34,14 @@ public sealed partial class ArtistViewPage : Page {
             await ViewModel.LoadArtistDetailsAsync(navParam.ArtistId);
             await ViewModel.LoadAvailablePlaylistsAsync();
         }
+        else {
+            // Log an error to aid in debugging if the navigation parameter is incorrect.
+            Debug.WriteLine($"[ERROR] {nameof(ArtistViewPage)}: Received incorrect navigation parameter type: {e.Parameter?.GetType().Name ?? "null"}");
+        }
     }
 
     /// <summary>
-    /// Cleans up resources when the user navigates away from the page.
+    /// Cleans up resources when the user navigates away from this page.
     /// </summary>
     protected override void OnNavigatedFrom(NavigationEventArgs e) {
         base.OnNavigatedFrom(e);
@@ -45,7 +49,7 @@ public sealed partial class ArtistViewPage : Page {
     }
 
     /// <summary>
-    /// Handles clicks on the album grid, navigating to the selected album.
+    /// Handles clicks on the album grid, navigating to the selected album's page.
     /// </summary>
     private void AlbumGridView_ItemClick(object sender, ItemClickEventArgs e) {
         if (e.ClickedItem is ArtistAlbumViewModelItem clickedAlbum) {
@@ -54,7 +58,7 @@ public sealed partial class ArtistViewPage : Page {
     }
 
     /// <summary>
-    /// Updates the ViewModel's selection when the song list selection changes.
+    /// Updates the view model with the current selection from the song list.
     /// </summary>
     private void SongsListView_SelectionChanged(object sender, SelectionChangedEventArgs e) {
         if (sender is ListView listView) {
@@ -68,13 +72,13 @@ public sealed partial class ArtistViewPage : Page {
     private void SongItemMenuFlyout_Opening(object sender, object e) {
         if (sender is not MenuFlyout menuFlyout) return;
 
-        // If the user right-clicks a song that is not already selected,
-        // make it the only selected item.
+        // Ensure the right-clicked song is selected before showing the context menu.
         if (menuFlyout.Target?.DataContext is Song rightClickedSong &&
             !SongsListView.SelectedItems.Contains(rightClickedSong)) {
             SongsListView.SelectedItem = rightClickedSong;
         }
 
+        // Find and populate the "Add to Playlist" submenu.
         if (menuFlyout.Items.OfType<MenuFlyoutSubItem>()
                 .FirstOrDefault(item => item.Name == "AddToPlaylistSubMenu") is { } addToPlaylistSubMenu) {
             PopulatePlaylistSubMenu(addToPlaylistSubMenu);
@@ -82,24 +86,27 @@ public sealed partial class ArtistViewPage : Page {
     }
 
     /// <summary>
-    /// Populates the "Add to playlist" submenu with available playlists.
+    /// Populates the "Add to playlist" submenu with available playlists from the view model.
     /// </summary>
     private void PopulatePlaylistSubMenu(MenuFlyoutSubItem subMenu) {
         subMenu.Items.Clear();
 
-        if (ViewModel.AvailablePlaylists.Any()) {
-            foreach (var playlist in ViewModel.AvailablePlaylists) {
-                var playlistMenuItem = new MenuFlyoutItem {
-                    Text = playlist.Name,
-                    Command = ViewModel.AddSelectedSongsToPlaylistCommand,
-                    CommandParameter = playlist
-                };
-                subMenu.Items.Add(playlistMenuItem);
-            }
-        }
-        else {
+        var availablePlaylists = ViewModel.AvailablePlaylists;
+
+        if (availablePlaylists?.Any() != true) {
+            // Display a disabled item if there are no playlists to add the song to.
             var disabledItem = new MenuFlyoutItem { Text = "No playlists available", IsEnabled = false };
             subMenu.Items.Add(disabledItem);
+            return;
+        }
+
+        foreach (var playlist in availablePlaylists) {
+            var playlistMenuItem = new MenuFlyoutItem {
+                Text = playlist.Name,
+                Command = ViewModel.AddSelectedSongsToPlaylistCommand,
+                CommandParameter = playlist
+            };
+            subMenu.Items.Add(playlistMenuItem);
         }
     }
 }

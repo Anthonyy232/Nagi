@@ -11,15 +11,16 @@ using Nagi.Services.Abstractions;
 namespace Nagi.ViewModels;
 
 /// <summary>
-/// ViewModel for the album details page, displaying album art, metadata, and the list of tracks.
+/// Provides data and commands for the album details page, displaying album art,
+/// metadata, and the list of tracks.
 /// </summary>
 public partial class AlbumViewViewModel : SongListViewModelBase {
     private Guid _albumId;
     private int? _albumYear;
 
-    public AlbumViewViewModel(ILibraryService libraryService, IMusicPlaybackService playbackService,
-        INavigationService navigationService)
-        : base(libraryService, playbackService, navigationService) {
+    public AlbumViewViewModel(ILibraryReader libraryReader, IPlaylistService playlistService,
+        IMusicPlaybackService playbackService, INavigationService navigationService)
+        : base(libraryReader, playlistService, playbackService, navigationService) {
         CurrentSortOrder = SongSortOrder.TrackNumberAsc;
         UpdateSortOrderButtonText(CurrentSortOrder);
     }
@@ -42,14 +43,10 @@ public partial class AlbumViewViewModel : SongListViewModelBase {
         return Task.FromResult(Enumerable.Empty<Song>());
     }
 
-    /// <summary>
-    /// Loads a page of songs for the current album. On the first page load,
-    /// it also updates the album's metadata display text.
-    /// </summary>
     protected override async Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize, SongSortOrder sortOrder) {
         if (_albumId == Guid.Empty) return new PagedResult<Song>();
 
-        var result = await _libraryService.GetSongsByAlbumIdPagedAsync(_albumId, pageNumber, pageSize, sortOrder);
+        var result = await _libraryReader.GetSongsByAlbumIdPagedAsync(_albumId, pageNumber, pageSize, sortOrder);
 
         if (pageNumber == 1) {
             UpdateAlbumDetails(result);
@@ -58,25 +55,22 @@ public partial class AlbumViewViewModel : SongListViewModelBase {
         return result;
     }
 
-    /// <summary>
-    /// Loads the complete list of song IDs for the current album.
-    /// </summary>
     protected override async Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder) {
         if (_albumId == Guid.Empty) return new List<Guid>();
-        return await _libraryService.GetAllSongIdsByAlbumIdAsync(_albumId, sortOrder);
+        return await _libraryReader.GetAllSongIdsByAlbumIdAsync(_albumId, sortOrder);
     }
 
     /// <summary>
-    /// Loads the details for a specific album and then initiates loading its songs.
+    /// Loads the details and track list for a specific album.
     /// </summary>
-    /// <param name="albumId">The ID of the album to load.</param>
+    /// <param name="albumId">The unique identifier of the album to load.</param>
     [RelayCommand]
     public async Task LoadAlbumDetailsAsync(Guid albumId) {
         if (IsOverallLoading) return;
 
         try {
             _albumId = albumId;
-            var album = await _libraryService.GetAlbumByIdAsync(albumId);
+            var album = await _libraryReader.GetAlbumByIdAsync(albumId);
 
             if (album != null) {
                 AlbumTitle = album.Title;
@@ -97,7 +91,7 @@ public partial class AlbumViewViewModel : SongListViewModelBase {
     }
 
     private void HandleAlbumNotFound(Guid albumId) {
-        Debug.WriteLine($"[AlbumViewViewModel] Album with ID '{albumId}' not found.");
+        Debug.WriteLine($"[AlbumViewViewModel] INFO: Album with ID '{albumId}' not found.");
         AlbumTitle = "Album Not Found";
         PageTitle = "Not Found";
         ArtistName = string.Empty;
@@ -107,7 +101,7 @@ public partial class AlbumViewViewModel : SongListViewModelBase {
     }
 
     private void HandleLoadError(Guid albumId, Exception ex) {
-        Debug.WriteLine($"[ERROR] Error loading album with ID '{albumId}': {ex.Message}");
+        Debug.WriteLine($"[AlbumViewViewModel] ERROR: Failed to load album with ID '{albumId}'. {ex.Message}");
         AlbumTitle = "Error Loading Album";
         PageTitle = "Error";
         ArtistName = string.Empty;
@@ -115,9 +109,6 @@ public partial class AlbumViewViewModel : SongListViewModelBase {
         Songs.Clear();
     }
 
-    /// <summary>
-    /// Constructs and sets the album details string (e.g., "2023 • 12 songs").
-    /// </summary>
     private void UpdateAlbumDetails(PagedResult<Song> pagedResult) {
         if (pagedResult?.Items == null) return;
 

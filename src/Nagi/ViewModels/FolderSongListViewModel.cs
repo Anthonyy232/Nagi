@@ -9,25 +9,22 @@ using Nagi.Services.Abstractions;
 namespace Nagi.ViewModels;
 
 /// <summary>
-/// ViewModel for displaying songs from a specific library folder using paged loading.
+/// Provides data and commands for displaying the songs within a specific library folder.
 /// </summary>
 public partial class FolderSongListViewModel : SongListViewModelBase {
     private Guid? _folderId;
 
-    public FolderSongListViewModel(ILibraryService libraryService, IMusicPlaybackService playbackService,
-        INavigationService navigationService)
-        : base(libraryService, playbackService, navigationService) {
+    public FolderSongListViewModel(ILibraryReader libraryReader, IPlaylistService playlistService,
+        IMusicPlaybackService playbackService, INavigationService navigationService)
+        : base(libraryReader, playlistService, playbackService, navigationService) {
     }
 
-    /// <summary>
-    /// Indicates that this ViewModel supports paged loading.
-    /// </summary>
     protected override bool IsPagingSupported => true;
 
     /// <summary>
-    /// Initializes the ViewModel with the folder's details and loads the first page of songs.
+    /// Initializes the view model with the details of a specific folder.
     /// </summary>
-    /// <param name="title">The title to display for the page.</param>
+    /// <param name="title">The title of the folder to display.</param>
     /// <param name="folderId">The unique identifier of the folder.</param>
     public async Task InitializeAsync(string title, Guid? folderId) {
         if (IsOverallLoading) return;
@@ -38,36 +35,27 @@ public partial class FolderSongListViewModel : SongListViewModelBase {
             await RefreshOrSortSongsAsync();
         }
         catch (Exception ex) {
-            Debug.WriteLine($"[ERROR] Failed to initialize FolderSongListViewModel. {ex.Message}");
+            Debug.WriteLine($"[FolderSongListViewModel] ERROR: Failed to initialize. {ex.Message}");
             TotalItemsText = "Error loading folder";
             Songs.Clear();
         }
     }
 
-    /// <summary>
-    /// Loads a specific page of songs from the folder.
-    /// </summary>
     protected override async Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize, SongSortOrder sortOrder) {
         if (!_folderId.HasValue) {
             return new PagedResult<Song>();
         }
 
-        return await _libraryService.GetSongsByFolderIdPagedAsync(_folderId.Value, pageNumber, pageSize, sortOrder);
+        return await _libraryReader.GetSongsByFolderIdPagedAsync(_folderId.Value, pageNumber, pageSize, sortOrder);
     }
 
-    /// <summary>
-    /// Fetches the complete, sorted list of song IDs for this folder.
-    /// </summary>
     protected override async Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder) {
         if (!_folderId.HasValue) {
             return new List<Guid>();
         }
-        return await _libraryService.GetAllSongIdsByFolderIdAsync(_folderId.Value, sortOrder);
+        return await _libraryReader.GetAllSongIdsByFolderIdAsync(_folderId.Value, sortOrder);
     }
 
-    /// <summary>
-    /// This method is not used because <see cref="SongListViewModelBase.IsPagingSupported"/> is true.
-    /// </summary>
     protected override Task<IEnumerable<Song>> LoadSongsAsync() {
         return Task.FromResult(Enumerable.Empty<Song>());
     }
