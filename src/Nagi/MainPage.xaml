@@ -315,8 +315,12 @@
                                         Height="56"
                                         Margin="0,0,12,0"
                                         CornerRadius="6">
-                                        <Image x:Name="AlbumArt" Source="{Binding AlbumArtSource, Mode=OneWay}"
-                                               Stretch="UniformToFill" />
+                                        <!-- === FIX IS HERE === -->
+                                        <Image x:Name="AlbumArt" Stretch="UniformToFill">
+                                            <Image.Source>
+                                                <BitmapImage UriSource="{Binding AlbumArtUri, Mode=OneWay, FallbackValue='ms-appx:///Assets/DefaultAlbumArt.png'}" />
+                                            </Image.Source>
+                                        </Image>
                                     </Border>
                                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                         <TextBlock

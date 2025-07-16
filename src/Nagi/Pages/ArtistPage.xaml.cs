@@ -16,7 +16,7 @@ public sealed partial class ArtistPage : Page {
 
     public ArtistPage() {
         InitializeComponent();
-        ViewModel = App.Services.GetRequiredService<ArtistViewModel>();
+        ViewModel = App.Services!.GetRequiredService<ArtistViewModel>();
     }
 
     /// <summary>

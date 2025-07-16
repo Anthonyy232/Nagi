@@ -15,10 +15,6 @@ using WinRT.Interop;
 
 namespace Nagi.Popups;
 
-/// <summary>
-/// Represents the popup window that appears when the tray icon is clicked.
-/// This window is styled as a borderless tool window and supports dynamic content sizing.
-/// </summary>
 public sealed partial class TrayPopup : Window {
     public event EventHandler? Deactivated;
 
@@ -30,12 +26,10 @@ public sealed partial class TrayPopup : Window {
     public TrayPopup(ElementTheme initialTheme) {
         this.InitializeComponent();
 
-        ViewModel = App.Services.GetRequiredService<PlayerViewModel>();
-        _settingsService = App.Services.GetRequiredService<ISettingsService>(); // Ensure ISettingsService is injected
+        ViewModel = App.Services!.GetRequiredService<PlayerViewModel>();
+        _settingsService = App.Services!.GetRequiredService<ISettingsService>();
 
         if (this.Content is Border rootBorder) {
-            // Proactively set the theme on the root UI element. This prevents a visual flash
-            // by ensuring the SystemBackdrop initializes with the correct theme from frame zero.
             rootBorder.RequestedTheme = initialTheme;
             rootBorder.DataContext = ViewModel;
             rootBorder.Background = new SolidColorBrush(Colors.Transparent);
@@ -43,47 +37,30 @@ public sealed partial class TrayPopup : Window {
         }
 
         ConfigureWindowAppearance();
-        _ = InitializeSettingsAsync(); // Load initial settings asynchronously
+        _ = InitializeSettingsAsync();
 
         Activated += OnActivated;
-        Closed += OnClosed; // Ensure Closed event is handled to unsubscribe
-        ViewModel.PropertyChanged += OnViewModelPropertyChanged; // Subscribe to VM changes for album art
-        _settingsService.ShowCoverArtInTrayFlyoutSettingChanged += OnShowCoverArtSettingChanged; // Subscribe to setting changes
+        Closed += OnClosed;
+        ViewModel.PropertyChanged += OnViewModelPropertyChanged;
+        _settingsService.ShowCoverArtInTrayFlyoutSettingChanged += OnShowCoverArtSettingChanged;
     }
 
-    /// <summary>
-    /// Sets the opacity of the window using layered window attributes.
-    /// This method is crucial for the fade-in/fade-out animations.
-    /// </summary>
-    /// <param name="alpha">The opacity value, from 0 (transparent) to 255 (opaque).</param>
     public void SetWindowOpacity(byte alpha) {
         var hwnd = WindowNative.GetWindowHandle(this);
         SetLayeredWindowAttributes(hwnd, 0, alpha, LWA_ALPHA);
     }
 
-    /// <summary>
-    /// Loads the initial setting for cover art visibility and updates the UI.
-    /// </summary>
     private async System.Threading.Tasks.Task InitializeSettingsAsync() {
         _isCoverArtInFlyoutEnabled = await _settingsService.GetShowCoverArtInTrayFlyoutAsync();
         UpdateCoverArtVisibility();
     }
 
-    /// <summary>
-    /// Updates the visibility of the cover art background based on the current setting and album art availability.
-    /// </summary>
     private void UpdateCoverArtVisibility() {
-        // Only show if setting is enabled AND there is actual album art.
-        var shouldBeVisible = _isCoverArtInFlyoutEnabled && ViewModel.AlbumArtSource != null;
+        // FIX: Use the new 'AlbumArtUri' property which is a string.
+        var shouldBeVisible = _isCoverArtInFlyoutEnabled && !string.IsNullOrEmpty(ViewModel.AlbumArtUri);
         CoverArtBackground.Visibility = shouldBeVisible ? Visibility.Visible : Visibility.Collapsed;
     }
 
-    /// <summary>
-    /// Calculates the required height of the window content for a given width.
-    /// This is used to dynamically size the popup before it is shown.
-    /// </summary>
-    /// <param name="targetWidthDips">The target width in device-independent pixels.</param>
-    /// <returns>The desired height in device-independent pixels.</returns>
     public double GetContentDesiredHeight(double targetWidthDips) {
         if (this.Content is FrameworkElement rootElement) {
             rootElement.Measure(new Size(targetWidthDips, double.PositiveInfinity));
@@ -92,10 +69,6 @@ public sealed partial class TrayPopup : Window {
         return 0;
     }
 
-    /// <summary>
-    /// Configures the window to appear as a borderless, non-resizable, always-on-top tool window.
-    /// It also applies the layered window style for opacity control.
-    /// </summary>
     private void ConfigureWindowAppearance() {
         var presenter = OverlappedPresenter.CreateForDialog();
         presenter.IsMaximizable = false;
@@ -107,14 +80,11 @@ public sealed partial class TrayPopup : Window {
 
         var windowHandle = WindowNative.GetWindowHandle(this);
 
-        // Apply extended window styles to make it a tool window (no taskbar icon)
-        // and enable the layered window for opacity control (required by SetWindowOpacity).
         int exStyle = GetWindowLong(windowHandle, GWL_EXSTYLE);
         exStyle |= WS_EX_TOOLWINDOW;
-        exStyle |= WS_EX_LAYERED; // Crucial for SetWindowOpacity to work
+        exStyle |= WS_EX_LAYERED;
         SetWindowLong(windowHandle, GWL_EXSTYLE, exStyle);
 
-        // Set the window corner preference to rounded.
         var preference = DWMWCP_ROUND;
         DwmSetWindowAttribute(windowHandle, DWMWA_WINDOW_CORNER_PREFERENCE, ref preference, sizeof(uint));
     }
@@ -125,9 +95,6 @@ public sealed partial class TrayPopup : Window {
         }
     }
 
-    /// <summary>
-    /// Handles changes to the "Show cover art in tray flyout" setting, updating the UI.
-    /// </summary>
     private void OnShowCoverArtSettingChanged(bool isEnabled) {
         DispatcherQueue.TryEnqueue(() => {
             _isCoverArtInFlyoutEnabled = isEnabled;
@@ -135,48 +102,33 @@ public sealed partial class TrayPopup : Window {
         });
     }
 
-    /// <summary>
-    /// Listens for changes to the ViewModel's AlbumArtSource to update the background visibility.
-    /// </summary>
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        if (e.PropertyName == nameof(PlayerViewModel.AlbumArtSource)) {
+        // FIX: Check for the new property name 'AlbumArtUri'
+        if (e.PropertyName == nameof(PlayerViewModel.AlbumArtUri)) {
             UpdateCoverArtVisibility();
         }
     }
 
-    /// <summary>
-    /// Unsubscribes from events when the window is closed to prevent memory leaks.
-    /// </summary>
     private void OnClosed(object sender, WindowEventArgs args) {
         ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
         _settingsService.ShowCoverArtInTrayFlyoutSettingChanged -= OnShowCoverArtSettingChanged;
     }
 
     #region Win32 Interop
-
-    // Window Styles
     private const int GWL_EXSTYLE = -20;
     private const int WS_EX_TOOLWINDOW = 0x00000080;
     private const int WS_EX_LAYERED = 0x00080000;
-
-    // Layered Window Attributes
-    private const uint LWA_ALPHA = 0x00000002; // Use bAlpha for opacity
-
-    // DWM Window Attributes
+    private const uint LWA_ALPHA = 0x00000002;
     private const uint DWMWA_WINDOW_CORNER_PREFERENCE = 33;
     private const uint DWMWCP_ROUND = 2;
 
     [DllImport("user32.dll")]
     private static extern int GetWindowLong(IntPtr hWnd, int nIndex);
-
     [DllImport("user32.dll")]
     private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
-
     [DllImport("user32.dll")]
     private static extern bool SetLayeredWindowAttributes(IntPtr hwnd, uint crKey, byte bAlpha, uint dwFlags);
-
     [DllImport("dwmapi.dll", CharSet = CharSet.Unicode, PreserveSig = false)]
     private static extern void DwmSetWindowAttribute(IntPtr hwnd, uint attribute, ref uint pvAttribute, uint cbAttribute);
-
     #endregion
 }

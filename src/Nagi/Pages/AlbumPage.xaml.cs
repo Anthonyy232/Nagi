@@ -16,7 +16,7 @@ public sealed partial class AlbumPage : Page {
 
     public AlbumPage() {
         InitializeComponent();
-        ViewModel = App.Services.GetRequiredService<AlbumViewModel>();
+        ViewModel = App.Services!.GetRequiredService<AlbumViewModel>();
     }
 
     /// <summary>

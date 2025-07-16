@@ -19,7 +19,7 @@ public sealed partial class OnboardingPage : Page, ICustomTitleBarProvider {
 
     public OnboardingPage() {
         InitializeComponent();
-        ViewModel = App.Services.GetRequiredService<OnboardingViewModel>();
+        ViewModel = App.Services!.GetRequiredService<OnboardingViewModel>();
         DataContext = ViewModel;
         Loaded += OnboardingPage_Loaded;
         Unloaded += OnboardingPage_Unloaded;

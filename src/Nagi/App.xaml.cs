@@ -13,6 +13,7 @@ using Nagi.Pages;
 using Nagi.Services;
 using Nagi.Services.Abstractions;
 using Nagi.Services.Implementations;
+using Nagi.Services.Implementations.WinUI;
 using Nagi.ViewModels;
 using System;
 using System.Diagnostics;
@@ -35,7 +36,7 @@ namespace Nagi;
 /// </summary>
 public partial class App : Application {
     private static Color? _systemAccentColor;
-    internal Window? _window;
+    private Window? _window;
     private MicaController? _micaController;
     private WindowsSystemDispatcherQueueHelper? _wsdqHelper;
 
@@ -58,14 +59,13 @@ public partial class App : Application {
     /// This runs once before any instance of the App class is created.
     /// </summary>
     static App() {
-        Services = ConfigureServices();
-        InitializeDatabase();
+        // Service configuration is deferred until OnLaunched when the window is available.
     }
 
     public static App? CurrentApp { get; private set; }
-    public static Window? RootWindow { get; private set; }
-    public static IServiceProvider Services { get; }
-    public static DispatcherQueue? MainDispatcherQueue { get; private set; }
+    public static Window? RootWindow => CurrentApp?._window;
+    public static IServiceProvider? Services { get; private set; }
+    public static DispatcherQueue? MainDispatcherQueue => CurrentApp?._window?.DispatcherQueue;
     public static bool IsExiting { get; set; }
 
     /// <summary>
@@ -90,7 +90,7 @@ public partial class App : Application {
     /// <summary>
     /// Configures the dependency injection services for the application.
     /// </summary>
-    private static IServiceProvider ConfigureServices() {
+    private static IServiceProvider ConfigureServices(Window window, DispatcherQueue dispatcherQueue, App appInstance) {
         var services = new ServiceCollection();
 
         #region Configuration
@@ -99,6 +99,15 @@ public partial class App : Application {
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
             .Build();
         services.AddSingleton<IConfiguration>(configuration);
+        #endregion
+
+        #region UI Abstraction Services
+        services.AddSingleton<IWindowService>(sp => new WinUIWindowService(window, sp.GetRequiredService<IWin32InteropService>()));
+        services.AddSingleton<IUIService>(sp => new WinUIUIService(window));
+        services.AddSingleton<IDispatcherService>(sp => new WinUIDispatcherService(dispatcherQueue));
+        services.AddSingleton<IThemeService>(sp => new WinUIThemeService(appInstance));
+        services.AddSingleton<IApplicationLifecycle>(sp => new WinUIApplicationLifecycle(appInstance, sp));
+        services.AddSingleton<IAppInfoService, WinUIAppInfoService>();
         #endregion
 
         #region Foundational Services
@@ -170,9 +179,9 @@ public partial class App : Application {
     /// <summary>
     /// Ensures the application database is created if it does not already exist.
     /// </summary>
-    private static void InitializeDatabase() {
+    private static void InitializeDatabase(IServiceProvider services) {
         try {
-            var dbContextFactory = Services.GetRequiredService<IDbContextFactory<MusicDbContext>>();
+            var dbContextFactory = services.GetRequiredService<IDbContextFactory<MusicDbContext>>();
             using var dbContext = dbContextFactory.CreateDbContext();
             dbContext.Database.EnsureCreated();
         }
@@ -188,11 +197,13 @@ public partial class App : Application {
         bool isStartupLaunch = Environment.GetCommandLineArgs()
             .Any(arg => arg.Equals("--startup", StringComparison.OrdinalIgnoreCase));
 
-        #region Window Initialization
+        #region Window and DI Initialization
         _window = new MainWindow();
-        RootWindow = _window;
-        MainDispatcherQueue = _window.DispatcherQueue;
         _window.Closed += OnWindowClosed;
+
+        // Configure services now that we have a window and dispatcher
+        Services = ConfigureServices(_window, _window.DispatcherQueue, this);
+        InitializeDatabase(Services);
         #endregion
 
         #region System Integration
@@ -212,9 +223,12 @@ public partial class App : Application {
         try {
             var playbackService = Services.GetRequiredService<IMusicPlaybackService>();
             await playbackService.InitializeAsync();
+
+            var trayIconVm = Services.GetRequiredService<TrayIconViewModel>();
+            await trayIconVm.InitializeAsync();
         }
         catch (Exception ex) {
-            Debug.WriteLine($"[ERROR] App: Failed to initialize MusicPlaybackService. {ex.Message}");
+            Debug.WriteLine($"[ERROR] App: Failed to initialize services. {ex.Message}");
         }
         #endregion
 
@@ -237,16 +251,18 @@ public partial class App : Application {
     /// </summary>
     private async void OnSuspending(object? sender, SuspendingEventArgs e) {
         var deferral = e.SuspendingOperation.GetDeferral();
-        await SaveApplicationStateAsync();
+        if (Services is not null) {
+            await SaveApplicationStateAsync(Services);
+        }
         deferral.Complete();
     }
 
     /// <summary>
     /// Saves the application's playback state based on user settings.
     /// </summary>
-    private async Task SaveApplicationStateAsync() {
-        var settingsService = Services.GetRequiredService<ISettingsService>();
-        var musicPlaybackService = Services.GetRequiredService<IMusicPlaybackService>();
+    private async Task SaveApplicationStateAsync(IServiceProvider services) {
+        var settingsService = services.GetRequiredService<ISettingsService>();
+        var musicPlaybackService = services.GetRequiredService<IMusicPlaybackService>();
 
         try {
             if (await settingsService.GetRestorePlaybackStateEnabledAsync()) {
@@ -265,17 +281,22 @@ public partial class App : Application {
     /// Invoked when the main application window is closed.
     /// </summary>
     private async void OnWindowClosed(object sender, WindowEventArgs args) {
-        await SaveApplicationStateAsync();
+        if (Services is not null) {
+            await SaveApplicationStateAsync(Services);
+
+            if (Services.GetService<TrayIconViewModel>() is IDisposable disposableTray) {
+                disposableTray.Dispose();
+            }
+            if (Services.GetService<IWindowService>() is IDisposable disposableWindow) {
+                disposableWindow.Dispose();
+            }
+        }
 
         _micaController?.Dispose();
         _micaController = null;
 
         _wsdqHelper?.Dispose();
         _wsdqHelper = null;
-
-        if (Services.GetService<TrayIconViewModel>() is IDisposable disposable) {
-            disposable.Dispose();
-        }
     }
 
     /// <summary>
@@ -290,7 +311,7 @@ public partial class App : Application {
     /// Checks if music folders are configured and navigates to the appropriate initial page (Onboarding or Main).
     /// </summary>
     public async Task CheckAndNavigateToMainContent() {
-        if (RootWindow is null) return;
+        if (RootWindow is null || Services is null) return;
 
         var libraryService = Services.GetRequiredService<ILibraryService>();
         bool hasFolders = (await libraryService.GetAllFoldersAsync()).Any();
@@ -358,6 +379,7 @@ public partial class App : Application {
     /// Applies a dynamic theme color based on color swatches from the current track.
     /// </summary>
     public async void ApplyDynamicThemeFromSwatches(string? lightSwatchId, string? darkSwatchId) {
+        if (Services is null) return;
         var settingsService = Services.GetRequiredService<ISettingsService>();
         if (!await settingsService.GetDynamicThemingAsync()) {
             ActivateDefaultPrimaryColor();
@@ -383,6 +405,7 @@ public partial class App : Application {
     /// Reapplies the dynamic theme based on the currently playing track.
     /// </summary>
     public void ReapplyCurrentDynamicTheme() {
+        if (Services is null) return;
         var playbackService = Services.GetRequiredService<IMusicPlaybackService>();
         if (playbackService.CurrentTrack is not null) {
             ApplyDynamicThemeFromSwatches(
@@ -406,11 +429,9 @@ public partial class App : Application {
         if (!uint.TryParse(hex, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out uint argb)) return false;
 
         switch (hex.Length) {
-            // Handles 6-digit hex strings (e.g., "RRGGBB"). Alpha is set to 255 (opaque).
             case 6:
                 color = Color.FromArgb(255, (byte)((argb >> 16) & 0xFF), (byte)((argb >> 8) & 0xFF), (byte)(argb & 0xFF));
                 return true;
-            // Handles 8-digit hex strings (e.g., "AARRGGBB").
             case 8:
                 color = Color.FromArgb((byte)((argb >> 24) & 0xFF), (byte)((argb >> 16) & 0xFF), (byte)((argb >> 8) & 0xFF), (byte)(argb & 0xFF));
                 return true;
@@ -427,7 +448,7 @@ public partial class App : Application {
     /// Handles window activation behavior based on launch arguments and settings.
     /// </summary>
     private async Task HandleWindowActivationAsync(bool isStartupLaunch = false) {
-        if (_window is null) return;
+        if (_window is null || Services is null) return;
 
         var settingsService = Services.GetRequiredService<ISettingsService>();
         bool startMinimized = await settingsService.GetStartMinimizedEnabledAsync();
@@ -435,10 +456,8 @@ public partial class App : Application {
 
         if (isStartupLaunch || startMinimized) {
             if (!hideToTray) {
-                // Show the window in a minimized state if not hiding to tray.
                 WindowActivator.ShowMinimized(_window);
             }
-            // If hideToTray is true, the window remains hidden by default.
         }
         else {
             _window.Activate();
@@ -450,8 +469,8 @@ public partial class App : Application {
     /// </summary>
     private void EnqueuePostLaunchTasks() {
         MainDispatcherQueue?.TryEnqueue(DispatcherQueuePriority.Normal, () => {
+            if (Services is null) return;
             try {
-                // Initialize services that require an active dispatcher queue, like the System Media Transport Controls.
                 var audioPlayerService = Services.GetRequiredService<IAudioPlayer>();
                 audioPlayerService.InitializeSmtc();
             }
@@ -468,13 +487,11 @@ public partial class App : Application {
     private bool TrySetMicaBackdrop() {
         if (!MicaController.IsSupported()) return false;
 
-        // The SystemBackdropConfiguration and MicaController must be created on a thread with a DispatcherQueue.
         _wsdqHelper = new WindowsSystemDispatcherQueueHelper();
         _wsdqHelper.EnsureDispatcherQueue();
 
         var configurationSource = new SystemBackdropConfiguration { IsInputActive = true };
 
-        // Link the backdrop configuration theme to the root element's theme.
         if (RootWindow?.Content is FrameworkElement rootElement) {
             void UpdateTheme() {
                 configurationSource.Theme = rootElement.ActualTheme switch {
@@ -506,7 +523,7 @@ public partial class App : Application {
     /// Checks for and applies application updates using Velopack.
     /// </summary>
     private async Task CheckForUpdatesAsync() {
-        // Update checks are skipped in debug builds for a faster development startup.
+        if (Services is null) return;
         #if DEBUG
                 Debug.WriteLine("[INFO] App: Skipping update check in DEBUG mode.");
                 return;

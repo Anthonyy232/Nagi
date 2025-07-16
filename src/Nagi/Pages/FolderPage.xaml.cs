@@ -18,7 +18,7 @@ public sealed partial class FolderPage : Page
     public FolderPage()
     {
         InitializeComponent();
-        ViewModel = App.Services.GetRequiredService<FolderViewModel>();
+        ViewModel = App.Services!.GetRequiredService<FolderViewModel>();
         DataContext = ViewModel;
     }
 

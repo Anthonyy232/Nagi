@@ -1,8 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using Nagi.Models;
 using Nagi.Services.Abstractions;
 using System;
@@ -12,116 +10,67 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Nagi.ViewModels;
 
-/// <summary>
-/// Provides properties and commands for the settings page, allowing users to configure the application.
-/// </summary>
 public partial class SettingsViewModel : ObservableObject {
-    private readonly IServiceProvider _serviceProvider;
     private readonly ISettingsService _settingsService;
+    private readonly IUIService _uiService;
+    private readonly IThemeService _themeService;
+    private readonly IApplicationLifecycle _applicationLifecycle;
+    private readonly IAppInfoService _appInfoService;
     private bool _isInitializing;
 
-    public SettingsViewModel(ISettingsService settingsService, IServiceProvider serviceProvider) {
+    public SettingsViewModel(
+        ISettingsService settingsService,
+        IUIService uiService,
+        IThemeService themeService,
+        IApplicationLifecycle applicationLifecycle,
+        IAppInfoService appInfoService) {
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
-        _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+        _uiService = uiService ?? throw new ArgumentNullException(nameof(uiService));
+        _themeService = themeService ?? throw new ArgumentNullException(nameof(themeService));
+        _applicationLifecycle = applicationLifecycle ?? throw new ArgumentNullException(nameof(applicationLifecycle));
+        _appInfoService = appInfoService ?? throw new ArgumentNullException(nameof(appInfoService));
         NavigationItems.CollectionChanged += OnNavigationItemsCollectionChanged;
     }
 
-    /// <summary>
-    /// Gets or sets the selected application theme.
-    /// </summary>
     [ObservableProperty]
     private ElementTheme _selectedTheme;
 
-    /// <summary>
-    /// Gets or sets a value indicating whether dynamic theming based on album art is enabled.
-    /// </summary>
     [ObservableProperty]
     private bool _isDynamicThemingEnabled;
 
-    /// <summary>
-    /// Gets or sets a value indicating whether animations for the player bar are enabled.
-    /// </summary>
     [ObservableProperty]
     private bool _isPlayerAnimationEnabled;
 
-    /// <summary>
-    /// Gets or sets a value indicating whether the application should save and restore playback state.
-    /// </summary>
     [ObservableProperty]
     private bool _isRestorePlaybackStateEnabled;
 
-    /// <summary>
-    /// Gets or sets a value indicating whether the application should launch automatically on system startup.
-    /// </summary>
     [ObservableProperty]
     private bool _isAutoLaunchEnabled;
 
-    /// <summary>
-    /// Gets or sets a value indicating whether the application should start in a minimized state.
-    /// </summary>
     [ObservableProperty]
     private bool _isStartMinimizedEnabled;
 
-    /// <summary>
-    /// Gets or sets a value indicating whether the application should hide to the system tray when closed.
-    /// </summary>
     [ObservableProperty]
     private bool _isHideToTrayEnabled;
 
-    /// <summary>
-    /// Gets or sets a value indicating whether cover art should be shown in the tray flyout.
-    /// </summary>
     [ObservableProperty]
     private bool _isShowCoverArtInTrayFlyoutEnabled;
 
-    /// <summary>
-    /// Gets or sets a value indicating whether the application should fetch additional online metadata.
-    /// </summary>
     [ObservableProperty]
     private bool _isFetchOnlineMetadataEnabled;
 
-    /// <summary>
-    /// Gets the collection of configurable navigation items for the settings UI.
-    /// </summary>
     public ObservableCollection<NavigationItemSetting> NavigationItems { get; } = new();
-
-    /// <summary>
-    /// Gets the list of available themes for binding to the UI.
-    /// </summary>
     public List<ElementTheme> AvailableThemes { get; } = Enum.GetValues<ElementTheme>().ToList();
+    public string ApplicationVersion => _appInfoService.GetAppVersion();
 
-    /// <summary>
-    /// Gets the application version string.
-    /// </summary>
-    public string ApplicationVersion {
-        get {
-            try {
-                // This approach works for both packaged and unpackaged apps.
-                var assembly = Assembly.GetEntryAssembly();
-                if (assembly?.GetName().Version is { } version) {
-                    return $"{version.Major}.{version.Minor}.{version.Build}";
-                }
-            }
-            catch (Exception ex) {
-                Debug.WriteLine($"[ERROR] Could not get application version: {ex.Message}");
-            }
-            return "N/A";
-        }
-    }
-
-    /// <summary>
-    /// Asynchronously loads all settings from the settings service and populates the ViewModel properties.
-    /// </summary>
     [RelayCommand]
     public async Task LoadSettingsAsync() {
         _isInitializing = true;
 
-        // Unsubscribe from events while loading to prevent premature saves.
         foreach (var item in NavigationItems) {
             item.PropertyChanged -= OnNavigationItemPropertyChanged;
         }
@@ -146,49 +95,26 @@ public partial class SettingsViewModel : ObservableObject {
         _isInitializing = false;
     }
 
-    /// <summary>
-    /// Resets all application data, including settings and the music library, to their default states after user confirmation.
-    /// </summary>
     [RelayCommand]
     private async Task ResetApplicationDataAsync() {
-        if (App.RootWindow?.Content?.XamlRoot is not { } xamlRoot) return;
+        var confirmed = await _uiService.ShowConfirmationDialogAsync(
+            "Confirm Reset",
+            "Are you sure you want to reset all application data and settings? This action cannot be undone. The application will return to the initial setup.",
+            "Reset",
+            "Cancel");
 
-        var confirmDialog = new ContentDialog {
-            Title = "Confirm Reset",
-            Content = "Are you sure you want to reset all application data and settings? This action cannot be undone. The application will return to the initial setup.",
-            PrimaryButtonText = "Reset",
-            CloseButtonText = "Cancel",
-            XamlRoot = xamlRoot
-        };
-
-        var result = await confirmDialog.ShowAsync();
-        if (result != ContentDialogResult.Primary) return;
+        if (!confirmed) return;
 
         try {
-            await _settingsService.ResetToDefaultsAsync();
-
-            var libraryService = _serviceProvider.GetRequiredService<ILibraryService>();
-            await libraryService.ClearAllLibraryDataAsync();
-
-            var playbackService = _serviceProvider.GetRequiredService<IMusicPlaybackService>();
-            await playbackService.ClearQueueAsync();
-
-            if (App.CurrentApp is App appInstance) {
-                await appInstance.CheckAndNavigateToMainContent();
-            }
+            await _applicationLifecycle.ResetAndNavigateToOnboardingAsync();
         }
         catch (Exception ex) {
             Debug.WriteLine($"[CRITICAL] Application reset failed. Error: {ex.Message}\n{ex.StackTrace}");
-
-            if (xamlRoot.IsHostVisible) {
-                var errorDialog = new ContentDialog {
-                    Title = "Reset Error",
-                    Content = $"An error occurred while resetting application data: {ex.Message}. Please try restarting the app manually.",
-                    CloseButtonText = "OK",
-                    XamlRoot = xamlRoot
-                };
-                await errorDialog.ShowAsync();
-            }
+            await _uiService.ShowConfirmationDialogAsync(
+                "Reset Error",
+                $"An error occurred while resetting application data: {ex.Message}. Please try restarting the app manually.",
+                "OK",
+                null);
         }
     }
 
@@ -207,7 +133,6 @@ public partial class SettingsViewModel : ObservableObject {
             }
         }
 
-        // Save on any collection change (reorder, add, remove).
         _ = SaveNavigationItemsAsync();
     }
 
@@ -227,9 +152,7 @@ public partial class SettingsViewModel : ObservableObject {
 
     private async Task ApplyAndSaveThemeAsync(ElementTheme theme) {
         await _settingsService.SetThemeAsync(theme);
-        if (Application.Current is App appInstance) {
-            appInstance.ApplyTheme(theme);
-        }
+        _themeService.ApplyTheme(theme);
     }
 
     partial void OnIsDynamicThemingEnabledChanged(bool value) {
@@ -239,9 +162,7 @@ public partial class SettingsViewModel : ObservableObject {
 
     private async Task ApplyAndSaveDynamicThemingAsync(bool isEnabled) {
         await _settingsService.SetDynamicThemingAsync(isEnabled);
-        if (Application.Current is App appInstance) {
-            appInstance.ReapplyCurrentDynamicTheme();
-        }
+        _themeService.ReapplyCurrentDynamicTheme();
     }
 
     partial void OnIsPlayerAnimationEnabledChanged(bool value) {

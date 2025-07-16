@@ -13,7 +13,7 @@ namespace Nagi.Pages;
 public sealed partial class LibraryPage : Page {
     public LibraryPage() {
         InitializeComponent();
-        ViewModel = App.Services.GetRequiredService<LibraryViewModel>();
+        ViewModel = App.Services!.GetRequiredService<LibraryViewModel>();
         DataContext = ViewModel;
     }
 

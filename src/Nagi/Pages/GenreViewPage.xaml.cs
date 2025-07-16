@@ -20,7 +20,7 @@ public sealed partial class GenreViewPage : Page {
 
     public GenreViewPage() {
         InitializeComponent();
-        ViewModel = App.Services.GetRequiredService<GenreViewViewModel>();
+        ViewModel = App.Services!.GetRequiredService<GenreViewViewModel>();
         DataContext = ViewModel;
     }
 

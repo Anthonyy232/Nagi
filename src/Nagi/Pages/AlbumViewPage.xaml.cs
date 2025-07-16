@@ -20,7 +20,7 @@ public sealed partial class AlbumViewPage : Page {
 
     public AlbumViewPage() {
         InitializeComponent();
-        ViewModel = App.Services.GetRequiredService<AlbumViewViewModel>();
+        ViewModel = App.Services!.GetRequiredService<AlbumViewViewModel>();
         DataContext = ViewModel;
     }
 

@@ -1142,13 +1142,13 @@ public class LibraryService : ILibraryService {
 
         // Get all file system info at once to minimize I/O calls.
         var diskFileMap = _fileSystem.EnumerateFiles(folderPath, "*.*", SearchOption.AllDirectories)
-            .Where(file => MusicFileExtensions.Contains(_fileSystem.GetExtension(file)))
-            .Select(path => {
-                try { return new { Path = path, LastWriteTime = _fileSystem.GetLastWriteTimeUtc(path) }; }
-                catch (IOException) { return null; } // File might be locked or inaccessible
-            })
-            .Where(x => x != null)
-            .ToDictionary(x => x!.Path, x => x.LastWriteTime, StringComparer.OrdinalIgnoreCase);
+        .Where(file => MusicFileExtensions.Contains(_fileSystem.GetExtension(file)))
+        .Select(path => {
+            try { return new { Path = path, LastWriteTime = _fileSystem.GetLastWriteTimeUtc(path) }; }
+            catch (IOException) { return null; } // File might be locked or inaccessible
+        })
+        .Where(x => x != null)
+        .ToDictionary(x => x!.Path, x => x!.LastWriteTime, StringComparer.OrdinalIgnoreCase);
 
         var dbPaths = new HashSet<string>(dbFileMap.Keys, StringComparer.OrdinalIgnoreCase);
         var diskPaths = new HashSet<string>(diskFileMap.Keys, StringComparer.OrdinalIgnoreCase);
@@ -1597,7 +1597,7 @@ public class LibraryService : ILibraryService {
         var term = $"%{searchTerm}%";
         return context.Songs
             .Include(s => s.Artist)
-            .Include(s => s.Album).ThenInclude(a => a!.Artist)
+            .Include(s => s.Album!.Artist)
             .Where(s => EF.Functions.Like(s.Title, term)
                 || (s.Album != null && EF.Functions.Like(s.Album.Title, term))
                 || (s.Artist != null && EF.Functions.Like(s.Artist.Name, term))

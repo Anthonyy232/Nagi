@@ -1,8 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.UI.Dispatching;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Media.Imaging;
 using Nagi.Models;
 using Nagi.Services.Abstractions;
 using Nagi.Pages;
@@ -17,9 +14,11 @@ using System.Threading.Tasks;
 namespace Nagi.ViewModels;
 
 /// <summary>
-/// Manages state and logic for the main media player controls and queue display.
+/// Manages the state and interactions for the main media player UI.
+/// Acts as a bridge between the UI and the background <see cref="IMusicPlaybackService"/>.
 /// </summary>
 public partial class PlayerViewModel : ObservableObject, IDisposable {
+    // Glyphs for UI icons
     private const string PlayIconGlyph = "\uE768";
     private const string PauseIconGlyph = "\uE769";
     private const string RepeatOffIconGlyph = "\uE8EE";
@@ -40,17 +39,17 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
 
     private readonly IMusicPlaybackService _playbackService;
     private readonly INavigationService _navigationService;
-    private readonly DispatcherQueue _dispatcherQueue;
+    private readonly IDispatcherService _dispatcherService;
 
-    // This flag prevents re-entrant property updates when the ViewModel's state
-    // is being updated from the playback service.
+    // Prevents feedback loops when properties are updated by the service.
     private bool _isUpdatingFromService;
 
-    public PlayerViewModel(IMusicPlaybackService playbackService, INavigationService navigationService) {
+    public PlayerViewModel(IMusicPlaybackService playbackService, INavigationService navigationService, IDispatcherService dispatcherService) {
         _playbackService = playbackService ?? throw new ArgumentNullException(nameof(playbackService));
         _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
-        _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+        _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
 
+        Debug.WriteLine("[PlayerViewModel] INFO: Initializing and subscribing to playback service events.");
         SubscribeToPlaybackServiceEvents();
         InitializeStateFromService();
     }
@@ -58,72 +57,74 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(PlayPauseIconGlyph))]
     [NotifyPropertyChangedFor(nameof(PlayPauseButtonToolTip))]
-    public partial bool IsPlaying { get; set; }
+    private bool _isPlaying;
 
     [ObservableProperty]
-    public partial string SongTitle { get; set; } = "No track playing";
+    private string _songTitle = "No track playing";
 
     [ObservableProperty]
-    public partial string ArtistName { get; set; } = string.Empty;
+    private string _artistName = string.Empty;
 
     [ObservableProperty]
-    public partial ImageSource? AlbumArtSource { get; set; }
+    private string? _albumArtUri;
 
     [ObservableProperty]
-    public partial Song? CurrentPlayingTrack { get; set; }
+    private Song? _currentPlayingTrack;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ShuffleIconGlyph))]
     [NotifyPropertyChangedFor(nameof(ShuffleButtonToolTip))]
-    public partial bool IsShuffleEnabled { get; set; }
+    private bool _isShuffleEnabled;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(RepeatIconGlyph))]
     [NotifyPropertyChangedFor(nameof(RepeatButtonToolTip))]
-    public partial RepeatMode CurrentRepeatMode { get; set; }
+    private RepeatMode _currentRepeatMode;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(VolumeButtonToolTip))]
-    public partial bool IsMuted { get; set; }
+    private bool _isMuted;
 
     [ObservableProperty]
-    public partial double CurrentVolume { get; set; } = 50;
+    private double _currentVolume = 50;
 
     [ObservableProperty]
-    public partial string VolumeIconGlyph { get; set; } = VolumeMediumIconGlyph;
+    private string _volumeIconGlyph = VolumeMediumIconGlyph;
 
     [ObservableProperty]
-    public partial ObservableCollection<Song> CurrentQueue { get; set; } = new();
+    private ObservableCollection<Song> _currentQueue = new();
 
     [ObservableProperty]
-    public partial double CurrentPosition { get; set; }
+    private double _currentPosition;
 
     [ObservableProperty]
-    public partial string CurrentTimeText { get; set; } = "0:00";
+    private string _currentTimeText = "0:00";
 
     [ObservableProperty]
-    public partial bool IsUserDraggingSlider { get; set; }
+    private bool _isUserDraggingSlider;
 
     [ObservableProperty]
-    public partial double TotalDuration { get; set; }
+    private double _totalDuration;
 
     [ObservableProperty]
-    public partial string TotalDurationText { get; set; } = "0:00";
+    private string _totalDurationText = "0:00";
 
     [ObservableProperty]
-    public partial bool IsGlobalOperationInProgress { get; set; }
+    private bool _isGlobalOperationInProgress;
 
     [ObservableProperty]
-    public partial string GlobalOperationStatusMessage { get; set; } = string.Empty;
+    private string _globalOperationStatusMessage = string.Empty;
+
+
 
     [ObservableProperty]
-    public partial double GlobalOperationProgressValue { get; set; }
+    private double _globalOperationProgressValue;
 
     [ObservableProperty]
-    public partial bool IsGlobalOperationIndeterminate { get; set; }
+    private bool _isGlobalOperationIndeterminate;
 
     [ObservableProperty]
-    public partial bool IsQueueViewVisible { get; set; }
+    private bool _isQueueViewVisible;
 
     public string PlayPauseIconGlyph => IsPlaying ? PauseIconGlyph : PlayIconGlyph;
     public string PlayPauseButtonToolTip => IsPlaying ? PauseTooltip : PlayTooltip;
@@ -142,7 +143,11 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
     };
     public string VolumeButtonToolTip => IsMuted ? "Unmute" : "Mute";
 
+    /// <summary>
+    /// Cleans up resources by unsubscribing from service events to prevent memory leaks.
+    /// </summary>
     public void Dispose() {
+        Debug.WriteLine("[PlayerViewModel] INFO: Disposing and unsubscribing from playback service events.");
         UnsubscribeFromPlaybackServiceEvents();
         GC.SuppressFinalize(this);
     }
@@ -153,6 +158,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
     [RelayCommand]
     private void ShowPlayerView() => IsQueueViewVisible = false;
 
+    // Commands that simply proxy calls to the playback service.
     [RelayCommand]
     private Task PlayPauseAsync() => _playbackService.PlayPauseAsync();
 
@@ -181,12 +187,11 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
     [RelayCommand]
     private Task SeekAsync(double position) => _playbackService.SeekAsync(TimeSpan.FromSeconds(position));
 
-    // Command to navigate to the artist page
     [RelayCommand(CanExecute = nameof(CanGoToArtist))]
     private void GoToArtist(Song? song) {
         var targetSong = song ?? CurrentPlayingTrack;
         if (targetSong?.ArtistId == null || targetSong.Artist == null) {
-            Debug.WriteLine("[PlayerViewModel] Attempted to navigate to Artist, but target song or artist was null/invalid.");
+            Debug.WriteLine("[PlayerViewModel] WARN: Attempted to navigate to Artist, but target song or artist was null/invalid.");
             return;
         }
 
@@ -194,11 +199,10 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
             ArtistId = targetSong.Artist.Id,
             ArtistName = targetSong.Artist.Name
         };
-        Debug.WriteLine($"[PlayerViewModel] Navigating to Artist: Name='{navParam.ArtistName}', ID='{navParam.ArtistId}'");
+        Debug.WriteLine($"[PlayerViewModel] INFO: Navigating to Artist: Name='{navParam.ArtistName}', ID='{navParam.ArtistId}'");
         _navigationService.Navigate(typeof(ArtistViewPage), navParam);
     }
 
-    // CanExecute method for GoToArtistCommand, now checks CurrentPlayingTrack
     private bool CanGoToArtist(Song? song) {
         var targetSong = song ?? CurrentPlayingTrack;
         return targetSong?.Artist != null && targetSong.Artist.Id != Guid.Empty;
@@ -207,10 +211,10 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
     partial void OnIsMutedChanged(bool value) => UpdateVolumeIconGlyph();
 
     partial void OnCurrentVolumeChanged(double value) {
-        //
-        // Only update the service if the change originated from the UI, not from the service itself.
+        // This check prevents an infinite loop: UI changes volume -> VM updates service -> service event fires -> VM updates UI.
         if (!_isUpdatingFromService) {
             var serviceVolume = Math.Clamp(value / 100.0, 0.0, 1.0);
+            // Only update the service if the change is significant, to avoid flooding with small adjustments.
             if (Math.Abs(_playbackService.Volume - serviceVolume) > 0.001) {
                 _ = _playbackService.SetVolumeAsync(serviceVolume);
             }
@@ -220,8 +224,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
 
     partial void OnCurrentPositionChanged(double value) {
         CurrentTimeText = TimeSpan.FromSeconds(value).ToString(@"m\:ss");
-        //
-        // Only seek if the user is not dragging the slider and the change is significant.
+        // Avoid seeking while the user is dragging the slider or when the update comes from the service itself.
         if (!_isUpdatingFromService && !IsUserDraggingSlider) {
             var newPosition = TimeSpan.FromSeconds(value);
             if (Math.Abs(_playbackService.CurrentPosition.TotalSeconds - newPosition.TotalSeconds) > 0.5) {
@@ -233,6 +236,9 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
     partial void OnTotalDurationChanged(double value) {
         TotalDurationText = TimeSpan.FromSeconds(value).ToString(@"m\:ss");
     }
+
+    #region Playback Service Event Handling
+    // These methods bridge the background playback service to the UI thread, ensuring thread-safe updates.
 
     private void SubscribeToPlaybackServiceEvents() {
         _playbackService.PlaybackStateChanged += OnPlaybackService_PlaybackStateChanged;
@@ -254,10 +260,8 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
         _playbackService.PositionChanged -= OnPlaybackService_PositionChanged;
     }
 
-    /// <summary>
-    /// Populates the ViewModel with the current state from the playback service.
-    /// </summary>
     private void InitializeStateFromService() {
+        Debug.WriteLine("[PlayerViewModel] INFO: Synchronizing initial state from playback service.");
         RunOnUIThread(() => {
             IsPlaying = _playbackService.IsPlaying;
             UpdateTrackDetails(_playbackService.CurrentTrack);
@@ -273,6 +277,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
 
     private void OnPlaybackService_PlaybackStateChanged() {
         RunOnUIThread(() => {
+            // This check prevents a brief visual flicker of the pause icon between tracks.
             if (!_playbackService.IsTransitioningTrack) IsPlaying = _playbackService.IsPlaying;
         });
     }
@@ -304,46 +309,40 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
         RunOnUIThread(() => CurrentRepeatMode = _playbackService.CurrentRepeatMode);
     }
 
+
+
     private void OnPlaybackService_QueueChanged() {
         RunOnUIThread(UpdateCurrentQueueDisplay);
     }
 
     private void OnPlaybackService_PositionChanged() {
         RunOnUIThread(() => {
+            // Only update the slider position if the user isn't currently dragging it.
             if (!IsUserDraggingSlider) CurrentPosition = _playbackService.CurrentPosition.TotalSeconds;
         });
     }
 
+    #endregion
+
     private void UpdateTrackDetails(Song? song) {
-        CurrentPlayingTrack = song; // Set the observable property
+        CurrentPlayingTrack = song;
         if (song != null) {
             SongTitle = song.Title;
             ArtistName = song.Artist?.Name ?? string.Empty;
-            // Notify CanExecuteChanged for GoToArtistCommand when CurrentPlayingTrack changes
-            GoToArtistCommand.NotifyCanExecuteChanged();
-            try {
-                AlbumArtSource = !string.IsNullOrEmpty(song.AlbumArtUriFromTrack)
-                    ? new BitmapImage(new Uri(song.AlbumArtUriFromTrack))
-                    : null;
-            }
-            catch (Exception ex) {
-                //
-                // Log if album art fails to load, but don't crash the application.
-                Debug.WriteLine($"[{nameof(PlayerViewModel)}] Error loading album art '{song.AlbumArtUriFromTrack}': {ex.Message}");
-                AlbumArtSource = null;
-            }
+            AlbumArtUri = song.AlbumArtUriFromTrack;
+            Debug.WriteLine($"[PlayerViewModel] INFO: Track changed to '{song.Title}'.");
         }
         else {
             SongTitle = "No track playing";
             ArtistName = string.Empty;
-            AlbumArtSource = null;
-            GoToArtistCommand.NotifyCanExecuteChanged(); // Also notify when no track is playing
+            AlbumArtUri = null;
+            Debug.WriteLine("[PlayerViewModel] INFO: Playback stopped, clearing track details.");
         }
+        GoToArtistCommand.NotifyCanExecuteChanged();
     }
 
     /// <summary>
-    /// Updates the observable collection for the queue view.
-    /// The queue is rotated so that the currently playing track is always at the top.
+    /// Updates the displayed queue, reordering it to show the current track at the top.
     /// </summary>
     private void UpdateCurrentQueueDisplay() {
         var sourceQueue = _playbackService.IsShuffleEnabled
@@ -357,12 +356,9 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
             var sourceQueueList = sourceQueue.ToList();
             var currentTrackIndex = sourceQueueList.FindIndex(s => s.Id == currentTrack.Id);
 
+            // This logic reorders the list so the current track is first, followed by the rest of the queue.
             if (currentTrackIndex != -1) {
-                //
-                // Add tracks from the current one to the end.
                 newDisplayQueue.AddRange(sourceQueueList.Skip(currentTrackIndex));
-                //
-                // Wrap around and add tracks from the beginning.
                 newDisplayQueue.AddRange(sourceQueueList.Take(currentTrackIndex));
             }
             else {
@@ -373,8 +369,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
             newDisplayQueue.AddRange(sourceQueue);
         }
 
-        //
-        // Only update the collection if the content has actually changed to avoid unnecessary UI refreshes.
+        // This check is a performance optimization to avoid clearing and re-adding all items if the queue hasn't changed.
         if (!CurrentQueue.SequenceEqual(newDisplayQueue)) {
             CurrentQueue.Clear();
             foreach (var song in newDisplayQueue) CurrentQueue.Add(song);
@@ -394,12 +389,11 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
     }
 
     /// <summary>
-    /// Safely executes an action on the UI thread, wrapping it in a scope
-    /// that indicates the ViewModel is being updated from the backing service.
-    /// This prevents feedback loops where a UI update would trigger a command.
+    /// A helper to ensure state updates from the service are run on the UI thread
+    /// and are wrapped in a scope that prevents update cycles.
     /// </summary>
     private void RunOnUIThread(Action action) {
-        _dispatcherQueue.TryEnqueue(() => {
+        _dispatcherService.TryEnqueue(() => {
             using (new ServiceUpdateScope(this)) {
                 action();
             }
@@ -407,9 +401,8 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
     }
 
     /// <summary>
-    /// A helper struct to temporarily set a flag that indicates the ViewModel
-    /// is being updated from the backing service, not by user interaction.
-    /// This prevents feedback loops where a UI update would trigger a command.
+    /// A disposable struct to temporarily flag that property changes are originating
+    /// from the background service, not from user interaction.
     /// </summary>
     private readonly struct ServiceUpdateScope : IDisposable {
         private readonly PlayerViewModel _viewModel;

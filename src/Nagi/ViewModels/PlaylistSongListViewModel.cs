@@ -13,25 +13,30 @@ using Nagi.Services.Abstractions;
 namespace Nagi.ViewModels;
 
 /// <summary>
-/// Provides data and commands for displaying and managing the songs within a specific playlist.
-/// Supports reordering of songs via drag-and-drop.
+/// A specialized song list view model for displaying and managing songs within a single playlist.
+/// Supports drag-and-drop reordering.
 /// </summary>
 public partial class PlaylistSongListViewModel : SongListViewModelBase {
     private Guid? _currentPlaylistId;
+
+    // Debounces save operations during rapid drag-and-drop reordering to prevent excessive database writes.
     private readonly DispatcherTimer _reorderSaveTimer;
 
-    public PlaylistSongListViewModel(ILibraryReader libraryReader, IPlaylistService playlistService,
-        IMusicPlaybackService playbackService, INavigationService navigationService)
-        : base(libraryReader, playlistService, playbackService, navigationService) {
-        // A timer to debounce saving the new song order after a drag-drop operation.
-        _reorderSaveTimer = new DispatcherTimer {
-            Interval = TimeSpan.FromMilliseconds(200)
-        };
+    public PlaylistSongListViewModel(
+        ILibraryReader libraryReader,
+        IPlaylistService playlistService,
+        IMusicPlaybackService playbackService,
+        INavigationService navigationService,
+        IDispatcherService dispatcherService,
+        IUIService uiService)
+        : base(libraryReader, playlistService, playbackService, navigationService, dispatcherService, uiService) {
+        _reorderSaveTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(200) };
         _reorderSaveTimer.Tick += ReorderSaveTimer_Tick;
     }
 
+    // Playlists do not support paging; all songs are loaded at once.
     protected override bool IsPagingSupported => false;
-
+    // Playlist songs are already ordered by their position in the playlist.
     protected override bool IsDataPreSortedAfterLoad => true;
 
     [ObservableProperty]
@@ -39,13 +44,13 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase {
     private bool _isCurrentViewAPlaylist;
 
     /// <summary>
-    /// Initializes the view model with the details of a specific playlist.
+    /// Initializes the view model for a specific playlist.
     /// </summary>
-    /// <param name="title">The title of the playlist to display.</param>
-    /// <param name="playlistId">The unique identifier of the playlist.</param>
     public async Task InitializeAsync(string title, Guid? playlistId) {
         if (IsOverallLoading) return;
+        Debug.WriteLine($"[PlaylistSongListViewModel] INFO: Initializing for playlist '{title}' (ID: {playlistId}).");
 
+        // Unsubscribe before refresh to prevent the handler from firing on the initial load.
         Songs.CollectionChanged -= OnSongsCollectionChanged;
 
         try {
@@ -55,6 +60,7 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase {
 
             await RefreshOrSortSongsCommand.ExecuteAsync(null);
 
+            // Re-subscribe only if it's a real playlist, enabling reordering logic.
             if (IsCurrentViewAPlaylist) {
                 Songs.CollectionChanged += OnSongsCollectionChanged;
             }
@@ -73,23 +79,23 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase {
         return await _libraryReader.GetSongsInPlaylistOrderedAsync(_currentPlaylistId.Value);
     }
 
+    // Paging is not supported for playlists.
     protected override Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize, SongSortOrder sortOrder) => Task.FromResult(new PagedResult<Song>());
     protected override Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder) => Task.FromResult(new List<Guid>());
 
-    /// <summary>
-    /// Removes the currently selected songs from the current playlist.
-    /// </summary>
     [RelayCommand(CanExecute = nameof(CanRemoveSongs))]
     private async Task RemoveSelectedSongsFromPlaylistAsync() {
         if (!_currentPlaylistId.HasValue || !SelectedSongs.Any()) return;
 
         var songIdsToRemove = SelectedSongs.Select(s => s.Id).ToList();
+        Debug.WriteLine($"[PlaylistSongListViewModel] INFO: Removing {songIdsToRemove.Count} songs from playlist ID '{_currentPlaylistId.Value}'.");
 
-        // Unsubscribe to prevent reorder logic from firing during removal.
+        // Temporarily unsubscribe to prevent reorder logic from firing during removal.
         Songs.CollectionChanged -= OnSongsCollectionChanged;
         try {
             var success = await _playlistService.RemoveSongsFromPlaylistAsync(_currentPlaylistId.Value, songIdsToRemove);
             if (success) {
+                // Reload the list from the database to reflect the changes.
                 await RefreshOrSortSongsCommand.ExecuteAsync(null);
             }
         }
@@ -102,28 +108,33 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase {
 
     private bool CanRemoveSongs() => IsCurrentViewAPlaylist && HasSelectedSongs;
 
+    /// <summary>
+    /// Listens for user-driven changes to the song collection (like drag-drop) to trigger a debounced save.
+    /// </summary>
     private void OnSongsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
-        // When songs are moved, added, or removed, start the timer to save the new order.
         if (e.Action is NotifyCollectionChangedAction.Move or NotifyCollectionChangedAction.Add or NotifyCollectionChangedAction.Remove) {
+            // Instead of saving on every micro-change, start a timer. If no more changes occur, the timer's tick will save.
             _reorderSaveTimer.Start();
         }
     }
 
+    /// <summary>
+    /// Called by the debouncing timer to execute the save operation.
+    /// </summary>
     private void ReorderSaveTimer_Tick(object? sender, object e) {
         _reorderSaveTimer.Stop();
+        Debug.WriteLine("[PlaylistSongListViewModel] INFO: Reorder save timer ticked. Executing update.");
         if (UpdatePlaylistOrderCommand.CanExecute(null)) {
             UpdatePlaylistOrderCommand.Execute(null);
         }
     }
 
-    /// <summary>
-    /// Saves the current order of songs in the playlist to the database.
-    /// </summary>
     [RelayCommand]
     private async Task UpdatePlaylistOrderAsync() {
         if (!_currentPlaylistId.HasValue || Songs.Count == 0) return;
 
         var orderedSongIds = Songs.Select(s => s.Id).ToList();
+        Debug.WriteLine($"[PlaylistSongListViewModel] INFO: Persisting new song order for playlist ID '{_currentPlaylistId.Value}'.");
         await _playlistService.UpdatePlaylistSongOrderAsync(_currentPlaylistId.Value, orderedSongIds);
     }
 }
