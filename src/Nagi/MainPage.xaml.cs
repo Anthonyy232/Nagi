@@ -52,6 +52,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider {
     private bool _isPlayerAnimationEnabled = true;
     private bool _isPointerOverPlayer;
     private bool _isUpdatingNavViewSelection;
+    private bool _isQueueFlyoutOpen;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MainPage"/> class.
@@ -68,9 +69,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider {
         Unloaded += OnMainPageUnloaded;
     }
 
-    /// <summary>
-    /// Gets the view model for the media player.
-    /// </summary>
     public PlayerViewModel ViewModel { get; }
 
     /// <summary>
@@ -164,7 +162,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider {
     private void UpdatePlayerVisualState(bool useTransitions = true) {
         var isPlaying = ViewModel.CurrentPlayingTrack != null && ViewModel.IsPlaying;
 
-        // Player is expanded if music is playing, user is hovering, or animations are disabled.
+        // Player is expanded if music is playing, user is hovering, queue is opened or animations are disabled.
         var shouldBeExpanded = !_isPlayerAnimationEnabled || isPlaying || _isPointerOverPlayer;
         var stateName = shouldBeExpanded ? "PlayerExpanded" : "PlayerCollapsed";
 
@@ -306,5 +304,14 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider {
 
     private void AppTitleBar_BackRequested(TitleBar sender, object args) {
         TryGoBack();
+    }
+
+    private void QueueFlyout_Opened(object sender, object e) {
+        _isQueueFlyoutOpen = true;
+    }
+
+    private void QueueFlyout_Closed(object sender, object e) {
+        _isQueueFlyoutOpen = false;
+        UpdatePlayerVisualState();
     }
 }
