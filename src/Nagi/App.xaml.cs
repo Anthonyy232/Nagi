@@ -87,27 +87,34 @@ public partial class App : Application {
         }
     }
 
+    #region Service Configuration
+
     /// <summary>
     /// Configures the dependency injection services for the application.
     /// </summary>
     private static IServiceProvider ConfigureServices(Window window, DispatcherQueue dispatcherQueue, App appInstance) {
         var services = new ServiceCollection();
 
+        // Configure services that do not depend on the UI
+        ConfigureCoreServices(services);
+
+        // Configure services that depend on the UI
+        ConfigureUIServices(services, window, dispatcherQueue, appInstance);
+
+        return services.BuildServiceProvider();
+    }
+
+    /// <summary>
+    /// Configures core services that do not have any dependency on the WinUI framework.
+    /// This method can be called by design-time tools like EF Core CLI.
+    /// </summary>
+    public static void ConfigureCoreServices(IServiceCollection services) {
         #region Configuration
         var configuration = new ConfigurationBuilder()
             .SetBasePath(AppContext.BaseDirectory)
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
             .Build();
         services.AddSingleton<IConfiguration>(configuration);
-        #endregion
-
-        #region UI Abstraction Services
-        services.AddSingleton<IWindowService>(sp => new WinUIWindowService(window, sp.GetRequiredService<IWin32InteropService>()));
-        services.AddSingleton<IUIService>(sp => new WinUIUIService(window));
-        services.AddSingleton<IDispatcherService>(sp => new WinUIDispatcherService(dispatcherQueue));
-        services.AddSingleton<IThemeService>(sp => new WinUIThemeService(appInstance));
-        services.AddSingleton<IApplicationLifecycle>(sp => new WinUIApplicationLifecycle(appInstance, sp));
-        services.AddSingleton<IAppInfoService, WinUIAppInfoService>();
         #endregion
 
         #region Foundational Services
@@ -131,15 +138,8 @@ public partial class App : Application {
         services.AddSingleton<IImageProcessor, ImageSharpProcessor>();
         services.AddSingleton<IMetadataExtractor, TagLibMetadataExtractor>();
         services.AddSingleton<ISettingsService, SettingsService>();
-        services.AddSingleton<IMusicPlaybackService, MusicPlaybackService>();
         services.AddSingleton<INavigationService, NavigationService>();
         services.AddSingleton<IWin32InteropService, Win32InteropService>();
-        services.AddSingleton<ITrayPopupService, TrayPopupService>();
-        services.AddSingleton<IAudioPlayer>(provider => {
-            if (MainDispatcherQueue is null)
-                throw new InvalidOperationException("MainDispatcherQueue must be initialized before creating AudioPlayerService.");
-            return new AudioPlayerService(MainDispatcherQueue);
-        });
 
         services.AddSingleton<LibraryService>();
         services.AddSingleton<ILibraryService>(provider => provider.GetRequiredService<LibraryService>());
@@ -153,6 +153,30 @@ public partial class App : Application {
         services.AddSingleton<IApiKeyService, ApiKeyService>();
         services.AddSingleton<ILastFmService, LastFmService>();
         services.AddSingleton<ISpotifyService, SpotifyService>();
+        #endregion
+    }
+
+    /// <summary>
+    /// Configures services that are dependent on the WinUI framework (Window, DispatcherQueue, etc.).
+    /// </summary>
+    private static void ConfigureUIServices(IServiceCollection services, Window window, DispatcherQueue dispatcherQueue, App appInstance) {
+        #region UI Abstraction Services
+        services.AddSingleton<IWindowService>(sp => new WinUIWindowService(window, sp.GetRequiredService<IWin32InteropService>()));
+        services.AddSingleton<IUIService>(sp => new WinUIUIService(window));
+        services.AddSingleton<IDispatcherService>(sp => new WinUIDispatcherService(dispatcherQueue));
+        services.AddSingleton<IThemeService>(sp => new WinUIThemeService(appInstance));
+        services.AddSingleton<IApplicationLifecycle>(sp => new WinUIApplicationLifecycle(appInstance, sp));
+        services.AddSingleton<IAppInfoService, WinUIAppInfoService>();
+        #endregion
+
+        #region UI-Dependent Core Services
+        services.AddSingleton<IMusicPlaybackService, MusicPlaybackService>();
+        services.AddSingleton<ITrayPopupService, TrayPopupService>();
+        services.AddSingleton<IAudioPlayer>(provider => {
+            if (dispatcherQueue is null)
+                throw new InvalidOperationException("DispatcherQueue must be available to create AudioPlayerService.");
+            return new AudioPlayerService(dispatcherQueue);
+        });
         #endregion
 
         #region ViewModels
@@ -172,9 +196,9 @@ public partial class App : Application {
         services.AddTransient<GenreViewModel>();
         services.AddTransient<GenreViewViewModel>();
         #endregion
-
-        return services.BuildServiceProvider();
     }
+
+    #endregion
 
     /// <summary>
     /// Ensures the application database is created if it does not already exist.
@@ -183,10 +207,11 @@ public partial class App : Application {
         try {
             var dbContextFactory = services.GetRequiredService<IDbContextFactory<MusicDbContext>>();
             using var dbContext = dbContextFactory.CreateDbContext();
-            dbContext.Database.EnsureCreated();
+            dbContext.RecreateDatabase();
+            dbContext.Database.Migrate();
         }
         catch (Exception ex) {
-            Debug.WriteLine($"[CRITICAL] App: Failed to initialize database. {ex.Message}");
+            Debug.WriteLine($"[CRITICAL] App: Failed to initialize or migrate database. {ex.Message}");
         }
     }
 
@@ -524,17 +549,15 @@ public partial class App : Application {
     /// </summary>
     private async Task CheckForUpdatesAsync() {
         if (Services is null) return;
-        #if DEBUG
-                Debug.WriteLine("[INFO] App: Skipping update check in DEBUG mode.");
-                return;
-        #else
-        try
-        {
+            #if DEBUG
+                    Debug.WriteLine("[INFO] App: Skipping update check in DEBUG mode.");
+                    return;
+            #else
+        try {
             var updateManager = Services.GetRequiredService<UpdateManager>();
             var newVersion = await updateManager.CheckForUpdatesAsync();
 
-            if (newVersion == null)
-            {
+            if (newVersion == null) {
                 Debug.WriteLine("[INFO] App: No updates found.");
                 return;
             }
@@ -545,8 +568,7 @@ public partial class App : Application {
             Debug.WriteLine("[INFO] App: Update downloaded. Applying and restarting.");
             updateManager.ApplyUpdatesAndRestart(newVersion);
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             Debug.WriteLine($"[ERROR] App: Failed while checking for updates. {ex.Message}");
         }
 #endif

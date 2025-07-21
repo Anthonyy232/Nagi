@@ -32,4 +32,10 @@ public class SongFileMetadata {
     public string? Composer { get; set; }
     public bool ExtractionFailed { get; set; }
     public string? ErrorMessage { get; set; }
+    public string? Grouping { get; set; }
+    public string? Copyright { get; set; }
+    public string? Comment { get; set; }
+    public string? Conductor { get; set; }
+    public string? MusicBrainzTrackId { get; set; }
+    public string? MusicBrainzReleaseId { get; set; }
 }
