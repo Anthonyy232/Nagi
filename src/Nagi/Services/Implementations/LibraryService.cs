@@ -1327,7 +1327,13 @@ public class LibraryService : ILibraryService {
             Lyrics = metadata.Lyrics,
             ArtistId = trackArtist.Id,
             AlbumId = album?.Id,
-            Genres = genres
+            Genres = genres,
+            Grouping = metadata.Grouping,
+            Copyright = metadata.Copyright,
+            Comment = metadata.Comment,
+            Conductor = metadata.Conductor,
+            MusicBrainzTrackId = metadata.MusicBrainzTrackId,
+            MusicBrainzReleaseId = metadata.MusicBrainzReleaseId
         };
 
         if (album is not null && string.IsNullOrEmpty(album.CoverArtUri) && !string.IsNullOrEmpty(metadata.CoverArtUri)) {
@@ -1375,7 +1381,13 @@ public class LibraryService : ILibraryService {
                 Lyrics = metadata.Lyrics,
                 ArtistId = trackArtist.Id,
                 AlbumId = album?.Id,
-                Genres = genres
+                Genres = genres,
+                Grouping = metadata.Grouping,
+                Copyright = metadata.Copyright,
+                Comment = metadata.Comment,
+                Conductor = metadata.Conductor,
+                MusicBrainzTrackId = metadata.MusicBrainzTrackId,
+                MusicBrainzReleaseId = metadata.MusicBrainzReleaseId
             };
 
             if (album is not null && string.IsNullOrEmpty(album.CoverArtUri) && !string.IsNullOrEmpty(metadata.CoverArtUri)) {

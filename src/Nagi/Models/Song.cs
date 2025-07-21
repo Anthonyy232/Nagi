@@ -92,6 +92,36 @@ public class Song {
     /// </summary>
     public double? Bpm { get; set; }
 
+    /// <summary>
+    /// A custom grouping category for the song.
+    /// </summary>
+    public string? Grouping { get; set; }
+
+    /// <summary>
+    /// Copyright information for the track.
+    /// </summary>
+    public string? Copyright { get; set; }
+
+    /// <summary>
+    /// A general-purpose comment field.
+    /// </summary>
+    public string? Comment { get; set; }
+
+    /// <summary>
+    /// The conductor of the orchestra, if applicable.
+    /// </summary>
+    public string? Conductor { get; set; }
+
+    /// <summary>
+    /// The unique identifier for the track from the MusicBrainz database.
+    /// </summary>
+    public string? MusicBrainzTrackId { get; set; }
+
+    /// <summary>
+    /// The unique identifier for the release (album) from the MusicBrainz database.
+    /// </summary>
+    public string? MusicBrainzReleaseId { get; set; }
+
     [NotMapped]
     public bool IsArtworkAvailable => !string.IsNullOrEmpty(AlbumArtUriFromTrack);
 

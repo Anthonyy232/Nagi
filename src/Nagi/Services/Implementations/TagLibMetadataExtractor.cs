@@ -67,6 +67,12 @@ public class TagLibMetadataExtractor : IMetadataExtractor {
             metadata.Lyrics = tag.Lyrics;
             metadata.Bpm = tag.BeatsPerMinute > 0 ? tag.BeatsPerMinute : null;
             metadata.Composer = tag.Composers.FirstOrDefault()?.Trim();
+            metadata.Grouping = tag.Grouping?.Trim();
+            metadata.Copyright = tag.Copyright?.Trim();
+            metadata.Comment = tag.Comment?.Trim();
+            metadata.Conductor = tag.Conductor?.Trim();
+            metadata.MusicBrainzTrackId = tag.MusicBrainzTrackId;
+            metadata.MusicBrainzReleaseId = tag.MusicBrainzReleaseId;
 
             var picture = tag.Pictures.FirstOrDefault();
             if (picture?.Data?.Data != null) {
