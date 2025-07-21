@@ -18,7 +18,7 @@ namespace Nagi.Services.Implementations;
 
 /// <summary>
 /// Manages application settings by persisting them to local storage.
-/// This implementation is suitable for both packaged and unpackaged applications.
+/// This implementation supports both packaged (MSIX) and unpackaged application deployments.
 /// </summary>
 public class SettingsService : ISettingsService {
     private const string AppName = "Nagi";
@@ -38,13 +38,17 @@ public class SettingsService : ISettingsService {
     private const string ShowCoverArtInTrayFlyoutKey = "ShowCoverArtInTrayFlyout";
     private const string FetchOnlineMetadataKey = "FetchOnlineMetadataEnabled";
     private const string NavigationItemsKey = "NavigationItems";
+    private const string CheckForUpdatesEnabledKey = "CheckForUpdatesEnabled";
+    private const string LastSkippedUpdateVersionKey = "LastSkippedUpdateVersion";
 
     private readonly PathConfiguration _pathConfig;
     private readonly bool _isPackaged;
     private readonly ApplicationDataContainer? _localSettings;
     private Dictionary<string, object?> _settings;
-    private readonly SemaphoreSlim _settingsFileLock = new(1, 1);
     private bool _isInitialized;
+
+    // A semaphore to prevent race conditions when reading/writing the settings file in unpackaged mode.
+    private readonly SemaphoreSlim _settingsFileLock = new(1, 1);
 
     private static readonly JsonSerializerOptions _serializerOptions = new() { WriteIndented = true };
 
@@ -71,7 +75,7 @@ public class SettingsService : ISettingsService {
             if (_isInitialized) return;
 
             if (File.Exists(_pathConfig.SettingsFilePath)) {
-                var json = await File.ReadAllTextAsync(_pathConfig.SettingsFilePath);
+                string json = await File.ReadAllTextAsync(_pathConfig.SettingsFilePath);
                 _settings = JsonSerializer.Deserialize<Dictionary<string, object?>>(json) ?? new();
             }
             _isInitialized = true;
@@ -89,10 +93,10 @@ public class SettingsService : ISettingsService {
 
     private T GetValue<T>(string key, T defaultValue) {
         if (_isPackaged) {
-            return _localSettings!.Values.TryGetValue(key, out var value) && value is T v ? v : defaultValue;
+            return _localSettings!.Values.TryGetValue(key, out object? value) && value is T v ? v : defaultValue;
         }
         else {
-            if (_settings.TryGetValue(key, out var value) && value != null) {
+            if (_settings.TryGetValue(key, out object? value) && value != null) {
                 try {
                     // When deserializing into object, numbers can become JsonElement.
                     if (value is JsonElement element) return element.Deserialize<T>() ?? defaultValue;
@@ -110,13 +114,13 @@ public class SettingsService : ISettingsService {
         string? json = null;
 
         if (_isPackaged) {
-            if (_localSettings!.Values.TryGetValue(key, out var value) && value is string jsonString) {
+            if (_localSettings!.Values.TryGetValue(key, out object? value) && value is string jsonString) {
                 json = jsonString;
             }
         }
         else {
             await EnsureUnpackagedSettingsLoadedAsync();
-            if (_settings.TryGetValue(key, out var value) && value != null) {
+            if (_settings.TryGetValue(key, out object? value) && value != null) {
                 json = (value as JsonElement?)?.GetRawText() ?? value as string;
             }
         }
@@ -137,12 +141,12 @@ public class SettingsService : ISettingsService {
         string? name = null;
 
         if (_isPackaged) {
-            if (_localSettings!.Values.TryGetValue(key, out var value) && value is string stringValue) {
+            if (_localSettings!.Values.TryGetValue(key, out object? value) && value is string stringValue) {
                 name = stringValue;
             }
         }
         else {
-            if (_settings.TryGetValue(key, out var value) && value != null) {
+            if (_settings.TryGetValue(key, out object? value) && value != null) {
                 name = (value as JsonElement?)?.GetString() ?? value as string;
             }
         }
@@ -169,7 +173,7 @@ public class SettingsService : ISettingsService {
             _settings[key] = value;
             await _settingsFileLock.WaitAsync();
             try {
-                var json = JsonSerializer.Serialize(_settings, _serializerOptions);
+                string json = JsonSerializer.Serialize(_settings, _serializerOptions);
                 await File.WriteAllTextAsync(_pathConfig.SettingsFilePath, json);
             }
             finally {
@@ -180,7 +184,7 @@ public class SettingsService : ISettingsService {
 
     private async Task SetValueAndNotifyAsync<T>(string key, T newValue, T defaultValue, Action<T>? notifier) {
         await EnsureUnpackagedSettingsLoadedAsync();
-        var currentValue = GetValue(key, defaultValue);
+        T currentValue = GetValue(key, defaultValue);
         if (!EqualityComparer<T>.Default.Equals(currentValue, newValue)) {
             notifier?.Invoke(newValue);
         }
@@ -225,6 +229,8 @@ public class SettingsService : ISettingsService {
         await SaveMuteStateAsync(false);
         await SaveShuffleStateAsync(false);
         await SaveRepeatModeAsync(RepeatMode.Off);
+        await SetCheckForUpdatesEnabledAsync(true);
+        await SetLastSkippedUpdateVersionAsync(null);
 
         Debug.WriteLine("[INFO] SettingsService: All application settings have been reset to their default values.");
     }
@@ -315,7 +321,7 @@ public class SettingsService : ISettingsService {
                 if (key is null) return;
 
                 if (isEnabled) {
-                    var exePath = Environment.ProcessPath;
+                    string? exePath = Environment.ProcessPath;
                     if (!string.IsNullOrEmpty(exePath)) {
                         key.SetValue(AutoLaunchRegistryValueName, $"\"{exePath}\"");
                     }
@@ -355,6 +361,20 @@ public class SettingsService : ISettingsService {
 
     public Task SetFetchOnlineMetadataEnabledAsync(bool isEnabled) => SetValueAsync(FetchOnlineMetadataKey, isEnabled);
 
+    public async Task<bool> GetCheckForUpdatesEnabledAsync() {
+        await EnsureUnpackagedSettingsLoadedAsync();
+        return GetValue(CheckForUpdatesEnabledKey, true);
+    }
+
+    public Task SetCheckForUpdatesEnabledAsync(bool isEnabled) => SetValueAsync(CheckForUpdatesEnabledKey, isEnabled);
+
+    public async Task<string?> GetLastSkippedUpdateVersionAsync() {
+        await EnsureUnpackagedSettingsLoadedAsync();
+        return GetValue<string?>(LastSkippedUpdateVersionKey, null);
+    }
+
+    public Task SetLastSkippedUpdateVersionAsync(string? version) => SetValueAsync(LastSkippedUpdateVersionKey, version);
+
     public async Task<List<NavigationItemSetting>> GetNavigationItemsAsync() {
         var items = await GetComplexValueAsync<List<NavigationItemSetting>>(NavigationItemsKey);
 
@@ -381,7 +401,7 @@ public class SettingsService : ISettingsService {
             return;
         }
 
-        var jsonState = JsonSerializer.Serialize(state, _serializerOptions);
+        string jsonState = JsonSerializer.Serialize(state, _serializerOptions);
 
         if (_isPackaged) {
             var stateFile = await ApplicationData.Current.LocalFolder.CreateFileAsync(

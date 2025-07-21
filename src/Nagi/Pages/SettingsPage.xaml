@@ -14,6 +14,7 @@
         <localConverters:ElementThemeToFriendlyStringConverter x:Key="ThemeToStringConverter" />
         <localConverters:StringToFontFamilyConverter x:Key="StringToFontFamilyConverter" />
 
+        <!-- FIXED: Removed the extra nested <Setter.Value> -->
         <Style x:Key="NavigationListViewItemStyle" TargetType="ListViewItem">
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
             <Setter Property="Padding" Value="0" />
@@ -265,7 +266,22 @@
                     </controls:SettingsExpander.Items>
                 </controls:SettingsExpander>
 
-                <HyperlinkButton Margin="0,8,0,0" Content="Send Feedback" NavigateUri="mailto:anthonyyla.dev@gmail.com" />
+                <controls:SettingsCard Header="Check for updates on startup"
+                                       Description="Automatically check for new versions when the application starts.">
+                    <controls:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
+                    </controls:SettingsCard.HeaderIcon>
+                    <ToggleSwitch HorizontalAlignment="Right" IsOn="{x:Bind ViewModel.IsCheckForUpdatesEnabled, Mode=TwoWay}" />
+                </controls:SettingsCard>
+
+                <StackPanel Margin="0,8,0,0" Orientation="Horizontal" Spacing="12">
+                    <HyperlinkButton
+                        Command="{x:Bind ViewModel.CheckForUpdatesManuallyCommand}"
+                        Content="Check for Updates" />
+                    <HyperlinkButton
+                        Content="Send Feedback"
+                        NavigateUri="mailto:anthonyyla.dev@gmail.com" />
+                </StackPanel>
             </StackPanel>
         </ScrollView>
     </Grid>

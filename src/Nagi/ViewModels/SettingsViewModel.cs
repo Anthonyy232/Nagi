@@ -14,12 +14,18 @@ using System.Threading.Tasks;
 
 namespace Nagi.ViewModels;
 
+/// <summary>
+/// ViewModel for the Settings page, providing properties and commands to manage application settings.
+/// </summary>
 public partial class SettingsViewModel : ObservableObject {
     private readonly ISettingsService _settingsService;
     private readonly IUIService _uiService;
     private readonly IThemeService _themeService;
     private readonly IApplicationLifecycle _applicationLifecycle;
     private readonly IAppInfoService _appInfoService;
+    private readonly IUpdateService _updateService;
+
+    // Flag to prevent property change handlers from running during initial data loading.
     private bool _isInitializing;
 
     public SettingsViewModel(
@@ -27,12 +33,14 @@ public partial class SettingsViewModel : ObservableObject {
         IUIService uiService,
         IThemeService themeService,
         IApplicationLifecycle applicationLifecycle,
-        IAppInfoService appInfoService) {
+        IAppInfoService appInfoService,
+        IUpdateService updateService) {
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
         _uiService = uiService ?? throw new ArgumentNullException(nameof(uiService));
         _themeService = themeService ?? throw new ArgumentNullException(nameof(themeService));
         _applicationLifecycle = applicationLifecycle ?? throw new ArgumentNullException(nameof(applicationLifecycle));
         _appInfoService = appInfoService ?? throw new ArgumentNullException(nameof(appInfoService));
+        _updateService = updateService ?? throw new ArgumentNullException(nameof(updateService));
         NavigationItems.CollectionChanged += OnNavigationItemsCollectionChanged;
     }
 
@@ -63,10 +71,16 @@ public partial class SettingsViewModel : ObservableObject {
     [ObservableProperty]
     private bool _isFetchOnlineMetadataEnabled;
 
+    [ObservableProperty]
+    private bool _isCheckForUpdatesEnabled;
+
     public ObservableCollection<NavigationItemSetting> NavigationItems { get; } = new();
     public List<ElementTheme> AvailableThemes { get; } = Enum.GetValues<ElementTheme>().ToList();
     public string ApplicationVersion => _appInfoService.GetAppVersion();
 
+    /// <summary>
+    /// Loads all settings from the settings service and populates the ViewModel properties.
+    /// </summary>
     [RelayCommand]
     public async Task LoadSettingsAsync() {
         _isInitializing = true;
@@ -91,13 +105,17 @@ public partial class SettingsViewModel : ObservableObject {
         IsHideToTrayEnabled = await _settingsService.GetHideToTrayEnabledAsync();
         IsShowCoverArtInTrayFlyoutEnabled = await _settingsService.GetShowCoverArtInTrayFlyoutAsync();
         IsFetchOnlineMetadataEnabled = await _settingsService.GetFetchOnlineMetadataEnabledAsync();
+        IsCheckForUpdatesEnabled = await _settingsService.GetCheckForUpdatesEnabledAsync();
 
         _isInitializing = false;
     }
 
+    /// <summary>
+    /// Prompts the user for confirmation and then resets all application data and settings to their defaults.
+    /// </summary>
     [RelayCommand]
     private async Task ResetApplicationDataAsync() {
-        var confirmed = await _uiService.ShowConfirmationDialogAsync(
+        bool confirmed = await _uiService.ShowConfirmationDialogAsync(
             "Confirm Reset",
             "Are you sure you want to reset all application data and settings? This action cannot be undone. The application will return to the initial setup.",
             "Reset",
@@ -110,12 +128,18 @@ public partial class SettingsViewModel : ObservableObject {
         }
         catch (Exception ex) {
             Debug.WriteLine($"[CRITICAL] Application reset failed. Error: {ex.Message}\n{ex.StackTrace}");
-            await _uiService.ShowConfirmationDialogAsync(
+            await _uiService.ShowMessageDialogAsync(
                 "Reset Error",
-                $"An error occurred while resetting application data: {ex.Message}. Please try restarting the app manually.",
-                "OK",
-                null);
+                $"An error occurred while resetting application data: {ex.Message}. Please try restarting the app manually.");
         }
+    }
+
+    /// <summary>
+    /// Manually triggers a check for application updates.
+    /// </summary>
+    [RelayCommand]
+    private async Task CheckForUpdatesManuallyAsync() {
+        await _updateService.CheckForUpdatesManuallyAsync();
     }
 
     private void OnNavigationItemsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
@@ -198,5 +222,10 @@ public partial class SettingsViewModel : ObservableObject {
     partial void OnIsFetchOnlineMetadataEnabledChanged(bool value) {
         if (_isInitializing) return;
         _ = _settingsService.SetFetchOnlineMetadataEnabledAsync(value);
+    }
+
+    partial void OnIsCheckForUpdatesEnabledChanged(bool value) {
+        if (_isInitializing) return;
+        _ = _settingsService.SetCheckForUpdatesEnabledAsync(value);
     }
 }

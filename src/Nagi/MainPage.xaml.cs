@@ -7,7 +7,6 @@ using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Controls;
 using Nagi.Interfaces;
-using Nagi.Models;
 using Nagi.Pages;
 using Nagi.Services.Abstractions;
 using Nagi.ViewModels;
@@ -26,7 +25,7 @@ namespace Nagi;
 public sealed partial class MainPage : UserControl, ICustomTitleBarProvider {
     private const double VolumeChangeStep = 5.0;
 
-    // Maps detail page types to their parent navigation tag for correct item selection.
+    // Maps detail pages back to their parent navigation item for selection synchronization.
     private readonly Dictionary<Type, string> _detailPageToParentTagMap = new()
     {
         { typeof(PlaylistSongViewPage), "playlists" },
@@ -36,7 +35,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider {
         { typeof(GenreViewPage), "genres" }
     };
 
-    // Maps navigation view item tags to their corresponding page types.
+    // Maps navigation item tags to their corresponding page types.
     private readonly Dictionary<string, Type> _pages = new()
     {
         { "library", typeof(LibraryPage) },
@@ -49,18 +48,19 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider {
     };
 
     private readonly ISettingsService _settingsService;
+    private readonly IThemeService _themeService;
     private bool _isPlayerAnimationEnabled = true;
     private bool _isPointerOverPlayer;
-    private bool _isUpdatingNavViewSelection;
     private bool _isQueueFlyoutOpen;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="MainPage"/> class.
-    /// </summary>
+    // Flag to prevent re-entrant or recursive navigation calls while the selection is being updated programmatically.
+    private bool _isUpdatingNavViewSelection;
+
     public MainPage() {
         InitializeComponent();
         ViewModel = App.Services!.GetRequiredService<PlayerViewModel>();
         _settingsService = App.Services!.GetRequiredService<ISettingsService>();
+        _themeService = App.Services!.GetRequiredService<IThemeService>();
         DataContext = ViewModel;
 
         InitializeNavigationService();
@@ -70,15 +70,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider {
     }
 
     public PlayerViewModel ViewModel { get; }
-
-    /// <summary>
-    /// Provides the title bar UI element to the main window.
-    /// </summary>
     public TitleBar GetAppTitleBarElement() => AppTitleBar;
-
-    /// <summary>
-    /// Provides the title bar row definition to the main window.
-    /// </summary>
     public RowDefinition GetAppTitleBarRowElement() => AppTitleBarRow;
 
     private void InitializeNavigationService() {
@@ -86,12 +78,8 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider {
         navigationService.Initialize(ContentFrame);
     }
 
-    /// <summary>
-    /// Updates the visual state of the page based on window activation.
-    /// </summary>
-    /// <param name="activationState">The window's activation state.</param>
     public void UpdateActivationVisualState(WindowActivationState activationState) {
-        var stateName = activationState == WindowActivationState.Deactivated
+        string stateName = activationState == WindowActivationState.Deactivated
             ? "WindowIsInactive"
             : "WindowIsActive";
         VisualStateManager.GoToState(this, stateName, true);
@@ -106,11 +94,13 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider {
         }
 
         if (selectedItem is NavigationViewItem { Tag: string tag } &&
-            _pages.TryGetValue(tag, out var pageType) &&
+            _pages.TryGetValue(tag, out Type? pageType) &&
             ContentFrame.CurrentSourcePageType != pageType) {
             ContentFrame.Navigate(pageType, null, transitionInfo);
         }
     }
+
+
 
     private void TryGoBack() {
         if (ContentFrame.CanGoBack) {
@@ -118,9 +108,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider {
         }
     }
 
-    /// <summary>
-    /// Synchronizes the NavigationView's selected item with the current page in the content frame.
-    /// </summary>
     private void UpdateNavViewSelection(Type currentPageType) {
         _isUpdatingNavViewSelection = true;
 
@@ -128,10 +115,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider {
             NavView.SelectedItem = NavView.SettingsItem;
         }
         else {
-            // Find the navigation tag associated with the current page.
-            var tagToSelect = _pages.FirstOrDefault(p => p.Value == currentPageType).Key;
-
-            // If it's a detail page, find its parent tag.
+            string? tagToSelect = _pages.FirstOrDefault(p => p.Value == currentPageType).Key;
             if (tagToSelect is null) {
                 _detailPageToParentTagMap.TryGetValue(currentPageType, out tagToSelect);
             }
@@ -151,20 +135,15 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider {
 
     private void ApplyDynamicThemeForCurrentTrack() {
         var song = ViewModel.CurrentPlayingTrack;
-        if (App.Current is App app) {
-            app.ApplyDynamicThemeFromSwatches(song?.LightSwatchId, song?.DarkSwatchId);
-        }
+        _themeService.ApplyDynamicThemeFromSwatches(song?.LightSwatchId, song?.DarkSwatchId);
     }
 
-    /// <summary>
-    /// Transitions the player UI between its expanded and collapsed states.
-    /// </summary>
     private void UpdatePlayerVisualState(bool useTransitions = true) {
-        var isPlaying = ViewModel.CurrentPlayingTrack != null && ViewModel.IsPlaying;
+        bool isPlaying = ViewModel.CurrentPlayingTrack != null && ViewModel.IsPlaying;
 
-        // Player is expanded if music is playing, user is hovering, queue is opened or animations are disabled.
-        var shouldBeExpanded = !_isPlayerAnimationEnabled || isPlaying || _isPointerOverPlayer;
-        var stateName = shouldBeExpanded ? "PlayerExpanded" : "PlayerCollapsed";
+        // The player is expanded if animations are disabled, music is playing, the user is hovering, or the queue flyout is open.
+        bool shouldBeExpanded = !_isPlayerAnimationEnabled || isPlaying || _isPointerOverPlayer || _isQueueFlyoutOpen;
+        string stateName = shouldBeExpanded ? "PlayerExpanded" : "PlayerCollapsed";
 
         VisualStateManager.GoToState(this, stateName, useTransitions);
     }
@@ -199,7 +178,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider {
 
         await PopulateNavigationAsync();
 
-        // After initial population, select the correct starting item.
         if (NavView.MenuItems.Any() && NavView.SelectedItem == null) {
             NavView.SelectedItem = NavView.MenuItems.First();
         }
@@ -230,8 +208,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider {
         DispatcherQueue.TryEnqueue(async () => {
             _isUpdatingNavViewSelection = true;
             await PopulateNavigationAsync();
-            // After repopulating, re-select the Settings item if we are on the settings page.
-            // This prevents navigating away unexpectedly.
             if (ContentFrame.CurrentSourcePageType == typeof(SettingsPage)) {
                 NavView.SelectedItem = NavView.SettingsItem;
             }
@@ -240,14 +216,16 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider {
     }
 
     private void OnActualThemeChanged(FrameworkElement sender, object args) {
-        ApplyDynamicThemeForCurrentTrack();
+        _themeService.ReapplyCurrentDynamicTheme();
     }
 
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         switch (e.PropertyName) {
             case nameof(PlayerViewModel.CurrentPlayingTrack):
-                DispatcherQueue.TryEnqueue(ApplyDynamicThemeForCurrentTrack);
-                DispatcherQueue.TryEnqueue(() => UpdatePlayerVisualState());
+                DispatcherQueue.TryEnqueue(() => {
+                    ApplyDynamicThemeForCurrentTrack();
+                    UpdatePlayerVisualState();
+                });
                 break;
             case nameof(PlayerViewModel.IsPlaying):
                 DispatcherQueue.TryEnqueue(() => UpdatePlayerVisualState());
@@ -269,21 +247,19 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider {
     }
 
     private void OnContentFrameNavigated(object sender, NavigationEventArgs e) {
-        // Show the title bar's back button only on detail pages.
-        var isDetailPage = _detailPageToParentTagMap.ContainsKey(e.SourcePageType);
+        bool isDetailPage = _detailPageToParentTagMap.ContainsKey(e.SourcePageType);
         AppTitleBar.IsBackButtonVisible = ContentFrame.CanGoBack && isDetailPage;
 
         UpdateNavViewSelection(e.SourcePageType);
 
-        // Animate the player visibility based on the current page.
-        var isSettingsPage = e.SourcePageType == typeof(SettingsPage);
-        var stateName = isSettingsPage ? "PlayerHidden" : "PlayerVisible";
+        bool isSettingsPage = e.SourcePageType == typeof(SettingsPage);
+        string stateName = isSettingsPage ? "PlayerHidden" : "PlayerVisible";
         VisualStateManager.GoToState(this, stateName, true);
     }
 
     private void VolumeControlsWrapper_PointerWheelChanged(object sender, PointerRoutedEventArgs e) {
         var delta = e.GetCurrentPoint(sender as UIElement).Properties.MouseWheelDelta;
-        var change = delta > 0 ? VolumeChangeStep : -VolumeChangeStep;
+        double change = delta > 0 ? VolumeChangeStep : -VolumeChangeStep;
         ViewModel.CurrentVolume = Math.Clamp(ViewModel.CurrentVolume + change, 0, 100);
         e.Handled = true;
     }
@@ -308,10 +284,12 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider {
 
     private void QueueFlyout_Opened(object sender, object e) {
         _isQueueFlyoutOpen = true;
+        UpdatePlayerVisualState();
     }
 
     private void QueueFlyout_Closed(object sender, object e) {
         _isQueueFlyoutOpen = false;
+        // The visual state must be updated when the flyout closes, in case the pointer is not over the player.
         UpdatePlayerVisualState();
     }
 }
