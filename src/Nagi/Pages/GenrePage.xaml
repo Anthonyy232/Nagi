@@ -12,7 +12,6 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <!-- Converters are defined as page resources for use with x:Bind compiled bindings. -->
         <converters:GenreToGradientConverter x:Key="GenreToGradientConverter" />
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <converters:BooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" Invert="True" />
@@ -86,11 +85,16 @@
                 VerticalAlignment="Center"
                 Spacing="12"
                 Visibility="{x:Bind ViewModel.HasGenres, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}">
-                <FontIcon FontSize="48" Glyph="" />
+                <FontIcon FontSize="48" Glyph="&#xE8EC;" />
                 <TextBlock
                     HorizontalAlignment="Center"
                     Style="{ThemeResource SubtitleTextBlockStyle}"
                     Text="No genres found" />
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    Opacity="0.7"
+                    Style="{ThemeResource BodyTextBlockStyle}"
+                    Text="Scan your music library to populate genres." />
             </StackPanel>
         </Grid>
     </Grid>
