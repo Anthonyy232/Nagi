@@ -285,6 +285,41 @@
                     </StackPanel>
                 </controls:SettingsCard>
 
+                <!-- Last.fm preferences, visible only when connected -->
+                <StackPanel Spacing="{StaticResource SettingsCardSpacing}" Visibility="{x:Bind ViewModel.IsLastFmConnected, Mode=OneWay}">
+                    <controls:SettingsCard
+                        Header="Enable scrobbling"
+                        Description="Automatically add the tracks you listen to on Nagi to your Last.fm profile.">
+                        <controls:SettingsCard.HeaderIcon>
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
+                        </controls:SettingsCard.HeaderIcon>
+                        <ToggleSwitch
+                            HorizontalAlignment="Right"
+                            IsOn="{x:Bind ViewModel.IsLastFmScrobblingEnabled, Mode=TwoWay}" />
+                    </controls:SettingsCard>
+
+                    <controls:SettingsCard
+                        Header="Update 'Now Playing'"
+                        Description="Show your friends on Last.fm what you're currently listening to in real-time.">
+                        <controls:SettingsCard.HeaderIcon>
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
+                        </controls:SettingsCard.HeaderIcon>
+                        <ToggleSwitch
+                            HorizontalAlignment="Right"
+                            IsOn="{x:Bind ViewModel.IsLastFmNowPlayingEnabled, Mode=TwoWay}" />
+                    </controls:SettingsCard>
+                </StackPanel>
+
+                <controls:SettingsCard Header="Discord"
+                                       Description="Show your current listening activity as your status on Discord.">
+                    <controls:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
+                    </controls:SettingsCard.HeaderIcon>
+                    <ToggleSwitch
+                        HorizontalAlignment="Right"
+                        IsOn="{x:Bind ViewModel.IsDiscordRichPresenceEnabled, Mode=TwoWay}" />
+                </controls:SettingsCard>
+
                 <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="About" />
 
                 <controls:SettingsExpander

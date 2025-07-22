@@ -30,7 +30,7 @@ public class LibraryService : ILibraryService {
     private readonly IDbContextFactory<MusicDbContext> _contextFactory;
     private readonly IFileSystemService _fileSystem;
     private readonly IMetadataExtractor _metadataExtractor;
-    private readonly ILastFmService _lastFmService;
+    private readonly ILastFmMetadataService _lastFmService;
     private readonly ISpotifyService _spotifyService;
     private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly PathConfiguration _pathConfig;
@@ -48,7 +48,7 @@ public class LibraryService : ILibraryService {
         IDbContextFactory<MusicDbContext> contextFactory,
         IFileSystemService fileSystem,
         IMetadataExtractor metadataExtractor,
-        ILastFmService lastFmService,
+        ILastFmMetadataService lastFmService,
         ISpotifyService spotifyService,
         IHttpClientFactory httpClientFactory,
         IServiceScopeFactory serviceScopeFactory,
