@@ -112,7 +112,9 @@ public partial class App : Application {
 
         services.AddSingleton<IApiKeyService, ApiKeyService>();
         services.AddSingleton<ILastFmService, LastFmService>();
+        services.AddSingleton<ILastFmAuthService, LastFmAuthService>();
         services.AddSingleton<ISpotifyService, SpotifyService>();
+        services.AddSingleton<ICredentialLockerService, CredentialLockerService>();
     }
 
     private static void ConfigureUIServices(IServiceCollection services, Window window, DispatcherQueue dispatcherQueue, App appInstance) {

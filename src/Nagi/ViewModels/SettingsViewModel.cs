@@ -11,6 +11,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Windows.System;
 
 namespace Nagi.ViewModels;
 
@@ -24,6 +25,7 @@ public partial class SettingsViewModel : ObservableObject {
     private readonly IApplicationLifecycle _applicationLifecycle;
     private readonly IAppInfoService _appInfoService;
     private readonly IUpdateService _updateService;
+    private readonly ILastFmAuthService _lastFmAuthService;
 
     // Flag to prevent property change handlers from running during initial data loading.
     private bool _isInitializing;
@@ -34,13 +36,15 @@ public partial class SettingsViewModel : ObservableObject {
         IThemeService themeService,
         IApplicationLifecycle applicationLifecycle,
         IAppInfoService appInfoService,
-        IUpdateService updateService) {
+        IUpdateService updateService,
+        ILastFmAuthService lastFmAuthService) {
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
         _uiService = uiService ?? throw new ArgumentNullException(nameof(uiService));
         _themeService = themeService ?? throw new ArgumentNullException(nameof(themeService));
         _applicationLifecycle = applicationLifecycle ?? throw new ArgumentNullException(nameof(applicationLifecycle));
         _appInfoService = appInfoService ?? throw new ArgumentNullException(nameof(appInfoService));
         _updateService = updateService ?? throw new ArgumentNullException(nameof(updateService));
+        _lastFmAuthService = lastFmAuthService ?? throw new ArgumentNullException(nameof(lastFmAuthService));
         NavigationItems.CollectionChanged += OnNavigationItemsCollectionChanged;
     }
 
@@ -73,6 +77,18 @@ public partial class SettingsViewModel : ObservableObject {
 
     [ObservableProperty]
     private bool _isCheckForUpdatesEnabled;
+
+    [ObservableProperty]
+    private bool _isLastFmConnected;
+
+    [ObservableProperty]
+    private bool _isConnectingToLastFm;
+
+    [ObservableProperty]
+    private string? _lastFmUsername;
+
+    public bool IsLastFmNotConnected => !IsLastFmConnected;
+    public bool IsLastFmInitialAuthEnabled => !IsConnectingToLastFm;
 
     public ObservableCollection<NavigationItemSetting> NavigationItems { get; } = new();
     public List<ElementTheme> AvailableThemes { get; } = Enum.GetValues<ElementTheme>().ToList();
@@ -107,6 +123,14 @@ public partial class SettingsViewModel : ObservableObject {
         IsFetchOnlineMetadataEnabled = await _settingsService.GetFetchOnlineMetadataEnabledAsync();
         IsCheckForUpdatesEnabled = await _settingsService.GetCheckForUpdatesEnabledAsync();
 
+        var lastFmCredentials = await _settingsService.GetLastFmCredentialsAsync();
+        LastFmUsername = lastFmCredentials?.Username;
+        IsLastFmConnected = lastFmCredentials is not null && !string.IsNullOrEmpty(lastFmCredentials.Value.SessionKey);
+
+        // Check for a pending auth token to restore the UI state after an app restart.
+        var authToken = await _settingsService.GetLastFmAuthTokenAsync();
+        IsConnectingToLastFm = !string.IsNullOrEmpty(authToken);
+
         _isInitializing = false;
     }
 
@@ -140,6 +164,70 @@ public partial class SettingsViewModel : ObservableObject {
     [RelayCommand]
     private async Task CheckForUpdatesManuallyAsync() {
         await _updateService.CheckForUpdatesManuallyAsync();
+    }
+
+    /// <summary>
+    /// Initiates the Last.fm connection process by opening the auth URL in the browser.
+    /// </summary>
+    [RelayCommand]
+    private async Task LastFmInitialAuthAsync() {
+        IsConnectingToLastFm = true;
+        var authData = await _lastFmAuthService.GetAuthenticationTokenAsync();
+        if (authData is { Token: not null, AuthUrl: not null }) {
+            // Persist the token to allow the auth flow to survive an app restart.
+            await _settingsService.SaveLastFmAuthTokenAsync(authData.Value.Token);
+            await Launcher.LaunchUriAsync(new Uri(authData.Value.AuthUrl));
+        }
+        else {
+            await _uiService.ShowMessageDialogAsync("Error", "Could not connect to Last.fm. Please try again later.");
+            IsConnectingToLastFm = false;
+        }
+    }
+
+    /// <summary>
+    /// Finalizes the Last.fm connection after the user has authorized the app.
+    /// </summary>
+    [RelayCommand]
+    private async Task LastFmFinalizeAuthAsync() {
+        var authToken = await _settingsService.GetLastFmAuthTokenAsync();
+        if (string.IsNullOrEmpty(authToken)) return;
+
+        var sessionData = await _lastFmAuthService.GetSessionAsync(authToken);
+        if (sessionData is { Username: not null, SessionKey: not null }) {
+            await _settingsService.SaveLastFmCredentialsAsync(sessionData.Value.Username, sessionData.Value.SessionKey);
+            LastFmUsername = sessionData.Value.Username;
+            IsLastFmConnected = true;
+        }
+        else {
+            await _uiService.ShowMessageDialogAsync("Authentication Failed", "Could not get a session from Last.fm. Please try connecting again.");
+        }
+
+        // Clear the temporary token regardless of success or failure.
+        IsConnectingToLastFm = false;
+        await _settingsService.SaveLastFmAuthTokenAsync(null);
+    }
+
+    /// <summary>
+    /// Disconnects the user's Last.fm account by clearing saved credentials.
+    /// </summary>
+    [RelayCommand]
+    private async Task LastFmDisconnectAsync() {
+        bool confirmed = await _uiService.ShowConfirmationDialogAsync(
+            "Disconnect Last.fm",
+            "Are you sure you want to disconnect your Last.fm account? Your scrobbling history will be preserved on Last.fm, but Nagi will no longer be able to scrobble.",
+            "Disconnect",
+            "Cancel");
+
+        if (!confirmed) return;
+
+        await _settingsService.ClearLastFmCredentialsAsync();
+
+        // Also clear any pending auth token to prevent an inconsistent state.
+        await _settingsService.SaveLastFmAuthTokenAsync(null);
+
+        IsLastFmConnected = false;
+        LastFmUsername = null;
+        IsConnectingToLastFm = false;
     }
 
     private void OnNavigationItemsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
@@ -227,5 +315,13 @@ public partial class SettingsViewModel : ObservableObject {
     partial void OnIsCheckForUpdatesEnabledChanged(bool value) {
         if (_isInitializing) return;
         _ = _settingsService.SetCheckForUpdatesEnabledAsync(value);
+    }
+
+    partial void OnIsLastFmConnectedChanged(bool value) {
+        OnPropertyChanged(nameof(IsLastFmNotConnected));
+    }
+
+    partial void OnIsConnectingToLastFmChanged(bool value) {
+        OnPropertyChanged(nameof(IsLastFmInitialAuthEnabled));
     }
 }
