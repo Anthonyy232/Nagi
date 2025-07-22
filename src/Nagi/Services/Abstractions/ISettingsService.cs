@@ -34,6 +34,11 @@ public interface ISettingsService {
     event Action? NavigationSettingsChanged;
 
     /// <summary>
+    /// Occurs when Last.fm related settings (scrobbling, now playing) have changed.
+    /// </summary>
+    event Action? LastFmSettingsChanged;
+
+    /// <summary>
     /// Gets the initial volume level for the media player.
     /// </summary>
     /// <returns>A volume level between 0.0 and 1.0.</returns>
@@ -190,6 +195,18 @@ public interface ISettingsService {
     Task SetFetchOnlineMetadataEnabledAsync(bool isEnabled);
 
     /// <summary>
+    /// Gets whether Discord Rich Presence is enabled.
+    /// </summary>
+    /// <returns>True if Discord Rich Presence is enabled; otherwise, false.</returns>
+    Task<bool> GetDiscordRichPresenceEnabledAsync();
+
+    /// <summary>
+    /// Sets the Discord Rich Presence preference.
+    /// </summary>
+    /// <param name="isEnabled">The Discord Rich Presence preference to save.</param>
+    Task SetDiscordRichPresenceEnabledAsync(bool isEnabled);
+
+    /// <summary>
     /// Gets the ordered and enabled/disabled list of navigation items.
     /// </summary>
     /// <returns>A list of <see cref="NavigationItemSetting" />.</returns>
@@ -252,6 +269,30 @@ public interface ISettingsService {
     #endregion
 
     #region Last.fm Settings
+
+    /// <summary>
+    /// Gets whether scrobbling to Last.fm is enabled.
+    /// </summary>
+    /// <returns>True if scrobbling is enabled; otherwise, false.</returns>
+    Task<bool> GetLastFmScrobblingEnabledAsync();
+
+    /// <summary>
+    /// Sets the preference for scrobbling to Last.fm.
+    /// </summary>
+    /// <param name="isEnabled">The preference to save.</param>
+    Task SetLastFmScrobblingEnabledAsync(bool isEnabled);
+
+    /// <summary>
+    /// Gets whether updating the 'Now Playing' status on Last.fm is enabled.
+    /// </summary>
+    /// <returns>True if 'Now Playing' updates are enabled; otherwise, false.</returns>
+    Task<bool> GetLastFmNowPlayingEnabledAsync();
+
+    /// <summary>
+    /// Sets the preference for updating the 'Now Playing' status on Last.fm.
+    /// </summary>
+    /// <param name="isEnabled">The preference to save.</param>
+    Task SetLastFmNowPlayingEnabledAsync(bool isEnabled);
 
     /// <summary>
     /// Gets the saved Last.fm credentials from secure storage.

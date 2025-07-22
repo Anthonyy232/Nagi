@@ -76,6 +76,9 @@ public partial class SettingsViewModel : ObservableObject {
     private bool _isFetchOnlineMetadataEnabled;
 
     [ObservableProperty]
+    private bool _isDiscordRichPresenceEnabled;
+
+    [ObservableProperty]
     private bool _isCheckForUpdatesEnabled;
 
     [ObservableProperty]
@@ -86,6 +89,12 @@ public partial class SettingsViewModel : ObservableObject {
 
     [ObservableProperty]
     private string? _lastFmUsername;
+
+    [ObservableProperty]
+    private bool _isLastFmScrobblingEnabled;
+
+    [ObservableProperty]
+    private bool _isLastFmNowPlayingEnabled;
 
     public bool IsLastFmNotConnected => !IsLastFmConnected;
     public bool IsLastFmInitialAuthEnabled => !IsConnectingToLastFm;
@@ -121,11 +130,17 @@ public partial class SettingsViewModel : ObservableObject {
         IsHideToTrayEnabled = await _settingsService.GetHideToTrayEnabledAsync();
         IsShowCoverArtInTrayFlyoutEnabled = await _settingsService.GetShowCoverArtInTrayFlyoutAsync();
         IsFetchOnlineMetadataEnabled = await _settingsService.GetFetchOnlineMetadataEnabledAsync();
+        IsDiscordRichPresenceEnabled = await _settingsService.GetDiscordRichPresenceEnabledAsync();
         IsCheckForUpdatesEnabled = await _settingsService.GetCheckForUpdatesEnabledAsync();
 
         var lastFmCredentials = await _settingsService.GetLastFmCredentialsAsync();
         LastFmUsername = lastFmCredentials?.Username;
         IsLastFmConnected = lastFmCredentials is not null && !string.IsNullOrEmpty(lastFmCredentials.Value.SessionKey);
+
+        if (IsLastFmConnected) {
+            IsLastFmScrobblingEnabled = await _settingsService.GetLastFmScrobblingEnabledAsync();
+            IsLastFmNowPlayingEnabled = await _settingsService.GetLastFmNowPlayingEnabledAsync();
+        }
 
         // Check for a pending auth token to restore the UI state after an app restart.
         var authToken = await _settingsService.GetLastFmAuthTokenAsync();
@@ -197,6 +212,12 @@ public partial class SettingsViewModel : ObservableObject {
             await _settingsService.SaveLastFmCredentialsAsync(sessionData.Value.Username, sessionData.Value.SessionKey);
             LastFmUsername = sessionData.Value.Username;
             IsLastFmConnected = true;
+
+            // Set default preferences on successful connection
+            IsLastFmScrobblingEnabled = true;
+            IsLastFmNowPlayingEnabled = true;
+            await _settingsService.SetLastFmScrobblingEnabledAsync(true);
+            await _settingsService.SetLastFmNowPlayingEnabledAsync(true);
         }
         else {
             await _uiService.ShowMessageDialogAsync("Authentication Failed", "Could not get a session from Last.fm. Please try connecting again.");
@@ -228,6 +249,9 @@ public partial class SettingsViewModel : ObservableObject {
         IsLastFmConnected = false;
         LastFmUsername = null;
         IsConnectingToLastFm = false;
+        // Reset UI state for toggles to their default values
+        IsLastFmScrobblingEnabled = true;
+        IsLastFmNowPlayingEnabled = true;
     }
 
     private void OnNavigationItemsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
@@ -312,9 +336,24 @@ public partial class SettingsViewModel : ObservableObject {
         _ = _settingsService.SetFetchOnlineMetadataEnabledAsync(value);
     }
 
+    partial void OnIsDiscordRichPresenceEnabledChanged(bool value) {
+        if (_isInitializing) return;
+        _ = _settingsService.SetDiscordRichPresenceEnabledAsync(value);
+    }
+
     partial void OnIsCheckForUpdatesEnabledChanged(bool value) {
         if (_isInitializing) return;
         _ = _settingsService.SetCheckForUpdatesEnabledAsync(value);
+    }
+
+    partial void OnIsLastFmScrobblingEnabledChanged(bool value) {
+        if (_isInitializing) return;
+        _ = _settingsService.SetLastFmScrobblingEnabledAsync(value);
+    }
+
+    partial void OnIsLastFmNowPlayingEnabledChanged(bool value) {
+        if (_isInitializing) return;
+        _ = _settingsService.SetLastFmNowPlayingEnabledAsync(value);
     }
 
     partial void OnIsLastFmConnectedChanged(bool value) {

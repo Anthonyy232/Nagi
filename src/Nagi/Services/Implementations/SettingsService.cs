@@ -38,11 +38,14 @@ public class SettingsService : ISettingsService {
     private const string HideToTrayEnabledKey = "HideToTrayEnabled";
     private const string ShowCoverArtInTrayFlyoutKey = "ShowCoverArtInTrayFlyout";
     private const string FetchOnlineMetadataKey = "FetchOnlineMetadataEnabled";
+    private const string DiscordRichPresenceEnabledKey = "DiscordRichPresenceEnabled";
     private const string NavigationItemsKey = "NavigationItems";
     private const string CheckForUpdatesEnabledKey = "CheckForUpdatesEnabled";
     private const string LastSkippedUpdateVersionKey = "LastSkippedUpdateVersion";
     private const string LastFmCredentialResource = "Nagi/LastFm";
     private const string LastFmAuthTokenKey = "LastFmAuthToken";
+    private const string LastFmScrobblingEnabledKey = "LastFmScrobblingEnabled";
+    private const string LastFmNowPlayingEnabledKey = "LastFmNowPlayingEnabled";
 
     private readonly PathConfiguration _pathConfig;
     private readonly ICredentialLockerService _credentialLockerService;
@@ -60,6 +63,7 @@ public class SettingsService : ISettingsService {
     public event Action<bool>? HideToTraySettingChanged;
     public event Action<bool>? ShowCoverArtInTrayFlyoutSettingChanged;
     public event Action? NavigationSettingsChanged;
+    public event Action? LastFmSettingsChanged;
 
     public SettingsService(PathConfiguration pathConfig, ICredentialLockerService credentialLockerService) {
         _pathConfig = pathConfig ?? throw new ArgumentNullException(nameof(pathConfig));
@@ -225,6 +229,7 @@ public class SettingsService : ISettingsService {
         await SetHideToTrayEnabledAsync(true);
         await SetShowCoverArtInTrayFlyoutAsync(true);
         await SetFetchOnlineMetadataEnabledAsync(false);
+        await SetDiscordRichPresenceEnabledAsync(true);
         await SetThemeAsync(ElementTheme.Default);
         await SetDynamicThemingAsync(true);
         await SetRestorePlaybackStateEnabledAsync(true);
@@ -237,7 +242,6 @@ public class SettingsService : ISettingsService {
         await SetCheckForUpdatesEnabledAsync(true);
         await SetLastSkippedUpdateVersionAsync(null);
         await ClearLastFmCredentialsAsync();
-        await SaveLastFmAuthTokenAsync(null);
 
         Debug.WriteLine("[INFO] SettingsService: All application settings have been reset to their default values.");
     }
@@ -368,6 +372,13 @@ public class SettingsService : ISettingsService {
 
     public Task SetFetchOnlineMetadataEnabledAsync(bool isEnabled) => SetValueAsync(FetchOnlineMetadataKey, isEnabled);
 
+    public async Task<bool> GetDiscordRichPresenceEnabledAsync() {
+        await EnsureUnpackagedSettingsLoadedAsync();
+        return GetValue(DiscordRichPresenceEnabledKey, true);
+    }
+
+    public Task SetDiscordRichPresenceEnabledAsync(bool isEnabled) => SetValueAsync(DiscordRichPresenceEnabledKey, isEnabled);
+
     public async Task<bool> GetCheckForUpdatesEnabledAsync() {
         await EnsureUnpackagedSettingsLoadedAsync();
         return GetValue(CheckForUpdatesEnabledKey, true);
@@ -470,6 +481,26 @@ public class SettingsService : ISettingsService {
 
     #region Last.fm Settings
 
+    public async Task<bool> GetLastFmScrobblingEnabledAsync() {
+        await EnsureUnpackagedSettingsLoadedAsync();
+        return GetValue(LastFmScrobblingEnabledKey, false);
+    }
+
+    public async Task SetLastFmScrobblingEnabledAsync(bool isEnabled) {
+        await SetValueAsync(LastFmScrobblingEnabledKey, isEnabled);
+        LastFmSettingsChanged?.Invoke();
+    }
+
+    public async Task<bool> GetLastFmNowPlayingEnabledAsync() {
+        await EnsureUnpackagedSettingsLoadedAsync();
+        return GetValue(LastFmNowPlayingEnabledKey, false);
+    }
+
+    public async Task SetLastFmNowPlayingEnabledAsync(bool isEnabled) {
+        await SetValueAsync(LastFmNowPlayingEnabledKey, isEnabled);
+        LastFmSettingsChanged?.Invoke();
+    }
+
     public Task<(string? Username, string? SessionKey)?> GetLastFmCredentialsAsync() {
         // This method is async to match the interface pattern, but the underlying call is synchronous.
         var credentials = _credentialLockerService.RetrieveCredential(LastFmCredentialResource);
@@ -481,9 +512,11 @@ public class SettingsService : ISettingsService {
         return Task.CompletedTask;
     }
 
-    public Task ClearLastFmCredentialsAsync() {
+    public async Task ClearLastFmCredentialsAsync() {
         _credentialLockerService.RemoveCredential(LastFmCredentialResource);
-        return Task.CompletedTask;
+        await SetLastFmScrobblingEnabledAsync(false);
+        await SetLastFmNowPlayingEnabledAsync(false);
+        await SaveLastFmAuthTokenAsync(null);
     }
 
     public Task SaveLastFmAuthTokenAsync(string? token) {
