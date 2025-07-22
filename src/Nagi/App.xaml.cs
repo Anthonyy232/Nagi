@@ -111,7 +111,7 @@ public partial class App : Application {
         services.AddSingleton<IPlaylistService>(provider => provider.GetRequiredService<LibraryService>());
 
         services.AddSingleton<IApiKeyService, ApiKeyService>();
-        services.AddSingleton<ILastFmService, LastFmService>();
+        services.AddSingleton<ILastFmMetadataService, LastFmMetadataService>();
         services.AddSingleton<ILastFmAuthService, LastFmAuthService>();
         services.AddSingleton<ISpotifyService, SpotifyService>();
         services.AddSingleton<ICredentialLockerService, CredentialLockerService>();
