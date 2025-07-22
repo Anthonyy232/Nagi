@@ -14,7 +14,6 @@
         <localConverters:ElementThemeToFriendlyStringConverter x:Key="ThemeToStringConverter" />
         <localConverters:StringToFontFamilyConverter x:Key="StringToFontFamilyConverter" />
 
-        <!-- FIXED: Removed the extra nested <Setter.Value> -->
         <Style x:Key="NavigationListViewItemStyle" TargetType="ListViewItem">
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
             <Setter Property="Padding" Value="0" />
@@ -239,6 +238,51 @@
                         Command="{x:Bind ViewModel.ResetApplicationDataCommand}"
                         Content="Reset All Data"
                         Style="{StaticResource SettingsPageResetButtonStyle}" />
+                </controls:SettingsCard>
+
+                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="Integrations" />
+
+                <controls:SettingsCard Header="Last.fm"
+                                       Description="Connect your Last.fm account to scrobble tracks and show your currently playing song.">
+                    <controls:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
+                    </controls:SettingsCard.HeaderIcon>
+
+                    <StackPanel HorizontalAlignment="Right" Orientation="Vertical" Spacing="8">
+                        <!-- Shown when NOT connected -->
+                        <StackPanel Orientation="Vertical" Spacing="8" Visibility="{x:Bind ViewModel.IsLastFmNotConnected, Mode=OneWay}">
+                            <Button
+                                Command="{x:Bind ViewModel.LastFmInitialAuthCommand}"
+                                Content="Connect to Last.fm"
+                                IsEnabled="{x:Bind ViewModel.IsLastFmInitialAuthEnabled, Mode=OneWay}"
+                                HorizontalAlignment="Right" />
+
+                            <Button
+                                Command="{x:Bind ViewModel.LastFmFinalizeAuthCommand}"
+                                Content="Complete Connection"
+                                Visibility="{x:Bind ViewModel.IsConnectingToLastFm, Mode=OneWay}"
+                                HorizontalAlignment="Right" />
+
+                            <TextBlock
+                                Visibility="{x:Bind ViewModel.IsConnectingToLastFm, Mode=OneWay}"
+                                Text="After authorizing in your browser, click 'Complete Connection'."
+                                Style="{ThemeResource CaptionTextBlockStyle}"
+                                MaxWidth="250"
+                                TextWrapping="Wrap"
+                                HorizontalAlignment="Right"/>
+                        </StackPanel>
+
+                        <!-- Shown when connected -->
+                        <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center" Visibility="{x:Bind ViewModel.IsLastFmConnected, Mode=OneWay}">
+                            <TextBlock VerticalAlignment="Center">
+                                <Run Text="Connected as"/>
+                                <Run Text="{x:Bind ViewModel.LastFmUsername, Mode=OneWay}" FontWeight="SemiBold"/>
+                            </TextBlock>
+                            <Button
+                                Command="{x:Bind ViewModel.LastFmDisconnectCommand}"
+                                Content="Disconnect" />
+                        </StackPanel>
+                    </StackPanel>
                 </controls:SettingsCard>
 
                 <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="About" />

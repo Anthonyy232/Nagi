@@ -73,6 +73,16 @@ apiGroup.MapGet("/lastfm-key", (IConfiguration config) =>
     return Results.Ok(lastFmKey);
 });
 
+apiGroup.MapGet("/lastfm-secret-key", (IConfiguration config) => {
+    var lastFmSecret = config["LastFm:SharedSecret"];
+
+    if (string.IsNullOrEmpty(lastFmSecret)) {
+        return Results.Problem("Last.fm Shared Secret not configured on the server.", statusCode: 503);
+    }
+
+    return Results.Ok(lastFmSecret);
+});
+
 apiGroup.MapGet("/spotify-key", (IConfiguration config) =>
 {
     var spotifyKey = config["Spotify:ApiKey"];

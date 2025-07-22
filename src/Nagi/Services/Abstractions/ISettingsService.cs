@@ -189,35 +189,6 @@ public interface ISettingsService {
     /// <param name="isEnabled">The preference to save.</param>
     Task SetFetchOnlineMetadataEnabledAsync(bool isEnabled);
 
-    // ADDED: Update Settings
-    #region Update Settings
-
-    /// <summary>
-    /// Gets whether the application should automatically check for updates on startup.
-    /// </summary>
-    /// <returns>True if automatic checks are enabled; otherwise, false.</returns>
-    Task<bool> GetCheckForUpdatesEnabledAsync();
-
-    /// <summary>
-    /// Sets the preference for automatically checking for updates on startup.
-    /// </summary>
-    /// <param name="isEnabled">The preference to save.</param>
-    Task SetCheckForUpdatesEnabledAsync(bool isEnabled);
-
-    /// <summary>
-    /// Gets the version string of the last update the user chose to skip.
-    /// </summary>
-    /// <returns>The version string, or null if no version has been skipped.</returns>
-    Task<string?> GetLastSkippedUpdateVersionAsync();
-
-    /// <summary>
-    /// Saves the version string of an update the user has chosen to skip.
-    /// </summary>
-    /// <param name="version">The version string to save, or null to clear the skipped version.</param>
-    Task SetLastSkippedUpdateVersionAsync(string? version);
-
-    #endregion
-
     /// <summary>
     /// Gets the ordered and enabled/disabled list of navigation items.
     /// </summary>
@@ -251,4 +222,66 @@ public interface ISettingsService {
     /// Explicitly clears any saved playback state.
     /// </summary>
     Task ClearPlaybackStateAsync();
+
+    #region Update Settings
+
+    /// <summary>
+    /// Gets whether the application should automatically check for updates on startup.
+    /// </summary>
+    /// <returns>True if automatic checks are enabled; otherwise, false.</returns>
+    Task<bool> GetCheckForUpdatesEnabledAsync();
+
+    /// <summary>
+    /// Sets the preference for automatically checking for updates on startup.
+    /// </summary>
+    /// <param name="isEnabled">The preference to save.</param>
+    Task SetCheckForUpdatesEnabledAsync(bool isEnabled);
+
+    /// <summary>
+    /// Gets the version string of the last update the user chose to skip.
+    /// </summary>
+    /// <returns>The version string, or null if no version has been skipped.</returns>
+    Task<string?> GetLastSkippedUpdateVersionAsync();
+
+    /// <summary>
+    /// Saves the version string of an update the user has chosen to skip.
+    /// </summary>
+    /// <param name="version">The version string to save, or null to clear the skipped version.</param>
+    Task SetLastSkippedUpdateVersionAsync(string? version);
+
+    #endregion
+
+    #region Last.fm Settings
+
+    /// <summary>
+    /// Gets the saved Last.fm credentials from secure storage.
+    /// </summary>
+    /// <returns>A tuple containing the username and session key, or null if not present.</returns>
+    Task<(string? Username, string? SessionKey)?> GetLastFmCredentialsAsync();
+
+    /// <summary>
+    /// Saves the Last.fm credentials securely.
+    /// </summary>
+    /// <param name="username">The username to save.</param>
+    /// <param name="sessionKey">The session key to save.</param>
+    Task SaveLastFmCredentialsAsync(string username, string sessionKey);
+
+    /// <summary>
+    /// Removes the saved Last.fm credentials from secure storage.
+    /// </summary>
+    Task ClearLastFmCredentialsAsync();
+
+    /// <summary>
+    /// Saves the temporary authentication token received from Last.fm.
+    /// </summary>
+    /// <param name="token">The token to save, or null to clear it.</param>
+    Task SaveLastFmAuthTokenAsync(string? token);
+
+    /// <summary>
+    /// Gets the temporary authentication token for Last.fm.
+    /// </summary>
+    /// <returns>The saved token, or null if not present.</returns>
+    Task<string?> GetLastFmAuthTokenAsync();
+
+    #endregion
 }

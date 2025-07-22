@@ -18,6 +18,7 @@ namespace Nagi.Services.Implementations;
 
 /// <summary>
 /// Manages application settings by persisting them to local storage.
+/// Sensitive data is delegated to the ICredentialLockerService.
 /// This implementation supports both packaged (MSIX) and unpackaged application deployments.
 /// </summary>
 public class SettingsService : ISettingsService {
@@ -40,8 +41,11 @@ public class SettingsService : ISettingsService {
     private const string NavigationItemsKey = "NavigationItems";
     private const string CheckForUpdatesEnabledKey = "CheckForUpdatesEnabled";
     private const string LastSkippedUpdateVersionKey = "LastSkippedUpdateVersion";
+    private const string LastFmCredentialResource = "Nagi/LastFm";
+    private const string LastFmAuthTokenKey = "LastFmAuthToken";
 
     private readonly PathConfiguration _pathConfig;
+    private readonly ICredentialLockerService _credentialLockerService;
     private readonly bool _isPackaged;
     private readonly ApplicationDataContainer? _localSettings;
     private Dictionary<string, object?> _settings;
@@ -57,8 +61,9 @@ public class SettingsService : ISettingsService {
     public event Action<bool>? ShowCoverArtInTrayFlyoutSettingChanged;
     public event Action? NavigationSettingsChanged;
 
-    public SettingsService(PathConfiguration pathConfig) {
+    public SettingsService(PathConfiguration pathConfig, ICredentialLockerService credentialLockerService) {
         _pathConfig = pathConfig ?? throw new ArgumentNullException(nameof(pathConfig));
+        _credentialLockerService = credentialLockerService ?? throw new ArgumentNullException(nameof(credentialLockerService));
         _isPackaged = pathConfig.IsPackaged;
         _settings = new();
 
@@ -231,6 +236,8 @@ public class SettingsService : ISettingsService {
         await SaveRepeatModeAsync(RepeatMode.Off);
         await SetCheckForUpdatesEnabledAsync(true);
         await SetLastSkippedUpdateVersionAsync(null);
+        await ClearLastFmCredentialsAsync();
+        await SaveLastFmAuthTokenAsync(null);
 
         Debug.WriteLine("[INFO] SettingsService: All application settings have been reset to their default values.");
     }
@@ -460,4 +467,33 @@ public class SettingsService : ISettingsService {
             Debug.WriteLine($"[ERROR] SettingsService: Error clearing PlaybackState file: {ex.Message}");
         }
     }
+
+    #region Last.fm Settings
+
+    public Task<(string? Username, string? SessionKey)?> GetLastFmCredentialsAsync() {
+        // This method is async to match the interface pattern, but the underlying call is synchronous.
+        var credentials = _credentialLockerService.RetrieveCredential(LastFmCredentialResource);
+        return Task.FromResult(credentials);
+    }
+
+    public Task SaveLastFmCredentialsAsync(string username, string sessionKey) {
+        _credentialLockerService.SaveCredential(LastFmCredentialResource, username, sessionKey);
+        return Task.CompletedTask;
+    }
+
+    public Task ClearLastFmCredentialsAsync() {
+        _credentialLockerService.RemoveCredential(LastFmCredentialResource);
+        return Task.CompletedTask;
+    }
+
+    public Task SaveLastFmAuthTokenAsync(string? token) {
+        return SetValueAsync(LastFmAuthTokenKey, token);
+    }
+
+    public async Task<string?> GetLastFmAuthTokenAsync() {
+        await EnsureUnpackagedSettingsLoadedAsync();
+        return GetValue<string?>(LastFmAuthTokenKey, null);
+    }
+
+    #endregion
 }
