@@ -11,7 +11,6 @@
     Background="Transparent"
     mc:Ignorable="d">
 
-    <!-- Page-specific resources like converters. -->
     <Page.Resources>
         <ResourceDictionary>
             <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
@@ -24,7 +23,6 @@
     <ScrollViewer>
         <StackPanel Padding="24" Spacing="16">
 
-            <!-- Album header displaying cover art, title, artist, and other metadata. -->
             <Grid Margin="0,0,0,16">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -54,7 +52,6 @@
                 </StackPanel>
             </Grid>
 
-            <!-- Song list section with playback controls, sorting, and the track list. -->
             <StackPanel Margin="0,8,0,0" Spacing="8"
                         Visibility="{x:Bind ViewModel.Songs, Converter={StaticResource CollectionToVisibilityConverter}, Mode=OneWay}">
                 <Grid>
@@ -63,7 +60,6 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
-                    <!-- Playback controls for the entire album. -->
                     <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
                         <Button Command="{x:Bind ViewModel.PlayAllSongsCommand}"
                                 Style="{StaticResource SongListViewPageIconButton}" ToolTipService.ToolTip="Play all">
@@ -76,7 +72,6 @@
                         </Button>
                     </StackPanel>
 
-                    <!-- Sorting options for the song list. -->
                     <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                         <Button Style="{StaticResource SongListViewPageIconButton}"
                                 ToolTipService.ToolTip="{x:Bind ViewModel.CurrentSortOrderText, Mode=OneWay}">
@@ -142,7 +137,7 @@
                                     CommandParameter="{x:Bind}"
                                     Style="{StaticResource SongListViewPageSongPlayButtonStyle}">
                                     <Border Width="42" Height="42" CornerRadius="12"
-                                        Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                                        Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneTime}">
                                         <controls:ImageEx
                                             IsCacheEnabled="True"
                                             Stretch="UniformToFill"

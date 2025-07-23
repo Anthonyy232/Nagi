@@ -1,12 +1,12 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Nagi.Models;
+using Nagi.Services.Abstractions;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using Nagi.Models;
-using Nagi.Services.Abstractions;
 
 namespace Nagi.ViewModels;
 
@@ -31,18 +31,18 @@ public partial class AlbumViewViewModel : SongListViewModelBase {
     }
 
     [ObservableProperty]
-    private string _albumTitle = "Album";
+    public partial string AlbumTitle { get; set; } = "Album";
 
     [ObservableProperty]
-    private string _artistName = "Artist";
+    public partial string ArtistName { get; set; } = "Artist";
 
     [ObservableProperty]
-    private string? _coverArtUri;
+    public partial string? CoverArtUri { get; set; }
 
     public bool IsArtworkAvailable => !string.IsNullOrEmpty(CoverArtUri);
 
     [ObservableProperty]
-    private string _albumDetailsText = string.Empty;
+    public partial string AlbumDetailsText { get; set; } = string.Empty;
 
     // This partial method is automatically called by the source generator
     // whenever the CoverArtUri property changes.

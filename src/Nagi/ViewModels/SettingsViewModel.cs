@@ -55,52 +55,52 @@ public partial class SettingsViewModel : ObservableObject {
     }
 
     [ObservableProperty]
-    private ElementTheme _selectedTheme;
+    public partial ElementTheme SelectedTheme { get; set; }
 
     [ObservableProperty]
-    private bool _isDynamicThemingEnabled;
+    public partial bool IsDynamicThemingEnabled { get; set; }
 
     [ObservableProperty]
-    private bool _isPlayerAnimationEnabled;
+    public partial bool IsPlayerAnimationEnabled { get; set; }
 
     [ObservableProperty]
-    private bool _isRestorePlaybackStateEnabled;
+    public partial bool IsRestorePlaybackStateEnabled { get; set; }
 
     [ObservableProperty]
-    private bool _isAutoLaunchEnabled;
+    public partial bool IsAutoLaunchEnabled { get; set; }
 
     [ObservableProperty]
-    private bool _isStartMinimizedEnabled;
+    public partial bool IsStartMinimizedEnabled { get; set; }
 
     [ObservableProperty]
-    private bool _isHideToTrayEnabled;
+    public partial bool IsHideToTrayEnabled { get; set; }
 
     [ObservableProperty]
-    private bool _isShowCoverArtInTrayFlyoutEnabled;
+    public partial bool IsShowCoverArtInTrayFlyoutEnabled { get; set; }
 
     [ObservableProperty]
-    private bool _isFetchOnlineMetadataEnabled;
+    public partial bool IsFetchOnlineMetadataEnabled { get; set; }
 
     [ObservableProperty]
-    private bool _isDiscordRichPresenceEnabled;
+    public partial bool IsDiscordRichPresenceEnabled { get; set; }
 
     [ObservableProperty]
-    private bool _isCheckForUpdatesEnabled;
+    public partial bool IsCheckForUpdatesEnabled { get; set; }
 
     [ObservableProperty]
-    private bool _isLastFmConnected;
+    public partial bool IsLastFmConnected { get; set; }
 
     [ObservableProperty]
-    private bool _isConnectingToLastFm;
+    public partial bool IsConnectingToLastFm { get; set; }
 
     [ObservableProperty]
-    private string? _lastFmUsername;
+    public partial string? LastFmUsername { get; set; }
 
     [ObservableProperty]
-    private bool _isLastFmScrobblingEnabled;
+    public partial bool IsLastFmScrobblingEnabled { get; set; }
 
     [ObservableProperty]
-    private bool _isLastFmNowPlayingEnabled;
+    public partial bool IsLastFmNowPlayingEnabled { get; set; }
 
     public bool IsUpdateControlVisible { get; }
     public bool IsLastFmNotConnected => !IsLastFmConnected;

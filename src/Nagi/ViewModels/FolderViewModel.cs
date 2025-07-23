@@ -28,10 +28,10 @@ public partial class FolderViewModelItem : ObservableObject {
     public string Path { get; }
 
     [ObservableProperty]
-    private int _songCount;
+    public partial int SongCount { get; set; }
 
     [ObservableProperty]
-    private string _songCountText = string.Empty;
+    public partial string SongCountText { get; set; } = string.Empty;
 
     /// <summary>
     /// Updates the song count and its corresponding display text.
@@ -67,19 +67,19 @@ public partial class FolderViewModel : ObservableObject {
     }
 
     [ObservableProperty]
-    private ObservableCollection<FolderViewModelItem> _folders = new();
+    public partial ObservableCollection<FolderViewModelItem> Folders { get; set; } = new();
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsAnyOperationInProgress))]
-    private bool _isAddingFolder;
+    public partial bool IsAddingFolder { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsAnyOperationInProgress))]
-    private bool _isScanning;
+    public partial bool IsScanning { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsAnyOperationInProgress))]
-    private bool _isDeletingFolder;
+    public partial bool IsDeletingFolder { get; set; }
 
     /// <summary>
     /// Gets a value indicating whether any long-running library operation is currently in progress.

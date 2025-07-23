@@ -41,7 +41,7 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase {
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(RemoveSelectedSongsFromPlaylistCommand))]
-    private bool _isCurrentViewAPlaylist;
+    public partial bool IsCurrentViewAPlaylist { get; set; }
 
     /// <summary>
     /// Initializes the view model for a specific playlist.

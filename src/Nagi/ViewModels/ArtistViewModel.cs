@@ -17,9 +17,9 @@ namespace Nagi.ViewModels;
 /// A display-optimized representation of an artist for the user interface.
 /// </summary>
 public partial class ArtistViewModelItem : ObservableObject {
-    [ObservableProperty] private Guid _id;
-    [ObservableProperty] private string _name = string.Empty;
-    [ObservableProperty] private string? _localImageCachePath;
+    [ObservableProperty] public partial Guid Id { get; set; }
+    [ObservableProperty] public partial string Name { get; set; } = string.Empty;
+    [ObservableProperty] public partial string? LocalImageCachePath { get; set; }
 
     public bool IsArtworkAvailable => !string.IsNullOrEmpty(LocalImageCachePath);
 
@@ -50,16 +50,16 @@ public partial class ArtistViewModel : ObservableObject {
     }
 
     [ObservableProperty]
-    private ObservableCollection<ArtistViewModelItem> _artists = new();
+    public partial ObservableCollection<ArtistViewModelItem> Artists { get; set; } = new();
 
     [ObservableProperty]
-    private bool _isLoading;
+    public partial bool IsLoading { get; set; }
 
     [ObservableProperty]
-    private bool _isLoadingMore;
+    public partial bool IsLoadingMore { get; set; }
 
     [ObservableProperty]
-    private bool _hasLoadError;
+    public partial bool HasLoadError { get; set; }
 
     public bool HasArtists => Artists.Any();
 

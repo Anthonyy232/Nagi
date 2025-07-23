@@ -24,7 +24,6 @@
     <ScrollViewer>
         <StackPanel Padding="24" Spacing="16">
 
-            <!-- Artist header section with image, name, and biography. -->
             <Grid Margin="0,0,0,16">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -64,7 +63,6 @@
                 </StackPanel>
             </Grid>
 
-            <!-- Grid of the artist's albums. -->
             <StackPanel Spacing="16"
                         Visibility="{x:Bind ViewModel.HasAlbums, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
                 <TextBlock Style="{StaticResource SectionHeaderTextBlockStyle}" Text="Albums" />
@@ -95,10 +93,10 @@
                                         Height="160"
                                         HorizontalAlignment="Center"
                                         CornerRadius="8"
-                                        Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                                        Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneTime}">
                                     <controls:ImageEx
                                         IsCacheEnabled="True"
-                                        Source="{x:Bind CoverArtUri, Mode=OneWay, Converter={StaticResource StringToUriConverter}, FallbackValue=null}"
+                                        Source="{x:Bind CoverArtUri, Mode=OneTime, Converter={StaticResource StringToUriConverter}, FallbackValue=null}"
                                         Stretch="UniformToFill" />
                                 </Border>
                                 <TextBlock
@@ -106,13 +104,13 @@
                                     Margin="0,8,0,0"
                                     HorizontalAlignment="Center"
                                     FontWeight="SemiBold"
-                                    Text="{x:Bind Name, Mode=OneWay}"
+                                    Text="{x:Bind Name, Mode=OneTime}"
                                     TextTrimming="CharacterEllipsis" />
                                 <TextBlock
                                     Grid.Row="2"
                                     HorizontalAlignment="Center"
                                     Opacity="0.7"
-                                    Text="{x:Bind YearText, Mode=OneWay}"
+                                    Text="{x:Bind YearText, Mode=OneTime}"
                                     TextTrimming="CharacterEllipsis" />
                             </Grid>
                         </DataTemplate>
@@ -120,7 +118,6 @@
                 </GridView>
             </StackPanel>
 
-            <!-- List of all songs by the artist, with playback and sorting controls. -->
             <StackPanel Margin="0,8,0,0" Spacing="8"
                         Visibility="{x:Bind ViewModel.Songs, Converter={StaticResource CollectionToVisibilityConverter}, Mode=OneWay}">
                 <Grid>
@@ -212,7 +209,7 @@
                                     CommandParameter="{x:Bind}"
                                     Style="{StaticResource SongListViewPageSongPlayButtonStyle}">
                                     <Border Width="42" Height="42" CornerRadius="12"
-                                        Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                                        Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneTime}">
                                         <controls:ImageEx
                                             IsCacheEnabled="True"
                                             Stretch="UniformToFill"
