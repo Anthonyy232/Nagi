@@ -66,6 +66,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
     private string _artistName = string.Empty;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsArtworkAvailable))]
     private string? _albumArtUri;
 
     [ObservableProperty]
@@ -125,6 +126,8 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
 
     [ObservableProperty]
     private bool _isQueueViewVisible;
+    
+    public bool IsArtworkAvailable => !string.IsNullOrWhiteSpace(AlbumArtUri);
 
     public string PlayPauseIconGlyph => IsPlaying ? PauseIconGlyph : PlayIconGlyph;
     public string PlayPauseButtonToolTip => IsPlaying ? PauseTooltip : PlayTooltip;
