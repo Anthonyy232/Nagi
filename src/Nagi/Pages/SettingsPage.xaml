@@ -346,7 +346,8 @@
                 </controls:SettingsExpander>
 
                 <controls:SettingsCard Header="Check for updates on startup"
-                                       Description="Automatically check for new versions when the application starts.">
+                                       Description="Automatically check for new versions when the application starts."
+                                       Visibility="{x:Bind ViewModel.IsUpdateControlVisible, Mode=OneWay}">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
                     </controls:SettingsCard.HeaderIcon>
@@ -356,7 +357,8 @@
                 <StackPanel Margin="0,8,0,0" Orientation="Horizontal" Spacing="12">
                     <HyperlinkButton
                         Command="{x:Bind ViewModel.CheckForUpdatesManuallyCommand}"
-                        Content="Check for Updates" />
+                        Content="Check for Updates"
+                        Visibility="{x:Bind ViewModel.IsUpdateControlVisible, Mode=OneWay}" />
                     <HyperlinkButton
                         Content="Send Feedback"
                         NavigateUri="mailto:anthonyyla.dev@gmail.com" />

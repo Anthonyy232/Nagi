@@ -21,13 +21,16 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using Velopack;
-using Velopack.Sources;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Core;
 using Windows.UI;
 using WinRT;
 using UnhandledExceptionEventArgs = Microsoft.UI.Xaml.UnhandledExceptionEventArgs;
+
+#if !MSIX_PACKAGE
+using Velopack;
+using Velopack.Sources;
+#endif
 
 namespace Nagi;
 
@@ -47,8 +50,10 @@ public partial class App : Application {
         UnhandledException += OnAppUnhandledException;
         CoreApplication.Suspending += OnSuspending;
 
+#if !MSIX_PACKAGE
         // Initializes and runs the Velopack update manager.
         VelopackApp.Build().Run();
+#endif
     }
 
     /// <summary>
@@ -111,10 +116,13 @@ public partial class App : Application {
 
         services.AddSingleton<PathConfiguration>();
         services.AddHttpClient();
+
+#if !MSIX_PACKAGE
         services.AddSingleton(provider => {
             var source = new GithubSource("https://github.com/Anthonyy232/Nagi", null, false);
             return new UpdateManager(source);
         });
+#endif
 
         services.AddDbContextFactory<MusicDbContext>((serviceProvider, options) => {
             var pathConfig = serviceProvider.GetRequiredService<PathConfiguration>();

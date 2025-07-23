@@ -452,21 +452,41 @@ public class SettingsService : ISettingsService {
 
     /// <inheritdoc />
     public async Task<bool> GetCheckForUpdatesEnabledAsync() {
+#if MSIX_PACKAGE
+        return false;
+#else
         await EnsureUnpackagedSettingsLoadedAsync();
         return GetValue(CheckForUpdatesEnabledKey, true);
+#endif
     }
 
     /// <inheritdoc />
-    public Task SetCheckForUpdatesEnabledAsync(bool isEnabled) => SetValueAsync(CheckForUpdatesEnabledKey, isEnabled);
+    public Task SetCheckForUpdatesEnabledAsync(bool isEnabled) {
+#if MSIX_PACKAGE
+        return Task.CompletedTask;
+#else
+        return SetValueAsync(CheckForUpdatesEnabledKey, isEnabled);
+#endif
+    }
 
     /// <inheritdoc />
     public async Task<string?> GetLastSkippedUpdateVersionAsync() {
+#if MSIX_PACKAGE
+        return null;
+#else
         await EnsureUnpackagedSettingsLoadedAsync();
         return GetValue<string?>(LastSkippedUpdateVersionKey, null);
+#endif
     }
 
     /// <inheritdoc />
-    public Task SetLastSkippedUpdateVersionAsync(string? version) => SetValueAsync(LastSkippedUpdateVersionKey, version);
+    public Task SetLastSkippedUpdateVersionAsync(string? version) {
+#if MSIX_PACKAGE
+        return Task.CompletedTask;
+#else
+        return SetValueAsync(LastSkippedUpdateVersionKey, version);
+#endif
+    }
 
     /// <inheritdoc />
     public async Task<List<NavigationItemSetting>> GetNavigationItemsAsync() {
