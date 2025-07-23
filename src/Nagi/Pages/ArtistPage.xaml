@@ -71,17 +71,18 @@
 
                             <!-- Artist Image or Placeholder -->
                             <Grid Grid.Row="0" Width="160" Height="160" HorizontalAlignment="Center">
-                                <controls:ImageEx
+                                <Border
                                     CornerRadius="80"
-                                    IsCacheEnabled="True"
-                                    Source="{x:Bind LocalImageCachePath, Mode=OneWay, Converter={StaticResource StringToUriConverter}}"
-                                    Stretch="UniformToFill"
-                                    Visibility="{x:Bind LocalImageCachePath, Mode=OneWay, Converter={StaticResource NullToCollapsedConverter}}" />
-                                <!-- Default icon when no image is available -->
+                                    Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                                    <controls:ImageEx
+                                        IsCacheEnabled="True"
+                                        Source="{x:Bind LocalImageCachePath, Mode=OneWay, Converter={StaticResource StringToUriConverter}, FallbackValue=null}"
+                                        Stretch="UniformToFill" />
+                                </Border>
                                 <Grid
                                     Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                                     CornerRadius="80"
-                                    Visibility="{x:Bind LocalImageCachePath, Mode=OneWay, Converter={StaticResource NullToVisibleConverter}}">
+                                    Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}">
                                     <FontIcon
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"

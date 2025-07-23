@@ -43,7 +43,6 @@
             <Border x:Name="CoverArtBackground"
                     CornerRadius="{Binding CornerRadius, ElementName=OuterBorder}">
                 <Border.Background>
-                    <!-- === FIX IS HERE === -->
                     <media:ImageBlendBrush Source="{Binding AlbumArtUri}"
                                            Mode="ColorBurn"
                                            Stretch="UniformToFill" 

@@ -56,7 +56,6 @@ public sealed partial class TrayPopup : Window {
     }
 
     private void UpdateCoverArtVisibility() {
-        // FIX: Use the new 'AlbumArtUri' property which is a string.
         var shouldBeVisible = _isCoverArtInFlyoutEnabled && !string.IsNullOrEmpty(ViewModel.AlbumArtUri);
         CoverArtBackground.Visibility = shouldBeVisible ? Visibility.Visible : Visibility.Collapsed;
     }
@@ -103,7 +102,6 @@ public sealed partial class TrayPopup : Window {
     }
 
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        // FIX: Check for the new property name 'AlbumArtUri'
         if (e.PropertyName == nameof(PlayerViewModel.AlbumArtUri)) {
             UpdateCoverArtVisibility();
         }

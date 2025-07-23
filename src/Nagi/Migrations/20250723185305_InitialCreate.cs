@@ -182,6 +182,7 @@ namespace Nagi.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     SongId = table.Column<Guid>(type: "TEXT", nullable: false),
                     ListenTimestampUtc = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    IsEligibleForScrobbling = table.Column<bool>(type: "INTEGER", nullable: false),
                     IsScrobbled = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>

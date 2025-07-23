@@ -20,6 +20,12 @@ public partial class ArtistViewModelItem : ObservableObject {
     [ObservableProperty] private Guid _id;
     [ObservableProperty] private string _name = string.Empty;
     [ObservableProperty] private string? _localImageCachePath;
+
+    public bool IsArtworkAvailable => !string.IsNullOrEmpty(LocalImageCachePath);
+
+    partial void OnLocalImageCachePathChanged(string? value) {
+        OnPropertyChanged(nameof(IsArtworkAvailable));
+    }
 }
 
 /// <summary>

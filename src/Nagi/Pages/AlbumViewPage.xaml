@@ -30,15 +30,16 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <controls:ImageEx
-                    Grid.Column="0"
-                    Width="150"
-                    Height="150"
-                    CornerRadius="8"
-                    IsCacheEnabled="True"
-                    PlaceholderSource="ms-appx:///Assets/DefaultAlbumArt.png"
-                    Source="{x:Bind ViewModel.CoverArtUri, Mode=OneWay, Converter={StaticResource StringToUriConverter}}"
-                    Stretch="UniformToFill" />
+                <Border Grid.Column="0"
+                        Width="150"
+                        Height="150"
+                        CornerRadius="8"
+                        Visibility="{x:Bind ViewModel.IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                    <controls:ImageEx
+                        IsCacheEnabled="True"
+                        Source="{x:Bind ViewModel.CoverArtUri, Mode=OneWay, Converter={StaticResource StringToUriConverter}, FallbackValue=null}"
+                        Stretch="UniformToFill" />
+                </Border>
 
                 <StackPanel Grid.Column="1" Margin="24,0,0,0" VerticalAlignment="Bottom" Spacing="8">
                     <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Text="Album" />
@@ -140,12 +141,12 @@
                                     Command="{Binding DataContext.PlaySongCommand, ElementName=pageRoot}"
                                     CommandParameter="{x:Bind}"
                                     Style="{StaticResource SongListViewPageSongPlayButtonStyle}">
-                                    <Border Width="42" Height="42" CornerRadius="12">
+                                    <Border Width="42" Height="42" CornerRadius="12"
+                                        Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
                                         <controls:ImageEx
                                             IsCacheEnabled="True"
-                                            PlaceholderSource="ms-appx:///Assets/DefaultAlbumArt.png"
-                                            Source="{x:Bind AlbumArtUriFromTrack, Converter={StaticResource StringToUriConverter}}"
-                                            Stretch="UniformToFill" />
+                                            Stretch="UniformToFill"
+                                            Source="{x:Bind AlbumArtUriFromTrack, Converter={StaticResource StringToUriConverter}, FallbackValue=null}" />
                                     </Border>
                                 </Button>
 

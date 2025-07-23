@@ -108,12 +108,12 @@
                         <Button Grid.Column="0" Style="{StaticResource SongListViewPageSongPlayButtonStyle}"
                                 Command="{Binding DataContext.PlaySongCommand, ElementName=pageRoot}"
                                 CommandParameter="{x:Bind}">
-                            <Border Width="42" Height="42" CornerRadius="12">
+                            <Border Width="42" Height="42" CornerRadius="12"
+                                Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
                                 <controls:ImageEx
-                                    Source="{x:Bind AlbumArtUriFromTrack, Converter={StaticResource StringToUriConverter}}"
+                                    Source="{x:Bind AlbumArtUriFromTrack, Converter={StaticResource StringToUriConverter}, FallbackValue=null}"
                                     Stretch="UniformToFill"
-                                    IsCacheEnabled="True"
-                                    PlaceholderSource="ms-appx:///Assets/DefaultAlbumArt.png" />
+                                    IsCacheEnabled="True" />
                             </Border>
                         </Button>
 

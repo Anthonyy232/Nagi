@@ -9,9 +9,11 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:media="using:Microsoft.UI.Xaml.Media"
     xmlns:models="using:Nagi.Models"
+    xmlns:imageEx="using:ImageEx"
     mc:Ignorable="d">
 
     <UserControl.Resources>
+        <converters:StringToUriConverter x:Key="StringToUriConverter" />
         <converters:TimeSpanToTimeStringConverter x:Key="TimeSpanToTimeStringConverter" />
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <converters:ObjectToBooleanConverter x:Key="ObjectToBooleanConverter" />
@@ -314,12 +316,13 @@
                                         Width="56"
                                         Height="56"
                                         Margin="0,0,12,0"
-                                        CornerRadius="6">
-                                        <Image x:Name="AlbumArt" Stretch="UniformToFill">
-                                            <Image.Source>
-                                                <BitmapImage UriSource="{Binding AlbumArtUri, Mode=OneWay, FallbackValue='ms-appx:///Assets/DefaultAlbumArt.png'}" />
-                                            </Image.Source>
-                                        </Image>
+                                        CornerRadius="6"
+                                        Visibility="{Binding IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                                        <imageEx:ImageEx
+                                            x:Name="AlbumArt"
+                                            IsCacheEnabled="True"
+                                            Source="{Binding AlbumArtUri, Mode=OneWay, Converter={StaticResource StringToUriConverter}, FallbackValue=null}"
+                                            Stretch="UniformToFill" />
                                     </Border>
                                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                         <TextBlock

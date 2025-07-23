@@ -11,7 +11,7 @@ using Nagi.Data;
 namespace Nagi.Migrations
 {
     [DbContext(typeof(MusicDbContext))]
-    [Migration("20250721181426_InitialCreate")]
+    [Migration("20250723185305_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -144,6 +144,9 @@ namespace Nagi.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsEligibleForScrobbling")
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsScrobbled")

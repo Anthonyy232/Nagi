@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:Nagi.ViewModels"
+    xmlns:controls="using:ImageEx"
     x:Name="PlaylistPageRoot"
     Background="Transparent"
     Loaded="Page_Loaded"
@@ -97,19 +98,25 @@
                             Grid.Row="0"
                             Width="160"
                             Height="160"
-                            HorizontalAlignment="Center"
-                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                            CornerRadius="12">
-                            <Image
-                                Source="{x:Bind CoverImageUri, Mode=OneWay, Converter={StaticResource StringToUriConverter}}"
-                                Stretch="UniformToFill"
-                                Visibility="{x:Bind CoverImageUri, Converter={StaticResource StringToVisibilityConverter}, Mode=OneWay}" />
-                            <FontIcon
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FontSize="48"
-                                Glyph=""
-                                Visibility="{x:Bind CoverImageUri, Converter={StaticResource InverseStringToVisibilityConverter}, Mode=OneWay}" />
+                            HorizontalAlignment="Center">
+                            <Border
+                                CornerRadius="12"
+                                Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                                <controls:ImageEx
+                                    IsCacheEnabled="True"
+                                    Source="{x:Bind CoverImageUri, Mode=OneWay, Converter={StaticResource StringToUriConverter}, FallbackValue=null}"
+                                    Stretch="UniformToFill" />
+                            </Border>
+                            <Grid
+                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                CornerRadius="12"
+                                Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}">
+                                <FontIcon
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    FontSize="48"
+                                    Glyph="" />
+                            </Grid>
                         </Grid>
 
                         <TextBlock

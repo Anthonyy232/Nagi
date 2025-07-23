@@ -66,6 +66,7 @@
 		<PackageReference Include="CommunityToolkit.WinUI.Controls.ColorPicker" Version="$(CommunityToolkitWinUIVersion)" />
 		<PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="$(CommunityToolkitWinUIVersion)" />
 		<PackageReference Include="CommunityToolkit.WinUI.Media" Version="$(CommunityToolkitWinUIVersion)" />
+		<PackageReference Include="DiscordRichPresence" Version="1.3.0.28" />
 		<PackageReference Include="H.NotifyIcon.WinUI" Version="$(HNotifyIconWinUIVersion)" />
 		<PackageReference Include="ImageEx.WinUI" Version="$(ImageExWinUIVersion)" />
 		<PackageReference Include="MaterialColorUtilities" Version="$(MaterialColorUtilitiesVersion)" />
