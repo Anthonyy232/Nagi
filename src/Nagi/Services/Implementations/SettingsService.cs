@@ -121,8 +121,9 @@ public class SettingsService : ISettingsService {
             if (_settings.TryGetValue(key, out object? value) && value != null) {
                 try {
                     // Unpackaged settings are stored as JsonElements after deserialization.
-                    if (value is JsonElement element) return element.Deserialize<T>() ?? defaultValue;
-                    return (T)Convert.ChangeType(value, typeof(T));
+                    if (value is JsonElement element) {
+                        return element.Deserialize<T>() ?? defaultValue;
+                    }
                 }
                 catch {
                     return defaultValue;
@@ -176,7 +177,9 @@ public class SettingsService : ISettingsService {
         }
         else {
             if (_settings.TryGetValue(key, out object? value) && value != null) {
-                name = (value as JsonElement?)?.GetString() ?? value as string;
+                if (value is JsonElement element) {
+                    name = element.GetString();
+                }
             }
         }
 
@@ -202,7 +205,15 @@ public class SettingsService : ISettingsService {
         }
         else {
             await EnsureUnpackagedSettingsLoadedAsync();
-            _settings[key] = value;
+
+            if (value is null) {
+                _settings[key] = null;
+            }
+            else {
+                var serializedValue = JsonSerializer.Serialize(value);
+                _settings[key] = JsonDocument.Parse(serializedValue).RootElement.Clone();
+            }
+
             await _settingsFileLock.WaitAsync();
             try {
                 string json = JsonSerializer.Serialize(_settings, _serializerOptions);
