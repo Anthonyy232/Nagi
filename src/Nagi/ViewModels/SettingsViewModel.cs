@@ -46,6 +46,12 @@ public partial class SettingsViewModel : ObservableObject {
         _updateService = updateService ?? throw new ArgumentNullException(nameof(updateService));
         _lastFmAuthService = lastFmAuthService ?? throw new ArgumentNullException(nameof(lastFmAuthService));
         NavigationItems.CollectionChanged += OnNavigationItemsCollectionChanged;
+
+#if MSIX_PACKAGE
+        IsUpdateControlVisible = false;
+#else
+        IsUpdateControlVisible = true;
+#endif
     }
 
     [ObservableProperty]
@@ -96,6 +102,7 @@ public partial class SettingsViewModel : ObservableObject {
     [ObservableProperty]
     private bool _isLastFmNowPlayingEnabled;
 
+    public bool IsUpdateControlVisible { get; }
     public bool IsLastFmNotConnected => !IsLastFmConnected;
     public bool IsLastFmInitialAuthEnabled => !IsConnectingToLastFm;
 

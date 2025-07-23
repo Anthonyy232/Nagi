@@ -2,10 +2,33 @@
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
+
+#if !MSIX_PACKAGE
 using Velopack;
+#endif
 
 namespace Nagi.Services.Implementations;
 
+#if MSIX_PACKAGE
+/// <summary>
+/// A dummy implementation of <see cref="IUpdateService"/> for MSIX builds.
+/// Updates for MSIX packages are handled by the Microsoft Store, so this service does nothing.
+/// </summary>
+public class VelopackUpdateService : IUpdateService
+{
+    public Task CheckForUpdatesOnStartupAsync()
+    {
+        Debug.WriteLine("[INFO] VelopackUpdateService: Skipping update check in MSIX packaged mode.");
+        return Task.CompletedTask;
+    }
+
+    public Task CheckForUpdatesManuallyAsync()
+    {
+        Debug.WriteLine("[INFO] VelopackUpdateService: Manual update check is not available for MSIX packages.");
+        return Task.CompletedTask;
+    }
+}
+#else
 /// <summary>
 /// An implementation of <see cref="IUpdateService"/> that uses the Velopack framework for application updates.
 /// </summary>
@@ -82,10 +105,10 @@ public class VelopackUpdateService : IUpdateService {
     /// whether an update is available, if the application is up-to-date, or if an error occurred.
     /// </summary>
     public async Task CheckForUpdatesManuallyAsync() {
-        #if DEBUG
+#if DEBUG
                 await _uiService.ShowMessageDialogAsync("Debug Mode", "Update checks are disabled in debug mode. This dialog indicates the function was called.");
                 return;
-        #endif
+#endif
 
         try {
             UpdateInfo? updateInfo = await _updateManager.CheckForUpdatesAsync();
@@ -124,3 +147,4 @@ public class VelopackUpdateService : IUpdateService {
         }
     }
 }
+#endif

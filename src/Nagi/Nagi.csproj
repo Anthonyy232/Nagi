@@ -25,6 +25,7 @@
 		<!-- These properties will override the values in Package.appxmanifest during build -->
 		<ApplicationDisplayVersion>$(AppxPackageVersion)</ApplicationDisplayVersion>
 		<ApplicationVersion>$(AppxPackageVersion.Replace('.', ''))</ApplicationVersion>
+		<DefineConstants>$(DefineConstants);MSIX_PACKAGE</DefineConstants>
 
 		<!-- Signing properties for MSIX -->
 		<PackageCertificateThumbprint>2F0E4C35DA52D5D98977D972B339A23DF2830386</PackageCertificateThumbprint>
@@ -89,7 +90,7 @@
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.4188" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="$(WindowsAppSdkVersion)" />
 		<PackageReference Include="TagLibSharp" Version="$(TagLibSharpVersion)" />
-		<PackageReference Include="Velopack" Version="$(VelopackVersion)" />
+		<PackageReference Include="Velopack" Version="$(VelopackVersion)" Condition="$(Configuration.Contains('Unpackaged'))" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -111,9 +112,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Page Update="Styles\AlbumPageColors.xaml">
-	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-	  </Page>
+		<Page Update="Styles\AlbumPageColors.xaml">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Page>
 	</ItemGroup>
 
 	<!-- The "Package and Publish" menu should only appear for packaged configurations -->
