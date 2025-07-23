@@ -32,6 +32,12 @@ public class ListenHistory {
     public DateTime ListenTimestampUtc { get; set; } = DateTime.UtcNow;
 
     /// <summary>
+    /// Indicates whether this listen has met the time requirements (e.g., >4 mins or 50% played)
+    /// to be submitted to a scrobbling service. Defaults to false.
+    /// </summary>
+    public bool IsEligibleForScrobbling { get; set; }
+
+    /// <summary>
     /// Indicates whether this listen event has been successfully submitted 
     /// to an external scrobbling service (e.g., Last.fm).
     /// </summary>

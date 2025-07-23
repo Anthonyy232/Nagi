@@ -143,6 +143,9 @@ namespace Nagi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("IsEligibleForScrobbling")
+                        .HasColumnType("INTEGER");
+
                     b.Property<bool>("IsScrobbled")
                         .HasColumnType("INTEGER");
 

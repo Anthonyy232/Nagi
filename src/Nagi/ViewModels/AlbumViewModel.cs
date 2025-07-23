@@ -26,6 +26,12 @@ public partial class AlbumViewModelItem : ObservableObject {
     [ObservableProperty] private string _title;
     [ObservableProperty] private string _artistName;
     [ObservableProperty] private string? _coverArtUri;
+
+    public bool IsArtworkAvailable => !string.IsNullOrEmpty(CoverArtUri);
+
+    partial void OnCoverArtUriChanged(string? value) {
+        OnPropertyChanged(nameof(IsArtworkAvailable));
+    }
 }
 
 /// <summary>

@@ -39,6 +39,12 @@ public interface ISettingsService {
     event Action? LastFmSettingsChanged;
 
     /// <summary>
+    /// Occurs when the Discord Rich Presence setting is changed.
+    /// The boolean parameter indicates whether Discord Rich Presence is enabled.
+    /// </summary>
+    event Action<bool>? DiscordRichPresenceSettingChanged;
+
+    /// <summary>
     /// Gets the initial volume level for the media player.
     /// </summary>
     /// <returns>A volume level between 0.0 and 1.0.</returns>
@@ -240,8 +246,6 @@ public interface ISettingsService {
     /// </summary>
     Task ClearPlaybackStateAsync();
 
-    #region Update Settings
-
     /// <summary>
     /// Gets whether the application should automatically check for updates on startup.
     /// </summary>
@@ -265,10 +269,6 @@ public interface ISettingsService {
     /// </summary>
     /// <param name="version">The version string to save, or null to clear the skipped version.</param>
     Task SetLastSkippedUpdateVersionAsync(string? version);
-
-    #endregion
-
-    #region Last.fm Settings
 
     /// <summary>
     /// Gets whether scrobbling to Last.fm is enabled.
@@ -323,6 +323,4 @@ public interface ISettingsService {
     /// </summary>
     /// <returns>The saved token, or null if not present.</returns>
     Task<string?> GetLastFmAuthTokenAsync();
-
-    #endregion
 }

@@ -18,7 +18,6 @@ public partial class AlbumViewViewModel : SongListViewModelBase {
     private Guid _albumId;
     private int? _albumYear;
 
-    // FIX: Add IDispatcherService and IUIService to the constructor signature
     public AlbumViewViewModel(
         ILibraryReader libraryReader,
         IPlaylistService playlistService,
@@ -26,7 +25,6 @@ public partial class AlbumViewViewModel : SongListViewModelBase {
         INavigationService navigationService,
         IDispatcherService dispatcherService,
         IUIService uiService)
-        // FIX: Pass the new services to the base constructor
         : base(libraryReader, playlistService, playbackService, navigationService, dispatcherService, uiService) {
         CurrentSortOrder = SongSortOrder.TrackNumberAsc;
         UpdateSortOrderButtonText(CurrentSortOrder);
@@ -41,8 +39,17 @@ public partial class AlbumViewViewModel : SongListViewModelBase {
     [ObservableProperty]
     private string? _coverArtUri;
 
+    public bool IsArtworkAvailable => !string.IsNullOrEmpty(CoverArtUri);
+
     [ObservableProperty]
     private string _albumDetailsText = string.Empty;
+
+    // This partial method is automatically called by the source generator
+    // whenever the CoverArtUri property changes.
+    partial void OnCoverArtUriChanged(string? value) {
+        // Manually notify the UI that the dependent property has also changed.
+        OnPropertyChanged(nameof(IsArtworkAvailable));
+    }
 
     protected override bool IsPagingSupported => true;
 

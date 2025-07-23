@@ -35,7 +35,7 @@
                     <controls:ImageEx
                         CornerRadius="75"
                         IsCacheEnabled="True"
-                        Source="{x:Bind ViewModel.ArtistImageUri, Mode=OneWay, Converter={StaticResource StringToUriConverter}}"
+                        Source="{x:Bind ViewModel.ArtistImageUri, Mode=OneWay, Converter={StaticResource StringToUriConverter}, FallbackValue=null}"
                         Stretch="UniformToFill"
                         Visibility="{x:Bind ViewModel.ArtistImageUri, Mode=OneWay, Converter={StaticResource NullToCollapsedConverter}}" />
                     <Grid
@@ -90,16 +90,17 @@
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
-                                <controls:ImageEx
-                                    Grid.Row="0"
-                                    Width="160"
-                                    Height="160"
-                                    HorizontalAlignment="Center"
-                                    CornerRadius="8"
-                                    IsCacheEnabled="True"
-                                    PlaceholderSource="ms-appx:///Assets/DefaultAlbumArt.png"
-                                    Source="{x:Bind CoverArtUri, Mode=OneWay, Converter={StaticResource StringToUriConverter}}"
-                                    Stretch="UniformToFill" />
+                                <Border Grid.Row="0"
+                                        Width="160"
+                                        Height="160"
+                                        HorizontalAlignment="Center"
+                                        CornerRadius="8"
+                                        Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                                    <controls:ImageEx
+                                        IsCacheEnabled="True"
+                                        Source="{x:Bind CoverArtUri, Mode=OneWay, Converter={StaticResource StringToUriConverter}, FallbackValue=null}"
+                                        Stretch="UniformToFill" />
+                                </Border>
                                 <TextBlock
                                     Grid.Row="1"
                                     Margin="0,8,0,0"
@@ -210,12 +211,12 @@
                                     Command="{Binding DataContext.PlaySongCommand, ElementName=pageRoot}"
                                     CommandParameter="{x:Bind}"
                                     Style="{StaticResource SongListViewPageSongPlayButtonStyle}">
-                                    <Border Width="42" Height="42" CornerRadius="12">
+                                    <Border Width="42" Height="42" CornerRadius="12"
+                                        Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
                                         <controls:ImageEx
                                             IsCacheEnabled="True"
-                                            PlaceholderSource="ms-appx:///Assets/DefaultAlbumArt.png"
-                                            Source="{x:Bind AlbumArtUriFromTrack, Converter={StaticResource StringToUriConverter}}"
-                                            Stretch="UniformToFill" />
+                                            Stretch="UniformToFill"
+                                            Source="{x:Bind AlbumArtUriFromTrack, Converter={StaticResource StringToUriConverter}, FallbackValue=null}" />
                                     </Border>
                                 </Button>
 

@@ -1,4 +1,11 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Nagi.Data;
+using Nagi.Helpers;
+using Nagi.Models;
+using Nagi.Services.Abstractions;
+using Nagi.Services.Data;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -7,13 +14,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Nagi.Data;
-using Nagi.Helpers;
-using Nagi.Models;
-using Nagi.Services.Abstractions;
-using Nagi.Services.Data;
 
 namespace Nagi.Services.Implementations;
 
@@ -36,12 +36,9 @@ public class LibraryService : ILibraryService {
     private readonly PathConfiguration _pathConfig;
     private readonly HttpClient _httpClient;
 
-    // A lock to ensure the fire-and-forget background metadata fetch is not started multiple times.
     private readonly object _metadataFetchLock = new();
     private volatile bool _isMetadataFetchRunning;
 
-    // A dictionary of semaphores to prevent race conditions when downloading and writing artist images.
-    // Each unique image path gets its own lock, allowing different images to be processed in parallel.
     private readonly ConcurrentDictionary<string, SemaphoreSlim> _artistImageWriteSemaphores = new();
 
     public LibraryService(
@@ -114,8 +111,7 @@ public class LibraryService : ILibraryService {
 
             await transaction.CommitAsync();
 
-            // Delete physical files only after the transaction has successfully committed.
-            // This prevents orphaned files if the database operation fails.
+            // Delete physical files after the transaction is committed.
             foreach (var artPath in albumArtPathsToDelete) {
                 try {
                     if (_fileSystem.FileExists(artPath)) {
@@ -187,7 +183,7 @@ public class LibraryService : ILibraryService {
     }
 
     public Task<bool> RescanFolderForMusicAsync(Guid folderId, IProgress<ScanProgress>? progress = null) {
-        // Guarantees the entire operation is offloaded from the calling thread (e.g., the UI thread).
+        // Run the entire scan on a background thread to keep the UI responsive.
         return Task.Run(async () => {
             try {
                 var folder = await GetFolderByIdAsync(folderId);
@@ -201,13 +197,9 @@ public class LibraryService : ILibraryService {
                     return await RemoveFolderAsync(folderId);
                 }
 
-                // PHASE 1: EFFICIENT ANALYSIS
-                // Compare file system against the database to find what's new, changed, or gone.
                 progress?.Report(new ScanProgress { StatusText = $"Analyzing '{folder.Name}'...", IsIndeterminate = true });
                 var (filesToAdd, filesToUpdate, filesToDelete) = await AnalyzeFolderChangesAsync(folderId, folder.Path);
 
-                // PHASE 2: CLEANUP
-                // Delete outdated/removed songs first.
                 if (filesToDelete.Any()) {
                     progress?.Report(new ScanProgress { StatusText = "Cleaning up your library...", IsIndeterminate = true });
                     await using var deleteContext = await _contextFactory.CreateDbContextAsync();
@@ -219,22 +211,16 @@ public class LibraryService : ILibraryService {
                 var filesToProcess = filesToAdd.Concat(filesToUpdate).ToList();
                 if (!filesToProcess.Any()) {
                     progress?.Report(new ScanProgress { StatusText = "Scan complete. No new songs found.", Percentage = 100 });
-                    return filesToDelete.Any(); // Return true if deletions occurred.
+                    return filesToDelete.Any();
                 }
 
-                // PHASE 3: CONCURRENT METADATA EXTRACTION
-                // This is the most time-consuming part and drives the 0-100% progress bar.
                 var extractedMetadata = await ExtractMetadataConcurrentlyAsync(filesToProcess, progress);
 
-                // PHASE 4: BATCHED DATABASE UPDATE
-                // This is an indeterminate step as SaveChanges can take a variable amount of time.
                 int newSongsFound = 0;
                 if (extractedMetadata.Any()) {
                     newSongsFound = await BatchUpdateDatabaseAsync(folderId, extractedMetadata, progress);
                 }
 
-                // PHASE 5: FINALIZATION
-                // Clean up any artists, albums, or genres that no longer have associated songs.
                 progress?.Report(new ScanProgress { StatusText = "Finalizing...", IsIndeterminate = true });
                 await using (var finalContext = await _contextFactory.CreateDbContextAsync()) {
                     await CleanUpOrphanedEntitiesAsync(finalContext);
@@ -268,6 +254,7 @@ public class LibraryService : ILibraryService {
         var anyChangesMade = false;
 
         foreach (var folder in folders) {
+            // Wrap the progress reporter to add context about which folder is being scanned.
             var progressWrapper = new Progress<ScanProgress>(scanProgress => {
                 var status = scanProgress.Percentage >= 100
                     ? scanProgress.StatusText
@@ -313,13 +300,13 @@ public class LibraryService : ILibraryService {
             _isMetadataFetchRunning = true;
         }
 
-        // Fire and forget the background task.
         _ = Task.Run(async () => {
             try {
                 const int batchSize = 50;
                 while (true) {
                     List<Guid> artistIdsToUpdate;
                     await using (var idContext = await _contextFactory.CreateDbContextAsync()) {
+                        // Find artists missing a biography or remote image URL.
                         artistIdsToUpdate = await idContext.Artists
                             .AsNoTracking()
                             .Where(a => a.Biography == null || a.RemoteImageUrl == null)
@@ -331,8 +318,7 @@ public class LibraryService : ILibraryService {
 
                     if (artistIdsToUpdate.Count == 0) break;
 
-                    // For long-running tasks, it's best practice to create a new scope
-                    // to get a fresh DbContext for each batch, preventing memory leaks or stale data.
+                    // Use a scoped DbContext for the batch to ensure entities are managed correctly.
                     using var scope = _serviceScopeFactory.CreateScope();
                     var scopedContextFactory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<MusicDbContext>>();
                     await using var batchContext = await scopedContextFactory.CreateDbContextAsync();
@@ -669,7 +655,6 @@ public class LibraryService : ILibraryService {
             .Where(ps => ps.PlaylistId == playlistId && songIds.Contains(ps.SongId))
             .ExecuteDeleteAsync();
 
-        // After removing songs, re-index the remaining ones to ensure the 'Order' is contiguous.
         await ReindexPlaylistAsync(context, playlistId);
 
         playlist.DateModified = DateTime.UtcNow;
@@ -753,16 +738,39 @@ public class LibraryService : ILibraryService {
 
     #region Listen History
 
-    public async Task LogListenAsync(Guid songId) {
+    public async Task<long?> CreateListenHistoryEntryAsync(Guid songId) {
         await using var context = await _contextFactory.CreateDbContextAsync();
         var song = await context.Songs.FindAsync(songId);
-        if (song is null) return;
+        if (song is null) return null;
 
         song.PlayCount++;
         song.LastPlayedDate = DateTime.UtcNow;
 
-        context.ListenHistory.Add(new ListenHistory { SongId = songId, ListenTimestampUtc = DateTime.UtcNow });
+        var historyEntry = new ListenHistory { SongId = songId, ListenTimestampUtc = DateTime.UtcNow, IsScrobbled = false };
+        context.ListenHistory.Add(historyEntry);
+
         await context.SaveChangesAsync();
+        return historyEntry.Id;
+    }
+
+    public async Task<bool> MarkListenAsEligibleForScrobblingAsync(long listenHistoryId) {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        var historyEntry = await context.ListenHistory.FindAsync(listenHistoryId);
+        if (historyEntry is null) return false;
+
+        historyEntry.IsEligibleForScrobbling = true;
+        await context.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> MarkListenAsScrobbledAsync(long listenHistoryId) {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        var historyEntry = await context.ListenHistory.FindAsync(listenHistoryId);
+        if (historyEntry is null) return false;
+
+        historyEntry.IsScrobbled = true;
+        await context.SaveChangesAsync();
+        return true;
     }
 
     public async Task LogSkipAsync(Guid songId) {
@@ -1094,7 +1102,7 @@ public class LibraryService : ILibraryService {
         await using var transaction = await context.Database.BeginTransactionAsync();
 
         try {
-            // Delete data in an order that respects foreign key constraints.
+            // Delete data in order of dependency to avoid foreign key constraints.
             await context.PlaylistSongs.ExecuteDeleteAsync();
             await context.ListenHistory.ExecuteDeleteAsync();
             await context.Songs.ExecuteDeleteAsync();
@@ -1112,7 +1120,7 @@ public class LibraryService : ILibraryService {
             throw;
         }
 
-        // After successfully clearing the database, wipe the physical cache files.
+        // Clean up cached image files.
         var albumArtPath = _pathConfig.AlbumArtCachePath;
         var artistImagePath = _pathConfig.ArtistImageCachePath;
 
@@ -1128,10 +1136,9 @@ public class LibraryService : ILibraryService {
     #region Private Helpers
 
     /// <summary>
-    /// Compares the state of files on disk with the database to determine what needs to be added, updated, or deleted.
+    /// Compares the files in a folder on disk with the records in the database to determine what has changed.
     /// </summary>
     private async Task<(List<string> filesToAdd, List<string> filesToUpdate, List<string> filesToDelete)> AnalyzeFolderChangesAsync(Guid folderId, string folderPath) {
-        // Get DB state in one query
         await using var analysisContext = await _contextFactory.CreateDbContextAsync();
         var dbFileMap = (await analysisContext.Songs
                 .AsNoTracking()
@@ -1140,12 +1147,11 @@ public class LibraryService : ILibraryService {
                 .ToListAsync())
             .ToDictionary(s => s.FilePath, s => s.FileModifiedDate, StringComparer.OrdinalIgnoreCase);
 
-        // Get all file system info at once to minimize I/O calls.
         var diskFileMap = _fileSystem.EnumerateFiles(folderPath, "*.*", SearchOption.AllDirectories)
         .Where(file => MusicFileExtensions.Contains(_fileSystem.GetExtension(file)))
         .Select(path => {
             try { return new { Path = path, LastWriteTime = _fileSystem.GetLastWriteTimeUtc(path) }; }
-            catch (IOException) { return null; } // File might be locked or inaccessible
+            catch (IOException) { return null; }
         })
         .Where(x => x != null)
         .ToDictionary(x => x!.Path, x => x!.LastWriteTime, StringComparer.OrdinalIgnoreCase);
@@ -1153,7 +1159,6 @@ public class LibraryService : ILibraryService {
         var dbPaths = new HashSet<string>(dbFileMap.Keys, StringComparer.OrdinalIgnoreCase);
         var diskPaths = new HashSet<string>(diskFileMap.Keys, StringComparer.OrdinalIgnoreCase);
 
-        // Use efficient HashSet operations for clarity and performance.
         var filesToAdd = diskPaths.Except(dbPaths).ToList();
 
         var commonPaths = dbPaths.Intersect(diskPaths);
@@ -1162,15 +1167,14 @@ public class LibraryService : ILibraryService {
             .ToList();
 
         var filesRemovedFromDisk = dbPaths.Except(diskPaths).ToList();
-        // Files to delete are those removed from disk OR those that will be updated (delete-then-re-add strategy).
+        // Files to delete from DB are those removed from disk or those that will be updated (removed then re-added).
         var filesToDelete = filesRemovedFromDisk.Concat(filesToUpdate).ToList();
 
         return (filesToAdd, filesToUpdate, filesToDelete);
     }
 
     /// <summary>
-    /// Extracts metadata from a list of file paths concurrently, with batched progress reporting.
-    /// This phase is responsible for the 0-100% progress bar.
+    /// Extracts metadata from a list of files concurrently to improve performance.
     /// </summary>
     private async Task<List<SongFileMetadata>> ExtractMetadataConcurrentlyAsync(List<string> filesToProcess, IProgress<ScanProgress>? progress) {
         var extractedMetadata = new ConcurrentBag<SongFileMetadata>();
@@ -1211,8 +1215,7 @@ public class LibraryService : ILibraryService {
     }
 
     /// <summary>
-    /// Efficiently saves a batch of new songs to the database. This is reported as an indeterminate phase.
-    /// Includes retry logic for handling potential concurrency conflicts.
+    /// Updates the database with a batch of new or updated songs, optimized for performance.
     /// </summary>
     private async Task<int> BatchUpdateDatabaseAsync(Guid folderId, List<SongFileMetadata> metadataList, IProgress<ScanProgress>? progress) {
         const int maxRetries = 3;
@@ -1226,7 +1229,7 @@ public class LibraryService : ILibraryService {
             try {
                 await using var context = await _contextFactory.CreateDbContextAsync();
 
-                // Pre-fetch all existing related entities in a few queries to avoid N+1 problems.
+                // Pre-fetch existing artists, albums, and genres to reduce database round-trips.
                 var artistNames = metadataList.SelectMany(m => new[] { m.Artist, m.AlbumArtist }).Where(n => !string.IsNullOrWhiteSpace(n)).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
                 var albumTitles = metadataList.Select(m => m.Album).Where(t => !string.IsNullOrWhiteSpace(t)).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
                 var genreNames = metadataList.SelectMany(m => m.Genres ?? Enumerable.Empty<string>()).Where(g => !string.IsNullOrWhiteSpace(g)).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
@@ -1235,7 +1238,7 @@ public class LibraryService : ILibraryService {
                 var existingAlbums = await context.Albums.Where(a => albumTitles.Contains(a.Title)).ToListAsync();
                 var existingGenres = await context.Genres.Where(g => genreNames.Contains(g.Name)).ToDictionaryAsync(g => g.Name, StringComparer.OrdinalIgnoreCase);
 
-                // Create any new entities that don't exist yet and add them to the lookups.
+                // Create any new entities that don't exist yet.
                 foreach (var name in artistNames) {
                     if (!existingArtists.ContainsKey(name!)) {
                         var newArtist = new Artist { Name = name! };
@@ -1251,12 +1254,11 @@ public class LibraryService : ILibraryService {
                     }
                 }
 
-                // Build all the new song entities using the pre-fetched and newly created lookups.
+                // Prepare all song entities for insertion.
                 foreach (var metadata in metadataList) {
                     await AddSongWithDetailsOptimizedAsync(context, folderId, metadata, existingArtists, existingAlbums, existingGenres);
                 }
 
-                // Save everything in a single transaction.
                 await context.SaveChangesAsync();
                 saveSucceeded = true;
             }
@@ -1274,6 +1276,9 @@ public class LibraryService : ILibraryService {
         return totalMetadataCount;
     }
 
+    /// <summary>
+    /// An optimized version of AddSongWithDetailsAsync that uses pre-fetched entity lookups.
+    /// </summary>
     private Task AddSongWithDetailsOptimizedAsync(
         MusicDbContext context,
         Guid folderId,
@@ -1344,6 +1349,9 @@ public class LibraryService : ILibraryService {
         return Task.CompletedTask;
     }
 
+    /// <summary>
+    /// A non-optimized version of song creation for single additions, involving database lookups.
+    /// </summary>
     private async Task<Song?> AddSongWithDetailsAsync(MusicDbContext context, Guid folderId, SongFileMetadata metadata) {
         try {
             var trackArtist = await GetOrCreateArtistAsync(context, metadata.Artist);
@@ -1403,6 +1411,9 @@ public class LibraryService : ILibraryService {
         }
     }
 
+    /// <summary>
+    /// Updates a single property of a song in the database.
+    /// </summary>
     private async Task<bool> UpdateSongPropertyAsync(Guid songId, Action<Song> updateAction) {
         await using var context = await _contextFactory.CreateDbContextAsync();
         var song = await context.Songs.FindAsync(songId);
@@ -1419,6 +1430,9 @@ public class LibraryService : ILibraryService {
         }
     }
 
+    /// <summary>
+    /// Fetches artist metadata from remote services and updates the local database record.
+    /// </summary>
     private async Task FetchAndUpdateArtistFromRemoteAsync(MusicDbContext context, Artist artist) {
         var lastFmTask = _lastFmService.GetArtistInfoAsync(artist.Name);
         var spotifyImageTask = _spotifyService.GetArtistImageUrlAsync(artist.Name);
@@ -1446,6 +1460,9 @@ public class LibraryService : ILibraryService {
         }
     }
 
+    /// <summary>
+    /// Downloads an artist image and saves it to the local cache, preventing race conditions.
+    /// </summary>
     private async Task<bool> DownloadAndCacheArtistImageAsync(Artist artist, Uri imageUrl) {
         var localPath = _fileSystem.Combine(_pathConfig.ArtistImageCachePath, $"{artist.Id}.jpg");
         if (artist.LocalImageCachePath == localPath && _fileSystem.FileExists(localPath)) return false;
@@ -1453,6 +1470,7 @@ public class LibraryService : ILibraryService {
         var semaphore = _artistImageWriteSemaphores.GetOrAdd(localPath, _ => new SemaphoreSlim(1, 1));
         await semaphore.WaitAsync();
         try {
+            // Double-check after acquiring the semaphore in case another thread just finished.
             if (_fileSystem.FileExists(localPath)) return false;
 
             using var response = await _httpClient.GetAsync(imageUrl);
@@ -1472,6 +1490,10 @@ public class LibraryService : ILibraryService {
         }
     }
 
+    /// <summary>
+    /// Retrieves an artist from the database or creates a new one if it doesn't exist.
+    /// Checks the EF Core change tracker first to avoid redundant database queries.
+    /// </summary>
     private async Task<Artist> GetOrCreateArtistAsync(MusicDbContext context, string? name) {
         var normalizedName = string.IsNullOrWhiteSpace(name) ? UnknownArtistName : name.Trim();
 
@@ -1493,6 +1515,10 @@ public class LibraryService : ILibraryService {
         return newArtist;
     }
 
+    /// <summary>
+    /// Retrieves an album from the database or creates a new one if it doesn't exist.
+    /// Checks the EF Core change tracker first to avoid redundant database queries.
+    /// </summary>
     private async Task<Album> GetOrCreateAlbumAsync(MusicDbContext context, string title, Guid artistId, int? year) {
         var normalizedTitle = string.IsNullOrWhiteSpace(title) ? UnknownAlbumName : title.Trim();
 
@@ -1518,6 +1544,9 @@ public class LibraryService : ILibraryService {
         return newAlbum;
     }
 
+    /// <summary>
+    /// Ensures all specified genres exist in the database, creating any that are missing.
+    /// </summary>
     private async Task<List<Genre>> EnsureGenresExistAsync(MusicDbContext context, IEnumerable<string>? genreNames) {
         if (genreNames is null) return [];
 
@@ -1558,6 +1587,9 @@ public class LibraryService : ILibraryService {
         return finalGenres;
     }
 
+    /// <summary>
+    /// Re-calculates the 'Order' property for all songs in a playlist after a modification.
+    /// </summary>
     private async Task ReindexPlaylistAsync(MusicDbContext context, Guid playlistId) {
         var playlistSongs = await context.PlaylistSongs
             .Where(ps => ps.PlaylistId == playlistId).OrderBy(ps => ps.Order).ToListAsync();
@@ -1567,6 +1599,9 @@ public class LibraryService : ILibraryService {
         }
     }
 
+    /// <summary>
+    /// Deletes any artists, albums, or genres that are no longer referenced by any songs.
+    /// </summary>
     private async Task CleanUpOrphanedEntitiesAsync(MusicDbContext context) {
         await context.Albums.Where(a => !a.Songs.Any()).ExecuteDeleteAsync();
 
@@ -1594,6 +1629,9 @@ public class LibraryService : ILibraryService {
         await context.Genres.Where(g => !g.Songs.Any()).ExecuteDeleteAsync();
     }
 
+    /// <summary>
+    /// Applies a specific sort order to an IQueryable of songs.
+    /// </summary>
     private IOrderedQueryable<Song> ApplySongSortOrder(IQueryable<Song> query, SongSortOrder sortOrder) {
         return sortOrder switch {
             SongSortOrder.TitleDesc => query.OrderByDescending(s => s.Title).ThenBy(s => s.Id),
@@ -1605,6 +1643,9 @@ public class LibraryService : ILibraryService {
         };
     }
 
+    /// <summary>
+    /// Constructs a query for searching songs based on a search term.
+    /// </summary>
     private IQueryable<Song> BuildSongSearchQuery(MusicDbContext context, string searchTerm) {
         var term = $"%{searchTerm}%";
         return context.Songs
@@ -1616,10 +1657,16 @@ public class LibraryService : ILibraryService {
                 || (s.Album != null && s.Album.Artist != null && EF.Functions.Like(s.Album.Artist.Name, term)));
     }
 
+    /// <summary>
+    /// Constructs a query for searching artists based on a search term.
+    /// </summary>
     private IQueryable<Artist> BuildArtistSearchQuery(MusicDbContext context, string searchTerm) {
         return context.Artists.Where(a => EF.Functions.Like(a.Name, $"%{searchTerm}%"));
     }
 
+    /// <summary>
+    /// Constructs a query for searching albums based on a search term.
+    /// </summary>
     private IQueryable<Album> BuildAlbumSearchQuery(MusicDbContext context, string searchTerm) {
         var term = $"%{searchTerm}%";
         return context.Albums
@@ -1628,6 +1675,9 @@ public class LibraryService : ILibraryService {
                 || (al.Artist != null && EF.Functions.Like(al.Artist.Name, term)));
     }
 
+    /// <summary>
+    /// Checks if a DbUpdateException was caused by a unique constraint violation.
+    /// </summary>
     private bool IsUniqueConstraintViolation(DbUpdateException ex) {
         var innerMessage = ex.InnerException?.Message ?? string.Empty;
         return innerMessage.Contains("UNIQUE constraint failed", StringComparison.OrdinalIgnoreCase)

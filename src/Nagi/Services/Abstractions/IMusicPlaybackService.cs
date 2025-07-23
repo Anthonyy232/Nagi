@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace Nagi.Services.Abstractions;
 
 /// <summary>
-///     Defines the available sorting orders for a list of songs.
+/// Defines the available sorting orders for a list of songs.
 /// </summary>
 public enum SongSortOrder {
     TitleAsc,
@@ -19,7 +19,7 @@ public enum SongSortOrder {
 }
 
 /// <summary>
-///     Defines playback repeat modes.
+/// Defines playback repeat modes.
 /// </summary>
 public enum RepeatMode {
     Off,
@@ -28,267 +28,189 @@ public enum RepeatMode {
 }
 
 /// <summary>
-///     Defines the contract for a high-level music playback service,
-///     managing the playback queue, playback state, and user settings like shuffle and repeat.
+/// Defines the contract for a service that manages music playback, queue, and state.
 /// </summary>
-public interface IMusicPlaybackService {
-    #region Events
-
+public interface IMusicPlaybackService : IDisposable {
     /// <summary>
-    ///     Occurs when the currently playing track changes.
-    /// </summary>
-    event Action? TrackChanged;
-
-    /// <summary>
-    ///     Occurs when the playback state (e.g., IsPlaying) changes.
-    /// </summary>
-    event Action? PlaybackStateChanged;
-
-    /// <summary>
-    ///     Occurs when the volume or mute state changes.
-    /// </summary>
-    event Action? VolumeStateChanged;
-
-    /// <summary>
-    ///     Occurs when shuffle mode is enabled or disabled.
-    /// </summary>
-    event Action? ShuffleModeChanged;
-
-    /// <summary>
-    ///     Occurs when the repeat mode changes.
-    /// </summary>
-    event Action? RepeatModeChanged;
-
-    /// <summary>
-    ///     Occurs when the content or order of the playback queue changes.
-    /// </summary>
-    event Action? QueueChanged;
-
-    /// <summary>
-    ///     Occurs frequently as the playback position changes during active playback.
-    /// </summary>
-    event Action? PositionChanged;
-
-    #endregion
-
-    #region Properties
-
-    /// <summary>
-    ///     Gets the currently playing or paused track. Returns null if nothing is loaded.
+    /// Gets the currently playing song, or null if nothing is playing.
     /// </summary>
     Song? CurrentTrack { get; }
 
     /// <summary>
-    ///     Gets a value indicating whether a track is currently playing.
+    /// Gets the unique database ID for the current listening session.
+    /// This is used to link playback events to a specific entry in the ListenHistory table.
+    /// </summary>
+    long? CurrentListenHistoryId { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether the audio player is currently playing.
     /// </summary>
     bool IsPlaying { get; }
 
     /// <summary>
-    ///     Gets the current playback position of the current track.
+    /// Gets the current playback position of the track.
     /// </summary>
     TimeSpan CurrentPosition { get; }
 
     /// <summary>
-    ///     Gets the total duration of the current track.
+    /// Gets the total duration of the current track.
     /// </summary>
     TimeSpan Duration { get; }
 
     /// <summary>
-    ///     Gets the current playback volume (0.0 to 1.0).
+    /// Gets the current volume level (0.0 to 1.0).
     /// </summary>
     double Volume { get; }
 
     /// <summary>
-    ///     Gets a value indicating whether playback is currently muted.
+    /// Gets a value indicating whether the player is muted.
     /// </summary>
     bool IsMuted { get; }
 
     /// <summary>
-    ///     Gets a value indicating if the service is in the process of changing tracks.
-    /// </summary>
-    bool IsTransitioningTrack { get; }
-
-    /// <summary>
-    ///     Gets a read-only list of songs in the original, non-shuffled playback queue.
+    /// Gets a read-only list of songs in the original, unshuffled playback queue.
     /// </summary>
     IReadOnlyList<Song> PlaybackQueue { get; }
 
     /// <summary>
-    ///     Gets a read-only list of songs in the shuffled playback queue. This list is empty if shuffle is disabled.
+    /// Gets a read-only list of songs in the shuffled playback queue.
     /// </summary>
     IReadOnlyList<Song> ShuffledQueue { get; }
 
     /// <summary>
-    ///     Gets the index of the current track within the original, non-shuffled PlaybackQueue.
-    ///     Returns -1 if no track is active.
+    /// Gets the index of the current track in the original PlaybackQueue.
     /// </summary>
     int CurrentQueueIndex { get; }
 
     /// <summary>
-    ///     Gets a value indicating whether shuffle mode is currently enabled.
+    /// Gets a value indicating whether shuffle mode is enabled.
     /// </summary>
     bool IsShuffleEnabled { get; }
 
     /// <summary>
-    ///     Gets the current repeat mode.
+    /// Gets the current repeat mode (Off, RepeatAll, RepeatOne).
     /// </summary>
     RepeatMode CurrentRepeatMode { get; }
 
-    #endregion
-
-    #region Playback Control
+    /// <summary>
+    /// Gets a value indicating whether the service is in the process of changing tracks.
+    /// </summary>
+    bool IsTransitioningTrack { get; }
 
     /// <summary>
-    ///     Initializes the playback service, loading persisted settings and restoring the last playback state.
+    /// Fires when the current track changes or playback stops.
+    /// </summary>
+    event Action? TrackChanged;
+
+    /// <summary>
+    /// Fires when the playback state changes (e.g., playing, paused).
+    /// </summary>
+    event Action? PlaybackStateChanged;
+
+    /// <summary>
+    /// Fires when the volume or mute state changes.
+    /// </summary>
+    event Action? VolumeStateChanged;
+
+    /// <summary>
+    /// Fires when the shuffle mode is enabled or disabled.
+    /// </summary>
+    event Action? ShuffleModeChanged;
+
+    /// <summary>
+    /// Fires when the repeat mode changes.
+    /// </summary>
+    event Action? RepeatModeChanged;
+
+    /// <summary>
+    /// Fires when the playback queue is modified (e.g., songs added, removed, reordered).
+    /// </summary>
+    event Action? QueueChanged;
+
+    /// <summary>
+    /// Fires as the playback position of the current track changes.
+    /// </summary>
+    event Action? PositionChanged;
+
+    /// <summary>
+    /// Initializes the service, loading settings and saved playback state.
     /// </summary>
     Task InitializeAsync();
 
     /// <summary>
-    ///     Plays a collection of songs, replacing the current queue.
+    /// Plays a single song, replacing the current queue.
     /// </summary>
-    /// <param name="songs">The collection of songs to play.</param>
-    /// <param name="startIndex">The index of the song to start with. Ignored if startShuffled is true.</param>
-    /// <param name="startShuffled">If true, shuffle is enabled and a random song starts playback.</param>
-    Task PlayAsync(IEnumerable<Song> songs, int startIndex = 0, bool startShuffled = false);
-
-    /// <summary>
-    ///     Plays a single song, replacing the current queue, without changing the current shuffle mode.
-    /// </summary>
-    /// <param name="song">The song to play.</param>
     Task PlayAsync(Song song);
 
     /// <summary>
-    ///     Toggles between play and pause. If no track is active, it starts the current queue.
+    /// Plays a list of songs, replacing the current queue.
+    /// </summary>
+    /// <param name="songs">The collection of songs to play.</param>
+    /// <param name="startIndex">The index in the collection to start playing from.</param>
+    /// <param name="startShuffled">If true, shuffle will be enabled before playing.</param>
+    Task PlayAsync(IEnumerable<Song> songs, int startIndex = 0, bool startShuffled = false);
+
+    /// <summary>
+    /// Toggles between playing and pausing the current track.
     /// </summary>
     Task PlayPauseAsync();
 
     /// <summary>
-    ///     Stops playback and unloads the current track.
+    /// Stops playback and clears the current track.
     /// </summary>
     Task StopAsync();
 
     /// <summary>
-    ///     Advances to the next track in the queue, respecting shuffle and repeat modes.
+    /// Skips to the next track in the queue.
     /// </summary>
     Task NextAsync();
 
     /// <summary>
-    ///     Moves to the previous track. If the current track has played for more than a few seconds, it restarts the current
-    ///     track instead.
+    /// Goes to the previous track in the queue or restarts the current track.
     /// </summary>
     Task PreviousAsync();
 
     /// <summary>
-    ///     Seeks to a specific position within the current track.
+    /// Seeks to a specific position in the current track.
     /// </summary>
-    /// <param name="position">The desired playback position.</param>
     Task SeekAsync(TimeSpan position);
 
-    #endregion
-
-    #region Playback Initiation
-
-    /// <summary>
-    ///     Clears the current queue and starts playing all songs from a specific album.
-    ///     Playback will begin with shuffle turned off, and songs are ordered by track number.
-    /// </summary>
-    /// <param name="albumId">The ID of the album to play.</param>
     Task PlayAlbumAsync(Guid albumId);
-
-    /// <summary>
-    ///     Clears the current queue and starts playing all songs by a specific artist.
-    ///     Playback will begin with shuffle turned off, and songs are ordered alphabetically by title.
-    /// </summary>
-    /// <param name="artistId">The ID of the artist to play.</param>
     Task PlayArtistAsync(Guid artistId);
-
-    /// <summary>
-    ///     Clears the current queue and starts playing all songs from a specific folder.
-    ///     Playback will begin with shuffle turned off, and songs are ordered alphabetically by title.
-    /// </summary>
-    /// <param name="folderId">The ID of the folder to play.</param>
     Task PlayFolderAsync(Guid folderId);
-
-    /// <summary>
-    ///     Clears the current queue and starts playing a specific playlist.
-    ///     Playback will begin with shuffle turned off, and songs are in playlist order.
-    /// </summary>
-    /// <param name="playlistId">The ID of the playlist to play.</param>
     Task PlayPlaylistAsync(Guid playlistId);
-
-    /// <summary>
-    ///     Clears the current queue and starts playing all songs from a specific genre.
-    ///     Playback will begin with shuffle turned off, and songs are ordered alphabetically by title.
-    /// </summary>
-    /// <param name="genreId">The ID of the genre to play.</param>
     Task PlayGenreAsync(Guid genreId);
 
-    #endregion
-
-    #region Mode and Volume Control
-
     /// <summary>
-    ///     Sets the playback volume and persists the value.
+    /// Sets the player volume.
     /// </summary>
-    /// <param name="volume">Volume level from 0.0 (silent) to 1.0 (max).</param>
+    /// <param name="volume">The new volume level (0.0 to 1.0).</param>
     Task SetVolumeAsync(double volume);
 
     /// <summary>
-    ///     Toggles the mute state and persists the change.
+    /// Toggles the mute state of the player.
     /// </summary>
     Task ToggleMuteAsync();
 
     /// <summary>
-    ///     Enables or disables shuffle mode and persists the change.
+    /// Enables or disables shuffle mode.
     /// </summary>
-    /// <param name="enable">True to enable shuffle, false to disable.</param>
     Task SetShuffleAsync(bool enable);
 
     /// <summary>
-    ///     Sets the repeat mode for playback and persists the change.
+    /// Cycles through the available repeat modes.
     /// </summary>
-    /// <param name="mode">The desired repeat mode.</param>
     Task SetRepeatModeAsync(RepeatMode mode);
 
-    #endregion
-
-    #region Queue Management
-
-    /// <summary>
-    ///     Adds a song to the end of the playback queue.
-    /// </summary>
     Task AddToQueueAsync(Song song);
-
-    /// <summary>
-    ///     Adds a collection of songs to the end of the playback queue.
-    /// </summary>
     Task AddRangeToQueueAsync(IEnumerable<Song> songs);
-
-    /// <summary>
-    ///     Inserts a song immediately after the current track in the queue.
-    /// </summary>
     Task PlayNextAsync(Song song);
-
-    /// <summary>
-    ///     Removes a specific song from the playback queue. If the current song is removed, plays the next one.
-    /// </summary>
     Task RemoveFromQueueAsync(Song song);
-
-    /// <summary>
-    ///     Plays a specific song from the current queue by its index in the original (non-shuffled) queue.
-    /// </summary>
-    /// <param name="originalQueueIndex">The 0-based index of the song in the original playback queue.</param>
     Task PlayQueueItemAsync(int originalQueueIndex);
-
-    /// <summary>
-    ///     Clears all songs from the playback queue and stops playback.
-    /// </summary>
     Task ClearQueueAsync();
 
     /// <summary>
-    ///     Saves the current playback state (queue, track, position) to persistent storage.
+    /// Saves the current playback state (queue, track, position) to persistent storage.
     /// </summary>
     Task SavePlaybackStateAsync();
-
-    #endregion
 }

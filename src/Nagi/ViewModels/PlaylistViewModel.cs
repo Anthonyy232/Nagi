@@ -27,6 +27,12 @@ public partial class PlaylistViewModelItem : ObservableObject {
 
     [ObservableProperty] public partial string? CoverImageUri { get; set; }
 
+    public bool IsArtworkAvailable => !string.IsNullOrEmpty(CoverImageUri);
+
+    partial void OnCoverImageUriChanged(string? value) {
+        OnPropertyChanged(nameof(IsArtworkAvailable));
+    }
+
     [ObservableProperty] public partial int SongCount { get; set; }
 
     [ObservableProperty] public partial string SongCountText { get; set; } = string.Empty;

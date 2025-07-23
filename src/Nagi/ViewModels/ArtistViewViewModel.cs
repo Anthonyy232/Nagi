@@ -22,6 +22,7 @@ public partial class ArtistAlbumViewModelItem : ObservableObject {
     public string Name { get; }
     public string? CoverArtUri { get; }
     public string YearText { get; }
+    public bool IsArtworkAvailable => !string.IsNullOrEmpty(CoverArtUri);
 
     public ArtistAlbumViewModelItem(Album album) {
         Id = album.Id;
