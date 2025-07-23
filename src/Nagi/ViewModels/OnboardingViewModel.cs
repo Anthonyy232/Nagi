@@ -23,20 +23,20 @@ public partial class OnboardingViewModel : ObservableObject {
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsAnyOperationInProgress))]
-    private bool _isAddingFolder;
+    public partial bool IsAddingFolder { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsAnyOperationInProgress))]
-    private bool _isParsing;
+    public partial bool IsParsing { get; set; }
 
     [ObservableProperty]
-    private string _statusMessage = InitialWelcomeMessage;
+    public partial string StatusMessage { get; set; } = InitialWelcomeMessage;
 
     [ObservableProperty]
-    private double _progressValue;
+    public partial double ProgressValue { get; set; }
 
     [ObservableProperty]
-    private bool _isProgressIndeterminate;
+    public partial bool IsProgressIndeterminate { get; set; }
 
     public bool IsAnyOperationInProgress => IsAddingFolder || IsParsing;
 

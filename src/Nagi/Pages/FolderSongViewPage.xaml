@@ -23,7 +23,6 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- Page header -->
         <Grid Grid.Row="0" Padding="24,20,24,20" VerticalAlignment="Center">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -78,7 +77,6 @@
             </StackPanel>
         </Grid>
 
-        <!-- Songs list -->
         <ListView
             x:Name="SongsListView"
             Grid.Row="1"
@@ -133,7 +131,7 @@
                             CommandParameter="{x:Bind}"
                             Style="{StaticResource SongListViewPageSongPlayButtonStyle}">
                             <Border Width="42" Height="42" CornerRadius="12"
-                                Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                                Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneTime}">
                                 <controls:ImageEx
                                     IsCacheEnabled="True"
                                     Stretch="UniformToFill"

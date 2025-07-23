@@ -39,40 +39,40 @@ public abstract partial class SongListViewModelBase : ObservableObject {
     private int _totalItemCount;
 
     [ObservableProperty]
-    private ObservableCollection<Song> _songs = new();
+    public partial ObservableCollection<Song> Songs { get; set; } = new();
 
     [ObservableProperty]
-    private ObservableCollection<Song> _selectedSongs = new();
+    public partial ObservableCollection<Song> SelectedSongs { get; set; } = new();
 
     [ObservableProperty]
-    private ObservableCollection<Playlist> _availablePlaylists = new();
+    public partial ObservableCollection<Playlist> AvailablePlaylists { get; set; } = new();
 
     [ObservableProperty]
-    private string _pageTitle = "Songs";
+    public partial string PageTitle { get; set; } = "Songs";
 
     [ObservableProperty]
-    private string _totalItemsText = "0 items";
+    public partial string TotalItemsText { get; set; } = "0 items";
 
     [ObservableProperty]
-    private SongSortOrder _currentSortOrder = SongSortOrder.TitleAsc;
+    public partial SongSortOrder CurrentSortOrder { get; set; } = SongSortOrder.TitleAsc;
 
     [ObservableProperty]
-    private string _currentSortOrderText = "Sort By: A to Z";
+    public partial string CurrentSortOrderText { get; set; } = "Sort By: A to Z";
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(RefreshOrSortSongsCommand))]
     [NotifyCanExecuteChangedFor(nameof(PlayAllSongsCommand))]
     [NotifyCanExecuteChangedFor(nameof(ShuffleAndPlayAllSongsCommand))]
-    private bool _isOverallLoading;
+    public partial bool IsOverallLoading { get; set; }
 
     [ObservableProperty]
-    private bool _isLoadingNextPage;
+    public partial bool IsLoadingNextPage { get; set; }
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ShowInFileExplorerCommand))]
     [NotifyCanExecuteChangedFor(nameof(GoToAlbumCommand))]
     [NotifyCanExecuteChangedFor(nameof(GoToArtistCommand))]
-    private bool _isSingleSongSelected;
+    public partial bool IsSingleSongSelected { get; set; }
 
     protected SongListViewModelBase(
         ILibraryReader libraryReader,

@@ -23,7 +23,6 @@
 
     <ScrollViewer>
         <StackPanel Padding="24" Spacing="16">
-            <!-- Page Header -->
             <Grid Margin="0,0,0,16">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -43,7 +42,6 @@
                 </StackPanel>
             </Grid>
 
-            <!-- Song List Section -->
             <StackPanel Margin="0,8,0,0" Spacing="8"
                         Visibility="{x:Bind ViewModel.Songs, Converter={StaticResource CollectionToVisibilityConverter}, Mode=OneWay}">
                 <Grid>
@@ -112,7 +110,7 @@
 
                                 <Button Grid.Column="0" Command="{Binding DataContext.PlaySongCommand, ElementName=pageRoot}" CommandParameter="{x:Bind}" Style="{StaticResource SongListViewPageSongPlayButtonStyle}">
                                     <Border Width="42" Height="42" CornerRadius="12"
-                                        Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                                        Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneTime}">
                                         <controls:ImageEx IsCacheEnabled="True" Stretch="UniformToFill" Source="{x:Bind AlbumArtUriFromTrack, Converter={StaticResource StringToUriConverter}, FallbackValue=null}" />
                                     </Border>
                                 </Button>

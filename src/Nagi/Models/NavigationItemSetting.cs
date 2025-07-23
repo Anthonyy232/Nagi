@@ -7,7 +7,7 @@ namespace Nagi.Models;
 /// </summary>
 public partial class NavigationItemSetting : ObservableObject {
     [ObservableProperty]
-    private bool _isEnabled;
+    public partial bool IsEnabled { get; set; }
 
     /// <summary>
     /// Gets or sets a unique identifier for the navigation item.

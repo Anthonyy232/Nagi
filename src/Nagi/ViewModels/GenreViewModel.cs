@@ -16,10 +16,10 @@ namespace Nagi.ViewModels;
 /// </summary>
 public partial class GenreViewModelItem : ObservableObject {
     [ObservableProperty]
-    private Guid _id;
+    public partial Guid Id { get; set; }
 
     [ObservableProperty]
-    private string _name = string.Empty;
+    public partial string Name { get; set; } = string.Empty;
 }
 
 /// <summary>
@@ -36,13 +36,13 @@ public partial class GenreViewModel : ObservableObject {
     }
 
     [ObservableProperty]
-    private ObservableCollection<GenreViewModelItem> _genres = new();
+    public partial ObservableCollection<GenreViewModelItem> Genres { get; set; } = new();
 
     [ObservableProperty]
-    private bool _isLoading;
+    public partial bool IsLoading { get; set; }
 
     [ObservableProperty]
-    private bool _hasLoadError;
+    public partial bool HasLoadError { get; set; }
 
     /// <summary>
     /// Gets a value indicating whether there are any genres to display.

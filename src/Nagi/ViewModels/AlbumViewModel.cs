@@ -23,9 +23,9 @@ public partial class AlbumViewModelItem : ObservableObject {
     }
 
     public Guid Id { get; }
-    [ObservableProperty] private string _title;
-    [ObservableProperty] private string _artistName;
-    [ObservableProperty] private string? _coverArtUri;
+    [ObservableProperty] public partial string Title { get; set; }
+    [ObservableProperty] public partial string ArtistName { get; set; }
+    [ObservableProperty] public partial string? CoverArtUri { get; set; }
 
     public bool IsArtworkAvailable => !string.IsNullOrEmpty(CoverArtUri);
 
@@ -51,16 +51,16 @@ public partial class AlbumViewModel : ObservableObject {
     }
 
     [ObservableProperty]
-    private ObservableCollection<AlbumViewModelItem> _albums = new();
+    public partial ObservableCollection<AlbumViewModelItem> Albums { get; set; } = new();
 
     [ObservableProperty]
-    private bool _isLoading;
+    public partial bool IsLoading { get; set; }
 
     [ObservableProperty]
-    private bool _isLoadingMore;
+    public partial bool IsLoadingMore { get; set; }
 
     [ObservableProperty]
-    private bool _hasLoadError;
+    public partial bool HasLoadError { get; set; }
 
     public bool HasAlbums => Albums.Any();
 

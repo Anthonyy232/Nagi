@@ -30,7 +30,7 @@ public partial class GenreViewViewModel : SongListViewModelBase {
     }
 
     [ObservableProperty]
-    private string _genreName = "Genre";
+    public partial string GenreName { get; set; } = "Genre";
 
     protected override bool IsPagingSupported => true;
 
