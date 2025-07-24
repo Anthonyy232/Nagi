@@ -9,13 +9,13 @@
     IgnorableNamespaces="uap uap3 uap5 rescap desktop">
 
 	<Identity
-        Name="0e78498c-35ed-4782-a2e0-fce2ae1344ea"
-        Publisher="CN=Anthony La"
+        Name="48743Nagi.Nagi"
+        Publisher="CN=83B77A15-7BA2-452B-A4A0-9DD253FA3D0E"
         Version="1.0.0.0"/>
 
 	<Properties>
 		<DisplayName>Nagi</DisplayName>
-		<PublisherDisplayName>Anthony La</PublisherDisplayName>
+		<PublisherDisplayName>Nagi</PublisherDisplayName>
 		<Logo>Assets\StoreLogo.png</Logo>
 	</Properties>
 
