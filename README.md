@@ -36,7 +36,9 @@
 
 
 ## Download
+[<img src="https://get.microsoft.com/images/en-us%20dark.svg" alt="Download app from Microsoft Store" width="350">](https://apps.microsoft.com/detail/9P1V1PPML3QT?referrer=appbadge&launch=true&mode=full)
 [<img src="https://github.com/user-attachments/assets/f81e6835-068d-4513-894b-659b5ac7f0ea" alt="Download app from GitHub" width="256">](https://github.com/Anthonyy232/Nagi/releases)
+
 
 
 ## Localization
