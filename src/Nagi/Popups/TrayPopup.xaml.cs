@@ -10,7 +10,6 @@ using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using Windows.Foundation;
-using Windows.UI;
 using WinRT.Interop;
 
 namespace Nagi.Popups;
