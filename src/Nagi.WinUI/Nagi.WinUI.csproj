@@ -1,0 +1,159 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net$(NetVersion)-windows$(WindowsSdkVersion)</TargetFramework>
+		<TargetPlatformMinVersion>$(WindowsTargetPlatformMinVersion)</TargetPlatformMinVersion>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
+		<Platforms>x86;x64;ARM64</Platforms>
+		<RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+		<UseWinUI>true</UseWinUI>
+		<EnableMsixTooling>true</EnableMsixTooling>
+		<Nullable>enable</Nullable>
+		<DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
+		<Configurations>Debug;Release;DebugUnpackaged;ReleaseUnpackaged</Configurations>
+	</PropertyGroup>
+
+	<!-- =============================================================== -->
+	<!-- == Packaged (MSIX) Configuration Properties                    == -->
+	<!-- =============================================================== -->
+	<PropertyGroup Condition="!$(Configuration.Contains('Unpackaged'))">
+		<WindowsPackageType>MSIX</WindowsPackageType>
+		<PublishProfile>win-$(Platform).pubxml</PublishProfile>
+		<ApplicationDisplayVersion>$(AppxPackageVersion)</ApplicationDisplayVersion>
+		<ApplicationVersion>$(AppxPackageVersion.Replace('.', ''))</ApplicationVersion>
+		<DefineConstants>$(DefineConstants);MSIX_PACKAGE</DefineConstants>
+	</PropertyGroup>
+
+	<!-- =============================================================== -->
+	<!-- == Unpackaged Configuration Properties                         == -->
+	<!-- =============================================================== -->
+	<PropertyGroup Condition="$(Configuration.Contains('Unpackaged'))">
+		<WindowsPackageType>None</WindowsPackageType>
+		<ApplicationIcon>Assets\AppLogo.ico</ApplicationIcon>
+	</PropertyGroup>
+
+	<!-- =============================================================== -->
+	<!-- == Packaged (MSIX) Specific Item Groups                        == -->
+	<!-- =================================m============================== -->
+	<ItemGroup Condition="!$(Configuration.Contains('Unpackaged'))">
+		<Content Include="Assets\SplashScreen.scale-200.png" />
+		<Content Include="Assets\LockScreenLogo.scale-200.png" />
+		<Content Include="Assets\Square150x150Logo.scale-200.png" />
+		<Content Include="Assets\Square44x44Logo.scale-200.png" />
+		<Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
+		<Content Include="Assets\Wide310x150Logo.scale-200.png" />
+	</ItemGroup>
+
+	<ItemGroup Condition="!$(Configuration.Contains('Unpackaged')) and '$(EnableMsixTooling)'=='true'">
+		<ProjectCapability Include="Msix" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Remove="Assets\Raws\**" />
+	  <Compile Remove="Interfaces\**" />
+	  <Content Remove="Assets\Raws\**" />
+	  <EmbeddedResource Remove="Assets\Raws\**" />
+	  <EmbeddedResource Remove="Interfaces\**" />
+	  <None Remove="Assets\Raws\**" />
+	  <None Remove="Interfaces\**" />
+	  <Page Remove="Assets\Raws\**" />
+	  <Page Remove="Interfaces\**" />
+	</ItemGroup>
+
+	<!-- =============================================================== -->
+	<!-- == Common Item Groups                                          == -->
+	<!-- =============================================================== -->
+	<ItemGroup>
+		<!-- Core Project Reference -->
+		<ProjectReference Include="..\Nagi.Core\Nagi.Core.csproj" />
+
+		<!-- UI-Specific Controls and Media -->
+		<PackageReference Include="CommunityToolkit.WinUI.Controls.ColorPicker" Version="$(CommunityToolkitWinUIVersion)" />
+		<PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="$(CommunityToolkitWinUIVersion)" />
+		<PackageReference Include="CommunityToolkit.WinUI.Media" Version="$(CommunityToolkitWinUIVersion)" />
+		<PackageReference Include="H.NotifyIcon.WinUI" Version="$(HNotifyIconWinUIVersion)" />
+		<PackageReference Include="ImageEx.WinUI" Version="$(ImageExWinUIVersion)" />
+		<PackageReference Include="LibVLCSharp" Version="3.9.3" />
+		<PackageReference Include="VideoLAN.LibVLC.Windows" Version="3.0.21" />
+		<PackageReference Include="Microsoft.Graphics.Win2D" Version="$(MicrosoftGraphicsWin2DVersion)" />
+
+		<!-- Windows App SDK and Build Tools -->
+		<PackageReference Include="Microsoft.WindowsAppSDK" Version="$(WindowsAppSdkVersion)" />
+		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="$(MicrosoftWindowsSDKBuildToolsVersion)" />
+
+		<!-- Application Services (DI, Configuration) for app startup -->
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="$(DependencyInjectionVersion)" />
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="$(MicrosoftExtensionsConfigurationVersion)" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="$(MicrosoftExtensionsConfigurationFileExtensionsVersion)" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="$(MicrosoftExtensionsConfigurationJsonVersion)" />
+		<PackageReference Include="Microsoft.Extensions.Http" Version="$(MicrosoftExtensionsHttpVersion)" />
+
+		<!-- EF Core tools are needed in the startup project for migrations -->
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="$(EntityFrameworkCoreVersion)">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="$(EntityFrameworkCoreVersion)">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+
+		<!-- Updater package, only needed for the unpackaged executable -->
+		<PackageReference Include="Velopack" Version="$(VelopackVersion)" Condition="$(Configuration.Contains('Unpackaged'))" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="Assets\AppLogo.ico">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="appsettings.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Page Update="Styles\AlbumPageColors.xaml">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Page>
+	</ItemGroup>
+
+	<PropertyGroup Condition="!$(Configuration.Contains('Unpackaged')) and '$(EnableMsixTooling)'=='true'">
+		<HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<PublishReadyToRun Condition="'$(Configuration)' == 'Debug' or '$(Configuration)' == 'DebugUnpackaged'">False</PublishReadyToRun>
+		<PublishReadyToRun Condition="'$(Configuration)' != 'Debug' and '$(Configuration)' != 'DebugUnpackaged'">True</PublishReadyToRun>
+		<PublishTrimmed>false</PublishTrimmed>
+		<SupportedOSPlatformVersion>10.0.18362.0</SupportedOSPlatformVersion>
+		<PackageCertificateThumbprint>3EBE28646614296DE51CCE9C9B6C6F75427D7C6C</PackageCertificateThumbprint>
+		<AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
+		<GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+		<AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
+		<AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
+		<GenerateTestArtifacts>True</GenerateTestArtifacts>
+		<AppxBundle>Always</AppxBundle>
+		<AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
+		<GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
+		<HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseUnpackaged|x86'">
+		<Optimize>True</Optimize>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseUnpackaged|x64'">
+		<Optimize>True</Optimize>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseUnpackaged|ARM64'">
+		<Optimize>True</Optimize>
+	</PropertyGroup>
+	<ItemGroup>
+	  <PRIResource Remove="Interfaces\**" />
+	</ItemGroup>
+	<ItemGroup>
+	  <PRIResource Remove="Assets\Raws\**" />
+	</ItemGroup>
+</Project>

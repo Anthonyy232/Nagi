@@ -1,0 +1,146 @@
+<Page
+    x:Class="Nagi.WinUI.Pages.PlaylistSongViewPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="using:Nagi.WinUI.Converters"
+    xmlns:controls="using:ImageEx"
+    xmlns:models="using:Nagi.Core.Models"
+    mc:Ignorable="d"
+    Background="Transparent"
+    x:Name="pageRoot">
+
+    <Page.Resources>
+        <converters:TimeSpanToTimeStringConverter x:Key="TimeSpanToTimeStringConverter" />
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <converters:StringToUriConverter x:Key="StringToUriConverter" />
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Padding="24,20,24,20" VerticalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                <TextBlock Text="{x:Bind ViewModel.PageTitle, Mode=OneWay}"
+                           Style="{StaticResource SongListViewPageTitleTextStyle}" />
+                <TextBlock Text="{x:Bind ViewModel.TotalItemsText, Mode=OneWay}"
+                           Foreground="{ThemeResource TextFillColorSecondary}" VerticalAlignment="Bottom"
+                           Margin="0,0,0,5" FontSize="13" />
+            </StackPanel>
+
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                <Button Style="{StaticResource SongListViewPageIconButton}" ToolTipService.ToolTip="Play all"
+                        Command="{x:Bind ViewModel.PlayAllSongsCommand}">
+                    <FontIcon Glyph="" FontSize="16" Foreground="{StaticResource AppPrimaryColorBrush}" />
+                </Button>
+
+                <Button Style="{StaticResource SongListViewPageFilledButtonStyle}"
+                        ToolTipService.ToolTip="Shuffle and play all"
+                        Command="{x:Bind ViewModel.ShuffleAndPlayAllSongsCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <FontIcon Glyph="" FontSize="14" />
+                        <TextBlock Text="Shuffle and play" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <ListView Grid.Row="1"
+                  x:Name="SongsListView"
+                  SelectionMode="Extended"
+                  IsItemClickEnabled="True"
+                  Padding="24,12,24,0"
+                  ItemsSource="{x:Bind ViewModel.Songs, Mode=OneWay}"
+                  ItemContainerStyle="{StaticResource SongListViewPageListViewItemStyle}"
+                  SelectionChanged="SongsListView_SelectionChanged"
+                  CanDragItems="{x:Bind ViewModel.IsCurrentViewAPlaylist, Mode=OneWay}"
+                  CanReorderItems="{x:Bind ViewModel.IsCurrentViewAPlaylist, Mode=OneWay}"
+                  AllowDrop="{x:Bind ViewModel.IsCurrentViewAPlaylist, Mode=OneWay}">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="models:Song">
+                    <Grid Height="54" ColumnSpacing="12" Background="Transparent">
+                        <Grid.ContextFlyout>
+                            <MenuFlyout Opening="SongItemMenuFlyout_Opening">
+                                <MenuFlyoutItem Text="Play"
+                                                Command="{Binding DataContext.PlaySelectedSongsCommand, ElementName=pageRoot}" />
+                                <MenuFlyoutItem Text="Play Next"
+                                                Command="{Binding DataContext.PlaySelectedSongsNextCommand, ElementName=pageRoot}" />
+                                <MenuFlyoutItem Text="Add to Queue"
+                                                Command="{Binding DataContext.AddSelectedSongsToQueueCommand, ElementName=pageRoot}" />
+                                <MenuFlyoutSeparator Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                <MenuFlyoutItem Text="Go to album"
+                                                Command="{Binding DataContext.GoToAlbumCommand, ElementName=pageRoot}"
+                                                Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                <MenuFlyoutItem Text="Go to artist"
+                                                Command="{Binding DataContext.GoToArtistCommand, ElementName=pageRoot}"
+                                                Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                <MenuFlyoutItem Text="Show in explorer"
+                                                Command="{Binding DataContext.ShowInFileExplorerCommand, ElementName=pageRoot}"
+                                                Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                <MenuFlyoutSeparator
+                                    Visibility="{Binding DataContext.IsCurrentViewAPlaylist, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                <MenuFlyoutItem Text="Remove from playlist"
+                                                Command="{Binding DataContext.RemoveSelectedSongsFromPlaylistCommand, ElementName=pageRoot}"
+                                                Visibility="{Binding DataContext.IsCurrentViewAPlaylist, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            </MenuFlyout>
+                        </Grid.ContextFlyout>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="1*" MinWidth="100" />
+                            <ColumnDefinition Width="1*" MinWidth="100" />
+                            <ColumnDefinition Width="*" MinWidth="40" />
+                            <ColumnDefinition Width="Auto" MinWidth="50" />
+                        </Grid.ColumnDefinitions>
+
+                        <Button Grid.Column="0" Style="{StaticResource SongListViewPageSongPlayButtonStyle}"
+                                Command="{Binding DataContext.PlaySongCommand, ElementName=pageRoot}"
+                                CommandParameter="{x:Bind}">
+                            <Border Width="42" Height="42" CornerRadius="12"
+                                Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneTime}">
+                                <controls:ImageEx
+                                    Source="{x:Bind AlbumArtUriFromTrack, Converter={StaticResource StringToUriConverter}, FallbackValue=null}"
+                                    Stretch="UniformToFill"
+                                    IsCacheEnabled="True" />
+                            </Border>
+                        </Button>
+
+                        <TextBlock Grid.Column="1" Text="{x:Bind Title}" VerticalAlignment="Center"
+                                   Style="{StaticResource SongListViewPageBodyStrongTextBlockStyle}"
+                                   TextTrimming="CharacterEllipsis" />
+
+                        <HyperlinkButton Grid.Column="2"
+                                         Content="{x:Bind Artist.Name}"
+                                         Command="{Binding DataContext.GoToArtistCommand, ElementName=pageRoot}"
+                                         CommandParameter="{x:Bind}"
+                                         Style="{StaticResource SongListHyperlinkButtonStyle}" />
+
+                        <HyperlinkButton Grid.Column="3"
+                                         Content="{x:Bind Album.Title}"
+                                         Command="{Binding DataContext.GoToAlbumCommand, ElementName=pageRoot}"
+                                         CommandParameter="{x:Bind}"
+                                         Style="{StaticResource SongListHyperlinkButtonStyle}" />
+
+                        <TextBlock Grid.Column="4" Text="{x:Bind Album.Year}"
+                                   Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}"
+                                   HorizontalAlignment="Center" />
+                        <TextBlock Grid.Column="5"
+                                   Text="{x:Bind Duration, Converter={StaticResource TimeSpanToTimeStringConverter}}"
+                                   Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}"
+                                   HorizontalAlignment="Right" Margin="0,0,12,0" />
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</Page>

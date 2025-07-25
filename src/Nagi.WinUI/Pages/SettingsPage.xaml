@@ -1,0 +1,369 @@
+﻿<Page
+    x:Class="Nagi.WinUI.Pages.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:CommunityToolkit.WinUI.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:localConverters="using:Nagi.WinUI.Converters"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mux="using:Microsoft.UI.Xaml"
+    xmlns:navigation="using:Nagi.WinUI.Navigation"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <localConverters:ElementThemeToFriendlyStringConverter x:Key="ThemeToStringConverter" />
+        <localConverters:StringToFontFamilyConverter x:Key="StringToFontFamilyConverter" />
+
+        <Style x:Key="NavigationListViewItemStyle" TargetType="ListViewItem">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="MinHeight" Value="0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListViewItem">
+                        <ListViewItemPresenter
+                            ContentTransitions="{TemplateBinding ContentTransitions}"
+                            SelectionCheckMarkVisualEnabled="False"
+                            PointerOverBackground="{ThemeResource SubtleFillColorSecondaryBrush}"
+                            PointerOverForeground="{ThemeResource TextFillColorPrimaryBrush}"
+                            SelectedBackground="Transparent"
+                            SelectedForeground="{ThemeResource TextFillColorPrimaryBrush}"
+                            SelectedPointerOverBackground="{ThemeResource SubtleFillColorSecondaryBrush}"
+                            PressedBackground="{ThemeResource SubtleFillColorTertiaryBrush}"
+                            SelectedPressedBackground="{ThemeResource SubtleFillColorTertiaryBrush}"
+                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                            ContentMargin="{TemplateBinding Padding}" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <TextBlock
+            Grid.Row="0"
+            MaxWidth="1064"
+            Margin="36,24,36,0"
+            Style="{StaticResource SettingsPageTitleTextStyle}"
+            Text="Settings" />
+
+        <ScrollView
+            Grid.Row="1"
+            Padding="36,0,36,24"
+            VerticalScrollBarVisibility="Auto"
+            VerticalScrollMode="Auto">
+            <StackPanel
+                MaxWidth="1064"
+                HorizontalAlignment="Stretch"
+                Spacing="{StaticResource SettingsCardSpacing}">
+                <StackPanel.ChildrenTransitions>
+                    <EntranceThemeTransition FromVerticalOffset="50" />
+                    <RepositionThemeTransition IsStaggeringEnabled="False" />
+                </StackPanel.ChildrenTransitions>
+
+                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="Appearance" />
+
+                <controls:SettingsCard Header="Theme" Description="Choose the application theme.">
+                    <controls:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
+                    </controls:SettingsCard.HeaderIcon>
+                    <ComboBox
+                        MinWidth="300"
+                        HorizontalAlignment="Right"
+                        ItemsSource="{x:Bind ViewModel.AvailableThemes}"
+                        SelectedItem="{x:Bind ViewModel.SelectedTheme, Mode=TwoWay}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="mux:ElementTheme">
+                                <TextBlock Text="{Binding Converter={StaticResource ThemeToStringConverter}}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </controls:SettingsCard>
+
+                <controls:SettingsCard
+                    Header="Dynamic Theming"
+                    Description="Enable and configure dynamic theming options.">
+                    <controls:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
+                    </controls:SettingsCard.HeaderIcon>
+                    <ToggleSwitch
+                        HorizontalAlignment="Right"
+                        IsOn="{x:Bind ViewModel.IsDynamicThemingEnabled, Mode=TwoWay}" />
+                </controls:SettingsCard>
+
+                <controls:SettingsCard Header="Customize Navigation"
+                       Description="Drag to reorder pages in the navigation menu. Use the toggle to show or hide a page.">
+                    <controls:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
+                    </controls:SettingsCard.HeaderIcon>
+
+                    <ListView
+                        Width="350"
+                        HorizontalAlignment="Right"
+                        AllowDrop="True"
+                        CanDragItems="True"
+                        CanReorderItems="True"
+                        ItemsSource="{x:Bind ViewModel.NavigationItems}"
+                        ItemContainerStyle="{StaticResource NavigationListViewItemStyle}"
+                        SelectionMode="None"
+                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        BorderThickness="1"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        CornerRadius="{StaticResource ControlCornerRadius}">
+
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="navigation:NavigationItemSetting">
+                                <Grid Padding="12,10" VerticalAlignment="Center">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="28" />
+                                        <ColumnDefinition Width="32" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <FontIcon
+                                        Grid.Column="0"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                        FontSize="16"
+                                        Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                                        Glyph="" />
+
+                                    <FontIcon
+                                        Grid.Column="1"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        FontFamily="{x:Bind IconFontFamily, Converter={StaticResource StringToFontFamilyConverter}}"
+                                        Foreground="{ThemeResource AppPrimaryColorBrush}"
+                                        Glyph="{x:Bind IconGlyph}" />
+
+                                    <TextBlock
+                                        Grid.Column="2"
+                                        Margin="8,0,12,0"
+                                        VerticalAlignment="Center"
+                                        FontWeight="SemiBold"
+                                        Text="{x:Bind DisplayName}" />
+
+                                    <ToggleSwitch
+                                        Grid.Column="3"
+                                        VerticalAlignment="Center"
+                                        IsOn="{x:Bind IsEnabled, Mode=TwoWay}" />
+
+                                    <Border
+                                        Grid.ColumnSpan="4"
+                                        Height="1"
+                                        VerticalAlignment="Bottom"
+                                        Background="{ThemeResource CardStrokeColorDefaultBrush}" />
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </controls:SettingsCard>
+
+                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="Player Management" />
+
+                <controls:SettingsCard Header="Collapsable player"
+                                       Description="Animate the player bar to expand and collapse.">
+                    <controls:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
+                    </controls:SettingsCard.HeaderIcon>
+                    <ToggleSwitch HorizontalAlignment="Right" IsOn="{x:Bind ViewModel.IsPlayerAnimationEnabled, Mode=TwoWay}" />
+                </controls:SettingsCard>
+
+                <controls:SettingsCard Header="Restore playback state"
+                                       Description="Save the current playback state to resume on next launch.">
+                    <controls:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
+                    </controls:SettingsCard.HeaderIcon>
+                    <ToggleSwitch HorizontalAlignment="Right" IsOn="{x:Bind ViewModel.IsRestorePlaybackStateEnabled, Mode=TwoWay}" />
+                </controls:SettingsCard>
+
+                <controls:SettingsCard Header="Auto launch on startup"
+                                       Description="Start Nagi automatically when you log into your computer.">
+                    <controls:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
+                    </controls:SettingsCard.HeaderIcon>
+                    <ToggleSwitch HorizontalAlignment="Right" IsOn="{x:Bind ViewModel.IsAutoLaunchEnabled, Mode=TwoWay}" />
+                </controls:SettingsCard>
+
+                <controls:SettingsCard Header="Start minimized"
+                                       Description="When launched, the application window will be minimized by default.">
+                    <controls:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
+                    </controls:SettingsCard.HeaderIcon>
+                    <ToggleSwitch HorizontalAlignment="Right" IsOn="{x:Bind ViewModel.IsStartMinimizedEnabled, Mode=TwoWay}" />
+                </controls:SettingsCard>
+
+                <controls:SettingsCard Header="Hide to system tray"
+                                       Description="When closed, hide to the system tray instead.">
+                    <controls:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
+                    </controls:SettingsCard.HeaderIcon>
+                    <ToggleSwitch HorizontalAlignment="Right" IsOn="{x:Bind ViewModel.IsHideToTrayEnabled, Mode=TwoWay}" />
+                </controls:SettingsCard>
+
+                <controls:SettingsCard Header="Show cover art in flyout"
+                                       Description="Display the cover art in the compact player that appears when clicking the tray icon.">
+                    <controls:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
+                    </controls:SettingsCard.HeaderIcon>
+                    <ToggleSwitch HorizontalAlignment="Right" IsOn="{x:Bind ViewModel.IsShowCoverArtInTrayFlyoutEnabled, Mode=TwoWay}" />
+                </controls:SettingsCard>
+
+                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="Data Management" />
+
+                <controls:SettingsCard Header="Retrieve online metadata"
+                                       Description="Fetch additional information like artist images and biographies from online services (e.g., Spotify, Last.fm).">
+                    <controls:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
+                    </controls:SettingsCard.HeaderIcon>
+                    <ToggleSwitch HorizontalAlignment="Right" IsOn="{x:Bind ViewModel.IsFetchOnlineMetadataEnabled, Mode=TwoWay}" />
+                </controls:SettingsCard>
+
+                <controls:SettingsCard
+                    Header="Reset application"
+                    Description="This will delete all library data, playlists, and reset all settings to their defaults. The application will restart.">
+                    <controls:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
+                    </controls:SettingsCard.HeaderIcon>
+                    <Button
+                        HorizontalAlignment="Right"
+                        Command="{x:Bind ViewModel.ResetApplicationDataCommand}"
+                        Content="Reset All Data"
+                        Style="{StaticResource SettingsPageResetButtonStyle}" />
+                </controls:SettingsCard>
+
+                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="Integrations" />
+
+                <controls:SettingsCard Header="Last.fm"
+                                       Description="Connect your Last.fm account to scrobble tracks and show your currently playing song.">
+                    <controls:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
+                    </controls:SettingsCard.HeaderIcon>
+
+                    <StackPanel HorizontalAlignment="Right" Orientation="Vertical" Spacing="8">
+                        <!-- Shown when NOT connected -->
+                        <StackPanel Orientation="Vertical" Spacing="8" Visibility="{x:Bind ViewModel.IsLastFmNotConnected, Mode=OneWay}">
+                            <Button
+                                Command="{x:Bind ViewModel.LastFmInitialAuthCommand}"
+                                Content="Connect to Last.fm"
+                                IsEnabled="{x:Bind ViewModel.IsLastFmInitialAuthEnabled, Mode=OneWay}"
+                                HorizontalAlignment="Right" />
+
+                            <Button
+                                Command="{x:Bind ViewModel.LastFmFinalizeAuthCommand}"
+                                Content="Complete Connection"
+                                Visibility="{x:Bind ViewModel.IsConnectingToLastFm, Mode=OneWay}"
+                                HorizontalAlignment="Right" />
+
+                            <TextBlock
+                                Visibility="{x:Bind ViewModel.IsConnectingToLastFm, Mode=OneWay}"
+                                Text="After authorizing in your browser, click 'Complete Connection'."
+                                Style="{ThemeResource CaptionTextBlockStyle}"
+                                MaxWidth="250"
+                                TextWrapping="Wrap"
+                                HorizontalAlignment="Right"/>
+                        </StackPanel>
+
+                        <!-- Shown when connected -->
+                        <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center" Visibility="{x:Bind ViewModel.IsLastFmConnected, Mode=OneWay}">
+                            <TextBlock VerticalAlignment="Center">
+                                <Run Text="Connected as"/>
+                                <Run Text="{x:Bind ViewModel.LastFmUsername, Mode=OneWay}" FontWeight="SemiBold"/>
+                            </TextBlock>
+                            <Button
+                                Command="{x:Bind ViewModel.LastFmDisconnectCommand}"
+                                Content="Disconnect" />
+                        </StackPanel>
+                    </StackPanel>
+                </controls:SettingsCard>
+
+                <!-- Last.fm preferences, visible only when connected -->
+                <StackPanel Spacing="{StaticResource SettingsCardSpacing}" Visibility="{x:Bind ViewModel.IsLastFmConnected, Mode=OneWay}">
+                    <controls:SettingsCard
+                        Header="Enable scrobbling"
+                        Description="Automatically add the tracks you listen to on Nagi to your Last.fm profile.">
+                        <controls:SettingsCard.HeaderIcon>
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
+                        </controls:SettingsCard.HeaderIcon>
+                        <ToggleSwitch
+                            HorizontalAlignment="Right"
+                            IsOn="{x:Bind ViewModel.IsLastFmScrobblingEnabled, Mode=TwoWay}" />
+                    </controls:SettingsCard>
+
+                    <controls:SettingsCard
+                        Header="Update 'Now Playing'"
+                        Description="Show your friends on Last.fm what you're currently listening to in real-time.">
+                        <controls:SettingsCard.HeaderIcon>
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
+                        </controls:SettingsCard.HeaderIcon>
+                        <ToggleSwitch
+                            HorizontalAlignment="Right"
+                            IsOn="{x:Bind ViewModel.IsLastFmNowPlayingEnabled, Mode=TwoWay}" />
+                    </controls:SettingsCard>
+                </StackPanel>
+
+                <controls:SettingsCard Header="Discord"
+                                       Description="Show your current listening activity as your status on Discord.">
+                    <controls:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
+                    </controls:SettingsCard.HeaderIcon>
+                    <ToggleSwitch
+                        HorizontalAlignment="Right"
+                        IsOn="{x:Bind ViewModel.IsDiscordRichPresenceEnabled, Mode=TwoWay}" />
+                </controls:SettingsCard>
+
+                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="About" />
+
+                <controls:SettingsExpander
+                    Header="About Nagi"
+                    Description="Rediscover your local music collection with Nagi, a music player focused on speed, simplicity, and privacy."
+                    IsExpanded="False">
+                    <controls:SettingsExpander.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
+                    </controls:SettingsExpander.HeaderIcon>
+                    <TextBlock
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        IsTextSelectionEnabled="True">
+                        <Run Text="Version "/>
+                        <Run Text="{x:Bind ViewModel.ApplicationVersion, Mode=OneWay}"/>
+                    </TextBlock>
+                    <controls:SettingsExpander.Items>
+                        <controls:SettingsCard ContentAlignment="Left">
+                            <StackPanel Orientation="Horizontal">
+                                <HyperlinkButton Content="View Licenses" NavigateUri="https://github.com/Anthonyy232/Nagi/blob/master/LICENSE" />
+                                <HyperlinkButton Content="Source Code" NavigateUri="https://github.com/Anthonyy232/Nagi" />
+                            </StackPanel>
+                        </controls:SettingsCard>
+                    </controls:SettingsExpander.Items>
+                </controls:SettingsExpander>
+
+                <controls:SettingsCard Header="Check for updates on startup"
+                                       Description="Automatically check for new versions when the application starts."
+                                       Visibility="{x:Bind ViewModel.IsUpdateControlVisible, Mode=OneWay}">
+                    <controls:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
+                    </controls:SettingsCard.HeaderIcon>
+                    <ToggleSwitch HorizontalAlignment="Right" IsOn="{x:Bind ViewModel.IsCheckForUpdatesEnabled, Mode=TwoWay}" />
+                </controls:SettingsCard>
+
+                <StackPanel Margin="0,8,0,0" Orientation="Horizontal" Spacing="12">
+                    <HyperlinkButton
+                        Command="{x:Bind ViewModel.CheckForUpdatesManuallyCommand}"
+                        Content="Check for Updates"
+                        Visibility="{x:Bind ViewModel.IsUpdateControlVisible, Mode=OneWay}" />
+                    <HyperlinkButton
+                        Content="Send Feedback"
+                        NavigateUri="mailto:anthonyyla.dev@gmail.com" />
+                </StackPanel>
+            </StackPanel>
+        </ScrollView>
+    </Grid>
+</Page>
