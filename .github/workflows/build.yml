@@ -26,14 +26,14 @@ jobs:
         id: get_version
         shell: bash
         run: |
-          four_part_version=$(grep -oE '<AppxPackageVersion>[^<]+' Directory.Build.props | sed 's/<AppxPackageVersion>//')
+          four_part_version=$(grep -oE '<ApplicationVersion>[^<]+' Directory.Build.props | sed 's/<ApplicationVersion>//' || grep -oE '<AppxPackageVersion>[^<]+' Directory.Build.props | sed 's/<AppxPackageVersion>//')
           three_part_version=$(echo "$four_part_version" | sed 's/\.[0-9]\+$//')
           echo "version=$three_part_version" >> $GITHUB_OUTPUT
 
       - name: Install .NET SDK
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 9.0.x
+          dotnet-version: 8.0.x
 
       - name: Install/Update vpk command-line tool
         run: dotnet tool update -g vpk --prerelease
@@ -41,33 +41,36 @@ jobs:
       - name: Create appsettings.json from Secrets
         shell: pwsh
         run: |
+          $appSettingsPath = "src/Nagi.WinUI/appsettings.json"
           echo '{
             "NagiApiServer": {
               "Url": "https://nagiappapi.azure-api.net/nagi",
               "ApiKey": "${{ secrets.NAGI_API_KEY }}",
               "SubscriptionKey": "${{ secrets.NAGI_SUBSCRIPTION_KEY }}"
             }
-          }' > src/Nagi/appsettings.json
+          }' > $appSettingsPath
 
       - name: Build and Package Platform
-        # This step now runs once for each platform in the matrix.
         shell: pwsh
         run: |
           $p = "${{ matrix.platform }}"
           $publishDir = "./publish/$p"
-          $releaseDir = "./Releases/$p"
+          $releaseDir = "./Releases"
           
           echo "Building for $p..."
-          dotnet publish src/Nagi/Nagi.csproj -c ReleaseUnpackaged -r $p --self-contained -o $publishDir
+          dotnet publish src/Nagi.WinUI/Nagi.WinUI.csproj -c Release -p:WindowsPackageType=None -r $p --self-contained -o $publishDir
           
           echo "Packaging for $p..."
-          vpk pack --packId Nagi --packVersion ${{ steps.get_version.outputs.version }} --mainExe Nagi.exe --packDir $publishDir -o $releaseDir --channel $p --runtime $p
+          vpk pack --packId Nagi --packVersion ${{ steps.get_version.outputs.version }} --mainExe Nagi.WinUI.exe --packDir $publishDir -o $releaseDir
 
-      - name: Upload Build Artifact
-        # This step also runs for each platform, creating a separate artifact.
+      - name: Upload Build Artifacts to GitHub
         uses: actions/upload-artifact@v4
         with:
-          # The artifact name is now unique for each platform.
-          name: Nagi-Release-${{ steps.get_version.outputs.version }}-${{ matrix.platform }}
-          # The path points to the specific release directory for that platform.
-          path: ./Releases/${{ matrix.platform }}/
+          name: Nagi-Release-Artifacts-${{ matrix.platform }}
+          path: ./Releases
+
+      - name: Create GitHub Release
+        if: github.ref == 'refs/heads/master'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: vpk releasify -r ./Releases -c ${{ matrix.platform }}
