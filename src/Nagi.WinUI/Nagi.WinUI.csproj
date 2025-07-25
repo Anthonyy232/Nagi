@@ -12,6 +12,8 @@
 		<Nullable>enable</Nullable>
 		<DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
 		<Configurations>Debug;Release;DebugUnpackaged;ReleaseUnpackaged</Configurations>
+		<AssemblyName>Nagi</AssemblyName>
+		<Product>Nagi</Product>
 	</PropertyGroup>
 
 	<!-- =============================================================== -->
