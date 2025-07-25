@@ -12,7 +12,10 @@ _ReSharper*/
 # Build artifacts
 [Bb]in/
 [Oo]bj/
+[Rr]elease/
+[Rr]eleases/
 .roslyn/
+[Bb]undle[Aa]rtifacts/
 
 # Test Results & Logs
 [Tt]est[Rr]esult*/
@@ -32,6 +35,8 @@ Bundle/
 *.cer
 *.nupkg
 *.snupkg
+*.zip
+*.exe
 
 # OS-generated files
 .DS_Store

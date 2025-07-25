@@ -1,0 +1,553 @@
+<UserControl
+    x:Class="Nagi.WinUI.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="using:Nagi.WinUI.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:controls="using:Microsoft.UI.Xaml.Controls"
+    xmlns:localControls="using:Nagi.WinUI.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:media="using:Microsoft.UI.Xaml.Media"
+    xmlns:imageEx="using:ImageEx"
+    xmlns:models="using:Nagi.Core.Models"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <converters:StringToUriConverter x:Key="StringToUriConverter" />
+        <converters:TimeSpanToTimeStringConverter x:Key="TimeSpanToTimeStringConverter" />
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <converters:ObjectToBooleanConverter x:Key="ObjectToBooleanConverter" />
+
+        <media:AcrylicBrush
+            x:Key="FloatingAcrylicInAppLuminosity"
+            FallbackColor="{Binding Color, Source={StaticResource AppPrimaryColorBrush}}"
+            TintColor="{Binding Color, Source={StaticResource AppPrimaryColorBrush}}"
+            TintLuminosityOpacity="0.15"
+            TintOpacity="0.15" />
+
+        <Style x:Key="QueueListViewItemStyle" TargetType="ListViewItem">
+            <Setter Property="Padding" Value="12,8" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        </Style>
+    </UserControl.Resources>
+
+    <Grid x:Name="OverlayContainerGrid">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="PlayerVisibilityStates">
+                <VisualState x:Name="PlayerVisible">
+                    <Storyboard>
+                        <DoubleAnimation
+                            Storyboard.TargetName="FloatingPlayerContainer"
+                            Storyboard.TargetProperty="Opacity"
+                            To="1"
+                            Duration="0:0:0.3">
+                            <DoubleAnimation.EasingFunction>
+                                <CubicEase EasingMode="EaseOut" />
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
+                        <DoubleAnimation
+                            Storyboard.TargetName="FloatingPlayerContainer"
+                            Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)"
+                            To="0"
+                            Duration="0:0:0.3">
+                            <DoubleAnimation.EasingFunction>
+                                <CubicEase EasingMode="EaseOut" />
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="PlayerHidden">
+                    <Storyboard>
+                        <DoubleAnimation
+                            Storyboard.TargetName="FloatingPlayerContainer"
+                            Storyboard.TargetProperty="Opacity"
+                            To="0"
+                            Duration="0:0:0.3">
+                            <DoubleAnimation.EasingFunction>
+                                <CubicEase EasingMode="EaseIn" />
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
+                        <DoubleAnimation
+                            Storyboard.TargetName="FloatingPlayerContainer"
+                            Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)"
+                            To="150"
+                            Duration="0:0:0.3">
+                            <DoubleAnimation.EasingFunction>
+                                <CubicEase EasingMode="EaseIn" />
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+
+            <VisualStateGroup x:Name="PlayerStateGroup">
+                <VisualState x:Name="PlayerExpanded">
+                    <Storyboard>
+                        <DoubleAnimation
+                            Storyboard.TargetName="FloatingPlayerContainer"
+                            Storyboard.TargetProperty="MinHeight"
+                            To="116"
+                            Duration="0:0:0.6"
+                            EnableDependentAnimation="True">
+                            <DoubleAnimation.EasingFunction>
+                                <BackEase Amplitude="0.3" EasingMode="EaseOut" />
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
+                        <DoubleAnimation
+                            BeginTime="0:0:0.1"
+                            Storyboard.TargetName="SeekBarGrid"
+                            Storyboard.TargetProperty="Opacity"
+                            To="1"
+                            Duration="0:0:0.35" />
+                        <DoubleAnimation
+                            BeginTime="0:0:0.1"
+                            Storyboard.TargetName="SeekBarGrid"
+                            Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)"
+                            To="0"
+                            Duration="0:0:0.5">
+                            <DoubleAnimation.EasingFunction>
+                                <CubicEase EasingMode="EaseOut" />
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
+                        <DoubleAnimation
+                            BeginTime="0:0:0.1"
+                            Storyboard.TargetName="ArtistNameHyperlink"
+                            Storyboard.TargetProperty="MaxHeight"
+                            To="20"
+                            Duration="0:0:0.4"
+                            EnableDependentAnimation="True">
+                            <DoubleAnimation.EasingFunction>
+                                <CubicEase EasingMode="EaseOut" />
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
+                        <DoubleAnimation
+                            BeginTime="0:0:0.15"
+                            Storyboard.TargetName="ArtistNameHyperlink"
+                            Storyboard.TargetProperty="Opacity"
+                            To="1"
+                            Duration="0:0:0.25" />
+                        <DoubleAnimation
+                            BeginTime="0:0:0.2"
+                            Storyboard.TargetName="SecondaryControlsStackPanel"
+                            Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)"
+                            To="0"
+                            Duration="0:0:0.4">
+                            <DoubleAnimation.EasingFunction>
+                                <CubicEase EasingMode="EaseOut" />
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
+                        <DoubleAnimation
+                            BeginTime="0:0:0.2"
+                            Storyboard.TargetName="SecondaryControlsStackPanel"
+                            Storyboard.TargetProperty="Opacity"
+                            To="1"
+                            Duration="0:0:0.3" />
+                        <DoubleAnimation
+                            BeginTime="0:0:0.2"
+                            Storyboard.TargetName="ShuffleButton"
+                            Storyboard.TargetProperty="Opacity"
+                            To="1"
+                            Duration="0:0:0.3" />
+                        <DoubleAnimation
+                            BeginTime="0:0:0.2"
+                            Storyboard.TargetName="RepeatButton"
+                            Storyboard.TargetProperty="Opacity"
+                            To="1"
+                            Duration="0:0:0.3" />
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="PlayerCollapsed">
+                    <Storyboard>
+                        <DoubleAnimation
+                            Storyboard.TargetName="FloatingPlayerContainer"
+                            Storyboard.TargetProperty="MinHeight"
+                            To="80"
+                            Duration="0:0:0.3"
+                            EnableDependentAnimation="True">
+                            <DoubleAnimation.EasingFunction>
+                                <ExponentialEase EasingMode="EaseOut" />
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
+                        <DoubleAnimation
+                            Storyboard.TargetName="SeekBarGrid"
+                            Storyboard.TargetProperty="Opacity"
+                            To="0"
+                            Duration="0:0:0.15" />
+                        <DoubleAnimation
+                            Storyboard.TargetName="SeekBarGrid"
+                            Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)"
+                            To="10"
+                            Duration="0:0:0.2">
+                            <DoubleAnimation.EasingFunction>
+                                <ExponentialEase EasingMode="EaseIn" />
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
+                        <DoubleAnimation
+                            Storyboard.TargetName="ArtistNameHyperlink"
+                            Storyboard.TargetProperty="MaxHeight"
+                            To="0"
+                            Duration="0:0:0.25"
+                            EnableDependentAnimation="True">
+                            <DoubleAnimation.EasingFunction>
+                                <ExponentialEase EasingMode="EaseIn" />
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
+                        <DoubleAnimation
+                            Storyboard.TargetName="ArtistNameHyperlink"
+                            Storyboard.TargetProperty="Opacity"
+                            To="0"
+                            Duration="0:0:0.15" />
+                        <DoubleAnimation
+                            Storyboard.TargetName="SecondaryControlsStackPanel"
+                            Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)"
+                            To="10"
+                            Duration="0:0:0.25">
+                            <DoubleAnimation.EasingFunction>
+                                <ExponentialEase EasingMode="EaseIn" />
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
+                        <DoubleAnimation
+                            Storyboard.TargetName="SecondaryControlsStackPanel"
+                            Storyboard.TargetProperty="Opacity"
+                            To="0"
+                            Duration="0:0:0.15" />
+                        <DoubleAnimation
+                            Storyboard.TargetName="ShuffleButton"
+                            Storyboard.TargetProperty="Opacity"
+                            To="0"
+                            Duration="0:0:0.15" />
+                        <DoubleAnimation
+                            Storyboard.TargetName="RepeatButton"
+                            Storyboard.TargetProperty="Opacity"
+                            To="0"
+                            Duration="0:0:0.15" />
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <Grid x:Name="MainContentGrid">
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup x:Name="WindowWidthStates">
+                    <VisualState x:Name="WideLayout">
+                        <VisualState.StateTriggers>
+                            <AdaptiveTrigger MinWindowWidth="720" />
+                        </VisualState.StateTriggers>
+                        <VisualState.Setters>
+                            <Setter Target="NavView.IsPaneOpen" Value="True" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="NarrowLayout">
+                        <VisualState.StateTriggers>
+                            <AdaptiveTrigger MinWindowWidth="0" />
+                        </VisualState.StateTriggers>
+                        <VisualState.Setters>
+                            <Setter Target="NavView.IsPaneOpen" Value="False" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+                <VisualStateGroup x:Name="WindowActivationStates">
+                    <VisualState x:Name="WindowIsActive" />
+                    <VisualState x:Name="WindowIsInactive" />
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+
+            <Grid.RowDefinitions>
+                <RowDefinition x:Name="AppTitleBarRow" Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <controls:TitleBar
+                x:Name="AppTitleBar"
+                Grid.Row="0"
+                Background="Transparent"
+                IsBackButtonVisible="False"
+                IsPaneToggleButtonVisible="True"
+                PaneToggleRequested="AppTitleBar_PaneToggleRequested"
+                BackRequested="AppTitleBar_BackRequested" />
+
+            <NavigationView
+                x:Name="NavView"
+                Grid.Row="1"
+                AlwaysShowHeader="False"
+                IsBackButtonVisible="Collapsed"
+                IsSettingsVisible="True"
+                IsTitleBarAutoPaddingEnabled="True"
+                IsPaneToggleButtonVisible="False"
+                ItemInvoked="NavView_ItemInvoked"
+                PaneDisplayMode="Left"
+                BackRequested="NavView_BackRequested"
+                SelectionChanged="NavView_SelectionChanged">
+
+                <Grid>
+                    <Frame x:Name="ContentFrame" Padding="12,0,12,0" />
+
+                    <Border
+                        x:Name="FloatingPlayerContainer"
+                        Margin="12,0,12,12"
+                        Padding="12"
+                        VerticalAlignment="Bottom"
+                        Background="{ThemeResource FloatingAcrylicInAppLuminosity}"
+                        CornerRadius="8"
+                        PointerEntered="FloatingPlayerContainer_PointerEntered"
+                        PointerExited="FloatingPlayerContainer_PointerExited">
+                        <Border.RenderTransform>
+                            <CompositeTransform />
+                        </Border.RenderTransform>
+                        <Grid>
+                            <Grid x:Name="MainControlsGrid" VerticalAlignment="Top">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition MinWidth="180" Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition MinWidth="160" Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Grid
+                                    Grid.Column="0"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Border
+                                        x:Name="AlbumArtBorder"
+                                        Grid.Column="0"
+                                        Width="56"
+                                        Height="56"
+                                        Margin="0,0,12,0"
+                                        CornerRadius="6"
+                                        Visibility="{Binding IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                                        <imageEx:ImageEx
+                                            x:Name="AlbumArt"
+                                            IsCacheEnabled="True"
+                                            Source="{Binding AlbumArtUri, Mode=OneWay, Converter={StaticResource StringToUriConverter}, FallbackValue=null}"
+                                            Stretch="UniformToFill" />
+                                    </Border>
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                        <TextBlock
+                                            x:Name="SongTitle"
+                                            Style="{ThemeResource BodyStrongTextBlockStyle}"
+                                            Text="{Binding SongTitle, Mode=OneWay}"
+                                            TextTrimming="CharacterEllipsis" />
+                                        <HyperlinkButton
+                                            x:Name="ArtistNameHyperlink"
+                                            MaxHeight="0"
+                                            Opacity="0"
+                                            Style="{StaticResource SongListHyperlinkButtonStyle}"
+                                            Content="{Binding ArtistName, Mode=OneWay}"
+                                            Command="{Binding GoToArtistCommand}"
+                                            CommandParameter="{Binding CurrentPlayingTrack, Mode=OneWay}"
+                                            Visibility="{Binding CurrentPlayingTrack, Converter={StaticResource ObjectToBooleanConverter}, Mode=OneWay}"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Grid>
+
+                                <StackPanel
+                                    x:Name="MainTransportControls"
+                                    Grid.Column="1"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Orientation="Horizontal"
+                                    Spacing="8">
+                                    <Button
+                                        x:Name="ShuffleButton"
+                                        Command="{Binding ToggleShuffleCommand}"
+                                        Opacity="0"
+                                        Style="{StaticResource ShuffleButtonStyle}"
+                                        ToolTipService.ToolTip="{Binding ShuffleButtonToolTip, Mode=OneWay}">
+                                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                  Glyph="{Binding ShuffleIconGlyph, Mode=OneWay}" />
+                                    </Button>
+                                    <Button x:Name="PreviousButton" Command="{Binding PreviousCommand}"
+                                            Style="{StaticResource PreviousButtonStyle}"
+                                            ToolTipService.ToolTip="Previous">
+                                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
+                                    </Button>
+                                    <Button
+                                        x:Name="PlayPauseButton"
+                                        Command="{Binding PlayPauseCommand}"
+                                        Style="{StaticResource PlayPauseButtonStyle}"
+                                        ToolTipService.ToolTip="{Binding PlayPauseButtonToolTip, Mode=OneWay}">
+                                        <FontIcon
+                                            x:Name="PlayPauseIcon"
+                                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                            FontSize="24"
+                                            Glyph="{Binding PlayPauseIconGlyph, Mode=OneWay}" />
+                                    </Button>
+                                    <Button x:Name="NextButton" Command="{Binding NextCommand}"
+                                            Style="{StaticResource NextButtonStyle}" ToolTipService.ToolTip="Next">
+                                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
+                                    </Button>
+                                    <Button
+                                        x:Name="RepeatButton"
+                                        Command="{Binding CycleRepeatCommand}"
+                                        Opacity="0"
+                                        Style="{StaticResource RepeatButtonStyle}"
+                                        ToolTipService.ToolTip="{Binding RepeatButtonToolTip, Mode=OneWay}">
+                                        <FontIcon x:Name="RepeatIcon"
+                                                  FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                  Glyph="{Binding RepeatIconGlyph, Mode=OneWay}" />
+                                    </Button>
+                                </StackPanel>
+
+                                <StackPanel
+                                    x:Name="SecondaryControlsStackPanel"
+                                    Grid.Column="2"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    Opacity="0"
+                                    Orientation="Horizontal"
+                                    Spacing="4">
+                                    <StackPanel.RenderTransform>
+                                        <CompositeTransform TranslateY="10" />
+                                    </StackPanel.RenderTransform>
+                                    <Button x:Name="QueueButton" Style="{StaticResource QueueButtonStyle}"
+                                            ToolTipService.ToolTip="Current Queue">
+                                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
+                                        <Button.Flyout>
+                                            <Flyout x:Name="QueueFlyout"
+                                                Placement="Top"
+                                                Opened="QueueFlyout_Opened"
+                                                Closed="QueueFlyout_Closed">
+                                                <Grid Width="300" Height="400">
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto" />
+                                                        <RowDefinition Height="*" />
+                                                    </Grid.RowDefinitions>
+                                                    <TextBlock
+                                                        Margin="12,0,12,4"
+                                                        Style="{ThemeResource MediaControlSubtitleStyle}"
+                                                        Text="Current Queue" />
+                                                    <ListView
+                                                        Grid.Row="1"
+                                                        ItemContainerStyle="{StaticResource QueueListViewItemStyle}"
+                                                        ItemsSource="{Binding CurrentQueue, Mode=OneWay}"
+                                                        SelectionMode="None"
+                                                        VirtualizingStackPanel.VirtualizationMode="Recycling">
+                                                        <ListView.ItemTemplate>
+                                                            <DataTemplate x:DataType="models:Song">
+                                                                <StackPanel Margin="0,4">
+                                                                    <TextBlock
+                                                                        Style="{ThemeResource BodyStrongTextBlockStyle}"
+                                                                        Text="{x:Bind Title}"
+                                                                        TextTrimming="CharacterEllipsis" />
+                                                                    <TextBlock
+                                                                        Style="{ThemeResource CaptionTextBlockStyle}"
+                                                                        Text="{x:Bind Artist.Name}"
+                                                                        TextTrimming="CharacterEllipsis" />
+                                                                </StackPanel>
+                                                            </DataTemplate>
+                                                        </ListView.ItemTemplate>
+                                                    </ListView>
+                                                </Grid>
+                                            </Flyout>
+                                        </Button.Flyout>
+                                    </Button>
+                                    <Grid
+                                        x:Name="VolumeControlsWrapper"
+                                        Padding="0,8"
+                                        Background="Transparent"
+                                        PointerWheelChanged="VolumeControlsWrapper_PointerWheelChanged">
+                                        <StackPanel
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Orientation="Horizontal"
+                                            Spacing="0">
+                                            <Button
+                                                x:Name="VolumeButton"
+                                                Command="{Binding ToggleMuteCommand}"
+                                                Style="{StaticResource VolumeButtonStyle}"
+                                                ToolTipService.ToolTip="{Binding VolumeButtonToolTip, Mode=OneWay}">
+                                                <FontIcon x:Name="VolumeIcon"
+                                                          FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                          Glyph="{Binding VolumeIconGlyph, Mode=OneWay}" />
+                                            </Button>
+                                            <Slider
+                                                x:Name="VolumeSlider"
+                                                VerticalAlignment="Center"
+                                                Style="{StaticResource VolumeSliderStyle}"
+                                                Value="{Binding CurrentVolume, Mode=TwoWay}" />
+                                        </StackPanel>
+                                    </Grid>
+                                </StackPanel>
+                            </Grid>
+
+                            <Grid
+                                x:Name="SeekBarGrid"
+                                VerticalAlignment="Bottom"
+                                Opacity="0">
+                                <Grid.RenderTransform>
+                                    <CompositeTransform TranslateY="10" />
+                                </Grid.RenderTransform>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock
+                                    x:Name="CurrentTimeTextBlock"
+                                    Grid.Column="0"
+                                    Margin="0,0,8,0"
+                                    VerticalAlignment="Center"
+                                    Style="{ThemeResource CaptionTextBlockStyle}"
+                                    Text="{Binding CurrentTimeText, Mode=OneWay, FallbackValue='0:00'}" />
+                                <Slider
+                                    x:Name="MediaSeekerSlider"
+                                    Grid.Column="1"
+                                    VerticalAlignment="Center"
+                                    IsThumbToolTipEnabled="True"
+                                    Maximum="{Binding TotalDuration, Mode=OneWay}"
+                                    Style="{StaticResource MediaSeekerSliderStyle}"
+                                    ThumbToolTipValueConverter="{StaticResource TimeSpanToTimeStringConverter}"
+                                    Value="{Binding CurrentPosition, Mode=TwoWay}" />
+                                <TextBlock
+                                    x:Name="TotalTimeTextBlock"
+                                    Grid.Column="2"
+                                    Margin="8,0,0,0"
+                                    VerticalAlignment="Center"
+                                    Style="{ThemeResource CaptionTextBlockStyle}"
+                                    Text="{Binding TotalDurationText, Mode=OneWay, FallbackValue='0:00'}" />
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </NavigationView>
+        </Grid>
+
+        <localControls:TrayIconUserControl
+            x:Name="AppTrayIconHost"
+            VerticalAlignment="Top" HorizontalAlignment="Left"
+            Width="1" Height="1" Opacity="0" IsTabStop="False" />
+
+        <Grid
+            x:Name="ProgressOverlayGrid"
+            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+            IsHitTestVisible="{Binding IsGlobalOperationInProgress, Mode=OneWay}"
+            Opacity="0.85"
+            Visibility="{Binding IsGlobalOperationInProgress, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+            <StackPanel
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Spacing="12">
+                <ProgressBar
+                    Width="400"
+                    Height="10"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    IsIndeterminate="{Binding IsGlobalOperationIndeterminate, Mode=OneWay}"
+                    Maximum="100"
+                    Value="{Binding GlobalOperationProgressValue, Mode=OneWay}" />
+                <TextBlock
+                    MaxWidth="400"
+                    HorizontalAlignment="Center"
+                    Style="{ThemeResource SubtitleTextBlockStyle}"
+                    Text="{Binding GlobalOperationStatusMessage, Mode=OneWay}"
+                    TextAlignment="Center"
+                    TextTrimming="CharacterEllipsis"
+                    TextWrapping="NoWrap" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>
