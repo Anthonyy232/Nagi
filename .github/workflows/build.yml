@@ -26,14 +26,13 @@ jobs:
         id: get_version
         shell: bash
         run: |
-          four_part_version=$(grep -oE '<ApplicationVersion>[^<]+' Directory.Build.props | sed 's/<ApplicationVersion>//' || grep -oE '<AppxPackageVersion>[^<]+' Directory.Build.props | sed 's/<AppxPackageVersion>//')
+          four_part_version=$(grep -oE '<AppxPackageVersion>[^<]+' Directory.Build.props | sed 's/<AppxPackageVersion>//')
           three_part_version=$(echo "$four_part_version" | sed 's/\.[0-9]\+$//')
           echo "version=$three_part_version" >> $GITHUB_OUTPUT
 
       - name: Install .NET SDK
         uses: actions/setup-dotnet@v4
         with:
-          # Using .NET 9 to match your project from the build logs
           dotnet-version: 9.0.x
 
       - name: Install/Update vpk command-line tool
@@ -48,24 +47,29 @@ jobs:
               "ApiKey": "${{ secrets.NAGI_API_KEY }}",
               "SubscriptionKey": "${{ secrets.NAGI_SUBSCRIPTION_KEY }}"
             }
-          }' > src/Nagi.WinUI/appsettings.json
+          }' > src/Nagi.WinUI/appsettings.json # <-- CHANGE: Updated path to new project folder
 
       - name: Build and Package Platform
+        # This step now runs once for each platform in the matrix.
         shell: pwsh
         run: |
           $p = "${{ matrix.platform }}"
           $publishDir = "./publish/$p"
-          $releaseDir = "./Releases"
+          $releaseDir = "./Releases/$p"
           
           echo "Building for $p..."
-          # Using '-c Release' as a standard. Added 'PublishReadyToRun=false' to prevent timeout.
-          dotnet publish src/Nagi.WinUI/Nagi.WinUI.csproj -c Release -p:WindowsPackageType=None -p:PublishReadyToRun=false -r $p --self-contained -o $publishDir
+          # <-- CHANGE: Updated path to the new .csproj file
+          dotnet publish src/Nagi.WinUI/Nagi.WinUI.csproj -c ReleaseUnpackaged -r $p --self-contained -o $publishDir
           
           echo "Packaging for $p..."
-          vpk pack --packId Nagi --packVersion ${{ steps.get_version.outputs.version }} --mainExe Nagi.WinUI.exe --packDir $publishDir -o $releaseDir --channel $p --runtime $p
+          # NOTE: --mainExe is still Nagi.exe because of <AssemblyName> in your csproj
+          vpk pack --packId Nagi --packVersion ${{ steps.get_version.outputs.version }} --mainExe Nagi.exe --packDir $publishDir -o $releaseDir --channel $p --runtime $p
 
       - name: Upload Build Artifact
+        # This step also runs for each platform, creating a separate artifact.
         uses: actions/upload-artifact@v4
         with:
+          # The artifact name is now unique for each platform.
           name: Nagi-Release-${{ steps.get_version.outputs.version }}-${{ matrix.platform }}
-          path: ./Releases/
+          # The path points to the specific release directory for that platform.
+          path: ./Releases/${{ matrix.platform }}/
