@@ -6,7 +6,6 @@
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<Platforms>x86;x64;ARM64</Platforms>
 		<RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
-		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 		<UseWinUI>true</UseWinUI>
 		<EnableMsixTooling>true</EnableMsixTooling>
 		<Nullable>enable</Nullable>
@@ -14,6 +13,7 @@
 		<Configurations>Debug;Release;DebugUnpackaged;ReleaseUnpackaged</Configurations>
 		<AssemblyName>Nagi</AssemblyName>
 		<Product>Nagi</Product>
+		<SupportedOSPlatformVersion>10.0.18362.0</SupportedOSPlatformVersion>
 	</PropertyGroup>
 
 	<!-- =============================================================== -->
@@ -21,6 +21,8 @@
 	<!-- =============================================================== -->
 	<PropertyGroup Condition="!$(Configuration.Contains('Unpackaged'))">
 		<WindowsPackageType>MSIX</WindowsPackageType>
+		<!-- For MSIX, the runtime is handled by the store/installer, so it's not self-contained. -->
+		<WindowsAppSDKSelfContained>false</WindowsAppSDKSelfContained>
 		<PublishProfile>win-$(Platform).pubxml</PublishProfile>
 		<ApplicationDisplayVersion>$(AppxPackageVersion)</ApplicationDisplayVersion>
 		<ApplicationVersion>$(AppxPackageVersion.Replace('.', ''))</ApplicationVersion>
@@ -32,12 +34,37 @@
 	<!-- =============================================================== -->
 	<PropertyGroup Condition="$(Configuration.Contains('Unpackaged'))">
 		<WindowsPackageType>None</WindowsPackageType>
+		<!-- For unpackaged, we need to ship the runtime with the app. -->
+		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 		<ApplicationIcon>Assets\AppLogo.ico</ApplicationIcon>
 	</PropertyGroup>
 
 	<!-- =============================================================== -->
+	<!-- == Debug Build Configuration                                   == -->
+	<!-- =============================================================== -->
+	<PropertyGroup Condition="'$(Configuration)' == 'Debug' or '$(Configuration)' == 'DebugUnpackaged'">
+		<PublishReadyToRun>false</PublishReadyToRun>
+		<PublishTrimmed>false</PublishTrimmed>
+		<Optimize>false</Optimize>
+	</PropertyGroup>
+
+	<!-- =============================================================== -->
+	<!-- == Release Build Optimizations (AOT/Trimming)                  == -->
+	<!-- =============================================================== -->
+	<PropertyGroup Condition="'$(Configuration)' == 'Release' or '$(Configuration)' == 'ReleaseUnpackaged'">
+		<PublishReadyToRun>true</PublishReadyToRun>
+		<TieredPGO>true</TieredPGO>
+
+		<PublishTrimmed>true</PublishTrimmed>
+		<TrimMode>link</TrimMode>
+
+		<Optimize>true</Optimize>
+		<JsonSerializerIsReflectionEnabledByDefault>true</JsonSerializerIsReflectionEnabledByDefault>
+	</PropertyGroup>
+
+	<!-- =============================================================== -->
 	<!-- == Packaged (MSIX) Specific Item Groups                        == -->
-	<!-- =================================m============================== -->
+	<!-- =============================================================== -->
 	<ItemGroup Condition="!$(Configuration.Contains('Unpackaged'))">
 		<Content Include="Assets\SplashScreen.scale-200.png" />
 		<Content Include="Assets\LockScreenLogo.scale-200.png" />
@@ -52,15 +79,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Remove="Assets\Raws\**" />
-	  <Compile Remove="Interfaces\**" />
-	  <Content Remove="Assets\Raws\**" />
-	  <EmbeddedResource Remove="Assets\Raws\**" />
-	  <EmbeddedResource Remove="Interfaces\**" />
-	  <None Remove="Assets\Raws\**" />
-	  <None Remove="Interfaces\**" />
-	  <Page Remove="Assets\Raws\**" />
-	  <Page Remove="Interfaces\**" />
+		<Compile Remove="Assets\Raws\**" />
+		<Compile Remove="Interfaces\**" />
+		<Content Remove="Assets\Raws\**" />
+		<EmbeddedResource Remove="Assets\Raws\**" />
+		<EmbeddedResource Remove="Interfaces\**" />
+		<None Remove="Assets\Raws\**" />
+		<None Remove="Interfaces\**" />
+		<Page Remove="Assets\Raws\**" />
+		<Page Remove="Interfaces\**" />
 	</ItemGroup>
 
 	<!-- =============================================================== -->
@@ -117,21 +144,12 @@
 		</None>
 	</ItemGroup>
 
-	<ItemGroup>
-		<Page Update="Styles\AlbumPageColors.xaml">
-			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
-		</Page>
-	</ItemGroup>
-
 	<PropertyGroup Condition="!$(Configuration.Contains('Unpackaged')) and '$(EnableMsixTooling)'=='true'">
 		<HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
 	</PropertyGroup>
 
+	<!-- Properties for MSIX Publishing -->
 	<PropertyGroup>
-		<PublishReadyToRun Condition="'$(Configuration)' == 'Debug' or '$(Configuration)' == 'DebugUnpackaged'">False</PublishReadyToRun>
-		<PublishReadyToRun Condition="'$(Configuration)' != 'Debug' and '$(Configuration)' != 'DebugUnpackaged'">True</PublishReadyToRun>
-		<PublishTrimmed>false</PublishTrimmed>
-		<SupportedOSPlatformVersion>10.0.18362.0</SupportedOSPlatformVersion>
 		<PackageCertificateThumbprint>3EBE28646614296DE51CCE9C9B6C6F75427D7C6C</PackageCertificateThumbprint>
 		<AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
 		<GenerateAppInstallerFile>False</GenerateAppInstallerFile>
@@ -143,19 +161,11 @@
 		<GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
 		<HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
 	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseUnpackaged|x86'">
-		<Optimize>True</Optimize>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseUnpackaged|x64'">
-		<Optimize>True</Optimize>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseUnpackaged|ARM64'">
-		<Optimize>True</Optimize>
-	</PropertyGroup>
+
 	<ItemGroup>
-	  <PRIResource Remove="Interfaces\**" />
+		<PRIResource Remove="Interfaces\**" />
 	</ItemGroup>
 	<ItemGroup>
-	  <PRIResource Remove="Assets\Raws\**" />
+		<PRIResource Remove="Assets\Raws\**" />
 	</ItemGroup>
 </Project>
