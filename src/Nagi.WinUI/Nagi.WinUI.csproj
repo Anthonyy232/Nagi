@@ -21,7 +21,6 @@
 	<!-- =============================================================== -->
 	<PropertyGroup Condition="!$(Configuration.Contains('Unpackaged'))">
 		<WindowsPackageType>MSIX</WindowsPackageType>
-		<!-- For MSIX, the runtime is handled by the store/installer, so it's not self-contained. -->
 		<WindowsAppSDKSelfContained>false</WindowsAppSDKSelfContained>
 		<PublishProfile>win-$(Platform).pubxml</PublishProfile>
 		<ApplicationDisplayVersion>$(AppxPackageVersion)</ApplicationDisplayVersion>
@@ -34,7 +33,6 @@
 	<!-- =============================================================== -->
 	<PropertyGroup Condition="$(Configuration.Contains('Unpackaged'))">
 		<WindowsPackageType>None</WindowsPackageType>
-		<!-- For unpackaged, we need to ship the runtime with the app. -->
 		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 		<ApplicationIcon>Assets\AppLogo.ico</ApplicationIcon>
 	</PropertyGroup>
@@ -56,7 +54,7 @@
 		<TieredPGO>true</TieredPGO>
 
 		<PublishTrimmed>true</PublishTrimmed>
-		<TrimMode>link</TrimMode>
+		<TrimMode>copyused</TrimMode>
 
 		<Optimize>true</Optimize>
 		<JsonSerializerIsReflectionEnabledByDefault>true</JsonSerializerIsReflectionEnabledByDefault>
