@@ -53,9 +53,9 @@ public partial class App : Application {
         CoreApplication.Suspending += OnSuspending;
         LibVLCSharp.Shared.Core.Initialize();
 
-        #if !MSIX_PACKAGE
-                VelopackApp.Build().Run();
-        #endif
+#if !MSIX_PACKAGE
+        VelopackApp.Build().Run();
+#endif
     }
 
     /// <summary>
@@ -154,8 +154,7 @@ public partial class App : Application {
         services.AddSingleton<IUpdateService, VelopackUpdateService>();
 
 #if !MSIX_PACKAGE
-        services.AddSingleton(provider =>
-        {
+        services.AddSingleton(provider => {
             var source = new GithubSource("https://github.com/Anthonyy232/Nagi", null, false);
             return new UpdateManager(source);
         });
@@ -167,13 +166,14 @@ public partial class App : Application {
         services.AddSingleton<IWin32InteropService, Win32InteropService>();
         services.AddSingleton<IWindowService>(sp => new WindowService(window, sp.GetRequiredService<IWin32InteropService>()));
         services.AddSingleton<IUIService>(sp => new UIService(window));
-        services.AddSingleton<IDispatcherService>(sp => new DispatcherService(dispatcherQueue));
+        services.AddSingleton(dispatcherQueue);
+        services.AddSingleton<IDispatcherService, DispatcherService>();
         services.AddSingleton<IThemeService>(sp => new ThemeService(appInstance, sp));
         services.AddSingleton<IApplicationLifecycle>(sp => new ApplicationLifecycle(appInstance, sp));
         services.AddSingleton<IAppInfoService, AppInfoService>();
         services.AddSingleton<INavigationService, NavigationService>();
         services.AddSingleton<ITrayPopupService, TrayPopupService>();
-        services.AddSingleton<IAudioPlayer>(provider => new MediaPlayerAudioPlayerService(dispatcherQueue));
+        services.AddSingleton<IAudioPlayer>(provider => new MediaPlayerAudioPlayerService(provider.GetRequiredService<IDispatcherService>()));
     }
 
     // Registers ViewModels used throughout the application.
