@@ -38,10 +38,10 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable {
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ToolTipText))]
-    private bool _isWindowVisible = true;
+    public partial bool IsWindowVisible { get; set; } = true;
 
     [ObservableProperty]
-    private bool _isTrayIconVisible;
+    public partial bool IsTrayIconVisible { get; set; }
 
     public string ToolTipText => $"{_appInfoService.GetAppName()} - {(IsWindowVisible ? "Window Visible" : "Hidden in Tray")}";
 
