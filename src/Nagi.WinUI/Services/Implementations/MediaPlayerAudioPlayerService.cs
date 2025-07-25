@@ -6,7 +6,6 @@ using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.Storage;
 using Windows.Storage.Streams;
-using Microsoft.UI.Dispatching;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.WinUI.Services.Abstractions;
@@ -19,15 +18,15 @@ namespace Nagi.WinUI.Services.Implementations;
 /// </summary>
 public class MediaPlayerAudioPlayerService : IAudioPlayer
 {
-    private readonly DispatcherQueue _dispatcherQueue;
+    private readonly IDispatcherService _dispatcherService;
     private readonly MediaPlayer _mediaPlayer;
     private MediaPlaybackSession? _currentPlaybackSession;
     private Song? _currentSong;
     private SystemMediaTransportControls? _smtc;
 
-    public MediaPlayerAudioPlayerService(DispatcherQueue dispatcherQueue)
+    public MediaPlayerAudioPlayerService(IDispatcherService dispatcherService)
     {
-        _dispatcherQueue = dispatcherQueue ?? throw new ArgumentNullException(nameof(dispatcherQueue));
+        _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
 
         _mediaPlayer = new MediaPlayer();
         _mediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
@@ -187,12 +186,12 @@ public class MediaPlayerAudioPlayerService : IAudioPlayer
 
     private void MediaPlayer_MediaEnded(MediaPlayer sender, object args)
     {
-        _dispatcherQueue.TryEnqueue(() => PlaybackEnded?.Invoke());
+        _dispatcherService.TryEnqueue(() => PlaybackEnded?.Invoke());
     }
 
     private void MediaPlayer_CurrentStateChanged(MediaPlayer sender, object args)
     {
-        _dispatcherQueue.TryEnqueue(() => StateChanged?.Invoke());
+        _dispatcherService.TryEnqueue(() => StateChanged?.Invoke());
 
         // Update the SMTC playback status to match the player's state.
         if (_smtc != null)
@@ -209,20 +208,20 @@ public class MediaPlayerAudioPlayerService : IAudioPlayer
 
     private void MediaPlayer_VolumeChanged(MediaPlayer sender, object args)
     {
-        _dispatcherQueue.TryEnqueue(() => VolumeChanged?.Invoke());
+        _dispatcherService.TryEnqueue(() => VolumeChanged?.Invoke());
     }
 
     private void PlaybackSession_PositionChanged(MediaPlaybackSession sender, object args)
     {
-        _dispatcherQueue.TryEnqueue(() => PositionChanged?.Invoke());
+        _dispatcherService.TryEnqueue(() => PositionChanged?.Invoke());
     }
 
     private void MediaPlayer_MediaFailed(MediaPlayer sender, MediaPlayerFailedEventArgs args)
     {
         var errorMessage = $"Media playback failed. Error: {args.Error}, Message: {args.ErrorMessage}";
         Debug.WriteLine($"[MediaPlayerAudioPlayerService] {errorMessage}");
-        _dispatcherQueue.TryEnqueue(() => ErrorOccurred?.Invoke(errorMessage));
-        _dispatcherQueue.TryEnqueue(async () => await StopAsync());
+        _dispatcherService.TryEnqueue(() => ErrorOccurred?.Invoke(errorMessage));
+        _dispatcherService.TryEnqueue(async () => await StopAsync());
     }
 
     private async void MediaPlayer_MediaOpened(MediaPlayer sender, object args)
@@ -232,7 +231,7 @@ public class MediaPlayerAudioPlayerService : IAudioPlayer
         _currentPlaybackSession = sender.PlaybackSession;
         if (_currentPlaybackSession != null) _currentPlaybackSession.PositionChanged += PlaybackSession_PositionChanged;
 
-        _dispatcherQueue.TryEnqueue(() => MediaOpened?.Invoke());
+        _dispatcherService.TryEnqueue(() => MediaOpened?.Invoke());
         await UpdateSmtcDisplayAsync();
     }
 
@@ -269,7 +268,7 @@ public class MediaPlayerAudioPlayerService : IAudioPlayer
         MediaPlaybackCommandManagerNextReceivedEventArgs args)
     {
         var deferral = args.GetDeferral();
-        _dispatcherQueue.TryEnqueue(() =>
+        _dispatcherService.TryEnqueue(() =>
         {
             SmtcNextButtonPressed?.Invoke();
             args.Handled = true;
@@ -281,7 +280,7 @@ public class MediaPlayerAudioPlayerService : IAudioPlayer
         MediaPlaybackCommandManagerPreviousReceivedEventArgs args)
     {
         var deferral = args.GetDeferral();
-        _dispatcherQueue.TryEnqueue(() =>
+        _dispatcherService.TryEnqueue(() =>
         {
             SmtcPreviousButtonPressed?.Invoke();
             args.Handled = true;

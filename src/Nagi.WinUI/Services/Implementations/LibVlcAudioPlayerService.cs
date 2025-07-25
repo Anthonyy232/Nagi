@@ -1,8 +1,8 @@
 ﻿using CommunityToolkit.WinUI;
 using LibVLCSharp.Shared;
-using Microsoft.UI.Dispatching;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
+using Nagi.WinUI.Services.Abstractions;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -18,7 +18,7 @@ namespace Nagi.WinUI.Services.Implementations;
 /// and manual integration with the System Media Transport Controls (SMTC).
 /// </summary>
 public class LibVlcAudioPlayerService : IAudioPlayer, IDisposable {
-    private readonly DispatcherQueue _dispatcherQueue;
+    private readonly IDispatcherService _dispatcherService;
     private readonly LibVLC _libVlc;
     private readonly MediaPlayer _mediaPlayer;
     private SystemMediaTransportControls? _smtc;
@@ -28,8 +28,8 @@ public class LibVlcAudioPlayerService : IAudioPlayer, IDisposable {
     // that is correctly associated with the application's main window.
     private readonly WinMediaPlayback.MediaPlayer _dummyMediaPlayer;
 
-    public LibVlcAudioPlayerService(DispatcherQueue dispatcherQueue) {
-        _dispatcherQueue = dispatcherQueue ?? throw new ArgumentNullException(nameof(dispatcherQueue));
+    public LibVlcAudioPlayerService(IDispatcherService dispatcherService) {
+        _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
         _libVlc = new LibVLC();
         _mediaPlayer = new MediaPlayer(_libVlc);
         _dummyMediaPlayer = new WinMediaPlayback.MediaPlayer();
@@ -127,7 +127,7 @@ public class LibVlcAudioPlayerService : IAudioPlayer, IDisposable {
         catch (Exception ex) {
             var errorMessage = $"Failed to load '{song.Title}': {ex.Message}";
             Debug.WriteLine($"[LibVlcAudioPlayerService] {errorMessage}");
-            _dispatcherQueue.TryEnqueue(() => ErrorOccurred?.Invoke(errorMessage));
+            _dispatcherService.TryEnqueue(() => ErrorOccurred?.Invoke(errorMessage));
             _currentSong = null;
             _mediaPlayer.Media = null;
         }
@@ -178,7 +178,7 @@ public class LibVlcAudioPlayerService : IAudioPlayer, IDisposable {
     public Task SetVolumeAsync(double volume) {
         _mediaPlayer.Volume = (int)Math.Clamp(volume * 100, 0, 100);
         // Manually invoke VolumeChanged since LibVLCSharp does not provide a dedicated event.
-        _dispatcherQueue.TryEnqueue(() => VolumeChanged?.Invoke());
+        _dispatcherService.TryEnqueue(() => VolumeChanged?.Invoke());
         return Task.CompletedTask;
     }
 
@@ -186,7 +186,7 @@ public class LibVlcAudioPlayerService : IAudioPlayer, IDisposable {
     public Task SetMuteAsync(bool isMuted) {
         _mediaPlayer.Mute = isMuted;
         // Manually invoke VolumeChanged since LibVLCSharp does not provide a dedicated event.
-        _dispatcherQueue.TryEnqueue(() => VolumeChanged?.Invoke());
+        _dispatcherService.TryEnqueue(() => VolumeChanged?.Invoke());
         return Task.CompletedTask;
     }
 
@@ -217,7 +217,7 @@ public class LibVlcAudioPlayerService : IAudioPlayer, IDisposable {
 
     private void OnMediaPlayerMediaChanged(object? sender, MediaPlayerMediaChangedEventArgs e) {
         // This event confirms the media is loaded and ready for playback commands.
-        _dispatcherQueue.TryEnqueue(() => MediaOpened?.Invoke());
+        _dispatcherService.TryEnqueue(() => MediaOpened?.Invoke());
         _ = UpdateSmtcDisplayAsync();
     }
 
@@ -229,25 +229,25 @@ public class LibVlcAudioPlayerService : IAudioPlayer, IDisposable {
         }
 
         Debug.WriteLine($"[LibVlcAudioPlayerService] {errorMessage}");
-        _dispatcherQueue.TryEnqueue(() => ErrorOccurred?.Invoke(errorMessage));
+        _dispatcherService.TryEnqueue(() => ErrorOccurred?.Invoke(errorMessage));
     }
 
     private void OnMediaPlayerStateChanged(object? sender, EventArgs e) {
-        _dispatcherQueue.TryEnqueue(() => StateChanged?.Invoke());
+        _dispatcherService.TryEnqueue(() => StateChanged?.Invoke());
         UpdateSmtcPlaybackStatus();
     }
 
     private void OnMediaPlayerPositionChanged(object? sender, MediaPlayerPositionChangedEventArgs e) {
-        _dispatcherQueue.TryEnqueue(() => PositionChanged?.Invoke());
+        _dispatcherService.TryEnqueue(() => PositionChanged?.Invoke());
     }
 
     private void OnMediaPlayerEndReached(object? sender, EventArgs e) {
-        _dispatcherQueue.TryEnqueue(() => PlaybackEnded?.Invoke());
+        _dispatcherService.TryEnqueue(() => PlaybackEnded?.Invoke());
     }
 
     private async void OnSmtcButtonPressed(SystemMediaTransportControls sender, SystemMediaTransportControlsButtonPressedEventArgs args) {
         // Marshal to the dispatcher queue to ensure thread-safe interaction with the player.
-        await _dispatcherQueue.EnqueueAsync(async () => {
+        await _dispatcherService.EnqueueAsync(async () => {
             switch (args.Button) {
                 case SystemMediaTransportControlsButton.Play:
                     await PlayAsync();

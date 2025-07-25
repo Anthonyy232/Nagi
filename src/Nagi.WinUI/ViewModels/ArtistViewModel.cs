@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.UI.Dispatching;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -37,17 +36,21 @@ public partial class ArtistViewModel : ObservableObject {
     private readonly ILibraryService _libraryService;
     private readonly IMusicPlaybackService _musicPlaybackService;
     private readonly ISettingsService _settingsService;
-    private readonly DispatcherQueue _dispatcherQueue;
+    private readonly IDispatcherService _dispatcherService;
     private readonly Dictionary<Guid, ArtistViewModelItem> _artistLookup = new();
     private int _currentPage = 1;
     private const int PageSize = 250;
     private bool _isFullyLoaded;
 
-    public ArtistViewModel(ILibraryService libraryService, ISettingsService settingsService, IMusicPlaybackService musicPlaybackService) {
+    public ArtistViewModel(
+        ILibraryService libraryService,
+        ISettingsService settingsService,
+        IMusicPlaybackService musicPlaybackService,
+        IDispatcherService dispatcherService) {
         _libraryService = libraryService;
         _settingsService = settingsService;
         _musicPlaybackService = musicPlaybackService;
-        _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+        _dispatcherService = dispatcherService;
         Artists.CollectionChanged += (s, e) => OnPropertyChanged(nameof(HasArtists));
     }
 
@@ -158,7 +161,7 @@ public partial class ArtistViewModel : ObservableObject {
     private void OnArtistMetadataUpdated(object? sender, ArtistMetadataUpdatedEventArgs e) {
         if (_artistLookup.TryGetValue(e.ArtistId, out var artistVm)) {
             // Ensure UI updates are performed on the main thread.
-            _dispatcherQueue.TryEnqueue(() => {
+            _dispatcherService.TryEnqueue(() => {
                 artistVm.LocalImageCachePath = e.NewLocalImageCachePath;
             });
         }
