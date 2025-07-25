@@ -33,7 +33,8 @@ jobs:
       - name: Install .NET SDK
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 8.0.x
+          # Using .NET 9 to match your project from the build logs
+          dotnet-version: 9.0.x
 
       - name: Install/Update vpk command-line tool
         run: dotnet tool update -g vpk --prerelease
@@ -41,14 +42,13 @@ jobs:
       - name: Create appsettings.json from Secrets
         shell: pwsh
         run: |
-          $appSettingsPath = "src/Nagi.WinUI/appsettings.json"
           echo '{
             "NagiApiServer": {
               "Url": "https://nagiappapi.azure-api.net/nagi",
               "ApiKey": "${{ secrets.NAGI_API_KEY }}",
               "SubscriptionKey": "${{ secrets.NAGI_SUBSCRIPTION_KEY }}"
             }
-          }' > $appSettingsPath
+          }' > src/Nagi.WinUI/appsettings.json
 
       - name: Build and Package Platform
         shell: pwsh
@@ -58,19 +58,14 @@ jobs:
           $releaseDir = "./Releases"
           
           echo "Building for $p..."
-          dotnet publish src/Nagi.WinUI/Nagi.WinUI.csproj -c Release -p:WindowsPackageType=None -r $p --self-contained -o $publishDir
+          # Using '-c Release' as a standard. Added 'PublishReadyToRun=false' to prevent timeout.
+          dotnet publish src/Nagi.WinUI/Nagi.WinUI.csproj -c Release -p:WindowsPackageType=None -p:PublishReadyToRun=false -r $p --self-contained -o $publishDir
           
           echo "Packaging for $p..."
-          vpk pack --packId Nagi --packVersion ${{ steps.get_version.outputs.version }} --mainExe Nagi.WinUI.exe --packDir $publishDir -o $releaseDir
+          vpk pack --packId Nagi --packVersion ${{ steps.get_version.outputs.version }} --mainExe Nagi.WinUI.exe --packDir $publishDir -o $releaseDir --channel $p --runtime $p
 
-      - name: Upload Build Artifacts to GitHub
+      - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Nagi-Release-Artifacts-${{ matrix.platform }}
-          path: ./Releases
-
-      - name: Create GitHub Release
-        if: github.ref == 'refs/heads/master'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: vpk releasify -r ./Releases -c ${{ matrix.platform }}
+          name: Nagi-Release-${{ steps.get_version.outputs.version }}-${{ matrix.platform }}
+          path: ./Releases/
