@@ -145,7 +145,7 @@ public class TagLibMetadataExtractor : IMetadataExtractor {
         await semaphore.WaitAsync();
         try {
             (metadata.CoverArtUri, metadata.LightSwatchId, metadata.DarkSwatchId) =
-                await _imageProcessor.SaveCoverArtAndExtractColorsAsync(pictureData, metadata.Album, metadata.AlbumArtist);
+                await _imageProcessor.SaveCoverArtAndExtractColorsAsync(pictureData, metadata.Album!, metadata.AlbumArtist!);
         }
         finally {
             semaphore.Release();
