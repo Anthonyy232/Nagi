@@ -1,8 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+	<!-- =============================================================== -->
+	<!-- == Project Properties                                          == -->
+	<!-- =============================================================== -->
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net$(NetVersion)-windows$(WindowsSdkVersion)</TargetFramework>
 		<TargetPlatformMinVersion>$(WindowsTargetPlatformMinVersion)</TargetPlatformMinVersion>
+		<SupportedOSPlatformVersion>10.0.18362.0</SupportedOSPlatformVersion>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<Platforms>x86;x64;ARM64</Platforms>
 		<RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
@@ -13,11 +17,10 @@
 		<Configurations>Debug;Release;DebugUnpackaged;ReleaseUnpackaged</Configurations>
 		<AssemblyName>Nagi</AssemblyName>
 		<Product>Nagi</Product>
-		<SupportedOSPlatformVersion>10.0.18362.0</SupportedOSPlatformVersion>
 	</PropertyGroup>
 
 	<!-- =============================================================== -->
-	<!-- == Packaged (MSIX) Configuration Properties                    == -->
+	<!-- == Packaged (MSIX) Configuration                               == -->
 	<!-- =============================================================== -->
 	<PropertyGroup Condition="!$(Configuration.Contains('Unpackaged'))">
 		<WindowsPackageType>MSIX</WindowsPackageType>
@@ -26,10 +29,11 @@
 		<ApplicationDisplayVersion>$(AppxPackageVersion)</ApplicationDisplayVersion>
 		<ApplicationVersion>$(AppxPackageVersion.Replace('.', ''))</ApplicationVersion>
 		<DefineConstants>$(DefineConstants);MSIX_PACKAGE</DefineConstants>
+		<HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
 	</PropertyGroup>
 
 	<!-- =============================================================== -->
-	<!-- == Unpackaged Configuration Properties                         == -->
+	<!-- == Unpackaged Configuration                                    == -->
 	<!-- =============================================================== -->
 	<PropertyGroup Condition="$(Configuration.Contains('Unpackaged'))">
 		<WindowsPackageType>None</WindowsPackageType>
@@ -38,7 +42,7 @@
 	</PropertyGroup>
 
 	<!-- =============================================================== -->
-	<!-- == Debug Build Configuration                                   == -->
+	<!-- == Build Configuration: Debug                                  == -->
 	<!-- =============================================================== -->
 	<PropertyGroup Condition="'$(Configuration)' == 'Debug' or '$(Configuration)' == 'DebugUnpackaged'">
 		<PublishReadyToRun>false</PublishReadyToRun>
@@ -47,103 +51,18 @@
 	</PropertyGroup>
 
 	<!-- =============================================================== -->
-	<!-- == Release Build Optimizations (AOT/Trimming)                  == -->
+	<!-- == Build Configuration: Release (AOT/Trimming)                 == -->
 	<!-- =============================================================== -->
 	<PropertyGroup Condition="'$(Configuration)' == 'Release' or '$(Configuration)' == 'ReleaseUnpackaged'">
 		<PublishReadyToRun>true</PublishReadyToRun>
 		<TieredPGO>true</TieredPGO>
-
 		<Optimize>true</Optimize>
 		<JsonSerializerIsReflectionEnabledByDefault>true</JsonSerializerIsReflectionEnabledByDefault>
 	</PropertyGroup>
 
 	<!-- =============================================================== -->
-	<!-- == Packaged (MSIX) Specific Item Groups                        == -->
+	<!-- == MSIX Publishing Properties                                  == -->
 	<!-- =============================================================== -->
-	<ItemGroup Condition="!$(Configuration.Contains('Unpackaged'))">
-		<Content Include="Assets\SplashScreen.scale-200.png" />
-		<Content Include="Assets\LockScreenLogo.scale-200.png" />
-		<Content Include="Assets\Square150x150Logo.scale-200.png" />
-		<Content Include="Assets\Square44x44Logo.scale-200.png" />
-		<Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
-		<Content Include="Assets\Wide310x150Logo.scale-200.png" />
-	</ItemGroup>
-
-	<ItemGroup Condition="!$(Configuration.Contains('Unpackaged')) and '$(EnableMsixTooling)'=='true'">
-		<ProjectCapability Include="Msix" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Compile Remove="Assets\Raws\**" />
-		<Compile Remove="Interfaces\**" />
-		<Content Remove="Assets\Raws\**" />
-		<EmbeddedResource Remove="Assets\Raws\**" />
-		<EmbeddedResource Remove="Interfaces\**" />
-		<None Remove="Assets\Raws\**" />
-		<None Remove="Interfaces\**" />
-		<Page Remove="Assets\Raws\**" />
-		<Page Remove="Interfaces\**" />
-	</ItemGroup>
-
-	<!-- =============================================================== -->
-	<!-- == Common Item Groups                                          == -->
-	<!-- =============================================================== -->
-	<ItemGroup>
-		<!-- Core Project Reference -->
-		<ProjectReference Include="..\Nagi.Core\Nagi.Core.csproj" />
-
-		<!-- UI-Specific Controls and Media -->
-		<PackageReference Include="CommunityToolkit.WinUI.Controls.ColorPicker" Version="$(CommunityToolkitWinUIVersion)" />
-		<PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="$(CommunityToolkitWinUIVersion)" />
-		<PackageReference Include="CommunityToolkit.WinUI.Media" Version="$(CommunityToolkitWinUIVersion)" />
-		<PackageReference Include="H.NotifyIcon.WinUI" Version="$(HNotifyIconWinUIVersion)" />
-		<PackageReference Include="ImageEx.WinUI" Version="$(ImageExWinUIVersion)" />
-		<PackageReference Include="LibVLCSharp" Version="3.9.3" />
-		<PackageReference Include="VideoLAN.LibVLC.Windows" Version="3.0.21" />
-		<PackageReference Include="Microsoft.Graphics.Win2D" Version="$(MicrosoftGraphicsWin2DVersion)" />
-
-		<!-- Windows App SDK and Build Tools -->
-		<PackageReference Include="Microsoft.WindowsAppSDK" Version="$(WindowsAppSdkVersion)" />
-		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="$(MicrosoftWindowsSDKBuildToolsVersion)" />
-
-		<!-- Application Services (DI, Configuration) for app startup -->
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="$(DependencyInjectionVersion)" />
-		<PackageReference Include="Microsoft.Extensions.Configuration" Version="$(MicrosoftExtensionsConfigurationVersion)" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="$(MicrosoftExtensionsConfigurationFileExtensionsVersion)" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="$(MicrosoftExtensionsConfigurationJsonVersion)" />
-		<PackageReference Include="Microsoft.Extensions.Http" Version="$(MicrosoftExtensionsHttpVersion)" />
-
-		<!-- EF Core tools are needed in the startup project for migrations -->
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="$(EntityFrameworkCoreVersion)">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="$(EntityFrameworkCoreVersion)">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-
-		<!-- Updater package, only needed for the unpackaged executable -->
-		<PackageReference Include="Velopack" Version="$(VelopackVersion)" Condition="$(Configuration.Contains('Unpackaged'))" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Content Include="Assets\AppLogo.ico">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-	</ItemGroup>
-
-	<ItemGroup>
-		<None Update="appsettings.json">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-	</ItemGroup>
-
-	<PropertyGroup Condition="!$(Configuration.Contains('Unpackaged')) and '$(EnableMsixTooling)'=='true'">
-		<HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
-	</PropertyGroup>
-
-	<!-- Properties for MSIX Publishing -->
 	<PropertyGroup>
 		<PackageCertificateThumbprint>3EBE28646614296DE51CCE9C9B6C6F75427D7C6C</PackageCertificateThumbprint>
 		<AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
@@ -157,10 +76,142 @@
 		<HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
 	</PropertyGroup>
 
+	<!-- =============================================================== -->
+	<!-- == Package & Project References                                == -->
+	<!-- =============================================================== -->
 	<ItemGroup>
+		<!-- Project References -->
+		<ProjectReference Include="..\Nagi.Core\Nagi.Core.csproj" />
+
+		<!-- Core SDKs and Build Tools -->
+		<PackageReference Include="Microsoft.WindowsAppSDK" Version="$(WindowsAppSdkVersion)" />
+		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="$(MicrosoftWindowsSDKBuildToolsVersion)" />
+
+		<!-- Application Services (DI, Configuration) -->
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="$(DependencyInjectionVersion)" />
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="$(MicrosoftExtensionsConfigurationVersion)" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="$(MicrosoftExtensionsConfigurationFileExtensionsVersion)" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="$(MicrosoftExtensionsConfigurationJsonVersion)" />
+		<PackageReference Include="Microsoft.Extensions.Http" Version="$(MicrosoftExtensionsHttpVersion)" />
+
+		<!-- UI Controls and Media -->
+		<PackageReference Include="CommunityToolkit.WinUI.Controls.ColorPicker" Version="$(CommunityToolkitWinUIVersion)" />
+		<PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="$(CommunityToolkitWinUIVersion)" />
+		<PackageReference Include="CommunityToolkit.WinUI.Media" Version="$(CommunityToolkitWinUIVersion)" />
+		<PackageReference Include="H.NotifyIcon.WinUI" Version="$(HNotifyIconWinUIVersion)" />
+		<PackageReference Include="ImageEx.WinUI" Version="$(ImageExWinUIVersion)" />
+		<PackageReference Include="Microsoft.Graphics.Win2D" Version="$(MicrosoftGraphicsWin2DVersion)" />
+
+		<!-- Video Playback -->
+		<PackageReference Include="LibVLCSharp" Version="$(LibVLCSharpVersion)" />
+		<PackageReference Include="VideoLAN.LibVLC.Windows" Version="$(LibVLCWindowsVersion)" />
+
+		<!-- Updater (Unpackaged only) -->
+		<PackageReference Include="Velopack" Version="$(VelopackVersion)" Condition="$(Configuration.Contains('Unpackaged'))" />
+	</ItemGroup>
+
+	<!-- =============================================================== -->
+	<!-- == LibVLC Build Customization (Cherry-Picking)                 == -->
+	<!-- =============================================================== -->
+	<!--
+	  This section uses an "inclusive" strategy to only copy the essential LibVLC plugins
+	  needed for the application, drastically reducing the final package size.
+	-->
+	<ItemGroup>
+		<!-- Define the list of required files for the x64 platform. -->
+		<VlcWindowsX64IncludeFiles Include="
+			libvlc.dll;
+			libvlccore.dll;
+
+			// --- Access (How to read files) ---
+			plugins\access\libfilesystem_plugin.dll;
+
+			// --- Demuxers (Container format support) ---
+			plugins\demux\libmkv_plugin.dll;         // .mkv, .webm
+			plugins\demux\libmp4_plugin.dll;         // .mp4, .m4a, .m4b, .m4v
+			plugins\demux\libasf_plugin.dll;         // .asf, .wma, .wmv
+			plugins\demux\libavi_plugin.dll;         // .avi
+			plugins\demux\libogg_plugin.dll;         // .ogg, .oga, .ogv
+			plugins\demux\libflacsys_plugin.dll;     // .flac (as a container)
+			plugins\demux\libmpgv_plugin.dll;        // .mpeg, .mpg
+			plugins\demux\libps_plugin.dll;          // .mpeg, .mpg (Program Stream)
+			plugins\demux\libwav_plugin.dll;         // .wav
+			plugins\demux\libaiff_plugin.dll;        // .aiff
+			plugins\demux\libau_plugin.dll;          // .aa, .aax (Audible formats)
+			plugins\demux\libmpc_plugin.dll;         // .mpc, .mpp
+
+			// --- Decoders (The actual audio/video codecs) ---
+			plugins\codec\libavcodec_plugin.dll;     // THE BIG ONE: Covers H.264, AAC, WMA, WMV, MPEG, and many more
+			plugins\codec\libflac_plugin.dll;        // .flac (codec)
+			plugins\codec\libvorbis_plugin.dll;      // Vorbis audio (in .ogg, .mkv)
+			plugins\codec\libopus_plugin.dll;        // Opus audio (in .ogg, .mkv, .webm)
+			plugins\codec\libfaad_plugin.dll;        // .aac (alternative high-quality decoder)
+			plugins\codec\libmpg123_plugin.dll;      // .mp3
+			plugins\codec\libvpx_plugin.dll;         // VP8/VP9 video (in .webm, .mkv)
+			plugins\codec\libtheora_plugin.dll;      // Theora video (in .ogg)
+
+			// --- Audio Output (Sending sound to the speakers) ---
+			plugins\audio_output\libmmdevice_plugin.dll;  // Windows audio device enumeration
+			plugins\audio_output\libwasapi_plugin.dll;    // Modern Windows Audio Session API
+			plugins\audio_output\libdirectsound_plugin.dll; // Fallback audio output
+
+			// --- Video & Text Support (Even for audio-only apps, some are needed) ---
+			// Although you treat videos as audio, these are needed if LibVLC ever tries to open a video context.
+			// They are small and safe to include.
+			plugins\video_output\libdrawable_plugin.dll; // Required for LibVLCSharp to get a handle
+			plugins\video_output\libvdummy_plugin.dll;   // Dummy video output
+			plugins\text_renderer\libfreetype_plugin.dll; // For rendering any text/subtitles/OSD
+			plugins\video_chroma\libswscale_plugin.dll;  // Color space conversion
+
+			// --- Audio Filters (For format conversion) ---
+			plugins\audio_filter\libaudio_format_plugin.dll;
+			plugins\audio_filter\libsamplerate_plugin.dll;
+			plugins\audio_filter\libugly_resampler_plugin.dll
+			" />
+
+		<!-- Apply the same inclusion rules to x86 and ARM64 builds by referencing the x64 list. -->
+		<VlcWindowsX86IncludeFiles Include="@(VlcWindowsX64IncludeFiles)" />
+		<VlcWindowsArm64IncludeFiles Include="@(VlcWindowsX64IncludeFiles)" />
+	</ItemGroup>
+
+	<!-- =============================================================== -->
+	<!-- == File/Folder Exclusions & Inclusions                         == -->
+	<!-- =============================================================== -->
+	<ItemGroup>
+		<!-- Exclude specific folders from build -->
+		<Compile Remove="Assets\Raws\**" />
+		<Content Remove="Assets\Raws\**" />
+		<EmbeddedResource Remove="Assets\Raws\**" />
+		<None Remove="Assets\Raws\**" />
+		<Page Remove="Assets\Raws\**" />
+		<PRIResource Remove="Assets\Raws\**" />
+
+		<Compile Remove="Interfaces\**" />
+		<EmbeddedResource Remove="Interfaces\**" />
+		<None Remove="Interfaces\**" />
+		<Page Remove="Interfaces\**" />
 		<PRIResource Remove="Interfaces\**" />
 	</ItemGroup>
-	<ItemGroup>
-		<PRIResource Remove="Assets\Raws\**" />
+
+	<ItemGroup Condition="!$(Configuration.Contains('Unpackaged'))">
+		<!-- MSIX Assets -->
+		<Content Include="Assets\SplashScreen.scale-200.png" />
+		<Content Include="Assets\LockScreenLogo.scale-200.png" />
+		<Content Include="Assets\Square150x150Logo.scale-200.png" />
+		<Content Include="Assets\Square44x44Logo.scale-200.png" />
+		<Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
+		<Content Include="Assets\Wide310x150Logo.scale-200.png" />
+		<ProjectCapability Include="Msix" />
 	</ItemGroup>
+
+	<ItemGroup>
+		<!-- Application Content -->
+		<Content Include="Assets\AppLogo.ico">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<None Update="appsettings.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
 </Project>
