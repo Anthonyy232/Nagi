@@ -10,7 +10,6 @@
 		<!-- Data Access: Entity Framework Core -->
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="$(EntityFrameworkCoreVersion)" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="$(EntityFrameworkCoreVersion)" />
-		<!-- Design and Tools are kept to support EF Core commands within this project if needed -->
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="$(EntityFrameworkCoreVersion)">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -20,25 +19,20 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 
-		<!-- Core Utilities -->
+		<!-- Core Utilities & Services -->
 		<PackageReference Include="TagLibSharp" Version="$(TagLibSharpVersion)" />
 		<PackageReference Include="ColorThief.ImageSharp" Version="$(ColorThiefImageSharpVersion)" />
 		<PackageReference Include="MaterialColorUtilities" Version="$(MaterialColorUtilitiesVersion)" />
 		<PackageReference Include="DiscordRichPresence" Version="$(DiscordRichPresenceVersion)" />
 
-		<!-- MVVM Toolkit: For ViewModels, which are part of the core application logic -->
+		<!-- MVVM & Dependency Injection -->
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="$(CommunityToolkitMvvmVersion)" />
-
-		<!-- Infrastructure: For defining services and configurations -->
-		<PackageReference Include="Microsoft.Extensions.Configuration" Version="$(MicrosoftExtensionsConfigurationVersion)" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="$(MicrosoftExtensionsConfigurationFileExtensionsVersion)" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="$(MicrosoftExtensionsConfigurationJsonVersion)" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="$(DependencyInjectionVersion)" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="$(DependencyInjectionVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="$(MicrosoftExtensionsHttpVersion)" />
-</ItemGroup>
+	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Services\Presence\" />
+		<Folder Include="Services\Presence\" />
 	</ItemGroup>
 
 </Project>
