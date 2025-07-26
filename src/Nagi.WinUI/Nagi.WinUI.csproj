@@ -53,9 +53,6 @@
 		<PublishReadyToRun>true</PublishReadyToRun>
 		<TieredPGO>true</TieredPGO>
 
-		<PublishTrimmed>true</PublishTrimmed>
-		<TrimMode>copyused</TrimMode>
-
 		<Optimize>true</Optimize>
 		<JsonSerializerIsReflectionEnabledByDefault>true</JsonSerializerIsReflectionEnabledByDefault>
 	</PropertyGroup>
