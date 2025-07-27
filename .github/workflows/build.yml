@@ -55,15 +55,15 @@ jobs:
           }' > src/Nagi.WinUI/appsettings.json
 
       - name: Clear NuGet Caches
-        # This is a good practice to prevent stale or corrupted cache issues.
         run: dotnet nuget locals all --clear
 
       - name: Restore Dependencies
-        # This step now correctly uses the comprehensive nuget.config file.
         run: dotnet restore src/Nagi.WinUI/Nagi.WinUI.csproj
         env:
           # Provide the built-in token to match the %GITHUB_TOKEN% placeholder.
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Provide the actor's name to match the %GITHUB_ACTOR% placeholder.
+          GITHUB_ACTOR: ${{ github.actor }}
 
       - name: Build and Package Platform
         shell: pwsh
