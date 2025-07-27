@@ -1,11 +1,11 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
@@ -203,6 +203,8 @@ public partial class ArtistViewViewModel : SongListViewModelBase {
     public override void Cleanup() {
         base.Cleanup();
         _libraryScanner.ArtistMetadataUpdated -= OnArtistMetadataUpdated;
+        // Also unsubscribe from the collection changed event for completeness.
+        Albums.CollectionChanged -= (s, e) => OnPropertyChanged(nameof(HasAlbums));
         Debug.WriteLine($"[ArtistViewViewModel] INFO: Cleaned up for artist ID '{_artistId}'.");
     }
 }

@@ -13,10 +13,11 @@ namespace Nagi.WinUI.Services.Implementations;
 /// Manages the retrieval and caching of API keys from a secure server endpoint.
 /// This implementation is thread-safe using a ConcurrentDictionary.
 /// </summary>
-public class ApiKeyService : IApiKeyService {
+public class ApiKeyService : IApiKeyService, IDisposable {
     private readonly ConcurrentDictionary<string, Lazy<Task<string?>>> _cachedApiKeys = new();
     private readonly IConfiguration _configuration;
     private readonly HttpClient _httpClient;
+    private bool _isDisposed;
 
     public ApiKeyService(IHttpClientFactory httpClientFactory, IConfiguration configuration) {
         _httpClient = httpClientFactory.CreateClient();
@@ -80,5 +81,16 @@ public class ApiKeyService : IApiKeyService {
             Debug.WriteLine($"Exception while fetching API key '{keyName}': {ex.Message}");
             return null;
         }
+    }
+
+    /// <summary>
+    /// Releases the unmanaged resources used by the <see cref="ApiKeyService"/> and optionally releases the managed resources.
+    /// </summary>
+    public void Dispose() {
+        if (_isDisposed) return;
+
+        _httpClient.Dispose();
+        _isDisposed = true;
+        GC.SuppressFinalize(this);
     }
 }

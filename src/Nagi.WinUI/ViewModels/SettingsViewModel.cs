@@ -19,7 +19,7 @@ namespace Nagi.WinUI.ViewModels;
 /// <summary>
 /// ViewModel for the Settings page, providing properties and commands to manage application settings.
 /// </summary>
-public partial class SettingsViewModel : ObservableObject {
+public partial class SettingsViewModel : ObservableObject, IDisposable {
     private readonly IUISettingsService _settingsService;
     private readonly IUIService _uiService;
     private readonly IThemeService _themeService;
@@ -30,6 +30,7 @@ public partial class SettingsViewModel : ObservableObject {
 
     // Flag to prevent property change handlers from running during initial data loading.
     private bool _isInitializing;
+    private bool _isDisposed;
 
     public SettingsViewModel(
         IUISettingsService settingsService,
@@ -46,6 +47,7 @@ public partial class SettingsViewModel : ObservableObject {
         _appInfoService = appInfoService ?? throw new ArgumentNullException(nameof(appInfoService));
         _updateService = updateService ?? throw new ArgumentNullException(nameof(updateService));
         _lastFmAuthService = lastFmAuthService ?? throw new ArgumentNullException(nameof(lastFmAuthService));
+
         NavigationItems.CollectionChanged += OnNavigationItemsCollectionChanged;
 
 #if MSIX_PACKAGE
@@ -379,5 +381,23 @@ public partial class SettingsViewModel : ObservableObject {
     partial void OnIsLastFmNowPlayingEnabledChanged(bool value) {
         if (_isInitializing) return;
         _ = _settingsService.SetLastFmNowPlayingEnabledAsync(value);
+    }
+
+    /// <summary>
+    /// Cleans up resources by unsubscribing from event handlers to prevent memory leaks.
+    /// </summary>
+    public void Dispose() {
+        if (_isDisposed) return;
+
+        // Unsubscribe from the collection itself
+        NavigationItems.CollectionChanged -= OnNavigationItemsCollectionChanged;
+
+        // Unsubscribe from each item within the collection
+        foreach (var item in NavigationItems) {
+            item.PropertyChanged -= OnNavigationItemPropertyChanged;
+        }
+
+        _isDisposed = true;
+        GC.SuppressFinalize(this);
     }
 }

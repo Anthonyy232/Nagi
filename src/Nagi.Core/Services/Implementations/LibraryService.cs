@@ -1,14 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
 using Nagi.Core.Data;
 using Nagi.Core.Helpers;
 using Nagi.Core.Models;
@@ -49,6 +42,7 @@ public class LibraryService : ILibraryService {
 
     private readonly object _metadataFetchLock = new();
     private volatile bool _isMetadataFetchRunning;
+    private CancellationTokenSource _metadataFetchCts;
 
     private readonly ConcurrentDictionary<string, SemaphoreSlim> _artistImageWriteSemaphores = new();
 
@@ -60,8 +54,7 @@ public class LibraryService : ILibraryService {
         ISpotifyService spotifyService,
         IHttpClientFactory httpClientFactory,
         IServiceScopeFactory serviceScopeFactory,
-        IPathConfiguration pathConfig)
-    {
+        IPathConfiguration pathConfig) {
         _contextFactory = contextFactory ?? throw new ArgumentNullException(nameof(contextFactory));
         _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
         _metadataExtractor = metadataExtractor ?? throw new ArgumentNullException(nameof(metadataExtractor));
@@ -70,6 +63,7 @@ public class LibraryService : ILibraryService {
         _httpClient = httpClientFactory.CreateClient("ImageDownloader");
         _serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
         _pathConfig = pathConfig ?? throw new ArgumentNullException(nameof(pathConfig));
+        _metadataFetchCts = new CancellationTokenSource();
     }
 
     public event EventHandler<ArtistMetadataUpdatedEventArgs>? ArtistMetadataUpdated;
@@ -185,16 +179,16 @@ public class LibraryService : ILibraryService {
 
     #region Library Scanning
 
-    public async Task ScanFolderForMusicAsync(string folderPath, IProgress<ScanProgress>? progress = null) {
+    public async Task ScanFolderForMusicAsync(string folderPath, IProgress<ScanProgress>? progress = null, CancellationToken cancellationToken = default) {
         var folder = await GetFolderByPathAsync(folderPath) ?? await AddFolderAsync(folderPath);
         if (folder is null) {
             progress?.Report(new ScanProgress { StatusText = "Failed to add folder.", Percentage = 100 });
             return;
         }
-        await RescanFolderForMusicAsync(folder.Id, progress);
+        await RescanFolderForMusicAsync(folder.Id, progress, cancellationToken);
     }
 
-    public Task<bool> RescanFolderForMusicAsync(Guid folderId, IProgress<ScanProgress>? progress = null) {
+    public Task<bool> RescanFolderForMusicAsync(Guid folderId, IProgress<ScanProgress>? progress = null, CancellationToken cancellationToken = default) {
         // Run the entire scan on a background thread to keep the UI responsive.
         return Task.Run(async () => {
             try {
@@ -204,20 +198,24 @@ public class LibraryService : ILibraryService {
                     return false;
                 }
 
+                cancellationToken.ThrowIfCancellationRequested();
+
                 if (!_fileSystem.DirectoryExists(folder.Path)) {
                     progress?.Report(new ScanProgress { StatusText = "Folder path no longer exists. Removing from library.", Percentage = 100 });
                     return await RemoveFolderAsync(folderId);
                 }
 
                 progress?.Report(new ScanProgress { StatusText = $"Analyzing '{folder.Name}'...", IsIndeterminate = true });
-                var (filesToAdd, filesToUpdate, filesToDelete) = await AnalyzeFolderChangesAsync(folderId, folder.Path);
+                var (filesToAdd, filesToUpdate, filesToDelete) = await AnalyzeFolderChangesAsync(folderId, folder.Path, cancellationToken);
+
+                cancellationToken.ThrowIfCancellationRequested();
 
                 if (filesToDelete.Any()) {
                     progress?.Report(new ScanProgress { StatusText = "Cleaning up your library...", IsIndeterminate = true });
                     await using var deleteContext = await _contextFactory.CreateDbContextAsync();
                     await deleteContext.Songs
                         .Where(s => s.FolderId == folderId && filesToDelete.Contains(s.FilePath))
-                        .ExecuteDeleteAsync();
+                        .ExecuteDeleteAsync(cancellationToken);
                 }
 
                 var filesToProcess = filesToAdd.Concat(filesToUpdate).ToList();
@@ -226,16 +224,20 @@ public class LibraryService : ILibraryService {
                     return filesToDelete.Any();
                 }
 
-                var extractedMetadata = await ExtractMetadataConcurrentlyAsync(filesToProcess, progress);
+                var extractedMetadata = await ExtractMetadataConcurrentlyAsync(filesToProcess, progress, cancellationToken);
+
+                cancellationToken.ThrowIfCancellationRequested();
 
                 int newSongsFound = 0;
                 if (extractedMetadata.Any()) {
-                    newSongsFound = await BatchUpdateDatabaseAsync(folderId, extractedMetadata, progress);
+                    newSongsFound = await BatchUpdateDatabaseAsync(folderId, extractedMetadata, progress, cancellationToken);
                 }
+
+                cancellationToken.ThrowIfCancellationRequested();
 
                 progress?.Report(new ScanProgress { StatusText = "Finalizing...", IsIndeterminate = true });
                 await using (var finalContext = await _contextFactory.CreateDbContextAsync()) {
-                    await CleanUpOrphanedEntitiesAsync(finalContext);
+                    await CleanUpOrphanedEntitiesAsync(finalContext, cancellationToken);
                 }
 
                 var pluralSong = newSongsFound == 1 ? "song" : "songs";
@@ -245,15 +247,20 @@ public class LibraryService : ILibraryService {
                 progress?.Report(new ScanProgress { StatusText = summary, Percentage = 100, NewSongsFound = newSongsFound });
                 return true;
             }
+            catch (OperationCanceledException) {
+                Trace.TraceInformation($"[{nameof(LibraryService)}] Scan for folder ID '{folderId}' was cancelled.");
+                progress?.Report(new ScanProgress { StatusText = "Scan cancelled by user.", Percentage = 100 });
+                return false;
+            }
             catch (Exception ex) {
                 Trace.TraceError($"[{nameof(LibraryService)}] FATAL: Rescan for folder ID '{folderId}' failed. Exception: {ex}");
                 progress?.Report(new ScanProgress { StatusText = "An error occurred during the scan. Please check the logs.", Percentage = 100 });
                 return false;
             }
-        });
+        }, cancellationToken);
     }
 
-    public async Task<bool> RefreshAllFoldersAsync(IProgress<ScanProgress>? progress = null) {
+    public async Task<bool> RefreshAllFoldersAsync(IProgress<ScanProgress>? progress = null, CancellationToken cancellationToken = default) {
         var folders = (await GetAllFoldersAsync()).ToList();
         var totalFolders = folders.Count;
 
@@ -266,6 +273,8 @@ public class LibraryService : ILibraryService {
         var anyChangesMade = false;
 
         foreach (var folder in folders) {
+            cancellationToken.ThrowIfCancellationRequested();
+
             // Wrap the progress reporter to add context about which folder is being scanned.
             var progressWrapper = new Progress<ScanProgress>(scanProgress => {
                 var status = scanProgress.Percentage >= 100
@@ -282,7 +291,7 @@ public class LibraryService : ILibraryService {
                 });
             });
 
-            var result = await RescanFolderForMusicAsync(folder.Id, progressWrapper);
+            var result = await RescanFolderForMusicAsync(folder.Id, progressWrapper, cancellationToken);
             if (result) anyChangesMade = true;
 
             foldersProcessed++;
@@ -309,13 +318,21 @@ public class LibraryService : ILibraryService {
     public Task StartArtistMetadataBackgroundFetchAsync() {
         lock (_metadataFetchLock) {
             if (_isMetadataFetchRunning) return Task.CompletedTask;
+
+            // If the previous token was cancelled (e.g., by a reset), create a new one.
+            if (_metadataFetchCts.IsCancellationRequested) {
+                _metadataFetchCts.Dispose();
+                _metadataFetchCts = new CancellationTokenSource();
+            }
             _isMetadataFetchRunning = true;
         }
+
+        var token = _metadataFetchCts.Token;
 
         _ = Task.Run(async () => {
             try {
                 const int batchSize = 50;
-                while (true) {
+                while (!token.IsCancellationRequested) {
                     List<Guid> artistIdsToUpdate;
                     await using (var idContext = await _contextFactory.CreateDbContextAsync()) {
                         // Find artists missing a biography or remote image URL.
@@ -325,20 +342,26 @@ public class LibraryService : ILibraryService {
                             .OrderBy(a => a.Name)
                             .Select(a => a.Id)
                             .Take(batchSize)
-                            .ToListAsync();
+                            .ToListAsync(token);
                     }
 
-                    if (artistIdsToUpdate.Count == 0) break;
+                    if (artistIdsToUpdate.Count == 0 || token.IsCancellationRequested) break;
 
                     // Use a scoped DbContext for the batch to ensure entities are managed correctly.
                     using var scope = _serviceScopeFactory.CreateScope();
                     var scopedContextFactory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<MusicDbContext>>();
                     await using var batchContext = await scopedContextFactory.CreateDbContextAsync();
 
-                    var artistsInBatch = await batchContext.Artists.Where(a => artistIdsToUpdate.Contains(a.Id)).ToListAsync();
+                    var artistsInBatch = await batchContext.Artists.Where(a => artistIdsToUpdate.Contains(a.Id)).ToListAsync(token);
                     foreach (var artist in artistsInBatch) {
+                        if (token.IsCancellationRequested) break;
                         try {
                             await FetchAndUpdateArtistFromRemoteAsync(batchContext, artist);
+                        }
+                        catch (DbUpdateConcurrencyException) {
+                            // This can happen if the main scan is also touching the artist.
+                            // It's safe to ignore and let the next pass pick it up.
+                            Trace.TraceWarning($"[{nameof(LibraryService)}] Concurrency conflict for artist {artist.Id} during background fetch. Ignoring.");
                         }
                         catch (Exception ex) {
                             Trace.TraceWarning($"[{nameof(LibraryService)}] Failed to update artist {artist.Id} in background. {ex.Message}");
@@ -346,12 +369,16 @@ public class LibraryService : ILibraryService {
                     }
                 }
             }
+            catch (OperationCanceledException) {
+                // This is the expected, clean exit when cancellation is requested.
+                Trace.TraceInformation($"[{nameof(LibraryService)}] Artist metadata background fetch was cancelled.");
+            }
             finally {
                 lock (_metadataFetchLock) {
                     _isMetadataFetchRunning = false;
                 }
             }
-        });
+        }, token);
         return Task.CompletedTask;
     }
 
@@ -1111,6 +1138,12 @@ public class LibraryService : ILibraryService {
     #region Data Reset
 
     public async Task ClearAllLibraryDataAsync() {
+        // Signal any running background tasks to stop before we delete their data.
+        Trace.TraceInformation($"[{nameof(LibraryService)}] Data reset requested. Cancelling background tasks...");
+        _metadataFetchCts.Cancel();
+        // Give the background task a moment to acknowledge the cancellation and exit.
+        await Task.Delay(250);
+
         await using var context = await _contextFactory.CreateDbContextAsync();
         await using var transaction = await context.Database.BeginTransactionAsync();
 
@@ -1151,14 +1184,16 @@ public class LibraryService : ILibraryService {
     /// <summary>
     /// Compares the files in a folder on disk with the records in the database to determine what has changed.
     /// </summary>
-    private async Task<(List<string> filesToAdd, List<string> filesToUpdate, List<string> filesToDelete)> AnalyzeFolderChangesAsync(Guid folderId, string folderPath) {
+    private async Task<(List<string> filesToAdd, List<string> filesToUpdate, List<string> filesToDelete)> AnalyzeFolderChangesAsync(Guid folderId, string folderPath, CancellationToken cancellationToken) {
         await using var analysisContext = await _contextFactory.CreateDbContextAsync();
         var dbFileMap = (await analysisContext.Songs
                 .AsNoTracking()
                 .Where(s => s.FolderId == folderId)
                 .Select(s => new { s.FilePath, s.FileModifiedDate })
-                .ToListAsync())
+                .ToListAsync(cancellationToken))
             .ToDictionary(s => s.FilePath, s => s.FileModifiedDate, StringComparer.OrdinalIgnoreCase);
+
+        cancellationToken.ThrowIfCancellationRequested();
 
         var diskFileMap = _fileSystem.EnumerateFiles(folderPath, "*.*", SearchOption.AllDirectories)
         .Where(file => MusicFileExtensions.Contains(_fileSystem.GetExtension(file)))
@@ -1189,7 +1224,7 @@ public class LibraryService : ILibraryService {
     /// <summary>
     /// Extracts metadata from a list of files concurrently to improve performance.
     /// </summary>
-    private async Task<List<SongFileMetadata>> ExtractMetadataConcurrentlyAsync(List<string> filesToProcess, IProgress<ScanProgress>? progress) {
+    private async Task<List<SongFileMetadata>> ExtractMetadataConcurrentlyAsync(List<string> filesToProcess, IProgress<ScanProgress>? progress, CancellationToken cancellationToken) {
         var extractedMetadata = new ConcurrentBag<SongFileMetadata>();
         int degreeOfParallelism = Environment.ProcessorCount;
         using var semaphore = new SemaphoreSlim(degreeOfParallelism);
@@ -1200,8 +1235,9 @@ public class LibraryService : ILibraryService {
         progress?.Report(new ScanProgress { StatusText = "Reading song details...", TotalFiles = totalFiles, Percentage = 0 });
 
         var extractionTasks = filesToProcess.Select(async filePath => {
-            await semaphore.WaitAsync();
+            await semaphore.WaitAsync(cancellationToken);
             try {
+                cancellationToken.ThrowIfCancellationRequested();
                 var metadata = await _metadataExtractor.ExtractMetadataAsync(filePath);
                 if (!metadata.ExtractionFailed) {
                     extractedMetadata.Add(metadata);
@@ -1230,7 +1266,7 @@ public class LibraryService : ILibraryService {
     /// <summary>
     /// Updates the database with a batch of new or updated songs, optimized for performance.
     /// </summary>
-    private async Task<int> BatchUpdateDatabaseAsync(Guid folderId, List<SongFileMetadata> metadataList, IProgress<ScanProgress>? progress) {
+    private async Task<int> BatchUpdateDatabaseAsync(Guid folderId, List<SongFileMetadata> metadataList, IProgress<ScanProgress>? progress, CancellationToken cancellationToken) {
         const int maxRetries = 3;
         int retryCount = 0;
         bool saveSucceeded = false;
@@ -1239,6 +1275,7 @@ public class LibraryService : ILibraryService {
         progress?.Report(new ScanProgress { StatusText = "Adding songs to your library...", IsIndeterminate = true, NewSongsFound = totalMetadataCount });
 
         while (retryCount < maxRetries && !saveSucceeded) {
+            cancellationToken.ThrowIfCancellationRequested();
             try {
                 await using var context = await _contextFactory.CreateDbContextAsync();
 
@@ -1247,9 +1284,9 @@ public class LibraryService : ILibraryService {
                 var albumTitles = metadataList.Select(m => m.Album).Where(t => !string.IsNullOrWhiteSpace(t)).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
                 var genreNames = metadataList.SelectMany(m => m.Genres ?? Enumerable.Empty<string>()).Where(g => !string.IsNullOrWhiteSpace(g)).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
 
-                var existingArtists = await context.Artists.Where(a => artistNames.Contains(a.Name)).ToDictionaryAsync(a => a.Name, StringComparer.OrdinalIgnoreCase);
-                var existingAlbums = await context.Albums.Where(a => albumTitles.Contains(a.Title)).ToListAsync();
-                var existingGenres = await context.Genres.Where(g => genreNames.Contains(g.Name)).ToDictionaryAsync(g => g.Name, StringComparer.OrdinalIgnoreCase);
+                var existingArtists = await context.Artists.Where(a => artistNames.Contains(a.Name)).ToDictionaryAsync(a => a.Name, StringComparer.OrdinalIgnoreCase, cancellationToken);
+                var existingAlbums = await context.Albums.Where(a => albumTitles.Contains(a.Title)).ToListAsync(cancellationToken);
+                var existingGenres = await context.Genres.Where(g => genreNames.Contains(g.Name)).ToDictionaryAsync(g => g.Name, StringComparer.OrdinalIgnoreCase, cancellationToken);
 
                 // Create any new entities that don't exist yet.
                 foreach (var name in artistNames) {
@@ -1272,7 +1309,7 @@ public class LibraryService : ILibraryService {
                     await AddSongWithDetailsOptimizedAsync(context, folderId, metadata, existingArtists, existingAlbums, existingGenres);
                 }
 
-                await context.SaveChangesAsync();
+                await context.SaveChangesAsync(cancellationToken);
                 saveSucceeded = true;
             }
             catch (DbUpdateException ex) when (IsUniqueConstraintViolation(ex)) {
@@ -1282,7 +1319,7 @@ public class LibraryService : ILibraryService {
                     Trace.TraceError($"[{nameof(LibraryService)}] Batch save failed after max retries. The operation will be aborted.");
                     throw;
                 }
-                await Task.Delay(200 * retryCount);
+                await Task.Delay(200 * retryCount, cancellationToken);
             }
         }
 
@@ -1615,18 +1652,18 @@ public class LibraryService : ILibraryService {
     /// <summary>
     /// Deletes any artists, albums, or genres that are no longer referenced by any songs.
     /// </summary>
-    private async Task CleanUpOrphanedEntitiesAsync(MusicDbContext context) {
-        await context.Albums.Where(a => !a.Songs.Any()).ExecuteDeleteAsync();
+    private async Task CleanUpOrphanedEntitiesAsync(MusicDbContext context, CancellationToken cancellationToken = default) {
+        await context.Albums.Where(a => !a.Songs.Any()).ExecuteDeleteAsync(cancellationToken);
 
         var orphanedArtists = await context.Artists
             .AsNoTracking()
             .Where(a => !a.Songs.Any() && !a.Albums.Any())
             .Select(a => new { a.Id, a.LocalImageCachePath })
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
 
         if (orphanedArtists.Any()) {
             var idsToDelete = orphanedArtists.Select(a => a.Id).ToList();
-            await context.Artists.Where(a => idsToDelete.Contains(a.Id)).ExecuteDeleteAsync();
+            await context.Artists.Where(a => idsToDelete.Contains(a.Id)).ExecuteDeleteAsync(cancellationToken);
             foreach (var artist in orphanedArtists) {
                 if (!string.IsNullOrEmpty(artist.LocalImageCachePath) && _fileSystem.FileExists(artist.LocalImageCachePath)) {
                     try {
@@ -1639,7 +1676,7 @@ public class LibraryService : ILibraryService {
             }
         }
 
-        await context.Genres.Where(g => !g.Songs.Any()).ExecuteDeleteAsync();
+        await context.Genres.Where(g => !g.Songs.Any()).ExecuteDeleteAsync(cancellationToken);
     }
 
     /// <summary>

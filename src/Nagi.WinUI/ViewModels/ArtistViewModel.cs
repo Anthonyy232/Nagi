@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -10,6 +11,8 @@ using System.Threading.Tasks;
 using Nagi.Core;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using Nagi.WinUI.Navigation;
+using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
 
 namespace Nagi.WinUI.ViewModels;
@@ -32,26 +35,34 @@ public partial class ArtistViewModelItem : ObservableObject {
 /// <summary>
 /// Manages the state and logic for the artist list page, including data fetching and live updates.
 /// </summary>
-public partial class ArtistViewModel : ObservableObject {
+public partial class ArtistViewModel : ObservableObject, IDisposable {
     private readonly ILibraryService _libraryService;
     private readonly IMusicPlaybackService _musicPlaybackService;
     private readonly ISettingsService _settingsService;
     private readonly IDispatcherService _dispatcherService;
+    private readonly INavigationService _navigationService;
     private readonly Dictionary<Guid, ArtistViewModelItem> _artistLookup = new();
+    private readonly NotifyCollectionChangedEventHandler _collectionChangedHandler;
     private int _currentPage = 1;
     private const int PageSize = 250;
     private bool _isFullyLoaded;
+    private bool _isDisposed;
 
     public ArtistViewModel(
         ILibraryService libraryService,
         ISettingsService settingsService,
         IMusicPlaybackService musicPlaybackService,
-        IDispatcherService dispatcherService) {
+        IDispatcherService dispatcherService,
+        INavigationService navigationService) {
         _libraryService = libraryService;
         _settingsService = settingsService;
         _musicPlaybackService = musicPlaybackService;
         _dispatcherService = dispatcherService;
-        Artists.CollectionChanged += (s, e) => OnPropertyChanged(nameof(HasArtists));
+        _navigationService = navigationService;
+
+        // Store the handler in a field so we can reliably unsubscribe from it later.
+        _collectionChangedHandler = (s, e) => OnPropertyChanged(nameof(HasArtists));
+        Artists.CollectionChanged += _collectionChangedHandler;
     }
 
     [ObservableProperty]
@@ -67,6 +78,20 @@ public partial class ArtistViewModel : ObservableObject {
     public partial bool HasLoadError { get; set; }
 
     public bool HasArtists => Artists.Any();
+
+    /// <summary>
+    /// Navigates to the detailed view for the selected artist.
+    /// </summary>
+    [RelayCommand]
+    public void NavigateToArtistDetail(ArtistViewModelItem? artist) {
+        if (artist is null) return;
+
+        var navParam = new ArtistViewNavigationParameter {
+            ArtistId = artist.Id,
+            ArtistName = artist.Name
+        };
+        _navigationService.Navigate(typeof(ArtistViewPage), navParam);
+    }
 
     /// <summary>
     /// Clears the current queue and starts playing all songs by the selected artist.
@@ -176,4 +201,19 @@ public partial class ArtistViewModel : ObservableObject {
     /// Unsubscribes from service events to prevent memory leaks.
     /// </summary>
     public void UnsubscribeFromEvents() => _libraryService.ArtistMetadataUpdated -= OnArtistMetadataUpdated;
+
+    /// <summary>
+    /// Cleans up resources by unsubscribing from event handlers.
+    /// </summary>
+    public void Dispose() {
+        if (_isDisposed) return;
+
+        if (Artists != null) {
+            Artists.CollectionChanged -= _collectionChangedHandler;
+        }
+        _libraryService.ArtistMetadataUpdated -= OnArtistMetadataUpdated;
+
+        _isDisposed = true;
+        GC.SuppressFinalize(this);
+    }
 }

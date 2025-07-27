@@ -2,7 +2,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using System.Threading;
-using Nagi.WinUI.Navigation;
 using Nagi.WinUI.ViewModels;
 
 namespace Nagi.WinUI.Pages;
@@ -34,12 +33,15 @@ public sealed partial class AlbumPage : Page {
 
     /// <summary>
     /// Handles the page's navigated-from event.
-    /// Cancels any ongoing data loading operations to prevent background work.
+    /// Cancels any ongoing data loading operations and disposes the ViewModel.
     /// </summary>
     protected override void OnNavigatedFrom(NavigationEventArgs e) {
         base.OnNavigatedFrom(e);
         _cancellationTokenSource?.Cancel();
         _cancellationTokenSource?.Dispose();
+
+        // This is the crucial addition to prevent memory leaks from the ViewModel.
+        ViewModel.Dispose();
     }
 
     /// <summary>
@@ -48,12 +50,7 @@ public sealed partial class AlbumPage : Page {
     /// </summary>
     private void AlbumsGridView_ItemClick(object sender, ItemClickEventArgs e) {
         if (e.ClickedItem is AlbumViewModelItem clickedAlbum) {
-            var navParam = new AlbumViewNavigationParameter {
-                AlbumId = clickedAlbum.Id,
-                AlbumTitle = clickedAlbum.Title,
-                ArtistName = clickedAlbum.ArtistName
-            };
-            Frame.Navigate(typeof(AlbumViewPage), navParam);
+            ViewModel.NavigateToAlbumDetail(clickedAlbum);
         }
     }
 }

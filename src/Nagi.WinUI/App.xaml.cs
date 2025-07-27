@@ -52,10 +52,6 @@ public partial class App : Application {
         UnhandledException += OnAppUnhandledException;
         CoreApplication.Suspending += OnSuspending;
         LibVLCSharp.Core.Initialize();
-
-#if !MSIX_PACKAGE
-            VelopackApp.Build().Run();
-#endif
     }
 
     /// <summary>
@@ -305,6 +301,8 @@ public partial class App : Application {
         _micaController = null;
         _wsdqHelper?.Dispose();
         _wsdqHelper = null;
+
+        Application.Current.Exit();
     }
 
     private void OnAppUnhandledException(object sender, UnhandledExceptionEventArgs e) {

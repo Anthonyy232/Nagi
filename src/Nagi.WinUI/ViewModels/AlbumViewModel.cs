@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -9,6 +10,8 @@ using System.Threading.Tasks;
 using Nagi.Core;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
+using Nagi.WinUI.Navigation;
+using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
 
 namespace Nagi.WinUI.ViewModels;
@@ -39,17 +42,24 @@ public partial class AlbumViewModelItem : ObservableObject {
 /// <summary>
 /// Manages the state and logic for the album list page, featuring gradual data fetching.
 /// </summary>
-public partial class AlbumViewModel : ObservableObject {
+public partial class AlbumViewModel : ObservableObject, IDisposable {
     private readonly ILibraryService _libraryService;
     private readonly IMusicPlaybackService _musicPlaybackService;
+    private readonly INavigationService _navigationService;
+    private readonly NotifyCollectionChangedEventHandler _collectionChangedHandler;
     private int _currentPage = 1;
     private const int PageSize = 250;
     private bool _isFullyLoaded;
+    private bool _isDisposed;
 
-    public AlbumViewModel(ILibraryService libraryService, IMusicPlaybackService musicPlaybackService) {
+    public AlbumViewModel(ILibraryService libraryService, IMusicPlaybackService musicPlaybackService, INavigationService navigationService) {
         _libraryService = libraryService;
         _musicPlaybackService = musicPlaybackService;
-        Albums.CollectionChanged += (sender, args) => OnPropertyChanged(nameof(HasAlbums));
+        _navigationService = navigationService;
+
+        // Store the handler in a field so we can reliably unsubscribe from it later.
+        _collectionChangedHandler = (sender, args) => OnPropertyChanged(nameof(HasAlbums));
+        Albums.CollectionChanged += _collectionChangedHandler;
     }
 
     [ObservableProperty]
@@ -65,6 +75,21 @@ public partial class AlbumViewModel : ObservableObject {
     public partial bool HasLoadError { get; set; }
 
     public bool HasAlbums => Albums.Any();
+
+    /// <summary>
+    /// Navigates to the detailed view for the selected album.
+    /// </summary>
+    [RelayCommand]
+    public void NavigateToAlbumDetail(AlbumViewModelItem? album) {
+        if (album is null) return;
+
+        var navParam = new AlbumViewNavigationParameter {
+            AlbumId = album.Id,
+            AlbumTitle = album.Title,
+            ArtistName = album.ArtistName
+        };
+        _navigationService.Navigate(typeof(AlbumViewPage), navParam);
+    }
 
     /// <summary>
     /// Clears the current queue and starts playing all songs from the selected album.
@@ -142,5 +167,19 @@ public partial class AlbumViewModel : ObservableObject {
         if (pagedResult == null || Albums.Count >= pagedResult.TotalCount) {
             _isFullyLoaded = true;
         }
+    }
+
+    /// <summary>
+    /// Cleans up resources by unsubscribing from event handlers.
+    /// </summary>
+    public void Dispose() {
+        if (_isDisposed) return;
+
+        if (Albums != null) {
+            Albums.CollectionChanged -= _collectionChangedHandler;
+        }
+
+        _isDisposed = true;
+        GC.SuppressFinalize(this);
     }
 }

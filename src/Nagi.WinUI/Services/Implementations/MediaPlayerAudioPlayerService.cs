@@ -17,7 +17,7 @@ namespace Nagi.WinUI.Services.Implementations;
 /// This service integrates automatically with the System Media Transport Controls (SMTC)
 /// via the <see cref="MediaPlayer.CommandManager"/>.
 /// </summary>
-public class MediaPlayerAudioPlayerService : IAudioPlayer {
+public class MediaPlayerAudioPlayerService : IAudioPlayer, IDisposable {
     private readonly IDispatcherService _dispatcherService;
     private readonly MediaPlayer _mediaPlayer;
     private MediaPlaybackSession? _currentPlaybackSession;

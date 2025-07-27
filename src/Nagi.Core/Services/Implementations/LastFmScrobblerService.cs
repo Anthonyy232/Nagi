@@ -73,10 +73,10 @@ public class LastFmScrobblerService : ILastFmScrobblerService {
     private async Task<bool> PostToLastFmAsync(Dictionary<string, string> parameters, string apiSecret) {
         parameters["api_sig"] = CreateSignature(parameters, apiSecret);
 
-        var formContent = new FormUrlEncodedContent(parameters);
+        using var formContent = new FormUrlEncodedContent(parameters);
 
         try {
-            var response = await _httpClient.PostAsync(LastFmApiBaseUrl, formContent);
+            using var response = await _httpClient.PostAsync(LastFmApiBaseUrl, formContent);
             if (response.IsSuccessStatusCode) {
                 return true;
             }
