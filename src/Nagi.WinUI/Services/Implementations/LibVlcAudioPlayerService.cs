@@ -260,7 +260,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable {
     }
 
     private void OnMediaPlayerEncounteredError(object? sender, EventArgs e) {
-        string lastVlcError = _libVlc.LastLibVLCError;
+        string? lastVlcError = _libVlc.LastLibVLCError;
         string errorMessage = string.IsNullOrEmpty(lastVlcError)
             ? "LibVLC encountered an unspecified error."
             : $"LibVLC Error: {lastVlcError}";
