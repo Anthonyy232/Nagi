@@ -109,9 +109,10 @@
 		<!-- Updater (Unpackaged only) -->
 		<PackageReference Include="Velopack" Version="$(VelopackVersion)" Condition="$(Configuration.Contains('Unpackaged'))" />
 	</ItemGroup>
-	      
+
+
 	<ItemGroup>
-  <VlcWindowsX64IncludeFiles Include="
+		<VlcWindowsX64IncludeFiles Include="
       libvlc.dll;
       libvlccore.dll;
 
@@ -133,13 +134,15 @@
       plugins\demux\libaiff_plugin.dll;
       plugins\demux\libmpc_plugin.dll;
       plugins\demux\libts_plugin.dll;
+      plugins\demux\libes_plugin.dll;
+      plugins\demux\librawaud_plugin.dll;
 
       plugins\packetizer\libpacketizer_copy_plugin.dll;
       plugins\packetizer\libpacketizer_flac_plugin.dll;
-      plugins\packetizer\libpacketizer_h264_plugin.dll;
-      plugins\packetizer\libpacketizer_hevc_plugin.dll;
       plugins\packetizer\libpacketizer_mpegaudio_plugin.dll;
       plugins\packetizer\libpacketizer_mpeg4audio_plugin.dll;
+      plugins\packetizer\libpacketizer_h264_plugin.dll;
+      plugins\packetizer\libpacketizer_hevc_plugin.dll;
       plugins\packetizer\libpacketizer_av1_plugin.dll;
 
       plugins\codec\libavcodec_plugin.dll;
@@ -149,6 +152,11 @@
       plugins\codec\libvpx_plugin.dll;
       plugins\codec\libtheora_plugin.dll;
       plugins\codec\libdav1d_plugin.dll;
+      plugins\codec\libmpg123_plugin.dll;
+      plugins\codec\libadpcm_plugin.dll;
+      plugins\codec\libaraw_plugin.dll;
+      plugins\codec\libdmo_plugin.dll;
+      plugins\codec\libmft_plugin.dll;
 
       plugins\audio_output\libmmdevice_plugin.dll;
       plugins\audio_output\libwasapi_plugin.dll;
@@ -159,12 +167,21 @@
       plugins\audio_filter\libugly_resampler_plugin.dll;
 
       plugins\meta_engine\libtaglib_plugin.dll;
+	  
+	  plugins\stream_filter\libskiptags_plugin.dll;
+	  plugins\stream_filter\libprefetch_plugin.dll;
+	  plugins\stream_filter\libcache_read_plugin.dll;
+	  plugins\audio_filter\libscaletempo_plugin.dll;
       " />
 
-  <VlcWindowsX86IncludeFiles Include="@(VlcWindowsX64IncludeFiles)" />
-  <VlcWindowsArm64IncludeFiles Include="@(VlcWindowsX64IncludeFiles)" />
-</ItemGroup>
-	
+		<VlcWindowsX86IncludeFiles Include="@(VlcWindowsX64IncludeFiles)" />
+		<VlcWindowsArm64IncludeFiles Include="@(VlcWindowsX64IncludeFiles)" />
+	</ItemGroup>
+
+
+
+
+
 
 	<!-- =============================================================== -->
 	<!-- == File/Folder Exclusions & Inclusions                         == -->
