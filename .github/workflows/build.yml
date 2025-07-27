@@ -1,6 +1,5 @@
 name: Create Nagi Release with Velopack
 
-# This workflow triggers on any push to the 'master' branch.
 on:
   push:
     branches: [ master ]
@@ -9,7 +8,6 @@ jobs:
   build-and-release:
     runs-on: windows-latest
     
-    # This strategy matrix will run the entire job 3 times, once for each platform.
     strategy:
       matrix:
         platform: [win-x64, win-x86, win-arm64]
@@ -18,7 +16,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          # Fetches all history for all branches and tags for versioning.
           fetch-depth: 0
 
       - name: Get and Format Version from Project Properties
@@ -49,7 +46,7 @@ jobs:
           }' > src/Nagi.WinUI/appsettings.json
 
       - name: Restore Dependencies
-        run: dotnet restore src/Nagi.WinUI/Nagi.WinUI.csproj -r ${{ matrix.platform }}
+        run: dotnet restore src/Nagi.WinUI/Nagi.WinUI.csproj -c ReleaseUnpackaged -r ${{ matrix.platform }}
         env:
           GITHUB_USER: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
@@ -62,7 +59,7 @@ jobs:
           $releaseDir = "./Releases/$p"
           
           echo "Building for $p..."
-          # Now that restore is done correctly, we can use --no-restore to speed things up.
+          # Now that restore is fully synchronized, --no-restore is safe and efficient.
           dotnet publish src/Nagi.WinUI/Nagi.WinUI.csproj -c ReleaseUnpackaged -r $p --self-contained -o $publishDir --no-restore
           
           echo "Packaging for $p..."
