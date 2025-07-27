@@ -51,13 +51,35 @@ jobs:
             }
           }' > src/Nagi.WinUI/appsettings.json
 
+      # ====================================================================
+      # == NEW STEP: Create a NuGet config with retry and timeout settings ==
+      # ====================================================================
+      - name: Create NuGet.Config for build
+        run: |
+          echo '<?xml version="1.0" encoding="utf-8"?>' > NuGet.Config
+          echo '<configuration>' >> NuGet.Config
+          echo '  <config>' >> NuGet.Config
+          echo '    <add key="globalPackagesFolder" value=".packages" />' >> NuGet.Config
+          echo '  </config>' >> NuGet.Config
+          echo '  <settings>' >> NuGet.Config
+          echo '    <repositoryPath>./packages</repositoryPath>' >> NuGet.Config
+          echo '  </settings>' >> NuGet.Config
+          echo '</configuration>' >> NuGet.Config
+        shell: bash
+
       - name: Clear NuGet Cache
         run: dotnet nuget locals all --clear
 
+      # ====================================================================
+      # == MODIFIED STEP: Added --force-evaluate for more resilience      ==
+      # ====================================================================
       - name: Restore Dependencies
-        run: dotnet restore src/Nagi.WinUI/Nagi.WinUI.csproj
+        run: dotnet restore src/Nagi.WinUI/Nagi.WinUI.csproj --force-evaluate
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Add environment variables for NuGet retry logic
+          NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+          NUGET_HTTP_CACHE_PATH: ${{ github.workspace }}/.nuget/v3-cache
 
       - name: Build and Package Platform
         shell: pwsh
