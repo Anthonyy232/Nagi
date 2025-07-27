@@ -113,21 +113,6 @@
 	<!-- =============================================================== -->
 	<!-- == File/Folder Exclusions & Inclusions                         == -->
 	<!-- =============================================================== -->
-	<ItemGroup>
-		<!-- Exclude specific folders from build -->
-		<Compile Remove="Assets\Raws\**" />
-		<Content Remove="Assets\Raws\**" />
-		<EmbeddedResource Remove="Assets\Raws\**" />
-		<None Remove="Assets\Raws\**" />
-		<Page Remove="Assets\Raws\**" />
-		<PRIResource Remove="Assets\Raws\**" />
-
-		<Compile Remove="Interfaces\**" />
-		<EmbeddedResource Remove="Interfaces\**" />
-		<None Remove="Interfaces\**" />
-		<Page Remove="Interfaces\**" />
-		<PRIResource Remove="Interfaces\**" />
-	</ItemGroup>
 
 	<ItemGroup Condition="!$(Configuration.Contains('Unpackaged'))">
 		<!-- MSIX Assets -->
