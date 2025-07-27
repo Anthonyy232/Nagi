@@ -1,3 +1,4 @@
+# Workflow name for easy identification in the GitHub Actions UI.
 name: Create Nagi Release with Velopack
 
 # This workflow triggers on any push to the 'master' branch.
@@ -9,20 +10,18 @@ jobs:
   build-and-release:
     runs-on: windows-latest
     
-    # This strategy matrix will run the entire job 3 times, once for each platform.
     strategy:
       matrix:
         platform: [win-x64, win-x86, win-arm64]
 
     permissions:
-      contents: read  # Needed for actions/checkout
-      packages: read  # Needed to read from GitHub Packages
+      contents: read
+      packages: read
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          # Fetches all history for all branches and tags for versioning.
           fetch-depth: 0
 
       - name: Get and Format Version from Project Properties
@@ -52,10 +51,12 @@ jobs:
             }
           }' > src/Nagi.WinUI/appsettings.json
 
+      - name: Clear NuGet Cache
+        run: dotnet nuget locals all --clear
+
       - name: Restore Dependencies
         run: dotnet restore src/Nagi.WinUI/Nagi.WinUI.csproj
         env:
-          # This provides the GITHUB_TOKEN to match the %GITHUB_TOKEN% in nuget.config
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and Package Platform
