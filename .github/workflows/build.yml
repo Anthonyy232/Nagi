@@ -1,27 +1,30 @@
 # Workflow name for easy identification in the GitHub Actions UI.
 name: Create Nagi Release with Velopack
 
-# This workflow triggers on any push to the 'master' branch.
 on:
   push:
     branches: [ master ]
 
 jobs:
   build-and-release:
+    # Run on a Windows machine, which is required for WinUI builds.
     runs-on: windows-latest
     
+    # Run the job for each platform in parallel.
     strategy:
       matrix:
         platform: [win-x64, win-x86, win-arm64]
 
+    # Grant the GITHUB_TOKEN the permissions it needs. This is essential.
     permissions:
-      contents: read
-      packages: read
+      contents: read  # Required for actions/checkout to read the repo.
+      packages: read  # Required to read from your GitHub Packages feed.
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
+          # Fetches all history, which can be useful for versioning tools.
           fetch-depth: 0
 
       - name: Get and Format Version from Project Properties
@@ -51,35 +54,16 @@ jobs:
             }
           }' > src/Nagi.WinUI/appsettings.json
 
-      # ====================================================================
-      # == NEW STEP: Create a NuGet config with retry and timeout settings ==
-      # ====================================================================
-      - name: Create NuGet.Config for build
-        run: |
-          echo '<?xml version="1.0" encoding="utf-8"?>' > NuGet.Config
-          echo '<configuration>' >> NuGet.Config
-          echo '  <config>' >> NuGet.Config
-          echo '    <add key="globalPackagesFolder" value=".packages" />' >> NuGet.Config
-          echo '  </config>' >> NuGet.Config
-          echo '  <settings>' >> NuGet.Config
-          echo '    <repositoryPath>./packages</repositoryPath>' >> NuGet.Config
-          echo '  </settings>' >> NuGet.Config
-          echo '</configuration>' >> NuGet.Config
-        shell: bash
-
-      - name: Clear NuGet Cache
+      - name: Clear NuGet Caches
+        # This is a good practice to prevent stale or corrupted cache issues.
         run: dotnet nuget locals all --clear
 
-      # ====================================================================
-      # == MODIFIED STEP: Added --force-evaluate for more resilience      ==
-      # ====================================================================
       - name: Restore Dependencies
-        run: dotnet restore src/Nagi.WinUI/Nagi.WinUI.csproj --force-evaluate
+        # This step now correctly uses the comprehensive nuget.config file.
+        run: dotnet restore src/Nagi.WinUI/Nagi.WinUI.csproj
         env:
+          # Provide the built-in token to match the %GITHUB_TOKEN% placeholder.
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # Add environment variables for NuGet retry logic
-          NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
-          NUGET_HTTP_CACHE_PATH: ${{ github.workspace }}/.nuget/v3-cache
 
       - name: Build and Package Platform
         shell: pwsh
@@ -89,6 +73,7 @@ jobs:
           $releaseDir = "./Releases/$p"
           
           echo "Building for $p..."
+          # Use --no-restore as we have a dedicated restore step.
           dotnet publish src/Nagi.WinUI/Nagi.WinUI.csproj -c ReleaseUnpackaged -r $p --self-contained -o $publishDir --no-restore
           
           echo "Packaging for $p..."
