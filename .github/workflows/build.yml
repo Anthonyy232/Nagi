@@ -48,17 +48,13 @@ jobs:
             }
           }' > src/Nagi.WinUI/appsettings.json
 
-      # ====================================================================
-      # == NEW STEP: Restore dependencies using the configured nuget.config ==
-      # ====================================================================
       - name: Restore Dependencies
-        run: dotnet restore src/Nagi.WinUI/Nagi.WinUI.csproj
+        run: dotnet restore src/Nagi.WinUI/Nagi.WinUI.csproj -r ${{ matrix.platform }}
         env:
           GITHUB_USER: ${{ github.actor }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
 
       - name: Build and Package Platform
-        # This step now runs once for each platform in the matrix.
         shell: pwsh
         run: |
           $p = "${{ matrix.platform }}"
@@ -66,18 +62,14 @@ jobs:
           $releaseDir = "./Releases/$p"
           
           echo "Building for $p..."
-          # <-- CHANGE: Added --no-restore since we restored in the previous step
+          # Now that restore is done correctly, we can use --no-restore to speed things up.
           dotnet publish src/Nagi.WinUI/Nagi.WinUI.csproj -c ReleaseUnpackaged -r $p --self-contained -o $publishDir --no-restore
           
           echo "Packaging for $p..."
-          # NOTE: --mainExe is still Nagi.exe because of <AssemblyName> in your csproj
           vpk pack --packId Nagi --packVersion ${{ steps.get_version.outputs.version }} --mainExe Nagi.exe --packDir $publishDir -o $releaseDir --channel $p --runtime $p
 
       - name: Upload Build Artifact
-        # This step also runs for each platform, creating a separate artifact.
         uses: actions/upload-artifact@v4
         with:
-          # The artifact name is now unique for each platform.
           name: Nagi-Release-${{ steps.get_version.outputs.version }}-${{ matrix.platform }}
-          # The path points to the specific release directory for that platform.
           path: ./Releases/${{ matrix.platform }}/
