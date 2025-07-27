@@ -1,8 +1,5 @@
 ﻿using Nagi.Core.Models;
 using Nagi.Core.Services.Data;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Nagi.Core.Services.Abstractions;
 
@@ -77,39 +74,44 @@ public interface IMusicPlaybackService : IDisposable {
     bool IsTransitioningTrack { get; }
 
     /// <summary>
-    /// Fires when the current track changes or playback stops.
+    /// Occurs when the current track changes or playback stops.
     /// </summary>
     event Action? TrackChanged;
 
     /// <summary>
-    /// Fires when the playback state changes (e.g., playing, paused).
+    /// Occurs when the playback state changes (e.g., playing, paused).
     /// </summary>
     event Action? PlaybackStateChanged;
 
     /// <summary>
-    /// Fires when the volume or mute state changes.
+    /// Occurs when the volume or mute state changes.
     /// </summary>
     event Action? VolumeStateChanged;
 
     /// <summary>
-    /// Fires when the shuffle mode is enabled or disabled.
+    /// Occurs when the shuffle mode is enabled or disabled.
     /// </summary>
     event Action? ShuffleModeChanged;
 
     /// <summary>
-    /// Fires when the repeat mode changes.
+    /// Occurs when the repeat mode changes.
     /// </summary>
     event Action? RepeatModeChanged;
 
     /// <summary>
-    /// Fires when the playback queue is modified (e.g., songs added, removed, reordered).
+    /// Occurs when the playback queue is modified (e.g., songs added, removed, reordered).
     /// </summary>
     event Action? QueueChanged;
 
     /// <summary>
-    /// Fires as the playback position of the current track changes.
+    /// Occurs as the playback position of the current track changes.
     /// </summary>
     event Action? PositionChanged;
+
+    /// <summary>
+    /// Occurs when the duration of the current track becomes known.
+    /// </summary>
+    event Action? DurationChanged;
 
     /// <summary>
     /// Initializes the service, loading settings and saved playback state.
@@ -119,6 +121,7 @@ public interface IMusicPlaybackService : IDisposable {
     /// <summary>
     /// Plays a single song, replacing the current queue.
     /// </summary>
+    /// <param name="song">The song to play.</param>
     Task PlayAsync(Song song);
 
     /// <summary>
@@ -152,12 +155,37 @@ public interface IMusicPlaybackService : IDisposable {
     /// <summary>
     /// Seeks to a specific position in the current track.
     /// </summary>
+    /// <param name="position">The position to seek to.</param>
     Task SeekAsync(TimeSpan position);
 
+    /// <summary>
+    /// Creates a new queue from all songs by the specified album and starts playback.
+    /// </summary>
+    /// <param name="albumId">The ID of the album to play.</param>
     Task PlayAlbumAsync(Guid albumId);
+
+    /// <summary>
+    /// Creates a new queue from all songs by the specified artist and starts playback.
+    /// </summary>
+    /// <param name="artistId">The ID of the artist to play.</param>
     Task PlayArtistAsync(Guid artistId);
+
+    /// <summary>
+    /// Creates a new queue from all songs in the specified folder and starts playback.
+    /// </summary>
+    /// <param name="folderId">The ID of the folder to play.</param>
     Task PlayFolderAsync(Guid folderId);
+
+    /// <summary>
+    /// Creates a new queue from the specified playlist and starts playback.
+    /// </summary>
+    /// <param name="playlistId">The ID of the playlist to play.</param>
     Task PlayPlaylistAsync(Guid playlistId);
+
+    /// <summary>
+    /// Creates a new queue from all songs of the specified genre and starts playback.
+    /// </summary>
+    /// <param name="genreId">The ID of the genre to play.</param>
     Task PlayGenreAsync(Guid genreId);
 
     /// <summary>
@@ -174,18 +202,48 @@ public interface IMusicPlaybackService : IDisposable {
     /// <summary>
     /// Enables or disables shuffle mode.
     /// </summary>
+    /// <param name="enable">True to enable shuffle, false to disable.</param>
     Task SetShuffleAsync(bool enable);
 
     /// <summary>
     /// Cycles through the available repeat modes.
     /// </summary>
+    /// <param name="mode">The desired repeat mode.</param>
     Task SetRepeatModeAsync(RepeatMode mode);
 
+    /// <summary>
+    /// Adds a song to the end of the current queue.
+    /// </summary>
+    /// <param name="song">The song to add.</param>
     Task AddToQueueAsync(Song song);
+
+    /// <summary>
+    /// Adds a collection of songs to the end of the current queue.
+    /// </summary>
+    /// <param name="songs">The songs to add.</param>
     Task AddRangeToQueueAsync(IEnumerable<Song> songs);
+
+    /// <summary>
+    /// Inserts a song into the queue immediately after the current track.
+    /// </summary>
+    /// <param name="song">The song to play next.</param>
     Task PlayNextAsync(Song song);
+
+    /// <summary>
+    /// Removes a song from the queue.
+    /// </summary>
+    /// <param name="song">The song to remove.</param>
     Task RemoveFromQueueAsync(Song song);
+
+    /// <summary>
+    /// Jumps to and plays a specific item in the queue.
+    /// </summary>
+    /// <param name="originalQueueIndex">The index of the song in the original, unshuffled queue.</param>
     Task PlayQueueItemAsync(int originalQueueIndex);
+
+    /// <summary>
+    /// Stops playback and clears the entire queue.
+    /// </summary>
     Task ClearQueueAsync();
 
     /// <summary>

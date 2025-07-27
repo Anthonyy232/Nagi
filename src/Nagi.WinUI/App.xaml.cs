@@ -29,8 +29,8 @@ using WinRT;
 using UnhandledExceptionEventArgs = Microsoft.UI.Xaml.UnhandledExceptionEventArgs;
 
 #if !MSIX_PACKAGE
-using Velopack;
-using Velopack.Sources;
+    using Velopack;
+    using Velopack.Sources;
 #endif
 
 namespace Nagi.WinUI;
@@ -51,10 +51,10 @@ public partial class App : Application {
         InitializeComponent();
         UnhandledException += OnAppUnhandledException;
         CoreApplication.Suspending += OnSuspending;
-        LibVLCSharp.Shared.Core.Initialize();
+        LibVLCSharp.Core.Initialize();
 
 #if !MSIX_PACKAGE
-        VelopackApp.Build().Run();
+            VelopackApp.Build().Run();
 #endif
     }
 
@@ -153,12 +153,12 @@ public partial class App : Application {
         services.AddSingleton<IPresenceService, LastFmPresenceService>();
         services.AddSingleton<IUpdateService, VelopackUpdateService>();
 
-#if !MSIX_PACKAGE
-        services.AddSingleton(provider => {
-            var source = new GithubSource("https://github.com/Anthonyy232/Nagi", null, false);
-            return new UpdateManager(source);
-        });
-#endif
+        #if !MSIX_PACKAGE
+                services.AddSingleton(provider => {
+                    var source = new GithubSource("https://github.com/Anthonyy232/Nagi", null, false);
+                    return new UpdateManager(source);
+                });
+        #endif
     }
 
     // Registers WinUI-specific services for UI interaction, navigation, and platform integration.
@@ -173,7 +173,7 @@ public partial class App : Application {
         services.AddSingleton<IAppInfoService, AppInfoService>();
         services.AddSingleton<INavigationService, NavigationService>();
         services.AddSingleton<ITrayPopupService, TrayPopupService>();
-        services.AddSingleton<IAudioPlayer>(provider => new MediaPlayerAudioPlayerService(provider.GetRequiredService<IDispatcherService>()));
+        services.AddSingleton<IAudioPlayer>(provider => new LibVlcAudioPlayerService(provider.GetRequiredService<IDispatcherService>()));
     }
 
     // Registers ViewModels used throughout the application.
@@ -456,10 +456,10 @@ public partial class App : Application {
     private async Task CheckForUpdatesOnStartupAsync() {
         if (Services is null) return;
         try {
-#if !MSIX_PACKAGE
+        #if !MSIX_PACKAGE
             var updateService = Services.GetRequiredService<IUpdateService>();
             await updateService.CheckForUpdatesOnStartupAsync();
-#endif
+        #endif
         }
         catch (Exception ex) {
             Debug.WriteLine($"[ERROR] App: Failed during startup update check. {ex.Message}");
