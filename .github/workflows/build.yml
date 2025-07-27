@@ -1,39 +1,48 @@
 # Workflow name for easy identification in the GitHub Actions UI.
 name: Create Nagi Release with Velopack
 
+# Triggers the workflow on any push to the master branch.
 on:
   push:
     branches: [ master ]
 
 jobs:
   build-and-release:
+    # A descriptive name for the job, incorporating the build matrix strategy.
+    name: Build & Release (${{ matrix.platform }})
+    
     # Run on a Windows machine, which is required for WinUI builds.
     runs-on: windows-latest
     
-    # Run the job for each platform in parallel.
+    # Define a build matrix to run jobs for each target platform in parallel.
     strategy:
+      fail-fast: false # Allows other jobs to continue even if one fails.
       matrix:
         platform: [win-x64, win-x86, win-arm64]
 
-    # Grant the GITHUB_TOKEN the permissions it needs. This is essential.
+    # Grant the GITHUB_TOKEN the minimum permissions required for the workflow.
+    # This is a security best practice.
     permissions:
       contents: read  # Required for actions/checkout to read the repo.
-      packages: read  # Required to read from your GitHub Packages feed.
+      packages: read  # Good practice, though we override the token for restore.
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          # Fetches all history, which can be useful for versioning tools.
+          # Fetches all history, required for versioning tools that rely on git history.
           fetch-depth: 0
 
       - name: Get and Format Version from Project Properties
         id: get_version
         shell: bash
         run: |
+          # Extracts the four-part version from Directory.Build.props.
           four_part_version=$(grep -oE '<AppxPackageVersion>[^<]+' Directory.Build.props | sed 's/<AppxPackageVersion>//')
+          # Velopack uses a three-part semantic version, so we remove the last part.
           three_part_version=$(echo "$four_part_version" | sed 's/\.[0-9]\+$//')
           echo "version=$three_part_version" >> $GITHUB_OUTPUT
+          echo "Extracted version: $three_part_version"
 
       - name: Install .NET SDK
         uses: actions/setup-dotnet@v4
@@ -46,13 +55,17 @@ jobs:
       - name: Create appsettings.json from Secrets
         shell: pwsh
         run: |
-          echo '{
+          $appSettingsContent = @'
+          {
             "NagiApiServer": {
               "Url": "https://nagiappapi.azure-api.net/nagi",
               "ApiKey": "${{ secrets.NAGI_API_KEY }}",
               "SubscriptionKey": "${{ secrets.NAGI_SUBSCRIPTION_KEY }}"
             }
-          }' > src/Nagi.WinUI/appsettings.json
+          }
+          '@
+          $appSettingsContent | Out-File -FilePath "src/Nagi.WinUI/appsettings.json" -Encoding utf8
+          echo "appsettings.json created successfully."
 
       - name: Clear NuGet Caches
         run: dotnet nuget locals all --clear
@@ -60,12 +73,13 @@ jobs:
       - name: Restore Dependencies
         run: dotnet restore src/Nagi.WinUI/Nagi.WinUI.csproj
         env:
-          # Provide the built-in token to match the %GITHUB_TOKEN% placeholder.
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # Provide the actor's name to match the %GITHUB_ACTOR% placeholder.
+          # THE FIX: Use the Personal Access Token with read:packages scope.
+          # This token has permission to read packages from your personal feed.
+          GITHUB_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
+          # The actor's name is still required for the username placeholder in nuget.config.
           GITHUB_ACTOR: ${{ github.actor }}
 
-      - name: Build and Package Platform
+      - name: Build and Package for ${{ matrix.platform }}
         shell: pwsh
         run: |
           $p = "${{ matrix.platform }}"
@@ -73,10 +87,10 @@ jobs:
           $releaseDir = "./Releases/$p"
           
           echo "Building for $p..."
-          # Use --no-restore as we have a dedicated restore step.
+          # Use --no-restore as we have a dedicated and explicit restore step.
           dotnet publish src/Nagi.WinUI/Nagi.WinUI.csproj -c ReleaseUnpackaged -r $p --self-contained -o $publishDir --no-restore
           
-          echo "Packaging for $p..."
+          echo "Packaging for $p with Velopack..."
           vpk pack --packId Nagi --packVersion ${{ steps.get_version.outputs.version }} --mainExe Nagi.exe --packDir $publishDir -o $releaseDir --channel $p --runtime $p
 
       - name: Upload Build Artifact
