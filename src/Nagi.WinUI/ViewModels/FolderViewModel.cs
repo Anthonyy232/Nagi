@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,6 +11,8 @@ using Nagi.Core;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using Nagi.WinUI.Navigation;
+using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
 using Nagi.WinUI.Services.Implementations;
 
@@ -55,18 +58,23 @@ public partial class FolderViewModelItem : ObservableObject {
 /// Manages the collection of music library folders and orchestrates library operations
 /// such as adding, deleting, and scanning folders.
 /// </summary>
-public partial class FolderViewModel : ObservableObject {
+public partial class FolderViewModel : ObservableObject, IDisposable {
     private readonly ILibraryService _libraryService;
     private readonly IMusicPlaybackService _musicPlaybackService;
+    private readonly INavigationService _navigationService;
     private readonly PlayerViewModel _playerViewModel;
+    private readonly NotifyCollectionChangedEventHandler _collectionChangedHandler;
+    private bool _isDisposed;
 
-    public FolderViewModel(ILibraryService libraryService, PlayerViewModel playerViewModel, IMusicPlaybackService musicPlaybackService) {
+    public FolderViewModel(ILibraryService libraryService, PlayerViewModel playerViewModel, IMusicPlaybackService musicPlaybackService, INavigationService navigationService) {
         _libraryService = libraryService;
         _playerViewModel = playerViewModel;
         _musicPlaybackService = musicPlaybackService;
+        _navigationService = navigationService;
 
-        // Ensure the HasFolders property is updated whenever the collection changes.
-        Folders.CollectionChanged += (s, e) => OnPropertyChanged(nameof(HasFolders));
+        // Store the handler in a field so we can reliably unsubscribe from it later.
+        _collectionChangedHandler = (s, e) => OnPropertyChanged(nameof(HasFolders));
+        Folders.CollectionChanged += _collectionChangedHandler;
     }
 
     [ObservableProperty]
@@ -96,6 +104,20 @@ public partial class FolderViewModel : ObservableObject {
     /// Gets a value indicating whether there are any folders in the library.
     /// </summary>
     public bool HasFolders => Folders.Any();
+
+    /// <summary>
+    /// Navigates to the song list for the selected folder.
+    /// </summary>
+    [RelayCommand]
+    public void NavigateToFolderDetail(FolderViewModelItem? folder) {
+        if (folder is null) return;
+
+        var navParam = new FolderSongViewNavigationParameter {
+            Title = folder.Name,
+            FolderId = folder.Id
+        };
+        _navigationService.Navigate(typeof(FolderSongViewPage), navParam);
+    }
 
     /// <summary>
     /// Clears the current queue and starts playing all songs from the selected folder.
@@ -313,5 +335,19 @@ public partial class FolderViewModel : ObservableObject {
             _playerViewModel.IsGlobalOperationInProgress = false;
             _playerViewModel.IsGlobalOperationIndeterminate = false;
         }
+    }
+
+    /// <summary>
+    /// Cleans up resources by unsubscribing from event handlers.
+    /// </summary>
+    public void Dispose() {
+        if (_isDisposed) return;
+
+        if (Folders != null) {
+            Folders.CollectionChanged -= _collectionChangedHandler;
+        }
+
+        _isDisposed = true;
+        GC.SuppressFinalize(this);
     }
 }

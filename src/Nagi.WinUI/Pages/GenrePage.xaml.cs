@@ -18,6 +18,8 @@ public sealed partial class GenrePage : Page {
     public GenrePage() {
         InitializeComponent();
         ViewModel = App.Services!.GetRequiredService<GenreViewModel>();
+        // Set the DataContext for XAML bindings.
+        DataContext = ViewModel;
     }
 
     /// <summary>
@@ -33,13 +35,17 @@ public sealed partial class GenrePage : Page {
     }
 
     /// <summary>
-    /// Handles the page's navigated-from event. Cancels any ongoing data loading operations.
+    /// Handles the page's navigated-from event. Cancels any ongoing data loading operations
+    /// and disposes the ViewModel to prevent memory leaks.
     /// </summary>
     protected override void OnNavigatedFrom(NavigationEventArgs e) {
         base.OnNavigatedFrom(e);
         _cancellationTokenSource?.Cancel();
         _cancellationTokenSource?.Dispose();
         _cancellationTokenSource = null;
+
+        // This is the crucial addition to prevent memory leaks from the ViewModel.
+        ViewModel.Dispose();
     }
 
     /// <summary>
@@ -47,11 +53,7 @@ public sealed partial class GenrePage : Page {
     /// </summary>
     private void GenresGridView_ItemClick(object sender, ItemClickEventArgs e) {
         if (e.ClickedItem is GenreViewModelItem clickedGenre) {
-            var navParam = new GenreViewNavigationParameter {
-                GenreId = clickedGenre.Id,
-                GenreName = clickedGenre.Name
-            };
-            Frame.Navigate(typeof(GenreViewPage), navParam);
+            ViewModel.NavigateToGenreDetail(clickedGenre);
         }
     }
 }

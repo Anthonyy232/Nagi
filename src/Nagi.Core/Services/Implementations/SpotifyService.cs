@@ -11,12 +11,12 @@ using System.Threading.Tasks;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 
-namespace Nagi.WinUI.Services.Implementations;
+namespace Nagi.Core.Services.Implementations;
 
 /// <summary>
 /// A service for interacting with the Spotify Web API, including token management and data retrieval.
 /// </summary>
-public class SpotifyService : ISpotifyService {
+public class SpotifyService : ISpotifyService, IDisposable {
     private const string SpotifyAccountsBaseUrl = "https://accounts.spotify.com/";
     private const string SpotifyApiBaseUrl = "https://api.spotify.com/v1/";
     private const string ApiKeyName = "spotify";
@@ -30,6 +30,7 @@ public class SpotifyService : ISpotifyService {
 
     // A circuit breaker flag to permanently disable API calls for the session if a rate limit is hit.
     private bool _isApiPermanentlyDisabled;
+    private bool _isDisposed;
 
     public SpotifyService(IHttpClientFactory httpClientFactory, IApiKeyService apiKeyService) {
         _httpClient = httpClientFactory.CreateClient();
@@ -174,5 +175,16 @@ public class SpotifyService : ISpotifyService {
             Debug.WriteLine($"Exception while fetching Spotify access token: {ex.Message}");
             return null;
         }
+    }
+
+    /// <summary>
+    /// Releases the unmanaged resources used by the <see cref="SpotifyService"/> and optionally releases the managed resources.
+    /// </summary>
+    public void Dispose() {
+        if (_isDisposed) return;
+
+        _httpClient.Dispose();
+        _isDisposed = true;
+        GC.SuppressFinalize(this);
     }
 }

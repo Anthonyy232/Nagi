@@ -1,6 +1,6 @@
-﻿using Microsoft.UI.Xaml;
-using System;
+﻿using System;
 using Windows.Graphics;
+using Microsoft.UI.Xaml;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Popups;
 using Nagi.WinUI.Services.Abstractions;
@@ -13,7 +13,7 @@ namespace Nagi.WinUI.Services.Implementations;
 /// This service handles creating, showing, hiding, and animating the popup,
 /// ensuring it is correctly positioned relative to the cursor and screen work area.
 /// </summary>
-public class TrayPopupService : ITrayPopupService {
+public class TrayPopupService : ITrayPopupService, IDisposable {
     // Vertical distance between the cursor and the popup window.
     private const int VERTICAL_OFFSET = 24;
     // Time in milliseconds to ignore hide/show requests after deactivation to prevent flickering.
@@ -27,12 +27,16 @@ public class TrayPopupService : ITrayPopupService {
     private TrayPopup? _popupWindow;
     private uint _lastDeactivatedTime;
     private bool _isAnimating;
+    private bool _isDisposed;
 
     public TrayPopupService(IWin32InteropService win32InteropService) {
         _win32 = win32InteropService;
     }
 
     public void ShowOrHidePopup() {
+        // Prevent actions if the service has been disposed.
+        if (_isDisposed) return;
+
         // Prevent rapid toggling or actions during an animation.
         if (_isAnimating || (_win32.GetTickCount() - _lastDeactivatedTime < DEACTIVATION_DEBOUNCE_MS)) {
             return;
@@ -73,8 +77,8 @@ public class TrayPopupService : ITrayPopupService {
         // Center the popup horizontally on the cursor.
         int finalX = cursorPosition.X - (finalWidth / 2);
         // Clamp the position to ensure it stays within the screen's work area.
-        finalX = (int) Math.Max(workArea.Left, finalX);
-        finalX = (int) Math.Min(workArea.Right - finalWidth, finalX);
+        finalX = (int)Math.Max(workArea.Left, finalX);
+        finalX = (int)Math.Min(workArea.Right - finalWidth, finalX);
 
         // Position the popup above the cursor by default.
         int finalY = cursorPosition.Y - finalHeight - VERTICAL_OFFSET;
@@ -95,11 +99,34 @@ public class TrayPopupService : ITrayPopupService {
         var currentTheme = mainContent?.ActualTheme ?? ElementTheme.Default;
         _popupWindow = new TrayPopup(currentTheme);
         _popupWindow.Deactivated += OnPopupDeactivated;
-        _popupWindow.Closed += (s, e) => { _popupWindow = null; };
+        _popupWindow.Closed += OnPopupWindowClosed;
     }
 
     private void OnPopupDeactivated(object? sender, EventArgs e) {
         _lastDeactivatedTime = _win32.GetTickCount();
         HidePopup();
+    }
+
+    private void OnPopupWindowClosed(object? sender, WindowEventArgs args) {
+        // When the window is closed, we must clean up our references to it.
+        if (sender is TrayPopup popup) {
+            popup.Deactivated -= OnPopupDeactivated;
+            popup.Closed -= OnPopupWindowClosed;
+            _popupWindow = null;
+        }
+    }
+
+    /// <summary>
+    /// Cleans up resources by ensuring the popup window is closed.
+    /// </summary>
+    public void Dispose() {
+        if (_isDisposed) return;
+
+        // Close the window if it exists. The OnPopupWindowClosed event handler
+        // will take care of unsubscribing from events and nulling out the reference.
+        _popupWindow?.Close();
+
+        _isDisposed = true;
+        GC.SuppressFinalize(this);
     }
 }

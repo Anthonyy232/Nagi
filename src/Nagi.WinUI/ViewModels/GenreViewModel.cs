@@ -2,12 +2,15 @@
 using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Nagi.Core;
 using Nagi.Core.Services.Abstractions;
+using Nagi.WinUI.Navigation;
+using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
 
 namespace Nagi.WinUI.ViewModels;
@@ -26,14 +29,21 @@ public partial class GenreViewModelItem : ObservableObject {
 /// <summary>
 /// Manages the state and logic for the genre list page.
 /// </summary>
-public partial class GenreViewModel : ObservableObject {
+public partial class GenreViewModel : ObservableObject, IDisposable {
     private readonly ILibraryService _libraryService;
     private readonly IMusicPlaybackService _musicPlaybackService;
+    private readonly INavigationService _navigationService;
+    private readonly NotifyCollectionChangedEventHandler _collectionChangedHandler;
+    private bool _isDisposed;
 
-    public GenreViewModel(ILibraryService libraryService, IMusicPlaybackService musicPlaybackService) {
+    public GenreViewModel(ILibraryService libraryService, IMusicPlaybackService musicPlaybackService, INavigationService navigationService) {
         _libraryService = libraryService;
         _musicPlaybackService = musicPlaybackService;
-        Genres.CollectionChanged += (s, e) => OnPropertyChanged(nameof(HasGenres));
+        _navigationService = navigationService;
+
+        // Store the handler in a field so we can reliably unsubscribe from it later.
+        _collectionChangedHandler = (s, e) => OnPropertyChanged(nameof(HasGenres));
+        Genres.CollectionChanged += _collectionChangedHandler;
     }
 
     [ObservableProperty]
@@ -49,6 +59,20 @@ public partial class GenreViewModel : ObservableObject {
     /// Gets a value indicating whether there are any genres to display.
     /// </summary>
     public bool HasGenres => Genres.Any();
+
+    /// <summary>
+    /// Navigates to the detailed view for the selected genre.
+    /// </summary>
+    [RelayCommand]
+    public void NavigateToGenreDetail(GenreViewModelItem? genre) {
+        if (genre is null) return;
+
+        var navParam = new GenreViewNavigationParameter {
+            GenreId = genre.Id,
+            GenreName = genre.Name
+        };
+        _navigationService.Navigate(typeof(GenreViewPage), navParam);
+    }
 
     /// <summary>
     /// Asynchronously loads all genres from the library.
@@ -99,5 +123,19 @@ public partial class GenreViewModel : ObservableObject {
             // This is a critical failure as it directly impacts core user functionality.
             Debug.WriteLine($"[CRITICAL] Failed to play genre {genreId}: {ex}");
         }
+    }
+
+    /// <summary>
+    /// Cleans up resources by unsubscribing from event handlers.
+    /// </summary>
+    public void Dispose() {
+        if (_isDisposed) return;
+
+        if (Genres != null) {
+            Genres.CollectionChanged -= _collectionChangedHandler;
+        }
+
+        _isDisposed = true;
+        GC.SuppressFinalize(this);
     }
 }

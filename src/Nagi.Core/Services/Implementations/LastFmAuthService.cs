@@ -44,7 +44,7 @@ public class LastFmAuthService : ILastFmAuthService {
         var requestUrl = $"{LastFmApiBaseUrl}?method=auth.getToken&api_key={apiKey}&api_sig={signature}&format=json";
 
         try {
-            var response = await _httpClient.GetAsync(requestUrl);
+            using var response = await _httpClient.GetAsync(requestUrl);
             var content = await response.Content.ReadAsStringAsync();
 
             if (!response.IsSuccessStatusCode) {
@@ -88,7 +88,7 @@ public class LastFmAuthService : ILastFmAuthService {
         var requestUrl = $"{LastFmApiBaseUrl}?method=auth.getSession&api_key={apiKey}&token={token}&api_sig={signature}&format=json";
 
         try {
-            var response = await _httpClient.GetAsync(requestUrl);
+            using var response = await _httpClient.GetAsync(requestUrl);
             var content = await response.Content.ReadAsStringAsync();
 
             if (!response.IsSuccessStatusCode) {

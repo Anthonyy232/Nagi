@@ -2,12 +2,15 @@
 using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Nagi.Core;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
+using Nagi.WinUI.Navigation;
+using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
 
 namespace Nagi.WinUI.ViewModels;
@@ -53,14 +56,21 @@ public partial class PlaylistViewModelItem : ObservableObject {
 /// <summary>
 ///     ViewModel for managing the collection of playlists.
 /// </summary>
-public partial class PlaylistViewModel : ObservableObject {
+public partial class PlaylistViewModel : ObservableObject, IDisposable {
     private readonly ILibraryService _libraryService;
     private readonly IMusicPlaybackService _musicPlaybackService;
+    private readonly INavigationService _navigationService;
+    private readonly NotifyCollectionChangedEventHandler _collectionChangedHandler;
+    private bool _isDisposed;
 
-    public PlaylistViewModel(ILibraryService libraryService, IMusicPlaybackService musicPlaybackService) {
+    public PlaylistViewModel(ILibraryService libraryService, IMusicPlaybackService musicPlaybackService, INavigationService navigationService) {
         _libraryService = libraryService;
         _musicPlaybackService = musicPlaybackService;
-        Playlists.CollectionChanged += (s, e) => OnPropertyChanged(nameof(HasPlaylists));
+        _navigationService = navigationService;
+
+        // Store the handler in a field so we can reliably unsubscribe from it later.
+        _collectionChangedHandler = (s, e) => OnPropertyChanged(nameof(HasPlaylists));
+        Playlists.CollectionChanged += _collectionChangedHandler;
     }
 
     [ObservableProperty] public partial ObservableCollection<PlaylistViewModelItem> Playlists { get; set; } = new();
@@ -93,6 +103,20 @@ public partial class PlaylistViewModel : ObservableObject {
     ///     Gets a value indicating whether there are any playlists in the library.
     /// </summary>
     public bool HasPlaylists => Playlists.Any();
+
+    /// <summary>
+    /// Navigates to the song list for the selected playlist.
+    /// </summary>
+    [RelayCommand]
+    public void NavigateToPlaylistDetail(PlaylistViewModelItem? playlist) {
+        if (playlist is null) return;
+
+        var navParam = new PlaylistSongViewNavigationParameter {
+            Title = playlist.Name,
+            PlaylistId = playlist.Id
+        };
+        _navigationService.Navigate(typeof(PlaylistSongViewPage), navParam);
+    }
 
     /// <summary>
     ///     Clears the current queue and starts playing the selected playlist.
@@ -255,5 +279,19 @@ public partial class PlaylistViewModel : ObservableObject {
         finally {
             IsDeletingPlaylist = false;
         }
+    }
+
+    /// <summary>
+    /// Cleans up resources by unsubscribing from event handlers.
+    /// </summary>
+    public void Dispose() {
+        if (_isDisposed) return;
+
+        if (Playlists != null) {
+            Playlists.CollectionChanged -= _collectionChangedHandler;
+        }
+
+        _isDisposed = true;
+        GC.SuppressFinalize(this);
     }
 }

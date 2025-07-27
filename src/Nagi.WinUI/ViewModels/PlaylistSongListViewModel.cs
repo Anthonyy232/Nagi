@@ -139,4 +139,23 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase {
         Debug.WriteLine($"[PlaylistSongListViewModel] INFO: Persisting new song order for playlist ID '{_currentPlaylistId.Value}'.");
         await _playlistService.UpdatePlaylistSongOrderAsync(_currentPlaylistId.Value, orderedSongIds);
     }
+
+    /// <summary>
+    /// Cleans up resources specific to this view model, such as timers and event subscriptions,
+    /// and then calls the base class's cleanup logic.
+    /// </summary>
+    public override void Cleanup() {
+        Debug.WriteLine("[PlaylistSongListViewModel] INFO: Cleaning up resources.");
+
+        // Stop the timer and unsubscribe to prevent it from firing after disposal
+        // and to allow the ViewModel to be garbage collected.
+        _reorderSaveTimer.Stop();
+        _reorderSaveTimer.Tick -= ReorderSaveTimer_Tick;
+
+        // Unsubscribe from the collection changed event.
+        Songs.CollectionChanged -= OnSongsCollectionChanged;
+
+        // Call the base implementation to clean up its resources (like the CancellationTokenSource).
+        base.Cleanup();
+    }
 }

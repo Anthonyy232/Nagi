@@ -8,6 +8,10 @@ using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
 using WinRT;
 
+#if !MSIX_PACKAGE
+    using Velopack;
+#endif
+
 namespace Nagi.WinUI;
 
 /// <summary>
@@ -22,6 +26,10 @@ public static class Program {
     /// <returns>An integer representing the application's exit code.</returns>
     [STAThread]
     private static int Main(string[] args) {
+        #if !MSIX_PACKAGE
+            VelopackApp.Build().Run();
+        #endif
+
         // Initialize COM wrappers for WinRT interop.
         ComWrappersSupport.InitializeComWrappers();
 
