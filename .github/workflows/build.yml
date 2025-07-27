@@ -46,7 +46,7 @@ jobs:
           }' > src/Nagi.WinUI/appsettings.json
 
       - name: Restore Dependencies
-        run: dotnet restore src/Nagi.WinUI/Nagi.WinUI.csproj -c ReleaseUnpackaged -r ${{ matrix.platform }}
+        run: dotnet restore src/Nagi.WinUI/Nagi.WinUI.csproj -r ${{ matrix.platform }} -p:Configuration=ReleaseUnpackaged
         env:
           GITHUB_USER: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
@@ -59,7 +59,7 @@ jobs:
           $releaseDir = "./Releases/$p"
           
           echo "Building for $p..."
-          # Now that restore is fully synchronized, --no-restore is safe and efficient.
+          # The publish command still uses the simpler -c switch.
           dotnet publish src/Nagi.WinUI/Nagi.WinUI.csproj -c ReleaseUnpackaged -r $p --self-contained -o $publishDir --no-restore
           
           echo "Packaging for $p..."
