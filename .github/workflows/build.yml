@@ -14,6 +14,10 @@ jobs:
       matrix:
         platform: [win-x64, win-x86, win-arm64]
 
+    permissions:
+      contents: read  # Needed for actions/checkout
+      packages: read  # Needed to read from GitHub Packages
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -48,9 +52,6 @@ jobs:
             }
           }' > src/Nagi.WinUI/appsettings.json
 
-      # ====================================================================
-      # == NEW STEP: Restore dependencies using the configured nuget.config ==
-      # ====================================================================
       - name: Restore Dependencies
         run: dotnet restore src/Nagi.WinUI/Nagi.WinUI.csproj
         env:
@@ -58,7 +59,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and Package Platform
-        # This step now runs once for each platform in the matrix.
         shell: pwsh
         run: |
           $p = "${{ matrix.platform }}"
@@ -66,18 +66,13 @@ jobs:
           $releaseDir = "./Releases/$p"
           
           echo "Building for $p..."
-          # <-- CHANGE: Added --no-restore since we restored in the previous step
           dotnet publish src/Nagi.WinUI/Nagi.WinUI.csproj -c ReleaseUnpackaged -r $p --self-contained -o $publishDir --no-restore
           
           echo "Packaging for $p..."
-          # NOTE: --mainExe is still Nagi.exe because of <AssemblyName> in your csproj
           vpk pack --packId Nagi --packVersion ${{ steps.get_version.outputs.version }} --mainExe Nagi.exe --packDir $publishDir -o $releaseDir --channel $p --runtime $p
 
       - name: Upload Build Artifact
-        # This step also runs for each platform, creating a separate artifact.
         uses: actions/upload-artifact@v4
         with:
-          # The artifact name is now unique for each platform.
           name: Nagi-Release-${{ steps.get_version.outputs.version }}-${{ matrix.platform }}
-          # The path points to the specific release directory for that platform.
           path: ./Releases/${{ matrix.platform }}/
