@@ -22,13 +22,13 @@
 		<DependencyInjectionVersion>9.0.7</DependencyInjectionVersion>
 		<DiscordRichPresenceVersion>1.3.0.28</DiscordRichPresenceVersion>
 		<EntityFrameworkCoreVersion>9.0.7</EntityFrameworkCoreVersion>
+		<LibVLCSharpVersion>4.0.0-alpha-20250725-9054</LibVLCSharpVersion>
+		<LibVLCWindowsVersion>4.0.0-alpha-20250725</LibVLCWindowsVersion>
 		<!-- For all EF Core packages -->
 		<HNotifyIconWinUIVersion>2.3.0</HNotifyIconWinUIVersion>
 		<ImageExWinUIVersion>4.0.0</ImageExWinUIVersion>
-		<LibVLCSharpVersion>3.9.3</LibVLCSharpVersion>
-		<LibVLCWindowsVersion>3.0.21</LibVLCWindowsVersion>
 		<MaterialColorUtilitiesVersion>0.3.0</MaterialColorUtilitiesVersion>
-		<MicrosoftExtensionsConfigurationVersion>10.0.0-preview.5.25277.114</MicrosoftExtensionsConfigurationVersion>
+		<MicrosoftExtensionsConfigurationVersion>9.0.7</MicrosoftExtensionsConfigurationVersion>
 		<MicrosoftExtensionsConfigurationFileExtensionsVersion>9.0.7</MicrosoftExtensionsConfigurationFileExtensionsVersion>
 		<MicrosoftExtensionsConfigurationJsonVersion>9.0.7</MicrosoftExtensionsConfigurationJsonVersion>
 		<MicrosoftExtensionsHttpVersion>9.0.7</MicrosoftExtensionsHttpVersion>
