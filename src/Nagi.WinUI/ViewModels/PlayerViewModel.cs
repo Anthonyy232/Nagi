@@ -63,73 +63,73 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(PlayPauseIconGlyph))]
     [NotifyPropertyChangedFor(nameof(PlayPauseButtonToolTip))]
-    private bool _isPlaying;
+    public partial bool IsPlaying { get; set; }
 
     [ObservableProperty]
-    private string _songTitle = "No track playing";
+    public partial string SongTitle { get; set; } = "No track playing";
 
     [ObservableProperty]
-    private string _artistName = string.Empty;
+    public partial string ArtistName { get; set; } = string.Empty;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsArtworkAvailable))]
-    private string? _albumArtUri;
+    public partial string? AlbumArtUri { get; set; }
 
     [ObservableProperty]
-    private Song? _currentPlayingTrack;
+    public partial Song? CurrentPlayingTrack { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ShuffleIconGlyph))]
     [NotifyPropertyChangedFor(nameof(ShuffleButtonToolTip))]
-    private bool _isShuffleEnabled;
+    public partial bool IsShuffleEnabled { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(RepeatIconGlyph))]
     [NotifyPropertyChangedFor(nameof(RepeatButtonToolTip))]
-    private RepeatMode _currentRepeatMode;
+    public partial RepeatMode CurrentRepeatMode { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(VolumeButtonToolTip))]
-    private bool _isMuted;
+    public partial bool IsMuted { get; set; }
 
     [ObservableProperty]
-    private double _currentVolume = 50;
+    public partial double CurrentVolume { get; set; } = 50;
 
     [ObservableProperty]
-    private string _volumeIconGlyph = VolumeMediumIconGlyph;
+    public partial string VolumeIconGlyph { get; set; } = VolumeMediumIconGlyph;
 
     [ObservableProperty]
-    private ObservableCollection<Song> _currentQueue = new();
+    public partial ObservableCollection<Song> CurrentQueue { get; set; } = new();
 
     [ObservableProperty]
-    private double _currentPosition;
+    public partial double CurrentPosition { get; set; }
 
     [ObservableProperty]
-    private string _currentTimeText = "0:00";
+    public partial string CurrentTimeText { get; set; } = "0:00";
 
     [ObservableProperty]
-    private bool _isUserDraggingSlider;
+    public partial bool IsUserDraggingSlider { get; set; }
 
     [ObservableProperty]
-    private double _totalDuration;
+    public partial double TotalDuration { get; set; }
 
     [ObservableProperty]
-    private string _totalDurationText = "0:00";
+    public partial string TotalDurationText { get; set; } = "0:00";
 
     [ObservableProperty]
-    private bool _isGlobalOperationInProgress;
+    public partial bool IsGlobalOperationInProgress { get; set; }
 
     [ObservableProperty]
-    private string _globalOperationStatusMessage = string.Empty;
+    public partial string GlobalOperationStatusMessage { get; set; } = string.Empty;
 
     [ObservableProperty]
-    private double _globalOperationProgressValue;
+    public partial double GlobalOperationProgressValue { get; set; }
 
     [ObservableProperty]
-    private bool _isGlobalOperationIndeterminate;
+    public partial bool IsGlobalOperationIndeterminate { get; set; }
 
     [ObservableProperty]
-    private bool _isQueueViewVisible;
+    public partial bool IsQueueViewVisible { get; set; }
 
     public bool IsArtworkAvailable => !string.IsNullOrWhiteSpace(AlbumArtUri);
 
