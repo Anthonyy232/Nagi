@@ -1,8 +1,10 @@
-﻿using System;
+﻿using H.NotifyIcon;
+using H.NotifyIcon.EfficiencyMode;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Services.Abstractions;
+using System;
 
 namespace Nagi.WinUI.Services.Implementations;
 
@@ -33,8 +35,13 @@ public class WindowService : IWindowService, IDisposable {
         }
     }
 
-    public void Hide() => _appWindow.Hide();
-    public void ShowAndActivate() => WindowActivator.ShowAndActivate(_window, _win32InteropService);
+    public void Hide() => _window.Hide(enableEfficiencyMode: true);
+
+    public void ShowAndActivate() {
+        EfficiencyModeUtilities.SetEfficiencyMode(false);
+        WindowActivator.ShowAndActivate(_window, _win32InteropService);
+    }
+
     public void Close() => _window.Close();
 
     public void Dispose() {
