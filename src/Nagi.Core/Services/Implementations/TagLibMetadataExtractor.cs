@@ -11,11 +11,6 @@ namespace Nagi.Core.Services.Implementations;
 /// An implementation of <see cref="IMetadataExtractor"/> that uses the TagLib-Sharp library
 /// to extract metadata from music files.
 /// </summary>
-/// <remarks>
-/// This class is designed to be thread-safe and robust. It handles missing or malformed
-/// metadata gracefully and prevents race conditions when processing album art for the same album
-/// concurrently.
-/// </remarks>
 public class TagLibMetadataExtractor : IMetadataExtractor {
     private const string UnknownArtistName = "Unknown Artist";
     private const string UnknownAlbumName = "Unknown Album";
@@ -42,6 +37,9 @@ public class TagLibMetadataExtractor : IMetadataExtractor {
             metadata.FileCreatedDate = fileInfo.CreationTimeUtc;
             metadata.FileModifiedDate = fileInfo.LastWriteTimeUtc;
             metadata.Title = _fileSystem.GetFileNameWithoutExtension(filePath);
+
+            // Find an associated LRC file path, if one exists.
+            metadata.LrcFilePath = FindLrcFilePath(filePath);
 
             // Use a read-only abstraction for safety and performance.
             using var tagFile = TagLib.File.Create(new NonWritableFileAbstraction(filePath));
@@ -149,6 +147,38 @@ public class TagLibMetadataExtractor : IMetadataExtractor {
         }
         finally {
             semaphore.Release();
+        }
+    }
+
+    /// <summary>
+    /// Finds an associated LRC lyrics file for a given audio file in the same directory.
+    /// The match is performed case-insensitively on the file name without its extension.
+    /// </summary>
+    /// <param name="audioFilePath">The full path to the audio file.</param>
+    /// <returns>The full path to the matching .lrc file, or null if not found.</returns>
+    private string? FindLrcFilePath(string audioFilePath) {
+        try {
+            var directory = _fileSystem.GetDirectoryName(audioFilePath);
+            if (string.IsNullOrEmpty(directory)) {
+                // This can happen if the path is just a filename without a directory.
+                return null;
+            }
+
+            var audioFileNameWithoutExt = _fileSystem.GetFileNameWithoutExtension(audioFilePath);
+
+            // Search for all .lrc files in the directory. This is generally efficient as the
+            // pattern is filtered at the OS level.
+            var lrcFiles = _fileSystem.GetFiles(directory, "*.lrc");
+
+            // Find the first .lrc file that matches the audio file's name, ignoring case.
+            return lrcFiles.FirstOrDefault(lrcPath =>
+                _fileSystem.GetFileNameWithoutExtension(lrcPath)
+                    .Equals(audioFileNameWithoutExt, StringComparison.OrdinalIgnoreCase));
+        }
+        catch (Exception ex) {
+            // Log the error but don't let it stop the entire metadata extraction process.
+            Trace.TraceWarning($"[MetadataExtractor] Error while searching for LRC file for '{audioFilePath}'. Error: {ex.Message}");
+            return null;
         }
     }
 

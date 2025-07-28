@@ -79,7 +79,7 @@ public class LibraryService : ILibraryService {
             return existingFolder;
         }
 
-        var folder = new Folder { Path = path, Name = name ?? _fileSystem.GetDirectoryNameFromPath(path) };
+        var folder = new Folder { Path = path, Name = name ?? _fileSystem.GetDirectoryName(path) ?? "" };
         try {
             folder.LastModifiedDate = _fileSystem.GetLastWriteTimeUtc(path);
         }
@@ -1380,6 +1380,7 @@ public class LibraryService : ILibraryService {
             Composer = metadata.Composer,
             Bpm = metadata.Bpm,
             Lyrics = metadata.Lyrics,
+            LrcFilePath = metadata.LrcFilePath,
             ArtistId = trackArtist.Id,
             AlbumId = album?.Id,
             Genres = genres,
@@ -1437,6 +1438,7 @@ public class LibraryService : ILibraryService {
                 Composer = metadata.Composer,
                 Bpm = metadata.Bpm,
                 Lyrics = metadata.Lyrics,
+                LrcFilePath = metadata.LrcFilePath,
                 ArtistId = trackArtist.Id,
                 AlbumId = album?.Id,
                 Genres = genres,

@@ -128,6 +128,9 @@ public class Song {
     [NotMapped]
     public bool IsArtworkAvailable => !string.IsNullOrEmpty(AlbumArtUriFromTrack);
 
+    [NotMapped]
+    public bool HasTimedLyrics => !string.IsNullOrEmpty(LrcFilePath);
+
     // Navigation properties
     public virtual ICollection<Genre> Genres { get; set; } = new List<Genre>();
     public virtual ICollection<PlaylistSong> PlaylistSongs { get; set; } = new List<PlaylistSong>();
