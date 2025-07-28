@@ -86,6 +86,11 @@ public class Song {
     public string? Lyrics { get; set; }
 
     /// <summary>
+    /// The file path to the synchronized .lrc lyrics file associated with this song.
+    /// </summary>
+    public string? LrcFilePath { get; set; }
+
+    /// <summary>
     /// The beats per minute of the track.
     /// </summary>
     public double? Bpm { get; set; }

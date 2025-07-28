@@ -25,6 +25,7 @@ public class SongFileMetadata {
     public DateTime? FileCreatedDate { get; set; }
     public DateTime? FileModifiedDate { get; set; }
     public string? Lyrics { get; set; }
+    public string? LrcFilePath { get; set; }
     public double? Bpm { get; set; }
     public string? Composer { get; set; }
     public bool ExtractionFailed { get; set; }
