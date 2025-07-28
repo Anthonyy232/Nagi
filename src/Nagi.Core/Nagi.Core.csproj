@@ -8,6 +8,7 @@
 
 	<ItemGroup>
 		<!-- Data Access: Entity Framework Core -->
+		<PackageReference Include="LrcParser" Version="2025.623.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="$(EntityFrameworkCoreVersion)" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="$(EntityFrameworkCoreVersion)" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="$(EntityFrameworkCoreVersion)">
