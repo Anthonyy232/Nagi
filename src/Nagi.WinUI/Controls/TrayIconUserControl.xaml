@@ -25,8 +25,7 @@
             <MenuFlyout AreOpenCloseAnimationsEnabled="True">
                 <MenuFlyoutItem
                     Command="{x:Bind ViewModel.ToggleMainWindowVisibilityCommand}"
-                    Text="Show Window"
-                    Style="{StaticResource DefaultMenuFlyoutItemStyle}">
+                    Text="Show Window">
                     <MenuFlyoutItem.Icon>
                         <SymbolIcon Symbol="FullScreen" />
                     </MenuFlyoutItem.Icon>
@@ -34,8 +33,7 @@
                 <MenuFlyoutSeparator />
                 <MenuFlyoutItem
                     Command="{x:Bind ViewModel.ExitApplicationCommand}"
-                    Text="Exit"
-                    Style="{StaticResource DefaultMenuFlyoutItemStyle}">
+                    Text="Exit">
                     <MenuFlyoutItem.Icon>
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="" />
                     </MenuFlyoutItem.Icon>

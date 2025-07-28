@@ -11,16 +11,15 @@ using WinRT.Interop;
 namespace Nagi.WinUI.Services.Implementations;
 
 /// <summary>
-/// Implements IWin32InteropService by calling native Win32 APIs.
-/// This service acts as a wrapper to provide a safe and managed interface
-/// to the underlying Windows platform functions.
+/// Provides a managed wrapper for native Win32 API functions, offering a safe
+/// and convenient interface to the underlying Windows platform.
 /// </summary>
 public class Win32InteropService : IWin32InteropService {
     /// <summary>
-    /// Sets the icon for a given window handle.
+    /// Sets the large and small icons for a window from a specified icon file.
     /// </summary>
-    /// <param name="window">The window to set the icon for.</param>
-    /// <param name="iconPath">The relative path to the icon file.</param>
+    /// <param name="window">The window whose icon is to be set.</param>
+    /// <param name="iconPath">The application-relative path to the .ico file.</param>
     public void SetWindowIcon(Window window, string iconPath) {
         IntPtr hwnd = WindowNative.GetWindowHandle(window);
         if (hwnd == IntPtr.Zero) return;
@@ -45,29 +44,23 @@ public class Win32InteropService : IWin32InteropService {
     }
 
     /// <summary>
-    /// Gets the work area of the primary display monitor.
-    /// The work area is the portion of the screen not obscured by the system taskbar.
+    /// Retrieves the work area of the primary display monitor.
     /// </summary>
     /// <returns>A Rect representing the primary work area.</returns>
     public Rect GetPrimaryWorkArea() {
-        IntPtr rectPtr = Marshal.AllocHGlobal(Marshal.SizeOf<NativeMethods.RECT>());
-        try {
-            if (NativeMethods.SystemParametersInfo(NativeMethods.SPI_GETWORKAREA, 0, rectPtr, 0)) {
-                var rect = Marshal.PtrToStructure<NativeMethods.RECT>(rectPtr);
-                return new Rect(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
-            }
-            // Fallback to a default resolution if the API call fails.
-            return new Rect(0, 0, 1920, 1080);
+        var workAreaRect = new NativeMethods.RECT();
+        if (NativeMethods.SystemParametersInfo(NativeMethods.SPI_GETWORKAREA, 0, ref workAreaRect, 0)) {
+            return new Rect(workAreaRect.left, workAreaRect.top, workAreaRect.right - workAreaRect.left, workAreaRect.bottom - workAreaRect.top);
         }
-        finally {
-            Marshal.FreeHGlobal(rectPtr);
-        }
+
+        // Fallback to a default resolution if the API call fails.
+        return new Rect(0, 0, 1920, 1080);
     }
 
     /// <summary>
-    /// Retrieves the current position of the cursor on the screen.
+    /// Retrieves the current position of the cursor in screen coordinates.
     /// </summary>
-    /// <returns>A PointInt32 representing the cursor's coordinates.</returns>
+    /// <returns>A PointInt32 with the cursor's X and Y coordinates.</returns>
     public PointInt32 GetCursorPos() {
         if (NativeMethods.GetCursorPos(out NativeMethods.POINT point)) {
             return new PointInt32(point.X, point.Y);
@@ -76,14 +69,18 @@ public class Win32InteropService : IWin32InteropService {
     }
 
     /// <summary>
-    /// Gets the work area of the monitor that contains the specified point.
+    /// Retrieves the work area of the display monitor that contains the specified point.
     /// </summary>
-    /// <param name="point">The point to check.</param>
-    /// <returns>A Rect representing the work area of the relevant monitor.</returns>
+    /// <param name="point">The point in screen coordinates to check.</param>
+    /// <returns>A Rect representing the work area of the containing monitor.</returns>
     public Rect GetWorkAreaForPoint(PointInt32 point) {
-        var monitorHandle = NativeMethods.MonitorFromPoint(new NativeMethods.POINT { X = point.X, Y = point.Y }, NativeMethods.MONITOR_DEFAULTTONEAREST);
+        var nativePoint = new NativeMethods.POINT { X = point.X, Y = point.Y };
+        IntPtr monitorHandle = NativeMethods.MonitorFromPoint(nativePoint, NativeMethods.MONITOR_DEFAULTTONEAREST);
+
         var monitorInfo = new NativeMethods.MONITORINFO();
-        if (NativeMethods.GetMonitorInfo(monitorHandle, monitorInfo)) {
+        monitorInfo.cbSize = Marshal.SizeOf(monitorInfo);
+
+        if (NativeMethods.GetMonitorInfo(monitorHandle, ref monitorInfo)) {
             var workRect = monitorInfo.rcWork;
             return new Rect(workRect.left, workRect.top, workRect.right - workRect.left, workRect.bottom - workRect.top);
         }
@@ -92,25 +89,75 @@ public class Win32InteropService : IWin32InteropService {
         return GetPrimaryWorkArea();
     }
 
-    public int GetDpiForWindow(IntPtr hwnd) => NativeMethods.GetDpiForWindow(hwnd);
+    /// <summary>
+    /// Gets the Dots Per Inch (DPI) for the specified window.
+    /// This method includes a fallback for older versions of Windows that do not support GetDpiForWindow.
+    /// </summary>
+    /// <param name="hwnd">The handle to the window.</param>
+    /// <returns>The DPI value of the window, or 96 if it cannot be determined.</returns>
+    public int GetDpiForWindow(IntPtr hwnd) {
+        try {
+            // This is the modern API, available on Windows 10 (1607) and newer.
+            return NativeMethods.GetDpiForWindow(hwnd);
+        }
+        catch (EntryPointNotFoundException) {
+            // Fallback for older OS versions.
+            Debug.WriteLine("[Win32InteropService] GetDpiForWindow not found. Falling back to GetDeviceCaps.");
+            IntPtr hdc = NativeMethods.GetDC(hwnd);
+            if (hdc != IntPtr.Zero) {
+                try {
+                    // Get the horizontal DPI.
+                    return NativeMethods.GetDeviceCaps(hdc, NativeMethods.LOGPIXELSX);
+                }
+                finally {
+                    // Important: Always release the device context.
+                    NativeMethods.ReleaseDC(hwnd, hdc);
+                }
+            }
+        }
+        // If all else fails, return the standard default DPI.
+        return 96;
+    }
+
+    /// <inheritdoc/>
     public uint GetTickCount() => NativeMethods.GetTickCount();
+
+    /// <inheritdoc/>
     public IntPtr GetForegroundWindow() => NativeMethods.GetForegroundWindow();
+
+    /// <inheritdoc/>
     public uint GetWindowThreadProcessId(IntPtr hWnd, IntPtr ProcessId) => NativeMethods.GetWindowThreadProcessId(hWnd, ProcessId);
+
+    /// <inheritdoc/>
     public bool AttachThreadInput(uint idAttach, uint idAttachTo, bool fAttach) => NativeMethods.AttachThreadInput(idAttach, idAttachTo, fAttach);
+
+    /// <inheritdoc/>
     public bool BringWindowToTop(IntPtr hWnd) => NativeMethods.BringWindowToTop(hWnd);
+
+    /// <inheritdoc/>
     public uint GetCurrentThreadId() => NativeMethods.GetCurrentThreadId();
 
     /// <summary>
-    /// Contains P/Invoke definitions for native Win32 API calls.
+    /// Contains P/Invoke definitions for native Win32 API calls used by this service.
     /// </summary>
     private static class NativeMethods {
+        // Constants for SystemParametersInfo
         public const uint SPI_GETWORKAREA = 0x0030;
+
+        // Constants for MonitorFromPoint
         public const uint MONITOR_DEFAULTTONEAREST = 0x00000002;
+
+        // Constants for LoadImage
         public const uint IMAGE_ICON = 1;
         public const uint LR_LOADFROMFILE = 0x0010;
+
+        // Constants for SendMessage (WM_SETICON)
         public const uint WM_SETICON = 0x0080;
         public const int ICON_SMALL = 0;
         public const int ICON_BIG = 1;
+
+        // Constants for GetDeviceCaps
+        public const int LOGPIXELSX = 88; // Logical pixels/inch in X
 
         [StructLayout(LayoutKind.Sequential)]
         public struct RECT { public int left; public int top; public int right; public int bottom; }
@@ -119,17 +166,17 @@ public class Win32InteropService : IWin32InteropService {
         public struct POINT { public int X; public int Y; }
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-        public class MONITORINFO {
-            public int cbSize = Marshal.SizeOf(typeof(MONITORINFO));
-            public RECT rcMonitor = new();
-            public RECT rcWork = new();
-            public int dwFlags = 0;
+        public struct MONITORINFO {
+            public int cbSize;
+            public RECT rcMonitor;
+            public RECT rcWork;
+            public int dwFlags;
         }
 
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         public static extern IntPtr LoadImage(IntPtr hinst, string lpszName, uint uType, int cxDesired, int cyDesired, uint fuLoad);
 
-        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
         [DllImport("kernel32.dll")]
@@ -140,7 +187,7 @@ public class Win32InteropService : IWin32InteropService {
 
         [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool SystemParametersInfo(uint uiAction, uint uiParam, IntPtr pvParam, uint fWinIni);
+        public static extern bool SystemParametersInfo(uint uiAction, uint uiParam, ref RECT pvParam, uint fWinIni);
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern int GetDpiForWindow(IntPtr hwnd);
@@ -154,7 +201,7 @@ public class Win32InteropService : IWin32InteropService {
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool GetMonitorInfo(IntPtr hMonitor, MONITORINFO lpmi);
+        public static extern bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFO lpmi);
 
         [DllImport("user32.dll")]
         public static extern IntPtr GetForegroundWindow();
@@ -169,5 +216,14 @@ public class Win32InteropService : IWin32InteropService {
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool BringWindowToTop(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetDC(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        public static extern int ReleaseDC(IntPtr hWnd, IntPtr hDC);
+
+        [DllImport("gdi32.dll")]
+        public static extern int GetDeviceCaps(IntPtr hdc, int nIndex);
     }
 }
