@@ -20,7 +20,7 @@
 		<CommunityToolkitMvvmVersion>8.4.0</CommunityToolkitMvvmVersion>
 		<CommunityToolkitWinUIVersion>8.2.250402</CommunityToolkitWinUIVersion>
 		<DependencyInjectionVersion>9.0.7</DependencyInjectionVersion>
-		<DiscordRichPresenceVersion>1.3.0.28</DiscordRichPresenceVersion>
+		<DiscordRichPresenceVersion>1.4.1.37</DiscordRichPresenceVersion>
 		<EntityFrameworkCoreVersion>9.0.7</EntityFrameworkCoreVersion>
 		<LibVLCSharpVersion>4.0.0-alpha-20250725-9054</LibVLCSharpVersion>
 		<LibVLCWindowsVersion>4.0.0-alpha-20250725</LibVLCWindowsVersion>

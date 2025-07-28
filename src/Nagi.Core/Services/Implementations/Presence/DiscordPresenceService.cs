@@ -114,6 +114,7 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable {
         var presence = new RichPresence {
             Details = StringExtensions.Truncate(_currentSong.Title, 128),
             State = state,
+            StatusDisplay = StatusDisplayType.Details,
             Timestamps = _timestamps,
             Assets = new Assets {
                 LargeImageKey = "logo",
