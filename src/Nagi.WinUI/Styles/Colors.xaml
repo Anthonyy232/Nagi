@@ -18,6 +18,6 @@
     <SolidColorBrush 
         x:Key="Win10AcrylicBrush" 
         Color="{Binding Color, Source={StaticResource AppPrimaryColorBrush}}"
-        Opacity="0.5" />
+        Opacity="0.2" />
 
 </ResourceDictionary>
