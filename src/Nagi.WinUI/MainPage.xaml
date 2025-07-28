@@ -12,26 +12,48 @@
     xmlns:models="using:Nagi.Core.Models"
     mc:Ignorable="d">
 
+
     <UserControl.Resources>
-        <converters:StringToUriConverter x:Key="StringToUriConverter" />
-        <converters:TimeSpanToTimeStringConverter x:Key="TimeSpanToTimeStringConverter" />
-        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-        <converters:ObjectToBooleanConverter x:Key="ObjectToBooleanConverter" />
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Default">
+                    <StaticResource x:Key="BrushResource" ResourceKey="Win11AcrylicBrush"/>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="HighContrast">
+                    <StaticResource x:Key="BrushResource" ResourceKey="Win10AcrylicBrush"/>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
 
-        <media:AcrylicBrush
-            x:Key="FloatingAcrylicInAppLuminosity"
-            FallbackColor="{Binding Color, Source={StaticResource AppPrimaryColorBrush}}"
-            TintColor="{Binding Color, Source={StaticResource AppPrimaryColorBrush}}"
-            TintLuminosityOpacity="0.15"
-            TintOpacity="0.15" />
+            <converters:StringToUriConverter x:Key="StringToUriConverter" />
+            <converters:TimeSpanToTimeStringConverter x:Key="TimeSpanToTimeStringConverter" />
+            <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+            <converters:ObjectToBooleanConverter x:Key="ObjectToBooleanConverter" />
 
-        <Style x:Key="QueueListViewItemStyle" TargetType="ListViewItem">
-            <Setter Property="Padding" Value="12,8" />
-            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-        </Style>
+            <!-- Windows 11 Acrylic Brush -->
+            <media:AcrylicBrush
+                x:Key="Win11AcrylicBrush"
+                FallbackColor="{Binding Color, Source={StaticResource AppPrimaryColorBrush}}"
+                TintColor="{Binding Color, Source={StaticResource AppPrimaryColorBrush}}"
+                TintLuminosityOpacity="0.15"
+                TintOpacity="0.15" />
+
+            <!-- Windows 10 Compatible Brush -->
+            <SolidColorBrush 
+                x:Key="Win10AcrylicBrush" 
+                Color="{Binding Color, Source={StaticResource AppPrimaryColorBrush}}"
+                Opacity="0.7" />
+
+            <Style x:Key="QueueListViewItemStyle" TargetType="ListViewItem">
+                <Setter Property="Padding" Value="12,8" />
+                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            </Style>
+
+        </ResourceDictionary>
     </UserControl.Resources>
 
-    <Grid x:Name="OverlayContainerGrid">
+
+
+<Grid x:Name="OverlayContainerGrid">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="PlayerVisibilityStates">
                 <VisualState x:Name="PlayerVisible">
@@ -287,7 +309,7 @@
                         Margin="12,0,12,12"
                         Padding="12"
                         VerticalAlignment="Bottom"
-                        Background="{ThemeResource FloatingAcrylicInAppLuminosity}"
+                        Background="{ThemeResource BrushResource}"
                         CornerRadius="8"
                         PointerEntered="FloatingPlayerContainer_PointerEntered"
                         PointerExited="FloatingPlayerContainer_PointerExited">
