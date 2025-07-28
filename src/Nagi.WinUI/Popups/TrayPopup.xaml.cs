@@ -102,8 +102,10 @@ public sealed partial class TrayPopup : Window {
         exStyle |= WS_EX_LAYERED;
         SetWindowLong(windowHandle, GWL_EXSTYLE, exStyle);
 
-        var preference = DWMWCP_ROUND;
-        DwmSetWindowAttribute(windowHandle, DWMWA_WINDOW_CORNER_PREFERENCE, ref preference, sizeof(uint));
+        if (Environment.OSVersion.Version.Build >= 22000) {
+            var preference = DWMWCP_ROUND; // DWM_WINDOW_CORNER_PREFERENCE.DWMWCP_ROUND
+            DwmSetWindowAttribute(windowHandle, DWMWA_WINDOW_CORNER_PREFERENCE, ref preference, sizeof(uint));
+        }
     }
 
     private void OnActivated(object sender, WindowActivatedEventArgs args) {
