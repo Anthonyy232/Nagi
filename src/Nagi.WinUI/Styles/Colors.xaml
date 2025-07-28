@@ -1,7 +1,23 @@
-<!-- Styles/Colors.xaml -->
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:media="using:Microsoft.UI.Xaml.Media">
 
     <SolidColorBrush x:Key="AppPrimaryColorBrush" Color="{ThemeResource SystemAccentColor}" />
+
+
+    <!-- Windows 11 Acrylic Brush -->
+    <media:AcrylicBrush
+        x:Key="Win11AcrylicBrush"
+        FallbackColor="{Binding Color, Source={StaticResource AppPrimaryColorBrush}}"
+        TintColor="{Binding Color, Source={StaticResource AppPrimaryColorBrush}}"
+        TintLuminosityOpacity="0.15"
+        TintOpacity="0.15" />
+
+    <!-- Windows 10 Compatible Brush -->
+    <SolidColorBrush 
+        x:Key="Win10AcrylicBrush" 
+        Color="{Binding Color, Source={StaticResource AppPrimaryColorBrush}}"
+        Opacity="0.5" />
+
 </ResourceDictionary>
