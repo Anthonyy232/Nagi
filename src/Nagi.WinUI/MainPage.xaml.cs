@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
 using Nagi.WinUI.ViewModels;
+using Windows.Foundation.Metadata;
 
 namespace Nagi.WinUI;
 
@@ -180,6 +181,8 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider {
 
     // Sets up event handlers and initial state when the page is loaded.
     private async void OnMainPageLoaded(object sender, RoutedEventArgs e) {
+        SetPlatformSpecificBrush();
+
         ActualThemeChanged += OnActualThemeChanged;
         ContentFrame.Navigated += OnContentFrameNavigated;
         ViewModel.PropertyChanged += OnViewModelPropertyChanged;
@@ -206,6 +209,21 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider {
         ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
         _settingsService.PlayerAnimationSettingChanged -= OnPlayerAnimationSettingChanged;
         _settingsService.NavigationSettingsChanged -= OnNavigationSettingsChanged;
+    }
+
+    /// <summary>
+    /// Sets the background brush for the floating player based on the current OS.
+    /// Uses Acrylic for Windows 11+ and a solid color for Windows 10.
+    /// </summary>
+    private void SetPlatformSpecificBrush() {
+        if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 14)) {
+            // We are on Windows 11 or newer
+            FloatingPlayerContainer.Background = (Brush)Application.Current.Resources["Win11AcrylicBrush"];
+        }
+        else {
+            // We are on Windows 10
+            FloatingPlayerContainer.Background = (Brush)Application.Current.Resources["Win10AcrylicBrush"];
+        }
     }
 
     // Responds to changes in the player animation setting.
