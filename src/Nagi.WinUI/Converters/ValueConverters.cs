@@ -6,7 +6,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
+using System.Numerics;
 using Windows.UI;
 
 namespace Nagi.WinUI.Converters;
@@ -22,7 +24,7 @@ public class TimeSpanToTimeStringConverter : IValueConverter {
             _ => TimeSpan.Zero
         };
 
-        // The @"m\:ss" format string ensures the colon is treated as a literal character.
+        // The @"m\:ss" format ensures the colon is treated as a literal character.
         return timeSpan.ToString(@"m\:ss");
     }
 
@@ -32,7 +34,7 @@ public class TimeSpanToTimeStringConverter : IValueConverter {
 }
 
 /// <summary>
-/// Converts a boolean value to its inverse.
+/// Converts a boolean value to its inverse (true to false, and false to true).
 /// </summary>
 public class BooleanToInverseBooleanConverter : IValueConverter {
     public object Convert(object value, Type targetType, object parameter, string language) {
@@ -51,7 +53,7 @@ public class BooleanToInverseBooleanConverter : IValueConverter {
 }
 
 /// <summary>
-/// Converts an ElementTheme enum to a user-friendly string for display.
+/// Converts an ElementTheme enum to a user-friendly string for display in settings.
 /// </summary>
 public class ElementThemeToFriendlyStringConverter : IValueConverter {
     private static readonly Dictionary<ElementTheme, string> FriendlyNames = new()
@@ -70,7 +72,6 @@ public class ElementThemeToFriendlyStringConverter : IValueConverter {
 
     public object ConvertBack(object value, Type targetType, object parameter, string language) {
         if (value is string strValue) {
-            // Find the theme corresponding to the friendly name.
             var pair = FriendlyNames.FirstOrDefault(kvp => kvp.Value == strValue);
             if (pair.Value != null) {
                 return pair.Key;
@@ -82,11 +83,11 @@ public class ElementThemeToFriendlyStringConverter : IValueConverter {
 }
 
 /// <summary>
-/// Converts a boolean to a Visibility value.
+/// Converts a boolean value to a System.Windows.Visibility value.
 /// </summary>
 public class BooleanToVisibilityConverter : IValueConverter {
     /// <summary>
-    /// Gets or sets a value indicating whether to invert the conversion (true becomes Collapsed, false becomes Visible).
+    /// If true, the conversion will be inverted (true becomes Collapsed, false becomes Visible).
     /// </summary>
     public bool Invert { get; set; }
 
@@ -113,9 +114,8 @@ public class StringToUriConverter : IValueConverter {
             try {
                 return new BitmapImage(new Uri(uriString, UriKind.Absolute));
             }
-            catch (Exception ex) {
-                // Log the error for debugging purposes if the URI is malformed.
-                Debug.WriteLine($"[ERROR] StringToUriConverter: Failed to create BitmapImage from '{uriString}'. {ex.Message}");
+            catch (FormatException ex) {
+                Debug.WriteLine($"[StringToUriConverter] Failed to create Uri from '{uriString}'. {ex.Message}");
                 return null;
             }
         }
@@ -128,11 +128,11 @@ public class StringToUriConverter : IValueConverter {
 }
 
 /// <summary>
-/// Converts a string to a Visibility value. Visible if the string is not null or consists of only whitespace.
+/// Converts a string to Visibility. The element is visible if the string is not null or whitespace.
 /// </summary>
 public class StringToVisibilityConverter : IValueConverter {
     /// <summary>
-    /// Gets or sets a value indicating whether to invert the conversion (non-empty becomes Collapsed, empty becomes Visible).
+    /// If true, the conversion will be inverted.
     /// </summary>
     public bool Invert { get; set; }
 
@@ -150,12 +150,11 @@ public class StringToVisibilityConverter : IValueConverter {
 }
 
 /// <summary>
-/// Converts a collection to a Visibility value. Visible if the collection is not null and not empty.
+/// Converts a collection to Visibility. The element is visible if the collection is not null and not empty.
 /// </summary>
 public class CollectionToVisibilityConverter : IValueConverter {
     public object Convert(object value, Type targetType, object parameter, string language) {
         if (value is IEnumerable collection) {
-            // Use LINQ's Any() to efficiently check if the collection contains any items.
             return collection.Cast<object>().Any() ? Visibility.Visible : Visibility.Collapsed;
         }
         return Visibility.Collapsed;
@@ -167,11 +166,11 @@ public class CollectionToVisibilityConverter : IValueConverter {
 }
 
 /// <summary>
-/// Converts a string to Visibility. Visible if the string is not null or empty.
+/// Converts a string to Visibility. The element is visible if the string is not null or empty.
 /// </summary>
 public class NullOrEmptyStringToVisibilityConverter : IValueConverter {
     /// <summary>
-    /// Gets or sets a value indicating whether to invert the logic (Visible for null/empty, Collapsed for non-empty).
+    /// If true, the conversion will be inverted.
     /// </summary>
     public bool Invert { get; set; }
 
@@ -189,13 +188,11 @@ public class NullOrEmptyStringToVisibilityConverter : IValueConverter {
 }
 
 /// <summary>
-/// Converts an object to Visibility. Collapsed if the object is null.
+/// Converts an object to Visibility. The element is visible if the object is not null.
 /// </summary>
 public class ObjectToVisibilityConverter : IValueConverter {
     public object Convert(object value, Type targetType, object parameter, string language) {
-        // The converter parameter can be used to invert the behavior directly from XAML by passing "Invert".
         bool invert = "Invert".Equals(parameter as string, StringComparison.OrdinalIgnoreCase);
-
         bool isVisible = value != null;
 
         if (invert) {
@@ -211,7 +208,7 @@ public class ObjectToVisibilityConverter : IValueConverter {
 }
 
 /// <summary>
-/// Converts an object to a boolean, returning true if the object is not null, false otherwise.
+/// Converts an object to a boolean. Returns true if the object is not null, false otherwise.
 /// </summary>
 public class ObjectToBooleanConverter : IValueConverter {
     public object Convert(object value, Type targetType, object parameter, string language) {
@@ -225,10 +222,8 @@ public class ObjectToBooleanConverter : IValueConverter {
 
 /// <summary>
 /// Converts a string value into a unique, deterministic LinearGradientBrush from a curated palette.
-/// This ensures that the same string always produces the same visually appealing gradient.
 /// </summary>
 public class GenreToGradientConverter : IValueConverter {
-    // A vibrant, modern palette of 24 curated gradient pairs.
     private static readonly List<(Color Start, Color End)> Palettes = new()
     {
         (Color.FromArgb(255, 142, 45, 226), Color.FromArgb(255, 74, 0, 224)),
@@ -262,7 +257,6 @@ public class GenreToGradientConverter : IValueConverter {
             return GetDefaultGradient();
         }
 
-        // Use the string's hash code to deterministically select a color palette.
         int seed = genreName.GetHashCode();
         int index = Math.Abs(seed) % Palettes.Count;
         var (startColor, endColor) = Palettes[index];
@@ -283,7 +277,6 @@ public class GenreToGradientConverter : IValueConverter {
     }
 
     private static LinearGradientBrush GetDefaultGradient() {
-        // A neutral gray gradient for default or error cases.
         return CreateGradient(Color.FromArgb(255, 88, 88, 88), Color.FromArgb(255, 58, 58, 58));
     }
 
@@ -294,11 +287,8 @@ public class GenreToGradientConverter : IValueConverter {
 
 /// <summary>
 /// Converts a string font family name into a FontFamily object.
-/// Returns a default system font if the input string is null or empty.
 /// </summary>
 public class StringToFontFamilyConverter : IValueConverter {
-    // This is the default system font for symbols, which corresponds to the 
-    // SymbolThemeFontFamily resource.
     private static readonly FontFamily DefaultSymbolFont = new("Segoe MDL2 Assets");
 
     public object Convert(object value, Type targetType, object parameter, string language) {
@@ -306,12 +296,85 @@ public class StringToFontFamilyConverter : IValueConverter {
             return new FontFamily(fontFamilyName);
         }
 
-        // Return the default symbol font to ensure the binding always receives a 
-        // valid FontFamily object, preventing potential cast exceptions.
         return DefaultSymbolFont;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, string language) {
+        throw new NotImplementedException();
+    }
+}
+
+/// <summary>
+/// Selects a style based on whether the bound boolean value is true or false.
+/// </summary>
+public class ActiveLyricToStyleConverter : IValueConverter {
+    /// <summary>
+    /// The style to apply when the bound value is true.
+    /// </summary>
+    public Style ActiveStyle { get; set; }
+
+    /// <summary>
+    /// The style to apply when the bound value is false.
+    /// </summary>
+    public Style InactiveStyle { get; set; }
+
+    public object Convert(object value, Type targetType, object parameter, string language) {
+        return (value is bool isActive && isActive) ? ActiveStyle : InactiveStyle;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, string language) {
+        throw new NotImplementedException();
+    }
+}
+
+/// <summary>
+/// Converts a boolean value to a System.Numerics.Vector3, typically for use with UIElement.Translation.
+/// Expects a string parameter in the format "X,Y,Z".
+/// </summary>
+public class BooleanToTranslationConverter : IValueConverter
+{
+    /// <summary>
+    /// Converts a boolean to a Vector3.
+    /// </summary>
+    /// <param name="value">The boolean value to convert.</param>
+    /// <param name="targetType">The type of the target property (ignored).</param>
+    /// <param name="parameter">A string in "X,Y,Z" format for the 'true' state Vector3.</param>
+    /// <param name="language">The culture to use in the converter (ignored).</param>
+    /// <returns>A Vector3 based on the boolean value and parameter, or Vector3.Zero if conversion fails.</returns>
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        if (value is bool isActive && isActive)
+        {
+            if (parameter is string vectorStr)
+            {
+                try
+                {
+                    string[] parts = vectorStr.Split(',');
+                    if (parts.Length == 3)
+                    {
+                        float x = float.Parse(parts[0], CultureInfo.InvariantCulture);
+                        float y = float.Parse(parts[1], CultureInfo.InvariantCulture);
+                        float z = float.Parse(parts[2], CultureInfo.InvariantCulture);
+                        return new Vector3(x, y, z);
+                    }
+                }
+                catch (FormatException)
+                {
+                    // Could add logging here if needed
+                    return Vector3.Zero;
+                }
+            }
+        }
+
+        // Default value for 'false' or any error
+        return Vector3.Zero;
+    }
+
+    /// <summary>
+    /// Not implemented.
+    /// </summary>
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
         throw new NotImplementedException();
     }
 }

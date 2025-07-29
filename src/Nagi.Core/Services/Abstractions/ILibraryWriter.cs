@@ -16,6 +16,7 @@ public interface ILibraryWriter {
     Task<bool> SetSongRatingAsync(Guid songId, int? rating);
     Task<bool> SetSongLovedStatusAsync(Guid songId, bool isLoved);
     Task<bool> UpdateSongLyricsAsync(Guid songId, string? lyrics);
+    Task<bool> UpdateSongLrcPathAsync(Guid songId, string? lrcPath);
     Task<long?> CreateListenHistoryEntryAsync(Guid songId);
     Task<bool> MarkListenAsScrobbledAsync(long listenHistoryId);
     Task<bool> MarkListenAsEligibleForScrobblingAsync(long listenHistoryId);

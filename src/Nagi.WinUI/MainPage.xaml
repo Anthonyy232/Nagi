@@ -397,6 +397,13 @@
                                     <StackPanel.RenderTransform>
                                         <CompositeTransform TranslateY="10" />
                                     </StackPanel.RenderTransform>
+                                    <Button x:Name="LyricsButton"
+                                            Style="{StaticResource LyricsButtonStyle}"
+                                            ToolTipService.ToolTip="Lyrics"
+                                            Command="{Binding GoToLyricsPageCommand}"
+                                            Visibility="{Binding CurrentPlayingTrack, Converter={StaticResource ObjectToBooleanConverter}, Mode=OneWay}">
+                                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
+                                    </Button>
                                     <Button x:Name="QueueButton" Style="{StaticResource QueueButtonStyle}"
                                             ToolTipService.ToolTip="Current Queue">
                                         <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />

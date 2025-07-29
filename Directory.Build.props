@@ -24,6 +24,7 @@
 		<EntityFrameworkCoreVersion>9.0.7</EntityFrameworkCoreVersion>
 		<LibVLCSharpVersion>4.0.0-alpha-20250725-9054</LibVLCSharpVersion>
 		<LibVLCWindowsVersion>4.0.0-alpha-20250725</LibVLCWindowsVersion>
+		<LrcParserVersion>2025.623.0</LrcParserVersion>
 		<!-- For all EF Core packages -->
 		<HNotifyIconWinUIVersion>2.3.0</HNotifyIconWinUIVersion>
 		<ImageExWinUIVersion>4.0.0</ImageExWinUIVersion>

@@ -15,6 +15,7 @@ using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
 using Nagi.WinUI.ViewModels;
 using Windows.Foundation.Metadata;
+using Microsoft.UI.Xaml.Documents;
 
 namespace Nagi.WinUI;
 
@@ -282,7 +283,8 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider {
     // Updates UI elements like the back button after a navigation event.
     private void OnContentFrameNavigated(object sender, NavigationEventArgs e) {
         bool isDetailPage = _detailPageToParentTagMap.ContainsKey(e.SourcePageType);
-        AppTitleBar.IsBackButtonVisible = ContentFrame.CanGoBack && isDetailPage;
+        bool isLyricsPage = e.SourcePageType == typeof(LyricsPage);
+        AppTitleBar.IsBackButtonVisible = (ContentFrame.CanGoBack && isDetailPage) || isLyricsPage;
 
         UpdateNavViewSelection(e.SourcePageType);
 

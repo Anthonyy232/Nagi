@@ -8,7 +8,7 @@
 
 	<ItemGroup>
 		<!-- Data Access: Entity Framework Core -->
-		<PackageReference Include="LrcParser" Version="2025.623.0" />
+		<PackageReference Include="LrcParser" Version="$(LrcParserVersion)" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="$(EntityFrameworkCoreVersion)" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="$(EntityFrameworkCoreVersion)" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="$(EntityFrameworkCoreVersion)">
@@ -33,6 +33,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Folder Include="Models\Lyrics\" />
 		<Folder Include="Services\Presence\" />
 	</ItemGroup>
 
