@@ -214,6 +214,24 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
         return targetSong?.Artist != null && targetSong.Artist.Id != Guid.Empty;
     }
 
+    [RelayCommand(CanExecute = nameof(CanGoToLyricsPage))]
+    private void GoToLyricsPage() // The Song parameter has been removed
+    {
+        // The target song is implicitly the CurrentPlayingTrack in the service,
+        // which the LyricsPageViewModel will now access directly.
+        if (CurrentPlayingTrack == null) {
+            Debug.WriteLine("[PlayerViewModel] WARN: Attempted to navigate to Lyrics page, but no track is playing.");
+            return;
+        }
+
+        // The navigation parameter is no longer required.
+        Debug.WriteLine($"[PlayerViewModel] INFO: Navigating to Lyrics Page.");
+        _navigationService.Navigate(typeof(LyricsPage)); // Simplified navigation call
+    }
+
+    // The CanExecute logic is also simplified.
+    private bool CanGoToLyricsPage() => CurrentPlayingTrack != null;
+
     partial void OnIsMutedChanged(bool value) => UpdateVolumeIconGlyph();
 
     partial void OnCurrentVolumeChanged(double value) {
@@ -357,6 +375,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
             Debug.WriteLine("[PlayerViewModel] INFO: Playback stopped, clearing track details.");
         }
         GoToArtistCommand.NotifyCanExecuteChanged();
+        GoToLyricsPageCommand.NotifyCanExecuteChanged();
     }
 
     private void UpdateCurrentQueueDisplay() {

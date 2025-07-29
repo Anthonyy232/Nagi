@@ -545,6 +545,10 @@ public class LibraryService : ILibraryService {
         return UpdateSongPropertyAsync(songId, s => s.Lyrics = lyrics);
     }
 
+    public Task<bool> UpdateSongLrcPathAsync(Guid songId, string? lrcPath) {
+        return UpdateSongPropertyAsync(songId, s => s.LrcFilePath = lrcPath);
+    }
+
     #endregion
 
     #region Artist Management

@@ -96,6 +96,7 @@ across the application's media player interface.
     <Style x:Key="RepeatButtonStyle" TargetType="Button" BasedOn="{StaticResource MediaControlButtonStyle}" />
     <Style x:Key="VolumeButtonStyle" TargetType="Button" BasedOn="{StaticResource MediaControlButtonStyle}" />
     <Style x:Key="QueueButtonStyle" TargetType="Button" BasedOn="{StaticResource MediaControlButtonStyle}" />
+    <Style x:Key="LyricsButtonStyle" TargetType="Button" BasedOn="{StaticResource MediaControlButtonStyle}" />
 
     <!--
     Style for the thumb of the media seeker (progress) slider.

@@ -138,6 +138,8 @@ public partial class App : Application {
         services.AddSingleton<IFileSystemService, FileSystemService>();
         services.AddSingleton<IImageProcessor, ImageSharpProcessor>();
         services.AddSingleton<IMetadataExtractor, TagLibMetadataExtractor>();
+        services.AddSingleton<ILrcService, LrcService>();
+
 
         services.AddSingleton<IApiKeyService, ApiKeyService>();
         services.AddSingleton<ILastFmMetadataService, LastFmMetadataService>();
@@ -190,6 +192,7 @@ public partial class App : Application {
         services.AddTransient<AlbumViewModel>();
         services.AddTransient<GenreViewModel>();
         services.AddTransient<GenreViewViewModel>();
+        services.AddTransient<LyricsPageViewModel>();
     }
 
     // Ensures the database is created and all migrations are applied.
