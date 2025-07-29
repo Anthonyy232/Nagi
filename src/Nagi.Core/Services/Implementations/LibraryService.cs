@@ -79,7 +79,7 @@ public class LibraryService : ILibraryService {
             return existingFolder;
         }
 
-        var folder = new Folder { Path = path, Name = name ?? _fileSystem.GetDirectoryName(path) ?? "" };
+        var folder = new Folder { Path = path, Name = name ?? _fileSystem.GetFileNameWithoutExtension(path) ?? "" };
         try {
             folder.LastModifiedDate = _fileSystem.GetLastWriteTimeUtc(path);
         }
