@@ -15,7 +15,6 @@ using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
 using Nagi.WinUI.ViewModels;
 using Windows.Foundation.Metadata;
-using Microsoft.UI.Xaml.Documents;
 
 namespace Nagi.WinUI;
 
@@ -50,6 +49,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider {
 
     private readonly IUISettingsService _settingsService;
     private readonly IThemeService _themeService;
+    private readonly IDispatcherService _dispatcherService;
 
     // A flag to control the player's expand/collapse animation based on user settings.
     private bool _isPlayerAnimationEnabled = true;
@@ -65,6 +65,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider {
         ViewModel = App.Services!.GetRequiredService<PlayerViewModel>();
         _settingsService = App.Services!.GetRequiredService<IUISettingsService>();
         _themeService = App.Services!.GetRequiredService<IThemeService>();
+        _dispatcherService = App.Services!.GetRequiredService<IDispatcherService>(); // Injected the service
         DataContext = ViewModel;
 
         InitializeNavigationService();
@@ -189,6 +190,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider {
         ViewModel.PropertyChanged += OnViewModelPropertyChanged;
         _settingsService.PlayerAnimationSettingChanged += OnPlayerAnimationSettingChanged;
         _settingsService.NavigationSettingsChanged += OnNavigationSettingsChanged;
+        _settingsService.TransparencyEffectsSettingChanged += OnTransparencyEffectsSettingChanged;
 
         await PopulateNavigationAsync();
 
@@ -210,6 +212,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider {
         ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
         _settingsService.PlayerAnimationSettingChanged -= OnPlayerAnimationSettingChanged;
         _settingsService.NavigationSettingsChanged -= OnNavigationSettingsChanged;
+        _settingsService.TransparencyEffectsSettingChanged -= OnTransparencyEffectsSettingChanged;
     }
 
     /// <summary>
@@ -217,7 +220,13 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider {
     /// Uses Acrylic for Windows 11+ and a solid color for Windows 10.
     /// </summary>
     private void SetPlatformSpecificBrush() {
-        if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 14)) {
+        bool isAcrylicEnabled = _settingsService.IsTransparencyEffectsEnabled();
+        if (!isAcrylicEnabled) {
+            // Transparency effects are disabled
+            FloatingPlayerContainer.Background = (Brush)Application.Current.Resources["NonTransparentBrush"];
+            return;
+        }
+        else if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 14)) {
             // We are on Windows 11 or newer
             FloatingPlayerContainer.Background = (Brush)Application.Current.Resources["Win11AcrylicBrush"];
         }
@@ -227,9 +236,13 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider {
         }
     }
 
+    private void OnTransparencyEffectsSettingChanged(bool isEnabled) {
+        _dispatcherService.TryEnqueue(SetPlatformSpecificBrush);
+    }
+
     // Responds to changes in the player animation setting.
     private void OnPlayerAnimationSettingChanged(bool isEnabled) {
-        DispatcherQueue.TryEnqueue(() => {
+        _dispatcherService.TryEnqueue(() => {
             _isPlayerAnimationEnabled = isEnabled;
             UpdatePlayerVisualState(false);
         });
@@ -237,7 +250,9 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider {
 
     // Repopulates the navigation view when its settings change.
     private void OnNavigationSettingsChanged() {
-        DispatcherQueue.TryEnqueue(async () => {
+        // Use EnqueueAsync for async lambdas. Fire-and-forget is acceptable
+        // for this background UI update. The discard `_ =` signifies this intent.
+        _ = _dispatcherService.EnqueueAsync(async () => {
             _isUpdatingNavViewSelection = true;
             await PopulateNavigationAsync();
             if (ContentFrame.CurrentSourcePageType == typeof(SettingsPage)) {
@@ -256,13 +271,13 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider {
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         switch (e.PropertyName) {
             case nameof(PlayerViewModel.CurrentPlayingTrack):
-                DispatcherQueue.TryEnqueue(() => {
+                _dispatcherService.TryEnqueue(() => {
                     ApplyDynamicThemeForCurrentTrack();
                     UpdatePlayerVisualState();
                 });
                 break;
             case nameof(PlayerViewModel.IsPlaying):
-                DispatcherQueue.TryEnqueue(() => UpdatePlayerVisualState());
+                _dispatcherService.TryEnqueue(() => SetPlatformSpecificBrush());
                 break;
         }
     }
@@ -310,8 +325,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider {
         _isPointerOverPlayer = false;
         UpdatePlayerVisualState();
     }
-
-
 
     private void AppTitleBar_PaneToggleRequested(TitleBar sender, object args) {
         NavView.IsPaneOpen = !NavView.IsPaneOpen;
