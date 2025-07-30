@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style x:Key="InactiveLyricLineStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="20" />
+        <Setter Property="Foreground" Value="{ThemeResource TextFillColorTertiaryBrush}" />
+        <Setter Property="TextAlignment" Value="Center" />
+        <Setter Property="Margin" Value="0,12" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="TextTrimming" Value="None" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="Opacity" Value="0.7" />
+        <Setter Property="LineHeight" Value="28" />
+    </Style>
+
+    <Style x:Key="ActiveLyricTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource InactiveLyricLineStyle}">
+        <Setter Property="FontSize" Value="28" />
+        <Setter Property="Foreground" Value="{StaticResource AppPrimaryColorBrush}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Opacity" Value="1.0" />
+        <Setter Property="LineHeight" Value="40" />
+    </Style>
+
+    <Style x:Key="LyricsListViewItemStyle" TargetType="ListViewItem">
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Margin" Value="0"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+    </Style>
+
+    <Style x:Key="LyricsProgressBarStyle" TargetType="ProgressBar">
+        <Setter Property="Height" Value="3" />
+        <Setter Property="Margin" Value="0,0,0,0" />
+        <Setter Property="Maximum" Value="100" />
+        <Setter Property="Foreground" Value="{StaticResource AppPrimaryColorBrush}" />
+    </Style>
+
+</ResourceDictionary>

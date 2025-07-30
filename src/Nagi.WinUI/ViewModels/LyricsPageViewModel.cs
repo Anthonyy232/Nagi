@@ -9,12 +9,13 @@ using System.Collections.ObjectModel;
 namespace Nagi.WinUI.ViewModels;
 
 /// <summary>
-/// Provides data and logic for the LyricsPage.
+/// Provides data, logic, and state management for the LyricsPage.
 /// </summary>
 public partial class LyricsPageViewModel : ObservableObject, IDisposable {
     private readonly IMusicPlaybackService _playbackService;
     private readonly IDispatcherService _dispatcherService;
     private readonly ILrcService _lrcService;
+
     private bool _isDisposed;
     private ParsedLrc? _parsedLrc;
     private int _lrcSearchHint;
@@ -24,8 +25,6 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable {
 
     [ObservableProperty]
     private bool _hasLyrics;
-
-    public ObservableCollection<LyricLine> LyricLines { get; } = new();
 
     [ObservableProperty]
     private LyricLine? _currentLine;
@@ -39,6 +38,8 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable {
     [ObservableProperty]
     private bool _isPlaying;
 
+    public ObservableCollection<LyricLine> LyricLines { get; } = new();
+
     public LyricsPageViewModel(
         IMusicPlaybackService playbackService,
         IDispatcherService dispatcherService,
@@ -47,19 +48,21 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable {
         _dispatcherService = dispatcherService;
         _lrcService = lrcService;
 
-        _playbackService.TrackChanged += OnPlaybackService_TrackChanged;
-        _playbackService.PositionChanged += OnPlaybackService_PositionChanged;
-        _playbackService.DurationChanged += OnPlaybackService_DurationChanged;
-        _playbackService.PlaybackStateChanged += OnPlaybackService_PlaybackStateChanged;
+        _playbackService.TrackChanged += OnPlaybackServiceTrackChanged;
+        _playbackService.PositionChanged += OnPlaybackServicePositionChanged;
+        _playbackService.DurationChanged += OnPlaybackServiceDurationChanged;
+        _playbackService.PlaybackStateChanged += OnPlaybackServicePlaybackStateChanged;
 
+        // Initialize state with the currently playing track, if any.
         UpdateForTrack(_playbackService.CurrentTrack);
         IsPlaying = _playbackService.IsPlaying;
     }
 
     /// <summary>
-    /// Updates the ViewModel's state for a new song.
+    /// Updates the ViewModel's state to reflect a new song.
     /// </summary>
     private async void UpdateForTrack(Song? song) {
+        // Ensure all state updates occur on the UI thread.
         await _dispatcherService.EnqueueAsync(async () => {
             LyricLines.Clear();
             CurrentLine = null;
@@ -90,7 +93,8 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable {
                 }
 
                 HasLyrics = true;
-                OnPlaybackService_PositionChanged();
+                // Manually trigger a position update to set the initial lyric line.
+                OnPlaybackServicePositionChanged();
             }
         });
     }
@@ -98,14 +102,14 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable {
     /// <summary>
     /// Handles the TrackChanged event from the playback service.
     /// </summary>
-    private void OnPlaybackService_TrackChanged() {
+    private void OnPlaybackServiceTrackChanged() {
         UpdateForTrack(_playbackService.CurrentTrack);
     }
 
     /// <summary>
-    /// Handles the PositionChanged event from the playback service.
+    /// Handles the PositionChanged event from the playback service, updating the current lyric line.
     /// </summary>
-    private void OnPlaybackService_PositionChanged() {
+    private void OnPlaybackServicePositionChanged() {
         if (_parsedLrc is null || !HasLyrics) return;
 
         var position = _playbackService.CurrentPosition;
@@ -113,11 +117,15 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable {
         _dispatcherService.TryEnqueue(() => {
             CurrentPosition = position;
 
+            // Use the LRC service to efficiently find the current line.
             var newCurrentLine = _lrcService.GetCurrentLine(_parsedLrc, position, ref _lrcSearchHint);
 
+            // Only update properties if the line has actually changed to prevent unnecessary UI churn.
             if (!ReferenceEquals(newCurrentLine, CurrentLine)) {
                 if (CurrentLine != null) CurrentLine.IsActive = false;
                 if (newCurrentLine != null) newCurrentLine.IsActive = true;
+
+                // Manually call SetProperty to trigger the PropertyChanged event for CurrentLine.
                 SetProperty(ref _currentLine, newCurrentLine, nameof(CurrentLine));
             }
         });
@@ -126,27 +134,27 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable {
     /// <summary>
     /// Handles the DurationChanged event from the playback service.
     /// </summary>
-    private void OnPlaybackService_DurationChanged() {
+    private void OnPlaybackServiceDurationChanged() {
         _dispatcherService.TryEnqueue(() => { SongDuration = _playbackService.Duration; });
     }
 
     /// <summary>
     /// Handles the PlaybackStateChanged event from the playback service.
     /// </summary>
-    private void OnPlaybackService_PlaybackStateChanged() {
+    private void OnPlaybackServicePlaybackStateChanged() {
         _dispatcherService.TryEnqueue(() => { IsPlaying = _playbackService.IsPlaying; });
     }
 
     /// <summary>
-    /// Cleans up resources and unsubscribes from events.
+    /// Cleans up resources and unsubscribes from events to prevent memory leaks.
     /// </summary>
     public void Dispose() {
         if (_isDisposed) return;
 
-        _playbackService.TrackChanged -= OnPlaybackService_TrackChanged;
-        _playbackService.PositionChanged -= OnPlaybackService_PositionChanged;
-        _playbackService.DurationChanged -= OnPlaybackService_DurationChanged;
-        _playbackService.PlaybackStateChanged -= OnPlaybackService_PlaybackStateChanged;
+        _playbackService.TrackChanged -= OnPlaybackServiceTrackChanged;
+        _playbackService.PositionChanged -= OnPlaybackServicePositionChanged;
+        _playbackService.DurationChanged -= OnPlaybackServiceDurationChanged;
+        _playbackService.PlaybackStateChanged -= OnPlaybackServicePlaybackStateChanged;
 
         _isDisposed = true;
         GC.SuppressFinalize(this);

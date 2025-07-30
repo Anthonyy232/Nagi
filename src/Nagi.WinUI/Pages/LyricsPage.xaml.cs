@@ -20,15 +20,15 @@ public sealed partial class LyricsPage : Page {
     public LyricsPage() {
         ViewModel = App.Services!.GetRequiredService<LyricsPageViewModel>();
         this.InitializeComponent();
-        ViewModel.PropertyChanged += ViewModel_PropertyChanged;
-        this.Unloaded += OnUnloaded;
+        ViewModel.PropertyChanged += OnViewModelPropertyChanged;
+        this.Unloaded += OnPageUnloaded;
     }
 
     /// <summary>
     /// Handles the page's Unloaded event to clean up resources.
     /// </summary>
-    private void OnUnloaded(object sender, RoutedEventArgs e) {
-        ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
+    private void OnPageUnloaded(object sender, RoutedEventArgs e) {
+        ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
         _progressBarStoryboard.Stop();
         ViewModel.Dispose();
     }
@@ -36,7 +36,7 @@ public sealed partial class LyricsPage : Page {
     /// <summary>
     /// Handles the page's Loaded event to trigger animations and initial setup.
     /// </summary>
-    private void LyricsPage_Loaded(object sender, RoutedEventArgs e) {
+    private void OnPageLoaded(object sender, RoutedEventArgs e) {
         if (this.Resources["PageLoadStoryboard"] is Storyboard storyboard) {
             storyboard.Begin();
         }
@@ -46,9 +46,10 @@ public sealed partial class LyricsPage : Page {
     /// <summary>
     /// Responds to property changes in the ViewModel to update the UI.
     /// </summary>
-    private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
+    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         switch (e.PropertyName) {
             case nameof(ViewModel.CurrentLine):
+                // Enqueue UI updates to ensure they run on the main thread.
                 DispatcherQueue.TryEnqueue(() => {
                     ScrollToCurrentLine();
                     UpdateProgressBarForCurrentLine();
@@ -57,8 +58,7 @@ public sealed partial class LyricsPage : Page {
 
             case nameof(ViewModel.IsPlaying):
                 if (ViewModel.IsPlaying) {
-                    // Resync the animation when playback starts or resumes
-                    // to handle both simple resume and resuming after a seek.
+                    // Resync animation on play/resume to handle seeking or pausing.
                     UpdateProgressBarForCurrentLine();
                 }
                 else {
@@ -81,26 +81,21 @@ public sealed partial class LyricsPage : Page {
             return;
         }
 
-        // Determine the start time of the next line to calculate the current line's duration.
+        // Determine the current line's duration by finding the next line's start time.
         int currentIndex = ViewModel.LyricLines.IndexOf(currentLine);
-        TimeSpan nextLineStartTime;
-        if (currentIndex >= 0 && currentIndex < ViewModel.LyricLines.Count - 1) {
-            nextLineStartTime = ViewModel.LyricLines[currentIndex + 1].StartTime;
-        }
-        else {
-            // For the last line, the end time is the song's total duration.
-            nextLineStartTime = ViewModel.SongDuration;
-        }
+        TimeSpan nextLineStartTime = (currentIndex >= 0 && currentIndex < ViewModel.LyricLines.Count - 1)
+            ? ViewModel.LyricLines[currentIndex + 1].StartTime
+            : ViewModel.SongDuration; // Use song duration for the last line.
 
         TimeSpan lineDuration = nextLineStartTime - currentLine.StartTime;
 
-        // Handle lines with no duration (e.g., same timestamp as the next line).
+        // Handle lines with no duration (e.g., same timestamp as the next).
         if (lineDuration <= TimeSpan.Zero) {
             LyricsProgressBar.Value = ViewModel.CurrentPosition >= currentLine.StartTime ? 100 : 0;
             return;
         }
 
-        // Calculate the starting progress value to handle seeking within a line.
+        // Calculate starting progress to handle seeking within a line.
         var positionInLine = ViewModel.CurrentPosition - currentLine.StartTime;
         double startValue = (positionInLine.TotalMilliseconds / lineDuration.TotalMilliseconds) * 100;
         startValue = Math.Clamp(startValue, 0, 100);
@@ -112,7 +107,7 @@ public sealed partial class LyricsPage : Page {
             return;
         }
 
-        // Create the animation from the calculated start point to 100%.
+        // Create an animation from the calculated start point to 100%.
         var animation = new DoubleAnimation {
             From = startValue,
             To = 100.0,
@@ -141,7 +136,7 @@ public sealed partial class LyricsPage : Page {
         if (lineIndex < 0) return;
 
         var options = new BringIntoViewOptions() {
-            VerticalAlignmentRatio = 0.25,
+            VerticalAlignmentRatio = 0.25, // Center the item in the top quarter of the viewport.
             AnimationDesired = true
         };
 
@@ -151,13 +146,11 @@ public sealed partial class LyricsPage : Page {
             container.StartBringIntoView(options);
         }
         else {
-            // Fallback for when the container is not yet realized.
+            // Fallback for when the container is not yet realized (virtualized).
             LyricsListView.ScrollIntoView(ViewModel.CurrentLine);
-            await Task.Yield();
+            await Task.Yield(); // Allow the UI thread to process the scroll and create the container.
             container = LyricsListView.ContainerFromIndex(lineIndex) as UIElement;
-            if (container != null) {
-                container.StartBringIntoView(options);
-            }
+            container?.StartBringIntoView(options);
         }
     }
 }

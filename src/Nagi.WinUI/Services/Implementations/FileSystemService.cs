@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using Nagi.Core.Services.Abstractions;
@@ -55,6 +56,8 @@ public class FileSystemService : IFileSystemService {
         return Path.GetFileNameWithoutExtension(path);
     }
     public string? GetDirectoryName(string path) {
+        Debug.WriteLine($"Getting directory name for path: {path}");
+        Debug.WriteLine("[FileSystemService] " + Path.GetDirectoryName(path));
         return Path.GetDirectoryName(path);
     }
 
