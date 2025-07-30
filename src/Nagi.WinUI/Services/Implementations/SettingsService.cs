@@ -1,5 +1,6 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.Win32;
+using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
@@ -15,7 +16,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.Storage;
-using Nagi.Core.Helpers;
+using Windows.UI.ViewManagement;
 
 namespace Nagi.WinUI.Services.Implementations;
 
@@ -54,6 +55,7 @@ public class SettingsService : IUISettingsService {
     private readonly ICredentialLockerService _credentialLockerService;
     private readonly bool _isPackaged;
     private readonly ApplicationDataContainer? _localSettings;
+    private readonly UISettings _uiSettings = new();
     private Dictionary<string, object?> _settings;
     private bool _isInitialized;
 
@@ -66,6 +68,7 @@ public class SettingsService : IUISettingsService {
     public event Action? NavigationSettingsChanged;
     public event Action? LastFmSettingsChanged;
     public event Action<bool>? DiscordRichPresenceSettingChanged;
+    public event Action<bool>? TransparencyEffectsSettingChanged;
 
     public SettingsService(IPathConfiguration pathConfig, ICredentialLockerService credentialLockerService) {
         _pathConfig = pathConfig ?? throw new ArgumentNullException(nameof(pathConfig));
@@ -76,7 +79,15 @@ public class SettingsService : IUISettingsService {
         if (_isPackaged) {
             _localSettings = ApplicationData.Current.LocalSettings;
         }
+
+        _uiSettings.AdvancedEffectsEnabledChanged += OnAdvancedEffectsEnabledChanged;
     }
+
+    private void OnAdvancedEffectsEnabledChanged(UISettings sender, object args) {
+        TransparencyEffectsSettingChanged?.Invoke(_uiSettings.AdvancedEffectsEnabled);
+    }
+
+    public bool IsTransparencyEffectsEnabled() => _uiSettings.AdvancedEffectsEnabled;
 
     // Ensures that settings are loaded from the JSON file for unpackaged applications.
     private async Task EnsureUnpackagedSettingsLoadedAsync() {
