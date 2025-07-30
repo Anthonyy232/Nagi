@@ -24,6 +24,7 @@
                 <ResourceDictionary Source="ms-appx:///Styles/OnboardingPageColors.xaml" />
                 <ResourceDictionary Source="ms-appx:///Styles/GenrePageColors.xaml" />
                 <ResourceDictionary Source="ms-appx:///Styles/GenreViewPageColors.xaml" />
+                <ResourceDictionary Source="ms-appx:///Styles/LyricsPageColors.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

@@ -9,49 +9,28 @@
     xmlns:core="using:Nagi.Core.Models.Lyrics"
     xmlns:converters="using:Nagi.WinUI.Converters"
     mc:Ignorable="d"
-    Loaded="LyricsPage_Loaded">
+    Loaded="OnPageLoaded">
 
     <Page.Resources>
-        <!-- Styles -->
-        <Style x:Key="LyricLineStyle" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="20" />
-            <Setter Property="Foreground" Value="{ThemeResource TextFillColorTertiaryBrush}" />
-            <Setter Property="TextAlignment" Value="Center" />
-            <Setter Property="Margin" Value="0,10" />
-            <Setter Property="FontWeight" Value="Normal" />
-            <Setter Property="TextTrimming" Value="None" />
-            <Setter Property="TextWrapping" Value="Wrap" />
-            <Setter Property="Opacity" Value="0.7" />
-            <Setter Property="LineHeight" Value="28" />
-        </Style>
+        <ResourceDictionary>
+            <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+            <converters:BooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" Invert="True" />
+            <converters:ActiveLyricToStyleConverter
+                x:Key="ActiveLyricToStyleConverter"
+                ActiveStyle="{StaticResource ActiveLyricTextBlockStyle}"
+                InactiveStyle="{StaticResource InactiveLyricLineStyle}" />
 
-        <Style x:Key="HighlightedLyricLineStyle" TargetType="TextBlock" BasedOn="{StaticResource LyricLineStyle}">
-            <Setter Property="FontSize" Value="28" />
-            <Setter Property="Foreground" Value="{ThemeResource AccentTextFillColorPrimaryBrush}" />
-            <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="Opacity" Value="1.0" />
-            <Setter Property="LineHeight" Value="36" />
-        </Style>
-
-        <!-- Converters -->
-        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-        <converters:BooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" Invert="True" />
-        <converters:ActiveLyricToStyleConverter
-            x:Key="ActiveLyricToStyleConverter"
-            ActiveStyle="{StaticResource HighlightedLyricLineStyle}"
-            InactiveStyle="{StaticResource LyricLineStyle}" />
-
-        <!-- Animations -->
-        <Storyboard x:Key="PageLoadStoryboard">
-            <DoubleAnimation
-            Storyboard.TargetName="LyricsContainer"
-            Storyboard.TargetProperty="Opacity"
-            From="0" To="1" Duration="0:0:0.5">
-                <DoubleAnimation.EasingFunction>
-                    <ExponentialEase EasingMode="EaseOut" Exponent="3"/>
-                </DoubleAnimation.EasingFunction>
-            </DoubleAnimation>
-        </Storyboard>
+            <Storyboard x:Key="PageLoadStoryboard">
+                <DoubleAnimation
+                    Storyboard.TargetName="LyricsContainer"
+                    Storyboard.TargetProperty="Opacity"
+                    From="0" To="1" Duration="0:0:0.5">
+                    <DoubleAnimation.EasingFunction>
+                        <ExponentialEase EasingMode="EaseOut" Exponent="3"/>
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+            </Storyboard>
+        </ResourceDictionary>
     </Page.Resources>
 
     <Grid x:Name="LyricsContainer" Opacity="0">
@@ -59,7 +38,6 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <TextBlock
@@ -71,57 +49,47 @@
             HorizontalAlignment="Center"
             TextTrimming="CharacterEllipsis"
             MaxLines="1"
-            MaxWidth="1200">
-        </TextBlock>
+            MaxWidth="1200" />
 
         <ProgressBar
             x:Name="LyricsProgressBar"
             Grid.Row="1"
-            Height="2"
-            Margin="100,16,100,24"
-            Maximum="100"
-            Foreground="{ThemeResource AccentFillColorDefaultBrush}"
+            Style="{StaticResource LyricsProgressBarStyle}"
+            Margin="100,16,100,12"
             Visibility="{x:Bind ViewModel.HasLyrics, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-            MaxWidth="600">
-        </ProgressBar>
+            MaxWidth="600" />
 
         <ListView
             x:Name="LyricsListView"
             Grid.Row="2"
-            Padding="0,24"
+            Padding="0,24,0,96"
             ItemsSource="{x:Bind ViewModel.LyricLines, Mode=OneWay}"
             Background="Transparent"
             SelectionMode="None"
             IsItemClickEnabled="False"
             HorizontalContentAlignment="Stretch"
+            ItemContainerStyle="{StaticResource LyricsListViewItemStyle}"
             Visibility="{x:Bind ViewModel.HasLyrics, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="core:LyricLine">
                     <TextBlock
                         Text="{x:Bind Text}"
-                        Style="{x:Bind IsActive, Mode=OneWay, Converter={StaticResource ActiveLyricToStyleConverter}}">
-                    </TextBlock>
+                        Style="{x:Bind IsActive, Mode=OneWay, Converter={StaticResource ActiveLyricToStyleConverter}}" />
                 </DataTemplate>
             </ListView.ItemTemplate>
-
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="Padding" Value="0"/>
-                    <Setter Property="Margin" Value="0,4"/>
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                </Style>
-            </ListView.ItemContainerStyle>
         </ListView>
 
+        <!-- Placeholder shown when no lyrics are available for the current track. -->
         <StackPanel
             Grid.Row="2"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
+            Spacing="8"
             Visibility="{x:Bind ViewModel.HasLyrics, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
             <FontIcon
                 Glyph=""
                 FontSize="36"
-                Margin="0,0,0,16"
+                Margin="0,0,0,8"
                 Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
             <TextBlock
                 Style="{StaticResource SubtitleTextBlockStyle}"
@@ -129,10 +97,9 @@
                 HorizontalAlignment="Center" />
             <TextBlock
                 Style="{StaticResource BodyTextBlockStyle}"
-                Text="Try another song or check back later"
+                Text="Try another song"
                 HorizontalAlignment="Center"
-                Foreground="{ThemeResource TextFillColorTertiaryBrush}"
-                Margin="0,8,0,0" />
+                Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
         </StackPanel>
     </Grid>
 </Page>

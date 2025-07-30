@@ -36,6 +36,19 @@ public interface IUISettingsService : ISettingsService {
     event Action? NavigationSettingsChanged;
 
     /// <summary>
+    /// Occurs when the system's transparency effects setting is changed.
+    /// The boolean parameter indicates whether transparency effects are enabled.
+    /// </summary>
+    event Action<bool>? TransparencyEffectsSettingChanged;
+
+    /// <summary>
+    /// Gets whether system-wide transparency effects are currently enabled.
+    /// This is a live value from the OS, not a stored setting.
+    /// </summary>
+    /// <returns>True if transparency effects are enabled; otherwise, false.</returns>
+    bool IsTransparencyEffectsEnabled();
+
+    /// <summary>
     /// Gets the current application theme (Light, Dark, or Default).
     /// </summary>
     /// <returns>The saved <see cref="ElementTheme" />.</returns>
