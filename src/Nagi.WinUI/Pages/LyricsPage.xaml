@@ -1,6 +1,5 @@
 <Page
     x:Class="Nagi.WinUI.Pages.LyricsPage"
-    x:Name="lyricsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -66,7 +65,8 @@
             ItemsSource="{x:Bind ViewModel.LyricLines, Mode=OneWay}"
             Background="Transparent"
             SelectionMode="None"
-            IsItemClickEnabled="False"
+            IsItemClickEnabled="True"
+            ItemClick="LyricsListView_ItemClick"
             HorizontalContentAlignment="Stretch"
             ItemContainerStyle="{StaticResource LyricsListViewItemStyle}"
             Visibility="{x:Bind ViewModel.HasLyrics, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -79,7 +79,6 @@
             </ListView.ItemTemplate>
         </ListView>
 
-        <!-- Placeholder shown when no lyrics are available for the current track. -->
         <StackPanel
             Grid.Row="2"
             HorizontalAlignment="Center"
