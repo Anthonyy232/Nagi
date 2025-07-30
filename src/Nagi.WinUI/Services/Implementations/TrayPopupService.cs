@@ -64,6 +64,7 @@ public class TrayPopupService : ITrayPopupService, IDisposable {
 
     private async void ShowPopup() {
         _isAnimating = true;
+        _popupWindow!.ViewModel.ShowPlayerViewCommand.Execute(null);
 
         var windowHandle = WindowNative.GetWindowHandle(_popupWindow!);
         var scale = _win32.GetDpiForWindow(windowHandle) / BASE_DPI;
