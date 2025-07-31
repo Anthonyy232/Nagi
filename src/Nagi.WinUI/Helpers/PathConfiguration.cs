@@ -11,41 +11,28 @@ namespace Nagi.WinUI.Helpers;
 ///     automatically adapting to whether the app is running in a packaged or unpackaged context.
 /// </summary>
 public class PathConfiguration : IPathConfiguration {
-    /// <summary>
-    ///     Gets a value indicating whether the application is running in a packaged context (e.g., MSIX).
-    /// </summary>
+    /// <inheritdoc />
     public bool IsPackaged { get; }
 
-    /// <summary>
-    ///     Gets the root directory for all application data.
-    ///     - Packaged: %LOCALAPPDATA%\Packages\[PackageName]\LocalState
-    ///     - Unpackaged: %LOCALAPPDATA%\Nagi
-    /// </summary>
+    /// <inheritdoc />
     public string AppDataRoot { get; }
 
-    /// <summary>
-    ///     Gets the full path to the settings.json file.
-    /// </summary>
+    /// <inheritdoc />
     public string SettingsFilePath { get; }
 
-    /// <summary>
-    ///     Gets the full path to the playback_state.json file.
-    /// </summary>
+    /// <inheritdoc />
     public string PlaybackStateFilePath { get; }
 
-    /// <summary>
-    ///     Gets the full path to the directory for caching album art images.
-    /// </summary>
+    /// <inheritdoc />
     public string AlbumArtCachePath { get; }
 
-    /// <summary>
-    ///     Gets the full path to the directory for caching artist images.
-    /// </summary>
+    /// <inheritdoc />
     public string ArtistImageCachePath { get; }
 
-    /// <summary>
-    ///     Gets the full path to the SQLite database file.
-    /// </summary>
+    /// <inheritdoc />
+    public string LrcCachePath { get; }
+
+    /// <inheritdoc />
     public string DatabasePath { get; }
 
     public PathConfiguration() {
@@ -60,12 +47,14 @@ public class PathConfiguration : IPathConfiguration {
         PlaybackStateFilePath = Path.Combine(AppDataRoot, "playback_state.json");
         AlbumArtCachePath = Path.Combine(AppDataRoot, "AlbumArt");
         ArtistImageCachePath = Path.Combine(AppDataRoot, "ArtistImages");
+        LrcCachePath = Path.Combine(AppDataRoot, "LrcCache");
         DatabasePath = Path.Combine(AppDataRoot, "nagi.db");
 
         // Ensure all necessary directories exist on startup.
         Directory.CreateDirectory(AppDataRoot);
         Directory.CreateDirectory(AlbumArtCachePath);
         Directory.CreateDirectory(ArtistImageCachePath);
+        Directory.CreateDirectory(LrcCachePath);
     }
 
     private static bool IsRunningInPackage() {

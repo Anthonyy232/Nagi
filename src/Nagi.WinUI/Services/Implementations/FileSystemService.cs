@@ -36,6 +36,10 @@ public class FileSystemService : IFileSystemService {
         return File.WriteAllBytesAsync(path, bytes);
     }
 
+    public Task WriteAllTextAsync(string path, string contents) {
+        return File.WriteAllTextAsync(path, contents);
+    }
+
     public bool FileExists(string path) {
         return File.Exists(path);
     }
@@ -56,8 +60,6 @@ public class FileSystemService : IFileSystemService {
         return Path.GetFileNameWithoutExtension(path);
     }
     public string? GetDirectoryName(string path) {
-        Debug.WriteLine($"Getting directory name for path: {path}");
-        Debug.WriteLine("[FileSystemService] " + Path.GetDirectoryName(path));
         return Path.GetDirectoryName(path);
     }
 
