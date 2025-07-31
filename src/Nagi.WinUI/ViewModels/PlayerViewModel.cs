@@ -299,7 +299,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
 
     private void OnPlaybackService_PlaybackStateChanged() {
         RunOnUIThread(() => {
-            if (!_playbackService.IsTransitioningTrack) IsPlaying = _playbackService.IsPlaying;
+            IsPlaying = _playbackService.IsPlaying;
         });
     }
 
