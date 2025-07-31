@@ -45,11 +45,12 @@ public class LibraryService : ILibraryService {
     private readonly IPathConfiguration _pathConfig;
     private readonly HttpClient _httpClient;
 
+    // State management for the singleton background artist metadata fetch task.
     private readonly object _metadataFetchLock = new();
     private volatile bool _isMetadataFetchRunning;
     private CancellationTokenSource _metadataFetchCts;
 
-    // Manages per-file locks to prevent race conditions when downloading multiple images for the same artist.
+    // Prevents race conditions when downloading images for the same artist concurrently.
     private readonly ConcurrentDictionary<string, SemaphoreSlim> _artistImageWriteSemaphores = new();
 
     public LibraryService(
@@ -99,7 +100,7 @@ public class LibraryService : ILibraryService {
             folder.LastModifiedDate = _fileSystem.GetLastWriteTimeUtc(path);
         }
         catch (Exception ex) {
-            Trace.TraceWarning($"[{nameof(LibraryService)}] Could not get LastWriteTimeUtc for folder '{path}'. {ex.Message}");
+            Debug.WriteLine($"[{nameof(LibraryService)}] Could not get LastWriteTimeUtc for folder '{path}'. {ex.Message}");
             folder.LastModifiedDate = null;
         }
 
@@ -109,7 +110,8 @@ public class LibraryService : ILibraryService {
     }
 
     /// <summary>
-    /// Removes a folder and all its associated songs from the library. This is a destructive operation.
+    /// Removes a folder and all its associated songs and cached files (album art, lyrics) from the library.
+    /// The operation is transactional, and physical files are only deleted after the database transaction succeeds.
     /// </summary>
     /// <param name="folderId">The ID of the folder to remove.</param>
     /// <returns>True if the folder was successfully removed; otherwise, false.</returns>
@@ -118,14 +120,22 @@ public class LibraryService : ILibraryService {
         var folder = await context.Folders.FindAsync(folderId);
         if (folder is null) return false;
 
+        List<string> albumArtPathsToDelete;
+        List<string> lrcPathsToDelete;
+
         await using var transaction = await context.Database.BeginTransactionAsync();
         try {
             var songsInFolder = context.Songs.Where(s => s.FolderId == folderId);
 
-            var albumArtPathsToDelete = await songsInFolder
+            albumArtPathsToDelete = await songsInFolder
                 .Where(s => s.AlbumArtUriFromTrack != null)
                 .Select(s => s.AlbumArtUriFromTrack!)
                 .Distinct()
+                .ToListAsync();
+
+            lrcPathsToDelete = await songsInFolder
+                .Where(s => s.LrcFilePath != null)
+                .Select(s => s.LrcFilePath!)
                 .ToListAsync();
 
             await songsInFolder.ExecuteDeleteAsync();
@@ -136,26 +146,36 @@ public class LibraryService : ILibraryService {
             await CleanUpOrphanedEntitiesAsync(context);
 
             await transaction.CommitAsync();
-
-            // Delete physical files only after the database transaction is successfully committed.
-            foreach (var artPath in albumArtPathsToDelete) {
-                try {
-                    if (_fileSystem.FileExists(artPath)) {
-                        _fileSystem.DeleteFile(artPath);
-                    }
-                }
-                catch (Exception ex) {
-                    Trace.TraceWarning($"[{nameof(LibraryService)}] Failed to delete album art file '{artPath}'. {ex.Message}");
-                }
-            }
-
-            return true;
         }
         catch (Exception ex) {
-            Trace.TraceError($"[{nameof(LibraryService)}] Folder removal for ID '{folderId}' failed and was rolled back. Exception: {ex}");
+            Debug.WriteLine($"[{nameof(LibraryService)}] Folder removal for ID '{folderId}' failed and was rolled back. Exception: {ex}");
             await transaction.RollbackAsync();
             return false;
         }
+
+        foreach (var artPath in albumArtPathsToDelete) {
+            try {
+                if (_fileSystem.FileExists(artPath)) {
+                    _fileSystem.DeleteFile(artPath);
+                }
+            }
+            catch (Exception ex) {
+                Debug.WriteLine($"[{nameof(LibraryService)}] Failed to delete album art file '{artPath}'. {ex.Message}");
+            }
+        }
+
+        foreach (var lrcPath in lrcPathsToDelete) {
+            if (IsPathInLrcCache(lrcPath)) {
+                try {
+                    _fileSystem.DeleteFile(lrcPath);
+                }
+                catch (Exception ex) {
+                    Debug.WriteLine($"[{nameof(LibraryService)}] Failed to delete cached LRC file '{lrcPath}'. {ex.Message}");
+                }
+            }
+        }
+
+        return true;
     }
 
     /// <summary>
@@ -171,7 +191,7 @@ public class LibraryService : ILibraryService {
             folder.LastModifiedDate = _fileSystem.GetLastWriteTimeUtc(folder.Path);
         }
         catch (Exception ex) {
-            Trace.TraceWarning($"[{nameof(LibraryService)}] Could not get LastWriteTimeUtc for folder '{folder.Path}'. {ex.Message}");
+            Debug.WriteLine($"[{nameof(LibraryService)}] Could not get LastWriteTimeUtc for folder '{folder.Path}'. {ex.Message}");
         }
 
         context.Folders.Update(folder);
@@ -224,7 +244,7 @@ public class LibraryService : ILibraryService {
     #region Library Scanning
 
     /// <summary>
-    /// Scans a folder path for music files and adds them to the library. If the folder is not yet in the library, it will be added first.
+    /// Scans a folder path for music files, adding it to the library if necessary. This is a convenience wrapper for <see cref="RescanFolderForMusicAsync"/>.
     /// </summary>
     /// <param name="folderPath">The absolute path of the folder to scan.</param>
     /// <param name="progress">An optional progress reporter for UI updates.</param>
@@ -239,15 +259,14 @@ public class LibraryService : ILibraryService {
     }
 
     /// <summary>
-    /// Rescans an existing library folder, adding new files, updating changed files, and removing deleted files.
-    /// This operation runs on a background thread to avoid blocking the caller.
+    /// Rescans an existing library folder, adding new files, updating changed files, and removing deleted files and their associated caches.
     /// </summary>
     /// <param name="folderId">The ID of the folder to rescan.</param>
     /// <param name="progress">An optional progress reporter for UI updates.</param>
     /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
     /// <returns>True if the scan completed and made changes; otherwise, false. Returns false if cancelled or an error occurred.</returns>
     public Task<bool> RescanFolderForMusicAsync(Guid folderId, IProgress<ScanProgress>? progress = null, CancellationToken cancellationToken = default) {
-        // Offload the entire scan to a background thread to keep the UI responsive.
+        // Offloads the entire scan to a background thread to avoid blocking the caller.
         return Task.Run(async () => {
             try {
                 var folder = await GetFolderByIdAsync(folderId);
@@ -263,19 +282,54 @@ public class LibraryService : ILibraryService {
                     return await RemoveFolderAsync(folderId);
                 }
 
-                // Step 1: Analyze changes by comparing the database to the file system.
+                // Determine which files are new, modified, or deleted by comparing the database to the file system.
                 progress?.Report(new ScanProgress { StatusText = $"Analyzing '{folder.Name}'...", IsIndeterminate = true });
                 var (filesToAdd, filesToUpdate, filesToDelete) = await AnalyzeFolderChangesAsync(folderId, folder.Path, cancellationToken);
 
                 cancellationToken.ThrowIfCancellationRequested();
 
-                // Step 2: Delete records for files that no longer exist or will be updated.
                 if (filesToDelete.Any()) {
                     progress?.Report(new ScanProgress { StatusText = "Cleaning up your library...", IsIndeterminate = true });
                     await using var deleteContext = await _contextFactory.CreateDbContextAsync();
-                    await deleteContext.Songs
-                        .Where(s => s.FolderId == folderId && filesToDelete.Contains(s.FilePath))
-                        .ExecuteDeleteAsync(cancellationToken);
+
+                    // Before performing a bulk delete, retrieve the paths of associated cache files (art, lyrics) to prevent orphans.
+                    // This is critical because ExecuteDeleteAsync bypasses entity tracking and any C# cleanup logic.
+                    var songsToDeleteQuery = deleteContext.Songs
+                        .Where(s => s.FolderId == folderId && filesToDelete.Contains(s.FilePath));
+
+                    var lrcPathsToDelete = await songsToDeleteQuery
+                        .Where(s => s.LrcFilePath != null)
+                        .Select(s => s.LrcFilePath!)
+                        .ToListAsync(cancellationToken);
+
+                    var albumArtPathsToDelete = await songsToDeleteQuery
+                        .Where(s => s.AlbumArtUriFromTrack != null)
+                        .Select(s => s.AlbumArtUriFromTrack!)
+                        .ToListAsync(cancellationToken);
+
+                    await songsToDeleteQuery.ExecuteDeleteAsync(cancellationToken);
+
+                    foreach (var lrcPath in lrcPathsToDelete) {
+                        if (IsPathInLrcCache(lrcPath)) {
+                            try {
+                                _fileSystem.DeleteFile(lrcPath);
+                            }
+                            catch (Exception ex) {
+                                Debug.WriteLine($"[{nameof(LibraryService)}] Failed to delete cached LRC file '{lrcPath}' during rescan. {ex.Message}");
+                            }
+                        }
+                    }
+
+                    foreach (var artPath in albumArtPathsToDelete) {
+                        try {
+                            if (_fileSystem.FileExists(artPath)) {
+                                _fileSystem.DeleteFile(artPath);
+                            }
+                        }
+                        catch (Exception ex) {
+                            Debug.WriteLine($"[{nameof(LibraryService)}] Failed to delete orphaned album art file '{artPath}' during rescan. {ex.Message}");
+                        }
+                    }
                 }
 
                 var filesToProcess = filesToAdd.Concat(filesToUpdate).ToList();
@@ -284,12 +338,12 @@ public class LibraryService : ILibraryService {
                     return filesToDelete.Any();
                 }
 
-                // Step 3: Extract metadata from new and updated files concurrently.
+                // Process all new and updated files in parallel to accelerate metadata extraction.
                 var extractedMetadata = await ExtractMetadataConcurrentlyAsync(filesToProcess, progress, cancellationToken);
 
                 cancellationToken.ThrowIfCancellationRequested();
 
-                // Step 4: Batch-add the new/updated songs to the database.
+                // Persist all extracted metadata to the database in a single, optimized batch operation.
                 int newSongsFound = 0;
                 if (extractedMetadata.Any()) {
                     newSongsFound = await BatchUpdateDatabaseAsync(folderId, extractedMetadata, progress, cancellationToken);
@@ -297,7 +351,7 @@ public class LibraryService : ILibraryService {
 
                 cancellationToken.ThrowIfCancellationRequested();
 
-                // Step 5: Final cleanup of any orphaned artists, albums, or genres.
+                // Remove any artists, albums, or genres that are no longer referenced by any songs.
                 progress?.Report(new ScanProgress { StatusText = "Finalizing...", IsIndeterminate = true });
                 await using (var finalContext = await _contextFactory.CreateDbContextAsync()) {
                     await CleanUpOrphanedEntitiesAsync(finalContext, cancellationToken);
@@ -311,12 +365,12 @@ public class LibraryService : ILibraryService {
                 return true;
             }
             catch (OperationCanceledException) {
-                Trace.TraceInformation($"[{nameof(LibraryService)}] Scan for folder ID '{folderId}' was cancelled.");
+                Debug.WriteLine($"[{nameof(LibraryService)}] Scan for folder ID '{folderId}' was cancelled.");
                 progress?.Report(new ScanProgress { StatusText = "Scan cancelled by user.", Percentage = 100 });
                 return false;
             }
             catch (Exception ex) {
-                Trace.TraceError($"[{nameof(LibraryService)}] FATAL: Rescan for folder ID '{folderId}' failed. Exception: {ex}");
+                Debug.WriteLine($"[{nameof(LibraryService)}] FATAL: Rescan for folder ID '{folderId}' failed. Exception: {ex}");
                 progress?.Report(new ScanProgress { StatusText = "An error occurred during the scan. Please check the logs.", Percentage = 100 });
                 return false;
             }
@@ -344,7 +398,7 @@ public class LibraryService : ILibraryService {
         foreach (var folder in folders) {
             cancellationToken.ThrowIfCancellationRequested();
 
-            // Wrap the progress reporter to add context about which folder is being scanned.
+            // Wraps the progress reporter to provide contextual updates about which folder is being scanned.
             var progressWrapper = new Progress<ScanProgress>(scanProgress => {
                 var status = scanProgress.Percentage >= 100
                     ? scanProgress.StatusText
@@ -398,7 +452,6 @@ public class LibraryService : ILibraryService {
         lock (_metadataFetchLock) {
             if (_isMetadataFetchRunning) return Task.CompletedTask;
 
-            // If the previous token was cancelled (e.g., by a library reset), create a new one.
             if (_metadataFetchCts.IsCancellationRequested) {
                 _metadataFetchCts.Dispose();
                 _metadataFetchCts = new CancellationTokenSource();
@@ -414,7 +467,6 @@ public class LibraryService : ILibraryService {
                 while (!token.IsCancellationRequested) {
                     List<Guid> artistIdsToUpdate;
                     await using (var idContext = await _contextFactory.CreateDbContextAsync()) {
-                        // Find a batch of artists that have never been checked for metadata.
                         artistIdsToUpdate = await idContext.Artists
                             .AsNoTracking()
                             .Where(a => a.MetadataLastCheckedUtc == null)
@@ -426,7 +478,6 @@ public class LibraryService : ILibraryService {
 
                     if (artistIdsToUpdate.Count == 0 || token.IsCancellationRequested) break;
 
-                    // Use a scoped DbContext for the batch to ensure entities are managed correctly.
                     using var scope = _serviceScopeFactory.CreateScope();
                     var scopedContextFactory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<MusicDbContext>>();
                     await using var batchContext = await scopedContextFactory.CreateDbContextAsync();
@@ -438,19 +489,16 @@ public class LibraryService : ILibraryService {
                             await FetchAndUpdateArtistFromRemoteAsync(batchContext, artist);
                         }
                         catch (DbUpdateConcurrencyException) {
-                            // This can happen if another process (like a main scan) is also touching the artist.
-                            // It's safe to ignore; the next pass of the background worker will pick it up.
-                            Trace.TraceWarning($"[{nameof(LibraryService)}] Concurrency conflict for artist {artist.Id} during background fetch. Ignoring.");
+                            Debug.WriteLine($"[{nameof(LibraryService)}] Concurrency conflict for artist {artist.Id} during background fetch. Ignoring.");
                         }
                         catch (Exception ex) {
-                            Trace.TraceWarning($"[{nameof(LibraryService)}] Failed to update artist {artist.Id} in background. {ex.Message}");
+                            Debug.WriteLine($"[{nameof(LibraryService)}] Failed to update artist {artist.Id} in background. {ex.Message}");
                         }
                     }
                 }
             }
             catch (OperationCanceledException) {
-                // This is the expected, clean exit when cancellation is requested.
-                Trace.TraceInformation($"[{nameof(LibraryService)}] Artist metadata background fetch was cancelled.");
+                Debug.WriteLine($"[{nameof(LibraryService)}] Artist metadata background fetch was cancelled.");
             }
             finally {
                 lock (_metadataFetchLock) {
@@ -498,7 +546,7 @@ public class LibraryService : ILibraryService {
     }
 
     /// <summary>
-    /// Removes a song from the database by its ID.
+    /// Removes a song from the database by its ID and cleans up any associated cached files.
     /// </summary>
     /// <param name="songId">The ID of the song to remove.</param>
     /// <returns>True if the song was successfully removed; otherwise, false.</returns>
@@ -508,15 +556,26 @@ public class LibraryService : ILibraryService {
         if (song is null) return false;
 
         var albumArtPathToDelete = song.AlbumArtUriFromTrack;
+        var lrcPathToDelete = song.LrcFilePath;
+
         context.Songs.Remove(song);
         await context.SaveChangesAsync();
+
+        if (IsPathInLrcCache(lrcPathToDelete)) {
+            try {
+                _fileSystem.DeleteFile(lrcPathToDelete!);
+            }
+            catch (Exception ex) {
+                Debug.WriteLine($"[{nameof(LibraryService)}] Failed to delete cached LRC file '{lrcPathToDelete}'. {ex.Message}");
+            }
+        }
 
         if (!string.IsNullOrWhiteSpace(albumArtPathToDelete) && _fileSystem.FileExists(albumArtPathToDelete)) {
             try {
                 _fileSystem.DeleteFile(albumArtPathToDelete);
             }
             catch (Exception ex) {
-                Trace.TraceWarning($"[{nameof(LibraryService)}] Failed to delete album art file '{albumArtPathToDelete}'. {ex.Message}");
+                Debug.WriteLine($"[{nameof(LibraryService)}] Failed to delete album art file '{albumArtPathToDelete}'. {ex.Message}");
             }
         }
 
@@ -556,7 +615,7 @@ public class LibraryService : ILibraryService {
     }
 
     /// <summary>
-    /// Retrieves a collection of songs by their unique IDs.
+    /// Retrieves a collection of songs by their unique IDs, including related data.
     /// </summary>
     /// <param name="songIds">An enumerable of song IDs to retrieve.</param>
     /// <returns>A dictionary mapping song IDs to the corresponding <see cref="Song"/> objects.</returns>
@@ -590,7 +649,7 @@ public class LibraryService : ILibraryService {
     }
 
     /// <summary>
-    /// Retrieves all songs from the library with a specified sort order.
+    /// Retrieves all songs from the library with a specified sort order, including related data.
     /// </summary>
     /// <param name="sortOrder">The order in which to sort the songs.</param>
     /// <returns>An enumerable collection of all <see cref="Song"/> objects.</returns>
@@ -652,7 +711,7 @@ public class LibraryService : ILibraryService {
     }
 
     /// <summary>
-    // Searches for songs across titles, artists, and albums.
+    /// Searches for songs across titles, artists, and albums.
     /// </summary>
     /// <param name="searchTerm">The text to search for.</param>
     /// <returns>An enumerable collection of matching <see cref="Song"/> objects.</returns>
@@ -881,7 +940,7 @@ public class LibraryService : ILibraryService {
     }
 
     /// <summary>
-    /// Adds a collection of songs to the end of a playlist.
+    /// Adds a collection of songs to the end of a playlist, ignoring any duplicates.
     /// </summary>
     /// <param name="playlistId">The ID of the playlist.</param>
     /// <param name="songIds">The IDs of the songs to add.</param>
@@ -1575,20 +1634,18 @@ public class LibraryService : ILibraryService {
 
     /// <summary>
     /// Deletes all data from the library, including all songs, artists, albums, playlists, and folders.
-    /// Also clears associated cache files (album art, artist images). This is a highly destructive operation.
+    /// Also clears all associated cache files (album art, artist images, LRC files).
+    /// This is a highly destructive, non-recoverable operation.
     /// </summary>
     public async Task ClearAllLibraryDataAsync() {
-        // Signal any running background tasks to stop before their data is deleted.
-        Trace.TraceInformation($"[{nameof(LibraryService)}] Data reset requested. Cancelling background tasks...");
+        Debug.WriteLine($"[{nameof(LibraryService)}] Data reset requested. Cancelling background tasks...");
         _metadataFetchCts.Cancel();
-        // Give the background task a moment to acknowledge the cancellation and exit gracefully.
         await Task.Delay(250);
 
         await using var context = await _contextFactory.CreateDbContextAsync();
         await using var transaction = await context.Database.BeginTransactionAsync();
 
         try {
-            // Delete data in order of dependency to avoid foreign key constraint violations.
             await context.PlaylistSongs.ExecuteDeleteAsync();
             await context.ListenHistory.ExecuteDeleteAsync();
             await context.Songs.ExecuteDeleteAsync();
@@ -1602,19 +1659,21 @@ public class LibraryService : ILibraryService {
         }
         catch (Exception ex) {
             await transaction.RollbackAsync();
-            Trace.TraceError($"[{nameof(LibraryService)}] Database reset failed and was rolled back. Exception: {ex}");
+            Debug.WriteLine($"[{nameof(LibraryService)}] Database reset failed and was rolled back. Exception: {ex}");
             throw;
         }
 
-        // Clean up cached image files from the file system.
         var albumArtPath = _pathConfig.AlbumArtCachePath;
         var artistImagePath = _pathConfig.ArtistImageCachePath;
+        var lrcCachePath = _pathConfig.LrcCachePath;
 
         if (_fileSystem.DirectoryExists(albumArtPath)) _fileSystem.DeleteDirectory(albumArtPath, true);
         if (_fileSystem.DirectoryExists(artistImagePath)) _fileSystem.DeleteDirectory(artistImagePath, true);
+        if (_fileSystem.DirectoryExists(lrcCachePath)) _fileSystem.DeleteDirectory(lrcCachePath, true);
 
         _fileSystem.CreateDirectory(albumArtPath);
         _fileSystem.CreateDirectory(artistImagePath);
+        _fileSystem.CreateDirectory(lrcCachePath);
     }
 
     #endregion
@@ -1622,7 +1681,30 @@ public class LibraryService : ILibraryService {
     #region Private Helpers
 
     /// <summary>
-    /// Compares files on disk with database records to determine what has changed.
+    /// Determines if a file path is located within the app's managed LRC cache directory,
+    /// which is necessary to prevent the deletion of user-provided external .lrc files.
+    /// </summary>
+    /// <param name="filePath">The file path to check.</param>
+    /// <returns>True if the file is in the LRC cache; otherwise, false.</returns>
+    private bool IsPathInLrcCache(string? filePath) {
+        if (string.IsNullOrWhiteSpace(filePath)) return false;
+
+        try {
+            var lrcCachePath = _pathConfig.LrcCachePath;
+            var normalizedFilePath = Path.GetFullPath(filePath);
+            var normalizedCachePath = Path.GetFullPath(lrcCachePath);
+
+            return normalizedFilePath.StartsWith(normalizedCachePath, StringComparison.OrdinalIgnoreCase)
+                   && _fileSystem.FileExists(filePath);
+        }
+        catch (Exception ex) {
+            Debug.WriteLine($"[{nameof(LibraryService)}] Could not validate LRC cache path for '{filePath}'. Reason: {ex.Message}");
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Compares files on disk with database records to determine what has been added, modified, or deleted.
     /// </summary>
     private async Task<(List<string> filesToAdd, List<string> filesToUpdate, List<string> filesToDelete)> AnalyzeFolderChangesAsync(Guid folderId, string folderPath, CancellationToken cancellationToken) {
         await using var analysisContext = await _contextFactory.CreateDbContextAsync();
@@ -1639,7 +1721,7 @@ public class LibraryService : ILibraryService {
         .Where(file => MusicFileExtensions.Contains(_fileSystem.GetExtension(file)))
         .Select(path => {
             try { return new { Path = path, LastWriteTime = _fileSystem.GetLastWriteTimeUtc(path) }; }
-            catch (IOException) { return null; } // File might be locked, skip it.
+            catch (IOException) { return null; }
         })
         .Where(x => x != null)
         .ToDictionary(x => x!.Path, x => x!.LastWriteTime, StringComparer.OrdinalIgnoreCase);
@@ -1655,7 +1737,6 @@ public class LibraryService : ILibraryService {
             .ToList();
 
         var filesRemovedFromDisk = dbPaths.Except(diskPaths).ToList();
-        // Files to delete from DB are those removed from disk or those that will be updated (which are removed then re-added).
         var filesToDelete = filesRemovedFromDisk.Concat(filesToUpdate).ToList();
 
         return (filesToAdd, filesToUpdate, filesToDelete);
@@ -1670,7 +1751,6 @@ public class LibraryService : ILibraryService {
         using var semaphore = new SemaphoreSlim(degreeOfParallelism);
         int processedCount = 0;
         int totalFiles = filesToProcess.Count;
-        // Report progress in batches to avoid flooding the UI thread.
         const int progressReportingBatchSize = 25;
 
         progress?.Report(new ScanProgress { StatusText = "Reading song details...", TotalFiles = totalFiles, Percentage = 0 });
@@ -1705,7 +1785,8 @@ public class LibraryService : ILibraryService {
     }
 
     /// <summary>
-    /// Updates the database with a batch of new or updated songs, optimized for performance.
+    /// Updates the database with a batch of new or updated songs. This method is optimized for performance by
+    /// pre-fetching existing entities and includes retry logic to handle potential concurrency conflicts.
     /// </summary>
     private async Task<int> BatchUpdateDatabaseAsync(Guid folderId, List<SongFileMetadata> metadataList, IProgress<ScanProgress>? progress, CancellationToken cancellationToken) {
         const int maxRetries = 3;
@@ -1715,13 +1796,11 @@ public class LibraryService : ILibraryService {
 
         progress?.Report(new ScanProgress { StatusText = "Adding songs to your library...", IsIndeterminate = true, NewSongsFound = totalMetadataCount });
 
-        // Retry loop to handle rare concurrency issues (e.g., two scans running at once).
         while (retryCount < maxRetries && !saveSucceeded) {
             cancellationToken.ThrowIfCancellationRequested();
             try {
                 await using var context = await _contextFactory.CreateDbContextAsync();
 
-                // Pre-fetch existing artists, albums, and genres to reduce database round-trips inside the loop.
                 var artistNames = metadataList.SelectMany(m => new[] { m.Artist, m.AlbumArtist }).Where(n => !string.IsNullOrWhiteSpace(n)).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
                 var albumTitles = metadataList.Select(m => m.Album).Where(t => !string.IsNullOrWhiteSpace(t)).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
                 var genreNames = metadataList.SelectMany(m => m.Genres ?? Enumerable.Empty<string>()).Where(g => !string.IsNullOrWhiteSpace(g)).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
@@ -1730,7 +1809,6 @@ public class LibraryService : ILibraryService {
                 var existingAlbums = await context.Albums.Where(a => albumTitles.Contains(a.Title)).ToListAsync(cancellationToken);
                 var existingGenres = await context.Genres.Where(g => genreNames.Contains(g.Name)).ToDictionaryAsync(g => g.Name, StringComparer.OrdinalIgnoreCase, cancellationToken);
 
-                // Create any new entities that don't exist yet in memory.
                 foreach (var name in artistNames) {
                     if (!existingArtists.ContainsKey(name!)) {
                         var newArtist = new Artist { Name = name! };
@@ -1746,7 +1824,6 @@ public class LibraryService : ILibraryService {
                     }
                 }
 
-                // Prepare all song entities for insertion using the pre-fetched data.
                 foreach (var metadata in metadataList) {
                     await AddSongWithDetailsOptimizedAsync(context, folderId, metadata, existingArtists, existingAlbums, existingGenres);
                 }
@@ -1756,9 +1833,9 @@ public class LibraryService : ILibraryService {
             }
             catch (DbUpdateException ex) when (IsUniqueConstraintViolation(ex)) {
                 retryCount++;
-                Trace.TraceWarning($"[{nameof(LibraryService)}] Concurrency conflict during batch save. Attempt {retryCount}/{maxRetries}. Error: {ex.InnerException?.Message}");
+                Debug.WriteLine($"[{nameof(LibraryService)}] Concurrency conflict during batch save. Attempt {retryCount}/{maxRetries}. Error: {ex.InnerException?.Message}");
                 if (retryCount >= maxRetries) {
-                    Trace.TraceError($"[{nameof(LibraryService)}] Batch save failed after max retries. The operation will be aborted.");
+                    Debug.WriteLine($"[{nameof(LibraryService)}] Batch save failed after max retries. The operation will be aborted.");
                     throw;
                 }
                 await Task.Delay(200 * retryCount, cancellationToken);
@@ -1769,7 +1846,7 @@ public class LibraryService : ILibraryService {
     }
 
     /// <summary>
-    /// An optimized version of song creation that uses pre-fetched entity lookups to avoid database hits.
+    /// An optimized version of song creation that uses pre-fetched entity lookups to avoid database hits during a batch operation.
     /// </summary>
     private Task AddSongWithDetailsOptimizedAsync(
         MusicDbContext context,
@@ -1791,7 +1868,7 @@ public class LibraryService : ILibraryService {
             if (album == null) {
                 album = new Album { Title = albumTitle, ArtistId = albumArtist.Id, Year = metadata.Year };
                 context.Albums.Add(album);
-                existingAlbumList.Add(album); // Add to local list for subsequent lookups in the same batch.
+                existingAlbumList.Add(album);
             }
             else if (album.Year is null && metadata.Year.HasValue) {
                 album.Year = metadata.Year;
@@ -1843,7 +1920,7 @@ public class LibraryService : ILibraryService {
     }
 
     /// <summary>
-    /// A non-optimized version of song creation for single additions, involving database lookups.
+    /// A non-optimized version of song creation for single additions, involving individual database lookups.
     /// </summary>
     private async Task<Song?> AddSongWithDetailsAsync(MusicDbContext context, Guid folderId, SongFileMetadata metadata) {
         try {
@@ -1900,7 +1977,7 @@ public class LibraryService : ILibraryService {
             return song;
         }
         catch (Exception ex) {
-            Trace.TraceError($"[{nameof(LibraryService)}] Failed to prepare song entity for '{metadata.FilePath}'. Reason: {ex.Message}");
+            Debug.WriteLine($"[{nameof(LibraryService)}] Failed to prepare song entity for '{metadata.FilePath}'. Reason: {ex.Message}");
             return null;
         }
     }
@@ -1919,7 +1996,7 @@ public class LibraryService : ILibraryService {
             return true;
         }
         catch (DbUpdateException ex) {
-            Trace.TraceError($"[{nameof(LibraryService)}] Database update failed for song ID '{songId}'. Reason: {ex.InnerException?.Message ?? ex.Message}");
+            Debug.WriteLine($"[{nameof(LibraryService)}] Database update failed for song ID '{songId}'. Reason: {ex.InnerException?.Message ?? ex.Message}");
             return false;
         }
     }
@@ -1928,7 +2005,6 @@ public class LibraryService : ILibraryService {
     /// Fetches artist metadata from remote services and updates the local database record.
     /// </summary>
     private async Task FetchAndUpdateArtistFromRemoteAsync(MusicDbContext context, Artist artist) {
-        // 1. Fetch data from all available external services concurrently.
         var lastFmResultTask = _lastFmService.GetArtistInfoAsync(artist.Name);
         var spotifyResultTask = _spotifyService.GetArtistImageUrlAsync(artist.Name);
         await Task.WhenAll(lastFmResultTask, spotifyResultTask);
@@ -1936,16 +2012,11 @@ public class LibraryService : ILibraryService {
         var lastFmResult = lastFmResultTask.Result;
         var spotifyResult = spotifyResultTask.Result;
 
-        // 2. Check if services completed conclusively (i.e., not a temporary error).
-        // If any service had a temporary error, we abort and do NOT update the timestamp.
-        // This allows the background worker to try again later.
         if (!lastFmResult.IsConclusive || !spotifyResult.IsConclusive) {
             Debug.WriteLine($"[{nameof(LibraryService)}] Skipping metadata update for '{artist.Name}' due to a temporary service error. Will retry later.");
             return;
         }
 
-        // 3. At this point, we know the API calls were conclusive (success, not found, or permanent error).
-        // We can now safely update the artist entity and timestamp.
         bool wasMetadataFoundAndUpdated = false;
 
         if (lastFmResult.Status == ServiceResultStatus.Success && lastFmResult.Data?.Biography is not null) {
@@ -1960,13 +2031,9 @@ public class LibraryService : ILibraryService {
             }
         }
 
-        // 4. Set the timestamp because the check was conclusive, preventing repeated checks for artists with no data.
         artist.MetadataLastCheckedUtc = DateTime.UtcNow;
-
-        // 5. Save changes to the database.
         await context.SaveChangesAsync();
 
-        // 6. Notify the UI only if we actually found and saved new data.
         if (wasMetadataFoundAndUpdated) {
             ArtistMetadataUpdated?.Invoke(this, new ArtistMetadataUpdatedEventArgs(artist.Id, artist.LocalImageCachePath));
         }
@@ -1979,11 +2046,9 @@ public class LibraryService : ILibraryService {
         var localPath = _fileSystem.Combine(_pathConfig.ArtistImageCachePath, $"{artist.Id}.jpg");
         if (artist.LocalImageCachePath == localPath && _fileSystem.FileExists(localPath)) return false;
 
-        // Use a semaphore specific to the file path to ensure only one thread writes the file.
         var semaphore = _artistImageWriteSemaphores.GetOrAdd(localPath, _ => new SemaphoreSlim(1, 1));
         await semaphore.WaitAsync();
         try {
-            // Double-check after acquiring the semaphore in case another thread just finished.
             if (_fileSystem.FileExists(localPath)) return false;
 
             using var response = await _httpClient.GetAsync(imageUrl);
@@ -1995,7 +2060,7 @@ public class LibraryService : ILibraryService {
             return true;
         }
         catch (Exception ex) {
-            Trace.TraceWarning($"[{nameof(LibraryService)}] Failed to download image for artist '{artist.Name}'. {ex.Message}");
+            Debug.WriteLine($"[{nameof(LibraryService)}] Failed to download image for artist '{artist.Name}'. {ex.Message}");
             return false;
         }
         finally {
@@ -2113,7 +2178,7 @@ public class LibraryService : ILibraryService {
     }
 
     /// <summary>
-    /// Deletes any artists, albums, or genres that are no longer referenced by any songs.
+    /// Deletes any artists, albums, or genres that are no longer referenced by any songs, and cleans up associated artist images.
     /// </summary>
     private async Task CleanUpOrphanedEntitiesAsync(MusicDbContext context, CancellationToken cancellationToken = default) {
         await context.Albums.Where(a => !a.Songs.Any()).ExecuteDeleteAsync(cancellationToken);
@@ -2133,7 +2198,7 @@ public class LibraryService : ILibraryService {
                         _fileSystem.DeleteFile(artist.LocalImageCachePath);
                     }
                     catch (Exception ex) {
-                        Trace.TraceWarning($"[{nameof(LibraryService)}] Failed to delete orphaned artist image '{artist.LocalImageCachePath}'. {ex.Message}");
+                        Debug.WriteLine($"[{nameof(LibraryService)}] Failed to delete orphaned artist image '{artist.LocalImageCachePath}'. {ex.Message}");
                     }
                 }
             }
@@ -2189,11 +2254,10 @@ public class LibraryService : ILibraryService {
     }
 
     /// <summary>
-    /// Checks if a DbUpdateException was caused by a unique constraint violation.
+    /// Checks if a DbUpdateException was caused by a unique constraint violation, used for batch update retry logic.
     /// </summary>
     private bool IsUniqueConstraintViolation(DbUpdateException ex) {
         var innerMessage = ex.InnerException?.Message ?? string.Empty;
-        // Check for common unique constraint error messages across different database providers.
         return innerMessage.Contains("UNIQUE constraint failed", StringComparison.OrdinalIgnoreCase)
                || innerMessage.Contains("Violation of UNIQUE KEY constraint", StringComparison.OrdinalIgnoreCase)
                || innerMessage.Contains("duplicate key value violates unique constraint", StringComparison.OrdinalIgnoreCase);
