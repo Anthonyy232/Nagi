@@ -37,14 +37,14 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable {
         Debug.WriteLine("[LibVlcAudioPlayerService] Initializing LibVLC core.");
         var vlcOptions = new string[]
         {
-            "--no-video",               // No video output
-            "--no-spu",                 // Disable subtitle processing
-            "--no-osd",                 // Disable OnOSD
-            "--no-stats",               // Disable playback statistics
-            "--ignore-config",          // Isolate app from user's global VLC config
-            "--no-one-instance",        // Ensure the instance is self-contained
-            "--no-lua",                 // Disable Lua scripting
-            "--verbose=1"               // Error/debug logging level
+            "--no-video",
+            "--no-spu",
+            "--no-osd",
+            "--no-stats",
+            "--ignore-config",
+            "--no-one-instance",
+            "--no-lua",
+            "--verbose=-1"
         };
         _libVlc = new LibVLC(false, vlcOptions);
         _mediaPlayer = new MediaPlayer(_libVlc);
@@ -67,8 +67,6 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable {
         _mediaPlayer.Unmuted += OnMediaPlayerMuteChanged;
     }
 
-    #region IAudioPlayer Events
-
     /// <inheritdoc />
     public event Action? PlaybackEnded;
     /// <inheritdoc />
@@ -88,10 +86,6 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable {
     /// <inheritdoc />
     public event Action? SmtcPreviousButtonPressed;
 
-    #endregion
-
-    #region IAudioPlayer Properties
-
     /// <inheritdoc />
     public bool IsPlaying => _mediaPlayer.IsPlaying;
     /// <inheritdoc />
@@ -102,10 +96,6 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable {
     public double Volume => _mediaPlayer.Volume / 100.0;
     /// <inheritdoc />
     public bool IsMuted => _mediaPlayer.Mute;
-
-    #endregion
-
-    #region IAudioPlayer Methods
 
     /// <inheritdoc />
     public void InitializeSmtc() {
@@ -143,6 +133,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable {
             Debug.WriteLine($"[LibVlcAudioPlayerService] Loading media from path: {song.FilePath}");
             var media = new Media(new Uri(song.FilePath));
             _mediaPlayer.Media = media;
+
             // LibVLCSharp documentation recommends disposing the Media object
             // after assigning it to the player.
             media.Dispose();
@@ -244,10 +235,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable {
         GC.SuppressFinalize(this);
     }
 
-    #endregion
-
     private void OnMediaPlayerMediaChanged(object? sender, MediaPlayerMediaChangedEventArgs e) {
-        Debug.WriteLine($"[LibVlcAudioPlayerService] MediaChanged event fired. New media is {(e.Media is not null ? "loaded" : "null")}.");
         if (e.Media is not null) {
             _dispatcherService.TryEnqueue(() => MediaOpened?.Invoke());
             _ = UpdateSmtcDisplayAsync();
@@ -255,7 +243,6 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable {
     }
 
     private void OnMediaPlayerLengthChanged(object? sender, MediaPlayerLengthChangedEventArgs e) {
-        Debug.WriteLine($"[LibVlcAudioPlayerService] LengthChanged event fired. New length: {e.Length}ms.");
         _dispatcherService.TryEnqueue(() => DurationChanged?.Invoke());
     }
 
