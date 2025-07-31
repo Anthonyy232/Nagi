@@ -47,10 +47,10 @@ public class TagLibMetadataExtractor : IMetadataExtractor {
             metadata.FileModifiedDate = fileInfo.LastWriteTimeUtc;
             metadata.Title = _fileSystem.GetFileNameWithoutExtension(filePath);
 
-            // Lyrics are extracted with priority. First, check for cached or embedded synchronized lyrics.
+            // Prioritize lyrics extraction. First, check for cached or embedded synchronized lyrics.
             metadata.LrcFilePath = await GetLrcPathAsync(filePath, fileInfo.LastWriteTimeUtc);
 
-            // If no embedded lyrics were found, look for an external .lrc file as a fallback.
+            // As a fallback, look for an external .lrc file if no embedded lyrics were found.
             if (string.IsNullOrWhiteSpace(metadata.LrcFilePath)) {
                 metadata.LrcFilePath = FindLrcFilePath(filePath);
             }
@@ -66,17 +66,17 @@ public class TagLibMetadataExtractor : IMetadataExtractor {
             await ProcessAlbumArtAsync(metadata, tagFile.Tag);
         }
         catch (CorruptFileException ex) {
-            Trace.TraceWarning($"[MetadataExtractor] Corrupt file detected. Path: '{filePath}', Reason: {ex.Message}");
+            Debug.WriteLine($"[MetadataExtractor] Corrupt file detected. Path: '{filePath}', Reason: {ex.Message}");
             metadata.ExtractionFailed = true;
             metadata.ErrorMessage = "CorruptFile";
         }
         catch (UnsupportedFormatException) {
-            Trace.TraceWarning($"[MetadataExtractor] Unsupported file format. Path: '{filePath}'");
+            Debug.WriteLine($"[MetadataExtractor] Unsupported file format. Path: '{filePath}'");
             metadata.ExtractionFailed = true;
             metadata.ErrorMessage = "UnsupportedFormat";
         }
         catch (Exception ex) {
-            Trace.TraceWarning($"[MetadataExtractor] An unexpected error occurred during metadata extraction. Path: '{filePath}', Error: {ex.GetType().Name} - {ex.Message}");
+            Debug.WriteLine($"[MetadataExtractor] An unexpected error occurred during metadata extraction. Path: '{filePath}', Error: {ex.GetType().Name} - {ex.Message}");
             metadata.ExtractionFailed = true;
             metadata.ErrorMessage = ex.GetType().Name;
         }
@@ -85,7 +85,7 @@ public class TagLibMetadataExtractor : IMetadataExtractor {
     }
 
     /// <summary>
-    /// Populates the metadata object from the file's tags and properties.
+    /// Populates the metadata object from the file's tags and properties, providing sane defaults for missing values.
     /// </summary>
     private void PopulateMetadataFromTag(SongFileMetadata metadata, Tag tag, Properties properties) {
         var artist = SanitizeString(tag.Performers?.FirstOrDefault()) ?? UnknownArtistName;
@@ -128,7 +128,7 @@ public class TagLibMetadataExtractor : IMetadataExtractor {
         var picture = tag.Pictures?.FirstOrDefault();
         if (picture?.Data?.Data is not { Length: > 0 } pictureData) return;
 
-        // Create a key based on the album and artist to uniquely identify the album art.
+        // A key based on the album and artist uniquely identifies the album art, preventing redundant processing.
         var artKey = $"{metadata.AlbumArtist}_{metadata.Album}";
         var semaphore = _albumArtWriteSemaphores.GetOrAdd(artKey, _ => new SemaphoreSlim(1, 1));
 
@@ -150,7 +150,7 @@ public class TagLibMetadataExtractor : IMetadataExtractor {
     /// <param name="audioFileLastWriteTime">The last modification time of the audio file, used for cache validation.</param>
     /// <returns>The path to the cached LRC file, or null if not found or extracted.</returns>
     private async Task<string?> GetLrcPathAsync(string audioFilePath, DateTime audioFileLastWriteTime) {
-        // Create a deterministic and unique filename for the cache from the audio file path hash.
+        // A cryptographic hash of the file path creates a deterministic and unique filename for the cache entry.
         string cacheKey;
         using (var sha256 = SHA256.Create()) {
             var hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(audioFilePath));
@@ -159,8 +159,8 @@ public class TagLibMetadataExtractor : IMetadataExtractor {
 
         var cachedLrcPath = _fileSystem.Combine(_pathConfig.LrcCachePath, $"{cacheKey}.lrc");
 
-        // If a cached file exists, check if it's still valid by comparing its modification time
-        // with the source audio file's modification time.
+        // Validate the cache by comparing its modification time with the source audio file's modification time.
+        // This avoids re-extracting lyrics from an unchanged file.
         if (_fileSystem.FileExists(cachedLrcPath)) {
             var cacheLastWriteTime = _fileSystem.GetLastWriteTimeUtc(cachedLrcPath);
             if (cacheLastWriteTime >= audioFileLastWriteTime) {
@@ -175,11 +175,11 @@ public class TagLibMetadataExtractor : IMetadataExtractor {
             return await ExtractAndCacheEmbeddedLrcAsync(tagFile, cachedLrcPath);
         }
         catch (UnsupportedFormatException) {
-            // This format is not supported by TagLib for tag reading, so we can't get embedded lyrics.
+            // This format is not supported by TagLib for tag reading, so we cannot extract embedded lyrics.
             return null;
         }
         catch (Exception ex) {
-            Trace.TraceWarning($"[MetadataExtractor] Failed to extract or cache embedded LRC for '{audioFilePath}'. Error: {ex.Message}");
+            Debug.WriteLine($"[MetadataExtractor] Failed to extract or cache embedded LRC for '{audioFilePath}'. Error: {ex.Message}");
             return null;
         }
     }
@@ -191,30 +191,31 @@ public class TagLibMetadataExtractor : IMetadataExtractor {
     /// <param name="cachedLrcPath">The destination path for the cached LRC file.</param>
     /// <returns>The path to the cached LRC file if successful; otherwise, null.</returns>
     private async Task<string?> ExtractAndCacheEmbeddedLrcAsync(TagLib.File tagFile, string cachedLrcPath) {
-        // Explicitly request the ID3v2 tag to ensure we can access SYLT frames,
-        // which are not part of other tag formats like ID3v1.
+        // Explicitly request the ID3v2 tag, as SYLT frames are specific to this format.
         // The 'false' parameter prevents creating a new tag if one doesn't exist.
         if (tagFile.GetTag(TagTypes.Id3v2, false) is not TagLib.Id3v2.Tag id3v2Tag) {
             return null;
         }
 
+        // Find the best available synchronized lyrics frame, preferring the one with the most content.
         var bestSyltFrame = id3v2Tag.GetFrames<SynchronisedLyricsFrame>()
             .Where(f => f.Text.Length > 0)
-            .OrderByDescending(f => f.Text.Length) // Prefer the frame with the most lyric lines.
+            .OrderByDescending(f => f.Text.Length)
             .FirstOrDefault();
 
         if (bestSyltFrame is null) {
             return null;
         }
 
+        // The application's LRC parser only supports millisecond-based timestamps.
         if (bestSyltFrame.Format != TimestampFormat.AbsoluteMilliseconds) {
-            Trace.TraceWarning($"[LRC Extractor] Skipping embedded lyrics due to unsupported timestamp format: {bestSyltFrame.Format}");
+            Debug.WriteLine($"[LRC Extractor] Skipping embedded lyrics due to unsupported timestamp format: {bestSyltFrame.Format}");
             return null;
         }
 
         var lrcContentBuilder = new StringBuilder();
 
-        // Group lyrics by timestamp to merge any lines that share the exact same time.
+        // Group lyrics by timestamp to merge any lines that share the exact same time, a common occurrence in some files.
         var linesByTime = bestSyltFrame.Text
             .OrderBy(line => line.Time)
             .GroupBy(line => line.Time)
@@ -230,18 +231,18 @@ public class TagLibMetadataExtractor : IMetadataExtractor {
 
         var lrcContent = lrcContentBuilder.ToString();
         if (string.IsNullOrWhiteSpace(lrcContent)) {
-            Trace.TraceWarning("[LRC Extractor] Processed SYLT frame, but the resulting LRC content was empty.");
+            Debug.WriteLine("[LRC Extractor] Processed SYLT frame, but the resulting LRC content was empty.");
             return null;
         }
 
         await _fileSystem.WriteAllTextAsync(cachedLrcPath, lrcContent);
-        Trace.TraceInformation($"[LRC Extractor] LRC content successfully cached at '{cachedLrcPath}'.");
+        Debug.WriteLine($"[LRC Extractor] LRC content successfully cached at '{cachedLrcPath}'.");
 
         return cachedLrcPath;
     }
 
     /// <summary>
-    /// Searches for an external .lrc file in the same directory as the audio file.
+    /// Searches for an external .lrc file in the same directory as the audio file, matching by filename.
     /// </summary>
     /// <param name="audioFilePath">The full path to the audio file.</param>
     /// <returns>The path to the matching .lrc file, or null if not found.</returns>
@@ -253,19 +254,19 @@ public class TagLibMetadataExtractor : IMetadataExtractor {
             var audioFileNameWithoutExt = _fileSystem.GetFileNameWithoutExtension(audioFilePath);
             var lrcFiles = _fileSystem.GetFiles(directory, "*.lrc");
 
-            // Find an LRC file with a name that matches the audio file's name, ignoring case.
+            // Find an LRC file with a name that matches the audio file's name, ignoring case for compatibility.
             return lrcFiles.FirstOrDefault(lrcPath =>
                 _fileSystem.GetFileNameWithoutExtension(lrcPath)
                     .Equals(audioFileNameWithoutExt, StringComparison.OrdinalIgnoreCase));
         }
         catch (Exception ex) {
-            Trace.TraceWarning($"[MetadataExtractor] Error while searching for LRC file for '{audioFilePath}'. Error: {ex.Message}");
+            Debug.WriteLine($"[MetadataExtractor] Error while searching for LRC file for '{audioFilePath}'. Error: {ex.Message}");
             return null;
         }
     }
 
     /// <summary>
-    /// Trims a string and returns null if the result is empty or whitespace.
+    /// Trims a string and returns null if the result is empty or whitespace, ensuring consistent null/empty handling.
     /// </summary>
     /// <param name="input">The string to sanitize.</param>
     /// <returns>The trimmed string or null.</returns>
