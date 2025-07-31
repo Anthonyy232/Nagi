@@ -1,4 +1,9 @@
-﻿namespace Nagi.Core.Services.Abstractions;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
+
+namespace Nagi.Core.Services.Abstractions;
 
 /// <summary>
 /// Provides an abstraction over the file system to enable testability and platform-specific implementations.
@@ -10,6 +15,8 @@ public interface IFileSystemService {
     IEnumerable<string> EnumerateFiles(string path, string searchPattern, SearchOption searchOption);
     string[] GetFiles(string path, string searchPattern);
     Task WriteAllBytesAsync(string path, byte[] bytes);
+    Task WriteAllTextAsync(string path, string contents);
+
     bool FileExists(string path);
     void DeleteFile(string path);
     DateTime GetLastWriteTimeUtc(string path);

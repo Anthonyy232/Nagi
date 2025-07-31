@@ -35,6 +35,11 @@ public interface IPathConfiguration {
     string ArtistImageCachePath { get; }
 
     /// <summary>
+    /// Gets the full path to the directory for caching .lrc files extracted from metadata.
+    /// </summary>
+    string LrcCachePath { get; }
+
+    /// <summary>
     /// Gets the full path to the SQLite database file.
     /// </summary>
     string DatabasePath { get; }
