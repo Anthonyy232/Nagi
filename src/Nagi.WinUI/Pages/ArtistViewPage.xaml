@@ -170,7 +170,7 @@
         <ListView
             Grid.Row="1"
             x:Name="SongsListView"
-            Padding="24,0,24,0"
+            Padding="24,0,24,132"
             IsItemClickEnabled="True"
             ItemContainerStyle="{StaticResource SongListViewPageListViewItemStyle}"
             ItemsSource="{x:Bind ViewModel.Songs, Mode=OneWay}"
