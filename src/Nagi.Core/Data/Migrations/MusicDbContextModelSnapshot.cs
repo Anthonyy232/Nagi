@@ -58,6 +58,8 @@ namespace Nagi.Core.Data.Migrations
 
                     b.HasIndex("Title");
 
+                    b.HasIndex("Year");
+
                     b.HasIndex("Title", "ArtistId")
                         .IsUnique();
 
@@ -74,6 +76,9 @@ namespace Nagi.Core.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LocalImageCachePath")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("MetadataLastCheckedUtc")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
@@ -156,6 +161,8 @@ namespace Nagi.Core.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("IsScrobbled");
 
                     b.HasIndex("ListenTimestampUtc");
 
@@ -336,14 +343,22 @@ namespace Nagi.Core.Data.Migrations
 
                     b.HasIndex("ArtistId");
 
+                    b.HasIndex("DateAddedToLibrary");
+
                     b.HasIndex("FilePath")
                         .IsUnique();
 
                     b.HasIndex("FolderId");
 
+                    b.HasIndex("IsLoved");
+
                     b.HasIndex("LastPlayedDate");
 
+                    b.HasIndex("PlayCount");
+
                     b.HasIndex("Title");
+
+                    b.HasIndex("AlbumId", "DiscNumber", "TrackNumber");
 
                     b.ToTable("Songs");
                 });

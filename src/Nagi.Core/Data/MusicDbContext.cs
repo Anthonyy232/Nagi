@@ -24,26 +24,32 @@ public class MusicDbContext : DbContext {
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         base.OnModelCreating(modelBuilder);
 
-        // Configure Song entity
         modelBuilder.Entity<Song>(entity => {
-            // Use case-insensitive collation for text-based lookups.
+            // Use case-insensitive collation for efficient, case-insensitive text lookups.
             entity.Property(s => s.Title).UseCollation("NOCASE");
             entity.Property(s => s.FilePath).UseCollation("NOCASE");
 
-            // Define indexes for frequently queried columns.
+            // Define indexes for frequently queried columns to improve performance.
             entity.HasIndex(s => s.Title);
             entity.HasIndex(s => s.FilePath).IsUnique();
             entity.HasIndex(s => s.ArtistId);
             entity.HasIndex(s => s.AlbumId);
             entity.HasIndex(s => s.FolderId);
             entity.HasIndex(s => s.LastPlayedDate);
+            entity.HasIndex(s => s.DateAddedToLibrary);
+            entity.HasIndex(s => s.PlayCount);
+            entity.HasIndex(s => s.IsLoved);
 
-            // Define relationships.
+            // Composite index for fast, correct sorting of tracks within an album.
+            entity.HasIndex(s => new { s.AlbumId, s.DiscNumber, s.TrackNumber });
+
+            // Prevent deleting a folder if it still contains songs.
             entity.HasOne(s => s.Folder)
                 .WithMany(f => f.Songs)
                 .HasForeignKey(s => s.FolderId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            // Cascade delete listen history when a song is deleted.
             entity.HasMany(s => s.ListenHistory)
                 .WithOne(lh => lh.Song)
                 .HasForeignKey(lh => lh.SongId)
@@ -53,80 +59,83 @@ public class MusicDbContext : DbContext {
                 .WithMany(g => g.Songs);
         });
 
-        // Configure Album entity
         modelBuilder.Entity<Album>(entity => {
             entity.Property(a => a.Title).UseCollation("NOCASE");
             entity.HasIndex(a => a.Title);
             entity.HasIndex(a => a.ArtistId);
+            entity.HasIndex(a => a.Year);
+
+            // Ensure album titles are unique per artist.
             entity.HasIndex(a => new { a.Title, a.ArtistId }).IsUnique();
         });
 
-        // Configure Artist entity
         modelBuilder.Entity<Artist>(entity => {
             entity.Property(a => a.Name).UseCollation("NOCASE");
             entity.HasIndex(a => a.Name).IsUnique();
         });
 
-        // Configure Genre entity
         modelBuilder.Entity<Genre>(entity => {
             entity.Property(g => g.Name).UseCollation("NOCASE");
             entity.HasIndex(g => g.Name).IsUnique();
         });
 
-        // Configure ListenHistory entity
         modelBuilder.Entity<ListenHistory>(entity => {
             entity.HasIndex(lh => lh.SongId);
             entity.HasIndex(lh => lh.ListenTimestampUtc);
+            entity.HasIndex(lh => lh.IsScrobbled);
         });
 
-        // Configure Folder entity
         modelBuilder.Entity<Folder>(entity => {
             entity.Property(f => f.Path).UseCollation("NOCASE");
             entity.HasIndex(f => f.Path).IsUnique();
         });
 
-        // Configure Playlist entity
         modelBuilder.Entity<Playlist>(entity => {
             entity.Property(p => p.Name).UseCollation("NOCASE");
             entity.HasIndex(p => p.Name).IsUnique();
         });
 
-        // Configure PlaylistSong (many-to-many join) entity
         modelBuilder.Entity<PlaylistSong>(entity => {
+            // Define the composite primary key for the join table.
             entity.HasKey(ps => new { ps.PlaylistId, ps.SongId });
 
+            // Cascade delete join entries when a playlist or song is deleted.
             entity.HasOne(ps => ps.Playlist)
                 .WithMany(p => p.PlaylistSongs)
                 .HasForeignKey(ps => ps.PlaylistId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+
 
             entity.HasOne(ps => ps.Song)
                 .WithMany(s => s.PlaylistSongs)
                 .HasForeignKey(ps => ps.SongId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // Index for efficient, ordered retrieval of songs in a playlist.
             entity.HasIndex(ps => new { ps.PlaylistId, ps.Order });
         });
     }
 
     /// <summary>
-    /// WARNING: This is a destructive operation that deletes and recreates the database.
-    /// It should only be used for development, testing, or a user-initiated library reset.
+    /// Deletes and recreates the database.
+    /// This is a destructive operation intended for development, testing, or user-initiated library resets.
     /// </summary>
     public void RecreateDatabase() {
         try {
             Database.EnsureDeleted();
         }
         catch (Exception ex) {
-            // Log if deletion fails, as the database might be locked.
-            Debug.WriteLine($"[MusicDbContext] Warning: Failed to delete database. It may be in use. Error: {ex.Message}");
+            // Log if deletion fails, as the database might be locked by another process.
+            Debug.WriteLine($"Warning: Failed to delete database. It may be in use. Error: {ex.Message}");
         }
+
         try {
             Database.EnsureCreated();
         }
         catch (Exception ex) {
             // This is a critical failure if the database cannot be created.
-            Debug.WriteLine($"[MusicDbContext] CRITICAL: Failed to create new database. Error: {ex.Message}");
+            Debug.WriteLine($"CRITICAL: Failed to create new database. Error: {ex.Message}");
             throw;
         }
     }

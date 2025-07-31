@@ -35,6 +35,12 @@ public class Artist
     public string? LocalImageCachePath { get; set; }
 
     /// <summary>
+    /// The date and time when the artist's metadata was last successfully checked.
+    /// Null indicates never checked and received a proper empty response
+    /// </summary>
+    public DateTime? MetadataLastCheckedUtc { get; set; }
+
+    /// <summary>
     ///     A collection of songs by this artist.
     /// </summary>
     public virtual ICollection<Song> Songs { get; set; } = new List<Song>();
