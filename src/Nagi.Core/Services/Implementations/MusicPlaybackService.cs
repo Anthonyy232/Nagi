@@ -113,12 +113,11 @@ namespace Nagi.Core.Services.Implementations {
 
                 // If restoration was not attempted or failed, ensure queues are cleared.
                 if (!restoredSuccessfully) {
-                    Debug.WriteLine("[MusicPlaybackService] No session restored. Clearing queues.");
                     ClearQueuesInternal();
                 }
             }
             catch (Exception ex) {
-                Debug.WriteLine($"[MusicPlaybackService] ERROR: Initialization failed: {ex.Message}. Using default settings.");
+                Debug.WriteLine($"[MusicPlaybackService] Initialization failed: {ex.Message}. Using default settings.");
                 await _audioPlayer.SetVolumeAsync(0.5);
                 await _audioPlayer.SetMuteAsync(false);
                 IsShuffleEnabled = false;
@@ -139,6 +138,9 @@ namespace Nagi.Core.Services.Implementations {
             PositionChanged?.Invoke();
         }
 
+        /// <summary>
+        /// Restores the playback queue, indices, and current track from a saved state.
+        /// </summary>
         private async Task<bool> RestoreInternalPlaybackStateAsync(PlaybackState state) {
             var songIds = new HashSet<Guid>(state.PlaybackQueueTrackIds ?? Enumerable.Empty<Guid>());
             if (!songIds.Any()) return false;
@@ -149,7 +151,6 @@ namespace Nagi.Core.Services.Implementations {
             _playbackQueue = (state.PlaybackQueueTrackIds ?? Enumerable.Empty<Guid>())
                 .Select(id => songMap.GetValueOrDefault(id))
                 .Where(s => s != null)
-                .Cast<Song>()
                 .ToList();
 
             if (!_playbackQueue.Any()) return false;
@@ -159,8 +160,9 @@ namespace Nagi.Core.Services.Implementations {
                 _shuffledQueue = shuffledIds
                     .Select(id => songMap.GetValueOrDefault(id))
                     .Where(s => s != null)
-                    .Cast<Song>()
                     .ToList();
+
+                // Ensure shuffled queue is valid, otherwise regenerate it.
                 if (_shuffledQueue.Count != _playbackQueue.Count) {
                     GenerateShuffledQueue();
                 }
@@ -175,8 +177,7 @@ namespace Nagi.Core.Services.Implementations {
 
                 CurrentListenHistoryId = null;
 
-                // To prevent a race condition, we must wait for the audio player to report
-                // that the media's duration is known before attempting to seek.
+                // Wait for the media duration to be known before seeking to the saved position.
                 var durationKnownTcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
                 void OnDurationChangedHandler() {
                     _audioPlayer.DurationChanged -= OnDurationChangedHandler;
@@ -186,27 +187,25 @@ namespace Nagi.Core.Services.Implementations {
 
                 try {
                     await _audioPlayer.LoadAsync(CurrentTrack);
-
-                    // Wait for the duration to be known, with a reasonable timeout as a safeguard.
                     var completedTask = await Task.WhenAny(durationKnownTcs.Task, Task.Delay(5000));
 
                     if (completedTask == durationKnownTcs.Task && _audioPlayer.Duration > TimeSpan.Zero && state.CurrentPositionSeconds > 0) {
-                        Debug.WriteLine($"[MusicPlaybackService] Restoring seek position to {state.CurrentPositionSeconds}s");
                         await _audioPlayer.SeekAsync(TimeSpan.FromSeconds(state.CurrentPositionSeconds));
                     }
                     else if (completedTask != durationKnownTcs.Task) {
-                        Debug.WriteLine("[MusicPlaybackService] WARN: Timed out waiting for duration to be known during session restore.");
+                        Debug.WriteLine("[MusicPlaybackService] WARN: Timed out waiting for duration during session restore.");
                     }
                 }
                 finally {
-                    // Ensure the temporary handler is always removed.
                     _audioPlayer.DurationChanged -= OnDurationChangedHandler;
                 }
             }
             else {
+                // Restore indices even if the track itself isn't loaded.
                 CurrentQueueIndex = state.CurrentPlaybackQueueIndex;
                 _currentShuffledIndex = state.CurrentShuffledQueueIndex;
             }
+
             return true;
         }
 
@@ -237,6 +236,8 @@ namespace Nagi.Core.Services.Implementations {
 
             TrackChanged?.Invoke();
         }
+
+
 
         /// <inheritdoc />
         public async Task PlayAsync(Song song) {
@@ -274,16 +275,25 @@ namespace Nagi.Core.Services.Implementations {
 
             if (IsShuffleEnabled) {
                 GenerateShuffledQueue();
-                _currentShuffledIndex = _random.Next(_shuffledQueue.Count);
-                var songToPlay = _shuffledQueue[_currentShuffledIndex];
-                var actualStartIndex = _playbackQueue.IndexOf(songToPlay);
-                await PlayQueueItemAsync(actualStartIndex);
+                var songToPlay = _shuffledQueue.ElementAtOrDefault(startIndex);
+                if (songToPlay == null) {
+                    startIndex = 0;
+                    songToPlay = _shuffledQueue.FirstOrDefault();
+                }
+
+                if (songToPlay != null) {
+                    var actualPlaybackIndex = _playbackQueue.IndexOf(songToPlay);
+                    await PlayQueueItemAsync(actualPlaybackIndex);
+                }
+                else {
+                    await StopAsync();
+                }
             }
             else {
-                _shuffledQueue.Clear();
-                _currentShuffledIndex = -1;
-                var actualStartIndex = Math.Clamp(startIndex, 0, _playbackQueue.Count - 1);
-                await PlayQueueItemAsync(actualStartIndex);
+                if (startIndex < 0 || startIndex >= _playbackQueue.Count) {
+                    startIndex = 0;
+                }
+                await PlayQueueItemAsync(startIndex);
             }
         }
 
@@ -299,17 +309,17 @@ namespace Nagi.Core.Services.Implementations {
                 return;
             }
 
+            // If no track is loaded but a queue exists, play from the last known position.
+            // This allows playback to resume correctly after being stopped at a queue boundary.
             if (_playbackQueue.Any()) {
-                int indexToPlay = 0;
+                int indexToPlay = CurrentQueueIndex >= 0 ? CurrentQueueIndex : 0;
+
                 if (IsShuffleEnabled && _shuffledQueue.Any()) {
                     var shuffledIndex = _currentShuffledIndex >= 0 ? _currentShuffledIndex : 0;
                     var songToPlay = _shuffledQueue.ElementAtOrDefault(shuffledIndex);
                     if (songToPlay != null) {
                         indexToPlay = _playbackQueue.IndexOf(songToPlay);
                     }
-                }
-                else {
-                    indexToPlay = CurrentQueueIndex >= 0 ? CurrentQueueIndex : 0;
                 }
 
                 if (indexToPlay >= 0 && indexToPlay < _playbackQueue.Count) {
@@ -321,6 +331,10 @@ namespace Nagi.Core.Services.Implementations {
         /// <inheritdoc />
         public async Task StopAsync() {
             await _audioPlayer.StopAsync();
+
+            // Null the track to indicate a "stopped" state but preserve the queue indices.
+            // This is crucial for Next/Previous commands to work correctly from the
+            // beginning or end of the queue.
             CurrentTrack = null;
             CurrentListenHistoryId = null;
             IsTransitioningTrack = false;
@@ -336,23 +350,30 @@ namespace Nagi.Core.Services.Implementations {
                 return;
             }
 
-            if (TryGetNextTrackIndex(moveForward: true, out int nextIndex)) {
-                await PlayQueueItemAsync(nextIndex);
+            // This logic handles two distinct cases for robust navigation.
+            if (CurrentTrack != null) {
+                // Case 1: A track is currently active. Find the next one in the sequence.
+                if (TryGetNextTrackIndex(moveForward: true, out int nextIndex)) {
+                    await PlayQueueItemAsync(nextIndex);
+                }
+                else {
+                    // Reached the end of the queue.
+                    await StopAsync();
+                }
             }
-            else {
-                await StopAsync();
-                CurrentQueueIndex = -1;
-                _currentShuffledIndex = -1;
+            else if (_playbackQueue.Any()) {
+                // Case 2: The player is stopped at a queue boundary (e.g., after pressing Previous
+                // until the start). Pressing Next should resume playback from the current position.
+                await PlayQueueItemAsync(CurrentQueueIndex);
             }
         }
 
         /// <inheritdoc />
         public async Task PreviousAsync() {
+            // If the track has played for more than 3 seconds, restart it.
             if (CurrentTrack != null && _audioPlayer.CurrentPosition.TotalSeconds > 3 && CurrentRepeatMode != RepeatMode.RepeatOne) {
                 await SeekAsync(TimeSpan.Zero);
-                if (!_audioPlayer.IsPlaying) {
-                    await _audioPlayer.PlayAsync();
-                }
+                if (!_audioPlayer.IsPlaying) await _audioPlayer.PlayAsync();
                 return;
             }
 
@@ -361,13 +382,21 @@ namespace Nagi.Core.Services.Implementations {
                 return;
             }
 
-            if (TryGetNextTrackIndex(moveForward: false, out int prevIndex)) {
-                await PlayQueueItemAsync(prevIndex);
+            // This logic mirrors NextAsync for robust navigation.
+            if (CurrentTrack != null) {
+                // Case 1: A track is currently active. Find the previous one in the sequence.
+                if (TryGetNextTrackIndex(moveForward: false, out int prevIndex)) {
+                    await PlayQueueItemAsync(prevIndex);
+                }
+                else {
+                    // Reached the beginning of the queue.
+                    await StopAsync();
+                }
             }
-            else {
-                await StopAsync();
-                CurrentQueueIndex = -1;
-                _currentShuffledIndex = -1;
+            else if (_playbackQueue.Any()) {
+                // Case 2: The player is stopped at a queue boundary (e.g., after pressing Next
+                // until the end). Pressing Previous should resume playback from the current position.
+                await PlayQueueItemAsync(CurrentQueueIndex);
             }
         }
 
@@ -444,6 +473,7 @@ namespace Nagi.Core.Services.Implementations {
         /// <inheritdoc />
         public async Task SetRepeatModeAsync(RepeatMode mode) {
             if (CurrentRepeatMode == mode) return;
+
             CurrentRepeatMode = mode;
             await _settingsService.SaveRepeatModeAsync(CurrentRepeatMode);
             RepeatModeChanged?.Invoke();
@@ -456,7 +486,12 @@ namespace Nagi.Core.Services.Implementations {
 
             _playbackQueue.Add(song);
             if (IsShuffleEnabled) {
+                // To maintain predictable behavior, the entire shuffled queue is regenerated
+                // to include the new song in a random position.
                 GenerateShuffledQueue();
+                if (CurrentTrack != null) {
+                    _currentShuffledIndex = _shuffledQueue.IndexOf(CurrentTrack);
+                }
             }
             QueueChanged?.Invoke();
             UpdateSmtcControls();
@@ -467,13 +502,16 @@ namespace Nagi.Core.Services.Implementations {
         public Task AddRangeToQueueAsync(IEnumerable<Song> songs) {
             if (songs == null || !songs.Any()) return Task.CompletedTask;
 
-            var currentQueueSet = new HashSet<Song>(_playbackQueue);
+            var currentQueueSet = _playbackQueue.ToHashSet();
             var songsToAdd = songs.Where(s => currentQueueSet.Add(s)).ToList();
 
             if (songsToAdd.Any()) {
                 _playbackQueue.AddRange(songsToAdd);
                 if (IsShuffleEnabled) {
                     GenerateShuffledQueue();
+                    if (CurrentTrack != null) {
+                        _currentShuffledIndex = _shuffledQueue.IndexOf(CurrentTrack);
+                    }
                 }
                 QueueChanged?.Invoke();
                 UpdateSmtcControls();
@@ -514,13 +552,16 @@ namespace Nagi.Core.Services.Implementations {
             bool isRemovingCurrentTrack = CurrentTrack == song;
 
             if (isRemovingCurrentTrack) {
+                // If the currently playing track is removed, stop playback and decide what to do next.
                 await _audioPlayer.StopAsync();
                 _playbackQueue.RemoveAt(originalIndex);
                 if (IsShuffleEnabled) _shuffledQueue.Remove(song);
 
                 if (_playbackQueue.Any()) {
+                    // Attempt to play the next song in the queue.
                     int nextIndexToPlay = originalIndex;
                     if (nextIndexToPlay >= _playbackQueue.Count) {
+                        // If the removed track was the last one, wrap around if repeat is on.
                         nextIndexToPlay = CurrentRepeatMode == RepeatMode.RepeatAll ? 0 : -1;
                     }
 
@@ -534,16 +575,19 @@ namespace Nagi.Core.Services.Implementations {
                     }
                 }
                 else {
+                    // The queue is now empty.
                     await StopAsync();
                     ClearQueuesInternal();
                     QueueChanged?.Invoke();
                 }
             }
             else {
+                // If a different track is removed, simply update the queues and indices.
                 _playbackQueue.RemoveAt(originalIndex);
                 if (IsShuffleEnabled) _shuffledQueue.Remove(song);
 
                 if (CurrentTrack != null) {
+                    // Adjust the current index if the removed song was before the current one.
                     if (originalIndex < CurrentQueueIndex) {
                         CurrentQueueIndex--;
                     }
@@ -573,6 +617,7 @@ namespace Nagi.Core.Services.Implementations {
                 _currentShuffledIndex = _shuffledQueue.IndexOf(CurrentTrack);
             }
 
+            Debug.WriteLine($"[MusicPlaybackService] Now playing '{CurrentTrack.Title}' (Index: {CurrentQueueIndex}, Shuffled Index: {_currentShuffledIndex})");
             await _audioPlayer.LoadAsync(CurrentTrack);
             await _audioPlayer.PlayAsync();
             UpdateSmtcControls();
@@ -602,6 +647,9 @@ namespace Nagi.Core.Services.Implementations {
             await _settingsService.SavePlaybackStateAsync(state);
         }
 
+        /// <summary>
+        /// Fetches songs by their IDs and initiates playback.
+        /// </summary>
         private async Task PlayFromOrderedIdsAsync(IList<Guid> orderedSongIds, bool startShuffled) {
             if (orderedSongIds == null || !orderedSongIds.Any()) {
                 await PlayAsync(new List<Song>(), 0, startShuffled: false);
@@ -613,12 +661,14 @@ namespace Nagi.Core.Services.Implementations {
             var orderedSongs = orderedSongIds
                 .Select(id => songMap.GetValueOrDefault(id))
                 .Where(s => s != null)
-                .Cast<Song>()
                 .ToList();
 
             await PlayAsync(orderedSongs, 0, startShuffled);
         }
 
+        /// <summary>
+        /// Resets all queues and playback indices to their default state.
+        /// </summary>
         private void ClearQueuesInternal() {
             _playbackQueue.Clear();
             _shuffledQueue.Clear();
@@ -628,6 +678,9 @@ namespace Nagi.Core.Services.Implementations {
             CurrentListenHistoryId = null;
         }
 
+        /// <summary>
+        /// Generates a new shuffled queue from the main playback queue using the Fisher-Yates algorithm.
+        /// </summary>
         private void GenerateShuffledQueue() {
             if (!_playbackQueue.Any()) {
                 _shuffledQueue.Clear();
@@ -643,43 +696,62 @@ namespace Nagi.Core.Services.Implementations {
             }
         }
 
+        /// <summary>
+        /// Calculates the index of the next track to play based on the current state.
+        /// </summary>
+        /// <param name="moveForward">True to get the next track, false for the previous.</param>
+        /// <param name="nextPlaybackQueueIndex">The calculated index in the main playback queue.</param>
+        /// <returns>True if a next track exists; otherwise, false.</returns>
         private bool TryGetNextTrackIndex(bool moveForward, out int nextPlaybackQueueIndex) {
             nextPlaybackQueueIndex = -1;
-            if (!_playbackQueue.Any()) return false;
+            if (!_playbackQueue.Any() || CurrentQueueIndex == -1) {
+                return false;
+            }
 
             int nextIndex = -1;
 
             if (IsShuffleEnabled) {
                 int nextShuffledIndex = -1;
                 if (moveForward) {
-                    if (_currentShuffledIndex < _shuffledQueue.Count - 1)
+                    if (_currentShuffledIndex < _shuffledQueue.Count - 1) {
                         nextShuffledIndex = _currentShuffledIndex + 1;
-                    else if (CurrentRepeatMode == RepeatMode.RepeatAll)
+                    }
+                    else if (CurrentRepeatMode == RepeatMode.RepeatAll) {
                         nextShuffledIndex = 0;
+                    }
                 }
-                else {
-                    if (_currentShuffledIndex > 0)
+                else // move backward
+                {
+                    if (_currentShuffledIndex > 0) {
                         nextShuffledIndex = _currentShuffledIndex - 1;
-                    else if (CurrentRepeatMode == RepeatMode.RepeatAll)
+                    }
+                    else if (CurrentRepeatMode == RepeatMode.RepeatAll) {
                         nextShuffledIndex = _shuffledQueue.Count - 1;
+                    }
                 }
 
                 if (nextShuffledIndex != -1) {
                     nextIndex = _playbackQueue.IndexOf(_shuffledQueue[nextShuffledIndex]);
                 }
             }
-            else {
+            else // Not shuffled
+            {
                 if (moveForward) {
-                    if (CurrentQueueIndex < _playbackQueue.Count - 1)
+                    if (CurrentQueueIndex < _playbackQueue.Count - 1) {
                         nextIndex = CurrentQueueIndex + 1;
-                    else if (CurrentRepeatMode == RepeatMode.RepeatAll)
+                    }
+                    else if (CurrentRepeatMode == RepeatMode.RepeatAll) {
                         nextIndex = 0;
+                    }
                 }
-                else {
-                    if (CurrentQueueIndex > 0)
+                else // move backward
+                {
+                    if (CurrentQueueIndex > 0) {
                         nextIndex = CurrentQueueIndex - 1;
-                    else if (CurrentRepeatMode == RepeatMode.RepeatAll)
+                    }
+                    else if (CurrentRepeatMode == RepeatMode.RepeatAll) {
                         nextIndex = _playbackQueue.Count - 1;
+                    }
                 }
             }
 
@@ -691,6 +763,9 @@ namespace Nagi.Core.Services.Implementations {
             return false;
         }
 
+        /// <summary>
+        /// Updates the enabled/disabled state of the Next/Previous buttons in the System Media Transport Controls.
+        /// </summary>
         private void UpdateSmtcControls() {
             bool canGoNext = false;
             bool canGoPrevious = false;
@@ -709,6 +784,7 @@ namespace Nagi.Core.Services.Implementations {
                     canGoPrevious = CurrentQueueIndex > 0;
                 }
 
+                // If a track is active, you can always go "previous" to either restart the track or go to the prior one.
                 if (CurrentTrack != null) {
                     canGoPrevious = true;
                 }
@@ -718,6 +794,7 @@ namespace Nagi.Core.Services.Implementations {
         }
 
         private async void OnAudioPlayerPlaybackEnded() {
+            // When the current track finishes naturally, advance to the next one.
             await NextAsync();
         }
 
@@ -745,8 +822,6 @@ namespace Nagi.Core.Services.Implementations {
             IsTransitioningTrack = false;
             await StopAsync();
         }
-
-
 
         private void OnAudioPlayerMediaOpened() {
             TrackChanged?.Invoke();
