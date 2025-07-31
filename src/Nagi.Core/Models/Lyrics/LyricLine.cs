@@ -14,6 +14,12 @@ public partial class LyricLine : ObservableObject {
     private bool _isActive;
 
     /// <summary>
+    /// Gets or sets the opacity of the lyric line, calculated based on its distance from the active line.
+    /// </summary>
+    [ObservableProperty]
+    private double _opacity = 1.0;
+
+    /// <summary>
     /// The timestamp at which this lyric line should be displayed.
     /// </summary>
     public TimeSpan StartTime { get; set; }
