@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Nagi.Core.Data;
 
@@ -10,9 +11,11 @@ using Nagi.Core.Data;
 namespace Nagi.Core.Data.Migrations
 {
     [DbContext(typeof(MusicDbContext))]
-    partial class MusicDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250731053939_AddMetadataCheckedTimestampToArtist")]
+    partial class AddMetadataCheckedTimestampToArtist
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.7");
@@ -57,8 +60,6 @@ namespace Nagi.Core.Data.Migrations
                     b.HasIndex("ArtistId");
 
                     b.HasIndex("Title");
-
-                    b.HasIndex("Year");
 
                     b.HasIndex("Title", "ArtistId")
                         .IsUnique();
@@ -161,8 +162,6 @@ namespace Nagi.Core.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("IsScrobbled");
 
                     b.HasIndex("ListenTimestampUtc");
 
@@ -343,22 +342,14 @@ namespace Nagi.Core.Data.Migrations
 
                     b.HasIndex("ArtistId");
 
-                    b.HasIndex("DateAddedToLibrary");
-
                     b.HasIndex("FilePath")
                         .IsUnique();
 
                     b.HasIndex("FolderId");
 
-                    b.HasIndex("IsLoved");
-
                     b.HasIndex("LastPlayedDate");
 
-                    b.HasIndex("PlayCount");
-
                     b.HasIndex("Title");
-
-                    b.HasIndex("AlbumId", "DiscNumber", "TrackNumber");
 
                     b.ToTable("Songs");
                 });

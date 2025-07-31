@@ -14,14 +14,14 @@
     },
     "resourceGroupLocation": {
       "type": "string",
-      "defaultValue": "canadacentral",
+      "defaultValue": "westus2",
       "metadata": {
         "description": "Location of the resource group. Resource groups could have different location than resources, however by default we use API versions from latest hybrid profile which support all locations for resource types we support."
       }
     },
     "resourceName": {
       "type": "string",
-      "defaultValue": "NagiLastFM",
+      "defaultValue": "NagiAppApiServer",
       "metadata": {
         "description": "Name of the main resource to be created by this template."
       }

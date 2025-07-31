@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
@@ -12,6 +13,13 @@ using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 
 namespace Nagi.Core.Services.Implementations;
+
+// File-local DTOs for deserializing the Spotify API search response.
+// This encapsulates the data structures specific to this service.
+file class SpotifySearchResponse { public SpotifyArtistCollection? Artists { get; set; } }
+file class SpotifyArtistCollection { public IEnumerable<SpotifyArtist>? Items { get; set; } }
+file class SpotifyArtist { public IEnumerable<SpotifyImage>? Images { get; set; } }
+file class SpotifyImage { public string? Url { get; set; } public int Height { get; set; } public int Width { get; set; } }
 
 /// <summary>
 /// A service for interacting with the Spotify Web API, including token management and data retrieval.
@@ -27,8 +35,6 @@ public class SpotifyService : ISpotifyService, IDisposable {
 
     private string? _accessToken;
     private DateTime _accessTokenExpiration;
-
-    // A circuit breaker flag to permanently disable API calls for the session if a rate limit is hit.
     private bool _isApiPermanentlyDisabled;
     private bool _isDisposed;
 
@@ -37,119 +43,109 @@ public class SpotifyService : ISpotifyService, IDisposable {
         _apiKeyService = apiKeyService;
     }
 
-    /// <summary>
-    /// Gets a valid Spotify access token, refreshing it if it's expired or nearing expiration.
-    /// </summary>
-    /// <param name="cancellationToken">A token to cancel the operation.</param>
-    /// <returns>A valid access token, or null if one could not be obtained.</returns>
+    /// <inheritdoc />
     public async Task<string?> GetAccessTokenAsync(CancellationToken cancellationToken = default) {
+        // Return the cached token if it's valid and not expiring soon.
         if (!string.IsNullOrEmpty(_accessToken) && _accessTokenExpiration > DateTime.UtcNow.AddMinutes(5)) {
             return _accessToken;
         }
-
         return await FetchAndCacheAccessTokenAsync(cancellationToken);
     }
 
-    /// <summary>
-    /// Retrieves the URL for an artist's image from Spotify.
-    /// </summary>
-    /// <param name="artistName">The name of the artist to search for.</param>
-    /// <param name="cancellationToken">A token to cancel the operation.</param>
-    /// <returns>The URL of the artist's largest available image, or null if not found or an error occurs.</returns>
-    public async Task<string?> GetArtistImageUrlAsync(string artistName, CancellationToken cancellationToken = default) {
+    /// <inheritdoc />
+    public async Task<ServiceResult<SpotifyImageResult>> GetArtistImageUrlAsync(string artistName, CancellationToken cancellationToken = default) {
         if (_isApiPermanentlyDisabled) {
-            return null;
+            return ServiceResult<SpotifyImageResult>.FromPermanentError("Spotify API is disabled for this session due to rate limiting.");
         }
-
-        if (string.IsNullOrWhiteSpace(artistName)) return null;
+        if (string.IsNullOrWhiteSpace(artistName)) {
+            return ServiceResult<SpotifyImageResult>.FromPermanentError("Artist name cannot be empty.");
+        }
 
         var token = await GetAccessTokenAsync(cancellationToken);
         if (string.IsNullOrEmpty(token)) {
-            Debug.WriteLine("Cannot fetch artist image; Spotify access token is unavailable.");
-            return null;
+            return ServiceResult<SpotifyImageResult>.FromTemporaryError("Could not retrieve Spotify access token.");
         }
 
-        using var request = new HttpRequestMessage(HttpMethod.Get,
-            $"{SpotifyApiBaseUrl}search?q={Uri.EscapeDataString(artistName)}&type=artist&limit=1");
+        var requestUrl = $"{SpotifyApiBaseUrl}search?q={Uri.EscapeDataString(artistName)}&type=artist&limit=1";
+        using var request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         try {
             var response = await _httpClient.SendAsync(request, cancellationToken);
 
-            // If the rate limit is exceeded, permanently disable the service for this session to prevent further issues.
+            // If rate limited, disable the service for the current session to avoid further errors.
             if (response.StatusCode == HttpStatusCode.TooManyRequests) {
-                Debug.WriteLine("Spotify rate limit hit. Disabling Spotify API requests for this session.");
+                Debug.WriteLine("[SpotifyService] Rate limit hit. Disabling Spotify API for this session.");
                 _isApiPermanentlyDisabled = true;
-                return null;
+                return ServiceResult<SpotifyImageResult>.FromPermanentError("Spotify API rate limit exceeded.");
             }
 
             if (!response.IsSuccessStatusCode) {
                 var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
-                Debug.WriteLine(
-                    $"Spotify artist search failed. Status: {response.StatusCode}, Content: {errorContent}");
-                return null;
+                var errorMessage = $"Spotify artist search failed. Status: {response.StatusCode}, Content: {errorContent}";
+                Debug.WriteLine($"[SpotifyService] Temporary Error: {errorMessage}");
+                return ServiceResult<SpotifyImageResult>.FromTemporaryError(errorMessage);
             }
 
             var jsonResponse = await response.Content.ReadAsStringAsync(cancellationToken);
-            var spotifySearchResponse = JsonSerializer.Deserialize<SpotifySearchResponse>(jsonResponse, _jsonOptions);
+            var searchResponse = JsonSerializer.Deserialize<SpotifySearchResponse>(jsonResponse, _jsonOptions);
 
-            var artist = spotifySearchResponse?.Artists?.Items?.FirstOrDefault();
-            if (artist?.Images is null || !artist.Images.Any()) return null;
+            var artist = searchResponse?.Artists?.Items?.FirstOrDefault();
+            if (artist?.Images is null || !artist.Images.Any()) {
+                return ServiceResult<SpotifyImageResult>.FromSuccessNotFound();
+            }
 
-            // Select the image with the largest area.
+            // Find the largest image available by area.
             var largestImage = artist.Images
+                .Where(img => !string.IsNullOrEmpty(img.Url))
                 .OrderByDescending(img => img.Height * img.Width)
-                .FirstOrDefault(img => !string.IsNullOrEmpty(img.Url));
+                .FirstOrDefault();
 
-            return largestImage?.Url;
-        }
-        catch (OperationCanceledException) {
-            // Re-throw if the operation was cancelled by the caller.
-            throw;
+            return largestImage != null
+                ? ServiceResult<SpotifyImageResult>.FromSuccess(new SpotifyImageResult { ImageUrl = largestImage.Url! })
+                : ServiceResult<SpotifyImageResult>.FromSuccessNotFound();
         }
         catch (JsonException ex) {
-            Debug.WriteLine($"Failed to deserialize Spotify artist search response for '{artistName}': {ex.Message}");
-            return null;
+            var errorMessage = $"Failed to deserialize Spotify response for '{artistName}': {ex.Message}";
+            Debug.WriteLine($"[SpotifyService] Permanent Error: {errorMessage}");
+            return ServiceResult<SpotifyImageResult>.FromPermanentError(errorMessage);
         }
-        catch (Exception ex) {
-            Debug.WriteLine($"Exception while fetching Spotify artist image for '{artistName}': {ex.Message}");
-            return null;
+        catch (Exception ex) when (ex is not OperationCanceledException) {
+            var errorMessage = $"Exception while fetching Spotify artist image for '{artistName}': {ex.Message}";
+            Debug.WriteLine($"[SpotifyService] Temporary Error: {errorMessage}");
+            return ServiceResult<SpotifyImageResult>.FromTemporaryError(errorMessage);
         }
     }
 
-    // Fetches a new access token using client credentials and caches it.
+    /// <summary>
+    /// Fetches a new client credentials access token from the Spotify API and caches it.
+    /// </summary>
     private async Task<string?> FetchAndCacheAccessTokenAsync(CancellationToken cancellationToken) {
         var spotifyCredentials = await _apiKeyService.GetApiKeyAsync(ApiKeyName, cancellationToken);
         if (string.IsNullOrEmpty(spotifyCredentials)) {
-            Debug.WriteLine($"Cannot get Spotify access token; credentials for '{ApiKeyName}' are unavailable.");
+            Debug.WriteLine($"[SpotifyService] Cannot get access token; credentials for '{ApiKeyName}' are unavailable.");
             return null;
         }
 
         var parts = spotifyCredentials.Split(':');
         if (parts.Length != 2) {
-            Debug.WriteLine(
-                $"Error: Spotify credentials for '{ApiKeyName}' are not in the expected 'ClientId:ClientSecret' format.");
+            Debug.WriteLine($"[SpotifyService] Error: Spotify credentials for '{ApiKeyName}' are not in 'ClientId:ClientSecret' format.");
             return null;
         }
 
-        var clientId = parts[0];
-        var clientSecret = parts[1];
+        var (clientId, clientSecret) = (parts[0], parts[1]);
 
         try {
             using var request = new HttpRequestMessage(HttpMethod.Post, $"{SpotifyAccountsBaseUrl}api/token");
-            request.Headers.Authorization = new AuthenticationHeaderValue(
-                "Basic",
-                Convert.ToBase64String(Encoding.UTF8.GetBytes($"{clientId}:{clientSecret}"))
-            );
-            request.Content = new StringContent("grant_type=client_credentials", Encoding.UTF8,
-                "application/x-www-form-urlencoded");
+            var authHeader = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{clientId}:{clientSecret}"));
+            request.Headers.Authorization = new AuthenticationHeaderValue("Basic", authHeader);
+            request.Content = new StringContent("grant_type=client_credentials", Encoding.UTF8, "application/x-www-form-urlencoded");
 
             var response = await _httpClient.SendAsync(request, cancellationToken);
 
             if (!response.IsSuccessStatusCode) {
                 var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
-                Debug.WriteLine(
-                    $"Error fetching Spotify access token. Status: {response.StatusCode}, Content: {errorContent}");
+                Debug.WriteLine($"[SpotifyService] Error fetching access token. Status: {response.StatusCode}, Content: {errorContent}");
                 return null;
             }
 
@@ -158,31 +154,27 @@ public class SpotifyService : ISpotifyService, IDisposable {
             var root = doc.RootElement;
 
             if (root.TryGetProperty("access_token", out var accessTokenElement) &&
-                root.TryGetProperty("expires_in", out var expiresInElement)) {
+                root.TryGetProperty("expires_in", out var expiresInElement) &&
+                accessTokenElement.ValueKind == JsonValueKind.String) {
                 _accessToken = accessTokenElement.GetString();
-                var expiresInSeconds = expiresInElement.GetInt32();
-                _accessTokenExpiration = DateTime.UtcNow.AddSeconds(expiresInSeconds);
+                _accessTokenExpiration = DateTime.UtcNow.AddSeconds(expiresInElement.GetInt32());
                 return _accessToken;
             }
 
-            Debug.WriteLine("Spotify token response is missing 'access_token' or 'expires_in'.");
+            Debug.WriteLine("[SpotifyService] Spotify token response is missing 'access_token' or 'expires_in'.");
             return null;
         }
-        catch (OperationCanceledException) {
-            throw;
-        }
-        catch (Exception ex) {
-            Debug.WriteLine($"Exception while fetching Spotify access token: {ex.Message}");
+        catch (Exception ex) when (ex is not OperationCanceledException) {
+            Debug.WriteLine($"[SpotifyService] Exception while fetching Spotify access token: {ex.Message}");
             return null;
         }
     }
 
     /// <summary>
-    /// Releases the unmanaged resources used by the <see cref="SpotifyService"/> and optionally releases the managed resources.
+    /// Releases the resources used by the <see cref="SpotifyService"/>.
     /// </summary>
     public void Dispose() {
         if (_isDisposed) return;
-
         _httpClient.Dispose();
         _isDisposed = true;
         GC.SuppressFinalize(this);
