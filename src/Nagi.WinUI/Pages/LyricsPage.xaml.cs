@@ -21,8 +21,8 @@ public sealed partial class LyricsPage : Page {
     // Storyboard for animating the progress bar for the current lyric line.
     private readonly Storyboard _progressBarStoryboard = new();
 
-    // Defines how far into the viewport the active line should be scrolled (25% from the top).
-    private const double ScrollIntoViewRatio = 0.25;
+    // Defines how far into the viewport the active line should be scrolled.
+    private const double ScrollIntoViewRatio = 0.40;
 
     public LyricsPage() {
         ViewModel = App.Services!.GetRequiredService<LyricsPageViewModel>();

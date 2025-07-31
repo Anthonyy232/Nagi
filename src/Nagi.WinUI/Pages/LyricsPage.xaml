@@ -74,7 +74,8 @@
                 <DataTemplate x:DataType="core:LyricLine">
                     <TextBlock
                         Text="{x:Bind Text}"
-                        Style="{x:Bind IsActive, Mode=OneWay, Converter={StaticResource ActiveLyricToStyleConverter}}" />
+                        Style="{x:Bind IsActive, Mode=OneWay, Converter={StaticResource ActiveLyricToStyleConverter}}"
+                        Opacity="{x:Bind Opacity, Mode=OneWay}" />
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
