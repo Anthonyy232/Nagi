@@ -116,7 +116,7 @@ public interface IMusicPlaybackService : IDisposable {
     /// <summary>
     /// Initializes the service, loading settings and saved playback state.
     /// </summary>
-    Task InitializeAsync();
+    Task InitializeAsync(bool restoreLastSession = true);
 
     /// <summary>
     /// Plays a single song, replacing the current queue.
@@ -228,6 +228,13 @@ public interface IMusicPlaybackService : IDisposable {
     /// </summary>
     /// <param name="song">The song to play next.</param>
     Task PlayNextAsync(Song song);
+
+    /// <summary>
+    /// Plays a single audio file directly from its path, without it needing to be
+    /// in the main playback queue or library.
+    /// </summary>
+    /// <param name="filePath">The absolute path to the audio file.</param>
+    Task PlayTransientFileAsync(string filePath);
 
     /// <summary>
     /// Removes a song from the queue.

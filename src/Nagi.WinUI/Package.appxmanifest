@@ -52,15 +52,43 @@
 			</uap:VisualElements>
 
 			<Extensions>
-				<uap5:Extension
-                    Category="windows.startupTask">
+				<uap:Extension Category="windows.fileTypeAssociation">
+					<uap:FileTypeAssociation Name="nagi-music-files">
+						<uap:DisplayName>Nagi Music Player</uap:DisplayName>
+						<uap:Logo>Assets\AppLogo.png</uap:Logo>
+						<uap:InfoTip>Open with Nagi Music Player</uap:InfoTip>
+						<uap:SupportedFileTypes>
+							<!-- Audio Formats -->
+							<uap:FileType>.aa</uap:FileType>
+							<uap:FileType>.aax</uap:FileType>
+							<uap:FileType>.aac</uap:FileType>
+							<uap:FileType>.aiff</uap:FileType>
+							<uap:FileType>.ape</uap:FileType>
+							<uap:FileType>.dsf</uap:FileType>
+							<uap:FileType>.flac</uap:FileType>
+							<uap:FileType>.m4a</uap:FileType>
+							<uap:FileType>.m4b</uap:FileType>
+							<uap:FileType>.m4p</uap:FileType>
+							<uap:FileType>.mp3</uap:FileType>
+							<uap:FileType>.mpc</uap:FileType>
+							<uap:FileType>.mpp</uap:FileType>
+							<uap:FileType>.ogg</uap:FileType>
+							<uap:FileType>.oga</uap:FileType>
+							<uap:FileType>.wav</uap:FileType>
+							<uap:FileType>.wma</uap:FileType>
+							<uap:FileType>.wv</uap:FileType>
+							<uap:FileType>.webm</uap:FileType>
+						</uap:SupportedFileTypes>
+					</uap:FileTypeAssociation>
+				</uap:Extension>
+
+				<uap5:Extension Category="windows.startupTask">
 					<uap5:StartupTask
-                        TaskId="NagiAutolaunchStartup"
-                        Enabled="false"
-                        DisplayName="Nagi Startup"/>
+						TaskId="NagiAutolaunchStartup"
+						Enabled="false"
+						DisplayName="Nagi Startup"/>
 				</uap5:Extension>
 			</Extensions>
-
 		</Application>
 	</Applications>
 
