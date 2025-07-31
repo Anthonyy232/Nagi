@@ -61,7 +61,7 @@
         <ListView
             x:Name="LyricsListView"
             Grid.Row="2"
-            Padding="0,24,0,96"
+            Padding="24,0,24,132"
             ItemsSource="{x:Bind ViewModel.LyricLines, Mode=OneWay}"
             Background="Transparent"
             SelectionMode="None"
