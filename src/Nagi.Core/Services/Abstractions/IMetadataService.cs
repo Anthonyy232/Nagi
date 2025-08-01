@@ -5,7 +5,7 @@ namespace Nagi.Core.Services.Abstractions;
 /// <summary>
 ///     Defines a contract for extracting metadata from a music file.
 /// </summary>
-public interface IMetadataExtractor
+public interface IMetadataService
 {
     /// <summary>
     ///     Asynchronously extracts all relevant metadata from a single music file.

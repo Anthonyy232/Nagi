@@ -16,7 +16,7 @@ namespace Nagi.Core.Services.Implementations {
         private readonly IAudioPlayer _audioPlayer;
         private readonly ILibraryService _libraryService;
         private readonly ISettingsService _settingsService;
-        private readonly IMetadataExtractor _metadataExtractor;
+        private readonly IMetadataService _metadataService;
         private readonly Random _random = new();
 
         private List<Song> _playbackQueue = new();
@@ -31,11 +31,11 @@ namespace Nagi.Core.Services.Implementations {
             ISettingsService settingsService,
             IAudioPlayer audioPlayer,
             ILibraryService libraryService,
-            IMetadataExtractor metadataExtractor) {
+            IMetadataService metadataService) {
             _settingsService = settingsService;
             _audioPlayer = audioPlayer;
             _libraryService = libraryService;
-            _metadataExtractor = metadataExtractor;
+            _metadataService = metadataService;
 
             _audioPlayer.PlaybackEnded += OnAudioPlayerPlaybackEnded;
             _audioPlayer.StateChanged += OnAudioPlayerStateChanged;
@@ -211,7 +211,7 @@ namespace Nagi.Core.Services.Implementations {
 
         /// <inheritdoc />
         public async Task PlayTransientFileAsync(string filePath) {
-            var metadata = await _metadataExtractor.ExtractMetadataAsync(filePath);
+            var metadata = await _metadataService.ExtractMetadataAsync(filePath);
 
             var transientSong = new Song {
                 FilePath = filePath,
