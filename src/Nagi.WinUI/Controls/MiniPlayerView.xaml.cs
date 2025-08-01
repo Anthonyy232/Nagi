@@ -1,173 +1,176 @@
-﻿using Microsoft.UI;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
-using Nagi.WinUI.Controls;
-using Nagi.WinUI.Pages;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
+using Nagi.WinUI.ViewModels;
 using System;
-using System.Diagnostics;
 using Windows.Graphics;
-using WinRT.Interop;
 
-namespace Nagi.WinUI;
+namespace Nagi.WinUI.Controls;
 
 /// <summary>
-/// The main application window, responsible for hosting page content and managing a custom title bar.
+/// A user control for the mini-player, which displays track information and provides
+/// media controls. It manages its own visual states for hover effects and handles
+/// window dragging.
 /// </summary>
-public sealed partial class MainWindow : Window {
-    private AppWindow? _appWindow;
-    private bool _isTitleBarInitialized = false;
+public sealed partial class MiniPlayerView : UserControl {
+    /// <summary>
+    /// Gets the view model that provides data and commands for the player UI.
+    /// </summary>
+    public PlayerViewModel ViewModel { get; }
 
-    public MainWindow() {
+    /// <summary>
+    /// Occurs when the user clicks the button to restore the main application window.
+    /// </summary>
+    public event EventHandler? RestoreButtonClicked;
+
+    private readonly Window _parentWindow;
+    private bool _isDragging = false;
+    private PointInt32 _lastPointerPosition;
+    private bool _isUnloaded = false;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MiniPlayerView"/> class.
+    /// </summary>
+    /// <param name="parentWindow">The parent window that hosts this control.</param>
+    public MiniPlayerView(Window parentWindow) {
         InitializeComponent();
-        ExtendsContentIntoTitleBar = true;
+        _parentWindow = parentWindow;
 
-        Activated += OnWindowActivated;
-        Closed += OnWindowClosed;
-    }
+        // The DataContext is set to this control to enable {x:Bind} to its properties.
+        ViewModel = App.Services!.GetRequiredService<PlayerViewModel>();
+        DataContext = this;
 
-    /// <summary>
-    /// Configures the window's title bar based on the current page's content.
-    /// This method should be called after the window has been activated.
-    /// </summary>
-    public void InitializeCustomTitleBar() {
-        _appWindow ??= GetAppWindowForCurrentWindow();
-        if (_appWindow == null) {
-            // This is a critical failure, as the application cannot be controlled without an AppWindow.
-            Debug.WriteLine("[CRITICAL] MainWindow: AppWindow is not available. Cannot initialize title bar.");
-            return;
-        }
-
-        _appWindow.SetIcon("Assets/AppLogo.ico");
-
-        if (_appWindow.Presenter is not OverlappedPresenter presenter) {
-            RevertToDefaultTitleBar();
-            return;
-        }
-
-        if (Content is ICustomTitleBarProvider provider && provider.GetAppTitleBarElement() is { } titleBarElement) {
-            // Configure the custom title bar provided by the current page.
-            ExtendsContentIntoTitleBar = true;
-            SetTitleBar(titleBarElement);
-            bool showSystemButtons = Content is not OnboardingPage;
-            presenter.SetBorderAndTitleBar(true, showSystemButtons);
-        }
-        else {
-            // Revert to the default title bar if the current page does not provide one.
-            RevertToDefaultTitleBar(presenter);
-        }
-    }
-
-    /// <summary>
-    /// Reverts the window to use the standard system-drawn title bar.
-    /// </summary>
-    private void RevertToDefaultTitleBar(OverlappedPresenter? presenter = null) {
-        ExtendsContentIntoTitleBar = false;
-        SetTitleBar(null);
-        presenter?.SetBorderAndTitleBar(false, true);
-    }
-
-    private void OnWindowActivated(object sender, WindowActivatedEventArgs args) {
-        // The title bar must be initialized after the window is first activated.
-        if (!_isTitleBarInitialized) {
-            InitializeCustomTitleBar();
-            _isTitleBarInitialized = true;
-        }
-
-        // Forward activation changes to the MainPage to update its UI (e.g., title bar color).
-        if (Content is MainPage mainPage) {
-            mainPage.UpdateActivationVisualState(args.WindowActivationState);
-        }
-    }
-
-    private void OnWindowClosed(object sender, WindowEventArgs args) {
-        Activated -= OnWindowActivated;
-        Closed -= OnWindowClosed;
-    }
-
-    private AppWindow? GetAppWindowForCurrentWindow() {
-        try {
-            IntPtr hWnd = WindowNative.GetWindowHandle(this);
-            if (hWnd == IntPtr.Zero) {
-                Debug.WriteLine("[ERROR] MainWindow: Could not get window handle.");
-                return null;
-            }
-            WindowId myWndId = Win32Interop.GetWindowIdFromWindow(hWnd);
-            return AppWindow.GetFromWindowId(myWndId);
-        }
-        catch (Exception ex) {
-            Debug.WriteLine($"[ERROR] MainWindow: Failed to retrieve AppWindow. Exception: {ex.Message}");
-            return null;
-        }
-    }
-}
-
-/// <summary>
-/// A secondary window that serves as an always-on-top mini-player.
-/// </summary>
-public sealed class MiniPlayerWindow : Window {
-    private const int WindowWidth = 300;
-    private const int WindowHeight = 300;
-    private const string AppIconPath = "Assets/AppLogo.ico";
-    private const int HorizontalScreenMargin = 10;
-    private const int VerticalScreenMargin = 48;
-
-    private readonly MiniPlayerView _view;
-
-    public MiniPlayerWindow() {
-        _view = new MiniPlayerView(this);
-        Content = _view;
-
-        ConfigureAppWindow();
         SubscribeToEvents();
     }
 
-    private void ConfigureAppWindow() {
-        ExtendsContentIntoTitleBar = false;
+    /// <summary>
+    /// Provides the UI element designated as the draggable region for the window.
+    /// </summary>
+    /// <returns>The Border element that acts as the window's drag handle.</returns>
+    public Border GetDragHandle() => DragHandle;
 
-        var appWindow = AppWindow;
-        appWindow.Title = "Nagi";
-        appWindow.SetIcon(AppIconPath);
-        appWindow.Resize(new SizeInt32(WindowWidth, WindowHeight));
-        PositionWindowInBottomRight(appWindow);
-
-        if (appWindow.Presenter is OverlappedPresenter presenter) {
-            // Configure the window to be a tool window (always on top, not resizable, no system controls).
-            presenter.IsAlwaysOnTop = true;
-            presenter.IsResizable = false;
-            presenter.IsMaximizable = false;
-            presenter.IsMinimizable = false;
-            presenter.SetBorderAndTitleBar(true, false);
-        }
-        else {
-            Debug.WriteLine("[WARN] MiniPlayerWindow: Could not configure the presenter as it is not an OverlappedPresenter.");
-        }
-    }
-
-    private void PositionWindowInBottomRight(AppWindow appWindow) {
-        var displayArea = DisplayArea.GetFromWindowId(appWindow.Id, DisplayAreaFallback.Primary);
-
-        if (displayArea != null) {
-            var workArea = displayArea.WorkArea;
-            int positionX = workArea.X + workArea.Width - WindowWidth - HorizontalScreenMargin;
-            int positionY = workArea.Y + workArea.Height - WindowHeight - VerticalScreenMargin;
-            appWindow.Move(new PointInt32(positionX, positionY));
-        }
-        else {
-            Debug.WriteLine("[WARN] MiniPlayerWindow: Could not retrieve display area to position the window.");
-        }
-    }
-
+    // Subscribes to all necessary UI and window events.
     private void SubscribeToEvents() {
-        _view.RestoreButtonClicked += OnRestoreButtonClicked;
-        Closed += OnWindowClosed;
+        RestoreButton.Click += OnRestoreButtonClick;
+        _parentWindow.Activated += OnWindowActivated;
+
+        // Pointer events for window dragging
+        DragHandle.PointerPressed += OnDragHandlePointerPressed;
+        DragHandle.PointerMoved += OnDragHandlePointerMoved;
+        DragHandle.PointerReleased += OnDragHandlePointerReleased;
+        DragHandle.PointerCaptureLost += OnDragHandlePointerCaptureLost;
+
+        // Pointer events for hover effects
+        HoverDetector.PointerEntered += OnPointerEntered;
+        HoverDetector.PointerExited += OnPointerExited;
+        HoverDetector.PointerCanceled += OnPointerExited;
+
+        Unloaded += OnUnloaded;
     }
 
-    private void OnRestoreButtonClicked(object? sender, EventArgs e) {
-        Close();
+    // Handles the Unloaded event to clean up resources and event subscriptions.
+    private void OnUnloaded(object sender, RoutedEventArgs e) {
+        // Ensure cleanup only happens once.
+        if (_isUnloaded) return;
+        _isUnloaded = true;
+
+        // Unsubscribe from all events to prevent memory leaks.
+        RestoreButton.Click -= OnRestoreButtonClick;
+        _parentWindow.Activated -= OnWindowActivated;
+
+        DragHandle.PointerPressed -= OnDragHandlePointerPressed;
+        DragHandle.PointerMoved -= OnDragHandlePointerMoved;
+        DragHandle.PointerReleased -= OnDragHandlePointerReleased;
+        DragHandle.PointerCaptureLost -= OnDragHandlePointerCaptureLost;
+
+        HoverDetector.PointerEntered -= OnPointerEntered;
+        HoverDetector.PointerExited -= OnPointerExited;
+        HoverDetector.PointerCanceled -= OnPointerExited;
+
+        Unloaded -= OnUnloaded;
     }
 
-    private void OnWindowClosed(object sender, WindowEventArgs args) {
-        _view.RestoreButtonClicked -= OnRestoreButtonClicked;
-        Closed -= OnWindowClosed;
+    // Hides the hover controls when the window loses focus.
+    private void OnWindowActivated(object sender, WindowActivatedEventArgs args) {
+        if (_isUnloaded) return;
+
+        if (args.WindowActivationState == WindowActivationState.Deactivated) {
+            VisualStateManager.GoToState(this, "Normal", false);
+        }
+    }
+
+    // Fires the RestoreButtonClicked event to notify the parent window.
+    private void OnRestoreButtonClick(object sender, RoutedEventArgs e) {
+        RestoreButtonClicked?.Invoke(this, EventArgs.Empty);
+    }
+
+    // Shows the hover controls when the pointer enters the control's bounds.
+    private void OnPointerEntered(object sender, PointerRoutedEventArgs e) {
+        if (_isUnloaded) return;
+        VisualStateManager.GoToState(this, "MouseOver", true);
+    }
+
+    // Hides the hover controls when the pointer leaves the control's bounds.
+    private void OnPointerExited(object sender, PointerRoutedEventArgs e) {
+        if (_isUnloaded) return;
+        VisualStateManager.GoToState(this, "Normal", true);
+    }
+
+    // Initiates a window drag operation when the left mouse button is pressed on the drag handle.
+    private void OnDragHandlePointerPressed(object sender, PointerRoutedEventArgs e) {
+        if (_isUnloaded) return;
+
+        var pointerPoint = e.GetCurrentPoint(DragHandle);
+        if (pointerPoint.Properties.IsLeftButtonPressed) {
+            _isDragging = true;
+            var position = pointerPoint.Position;
+            _lastPointerPosition = new PointInt32((int)position.X, (int)position.Y);
+            DragHandle.CapturePointer(e.Pointer);
+            e.Handled = true;
+        }
+    }
+
+    // Moves the window based on the pointer's movement while dragging.
+    private void OnDragHandlePointerMoved(object sender, PointerRoutedEventArgs e) {
+        if (!_isDragging || _isUnloaded) return;
+
+        var currentPosition = e.GetCurrentPoint(DragHandle).Position;
+        var currentPointerPosition = new PointInt32((int)currentPosition.X, (int)currentPosition.Y);
+
+        int deltaX = currentPointerPosition.X - _lastPointerPosition.X;
+        int deltaY = currentPointerPosition.Y - _lastPointerPosition.Y;
+
+        // Only move the window if the pointer has actually moved.
+        if (deltaX != 0 || deltaY != 0) {
+            var appWindow = _parentWindow.AppWindow;
+            var currentWindowPosition = appWindow.Position;
+            var newPosition = new PointInt32(
+                currentWindowPosition.X + deltaX,
+                currentWindowPosition.Y + deltaY
+            );
+
+            appWindow.Move(newPosition);
+        }
+
+        e.Handled = true;
+    }
+
+    // Ends the window drag operation.
+    private void OnDragHandlePointerReleased(object sender, PointerRoutedEventArgs e) {
+        if (_isUnloaded) return;
+
+        if (_isDragging) {
+            _isDragging = false;
+            DragHandle.ReleasePointerCapture(e.Pointer);
+            e.Handled = true;
+        }
+    }
+
+    // Ensures dragging stops if pointer capture is lost unexpectedly.
+    private void OnDragHandlePointerCaptureLost(object sender, PointerRoutedEventArgs e) {
+        if (_isUnloaded) return;
+        _isDragging = false;
     }
 }
