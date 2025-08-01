@@ -6,46 +6,35 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid
-        x:Name="HoverDetector"
-        Background="Transparent"
-        PointerEntered="OnPointerEntered"
-        PointerExited="OnPointerExited"
-        CornerRadius="0">
-
+    <Grid x:Name="HoverDetector" Background="Transparent">
         <VisualStateManager.VisualStateGroups>
-            <!-- Visual States are unchanged -->
             <VisualStateGroup x:Name="HoverStates">
                 <VisualStateGroup.Transitions>
                     <VisualTransition GeneratedDuration="0:0:0.2"/>
                 </VisualStateGroup.Transitions>
                 <VisualState x:Name="Normal">
-                    <VisualState.Setters>
-                        <Setter Target="HoverControlsContainer.Opacity" Value="0"/>
-                    </VisualState.Setters>
+                    <Storyboard>
+                        <DoubleAnimation Storyboard.TargetName="HoverControlsContainer"
+                                       Storyboard.TargetProperty="Opacity"
+                                       To="0"
+                                       Duration="0"/>
+                    </Storyboard>
                 </VisualState>
                 <VisualState x:Name="MouseOver">
-                    <VisualState.Setters>
-                        <Setter Target="HoverControlsContainer.Opacity" Value="1"/>
-                    </VisualState.Setters>
+                    <Storyboard>
+                        <DoubleAnimation Storyboard.TargetName="HoverControlsContainer"
+                                       Storyboard.TargetProperty="Opacity"
+                                       To="1"
+                                       Duration="0"/>
+                    </Storyboard>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
-        <Border 
-            x:Name="ContentContainer" 
-            Background="{ThemeResource SystemAccentColor}"
-            CornerRadius="0">
-
-            <!-- A Border can only have one child, so we need a Grid inside it to hold multiple elements. -->
+        <Border Background="{StaticResource AppPrimaryColorBrush}">
             <Grid>
-                <!-- 
-                The drag handle must also have its corners rounded to match the container,
-                ensuring the draggable area is perfectly aligned with the visible area.
-                -->
-                <Border x:Name="DragHandle" Background="Transparent" CornerRadius="0"/>
+                <Border x:Name="DragHandle" Background="Transparent"/>
 
-                <!-- Main content display, which is not interactive. -->
                 <StackPanel
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
@@ -65,28 +54,24 @@
                         Style="{ThemeResource CaptionTextBlockStyle}"/>
                 </StackPanel>
 
-                <!-- Container for controls that appear on hover. -->
                 <Grid x:Name="HoverControlsContainer" Opacity="0">
-                    <!-- This border provides the dark overlay and must also be rounded. -->
-                    <Border Background="#80000000" IsHitTestVisible="False" CornerRadius="0"/>
-                    <Grid>
-                        <Button
-                            x:Name="RestoreButton"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Top"
-                            Width="48"
-                            Height="48"
-                            Padding="0"
-                            Background="Transparent"
-                            BorderThickness="0"
-                            ToolTipService.ToolTip="Show Nagi">
-                            <FontIcon
-                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                Glyph=""
-                                FontSize="20"
-                                Foreground="White"/>
-                        </Button>
-                    </Grid>
+                    <Border Background="#80000000" IsHitTestVisible="False"/>
+                    <Button
+                        x:Name="RestoreButton"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        Width="48"
+                        Height="48"
+                        Padding="0"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        ToolTipService.ToolTip="Show Nagi">
+                        <FontIcon
+                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                            Glyph="&#xE740;"
+                            FontSize="18"
+                            Foreground="White"/>
+                    </Button>
                 </Grid>
             </Grid>
         </Border>
