@@ -318,7 +318,12 @@ namespace Nagi.WinUI {
 
         private static void ConfigureWinUIServices(IServiceCollection services, Window window, DispatcherQueue dispatcherQueue, App appInstance) {
             services.AddSingleton<IWin32InteropService, Win32InteropService>();
-            services.AddSingleton<IWindowService>(sp => new WindowService(window, sp.GetRequiredService<IWin32InteropService>()));
+            services.AddSingleton<IWindowService>(sp => new WindowService(
+                window,
+                sp.GetRequiredService<IWin32InteropService>(),
+                sp.GetRequiredService<IUISettingsService>(),
+                sp.GetRequiredService<IDispatcherService>()
+            ));
             services.AddSingleton<IUIService>(sp => new UIService(window));
             services.AddSingleton(dispatcherQueue);
             services.AddSingleton<IDispatcherService, DispatcherService>();
