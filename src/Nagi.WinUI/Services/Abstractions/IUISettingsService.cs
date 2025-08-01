@@ -25,6 +25,24 @@ public interface IUISettingsService : ISettingsService {
     event Action<bool>? HideToTraySettingChanged;
 
     /// <summary>
+    /// Occurs when the "Minimize to Miniplayer" setting is changed.
+    /// The boolean parameter indicates whether minimizing to the miniplayer is enabled.
+    /// </summary>
+    event Action<bool>? MinimizeToMiniPlayerSettingChanged;
+
+    /// <summary>
+    /// Occurs when the "Show Lyrics on Player" setting is changed.
+    /// The boolean parameter indicates whether showing lyrics is enabled.
+    /// </summary>
+    event Action<bool>? ShowLyricsOnPlayerSettingChanged;
+
+    /// <summary>
+    /// Occurs when the "Show Queue Button" setting is changed.
+    /// The boolean parameter indicates whether the button is visible.
+    /// </summary>
+    event Action<bool>? ShowQueueButtonSettingChanged;
+
+    /// <summary>
     /// Occurs when the "Show Cover Art in Tray Flyout" setting is changed.
     /// The boolean parameter indicates whether the cover art is visible.
     /// </summary>
@@ -119,6 +137,42 @@ public interface IUISettingsService : ISettingsService {
     /// </summary>
     /// <param name="isEnabled">The hide to tray preference to save.</param>
     Task SetHideToTrayEnabledAsync(bool isEnabled);
+
+    /// <summary>
+    /// Gets whether the application should minimize to a floating miniplayer.
+    /// </summary>
+    /// <returns>True if minimizing to the miniplayer is enabled; otherwise, false.</returns>
+    Task<bool> GetMinimizeToMiniPlayerEnabledAsync();
+
+    /// <summary>
+    /// Sets the preference for minimizing to a floating miniplayer.
+    /// </summary>
+    /// <param name="isEnabled">The preference to save.</param>
+    Task SetMinimizeToMiniPlayerEnabledAsync(bool isEnabled);
+
+    /// <summary>
+    /// Gets whether lyrics should be shown on the player controls.
+    /// </summary>
+    /// <returns>True if showing lyrics is enabled; otherwise, false.</returns>
+    Task<bool> GetShowLyricsOnPlayerEnabledAsync();
+
+    /// <summary>
+    /// Sets the preference for showing lyrics on the player controls.
+    /// </summary>
+    /// <param name="isEnabled">The preference to save.</param>
+    Task SetShowLyricsOnPlayerEnabledAsync(bool isEnabled);
+
+    /// <summary>
+    /// Gets whether the queue button should be shown on the player controls.
+    /// </summary>
+    /// <returns>True if showing the queue button is enabled; otherwise, false.</returns>
+    Task<bool> GetShowQueueButtonEnabledAsync();
+
+    /// <summary>
+    /// Sets the preference for showing the queue button on the player controls.
+    /// </summary>
+    /// <param name="isEnabled">The preference to save.</param>
+    Task SetShowQueueButtonEnabledAsync(bool isEnabled);
 
     /// <summary>
     /// Gets whether cover art should be shown in the tray flyout.

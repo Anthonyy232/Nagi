@@ -401,7 +401,7 @@
                                             Style="{StaticResource LyricsButtonStyle}"
                                             ToolTipService.ToolTip="Lyrics"
                                             Command="{Binding GoToLyricsPageCommand}"
-                                            Visibility="{Binding CurrentPlayingTrack, Converter={StaticResource ObjectToBooleanConverter}, Mode=OneWay}">
+                                            Visibility="{Binding IsLyricsButtonEffectivelyVisible, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
                                         <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
                                     </Button>
                                     <Button x:Name="QueueButton" Style="{StaticResource QueueButtonStyle}"

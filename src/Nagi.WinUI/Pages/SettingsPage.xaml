@@ -177,6 +177,14 @@
                     <ToggleSwitch HorizontalAlignment="Right" IsOn="{x:Bind ViewModel.IsPlayerAnimationEnabled, Mode=TwoWay}" />
                 </controls:SettingsCard>
 
+                <controls:SettingsCard Header="Show lyrics"
+                                       Description="Display lyrics on the player controls when available.">
+                    <controls:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
+                    </controls:SettingsCard.HeaderIcon>
+                    <ToggleSwitch HorizontalAlignment="Right" IsOn="{x:Bind ViewModel.IsShowLyricsOnPlayerEnabled, Mode=TwoWay}" />
+                </controls:SettingsCard>
+
                 <controls:SettingsCard Header="Restore playback state"
                                        Description="Save the current playback state to resume on next launch.">
                     <controls:SettingsCard.HeaderIcon>
@@ -199,6 +207,14 @@
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
                     </controls:SettingsCard.HeaderIcon>
                     <ToggleSwitch HorizontalAlignment="Right" IsOn="{x:Bind ViewModel.IsStartMinimizedEnabled, Mode=TwoWay}" />
+                </controls:SettingsCard>
+
+                <controls:SettingsCard Header="Minimize to miniplayer"
+                                       Description="When minimized, show a compact floating player instead of hiding the window.">
+                    <controls:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
+                    </controls:SettingsCard.HeaderIcon>
+                    <ToggleSwitch HorizontalAlignment="Right" IsOn="{x:Bind ViewModel.IsMinimizeToMiniPlayerEnabled, Mode=TwoWay}" />
                 </controls:SettingsCard>
 
                 <controls:SettingsCard Header="Hide to system tray"

@@ -67,6 +67,9 @@ public partial class SettingsViewModel : ObservableObject, IDisposable {
     public partial bool IsPlayerAnimationEnabled { get; set; }
 
     [ObservableProperty]
+    public partial bool IsShowLyricsOnPlayerEnabled { get; set; }
+
+    [ObservableProperty]
     public partial bool IsRestorePlaybackStateEnabled { get; set; }
 
     [ObservableProperty]
@@ -77,6 +80,9 @@ public partial class SettingsViewModel : ObservableObject, IDisposable {
 
     [ObservableProperty]
     public partial bool IsHideToTrayEnabled { get; set; }
+
+    [ObservableProperty]
+    public partial bool IsMinimizeToMiniPlayerEnabled { get; set; }
 
     [ObservableProperty]
     public partial bool IsShowCoverArtInTrayFlyoutEnabled { get; set; }
@@ -158,10 +164,12 @@ public partial class SettingsViewModel : ObservableObject, IDisposable {
         SelectedTheme = await _settingsService.GetThemeAsync();
         IsDynamicThemingEnabled = await _settingsService.GetDynamicThemingAsync();
         IsPlayerAnimationEnabled = await _settingsService.GetPlayerAnimationEnabledAsync();
+        IsShowLyricsOnPlayerEnabled = await _settingsService.GetShowLyricsOnPlayerEnabledAsync();
         IsRestorePlaybackStateEnabled = await _settingsService.GetRestorePlaybackStateEnabledAsync();
         IsAutoLaunchEnabled = await _settingsService.GetAutoLaunchEnabledAsync();
         IsStartMinimizedEnabled = await _settingsService.GetStartMinimizedEnabledAsync();
         IsHideToTrayEnabled = await _settingsService.GetHideToTrayEnabledAsync();
+        IsMinimizeToMiniPlayerEnabled = await _settingsService.GetMinimizeToMiniPlayerEnabledAsync();
         IsShowCoverArtInTrayFlyoutEnabled = await _settingsService.GetShowCoverArtInTrayFlyoutAsync();
         IsFetchOnlineMetadataEnabled = await _settingsService.GetFetchOnlineMetadataEnabledAsync();
         IsDiscordRichPresenceEnabled = await _settingsService.GetDiscordRichPresenceEnabledAsync();
@@ -333,6 +341,11 @@ public partial class SettingsViewModel : ObservableObject, IDisposable {
         _ = _settingsService.SetPlayerAnimationEnabledAsync(value);
     }
 
+    partial void OnIsShowLyricsOnPlayerEnabledChanged(bool value) {
+        if (_isInitializing) return;
+        _ = _settingsService.SetShowLyricsOnPlayerEnabledAsync(value);
+    }
+
     partial void OnIsRestorePlaybackStateEnabledChanged(bool value) {
         if (_isInitializing) return;
         _ = _settingsService.SetRestorePlaybackStateEnabledAsync(value);
@@ -351,6 +364,11 @@ public partial class SettingsViewModel : ObservableObject, IDisposable {
     partial void OnIsHideToTrayEnabledChanged(bool value) {
         if (_isInitializing) return;
         _ = _settingsService.SetHideToTrayEnabledAsync(value);
+    }
+
+    partial void OnIsMinimizeToMiniPlayerEnabledChanged(bool value) {
+        if (_isInitializing) return;
+        _ = _settingsService.SetMinimizeToMiniPlayerEnabledAsync(value);
     }
 
     partial void OnIsShowCoverArtInTrayFlyoutEnabledChanged(bool value) {
