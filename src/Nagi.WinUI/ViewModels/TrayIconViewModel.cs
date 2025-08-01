@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Windowing;
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Nagi.Core.Services.Abstractions;
 using Nagi.WinUI.Services.Abstractions;
@@ -9,7 +10,7 @@ using Nagi.WinUI.Services.Abstractions;
 namespace Nagi.WinUI.ViewModels;
 
 /// <summary>
-/// Provides the data and commands for the application's system tray icon.
+/// Provides the data context and command logic for the application's system tray icon.
 /// </summary>
 public partial class TrayIconViewModel : ObservableObject, IDisposable {
     private readonly IDispatcherService _dispatcherService;
@@ -36,22 +37,36 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable {
         _settingsService.HideToTraySettingChanged += OnHideToTraySettingChanged;
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the main application window is currently visible.
+    /// </summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ToolTipText))]
-    public partial bool IsWindowVisible { get; set; } = true;
+    private bool _isWindowVisible = true;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the system tray icon should be visible.
+    /// </summary>
     [ObservableProperty]
-    public partial bool IsTrayIconVisible { get; set; }
+    private bool _isTrayIconVisible;
 
+    /// <summary>
+    /// Gets the tooltip text for the tray icon.
+    /// </summary>
     public string ToolTipText => $"{_appInfoService.GetAppName()} - {(IsWindowVisible ? "Window Visible" : "Hidden in Tray")}";
 
+    /// <summary>
+    /// Asynchronously initializes the ViewModel by subscribing to window events and loading initial settings.
+    /// </summary>
     public async Task InitializeAsync() {
+        await _windowService.InitializeAsync();
         _windowService.Closing += OnAppWindowClosing;
         _windowService.VisibilityChanged += OnAppWindowVisibilityChanged;
 
         _isHideToTrayEnabled = await _settingsService.GetHideToTrayEnabledAsync();
         IsWindowVisible = _windowService.IsVisible;
         UpdateTrayIconVisibility();
+        Debug.WriteLine($"[INFO] TrayIconViewModel: Initialized. HideToTray: {_isHideToTrayEnabled}, IsWindowVisible: {IsWindowVisible}");
     }
 
     private void UpdateTrayIconVisibility() {
@@ -66,43 +81,55 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable {
     }
 
     private void OnAppWindowClosing(AppWindowClosingEventArgs args) {
-        // If the user is intentionally exiting (e.g., via the tray menu), do not intercept the close.
+        // If the application is exiting intentionally, do not intercept the close.
         if (_windowService.IsExiting) return;
 
         if (_isHideToTrayEnabled) {
-            // Cancel the close operation and hide the window instead.
+            // Cancel the default close operation and hide the window to the tray instead.
             args.Cancel = true;
+            Debug.WriteLine("[INFO] TrayIconViewModel: 'Hide to Tray' is enabled. Intercepting close and hiding window.");
             _dispatcherService.TryEnqueue(HideWindow);
         }
         else {
-            // Allow the application to exit normally.
+            // If not hiding to tray, closing the window means exiting the application.
             _windowService.IsExiting = true;
+            Debug.WriteLine("[INFO] TrayIconViewModel: 'Hide to Tray' is disabled. Allowing application to exit.");
         }
     }
 
     private void OnHideToTraySettingChanged(bool isEnabled) {
         _dispatcherService.TryEnqueue(() => {
+            Debug.WriteLine($"[INFO] TrayIconViewModel: 'Hide to Tray' setting changed to {isEnabled}.");
             _isHideToTrayEnabled = isEnabled;
             UpdateTrayIconVisibility();
 
-            // If the "Hide to Tray" feature is disabled while the window is currently hidden,
-            // we must show the window to prevent it from becoming inaccessible.
+            // Safeguard: if the feature is disabled while the window is hidden,
+            // show the window to prevent it from becoming inaccessible.
             if (!isEnabled && !IsWindowVisible) {
+                Debug.WriteLine("[WARN] TrayIconViewModel: 'Hide to Tray' disabled while window was hidden. Forcing window to show.");
                 ShowWindow();
             }
         });
     }
 
+    /// <summary>
+    /// Shows or hides the popup menu associated with the tray icon.
+    /// </summary>
     [RelayCommand]
     private void ShowPopup() => _trayPopupService.ShowOrHidePopup();
 
+    /// <summary>
+    /// Toggles the main window's visibility.
+    /// </summary>
     [RelayCommand]
     private void ToggleMainWindowVisibility() {
         if (!IsWindowVisible) {
+            Debug.WriteLine("[INFO] TrayIconViewModel: Executing ToggleMainWindowVisibility (Show).");
             ShowWindow();
         }
         else if (_isHideToTrayEnabled) {
-            HideWindow();
+            Debug.WriteLine("[INFO] TrayIconViewModel: Executing ToggleMainWindowVisibility (Minimize to Mini-Player).");
+            _windowService.MinimizeToMiniPlayer();
         }
     }
 
@@ -113,8 +140,12 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable {
         _windowService.ShowAndActivate();
     }
 
+    /// <summary>
+    /// Commands the application to exit gracefully.
+    /// </summary>
     [RelayCommand]
     private void ExitApplication() {
+        Debug.WriteLine("[INFO] TrayIconViewModel: Executing ExitApplication.");
         _windowService.IsExiting = true;
         _windowService.Close();
     }
@@ -125,6 +156,7 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable {
     public void Dispose() {
         if (_isDisposed) return;
 
+        Debug.WriteLine("[INFO] TrayIconViewModel: Disposing and unsubscribing from events.");
         _windowService.Closing -= OnAppWindowClosing;
         _windowService.VisibilityChanged -= OnAppWindowVisibilityChanged;
         _settingsService.HideToTraySettingChanged -= OnHideToTraySettingChanged;
