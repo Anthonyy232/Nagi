@@ -120,18 +120,14 @@ public sealed partial class MainWindow : Window {
 public sealed class MiniPlayerWindow : Window {
     private const int WINDOW_SIZE = 200;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="MiniPlayerWindow"/> class.
-    /// </summary>
     public MiniPlayerWindow() {
-        // Host the MiniPlayerView UserControl as the content of this window.
         var view = new MiniPlayerView();
         this.Content = view;
 
-        // Configure window properties for a compact, widget-like appearance.
-        ExtendsContentIntoTitleBar = true;
+        // Subscribe to the view's event to close this window.
+        view.RestoreButtonClicked += (sender, args) => this.Close();
 
-        // Make the entire UserControl draggable by setting its root as the title bar.
+        ExtendsContentIntoTitleBar = true;
         SetTitleBar(view.GetDraggableRegion());
 
         var appWindow = this.AppWindow;
@@ -140,9 +136,11 @@ public sealed class MiniPlayerWindow : Window {
             presenter.IsResizable = false;
             presenter.IsMaximizable = false;
             presenter.IsMinimizable = false;
-            Debug.WriteLine("[INFO] MiniPlayerWindow: Presenter configured for always-on-top, non-resizable state.");
+            presenter.SetBorderAndTitleBar(true, false);
+            Debug.WriteLine("[INFO] MiniPlayerWindow: Presenter configured for always-on-top, non-resizable state with custom title bar.");
         }
         appWindow.Resize(new SizeInt32(WINDOW_SIZE, WINDOW_SIZE));
         appWindow.Title = "Nagi Mini Player";
+        appWindow.SetIcon("Assets/AppLogo.ico");
     }
 }
