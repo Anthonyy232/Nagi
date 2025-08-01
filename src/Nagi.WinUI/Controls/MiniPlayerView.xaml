@@ -6,38 +6,89 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid x:Name="DraggableRegion" Background="{ThemeResource SystemAccentColor}">
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10">
-            <TextBlock
-                Text="Mini Player"
-                Foreground="White"
-                HorizontalAlignment="Center"
-                Style="{ThemeResource SubtitleTextBlockStyle}"/>
+    <Grid
+        x:Name="HoverDetector"
+        Background="Transparent"
+        PointerEntered="OnPointerEntered"
+        PointerExited="OnPointerExited"
+        CornerRadius="0">
 
-            <TextBlock
-                Text="{x:Bind ViewModel.CurrentPlayingTrack.Title, FallbackValue='No Song Playing'}"
-                Foreground="White"
-                HorizontalAlignment="Center"
-                TextWrapping="Wrap"
-                TextAlignment="Center"
-                Style="{ThemeResource CaptionTextBlockStyle}"/>
-        </StackPanel>
+        <VisualStateManager.VisualStateGroups>
+            <!-- Visual States are unchanged -->
+            <VisualStateGroup x:Name="HoverStates">
+                <VisualStateGroup.Transitions>
+                    <VisualTransition GeneratedDuration="0:0:0.2"/>
+                </VisualStateGroup.Transitions>
+                <VisualState x:Name="Normal">
+                    <VisualState.Setters>
+                        <Setter Target="HoverControlsContainer.Opacity" Value="0"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="MouseOver">
+                    <VisualState.Setters>
+                        <Setter Target="HoverControlsContainer.Opacity" Value="1"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
 
-        <Button
-            x:Name="RestoreButton"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Top"
-            Width="32"
-            Height="32"
-            Padding="0"
-            Background="Transparent"
-            BorderThickness="0"
-            ToolTipService.ToolTip="Show Nagi">
-            <FontIcon
-                FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                Glyph=""
-                FontSize="12"
-                Foreground="White"/>
-        </Button>
+        <Border 
+            x:Name="ContentContainer" 
+            Background="{ThemeResource SystemAccentColor}"
+            CornerRadius="0">
+
+            <!-- A Border can only have one child, so we need a Grid inside it to hold multiple elements. -->
+            <Grid>
+                <!-- 
+                The drag handle must also have its corners rounded to match the container,
+                ensuring the draggable area is perfectly aligned with the visible area.
+                -->
+                <Border x:Name="DragHandle" Background="Transparent" CornerRadius="0"/>
+
+                <!-- Main content display, which is not interactive. -->
+                <StackPanel
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Spacing="10"
+                    IsHitTestVisible="False">
+                    <TextBlock
+                        Text="Mini Player"
+                        Foreground="White"
+                        HorizontalAlignment="Center"
+                        Style="{ThemeResource SubtitleTextBlockStyle}"/>
+                    <TextBlock
+                        Text="{x:Bind ViewModel.CurrentPlayingTrack.Title, FallbackValue='No Song Playing'}"
+                        Foreground="White"
+                        HorizontalAlignment="Center"
+                        TextWrapping="Wrap"
+                        TextAlignment="Center"
+                        Style="{ThemeResource CaptionTextBlockStyle}"/>
+                </StackPanel>
+
+                <!-- Container for controls that appear on hover. -->
+                <Grid x:Name="HoverControlsContainer" Opacity="0">
+                    <!-- This border provides the dark overlay and must also be rounded. -->
+                    <Border Background="#80000000" IsHitTestVisible="False" CornerRadius="0"/>
+                    <Grid>
+                        <Button
+                            x:Name="RestoreButton"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Top"
+                            Width="48"
+                            Height="48"
+                            Padding="0"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            ToolTipService.ToolTip="Show Nagi">
+                            <FontIcon
+                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                Glyph=""
+                                FontSize="20"
+                                Foreground="White"/>
+                        </Button>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </Border>
     </Grid>
 </UserControl>

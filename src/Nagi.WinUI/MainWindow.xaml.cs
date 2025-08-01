@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml.Controls;
 using Nagi.WinUI.Controls;
 using Nagi.WinUI.Pages;
 using Windows.Graphics;
+using Microsoft.UI.Xaml.Media;
 using WinRT.Interop;
 
 namespace Nagi.WinUI;
@@ -115,40 +116,47 @@ public sealed partial class MainWindow : Window {
 
 /// <summary>
 /// A secondary window that serves as an always-on-top mini-player.
-/// Its lifecycle is managed by the <see cref="Services.Implementations.WindowService"/>.
+/// Its lifecycle is managed by the application's window service.
 /// </summary>
 public sealed class MiniPlayerWindow : Window {
-    private const int WINDOW_WIDTH = 300;
-    private const int WINDOW_HEIGHT = 300;
-    private const string APP_ICON_PATH = "Assets/AppLogo.ico";
-    private const int HORIZONTAL_MARGIN = 10;
-    private const int VERTICAL_MARGIN = 48;
+    private const int WindowWidth = 300;
+    private const int WindowHeight = 300;
+    private const string AppIconPath = "Assets/AppLogo.ico";
+    private const int HorizontalScreenMargin = 10;
+    private const int VerticalScreenMargin = 48;
 
     private readonly MiniPlayerView _view;
 
     public MiniPlayerWindow() {
-        _view = new MiniPlayerView();
-        this.Content = _view;
+        _view = new MiniPlayerView(this);
+        Content = _view;
 
         InitializeWindowSettings();
         ConfigureAppWindow();
-        SubscribeToViewEvents();
+        SubscribeToEvents();
     }
 
+    /// <summary>
+    /// Sets window properties that depend on the content, such as the custom title bar.
+    /// </summary>
     private void InitializeWindowSettings() {
         ExtendsContentIntoTitleBar = true;
-        var draggableRegion = _view.GetDraggableRegion();
-        if (draggableRegion != null) {
-            SetTitleBar(draggableRegion);
+
+        var dragHandle = _view.GetDragHandle();
+        if (dragHandle != null) {
+            SetTitleBar(dragHandle);
         }
     }
 
+    /// <summary>
+    /// Configures the underlying AppWindow properties for the mini-player.
+    /// </summary>
     private void ConfigureAppWindow() {
-        var appWindow = this.AppWindow;
+        var appWindow = AppWindow;
 
         appWindow.Title = "Nagi";
-        appWindow.SetIcon(APP_ICON_PATH);
-        appWindow.Resize(new SizeInt32(WINDOW_WIDTH, WINDOW_HEIGHT));
+        appWindow.SetIcon(AppIconPath);
+        appWindow.Resize(new SizeInt32(WindowWidth, WindowHeight));
         PositionWindowInBottomRight(appWindow);
 
         if (appWindow.Presenter is OverlappedPresenter presenter) {
@@ -156,46 +164,49 @@ public sealed class MiniPlayerWindow : Window {
             presenter.IsResizable = false;
             presenter.IsMaximizable = false;
             presenter.IsMinimizable = false;
-            presenter.SetBorderAndTitleBar(true, false);
+            presenter.SetBorderAndTitleBar(false, false);
         }
         else {
+            // Log a warning if the presenter is not the expected type, as window styling will fail.
             Debug.WriteLine("[WARN] MiniPlayerWindow: Could not configure the presenter as it is not an OverlappedPresenter.");
         }
     }
 
     /// <summary>
-    /// Calculates and sets the window's initial position to the bottom-right of the primary display.
+    /// Positions the window in the bottom-right corner of the primary display's work area.
     /// </summary>
-    /// <param name="appWindow">The AppWindow to position.</param>
     private void PositionWindowInBottomRight(AppWindow appWindow) {
-        DisplayArea displayArea = DisplayArea.GetFromWindowId(appWindow.Id, 0) ?? DisplayArea.Primary;
+        var displayArea = DisplayArea.GetFromWindowId(appWindow.Id, DisplayAreaFallback.Primary);
 
         if (displayArea != null) {
-            RectInt32 workArea = displayArea.WorkArea;
-
-            // Calculate the top-left position for the window.
-            // The calculation accounts for the work area's offset on multi-monitor setups.
-            int positionX = workArea.X + workArea.Width - WINDOW_WIDTH - HORIZONTAL_MARGIN;
-            int positionY = workArea.Y + workArea.Height - WINDOW_HEIGHT - VERTICAL_MARGIN;
-
+            var workArea = displayArea.WorkArea;
+            int positionX = workArea.X + workArea.Width - WindowWidth - HorizontalScreenMargin;
+            int positionY = workArea.Y + workArea.Height - WindowHeight - VerticalScreenMargin;
             appWindow.Move(new PointInt32(positionX, positionY));
         }
         else {
+            // Log a warning if the display area cannot be determined for positioning.
             Debug.WriteLine("[WARN] MiniPlayerWindow: Could not retrieve display area to position the window.");
         }
     }
 
-    private void SubscribeToViewEvents() {
+    /// <summary>
+    /// Subscribes to window and view events.
+    /// </summary>
+    private void SubscribeToEvents() {
         _view.RestoreButtonClicked += OnRestoreButtonClicked;
-        this.Closed += OnWindowClosed;
+        Closed += OnWindowClosed;
     }
 
     private void OnRestoreButtonClicked(object? sender, EventArgs e) {
-        this.Close();
+        Close();
     }
 
+    /// <summary>
+    /// Unsubscribes from events to prevent memory leaks when the window is closed.
+    /// </summary>
     private void OnWindowClosed(object sender, WindowEventArgs args) {
         _view.RestoreButtonClicked -= OnRestoreButtonClicked;
-        this.Closed -= OnWindowClosed;
+        Closed -= OnWindowClosed;
     }
 }
