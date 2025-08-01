@@ -40,19 +40,23 @@ namespace Nagi.WinUI.ViewModels {
         private readonly IMusicPlaybackService _playbackService;
         private readonly INavigationService _navigationService;
         private readonly IDispatcherService _dispatcherService;
+        private readonly IUISettingsService _settingsService;
 
         private bool _isUpdatingFromService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PlayerViewModel"/> class.
         /// </summary>
-        public PlayerViewModel(IMusicPlaybackService playbackService, INavigationService navigationService, IDispatcherService dispatcherService) {
+        public PlayerViewModel(IMusicPlaybackService playbackService, INavigationService navigationService, IDispatcherService dispatcherService, IUISettingsService settingsService) {
             _playbackService = playbackService ?? throw new ArgumentNullException(nameof(playbackService));
             _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
             _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
+            _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
 
             SubscribeToPlaybackServiceEvents();
+            SubscribeToSettingsServiceEvents();
             InitializeStateFromService();
+            InitializeSettingsAsync();
         }
 
         [ObservableProperty]
@@ -71,6 +75,9 @@ namespace Nagi.WinUI.ViewModels {
         private string? _albumArtUri;
 
         [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(IsLyricsButtonEffectivelyVisible))]
+        [NotifyCanExecuteChangedFor(nameof(GoToLyricsPageCommand))]
+        [NotifyCanExecuteChangedFor(nameof(GoToArtistCommand))]
         private Song? _currentPlayingTrack;
 
         [ObservableProperty]
@@ -126,6 +133,13 @@ namespace Nagi.WinUI.ViewModels {
         [ObservableProperty]
         private bool _isQueueViewVisible;
 
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(IsLyricsButtonEffectivelyVisible))]
+        [NotifyCanExecuteChangedFor(nameof(GoToLyricsPageCommand))]
+        private bool _showLyricsOnPlayerEnabled;
+
+        public bool IsLyricsButtonEffectivelyVisible => ShowLyricsOnPlayerEnabled;
+
         public bool IsArtworkAvailable => !string.IsNullOrWhiteSpace(AlbumArtUri);
 
         public string PlayPauseIconGlyph => IsPlaying ? PauseIconGlyph : PlayIconGlyph;
@@ -151,6 +165,7 @@ namespace Nagi.WinUI.ViewModels {
         public void Dispose() {
             Debug.WriteLine("[PlayerViewModel] Disposing and unsubscribing from playback service events.");
             UnsubscribeFromPlaybackServiceEvents();
+            UnsubscribeFromSettingsServiceEvents();
             GC.SuppressFinalize(this);
         }
 
@@ -210,14 +225,10 @@ namespace Nagi.WinUI.ViewModels {
 
         [RelayCommand(CanExecute = nameof(CanGoToLyricsPage))]
         private void GoToLyricsPage() {
-            if (CurrentPlayingTrack == null) {
-                Debug.WriteLine("[PlayerViewModel] WARN: Cannot navigate to Lyrics page, no track is playing.");
-                return;
-            }
             _navigationService.Navigate(typeof(LyricsPage));
         }
 
-        private bool CanGoToLyricsPage() => CurrentPlayingTrack != null;
+        private bool CanGoToLyricsPage() => ShowLyricsOnPlayerEnabled;
 
         partial void OnIsMutedChanged(bool value) => UpdateVolumeIconGlyph();
 
@@ -345,6 +356,26 @@ namespace Nagi.WinUI.ViewModels {
 
         #endregion
 
+        #region Settings Service Event Handling
+
+        private async void InitializeSettingsAsync() {
+            ShowLyricsOnPlayerEnabled = await _settingsService.GetShowLyricsOnPlayerEnabledAsync();
+        }
+
+        private void SubscribeToSettingsServiceEvents() {
+            _settingsService.ShowLyricsOnPlayerSettingChanged += OnSettingsService_ShowLyricsOnPlayerSettingChanged;
+        }
+
+        private void UnsubscribeFromSettingsServiceEvents() {
+            _settingsService.ShowLyricsOnPlayerSettingChanged -= OnSettingsService_ShowLyricsOnPlayerSettingChanged;
+        }
+
+        private void OnSettingsService_ShowLyricsOnPlayerSettingChanged(bool isEnabled) {
+            RunOnUIThread(() => ShowLyricsOnPlayerEnabled = isEnabled);
+        }
+
+        #endregion
+
         private void UpdateTrackDetails(Song? song) {
             CurrentPlayingTrack = song;
             if (song != null) {
@@ -357,8 +388,6 @@ namespace Nagi.WinUI.ViewModels {
                 ArtistName = string.Empty;
                 AlbumArtUri = null;
             }
-            GoToArtistCommand.NotifyCanExecuteChanged();
-            GoToLyricsPageCommand.NotifyCanExecuteChanged();
         }
 
         /// <summary>

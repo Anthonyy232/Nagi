@@ -40,6 +40,9 @@ public class SettingsService : IUISettingsService {
     private const string RestorePlaybackStateEnabledKey = "RestorePlaybackStateEnabled";
     private const string StartMinimizedEnabledKey = "StartMinimizedEnabled";
     private const string HideToTrayEnabledKey = "HideToTrayEnabled";
+    private const string MinimizeToMiniPlayerEnabledKey = "MinimizeToMiniPlayerEnabled";
+    private const string ShowLyricsOnPlayerEnabledKey = "ShowLyricsOnPlayerEnabled";
+    private const string ShowQueueButtonEnabledKey = "ShowQueueButtonEnabled";
     private const string ShowCoverArtInTrayFlyoutKey = "ShowCoverArtInTrayFlyout";
     private const string FetchOnlineMetadataKey = "FetchOnlineMetadataEnabled";
     private const string DiscordRichPresenceEnabledKey = "DiscordRichPresenceEnabled";
@@ -64,6 +67,9 @@ public class SettingsService : IUISettingsService {
 
     public event Action<bool>? PlayerAnimationSettingChanged;
     public event Action<bool>? HideToTraySettingChanged;
+    public event Action<bool>? MinimizeToMiniPlayerSettingChanged;
+    public event Action<bool>? ShowLyricsOnPlayerSettingChanged;
+    public event Action<bool>? ShowQueueButtonSettingChanged;
     public event Action<bool>? ShowCoverArtInTrayFlyoutSettingChanged;
     public event Action? NavigationSettingsChanged;
     public event Action? LastFmSettingsChanged;
@@ -255,7 +261,10 @@ public class SettingsService : IUISettingsService {
         await ClearPlaybackStateAsync();
         await SetAutoLaunchEnabledAsync(false);
         await SetPlayerAnimationEnabledAsync(true);
+        await SetShowLyricsOnPlayerEnabledAsync(true);
+        await SetShowQueueButtonEnabledAsync(true);
         await SetHideToTrayEnabledAsync(true);
+        await SetMinimizeToMiniPlayerEnabledAsync(false);
         await SetShowCoverArtInTrayFlyoutAsync(true);
         await SetFetchOnlineMetadataEnabledAsync(false);
         await SetDiscordRichPresenceEnabledAsync(false);
@@ -518,6 +527,27 @@ public class SettingsService : IUISettingsService {
     }
 
     public Task SetHideToTrayEnabledAsync(bool isEnabled) => SetValueAndNotifyAsync(HideToTrayEnabledKey, isEnabled, true, HideToTraySettingChanged);
+
+    public async Task<bool> GetMinimizeToMiniPlayerEnabledAsync() {
+        await EnsureUnpackagedSettingsLoadedAsync();
+        return GetValue(MinimizeToMiniPlayerEnabledKey, false);
+    }
+
+    public Task SetMinimizeToMiniPlayerEnabledAsync(bool isEnabled) => SetValueAndNotifyAsync(MinimizeToMiniPlayerEnabledKey, isEnabled, false, MinimizeToMiniPlayerSettingChanged);
+
+    public async Task<bool> GetShowLyricsOnPlayerEnabledAsync() {
+        await EnsureUnpackagedSettingsLoadedAsync();
+        return GetValue(ShowLyricsOnPlayerEnabledKey, true);
+    }
+
+    public Task SetShowLyricsOnPlayerEnabledAsync(bool isEnabled) => SetValueAndNotifyAsync(ShowLyricsOnPlayerEnabledKey, isEnabled, true, ShowLyricsOnPlayerSettingChanged);
+
+    public async Task<bool> GetShowQueueButtonEnabledAsync() {
+        await EnsureUnpackagedSettingsLoadedAsync();
+        return GetValue(ShowQueueButtonEnabledKey, true);
+    }
+
+    public Task SetShowQueueButtonEnabledAsync(bool isEnabled) => SetValueAndNotifyAsync(ShowQueueButtonEnabledKey, isEnabled, true, ShowQueueButtonSettingChanged);
 
     public async Task<bool> GetShowCoverArtInTrayFlyoutAsync() {
         await EnsureUnpackagedSettingsLoadedAsync();
