@@ -2,78 +2,210 @@
     x:Class="Nagi.WinUI.Controls.MiniPlayerView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="using:Nagi.WinUI.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:imageex="using:ImageEx"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:Nagi.Core.Models"
+    xmlns:viewmodels="using:Nagi.WinUI.ViewModels"
+    d:DataContext="{d:DesignInstance Type=viewmodels:PlayerViewModel, IsDesignTimeCreatable=True}"
     mc:Ignorable="d">
 
+    <UserControl.Resources>
+        <converters:TimeSpanToTimeStringConverter x:Key="TimeSpanToTimeStringConverter" />
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <converters:BooleanToVisibilityConverter x:Key="InvertedBooleanToVisibilityConverter" Invert="True" />
+
+        <Style x:Key="QueueListViewItemStyle" TargetType="ListViewItem">
+            <Setter Property="Padding" Value="12,8" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="White" />
+        </Style>
+
+        <Style x:Key="BackButtonStyle" BasedOn="{StaticResource MediaControlButtonStyle}" TargetType="Button" />
+        <Style x:Key="FullScreenButtonStyle" BasedOn="{StaticResource MediaControlButtonStyle}" TargetType="Button" />
+    </UserControl.Resources>
+
+    <!--
+    The root grid handles pointer enter/exit events to show or hide the controls.
+    It contains several layers to create the final appearance.
+    -->
     <Grid x:Name="HoverDetector" Background="Transparent">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="HoverStates">
                 <VisualStateGroup.Transitions>
-                    <VisualTransition GeneratedDuration="0:0:0.2"/>
+                    <VisualTransition GeneratedDuration="0:0:0.2" />
                 </VisualStateGroup.Transitions>
                 <VisualState x:Name="Normal">
                     <Storyboard>
-                        <DoubleAnimation Storyboard.TargetName="HoverControlsContainer"
-                                       Storyboard.TargetProperty="Opacity"
-                                       To="0"
-                                       Duration="0"/>
+                        <DoubleAnimation
+                            Storyboard.TargetName="HoverControlsContainer"
+                            Storyboard.TargetProperty="Opacity"
+                            To="0"
+                            Duration="0" />
                     </Storyboard>
                 </VisualState>
                 <VisualState x:Name="MouseOver">
                     <Storyboard>
-                        <DoubleAnimation Storyboard.TargetName="HoverControlsContainer"
-                                       Storyboard.TargetProperty="Opacity"
-                                       To="1"
-                                       Duration="0"/>
+                        <DoubleAnimation
+                            Storyboard.TargetName="HoverControlsContainer"
+                            Storyboard.TargetProperty="Opacity"
+                            To="1"
+                            Duration="0" />
                     </Storyboard>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
-        <Border Background="{StaticResource AppPrimaryColorBrush}">
+        <Border Background="{StaticResource AppPrimaryColorBrush}" />
+
+        <imageex:ImageEx
+            IsCacheEnabled="True"
+            IsHitTestVisible="False"
+            Source="{x:Bind ViewModel.AlbumArtUri, Mode=OneWay}"
+            Stretch="UniformToFill" />
+
+        <Border x:Name="DragHandle" Background="Transparent" />
+
+        <Grid x:Name="HoverControlsContainer" Opacity="0">
+            <!--  A semi-transparent overlay to ensure text and controls are readable over the album art.  -->
+            <Border Background="#A0000000" IsHitTestVisible="False" />
+
             <Grid>
-                <Border x:Name="DragHandle" Background="Transparent"/>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
 
-                <StackPanel
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Spacing="10"
-                    IsHitTestVisible="False">
-                    <TextBlock
-                        Text="Mini Player"
-                        Foreground="White"
-                        HorizontalAlignment="Center"
-                        Style="{ThemeResource SubtitleTextBlockStyle}"/>
-                    <TextBlock
-                        Text="{x:Bind ViewModel.CurrentPlayingTrack.Title, FallbackValue='No Song Playing'}"
-                        Foreground="White"
-                        HorizontalAlignment="Center"
-                        TextWrapping="Wrap"
-                        TextAlignment="Center"
-                        Style="{ThemeResource CaptionTextBlockStyle}"/>
-                </StackPanel>
+                <!--  Header: Contains the back button, title/artist info, and restore button.  -->
+                <Grid Grid.Row="0" Margin="12,16,16,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
 
-                <Grid x:Name="HoverControlsContainer" Opacity="0">
-                    <Border Background="#80000000" IsHitTestVisible="False"/>
+                    <!--  Back Button: Visible only in the queue view to return to the player.  -->
+                    <Button
+                        Grid.Column="0"
+                        Command="{x:Bind ViewModel.ShowPlayerViewCommand}"
+                        Style="{StaticResource BackButtonStyle}"
+                        ToolTipService.ToolTip="Back to Player"
+                        Visibility="{x:Bind ViewModel.IsQueueViewVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
+                    </Button>
+
+                    <!--  Centered Title Area: Displays either song info or the queue title, spanning all columns for true centering.  -->
+                    <StackPanel
+                        Grid.Column="0"
+                        Grid.ColumnSpan="3"
+                        Margin="40,0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        IsHitTestVisible="False"
+                        Spacing="2"
+                        Visibility="{x:Bind ViewModel.IsQueueViewVisible, Mode=OneWay, Converter={StaticResource InvertedBooleanToVisibilityConverter}}">
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            Foreground="White"
+                            Style="{ThemeResource BodyStrongTextBlockStyle}"
+                            Text="{x:Bind ViewModel.SongTitle, Mode=OneWay, FallbackValue='Song Title'}"
+                            TextAlignment="Center"
+                            TextTrimming="CharacterEllipsis" />
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Style="{ThemeResource BodyTextBlockStyle}"
+                            Text="{x:Bind ViewModel.ArtistName, Mode=OneWay, FallbackValue='Artist Name'}"
+                            TextAlignment="Center"
+                            TextTrimming="CharacterEllipsis" />
+                    </StackPanel>
+
+                    <TextBlock
+                        Grid.Column="0"
+                        Grid.ColumnSpan="3"
+                        Margin="40,0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Foreground="White"
+                        Style="{ThemeResource SubtitleTextBlockStyle}"
+                        Text="Current Queue"
+                        Visibility="{x:Bind ViewModel.IsQueueViewVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
                     <Button
                         x:Name="RestoreButton"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Top"
-                        Width="48"
-                        Height="48"
-                        Padding="0"
-                        Background="Transparent"
-                        BorderThickness="0"
+                        Grid.Column="2"
+                        Style="{StaticResource FullScreenButtonStyle}"
                         ToolTipService.ToolTip="Show Nagi">
-                        <FontIcon
-                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                            Glyph="&#xE740;"
-                            FontSize="18"
-                            Foreground="White"/>
+                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" FontSize="20" Glyph="" />
                     </Button>
                 </Grid>
+
+                <!--
+                Content Area: Switches between the Player controls and the Queue list
+                based on the ViewModel's IsQueueViewVisible property.
+                -->
+                <Grid Grid.Row="1">
+                    <!--  Player View -->
+                    <Grid Padding="16" Visibility="{x:Bind ViewModel.IsQueueViewVisible, Mode=OneWay, Converter={StaticResource InvertedBooleanToVisibilityConverter}}">
+                        <StackPanel VerticalAlignment="Bottom" Spacing="12">
+                            <Slider
+                                IsThumbToolTipEnabled="True"
+                                Maximum="{x:Bind ViewModel.TotalDuration, Mode=OneWay}"
+                                Style="{StaticResource MediaSeekerSliderStyle}"
+                                ThumbToolTipValueConverter="{StaticResource TimeSpanToTimeStringConverter}"
+                                Value="{x:Bind ViewModel.CurrentPosition, Mode=TwoWay}" />
+
+                            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Spacing="4">
+                                <Button Command="{x:Bind ViewModel.ToggleMuteCommand}" Style="{StaticResource VolumeButtonStyle}" ToolTipService.ToolTip="{x:Bind ViewModel.VolumeButtonToolTip, Mode=OneWay}">
+                                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="{x:Bind ViewModel.VolumeIconGlyph, Mode=OneWay}" />
+                                </Button>
+                                <Button Command="{x:Bind ViewModel.ToggleShuffleCommand}" Style="{StaticResource ShuffleButtonStyle}" ToolTipService.ToolTip="{x:Bind ViewModel.ShuffleButtonToolTip, Mode=OneWay}">
+                                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="{x:Bind ViewModel.ShuffleIconGlyph, Mode=OneWay}" />
+                                </Button>
+                                <Button Command="{x:Bind ViewModel.PreviousCommand}" Style="{StaticResource PreviousButtonStyle}" ToolTipService.ToolTip="Previous">
+                                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
+                                </Button>
+                                <Button Command="{x:Bind ViewModel.PlayPauseCommand}" Style="{StaticResource PlayPauseButtonStyle}" ToolTipService.ToolTip="{x:Bind ViewModel.PlayPauseButtonToolTip, Mode=OneWay}">
+                                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" FontSize="24" Glyph="{x:Bind ViewModel.PlayPauseIconGlyph, Mode=OneWay}" />
+                                </Button>
+                                <Button Command="{x:Bind ViewModel.NextCommand}" Style="{StaticResource NextButtonStyle}" ToolTipService.ToolTip="Next">
+                                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
+                                </Button>
+                                <Button Command="{x:Bind ViewModel.CycleRepeatCommand}" Style="{StaticResource RepeatButtonStyle}" ToolTipService.ToolTip="{x:Bind ViewModel.RepeatButtonToolTip, Mode=OneWay}">
+                                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="{x:Bind ViewModel.RepeatIconGlyph, Mode=OneWay}" />
+                                </Button>
+                                <Button Command="{x:Bind ViewModel.ShowQueueViewCommand}" Style="{StaticResource QueueButtonStyle}" ToolTipService.ToolTip="Current Queue">
+                                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
+                                </Button>
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+
+                    <!--  Queue View -->
+                    <ListView
+                        Padding="0,12,4,16"
+                        ItemContainerStyle="{StaticResource QueueListViewItemStyle}"
+                        ItemsSource="{x:Bind ViewModel.CurrentQueue}"
+                        SelectionMode="None"
+                        VirtualizingStackPanel.VirtualizationMode="Recycling"
+                        Visibility="{x:Bind ViewModel.IsQueueViewVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="models:Song">
+                                <StackPanel Margin="0,4">
+                                    <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="{x:Bind Title}" TextTrimming="CharacterEllipsis" />
+                                    <TextBlock
+                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                        Style="{ThemeResource CaptionTextBlockStyle}"
+                                        Text="{x:Bind Artist.Name}"
+                                        TextTrimming="CharacterEllipsis" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
             </Grid>
-        </Border>
+        </Grid>
     </Grid>
 </UserControl>
