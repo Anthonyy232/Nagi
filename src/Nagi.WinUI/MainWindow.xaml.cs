@@ -118,29 +118,84 @@ public sealed partial class MainWindow : Window {
 /// Its lifecycle is managed by the <see cref="Services.Implementations.WindowService"/>.
 /// </summary>
 public sealed class MiniPlayerWindow : Window {
-    private const int WINDOW_SIZE = 200;
+    private const int WINDOW_WIDTH = 300;
+    private const int WINDOW_HEIGHT = 300;
+    private const string APP_ICON_PATH = "Assets/AppLogo.ico";
+    private const int HORIZONTAL_MARGIN = 10;
+    private const int VERTICAL_MARGIN = 48;
+
+    private readonly MiniPlayerView _view;
 
     public MiniPlayerWindow() {
-        var view = new MiniPlayerView();
-        this.Content = view;
+        _view = new MiniPlayerView();
+        this.Content = _view;
 
-        // Subscribe to the view's event to close this window.
-        view.RestoreButtonClicked += (sender, args) => this.Close();
+        InitializeWindowSettings();
+        ConfigureAppWindow();
+        SubscribeToViewEvents();
+    }
 
+    private void InitializeWindowSettings() {
         ExtendsContentIntoTitleBar = true;
-        SetTitleBar(view.GetDraggableRegion());
+        var draggableRegion = _view.GetDraggableRegion();
+        if (draggableRegion != null) {
+            SetTitleBar(draggableRegion);
+        }
+    }
 
+    private void ConfigureAppWindow() {
         var appWindow = this.AppWindow;
+
+        appWindow.Title = "Nagi";
+        appWindow.SetIcon(APP_ICON_PATH);
+        appWindow.Resize(new SizeInt32(WINDOW_WIDTH, WINDOW_HEIGHT));
+        PositionWindowInBottomRight(appWindow);
+
         if (appWindow.Presenter is OverlappedPresenter presenter) {
             presenter.IsAlwaysOnTop = true;
             presenter.IsResizable = false;
             presenter.IsMaximizable = false;
             presenter.IsMinimizable = false;
             presenter.SetBorderAndTitleBar(true, false);
-            Debug.WriteLine("[INFO] MiniPlayerWindow: Presenter configured for always-on-top, non-resizable state with custom title bar.");
         }
-        appWindow.Resize(new SizeInt32(WINDOW_SIZE, WINDOW_SIZE));
-        appWindow.Title = "Nagi Mini Player";
-        appWindow.SetIcon("Assets/AppLogo.ico");
+        else {
+            Debug.WriteLine("[WARN] MiniPlayerWindow: Could not configure the presenter as it is not an OverlappedPresenter.");
+        }
+    }
+
+    /// <summary>
+    /// Calculates and sets the window's initial position to the bottom-right of the primary display.
+    /// </summary>
+    /// <param name="appWindow">The AppWindow to position.</param>
+    private void PositionWindowInBottomRight(AppWindow appWindow) {
+        DisplayArea displayArea = DisplayArea.GetFromWindowId(appWindow.Id, 0) ?? DisplayArea.Primary;
+
+        if (displayArea != null) {
+            RectInt32 workArea = displayArea.WorkArea;
+
+            // Calculate the top-left position for the window.
+            // The calculation accounts for the work area's offset on multi-monitor setups.
+            int positionX = workArea.X + workArea.Width - WINDOW_WIDTH - HORIZONTAL_MARGIN;
+            int positionY = workArea.Y + workArea.Height - WINDOW_HEIGHT - VERTICAL_MARGIN;
+
+            appWindow.Move(new PointInt32(positionX, positionY));
+        }
+        else {
+            Debug.WriteLine("[WARN] MiniPlayerWindow: Could not retrieve display area to position the window.");
+        }
+    }
+
+    private void SubscribeToViewEvents() {
+        _view.RestoreButtonClicked += OnRestoreButtonClicked;
+        this.Closed += OnWindowClosed;
+    }
+
+    private void OnRestoreButtonClicked(object? sender, EventArgs e) {
+        this.Close();
+    }
+
+    private void OnWindowClosed(object sender, WindowEventArgs args) {
+        _view.RestoreButtonClicked -= OnRestoreButtonClicked;
+        this.Closed -= OnWindowClosed;
     }
 }
