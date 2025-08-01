@@ -17,6 +17,7 @@
 		<Configurations>Debug;Release;DebugUnpackaged;ReleaseUnpackaged</Configurations>
 		<AssemblyName>Nagi</AssemblyName>
 		<Product>Nagi</Product>
+		<ApplicationIcon>Assets\AppLogo.ico</ApplicationIcon>
 	</PropertyGroup>
 
 	<!-- =============================================================== -->

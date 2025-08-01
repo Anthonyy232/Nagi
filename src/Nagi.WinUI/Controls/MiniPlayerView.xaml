@@ -22,5 +22,22 @@
                 TextAlignment="Center"
                 Style="{ThemeResource CaptionTextBlockStyle}"/>
         </StackPanel>
+
+        <Button
+            x:Name="RestoreButton"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Width="32"
+            Height="32"
+            Padding="0"
+            Background="Transparent"
+            BorderThickness="0"
+            ToolTipService.ToolTip="Show Nagi">
+            <FontIcon
+                FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                Glyph=""
+                FontSize="12"
+                Foreground="White"/>
+        </Button>
     </Grid>
 </UserControl>

@@ -103,8 +103,7 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable {
             _isHideToTrayEnabled = isEnabled;
             UpdateTrayIconVisibility();
 
-            // Safeguard: if the feature is disabled while the window is hidden,
-            // show the window to prevent it from becoming inaccessible.
+            // If the feature is disabled while the window is hidden, show the window to prevent it from becoming inaccessible.
             if (!isEnabled && !IsWindowVisible) {
                 Debug.WriteLine("[WARN] TrayIconViewModel: 'Hide to Tray' disabled while window was hidden. Forcing window to show.");
                 ShowWindow();
