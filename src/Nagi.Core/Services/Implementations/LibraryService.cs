@@ -38,7 +38,7 @@ public class LibraryService : ILibraryService {
 
     private readonly IDbContextFactory<MusicDbContext> _contextFactory;
     private readonly IFileSystemService _fileSystem;
-    private readonly IMetadataExtractor _metadataExtractor;
+    private readonly IMetadataService _metadataService;
     private readonly ILastFmMetadataService _lastFmService;
     private readonly ISpotifyService _spotifyService;
     private readonly IServiceScopeFactory _serviceScopeFactory;
@@ -56,7 +56,7 @@ public class LibraryService : ILibraryService {
     public LibraryService(
         IDbContextFactory<MusicDbContext> contextFactory,
         IFileSystemService fileSystem,
-        IMetadataExtractor metadataExtractor,
+        IMetadataService metadataService,
         ILastFmMetadataService lastFmService,
         ISpotifyService spotifyService,
         IHttpClientFactory httpClientFactory,
@@ -64,7 +64,7 @@ public class LibraryService : ILibraryService {
         IPathConfiguration pathConfig) {
         _contextFactory = contextFactory ?? throw new ArgumentNullException(nameof(contextFactory));
         _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
-        _metadataExtractor = metadataExtractor ?? throw new ArgumentNullException(nameof(metadataExtractor));
+        _metadataService = metadataService ?? throw new ArgumentNullException(nameof(metadataService));
         _lastFmService = lastFmService ?? throw new ArgumentNullException(nameof(lastFmService));
         _spotifyService = spotifyService ?? throw new ArgumentNullException(nameof(spotifyService));
         _httpClient = httpClientFactory.CreateClient("ImageDownloader");
@@ -1759,7 +1759,7 @@ public class LibraryService : ILibraryService {
             await semaphore.WaitAsync(cancellationToken);
             try {
                 cancellationToken.ThrowIfCancellationRequested();
-                var metadata = await _metadataExtractor.ExtractMetadataAsync(filePath);
+                var metadata = await _metadataService.ExtractMetadataAsync(filePath);
                 if (!metadata.ExtractionFailed) {
                     extractedMetadata.Add(metadata);
                 }

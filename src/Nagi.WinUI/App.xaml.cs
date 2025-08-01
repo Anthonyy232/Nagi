@@ -294,7 +294,7 @@ namespace Nagi.WinUI {
             services.AddSingleton<IOfflineScrobbleService, OfflineScrobbleService>();
             services.AddSingleton<IFileSystemService, FileSystemService>();
             services.AddSingleton<IImageProcessor, ImageSharpProcessor>();
-            services.AddSingleton<IMetadataExtractor, TagLibMetadataExtractor>();
+            services.AddSingleton<IMetadataService, TagLibMetadataService>();
             services.AddSingleton<ILrcService, LrcService>();
 
             services.AddSingleton<IApiKeyService, ApiKeyService>();
