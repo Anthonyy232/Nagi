@@ -11,7 +11,8 @@ using WinRT.Interop;
 namespace Nagi.WinUI;
 
 /// <summary>
-/// The main application window, responsible for hosting page content and managing a custom title bar.
+/// The main application window. It manages the window frame, hosts application pages,
+/// and dynamically configures a custom or default title bar based on the current content.
 /// </summary>
 public sealed partial class MainWindow : Window {
     private AppWindow? _appWindow;
@@ -19,6 +20,8 @@ public sealed partial class MainWindow : Window {
 
     public MainWindow() {
         InitializeComponent();
+
+        // Allow content to be drawn into the title bar area for a custom look.
         ExtendsContentIntoTitleBar = true;
 
         Activated += OnWindowActivated;
@@ -27,12 +30,13 @@ public sealed partial class MainWindow : Window {
 
     /// <summary>
     /// Configures the window's title bar based on the current page's content.
-    /// This method should be called after the window has been activated.
+    /// This method inspects the current page for an ICustomTitleBarProvider
+    /// to determine how the title bar should be rendered.
     /// </summary>
     public void InitializeCustomTitleBar() {
         _appWindow ??= GetAppWindowForCurrentWindow();
         if (_appWindow == null) {
-            // This is a critical failure, as the application cannot be controlled without an AppWindow.
+            // This is a critical failure, as the app cannot be controlled without an AppWindow.
             Debug.WriteLine("[CRITICAL] MainWindow: AppWindow is not available. Cannot initialize title bar.");
             return;
         }
@@ -63,6 +67,7 @@ public sealed partial class MainWindow : Window {
     private void RevertToDefaultTitleBar(OverlappedPresenter? presenter = null) {
         ExtendsContentIntoTitleBar = false;
         SetTitleBar(null);
+        presenter ??= _appWindow?.Presenter as OverlappedPresenter;
         presenter?.SetBorderAndTitleBar(false, true);
     }
 
@@ -91,8 +96,9 @@ public sealed partial class MainWindow : Window {
                 Debug.WriteLine("[ERROR] MainWindow: Could not get window handle.");
                 return null;
             }
-            WindowId myWndId = Win32Interop.GetWindowIdFromWindow(hWnd);
-            return AppWindow.GetFromWindowId(myWndId);
+
+            WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
+            return AppWindow.GetFromWindowId(windowId);
         }
         catch (Exception ex) {
             Debug.WriteLine($"[ERROR] MainWindow: Failed to retrieve AppWindow. Exception: {ex.Message}");
@@ -102,64 +108,103 @@ public sealed partial class MainWindow : Window {
 }
 
 /// <summary>
-/// A secondary window that serves as an always-on-top mini-player.
+/// A secondary window that serves as an always-on-top, resizable mini-player.
+/// It maintains a square aspect ratio and positions itself in the corner of the screen.
 /// </summary>
 public sealed class MiniPlayerWindow : Window {
-    private const int WindowWidth = 350;
-    private const int WindowHeight = 350;
+    private const int InitialWindowSize = 350;
+    private const int MinWindowSize = 200;
+    private const int MaxWindowSize = 640;
     private const string AppIconPath = "Assets/AppLogo.ico";
     private const int HorizontalScreenMargin = 10;
     private const int VerticalScreenMargin = 48;
 
     private readonly MiniPlayerView _view;
+    private readonly AppWindow _appWindow;
 
     public MiniPlayerWindow() {
         _view = new MiniPlayerView(this);
         Content = _view;
+        _appWindow = this.AppWindow;
 
         ConfigureAppWindow();
         SubscribeToEvents();
     }
 
     private void ConfigureAppWindow() {
-        ExtendsContentIntoTitleBar = false;
+        ExtendsContentIntoTitleBar = true;
 
-        var appWindow = AppWindow;
-        appWindow.Title = "Nagi";
-        appWindow.SetIcon(AppIconPath);
-        appWindow.Resize(new SizeInt32(WindowWidth, WindowHeight));
-        PositionWindowInBottomRight(appWindow);
+        _appWindow.Title = "Nagi";
+        _appWindow.SetIcon(AppIconPath);
+        _appWindow.Resize(new SizeInt32(InitialWindowSize, InitialWindowSize));
+        PositionWindowInBottomRight(_appWindow);
 
-        if (appWindow.Presenter is OverlappedPresenter presenter) {
-            // Configure the window to be a tool window (always on top, not resizable, no system controls).
+        if (_appWindow.Presenter is OverlappedPresenter presenter) {
             presenter.IsAlwaysOnTop = true;
-            presenter.IsResizable = false;
+            presenter.IsResizable = true;
             presenter.IsMaximizable = false;
             presenter.IsMinimizable = false;
             presenter.SetBorderAndTitleBar(true, false);
         }
         else {
-            Debug.WriteLine("[WARN] MiniPlayerWindow: Could not configure the presenter as it is not an OverlappedPresenter.");
+            Debug.WriteLine("[WARN] MiniPlayerWindow: Could not configure presenter. It is not an OverlappedPresenter.");
         }
     }
 
     private void PositionWindowInBottomRight(AppWindow appWindow) {
         var displayArea = DisplayArea.GetFromWindowId(appWindow.Id, DisplayAreaFallback.Primary);
-
-        if (displayArea != null) {
-            var workArea = displayArea.WorkArea;
-            int positionX = workArea.X + workArea.Width - WindowWidth - HorizontalScreenMargin;
-            int positionY = workArea.Y + workArea.Height - WindowHeight - VerticalScreenMargin;
-            appWindow.Move(new PointInt32(positionX, positionY));
-        }
-        else {
+        if (displayArea == null) {
             Debug.WriteLine("[WARN] MiniPlayerWindow: Could not retrieve display area to position the window.");
+            return;
         }
+
+        var workArea = displayArea.WorkArea;
+        int positionX = workArea.X + workArea.Width - InitialWindowSize - HorizontalScreenMargin;
+        int positionY = workArea.Y + workArea.Height - InitialWindowSize - VerticalScreenMargin;
+        appWindow.Move(new PointInt32(positionX, positionY));
     }
 
     private void SubscribeToEvents() {
         _view.RestoreButtonClicked += OnRestoreButtonClicked;
+        _appWindow.Changed += OnAppWindowChanged;
         Closed += OnWindowClosed;
+    }
+
+    private void OnAppWindowChanged(AppWindow sender, AppWindowChangedEventArgs args) {
+        if (args.DidSizeChange) {
+            MaintainSquareAspectRatio(sender);
+        }
+    }
+
+    /// <summary>
+    /// Enforces a 1:1 aspect ratio for the window, resizing it from the center
+    /// to prevent a "dragging" effect during user resizing.
+    /// </summary>
+    private void MaintainSquareAspectRatio(AppWindow window) {
+        PointInt32 currentPosition = window.Position;
+        SizeInt32 currentSize = window.Size;
+
+        int desiredSize = Math.Max(currentSize.Width, currentSize.Height);
+        int newSize = Math.Clamp(desiredSize, MinWindowSize, MaxWindowSize);
+
+        // If the window is already the correct square size, no change is needed.
+        if (currentSize.Width == newSize && currentSize.Height == newSize) {
+            return;
+        }
+
+        // Calculate the center point before the resize.
+        int centerX = currentPosition.X + (currentSize.Width / 2);
+        int centerY = currentPosition.Y + (currentSize.Height / 2);
+
+        // Calculate the new top-left position to keep the window centered.
+        int newX = centerX - (newSize / 2);
+        int newY = centerY - (newSize / 2);
+
+        // Temporarily unsubscribe from the event to prevent re-entrancy,
+        // as we are about to change the size again.
+        window.Changed -= OnAppWindowChanged;
+        window.MoveAndResize(new RectInt32(newX, newY, newSize, newSize));
+        window.Changed += OnAppWindowChanged;
     }
 
     private void OnRestoreButtonClicked(object? sender, EventArgs e) {
@@ -167,7 +212,9 @@ public sealed class MiniPlayerWindow : Window {
     }
 
     private void OnWindowClosed(object sender, WindowEventArgs args) {
+        // Clean up event subscriptions to prevent memory leaks.
         _view.RestoreButtonClicked -= OnRestoreButtonClicked;
+        _appWindow.Changed -= OnAppWindowChanged;
         Closed -= OnWindowClosed;
     }
 }
