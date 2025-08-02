@@ -1,5 +1,8 @@
+// Nagi.WinUI.ViewModels/PlayerViewModel.cs
+
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.UI.Windowing;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
@@ -15,8 +18,8 @@ using System.Threading.Tasks;
 
 namespace Nagi.WinUI.ViewModels {
     /// <summary>
-    /// Manages the state and interactions for the main media player UI.
-    /// This view model acts as a bridge between the UI and the background <see cref="IMusicPlaybackService"/>.
+    /// Manages the state and interactions for the main media player UI. This view model acts as a coordinator
+    /// between the UI and various services like <see cref="IMusicPlaybackService"/> and <see cref="IWindowService"/>.
     /// </summary>
     public partial class PlayerViewModel : ObservableObject, IDisposable {
         private const string PlayIconGlyph = "\uE768";
@@ -41,20 +44,23 @@ namespace Nagi.WinUI.ViewModels {
         private readonly INavigationService _navigationService;
         private readonly IDispatcherService _dispatcherService;
         private readonly IUISettingsService _settingsService;
+        private readonly IWindowService _windowService;
 
         private bool _isUpdatingFromService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PlayerViewModel"/> class.
         /// </summary>
-        public PlayerViewModel(IMusicPlaybackService playbackService, INavigationService navigationService, IDispatcherService dispatcherService, IUISettingsService settingsService) {
+        public PlayerViewModel(IMusicPlaybackService playbackService, INavigationService navigationService, IDispatcherService dispatcherService, IUISettingsService settingsService, IWindowService windowService) {
             _playbackService = playbackService ?? throw new ArgumentNullException(nameof(playbackService));
             _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
             _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
             _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
+            _windowService = windowService ?? throw new ArgumentNullException(nameof(windowService));
 
             SubscribeToPlaybackServiceEvents();
             SubscribeToSettingsServiceEvents();
+            SubscribeToWindowServiceEvents();
             InitializeStateFromService();
             InitializeSettingsAsync();
         }
@@ -139,9 +145,7 @@ namespace Nagi.WinUI.ViewModels {
         private bool _showLyricsOnPlayerEnabled;
 
         public bool IsLyricsButtonEffectivelyVisible => ShowLyricsOnPlayerEnabled;
-
         public bool IsArtworkAvailable => !string.IsNullOrWhiteSpace(AlbumArtUri);
-
         public string PlayPauseIconGlyph => IsPlaying ? PauseIconGlyph : PlayIconGlyph;
         public string PlayPauseButtonToolTip => IsPlaying ? PauseTooltip : PlayTooltip;
         public string ShuffleIconGlyph => IsShuffleEnabled ? ShuffleOnIconGlyph : ShuffleOffIconGlyph;
@@ -163,9 +167,10 @@ namespace Nagi.WinUI.ViewModels {
         /// Cleans up resources by unsubscribing from service events to prevent memory leaks.
         /// </summary>
         public void Dispose() {
-            Debug.WriteLine("[PlayerViewModel] Disposing and unsubscribing from playback service events.");
+            Debug.WriteLine("[PlayerViewModel] Disposing and unsubscribing from service events.");
             UnsubscribeFromPlaybackServiceEvents();
             UnsubscribeFromSettingsServiceEvents();
+            UnsubscribeFromWindowServiceEvents();
             GC.SuppressFinalize(this);
         }
 
@@ -207,14 +212,11 @@ namespace Nagi.WinUI.ViewModels {
         private void GoToArtist(Song? song) {
             var targetSong = song ?? CurrentPlayingTrack;
             if (targetSong?.ArtistId == null || targetSong.Artist == null) {
-                Debug.WriteLine("[PlayerViewModel] WARN: Cannot navigate to Artist page, artist information is missing.");
+                Debug.WriteLine("[PlayerViewModel] WARN: Cannot navigate to Artist page, information is missing.");
                 return;
             }
 
-            var navParam = new ArtistViewNavigationParameter {
-                ArtistId = targetSong.Artist.Id,
-                ArtistName = targetSong.Artist.Name
-            };
+            var navParam = new ArtistViewNavigationParameter { ArtistId = targetSong.Artist.Id, ArtistName = targetSong.Artist.Name };
             _navigationService.Navigate(typeof(ArtistViewPage), navParam);
         }
 
@@ -224,42 +226,33 @@ namespace Nagi.WinUI.ViewModels {
         }
 
         [RelayCommand(CanExecute = nameof(CanGoToLyricsPage))]
-        private void GoToLyricsPage() {
-            _navigationService.Navigate(typeof(LyricsPage));
-        }
+        private void GoToLyricsPage() => _navigationService.Navigate(typeof(LyricsPage));
 
         private bool CanGoToLyricsPage() => ShowLyricsOnPlayerEnabled;
 
         partial void OnIsMutedChanged(bool value) => UpdateVolumeIconGlyph();
 
         partial void OnCurrentVolumeChanged(double value) {
-            if (!_isUpdatingFromService) {
-                var serviceVolume = Math.Clamp(value / 100.0, 0.0, 1.0);
-                // Update service only if the change is significant to avoid feedback loops.
-                if (Math.Abs(_playbackService.Volume - serviceVolume) > 0.001) {
-                    _ = _playbackService.SetVolumeAsync(serviceVolume);
-                }
+            if (_isUpdatingFromService) return;
+            var serviceVolume = Math.Clamp(value / 100.0, 0.0, 1.0);
+            if (Math.Abs(_playbackService.Volume - serviceVolume) > 0.001) {
+                _ = _playbackService.SetVolumeAsync(serviceVolume);
             }
             UpdateVolumeIconGlyph();
         }
 
         partial void OnCurrentPositionChanged(double value) {
             CurrentTimeText = TimeSpan.FromSeconds(value).ToString(@"m\:ss");
-            if (!_isUpdatingFromService && !IsUserDraggingSlider) {
-                var newPosition = TimeSpan.FromSeconds(value);
-                // Update service only if the change is significant to avoid stuttering.
-                if (Math.Abs(_playbackService.CurrentPosition.TotalSeconds - newPosition.TotalSeconds) > 0.5) {
-                    _ = _playbackService.SeekAsync(newPosition);
-                }
+            if (_isUpdatingFromService || IsUserDraggingSlider) return;
+            var newPosition = TimeSpan.FromSeconds(value);
+            if (Math.Abs(_playbackService.CurrentPosition.TotalSeconds - newPosition.TotalSeconds) > 0.5) {
+                _ = _playbackService.SeekAsync(newPosition);
             }
         }
 
-        partial void OnTotalDurationChanged(double value) {
-            TotalDurationText = TimeSpan.FromSeconds(value).ToString(@"m\:ss");
-        }
+        partial void OnTotalDurationChanged(double value) => TotalDurationText = TimeSpan.FromSeconds(value).ToString(@"m\:ss");
 
-        #region Playback Service Event Handling
-
+        #region Service Event Handling
         private void SubscribeToPlaybackServiceEvents() {
             _playbackService.PlaybackStateChanged += OnPlaybackService_PlaybackStateChanged;
             _playbackService.TrackChanged += OnPlaybackService_TrackChanged;
@@ -293,88 +286,87 @@ namespace Nagi.WinUI.ViewModels {
                 TotalDuration = Math.Max(0, _playbackService.Duration.TotalSeconds);
                 CurrentPosition = _playbackService.CurrentPosition.TotalSeconds;
                 UpdateCurrentQueueDisplay();
+                UpdateEfficiencyMode();
             });
         }
 
         private void OnPlaybackService_PlaybackStateChanged() {
-            RunOnUIThread(() => IsPlaying = _playbackService.IsPlaying);
+            RunOnUIThread(() => {
+                IsPlaying = _playbackService.IsPlaying;
+                UpdateEfficiencyMode();
+            });
         }
 
         private void OnPlaybackService_TrackChanged() {
             RunOnUIThread(() => {
-                var newTrack = _playbackService.CurrentTrack;
-                UpdateTrackDetails(newTrack);
-
-                if (newTrack == null) {
-                    // When playback stops, reset time displays.
-                    TotalDuration = 0;
-                    CurrentPosition = 0;
-                }
-                else {
-                    CurrentPosition = 0;
-                }
-
+                UpdateTrackDetails(_playbackService.CurrentTrack);
+                CurrentPosition = 0;
                 UpdateCurrentQueueDisplay();
             });
         }
 
-        private void OnPlaybackService_VolumeStateChanged() {
-            RunOnUIThread(() => {
-                IsMuted = _playbackService.IsMuted;
-                CurrentVolume = Math.Clamp(_playbackService.Volume * 100.0, 0.0, 100.0);
-            });
+        private void OnPlaybackService_VolumeStateChanged() => RunOnUIThread(() => {
+            IsMuted = _playbackService.IsMuted;
+            CurrentVolume = Math.Clamp(_playbackService.Volume * 100.0, 0.0, 100.0);
+        });
+
+        private void OnPlaybackService_ShuffleModeChanged() => RunOnUIThread(() => {
+            IsShuffleEnabled = _playbackService.IsShuffleEnabled;
+            UpdateCurrentQueueDisplay();
+        });
+
+        private void OnPlaybackService_RepeatModeChanged() => RunOnUIThread(() => CurrentRepeatMode = _playbackService.CurrentRepeatMode);
+
+        private void OnPlaybackService_QueueChanged() => RunOnUIThread(UpdateCurrentQueueDisplay);
+
+        private void OnPlaybackService_PositionChanged() => RunOnUIThread(() => {
+            if (!IsUserDraggingSlider) {
+                CurrentPosition = _playbackService.CurrentPosition.TotalSeconds;
+            }
+        });
+
+        private void OnPlaybackService_DurationChanged() => RunOnUIThread(() => TotalDuration = Math.Max(0, _playbackService.Duration.TotalSeconds));
+
+        private void SubscribeToWindowServiceEvents() {
+            _windowService.UIStateChanged += OnWindowService_UIStateChanged;
         }
 
-        private void OnPlaybackService_ShuffleModeChanged() {
-            RunOnUIThread(() => {
-                IsShuffleEnabled = _playbackService.IsShuffleEnabled;
-                UpdateCurrentQueueDisplay();
-            });
+        private void UnsubscribeFromWindowServiceEvents() {
+            _windowService.UIStateChanged -= OnWindowService_UIStateChanged;
         }
 
-        private void OnPlaybackService_RepeatModeChanged() {
-            RunOnUIThread(() => CurrentRepeatMode = _playbackService.CurrentRepeatMode);
-        }
-
-
-
-        private void OnPlaybackService_QueueChanged() {
-            RunOnUIThread(UpdateCurrentQueueDisplay);
-        }
-
-        private void OnPlaybackService_PositionChanged() {
-            RunOnUIThread(() => {
-                if (!IsUserDraggingSlider) {
-                    CurrentPosition = _playbackService.CurrentPosition.TotalSeconds;
-                }
-            });
-        }
-
-        private void OnPlaybackService_DurationChanged() {
-            RunOnUIThread(() => TotalDuration = Math.Max(0, _playbackService.Duration.TotalSeconds));
-        }
-
-        #endregion
-
-        #region Settings Service Event Handling
+        private void OnWindowService_UIStateChanged() => RunOnUIThread(UpdateEfficiencyMode);
 
         private async void InitializeSettingsAsync() {
             ShowLyricsOnPlayerEnabled = await _settingsService.GetShowLyricsOnPlayerEnabledAsync();
         }
 
-        private void SubscribeToSettingsServiceEvents() {
-            _settingsService.ShowLyricsOnPlayerSettingChanged += OnSettingsService_ShowLyricsOnPlayerSettingChanged;
-        }
+        private void SubscribeToSettingsServiceEvents() => _settingsService.ShowLyricsOnPlayerSettingChanged += OnSettingsService_ShowLyricsOnPlayerSettingChanged;
 
-        private void UnsubscribeFromSettingsServiceEvents() {
-            _settingsService.ShowLyricsOnPlayerSettingChanged -= OnSettingsService_ShowLyricsOnPlayerSettingChanged;
-        }
+        private void UnsubscribeFromSettingsServiceEvents() => _settingsService.ShowLyricsOnPlayerSettingChanged -= OnSettingsService_ShowLyricsOnPlayerSettingChanged;
 
-        private void OnSettingsService_ShowLyricsOnPlayerSettingChanged(bool isEnabled) {
-            RunOnUIThread(() => ShowLyricsOnPlayerEnabled = isEnabled);
-        }
-
+        private void OnSettingsService_ShowLyricsOnPlayerSettingChanged(bool isEnabled) => RunOnUIThread(() => ShowLyricsOnPlayerEnabled = isEnabled);
         #endregion
+
+        /// <summary>
+        /// Orchestrates the application's efficiency mode based on playback and window state.
+        /// Efficiency mode is enabled only if music is paused AND the application is in a background state
+        /// (e.g., minimized, hidden to tray, or in mini-player mode).
+        /// </summary>
+        private void UpdateEfficiencyMode() {
+            bool isPaused = !_playbackService.IsPlaying;
+            bool isMainWindowVisible = _windowService.IsVisible;
+            bool isMiniPlayerActive = _windowService.IsMiniPlayerActive;
+            bool isMinimized = _windowService.IsMinimized;
+
+            // A "background state" is when the app is not the user's primary focus.
+            bool isInBackgroundState = !isMainWindowVisible || isMiniPlayerActive || isMinimized;
+
+            bool shouldBeEfficient = isPaused && isInBackgroundState;
+
+            _windowService.SetEfficiencyMode(shouldBeEfficient);
+            Debug.WriteLine($"[PlayerViewModel] Efficiency Mode Check -> Result: {shouldBeEfficient} (IsPaused: {isPaused}, IsInBgState: {isInBackgroundState})");
+        }
 
         private void UpdateTrackDetails(Song? song) {
             CurrentPlayingTrack = song;
@@ -387,11 +379,13 @@ namespace Nagi.WinUI.ViewModels {
                 SongTitle = "No track playing";
                 ArtistName = string.Empty;
                 AlbumArtUri = null;
+                TotalDuration = 0;
             }
         }
 
         /// <summary>
-        /// Updates the observable collection for the queue view based on the current playback state.
+        /// Refreshes the queue display based on the current playback service state,
+        /// including shuffle and repeat modes.
         /// </summary>
         private void UpdateCurrentQueueDisplay() {
             var sourceQueue = _playbackService.IsShuffleEnabled
@@ -406,25 +400,19 @@ namespace Nagi.WinUI.ViewModels {
                 var currentTrackIndex = sourceQueueList.FindIndex(s => s.Id == currentTrack.Id);
 
                 if (currentTrackIndex != -1) {
-                    // If RepeatAll is on, display the queue wrapped around from the current track.
-                    // This shows the user what will play after the last song.
+                    // To give a continuous feel, the queue display starts from the current song.
+                    // If repeat-all is enabled, the queue wraps around.
+                    newDisplayQueue.AddRange(sourceQueueList.Skip(currentTrackIndex));
                     if (_playbackService.CurrentRepeatMode == RepeatMode.RepeatAll) {
-                        newDisplayQueue.AddRange(sourceQueueList.Skip(currentTrackIndex));
                         newDisplayQueue.AddRange(sourceQueueList.Take(currentTrackIndex));
-                    }
-                    else {
-                        // Otherwise, show a linear queue from the current track to the end.
-                        newDisplayQueue.AddRange(sourceQueueList.Skip(currentTrackIndex));
                     }
                 }
                 else {
-                    // Fallback: If the current track isn't in the queue, show the whole list.
+                    // Fallback in case the current track is somehow not in its own queue.
                     newDisplayQueue.AddRange(sourceQueueList);
                 }
             }
-            // If no track is playing, newDisplayQueue remains empty, correctly hiding the queue UI.
 
-            // Efficiently update the UI only if the displayed queue has actually changed.
             if (!CurrentQueue.SequenceEqual(newDisplayQueue)) {
                 CurrentQueue.Clear();
                 foreach (var song in newDisplayQueue) CurrentQueue.Add(song);
@@ -444,8 +432,7 @@ namespace Nagi.WinUI.ViewModels {
         }
 
         /// <summary>
-        /// Safely executes an action on the UI thread and wraps it in a scope
-        /// to prevent property change feedback loops.
+        /// Safely executes an action on the UI thread and prevents re-entrant property change loops.
         /// </summary>
         private void RunOnUIThread(Action action) {
             _dispatcherService.TryEnqueue(() => {
@@ -456,10 +443,8 @@ namespace Nagi.WinUI.ViewModels {
         }
 
         /// <summary>
-        /// A helper struct to prevent property-changed event feedback loops.
-        /// It sets a flag on the view model upon creation and unsets it upon disposal,
-        /// allowing code within a 'using' block to be identified as originating from the
-        /// background service, thus preventing it from re-triggering service calls.
+        /// A helper struct to prevent property-changed event feedback loops. It sets a flag on the
+        /// view model during a service-initiated update, preventing the UI from re-triggering service calls.
         /// </summary>
         private readonly struct ServiceUpdateScope : IDisposable {
             private readonly PlayerViewModel _viewModel;

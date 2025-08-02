@@ -34,7 +34,6 @@
 
 	<ItemGroup>
 		<Folder Include="Models\Lyrics\" />
-		<Folder Include="Services\Presence\" />
 	</ItemGroup>
 
 </Project>
