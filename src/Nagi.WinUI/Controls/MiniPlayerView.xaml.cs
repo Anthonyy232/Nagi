@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -11,8 +10,7 @@ namespace Nagi.WinUI.Controls;
 
 /// <summary>
 /// A user control for the mini-player, which displays track information and provides
-/// media controls. It manages its own visual states for hover effects and handles
-/// window dragging.
+/// media controls. It manages its own visual states and handles window dragging.
 /// </summary>
 public sealed partial class MiniPlayerView : UserControl {
     /// <summary>
@@ -27,8 +25,10 @@ public sealed partial class MiniPlayerView : UserControl {
 
     private readonly Window _parentWindow;
     private bool _isDragging = false;
-    private PointInt32 _lastPointerPosition;
     private bool _isUnloaded = false;
+
+    // Stores the last known pointer position to calculate movement delta.
+    private PointInt32 _lastPointerPosition;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MiniPlayerView"/> class.
@@ -38,31 +38,23 @@ public sealed partial class MiniPlayerView : UserControl {
         InitializeComponent();
         _parentWindow = parentWindow;
 
-        // The DataContext is set to this control to enable {x:Bind} to its properties.
         ViewModel = App.Services!.GetRequiredService<PlayerViewModel>();
         DataContext = this;
 
         SubscribeToEvents();
     }
 
-    /// <summary>
-    /// Provides the UI element designated as the draggable region for the window.
-    /// </summary>
-    /// <returns>The Border element that acts as the window's drag handle.</returns>
-    public Border GetDragHandle() => DragHandle;
-
-    // Subscribes to all necessary UI and window events.
     private void SubscribeToEvents() {
         RestoreButton.Click += OnRestoreButtonClick;
         _parentWindow.Activated += OnWindowActivated;
 
-        // Pointer events for window dragging
+        // Pointer events for custom window dragging.
         DragHandle.PointerPressed += OnDragHandlePointerPressed;
         DragHandle.PointerMoved += OnDragHandlePointerMoved;
         DragHandle.PointerReleased += OnDragHandlePointerReleased;
         DragHandle.PointerCaptureLost += OnDragHandlePointerCaptureLost;
 
-        // Pointer events for hover effects
+        // Pointer events for hover effects.
         HoverDetector.PointerEntered += OnPointerEntered;
         HoverDetector.PointerExited += OnPointerExited;
         HoverDetector.PointerCanceled += OnPointerExited;
@@ -70,9 +62,8 @@ public sealed partial class MiniPlayerView : UserControl {
         Unloaded += OnUnloaded;
     }
 
-    // Handles the Unloaded event to clean up resources and event subscriptions.
     private void OnUnloaded(object sender, RoutedEventArgs e) {
-        // Ensure cleanup only happens once.
+        // Ensure cleanup logic runs only once.
         if (_isUnloaded) return;
         _isUnloaded = true;
 
@@ -92,27 +83,24 @@ public sealed partial class MiniPlayerView : UserControl {
         Unloaded -= OnUnloaded;
     }
 
-    // Hides the hover controls when the window loses focus.
     private void OnWindowActivated(object sender, WindowActivatedEventArgs args) {
         if (_isUnloaded) return;
 
+        // Hide hover controls when the window is no longer in the foreground.
         if (args.WindowActivationState == WindowActivationState.Deactivated) {
             VisualStateManager.GoToState(this, "Normal", false);
         }
     }
 
-    // Fires the RestoreButtonClicked event to notify the parent window.
     private void OnRestoreButtonClick(object sender, RoutedEventArgs e) {
         RestoreButtonClicked?.Invoke(this, EventArgs.Empty);
     }
 
-    // Shows the hover controls when the pointer enters the control's bounds.
     private void OnPointerEntered(object sender, PointerRoutedEventArgs e) {
         if (_isUnloaded) return;
         VisualStateManager.GoToState(this, "MouseOver", true);
     }
 
-    // Hides the hover controls when the pointer leaves the control's bounds.
     private void OnPointerExited(object sender, PointerRoutedEventArgs e) {
         if (_isUnloaded) return;
         VisualStateManager.GoToState(this, "Normal", true);
@@ -159,7 +147,7 @@ public sealed partial class MiniPlayerView : UserControl {
 
     // Ends the window drag operation.
     private void OnDragHandlePointerReleased(object sender, PointerRoutedEventArgs e) {
-        if (_isUnloaded) return;
+        if (!_isUnloaded) return;
 
         if (_isDragging) {
             _isDragging = false;
