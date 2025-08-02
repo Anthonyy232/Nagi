@@ -1,4 +1,6 @@
-﻿using H.NotifyIcon;
+﻿// Nagi.WinUI.Services.Implementations/WindowService.cs
+
+using H.NotifyIcon;
 using H.NotifyIcon.EfficiencyMode;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -29,9 +31,15 @@ public sealed class WindowService : IWindowService, IDisposable {
     public event Action<AppWindowClosingEventArgs>? Closing;
     /// <inheritdoc/>
     public event Action<AppWindowChangedEventArgs>? VisibilityChanged;
+    /// <inheritdoc/>
+    public event Action? UIStateChanged;
 
     /// <inheritdoc/>
     public bool IsVisible => _appWindow.IsVisible;
+    /// <inheritdoc/>
+    public bool IsMiniPlayerActive => _miniPlayerWindow is not null;
+    /// <inheritdoc/>
+    public bool IsMinimized => _appWindow.Presenter is OverlappedPresenter { State: OverlappedPresenterState.Minimized };
     /// <inheritdoc/>
     public bool IsExiting { get; set; }
 
@@ -49,35 +57,36 @@ public sealed class WindowService : IWindowService, IDisposable {
 
     /// <inheritdoc/>
     public async Task InitializeAsync() {
-        // Asynchronously load the initial setting for mini-player behavior.
         _isMiniPlayerEnabled = await _settingsService.GetMinimizeToMiniPlayerEnabledAsync();
-        Debug.WriteLine($"[INFO] WindowService: Initial 'Minimize to Mini-Player' state: {_isMiniPlayerEnabled}");
+        Debug.WriteLine($"[WindowService] Initial 'Minimize to Mini-Player' state: {_isMiniPlayerEnabled}");
     }
 
     /// <summary>
-    /// Handles real-time changes to the "Minimize to Mini-Player" setting.
+    /// Responds to live changes in the "Minimize to Mini-Player" application setting.
     /// </summary>
-    /// <param name="isEnabled">The new value of the setting.</param>
     private void OnMinimizeToMiniPlayerSettingChanged(bool isEnabled) {
         _isMiniPlayerEnabled = isEnabled;
-        Debug.WriteLine($"[INFO] WindowService: 'Minimize to Mini-Player' setting updated to: {isEnabled}");
+        Debug.WriteLine($"[WindowService] 'Minimize to Mini-Player' setting updated to: {isEnabled}");
     }
 
     private void OnAppWindowClosing(AppWindow sender, AppWindowClosingEventArgs args) {
         Closing?.Invoke(args);
     }
 
+    /// <summary>
+    /// Central handler for all AppWindow state changes, responsible for invoking high-level events.
+    /// </summary>
     private void OnAppWindowChanged(AppWindow sender, AppWindowChangedEventArgs args) {
+        bool didPresenterChange = args.DidPresenterChange;
+
         if (args.DidVisibilityChange) {
             VisibilityChanged?.Invoke(args);
         }
 
-        if (args.DidPresenterChange && _appWindow.Presenter is OverlappedPresenter presenter) {
-            Debug.WriteLine($"[INFO] WindowService: Main window presenter state changed to {presenter.State}.");
+        if (didPresenterChange && _appWindow.Presenter is OverlappedPresenter presenter) {
             switch (presenter.State) {
                 case OverlappedPresenterState.Minimized:
                     if (_isMiniPlayerEnabled) {
-                        EfficiencyModeUtilities.SetEfficiencyMode(false);
                         _appWindow.IsShownInSwitchers = false;
                         ShowMiniPlayer();
                     }
@@ -89,13 +98,19 @@ public sealed class WindowService : IWindowService, IDisposable {
                     break;
             }
         }
+
+        // A change in either visibility or presenter state constitutes a UI state change
+        // that external coordinators may need to react to.
+        if (args.DidVisibilityChange || didPresenterChange) {
+            UIStateChanged?.Invoke();
+        }
     }
 
+    /// <summary>
+    /// Creates and displays the mini-player window.
+    /// </summary>
     private void ShowMiniPlayer() {
-        if (!_isMiniPlayerEnabled) return;
-
-        if (_miniPlayerWindow is not null) {
-            Debug.WriteLine("[WARN] WindowService: ShowMiniPlayer called, but an instance already exists.");
+        if (!_isMiniPlayerEnabled || _miniPlayerWindow is not null) {
             return;
         }
 
@@ -103,10 +118,15 @@ public sealed class WindowService : IWindowService, IDisposable {
             _miniPlayerWindow = new MiniPlayerWindow();
             _miniPlayerWindow.Closed += OnMiniPlayerClosed;
             _miniPlayerWindow.Activate();
-            EfficiencyModeUtilities.SetEfficiencyMode(true);
+
+            // Because the IsMiniPlayerActive state has changed, notify subscribers.
+            UIStateChanged?.Invoke();
         });
     }
 
+    /// <summary>
+    /// Programmatically closes the mini-player window.
+    /// </summary>
     private void HideMiniPlayer() {
         if (_miniPlayerWindow is null) return;
 
@@ -114,35 +134,40 @@ public sealed class WindowService : IWindowService, IDisposable {
             _isClosingMiniPlayerProgrammatically = true;
             _miniPlayerWindow?.Close();
             _isClosingMiniPlayerProgrammatically = false;
-            Debug.WriteLine("[INFO] WindowService: Mini-player window closed programmatically.");
         });
     }
 
+    /// <summary>
+    /// Handles the Closed event for the mini-player, cleaning up resources and managing state transitions.
+    /// </summary>
     private void OnMiniPlayerClosed(object? sender, WindowEventArgs args) {
         if (sender is MiniPlayerWindow window) {
             window.Closed -= OnMiniPlayerClosed;
         }
 
-        // If the user closed the mini-player, restore the main window.
+        // If the user manually closed the mini-player, restore the main application window
+        // to provide a clear path back to the full UI.
         if (!_isClosingMiniPlayerProgrammatically) {
-            Debug.WriteLine("[INFO] WindowService: Mini-player closed by user; restoring main window.");
+            Debug.WriteLine("[WindowService] Mini-player closed by user; restoring main window.");
             if (_appWindow.Presenter is OverlappedPresenter { State: OverlappedPresenterState.Minimized } presenter) {
                 presenter.Restore();
             }
         }
         _miniPlayerWindow = null;
+
+        // Because the IsMiniPlayerActive state has changed, notify subscribers.
+        UIStateChanged?.Invoke();
     }
 
     /// <inheritdoc/>
     public void Hide() {
-        _window.Hide(enableEfficiencyMode: true);
+        _window.Hide(enableEfficiencyMode: false);
     }
 
     /// <inheritdoc/>
     public void ShowAndActivate() {
         HideMiniPlayer();
         _appWindow.IsShownInSwitchers = true;
-        EfficiencyModeUtilities.SetEfficiencyMode(false);
         WindowActivator.ShowAndActivate(_window, _win32InteropService);
     }
 
@@ -158,13 +183,18 @@ public sealed class WindowService : IWindowService, IDisposable {
         _window.Close();
     }
 
+    /// <inheritdoc/>
+    public void SetEfficiencyMode(bool isEnabled) {
+        EfficiencyModeUtilities.SetEfficiencyMode(isEnabled);
+    }
+
     /// <summary>
     /// Cleans up resources and unsubscribes from events to prevent memory leaks.
     /// </summary>
     public void Dispose() {
         if (_isDisposed) return;
 
-        Debug.WriteLine("[INFO] WindowService: Disposing and cleaning up resources.");
+        Debug.WriteLine("[WindowService] Disposing and cleaning up resources.");
         _appWindow.Closing -= OnAppWindowClosing;
         _appWindow.Changed -= OnAppWindowChanged;
         _settingsService.MinimizeToMiniPlayerSettingChanged -= OnMinimizeToMiniPlayerSettingChanged;

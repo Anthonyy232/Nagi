@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Nagi.WinUI.Services.Abstractions/IWindowService.cs
+
+using System;
 using System.Threading.Tasks;
 using Microsoft.UI.Windowing;
 
@@ -14,29 +16,47 @@ public interface IWindowService {
     event Action<AppWindowClosingEventArgs>? Closing;
 
     /// <summary>
-    /// Occurs when a property of the main application window has changed, such as its visibility.
+    /// Occurs when a property of the main application window has changed.
+    /// This is a lower-level event; prefer UIStateChanged for coordinating application logic.
     /// </summary>
     event Action<AppWindowChangedEventArgs>? VisibilityChanged;
 
     /// <summary>
-    /// Gets a value indicating whether the main window is currently visible.
+    /// Occurs when the overall UI state of the application changes, such as when the main window is hidden,
+    /// minimized, or the mini-player is shown/hidden. This is the preferred event for coordinating logic
+    /// that depends on the window's state.
+    /// </summary>
+    event Action? UIStateChanged;
+
+    /// <summary>
+    /// Gets a value indicating whether the main window is currently visible on-screen.
     /// </summary>
     bool IsVisible { get; }
 
     /// <summary>
+    /// Gets a value indicating whether the mini-player window is currently active.
+    /// </summary>
+    bool IsMiniPlayerActive { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether the main window is currently in a standard minimized state.
+    /// </summary>
+    bool IsMinimized { get; }
+
+    /// <summary>
     /// Gets or sets a value indicating whether the application is in the process of exiting.
-    /// This flag helps distinguish between a user-initiated close (e.g., from a tray menu)
-    /// and a close action that should be intercepted (e.g., clicking the 'X' button when "hide to tray" is enabled).
+    /// This flag helps distinguish between a close action that should be intercepted (e.g., hide to tray)
+    /// and a final, user-initiated shutdown (e.g., from a tray menu).
     /// </summary>
     bool IsExiting { get; set; }
 
     /// <summary>
-    /// Asynchronously initializes the service.
+    /// Asynchronously performs initial setup for the service.
     /// </summary>
     Task InitializeAsync();
 
     /// <summary>
-    /// Hides the main window and enters an efficiency mode.
+    /// Hides the main window, typically to the system tray.
     /// </summary>
     void Hide();
 
@@ -51,7 +71,14 @@ public interface IWindowService {
     void Close();
 
     /// <summary>
-    /// Minimizes the main window, which may trigger the appearance of the mini-player.
+    /// Minimizes the main window. This action may trigger the mini-player if the corresponding setting is enabled.
     /// </summary>
     void MinimizeToMiniPlayer();
+
+    /// <summary>
+    /// Sets the process efficiency mode. The calling coordinator (e.g., PlayerViewModel) is responsible
+    /// for determining when this mode should be enabled or disabled.
+    /// </summary>
+    /// <param name="isEnabled">True to enable efficiency mode; false to disable it.</param>
+    void SetEfficiencyMode(bool isEnabled);
 }
