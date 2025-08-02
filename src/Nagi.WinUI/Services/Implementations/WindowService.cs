@@ -77,7 +77,7 @@ public sealed class WindowService : IWindowService, IDisposable {
             switch (presenter.State) {
                 case OverlappedPresenterState.Minimized:
                     if (_isMiniPlayerEnabled) {
-                        Debug.WriteLine("[INFO] WindowService: Window minimized, showing mini-player.");
+                        EfficiencyModeUtilities.SetEfficiencyMode(false);
                         _appWindow.IsShownInSwitchers = false;
                         ShowMiniPlayer();
                     }
@@ -103,7 +103,7 @@ public sealed class WindowService : IWindowService, IDisposable {
             _miniPlayerWindow = new MiniPlayerWindow();
             _miniPlayerWindow.Closed += OnMiniPlayerClosed;
             _miniPlayerWindow.Activate();
-            Debug.WriteLine("[INFO] WindowService: Mini-player window created and activated.");
+            EfficiencyModeUtilities.SetEfficiencyMode(true);
         });
     }
 
