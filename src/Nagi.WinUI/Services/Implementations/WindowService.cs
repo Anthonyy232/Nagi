@@ -58,7 +58,6 @@ public sealed class WindowService : IWindowService, IDisposable {
     /// <inheritdoc/>
     public async Task InitializeAsync() {
         _isMiniPlayerEnabled = await _settingsService.GetMinimizeToMiniPlayerEnabledAsync();
-        Debug.WriteLine($"[WindowService] Initial 'Minimize to Mini-Player' state: {_isMiniPlayerEnabled}");
     }
 
     /// <summary>
@@ -66,7 +65,6 @@ public sealed class WindowService : IWindowService, IDisposable {
     /// </summary>
     private void OnMinimizeToMiniPlayerSettingChanged(bool isEnabled) {
         _isMiniPlayerEnabled = isEnabled;
-        Debug.WriteLine($"[WindowService] 'Minimize to Mini-Player' setting updated to: {isEnabled}");
     }
 
     private void OnAppWindowClosing(AppWindow sender, AppWindowClosingEventArgs args) {
@@ -148,7 +146,6 @@ public sealed class WindowService : IWindowService, IDisposable {
         // If the user manually closed the mini-player, restore the main application window
         // to provide a clear path back to the full UI.
         if (!_isClosingMiniPlayerProgrammatically) {
-            Debug.WriteLine("[WindowService] Mini-player closed by user; restoring main window.");
             if (_appWindow.Presenter is OverlappedPresenter { State: OverlappedPresenterState.Minimized } presenter) {
                 presenter.Restore();
             }

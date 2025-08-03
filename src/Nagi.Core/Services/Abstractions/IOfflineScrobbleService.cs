@@ -16,5 +16,5 @@ public interface IOfflineScrobbleService {
     /// Triggers an immediate, on-demand check and processing of the scrobble queue.
     /// </summary>
     /// <returns>A task that completes when the processing is finished.</returns>
-    Task ProcessQueueAsync();
+    Task ProcessQueueAsync(CancellationToken cancellationToken = default);
 }
