@@ -581,10 +581,10 @@ namespace Nagi.WinUI {
         private async Task CheckForUpdatesOnStartupAsync() {
             if (Services is null) return;
             try {
-#if !MSIX_PACKAGE
-                var updateService = Services.GetRequiredService<IUpdateService>();
-                await updateService.CheckForUpdatesOnStartupAsync();
-#endif
+                #if !MSIX_PACKAGE
+                    var updateService = Services.GetRequiredService<IUpdateService>();
+                    await updateService.CheckForUpdatesOnStartupAsync();
+                #endif
             }
             catch (Exception ex) {
                 Debug.WriteLine($"[ERROR] App: Failed during startup update check. {ex.Message}");

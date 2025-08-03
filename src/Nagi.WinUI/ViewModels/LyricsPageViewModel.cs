@@ -41,22 +41,22 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable {
     private const double MinimumOpacity = 0.10;
 
     [ObservableProperty]
-    private string _songTitle = "No song selected";
+    public partial string SongTitle { get; set; } = "No song selected";
 
     [ObservableProperty]
-    private bool _hasLyrics;
+    public partial bool HasLyrics { get; set; }
 
     [ObservableProperty]
-    private LyricLine? _currentLine;
+    public partial LyricLine? CurrentLine { get; set; }
 
     [ObservableProperty]
-    private TimeSpan _songDuration;
+    public partial TimeSpan SongDuration { get; set; }
 
     [ObservableProperty]
-    private TimeSpan _currentPosition;
+    public partial TimeSpan CurrentPosition { get; set; }
 
     [ObservableProperty]
-    private bool _isPlaying;
+    public partial bool IsPlaying { get; set; }
 
     public ObservableCollection<LyricLine> LyricLines { get; } = new();
 
@@ -112,7 +112,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable {
             if (!ReferenceEquals(newCurrentLine, CurrentLine)) {
                 if (CurrentLine != null) CurrentLine.IsActive = false;
                 if (newCurrentLine != null) newCurrentLine.IsActive = true;
-                SetProperty(ref _currentLine, newCurrentLine, nameof(CurrentLine));
+                CurrentLine = newCurrentLine;
                 UpdateLineOpacities();
             }
         });

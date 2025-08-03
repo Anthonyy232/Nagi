@@ -582,37 +582,37 @@ public class SettingsService : IUISettingsService {
     public Task SetShowCoverArtInTrayFlyoutAsync(bool isEnabled) => SetValueAndNotifyAsync(ShowCoverArtInTrayFlyoutKey, isEnabled, true, ShowCoverArtInTrayFlyoutSettingChanged);
 
     public async Task<bool> GetCheckForUpdatesEnabledAsync() {
-#if MSIX_PACKAGE
-        return false;
-#else
-        await EnsureUnpackagedSettingsLoadedAsync();
-        return GetValue(CheckForUpdatesEnabledKey, true);
-#endif
+        #if MSIX_PACKAGE
+                return false;
+        #else
+                await EnsureUnpackagedSettingsLoadedAsync();
+                return GetValue(CheckForUpdatesEnabledKey, true);
+        #endif
     }
 
     public Task SetCheckForUpdatesEnabledAsync(bool isEnabled) {
-#if MSIX_PACKAGE
-        return Task.CompletedTask;
-#else
-        return SetValueAsync(CheckForUpdatesEnabledKey, isEnabled);
-#endif
+        #if MSIX_PACKAGE
+                return Task.CompletedTask;
+        #else
+                return SetValueAsync(CheckForUpdatesEnabledKey, isEnabled);
+        #endif
     }
 
     public async Task<string?> GetLastSkippedUpdateVersionAsync() {
-#if MSIX_PACKAGE
-        return null;
-#else
-        await EnsureUnpackagedSettingsLoadedAsync();
-        return GetValue<string?>(LastSkippedUpdateVersionKey, null);
-#endif
+        #if MSIX_PACKAGE
+                return null;
+        #else
+                await EnsureUnpackagedSettingsLoadedAsync();
+                return GetValue<string?>(LastSkippedUpdateVersionKey, null);
+        #endif
     }
 
     public Task SetLastSkippedUpdateVersionAsync(string? version) {
-#if MSIX_PACKAGE
-        return Task.CompletedTask;
-#else
-        return SetValueAsync(LastSkippedUpdateVersionKey, version);
-#endif
+        #if MSIX_PACKAGE
+                return Task.CompletedTask;
+        #else
+                return SetValueAsync(LastSkippedUpdateVersionKey, version);
+        #endif
     }
 
     public async Task<List<NavigationItemSetting>> GetNavigationItemsAsync() {
