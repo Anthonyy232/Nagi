@@ -42,13 +42,13 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable {
     /// </summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ToolTipText))]
-    private bool _isWindowVisible = true;
+    public partial bool IsWindowVisible { get; set; } = true;
 
     /// <summary>
     /// Gets or sets a value indicating whether the system tray icon should be visible.
     /// </summary>
     [ObservableProperty]
-    private bool _isTrayIconVisible;
+    public partial bool IsTrayIconVisible { get; set; }
 
     /// <summary>
     /// Gets the tooltip text for the tray icon.

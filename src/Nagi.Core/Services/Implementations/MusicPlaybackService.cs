@@ -151,6 +151,7 @@ namespace Nagi.Core.Services.Implementations {
             _playbackQueue = (state.PlaybackQueueTrackIds ?? Enumerable.Empty<Guid>())
                 .Select(id => songMap.GetValueOrDefault(id))
                 .Where(s => s != null)
+                .Cast<Song>()
                 .ToList();
 
             if (!_playbackQueue.Any()) return false;
@@ -160,6 +161,7 @@ namespace Nagi.Core.Services.Implementations {
                 _shuffledQueue = shuffledIds
                     .Select(id => songMap.GetValueOrDefault(id))
                     .Where(s => s != null)
+                    .Cast<Song>()
                     .ToList();
 
                 // Ensure shuffled queue is valid, otherwise regenerate it.
@@ -661,6 +663,7 @@ namespace Nagi.Core.Services.Implementations {
             var orderedSongs = orderedSongIds
                 .Select(id => songMap.GetValueOrDefault(id))
                 .Where(s => s != null)
+                .Cast<Song>()
                 .ToList();
 
             await PlayAsync(orderedSongs, 0, startShuffled);

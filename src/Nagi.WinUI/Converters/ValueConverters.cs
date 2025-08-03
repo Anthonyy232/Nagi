@@ -314,15 +314,18 @@ public class ActiveLyricToStyleConverter : IValueConverter {
     /// <summary>
     /// Gets or sets the style to apply when the bound value is true.
     /// </summary>
-    public Style ActiveStyle { get; set; }
+    public Style? ActiveStyle { get; set; }
 
     /// <summary>
     /// Gets or sets the style to apply when the bound value is false.
     /// </summary>
-    public Style InactiveStyle { get; set; }
+    public Style? InactiveStyle { get; set; }
 
     public object Convert(object value, Type targetType, object parameter, string language) {
-        return value is true ? ActiveStyle : InactiveStyle;
+        if (value is true) {
+            return ActiveStyle ?? throw new InvalidOperationException("ActiveStyle must be set");
+        }
+        return InactiveStyle ?? throw new InvalidOperationException("InactiveStyle must be set");
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, string language) {
