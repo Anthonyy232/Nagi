@@ -80,9 +80,6 @@
 		<GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
 		<HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
 	</PropertyGroup>
-	<ItemGroup>
-	  <None Remove="Controls\MiniPlayerView.xaml" />
-	</ItemGroup>
 
 	<!-- =============================================================== -->
 	<!-- == Package & Project References                                == -->
@@ -135,11 +132,6 @@
 		<VlcWindowsArm64IncludeFiles Include="@(VlcWindowsX64IncludeFiles)" />
 	</ItemGroup>
 
-
-
-
-
-
 	<!-- =============================================================== -->
 	<!-- == File/Folder Exclusions & Inclusions                         == -->
 	<!-- =============================================================== -->
@@ -166,9 +158,6 @@
 		<None Update="appsettings.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
-		<Page Update="Controls\MiniPlayerView.xaml">
-		  <Generator>MSBuild:Compile</Generator>
-		</Page>
 	</ItemGroup>
 
 </Project>
