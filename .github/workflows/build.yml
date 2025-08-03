@@ -38,6 +38,9 @@ jobs:
         shell: pwsh
         run: |
           echo '{
+            "Discord": {
+              "AppId": "${{ secrets.NAGI_DISCORD_KEY }}"
+            },
             "NagiApiServer": {
               "Url": "https://nagiflexapiserver.azurewebsites.net",
               "ApiKey": "${{ secrets.NAGI_API_KEY }}",
