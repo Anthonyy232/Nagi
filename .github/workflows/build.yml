@@ -39,7 +39,7 @@ jobs:
         run: |
           echo '{
             "NagiApiServer": {
-              "Url": "https://nagiappapi.azure-api.net/nagi",
+              "Url": "https://nagiflexapiserver.azurewebsites.net",
               "ApiKey": "${{ secrets.NAGI_API_KEY }}",
               "SubscriptionKey": "${{ secrets.NAGI_SUBSCRIPTION_KEY }}"
             }
