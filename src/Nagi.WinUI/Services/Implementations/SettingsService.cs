@@ -23,7 +23,8 @@ namespace Nagi.WinUI.Services.Implementations;
 /// <summary>
 /// Manages application settings by persisting them to local storage.
 /// This implementation supports both packaged (MSIX) and unpackaged application deployments,
-/// storing settings in the appropriate location for each.
+/// storing settings in the appropriate location for each. For unpackaged deployments,
+/// file writes are debounced to improve performance during rapid setting changes.
 /// </summary>
 public class SettingsService : IUISettingsService {
     private const string AppName = "Nagi";
@@ -59,11 +60,14 @@ public class SettingsService : IUISettingsService {
     private readonly bool _isPackaged;
     private readonly ApplicationDataContainer? _localSettings;
     private readonly UISettings _uiSettings = new();
+    private readonly SemaphoreSlim _settingsFileLock = new(1, 1);
+    private static readonly JsonSerializerOptions _serializerOptions = new() { WriteIndented = true };
+
     private Dictionary<string, object?> _settings;
     private bool _isInitialized;
 
-    private readonly SemaphoreSlim _settingsFileLock = new(1, 1);
-    private static readonly JsonSerializerOptions _serializerOptions = new() { WriteIndented = true };
+    private readonly TimeSpan _saveDebounceDelay = TimeSpan.FromMilliseconds(500);
+    private int _isSaveQueued; // 0 for false, 1 for true; used with Interlocked.
 
     public event Action<bool>? PlayerAnimationSettingChanged;
     public event Action<bool>? HideToTraySettingChanged;
@@ -95,12 +99,12 @@ public class SettingsService : IUISettingsService {
 
     public bool IsTransparencyEffectsEnabled() => _uiSettings.AdvancedEffectsEnabled;
 
-    // Ensures that settings are loaded from the JSON file for unpackaged applications.
     private async Task EnsureUnpackagedSettingsLoadedAsync() {
         if (_isPackaged || _isInitialized) return;
 
         await _settingsFileLock.WaitAsync();
         try {
+            // Double-check after acquiring the lock to prevent re-initialization.
             if (_isInitialized) return;
 
             if (File.Exists(_pathConfig.SettingsFilePath)) {
@@ -119,7 +123,33 @@ public class SettingsService : IUISettingsService {
         }
     }
 
-    // Retrieves a simple value from settings, providing a default if not found.
+    /// <summary>
+    /// Queues a request to save the settings to a file. This operation is debounced,
+    /// meaning it will only execute after a short delay of inactivity, preventing
+    /// excessive I/O during rapid changes.
+    /// </summary>
+    private async Task QueueSaveAsync() {
+        // Atomically set the flag to 1. If it was already 1, another save is already queued, so do nothing.
+        if (Interlocked.CompareExchange(ref _isSaveQueued, 1, 0) == 0) {
+            await Task.Delay(_saveDebounceDelay);
+
+            // The semaphore is still crucial here to protect the actual file write.
+            await _settingsFileLock.WaitAsync();
+            try {
+                string json = JsonSerializer.Serialize(_settings, _serializerOptions);
+                await File.WriteAllTextAsync(_pathConfig.SettingsFilePath, json);
+            }
+            catch (Exception ex) {
+                Debug.WriteLine($"[SettingsService] CRITICAL: Failed to save settings to file. Error: {ex.Message}");
+            }
+            finally {
+                _settingsFileLock.Release();
+                // Reset the flag after the save is complete to allow future saves.
+                Interlocked.Exchange(ref _isSaveQueued, 0);
+            }
+        }
+    }
+
     private T GetValue<T>(string key, T defaultValue) {
         if (_isPackaged) {
             return _localSettings!.Values.TryGetValue(key, out object? value) && value is T v ? v : defaultValue;
@@ -131,7 +161,7 @@ public class SettingsService : IUISettingsService {
                         return element.Deserialize<T>() ?? defaultValue;
                     }
                 }
-                catch {
+                catch (JsonException) {
                     return defaultValue;
                 }
             }
@@ -139,7 +169,6 @@ public class SettingsService : IUISettingsService {
         }
     }
 
-    // Retrieves a complex object (stored as JSON) from settings.
     private async Task<T?> GetComplexValueAsync<T>(string key) where T : class {
         string? json = null;
 
@@ -168,7 +197,8 @@ public class SettingsService : IUISettingsService {
         return null;
     }
 
-    // Retrieves an enum value from settings.
+
+
     private TEnum GetEnumValue<TEnum>(string key, TEnum defaultValue) where TEnum : struct, Enum {
         string? name = null;
 
@@ -192,9 +222,9 @@ public class SettingsService : IUISettingsService {
         return defaultValue;
     }
 
-    // Saves a value to settings. For unpackaged apps, this rewrites the entire settings file.
     private async Task SetValueAsync<T>(string key, T value) {
         if (_isPackaged) {
+            // For complex types, serialize to JSON string. Otherwise, store directly.
             if (typeof(T).IsClass && typeof(T) != typeof(string)) {
                 _localSettings!.Values[key] = JsonSerializer.Serialize(value, _serializerOptions);
             }
@@ -209,22 +239,17 @@ public class SettingsService : IUISettingsService {
                 _settings[key] = null;
             }
             else {
+                // Serialize and re-parse to ensure the object is stored as a JsonElement,
+                // maintaining type consistency in the settings dictionary.
                 var serializedValue = JsonSerializer.Serialize(value);
                 _settings[key] = JsonDocument.Parse(serializedValue).RootElement.Clone();
             }
 
-            await _settingsFileLock.WaitAsync();
-            try {
-                string json = JsonSerializer.Serialize(_settings, _serializerOptions);
-                await File.WriteAllTextAsync(_pathConfig.SettingsFilePath, json);
-            }
-            finally {
-                _settingsFileLock.Release();
-            }
+            // Instead of writing to the file immediately, queue a single, debounced save.
+            _ = QueueSaveAsync();
         }
     }
 
-    // Saves a value and invokes a notifier event if the value has changed.
     private async Task SetValueAndNotifyAsync<T>(string key, T newValue, T defaultValue, Action<T>? notifier) {
         await EnsureUnpackagedSettingsLoadedAsync();
         T currentValue = GetValue(key, defaultValue);
@@ -235,7 +260,6 @@ public class SettingsService : IUISettingsService {
         await SetValueAsync(key, newValue);
     }
 
-    // Provides the default set of navigation items for the main menu.
     private List<NavigationItemSetting> GetDefaultNavigationItems() => new()
     {
         new() { DisplayName = "Library", Tag = "library", IconGlyph = "\uE1D3", IsEnabled = true },
@@ -489,11 +513,12 @@ public class SettingsService : IUISettingsService {
             var startupTask = await StartupTask.GetAsync(StartupTaskId);
             if (isEnabled) {
                 var state = await startupTask.RequestEnableAsync();
-                Debug.WriteLine($"[SettingsService] StartupTask enable request returned: {state}");
+                if (state != StartupTaskState.Enabled) {
+                    Debug.WriteLine($"[SettingsService] StartupTask enable request did not result in 'Enabled' state. Current state: {state}");
+                }
             }
             else {
                 startupTask.Disable();
-                Debug.WriteLine("[SettingsService] StartupTask disabled.");
             }
         }
         else {
@@ -594,6 +619,7 @@ public class SettingsService : IUISettingsService {
         var items = await GetComplexValueAsync<List<NavigationItemSetting>>(NavigationItemsKey);
 
         if (items != null) {
+            // Ensure any new default navigation items are added for existing users.
             var defaultItems = GetDefaultNavigationItems();
             var loadedTags = new HashSet<string>(items.Select(i => i.Tag));
             var missingItems = defaultItems.Where(d => !loadedTags.Contains(d.Tag));
