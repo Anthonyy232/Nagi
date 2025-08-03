@@ -18,6 +18,7 @@
 		<AssemblyName>Nagi</AssemblyName>
 		<Product>Nagi</Product>
 		<ApplicationIcon>Assets\AppLogo.ico</ApplicationIcon>
+		<StartupObject>Nagi.WinUI.Program</StartupObject>
 	</PropertyGroup>
 
 	<!-- =============================================================== -->
