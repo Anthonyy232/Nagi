@@ -19,11 +19,18 @@ public class AppInfoService : IAppInfoService {
 
     public string GetAppVersion() {
         try {
-            // This approach works for both packaged and unpackaged apps.
-            var assembly = Assembly.GetEntryAssembly();
-            if (assembly?.GetName().Version is { } version) {
-                return $"{version.Major}.{version.Minor}.{version.Build}";
-            }
+#if MSIX_PACKAGE
+            // For MSIX packages, get the version from the package manifest
+            var package = Package.Current;
+            var version = package.Id.Version;
+            return $"{version.Major}.{version.Minor}.{version.Build}";
+            #else
+                        // For unpackaged apps, use assembly version
+                        var assembly = Assembly.GetEntryAssembly();
+                        if (assembly?.GetName().Version is { } version) {
+                            return $"{version.Major}.{version.Minor}.{version.Build}";
+                        }
+            #endif
         }
         catch (Exception ex) {
             Debug.WriteLine($"[ERROR] Could not get application version: {ex.Message}");

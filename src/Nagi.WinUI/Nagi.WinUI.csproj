@@ -40,6 +40,9 @@
 		<WindowsPackageType>None</WindowsPackageType>
 		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 		<ApplicationIcon>Assets\AppLogo.ico</ApplicationIcon>
+		<AssemblyVersion>$(AppxPackageVersion)</AssemblyVersion>
+		<FileVersion>$(AppxPackageVersion)</FileVersion>
+		<Version>$(AppxPackageVersion)</Version>
 	</PropertyGroup>
 
 	<!-- =============================================================== -->
