@@ -26,7 +26,7 @@
     <!-- =============================================================== -->
     <PropertyGroup Condition="!$(Configuration.Contains('Unpackaged'))">
         <WindowsPackageType>MSIX</WindowsPackageType>
-        <WindowsAppSDKSelfContained>false</WindowsAppSDKSelfContained>
+        <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
         <PublishProfile>win-$(Platform).pubxml</PublishProfile>
         <ApplicationDisplayVersion>$(AppxPackageVersion)</ApplicationDisplayVersion>
         <ApplicationVersion>$(AppxPackageVersion.Replace('.', ''))</ApplicationVersion>
