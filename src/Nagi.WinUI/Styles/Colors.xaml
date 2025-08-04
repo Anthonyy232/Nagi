@@ -21,11 +21,10 @@
         TintOpacity="0.15" />
 
     <!-- Windows 10 compatible acrylic brush. -->
-    <media:AcrylicBrush
-        x:Key="Win10AcrylicBrush"
-        FallbackColor="{Binding Color, Source={StaticResource AppPrimaryColorBrush}}"
-        TintColor="{Binding Color, Source={StaticResource AppPrimaryColorBrush}}"
-        TintOpacity="0.4" />
+    <SolidColorBrush 
+    x:Key="Win10AcrylicBrush" 
+    Color="{Binding Color, Source={StaticResource AppPrimaryColorBrush}, Converter={StaticResource SubtleDarkenConverter}}" />
+
 
     <!-- No transparency brush. -->
     <SolidColorBrush 
