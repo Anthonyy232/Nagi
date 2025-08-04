@@ -112,22 +112,23 @@ jobs:
           foreach ($p in $platforms) {
             echo "Uploading assets for channel: $p"
 
-            # Explicitly build the command string to ensure correct argument formatting.
-            # Note the use of backticks ` to escape the double quotes inside the string.
-            $command = "vpk upload github --repoUrl `"https://github.com/${{ github.repository }}`" `
-              --token `"${{ env.GITHUB_TOKEN }}`" `
-              --releaseName `"Version ${{ github.ref_name }}`" `
-              --channel `"$p`" `
-              -o `"./VeloPack-Release-Assets`""
+            # Build an array of arguments. This is the safest way to pass args in PowerShell.
+            $arguments = @(
+                "upload", "github",
+                "--repoUrl", "https://github.com/${{ github.repository }}",
+                "--token", "${{ env.GITHUB_TOKEN }}",
+                "--releaseName", "Version ${{ github.ref_name }}",
+                "--channel", $p,
+                "-o", "./VeloPack-Release-Assets"
+            )
 
-            # For the second iteration onwards, append the crucial flag.
+            # For subsequent iterations, append the crucial flag to the argument list.
             if (-not $isFirst) {
-              $command += " --add-to-existing"
+                $arguments += "--add-to-existing"
             }
 
-            # Execute the command string.
-            Invoke-Expression -Command $command
+            # Execute the command with the argument list. No string parsing issues.
+            vpk $arguments
 
-            # Set the flag to false for all subsequent loops.
             $isFirst = $false
           }
