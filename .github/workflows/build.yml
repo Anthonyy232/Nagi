@@ -45,16 +45,17 @@ jobs:
       - name: Create appsettings.json from repository secrets
         shell: pwsh
         run: |
-          echo '{
-            "Discord": {
-              "AppId": "${{ secrets.NAGI_DISCORD_KEY }}"
-            },
-            "NagiApiServer": {
-              "Url": "https://nagiflexapiserver.azurewebsites.net",
-              "ApiKey": "${{ secrets.NAGI_API_KEY }}",
-              "SubscriptionKey": "${{ secrets.NAGI_SUBSCRIPTION_KEY }}"
+          $appSettings = @{
+            Discord = @{
+              AppId = "${{ secrets.NAGI_DISCORD_KEY }}"
             }
-          }' > src/Nagi.WinUI/appsettings.json
+            NagiApiServer = @{
+              Url = "https://nagiflexapiserver.azurewebsites.net"
+              ApiKey = "${{ secrets.NAGI_API_KEY }}"
+              SubscriptionKey = "${{ secrets.NAGI_SUBSCRIPTION_KEY }}"
+            }
+          }
+          $appSettings | ConvertTo-Json -Depth 3 | Out-File -FilePath "src/Nagi.WinUI/appsettings.json" -Encoding UTF8
 
       - name: Build and Publish Application
         env:
@@ -72,7 +73,7 @@ jobs:
           --packVersion ${{ steps.get_version.outputs.version }}
           --mainExe Nagi.exe
           --packDir ./publish/${{ matrix.platform }}
-          -o ./Releases/${{ matrix.platform }}
+          --outputDir ./Releases/${{ matrix.platform }}
           --channel ${{ matrix.platform }}
           --runtime ${{ matrix.platform }}
 
@@ -97,38 +98,73 @@ jobs:
       - name: Download all Velopack artifacts
         uses: actions/download-artifact@v4
         with:
-          path: ./VeloPack-Release-Assets
+          path: ./Downloaded-Artifacts
           pattern: VeloPack-Release-Assets-*
-          merge-multiple: true
 
-      - name: Publish assets to GitHub Release
+      - name: Debug - List downloaded files
+        shell: pwsh
+        run: |
+          Write-Host "Contents of Downloaded-Artifacts:"
+          Get-ChildItem -Path "./Downloaded-Artifacts" -Recurse | ForEach-Object { Write-Host $_.FullName }
+
+      - name: Reorganize artifacts for upload
+        shell: pwsh
+        run: |
+          $platforms = @("win-x64", "win-x86", "win-arm64")
+          
+          foreach ($platform in $platforms) {
+            $platformDir = "./Releases/$platform"
+            New-Item -ItemType Directory -Path $platformDir -Force
+            
+            # Look for the specific platform artifact directory
+            $artifactDir = "./Downloaded-Artifacts/VeloPack-Release-Assets-$platform"
+            if (Test-Path $artifactDir) {
+              Write-Host "Processing artifacts for $platform from $artifactDir"
+              $sourceFiles = Get-ChildItem -Path $artifactDir -Recurse -File
+              foreach ($file in $sourceFiles) {
+                Copy-Item -Path $file.FullName -Destination $platformDir -Force
+                Write-Host "Copied $($file.Name) to $platformDir"
+              }
+            } else {
+              Write-Warning "Artifact directory not found: $artifactDir"
+            }
+          }
+
+      - name: Publish assets to GitHub Release (Draft)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: pwsh
         run: |
-          $platforms = "win-x64", "win-x86", "win-arm64"
-          $isFirst = $true
+          $platforms = @("win-x64", "win-x86", "win-arm64")
+          $repoUrl = "https://github.com/${{ github.repository }}"
+          $releaseName = "Version ${{ github.ref_name }}"
 
-          foreach ($p in $platforms) {
-            echo "Uploading assets for channel: $p"
-
-            # Build an array of arguments. This is the safest way to pass args in PowerShell.
-            $arguments = @(
-                "upload", "github",
-                "--repoUrl", "https://github.com/${{ github.repository }}",
-                "--token", "${{ env.GITHUB_TOKEN }}",
-                "--releaseName", "Version ${{ github.ref_name }}",
-                "--channel", $p,
-                "-o", "./VeloPack-Release-Assets"
-            )
-
-            # For subsequent iterations, append the crucial flag to the argument list.
-            if (-not $isFirst) {
-                $arguments += "--add-to-existing"
+          foreach ($platform in $platforms) {
+            Write-Host "Uploading assets for channel: $platform"
+            
+            $platformDir = "./Releases/$platform"
+            if (Test-Path $platformDir) {
+              $files = Get-ChildItem -Path $platformDir -File
+              Write-Host "Found $($files.Count) files in $platformDir"
+              
+              if ($files.Count -gt 0) {
+                try {
+                  vpk upload github `
+                    --repoUrl $repoUrl `
+                    --token "${{ env.GITHUB_TOKEN }}" `
+                    --releaseName $releaseName `
+                    --channel $platform `
+                    --outputDir $platformDir `
+                    --merge
+                  Write-Host "Successfully uploaded assets for $platform"
+                } catch {
+                  Write-Error "Failed to upload assets for $platform`: $_"
+                  exit 1
+                }
+              } else {
+                Write-Warning "No files found in $platformDir"
+              }
+            } else {
+              Write-Warning "Directory $platformDir does not exist"
             }
-
-            # Execute the command with the argument list. No string parsing issues.
-            vpk $arguments
-
-            $isFirst = $false
           }
