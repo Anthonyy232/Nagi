@@ -1,6 +1,7 @@
 ﻿namespace Nagi.WinUI.Models;
 
-public enum BackdropMaterial {
+public enum BackdropMaterial
+{
     Mica,
     MicaAlt,
     Acrylic

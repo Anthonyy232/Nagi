@@ -1,51 +1,56 @@
-﻿using Nagi.Core.Helpers;
-using Nagi.Core.Models;
-using Nagi.Core.Services.Abstractions;
-using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Diagnostics;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
+using Nagi.Core.Helpers;
+using Nagi.Core.Models;
+using Nagi.Core.Services.Abstractions;
 using TagLib;
 using TagLib.Id3v2;
+using File = TagLib.File;
 using Tag = TagLib.Tag;
 
 namespace Nagi.Core.Services.Implementations;
 
 /// <summary>
-/// Extracts music file metadata using the TagLib-Sharp library. This service is highly
-/// optimized for performance and concurrency, featuring:
-/// - One-time-per-album art processing using a thread-safe, lazy-initialized async cache.
-/// - Caching for extracted synchronized lyrics (LRC) to avoid redundant processing.
-/// - Support for both embedded and external lyrics files.
+///     Extracts music file metadata using the TagLib-Sharp library. This service is highly
+///     optimized for performance and concurrency, featuring:
+///     - One-time-per-album art processing using a thread-safe, lazy-initialized async cache.
+///     - Caching for extracted synchronized lyrics (LRC) to avoid redundant processing.
+///     - Support for both embedded and external lyrics files.
 /// </summary>
-public class TagLibMetadataService : IMetadataService {
+public class TagLibMetadataService : IMetadataService
+{
     private const string UnknownArtistName = "Unknown Artist";
     private const string UnknownAlbumName = "Unknown Album";
-
-    private readonly IFileSystemService _fileSystem;
-    private readonly IImageProcessor _imageProcessor;
-    private readonly IPathConfiguration _pathConfig;
 
     // A thread-safe dictionary to ensure the expensive image processing for an album's art
     // happens exactly once. The key is a unique album identifier (artist + title). The value is
     // a lazy-initialized Task that represents the single, shared processing operation. All
     // concurrent requests for the same album art will await this single task.
-    private readonly ConcurrentDictionary<string, Lazy<Task<(string? CoverArtUri, string? LightSwatchId, string? DarkSwatchId)>>> _albumArtProcessingTasks = new();
+    private readonly
+        ConcurrentDictionary<string, Lazy<Task<(string? CoverArtUri, string? LightSwatchId, string? DarkSwatchId)>>>
+        _albumArtProcessingTasks = new();
 
-    public TagLibMetadataService(IImageProcessor imageProcessor, IFileSystemService fileSystem, IPathConfiguration pathConfig) {
+    private readonly IFileSystemService _fileSystem;
+    private readonly IImageProcessor _imageProcessor;
+    private readonly IPathConfiguration _pathConfig;
+
+    public TagLibMetadataService(IImageProcessor imageProcessor, IFileSystemService fileSystem,
+        IPathConfiguration pathConfig)
+    {
         _imageProcessor = imageProcessor ?? throw new ArgumentNullException(nameof(imageProcessor));
         _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
         _pathConfig = pathConfig ?? throw new ArgumentNullException(nameof(pathConfig));
     }
 
     /// <inheritdoc />
-    public async Task<SongFileMetadata> ExtractMetadataAsync(string filePath) {
+    public async Task<SongFileMetadata> ExtractMetadataAsync(string filePath)
+    {
         var metadata = new SongFileMetadata { FilePath = filePath };
 
-        try {
+        try
+        {
             var fileInfo = _fileSystem.GetFileInfo(filePath);
             metadata.FileCreatedDate = fileInfo.CreationTimeUtc;
             metadata.FileModifiedDate = fileInfo.LastWriteTimeUtc;
@@ -55,32 +60,33 @@ public class TagLibMetadataService : IMetadataService {
             metadata.LrcFilePath = await GetLrcPathAsync(filePath, fileInfo.LastWriteTimeUtc);
 
             // As a fallback, look for an external .lrc file if no embedded lyrics were found.
-            if (string.IsNullOrWhiteSpace(metadata.LrcFilePath)) {
-                metadata.LrcFilePath = FindLrcFilePath(filePath);
-            }
+            if (string.IsNullOrWhiteSpace(metadata.LrcFilePath)) metadata.LrcFilePath = FindLrcFilePath(filePath);
 
             // Use a read-only file abstraction for safety and to prevent file locks.
-            using var tagFile = TagLib.File.Create(new NonWritableFileAbstraction(filePath));
+            using var tagFile = File.Create(new NonWritableFileAbstraction(filePath));
 
-            if (tagFile?.Tag is null || tagFile.Properties is null) {
+            if (tagFile?.Tag is null || tagFile.Properties is null)
                 throw new CorruptFileException("TagLib could not read the file's tag or property structures.");
-            }
 
             PopulateMetadataFromTag(metadata, tagFile.Tag, tagFile.Properties);
             await ProcessAlbumArtAsync(metadata, tagFile.Tag);
         }
-        catch (CorruptFileException ex) {
+        catch (CorruptFileException ex)
+        {
             Debug.WriteLine($"[MetadataExtractor] Corrupt file detected. Path: '{filePath}', Reason: {ex.Message}");
             metadata.ExtractionFailed = true;
             metadata.ErrorMessage = "CorruptFile";
         }
-        catch (UnsupportedFormatException) {
+        catch (UnsupportedFormatException)
+        {
             Debug.WriteLine($"[MetadataExtractor] Unsupported file format. Path: '{filePath}'");
             metadata.ExtractionFailed = true;
             metadata.ErrorMessage = "UnsupportedFormat";
         }
-        catch (Exception ex) {
-            Debug.WriteLine($"[MetadataExtractor] An unexpected error occurred during metadata extraction. Path: '{filePath}', Error: {ex.GetType().Name} - {ex.Message}");
+        catch (Exception ex)
+        {
+            Debug.WriteLine(
+                $"[MetadataExtractor] An unexpected error occurred during metadata extraction. Path: '{filePath}', Error: {ex.GetType().Name} - {ex.Message}");
             metadata.ExtractionFailed = true;
             metadata.ErrorMessage = ex.GetType().Name;
         }
@@ -89,9 +95,10 @@ public class TagLibMetadataService : IMetadataService {
     }
 
     /// <summary>
-    /// Populates the metadata object from the file's tags and properties, providing sane defaults for missing values.
+    ///     Populates the metadata object from the file's tags and properties, providing sane defaults for missing values.
     /// </summary>
-    private void PopulateMetadataFromTag(SongFileMetadata metadata, Tag tag, Properties properties) {
+    private void PopulateMetadataFromTag(SongFileMetadata metadata, Tag tag, Properties properties)
+    {
         var artist = SanitizeString(tag.Performers?.FirstOrDefault()) ?? UnknownArtistName;
         var albumArtist = SanitizeString(tag.AlbumArtists?.FirstOrDefault()) ?? artist;
         var album = SanitizeString(tag.Album) ?? UnknownAlbumName;
@@ -125,11 +132,12 @@ public class TagLibMetadataService : IMetadataService {
     }
 
     /// <summary>
-    /// Extracts album art from the tag and processes it. This method ensures the expensive image processing
-    /// for a given album occurs exactly once, even under high concurrency. All concurrent callers for the
-    /// same album will await the result of the single, shared operation.
+    ///     Extracts album art from the tag and processes it. This method ensures the expensive image processing
+    ///     for a given album occurs exactly once, even under high concurrency. All concurrent callers for the
+    ///     same album will await the result of the single, shared operation.
     /// </summary>
-    private async Task ProcessAlbumArtAsync(SongFileMetadata metadata, Tag tag) {
+    private async Task ProcessAlbumArtAsync(SongFileMetadata metadata, Tag tag)
+    {
         var picture = tag.Pictures?.FirstOrDefault();
         if (picture?.Data?.Data is not { Length: > 0 } pictureData) return;
 
@@ -143,7 +151,8 @@ public class TagLibMetadataService : IMetadataService {
             )
         );
 
-        try {
+        try
+        {
             // All threads for the same album will await the SAME task instance here.
             // If the task has already completed, the result is returned instantly.
             // If it's in progress, they wait for it to finish.
@@ -154,23 +163,29 @@ public class TagLibMetadataService : IMetadataService {
             metadata.LightSwatchId = lightSwatchId;
             metadata.DarkSwatchId = darkSwatchId;
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             // CRITICAL: If image processing fails, the Lazy<Task> caches the exception and
             // will re-throw it on every subsequent access, "poisoning" the cache for this key.
             // We must remove the failed entry so that a subsequent request can retry the operation.
-            Debug.WriteLine($"[AlbumArtProcessor] Failed to process art for key '{artKey}'. Removing from cache to allow retry. Error: {ex.Message}");
-            _albumArtProcessingTasks.TryRemove(new(artKey, lazyTask));
+            Debug.WriteLine(
+                $"[AlbumArtProcessor] Failed to process art for key '{artKey}'. Removing from cache to allow retry. Error: {ex.Message}");
+            _albumArtProcessingTasks.TryRemove(
+                new KeyValuePair<string,
+                    Lazy<Task<(string? CoverArtUri, string? LightSwatchId, string? DarkSwatchId)>>>(artKey, lazyTask));
             // We don't re-throw, as failing to get album art shouldn't fail the entire metadata extraction.
         }
     }
 
     /// <summary>
-    /// Gets the path to the LRC file, prioritizing a valid cache entry before
-    /// attempting to extract embedded lyrics from the audio file.
+    ///     Gets the path to the LRC file, prioritizing a valid cache entry before
+    ///     attempting to extract embedded lyrics from the audio file.
     /// </summary>
-    private async Task<string?> GetLrcPathAsync(string audioFilePath, DateTime audioFileLastWriteTime) {
+    private async Task<string?> GetLrcPathAsync(string audioFilePath, DateTime audioFileLastWriteTime)
+    {
         string cacheKey;
-        using (var sha256 = SHA256.Create()) {
+        using (var sha256 = SHA256.Create())
+        {
             var hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(audioFilePath));
             cacheKey = Convert.ToBase64String(hashBytes).Replace('/', '_').Replace('+', '-');
         }
@@ -178,35 +193,37 @@ public class TagLibMetadataService : IMetadataService {
         var cachedLrcPath = _fileSystem.Combine(_pathConfig.LrcCachePath, $"{cacheKey}.lrc");
 
         // Check for a valid cache entry. It's valid if it exists and is newer than the audio file.
-        if (_fileSystem.FileExists(cachedLrcPath)) {
+        if (_fileSystem.FileExists(cachedLrcPath))
+        {
             var cacheLastWriteTime = _fileSystem.GetLastWriteTimeUtc(cachedLrcPath);
-            if (cacheLastWriteTime >= audioFileLastWriteTime) {
-                return cachedLrcPath;
-            }
+            if (cacheLastWriteTime >= audioFileLastWriteTime) return cachedLrcPath;
         }
 
-        try {
-            using var tagFile = TagLib.File.Create(new NonWritableFileAbstraction(audioFilePath));
+        try
+        {
+            using var tagFile = File.Create(new NonWritableFileAbstraction(audioFilePath));
             if (tagFile?.Tag is null) return null;
 
             return await ExtractAndCacheEmbeddedLrcAsync(tagFile, cachedLrcPath);
         }
-        catch (UnsupportedFormatException) {
+        catch (UnsupportedFormatException)
+        {
             return null;
         }
-        catch (Exception ex) {
-            Debug.WriteLine($"[MetadataExtractor] Failed to extract or cache embedded LRC for '{audioFilePath}'. Error: {ex.Message}");
+        catch (Exception ex)
+        {
+            Debug.WriteLine(
+                $"[MetadataExtractor] Failed to extract or cache embedded LRC for '{audioFilePath}'. Error: {ex.Message}");
             return null;
         }
     }
 
     /// <summary>
-    /// Extracts embedded synchronized (SYLT) lyrics, converts them to LRC format, and saves them to the cache.
+    ///     Extracts embedded synchronized (SYLT) lyrics, converts them to LRC format, and saves them to the cache.
     /// </summary>
-    private async Task<string?> ExtractAndCacheEmbeddedLrcAsync(TagLib.File tagFile, string cachedLrcPath) {
-        if (tagFile.GetTag(TagTypes.Id3v2, false) is not TagLib.Id3v2.Tag id3v2Tag) {
-            return null;
-        }
+    private async Task<string?> ExtractAndCacheEmbeddedLrcAsync(File tagFile, string cachedLrcPath)
+    {
+        if (tagFile.GetTag(TagTypes.Id3v2, false) is not TagLib.Id3v2.Tag id3v2Tag) return null;
 
         // Find the best SYLT frame, preferring longer ones as they likely contain more lyrics.
         var bestSyltFrame = id3v2Tag.GetFrames<SynchronisedLyricsFrame>()
@@ -214,13 +231,13 @@ public class TagLibMetadataService : IMetadataService {
             .OrderByDescending(f => f.Text.Length)
             .FirstOrDefault();
 
-        if (bestSyltFrame is null) {
-            return null;
-        }
+        if (bestSyltFrame is null) return null;
 
         // We only support the most common millisecond-based timestamps.
-        if (bestSyltFrame.Format != TimestampFormat.AbsoluteMilliseconds) {
-            Debug.WriteLine($"[LRC Extractor] Skipping embedded lyrics due to unsupported timestamp format: {bestSyltFrame.Format}");
+        if (bestSyltFrame.Format != TimestampFormat.AbsoluteMilliseconds)
+        {
+            Debug.WriteLine(
+                $"[LRC Extractor] Skipping embedded lyrics due to unsupported timestamp format: {bestSyltFrame.Format}");
             return null;
         }
 
@@ -228,30 +245,32 @@ public class TagLibMetadataService : IMetadataService {
         var linesByTime = bestSyltFrame.Text
             .OrderBy(line => line.Time)
             .GroupBy(line => line.Time)
-            .Select(group => new {
+            .Select(group => new
+            {
                 Time = TimeSpan.FromMilliseconds(group.Key),
                 Text = string.Join(" ", group.Select(l => l.Text?.Trim()).Where(t => !string.IsNullOrEmpty(t)))
             });
 
-        foreach (var line in linesByTime) {
+        foreach (var line in linesByTime)
+        {
             if (string.IsNullOrWhiteSpace(line.Text)) continue;
             lrcContentBuilder.AppendLine($"[{line.Time:mm\\:ss\\.ff}]{line.Text}");
         }
 
         var lrcContent = lrcContentBuilder.ToString();
-        if (string.IsNullOrWhiteSpace(lrcContent)) {
-            return null;
-        }
+        if (string.IsNullOrWhiteSpace(lrcContent)) return null;
 
         await _fileSystem.WriteAllTextAsync(cachedLrcPath, lrcContent);
         return cachedLrcPath;
     }
 
     /// <summary>
-    /// Searches for an external .lrc file in the same directory as the audio file, matching by filename.
+    ///     Searches for an external .lrc file in the same directory as the audio file, matching by filename.
     /// </summary>
-    private string? FindLrcFilePath(string audioFilePath) {
-        try {
+    private string? FindLrcFilePath(string audioFilePath)
+    {
+        try
+        {
             var directory = _fileSystem.GetDirectoryName(audioFilePath);
             if (string.IsNullOrEmpty(directory)) return null;
 
@@ -262,16 +281,19 @@ public class TagLibMetadataService : IMetadataService {
                 _fileSystem.GetFileNameWithoutExtension(lrcPath)
                     .Equals(audioFileNameWithoutExt, StringComparison.OrdinalIgnoreCase));
         }
-        catch (Exception ex) {
-            Debug.WriteLine($"[MetadataExtractor] Error while searching for LRC file for '{audioFilePath}'. Error: {ex.Message}");
+        catch (Exception ex)
+        {
+            Debug.WriteLine(
+                $"[MetadataExtractor] Error while searching for LRC file for '{audioFilePath}'. Error: {ex.Message}");
             return null;
         }
     }
 
     /// <summary>
-    /// Trims a string and returns null if the result is empty or whitespace, ensuring consistent null/empty handling.
+    ///     Trims a string and returns null if the result is empty or whitespace, ensuring consistent null/empty handling.
     /// </summary>
-    private string? SanitizeString(string? input) {
+    private string? SanitizeString(string? input)
+    {
         return string.IsNullOrWhiteSpace(input) ? null : input.Trim();
     }
 }

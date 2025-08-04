@@ -76,7 +76,8 @@
                                                 Command="{Binding DataContext.PlaySelectedSongsNextCommand, ElementName=pageRoot}" />
                                 <MenuFlyoutItem Text="Add to Queue"
                                                 Command="{Binding DataContext.AddSelectedSongsToQueueCommand, ElementName=pageRoot}" />
-                                <MenuFlyoutSeparator Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                <MenuFlyoutSeparator
+                                    Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                 <MenuFlyoutItem Text="Go to album"
                                                 Command="{Binding DataContext.GoToAlbumCommand, ElementName=pageRoot}"
                                                 Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
@@ -107,7 +108,7 @@
                                 Command="{Binding DataContext.PlaySongCommand, ElementName=pageRoot}"
                                 CommandParameter="{x:Bind}">
                             <Border Width="42" Height="42" CornerRadius="12"
-                                Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneTime}">
+                                    Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
                                 <controls:ImageEx
                                     Source="{x:Bind AlbumArtUriFromTrack, Converter={StaticResource StringToUriConverter}, FallbackValue=null}"
                                     Stretch="UniformToFill"

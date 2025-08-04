@@ -1,16 +1,17 @@
-﻿using Microsoft.UI.Xaml;
-using Nagi.WinUI.Navigation;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.UI.Xaml;
+using Nagi.WinUI.Navigation;
 
 namespace Nagi.WinUI.Services.Abstractions;
 
 /// <summary>
-/// Defines a service for managing view-specific settings related to the application's
-/// appearance and behavior within the Windows UI shell.
+///     Defines a service for managing view-specific settings related to the application's
+///     appearance and behavior within the Windows UI shell.
 /// </summary>
-public interface IViewSettingsService {
+public interface IViewSettingsService
+{
     event Action<bool>? PlayerAnimationSettingChanged;
     event Action<bool>? HideToTraySettingChanged;
     event Action<bool>? ShowCoverArtInTrayFlyoutSettingChanged;
@@ -34,7 +35,7 @@ public interface IViewSettingsService {
     Task SetNavigationItemsAsync(List<NavigationItemSetting> items);
 
     /// <summary>
-    /// Resets all application settings (both core and view) to their default values.
+    ///     Resets all application settings (both core and view) to their default values.
     /// </summary>
     Task ResetAllSettingsAsync();
 }

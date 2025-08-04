@@ -98,10 +98,10 @@
                                             Height="160"
                                             HorizontalAlignment="Center"
                                             CornerRadius="8"
-                                            Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneTime}">
+                                            Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
                                         <controls:ImageEx
                                             IsCacheEnabled="True"
-                                            Source="{x:Bind CoverArtUri, Mode=OneTime, Converter={StaticResource StringToUriConverter}, FallbackValue=null}"
+                                            Source="{x:Bind CoverArtUri, Converter={StaticResource StringToUriConverter}, FallbackValue=null}"
                                             Stretch="UniformToFill" />
                                     </Border>
                                     <TextBlock
@@ -109,13 +109,13 @@
                                         Margin="0,8,0,0"
                                         HorizontalAlignment="Center"
                                         FontWeight="SemiBold"
-                                        Text="{x:Bind Name, Mode=OneTime}"
+                                        Text="{x:Bind Name}"
                                         TextTrimming="CharacterEllipsis" />
                                     <TextBlock
                                         Grid.Row="2"
                                         HorizontalAlignment="Center"
                                         Opacity="0.7"
-                                        Text="{x:Bind YearText, Mode=OneTime}"
+                                        Text="{x:Bind YearText}"
                                         TextTrimming="CharacterEllipsis" />
                                 </Grid>
                             </DataTemplate>
@@ -123,7 +123,8 @@
                     </GridView>
                 </StackPanel>
 
-                <Grid Margin="0,8,0,0" Visibility="{x:Bind ViewModel.Songs, Converter={StaticResource CollectionToVisibilityConverter}, Mode=OneWay}">
+                <Grid Margin="0,8,0,0"
+                      Visibility="{x:Bind ViewModel.Songs, Converter={StaticResource CollectionToVisibilityConverter}, Mode=OneWay}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
@@ -191,7 +192,8 @@
                                     Command="{Binding DataContext.AddSelectedSongsToQueueCommand, ElementName=pageRoot}"
                                     Text="Add to Queue" />
                                 <MenuFlyoutSubItem x:Name="AddToPlaylistSubMenu" Text="Add to playlist" />
-                                <MenuFlyoutSeparator Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                <MenuFlyoutSeparator
+                                    Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                 <MenuFlyoutItem
                                     Command="{Binding DataContext.GoToAlbumCommand, ElementName=pageRoot}"
                                     Text="Go to album"
@@ -216,7 +218,7 @@
                             CommandParameter="{x:Bind}"
                             Style="{StaticResource SongListViewPageSongPlayButtonStyle}">
                             <Border Width="42" Height="42" CornerRadius="12"
-                                Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneTime}">
+                                    Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
                                 <controls:ImageEx
                                     IsCacheEnabled="True"
                                     Stretch="UniformToFill"

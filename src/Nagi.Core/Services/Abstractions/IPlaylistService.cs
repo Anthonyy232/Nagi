@@ -3,9 +3,10 @@
 namespace Nagi.Core.Services.Abstractions;
 
 /// <summary>
-/// Defines the contract for managing playlists.
+///     Defines the contract for managing playlists.
 /// </summary>
-public interface IPlaylistService {
+public interface IPlaylistService
+{
     Task<Playlist?> CreatePlaylistAsync(string name, string? description = null, string? coverImageUri = null);
     Task<bool> DeletePlaylistAsync(Guid playlistId);
     Task<bool> RenamePlaylistAsync(Guid playlistId, string newName);

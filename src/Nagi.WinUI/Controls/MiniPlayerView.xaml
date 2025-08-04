@@ -148,7 +148,8 @@
                 -->
                 <Grid Grid.Row="1">
                     <!--  Player View -->
-                    <Grid Padding="16" Visibility="{x:Bind ViewModel.IsQueueViewVisible, Mode=OneWay, Converter={StaticResource InvertedBooleanToVisibilityConverter}}">
+                    <Grid Padding="16"
+                          Visibility="{x:Bind ViewModel.IsQueueViewVisible, Mode=OneWay, Converter={StaticResource InvertedBooleanToVisibilityConverter}}">
                         <StackPanel VerticalAlignment="Bottom" Spacing="12">
                             <Slider
                                 IsThumbToolTipEnabled="True"
@@ -158,25 +159,41 @@
                                 Value="{x:Bind ViewModel.CurrentPosition, Mode=TwoWay}" />
 
                             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Spacing="4">
-                                <Button Command="{x:Bind ViewModel.ToggleMuteCommand}" Style="{StaticResource VolumeButtonStyle}" ToolTipService.ToolTip="{x:Bind ViewModel.VolumeButtonToolTip, Mode=OneWay}">
-                                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="{x:Bind ViewModel.VolumeIconGlyph, Mode=OneWay}" />
+                                <Button Command="{x:Bind ViewModel.ToggleMuteCommand}"
+                                        Style="{StaticResource VolumeButtonStyle}"
+                                        ToolTipService.ToolTip="{x:Bind ViewModel.VolumeButtonToolTip, Mode=OneWay}">
+                                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                              Glyph="{x:Bind ViewModel.VolumeIconGlyph, Mode=OneWay}" />
                                 </Button>
-                                <Button Command="{x:Bind ViewModel.ToggleShuffleCommand}" Style="{StaticResource ShuffleButtonStyle}" ToolTipService.ToolTip="{x:Bind ViewModel.ShuffleButtonToolTip, Mode=OneWay}">
-                                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="{x:Bind ViewModel.ShuffleIconGlyph, Mode=OneWay}" />
+                                <Button Command="{x:Bind ViewModel.ToggleShuffleCommand}"
+                                        Style="{StaticResource ShuffleButtonStyle}"
+                                        ToolTipService.ToolTip="{x:Bind ViewModel.ShuffleButtonToolTip, Mode=OneWay}">
+                                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                              Glyph="{x:Bind ViewModel.ShuffleIconGlyph, Mode=OneWay}" />
                                 </Button>
-                                <Button Command="{x:Bind ViewModel.PreviousCommand}" Style="{StaticResource PreviousButtonStyle}" ToolTipService.ToolTip="Previous">
+                                <Button Command="{x:Bind ViewModel.PreviousCommand}"
+                                        Style="{StaticResource PreviousButtonStyle}" ToolTipService.ToolTip="Previous">
                                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
                                 </Button>
-                                <Button Command="{x:Bind ViewModel.PlayPauseCommand}" Style="{StaticResource PlayPauseButtonStyle}" ToolTipService.ToolTip="{x:Bind ViewModel.PlayPauseButtonToolTip, Mode=OneWay}">
-                                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" FontSize="24" Glyph="{x:Bind ViewModel.PlayPauseIconGlyph, Mode=OneWay}" />
+                                <Button Command="{x:Bind ViewModel.PlayPauseCommand}"
+                                        Style="{StaticResource PlayPauseButtonStyle}"
+                                        ToolTipService.ToolTip="{x:Bind ViewModel.PlayPauseButtonToolTip, Mode=OneWay}">
+                                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" FontSize="24"
+                                              Glyph="{x:Bind ViewModel.PlayPauseIconGlyph, Mode=OneWay}" />
                                 </Button>
-                                <Button Command="{x:Bind ViewModel.NextCommand}" Style="{StaticResource NextButtonStyle}" ToolTipService.ToolTip="Next">
+                                <Button Command="{x:Bind ViewModel.NextCommand}"
+                                        Style="{StaticResource NextButtonStyle}" ToolTipService.ToolTip="Next">
                                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
                                 </Button>
-                                <Button Command="{x:Bind ViewModel.CycleRepeatCommand}" Style="{StaticResource RepeatButtonStyle}" ToolTipService.ToolTip="{x:Bind ViewModel.RepeatButtonToolTip, Mode=OneWay}">
-                                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="{x:Bind ViewModel.RepeatIconGlyph, Mode=OneWay}" />
+                                <Button Command="{x:Bind ViewModel.CycleRepeatCommand}"
+                                        Style="{StaticResource RepeatButtonStyle}"
+                                        ToolTipService.ToolTip="{x:Bind ViewModel.RepeatButtonToolTip, Mode=OneWay}">
+                                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                              Glyph="{x:Bind ViewModel.RepeatIconGlyph, Mode=OneWay}" />
                                 </Button>
-                                <Button Command="{x:Bind ViewModel.ShowQueueViewCommand}" Style="{StaticResource QueueButtonStyle}" ToolTipService.ToolTip="Current Queue">
+                                <Button Command="{x:Bind ViewModel.ShowQueueViewCommand}"
+                                        Style="{StaticResource QueueButtonStyle}"
+                                        ToolTipService.ToolTip="Current Queue">
                                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
                                 </Button>
                             </StackPanel>
@@ -194,7 +211,8 @@
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="models:Song">
                                 <StackPanel Margin="0,4">
-                                    <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="{x:Bind Title}" TextTrimming="CharacterEllipsis" />
+                                    <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="{x:Bind Title}"
+                                               TextTrimming="CharacterEllipsis" />
                                     <TextBlock
                                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                         Style="{ThemeResource CaptionTextBlockStyle}"

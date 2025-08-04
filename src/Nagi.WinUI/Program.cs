@@ -1,14 +1,13 @@
-﻿using Microsoft.UI.Dispatching;
-using Microsoft.UI.Xaml;
-using Microsoft.Windows.AppLifecycle;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
+using Microsoft.UI.Dispatching;
+using Microsoft.UI.Xaml;
+using Microsoft.Windows.AppLifecycle;
 using WinRT;
-
 #if !MSIX_PACKAGE
 using Velopack;
 #endif
@@ -16,28 +15,29 @@ using Velopack;
 namespace Nagi.WinUI;
 
 /// <summary>
-/// Contains the application's entry point and single-instancing logic.
+///     Contains the application's entry point and single-instancing logic.
 /// </summary>
-public static class Program {
+public static class Program
+{
     private const string AppInstanceKey = "NagiMusicPlayerInstance-9A8B7C6D";
 
     [STAThread]
-    private static int Main(string[] args) {
-        #if !MSIX_PACKAGE
-            VelopackApp.Build().Run();
-        #endif
+    private static int Main(string[] args)
+    {
+#if !MSIX_PACKAGE
+        VelopackApp.Build().Run();
+#endif
 
         ComWrappersSupport.InitializeComWrappers();
 
         // If this is a secondary instance, redirect its activation arguments to the primary
         // instance and exit immediately. This enforces a single-instance model.
-        if (TryRedirectActivation()) {
-            return 0;
-        }
+        if (TryRedirectActivation()) return 0;
 
         Debug.WriteLine("[Program] Primary instance starting.");
 
-        Application.Start(p => {
+        Application.Start(p =>
+        {
             // The SynchronizationContext is essential for the UI thread to correctly
             // manage async operations and callbacks.
             var context = new DispatcherQueueSynchronizationContext(DispatcherQueue.GetForCurrentThread());
@@ -49,40 +49,43 @@ public static class Program {
     }
 
     /// <summary>
-    /// Checks for an existing application instance. If found, redirects activation and returns true.
-    /// If not found, it registers the current process as the primary instance and returns false.
+    ///     Checks for an existing application instance. If found, redirects activation and returns true.
+    ///     If not found, it registers the current process as the primary instance and returns false.
     /// </summary>
     /// <returns>True if activation was redirected; otherwise, false.</returns>
-    private static bool TryRedirectActivation() {
-        AppInstance mainInstance = AppInstance.FindOrRegisterForKey(AppInstanceKey);
+    private static bool TryRedirectActivation()
+    {
+        var mainInstance = AppInstance.FindOrRegisterForKey(AppInstanceKey);
 
-        if (mainInstance.IsCurrent) {
+        if (mainInstance.IsCurrent)
+        {
             // This is the primary instance, so it must listen for activations from subsequent instances.
             mainInstance.Activated += OnActivated;
             return false;
         }
 
         Debug.WriteLine("[Program] Secondary instance detected. Redirecting activation...");
-        AppActivationArguments args = AppInstance.GetCurrent().GetActivatedEventArgs();
+        var args = AppInstance.GetCurrent().GetActivatedEventArgs();
         RedirectActivationTo(args, mainInstance);
         return true;
     }
 
     /// <summary>
-    /// Handles activation requests that have been redirected to the main instance.
-    /// This method runs in the primary instance when a user launches the app a second time.
+    ///     Handles activation requests that have been redirected to the main instance.
+    ///     This method runs in the primary instance when a user launches the app a second time.
     /// </summary>
-    private static void OnActivated(object? sender, AppActivationArguments args) {
-        string? filePath = TryGetFilePathFromArgs(args);
+    private static void OnActivated(object? sender, AppActivationArguments args)
+    {
+        var filePath = TryGetFilePathFromArgs(args);
         Debug.WriteLine($"[Program] Primary instance activated. File path found: {filePath ?? "None"}");
 
-        if (!string.IsNullOrEmpty(filePath)) {
-            App.CurrentApp?.EnqueueFileActivation(filePath);
-        }
+        if (!string.IsNullOrEmpty(filePath)) App.CurrentApp?.EnqueueFileActivation(filePath);
 
         // Always bring the main window to the foreground on activation to provide user feedback.
-        App.MainDispatcherQueue?.TryEnqueue(() => {
-            if (App.RootWindow is not null) {
+        App.MainDispatcherQueue?.TryEnqueue(() =>
+        {
+            if (App.RootWindow is not null)
+            {
                 App.RootWindow.AppWindow.Show();
                 App.RootWindow.Activate();
             }
@@ -90,35 +93,39 @@ public static class Program {
     }
 
     /// <summary>
-    /// Extracts a file path from activation arguments, supporting both file associations and command-line launches.
+    ///     Extracts a file path from activation arguments, supporting both file associations and command-line launches.
     /// </summary>
-    private static string? TryGetFilePathFromArgs(AppActivationArguments args) {
-        if (args.Kind == ExtendedActivationKind.File && args.Data is IFileActivatedEventArgs fileArgs) {
-            if (fileArgs.Files?.Count > 0) {
-                return fileArgs.Files[0].Path;
-            }
+    private static string? TryGetFilePathFromArgs(AppActivationArguments args)
+    {
+        if (args.Kind == ExtendedActivationKind.File && args.Data is IFileActivatedEventArgs fileArgs)
+        {
+            if (fileArgs.Files?.Count > 0) return fileArgs.Files[0].Path;
         }
-        else if (args.Kind == ExtendedActivationKind.Launch && args.Data is ILaunchActivatedEventArgs launchArgs) {
-            if (!string.IsNullOrWhiteSpace(launchArgs.Arguments)) {
-                string commandLineArgs = launchArgs.Arguments.Trim();
+        else if (args.Kind == ExtendedActivationKind.Launch && args.Data is ILaunchActivatedEventArgs launchArgs)
+        {
+            if (!string.IsNullOrWhiteSpace(launchArgs.Arguments))
+            {
+                var commandLineArgs = launchArgs.Arguments.Trim();
                 // Handles file paths that are quoted (e.g., contain spaces) by removing the quotes.
-                if (commandLineArgs.StartsWith("\"") && commandLineArgs.EndsWith("\"")) {
+                if (commandLineArgs.StartsWith("\"") && commandLineArgs.EndsWith("\""))
                     return commandLineArgs.Substring(1, commandLineArgs.Length - 2);
-                }
                 return commandLineArgs;
             }
         }
+
         return null;
     }
 
     /// <summary>
-    /// Redirects activation to the primary instance and waits for the operation to complete.
+    ///     Redirects activation to the primary instance and waits for the operation to complete.
     /// </summary>
-    private static void RedirectActivationTo(AppActivationArguments args, AppInstance keyInstance) {
+    private static void RedirectActivationTo(AppActivationArguments args, AppInstance keyInstance)
+    {
         var redirectEventHandle = CreateEvent(IntPtr.Zero, true, false, null);
 
         // The redirection must run on a background thread to avoid blocking the STA thread.
-        Task.Run(() => {
+        Task.Run(() =>
+        {
             keyInstance.RedirectActivationToAsync(args).AsTask().Wait();
             SetEvent(redirectEventHandle);
         });
@@ -138,13 +145,15 @@ public static class Program {
     #region P/Invoke Declarations
 
     [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
-    private static extern IntPtr CreateEvent(IntPtr lpEventAttributes, bool bManualReset, bool bInitialState, string? lpName);
+    private static extern IntPtr CreateEvent(IntPtr lpEventAttributes, bool bManualReset, bool bInitialState,
+        string? lpName);
 
     [DllImport("kernel32.dll")]
     private static extern bool SetEvent(IntPtr hEvent);
 
     [DllImport("ole32.dll")]
-    private static extern uint CoWaitForMultipleObjects(uint dwFlags, uint dwMilliseconds, uint nHandles, IntPtr[] pHandles, out uint dwIndex);
+    private static extern uint CoWaitForMultipleObjects(uint dwFlags, uint dwMilliseconds, uint nHandles,
+        IntPtr[] pHandles, out uint dwIndex);
 
     #endregion
 }

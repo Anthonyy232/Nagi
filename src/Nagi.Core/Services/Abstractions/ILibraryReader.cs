@@ -4,9 +4,10 @@ using Nagi.Core.Services.Data;
 namespace Nagi.Core.Services.Abstractions;
 
 /// <summary>
-/// Defines the contract for reading and querying data from the music library.
+///     Defines the contract for reading and querying data from the music library.
 /// </summary>
-public interface ILibraryReader {
+public interface ILibraryReader
+{
     Task<Folder?> GetFolderByIdAsync(Guid folderId);
     Task<Folder?> GetFolderByPathAsync(string path);
     Task<IEnumerable<Folder>> GetAllFoldersAsync();
@@ -32,18 +33,31 @@ public interface ILibraryReader {
     Task<IEnumerable<Genre>> GetAllGenresAsync();
     Task<IEnumerable<Song>> GetSongsByGenreIdAsync(Guid genreId);
     Task<int> GetListenCountForSongAsync(Guid songId);
-    Task<PagedResult<Song>> GetAllSongsPagedAsync(int pageNumber, int pageSize, SongSortOrder sortOrder = SongSortOrder.TitleAsc);
+
+    Task<PagedResult<Song>> GetAllSongsPagedAsync(int pageNumber, int pageSize,
+        SongSortOrder sortOrder = SongSortOrder.TitleAsc);
+
     Task<PagedResult<Song>> SearchSongsPagedAsync(string searchTerm, int pageNumber, int pageSize);
-    Task<PagedResult<Song>> GetSongsByAlbumIdPagedAsync(Guid albumId, int pageNumber, int pageSize, SongSortOrder sortOrder);
-    Task<PagedResult<Song>> GetSongsByArtistIdPagedAsync(Guid artistId, int pageNumber, int pageSize, SongSortOrder sortOrder);
-    Task<PagedResult<Song>> GetSongsByGenreIdPagedAsync(Guid genreId, int pageNumber, int pageSize, SongSortOrder sortOrder);
+
+    Task<PagedResult<Song>> GetSongsByAlbumIdPagedAsync(Guid albumId, int pageNumber, int pageSize,
+        SongSortOrder sortOrder);
+
+    Task<PagedResult<Song>> GetSongsByArtistIdPagedAsync(Guid artistId, int pageNumber, int pageSize,
+        SongSortOrder sortOrder);
+
+    Task<PagedResult<Song>> GetSongsByGenreIdPagedAsync(Guid genreId, int pageNumber, int pageSize,
+        SongSortOrder sortOrder);
+
     Task<PagedResult<Song>> GetSongsByPlaylistPagedAsync(Guid playlistId, int pageNumber, int pageSize);
     Task<PagedResult<Artist>> GetAllArtistsPagedAsync(int pageNumber, int pageSize);
     Task<PagedResult<Artist>> SearchArtistsPagedAsync(string searchTerm, int pageNumber, int pageSize);
     Task<PagedResult<Album>> GetAllAlbumsPagedAsync(int pageNumber, int pageSize);
     Task<PagedResult<Album>> SearchAlbumsPagedAsync(string searchTerm, int pageNumber, int pageSize);
     Task<PagedResult<Playlist>> GetAllPlaylistsPagedAsync(int pageNumber, int pageSize);
-    Task<PagedResult<Song>> GetSongsByFolderIdPagedAsync(Guid folderId, int pageNumber, int pageSize, SongSortOrder sortOrder = SongSortOrder.TitleAsc);
+
+    Task<PagedResult<Song>> GetSongsByFolderIdPagedAsync(Guid folderId, int pageNumber, int pageSize,
+        SongSortOrder sortOrder = SongSortOrder.TitleAsc);
+
     Task<List<Guid>> GetAllSongIdsAsync(SongSortOrder sortOrder);
     Task<List<Guid>> GetAllSongIdsByFolderIdAsync(Guid folderId, SongSortOrder sortOrder);
     Task<List<Guid>> GetAllSongIdsByArtistIdAsync(Guid artistId, SongSortOrder sortOrder);
@@ -53,7 +67,12 @@ public interface ILibraryReader {
     Task<IEnumerable<Song>> SearchSongsInFolderAsync(Guid folderId, string searchTerm);
     Task<IEnumerable<Song>> SearchSongsInAlbumAsync(Guid albumId, string searchTerm);
     Task<IEnumerable<Song>> SearchSongsInArtistAsync(Guid artistId, string searchTerm);
-    Task<PagedResult<Song>> SearchSongsInFolderPagedAsync(Guid folderId, string searchTerm, int pageNumber, int pageSize);
+
+    Task<PagedResult<Song>> SearchSongsInFolderPagedAsync(Guid folderId, string searchTerm, int pageNumber,
+        int pageSize);
+
     Task<PagedResult<Song>> SearchSongsInAlbumPagedAsync(Guid albumId, string searchTerm, int pageNumber, int pageSize);
-    Task<PagedResult<Song>> SearchSongsInArtistPagedAsync(Guid artistId, string searchTerm, int pageNumber, int pageSize);
+
+    Task<PagedResult<Song>> SearchSongsInArtistPagedAsync(Guid artistId, string searchTerm, int pageNumber,
+        int pageSize);
 }

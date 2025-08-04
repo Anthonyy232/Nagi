@@ -2,14 +2,11 @@
 
 #nullable disable
 
-namespace Nagi.Core.Data.Migrations
-{
+namespace Nagi.Core.Data.Migrations {
     /// <inheritdoc />
-    public partial class AddLrcFilePathToSong : Migration
-    {
+    public partial class AddLrcFilePathToSong : Migration {
         /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
+        protected override void Up(MigrationBuilder migrationBuilder) {
             migrationBuilder.AddColumn<string>(
                 name: "LrcFilePath",
                 table: "Songs",
@@ -18,8 +15,7 @@ namespace Nagi.Core.Data.Migrations
         }
 
         /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
+        protected override void Down(MigrationBuilder migrationBuilder) {
             migrationBuilder.DropColumn(
                 name: "LrcFilePath",
                 table: "Songs");

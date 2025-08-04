@@ -1,16 +1,12 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Nagi.Core.Data.Migrations
-{
+namespace Nagi.Core.Data.Migrations {
     /// <inheritdoc />
-    public partial class AddMetadataCheckedTimestampToArtist : Migration
-    {
+    public partial class AddMetadataCheckedTimestampToArtist : Migration {
         /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
+        protected override void Up(MigrationBuilder migrationBuilder) {
             migrationBuilder.AddColumn<DateTime>(
                 name: "MetadataLastCheckedUtc",
                 table: "Artists",
@@ -19,8 +15,7 @@ namespace Nagi.Core.Data.Migrations
         }
 
         /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
+        protected override void Down(MigrationBuilder migrationBuilder) {
             migrationBuilder.DropColumn(
                 name: "MetadataLastCheckedUtc",
                 table: "Artists");

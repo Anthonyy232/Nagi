@@ -130,11 +130,11 @@
                             CommandParameter="{x:Bind}"
                             Style="{StaticResource SongListViewPageSongPlayButtonStyle}">
                             <Border Width="42" Height="42" CornerRadius="12"
-                                Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneTime}">
+                                    Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
                                 <controls:ImageEx
-                                IsCacheEnabled="True"
-                                Stretch="UniformToFill"
-                                Source="{x:Bind AlbumArtUriFromTrack, Converter={StaticResource StringToUriConverter}, FallbackValue=null}" />
+                                    IsCacheEnabled="True"
+                                    Stretch="UniformToFill"
+                                    Source="{x:Bind AlbumArtUriFromTrack, Converter={StaticResource StringToUriConverter}, FallbackValue=null}" />
                             </Border>
                         </Button>
 

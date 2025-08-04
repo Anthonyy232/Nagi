@@ -7,7 +7,6 @@
     xmlns:controls="using:Microsoft.UI.Xaml.Controls"
     xmlns:localControls="using:Nagi.WinUI.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:media="using:Microsoft.UI.Xaml.Media"
     xmlns:imageEx="using:ImageEx"
     xmlns:models="using:Nagi.Core.Models"
     mc:Ignorable="d">
@@ -332,9 +331,7 @@
                                             Content="{Binding ArtistName, Mode=OneWay}"
                                             Command="{Binding GoToArtistCommand}"
                                             CommandParameter="{Binding CurrentPlayingTrack, Mode=OneWay}"
-                                            Visibility="{Binding CurrentPlayingTrack, Converter={StaticResource ObjectToBooleanConverter}, Mode=OneWay}"
-                                            HorizontalAlignment="Left"
-                                            VerticalAlignment="Center" />
+                                            Visibility="{Binding CurrentPlayingTrack, Converter={StaticResource ObjectToBooleanConverter}, Mode=OneWay}" />
                                     </StackPanel>
                                 </Grid>
 
@@ -409,9 +406,9 @@
                                         <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
                                         <Button.Flyout>
                                             <Flyout x:Name="QueueFlyout"
-                                                Placement="Top"
-                                                Opened="QueueFlyout_Opened"
-                                                Closed="QueueFlyout_Closed">
+                                                    Placement="Top"
+                                                    Opened="QueueFlyout_Opened"
+                                                    Closed="QueueFlyout_Closed">
                                                 <Grid Width="300" Height="400">
                                                     <Grid.RowDefinitions>
                                                         <RowDefinition Height="Auto" />

@@ -15,8 +15,6 @@
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <converters:BooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" Invert="True" />
         <converters:StringToUriConverter x:Key="StringToUriConverter" />
-        <converters:NullOrEmptyStringToVisibilityConverter x:Key="NullToCollapsedConverter" />
-        <converters:NullOrEmptyStringToVisibilityConverter x:Key="NullToVisibleConverter" Invert="True" />
         <converters:BooleanToInverseBooleanConverter x:Key="BooleanToInverseBooleanConverter" />
     </Page.Resources>
 
@@ -60,8 +58,7 @@
                                         Command="{Binding ViewModel.PlayArtistCommand, ElementName=ArtistPageRoot}"
                                         CommandParameter="{x:Bind Id}"
                                         IsEnabled="{Binding ViewModel.IsLoading, ElementName=ArtistPageRoot, Converter={StaticResource BooleanToInverseBooleanConverter}}"
-                                        Text="Play">
-                                    </MenuFlyoutItem>
+                                        Text="Play" />
                                 </MenuFlyout>
                             </Grid.ContextFlyout>
                             <Grid.RowDefinitions>

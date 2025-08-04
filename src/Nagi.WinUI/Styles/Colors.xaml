@@ -21,14 +21,14 @@
         TintOpacity="0.15" />
 
     <!-- Windows 10 compatible acrylic brush. -->
-    <SolidColorBrush 
-    x:Key="Win10AcrylicBrush" 
-    Color="{Binding Color, Source={StaticResource AppPrimaryColorBrush}, Converter={StaticResource SubtleDarkenConverter}}" />
+    <SolidColorBrush
+        x:Key="Win10AcrylicBrush"
+        Color="{Binding Color, Source={StaticResource AppPrimaryColorBrush}, Converter={StaticResource SubtleDarkenConverter}}" />
 
 
     <!-- No transparency brush. -->
-    <SolidColorBrush 
-        x:Key="NonTransparentBrush" 
+    <SolidColorBrush
+        x:Key="NonTransparentBrush"
         Color="{Binding Color, Source={StaticResource AppPrimaryColorBrush}, Converter={StaticResource SubtleDarkenConverter}}" />
 
 </ResourceDictionary>
