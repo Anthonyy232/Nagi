@@ -94,35 +94,35 @@ jobs:
   # JOB 2: Create GitHub Release (Continuous Deployment)
   # This job ONLY runs when a tag is pushed, creating a public-facing release.
   # =====================================================================================
-  create-github-release:
-    name: Create GitHub Release
-    runs-on: windows-latest
-    needs: build-and-pack # Ensures this job waits for all builds to complete successfully.
-    permissions:
-      contents: write # Grants permission to create releases and upload assets
+create-github-release:
+  name: Create GitHub Release
+  runs-on: windows-latest
+  needs: build-and-pack # Ensures this job waits for all builds to complete successfully.
+  permissions:
+    contents: write # Grants permission to create releases and upload assets
 
-    # This condition is the gatekeeper for CD. It ensures this job is only executed for tag pushes.
-    if: startsWith(github.ref, 'refs/tags/')
+  # This condition is the gatekeeper for CD. It ensures this job is only executed for tag pushes.
+  if: startsWith(github.ref, 'refs/tags/')
 
-    steps:
-      # Step 1: Prepare the release environment
-      - name: Install/Update Velopack CLI (vpk)
-        run: dotnet tool update -g vpk --prerelease
+  steps:
+    # Step 1: Prepare the release environment
+    - name: Install/Update Velopack CLI (vpk)
+      run: dotnet tool update -g vpk --prerelease
 
-      # Step 2: Consolidate packages from all build platforms
-      - name: Download all Velopack artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: ./VeloPack-Release-Assets
-          pattern: VeloPack-Release-Assets-*
-          merge-multiple: true
+    # Step 2: Consolidate packages from all build platforms
+    - name: Download all Velopack artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: ./VeloPack-Release-Assets
+        pattern: VeloPack-Release-Assets-*
+        merge-multiple: true
 
-      # Step 3: Publish the consolidated packages to a GitHub Release
-      - name: Publish assets to GitHub Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: >
-          vpk github --repoUrl https://github.com/${{ github.repository }}
-          --token ${{ env.GITHUB_TOKEN }}
-          --releaseName "Version ${{ github.ref_name }}"
-          ./VeloPack-Release-Assets
+    # Step 3: Publish the consolidated packages to a GitHub Release
+    - name: Publish assets to GitHub Release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: >
+        vpk upload github --repoUrl https://github.com/${{ github.repository }}
+        --token ${{ env.GITHUB_TOKEN }}
+        --releaseName "Version ${{ github.ref_name }}"
+        ./VeloPack-Release-Assets
