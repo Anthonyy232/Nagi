@@ -35,8 +35,6 @@ jobs:
         id: get_version
         shell: bash
         run: |
-          # Extracts the 4-part version from project properties and formats it into the 3-part
-          # semantic version (e.g., '1.2.3.0' -> '1.2.3') required by Velopack.
           four_part_version=$(grep -oE '<AppxPackageVersion>[^<]+' Directory.Build.props | sed 's/<AppxPackageVersion>//')
           three_part_version=$(echo "$four_part_version" | sed 's/\.[0-9]\+$//')
           echo "version=$three_part_version" >> $GITHUB_OUTPUT
@@ -53,8 +51,6 @@ jobs:
       - name: Create appsettings.json from repository secrets
         shell: pwsh
         run: |
-          # Injects sensitive API keys and configuration into the appsettings.json file at build time.
-          # This avoids committing secret keys directly to the source code.
           echo '{
             "Discord": {
               "AppId": "${{ secrets.NAGI_DISCORD_KEY }}"
@@ -69,9 +65,6 @@ jobs:
       # Step 3: Build and Package the application
       - name: Build and Publish Application
         env:
-          # This provides the GITHUB_TOKEN to the 'dotnet publish' command. This allows the
-          # implicit 'dotnet restore' step to authenticate with your private GitHub Packages
-          # feed and download the LibVLC package, fixing the 401 Unauthorized error.
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: >
           dotnet publish src/Nagi.WinUI/Nagi.WinUI.csproj
@@ -121,18 +114,15 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: ./VeloPack-Release-Assets
-          # This pattern downloads all artifacts from the 'build-and-pack' job matrix
-          # and merges them into a single directory for processing.
           pattern: VeloPack-Release-Assets-*
           merge-multiple: true
 
       # Step 3: Publish the consolidated packages to a GitHub Release
       - name: Publish assets to GitHub Release
         env:
-          # The GITHUB_TOKEN is automatically provided by GitHub Actions and is required by 'vpk'
-          # to get permissions to create a release on your repository.
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          # This command creates a new draft release on GitHub, uploads all setup files and nupkgs,
-          # and generates a master RELEASES file for multi-architecture updates.
-          vpk github --repoUrl https://github.com/${{ github.repository }} --token ${{ env.GITHUB_TOKEN }} --releaseName "Version ${{ github.ref_name }}" ./VeloPack-Release-Assets
+        run: >
+          vpk github --repoUrl https://github.com/${{ github.repository }}
+          --token ${{ env.GITHUB_TOKEN }}
+          --releaseName "Version ${{ github.ref_name }}"
+          ./VeloPack-Release-Assets
