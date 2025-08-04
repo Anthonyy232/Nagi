@@ -7,8 +7,4 @@
     mc:Ignorable="d"
     Title="Nagi">
 
-    <Window.SystemBackdrop>
-        <MicaBackdrop />
-    </Window.SystemBackdrop>
-
 </Window>

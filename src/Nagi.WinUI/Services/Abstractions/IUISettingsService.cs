@@ -1,5 +1,6 @@
 ﻿using Microsoft.UI.Xaml;
 using Nagi.Core.Services.Abstractions;
+using Nagi.WinUI.Models;
 using Nagi.WinUI.Navigation;
 using System;
 using System.Collections.Generic;
@@ -221,6 +222,21 @@ public interface IUISettingsService : ISettingsService {
     /// </summary>
     /// <param name="version">The version string to save, or null to clear the skipped version.</param>
     Task SetLastSkippedUpdateVersionAsync(string? version);
+
+    /// <summary>
+    /// Gets the currently configured window backdrop material.
+    /// </summary>
+    Task<BackdropMaterial> GetBackdropMaterialAsync();
+
+    /// <summary>
+    /// Saves the selected window backdrop material.
+    /// </summary>
+    Task SetBackdropMaterialAsync(BackdropMaterial material);
+
+    /// <summary>
+    /// Occurs when the window backdrop material setting has changed.
+    /// </summary>
+    event Action<BackdropMaterial>? BackdropMaterialChanged;
 
     /// <summary>
     /// Resets all settings to their default values.

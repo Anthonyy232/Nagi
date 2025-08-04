@@ -5,6 +5,7 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.WinUI.Navigation;
+using Nagi.WinUI.Models;
 using Nagi.WinUI.Services.Abstractions;
 using System;
 using System.Collections.Generic;
@@ -36,6 +37,7 @@ public class SettingsService : IUISettingsService {
     private const string ShuffleStateKey = "MusicShuffleState";
     private const string RepeatModeKey = "MusicRepeatMode";
     private const string ThemeKey = "AppTheme";
+    private const string BackdropMaterialKey = "BackdropMaterial";
     private const string DynamicThemingKey = "DynamicThemingEnabled";
     private const string PlayerAnimationEnabledKey = "PlayerAnimationEnabled";
     private const string RestorePlaybackStateEnabledKey = "RestorePlaybackStateEnabled";
@@ -79,6 +81,7 @@ public class SettingsService : IUISettingsService {
     public event Action? LastFmSettingsChanged;
     public event Action<bool>? DiscordRichPresenceSettingChanged;
     public event Action<bool>? TransparencyEffectsSettingChanged;
+    public event Action<BackdropMaterial>? BackdropMaterialChanged;
 
     public SettingsService(IPathConfiguration pathConfig, ICredentialLockerService credentialLockerService) {
         _pathConfig = pathConfig ?? throw new ArgumentNullException(nameof(pathConfig));
@@ -293,6 +296,7 @@ public class SettingsService : IUISettingsService {
         await SetFetchOnlineMetadataEnabledAsync(false);
         await SetDiscordRichPresenceEnabledAsync(false);
         await SetThemeAsync(ElementTheme.Default);
+        await SetBackdropMaterialAsync(BackdropMaterial.Mica);
         await SetDynamicThemingAsync(true);
         await SetRestorePlaybackStateEnabledAsync(true);
         await SetStartMinimizedEnabledAsync(false);
@@ -482,6 +486,22 @@ public class SettingsService : IUISettingsService {
 
     public Task SetThemeAsync(ElementTheme theme) => SetValueAsync(ThemeKey, theme.ToString());
 
+    /// <summary>
+    /// Gets the currently configured window backdrop material.
+    /// </summary>
+    public async Task<BackdropMaterial> GetBackdropMaterialAsync() {
+        await EnsureUnpackagedSettingsLoadedAsync();
+        return GetEnumValue(BackdropMaterialKey, BackdropMaterial.Mica);
+    }
+
+    /// <summary>
+    /// Saves the selected window backdrop material and notifies listeners.
+    /// </summary>
+    public async Task SetBackdropMaterialAsync(BackdropMaterial material) {
+        await SetValueAsync(BackdropMaterialKey, material.ToString());
+        BackdropMaterialChanged?.Invoke(material);
+    }
+
     public async Task<bool> GetDynamicThemingAsync() {
         await EnsureUnpackagedSettingsLoadedAsync();
         return GetValue(DynamicThemingKey, true);
@@ -551,6 +571,8 @@ public class SettingsService : IUISettingsService {
         return GetValue(HideToTrayEnabledKey, true);
     }
 
+
+
     public Task SetHideToTrayEnabledAsync(bool isEnabled) => SetValueAndNotifyAsync(HideToTrayEnabledKey, isEnabled, true, HideToTraySettingChanged);
 
     public async Task<bool> GetMinimizeToMiniPlayerEnabledAsync() {
@@ -583,7 +605,7 @@ public class SettingsService : IUISettingsService {
 
     public async Task<bool> GetCheckForUpdatesEnabledAsync() {
         #if MSIX_PACKAGE
-                return false;
+                        return false;
         #else
                 await EnsureUnpackagedSettingsLoadedAsync();
                 return GetValue(CheckForUpdatesEnabledKey, true);
@@ -592,7 +614,7 @@ public class SettingsService : IUISettingsService {
 
     public Task SetCheckForUpdatesEnabledAsync(bool isEnabled) {
         #if MSIX_PACKAGE
-                return Task.CompletedTask;
+                        return Task.CompletedTask;
         #else
                 return SetValueAsync(CheckForUpdatesEnabledKey, isEnabled);
         #endif
@@ -600,7 +622,7 @@ public class SettingsService : IUISettingsService {
 
     public async Task<string?> GetLastSkippedUpdateVersionAsync() {
         #if MSIX_PACKAGE
-                return null;
+                        return null;
         #else
                 await EnsureUnpackagedSettingsLoadedAsync();
                 return GetValue<string?>(LastSkippedUpdateVersionKey, null);
@@ -609,7 +631,7 @@ public class SettingsService : IUISettingsService {
 
     public Task SetLastSkippedUpdateVersionAsync(string? version) {
         #if MSIX_PACKAGE
-                return Task.CompletedTask;
+                        return Task.CompletedTask;
         #else
                 return SetValueAsync(LastSkippedUpdateVersionKey, version);
         #endif

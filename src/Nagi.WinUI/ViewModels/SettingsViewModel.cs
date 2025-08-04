@@ -13,6 +13,7 @@ using Windows.System;
 using Nagi.Core.Services.Abstractions;
 using Nagi.WinUI.Services.Abstractions;
 using Nagi.WinUI.Navigation;
+using Nagi.WinUI.Models;
 
 namespace Nagi.WinUI.ViewModels;
 
@@ -59,6 +60,12 @@ public partial class SettingsViewModel : ObservableObject, IDisposable {
 
     [ObservableProperty]
     public partial ElementTheme SelectedTheme { get; set; }
+
+    /// <summary>
+    /// Gets or sets the selected window backdrop material.
+    /// </summary>
+    [ObservableProperty]
+    public partial BackdropMaterial SelectedBackdropMaterial { get; set; }
 
     [ObservableProperty]
     public partial bool IsDynamicThemingEnabled { get; set; }
@@ -139,6 +146,11 @@ public partial class SettingsViewModel : ObservableObject, IDisposable {
     public List<ElementTheme> AvailableThemes { get; } = Enum.GetValues<ElementTheme>().ToList();
 
     /// <summary>
+    /// Gets the list of available backdrop materials for the window.
+    /// </summary>
+    public List<BackdropMaterial> AvailableBackdropMaterials { get; } = Enum.GetValues<BackdropMaterial>().ToList();
+
+    /// <summary>
     /// Gets the current version of the application.
     /// </summary>
     public string ApplicationVersion => _appInfoService.GetAppVersion();
@@ -162,6 +174,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable {
         }
 
         SelectedTheme = await _settingsService.GetThemeAsync();
+        SelectedBackdropMaterial = await _settingsService.GetBackdropMaterialAsync();
         IsDynamicThemingEnabled = await _settingsService.GetDynamicThemingAsync();
         IsPlayerAnimationEnabled = await _settingsService.GetPlayerAnimationEnabledAsync();
         IsShowLyricsOnPlayerEnabled = await _settingsService.GetShowLyricsOnPlayerEnabledAsync();
@@ -319,6 +332,11 @@ public partial class SettingsViewModel : ObservableObject, IDisposable {
     partial void OnSelectedThemeChanged(ElementTheme value) {
         if (_isInitializing) return;
         _ = ApplyAndSaveThemeAsync(value);
+    }
+
+    partial void OnSelectedBackdropMaterialChanged(BackdropMaterial value) {
+        if (_isInitializing) return;
+        _ = _settingsService.SetBackdropMaterialAsync(value);
     }
 
     private async Task ApplyAndSaveThemeAsync(ElementTheme theme) {

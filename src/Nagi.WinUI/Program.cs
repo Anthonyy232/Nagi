@@ -24,7 +24,7 @@ public static class Program {
     [STAThread]
     private static int Main(string[] args) {
         #if !MSIX_PACKAGE
-                    VelopackApp.Build().Run();
+            VelopackApp.Build().Run();
         #endif
 
         ComWrappersSupport.InitializeComWrappers();
