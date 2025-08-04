@@ -1,27 +1,39 @@
-name: Create Nagi Release with Velopack
+name: Nagi CI/CD with Velopack
 
 on:
+  # This single 'push' trigger handles both CI and CD scenarios.
+  # The workflow will execute if an event matches EITHER the branches filter OR the tags filter.
   push:
-    branches: [ master ]
+    branches:
+      - master
+    tags:
+      - '*.*.*' # Matches version tags like '1.1.0', '1.2.3', etc.
 
 jobs:
-  build-and-release:
+  # =====================================================================================
+  # JOB 1: Build and Package Application (Continuous Integration)
+  # This job runs for both CI and CD triggers to ensure a valid package is always ready.
+  # =====================================================================================
+  build-and-pack:
+    name: Build & Pack (${{ matrix.platform }})
     runs-on: windows-latest
-    
     strategy:
       matrix:
         platform: [win-x64, win-x86, win-arm64]
 
     steps:
-      - name: Checkout repository
+      # Step 1: Prepare the build environment
+      - name: Checkout repository source code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0 # Fetches all history, required for some versioning tools
 
-      - name: Get and Format Version from Project Properties
+      - name: Get and Format Application Version
         id: get_version
         shell: bash
         run: |
+          # Extracts the 4-part version from project properties and formats it into the 3-part
+          # semantic version (e.g., '1.2.3.0' -> '1.2.3') required by Velopack.
           four_part_version=$(grep -oE '<AppxPackageVersion>[^<]+' Directory.Build.props | sed 's/<AppxPackageVersion>//')
           three_part_version=$(echo "$four_part_version" | sed 's/\.[0-9]\+$//')
           echo "version=$three_part_version" >> $GITHUB_OUTPUT
@@ -31,12 +43,15 @@ jobs:
         with:
           dotnet-version: 9.0.x
 
-      - name: Install/Update vpk command-line tool
+      - name: Install/Update Velopack CLI (vpk)
         run: dotnet tool update -g vpk --prerelease
 
-      - name: Create appsettings.json from Secrets
+      # Step 2: Configure the application for release build
+      - name: Create appsettings.json from repository secrets
         shell: pwsh
         run: |
+          # Injects sensitive API keys and configuration into the appsettings.json file at build time.
+          # This avoids committing secret keys directly to the source code.
           echo '{
             "Discord": {
               "AppId": "${{ secrets.NAGI_DISCORD_KEY }}"
@@ -48,28 +63,66 @@ jobs:
             }
           }' > src/Nagi.WinUI/appsettings.json
 
-      - name: Restore Dependencies
-        run: dotnet restore src/Nagi.WinUI/Nagi.WinUI.csproj -r ${{ matrix.platform }} -p:Configuration=ReleaseUnpackaged
-        env:
-          GITHUB_USER: ${{ github.actor }}
-          GITHUB_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN }}
+      # Step 3: Build and Package the application
+      - name: Build and Publish Application
+        run: >
+          dotnet publish src/Nagi.WinUI/Nagi.WinUI.csproj
+          -c ReleaseUnpackaged
+          -r ${{ matrix.platform }}
+          --self-contained
+          -o ./publish/${{ matrix.platform }}
 
-      - name: Build and Package Platform
-        shell: pwsh
-        run: |
-          $p = "${{ matrix.platform }}"
-          $publishDir = "./publish/$p"
-          $releaseDir = "./Releases/$p"
-          
-          echo "Building for $p..."
-          # The publish command still uses the simpler -c switch.
-          dotnet publish src/Nagi.WinUI/Nagi.WinUI.csproj -c ReleaseUnpackaged -r $p --self-contained -o $publishDir --no-restore
-          
-          echo "Packaging for $p..."
-          vpk pack --packId Nagi --packVersion ${{ steps.get_version.outputs.version }} --mainExe Nagi.exe --packDir $publishDir -o $releaseDir --channel $p --runtime $p
+      - name: Package with Velopack
+        run: >
+          vpk pack --packId Nagi
+          --packVersion ${{ steps.get_version.outputs.version }}
+          --mainExe Nagi.exe
+          --packDir ./publish/${{ matrix.platform }}
+          -o ./Releases/${{ matrix.platform }}
+          --channel ${{ matrix.platform }}
+          --runtime ${{ matrix.platform }}
 
-      - name: Upload Build Artifact
+      # Step 4: Store the packaged output for the release job
+      - name: Upload Velopack release artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: Nagi-Release-${{ steps.get_version.outputs.version }}-${{ matrix.platform }}
+          name: VeloPack-Release-Assets-${{ matrix.platform }}
           path: ./Releases/${{ matrix.platform }}/
+
+  # =====================================================================================
+  # JOB 2: Create GitHub Release (Continuous Deployment)
+  # This job ONLY runs when a tag is pushed, creating a public-facing release.
+  # =====================================================================================
+  create-github-release:
+    name: Create GitHub Release
+    runs-on: windows-latest
+    needs: build-and-pack # Ensures this job waits for all builds to complete successfully.
+
+    # This condition is the gatekeeper for CD. It ensures this job is only executed for tag pushes.
+    if: startsWith(github.ref, 'refs/tags/')
+
+    steps:
+      # Step 1: Prepare the release environment
+      - name: Install/Update Velopack CLI (vpk)
+        run: dotnet tool update -g vpk --prerelease
+
+      # Step 2: Consolidate packages from all build platforms
+      - name: Download all Velopack artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./VeloPack-Release-Assets
+          # This pattern downloads all artifacts from the 'build-and-pack' job matrix
+          # and merges them into a single directory for processing.
+          pattern: VeloPack-Release-Assets-*
+          merge-multiple: true
+
+      # Step 3: Publish the consolidated packages to a GitHub Release
+      - name: Publish assets to GitHub Release
+        env:
+          # The GITHUB_TOKEN is automatically provided by GitHub Actions and is required by 'vpk'
+          # to get permissions to create a release on your repository.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # This command creates a new draft release on GitHub, uploads all setup files and nupkgs,
+          # and generates a master RELEASES file for multi-architecture updates.
+          vpk github --repoUrl https://github.com/${{ github.repository }} --token ${{ env.GITHUB_TOKEN }} --releaseName "Version ${{ github.ref_name }}" ./VeloPack-Release-Assets
