@@ -1,46 +1,140 @@
-# =====================================================================================
-# JOB 2: Create GitHub Release (Continuous Deployment)
-# This job ONLY runs when a tag is pushed, creating a public-facing release.
-# =====================================================================================
-create-github-release:
-  name: Create GitHub Release
-  runs-on: windows-latest
-  needs: build-and-pack # Ensures this job waits for all builds to complete successfully.
-  permissions:
-    contents: write # Grants permission to create releases and upload assets
+# .github/workflows/build.yml
 
-  # This condition is the gatekeeper for CD. It ensures this job is only executed for tag pushes.
-  if: startsWith(github.ref, 'refs/tags/')
+name: Nagi CI/CD with Velopack
 
-  steps:
-    # Step 1: Prepare the release environment
-    - name: Install/Update Velopack CLI (vpk)
-      run: dotnet tool update -g vpk --prerelease
+on:
+  # This single 'push' trigger handles both CI and CD scenarios.
+  # The workflow will execute if an event matches EITHER the branches filter OR the tags filter.
+  push:
+    branches:
+      - master
+    tags:
+      - '*.*.*' # Matches version tags like '1.1.0', '1.2.3', etc.
 
-    # Step 2: Consolidate packages from all build platforms
-    - name: Download all Velopack artifacts
-      uses: actions/download-artifact@v4
-      with:
-        path: ./VeloPack-Release-Assets
-        pattern: VeloPack-Release-Assets-*
-        merge-multiple: true
+jobs:
+  # =====================================================================================
+  # JOB 1: Build and Package Application (Continuous Integration)
+  # This job runs for both CI and CD triggers to ensure a valid package is always ready.
+  # =====================================================================================
+  build-and-pack:
+    name: Build & Pack (${{ matrix.platform }})
+    runs-on: windows-latest
+    permissions:
+      contents: read
+      packages: read # Grants permission to read from GitHub Packages for private dependencies
+    strategy:
+      matrix:
+        platform: [win-x64, win-x86, win-arm64]
 
-    # Step 3: Publish the consolidated packages to a GitHub Release
-    - name: Publish assets to GitHub Release
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      shell: pwsh
-      run: |
-        # Define the list of platforms/channels that were built in the previous job.
-        $platforms = "win-x64", "win-x86", "win-arm64"
+    steps:
+      # Step 1: Prepare the build environment
+      - name: Checkout repository source code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetches all history, required for some versioning tools
 
-        # Loop through each platform and upload its assets to the same GitHub release.
-        # vpk will create the release on the first run and add to it on subsequent runs.
-        foreach ($p in $platforms) {
-          echo "Uploading assets for channel: $p"
-          vpk upload github --repoUrl https://github.com/${{ github.repository }} `
-            --token ${{ env.GITHUB_TOKEN }} `
-            --releaseName "Version ${{ github.ref_name }}" `
-            --channel $p `
-            -o ./VeloPack-Release-Assets
-        }
+      - name: Get and Format Application Version
+        id: get_version
+        shell: bash
+        run: |
+          four_part_version=$(grep -oE '<AppxPackageVersion>[^<]+' Directory.Build.props | sed 's/<AppxPackageVersion>//')
+          three_part_version=$(echo "$four_part_version" | sed 's/\.[0-9]\+$//')
+          echo "version=$three_part_version" >> $GITHUB_OUTPUT
+
+      - name: Install .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Install/Update Velopack CLI (vpk)
+        run: dotnet tool update -g vpk --prerelease
+
+      # Step 2: Configure the application for release build
+      - name: Create appsettings.json from repository secrets
+        shell: pwsh
+        run: |
+          echo '{
+            "Discord": {
+              "AppId": "${{ secrets.NAGI_DISCORD_KEY }}"
+            },
+            "NagiApiServer": {
+              "Url": "https://nagiflexapiserver.azurewebsites.net",
+              "ApiKey": "${{ secrets.NAGI_API_KEY }}",
+              "SubscriptionKey": "${{ secrets.NAGI_SUBSCRIPTION_KEY }}"
+            }
+          }' > src/Nagi.WinUI/appsettings.json
+
+      # Step 3: Build and Package the application
+      - name: Build and Publish Application
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: >
+          dotnet publish src/Nagi.WinUI/Nagi.WinUI.csproj
+          -c ReleaseUnpackaged
+          -r ${{ matrix.platform }}
+          --self-contained
+          -o ./publish/${{ matrix.platform }}
+
+      - name: Package with Velopack
+        run: >
+          vpk pack --packId Nagi
+          --packVersion ${{ steps.get_version.outputs.version }}
+          --mainExe Nagi.exe
+          --packDir ./publish/${{ matrix.platform }}
+          -o ./Releases/${{ matrix.platform }}
+          --channel ${{ matrix.platform }}
+          --runtime ${{ matrix.platform }}
+
+      # Step 4: Store the packaged output for the release job
+      - name: Upload Velopack release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: VeloPack-Release-Assets-${{ matrix.platform }}
+          path: ./Releases/${{ matrix.platform }}/
+
+  # =====================================================================================
+  # JOB 2: Create GitHub Release (Continuous Deployment)
+  # This job ONLY runs when a tag is pushed, creating a public-facing release.
+  # =====================================================================================
+  create-github-release:
+    name: Create GitHub Release
+    runs-on: windows-latest
+    needs: build-and-pack # Ensures this job waits for all builds to complete successfully.
+    permissions:
+      contents: write # Grants permission to create releases and upload assets
+
+    # This condition is the gatekeeper for CD. It ensures this job is only executed for tag pushes.
+    if: startsWith(github.ref, 'refs/tags/')
+
+    steps:
+      # Step 1: Prepare the release environment
+      - name: Install/Update Velopack CLI (vpk)
+        run: dotnet tool update -g vpk --prerelease
+
+      # Step 2: Consolidate packages from all build platforms
+      - name: Download all Velopack artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./VeloPack-Release-Assets
+          pattern: VeloPack-Release-Assets-*
+          merge-multiple: true
+
+      # Step 3: Publish the consolidated packages to a GitHub Release
+      - name: Publish assets to GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: pwsh
+        run: |
+          # Define the list of platforms/channels that were built in the previous job.
+          $platforms = "win-x64", "win-x86", "win-arm64"
+
+          # Loop through each platform and upload its assets to the same GitHub release.
+          # vpk will create the release on the first run and add to it on subsequent runs.
+          foreach ($p in $platforms) {
+            echo "Uploading assets for channel: $p"
+            vpk upload github --repoUrl https://github.com/${{ github.repository }} `
+              --token ${{ env.GITHUB_TOKEN }} `
+              --releaseName "Version ${{ github.ref_name }}" `
+              --channel $p `
+              -o ./VeloPack-Release-Assets
+          }
