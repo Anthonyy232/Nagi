@@ -1,9 +1,9 @@
-﻿using System;
-using Windows.UI;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Nagi.Core.Services.Abstractions;
 using Nagi.WinUI.Services.Abstractions;
+using System;
+using Windows.UI;
 
 namespace Nagi.WinUI.Services.Implementations;
 

@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
+using Nagi.WinUI.Models;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -310,6 +311,9 @@ public class StringToFontFamilyConverter : IValueConverter {
 /// <summary>
 /// Selects a style based on whether the bound boolean value is true or false.
 /// </summary>
+/// <summary>
+/// Selects a style based on whether the bound boolean value is true or false.
+/// </summary>
 public class ActiveLyricToStyleConverter : IValueConverter {
     /// <summary>
     /// Gets or sets the style to apply when the bound value is true.
@@ -370,6 +374,28 @@ public class ColorBlendConverter : IValueConverter {
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, string language) {
+        throw new NotImplementedException();
+    }
+}
+
+/// <summary>
+/// Converts a BackdropMaterial enum value to a user-friendly string for display in the UI.
+/// </summary>
+public class BackdropMaterialToStringConverter : IValueConverter {
+    public object Convert(object value, Type targetType, object parameter, string language) {
+        if (value is BackdropMaterial material) {
+            return material switch {
+                BackdropMaterial.Mica => "Mica",
+                BackdropMaterial.MicaAlt => "Mica Alt",
+                BackdropMaterial.Acrylic => "Acrylic",
+                _ => material.ToString()
+            };
+        }
+        return string.Empty;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, string language) {
+        // This converter is only used for one-way binding, so ConvertBack is not needed.
         throw new NotImplementedException();
     }
 }
