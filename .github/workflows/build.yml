@@ -125,16 +125,29 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: pwsh
         run: |
-          # Define the list of platforms/channels that were built in the previous job.
           $platforms = "win-x64", "win-x86", "win-arm64"
+          $isFirst = $true
 
-          # Loop through each platform and upload its assets to the same GitHub release.
-          # vpk will create the release on the first run and add to it on subsequent runs.
           foreach ($p in $platforms) {
             echo "Uploading assets for channel: $p"
-            vpk upload github --repoUrl https://github.com/${{ github.repository }} `
-              --token ${{ env.GITHUB_TOKEN }} `
-              --releaseName "Version ${{ github.ref_name }}" `
-              --channel $p `
-              -o ./VeloPack-Release-Assets
+
+            # Build the command arguments dynamically using a PowerShell hashtable
+            $vpkArgs = @{
+                repoUrl = "https://github.com/${{ github.repository }}"
+                token = "${{ env.GITHUB_TOKEN }}"
+                releaseName = "Version ${{ github.ref_name }}"
+                channel = $p
+                o = "./VeloPack-Release-Assets"
+            }
+
+            # For the second iteration onwards, add the crucial '--add-to-existing' flag
+            if (-not $isFirst) {
+                $vpkArgs.Add("addToExisting", $true)
+            }
+
+            # Run the command, "splatting" the hashtable into parameters
+            vpk upload github @vpkArgs
+
+            # Set the flag to false for all subsequent loops
+            $isFirst = $false
           }
