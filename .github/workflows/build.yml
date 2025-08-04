@@ -17,6 +17,9 @@ jobs:
   build-and-pack:
     name: Build & Pack (${{ matrix.platform }})
     runs-on: windows-latest
+    permissions:
+      contents: read
+      packages: read # Grants permission to read from GitHub Packages for private dependencies
     strategy:
       matrix:
         platform: [win-x64, win-x86, win-arm64]
@@ -65,6 +68,11 @@ jobs:
 
       # Step 3: Build and Package the application
       - name: Build and Publish Application
+        env:
+          # This provides the GITHUB_TOKEN to the 'dotnet publish' command. This allows the
+          # implicit 'dotnet restore' step to authenticate with your private GitHub Packages
+          # feed and download the LibVLC package, fixing the 401 Unauthorized error.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: >
           dotnet publish src/Nagi.WinUI/Nagi.WinUI.csproj
           -c ReleaseUnpackaged
@@ -97,6 +105,8 @@ jobs:
     name: Create GitHub Release
     runs-on: windows-latest
     needs: build-and-pack # Ensures this job waits for all builds to complete successfully.
+    permissions:
+      contents: write # Grants permission to create releases and upload assets
 
     # This condition is the gatekeeper for CD. It ensures this job is only executed for tag pushes.
     if: startsWith(github.ref, 'refs/tags/')
