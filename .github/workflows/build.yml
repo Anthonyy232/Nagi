@@ -3,35 +3,28 @@
 name: Nagi CI/CD with Velopack
 
 on:
-  # This single 'push' trigger handles both CI and CD scenarios.
-  # The workflow will execute if an event matches EITHER the branches filter OR the tags filter.
   push:
     branches:
       - master
     tags:
-      - '*.*.*' # Matches version tags like '1.1.0', '1.2.3', etc.
+      - '*.*.*'
 
 jobs:
-  # =====================================================================================
-  # JOB 1: Build and Package Application (Continuous Integration)
-  # This job runs for both CI and CD triggers to ensure a valid package is always ready.
-  # =====================================================================================
   build-and-pack:
     name: Build & Pack (${{ matrix.platform }})
     runs-on: windows-latest
     permissions:
       contents: read
-      packages: read # Grants permission to read from GitHub Packages for private dependencies
+      packages: read
     strategy:
       matrix:
         platform: [win-x64, win-x86, win-arm64]
 
     steps:
-      # Step 1: Prepare the build environment
       - name: Checkout repository source code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Fetches all history, required for some versioning tools
+          fetch-depth: 0
 
       - name: Get and Format Application Version
         id: get_version
@@ -49,7 +42,6 @@ jobs:
       - name: Install/Update Velopack CLI (vpk)
         run: dotnet tool update -g vpk --prerelease
 
-      # Step 2: Configure the application for release build
       - name: Create appsettings.json from repository secrets
         shell: pwsh
         run: |
@@ -64,7 +56,6 @@ jobs:
             }
           }' > src/Nagi.WinUI/appsettings.json
 
-      # Step 3: Build and Package the application
       - name: Build and Publish Application
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -85,33 +76,24 @@ jobs:
           --channel ${{ matrix.platform }}
           --runtime ${{ matrix.platform }}
 
-      # Step 4: Store the packaged output for the release job
       - name: Upload Velopack release artifacts
         uses: actions/upload-artifact@v4
         with:
           name: VeloPack-Release-Assets-${{ matrix.platform }}
           path: ./Releases/${{ matrix.platform }}/
 
-  # =====================================================================================
-  # JOB 2: Create GitHub Release (Continuous Deployment)
-  # This job ONLY runs when a tag is pushed, creating a public-facing release.
-  # =====================================================================================
   create-github-release:
     name: Create GitHub Release
     runs-on: windows-latest
-    needs: build-and-pack # Ensures this job waits for all builds to complete successfully.
+    needs: build-and-pack
     permissions:
-      contents: write # Grants permission to create releases and upload assets
-
-    # This condition is the gatekeeper for CD. It ensures this job is only executed for tag pushes.
+      contents: write
     if: startsWith(github.ref, 'refs/tags/')
 
     steps:
-      # Step 1: Prepare the release environment
       - name: Install/Update Velopack CLI (vpk)
         run: dotnet tool update -g vpk --prerelease
 
-      # Step 2: Consolidate packages from all build platforms
       - name: Download all Velopack artifacts
         uses: actions/download-artifact@v4
         with:
@@ -119,7 +101,6 @@ jobs:
           pattern: VeloPack-Release-Assets-*
           merge-multiple: true
 
-      # Step 3: Publish the consolidated packages to a GitHub Release
       - name: Publish assets to GitHub Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -131,23 +112,22 @@ jobs:
           foreach ($p in $platforms) {
             echo "Uploading assets for channel: $p"
 
-            # Build the command arguments dynamically using a PowerShell hashtable
-            $vpkArgs = @{
-                repoUrl = "https://github.com/${{ github.repository }}"
-                token = "${{ env.GITHUB_TOKEN }}"
-                releaseName = "Version ${{ github.ref_name }}"
-                channel = $p
-                o = "./VeloPack-Release-Assets"
-            }
+            # Explicitly build the command string to ensure correct argument formatting.
+            # Note the use of backticks ` to escape the double quotes inside the string.
+            $command = "vpk upload github --repoUrl `"https://github.com/${{ github.repository }}`" `
+              --token `"${{ env.GITHUB_TOKEN }}`" `
+              --releaseName `"Version ${{ github.ref_name }}`" `
+              --channel `"$p`" `
+              -o `"./VeloPack-Release-Assets`""
 
-            # For the second iteration onwards, add the crucial '--add-to-existing' flag
+            # For the second iteration onwards, append the crucial flag.
             if (-not $isFirst) {
-                $vpkArgs.Add("addToExisting", $true)
+              $command += " --add-to-existing"
             }
 
-            # Run the command, "splatting" the hashtable into parameters
-            vpk upload github @vpkArgs
+            # Execute the command string.
+            Invoke-Expression -Command $command
 
-            # Set the flag to false for all subsequent loops
+            # Set the flag to false for all subsequent loops.
             $isFirst = $false
           }
