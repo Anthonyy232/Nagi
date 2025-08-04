@@ -16,7 +16,6 @@
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <converters:BooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" Invert="True" />
         <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
-        <converters:StringToVisibilityConverter x:Key="InverseStringToVisibilityConverter" Invert="True" />
         <converters:BooleanToInverseBooleanConverter x:Key="BooleanToInverseBooleanConverter" />
         <converters:StringToUriConverter x:Key="StringToUriConverter" />
     </Page.Resources>
@@ -81,8 +80,7 @@
                                     Command="{Binding DataContext.PlayPlaylistCommand, ElementName=PlaylistPageRoot}"
                                     CommandParameter="{x:Bind Id}"
                                     IsEnabled="{Binding DataContext.IsAnyOperationInProgress, ElementName=PlaylistPageRoot, Converter={StaticResource BooleanToInverseBooleanConverter}}"
-                                    Text="Play">
-                                </MenuFlyoutItem>
+                                    Text="Play" />
                                 <MenuFlyoutItem Click="RenamePlaylist_Click" Text="Rename" />
                                 <MenuFlyoutItem Click="ChangeCover_Click" Text="Change Cover" />
                                 <MenuFlyoutItem Click="DeletePlaylist_Click" Text="Delete" />

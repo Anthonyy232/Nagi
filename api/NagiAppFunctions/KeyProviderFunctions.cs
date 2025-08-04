@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using System.Threading.Tasks;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
@@ -11,57 +10,74 @@ using Microsoft.OpenApi.Models;
 namespace NagiAppFunctions;
 
 /// <summary>
-/// A DTO for the JSON response containing a configuration value.
+///     A DTO for the JSON response containing a configuration value.
 /// </summary>
-file class KeyResponse {
+file class KeyResponse
+{
     public string Value { get; set; } = string.Empty;
 }
 
 /// <summary>
-/// Provides secure endpoints for client applications to retrieve necessary third-party API keys.
+///     Provides secure endpoints for client applications to retrieve necessary third-party API keys.
 /// </summary>
-public class KeyProviderFunctions {
+public class KeyProviderFunctions
+{
     private readonly IConfiguration _config;
     private readonly ILogger<KeyProviderFunctions> _logger;
 
-    public KeyProviderFunctions(IConfiguration config, ILogger<KeyProviderFunctions> logger) {
+    public KeyProviderFunctions(IConfiguration config, ILogger<KeyProviderFunctions> logger)
+    {
         _config = config;
         _logger = logger;
     }
 
     [Function("GetLastFmKey")]
-    [OpenApiOperation(operationId: "GetLastFmKey", tags: new[] { "Keys" }, Summary = "Gets the Last.fm API Key")]
+    [OpenApiOperation("GetLastFmKey", new[] { "Keys" }, Summary = "Gets the Last.fm API Key")]
     [OpenApiSecurity("ApiKey", SecuritySchemeType.ApiKey, Name = "X-API-KEY", In = OpenApiSecurityLocationType.Header)]
-    [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(KeyResponse), Description = "A JSON object containing the Last.fm API Key.")]
-    [OpenApiResponseWithBody(statusCode: HttpStatusCode.ServiceUnavailable, contentType: "text/plain", bodyType: typeof(string), Description = "The requested key is not configured on the server.")]
+    [OpenApiResponseWithBody(HttpStatusCode.OK, "application/json", typeof(KeyResponse),
+        Description = "A JSON object containing the Last.fm API Key.")]
+    [OpenApiResponseWithBody(HttpStatusCode.ServiceUnavailable, "text/plain", typeof(string),
+        Description = "The requested key is not configured on the server.")]
     public async Task<HttpResponseData> GetLastFmKey(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "lastfm-key")] HttpRequestData req) {
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "lastfm-key")]
+        HttpRequestData req)
+    {
         return await CreateKeyResponseAsync(req, "LastFm:ApiKey", "Last.fm API Key");
     }
 
     [Function("GetLastFmSecretKey")]
-    [OpenApiOperation(operationId: "GetLastFmSecretKey", tags: new[] { "Keys" }, Summary = "Gets the Last.fm Shared Secret")]
+    [OpenApiOperation("GetLastFmSecretKey", new[] { "Keys" }, Summary = "Gets the Last.fm Shared Secret")]
     [OpenApiSecurity("ApiKey", SecuritySchemeType.ApiKey, Name = "X-API-KEY", In = OpenApiSecurityLocationType.Header)]
-    [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(KeyResponse), Description = "A JSON object containing the Last.fm Shared Secret.")]
-    [OpenApiResponseWithBody(statusCode: HttpStatusCode.ServiceUnavailable, contentType: "text/plain", bodyType: typeof(string), Description = "The requested key is not configured on the server.")]
+    [OpenApiResponseWithBody(HttpStatusCode.OK, "application/json", typeof(KeyResponse),
+        Description = "A JSON object containing the Last.fm Shared Secret.")]
+    [OpenApiResponseWithBody(HttpStatusCode.ServiceUnavailable, "text/plain", typeof(string),
+        Description = "The requested key is not configured on the server.")]
     public async Task<HttpResponseData> GetLastFmSecretKey(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "lastfm-secret-key")] HttpRequestData req) {
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "lastfm-secret-key")]
+        HttpRequestData req)
+    {
         return await CreateKeyResponseAsync(req, "LastFm:SharedSecret", "Last.fm Shared Secret");
     }
 
     [Function("GetSpotifyKey")]
-    [OpenApiOperation(operationId: "GetSpotifyKey", tags: new[] { "Keys" }, Summary = "Gets the Spotify Client ID and Secret, concatenated.")]
+    [OpenApiOperation("GetSpotifyKey", new[] { "Keys" },
+        Summary = "Gets the Spotify Client ID and Secret, concatenated.")]
     [OpenApiSecurity("ApiKey", SecuritySchemeType.ApiKey, Name = "X-API-KEY", In = OpenApiSecurityLocationType.Header)]
-    [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(KeyResponse), Description = "A JSON object containing the Spotify credentials in the format 'ClientId:ClientSecret'.")]
-    [OpenApiResponseWithBody(statusCode: HttpStatusCode.ServiceUnavailable, contentType: "text/plain", bodyType: typeof(string), Description = "The requested key is not configured on the server.")]
+    [OpenApiResponseWithBody(HttpStatusCode.OK, "application/json", typeof(KeyResponse),
+        Description = "A JSON object containing the Spotify credentials in the format 'ClientId:ClientSecret'.")]
+    [OpenApiResponseWithBody(HttpStatusCode.ServiceUnavailable, "text/plain", typeof(string),
+        Description = "The requested key is not configured on the server.")]
     public async Task<HttpResponseData> GetSpotifyKey(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "spotify-key")] HttpRequestData req) {
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "spotify-key")]
+        HttpRequestData req)
+    {
         // The client expects a single string "ClientId:ClientSecret".
         var clientId = _config["Spotify:ClientId"];
         var clientSecret = _config["Spotify:ClientSecret"];
         const string keyName = "Spotify ClientId/Secret";
 
-        if (string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(clientSecret)) {
+        if (string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(clientSecret))
+        {
             _logger.LogError("{KeyName} is not configured correctly on the server.", keyName);
             var errorResponse = req.CreateResponse(HttpStatusCode.ServiceUnavailable);
             await errorResponse.WriteStringAsync($"{keyName} is not configured on the server.");
@@ -74,16 +90,18 @@ public class KeyProviderFunctions {
     }
 
     /// <summary>
-    /// A generic helper to retrieve a configuration value and create an appropriate HTTP response.
+    ///     A generic helper to retrieve a configuration value and create an appropriate HTTP response.
     /// </summary>
     /// <param name="req">The incoming HTTP request data.</param>
     /// <param name="configPath">The path to the key in the application configuration (e.g., "LastFm:ApiKey").</param>
     /// <param name="keyName">A user-friendly name for the key, used in error messages.</param>
     /// <returns>An HttpResponseData object containing the key or an error.</returns>
-    private async Task<HttpResponseData> CreateKeyResponseAsync(HttpRequestData req, string configPath, string keyName) {
+    private async Task<HttpResponseData> CreateKeyResponseAsync(HttpRequestData req, string configPath, string keyName)
+    {
         var keyValue = _config[configPath];
 
-        if (string.IsNullOrEmpty(keyValue)) {
+        if (string.IsNullOrEmpty(keyValue))
+        {
             _logger.LogError("{KeyName} is not configured on the server. Path: {ConfigPath}", keyName, configPath);
             var errorResponse = req.CreateResponse(HttpStatusCode.ServiceUnavailable);
             await errorResponse.WriteStringAsync($"{keyName} is not configured on the server.");

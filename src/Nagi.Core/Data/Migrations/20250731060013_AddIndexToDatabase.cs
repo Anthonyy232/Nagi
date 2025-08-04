@@ -2,14 +2,11 @@
 
 #nullable disable
 
-namespace Nagi.Core.Data.Migrations
-{
+namespace Nagi.Core.Data.Migrations {
     /// <inheritdoc />
-    public partial class AddIndexToDatabase : Migration
-    {
+    public partial class AddIndexToDatabase : Migration {
         /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
+        protected override void Up(MigrationBuilder migrationBuilder) {
             migrationBuilder.CreateIndex(
                 name: "IX_Songs_AlbumId_DiscNumber_TrackNumber",
                 table: "Songs",
@@ -42,8 +39,7 @@ namespace Nagi.Core.Data.Migrations
         }
 
         /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
+        protected override void Down(MigrationBuilder migrationBuilder) {
             migrationBuilder.DropIndex(
                 name: "IX_Songs_AlbumId_DiscNumber_TrackNumber",
                 table: "Songs");

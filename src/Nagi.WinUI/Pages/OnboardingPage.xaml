@@ -81,7 +81,8 @@
                             Storyboard.TargetName="CallToActionPanel"
                             Storyboard.TargetProperty="Opacity"
                             From="0" To="1.0" Duration="0:0:0.3" />
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CallToActionPanel" Storyboard.TargetProperty="Visibility">
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CallToActionPanel"
+                                                       Storyboard.TargetProperty="Visibility">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
                         </ObjectAnimationUsingKeyFrames>
 
@@ -105,7 +106,8 @@
                             Storyboard.TargetName="ProgressPanel"
                             Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)"
                             To="0.9" Duration="0:0:0.4" />
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ProgressPanel" Storyboard.TargetProperty="Visibility">
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ProgressPanel"
+                                                       Storyboard.TargetProperty="Visibility">
                             <DiscreteObjectKeyFrame KeyTime="0:0:0.3" Value="Collapsed" />
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
@@ -124,7 +126,8 @@
                             Storyboard.TargetName="CallToActionPanel"
                             Storyboard.TargetProperty="Opacity"
                             To="0.0" Duration="0:0:0.3" />
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CallToActionPanel" Storyboard.TargetProperty="Visibility">
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CallToActionPanel"
+                                                       Storyboard.TargetProperty="Visibility">
                             <DiscreteObjectKeyFrame KeyTime="0:0:0.3" Value="Collapsed" />
                         </ObjectAnimationUsingKeyFrames>
 
@@ -148,7 +151,8 @@
                             Storyboard.TargetName="ProgressPanel"
                             Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)"
                             From="0.9" To="1.0" Duration="0:0:0.5" />
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ProgressPanel" Storyboard.TargetProperty="Visibility">
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ProgressPanel"
+                                                       Storyboard.TargetProperty="Visibility">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
@@ -239,11 +243,12 @@
                                 Padding="24,12"
                                 Command="{Binding AddFolderCommand}"
                                 Style="{StaticResource BrandAccentButtonStyle}">
-                                <StackPanel x:Name="AddFolderButtonContent" Orientation="Horizontal" Spacing="10" RenderTransformOrigin="0.5,0.5">
+                                <StackPanel x:Name="AddFolderButtonContent" Orientation="Horizontal" Spacing="10"
+                                            RenderTransformOrigin="0.5,0.5">
                                     <StackPanel.RenderTransform>
                                         <TransformGroup>
-                                            <ScaleTransform/>
-                                            <TranslateTransform/>
+                                            <ScaleTransform />
+                                            <TranslateTransform />
                                         </TransformGroup>
                                     </StackPanel.RenderTransform>
                                     <VisualStateManager.VisualStateGroups>
@@ -312,7 +317,7 @@
                                 Height="48"
                                 Foreground="{StaticResource AppPrimaryColorBrush}"
                                 IsActive="True"
-                                Visibility="{Binding IsAddingFolder, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                Visibility="{Binding IsAddingFolder, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                             <ProgressBar
                                 Width="300"
@@ -323,7 +328,7 @@
                                 IsIndeterminate="{Binding IsProgressIndeterminate, Mode=OneWay}"
                                 Maximum="100"
                                 Value="{Binding ProgressValue, Mode=OneWay}"
-                                Visibility="{Binding IsParsing, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                Visibility="{Binding IsParsing, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                         </StackPanel>
                     </Grid>
                 </Grid>

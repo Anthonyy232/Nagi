@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
-
-namespace Nagi.Core.Services.Abstractions;
+﻿namespace Nagi.Core.Services.Abstractions;
 
 /// <summary>
-/// Provides an abstraction over the file system to enable testability and platform-specific implementations.
+///     Provides an abstraction over the file system to enable testability and platform-specific implementations.
 /// </summary>
-public interface IFileSystemService {
+public interface IFileSystemService
+{
     bool DirectoryExists(string path);
     void CreateDirectory(string path);
     void DeleteDirectory(string path, bool recursive);

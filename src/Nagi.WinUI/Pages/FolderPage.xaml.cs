@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using Nagi.WinUI.Navigation;
 using Nagi.WinUI.ViewModels;
 using WinRT.Interop;
 
@@ -14,8 +13,10 @@ namespace Nagi.WinUI.Pages;
 /// <summary>
 ///     A page that displays a grid of music folders and allows adding, deleting, and rescanning them.
 /// </summary>
-public sealed partial class FolderPage : Page {
-    public FolderPage() {
+public sealed partial class FolderPage : Page
+{
+    public FolderPage()
+    {
         InitializeComponent();
         ViewModel = App.Services!.GetRequiredService<FolderViewModel>();
         DataContext = ViewModel;
@@ -26,15 +27,17 @@ public sealed partial class FolderPage : Page {
     /// <summary>
     ///     Loads the folders from the ViewModel when the page is loaded.
     /// </summary>
-    private async void Page_Loaded(object sender, RoutedEventArgs e) {
+    private async void Page_Loaded(object sender, RoutedEventArgs e)
+    {
         await ViewModel.LoadFoldersCommand.ExecuteAsync(null);
     }
 
     /// <summary>
-    /// Handles the page's navigated-from event.
-    /// This is the critical cleanup step that disposes the ViewModel to prevent memory leaks.
+    ///     Handles the page's navigated-from event.
+    ///     This is the critical cleanup step that disposes the ViewModel to prevent memory leaks.
     /// </summary>
-    protected override void OnNavigatedFrom(NavigationEventArgs e) {
+    protected override void OnNavigatedFrom(NavigationEventArgs e)
+    {
         base.OnNavigatedFrom(e);
 
         // This is the crucial addition to prevent memory leaks from the ViewModel.
@@ -44,16 +47,16 @@ public sealed partial class FolderPage : Page {
     /// <summary>
     ///     Handles clicks on a folder item, navigating to the song list for that folder.
     /// </summary>
-    private void FoldersGridView_ItemClick(object sender, ItemClickEventArgs e) {
-        if (e.ClickedItem is FolderViewModelItem clickedFolder) {
-            ViewModel.NavigateToFolderDetail(clickedFolder);
-        }
+    private void FoldersGridView_ItemClick(object sender, ItemClickEventArgs e)
+    {
+        if (e.ClickedItem is FolderViewModelItem clickedFolder) ViewModel.NavigateToFolderDetail(clickedFolder);
     }
 
     /// <summary>
     ///     Opens a folder picker to allow the user to add a new music folder.
     /// </summary>
-    private async void AddFolderButton_Click(object sender, RoutedEventArgs e) {
+    private async void AddFolderButton_Click(object sender, RoutedEventArgs e)
+    {
         if (ViewModel.IsAnyOperationInProgress) return;
 
         var folderPicker = new FolderPicker();
@@ -68,7 +71,8 @@ public sealed partial class FolderPage : Page {
     /// <summary>
     ///     Handles the click event for the "Delete" context menu item.
     /// </summary>
-    private async void DeleteFolder_Click(object sender, RoutedEventArgs e) {
+    private async void DeleteFolder_Click(object sender, RoutedEventArgs e)
+    {
         if (sender is FrameworkElement { DataContext: FolderViewModelItem folderItem })
             await ShowDeleteFolderConfirmationDialogAsync(folderItem);
     }
@@ -76,10 +80,12 @@ public sealed partial class FolderPage : Page {
     /// <summary>
     ///     Displays a confirmation dialog before deleting a folder from the library.
     /// </summary>
-    private async Task ShowDeleteFolderConfirmationDialogAsync(FolderViewModelItem folderItem) {
+    private async Task ShowDeleteFolderConfirmationDialogAsync(FolderViewModelItem folderItem)
+    {
         if (ViewModel.IsAnyOperationInProgress) return;
 
-        var dialog = new ContentDialog {
+        var dialog = new ContentDialog
+        {
             Title = "Delete Folder",
             Content =
                 $"Are you sure you want to remove the folder '{folderItem.Name}' from the library? This will not delete the files from your computer.",

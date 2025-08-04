@@ -1,163 +1,163 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-	<!-- =============================================================== -->
-	<!-- == Project Properties                                          == -->
-	<!-- =============================================================== -->
-	<PropertyGroup>
-		<OutputType>WinExe</OutputType>
-		<TargetFramework>net$(NetVersion)-windows$(WindowsSdkVersion)</TargetFramework>
-		<TargetPlatformMinVersion>$(WindowsTargetPlatformMinVersion)</TargetPlatformMinVersion>
-		<SupportedOSPlatformVersion>10.0.18362.0</SupportedOSPlatformVersion>
-		<ApplicationManifest>app.manifest</ApplicationManifest>
-		<Platforms>x86;x64;ARM64</Platforms>
-		<RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
-		<UseWinUI>true</UseWinUI>
-		<EnableMsixTooling>true</EnableMsixTooling>
-		<Nullable>enable</Nullable>
-		<DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
-		<Configurations>Debug;Release;DebugUnpackaged;ReleaseUnpackaged</Configurations>
-		<AssemblyName>Nagi</AssemblyName>
-		<Product>Nagi</Product>
-		<ApplicationIcon>Assets\AppLogo.ico</ApplicationIcon>
-		<StartupObject>Nagi.WinUI.Program</StartupObject>
-	</PropertyGroup>
+    <!-- =============================================================== -->
+    <!-- == Project Properties                                          == -->
+    <!-- =============================================================== -->
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net$(NetVersion)-windows$(WindowsSdkVersion)</TargetFramework>
+        <TargetPlatformMinVersion>$(WindowsTargetPlatformMinVersion)</TargetPlatformMinVersion>
+        <SupportedOSPlatformVersion>10.0.18362.0</SupportedOSPlatformVersion>
+        <ApplicationManifest>app.manifest</ApplicationManifest>
+        <Platforms>x86;x64;ARM64</Platforms>
+        <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+        <UseWinUI>true</UseWinUI>
+        <EnableMsixTooling>true</EnableMsixTooling>
+        <Nullable>enable</Nullable>
+        <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
+        <Configurations>Debug;Release;DebugUnpackaged;ReleaseUnpackaged</Configurations>
+        <AssemblyName>Nagi</AssemblyName>
+        <Product>Nagi</Product>
+        <ApplicationIcon>Assets\AppLogo.ico</ApplicationIcon>
+        <StartupObject>Nagi.WinUI.Program</StartupObject>
+    </PropertyGroup>
 
-	<!-- =============================================================== -->
-	<!-- == Packaged (MSIX) Configuration                               == -->
-	<!-- =============================================================== -->
-	<PropertyGroup Condition="!$(Configuration.Contains('Unpackaged'))">
-		<WindowsPackageType>MSIX</WindowsPackageType>
-		<WindowsAppSDKSelfContained>false</WindowsAppSDKSelfContained>
-		<PublishProfile>win-$(Platform).pubxml</PublishProfile>
-		<ApplicationDisplayVersion>$(AppxPackageVersion)</ApplicationDisplayVersion>
-		<ApplicationVersion>$(AppxPackageVersion.Replace('.', ''))</ApplicationVersion>
-		<DefineConstants>$(DefineConstants);MSIX_PACKAGE</DefineConstants>
-		<HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
-	</PropertyGroup>
+    <!-- =============================================================== -->
+    <!-- == Packaged (MSIX) Configuration                               == -->
+    <!-- =============================================================== -->
+    <PropertyGroup Condition="!$(Configuration.Contains('Unpackaged'))">
+        <WindowsPackageType>MSIX</WindowsPackageType>
+        <WindowsAppSDKSelfContained>false</WindowsAppSDKSelfContained>
+        <PublishProfile>win-$(Platform).pubxml</PublishProfile>
+        <ApplicationDisplayVersion>$(AppxPackageVersion)</ApplicationDisplayVersion>
+        <ApplicationVersion>$(AppxPackageVersion.Replace('.', ''))</ApplicationVersion>
+        <DefineConstants>$(DefineConstants);MSIX_PACKAGE</DefineConstants>
+        <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
+    </PropertyGroup>
 
-	<!-- =============================================================== -->
-	<!-- == Unpackaged Configuration                                    == -->
-	<!-- =============================================================== -->
-	<PropertyGroup Condition="$(Configuration.Contains('Unpackaged'))">
-		<WindowsPackageType>None</WindowsPackageType>
-		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
-		<ApplicationIcon>Assets\AppLogo.ico</ApplicationIcon>
-		<AssemblyVersion>$(AppxPackageVersion)</AssemblyVersion>
-		<FileVersion>$(AppxPackageVersion)</FileVersion>
-		<Version>$(AppxPackageVersion)</Version>
-	</PropertyGroup>
+    <!-- =============================================================== -->
+    <!-- == Unpackaged Configuration                                    == -->
+    <!-- =============================================================== -->
+    <PropertyGroup Condition="$(Configuration.Contains('Unpackaged'))">
+        <WindowsPackageType>None</WindowsPackageType>
+        <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+        <ApplicationIcon>Assets\AppLogo.ico</ApplicationIcon>
+        <AssemblyVersion>$(AppxPackageVersion)</AssemblyVersion>
+        <FileVersion>$(AppxPackageVersion)</FileVersion>
+        <Version>$(AppxPackageVersion)</Version>
+    </PropertyGroup>
 
-	<!-- =============================================================== -->
-	<!-- == Build Configuration: Debug                                  == -->
-	<!-- =============================================================== -->
-	<PropertyGroup Condition="'$(Configuration)' == 'Debug' or '$(Configuration)' == 'DebugUnpackaged'">
-		<PublishReadyToRun>false</PublishReadyToRun>
-		<PublishTrimmed>false</PublishTrimmed>
-		<Optimize>false</Optimize>
-	</PropertyGroup>
+    <!-- =============================================================== -->
+    <!-- == Build Configuration: Debug                                  == -->
+    <!-- =============================================================== -->
+    <PropertyGroup Condition="'$(Configuration)' == 'Debug' or '$(Configuration)' == 'DebugUnpackaged'">
+        <PublishReadyToRun>false</PublishReadyToRun>
+        <PublishTrimmed>false</PublishTrimmed>
+        <Optimize>false</Optimize>
+    </PropertyGroup>
 
-	<!-- =============================================================== -->
-	<!-- == Build Configuration: Release (AOT/Trimming)                 == -->
-	<!-- =============================================================== -->
-	<PropertyGroup Condition="'$(Configuration)' == 'Release' or '$(Configuration)' == 'ReleaseUnpackaged'">
-		<PublishReadyToRun>true</PublishReadyToRun>
-		<TieredPGO>true</TieredPGO>
-		<Optimize>true</Optimize>
-		<JsonSerializerIsReflectionEnabledByDefault>true</JsonSerializerIsReflectionEnabledByDefault>
-	</PropertyGroup>
+    <!-- =============================================================== -->
+    <!-- == Build Configuration: Release (AOT/Trimming)                 == -->
+    <!-- =============================================================== -->
+    <PropertyGroup Condition="'$(Configuration)' == 'Release' or '$(Configuration)' == 'ReleaseUnpackaged'">
+        <PublishReadyToRun>true</PublishReadyToRun>
+        <TieredPGO>true</TieredPGO>
+        <Optimize>true</Optimize>
+        <JsonSerializerIsReflectionEnabledByDefault>true</JsonSerializerIsReflectionEnabledByDefault>
+    </PropertyGroup>
 
-	<!-- =============================================================== -->
-	<!-- == MSIX Publishing Properties                                  == -->
-	<!-- =============================================================== -->
-	<PropertyGroup>
-		<PackageCertificateThumbprint>3EBE28646614296DE51CCE9C9B6C6F75427D7C6C</PackageCertificateThumbprint>
-		<AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
-		<GenerateAppInstallerFile>False</GenerateAppInstallerFile>
-		<AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
-		<AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
-		<GenerateTestArtifacts>True</GenerateTestArtifacts>
-		<AppxBundle>Always</AppxBundle>
-		<AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
-		<GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
-		<HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
-	</PropertyGroup>
+    <!-- =============================================================== -->
+    <!-- == MSIX Publishing Properties                                  == -->
+    <!-- =============================================================== -->
+    <PropertyGroup>
+        <PackageCertificateThumbprint>3EBE28646614296DE51CCE9C9B6C6F75427D7C6C</PackageCertificateThumbprint>
+        <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
+        <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+        <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
+        <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
+        <GenerateTestArtifacts>True</GenerateTestArtifacts>
+        <AppxBundle>Always</AppxBundle>
+        <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
+        <GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
+        <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
+    </PropertyGroup>
 
-	<!-- =============================================================== -->
-	<!-- == Package & Project References                                == -->
-	<!-- =============================================================== -->
-	<ItemGroup>
-		<!-- Project References -->
-		<ProjectReference Include="..\Nagi.Core\Nagi.Core.csproj" />
+    <!-- =============================================================== -->
+    <!-- == Package & Project References                                == -->
+    <!-- =============================================================== -->
+    <ItemGroup>
+        <!-- Project References -->
+        <ProjectReference Include="..\Nagi.Core\Nagi.Core.csproj"/>
 
-		<!-- Core SDKs and Build Tools -->
-		<PackageReference Include="Microsoft.WindowsAppSDK" Version="$(WindowsAppSdkVersion)" />
-		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="$(MicrosoftWindowsSDKBuildToolsVersion)" />
+        <!-- Core SDKs and Build Tools -->
+        <PackageReference Include="Microsoft.WindowsAppSDK" Version="$(WindowsAppSdkVersion)"/>
+        <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="$(MicrosoftWindowsSDKBuildToolsVersion)"/>
 
-		<!-- EFCore Migrations -->
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="$(EntityFrameworkCoreVersion)">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="$(EntityFrameworkCoreVersion)">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
+        <!-- EFCore Migrations -->
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="$(EntityFrameworkCoreVersion)">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="$(EntityFrameworkCoreVersion)">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
 
-		<!-- Application Services (DI, Configuration) -->
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="$(DependencyInjectionVersion)" />
-		<PackageReference Include="Microsoft.Extensions.Configuration" Version="$(MicrosoftExtensionsConfigurationVersion)" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="$(MicrosoftExtensionsConfigurationFileExtensionsVersion)" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="$(MicrosoftExtensionsConfigurationJsonVersion)" />
-		<PackageReference Include="Microsoft.Extensions.Http" Version="$(MicrosoftExtensionsHttpVersion)" />
+        <!-- Application Services (DI, Configuration) -->
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="$(DependencyInjectionVersion)"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="$(MicrosoftExtensionsConfigurationVersion)"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="$(MicrosoftExtensionsConfigurationFileExtensionsVersion)"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="$(MicrosoftExtensionsConfigurationJsonVersion)"/>
+        <PackageReference Include="Microsoft.Extensions.Http" Version="$(MicrosoftExtensionsHttpVersion)"/>
 
-		<!-- UI Controls and Media -->
-		<PackageReference Include="CommunityToolkit.WinUI.Controls.ColorPicker" Version="$(CommunityToolkitWinUIVersion)" />
-		<PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="$(CommunityToolkitWinUIVersion)" />
-		<PackageReference Include="CommunityToolkit.WinUI.Media" Version="$(CommunityToolkitWinUIVersion)" />
-		<PackageReference Include="H.NotifyIcon.WinUI" Version="$(HNotifyIconWinUIVersion)" />
-		<PackageReference Include="ImageEx.WinUI" Version="$(ImageExWinUIVersion)" />
-		<PackageReference Include="Microsoft.Graphics.Win2D" Version="$(MicrosoftGraphicsWin2DVersion)" />
+        <!-- UI Controls and Media -->
+        <PackageReference Include="CommunityToolkit.WinUI.Controls.ColorPicker" Version="$(CommunityToolkitWinUIVersion)"/>
+        <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="$(CommunityToolkitWinUIVersion)"/>
+        <PackageReference Include="CommunityToolkit.WinUI.Media" Version="$(CommunityToolkitWinUIVersion)"/>
+        <PackageReference Include="H.NotifyIcon.WinUI" Version="$(HNotifyIconWinUIVersion)"/>
+        <PackageReference Include="ImageEx.WinUI" Version="$(ImageExWinUIVersion)"/>
+        <PackageReference Include="Microsoft.Graphics.Win2D" Version="$(MicrosoftGraphicsWin2DVersion)"/>
 
-		<!-- Video Playback -->
-		<PackageReference Include="LibVLCSharp" Version="$(LibVLCSharpVersion)" />
-		<PackageReference Include="VideoLAN.LibVLC.Windows" Version="$(LibVLCWindowsVersion)" />
+        <!-- Video Playback -->
+        <PackageReference Include="LibVLCSharp" Version="$(LibVLCSharpVersion)"/>
+        <PackageReference Include="VideoLAN.LibVLC.Windows" Version="$(LibVLCWindowsVersion)"/>
 
-		<!-- Updater (Unpackaged only) -->
-		<PackageReference Include="Velopack" Version="$(VelopackVersion)" Condition="$(Configuration.Contains('Unpackaged'))" />
-	</ItemGroup>
+        <!-- Updater (Unpackaged only) -->
+        <PackageReference Include="Velopack" Version="$(VelopackVersion)" Condition="$(Configuration.Contains('Unpackaged'))"/>
+    </ItemGroup>
 
 
-	<ItemGroup>
-		<VlcWindowsX64IncludeFiles Include="&#xD;&#xA;		    libvlc.dll;&#xD;&#xA;		    libvlccore.dll;&#xD;&#xA;		    plugins\logger\libconsole_logger_plugin.dll;&#xD;&#xA;		    plugins\misc\libxml_plugin.dll;&#xD;&#xA;		    plugins\lua\liblua_plugin.dll;&#xD;&#xA;&#xD;&#xA;		    plugins\access\libfilesystem_plugin.dll;&#xD;&#xA;&#xD;&#xA;		    plugins\demux\libmp4_plugin.dll;&#xD;&#xA;		    plugins\demux\libwav_plugin.dll;&#xD;&#xA;		    plugins\demux\libogg_plugin.dll;&#xD;&#xA;		    plugins\demux\libflacsys_plugin.dll;&#xD;&#xA;		    plugins\demux\libasf_plugin.dll;&#xD;&#xA;		    plugins\demux\libmkv_plugin.dll;&#xD;&#xA;		    plugins\demux\libplaylist_plugin.dll;&#xD;&#xA;		    plugins\demux\libmpgv_plugin.dll;&#xD;&#xA;		    plugins\demux\libps_plugin.dll;&#xD;&#xA;		    plugins\demux\libts_plugin.dll;&#xD;&#xA;		    plugins\demux\libes_plugin.dll;&#xD;&#xA;		    plugins\demux\librawaud_plugin.dll;&#xD;&#xA;&#xD;&#xA;		    plugins\codec\libavcodec_plugin.dll;&#xD;&#xA;		    plugins\codec\libmpg123_plugin.dll;&#xD;&#xA;		    plugins\codec\libflac_plugin.dll;&#xD;&#xA;		    plugins\codec\libvorbis_plugin.dll;&#xD;&#xA;		    plugins\codec\libopus_plugin.dll;&#xD;&#xA;		    plugins\codec\libaraw_plugin.dll;&#xD;&#xA;		    plugins\codec\libadpcm_plugin.dll;&#xD;&#xA;		    plugins\codec\libmft_plugin.dll;&#xD;&#xA;&#xD;&#xA;		    plugins\audio_output\libmmdevice_plugin.dll;&#xD;&#xA;		    plugins\audio_output\libwasapi_plugin.dll;&#xD;&#xA;		    plugins\audio_output\libwaveout_plugin.dll;&#xD;&#xA;		    plugins\audio_filter\libaudio_format_plugin.dll;&#xD;&#xA;		    plugins\audio_filter\libtrivial_channel_mixer_plugin.dll;&#xD;&#xA;		    plugins\audio_filter\libsamplerate_plugin.dll;&#xD;&#xA;		    plugins\audio_filter\libscaletempo_plugin.dll;&#xD;&#xA;		    plugins\audio_filter\libnormvol_plugin.dll;&#xD;&#xA;		    plugins\audio_filter\libcompressor_plugin.dll;&#xD;&#xA;&#xD;&#xA;		    plugins\meta_engine\libtaglib_plugin.dll;&#xD;&#xA;&#xD;&#xA;		    plugins\stream_filter\libprefetch_plugin.dll;&#xD;&#xA;		    plugins\stream_filter\libcache_read_plugin.dll;" />
-		<VlcWindowsX86IncludeFiles Include="@(VlcWindowsX64IncludeFiles)" />
-		<VlcWindowsArm64IncludeFiles Include="@(VlcWindowsX64IncludeFiles)" />
-	</ItemGroup>
+    <ItemGroup>
+        <VlcWindowsX64IncludeFiles Include="&#xD;&#xA;		    libvlc.dll;&#xD;&#xA;		    libvlccore.dll;&#xD;&#xA;		    plugins\logger\libconsole_logger_plugin.dll;&#xD;&#xA;		    plugins\misc\libxml_plugin.dll;&#xD;&#xA;		    plugins\lua\liblua_plugin.dll;&#xD;&#xA;&#xD;&#xA;		    plugins\access\libfilesystem_plugin.dll;&#xD;&#xA;&#xD;&#xA;		    plugins\demux\libmp4_plugin.dll;&#xD;&#xA;		    plugins\demux\libwav_plugin.dll;&#xD;&#xA;		    plugins\demux\libogg_plugin.dll;&#xD;&#xA;		    plugins\demux\libflacsys_plugin.dll;&#xD;&#xA;		    plugins\demux\libasf_plugin.dll;&#xD;&#xA;		    plugins\demux\libmkv_plugin.dll;&#xD;&#xA;		    plugins\demux\libplaylist_plugin.dll;&#xD;&#xA;		    plugins\demux\libmpgv_plugin.dll;&#xD;&#xA;		    plugins\demux\libps_plugin.dll;&#xD;&#xA;		    plugins\demux\libts_plugin.dll;&#xD;&#xA;		    plugins\demux\libes_plugin.dll;&#xD;&#xA;		    plugins\demux\librawaud_plugin.dll;&#xD;&#xA;&#xD;&#xA;		    plugins\codec\libavcodec_plugin.dll;&#xD;&#xA;		    plugins\codec\libmpg123_plugin.dll;&#xD;&#xA;		    plugins\codec\libflac_plugin.dll;&#xD;&#xA;		    plugins\codec\libvorbis_plugin.dll;&#xD;&#xA;		    plugins\codec\libopus_plugin.dll;&#xD;&#xA;		    plugins\codec\libaraw_plugin.dll;&#xD;&#xA;		    plugins\codec\libadpcm_plugin.dll;&#xD;&#xA;		    plugins\codec\libmft_plugin.dll;&#xD;&#xA;&#xD;&#xA;		    plugins\audio_output\libmmdevice_plugin.dll;&#xD;&#xA;		    plugins\audio_output\libwasapi_plugin.dll;&#xD;&#xA;		    plugins\audio_output\libwaveout_plugin.dll;&#xD;&#xA;		    plugins\audio_filter\libaudio_format_plugin.dll;&#xD;&#xA;		    plugins\audio_filter\libtrivial_channel_mixer_plugin.dll;&#xD;&#xA;		    plugins\audio_filter\libsamplerate_plugin.dll;&#xD;&#xA;		    plugins\audio_filter\libscaletempo_plugin.dll;&#xD;&#xA;		    plugins\audio_filter\libnormvol_plugin.dll;&#xD;&#xA;		    plugins\audio_filter\libcompressor_plugin.dll;&#xD;&#xA;&#xD;&#xA;		    plugins\meta_engine\libtaglib_plugin.dll;&#xD;&#xA;&#xD;&#xA;		    plugins\stream_filter\libprefetch_plugin.dll;&#xD;&#xA;		    plugins\stream_filter\libcache_read_plugin.dll;"/>
+        <VlcWindowsX86IncludeFiles Include="@(VlcWindowsX64IncludeFiles)"/>
+        <VlcWindowsArm64IncludeFiles Include="@(VlcWindowsX64IncludeFiles)"/>
+    </ItemGroup>
 
-	<!-- =============================================================== -->
-	<!-- == File/Folder Exclusions & Inclusions                         == -->
-	<!-- =============================================================== -->
+    <!-- =============================================================== -->
+    <!-- == File/Folder Exclusions & Inclusions                         == -->
+    <!-- =============================================================== -->
 
-	<ItemGroup Condition="!$(Configuration.Contains('Unpackaged'))">
-		<!-- MSIX Assets -->
-		<Content Include="Assets\SplashScreen.scale-200.png" />
-		<Content Include="Assets\LockScreenLogo.scale-200.png" />
-		<Content Include="Assets\Square150x150Logo.scale-200.png" />
-		<Content Include="Assets\Square44x44Logo.scale-200.png" />
-		<Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
-		<Content Include="Assets\Wide310x150Logo.scale-200.png" />
-		<ProjectCapability Include="Msix" />
-	</ItemGroup>
+    <ItemGroup Condition="!$(Configuration.Contains('Unpackaged'))">
+        <!-- MSIX Assets -->
+        <Content Include="Assets\SplashScreen.scale-200.png"/>
+        <Content Include="Assets\LockScreenLogo.scale-200.png"/>
+        <Content Include="Assets\Square150x150Logo.scale-200.png"/>
+        <Content Include="Assets\Square44x44Logo.scale-200.png"/>
+        <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png"/>
+        <Content Include="Assets\Wide310x150Logo.scale-200.png"/>
+        <ProjectCapability Include="Msix"/>
+    </ItemGroup>
 
-	<ItemGroup>
-		<!-- Application Content -->
-		<Content Include="Assets\AppLogo.ico">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-		<Content Include="Assets\AppLogo.png">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-		<None Update="appsettings.json">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-	</ItemGroup>
+    <ItemGroup>
+        <!-- Application Content -->
+        <Content Include="Assets\AppLogo.ico">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Assets\AppLogo.png">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Update="appsettings.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
 
 </Project>

@@ -1,24 +1,28 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using Windows.Foundation;
+using Windows.UI;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Nagi.WinUI.Models;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using Windows.UI;
 
 namespace Nagi.WinUI.Converters;
 
 /// <summary>
-/// Converts a TimeSpan or a double (representing seconds) to a formatted time string (m:ss).
+///     Converts a TimeSpan or a double (representing seconds) to a formatted time string (m:ss).
 /// </summary>
-public class TimeSpanToTimeStringConverter : IValueConverter {
-    public object Convert(object value, Type targetType, object parameter, string language) {
-        TimeSpan timeSpan = value switch {
+public class TimeSpanToTimeStringConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        var timeSpan = value switch
+        {
             TimeSpan ts => ts,
             double seconds => TimeSpan.FromSeconds(seconds),
             _ => TimeSpan.Zero
@@ -28,34 +32,35 @@ public class TimeSpanToTimeStringConverter : IValueConverter {
         return timeSpan.ToString(@"m\:ss");
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, string language) {
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
         throw new NotImplementedException();
     }
 }
 
 /// <summary>
-/// Converts a boolean value to its inverse.
+///     Converts a boolean value to its inverse.
 /// </summary>
-public class BooleanToInverseBooleanConverter : IValueConverter {
-    public object Convert(object value, Type targetType, object parameter, string language) {
-        if (value is bool b) {
-            return !b;
-        }
+public class BooleanToInverseBooleanConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        if (value is bool b) return !b;
         return value;
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, string language) {
-        if (value is bool b) {
-            return !b;
-        }
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
+        if (value is bool b) return !b;
         return value;
     }
 }
 
 /// <summary>
-/// Converts an ElementTheme enum to a user-friendly string for display.
+///     Converts an ElementTheme enum to a user-friendly string for display.
 /// </summary>
-public class ElementThemeToFriendlyStringConverter : IValueConverter {
+public class ElementThemeToFriendlyStringConverter : IValueConverter
+{
     private static readonly Dictionary<ElementTheme, string> FriendlyNames = new()
     {
         { ElementTheme.Light, "Light" },
@@ -63,20 +68,19 @@ public class ElementThemeToFriendlyStringConverter : IValueConverter {
         { ElementTheme.Default, "Use system setting" }
     };
 
-    public object Convert(object value, Type targetType, object parameter, string language) {
-        if (value is ElementTheme theme && FriendlyNames.TryGetValue(theme, out var name)) {
-            return name;
-        }
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        if (value is ElementTheme theme && FriendlyNames.TryGetValue(theme, out var name)) return name;
         return value?.ToString() ?? string.Empty;
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, string language) {
-        if (value is string strValue) {
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
+        if (value is string strValue)
+        {
             // Find the theme corresponding to the friendly name.
             var pair = FriendlyNames.FirstOrDefault(kvp => kvp.Value == strValue);
-            if (pair.Value != null) {
-                return pair.Key;
-            }
+            if (pair.Value != null) return pair.Key;
         }
 
         return DependencyProperty.UnsetValue;
@@ -84,150 +88,165 @@ public class ElementThemeToFriendlyStringConverter : IValueConverter {
 }
 
 /// <summary>
-/// Converts a boolean value to a Visibility value.
+///     Converts a boolean value to a Visibility value.
 /// </summary>
-public class BooleanToVisibilityConverter : IValueConverter {
+public class BooleanToVisibilityConverter : IValueConverter
+{
     /// <summary>
-    /// Gets or sets a value indicating whether the conversion should be inverted.
-    /// If true, true becomes Collapsed and false becomes Visible.
+    ///     Gets or sets a value indicating whether the conversion should be inverted.
+    ///     If true, true becomes Collapsed and false becomes Visible.
     /// </summary>
     public bool Invert { get; set; }
 
-    public object Convert(object value, Type targetType, object parameter, string language) {
-        bool isVisible = value is true;
-        if (Invert) {
-            isVisible = !isVisible;
-        }
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        var isVisible = value is true;
+        if (Invert) isVisible = !isVisible;
         return isVisible ? Visibility.Visible : Visibility.Collapsed;
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, string language) {
-        bool isVisible = value is Visibility.Visible;
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
+        var isVisible = value is Visibility.Visible;
         return Invert ? !isVisible : isVisible;
     }
 }
 
 /// <summary>
-/// Converts a string URI to a BitmapImage. Returns null for invalid or empty URIs.
+///     Converts a string URI to a BitmapImage. Returns null for invalid or empty URIs.
 /// </summary>
-public class StringToUriConverter : IValueConverter {
-    public object? Convert(object value, Type targetType, object parameter, string language) {
-        if (value is string uriString && !string.IsNullOrEmpty(uriString)) {
-            try {
+public class StringToUriConverter : IValueConverter
+{
+    public object? Convert(object value, Type targetType, object parameter, string language)
+    {
+        if (value is string uriString && !string.IsNullOrEmpty(uriString))
+            try
+            {
                 return new BitmapImage(new Uri(uriString, UriKind.Absolute));
             }
-            catch (FormatException ex) {
+            catch (FormatException ex)
+            {
                 // Log errors during development to diagnose invalid URI formats.
                 Debug.WriteLine($"[Nagi.Converters] Failed to create Uri from '{uriString}'. {ex.Message}");
                 return null;
             }
-        }
+
         return null;
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, string language) {
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
         throw new NotImplementedException();
     }
 }
 
 /// <summary>
-/// Converts a string to Visibility. Visible if the string is not null or whitespace.
+///     Converts a string to Visibility. Visible if the string is not null or whitespace.
 /// </summary>
-public class StringToVisibilityConverter : IValueConverter {
+public class StringToVisibilityConverter : IValueConverter
+{
     /// <summary>
-    /// Gets or sets a value indicating whether the conversion should be inverted.
+    ///     Gets or sets a value indicating whether the conversion should be inverted.
     /// </summary>
     public bool Invert { get; set; }
 
-    public object Convert(object value, Type targetType, object parameter, string language) {
-        bool isVisible = !string.IsNullOrWhiteSpace(value as string);
-        if (Invert) {
-            isVisible = !isVisible;
-        }
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        var isVisible = !string.IsNullOrWhiteSpace(value as string);
+        if (Invert) isVisible = !isVisible;
         return isVisible ? Visibility.Visible : Visibility.Collapsed;
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, string language) {
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
         throw new NotImplementedException();
     }
 }
 
 /// <summary>
-/// Converts a collection to Visibility. Visible if the collection is not null and not empty.
+///     Converts a collection to Visibility. Visible if the collection is not null and not empty.
 /// </summary>
-public class CollectionToVisibilityConverter : IValueConverter {
-    public object Convert(object value, Type targetType, object parameter, string language) {
-        if (value is IEnumerable collection) {
+public class CollectionToVisibilityConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        if (value is IEnumerable collection)
             // Efficiently checks if there is at least one item.
             return collection.Cast<object>().Any() ? Visibility.Visible : Visibility.Collapsed;
-        }
         return Visibility.Collapsed;
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, string language) {
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
         throw new NotImplementedException();
     }
 }
 
 /// <summary>
-/// Converts a string to Visibility. Visible if the string is not null or empty.
+///     Converts a string to Visibility. Visible if the string is not null or empty.
 /// </summary>
-public class NullOrEmptyStringToVisibilityConverter : IValueConverter {
+public class NullOrEmptyStringToVisibilityConverter : IValueConverter
+{
     /// <summary>
-    /// Gets or sets a value indicating whether the conversion should be inverted.
+    ///     Gets or sets a value indicating whether the conversion should be inverted.
     /// </summary>
     public bool Invert { get; set; }
 
-    public object Convert(object value, Type targetType, object parameter, string language) {
-        bool isVisible = !string.IsNullOrEmpty(value as string);
-        if (Invert) {
-            isVisible = !isVisible;
-        }
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        var isVisible = !string.IsNullOrEmpty(value as string);
+        if (Invert) isVisible = !isVisible;
         return isVisible ? Visibility.Visible : Visibility.Collapsed;
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, string language) {
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
         throw new NotImplementedException();
     }
 }
 
 /// <summary>
-/// Converts an object to Visibility. Visible if the object is not null.
+///     Converts an object to Visibility. Visible if the object is not null.
 /// </summary>
-public class ObjectToVisibilityConverter : IValueConverter {
-    public object Convert(object value, Type targetType, object parameter, string language) {
-        bool isVisible = value != null;
+public class ObjectToVisibilityConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        var isVisible = value != null;
 
         // Inversion can be controlled via the converter parameter.
-        if ("Invert".Equals(parameter as string, StringComparison.OrdinalIgnoreCase)) {
-            isVisible = !isVisible;
-        }
+        if ("Invert".Equals(parameter as string, StringComparison.OrdinalIgnoreCase)) isVisible = !isVisible;
 
         return isVisible ? Visibility.Visible : Visibility.Collapsed;
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, string language) {
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
         throw new NotImplementedException();
     }
 }
 
 /// <summary>
-/// Converts an object to a boolean. Returns true if the object is not null.
+///     Converts an object to a boolean. Returns true if the object is not null.
 /// </summary>
-public class ObjectToBooleanConverter : IValueConverter {
-    public object Convert(object value, Type targetType, object parameter, string language) {
+public class ObjectToBooleanConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
         return value != null;
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, string language) {
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
         throw new NotImplementedException();
     }
 }
 
 /// <summary>
-/// Converts a string value into a unique, deterministic LinearGradientBrush from a curated palette.
+///     Converts a string value into a unique, deterministic LinearGradientBrush from a curated palette.
 /// </summary>
-public class GenreToGradientConverter : IValueConverter {
+public class GenreToGradientConverter : IValueConverter
+{
     private static readonly List<(Color Start, Color End)> Palettes = new()
     {
         (Color.FromArgb(255, 142, 45, 226), Color.FromArgb(255, 74, 0, 224)),
@@ -256,145 +275,155 @@ public class GenreToGradientConverter : IValueConverter {
         (Color.FromArgb(255, 6, 214, 160), Color.FromArgb(255, 255, 209, 102))
     };
 
-    public object Convert(object value, Type targetType, object parameter, string language) {
-        if (value is not string genreName || string.IsNullOrEmpty(genreName)) {
-            return GetDefaultGradient();
-        }
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        if (value is not string genreName || string.IsNullOrEmpty(genreName)) return GetDefaultGradient();
 
-        int seed = genreName.GetHashCode();
-        int index = Math.Abs(seed) % Palettes.Count;
+        var seed = genreName.GetHashCode();
+        var index = Math.Abs(seed) % Palettes.Count;
         var (startColor, endColor) = Palettes[index];
 
         return CreateGradient(startColor, endColor);
     }
 
-    private static LinearGradientBrush CreateGradient(Color start, Color end) {
-        return new LinearGradientBrush {
-            StartPoint = new(0, 0),
-            EndPoint = new(1, 1),
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
+        throw new NotImplementedException();
+    }
+
+    private static LinearGradientBrush CreateGradient(Color start, Color end)
+    {
+        return new LinearGradientBrush
+        {
+            StartPoint = new Point(0, 0),
+            EndPoint = new Point(1, 1),
             GradientStops = new GradientStopCollection
             {
-                new() { Color = start, Offset = 0.0 },
-                new() { Color = end, Offset = 1.0 }
+                new GradientStop { Color = start, Offset = 0.0 },
+                new GradientStop { Color = end, Offset = 1.0 }
             }
         };
     }
 
-    private static LinearGradientBrush GetDefaultGradient() {
+    private static LinearGradientBrush GetDefaultGradient()
+    {
         return CreateGradient(Color.FromArgb(255, 88, 88, 88), Color.FromArgb(255, 58, 58, 58));
-    }
-
-    public object ConvertBack(object value, Type targetType, object parameter, string language) {
-        throw new NotImplementedException();
     }
 }
 
 /// <summary>
-/// Converts a string font family name into a FontFamily object.
+///     Converts a string font family name into a FontFamily object.
 /// </summary>
-public class StringToFontFamilyConverter : IValueConverter {
+public class StringToFontFamilyConverter : IValueConverter
+{
     private static readonly FontFamily DefaultSymbolFont = new("Segoe MDL2 Assets");
 
-    public object Convert(object value, Type targetType, object parameter, string language) {
-        if (value is string fontFamilyName && !string.IsNullOrEmpty(fontFamilyName)) {
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        if (value is string fontFamilyName && !string.IsNullOrEmpty(fontFamilyName))
             return new FontFamily(fontFamilyName);
-        }
 
         return DefaultSymbolFont;
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, string language) {
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
         throw new NotImplementedException();
     }
 }
 
 /// <summary>
-/// Selects a style based on whether the bound boolean value is true or false.
+///     Selects a style based on whether the bound boolean value is true or false.
 /// </summary>
 /// <summary>
-/// Selects a style based on whether the bound boolean value is true or false.
+///     Selects a style based on whether the bound boolean value is true or false.
 /// </summary>
-public class ActiveLyricToStyleConverter : IValueConverter {
+public class ActiveLyricToStyleConverter : IValueConverter
+{
     /// <summary>
-    /// Gets or sets the style to apply when the bound value is true.
+    ///     Gets or sets the style to apply when the bound value is true.
     /// </summary>
     public Style? ActiveStyle { get; set; }
 
     /// <summary>
-    /// Gets or sets the style to apply when the bound value is false.
+    ///     Gets or sets the style to apply when the bound value is false.
     /// </summary>
     public Style? InactiveStyle { get; set; }
 
-    public object Convert(object value, Type targetType, object parameter, string language) {
-        if (value is true) {
-            return ActiveStyle ?? throw new InvalidOperationException("ActiveStyle must be set");
-        }
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        if (value is true) return ActiveStyle ?? throw new InvalidOperationException("ActiveStyle must be set");
         return InactiveStyle ?? throw new InvalidOperationException("InactiveStyle must be set");
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, string language) {
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
         throw new NotImplementedException();
     }
 }
 
 /// <summary>
-/// Blends an input color with a specified BlendColor by a given factor.
-/// Useful for creating background or hover states from a base color.
+///     Blends an input color with a specified BlendColor by a given factor.
+///     Useful for creating background or hover states from a base color.
 /// </summary>
-public class ColorBlendConverter : IValueConverter {
+public class ColorBlendConverter : IValueConverter
+{
     /// <summary>
-    /// Gets or sets the color to blend with the source color. Defaults to Black.
+    ///     Gets or sets the color to blend with the source color. Defaults to Black.
     /// </summary>
     public Color BlendColor { get; set; } = Colors.Black;
 
     /// <summary>
-    /// Gets or sets the blending factor. 0.0 is 100% source color, 1.0 is 100% BlendColor.
-    /// Defaults to 0.2 (20% blend).
+    ///     Gets or sets the blending factor. 0.0 is 100% source color, 1.0 is 100% BlendColor.
+    ///     Defaults to 0.2 (20% blend).
     /// </summary>
     public double BlendFactor { get; set; } = 0.2;
 
-    public object Convert(object value, Type targetType, object parameter, string language) {
-        if (value is not Color sourceColor) {
-            return value;
-        }
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        if (value is not Color sourceColor) return value;
 
         // Allow overriding the factor via converter parameter.
-        double factor = parameter is string paramString && double.TryParse(paramString, out double p)
+        var factor = parameter is string paramString && double.TryParse(paramString, out var p)
             ? p
             : BlendFactor;
 
         factor = Math.Clamp(factor, 0.0, 1.0);
 
         // Linear interpolation between the source and blend colors.
-        byte r = (byte)((1 - factor) * sourceColor.R + factor * BlendColor.R);
-        byte g = (byte)((1 - factor) * sourceColor.G + factor * BlendColor.G);
-        byte b = (byte)((1 - factor) * sourceColor.B + factor * BlendColor.B);
+        var r = (byte)((1 - factor) * sourceColor.R + factor * BlendColor.R);
+        var g = (byte)((1 - factor) * sourceColor.G + factor * BlendColor.G);
+        var b = (byte)((1 - factor) * sourceColor.B + factor * BlendColor.B);
 
         return Color.FromArgb(sourceColor.A, r, g, b);
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, string language) {
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
         throw new NotImplementedException();
     }
 }
 
 /// <summary>
-/// Converts a BackdropMaterial enum value to a user-friendly string for display in the UI.
+///     Converts a BackdropMaterial enum value to a user-friendly string for display in the UI.
 /// </summary>
-public class BackdropMaterialToStringConverter : IValueConverter {
-    public object Convert(object value, Type targetType, object parameter, string language) {
-        if (value is BackdropMaterial material) {
-            return material switch {
+public class BackdropMaterialToStringConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        if (value is BackdropMaterial material)
+            return material switch
+            {
                 BackdropMaterial.Mica => "Mica",
                 BackdropMaterial.MicaAlt => "Mica Alt",
                 BackdropMaterial.Acrylic => "Acrylic",
                 _ => material.ToString()
             };
-        }
         return string.Empty;
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, string language) {
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
         // This converter is only used for one-way binding, so ConvertBack is not needed.
         throw new NotImplementedException();
     }

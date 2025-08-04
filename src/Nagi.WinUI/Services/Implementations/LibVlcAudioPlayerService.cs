@@ -1,41 +1,43 @@
-﻿using LibVLCSharp;
-using Nagi.Core.Models;
-using Nagi.Core.Services.Abstractions;
-using Nagi.WinUI.Services.Abstractions;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Windows.Media;
 using Windows.Storage;
 using Windows.Storage.Streams;
+using LibVLCSharp;
+using Nagi.Core.Models;
+using Nagi.Core.Services.Abstractions;
+using Nagi.WinUI.Services.Abstractions;
 using WinMediaPlayback = Windows.Media.Playback;
 
 namespace Nagi.WinUI.Services.Implementations;
 
 /// <summary>
-/// Implements <see cref="IAudioPlayer"/> using LibVLCSharp for robust audio playback
-/// and manual integration with the System Media Transport Controls (SMTC).
+///     Implements <see cref="IAudioPlayer" /> using LibVLCSharp for robust audio playback
+///     and manual integration with the System Media Transport Controls (SMTC).
 /// </summary>
-public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable {
+public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
+{
     private readonly IDispatcherService _dispatcherService;
-    private readonly LibVLC _libVlc;
-    private readonly MediaPlayer _mediaPlayer;
-    private SystemMediaTransportControls? _smtc;
-    private Song? _currentSong;
 
     // A dummy MediaPlayer from the Windows.Media.Playback namespace is required in WinUI 3
     // to obtain a working SMTC instance that is correctly associated with the application's main window.
     private readonly WinMediaPlayback.MediaPlayer _dummyMediaPlayer;
+    private readonly LibVLC _libVlc;
+    private readonly MediaPlayer _mediaPlayer;
+    private Song? _currentSong;
+    private SystemMediaTransportControls? _smtc;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="LibVlcAudioPlayerService"/> class.
+    ///     Initializes a new instance of the <see cref="LibVlcAudioPlayerService" /> class.
     /// </summary>
     /// <param name="dispatcherService">The service for dispatching actions to the UI thread.</param>
-    public LibVlcAudioPlayerService(IDispatcherService dispatcherService) {
+    public LibVlcAudioPlayerService(IDispatcherService dispatcherService)
+    {
         _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
 
         Debug.WriteLine("[LibVlcAudioPlayerService] Initializing LibVLC core.");
-        var vlcOptions = new string[]
+        var vlcOptions = new[]
         {
             "--no-video",
             "--no-spu",
@@ -69,37 +71,51 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable {
 
     /// <inheritdoc />
     public event Action? PlaybackEnded;
+
     /// <inheritdoc />
     public event Action? PositionChanged;
+
     /// <inheritdoc />
     public event Action? StateChanged;
+
     /// <inheritdoc />
     public event Action? VolumeChanged;
+
     /// <inheritdoc />
     public event Action<string>? ErrorOccurred;
+
     /// <inheritdoc />
     public event Action? MediaOpened;
+
     /// <inheritdoc />
     public event Action? DurationChanged;
+
     /// <inheritdoc />
     public event Action? SmtcNextButtonPressed;
+
     /// <inheritdoc />
     public event Action? SmtcPreviousButtonPressed;
 
     /// <inheritdoc />
     public bool IsPlaying => _mediaPlayer.IsPlaying;
+
     /// <inheritdoc />
     public TimeSpan CurrentPosition => TimeSpan.FromMilliseconds(_mediaPlayer.Time);
+
     /// <inheritdoc />
     public TimeSpan Duration => TimeSpan.FromMilliseconds(_mediaPlayer.Length);
+
     /// <inheritdoc />
     public double Volume => _mediaPlayer.Volume / 100.0;
+
     /// <inheritdoc />
     public bool IsMuted => _mediaPlayer.Mute;
 
     /// <inheritdoc />
-    public void InitializeSmtc() {
-        try {
+    public void InitializeSmtc()
+    {
+        try
+        {
             Debug.WriteLine("[LibVlcAudioPlayerService] Initializing System Media Transport Controls (SMTC).");
             _smtc = _dummyMediaPlayer.SystemMediaTransportControls;
 
@@ -114,22 +130,26 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable {
             _smtc.PlaybackStatus = MediaPlaybackStatus.Stopped;
             Debug.WriteLine("[LibVlcAudioPlayerService] SMTC initialized successfully.");
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             Debug.WriteLine($"[LibVlcAudioPlayerService] CRITICAL: Failed to initialize SMTC. Error: {ex.Message}");
         }
     }
 
     /// <inheritdoc />
-    public void UpdateSmtcButtonStates(bool canNext, bool canPrevious) {
+    public void UpdateSmtcButtonStates(bool canNext, bool canPrevious)
+    {
         if (_smtc is null) return;
         _smtc.IsNextEnabled = canNext;
         _smtc.IsPreviousEnabled = canPrevious;
     }
 
     /// <inheritdoc />
-    public Task LoadAsync(Song song) {
+    public Task LoadAsync(Song song)
+    {
         _currentSong = song;
-        try {
+        try
+        {
             Debug.WriteLine($"[LibVlcAudioPlayerService] Loading media from path: {song.FilePath}");
             var media = new Media(new Uri(song.FilePath));
             _mediaPlayer.Media = media;
@@ -138,7 +158,8 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable {
             // after assigning it to the player.
             media.Dispose();
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             var errorMessage = $"Failed to load '{song.Title}': {ex.Message}";
             Debug.WriteLine($"[LibVlcAudioPlayerService] ERROR: {errorMessage}");
             _dispatcherService.TryEnqueue(() => ErrorOccurred?.Invoke(errorMessage));
@@ -149,33 +170,33 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable {
     }
 
     /// <inheritdoc />
-    public Task PlayAsync() {
-        if (_mediaPlayer.Media is not null) {
+    public Task PlayAsync()
+    {
+        if (_mediaPlayer.Media is not null)
             _mediaPlayer.Play();
-        }
-        else {
+        else
             Debug.WriteLine("[LibVlcAudioPlayerService] WARN: Play command received, but no media is loaded.");
-        }
         return Task.CompletedTask;
     }
 
     /// <inheritdoc />
-    public Task PauseAsync() {
-        if (_mediaPlayer.CanPause) {
+    public Task PauseAsync()
+    {
+        if (_mediaPlayer.CanPause)
             _mediaPlayer.Pause();
-        }
-        else {
+        else
             Debug.WriteLine("[LibVlcAudioPlayerService] WARN: Pause command received, but player cannot be paused.");
-        }
         return Task.CompletedTask;
     }
 
     /// <inheritdoc />
-    public Task StopAsync() {
+    public Task StopAsync()
+    {
         _mediaPlayer.Stop();
         _currentSong = null;
 
-        if (_smtc is not null) {
+        if (_smtc is not null)
+        {
             _smtc.DisplayUpdater.ClearAll();
             _smtc.DisplayUpdater.Update();
             _smtc.PlaybackStatus = MediaPlaybackStatus.Stopped;
@@ -185,31 +206,33 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable {
     }
 
     /// <inheritdoc />
-    public Task SeekAsync(TimeSpan position) {
-        if (_mediaPlayer.IsSeekable) {
+    public Task SeekAsync(TimeSpan position)
+    {
+        if (_mediaPlayer.IsSeekable)
             _mediaPlayer.SetTime((long)position.TotalMilliseconds, true);
-        }
-        else {
+        else
             Debug.WriteLine("[LibVlcAudioPlayerService] WARN: Seek command received, but media is not seekable.");
-        }
         return Task.CompletedTask;
     }
 
     /// <inheritdoc />
-    public Task SetVolumeAsync(double volume) {
-        int vlcVolume = (int)Math.Clamp(volume * 100, 0, 100);
+    public Task SetVolumeAsync(double volume)
+    {
+        var vlcVolume = (int)Math.Clamp(volume * 100, 0, 100);
         _mediaPlayer.SetVolume(vlcVolume);
         return Task.CompletedTask;
     }
 
     /// <inheritdoc />
-    public Task SetMuteAsync(bool isMuted) {
+    public Task SetMuteAsync(bool isMuted)
+    {
         _mediaPlayer.Mute = isMuted;
         return Task.CompletedTask;
     }
 
     /// <inheritdoc />
-    public void Dispose() {
+    public void Dispose()
+    {
         Debug.WriteLine("[LibVlcAudioPlayerService] Disposing service.");
         _mediaPlayer.PositionChanged -= OnMediaPlayerPositionChanged;
         _mediaPlayer.Playing -= OnMediaPlayerStateChanged;
@@ -222,7 +245,8 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable {
         _mediaPlayer.Muted -= OnMediaPlayerMuteChanged;
         _mediaPlayer.Unmuted -= OnMediaPlayerMuteChanged;
 
-        if (_smtc is not null) {
+        if (_smtc is not null)
+        {
             _smtc.ButtonPressed -= OnSmtcButtonPressed;
             _smtc.IsEnabled = false;
         }
@@ -235,34 +259,42 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable {
         GC.SuppressFinalize(this);
     }
 
-    private void OnMediaPlayerMediaChanged(object? sender, MediaPlayerMediaChangedEventArgs e) {
-        if (e.Media is not null) {
+    private void OnMediaPlayerMediaChanged(object? sender, MediaPlayerMediaChangedEventArgs e)
+    {
+        if (e.Media is not null)
+        {
             _dispatcherService.TryEnqueue(() => MediaOpened?.Invoke());
             _ = UpdateSmtcDisplayAsync();
         }
     }
 
-    private void OnMediaPlayerLengthChanged(object? sender, MediaPlayerLengthChangedEventArgs e) {
+    private void OnMediaPlayerLengthChanged(object? sender, MediaPlayerLengthChangedEventArgs e)
+    {
         _dispatcherService.TryEnqueue(() => DurationChanged?.Invoke());
     }
 
-    private void OnMediaPlayerEncounteredError(object? sender, EventArgs e) {
-        string? lastVlcError = _libVlc.LastLibVLCError;
-        string errorMessage = string.IsNullOrEmpty(lastVlcError)
+    private void OnMediaPlayerEncounteredError(object? sender, EventArgs e)
+    {
+        var lastVlcError = _libVlc.LastLibVLCError;
+        var errorMessage = string.IsNullOrEmpty(lastVlcError)
             ? "LibVLC encountered an unspecified error."
             : $"LibVLC Error: {lastVlcError}";
 
         Debug.WriteLine($"[LibVlcAudioPlayerService] ERROR: {errorMessage}");
-        _dispatcherService.TryEnqueue(() => {
+        _dispatcherService.TryEnqueue(() =>
+        {
             ErrorOccurred?.Invoke(errorMessage);
             PlaybackEnded?.Invoke();
         });
     }
 
-    private void OnMediaPlayerStateChanged(object? sender, EventArgs e) {
-        _dispatcherService.TryEnqueue(() => {
+    private void OnMediaPlayerStateChanged(object? sender, EventArgs e)
+    {
+        _dispatcherService.TryEnqueue(() =>
+        {
             StateChanged?.Invoke();
-            if (_mediaPlayer.State == VLCState.Stopped && _currentSong is not null) {
+            if (_mediaPlayer.State == VLCState.Stopped && _currentSong is not null)
+            {
                 Debug.WriteLine("[LibVlcAudioPlayerService] Detected natural end of playback.");
                 PlaybackEnded?.Invoke();
             }
@@ -270,22 +302,29 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable {
         UpdateSmtcPlaybackStatus();
     }
 
-    private void OnMediaPlayerPositionChanged(object? sender, MediaPlayerPositionChangedEventArgs e) {
+    private void OnMediaPlayerPositionChanged(object? sender, MediaPlayerPositionChangedEventArgs e)
+    {
         _dispatcherService.TryEnqueue(() => PositionChanged?.Invoke());
     }
 
-    private void OnMediaPlayerVolumeChanged(object? sender, MediaPlayerVolumeChangedEventArgs e) {
+    private void OnMediaPlayerVolumeChanged(object? sender, MediaPlayerVolumeChangedEventArgs e)
+    {
         _dispatcherService.TryEnqueue(() => VolumeChanged?.Invoke());
     }
 
-    private void OnMediaPlayerMuteChanged(object? sender, EventArgs e) {
+    private void OnMediaPlayerMuteChanged(object? sender, EventArgs e)
+    {
         _dispatcherService.TryEnqueue(() => VolumeChanged?.Invoke());
     }
 
-    private async void OnSmtcButtonPressed(SystemMediaTransportControls sender, SystemMediaTransportControlsButtonPressedEventArgs args) {
+    private async void OnSmtcButtonPressed(SystemMediaTransportControls sender,
+        SystemMediaTransportControlsButtonPressedEventArgs args)
+    {
         Debug.WriteLine($"[LibVlcAudioPlayerService] SMTC button pressed: {args.Button}.");
-        await _dispatcherService.EnqueueAsync(async () => {
-            switch (args.Button) {
+        await _dispatcherService.EnqueueAsync(async () =>
+        {
+            switch (args.Button)
+            {
                 case SystemMediaTransportControlsButton.Play:
                     await PlayAsync();
                     break;
@@ -302,10 +341,12 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable {
         });
     }
 
-    private void UpdateSmtcPlaybackStatus() {
+    private void UpdateSmtcPlaybackStatus()
+    {
         if (_smtc is null) return;
 
-        var newStatus = _mediaPlayer.State switch {
+        var newStatus = _mediaPlayer.State switch
+        {
             VLCState.Playing => MediaPlaybackStatus.Playing,
             VLCState.Paused => MediaPlaybackStatus.Paused,
             VLCState.Stopped or VLCState.Error => MediaPlaybackStatus.Stopped,
@@ -313,13 +354,15 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable {
             _ => MediaPlaybackStatus.Closed
         };
 
-        if (_smtc.PlaybackStatus != newStatus) {
+        if (_smtc.PlaybackStatus != newStatus)
+        {
             Debug.WriteLine($"[LibVlcAudioPlayerService] Updating SMTC PlaybackStatus to {newStatus}.");
             _smtc.PlaybackStatus = newStatus;
         }
     }
 
-    private async Task UpdateSmtcDisplayAsync() {
+    private async Task UpdateSmtcDisplayAsync()
+    {
         if (_smtc is null || _currentSong is null) return;
 
         Debug.WriteLine($"[LibVlcAudioPlayerService] Updating SMTC display for track '{_currentSong.Title}'.");
@@ -327,19 +370,21 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable {
         updater.Type = MediaPlaybackType.Music;
         updater.MusicProperties.Title = _currentSong.Title ?? string.Empty;
         updater.MusicProperties.Artist = _currentSong.Artist?.Name ?? "Unknown Artist";
-        updater.MusicProperties.AlbumArtist = _currentSong.Album?.Artist?.Name ?? _currentSong.Artist?.Name ?? "Unknown Album Artist";
+        updater.MusicProperties.AlbumArtist =
+            _currentSong.Album?.Artist?.Name ?? _currentSong.Artist?.Name ?? "Unknown Album Artist";
         updater.MusicProperties.AlbumTitle = _currentSong.Album?.Title ?? "Unknown Album";
         updater.Thumbnail = null;
 
-        if (!string.IsNullOrEmpty(_currentSong.AlbumArtUriFromTrack)) {
-            try {
+        if (!string.IsNullOrEmpty(_currentSong.AlbumArtUriFromTrack))
+            try
+            {
                 var albumArtFile = await StorageFile.GetFileFromPathAsync(_currentSong.AlbumArtUriFromTrack);
                 updater.Thumbnail = RandomAccessStreamReference.CreateFromFile(albumArtFile);
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 Debug.WriteLine($"[LibVlcAudioPlayerService] WARN: Failed to set SMTC thumbnail: {ex.Message}");
             }
-        }
 
         updater.Update();
     }

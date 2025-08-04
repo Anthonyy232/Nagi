@@ -36,7 +36,8 @@
             IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
             Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-        <Grid Grid.Row="1" Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+        <Grid Grid.Row="1"
+              Visibility="{x:Bind ViewModel.IsLoading, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
             <GridView
                 IsItemClickEnabled="True"
                 ItemClick="GenresGridView_ItemClick"
@@ -52,7 +53,8 @@
                 <GridView.ItemTemplate>
                     <DataTemplate x:DataType="vm:GenreViewModelItem">
                         <!-- The background is bound to the genre name, producing a unique gradient for each. -->
-                        <Grid Padding="16" Background="{x:Bind Name, Converter={StaticResource GenreToGradientConverter}, Mode=OneWay}">
+                        <Grid Padding="16"
+                              Background="{x:Bind Name, Converter={StaticResource GenreToGradientConverter}, Mode=OneWay}">
                             <Grid.ContextFlyout>
                                 <MenuFlyout>
                                     <MenuFlyoutItem

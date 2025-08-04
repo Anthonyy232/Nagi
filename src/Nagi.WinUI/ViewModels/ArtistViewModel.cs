@@ -1,6 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -8,7 +6,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Nagi.Core;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.WinUI.Navigation;
@@ -18,42 +17,46 @@ using Nagi.WinUI.Services.Abstractions;
 namespace Nagi.WinUI.ViewModels;
 
 /// <summary>
-/// A display-optimized representation of an artist for the user interface.
+///     A display-optimized representation of an artist for the user interface.
 /// </summary>
-public partial class ArtistViewModelItem : ObservableObject {
+public partial class ArtistViewModelItem : ObservableObject
+{
     [ObservableProperty] public partial Guid Id { get; set; }
     [ObservableProperty] public partial string Name { get; set; } = string.Empty;
     [ObservableProperty] public partial string? LocalImageCachePath { get; set; }
 
     public bool IsArtworkAvailable => !string.IsNullOrEmpty(LocalImageCachePath);
 
-    partial void OnLocalImageCachePathChanged(string? value) {
+    partial void OnLocalImageCachePathChanged(string? value)
+    {
         OnPropertyChanged(nameof(IsArtworkAvailable));
     }
 }
 
 /// <summary>
-/// Manages the state and logic for the artist list page, including data fetching and live updates.
+///     Manages the state and logic for the artist list page, including data fetching and live updates.
 /// </summary>
-public partial class ArtistViewModel : ObservableObject, IDisposable {
-    private readonly ILibraryService _libraryService;
-    private readonly IMusicPlaybackService _musicPlaybackService;
-    private readonly ISettingsService _settingsService;
-    private readonly IDispatcherService _dispatcherService;
-    private readonly INavigationService _navigationService;
+public partial class ArtistViewModel : ObservableObject, IDisposable
+{
+    private const int PageSize = 250;
     private readonly Dictionary<Guid, ArtistViewModelItem> _artistLookup = new();
     private readonly NotifyCollectionChangedEventHandler _collectionChangedHandler;
+    private readonly IDispatcherService _dispatcherService;
+    private readonly ILibraryService _libraryService;
+    private readonly IMusicPlaybackService _musicPlaybackService;
+    private readonly INavigationService _navigationService;
+    private readonly ISettingsService _settingsService;
     private int _currentPage = 1;
-    private const int PageSize = 250;
-    private bool _isFullyLoaded;
     private bool _isDisposed;
+    private bool _isFullyLoaded;
 
     public ArtistViewModel(
         ILibraryService libraryService,
         ISettingsService settingsService,
         IMusicPlaybackService musicPlaybackService,
         IDispatcherService dispatcherService,
-        INavigationService navigationService) {
+        INavigationService navigationService)
+    {
         _libraryService = libraryService;
         _settingsService = settingsService;
         _musicPlaybackService = musicPlaybackService;
@@ -65,28 +68,40 @@ public partial class ArtistViewModel : ObservableObject, IDisposable {
         Artists.CollectionChanged += _collectionChangedHandler;
     }
 
-    [ObservableProperty]
-    public partial ObservableCollection<ArtistViewModelItem> Artists { get; set; } = new();
+    [ObservableProperty] public partial ObservableCollection<ArtistViewModelItem> Artists { get; set; } = new();
 
-    [ObservableProperty]
-    public partial bool IsLoading { get; set; }
+    [ObservableProperty] public partial bool IsLoading { get; set; }
 
-    [ObservableProperty]
-    public partial bool IsLoadingMore { get; set; }
+    [ObservableProperty] public partial bool IsLoadingMore { get; set; }
 
-    [ObservableProperty]
-    public partial bool HasLoadError { get; set; }
+    [ObservableProperty] public partial bool HasLoadError { get; set; }
 
     public bool HasArtists => Artists.Any();
 
     /// <summary>
-    /// Navigates to the detailed view for the selected artist.
+    ///     Cleans up resources by unsubscribing from event handlers.
+    /// </summary>
+    public void Dispose()
+    {
+        if (_isDisposed) return;
+
+        if (Artists != null) Artists.CollectionChanged -= _collectionChangedHandler;
+        _libraryService.ArtistMetadataUpdated -= OnArtistMetadataUpdated;
+
+        _isDisposed = true;
+        GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    ///     Navigates to the detailed view for the selected artist.
     /// </summary>
     [RelayCommand]
-    public void NavigateToArtistDetail(ArtistViewModelItem? artist) {
+    public void NavigateToArtistDetail(ArtistViewModelItem? artist)
+    {
         if (artist is null) return;
 
-        var navParam = new ArtistViewNavigationParameter {
+        var navParam = new ArtistViewNavigationParameter
+        {
             ArtistId = artist.Id,
             ArtistName = artist.Name
         };
@@ -94,26 +109,30 @@ public partial class ArtistViewModel : ObservableObject, IDisposable {
     }
 
     /// <summary>
-    /// Clears the current queue and starts playing all songs by the selected artist.
+    ///     Clears the current queue and starts playing all songs by the selected artist.
     /// </summary>
     [RelayCommand]
-    private async Task PlayArtistAsync(Guid artistId) {
+    private async Task PlayArtistAsync(Guid artistId)
+    {
         if (IsLoading || artistId == Guid.Empty) return;
 
-        try {
+        try
+        {
             await _musicPlaybackService.PlayArtistAsync(artistId);
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             Debug.WriteLine($"[ArtistViewModel] CRITICAL: Error playing artist {artistId}: {ex.Message}");
         }
     }
 
     /// <summary>
-    /// Asynchronously loads artists with support for cancellation.
+    ///     Asynchronously loads artists with support for cancellation.
     /// </summary>
     /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
     [RelayCommand]
-    public async Task LoadArtistsAsync(CancellationToken cancellationToken) {
+    public async Task LoadArtistsAsync(CancellationToken cancellationToken)
+    {
         if (IsLoading) return;
 
         IsLoading = true;
@@ -123,49 +142,57 @@ public partial class ArtistViewModel : ObservableObject, IDisposable {
         _artistLookup.Clear();
         Artists.Clear();
 
-        try {
+        try
+        {
             await LoadNextPageAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) return;
 
             // Optionally start background metadata fetching after initial load.
-            if (await _settingsService.GetFetchOnlineMetadataEnabledAsync()) {
+            if (await _settingsService.GetFetchOnlineMetadataEnabledAsync())
                 await _libraryService.StartArtistMetadataBackgroundFetchAsync();
-            }
 
             // Continue loading subsequent pages in the background.
-            if (!_isFullyLoaded) {
+            if (!_isFullyLoaded)
+            {
                 IsLoadingMore = true;
-                while (!_isFullyLoaded && !cancellationToken.IsCancellationRequested) {
+                while (!_isFullyLoaded && !cancellationToken.IsCancellationRequested)
+                {
                     _currentPage++;
                     await LoadNextPageAsync(cancellationToken);
                     await Task.Delay(250, cancellationToken);
                 }
             }
         }
-        catch (OperationCanceledException) {
+        catch (OperationCanceledException)
+        {
             Debug.WriteLine("[ArtistViewModel] Artist loading was canceled.");
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             Debug.WriteLine($"[ArtistViewModel] An error occurred while loading artists: {ex.Message}");
             HasLoadError = true;
         }
-        finally {
+        finally
+        {
             IsLoading = false;
             IsLoadingMore = false;
         }
     }
 
     /// <summary>
-    /// Fetches a single page of artists from the library service.
+    ///     Fetches a single page of artists from the library service.
     /// </summary>
-    private async Task LoadNextPageAsync(CancellationToken cancellationToken) {
+    private async Task LoadNextPageAsync(CancellationToken cancellationToken)
+    {
         var pagedResult = await _libraryService.GetAllArtistsPagedAsync(_currentPage, PageSize);
 
         if (cancellationToken.IsCancellationRequested) return;
 
-        if (pagedResult?.Items?.Any() == true) {
-            foreach (var artist in pagedResult.Items) {
-                var artistVm = new ArtistViewModelItem {
+        if (pagedResult?.Items?.Any() == true)
+            foreach (var artist in pagedResult.Items)
+            {
+                var artistVm = new ArtistViewModelItem
+                {
                     Id = artist.Id,
                     Name = artist.Name,
                     LocalImageCachePath = artist.LocalImageCachePath
@@ -173,47 +200,33 @@ public partial class ArtistViewModel : ObservableObject, IDisposable {
                 _artistLookup.Add(artist.Id, artistVm);
                 Artists.Add(artistVm);
             }
-        }
 
-        if (pagedResult == null || Artists.Count >= pagedResult.TotalCount) {
-            _isFullyLoaded = true;
-        }
+        if (pagedResult == null || Artists.Count >= pagedResult.TotalCount) _isFullyLoaded = true;
     }
 
     /// <summary>
-    /// Handles updates to artist metadata, such as new images.
+    ///     Handles updates to artist metadata, such as new images.
     /// </summary>
-    private void OnArtistMetadataUpdated(object? sender, ArtistMetadataUpdatedEventArgs e) {
-        if (_artistLookup.TryGetValue(e.ArtistId, out var artistVm)) {
+    private void OnArtistMetadataUpdated(object? sender, ArtistMetadataUpdatedEventArgs e)
+    {
+        if (_artistLookup.TryGetValue(e.ArtistId, out var artistVm))
             // Ensure UI updates are performed on the main thread.
-            _dispatcherService.TryEnqueue(() => {
-                artistVm.LocalImageCachePath = e.NewLocalImageCachePath;
-            });
-        }
+            _dispatcherService.TryEnqueue(() => { artistVm.LocalImageCachePath = e.NewLocalImageCachePath; });
     }
 
     /// <summary>
-    /// Subscribes to necessary service events.
+    ///     Subscribes to necessary service events.
     /// </summary>
-    public void SubscribeToEvents() => _libraryService.ArtistMetadataUpdated += OnArtistMetadataUpdated;
+    public void SubscribeToEvents()
+    {
+        _libraryService.ArtistMetadataUpdated += OnArtistMetadataUpdated;
+    }
 
     /// <summary>
-    /// Unsubscribes from service events to prevent memory leaks.
+    ///     Unsubscribes from service events to prevent memory leaks.
     /// </summary>
-    public void UnsubscribeFromEvents() => _libraryService.ArtistMetadataUpdated -= OnArtistMetadataUpdated;
-
-    /// <summary>
-    /// Cleans up resources by unsubscribing from event handlers.
-    /// </summary>
-    public void Dispose() {
-        if (_isDisposed) return;
-
-        if (Artists != null) {
-            Artists.CollectionChanged -= _collectionChangedHandler;
-        }
+    public void UnsubscribeFromEvents()
+    {
         _libraryService.ArtistMetadataUpdated -= OnArtistMetadataUpdated;
-
-        _isDisposed = true;
-        GC.SuppressFinalize(this);
     }
 }

@@ -12,7 +12,7 @@
     mc:Ignorable="d">
 
     <Window.SystemBackdrop>
-        <muxm:DesktopAcrylicBackdrop/>
+        <muxm:DesktopAcrylicBackdrop />
     </Window.SystemBackdrop>
 
     <Border x:Name="OuterBorder"
@@ -25,7 +25,6 @@
             <converters:TimeSpanToTimeStringConverter x:Key="TimeSpanToTimeStringConverter" />
             <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <converters:BooleanToVisibilityConverter x:Key="InvertedBooleanToVisibilityConverter" Invert="True" />
-            <converters:ObjectToVisibilityConverter x:Key="ObjectToVisibilityConverter" />
 
             <Style x:Key="QueueListViewItemStyle" TargetType="ListViewItem">
                 <Setter Property="Padding" Value="12,8" />
@@ -41,8 +40,8 @@
                 <Border.Background>
                     <media:ImageBlendBrush Source="{Binding AlbumArtUri}"
                                            Mode="ColorBurn"
-                                           Stretch="UniformToFill" 
-                                           Opacity="0.3"/>
+                                           Stretch="UniformToFill"
+                                           Opacity="0.3" />
                 </Border.Background>
             </Border>
 
@@ -52,48 +51,61 @@
                       Visibility="{Binding IsQueueViewVisible, Converter={StaticResource InvertedBooleanToVisibilityConverter}}"
                       Background="Transparent">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
                     <StackPanel Grid.Row="0" HorizontalAlignment="Stretch" Spacing="2">
                         <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}"
                                    Text="{Binding SongTitle, FallbackValue='A Really Long Song Title That Might Need to be Clipped'}"
-                                   HorizontalAlignment="Center" TextAlignment="Center" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
+                                   HorizontalAlignment="Center" TextAlignment="Center" TextTrimming="CharacterEllipsis"
+                                   TextWrapping="NoWrap" />
                         <TextBlock Style="{ThemeResource BodyTextBlockStyle}"
                                    Text="{Binding ArtistName, FallbackValue='An Artist With an Equally Long Name'}"
                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                   HorizontalAlignment="Center" TextAlignment="Center" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
+                                   HorizontalAlignment="Center" TextAlignment="Center" TextTrimming="CharacterEllipsis"
+                                   TextWrapping="NoWrap" />
                     </StackPanel>
 
                     <Slider Grid.Row="1"
                             Maximum="{Binding TotalDuration}" Value="{Binding CurrentPosition, Mode=TwoWay}"
                             ThumbToolTipValueConverter="{StaticResource TimeSpanToTimeStringConverter}"
                             IsThumbToolTipEnabled="True"
-                            Style="{StaticResource MediaSeekerSliderStyle}"/>
+                            Style="{StaticResource MediaSeekerSliderStyle}" />
 
                     <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="8">
-                        <Button Command="{Binding ToggleMuteCommand}" Style="{StaticResource VolumeButtonStyle}" ToolTipService.ToolTip="{Binding VolumeButtonToolTip}">
-                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="{Binding VolumeIconGlyph}"/>
+                        <Button Command="{Binding ToggleMuteCommand}" Style="{StaticResource VolumeButtonStyle}"
+                                ToolTipService.ToolTip="{Binding VolumeButtonToolTip}">
+                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                      Glyph="{Binding VolumeIconGlyph}" />
                         </Button>
-                        <Button Command="{Binding ToggleShuffleCommand}" Style="{StaticResource ShuffleButtonStyle}" ToolTipService.ToolTip="{Binding ShuffleButtonToolTip}">
-                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="{Binding ShuffleIconGlyph}"/>
+                        <Button Command="{Binding ToggleShuffleCommand}" Style="{StaticResource ShuffleButtonStyle}"
+                                ToolTipService.ToolTip="{Binding ShuffleButtonToolTip}">
+                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                      Glyph="{Binding ShuffleIconGlyph}" />
                         </Button>
-                        <Button Command="{Binding PreviousCommand}" Style="{StaticResource PreviousButtonStyle}" ToolTipService.ToolTip="Previous">
-                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph=""/>
+                        <Button Command="{Binding PreviousCommand}" Style="{StaticResource PreviousButtonStyle}"
+                                ToolTipService.ToolTip="Previous">
+                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
                         </Button>
-                        <Button Command="{Binding PlayPauseCommand}" Style="{StaticResource PlayPauseButtonStyle}" ToolTipService.ToolTip="{Binding PlayPauseButtonToolTip}">
-                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" FontSize="24" Glyph="{Binding PlayPauseIconGlyph}"/>
+                        <Button Command="{Binding PlayPauseCommand}" Style="{StaticResource PlayPauseButtonStyle}"
+                                ToolTipService.ToolTip="{Binding PlayPauseButtonToolTip}">
+                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" FontSize="24"
+                                      Glyph="{Binding PlayPauseIconGlyph}" />
                         </Button>
-                        <Button Command="{Binding NextCommand}" Style="{StaticResource NextButtonStyle}" ToolTipService.ToolTip="Next">
-                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph=""/>
+                        <Button Command="{Binding NextCommand}" Style="{StaticResource NextButtonStyle}"
+                                ToolTipService.ToolTip="Next">
+                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
                         </Button>
-                        <Button Command="{Binding CycleRepeatCommand}" Style="{StaticResource RepeatButtonStyle}" ToolTipService.ToolTip="{Binding RepeatButtonToolTip}">
-                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="{Binding RepeatIconGlyph}"/>
+                        <Button Command="{Binding CycleRepeatCommand}" Style="{StaticResource RepeatButtonStyle}"
+                                ToolTipService.ToolTip="{Binding RepeatButtonToolTip}">
+                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                      Glyph="{Binding RepeatIconGlyph}" />
                         </Button>
-                        <Button Command="{Binding ShowQueueViewCommand}" Style="{StaticResource QueueButtonStyle}" ToolTipService.ToolTip="Current Queue">
-                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph=""/>
+                        <Button Command="{Binding ShowQueueViewCommand}" Style="{StaticResource QueueButtonStyle}"
+                                ToolTipService.ToolTip="Current Queue">
+                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
                         </Button>
                     </StackPanel>
                 </Grid>
@@ -112,13 +124,13 @@
                                 Command="{Binding ShowPlayerViewCommand}"
                                 Style="{StaticResource BackButtonStyle}"
                                 ToolTipService.ToolTip="Back to Player">
-                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph=""/>
+                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
                         </Button>
 
                         <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center"
                                    Style="{ThemeResource SubtitleTextBlockStyle}"
                                    Text="Current Queue"
-                                   Margin="12,0,12,4"/>
+                                   Margin="12,0,12,4" />
                     </Grid>
 
                     <ListView Grid.Row="1"

@@ -1,9 +1,10 @@
 ﻿namespace Nagi.Core.Services.Abstractions;
 
 /// <summary>
-/// Provides information about the application itself.
+///     Provides information about the application itself.
 /// </summary>
-public interface IAppInfoService {
+public interface IAppInfoService
+{
     string GetAppName();
     string GetAppVersion();
 }

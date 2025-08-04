@@ -1,7 +1,4 @@
-﻿using Nagi.Core.Models;
-using Nagi.Core.Services.Abstractions;
-using Nagi.WinUI.Services.Abstractions;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Windows.Media;
@@ -9,15 +6,19 @@ using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.Storage;
 using Windows.Storage.Streams;
+using Nagi.Core.Models;
+using Nagi.Core.Services.Abstractions;
+using Nagi.WinUI.Services.Abstractions;
 
 namespace Nagi.WinUI.Services.Implementations;
 
 /// <summary>
-/// Implements <see cref="IAudioPlayer"/> using <see cref="Windows.Media.Playback.MediaPlayer"/> for WinUI 3.
-/// This service integrates automatically with the System Media Transport Controls (SMTC)
-/// via the <see cref="MediaPlayer.CommandManager"/>.
+///     Implements <see cref="IAudioPlayer" /> using <see cref="Windows.Media.Playback.MediaPlayer" /> for WinUI 3.
+///     This service integrates automatically with the System Media Transport Controls (SMTC)
+///     via the <see cref="MediaPlayer.CommandManager" />.
 /// </summary>
-public class MediaPlayerAudioPlayerService : IAudioPlayer, IDisposable {
+public class MediaPlayerAudioPlayerService : IAudioPlayer, IDisposable
+{
     private readonly IDispatcherService _dispatcherService;
     private readonly MediaPlayer _mediaPlayer;
     private MediaPlaybackSession? _currentPlaybackSession;
@@ -25,10 +26,11 @@ public class MediaPlayerAudioPlayerService : IAudioPlayer, IDisposable {
     private SystemMediaTransportControls? _smtc;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MediaPlayerAudioPlayerService"/> class.
+    ///     Initializes a new instance of the <see cref="MediaPlayerAudioPlayerService" /> class.
     /// </summary>
     /// <param name="dispatcherService">The service for dispatching actions to the UI thread.</param>
-    public MediaPlayerAudioPlayerService(IDispatcherService dispatcherService) {
+    public MediaPlayerAudioPlayerService(IDispatcherService dispatcherService)
+    {
         _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
 
         Debug.WriteLine("[MediaPlayerAudioPlayerService] INFO: Initializing MediaPlayer.");
@@ -86,7 +88,8 @@ public class MediaPlayerAudioPlayerService : IAudioPlayer, IDisposable {
     public event Action? SmtcPreviousButtonPressed;
 
     /// <inheritdoc />
-    public void InitializeSmtc() {
+    public void InitializeSmtc()
+    {
         Debug.WriteLine("[MediaPlayerAudioPlayerService] INFO: Initializing SMTC CommandManager.");
         _mediaPlayer.CommandManager.IsEnabled = true;
         _smtc = _mediaPlayer.SystemMediaTransportControls;
@@ -96,31 +99,33 @@ public class MediaPlayerAudioPlayerService : IAudioPlayer, IDisposable {
     }
 
     /// <inheritdoc />
-    public void UpdateSmtcButtonStates(bool canNext, bool canPrevious) {
+    public void UpdateSmtcButtonStates(bool canNext, bool canPrevious)
+    {
         if (_mediaPlayer.CommandManager == null) return;
 
         var newNextRule = canNext ? MediaCommandEnablingRule.Always : MediaCommandEnablingRule.Never;
-        if (_mediaPlayer.CommandManager.NextBehavior.EnablingRule != newNextRule) {
+        if (_mediaPlayer.CommandManager.NextBehavior.EnablingRule != newNextRule)
             _mediaPlayer.CommandManager.NextBehavior.EnablingRule = newNextRule;
-        }
 
         var newPreviousRule = canPrevious ? MediaCommandEnablingRule.Always : MediaCommandEnablingRule.Never;
-        if (_mediaPlayer.CommandManager.PreviousBehavior.EnablingRule != newPreviousRule) {
+        if (_mediaPlayer.CommandManager.PreviousBehavior.EnablingRule != newPreviousRule)
             _mediaPlayer.CommandManager.PreviousBehavior.EnablingRule = newPreviousRule;
-        }
     }
 
     /// <inheritdoc />
-    public async Task LoadAsync(Song song) {
+    public async Task LoadAsync(Song song)
+    {
         if (song == null) return;
 
         _currentSong = song;
-        try {
+        try
+        {
             Debug.WriteLine($"[MediaPlayerAudioPlayerService] INFO: Loading media from path: {song.FilePath}");
             var file = await StorageFile.GetFileFromPathAsync(song.FilePath);
             _mediaPlayer.Source = MediaSource.CreateFromStorageFile(file);
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             var errorMessage = $"Failed to load '{song.Title}': {ex.Message}";
             Debug.WriteLine($"[MediaPlayerAudioPlayerService] ERROR: {errorMessage}");
             _dispatcherService.TryEnqueue(() => ErrorOccurred?.Invoke(errorMessage));
@@ -130,33 +135,35 @@ public class MediaPlayerAudioPlayerService : IAudioPlayer, IDisposable {
     }
 
     /// <inheritdoc />
-    public async Task PlayAsync() {
-        if (_mediaPlayer.Source == null && _currentSong != null) {
-            Debug.WriteLine("[MediaPlayerAudioPlayerService] WARN: PlayAsync called with no source. Attempting to reload current song.");
+    public async Task PlayAsync()
+    {
+        if (_mediaPlayer.Source == null && _currentSong != null)
+        {
+            Debug.WriteLine(
+                "[MediaPlayerAudioPlayerService] WARN: PlayAsync called with no source. Attempting to reload current song.");
             await LoadAsync(_currentSong);
             if (_mediaPlayer.Source == null) return;
         }
 
-        if (_mediaPlayer.Source != null) {
-            _mediaPlayer.Play();
-        }
+        if (_mediaPlayer.Source != null) _mediaPlayer.Play();
     }
 
     /// <inheritdoc />
-    public Task PauseAsync() {
-        if (_mediaPlayer.Source != null && _mediaPlayer.CanPause) {
-            _mediaPlayer.Pause();
-        }
+    public Task PauseAsync()
+    {
+        if (_mediaPlayer.Source != null && _mediaPlayer.CanPause) _mediaPlayer.Pause();
         return Task.CompletedTask;
     }
 
     /// <inheritdoc />
-    public Task StopAsync() {
+    public Task StopAsync()
+    {
         Debug.WriteLine("[MediaPlayerAudioPlayerService] INFO: Stop command received.");
         _mediaPlayer.Source = null;
         _currentSong = null;
 
-        if (_smtc != null) {
+        if (_smtc != null)
+        {
             _smtc.DisplayUpdater.ClearAll();
             _smtc.DisplayUpdater.Update();
         }
@@ -165,27 +172,29 @@ public class MediaPlayerAudioPlayerService : IAudioPlayer, IDisposable {
     }
 
     /// <inheritdoc />
-    public Task SeekAsync(TimeSpan position) {
-        if (_mediaPlayer.PlaybackSession?.CanSeek == true) {
-            _mediaPlayer.PlaybackSession.Position = position;
-        }
+    public Task SeekAsync(TimeSpan position)
+    {
+        if (_mediaPlayer.PlaybackSession?.CanSeek == true) _mediaPlayer.PlaybackSession.Position = position;
         return Task.CompletedTask;
     }
 
     /// <inheritdoc />
-    public Task SetVolumeAsync(double volume) {
+    public Task SetVolumeAsync(double volume)
+    {
         _mediaPlayer.Volume = Math.Clamp(volume, 0.0, 1.0);
         return Task.CompletedTask;
     }
 
     /// <inheritdoc />
-    public Task SetMuteAsync(bool isMuted) {
+    public Task SetMuteAsync(bool isMuted)
+    {
         _mediaPlayer.IsMuted = isMuted;
         return Task.CompletedTask;
     }
 
     /// <inheritdoc />
-    public void Dispose() {
+    public void Dispose()
+    {
         Debug.WriteLine("[MediaPlayerAudioPlayerService] INFO: Disposing service.");
         _mediaPlayer.MediaEnded -= MediaPlayer_MediaEnded;
         _mediaPlayer.CurrentStateChanged -= MediaPlayer_CurrentStateChanged;
@@ -193,12 +202,14 @@ public class MediaPlayerAudioPlayerService : IAudioPlayer, IDisposable {
         _mediaPlayer.MediaFailed -= MediaPlayer_MediaFailed;
         _mediaPlayer.MediaOpened -= MediaPlayer_MediaOpened;
 
-        if (_currentPlaybackSession != null) {
+        if (_currentPlaybackSession != null)
+        {
             _currentPlaybackSession.PositionChanged -= PlaybackSession_PositionChanged;
             _currentPlaybackSession.NaturalDurationChanged -= PlaybackSession_NaturalDurationChanged;
         }
 
-        if (_mediaPlayer.CommandManager != null) {
+        if (_mediaPlayer.CommandManager != null)
+        {
             _mediaPlayer.CommandManager.NextReceived -= CommandManager_NextReceived;
             _mediaPlayer.CommandManager.PreviousReceived -= CommandManager_PreviousReceived;
         }
@@ -209,17 +220,22 @@ public class MediaPlayerAudioPlayerService : IAudioPlayer, IDisposable {
         Debug.WriteLine("[MediaPlayerAudioPlayerService] INFO: Service disposed.");
     }
 
-    private void MediaPlayer_MediaEnded(MediaPlayer sender, object args) {
+    private void MediaPlayer_MediaEnded(MediaPlayer sender, object args)
+    {
         Debug.WriteLine("[MediaPlayerAudioPlayerService] INFO: MediaEnded event fired.");
         _dispatcherService.TryEnqueue(() => PlaybackEnded?.Invoke());
     }
 
-    private void MediaPlayer_CurrentStateChanged(MediaPlayer sender, object args) {
-        Debug.WriteLine($"[MediaPlayerAudioPlayerService] INFO: CurrentStateChanged event fired. New state: {sender.PlaybackSession?.PlaybackState}");
+    private void MediaPlayer_CurrentStateChanged(MediaPlayer sender, object args)
+    {
+        Debug.WriteLine(
+            $"[MediaPlayerAudioPlayerService] INFO: CurrentStateChanged event fired. New state: {sender.PlaybackSession?.PlaybackState}");
         _dispatcherService.TryEnqueue(() => StateChanged?.Invoke());
 
-        if (_smtc != null) {
-            var newStatus = sender.PlaybackSession?.PlaybackState switch {
+        if (_smtc != null)
+        {
+            var newStatus = sender.PlaybackSession?.PlaybackState switch
+            {
                 MediaPlaybackState.Playing => MediaPlaybackStatus.Playing,
                 MediaPlaybackState.Paused => MediaPlaybackStatus.Paused,
                 MediaPlaybackState.None => MediaPlaybackStatus.Stopped,
@@ -227,61 +243,67 @@ public class MediaPlayerAudioPlayerService : IAudioPlayer, IDisposable {
                 _ => MediaPlaybackStatus.Closed
             };
 
-            if (_smtc.PlaybackStatus != newStatus) {
-                _smtc.PlaybackStatus = newStatus;
-            }
+            if (_smtc.PlaybackStatus != newStatus) _smtc.PlaybackStatus = newStatus;
         }
     }
 
-    private void MediaPlayer_VolumeChanged(MediaPlayer sender, object args) {
+    private void MediaPlayer_VolumeChanged(MediaPlayer sender, object args)
+    {
         _dispatcherService.TryEnqueue(() => VolumeChanged?.Invoke());
     }
 
-    private void PlaybackSession_PositionChanged(MediaPlaybackSession sender, object args) {
+    private void PlaybackSession_PositionChanged(MediaPlaybackSession sender, object args)
+    {
         _dispatcherService.TryEnqueue(() => PositionChanged?.Invoke());
     }
 
-    private void PlaybackSession_NaturalDurationChanged(MediaPlaybackSession sender, object args) {
-        Debug.WriteLine($"[MediaPlayerAudioPlayerService] INFO: NaturalDurationChanged event fired. New duration: {sender.NaturalDuration}.");
+    private void PlaybackSession_NaturalDurationChanged(MediaPlaybackSession sender, object args)
+    {
+        Debug.WriteLine(
+            $"[MediaPlayerAudioPlayerService] INFO: NaturalDurationChanged event fired. New duration: {sender.NaturalDuration}.");
         _dispatcherService.TryEnqueue(() => DurationChanged?.Invoke());
     }
 
-    private void MediaPlayer_MediaFailed(MediaPlayer sender, MediaPlayerFailedEventArgs args) {
+    private void MediaPlayer_MediaFailed(MediaPlayer sender, MediaPlayerFailedEventArgs args)
+    {
         var errorMessage = $"Media playback failed. Error: {args.Error}, Message: {args.ErrorMessage}";
         Debug.WriteLine($"[MediaPlayerAudioPlayerService] ERROR: {errorMessage}");
         _dispatcherService.TryEnqueue(() => ErrorOccurred?.Invoke(errorMessage));
         _dispatcherService.TryEnqueue(async () => await StopAsync());
     }
 
-    private async void MediaPlayer_MediaOpened(MediaPlayer sender, object args) {
+    private async void MediaPlayer_MediaOpened(MediaPlayer sender, object args)
+    {
         Debug.WriteLine("[MediaPlayerAudioPlayerService] INFO: MediaOpened event fired.");
 
-        if (_currentPlaybackSession != null) {
+        if (_currentPlaybackSession != null)
+        {
             _currentPlaybackSession.PositionChanged -= PlaybackSession_PositionChanged;
             _currentPlaybackSession.NaturalDurationChanged -= PlaybackSession_NaturalDurationChanged;
         }
 
         _currentPlaybackSession = sender.PlaybackSession;
-        if (_currentPlaybackSession != null) {
+        if (_currentPlaybackSession != null)
+        {
             _currentPlaybackSession.PositionChanged += PlaybackSession_PositionChanged;
             _currentPlaybackSession.NaturalDurationChanged += PlaybackSession_NaturalDurationChanged;
         }
 
         _dispatcherService.TryEnqueue(() => MediaOpened?.Invoke());
 
-        if (_currentPlaybackSession?.NaturalDuration > TimeSpan.Zero) {
+        if (_currentPlaybackSession?.NaturalDuration > TimeSpan.Zero)
             PlaybackSession_NaturalDurationChanged(_currentPlaybackSession, args);
-        }
 
         await UpdateSmtcDisplayAsync();
     }
 
 
-
-    private async Task UpdateSmtcDisplayAsync() {
+    private async Task UpdateSmtcDisplayAsync()
+    {
         if (_smtc == null || _currentSong == null) return;
 
-        Debug.WriteLine($"[MediaPlayerAudioPlayerService] INFO: Updating SMTC display for track '{_currentSong.Title}'.");
+        Debug.WriteLine(
+            $"[MediaPlayerAudioPlayerService] INFO: Updating SMTC display for track '{_currentSong.Title}'.");
         var updater = _smtc.DisplayUpdater;
         updater.Type = MediaPlaybackType.Music;
         updater.MusicProperties.Title = _currentSong.Title ?? string.Empty;
@@ -290,28 +312,30 @@ public class MediaPlayerAudioPlayerService : IAudioPlayer, IDisposable {
             _currentSong.Album?.Artist?.Name ?? _currentSong.Artist?.Name ?? "Unknown Album Artist";
         updater.MusicProperties.AlbumTitle = _currentSong.Album?.Title ?? "Unknown Album";
 
-        if (!string.IsNullOrEmpty(_currentSong.AlbumArtUriFromTrack)) {
-            try {
+        if (!string.IsNullOrEmpty(_currentSong.AlbumArtUriFromTrack))
+            try
+            {
                 var albumArtFile = await StorageFile.GetFileFromPathAsync(_currentSong.AlbumArtUriFromTrack);
                 updater.Thumbnail = RandomAccessStreamReference.CreateFromFile(albumArtFile);
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 Debug.WriteLine($"[MediaPlayerAudioPlayerService] WARN: Error setting SMTC thumbnail: {ex.Message}");
                 updater.Thumbnail = null;
             }
-        }
-        else {
+        else
             updater.Thumbnail = null;
-        }
 
         updater.Update();
     }
 
     private void CommandManager_NextReceived(MediaPlaybackCommandManager sender,
-        MediaPlaybackCommandManagerNextReceivedEventArgs args) {
+        MediaPlaybackCommandManagerNextReceivedEventArgs args)
+    {
         Debug.WriteLine("[MediaPlayerAudioPlayerService] INFO: SMTC Next command received.");
         var deferral = args.GetDeferral();
-        _dispatcherService.TryEnqueue(() => {
+        _dispatcherService.TryEnqueue(() =>
+        {
             SmtcNextButtonPressed?.Invoke();
             args.Handled = true;
             deferral.Complete();
@@ -319,10 +343,12 @@ public class MediaPlayerAudioPlayerService : IAudioPlayer, IDisposable {
     }
 
     private void CommandManager_PreviousReceived(MediaPlaybackCommandManager sender,
-        MediaPlaybackCommandManagerPreviousReceivedEventArgs args) {
+        MediaPlaybackCommandManagerPreviousReceivedEventArgs args)
+    {
         Debug.WriteLine("[MediaPlayerAudioPlayerService] INFO: SMTC Previous command received.");
         var deferral = args.GetDeferral();
-        _dispatcherService.TryEnqueue(() => {
+        _dispatcherService.TryEnqueue(() =>
+        {
             SmtcPreviousButtonPressed?.Invoke();
             args.Handled = true;
             deferral.Complete();

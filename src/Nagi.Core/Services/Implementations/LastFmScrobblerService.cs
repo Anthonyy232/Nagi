@@ -7,27 +7,30 @@ using Nagi.Core.Services.Abstractions;
 namespace Nagi.Core.Services.Implementations;
 
 /// <summary>
-/// Handles direct API communication with Last.fm for scrobbling and "now playing" updates.
+///     Handles direct API communication with Last.fm for scrobbling and "now playing" updates.
 /// </summary>
-public class LastFmScrobblerService : ILastFmScrobblerService {
+public class LastFmScrobblerService : ILastFmScrobblerService
+{
     private const string LastFmApiBaseUrl = "https://ws.audioscrobbler.com/2.0/";
     private const string ApiKeyName = "lastfm";
     private const string ApiSecretName = "lastfm-secret";
 
     private readonly IApiKeyService _apiKeyService;
-    private readonly ISettingsService _settingsService;
     private readonly HttpClient _httpClient;
+    private readonly ISettingsService _settingsService;
 
     public LastFmScrobblerService(
         IHttpClientFactory httpClientFactory,
         IApiKeyService apiKeyService,
-        ISettingsService settingsService) {
+        ISettingsService settingsService)
+    {
         _httpClient = httpClientFactory.CreateClient("LastFm");
         _apiKeyService = apiKeyService;
         _settingsService = settingsService;
     }
 
-    public async Task<bool> UpdateNowPlayingAsync(Song song) {
+    public async Task<bool> UpdateNowPlayingAsync(Song song)
+    {
         var (apiKey, apiSecret, sessionKey) = await GetApiCredentialsAsync();
         if (apiKey is null || apiSecret is null || sessionKey is null) return false;
 
@@ -46,7 +49,8 @@ public class LastFmScrobblerService : ILastFmScrobblerService {
         return await PostToLastFmAsync(parameters, apiSecret);
     }
 
-    public async Task<bool> ScrobbleAsync(Song song, DateTime playStartTime) {
+    public async Task<bool> ScrobbleAsync(Song song, DateTime playStartTime)
+    {
         var (apiKey, apiSecret, sessionKey) = await GetApiCredentialsAsync();
         if (apiKey is null || apiSecret is null || sessionKey is null) return false;
 
@@ -68,33 +72,36 @@ public class LastFmScrobblerService : ILastFmScrobblerService {
     }
 
     /// <summary>
-    /// Sends a POST request to the Last.fm API with the provided parameters.
+    ///     Sends a POST request to the Last.fm API with the provided parameters.
     /// </summary>
-    private async Task<bool> PostToLastFmAsync(Dictionary<string, string> parameters, string apiSecret) {
+    private async Task<bool> PostToLastFmAsync(Dictionary<string, string> parameters, string apiSecret)
+    {
         parameters["api_sig"] = CreateSignature(parameters, apiSecret);
 
         using var formContent = new FormUrlEncodedContent(parameters);
 
-        try {
+        try
+        {
             using var response = await _httpClient.PostAsync(LastFmApiBaseUrl, formContent);
-            if (response.IsSuccessStatusCode) {
-                return true;
-            }
+            if (response.IsSuccessStatusCode) return true;
 
             var errorContent = await response.Content.ReadAsStringAsync();
-            Debug.WriteLine($"[LastFmScrobblerService] API call failed. Status: {response.StatusCode}, Response: {errorContent}");
+            Debug.WriteLine(
+                $"[LastFmScrobblerService] API call failed. Status: {response.StatusCode}, Response: {errorContent}");
             return false;
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             Debug.WriteLine($"[LastFmScrobblerService] Exception during API call: {ex.Message}");
             return false;
         }
     }
 
     /// <summary>
-    /// Retrieves all necessary API keys and session tokens for an authenticated request.
+    ///     Retrieves all necessary API keys and session tokens for an authenticated request.
     /// </summary>
-    private async Task<(string? ApiKey, string? ApiSecret, string? SessionKey)> GetApiCredentialsAsync() {
+    private async Task<(string? ApiKey, string? ApiSecret, string? SessionKey)> GetApiCredentialsAsync()
+    {
         var apiKeyTask = _apiKeyService.GetApiKeyAsync(ApiKeyName);
         var apiSecretTask = _apiKeyService.GetApiKeyAsync(ApiSecretName);
         var credentialsTask = _settingsService.GetLastFmCredentialsAsync();
@@ -105,8 +112,11 @@ public class LastFmScrobblerService : ILastFmScrobblerService {
         var apiSecret = apiSecretTask.Result;
         var credentials = credentialsTask.Result;
 
-        if (string.IsNullOrEmpty(apiKey) || string.IsNullOrEmpty(apiSecret) || string.IsNullOrEmpty(credentials?.SessionKey)) {
-            Debug.WriteLine("[LastFmScrobblerService] Cannot perform action; API key, secret, or session key is unavailable.");
+        if (string.IsNullOrEmpty(apiKey) || string.IsNullOrEmpty(apiSecret) ||
+            string.IsNullOrEmpty(credentials?.SessionKey))
+        {
+            Debug.WriteLine(
+                "[LastFmScrobblerService] Cannot perform action; API key, secret, or session key is unavailable.");
             return (null, null, null);
         }
 
@@ -114,25 +124,26 @@ public class LastFmScrobblerService : ILastFmScrobblerService {
     }
 
     /// <summary>
-    /// Creates the required MD5 signature for an authenticated Last.fm API call.
+    ///     Creates the required MD5 signature for an authenticated Last.fm API call.
     /// </summary>
-    private static string CreateSignature(IDictionary<string, string> parameters, string secret) {
+    private static string CreateSignature(IDictionary<string, string> parameters, string secret)
+    {
         var sb = new StringBuilder();
         // Parameters must be ordered alphabetically by key for a valid signature.
-        foreach (var kvp in parameters.OrderBy(p => p.Key)) {
+        foreach (var kvp in parameters.OrderBy(p => p.Key))
+        {
             sb.Append(kvp.Key);
             sb.Append(kvp.Value);
         }
+
         sb.Append(secret);
 
         using var md5 = MD5.Create();
-        byte[] inputBytes = Encoding.UTF8.GetBytes(sb.ToString());
-        byte[] hashBytes = md5.ComputeHash(inputBytes);
+        var inputBytes = Encoding.UTF8.GetBytes(sb.ToString());
+        var hashBytes = md5.ComputeHash(inputBytes);
 
         var hashStringBuilder = new StringBuilder();
-        foreach (var t in hashBytes) {
-            hashStringBuilder.Append(t.ToString("x2"));
-        }
+        foreach (var t in hashBytes) hashStringBuilder.Append(t.ToString("x2"));
         return hashStringBuilder.ToString();
     }
 }

@@ -1,49 +1,51 @@
+using System;
+using System.Diagnostics;
+using Windows.Graphics;
+using Windows.UI;
 using Microsoft.UI;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Media;
 using Nagi.WinUI.Controls;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Models;
 using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
-using System;
-using System.Diagnostics;
-using Windows.Graphics;
-using Windows.UI;
 using WinRT;
 using WinRT.Interop;
 
 namespace Nagi.WinUI;
 
 /// <summary>
-/// The main application window. It manages the window frame, hosts application pages,
-/// and dynamically configures a custom or default title bar based on the current content.
-/// It also manages the window's backdrop material based on user settings and system theme.
+///     The main application window. It manages the window frame, hosts application pages,
+///     and dynamically configures a custom or default title bar based on the current content.
+///     It also manages the window's backdrop material based on user settings and system theme.
 /// </summary>
-public sealed partial class MainWindow : Window {
+public sealed partial class MainWindow : Window
+{
+    private DesktopAcrylicController? _acrylicController;
     private AppWindow? _appWindow;
-    private bool _isTitleBarInitialized = false;
-    private IUISettingsService? _settingsService;
 
     private SystemBackdropConfiguration? _backdropConfiguration;
+    private bool _isTitleBarInitialized;
     private MicaController? _micaController;
-    private DesktopAcrylicController? _acrylicController;
-    private WindowsSystemDispatcherQueueHelper? _wsdqHelper;
     private FrameworkElement? _rootElement;
+    private IUISettingsService? _settingsService;
+    private WindowsSystemDispatcherQueueHelper? _wsdqHelper;
 
-    public MainWindow() {
+    public MainWindow()
+    {
         InitializeComponent();
         ExtendsContentIntoTitleBar = true;
     }
 
     /// <summary>
-    /// Initializes the window with required services and subscribes to necessary events.
+    ///     Initializes the window with required services and subscribes to necessary events.
     /// </summary>
     /// <param name="settingsService">The service for UI-related settings.</param>
-    public void InitializeDependencies(IUISettingsService settingsService) {
+    public void InitializeDependencies(IUISettingsService settingsService)
+    {
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
 
         TrySetBackdrop();
@@ -56,20 +58,17 @@ public sealed partial class MainWindow : Window {
     }
 
     /// <summary>
-    /// Notifies the window that its content has been loaded. This allows the window to
-    /// hook into the content's theme change events to keep the title bar and backdrop synchronized.
-    /// This method should be called from App.xaml.cs after the initial page is set.
+    ///     Notifies the window that its content has been loaded. This allows the window to
+    ///     hook into the content's theme change events to keep the title bar and backdrop synchronized.
+    ///     This method should be called from App.xaml.cs after the initial page is set.
     /// </summary>
-    public void NotifyContentLoaded() {
+    public void NotifyContentLoaded()
+    {
         // Unsubscribe from any previous content's event handler to prevent memory leaks.
-        if (_rootElement != null) {
-            _rootElement.ActualThemeChanged -= OnActualThemeChanged;
-        }
+        if (_rootElement != null) _rootElement.ActualThemeChanged -= OnActualThemeChanged;
 
-        _rootElement = this.Content as FrameworkElement;
-        if (_rootElement != null) {
-            _rootElement.ActualThemeChanged += OnActualThemeChanged;
-        }
+        _rootElement = Content as FrameworkElement;
+        if (_rootElement != null) _rootElement.ActualThemeChanged += OnActualThemeChanged;
 
         // Immediately synchronize the backdrop and title bar with the new content's current theme.
         SetBackdropTheme();
@@ -77,67 +76,72 @@ public sealed partial class MainWindow : Window {
     }
 
     /// <summary>
-    /// Configures the window's title bar. It uses a custom title bar if the current
-    /// page provides one; otherwise, it reverts to the default system title bar.
+    ///     Configures the window's title bar. It uses a custom title bar if the current
+    ///     page provides one; otherwise, it reverts to the default system title bar.
     /// </summary>
-    public void InitializeCustomTitleBar() {
+    public void InitializeCustomTitleBar()
+    {
         _appWindow ??= GetAppWindowForCurrentWindow();
-        if (_appWindow == null) {
+        if (_appWindow == null)
+        {
             Debug.WriteLine("[CRITICAL] MainWindow: AppWindow is not available. Cannot initialize title bar.");
             return;
         }
 
-        if (_appWindow.Presenter is not OverlappedPresenter presenter) {
+        if (_appWindow.Presenter is not OverlappedPresenter presenter)
+        {
             RevertToDefaultTitleBar();
             return;
         }
 
-        if (Content is ICustomTitleBarProvider provider && provider.GetAppTitleBarElement() is { } titleBarElement) {
+        if (Content is ICustomTitleBarProvider provider && provider.GetAppTitleBarElement() is { } titleBarElement)
+        {
             ExtendsContentIntoTitleBar = true;
             SetTitleBar(titleBarElement);
-            bool showSystemButtons = Content is not OnboardingPage;
+            var showSystemButtons = Content is not OnboardingPage;
             presenter.SetBorderAndTitleBar(true, showSystemButtons);
         }
-        else {
+        else
+        {
             RevertToDefaultTitleBar(presenter);
         }
 
         UpdateTitleBarTheme();
     }
 
-    private void RevertToDefaultTitleBar(OverlappedPresenter? presenter = null) {
+    private void RevertToDefaultTitleBar(OverlappedPresenter? presenter = null)
+    {
         ExtendsContentIntoTitleBar = false;
         SetTitleBar(null);
         presenter ??= _appWindow?.Presenter as OverlappedPresenter;
         presenter?.SetBorderAndTitleBar(false, true);
     }
 
-    private void OnWindowActivated(object sender, WindowActivatedEventArgs args) {
+    private void OnWindowActivated(object sender, WindowActivatedEventArgs args)
+    {
         // Lazily initialize the title bar on first activation.
-        if (!_isTitleBarInitialized) {
+        if (!_isTitleBarInitialized)
+        {
             InitializeCustomTitleBar();
             _isTitleBarInitialized = true;
         }
 
-        if (_backdropConfiguration != null) {
+        if (_backdropConfiguration != null)
             _backdropConfiguration.IsInputActive = args.WindowActivationState != WindowActivationState.Deactivated;
-        }
 
-        if (Content is MainPage mainPage) {
-            mainPage.UpdateActivationVisualState(args.WindowActivationState);
-        }
+        if (Content is MainPage mainPage) mainPage.UpdateActivationVisualState(args.WindowActivationState);
     }
 
-    private void OnWindowClosed(object sender, WindowEventArgs args) {
+    private void OnWindowClosed(object sender, WindowEventArgs args)
+    {
         // Unsubscribe from all events and dispose of resources to prevent memory leaks.
         Activated -= OnWindowActivated;
         Closed -= OnWindowClosed;
 
-        if (_rootElement != null) {
-            _rootElement.ActualThemeChanged -= OnActualThemeChanged;
-        }
+        if (_rootElement != null) _rootElement.ActualThemeChanged -= OnActualThemeChanged;
 
-        if (_settingsService != null) {
+        if (_settingsService != null)
+        {
             _settingsService.BackdropMaterialChanged -= OnBackdropMaterialChanged;
             _settingsService.TransparencyEffectsSettingChanged -= OnTransparencyEffectsChanged;
         }
@@ -151,24 +155,28 @@ public sealed partial class MainWindow : Window {
         _backdropConfiguration = null;
     }
 
-    private void OnBackdropMaterialChanged(BackdropMaterial material) {
+    private void OnBackdropMaterialChanged(BackdropMaterial material)
+    {
         DispatcherQueue.TryEnqueue(() => TrySetBackdrop(material));
     }
 
-    private void OnTransparencyEffectsChanged(bool isEnabled) {
+    private void OnTransparencyEffectsChanged(bool isEnabled)
+    {
         DispatcherQueue.TryEnqueue(() => TrySetBackdrop());
     }
 
-    private void OnActualThemeChanged(FrameworkElement sender, object args) {
+    private void OnActualThemeChanged(FrameworkElement sender, object args)
+    {
         SetBackdropTheme();
         UpdateTitleBarTheme();
     }
 
     /// <summary>
-    /// Attempts to set the system backdrop (Mica or Acrylic) based on user settings.
-    /// Disposes of any existing backdrop controller before applying a new one.
+    ///     Attempts to set the system backdrop (Mica or Acrylic) based on user settings.
+    ///     Disposes of any existing backdrop controller before applying a new one.
     /// </summary>
-    private async void TrySetBackdrop(BackdropMaterial? material = null) {
+    private async void TrySetBackdrop(BackdropMaterial? material = null)
+    {
         if (_settingsService is null) return;
 
         material ??= await _settingsService.GetBackdropMaterialAsync();
@@ -178,25 +186,29 @@ public sealed partial class MainWindow : Window {
         _micaController = null;
         _acrylicController?.Dispose();
         _acrylicController = null;
-        this.SystemBackdrop = null;
+        SystemBackdrop = null;
 
-        if (_settingsService.IsTransparencyEffectsEnabled()) {
-            if (!EnsureWindowsSystemDispatcherQueue()) {
-                Debug.WriteLine("[WARN] MainWindow: Could not create a system dispatcher queue. Backdrop will not be applied.");
+        if (_settingsService.IsTransparencyEffectsEnabled())
+        {
+            if (!EnsureWindowsSystemDispatcherQueue())
+            {
+                Debug.WriteLine(
+                    "[WARN] MainWindow: Could not create a system dispatcher queue. Backdrop will not be applied.");
                 return;
             }
 
             _backdropConfiguration = new SystemBackdropConfiguration { IsInputActive = true };
             SetBackdropTheme();
 
-            switch (material) {
+            switch (material)
+            {
                 case BackdropMaterial.Mica:
-                    _micaController = new MicaController() { Kind = MicaKind.Base };
+                    _micaController = new MicaController { Kind = MicaKind.Base };
                     _micaController.SetSystemBackdropConfiguration(_backdropConfiguration);
                     _micaController.AddSystemBackdropTarget(this.As<ICompositionSupportsSystemBackdrop>());
                     break;
                 case BackdropMaterial.MicaAlt:
-                    _micaController = new MicaController() { Kind = MicaKind.BaseAlt };
+                    _micaController = new MicaController { Kind = MicaKind.BaseAlt };
                     _micaController.SetSystemBackdropConfiguration(_backdropConfiguration);
                     _micaController.AddSystemBackdropTarget(this.As<ICompositionSupportsSystemBackdrop>());
                     break;
@@ -207,28 +219,30 @@ public sealed partial class MainWindow : Window {
                     break;
             }
         }
-        else {
+        else
+        {
             _backdropConfiguration = null;
         }
     }
 
-    private void SetBackdropTheme() {
-        if (_backdropConfiguration != null && _rootElement != null) {
-            _backdropConfiguration.Theme = _rootElement.ActualTheme switch {
+    private void SetBackdropTheme()
+    {
+        if (_backdropConfiguration != null && _rootElement != null)
+            _backdropConfiguration.Theme = _rootElement.ActualTheme switch
+            {
                 ElementTheme.Dark => SystemBackdropTheme.Dark,
                 ElementTheme.Light => SystemBackdropTheme.Light,
-                _ => SystemBackdropTheme.Default,
+                _ => SystemBackdropTheme.Default
             };
-        }
     }
 
-    private void UpdateTitleBarTheme() {
-        if (_appWindow?.TitleBar is not { } titleBar || _rootElement is null) {
-            return;
-        }
+    private void UpdateTitleBarTheme()
+    {
+        if (_appWindow?.TitleBar is not { } titleBar || _rootElement is null) return;
 
         // Set button colors to match the element theme.
-        if (_rootElement.ActualTheme == ElementTheme.Dark) {
+        if (_rootElement.ActualTheme == ElementTheme.Dark)
+        {
             titleBar.ButtonForegroundColor = Colors.White;
             titleBar.ButtonHoverForegroundColor = Colors.White;
             titleBar.ButtonHoverBackgroundColor = Color.FromArgb(0x20, 0xFF, 0xFF, 0xFF);
@@ -236,7 +250,8 @@ public sealed partial class MainWindow : Window {
             titleBar.ButtonPressedBackgroundColor = Color.FromArgb(0x40, 0xFF, 0xFF, 0xFF);
             titleBar.ButtonInactiveForegroundColor = Color.FromArgb(0xFF, 0x99, 0x99, 0x99);
         }
-        else {
+        else
+        {
             titleBar.ButtonForegroundColor = Colors.Black;
             titleBar.ButtonHoverForegroundColor = Colors.Black;
             titleBar.ButtonHoverBackgroundColor = Color.FromArgb(0x20, 0x00, 0x00, 0x00);
@@ -246,10 +261,12 @@ public sealed partial class MainWindow : Window {
         }
     }
 
-    private bool EnsureWindowsSystemDispatcherQueue() {
+    private bool EnsureWindowsSystemDispatcherQueue()
+    {
         if (Windows.System.DispatcherQueue.GetForCurrentThread() != null) return true;
 
-        if (_wsdqHelper == null) {
+        if (_wsdqHelper == null)
+        {
             _wsdqHelper = new WindowsSystemDispatcherQueueHelper();
             _wsdqHelper.EnsureDispatcherQueue();
         }
@@ -258,19 +275,24 @@ public sealed partial class MainWindow : Window {
     }
 
     /// <summary>
-    /// Retrieves the AppWindow for the current WinUI Window instance.
+    ///     Retrieves the AppWindow for the current WinUI Window instance.
     /// </summary>
-    private AppWindow? GetAppWindowForCurrentWindow() {
-        try {
-            IntPtr hWnd = WindowNative.GetWindowHandle(this);
-            if (hWnd == IntPtr.Zero) {
+    private AppWindow? GetAppWindowForCurrentWindow()
+    {
+        try
+        {
+            var hWnd = WindowNative.GetWindowHandle(this);
+            if (hWnd == IntPtr.Zero)
+            {
                 Debug.WriteLine("[ERROR] MainWindow: Could not get window handle.");
                 return null;
             }
-            Microsoft.UI.WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
+
+            var windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
             return AppWindow.GetFromWindowId(windowId);
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             Debug.WriteLine($"[ERROR] MainWindow: Failed to retrieve AppWindow. Exception: {ex.Message}");
             return null;
         }
@@ -278,30 +300,33 @@ public sealed partial class MainWindow : Window {
 }
 
 /// <summary>
-/// A secondary window that serves as an always-on-top, resizable mini-player.
-/// It maintains a square aspect ratio and positions itself in the corner of the screen.
+///     A secondary window that serves as an always-on-top, resizable mini-player.
+///     It maintains a square aspect ratio and positions itself in the corner of the screen.
 /// </summary>
-public sealed class MiniPlayerWindow : Window {
+public sealed class MiniPlayerWindow : Window
+{
     private const int InitialWindowSize = 350;
     private const int MinWindowSize = 200;
     private const int MaxWindowSize = 640;
     private const string AppIconPath = "Assets/AppLogo.ico";
     private const int HorizontalScreenMargin = 10;
     private const int VerticalScreenMargin = 48;
-
-    private readonly MiniPlayerView _view;
     private readonly AppWindow _appWindow;
 
-    public MiniPlayerWindow() {
+    private readonly MiniPlayerView _view;
+
+    public MiniPlayerWindow()
+    {
         _view = new MiniPlayerView(this);
         Content = _view;
-        _appWindow = this.AppWindow;
+        _appWindow = AppWindow;
 
         ConfigureAppWindow();
         SubscribeToEvents();
     }
 
-    private void ConfigureAppWindow() {
+    private void ConfigureAppWindow()
+    {
         ExtendsContentIntoTitleBar = true;
 
         _appWindow.Title = "Nagi";
@@ -309,64 +334,68 @@ public sealed class MiniPlayerWindow : Window {
         _appWindow.Resize(new SizeInt32(InitialWindowSize, InitialWindowSize));
         PositionWindowInBottomRight(_appWindow);
 
-        if (_appWindow.Presenter is OverlappedPresenter presenter) {
+        if (_appWindow.Presenter is OverlappedPresenter presenter)
+        {
             presenter.IsAlwaysOnTop = true;
             presenter.IsResizable = true;
             presenter.IsMaximizable = false;
             presenter.IsMinimizable = false;
             presenter.SetBorderAndTitleBar(true, false);
         }
-        else {
-            Debug.WriteLine("[WARN] MiniPlayerWindow: Could not configure presenter. It is not an OverlappedPresenter.");
+        else
+        {
+            Debug.WriteLine(
+                "[WARN] MiniPlayerWindow: Could not configure presenter. It is not an OverlappedPresenter.");
         }
     }
 
-    private void PositionWindowInBottomRight(AppWindow appWindow) {
+    private void PositionWindowInBottomRight(AppWindow appWindow)
+    {
         var displayArea = DisplayArea.GetFromWindowId(appWindow.Id, DisplayAreaFallback.Primary);
-        if (displayArea == null) {
+        if (displayArea == null)
+        {
             Debug.WriteLine("[WARN] MiniPlayerWindow: Could not retrieve display area to position the window.");
             return;
         }
 
         var workArea = displayArea.WorkArea;
-        int positionX = workArea.X + workArea.Width - InitialWindowSize - HorizontalScreenMargin;
-        int positionY = workArea.Y + workArea.Height - InitialWindowSize - VerticalScreenMargin;
+        var positionX = workArea.X + workArea.Width - InitialWindowSize - HorizontalScreenMargin;
+        var positionY = workArea.Y + workArea.Height - InitialWindowSize - VerticalScreenMargin;
         appWindow.Move(new PointInt32(positionX, positionY));
     }
 
-    private void SubscribeToEvents() {
+    private void SubscribeToEvents()
+    {
         _view.RestoreButtonClicked += OnRestoreButtonClicked;
         _appWindow.Changed += OnAppWindowChanged;
         Closed += OnWindowClosed;
     }
 
-    private void OnAppWindowChanged(AppWindow sender, AppWindowChangedEventArgs args) {
-        if (args.DidSizeChange) {
-            MaintainSquareAspectRatio(sender);
-        }
+    private void OnAppWindowChanged(AppWindow sender, AppWindowChangedEventArgs args)
+    {
+        if (args.DidSizeChange) MaintainSquareAspectRatio(sender);
     }
 
     /// <summary>
-    /// Enforces a square aspect ratio for the window during resizing,
-    /// clamping the size between a defined min and max.
+    ///     Enforces a square aspect ratio for the window during resizing,
+    ///     clamping the size between a defined min and max.
     /// </summary>
-    private void MaintainSquareAspectRatio(AppWindow window) {
-        PointInt32 currentPosition = window.Position;
-        SizeInt32 currentSize = window.Size;
+    private void MaintainSquareAspectRatio(AppWindow window)
+    {
+        var currentPosition = window.Position;
+        var currentSize = window.Size;
 
-        int desiredSize = Math.Max(currentSize.Width, currentSize.Height);
-        int newSize = Math.Clamp(desiredSize, MinWindowSize, MaxWindowSize);
+        var desiredSize = Math.Max(currentSize.Width, currentSize.Height);
+        var newSize = Math.Clamp(desiredSize, MinWindowSize, MaxWindowSize);
 
-        if (currentSize.Width == newSize && currentSize.Height == newSize) {
-            return;
-        }
+        if (currentSize.Width == newSize && currentSize.Height == newSize) return;
 
         // To avoid the window "jumping" during resize, calculate the new top-left
         // position to keep the window centered on its previous location.
-        int centerX = currentPosition.X + (currentSize.Width / 2);
-        int centerY = currentPosition.Y + (currentSize.Height / 2);
-        int newX = centerX - (newSize / 2);
-        int newY = centerY - (newSize / 2);
+        var centerX = currentPosition.X + currentSize.Width / 2;
+        var centerY = currentPosition.Y + currentSize.Height / 2;
+        var newX = centerX - newSize / 2;
+        var newY = centerY - newSize / 2;
 
         // Temporarily unsubscribe from the event to prevent recursion while we programmatically resize.
         window.Changed -= OnAppWindowChanged;
@@ -374,11 +403,13 @@ public sealed class MiniPlayerWindow : Window {
         window.Changed += OnAppWindowChanged;
     }
 
-    private void OnRestoreButtonClicked(object? sender, EventArgs e) {
+    private void OnRestoreButtonClicked(object? sender, EventArgs e)
+    {
         Close();
     }
 
-    private void OnWindowClosed(object sender, WindowEventArgs args) {
+    private void OnWindowClosed(object sender, WindowEventArgs args)
+    {
         _view.RestoreButtonClicked -= OnRestoreButtonClicked;
         _appWindow.Changed -= OnAppWindowChanged;
         Closed -= OnWindowClosed;

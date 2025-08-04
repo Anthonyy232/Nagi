@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:vm="using:Nagi.WinUI.ViewModels"
     xmlns:core="using:Nagi.Core.Models.Lyrics"
     xmlns:converters="using:Nagi.WinUI.Converters"
     mc:Ignorable="d"
@@ -19,16 +18,6 @@
                 ActiveStyle="{StaticResource ActiveLyricTextBlockStyle}"
                 InactiveStyle="{StaticResource InactiveLyricLineStyle}" />
 
-            <Storyboard x:Key="PageLoadStoryboard">
-                <DoubleAnimation
-                    Storyboard.TargetName="LyricsContainer"
-                    Storyboard.TargetProperty="Opacity"
-                    From="0" To="1" Duration="0:0:0.5">
-                    <DoubleAnimation.EasingFunction>
-                        <ExponentialEase EasingMode="EaseOut" Exponent="3"/>
-                    </DoubleAnimation.EasingFunction>
-                </DoubleAnimation>
-            </Storyboard>
         </ResourceDictionary>
     </Page.Resources>
 

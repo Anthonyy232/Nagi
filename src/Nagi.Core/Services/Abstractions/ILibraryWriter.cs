@@ -3,9 +3,10 @@
 namespace Nagi.Core.Services.Abstractions;
 
 /// <summary>
-/// Defines the contract for writing, updating, and deleting data in the music library.
+///     Defines the contract for writing, updating, and deleting data in the music library.
 /// </summary>
-public interface ILibraryWriter {
+public interface ILibraryWriter
+{
     Task<Folder?> AddFolderAsync(string path, string? name = null);
     Task<bool> RemoveFolderAsync(Guid folderId);
     Task<bool> UpdateFolderAsync(Folder folder);

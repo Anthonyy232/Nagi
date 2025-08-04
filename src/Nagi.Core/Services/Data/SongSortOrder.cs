@@ -1,9 +1,10 @@
 ﻿namespace Nagi.Core.Services.Data;
 
 /// <summary>
-/// Defines the available sorting orders for a list of songs.
+///     Defines the available sorting orders for a list of songs.
 /// </summary>
-public enum SongSortOrder {
+public enum SongSortOrder
+{
     TitleAsc,
     TitleDesc,
     DateAddedDesc,
