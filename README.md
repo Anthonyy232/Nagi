@@ -1,4 +1,3 @@
-
 <div align="center">
     <img style="display: block; border-radius: 9999px;" src="https://github.com/user-attachments/assets/58f7a205-113d-463e-a2f3-d9979b935da1" alt="">
     <h1>
@@ -6,18 +5,20 @@
         <p><img style="display: block; border-radius: 9999px;" src="https://img.shields.io/github/downloads/Anthonyy232/Nagi/total" alt=""></p>
     </h1>
   <p align="center"></p>
-    <p>Rediscover your local music collection with Nagi, a music player focused on speed, simplicity, and privacy. Nagi is built with C# and WinUI 3 to offer a clean, native Fluent experience. It's beautiful, efficient, and respects your privacy. </p>
+    <p>Rediscover your local music collection with Nagi, a music player focused on speed, simplicity, and privacy. Featuring a resizable mini-player, interactive lyrics, and wide format support, Nagi is built with C# and WinUI 3 to offer a clean, native Fluent experience. It's beautiful, efficient, and respects your privacy.</p>
 </div>
 
 ## Features
-- **Fluent & Modern UI**: A beautiful and responsive interface built with the latest WinUI 3 Fluent design system.
+- **Fluent & Modern UI**: A beautiful and responsive interface built with the latest WinUI 3, featuring customizable backdrops like Mica, Mica Alt, and Acrylic.
+- **Resizable Mini-Player**: A sleek, always-on-top mini-player for easy control while you work. Features playback controls, album art, a draggable interface, and an efficiency mode to reduce resource usage.
+- **Lyrics Support**: View lyrics from embedded tags or external `.lrc` files. Click any line to seek directly to that part of the song.
 - **Folder-Based Library**: Simply add your music folders, and Nagi will automatically scan and organize your collection.
 - **Dynamic Theming**: The color scheme dynamically adapts to the art of the currently playing song.
-- **Online Metadata**: Automatically fetches and displays metadata for artists.
 - **Playlist Management**: Create, edit, and enjoy your own custom playlists.
-- **Tray Mini-Player**: Control your music playback from a convenient and sleek pop-up in the Windows system tray.
+- **Tray Controls**: Control your music from a convenient pop-up in the Windows system tray.
+- **LastFM and Discord Integrations**: Automatically fetches artist metadata, scrobbles your tracks to Last.fm, and showcases your activity with improved Discord Rich Presence.
 - **Private**: Your music and data are yours. Nagi does not send any user data to the cloud without user consent.
-
+- **Wide Codec Support**: Nagi plays a vast array of audio formats, including: `.aa`, `.aax`, `.aac`, `.aiff`, `.ape`, `.dsf`, `.flac`, `.m4a`, `.m4b`, `.m4p`, `.mp3`, `.mpc`, `.mpp`, `.ogg`, `.oga`, `.wav`, `.wma`, `.wv`, and `.webm`.
       
 <div align="center">
 <table border="0">
@@ -48,7 +49,8 @@ Soon!
 
 - **[C#](https://docs.microsoft.com/en-us/dotnet/csharp/)** & **[.NET](https://dotnet.microsoft.com/)**: The core programming language and framework for building robust Windows applications.
 - **[WinUI 3](https://docs.microsoft.com/en-us/windows/apps/winui/winui3/)** in **[Windows App SDK](https://github.com/microsoft/WindowsAppSDK)**: The native UI platform for crafting modern, fluent interfaces on Windows.
-- **[Community Toolkit for WinUI](https://github.com/CommunityToolkit/WindowsCommunityToolkit)**: A collection of controls, helpers, and services to simplify app development (Media, ColorPicker, SettingsControls).
+- **[LibVLCSharp](https://github.com/videolan/libvlcsharp)**: A cross-platform .NET binding for LibVLC, enabling robust and wide-ranging audio format support.
+- **[Community Toolkit for WinUI](https://github.com/CommunityToolkit/WindowsCommunityToolkit)**: A collection of controls, helpers, and services to simplify app development (e.g., ColorPicker, SettingsControls).
 - **[Community Toolkit MVVM](https://docs.microsoft.com/en-us/dotnet/communitytoolkit/mvvm/)**: A modern, fast, and platform-agnostic MVVM library.
 - **[Entity Framework Core (SQLite)](https://docs.microsoft.com/en-us/ef/core/)**: A modern object-relational mapper for .NET, used for local database storage.
 - **[TagLib#](https://github.com/mono/taglib-sharp)**: A library for reading and writing metadata in audio files.
@@ -69,9 +71,9 @@ This project is built using C# and the Windows App SDK. Here are the steps to bu
 
 ### Steps
 - Open a terminal and run the following git command:  <pre>git clone https://github.com/Anthonyy232/Nagi.git</pre>
-- In File Explorer, navigate to the cloned repository and open `Nagi.sln` with Visual Studio.
-- In Visual Studio, set the Solution Platform to `x64` (or your target architecture).
-- Press `F5` or click the `▶ Nagi (Package)` button to build and run the application.
+- In File Explorer, navigate to the cloned repository and open Nagi.sln with Visual Studio.
+- In Visual Studio, set the Solution Platform to x64 (or your target architecture).
+- Press F5 or click the ▶ Nagi (Package) button to build and run the application.
 
 ## Contributions
 
