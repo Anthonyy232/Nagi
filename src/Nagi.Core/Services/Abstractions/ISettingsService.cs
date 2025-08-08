@@ -7,8 +7,7 @@ namespace Nagi.Core.Services.Abstractions;
 ///     Defines a service for managing application-wide, non-UI settings.
 ///     This interface is safe to use in the Core project.
 /// </summary>
-public interface ISettingsService
-{
+public interface ISettingsService {
     /// <summary>
     ///     Occurs when Last.fm related settings (scrobbling, now playing) have changed.
     /// </summary>
@@ -174,4 +173,16 @@ public interface ISettingsService
     /// </summary>
     /// <returns>The saved token, or null if not present.</returns>
     Task<string?> GetLastFmAuthTokenAsync();
+
+    /// <summary>
+    ///     Retrieves the last saved equalizer settings.
+    /// </summary>
+    /// <returns>The saved <see cref="EqualizerSettings" />, or null if none exist.</returns>
+    Task<EqualizerSettings?> GetEqualizerSettingsAsync();
+
+    /// <summary>
+    ///     Saves the current equalizer settings.
+    /// </summary>
+    /// <param name="settings">The equalizer settings to save.</param>
+    Task SetEqualizerSettingsAsync(EqualizerSettings settings);
 }

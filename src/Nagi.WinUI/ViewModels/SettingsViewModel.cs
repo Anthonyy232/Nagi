@@ -5,6 +5,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.System;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -18,21 +19,75 @@ using Nagi.WinUI.Services.Abstractions;
 namespace Nagi.WinUI.ViewModels;
 
 /// <summary>
-///     ViewModel for the Settings page, providing properties and commands to manage application settings.
+/// ViewModel for a single band in the audio equalizer.
 /// </summary>
-public partial class SettingsViewModel : ObservableObject, IDisposable
-{
+public partial class EqualizerBandViewModel : ObservableObject, IDisposable {
+    private const int KiloHertzThreshold = 1000;
+    private const int DebounceDelayMilliseconds = 200;
+
+    private readonly IMusicPlaybackService _playbackService;
+    private CancellationTokenSource? _debounceCts;
+
+    public uint Index { get; }
+    public string FrequencyLabel { get; }
+
+    [ObservableProperty]
+    private float _gain;
+
+    public EqualizerBandViewModel(uint index, float frequency, float initialGain, IMusicPlaybackService playbackService) {
+        Index = index;
+        FrequencyLabel = frequency < KiloHertzThreshold ? $"{frequency:F0}" : $"{frequency / KiloHertzThreshold:F0}K";
+        _gain = initialGain;
+        _playbackService = playbackService;
+    }
+
+    /// <summary>
+    /// Debounces gain changes to prevent excessive updates to the audio player.
+    /// </summary>
+    async partial void OnGainChanged(float value) {
+        _debounceCts?.Cancel();
+        _debounceCts?.Dispose();
+
+        _debounceCts = new CancellationTokenSource();
+        var token = _debounceCts.Token;
+
+        try {
+            await Task.Delay(DebounceDelayMilliseconds, token);
+
+            Debug.WriteLine($"Applying EQ Band {Index} Gain: {value}");
+            await _playbackService.SetEqualizerBandAsync(Index, value);
+        }
+        catch (TaskCanceledException) {
+            // This is expected if the user changes the value again quickly.
+        }
+    }
+
+    public void Dispose() {
+        _debounceCts?.Cancel();
+        _debounceCts?.Dispose();
+        GC.SuppressFinalize(this);
+    }
+}
+
+/// <summary>
+/// ViewModel for the Settings page, providing properties and commands to manage application settings.
+/// </summary>
+public partial class SettingsViewModel : ObservableObject, IDisposable {
+    private const int EqualizerDebounceDelayMilliseconds = 200;
+
     private readonly IAppInfoService _appInfoService;
     private readonly IApplicationLifecycle _applicationLifecycle;
     private readonly ILastFmAuthService _lastFmAuthService;
+    private readonly IMusicPlaybackService _playbackService;
     private readonly IUISettingsService _settingsService;
     private readonly IThemeService _themeService;
     private readonly IUIService _uiService;
     private readonly IUpdateService _updateService;
-    private bool _isDisposed;
 
-    // Flag to prevent property change handlers from running during initial data loading.
+    private bool _isDisposed;
+    // Flag to prevent settings from being saved while they are being loaded initially.
     private bool _isInitializing;
+    private CancellationTokenSource? _preampDebounceCts;
 
     public SettingsViewModel(
         IUISettingsService settingsService,
@@ -41,8 +96,8 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         IApplicationLifecycle applicationLifecycle,
         IAppInfoService appInfoService,
         IUpdateService updateService,
-        ILastFmAuthService lastFmAuthService)
-    {
+        ILastFmAuthService lastFmAuthService,
+        IMusicPlaybackService playbackService) {
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
         _uiService = uiService ?? throw new ArgumentNullException(nameof(uiService));
         _themeService = themeService ?? throw new ArgumentNullException(nameof(themeService));
@@ -50,8 +105,10 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         _appInfoService = appInfoService ?? throw new ArgumentNullException(nameof(appInfoService));
         _updateService = updateService ?? throw new ArgumentNullException(nameof(updateService));
         _lastFmAuthService = lastFmAuthService ?? throw new ArgumentNullException(nameof(lastFmAuthService));
+        _playbackService = playbackService ?? throw new ArgumentNullException(nameof(playbackService));
 
         NavigationItems.CollectionChanged += OnNavigationItemsCollectionChanged;
+        _playbackService.EqualizerChanged += OnPlaybackService_EqualizerChanged;
 
 #if MSIX_PACKAGE
         IsUpdateControlVisible = false;
@@ -60,118 +117,74 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 #endif
     }
 
-    [ObservableProperty] public partial ElementTheme SelectedTheme { get; set; }
-
-    /// <summary>
-    ///     Gets or sets the selected window backdrop material.
-    /// </summary>
-    [ObservableProperty]
-    public partial BackdropMaterial SelectedBackdropMaterial { get; set; }
-
-    [ObservableProperty] public partial bool IsDynamicThemingEnabled { get; set; }
-
-    [ObservableProperty] public partial bool IsPlayerAnimationEnabled { get; set; }
-
-    [ObservableProperty] public partial bool IsShowLyricsOnPlayerEnabled { get; set; }
-
-    [ObservableProperty] public partial bool IsRestorePlaybackStateEnabled { get; set; }
-
-    [ObservableProperty] public partial bool IsAutoLaunchEnabled { get; set; }
-
-    [ObservableProperty] public partial bool IsStartMinimizedEnabled { get; set; }
-
-    [ObservableProperty] public partial bool IsHideToTrayEnabled { get; set; }
-
-    [ObservableProperty] public partial bool IsMinimizeToMiniPlayerEnabled { get; set; }
-
-    [ObservableProperty] public partial bool IsShowCoverArtInTrayFlyoutEnabled { get; set; }
-
-    [ObservableProperty] public partial bool IsFetchOnlineMetadataEnabled { get; set; }
-
-    [ObservableProperty] public partial bool IsDiscordRichPresenceEnabled { get; set; }
-
-    [ObservableProperty] public partial bool IsCheckForUpdatesEnabled { get; set; }
+    [ObservableProperty] private ElementTheme _selectedTheme;
+    [ObservableProperty] private BackdropMaterial _selectedBackdropMaterial;
+    [ObservableProperty] private bool _isDynamicThemingEnabled;
+    [ObservableProperty] private bool _isPlayerAnimationEnabled;
+    [ObservableProperty] private bool _isShowLyricsOnPlayerEnabled;
+    [ObservableProperty] private bool _isRestorePlaybackStateEnabled;
+    [ObservableProperty] private bool _isAutoLaunchEnabled;
+    [ObservableProperty] private bool _isStartMinimizedEnabled;
+    [ObservableProperty] private bool _isHideToTrayEnabled;
+    [ObservableProperty] private bool _isMinimizeToMiniPlayerEnabled;
+    [ObservableProperty] private bool _isShowCoverArtInTrayFlyoutEnabled;
+    [ObservableProperty] private bool _isFetchOnlineMetadataEnabled;
+    [ObservableProperty] private bool _isDiscordRichPresenceEnabled;
+    [ObservableProperty] private bool _isCheckForUpdatesEnabled;
+    [ObservableProperty] private float _equalizerPreamp;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsLastFmNotConnected))]
-    public partial bool IsLastFmConnected { get; set; }
+    private bool _isLastFmConnected;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsLastFmInitialAuthEnabled))]
-    public partial bool IsConnectingToLastFm { get; set; }
+    private bool _isConnectingToLastFm;
 
-    [ObservableProperty] public partial string? LastFmUsername { get; set; }
+    [ObservableProperty] private string? _lastFmUsername;
+    [ObservableProperty] private bool _isLastFmScrobblingEnabled;
+    [ObservableProperty] private bool _isLastFmNowPlayingEnabled;
 
-    [ObservableProperty] public partial bool IsLastFmScrobblingEnabled { get; set; }
-
-    [ObservableProperty] public partial bool IsLastFmNowPlayingEnabled { get; set; }
-
-    /// <summary>
-    ///     Gets a value indicating whether the update-related controls should be visible.
-    /// </summary>
+    public ObservableCollection<EqualizerBandViewModel> EqualizerBands { get; } = new();
     public bool IsUpdateControlVisible { get; }
-
-    /// <summary>
-    ///     Gets a value indicating whether the user is not connected to Last.fm.
-    /// </summary>
     public bool IsLastFmNotConnected => !IsLastFmConnected;
-
-    /// <summary>
-    ///     Gets a value indicating whether the initial Last.fm authentication button should be enabled.
-    /// </summary>
     public bool IsLastFmInitialAuthEnabled => !IsConnectingToLastFm;
-
-    /// <summary>
-    ///     Gets the collection of navigation items that can be configured by the user.
-    /// </summary>
     public ObservableCollection<NavigationItemSetting> NavigationItems { get; } = new();
-
-    /// <summary>
-    ///     Gets the list of available application themes.
-    /// </summary>
     public List<ElementTheme> AvailableThemes { get; } = Enum.GetValues<ElementTheme>().ToList();
-
-    /// <summary>
-    ///     Gets the list of available backdrop materials for the window.
-    /// </summary>
     public List<BackdropMaterial> AvailableBackdropMaterials { get; } = Enum.GetValues<BackdropMaterial>().ToList();
-
-    /// <summary>
-    ///     Gets the current version of the application.
-    /// </summary>
     public string ApplicationVersion => _appInfoService.GetAppVersion();
 
-    /// <summary>
-    ///     Cleans up resources by unsubscribing from event handlers to prevent memory leaks.
-    /// </summary>
-    public void Dispose()
-    {
+    public void Dispose() {
         if (_isDisposed) return;
 
-        // Unsubscribe from the collection itself
         NavigationItems.CollectionChanged -= OnNavigationItemsCollectionChanged;
+        _playbackService.EqualizerChanged -= OnPlaybackService_EqualizerChanged;
 
-        // Unsubscribe from each item within the collection
-        foreach (var item in NavigationItems) item.PropertyChanged -= OnNavigationItemPropertyChanged;
+        foreach (var item in NavigationItems) {
+            item.PropertyChanged -= OnNavigationItemPropertyChanged;
+        }
+
+        foreach (var bandVm in EqualizerBands) {
+            bandVm.Dispose();
+        }
+        _preampDebounceCts?.Cancel();
+        _preampDebounceCts?.Dispose();
 
         _isDisposed = true;
         GC.SuppressFinalize(this);
     }
 
-    /// <summary>
-    ///     Loads all settings from the settings service and populates the ViewModel properties.
-    /// </summary>
     [RelayCommand]
-    public async Task LoadSettingsAsync()
-    {
+    public async Task LoadSettingsAsync() {
         _isInitializing = true;
 
-        foreach (var item in NavigationItems) item.PropertyChanged -= OnNavigationItemPropertyChanged;
+        foreach (var item in NavigationItems) {
+            item.PropertyChanged -= OnNavigationItemPropertyChanged;
+        }
         NavigationItems.Clear();
 
         var navItems = await _settingsService.GetNavigationItemsAsync();
-        foreach (var item in navItems)
-        {
+        foreach (var item in navItems) {
             item.PropertyChanged += OnNavigationItemPropertyChanged;
             NavigationItems.Add(item);
         }
@@ -195,8 +208,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         LastFmUsername = lastFmCredentials?.Username;
         IsLastFmConnected = lastFmCredentials is not null && !string.IsNullOrEmpty(lastFmCredentials.Value.SessionKey);
 
-        if (IsLastFmConnected)
-        {
+        if (IsLastFmConnected) {
             IsLastFmScrobblingEnabled = await _settingsService.GetLastFmScrobblingEnabledAsync();
             IsLastFmNowPlayingEnabled = await _settingsService.GetLastFmNowPlayingEnabledAsync();
         }
@@ -204,15 +216,13 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         var authToken = await _settingsService.GetLastFmAuthTokenAsync();
         IsConnectingToLastFm = !string.IsNullOrEmpty(authToken);
 
+        LoadEqualizerState();
+
         _isInitializing = false;
     }
 
-    /// <summary>
-    ///     Prompts the user for confirmation and then resets all application data and settings to their defaults.
-    /// </summary>
     [RelayCommand]
-    private async Task ResetApplicationDataAsync()
-    {
+    private async Task ResetApplicationDataAsync() {
         var confirmed = await _uiService.ShowConfirmationDialogAsync(
             "Confirm Reset",
             "Are you sure you want to reset all application data and settings? This action cannot be undone. The application will return to the initial setup.",
@@ -220,12 +230,10 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
         if (!confirmed) return;
 
-        try
-        {
+        try {
             await _applicationLifecycle.ResetAndNavigateToOnboardingAsync();
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             Debug.WriteLine($"[CRITICAL] Application reset failed. Error: {ex.Message}\n{ex.StackTrace}");
             await _uiService.ShowMessageDialogAsync(
                 "Reset Error",
@@ -233,47 +241,32 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         }
     }
 
-    /// <summary>
-    ///     Manually triggers a check for application updates.
-    /// </summary>
     [RelayCommand]
-    private async Task CheckForUpdatesManuallyAsync()
-    {
+    private async Task CheckForUpdatesManuallyAsync() {
         await _updateService.CheckForUpdatesManuallyAsync();
     }
 
-    /// <summary>
-    ///     Initiates the Last.fm connection process by opening the auth URL in the browser.
-    /// </summary>
     [RelayCommand]
-    private async Task LastFmInitialAuthAsync()
-    {
+    private async Task LastFmInitialAuthAsync() {
         IsConnectingToLastFm = true;
         var authData = await _lastFmAuthService.GetAuthenticationTokenAsync();
-        if (authData is { Token: not null, AuthUrl: not null })
-        {
+        if (authData is { Token: not null, AuthUrl: not null }) {
             await _settingsService.SaveLastFmAuthTokenAsync(authData.Value.Token);
             await Launcher.LaunchUriAsync(new Uri(authData.Value.AuthUrl));
         }
-        else
-        {
+        else {
             await _uiService.ShowMessageDialogAsync("Error", "Could not connect to Last.fm. Please try again later.");
             IsConnectingToLastFm = false;
         }
     }
 
-    /// <summary>
-    ///     Finalizes the Last.fm connection after the user has authorized the app.
-    /// </summary>
     [RelayCommand]
-    private async Task LastFmFinalizeAuthAsync()
-    {
+    private async Task LastFmFinalizeAuthAsync() {
         var authToken = await _settingsService.GetLastFmAuthTokenAsync();
         if (string.IsNullOrEmpty(authToken)) return;
 
         var sessionData = await _lastFmAuthService.GetSessionAsync(authToken);
-        if (sessionData is { Username: not null, SessionKey: not null })
-        {
+        if (sessionData is { Username: not null, SessionKey: not null }) {
             await _settingsService.SaveLastFmCredentialsAsync(sessionData.Value.Username, sessionData.Value.SessionKey);
             LastFmUsername = sessionData.Value.Username;
             IsLastFmConnected = true;
@@ -283,8 +276,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             await _settingsService.SetLastFmScrobblingEnabledAsync(true);
             await _settingsService.SetLastFmNowPlayingEnabledAsync(true);
         }
-        else
-        {
+        else {
             await _uiService.ShowMessageDialogAsync("Authentication Failed",
                 "Could not get a session from Last.fm. Please try connecting again.");
         }
@@ -293,12 +285,8 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         await _settingsService.SaveLastFmAuthTokenAsync(null);
     }
 
-    /// <summary>
-    ///     Disconnects the user's Last.fm account by clearing saved credentials.
-    /// </summary>
     [RelayCommand]
-    private async Task LastFmDisconnectAsync()
-    {
+    private async Task LastFmDisconnectAsync() {
         var confirmed = await _uiService.ShowConfirmationDialogAsync(
             "Disconnect Last.fm",
             "Are you sure you want to disconnect your Last.fm account? Your scrobbling history will be preserved on Last.fm, but Nagi will no longer be able to scrobble.",
@@ -312,141 +300,123 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         IsLastFmConnected = false;
         LastFmUsername = null;
         IsConnectingToLastFm = false;
-        IsLastFmScrobblingEnabled = true;
-        IsLastFmNowPlayingEnabled = true;
+        IsLastFmScrobblingEnabled = false;
+        IsLastFmNowPlayingEnabled = false;
     }
 
-    private void OnNavigationItemsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-    {
+    [RelayCommand]
+    private async Task ResetEqualizerAsync() {
+        await _playbackService.ResetEqualizerAsync();
+    }
+
+    private void LoadEqualizerState() {
+        var eqSettings = _playbackService.CurrentEqualizerSettings;
+        if (eqSettings == null) return;
+
+        EqualizerPreamp = eqSettings.Preamp;
+
+        foreach (var bandVm in EqualizerBands) {
+            bandVm.Dispose();
+        }
+        EqualizerBands.Clear();
+
+        foreach (var bandInfo in _playbackService.EqualizerBands) {
+            var gain = eqSettings.BandGains.ElementAtOrDefault((int)bandInfo.Index);
+            EqualizerBands.Add(new EqualizerBandViewModel(bandInfo.Index, bandInfo.Frequency, gain, _playbackService));
+        }
+    }
+
+    private void OnPlaybackService_EqualizerChanged() {
+        _isInitializing = true;
+        var eqSettings = _playbackService.CurrentEqualizerSettings;
+        if (eqSettings != null) {
+            if (Math.Abs(EqualizerPreamp - eqSettings.Preamp) > float.Epsilon) {
+                EqualizerPreamp = eqSettings.Preamp;
+            }
+
+            foreach (var bandVM in EqualizerBands) {
+                var newGain = eqSettings.BandGains.ElementAtOrDefault((int)bandVM.Index);
+                if (Math.Abs(bandVM.Gain - newGain) > float.Epsilon) {
+                    bandVM.Gain = newGain;
+                }
+            }
+        }
+        _isInitializing = false;
+    }
+
+    private void OnNavigationItemsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
         if (_isInitializing) return;
 
-        if (e.NewItems != null)
+        if (e.NewItems != null) {
             foreach (NavigationItemSetting item in e.NewItems)
                 item.PropertyChanged += OnNavigationItemPropertyChanged;
+        }
 
-        if (e.OldItems != null)
+        if (e.OldItems != null) {
             foreach (NavigationItemSetting item in e.OldItems)
                 item.PropertyChanged -= OnNavigationItemPropertyChanged;
+        }
 
         _ = SaveNavigationItemsAsync();
     }
 
-    private void OnNavigationItemPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
+    private void OnNavigationItemPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         if (_isInitializing || e.PropertyName != nameof(NavigationItemSetting.IsEnabled)) return;
         _ = SaveNavigationItemsAsync();
     }
 
-    private async Task SaveNavigationItemsAsync()
-    {
+    private async Task SaveNavigationItemsAsync() {
         await _settingsService.SetNavigationItemsAsync(NavigationItems.ToList());
     }
 
-    partial void OnSelectedThemeChanged(ElementTheme value)
-    {
+    async partial void OnSelectedThemeChanged(ElementTheme value) {
         if (_isInitializing) return;
-        _ = ApplyAndSaveThemeAsync(value);
+        await _settingsService.SetThemeAsync(value);
+        _themeService.ApplyTheme(value);
     }
 
-    partial void OnSelectedBackdropMaterialChanged(BackdropMaterial value)
-    {
+    partial void OnSelectedBackdropMaterialChanged(BackdropMaterial value) {
         if (_isInitializing) return;
         _ = _settingsService.SetBackdropMaterialAsync(value);
     }
 
-    private async Task ApplyAndSaveThemeAsync(ElementTheme theme)
-    {
-        await _settingsService.SetThemeAsync(theme);
-        _themeService.ApplyTheme(theme);
-    }
-
-    partial void OnIsDynamicThemingEnabledChanged(bool value)
-    {
+    async partial void OnIsDynamicThemingEnabledChanged(bool value) {
         if (_isInitializing) return;
-        _ = ApplyAndSaveDynamicThemingAsync(value);
-    }
-
-    private async Task ApplyAndSaveDynamicThemingAsync(bool isEnabled)
-    {
-        await _settingsService.SetDynamicThemingAsync(isEnabled);
+        await _settingsService.SetDynamicThemingAsync(value);
         _themeService.ReapplyCurrentDynamicTheme();
     }
 
-    partial void OnIsPlayerAnimationEnabledChanged(bool value)
-    {
-        if (_isInitializing) return;
-        _ = _settingsService.SetPlayerAnimationEnabledAsync(value);
-    }
+    partial void OnIsPlayerAnimationEnabledChanged(bool value) { if (_isInitializing) return; _ = _settingsService.SetPlayerAnimationEnabledAsync(value); }
+    partial void OnIsShowLyricsOnPlayerEnabledChanged(bool value) { if (_isInitializing) return; _ = _settingsService.SetShowLyricsOnPlayerEnabledAsync(value); }
+    partial void OnIsRestorePlaybackStateEnabledChanged(bool value) { if (_isInitializing) return; _ = _settingsService.SetRestorePlaybackStateEnabledAsync(value); }
+    partial void OnIsAutoLaunchEnabledChanged(bool value) { if (_isInitializing) return; _ = _settingsService.SetAutoLaunchEnabledAsync(value); }
+    partial void OnIsStartMinimizedEnabledChanged(bool value) { if (_isInitializing) return; _ = _settingsService.SetStartMinimizedEnabledAsync(value); }
+    partial void OnIsHideToTrayEnabledChanged(bool value) { if (_isInitializing) return; _ = _settingsService.SetHideToTrayEnabledAsync(value); }
+    partial void OnIsMinimizeToMiniPlayerEnabledChanged(bool value) { if (_isInitializing) return; _ = _settingsService.SetMinimizeToMiniPlayerEnabledAsync(value); }
+    partial void OnIsShowCoverArtInTrayFlyoutEnabledChanged(bool value) { if (_isInitializing) return; _ = _settingsService.SetShowCoverArtInTrayFlyoutAsync(value); }
+    partial void OnIsFetchOnlineMetadataEnabledChanged(bool value) { if (_isInitializing) return; _ = _settingsService.SetFetchOnlineMetadataEnabledAsync(value); }
+    partial void OnIsDiscordRichPresenceEnabledChanged(bool value) { if (_isInitializing) return; _ = _settingsService.SetDiscordRichPresenceEnabledAsync(value); }
+    partial void OnIsCheckForUpdatesEnabledChanged(bool value) { if (_isInitializing) return; _ = _settingsService.SetCheckForUpdatesEnabledAsync(value); }
+    partial void OnIsLastFmScrobblingEnabledChanged(bool value) { if (_isInitializing) return; _ = _settingsService.SetLastFmScrobblingEnabledAsync(value); }
+    partial void OnIsLastFmNowPlayingEnabledChanged(bool value) { if (_isInitializing) return; _ = _settingsService.SetLastFmNowPlayingEnabledAsync(value); }
 
-    partial void OnIsShowLyricsOnPlayerEnabledChanged(bool value)
-    {
+    async partial void OnEqualizerPreampChanged(float value) {
         if (_isInitializing) return;
-        _ = _settingsService.SetShowLyricsOnPlayerEnabledAsync(value);
-    }
 
-    partial void OnIsRestorePlaybackStateEnabledChanged(bool value)
-    {
-        if (_isInitializing) return;
-        _ = _settingsService.SetRestorePlaybackStateEnabledAsync(value);
-    }
+        _preampDebounceCts?.Cancel();
+        _preampDebounceCts?.Dispose();
 
-    partial void OnIsAutoLaunchEnabledChanged(bool value)
-    {
-        if (_isInitializing) return;
-        _ = _settingsService.SetAutoLaunchEnabledAsync(value);
-    }
+        _preampDebounceCts = new CancellationTokenSource();
+        var token = _preampDebounceCts.Token;
 
-    partial void OnIsStartMinimizedEnabledChanged(bool value)
-    {
-        if (_isInitializing) return;
-        _ = _settingsService.SetStartMinimizedEnabledAsync(value);
-    }
+        try {
+            await Task.Delay(EqualizerDebounceDelayMilliseconds, token);
 
-    partial void OnIsHideToTrayEnabledChanged(bool value)
-    {
-        if (_isInitializing) return;
-        _ = _settingsService.SetHideToTrayEnabledAsync(value);
-    }
-
-    partial void OnIsMinimizeToMiniPlayerEnabledChanged(bool value)
-    {
-        if (_isInitializing) return;
-        _ = _settingsService.SetMinimizeToMiniPlayerEnabledAsync(value);
-    }
-
-    partial void OnIsShowCoverArtInTrayFlyoutEnabledChanged(bool value)
-    {
-        if (_isInitializing) return;
-        _ = _settingsService.SetShowCoverArtInTrayFlyoutAsync(value);
-    }
-
-    partial void OnIsFetchOnlineMetadataEnabledChanged(bool value)
-    {
-        if (_isInitializing) return;
-        _ = _settingsService.SetFetchOnlineMetadataEnabledAsync(value);
-    }
-
-    partial void OnIsDiscordRichPresenceEnabledChanged(bool value)
-    {
-        if (_isInitializing) return;
-        _ = _settingsService.SetDiscordRichPresenceEnabledAsync(value);
-    }
-
-    partial void OnIsCheckForUpdatesEnabledChanged(bool value)
-    {
-        if (_isInitializing) return;
-        _ = _settingsService.SetCheckForUpdatesEnabledAsync(value);
-    }
-
-    partial void OnIsLastFmScrobblingEnabledChanged(bool value)
-    {
-        if (_isInitializing) return;
-        _ = _settingsService.SetLastFmScrobblingEnabledAsync(value);
-    }
-
-    partial void OnIsLastFmNowPlayingEnabledChanged(bool value)
-    {
-        if (_isInitializing) return;
-        _ = _settingsService.SetLastFmNowPlayingEnabledAsync(value);
+            Debug.WriteLine($"Applying Preamp Gain: {value}");
+            await _playbackService.SetEqualizerPreampAsync(value);
+        }
+        catch (TaskCanceledException) {
+            // This is expected if the user changes the value again quickly.
+        }
     }
 }

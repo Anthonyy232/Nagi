@@ -1,6 +1,11 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:animation="using:Microsoft.UI.Xaml.Media.Animation"
+    xmlns:primitives="using:Microsoft.UI.Xaml.Controls.Primitives">
+
+    <!-- Easing function for animations -->
+    <animation:CubicEase x:Key="CubicEaseOut" EasingMode="EaseOut" />
 
     <!-- Spacing resource for consistency between settings cards. -->
     <x:Double x:Key="SettingsCardSpacing">4</x:Double>
@@ -25,19 +30,13 @@
     <SolidColorBrush x:Key="ToggleSwitchFillOnPressed"
                      Color="{Binding Color, Source={ThemeResource AppPrimaryColorBrush}}" Opacity="0.8" />
 
-    <!--
-    Implicit style for all ToggleSwitch controls on the page.
-    - Removes the default "On"/"Off" text to integrate cleanly with the SettingsCard control.
-    -->
+    <!-- Implicit style for all ToggleSwitch controls on the page. -->
     <Style TargetType="ToggleSwitch" BasedOn="{StaticResource DefaultToggleSwitchStyle}">
         <Setter Property="OnContent" Value="" />
         <Setter Property="OffContent" Value="" />
     </Style>
 
-    <!--
-    Defines the appearance of the "Reset All Data" button.
-    This style provides custom visual feedback for different interaction states.
-    -->
+    <!-- Defines the appearance of the "Reset" buttons. -->
     <Style x:Key="SettingsPageResetButtonStyle" TargetType="Button" BasedOn="{StaticResource AccentButtonStyle}">
         <Setter Property="Background" Value="{ThemeResource AppPrimaryColorBrush}" />
         <Setter Property="Padding" Value="16,10" />
@@ -97,4 +96,179 @@
         </Setter>
     </Style>
 
+    <!--
+    Style for the thumb of the equalizer sliders.
+    This is identical to the media slider thumb, ensuring visual consistency.
+    -->
+    <Style x:Key="EqualizerSliderThumbStyle" TargetType="primitives:Thumb">
+        <Setter Property="Background" Value="{StaticResource AppPrimaryColorBrush}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Width" Value="16" />
+        <Setter Property="Height" Value="16" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="primitives:Thumb">
+                    <Grid>
+                        <Ellipse x:Name="ThumbVisual"
+                                 Fill="{TemplateBinding Background}"
+                                 Width="{TemplateBinding Width}"
+                                 Height="{TemplateBinding Height}"
+                                 Stroke="{ThemeResource ControlStrokeColorDefaultBrush}"
+                                 StrokeThickness="1">
+                            <Ellipse.RenderTransform>
+                                <ScaleTransform x:Name="ThumbScaleTransform" CenterX="8" CenterY="8" />
+                            </Ellipse.RenderTransform>
+                        </Ellipse>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="ThumbScaleTransform"
+                                                         Storyboard.TargetProperty="ScaleX" To="1.25"
+                                                         Duration="0:0:0.1"
+                                                         EasingFunction="{StaticResource CubicEaseOut}" />
+                                        <DoubleAnimation Storyboard.TargetName="ThumbScaleTransform"
+                                                         Storyboard.TargetProperty="ScaleY" To="1.25"
+                                                         Duration="0:0:0.1"
+                                                         EasingFunction="{StaticResource CubicEaseOut}" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="ThumbScaleTransform"
+                                                         Storyboard.TargetProperty="ScaleX" To="1.1" Duration="0:0:0.1"
+                                                         EasingFunction="{StaticResource CubicEaseOut}" />
+                                        <DoubleAnimation Storyboard.TargetName="ThumbScaleTransform"
+                                                         Storyboard.TargetProperty="ScaleY" To="1.1" Duration="0:0:0.1"
+                                                         EasingFunction="{StaticResource CubicEaseOut}" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ThumbVisual"
+                                                                       Storyboard.TargetProperty="Fill">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ThumbVisual"
+                                                                       Storyboard.TargetProperty="Stroke">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource ControlStrokeColorDisabledBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--
+    Custom style for the equalizer sliders, replacing the simple one.
+    It uses a full ControlTemplate to apply the custom thumb style and colors.
+    Includes both Horizontal and Vertical templates.
+    -->
+    <Style x:Key="EqualizerSliderStyle" TargetType="Slider">
+        <Setter Property="Background" Value="{ThemeResource ControlStrokeColorSecondaryBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource AppPrimaryColorBrush}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Slider">
+                    <Grid Margin="{TemplateBinding Padding}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver" />
+                                <VisualState x:Name="Pressed" />
+                                <VisualState x:Name="Disabled">
+                                    <Storyboard>
+                                        <!-- Horizontal Disabled State -->
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalTrackRect" Storyboard.TargetProperty="Fill">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalDecreaseRect" Storyboard.TargetProperty="Fill">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <!-- Vertical Disabled State -->
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalTrackRect" Storyboard.TargetProperty="Fill">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalDecreaseRect" Storyboard.TargetProperty="Fill">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+
+                        <!-- Template for Horizontal Sliders (e.g., Preamp) -->
+                        <Grid x:Name="HorizontalTemplate" MinHeight="32">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Rectangle x:Name="HorizontalTrackRect" Grid.ColumnSpan="3" Grid.Row="1" Height="8" RadiusX="4" RadiusY="4" Fill="{TemplateBinding Background}" />
+                            <Rectangle x:Name="HorizontalDecreaseRect" Grid.Row="1" Height="8" RadiusX="4" RadiusY="4" Fill="{TemplateBinding Foreground}" />
+                            <primitives:Thumb x:Name="HorizontalThumb" Grid.Column="1" Grid.Row="1" Style="{StaticResource EqualizerSliderThumbStyle}" DataContext="{TemplateBinding Value}" AutomationProperties.AccessibilityView="Raw" />
+                        </Grid>
+
+                        <!-- Template for Vertical Sliders (e.g., EQ Bands) -->
+                        <Grid x:Name="VerticalTemplate" MinWidth="32">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Rectangle x:Name="VerticalTrackRect" Grid.RowSpan="3" Grid.Column="1" Width="8" RadiusX="4" RadiusY="4" Fill="{TemplateBinding Background}" />
+                            <Rectangle x:Name="VerticalDecreaseRect" Grid.Column="1" Grid.Row="2" Width="8" RadiusX="4" RadiusY="4" Fill="{TemplateBinding Foreground}" />
+                            <primitives:Thumb x:Name="VerticalThumb" Grid.Row="1" Grid.Column="1" Style="{StaticResource EqualizerSliderThumbStyle}" DataContext="{TemplateBinding Value}" AutomationProperties.AccessibilityView="Raw" />
+                        </Grid>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Style for the ListViewItems in the "Customize Navigation" card. -->
+    <Style x:Key="NavigationListViewItemStyle" TargetType="ListViewItem">
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="MinHeight" Value="0" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListViewItem">
+                    <ListViewItemPresenter
+                        ContentMargin="{TemplateBinding Padding}"
+                        ContentTransitions="{TemplateBinding ContentTransitions}"
+                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        PointerOverBackground="{ThemeResource SubtleFillColorSecondaryBrush}"
+                        PointerOverForeground="{ThemeResource TextFillColorPrimaryBrush}"
+                        PressedBackground="{ThemeResource SubtleFillColorTertiaryBrush}"
+                        SelectedBackground="Transparent"
+                        SelectedForeground="{ThemeResource TextFillColorPrimaryBrush}"
+                        SelectedPointerOverBackground="{ThemeResource SubtleFillColorSecondaryBrush}"
+                        SelectedPressedBackground="{ThemeResource SubtleFillColorTertiaryBrush}"
+                        SelectionCheckMarkVisualEnabled="False"
+                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 </ResourceDictionary>
+
+    

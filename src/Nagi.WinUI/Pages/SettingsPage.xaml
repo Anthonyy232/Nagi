@@ -6,40 +6,16 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:localConverters="using:Nagi.WinUI.Converters"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:Nagi.WinUI.Models"
     xmlns:mux="using:Microsoft.UI.Xaml"
     xmlns:navigation="using:Nagi.WinUI.Navigation"
-    xmlns:models="using:Nagi.WinUI.Models"
+    xmlns:viewmodels="using:Nagi.WinUI.ViewModels"
     mc:Ignorable="d">
 
     <Page.Resources>
         <localConverters:ElementThemeToFriendlyStringConverter x:Key="ThemeToStringConverter" />
         <localConverters:BackdropMaterialToStringConverter x:Key="BackdropMaterialToStringConverter" />
         <localConverters:StringToFontFamilyConverter x:Key="StringToFontFamilyConverter" />
-
-        <Style x:Key="NavigationListViewItemStyle" TargetType="ListViewItem">
-            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-            <Setter Property="Padding" Value="0" />
-            <Setter Property="MinHeight" Value="0" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ListViewItem">
-                        <ListViewItemPresenter
-                            ContentTransitions="{TemplateBinding ContentTransitions}"
-                            SelectionCheckMarkVisualEnabled="False"
-                            PointerOverBackground="{ThemeResource SubtleFillColorSecondaryBrush}"
-                            PointerOverForeground="{ThemeResource TextFillColorPrimaryBrush}"
-                            SelectedBackground="Transparent"
-                            SelectedForeground="{ThemeResource TextFillColorPrimaryBrush}"
-                            SelectedPointerOverBackground="{ThemeResource SubtleFillColorSecondaryBrush}"
-                            PressedBackground="{ThemeResource SubtleFillColorTertiaryBrush}"
-                            SelectedPressedBackground="{ThemeResource SubtleFillColorTertiaryBrush}"
-                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                            ContentMargin="{TemplateBinding Padding}" />
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
     </Page.Resources>
 
     <Grid>
@@ -88,7 +64,6 @@
                     </ComboBox>
                 </controls:SettingsCard>
 
-                <!-- This is the new SettingsCard for selecting the window material -->
                 <controls:SettingsCard
                     Header="Window Material"
                     Description="Select the backdrop material for the window.">
@@ -120,8 +95,9 @@
                         IsOn="{x:Bind ViewModel.IsDynamicThemingEnabled, Mode=TwoWay}" />
                 </controls:SettingsCard>
 
-                <controls:SettingsCard Header="Customize Navigation"
-                                       Description="Drag to reorder pages in the navigation menu. Use the toggle to show or hide a page.">
+                <controls:SettingsCard
+                    Header="Customize Navigation"
+                    Description="Drag to reorder pages in the navigation menu. Use the toggle to show or hide a page.">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
                     </controls:SettingsCard.HeaderIcon>
@@ -130,15 +106,15 @@
                         Width="350"
                         HorizontalAlignment="Right"
                         AllowDrop="True"
+                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1"
                         CanDragItems="True"
                         CanReorderItems="True"
-                        ItemsSource="{x:Bind ViewModel.NavigationItems}"
+                        CornerRadius="{StaticResource ControlCornerRadius}"
                         ItemContainerStyle="{StaticResource NavigationListViewItemStyle}"
-                        SelectionMode="None"
-                        Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                        BorderThickness="1"
-                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                        CornerRadius="{StaticResource ControlCornerRadius}">
+                        ItemsSource="{x:Bind ViewModel.NavigationItems}"
+                        SelectionMode="None">
 
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="navigation:NavigationItemSetting">
@@ -192,87 +168,155 @@
 
                 <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="Player Management" />
 
-                <controls:SettingsCard Header="Collapsable player"
-                                       Description="Animate the player bar to expand and collapse.">
+                <controls:SettingsCard
+                    Header="Audio Equalizer"
+                    Description="Adjust frequency bands to customize your sound.">
+                    <controls:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
+                    </controls:SettingsCard.HeaderIcon>
+                    <StackPanel Spacing="16">
+                        <StackPanel Spacing="4">
+                            <TextBlock FontWeight="SemiBold" Text="Preamp" />
+                            <Slider
+                                Maximum="20"
+                                Minimum="-20"
+                                StepFrequency="0.1"
+                                Style="{StaticResource EqualizerSliderStyle}"
+                                Value="{x:Bind ViewModel.EqualizerPreamp, Mode=TwoWay}" />
+                        </StackPanel>
+
+                        <ItemsRepeater ItemsSource="{x:Bind ViewModel.EqualizerBands}">
+                            <ItemsRepeater.Layout>
+                                <StackLayout Orientation="Horizontal" Spacing="12" />
+                            </ItemsRepeater.Layout>
+                            <ItemsRepeater.ItemTemplate>
+                                <DataTemplate x:DataType="viewmodels:EqualizerBandViewModel">
+                                    <StackPanel Width="40" Spacing="8">
+                                        <Slider
+                                            Height="150"
+                                            HorizontalContentAlignment="Center"
+                                            Maximum="20"
+                                            Minimum="-20"
+                                            Orientation="Vertical"
+                                            StepFrequency="0.1"
+                                            Style="{StaticResource EqualizerSliderStyle}"
+                                            Value="{x:Bind Gain, Mode=TwoWay}" />
+                                        <TextBlock
+                                            HorizontalAlignment="Center"
+                                            Style="{ThemeResource CaptionTextBlockStyle}"
+                                            Text="{x:Bind FrequencyLabel}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsRepeater.ItemTemplate>
+                        </ItemsRepeater>
+
+                        <Button
+                            HorizontalAlignment="Center"
+                            Command="{x:Bind ViewModel.ResetEqualizerCommand}"
+                            Content="Reset"
+                            Style="{StaticResource SettingsPageResetButtonStyle}" />
+                    </StackPanel>
+                </controls:SettingsCard>
+
+                <controls:SettingsCard
+                    Header="Collapsable player"
+                    Description="Animate the player bar to expand and collapse.">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
                     </controls:SettingsCard.HeaderIcon>
-                    <ToggleSwitch HorizontalAlignment="Right"
-                                  IsOn="{x:Bind ViewModel.IsPlayerAnimationEnabled, Mode=TwoWay}" />
+                    <ToggleSwitch
+                        HorizontalAlignment="Right"
+                        IsOn="{x:Bind ViewModel.IsPlayerAnimationEnabled, Mode=TwoWay}" />
                 </controls:SettingsCard>
 
-                <controls:SettingsCard Header="Show lyrics"
-                                       Description="Display lyrics on the player controls when available.">
+                <controls:SettingsCard
+                    Header="Show lyrics"
+                    Description="Display lyrics on the player controls when available.">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
                     </controls:SettingsCard.HeaderIcon>
-                    <ToggleSwitch HorizontalAlignment="Right"
-                                  IsOn="{x:Bind ViewModel.IsShowLyricsOnPlayerEnabled, Mode=TwoWay}" />
+                    <ToggleSwitch
+                        HorizontalAlignment="Right"
+                        IsOn="{x:Bind ViewModel.IsShowLyricsOnPlayerEnabled, Mode=TwoWay}" />
                 </controls:SettingsCard>
 
-                <controls:SettingsCard Header="Restore playback state"
-                                       Description="Save the current playback state to resume on next launch.">
+                <controls:SettingsCard
+                    Header="Restore playback state"
+                    Description="Save the current playback state to resume on next launch.">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
                     </controls:SettingsCard.HeaderIcon>
-                    <ToggleSwitch HorizontalAlignment="Right"
-                                  IsOn="{x:Bind ViewModel.IsRestorePlaybackStateEnabled, Mode=TwoWay}" />
+                    <ToggleSwitch
+                        HorizontalAlignment="Right"
+                        IsOn="{x:Bind ViewModel.IsRestorePlaybackStateEnabled, Mode=TwoWay}" />
                 </controls:SettingsCard>
 
-                <controls:SettingsCard Header="Auto launch on startup"
-                                       Description="Start Nagi automatically when you log into your computer.">
+                <controls:SettingsCard
+                    Header="Auto launch on startup"
+                    Description="Start Nagi automatically when you log into your computer.">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
                     </controls:SettingsCard.HeaderIcon>
-                    <ToggleSwitch HorizontalAlignment="Right"
-                                  IsOn="{x:Bind ViewModel.IsAutoLaunchEnabled, Mode=TwoWay}" />
+                    <ToggleSwitch
+                        HorizontalAlignment="Right"
+                        IsOn="{x:Bind ViewModel.IsAutoLaunchEnabled, Mode=TwoWay}" />
                 </controls:SettingsCard>
 
-                <controls:SettingsCard Header="Start minimized"
-                                       Description="When launched, the application window will be minimized by default.">
+                <controls:SettingsCard
+                    Header="Start minimized"
+                    Description="When launched, the application window will be minimized by default.">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
                     </controls:SettingsCard.HeaderIcon>
-                    <ToggleSwitch HorizontalAlignment="Right"
-                                  IsOn="{x:Bind ViewModel.IsStartMinimizedEnabled, Mode=TwoWay}" />
+                    <ToggleSwitch
+                        HorizontalAlignment="Right"
+                        IsOn="{x:Bind ViewModel.IsStartMinimizedEnabled, Mode=TwoWay}" />
                 </controls:SettingsCard>
 
-                <controls:SettingsCard Header="Minimize to mini-player"
-                                       Description="When minimized, show a compact floating player instead of hiding the window.">
+                <controls:SettingsCard
+                    Header="Minimize to mini-player"
+                    Description="When minimized, show a compact floating player instead of hiding the window.">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
                     </controls:SettingsCard.HeaderIcon>
-                    <ToggleSwitch HorizontalAlignment="Right"
-                                  IsOn="{x:Bind ViewModel.IsMinimizeToMiniPlayerEnabled, Mode=TwoWay}" />
+                    <ToggleSwitch
+                        HorizontalAlignment="Right"
+                        IsOn="{x:Bind ViewModel.IsMinimizeToMiniPlayerEnabled, Mode=TwoWay}" />
                 </controls:SettingsCard>
 
-                <controls:SettingsCard Header="Hide to system tray"
-                                       Description="When closed, hide to the system tray instead.">
+                <controls:SettingsCard
+                    Header="Hide to system tray"
+                    Description="When closed, hide to the system tray instead.">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
                     </controls:SettingsCard.HeaderIcon>
-                    <ToggleSwitch HorizontalAlignment="Right"
-                                  IsOn="{x:Bind ViewModel.IsHideToTrayEnabled, Mode=TwoWay}" />
+                    <ToggleSwitch
+                        HorizontalAlignment="Right"
+                        IsOn="{x:Bind ViewModel.IsHideToTrayEnabled, Mode=TwoWay}" />
                 </controls:SettingsCard>
 
-                <controls:SettingsCard Header="Show cover art in flyout"
-                                       Description="Display the cover art in the compact player that appears when clicking the tray icon.">
+                <controls:SettingsCard
+                    Header="Show cover art in flyout"
+                    Description="Display the cover art in the compact player that appears when clicking the tray icon.">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
                     </controls:SettingsCard.HeaderIcon>
-                    <ToggleSwitch HorizontalAlignment="Right"
-                                  IsOn="{x:Bind ViewModel.IsShowCoverArtInTrayFlyoutEnabled, Mode=TwoWay}" />
+                    <ToggleSwitch
+                        HorizontalAlignment="Right"
+                        IsOn="{x:Bind ViewModel.IsShowCoverArtInTrayFlyoutEnabled, Mode=TwoWay}" />
                 </controls:SettingsCard>
 
                 <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="Data Management" />
 
-                <controls:SettingsCard Header="Retrieve online metadata"
-                                       Description="Fetch additional information like artist images and biographies from online services (e.g., Spotify, Last.fm).">
+                <controls:SettingsCard
+                    Header="Retrieve online metadata"
+                    Description="Fetch additional information like artist images and biographies from online services (e.g., Spotify, Last.fm).">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
                     </controls:SettingsCard.HeaderIcon>
-                    <ToggleSwitch HorizontalAlignment="Right"
-                                  IsOn="{x:Bind ViewModel.IsFetchOnlineMetadataEnabled, Mode=TwoWay}" />
+                    <ToggleSwitch
+                        HorizontalAlignment="Right"
+                        IsOn="{x:Bind ViewModel.IsFetchOnlineMetadataEnabled, Mode=TwoWay}" />
                 </controls:SettingsCard>
 
                 <controls:SettingsCard
@@ -290,45 +334,52 @@
 
                 <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="Integrations" />
 
-                <controls:SettingsCard Header="Last.fm"
-                                       Description="Connect your Last.fm account to scrobble tracks and show your currently playing song.">
+                <controls:SettingsCard
+                    Header="Last.fm"
+                    Description="Connect your Last.fm account to scrobble tracks and show your currently playing song.">
                     <controls:SettingsCard.HeaderIcon>
                         <PathIcon
                             Data="M10.584 17.209l-.88-2.392s-1.43 1.595-3.573 1.595c-1.897 0-3.244-1.65-3.244-4.289 0-3.381 1.704-4.591 3.382-4.591 2.419 0 3.188 1.567 3.849 3.574l.88 2.75c.879 2.667 2.528 4.811 7.284 4.811 3.409 0 5.719-1.044 5.719-3.793 0-2.227-1.265-3.381-3.629-3.932l-1.76-.385c-1.209-.275-1.566-.77-1.566-1.594 0-.935.742-1.485 1.952-1.485 1.319 0 2.034.495 2.144 1.677l2.749-.33c-.22-2.474-1.924-3.491-4.729-3.491-2.474 0-4.893.935-4.893 3.931 0 1.87.907 3.052 3.188 3.602l1.869.439c1.402.33 1.869.907 1.869 1.705 0 1.017-.989 1.43-2.858 1.43-2.776 0-3.932-1.457-4.591-3.464l-.907-2.749c-1.155-3.574-2.997-4.894-6.653-4.894-4.041-.001-6.186 2.556-6.186 6.899 0 4.179 2.145 6.433 5.993 6.433 3.107.001 4.591-1.457 4.591-1.457z"
                             Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
                     </controls:SettingsCard.HeaderIcon>
 
-                    <StackPanel HorizontalAlignment="Right" Orientation="Vertical" Spacing="8">
-                        <!-- Shown when NOT connected -->
-                        <StackPanel Orientation="Vertical" Spacing="8"
-                                    Visibility="{x:Bind ViewModel.IsLastFmNotConnected, Mode=OneWay}">
+                    <StackPanel
+                        HorizontalAlignment="Right"
+                        Orientation="Vertical"
+                        Spacing="8">
+                        <StackPanel
+                            Orientation="Vertical"
+                            Spacing="8"
+                            Visibility="{x:Bind ViewModel.IsLastFmNotConnected, Mode=OneWay}">
                             <Button
+                                HorizontalAlignment="Right"
                                 Command="{x:Bind ViewModel.LastFmInitialAuthCommand}"
                                 Content="Connect to Last.fm"
-                                IsEnabled="{x:Bind ViewModel.IsLastFmInitialAuthEnabled, Mode=OneWay}"
-                                HorizontalAlignment="Right" />
+                                IsEnabled="{x:Bind ViewModel.IsLastFmInitialAuthEnabled, Mode=OneWay}" />
 
                             <Button
+                                HorizontalAlignment="Right"
                                 Command="{x:Bind ViewModel.LastFmFinalizeAuthCommand}"
                                 Content="Complete Connection"
-                                Visibility="{x:Bind ViewModel.IsConnectingToLastFm, Mode=OneWay}"
-                                HorizontalAlignment="Right" />
+                                Visibility="{x:Bind ViewModel.IsConnectingToLastFm, Mode=OneWay}" />
 
                             <TextBlock
-                                Visibility="{x:Bind ViewModel.IsConnectingToLastFm, Mode=OneWay}"
-                                Text="After authorizing in your browser, click 'Complete Connection'."
-                                Style="{ThemeResource CaptionTextBlockStyle}"
                                 MaxWidth="250"
+                                HorizontalAlignment="Right"
+                                Style="{ThemeResource CaptionTextBlockStyle}"
+                                Text="After authorizing in your browser, click 'Complete Connection'."
                                 TextWrapping="Wrap"
-                                HorizontalAlignment="Right" />
+                                Visibility="{x:Bind ViewModel.IsConnectingToLastFm, Mode=OneWay}" />
                         </StackPanel>
 
-                        <!-- Shown when connected -->
-                        <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Center"
-                                    Visibility="{x:Bind ViewModel.IsLastFmConnected, Mode=OneWay}">
+                        <StackPanel
+                            Orientation="Horizontal"
+                            Spacing="12"
+                            VerticalAlignment="Center"
+                            Visibility="{x:Bind ViewModel.IsLastFmConnected, Mode=OneWay}">
                             <TextBlock VerticalAlignment="Center">
                                 <Run Text="Connected as" />
-                                <Run Text="{x:Bind ViewModel.LastFmUsername, Mode=OneWay}" FontWeight="SemiBold" />
+                                <Run FontWeight="SemiBold" Text="{x:Bind ViewModel.LastFmUsername, Mode=OneWay}" />
                             </TextBlock>
                             <Button
                                 Command="{x:Bind ViewModel.LastFmDisconnectCommand}"
@@ -337,7 +388,6 @@
                     </StackPanel>
                 </controls:SettingsCard>
 
-                <!-- Last.fm preferences, visible only when connected -->
                 <StackPanel Spacing="{StaticResource SettingsCardSpacing}"
                             Visibility="{x:Bind ViewModel.IsLastFmConnected, Mode=OneWay}">
                     <controls:SettingsCard
@@ -363,8 +413,9 @@
                     </controls:SettingsCard>
                 </StackPanel>
 
-                <controls:SettingsCard Header="Discord"
-                                       Description="Show your current listening activity as your status on Discord.">
+                <controls:SettingsCard
+                    Header="Discord"
+                    Description="Show your current listening activity as your status on Discord.">
                     <controls:SettingsCard.HeaderIcon>
                         <PathIcon
                             Data="M20.317 4.37C18.787 3.66 17.13 3.15 15.4 2.88C15.4 2.88 15.27 3.04 15.12 3.26C13.24 2.99 11.37 2.99 9.52 3.26C9.37 3.04 9.24 2.88 9.24 2.88C7.51 3.15 5.85 3.66 4.32 4.37C0.93 9.21 0.05 13.93 0.51 18.58C2.6 20.01 4.65 20.89 6.66 21.43C7.15 20.77 7.6 20.07 8 19.33C7.32 19.08 6.67 18.78 6.05 18.43C6.2 18.32 6.34 18.21 6.48 18.09C10.36 19.87 14.64 19.87 18.52 18.09C18.66 18.21 18.8 18.32 18.95 18.43C18.33 18.78 17.68 19.08 17 19.33C17.4 20.07 17.85 20.77 18.34 21.43C20.35 20.89 22.4 20.01 24.49 18.58C25.02 13.21 23.6 8.54 20.317 4.37ZM8.62 15.31C7.27 15.31 6.18 14.08 6.18 12.58C6.18 11.08 7.24 9.84 8.62 9.84C9.99 9.84 11.08 11.07 11.06 12.58C11.06 14.08 9.99 15.31 8.62 15.31ZM16.38 15.31C15.03 15.31 13.94 14.08 13.94 12.58C13.94 11.08 15 9.84 16.38 9.84C17.75 9.84 18.84 11.07 18.82 12.58C18.82 14.08 17.75 15.31 16.38 15.31Z"
@@ -393,26 +444,33 @@
                     <controls:SettingsExpander.Items>
                         <controls:SettingsCard ContentAlignment="Left">
                             <StackPanel Orientation="Horizontal">
-                                <HyperlinkButton Content="View Licenses"
-                                                 NavigateUri="https://github.com/Anthonyy232/Nagi/blob/master/LICENSE" />
-                                <HyperlinkButton Content="Source Code"
-                                                 NavigateUri="https://github.com/Anthonyy232/Nagi" />
+                                <HyperlinkButton
+                                    Content="View Licenses"
+                                    NavigateUri="https://github.com/Anthonyy232/Nagi/blob/master/LICENSE" />
+                                <HyperlinkButton
+                                    Content="Source Code"
+                                    NavigateUri="https://github.com/Anthonyy232/Nagi" />
                             </StackPanel>
                         </controls:SettingsCard>
                     </controls:SettingsExpander.Items>
                 </controls:SettingsExpander>
 
-                <controls:SettingsCard Header="Check for updates on startup"
-                                       Description="Automatically check for new versions when the application starts."
-                                       Visibility="{x:Bind ViewModel.IsUpdateControlVisible, Mode=OneWay}">
+                <controls:SettingsCard
+                    Header="Check for updates on startup"
+                    Description="Automatically check for new versions when the application starts."
+                    Visibility="{x:Bind ViewModel.IsUpdateControlVisible, Mode=OneWay}">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="" />
                     </controls:SettingsCard.HeaderIcon>
-                    <ToggleSwitch HorizontalAlignment="Right"
-                                  IsOn="{x:Bind ViewModel.IsCheckForUpdatesEnabled, Mode=TwoWay}" />
+                    <ToggleSwitch
+                        HorizontalAlignment="Right"
+                        IsOn="{x:Bind ViewModel.IsCheckForUpdatesEnabled, Mode=TwoWay}" />
                 </controls:SettingsCard>
 
-                <StackPanel Margin="0,8,0,0" Orientation="Horizontal" Spacing="12">
+                <StackPanel
+                    Margin="0,8,0,0"
+                    Orientation="Horizontal"
+                    Spacing="12">
                     <HyperlinkButton
                         Command="{x:Bind ViewModel.CheckForUpdatesManuallyCommand}"
                         Content="Check for Updates"
