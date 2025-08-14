@@ -1,5 +1,3 @@
-// Nagi.WinUI.ViewModels/PlayerViewModel.cs
-
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,6 +9,7 @@ using CommunityToolkit.Mvvm.Input;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using Nagi.WinUI.Models;
 using Nagi.WinUI.Navigation;
 using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
@@ -18,11 +17,10 @@ using Nagi.WinUI.Services.Abstractions;
 namespace Nagi.WinUI.ViewModels;
 
 /// <summary>
-///     Manages the state and interactions for the main media player UI. This view model acts as a coordinator
-///     between the UI and various services like <see cref="IMusicPlaybackService" /> and <see cref="IWindowService" />.
+/// Manages the state and interactions for the main media player UI. This view model acts as a coordinator
+/// between the UI and various services like <see cref="IMusicPlaybackService" /> and <see cref="IWindowService" />.
 /// </summary>
-public partial class PlayerViewModel : ObservableObject, IDisposable
-{
+public partial class PlayerViewModel : ObservableObject, IDisposable {
     private const string PlayIconGlyph = "\uE768";
     private const string PauseIconGlyph = "\uE769";
     private const string RepeatOffIconGlyph = "\uE8EE";
@@ -49,12 +47,8 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
 
     private bool _isUpdatingFromService;
 
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="PlayerViewModel" /> class.
-    /// </summary>
     public PlayerViewModel(IMusicPlaybackService playbackService, INavigationService navigationService,
-        IDispatcherService dispatcherService, IUISettingsService settingsService, IWindowService windowService)
-    {
+        IDispatcherService dispatcherService, IUISettingsService settingsService, IWindowService windowService) {
         _playbackService = playbackService ?? throw new ArgumentNullException(nameof(playbackService));
         _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
         _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
@@ -71,83 +65,67 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(PlayPauseIconGlyph))]
     [NotifyPropertyChangedFor(nameof(PlayPauseButtonToolTip))]
-    public partial bool IsPlaying { get; set; }
+    private bool _isPlaying;
 
-    [ObservableProperty] public partial string SongTitle { get; set; } = "No track playing";
+    [ObservableProperty] private string _songTitle = "No track playing";
 
-    [ObservableProperty] public partial string ArtistName { get; set; } = string.Empty;
+    [ObservableProperty] private string _artistName = string.Empty;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsArtworkAvailable))]
-    public partial string? AlbumArtUri { get; set; }
+    private string? _albumArtUri;
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsLyricsButtonEffectivelyVisible))]
-    [NotifyCanExecuteChangedFor(nameof(GoToLyricsPageCommand))]
     [NotifyCanExecuteChangedFor(nameof(GoToArtistCommand))]
-    public partial Song? CurrentPlayingTrack { get; set; }
+    private Song? _currentPlayingTrack;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ShuffleIconGlyph))]
     [NotifyPropertyChangedFor(nameof(ShuffleButtonToolTip))]
-    public partial bool IsShuffleEnabled { get; set; }
+    private bool _isShuffleEnabled;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(RepeatIconGlyph))]
     [NotifyPropertyChangedFor(nameof(RepeatButtonToolTip))]
-    public partial RepeatMode CurrentRepeatMode { get; set; }
+    private RepeatMode _currentRepeatMode;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(VolumeButtonToolTip))]
-    public partial bool IsMuted { get; set; }
+    private bool _isMuted;
 
-    [ObservableProperty] public partial double CurrentVolume { get; set; } = 50;
-
-    [ObservableProperty] public partial string VolumeIconGlyph { get; set; } = VolumeMediumIconGlyph;
-
-    [ObservableProperty] public partial ObservableCollection<Song> CurrentQueue { get; set; } = new();
-
-    [ObservableProperty] public partial double CurrentPosition { get; set; }
-
-    [ObservableProperty] public partial string CurrentTimeText { get; set; } = "0:00";
-
-    [ObservableProperty] public partial bool IsUserDraggingSlider { get; set; }
-
-    [ObservableProperty] public partial double TotalDuration { get; set; }
-
-    [ObservableProperty] public partial string TotalDurationText { get; set; } = "0:00";
-
-    [ObservableProperty] public partial bool IsGlobalOperationInProgress { get; set; }
-
-    [ObservableProperty] public partial string GlobalOperationStatusMessage { get; set; } = string.Empty;
-
-    [ObservableProperty] public partial double GlobalOperationProgressValue { get; set; }
-
-    [ObservableProperty] public partial bool IsGlobalOperationIndeterminate { get; set; }
-
-    [ObservableProperty] public partial bool IsQueueViewVisible { get; set; }
+    [ObservableProperty] private double _currentVolume = 50;
+    [ObservableProperty] private string _volumeIconGlyph = VolumeMediumIconGlyph;
+    [ObservableProperty] private ObservableCollection<Song> _currentQueue = new();
+    [ObservableProperty] private double _currentPosition;
+    [ObservableProperty] private string _currentTimeText = "0:00";
+    [ObservableProperty] private bool _isUserDraggingSlider;
+    [ObservableProperty] private double _totalDuration;
+    [ObservableProperty] private string _totalDurationText = "0:00";
+    [ObservableProperty] private bool _isGlobalOperationInProgress;
+    [ObservableProperty] private string _globalOperationStatusMessage = string.Empty;
+    [ObservableProperty] private double _globalOperationProgressValue;
+    [ObservableProperty] private bool _isGlobalOperationIndeterminate;
+    [ObservableProperty] private bool _isQueueViewVisible;
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsLyricsButtonEffectivelyVisible))]
-    [NotifyCanExecuteChangedFor(nameof(GoToLyricsPageCommand))]
-    public partial bool ShowLyricsOnPlayerEnabled { get; set; }
+    private bool _isVolumeControlVisible;
 
-    public bool IsLyricsButtonEffectivelyVisible => ShowLyricsOnPlayerEnabled;
+    public ObservableCollection<PlayerButtonSetting> MainTransportButtons { get; } = new();
+    public ObservableCollection<PlayerButtonSetting> SecondaryControlsButtons { get; } = new();
+
     public bool IsArtworkAvailable => !string.IsNullOrWhiteSpace(AlbumArtUri);
     public string PlayPauseIconGlyph => IsPlaying ? PauseIconGlyph : PlayIconGlyph;
     public string PlayPauseButtonToolTip => IsPlaying ? PauseTooltip : PlayTooltip;
     public string ShuffleIconGlyph => IsShuffleEnabled ? ShuffleOnIconGlyph : ShuffleOffIconGlyph;
     public string ShuffleButtonToolTip => IsShuffleEnabled ? "Shuffle On" : "Shuffle Off";
 
-    public string RepeatIconGlyph => CurrentRepeatMode switch
-    {
+    public string RepeatIconGlyph => CurrentRepeatMode switch {
         RepeatMode.RepeatAll => RepeatAllIconGlyph,
         RepeatMode.RepeatOne => RepeatOneIconGlyph,
         _ => RepeatOffIconGlyph
     };
 
-    public string RepeatButtonToolTip => CurrentRepeatMode switch
-    {
+    public string RepeatButtonToolTip => CurrentRepeatMode switch {
         RepeatMode.Off => "Repeat Off",
         RepeatMode.RepeatAll => "Repeat All",
         RepeatMode.RepeatOne => "Repeat One",
@@ -157,10 +135,9 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     public string VolumeButtonToolTip => IsMuted ? "Unmute" : "Mute";
 
     /// <summary>
-    ///     Cleans up resources by unsubscribing from service events to prevent memory leaks.
+    /// Cleans up resources and unsubscribes from service events.
     /// </summary>
-    public void Dispose()
-    {
+    public void Dispose() {
         Debug.WriteLine("[PlayerViewModel] Disposing and unsubscribing from service events.");
         UnsubscribeFromPlaybackServiceEvents();
         UnsubscribeFromSettingsServiceEvents();
@@ -168,47 +145,70 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
         GC.SuppressFinalize(this);
     }
 
-    [RelayCommand]
-    private void ShowQueueView()
-    {
-        IsQueueViewVisible = true;
+    /// <summary>
+    /// Loads player button settings and splits them into main and secondary controls
+    /// based on a special "Separator" item.
+    /// </summary>
+    private async Task LoadPlayerButtonSettingsAsync() {
+        var allButtons = await _settingsService.GetPlayerButtonSettingsAsync();
+
+        var enabledButtons = allButtons.Where(s => s.IsEnabled).ToList();
+
+        IsVolumeControlVisible = enabledButtons.Any(b => b.Id == "Volume");
+
+        var separatorIndex = enabledButtons.FindIndex(b => b.Id == "Separator");
+
+        var mainButtons = new List<PlayerButtonSetting>();
+        var secondaryButtons = new List<PlayerButtonSetting>();
+
+        if (separatorIndex != -1) {
+            // Split the list based on the separator's position.
+            mainButtons.AddRange(enabledButtons.Take(separatorIndex));
+            secondaryButtons.AddRange(enabledButtons.Skip(separatorIndex + 1));
+        }
+        else {
+            // Fallback: If no separator is found, place all buttons in the main transport area.
+            mainButtons.AddRange(enabledButtons.Where(b => b.Id != "Separator"));
+        }
+
+        UpdateCollectionIfChanged(MainTransportButtons, mainButtons);
+        UpdateCollectionIfChanged(SecondaryControlsButtons, secondaryButtons);
+    }
+
+    /// <summary>
+    /// Efficiently updates an ObservableCollection by comparing its current items
+    /// with a new list, preventing unnecessary UI refreshes if they are identical.
+    /// </summary>
+    private static void UpdateCollectionIfChanged(ObservableCollection<PlayerButtonSetting> collection, List<PlayerButtonSetting> newItems) {
+        if (collection.Select(b => b.Id).SequenceEqual(newItems.Select(b => b.Id))) return;
+
+        collection.Clear();
+        foreach (var item in newItems) {
+            collection.Add(item);
+        }
     }
 
     [RelayCommand]
-    private void ShowPlayerView()
-    {
-        IsQueueViewVisible = false;
-    }
+    private void ShowQueueView() => IsQueueViewVisible = true;
 
     [RelayCommand]
-    private Task PlayPauseAsync()
-    {
-        return _playbackService.PlayPauseAsync();
-    }
+    private void ShowPlayerView() => IsQueueViewVisible = false;
 
     [RelayCommand]
-    private Task PreviousAsync()
-    {
-        return _playbackService.PreviousAsync();
-    }
+    private Task PlayPauseAsync() => _playbackService.PlayPauseAsync();
 
     [RelayCommand]
-    private Task NextAsync()
-    {
-        return _playbackService.NextAsync();
-    }
+    private Task PreviousAsync() => _playbackService.PreviousAsync();
 
     [RelayCommand]
-    private Task ToggleShuffleAsync()
-    {
-        return _playbackService.SetShuffleAsync(!_playbackService.IsShuffleEnabled);
-    }
+    private Task NextAsync() => _playbackService.NextAsync();
 
     [RelayCommand]
-    private Task CycleRepeatAsync()
-    {
-        var nextMode = _playbackService.CurrentRepeatMode switch
-        {
+    private Task ToggleShuffleAsync() => _playbackService.SetShuffleAsync(!_playbackService.IsShuffleEnabled);
+
+    [RelayCommand]
+    private Task CycleRepeatAsync() {
+        var nextMode = _playbackService.CurrentRepeatMode switch {
             RepeatMode.Off => RepeatMode.RepeatAll,
             RepeatMode.RepeatAll => RepeatMode.RepeatOne,
             _ => RepeatMode.Off
@@ -217,110 +217,74 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     }
 
     [RelayCommand]
-    private Task ToggleMuteAsync()
-    {
-        return _playbackService.ToggleMuteAsync();
-    }
+    private Task ToggleMuteAsync() => _playbackService.ToggleMuteAsync();
 
     [RelayCommand]
-    private Task SeekAsync(double position)
-    {
-        return _playbackService.SeekAsync(TimeSpan.FromSeconds(position));
-    }
+    private Task SeekAsync(double position) => _playbackService.SeekAsync(TimeSpan.FromSeconds(position));
 
     [RelayCommand(CanExecute = nameof(CanGoToArtist))]
-    private void GoToArtist(Song? song)
-    {
+    private void GoToArtist(Song? song) {
         var targetSong = song ?? CurrentPlayingTrack;
-        if (targetSong?.ArtistId == null || targetSong.Artist == null)
-        {
-            Debug.WriteLine("[PlayerViewModel] WARN: Cannot navigate to Artist page, information is missing.");
+        if (targetSong?.ArtistId == null || targetSong.Artist == null) {
+            Debug.WriteLine("[PlayerViewModel] Cannot navigate to Artist page: artist information is missing.");
             return;
         }
 
-        var navParam = new ArtistViewNavigationParameter
-            { ArtistId = targetSong.Artist.Id, ArtistName = targetSong.Artist.Name };
+        var navParam = new ArtistViewNavigationParameter { ArtistId = targetSong.Artist.Id, ArtistName = targetSong.Artist.Name };
         _navigationService.Navigate(typeof(ArtistViewPage), navParam);
     }
 
-    private bool CanGoToArtist(Song? song)
-    {
+    private bool CanGoToArtist(Song? song) {
         var targetSong = song ?? CurrentPlayingTrack;
         return targetSong?.Artist != null && targetSong.Artist.Id != Guid.Empty;
     }
 
-    [RelayCommand(CanExecute = nameof(CanGoToLyricsPage))]
-    private void GoToLyricsPage()
-    {
-        _navigationService.Navigate(typeof(LyricsPage));
-    }
+    [RelayCommand]
+    private void GoToLyricsPage() => _navigationService.Navigate(typeof(LyricsPage));
 
-    private bool CanGoToLyricsPage()
-    {
-        return ShowLyricsOnPlayerEnabled;
-    }
+    partial void OnIsMutedChanged(bool value) => UpdateVolumeIconGlyph();
 
-    partial void OnIsMutedChanged(bool value)
-    {
-        UpdateVolumeIconGlyph();
-    }
-
-    partial void OnCurrentVolumeChanged(double value)
-    {
+    partial void OnCurrentVolumeChanged(double value) {
         if (_isUpdatingFromService) return;
         var serviceVolume = Math.Clamp(value / 100.0, 0.0, 1.0);
-        if (Math.Abs(_playbackService.Volume - serviceVolume) > 0.001)
+        if (Math.Abs(_playbackService.Volume - serviceVolume) > 0.001) {
             _ = _playbackService.SetVolumeAsync(serviceVolume);
+        }
         UpdateVolumeIconGlyph();
     }
 
-    partial void OnCurrentPositionChanged(double value)
-    {
+    partial void OnCurrentPositionChanged(double value) {
         CurrentTimeText = TimeSpan.FromSeconds(value).ToString(@"m\:ss");
         if (_isUpdatingFromService || IsUserDraggingSlider) return;
+
         var newPosition = TimeSpan.FromSeconds(value);
-        if (Math.Abs(_playbackService.CurrentPosition.TotalSeconds - newPosition.TotalSeconds) > 0.5)
+        if (Math.Abs(_playbackService.CurrentPosition.TotalSeconds - newPosition.TotalSeconds) > 0.5) {
             _ = _playbackService.SeekAsync(newPosition);
+        }
     }
 
-    partial void OnTotalDurationChanged(double value)
-    {
-        TotalDurationText = TimeSpan.FromSeconds(value).ToString(@"m\:ss");
-    }
+    partial void OnTotalDurationChanged(double value) => TotalDurationText = TimeSpan.FromSeconds(value).ToString(@"m\:ss");
 
-    /// <summary>
-    ///     Orchestrates the application's efficiency mode based on playback and window state.
-    ///     Efficiency mode is enabled only if music is paused AND the application is in a background state
-    ///     (e.g., minimized, hidden to tray, or in mini-player mode).
-    /// </summary>
-    private void UpdateEfficiencyMode()
-    {
+    private void UpdateEfficiencyMode() {
         var isPaused = !_playbackService.IsPlaying;
         var isMainWindowVisible = _windowService.IsVisible;
         var isMiniPlayerActive = _windowService.IsMiniPlayerActive;
         var isMinimized = _windowService.IsMinimized;
 
-        // A "background state" is when the app is not the user's primary focus.
         var isInBackgroundState = !isMainWindowVisible || isMiniPlayerActive || isMinimized;
-
         var shouldBeEfficient = isPaused && isInBackgroundState;
 
         _windowService.SetEfficiencyMode(shouldBeEfficient);
-        Debug.WriteLine(
-            $"[PlayerViewModel] Efficiency Mode Check -> Result: {shouldBeEfficient} (IsPaused: {isPaused}, IsInBgState: {isInBackgroundState})");
     }
 
-    private void UpdateTrackDetails(Song? song)
-    {
+    private void UpdateTrackDetails(Song? song) {
         CurrentPlayingTrack = song;
-        if (song != null)
-        {
+        if (song != null) {
             SongTitle = song.Title;
             ArtistName = song.Artist?.Name ?? string.Empty;
             AlbumArtUri = song.AlbumArtUriFromTrack;
         }
-        else
-        {
+        else {
             SongTitle = "No track playing";
             ArtistName = string.Empty;
             AlbumArtUri = null;
@@ -328,12 +292,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
         }
     }
 
-    /// <summary>
-    ///     Refreshes the queue display based on the current playback service state,
-    ///     including shuffle and repeat modes.
-    /// </summary>
-    private void UpdateCurrentQueueDisplay()
-    {
+    private void UpdateCurrentQueueDisplay() {
         var sourceQueue = _playbackService.IsShuffleEnabled
             ? _playbackService.ShuffledQueue
             : _playbackService.PlaybackQueue;
@@ -341,39 +300,31 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
         var newDisplayQueue = new List<Song>();
         var currentTrack = _playbackService.CurrentTrack;
 
-        if (currentTrack != null)
-        {
+        if (currentTrack != null) {
             var sourceQueueList = sourceQueue.ToList();
             var currentTrackIndex = sourceQueueList.FindIndex(s => s.Id == currentTrack.Id);
 
-            if (currentTrackIndex != -1)
-            {
-                // To give a continuous feel, the queue display starts from the current song.
-                // If repeat-all is enabled, the queue wraps around.
+            if (currentTrackIndex != -1) {
                 newDisplayQueue.AddRange(sourceQueueList.Skip(currentTrackIndex));
-                if (_playbackService.CurrentRepeatMode == RepeatMode.RepeatAll)
+                if (_playbackService.CurrentRepeatMode == RepeatMode.RepeatAll) {
                     newDisplayQueue.AddRange(sourceQueueList.Take(currentTrackIndex));
+                }
             }
-            else
-            {
-                // Fallback in case the current track is somehow not in its own queue.
+            else {
                 newDisplayQueue.AddRange(sourceQueueList);
             }
         }
 
-        if (!CurrentQueue.SequenceEqual(newDisplayQueue))
-        {
+        if (!CurrentQueue.SequenceEqual(newDisplayQueue)) {
             CurrentQueue.Clear();
             foreach (var song in newDisplayQueue) CurrentQueue.Add(song);
         }
     }
 
-    private void UpdateVolumeIconGlyph()
-    {
+    private void UpdateVolumeIconGlyph() {
         var newGlyph = IsMuted || CurrentVolume == 0
             ? MuteIconGlyph
-            : CurrentVolume switch
-            {
+            : CurrentVolume switch {
                 <= VolumeLowThreshold => VolumeLowIconGlyph,
                 <= VolumeMediumThreshold => VolumeMediumIconGlyph,
                 _ => VolumeHighIconGlyph
@@ -382,44 +333,34 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
         if (VolumeIconGlyph != newGlyph) VolumeIconGlyph = newGlyph;
     }
 
-    /// <summary>
-    ///     Safely executes an action on the UI thread and prevents re-entrant property change loops.
-    /// </summary>
-    private void RunOnUIThread(Action action)
-    {
-        _dispatcherService.TryEnqueue(() =>
-        {
-            using (new ServiceUpdateScope(this))
-            {
+    private void RunOnUIThread(Action action) {
+        _dispatcherService.TryEnqueue(() => {
+            using (new ServiceUpdateScope(this)) {
                 action();
             }
         });
     }
 
     /// <summary>
-    ///     A helper struct to prevent property-changed event feedback loops. It sets a flag on the
-    ///     view model during a service-initiated update, preventing the UI from re-triggering service calls.
+    /// A disposable struct that sets a flag to prevent property change feedback loops
+    /// when updating the ViewModel from a service.
     /// </summary>
-    private readonly struct ServiceUpdateScope : IDisposable
-    {
+    private readonly struct ServiceUpdateScope : IDisposable {
         private readonly PlayerViewModel _viewModel;
 
-        public ServiceUpdateScope(PlayerViewModel viewModel)
-        {
+        public ServiceUpdateScope(PlayerViewModel viewModel) {
             _viewModel = viewModel;
             _viewModel._isUpdatingFromService = true;
         }
 
-        public void Dispose()
-        {
+        public void Dispose() {
             _viewModel._isUpdatingFromService = false;
         }
     }
 
     #region Service Event Handling
 
-    private void SubscribeToPlaybackServiceEvents()
-    {
+    private void SubscribeToPlaybackServiceEvents() {
         _playbackService.PlaybackStateChanged += OnPlaybackService_PlaybackStateChanged;
         _playbackService.TrackChanged += OnPlaybackService_TrackChanged;
         _playbackService.VolumeStateChanged += OnPlaybackService_VolumeStateChanged;
@@ -430,8 +371,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
         _playbackService.DurationChanged += OnPlaybackService_DurationChanged;
     }
 
-    private void UnsubscribeFromPlaybackServiceEvents()
-    {
+    private void UnsubscribeFromPlaybackServiceEvents() {
         _playbackService.PlaybackStateChanged -= OnPlaybackService_PlaybackStateChanged;
         _playbackService.TrackChanged -= OnPlaybackService_TrackChanged;
         _playbackService.VolumeStateChanged -= OnPlaybackService_VolumeStateChanged;
@@ -442,10 +382,8 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
         _playbackService.DurationChanged -= OnPlaybackService_DurationChanged;
     }
 
-    private void InitializeStateFromService()
-    {
-        RunOnUIThread(() =>
-        {
+    private void InitializeStateFromService() {
+        RunOnUIThread(() => {
             IsPlaying = _playbackService.IsPlaying;
             UpdateTrackDetails(_playbackService.CurrentTrack);
             IsMuted = _playbackService.IsMuted;
@@ -459,100 +397,52 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
         });
     }
 
-    private void OnPlaybackService_PlaybackStateChanged()
-    {
-        RunOnUIThread(() =>
-        {
-            IsPlaying = _playbackService.IsPlaying;
-            UpdateEfficiencyMode();
-        });
+    private void OnPlaybackService_PlaybackStateChanged() => RunOnUIThread(() => {
+        IsPlaying = _playbackService.IsPlaying;
+        UpdateEfficiencyMode();
+    });
+
+    private void OnPlaybackService_TrackChanged() => RunOnUIThread(() => {
+        UpdateTrackDetails(_playbackService.CurrentTrack);
+        CurrentPosition = 0;
+        UpdateCurrentQueueDisplay();
+    });
+
+    private void OnPlaybackService_VolumeStateChanged() => RunOnUIThread(() => {
+        IsMuted = _playbackService.IsMuted;
+        CurrentVolume = Math.Clamp(_playbackService.Volume * 100.0, 0.0, 100.0);
+    });
+
+    private void OnPlaybackService_ShuffleModeChanged() => RunOnUIThread(() => {
+        IsShuffleEnabled = _playbackService.IsShuffleEnabled;
+        UpdateCurrentQueueDisplay();
+    });
+
+    private void OnPlaybackService_RepeatModeChanged() => RunOnUIThread(() => CurrentRepeatMode = _playbackService.CurrentRepeatMode);
+    private void OnPlaybackService_QueueChanged() => RunOnUIThread(UpdateCurrentQueueDisplay);
+    private void OnPlaybackService_PositionChanged() => RunOnUIThread(() => {
+        if (!IsUserDraggingSlider) CurrentPosition = _playbackService.CurrentPosition.TotalSeconds;
+    });
+
+    private void OnPlaybackService_DurationChanged() => RunOnUIThread(() => TotalDuration = Math.Max(0, _playbackService.Duration.TotalSeconds));
+
+    private void SubscribeToWindowServiceEvents() => _windowService.UIStateChanged += OnWindowService_UIStateChanged;
+    private void UnsubscribeFromWindowServiceEvents() => _windowService.UIStateChanged -= OnWindowService_UIStateChanged;
+    private void OnWindowService_UIStateChanged() => RunOnUIThread(UpdateEfficiencyMode);
+
+    private async void InitializeSettingsAsync() {
+        await LoadPlayerButtonSettingsAsync();
     }
 
-    private void OnPlaybackService_TrackChanged()
-    {
-        RunOnUIThread(() =>
-        {
-            UpdateTrackDetails(_playbackService.CurrentTrack);
-            CurrentPosition = 0;
-            UpdateCurrentQueueDisplay();
-        });
+    private void SubscribeToSettingsServiceEvents() {
+        _settingsService.PlayerButtonSettingsChanged += OnSettingsService_PlayerButtonSettingsChanged;
     }
 
-    private void OnPlaybackService_VolumeStateChanged()
-    {
-        RunOnUIThread(() =>
-        {
-            IsMuted = _playbackService.IsMuted;
-            CurrentVolume = Math.Clamp(_playbackService.Volume * 100.0, 0.0, 100.0);
-        });
+    private void UnsubscribeFromSettingsServiceEvents() {
+        _settingsService.PlayerButtonSettingsChanged -= OnSettingsService_PlayerButtonSettingsChanged;
     }
 
-    private void OnPlaybackService_ShuffleModeChanged()
-    {
-        RunOnUIThread(() =>
-        {
-            IsShuffleEnabled = _playbackService.IsShuffleEnabled;
-            UpdateCurrentQueueDisplay();
-        });
-    }
-
-    private void OnPlaybackService_RepeatModeChanged()
-    {
-        RunOnUIThread(() => CurrentRepeatMode = _playbackService.CurrentRepeatMode);
-    }
-
-    private void OnPlaybackService_QueueChanged()
-    {
-        RunOnUIThread(UpdateCurrentQueueDisplay);
-    }
-
-    private void OnPlaybackService_PositionChanged()
-    {
-        RunOnUIThread(() =>
-        {
-            if (!IsUserDraggingSlider) CurrentPosition = _playbackService.CurrentPosition.TotalSeconds;
-        });
-    }
-
-    private void OnPlaybackService_DurationChanged()
-    {
-        RunOnUIThread(() => TotalDuration = Math.Max(0, _playbackService.Duration.TotalSeconds));
-    }
-
-    private void SubscribeToWindowServiceEvents()
-    {
-        _windowService.UIStateChanged += OnWindowService_UIStateChanged;
-    }
-
-    private void UnsubscribeFromWindowServiceEvents()
-    {
-        _windowService.UIStateChanged -= OnWindowService_UIStateChanged;
-    }
-
-    private void OnWindowService_UIStateChanged()
-    {
-        RunOnUIThread(UpdateEfficiencyMode);
-    }
-
-    private async void InitializeSettingsAsync()
-    {
-        ShowLyricsOnPlayerEnabled = await _settingsService.GetShowLyricsOnPlayerEnabledAsync();
-    }
-
-    private void SubscribeToSettingsServiceEvents()
-    {
-        _settingsService.ShowLyricsOnPlayerSettingChanged += OnSettingsService_ShowLyricsOnPlayerSettingChanged;
-    }
-
-    private void UnsubscribeFromSettingsServiceEvents()
-    {
-        _settingsService.ShowLyricsOnPlayerSettingChanged -= OnSettingsService_ShowLyricsOnPlayerSettingChanged;
-    }
-
-    private void OnSettingsService_ShowLyricsOnPlayerSettingChanged(bool isEnabled)
-    {
-        RunOnUIThread(() => ShowLyricsOnPlayerEnabled = isEnabled);
-    }
+    private void OnSettingsService_PlayerButtonSettingsChanged() => _ = _dispatcherService.EnqueueAsync(LoadPlayerButtonSettingsAsync);
 
     #endregion
 }

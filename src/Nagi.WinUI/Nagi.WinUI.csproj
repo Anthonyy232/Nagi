@@ -86,11 +86,11 @@
     <!-- =============================================================== -->
     <ItemGroup>
         <!-- Project References -->
-        <ProjectReference Include="..\Nagi.Core\Nagi.Core.csproj"/>
+        <ProjectReference Include="..\Nagi.Core\Nagi.Core.csproj" />
 
         <!-- Core SDKs and Build Tools -->
-        <PackageReference Include="Microsoft.WindowsAppSDK" Version="$(WindowsAppSdkVersion)"/>
-        <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="$(MicrosoftWindowsSDKBuildToolsVersion)"/>
+        <PackageReference Include="Microsoft.WindowsAppSDK" Version="$(WindowsAppSdkVersion)" />
+        <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="$(MicrosoftWindowsSDKBuildToolsVersion)" />
 
         <!-- EFCore Migrations -->
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="$(EntityFrameworkCoreVersion)">
@@ -103,33 +103,34 @@
         </PackageReference>
 
         <!-- Application Services (DI, Configuration) -->
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="$(DependencyInjectionVersion)"/>
-        <PackageReference Include="Microsoft.Extensions.Configuration" Version="$(MicrosoftExtensionsConfigurationVersion)"/>
-        <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="$(MicrosoftExtensionsConfigurationFileExtensionsVersion)"/>
-        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="$(MicrosoftExtensionsConfigurationJsonVersion)"/>
-        <PackageReference Include="Microsoft.Extensions.Http" Version="$(MicrosoftExtensionsHttpVersion)"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="$(DependencyInjectionVersion)" />
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="$(MicrosoftExtensionsConfigurationVersion)" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="$(MicrosoftExtensionsConfigurationFileExtensionsVersion)" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="$(MicrosoftExtensionsConfigurationJsonVersion)" />
+        <PackageReference Include="Microsoft.Extensions.Http" Version="$(MicrosoftExtensionsHttpVersion)" />
 
         <!-- UI Controls and Media -->
-        <PackageReference Include="CommunityToolkit.WinUI.Controls.ColorPicker" Version="$(CommunityToolkitWinUIVersion)"/>
-        <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="$(CommunityToolkitWinUIVersion)"/>
-        <PackageReference Include="CommunityToolkit.WinUI.Media" Version="$(CommunityToolkitWinUIVersion)"/>
-        <PackageReference Include="H.NotifyIcon.WinUI" Version="$(HNotifyIconWinUIVersion)"/>
-        <PackageReference Include="ImageEx.WinUI" Version="$(ImageExWinUIVersion)"/>
-        <PackageReference Include="Microsoft.Graphics.Win2D" Version="$(MicrosoftGraphicsWin2DVersion)"/>
+        <PackageReference Include="CommunityToolkit.WinUI.Controls.ColorPicker" Version="$(CommunityToolkitWinUIVersion)" />
+        <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="$(CommunityToolkitWinUIVersion)" />
+        <PackageReference Include="CommunityToolkit.WinUI.Media" Version="$(CommunityToolkitWinUIVersion)" />
+        <PackageReference Include="H.NotifyIcon.WinUI" Version="$(HNotifyIconWinUIVersion)" />
+        <PackageReference Include="ImageEx.WinUI" Version="$(ImageExWinUIVersion)" />
+        <PackageReference Include="Microsoft.Graphics.Win2D" Version="$(MicrosoftGraphicsWin2DVersion)" />
 
         <!-- Video Playback -->
-        <PackageReference Include="LibVLCSharp" Version="$(LibVLCSharpVersion)"/>
-        <PackageReference Include="VideoLAN.LibVLC.Windows" Version="$(LibVLCWindowsVersion)"/>
+        <PackageReference Include="LibVLCSharp" Version="$(LibVLCSharpVersion)" />
+        <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="$(MicrosoftXamlBehaviorsWinUIManagedVersion)" />
+        <PackageReference Include="VideoLAN.LibVLC.Windows" Version="$(LibVLCWindowsVersion)" />
 
         <!-- Updater (Unpackaged only) -->
-        <PackageReference Include="Velopack" Version="$(VelopackVersion)" Condition="$(Configuration.Contains('Unpackaged'))"/>
+        <PackageReference Include="Velopack" Version="$(VelopackVersion)" Condition="$(Configuration.Contains('Unpackaged'))" />
     </ItemGroup>
 
 
     <ItemGroup>
-        <VlcWindowsX64IncludeFiles Include="&#xD;&#xA;		    libvlc.dll;&#xD;&#xA;		    libvlccore.dll;&#xD;&#xA;		    plugins\logger\libconsole_logger_plugin.dll;&#xD;&#xA;		    plugins\misc\libxml_plugin.dll;&#xD;&#xA;		    plugins\lua\liblua_plugin.dll;&#xD;&#xA;&#xD;&#xA;		    plugins\access\libfilesystem_plugin.dll;&#xD;&#xA;&#xD;&#xA;		    plugins\demux\libmp4_plugin.dll;&#xD;&#xA;		    plugins\demux\libwav_plugin.dll;&#xD;&#xA;		    plugins\demux\libogg_plugin.dll;&#xD;&#xA;		    plugins\demux\libflacsys_plugin.dll;&#xD;&#xA;		    plugins\demux\libasf_plugin.dll;&#xD;&#xA;		    plugins\demux\libmkv_plugin.dll;&#xD;&#xA;		    plugins\demux\libplaylist_plugin.dll;&#xD;&#xA;		    plugins\demux\libmpgv_plugin.dll;&#xD;&#xA;		    plugins\demux\libps_plugin.dll;&#xD;&#xA;		    plugins\demux\libts_plugin.dll;&#xD;&#xA;		    plugins\demux\libes_plugin.dll;&#xD;&#xA;		    plugins\demux\librawaud_plugin.dll;&#xD;&#xA;&#xD;&#xA;		    plugins\codec\libavcodec_plugin.dll;&#xD;&#xA;		    plugins\codec\libmpg123_plugin.dll;&#xD;&#xA;		    plugins\codec\libflac_plugin.dll;&#xD;&#xA;		    plugins\codec\libvorbis_plugin.dll;&#xD;&#xA;		    plugins\codec\libopus_plugin.dll;&#xD;&#xA;		    plugins\codec\libaraw_plugin.dll;&#xD;&#xA;		    plugins\codec\libadpcm_plugin.dll;&#xD;&#xA;		    plugins\codec\libmft_plugin.dll;&#xD;&#xA;&#xD;&#xA;		    plugins\audio_output\libmmdevice_plugin.dll;&#xD;&#xA;		    plugins\audio_output\libwasapi_plugin.dll;&#xD;&#xA;		    plugins\audio_output\libwaveout_plugin.dll;&#xD;&#xA;		    plugins\audio_filter\libaudio_format_plugin.dll;&#xD;&#xA;		    plugins\audio_filter\libtrivial_channel_mixer_plugin.dll;&#xD;&#xA;		    plugins\audio_filter\libsamplerate_plugin.dll;&#xD;&#xA;		    plugins\audio_filter\libscaletempo_plugin.dll;&#xD;&#xA;		    plugins\audio_filter\libnormvol_plugin.dll;&#xD;&#xA;		    plugins\audio_filter\libcompressor_plugin.dll;&#xD;&#xA;		    plugins\audio_filter\libequalizer_plugin.dll;&#xD;&#xA;&#xD;&#xA;		    plugins\meta_engine\libtaglib_plugin.dll;&#xD;&#xA;&#xD;&#xA;		    plugins\stream_filter\libprefetch_plugin.dll;&#xD;&#xA;		    plugins\stream_filter\libcache_read_plugin.dll;"/>
-        <VlcWindowsX86IncludeFiles Include="@(VlcWindowsX64IncludeFiles)"/>
-        <VlcWindowsArm64IncludeFiles Include="@(VlcWindowsX64IncludeFiles)"/>
+        <VlcWindowsX64IncludeFiles Include="&#xD;&#xA;		    libvlc.dll;&#xD;&#xA;		    libvlccore.dll;&#xD;&#xA;		    plugins\logger\libconsole_logger_plugin.dll;&#xD;&#xA;		    plugins\misc\libxml_plugin.dll;&#xD;&#xA;		    plugins\lua\liblua_plugin.dll;&#xD;&#xA;&#xD;&#xA;		    plugins\access\libfilesystem_plugin.dll;&#xD;&#xA;&#xD;&#xA;		    plugins\demux\libmp4_plugin.dll;&#xD;&#xA;		    plugins\demux\libwav_plugin.dll;&#xD;&#xA;		    plugins\demux\libogg_plugin.dll;&#xD;&#xA;		    plugins\demux\libflacsys_plugin.dll;&#xD;&#xA;		    plugins\demux\libasf_plugin.dll;&#xD;&#xA;		    plugins\demux\libmkv_plugin.dll;&#xD;&#xA;		    plugins\demux\libplaylist_plugin.dll;&#xD;&#xA;		    plugins\demux\libmpgv_plugin.dll;&#xD;&#xA;		    plugins\demux\libps_plugin.dll;&#xD;&#xA;		    plugins\demux\libts_plugin.dll;&#xD;&#xA;		    plugins\demux\libes_plugin.dll;&#xD;&#xA;		    plugins\demux\librawaud_plugin.dll;&#xD;&#xA;&#xD;&#xA;		    plugins\codec\libavcodec_plugin.dll;&#xD;&#xA;		    plugins\codec\libmpg123_plugin.dll;&#xD;&#xA;		    plugins\codec\libflac_plugin.dll;&#xD;&#xA;		    plugins\codec\libvorbis_plugin.dll;&#xD;&#xA;		    plugins\codec\libopus_plugin.dll;&#xD;&#xA;		    plugins\codec\libaraw_plugin.dll;&#xD;&#xA;		    plugins\codec\libadpcm_plugin.dll;&#xD;&#xA;		    plugins\codec\libmft_plugin.dll;&#xD;&#xA;&#xD;&#xA;		    plugins\audio_output\libmmdevice_plugin.dll;&#xD;&#xA;		    plugins\audio_output\libwasapi_plugin.dll;&#xD;&#xA;		    plugins\audio_output\libwaveout_plugin.dll;&#xD;&#xA;		    plugins\audio_filter\libaudio_format_plugin.dll;&#xD;&#xA;		    plugins\audio_filter\libtrivial_channel_mixer_plugin.dll;&#xD;&#xA;		    plugins\audio_filter\libsamplerate_plugin.dll;&#xD;&#xA;		    plugins\audio_filter\libscaletempo_plugin.dll;&#xD;&#xA;		    plugins\audio_filter\libnormvol_plugin.dll;&#xD;&#xA;		    plugins\audio_filter\libcompressor_plugin.dll;&#xD;&#xA;		    plugins\audio_filter\libequalizer_plugin.dll;&#xD;&#xA;&#xD;&#xA;		    plugins\meta_engine\libtaglib_plugin.dll;&#xD;&#xA;&#xD;&#xA;		    plugins\stream_filter\libprefetch_plugin.dll;&#xD;&#xA;		    plugins\stream_filter\libcache_read_plugin.dll;" />
+        <VlcWindowsX86IncludeFiles Include="@(VlcWindowsX64IncludeFiles)" />
+        <VlcWindowsArm64IncludeFiles Include="@(VlcWindowsX64IncludeFiles)" />
     </ItemGroup>
 
     <!-- =============================================================== -->
@@ -138,13 +139,13 @@
 
     <ItemGroup Condition="!$(Configuration.Contains('Unpackaged'))">
         <!-- MSIX Assets -->
-        <Content Include="Assets\SplashScreen.scale-200.png"/>
-        <Content Include="Assets\LockScreenLogo.scale-200.png"/>
-        <Content Include="Assets\Square150x150Logo.scale-200.png"/>
-        <Content Include="Assets\Square44x44Logo.scale-200.png"/>
-        <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png"/>
-        <Content Include="Assets\Wide310x150Logo.scale-200.png"/>
-        <ProjectCapability Include="Msix"/>
+        <Content Include="Assets\SplashScreen.scale-200.png" />
+        <Content Include="Assets\LockScreenLogo.scale-200.png" />
+        <Content Include="Assets\Square150x150Logo.scale-200.png" />
+        <Content Include="Assets\Square44x44Logo.scale-200.png" />
+        <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
+        <Content Include="Assets\Wide310x150Logo.scale-200.png" />
+        <ProjectCapability Include="Msix" />
     </ItemGroup>
 
     <ItemGroup>

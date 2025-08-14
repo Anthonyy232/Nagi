@@ -22,16 +22,14 @@ using Nagi.WinUI.Services.Abstractions;
 namespace Nagi.WinUI.Services.Implementations;
 
 /// <summary>
-/// Manages application settings by persisting them to local storage.
-/// This implementation supports both packaged (MSIX) and unpackaged application deployments,
-/// storing settings in the appropriate location for each. For unpackaged deployments,
-/// file writes are debounced to improve performance during rapid setting changes.
+/// Manages application settings by persisting them to local storage. This implementation supports
+/// both packaged (MSIX) and unpackaged deployments, storing settings in the appropriate location.
+/// For unpackaged deployments, file writes are debounced to improve performance.
 /// </summary>
 public class SettingsService : IUISettingsService {
     private const string AppName = "Nagi";
     private const string AutoLaunchRegistryValueName = AppName;
     private const string StartupTaskId = "NagiAutolaunchStartup";
-
     private const string VolumeKey = "AppVolume";
     private const string MuteStateKey = "AppMuteState";
     private const string ShuffleStateKey = "MusicShuffleState";
@@ -44,12 +42,12 @@ public class SettingsService : IUISettingsService {
     private const string StartMinimizedEnabledKey = "StartMinimizedEnabled";
     private const string HideToTrayEnabledKey = "HideToTrayEnabled";
     private const string MinimizeToMiniPlayerEnabledKey = "MinimizeToMiniPlayerEnabled";
-    private const string ShowLyricsOnPlayerEnabledKey = "ShowLyricsOnPlayerEnabled";
     private const string ShowQueueButtonEnabledKey = "ShowQueueButtonEnabled";
     private const string ShowCoverArtInTrayFlyoutKey = "ShowCoverArtInTrayFlyout";
     private const string FetchOnlineMetadataKey = "FetchOnlineMetadataEnabled";
     private const string DiscordRichPresenceEnabledKey = "DiscordRichPresenceEnabled";
     private const string NavigationItemsKey = "NavigationItems";
+    private const string PlayerButtonSettingsKey = "PlayerButtonSettings";
     private const string CheckForUpdatesEnabledKey = "CheckForUpdatesEnabled";
     private const string LastSkippedUpdateVersionKey = "LastSkippedUpdateVersion";
     private const string LastFmCredentialResource = "Nagi/LastFm";
@@ -69,7 +67,7 @@ public class SettingsService : IUISettingsService {
 
     private Dictionary<string, object?> _settings;
     private volatile bool _isInitialized;
-    private int _isSaveQueued; // 0 for false, 1 for true; used with Interlocked.
+    private int _isSaveQueued;
 
     public SettingsService(IPathConfiguration pathConfig, ICredentialLockerService credentialLockerService) {
         _pathConfig = pathConfig ?? throw new ArgumentNullException(nameof(pathConfig));
@@ -87,10 +85,10 @@ public class SettingsService : IUISettingsService {
     public event Action<bool>? PlayerAnimationSettingChanged;
     public event Action<bool>? HideToTraySettingChanged;
     public event Action<bool>? MinimizeToMiniPlayerSettingChanged;
-    public event Action<bool>? ShowLyricsOnPlayerSettingChanged;
     public event Action<bool>? ShowQueueButtonSettingChanged;
     public event Action<bool>? ShowCoverArtInTrayFlyoutSettingChanged;
     public event Action? NavigationSettingsChanged;
+    public event Action? PlayerButtonSettingsChanged;
     public event Action? LastFmSettingsChanged;
     public event Action<bool>? DiscordRichPresenceSettingChanged;
     public event Action<bool>? TransparencyEffectsSettingChanged;
@@ -113,7 +111,6 @@ public class SettingsService : IUISettingsService {
         await ClearPlaybackStateAsync();
         await SetAutoLaunchEnabledAsync(false);
         await SetPlayerAnimationEnabledAsync(true);
-        await SetShowLyricsOnPlayerEnabledAsync(true);
         await SetShowQueueButtonEnabledAsync(true);
         await SetHideToTrayEnabledAsync(true);
         await SetMinimizeToMiniPlayerEnabledAsync(false);
@@ -126,6 +123,7 @@ public class SettingsService : IUISettingsService {
         await SetRestorePlaybackStateEnabledAsync(true);
         await SetStartMinimizedEnabledAsync(false);
         await SetNavigationItemsAsync(GetDefaultNavigationItems());
+        await SetPlayerButtonSettingsAsync(GetDefaultPlayerButtonSettings());
         await SaveVolumeAsync(0.5);
         await SaveMuteStateAsync(false);
         await SaveShuffleStateAsync(false);
@@ -151,7 +149,6 @@ public class SettingsService : IUISettingsService {
 
         await _settingsFileLock.WaitAsync();
         try {
-            // Double-check after acquiring the lock to prevent re-initialization.
             if (_isInitialized) return;
 
             if (File.Exists(_pathConfig.SettingsFilePath)) {
@@ -173,11 +170,9 @@ public class SettingsService : IUISettingsService {
 
     /// <summary>
     /// Queues a request to save the settings to a file for unpackaged deployments.
-    /// This operation is debounced, meaning it will only execute after a short delay of inactivity,
-    /// preventing excessive I/O during rapid changes.
+    /// This operation is debounced to prevent excessive I/O during rapid changes.
     /// </summary>
     private async Task QueueSaveAsync() {
-        // Atomically set the flag to 1. If it was already 1, another save is already queued, so do nothing.
         if (Interlocked.CompareExchange(ref _isSaveQueued, 1, 0) == 0) {
             await Task.Delay(_saveDebounceDelay);
 
@@ -191,7 +186,6 @@ public class SettingsService : IUISettingsService {
             }
             finally {
                 _settingsFileLock.Release();
-                // Reset the flag after the save is complete to allow future saves.
                 Interlocked.Exchange(ref _isSaveQueued, 0);
             }
         }
@@ -265,7 +259,6 @@ public class SettingsService : IUISettingsService {
 
     private async Task SetValueAsync<T>(string key, T value) {
         if (_isPackaged) {
-            // For complex types, serialize to JSON string. Otherwise, store directly.
             if (typeof(T).IsClass && typeof(T) != typeof(string)) {
                 _localSettings!.Values[key] = JsonSerializer.Serialize(value, _serializerOptions);
             }
@@ -280,8 +273,6 @@ public class SettingsService : IUISettingsService {
                 _settings[key] = null;
             }
             else {
-                // Serialize and re-parse to ensure the object is stored as a JsonElement,
-                // maintaining type consistency in the settings dictionary.
                 var serializedValue = JsonSerializer.Serialize(value);
                 _settings[key] = JsonDocument.Parse(serializedValue).RootElement.Clone();
             }
@@ -309,6 +300,21 @@ public class SettingsService : IUISettingsService {
             new() { DisplayName = "Artists", Tag = "artists", IconGlyph = "\uE77B", IsEnabled = true },
             new() { DisplayName = "Albums", Tag = "albums", IconGlyph = "\uE93C", IsEnabled = true },
             new() { DisplayName = "Genres", Tag = "genres", IconGlyph = "\uE8EC", IsEnabled = true }
+        };
+    }
+
+    private List<PlayerButtonSetting> GetDefaultPlayerButtonSettings() {
+        return new List<PlayerButtonSetting>
+        {
+            new() { Id = "Shuffle", DisplayName = "Shuffle", IconGlyph = "\uE8B1", IsEnabled = true },
+            new() { Id = "Previous", DisplayName = "Previous", IconGlyph = "\uE892", IsEnabled = true },
+            new() { Id = "PlayPause", DisplayName = "Play/Pause", IconGlyph = "\uE768", IsEnabled = true },
+            new() { Id = "Next", DisplayName = "Next", IconGlyph = "\uE893", IsEnabled = true },
+            new() { Id = "Repeat", DisplayName = "Repeat", IconGlyph = "\uE8EE", IsEnabled = true },
+            new() { Id = "Separator", DisplayName = "Layout Divider", IconGlyph = "\uE7A3", IsEnabled = true },
+            new() { Id = "Lyrics", DisplayName = "Lyrics", IconGlyph = "\uE8D2", IsEnabled = true },
+            new() { Id = "Queue", DisplayName = "Queue", IconGlyph = "\uE90B", IsEnabled = true },
+            new() { Id = "Volume", DisplayName = "Volume", IconGlyph = "\uE767", IsEnabled = true },
         };
     }
 
@@ -471,7 +477,6 @@ public class SettingsService : IUISettingsService {
     }
 
     public Task<EqualizerSettings?> GetEqualizerSettingsAsync() => GetComplexValueAsync<EqualizerSettings>(EqualizerSettingsKey);
-
     public Task SetEqualizerSettingsAsync(EqualizerSettings settings) => SetValueAsync(EqualizerSettingsKey, settings);
 
     #endregion
@@ -573,13 +578,6 @@ public class SettingsService : IUISettingsService {
 
     public Task SetMinimizeToMiniPlayerEnabledAsync(bool isEnabled) => SetValueAndNotifyAsync(MinimizeToMiniPlayerEnabledKey, isEnabled, false, MinimizeToMiniPlayerSettingChanged);
 
-    public async Task<bool> GetShowLyricsOnPlayerEnabledAsync() {
-        await EnsureUnpackagedSettingsLoadedAsync();
-        return GetValue(ShowLyricsOnPlayerEnabledKey, true);
-    }
-
-    public Task SetShowLyricsOnPlayerEnabledAsync(bool isEnabled) => SetValueAndNotifyAsync(ShowLyricsOnPlayerEnabledKey, isEnabled, true, ShowLyricsOnPlayerSettingChanged);
-
     public async Task<bool> GetShowQueueButtonEnabledAsync() {
         await EnsureUnpackagedSettingsLoadedAsync();
         return GetValue(ShowQueueButtonEnabledKey, true);
@@ -632,7 +630,6 @@ public class SettingsService : IUISettingsService {
         var items = await GetComplexValueAsync<List<NavigationItemSetting>>(NavigationItemsKey);
 
         if (items != null) {
-            // Ensure any new default navigation items are added for existing users.
             var defaultItems = GetDefaultNavigationItems();
             var loadedTags = new HashSet<string>(items.Select(i => i.Tag));
             var missingItems = defaultItems.Where(d => !loadedTags.Contains(d.Tag));
@@ -646,6 +643,25 @@ public class SettingsService : IUISettingsService {
     public async Task SetNavigationItemsAsync(List<NavigationItemSetting> items) {
         await SetValueAsync(NavigationItemsKey, items);
         NavigationSettingsChanged?.Invoke();
+    }
+
+    public async Task<List<PlayerButtonSetting>> GetPlayerButtonSettingsAsync() {
+        var settings = await GetComplexValueAsync<List<PlayerButtonSetting>>(PlayerButtonSettingsKey);
+
+        if (settings != null) {
+            // For backward compatibility, ensure the separator exists for users with older settings.
+            if (!settings.Any(b => b.Id == "Separator")) {
+                settings.Insert(5, new PlayerButtonSetting { Id = "Separator", DisplayName = "Layout Divider", IconGlyph = "\uE7A3", IsEnabled = true });
+            }
+            return settings;
+        }
+
+        return GetDefaultPlayerButtonSettings();
+    }
+
+    public async Task SetPlayerButtonSettingsAsync(List<PlayerButtonSetting> settings) {
+        await SetValueAsync(PlayerButtonSettingsKey, settings);
+        PlayerButtonSettingsChanged?.Invoke();
     }
 
     #endregion

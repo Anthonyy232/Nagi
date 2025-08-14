@@ -42,7 +42,8 @@ public partial class EqualizerBandViewModel : ObservableObject, IDisposable {
     }
 
     /// <summary>
-    /// Debounces gain changes to prevent excessive updates to the audio player.
+    /// Debounces gain changes to prevent excessive updates to the audio player,
+    /// improving performance when a slider is being dragged.
     /// </summary>
     async partial void OnGainChanged(float value) {
         _debounceCts?.Cancel();
@@ -53,12 +54,10 @@ public partial class EqualizerBandViewModel : ObservableObject, IDisposable {
 
         try {
             await Task.Delay(DebounceDelayMilliseconds, token);
-
-            Debug.WriteLine($"Applying EQ Band {Index} Gain: {value}");
             await _playbackService.SetEqualizerBandAsync(Index, value);
         }
         catch (TaskCanceledException) {
-            // This is expected if the user changes the value again quickly.
+            // Debounce was cancelled, which is expected behavior.
         }
     }
 
@@ -85,7 +84,6 @@ public partial class SettingsViewModel : ObservableObject, IDisposable {
     private readonly IUpdateService _updateService;
 
     private bool _isDisposed;
-    // Flag to prevent settings from being saved while they are being loaded initially.
     private bool _isInitializing;
     private CancellationTokenSource? _preampDebounceCts;
 
@@ -108,6 +106,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable {
         _playbackService = playbackService ?? throw new ArgumentNullException(nameof(playbackService));
 
         NavigationItems.CollectionChanged += OnNavigationItemsCollectionChanged;
+        PlayerButtons.CollectionChanged += OnPlayerButtonsCollectionChanged;
         _playbackService.EqualizerChanged += OnPlaybackService_EqualizerChanged;
 
 #if MSIX_PACKAGE
@@ -121,7 +120,6 @@ public partial class SettingsViewModel : ObservableObject, IDisposable {
     [ObservableProperty] private BackdropMaterial _selectedBackdropMaterial;
     [ObservableProperty] private bool _isDynamicThemingEnabled;
     [ObservableProperty] private bool _isPlayerAnimationEnabled;
-    [ObservableProperty] private bool _isShowLyricsOnPlayerEnabled;
     [ObservableProperty] private bool _isRestorePlaybackStateEnabled;
     [ObservableProperty] private bool _isAutoLaunchEnabled;
     [ObservableProperty] private bool _isStartMinimizedEnabled;
@@ -146,6 +144,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable {
     [ObservableProperty] private bool _isLastFmNowPlayingEnabled;
 
     public ObservableCollection<EqualizerBandViewModel> EqualizerBands { get; } = new();
+    public ObservableCollection<PlayerButtonSetting> PlayerButtons { get; } = new();
     public bool IsUpdateControlVisible { get; }
     public bool IsLastFmNotConnected => !IsLastFmConnected;
     public bool IsLastFmInitialAuthEnabled => !IsConnectingToLastFm;
@@ -158,10 +157,15 @@ public partial class SettingsViewModel : ObservableObject, IDisposable {
         if (_isDisposed) return;
 
         NavigationItems.CollectionChanged -= OnNavigationItemsCollectionChanged;
+        PlayerButtons.CollectionChanged -= OnPlayerButtonsCollectionChanged;
         _playbackService.EqualizerChanged -= OnPlaybackService_EqualizerChanged;
 
         foreach (var item in NavigationItems) {
             item.PropertyChanged -= OnNavigationItemPropertyChanged;
+        }
+
+        foreach (var item in PlayerButtons) {
+            item.PropertyChanged -= OnPlayerButtonPropertyChanged;
         }
 
         foreach (var bandVm in EqualizerBands) {
@@ -189,11 +193,20 @@ public partial class SettingsViewModel : ObservableObject, IDisposable {
             NavigationItems.Add(item);
         }
 
+        foreach (var item in PlayerButtons) {
+            item.PropertyChanged -= OnPlayerButtonPropertyChanged;
+        }
+        PlayerButtons.Clear();
+        var playerButtons = await _settingsService.GetPlayerButtonSettingsAsync();
+        foreach (var button in playerButtons) {
+            button.PropertyChanged += OnPlayerButtonPropertyChanged;
+            PlayerButtons.Add(button);
+        }
+
         SelectedTheme = await _settingsService.GetThemeAsync();
         SelectedBackdropMaterial = await _settingsService.GetBackdropMaterialAsync();
         IsDynamicThemingEnabled = await _settingsService.GetDynamicThemingAsync();
         IsPlayerAnimationEnabled = await _settingsService.GetPlayerAnimationEnabledAsync();
-        IsShowLyricsOnPlayerEnabled = await _settingsService.GetShowLyricsOnPlayerEnabledAsync();
         IsRestorePlaybackStateEnabled = await _settingsService.GetRestorePlaybackStateEnabledAsync();
         IsAutoLaunchEnabled = await _settingsService.GetAutoLaunchEnabledAsync();
         IsStartMinimizedEnabled = await _settingsService.GetStartMinimizedEnabledAsync();
@@ -344,6 +357,31 @@ public partial class SettingsViewModel : ObservableObject, IDisposable {
         _isInitializing = false;
     }
 
+    private void OnPlayerButtonsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
+        if (_isInitializing) return;
+
+        if (e.NewItems != null) {
+            foreach (PlayerButtonSetting item in e.NewItems)
+                item.PropertyChanged += OnPlayerButtonPropertyChanged;
+        }
+
+        if (e.OldItems != null) {
+            foreach (PlayerButtonSetting item in e.OldItems)
+                item.PropertyChanged -= OnPlayerButtonPropertyChanged;
+        }
+
+        _ = SavePlayerButtonSettingsAsync();
+    }
+
+    private void OnPlayerButtonPropertyChanged(object? sender, PropertyChangedEventArgs e) {
+        if (_isInitializing || e.PropertyName != nameof(PlayerButtonSetting.IsEnabled)) return;
+        _ = SavePlayerButtonSettingsAsync();
+    }
+
+    private async Task SavePlayerButtonSettingsAsync() {
+        await _settingsService.SetPlayerButtonSettingsAsync(PlayerButtons.ToList());
+    }
+
     private void OnNavigationItemsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
         if (_isInitializing) return;
 
@@ -387,7 +425,6 @@ public partial class SettingsViewModel : ObservableObject, IDisposable {
     }
 
     partial void OnIsPlayerAnimationEnabledChanged(bool value) { if (_isInitializing) return; _ = _settingsService.SetPlayerAnimationEnabledAsync(value); }
-    partial void OnIsShowLyricsOnPlayerEnabledChanged(bool value) { if (_isInitializing) return; _ = _settingsService.SetShowLyricsOnPlayerEnabledAsync(value); }
     partial void OnIsRestorePlaybackStateEnabledChanged(bool value) { if (_isInitializing) return; _ = _settingsService.SetRestorePlaybackStateEnabledAsync(value); }
     partial void OnIsAutoLaunchEnabledChanged(bool value) { if (_isInitializing) return; _ = _settingsService.SetAutoLaunchEnabledAsync(value); }
     partial void OnIsStartMinimizedEnabledChanged(bool value) { if (_isInitializing) return; _ = _settingsService.SetStartMinimizedEnabledAsync(value); }
@@ -411,12 +448,10 @@ public partial class SettingsViewModel : ObservableObject, IDisposable {
 
         try {
             await Task.Delay(EqualizerDebounceDelayMilliseconds, token);
-
-            Debug.WriteLine($"Applying Preamp Gain: {value}");
             await _playbackService.SetEqualizerPreampAsync(value);
         }
         catch (TaskCanceledException) {
-            // This is expected if the user changes the value again quickly.
+            // Debounce was cancelled, which is expected behavior.
         }
     }
 }
