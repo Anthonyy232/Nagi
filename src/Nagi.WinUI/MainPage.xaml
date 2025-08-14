@@ -1,5 +1,6 @@
 <UserControl
     x:Class="Nagi.WinUI.MainPage"
+    x:Name="MainPageRoot"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="using:Nagi.WinUI.Converters"
@@ -9,6 +10,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:imageEx="using:ImageEx"
     xmlns:models="using:Nagi.Core.Models"
+    xmlns:uiModels="using:Nagi.WinUI.Models"
     mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -22,6 +24,131 @@
                 <Setter Property="Padding" Value="12,8" />
                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />
             </Style>
+
+            <DataTemplate x:Key="ShuffleButtonTemplate" x:DataType="uiModels:PlayerButtonSetting">
+                <Button
+                    Command="{Binding DataContext.ToggleShuffleCommand, ElementName=MainPageRoot}"
+                    Style="{StaticResource ShuffleButtonStyle}"
+                    ToolTipService.ToolTip="{Binding DataContext.ShuffleButtonToolTip, ElementName=MainPageRoot, Mode=OneWay}">
+                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                              Glyph="{Binding DataContext.ShuffleIconGlyph, ElementName=MainPageRoot, Mode=OneWay}" />
+                </Button>
+            </DataTemplate>
+
+            <DataTemplate x:Key="PreviousButtonTemplate" x:DataType="uiModels:PlayerButtonSetting">
+                <Button Command="{Binding DataContext.PreviousCommand, ElementName=MainPageRoot}"
+                        Style="{StaticResource PreviousButtonStyle}"
+                        ToolTipService.ToolTip="Previous">
+                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
+                </Button>
+            </DataTemplate>
+
+            <DataTemplate x:Key="PlayPauseButtonTemplate" x:DataType="uiModels:PlayerButtonSetting">
+                <Button
+                    Command="{Binding DataContext.PlayPauseCommand, ElementName=MainPageRoot}"
+                    Style="{StaticResource PlayPauseButtonStyle}"
+                    ToolTipService.ToolTip="{Binding DataContext.PlayPauseButtonToolTip, ElementName=MainPageRoot, Mode=OneWay}">
+                    <FontIcon
+                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                        FontSize="24"
+                        Glyph="{Binding DataContext.PlayPauseIconGlyph, ElementName=MainPageRoot, Mode=OneWay}" />
+                </Button>
+            </DataTemplate>
+
+            <DataTemplate x:Key="NextButtonTemplate" x:DataType="uiModels:PlayerButtonSetting">
+                <Button Command="{Binding DataContext.NextCommand, ElementName=MainPageRoot}"
+                        Style="{StaticResource NextButtonStyle}" ToolTipService.ToolTip="Next">
+                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
+                </Button>
+            </DataTemplate>
+
+            <DataTemplate x:Key="RepeatButtonTemplate" x:DataType="uiModels:PlayerButtonSetting">
+                <Button
+                    Command="{Binding DataContext.CycleRepeatCommand, ElementName=MainPageRoot}"
+                    Style="{StaticResource RepeatButtonStyle}"
+                    ToolTipService.ToolTip="{Binding DataContext.RepeatButtonToolTip, ElementName=MainPageRoot, Mode=OneWay}">
+                    <FontIcon
+                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                        Glyph="{Binding DataContext.RepeatIconGlyph, ElementName=MainPageRoot, Mode=OneWay}" />
+                </Button>
+            </DataTemplate>
+
+            <DataTemplate x:Key="LyricsButtonTemplate" x:DataType="uiModels:PlayerButtonSetting">
+                <Button
+                    Style="{StaticResource LyricsButtonStyle}"
+                    ToolTipService.ToolTip="Lyrics"
+                    Command="{Binding DataContext.GoToLyricsPageCommand, ElementName=MainPageRoot}">
+                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
+                </Button>
+            </DataTemplate>
+
+            <DataTemplate x:Key="QueueButtonTemplate" x:DataType="uiModels:PlayerButtonSetting">
+                <Button Style="{StaticResource QueueButtonStyle}"
+                        ToolTipService.ToolTip="Current Queue">
+                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
+                    <Button.Flyout>
+                        <Flyout x:Name="QueueFlyout"
+                                Placement="Top"
+                                Opened="QueueFlyout_Opened"
+                                Closed="QueueFlyout_Closed">
+                            <Grid Width="300" Height="400">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <TextBlock
+                                    Margin="12,0,12,4"
+                                    Style="{ThemeResource MediaControlSubtitleStyle}"
+                                    Text="Current Queue" />
+                                <ListView
+                                    Grid.Row="1"
+                                    ItemContainerStyle="{StaticResource QueueListViewItemStyle}"
+                                    ItemsSource="{Binding DataContext.CurrentQueue, ElementName=MainPageRoot, Mode=OneWay}"
+                                    SelectionMode="None"
+                                    VirtualizingStackPanel.VirtualizationMode="Recycling">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate x:DataType="models:Song">
+                                            <StackPanel Margin="0,4">
+                                                <TextBlock
+                                                    Style="{ThemeResource BodyStrongTextBlockStyle}"
+                                                    Text="{x:Bind Title}"
+                                                    TextTrimming="CharacterEllipsis" />
+                                                <TextBlock
+                                                    Style="{ThemeResource CaptionTextBlockStyle}"
+                                                    Text="{x:Bind Artist.Name}"
+                                                    TextTrimming="CharacterEllipsis" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </Grid>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+            </DataTemplate>
+
+            <DataTemplate x:Key="VolumeButtonTemplate" x:DataType="uiModels:PlayerButtonSetting">
+                <Button
+                    Command="{Binding DataContext.ToggleMuteCommand, ElementName=MainPageRoot}"
+                    Style="{StaticResource VolumeButtonStyle}"
+                    ToolTipService.ToolTip="{Binding DataContext.VolumeButtonToolTip, ElementName=MainPageRoot, Mode=OneWay}"
+                    PointerWheelChanged="VolumeControlsWrapper_PointerWheelChanged">
+                    <FontIcon
+                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                        Glyph="{Binding DataContext.VolumeIconGlyph, ElementName=MainPageRoot, Mode=OneWay}" />
+                </Button>
+            </DataTemplate>
+
+            <localControls:PlayerButtonTemplateSelector x:Key="PlayerButtonSelector"
+                ShuffleButtonTemplate="{StaticResource ShuffleButtonTemplate}"
+                PreviousButtonTemplate="{StaticResource PreviousButtonTemplate}"
+                PlayPauseButtonTemplate="{StaticResource PlayPauseButtonTemplate}"
+                NextButtonTemplate="{StaticResource NextButtonTemplate}"
+                RepeatButtonTemplate="{StaticResource RepeatButtonTemplate}"
+                LyricsButtonTemplate="{StaticResource LyricsButtonTemplate}"
+                QueueButtonTemplate="{StaticResource QueueButtonTemplate}"
+                VolumeButtonTemplate="{StaticResource VolumeButtonTemplate}"
+                />
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -122,7 +249,7 @@
                             Duration="0:0:0.25" />
                         <DoubleAnimation
                             BeginTime="0:0:0.2"
-                            Storyboard.TargetName="SecondaryControlsStackPanel"
+                            Storyboard.TargetName="SecondaryControlsContainer"
                             Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)"
                             To="0"
                             Duration="0:0:0.4">
@@ -132,19 +259,7 @@
                         </DoubleAnimation>
                         <DoubleAnimation
                             BeginTime="0:0:0.2"
-                            Storyboard.TargetName="SecondaryControlsStackPanel"
-                            Storyboard.TargetProperty="Opacity"
-                            To="1"
-                            Duration="0:0:0.3" />
-                        <DoubleAnimation
-                            BeginTime="0:0:0.2"
-                            Storyboard.TargetName="ShuffleButton"
-                            Storyboard.TargetProperty="Opacity"
-                            To="1"
-                            Duration="0:0:0.3" />
-                        <DoubleAnimation
-                            BeginTime="0:0:0.2"
-                            Storyboard.TargetName="RepeatButton"
+                            Storyboard.TargetName="SecondaryControlsContainer"
                             Storyboard.TargetProperty="Opacity"
                             To="1"
                             Duration="0:0:0.3" />
@@ -192,7 +307,7 @@
                             To="0"
                             Duration="0:0:0.15" />
                         <DoubleAnimation
-                            Storyboard.TargetName="SecondaryControlsStackPanel"
+                            Storyboard.TargetName="SecondaryControlsContainer"
                             Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)"
                             To="10"
                             Duration="0:0:0.25">
@@ -201,17 +316,7 @@
                             </DoubleAnimation.EasingFunction>
                         </DoubleAnimation>
                         <DoubleAnimation
-                            Storyboard.TargetName="SecondaryControlsStackPanel"
-                            Storyboard.TargetProperty="Opacity"
-                            To="0"
-                            Duration="0:0:0.15" />
-                        <DoubleAnimation
-                            Storyboard.TargetName="ShuffleButton"
-                            Storyboard.TargetProperty="Opacity"
-                            To="0"
-                            Duration="0:0:0.15" />
-                        <DoubleAnimation
-                            Storyboard.TargetName="RepeatButton"
+                            Storyboard.TargetName="SecondaryControlsContainer"
                             Storyboard.TargetProperty="Opacity"
                             To="0"
                             Duration="0:0:0.15" />
@@ -335,140 +440,46 @@
                                     </StackPanel>
                                 </Grid>
 
-                                <StackPanel
-                                    x:Name="MainTransportControls"
+                                <ItemsControl
                                     Grid.Column="1"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
-                                    Orientation="Horizontal"
-                                    Spacing="8">
-                                    <Button
-                                        x:Name="ShuffleButton"
-                                        Command="{Binding ToggleShuffleCommand}"
-                                        Opacity="0"
-                                        Style="{StaticResource ShuffleButtonStyle}"
-                                        ToolTipService.ToolTip="{Binding ShuffleButtonToolTip, Mode=OneWay}">
-                                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                                  Glyph="{Binding ShuffleIconGlyph, Mode=OneWay}" />
-                                    </Button>
-                                    <Button x:Name="PreviousButton" Command="{Binding PreviousCommand}"
-                                            Style="{StaticResource PreviousButtonStyle}"
-                                            ToolTipService.ToolTip="Previous">
-                                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
-                                    </Button>
-                                    <Button
-                                        x:Name="PlayPauseButton"
-                                        Command="{Binding PlayPauseCommand}"
-                                        Style="{StaticResource PlayPauseButtonStyle}"
-                                        ToolTipService.ToolTip="{Binding PlayPauseButtonToolTip, Mode=OneWay}">
-                                        <FontIcon
-                                            x:Name="PlayPauseIcon"
-                                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                            FontSize="24"
-                                            Glyph="{Binding PlayPauseIconGlyph, Mode=OneWay}" />
-                                    </Button>
-                                    <Button x:Name="NextButton" Command="{Binding NextCommand}"
-                                            Style="{StaticResource NextButtonStyle}" ToolTipService.ToolTip="Next">
-                                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
-                                    </Button>
-                                    <Button
-                                        x:Name="RepeatButton"
-                                        Command="{Binding CycleRepeatCommand}"
-                                        Opacity="0"
-                                        Style="{StaticResource RepeatButtonStyle}"
-                                        ToolTipService.ToolTip="{Binding RepeatButtonToolTip, Mode=OneWay}">
-                                        <FontIcon x:Name="RepeatIcon"
-                                                  FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                                  Glyph="{Binding RepeatIconGlyph, Mode=OneWay}" />
-                                    </Button>
-                                </StackPanel>
+                                    ItemsSource="{Binding MainTransportButtons}"
+                                    ItemTemplateSelector="{StaticResource PlayerButtonSelector}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Horizontal" Spacing="8"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                </ItemsControl>
 
                                 <StackPanel
-                                    x:Name="SecondaryControlsStackPanel"
+                                    x:Name="SecondaryControlsContainer"
                                     Grid.Column="2"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Center"
-                                    Opacity="0"
                                     Orientation="Horizontal"
-                                    Spacing="4">
+                                    Spacing="4"
+                                    Opacity="0">
                                     <StackPanel.RenderTransform>
                                         <CompositeTransform TranslateY="10" />
                                     </StackPanel.RenderTransform>
-                                    <Button x:Name="LyricsButton"
-                                            Style="{StaticResource LyricsButtonStyle}"
-                                            ToolTipService.ToolTip="Lyrics"
-                                            Command="{Binding GoToLyricsPageCommand}"
-                                            Visibility="{Binding IsLyricsButtonEffectivelyVisible, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
-                                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
-                                    </Button>
-                                    <Button x:Name="QueueButton" Style="{StaticResource QueueButtonStyle}"
-                                            ToolTipService.ToolTip="Current Queue">
-                                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
-                                        <Button.Flyout>
-                                            <Flyout x:Name="QueueFlyout"
-                                                    Placement="Top"
-                                                    Opened="QueueFlyout_Opened"
-                                                    Closed="QueueFlyout_Closed">
-                                                <Grid Width="300" Height="400">
-                                                    <Grid.RowDefinitions>
-                                                        <RowDefinition Height="Auto" />
-                                                        <RowDefinition Height="*" />
-                                                    </Grid.RowDefinitions>
-                                                    <TextBlock
-                                                        Margin="12,0,12,4"
-                                                        Style="{ThemeResource MediaControlSubtitleStyle}"
-                                                        Text="Current Queue" />
-                                                    <ListView
-                                                        Grid.Row="1"
-                                                        ItemContainerStyle="{StaticResource QueueListViewItemStyle}"
-                                                        ItemsSource="{Binding CurrentQueue, Mode=OneWay}"
-                                                        SelectionMode="None"
-                                                        VirtualizingStackPanel.VirtualizationMode="Recycling">
-                                                        <ListView.ItemTemplate>
-                                                            <DataTemplate x:DataType="models:Song">
-                                                                <StackPanel Margin="0,4">
-                                                                    <TextBlock
-                                                                        Style="{ThemeResource BodyStrongTextBlockStyle}"
-                                                                        Text="{x:Bind Title}"
-                                                                        TextTrimming="CharacterEllipsis" />
-                                                                    <TextBlock
-                                                                        Style="{ThemeResource CaptionTextBlockStyle}"
-                                                                        Text="{x:Bind Artist.Name}"
-                                                                        TextTrimming="CharacterEllipsis" />
-                                                                </StackPanel>
-                                                            </DataTemplate>
-                                                        </ListView.ItemTemplate>
-                                                    </ListView>
-                                                </Grid>
-                                            </Flyout>
-                                        </Button.Flyout>
-                                    </Button>
-                                    <Grid
-                                        x:Name="VolumeControlsWrapper"
-                                        Padding="0,8"
-                                        Background="Transparent"
-                                        PointerWheelChanged="VolumeControlsWrapper_PointerWheelChanged">
-                                        <StackPanel
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center"
-                                            Orientation="Horizontal"
-                                            Spacing="0">
-                                            <Button
-                                                x:Name="VolumeButton"
-                                                Command="{Binding ToggleMuteCommand}"
-                                                Style="{StaticResource VolumeButtonStyle}"
-                                                ToolTipService.ToolTip="{Binding VolumeButtonToolTip, Mode=OneWay}">
-                                                <FontIcon x:Name="VolumeIcon"
-                                                          FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                                          Glyph="{Binding VolumeIconGlyph, Mode=OneWay}" />
-                                            </Button>
-                                            <Slider
-                                                x:Name="VolumeSlider"
-                                                VerticalAlignment="Center"
-                                                Style="{StaticResource VolumeSliderStyle}"
-                                                Value="{Binding CurrentVolume, Mode=TwoWay}" />
-                                        </StackPanel>
-                                    </Grid>
+
+                                    <ItemsControl
+                                        ItemsSource="{Binding SecondaryControlsButtons}"
+                                        ItemTemplateSelector="{StaticResource PlayerButtonSelector}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <StackPanel Orientation="Horizontal" Spacing="4"/>
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                    </ItemsControl>
+
+                                    <Slider
+                                        VerticalAlignment="Center"
+                                        Style="{StaticResource VolumeSliderStyle}"
+                                        Value="{Binding CurrentVolume, Mode=TwoWay}"
+                                        Visibility="{Binding IsVolumeControlVisible, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" />
                                 </StackPanel>
                             </Grid>
 
@@ -489,7 +500,7 @@
                                     Grid.Column="0"
                                     Margin="0,0,8,0"
                                     VerticalAlignment="Center"
-                                    Style="{ThemeResource CaptionTextBlockStyle}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{Binding CurrentTimeText, Mode=OneWay, FallbackValue='0:00'}" />
                                 <Slider
                                     x:Name="MediaSeekerSlider"
@@ -505,7 +516,7 @@
                                     Grid.Column="2"
                                     Margin="8,0,0,0"
                                     VerticalAlignment="Center"
-                                    Style="{ThemeResource CaptionTextBlockStyle}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
                                     Text="{Binding TotalDurationText, Mode=OneWay, FallbackValue='0:00'}" />
                             </Grid>
                         </Grid>
