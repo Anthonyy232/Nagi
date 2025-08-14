@@ -39,16 +39,14 @@ namespace Nagi.WinUI;
 /// <summary>
 ///     Provides application-specific behavior to supplement the default Application class.
 /// </summary>
-public partial class App : Application
-{
+public partial class App : Application {
     private static Color? _systemAccentColor;
 
     private readonly ConcurrentQueue<string> _fileActivationQueue = new();
     private volatile bool _isProcessingFileQueue;
     private Window? _window;
 
-    public App()
-    {
+    public App() {
         CurrentApp = this;
         InitializeComponent();
         UnhandledException += OnAppUnhandledException;
@@ -61,10 +59,8 @@ public partial class App : Application
     public static IServiceProvider? Services { get; private set; }
     public static DispatcherQueue? MainDispatcherQueue => CurrentApp?._window?.DispatcherQueue;
 
-    public static Color SystemAccentColor
-    {
-        get
-        {
+    public static Color SystemAccentColor {
+        get {
             _systemAccentColor ??= Current.Resources.TryGetValue("SystemAccentColor", out var value) &&
                                    value is Color color
                 ? color
@@ -73,45 +69,34 @@ public partial class App : Application
         }
     }
 
-    protected override async void OnLaunched(LaunchActivatedEventArgs args)
-    {
-        // 1. Initialize the main window and dependency injection container.
+    protected override async void OnLaunched(LaunchActivatedEventArgs args) {
         InitializeWindowAndServices();
         InitializeSystemIntegration();
 
-        // 2. Handle activation arguments (e.g., from file association or command line).
         HandleInitialActivation(args.UWPLaunchActivatedEventArgs);
 
-        // 3. Initialize core application services.
         var restoreSession = _fileActivationQueue.IsEmpty;
         await InitializeCoreServicesAsync(restoreSession);
 
-        // 4. Determine and navigate to the initial UI content (Onboarding or Main Page).
         await CheckAndNavigateToMainContent();
 
-        // 5. Process any file activations that were queued during startup.
         ProcessFileActivationQueue();
 
-        // 6. Activate the main window, potentially minimized or hidden based on settings.
         var isStartupLaunch = Environment.GetCommandLineArgs()
             .Any(arg => arg.Equals("--startup", StringComparison.OrdinalIgnoreCase));
         await HandleWindowActivationAsync(isStartupLaunch);
 
-        // 7. Perform non-critical post-launch tasks.
         PerformPostLaunchTasks();
     }
 
-    private void HandleInitialActivation(IActivatedEventArgs args)
-    {
+    private void HandleInitialActivation(IActivatedEventArgs args) {
         string? filePath = null;
 
-        if (args.Kind == ActivationKind.File)
-        {
+        if (args.Kind == ActivationKind.File) {
             var fileArgs = args.As<IFileActivatedEventArgs>();
             if (fileArgs.Files.Any()) filePath = fileArgs.Files[0].Path;
         }
-        else if (args.Kind == ActivationKind.Launch)
-        {
+        else if (args.Kind == ActivationKind.Launch) {
             var commandLineArgs = Environment.GetCommandLineArgs();
             if (commandLineArgs.Length > 1) filePath = commandLineArgs[1];
         }
@@ -123,8 +108,7 @@ public partial class App : Application
     ///     Queues a file path for playback. This can be called from external sources
     ///     (e.g., a single-instance redirection) to open files in the running application.
     /// </summary>
-    public void EnqueueFileActivation(string filePath)
-    {
+    public void EnqueueFileActivation(string filePath) {
         if (string.IsNullOrEmpty(filePath)) return;
         _fileActivationQueue.Enqueue(filePath);
         ProcessFileActivationQueue();
@@ -134,50 +118,46 @@ public partial class App : Application
     ///     Processes the queue of file activation requests on the main UI thread.
     ///     A flag ensures that the queue is processed by only one thread at a time.
     /// </summary>
-    private void ProcessFileActivationQueue()
-    {
+    private void ProcessFileActivationQueue() {
         if (_isProcessingFileQueue) return;
 
-        MainDispatcherQueue?.TryEnqueue(async () =>
-        {
+        MainDispatcherQueue?.TryEnqueue(async () => {
             if (_isProcessingFileQueue) return;
 
             _isProcessingFileQueue = true;
-            try
-            {
+            try {
                 while (_fileActivationQueue.TryDequeue(out var filePath)) await ProcessFileActivationAsync(filePath);
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 Debug.WriteLine(
                     $"[ERROR] App.ProcessFileActivationQueue: Exception while processing queue: {ex.Message}");
             }
-            finally
-            {
+            finally {
                 _isProcessingFileQueue = false;
             }
         });
     }
 
-    public async Task ProcessFileActivationAsync(string filePath)
-    {
-        if (Services is null || string.IsNullOrEmpty(filePath))
-        {
+    public async Task ProcessFileActivationAsync(string filePath) {
+        if (Services is null || string.IsNullOrEmpty(filePath)) {
             Debug.WriteLine("[ERROR] App.ProcessFileActivationAsync: Aborted due to null services or file path.");
             return;
         }
 
-        var playbackService = Services.GetRequiredService<IMusicPlaybackService>();
+        try {
+            var playbackService = Services.GetRequiredService<IMusicPlaybackService>();
 
-        _window?.Activate();
-        await playbackService.PlayTransientFileAsync(filePath);
+            _window?.Activate();
+            await playbackService.PlayTransientFileAsync(filePath);
+        }
+        catch (Exception ex) {
+            Debug.WriteLine($"[ERROR] App.ProcessFileActivationAsync: Failed to process file '{filePath}'. Exception: {ex}");
+        }
     }
 
-    private async Task InitializeCoreServicesAsync(bool restoreSession = true)
-    {
+    private async Task InitializeCoreServicesAsync(bool restoreSession = true) {
         if (Services is null) return;
-        try
-        {
+        try {
             await Services.GetRequiredService<IMusicPlaybackService>().InitializeAsync(restoreSession);
             await Services.GetRequiredService<IPresenceManager>().InitializeAsync();
             await Services.GetRequiredService<TrayIconViewModel>().InitializeAsync();
@@ -186,8 +166,7 @@ public partial class App : Application
             offlineScrobbleService.Start();
             await offlineScrobbleService.ProcessQueueAsync();
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             Debug.WriteLine($"[ERROR] App.InitializeCoreServicesAsync: Failed to initialize services. {ex.Message}");
         }
     }
@@ -195,8 +174,7 @@ public partial class App : Application
     /// <summary>
     ///     Configures the dependency injection container for the application.
     /// </summary>
-    private static IServiceProvider ConfigureServices(Window window, DispatcherQueue dispatcherQueue, App appInstance)
-    {
+    private static IServiceProvider ConfigureServices(Window window, DispatcherQueue dispatcherQueue, App appInstance) {
         var services = new ServiceCollection();
 
         var configuration = new ConfigurationBuilder()
@@ -215,18 +193,15 @@ public partial class App : Application
         return services.BuildServiceProvider();
     }
 
-    private static void ConfigureAppSettingsServices(IServiceCollection services)
-    {
+    private static void ConfigureAppSettingsServices(IServiceCollection services) {
         services.AddSingleton<ICredentialLockerService, CredentialLockerService>();
         services.AddSingleton<SettingsService>();
         services.AddSingleton<IUISettingsService>(sp => sp.GetRequiredService<SettingsService>());
         services.AddSingleton<ISettingsService>(sp => sp.GetRequiredService<SettingsService>());
     }
 
-    private static void ConfigureCoreLogicServices(IServiceCollection services)
-    {
-        services.AddDbContextFactory<MusicDbContext>((serviceProvider, options) =>
-        {
+    private static void ConfigureCoreLogicServices(IServiceCollection services) {
+        services.AddDbContextFactory<MusicDbContext>((serviceProvider, options) => {
             var pathConfig = serviceProvider.GetRequiredService<IPathConfiguration>();
             options.UseSqlite($"Data Source={pathConfig.DatabasePath}");
         });
@@ -264,8 +239,7 @@ public partial class App : Application
     }
 
     private static void ConfigureWinUIServices(IServiceCollection services, Window window,
-        DispatcherQueue dispatcherQueue, App appInstance)
-    {
+        DispatcherQueue dispatcherQueue, App appInstance) {
         services.AddSingleton<IWin32InteropService, Win32InteropService>();
         services.AddSingleton<IWindowService>(sp => new WindowService(
             window,
@@ -285,8 +259,7 @@ public partial class App : Application
             new LibVlcAudioPlayerService(provider.GetRequiredService<IDispatcherService>()));
     }
 
-    private static void ConfigureViewModels(IServiceCollection services)
-    {
+    private static void ConfigureViewModels(IServiceCollection services) {
         services.AddSingleton<PlayerViewModel>();
         services.AddSingleton<TrayIconViewModel>();
 
@@ -306,23 +279,19 @@ public partial class App : Application
         services.AddTransient<LyricsPageViewModel>();
     }
 
-    private static void InitializeDatabase(IServiceProvider services)
-    {
-        try
-        {
+    private static void InitializeDatabase(IServiceProvider services) {
+        try {
             var dbContextFactory = services.GetRequiredService<IDbContextFactory<MusicDbContext>>();
             using var dbContext = dbContextFactory.CreateDbContext();
             dbContext.Database.Migrate();
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             Debug.WriteLine(
                 $"[CRITICAL] App.InitializeDatabase: Failed to initialize or migrate database. {ex.Message}");
         }
     }
 
-    private void InitializeWindowAndServices()
-    {
+    private void InitializeWindowAndServices() {
         _window = new MainWindow();
         _window.Closed += OnWindowClosed;
 
@@ -334,61 +303,50 @@ public partial class App : Application
         InitializeDatabase(Services);
     }
 
-    private void InitializeSystemIntegration()
-    {
-        try
-        {
+    private void InitializeSystemIntegration() {
+        try {
             var interopService = Services!.GetRequiredService<IWin32InteropService>();
             interopService.SetWindowIcon(_window!, "Assets/AppLogo.ico");
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             Debug.WriteLine($"[ERROR] App.InitializeSystemIntegration: Failed to set window icon. {ex.Message}");
         }
     }
 
-    private void PerformPostLaunchTasks()
-    {
+    private void PerformPostLaunchTasks() {
         _ = CheckForUpdatesOnStartupAsync();
         EnqueuePostLaunchTasks();
     }
 
-    private async void OnSuspending(object? sender, SuspendingEventArgs e)
-    {
+    private async void OnSuspending(object? sender, SuspendingEventArgs e) {
         var deferral = e.SuspendingOperation.GetDeferral();
         if (Services is not null) await SaveApplicationStateAsync(Services);
         deferral.Complete();
     }
 
-    private async Task SaveApplicationStateAsync(IServiceProvider services)
-    {
+    private async Task SaveApplicationStateAsync(IServiceProvider services) {
         var settingsService = services.GetRequiredService<ISettingsService>();
         var musicPlaybackService = services.GetRequiredService<IMusicPlaybackService>();
 
-        try
-        {
+        try {
             if (await settingsService.GetRestorePlaybackStateEnabledAsync())
                 await musicPlaybackService.SavePlaybackStateAsync();
             else
                 await settingsService.ClearPlaybackStateAsync();
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             Debug.WriteLine(
                 $"[ERROR] App.SaveApplicationStateAsync: Failed to save or clear playback state. {ex.Message}");
         }
     }
 
-    private async void OnWindowClosed(object sender, WindowEventArgs args)
-    {
+    private async void OnWindowClosed(object sender, WindowEventArgs args) {
         if (Services is not null)
-            try
-            {
+            try {
                 await Services.GetRequiredService<IPresenceManager>().ShutdownAsync();
                 await SaveApplicationStateAsync(Services);
             }
-            finally
-            {
+            finally {
                 // Ensure the service provider and its disposable services are cleaned up.
                 if (Services is IAsyncDisposable asyncDisposableServices)
                     await asyncDisposableServices.DisposeAsync();
@@ -398,8 +356,7 @@ public partial class App : Application
         Current.Exit();
     }
 
-    private void OnAppUnhandledException(object sender, UnhandledExceptionEventArgs e)
-    {
+    private void OnAppUnhandledException(object sender, UnhandledExceptionEventArgs e) {
         // Log the unhandled exception to prevent the application from crashing silently.
         Debug.WriteLine($"[FATAL] App.OnAppUnhandledException: {e.Exception}");
         e.Handled = true;
@@ -409,8 +366,7 @@ public partial class App : Application
     ///     Sets the initial page of the application based on whether a music library has been configured.
     ///     This method follows a specific sequence to prevent theme flashing on startup.
     /// </summary>
-    public async Task CheckAndNavigateToMainContent()
-    {
+    public async Task CheckAndNavigateToMainContent() {
         if (RootWindow is null || Services is null) return;
 
         var libraryService = Services.GetRequiredService<ILibraryService>();
@@ -419,18 +375,15 @@ public partial class App : Application
         // The following sequence is critical to prevent theme flashing on startup.
 
         // 1. Set the content (e.g., MainPage or OnboardingPage). It will temporarily use the OS's theme.
-        if (hasFolders)
-        {
+        if (hasFolders) {
             if (RootWindow.Content is not MainPage) RootWindow.Content = new MainPage();
             await Services.GetRequiredService<LibraryViewModel>().InitializeAsync();
         }
-        else
-        {
+        else {
             if (RootWindow.Content is not OnboardingPage) RootWindow.Content = new OnboardingPage();
         }
 
-        if (RootWindow is MainWindow mainWindow)
-        {
+        if (RootWindow is MainWindow mainWindow) {
             // 2. Fetch the user's saved theme from settings and apply it to the root element.
             var settingsService = Services.GetRequiredService<IUISettingsService>();
             var themeService = Services.GetRequiredService<IThemeService>();
@@ -444,8 +397,7 @@ public partial class App : Application
         }
     }
 
-    internal void ApplyThemeInternal(ElementTheme themeToApply)
-    {
+    internal void ApplyThemeInternal(ElementTheme themeToApply) {
         if (RootWindow?.Content is not FrameworkElement rootElement) return;
 
         rootElement.RequestedTheme = themeToApply;
@@ -454,29 +406,24 @@ public partial class App : Application
         if (RootWindow is MainWindow mainWindow) mainWindow.InitializeCustomTitleBar();
     }
 
-    public void SetAppPrimaryColorBrushColor(Color newColor)
-    {
+    public void SetAppPrimaryColorBrushColor(Color newColor) {
         if (Resources.TryGetValue("AppPrimaryColorBrush", out var brushObject) &&
-            brushObject is SolidColorBrush appPrimaryColorBrush)
-        {
+            brushObject is SolidColorBrush appPrimaryColorBrush) {
             if (appPrimaryColorBrush.Color != newColor) appPrimaryColorBrush.Color = newColor;
         }
-        else
-        {
+        else {
             Debug.WriteLine("[CRITICAL] App.SetAppPrimaryColorBrushColor: AppPrimaryColorBrush resource not found.");
         }
     }
 
-    public bool TryParseHexColor(string hex, out Color color)
-    {
+    public bool TryParseHexColor(string hex, out Color color) {
         color = Colors.Transparent;
         if (string.IsNullOrEmpty(hex)) return false;
 
         hex = hex.TrimStart('#');
         if (!uint.TryParse(hex, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var argb)) return false;
 
-        switch (hex.Length)
-        {
+        switch (hex.Length) {
             case 6: // RRGGBB
                 color = Color.FromArgb(255, (byte)((argb >> 16) & 0xFF), (byte)((argb >> 8) & 0xFF),
                     (byte)(argb & 0xFF));
@@ -490,54 +437,45 @@ public partial class App : Application
         }
     }
 
-    private async Task HandleWindowActivationAsync(bool isStartupLaunch = false)
-    {
+    private async Task HandleWindowActivationAsync(bool isStartupLaunch = false) {
         if (_window is null || Services is null) return;
 
         var settingsService = Services.GetRequiredService<IUISettingsService>();
         var startMinimized = await settingsService.GetStartMinimizedEnabledAsync();
         var hideToTray = await settingsService.GetHideToTrayEnabledAsync();
 
-        if (isStartupLaunch || startMinimized)
-        {
+        if (isStartupLaunch || startMinimized) {
             if (!hideToTray) WindowActivator.ShowMinimized(_window);
         }
-        else
-        {
+        else {
             _window.Activate();
         }
     }
 
-    private void EnqueuePostLaunchTasks()
-    {
-        MainDispatcherQueue?.TryEnqueue(DispatcherQueuePriority.Normal, () =>
-        {
-            if (Services is null) return;
-            try
-            {
+    private void EnqueuePostLaunchTasks() {
+        MainDispatcherQueue?.TryEnqueue(DispatcherQueuePriority.Normal, () => {
+            try {
+                if (Services is null) return;
+
                 var audioPlayerService = Services.GetRequiredService<IAudioPlayer>();
                 audioPlayerService.InitializeSmtc();
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 Debug.WriteLine(
                     $"[ERROR] App.EnqueuePostLaunchTasks: Failed to initialize System Media Transport Controls. {ex.Message}");
             }
         });
     }
 
-    private async Task CheckForUpdatesOnStartupAsync()
-    {
+    private async Task CheckForUpdatesOnStartupAsync() {
         if (Services is null) return;
-        try
-        {
+        try {
 #if !MSIX_PACKAGE
                 var updateService = Services.GetRequiredService<IUpdateService>();
                 await updateService.CheckForUpdatesOnStartupAsync();
 #endif
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             Debug.WriteLine(
                 $"[ERROR] App.CheckForUpdatesOnStartupAsync: Failed during startup update check. {ex.Message}");
         }

@@ -33,6 +33,7 @@ public sealed partial class MainWindow : Window
     private FrameworkElement? _rootElement;
     private IUISettingsService? _settingsService;
     private WindowsSystemDispatcherQueueHelper? _wsdqHelper;
+    private bool _isBackdropInitialized;
 
     public MainWindow()
     {
@@ -47,8 +48,6 @@ public sealed partial class MainWindow : Window
     public void InitializeDependencies(IUISettingsService settingsService)
     {
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
-
-        TrySetBackdrop();
 
         Activated += OnWindowActivated;
         Closed += OnWindowClosed;
@@ -126,6 +125,11 @@ public sealed partial class MainWindow : Window
             _isTitleBarInitialized = true;
         }
 
+        if (!_isBackdropInitialized) {
+            TrySetBackdrop();
+            _isBackdropInitialized = true;
+        }
+
         if (_backdropConfiguration != null)
             _backdropConfiguration.IsInputActive = args.WindowActivationState != WindowActivationState.Deactivated;
 
@@ -146,10 +150,6 @@ public sealed partial class MainWindow : Window
             _settingsService.TransparencyEffectsSettingChanged -= OnTransparencyEffectsChanged;
         }
 
-        _micaController?.Dispose();
-        _micaController = null;
-        _acrylicController?.Dispose();
-        _acrylicController = null;
         _wsdqHelper?.Dispose();
         _wsdqHelper = null;
         _backdropConfiguration = null;
