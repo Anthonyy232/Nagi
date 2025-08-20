@@ -64,7 +64,7 @@ jobs:
           dotnet publish src/Nagi.WinUI/Nagi.WinUI.csproj
           -c ReleaseUnpackaged
           -r ${{ matrix.platform }}
-          --self-contained
+          --self-contained false
           -o ./publish/${{ matrix.platform }}
 
       - name: Package with Velopack

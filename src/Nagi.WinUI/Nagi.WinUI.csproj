@@ -89,25 +89,16 @@
         <ProjectReference Include="..\Nagi.Core\Nagi.Core.csproj" />
 
         <!-- Core SDKs and Build Tools -->
-        <PackageReference Include="Microsoft.WindowsAppSDK" Version="$(WindowsAppSdkVersion)" />
+        <PackageReference Include="Microsoft.WindowsAppSDK" Version="$(WindowsAppSdkVersion)">
+          <TreatAsUsed>true</TreatAsUsed>
+        </PackageReference>
         <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="$(MicrosoftWindowsSDKBuildToolsVersion)" />
 
         <!-- EFCore Migrations -->
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="$(EntityFrameworkCoreVersion)">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="$(EntityFrameworkCoreVersion)">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
 
         <!-- Application Services (DI, Configuration) -->
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="$(DependencyInjectionVersion)" />
-        <PackageReference Include="Microsoft.Extensions.Configuration" Version="$(MicrosoftExtensionsConfigurationVersion)" />
         <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="$(MicrosoftExtensionsConfigurationFileExtensionsVersion)" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="$(MicrosoftExtensionsConfigurationJsonVersion)" />
-        <PackageReference Include="Microsoft.Extensions.Http" Version="$(MicrosoftExtensionsHttpVersion)" />
 
         <!-- UI Controls and Media -->
         <PackageReference Include="CommunityToolkit.WinUI.Controls.ColorPicker" Version="$(CommunityToolkitWinUIVersion)" />
@@ -115,7 +106,6 @@
         <PackageReference Include="CommunityToolkit.WinUI.Media" Version="$(CommunityToolkitWinUIVersion)" />
         <PackageReference Include="H.NotifyIcon.WinUI" Version="$(HNotifyIconWinUIVersion)" />
         <PackageReference Include="ImageEx.WinUI" Version="$(ImageExWinUIVersion)" />
-        <PackageReference Include="Microsoft.Graphics.Win2D" Version="$(MicrosoftGraphicsWin2DVersion)" />
 
         <!-- Video Playback -->
         <PackageReference Include="LibVLCSharp" Version="$(LibVLCSharpVersion)" />
