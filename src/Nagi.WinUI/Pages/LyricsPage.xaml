@@ -17,6 +17,16 @@
                 x:Key="ActiveLyricToStyleConverter"
                 ActiveStyle="{StaticResource ActiveLyricTextBlockStyle}"
                 InactiveStyle="{StaticResource InactiveLyricLineStyle}" />
+            <Storyboard x:Key="PageLoadStoryboard">
+                <DoubleAnimation
+                    Storyboard.TargetName="LyricsContainer"
+                    Storyboard.TargetProperty="Opacity"
+                    From="0" To="1" Duration="0:0:0.5">
+                    <DoubleAnimation.EasingFunction>
+                        <ExponentialEase EasingMode="EaseOut" Exponent="3"/>
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+            </Storyboard>
         </ResourceDictionary>
     </Page.Resources>
 
