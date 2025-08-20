@@ -7,7 +7,7 @@ namespace Nagi.WinUI.Models;
 /// </summary>
 public partial class PlayerButtonSetting : ObservableObject {
     [ObservableProperty]
-    private bool _isEnabled;
+    public partial bool IsEnabled { get; set; }
 
     public required string Id { get; set; }
     public required string DisplayName { get; set; }
