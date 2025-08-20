@@ -7,7 +7,8 @@ namespace Nagi.Core.Services.Abstractions;
 ///     Defines a service for managing application-wide, non-UI settings.
 ///     This interface is safe to use in the Core project.
 /// </summary>
-public interface ISettingsService {
+public interface ISettingsService
+{
     /// <summary>
     ///     Occurs when Last.fm related settings (scrobbling, now playing) have changed.
     /// </summary>

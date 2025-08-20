@@ -28,12 +28,12 @@ public sealed partial class MainWindow : Window
     private AppWindow? _appWindow;
 
     private SystemBackdropConfiguration? _backdropConfiguration;
+    private bool _isBackdropInitialized;
     private bool _isTitleBarInitialized;
     private MicaController? _micaController;
     private FrameworkElement? _rootElement;
     private IUISettingsService? _settingsService;
     private WindowsSystemDispatcherQueueHelper? _wsdqHelper;
-    private bool _isBackdropInitialized;
 
     public MainWindow()
     {
@@ -125,7 +125,8 @@ public sealed partial class MainWindow : Window
             _isTitleBarInitialized = true;
         }
 
-        if (!_isBackdropInitialized) {
+        if (!_isBackdropInitialized)
+        {
             TrySetBackdrop();
             _isBackdropInitialized = true;
         }

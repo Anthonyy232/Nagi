@@ -12,7 +12,8 @@ namespace Nagi.WinUI.Helpers;
 ///     This implementation uses an async/await loop with cancellation handling to prevent
 ///     conflicting animations and ensure a jank-free experience.
 /// </summary>
-internal static class PopupAnimation {
+internal static class PopupAnimation
+{
     // Defines the duration and style of the animations.
     private const float ShowDurationMs = 250f;
     private const float HideDurationMs = 200f;
@@ -26,11 +27,13 @@ internal static class PopupAnimation {
     ///     Animates a window into view with a scale and fade effect.
     ///     Cancels any previously running animation on the same window.
     /// </summary>
-    public static async Task AnimateIn(TrayPopup window, RectInt32 finalRect) {
+    public static async Task AnimateIn(TrayPopup window, RectInt32 finalRect)
+    {
         // Defensively check if the window is valid before starting.
         if (window?.AppWindow is null) return;
 
-        try {
+        try
+        {
             // Cancel any existing animation and create a new cancellation token for this one.
             _animationCts?.Cancel();
             _animationCts = new CancellationTokenSource();
@@ -49,7 +52,8 @@ internal static class PopupAnimation {
             WindowActivator.ActivatePopupWindow(window);
 
             var stopwatch = Stopwatch.StartNew();
-            while (stopwatch.ElapsedMilliseconds < ShowDurationMs) {
+            while (stopwatch.ElapsedMilliseconds < ShowDurationMs)
+            {
                 if (token.IsCancellationRequested) return;
 
                 var progress = (float)stopwatch.Elapsed.TotalMilliseconds / ShowDurationMs;
@@ -69,12 +73,14 @@ internal static class PopupAnimation {
             }
 
             // If not cancelled, ensure the final state is set perfectly.
-            if (!token.IsCancellationRequested) {
+            if (!token.IsCancellationRequested)
+            {
                 window.AppWindow.MoveAndResize(finalRect);
                 window.SetWindowOpacity(255);
             }
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             // This can happen if the window is closed during the animation.
             Debug.WriteLine($"[PopupAnimation] AnimateIn failed gracefully: {ex.Message}");
         }
@@ -84,11 +90,13 @@ internal static class PopupAnimation {
     ///     Animates a window out of view with a reverse scale and fade effect.
     ///     Cancels any previously running animation on the same window.
     /// </summary>
-    public static async Task AnimateOut(TrayPopup window) {
+    public static async Task AnimateOut(TrayPopup window)
+    {
         // Defensively check if the window is valid and visible before starting.
         if (window?.AppWindow is null || !window.AppWindow.IsVisible) return;
 
-        try {
+        try
+        {
             // Cancel any existing animation and create a new cancellation token for this one.
             _animationCts?.Cancel();
             _animationCts = new CancellationTokenSource();
@@ -105,7 +113,8 @@ internal static class PopupAnimation {
             var finalRect = new RectInt32(finalX, finalY, finalWidth, finalHeight);
 
             var stopwatch = Stopwatch.StartNew();
-            while (stopwatch.ElapsedMilliseconds < HideDurationMs) {
+            while (stopwatch.ElapsedMilliseconds < HideDurationMs)
+            {
                 if (token.IsCancellationRequested) return;
 
                 var progress = (float)stopwatch.Elapsed.TotalMilliseconds / HideDurationMs;
@@ -125,12 +134,14 @@ internal static class PopupAnimation {
             }
 
             // If not cancelled, hide and reset the window for the next time it's shown.
-            if (!token.IsCancellationRequested) {
+            if (!token.IsCancellationRequested)
+            {
                 window.AppWindow.Hide();
                 window.SetWindowOpacity(255);
             }
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             // This can happen if the window is closed during the animation.
             Debug.WriteLine($"[PopupAnimation] AnimateOut failed gracefully: {ex.Message}");
             // Ensure the window is hidden if the animation fails mid-way.
@@ -141,14 +152,16 @@ internal static class PopupAnimation {
     /// <summary>
     ///     Cubic easing function that starts fast and decelerates.
     /// </summary>
-    private static float EaseOutCubic(float progress) {
+    private static float EaseOutCubic(float progress)
+    {
         return 1 - MathF.Pow(1 - progress, 3);
     }
 
     /// <summary>
     ///     Cubic easing function that starts slow and accelerates.
     /// </summary>
-    private static float EaseInCubic(float progress) {
+    private static float EaseInCubic(float progress)
+    {
         return progress * progress * progress;
     }
 }

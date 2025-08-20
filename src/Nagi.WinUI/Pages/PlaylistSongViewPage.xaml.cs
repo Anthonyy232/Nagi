@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using Windows.System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -14,10 +15,12 @@ namespace Nagi.WinUI.Pages;
 /// <summary>
 ///     A page for displaying the list of songs within a specific playlist.
 /// </summary>
-public sealed partial class PlaylistSongViewPage : Page {
+public sealed partial class PlaylistSongViewPage : Page
+{
     private bool _isSearchExpanded;
 
-    public PlaylistSongViewPage() {
+    public PlaylistSongViewPage()
+    {
         InitializeComponent();
         ViewModel = App.Services!.GetRequiredService<PlaylistSongListViewModel>();
         DataContext = ViewModel;
@@ -33,13 +36,16 @@ public sealed partial class PlaylistSongViewPage : Page {
     /// <summary>
     ///     Initializes the view model with navigation parameters when the page is navigated to.
     /// </summary>
-    protected override async void OnNavigatedTo(NavigationEventArgs e) {
+    protected override async void OnNavigatedTo(NavigationEventArgs e)
+    {
         base.OnNavigatedTo(e);
 
-        if (e.Parameter is PlaylistSongViewNavigationParameter navParam) {
+        if (e.Parameter is PlaylistSongViewNavigationParameter navParam)
+        {
             await ViewModel.InitializeAsync(navParam.Title, navParam.PlaylistId);
         }
-        else {
+        else
+        {
             // Log a warning and initialize with a fallback state if navigation parameters are invalid.
             Debug.WriteLine(
                 $"[WARNING] {nameof(PlaylistSongViewPage)}: Received invalid navigation parameter. Type: {e.Parameter?.GetType().Name ?? "null"}");
@@ -50,46 +56,50 @@ public sealed partial class PlaylistSongViewPage : Page {
     /// <summary>
     ///     Cleans up resources when the user navigates away from this page.
     /// </summary>
-    protected override void OnNavigatedFrom(NavigationEventArgs e) {
+    protected override void OnNavigatedFrom(NavigationEventArgs e)
+    {
         base.OnNavigatedFrom(e);
         ViewModel.Cleanup();
     }
 
     /// <summary>
-    /// Handles the page loaded event to set initial visual state.
+    ///     Handles the page loaded event to set initial visual state.
     /// </summary>
-    private void OnPageLoaded(object sender, RoutedEventArgs e) {
+    private void OnPageLoaded(object sender, RoutedEventArgs e)
+    {
         // Set initial search state to collapsed without animation.
         VisualStateManager.GoToState(this, "SearchCollapsed", false);
         Loaded -= OnPageLoaded;
     }
 
     /// <summary>
-    /// Handles the search toggle button click to expand or collapse the search box.
+    ///     Handles the search toggle button click to expand or collapse the search box.
     /// </summary>
-    private void OnSearchToggleButtonClick(object sender, RoutedEventArgs e) {
-        if (_isSearchExpanded) {
+    private void OnSearchToggleButtonClick(object sender, RoutedEventArgs e)
+    {
+        if (_isSearchExpanded)
             CollapseSearch();
-        }
-        else {
+        else
             ExpandSearch();
-        }
     }
 
     /// <summary>
-    /// Handles key down events in the search text box.
+    ///     Handles key down events in the search text box.
     /// </summary>
-    private void OnSearchTextBoxKeyDown(object sender, KeyRoutedEventArgs e) {
-        if (e.Key == Windows.System.VirtualKey.Escape) {
+    private void OnSearchTextBoxKeyDown(object sender, KeyRoutedEventArgs e)
+    {
+        if (e.Key == VirtualKey.Escape)
+        {
             CollapseSearch();
             e.Handled = true;
         }
     }
 
     /// <summary>
-    /// Expands the search interface with an animation.
+    ///     Expands the search interface with an animation.
     /// </summary>
-    private void ExpandSearch() {
+    private void ExpandSearch()
+    {
         if (_isSearchExpanded) return;
 
         _isSearchExpanded = true;
@@ -99,7 +109,8 @@ public sealed partial class PlaylistSongViewPage : Page {
         // Focus the search text box after the animation has started for a smooth transition.
         var timer = DispatcherQueue.CreateTimer();
         timer.Interval = TimeSpan.FromMilliseconds(150);
-        timer.Tick += (s, args) => {
+        timer.Tick += (s, args) =>
+        {
             timer.Stop();
             SearchTextBox.Focus(FocusState.Programmatic);
         };
@@ -107,10 +118,11 @@ public sealed partial class PlaylistSongViewPage : Page {
     }
 
     /// <summary>
-    /// Collapses the search interface with an animation and resets the filter.
-    /// The data refresh is delayed to occur after the animation completes for a smoother UX.
+    ///     Collapses the search interface with an animation and resets the filter.
+    ///     The data refresh is delayed to occur after the animation completes for a smoother UX.
     /// </summary>
-    private void CollapseSearch() {
+    private void CollapseSearch()
+    {
         if (!_isSearchExpanded) return;
 
         _isSearchExpanded = false;
@@ -121,26 +133,31 @@ public sealed partial class PlaylistSongViewPage : Page {
 
         // Store the current search term to check if we need to refresh data
         var previousSearchTerm = ViewModel.SearchTerm;
-        
+
         // Clear the search term. This may trigger a debounced search in the ViewModel.
         ViewModel.SearchTerm = string.Empty;
 
         // Only schedule a data refresh if the search term was not already empty
         // This prevents unnecessary refetching when collapsing from an empty search
-        if (!string.IsNullOrWhiteSpace(previousSearchTerm)) {
+        if (!string.IsNullOrWhiteSpace(previousSearchTerm))
+        {
             // Schedule the data refresh to happen after the animation completes.
             // This prevents the data fetch from causing stutters in the animation.
             var timer = DispatcherQueue.CreateTimer();
             timer.Interval = TimeSpan.FromMilliseconds(350); // Slightly longer than the animation duration.
-            timer.Tick += (s, args) => {
+            timer.Tick += (s, args) =>
+            {
                 timer.Stop();
-                try {
+                try
+                {
                     // Execute the search command to reload the full, unfiltered list.
                     // This command correctly cancels any pending debounce operations.
                     _ = ViewModel.SearchCommand.ExecuteAsync(null);
                 }
-                catch (Exception ex) {
-                    Debug.WriteLine($"[PlaylistSongViewPage] ERROR: Failed to refresh after search collapse. {ex.Message}");
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(
+                        $"[PlaylistSongViewPage] ERROR: Failed to refresh after search collapse. {ex.Message}");
                 }
             };
             timer.Start();
@@ -150,14 +167,16 @@ public sealed partial class PlaylistSongViewPage : Page {
     /// <summary>
     ///     Updates the view model with the current selection from the song list.
     /// </summary>
-    private void SongsListView_SelectionChanged(object sender, SelectionChangedEventArgs e) {
+    private void SongsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
         if (sender is ListView listView) ViewModel.OnSongsSelectionChanged(listView.SelectedItems);
     }
 
     /// <summary>
     ///     Ensures the right-clicked song is selected before its context menu is opened.
     /// </summary>
-    private void SongItemMenuFlyout_Opening(object sender, object e) {
+    private void SongItemMenuFlyout_Opening(object sender, object e)
+    {
         if (sender is not MenuFlyout { Target.DataContext: Song rightClickedSong }) return;
         if (!SongsListView.SelectedItems.Contains(rightClickedSong)) SongsListView.SelectedItem = rightClickedSong;
     }

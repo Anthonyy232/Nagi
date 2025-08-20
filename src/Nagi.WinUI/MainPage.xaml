@@ -140,15 +140,14 @@
             </DataTemplate>
 
             <localControls:PlayerButtonTemplateSelector x:Key="PlayerButtonSelector"
-                ShuffleButtonTemplate="{StaticResource ShuffleButtonTemplate}"
-                PreviousButtonTemplate="{StaticResource PreviousButtonTemplate}"
-                PlayPauseButtonTemplate="{StaticResource PlayPauseButtonTemplate}"
-                NextButtonTemplate="{StaticResource NextButtonTemplate}"
-                RepeatButtonTemplate="{StaticResource RepeatButtonTemplate}"
-                LyricsButtonTemplate="{StaticResource LyricsButtonTemplate}"
-                QueueButtonTemplate="{StaticResource QueueButtonTemplate}"
-                VolumeButtonTemplate="{StaticResource VolumeButtonTemplate}"
-                />
+                                                        ShuffleButtonTemplate="{StaticResource ShuffleButtonTemplate}"
+                                                        PreviousButtonTemplate="{StaticResource PreviousButtonTemplate}"
+                                                        PlayPauseButtonTemplate="{StaticResource PlayPauseButtonTemplate}"
+                                                        NextButtonTemplate="{StaticResource NextButtonTemplate}"
+                                                        RepeatButtonTemplate="{StaticResource RepeatButtonTemplate}"
+                                                        LyricsButtonTemplate="{StaticResource LyricsButtonTemplate}"
+                                                        QueueButtonTemplate="{StaticResource QueueButtonTemplate}"
+                                                        VolumeButtonTemplate="{StaticResource VolumeButtonTemplate}" />
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -448,7 +447,7 @@
                                     ItemTemplateSelector="{StaticResource PlayerButtonSelector}">
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>
-                                            <StackPanel Orientation="Horizontal" Spacing="8"/>
+                                            <StackPanel Orientation="Horizontal" Spacing="8" />
                                         </ItemsPanelTemplate>
                                     </ItemsControl.ItemsPanel>
                                 </ItemsControl>
@@ -470,7 +469,7 @@
                                         ItemTemplateSelector="{StaticResource PlayerButtonSelector}">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
-                                                <StackPanel Orientation="Horizontal" Spacing="4"/>
+                                                <StackPanel Orientation="Horizontal" Spacing="4" />
                                             </ItemsPanelTemplate>
                                         </ItemsControl.ItemsPanel>
                                     </ItemsControl>
