@@ -32,7 +32,7 @@ public class KeyProviderFunctions
     }
 
     [Function("GetLastFmKey")]
-    [OpenApiOperation("GetLastFmKey", new[] { "Keys" }, Summary = "Gets the Last.fm API Key")]
+    [OpenApiOperation("GetLastFmKey", "Keys", Summary = "Gets the Last.fm API Key")]
     [OpenApiSecurity("ApiKey", SecuritySchemeType.ApiKey, Name = "X-API-KEY", In = OpenApiSecurityLocationType.Header)]
     [OpenApiResponseWithBody(HttpStatusCode.OK, "application/json", typeof(KeyResponse),
         Description = "A JSON object containing the Last.fm API Key.")]
@@ -46,7 +46,7 @@ public class KeyProviderFunctions
     }
 
     [Function("GetLastFmSecretKey")]
-    [OpenApiOperation("GetLastFmSecretKey", new[] { "Keys" }, Summary = "Gets the Last.fm Shared Secret")]
+    [OpenApiOperation("GetLastFmSecretKey", "Keys", Summary = "Gets the Last.fm Shared Secret")]
     [OpenApiSecurity("ApiKey", SecuritySchemeType.ApiKey, Name = "X-API-KEY", In = OpenApiSecurityLocationType.Header)]
     [OpenApiResponseWithBody(HttpStatusCode.OK, "application/json", typeof(KeyResponse),
         Description = "A JSON object containing the Last.fm Shared Secret.")]
@@ -60,7 +60,7 @@ public class KeyProviderFunctions
     }
 
     [Function("GetSpotifyKey")]
-    [OpenApiOperation("GetSpotifyKey", new[] { "Keys" },
+    [OpenApiOperation("GetSpotifyKey", "Keys",
         Summary = "Gets the Spotify Client ID and Secret, concatenated.")]
     [OpenApiSecurity("ApiKey", SecuritySchemeType.ApiKey, Name = "X-API-KEY", In = OpenApiSecurityLocationType.Header)]
     [OpenApiResponseWithBody(HttpStatusCode.OK, "application/json", typeof(KeyResponse),

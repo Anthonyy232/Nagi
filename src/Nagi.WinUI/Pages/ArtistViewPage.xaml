@@ -16,7 +16,6 @@
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <converters:TimeSpanToTimeStringConverter x:Key="TimeSpanToTimeStringConverter" />
         <converters:StringToUriConverter x:Key="StringToUriConverter" />
-        <converters:CollectionToVisibilityConverter x:Key="CollectionToVisibilityConverter" />
         <converters:NullOrEmptyStringToVisibilityConverter x:Key="NullToCollapsedConverter" />
         <converters:NullOrEmptyStringToVisibilityConverter x:Key="NullToVisibleConverter" Invert="True" />
     </Page.Resources>
@@ -221,16 +220,18 @@
                                     <ResourceDictionary>
                                         <ResourceDictionary.ThemeDictionaries>
                                             <ResourceDictionary x:Key="Default">
-                                                <StaticResource x:Key="TextControlBorderBrushPointerOver" ResourceKey="AppPrimaryColorBrush" />
-                                                <StaticResource x:Key="TextControlBorderBrushFocused" ResourceKey="AppPrimaryColorBrush" />
+                                                <StaticResource x:Key="TextControlBorderBrushPointerOver"
+                                                                ResourceKey="AppPrimaryColorBrush" />
+                                                <StaticResource x:Key="TextControlBorderBrushFocused"
+                                                                ResourceKey="AppPrimaryColorBrush" />
                                             </ResourceDictionary>
                                             <ResourceDictionary x:Key="Light">
-                                                <StaticResource x:Key="TextControlBorderBrushPointerOver" ResourceKey="AppPrimaryColorBrush" />
-                                                <StaticResource x:Key="TextControlBorderBrushFocused" ResourceKey="AppPrimaryColorBrush" />
+                                                <StaticResource x:Key="TextControlBorderBrushPointerOver"
+                                                                ResourceKey="AppPrimaryColorBrush" />
+                                                <StaticResource x:Key="TextControlBorderBrushFocused"
+                                                                ResourceKey="AppPrimaryColorBrush" />
                                             </ResourceDictionary>
                                             <ResourceDictionary x:Key="HighContrast">
-                                                <SolidColorBrush x:Key="TextControlBorderBrushPointerOver" Color="{ThemeResource SystemColorHighlightColor}" />
-                                                <SolidColorBrush x:Key="TextControlBorderBrushFocused" Color="{ThemeResource SystemColorHighlightColor}" />
                                             </ResourceDictionary>
                                         </ResourceDictionary.ThemeDictionaries>
                                     </ResourceDictionary>
@@ -238,13 +239,13 @@
                             </TextBox>
 
                             <Button x:Name="SearchToggleButton"
-                                Click="OnSearchToggleButtonClick"
-                                Style="{StaticResource SongListViewPageIconButton}"
-                                ToolTipService.ToolTip="Search in artist"
-                                HorizontalAlignment="Right"
-                                Margin="0,0,1,0"
-                                IsHitTestVisible="True"
-                                Canvas.ZIndex="1">
+                                    Click="OnSearchToggleButtonClick"
+                                    Style="{StaticResource SongListViewPageIconButton}"
+                                    ToolTipService.ToolTip="Search in artist"
+                                    HorizontalAlignment="Right"
+                                    Margin="0,0,1,0"
+                                    IsHitTestVisible="True"
+                                    Canvas.ZIndex="1">
                                 <FontIcon x:Name="SearchIcon" FontSize="16" Glyph="&#xE721;" />
                             </Button>
                         </Grid>

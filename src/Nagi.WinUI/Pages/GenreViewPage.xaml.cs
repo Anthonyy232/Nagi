@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
+using Windows.System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -15,10 +16,12 @@ namespace Nagi.WinUI.Pages;
 /// <summary>
 ///     A page that displays detailed information for a specific genre, including all of its associated songs.
 /// </summary>
-public sealed partial class GenreViewPage : Page {
+public sealed partial class GenreViewPage : Page
+{
     private bool _isSearchExpanded;
 
-    public GenreViewPage() {
+    public GenreViewPage()
+    {
         InitializeComponent();
         ViewModel = App.Services!.GetRequiredService<GenreViewViewModel>();
         DataContext = ViewModel;
@@ -34,14 +37,17 @@ public sealed partial class GenreViewPage : Page {
     /// <summary>
     ///     Initializes the view model with navigation parameters when the page is navigated to.
     /// </summary>
-    protected override async void OnNavigatedTo(NavigationEventArgs e) {
+    protected override async void OnNavigatedTo(NavigationEventArgs e)
+    {
         base.OnNavigatedTo(e);
 
-        if (e.Parameter is GenreViewNavigationParameter navParam) {
+        if (e.Parameter is GenreViewNavigationParameter navParam)
+        {
             await ViewModel.LoadGenreDetailsAsync(navParam);
             await ViewModel.LoadAvailablePlaylistsAsync();
         }
-        else {
+        else
+        {
             // Log an error to aid in debugging if the navigation parameter is incorrect.
             Debug.WriteLine(
                 $"[ERROR] {nameof(GenreViewPage)}: Received incorrect navigation parameter type: {e.Parameter?.GetType().Name ?? "null"}");
@@ -51,24 +57,27 @@ public sealed partial class GenreViewPage : Page {
     /// <summary>
     ///     Cleans up resources when the user navigates away from this page.
     /// </summary>
-    protected override void OnNavigatedFrom(NavigationEventArgs e) {
+    protected override void OnNavigatedFrom(NavigationEventArgs e)
+    {
         base.OnNavigatedFrom(e);
         ViewModel.Cleanup();
     }
 
     /// <summary>
-    /// Handles the page loaded event to set initial visual state.
+    ///     Handles the page loaded event to set initial visual state.
     /// </summary>
-    private void OnPageLoaded(object sender, RoutedEventArgs e) {
+    private void OnPageLoaded(object sender, RoutedEventArgs e)
+    {
         // Set initial search state to collapsed without animation.
         VisualStateManager.GoToState(this, "SearchCollapsed", false);
         Loaded -= OnPageLoaded;
     }
 
     /// <summary>
-    /// Handles the search toggle button click to expand or collapse the search box.
+    ///     Handles the search toggle button click to expand or collapse the search box.
     /// </summary>
-    private void OnSearchToggleButtonClick(object sender, RoutedEventArgs e) {
+    private void OnSearchToggleButtonClick(object sender, RoutedEventArgs e)
+    {
         if (_isSearchExpanded)
             CollapseSearch();
         else
@@ -76,19 +85,22 @@ public sealed partial class GenreViewPage : Page {
     }
 
     /// <summary>
-    /// Handles key down events in the search text box.
+    ///     Handles key down events in the search text box.
     /// </summary>
-    private void OnSearchTextBoxKeyDown(object sender, KeyRoutedEventArgs e) {
-        if (e.Key == Windows.System.VirtualKey.Escape) {
+    private void OnSearchTextBoxKeyDown(object sender, KeyRoutedEventArgs e)
+    {
+        if (e.Key == VirtualKey.Escape)
+        {
             CollapseSearch();
             e.Handled = true;
         }
     }
 
     /// <summary>
-    /// Expands the search interface with an animation.
+    ///     Expands the search interface with an animation.
     /// </summary>
-    private void ExpandSearch() {
+    private void ExpandSearch()
+    {
         if (_isSearchExpanded) return;
 
         _isSearchExpanded = true;
@@ -98,7 +110,8 @@ public sealed partial class GenreViewPage : Page {
         // Focus the search text box after the animation has started for a smooth transition.
         var timer = DispatcherQueue.CreateTimer();
         timer.Interval = TimeSpan.FromMilliseconds(150);
-        timer.Tick += (s, args) => {
+        timer.Tick += (s, args) =>
+        {
             timer.Stop();
             SearchTextBox.Focus(FocusState.Programmatic);
         };
@@ -106,10 +119,11 @@ public sealed partial class GenreViewPage : Page {
     }
 
     /// <summary>
-    /// Collapses the search interface with an animation and resets the filter.
-    /// The data refresh is delayed to occur after the animation completes for a smoother UX.
+    ///     Collapses the search interface with an animation and resets the filter.
+    ///     The data refresh is delayed to occur after the animation completes for a smoother UX.
     /// </summary>
-    private void CollapseSearch() {
+    private void CollapseSearch()
+    {
         if (!_isSearchExpanded) return;
 
         _isSearchExpanded = false;
@@ -120,24 +134,28 @@ public sealed partial class GenreViewPage : Page {
 
         // Store the current search term to check if we need to refresh data
         var previousSearchTerm = ViewModel.SearchTerm;
-        
+
         ViewModel.SearchTerm = string.Empty;
 
         // Only schedule a data refresh if the search term was not already empty
         // This prevents unnecessary refetching when collapsing from an empty search
-        if (!string.IsNullOrWhiteSpace(previousSearchTerm)) {
+        if (!string.IsNullOrWhiteSpace(previousSearchTerm))
+        {
             // Schedule the data refresh to happen after the animation completes.
             // This prevents the data fetch from causing stutters in the animation.
             var timer = DispatcherQueue.CreateTimer();
             timer.Interval = TimeSpan.FromMilliseconds(350); // Slightly longer than the animation duration.
-            timer.Tick += (s, args) => {
+            timer.Tick += (s, args) =>
+            {
                 timer.Stop();
-                try {
+                try
+                {
                     // Execute the search command to reload the full, unfiltered list.
                     // This command correctly cancels any pending debounce operations.
                     _ = ViewModel.SearchCommand.ExecuteAsync(null);
                 }
-                catch (Exception ex) {
+                catch (Exception ex)
+                {
                     Debug.WriteLine($"[GenreViewPage] ERROR: Failed to refresh after search collapse. {ex.Message}");
                 }
             };
@@ -148,14 +166,16 @@ public sealed partial class GenreViewPage : Page {
     /// <summary>
     ///     Updates the view model with the current selection from the song list.
     /// </summary>
-    private void SongsListView_SelectionChanged(object sender, SelectionChangedEventArgs e) {
+    private void SongsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
         if (sender is ListView listView) ViewModel.OnSongsSelectionChanged(listView.SelectedItems);
     }
 
     /// <summary>
     ///     Handles the opening of the context menu for a song item.
     /// </summary>
-    private void SongItemMenuFlyout_Opening(object sender, object e) {
+    private void SongItemMenuFlyout_Opening(object sender, object e)
+    {
         if (sender is not MenuFlyout menuFlyout) return;
 
         // Ensure the right-clicked song is selected before showing the context menu.
@@ -172,20 +192,24 @@ public sealed partial class GenreViewPage : Page {
     /// <summary>
     ///     Populates the "Add to playlist" submenu with available playlists from the view model.
     /// </summary>
-    private void PopulatePlaylistSubMenu(MenuFlyoutSubItem subMenu) {
+    private void PopulatePlaylistSubMenu(MenuFlyoutSubItem subMenu)
+    {
         subMenu.Items.Clear();
 
         var availablePlaylists = ViewModel.AvailablePlaylists;
 
-        if (availablePlaylists?.Any() != true) {
+        if (availablePlaylists?.Any() != true)
+        {
             // Display a disabled item if there are no playlists to add the song to.
             var disabledItem = new MenuFlyoutItem { Text = "No playlists available", IsEnabled = false };
             subMenu.Items.Add(disabledItem);
             return;
         }
 
-        foreach (var playlist in availablePlaylists) {
-            var playlistMenuItem = new MenuFlyoutItem {
+        foreach (var playlist in availablePlaylists)
+        {
+            var playlistMenuItem = new MenuFlyoutItem
+            {
                 Text = playlist.Name,
                 Command = ViewModel.AddSelectedSongsToPlaylistCommand,
                 CommandParameter = playlist

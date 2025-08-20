@@ -186,18 +186,26 @@
                                 <VisualState x:Name="Disabled">
                                     <Storyboard>
                                         <!-- Horizontal Disabled State -->
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalTrackRect" Storyboard.TargetProperty="Fill">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalTrackRect"
+                                                                       Storyboard.TargetProperty="Fill">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalDecreaseRect" Storyboard.TargetProperty="Fill">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalDecreaseRect"
+                                                                       Storyboard.TargetProperty="Fill">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <!-- Vertical Disabled State -->
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalTrackRect" Storyboard.TargetProperty="Fill">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalTrackRect"
+                                                                       Storyboard.TargetProperty="Fill">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalDecreaseRect" Storyboard.TargetProperty="Fill">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalDecreaseRect"
+                                                                       Storyboard.TargetProperty="Fill">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -216,9 +224,14 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
-                            <Rectangle x:Name="HorizontalTrackRect" Grid.ColumnSpan="3" Grid.Row="1" Height="8" RadiusX="4" RadiusY="4" Fill="{TemplateBinding Background}" />
-                            <Rectangle x:Name="HorizontalDecreaseRect" Grid.Row="1" Height="8" RadiusX="4" RadiusY="4" Fill="{TemplateBinding Foreground}" />
-                            <primitives:Thumb x:Name="HorizontalThumb" Grid.Column="1" Grid.Row="1" Style="{StaticResource EqualizerSliderThumbStyle}" DataContext="{TemplateBinding Value}" AutomationProperties.AccessibilityView="Raw" />
+                            <Rectangle x:Name="HorizontalTrackRect" Grid.ColumnSpan="3" Grid.Row="1" Height="8"
+                                       RadiusX="4" RadiusY="4" Fill="{TemplateBinding Background}" />
+                            <Rectangle x:Name="HorizontalDecreaseRect" Grid.Row="1" Height="8" RadiusX="4" RadiusY="4"
+                                       Fill="{TemplateBinding Foreground}" />
+                            <primitives:Thumb x:Name="HorizontalThumb" Grid.Column="1" Grid.Row="1"
+                                              Style="{StaticResource EqualizerSliderThumbStyle}"
+                                              DataContext="{TemplateBinding Value}"
+                                              AutomationProperties.AccessibilityView="Raw" />
                         </Grid>
 
                         <!-- Template for Vertical Sliders (e.g., EQ Bands) -->
@@ -233,9 +246,14 @@
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <Rectangle x:Name="VerticalTrackRect" Grid.RowSpan="3" Grid.Column="1" Width="8" RadiusX="4" RadiusY="4" Fill="{TemplateBinding Background}" />
-                            <Rectangle x:Name="VerticalDecreaseRect" Grid.Column="1" Grid.Row="2" Width="8" RadiusX="4" RadiusY="4" Fill="{TemplateBinding Foreground}" />
-                            <primitives:Thumb x:Name="VerticalThumb" Grid.Row="1" Grid.Column="1" Style="{StaticResource EqualizerSliderThumbStyle}" DataContext="{TemplateBinding Value}" AutomationProperties.AccessibilityView="Raw" />
+                            <Rectangle x:Name="VerticalTrackRect" Grid.RowSpan="3" Grid.Column="1" Width="8"
+                                       RadiusX="4" RadiusY="4" Fill="{TemplateBinding Background}" />
+                            <Rectangle x:Name="VerticalDecreaseRect" Grid.Column="1" Grid.Row="2" Width="8" RadiusX="4"
+                                       RadiusY="4" Fill="{TemplateBinding Foreground}" />
+                            <primitives:Thumb x:Name="VerticalThumb" Grid.Row="1" Grid.Column="1"
+                                              Style="{StaticResource EqualizerSliderThumbStyle}"
+                                              DataContext="{TemplateBinding Value}"
+                                              AutomationProperties.AccessibilityView="Raw" />
                         </Grid>
                     </Grid>
                 </ControlTemplate>
@@ -270,5 +288,3 @@
     </Style>
 
 </ResourceDictionary>
-
-    
