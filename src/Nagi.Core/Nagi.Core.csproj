@@ -31,9 +31,4 @@
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="$(DependencyInjectionVersion)"/>
         <PackageReference Include="Microsoft.Extensions.Http" Version="$(MicrosoftExtensionsHttpVersion)"/>
     </ItemGroup>
-
-    <ItemGroup>
-        <Folder Include="Models\Lyrics\"/>
-    </ItemGroup>
-
 </Project>
