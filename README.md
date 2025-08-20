@@ -39,7 +39,7 @@
 - **Playlist Management**: Create, edit, and enjoy your own custom playlists.
 - **Tray Controls**: Control your music from a convenient pop-up in the Windows system tray.
 - **Last.fm and Discord Integrations**: Automatically fetches artist metadata from Last.fm, scrobbles your tracks, and showcases your activity with improved Discord Rich Presence.
-- **Private by Design**: Your music and data are yours. Nagi does not send any user data to the cloud without your consent.
+- **Equalizer Support**: Personalize your listening experience with a 10-band equalizer with pregain support
 - **Wide Codec Support**: Nagi plays a vast array of audio formats, including: `.aa`, `.aax`, `.aac`, `.aiff`, `.ape`, `.dsf`, `.flac`, `.m4a`, `.m4b`, `.m4p`, `.mp3`, `.mpc`, `.mpp`, `.ogg`, `.oga`, `.wav`, `.wma`, `.wv`, and `.webm`.
 
 ## 🖼️ Screenshots
