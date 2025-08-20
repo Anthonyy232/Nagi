@@ -1,8 +1,11 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Nagi.Core.Services.Abstractions;
+using Nagi.WinUI.Services.Abstractions;
+
 #if !MSIX_PACKAGE
-    using Velopack;
+using Velopack;
 #endif
 
 namespace Nagi.WinUI.Services.Implementations;
