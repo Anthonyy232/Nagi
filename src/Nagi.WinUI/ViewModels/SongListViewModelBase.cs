@@ -23,7 +23,7 @@ namespace Nagi.WinUI.ViewModels;
 public abstract partial class SongListViewModelBase : ObservableObject
 {
     private const int PageSize = 250;
-    private readonly IDispatcherService _dispatcherService;
+    protected readonly IDispatcherService _dispatcherService;
     protected readonly ILibraryReader _libraryReader;
     private readonly object _loadLock = new();
     protected readonly INavigationService _navigationService;
@@ -116,7 +116,6 @@ public abstract partial class SongListViewModelBase : ObservableObject
         Debug.WriteLine($"[SongListViewModelBase] INFO: Starting song refresh. Paging: {IsPagingSupported}.");
         // Cancel any previous loading task, as it's now obsolete.
         _pagedLoadCts?.Cancel();
-        _pagedLoadCts?.Dispose();
 
         if (!string.IsNullOrEmpty(sortOrderString) &&
             Enum.TryParse<SongSortOrder>(sortOrderString, true, out var newSortOrder))

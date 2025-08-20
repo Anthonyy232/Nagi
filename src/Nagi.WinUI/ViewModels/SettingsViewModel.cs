@@ -32,12 +32,12 @@ public partial class EqualizerBandViewModel : ObservableObject, IDisposable {
     public string FrequencyLabel { get; }
 
     [ObservableProperty]
-    private float _gain;
+    public partial float Gain { get; set; }
 
     public EqualizerBandViewModel(uint index, float frequency, float initialGain, IMusicPlaybackService playbackService) {
         Index = index;
         FrequencyLabel = frequency < KiloHertzThreshold ? $"{frequency:F0}" : $"{frequency / KiloHertzThreshold:F0}K";
-        _gain = initialGain;
+        Gain = initialGain;
         _playbackService = playbackService;
     }
 
@@ -116,32 +116,32 @@ public partial class SettingsViewModel : ObservableObject, IDisposable {
 #endif
     }
 
-    [ObservableProperty] private ElementTheme _selectedTheme;
-    [ObservableProperty] private BackdropMaterial _selectedBackdropMaterial;
-    [ObservableProperty] private bool _isDynamicThemingEnabled;
-    [ObservableProperty] private bool _isPlayerAnimationEnabled;
-    [ObservableProperty] private bool _isRestorePlaybackStateEnabled;
-    [ObservableProperty] private bool _isAutoLaunchEnabled;
-    [ObservableProperty] private bool _isStartMinimizedEnabled;
-    [ObservableProperty] private bool _isHideToTrayEnabled;
-    [ObservableProperty] private bool _isMinimizeToMiniPlayerEnabled;
-    [ObservableProperty] private bool _isShowCoverArtInTrayFlyoutEnabled;
-    [ObservableProperty] private bool _isFetchOnlineMetadataEnabled;
-    [ObservableProperty] private bool _isDiscordRichPresenceEnabled;
-    [ObservableProperty] private bool _isCheckForUpdatesEnabled;
-    [ObservableProperty] private float _equalizerPreamp;
+    [ObservableProperty] public partial ElementTheme SelectedTheme { get; set; }
+    [ObservableProperty] public partial BackdropMaterial SelectedBackdropMaterial { get; set; }
+    [ObservableProperty] public partial bool IsDynamicThemingEnabled { get; set; }
+    [ObservableProperty] public partial bool IsPlayerAnimationEnabled { get; set; }
+    [ObservableProperty] public partial bool IsRestorePlaybackStateEnabled { get; set; }
+    [ObservableProperty] public partial bool IsAutoLaunchEnabled { get; set; }
+    [ObservableProperty] public partial bool IsStartMinimizedEnabled { get; set; }
+    [ObservableProperty] public partial bool IsHideToTrayEnabled { get; set; }
+    [ObservableProperty] public partial bool IsMinimizeToMiniPlayerEnabled { get; set; }
+    [ObservableProperty] public partial bool IsShowCoverArtInTrayFlyoutEnabled { get; set; }
+    [ObservableProperty] public partial bool IsFetchOnlineMetadataEnabled { get; set; }
+    [ObservableProperty] public partial bool IsDiscordRichPresenceEnabled { get; set; }
+    [ObservableProperty] public partial bool IsCheckForUpdatesEnabled { get; set; }
+    [ObservableProperty] public partial float EqualizerPreamp { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsLastFmNotConnected))]
-    private bool _isLastFmConnected;
+    public partial bool IsLastFmConnected { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsLastFmInitialAuthEnabled))]
-    private bool _isConnectingToLastFm;
+    public partial bool IsConnectingToLastFm { get; set; }
 
-    [ObservableProperty] private string? _lastFmUsername;
-    [ObservableProperty] private bool _isLastFmScrobblingEnabled;
-    [ObservableProperty] private bool _isLastFmNowPlayingEnabled;
+    [ObservableProperty] public partial string? LastFmUsername { get; set; }
+    [ObservableProperty] public partial bool IsLastFmScrobblingEnabled { get; set; }
+    [ObservableProperty] public partial bool IsLastFmNowPlayingEnabled { get; set; }
 
     public ObservableCollection<EqualizerBandViewModel> EqualizerBands { get; } = new();
     public ObservableCollection<PlayerButtonSetting> PlayerButtons { get; } = new();

@@ -18,6 +18,75 @@
     </Page.Resources>
 
     <Grid>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="SearchStates">
+                <VisualState x:Name="SearchCollapsed">
+                    <Storyboard>
+                        <DoubleAnimation
+                            Storyboard.TargetName="SearchTextBox"
+                            Storyboard.TargetProperty="Width"
+                            To="0"
+                            Duration="0:0:0.3"
+                            EnableDependentAnimation="True">
+                            <DoubleAnimation.EasingFunction>
+                                <CubicEase EasingMode="EaseInOut" />
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
+
+                        <DoubleAnimation
+                            Storyboard.TargetName="SearchTextBox"
+                            Storyboard.TargetProperty="Opacity"
+                            To="0"
+                            Duration="0:0:0.15" />
+
+                        <ObjectAnimationUsingKeyFrames
+                            Storyboard.TargetName="SearchTextBox"
+                            Storyboard.TargetProperty="IsHitTestVisible">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="False" />
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames
+                            Storyboard.TargetName="SearchIcon"
+                            Storyboard.TargetProperty="Glyph">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="" />
+                            <DiscreteObjectKeyFrame KeyTime="0:0:0.3" Value="&#xE721;" />
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="SearchExpanded">
+                    <Storyboard>
+                        <DoubleAnimation
+                            Storyboard.TargetName="SearchTextBox"
+                            Storyboard.TargetProperty="Width"
+                            To="300"
+                            Duration="0:0:0.3"
+                            EnableDependentAnimation="True">
+                            <DoubleAnimation.EasingFunction>
+                                <CubicEase EasingMode="EaseInOut" />
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
+
+                        <DoubleAnimation
+                            Storyboard.TargetName="SearchTextBox"
+                            Storyboard.TargetProperty="Opacity"
+                            To="1"
+                            BeginTime="0:0:0.15"
+                            Duration="0:0:0.15" />
+
+                        <ObjectAnimationUsingKeyFrames
+                            Storyboard.TargetName="SearchTextBox"
+                            Storyboard.TargetProperty="IsHitTestVisible">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="True" />
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames
+                            Storyboard.TargetName="SearchIcon"
+                            Storyboard.TargetProperty="Glyph">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="&#xE711;" />
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -32,22 +101,68 @@
             <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
                 <TextBlock Style="{StaticResource SongListViewPageTitleTextStyle}" Text="Library" />
                 <TextBlock
-                    Margin="0,0,0,5"
-                    VerticalAlignment="Bottom"
-                    FontSize="13"
-                    Foreground="{ThemeResource TextFillColorSecondary}"
-                    Text="{x:Bind ViewModel.TotalItemsText, Mode=OneWay}" />
+                Margin="0,0,0,5"
+                VerticalAlignment="Bottom"
+                FontSize="13"
+                Foreground="{ThemeResource TextFillColorSecondary}"
+                Text="{x:Bind ViewModel.TotalItemsText, Mode=OneWay}" />
             </StackPanel>
 
             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                <!-- Search functionality -->
+                <Grid>
+                    <!-- Search TextBox (initially collapsed, expands to the left) -->
+                    <TextBox x:Name="SearchTextBox"
+                             Style="{StaticResource SearchTextBoxStyle}"
+                             PlaceholderText="Search library..."
+                             Width="0"
+                             Opacity="0"
+                             IsHitTestVisible="False"
+                             HorizontalAlignment="Right"
+                             KeyDown="OnSearchTextBoxKeyDown"
+                             Text="{x:Bind ViewModel.SearchTerm, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             Canvas.ZIndex="0">
+                        <TextBox.Resources>
+                            <ResourceDictionary>
+                                <ResourceDictionary.ThemeDictionaries>
+                                    <ResourceDictionary x:Key="Default">
+                                        <StaticResource x:Key="TextControlBorderBrushPointerOver" ResourceKey="AppPrimaryColorBrush" />
+                                        <StaticResource x:Key="TextControlBorderBrushFocused" ResourceKey="AppPrimaryColorBrush" />
+                                    </ResourceDictionary>
+                                    <ResourceDictionary x:Key="Light">
+                                        <StaticResource x:Key="TextControlBorderBrushPointerOver" ResourceKey="AppPrimaryColorBrush" />
+                                        <StaticResource x:Key="TextControlBorderBrushFocused" ResourceKey="AppPrimaryColorBrush" />
+                                    </ResourceDictionary>
+                                    <ResourceDictionary x:Key="HighContrast">
+                                        <SolidColorBrush x:Key="TextControlBorderBrushPointerOver" Color="{ThemeResource SystemColorHighlightColor}" />
+                                        <SolidColorBrush x:Key="TextControlBorderBrushFocused" Color="{ThemeResource SystemColorHighlightColor}" />
+                                    </ResourceDictionary>
+                                </ResourceDictionary.ThemeDictionaries>
+                            </ResourceDictionary>
+                        </TextBox.Resources>
+                    </TextBox>
+
+                    <!-- Combined Search/Close Button -->
+                    <Button x:Name="SearchToggleButton"
+                        Click="OnSearchToggleButtonClick"
+                        Style="{StaticResource SongListViewPageIconButton}"
+                        ToolTipService.ToolTip="Search library"
+                        HorizontalAlignment="Right"
+                        Margin="0,0,1,0"
+                        IsHitTestVisible="True"
+                        Canvas.ZIndex="1">
+                        <FontIcon x:Name="SearchIcon" FontSize="16" Glyph="&#xE721;" />
+                    </Button>
+                </Grid>
+
                 <Button Command="{x:Bind ViewModel.PlayAllSongsCommand}"
-                        Style="{StaticResource SongListViewPageIconButton}" ToolTipService.ToolTip="Play all">
+                    Style="{StaticResource SongListViewPageIconButton}" ToolTipService.ToolTip="Play all">
                     <FontIcon FontSize="16" Foreground="{StaticResource AppPrimaryColorBrush}" Glyph="" />
                 </Button>
 
                 <Button Command="{x:Bind ViewModel.ShuffleAndPlayAllSongsCommand}"
-                        Style="{StaticResource SongListViewPageFilledButtonStyle}"
-                        ToolTipService.ToolTip="Shuffle and play all">
+                    Style="{StaticResource SongListViewPageFilledButtonStyle}"
+                    ToolTipService.ToolTip="Shuffle and play all">
                     <StackPanel Orientation="Horizontal" Spacing="6">
                         <FontIcon FontSize="14" Glyph="" />
                         <TextBlock Text="Shuffle and play" VerticalAlignment="Center" />
@@ -58,17 +173,17 @@
                     <Button.Flyout>
                         <MenuFlyout Placement="Bottom">
                             <MenuFlyoutItem Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                            CommandParameter="TitleAsc" Text="A to Z" />
+                                        CommandParameter="TitleAsc" Text="A to Z" />
                             <MenuFlyoutItem Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                            CommandParameter="TitleDesc" Text="Z to A" />
+                                        CommandParameter="TitleDesc" Text="Z to A" />
                             <MenuFlyoutItem Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                            CommandParameter="DateAddedDesc" Text="Newest" />
+                                        CommandParameter="DateAddedDesc" Text="Newest" />
                             <MenuFlyoutItem Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                            CommandParameter="DateAddedAsc" Text="Oldest" />
+                                        CommandParameter="DateAddedAsc" Text="Oldest" />
                             <MenuFlyoutItem Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                            CommandParameter="AlbumAsc" Text="Album" />
+                                        CommandParameter="AlbumAsc" Text="Album" />
                             <MenuFlyoutItem Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                            CommandParameter="ArtistAsc" Text="Artist" />
+                                        CommandParameter="ArtistAsc" Text="Artist" />
                         </MenuFlyout>
                     </Button.Flyout>
                     <TextBlock Text="{x:Bind ViewModel.CurrentSortOrderText, Mode=OneWay}" VerticalAlignment="Center" />
@@ -77,41 +192,41 @@
         </Grid>
 
         <ListView
-            x:Name="SongsListView"
-            Grid.Row="1"
-            Padding="24,0,24,132"
-            IsItemClickEnabled="True"
-            ItemContainerStyle="{StaticResource SongListViewPageListViewItemStyle}"
-            ItemsSource="{x:Bind ViewModel.Songs, Mode=OneWay}"
-            SelectionChanged="OnListViewSelectionChanged"
-            SelectionMode="Extended">
+        x:Name="SongsListView"
+        Grid.Row="1"
+        Padding="24,0,24,132"
+        IsItemClickEnabled="True"
+        ItemContainerStyle="{StaticResource SongListViewPageListViewItemStyle}"
+        ItemsSource="{x:Bind ViewModel.Songs, Mode=OneWay}"
+        SelectionChanged="OnListViewSelectionChanged"
+        SelectionMode="Extended">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="models:Song">
                     <Grid Height="54" ColumnSpacing="12" Background="Transparent">
                         <Grid.ContextFlyout>
                             <MenuFlyout Opening="SongItemMenuFlyout_Opening">
                                 <MenuFlyoutItem
-                                    Command="{Binding DataContext.PlaySelectedSongsCommand, ElementName=pageRoot}"
-                                    Text="Play" />
+                                Command="{Binding DataContext.PlaySelectedSongsCommand, ElementName=pageRoot}"
+                                Text="Play" />
                                 <MenuFlyoutItem
-                                    Command="{Binding DataContext.PlaySelectedSongsNextCommand, ElementName=pageRoot}"
-                                    Text="Play Next" />
+                                Command="{Binding DataContext.PlaySelectedSongsNextCommand, ElementName=pageRoot}"
+                                Text="Play Next" />
                                 <MenuFlyoutItem
-                                    Command="{Binding DataContext.AddSelectedSongsToQueueCommand, ElementName=pageRoot}"
-                                    Text="Add to Queue" />
+                                Command="{Binding DataContext.AddSelectedSongsToQueueCommand, ElementName=pageRoot}"
+                                Text="Add to Queue" />
                                 <MenuFlyoutSubItem x:Name="AddToPlaylistSubMenu" Text="Add to playlist" />
                                 <MenuFlyoutSeparator
-                                    Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                 <MenuFlyoutItem Command="{Binding DataContext.GoToAlbumCommand, ElementName=pageRoot}"
-                                                Text="Go to album"
-                                                Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                            Text="Go to album"
+                                            Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                 <MenuFlyoutItem Command="{Binding DataContext.GoToArtistCommand, ElementName=pageRoot}"
-                                                Text="Go to artist"
-                                                Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                            Text="Go to artist"
+                                            Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                 <MenuFlyoutItem
-                                    Command="{Binding DataContext.ShowInFileExplorerCommand, ElementName=pageRoot}"
-                                    Text="Show in explorer"
-                                    Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                Command="{Binding DataContext.ShowInFileExplorerCommand, ElementName=pageRoot}"
+                                Text="Show in explorer"
+                                Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
                             </MenuFlyout>
                         </Grid.ContextFlyout>
 
@@ -125,42 +240,42 @@
                         </Grid.ColumnDefinitions>
 
                         <Button
-                            Grid.Column="0"
-                            Command="{Binding DataContext.PlaySongCommand, ElementName=pageRoot}"
-                            CommandParameter="{x:Bind}"
-                            Style="{StaticResource SongListViewPageSongPlayButtonStyle}">
+                        Grid.Column="0"
+                        Command="{Binding DataContext.PlaySongCommand, ElementName=pageRoot}"
+                        CommandParameter="{x:Bind}"
+                        Style="{StaticResource SongListViewPageSongPlayButtonStyle}">
                             <Border Width="42" Height="42" CornerRadius="12"
-                                    Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
                                 <controls:ImageEx
-                                    IsCacheEnabled="True"
-                                    Stretch="UniformToFill"
-                                    Source="{x:Bind AlbumArtUriFromTrack, Converter={StaticResource StringToUriConverter}, FallbackValue=null}" />
+                                IsCacheEnabled="True"
+                                Stretch="UniformToFill"
+                                Source="{x:Bind AlbumArtUriFromTrack, Converter={StaticResource StringToUriConverter}, FallbackValue=null}" />
                             </Border>
                         </Button>
 
                         <TextBlock Grid.Column="1" Style="{StaticResource SongListViewPageBodyStrongTextBlockStyle}"
-                                   Text="{x:Bind Title}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                               Text="{x:Bind Title}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
 
                         <HyperlinkButton
-                            Grid.Column="2"
-                            Command="{Binding DataContext.GoToArtistCommand, ElementName=pageRoot}"
-                            CommandParameter="{x:Bind}"
-                            Content="{x:Bind Artist.Name}"
-                            Style="{StaticResource SongListHyperlinkButtonStyle}" />
+                        Grid.Column="2"
+                        Command="{Binding DataContext.GoToArtistCommand, ElementName=pageRoot}"
+                        CommandParameter="{x:Bind}"
+                        Content="{x:Bind Artist.Name}"
+                        Style="{StaticResource SongListHyperlinkButtonStyle}" />
 
                         <HyperlinkButton
-                            Grid.Column="3"
-                            Command="{Binding DataContext.GoToAlbumCommand, ElementName=pageRoot}"
-                            CommandParameter="{x:Bind}"
-                            Content="{x:Bind Album.Title}"
-                            Style="{StaticResource SongListHyperlinkButtonStyle}" />
+                        Grid.Column="3"
+                        Command="{Binding DataContext.GoToAlbumCommand, ElementName=pageRoot}"
+                        CommandParameter="{x:Bind}"
+                        Content="{x:Bind Album.Title}"
+                        Style="{StaticResource SongListHyperlinkButtonStyle}" />
 
                         <TextBlock Grid.Column="4" HorizontalAlignment="Center"
-                                   Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}"
-                                   Text="{x:Bind Album.Year}" />
+                               Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}"
+                               Text="{x:Bind Album.Year}" />
                         <TextBlock Grid.Column="5" Margin="0,0,12,0" HorizontalAlignment="Right"
-                                   Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}"
-                                   Text="{x:Bind Duration, Converter={StaticResource TimeSpanToTimeStringConverter}}" />
+                               Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}"
+                               Text="{x:Bind Duration, Converter={StaticResource TimeSpanToTimeStringConverter}}" />
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>

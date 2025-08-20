@@ -6,8 +6,7 @@ namespace Nagi.Core.Services.Abstractions;
 /// <summary>
 ///     Defines the contract for reading and querying data from the music library.
 /// </summary>
-public interface ILibraryReader
-{
+public interface ILibraryReader {
     Task<Folder?> GetFolderByIdAsync(Guid folderId);
     Task<Folder?> GetFolderByPathAsync(string path);
     Task<IEnumerable<Folder>> GetAllFoldersAsync();
@@ -64,15 +63,26 @@ public interface ILibraryReader
     Task<List<Guid>> GetAllSongIdsByAlbumIdAsync(Guid albumId, SongSortOrder sortOrder);
     Task<List<Guid>> GetAllSongIdsByPlaylistIdAsync(Guid playlistId);
     Task<List<Guid>> GetAllSongIdsByGenreIdAsync(Guid genreId, SongSortOrder sortOrder);
+    Task<List<Guid>> SearchAllSongIdsAsync(string searchTerm, SongSortOrder sortOrder);
+
+    // Scoped Search (Non-Paged)
     Task<IEnumerable<Song>> SearchSongsInFolderAsync(Guid folderId, string searchTerm);
     Task<IEnumerable<Song>> SearchSongsInAlbumAsync(Guid albumId, string searchTerm);
     Task<IEnumerable<Song>> SearchSongsInArtistAsync(Guid artistId, string searchTerm);
+    Task<IEnumerable<Song>> SearchSongsInPlaylistAsync(Guid playlistId, string searchTerm);
+    Task<IEnumerable<Song>> SearchSongsInGenreAsync(Guid genreId, string searchTerm);
 
-    Task<PagedResult<Song>> SearchSongsInFolderPagedAsync(Guid folderId, string searchTerm, int pageNumber,
-        int pageSize);
-
+    // Scoped Search (Paged)
+    Task<PagedResult<Song>> SearchSongsInFolderPagedAsync(Guid folderId, string searchTerm, int pageNumber, int pageSize);
     Task<PagedResult<Song>> SearchSongsInAlbumPagedAsync(Guid albumId, string searchTerm, int pageNumber, int pageSize);
+    Task<PagedResult<Song>> SearchSongsInArtistPagedAsync(Guid artistId, string searchTerm, int pageNumber, int pageSize);
+    Task<PagedResult<Song>> SearchSongsInPlaylistPagedAsync(Guid playlistId, string searchTerm, int pageNumber, int pageSize);
+    Task<PagedResult<Song>> SearchSongsInGenrePagedAsync(Guid genreId, string searchTerm, int pageNumber, int pageSize);
 
-    Task<PagedResult<Song>> SearchSongsInArtistPagedAsync(Guid artistId, string searchTerm, int pageNumber,
-        int pageSize);
+    // Scoped Search (Song IDs)
+    Task<List<Guid>> SearchAllSongIdsInFolderAsync(Guid folderId, string searchTerm, SongSortOrder sortOrder);
+    Task<List<Guid>> SearchAllSongIdsInArtistAsync(Guid artistId, string searchTerm, SongSortOrder sortOrder);
+    Task<List<Guid>> SearchAllSongIdsInAlbumAsync(Guid albumId, string searchTerm, SongSortOrder sortOrder);
+    Task<List<Guid>> SearchAllSongIdsInPlaylistAsync(Guid playlistId, string searchTerm);
+    Task<List<Guid>> SearchAllSongIdsInGenreAsync(Guid genreId, string searchTerm, SongSortOrder sortOrder);
 }

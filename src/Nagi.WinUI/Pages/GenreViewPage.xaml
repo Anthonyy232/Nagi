@@ -22,6 +22,75 @@
     </Page.Resources>
 
     <Grid>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="SearchStates">
+                <VisualState x:Name="SearchCollapsed">
+                    <Storyboard>
+                        <DoubleAnimation
+                            Storyboard.TargetName="SearchTextBox"
+                            Storyboard.TargetProperty="Width"
+                            To="0"
+                            Duration="0:0:0.3"
+                            EnableDependentAnimation="True">
+                            <DoubleAnimation.EasingFunction>
+                                <CubicEase EasingMode="EaseInOut" />
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
+
+                        <DoubleAnimation
+                            Storyboard.TargetName="SearchTextBox"
+                            Storyboard.TargetProperty="Opacity"
+                            To="0"
+                            Duration="0:0:0.15" />
+
+                        <ObjectAnimationUsingKeyFrames
+                            Storyboard.TargetName="SearchTextBox"
+                            Storyboard.TargetProperty="IsHitTestVisible">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="False" />
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames
+                            Storyboard.TargetName="SearchIcon"
+                            Storyboard.TargetProperty="Glyph">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="" />
+                            <DiscreteObjectKeyFrame KeyTime="0:0:0.3" Value="&#xE721;" />
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="SearchExpanded">
+                    <Storyboard>
+                        <DoubleAnimation
+                            Storyboard.TargetName="SearchTextBox"
+                            Storyboard.TargetProperty="Width"
+                            To="300"
+                            Duration="0:0:0.3"
+                            EnableDependentAnimation="True">
+                            <DoubleAnimation.EasingFunction>
+                                <CubicEase EasingMode="EaseInOut" />
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
+
+                        <DoubleAnimation
+                            Storyboard.TargetName="SearchTextBox"
+                            Storyboard.TargetProperty="Opacity"
+                            To="1"
+                            BeginTime="0:0:0.15"
+                            Duration="0:0:0.15" />
+
+                        <ObjectAnimationUsingKeyFrames
+                            Storyboard.TargetName="SearchTextBox"
+                            Storyboard.TargetProperty="IsHitTestVisible">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="True" />
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames
+                            Storyboard.TargetName="SearchIcon"
+                            Storyboard.TargetProperty="Glyph">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="&#xE711;" />
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -47,8 +116,8 @@
                 </StackPanel>
             </Grid>
 
-            <StackPanel Margin="0,8,0,0" Spacing="8"
-                        Visibility="{x:Bind ViewModel.Songs, Converter={StaticResource CollectionToVisibilityConverter}, Mode=OneWay}">
+            <!-- The Visibility binding has been removed from this StackPanel to fix the bug -->
+            <StackPanel Margin="0,8,0,0" Spacing="8">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
@@ -61,6 +130,50 @@
                                    Text="{x:Bind ViewModel.TotalItemsText, Mode=OneWay}" />
                     </StackPanel>
                     <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                        <!-- Search functionality -->
+                        <Grid>
+                            <TextBox x:Name="SearchTextBox"
+                                     Style="{StaticResource SearchTextBoxStyle}"
+                                     PlaceholderText="Search in genre..."
+                                     Width="0"
+                                     Opacity="0"
+                                     IsHitTestVisible="False"
+                                     HorizontalAlignment="Right"
+                                     KeyDown="OnSearchTextBoxKeyDown"
+                                     Text="{x:Bind ViewModel.SearchTerm, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     Canvas.ZIndex="0">
+                                <TextBox.Resources>
+                                    <ResourceDictionary>
+                                        <ResourceDictionary.ThemeDictionaries>
+                                            <ResourceDictionary x:Key="Default">
+                                                <StaticResource x:Key="TextControlBorderBrushPointerOver" ResourceKey="AppPrimaryColorBrush" />
+                                                <StaticResource x:Key="TextControlBorderBrushFocused" ResourceKey="AppPrimaryColorBrush" />
+                                            </ResourceDictionary>
+                                            <ResourceDictionary x:Key="Light">
+                                                <StaticResource x:Key="TextControlBorderBrushPointerOver" ResourceKey="AppPrimaryColorBrush" />
+                                                <StaticResource x:Key="TextControlBorderBrushFocused" ResourceKey="AppPrimaryColorBrush" />
+                                            </ResourceDictionary>
+                                            <ResourceDictionary x:Key="HighContrast">
+                                                <SolidColorBrush x:Key="TextControlBorderBrushPointerOver" Color="{ThemeResource SystemColorHighlightColor}" />
+                                                <SolidColorBrush x:Key="TextControlBorderBrushFocused" Color="{ThemeResource SystemColorHighlightColor}" />
+                                            </ResourceDictionary>
+                                        </ResourceDictionary.ThemeDictionaries>
+                                    </ResourceDictionary>
+                                </TextBox.Resources>
+                            </TextBox>
+
+                            <Button x:Name="SearchToggleButton"
+                                Click="OnSearchToggleButtonClick"
+                                Style="{StaticResource SongListViewPageIconButton}"
+                                ToolTipService.ToolTip="Search in genre"
+                                HorizontalAlignment="Right"
+                                Margin="0,0,1,0"
+                                IsHitTestVisible="True"
+                                Canvas.ZIndex="1">
+                                <FontIcon x:Name="SearchIcon" FontSize="16" Glyph="&#xE721;" />
+                            </Button>
+                        </Grid>
+
                         <Button Command="{x:Bind ViewModel.PlayAllSongsCommand}"
                                 Style="{StaticResource SongListViewPageIconButton}" ToolTipService.ToolTip="Play all">
                             <FontIcon FontSize="16" Glyph="" />

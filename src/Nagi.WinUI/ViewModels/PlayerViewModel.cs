@@ -55,6 +55,16 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
         _windowService = windowService ?? throw new ArgumentNullException(nameof(windowService));
 
+        // Initialize properties with default values
+        SongTitle = "No track playing";
+        ArtistName = string.Empty;
+        CurrentVolume = 50;
+        VolumeIconGlyph = VolumeMediumIconGlyph;
+        CurrentQueue = new();
+        CurrentTimeText = "0:00";
+        TotalDurationText = "0:00";
+        GlobalOperationStatusMessage = string.Empty;
+
         SubscribeToPlaybackServiceEvents();
         SubscribeToSettingsServiceEvents();
         SubscribeToWindowServiceEvents();
@@ -65,50 +75,50 @@ public partial class PlayerViewModel : ObservableObject, IDisposable {
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(PlayPauseIconGlyph))]
     [NotifyPropertyChangedFor(nameof(PlayPauseButtonToolTip))]
-    private bool _isPlaying;
+    public partial bool IsPlaying { get; set; }
 
-    [ObservableProperty] private string _songTitle = "No track playing";
+    [ObservableProperty] public partial string SongTitle { get; set; }
 
-    [ObservableProperty] private string _artistName = string.Empty;
+    [ObservableProperty] public partial string ArtistName { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsArtworkAvailable))]
-    private string? _albumArtUri;
+    public partial string? AlbumArtUri { get; set; }
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(GoToArtistCommand))]
-    private Song? _currentPlayingTrack;
+    public partial Song? CurrentPlayingTrack { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ShuffleIconGlyph))]
     [NotifyPropertyChangedFor(nameof(ShuffleButtonToolTip))]
-    private bool _isShuffleEnabled;
+    public partial bool IsShuffleEnabled { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(RepeatIconGlyph))]
     [NotifyPropertyChangedFor(nameof(RepeatButtonToolTip))]
-    private RepeatMode _currentRepeatMode;
+    public partial RepeatMode CurrentRepeatMode { get; set; }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(VolumeButtonToolTip))]
-    private bool _isMuted;
+    public partial bool IsMuted { get; set; }
 
-    [ObservableProperty] private double _currentVolume = 50;
-    [ObservableProperty] private string _volumeIconGlyph = VolumeMediumIconGlyph;
-    [ObservableProperty] private ObservableCollection<Song> _currentQueue = new();
-    [ObservableProperty] private double _currentPosition;
-    [ObservableProperty] private string _currentTimeText = "0:00";
-    [ObservableProperty] private bool _isUserDraggingSlider;
-    [ObservableProperty] private double _totalDuration;
-    [ObservableProperty] private string _totalDurationText = "0:00";
-    [ObservableProperty] private bool _isGlobalOperationInProgress;
-    [ObservableProperty] private string _globalOperationStatusMessage = string.Empty;
-    [ObservableProperty] private double _globalOperationProgressValue;
-    [ObservableProperty] private bool _isGlobalOperationIndeterminate;
-    [ObservableProperty] private bool _isQueueViewVisible;
+    [ObservableProperty] public partial double CurrentVolume { get; set; }
+    [ObservableProperty] public partial string VolumeIconGlyph { get; set; }
+    [ObservableProperty] public partial ObservableCollection<Song> CurrentQueue { get; set; }
+    [ObservableProperty] public partial double CurrentPosition { get; set; }
+    [ObservableProperty] public partial string CurrentTimeText { get; set; }
+    [ObservableProperty] public partial bool IsUserDraggingSlider { get; set; }
+    [ObservableProperty] public partial double TotalDuration { get; set; }
+    [ObservableProperty] public partial string TotalDurationText { get; set; }
+    [ObservableProperty] public partial bool IsGlobalOperationInProgress { get; set; }
+    [ObservableProperty] public partial string GlobalOperationStatusMessage { get; set; }
+    [ObservableProperty] public partial double GlobalOperationProgressValue { get; set; }
+    [ObservableProperty] public partial bool IsGlobalOperationIndeterminate { get; set; }
+    [ObservableProperty] public partial bool IsQueueViewVisible { get; set; }
 
     [ObservableProperty]
-    private bool _isVolumeControlVisible;
+    public partial bool IsVolumeControlVisible { get; set; }
 
     public ObservableCollection<PlayerButtonSetting> MainTransportButtons { get; } = new();
     public ObservableCollection<PlayerButtonSetting> SecondaryControlsButtons { get; } = new();
