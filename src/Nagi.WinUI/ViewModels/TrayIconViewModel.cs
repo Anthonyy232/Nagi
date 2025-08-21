@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.UI.Windowing;
 using Nagi.Core.Services.Abstractions;
+using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
 
 namespace Nagi.WinUI.ViewModels;
@@ -108,6 +109,14 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable
     {
         // If the application is exiting intentionally, do not intercept the close.
         if (_windowService.IsExiting) return;
+
+        // Check if the current page is the OnboardingPage - if so, always exit the app
+        if (App.RootWindow?.Content is OnboardingPage)
+        {
+            _windowService.IsExiting = true;
+            Debug.WriteLine("[INFO] TrayIconViewModel: OnboardingPage is active. Allowing application to exit.");
+            return;
+        }
 
         if (_isHideToTrayEnabled)
         {
