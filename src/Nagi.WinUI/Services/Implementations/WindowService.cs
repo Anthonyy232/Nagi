@@ -70,7 +70,7 @@ public sealed class WindowService : IWindowService, IDisposable
     public bool IsMiniPlayerActive => _miniPlayerWindow is not null;
 
     /// <inheritdoc />
-    public bool IsMinimized => _appWindow.Presenter is OverlappedPresenter { State: OverlappedPresenterState.Minimized };
+    public bool IsMinimized => _appWindow?.Presenter is OverlappedPresenter { State: OverlappedPresenterState.Minimized };
 
     /// <inheritdoc />
     public bool IsExiting { get; set; }
@@ -100,20 +100,23 @@ public sealed class WindowService : IWindowService, IDisposable
     {
         if (_window is null) return;
         HideMiniPlayer();
-        _appWindow.IsShownInSwitchers = true;
+        if (_appWindow is not null)
+        {
+            _appWindow.IsShownInSwitchers = true;
+        }
         WindowActivator.ShowAndActivate(_window, _win32InteropService);
     }
 
     /// <inheritdoc />
     public void MinimizeToMiniPlayer()
     {
-        if (_appWindow.Presenter is OverlappedPresenter presenter) presenter.Minimize();
+        if (_appWindow?.Presenter is OverlappedPresenter presenter) presenter.Minimize();
     }
 
     /// <inheritdoc />
     public void Close()
     {
-        _window.Close();
+        _window?.Close();
     }
 
     /// <inheritdoc />
@@ -145,20 +148,26 @@ public sealed class WindowService : IWindowService, IDisposable
 
         if (args.DidVisibilityChange) VisibilityChanged?.Invoke(args);
 
-        if (didPresenterChange && _appWindow.Presenter is OverlappedPresenter presenter)
+        if (didPresenterChange && _appWindow?.Presenter is OverlappedPresenter presenter)
             switch (presenter.State)
             {
                 case OverlappedPresenterState.Minimized:
                     if (_isMiniPlayerEnabled)
                     {
-                        _appWindow.IsShownInSwitchers = false;
+                        if (_appWindow is not null)
+                        {
+                            _appWindow.IsShownInSwitchers = false;
+                        }
                         ShowMiniPlayer();
                     }
 
                     break;
 
                 case OverlappedPresenterState.Restored:
-                    _appWindow.IsShownInSwitchers = true;
+                    if (_appWindow is not null)
+                    {
+                        _appWindow.IsShownInSwitchers = true;
+                    }
                     HideMiniPlayer();
                     break;
             }
@@ -236,7 +245,7 @@ public sealed class WindowService : IWindowService, IDisposable
 
         // If the user manually closed the mini-player, restore the main application window
         if (!_isClosingMiniPlayerProgrammatically)
-            if (_appWindow.Presenter is OverlappedPresenter { State: OverlappedPresenterState.Minimized } presenter)
+            if (_appWindow?.Presenter is OverlappedPresenter { State: OverlappedPresenterState.Minimized } presenter)
                 presenter.Restore();
 
         _miniPlayerWindow = null;
