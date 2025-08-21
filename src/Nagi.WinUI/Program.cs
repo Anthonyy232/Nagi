@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
@@ -81,13 +82,59 @@ public static class Program
 
         if (!string.IsNullOrEmpty(filePath)) App.CurrentApp?.EnqueueFileActivation(filePath);
 
-        // Always bring the main window to the foreground on activation to provide user feedback.
+        // Only bring the main window to the foreground if appropriate based on current state
+        // This prevents interrupting users when the app is minimized to tray or in mini-player mode
         App.MainDispatcherQueue?.TryEnqueue(() =>
         {
             if (App.RootWindow is not null)
             {
-                App.RootWindow.AppWindow.Show();
-                App.RootWindow.Activate();
+                try
+                {
+                    // Check if services are available and initialized
+                    if (App.Services is not null)
+                    {
+                        var windowService = App.Services.GetService<Nagi.WinUI.Services.Abstractions.IWindowService>();
+                        
+                        // Only proceed with service-based checks if the service is properly initialized
+                        if (windowService is not null)
+                        {
+                            var windowVisible = App.RootWindow.AppWindow.IsVisible;
+                            var miniPlayerActive = windowService.IsMiniPlayerActive;
+                            
+                            // Only bring to front if window is visible and mini-player is not active, OR if no file is being opened
+                            var bringToFront = (windowVisible && !miniPlayerActive) || string.IsNullOrEmpty(filePath);
+
+                            if (bringToFront)
+                            {
+                                App.RootWindow.AppWindow.Show();
+                                App.RootWindow.Activate();
+                            }
+                            return; // Exit early since we handled it with full service info
+                        }
+                    }
+                    
+                    // Fallback: Services not available or not initialized yet
+                    var isWindowVisible = App.RootWindow.AppWindow.IsVisible;
+
+                    var shouldBringToFront = string.IsNullOrEmpty(filePath) || isWindowVisible;
+
+                    if (shouldBringToFront)
+                    {
+                        App.RootWindow.AppWindow.Show();
+                        App.RootWindow.Activate();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"[ERROR] Program.OnActivated: Exception during activation handling. {ex.Message}");
+                    
+                    // Final fallback: Basic behavior for non-file activations only
+                    if (string.IsNullOrEmpty(filePath))
+                    {
+                        App.RootWindow.AppWindow.Show();
+                        App.RootWindow.Activate();
+                    }
+                }
             }
         });
     }
