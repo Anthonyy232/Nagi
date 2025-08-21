@@ -833,8 +833,9 @@ public class MusicPlaybackService : IMusicPlaybackService
         if (IsTransitioningTrack && _audioPlayer.IsPlaying) IsTransitioningTrack = false;
     }
 
-    private void OnAudioPlayerVolumeChanged()
+    private async void OnAudioPlayerVolumeChanged()
     {
+        await _settingsService.SaveVolumeAsync(_audioPlayer.Volume);
         VolumeStateChanged?.Invoke();
     }
 
