@@ -163,8 +163,22 @@ public partial class App : Application
         try
         {
             var playbackService = Services.GetRequiredService<IMusicPlaybackService>();
+            var windowService = Services.GetService<IWindowService>();
 
-            _window?.Activate();
+            // Only activate the main window if it's currently visible and the mini-player isn't active
+            // This avoids interrupting users when in tray mode or mini-player mode
+            var shouldActivateWindow = _window?.AppWindow.IsVisible == true;
+            
+            if (shouldActivateWindow && windowService is not null)
+            {
+                shouldActivateWindow = !windowService.IsMiniPlayerActive;
+            }
+            
+            if (shouldActivateWindow)
+            {
+                _window?.Activate();
+            }
+            
             await playbackService.PlayTransientFileAsync(filePath);
         }
         catch (Exception ex)
