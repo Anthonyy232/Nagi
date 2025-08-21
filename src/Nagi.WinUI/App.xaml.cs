@@ -179,6 +179,7 @@ public partial class App : Application
         if (Services is null) return;
         try
         {
+            await Services.GetRequiredService<IWindowService>().InitializeAsync();
             await Services.GetRequiredService<IMusicPlaybackService>().InitializeAsync(restoreSession);
             await Services.GetRequiredService<IPresenceManager>().InitializeAsync();
             await Services.GetRequiredService<TrayIconViewModel>().InitializeAsync();
@@ -269,12 +270,11 @@ public partial class App : Application
     {
         services.AddSingleton<IWin32InteropService, Win32InteropService>();
         services.AddSingleton<IWindowService>(sp => new WindowService(
-            window,
             sp.GetRequiredService<IWin32InteropService>(),
             sp.GetRequiredService<IUISettingsService>(),
             sp.GetRequiredService<IDispatcherService>()
         ));
-        services.AddSingleton<IUIService>(sp => new UIService(window));
+        services.AddSingleton<IUIService, UIService>();
         services.AddSingleton(dispatcherQueue);
         services.AddSingleton<IDispatcherService, DispatcherService>();
         services.AddSingleton<IThemeService>(sp => new ThemeService(appInstance, sp));
