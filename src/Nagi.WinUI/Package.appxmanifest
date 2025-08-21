@@ -79,6 +79,7 @@
 							<uap:FileType>.wv</uap:FileType>
 							<uap:FileType>.webm</uap:FileType>
 						</uap:SupportedFileTypes>
+						<uap:EditFlags OpenIsSafe="true"/>
 					</uap:FileTypeAssociation>
 				</uap:Extension>
 
