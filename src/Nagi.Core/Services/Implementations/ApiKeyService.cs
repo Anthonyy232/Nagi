@@ -4,7 +4,7 @@ using System.Text.Json;
 using Microsoft.Extensions.Configuration;
 using Nagi.Core.Services.Abstractions;
 
-namespace Nagi.WinUI.Services.Implementations;
+namespace Nagi.Core.Services.Implementations;
 
 // Private DTO for deserializing the API key from the server response.
 file class ApiKeyResponse
@@ -103,10 +103,10 @@ public class ApiKeyService : IApiKeyService, IDisposable
 
             var finalKey = apiKeyResponse?.Value;
 
-            if (string.IsNullOrEmpty(finalKey))
+            if (string.IsNullOrWhiteSpace(finalKey))
             {
                 Debug.WriteLine(
-                    $"[ApiKeyService] Error: API key response for '{keyName}' is missing the 'Value' field.");
+                    $"[ApiKeyService] Error: API key response for '{keyName}' is missing the 'Value' field or contains only whitespace.");
                 return null;
             }
 
