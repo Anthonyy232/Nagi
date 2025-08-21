@@ -324,15 +324,23 @@ public partial class App : Application
 
     private void InitializeWindowAndServices()
     {
-        _window = new MainWindow();
-        _window.Closed += OnWindowClosed;
+        try
+        {
+            _window = new MainWindow();
+            _window.Closed += OnWindowClosed;
 
-        Services = ConfigureServices(_window, _window.DispatcherQueue, this);
+            Services = ConfigureServices(_window, _window.DispatcherQueue, this);
 
-        if (_window is MainWindow mainWindow)
-            mainWindow.InitializeDependencies(Services.GetRequiredService<IUISettingsService>());
+            if (_window is MainWindow mainWindow)
+                mainWindow.InitializeDependencies(Services.GetRequiredService<IUISettingsService>());
 
-        InitializeDatabase(Services);
+            InitializeDatabase(Services);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"[CRITICAL] App.InitializeWindowAndServices: Failed to initialize window. {ex.Message}");
+            throw; // Re-throw to prevent application from continuing in invalid state
+        }
     }
 
     private void InitializeSystemIntegration()
@@ -380,23 +388,25 @@ public partial class App : Application
         }
     }
 
-    private async void OnWindowClosed(object sender, WindowEventArgs args)
-    {
+    private async void OnWindowClosed(object sender, WindowEventArgs args) {
         if (Services is not null)
-            try
-            {
+            try {
                 await Services.GetRequiredService<IPresenceManager>().ShutdownAsync();
                 await SaveApplicationStateAsync(Services);
             }
-            finally
-            {
-                // Ensure the service provider and its disposable services are cleaned up.
+            finally {
                 if (Services is IAsyncDisposable asyncDisposableServices)
                     await asyncDisposableServices.DisposeAsync();
                 else if (Services is IDisposable disposableServices) disposableServices.Dispose();
             }
 
-        Current.Exit();
+        if (Current is not null) {
+            Current.Exit();
+        }
+        else {
+            // Fallback: Force application termination
+            Environment.Exit(0);
+        }
     }
 
     private void OnAppUnhandledException(object sender, UnhandledExceptionEventArgs e)
