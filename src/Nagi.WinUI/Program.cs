@@ -11,6 +11,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
 using Nagi.WinUI.Services.Abstractions;
 using WinRT;
+
 #if !MSIX_PACKAGE
 using Velopack;
 #endif
@@ -18,21 +19,28 @@ using Velopack;
 namespace Nagi.WinUI;
 
 /// <summary>
-/// Contains the application's entry point and single-instancing logic.
+/// Application entry point with single-instance enforcement.
 /// </summary>
 public static class Program {
     private const string AppInstanceKey = "NagiMusicPlayerInstance-9A8B7C6D";
+    private const int MaxRetryAttempts = 3;
+    private const int RetryDelayMs = 100;
+    private const int RedirectionTimeoutMs = 5000;
 
     [STAThread]
     private static int Main(string[] args) {
-#if !MSIX_PACKAGE
-        VelopackApp.Build().Run();
-#endif
+        #if !MSIX_PACKAGE
+                VelopackApp.Build().Run();
+        #endif
 
         ComWrappersSupport.InitializeComWrappers();
 
-        // Enforce a single-instance model by redirecting activation
-        // of subsequent instances to the primary one.
+        // Ensure COM initialization in release builds
+        #if !DEBUG
+                Thread.Sleep(50);
+        #endif
+
+        // Redirect secondary instances to primary
         if (TryRedirectActivation()) {
             return 0;
         }
@@ -40,8 +48,7 @@ public static class Program {
         Debug.WriteLine("[Program] Primary instance starting.");
 
         Application.Start(p => {
-            // The SynchronizationContext is essential for the UI thread to correctly
-            // manage async operations and callbacks.
+            // Configure UI thread synchronization context
             var context = new DispatcherQueueSynchronizationContext(DispatcherQueue.GetForCurrentThread());
             SynchronizationContext.SetSynchronizationContext(context);
             _ = new App();
@@ -51,28 +58,72 @@ public static class Program {
     }
 
     /// <summary>
-    /// Checks for an existing application instance. If found, redirects activation and returns true.
-    /// If not found, it registers the current process as the primary instance and returns false.
+    /// Enforces single-instance by redirecting secondary launches to primary.
     /// </summary>
-    /// <returns>True if activation was redirected; otherwise, false.</returns>
+    /// <returns>True if redirected to existing instance; false if this becomes primary.</returns>
     private static bool TryRedirectActivation() {
-        var mainInstance = AppInstance.FindOrRegisterForKey(AppInstanceKey);
+        AppInstance? mainInstance = null;
+
+        // Retry AppInstance operations for stability
+        for (int attempt = 0; attempt < MaxRetryAttempts; attempt++) {
+            try {
+                mainInstance = AppInstance.FindOrRegisterForKey(AppInstanceKey);
+                break;
+            }
+            catch (Exception ex) {
+                Debug.WriteLine($"[Program] Attempt {attempt + 1} failed to find/register app instance: {ex.Message}");
+                if (attempt == MaxRetryAttempts - 1) {
+                    Debug.WriteLine("[Program] All attempts failed, continuing as primary instance.");
+                    return false;
+                }
+                Thread.Sleep(RetryDelayMs);
+            }
+        }
+
+        if (mainInstance == null) {
+            Debug.WriteLine("[Program] Failed to get app instance, continuing as primary.");
+            return false;
+        }
 
         if (mainInstance.IsCurrent) {
-            // This is the primary instance, so it must listen for activations from subsequent instances.
+            // Register as primary instance
             mainInstance.Activated += OnActivated;
             return false;
         }
 
         Debug.WriteLine("[Program] Secondary instance detected. Redirecting activation...");
-        var args = AppInstance.GetCurrent().GetActivatedEventArgs();
-        RedirectActivationTo(args, mainInstance);
-        return true;
+
+        // Verify primary instance is still running
+        if (!IsProcessAlive(mainInstance.ProcessId)) {
+            Debug.WriteLine("[Program] Main instance process is no longer running, becoming primary.");
+            return false;
+        }
+
+        try {
+            var args = AppInstance.GetCurrent().GetActivatedEventArgs();
+            return RedirectActivationTo(args, mainInstance);
+        }
+        catch (Exception ex) {
+            Debug.WriteLine($"[Program] Failed to redirect activation: {ex.Message}");
+            return false;
+        }
     }
 
     /// <summary>
-    /// Handles activation requests that have been redirected to the main instance.
-    /// This method runs in the primary instance when a user launches the app a second time.
+    /// Validates if process is still running.
+    /// </summary>
+    private static bool IsProcessAlive(uint processId) {
+        try {
+            using var process = Process.GetProcessById((int)processId);
+            return !process.HasExited;
+        }
+        catch {
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Handles activation from secondary instances.
     /// </summary>
     private static void OnActivated(object? sender, AppActivationArguments args) {
         var filePath = TryGetFilePathFromArgs(args);
@@ -82,7 +133,7 @@ public static class Program {
             App.CurrentApp?.EnqueueFileActivation(filePath);
         }
 
-        // Ensure window activation logic runs on the main UI thread.
+        // Execute window activation on UI thread
         App.MainDispatcherQueue?.TryEnqueue(() => {
             if (App.RootWindow is null) return;
 
@@ -91,8 +142,7 @@ public static class Program {
                 var isWindowVisible = App.RootWindow.AppWindow.IsVisible;
                 var isMiniPlayerActive = windowService?.IsMiniPlayerActive ?? false;
 
-                // Bring window to front if opening a file while the main window is visible and not in mini-player mode.
-                // Always bring to front if not opening a file (i.e., just launching the app again).
+                // Show window unless opening file in mini-player mode
                 var shouldActivate = string.IsNullOrEmpty(filePath) || (isWindowVisible && !isMiniPlayerActive);
 
                 if (shouldActivate) {
@@ -102,7 +152,7 @@ public static class Program {
             }
             catch (Exception ex) {
                 Debug.WriteLine($"[ERROR] Program.OnActivated: Exception during activation handling. {ex.Message}");
-                // A minimal fallback to ensure the window appears on a simple re-launch if an error occurred.
+                // Fallback for simple re-launch
                 if (string.IsNullOrEmpty(filePath)) {
                     App.RootWindow?.AppWindow.Show();
                     App.RootWindow?.Activate();
@@ -112,7 +162,7 @@ public static class Program {
     }
 
     /// <summary>
-    /// Extracts a file path from activation arguments, supporting both file associations and command-line launches.
+    /// Extracts file path from file association or command line activation.
     /// </summary>
     private static string? TryGetFilePathFromArgs(AppActivationArguments args) {
         if (args.Kind == ExtendedActivationKind.File && args.Data is IFileActivatedEventArgs fileArgs) {
@@ -127,7 +177,7 @@ public static class Program {
 
             try {
                 if (argc > 0) {
-                    // Assume the file path is the last argument.
+                    // Extract last argument as potential file path
                     var lastArgPtr = Marshal.ReadIntPtr(argv, (argc - 1) * IntPtr.Size);
                     var potentialPath = Marshal.PtrToStringUni(lastArgPtr);
 
@@ -146,27 +196,51 @@ public static class Program {
     }
 
     /// <summary>
-    /// Redirects activation to the primary instance and waits for the operation to complete.
+    /// Redirects activation to primary instance with timeout protection.
     /// </summary>
-    private static void RedirectActivationTo(AppActivationArguments args, AppInstance keyInstance) {
+    /// <returns>True if redirection succeeded; false if timeout or failure.</returns>
+    private static bool RedirectActivationTo(AppActivationArguments args, AppInstance keyInstance) {
         var redirectEventHandle = CreateEvent(IntPtr.Zero, true, false, null);
+        if (redirectEventHandle == IntPtr.Zero) {
+            Debug.WriteLine("[Program] Failed to create event handle for redirection.");
+            return false;
+        }
 
-        // The redirection must run on a background thread to avoid blocking the STA thread.
-        _ = Task.Run(() => {
-            keyInstance.RedirectActivationToAsync(args).AsTask().Wait();
-            SetEvent(redirectEventHandle);
+        var redirectionSucceeded = false;
+
+        // Perform redirection on background thread
+        _ = Task.Run(async () => {
+            try {
+                await keyInstance.RedirectActivationToAsync(args);
+                redirectionSucceeded = true;
+                Debug.WriteLine("[Program] Activation redirection completed successfully.");
+            }
+            catch (Exception ex) {
+                Debug.WriteLine($"[Program] RedirectActivationToAsync failed: {ex.Message}");
+            }
+            finally {
+                SetEvent(redirectEventHandle);
+            }
         });
 
-        // CoWaitForMultipleObjects processes the message pump, which is required for
-        // activation redirection in unpackaged WinUI apps to prevent deadlocks.
+        // Wait with message pump processing to prevent deadlocks
         const uint CWMO_DEFAULT = 0;
-        const uint INFINITE = 0xFFFFFFFF;
-        _ = CoWaitForMultipleObjects(
+        var waitResult = CoWaitForMultipleObjects(
             CWMO_DEFAULT,
-            INFINITE,
+            RedirectionTimeoutMs,
             1,
-            [redirectEventHandle],
+            new[] { redirectEventHandle },
             out _);
+
+        CloseHandle(redirectEventHandle);
+
+        // Handle timeout (WAIT_TIMEOUT = 0x00000102)
+        if (waitResult == 0x00000102) {
+            Debug.WriteLine("[Program] Redirection timed out, becoming primary instance.");
+            return false;
+        }
+
+        return redirectionSucceeded;
     }
 
     #region P/Invoke Declarations
@@ -177,6 +251,9 @@ public static class Program {
 
     [DllImport("kernel32.dll")]
     private static extern bool SetEvent(IntPtr hEvent);
+
+    [DllImport("kernel32.dll")]
+    private static extern bool CloseHandle(IntPtr hObject);
 
     [DllImport("ole32.dll")]
     private static extern uint CoWaitForMultipleObjects(uint dwFlags, uint dwMilliseconds, uint nHandles,
