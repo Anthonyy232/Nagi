@@ -19,6 +19,7 @@
         <Product>Nagi</Product>
         <ApplicationIcon>Assets\AppLogo.ico</ApplicationIcon>
         <StartupObject>Nagi.WinUI.Program</StartupObject>
+		<ProjectGuid>57ABC68F-E3A9-42BD-ABDF-CE1B7E2ACE95</ProjectGuid>
     </PropertyGroup>
 
     <!-- =============================================================== -->
