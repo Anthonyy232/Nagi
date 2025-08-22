@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
+using Nagi.WinUI.Services.Abstractions;
 using WinRT;
 #if !MSIX_PACKAGE
 using Velopack;
@@ -16,29 +18,28 @@ using Velopack;
 namespace Nagi.WinUI;
 
 /// <summary>
-///     Contains the application's entry point and single-instancing logic.
+/// Contains the application's entry point and single-instancing logic.
 /// </summary>
-public static class Program
-{
+public static class Program {
     private const string AppInstanceKey = "NagiMusicPlayerInstance-9A8B7C6D";
 
     [STAThread]
-    private static int Main(string[] args)
-    {
+    private static int Main(string[] args) {
 #if !MSIX_PACKAGE
         VelopackApp.Build().Run();
 #endif
 
         ComWrappersSupport.InitializeComWrappers();
 
-        // If this is a secondary instance, redirect its activation arguments to the primary
-        // instance and exit immediately. This enforces a single-instance model.
-        if (TryRedirectActivation()) return 0;
+        // Enforce a single-instance model by redirecting activation
+        // of subsequent instances to the primary one.
+        if (TryRedirectActivation()) {
+            return 0;
+        }
 
         Debug.WriteLine("[Program] Primary instance starting.");
 
-        Application.Start(p =>
-        {
+        Application.Start(p => {
             // The SynchronizationContext is essential for the UI thread to correctly
             // manage async operations and callbacks.
             var context = new DispatcherQueueSynchronizationContext(DispatcherQueue.GetForCurrentThread());
@@ -50,16 +51,14 @@ public static class Program
     }
 
     /// <summary>
-    ///     Checks for an existing application instance. If found, redirects activation and returns true.
-    ///     If not found, it registers the current process as the primary instance and returns false.
+    /// Checks for an existing application instance. If found, redirects activation and returns true.
+    /// If not found, it registers the current process as the primary instance and returns false.
     /// </summary>
     /// <returns>True if activation was redirected; otherwise, false.</returns>
-    private static bool TryRedirectActivation()
-    {
+    private static bool TryRedirectActivation() {
         var mainInstance = AppInstance.FindOrRegisterForKey(AppInstanceKey);
 
-        if (mainInstance.IsCurrent)
-        {
+        if (mainInstance.IsCurrent) {
             // This is the primary instance, so it must listen for activations from subsequent instances.
             mainInstance.Activated += OnActivated;
             return false;
@@ -72,91 +71,74 @@ public static class Program
     }
 
     /// <summary>
-    ///     Handles activation requests that have been redirected to the main instance.
-    ///     This method runs in the primary instance when a user launches the app a second time.
+    /// Handles activation requests that have been redirected to the main instance.
+    /// This method runs in the primary instance when a user launches the app a second time.
     /// </summary>
-    private static void OnActivated(object? sender, AppActivationArguments args)
-    {
+    private static void OnActivated(object? sender, AppActivationArguments args) {
         var filePath = TryGetFilePathFromArgs(args);
         Debug.WriteLine($"[Program] Primary instance activated. File path found: {filePath ?? "None"}");
 
-        if (!string.IsNullOrEmpty(filePath)) App.CurrentApp?.EnqueueFileActivation(filePath);
+        if (!string.IsNullOrEmpty(filePath)) {
+            App.CurrentApp?.EnqueueFileActivation(filePath);
+        }
 
-        // Only bring the main window to the foreground if appropriate based on current state
-        // This prevents interrupting users when the app is minimized to tray or in mini-player mode
-        App.MainDispatcherQueue?.TryEnqueue(() =>
-        {
-            if (App.RootWindow is not null)
-            {
-                try
-                {
-                    // Check if services are available and initialized
-                    if (App.Services is not null)
-                    {
-                        var windowService = App.Services.GetService<Nagi.WinUI.Services.Abstractions.IWindowService>();
-                        
-                        // Only proceed with service-based checks if the service is properly initialized
-                        if (windowService is not null)
-                        {
-                            var windowVisible = App.RootWindow.AppWindow.IsVisible;
-                            var miniPlayerActive = windowService.IsMiniPlayerActive;
-                            
-                            // Only bring to front if window is visible and mini-player is not active, OR if no file is being opened
-                            var bringToFront = (windowVisible && !miniPlayerActive) || string.IsNullOrEmpty(filePath);
+        // Ensure window activation logic runs on the main UI thread.
+        App.MainDispatcherQueue?.TryEnqueue(() => {
+            if (App.RootWindow is null) return;
 
-                            if (bringToFront)
-                            {
-                                App.RootWindow.AppWindow.Show();
-                                App.RootWindow.Activate();
-                            }
-                            return; // Exit early since we handled it with full service info
-                        }
-                    }
-                    
-                    // Fallback: Services not available or not initialized yet
-                    var isWindowVisible = App.RootWindow.AppWindow.IsVisible;
+            try {
+                var windowService = App.Services?.GetService<IWindowService>();
+                var isWindowVisible = App.RootWindow.AppWindow.IsVisible;
+                var isMiniPlayerActive = windowService?.IsMiniPlayerActive ?? false;
 
-                    var shouldBringToFront = string.IsNullOrEmpty(filePath) || isWindowVisible;
+                // Bring window to front if opening a file while the main window is visible and not in mini-player mode.
+                // Always bring to front if not opening a file (i.e., just launching the app again).
+                var shouldActivate = string.IsNullOrEmpty(filePath) || (isWindowVisible && !isMiniPlayerActive);
 
-                    if (shouldBringToFront)
-                    {
-                        App.RootWindow.AppWindow.Show();
-                        App.RootWindow.Activate();
-                    }
+                if (shouldActivate) {
+                    App.RootWindow.AppWindow.Show();
+                    App.RootWindow.Activate();
                 }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"[ERROR] Program.OnActivated: Exception during activation handling. {ex.Message}");
-                    
-                    // Final fallback: Basic behavior for non-file activations only
-                    if (string.IsNullOrEmpty(filePath))
-                    {
-                        App.RootWindow.AppWindow.Show();
-                        App.RootWindow.Activate();
-                    }
+            }
+            catch (Exception ex) {
+                Debug.WriteLine($"[ERROR] Program.OnActivated: Exception during activation handling. {ex.Message}");
+                // A minimal fallback to ensure the window appears on a simple re-launch if an error occurred.
+                if (string.IsNullOrEmpty(filePath)) {
+                    App.RootWindow?.AppWindow.Show();
+                    App.RootWindow?.Activate();
                 }
             }
         });
     }
 
     /// <summary>
-    ///     Extracts a file path from activation arguments, supporting both file associations and command-line launches.
+    /// Extracts a file path from activation arguments, supporting both file associations and command-line launches.
     /// </summary>
-    private static string? TryGetFilePathFromArgs(AppActivationArguments args)
-    {
-        if (args.Kind == ExtendedActivationKind.File && args.Data is IFileActivatedEventArgs fileArgs)
-        {
-            if (fileArgs.Files?.Count > 0) return fileArgs.Files[0].Path;
+    private static string? TryGetFilePathFromArgs(AppActivationArguments args) {
+        if (args.Kind == ExtendedActivationKind.File && args.Data is IFileActivatedEventArgs fileArgs) {
+            if (fileArgs.Files is { Count: > 0 }) {
+                return fileArgs.Files[0].Path;
+            }
         }
-        else if (args.Kind == ExtendedActivationKind.Launch && args.Data is ILaunchActivatedEventArgs launchArgs)
-        {
-            if (!string.IsNullOrWhiteSpace(launchArgs.Arguments))
-            {
-                var commandLineArgs = launchArgs.Arguments.Trim();
-                // Handles file paths that are quoted (e.g., contain spaces) by removing the quotes.
-                if (commandLineArgs.StartsWith("\"") && commandLineArgs.EndsWith("\""))
-                    return commandLineArgs.Substring(1, commandLineArgs.Length - 2);
-                return commandLineArgs;
+        else if (args.Kind == ExtendedActivationKind.Launch && args.Data is ILaunchActivatedEventArgs launchArgs) {
+            if (string.IsNullOrWhiteSpace(launchArgs.Arguments)) return null;
+            var argv = CommandLineToArgvW(launchArgs.Arguments, out var argc);
+            if (argv == IntPtr.Zero) return null;
+
+            try {
+                if (argc > 0) {
+                    // Assume the file path is the last argument.
+                    var lastArgPtr = Marshal.ReadIntPtr(argv, (argc - 1) * IntPtr.Size);
+                    var potentialPath = Marshal.PtrToStringUni(lastArgPtr);
+
+                    if (!string.IsNullOrEmpty(potentialPath) &&
+                        (File.Exists(potentialPath) || Directory.Exists(potentialPath))) {
+                        return potentialPath;
+                    }
+                }
+            }
+            finally {
+                LocalFree(argv);
             }
         }
 
@@ -164,21 +146,19 @@ public static class Program
     }
 
     /// <summary>
-    ///     Redirects activation to the primary instance and waits for the operation to complete.
+    /// Redirects activation to the primary instance and waits for the operation to complete.
     /// </summary>
-    private static void RedirectActivationTo(AppActivationArguments args, AppInstance keyInstance)
-    {
+    private static void RedirectActivationTo(AppActivationArguments args, AppInstance keyInstance) {
         var redirectEventHandle = CreateEvent(IntPtr.Zero, true, false, null);
 
         // The redirection must run on a background thread to avoid blocking the STA thread.
-        Task.Run(() =>
-        {
+        _ = Task.Run(() => {
             keyInstance.RedirectActivationToAsync(args).AsTask().Wait();
             SetEvent(redirectEventHandle);
         });
 
-        // A standard Task.Wait() or await would block the message pump (deadlocks)
-        // CoWaitForMultipleObjects does message pump which is needed for activation redirection in unpackaged WinUI apps.
+        // CoWaitForMultipleObjects processes the message pump, which is required for
+        // activation redirection in unpackaged WinUI apps to prevent deadlocks.
         const uint CWMO_DEFAULT = 0;
         const uint INFINITE = 0xFFFFFFFF;
         _ = CoWaitForMultipleObjects(
@@ -201,6 +181,12 @@ public static class Program
     [DllImport("ole32.dll")]
     private static extern uint CoWaitForMultipleObjects(uint dwFlags, uint dwMilliseconds, uint nHandles,
         IntPtr[] pHandles, out uint dwIndex);
+
+    [DllImport("shell32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+    private static extern IntPtr CommandLineToArgvW(string lpCmdLine, out int pNumArgs);
+
+    [DllImport("kernel32.dll")]
+    private static extern IntPtr LocalFree(IntPtr hMem);
 
     #endregion
 }

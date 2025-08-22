@@ -13,11 +13,7 @@ using Tag = TagLib.Tag;
 namespace Nagi.Core.Services.Implementations;
 
 /// <summary>
-///     Extracts music file metadata using the TagLib-Sharp library. This service is highly
-///     optimized for performance and concurrency, featuring:
-///     - One-time-per-album art processing using a thread-safe, lazy-initialized async cache.
-///     - Caching for extracted synchronized lyrics (LRC) to avoid redundant processing.
-///     - Support for both embedded and external lyrics files.
+///     Extracts music file metadata using the TagLib-Sharp library.
 /// </summary>
 public class TagLibMetadataService : IMetadataService
 {
