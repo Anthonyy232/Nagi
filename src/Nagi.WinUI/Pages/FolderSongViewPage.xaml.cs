@@ -16,12 +16,10 @@ namespace Nagi.WinUI.Pages;
 /// <summary>
 ///     A page for displaying the list of songs within a specific folder.
 /// </summary>
-public sealed partial class FolderSongViewPage : Page
-{
+public sealed partial class FolderSongViewPage : Page {
     private bool _isSearchExpanded;
 
-    public FolderSongViewPage()
-    {
+    public FolderSongViewPage() {
         InitializeComponent();
         ViewModel = App.Services!.GetRequiredService<FolderSongListViewModel>();
         DataContext = ViewModel;
@@ -37,17 +35,14 @@ public sealed partial class FolderSongViewPage : Page
     /// <summary>
     ///     Initializes the view model with navigation parameters when the page is navigated to.
     /// </summary>
-    protected override async void OnNavigatedTo(NavigationEventArgs e)
-    {
+    protected override async void OnNavigatedTo(NavigationEventArgs e) {
         base.OnNavigatedTo(e);
 
-        if (e.Parameter is FolderSongViewNavigationParameter navParam)
-        {
+        if (e.Parameter is FolderSongViewNavigationParameter navParam) {
             await ViewModel.InitializeAsync(navParam.Title, navParam.FolderId);
             await ViewModel.LoadAvailablePlaylistsAsync();
         }
-        else
-        {
+        else {
             // Log a warning and initialize with a fallback state if navigation parameters are invalid.
             Debug.WriteLine(
                 $"[WARNING] {nameof(FolderSongViewPage)}: Received invalid navigation parameter. Type: {e.Parameter?.GetType().Name ?? "null"}");
@@ -60,8 +55,7 @@ public sealed partial class FolderSongViewPage : Page
     ///     This ensures that if a search filter is active, it's cleared so the user
     ///     sees the full folder when they return.
     /// </summary>
-    protected override void OnNavigatedFrom(NavigationEventArgs e)
-    {
+    protected override void OnNavigatedFrom(NavigationEventArgs e) {
         base.OnNavigatedFrom(e);
         ViewModel.Cleanup();
     }
@@ -69,8 +63,7 @@ public sealed partial class FolderSongViewPage : Page
     /// <summary>
     ///     Handles the page loaded event to set initial visual state.
     /// </summary>
-    private void OnPageLoaded(object sender, RoutedEventArgs e)
-    {
+    private void OnPageLoaded(object sender, RoutedEventArgs e) {
         // Set initial search state to collapsed without animation.
         VisualStateManager.GoToState(this, "SearchCollapsed", false);
         Loaded -= OnPageLoaded;
@@ -79,8 +72,7 @@ public sealed partial class FolderSongViewPage : Page
     /// <summary>
     ///     Handles the search toggle button click to expand or collapse the search box.
     /// </summary>
-    private void OnSearchToggleButtonClick(object sender, RoutedEventArgs e)
-    {
+    private void OnSearchToggleButtonClick(object sender, RoutedEventArgs e) {
         if (_isSearchExpanded)
             CollapseSearch();
         else
@@ -90,10 +82,8 @@ public sealed partial class FolderSongViewPage : Page
     /// <summary>
     ///     Handles key down events in the search text box.
     /// </summary>
-    private void OnSearchTextBoxKeyDown(object sender, KeyRoutedEventArgs e)
-    {
-        if (e.Key == VirtualKey.Escape)
-        {
+    private void OnSearchTextBoxKeyDown(object sender, KeyRoutedEventArgs e) {
+        if (e.Key == VirtualKey.Escape) {
             CollapseSearch();
             e.Handled = true;
         }
@@ -102,8 +92,7 @@ public sealed partial class FolderSongViewPage : Page
     /// <summary>
     ///     Expands the search interface with an animation.
     /// </summary>
-    private void ExpandSearch()
-    {
+    private void ExpandSearch() {
         if (_isSearchExpanded) return;
 
         _isSearchExpanded = true;
@@ -113,8 +102,7 @@ public sealed partial class FolderSongViewPage : Page
         // Focus the search text box after the animation has started for a smooth transition.
         var timer = DispatcherQueue.CreateTimer();
         timer.Interval = TimeSpan.FromMilliseconds(150);
-        timer.Tick += (s, args) =>
-        {
+        timer.Tick += (s, args) => {
             timer.Stop();
             SearchTextBox.Focus(FocusState.Programmatic);
         };
@@ -139,16 +127,23 @@ public sealed partial class FolderSongViewPage : Page
     /// <summary>
     ///     Updates the view model with the current selection from the song list.
     /// </summary>
-    private void SongsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
+    private void SongsListView_SelectionChanged(object sender, SelectionChangedEventArgs e) {
         if (sender is ListView listView) ViewModel.OnSongsSelectionChanged(listView.SelectedItems);
+    }
+
+    /// <summary>
+    ///     Handles the double-tapped event on the song list to play the selected song.
+    /// </summary>
+    private void SongsListView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e) {
+        if (e.OriginalSource is FrameworkElement { DataContext: Song tappedSong }) {
+            ViewModel.PlaySongCommand.Execute(tappedSong);
+        }
     }
 
     /// <summary>
     ///     Handles the opening of the context menu for a song item.
     /// </summary>
-    private void SongItemMenuFlyout_Opening(object sender, object e)
-    {
+    private void SongItemMenuFlyout_Opening(object sender, object e) {
         if (sender is not MenuFlyout menuFlyout) return;
 
         // Ensure the right-clicked song is selected before showing the context menu.
@@ -165,23 +160,19 @@ public sealed partial class FolderSongViewPage : Page
     /// <summary>
     ///     Populates the "Add to playlist" submenu with available playlists from the view model.
     /// </summary>
-    private void PopulatePlaylistSubMenu(MenuFlyoutSubItem subMenu)
-    {
+    private void PopulatePlaylistSubMenu(MenuFlyoutSubItem subMenu) {
         subMenu.Items.Clear();
 
         var availablePlaylists = ViewModel.AvailablePlaylists;
 
-        if (availablePlaylists?.Any() != true)
-        {
+        if (availablePlaylists?.Any() != true) {
             // Display a disabled item if there are no playlists to add the song to.
             subMenu.Items.Add(new MenuFlyoutItem { Text = "No playlists available", IsEnabled = false });
             return;
         }
 
-        foreach (var playlist in availablePlaylists)
-        {
-            var playlistMenuItem = new MenuFlyoutItem
-            {
+        foreach (var playlist in availablePlaylists) {
+            var playlistMenuItem = new MenuFlyoutItem {
                 Text = playlist.Name,
                 Command = ViewModel.AddSelectedSongsToPlaylistCommand,
                 CommandParameter = playlist

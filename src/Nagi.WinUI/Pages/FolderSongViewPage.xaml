@@ -202,7 +202,8 @@
             ItemContainerStyle="{StaticResource SongListViewPageListViewItemStyle}"
             ItemsSource="{x:Bind ViewModel.Songs, Mode=OneWay}"
             SelectionChanged="SongsListView_SelectionChanged"
-            SelectionMode="Extended">
+            SelectionMode="Extended"
+            DoubleTapped="SongsListView_DoubleTapped">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="models:Song">
                     <Grid Height="54" ColumnSpacing="12" Background="Transparent">

@@ -15,12 +15,10 @@ namespace Nagi.WinUI.Pages;
 /// <summary>
 ///     The page for displaying and interacting with the user's music library.
 /// </summary>
-public sealed partial class LibraryPage : Page
-{
+public sealed partial class LibraryPage : Page {
     private bool _isSearchExpanded;
 
-    public LibraryPage()
-    {
+    public LibraryPage() {
         InitializeComponent();
         ViewModel = App.Services!.GetRequiredService<LibraryViewModel>();
         DataContext = ViewModel;
@@ -36,8 +34,7 @@ public sealed partial class LibraryPage : Page
     /// <summary>
     ///     Loads necessary data when the page is navigated to.
     /// </summary>
-    protected override async void OnNavigatedTo(NavigationEventArgs e)
-    {
+    protected override async void OnNavigatedTo(NavigationEventArgs e) {
         base.OnNavigatedTo(e);
 
         // Load playlists first for context menu availability.
@@ -52,8 +49,7 @@ public sealed partial class LibraryPage : Page
     ///     This ensures that if a search filter is active, it's cleared so the user
     ///     sees the full library when they return.
     /// </summary>
-    protected override void OnNavigatedFrom(NavigationEventArgs e)
-    {
+    protected override void OnNavigatedFrom(NavigationEventArgs e) {
         base.OnNavigatedFrom(e);
         ViewModel.Cleanup();
     }
@@ -61,8 +57,7 @@ public sealed partial class LibraryPage : Page
     /// <summary>
     ///     Handles the page loaded event to set initial visual state.
     /// </summary>
-    private void OnPageLoaded(object sender, RoutedEventArgs e)
-    {
+    private void OnPageLoaded(object sender, RoutedEventArgs e) {
         // Set initial search state to collapsed without animation.
         VisualStateManager.GoToState(this, "SearchCollapsed", false);
         Loaded -= OnPageLoaded;
@@ -71,8 +66,7 @@ public sealed partial class LibraryPage : Page
     /// <summary>
     ///     Handles the search toggle button click to expand or collapse the search box.
     /// </summary>
-    private void OnSearchToggleButtonClick(object sender, RoutedEventArgs e)
-    {
+    private void OnSearchToggleButtonClick(object sender, RoutedEventArgs e) {
         if (_isSearchExpanded)
             CollapseSearch();
         else
@@ -82,10 +76,8 @@ public sealed partial class LibraryPage : Page
     /// <summary>
     ///     Handles key down events in the search text box.
     /// </summary>
-    private void OnSearchTextBoxKeyDown(object sender, KeyRoutedEventArgs e)
-    {
-        if (e.Key == VirtualKey.Escape)
-        {
+    private void OnSearchTextBoxKeyDown(object sender, KeyRoutedEventArgs e) {
+        if (e.Key == VirtualKey.Escape) {
             CollapseSearch();
             e.Handled = true;
         }
@@ -94,8 +86,7 @@ public sealed partial class LibraryPage : Page
     /// <summary>
     ///     Expands the search interface with an animation.
     /// </summary>
-    private void ExpandSearch()
-    {
+    private void ExpandSearch() {
         if (_isSearchExpanded) return;
 
         _isSearchExpanded = true;
@@ -105,8 +96,7 @@ public sealed partial class LibraryPage : Page
         // Focus the search text box after the animation has started for a smooth transition.
         var timer = DispatcherQueue.CreateTimer();
         timer.Interval = TimeSpan.FromMilliseconds(150);
-        timer.Tick += (s, args) =>
-        {
+        timer.Tick += (s, args) => {
             timer.Stop();
             SearchTextBox.Focus(FocusState.Programmatic);
         };
@@ -131,20 +121,16 @@ public sealed partial class LibraryPage : Page
     ///     Handles the opening of the context menu for a song item. It dynamically populates
     ///     the "Add to playlist" submenu and ensures the right-clicked item is selected.
     /// </summary>
-    private void SongItemMenuFlyout_Opening(object sender, object e)
-    {
+    private void SongItemMenuFlyout_Opening(object sender, object e) {
         if (sender is not MenuFlyout menuFlyout) return;
 
         // Dynamically build the "Add to playlist" submenu.
         if (menuFlyout.Items.OfType<MenuFlyoutSubItem>()
-                .FirstOrDefault(item => item.Name == "AddToPlaylistSubMenu") is { } addToPlaylistSubMenu)
-        {
+                .FirstOrDefault(item => item.Name == "AddToPlaylistSubMenu") is { } addToPlaylistSubMenu) {
             addToPlaylistSubMenu.Items.Clear();
             if (ViewModel.AvailablePlaylists.Any())
-                foreach (var playlist in ViewModel.AvailablePlaylists)
-                {
-                    var playlistMenuItem = new MenuFlyoutItem
-                    {
+                foreach (var playlist in ViewModel.AvailablePlaylists) {
+                    var playlistMenuItem = new MenuFlyoutItem {
                         Text = playlist.Name,
                         Command = ViewModel.AddSelectedSongsToPlaylistCommand,
                         CommandParameter = playlist
@@ -166,8 +152,16 @@ public sealed partial class LibraryPage : Page
     /// <summary>
     ///     Notifies the ViewModel when the ListView's selection has changed.
     /// </summary>
-    private void OnListViewSelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
+    private void OnListViewSelectionChanged(object sender, SelectionChangedEventArgs e) {
         if (sender is ListView listView) ViewModel.OnSongsSelectionChanged(listView.SelectedItems);
+    }
+
+    /// <summary>
+    ///     Handles the double-tapped event on the song list to play the selected song.
+    /// </summary>
+    private void SongsListView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e) {
+        if (e.OriginalSource is FrameworkElement { DataContext: Song tappedSong }) {
+            ViewModel.PlaySongCommand.Execute(tappedSong);
+        }
     }
 }

@@ -179,7 +179,8 @@
                   SelectionChanged="SongsListView_SelectionChanged"
                   CanDragItems="{x:Bind ViewModel.IsReorderingEnabled, Mode=OneWay}"
                   CanReorderItems="{x:Bind ViewModel.IsReorderingEnabled, Mode=OneWay}"
-                  AllowDrop="{x:Bind ViewModel.IsReorderingEnabled, Mode=OneWay}">
+                  AllowDrop="{x:Bind ViewModel.IsReorderingEnabled, Mode=OneWay}"
+                  DoubleTapped="SongsListView_DoubleTapped">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="models:Song">
                     <Grid Height="54" ColumnSpacing="12" Background="Transparent">
