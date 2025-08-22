@@ -169,13 +169,10 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable
     {
         if (!IsWindowVisible)
         {
-            Debug.WriteLine("[INFO] TrayIconViewModel: Executing ToggleMainWindowVisibility (Show).");
             ShowWindow();
         }
         else if (_isHideToTrayEnabled)
         {
-            Debug.WriteLine(
-                "[INFO] TrayIconViewModel: Executing ToggleMainWindowVisibility (Minimize to Mini-Player).");
             _windowService.MinimizeToMiniPlayer();
         }
     }
@@ -197,7 +194,6 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void ExitApplication()
     {
-        Debug.WriteLine("[INFO] TrayIconViewModel: Executing ExitApplication.");
         _windowService.IsExiting = true;
         _windowService.Close();
     }

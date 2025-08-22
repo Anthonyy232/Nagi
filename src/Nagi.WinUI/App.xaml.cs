@@ -132,6 +132,41 @@ public partial class App : Application {
     }
 
     /// <summary>
+    /// Handles an activation request from an external source (e.g., a secondary instance).
+    /// This method orchestrates file queuing and window activation logic on the UI thread.
+    /// </summary>
+    /// <param name="filePath">The file path from the activation arguments, if any.</param>
+    public void HandleExternalActivation(string? filePath) {
+        MainDispatcherQueue?.TryEnqueue(() => {
+            if (_window is null) {
+                Debug.WriteLine("[ERROR] App.HandleExternalActivation: Aborted because the main window is not available.");
+                return;
+            }
+
+            // Queue the file for playback if one was provided.
+            if (!string.IsNullOrEmpty(filePath)) {
+                EnqueueFileActivation(filePath);
+            }
+
+            // Activate main window if empty file activation
+            try {
+                var shouldActivateWindow = string.IsNullOrEmpty(filePath);
+                if (shouldActivateWindow) {
+                    _window.AppWindow.Show();
+                    _window.Activate();
+                }
+            }
+            catch (Exception ex) {
+                Debug.WriteLine($"[ERROR] App.HandleExternalActivation: Exception during window activation. {ex.Message}");
+                if (string.IsNullOrEmpty(filePath)) {
+                    _window.AppWindow.Show();
+                    _window.Activate();
+                }
+            }
+        });
+    }
+
+    /// <summary>
     /// Processes the queue of file activation requests on the main UI thread.
     /// A flag ensures that the queue is processed by only one thread at a time.
     /// </summary>
@@ -165,17 +200,6 @@ public partial class App : Application {
 
         try {
             var playbackService = Services.GetRequiredService<IMusicPlaybackService>();
-            var windowService = Services.GetService<IWindowService>();
-
-            var isWindowVisible = _window?.AppWindow.IsVisible ?? false;
-            var isMiniPlayerActive = windowService?.IsMiniPlayerActive ?? false;
-
-            // Only activate the main window if it's currently visible and the mini-player isn't active.
-            // This avoids interrupting users when the app is in the system tray or in mini-player mode.
-            if (isWindowVisible && !isMiniPlayerActive) {
-                _window?.Activate();
-            }
-
             await playbackService.PlayTransientFileAsync(filePath);
         }
         catch (Exception ex) {

@@ -86,7 +86,6 @@ public static class Program {
         }
 
         if (mainInstance.IsCurrent) {
-            // Register as primary instance
             mainInstance.Activated += OnActivated;
             return false;
         }
@@ -124,41 +123,14 @@ public static class Program {
 
     /// <summary>
     /// Handles activation from secondary instances.
+    /// This method's responsibility is to pass the activation arguments
+    /// to the running App instance for processing on the UI thread.
     /// </summary>
     private static void OnActivated(object? sender, AppActivationArguments args) {
         var filePath = TryGetFilePathFromArgs(args);
         Debug.WriteLine($"[Program] Primary instance activated. File path found: {filePath ?? "None"}");
 
-        if (!string.IsNullOrEmpty(filePath)) {
-            App.CurrentApp?.EnqueueFileActivation(filePath);
-        }
-
-        // Execute window activation on UI thread
-        App.MainDispatcherQueue?.TryEnqueue(() => {
-            if (App.RootWindow is null) return;
-
-            try {
-                var windowService = App.Services?.GetService<IWindowService>();
-                var isWindowVisible = App.RootWindow.AppWindow.IsVisible;
-                var isMiniPlayerActive = windowService?.IsMiniPlayerActive ?? false;
-
-                // Show window unless opening file in mini-player mode
-                var shouldActivate = string.IsNullOrEmpty(filePath) || (isWindowVisible && !isMiniPlayerActive);
-
-                if (shouldActivate) {
-                    App.RootWindow.AppWindow.Show();
-                    App.RootWindow.Activate();
-                }
-            }
-            catch (Exception ex) {
-                Debug.WriteLine($"[ERROR] Program.OnActivated: Exception during activation handling. {ex.Message}");
-                // Fallback for simple re-launch
-                if (string.IsNullOrEmpty(filePath)) {
-                    App.RootWindow?.AppWindow.Show();
-                    App.RootWindow?.Activate();
-                }
-            }
-        });
+        App.CurrentApp?.HandleExternalActivation(filePath);
     }
 
     /// <summary>
