@@ -33,7 +33,6 @@ public partial class GenreViewViewModel : SongListViewModelBase
         : base(libraryReader, playlistService, playbackService, navigationService, dispatcherService, uiService)
     {
         GenreName = "Genre";
-        SearchTerm = string.Empty;
 
         CurrentSortOrder = SongSortOrder.TitleAsc;
         UpdateSortOrderButtonText(CurrentSortOrder);

@@ -31,7 +31,6 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         IUIService uiService)
         : base(libraryReader, playlistService, playbackService, navigationService, dispatcherService, uiService)
     {
-        SearchTerm = string.Empty;
     }
 
     [ObservableProperty] public partial string SearchTerm { get; set; }

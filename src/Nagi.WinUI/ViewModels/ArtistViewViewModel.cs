@@ -65,7 +65,6 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         // Initialize properties with default values
         ArtistName = "Artist";
         ArtistBio = "Loading biography...";
-        SearchTerm = string.Empty;
 
         CurrentSortOrder = SongSortOrder.AlbumAsc;
         UpdateSortOrderButtonText(CurrentSortOrder);
