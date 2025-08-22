@@ -587,7 +587,7 @@ public class MusicPlaybackService : IMusicPlaybackService
     {
         if (CurrentEqualizerSettings == null) return;
 
-        CurrentEqualizerSettings.Preamp = 0.0f;
+        CurrentEqualizerSettings.Preamp = 10.0f;
         for (var i = 0; i < CurrentEqualizerSettings.BandGains.Count; i++) CurrentEqualizerSettings.BandGains[i] = 0.0f;
 
         _audioPlayer.ApplyEqualizerSettings(CurrentEqualizerSettings);
