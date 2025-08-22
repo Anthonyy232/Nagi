@@ -60,7 +60,6 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
         // Initialize properties with default values
         SongTitle = "No track playing";
         ArtistName = string.Empty;
-        CurrentVolume = 50;
         VolumeIconGlyph = VolumeMediumIconGlyph;
         CurrentQueue = new ObservableCollection<Song>();
         CurrentTimeText = "0:00";

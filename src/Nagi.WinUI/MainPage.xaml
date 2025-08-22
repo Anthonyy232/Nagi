@@ -131,8 +131,7 @@
                 <Button
                     Command="{Binding DataContext.ToggleMuteCommand, ElementName=MainPageRoot}"
                     Style="{StaticResource VolumeButtonStyle}"
-                    ToolTipService.ToolTip="{Binding DataContext.VolumeButtonToolTip, ElementName=MainPageRoot, Mode=OneWay}"
-                    PointerWheelChanged="VolumeControlsWrapper_PointerWheelChanged">
+                    ToolTipService.ToolTip="{Binding DataContext.VolumeButtonToolTip, ElementName=MainPageRoot, Mode=OneWay}">
                     <FontIcon
                         FontFamily="{ThemeResource SymbolThemeFontFamily}"
                         Glyph="{Binding DataContext.VolumeIconGlyph, ElementName=MainPageRoot, Mode=OneWay}" />

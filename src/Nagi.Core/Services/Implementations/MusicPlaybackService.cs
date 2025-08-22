@@ -84,10 +84,9 @@ public class MusicPlaybackService : IMusicPlaybackService
             CurrentRepeatMode = await _settingsService.GetInitialRepeatModeAsync();
 
             CurrentEqualizerSettings = await _settingsService.GetEqualizerSettingsAsync();
-            if (CurrentEqualizerSettings == null)
-                CurrentEqualizerSettings = new EqualizerSettings
+            CurrentEqualizerSettings ??= new EqualizerSettings
                 {
-                    Preamp = 0.0f,
+                    Preamp = 10.0f,
                     BandGains = Enumerable.Repeat(0.0f, EqualizerBands.Count).ToList()
                 };
             _audioPlayer.ApplyEqualizerSettings(CurrentEqualizerSettings);
