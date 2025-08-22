@@ -350,7 +350,7 @@ public class SettingsService : IUISettingsService
     public async Task<double> GetInitialVolumeAsync()
     {
         await EnsureUnpackagedSettingsLoadedAsync();
-        return Math.Clamp(GetValue(VolumeKey, 1.0), 0.0, 1.0);
+        return Math.Clamp(GetValue(VolumeKey, 0.5), 0.0, 1.0);
     }
 
     public Task SaveVolumeAsync(double volume)
