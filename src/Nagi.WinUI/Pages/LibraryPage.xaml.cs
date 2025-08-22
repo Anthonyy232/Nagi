@@ -115,10 +115,8 @@ public sealed partial class LibraryPage : Page
 
     /// <summary>
     ///     Collapses the search interface with an animation and resets the filter.
-    ///     The data refresh is delayed to occur after the animation completes for a smoother UX.
     /// </summary>
-    private void CollapseSearch()
-    {
+    private void CollapseSearch() {
         if (!_isSearchExpanded) return;
 
         _isSearchExpanded = false;
@@ -126,37 +124,7 @@ public sealed partial class LibraryPage : Page
         // Update UI immediately and start the collapse animation.
         ToolTipService.SetToolTip(SearchToggleButton, "Search library");
         VisualStateManager.GoToState(this, "SearchCollapsed", true);
-
-        // Store the current search term to check if we need to refresh data
-        var previousSearchTerm = ViewModel.SearchTerm;
-
-        // Clear the search term. This may trigger a debounced search in the ViewModel.
         ViewModel.SearchTerm = string.Empty;
-
-        // Only schedule a data refresh if the search term was not already empty
-        // This prevents unnecessary refetching when collapsing from an empty search
-        if (!string.IsNullOrWhiteSpace(previousSearchTerm))
-        {
-            // Schedule the data refresh to happen after the animation completes.
-            // This prevents the data fetch from causing stutters in the animation.
-            var timer = DispatcherQueue.CreateTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(350); // Slightly longer than the animation duration.
-            timer.Tick += (s, args) =>
-            {
-                timer.Stop();
-                try
-                {
-                    // Execute the search command to reload the full, unfiltered list.
-                    // This command correctly cancels any pending debounce operations.
-                    _ = ViewModel.SearchCommand.ExecuteAsync(null);
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"[LibraryPage] ERROR: Failed to refresh after search collapse. {ex.Message}");
-                }
-            };
-            timer.Start();
-        }
     }
 
     /// <summary>

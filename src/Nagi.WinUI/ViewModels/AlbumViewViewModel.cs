@@ -37,7 +37,6 @@ public partial class AlbumViewViewModel : SongListViewModelBase
         AlbumTitle = "Album";
         ArtistName = "Artist";
         AlbumDetailsText = string.Empty;
-        SearchTerm = string.Empty;
 
         CurrentSortOrder = SongSortOrder.TrackNumberAsc;
         UpdateSortOrderButtonText(CurrentSortOrder);

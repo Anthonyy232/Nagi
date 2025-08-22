@@ -39,7 +39,6 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
     {
         _reorderSaveTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(200) };
         _reorderSaveTimer.Tick += ReorderSaveTimer_Tick;
-        SearchTerm = string.Empty;
     }
 
     [ObservableProperty]

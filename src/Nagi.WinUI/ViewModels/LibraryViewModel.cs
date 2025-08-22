@@ -35,7 +35,6 @@ public partial class LibraryViewModel : SongListViewModelBase
         : base(libraryReader, playlistService, playbackService, navigationService, dispatcherService, uiService)
     {
         _libraryScanner = libraryScanner;
-        SearchTerm = string.Empty;
     }
 
     [ObservableProperty] public partial string SearchTerm { get; set; }
@@ -45,7 +44,6 @@ public partial class LibraryViewModel : SongListViewModelBase
 
     partial void OnSearchTermChanged(string value)
     {
-        // When the user types in the search box, trigger a debounced search.
         TriggerDebouncedSearch();
     }
 
