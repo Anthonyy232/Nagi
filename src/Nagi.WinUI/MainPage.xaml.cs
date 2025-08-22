@@ -333,15 +333,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         VisualStateManager.GoToState(this, stateName, true);
     }
 
-    // Allows changing the volume by scrolling the mouse wheel over the volume controls.
-    private void VolumeControlsWrapper_PointerWheelChanged(object sender, PointerRoutedEventArgs e)
-    {
-        var delta = e.GetCurrentPoint(sender as UIElement).Properties.MouseWheelDelta;
-        var change = delta > 0 ? VolumeChangeStep : -VolumeChangeStep;
-        ViewModel.CurrentVolume = Math.Clamp(ViewModel.CurrentVolume + change, 0, 100);
-        e.Handled = true;
-    }
-
     private void FloatingPlayerContainer_PointerEntered(object sender, PointerRoutedEventArgs e)
     {
         _isPointerOverPlayer = true;

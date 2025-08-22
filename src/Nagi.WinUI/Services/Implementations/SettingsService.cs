@@ -129,7 +129,7 @@ public class SettingsService : IUISettingsService
         await SetStartMinimizedEnabledAsync(false);
         await SetNavigationItemsAsync(GetDefaultNavigationItems());
         await SetPlayerButtonSettingsAsync(GetDefaultPlayerButtonSettings());
-        await SaveVolumeAsync(1.0);
+        await SaveVolumeAsync(0.5);
         await SaveMuteStateAsync(false);
         await SaveShuffleStateAsync(false);
         await SaveRepeatModeAsync(RepeatMode.Off);
