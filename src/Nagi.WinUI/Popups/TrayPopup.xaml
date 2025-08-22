@@ -41,7 +41,7 @@
                     <media:ImageBlendBrush Source="{Binding AlbumArtUri}"
                                            Mode="ColorBurn"
                                            Stretch="UniformToFill"
-                                           Opacity="0.3" />
+                                           Opacity="0.2" />
                 </Border.Background>
             </Border>
 
