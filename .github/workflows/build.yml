@@ -1,4 +1,17 @@
-# .github/workflows/build.yml
+# Nagi CI/CD Pipeline
+#
+# Defines the continuous integration and deployment process for the Nagi application.
+# This workflow is triggered by pushes to the 'master' branch for CI validation
+# and by tag pushes (e.g., '1.2.3') to create and publish a new release.
+#
+# Workflow Execution Flow:
+# 1. Test: Compiles and runs unit tests as a quality gate.
+# 2. Build & Pack: If tests pass, builds and packages the application for multiple platforms in parallel.
+# 3. Create GitHub Release: If triggered by a tag, collects all packages and publishes them to a GitHub Release.
+#
+# Triggers:
+# - Push to master branch: CI validation only. (git push origin master)
+# - Push tag '1.2.3': Full pipeline including release creation. (git tag 1.2.3 -> git push origin 1.2.3)
 
 name: Nagi CI/CD with Velopack
 
@@ -10,9 +23,50 @@ on:
       - '*.*.*'
 
 jobs:
+  # ===================================================================
+  # JOB: test
+  # Purpose: Validates code integrity by running all .NET unit tests.
+  # This job acts as a quality gate; the pipeline will not proceed if tests fail.
+  # ===================================================================
+  test:
+    name: Run Unit Tests
+    runs-on: windows-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository source code
+        uses: actions/checkout@v4
+
+      - name: Install .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Run .NET Tests
+        # Executes tests and generates a TRX report for diagnostics.
+        run: >
+          dotnet test tests/Nagi.Core.Tests/Nagi.Core.Tests.csproj
+          --configuration Release
+          --logger "trx;logfilename=test-results.trx"
+
+      - name: Upload test results on failure
+        # On failure, upload the TRX test results for easier debugging from the workflow summary.
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: '**/test-results.trx'
+
+  # ===================================================================
+  # JOB: build-and-pack
+  # Purpose: Builds, publishes, and packages the application for multiple target platforms.
+  # Utilizes a matrix strategy to run these steps in parallel for each platform.
+  # ===================================================================
   build-and-pack:
     name: Build & Pack (${{ matrix.platform }})
     runs-on: windows-latest
+    needs: test # Ensures this job only runs if all tests pass.
     permissions:
       contents: read
       packages: read
@@ -24,11 +78,12 @@ jobs:
       - name: Checkout repository source code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0 # Fetches all history for accurate version detection.
 
       - name: Get and Format Application Version
         id: get_version
         shell: bash
+        # Extracts the 3-part version number (e.g., 1.2.3) from Directory.Build.props for Velopack.
         run: |
           four_part_version=$(grep -oE '<AppxPackageVersion>[^<]+' Directory.Build.props | sed 's/<AppxPackageVersion>//')
           three_part_version=$(echo "$four_part_version" | sed 's/\.[0-9]\+$//')
@@ -43,6 +98,7 @@ jobs:
         run: dotnet tool update -g vpk --prerelease
 
       - name: Create appsettings.json from repository secrets
+        # Dynamically generates the production appsettings.json using secrets to avoid committing sensitive keys.
         shell: pwsh
         run: |
           $appSettings = @{
@@ -68,6 +124,7 @@ jobs:
           -o ./publish/${{ matrix.platform }}
 
       - name: Package with Velopack
+        # Packages the published output into a Velopack release for the specified channel and runtime.
         run: >
           vpk pack --packId Nagi
           --packVersion ${{ steps.get_version.outputs.version }}
@@ -78,24 +135,31 @@ jobs:
           --runtime ${{ matrix.platform }}
 
       - name: Upload Velopack release artifacts
+        # Uploads the generated Velopack release assets for this job's platform.
         uses: actions/upload-artifact@v4
         with:
           name: VeloPack-Release-Assets-${{ matrix.platform }}
           path: ./Releases/${{ matrix.platform }}/
 
+  # ===================================================================
+  # JOB: create-github-release
+  # Purpose: Gathers all platform-specific artifacts and publishes them to a single GitHub Release.
+  # This job is conditional and only runs when a new tag is pushed.
+  # ===================================================================
   create-github-release:
     name: Create GitHub Release
     runs-on: windows-latest
-    needs: build-and-pack
+    needs: build-and-pack # Ensures this job only runs after all platform builds are complete.
     permissions:
-      contents: write
-    if: startsWith(github.ref, 'refs/tags/')
+      contents: write # Required to create/update GitHub Releases.
+    if: startsWith(github.ref, 'refs/tags/') # Condition: Only execute this job for tag pushes.
 
     steps:
       - name: Install/Update Velopack CLI (vpk)
         run: dotnet tool update -g vpk --prerelease
 
       - name: Download all Velopack artifacts
+        # Downloads all platform-specific release artifacts from the parallel build jobs.
         uses: actions/download-artifact@v4
         with:
           path: ./Downloaded-Artifacts
@@ -108,25 +172,17 @@ jobs:
           Get-ChildItem -Path "./Downloaded-Artifacts" -Recurse | ForEach-Object { Write-Host $_.FullName }
 
       - name: Reorganize artifacts for upload
+        # The download-artifact action places artifacts in subdirectories. This step
+        # re-creates the flat './Releases/[platform]' structure required by the vpk upload tool.
         shell: pwsh
         run: |
           $platforms = @("win-x64", "win-x86", "win-arm64")
-          
           foreach ($platform in $platforms) {
             $platformDir = "./Releases/$platform"
             New-Item -ItemType Directory -Path $platformDir -Force
-            
-            # Look for the specific platform artifact directory
             $artifactDir = "./Downloaded-Artifacts/VeloPack-Release-Assets-$platform"
             if (Test-Path $artifactDir) {
-              Write-Host "Processing artifacts for $platform from $artifactDir"
-              $sourceFiles = Get-ChildItem -Path $artifactDir -Recurse -File
-              foreach ($file in $sourceFiles) {
-                Copy-Item -Path $file.FullName -Destination $platformDir -Force
-                Write-Host "Copied $($file.Name) to $platformDir"
-              }
-            } else {
-              Write-Warning "Artifact directory not found: $artifactDir"
+              Copy-Item -Path "$artifactDir/*" -Destination $platformDir -Recurse -Force
             }
           }
 
@@ -134,37 +190,24 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: pwsh
+        # Uses the Velopack CLI to upload all assets. It will create a new release named after the tag
+        # or merge assets into an existing draft release for that tag.
         run: |
           $platforms = @("win-x64", "win-x86", "win-arm64")
           $repoUrl = "https://github.com/${{ github.repository }}"
           $releaseName = "Version ${{ github.ref_name }}"
 
           foreach ($platform in $platforms) {
-            Write-Host "Uploading assets for channel: $platform"
-            
             $platformDir = "./Releases/$platform"
-            if (Test-Path $platformDir) {
-              $files = Get-ChildItem -Path $platformDir -File
-              Write-Host "Found $($files.Count) files in $platformDir"
-              
-              if ($files.Count -gt 0) {
-                try {
-                  vpk upload github `
-                    --repoUrl $repoUrl `
-                    --token "${{ env.GITHUB_TOKEN }}" `
-                    --releaseName $releaseName `
-                    --channel $platform `
-                    --outputDir $platformDir `
-                    --merge
-                  Write-Host "Successfully uploaded assets for $platform"
-                } catch {
-                  Write-Error "Failed to upload assets for $platform`: $_"
-                  exit 1
-                }
-              } else {
-                Write-Warning "No files found in $platformDir"
-              }
+            if ((Get-ChildItem -Path $platformDir -File).Count -gt 0) {
+              vpk upload github `
+                --repoUrl $repoUrl `
+                --token "${{ env.GITHUB_TOKEN }}" `
+                --releaseName $releaseName `
+                --channel $platform `
+                --outputDir $platformDir `
+                --merge
             } else {
-              Write-Warning "Directory $platformDir does not exist"
+              Write-Warning "No assets found for platform '$platform'. Skipping upload."
             }
           }

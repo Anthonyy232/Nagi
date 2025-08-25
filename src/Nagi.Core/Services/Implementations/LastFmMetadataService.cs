@@ -52,8 +52,7 @@ public class LastFmMetadataService : ILastFmMetadataService
                 await response.Content.CopyToAsync(contentStream, cancellationToken);
                 contentStream.Position = 0;
 
-                if (response.IsSuccessStatusCode)
-                {
+                if (response.IsSuccessStatusCode) {
                     var lastFmResponse =
                         await JsonSerializer.DeserializeAsync<LastFmArtistResponse>(contentStream, _jsonOptions,
                             cancellationToken);
@@ -64,12 +63,15 @@ public class LastFmMetadataService : ILastFmMetadataService
                         : ServiceResult<ArtistInfo>.FromSuccessNotFound();
                 }
 
-                // Handle API-specific errors.
-                var errorResponse =
-                    await JsonSerializer.DeserializeAsync<LastFmErrorResponse>(contentStream, _jsonOptions,
-                        cancellationToken);
-                if (errorResponse?.ErrorCode == InvalidApiKeyErrorCode && attempt < MaxRetries)
-                {
+                // Handle API-specific errors
+                LastFmErrorResponse? errorResponse = null;
+                if (contentStream.Length > 0) {
+                    errorResponse =
+                        await JsonSerializer.DeserializeAsync<LastFmErrorResponse>(contentStream, _jsonOptions,
+                            cancellationToken);
+                }
+
+                if (errorResponse?.ErrorCode == InvalidApiKeyErrorCode && attempt < MaxRetries) {
                     Debug.WriteLine("[LastFmService] Invalid Last.fm API key. Refreshing and retrying.");
                     apiKey = await _apiKeyService.RefreshApiKeyAsync(ApiKeyName, cancellationToken);
                     if (string.IsNullOrEmpty(apiKey))

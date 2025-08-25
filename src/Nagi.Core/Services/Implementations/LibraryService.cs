@@ -281,131 +281,119 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     }
 
     /// <inheritdoc />
-    public Task<bool> RescanFolderForMusicAsync(Guid folderId, IProgress<ScanProgress>? progress = null,
-        CancellationToken cancellationToken = default)
-    {
-        return Task.Run(async () =>
-        {
-            try
+    public async Task<bool> RescanFolderForMusicAsync(Guid folderId, IProgress<ScanProgress>? progress = null,
+    CancellationToken cancellationToken = default) {
+        try {
+            return await Task.Run(async () =>
             {
-                var folder = await GetFolderByIdAsync(folderId);
-                if (folder is null)
-                {
-                    progress?.Report(new ScanProgress { StatusText = "Folder not found.", Percentage = 100 });
+                try {
+                    var folder = await GetFolderByIdAsync(folderId);
+                    if (folder is null) {
+                        progress?.Report(new ScanProgress { StatusText = "Folder not found.", Percentage = 100 });
+                        return false;
+                    }
+
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    if (!_fileSystem.DirectoryExists(folder.Path)) {
+                        progress?.Report(new ScanProgress { StatusText = "Folder path no longer exists. Removing from library.", Percentage = 100 });
+                        return await RemoveFolderAsync(folderId);
+                    }
+
+                    progress?.Report(new ScanProgress { StatusText = $"Analyzing '{folder.Name}'...", IsIndeterminate = true });
+                    var (filesToAdd, filesToUpdate, filesToDelete) =
+                        await AnalyzeFolderChangesAsync(folderId, folder.Path, cancellationToken);
+
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    if (filesToDelete.Any()) {
+                        progress?.Report(new ScanProgress { StatusText = "Cleaning up your library...", IsIndeterminate = true });
+                        await using var deleteContext = await _contextFactory.CreateDbContextAsync();
+
+                        var songsToDeleteQuery = deleteContext.Songs
+                            .Where(s => s.FolderId == folderId && filesToDelete.Contains(s.FilePath));
+
+                        var lrcPathsToDelete = await songsToDeleteQuery
+                            .Where(s => s.LrcFilePath != null)
+                            .Select(s => s.LrcFilePath!)
+                            .ToListAsync(cancellationToken);
+
+                        var albumArtPathsToDelete = await songsToDeleteQuery
+                            .Where(s => s.AlbumArtUriFromTrack != null)
+                            .Select(s => s.AlbumArtUriFromTrack!)
+                            .Distinct()
+                            .ToListAsync(cancellationToken);
+
+                        await songsToDeleteQuery.ExecuteDeleteAsync(cancellationToken);
+
+                        foreach (var lrcPath in lrcPathsToDelete)
+                            if (IsPathInLrcCache(lrcPath))
+                                try {
+                                    _fileSystem.DeleteFile(lrcPath);
+                                }
+                                catch (Exception ex) {
+                                    Debug.WriteLine(
+                                        $"[{nameof(LibraryService)}] Failed to delete cached LRC file '{lrcPath}' during rescan. {ex.Message}");
+                                }
+
+                        foreach (var artPath in albumArtPathsToDelete)
+                            try {
+                                if (_fileSystem.FileExists(artPath)) _fileSystem.DeleteFile(artPath);
+                            }
+                            catch (Exception ex) {
+                                Debug.WriteLine(
+                                    $"[{nameof(LibraryService)}] Failed to delete orphaned album art file '{artPath}' during rescan. {ex.Message}");
+                            }
+                    }
+
+                    var filesToProcess = filesToAdd.Concat(filesToUpdate).ToList();
+                    if (!filesToProcess.Any()) {
+                        progress?.Report(new ScanProgress { StatusText = "Scan complete. No new songs found.", Percentage = 100 });
+                        return filesToDelete.Any();
+                    }
+
+                    var extractedMetadata =
+                        await ExtractMetadataConcurrentlyAsync(filesToProcess, progress, cancellationToken);
+
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    var newSongsFound = 0;
+                    if (extractedMetadata.Any())
+                        newSongsFound =
+                            await BatchUpdateDatabaseAsync(folderId, extractedMetadata, progress, cancellationToken);
+
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    progress?.Report(new ScanProgress { StatusText = "Finalizing...", IsIndeterminate = true });
+                    await using (var finalContext = await _contextFactory.CreateDbContextAsync()) {
+                        await CleanUpOrphanedEntitiesAsync(finalContext, cancellationToken);
+                    }
+
+                    var pluralSong = newSongsFound == 1 ? "song" : "songs";
+                    var summary = newSongsFound > 0
+                        ? $"Scan complete. Added {newSongsFound:N0} new {pluralSong}."
+                        : "Scan complete. No new songs found.";
+                    progress?.Report(new ScanProgress { StatusText = summary, Percentage = 100, NewSongsFound = newSongsFound });
+                    return true;
+                }
+                catch (OperationCanceledException) {
+                    Debug.WriteLine($"[{nameof(LibraryService)}] Scan for folder ID '{folderId}' was cancelled.");
+                    progress?.Report(new ScanProgress { StatusText = "Scan cancelled by user.", Percentage = 100 });
                     return false;
                 }
-
-                cancellationToken.ThrowIfCancellationRequested();
-
-                if (!_fileSystem.DirectoryExists(folder.Path))
-                {
-                    progress?.Report(new ScanProgress
-                        { StatusText = "Folder path no longer exists. Removing from library.", Percentage = 100 });
-                    return await RemoveFolderAsync(folderId);
+                catch (Exception ex) {
+                    Debug.WriteLine(
+                        $"[{nameof(LibraryService)}] FATAL: Rescan for folder ID '{folderId}' failed. Exception: {ex}");
+                    progress?.Report(new ScanProgress { StatusText = "An error occurred during the scan. Please check the logs.", Percentage = 100 });
+                    return false;
                 }
-
-                progress?.Report(new ScanProgress
-                    { StatusText = $"Analyzing '{folder.Name}'...", IsIndeterminate = true });
-                var (filesToAdd, filesToUpdate, filesToDelete) =
-                    await AnalyzeFolderChangesAsync(folderId, folder.Path, cancellationToken);
-
-                cancellationToken.ThrowIfCancellationRequested();
-
-                if (filesToDelete.Any())
-                {
-                    progress?.Report(new ScanProgress
-                        { StatusText = "Cleaning up your library...", IsIndeterminate = true });
-                    await using var deleteContext = await _contextFactory.CreateDbContextAsync();
-
-                    var songsToDeleteQuery = deleteContext.Songs
-                        .Where(s => s.FolderId == folderId && filesToDelete.Contains(s.FilePath));
-
-                    var lrcPathsToDelete = await songsToDeleteQuery
-                        .Where(s => s.LrcFilePath != null)
-                        .Select(s => s.LrcFilePath!)
-                        .ToListAsync(cancellationToken);
-
-                    var albumArtPathsToDelete = await songsToDeleteQuery
-                        .Where(s => s.AlbumArtUriFromTrack != null)
-                        .Select(s => s.AlbumArtUriFromTrack!)
-                        .Distinct()
-                        .ToListAsync(cancellationToken);
-
-                    await songsToDeleteQuery.ExecuteDeleteAsync(cancellationToken);
-
-                    foreach (var lrcPath in lrcPathsToDelete)
-                        if (IsPathInLrcCache(lrcPath))
-                            try
-                            {
-                                _fileSystem.DeleteFile(lrcPath);
-                            }
-                            catch (Exception ex)
-                            {
-                                Debug.WriteLine(
-                                    $"[{nameof(LibraryService)}] Failed to delete cached LRC file '{lrcPath}' during rescan. {ex.Message}");
-                            }
-
-                    foreach (var artPath in albumArtPathsToDelete)
-                        try
-                        {
-                            if (_fileSystem.FileExists(artPath)) _fileSystem.DeleteFile(artPath);
-                        }
-                        catch (Exception ex)
-                        {
-                            Debug.WriteLine(
-                                $"[{nameof(LibraryService)}] Failed to delete orphaned album art file '{artPath}' during rescan. {ex.Message}");
-                        }
-                }
-
-                var filesToProcess = filesToAdd.Concat(filesToUpdate).ToList();
-                if (!filesToProcess.Any())
-                {
-                    progress?.Report(new ScanProgress
-                        { StatusText = "Scan complete. No new songs found.", Percentage = 100 });
-                    return filesToDelete.Any();
-                }
-
-                var extractedMetadata =
-                    await ExtractMetadataConcurrentlyAsync(filesToProcess, progress, cancellationToken);
-
-                cancellationToken.ThrowIfCancellationRequested();
-
-                var newSongsFound = 0;
-                if (extractedMetadata.Any())
-                    newSongsFound =
-                        await BatchUpdateDatabaseAsync(folderId, extractedMetadata, progress, cancellationToken);
-
-                cancellationToken.ThrowIfCancellationRequested();
-
-                progress?.Report(new ScanProgress { StatusText = "Finalizing...", IsIndeterminate = true });
-                await using (var finalContext = await _contextFactory.CreateDbContextAsync())
-                {
-                    await CleanUpOrphanedEntitiesAsync(finalContext, cancellationToken);
-                }
-
-                var pluralSong = newSongsFound == 1 ? "song" : "songs";
-                var summary = newSongsFound > 0
-                    ? $"Scan complete. Added {newSongsFound:N0} new {pluralSong}."
-                    : "Scan complete. No new songs found.";
-                progress?.Report(new ScanProgress
-                    { StatusText = summary, Percentage = 100, NewSongsFound = newSongsFound });
-                return true;
-            }
-            catch (OperationCanceledException)
-            {
-                Debug.WriteLine($"[{nameof(LibraryService)}] Scan for folder ID '{folderId}' was cancelled.");
-                progress?.Report(new ScanProgress { StatusText = "Scan cancelled by user.", Percentage = 100 });
-                return false;
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(
-                    $"[{nameof(LibraryService)}] FATAL: Rescan for folder ID '{folderId}' failed. Exception: {ex}");
-                progress?.Report(new ScanProgress
-                    { StatusText = "An error occurred during the scan. Please check the logs.", Percentage = 100 });
-                return false;
-            }
-        }, cancellationToken);
+            }, cancellationToken);
+        }
+        catch (OperationCanceledException) {
+            Debug.WriteLine($"[{nameof(LibraryService)}] Scan for folder ID '{folderId}' was cancelled before it began.");
+            progress?.Report(new ScanProgress { StatusText = "Scan cancelled by user.", Percentage = 100 });
+            return false;
+        }
     }
 
     /// <inheritdoc />
