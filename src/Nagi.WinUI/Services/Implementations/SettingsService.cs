@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -9,6 +8,7 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.Storage;
 using Windows.UI.ViewManagement;
+using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.Win32;
 using Nagi.Core.Helpers;
@@ -26,8 +26,7 @@ namespace Nagi.WinUI.Services.Implementations;
 ///     both packaged (MSIX) and unpackaged deployments, storing settings in the appropriate location.
 ///     For unpackaged deployments, file writes are debounced to improve performance.
 /// </summary>
-public class SettingsService : IUISettingsService
-{
+public class SettingsService : IUISettingsService {
     private const string AppName = "Nagi";
     private const string AutoLaunchRegistryValueName = AppName;
     private const string StartupTaskId = "NagiAutolaunchStartup";
@@ -65,16 +64,17 @@ public class SettingsService : IUISettingsService
     private readonly TimeSpan _saveDebounceDelay = TimeSpan.FromMilliseconds(500);
     private readonly SemaphoreSlim _settingsFileLock = new(1, 1);
     private readonly UISettings _uiSettings = new();
+    private readonly ILogger<SettingsService> _logger;
     private volatile bool _isInitialized;
     private int _isSaveQueued;
 
     private Dictionary<string, object?> _settings;
 
-    public SettingsService(IPathConfiguration pathConfig, ICredentialLockerService credentialLockerService)
-    {
+    public SettingsService(IPathConfiguration pathConfig, ICredentialLockerService credentialLockerService, ILogger<SettingsService> logger) {
         _pathConfig = pathConfig ?? throw new ArgumentNullException(nameof(pathConfig));
         _credentialLockerService =
             credentialLockerService ?? throw new ArgumentNullException(nameof(credentialLockerService));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _isPackaged = pathConfig.IsPackaged;
         _settings = new Dictionary<string, object?>();
 
@@ -95,19 +95,15 @@ public class SettingsService : IUISettingsService
     public event Action<bool>? TransparencyEffectsSettingChanged;
     public event Action<BackdropMaterial>? BackdropMaterialChanged;
 
-    public bool IsTransparencyEffectsEnabled()
-    {
+    public bool IsTransparencyEffectsEnabled() {
         return _uiSettings.AdvancedEffectsEnabled;
     }
 
-    public async Task ResetToDefaultsAsync()
-    {
-        if (_isPackaged)
-        {
+    public async Task ResetToDefaultsAsync() {
+        if (_isPackaged) {
             _localSettings!.Values.Clear();
         }
-        else
-        {
+        else {
             await EnsureUnpackagedSettingsLoadedAsync();
             _settings.Clear();
             if (File.Exists(_pathConfig.SettingsFilePath)) File.Delete(_pathConfig.SettingsFilePath);
@@ -138,11 +134,10 @@ public class SettingsService : IUISettingsService
         await ClearLastFmCredentialsAsync();
         await SetEqualizerSettingsAsync(new EqualizerSettings());
 
-        Debug.WriteLine("[SettingsService] All application settings have been reset to their default values.");
+        _logger.LogInformation("All application settings have been reset to their default values.");
     }
 
-    private void OnAdvancedEffectsEnabledChanged(UISettings sender, object args)
-    {
+    private void OnAdvancedEffectsEnabledChanged(UISettings sender, object args) {
         TransparencyEffectsSettingChanged?.Invoke(_uiSettings.AdvancedEffectsEnabled);
     }
 
@@ -150,17 +145,14 @@ public class SettingsService : IUISettingsService
     ///     For unpackaged deployments, ensures the settings dictionary is loaded from the JSON file on disk.
     ///     This operation is thread-safe and will only execute once.
     /// </summary>
-    private async Task EnsureUnpackagedSettingsLoadedAsync()
-    {
+    private async Task EnsureUnpackagedSettingsLoadedAsync() {
         if (_isPackaged || _isInitialized) return;
 
         await _settingsFileLock.WaitAsync();
-        try
-        {
+        try {
             if (_isInitialized) return;
 
-            if (File.Exists(_pathConfig.SettingsFilePath))
-            {
+            if (File.Exists(_pathConfig.SettingsFilePath)) {
                 var json = await File.ReadAllTextAsync(_pathConfig.SettingsFilePath);
                 _settings = JsonSerializer.Deserialize<Dictionary<string, object?>>(json) ??
                             new Dictionary<string, object?>();
@@ -168,15 +160,12 @@ public class SettingsService : IUISettingsService
 
             _isInitialized = true;
         }
-        catch (Exception ex)
-        {
-            Debug.WriteLine(
-                $"[SettingsService] Failed to read settings file. A new one will be created. Error: {ex.Message}");
+        catch (Exception ex) {
+            _logger.LogWarning(ex, "Failed to read settings file. A new one will be created.");
             _settings = new Dictionary<string, object?>();
             _isInitialized = true;
         }
-        finally
-        {
+        finally {
             _settingsFileLock.Release();
         }
     }
@@ -185,45 +174,35 @@ public class SettingsService : IUISettingsService
     ///     Queues a request to save the settings to a file for unpackaged deployments.
     ///     This operation is debounced to prevent excessive I/O during rapid changes.
     /// </summary>
-    private async Task QueueSaveAsync()
-    {
-        if (Interlocked.CompareExchange(ref _isSaveQueued, 1, 0) == 0)
-        {
+    private async Task QueueSaveAsync() {
+        if (Interlocked.CompareExchange(ref _isSaveQueued, 1, 0) == 0) {
             await Task.Delay(_saveDebounceDelay);
 
             await _settingsFileLock.WaitAsync();
-            try
-            {
+            try {
                 var json = JsonSerializer.Serialize(_settings, _serializerOptions);
                 await File.WriteAllTextAsync(_pathConfig.SettingsFilePath, json);
             }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"[SettingsService] CRITICAL: Failed to save settings to file. Error: {ex.Message}");
+            catch (Exception ex) {
+                _logger.LogError(ex, "CRITICAL: Failed to save settings to file.");
             }
-            finally
-            {
+            finally {
                 _settingsFileLock.Release();
                 Interlocked.Exchange(ref _isSaveQueued, 0);
             }
         }
     }
 
-    private T GetValue<T>(string key, T defaultValue)
-    {
-        if (_isPackaged)
-        {
+    private T GetValue<T>(string key, T defaultValue) {
+        if (_isPackaged) {
             return _localSettings!.Values.TryGetValue(key, out var value) && value is T v ? v : defaultValue;
         }
-        else
-        {
+        else {
             if (_settings.TryGetValue(key, out var value) && value != null)
-                try
-                {
+                try {
                     if (value is JsonElement element) return element.Deserialize<T>() ?? defaultValue;
                 }
-                catch (JsonException)
-                {
+                catch (JsonException) {
                     return defaultValue;
                 }
 
@@ -231,47 +210,38 @@ public class SettingsService : IUISettingsService
         }
     }
 
-    private async Task<T?> GetComplexValueAsync<T>(string key) where T : class
-    {
+    private async Task<T?> GetComplexValueAsync<T>(string key) where T : class {
         string? json = null;
 
-        if (_isPackaged)
-        {
+        if (_isPackaged) {
             if (_localSettings!.Values.TryGetValue(key, out var value) && value is string jsonString) json = jsonString;
         }
-        else
-        {
+        else {
             await EnsureUnpackagedSettingsLoadedAsync();
             if (_settings.TryGetValue(key, out var value) && value != null)
                 json = (value as JsonElement?)?.GetRawText() ?? value as string;
         }
 
         if (json != null)
-            try
-            {
+            try {
                 return JsonSerializer.Deserialize<T>(json);
             }
-            catch (JsonException ex)
-            {
-                Debug.WriteLine(
-                    $"[SettingsService] Failed to deserialize complex value for key '{key}'. Error: {ex.Message}");
+            catch (JsonException ex) {
+                _logger.LogWarning(ex, "Failed to deserialize complex value for key '{Key}'.", key);
                 return null;
             }
 
         return null;
     }
 
-    private TEnum GetEnumValue<TEnum>(string key, TEnum defaultValue) where TEnum : struct, Enum
-    {
+    private TEnum GetEnumValue<TEnum>(string key, TEnum defaultValue) where TEnum : struct, Enum {
         string? name = null;
 
-        if (_isPackaged)
-        {
+        if (_isPackaged) {
             if (_localSettings!.Values.TryGetValue(key, out var value) && value is string stringValue)
                 name = stringValue;
         }
-        else
-        {
+        else {
             if (_settings.TryGetValue(key, out var value) && value is JsonElement element) name = element.GetString();
         }
 
@@ -280,25 +250,20 @@ public class SettingsService : IUISettingsService
         return defaultValue;
     }
 
-    private async Task SetValueAsync<T>(string key, T value)
-    {
-        if (_isPackaged)
-        {
+    private async Task SetValueAsync<T>(string key, T value) {
+        if (_isPackaged) {
             if (typeof(T).IsClass && typeof(T) != typeof(string))
                 _localSettings!.Values[key] = JsonSerializer.Serialize(value, _serializerOptions);
             else
                 _localSettings!.Values[key] = value;
         }
-        else
-        {
+        else {
             await EnsureUnpackagedSettingsLoadedAsync();
 
-            if (value is null)
-            {
+            if (value is null) {
                 _settings[key] = null;
             }
-            else
-            {
+            else {
                 var serializedValue = JsonSerializer.Serialize(value);
                 _settings[key] = JsonDocument.Parse(serializedValue).RootElement.Clone();
             }
@@ -307,8 +272,7 @@ public class SettingsService : IUISettingsService
         }
     }
 
-    private async Task SetValueAndNotifyAsync<T>(string key, T newValue, T defaultValue, Action<T>? notifier)
-    {
+    private async Task SetValueAndNotifyAsync<T>(string key, T newValue, T defaultValue, Action<T>? notifier) {
         await EnsureUnpackagedSettingsLoadedAsync();
         var currentValue = GetValue(key, defaultValue);
 
@@ -316,8 +280,7 @@ public class SettingsService : IUISettingsService
         await SetValueAsync(key, newValue);
     }
 
-    private List<NavigationItemSetting> GetDefaultNavigationItems()
-    {
+    private List<NavigationItemSetting> GetDefaultNavigationItems() {
         return new List<NavigationItemSetting>
         {
             new() { DisplayName = "Library", Tag = "library", IconGlyph = "\uE1D3", IsEnabled = true },
@@ -329,8 +292,7 @@ public class SettingsService : IUISettingsService
         };
     }
 
-    private List<PlayerButtonSetting> GetDefaultPlayerButtonSettings()
-    {
+    private List<PlayerButtonSetting> GetDefaultPlayerButtonSettings() {
         return new List<PlayerButtonSetting>
         {
             new() { Id = "Shuffle", DisplayName = "Shuffle", IconGlyph = "\uE8B1", IsEnabled = true },
@@ -347,119 +309,97 @@ public class SettingsService : IUISettingsService
 
     #region Core Settings (ISettingsService)
 
-    public async Task<double> GetInitialVolumeAsync()
-    {
+    public async Task<double> GetInitialVolumeAsync() {
         await EnsureUnpackagedSettingsLoadedAsync();
         return Math.Clamp(GetValue(VolumeKey, 0.5), 0.0, 1.0);
     }
 
-    public Task SaveVolumeAsync(double volume)
-    {
+    public Task SaveVolumeAsync(double volume) {
         return SetValueAsync(VolumeKey, Math.Clamp(volume, 0.0, 1.0));
     }
 
-    public async Task<bool> GetInitialMuteStateAsync()
-    {
+    public async Task<bool> GetInitialMuteStateAsync() {
         await EnsureUnpackagedSettingsLoadedAsync();
         return GetValue(MuteStateKey, false);
     }
 
-    public Task SaveMuteStateAsync(bool isMuted)
-    {
+    public Task SaveMuteStateAsync(bool isMuted) {
         return SetValueAsync(MuteStateKey, isMuted);
     }
 
-    public async Task<bool> GetInitialShuffleStateAsync()
-    {
+    public async Task<bool> GetInitialShuffleStateAsync() {
         await EnsureUnpackagedSettingsLoadedAsync();
         return GetValue(ShuffleStateKey, false);
     }
 
-    public Task SaveShuffleStateAsync(bool isEnabled)
-    {
+    public Task SaveShuffleStateAsync(bool isEnabled) {
         return SetValueAsync(ShuffleStateKey, isEnabled);
     }
 
-    public async Task<RepeatMode> GetInitialRepeatModeAsync()
-    {
+    public async Task<RepeatMode> GetInitialRepeatModeAsync() {
         await EnsureUnpackagedSettingsLoadedAsync();
         return GetEnumValue(RepeatModeKey, RepeatMode.Off);
     }
 
-    public Task SaveRepeatModeAsync(RepeatMode mode)
-    {
+    public Task SaveRepeatModeAsync(RepeatMode mode) {
         return SetValueAsync(RepeatModeKey, mode.ToString());
     }
 
-    public async Task<bool> GetRestorePlaybackStateEnabledAsync()
-    {
+    public async Task<bool> GetRestorePlaybackStateEnabledAsync() {
         await EnsureUnpackagedSettingsLoadedAsync();
         return GetValue(RestorePlaybackStateEnabledKey, true);
     }
 
-    public Task SetRestorePlaybackStateEnabledAsync(bool isEnabled)
-    {
+    public Task SetRestorePlaybackStateEnabledAsync(bool isEnabled) {
         return SetValueAsync(RestorePlaybackStateEnabledKey, isEnabled);
     }
 
-    public async Task<bool> GetFetchOnlineMetadataEnabledAsync()
-    {
+    public async Task<bool> GetFetchOnlineMetadataEnabledAsync() {
         await EnsureUnpackagedSettingsLoadedAsync();
         return GetValue(FetchOnlineMetadataKey, false);
     }
 
-    public Task SetFetchOnlineMetadataEnabledAsync(bool isEnabled)
-    {
+    public Task SetFetchOnlineMetadataEnabledAsync(bool isEnabled) {
         return SetValueAsync(FetchOnlineMetadataKey, isEnabled);
     }
 
-    public async Task<bool> GetDiscordRichPresenceEnabledAsync()
-    {
+    public async Task<bool> GetDiscordRichPresenceEnabledAsync() {
         await EnsureUnpackagedSettingsLoadedAsync();
         return GetValue(DiscordRichPresenceEnabledKey, false);
     }
 
-    public Task SetDiscordRichPresenceEnabledAsync(bool isEnabled)
-    {
+    public Task SetDiscordRichPresenceEnabledAsync(bool isEnabled) {
         return SetValueAndNotifyAsync(DiscordRichPresenceEnabledKey, isEnabled, false,
             DiscordRichPresenceSettingChanged);
     }
 
-    public async Task SavePlaybackStateAsync(PlaybackState? state)
-    {
-        if (state == null)
-        {
+    public async Task SavePlaybackStateAsync(PlaybackState? state) {
+        if (state == null) {
             await ClearPlaybackStateAsync();
             return;
         }
 
         var jsonState = JsonSerializer.Serialize(state, _serializerOptions);
 
-        if (_isPackaged)
-        {
+        if (_isPackaged) {
             var stateFile = await ApplicationData.Current.LocalFolder.CreateFileAsync(
                 Path.GetFileName(_pathConfig.PlaybackStateFilePath), CreationCollisionOption.ReplaceExisting);
             await FileIO.WriteTextAsync(stateFile, jsonState);
         }
-        else
-        {
+        else {
             await File.WriteAllTextAsync(_pathConfig.PlaybackStateFilePath, jsonState);
         }
     }
 
-    public async Task<PlaybackState?> GetPlaybackStateAsync()
-    {
-        try
-        {
+    public async Task<PlaybackState?> GetPlaybackStateAsync() {
+        try {
             string? jsonState = null;
-            if (_isPackaged)
-            {
+            if (_isPackaged) {
                 var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(
                     Path.GetFileName(_pathConfig.PlaybackStateFilePath));
                 if (item is IStorageFile stateFile) jsonState = await FileIO.ReadTextAsync(stateFile);
             }
-            else
-            {
+            else {
                 if (!File.Exists(_pathConfig.PlaybackStateFilePath)) return null;
                 jsonState = await File.ReadAllTextAsync(_pathConfig.PlaybackStateFilePath);
             }
@@ -467,100 +407,82 @@ public class SettingsService : IUISettingsService
             if (string.IsNullOrEmpty(jsonState)) return null;
             return JsonSerializer.Deserialize<PlaybackState>(jsonState);
         }
-        catch (FileNotFoundException)
-        {
+        catch (FileNotFoundException) {
             return null;
         }
-        catch (Exception ex)
-        {
-            Debug.WriteLine($"[SettingsService] Error reading PlaybackState: {ex.Message}");
+        catch (Exception ex) {
+            _logger.LogWarning(ex, "Error reading PlaybackState.");
             await ClearPlaybackStateAsync();
             return null;
         }
     }
 
-    public async Task ClearPlaybackStateAsync()
-    {
-        try
-        {
-            if (_isPackaged)
-            {
+    public async Task ClearPlaybackStateAsync() {
+        try {
+            if (_isPackaged) {
                 var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(
                     Path.GetFileName(_pathConfig.PlaybackStateFilePath));
                 if (item != null) await item.DeleteAsync();
             }
-            else
-            {
+            else {
                 if (File.Exists(_pathConfig.PlaybackStateFilePath)) File.Delete(_pathConfig.PlaybackStateFilePath);
             }
         }
-        catch (Exception ex)
-        {
-            Debug.WriteLine($"[SettingsService] Error clearing PlaybackState file: {ex.Message}");
+        catch (Exception ex) {
+            _logger.LogWarning(ex, "Error clearing PlaybackState file.");
         }
     }
 
-    public async Task<bool> GetLastFmScrobblingEnabledAsync()
-    {
+    public async Task<bool> GetLastFmScrobblingEnabledAsync() {
         await EnsureUnpackagedSettingsLoadedAsync();
         return GetValue(LastFmScrobblingEnabledKey, false);
     }
 
-    public async Task SetLastFmScrobblingEnabledAsync(bool isEnabled)
-    {
+    public async Task SetLastFmScrobblingEnabledAsync(bool isEnabled) {
         await SetValueAsync(LastFmScrobblingEnabledKey, isEnabled);
         LastFmSettingsChanged?.Invoke();
     }
 
-    public async Task<bool> GetLastFmNowPlayingEnabledAsync()
-    {
+    public async Task<bool> GetLastFmNowPlayingEnabledAsync() {
         await EnsureUnpackagedSettingsLoadedAsync();
         return GetValue(LastFmNowPlayingEnabledKey, false);
     }
 
-    public async Task SetLastFmNowPlayingEnabledAsync(bool isEnabled)
-    {
+    public async Task SetLastFmNowPlayingEnabledAsync(bool isEnabled) {
         await SetValueAsync(LastFmNowPlayingEnabledKey, isEnabled);
         LastFmSettingsChanged?.Invoke();
     }
 
-    public Task<(string? Username, string? SessionKey)?> GetLastFmCredentialsAsync()
-    {
+    public Task<(string? Username, string? SessionKey)?> GetLastFmCredentialsAsync() {
         return Task.FromResult(_credentialLockerService.RetrieveCredential(LastFmCredentialResource));
     }
 
-    public Task SaveLastFmCredentialsAsync(string username, string sessionKey)
-    {
+    public Task SaveLastFmCredentialsAsync(string username, string sessionKey) {
         _credentialLockerService.SaveCredential(LastFmCredentialResource, username, sessionKey);
         return Task.CompletedTask;
     }
 
-    public async Task ClearLastFmCredentialsAsync()
-    {
+    public async Task ClearLastFmCredentialsAsync() {
         _credentialLockerService.RemoveCredential(LastFmCredentialResource);
         await SetLastFmScrobblingEnabledAsync(false);
         await SetLastFmNowPlayingEnabledAsync(false);
         await SaveLastFmAuthTokenAsync(null);
     }
 
-    public Task SaveLastFmAuthTokenAsync(string? token)
-    {
+    public Task SaveLastFmAuthTokenAsync(string? token) {
         return SetValueAsync(LastFmAuthTokenKey, token);
     }
 
-    public async Task<string?> GetLastFmAuthTokenAsync()
-    {
+    public async Task<string?> GetLastFmAuthTokenAsync() {
         await EnsureUnpackagedSettingsLoadedAsync();
         return GetValue<string?>(LastFmAuthTokenKey, null);
     }
 
-    public Task<EqualizerSettings?> GetEqualizerSettingsAsync()
-    {
+    public Task<EqualizerSettings?> GetEqualizerSettingsAsync() {
         return GetComplexValueAsync<EqualizerSettings>(EqualizerSettingsKey);
     }
 
-    public Task SetEqualizerSettingsAsync(EqualizerSettings settings)
-    {
+    public Task SetEqualizerSettingsAsync(EqualizerSettings settings) {
         return SetValueAsync(EqualizerSettingsKey, settings);
     }
 
@@ -568,162 +490,131 @@ public class SettingsService : IUISettingsService
 
     #region UI Settings (IUISettingsService)
 
-    public async Task<ElementTheme> GetThemeAsync()
-    {
+    public async Task<ElementTheme> GetThemeAsync() {
         await EnsureUnpackagedSettingsLoadedAsync();
         return GetEnumValue(ThemeKey, ElementTheme.Default);
     }
 
-    public Task SetThemeAsync(ElementTheme theme)
-    {
+    public Task SetThemeAsync(ElementTheme theme) {
         return SetValueAsync(ThemeKey, theme.ToString());
     }
 
-    public async Task<BackdropMaterial> GetBackdropMaterialAsync()
-    {
+    public async Task<BackdropMaterial> GetBackdropMaterialAsync() {
         await EnsureUnpackagedSettingsLoadedAsync();
         return GetEnumValue(BackdropMaterialKey, BackdropMaterial.Mica);
     }
 
-    public async Task SetBackdropMaterialAsync(BackdropMaterial material)
-    {
+    public async Task SetBackdropMaterialAsync(BackdropMaterial material) {
         await SetValueAsync(BackdropMaterialKey, material.ToString());
         BackdropMaterialChanged?.Invoke(material);
     }
 
-    public async Task<bool> GetDynamicThemingAsync()
-    {
+    public async Task<bool> GetDynamicThemingAsync() {
         await EnsureUnpackagedSettingsLoadedAsync();
         return GetValue(DynamicThemingKey, true);
     }
 
-    public Task SetDynamicThemingAsync(bool isEnabled)
-    {
+    public Task SetDynamicThemingAsync(bool isEnabled) {
         return SetValueAsync(DynamicThemingKey, isEnabled);
     }
 
-    public async Task<bool> GetPlayerAnimationEnabledAsync()
-    {
+    public async Task<bool> GetPlayerAnimationEnabledAsync() {
         await EnsureUnpackagedSettingsLoadedAsync();
         return GetValue(PlayerAnimationEnabledKey, true);
     }
 
-    public Task SetPlayerAnimationEnabledAsync(bool isEnabled)
-    {
+    public Task SetPlayerAnimationEnabledAsync(bool isEnabled) {
         return SetValueAndNotifyAsync(PlayerAnimationEnabledKey, isEnabled, true, PlayerAnimationSettingChanged);
     }
 
-    public async Task<bool> GetAutoLaunchEnabledAsync()
-    {
-        if (_isPackaged)
-        {
+    public async Task<bool> GetAutoLaunchEnabledAsync() {
+        if (_isPackaged) {
             var startupTask = await StartupTask.GetAsync(StartupTaskId);
             return startupTask.State is StartupTaskState.Enabled;
         }
 
-        return await Task.Run(() =>
-        {
+        return await Task.Run(() => {
             using var key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", false);
             return key?.GetValue(AutoLaunchRegistryValueName) != null;
         });
     }
 
-    public async Task SetAutoLaunchEnabledAsync(bool isEnabled)
-    {
-        if (_isPackaged)
-        {
+    public async Task SetAutoLaunchEnabledAsync(bool isEnabled) {
+        if (_isPackaged) {
             var startupTask = await StartupTask.GetAsync(StartupTaskId);
-            if (isEnabled)
-            {
+            if (isEnabled) {
                 var state = await startupTask.RequestEnableAsync();
                 if (state is not StartupTaskState.Enabled and not StartupTaskState.EnabledByPolicy)
-                    Debug.WriteLine(
-                        $"[SettingsService] StartupTask enable request did not result in 'Enabled' state. Current state: {state}");
+                    _logger.LogWarning("StartupTask enable request did not result in 'Enabled' state. Current state: {State}", state);
             }
-            else
-            {
+            else {
                 startupTask.Disable();
             }
         }
-        else
-        {
-            await Task.Run(() =>
-            {
+        else {
+            await Task.Run(() => {
                 using var key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true);
                 if (key is null) return;
 
-                if (isEnabled)
-                {
+                if (isEnabled) {
                     var exePath = Environment.ProcessPath;
                     if (!string.IsNullOrEmpty(exePath)) key.SetValue(AutoLaunchRegistryValueName, $"\"{exePath}\"");
                 }
-                else
-                {
+                else {
                     key.DeleteValue(AutoLaunchRegistryValueName, false);
                 }
             });
         }
     }
 
-    public async Task<bool> GetStartMinimizedEnabledAsync()
-    {
+    public async Task<bool> GetStartMinimizedEnabledAsync() {
         await EnsureUnpackagedSettingsLoadedAsync();
         return GetValue(StartMinimizedEnabledKey, false);
     }
 
-    public Task SetStartMinimizedEnabledAsync(bool isEnabled)
-    {
+    public Task SetStartMinimizedEnabledAsync(bool isEnabled) {
         return SetValueAsync(StartMinimizedEnabledKey, isEnabled);
     }
 
-    public async Task<bool> GetHideToTrayEnabledAsync()
-    {
+    public async Task<bool> GetHideToTrayEnabledAsync() {
         await EnsureUnpackagedSettingsLoadedAsync();
         return GetValue(HideToTrayEnabledKey, true);
     }
 
-    public Task SetHideToTrayEnabledAsync(bool isEnabled)
-    {
+    public Task SetHideToTrayEnabledAsync(bool isEnabled) {
         return SetValueAndNotifyAsync(HideToTrayEnabledKey, isEnabled, true, HideToTraySettingChanged);
     }
 
-    public async Task<bool> GetMinimizeToMiniPlayerEnabledAsync()
-    {
+    public async Task<bool> GetMinimizeToMiniPlayerEnabledAsync() {
         await EnsureUnpackagedSettingsLoadedAsync();
         return GetValue(MinimizeToMiniPlayerEnabledKey, false);
     }
 
-    public Task SetMinimizeToMiniPlayerEnabledAsync(bool isEnabled)
-    {
+    public Task SetMinimizeToMiniPlayerEnabledAsync(bool isEnabled) {
         return SetValueAndNotifyAsync(MinimizeToMiniPlayerEnabledKey, isEnabled, false,
             MinimizeToMiniPlayerSettingChanged);
     }
 
-    public async Task<bool> GetShowQueueButtonEnabledAsync()
-    {
+    public async Task<bool> GetShowQueueButtonEnabledAsync() {
         await EnsureUnpackagedSettingsLoadedAsync();
         return GetValue(ShowQueueButtonEnabledKey, true);
     }
 
-    public Task SetShowQueueButtonEnabledAsync(bool isEnabled)
-    {
+    public Task SetShowQueueButtonEnabledAsync(bool isEnabled) {
         return SetValueAndNotifyAsync(ShowQueueButtonEnabledKey, isEnabled, true, ShowQueueButtonSettingChanged);
     }
 
-    public async Task<bool> GetShowCoverArtInTrayFlyoutAsync()
-    {
+    public async Task<bool> GetShowCoverArtInTrayFlyoutAsync() {
         await EnsureUnpackagedSettingsLoadedAsync();
         return GetValue(ShowCoverArtInTrayFlyoutKey, true);
     }
 
-    public Task SetShowCoverArtInTrayFlyoutAsync(bool isEnabled)
-    {
+    public Task SetShowCoverArtInTrayFlyoutAsync(bool isEnabled) {
         return SetValueAndNotifyAsync(ShowCoverArtInTrayFlyoutKey, isEnabled, true,
             ShowCoverArtInTrayFlyoutSettingChanged);
     }
 
-    public async Task<bool> GetCheckForUpdatesEnabledAsync()
-    {
+    public async Task<bool> GetCheckForUpdatesEnabledAsync() {
 #if MSIX_PACKAGE
         return false;
 #else
@@ -732,8 +623,7 @@ public class SettingsService : IUISettingsService
 #endif
     }
 
-    public Task SetCheckForUpdatesEnabledAsync(bool isEnabled)
-    {
+    public Task SetCheckForUpdatesEnabledAsync(bool isEnabled) {
 #if MSIX_PACKAGE
         return Task.CompletedTask;
 #else
@@ -741,8 +631,7 @@ public class SettingsService : IUISettingsService
 #endif
     }
 
-    public async Task<string?> GetLastSkippedUpdateVersionAsync()
-    {
+    public async Task<string?> GetLastSkippedUpdateVersionAsync() {
 #if MSIX_PACKAGE
         return null;
 #else
@@ -751,8 +640,7 @@ public class SettingsService : IUISettingsService
 #endif
     }
 
-    public Task SetLastSkippedUpdateVersionAsync(string? version)
-    {
+    public Task SetLastSkippedUpdateVersionAsync(string? version) {
 #if MSIX_PACKAGE
         return Task.CompletedTask;
 #else
@@ -760,12 +648,10 @@ public class SettingsService : IUISettingsService
 #endif
     }
 
-    public async Task<List<NavigationItemSetting>> GetNavigationItemsAsync()
-    {
+    public async Task<List<NavigationItemSetting>> GetNavigationItemsAsync() {
         var items = await GetComplexValueAsync<List<NavigationItemSetting>>(NavigationItemsKey);
 
-        if (items != null)
-        {
+        if (items != null) {
             var defaultItems = GetDefaultNavigationItems();
             var loadedTags = new HashSet<string>(items.Select(i => i.Tag));
             var missingItems = defaultItems.Where(d => !loadedTags.Contains(d.Tag));
@@ -776,31 +662,26 @@ public class SettingsService : IUISettingsService
         return GetDefaultNavigationItems();
     }
 
-    public async Task SetNavigationItemsAsync(List<NavigationItemSetting> items)
-    {
+    public async Task SetNavigationItemsAsync(List<NavigationItemSetting> items) {
         await SetValueAsync(NavigationItemsKey, items);
         NavigationSettingsChanged?.Invoke();
     }
 
-    public async Task<List<PlayerButtonSetting>> GetPlayerButtonSettingsAsync()
-    {
+    public async Task<List<PlayerButtonSetting>> GetPlayerButtonSettingsAsync() {
         var settings = await GetComplexValueAsync<List<PlayerButtonSetting>>(PlayerButtonSettingsKey);
 
-        if (settings != null)
-        {
+        if (settings != null) {
             // For backward compatibility, ensure the separator exists for users with older settings.
             if (!settings.Any(b => b.Id == "Separator"))
                 settings.Insert(5,
-                    new PlayerButtonSetting
-                        { Id = "Separator", DisplayName = "Layout Divider", IconGlyph = "\uE7A3", IsEnabled = true });
+                    new PlayerButtonSetting { Id = "Separator", DisplayName = "Layout Divider", IconGlyph = "\uE7A3", IsEnabled = true });
             return settings;
         }
 
         return GetDefaultPlayerButtonSettings();
     }
 
-    public async Task SetPlayerButtonSettingsAsync(List<PlayerButtonSetting> settings)
-    {
+    public async Task SetPlayerButtonSettingsAsync(List<PlayerButtonSetting> settings) {
         await SetValueAsync(PlayerButtonSettingsKey, settings);
         PlayerButtonSettingsChanged?.Invoke();
     }

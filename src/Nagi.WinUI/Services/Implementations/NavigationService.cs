@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
+using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.WinUI.Services.Abstractions;
@@ -9,10 +9,10 @@ namespace Nagi.WinUI.Services.Implementations;
 /// <summary>
 ///     Provides a service for navigating between pages within a XAML Frame.
 /// </summary>
-public class NavigationService : INavigationService, IDisposable
-{
+public class NavigationService : INavigationService, IDisposable {
     // The minimum time that must pass between navigation requests.
     private static readonly TimeSpan NavigationDebounceThreshold = TimeSpan.FromMilliseconds(500);
+    private readonly ILogger<NavigationService> _logger;
 
     private Frame? _frame;
     private bool _isDisposed;
@@ -20,11 +20,14 @@ public class NavigationService : INavigationService, IDisposable
     private Type? _lastPageType;
     private object? _lastParameter;
 
+    public NavigationService(ILogger<NavigationService> logger) {
+        _logger = logger;
+    }
+
     /// <summary>
     ///     Cleans up resources by unsubscribing from the Frame's Navigated event.
     /// </summary>
-    public void Dispose()
-    {
+    public void Dispose() {
         if (_isDisposed) return;
 
         if (_frame != null) _frame.Navigated -= OnFrameNavigated;
@@ -37,8 +40,7 @@ public class NavigationService : INavigationService, IDisposable
     ///     Initializes the navigation service with the application's root frame.
     /// </summary>
     /// <param name="frame">The root frame used for navigation.</param>
-    public void Initialize(Frame frame)
-    {
+    public void Initialize(Frame frame) {
         _frame = frame ?? throw new ArgumentNullException(nameof(frame));
         _frame.Navigated += OnFrameNavigated;
     }
@@ -52,26 +54,22 @@ public class NavigationService : INavigationService, IDisposable
     /// </remarks>
     /// <param name="pageType">The type of the page to navigate to.</param>
     /// <param name="parameter">An optional parameter to pass to the target page.</param>
-    public void Navigate(Type pageType, object? parameter = null)
-    {
+    public void Navigate(Type pageType, object? parameter = null) {
         // Debounce rapid navigation requests to prevent unintended double-clicks
-        if (DateTime.UtcNow - _lastNavigationTime < NavigationDebounceThreshold)
-        {
-            Debug.WriteLine($"[NavigationService] Navigation to {pageType.Name} debounced.");
+        if (DateTime.UtcNow - _lastNavigationTime < NavigationDebounceThreshold) {
+            _logger.LogDebug("Navigation to {PageName} debounced.", pageType.Name);
             return;
         }
 
-        if (_frame is null)
-        {
+        if (_frame is null) {
             // This is a critical failure, as navigation is impossible without an initialized frame.
-            Trace.TraceError("[NavigationService] Attempted to navigate before the root frame was initialized.");
+            _logger.LogError("Attempted to navigate before the root frame was initialized.");
             return;
         }
 
         // Prevent navigating to the same page with the same parameter, which is usually redundant.
-        if (_lastPageType == pageType && Equals(_lastParameter, parameter))
-        {
-            Debug.WriteLine($"[NavigationService] Navigation to same page {pageType.Name} prevented.");
+        if (_lastPageType == pageType && Equals(_lastParameter, parameter)) {
+            _logger.LogDebug("Navigation to same page {PageName} prevented.", pageType.Name);
             return;
         }
 
@@ -82,8 +80,7 @@ public class NavigationService : INavigationService, IDisposable
     /// <summary>
     ///     Updates the service's state after a navigation has completed.
     /// </summary>
-    private void OnFrameNavigated(object sender, NavigationEventArgs e)
-    {
+    private void OnFrameNavigated(object sender, NavigationEventArgs e) {
         _lastPageType = e.SourcePageType;
         _lastParameter = e.Parameter;
     }

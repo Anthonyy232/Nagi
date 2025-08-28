@@ -120,16 +120,9 @@ public class StringToUriConverter : IValueConverter
     public object? Convert(object value, Type targetType, object parameter, string language)
     {
         if (value is string uriString && !string.IsNullOrEmpty(uriString))
-            try
-            {
-                return new BitmapImage(new Uri(uriString, UriKind.Absolute));
-            }
-            catch (FormatException ex)
-            {
-                // Log errors during development to diagnose invalid URI formats.
-                Debug.WriteLine($"[Nagi.Converters] Failed to create Uri from '{uriString}'. {ex.Message}");
-                return null;
-            }
+        {
+            return new BitmapImage(new Uri(uriString, UriKind.Absolute));
+        }
 
         return null;
     }

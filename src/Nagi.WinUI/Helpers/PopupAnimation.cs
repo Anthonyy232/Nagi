@@ -3,6 +3,8 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Graphics;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Nagi.WinUI.Popups;
 
 namespace Nagi.WinUI.Helpers;
@@ -12,8 +14,7 @@ namespace Nagi.WinUI.Helpers;
 ///     This implementation uses an async/await loop with cancellation handling to prevent
 ///     conflicting animations and ensure a jank-free experience.
 /// </summary>
-internal static class PopupAnimation
-{
+internal static class PopupAnimation {
     // Defines the duration and style of the animations.
     private const float ShowDurationMs = 250f;
     private const float HideDurationMs = 200f;
@@ -23,19 +24,24 @@ internal static class PopupAnimation
     // Manages the cancellation of ongoing animations to prevent conflicts.
     private static CancellationTokenSource? _animationCts;
 
+    private static ILogger? _logger;
+    private static ILogger Logger =>
+        _logger ??= App.Services!.GetRequiredService<ILoggerFactory>().CreateLogger("PopupAnimation");
+
     /// <summary>
     ///     Animates a window into view with a scale and fade effect.
     ///     Cancels any previously running animation on the same window.
     /// </summary>
-    public static async Task AnimateIn(TrayPopup window, RectInt32 finalRect)
-    {
+    public static async Task AnimateIn(TrayPopup window, RectInt32 finalRect) {
         // Defensively check if the window is valid before starting.
         if (window?.AppWindow is null) return;
 
-        try
-        {
+        try {
             // Cancel any existing animation and create a new cancellation token for this one.
-            _animationCts?.Cancel();
+            if (_animationCts is not null) {
+                Logger.LogDebug("Cancelling previous animation before starting AnimateIn.");
+                _animationCts.Cancel();
+            }
             _animationCts = new CancellationTokenSource();
             var token = _animationCts.Token;
 
@@ -52,9 +58,11 @@ internal static class PopupAnimation
             WindowActivator.ActivatePopupWindow(window);
 
             var stopwatch = Stopwatch.StartNew();
-            while (stopwatch.ElapsedMilliseconds < ShowDurationMs)
-            {
-                if (token.IsCancellationRequested) return;
+            while (stopwatch.ElapsedMilliseconds < ShowDurationMs) {
+                if (token.IsCancellationRequested) {
+                    Logger.LogDebug("AnimateIn was cancelled.");
+                    return;
+                }
 
                 var progress = (float)stopwatch.Elapsed.TotalMilliseconds / ShowDurationMs;
                 var easedProgress = EaseOutCubic(progress);
@@ -73,16 +81,14 @@ internal static class PopupAnimation
             }
 
             // If not cancelled, ensure the final state is set perfectly.
-            if (!token.IsCancellationRequested)
-            {
+            if (!token.IsCancellationRequested) {
                 window.AppWindow.MoveAndResize(finalRect);
                 window.SetWindowOpacity(255);
             }
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             // This can happen if the window is closed during the animation.
-            Debug.WriteLine($"[PopupAnimation] AnimateIn failed gracefully: {ex.Message}");
+            Logger.LogWarning(ex, "AnimateIn failed gracefully. This can happen if the window is closed during animation.");
         }
     }
 
@@ -90,15 +96,16 @@ internal static class PopupAnimation
     ///     Animates a window out of view with a reverse scale and fade effect.
     ///     Cancels any previously running animation on the same window.
     /// </summary>
-    public static async Task AnimateOut(TrayPopup window)
-    {
+    public static async Task AnimateOut(TrayPopup window) {
         // Defensively check if the window is valid and visible before starting.
         if (window?.AppWindow is null || !window.AppWindow.IsVisible) return;
 
-        try
-        {
+        try {
             // Cancel any existing animation and create a new cancellation token for this one.
-            _animationCts?.Cancel();
+            if (_animationCts is not null) {
+                Logger.LogDebug("Cancelling previous animation before starting AnimateOut.");
+                _animationCts.Cancel();
+            }
             _animationCts = new CancellationTokenSource();
             var token = _animationCts.Token;
 
@@ -113,9 +120,11 @@ internal static class PopupAnimation
             var finalRect = new RectInt32(finalX, finalY, finalWidth, finalHeight);
 
             var stopwatch = Stopwatch.StartNew();
-            while (stopwatch.ElapsedMilliseconds < HideDurationMs)
-            {
-                if (token.IsCancellationRequested) return;
+            while (stopwatch.ElapsedMilliseconds < HideDurationMs) {
+                if (token.IsCancellationRequested) {
+                    Logger.LogDebug("AnimateOut was cancelled.");
+                    return;
+                }
 
                 var progress = (float)stopwatch.Elapsed.TotalMilliseconds / HideDurationMs;
                 var easedProgress = EaseInCubic(progress);
@@ -134,16 +143,14 @@ internal static class PopupAnimation
             }
 
             // If not cancelled, hide and reset the window for the next time it's shown.
-            if (!token.IsCancellationRequested)
-            {
+            if (!token.IsCancellationRequested) {
                 window.AppWindow.Hide();
                 window.SetWindowOpacity(255);
             }
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             // This can happen if the window is closed during the animation.
-            Debug.WriteLine($"[PopupAnimation] AnimateOut failed gracefully: {ex.Message}");
+            Logger.LogWarning(ex, "AnimateOut failed gracefully. This can happen if the window is closed during animation.");
             // Ensure the window is hidden if the animation fails mid-way.
             if (window?.AppWindow is not null) window.AppWindow.Hide();
         }
@@ -152,16 +159,14 @@ internal static class PopupAnimation
     /// <summary>
     ///     Cubic easing function that starts fast and decelerates.
     /// </summary>
-    private static float EaseOutCubic(float progress)
-    {
+    private static float EaseOutCubic(float progress) {
         return 1 - MathF.Pow(1 - progress, 3);
     }
 
     /// <summary>
     ///     Cubic easing function that starts slow and accelerates.
     /// </summary>
-    private static float EaseInCubic(float progress)
-    {
+    private static float EaseInCubic(float progress) {
         return progress * progress * progress;
     }
 }

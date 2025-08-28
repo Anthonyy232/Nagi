@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+﻿using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 
@@ -9,9 +9,9 @@ namespace Nagi.Core.Services.Implementations.Presence;
 ///     This manager activates, deactivates, and broadcasts updates to all relevant
 ///     IPresenceService implementations like Discord and Last.fm.
 /// </summary>
-public class PresenceManager : IPresenceManager, IDisposable
-{
+public class PresenceManager : IPresenceManager, IDisposable {
     private readonly List<IPresenceService> _activeServices = new();
+    private readonly ILogger<PresenceManager> _logger;
     private readonly IMusicPlaybackService _playbackService;
     private readonly IReadOnlyDictionary<string, IPresenceService> _presenceServices;
     private readonly ISettingsService _settingsService;
@@ -22,36 +22,38 @@ public class PresenceManager : IPresenceManager, IDisposable
     public PresenceManager(
         IMusicPlaybackService playbackService,
         IEnumerable<IPresenceService> presenceServices,
-        ISettingsService settingsService)
-    {
+        ISettingsService settingsService,
+        ILogger<PresenceManager> logger) {
         _playbackService = playbackService;
         _settingsService = settingsService;
+        _logger = logger;
 
         // Store services in a dictionary for efficient lookups by name.
         _presenceServices = presenceServices.ToDictionary(s => s.Name, s => s);
     }
 
-    public void Dispose()
-    {
+    public void Dispose() {
         // This provides a synchronous way to dispose, but calling ShutdownAsync is preferred.
         ShutdownAsync().GetAwaiter().GetResult();
         GC.SuppressFinalize(this);
     }
 
-    public async Task InitializeAsync()
-    {
+    public async Task InitializeAsync() {
         if (_isInitialized) return;
+        _logger.LogInformation("Initializing Presence Manager.");
 
         // Activate services based on their initial settings.
-        foreach (var service in _presenceServices.Values) await UpdateServiceActivationAsync(service);
+        foreach (var service in _presenceServices.Values) {
+            await UpdateServiceActivationAsync(service);
+        }
 
         SubscribeToEvents();
         _isInitialized = true;
     }
 
-    public async Task ShutdownAsync()
-    {
+    public async Task ShutdownAsync() {
         if (!_isInitialized) return;
+        _logger.LogInformation("Shutting down Presence Manager.");
 
         UnsubscribeFromEvents();
 
@@ -67,8 +69,7 @@ public class PresenceManager : IPresenceManager, IDisposable
         _isInitialized = false;
     }
 
-    private void SubscribeToEvents()
-    {
+    private void SubscribeToEvents() {
         _playbackService.TrackChanged += OnTrackChanged;
         _playbackService.PlaybackStateChanged += OnPlaybackStateChanged;
         _playbackService.PositionChanged += OnPositionChanged;
@@ -76,8 +77,7 @@ public class PresenceManager : IPresenceManager, IDisposable
         _settingsService.DiscordRichPresenceSettingChanged += OnDiscordRichPresenceSettingChanged;
     }
 
-    private void UnsubscribeFromEvents()
-    {
+    private void UnsubscribeFromEvents() {
         _playbackService.TrackChanged -= OnTrackChanged;
         _playbackService.PlaybackStateChanged -= OnPlaybackStateChanged;
         _playbackService.PositionChanged -= OnPositionChanged;
@@ -85,20 +85,20 @@ public class PresenceManager : IPresenceManager, IDisposable
         _settingsService.DiscordRichPresenceSettingChanged -= OnDiscordRichPresenceSettingChanged;
     }
 
-    private async void OnDiscordRichPresenceSettingChanged(bool isEnabled)
-    {
-        if (_presenceServices.TryGetValue("Discord", out var service)) await SetServiceActiveAsync(service, isEnabled);
+    private async void OnDiscordRichPresenceSettingChanged(bool isEnabled) {
+        if (_presenceServices.TryGetValue("Discord", out var service)) {
+            await SetServiceActiveAsync(service, isEnabled);
+        }
     }
 
-    private async void OnLastFmSettingsChanged()
-    {
-        if (_presenceServices.TryGetValue("Last.fm", out var service)) await UpdateServiceActivationAsync(service);
+    private async void OnLastFmSettingsChanged() {
+        if (_presenceServices.TryGetValue("Last.fm", out var service)) {
+            await UpdateServiceActivationAsync(service);
+        }
     }
 
-    private async Task UpdateServiceActivationAsync(IPresenceService service)
-    {
-        var shouldActivate = service.Name switch
-        {
+    private async Task UpdateServiceActivationAsync(IPresenceService service) {
+        var shouldActivate = service.Name switch {
             "Discord" => await _settingsService.GetDiscordRichPresenceEnabledAsync(),
             "Last.fm" => await IsLastFmServiceEnabledAsync(),
             _ => false
@@ -107,9 +107,7 @@ public class PresenceManager : IPresenceManager, IDisposable
         await SetServiceActiveAsync(service, shouldActivate);
     }
 
-
-    private async Task<bool> IsLastFmServiceEnabledAsync()
-    {
+    private async Task<bool> IsLastFmServiceEnabledAsync() {
         var hasCredentials = await _settingsService.GetLastFmCredentialsAsync() != null;
         if (!hasCredentials) return false;
 
@@ -119,89 +117,81 @@ public class PresenceManager : IPresenceManager, IDisposable
         return isScrobblingEnabled || isNowPlayingEnabled;
     }
 
-    private async Task SetServiceActiveAsync(IPresenceService service, bool shouldBeActive)
-    {
+    private async Task SetServiceActiveAsync(IPresenceService service, bool shouldBeActive) {
         var isActive = _activeServices.Contains(service);
         if (shouldBeActive == isActive) return;
 
-        if (shouldBeActive)
-            try
-            {
+        if (shouldBeActive) {
+            try {
                 await service.InitializeAsync();
                 _activeServices.Add(service);
-                Debug.WriteLine($"[PresenceManager] Activated '{service.Name}' presence service.");
+                _logger.LogInformation("Activated '{ServiceName}' presence service.", service.Name);
 
                 // If a track is already playing, immediately update the newly activated service.
-                if (_currentTrack is not null && _playbackService.CurrentListenHistoryId.HasValue)
-                {
+                if (_currentTrack is not null && _playbackService.CurrentListenHistoryId.HasValue) {
                     await service.OnTrackChangedAsync(_currentTrack, _playbackService.CurrentListenHistoryId.Value);
                     await service.OnPlaybackStateChangedAsync(_playbackService.IsPlaying);
                 }
             }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(
-                    $"[PresenceManager] Failed to initialize '{service.Name}' presence service: {ex.Message}");
+            catch (Exception ex) {
+                _logger.LogError(ex, "Failed to initialize '{ServiceName}' presence service.", service.Name);
             }
-        else
-            try
-            {
+        }
+        else {
+            try {
                 await service.OnPlaybackStoppedAsync();
-                if (service is IAsyncDisposable asyncDisposable) await asyncDisposable.DisposeAsync();
+                if (service is IAsyncDisposable asyncDisposable) {
+                    await asyncDisposable.DisposeAsync();
+                }
                 _activeServices.Remove(service);
-                Debug.WriteLine($"[PresenceManager] Deactivated '{service.Name}' presence service.");
+                _logger.LogInformation("Deactivated '{ServiceName}' presence service.", service.Name);
             }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(
-                    $"[PresenceManager] Failed to deactivate '{service.Name}' presence service: {ex.Message}");
+            catch (Exception ex) {
+                _logger.LogError(ex, "Failed to deactivate '{ServiceName}' presence service.", service.Name);
             }
+        }
     }
 
-    private async void OnTrackChanged()
-    {
+    private async void OnTrackChanged() {
         var newTrack = _playbackService.CurrentTrack;
         if (_currentTrack?.Id == newTrack?.Id) return;
 
         _currentTrack = newTrack;
+        _logger.LogDebug("Track changed to '{TrackTitle}'. Broadcasting to active services.", _currentTrack?.Title ?? "None");
 
-        if (_currentTrack is not null && _playbackService.CurrentListenHistoryId.HasValue)
-            await BroadcastAsync(s =>
-                s.OnTrackChangedAsync(_currentTrack, _playbackService.CurrentListenHistoryId.Value));
-        else
+        if (_currentTrack is not null && _playbackService.CurrentListenHistoryId.HasValue) {
+            await BroadcastAsync(s => s.OnTrackChangedAsync(_currentTrack, _playbackService.CurrentListenHistoryId.Value));
+        }
+        else {
             await BroadcastAsync(s => s.OnPlaybackStoppedAsync());
+        }
     }
 
-    private async void OnPlaybackStateChanged()
-    {
+    private async void OnPlaybackStateChanged() {
+        _logger.LogDebug("Playback state changed. IsPlaying: {IsPlaying}. Broadcasting to active services.", _playbackService.IsPlaying);
         await BroadcastAsync(s => s.OnPlaybackStateChangedAsync(_playbackService.IsPlaying));
     }
 
-    private async void OnPositionChanged()
-    {
+    private async void OnPositionChanged() {
         if (_currentTrack is null || _playbackService.Duration <= TimeSpan.Zero) return;
 
         await BroadcastAsync(s => s.OnTrackProgressAsync(_playbackService.CurrentPosition, _playbackService.Duration));
     }
 
-    private async Task BroadcastAsync(Func<IPresenceService, Task> action)
-    {
+    private async Task BroadcastAsync(Func<IPresenceService, Task> action) {
         if (!_activeServices.Any()) return;
 
         var broadcastTasks = _activeServices.Select(service => SafeExecuteAsync(service, action));
         await Task.WhenAll(broadcastTasks);
     }
 
-    private async Task SafeExecuteAsync(IPresenceService service, Func<IPresenceService, Task> action)
-    {
-        try
-        {
+    private async Task SafeExecuteAsync(IPresenceService service, Func<IPresenceService, Task> action) {
+        try {
             await action(service);
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             // Log errors from individual services without stopping others.
-            Debug.WriteLine($"[PresenceManager] Error in '{service.Name}' service: {ex.Message}");
+            _logger.LogError(ex, "An error occurred while broadcasting an event to the '{ServiceName}' service.", service.Name);
         }
     }
 }

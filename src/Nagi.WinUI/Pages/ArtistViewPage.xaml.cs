@@ -1,8 +1,8 @@
 using System;
-using System.Diagnostics;
 using System.Linq;
 using Windows.System;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -17,14 +17,17 @@ namespace Nagi.WinUI.Pages;
 ///     A page that displays detailed information for a specific artist, including their albums and songs.
 /// </summary>
 public sealed partial class ArtistViewPage : Page {
+    private readonly ILogger<ArtistViewPage> _logger;
     private bool _isSearchExpanded;
 
     public ArtistViewPage() {
         InitializeComponent();
         ViewModel = App.Services!.GetRequiredService<ArtistViewViewModel>();
+        _logger = App.Services!.GetRequiredService<ILogger<ArtistViewPage>>();
         DataContext = ViewModel;
 
         Loaded += OnPageLoaded;
+        _logger.LogInformation("ArtistViewPage initialized.");
     }
 
     /// <summary>
@@ -37,15 +40,25 @@ public sealed partial class ArtistViewPage : Page {
     /// </summary>
     protected override async void OnNavigatedTo(NavigationEventArgs e) {
         base.OnNavigatedTo(e);
+        _logger.LogInformation("Navigated to ArtistViewPage.");
 
         if (e.Parameter is ArtistViewNavigationParameter navParam) {
-            await ViewModel.LoadArtistDetailsAsync(navParam.ArtistId);
-            await ViewModel.LoadAvailablePlaylistsAsync();
+            _logger.LogInformation("Loading details for ArtistId: {ArtistId}", navParam.ArtistId);
+            try {
+                await ViewModel.LoadArtistDetailsAsync(navParam.ArtistId);
+                await ViewModel.LoadAvailablePlaylistsAsync();
+                _logger.LogInformation("Successfully loaded details for ArtistId: {ArtistId}", navParam.ArtistId);
+            }
+            catch (Exception ex) {
+                _logger.LogError(ex, "Failed to load details for ArtistId: {ArtistId}", navParam.ArtistId);
+            }
         }
         else {
-            // Log an error to aid in debugging if the navigation parameter is incorrect.
-            Debug.WriteLine(
-                $"[ERROR] {nameof(ArtistViewPage)}: Received incorrect navigation parameter type: {e.Parameter?.GetType().Name ?? "null"}");
+            // This is a developer error, so log it as an error.
+            var paramType = e.Parameter?.GetType().Name ?? "null";
+            _logger.LogError(
+                "Received incorrect navigation parameter type. Expected '{ExpectedType}', but got '{ActualType}'.",
+                nameof(ArtistViewNavigationParameter), paramType);
         }
     }
 
@@ -54,6 +67,7 @@ public sealed partial class ArtistViewPage : Page {
     /// </summary>
     protected override void OnNavigatedFrom(NavigationEventArgs e) {
         base.OnNavigatedFrom(e);
+        _logger.LogInformation("Navigating away from ArtistViewPage. Cleaning up ViewModel.");
         ViewModel.Cleanup();
     }
 
@@ -61,7 +75,7 @@ public sealed partial class ArtistViewPage : Page {
     ///     Handles the page loaded event to set initial visual state.
     /// </summary>
     private void OnPageLoaded(object sender, RoutedEventArgs e) {
-        // Set initial search state to collapsed without animation.
+        _logger.LogDebug("ArtistViewPage loaded. Setting initial visual state.");
         VisualStateManager.GoToState(this, "SearchCollapsed", false);
         Loaded -= OnPageLoaded;
     }
@@ -70,10 +84,14 @@ public sealed partial class ArtistViewPage : Page {
     ///     Handles the search toggle button click to expand or collapse the search box.
     /// </summary>
     private void OnSearchToggleButtonClick(object sender, RoutedEventArgs e) {
-        if (_isSearchExpanded)
+        if (_isSearchExpanded) {
+            _logger.LogDebug("Collapsing search box.");
             CollapseSearch();
-        else
+        }
+        else {
+            _logger.LogDebug("Expanding search box.");
             ExpandSearch();
+        }
     }
 
     /// <summary>
@@ -81,6 +99,7 @@ public sealed partial class ArtistViewPage : Page {
     /// </summary>
     private void OnSearchTextBoxKeyDown(object sender, KeyRoutedEventArgs e) {
         if (e.Key == VirtualKey.Escape) {
+            _logger.LogDebug("Escape key pressed in search box. Collapsing search.");
             CollapseSearch();
             e.Handled = true;
         }
@@ -93,6 +112,7 @@ public sealed partial class ArtistViewPage : Page {
         if (_isSearchExpanded) return;
 
         _isSearchExpanded = true;
+        _logger.LogInformation("Search UI expanded.");
         ToolTipService.SetToolTip(SearchToggleButton, "Close search");
         VisualStateManager.GoToState(this, "SearchExpanded", true);
 
@@ -116,6 +136,7 @@ public sealed partial class ArtistViewPage : Page {
         _isSearchExpanded = false;
 
         // Update UI immediately and start the collapse animation.
+        _logger.LogInformation("Search UI collapsed and search term cleared.");
         ToolTipService.SetToolTip(SearchToggleButton, "Search library");
         VisualStateManager.GoToState(this, "SearchCollapsed", true);
         ViewModel.SearchTerm = string.Empty;
@@ -125,14 +146,21 @@ public sealed partial class ArtistViewPage : Page {
     ///     Handles clicks on the album grid, navigating to the selected album's page.
     /// </summary>
     private void AlbumGridView_ItemClick(object sender, ItemClickEventArgs e) {
-        if (e.ClickedItem is ArtistAlbumViewModelItem clickedAlbum) ViewModel.ViewAlbumCommand.Execute(clickedAlbum.Id);
+        if (e.ClickedItem is ArtistAlbumViewModelItem clickedAlbum) {
+            _logger.LogInformation("User clicked album '{AlbumTitle}' (Id: {AlbumId}). Navigating to album view.",
+                clickedAlbum.Name, clickedAlbum.Id);
+            ViewModel.ViewAlbumCommand.Execute(clickedAlbum.Id);
+        }
     }
 
     /// <summary>
     ///     Updates the view model with the current selection from the song list.
     /// </summary>
     private void SongsListView_SelectionChanged(object sender, SelectionChangedEventArgs e) {
-        if (sender is ListView listView) ViewModel.OnSongsSelectionChanged(listView.SelectedItems);
+        if (sender is ListView listView) {
+            _logger.LogTrace("Song selection changed. {SelectedCount} items selected.", listView.SelectedItems.Count);
+            ViewModel.OnSongsSelectionChanged(listView.SelectedItems);
+        }
     }
 
     /// <summary>
@@ -140,6 +168,8 @@ public sealed partial class ArtistViewPage : Page {
     /// </summary>
     private void SongsListView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e) {
         if (e.OriginalSource is FrameworkElement { DataContext: Song tappedSong }) {
+            _logger.LogInformation("User double-tapped song '{SongTitle}' (Id: {SongId}). Executing play command.",
+                tappedSong.Title, tappedSong.Id);
             ViewModel.PlaySongCommand.Execute(tappedSong);
         }
     }
@@ -151,14 +181,18 @@ public sealed partial class ArtistViewPage : Page {
         if (sender is not MenuFlyout menuFlyout) return;
 
         // Ensure the right-clicked song is selected before showing the context menu.
-        if (menuFlyout.Target?.DataContext is Song rightClickedSong &&
-            !SongsListView.SelectedItems.Contains(rightClickedSong))
-            SongsListView.SelectedItem = rightClickedSong;
+        if (menuFlyout.Target?.DataContext is Song rightClickedSong) {
+            _logger.LogDebug("Context menu opening for song '{SongTitle}'.", rightClickedSong.Title);
+            if (!SongsListView.SelectedItems.Contains(rightClickedSong))
+                SongsListView.SelectedItem = rightClickedSong;
+        }
 
         // Find and populate the "Add to Playlist" submenu.
         if (menuFlyout.Items.OfType<MenuFlyoutSubItem>()
-                .FirstOrDefault(item => item.Name == "AddToPlaylistSubMenu") is { } addToPlaylistSubMenu)
+                .FirstOrDefault(item => item.Name == "AddToPlaylistSubMenu") is { } addToPlaylistSubMenu) {
+            _logger.LogDebug("Populating 'Add to playlist' submenu.");
             PopulatePlaylistSubMenu(addToPlaylistSubMenu);
+        }
     }
 
     /// <summary>
@@ -170,12 +204,13 @@ public sealed partial class ArtistViewPage : Page {
         var availablePlaylists = ViewModel.AvailablePlaylists;
 
         if (availablePlaylists?.Any() != true) {
-            // Display a disabled item if there are no playlists to add the song to.
+            _logger.LogDebug("No playlists available to populate submenu.");
             var disabledItem = new MenuFlyoutItem { Text = "No playlists available", IsEnabled = false };
             subMenu.Items.Add(disabledItem);
             return;
         }
 
+        _logger.LogDebug("Found {PlaylistCount} playlists to populate submenu.", availablePlaylists.Count);
         foreach (var playlist in availablePlaylists) {
             var playlistMenuItem = new MenuFlyoutItem {
                 Text = playlist.Name,

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
@@ -17,8 +17,7 @@ namespace Nagi.WinUI.ViewModels;
 /// <summary>
 ///     Provides data and commands for the genre details page, displaying all songs within a specific genre.
 /// </summary>
-public partial class GenreViewViewModel : SongListViewModelBase
-{
+public partial class GenreViewViewModel : SongListViewModelBase {
     private const int SearchDebounceDelay = 400;
     private CancellationTokenSource? _debounceCts;
     private Guid _genreId;
@@ -29,9 +28,9 @@ public partial class GenreViewViewModel : SongListViewModelBase
         IMusicPlaybackService playbackService,
         INavigationService navigationService,
         IDispatcherService dispatcherService,
-        IUIService uiService)
-        : base(libraryReader, playlistService, playbackService, navigationService, dispatcherService, uiService)
-    {
+        IUIService uiService,
+        ILogger<GenreViewViewModel> logger)
+        : base(libraryReader, playlistService, playbackService, navigationService, dispatcherService, uiService, logger) {
         GenreName = "Genre";
 
         CurrentSortOrder = SongSortOrder.TitleAsc;
@@ -46,19 +45,18 @@ public partial class GenreViewViewModel : SongListViewModelBase
 
     protected override bool IsPagingSupported => true;
 
-    partial void OnSearchTermChanged(string value)
-    {
+    partial void OnSearchTermChanged(string value) {
         TriggerDebouncedSearch();
     }
 
-    protected override Task<IEnumerable<Song>> LoadSongsAsync()
-    {
+
+
+    protected override Task<IEnumerable<Song>> LoadSongsAsync() {
         return Task.FromResult(Enumerable.Empty<Song>());
     }
 
     protected override async Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
-        SongSortOrder sortOrder)
-    {
+        SongSortOrder sortOrder) {
         if (_genreId == Guid.Empty) return new PagedResult<Song>();
 
         if (IsSearchActive)
@@ -67,8 +65,7 @@ public partial class GenreViewViewModel : SongListViewModelBase
         return await _libraryReader.GetSongsByGenreIdPagedAsync(_genreId, pageNumber, pageSize, sortOrder);
     }
 
-    protected override async Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder)
-    {
+    protected override async Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder) {
         if (_genreId == Guid.Empty) return new List<Guid>();
 
         if (IsSearchActive)
@@ -83,22 +80,21 @@ public partial class GenreViewViewModel : SongListViewModelBase
     /// </summary>
     /// <param name="navParam">The navigation parameter containing the genre's ID and name.</param>
     [RelayCommand]
-    public async Task LoadGenreDetailsAsync(GenreViewNavigationParameter? navParam)
-    {
+    public async Task LoadGenreDetailsAsync(GenreViewNavigationParameter? navParam) {
         if (IsOverallLoading || navParam is null) return;
 
-        try
-        {
+        _logger.LogInformation("Loading details for genre '{GenreName}' ({GenreId})", navParam.GenreName,
+            navParam.GenreId);
+
+        try {
             _genreId = navParam.GenreId;
             GenreName = navParam.GenreName;
             PageTitle = navParam.GenreName;
 
             await RefreshOrSortSongsCommand.ExecuteAsync(null);
         }
-        catch (Exception ex)
-        {
-            Debug.WriteLine(
-                $"[GenreViewViewModel] ERROR: Failed to load details for GenreId: {navParam?.GenreId}. {ex.Message}");
+        catch (Exception ex) {
+            _logger.LogError(ex, "Failed to load details for GenreId {GenreId}", navParam?.GenreId);
             GenreName = "Error Loading Genre";
             PageTitle = "Error";
             TotalItemsText = "Error";
@@ -110,54 +106,44 @@ public partial class GenreViewViewModel : SongListViewModelBase
     ///     Executes an immediate search or refresh, cancelling any pending debounced search.
     /// </summary>
     [RelayCommand]
-    private async Task SearchAsync()
-    {
+    private async Task SearchAsync() {
         _debounceCts?.Cancel();
         await RefreshOrSortSongsCommand.ExecuteAsync(null);
     }
 
-    private void TriggerDebouncedSearch()
-    {
-        try
-        {
+    private void TriggerDebouncedSearch() {
+        try {
             _debounceCts?.Cancel();
         }
-        catch (ObjectDisposedException)
-        {
+        catch (ObjectDisposedException) {
             // Ignore exception if the CancellationTokenSource has already been disposed.
         }
 
         _debounceCts = new CancellationTokenSource();
         var token = _debounceCts.Token;
 
-        Task.Run(async () =>
-        {
-            try
-            {
+        Task.Run(async () => {
+            try {
                 await Task.Delay(SearchDebounceDelay, token);
 
                 if (token.IsCancellationRequested) return;
 
-                await _dispatcherService.EnqueueAsync(async () =>
-                {
+                await _dispatcherService.EnqueueAsync(async () => {
                     // Re-check the cancellation token after dispatching to prevent a race condition.
                     if (token.IsCancellationRequested) return;
                     await RefreshOrSortSongsCommand.ExecuteAsync(null);
                 });
             }
-            catch (TaskCanceledException)
-            {
-                Debug.WriteLine("[GenreViewViewModel] Debounced search cancelled.");
+            catch (TaskCanceledException) {
+                _logger.LogDebug("Debounced search cancelled");
             }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"[GenreViewViewModel] ERROR: Debounced search failed. {ex.Message}");
+            catch (Exception ex) {
+                _logger.LogError(ex, "Debounced search failed for genre {GenreId}", _genreId);
             }
         }, token);
     }
 
-    public override void Cleanup()
-    {
+    public override void Cleanup() {
         _debounceCts?.Cancel();
         _debounceCts?.Dispose();
         SearchTerm = string.Empty;

@@ -1,6 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Implementations;
@@ -23,18 +24,20 @@ public class ImageSharpProcessorTests
     private readonly IFileSystemService _fileSystem;
     private readonly ImageSharpProcessor _imageProcessor;
     private readonly IPathConfiguration _pathConfig;
+    private readonly ILogger<ImageSharpProcessor> _logger;
 
     public ImageSharpProcessorTests()
     {
         _pathConfig = Substitute.For<IPathConfiguration>();
         _fileSystem = Substitute.For<IFileSystemService>();
+        _logger = Substitute.For<ILogger<ImageSharpProcessor>>();
 
         _pathConfig.AlbumArtCachePath.Returns(AlbumArtPath);
 
         _fileSystem.Combine(Arg.Any<string>(), Arg.Any<string>())
             .Returns(callInfo => Path.Combine(callInfo.Arg<string[]>()));
 
-        _imageProcessor = new ImageSharpProcessor(_pathConfig, _fileSystem);
+        _imageProcessor = new ImageSharpProcessor(_pathConfig, _fileSystem, _logger);
     }
 
     /// <summary>

@@ -1,8 +1,8 @@
 using System;
-using System.Diagnostics;
 using System.Linq;
 using Windows.System;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -17,14 +17,17 @@ namespace Nagi.WinUI.Pages;
 ///     A page that displays detailed information for a specific album, including its track list.
 /// </summary>
 public sealed partial class AlbumViewPage : Page {
+    private readonly ILogger<AlbumViewPage> _logger;
     private bool _isSearchExpanded;
 
     public AlbumViewPage() {
         InitializeComponent();
         ViewModel = App.Services!.GetRequiredService<AlbumViewViewModel>();
+        _logger = App.Services!.GetRequiredService<ILogger<AlbumViewPage>>();
         DataContext = ViewModel;
 
         Loaded += OnPageLoaded;
+        _logger.LogInformation("AlbumViewPage initialized.");
     }
 
     /// <summary>
@@ -37,15 +40,25 @@ public sealed partial class AlbumViewPage : Page {
     /// </summary>
     protected override async void OnNavigatedTo(NavigationEventArgs e) {
         base.OnNavigatedTo(e);
+        _logger.LogInformation("Navigated to AlbumViewPage.");
 
         if (e.Parameter is AlbumViewNavigationParameter navParam) {
-            await ViewModel.LoadAlbumDetailsAsync(navParam.AlbumId);
-            await ViewModel.LoadAvailablePlaylistsAsync();
+            _logger.LogInformation("Loading details for AlbumId: {AlbumId}", navParam.AlbumId);
+            try {
+                await ViewModel.LoadAlbumDetailsAsync(navParam.AlbumId);
+                await ViewModel.LoadAvailablePlaylistsAsync();
+                _logger.LogInformation("Successfully loaded details for AlbumId: {AlbumId}", navParam.AlbumId);
+            }
+            catch (Exception ex) {
+                _logger.LogError(ex, "Failed to load details for AlbumId: {AlbumId}", navParam.AlbumId);
+            }
         }
         else {
-            // Log an error to aid in debugging if the navigation parameter is incorrect.
-            Debug.WriteLine(
-                $"[ERROR] {nameof(AlbumViewPage)}: Received incorrect navigation parameter type: {e.Parameter?.GetType().Name ?? "null"}");
+            // This is a developer error, so log it as an error.
+            var paramType = e.Parameter?.GetType().Name ?? "null";
+            _logger.LogError(
+                "Received incorrect navigation parameter type. Expected '{ExpectedType}', but got '{ActualType}'.",
+                nameof(AlbumViewNavigationParameter), paramType);
         }
     }
 
@@ -54,6 +67,7 @@ public sealed partial class AlbumViewPage : Page {
     /// </summary>
     protected override void OnNavigatedFrom(NavigationEventArgs e) {
         base.OnNavigatedFrom(e);
+        _logger.LogInformation("Navigating away from AlbumViewPage. Cleaning up ViewModel.");
         ViewModel.Cleanup();
     }
 
@@ -61,7 +75,7 @@ public sealed partial class AlbumViewPage : Page {
     ///     Handles the page loaded event to set initial visual state.
     /// </summary>
     private void OnPageLoaded(object sender, RoutedEventArgs e) {
-        // Set initial search state to collapsed without animation.
+        _logger.LogDebug("AlbumViewPage loaded. Setting initial visual state.");
         VisualStateManager.GoToState(this, "SearchCollapsed", false);
         Loaded -= OnPageLoaded;
     }
@@ -70,10 +84,14 @@ public sealed partial class AlbumViewPage : Page {
     ///     Handles the search toggle button click to expand or collapse the search box.
     /// </summary>
     private void OnSearchToggleButtonClick(object sender, RoutedEventArgs e) {
-        if (_isSearchExpanded)
+        if (_isSearchExpanded) {
+            _logger.LogDebug("Collapsing search box.");
             CollapseSearch();
-        else
+        }
+        else {
+            _logger.LogDebug("Expanding search box.");
             ExpandSearch();
+        }
     }
 
     /// <summary>
@@ -81,6 +99,7 @@ public sealed partial class AlbumViewPage : Page {
     /// </summary>
     private void OnSearchTextBoxKeyDown(object sender, KeyRoutedEventArgs e) {
         if (e.Key == VirtualKey.Escape) {
+            _logger.LogDebug("Escape key pressed in search box. Collapsing search.");
             CollapseSearch();
             e.Handled = true;
         }
@@ -93,6 +112,7 @@ public sealed partial class AlbumViewPage : Page {
         if (_isSearchExpanded) return;
 
         _isSearchExpanded = true;
+        _logger.LogInformation("Search UI expanded.");
         ToolTipService.SetToolTip(SearchToggleButton, "Close search");
         VisualStateManager.GoToState(this, "SearchExpanded", true);
 
@@ -116,6 +136,7 @@ public sealed partial class AlbumViewPage : Page {
         _isSearchExpanded = false;
 
         // Update UI immediately and start the collapse animation.
+        _logger.LogInformation("Search UI collapsed and search term cleared.");
         ToolTipService.SetToolTip(SearchToggleButton, "Search library");
         VisualStateManager.GoToState(this, "SearchCollapsed", true);
         ViewModel.SearchTerm = string.Empty;
@@ -125,7 +146,10 @@ public sealed partial class AlbumViewPage : Page {
     ///     Updates the view model with the current selection from the song list.
     /// </summary>
     private void SongsListView_SelectionChanged(object sender, SelectionChangedEventArgs e) {
-        if (sender is ListView listView) ViewModel.OnSongsSelectionChanged(listView.SelectedItems);
+        if (sender is ListView listView) {
+            _logger.LogTrace("Song selection changed. {SelectedCount} items selected.", listView.SelectedItems.Count);
+            ViewModel.OnSongsSelectionChanged(listView.SelectedItems);
+        }
     }
 
     /// <summary>
@@ -133,6 +157,8 @@ public sealed partial class AlbumViewPage : Page {
     /// </summary>
     private void SongsListView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e) {
         if (e.OriginalSource is FrameworkElement { DataContext: Song tappedSong }) {
+            _logger.LogInformation("User double-tapped song '{SongTitle}' (Id: {SongId}). Executing play command.",
+                tappedSong.Title, tappedSong.Id);
             ViewModel.PlaySongCommand.Execute(tappedSong);
         }
     }
@@ -144,14 +170,18 @@ public sealed partial class AlbumViewPage : Page {
         if (sender is not MenuFlyout menuFlyout) return;
 
         // Ensure the right-clicked song is selected before showing the context menu.
-        if (menuFlyout.Target?.DataContext is Song rightClickedSong &&
-            !SongsListView.SelectedItems.Contains(rightClickedSong))
-            SongsListView.SelectedItem = rightClickedSong;
+        if (menuFlyout.Target?.DataContext is Song rightClickedSong) {
+            _logger.LogDebug("Context menu opening for song '{SongTitle}'.", rightClickedSong.Title);
+            if (!SongsListView.SelectedItems.Contains(rightClickedSong))
+                SongsListView.SelectedItem = rightClickedSong;
+        }
 
         // Find and populate the "Add to Playlist" submenu.
         if (menuFlyout.Items.OfType<MenuFlyoutSubItem>()
-                .FirstOrDefault(item => item.Name == "AddToPlaylistSubMenu") is { } addToPlaylistSubMenu)
+                .FirstOrDefault(item => item.Name == "AddToPlaylistSubMenu") is { } addToPlaylistSubMenu) {
+            _logger.LogDebug("Populating 'Add to playlist' submenu.");
             PopulatePlaylistSubMenu(addToPlaylistSubMenu);
+        }
     }
 
     /// <summary>
@@ -163,12 +193,13 @@ public sealed partial class AlbumViewPage : Page {
         var availablePlaylists = ViewModel.AvailablePlaylists;
 
         if (availablePlaylists?.Any() != true) {
-            // Display a disabled item if there are no playlists to add the song to.
+            _logger.LogDebug("No playlists available to populate submenu.");
             var disabledItem = new MenuFlyoutItem { Text = "No playlists available", IsEnabled = false };
             subMenu.Items.Add(disabledItem);
             return;
         }
 
+        _logger.LogDebug("Found {PlaylistCount} playlists to populate submenu.", availablePlaylists.Count);
         foreach (var playlist in availablePlaylists) {
             var playlistMenuItem = new MenuFlyoutItem {
                 Text = playlist.Name,

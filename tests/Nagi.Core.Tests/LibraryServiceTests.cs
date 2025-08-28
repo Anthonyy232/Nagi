@@ -2,6 +2,7 @@
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
@@ -41,6 +42,7 @@ public class LibraryServiceTests : IDisposable
     private readonly IPathConfiguration _pathConfig;
     private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly ISpotifyService _spotifyService;
+    private readonly ILogger<LibraryService> _logger;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="LibraryServiceTests" /> class.
@@ -57,6 +59,7 @@ public class LibraryServiceTests : IDisposable
         _serviceScopeFactory = Substitute.For<IServiceScopeFactory>();
         _pathConfig = Substitute.For<IPathConfiguration>();
         _httpMessageHandler = new TestHttpMessageHandler();
+        _logger = Substitute.For<ILogger<LibraryService>>();
 
         _dbHelper = new DbContextFactoryTestHelper();
 
@@ -75,7 +78,8 @@ public class LibraryServiceTests : IDisposable
             _spotifyService,
             _httpClientFactory,
             _serviceScopeFactory,
-            _pathConfig);
+            _pathConfig,
+            _logger);
     }
 
     /// <summary>
@@ -102,21 +106,23 @@ public class LibraryServiceTests : IDisposable
     public void Constructor_WithNullDependency_ThrowsArgumentNullException()
     {
         Assert.Throws<ArgumentNullException>(() => new LibraryService(null!, _fileSystem, _metadataService,
-            _lastFmService, _spotifyService, _httpClientFactory, _serviceScopeFactory, _pathConfig));
+            _lastFmService, _spotifyService, _httpClientFactory, _serviceScopeFactory, _pathConfig, _logger));
         Assert.Throws<ArgumentNullException>(() => new LibraryService(_dbHelper.ContextFactory, null!, _metadataService,
-            _lastFmService, _spotifyService, _httpClientFactory, _serviceScopeFactory, _pathConfig));
+            _lastFmService, _spotifyService, _httpClientFactory, _serviceScopeFactory, _pathConfig, _logger));
         Assert.Throws<ArgumentNullException>(() => new LibraryService(_dbHelper.ContextFactory, _fileSystem, null!,
-            _lastFmService, _spotifyService, _httpClientFactory, _serviceScopeFactory, _pathConfig));
+            _lastFmService, _spotifyService, _httpClientFactory, _serviceScopeFactory, _pathConfig, _logger));
         Assert.Throws<ArgumentNullException>(() => new LibraryService(_dbHelper.ContextFactory, _fileSystem,
-            _metadataService, null!, _spotifyService, _httpClientFactory, _serviceScopeFactory, _pathConfig));
+            _metadataService, null!, _spotifyService, _httpClientFactory, _serviceScopeFactory, _pathConfig, _logger));
         Assert.Throws<ArgumentNullException>(() => new LibraryService(_dbHelper.ContextFactory, _fileSystem,
-            _metadataService, _lastFmService, null!, _httpClientFactory, _serviceScopeFactory, _pathConfig));
+            _metadataService, _lastFmService, null!, _httpClientFactory, _serviceScopeFactory, _pathConfig, _logger));
         Assert.Throws<ArgumentNullException>(() => new LibraryService(_dbHelper.ContextFactory, _fileSystem,
-            _metadataService, _lastFmService, _spotifyService, null!, _serviceScopeFactory, _pathConfig));
+            _metadataService, _lastFmService, _spotifyService, null!, _serviceScopeFactory, _pathConfig, _logger));
         Assert.Throws<ArgumentNullException>(() => new LibraryService(_dbHelper.ContextFactory, _fileSystem,
-            _metadataService, _lastFmService, _spotifyService, _httpClientFactory, null!, _pathConfig));
+            _metadataService, _lastFmService, _spotifyService, _httpClientFactory, null!, _pathConfig, _logger));
         Assert.Throws<ArgumentNullException>(() => new LibraryService(_dbHelper.ContextFactory, _fileSystem,
-            _metadataService, _lastFmService, _spotifyService, _httpClientFactory, _serviceScopeFactory, null!));
+            _metadataService, _lastFmService, _spotifyService, _httpClientFactory, _serviceScopeFactory, null!, _logger));
+        Assert.Throws<ArgumentNullException>(() => new LibraryService(_dbHelper.ContextFactory, _fileSystem,
+            _metadataService, _lastFmService, _spotifyService, _httpClientFactory, _serviceScopeFactory, _pathConfig, null!));
     }
 
     #endregion

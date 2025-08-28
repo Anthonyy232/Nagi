@@ -2,6 +2,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Implementations;
@@ -24,6 +25,7 @@ public class LastFmScrobblerServiceTests : IDisposable
     private readonly IApiKeyService _apiKeyService;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly TestHttpMessageHandler _httpMessageHandler;
+    private readonly ILogger<LastFmScrobblerService> _logger;
     private readonly LastFmScrobblerService _scrobblerService;
     private readonly ISettingsService _settingsService;
 
@@ -35,11 +37,12 @@ public class LastFmScrobblerServiceTests : IDisposable
         _apiKeyService = Substitute.For<IApiKeyService>();
         _settingsService = Substitute.For<ISettingsService>();
         _httpMessageHandler = new TestHttpMessageHandler();
+        _logger = Substitute.For<ILogger<LastFmScrobblerService>>();
 
         var httpClient = new HttpClient(_httpMessageHandler);
         _httpClientFactory.CreateClient(Arg.Any<string>()).Returns(httpClient);
 
-        _scrobblerService = new LastFmScrobblerService(_httpClientFactory, _apiKeyService, _settingsService);
+        _scrobblerService = new LastFmScrobblerService(_httpClientFactory, _apiKeyService, _settingsService, _logger);
     }
 
     public void Dispose()

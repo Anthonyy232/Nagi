@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.WinUI.Navigation;
@@ -17,10 +17,8 @@ namespace Nagi.WinUI.ViewModels;
 /// <summary>
 ///     Represents a single playlist item for display in the UI.
 /// </summary>
-public partial class PlaylistViewModelItem : ObservableObject
-{
-    public PlaylistViewModelItem(Playlist playlist)
-    {
+public partial class PlaylistViewModelItem : ObservableObject {
+    public PlaylistViewModelItem(Playlist playlist) {
         Id = playlist.Id;
         Name = playlist.Name;
         CoverImageUri = playlist.CoverImageUri;
@@ -39,16 +37,14 @@ public partial class PlaylistViewModelItem : ObservableObject
 
     [ObservableProperty] public partial string SongCountText { get; set; } = string.Empty;
 
-    partial void OnCoverImageUriChanged(string? value)
-    {
+    partial void OnCoverImageUriChanged(string? value) {
         OnPropertyChanged(nameof(IsArtworkAvailable));
     }
 
     /// <summary>
     ///     Updates the song count and the display text for this playlist item.
     /// </summary>
-    public void UpdateSongCount(int newSongCount)
-    {
+    public void UpdateSongCount(int newSongCount) {
         if (SongCount == newSongCount) return;
 
         SongCount = newSongCount;
@@ -59,20 +55,20 @@ public partial class PlaylistViewModelItem : ObservableObject
 /// <summary>
 ///     ViewModel for managing the collection of playlists.
 /// </summary>
-public partial class PlaylistViewModel : ObservableObject, IDisposable
-{
+public partial class PlaylistViewModel : ObservableObject, IDisposable {
     private readonly NotifyCollectionChangedEventHandler _collectionChangedHandler;
     private readonly ILibraryService _libraryService;
+    private readonly ILogger<PlaylistViewModel> _logger;
     private readonly IMusicPlaybackService _musicPlaybackService;
     private readonly INavigationService _navigationService;
     private bool _isDisposed;
 
     public PlaylistViewModel(ILibraryService libraryService, IMusicPlaybackService musicPlaybackService,
-        INavigationService navigationService)
-    {
+        INavigationService navigationService, ILogger<PlaylistViewModel> logger) {
         _libraryService = libraryService;
         _musicPlaybackService = musicPlaybackService;
         _navigationService = navigationService;
+        _logger = logger;
 
         // Store the handler in a field so we can reliably unsubscribe from it later.
         _collectionChangedHandler = (s, e) => OnPropertyChanged(nameof(HasPlaylists));
@@ -113,8 +109,7 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
     /// <summary>
     ///     Cleans up resources by unsubscribing from event handlers.
     /// </summary>
-    public void Dispose()
-    {
+    public void Dispose() {
         if (_isDisposed) return;
 
         if (Playlists != null) Playlists.CollectionChanged -= _collectionChangedHandler;
@@ -127,12 +122,10 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
     ///     Navigates to the song list for the selected playlist.
     /// </summary>
     [RelayCommand]
-    public void NavigateToPlaylistDetail(PlaylistViewModelItem? playlist)
-    {
+    public void NavigateToPlaylistDetail(PlaylistViewModelItem? playlist) {
         if (playlist is null) return;
 
-        var navParam = new PlaylistSongViewNavigationParameter
-        {
+        var navParam = new PlaylistSongViewNavigationParameter {
             Title = playlist.Name,
             PlaylistId = playlist.Id
         };
@@ -143,20 +136,17 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
     ///     Clears the current queue and starts playing the selected playlist.
     /// </summary>
     [RelayCommand]
-    private async Task PlayPlaylistAsync(Guid playlistId)
-    {
+    private async Task PlayPlaylistAsync(Guid playlistId) {
         if (IsAnyOperationInProgress || playlistId == Guid.Empty) return;
 
         StatusMessage = "Starting playlist...";
-        try
-        {
+        try {
             await _musicPlaybackService.PlayPlaylistAsync(playlistId);
             StatusMessage = string.Empty;
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             StatusMessage = "Error starting playback for this playlist.";
-            Debug.WriteLine($"[PlaylistViewModel] CRITICAL: Error playing playlist {playlistId}: {ex.Message}");
+            _logger.LogCritical(ex, "Error playing playlist {PlaylistId}", playlistId);
         }
     }
 
@@ -164,21 +154,18 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
     ///     Loads all playlists from the library service.
     /// </summary>
     [RelayCommand]
-    private async Task LoadPlaylistsAsync()
-    {
+    private async Task LoadPlaylistsAsync() {
         StatusMessage = "Loading playlists...";
-        try
-        {
+        try {
             var playlistsFromDb = await _libraryService.GetAllPlaylistsAsync();
             Playlists.Clear();
             foreach (var playlist in playlistsFromDb.OrderBy(p => p.Name, StringComparer.OrdinalIgnoreCase))
                 Playlists.Add(new PlaylistViewModelItem(playlist));
             StatusMessage = string.Empty;
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             StatusMessage = "Error loading playlists.";
-            Debug.WriteLine($"[PlaylistViewModel] CRITICAL: Error loading playlists: {ex.Message}");
+            _logger.LogError(ex, "Error loading playlists");
         }
     }
 
@@ -187,35 +174,29 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
     /// </summary>
     /// <param name="args">A tuple containing the playlist name and optional cover image URI.</param>
     [RelayCommand]
-    private async Task CreatePlaylistAsync(Tuple<string, string?> args)
-    {
+    private async Task CreatePlaylistAsync(Tuple<string, string?> args) {
         var (playlistName, coverImageUri) = args;
         if (string.IsNullOrWhiteSpace(playlistName) || IsAnyOperationInProgress) return;
 
         IsCreatingPlaylist = true;
         StatusMessage = "Creating new playlist...";
 
-        try
-        {
+        try {
             var newPlaylist =
                 await _libraryService.CreatePlaylistAsync(playlistName.Trim(), coverImageUri: coverImageUri);
-            if (newPlaylist != null)
-            {
+            if (newPlaylist != null) {
                 Playlists.Add(new PlaylistViewModelItem(newPlaylist));
                 StatusMessage = string.Empty;
             }
-            else
-            {
+            else {
                 StatusMessage = "Failed to create playlist. It may already exist.";
             }
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             StatusMessage = "An error occurred while creating the playlist.";
-            Debug.WriteLine($"[PlaylistViewModel] CRITICAL: Error creating playlist: {ex.Message}");
+            _logger.LogError(ex, "Error creating playlist");
         }
-        finally
-        {
+        finally {
             IsCreatingPlaylist = false;
         }
     }
@@ -225,35 +206,29 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
     /// </summary>
     /// <param name="args">A tuple containing the playlist ID and the new cover image URI.</param>
     [RelayCommand]
-    private async Task UpdatePlaylistCoverAsync(Tuple<Guid, string> args)
-    {
+    private async Task UpdatePlaylistCoverAsync(Tuple<Guid, string> args) {
         var (playlistId, newCoverImageUri) = args;
         if (string.IsNullOrWhiteSpace(newCoverImageUri) || IsAnyOperationInProgress) return;
 
         IsUpdatingCover = true;
         StatusMessage = "Updating playlist cover...";
 
-        try
-        {
+        try {
             var success = await _libraryService.UpdatePlaylistCoverAsync(playlistId, newCoverImageUri);
-            if (success)
-            {
+            if (success) {
                 var playlistItem = Playlists.FirstOrDefault(p => p.Id == playlistId);
                 if (playlistItem != null) playlistItem.CoverImageUri = newCoverImageUri;
                 StatusMessage = string.Empty;
             }
-            else
-            {
+            else {
                 StatusMessage = "Failed to update playlist cover.";
             }
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             StatusMessage = "An error occurred while updating the playlist cover.";
-            Debug.WriteLine($"[PlaylistViewModel] CRITICAL: Error updating playlist cover: {ex.Message}");
+            _logger.LogError(ex, "Error updating playlist cover for {PlaylistId}", playlistId);
         }
-        finally
-        {
+        finally {
             IsUpdatingCover = false;
         }
     }
@@ -263,35 +238,29 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
     /// </summary>
     /// <param name="args">A tuple containing the playlist ID and the new name.</param>
     [RelayCommand]
-    private async Task RenamePlaylistAsync(Tuple<Guid, string> args)
-    {
+    private async Task RenamePlaylistAsync(Tuple<Guid, string> args) {
         var (playlistId, newName) = args;
         if (string.IsNullOrWhiteSpace(newName) || IsAnyOperationInProgress) return;
 
         IsRenamingPlaylist = true;
         StatusMessage = "Renaming playlist...";
 
-        try
-        {
+        try {
             var success = await _libraryService.RenamePlaylistAsync(playlistId, newName.Trim());
-            if (success)
-            {
+            if (success) {
                 var playlistItem = Playlists.FirstOrDefault(p => p.Id == playlistId);
                 if (playlistItem != null) playlistItem.Name = newName.Trim();
                 StatusMessage = string.Empty;
             }
-            else
-            {
+            else {
                 StatusMessage = "Failed to rename playlist.";
             }
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             StatusMessage = "An error occurred while renaming the playlist.";
-            Debug.WriteLine($"[PlaylistViewModel] CRITICAL: Error renaming playlist: {ex.Message}");
+            _logger.LogError(ex, "Error renaming playlist {PlaylistId}", playlistId);
         }
-        finally
-        {
+        finally {
             IsRenamingPlaylist = false;
         }
     }
@@ -300,34 +269,28 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
     ///     Deletes a playlist.
     /// </summary>
     [RelayCommand]
-    private async Task DeletePlaylistAsync(Guid playlistId)
-    {
+    private async Task DeletePlaylistAsync(Guid playlistId) {
         if (IsAnyOperationInProgress) return;
 
         IsDeletingPlaylist = true;
         StatusMessage = "Deleting playlist...";
 
-        try
-        {
+        try {
             var success = await _libraryService.DeletePlaylistAsync(playlistId);
-            if (success)
-            {
+            if (success) {
                 var playlistItem = Playlists.FirstOrDefault(p => p.Id == playlistId);
                 if (playlistItem != null) Playlists.Remove(playlistItem);
                 StatusMessage = string.Empty;
             }
-            else
-            {
+            else {
                 StatusMessage = "Failed to delete playlist.";
             }
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             StatusMessage = "An error occurred while deleting the playlist.";
-            Debug.WriteLine($"[PlaylistViewModel] CRITICAL: Error deleting playlist: {ex.Message}");
+            _logger.LogError(ex, "Error deleting playlist {PlaylistId}", playlistId);
         }
-        finally
-        {
+        finally {
             IsDeletingPlaylist = false;
         }
     }

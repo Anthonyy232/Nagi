@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Nagi.Core.Services.Abstractions;
 using Nagi.WinUI.Services.Abstractions;
@@ -9,80 +10,65 @@ namespace Nagi.WinUI.Services.Implementations;
 /// <summary>
 ///     A service that manages the application's visual theme, including static and dynamic theming.
 /// </summary>
-public class ThemeService : IThemeService
-{
+public class ThemeService : IThemeService {
     private readonly App _app;
+    private readonly ILogger<ThemeService> _logger;
     private readonly Lazy<IMusicPlaybackService> _playbackService;
     private readonly IServiceProvider _serviceProvider;
     private readonly Lazy<IUISettingsService> _settingsService;
 
-    public ThemeService(App app, IServiceProvider serviceProvider)
-    {
+    public ThemeService(App app, IServiceProvider serviceProvider, ILogger<ThemeService> logger) {
         _app = app ?? throw new ArgumentNullException(nameof(app));
         _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
-        _settingsService =
-            new Lazy<IUISettingsService>(() => _serviceProvider.GetRequiredService<IUISettingsService>());
-        _playbackService =
-            new Lazy<IMusicPlaybackService>(() => _serviceProvider.GetRequiredService<IMusicPlaybackService>());
+        _logger = logger;
+        _settingsService = new Lazy<IUISettingsService>(() => _serviceProvider.GetRequiredService<IUISettingsService>());
+        _playbackService = new Lazy<IMusicPlaybackService>(() => _serviceProvider.GetRequiredService<IMusicPlaybackService>());
     }
 
-    /// <summary>
-    ///     Applies a specific theme (Light, Dark, or Default) to the application.
-    /// </summary>
-    /// <param name="theme">The theme to apply.</param>
-    public void ApplyTheme(ElementTheme theme)
-    {
+    public void ApplyTheme(ElementTheme theme) {
+        _logger.LogInformation("Applying application theme: {Theme}", theme);
         _app.ApplyThemeInternal(theme);
     }
 
-    /// <summary>
-    ///     Reapplies the dynamic theme based on the currently playing track.
-    ///     If no track is playing, it reverts to the default accent color.
-    /// </summary>
-    public void ReapplyCurrentDynamicTheme()
-    {
+    public void ReapplyCurrentDynamicTheme() {
+        _logger.LogInformation("Reapplying current dynamic theme.");
         var currentTrack = _playbackService.Value.CurrentTrack;
-        if (currentTrack is not null)
-            ApplyDynamicThemeFromSwatches(
-                currentTrack.LightSwatchId,
-                currentTrack.DarkSwatchId);
-        else
+        if (currentTrack is not null) {
+            ApplyDynamicThemeFromSwatches(currentTrack.LightSwatchId, currentTrack.DarkSwatchId);
+        }
+        else {
+            _logger.LogDebug("No track is playing. Reverting to default primary color.");
             ActivateDefaultPrimaryColor();
+        }
     }
 
-    /// <summary>
-    ///     Applies a dynamic theme based on color swatches, typically from album art.
-    ///     The appropriate swatch is chosen based on the application's current light/dark theme.
-    /// </summary>
-    /// <param name="lightSwatchId">The hex color string for the light theme.</param>
-    /// <param name="darkSwatchId">The hex color string for the dark theme.</param>
-    public async void ApplyDynamicThemeFromSwatches(string? lightSwatchId, string? darkSwatchId)
-    {
-        if (!await _settingsService.Value.GetDynamicThemingAsync())
-        {
+    public async void ApplyDynamicThemeFromSwatches(string? lightSwatchId, string? darkSwatchId) {
+        if (!await _settingsService.Value.GetDynamicThemingAsync()) {
+            _logger.LogDebug("Dynamic theming is disabled. Activating default primary color.");
             ActivateDefaultPrimaryColor();
             return;
         }
 
-        if (App.RootWindow?.Content is not FrameworkElement rootElement)
-        {
+        if (App.RootWindow?.Content is not FrameworkElement rootElement) {
+            _logger.LogWarning("Could not get root FrameworkElement. Cannot apply dynamic theme.");
             ActivateDefaultPrimaryColor();
             return;
         }
 
         var swatchToUse = rootElement.ActualTheme == ElementTheme.Dark ? darkSwatchId : lightSwatchId;
 
-        if (!string.IsNullOrEmpty(swatchToUse) && _app.TryParseHexColor(swatchToUse, out var targetColor))
+        if (!string.IsNullOrEmpty(swatchToUse) && _app.TryParseHexColor(swatchToUse, out var targetColor)) {
+            _logger.LogDebug("Applying dynamic theme using {ThemeMode} swatch: {Swatch}", rootElement.ActualTheme, swatchToUse);
             _app.SetAppPrimaryColorBrushColor(targetColor);
-        else
+        }
+        else {
+            _logger.LogDebug("No valid swatch found for current theme. Activating default primary color.");
             ActivateDefaultPrimaryColor();
+        }
     }
 
-    /// <summary>
-    ///     Resets the application's primary color to the default system accent color.
-    /// </summary>
-    public void ActivateDefaultPrimaryColor()
-    {
+    public void ActivateDefaultPrimaryColor() {
+        _logger.LogInformation("Activating default primary color.");
         _app.SetAppPrimaryColorBrushColor(App.SystemAccentColor);
     }
 }

@@ -2,7 +2,9 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -11,6 +13,7 @@ using Windows.UI;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.UI;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
@@ -25,9 +28,11 @@ using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
 using Nagi.WinUI.Services.Implementations;
 using Nagi.WinUI.ViewModels;
+using Serilog;
 using WinRT;
 using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
 using UnhandledExceptionEventArgs = Microsoft.UI.Xaml.UnhandledExceptionEventArgs;
+
 
 #if !MSIX_PACKAGE
 using Velopack;
@@ -42,8 +47,10 @@ namespace Nagi.WinUI;
 /// </summary>
 public partial class App : Application {
     private static Color? _systemAccentColor;
+    private static string? _currentLogFilePath;
 
     private readonly ConcurrentQueue<string> _fileActivationQueue = new();
+    private ILogger<App>? _logger;
     private volatile bool _isProcessingFileQueue;
     private Window? _window;
 
@@ -75,6 +82,9 @@ public partial class App : Application {
     /// </summary>
     public static DispatcherQueue? MainDispatcherQueue => CurrentApp?._window?.DispatcherQueue;
 
+    /// <summary>
+    /// Gets the system's current accent color, with a fallback.
+    /// </summary>
     public static Color SystemAccentColor {
         get {
             _systemAccentColor ??= Current.Resources.TryGetValue("SystemAccentColor", out var value) &&
@@ -86,23 +96,52 @@ public partial class App : Application {
     }
 
     protected override async void OnLaunched(LaunchActivatedEventArgs args) {
-        InitializeWindowAndServices();
-        InitializeSystemIntegration();
+        var configuration = new ConfigurationBuilder()
+            .SetBasePath(AppContext.BaseDirectory)
+            .AddJsonFile("appsettings.json", false, true)
+            .Build();
+        var tempPathConfig = new PathConfiguration(configuration);
 
-        HandleInitialActivation(args.UWPLaunchActivatedEventArgs);
+        var sessionId = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+        _currentLogFilePath = Path.Combine(tempPathConfig.LogsDirectory, $"log-{sessionId}.txt");
 
-        var restoreSession = _fileActivationQueue.IsEmpty;
-        await InitializeCoreServicesAsync(restoreSession);
+        Log.Logger = new LoggerConfiguration()
+            .ReadFrom.Configuration(configuration)
+            .WriteTo.File(_currentLogFilePath,
+                rollingInterval: RollingInterval.Day,
+                retainedFileCountLimit: 14,
+                outputTemplate:
+                "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] [{ThreadId}] {Message:lj}{NewLine}{Exception}")
+            .WriteTo.Sink(MemoryLog.Instance)
+            .CreateLogger();
 
-        await CheckAndNavigateToMainContent();
+        try {
+            InitializeWindowAndServices(configuration);
+            _logger = Services!.GetRequiredService<ILogger<App>>();
+            _logger.LogInformation("Application starting up.");
 
-        ProcessFileActivationQueue();
+            InitializeSystemIntegration();
 
-        var isStartupLaunch = Environment.GetCommandLineArgs()
-            .Any(arg => arg.Equals("--startup", StringComparison.OrdinalIgnoreCase));
-        await HandleWindowActivationAsync(isStartupLaunch);
+            HandleInitialActivation(args.UWPLaunchActivatedEventArgs);
 
-        PerformPostLaunchTasks();
+            var restoreSession = _fileActivationQueue.IsEmpty;
+            await InitializeCoreServicesAsync(restoreSession);
+
+            await CheckAndNavigateToMainContent();
+
+            ProcessFileActivationQueue();
+
+            var isStartupLaunch = Environment.GetCommandLineArgs()
+                .Any(arg => arg.Equals("--startup", StringComparison.OrdinalIgnoreCase));
+            await HandleWindowActivationAsync(isStartupLaunch);
+
+            PerformPostLaunchTasks();
+        }
+        catch (Exception ex) {
+            Log.Fatal(ex, "Application terminated unexpectedly during startup.");
+            await Log.CloseAndFlushAsync();
+            throw;
+        }
     }
 
     private void HandleInitialActivation(IActivatedEventArgs args) {
@@ -113,7 +152,6 @@ public partial class App : Application {
             if (fileArgs.Files.Any()) filePath = fileArgs.Files[0].Path;
         }
         else if (args.Kind == ActivationKind.Launch) {
-            // For a direct launch, the first argument after the executable is treated as a file path.
             var commandLineArgs = Environment.GetCommandLineArgs();
             if (commandLineArgs.Length > 1) filePath = commandLineArgs[1];
         }
@@ -139,16 +177,14 @@ public partial class App : Application {
     public void HandleExternalActivation(string? filePath) {
         MainDispatcherQueue?.TryEnqueue(() => {
             if (_window is null) {
-                Debug.WriteLine("[ERROR] App.HandleExternalActivation: Aborted because the main window is not available.");
+                _logger?.LogError("HandleExternalActivation: Aborted because the main window is not available");
                 return;
             }
 
-            // Queue the file for playback if one was provided.
             if (!string.IsNullOrEmpty(filePath)) {
                 EnqueueFileActivation(filePath);
             }
 
-            // Activate main window if empty file activation
             try {
                 var shouldActivateWindow = string.IsNullOrEmpty(filePath);
                 if (shouldActivateWindow) {
@@ -157,7 +193,7 @@ public partial class App : Application {
                 }
             }
             catch (Exception ex) {
-                Debug.WriteLine($"[ERROR] App.HandleExternalActivation: Exception during window activation. {ex.Message}");
+                _logger?.LogError(ex, "HandleExternalActivation: Exception during window activation");
                 if (string.IsNullOrEmpty(filePath)) {
                     _window.AppWindow.Show();
                     _window.Activate();
@@ -166,10 +202,6 @@ public partial class App : Application {
         });
     }
 
-    /// <summary>
-    /// Processes the queue of file activation requests on the main UI thread.
-    /// A flag ensures that the queue is processed by only one thread at a time.
-    /// </summary>
     private void ProcessFileActivationQueue() {
         if (_isProcessingFileQueue) return;
 
@@ -183,8 +215,7 @@ public partial class App : Application {
                 }
             }
             catch (Exception ex) {
-                Debug.WriteLine(
-                    $"[ERROR] App.ProcessFileActivationQueue: Exception while processing queue: {ex.Message}");
+                _logger?.LogError(ex, "Exception while processing file activation queue");
             }
             finally {
                 _isProcessingFileQueue = false;
@@ -194,7 +225,7 @@ public partial class App : Application {
 
     public async Task ProcessFileActivationAsync(string filePath) {
         if (Services is null || string.IsNullOrEmpty(filePath)) {
-            Debug.WriteLine("[ERROR] App.ProcessFileActivationAsync: Aborted due to null services or file path.");
+            _logger?.LogError("ProcessFileActivationAsync: Aborted due to null services or file path");
             return;
         }
 
@@ -203,8 +234,7 @@ public partial class App : Application {
             await playbackService.PlayTransientFileAsync(filePath);
         }
         catch (Exception ex) {
-            Debug.WriteLine(
-                $"[ERROR] App.ProcessFileActivationAsync: Failed to process file '{filePath}'. Exception: {ex}");
+            _logger?.LogError(ex, "Failed to process file '{FilePath}'", filePath);
         }
     }
 
@@ -221,21 +251,17 @@ public partial class App : Application {
             await offlineScrobbleService.ProcessQueueAsync();
         }
         catch (Exception ex) {
-            Debug.WriteLine($"[ERROR] App.InitializeCoreServicesAsync: Failed to initialize services. {ex.Message}");
+            _logger?.LogError(ex, "Failed to initialize core services");
         }
     }
 
-    /// <summary>
-    /// Configures the dependency injection container for the application.
-    /// </summary>
-    private static IServiceProvider ConfigureServices(Window window, DispatcherQueue dispatcherQueue, App appInstance) {
+    private static IServiceProvider ConfigureServices(Window window, DispatcherQueue dispatcherQueue, App appInstance,
+        IConfiguration configuration) {
         var services = new ServiceCollection();
 
-        var configuration = new ConfigurationBuilder()
-            .SetBasePath(AppContext.BaseDirectory)
-            .AddJsonFile("appsettings.json", false, true)
-            .Build();
-        services.AddSingleton<IConfiguration>(configuration);
+        services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(dispose: true));
+
+        services.AddSingleton(configuration);
         services.AddSingleton<IPathConfiguration, PathConfiguration>();
         services.AddHttpClient();
 
@@ -292,26 +318,28 @@ public partial class App : Application {
 #endif
     }
 
-
-
     private static void ConfigureWinUIServices(IServiceCollection services, Window window,
         DispatcherQueue dispatcherQueue, App appInstance) {
         services.AddSingleton<IWin32InteropService, Win32InteropService>();
         services.AddSingleton<IWindowService>(sp => new WindowService(
             sp.GetRequiredService<IWin32InteropService>(),
             sp.GetRequiredService<IUISettingsService>(),
-            sp.GetRequiredService<IDispatcherService>()
+            sp.GetRequiredService<IDispatcherService>(),
+            sp.GetRequiredService<ILogger<WindowService>>()
         ));
         services.AddSingleton<IUIService, UIService>();
         services.AddSingleton(dispatcherQueue);
         services.AddSingleton<IDispatcherService, DispatcherService>();
-        services.AddSingleton<IThemeService>(sp => new ThemeService(appInstance, sp));
-        services.AddSingleton<IApplicationLifecycle>(sp => new ApplicationLifecycle(appInstance, sp));
+        services.AddSingleton<IThemeService>(sp =>
+            new ThemeService(appInstance, sp, sp.GetRequiredService<ILogger<ThemeService>>()));
+        services.AddSingleton<IApplicationLifecycle>(sp =>
+            new ApplicationLifecycle(appInstance, sp, sp.GetRequiredService<ILogger<ApplicationLifecycle>>()));
         services.AddSingleton<IAppInfoService, AppInfoService>();
         services.AddSingleton<INavigationService, NavigationService>();
         services.AddSingleton<ITrayPopupService, TrayPopupService>();
         services.AddSingleton<IAudioPlayer>(provider =>
-            new LibVlcAudioPlayerService(provider.GetRequiredService<IDispatcherService>()));
+            new LibVlcAudioPlayerService(provider.GetRequiredService<IDispatcherService>(),
+                provider.GetRequiredService<ILogger<LibVlcAudioPlayerService>>()));
     }
 
     private static void ConfigureViewModels(IServiceCollection services) {
@@ -341,17 +369,16 @@ public partial class App : Application {
             dbContext.Database.Migrate();
         }
         catch (Exception ex) {
-            Debug.WriteLine(
-                $"[CRITICAL] App.InitializeDatabase: Failed to initialize or migrate database. {ex.Message}");
+            Log.Fatal(ex, "Failed to initialize or migrate database.");
         }
     }
 
-    private void InitializeWindowAndServices() {
+    private void InitializeWindowAndServices(IConfiguration configuration) {
         try {
             _window = new MainWindow();
             _window.Closed += OnWindowClosed;
 
-            Services = ConfigureServices(_window, _window.DispatcherQueue, this);
+            Services = ConfigureServices(_window, _window.DispatcherQueue, this, configuration);
 
             if (_window is MainWindow mainWindow) {
                 mainWindow.InitializeDependencies(Services.GetRequiredService<IUISettingsService>());
@@ -360,8 +387,8 @@ public partial class App : Application {
             InitializeDatabase(Services);
         }
         catch (Exception ex) {
-            Debug.WriteLine($"[CRITICAL] App.InitializeWindowAndServices: Failed to initialize window. {ex.Message}");
-            throw; // Re-throw to prevent application from continuing in an invalid state.
+            Log.Fatal(ex, "Failed to initialize window and services.");
+            throw;
         }
     }
 
@@ -371,7 +398,7 @@ public partial class App : Application {
             interopService.SetWindowIcon(_window!, "Assets/AppLogo.ico");
         }
         catch (Exception ex) {
-            Debug.WriteLine($"[ERROR] App.InitializeSystemIntegration: Failed to set window icon. {ex.Message}");
+            _logger?.LogError(ex, "Failed to set window icon");
         }
     }
 
@@ -385,12 +412,10 @@ public partial class App : Application {
         if (Services is not null) {
             await SaveApplicationStateAsync(Services);
         }
+
         deferral.Complete();
     }
 
-    /// <summary>
-    /// Saves critical application state, such as the current playback session, before suspension.
-    /// </summary>
     private async Task SaveApplicationStateAsync(IServiceProvider services) {
         var settingsService = services.GetRequiredService<ISettingsService>();
         var musicPlaybackService = services.GetRequiredService<IMusicPlaybackService>();
@@ -404,18 +429,23 @@ public partial class App : Application {
             }
         }
         catch (Exception ex) {
-            Debug.WriteLine(
-                $"[ERROR] App.SaveApplicationStateAsync: Failed to save or clear playback state. {ex.Message}");
+            _logger?.LogError(ex, "Failed to save or clear playback state");
         }
     }
 
     private async void OnWindowClosed(object sender, WindowEventArgs args) {
         if (Services is not null) {
             try {
+                _logger?.LogInformation("Window is closing. Shutting down services.");
                 await Services.GetRequiredService<IPresenceManager>().ShutdownAsync();
                 await SaveApplicationStateAsync(Services);
             }
+            catch (Exception ex) {
+                _logger?.LogError(ex, "Error during service shutdown.");
+            }
             finally {
+                await Log.CloseAndFlushAsync();
+
                 if (Services is IAsyncDisposable asyncDisposableServices) {
                     await asyncDisposableServices.DisposeAsync();
                 }
@@ -424,19 +454,60 @@ public partial class App : Application {
                 }
             }
         }
-
-        Current?.Exit();
+        else {
+            await Log.CloseAndFlushAsync();
+        }
     }
 
     private void OnAppUnhandledException(object sender, UnhandledExceptionEventArgs e) {
-        // Log the unhandled exception to prevent the application from crashing silently.
-        Debug.WriteLine($"[FATAL] App.OnAppUnhandledException: {e.Exception}");
         e.Handled = true;
+        string exceptionDetails = e.Exception.ToString();
+        string originalLogPath = _currentLogFilePath ?? "Not set";
+
+        Log.Fatal(e.Exception, "An unhandled exception occurred. Application will now terminate. Log path at time of crash: {LogPath}", originalLogPath);
+        Log.CloseAndFlush();
+
+        // Primary strategy: Get logs from the in-memory sink.
+        string logContent = MemoryLog.Instance.GetContent();
+
+        // Fallback strategy: If memory is empty, try reading the log file from disk.
+        if (string.IsNullOrWhiteSpace(logContent)) {
+            try {
+                Thread.Sleep(250);
+                logContent = File.ReadAllText(originalLogPath);
+            }
+            catch (Exception fileEx) {
+                logContent = $"Could not retrieve logs from memory. The fallback attempt to read the log file failed.\n" +
+                             $"Expected Path: '{originalLogPath}'\n" +
+                             $"Error: {fileEx.Message}";
+            }
+        }
+
+        string fullCrashReport = $"{logContent}\n\n--- UNHANDLED EXCEPTION DETAILS ---\n{exceptionDetails}";
+
+        MainDispatcherQueue?.TryEnqueue(async () => {
+            try {
+                var uiService = Services?.GetRequiredService<IUIService>();
+                if (uiService != null) {
+                    await uiService.ShowCrashReportDialogAsync(
+                        title: "Application Error",
+                        introduction: "Nagi has encountered a critical error and must close. We are sorry for the inconvenience.",
+                        logContent: fullCrashReport,
+                        githubUrl: "https://github.com/Anthonyy232/Nagi/issues"
+                    );
+                }
+            }
+            catch (Exception dialogEx) {
+                Debug.WriteLine($"Failed to show the crash report dialog: {dialogEx}");
+            }
+            finally {
+                Current.Exit();
+            }
+        });
     }
 
     /// <summary>
     /// Sets the initial page of the application based on whether a music library has been configured.
-    /// This method follows a specific sequence to prevent a theme flash on startup.
     /// </summary>
     public async Task CheckAndNavigateToMainContent() {
         if (RootWindow is null || Services is null) return;
@@ -483,7 +554,7 @@ public partial class App : Application {
             if (appPrimaryColorBrush.Color != newColor) appPrimaryColorBrush.Color = newColor;
         }
         else {
-            Debug.WriteLine("[CRITICAL] App.SetAppPrimaryColorBrushColor: AppPrimaryColorBrush resource not found.");
+            _logger?.LogCritical("AppPrimaryColorBrush resource not found");
         }
     }
 
@@ -533,8 +604,7 @@ public partial class App : Application {
                 audioPlayerService.InitializeSmtc();
             }
             catch (Exception ex) {
-                Debug.WriteLine(
-                    $"[ERROR] App.EnqueuePostLaunchTasks: Failed to initialize System Media Transport Controls. {ex.Message}");
+                _logger?.LogError(ex, "Failed to initialize System Media Transport Controls");
             }
         });
     }
@@ -548,8 +618,7 @@ public partial class App : Application {
 #endif
         }
         catch (Exception ex) {
-            Debug.WriteLine(
-                $"[ERROR] App.CheckForUpdatesOnStartupAsync: Failed during startup update check. {ex.Message}");
+            _logger?.LogError(ex, "Failed during startup update check");
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using Windows.Graphics;
+using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Popups;
@@ -10,56 +11,44 @@ namespace Nagi.WinUI.Services.Implementations;
 
 /// <summary>
 ///     Manages the lifecycle and positioning of the tray popup window.
-///     This service handles creating, showing, hiding, and animating the popup,
-///     ensuring it is correctly positioned relative to the cursor and screen work area.
 /// </summary>
-public class TrayPopupService : ITrayPopupService, IDisposable
-{
-    // Vertical distance between the cursor and the popup window.
+public class TrayPopupService : ITrayPopupService, IDisposable {
     private const int VERTICAL_OFFSET = 24;
-
-    // Time in milliseconds to ignore hide/show requests after deactivation to prevent flickering.
     private const uint DEACTIVATION_DEBOUNCE_MS = 200;
-
-    // The width of the popup in device-independent pixels (DIPs).
     private const int POPUP_WIDTH_DIPS = 384;
-
-    // The base DPI value used for scaling calculations.
     private const float BASE_DPI = 96.0f;
 
     private readonly IWin32InteropService _win32;
+    private readonly ILogger<TrayPopupService> _logger;
     private bool _isAnimating;
     private bool _isDisposed;
     private uint _lastDeactivatedTime;
     private TrayPopup? _popupWindow;
 
-    public TrayPopupService(IWin32InteropService win32InteropService)
-    {
+    public TrayPopupService(IWin32InteropService win32InteropService, ILogger<TrayPopupService> logger) {
         _win32 = win32InteropService;
+        _logger = logger;
     }
 
-    /// <summary>
-    ///     Cleans up resources by ensuring the popup window is closed.
-    /// </summary>
-    public void Dispose()
-    {
+    public void Dispose() {
         if (_isDisposed) return;
-
-        // Close the window if it exists. The OnPopupWindowClosed event handler
-        // will take care of unsubscribing from events and nulling out the reference.
+        _logger.LogInformation("Disposing TrayPopupService.");
         _popupWindow?.Close();
-
         _isDisposed = true;
         GC.SuppressFinalize(this);
     }
 
-    public void ShowOrHidePopup()
-    {
-        // Prevent actions if the service has been disposed.
-        if (_isDisposed) return;
+    public void ShowOrHidePopup() {
+        if (_isDisposed) {
+            _logger.LogWarning("ShowOrHidePopup called on a disposed service.");
+            return;
+        }
 
-        // Prevent rapid toggling or actions during an animation.
-        if (_isAnimating || _win32.GetTickCount() - _lastDeactivatedTime < DEACTIVATION_DEBOUNCE_MS) return;
+        if (_isAnimating || _win32.GetTickCount() - _lastDeactivatedTime < DEACTIVATION_DEBOUNCE_MS) {
+            _logger.LogDebug("Popup toggle debounced (Animating: {IsAnimating}, Time since deactivation: {Time}ms)",
+                _isAnimating, _win32.GetTickCount() - _lastDeactivatedTime);
+            return;
+        }
 
         if (_popupWindow == null) CreateWindow();
 
@@ -69,18 +58,17 @@ public class TrayPopupService : ITrayPopupService, IDisposable
             ShowPopup();
     }
 
-    public async void HidePopup()
-    {
-        if (_popupWindow != null && _popupWindow.AppWindow.IsVisible && !_isAnimating)
-        {
+    public async void HidePopup() {
+        if (_popupWindow != null && _popupWindow.AppWindow.IsVisible && !_isAnimating) {
+            _logger.LogInformation("Hiding tray popup.");
             _isAnimating = true;
             await PopupAnimation.AnimateOut(_popupWindow);
             _isAnimating = false;
         }
     }
 
-    private async void ShowPopup()
-    {
+    private async void ShowPopup() {
+        _logger.LogInformation("Showing tray popup.");
         _isAnimating = true;
         _popupWindow!.ViewModel.ShowPlayerViewCommand.Execute(null);
 
@@ -93,44 +81,39 @@ public class TrayPopupService : ITrayPopupService, IDisposable
         var cursorPosition = _win32.GetCursorPos();
         var workArea = _win32.GetWorkAreaForPoint(cursorPosition);
 
-        // Center the popup horizontally on the cursor.
         var finalX = cursorPosition.X - finalWidth / 2;
-        // Clamp the position to ensure it stays within the screen's work area.
-        finalX = (int)Math.Max(workArea.Left, finalX);
-        finalX = (int)Math.Min(workArea.Right - finalWidth, finalX);
+        finalX = (int)Math.Max(workArea.Left, Math.Min(workArea.Right - finalWidth, finalX));
 
-        // Position the popup above the cursor by default.
         var finalY = cursorPosition.Y - finalHeight - VERTICAL_OFFSET;
-        // If there's not enough space above, flip it to appear below the cursor.
         if (finalY < workArea.Top) finalY = cursorPosition.Y + VERTICAL_OFFSET;
 
         var finalRect = new RectInt32(finalX, finalY, finalWidth, finalHeight);
+        _logger.LogDebug("Calculated popup position: {PopupRect}", finalRect);
 
         await PopupAnimation.AnimateIn(_popupWindow, finalRect);
-
         _isAnimating = false;
     }
 
-    private void CreateWindow()
-    {
+    private void CreateWindow() {
         var mainContent = App.RootWindow?.Content as FrameworkElement;
         var currentTheme = mainContent?.ActualTheme ?? ElementTheme.Default;
+        _logger.LogInformation("Creating new tray popup window with theme {Theme}.", currentTheme);
         _popupWindow = new TrayPopup(currentTheme);
         _popupWindow.Deactivated += OnPopupDeactivated;
         _popupWindow.Closed += OnPopupWindowClosed;
     }
 
-    private void OnPopupDeactivated(object? sender, EventArgs e)
-    {
+    private void OnPopupDeactivated(object? sender, EventArgs e) {
         _lastDeactivatedTime = _win32.GetTickCount();
+        _logger.LogDebug("Popup deactivated. Hiding.");
         HidePopup();
     }
 
-    private void OnPopupWindowClosed(object? sender, WindowEventArgs args)
-    {
-        // When the window is closed, we must clean up our references to it.
-        if (sender is TrayPopup popup)
-        {
+
+
+    private void OnPopupWindowClosed(object? sender, WindowEventArgs args) {
+        if (sender is TrayPopup popup) {
+            _logger.LogInformation("Tray popup window closed. Cleaning up references.");
             popup.Deactivated -= OnPopupDeactivated;
             popup.Closed -= OnPopupWindowClosed;
             _popupWindow = null;

@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
 using Windows.Security.Credentials;
+using Microsoft.Extensions.Logging;
 using Nagi.Core.Services.Abstractions;
 
 namespace Nagi.WinUI.Services.Implementations;
@@ -9,85 +9,78 @@ namespace Nagi.WinUI.Services.Implementations;
 /// <summary>
 ///     Implements credential management using the Windows PasswordVault for secure storage.
 /// </summary>
-public class CredentialLockerService : ICredentialLockerService
-{
+public class CredentialLockerService : ICredentialLockerService {
     // The HResult for the "Element not found" exception, which PasswordVault
     // throws when a resource is not found. We handle this explicitly as it's an expected condition.
     private const int ELEMENT_NOT_FOUND_HRESULT = unchecked((int)0x80070490);
+
     private readonly PasswordVault _vault = new();
+    private readonly ILogger<CredentialLockerService> _logger;
+
+    public CredentialLockerService(ILogger<CredentialLockerService> logger) {
+        _logger = logger;
+    }
 
     /// <inheritdoc />
-    public void SaveCredential(string resource, string userName, string password)
-    {
-        try
-        {
+    public void SaveCredential(string resource, string userName, string password) {
+        try {
             // To ensure a clean save and prevent errors if a credential already exists,
             // remove any existing credential for the resource before adding the new one.
             RemoveCredential(resource);
 
             var credential = new PasswordCredential(resource, userName, password);
             _vault.Add(credential);
-            Debug.WriteLine($"[INFO] CredentialLockerService: Saved credential for resource '{resource}'.");
+
+            _logger.LogDebug("Saved credential for resource {Resource}", resource);
         }
-        catch (Exception ex)
-        {
-            // Log any unexpected errors during the save operation.
-            Debug.WriteLine(
-                $"[ERROR] CredentialLockerService: Failed to save credential for resource '{resource}'. Error: {ex.Message}");
+        catch (Exception ex) {
+            _logger.LogError(ex, "Failed to save credential for resource {Resource}", resource);
         }
     }
 
     /// <inheritdoc />
-    public (string? UserName, string? Password)? RetrieveCredential(string resource)
-    {
-        try
-        {
-            // Find the first credential matching the resource.
+    public (string? UserName, string? Password)? RetrieveCredential(string resource) {
+        try {
             var credential = _vault.FindAllByResource(resource).FirstOrDefault();
 
-            if (credential != null)
-            {
-                // The password is not loaded by default and must be explicitly retrieved.
+            if (credential != null) {
                 credential.RetrievePassword();
+                _logger.LogDebug("Retrieved credential for resource {Resource}", resource);
                 return (credential.UserName, credential.Password);
             }
 
+            _logger.LogDebug("No credential found for resource {Resource}", resource);
             return null;
         }
-        // This is an expected condition when the credential does not exist.
-        // We catch it and return null without logging an error.
-        catch (Exception ex) when (ex.HResult == ELEMENT_NOT_FOUND_HRESULT)
-        {
+        catch (Exception ex) when (ex.HResult == ELEMENT_NOT_FOUND_HRESULT) {
+            // This is an expected condition when the credential does not exist.
+            // We catch it and return null without logging an error.
+            _logger.LogDebug("No credential found for resource {Resource} (HResult match)", resource);
             return null;
         }
-        // Catch any other, truly unexpected exceptions.
-        catch (Exception ex)
-        {
-            Debug.WriteLine(
-                $"[ERROR] CredentialLockerService: Failed to retrieve credential for resource '{resource}'. Error: {ex.Message}");
+        catch (Exception ex) {
+            _logger.LogError(ex, "Failed to retrieve credential for resource {Resource}", resource);
             return null;
         }
     }
 
     /// <inheritdoc />
-    public void RemoveCredential(string resource)
-    {
-        try
-        {
-            // Find all credentials associated with the resource, as the username is unknown.
+    public void RemoveCredential(string resource) {
+        try {
             var credentials = _vault.FindAllByResource(resource);
-            foreach (var credential in credentials) _vault.Remove(credential);
-        }
+            if (!credentials.Any()) return;
 
-        catch (Exception ex) when (ex.HResult == ELEMENT_NOT_FOUND_HRESULT)
-        {
-            // Silently ignore, as this is not an error.
+            foreach (var credential in credentials) {
+                _vault.Remove(credential);
+            }
+            _logger.LogDebug("Removed {Count} credential(s) for resource {Resource}", credentials.Count, resource);
         }
-        // Catch other exceptions that might occur during removal.
-        catch (Exception ex)
-        {
-            Debug.WriteLine(
-                $"[WARN] CredentialLockerService: Issue during removal of credential for resource '{resource}'. Error: {ex.Message}");
+        catch (Exception ex) when (ex.HResult == ELEMENT_NOT_FOUND_HRESULT) {
+            // Silently ignore, as this is not an error. The credential was already gone.
+        }
+        catch (Exception ex) {
+            // A warning is appropriate here as it's not a critical failure, but it is unexpected.
+            _logger.LogWarning(ex, "An issue occurred during removal of credential for resource {Resource}", resource);
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 using Nagi.Core.Models.Lyrics;
 using Nagi.Core.Services.Abstractions;
@@ -15,8 +16,7 @@ namespace Nagi.WinUI.ViewModels;
 ///     services to get song information and lyrics, and provides properties for data
 ///     binding to the view.
 /// </summary>
-public partial class LyricsPageViewModel : ObservableObject, IDisposable
-{
+public partial class LyricsPageViewModel : ObservableObject, IDisposable {
     /// <summary>
     ///     The base for the exponential fade. A value closer to 1.0 (e.g., 0.9) means a
     ///     very slow and gradual fade. A smaller value (e.g., 0.75) means a faster fade.
@@ -30,6 +30,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
 
     private static readonly TimeSpan OptimisticUpdateGracePeriod = TimeSpan.FromSeconds(2);
     private readonly IDispatcherService _dispatcherService;
+    private readonly ILogger<LyricsPageViewModel> _logger;
     private readonly ILrcService _lrcService;
     private readonly IMusicPlaybackService _playbackService;
     private readonly TimeSpan _seekTimeOffset = TimeSpan.FromSeconds(0.2);
@@ -43,11 +44,12 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
     public LyricsPageViewModel(
         IMusicPlaybackService playbackService,
         IDispatcherService dispatcherService,
-        ILrcService lrcService)
-    {
+        ILrcService lrcService,
+        ILogger<LyricsPageViewModel> logger) {
         _playbackService = playbackService;
         _dispatcherService = dispatcherService;
         _lrcService = lrcService;
+        _logger = logger;
 
         _playbackService.TrackChanged += OnPlaybackServiceTrackChanged;
         _playbackService.PositionChanged += OnPlaybackServicePositionChanged;
@@ -72,8 +74,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
 
     public ObservableCollection<LyricLine> LyricLines { get; } = new();
 
-    public void Dispose()
-    {
+    public void Dispose() {
         if (_isDisposed) return;
 
         _playbackService.TrackChanged -= OnPlaybackServiceTrackChanged;
@@ -86,13 +87,13 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
     }
 
     [RelayCommand]
-    public async Task SeekToLineAsync(LyricLine? line)
-    {
+    public async Task SeekToLineAsync(LyricLine? line) {
         if (line is null) return;
 
         var targetTime = line.StartTime - _seekTimeOffset;
         if (targetTime < TimeSpan.Zero) targetTime = TimeSpan.Zero;
 
+        _logger.LogDebug("Seeking lyrics to line with start time {StartTime}", line.StartTime);
         _optimisticallySetLine = line;
         _optimisticSetTimestamp = DateTime.UtcNow;
         UpdateCurrentLineFromPosition(targetTime);
@@ -100,32 +101,26 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
         await _playbackService.SeekAsync(targetTime);
     }
 
-    private void OnPlaybackServicePositionChanged()
-    {
+    private void OnPlaybackServicePositionChanged() {
         UpdateCurrentLineFromPosition(_playbackService.CurrentPosition);
     }
 
-    private void UpdateCurrentLineFromPosition(TimeSpan position)
-    {
+    private void UpdateCurrentLineFromPosition(TimeSpan position) {
         if (_parsedLrc is null || !HasLyrics) return;
 
-        _dispatcherService.TryEnqueue(() =>
-        {
+        _dispatcherService.TryEnqueue(() => {
             CurrentPosition = position;
             var newCurrentLine = _lrcService.GetCurrentLine(_parsedLrc, position, ref _lrcSearchHint);
 
             if (_optimisticallySetLine != null &&
-                DateTime.UtcNow - _optimisticSetTimestamp < OptimisticUpdateGracePeriod)
-            {
+                DateTime.UtcNow - _optimisticSetTimestamp < OptimisticUpdateGracePeriod) {
                 if (!ReferenceEquals(newCurrentLine, _optimisticallySetLine)) newCurrentLine = _optimisticallySetLine;
             }
-            else
-            {
+            else {
                 _optimisticallySetLine = null;
             }
 
-            if (!ReferenceEquals(newCurrentLine, CurrentLine))
-            {
+            if (!ReferenceEquals(newCurrentLine, CurrentLine)) {
                 if (CurrentLine != null) CurrentLine.IsActive = false;
                 if (newCurrentLine != null) newCurrentLine.IsActive = true;
                 CurrentLine = newCurrentLine;
@@ -138,21 +133,18 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
     ///     Calculates and applies opacity to each lyric line based on its distance
     ///     from the currently active line using a gradual, exponential curve.
     /// </summary>
-    private void UpdateLineOpacities()
-    {
+    private void UpdateLineOpacities() {
         if (LyricLines.Count == 0) return;
 
         var activeIndex = CurrentLine != null ? LyricLines.IndexOf(CurrentLine) : -1;
 
         // If no line is active, set all lines to the minimum opacity.
-        if (activeIndex == -1)
-        {
+        if (activeIndex == -1) {
             foreach (var line in LyricLines) line.Opacity = MinimumOpacity;
             return;
         }
 
-        for (var i = 0; i < LyricLines.Count; i++)
-        {
+        for (var i = 0; i < LyricLines.Count; i++) {
             var distance = Math.Abs(i - activeIndex);
 
             // Use Math.Pow for a smooth, exponential decay.
@@ -163,10 +155,8 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
         }
     }
 
-    private async void UpdateForTrack(Song? song)
-    {
-        await _dispatcherService.EnqueueAsync(async () =>
-        {
+    private async void UpdateForTrack(Song? song) {
+        await _dispatcherService.EnqueueAsync(async () => {
             LyricLines.Clear();
             CurrentLine = null;
             _parsedLrc = null;
@@ -175,13 +165,14 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
             SongDuration = TimeSpan.Zero;
             CurrentPosition = TimeSpan.Zero;
 
-            if (song is null)
-            {
+            if (song is null) {
+                _logger.LogInformation("Clearing lyrics view as playback stopped");
                 SongTitle = "No song selected";
                 HasLyrics = false;
                 return;
             }
 
+            _logger.LogInformation("Updating lyrics for track '{SongTitle}' ({SongId})", song.Title, song.Id);
             SongTitle = !string.IsNullOrWhiteSpace(song.Artist?.Name)
                 ? $"{song.Title} by {song.Artist.Name}"
                 : song.Title;
@@ -189,12 +180,12 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
 
             _parsedLrc = await _lrcService.GetLyricsAsync(song);
 
-            if (_parsedLrc is null || _parsedLrc.IsEmpty)
-            {
+            if (_parsedLrc is null || _parsedLrc.IsEmpty) {
+                _logger.LogInformation("No lyrics found for track '{SongTitle}'", song.Title);
                 HasLyrics = false;
             }
-            else
-            {
+            else {
+                _logger.LogInformation("Successfully parsed lyrics for track '{SongTitle}'", song.Title);
                 foreach (var line in _parsedLrc.Lines) LyricLines.Add(line);
                 HasLyrics = true;
                 UpdateCurrentLineFromPosition(_playbackService.CurrentPosition);
@@ -203,18 +194,17 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
         });
     }
 
-    private void OnPlaybackServiceTrackChanged()
-    {
+    private void OnPlaybackServiceTrackChanged() {
         UpdateForTrack(_playbackService.CurrentTrack);
     }
 
-    private void OnPlaybackServiceDurationChanged()
-    {
+    private void OnPlaybackServiceDurationChanged() {
         _dispatcherService.TryEnqueue(() => { SongDuration = _playbackService.Duration; });
     }
 
-    private void OnPlaybackServicePlaybackStateChanged()
-    {
+
+
+    private void OnPlaybackServicePlaybackStateChanged() {
         _dispatcherService.TryEnqueue(() => { IsPlaying = _playbackService.IsPlaying; });
     }
 }

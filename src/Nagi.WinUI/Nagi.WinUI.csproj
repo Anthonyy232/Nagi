@@ -111,6 +111,11 @@
         <!-- Video Playback -->
         <PackageReference Include="LibVLCSharp" Version="$(LibVLCSharpVersion)" />
         <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="$(MicrosoftXamlBehaviorsWinUIManagedVersion)" />
+        <PackageReference Include="Serilog.Enrichers.Thread" Version="$(SerilogEnrichersThreadVersion)" />
+        <PackageReference Include="Serilog.Extensions.Logging" Version="$(SerilogExtensionsLoggingVersion)" />
+        <PackageReference Include="Serilog.Settings.Configuration" Version="$(SerilogSettingsConfigurationVersion)" />
+        <PackageReference Include="Serilog.Sinks.Debug" Version="$(SerilogSinksDebugVersion)" />
+        <PackageReference Include="Serilog.Sinks.File" Version="$(SerilogSinksFileVersion)" />
         <PackageReference Include="VideoLAN.LibVLC.Windows" Version="$(LibVLCWindowsVersion)" />
 
         <!-- Updater (Unpackaged only) -->

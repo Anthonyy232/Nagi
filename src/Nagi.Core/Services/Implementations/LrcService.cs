@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+﻿using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 using Nagi.Core.Models.Lyrics;
 using Nagi.Core.Services.Abstractions;
@@ -10,11 +10,13 @@ namespace Nagi.Core.Services.Implementations;
 ///     optimized for high-performance playback synchronization.
 /// </summary>
 public class LrcService : ILrcService {
-    private readonly LrcParser.Parser.Lrc.LrcParser _parser = new();
     private readonly IFileSystemService _fileSystemService;
+    private readonly ILogger<LrcService> _logger;
+    private readonly LrcParser.Parser.Lrc.LrcParser _parser = new();
 
-    public LrcService(IFileSystemService fileSystemService) {
+    public LrcService(IFileSystemService fileSystemService, ILogger<LrcService> logger) {
         _fileSystemService = fileSystemService;
+        _logger = logger;
     }
 
     /// <inheritdoc />
@@ -45,7 +47,7 @@ public class LrcService : ILrcService {
             return new ParsedLrc(lyricLines);
         }
         catch (Exception ex) {
-            Debug.WriteLine($"[LrcService] ERROR: Failed to parse LRC file '{lrcFilePath}'. {ex.Message}");
+            _logger.LogError(ex, "Failed to parse LRC file {LrcFilePath}", lrcFilePath);
             return null;
         }
     }
