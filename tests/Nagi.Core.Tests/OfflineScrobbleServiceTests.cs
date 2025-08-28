@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Implementations;
@@ -27,6 +28,7 @@ public class OfflineScrobbleServiceTests : IDisposable
     // Mocks for external dependencies, enabling isolated testing of the service's logic.
     private readonly ILastFmScrobblerService _scrobblerService;
     private readonly ISettingsService _settingsService;
+    private readonly ILogger<OfflineScrobbleService> _logger;
 
     /// <summary>
     ///     The instance of the service under test.
@@ -43,6 +45,7 @@ public class OfflineScrobbleServiceTests : IDisposable
         _scrobblerService = Substitute.For<ILastFmScrobblerService>();
         _settingsService = Substitute.For<ISettingsService>();
         _dbHelper = new DbContextFactoryTestHelper();
+        _logger = Substitute.For<ILogger<OfflineScrobbleService>>();
 
         // Default setup for mocks to represent a "happy path"
         _settingsService.GetLastFmScrobblingEnabledAsync().Returns(true);
@@ -51,7 +54,8 @@ public class OfflineScrobbleServiceTests : IDisposable
         _service = new OfflineScrobbleService(
             _dbHelper.ContextFactory,
             _scrobblerService,
-            _settingsService);
+            _settingsService,
+            _logger);
     }
 
     /// <summary>

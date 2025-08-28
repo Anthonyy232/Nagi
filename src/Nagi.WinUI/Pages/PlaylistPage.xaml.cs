@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Windows.Storage.Pickers;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
@@ -15,195 +16,142 @@ namespace Nagi.WinUI.Pages;
 /// <summary>
 ///     A page that displays a grid of playlists and allows creating, renaming, and deleting them.
 /// </summary>
-public sealed partial class PlaylistPage : Page
-{
-    public PlaylistPage()
-    {
+public sealed partial class PlaylistPage : Page {
+    private readonly ILogger<PlaylistPage> _logger;
+
+    public PlaylistPage() {
         InitializeComponent();
         ViewModel = App.Services!.GetRequiredService<PlaylistViewModel>();
+        _logger = App.Services!.GetRequiredService<ILogger<PlaylistPage>>();
         DataContext = ViewModel;
+        _logger.LogInformation("PlaylistPage initialized.");
     }
 
-    /// <summary>
-    ///     Gets the ViewModel for this page.
-    /// </summary>
     public PlaylistViewModel ViewModel { get; }
 
-    /// <summary>
-    ///     Loads the playlists from the ViewModel when the page is loaded.
-    /// </summary>
-    private async void Page_Loaded(object sender, RoutedEventArgs e)
-    {
+    private async void Page_Loaded(object sender, RoutedEventArgs e) {
+        _logger.LogInformation("PlaylistPage loaded. Loading playlists...");
         await ViewModel.LoadPlaylistsCommand.ExecuteAsync(null);
+        _logger.LogInformation("Finished loading playlists.");
     }
 
-    /// <summary>
-    ///     Handles the page's navigated-from event.
-    ///     This is the critical cleanup step that disposes the ViewModel to prevent memory leaks.
-    /// </summary>
-    protected override void OnNavigatedFrom(NavigationEventArgs e)
-    {
+    protected override void OnNavigatedFrom(NavigationEventArgs e) {
         base.OnNavigatedFrom(e);
-
-        // This is the crucial addition to prevent memory leaks from the ViewModel.
+        _logger.LogInformation("Navigating away from PlaylistPage. Disposing ViewModel.");
         ViewModel.Dispose();
     }
 
-    /// <summary>
-    ///     Handles clicks on a playlist item, navigating to the song list for that playlist.
-    /// </summary>
-    private void PlaylistsGridView_ItemClick(object sender, ItemClickEventArgs e)
-    {
-        if (e.ClickedItem is PlaylistViewModelItem clickedPlaylist) ViewModel.NavigateToPlaylistDetail(clickedPlaylist);
+    private void PlaylistsGridView_ItemClick(object sender, ItemClickEventArgs e) {
+        if (e.ClickedItem is PlaylistViewModelItem clickedPlaylist) {
+            _logger.LogInformation(
+                "User clicked on playlist '{PlaylistName}' (Id: {PlaylistId}). Navigating to detail view.",
+                clickedPlaylist.Name, clickedPlaylist.Id);
+            ViewModel.NavigateToPlaylistDetail(clickedPlaylist);
+        }
     }
 
-    /// <summary>
-    ///     Shows a dialog to create a new playlist.
-    /// </summary>
-    private async void CreateNewPlaylistButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (ViewModel.IsAnyOperationInProgress) return;
+    private async void CreateNewPlaylistButton_Click(object sender, RoutedEventArgs e) {
+        if (ViewModel.IsAnyOperationInProgress) {
+            _logger.LogDebug("Create playlist button clicked, but an operation is already in progress. Ignoring.");
+            return;
+        }
 
+        _logger.LogInformation("Showing 'Create New Playlist' dialog.");
         string? selectedCoverImageUriForDialog = null;
 
-        // Programmatically create the content for the dialog.
         var inputTextBox = new TextBox { PlaceholderText = "Enter new playlist name" };
         var imagePreview = new Image { Stretch = Stretch.UniformToFill };
         var imagePlaceholder = new FontIcon { Glyph = "\uE91B", FontSize = 48 };
-        var imageGrid = new Grid
-        {
-            Width = 80,
-            Height = 80,
-            Margin = new Thickness(0, 0, 0, 12),
-            HorizontalAlignment = HorizontalAlignment.Center
-        };
+        var imageGrid = new Grid { Width = 80, Height = 80, Margin = new Thickness(0, 0, 0, 12), HorizontalAlignment = HorizontalAlignment.Center };
         imageGrid.Children.Add(imagePlaceholder);
         imageGrid.Children.Add(imagePreview);
-
-        var pickImageButton = new Button
-        {
-            Content = "Pick Cover Image",
-            Margin = new Thickness(0, 12, 0, 0),
-            HorizontalAlignment = HorizontalAlignment.Stretch
-        };
+        var pickImageButton = new Button { Content = "Pick Cover Image", Margin = new Thickness(0, 12, 0, 0), HorizontalAlignment = HorizontalAlignment.Stretch };
         var dialogContent = new StackPanel();
         dialogContent.Children.Add(imageGrid);
         dialogContent.Children.Add(inputTextBox);
         dialogContent.Children.Add(pickImageButton);
 
-        var dialog = new ContentDialog
-        {
-            Title = "Create New Playlist",
-            Content = dialogContent,
-            PrimaryButtonText = "Create",
-            CloseButtonText = "Cancel",
-            DefaultButton = ContentDialogButton.Primary,
-            XamlRoot = XamlRoot
-        };
+        var dialog = new ContentDialog { Title = "Create New Playlist", Content = dialogContent, PrimaryButtonText = "Create", CloseButtonText = "Cancel", DefaultButton = ContentDialogButton.Primary, XamlRoot = XamlRoot };
 
-        // Wire up event handlers for the dialog's controls.
-        pickImageButton.Click += async (s, args) =>
-        {
+        pickImageButton.Click += async (s, args) => {
             var pickedUri = await PickCoverImageAsync();
-            if (!string.IsNullOrWhiteSpace(pickedUri))
-            {
+            if (!string.IsNullOrWhiteSpace(pickedUri)) {
                 selectedCoverImageUriForDialog = pickedUri;
                 imagePreview.Source = new BitmapImage(new Uri(selectedCoverImageUriForDialog));
                 imagePlaceholder.Visibility = Visibility.Collapsed;
             }
         };
-        inputTextBox.TextChanged += (s, args) =>
-            dialog.IsPrimaryButtonEnabled = !string.IsNullOrWhiteSpace(inputTextBox.Text);
+        inputTextBox.TextChanged += (s, args) => dialog.IsPrimaryButtonEnabled = !string.IsNullOrWhiteSpace(inputTextBox.Text);
         dialog.IsPrimaryButtonEnabled = false;
 
         var result = await dialog.ShowAsync();
 
-        if (result == ContentDialogResult.Primary)
-        {
+        if (result == ContentDialogResult.Primary) {
+            _logger.LogInformation("User confirmed creation of new playlist '{PlaylistName}'.", inputTextBox.Text);
             var argsTuple = new Tuple<string, string?>(inputTextBox.Text, selectedCoverImageUriForDialog);
             await ViewModel.CreatePlaylistCommand.ExecuteAsync(argsTuple);
         }
+        else {
+            _logger.LogInformation("User cancelled 'Create New Playlist' dialog.");
+        }
     }
 
-    /// <summary>
-    ///     Shows a dialog to rename an existing playlist.
-    /// </summary>
-    private async void RenamePlaylist_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is not FrameworkElement { DataContext: PlaylistViewModelItem playlistItem } ||
-            ViewModel.IsAnyOperationInProgress) return;
+    private async void RenamePlaylist_Click(object sender, RoutedEventArgs e) {
+        if (sender is not FrameworkElement { DataContext: PlaylistViewModelItem playlistItem } || ViewModel.IsAnyOperationInProgress) return;
 
+        _logger.LogInformation("Showing 'Rename Playlist' dialog for '{PlaylistName}'.", playlistItem.Name);
         var inputTextBox = new TextBox { Text = playlistItem.Name };
-        var dialog = new ContentDialog
-        {
-            Title = $"Rename '{playlistItem.Name}'",
-            Content = inputTextBox,
-            PrimaryButtonText = "Rename",
-            CloseButtonText = "Cancel",
-            DefaultButton = ContentDialogButton.Primary,
-            XamlRoot = XamlRoot
-        };
+        var dialog = new ContentDialog { Title = $"Rename '{playlistItem.Name}'", Content = inputTextBox, PrimaryButtonText = "Rename", CloseButtonText = "Cancel", DefaultButton = ContentDialogButton.Primary, XamlRoot = XamlRoot };
 
-        inputTextBox.TextChanged += (s, args) =>
-            dialog.IsPrimaryButtonEnabled = !string.IsNullOrWhiteSpace(inputTextBox.Text) &&
-                                            inputTextBox.Text.Trim() != playlistItem.Name;
+        inputTextBox.TextChanged += (s, args) => dialog.IsPrimaryButtonEnabled = !string.IsNullOrWhiteSpace(inputTextBox.Text) && inputTextBox.Text.Trim() != playlistItem.Name;
         dialog.IsPrimaryButtonEnabled = false;
 
         var result = await dialog.ShowAsync();
 
-        if (result == ContentDialogResult.Primary)
-        {
+        if (result == ContentDialogResult.Primary) {
+            _logger.LogInformation("User confirmed rename of playlist '{OldName}' to '{NewName}'.", playlistItem.Name, inputTextBox.Text);
             var argsTuple = new Tuple<Guid, string>(playlistItem.Id, inputTextBox.Text);
             await ViewModel.RenamePlaylistCommand.ExecuteAsync(argsTuple);
         }
-    }
-
-    /// <summary>
-    ///     Shows a confirmation dialog before deleting a playlist.
-    /// </summary>
-    private async void DeletePlaylist_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is not FrameworkElement { DataContext: PlaylistViewModelItem playlistItem } ||
-            ViewModel.IsAnyOperationInProgress) return;
-
-        var dialog = new ContentDialog
-        {
-            Title = "Delete Playlist",
-            Content =
-                $"Are you sure you want to delete the playlist '{playlistItem.Name}'? This action cannot be undone.",
-            PrimaryButtonText = "Delete",
-            CloseButtonText = "Cancel",
-            DefaultButton = ContentDialogButton.Close,
-            XamlRoot = XamlRoot
-        };
-
-        var result = await dialog.ShowAsync();
-        if (result == ContentDialogResult.Primary) await ViewModel.DeletePlaylistCommand.ExecuteAsync(playlistItem.Id);
-    }
-
-    /// <summary>
-    ///     Handles the click event to change a playlist's cover image.
-    /// </summary>
-    private async void ChangeCover_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is not FrameworkElement { DataContext: PlaylistViewModelItem playlistItem } ||
-            ViewModel.IsAnyOperationInProgress) return;
-
-        var newCoverImageUri = await PickCoverImageAsync();
-
-        if (!string.IsNullOrWhiteSpace(newCoverImageUri))
-        {
-            var argsTuple = new Tuple<Guid, string>(playlistItem.Id, newCoverImageUri);
-            await ViewModel.UpdatePlaylistCoverCommand.ExecuteAsync(argsTuple);
+        else {
+            _logger.LogInformation("User cancelled rename of playlist '{PlaylistName}'.", playlistItem.Name);
         }
     }
 
-    /// <summary>
-    ///     Opens a file picker to select a cover image.
-    /// </summary>
-    /// <returns>The path to the selected image file, or null if no file was selected.</returns>
-    private async Task<string?> PickCoverImageAsync()
-    {
+    private async void DeletePlaylist_Click(object sender, RoutedEventArgs e) {
+        if (sender is not FrameworkElement { DataContext: PlaylistViewModelItem playlistItem } || ViewModel.IsAnyOperationInProgress) return;
+
+        _logger.LogInformation("Showing 'Delete Playlist' confirmation for '{PlaylistName}'.", playlistItem.Name);
+        var dialog = new ContentDialog { Title = "Delete Playlist", Content = $"Are you sure you want to delete the playlist '{playlistItem.Name}'? This action cannot be undone.", PrimaryButtonText = "Delete", CloseButtonText = "Cancel", DefaultButton = ContentDialogButton.Close, XamlRoot = XamlRoot };
+
+        var result = await dialog.ShowAsync();
+        if (result == ContentDialogResult.Primary) {
+            _logger.LogInformation("User confirmed deletion of playlist '{PlaylistName}' (Id: {PlaylistId}).", playlistItem.Name, playlistItem.Id);
+            await ViewModel.DeletePlaylistCommand.ExecuteAsync(playlistItem.Id);
+        }
+        else {
+            _logger.LogInformation("User cancelled deletion of playlist '{PlaylistName}'.", playlistItem.Name);
+        }
+    }
+
+    private async void ChangeCover_Click(object sender, RoutedEventArgs e) {
+        if (sender is not FrameworkElement { DataContext: PlaylistViewModelItem playlistItem } || ViewModel.IsAnyOperationInProgress) return;
+
+        _logger.LogInformation("User initiated cover image change for playlist '{PlaylistName}'.", playlistItem.Name);
+        var newCoverImageUri = await PickCoverImageAsync();
+
+        if (!string.IsNullOrWhiteSpace(newCoverImageUri)) {
+            _logger.LogInformation("User selected new cover image for playlist '{PlaylistName}'. Updating.", playlistItem.Name);
+            var argsTuple = new Tuple<Guid, string>(playlistItem.Id, newCoverImageUri);
+            await ViewModel.UpdatePlaylistCoverCommand.ExecuteAsync(argsTuple);
+        }
+        else {
+            _logger.LogInformation("User cancelled cover image selection.");
+        }
+    }
+
+    private async Task<string?> PickCoverImageAsync() {
+        _logger.LogDebug("Opening file picker for cover image.");
         var picker = new FileOpenPicker();
         var hwnd = WindowNative.GetWindowHandle(App.RootWindow);
         InitializeWithWindow.Initialize(picker, hwnd);
@@ -212,11 +160,11 @@ public sealed partial class PlaylistPage : Page
         picker.FileTypeFilter.Add(".png");
 
         var file = await picker.PickSingleFileAsync();
-        if (file != null)
-            // Storing the direct file path is not robust, as the app may lose access permissions.
-            // For a production app, it is recommended to copy the selected file to the app's
-            // local storage and save the path to the copied file instead.
+        if (file != null) {
+            _logger.LogInformation("User picked image file: {FilePath}", file.Path);
             return file.Path;
+        }
+        _logger.LogInformation("User did not pick an image file.");
         return null;
     }
 }

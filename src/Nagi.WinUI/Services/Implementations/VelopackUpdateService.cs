@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Nagi.Core.Services.Abstractions;
 using Nagi.WinUI.Services.Abstractions;
 
@@ -17,15 +17,22 @@ namespace Nagi.WinUI.Services.Implementations;
 /// </summary>
 public class VelopackUpdateService : IUpdateService
 {
+    private readonly ILogger<VelopackUpdateService> _logger;
+
+    public VelopackUpdateService(ILogger<VelopackUpdateService> logger)
+    {
+        _logger = logger;
+    }
+
     public Task CheckForUpdatesOnStartupAsync()
     {
-        Debug.WriteLine("[INFO] VelopackUpdateService: Skipping update check in MSIX packaged mode.");
+        _logger.LogInformation("Skipping update check in MSIX packaged mode.");
         return Task.CompletedTask;
     }
 
     public Task CheckForUpdatesManuallyAsync()
     {
-        Debug.WriteLine("[INFO] VelopackUpdateService: Manual update check is not available for MSIX packages.");
+        _logger.LogInformation("Manual update check is not available for MSIX packages.");
         return Task.CompletedTask;
     }
 }
@@ -37,14 +44,17 @@ public class VelopackUpdateService : IUpdateService {
     private readonly UpdateManager _updateManager;
     private readonly IUISettingsService _settingsService;
     private readonly IUIService _uiService;
+    private readonly ILogger<VelopackUpdateService> _logger;
 
     public VelopackUpdateService(
         UpdateManager updateManager,
         IUISettingsService settingsService,
-        IUIService uiService) {
+        IUIService uiService,
+        ILogger<VelopackUpdateService> logger) {
         _updateManager = updateManager ?? throw new ArgumentNullException(nameof(updateManager));
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
         _uiService = uiService ?? throw new ArgumentNullException(nameof(uiService));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     /// <summary>
@@ -53,25 +63,25 @@ public class VelopackUpdateService : IUpdateService {
     /// </summary>
     public async Task CheckForUpdatesOnStartupAsync() {
 #if DEBUG
-        Debug.WriteLine("[INFO] VelopackUpdateService: Skipping update check in DEBUG mode.");
+        _logger.LogDebug("Skipping update check in DEBUG mode.");
         return;
 #endif
 
         if (!await _settingsService.GetCheckForUpdatesEnabledAsync()) {
-            Debug.WriteLine("[INFO] VelopackUpdateService: Automatic update check is disabled by user setting.");
+            _logger.LogInformation("Automatic update check is disabled by user setting.");
             return;
         }
 
         try {
             UpdateInfo? updateInfo = await _updateManager.CheckForUpdatesAsync();
             if (updateInfo == null) {
-                Debug.WriteLine("[INFO] VelopackUpdateService: No updates found on startup.");
+                _logger.LogInformation("No updates found on startup.");
                 return;
             }
 
             string? lastSkippedVersion = await _settingsService.GetLastSkippedUpdateVersionAsync();
             if (lastSkippedVersion == updateInfo.TargetFullRelease.Version.ToString()) {
-                Debug.WriteLine($"[INFO] VelopackUpdateService: User has previously skipped version {lastSkippedVersion}.");
+                _logger.LogInformation("User has previously skipped version {SkippedVersion}.", lastSkippedVersion);
                 return;
             }
 
@@ -97,7 +107,7 @@ public class VelopackUpdateService : IUpdateService {
         }
         catch (Exception ex) {
             // This is a background task, so we log the error without disturbing the user with a dialog.
-            Debug.WriteLine($"[ERROR] VelopackUpdateService: Failed while checking for updates on startup. {ex.Message}");
+            _logger.LogError(ex, "Failed while checking for updates on startup.");
         }
     }
 
@@ -130,7 +140,7 @@ public class VelopackUpdateService : IUpdateService {
             }
         }
         catch (Exception ex) {
-            Debug.WriteLine($"[ERROR] VelopackUpdateService: Failed during manual update check. {ex.Message}");
+            _logger.LogError(ex, "Failed during manual update check.");
             await _uiService.ShowMessageDialogAsync("Update Error", $"An error occurred while checking for updates: {ex.Message}");
         }
     }
@@ -143,7 +153,7 @@ public class VelopackUpdateService : IUpdateService {
             _updateManager.ApplyUpdatesAndRestart(updateInfo);
         }
         catch (Exception ex) {
-            Debug.WriteLine($"[ERROR] VelopackUpdateService: Failed to download or apply update. {ex.Message}");
+            _logger.LogError(ex, "Failed to download or apply update.");
             await _uiService.ShowMessageDialogAsync("Update Error", $"An error occurred while installing the update: {ex.Message}");
         }
     }

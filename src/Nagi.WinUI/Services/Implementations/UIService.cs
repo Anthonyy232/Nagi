@@ -1,19 +1,19 @@
-﻿
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Nagi.WinUI.Controls;
+using Nagi.WinUI.Services.Abstractions;
 using System;
 using System.IO;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.System;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Nagi.WinUI.Services.Abstractions;
 using WinRT.Interop;
 
 namespace Nagi.WinUI.Services.Implementations;
 
 /// <summary>
-///     An implementation of the IUIService that uses WinUI 3 controls.
+/// An implementation of the IUIService that uses WinUI 3 controls.
 /// </summary>
 public class UIService : IUIService {
     public async Task<bool> ShowConfirmationDialogAsync(string title, string content, string primaryButtonText,
@@ -93,9 +93,26 @@ public class UIService : IUIService {
         await dialog.ShowAsync();
     }
 
-    /// <summary>
-    ///     Safely retrieves the XamlRoot from the main window's content.
-    /// </summary>
+    public async Task ShowCrashReportDialogAsync(string title, string introduction, string logContent, string githubUrl) {
+        if (!TryGetXamlRoot(out var xamlRoot)) return;
+
+        var dialogContent = new CrashReportDialogContent {
+            Introduction = introduction,
+            LogContent = logContent,
+            GitHubUrl = githubUrl
+        };
+
+        var dialog = new ContentDialog {
+            Title = title,
+            Content = dialogContent,
+            CloseButtonText = "Close",
+            DefaultButton = ContentDialogButton.Close,
+            XamlRoot = xamlRoot
+        };
+
+        await dialog.ShowAsync();
+    }
+
     private bool TryGetXamlRoot(out XamlRoot? xamlRoot) {
         xamlRoot = App.RootWindow?.Content?.XamlRoot;
         return xamlRoot is not null;

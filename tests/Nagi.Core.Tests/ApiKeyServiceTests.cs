@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.Json;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Nagi.Core.Services.Implementations;
 using Nagi.Core.Tests.Utils;
 using NSubstitute;
@@ -21,17 +22,19 @@ public class ApiKeyServiceTests : IDisposable
     private readonly IConfiguration _configuration;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly TestHttpMessageHandler _httpMessageHandler;
+    private readonly ILogger<ApiKeyService> _logger;
 
     public ApiKeyServiceTests()
     {
         _httpClientFactory = Substitute.For<IHttpClientFactory>();
         _configuration = Substitute.For<IConfiguration>();
         _httpMessageHandler = new TestHttpMessageHandler();
+        _logger = Substitute.For<ILogger<ApiKeyService>>();
 
         var httpClient = new HttpClient(_httpMessageHandler);
         _httpClientFactory.CreateClient(Arg.Any<string>()).Returns(httpClient);
 
-        _apiKeyService = new ApiKeyService(_httpClientFactory, _configuration);
+        _apiKeyService = new ApiKeyService(_httpClientFactory, _configuration, _logger);
     }
 
     public void Dispose()

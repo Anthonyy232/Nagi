@@ -1,7 +1,7 @@
 using System;
-using System.Diagnostics;
 using Windows.System;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -16,58 +16,56 @@ namespace Nagi.WinUI.Pages;
 ///     A page for displaying the list of songs within a specific playlist.
 /// </summary>
 public sealed partial class PlaylistSongViewPage : Page {
+    private readonly ILogger<PlaylistSongViewPage> _logger;
     private bool _isSearchExpanded;
 
     public PlaylistSongViewPage() {
         InitializeComponent();
         ViewModel = App.Services!.GetRequiredService<PlaylistSongListViewModel>();
+        _logger = App.Services!.GetRequiredService<ILogger<PlaylistSongViewPage>>();
         DataContext = ViewModel;
 
         Loaded += OnPageLoaded;
+        _logger.LogInformation("PlaylistSongViewPage initialized.");
     }
 
-    /// <summary>
-    ///     Gets the view model associated with this page.
-    /// </summary>
     public PlaylistSongListViewModel ViewModel { get; }
 
-    /// <summary>
-    ///     Initializes the view model with navigation parameters when the page is navigated to.
-    /// </summary>
     protected override async void OnNavigatedTo(NavigationEventArgs e) {
         base.OnNavigatedTo(e);
+        _logger.LogInformation("Navigated to PlaylistSongViewPage.");
 
-        if (e.Parameter is PlaylistSongViewNavigationParameter navParam) {
-            await ViewModel.InitializeAsync(navParam.Title, navParam.PlaylistId);
+        try {
+            if (e.Parameter is PlaylistSongViewNavigationParameter navParam) {
+                _logger.LogInformation("Loading songs for playlist '{PlaylistName}' (Id: {PlaylistId}).", navParam.Title,
+                    navParam.PlaylistId);
+                await ViewModel.InitializeAsync(navParam.Title, navParam.PlaylistId);
+            }
+            else {
+                var paramType = e.Parameter?.GetType().Name ?? "null";
+                _logger.LogWarning(
+                    "Received invalid navigation parameter. Expected '{ExpectedType}', got '{ActualType}'. Initializing with fallback state.",
+                    nameof(PlaylistSongViewNavigationParameter), paramType);
+                await ViewModel.InitializeAsync("Unknown Playlist", null);
+            }
         }
-        else {
-            // Log a warning and initialize with a fallback state if navigation parameters are invalid.
-            Debug.WriteLine(
-                $"[WARNING] {nameof(PlaylistSongViewPage)}: Received invalid navigation parameter. Type: {e.Parameter?.GetType().Name ?? "null"}");
-            await ViewModel.InitializeAsync("Unknown Playlist", null);
+        catch (Exception ex) {
+            _logger.LogError(ex, "Failed to initialize PlaylistSongViewPage.");
         }
     }
 
-    /// <summary>
-    ///     Cleans up resources when the user navigates away from this page.
-    /// </summary>
     protected override void OnNavigatedFrom(NavigationEventArgs e) {
         base.OnNavigatedFrom(e);
+        _logger.LogInformation("Navigating away from PlaylistSongViewPage. Cleaning up ViewModel.");
         ViewModel.Cleanup();
     }
 
-    /// <summary>
-    ///     Handles the page loaded event to set initial visual state.
-    /// </summary>
     private void OnPageLoaded(object sender, RoutedEventArgs e) {
-        // Set initial search state to collapsed without animation.
+        _logger.LogDebug("PlaylistSongViewPage loaded. Setting initial visual state.");
         VisualStateManager.GoToState(this, "SearchCollapsed", false);
         Loaded -= OnPageLoaded;
     }
 
-    /// <summary>
-    ///     Handles the search toggle button click to expand or collapse the search box.
-    /// </summary>
     private void OnSearchToggleButtonClick(object sender, RoutedEventArgs e) {
         if (_isSearchExpanded)
             CollapseSearch();
@@ -75,27 +73,22 @@ public sealed partial class PlaylistSongViewPage : Page {
             ExpandSearch();
     }
 
-    /// <summary>
-    ///     Handles key down events in the search text box.
-    /// </summary>
     private void OnSearchTextBoxKeyDown(object sender, KeyRoutedEventArgs e) {
         if (e.Key == VirtualKey.Escape) {
+            _logger.LogDebug("Escape key pressed in search box. Collapsing search.");
             CollapseSearch();
             e.Handled = true;
         }
     }
 
-    /// <summary>
-    ///     Expands the search interface with an animation.
-    /// </summary>
     private void ExpandSearch() {
         if (_isSearchExpanded) return;
 
         _isSearchExpanded = true;
+        _logger.LogInformation("Search UI expanded.");
         ToolTipService.SetToolTip(SearchToggleButton, "Close search");
         VisualStateManager.GoToState(this, "SearchExpanded", true);
 
-        // Focus the search text box after the animation has started for a smooth transition.
         var timer = DispatcherQueue.CreateTimer();
         timer.Interval = TimeSpan.FromMilliseconds(150);
         timer.Tick += (s, args) => {
@@ -105,42 +98,35 @@ public sealed partial class PlaylistSongViewPage : Page {
         timer.Start();
     }
 
-    /// <summary>
-    ///     Collapses the search interface with an animation and resets the filter.
-    ///     The data refresh is delayed to occur after the animation completes for a smoother UX.
-    /// </summary>
     private void CollapseSearch() {
         if (!_isSearchExpanded) return;
 
         _isSearchExpanded = false;
-
-        // Update UI immediately and start the collapse animation.
+        _logger.LogInformation("Search UI collapsed and search term cleared.");
         ToolTipService.SetToolTip(SearchToggleButton, "Search library");
         VisualStateManager.GoToState(this, "SearchCollapsed", true);
         ViewModel.SearchTerm = string.Empty;
     }
 
-    /// <summary>
-    ///     Updates the view model with the current selection from the song list.
-    /// </summary>
     private void SongsListView_SelectionChanged(object sender, SelectionChangedEventArgs e) {
-        if (sender is ListView listView) ViewModel.OnSongsSelectionChanged(listView.SelectedItems);
+        if (sender is ListView listView) {
+            _logger.LogTrace("Song selection changed. {SelectedCount} items selected.", listView.SelectedItems.Count);
+            ViewModel.OnSongsSelectionChanged(listView.SelectedItems);
+        }
     }
 
-    /// <summary>
-    ///     Handles the double-tapped event on the song list to play the selected song.
-    /// </summary>
     private void SongsListView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e) {
         if (e.OriginalSource is FrameworkElement { DataContext: Song tappedSong }) {
+            _logger.LogInformation("User double-tapped song '{SongTitle}' (Id: {SongId}). Executing play command.",
+                tappedSong.Title, tappedSong.Id);
             ViewModel.PlaySongCommand.Execute(tappedSong);
         }
     }
 
-    /// <summary>
-    ///     Ensures the right-clicked song is selected before its context menu is opened.
-    /// </summary>
     private void SongItemMenuFlyout_Opening(object sender, object e) {
         if (sender is not MenuFlyout { Target.DataContext: Song rightClickedSong }) return;
-        if (!SongsListView.SelectedItems.Contains(rightClickedSong)) SongsListView.SelectedItem = rightClickedSong;
+        _logger.LogDebug("Context menu opening for song '{SongTitle}'.", rightClickedSong.Title);
+        if (!SongsListView.SelectedItems.Contains(rightClickedSong))
+            SongsListView.SelectedItem = rightClickedSong;
     }
 }

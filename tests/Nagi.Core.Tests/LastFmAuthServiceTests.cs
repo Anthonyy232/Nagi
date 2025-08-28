@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Implementations;
 using Nagi.Core.Tests.Utils;
@@ -24,17 +25,19 @@ public class LastFmAuthServiceTests : IDisposable
     private readonly LastFmAuthService _authService;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly TestHttpMessageHandler _httpMessageHandler;
+    private readonly ILogger<LastFmAuthService> _logger;
 
     public LastFmAuthServiceTests()
     {
         _httpClientFactory = Substitute.For<IHttpClientFactory>();
         _apiKeyService = Substitute.For<IApiKeyService>();
         _httpMessageHandler = new TestHttpMessageHandler();
+        _logger = Substitute.For<ILogger<LastFmAuthService>>();
 
         var httpClient = new HttpClient(_httpMessageHandler);
         _httpClientFactory.CreateClient(Arg.Any<string>()).Returns(httpClient);
 
-        _authService = new LastFmAuthService(_httpClientFactory, _apiKeyService);
+        _authService = new LastFmAuthService(_httpClientFactory, _apiKeyService, _logger);
     }
 
     public void Dispose()

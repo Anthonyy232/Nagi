@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Text;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Core.Services.Implementations;
@@ -35,6 +36,11 @@ public class SpotifyServiceTests : IDisposable
     private readonly TestHttpMessageHandler _httpMessageHandler;
 
     /// <summary>
+    ///     A mock logger for the SpotifyService.
+    /// </summary>
+    private readonly ILogger<SpotifyService> _logger;
+
+    /// <summary>
     ///     The instance of the service under test.
     /// </summary>
     private readonly SpotifyService _service;
@@ -49,11 +55,12 @@ public class SpotifyServiceTests : IDisposable
         _httpClientFactory = Substitute.For<IHttpClientFactory>();
         _apiKeyService = Substitute.For<IApiKeyService>();
         _httpMessageHandler = new TestHttpMessageHandler();
+        _logger = Substitute.For<ILogger<SpotifyService>>();
 
         var httpClient = new HttpClient(_httpMessageHandler);
         _httpClientFactory.CreateClient(Arg.Any<string>()).Returns(httpClient);
 
-        _service = new SpotifyService(_httpClientFactory, _apiKeyService);
+        _service = new SpotifyService(_httpClientFactory, _apiKeyService, _logger);
     }
 
     /// <summary>

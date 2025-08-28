@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -18,20 +19,19 @@ namespace Nagi.WinUI.Popups;
 /// <summary>
 ///     Represents the custom window used as a popup for the system tray icon.
 /// </summary>
-public sealed partial class TrayPopup : Window
-{
+public sealed partial class TrayPopup : Window {
+    private readonly ILogger<TrayPopup> _logger;
     private readonly IUISettingsService _settingsService;
     private bool _isCoverArtInFlyoutEnabled;
 
-    public TrayPopup(ElementTheme initialTheme)
-    {
+    public TrayPopup(ElementTheme initialTheme) {
         InitializeComponent();
 
         ViewModel = App.Services!.GetRequiredService<PlayerViewModel>();
         _settingsService = App.Services!.GetRequiredService<IUISettingsService>();
+        _logger = App.Services!.GetRequiredService<ILogger<TrayPopup>>();
 
-        if (Content is Border rootBorder)
-        {
+        if (Content is Border rootBorder) {
             rootBorder.RequestedTheme = initialTheme;
             rootBorder.DataContext = ViewModel;
             rootBorder.Background = new SolidColorBrush(Colors.Transparent);
@@ -45,6 +45,8 @@ public sealed partial class TrayPopup : Window
         Closed += OnClosed;
         ViewModel.PropertyChanged += OnViewModelPropertyChanged;
         _settingsService.ShowCoverArtInTrayFlyoutSettingChanged += OnShowCoverArtSettingChanged;
+
+        _logger.LogInformation("TrayPopup initialized.");
     }
 
     /// <summary>
@@ -60,9 +62,8 @@ public sealed partial class TrayPopup : Window
     /// <summary>
     ///     Sets the opacity of the layered window.
     /// </summary>
-    /// <param name="alpha">The opacity value, from 0 (transparent) to 255 (opaque).</param>
-    public void SetWindowOpacity(byte alpha)
-    {
+    public void SetWindowOpacity(byte alpha) {
+        _logger.LogTrace("Setting window opacity to {Alpha}", alpha);
         var hwnd = WindowNative.GetWindowHandle(this);
         SetLayeredWindowAttributes(hwnd, 0, alpha, LWA_ALPHA);
     }
@@ -70,12 +71,8 @@ public sealed partial class TrayPopup : Window
     /// <summary>
     ///     Calculates the desired height of the popup's content for a given width.
     /// </summary>
-    /// <param name="targetWidthDips">The target width in device-independent pixels.</param>
-    /// <returns>The desired height of the content.</returns>
-    public double GetContentDesiredHeight(double targetWidthDips)
-    {
-        if (Content is FrameworkElement rootElement)
-        {
+    public double GetContentDesiredHeight(double targetWidthDips) {
+        if (Content is FrameworkElement rootElement) {
             rootElement.Measure(new Size(targetWidthDips, double.PositiveInfinity));
             return rootElement.DesiredSize.Height;
         }
@@ -83,20 +80,27 @@ public sealed partial class TrayPopup : Window
         return 0;
     }
 
-    private async Task InitializeSettingsAsync()
-    {
-        _isCoverArtInFlyoutEnabled = await _settingsService.GetShowCoverArtInTrayFlyoutAsync();
-        UpdateCoverArtVisibility();
+    private async Task InitializeSettingsAsync() {
+        _logger.LogInformation("Initializing settings for tray popup...");
+        try {
+            _isCoverArtInFlyoutEnabled = await _settingsService.GetShowCoverArtInTrayFlyoutAsync();
+            UpdateCoverArtVisibility();
+            _logger.LogInformation("Successfully initialized settings. ShowCoverArtInTrayFlyout is {IsEnabled}.",
+                _isCoverArtInFlyoutEnabled);
+        }
+        catch (Exception ex) {
+            _logger.LogError(ex, "Failed to initialize tray popup settings.");
+        }
     }
 
-    private void UpdateCoverArtVisibility()
-    {
+    private void UpdateCoverArtVisibility() {
         var shouldBeVisible = _isCoverArtInFlyoutEnabled && !string.IsNullOrEmpty(ViewModel.AlbumArtUri);
         CoverArtBackground.Visibility = shouldBeVisible ? Visibility.Visible : Visibility.Collapsed;
+        _logger.LogTrace("Cover art visibility updated to {Visibility}", CoverArtBackground.Visibility);
     }
 
-    private void ConfigureWindowAppearance()
-    {
+    private void ConfigureWindowAppearance() {
+        _logger.LogDebug("Configuring custom window appearance (tool window, layered, rounded corners).");
         var presenter = OverlappedPresenter.CreateForDialog();
         presenter.IsMaximizable = false;
         presenter.IsMinimizable = false;
@@ -112,34 +116,37 @@ public sealed partial class TrayPopup : Window
         exStyle |= WS_EX_LAYERED;
         SetWindowLong(windowHandle, GWL_EXSTYLE, exStyle);
 
-        if (Environment.OSVersion.Version.Build >= 22000)
-        {
+        if (Environment.OSVersion.Version.Build >= 22000) {
             var preference = DWMWCP_ROUND; // DWM_WINDOW_CORNER_PREFERENCE.DWMWCP_ROUND
             DwmSetWindowAttribute(windowHandle, DWMWA_WINDOW_CORNER_PREFERENCE, ref preference, sizeof(uint));
         }
     }
 
-    private void OnActivated(object sender, WindowActivatedEventArgs args)
-    {
-        if (args.WindowActivationState == WindowActivationState.Deactivated) Deactivated?.Invoke(this, EventArgs.Empty);
+    private void OnActivated(object sender, WindowActivatedEventArgs args) {
+        if (args.WindowActivationState == WindowActivationState.Deactivated) {
+            _logger.LogInformation("Tray popup deactivated. Firing Deactivated event.");
+            Deactivated?.Invoke(this, EventArgs.Empty);
+        }
     }
 
-    private void OnShowCoverArtSettingChanged(bool isEnabled)
-    {
-        DispatcherQueue.TryEnqueue(() =>
-        {
+    private void OnShowCoverArtSettingChanged(bool isEnabled) {
+        DispatcherQueue.TryEnqueue(() => {
+            _logger.LogInformation("'ShowCoverArtInTrayFlyout' setting changed to {IsEnabled}. Updating visibility.",
+                isEnabled);
             _isCoverArtInFlyoutEnabled = isEnabled;
             UpdateCoverArtVisibility();
         });
     }
 
-    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName == nameof(PlayerViewModel.AlbumArtUri)) UpdateCoverArtVisibility();
+    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e) {
+        if (e.PropertyName == nameof(PlayerViewModel.AlbumArtUri)) {
+            _logger.LogDebug("AlbumArtUri property changed. Updating cover art visibility.");
+            UpdateCoverArtVisibility();
+        }
     }
 
-    private void OnClosed(object sender, WindowEventArgs args)
-    {
+    private void OnClosed(object sender, WindowEventArgs args) {
+        _logger.LogInformation("TrayPopup closed. Unsubscribing from events.");
         ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
         _settingsService.ShowCoverArtInTrayFlyoutSettingChanged -= OnShowCoverArtSettingChanged;
     }

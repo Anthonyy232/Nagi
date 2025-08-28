@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.Json;
 using System.Web;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Core.Services.Implementations;
@@ -25,6 +26,7 @@ public class LastFmMetadataServiceTests : IDisposable
     private readonly IApiKeyService _apiKeyService;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly TestHttpMessageHandler _httpMessageHandler;
+    private readonly ILogger<LastFmMetadataService> _logger;
     private readonly LastFmMetadataService _metadataService;
 
     public LastFmMetadataServiceTests()
@@ -32,11 +34,12 @@ public class LastFmMetadataServiceTests : IDisposable
         _httpClientFactory = Substitute.For<IHttpClientFactory>();
         _apiKeyService = Substitute.For<IApiKeyService>();
         _httpMessageHandler = new TestHttpMessageHandler();
+        _logger = Substitute.For<ILogger<LastFmMetadataService>>();
 
         var httpClient = new HttpClient(_httpMessageHandler);
         _httpClientFactory.CreateClient(Arg.Any<string>()).Returns(httpClient);
 
-        _metadataService = new LastFmMetadataService(_httpClientFactory, _apiKeyService);
+        _metadataService = new LastFmMetadataService(_httpClientFactory, _apiKeyService, _logger);
     }
 
     public void Dispose()

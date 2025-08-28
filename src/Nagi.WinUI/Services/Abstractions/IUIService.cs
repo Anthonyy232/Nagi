@@ -3,33 +3,31 @@
 namespace Nagi.WinUI.Services.Abstractions;
 
 /// <summary>
-///     Represents the user's choice in an update dialog.
+/// Represents the user's choice in an update dialog.
 /// </summary>
-public enum UpdateDialogResult
-{
+public enum UpdateDialogResult {
     /// <summary>
-    ///     The user chose to install the update.
+    /// The user chose to install the update.
     /// </summary>
     Install,
 
     /// <summary>
-    ///     The user chose to be reminded later.
+    /// The user chose to be reminded later.
     /// </summary>
     RemindLater,
 
     /// <summary>
-    ///     The user chose to skip the current update version.
+    /// The user chose to skip the current update version.
     /// </summary>
     Skip
 }
 
 /// <summary>
-///     Abstracts UI-related operations like showing dialogs or pickers.
+/// Abstracts UI-related operations like showing dialogs or pickers.
 /// </summary>
-public interface IUIService
-{
+public interface IUIService {
     /// <summary>
-    ///     Shows a confirmation dialog to the user.
+    /// Shows a confirmation dialog to the user.
     /// </summary>
     /// <param name="title">The dialog's title.</param>
     /// <param name="content">The main message of the dialog.</param>
@@ -40,19 +38,19 @@ public interface IUIService
         string? closeButtonText = "Cancel");
 
     /// <summary>
-    ///     Opens a folder picker dialog for the user to select a single folder.
+    /// Opens a folder picker dialog for the user to select a single folder.
     /// </summary>
     /// <returns>The path of the selected folder, or null if the user cancelled.</returns>
     Task<string?> PickSingleFolderAsync();
 
     /// <summary>
-    ///     Opens the system's file explorer to the directory containing the specified file path.
+    /// Opens the system's file explorer to the directory containing the specified file path.
     /// </summary>
     /// <param name="filePath">The full path to a file within the target directory.</param>
     Task OpenFolderInExplorerAsync(string filePath);
 
     /// <summary>
-    ///     Shows a dialog specifically for application updates with three choices.
+    /// Shows a dialog specifically for application updates with three choices.
     /// </summary>
     /// <param name="title">The dialog's title.</param>
     /// <param name="content">The main message of the dialog.</param>
@@ -64,9 +62,18 @@ public interface IUIService
         string secondaryButtonText, string closeButtonText);
 
     /// <summary>
-    ///     Shows a simple message dialog with a single "OK" button.
+    /// Shows a simple message dialog with a single "OK" button.
     /// </summary>
     /// <param name="title">The dialog's title.</param>
     /// <param name="message">The message to display.</param>
     Task ShowMessageDialogAsync(string title, string message);
+
+    /// <summary>
+    /// Shows a dialog informing the user about a previous application crash.
+    /// </summary>
+    /// <param name="title">The dialog's title.</param>
+    /// <param name="introduction">The introductory message to the user.</param>
+    /// <param name="logContent">The content of the log file to display.</param>
+    /// <param name="githubUrl">The URL to the GitHub issues page.</param>
+    Task ShowCrashReportDialogAsync(string title, string introduction, string logContent, string githubUrl);
 }

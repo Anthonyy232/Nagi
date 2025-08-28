@@ -44,4 +44,9 @@ public interface IPathConfiguration
     ///     Gets the full path to the SQLite database file.
     /// </summary>
     string DatabasePath { get; }
+
+    /// <summary>
+    /// Gets the path to the directory where log files are stored.
+    /// </summary>
+    string LogsDirectory { get; }
 }

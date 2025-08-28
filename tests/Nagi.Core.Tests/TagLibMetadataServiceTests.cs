@@ -1,6 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Implementations;
@@ -25,6 +26,7 @@ public class TagLibMetadataServiceTests : IDisposable
     private const string LrcCachePath = "C:\\cache\\lrc";
     private readonly IFileSystemService _fileSystem;
     private readonly IImageProcessor _imageProcessor;
+    private readonly ILogger<TagLibMetadataService> _logger;
     private readonly TagLibMetadataService _metadataService;
     private readonly IPathConfiguration _pathConfig;
     private readonly string _tempDirectory;
@@ -34,6 +36,7 @@ public class TagLibMetadataServiceTests : IDisposable
         _imageProcessor = Substitute.For<IImageProcessor>();
         _fileSystem = Substitute.For<IFileSystemService>();
         _pathConfig = Substitute.For<IPathConfiguration>();
+        _logger = Substitute.For<ILogger<TagLibMetadataService>>();
 
         _tempDirectory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
         Directory.CreateDirectory(_tempDirectory);
@@ -49,7 +52,7 @@ public class TagLibMetadataServiceTests : IDisposable
         _fileSystem.Combine(Arg.Any<string[]>())
             .Returns(callInfo => Path.Combine(callInfo.ArgAt<string[]>(0)));
 
-        _metadataService = new TagLibMetadataService(_imageProcessor, _fileSystem, _pathConfig);
+        _metadataService = new TagLibMetadataService(_imageProcessor, _fileSystem, _pathConfig, _logger);
     }
 
     public void Dispose()

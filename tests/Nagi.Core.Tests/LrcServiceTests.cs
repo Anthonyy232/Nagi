@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 using Nagi.Core.Models.Lyrics;
 using Nagi.Core.Services.Abstractions;
@@ -17,12 +18,14 @@ public class LrcServiceTests
 {
     private const string LrcPath = "C:\\lyrics\\test.lrc";
     private readonly IFileSystemService _fileSystem;
+    private readonly ILogger<LrcService> _logger;
     private readonly LrcService _lrcService;
 
     public LrcServiceTests()
     {
         _fileSystem = Substitute.For<IFileSystemService>();
-        _lrcService = new LrcService(_fileSystem);
+        _logger = Substitute.For<ILogger<LrcService>>();
+        _lrcService = new LrcService(_fileSystem, _logger);
     }
 
     #region GetLyricsAsync Tests

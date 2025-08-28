@@ -1,3 +1,5 @@
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.UI;
 using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Windowing;
@@ -8,7 +10,6 @@ using Nagi.WinUI.Models;
 using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
 using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using Windows.Graphics;
 using Windows.UI;
@@ -23,6 +24,7 @@ namespace Nagi.WinUI;
 public sealed partial class MainWindow : Window {
     // Core windowing and service references.
     private AppWindow? _appWindow;
+    private ILogger<MainWindow>? _logger;
     private IUISettingsService? _settingsService;
     private FrameworkElement? _rootElement;
 
@@ -43,6 +45,7 @@ public sealed partial class MainWindow : Window {
     /// </summary>
     public void InitializeDependencies(IUISettingsService settingsService) {
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
+        _logger = App.Services!.GetRequiredService<ILogger<MainWindow>>();
         Activated += OnWindowActivated;
         Closed += OnWindowClosed;
         _settingsService.BackdropMaterialChanged += OnBackdropMaterialChanged;
@@ -65,7 +68,7 @@ public sealed partial class MainWindow : Window {
     public void InitializeCustomTitleBar() {
         _appWindow ??= GetAppWindowForCurrentWindow();
         if (_appWindow == null) {
-            Debug.WriteLine("[CRITICAL] MainWindow: AppWindow is not available. Cannot initialize title bar.");
+            _logger?.LogCritical("AppWindow is not available. Cannot initialize title bar");
             return;
         }
         if (_appWindow.Presenter is not OverlappedPresenter presenter) {
@@ -171,8 +174,7 @@ public sealed partial class MainWindow : Window {
             titleBar.ButtonPressedBackgroundColor = Color.FromArgb(0x40, 0xFF, 0xFF, 0xFF);
             titleBar.ButtonInactiveForegroundColor = Color.FromArgb(0xFF, 0x99, 0x99, 0x99);
         }
-        else
-        {
+        else {
             titleBar.ButtonForegroundColor = Colors.Black;
             titleBar.ButtonHoverForegroundColor = Colors.Black;
             titleBar.ButtonHoverBackgroundColor = Color.FromArgb(0x20, 0x00, 0x00, 0x00);
@@ -190,7 +192,7 @@ public sealed partial class MainWindow : Window {
             return AppWindow.GetFromWindowId(windowId);
         }
         catch (Exception ex) {
-            Debug.WriteLine($"[ERROR] MainWindow: Failed to retrieve AppWindow. Exception: {ex.Message}");
+            _logger?.LogError(ex, "Failed to retrieve AppWindow");
             return null;
         }
     }
@@ -212,12 +214,14 @@ public sealed class MiniPlayerWindow : Window {
     private const int VerticalScreenMargin = 48; // Larger to account for taskbar height.
 
     private readonly AppWindow _appWindow;
+    private readonly ILogger<MiniPlayerWindow> _logger;
     private readonly MiniPlayerView _view;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MiniPlayerWindow"/> class.
     /// </summary>
     public MiniPlayerWindow() {
+        _logger = App.Services!.GetRequiredService<ILogger<MiniPlayerWindow>>();
         _view = new MiniPlayerView(this);
         Content = _view;
         _appWindow = AppWindow;
@@ -245,7 +249,7 @@ public sealed class MiniPlayerWindow : Window {
             presenter.SetBorderAndTitleBar(true, false); // Keep a border but hide the system title text.
         }
         else {
-            Debug.WriteLine("[WARN] MiniPlayerWindow: Could not configure presenter. It is not an OverlappedPresenter.");
+            _logger.LogWarning("Could not configure presenter. It is not an OverlappedPresenter");
         }
     }
 
@@ -256,7 +260,7 @@ public sealed class MiniPlayerWindow : Window {
         // Get the display area for the window, falling back to the primary display.
         var displayArea = DisplayArea.GetFromWindowId(appWindow.Id, DisplayAreaFallback.Primary);
         if (displayArea == null) {
-            Debug.WriteLine("[WARN] MiniPlayerWindow: Could not retrieve display area to position the window.");
+            _logger.LogWarning("Could not retrieve display area to position the window");
             return;
         }
 

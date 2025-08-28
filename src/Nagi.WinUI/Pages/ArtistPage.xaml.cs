@@ -1,5 +1,8 @@
+using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.WinUI.ViewModels;
@@ -10,17 +13,17 @@ namespace Nagi.WinUI.Pages;
 ///     A page that displays a grid of all artists from the user's library.
 ///     This page is responsible for creating and managing the lifecycle of its ViewModel.
 /// </summary>
-public sealed partial class ArtistPage : Page
-{
+public sealed partial class ArtistPage : Page {
+    private readonly ILogger<ArtistPage> _logger;
     private CancellationTokenSource? _cancellationTokenSource;
 
-    public ArtistPage()
-    {
+    public ArtistPage() {
         InitializeComponent();
-        // Resolve the transient ViewModel from the dependency injection container.
         ViewModel = App.Services!.GetRequiredService<ArtistViewModel>();
-        // Set the DataContext for XAML bindings.
+        _logger = App.Services!.GetRequiredService<ILogger<ArtistPage>>();
         DataContext = ViewModel;
+
+        _logger.LogInformation("ArtistPage initialized.");
     }
 
     /// <summary>
@@ -32,14 +35,27 @@ public sealed partial class ArtistPage : Page
     ///     Handles the page's navigated-to event.
     ///     Initiates artist loading if the collection is empty.
     /// </summary>
-    protected override async void OnNavigatedTo(NavigationEventArgs e)
-    {
+    protected override async void OnNavigatedTo(NavigationEventArgs e) {
         base.OnNavigatedTo(e);
-        // Create a new CancellationTokenSource for the data loading operation.
+        _logger.LogInformation("Navigated to ArtistPage.");
         _cancellationTokenSource = new CancellationTokenSource();
 
-        // Load data only if it hasn't been loaded before to avoid unnecessary re-fetching.
-        if (ViewModel.Artists.Count == 0) await ViewModel.LoadArtistsAsync(_cancellationTokenSource.Token);
+        if (ViewModel.Artists.Count == 0) {
+            _logger.LogInformation("Artist collection is empty, loading artists...");
+            try {
+                await ViewModel.LoadArtistsAsync(_cancellationTokenSource.Token);
+                _logger.LogInformation("Successfully loaded artists.");
+            }
+            catch (TaskCanceledException) {
+                _logger.LogInformation("Artist loading was cancelled.");
+            }
+            catch (Exception ex) {
+                _logger.LogError(ex, "An unexpected error occurred while loading artists.");
+            }
+        }
+        else {
+            _logger.LogInformation("Artists already loaded, skipping fetch.");
+        }
     }
 
     /// <summary>
@@ -47,13 +63,19 @@ public sealed partial class ArtistPage : Page
     ///     This is the critical cleanup step. It cancels any ongoing data loading
     ///     and disposes the ViewModel to prevent memory leaks.
     /// </summary>
-    protected override void OnNavigatedFrom(NavigationEventArgs e)
-    {
+    protected override void OnNavigatedFrom(NavigationEventArgs e) {
         base.OnNavigatedFrom(e);
+        _logger.LogInformation("Navigating away from ArtistPage.");
 
-        // Cancel any background loading tasks associated with this page.
-        _cancellationTokenSource?.Cancel();
+        if (_cancellationTokenSource is { IsCancellationRequested: false }) {
+            _logger.LogDebug("Cancelling ongoing artist loading task.");
+            _cancellationTokenSource.Cancel();
+        }
+
         _cancellationTokenSource?.Dispose();
+        _cancellationTokenSource = null;
+
+        _logger.LogDebug("Disposing ArtistViewModel.");
         ViewModel.Dispose();
     }
 
@@ -61,8 +83,12 @@ public sealed partial class ArtistPage : Page
     ///     Handles clicks on an artist item in the grid.
     ///     Navigates to the detailed view for the selected artist by invoking the ViewModel's command.
     /// </summary>
-    private void ArtistsGridView_ItemClick(object sender, ItemClickEventArgs e)
-    {
-        if (e.ClickedItem is ArtistViewModelItem clickedArtist) ViewModel.NavigateToArtistDetail(clickedArtist);
+    private void ArtistsGridView_ItemClick(object sender, ItemClickEventArgs e) {
+        if (e.ClickedItem is ArtistViewModelItem clickedArtist) {
+            _logger.LogInformation(
+                "User clicked on artist '{ArtistName}' (Id: {ArtistId}). Navigating to detail view.",
+                clickedArtist.Name, clickedArtist.Id);
+            ViewModel.NavigateToArtistDetail(clickedArtist);
+        }
     }
 }

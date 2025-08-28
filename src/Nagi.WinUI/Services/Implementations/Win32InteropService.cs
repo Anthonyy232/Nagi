@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using Windows.Foundation;
 using Windows.Graphics;
+using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Nagi.WinUI.Services.Abstractions;
 using WinRT.Interop;
@@ -14,22 +14,25 @@ namespace Nagi.WinUI.Services.Implementations;
 ///     Provides a managed wrapper for native Win32 API functions, offering a safe
 ///     and convenient interface to the underlying Windows platform.
 /// </summary>
-public class Win32InteropService : IWin32InteropService
-{
+public class Win32InteropService : IWin32InteropService {
+    private readonly ILogger<Win32InteropService> _logger;
+
+    public Win32InteropService(ILogger<Win32InteropService> logger) {
+        _logger = logger;
+    }
+
     /// <summary>
     ///     Sets the large and small icons for a window from a specified icon file.
     /// </summary>
     /// <param name="window">The window whose icon is to be set.</param>
     /// <param name="iconPath">The application-relative path to the .ico file.</param>
-    public void SetWindowIcon(Window window, string iconPath)
-    {
+    public void SetWindowIcon(Window window, string iconPath) {
         var hwnd = WindowNative.GetWindowHandle(window);
         if (hwnd == IntPtr.Zero) return;
 
         var fullIconPath = Path.Combine(AppContext.BaseDirectory, iconPath);
-        if (!File.Exists(fullIconPath))
-        {
-            Debug.WriteLine($"[Win32InteropService] Icon file not found: {fullIconPath}");
+        if (!File.Exists(fullIconPath)) {
+            _logger.LogWarning("Icon file not found: {IconPath}", fullIconPath);
             return;
         }
 
@@ -50,8 +53,7 @@ public class Win32InteropService : IWin32InteropService
     ///     Retrieves the work area of the primary display monitor.
     /// </summary>
     /// <returns>A Rect representing the primary work area.</returns>
-    public Rect GetPrimaryWorkArea()
-    {
+    public Rect GetPrimaryWorkArea() {
         var workAreaRect = new NativeMethods.RECT();
         if (NativeMethods.SystemParametersInfo(NativeMethods.SPI_GETWORKAREA, 0, ref workAreaRect, 0))
             return new Rect(workAreaRect.left, workAreaRect.top, workAreaRect.right - workAreaRect.left,
@@ -65,8 +67,7 @@ public class Win32InteropService : IWin32InteropService
     ///     Retrieves the current position of the cursor in screen coordinates.
     /// </summary>
     /// <returns>A PointInt32 with the cursor's X and Y coordinates.</returns>
-    public PointInt32 GetCursorPos()
-    {
+    public PointInt32 GetCursorPos() {
         if (NativeMethods.GetCursorPos(out var point)) return new PointInt32(point.X, point.Y);
         return new PointInt32(0, 0);
     }
@@ -76,16 +77,14 @@ public class Win32InteropService : IWin32InteropService
     /// </summary>
     /// <param name="point">The point in screen coordinates to check.</param>
     /// <returns>A Rect representing the work area of the containing monitor.</returns>
-    public Rect GetWorkAreaForPoint(PointInt32 point)
-    {
+    public Rect GetWorkAreaForPoint(PointInt32 point) {
         var nativePoint = new NativeMethods.POINT { X = point.X, Y = point.Y };
         var monitorHandle = NativeMethods.MonitorFromPoint(nativePoint, NativeMethods.MONITOR_DEFAULTTONEAREST);
 
         var monitorInfo = new NativeMethods.MONITORINFO();
         monitorInfo.cbSize = Marshal.SizeOf(monitorInfo);
 
-        if (NativeMethods.GetMonitorInfo(monitorHandle, ref monitorInfo))
-        {
+        if (NativeMethods.GetMonitorInfo(monitorHandle, ref monitorInfo)) {
             var workRect = monitorInfo.rcWork;
             return new Rect(workRect.left, workRect.top, workRect.right - workRect.left,
                 workRect.bottom - workRect.top);
@@ -101,26 +100,21 @@ public class Win32InteropService : IWin32InteropService
     /// </summary>
     /// <param name="hwnd">The handle to the window.</param>
     /// <returns>The DPI value of the window, or 96 if it cannot be determined.</returns>
-    public int GetDpiForWindow(IntPtr hwnd)
-    {
-        try
-        {
+    public int GetDpiForWindow(IntPtr hwnd) {
+        try {
             // This is the modern API, available on Windows 10 (1607) and newer.
             return NativeMethods.GetDpiForWindow(hwnd);
         }
-        catch (EntryPointNotFoundException)
-        {
+        catch (EntryPointNotFoundException) {
             // Fallback for older OS versions.
-            Debug.WriteLine("[Win32InteropService] GetDpiForWindow not found. Falling back to GetDeviceCaps.");
+            _logger.LogInformation("GetDpiForWindow not found. Falling back to GetDeviceCaps for older OS.");
             var hdc = NativeMethods.GetDC(hwnd);
             if (hdc != IntPtr.Zero)
-                try
-                {
+                try {
                     // Get the horizontal DPI.
                     return NativeMethods.GetDeviceCaps(hdc, NativeMethods.LOGPIXELSX);
                 }
-                finally
-                {
+                finally {
                     // Important: Always release the device context.
                     NativeMethods.ReleaseDC(hwnd, hdc);
                 }
@@ -131,46 +125,39 @@ public class Win32InteropService : IWin32InteropService
     }
 
     /// <inheritdoc />
-    public uint GetTickCount()
-    {
+    public uint GetTickCount() {
         return NativeMethods.GetTickCount();
     }
 
     /// <inheritdoc />
-    public IntPtr GetForegroundWindow()
-    {
+    public IntPtr GetForegroundWindow() {
         return NativeMethods.GetForegroundWindow();
     }
 
     /// <inheritdoc />
-    public uint GetWindowThreadProcessId(IntPtr hWnd, IntPtr ProcessId)
-    {
+    public uint GetWindowThreadProcessId(IntPtr hWnd, IntPtr ProcessId) {
         return NativeMethods.GetWindowThreadProcessId(hWnd, ProcessId);
     }
 
     /// <inheritdoc />
-    public bool AttachThreadInput(uint idAttach, uint idAttachTo, bool fAttach)
-    {
+    public bool AttachThreadInput(uint idAttach, uint idAttachTo, bool fAttach) {
         return NativeMethods.AttachThreadInput(idAttach, idAttachTo, fAttach);
     }
 
     /// <inheritdoc />
-    public bool BringWindowToTop(IntPtr hWnd)
-    {
+    public bool BringWindowToTop(IntPtr hWnd) {
         return NativeMethods.BringWindowToTop(hWnd);
     }
 
     /// <inheritdoc />
-    public uint GetCurrentThreadId()
-    {
+    public uint GetCurrentThreadId() {
         return NativeMethods.GetCurrentThreadId();
     }
 
     /// <summary>
     ///     Contains P/Invoke definitions for native Win32 API calls used by this service.
     /// </summary>
-    private static class NativeMethods
-    {
+    private static class NativeMethods {
         // Constants for SystemParametersInfo
         public const uint SPI_GETWORKAREA = 0x0030;
 
@@ -245,8 +232,7 @@ public class Win32InteropService : IWin32InteropService
         public static extern int GetDeviceCaps(IntPtr hdc, int nIndex);
 
         [StructLayout(LayoutKind.Sequential)]
-        public struct RECT
-        {
+        public struct RECT {
             public int left;
             public int top;
             public int right;
@@ -254,15 +240,13 @@ public class Win32InteropService : IWin32InteropService
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        public struct POINT
-        {
+        public struct POINT {
             public int X;
             public int Y;
         }
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-        public struct MONITORINFO
-        {
+        public struct MONITORINFO {
             public int cbSize;
             public RECT rcMonitor;
             public RECT rcWork;

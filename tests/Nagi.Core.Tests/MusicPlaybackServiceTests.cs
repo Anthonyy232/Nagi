@@ -1,4 +1,5 @@
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
@@ -26,6 +27,7 @@ public class MusicPlaybackServiceTests
 
     // Mocks for external dependencies, enabling isolated testing of the service's logic.
     private readonly ISettingsService _settingsService;
+    private readonly ILogger<MusicPlaybackService> _logger;
 
     // A consistent list of song objects for use in tests.
     private readonly List<Song> _testSongs;
@@ -41,6 +43,7 @@ public class MusicPlaybackServiceTests
         _audioPlayer = Substitute.For<IAudioPlayer>();
         _libraryService = Substitute.For<ILibraryService>();
         _metadataService = Substitute.For<IMetadataService>();
+        _logger = Substitute.For<ILogger<MusicPlaybackService>>();
 
         // Setup default return values for settings to avoid nulls
         _settingsService.GetInitialVolumeAsync().Returns(0.5);
@@ -58,7 +61,8 @@ public class MusicPlaybackServiceTests
             _settingsService,
             _audioPlayer,
             _libraryService,
-            _metadataService);
+            _metadataService,
+            _logger);
 
         _testSongs = CreateTestSongs(5);
     }

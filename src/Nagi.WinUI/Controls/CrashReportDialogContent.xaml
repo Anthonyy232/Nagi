@@ -1,0 +1,61 @@
+<UserControl
+    x:Class="Nagi.WinUI.Controls.CrashReportDialogContent"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid RowSpacing="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock 
+            Grid.Row="0" 
+            Text="{x:Bind Introduction, Mode=OneWay}"
+            TextWrapping="Wrap"
+            d:Text="An unexpected error occurred. We are sorry for the inconvenience."/>
+
+        <TextBlock Grid.Row="1" TextWrapping="Wrap">
+            <Run Text="Please consider reporting this by creating an issue on the "/>
+            <Hyperlink NavigateUri="{x:Bind GitHubUrl, Mode=OneWay}">
+                <Run Text="Issues page"/>
+            </Hyperlink>
+            <Run Text="."/>
+        </TextBlock>
+
+        <Border 
+            Grid.Row="2"
+            BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
+            BorderThickness="1"
+            CornerRadius="4"
+            MinHeight="200"
+            MaxHeight="400">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                <TextBox
+                    x:Name="LogTextBox"
+                    Text="{x:Bind LogContent, Mode=OneWay}"
+                    IsReadOnly="True"
+                    AcceptsReturn="True"
+                    TextWrapping="NoWrap"
+                    FontFamily="Consolas, Cascadia Mono, Courier New"
+                    BorderThickness="0"
+                    Background="Transparent"
+                    d:Text="System.NullReferenceException: Object reference not set to an instance of an object..."/>
+            </ScrollViewer>
+        </Border>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
+            <Button x:Name="CopyButton" Click="CopyButton_Click">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <FontIcon Glyph="&#xE8C8;" FontSize="16"/>
+                    <TextBlock Text="Copy Log"/>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+    </Grid>
+</UserControl>
