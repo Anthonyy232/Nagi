@@ -17,7 +17,8 @@ namespace Nagi.WinUI.ViewModels;
 /// <summary>
 ///     A display-optimized representation of a genre for the user interface.
 /// </summary>
-public partial class GenreViewModelItem : ObservableObject {
+public partial class GenreViewModelItem : ObservableObject
+{
     [ObservableProperty] public partial Guid Id { get; set; }
 
     [ObservableProperty] public partial string Name { get; set; } = string.Empty;
@@ -26,7 +27,8 @@ public partial class GenreViewModelItem : ObservableObject {
 /// <summary>
 ///     Manages the state and logic for the genre list page.
 /// </summary>
-public partial class GenreViewModel : ObservableObject, IDisposable {
+public partial class GenreViewModel : ObservableObject, IDisposable
+{
     private readonly NotifyCollectionChangedEventHandler _collectionChangedHandler;
     private readonly ILibraryService _libraryService;
     private readonly ILogger<GenreViewModel> _logger;
@@ -35,7 +37,8 @@ public partial class GenreViewModel : ObservableObject, IDisposable {
     private bool _isDisposed;
 
     public GenreViewModel(ILibraryService libraryService, IMusicPlaybackService musicPlaybackService,
-        INavigationService navigationService, ILogger<GenreViewModel> logger) {
+        INavigationService navigationService, ILogger<GenreViewModel> logger)
+    {
         _libraryService = libraryService;
         _musicPlaybackService = musicPlaybackService;
         _navigationService = navigationService;
@@ -60,7 +63,8 @@ public partial class GenreViewModel : ObservableObject, IDisposable {
     /// <summary>
     ///     Cleans up resources by unsubscribing from event handlers.
     /// </summary>
-    public void Dispose() {
+    public void Dispose()
+    {
         if (_isDisposed) return;
 
         if (Genres != null) Genres.CollectionChanged -= _collectionChangedHandler;
@@ -73,10 +77,12 @@ public partial class GenreViewModel : ObservableObject, IDisposable {
     ///     Navigates to the detailed view for the selected genre.
     /// </summary>
     [RelayCommand]
-    public void NavigateToGenreDetail(GenreViewModelItem? genre) {
+    public void NavigateToGenreDetail(GenreViewModelItem? genre)
+    {
         if (genre is null) return;
 
-        var navParam = new GenreViewNavigationParameter {
+        var navParam = new GenreViewNavigationParameter
+        {
             GenreId = genre.Id,
             GenreName = genre.Name
         };
@@ -88,13 +94,15 @@ public partial class GenreViewModel : ObservableObject, IDisposable {
     /// </summary>
     /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
     [RelayCommand]
-    public async Task LoadGenresAsync(CancellationToken cancellationToken) {
+    public async Task LoadGenresAsync(CancellationToken cancellationToken)
+    {
         if (IsLoading) return;
 
         IsLoading = true;
         HasLoadError = false;
 
-        try {
+        try
+        {
             var genreModels = await _libraryService.GetAllGenresAsync();
             if (cancellationToken.IsCancellationRequested) return;
 
@@ -105,15 +113,18 @@ public partial class GenreViewModel : ObservableObject, IDisposable {
             // Efficiently replace the entire collection.
             Genres = new ObservableCollection<GenreViewModelItem>(sortedGenres);
         }
-        catch (OperationCanceledException) {
+        catch (OperationCanceledException)
+        {
             _logger.LogInformation("Genre loading was canceled");
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             _logger.LogError(ex, "Failed to load genres");
             HasLoadError = true;
             Genres.Clear();
         }
-        finally {
+        finally
+        {
             IsLoading = false;
         }
     }
@@ -122,13 +133,16 @@ public partial class GenreViewModel : ObservableObject, IDisposable {
     ///     Clears the current queue and starts playing all songs in the selected genre.
     /// </summary>
     [RelayCommand]
-    private async Task PlayGenreAsync(Guid genreId) {
+    private async Task PlayGenreAsync(Guid genreId)
+    {
         if (IsLoading || genreId == Guid.Empty) return;
 
-        try {
+        try
+        {
             await _musicPlaybackService.PlayGenreAsync(genreId);
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             // This is a critical failure as it directly impacts core user functionality.
             _logger.LogCritical(ex, "Failed to play genre {GenreId}", genreId);
         }

@@ -11,10 +11,12 @@ namespace Nagi.WinUI.Helpers;
 /// <summary>
 ///     Provides utility methods for managing window activation and state using Win32 APIs.
 /// </summary>
-internal static class WindowActivator {
+internal static class WindowActivator
+{
     private const int SW_SHOWMINIMIZED = 2;
 
     private static ILogger? _logger;
+
     private static ILogger Logger =>
         _logger ??= App.Services!.GetRequiredService<ILoggerFactory>().CreateLogger("WindowActivator");
 
@@ -34,9 +36,11 @@ internal static class WindowActivator {
     /// </remarks>
     /// <param name="window">The window to show and activate.</param>
     /// <param name="win32">A service providing Win32 interoperability functions.</param>
-    public static void ShowAndActivate(Window window, IWin32InteropService win32) {
+    public static void ShowAndActivate(Window window, IWin32InteropService win32)
+    {
         var windowHandle = WindowNative.GetWindowHandle(window);
-        if (windowHandle == IntPtr.Zero) {
+        if (windowHandle == IntPtr.Zero)
+        {
             Logger.LogWarning("Could not get window handle for ShowAndActivate.");
             return;
         }
@@ -49,8 +53,11 @@ internal static class WindowActivator {
 
         // To reliably bring a window to the foreground, we attach our thread's input
         // to the foreground window's thread, which allows us to bypass certain focus restrictions.
-        if (foregroundThreadId != currentThreadId) {
-            Logger.LogDebug("Attaching thread input from foreground thread {ForegroundThreadId} to current thread {CurrentThreadId}.", foregroundThreadId, currentThreadId);
+        if (foregroundThreadId != currentThreadId)
+        {
+            Logger.LogDebug(
+                "Attaching thread input from foreground thread {ForegroundThreadId} to current thread {CurrentThreadId}.",
+                foregroundThreadId, currentThreadId);
             win32.AttachThreadInput(foregroundThreadId, currentThreadId, true);
         }
 
@@ -58,8 +65,11 @@ internal static class WindowActivator {
         window.AppWindow.Show();
 
         // Detach the threads to restore normal input processing.
-        if (foregroundThreadId != currentThreadId) {
-            Logger.LogDebug("Detaching thread input from foreground thread {ForegroundThreadId} to current thread {CurrentThreadId}.", foregroundThreadId, currentThreadId);
+        if (foregroundThreadId != currentThreadId)
+        {
+            Logger.LogDebug(
+                "Detaching thread input from foreground thread {ForegroundThreadId} to current thread {CurrentThreadId}.",
+                foregroundThreadId, currentThreadId);
             win32.AttachThreadInput(foregroundThreadId, currentThreadId, false);
         }
     }
@@ -68,9 +78,11 @@ internal static class WindowActivator {
     ///     Activates a popup window, bringing it to the foreground.
     /// </summary>
     /// <param name="window">The window to show and activate.</param>
-    public static void ActivatePopupWindow(Window window) {
+    public static void ActivatePopupWindow(Window window)
+    {
         var windowHandle = WindowNative.GetWindowHandle(window);
-        if (windowHandle == IntPtr.Zero) {
+        if (windowHandle == IntPtr.Zero)
+        {
             Logger.LogWarning("Could not get window handle for ActivatePopupWindow.");
             return;
         }
@@ -84,9 +96,11 @@ internal static class WindowActivator {
     ///     Shows a window in a minimized state on the taskbar.
     /// </summary>
     /// <param name="window">The window to minimize.</param>
-    public static void ShowMinimized(Window window) {
+    public static void ShowMinimized(Window window)
+    {
         var windowHandle = WindowNative.GetWindowHandle(window);
-        if (windowHandle == IntPtr.Zero) {
+        if (windowHandle == IntPtr.Zero)
+        {
             Logger.LogWarning("Could not get window handle for ShowMinimized.");
             return;
         }

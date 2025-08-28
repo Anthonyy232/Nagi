@@ -47,7 +47,8 @@ public class FileSystemService : IFileSystemService
         return File.WriteAllTextAsync(path, contents);
     }
 
-    public Task<string> ReadAllTextAsync(string path) {
+    public Task<string> ReadAllTextAsync(string path)
+    {
         return File.ReadAllTextAsync(path);
     }
 

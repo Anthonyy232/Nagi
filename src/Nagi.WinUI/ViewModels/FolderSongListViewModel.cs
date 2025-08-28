@@ -16,7 +16,8 @@ namespace Nagi.WinUI.ViewModels;
 /// <summary>
 ///     Provides data and commands for displaying the songs within a specific library folder.
 /// </summary>
-public partial class FolderSongListViewModel : SongListViewModelBase {
+public partial class FolderSongListViewModel : SongListViewModelBase
+{
     private const int SearchDebounceDelay = 400;
     private CancellationTokenSource? _debounceCts;
     private Guid? _folderId;
@@ -29,7 +30,8 @@ public partial class FolderSongListViewModel : SongListViewModelBase {
         IDispatcherService dispatcherService,
         IUIService uiService,
         ILogger<FolderSongListViewModel> logger)
-        : base(libraryReader, playlistService, playbackService, navigationService, dispatcherService, uiService, logger) {
+        : base(libraryReader, playlistService, playbackService, navigationService, dispatcherService, uiService, logger)
+    {
     }
 
     [ObservableProperty] public partial string SearchTerm { get; set; }
@@ -37,7 +39,8 @@ public partial class FolderSongListViewModel : SongListViewModelBase {
     private bool IsSearchActive => !string.IsNullOrWhiteSpace(SearchTerm);
     protected override bool IsPagingSupported => true;
 
-    partial void OnSearchTermChanged(string value) {
+    partial void OnSearchTermChanged(string value)
+    {
         // When the user types in the search box, trigger a debounced search.
         TriggerDebouncedSearch();
     }
@@ -47,15 +50,18 @@ public partial class FolderSongListViewModel : SongListViewModelBase {
     /// </summary>
     /// <param name="title">The title of the folder to display.</param>
     /// <param name="folderId">The unique identifier of the folder.</param>
-    public async Task InitializeAsync(string title, Guid? folderId) {
+    public async Task InitializeAsync(string title, Guid? folderId)
+    {
         if (IsOverallLoading) return;
 
-        try {
+        try
+        {
             PageTitle = title;
             _folderId = folderId;
             await RefreshOrSortSongsAsync();
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             _logger.LogError(ex, "Failed to initialize folder {FolderId}", _folderId);
             TotalItemsText = "Error loading folder";
             Songs.Clear();
@@ -63,7 +69,8 @@ public partial class FolderSongListViewModel : SongListViewModelBase {
     }
 
     protected override Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
-        SongSortOrder sortOrder) {
+        SongSortOrder sortOrder)
+    {
         if (!_folderId.HasValue) return Task.FromResult(new PagedResult<Song>());
 
         if (IsSearchActive)
@@ -73,7 +80,8 @@ public partial class FolderSongListViewModel : SongListViewModelBase {
         return _libraryReader.GetSongsByFolderIdPagedAsync(_folderId.Value, pageNumber, pageSize, sortOrder);
     }
 
-    protected override Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder) {
+    protected override Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder)
+    {
         if (!_folderId.HasValue) return Task.FromResult(new List<Guid>());
 
         if (IsSearchActive)
@@ -83,7 +91,8 @@ public partial class FolderSongListViewModel : SongListViewModelBase {
         return _libraryReader.GetAllSongIdsByFolderIdAsync(_folderId.Value, sortOrder);
     }
 
-    protected override Task<IEnumerable<Song>> LoadSongsAsync() {
+    protected override Task<IEnumerable<Song>> LoadSongsAsync()
+    {
         return Task.FromResult(Enumerable.Empty<Song>());
     }
 
@@ -91,44 +100,54 @@ public partial class FolderSongListViewModel : SongListViewModelBase {
     ///     Executes an immediate search or refresh, cancelling any pending debounced search.
     /// </summary>
     [RelayCommand]
-    private async Task SearchAsync() {
+    private async Task SearchAsync()
+    {
         _debounceCts?.Cancel();
         await RefreshOrSortSongsAsync();
     }
 
-    private void TriggerDebouncedSearch() {
-        try {
+    private void TriggerDebouncedSearch()
+    {
+        try
+        {
             _debounceCts?.Cancel();
         }
-        catch (ObjectDisposedException) {
+        catch (ObjectDisposedException)
+        {
             // Ignore exception if the CancellationTokenSource has already been disposed.
         }
 
         _debounceCts = new CancellationTokenSource();
         var token = _debounceCts.Token;
 
-        Task.Run(async () => {
-            try {
+        Task.Run(async () =>
+        {
+            try
+            {
                 await Task.Delay(SearchDebounceDelay, token);
 
                 if (token.IsCancellationRequested) return;
 
-                await _dispatcherService.EnqueueAsync(async () => {
+                await _dispatcherService.EnqueueAsync(async () =>
+                {
                     // Re-check the cancellation token after dispatching to prevent a race condition.
                     if (token.IsCancellationRequested) return;
                     await RefreshOrSortSongsAsync();
                 });
             }
-            catch (TaskCanceledException) {
+            catch (TaskCanceledException)
+            {
                 _logger.LogDebug("Debounced search cancelled.");
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 _logger.LogError(ex, "Debounced search failed for folder {FolderId}", _folderId);
             }
         }, token);
     }
 
-    public override void Cleanup() {
+    public override void Cleanup()
+    {
         base.Cleanup();
         _debounceCts?.Cancel();
         _debounceCts?.Dispose();

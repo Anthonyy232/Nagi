@@ -38,11 +38,12 @@ public class LibraryServiceTests : IDisposable
     /// </summary>
     private readonly LibraryService _libraryService;
 
+    private readonly ILogger<LibraryService> _logger;
+
     private readonly IMetadataService _metadataService;
     private readonly IPathConfiguration _pathConfig;
     private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly ISpotifyService _spotifyService;
-    private readonly ILogger<LibraryService> _logger;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="LibraryServiceTests" /> class.
@@ -120,9 +121,11 @@ public class LibraryServiceTests : IDisposable
         Assert.Throws<ArgumentNullException>(() => new LibraryService(_dbHelper.ContextFactory, _fileSystem,
             _metadataService, _lastFmService, _spotifyService, _httpClientFactory, null!, _pathConfig, _logger));
         Assert.Throws<ArgumentNullException>(() => new LibraryService(_dbHelper.ContextFactory, _fileSystem,
-            _metadataService, _lastFmService, _spotifyService, _httpClientFactory, _serviceScopeFactory, null!, _logger));
+            _metadataService, _lastFmService, _spotifyService, _httpClientFactory, _serviceScopeFactory, null!,
+            _logger));
         Assert.Throws<ArgumentNullException>(() => new LibraryService(_dbHelper.ContextFactory, _fileSystem,
-            _metadataService, _lastFmService, _spotifyService, _httpClientFactory, _serviceScopeFactory, _pathConfig, null!));
+            _metadataService, _lastFmService, _spotifyService, _httpClientFactory, _serviceScopeFactory, _pathConfig,
+            null!));
     }
 
     #endregion

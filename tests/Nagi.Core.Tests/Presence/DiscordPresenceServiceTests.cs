@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
@@ -21,11 +19,13 @@ namespace Nagi.Core.Tests.Presence;
 ///     missing configuration and ensuring guard clauses prevent exceptions when the client is not initialized.
 ///     The logic for formatting and setting the rich presence cannot be tested in isolation.
 /// </remarks>
-public class DiscordPresenceServiceTests {
+public class DiscordPresenceServiceTests
+{
     private readonly IConfiguration _configuration;
     private readonly ILogger<DiscordPresenceService> _logger;
 
-    public DiscordPresenceServiceTests() {
+    public DiscordPresenceServiceTests()
+    {
         _configuration = Substitute.For<IConfiguration>();
         _logger = Substitute.For<ILogger<DiscordPresenceService>>();
     }
@@ -34,7 +34,8 @@ public class DiscordPresenceServiceTests {
     ///     Verifies that the service correctly identifies its name.
     /// </summary>
     [Fact]
-    public void Name_ShouldReturnDiscord() {
+    public void Name_ShouldReturnDiscord()
+    {
         // Arrange
         var service = new DiscordPresenceService(_configuration, _logger);
 
@@ -50,7 +51,8 @@ public class DiscordPresenceServiceTests {
     [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
-    public async Task InitializeAsync_WhenAppIdIsMissing_DoesNotInitializeClient(string? invalidAppId) {
+    public async Task InitializeAsync_WhenAppIdIsMissing_DoesNotInitializeClient(string? invalidAppId)
+    {
         // Arrange
         _configuration["Discord:AppId"].Returns(invalidAppId);
         var service = new DiscordPresenceService(_configuration, _logger);
@@ -73,7 +75,8 @@ public class DiscordPresenceServiceTests {
     ///     task without throwing an exception, demonstrating the effectiveness of the guard clauses.
     /// </remarks>
     [Fact]
-    public async Task AllMethods_WhenClientIsNotInitialized_ReturnCompletedTaskWithoutError() {
+    public async Task AllMethods_WhenClientIsNotInitialized_ReturnCompletedTaskWithoutError()
+    {
         // Arrange
         _configuration["Discord:AppId"].Returns("some-id");
         var service = new DiscordPresenceService(_configuration, _logger);
@@ -102,7 +105,8 @@ public class DiscordPresenceServiceTests {
     ///     by the Discord RPC client during initialization and logs an error instead of crashing.
     /// </summary>
     [Fact]
-    public async Task InitializeAsync_WhenRpcClientThrows_CatchesAndLogsError() {
+    public async Task InitializeAsync_WhenRpcClientThrows_CatchesAndLogsError()
+    {
         // This test is conceptual. In a real test runner, `new DiscordRpcClient` is likely to
         // fail if the Discord client isn't running. This test verifies that such a failure
         // is handled gracefully by the service's try-catch block.

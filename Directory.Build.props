@@ -40,7 +40,7 @@
 		<VelopackVersion>0.0.1350-g3ba32af</VelopackVersion>
 		<WindowsAppSdkVersion>1.8.250702007-experimental4</WindowsAppSdkVersion>
 
-		 <!-- Serilog Package Versions -->
+		<!-- Serilog Package Versions -->
 		<SerilogEnrichersThreadVersion>4.0.0</SerilogEnrichersThreadVersion>
 		<SerilogExtensionsLoggingVersion>9.0.2</SerilogExtensionsLoggingVersion>
 		<SerilogSettingsConfigurationVersion>9.0.0</SerilogSettingsConfigurationVersion>

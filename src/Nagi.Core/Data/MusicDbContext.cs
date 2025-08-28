@@ -1,15 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
-using System;
 
 namespace Nagi.Core.Data;
 
 /// <summary>
-/// Represents the Entity Framework Core database context for the application's music library.
+///     Represents the Entity Framework Core database context for the application's music library.
 /// </summary>
-public class MusicDbContext : DbContext {
-    public MusicDbContext(DbContextOptions<MusicDbContext> options) : base(options) {
+public class MusicDbContext : DbContext
+{
+    public MusicDbContext(DbContextOptions<MusicDbContext> options) : base(options)
+    {
     }
 
     public DbSet<Song> Songs { get; set; } = null!;
@@ -22,13 +23,15 @@ public class MusicDbContext : DbContext {
     public DbSet<ListenHistory> ListenHistory { get; set; } = null!;
 
     /// <summary>
-    /// Configures the database model, including table relationships, indexes, and constraints.
+    ///     Configures the database model, including table relationships, indexes, and constraints.
     /// </summary>
-    protected override void OnModelCreating(ModelBuilder modelBuilder) {
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
         base.OnModelCreating(modelBuilder);
 
         // Configure the Song entity.
-        modelBuilder.Entity<Song>(entity => {
+        modelBuilder.Entity<Song>(entity =>
+        {
             entity.Property(s => s.Title).UseCollation("NOCASE");
             entity.Property(s => s.FilePath).UseCollation("NOCASE");
 
@@ -60,7 +63,8 @@ public class MusicDbContext : DbContext {
         });
 
         // Configure the Album entity.
-        modelBuilder.Entity<Album>(entity => {
+        modelBuilder.Entity<Album>(entity =>
+        {
             entity.Property(a => a.Title).UseCollation("NOCASE");
             entity.HasIndex(a => a.Title);
             entity.HasIndex(a => a.ArtistId);
@@ -69,38 +73,44 @@ public class MusicDbContext : DbContext {
         });
 
         // Configure the Artist entity.
-        modelBuilder.Entity<Artist>(entity => {
+        modelBuilder.Entity<Artist>(entity =>
+        {
             entity.Property(a => a.Name).UseCollation("NOCASE");
             entity.HasIndex(a => a.Name).IsUnique();
         });
 
         // Configure the Genre entity.
-        modelBuilder.Entity<Genre>(entity => {
+        modelBuilder.Entity<Genre>(entity =>
+        {
             entity.Property(g => g.Name).UseCollation("NOCASE");
             entity.HasIndex(g => g.Name).IsUnique();
         });
 
         // Configure the ListenHistory entity.
-        modelBuilder.Entity<ListenHistory>(entity => {
+        modelBuilder.Entity<ListenHistory>(entity =>
+        {
             entity.HasIndex(lh => lh.SongId);
             entity.HasIndex(lh => lh.ListenTimestampUtc);
             entity.HasIndex(lh => lh.IsScrobbled);
         });
 
         // Configure the Folder entity.
-        modelBuilder.Entity<Folder>(entity => {
+        modelBuilder.Entity<Folder>(entity =>
+        {
             entity.Property(f => f.Path).UseCollation("NOCASE");
             entity.HasIndex(f => f.Path).IsUnique();
         });
 
         // Configure the Playlist entity.
-        modelBuilder.Entity<Playlist>(entity => {
+        modelBuilder.Entity<Playlist>(entity =>
+        {
             entity.Property(p => p.Name).UseCollation("NOCASE");
             entity.HasIndex(p => p.Name).IsUnique();
         });
 
         // Configure the PlaylistSong join entity.
-        modelBuilder.Entity<PlaylistSong>(entity => {
+        modelBuilder.Entity<PlaylistSong>(entity =>
+        {
             entity.HasKey(ps => new { ps.PlaylistId, ps.SongId });
 
             entity.HasOne(ps => ps.Playlist)
@@ -119,23 +129,28 @@ public class MusicDbContext : DbContext {
     }
 
     /// <summary>
-    /// Deletes and recreates the entire database. This is a destructive operation
-    /// intended for development, testing, or user-initiated library resets.
+    ///     Deletes and recreates the entire database. This is a destructive operation
+    ///     intended for development, testing, or user-initiated library resets.
     /// </summary>
     /// <param name="logger">The logger to use for recording operation status.</param>
-    public void RecreateDatabase(ILogger logger) {
-        try {
+    public void RecreateDatabase(ILogger logger)
+    {
+        try
+        {
             Database.EnsureDeleted();
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             // Log a warning if deletion fails, as the database might be locked by another process.
             logger.LogWarning(ex, "Failed to delete the database. It may be locked by another process.");
         }
 
-        try {
+        try
+        {
             Database.EnsureCreated();
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             // This is a critical failure if the database cannot be created.
             logger.LogCritical(ex, "Failed to create the new database after deletion.");
             throw;

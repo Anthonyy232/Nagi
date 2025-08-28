@@ -1,19 +1,20 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Windowing;
 using Nagi.Core.Services.Abstractions;
 using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
-using System;
-using System.Threading.Tasks;
 
 namespace Nagi.WinUI.ViewModels;
 
 /// <summary>
 ///     Provides the data context and command logic for the application's system tray icon.
 /// </summary>
-public partial class TrayIconViewModel : ObservableObject, IDisposable {
+public partial class TrayIconViewModel : ObservableObject, IDisposable
+{
     private readonly IAppInfoService _appInfoService;
     private readonly IDispatcherService _dispatcherService;
     private readonly ILogger<TrayIconViewModel> _logger;
@@ -30,7 +31,8 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable {
         IWindowService windowService,
         IAppInfoService appInfoService,
         IDispatcherService dispatcherService,
-        ILogger<TrayIconViewModel> logger) {
+        ILogger<TrayIconViewModel> logger)
+    {
         _settingsService = settingsService;
         _trayPopupService = trayPopupService;
         _windowService = windowService;
@@ -63,7 +65,8 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable {
     /// <summary>
     ///     Cleans up resources and unsubscribes from events to prevent memory leaks.
     /// </summary>
-    public void Dispose() {
+    public void Dispose()
+    {
         if (_isDisposed) return;
 
         _logger.LogInformation("Disposing and unsubscribing from events");
@@ -78,7 +81,8 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable {
     /// <summary>
     ///     Asynchronously initializes the ViewModel by subscribing to window events and loading initial settings.
     /// </summary>
-    public async Task InitializeAsync() {
+    public async Task InitializeAsync()
+    {
         await _windowService.InitializeAsync();
         _windowService.Closing += OnAppWindowClosing;
         _windowService.VisibilityChanged += OnAppWindowVisibilityChanged;
@@ -90,49 +94,59 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable {
             _isHideToTrayEnabled, IsWindowVisible);
     }
 
-    private void UpdateTrayIconVisibility() {
+    private void UpdateTrayIconVisibility()
+    {
         IsTrayIconVisible = _isHideToTrayEnabled && !IsWindowVisible;
     }
 
-    private void OnAppWindowVisibilityChanged(AppWindowChangedEventArgs args) {
-        _dispatcherService.TryEnqueue(() => {
+    private void OnAppWindowVisibilityChanged(AppWindowChangedEventArgs args)
+    {
+        _dispatcherService.TryEnqueue(() =>
+        {
             IsWindowVisible = _windowService.IsVisible;
             UpdateTrayIconVisibility();
         });
     }
 
-    private void OnAppWindowClosing(AppWindowClosingEventArgs args) {
+    private void OnAppWindowClosing(AppWindowClosingEventArgs args)
+    {
         // If the application is exiting intentionally, do not intercept the close.
         if (_windowService.IsExiting) return;
 
         // Check if the current page is the OnboardingPage - if so, always exit the app
-        if (App.RootWindow?.Content is OnboardingPage) {
+        if (App.RootWindow?.Content is OnboardingPage)
+        {
             _windowService.IsExiting = true;
             _logger.LogInformation("OnboardingPage is active. Allowing application to exit");
             return;
         }
 
-        if (_isHideToTrayEnabled) {
+        if (_isHideToTrayEnabled)
+        {
             // Cancel the default close operation and hide the window to the tray instead.
             args.Cancel = true;
             _logger.LogInformation("'Hide to Tray' is enabled. Intercepting close and hiding window");
             _dispatcherService.TryEnqueue(HideWindow);
         }
-        else {
+        else
+        {
             // If not hiding to tray, closing the window means exiting the application.
             _windowService.IsExiting = true;
             _logger.LogInformation("'Hide to Tray' is disabled. Allowing application to exit");
         }
     }
 
-    private void OnHideToTraySettingChanged(bool isEnabled) {
-        _dispatcherService.TryEnqueue(() => {
+    private void OnHideToTraySettingChanged(bool isEnabled)
+    {
+        _dispatcherService.TryEnqueue(() =>
+        {
             _logger.LogInformation("'Hide to Tray' setting changed to {IsEnabled}", isEnabled);
             _isHideToTrayEnabled = isEnabled;
             UpdateTrayIconVisibility();
 
             // If the feature is disabled while the window is hidden, show the window to prevent it from becoming inaccessible.
-            if (!isEnabled && !IsWindowVisible) {
+            if (!isEnabled && !IsWindowVisible)
+            {
                 _logger.LogWarning("'Hide to Tray' disabled while window was hidden. Forcing window to show");
                 ShowWindow();
             }
@@ -143,7 +157,8 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable {
     ///     Shows or hides the popup menu associated with the tray icon.
     /// </summary>
     [RelayCommand]
-    private void ShowPopup() {
+    private void ShowPopup()
+    {
         _trayPopupService.ShowOrHidePopup();
     }
 
@@ -151,20 +166,20 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable {
     ///     Toggles the main window's visibility.
     /// </summary>
     [RelayCommand]
-    private void ToggleMainWindowVisibility() {
-        if (!IsWindowVisible) {
+    private void ToggleMainWindowVisibility()
+    {
+        if (!IsWindowVisible)
             ShowWindow();
-        }
-        else if (_isHideToTrayEnabled) {
-            _windowService.MinimizeToMiniPlayer();
-        }
+        else if (_isHideToTrayEnabled) _windowService.MinimizeToMiniPlayer();
     }
 
-    private void HideWindow() {
+    private void HideWindow()
+    {
         _windowService.Hide();
     }
 
-    private void ShowWindow() {
+    private void ShowWindow()
+    {
         _trayPopupService.HidePopup();
         _windowService.ShowAndActivate();
     }
@@ -173,7 +188,8 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable {
     ///     Commands the application to exit gracefully.
     /// </summary>
     [RelayCommand]
-    private void ExitApplication() {
+    private void ExitApplication()
+    {
         _windowService.IsExiting = true;
         _windowService.Close();
     }

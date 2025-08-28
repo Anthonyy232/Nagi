@@ -10,12 +10,14 @@ namespace Nagi.WinUI.Services.Implementations;
 /// <summary>
 ///     Manages high-level application lifecycle events, such as navigation and application reset.
 /// </summary>
-public class ApplicationLifecycle : IApplicationLifecycle {
+public class ApplicationLifecycle : IApplicationLifecycle
+{
     private readonly App _app;
-    private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<ApplicationLifecycle> _logger;
+    private readonly IServiceProvider _serviceProvider;
 
-    public ApplicationLifecycle(App app, IServiceProvider serviceProvider, ILogger<ApplicationLifecycle> logger) {
+    public ApplicationLifecycle(App app, IServiceProvider serviceProvider, ILogger<ApplicationLifecycle> logger)
+    {
         _app = app ?? throw new ArgumentNullException(nameof(app));
         _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         _logger = logger;
@@ -24,7 +26,8 @@ public class ApplicationLifecycle : IApplicationLifecycle {
     /// <summary>
     ///     Navigates to the main content of the application, performing initial setup checks if necessary.
     /// </summary>
-    public async Task NavigateToMainContentAsync() {
+    public async Task NavigateToMainContentAsync()
+    {
         _logger.LogInformation("Navigating to main application content.");
         await _app.CheckAndNavigateToMainContent();
     }
@@ -33,9 +36,11 @@ public class ApplicationLifecycle : IApplicationLifecycle {
     ///     Resets the application to its default state by clearing all settings, library data, and the playback queue,
     ///     then navigates to the main content (which may trigger the onboarding process).
     /// </summary>
-    public async Task ResetAndNavigateToOnboardingAsync() {
+    public async Task ResetAndNavigateToOnboardingAsync()
+    {
         _logger.LogInformation("Starting application reset process.");
-        try {
+        try
+        {
             var settingsService = _serviceProvider.GetRequiredService<IUISettingsService>();
             await settingsService.ResetToDefaultsAsync();
             _logger.LogDebug("UI settings have been reset.");
@@ -51,7 +56,8 @@ public class ApplicationLifecycle : IApplicationLifecycle {
             await _app.CheckAndNavigateToMainContent();
             _logger.LogInformation("Application reset completed successfully.");
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             // A failure during reset is a critical issue that can leave the app in a bad state.
             _logger.LogCritical(ex, "A critical failure occurred during the application reset process.");
             // Re-throw to allow the caller (e.g., a ViewModel) to handle showing an error dialog.

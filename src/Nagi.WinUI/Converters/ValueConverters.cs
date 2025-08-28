@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Windows.Foundation;
 using Windows.UI;
@@ -120,9 +119,7 @@ public class StringToUriConverter : IValueConverter
     public object? Convert(object value, Type targetType, object parameter, string language)
     {
         if (value is string uriString && !string.IsNullOrEmpty(uriString))
-        {
             return new BitmapImage(new Uri(uriString, UriKind.Absolute));
-        }
 
         return null;
     }

@@ -8,20 +8,23 @@ namespace Nagi.WinUI.Helpers;
 
 // Provides a helper method to ensure a dispatcher queue exists on the current thread.
 // This is a prerequisite for using Mica or Acrylic system backdrops in a WinUI 3 application.
-internal sealed class WindowsSystemDispatcherQueueHelper : IDisposable {
+internal sealed class WindowsSystemDispatcherQueueHelper : IDisposable
+{
+    private static ILogger<WindowsSystemDispatcherQueueHelper>? _logger;
     private object? _dispatcherQueueController;
     private bool _disposed;
 
-    private static ILogger<WindowsSystemDispatcherQueueHelper>? _logger;
     private static ILogger<WindowsSystemDispatcherQueueHelper> Logger =>
         _logger ??= App.Services!.GetRequiredService<ILogger<WindowsSystemDispatcherQueueHelper>>();
 
     // Disposes of the created DispatcherQueueController.
-    public void Dispose() {
+    public void Dispose()
+    {
         if (_disposed) return;
 
         // The controller object is IDisposable and needs to be explicitly released.
-        if (_dispatcherQueueController is IDisposable controller) {
+        if (_dispatcherQueueController is IDisposable controller)
+        {
             Logger.LogDebug("Disposing DispatcherQueueController.");
             controller.Dispose();
         }
@@ -39,17 +42,21 @@ internal sealed class WindowsSystemDispatcherQueueHelper : IDisposable {
 
     // Ensures a DispatcherQueue is available for the current thread.
     // If one does not exist, it creates one.
-    public void EnsureDispatcherQueue() {
+    public void EnsureDispatcherQueue()
+    {
         // If a DispatcherQueue already exists, no action is needed.
-        if (DispatcherQueue.GetForCurrentThread() is not null) {
+        if (DispatcherQueue.GetForCurrentThread() is not null)
+        {
             Logger.LogDebug("DispatcherQueue already exists for the current thread. No action needed.");
             return;
         }
 
         // Create a new DispatcherQueueController for the current thread if one hasn't been created.
-        if (_dispatcherQueueController is null) {
+        if (_dispatcherQueueController is null)
+        {
             Logger.LogInformation("Creating a new DispatcherQueue for the current thread.");
-            var options = new DispatcherQueueOptions {
+            var options = new DispatcherQueueOptions
+            {
                 dwSize = (uint)Marshal.SizeOf<DispatcherQueueOptions>(),
                 threadType = DispatcherQueueThreadType.Current,
                 apartmentType = DispatcherQueueThreadApartmentType.STA
@@ -65,19 +72,22 @@ internal sealed class WindowsSystemDispatcherQueueHelper : IDisposable {
         }
     }
 
-    private enum DispatcherQueueThreadType {
+    private enum DispatcherQueueThreadType
+    {
         Dedicated = 1, // DQTYPE_THREAD_DEDICATED
         Current = 2 // DQTYPE_THREAD_CURRENT
     }
 
-    private enum DispatcherQueueThreadApartmentType {
+    private enum DispatcherQueueThreadApartmentType
+    {
         None = 0, // DQTAT_NONE
         ASTA = 1, // DQTAT_COM_ASTA
         STA = 2 // DQTAT_COM_STA
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    private struct DispatcherQueueOptions {
+    private struct DispatcherQueueOptions
+    {
         internal uint dwSize;
         internal DispatcherQueueThreadType threadType;
         internal DispatcherQueueThreadApartmentType apartmentType;

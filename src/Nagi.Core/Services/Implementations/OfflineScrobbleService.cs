@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Data;
 using Nagi.Core.Services.Abstractions;
@@ -11,14 +10,15 @@ namespace Nagi.Core.Services.Implementations;
 ///     successfully submitted in real-time. This service is designed to be resilient,
 ///     handling intermittent network failures and ensuring no scrobbles are lost.
 /// </summary>
-public class OfflineScrobbleService : IOfflineScrobbleService, IDisposable {
+public class OfflineScrobbleService : IOfflineScrobbleService, IDisposable
+{
     private static readonly TimeSpan InitialDelay = TimeSpan.FromMinutes(1);
     private static readonly TimeSpan CheckInterval = TimeSpan.FromMinutes(15);
     private readonly CancellationTokenSource _cancellationTokenSource = new();
     private readonly IDbContextFactory<MusicDbContext> _contextFactory;
+    private readonly ILogger<OfflineScrobbleService> _logger;
     private readonly ILastFmScrobblerService _scrobblerService;
     private readonly ISettingsService _settingsService;
-    private readonly ILogger<OfflineScrobbleService> _logger;
 
     // A lock-free flag to ensure only one processing task runs at a time.
     // 0 = not processing, 1 = processing.
@@ -28,7 +28,8 @@ public class OfflineScrobbleService : IOfflineScrobbleService, IDisposable {
         IDbContextFactory<MusicDbContext> contextFactory,
         ILastFmScrobblerService scrobblerService,
         ISettingsService settingsService,
-        ILogger<OfflineScrobbleService> logger) {
+        ILogger<OfflineScrobbleService> logger)
+    {
         _contextFactory = contextFactory;
         _scrobblerService = scrobblerService;
         _settingsService = settingsService;
@@ -37,7 +38,8 @@ public class OfflineScrobbleService : IOfflineScrobbleService, IDisposable {
     }
 
     /// <inheritdoc />
-    public void Dispose() {
+    public void Dispose()
+    {
         _logger.LogInformation("Disposing OfflineScrobbleService.");
         _settingsService.LastFmSettingsChanged -= OnLastFmSettingsChanged;
         _cancellationTokenSource.Cancel();
@@ -46,29 +48,34 @@ public class OfflineScrobbleService : IOfflineScrobbleService, IDisposable {
     }
 
     /// <inheritdoc />
-    public void Start() {
+    public void Start()
+    {
         _logger.LogInformation("Starting offline scrobble service background loop.");
         // Fire-and-forget the long-running task to run in the background.
         _ = Task.Run(() => ScrobbleLoopAsync(_cancellationTokenSource.Token));
     }
 
     /// <inheritdoc />
-    public async Task ProcessQueueAsync(CancellationToken cancellationToken = default) {
+    public async Task ProcessQueueAsync(CancellationToken cancellationToken = default)
+    {
         if (cancellationToken.IsCancellationRequested) return;
 
-        if (!await _settingsService.GetLastFmScrobblingEnabledAsync()) {
+        if (!await _settingsService.GetLastFmScrobblingEnabledAsync())
+        {
             _logger.LogInformation("Scrobbling is disabled; skipping queue processing.");
             return;
         }
 
         // Atomically check if processing is already running. If _isProcessingQueue is 0,
         // set it to 1 and proceed. If it's already 1, another thread is processing, so we exit.
-        if (Interlocked.CompareExchange(ref _isProcessingQueue, 1, 0) != 0) {
+        if (Interlocked.CompareExchange(ref _isProcessingQueue, 1, 0) != 0)
+        {
             _logger.LogDebug("Queue processing is already in progress; skipping.");
             return;
         }
 
-        try {
+        try
+        {
             _logger.LogInformation("Starting to process pending scrobbles...");
             // Pass the token to all async EF Core operations for clean cancellation.
             await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
@@ -83,7 +90,8 @@ public class OfflineScrobbleService : IOfflineScrobbleService, IDisposable {
 
             if (cancellationToken.IsCancellationRequested) return;
 
-            if (pendingScrobbles.Count == 0) {
+            if (pendingScrobbles.Count == 0)
+            {
                 _logger.LogInformation("No pending scrobbles found.");
                 return;
             }
@@ -91,72 +99,86 @@ public class OfflineScrobbleService : IOfflineScrobbleService, IDisposable {
             _logger.LogInformation("Found {ScrobbleCount} pending scrobbles.", pendingScrobbles.Count);
             var successfulScrobbles = 0;
 
-            foreach (var historyEntry in pendingScrobbles) {
+            foreach (var historyEntry in pendingScrobbles)
+            {
                 if (cancellationToken.IsCancellationRequested) break;
                 if (historyEntry.Song is null) continue;
 
-                try {
+                try
+                {
                     var success =
                         await _scrobblerService.ScrobbleAsync(historyEntry.Song, historyEntry.ListenTimestampUtc);
-                    if (success) {
+                    if (success)
+                    {
                         historyEntry.IsScrobbled = true;
                         successfulScrobbles++;
                     }
-                    else {
+                    else
+                    {
                         _logger.LogWarning("Scrobble failed for song '{SongTitle}'. Will retry later.",
                             historyEntry.Song.Title);
                         // Stop processing on the first failure to maintain chronological order.
                         break;
                     }
                 }
-                catch (Exception ex) {
+                catch (Exception ex)
+                {
                     _logger.LogError(ex, "Exception while scrobbling song '{SongTitle}'. Will retry later.",
                         historyEntry.Song.Title);
                     break;
                 }
             }
 
-            if (successfulScrobbles > 0) {
+            if (successfulScrobbles > 0)
+            {
                 await context.SaveChangesAsync(cancellationToken);
                 _logger.LogInformation("Successfully submitted {ScrobbleCount} scrobbles.", successfulScrobbles);
             }
         }
-        finally {
+        finally
+        {
             // Unconditionally release the lock, allowing the next run.
             Interlocked.Exchange(ref _isProcessingQueue, 0);
         }
     }
 
     /// <summary>
-    /// The main background loop that periodically triggers queue processing.
+    ///     The main background loop that periodically triggers queue processing.
     /// </summary>
-    private async Task ScrobbleLoopAsync(CancellationToken cancellationToken) {
-        try {
+    private async Task ScrobbleLoopAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
             await Task.Delay(InitialDelay, cancellationToken);
 
-            while (!cancellationToken.IsCancellationRequested) {
+            while (!cancellationToken.IsCancellationRequested)
+            {
                 // Wrap the core work in a try/catch to make the loop resilient to unexpected errors.
                 // A single failed run will not terminate the background service.
-                try {
+                try
+                {
                     await ProcessQueueAsync(cancellationToken);
                 }
-                catch (Exception ex) when (ex is not OperationCanceledException) {
+                catch (Exception ex) when (ex is not OperationCanceledException)
+                {
                     _logger.LogCritical(ex, "An unhandled exception occurred in the scrobble processing loop.");
                 }
 
                 await Task.Delay(CheckInterval, cancellationToken);
             }
         }
-        catch (OperationCanceledException) {
+        catch (OperationCanceledException)
+        {
             // This is the expected, clean way to exit the loop when Dispose is called.
             _logger.LogInformation("Offline scrobble service loop has been cancelled.");
         }
     }
 
     /// <summary>
-    /// Event handler that triggers an immediate queue processing when Last.fm settings change.
+    ///     Event handler that triggers an immediate queue processing when Last.fm settings change.
     /// </summary>
-    private void OnLastFmSettingsChanged() {
+    private void OnLastFmSettingsChanged()
+    {
         _logger.LogInformation("Last.fm settings changed. Triggering immediate queue processing.");
         // Pass the token to be a good citizen during shutdown.
         _ = ProcessQueueAsync(_cancellationTokenSource.Token);
