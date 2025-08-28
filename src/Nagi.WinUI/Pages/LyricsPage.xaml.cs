@@ -14,12 +14,14 @@ namespace Nagi.WinUI.Pages;
 /// <summary>
 ///     A page that displays synchronized lyrics for the currently playing song.
 /// </summary>
-public sealed partial class LyricsPage : Page {
+public sealed partial class LyricsPage : Page
+{
     private const double ScrollIntoViewRatio = 0.40;
-    private readonly Storyboard _progressBarStoryboard = new();
     private readonly ILogger<LyricsPage> _logger;
+    private readonly Storyboard _progressBarStoryboard = new();
 
-    public LyricsPage() {
+    public LyricsPage()
+    {
         ViewModel = App.Services!.GetRequiredService<LyricsPageViewModel>();
         _logger = App.Services!.GetRequiredService<ILogger<LyricsPage>>();
         InitializeComponent();
@@ -31,13 +33,15 @@ public sealed partial class LyricsPage : Page {
 
     public LyricsPageViewModel ViewModel { get; }
 
-    private void OnPageLoaded(object sender, RoutedEventArgs e) {
+    private void OnPageLoaded(object sender, RoutedEventArgs e)
+    {
         _logger.LogInformation("LyricsPage loaded.");
         if (Resources["PageLoadStoryboard"] is Storyboard storyboard) storyboard.Begin();
         UpdateProgressBarForCurrentLine();
     }
 
-    private void OnPageUnloaded(object sender, RoutedEventArgs e) {
+    private void OnPageUnloaded(object sender, RoutedEventArgs e)
+    {
         _logger.LogInformation("LyricsPage unloaded. Cleaning up resources.");
         ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
         Unloaded -= OnPageUnloaded;
@@ -48,19 +52,24 @@ public sealed partial class LyricsPage : Page {
     /// <summary>
     ///     Responds to property changes in the ViewModel to update the UI accordingly.
     /// </summary>
-    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        switch (e.PropertyName) {
+    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        switch (e.PropertyName)
+        {
             case nameof(ViewModel.CurrentLine):
                 _logger.LogDebug("Current lyric line changed. Updating UI.");
-                DispatcherQueue.TryEnqueue(() => {
+                DispatcherQueue.TryEnqueue(() =>
+                {
                     ScrollToCurrentLine();
                     UpdateProgressBarForCurrentLine();
                 });
                 break;
 
             case nameof(ViewModel.IsPlaying):
-                _logger.LogDebug("Playback state changed to IsPlaying: {IsPlaying}. Updating progress bar.", ViewModel.IsPlaying);
-                DispatcherQueue.TryEnqueue(() => {
+                _logger.LogDebug("Playback state changed to IsPlaying: {IsPlaying}. Updating progress bar.",
+                    ViewModel.IsPlaying);
+                DispatcherQueue.TryEnqueue(() =>
+                {
                     if (ViewModel.IsPlaying)
                         UpdateProgressBarForCurrentLine();
                     else
@@ -73,8 +82,10 @@ public sealed partial class LyricsPage : Page {
     /// <summary>
     ///     Handles clicks on a lyric line to seek to that position in the song.
     /// </summary>
-    private void LyricsListView_ItemClick(object sender, ItemClickEventArgs e) {
-        if (e.ClickedItem is LyricLine clickedLine) {
+    private void LyricsListView_ItemClick(object sender, ItemClickEventArgs e)
+    {
+        if (e.ClickedItem is LyricLine clickedLine)
+        {
             _logger.LogInformation("User clicked lyric line at {Timestamp}. Seeking.", clickedLine.StartTime);
             _ = ViewModel.SeekToLineAsync(clickedLine);
         }
@@ -83,12 +94,14 @@ public sealed partial class LyricsPage : Page {
     /// <summary>
     ///     Resets and starts the progress bar animation for the current lyric line.
     /// </summary>
-    private void UpdateProgressBarForCurrentLine() {
+    private void UpdateProgressBarForCurrentLine()
+    {
         _progressBarStoryboard.Stop();
         _progressBarStoryboard.Children.Clear();
 
         var currentLine = ViewModel.CurrentLine;
-        if (currentLine == null) {
+        if (currentLine == null)
+        {
             LyricsProgressBar.Value = 0;
             return;
         }
@@ -101,7 +114,8 @@ public sealed partial class LyricsPage : Page {
             : ViewModel.SongDuration;
         var lineDuration = nextLineStartTime - currentLine.StartTime;
 
-        if (lineDuration <= TimeSpan.Zero) {
+        if (lineDuration <= TimeSpan.Zero)
+        {
             LyricsProgressBar.Value = 100;
             return;
         }
@@ -115,7 +129,8 @@ public sealed partial class LyricsPage : Page {
         var remainingDuration = lineDuration - positionInLine;
         if (remainingDuration <= TimeSpan.Zero) return;
 
-        var animation = new DoubleAnimation {
+        var animation = new DoubleAnimation
+        {
             To = 100.0,
             Duration = remainingDuration,
             EnableDependentAnimation = true
@@ -133,7 +148,8 @@ public sealed partial class LyricsPage : Page {
     /// <summary>
     ///     Smoothly scrolls the lyrics list to bring the current active line into view.
     /// </summary>
-    private async void ScrollToCurrentLine() {
+    private async void ScrollToCurrentLine()
+    {
         var lineToScrollTo = ViewModel.CurrentLine;
         if (lineToScrollTo == null) return;
 
@@ -142,17 +158,20 @@ public sealed partial class LyricsPage : Page {
 
         _logger.LogTrace("Scrolling to lyric line index {LineIndex}.", lineIndex);
 
-        var options = new BringIntoViewOptions {
+        var options = new BringIntoViewOptions
+        {
             VerticalAlignmentRatio = ScrollIntoViewRatio,
             AnimationDesired = true
         };
 
         var container = LyricsListView.ContainerFromIndex(lineIndex) as UIElement;
 
-        if (container != null) {
+        if (container != null)
+        {
             container.StartBringIntoView(options);
         }
-        else {
+        else
+        {
             LyricsListView.ScrollIntoView(lineToScrollTo);
             await Task.Yield();
             var newContainer = LyricsListView.ContainerFromIndex(lineIndex) as UIElement;

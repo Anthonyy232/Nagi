@@ -17,6 +17,7 @@
                 x:Key="ActiveLyricToStyleConverter"
                 ActiveStyle="{StaticResource ActiveLyricTextBlockStyle}"
                 InactiveStyle="{StaticResource InactiveLyricLineStyle}" />
+            <!-- IMPORTANT: This Storyboard is triggered in code-behind (LyricsPage.xaml.cs, OnPageLoaded) and must NOT be removed by cleanup tools. -->
             <Storyboard x:Key="PageLoadStoryboard">
                 <DoubleAnimation
                     Storyboard.TargetName="LyricsContainer"

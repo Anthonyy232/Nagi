@@ -11,8 +11,10 @@ namespace Nagi.WinUI.Helpers;
 ///     Provides a centralized source of truth for all application data paths,
 ///     automatically adapting to whether the app is running in a packaged or unpackaged context.
 /// </summary>
-public class PathConfiguration : IPathConfiguration {
-    public PathConfiguration(IConfiguration configuration) {
+public class PathConfiguration : IPathConfiguration
+{
+    public PathConfiguration(IConfiguration configuration)
+    {
         IsPackaged = IsRunningInPackage();
 
         AppDataRoot = IsPackaged
@@ -63,12 +65,15 @@ public class PathConfiguration : IPathConfiguration {
     /// <inheritdoc />
     public string LogsDirectory { get; }
 
-    private static bool IsRunningInPackage() {
-        try {
+    private static bool IsRunningInPackage()
+    {
+        try
+        {
             // If this property can be accessed without throwing, we are in a package.
             return Package.Current != null;
         }
-        catch {
+        catch
+        {
             // An exception will be thrown if we are not in a package.
             return false;
         }

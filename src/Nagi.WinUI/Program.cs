@@ -5,13 +5,10 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
-using Nagi.WinUI.Services.Abstractions;
 using WinRT;
-
 #if !MSIX_PACKAGE
 using Velopack;
 #endif
@@ -19,19 +16,21 @@ using Velopack;
 namespace Nagi.WinUI;
 
 /// <summary>
-/// Application entry point with single-instance enforcement.
-/// NOTE: Microsoft.Extensions.Logging is not used here because this code runs
-/// before the dependency injection container and logging services are configured.
-/// Standard Debug.WriteLine is the appropriate tool for this pre-initialization phase.
+///     Application entry point with single-instance enforcement.
+///     NOTE: Microsoft.Extensions.Logging is not used here because this code runs
+///     before the dependency injection container and logging services are configured.
+///     Standard Debug.WriteLine is the appropriate tool for this pre-initialization phase.
 /// </summary>
-public static class Program {
+public static class Program
+{
     private const string AppInstanceKey = "NagiMusicPlayerInstance-9A8B7C6D";
     private const int MaxRetryAttempts = 3;
     private const int RetryDelayMs = 100;
     private const int RedirectionTimeoutMs = 5000;
 
     [STAThread]
-    private static int Main(string[] args) {
+    private static int Main(string[] args)
+    {
 #if !MSIX_PACKAGE
         VelopackApp.Build().Run();
 #endif
@@ -44,13 +43,12 @@ public static class Program {
 #endif
 
         // Redirect secondary instances to primary
-        if (TryRedirectActivation()) {
-            return 0;
-        }
+        if (TryRedirectActivation()) return 0;
 
         Debug.WriteLine("[Program] Primary instance starting.");
 
-        Application.Start(p => {
+        Application.Start(p =>
+        {
             // Configure UI thread synchronization context
             var context = new DispatcherQueueSynchronizationContext(DispatcherQueue.GetForCurrentThread());
             SynchronizationContext.SetSynchronizationContext(context);
@@ -61,34 +59,40 @@ public static class Program {
     }
 
     /// <summary>
-    /// Enforces single-instance by redirecting secondary launches to primary.
+    ///     Enforces single-instance by redirecting secondary launches to primary.
     /// </summary>
     /// <returns>True if redirected to existing instance; false if this becomes primary.</returns>
-    private static bool TryRedirectActivation() {
+    private static bool TryRedirectActivation()
+    {
         AppInstance? mainInstance = null;
 
         // Retry AppInstance operations for stability
-        for (int attempt = 0; attempt < MaxRetryAttempts; attempt++) {
-            try {
+        for (var attempt = 0; attempt < MaxRetryAttempts; attempt++)
+            try
+            {
                 mainInstance = AppInstance.FindOrRegisterForKey(AppInstanceKey);
                 break;
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 Debug.WriteLine($"[Program] Attempt {attempt + 1} failed to find/register app instance: {ex.Message}");
-                if (attempt == MaxRetryAttempts - 1) {
+                if (attempt == MaxRetryAttempts - 1)
+                {
                     Debug.WriteLine("[Program] All attempts failed, continuing as primary instance.");
                     return false;
                 }
+
                 Thread.Sleep(RetryDelayMs);
             }
-        }
 
-        if (mainInstance == null) {
+        if (mainInstance == null)
+        {
             Debug.WriteLine("[Program] Failed to get app instance, continuing as primary.");
             return false;
         }
 
-        if (mainInstance.IsCurrent) {
+        if (mainInstance.IsCurrent)
+        {
             mainInstance.Activated += OnActivated;
             return false;
         }
@@ -96,40 +100,47 @@ public static class Program {
         Debug.WriteLine("[Program] Secondary instance detected. Redirecting activation...");
 
         // Verify primary instance is still running
-        if (!IsProcessAlive(mainInstance.ProcessId)) {
+        if (!IsProcessAlive(mainInstance.ProcessId))
+        {
             Debug.WriteLine("[Program] Main instance process is no longer running, becoming primary.");
             return false;
         }
 
-        try {
+        try
+        {
             var args = AppInstance.GetCurrent().GetActivatedEventArgs();
             return RedirectActivationTo(args, mainInstance);
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             Debug.WriteLine($"[Program] Failed to redirect activation: {ex.Message}");
             return false;
         }
     }
 
     /// <summary>
-    /// Validates if process is still running.
+    ///     Validates if process is still running.
     /// </summary>
-    private static bool IsProcessAlive(uint processId) {
-        try {
+    private static bool IsProcessAlive(uint processId)
+    {
+        try
+        {
             using var process = Process.GetProcessById((int)processId);
             return !process.HasExited;
         }
-        catch {
+        catch
+        {
             return false;
         }
     }
 
     /// <summary>
-    /// Handles activation from secondary instances.
-    /// This method's responsibility is to pass the activation arguments
-    /// to the running App instance for processing on the UI thread.
+    ///     Handles activation from secondary instances.
+    ///     This method's responsibility is to pass the activation arguments
+    ///     to the running App instance for processing on the UI thread.
     /// </summary>
-    private static void OnActivated(object? sender, AppActivationArguments args) {
+    private static void OnActivated(object? sender, AppActivationArguments args)
+    {
         var filePath = TryGetFilePathFromArgs(args);
         Debug.WriteLine($"[Program] Primary instance activated. File path found: {filePath ?? "None"}");
 
@@ -137,32 +148,35 @@ public static class Program {
     }
 
     /// <summary>
-    /// Extracts file path from file association or command line activation.
+    ///     Extracts file path from file association or command line activation.
     /// </summary>
-    private static string? TryGetFilePathFromArgs(AppActivationArguments args) {
-        if (args.Kind == ExtendedActivationKind.File && args.Data is IFileActivatedEventArgs fileArgs) {
-            if (fileArgs.Files is { Count: > 0 }) {
-                return fileArgs.Files[0].Path;
-            }
+    private static string? TryGetFilePathFromArgs(AppActivationArguments args)
+    {
+        if (args.Kind == ExtendedActivationKind.File && args.Data is IFileActivatedEventArgs fileArgs)
+        {
+            if (fileArgs.Files is { Count: > 0 }) return fileArgs.Files[0].Path;
         }
-        else if (args.Kind == ExtendedActivationKind.Launch && args.Data is ILaunchActivatedEventArgs launchArgs) {
+        else if (args.Kind == ExtendedActivationKind.Launch && args.Data is ILaunchActivatedEventArgs launchArgs)
+        {
             if (string.IsNullOrWhiteSpace(launchArgs.Arguments)) return null;
             var argv = CommandLineToArgvW(launchArgs.Arguments, out var argc);
             if (argv == IntPtr.Zero) return null;
 
-            try {
-                if (argc > 0) {
+            try
+            {
+                if (argc > 0)
+                {
                     // Extract last argument as potential file path
                     var lastArgPtr = Marshal.ReadIntPtr(argv, (argc - 1) * IntPtr.Size);
                     var potentialPath = Marshal.PtrToStringUni(lastArgPtr);
 
                     if (!string.IsNullOrEmpty(potentialPath) &&
-                        (File.Exists(potentialPath) || Directory.Exists(potentialPath))) {
+                        (File.Exists(potentialPath) || Directory.Exists(potentialPath)))
                         return potentialPath;
-                    }
                 }
             }
-            finally {
+            finally
+            {
                 LocalFree(argv);
             }
         }
@@ -171,12 +185,14 @@ public static class Program {
     }
 
     /// <summary>
-    /// Redirects activation to primary instance with timeout protection.
+    ///     Redirects activation to primary instance with timeout protection.
     /// </summary>
     /// <returns>True if redirection succeeded; false if timeout or failure.</returns>
-    private static bool RedirectActivationTo(AppActivationArguments args, AppInstance keyInstance) {
+    private static bool RedirectActivationTo(AppActivationArguments args, AppInstance keyInstance)
+    {
         var redirectEventHandle = CreateEvent(IntPtr.Zero, true, false, null);
-        if (redirectEventHandle == IntPtr.Zero) {
+        if (redirectEventHandle == IntPtr.Zero)
+        {
             Debug.WriteLine("[Program] Failed to create event handle for redirection.");
             return false;
         }
@@ -184,16 +200,20 @@ public static class Program {
         var redirectionSucceeded = false;
 
         // Perform redirection on background thread
-        _ = Task.Run(async () => {
-            try {
+        _ = Task.Run(async () =>
+        {
+            try
+            {
                 await keyInstance.RedirectActivationToAsync(args);
                 redirectionSucceeded = true;
                 Debug.WriteLine("[Program] Activation redirection completed successfully.");
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 Debug.WriteLine($"[Program] RedirectActivationToAsync failed: {ex.Message}");
             }
-            finally {
+            finally
+            {
                 SetEvent(redirectEventHandle);
             }
         });
@@ -210,7 +230,8 @@ public static class Program {
         CloseHandle(redirectEventHandle);
 
         // Handle timeout (WAIT_TIMEOUT = 0x00000102)
-        if (waitResult == 0x00000102) {
+        if (waitResult == 0x00000102)
+        {
             Debug.WriteLine("[Program] Redirection timed out, becoming primary instance.");
             return false;
         }

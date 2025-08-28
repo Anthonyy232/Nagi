@@ -16,11 +16,13 @@ namespace Nagi.WinUI.Pages;
 /// <summary>
 ///     A page for displaying the list of songs within a specific folder.
 /// </summary>
-public sealed partial class FolderSongViewPage : Page {
+public sealed partial class FolderSongViewPage : Page
+{
     private readonly ILogger<FolderSongViewPage> _logger;
     private bool _isSearchExpanded;
 
-    public FolderSongViewPage() {
+    public FolderSongViewPage()
+    {
         InitializeComponent();
         ViewModel = App.Services!.GetRequiredService<FolderSongListViewModel>();
         _logger = App.Services!.GetRequiredService<ILogger<FolderSongViewPage>>();
@@ -38,18 +40,22 @@ public sealed partial class FolderSongViewPage : Page {
     /// <summary>
     ///     Initializes the view model with navigation parameters when the page is navigated to.
     /// </summary>
-    protected override async void OnNavigatedTo(NavigationEventArgs e) {
+    protected override async void OnNavigatedTo(NavigationEventArgs e)
+    {
         base.OnNavigatedTo(e);
         _logger.LogInformation("Navigated to FolderSongViewPage.");
 
-        try {
-            if (e.Parameter is FolderSongViewNavigationParameter navParam) {
+        try
+        {
+            if (e.Parameter is FolderSongViewNavigationParameter navParam)
+            {
                 _logger.LogInformation("Loading songs for folder '{FolderName}' (Id: {FolderId}).", navParam.Title,
                     navParam.FolderId);
                 await ViewModel.InitializeAsync(navParam.Title, navParam.FolderId);
                 await ViewModel.LoadAvailablePlaylistsAsync();
             }
-            else {
+            else
+            {
                 // Initialize with a fallback state if navigation parameters are invalid.
                 var paramType = e.Parameter?.GetType().Name ?? "null";
                 _logger.LogWarning(
@@ -58,7 +64,8 @@ public sealed partial class FolderSongViewPage : Page {
                 await ViewModel.InitializeAsync("Unknown Folder", null);
             }
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             _logger.LogError(ex, "Failed to initialize FolderSongViewPage.");
         }
     }
@@ -66,7 +73,8 @@ public sealed partial class FolderSongViewPage : Page {
     /// <summary>
     ///     Cleans up the search state when navigating away from the page.
     /// </summary>
-    protected override void OnNavigatedFrom(NavigationEventArgs e) {
+    protected override void OnNavigatedFrom(NavigationEventArgs e)
+    {
         base.OnNavigatedFrom(e);
         _logger.LogInformation("Navigating away from FolderSongViewPage. Cleaning up ViewModel.");
         ViewModel.Cleanup();
@@ -75,7 +83,8 @@ public sealed partial class FolderSongViewPage : Page {
     /// <summary>
     ///     Handles the page loaded event to set initial visual state.
     /// </summary>
-    private void OnPageLoaded(object sender, RoutedEventArgs e) {
+    private void OnPageLoaded(object sender, RoutedEventArgs e)
+    {
         _logger.LogDebug("FolderSongViewPage loaded. Setting initial visual state.");
         VisualStateManager.GoToState(this, "SearchCollapsed", false);
         Loaded -= OnPageLoaded;
@@ -84,7 +93,8 @@ public sealed partial class FolderSongViewPage : Page {
     /// <summary>
     ///     Handles the search toggle button click to expand or collapse the search box.
     /// </summary>
-    private void OnSearchToggleButtonClick(object sender, RoutedEventArgs e) {
+    private void OnSearchToggleButtonClick(object sender, RoutedEventArgs e)
+    {
         if (_isSearchExpanded)
             CollapseSearch();
         else
@@ -94,8 +104,10 @@ public sealed partial class FolderSongViewPage : Page {
     /// <summary>
     ///     Handles key down events in the search text box.
     /// </summary>
-    private void OnSearchTextBoxKeyDown(object sender, KeyRoutedEventArgs e) {
-        if (e.Key == VirtualKey.Escape) {
+    private void OnSearchTextBoxKeyDown(object sender, KeyRoutedEventArgs e)
+    {
+        if (e.Key == VirtualKey.Escape)
+        {
             _logger.LogDebug("Escape key pressed in search box. Collapsing search.");
             CollapseSearch();
             e.Handled = true;
@@ -105,7 +117,8 @@ public sealed partial class FolderSongViewPage : Page {
     /// <summary>
     ///     Expands the search interface with an animation.
     /// </summary>
-    private void ExpandSearch() {
+    private void ExpandSearch()
+    {
         if (_isSearchExpanded) return;
 
         _isSearchExpanded = true;
@@ -115,7 +128,8 @@ public sealed partial class FolderSongViewPage : Page {
 
         var timer = DispatcherQueue.CreateTimer();
         timer.Interval = TimeSpan.FromMilliseconds(150);
-        timer.Tick += (s, args) => {
+        timer.Tick += (s, args) =>
+        {
             timer.Stop();
             SearchTextBox.Focus(FocusState.Programmatic);
         };
@@ -125,7 +139,8 @@ public sealed partial class FolderSongViewPage : Page {
     /// <summary>
     ///     Collapses the search interface with an animation and resets the filter.
     /// </summary>
-    private void CollapseSearch() {
+    private void CollapseSearch()
+    {
         if (!_isSearchExpanded) return;
 
         _isSearchExpanded = false;
@@ -138,8 +153,10 @@ public sealed partial class FolderSongViewPage : Page {
     /// <summary>
     ///     Updates the view model with the current selection from the song list.
     /// </summary>
-    private void SongsListView_SelectionChanged(object sender, SelectionChangedEventArgs e) {
-        if (sender is ListView listView) {
+    private void SongsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (sender is ListView listView)
+        {
             _logger.LogTrace("Song selection changed. {SelectedCount} items selected.", listView.SelectedItems.Count);
             ViewModel.OnSongsSelectionChanged(listView.SelectedItems);
         }
@@ -148,8 +165,10 @@ public sealed partial class FolderSongViewPage : Page {
     /// <summary>
     ///     Handles the double-tapped event on the song list to play the selected song.
     /// </summary>
-    private void SongsListView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e) {
-        if (e.OriginalSource is FrameworkElement { DataContext: Song tappedSong }) {
+    private void SongsListView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+    {
+        if (e.OriginalSource is FrameworkElement { DataContext: Song tappedSong })
+        {
             _logger.LogInformation("User double-tapped song '{SongTitle}' (Id: {SongId}). Executing play command.",
                 tappedSong.Title, tappedSong.Id);
             ViewModel.PlaySongCommand.Execute(tappedSong);
@@ -159,17 +178,20 @@ public sealed partial class FolderSongViewPage : Page {
     /// <summary>
     ///     Handles the opening of the context menu for a song item.
     /// </summary>
-    private void SongItemMenuFlyout_Opening(object sender, object e) {
+    private void SongItemMenuFlyout_Opening(object sender, object e)
+    {
         if (sender is not MenuFlyout menuFlyout) return;
 
-        if (menuFlyout.Target?.DataContext is Song rightClickedSong) {
+        if (menuFlyout.Target?.DataContext is Song rightClickedSong)
+        {
             _logger.LogDebug("Context menu opening for song '{SongTitle}'.", rightClickedSong.Title);
             if (!SongsListView.SelectedItems.Contains(rightClickedSong))
                 SongsListView.SelectedItem = rightClickedSong;
         }
 
         if (menuFlyout.Items.OfType<MenuFlyoutSubItem>()
-                .FirstOrDefault(item => item.Name == "AddToPlaylistSubMenu") is { } addToPlaylistSubMenu) {
+                .FirstOrDefault(item => item.Name == "AddToPlaylistSubMenu") is { } addToPlaylistSubMenu)
+        {
             _logger.LogDebug("Populating 'Add to playlist' submenu.");
             PopulatePlaylistSubMenu(addToPlaylistSubMenu);
         }
@@ -178,19 +200,23 @@ public sealed partial class FolderSongViewPage : Page {
     /// <summary>
     ///     Populates the "Add to playlist" submenu with available playlists from the view model.
     /// </summary>
-    private void PopulatePlaylistSubMenu(MenuFlyoutSubItem subMenu) {
+    private void PopulatePlaylistSubMenu(MenuFlyoutSubItem subMenu)
+    {
         subMenu.Items.Clear();
         var availablePlaylists = ViewModel.AvailablePlaylists;
 
-        if (availablePlaylists?.Any() != true) {
+        if (availablePlaylists?.Any() != true)
+        {
             _logger.LogDebug("No playlists available to populate submenu.");
             subMenu.Items.Add(new MenuFlyoutItem { Text = "No playlists available", IsEnabled = false });
             return;
         }
 
         _logger.LogDebug("Found {PlaylistCount} playlists to populate submenu.", availablePlaylists.Count);
-        foreach (var playlist in availablePlaylists) {
-            var playlistMenuItem = new MenuFlyoutItem {
+        foreach (var playlist in availablePlaylists)
+        {
+            var playlistMenuItem = new MenuFlyoutItem
+            {
                 Text = playlist.Name,
                 Command = ViewModel.AddSelectedSongsToPlaylistCommand,
                 CommandParameter = playlist

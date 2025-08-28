@@ -18,6 +18,7 @@ public class MusicPlaybackServiceTests
 {
     private readonly IAudioPlayer _audioPlayer;
     private readonly ILibraryService _libraryService;
+    private readonly ILogger<MusicPlaybackService> _logger;
     private readonly IMetadataService _metadataService;
 
     /// <summary>
@@ -27,7 +28,6 @@ public class MusicPlaybackServiceTests
 
     // Mocks for external dependencies, enabling isolated testing of the service's logic.
     private readonly ISettingsService _settingsService;
-    private readonly ILogger<MusicPlaybackService> _logger;
 
     // A consistent list of song objects for use in tests.
     private readonly List<Song> _testSongs;
@@ -555,7 +555,7 @@ public class MusicPlaybackServiceTests
         // Arrange
         await _service.InitializeAsync();
         await _service.SetRepeatModeAsync(RepeatMode.RepeatAll);
-        await _service.PlayAsync(_testSongs, 0);
+        await _service.PlayAsync(_testSongs);
         _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(1)); // Position < 3s
 
         // Act
@@ -741,7 +741,7 @@ public class MusicPlaybackServiceTests
     {
         // Arrange
         await _service.InitializeAsync();
-        await _service.PlayAsync(_testSongs, 0); // Playing Song 1
+        await _service.PlayAsync(_testSongs); // Playing Song 1
         var songToMove = _testSongs[3]; // Song 4
 
         // Act
@@ -994,7 +994,7 @@ public class MusicPlaybackServiceTests
     {
         // Arrange
         await _service.InitializeAsync();
-        await _service.PlayAsync(_testSongs, 0);
+        await _service.PlayAsync(_testSongs);
         _audioPlayer.ClearReceivedCalls();
 
         // Act
@@ -1056,7 +1056,7 @@ public class MusicPlaybackServiceTests
     {
         // Arrange
         await _service.InitializeAsync();
-        await _service.PlayAsync(_testSongs, 0);
+        await _service.PlayAsync(_testSongs);
 
         // Act
         _audioPlayer.SmtcNextButtonPressed += Raise.Event<Action>();

@@ -11,10 +11,12 @@ namespace Nagi.WinUI.Pages;
 /// <summary>
 ///     A page that prompts the user to add their initial music library folder.
 /// </summary>
-public sealed partial class OnboardingPage : Page, ICustomTitleBarProvider {
+public sealed partial class OnboardingPage : Page, ICustomTitleBarProvider
+{
     private readonly ILogger<OnboardingPage> _logger;
 
-    public OnboardingPage() {
+    public OnboardingPage()
+    {
         InitializeComponent();
         ViewModel = App.Services!.GetRequiredService<OnboardingViewModel>();
         _logger = App.Services!.GetRequiredService<ILogger<OnboardingPage>>();
@@ -29,17 +31,26 @@ public sealed partial class OnboardingPage : Page, ICustomTitleBarProvider {
     /// </summary>
     public OnboardingViewModel ViewModel { get; }
 
-    public TitleBar GetAppTitleBarElement() => AppTitleBar;
-    public RowDefinition GetAppTitleBarRowElement() => AppTitleBarRow;
+    public TitleBar GetAppTitleBarElement()
+    {
+        return AppTitleBar;
+    }
 
-    private void OnboardingPage_Loaded(object sender, RoutedEventArgs e) {
+    public RowDefinition GetAppTitleBarRowElement()
+    {
+        return AppTitleBarRow;
+    }
+
+    private void OnboardingPage_Loaded(object sender, RoutedEventArgs e)
+    {
         _logger.LogInformation("OnboardingPage loaded.");
         VisualStateManager.GoToState(this, "PageLoaded", true);
         ViewModel.PropertyChanged += ViewModel_PropertyChanged;
         UpdateVisualState(ViewModel.IsAnyOperationInProgress);
     }
 
-    private void OnboardingPage_Unloaded(object sender, RoutedEventArgs e) {
+    private void OnboardingPage_Unloaded(object sender, RoutedEventArgs e)
+    {
         _logger.LogInformation("OnboardingPage unloaded.");
         ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
     }
@@ -47,7 +58,8 @@ public sealed partial class OnboardingPage : Page, ICustomTitleBarProvider {
     /// <summary>
     ///     Listens for ViewModel property changes to trigger UI state transitions.
     /// </summary>
-    private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e) {
+    private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
         if (e.PropertyName == nameof(ViewModel.IsAnyOperationInProgress))
             DispatcherQueue.TryEnqueue(() => { UpdateVisualState(ViewModel.IsAnyOperationInProgress); });
     }
@@ -55,7 +67,8 @@ public sealed partial class OnboardingPage : Page, ICustomTitleBarProvider {
     /// <summary>
     ///     Transitions the page between the 'Idle' and 'Working' visual states.
     /// </summary>
-    private void UpdateVisualState(bool isWorking) {
+    private void UpdateVisualState(bool isWorking)
+    {
         var stateName = isWorking ? "Working" : "Idle";
         _logger.LogDebug("Updating visual state to '{StateName}'.", stateName);
         VisualStateManager.GoToState(this, stateName, true);

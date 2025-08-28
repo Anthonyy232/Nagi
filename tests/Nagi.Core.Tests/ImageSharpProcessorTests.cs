@@ -23,8 +23,8 @@ public class ImageSharpProcessorTests
     private const string AlbumTitle = "Test Album";
     private readonly IFileSystemService _fileSystem;
     private readonly ImageSharpProcessor _imageProcessor;
-    private readonly IPathConfiguration _pathConfig;
     private readonly ILogger<ImageSharpProcessor> _logger;
+    private readonly IPathConfiguration _pathConfig;
 
     public ImageSharpProcessorTests()
     {

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Implementations.Presence;
@@ -17,16 +14,18 @@ namespace Nagi.Core.Tests.Presence;
 ///     broadcasting playback events, and reacting to application settings changes in a robust and
 ///     error-tolerant manner.
 /// </summary>
-public class PresenceManagerTests : IDisposable {
-    private readonly IMusicPlaybackService _playbackService;
-    private readonly ISettingsService _settingsService;
-    private readonly ILogger<PresenceManager> _logger;
+public class PresenceManagerTests : IDisposable
+{
     private readonly IPresenceService _discordService;
     private readonly IPresenceService _lastFmService;
+    private readonly ILogger<PresenceManager> _logger;
     private readonly PresenceManager _manager;
+    private readonly IMusicPlaybackService _playbackService;
+    private readonly ISettingsService _settingsService;
     private readonly Song _testSong;
 
-    public PresenceManagerTests() {
+    public PresenceManagerTests()
+    {
         _playbackService = Substitute.For<IMusicPlaybackService>();
         _settingsService = Substitute.For<ISettingsService>();
         _logger = Substitute.For<ILogger<PresenceManager>>();
@@ -43,14 +42,37 @@ public class PresenceManagerTests : IDisposable {
         _testSong = new Song { Id = Guid.NewGuid(), Title = "Test Song", Duration = TimeSpan.FromMinutes(3) };
     }
 
-    public void Dispose() {
+    public void Dispose()
+    {
         _manager.Dispose();
         GC.SuppressFinalize(this);
     }
 
+    #region Helper Methods
+
+    /// <summary>
+    ///     Sets up the initial state of the settings mocks and initializes the manager.
+    /// </summary>
+    private async Task SetupInitialStateAsync(bool discordEnabled, bool lastFmEnabled, bool lastFmHasCreds = true)
+    {
+        _settingsService.GetDiscordRichPresenceEnabledAsync().Returns(discordEnabled);
+
+        (string Username, string SessionKey)? credentials = lastFmHasCreds ? ("user", "key") : null;
+        _settingsService.GetLastFmCredentialsAsync()
+            .Returns(Task.FromResult<(string Username, string SessionKey)?>(credentials));
+
+        _settingsService.GetLastFmScrobblingEnabledAsync().Returns(lastFmEnabled);
+        _settingsService.GetLastFmNowPlayingEnabledAsync().Returns(false);
+
+        await _manager.InitializeAsync();
+    }
+
+    #endregion
+
     #region Initialization and Shutdown Tests
 
-    public static IEnumerable<object[]> InitializationScenarios() {
+    public static IEnumerable<object[]> InitializationScenarios()
+    {
         yield return new object[] { true, true, 1, 1 }; // Both enabled
         yield return new object[] { true, false, 1, 0 }; // Only Discord enabled
         yield return new object[] { false, true, 0, 1 }; // Only Last.fm enabled
@@ -71,11 +93,13 @@ public class PresenceManagerTests : IDisposable {
     [Theory]
     [MemberData(nameof(InitializationScenarios))]
     public async Task InitializeAsync_WithVaryingSettings_ActivatesCorrectServices(
-        bool discordEnabled, bool lastFmEnabled, int discordInitCalls, int lastFmInitCalls) {
+        bool discordEnabled, bool lastFmEnabled, int discordInitCalls, int lastFmInitCalls)
+    {
         // Arrange
         _settingsService.GetDiscordRichPresenceEnabledAsync().Returns(discordEnabled);
         (string Username, string SessionKey)? credentials = ("user", "key");
-        _settingsService.GetLastFmCredentialsAsync().Returns(Task.FromResult<(string Username, string SessionKey)?>(credentials));
+        _settingsService.GetLastFmCredentialsAsync()
+            .Returns(Task.FromResult<(string Username, string SessionKey)?>(credentials));
         _settingsService.GetLastFmScrobblingEnabledAsync().Returns(lastFmEnabled);
         _settingsService.GetLastFmNowPlayingEnabledAsync().Returns(false);
 
@@ -99,9 +123,10 @@ public class PresenceManagerTests : IDisposable {
     ///     preventing its activation without proper authentication.
     /// </remarks>
     [Fact]
-    public async Task InitializeAsync_WhenLastFmHasNoCredentials_DoesNotActivateService() {
+    public async Task InitializeAsync_WhenLastFmHasNoCredentials_DoesNotActivateService()
+    {
         // Arrange
-        await SetupInitialStateAsync(discordEnabled: false, lastFmEnabled: true, lastFmHasCreds: false);
+        await SetupInitialStateAsync(false, true, false);
 
         // Act
         // Initialization is called within the helper method.
@@ -121,9 +146,10 @@ public class PresenceManagerTests : IDisposable {
     ///     clear its remote state, followed by a call to <c>DisposeAsync</c> for proper resource cleanup.
     /// </remarks>
     [Fact]
-    public async Task ShutdownAsync_DeactivatesAndDisposesAllActiveServices() {
+    public async Task ShutdownAsync_DeactivatesAndDisposesAllActiveServices()
+    {
         // Arrange
-        await SetupInitialStateAsync(discordEnabled: true, lastFmEnabled: true);
+        await SetupInitialStateAsync(true, true);
 
         // Act
         await _manager.ShutdownAsync();
@@ -150,9 +176,10 @@ public class PresenceManagerTests : IDisposable {
     ///     correct song and listen history ID.
     /// </remarks>
     [Fact]
-    public async Task OnTrackChanged_WhenTrackChanges_BroadcastsToActiveServices() {
+    public async Task OnTrackChanged_WhenTrackChanges_BroadcastsToActiveServices()
+    {
         // Arrange
-        await SetupInitialStateAsync(discordEnabled: true, lastFmEnabled: true);
+        await SetupInitialStateAsync(true, true);
         _playbackService.CurrentTrack.Returns(_testSong);
         _playbackService.CurrentListenHistoryId.Returns(42L);
 
@@ -176,9 +203,10 @@ public class PresenceManagerTests : IDisposable {
     ///     with the new playback state. Inactive services receive no calls.
     /// </remarks>
     [Fact]
-    public async Task OnPlaybackStateChanged_WhenStateChanges_BroadcastsToActiveServices() {
+    public async Task OnPlaybackStateChanged_WhenStateChanges_BroadcastsToActiveServices()
+    {
         // Arrange
-        await SetupInitialStateAsync(discordEnabled: true, lastFmEnabled: false);
+        await SetupInitialStateAsync(true, false);
         _playbackService.IsPlaying.Returns(true);
 
         // Act
@@ -201,9 +229,10 @@ public class PresenceManagerTests : IDisposable {
     ///     with the current position and total duration of the track.
     /// </remarks>
     [Fact]
-    public async Task OnPositionChanged_WhenPositionChanges_BroadcastsToActiveServices() {
+    public async Task OnPositionChanged_WhenPositionChanges_BroadcastsToActiveServices()
+    {
         // Arrange
-        await SetupInitialStateAsync(discordEnabled: true, lastFmEnabled: true);
+        await SetupInitialStateAsync(true, true);
         var currentPosition = TimeSpan.FromSeconds(30);
         var duration = TimeSpan.FromMinutes(3);
 
@@ -236,9 +265,10 @@ public class PresenceManagerTests : IDisposable {
     ///     to activate it.
     /// </remarks>
     [Fact]
-    public async Task OnDiscordRichPresenceSettingChanged_WhenSetToTrue_ActivatesService() {
+    public async Task OnDiscordRichPresenceSettingChanged_WhenSetToTrue_ActivatesService()
+    {
         // Arrange
-        await SetupInitialStateAsync(discordEnabled: false, lastFmEnabled: false);
+        await SetupInitialStateAsync(false, false);
 
         // Act
         _settingsService.DiscordRichPresenceSettingChanged += Raise.Event<Action<bool>>(true);
@@ -259,9 +289,10 @@ public class PresenceManagerTests : IDisposable {
     ///     to clear its state, followed by <c>DisposeAsync</c> to clean up resources.
     /// </remarks>
     [Fact]
-    public async Task OnDiscordRichPresenceSettingChanged_WhenSetToFalse_DeactivatesService() {
+    public async Task OnDiscordRichPresenceSettingChanged_WhenSetToFalse_DeactivatesService()
+    {
         // Arrange
-        await SetupInitialStateAsync(discordEnabled: true, lastFmEnabled: false);
+        await SetupInitialStateAsync(true, false);
 
         // Act
         _settingsService.DiscordRichPresenceSettingChanged += Raise.Event<Action<bool>>(false);
@@ -283,11 +314,13 @@ public class PresenceManagerTests : IDisposable {
     ///     <c>InitializeAsync</c> method to activate it.
     /// </remarks>
     [Fact]
-    public async Task OnLastFmSettingsChanged_WhenSettingsChangeToEnabled_ActivatesService() {
+    public async Task OnLastFmSettingsChanged_WhenSettingsChangeToEnabled_ActivatesService()
+    {
         // Arrange
-        await SetupInitialStateAsync(discordEnabled: false, lastFmEnabled: false, lastFmHasCreds: false);
+        await SetupInitialStateAsync(false, false, false);
 
-        _settingsService.GetLastFmCredentialsAsync().Returns(Task.FromResult<(string Username, string SessionKey)?>(("user", "key")));
+        _settingsService.GetLastFmCredentialsAsync()
+            .Returns(Task.FromResult<(string Username, string SessionKey)?>(("user", "key")));
         _settingsService.GetLastFmScrobblingEnabledAsync().Returns(true);
 
         // Act
@@ -313,10 +346,11 @@ public class PresenceManagerTests : IDisposable {
     ///     service is still initialized and becomes active.
     /// </remarks>
     [Fact]
-    public async Task InitializeAsync_WhenServiceFailsToInitialize_LogsErrorAndDoesNotStopOthers() {
+    public async Task InitializeAsync_WhenServiceFailsToInitialize_LogsErrorAndDoesNotStopOthers()
+    {
         // Arrange
         _discordService.InitializeAsync().ThrowsAsync<InvalidOperationException>();
-        await SetupInitialStateAsync(discordEnabled: true, lastFmEnabled: true);
+        await SetupInitialStateAsync(true, true);
 
         // Act
         // Initialization is called within the helper method.
@@ -325,7 +359,8 @@ public class PresenceManagerTests : IDisposable {
         _logger.Received(1).Log(
             LogLevel.Error,
             Arg.Any<EventId>(),
-            Arg.Is<object>(o => o != null && o.ToString()!.Contains("Failed to initialize 'Discord' presence service.")),
+            Arg.Is<object>(o =>
+                o != null && o.ToString()!.Contains("Failed to initialize 'Discord' presence service.")),
             Arg.Any<InvalidOperationException>(),
             Arg.Any<Func<object, Exception?, string>>());
 
@@ -344,13 +379,14 @@ public class PresenceManagerTests : IDisposable {
     ///     service still receives the `OnTrackChangedAsync` call successfully.
     /// </remarks>
     [Fact]
-    public async Task BroadcastAsync_WhenServiceFails_LogsErrorAndContinuesBroadcast() {
+    public async Task BroadcastAsync_WhenServiceFails_LogsErrorAndContinuesBroadcast()
+    {
         // Arrange
-        await SetupInitialStateAsync(discordEnabled: true, lastFmEnabled: true);
+        await SetupInitialStateAsync(true, true);
         _playbackService.CurrentTrack.Returns(_testSong);
         _playbackService.CurrentListenHistoryId.Returns(42L);
         _discordService.OnTrackChangedAsync(Arg.Any<Song>(), Arg.Any<long>())
-                       .ThrowsAsync<InvalidOperationException>();
+            .ThrowsAsync<InvalidOperationException>();
 
         // Act
         _playbackService.TrackChanged += Raise.Event<Action>();
@@ -359,30 +395,13 @@ public class PresenceManagerTests : IDisposable {
         _logger.Received(1).Log(
             LogLevel.Error,
             Arg.Any<EventId>(),
-            Arg.Is<object>(o => o != null && o.ToString()!.Contains("An error occurred while broadcasting an event to the 'Discord' service.")),
+            Arg.Is<object>(o =>
+                o != null &&
+                o.ToString()!.Contains("An error occurred while broadcasting an event to the 'Discord' service.")),
             Arg.Any<InvalidOperationException>(),
             Arg.Any<Func<object, Exception?, string>>());
 
         await _lastFmService.Received(1).OnTrackChangedAsync(_testSong, 42L);
-    }
-
-    #endregion
-
-    #region Helper Methods
-
-    /// <summary>
-    ///     Sets up the initial state of the settings mocks and initializes the manager.
-    /// </summary>
-    private async Task SetupInitialStateAsync(bool discordEnabled, bool lastFmEnabled, bool lastFmHasCreds = true) {
-        _settingsService.GetDiscordRichPresenceEnabledAsync().Returns(discordEnabled);
-
-        (string Username, string SessionKey)? credentials = lastFmHasCreds ? ("user", "key") : null;
-        _settingsService.GetLastFmCredentialsAsync().Returns(Task.FromResult<(string Username, string SessionKey)?>(credentials));
-
-        _settingsService.GetLastFmScrobblingEnabledAsync().Returns(lastFmEnabled);
-        _settingsService.GetLastFmNowPlayingEnabledAsync().Returns(false);
-
-        await _manager.InitializeAsync();
     }
 
     #endregion

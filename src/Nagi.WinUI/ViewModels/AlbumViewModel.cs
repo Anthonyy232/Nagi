@@ -18,8 +18,10 @@ namespace Nagi.WinUI.ViewModels;
 /// <summary>
 ///     A display-optimized representation of an album for the user interface.
 /// </summary>
-public partial class AlbumViewModelItem : ObservableObject {
-    public AlbumViewModelItem(Album album) {
+public partial class AlbumViewModelItem : ObservableObject
+{
+    public AlbumViewModelItem(Album album)
+    {
         Id = album.Id;
         Title = album.Title;
         ArtistName = album.Artist?.Name ?? "Unknown Artist";
@@ -33,7 +35,8 @@ public partial class AlbumViewModelItem : ObservableObject {
 
     public bool IsArtworkAvailable => !string.IsNullOrEmpty(CoverArtUri);
 
-    partial void OnCoverArtUriChanged(string? value) {
+    partial void OnCoverArtUriChanged(string? value)
+    {
         OnPropertyChanged(nameof(IsArtworkAvailable));
     }
 }
@@ -41,7 +44,8 @@ public partial class AlbumViewModelItem : ObservableObject {
 /// <summary>
 ///     Manages the state and logic for the album list page, featuring gradual data fetching.
 /// </summary>
-public partial class AlbumViewModel : ObservableObject, IDisposable {
+public partial class AlbumViewModel : ObservableObject, IDisposable
+{
     private const int PageSize = 250;
     private readonly NotifyCollectionChangedEventHandler _collectionChangedHandler;
     private readonly ILibraryService _libraryService;
@@ -53,7 +57,8 @@ public partial class AlbumViewModel : ObservableObject, IDisposable {
     private bool _isFullyLoaded;
 
     public AlbumViewModel(ILibraryService libraryService, IMusicPlaybackService musicPlaybackService,
-        INavigationService navigationService, ILogger<AlbumViewModel> logger) {
+        INavigationService navigationService, ILogger<AlbumViewModel> logger)
+    {
         _libraryService = libraryService;
         _musicPlaybackService = musicPlaybackService;
         _navigationService = navigationService;
@@ -77,7 +82,8 @@ public partial class AlbumViewModel : ObservableObject, IDisposable {
     /// <summary>
     ///     Cleans up resources by unsubscribing from event handlers.
     /// </summary>
-    public void Dispose() {
+    public void Dispose()
+    {
         if (_isDisposed) return;
 
         if (Albums != null) Albums.CollectionChanged -= _collectionChangedHandler;
@@ -90,10 +96,12 @@ public partial class AlbumViewModel : ObservableObject, IDisposable {
     ///     Navigates to the detailed view for the selected album.
     /// </summary>
     [RelayCommand]
-    public void NavigateToAlbumDetail(AlbumViewModelItem? album) {
+    public void NavigateToAlbumDetail(AlbumViewModelItem? album)
+    {
         if (album is null) return;
 
-        var navParam = new AlbumViewNavigationParameter {
+        var navParam = new AlbumViewNavigationParameter
+        {
             AlbumId = album.Id,
             AlbumTitle = album.Title,
             ArtistName = album.ArtistName
@@ -105,13 +113,16 @@ public partial class AlbumViewModel : ObservableObject, IDisposable {
     ///     Clears the current queue and starts playing all songs from the selected album.
     /// </summary>
     [RelayCommand]
-    private async Task PlayAlbumAsync(Guid albumId) {
+    private async Task PlayAlbumAsync(Guid albumId)
+    {
         if (IsLoading || albumId == Guid.Empty) return;
 
-        try {
+        try
+        {
             await _musicPlaybackService.PlayAlbumAsync(albumId);
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             _logger.LogCritical(ex, "Error playing album {AlbumId}", albumId);
         }
     }
@@ -121,7 +132,8 @@ public partial class AlbumViewModel : ObservableObject, IDisposable {
     /// </summary>
     /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
     [RelayCommand]
-    public async Task LoadAlbumsAsync(CancellationToken cancellationToken) {
+    public async Task LoadAlbumsAsync(CancellationToken cancellationToken)
+    {
         if (IsLoading) return;
 
         IsLoading = true;
@@ -130,30 +142,36 @@ public partial class AlbumViewModel : ObservableObject, IDisposable {
         _isFullyLoaded = false;
         Albums.Clear();
 
-        try {
+        try
+        {
             await LoadNextPageAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) return;
 
             // Continue loading subsequent pages in the background.
-            if (!_isFullyLoaded) {
+            if (!_isFullyLoaded)
+            {
                 IsLoadingMore = true;
-                while (!_isFullyLoaded && !cancellationToken.IsCancellationRequested) {
+                while (!_isFullyLoaded && !cancellationToken.IsCancellationRequested)
+                {
                     _currentPage++;
                     await LoadNextPageAsync(cancellationToken);
                     await Task.Delay(250, cancellationToken);
                 }
             }
         }
-        catch (OperationCanceledException) {
+        catch (OperationCanceledException)
+        {
             // Log that the operation was intentionally canceled.
             _logger.LogInformation("Album loading was canceled.");
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             // Log any unexpected errors during the loading process.
             _logger.LogError(ex, "An error occurred while loading albums");
             HasLoadError = true;
         }
-        finally {
+        finally
+        {
             IsLoading = false;
             IsLoadingMore = false;
         }
@@ -162,7 +180,8 @@ public partial class AlbumViewModel : ObservableObject, IDisposable {
     /// <summary>
     ///     Fetches a single page of albums from the library service.
     /// </summary>
-    private async Task LoadNextPageAsync(CancellationToken cancellationToken) {
+    private async Task LoadNextPageAsync(CancellationToken cancellationToken)
+    {
         var pagedResult = await _libraryService.GetAllAlbumsPagedAsync(_currentPage, PageSize);
 
         if (cancellationToken.IsCancellationRequested) return;

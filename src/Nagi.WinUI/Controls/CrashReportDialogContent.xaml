@@ -8,27 +8,27 @@
 
     <Grid RowSpacing="12">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <TextBlock 
-            Grid.Row="0" 
+        <TextBlock
+            Grid.Row="0"
             Text="{x:Bind Introduction, Mode=OneWay}"
             TextWrapping="Wrap"
-            d:Text="An unexpected error occurred. We are sorry for the inconvenience."/>
+            d:Text="An unexpected error occurred. We are sorry for the inconvenience." />
 
         <TextBlock Grid.Row="1" TextWrapping="Wrap">
-            <Run Text="Please consider reporting this by creating an issue on the "/>
+            <Run Text="Please consider reporting this by creating an issue on the " />
             <Hyperlink NavigateUri="{x:Bind GitHubUrl, Mode=OneWay}">
-                <Run Text="Issues page"/>
+                <Run Text="Issues page" />
             </Hyperlink>
-            <Run Text="."/>
+            <Run Text="." />
         </TextBlock>
 
-        <Border 
+        <Border
             Grid.Row="2"
             BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
             BorderThickness="1"
@@ -45,15 +45,15 @@
                     FontFamily="Consolas, Cascadia Mono, Courier New"
                     BorderThickness="0"
                     Background="Transparent"
-                    d:Text="System.NullReferenceException: Object reference not set to an instance of an object..."/>
+                    d:Text="System.NullReferenceException: Object reference not set to an instance of an object..." />
             </ScrollViewer>
         </Border>
 
         <StackPanel Grid.Row="3" Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
             <Button x:Name="CopyButton" Click="CopyButton_Click">
                 <StackPanel Orientation="Horizontal" Spacing="8">
-                    <FontIcon Glyph="&#xE8C8;" FontSize="16"/>
-                    <TextBlock Text="Copy Log"/>
+                    <FontIcon Glyph="&#xE8C8;" FontSize="16" />
+                    <TextBlock Text="Copy Log" />
                 </StackPanel>
             </Button>
         </StackPanel>

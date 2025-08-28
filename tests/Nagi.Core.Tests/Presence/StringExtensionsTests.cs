@@ -1,5 +1,4 @@
-﻿using System;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Nagi.Core.Services.Implementations.Presence;
 using Xunit;
 
@@ -8,13 +7,15 @@ namespace Nagi.Core.Tests.Presence;
 /// <summary>
 ///     Contains unit tests for the <see cref="StringExtensions" /> static class.
 /// </summary>
-public class StringExtensionsTests {
+public class StringExtensionsTests
+{
     /// <summary>
     ///     Verifies that <see cref="StringExtensions.Truncate" /> returns the original string if its
     ///     length is less than the specified maximum length.
     /// </summary>
     [Fact]
-    public void Truncate_WhenStringIsShorterThanMaxLength_ReturnsOriginalString() {
+    public void Truncate_WhenStringIsShorterThanMaxLength_ReturnsOriginalString()
+    {
         // Arrange
         const string original = "hello";
         const int maxLength = 10;
@@ -31,7 +32,8 @@ public class StringExtensionsTests {
     ///     length is equal to the specified maximum length.
     /// </summary>
     [Fact]
-    public void Truncate_WhenStringIsEqualToMaxLength_ReturnsOriginalString() {
+    public void Truncate_WhenStringIsEqualToMaxLength_ReturnsOriginalString()
+    {
         // Arrange
         const string original = "hello";
         const int maxLength = 5;
@@ -48,7 +50,8 @@ public class StringExtensionsTests {
     ///     longer than the specified maximum length.
     /// </summary>
     [Fact]
-    public void Truncate_WhenStringIsLongerThanMaxLength_ReturnsTruncatedString() {
+    public void Truncate_WhenStringIsLongerThanMaxLength_ReturnsTruncatedString()
+    {
         // Arrange
         const string original = "hello world";
         const int maxLength = 5;
@@ -67,7 +70,8 @@ public class StringExtensionsTests {
     /// </summary>
     [Theory]
     [InlineData("")]
-    public void Truncate_WhenStringIsEmpty_ReturnsOriginalString(string value) {
+    public void Truncate_WhenStringIsEmpty_ReturnsOriginalString(string value)
+    {
         // Arrange
         const int maxLength = 5;
 
@@ -83,7 +87,8 @@ public class StringExtensionsTests {
     ///     maximum length is zero.
     /// </summary>
     [Fact]
-    public void Truncate_WhenMaxLengthIsZero_ReturnsEmptyString() {
+    public void Truncate_WhenMaxLengthIsZero_ReturnsEmptyString()
+    {
         // Arrange
         const string original = "hello";
         const int maxLength = 0;
@@ -101,7 +106,8 @@ public class StringExtensionsTests {
     ///     the expected behavior of the underlying <see cref="string.Substring(int, int)" /> method.
     /// </summary>
     [Fact]
-    public void Truncate_WhenMaxLengthIsNegative_ThrowsArgumentOutOfRangeException() {
+    public void Truncate_WhenMaxLengthIsNegative_ThrowsArgumentOutOfRangeException()
+    {
         // Arrange
         const string original = "hello";
         const int maxLength = -1;

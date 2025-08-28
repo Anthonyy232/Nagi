@@ -25,15 +25,17 @@ public class OfflineScrobbleServiceTests : IDisposable
     /// </summary>
     private readonly DbContextFactoryTestHelper _dbHelper;
 
+    private readonly ILogger<OfflineScrobbleService> _logger;
+
     // Mocks for external dependencies, enabling isolated testing of the service's logic.
     private readonly ILastFmScrobblerService _scrobblerService;
-    private readonly ISettingsService _settingsService;
-    private readonly ILogger<OfflineScrobbleService> _logger;
 
     /// <summary>
     ///     The instance of the service under test.
     /// </summary>
     private readonly OfflineScrobbleService _service;
+
+    private readonly ISettingsService _settingsService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="OfflineScrobbleServiceTests" /> class.

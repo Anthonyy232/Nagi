@@ -12,25 +12,28 @@ namespace Nagi.WinUI.Services.Implementations;
 /// <summary>
 ///     Manages the lifecycle and positioning of the tray popup window.
 /// </summary>
-public class TrayPopupService : ITrayPopupService, IDisposable {
+public class TrayPopupService : ITrayPopupService, IDisposable
+{
     private const int VERTICAL_OFFSET = 24;
     private const uint DEACTIVATION_DEBOUNCE_MS = 200;
     private const int POPUP_WIDTH_DIPS = 384;
     private const float BASE_DPI = 96.0f;
+    private readonly ILogger<TrayPopupService> _logger;
 
     private readonly IWin32InteropService _win32;
-    private readonly ILogger<TrayPopupService> _logger;
     private bool _isAnimating;
     private bool _isDisposed;
     private uint _lastDeactivatedTime;
     private TrayPopup? _popupWindow;
 
-    public TrayPopupService(IWin32InteropService win32InteropService, ILogger<TrayPopupService> logger) {
+    public TrayPopupService(IWin32InteropService win32InteropService, ILogger<TrayPopupService> logger)
+    {
         _win32 = win32InteropService;
         _logger = logger;
     }
 
-    public void Dispose() {
+    public void Dispose()
+    {
         if (_isDisposed) return;
         _logger.LogInformation("Disposing TrayPopupService.");
         _popupWindow?.Close();
@@ -38,13 +41,16 @@ public class TrayPopupService : ITrayPopupService, IDisposable {
         GC.SuppressFinalize(this);
     }
 
-    public void ShowOrHidePopup() {
-        if (_isDisposed) {
+    public void ShowOrHidePopup()
+    {
+        if (_isDisposed)
+        {
             _logger.LogWarning("ShowOrHidePopup called on a disposed service.");
             return;
         }
 
-        if (_isAnimating || _win32.GetTickCount() - _lastDeactivatedTime < DEACTIVATION_DEBOUNCE_MS) {
+        if (_isAnimating || _win32.GetTickCount() - _lastDeactivatedTime < DEACTIVATION_DEBOUNCE_MS)
+        {
             _logger.LogDebug("Popup toggle debounced (Animating: {IsAnimating}, Time since deactivation: {Time}ms)",
                 _isAnimating, _win32.GetTickCount() - _lastDeactivatedTime);
             return;
@@ -58,8 +64,10 @@ public class TrayPopupService : ITrayPopupService, IDisposable {
             ShowPopup();
     }
 
-    public async void HidePopup() {
-        if (_popupWindow != null && _popupWindow.AppWindow.IsVisible && !_isAnimating) {
+    public async void HidePopup()
+    {
+        if (_popupWindow != null && _popupWindow.AppWindow.IsVisible && !_isAnimating)
+        {
             _logger.LogInformation("Hiding tray popup.");
             _isAnimating = true;
             await PopupAnimation.AnimateOut(_popupWindow);
@@ -67,7 +75,8 @@ public class TrayPopupService : ITrayPopupService, IDisposable {
         }
     }
 
-    private async void ShowPopup() {
+    private async void ShowPopup()
+    {
         _logger.LogInformation("Showing tray popup.");
         _isAnimating = true;
         _popupWindow!.ViewModel.ShowPlayerViewCommand.Execute(null);
@@ -94,7 +103,8 @@ public class TrayPopupService : ITrayPopupService, IDisposable {
         _isAnimating = false;
     }
 
-    private void CreateWindow() {
+    private void CreateWindow()
+    {
         var mainContent = App.RootWindow?.Content as FrameworkElement;
         var currentTheme = mainContent?.ActualTheme ?? ElementTheme.Default;
         _logger.LogInformation("Creating new tray popup window with theme {Theme}.", currentTheme);
@@ -103,16 +113,18 @@ public class TrayPopupService : ITrayPopupService, IDisposable {
         _popupWindow.Closed += OnPopupWindowClosed;
     }
 
-    private void OnPopupDeactivated(object? sender, EventArgs e) {
+    private void OnPopupDeactivated(object? sender, EventArgs e)
+    {
         _lastDeactivatedTime = _win32.GetTickCount();
         _logger.LogDebug("Popup deactivated. Hiding.");
         HidePopup();
     }
 
 
-
-    private void OnPopupWindowClosed(object? sender, WindowEventArgs args) {
-        if (sender is TrayPopup popup) {
+    private void OnPopupWindowClosed(object? sender, WindowEventArgs args)
+    {
+        if (sender is TrayPopup popup)
+        {
             _logger.LogInformation("Tray popup window closed. Cleaning up references.");
             popup.Deactivated -= OnPopupDeactivated;
             popup.Closed -= OnPopupWindowClosed;

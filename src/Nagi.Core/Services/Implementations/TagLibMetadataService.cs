@@ -15,7 +15,8 @@ namespace Nagi.Core.Services.Implementations;
 /// <summary>
 ///     Extracts music file metadata using the TagLib-Sharp library.
 /// </summary>
-public class TagLibMetadataService : IMetadataService {
+public class TagLibMetadataService : IMetadataService
+{
     private const string UnknownArtistName = "Unknown Artist";
     private const string UnknownAlbumName = "Unknown Album";
 
@@ -25,11 +26,12 @@ public class TagLibMetadataService : IMetadataService {
 
     private readonly IFileSystemService _fileSystem;
     private readonly IImageProcessor _imageProcessor;
-    private readonly IPathConfiguration _pathConfig;
     private readonly ILogger<TagLibMetadataService> _logger;
+    private readonly IPathConfiguration _pathConfig;
 
     public TagLibMetadataService(IImageProcessor imageProcessor, IFileSystemService fileSystem,
-        IPathConfiguration pathConfig, ILogger<TagLibMetadataService> logger) {
+        IPathConfiguration pathConfig, ILogger<TagLibMetadataService> logger)
+    {
         _imageProcessor = imageProcessor ?? throw new ArgumentNullException(nameof(imageProcessor));
         _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
         _pathConfig = pathConfig ?? throw new ArgumentNullException(nameof(pathConfig));
@@ -37,10 +39,12 @@ public class TagLibMetadataService : IMetadataService {
     }
 
     /// <inheritdoc />
-    public async Task<SongFileMetadata> ExtractMetadataAsync(string filePath) {
+    public async Task<SongFileMetadata> ExtractMetadataAsync(string filePath)
+    {
         var metadata = new SongFileMetadata { FilePath = filePath };
 
-        try {
+        try
+        {
             var fileInfo = _fileSystem.GetFileInfo(filePath);
             metadata.FileCreatedDate = fileInfo.CreationTimeUtc;
             metadata.FileModifiedDate = fileInfo.LastWriteTimeUtc;
@@ -61,17 +65,20 @@ public class TagLibMetadataService : IMetadataService {
             PopulateMetadataFromTag(metadata, tagFile.Tag, tagFile.Properties);
             await ProcessAlbumArtAsync(metadata, tagFile.Tag);
         }
-        catch (CorruptFileException ex) {
+        catch (CorruptFileException ex)
+        {
             _logger.LogWarning(ex, "Corrupt file detected while extracting metadata from '{FilePath}'.", filePath);
             metadata.ExtractionFailed = true;
             metadata.ErrorMessage = "CorruptFile";
         }
-        catch (UnsupportedFormatException) {
+        catch (UnsupportedFormatException)
+        {
             _logger.LogWarning("Unsupported file format for metadata extraction: '{FilePath}'.", filePath);
             metadata.ExtractionFailed = true;
             metadata.ErrorMessage = "UnsupportedFormat";
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             _logger.LogError(ex, "An unexpected error occurred during metadata extraction for '{FilePath}'.",
                 filePath);
             metadata.ExtractionFailed = true;
@@ -84,7 +91,8 @@ public class TagLibMetadataService : IMetadataService {
     /// <summary>
     ///     Populates the metadata object from the file's tags and properties, providing sane defaults for missing values.
     /// </summary>
-    private void PopulateMetadataFromTag(SongFileMetadata metadata, Tag tag, Properties properties) {
+    private void PopulateMetadataFromTag(SongFileMetadata metadata, Tag tag, Properties properties)
+    {
         var artist = SanitizeString(tag.Performers?.FirstOrDefault()) ?? UnknownArtistName;
         var albumArtist = SanitizeString(tag.AlbumArtists?.FirstOrDefault()) ?? artist;
         var album = SanitizeString(tag.Album) ?? UnknownAlbumName;
@@ -122,7 +130,8 @@ public class TagLibMetadataService : IMetadataService {
     ///     for a given album occurs exactly once, even under high concurrency. All concurrent callers for the
     ///     same album will await the result of the single, shared operation.
     /// </summary>
-    private async Task ProcessAlbumArtAsync(SongFileMetadata metadata, Tag tag) {
+    private async Task ProcessAlbumArtAsync(SongFileMetadata metadata, Tag tag)
+    {
         var picture = tag.Pictures?.FirstOrDefault();
         if (picture?.Data?.Data is not { Length: > 0 } pictureData) return;
 
@@ -136,7 +145,8 @@ public class TagLibMetadataService : IMetadataService {
             )
         );
 
-        try {
+        try
+        {
             // All threads for the same album will await the SAME task instance here.
             // If the task has already completed, the result is returned instantly.
             // If it's in progress, they wait for it to finish.
@@ -147,7 +157,8 @@ public class TagLibMetadataService : IMetadataService {
             metadata.LightSwatchId = lightSwatchId;
             metadata.DarkSwatchId = darkSwatchId;
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             // CRITICAL: If image processing fails, the Lazy<Task> caches the exception and
             // will re-throw it on every subsequent access, "poisoning" the cache for this key.
             // We must remove the failed entry so that a subsequent request can retry the operation.
@@ -164,9 +175,11 @@ public class TagLibMetadataService : IMetadataService {
     ///     Gets the path to the LRC file, prioritizing a valid cache entry before
     ///     attempting to extract embedded lyrics from the audio file.
     /// </summary>
-    private async Task<string?> GetLrcPathAsync(string audioFilePath, DateTime audioFileLastWriteTime) {
+    private async Task<string?> GetLrcPathAsync(string audioFilePath, DateTime audioFileLastWriteTime)
+    {
         string cacheKey;
-        using (var sha256 = SHA256.Create()) {
+        using (var sha256 = SHA256.Create())
+        {
             var hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(audioFilePath));
             cacheKey = Convert.ToBase64String(hashBytes).Replace('/', '_').Replace('+', '-');
         }
@@ -174,21 +187,25 @@ public class TagLibMetadataService : IMetadataService {
         var cachedLrcPath = _fileSystem.Combine(_pathConfig.LrcCachePath, $"{cacheKey}.lrc");
 
         // Check for a valid cache entry. It's valid if it exists and is newer than the audio file.
-        if (_fileSystem.FileExists(cachedLrcPath)) {
+        if (_fileSystem.FileExists(cachedLrcPath))
+        {
             var cacheLastWriteTime = _fileSystem.GetLastWriteTimeUtc(cachedLrcPath);
             if (cacheLastWriteTime >= audioFileLastWriteTime) return cachedLrcPath;
         }
 
-        try {
+        try
+        {
             using var tagFile = File.Create(new NonWritableFileAbstraction(audioFilePath));
             if (tagFile?.Tag is null) return null;
 
             return await ExtractAndCacheEmbeddedLrcAsync(tagFile, cachedLrcPath);
         }
-        catch (UnsupportedFormatException) {
+        catch (UnsupportedFormatException)
+        {
             return null;
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             _logger.LogWarning(ex, "Failed to extract or cache embedded LRC for '{AudioFilePath}'.", audioFilePath);
             return null;
         }
@@ -197,7 +214,8 @@ public class TagLibMetadataService : IMetadataService {
     /// <summary>
     ///     Extracts embedded synchronized (SYLT) lyrics, converts them to LRC format, and saves them to the cache.
     /// </summary>
-    private async Task<string?> ExtractAndCacheEmbeddedLrcAsync(File tagFile, string cachedLrcPath) {
+    private async Task<string?> ExtractAndCacheEmbeddedLrcAsync(File tagFile, string cachedLrcPath)
+    {
         if (tagFile.GetTag(TagTypes.Id3v2, false) is not TagLib.Id3v2.Tag id3v2Tag) return null;
 
         // Find the best SYLT frame, preferring longer ones as they likely contain more lyrics.
@@ -209,7 +227,8 @@ public class TagLibMetadataService : IMetadataService {
         if (bestSyltFrame is null) return null;
 
         // We only support the most common millisecond-based timestamps.
-        if (bestSyltFrame.Format != TimestampFormat.AbsoluteMilliseconds) {
+        if (bestSyltFrame.Format != TimestampFormat.AbsoluteMilliseconds)
+        {
             _logger.LogDebug("Skipping embedded lyrics due to unsupported timestamp format: {TimestampFormat}",
                 bestSyltFrame.Format);
             return null;
@@ -219,12 +238,14 @@ public class TagLibMetadataService : IMetadataService {
         var linesByTime = bestSyltFrame.Text
             .OrderBy(line => line.Time)
             .GroupBy(line => line.Time)
-            .Select(group => new {
+            .Select(group => new
+            {
                 Time = TimeSpan.FromMilliseconds(group.Key),
                 Text = string.Join(" ", group.Select(l => l.Text?.Trim()).Where(t => !string.IsNullOrEmpty(t)))
             });
 
-        foreach (var line in linesByTime) {
+        foreach (var line in linesByTime)
+        {
             if (string.IsNullOrWhiteSpace(line.Text)) continue;
             lrcContentBuilder.AppendLine($"[{line.Time:mm\\:ss\\.ff}]{line.Text}");
         }
@@ -239,8 +260,10 @@ public class TagLibMetadataService : IMetadataService {
     /// <summary>
     ///     Searches for an external .lrc file in the same directory as the audio file, matching by filename.
     /// </summary>
-    private string? FindLrcFilePath(string audioFilePath) {
-        try {
+    private string? FindLrcFilePath(string audioFilePath)
+    {
+        try
+        {
             var directory = _fileSystem.GetDirectoryName(audioFilePath);
             if (string.IsNullOrEmpty(directory)) return null;
 
@@ -251,7 +274,8 @@ public class TagLibMetadataService : IMetadataService {
                 _fileSystem.GetFileNameWithoutExtension(lrcPath)
                     .Equals(audioFileNameWithoutExt, StringComparison.OrdinalIgnoreCase));
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             _logger.LogWarning(ex, "Error while searching for external LRC file for '{AudioFilePath}'.",
                 audioFilePath);
             return null;
@@ -261,7 +285,8 @@ public class TagLibMetadataService : IMetadataService {
     /// <summary>
     ///     Trims a string and returns null if the result is empty or whitespace, ensuring consistent null/empty handling.
     /// </summary>
-    private string? SanitizeString(string? input) {
+    private string? SanitizeString(string? input)
+    {
         return string.IsNullOrWhiteSpace(input) ? null : input.Trim();
     }
 }

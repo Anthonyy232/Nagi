@@ -46,7 +46,7 @@ public interface IPathConfiguration
     string DatabasePath { get; }
 
     /// <summary>
-    /// Gets the path to the directory where log files are stored.
+    ///     Gets the path to the directory where log files are stored.
     /// </summary>
     string LogsDirectory { get; }
 }

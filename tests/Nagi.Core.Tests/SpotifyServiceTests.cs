@@ -357,7 +357,7 @@ public class SpotifyServiceTests : IDisposable
         // Arrange
         SetupValidApiKey();
         var firstTokenResponse = CreateTokenResponseJson("expired-token", 0);
-        var secondTokenResponse = CreateTokenResponseJson("new-token", 3600);
+        var secondTokenResponse = CreateTokenResponseJson("new-token");
 
         var responseQueue = new Queue<HttpResponseMessage>(new[]
         {

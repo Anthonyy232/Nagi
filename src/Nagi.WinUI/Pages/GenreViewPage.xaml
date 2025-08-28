@@ -155,8 +155,7 @@
                                                 <StaticResource x:Key="TextControlBorderBrushFocused"
                                                                 ResourceKey="AppPrimaryColorBrush" />
                                             </ResourceDictionary>
-                                            <ResourceDictionary x:Key="HighContrast">
-                                            </ResourceDictionary>
+                                            <ResourceDictionary x:Key="HighContrast" />
                                         </ResourceDictionary.ThemeDictionaries>
                                     </ResourceDictionary>
                                 </TextBox.Resources>

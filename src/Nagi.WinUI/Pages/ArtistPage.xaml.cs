@@ -13,11 +13,13 @@ namespace Nagi.WinUI.Pages;
 ///     A page that displays a grid of all artists from the user's library.
 ///     This page is responsible for creating and managing the lifecycle of its ViewModel.
 /// </summary>
-public sealed partial class ArtistPage : Page {
+public sealed partial class ArtistPage : Page
+{
     private readonly ILogger<ArtistPage> _logger;
     private CancellationTokenSource? _cancellationTokenSource;
 
-    public ArtistPage() {
+    public ArtistPage()
+    {
         InitializeComponent();
         ViewModel = App.Services!.GetRequiredService<ArtistViewModel>();
         _logger = App.Services!.GetRequiredService<ILogger<ArtistPage>>();
@@ -35,25 +37,31 @@ public sealed partial class ArtistPage : Page {
     ///     Handles the page's navigated-to event.
     ///     Initiates artist loading if the collection is empty.
     /// </summary>
-    protected override async void OnNavigatedTo(NavigationEventArgs e) {
+    protected override async void OnNavigatedTo(NavigationEventArgs e)
+    {
         base.OnNavigatedTo(e);
         _logger.LogInformation("Navigated to ArtistPage.");
         _cancellationTokenSource = new CancellationTokenSource();
 
-        if (ViewModel.Artists.Count == 0) {
+        if (ViewModel.Artists.Count == 0)
+        {
             _logger.LogInformation("Artist collection is empty, loading artists...");
-            try {
+            try
+            {
                 await ViewModel.LoadArtistsAsync(_cancellationTokenSource.Token);
                 _logger.LogInformation("Successfully loaded artists.");
             }
-            catch (TaskCanceledException) {
+            catch (TaskCanceledException)
+            {
                 _logger.LogInformation("Artist loading was cancelled.");
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 _logger.LogError(ex, "An unexpected error occurred while loading artists.");
             }
         }
-        else {
+        else
+        {
             _logger.LogInformation("Artists already loaded, skipping fetch.");
         }
     }
@@ -63,11 +71,13 @@ public sealed partial class ArtistPage : Page {
     ///     This is the critical cleanup step. It cancels any ongoing data loading
     ///     and disposes the ViewModel to prevent memory leaks.
     /// </summary>
-    protected override void OnNavigatedFrom(NavigationEventArgs e) {
+    protected override void OnNavigatedFrom(NavigationEventArgs e)
+    {
         base.OnNavigatedFrom(e);
         _logger.LogInformation("Navigating away from ArtistPage.");
 
-        if (_cancellationTokenSource is { IsCancellationRequested: false }) {
+        if (_cancellationTokenSource is { IsCancellationRequested: false })
+        {
             _logger.LogDebug("Cancelling ongoing artist loading task.");
             _cancellationTokenSource.Cancel();
         }
@@ -83,8 +93,10 @@ public sealed partial class ArtistPage : Page {
     ///     Handles clicks on an artist item in the grid.
     ///     Navigates to the detailed view for the selected artist by invoking the ViewModel's command.
     /// </summary>
-    private void ArtistsGridView_ItemClick(object sender, ItemClickEventArgs e) {
-        if (e.ClickedItem is ArtistViewModelItem clickedArtist) {
+    private void ArtistsGridView_ItemClick(object sender, ItemClickEventArgs e)
+    {
+        if (e.ClickedItem is ArtistViewModelItem clickedArtist)
+        {
             _logger.LogInformation(
                 "User clicked on artist '{ArtistName}' (Id: {ArtistId}). Navigating to detail view.",
                 clickedArtist.Name, clickedArtist.Id);
