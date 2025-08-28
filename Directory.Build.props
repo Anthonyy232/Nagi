@@ -40,6 +40,13 @@
 		<VelopackVersion>0.0.1350-g3ba32af</VelopackVersion>
 		<WindowsAppSdkVersion>1.8.250702007-experimental4</WindowsAppSdkVersion>
 
+		 <!-- Serilog Package Versions -->
+		<SerilogEnrichersThreadVersion>4.0.0</SerilogEnrichersThreadVersion>
+		<SerilogExtensionsLoggingVersion>9.0.2</SerilogExtensionsLoggingVersion>
+		<SerilogSettingsConfigurationVersion>9.0.0</SerilogSettingsConfigurationVersion>
+		<SerilogSinksDebugVersion>3.0.0</SerilogSinksDebugVersion>
+		<SerilogSinksFileVersion>7.0.0</SerilogSinksFileVersion>
+
 		<!-- Test NuGet Package Versions -->
 		<CoverletCollectorVersion>6.0.4</CoverletCollectorVersion>
 		<FluentAssertionsVersion>8.6.0</FluentAssertionsVersion>
