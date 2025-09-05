@@ -13,7 +13,7 @@
 		<WindowsSdkVersion>10.0.26100</WindowsSdkVersion>
 		<WindowsTargetPlatformMinVersion>10.0.17763.0</WindowsTargetPlatformMinVersion>
 		<WindowsTargetPlatformMaxTestedVersion>10.0.19041.0</WindowsTargetPlatformMaxTestedVersion>
-		<AppxPackageVersion>1.2.2.0</AppxPackageVersion>
+		<AppxPackageVersion>1.2.3.0</AppxPackageVersion>
 
 		<!-- NuGet Package Versions -->
 		<ColorThiefImageSharpVersion>1.0.0</ColorThiefImageSharpVersion>
