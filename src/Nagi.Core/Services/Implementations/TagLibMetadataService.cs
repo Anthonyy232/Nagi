@@ -56,14 +56,50 @@ public class TagLibMetadataService : IMetadataService
             // As a fallback, look for an external .lrc file if no embedded lyrics were found.
             if (string.IsNullOrWhiteSpace(metadata.LrcFilePath)) metadata.LrcFilePath = FindLrcFilePath(filePath);
 
-            // Use a read-only file abstraction for safety and to prevent file locks.
-            using var tagFile = File.Create(new NonWritableFileAbstraction(filePath));
+            // Use a timeout wrapper for TagLib operations to prevent indefinite hangs
+            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30)); // 30-second timeout
+            var extractionTask = Task.Run(() =>
+            {
+                // Use a read-only file abstraction for safety and to prevent file locks.
+                using var tagFile = File.Create(new NonWritableFileAbstraction(filePath));
 
-            if (tagFile?.Tag is null || tagFile.Properties is null)
-                throw new CorruptFileException("TagLib could not read the file's tag or property structures.");
+                if (tagFile?.Tag is null || tagFile.Properties is null)
+                    throw new CorruptFileException("TagLib could not read the file's tag or property structures.");
 
-            PopulateMetadataFromTag(metadata, tagFile.Tag, tagFile.Properties);
-            await ProcessAlbumArtAsync(metadata, tagFile.Tag);
+                return (tagFile.Tag, tagFile.Properties);
+            }, cts.Token);
+
+            var (tag, properties) = await extractionTask;
+            
+            PopulateMetadataFromTag(metadata, tag, properties);
+            
+            // Process album art with a separate timeout to avoid blocking
+            using var albumArtCts = new CancellationTokenSource(TimeSpan.FromSeconds(15)); // 15-second timeout for album art
+            var albumArtTask = Task.Run(() =>
+            {
+                using var tagFileForArt = File.Create(new NonWritableFileAbstraction(filePath));
+                return tagFileForArt?.Tag;
+            }, albumArtCts.Token);
+
+            try
+            {
+                var tagForArt = await albumArtTask;
+                if (tagForArt != null)
+                {
+                    await ProcessAlbumArtAsync(metadata, tagForArt);
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                _logger.LogWarning("Album art extraction timed out for file: {FilePath}", filePath);
+                // Continue without album art rather than failing completely
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.LogWarning("Metadata extraction timed out for file: {FilePath}", filePath);
+            metadata.ExtractionFailed = true;
+            metadata.ErrorMessage = "ExtractionTimeout";
         }
         catch (CorruptFileException ex)
         {
@@ -195,10 +231,24 @@ public class TagLibMetadataService : IMetadataService
 
         try
         {
-            using var tagFile = File.Create(new NonWritableFileAbstraction(audioFilePath));
-            if (tagFile?.Tag is null) return null;
+            // Use timeout for LRC extraction to prevent hangs
+            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10)); // 10-second timeout for LRC
+            var lrcTask = Task.Run(() =>
+            {
+                using var tagFile = File.Create(new NonWritableFileAbstraction(audioFilePath));
+                if (tagFile?.Tag is null) return (File?)null;
+                return tagFile;
+            }, cts.Token);
+
+            var tagFile = await lrcTask;
+            if (tagFile == null) return null;
 
             return await ExtractAndCacheEmbeddedLrcAsync(tagFile, cachedLrcPath);
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.LogWarning("LRC extraction timed out for file: {AudioFilePath}", audioFilePath);
+            return null;
         }
         catch (UnsupportedFormatException)
         {
