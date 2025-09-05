@@ -28,6 +28,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     private readonly MediaPlayer _mediaPlayer;
     private Song? _currentSong;
     private SystemMediaTransportControls? _smtc;
+    private Media? _currentMedia;
 
     public LibVlcAudioPlayerService(IDispatcherService dispatcherService, ILogger<LibVlcAudioPlayerService> logger)
     {
@@ -109,9 +110,25 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         {
             _logger.LogInformation("Loading media for song '{SongTitle}' from path: {FilePath}", song.Title,
                 song.FilePath);
-            var media = new Media(new Uri(song.FilePath));
-            _mediaPlayer.Media = media;
-            media.Dispose();
+            
+            // Dispose previous media if it exists
+            if (_currentMedia != null)
+            {
+                try
+                {
+                    _currentMedia.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Error disposing previous media");
+                }
+                _currentMedia = null;
+            }
+            
+            // Create new media and store reference
+            _currentMedia = new Media(new Uri(song.FilePath));
+            _mediaPlayer.Media = _currentMedia;
+            // Do NOT dispose the media immediately - let it be disposed when no longer needed
         }
         catch (Exception ex)
         {
@@ -119,6 +136,20 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
             _logger.LogError(ex, "Failed to load song '{SongTitle}' from path: {FilePath}", song.Title, song.FilePath);
             _dispatcherService.TryEnqueue(() => ErrorOccurred?.Invoke(errorMessage));
             _currentSong = null;
+            
+            // Clean up media on error
+            if (_currentMedia != null)
+            {
+                try
+                {
+                    _currentMedia.Dispose();
+                }
+                catch (Exception disposeEx)
+                {
+                    _logger.LogWarning(disposeEx, "Error disposing media after load failure");
+                }
+                _currentMedia = null;
+            }
         }
 
         return Task.CompletedTask;
@@ -147,6 +178,20 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         _logger.LogInformation("Stop command received.");
         _mediaPlayer.Stop();
         _currentSong = null;
+
+        // Clean up current media when stopping
+        if (_currentMedia != null)
+        {
+            try
+            {
+                _currentMedia.Dispose();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Error disposing media during stop");
+            }
+            _currentMedia = null;
+        }
 
         if (_smtc is not null)
         {
@@ -225,6 +270,20 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         {
             _smtc.ButtonPressed -= OnSmtcButtonPressed;
             _smtc.IsEnabled = false;
+        }
+
+        // Clean up current media before disposing other components
+        if (_currentMedia != null)
+        {
+            try
+            {
+                _currentMedia.Dispose();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Error disposing media during LibVlcAudioPlayerService disposal");
+            }
+            _currentMedia = null;
         }
 
         _equalizer.Dispose();
