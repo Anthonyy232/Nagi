@@ -498,6 +498,7 @@ public partial class App : Application
             }
         else
             await Log.CloseAndFlushAsync();
+        Current?.Exit();
     }
 
     private void OnAppUnhandledException(object sender, UnhandledExceptionEventArgs e)
