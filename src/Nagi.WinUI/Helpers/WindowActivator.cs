@@ -14,6 +14,7 @@ namespace Nagi.WinUI.Helpers;
 internal static class WindowActivator
 {
     private const int SW_SHOWMINIMIZED = 2;
+    private const int SW_RESTORE = 9;
 
     private static ILogger? _logger;
 
@@ -51,8 +52,7 @@ internal static class WindowActivator
         var currentThreadId = win32.GetCurrentThreadId();
         var foregroundThreadId = win32.GetWindowThreadProcessId(foregroundWindowHandle, IntPtr.Zero);
 
-        // To reliably bring a window to the foreground, we attach our thread's input
-        // to the foreground window's thread, which allows us to bypass certain focus restrictions.
+        // Attach our thread's input to the foreground window's thread, which allows us to bypass focus restrictions.
         if (foregroundThreadId != currentThreadId)
         {
             Logger.LogDebug(
@@ -62,7 +62,10 @@ internal static class WindowActivator
         }
 
         win32.BringWindowToTop(windowHandle);
+        // Restore the window if it was minimized and ensure it's visible.
+        ShowWindow(windowHandle, SW_RESTORE);
         window.AppWindow.Show();
+        SetForegroundWindow(windowHandle);
 
         // Detach the threads to restore normal input processing.
         if (foregroundThreadId != currentThreadId)

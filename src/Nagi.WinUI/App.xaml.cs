@@ -645,15 +645,28 @@ public partial class App : Application
 
         var settingsService = Services.GetRequiredService<IUISettingsService>();
         var startMinimized = await settingsService.GetStartMinimizedEnabledAsync();
-        var hideToTray = await settingsService.GetHideToTrayEnabledAsync();
+        // Note: We intentionally await the mini-player setting inline in the condition below
+        // to keep the startup path simple and explicit about when the main window should
+        // be hidden from task switchers like Alt+Tab.
 
-        if (isStartupLaunch || startMinimized)
+        // Handle the special case where the app should start directly in compact/mini-player view.
+        // This avoids minimizing the main window before it's activated, which can cause instability.
+        if ((isStartupLaunch || startMinimized) && await settingsService.GetMinimizeToMiniPlayerEnabledAsync())
         {
+            var windowService = Services.GetRequiredService<IWindowService>();
+            windowService.ShowMiniPlayer();
+            // Explicitly hide the main window from the task switcher (e.g., Alt+Tab).
+            if (_window?.AppWindow is not null) _window.AppWindow.IsShownInSwitchers = false;
+        }
+        else if (isStartupLaunch || startMinimized)
+        {
+            var hideToTray = await settingsService.GetHideToTrayEnabledAsync();
             if (!hideToTray) WindowActivator.ShowMinimized(_window);
         }
         else
         {
-            _window.Activate();
+            // Default behavior: activate and show the main window.
+             _window.Activate();
         }
     }
 

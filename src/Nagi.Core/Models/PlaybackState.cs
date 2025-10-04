@@ -11,11 +11,6 @@ public class PlaybackState
     public Guid? CurrentTrackId { get; set; }
 
     /// <summary>
-    ///     The playback position of the current track in seconds.
-    /// </summary>
-    public double CurrentPositionSeconds { get; set; }
-
-    /// <summary>
     ///     The list of track IDs in the original, unshuffled playback queue.
     /// </summary>
     public List<Guid> PlaybackQueueTrackIds { get; set; } = new();

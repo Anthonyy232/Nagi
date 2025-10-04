@@ -77,6 +77,11 @@ public interface IWindowService
     void MinimizeToMiniPlayer();
 
     /// <summary>
+    ///     Creates and displays the mini-player window.
+    /// </summary>
+    void ShowMiniPlayer();
+
+    /// <summary>
     ///     Sets the process efficiency mode. The calling coordinator (e.g., PlayerViewModel) is responsible
     ///     for determining when this mode should be enabled or disabled.
     /// </summary>
