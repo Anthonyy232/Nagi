@@ -575,7 +575,6 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         var state = new PlaybackState
         {
             CurrentTrackId = CurrentTrack?.Id,
-            CurrentPositionSeconds = CurrentTrack != null ? _audioPlayer.CurrentPosition.TotalSeconds : 0,
             PlaybackQueueTrackIds = _playbackQueue.Select(s => s.Id).ToList(),
             CurrentPlaybackQueueIndex = CurrentQueueIndex,
             ShuffledQueueTrackIds = IsShuffleEnabled ? _shuffledQueue.Select(s => s.Id).ToList() : new List<Guid>(),
@@ -691,9 +690,10 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
                 await _audioPlayer.LoadAsync(CurrentTrack);
                 var completedTask = await Task.WhenAny(durationKnownTcs.Task, Task.Delay(5000));
 
-                if (completedTask == durationKnownTcs.Task && _audioPlayer.Duration > TimeSpan.Zero &&
-                    state.CurrentPositionSeconds > 0)
-                    await _audioPlayer.SeekAsync(TimeSpan.FromSeconds(state.CurrentPositionSeconds));
+                if (completedTask == durationKnownTcs.Task && _audioPlayer.Duration > TimeSpan.Zero)
+                {
+                    // previously we sought to the saved position; position restore intentionally removed
+                }
                 else if (completedTask != durationKnownTcs.Task)
                     _logger.LogWarning("Timed out waiting for media duration during session restore.");
             }

@@ -180,7 +180,7 @@ public sealed class WindowService : IWindowService, IDisposable
     /// <summary>
     ///     Creates and displays the mini-player window.
     /// </summary>
-    private void ShowMiniPlayer()
+    public void ShowMiniPlayer()
     {
         if (!_isMiniPlayerEnabled || _miniPlayerWindow is not null) return;
 
@@ -243,14 +243,13 @@ public sealed class WindowService : IWindowService, IDisposable
     {
         if (sender is MiniPlayerWindow window) window.Closed -= OnMiniPlayerClosed;
 
-        // If the user manually closed the mini-player, restore the main application window
+        // If the user manually closed the mini-player, show the main application window
         if (!_isClosingMiniPlayerProgrammatically)
-            if (_appWindow?.Presenter is OverlappedPresenter { State: OverlappedPresenterState.Minimized } presenter)
-                presenter.Restore();
-
+        {
+            _miniPlayerWindow = null;
+            ShowAndActivate();
+        }
         _miniPlayerWindow = null;
-
-        // Because the IsMiniPlayerActive state has changed, notify subscribers.
         UIStateChanged?.Invoke();
     }
 }

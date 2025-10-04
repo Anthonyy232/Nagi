@@ -187,7 +187,6 @@ public class MusicPlaybackServiceTests
         var savedState = new PlaybackState
         {
             CurrentTrackId = _testSongs[1].Id,
-            CurrentPositionSeconds = 30,
             PlaybackQueueTrackIds = songIds,
             CurrentPlaybackQueueIndex = 1
         };
@@ -212,7 +211,7 @@ public class MusicPlaybackServiceTests
         _service.CurrentTrack.Should().Be(_testSongs[1]);
         _service.CurrentQueueIndex.Should().Be(1);
         await _audioPlayer.Received(1).LoadAsync(_testSongs[1]);
-        await _audioPlayer.Received(1).SeekAsync(TimeSpan.FromSeconds(30));
+        await _audioPlayer.DidNotReceive().SeekAsync(Arg.Any<TimeSpan>());
     }
 
     /// <summary>
@@ -902,7 +901,6 @@ public class MusicPlaybackServiceTests
         // Assert
         await _settingsService.Received(1).SavePlaybackStateAsync(Arg.Is<PlaybackState>(state =>
             state.CurrentTrackId == _testSongs[2].Id &&
-            state.CurrentPositionSeconds == 45 &&
             state.PlaybackQueueTrackIds.SequenceEqual(_testSongs.Select(s => s.Id)) &&
             state.CurrentPlaybackQueueIndex == 2
         ));
@@ -1010,7 +1008,7 @@ public class MusicPlaybackServiceTests
     ///     Verifies that when the last song in a non-repeating queue ends, playback stops.
     /// </summary>
     [Fact]
-    public async Task OnAudioPlayerPlaybackEnded_AtEndOfQueueWithNoRepeat_StopsPlayback()
+    public async Task OnAudioPlayerPlaybackEnded_AtEndOfQueuewithNoRepeat_StopsPlayback()
     {
         // Arrange
         await _service.InitializeAsync();
