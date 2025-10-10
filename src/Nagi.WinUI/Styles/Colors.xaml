@@ -1,14 +1,12 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:media="using:Microsoft.UI.Xaml.Media"
-    xmlns:converters="using:Nagi.WinUI.Converters">
+    xmlns:media="using:Microsoft.UI.Xaml.Media">
 
     <!--
       This converter creates a darker shade of a given color by blending it with black.
       The BlendFactor of 0.3 means the resulting color is 70% the original and 30% black.
     -->
-    <converters:ColorBlendConverter x:Key="SubtleDarkenConverter" BlendColor="Black" BlendFactor="0.3" />
 
     <SolidColorBrush x:Key="AppPrimaryColorBrush" Color="{ThemeResource SystemAccentColor}" />
 
@@ -23,12 +21,13 @@
     <!-- Windows 10 compatible acrylic brush. -->
     <SolidColorBrush
         x:Key="Win10AcrylicBrush"
-        Color="{Binding Color, Source={StaticResource AppPrimaryColorBrush}, Converter={StaticResource SubtleDarkenConverter}}" />
+        Opacity="0.8"
+        Color="{ThemeResource CardBackgroundFillColorDefault}" />
 
 
     <!-- No transparency brush. -->
     <SolidColorBrush
         x:Key="NonTransparentBrush"
-        Color="{Binding Color, Source={StaticResource AppPrimaryColorBrush}, Converter={StaticResource SubtleDarkenConverter}}" />
+        Color="{ThemeResource CardBackgroundFillColorDefault}" />
 
 </ResourceDictionary>

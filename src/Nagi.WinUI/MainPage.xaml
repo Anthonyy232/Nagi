@@ -374,7 +374,8 @@
                 ItemInvoked="NavView_ItemInvoked"
                 PaneDisplayMode="Left"
                 BackRequested="NavView_BackRequested"
-                SelectionChanged="NavView_SelectionChanged">
+                SelectionChanged="NavView_SelectionChanged"
+                Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
                 <Grid>
                     <Frame x:Name="ContentFrame" Padding="12,0,12,0" />
