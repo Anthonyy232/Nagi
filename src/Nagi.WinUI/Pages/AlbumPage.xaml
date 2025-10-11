@@ -15,7 +15,6 @@
         <ResourceDictionary>
             <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <converters:BooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" Invert="True" />
-            <converters:StringToUriConverter x:Key="StringToUriConverter" />
             <converters:BooleanToInverseBooleanConverter x:Key="BooleanToInverseBooleanConverter" />
         </ResourceDictionary>
     </Page.Resources>
@@ -77,7 +76,7 @@
                                     Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
                                     <controls:ImageEx
                                         IsCacheEnabled="True"
-                                        Source="{x:Bind CoverArtUri, Mode=OneWay, Converter={StaticResource StringToUriConverter}, FallbackValue=null}"
+                                        Source="{x:Bind CoverArtUri, Mode=OneWay, FallbackValue=null}"
                                         Stretch="UniformToFill" />
                                 </Border>
                                 <Grid

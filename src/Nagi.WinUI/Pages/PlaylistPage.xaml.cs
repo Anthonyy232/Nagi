@@ -1,12 +1,12 @@
 using System;
 using System.Threading.Tasks;
 using Windows.Storage.Pickers;
+using ImageEx;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.WinUI.ViewModels;
 using WinRT.Interop;
@@ -68,7 +68,7 @@ public sealed partial class PlaylistPage : Page
         string? selectedCoverImageUriForDialog = null;
 
         var inputTextBox = new TextBox { PlaceholderText = "Enter new playlist name" };
-        var imagePreview = new Image { Stretch = Stretch.UniformToFill };
+        var imagePreview = new ImageEx.ImageEx { Stretch = Stretch.UniformToFill, IsCacheEnabled = true };
         var imagePlaceholder = new FontIcon { Glyph = "\uE91B", FontSize = 48 };
         var imageGrid = new Grid
         {
@@ -99,7 +99,7 @@ public sealed partial class PlaylistPage : Page
             if (!string.IsNullOrWhiteSpace(pickedUri))
             {
                 selectedCoverImageUriForDialog = pickedUri;
-                imagePreview.Source = new BitmapImage(new Uri(selectedCoverImageUriForDialog));
+                imagePreview.Source = pickedUri;
                 imagePlaceholder.Visibility = Visibility.Collapsed;
             }
         };

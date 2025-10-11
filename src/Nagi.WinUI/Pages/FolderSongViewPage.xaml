@@ -17,7 +17,6 @@
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <converters:BooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" Invert="True" />
         <converters:BooleanToInverseBooleanConverter x:Key="BooleanToInverseBooleanConverter" />
-        <converters:StringToUriConverter x:Key="StringToUriConverter" />
 
         <!-- Data template selector for folder/song items -->
         <local:FolderContentItemTemplateSelector x:Key="FolderContentItemTemplateSelector">
@@ -102,7 +101,7 @@
                                 <controls:ImageEx
                                     IsCacheEnabled="True"
                                     Stretch="UniformToFill"
-                                    Source="{x:Bind Song.AlbumArtUriFromTrack, Converter={StaticResource StringToUriConverter}, FallbackValue=null}" />
+                                    Source="{x:Bind Song.AlbumArtUriFromTrack, FallbackValue=null}" />
                             </Border>
                         </Button>
 

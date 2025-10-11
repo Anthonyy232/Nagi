@@ -17,9 +17,6 @@ namespace Nagi.WinUI;
 
 /// <summary>
 ///     Application entry point with single-instance enforcement.
-///     NOTE: Microsoft.Extensions.Logging is not used here because this code runs
-///     before the dependency injection container and logging services are configured.
-///     Standard Debug.WriteLine is the appropriate tool for this pre-initialization phase.
 /// </summary>
 public static class Program
 {
@@ -31,16 +28,16 @@ public static class Program
     [STAThread]
     private static int Main(string[] args)
     {
-#if !MSIX_PACKAGE
-        VelopackApp.Build().Run();
-#endif
+        #if !MSIX_PACKAGE
+                VelopackApp.Build().Run();
+        #endif
 
         ComWrappersSupport.InitializeComWrappers();
 
         // Ensure COM initialization in release builds
-#if !DEBUG
-        Thread.Sleep(50);
-#endif
+        #if !DEBUG
+                Thread.Sleep(100);
+        #endif
 
         // Redirect secondary instances to primary
         if (TryRedirectActivation()) return 0;
