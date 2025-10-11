@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using Windows.ApplicationModel;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Services.Abstractions;

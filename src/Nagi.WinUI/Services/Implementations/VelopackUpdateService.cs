@@ -1,6 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Services.Abstractions;
+using Nagi.WinUI.Services.Abstractions;
+
 #if !MSIX_PACKAGE
 using Velopack;
 #endif
@@ -37,8 +40,7 @@ public class VelopackUpdateService : IUpdateService
 /// <summary>
 ///     An implementation of <see cref="IUpdateService" /> that uses the Velopack framework for application updates.
 /// </summary>
-public class VelopackUpdateService : IUpdateService
-{
+public class VelopackUpdateService : IUpdateService {
     private readonly ILogger<VelopackUpdateService> _logger;
     private readonly IUISettingsService _settingsService;
     private readonly IUIService _uiService;
@@ -48,8 +50,7 @@ public class VelopackUpdateService : IUpdateService
         UpdateManager updateManager,
         IUISettingsService settingsService,
         IUIService uiService,
-        ILogger<VelopackUpdateService> logger)
-    {
+        ILogger<VelopackUpdateService> logger) {
         _updateManager = updateManager ?? throw new ArgumentNullException(nameof(updateManager));
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
         _uiService = uiService ?? throw new ArgumentNullException(nameof(uiService));
@@ -60,31 +61,26 @@ public class VelopackUpdateService : IUpdateService
     ///     Checks for updates upon application startup. This check is skipped in DEBUG builds or if disabled by the user.
     ///     If an update is found and has not been previously skipped, it prompts the user for action.
     /// </summary>
-    public async Task CheckForUpdatesOnStartupAsync()
-    {
+    public async Task CheckForUpdatesOnStartupAsync() {
 #if DEBUG
         _logger.LogDebug("Skipping update check in DEBUG mode.");
         return;
 #endif
 
-        if (!await _settingsService.GetCheckForUpdatesEnabledAsync())
-        {
+        if (!await _settingsService.GetCheckForUpdatesEnabledAsync()) {
             _logger.LogInformation("Automatic update check is disabled by user setting.");
             return;
         }
 
-        try
-        {
+        try {
             UpdateInfo? updateInfo = await _updateManager.CheckForUpdatesAsync();
-            if (updateInfo == null)
-            {
+            if (updateInfo == null) {
                 _logger.LogInformation("No updates found on startup.");
                 return;
             }
 
             var lastSkippedVersion = await _settingsService.GetLastSkippedUpdateVersionAsync();
-            if (lastSkippedVersion == updateInfo.TargetFullRelease.Version.ToString())
-            {
+            if (lastSkippedVersion == updateInfo.TargetFullRelease.Version.ToString()) {
                 _logger.LogInformation("User has previously skipped version {SkippedVersion}.", lastSkippedVersion);
                 return;
             }
@@ -96,8 +92,7 @@ public class VelopackUpdateService : IUpdateService
                 "Later",
                 "Skip This Version");
 
-            switch (result)
-            {
+            switch (result) {
                 case UpdateDialogResult.Install:
                     await DownloadAndApplyUpdateAsync(updateInfo);
                     break;
@@ -111,8 +106,7 @@ public class VelopackUpdateService : IUpdateService
                     break;
             }
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             // This is a background task, so we log the error without disturbing the user with a dialog.
             _logger.LogError(ex, "Failed while checking for updates on startup.");
         }
@@ -122,19 +116,16 @@ public class VelopackUpdateService : IUpdateService
     ///     Manually triggers an update check. This method provides UI feedback to the user regarding the outcome,
     ///     whether an update is available, if the application is up-to-date, or if an error occurred.
     /// </summary>
-    public async Task CheckForUpdatesManuallyAsync()
-    {
+    public async Task CheckForUpdatesManuallyAsync() {
 #if DEBUG
         await _uiService.ShowMessageDialogAsync("Debug Mode", "Update checks are disabled in debug mode. This dialog indicates the function was called.");
         return;
 #endif
 
-        try
-        {
+        try {
             UpdateInfo? updateInfo = await _updateManager.CheckForUpdatesAsync();
 
-            if (updateInfo == null)
-            {
+            if (updateInfo == null) {
                 await _uiService.ShowMessageDialogAsync("Up to Date", "You are running the latest version of Nagi.");
                 return;
             }
@@ -146,8 +137,7 @@ public class VelopackUpdateService : IUpdateService
 
             if (confirmed) await DownloadAndApplyUpdateAsync(updateInfo);
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             _logger.LogError(ex, "Failed during manual update check.");
             await _uiService.ShowMessageDialogAsync("Update Error",
                 $"An error occurred while checking for updates: {ex.Message}");
@@ -155,17 +145,14 @@ public class VelopackUpdateService : IUpdateService
     }
 
     // Handles the process of downloading and applying an update, providing user feedback.
-    private async Task DownloadAndApplyUpdateAsync(UpdateInfo updateInfo)
-    {
-        try
-        {
+    private async Task DownloadAndApplyUpdateAsync(UpdateInfo updateInfo) {
+        try {
             await _uiService.ShowMessageDialogAsync("Downloading Update",
                 $"Version {updateInfo.TargetFullRelease.Version} is being downloaded. The application will restart automatically when it's ready.");
             await _updateManager.DownloadUpdatesAsync(updateInfo);
             _updateManager.ApplyUpdatesAndRestart(updateInfo);
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
             _logger.LogError(ex, "Failed to download or apply update.");
             await _uiService.ShowMessageDialogAsync("Update Error",
                 $"An error occurred while installing the update: {ex.Message}");

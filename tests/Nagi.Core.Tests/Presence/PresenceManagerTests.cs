@@ -57,9 +57,9 @@ public class PresenceManagerTests : IDisposable
     {
         _settingsService.GetDiscordRichPresenceEnabledAsync().Returns(discordEnabled);
 
-        (string Username, string SessionKey)? credentials = lastFmHasCreds ? ("user", "key") : null;
+        (string? Username, string? SessionKey)? credentials = lastFmHasCreds ? ("user", "key") : null;
         _settingsService.GetLastFmCredentialsAsync()
-            .Returns(Task.FromResult<(string Username, string SessionKey)?>(credentials));
+            .Returns(Task.FromResult(credentials));
 
         _settingsService.GetLastFmScrobblingEnabledAsync().Returns(lastFmEnabled);
         _settingsService.GetLastFmNowPlayingEnabledAsync().Returns(false);
@@ -97,9 +97,9 @@ public class PresenceManagerTests : IDisposable
     {
         // Arrange
         _settingsService.GetDiscordRichPresenceEnabledAsync().Returns(discordEnabled);
-        (string Username, string SessionKey)? credentials = ("user", "key");
+        (string? Username, string? SessionKey)? credentials = ("user", "key");
         _settingsService.GetLastFmCredentialsAsync()
-            .Returns(Task.FromResult<(string Username, string SessionKey)?>(credentials));
+            .Returns(Task.FromResult(credentials));
         _settingsService.GetLastFmScrobblingEnabledAsync().Returns(lastFmEnabled);
         _settingsService.GetLastFmNowPlayingEnabledAsync().Returns(false);
 
@@ -319,8 +319,9 @@ public class PresenceManagerTests : IDisposable
         // Arrange
         await SetupInitialStateAsync(false, false, false);
 
+        (string? Username, string? SessionKey)? credentials = ("user", "key");
         _settingsService.GetLastFmCredentialsAsync()
-            .Returns(Task.FromResult<(string Username, string SessionKey)?>(("user", "key")));
+            .Returns(Task.FromResult(credentials));
         _settingsService.GetLastFmScrobblingEnabledAsync().Returns(true);
 
         // Act
