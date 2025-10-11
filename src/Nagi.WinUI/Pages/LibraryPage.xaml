@@ -14,7 +14,6 @@
     <Page.Resources>
         <converters:TimeSpanToTimeStringConverter x:Key="TimeSpanToTimeStringConverter" />
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-        <converters:StringToUriConverter x:Key="StringToUriConverter" />
     </Page.Resources>
 
     <Grid>
@@ -251,7 +250,7 @@
                                 <controls:ImageEx
                                     IsCacheEnabled="True"
                                     Stretch="UniformToFill"
-                                    Source="{x:Bind AlbumArtUriFromTrack, Converter={StaticResource StringToUriConverter}, FallbackValue=null}" />
+                                    Source="{x:Bind AlbumArtUriFromTrack, FallbackValue=null}" />
                             </Border>
                         </Button>
 

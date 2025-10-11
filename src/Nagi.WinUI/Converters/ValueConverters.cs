@@ -110,25 +110,6 @@ public class BooleanToVisibilityConverter : IValueConverter
 }
 
 /// <summary>
-///     Converts a string URI to a BitmapImage. Returns null for invalid or empty URIs.
-/// </summary>
-public class StringToUriConverter : IValueConverter
-{
-    public object? Convert(object value, Type targetType, object parameter, string language)
-    {
-        if (value is string uriString && !string.IsNullOrEmpty(uriString))
-            return new BitmapImage(new Uri(uriString, UriKind.Absolute));
-
-        return null;
-    }
-
-    public object ConvertBack(object value, Type targetType, object parameter, string language)
-    {
-        throw new NotImplementedException();
-    }
-}
-
-/// <summary>
 ///     Converts a string to Visibility. Visible if the string is not null or whitespace.
 /// </summary>
 public class StringToVisibilityConverter : IValueConverter
@@ -388,5 +369,39 @@ public class BooleanToOpacityConverter : IValueConverter
     public object ConvertBack(object value, Type targetType, object parameter, string language)
     {
         throw new NotSupportedException();
+    }
+}
+
+/// <summary>
+///     Converts a local file path to a proper file:/// URI for ImageEx to load in unpackaged scenarios.
+/// </summary>
+public class FilePathToUriConverter : IValueConverter
+{
+    public object? Convert(object value, Type targetType, object parameter, string language)
+    {
+        if (value is string filePath && !string.IsNullOrEmpty(filePath))
+        {
+            // If it's already a URI, return as-is
+            if (filePath.StartsWith("ms-appdata:", StringComparison.OrdinalIgnoreCase) ||
+                filePath.StartsWith("file:", StringComparison.OrdinalIgnoreCase) ||
+                filePath.StartsWith("http:", StringComparison.OrdinalIgnoreCase) ||
+                filePath.StartsWith("https:", StringComparison.OrdinalIgnoreCase))
+            {
+                return filePath;
+            }
+
+            // Convert absolute file path to file:/// URI
+            if (System.IO.Path.IsPathRooted(filePath))
+            {
+                return new Uri(filePath, UriKind.Absolute).AbsoluteUri;
+            }
+        }
+
+        return null;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
+        throw new NotImplementedException();
     }
 }

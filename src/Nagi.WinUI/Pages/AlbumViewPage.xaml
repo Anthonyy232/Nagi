@@ -15,8 +15,8 @@
         <ResourceDictionary>
             <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <converters:TimeSpanToTimeStringConverter x:Key="TimeSpanToTimeStringConverter" />
-            <converters:StringToUriConverter x:Key="StringToUriConverter" />
             <converters:CollectionToVisibilityConverter x:Key="CollectionToVisibilityConverter" />
+            <converters:FilePathToUriConverter x:Key="FilePathToUriConverter" />
         </ResourceDictionary>
     </Page.Resources>
 
@@ -108,7 +108,7 @@
                         Visibility="{x:Bind ViewModel.IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
                     <controls:ImageEx
                         IsCacheEnabled="True"
-                        Source="{x:Bind ViewModel.CoverArtUri, Mode=OneWay, Converter={StaticResource StringToUriConverter}, FallbackValue=null}"
+                        Source="{x:Bind ViewModel.CoverArtUri, Mode=OneWay, Converter={StaticResource FilePathToUriConverter}, FallbackValue=null}"
                         Stretch="UniformToFill" />
                 </Border>
 
@@ -270,7 +270,7 @@
                                 <controls:ImageEx
                                     IsCacheEnabled="True"
                                     Stretch="UniformToFill"
-                                    Source="{x:Bind AlbumArtUriFromTrack, Converter={StaticResource StringToUriConverter}, FallbackValue=null}" />
+                                    Source="{x:Bind AlbumArtUriFromTrack, Converter={StaticResource FilePathToUriConverter}, FallbackValue=null}" />
                             </Border>
                         </Button>
 

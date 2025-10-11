@@ -15,7 +15,6 @@
     <Page.Resources>
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <converters:TimeSpanToTimeStringConverter x:Key="TimeSpanToTimeStringConverter" />
-        <converters:StringToUriConverter x:Key="StringToUriConverter" />
         <converters:NullOrEmptyStringToVisibilityConverter x:Key="NullToCollapsedConverter" />
         <converters:NullOrEmptyStringToVisibilityConverter x:Key="NullToVisibleConverter" Invert="True" />
     </Page.Resources>
@@ -107,7 +106,7 @@
                         <controls:ImageEx
                             CornerRadius="75"
                             IsCacheEnabled="True"
-                            Source="{x:Bind ViewModel.ArtistImageUri, Mode=OneWay, Converter={StaticResource StringToUriConverter}, FallbackValue=null}"
+                            Source="{x:Bind ViewModel.ArtistImageUri, Mode=OneWay, FallbackValue=null}"
                             Stretch="UniformToFill"
                             Visibility="{x:Bind ViewModel.ArtistImageUri, Mode=OneWay, Converter={StaticResource NullToCollapsedConverter}}" />
                         <Grid
@@ -169,7 +168,7 @@
                                             Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
                                         <controls:ImageEx
                                             IsCacheEnabled="True"
-                                            Source="{x:Bind CoverArtUri, Converter={StaticResource StringToUriConverter}, FallbackValue=null}"
+                                            Source="{x:Bind CoverArtUri, FallbackValue=null}"
                                             Stretch="UniformToFill" />
                                     </Border>
                                     <TextBlock
@@ -340,7 +339,7 @@
                                 <controls:ImageEx
                                     IsCacheEnabled="True"
                                     Stretch="UniformToFill"
-                                    Source="{x:Bind AlbumArtUriFromTrack, Converter={StaticResource StringToUriConverter}, FallbackValue=null}" />
+                                    Source="{x:Bind AlbumArtUriFromTrack, FallbackValue=null}" />
                             </Border>
                         </Button>
 
