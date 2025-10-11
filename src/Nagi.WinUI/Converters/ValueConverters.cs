@@ -371,37 +371,3 @@ public class BooleanToOpacityConverter : IValueConverter
         throw new NotSupportedException();
     }
 }
-
-/// <summary>
-///     Converts a local file path to a proper file:/// URI for ImageEx to load in unpackaged scenarios.
-/// </summary>
-public class FilePathToUriConverter : IValueConverter
-{
-    public object? Convert(object value, Type targetType, object parameter, string language)
-    {
-        if (value is string filePath && !string.IsNullOrEmpty(filePath))
-        {
-            // If it's already a URI, return as-is
-            if (filePath.StartsWith("ms-appdata:", StringComparison.OrdinalIgnoreCase) ||
-                filePath.StartsWith("file:", StringComparison.OrdinalIgnoreCase) ||
-                filePath.StartsWith("http:", StringComparison.OrdinalIgnoreCase) ||
-                filePath.StartsWith("https:", StringComparison.OrdinalIgnoreCase))
-            {
-                return filePath;
-            }
-
-            // Convert absolute file path to file:/// URI
-            if (System.IO.Path.IsPathRooted(filePath))
-            {
-                return new Uri(filePath, UriKind.Absolute).AbsoluteUri;
-            }
-        }
-
-        return null;
-    }
-
-    public object ConvertBack(object value, Type targetType, object parameter, string language)
-    {
-        throw new NotImplementedException();
-    }
-}
