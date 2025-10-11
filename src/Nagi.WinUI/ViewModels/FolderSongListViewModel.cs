@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,15 +27,16 @@ public partial class BreadcrumbItem : ObservableObject
 }
 
 /// <summary>
-///     Provides data and commands for displaying the contents (folders and songs) within a specific library folder or directory.
+///     Provides data and commands for displaying the contents (folders and songs) within a specific library folder or
+///     directory.
 ///     Supports hierarchical navigation through subfolders.
 /// </summary>
 public partial class FolderSongListViewModel : SongListViewModelBase
 {
     private const int SearchDebounceDelay = 400;
+    private string? _currentDirectoryPath;
     private CancellationTokenSource? _debounceCts;
     private Guid? _rootFolderId;
-    private string? _currentDirectoryPath;
     private string? _rootFolderPath;
 
     public FolderSongListViewModel(
@@ -54,17 +56,20 @@ public partial class FolderSongListViewModel : SongListViewModelBase
     /// <summary>
     ///     Collection of folder content items (folders and songs) to display.
     /// </summary>
-    [ObservableProperty] public partial ObservableCollection<FolderContentItem> FolderContents { get; set; } = new();
+    [ObservableProperty]
+    public partial ObservableCollection<FolderContentItem> FolderContents { get; set; } = new();
 
     /// <summary>
     ///     Breadcrumb navigation items showing the current path in the folder hierarchy.
     /// </summary>
-    [ObservableProperty] public partial ObservableCollection<BreadcrumbItem> Breadcrumbs { get; set; } = new();
+    [ObservableProperty]
+    public partial ObservableCollection<BreadcrumbItem> Breadcrumbs { get; set; } = new();
 
     /// <summary>
     ///     Gets whether the user is currently at the root level of the folder.
     /// </summary>
-    [ObservableProperty] public partial bool IsAtRootLevel { get; set; } = true;
+    [ObservableProperty]
+    public partial bool IsAtRootLevel { get; set; } = true;
 
     private bool IsSearchActive => !string.IsNullOrWhiteSpace(SearchTerm);
     protected override bool IsPagingSupported => false; // Disable paging for folder view
@@ -102,7 +107,8 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to initialize folder {FolderId} at path {DirectoryPath}", _rootFolderId, directoryPath);
+            _logger.LogError(ex, "Failed to initialize folder {FolderId} at path {DirectoryPath}", _rootFolderId,
+                directoryPath);
             TotalItemsText = "Error loading folder";
             FolderContents.Clear();
             Songs.Clear();
@@ -139,9 +145,9 @@ public partial class FolderSongListViewModel : SongListViewModelBase
 
         try
         {
-            _currentDirectoryPath = string.IsNullOrEmpty(breadcrumb.Path) || 
-                                   string.Equals(breadcrumb.Path, _rootFolderPath, StringComparison.OrdinalIgnoreCase)
-                ? null 
+            _currentDirectoryPath = string.IsNullOrEmpty(breadcrumb.Path) ||
+                                    string.Equals(breadcrumb.Path, _rootFolderPath, StringComparison.OrdinalIgnoreCase)
+                ? null
                 : breadcrumb.Path;
             await LoadFolderContentsAsync();
             UpdateBreadcrumbs();
@@ -163,24 +169,18 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         try
         {
             if (string.IsNullOrEmpty(_currentDirectoryPath))
-            {
                 // Already at root
                 return;
-            }
 
             // Navigate to parent directory
-            var parentPath = System.IO.Path.GetDirectoryName(_currentDirectoryPath);
-            
+            var parentPath = Path.GetDirectoryName(_currentDirectoryPath);
+
             // If parent is the root folder path or null, go to root level
-            if (string.IsNullOrEmpty(parentPath) || 
+            if (string.IsNullOrEmpty(parentPath) ||
                 string.Equals(parentPath, _rootFolderPath, StringComparison.OrdinalIgnoreCase))
-            {
                 _currentDirectoryPath = null;
-            }
             else
-            {
                 _currentDirectoryPath = parentPath;
-            }
 
             await LoadFolderContentsAsync();
             UpdateBreadcrumbs();
@@ -210,8 +210,8 @@ public partial class FolderSongListViewModel : SongListViewModelBase
             Songs.Clear();
 
             var effectivePath = _currentDirectoryPath ?? _rootFolderPath ?? string.Empty;
-            IsAtRootLevel = string.IsNullOrEmpty(_currentDirectoryPath) || 
-                           string.Equals(_currentDirectoryPath, _rootFolderPath, StringComparison.OrdinalIgnoreCase);
+            IsAtRootLevel = string.IsNullOrEmpty(_currentDirectoryPath) ||
+                            string.Equals(_currentDirectoryPath, _rootFolderPath, StringComparison.OrdinalIgnoreCase);
 
             IEnumerable<Folder> subfolders;
             if (IsAtRootLevel)
@@ -220,31 +220,22 @@ public partial class FolderSongListViewModel : SongListViewModelBase
             }
             else
             {
-                var currentFolder = await _libraryReader.GetFolderByDirectoryPathAsync(_rootFolderId.Value, effectivePath);
+                var currentFolder =
+                    await _libraryReader.GetFolderByDirectoryPathAsync(_rootFolderId.Value, effectivePath);
                 if (currentFolder != null)
-                {
                     subfolders = await _libraryReader.GetSubFoldersAsync(currentFolder.Id);
-                }
                 else
-                {
                     subfolders = Enumerable.Empty<Folder>();
-                }
             }
 
             IEnumerable<Song> songs;
             if (IsSearchActive)
-            {
                 songs = await _libraryReader.SearchSongsInFolderAsync(_rootFolderId.Value, SearchTerm);
-            }
             else
-            {
                 songs = await _libraryReader.GetSongsInDirectoryAsync(_rootFolderId.Value, effectivePath);
-            }
 
             foreach (var folder in subfolders.OrderBy(f => f.Name, StringComparer.OrdinalIgnoreCase))
-            {
                 FolderContents.Add(FolderContentItem.FromFolder(folder));
-            }
 
             foreach (var song in songs.OrderBy(s => s.Title, StringComparer.OrdinalIgnoreCase))
             {
@@ -254,7 +245,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
 
             var folderCount = subfolders.Count();
             var songCount = songs.Count();
-            
+
             if (folderCount > 0 && songCount > 0)
             {
                 var folderText = folderCount == 1 ? "folder" : "folders";
@@ -278,7 +269,8 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to load folder contents for {FolderId} at {DirectoryPath}", _rootFolderId, _currentDirectoryPath);
+            _logger.LogError(ex, "Failed to load folder contents for {FolderId} at {DirectoryPath}", _rootFolderId,
+                _currentDirectoryPath);
             TotalItemsText = "Error loading contents";
         }
         finally
@@ -294,22 +286,19 @@ public partial class FolderSongListViewModel : SongListViewModelBase
     {
         Breadcrumbs.Clear();
 
-        if (!_rootFolderId.HasValue || string.IsNullOrEmpty(_rootFolderPath))
-        {
-            return;
-        }
+        if (!_rootFolderId.HasValue || string.IsNullOrEmpty(_rootFolderPath)) return;
 
         // Add root breadcrumb
-        var rootName = System.IO.Path.GetFileName(_rootFolderPath) ?? PageTitle;
+        var rootName = Path.GetFileName(_rootFolderPath) ?? PageTitle;
         Breadcrumbs.Add(new BreadcrumbItem
         {
             Name = rootName,
             Path = _rootFolderPath,
-            IsLast = string.IsNullOrEmpty(_currentDirectoryPath) || 
-                    string.Equals(_currentDirectoryPath, _rootFolderPath, StringComparison.OrdinalIgnoreCase)
+            IsLast = string.IsNullOrEmpty(_currentDirectoryPath) ||
+                     string.Equals(_currentDirectoryPath, _rootFolderPath, StringComparison.OrdinalIgnoreCase)
         });
 
-        if (!string.IsNullOrEmpty(_currentDirectoryPath) && 
+        if (!string.IsNullOrEmpty(_currentDirectoryPath) &&
             !string.Equals(_currentDirectoryPath, _rootFolderPath, StringComparison.OrdinalIgnoreCase))
         {
             var relativePath = _currentDirectoryPath.Substring(_rootFolderPath.Length).TrimStart('\\', '/');
@@ -318,7 +307,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
             var currentPath = _rootFolderPath;
             for (var i = 0; i < pathParts.Length; i++)
             {
-                currentPath = System.IO.Path.Combine(currentPath, pathParts[i]);
+                currentPath = Path.Combine(currentPath, pathParts[i]);
                 Breadcrumbs.Add(new BreadcrumbItem
                 {
                     Name = pathParts[i],
@@ -330,10 +319,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
 
         if (Breadcrumbs.Any())
         {
-            foreach (var breadcrumb in Breadcrumbs)
-            {
-                breadcrumb.IsLast = false;
-            }
+            foreach (var breadcrumb in Breadcrumbs) breadcrumb.IsLast = false;
             Breadcrumbs[^1].IsLast = true;
         }
     }
@@ -415,10 +401,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
             var songs = await _libraryReader.GetSongsInDirectoryRecursiveAsync(_rootFolderId.Value, folder.Path);
             var songList = songs.ToList();
 
-            if (songList.Any())
-            {
-                await _playbackService.PlayAsync(songList);
-            }
+            if (songList.Any()) await _playbackService.PlayAsync(songList);
         }
         catch (Exception ex)
         {

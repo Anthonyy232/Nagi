@@ -7,7 +7,6 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
-using Nagi.Core.Models;
 using Nagi.WinUI.Models;
 using Nagi.WinUI.Navigation;
 using Nagi.WinUI.ViewModels;
@@ -147,12 +146,8 @@ public sealed partial class FolderSongViewPage : Page
     private async void FolderContentsListView_ItemClick(object sender, ItemClickEventArgs e)
     {
         if (e.ClickedItem is FolderContentItem contentItem)
-        {
             if (contentItem.IsFolder && contentItem.Folder != null)
-            {
                 await ViewModel.NavigateToSubfolderCommand.ExecuteAsync(contentItem.Folder);
-            }
-        }
     }
 
     /// <summary>
@@ -180,13 +175,9 @@ public sealed partial class FolderSongViewPage : Page
         if (e.OriginalSource is FrameworkElement { DataContext: FolderContentItem contentItem })
         {
             if (contentItem.IsFolder && contentItem.Folder != null)
-            {
                 await ViewModel.NavigateToSubfolderCommand.ExecuteAsync(contentItem.Folder);
-            }
             else if (contentItem.IsSong && contentItem.Song != null)
-            {
                 ViewModel.PlaySongCommand.Execute(contentItem.Song);
-            }
         }
     }
 
@@ -199,18 +190,13 @@ public sealed partial class FolderSongViewPage : Page
 
         if (menuFlyout.Target?.DataContext is FolderContentItem { IsSong: true, Song: not null } contentItem)
         {
-            var listView = this.FindName("FolderContentsListView") as ListView;
-            if (listView != null && !listView.SelectedItems.Contains(contentItem))
-            {
-                listView.SelectedItem = contentItem;
-            }
+            var listView = FindName("FolderContentsListView") as ListView;
+            if (listView != null && !listView.SelectedItems.Contains(contentItem)) listView.SelectedItem = contentItem;
         }
 
         if (menuFlyout.Items.OfType<MenuFlyoutSubItem>()
                 .FirstOrDefault(item => item.Name == "AddToPlaylistSubMenu") is { } addToPlaylistSubMenu)
-        {
             PopulatePlaylistSubMenu(addToPlaylistSubMenu);
-        }
     }
 
     /// <summary>

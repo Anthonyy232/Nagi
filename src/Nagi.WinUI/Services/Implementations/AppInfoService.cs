@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection;
 using Windows.ApplicationModel;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Services.Abstractions;
@@ -33,10 +32,10 @@ public class AppInfoService : IAppInfoService
         try
         {
 #if MSIX_PACKAGE
-                        // For MSIX packages, get the version from the package manifest
-                        var package = Package.Current;
-                        var version = package.Id.Version;
-                        return $"{version.Major}.{version.Minor}.{version.Build}";
+            // For MSIX packages, get the version from the package manifest
+            var package = Package.Current;
+            var version = package.Id.Version;
+            return $"{version.Major}.{version.Minor}.{version.Build}";
 #else
             // For unpackaged apps, use assembly version
             var assembly = Assembly.GetEntryAssembly();

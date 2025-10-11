@@ -1,32 +1,32 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<TargetFramework>net9.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
-		<IsPackable>false</IsPackable>
-	</PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
 
-	<ItemGroup>
-		<PackageReference Include="coverlet.collector" Version="$(CoverletCollectorVersion)">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="FluentAssertions" Version="$(FluentAssertionsVersion)" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(MicrosoftNETTestSdkVersion)" />
-		<PackageReference Include="NSubstitute" Version="$(NSubstituteVersion)" />
-		<PackageReference Include="NSubstitute.Analyzers.CSharp" Version="$(NSubstituteAnalyzersCSharpVersion)">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="xunit" Version="$(XunitVersion)" />
-		<PackageReference Include="xunit.runner.visualstudio" Version="$(XunitRunnerVisualStudioVersion)">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-	</ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="coverlet.collector" Version="$(CoverletCollectorVersion)">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="FluentAssertions" Version="$(FluentAssertionsVersion)"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(MicrosoftNETTestSdkVersion)"/>
+        <PackageReference Include="NSubstitute" Version="$(NSubstituteVersion)"/>
+        <PackageReference Include="NSubstitute.Analyzers.CSharp" Version="$(NSubstituteAnalyzersCSharpVersion)">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="xunit" Version="$(XunitVersion)"/>
+        <PackageReference Include="xunit.runner.visualstudio" Version="$(XunitRunnerVisualStudioVersion)">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\..\src\Nagi.Core\Nagi.Core.csproj" />
-	</ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\Nagi.Core\Nagi.Core.csproj"/>
+    </ItemGroup>
 </Project>

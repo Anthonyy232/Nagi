@@ -132,6 +132,36 @@ public sealed class WindowService : IWindowService, IDisposable
     }
 
     /// <summary>
+    ///     Creates and displays the mini-player window.
+    /// </summary>
+    public void ShowMiniPlayer()
+    {
+        if (!_isMiniPlayerEnabled || _miniPlayerWindow is not null) return;
+
+        _dispatcherService.TryEnqueue(() =>
+        {
+            try
+            {
+                // Re-check inside the dispatched action to handle race conditions.
+                if (!_isMiniPlayerEnabled || _miniPlayerWindow is not null) return;
+
+                _miniPlayerWindow = new MiniPlayerWindow();
+                _miniPlayerWindow.Closed += OnMiniPlayerClosed;
+                _miniPlayerWindow.Activate();
+
+                // Because the IsMiniPlayerActive state has changed, notify subscribers.
+                UIStateChanged?.Invoke();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical(ex, "Failed to show Mini Player.");
+                // Ensure we clean up if the window failed to initialize.
+                _miniPlayerWindow = null;
+            }
+        });
+    }
+
+    /// <summary>
     ///     Responds to live changes in the "Minimize to Mini-Player" application setting.
     /// </summary>
     private void OnMinimizeToMiniPlayerSettingChanged(bool isEnabled)
@@ -178,36 +208,6 @@ public sealed class WindowService : IWindowService, IDisposable
     }
 
     /// <summary>
-    ///     Creates and displays the mini-player window.
-    /// </summary>
-    public void ShowMiniPlayer()
-    {
-        if (!_isMiniPlayerEnabled || _miniPlayerWindow is not null) return;
-
-        _dispatcherService.TryEnqueue(() =>
-        {
-            try
-            {
-                // Re-check inside the dispatched action to handle race conditions.
-                if (!_isMiniPlayerEnabled || _miniPlayerWindow is not null) return;
-
-                _miniPlayerWindow = new MiniPlayerWindow();
-                _miniPlayerWindow.Closed += OnMiniPlayerClosed;
-                _miniPlayerWindow.Activate();
-
-                // Because the IsMiniPlayerActive state has changed, notify subscribers.
-                UIStateChanged?.Invoke();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogCritical(ex, "Failed to show Mini Player.");
-                // Ensure we clean up if the window failed to initialize.
-                _miniPlayerWindow = null;
-            }
-        });
-    }
-
-    /// <summary>
     ///     Programmatically closes the mini-player window.
     /// </summary>
     private void HideMiniPlayer()
@@ -249,6 +249,7 @@ public sealed class WindowService : IWindowService, IDisposable
             _miniPlayerWindow = null;
             ShowAndActivate();
         }
+
         _miniPlayerWindow = null;
         UIStateChanged?.Invoke();
     }

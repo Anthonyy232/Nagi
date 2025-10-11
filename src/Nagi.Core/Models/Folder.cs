@@ -18,12 +18,14 @@ public class Folder
     /// <summary>
     ///     A user-friendly name for the folder.
     /// </summary>
-    [MaxLength(500)] public string Name { get; set; } = string.Empty;
+    [MaxLength(500)]
+    public string Name { get; set; } = string.Empty;
 
     /// <summary>
     ///     The absolute file system path to the folder.
     /// </summary>
-    [Required, MaxLength(1000)]
+    [Required]
+    [MaxLength(1000)]
     public string Path { get; set; } = string.Empty;
 
     /// <summary>

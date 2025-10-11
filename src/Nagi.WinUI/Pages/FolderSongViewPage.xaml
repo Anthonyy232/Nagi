@@ -6,7 +6,6 @@
     xmlns:converters="using:Nagi.WinUI.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:models="using:Nagi.Core.Models"
     xmlns:local="using:Nagi.WinUI.Models"
     xmlns:vm="using:Nagi.WinUI.ViewModels"
     x:Name="pageRoot"
@@ -19,7 +18,7 @@
         <converters:BooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" Invert="True" />
         <converters:BooleanToInverseBooleanConverter x:Key="BooleanToInverseBooleanConverter" />
         <converters:StringToUriConverter x:Key="StringToUriConverter" />
-        
+
         <!-- Data template selector for folder/song items -->
         <local:FolderContentItemTemplateSelector x:Key="FolderContentItemTemplateSelector">
             <local:FolderContentItemTemplateSelector.FolderTemplate>
@@ -33,25 +32,27 @@
                                     Text="Play" />
                             </MenuFlyout>
                         </Grid.ContextFlyout>
-                        
+
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <Border Grid.Column="0" Width="42" Height="42" Margin="12,0,0,0" CornerRadius="12" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
-                            <FontIcon FontSize="20" Glyph="&#xE8B7;" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <Border Grid.Column="0" Width="42" Height="42" Margin="12,0,0,0" CornerRadius="12"
+                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                            <FontIcon FontSize="20" Glyph="&#xE8B7;" HorizontalAlignment="Center"
+                                      VerticalAlignment="Center" />
                         </Border>
 
-                        <TextBlock Grid.Column="1" 
+                        <TextBlock Grid.Column="1"
                                    Style="{StaticResource SongListViewPageBodyStrongTextBlockStyle}"
-                                   Text="{x:Bind Folder.Name}" 
-                                   TextTrimming="CharacterEllipsis" 
+                                   Text="{x:Bind Folder.Name}"
+                                   TextTrimming="CharacterEllipsis"
                                    VerticalAlignment="Center" />
                     </Grid>
                 </DataTemplate>
             </local:FolderContentItemTemplateSelector.FolderTemplate>
-            
+
             <local:FolderContentItemTemplateSelector.SongTemplate>
                 <DataTemplate x:DataType="local:FolderContentItem">
                     <Grid Height="54" ColumnSpacing="12" Background="Transparent">
@@ -106,7 +107,8 @@
                         </Button>
 
                         <TextBlock Grid.Column="1" Style="{StaticResource SongListViewPageBodyStrongTextBlockStyle}"
-                                   Text="{x:Bind Song.Title}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                                   Text="{x:Bind Song.Title}" TextTrimming="CharacterEllipsis"
+                                   VerticalAlignment="Center" />
 
                         <HyperlinkButton
                             Grid.Column="2"
@@ -214,7 +216,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            
+
             <Grid Grid.Row="0" Padding="0,0,0,12">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
@@ -233,72 +235,72 @@
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                <!-- Search functionality -->
-                <Grid>
-                    <!-- Search TextBox (initially collapsed, expands to the left) -->
-                    <TextBox x:Name="SearchTextBox"
-                             Style="{StaticResource SearchTextBoxStyle}"
-                             PlaceholderText="Search folder..."
-                             Width="0"
-                             Opacity="0"
-                             IsHitTestVisible="False"
-                             HorizontalAlignment="Right"
-                             KeyDown="OnSearchTextBoxKeyDown"
-                             Text="{x:Bind ViewModel.SearchTerm, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                             Canvas.ZIndex="0">
-                        <TextBox.Resources>
-                            <ResourceDictionary>
-                                <ResourceDictionary.ThemeDictionaries>
-                                    <ResourceDictionary x:Key="Default">
-                                        <StaticResource x:Key="TextControlBorderBrushPointerOver"
-                                                        ResourceKey="AppPrimaryColorBrush" />
-                                        <StaticResource x:Key="TextControlBorderBrushFocused"
-                                                        ResourceKey="AppPrimaryColorBrush" />
-                                    </ResourceDictionary>
-                                    <ResourceDictionary x:Key="Light">
-                                        <StaticResource x:Key="TextControlBorderBrushPointerOver"
-                                                        ResourceKey="AppPrimaryColorBrush" />
-                                        <StaticResource x:Key="TextControlBorderBrushFocused"
-                                                        ResourceKey="AppPrimaryColorBrush" />
-                                    </ResourceDictionary>
-                                    <ResourceDictionary x:Key="HighContrast" />
-                                </ResourceDictionary.ThemeDictionaries>
-                            </ResourceDictionary>
-                        </TextBox.Resources>
-                    </TextBox>
+                    <!-- Search functionality -->
+                    <Grid>
+                        <!-- Search TextBox (initially collapsed, expands to the left) -->
+                        <TextBox x:Name="SearchTextBox"
+                                 Style="{StaticResource SearchTextBoxStyle}"
+                                 PlaceholderText="Search folder..."
+                                 Width="0"
+                                 Opacity="0"
+                                 IsHitTestVisible="False"
+                                 HorizontalAlignment="Right"
+                                 KeyDown="OnSearchTextBoxKeyDown"
+                                 Text="{x:Bind ViewModel.SearchTerm, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 Canvas.ZIndex="0">
+                            <TextBox.Resources>
+                                <ResourceDictionary>
+                                    <ResourceDictionary.ThemeDictionaries>
+                                        <ResourceDictionary x:Key="Default">
+                                            <StaticResource x:Key="TextControlBorderBrushPointerOver"
+                                                            ResourceKey="AppPrimaryColorBrush" />
+                                            <StaticResource x:Key="TextControlBorderBrushFocused"
+                                                            ResourceKey="AppPrimaryColorBrush" />
+                                        </ResourceDictionary>
+                                        <ResourceDictionary x:Key="Light">
+                                            <StaticResource x:Key="TextControlBorderBrushPointerOver"
+                                                            ResourceKey="AppPrimaryColorBrush" />
+                                            <StaticResource x:Key="TextControlBorderBrushFocused"
+                                                            ResourceKey="AppPrimaryColorBrush" />
+                                        </ResourceDictionary>
+                                        <ResourceDictionary x:Key="HighContrast" />
+                                    </ResourceDictionary.ThemeDictionaries>
+                                </ResourceDictionary>
+                            </TextBox.Resources>
+                        </TextBox>
 
-                    <!-- Combined Search/Close Button -->
-                    <Button x:Name="SearchToggleButton"
-                            Click="OnSearchToggleButtonClick"
-                            Style="{StaticResource SongListViewPageIconButton}"
-                            ToolTipService.ToolTip="Search folder"
-                            HorizontalAlignment="Right"
-                            Margin="0,0,1,0"
-                            IsHitTestVisible="True"
-                            Canvas.ZIndex="1">
-                        <FontIcon x:Name="SearchIcon" FontSize="16" Glyph="&#xE721;" />
+                        <!-- Combined Search/Close Button -->
+                        <Button x:Name="SearchToggleButton"
+                                Click="OnSearchToggleButtonClick"
+                                Style="{StaticResource SongListViewPageIconButton}"
+                                ToolTipService.ToolTip="Search folder"
+                                HorizontalAlignment="Right"
+                                Margin="0,0,1,0"
+                                IsHitTestVisible="True"
+                                Canvas.ZIndex="1">
+                            <FontIcon x:Name="SearchIcon" FontSize="16" Glyph="&#xE721;" />
+                        </Button>
+                    </Grid>
+
+                    <Button Command="{x:Bind ViewModel.PlayAllSongsCommand}"
+                            Style="{StaticResource SongListViewPageIconButton}" ToolTipService.ToolTip="Play all">
+                        <FontIcon FontSize="16" Foreground="{StaticResource AppPrimaryColorBrush}" Glyph="" />
                     </Button>
-                </Grid>
 
-                <Button Command="{x:Bind ViewModel.PlayAllSongsCommand}"
-                        Style="{StaticResource SongListViewPageIconButton}" ToolTipService.ToolTip="Play all">
-                    <FontIcon FontSize="16" Foreground="{StaticResource AppPrimaryColorBrush}" Glyph="" />
-                </Button>
-
-                <Button Command="{x:Bind ViewModel.ShuffleAndPlayAllSongsCommand}"
-                        Style="{StaticResource SongListViewPageFilledButtonStyle}"
-                        ToolTipService.ToolTip="Shuffle and play all">
-                    <StackPanel Orientation="Horizontal" Spacing="6">
-                        <FontIcon FontSize="14" Glyph="" />
-                        <TextBlock Text="Shuffle and play" VerticalAlignment="Center" />
-                    </StackPanel>
-                </Button>
-            </StackPanel>
+                    <Button Command="{x:Bind ViewModel.ShuffleAndPlayAllSongsCommand}"
+                            Style="{StaticResource SongListViewPageFilledButtonStyle}"
+                            ToolTipService.ToolTip="Shuffle and play all">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <FontIcon FontSize="14" Glyph="" />
+                            <TextBlock Text="Shuffle and play" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
             </Grid>
-            
+
             <!-- Breadcrumb navigation -->
-            <ItemsControl Grid.Row="1" 
-                          Padding="0,0,0,12" 
+            <ItemsControl Grid.Row="1"
+                          Padding="0,0,0,12"
                           ItemsSource="{x:Bind ViewModel.Breadcrumbs, Mode=OneWay}"
                           Visibility="{x:Bind ViewModel.IsAtRootLevel, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}">
                 <ItemsControl.ItemsPanel>
@@ -309,7 +311,7 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate x:DataType="vm:BreadcrumbItem">
                         <StackPanel Orientation="Horizontal" Spacing="4">
-                            <HyperlinkButton 
+                            <HyperlinkButton
                                 Content="{x:Bind Name}"
                                 Command="{Binding DataContext.NavigateToBreadcrumbCommand, ElementName=pageRoot}"
                                 CommandParameter="{x:Bind}"
@@ -317,15 +319,11 @@
                                 FontSize="13"
                                 Padding="4,2">
                                 <HyperlinkButton.Resources>
-                                    <SolidColorBrush x:Key="HyperlinkButtonForeground" Color="{ThemeResource TextFillColorSecondary}" />
-                                    <SolidColorBrush x:Key="HyperlinkButtonForegroundPointerOver" Color="{Binding Color, Source={StaticResource AppPrimaryColorBrush}}" />
-                                    <SolidColorBrush x:Key="HyperlinkButtonForegroundPressed" Color="{Binding Color, Source={StaticResource AppPrimaryColorBrush}}" />
-                                    <SolidColorBrush x:Key="HyperlinkButtonForegroundDisabled" Color="{ThemeResource TextFillColorPrimary}" />
                                 </HyperlinkButton.Resources>
                             </HyperlinkButton>
-                            <TextBlock Text="/" 
+                            <TextBlock Text="/"
                                        FontSize="13"
-                                       Foreground="{ThemeResource TextFillColorTertiary}" 
+                                       Foreground="{ThemeResource TextFillColorTertiary}"
                                        VerticalAlignment="Center"
                                        Visibility="{x:Bind IsLast, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}" />
                         </StackPanel>
@@ -345,7 +343,6 @@
             ItemTemplateSelector="{StaticResource FolderContentItemTemplateSelector}"
             SelectionChanged="FolderContentsListView_SelectionChanged"
             SelectionMode="Extended"
-            DoubleTapped="FolderContentsListView_DoubleTapped">
-        </ListView>
+            DoubleTapped="FolderContentsListView_DoubleTapped" />
     </Grid>
 </Page>
