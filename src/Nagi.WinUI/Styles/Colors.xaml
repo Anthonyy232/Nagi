@@ -21,13 +21,13 @@
     <!-- Windows 10 compatible acrylic brush. -->
     <SolidColorBrush
         x:Key="Win10AcrylicBrush"
-        Opacity="0.8"
-        Color="{ThemeResource CardBackgroundFillColorDefault}" />
+        Opacity="0.98"
+        Color="{ThemeResource SolidBackgroundFillColorBase}" />
 
 
     <!-- No transparency brush. -->
     <SolidColorBrush
         x:Key="NonTransparentBrush"
-        Color="{ThemeResource CardBackgroundFillColorDefault}" />
+        Color="{ThemeResource SolidBackgroundFillColorBase}" />
 
 </ResourceDictionary>
