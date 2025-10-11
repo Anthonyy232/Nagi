@@ -77,7 +77,7 @@ public partial class FolderViewModel : ObservableObject, IDisposable
         _navigationService = navigationService;
         _logger = logger;
 
-        // Store the handler in a field so we can reliably unsubscribe from it later.
+        // Store handler reference to enable proper cleanup in Dispose
         _collectionChangedHandler = (s, e) => OnPropertyChanged(nameof(HasFolders));
         Folders.CollectionChanged += _collectionChangedHandler;
     }
@@ -158,15 +158,14 @@ public partial class FolderViewModel : ObservableObject, IDisposable
     }
 
     /// <summary>
-    ///     Asynchronously loads all folders from the database and updates the UI.
+    ///     Asynchronously loads all root folders from the database and updates the UI.
     /// </summary>
     [RelayCommand]
     private async Task LoadFoldersAsync()
     {
         try
         {
-            // Fetch folder data and song counts concurrently for better performance.
-            var foldersFromDb = await _libraryService.GetAllFoldersAsync();
+            var foldersFromDb = await _libraryService.GetRootFoldersAsync();
             var folderItemTasks = foldersFromDb.Select(async folder =>
             {
                 var songCount = await _libraryService.GetSongCountForFolderAsync(folder.Id);
@@ -187,9 +186,8 @@ public partial class FolderViewModel : ObservableObject, IDisposable
     }
 
     /// <summary>
-    ///     Efficiently synchronizes the observable collection of folders with an updated list.
-    ///     This method avoids clearing and re-populating the entire collection, instead calculating
-    ///     the differences (add, remove, move, update) to minimize UI updates and prevent flicker.
+    ///     Efficiently updates the folder collection by calculating diffs rather than rebuilding,
+    ///     minimizing UI updates and preventing visual flicker.
     /// </summary>
     /// <param name="newItems">The authoritative, sorted list of items that should be in the collection.</param>
     private void SynchronizeCollection(IReadOnlyList<FolderViewModelItem> newItems)
@@ -209,7 +207,6 @@ public partial class FolderViewModel : ObservableObject, IDisposable
 
             if (i >= Folders.Count)
             {
-                // If we are past the end of the current list, all remaining new items are added.
                 Folders.Add(newItem);
                 continue;
             }
@@ -217,13 +214,10 @@ public partial class FolderViewModel : ObservableObject, IDisposable
             var currentItem = Folders[i];
             if (currentItem.Id == newItem.Id)
             {
-                // The item is in the correct position, so just update its data.
                 currentItem.UpdateSongCount(newItem.SongCount);
             }
             else
             {
-                // The item at this position is incorrect. We need to either move an existing
-                // item here or insert a new one.
                 if (currentFoldersMap.TryGetValue(newItem.Id, out var existingItemToMove))
                 {
                     var oldIndex = Folders.IndexOf(existingItemToMove);
@@ -255,7 +249,6 @@ public partial class FolderViewModel : ObservableObject, IDisposable
             return;
         }
 
-        _logger.LogInformation("Attempting to add and scan folder: {FolderPath}", folderPath);
         IsAddingFolder = true;
         _playerViewModel.IsGlobalOperationInProgress = true;
         _playerViewModel.GlobalOperationStatusMessage = "Adding folder to library...";
@@ -311,7 +304,6 @@ public partial class FolderViewModel : ObservableObject, IDisposable
         var folderToDelete = Folders.FirstOrDefault(f => f.Id == folderId);
         if (folderToDelete == null) return;
 
-        _logger.LogInformation("Attempting to delete folder {FolderId}", folderId);
         IsDeletingFolder = true;
         _playerViewModel.IsGlobalOperationInProgress = true;
         _playerViewModel.GlobalOperationStatusMessage = $"Deleting '{folderToDelete.Name}'...";
@@ -354,7 +346,6 @@ public partial class FolderViewModel : ObservableObject, IDisposable
         var folderItem = Folders.FirstOrDefault(f => f.Id == folderId);
         if (folderItem == null) return;
 
-        _logger.LogInformation("Attempting to rescan folder {FolderId}", folderId);
         IsScanning = true;
         _playerViewModel.IsGlobalOperationInProgress = true;
         _playerViewModel.GlobalOperationStatusMessage = $"Rescanning '{folderItem.Name}'...";

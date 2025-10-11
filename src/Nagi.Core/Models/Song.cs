@@ -10,7 +10,7 @@ public class Song
 {
     [Key] public Guid Id { get; set; } = Guid.NewGuid();
 
-    [Required] public string Title { get; set; } = "Unknown Title";
+    [Required, MaxLength(500)] public string Title { get; set; } = "Unknown Title";
 
     public Guid? AlbumId { get; set; }
 
@@ -20,10 +20,7 @@ public class Song
 
     [ForeignKey("ArtistId")] public virtual Artist? Artist { get; set; }
 
-    /// <summary>
-    ///     The composer of the song.
-    /// </summary>
-    public string? Composer { get; set; }
+    [MaxLength(200)] public string? Composer { get; set; }
 
     [Required] public Guid FolderId { get; set; }
 
@@ -31,9 +28,16 @@ public class Song
 
     public TimeSpan Duration { get; set; } = TimeSpan.Zero;
 
-    public string? AlbumArtUriFromTrack { get; set; }
+    [MaxLength(2000)] public string? AlbumArtUriFromTrack { get; set; }
 
-    [Required] public string FilePath { get; set; } = string.Empty;
+    [Required, MaxLength(1000)] public string FilePath { get; set; } = string.Empty;
+
+    /// <summary>
+    ///     The directory path where the song file is located. This is used for efficient
+    ///     folder hierarchy navigation and querying songs by directory.
+    /// </summary>
+    [Required, MaxLength(1000)]
+    public string DirectoryPath { get; set; } = string.Empty;
 
     public int? Year { get; set; }
     public int? TrackNumber { get; set; }
@@ -46,8 +50,8 @@ public class Song
     public DateTime? DateAddedToLibrary { get; set; } = DateTime.UtcNow;
     public DateTime? FileCreatedDate { get; set; }
     public DateTime? FileModifiedDate { get; set; }
-    public string? LightSwatchId { get; set; }
-    public string? DarkSwatchId { get; set; }
+    [MaxLength(50)] public string? LightSwatchId { get; set; }
+    [MaxLength(50)] public string? DarkSwatchId { get; set; }
 
     /// <summary>
     ///     A user-assigned rating, typically from 1 to 5.
@@ -77,12 +81,12 @@ public class Song
     /// <summary>
     ///     The lyrics of the song.
     /// </summary>
-    public string? Lyrics { get; set; }
+    [MaxLength(50000)] public string? Lyrics { get; set; }
 
     /// <summary>
     ///     The file path to the synchronized .lrc lyrics file associated with this song.
     /// </summary>
-    public string? LrcFilePath { get; set; }
+    [MaxLength(1000)] public string? LrcFilePath { get; set; }
 
     /// <summary>
     ///     The beats per minute of the track.
@@ -92,32 +96,32 @@ public class Song
     /// <summary>
     ///     A custom grouping category for the song.
     /// </summary>
-    public string? Grouping { get; set; }
+    [MaxLength(200)] public string? Grouping { get; set; }
 
     /// <summary>
     ///     Copyright information for the track.
     /// </summary>
-    public string? Copyright { get; set; }
+    [MaxLength(1000)] public string? Copyright { get; set; }
 
     /// <summary>
     ///     A general-purpose comment field.
     /// </summary>
-    public string? Comment { get; set; }
+    [MaxLength(1000)] public string? Comment { get; set; }
 
     /// <summary>
     ///     The conductor of the orchestra, if applicable.
     /// </summary>
-    public string? Conductor { get; set; }
+    [MaxLength(200)] public string? Conductor { get; set; }
 
     /// <summary>
     ///     The unique identifier for the track from the MusicBrainz database.
     /// </summary>
-    public string? MusicBrainzTrackId { get; set; }
+    [MaxLength(100)] public string? MusicBrainzTrackId { get; set; }
 
     /// <summary>
     ///     The unique identifier for the release (album) from the MusicBrainz database.
     /// </summary>
-    public string? MusicBrainzReleaseId { get; set; }
+    [MaxLength(100)] public string? MusicBrainzReleaseId { get; set; }
 
     [NotMapped] public bool IsArtworkAvailable => !string.IsNullOrEmpty(AlbumArtUriFromTrack);
 

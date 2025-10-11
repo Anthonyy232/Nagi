@@ -51,27 +51,16 @@ public class ImageSharpProcessor : IImageProcessor
         var filename = $"{stableId}.jpg";
         var fullPath = _fileSystem.Combine(_albumArtStoragePath, filename);
 
-        _logger.LogDebug(
-            "Processing cover art for Album: '{AlbumTitle}', Artist: '{ArtistName}'. Stable ID: {StableId}",
-            albumTitle, artistName, stableId);
-
-        // A simple check is now sufficient because the caller ensures this method isn't
-        // called concurrently for the same album, preventing a race condition.
         if (_fileSystem.FileExists(fullPath))
         {
-            _logger.LogDebug("Cover art for Stable ID '{StableId}' already exists at '{FullPath}'. Skipping write.",
-                stableId, fullPath);
-        }
-        else
-        {
-            await _fileSystem.WriteAllBytesAsync(fullPath, pictureData);
-            _logger.LogInformation("Saved new cover art for Stable ID '{StableId}' to '{FullPath}'.", stableId,
-                fullPath);
+            var (lightHex, darkHex) = ExtractColorSwatches(pictureData);
+            return (fullPath, lightHex, darkHex);
         }
 
-        var (lightHex, darkHex) = ExtractColorSwatches(pictureData);
+        await _fileSystem.WriteAllBytesAsync(fullPath, pictureData);
+        var (lightSwatchHex, darkSwatchHex) = ExtractColorSwatches(pictureData);
 
-        return (fullPath, lightHex, darkHex);
+        return (fullPath, lightSwatchHex, darkSwatchHex);
     }
 
     /// <summary>
@@ -93,8 +82,7 @@ public class ImageSharpProcessor : IImageProcessor
             var pixels = new uint[image.Width * image.Height];
             image.CopyPixelDataTo(MemoryMarshal.AsBytes(pixels.AsSpan()));
 
-            // The pixel format from ImageSharp is RGBA, but MaterialColorUtilities expects ARGB.
-            // This loop efficiently swaps the Red and Blue channels to convert the format.
+            // Convert ImageSharp's RGBA format to MaterialColorUtilities' ARGB format
             for (var i = 0; i < pixels.Length; i++)
                 pixels[i] = (pixels[i] & 0xFF00FF00) | ((pixels[i] & 0x00FF0000) >> 16) |
                             ((pixels[i] & 0x000000FF) << 16);
@@ -123,8 +111,8 @@ public class ImageSharpProcessor : IImageProcessor
     }
 
     /// <summary>
-    ///     Generates a stable, unique identifier for an album based on its artist and title.
-    ///     This is used for creating a consistent filename for cached album art.
+    ///     Generates a content-based identifier to ensure the same album always maps to the same cached file,
+    ///     enabling efficient cache reuse across rescans and preventing duplicate storage.
     /// </summary>
     private static string GenerateStableId(string artistName, string albumTitle)
     {

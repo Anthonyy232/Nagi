@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Nagi.Core.Data;
 
@@ -10,9 +11,11 @@ using Nagi.Core.Data;
 namespace Nagi.Core.Data.Migrations
 {
     [DbContext(typeof(MusicDbContext))]
-    partial class MusicDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251010223001_AddFolderHierarchySupport")]
+    partial class AddFolderHierarchySupport
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.8");
@@ -42,12 +45,10 @@ namespace Nagi.Core.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("CoverArtUri")
-                        .HasMaxLength(2000)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(500)
                         .HasColumnType("TEXT")
                         .UseCollation("NOCASE");
 
@@ -75,11 +76,9 @@ namespace Nagi.Core.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Biography")
-                        .HasMaxLength(50000)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LocalImageCachePath")
-                        .HasMaxLength(1000)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("MetadataLastCheckedUtc")
@@ -87,12 +86,10 @@ namespace Nagi.Core.Data.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(500)
                         .HasColumnType("TEXT")
                         .UseCollation("NOCASE");
 
                     b.Property<string>("RemoteImageUrl")
-                        .HasMaxLength(2000)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -114,7 +111,6 @@ namespace Nagi.Core.Data.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
                     b.Property<Guid?>("ParentFolderId")
@@ -122,7 +118,6 @@ namespace Nagi.Core.Data.Migrations
 
                     b.Property<string>("Path")
                         .IsRequired()
-                        .HasMaxLength(1000)
                         .HasColumnType("TEXT")
                         .UseCollation("NOCASE");
 
@@ -144,7 +139,6 @@ namespace Nagi.Core.Data.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100)
                         .HasColumnType("TEXT")
                         .UseCollation("NOCASE");
 
@@ -192,7 +186,6 @@ namespace Nagi.Core.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("CoverImageUri")
-                        .HasMaxLength(2000)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("DateCreated")
@@ -202,12 +195,10 @@ namespace Nagi.Core.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
-                        .HasMaxLength(5000)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(500)
                         .HasColumnType("TEXT")
                         .UseCollation("NOCASE");
 
@@ -246,7 +237,6 @@ namespace Nagi.Core.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("AlbumArtUriFromTrack")
-                        .HasMaxLength(2000)
                         .HasColumnType("TEXT");
 
                     b.Property<Guid?>("AlbumId")
@@ -265,23 +255,18 @@ namespace Nagi.Core.Data.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Comment")
-                        .HasMaxLength(1000)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Composer")
-                        .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Conductor")
-                        .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Copyright")
-                        .HasMaxLength(1000)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("DarkSwatchId")
-                        .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("DateAddedToLibrary")
@@ -289,7 +274,6 @@ namespace Nagi.Core.Data.Migrations
 
                     b.Property<string>("DirectoryPath")
                         .IsRequired()
-                        .HasMaxLength(1000)
                         .HasColumnType("TEXT")
                         .UseCollation("NOCASE");
 
@@ -310,7 +294,6 @@ namespace Nagi.Core.Data.Migrations
 
                     b.Property<string>("FilePath")
                         .IsRequired()
-                        .HasMaxLength(1000)
                         .HasColumnType("TEXT")
                         .UseCollation("NOCASE");
 
@@ -318,7 +301,6 @@ namespace Nagi.Core.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Grouping")
-                        .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("IsLoved")
@@ -328,23 +310,18 @@ namespace Nagi.Core.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LightSwatchId")
-                        .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LrcFilePath")
-                        .HasMaxLength(1000)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Lyrics")
-                        .HasMaxLength(50000)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("MusicBrainzReleaseId")
-                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("MusicBrainzTrackId")
-                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<int>("PlayCount")
@@ -361,7 +338,6 @@ namespace Nagi.Core.Data.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(500)
                         .HasColumnType("TEXT")
                         .UseCollation("NOCASE");
 
@@ -483,7 +459,7 @@ namespace Nagi.Core.Data.Migrations
                     b.HasOne("Nagi.Core.Models.Folder", "Folder")
                         .WithMany("Songs")
                         .HasForeignKey("FolderId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Album");

@@ -3,7 +3,7 @@
 namespace Nagi.WinUI.Navigation;
 
 /// <summary>
-///     Provides parameters for navigating to a view that displays songs from a specific folder.
+///     Provides parameters for navigating to a view that displays songs from a specific folder or directory.
 /// </summary>
 public class FolderSongViewNavigationParameter
 {
@@ -13,7 +13,13 @@ public class FolderSongViewNavigationParameter
     public string Title { get; set; } = string.Empty;
 
     /// <summary>
-    ///     Gets or sets the unique identifier of the folder whose songs are to be displayed.
+    ///     Gets or sets the unique identifier of the root folder whose contents are to be displayed.
     /// </summary>
     public Guid FolderId { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the directory path within the folder to display.
+    ///     If null or empty, the root of the folder is displayed.
+    /// </summary>
+    public string? DirectoryPath { get; set; }
 }

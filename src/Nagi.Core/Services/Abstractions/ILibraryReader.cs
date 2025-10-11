@@ -12,6 +12,16 @@ public interface ILibraryReader
     Task<Folder?> GetFolderByPathAsync(string path);
     Task<IEnumerable<Folder>> GetAllFoldersAsync();
     Task<int> GetSongCountForFolderAsync(Guid folderId);
+    
+    // Folder Hierarchy Methods
+    Task<IEnumerable<Folder>> GetRootFoldersAsync();
+    Task<IEnumerable<Folder>> GetSubFoldersAsync(Guid parentFolderId);
+    Task<Folder?> GetFolderByDirectoryPathAsync(Guid rootFolderId, string directoryPath);
+    Task<IEnumerable<Song>> GetSongsInDirectoryAsync(Guid folderId, string directoryPath);
+    Task<IEnumerable<Song>> GetSongsInDirectoryRecursiveAsync(Guid folderId, string directoryPath);
+    Task<int> GetSongCountInDirectoryAsync(Guid folderId, string directoryPath);
+    Task<int> GetSubFolderCountAsync(Guid parentFolderId);
+    
     Task<Song?> GetSongByIdAsync(Guid songId);
     Task<Song?> GetSongByFilePathAsync(string filePath);
     Task<IReadOnlyDictionary<Guid, Song>> GetSongsByIdsAsync(IEnumerable<Guid> songIds);
@@ -60,6 +70,7 @@ public interface ILibraryReader
 
     Task<List<Guid>> GetAllSongIdsAsync(SongSortOrder sortOrder);
     Task<List<Guid>> GetAllSongIdsByFolderIdAsync(Guid folderId, SongSortOrder sortOrder);
+    Task<List<Guid>> GetAllSongIdsInDirectoryRecursiveAsync(Guid folderId, string directoryPath, SongSortOrder sortOrder);
     Task<List<Guid>> GetAllSongIdsByArtistIdAsync(Guid artistId, SongSortOrder sortOrder);
     Task<List<Guid>> GetAllSongIdsByAlbumIdAsync(Guid albumId, SongSortOrder sortOrder);
     Task<List<Guid>> GetAllSongIdsByPlaylistIdAsync(Guid playlistId);

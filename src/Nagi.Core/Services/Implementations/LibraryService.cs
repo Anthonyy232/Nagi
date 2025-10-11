@@ -38,6 +38,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     private readonly object _metadataFetchLock = new();
     private readonly IMetadataService _metadataService;
     private readonly IPathConfiguration _pathConfig;
+    private readonly SemaphoreSlim _scanSemaphore = new(1, 1);
     private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly ISpotifyService _spotifyService;
     private bool _disposed;
@@ -136,35 +137,37 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         if (string.IsNullOrWhiteSpace(path)) return null;
 
         await using var context = await _contextFactory.CreateDbContextAsync();
-        var existingFolder = await context.Folders.AsNoTracking().FirstOrDefaultAsync(f => f.Path == path);
+        
+        var normalizedPath = path.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+        
+        var existingFolder = await context.Folders.AsNoTracking()
+            .FirstOrDefaultAsync(f => f.Path == normalizedPath);
         if (existingFolder is not null)
-        {
-            _logger.LogInformation("Folder with path {FolderPath} already exists in the library.", path);
             return existingFolder;
-        }
 
-        var folder = new Folder { Path = path, Name = name ?? _fileSystem.GetFileNameWithoutExtension(path) ?? "" };
+        var folder = new Folder 
+        { 
+            Path = normalizedPath, 
+            Name = name ?? _fileSystem.GetFileNameWithoutExtension(normalizedPath) ?? "" 
+        };
         try
         {
-            folder.LastModifiedDate = _fileSystem.GetLastWriteTimeUtc(path);
+            folder.LastModifiedDate = _fileSystem.GetLastWriteTimeUtc(normalizedPath);
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Could not get LastWriteTimeUtc for folder {FolderPath}", path);
+            _logger.LogWarning(ex, "Could not get LastWriteTimeUtc for folder {FolderPath}", normalizedPath);
             folder.LastModifiedDate = null;
         }
 
         context.Folders.Add(folder);
         await context.SaveChangesAsync();
-        _logger.LogInformation("Added new folder '{FolderName}' with path {FolderPath} to the library.", folder.Name,
-            folder.Path);
         return folder;
     }
 
     /// <inheritdoc />
     public async Task<bool> RemoveFolderAsync(Guid folderId)
     {
-        _logger.LogInformation("Attempting to remove folder with ID {FolderId}.", folderId);
         await using var context = await _contextFactory.CreateDbContextAsync();
         var folder = await context.Folders.FindAsync(folderId);
         if (folder is null)
@@ -179,20 +182,28 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         await using var transaction = await context.Database.BeginTransactionAsync();
         try
         {
-            var songsInFolder = context.Songs.Where(s => s.FolderId == folderId);
+            if (folder.ParentFolderId == null)
+            {
+                var songsInFolder = context.Songs.Where(s => s.FolderId == folderId);
 
-            albumArtPathsToDelete = await songsInFolder
-                .Where(s => s.AlbumArtUriFromTrack != null)
-                .Select(s => s.AlbumArtUriFromTrack!)
-                .Distinct()
-                .ToListAsync();
+                albumArtPathsToDelete = await songsInFolder
+                    .Where(s => s.AlbumArtUriFromTrack != null)
+                    .Select(s => s.AlbumArtUriFromTrack!)
+                    .Distinct()
+                    .ToListAsync();
 
-            lrcPathsToDelete = await songsInFolder
-                .Where(s => s.LrcFilePath != null)
-                .Select(s => s.LrcFilePath!)
-                .ToListAsync();
+                lrcPathsToDelete = await songsInFolder
+                    .Where(s => s.LrcFilePath != null)
+                    .Select(s => s.LrcFilePath!)
+                    .ToListAsync();
 
-            await songsInFolder.ExecuteDeleteAsync();
+                await songsInFolder.ExecuteDeleteAsync();
+            }
+            else
+            {
+                albumArtPathsToDelete = new List<string>();
+                lrcPathsToDelete = new List<string>();
+            }
 
             context.Folders.Remove(folder);
             await context.SaveChangesAsync();
@@ -200,9 +211,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             await CleanUpOrphanedEntitiesAsync(context);
 
             await transaction.CommitAsync();
-            _logger.LogInformation(
-                "Successfully removed folder '{FolderName}' and its associated songs from the database.",
-                folder.Name);
+            _logger.LogInformation("Removed folder '{FolderName}' and associated data.", folder.Name);
         }
         catch (Exception ex)
         {
@@ -268,8 +277,10 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     public async Task<Folder?> GetFolderByPathAsync(string path)
     {
         if (string.IsNullOrWhiteSpace(path)) return null;
+        
+        var normalizedPath = path.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
         await using var context = await _contextFactory.CreateDbContextAsync();
-        return await context.Folders.AsNoTracking().FirstOrDefaultAsync(f => f.Path == path);
+        return await context.Folders.AsNoTracking().FirstOrDefaultAsync(f => f.Path == normalizedPath);
     }
 
     /// <inheritdoc />
@@ -284,6 +295,100 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     {
         await using var context = await _contextFactory.CreateDbContextAsync();
         return await context.Songs.CountAsync(s => s.FolderId == folderId);
+    }
+
+    /// <inheritdoc />
+    public async Task<IEnumerable<Folder>> GetRootFoldersAsync()
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        return await context.Folders.AsNoTracking()
+            .Where(f => f.ParentFolderId == null)
+            .OrderBy(f => f.Name)
+            .ThenBy(f => f.Path)
+            .ToListAsync();
+    }
+
+    /// <inheritdoc />
+    public async Task<IEnumerable<Folder>> GetSubFoldersAsync(Guid parentFolderId)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        return await context.Folders.AsNoTracking()
+            .Where(f => f.ParentFolderId == parentFolderId)
+            .OrderBy(f => f.Name)
+            .ThenBy(f => f.Path)
+            .ToListAsync();
+    }
+
+    /// <inheritdoc />
+    public async Task<Folder?> GetFolderByDirectoryPathAsync(Guid rootFolderId, string directoryPath)
+    {
+        if (string.IsNullOrWhiteSpace(directoryPath)) return null;
+
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        
+        var folder = await context.Folders.AsNoTracking()
+            .FirstOrDefaultAsync(f => f.Path == directoryPath);
+        
+        if (folder != null) return folder;
+
+        return null;
+    }
+
+    /// <inheritdoc />
+    public async Task<IEnumerable<Song>> GetSongsInDirectoryAsync(Guid folderId, string directoryPath)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        
+        var normalizedPath = directoryPath.TrimEnd(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar);
+        
+        return await context.Songs.AsNoTracking()
+            .Where(s => s.FolderId == folderId && s.DirectoryPath == normalizedPath)
+            .Include(s => s.Artist)
+            .Include(s => s.Album).ThenInclude(alb => alb!.Artist)
+            .OrderBy(s => s.Album != null ? s.Album.Title : string.Empty)
+            .ThenBy(s => s.TrackNumber)
+            .ThenBy(s => s.Title)
+            .AsSplitQuery()
+            .ToListAsync();
+    }
+
+    /// <inheritdoc />
+    public async Task<int> GetSongCountInDirectoryAsync(Guid folderId, string directoryPath)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        
+        var normalizedPath = directoryPath.TrimEnd(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar);
+        
+        return await context.Songs.CountAsync(s => s.FolderId == folderId && s.DirectoryPath == normalizedPath);
+    }
+
+    /// <inheritdoc />
+    public async Task<IEnumerable<Song>> GetSongsInDirectoryRecursiveAsync(Guid folderId, string directoryPath)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        
+        var normalizedPath = directoryPath.TrimEnd(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar);
+        
+        return await context.Songs.AsNoTracking()
+            .Where(s => s.FolderId == folderId && 
+                       (s.DirectoryPath == normalizedPath || 
+                        s.DirectoryPath.StartsWith(normalizedPath + "\\") ||
+                        s.DirectoryPath.StartsWith(normalizedPath + "/")))
+            .Include(s => s.Artist)
+            .Include(s => s.Album).ThenInclude(alb => alb!.Artist)
+            .OrderBy(s => s.DirectoryPath)
+            .ThenBy(s => s.Album != null ? s.Album.Title : string.Empty)
+            .ThenBy(s => s.TrackNumber)
+            .ThenBy(s => s.Title)
+            .AsSplitQuery()
+            .ToListAsync();
+    }
+
+    /// <inheritdoc />
+    public async Task<int> GetSubFolderCountAsync(Guid parentFolderId)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        return await context.Folders.CountAsync(f => f.ParentFolderId == parentFolderId);
     }
 
     #endregion
@@ -309,6 +414,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     public async Task<bool> RescanFolderForMusicAsync(Guid folderId, IProgress<ScanProgress>? progress = null,
         CancellationToken cancellationToken = default)
     {
+        // Wait to acquire the semaphore. If the operation is cancelled while waiting, it will throw.
+        await _scanSemaphore.WaitAsync(cancellationToken);
         try
         {
             return await Task.Run(async () =>
@@ -321,8 +428,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                     return false;
                 }
 
-                _logger.LogInformation("Starting rescan for folder '{FolderName}' ({FolderId}).", folder.Name,
-                    folder.Id);
+                _logger.LogInformation("Scanning folder '{FolderName}'...", folder.Name);
 
                 try
                 {
@@ -338,71 +444,80 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                         return await RemoveFolderAsync(folderId);
                     }
 
+                progress?.Report(new ScanProgress
+                    { StatusText = $"Analyzing '{folder.Name}'...", IsIndeterminate = true });
+                var (filesToAdd, filesToUpdate, filesRemovedFromDisk) =
+                    await AnalyzeFolderChangesAsync(folderId, folder.Path, cancellationToken);
+
+                if (filesToAdd.Any() || filesToUpdate.Any() || filesRemovedFromDisk.Any())
+                    _logger.LogInformation("Changes detected: +{New} ~{Updated} -{Removed}",
+                        filesToAdd.Count, filesToUpdate.Count, filesRemovedFromDisk.Count);
+
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var allFilePathsToDelete = filesRemovedFromDisk.Concat(filesToUpdate).Distinct().ToList();
+
+                if (allFilePathsToDelete.Any())
+                {
                     progress?.Report(new ScanProgress
-                        { StatusText = $"Analyzing '{folder.Name}'...", IsIndeterminate = true });
-                    var (filesToAdd, filesToUpdate, filesToDelete) =
-                        await AnalyzeFolderChangesAsync(folderId, folder.Path, cancellationToken);
+                        { StatusText = "Cleaning up your library...", IsIndeterminate = true });
+                    await using var deleteContext = await _contextFactory.CreateDbContextAsync();
 
-                    _logger.LogInformation(
-                        "Folder analysis complete for {FolderId}: {FilesToAdd} new, {FilesToUpdate} updated, {FilesToDelete} removed.",
-                        folderId, filesToAdd.Count, filesToUpdate.Count, filesToDelete.Count);
+                    var songsToDeleteQuery = deleteContext.Songs
+                        .Where(s => s.FolderId == folderId && allFilePathsToDelete.Contains(s.FilePath));
 
-                    cancellationToken.ThrowIfCancellationRequested();
+                    var lrcPathsToDelete = await songsToDeleteQuery
+                        .Where(s => s.LrcFilePath != null)
+                        .Select(s => s.LrcFilePath!)
+                        .ToListAsync(cancellationToken);
 
-                    if (filesToDelete.Any())
-                    {
-                        progress?.Report(new ScanProgress
-                            { StatusText = "Cleaning up your library...", IsIndeterminate = true });
-                        await using var deleteContext = await _contextFactory.CreateDbContextAsync();
+                    var albumArtPathsToDelete = await songsToDeleteQuery
+                        .Where(s => s.AlbumArtUriFromTrack != null)
+                        .Select(s => s.AlbumArtUriFromTrack!)
+                        .Distinct()
+                        .ToListAsync(cancellationToken);
 
-                        var songsToDeleteQuery = deleteContext.Songs
-                            .Where(s => s.FolderId == folderId && filesToDelete.Contains(s.FilePath));
+                    await songsToDeleteQuery.ExecuteDeleteAsync(cancellationToken);
 
-                        var lrcPathsToDelete = await songsToDeleteQuery
-                            .Where(s => s.LrcFilePath != null)
-                            .Select(s => s.LrcFilePath!)
-                            .ToListAsync(cancellationToken);
-
-                        var albumArtPathsToDelete = await songsToDeleteQuery
-                            .Where(s => s.AlbumArtUriFromTrack != null)
-                            .Select(s => s.AlbumArtUriFromTrack!)
-                            .Distinct()
-                            .ToListAsync(cancellationToken);
-
-                        await songsToDeleteQuery.ExecuteDeleteAsync(cancellationToken);
-
-                        foreach (var lrcPath in lrcPathsToDelete)
-                            if (IsPathInLrcCache(lrcPath))
-                                try
-                                {
-                                    _fileSystem.DeleteFile(lrcPath);
-                                }
-                                catch (Exception ex)
-                                {
-                                    _logger.LogWarning(ex,
-                                        "Failed to delete cached LRC file {LrcPath} during rescan.", lrcPath);
-                                }
-
-                        foreach (var artPath in albumArtPathsToDelete)
+                    // Clean up associated files
+                    foreach (var lrcPath in lrcPathsToDelete)
+                        if (IsPathInLrcCache(lrcPath))
                             try
                             {
-                                if (_fileSystem.FileExists(artPath)) _fileSystem.DeleteFile(artPath);
+                                _fileSystem.DeleteFile(lrcPath);
                             }
                             catch (Exception ex)
                             {
                                 _logger.LogWarning(ex,
-                                    "Failed to delete orphaned album art file {AlbumArtPath} during rescan.", artPath);
+                                    "Failed to delete cached LRC file {LrcPath} during rescan.", lrcPath);
                             }
-                    }
 
-                    var filesToProcess = filesToAdd.Concat(filesToUpdate).ToList();
-                    if (!filesToProcess.Any())
+                    foreach (var artPath in albumArtPathsToDelete)
+                        try
+                        {
+                            if (_fileSystem.FileExists(artPath)) _fileSystem.DeleteFile(artPath);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogWarning(ex,
+                                "Failed to delete orphaned album art file {AlbumArtPath} during rescan.", artPath);
+                        }
+                }
+
+                var filesToProcess = filesToAdd.Concat(filesToUpdate).ToList();
+                
+                if (!filesToProcess.Any())
+                {
+                    if (allFilePathsToDelete.Any())
                     {
-                        _logger.LogInformation("Scan complete for {FolderId}. No new or updated songs found.",
-                            folderId);
-                        progress?.Report(new ScanProgress
-                            { StatusText = "Scan complete. No new songs found.", Percentage = 100 });
-                        return filesToDelete.Any();
+                        progress?.Report(new ScanProgress { StatusText = "Finalizing cleanup...", IsIndeterminate = true });
+                        await using var cleanupContext = await _contextFactory.CreateDbContextAsync();
+                        await CleanUpOrphanedEntitiesAsync(cleanupContext, cancellationToken);
+                    }
+                    
+                    progress?.Report(new ScanProgress
+                        { StatusText = "Scan complete. Library is up to date.", Percentage = 100 });
+                    return allFilePathsToDelete.Any();
                     }
 
                     var extractedMetadata =
@@ -425,9 +540,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
                     var pluralSong = newSongsFound == 1 ? "song" : "songs";
                     var summary = newSongsFound > 0
-                        ? $"Scan complete. Added {newSongsFound:N0} new {pluralSong}."
-                        : "Scan complete. No new songs found.";
-                    _logger.LogInformation("Rescan for folder {FolderId} finished. {Summary}", folderId, summary);
+                        ? $"Scan complete. Added or updated {newSongsFound:N0} {pluralSong}."
+                        : "Scan complete. Library is up to date.";
                     progress?.Report(new ScanProgress
                         { StatusText = summary, Percentage = 100, NewSongsFound = newSongsFound });
                     return true;
@@ -453,13 +567,17 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             progress?.Report(new ScanProgress { StatusText = "Scan cancelled by user.", Percentage = 100 });
             return false;
         }
+        finally
+        {
+            // CRITICAL: Release the semaphore so other scans can proceed.
+            _scanSemaphore.Release();
+        }
     }
 
     /// <inheritdoc />
     public async Task<bool> RefreshAllFoldersAsync(IProgress<ScanProgress>? progress = null,
         CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Starting to refresh all library folders.");
         var folders = (await GetAllFoldersAsync()).ToList();
         var totalFolders = folders.Count;
 
@@ -501,7 +619,6 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             foldersProcessed++;
         }
 
-        _logger.LogInformation("Library refresh complete. Processed {FolderCount} folders.", totalFolders);
         progress?.Report(new ScanProgress { StatusText = "Library refresh complete.", Percentage = 100 });
         return anyChangesMade;
     }
@@ -517,11 +634,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         var needsUpdate = string.IsNullOrWhiteSpace(artist.Biography) ||
                           string.IsNullOrWhiteSpace(artist.LocalImageCachePath);
         if (allowOnlineFetch && needsUpdate)
-        {
-            _logger.LogInformation("Fetching remote details for artist '{ArtistName}' ({ArtistId}).", artist.Name,
-                artist.Id);
             await FetchAndUpdateArtistFromRemoteAsync(context, artist);
-        }
 
         return await context.Artists.AsNoTracking().FirstOrDefaultAsync(a => a.Id == artistId);
     }
@@ -532,10 +645,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         lock (_metadataFetchLock)
         {
             if (_isMetadataFetchRunning)
-            {
-                _logger.LogInformation("Artist metadata background fetch is already running.");
                 return Task.CompletedTask;
-            }
 
             if (_metadataFetchCts.IsCancellationRequested)
             {
@@ -546,7 +656,6 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             _isMetadataFetchRunning = true;
         }
 
-        _logger.LogInformation("Starting artist metadata background fetch task.");
         var token = _metadataFetchCts.Token;
 
         _ = Task.Run(async () =>
@@ -569,9 +678,6 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                     }
 
                     if (artistIdsToUpdate.Count == 0 || token.IsCancellationRequested) break;
-
-                    _logger.LogInformation("Processing a batch of {ArtistCount} artists for metadata fetch.",
-                        artistIdsToUpdate.Count);
 
                     using var scope = _serviceScopeFactory.CreateScope();
                     var scopedContextFactory =
@@ -609,7 +715,6 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 lock (_metadataFetchLock)
                 {
                     _isMetadataFetchRunning = false;
-                    _logger.LogInformation("Artist metadata background fetch task has stopped.");
                 }
             }
         }, token);
@@ -1403,6 +1508,25 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     }
 
     /// <inheritdoc />
+    public async Task<List<Guid>> GetAllSongIdsInDirectoryRecursiveAsync(Guid folderId, string directoryPath, SongSortOrder sortOrder)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        
+        // Normalize the directory path for comparison
+        var normalizedPath = directoryPath.TrimEnd(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar);
+        
+        // Get all song IDs where DirectoryPath equals normalizedPath or starts with normalizedPath followed by a separator
+        // This prevents false positives (e.g., "C:\\Music\\Rock" matching "C:\\Music\\Rockabilly")
+        var query = context.Songs.AsNoTracking()
+            .Where(s => s.FolderId == folderId && 
+                       (s.DirectoryPath == normalizedPath || 
+                        s.DirectoryPath.StartsWith(normalizedPath + "\\\\") ||
+                        s.DirectoryPath.StartsWith(normalizedPath + "/")));
+        
+        return await ApplySongSortOrder(query, sortOrder).Select(s => s.Id).ToListAsync();
+    }
+
+    /// <inheritdoc />
     public async Task<List<Guid>> GetAllSongIdsByArtistIdAsync(Guid artistId, SongSortOrder sortOrder)
     {
         await using var context = await _contextFactory.CreateDbContextAsync();
@@ -1778,7 +1902,103 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         }
     }
 
-    private async Task<(List<string> filesToAdd, List<string> filesToUpdate, List<string> filesToDelete)>
+    /// <summary>
+    ///     Ensures that all discovered directory paths have corresponding Folder records in the database,
+    ///     creating a hierarchical structure of subfolders under the root folder.
+    ///     This includes all intermediate directories in the path hierarchy, even if they don't directly contain music files.
+    /// </summary>
+    private async Task EnsureSubFoldersExistAsync(Guid rootFolderId, string rootFolderPath, 
+        HashSet<string> discoveredDirectories, CancellationToken cancellationToken)
+    {
+        if (discoveredDirectories.Count == 0) return;
+
+        await using var context = await _contextFactory.CreateDbContextAsync();
+
+        var allFolders = await context.Folders.AsNoTracking().ToListAsync(cancellationToken);
+        var existingFolders = allFolders.ToDictionary(f => f.Path, StringComparer.OrdinalIgnoreCase);
+
+        var foldersToCreate = new List<Folder>();
+        var normalizedRootPath = rootFolderPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+
+        var allDirectoriesToEnsure = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        
+        // For each discovered directory (which contains songs), ensure all parent directories
+        // in the path hierarchy are also added, so empty intermediate folders show up in the UI
+        foreach (var directoryPath in discoveredDirectories)
+        {
+            var normalizedDirPath = directoryPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            var currentPath = normalizedDirPath;
+            
+            // Walk up the directory tree to the root, collecting all intermediate paths
+            while (!string.IsNullOrEmpty(currentPath) && 
+                   !currentPath.Equals(normalizedRootPath, StringComparison.OrdinalIgnoreCase))
+            {
+                allDirectoriesToEnsure.Add(currentPath);
+                var parentPath = _fileSystem.GetDirectoryName(currentPath);
+                if (string.IsNullOrEmpty(parentPath)) break;
+                currentPath = parentPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            }
+        }
+
+        var sortedDirectories = allDirectoriesToEnsure
+            .OrderBy(d => d.Split(new[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar }, 
+                StringSplitOptions.RemoveEmptyEntries).Length)
+            .ToList();
+
+        foreach (var directoryPath in sortedDirectories)
+        {
+            var normalizedDirPath = directoryPath;
+            
+            if (existingFolders.ContainsKey(normalizedDirPath))
+                continue;
+
+            Guid? parentFolderId = rootFolderId;
+            var parentPath = _fileSystem.GetDirectoryName(normalizedDirPath);
+            
+            if (!string.IsNullOrWhiteSpace(parentPath))
+            {
+                var normalizedParentPath = parentPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                
+                if (!normalizedParentPath.Equals(normalizedRootPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    if (existingFolders.TryGetValue(normalizedParentPath, out var parentFolder))
+                    {
+                        parentFolderId = parentFolder.Id;
+                    }
+                    else
+                    {
+                        var parentInList = foldersToCreate.FirstOrDefault(f => 
+                            f.Path.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+                                .Equals(normalizedParentPath, StringComparison.OrdinalIgnoreCase));
+                        if (parentInList != null)
+                        {
+                            parentFolderId = parentInList.Id;
+                        }
+                    }
+                }
+            }
+
+            var folderName = Path.GetFileName(normalizedDirPath);
+            var newFolder = new Folder
+            {
+                Name = string.IsNullOrWhiteSpace(folderName) ? normalizedDirPath : folderName,
+                Path = normalizedDirPath,
+                ParentFolderId = parentFolderId,
+                LastModifiedDate = DateTime.UtcNow
+            };
+
+            foldersToCreate.Add(newFolder);
+            existingFolders[normalizedDirPath] = newFolder;
+        }
+
+        if (foldersToCreate.Count > 0)
+        {
+            context.Folders.AddRange(foldersToCreate);
+            await context.SaveChangesAsync(cancellationToken);
+        }
+    }
+
+    private async Task<(List<string> filesToAdd, List<string> filesToUpdate, List<string> filesRemovedFromDisk)>
         AnalyzeFolderChangesAsync(Guid folderId, string folderPath, CancellationToken cancellationToken)
     {
         await using var analysisContext = await _contextFactory.CreateDbContextAsync();
@@ -1819,9 +2039,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             .ToList();
 
         var filesRemovedFromDisk = dbPaths.Except(diskPaths).ToList();
-        var filesToDelete = filesRemovedFromDisk.Concat(filesToUpdate).ToList();
 
-        return (filesToAdd, filesToUpdate, filesToDelete);
+        return (filesToAdd, filesToUpdate, filesRemovedFromDisk);
     }
 
     private async Task<List<SongFileMetadata>> ExtractMetadataConcurrentlyAsync(List<string> filesToProcess,
@@ -1885,18 +2104,56 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             NewSongsFound = totalMetadataCount
         });
 
+        await using var folderContext = await _contextFactory.CreateDbContextAsync();
+        var rootFolder = await folderContext.Folders.AsNoTracking()
+            .FirstOrDefaultAsync(f => f.Id == folderId, cancellationToken);
+        if (rootFolder == null)
+        {
+            _logger.LogError("Root folder with ID {FolderId} not found during batch update.", folderId);
+            return 0;
+        }
+
+        var discoveredDirectories = metadataList
+            .Select(m => _fileSystem.GetDirectoryName(m.FilePath))
+            .Where(d => !string.IsNullOrWhiteSpace(d))
+            .Select(d => d!)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        await EnsureSubFoldersExistAsync(folderId, rootFolder.Path, discoveredDirectories, cancellationToken);
+
         while (retryCount < maxRetries && !saveSucceeded)
         {
             cancellationToken.ThrowIfCancellationRequested();
             try
             {
                 await using var context = await _contextFactory.CreateDbContextAsync();
+                
+                // CRITICAL: Ensure clean state - no tracked entities from previous iterations
+                context.ChangeTracker.Clear();
 
-                var artistNames = metadataList.SelectMany(m => new[] { m.Artist, m.AlbumArtist })
+                var filePaths = metadataList.Select(m => m.FilePath).ToList();
+                
+                var existingSongPaths = await context.Songs
+                    .AsNoTracking()
+                    .Where(s => filePaths.Contains(s.FilePath))
+                    .Select(s => s.FilePath)
+                    .ToListAsync(cancellationToken);
+                    
+                var existingSongPathsSet = new HashSet<string>(existingSongPaths, StringComparer.OrdinalIgnoreCase);
+
+                var metadataToInsert = metadataList
+                    .Where(m => !existingSongPathsSet.Contains(m.FilePath))
+                    .ToList();
+
+                if (metadataToInsert.Count == 0)
+                    return 0;
+
+                var artistNames = metadataToInsert.SelectMany(m => new[] { m.Artist, m.AlbumArtist })
                     .Where(n => !string.IsNullOrWhiteSpace(n)).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
-                var albumTitles = metadataList.Select(m => m.Album).Where(t => !string.IsNullOrWhiteSpace(t))
+                var albumTitles = metadataToInsert.Select(m => m.Album).Where(t => !string.IsNullOrWhiteSpace(t))
                     .Distinct(StringComparer.OrdinalIgnoreCase).ToList();
-                var genreNames = metadataList.SelectMany(m => m.Genres ?? Enumerable.Empty<string>())
+                var genreNames = metadataToInsert.SelectMany(m => m.Genres ?? Enumerable.Empty<string>())
                     .Where(g => !string.IsNullOrWhiteSpace(g)).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
 
                 var existingArtists = await context.Artists.Where(a => artistNames.Contains(a.Name))
@@ -1922,12 +2179,14 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                         existingGenres[name!] = newGenre;
                     }
 
-                foreach (var metadata in metadataList)
+                foreach (var metadata in metadataToInsert)
                     await AddSongWithDetailsOptimizedAsync(context, folderId, metadata, existingArtists, existingAlbums,
                         existingGenres);
 
                 await context.SaveChangesAsync(cancellationToken);
                 saveSucceeded = true;
+                
+                return metadataToInsert.Count;
             }
             catch (DbUpdateException ex) when (IsUniqueConstraintViolation(ex))
             {
@@ -1945,7 +2204,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             }
         }
 
-        return totalMetadataCount;
+        return 0;
     }
 
     private Task AddSongWithDetailsOptimizedAsync(
@@ -1987,9 +2246,12 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 .Distinct(StringComparer.OrdinalIgnoreCase).Select(name => genreLookup[name]).ToList() ??
             new List<Genre>();
 
+        var directoryPath = _fileSystem.GetDirectoryName(metadata.FilePath) ?? string.Empty;
+
         var song = new Song
         {
             FilePath = metadata.FilePath,
+            DirectoryPath = directoryPath,
             Title = metadata.Title,
             Duration = metadata.Duration,
             AlbumArtUriFromTrack = metadata.CoverArtUri,
@@ -2044,9 +2306,12 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
             var genres = await EnsureGenresExistAsync(context, metadata.Genres);
 
+            var directoryPath = _fileSystem.GetDirectoryName(metadata.FilePath) ?? string.Empty;
+
             var song = new Song
             {
                 FilePath = metadata.FilePath,
+                DirectoryPath = directoryPath,
                 Title = metadata.Title,
                 Duration = metadata.Duration,
                 AlbumArtUriFromTrack = metadata.CoverArtUri,
@@ -2153,11 +2418,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         await context.SaveChangesAsync();
 
         if (wasMetadataFoundAndUpdated)
-        {
-            _logger.LogInformation("Successfully updated remote metadata for artist '{ArtistName}'.", artist.Name);
             ArtistMetadataUpdated?.Invoke(this,
                 new ArtistMetadataUpdatedEventArgs(artist.Id, artist.LocalImageCachePath));
-        }
     }
 
     private Task<string?> DownloadAndCacheArtistImageAsync(Artist artist, Uri imageUrl, HttpClient httpClient)
@@ -2176,9 +2438,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         }
         catch (Exception ex)
         {
-            // This removal is critical to prevent a "poisoned" task from blocking future attempts.
-            _logger.LogError(ex, "Artist image download failed for artist '{ArtistName}'. Removing from cache.",
-                artist.Name);
+            // Prevent retry storms by removing failed attempts from cache
+            _logger.LogError(ex, "Artist image download failed for artist '{ArtistName}'.", artist.Name);
             _artistImageProcessingTasks.TryRemove(artist.Id, out _);
             return Task.FromResult<string?>(null);
         }
@@ -2293,6 +2554,61 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     private async Task CleanUpOrphanedEntitiesAsync(MusicDbContext context,
         CancellationToken cancellationToken = default)
     {
+        var deletedAny = true;
+        while (deletedAny)
+        {
+            var orphanedSubFolders = await context.Folders
+                .AsNoTracking()
+                .Where(f => f.ParentFolderId != null) // Only subfolders, never root folders
+                .Where(f => !f.SubFolders.Any()) // No child folders
+                .Select(f => new { f.Id, f.Path })
+                .ToListAsync(cancellationToken);
+
+            if (!orphanedSubFolders.Any())
+            {
+                deletedAny = false;
+                break;
+            }
+
+            var folderPaths = orphanedSubFolders.Select(f => f.Path).ToList();
+            
+            // Prevent deletion of folders containing songs in subdirectories
+            var pathsWithSongsOrDescendants = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            
+            foreach (var folderPath in folderPaths)
+            {
+                var normalizedPath = folderPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                
+                // Check if any songs exist in this folder or any subdirectory
+                var hasSongs = await context.Songs
+                    .AnyAsync(s => s.DirectoryPath == normalizedPath ||
+                                   s.DirectoryPath.StartsWith(normalizedPath + Path.DirectorySeparatorChar) ||
+                                   s.DirectoryPath.StartsWith(normalizedPath + Path.AltDirectorySeparatorChar), 
+                              cancellationToken);
+                
+                if (hasSongs)
+                {
+                    pathsWithSongsOrDescendants.Add(folderPath);
+                }
+            }
+
+            var foldersToDelete = orphanedSubFolders
+                .Where(f => !pathsWithSongsOrDescendants.Contains(f.Path))
+                .Select(f => f.Id)
+                .ToList();
+
+            if (foldersToDelete.Any())
+            {
+                await context.Folders
+                    .Where(f => foldersToDelete.Contains(f.Id))
+                    .ExecuteDeleteAsync(cancellationToken);
+            }
+            else
+            {
+                deletedAny = false;
+            }
+        }
+
         await context.Albums.Where(a => !a.Songs.Any()).ExecuteDeleteAsync(cancellationToken);
 
         var orphanedArtists = await context.Artists
@@ -2340,9 +2656,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
     private IQueryable<Song> BuildSongSearchQuery(MusicDbContext context, string searchTerm)
     {
-        // Using EF.Functions.Like with leading wildcards ("%term%") can be inefficient
-        // on large datasets as it often prevents the database from using an index.
-        // For very large libraries, a dedicated full-text search solution would be more performant.
+        // Leading wildcards prevent index usage; consider full-text search for large datasets
         var term = $"%{searchTerm}%";
         return context.Songs
             .Include(s => s.Artist)
@@ -2398,6 +2712,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             {
                 _metadataFetchCts.Cancel();
                 _metadataFetchCts.Dispose();
+                _scanSemaphore.Dispose();
             }
 
             _disposed = true;
