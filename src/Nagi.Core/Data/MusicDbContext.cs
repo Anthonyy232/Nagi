@@ -34,9 +34,11 @@ public class MusicDbContext : DbContext
         {
             entity.Property(s => s.Title).UseCollation("NOCASE");
             entity.Property(s => s.FilePath).UseCollation("NOCASE");
+            entity.Property(s => s.DirectoryPath).UseCollation("NOCASE");
 
             entity.HasIndex(s => s.Title);
             entity.HasIndex(s => s.FilePath).IsUnique();
+            entity.HasIndex(s => s.DirectoryPath);
             entity.HasIndex(s => s.ArtistId);
             entity.HasIndex(s => s.AlbumId);
             entity.HasIndex(s => s.FolderId);
@@ -48,10 +50,13 @@ public class MusicDbContext : DbContext
             // Composite index for sorting tracks within an album.
             entity.HasIndex(s => new { s.AlbumId, s.DiscNumber, s.TrackNumber });
 
+            // Composite index for efficient folder + directory queries.
+            entity.HasIndex(s => new { s.FolderId, s.DirectoryPath });
+
             entity.HasOne(s => s.Folder)
                 .WithMany(f => f.Songs)
                 .HasForeignKey(s => s.FolderId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.NoAction);
 
             entity.HasMany(s => s.ListenHistory)
                 .WithOne(lh => lh.Song)
@@ -99,6 +104,13 @@ public class MusicDbContext : DbContext
         {
             entity.Property(f => f.Path).UseCollation("NOCASE");
             entity.HasIndex(f => f.Path).IsUnique();
+            entity.HasIndex(f => f.ParentFolderId);
+
+            // Self-referencing relationship for folder hierarchy
+            entity.HasOne(f => f.ParentFolder)
+                .WithMany(f => f.SubFolders)
+                .HasForeignKey(f => f.ParentFolderId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         // Configure the Playlist entity.

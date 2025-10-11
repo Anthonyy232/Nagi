@@ -77,7 +77,6 @@ public class ElementThemeToFriendlyStringConverter : IValueConverter
     {
         if (value is string strValue)
         {
-            // Find the theme corresponding to the friendly name.
             var pair = FriendlyNames.FirstOrDefault(kvp => kvp.Value == strValue);
             if (pair.Value != null) return pair.Key;
         }
@@ -161,7 +160,6 @@ public class CollectionToVisibilityConverter : IValueConverter
     public object Convert(object value, Type targetType, object parameter, string language)
     {
         if (value is IEnumerable collection)
-            // Efficiently checks if there is at least one item.
             return collection.Cast<object>().Any() ? Visibility.Visible : Visibility.Collapsed;
         return Visibility.Collapsed;
     }
@@ -204,7 +202,6 @@ public class ObjectToVisibilityConverter : IValueConverter
     {
         var isVisible = value != null;
 
-        // Inversion can be controlled via the converter parameter.
         if ("Invert".Equals(parameter as string, StringComparison.OrdinalIgnoreCase)) isVisible = !isVisible;
 
         return isVisible ? Visibility.Visible : Visibility.Collapsed;
@@ -353,48 +350,6 @@ public class ActiveLyricToStyleConverter : IValueConverter
 }
 
 /// <summary>
-///     Blends an input color with a specified BlendColor by a given factor.
-///     Useful for creating background or hover states from a base color.
-/// </summary>
-public class ColorBlendConverter : IValueConverter
-{
-    /// <summary>
-    ///     Gets or sets the color to blend with the source color. Defaults to Black.
-    /// </summary>
-    public Color BlendColor { get; set; } = Colors.Black;
-
-    /// <summary>
-    ///     Gets or sets the blending factor. 0.0 is 100% source color, 1.0 is 100% BlendColor.
-    ///     Defaults to 0.2 (20% blend).
-    /// </summary>
-    public double BlendFactor { get; set; } = 0.2;
-
-    public object Convert(object value, Type targetType, object parameter, string language)
-    {
-        if (value is not Color sourceColor) return value;
-
-        // Allow overriding the factor via converter parameter.
-        var factor = parameter is string paramString && double.TryParse(paramString, out var p)
-            ? p
-            : BlendFactor;
-
-        factor = Math.Clamp(factor, 0.0, 1.0);
-
-        // Linear interpolation between the source and blend colors.
-        var r = (byte)((1 - factor) * sourceColor.R + factor * BlendColor.R);
-        var g = (byte)((1 - factor) * sourceColor.G + factor * BlendColor.G);
-        var b = (byte)((1 - factor) * sourceColor.B + factor * BlendColor.B);
-
-        return Color.FromArgb(sourceColor.A, r, g, b);
-    }
-
-    public object ConvertBack(object value, Type targetType, object parameter, string language)
-    {
-        throw new NotImplementedException();
-    }
-}
-
-/// <summary>
 ///     Converts a BackdropMaterial enum value to a user-friendly string for display in the UI.
 /// </summary>
 public class BackdropMaterialToStringConverter : IValueConverter
@@ -414,7 +369,6 @@ public class BackdropMaterialToStringConverter : IValueConverter
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)
     {
-        // This converter is only used for one-way binding, so ConvertBack is not needed.
         throw new NotImplementedException();
     }
 }

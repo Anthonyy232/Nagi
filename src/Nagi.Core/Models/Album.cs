@@ -10,11 +10,11 @@ public class Album
 {
     [Key] public Guid Id { get; set; } = Guid.NewGuid();
 
-    [Required] public string Title { get; set; } = "Unknown Album";
+    [Required, MaxLength(500)] public string Title { get; set; } = "Unknown Album";
 
     public int? Year { get; set; }
 
-    public string? CoverArtUri { get; set; }
+    [MaxLength(2000)] public string? CoverArtUri { get; set; }
 
     /// <summary>
     ///     The foreign key for the album's primary artist.

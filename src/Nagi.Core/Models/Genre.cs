@@ -16,7 +16,7 @@ public class Genre
     /// <summary>
     ///     The name of the genre (e.g., "Rock", "Jazz", "Electronic").
     /// </summary>
-    [Required]
+    [Required, MaxLength(100)]
     public string Name { get; set; } = "Unknown Genre";
 
     /// <summary>
