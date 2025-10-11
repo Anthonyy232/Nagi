@@ -752,6 +752,44 @@ public class MusicPlaybackServiceTests
     }
 
     /// <summary>
+    ///     Verifies that PlayNextAsync works correctly when the queue is empty and no track is playing.
+    /// </summary>
+    [Fact]
+    public async Task PlayNextAsync_WithEmptyQueue_AddsSongAtBeginning()
+    {
+        // Arrange
+        await _service.InitializeAsync();
+        var songToAdd = new Song { Id = Guid.NewGuid(), Title = "First Song" };
+
+        // Act
+        await _service.PlayNextAsync(songToAdd);
+
+        // Assert
+        _service.PlaybackQueue.Should().HaveCount(1);
+        _service.PlaybackQueue[0].Should().Be(songToAdd);
+    }
+
+    /// <summary>
+    ///     Verifies that PlayNextAsync works correctly when there's only one song in queue and it's playing.
+    /// </summary>
+    [Fact]
+    public async Task PlayNextAsync_WithSingleItemQueue_AddsSongAfterCurrent()
+    {
+        // Arrange
+        await _service.InitializeAsync();
+        var firstSong = new Song { Id = Guid.NewGuid(), Title = "First Song" };
+        await _service.PlayAsync(new[] { firstSong });
+        var songToAdd = new Song { Id = Guid.NewGuid(), Title = "Second Song" };
+
+        // Act
+        await _service.PlayNextAsync(songToAdd);
+
+        // Assert
+        _service.PlaybackQueue.Should().HaveCount(2);
+        _service.PlaybackQueue[1].Should().Be(songToAdd);
+    }
+
+    /// <summary>
     ///     Verifies that removing the currently playing song from the queue causes playback to
     ///     advance to the next available track.
     /// </summary>
