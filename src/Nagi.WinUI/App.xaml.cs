@@ -498,6 +498,7 @@ public partial class App : Application
             }
         else
             await Log.CloseAndFlushAsync();
+
         Current?.Exit();
     }
 
@@ -666,7 +667,7 @@ public partial class App : Application
         else
         {
             // Default behavior: activate and show the main window.
-             _window.Activate();
+            _window.Activate();
         }
     }
 

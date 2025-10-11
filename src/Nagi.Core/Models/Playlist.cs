@@ -16,7 +16,8 @@ public class Playlist
     /// <summary>
     ///     The name of the playlist.
     /// </summary>
-    [Required, MaxLength(500)]
+    [Required]
+    [MaxLength(500)]
     public string Name { get; set; } = "New Playlist";
 
     /// <summary>
@@ -32,12 +33,14 @@ public class Playlist
     /// <summary>
     ///     An optional description for the playlist.
     /// </summary>
-    [MaxLength(5000)] public string? Description { get; set; }
+    [MaxLength(5000)]
+    public string? Description { get; set; }
 
     /// <summary>
     ///     A URI or path to a custom cover image for the playlist.
     /// </summary>
-    [MaxLength(2000)] public string? CoverImageUri { get; set; }
+    [MaxLength(2000)]
+    public string? CoverImageUri { get; set; }
 
     /// <summary>
     ///     The join entities that link this playlist to its songs in an ordered sequence.

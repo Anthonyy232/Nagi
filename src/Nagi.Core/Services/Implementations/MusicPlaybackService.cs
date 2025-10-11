@@ -592,7 +592,8 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
             _currentShuffledIndex = _shuffledQueue.IndexOf(CurrentTrack);
             if (_currentShuffledIndex == -1)
             {
-                _logger.LogWarning("Track '{SongTitle}' not found in shuffled queue. Regenerating shuffle.", CurrentTrack.Title);
+                _logger.LogWarning("Track '{SongTitle}' not found in shuffled queue. Regenerating shuffle.",
+                    CurrentTrack.Title);
                 GenerateShuffledQueue();
                 _currentShuffledIndex = _shuffledQueue.IndexOf(CurrentTrack);
             }
@@ -761,7 +762,9 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
                     // previously we sought to the saved position; position restore intentionally removed
                 }
                 else if (completedTask != durationKnownTcs.Task)
+                {
                     _logger.LogWarning("Timed out waiting for media duration during session restore.");
+                }
             }
             finally
             {

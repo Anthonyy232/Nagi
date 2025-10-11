@@ -70,11 +70,12 @@ public class TagLibMetadataService : IMetadataService
             }, cts.Token);
 
             var (tag, properties) = await extractionTask;
-            
+
             PopulateMetadataFromTag(metadata, tag, properties);
-            
+
             // Process album art with a separate timeout to avoid blocking
-            using var albumArtCts = new CancellationTokenSource(TimeSpan.FromSeconds(15)); // 15-second timeout for album art
+            using var albumArtCts =
+                new CancellationTokenSource(TimeSpan.FromSeconds(15)); // 15-second timeout for album art
             var albumArtTask = Task.Run(() =>
             {
                 using var tagFileForArt = File.Create(new NonWritableFileAbstraction(filePath));
@@ -84,10 +85,7 @@ public class TagLibMetadataService : IMetadataService
             try
             {
                 var tagForArt = await albumArtTask;
-                if (tagForArt != null)
-                {
-                    await ProcessAlbumArtAsync(metadata, tagForArt);
-                }
+                if (tagForArt != null) await ProcessAlbumArtAsync(metadata, tagForArt);
             }
             catch (OperationCanceledException)
             {
@@ -236,7 +234,7 @@ public class TagLibMetadataService : IMetadataService
             var lrcTask = Task.Run(() =>
             {
                 using var tagFile = File.Create(new NonWritableFileAbstraction(audioFilePath));
-                if (tagFile?.Tag is null) return (File?)null;
+                if (tagFile?.Tag is null) return null;
                 return tagFile;
             }, cts.Token);
 

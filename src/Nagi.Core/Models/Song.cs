@@ -10,7 +10,7 @@ public class Song
 {
     [Key] public Guid Id { get; set; } = Guid.NewGuid();
 
-    [Required, MaxLength(500)] public string Title { get; set; } = "Unknown Title";
+    [Required] [MaxLength(500)] public string Title { get; set; } = "Unknown Title";
 
     public Guid? AlbumId { get; set; }
 
@@ -30,13 +30,14 @@ public class Song
 
     [MaxLength(2000)] public string? AlbumArtUriFromTrack { get; set; }
 
-    [Required, MaxLength(1000)] public string FilePath { get; set; } = string.Empty;
+    [Required] [MaxLength(1000)] public string FilePath { get; set; } = string.Empty;
 
     /// <summary>
     ///     The directory path where the song file is located. This is used for efficient
     ///     folder hierarchy navigation and querying songs by directory.
     /// </summary>
-    [Required, MaxLength(1000)]
+    [Required]
+    [MaxLength(1000)]
     public string DirectoryPath { get; set; } = string.Empty;
 
     public int? Year { get; set; }
@@ -81,12 +82,14 @@ public class Song
     /// <summary>
     ///     The lyrics of the song.
     /// </summary>
-    [MaxLength(50000)] public string? Lyrics { get; set; }
+    [MaxLength(50000)]
+    public string? Lyrics { get; set; }
 
     /// <summary>
     ///     The file path to the synchronized .lrc lyrics file associated with this song.
     /// </summary>
-    [MaxLength(1000)] public string? LrcFilePath { get; set; }
+    [MaxLength(1000)]
+    public string? LrcFilePath { get; set; }
 
     /// <summary>
     ///     The beats per minute of the track.
@@ -96,32 +99,38 @@ public class Song
     /// <summary>
     ///     A custom grouping category for the song.
     /// </summary>
-    [MaxLength(200)] public string? Grouping { get; set; }
+    [MaxLength(200)]
+    public string? Grouping { get; set; }
 
     /// <summary>
     ///     Copyright information for the track.
     /// </summary>
-    [MaxLength(1000)] public string? Copyright { get; set; }
+    [MaxLength(1000)]
+    public string? Copyright { get; set; }
 
     /// <summary>
     ///     A general-purpose comment field.
     /// </summary>
-    [MaxLength(1000)] public string? Comment { get; set; }
+    [MaxLength(1000)]
+    public string? Comment { get; set; }
 
     /// <summary>
     ///     The conductor of the orchestra, if applicable.
     /// </summary>
-    [MaxLength(200)] public string? Conductor { get; set; }
+    [MaxLength(200)]
+    public string? Conductor { get; set; }
 
     /// <summary>
     ///     The unique identifier for the track from the MusicBrainz database.
     /// </summary>
-    [MaxLength(100)] public string? MusicBrainzTrackId { get; set; }
+    [MaxLength(100)]
+    public string? MusicBrainzTrackId { get; set; }
 
     /// <summary>
     ///     The unique identifier for the release (album) from the MusicBrainz database.
     /// </summary>
-    [MaxLength(100)] public string? MusicBrainzReleaseId { get; set; }
+    [MaxLength(100)]
+    public string? MusicBrainzReleaseId { get; set; }
 
     [NotMapped] public bool IsArtworkAvailable => !string.IsNullOrEmpty(AlbumArtUriFromTrack);
 

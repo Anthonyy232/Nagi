@@ -23,10 +23,7 @@ public class FolderContentItemTemplateSelector : DataTemplateSelector
     /// </summary>
     protected override DataTemplate? SelectTemplateCore(object item)
     {
-        if (item is FolderContentItem contentItem)
-        {
-            return contentItem.IsFolder ? FolderTemplate : SongTemplate;
-        }
+        if (item is FolderContentItem contentItem) return contentItem.IsFolder ? FolderTemplate : SongTemplate;
 
         return base.SelectTemplateCore(item);
     }

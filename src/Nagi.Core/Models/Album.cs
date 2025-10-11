@@ -10,7 +10,7 @@ public class Album
 {
     [Key] public Guid Id { get; set; } = Guid.NewGuid();
 
-    [Required, MaxLength(500)] public string Title { get; set; } = "Unknown Album";
+    [Required] [MaxLength(500)] public string Title { get; set; } = "Unknown Album";
 
     public int? Year { get; set; }
 

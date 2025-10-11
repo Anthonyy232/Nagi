@@ -1,9 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Services.Abstractions;
-using Nagi.WinUI.Services.Abstractions;
-
 #if !MSIX_PACKAGE
 using Velopack;
 #endif

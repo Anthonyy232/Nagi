@@ -26,9 +26,9 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     private readonly LibVLC _libVlc;
     private readonly ILogger<LibVlcAudioPlayerService> _logger;
     private readonly MediaPlayer _mediaPlayer;
+    private Media? _currentMedia;
     private Song? _currentSong;
     private SystemMediaTransportControls? _smtc;
-    private Media? _currentMedia;
 
     public LibVlcAudioPlayerService(IDispatcherService dispatcherService, ILogger<LibVlcAudioPlayerService> logger)
     {
@@ -110,7 +110,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         {
             _logger.LogInformation("Loading media for song '{SongTitle}' from path: {FilePath}", song.Title,
                 song.FilePath);
-            
+
             // Dispose previous media if it exists
             if (_currentMedia != null)
             {
@@ -122,9 +122,10 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
                 {
                     _logger.LogWarning(ex, "Error disposing previous media");
                 }
+
                 _currentMedia = null;
             }
-            
+
             // Create new media and store reference
             _currentMedia = new Media(new Uri(song.FilePath));
             _mediaPlayer.Media = _currentMedia;
@@ -136,7 +137,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
             _logger.LogError(ex, "Failed to load song '{SongTitle}' from path: {FilePath}", song.Title, song.FilePath);
             _dispatcherService.TryEnqueue(() => ErrorOccurred?.Invoke(errorMessage));
             _currentSong = null;
-            
+
             // Clean up media on error
             if (_currentMedia != null)
             {
@@ -148,6 +149,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
                 {
                     _logger.LogWarning(disposeEx, "Error disposing media after load failure");
                 }
+
                 _currentMedia = null;
             }
         }
@@ -190,6 +192,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
             {
                 _logger.LogWarning(ex, "Error disposing media during stop");
             }
+
             _currentMedia = null;
         }
 
@@ -283,6 +286,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
             {
                 _logger.LogWarning(ex, "Error disposing media during LibVlcAudioPlayerService disposal");
             }
+
             _currentMedia = null;
         }
 

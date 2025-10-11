@@ -1,101 +1,100 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package
-    xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
-    xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
-    xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
-    xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5"
-    xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
-    xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
-    IgnorableNamespaces="uap uap3 uap5 rescap desktop">
+        xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+        xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
+        xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5"
+        xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+        xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+        IgnorableNamespaces="uap uap3 uap5 rescap desktop">
 
-	<Identity
-        Name="48743Nagi.Nagi"
-        Publisher="CN=83B77A15-7BA2-452B-A4A0-9DD253FA3D0E"
-        Version="1.2.3.0"/>
+    <Identity
+            Name="48743Nagi.Nagi"
+            Publisher="CN=83B77A15-7BA2-452B-A4A0-9DD253FA3D0E"
+            Version="1.2.3.0"/>
 
-	<Properties>
-		<DisplayName>Nagi</DisplayName>
-		<PublisherDisplayName>Nagi</PublisherDisplayName>
-		<Logo>Assets\StoreLogo.png</Logo>
-	</Properties>
+    <Properties>
+        <DisplayName>Nagi</DisplayName>
+        <PublisherDisplayName>Nagi</PublisherDisplayName>
+        <Logo>Assets\StoreLogo.png</Logo>
+    </Properties>
 
-	<Dependencies>
-		<TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.26100.0" />
-	</Dependencies>
+    <Dependencies>
+        <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.26100.0"/>
+    </Dependencies>
 
-	<Resources>
-		<Resource Language="x-generate"/>
-	</Resources>
+    <Resources>
+        <Resource Language="x-generate"/>
+    </Resources>
 
-	<Applications>
-		<Application Id="App"
+    <Applications>
+        <Application Id="App"
                      Executable="$targetnametoken$.exe"
                      EntryPoint="$targetentrypoint$">
-			<uap:VisualElements
-                DisplayName="Nagi"
-                Description="Rediscover your local music collection with Nagi, a music player focused on speed, simplicity, and privacy. Nagi is built with C# and WinUI 3 to offer a clean, native Fluent experience. It's beautiful, efficient, and respects your privacy."
-                BackgroundColor="transparent"
-                Square150x150Logo="Assets\Square150x150Logo.png"
-                Square44x44Logo="Assets\Square44x44Logo.png">
-				<uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square71x71Logo="Assets\SmallTile.png"
+            <uap:VisualElements
+                    DisplayName="Nagi"
+                    Description="Rediscover your local music collection with Nagi, a music player focused on speed, simplicity, and privacy. Nagi is built with C# and WinUI 3 to offer a clean, native Fluent experience. It's beautiful, efficient, and respects your privacy."
+                    BackgroundColor="transparent"
+                    Square150x150Logo="Assets\Square150x150Logo.png"
+                    Square44x44Logo="Assets\Square44x44Logo.png">
+                <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square71x71Logo="Assets\SmallTile.png"
                                  Square310x310Logo="Assets\LargeTile.png" ShortName="Nagi">
-					<uap:ShowNameOnTiles>
-						<uap:ShowOn Tile="square150x150Logo"/>
-						<uap:ShowOn Tile="wide310x150Logo"/>
-						<uap:ShowOn Tile="square310x310Logo"/>
-					</uap:ShowNameOnTiles>
-				</uap:DefaultTile>
-				<uap:SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="transparent"/>
-				<uap:InitialRotationPreference>
-					<uap:Rotation Preference="landscape"/>
-				</uap:InitialRotationPreference>
-			</uap:VisualElements>
+                    <uap:ShowNameOnTiles>
+                        <uap:ShowOn Tile="square150x150Logo"/>
+                        <uap:ShowOn Tile="wide310x150Logo"/>
+                        <uap:ShowOn Tile="square310x310Logo"/>
+                    </uap:ShowNameOnTiles>
+                </uap:DefaultTile>
+                <uap:SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="transparent"/>
+                <uap:InitialRotationPreference>
+                    <uap:Rotation Preference="landscape"/>
+                </uap:InitialRotationPreference>
+            </uap:VisualElements>
 
-			<Extensions>
-				<uap:Extension Category="windows.fileTypeAssociation">
-					<uap:FileTypeAssociation Name="nagi-music-files">
-						<uap:DisplayName>Nagi Music Player</uap:DisplayName>
-						<uap:Logo>Assets\AppLogo.png</uap:Logo>
-						<uap:InfoTip>Open with Nagi Music Player</uap:InfoTip>
-						<uap:SupportedFileTypes>
-							<!-- Audio Formats -->
-							<uap:FileType>.aa</uap:FileType>
-							<uap:FileType>.aax</uap:FileType>
-							<uap:FileType>.aac</uap:FileType>
-							<uap:FileType>.aiff</uap:FileType>
-							<uap:FileType>.ape</uap:FileType>
-							<uap:FileType>.dsf</uap:FileType>
-							<uap:FileType>.flac</uap:FileType>
-							<uap:FileType>.m4a</uap:FileType>
-							<uap:FileType>.m4b</uap:FileType>
-							<uap:FileType>.m4p</uap:FileType>
-							<uap:FileType>.mp3</uap:FileType>
-							<uap:FileType>.mpc</uap:FileType>
-							<uap:FileType>.mpp</uap:FileType>
-							<uap:FileType>.ogg</uap:FileType>
-							<uap:FileType>.oga</uap:FileType>
-							<uap:FileType>.wav</uap:FileType>
-							<uap:FileType>.wma</uap:FileType>
-							<uap:FileType>.wv</uap:FileType>
-							<uap:FileType>.webm</uap:FileType>
-						</uap:SupportedFileTypes>
-						<uap:EditFlags OpenIsSafe="true"/>
-					</uap:FileTypeAssociation>
-				</uap:Extension>
+            <Extensions>
+                <uap:Extension Category="windows.fileTypeAssociation">
+                    <uap:FileTypeAssociation Name="nagi-music-files">
+                        <uap:DisplayName>Nagi Music Player</uap:DisplayName>
+                        <uap:Logo>Assets\AppLogo.png</uap:Logo>
+                        <uap:InfoTip>Open with Nagi Music Player</uap:InfoTip>
+                        <uap:SupportedFileTypes>
+                            <!-- Audio Formats -->
+                            <uap:FileType>.aa</uap:FileType>
+                            <uap:FileType>.aax</uap:FileType>
+                            <uap:FileType>.aac</uap:FileType>
+                            <uap:FileType>.aiff</uap:FileType>
+                            <uap:FileType>.ape</uap:FileType>
+                            <uap:FileType>.dsf</uap:FileType>
+                            <uap:FileType>.flac</uap:FileType>
+                            <uap:FileType>.m4a</uap:FileType>
+                            <uap:FileType>.m4b</uap:FileType>
+                            <uap:FileType>.m4p</uap:FileType>
+                            <uap:FileType>.mp3</uap:FileType>
+                            <uap:FileType>.mpc</uap:FileType>
+                            <uap:FileType>.mpp</uap:FileType>
+                            <uap:FileType>.ogg</uap:FileType>
+                            <uap:FileType>.oga</uap:FileType>
+                            <uap:FileType>.wav</uap:FileType>
+                            <uap:FileType>.wma</uap:FileType>
+                            <uap:FileType>.wv</uap:FileType>
+                            <uap:FileType>.webm</uap:FileType>
+                        </uap:SupportedFileTypes>
+                        <uap:EditFlags OpenIsSafe="true"/>
+                    </uap:FileTypeAssociation>
+                </uap:Extension>
 
-				<uap5:Extension Category="windows.startupTask">
-					<uap5:StartupTask
-						TaskId="NagiAutolaunchStartup"
-						Enabled="false"
-						DisplayName="Nagi Startup"/>
-				</uap5:Extension>
-			</Extensions>
-		</Application>
-	</Applications>
+                <uap5:Extension Category="windows.startupTask">
+                    <uap5:StartupTask
+                            TaskId="NagiAutolaunchStartup"
+                            Enabled="false"
+                            DisplayName="Nagi Startup"/>
+                </uap5:Extension>
+            </Extensions>
+        </Application>
+    </Applications>
 
-	<Capabilities>
-		<uap3:Capability Name="backgroundMediaPlayback"/>
-		<Capability Name="internetClient"/>
-		<rescap:Capability Name="runFullTrust"/>
-	</Capabilities>
+    <Capabilities>
+        <uap3:Capability Name="backgroundMediaPlayback"/>
+        <Capability Name="internetClient"/>
+        <rescap:Capability Name="runFullTrust"/>
+    </Capabilities>
 </Package>
