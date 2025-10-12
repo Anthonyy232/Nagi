@@ -72,7 +72,7 @@ jobs:
       packages: read
     strategy:
       matrix:
-        platform: [win-x64, win-x86, win-arm64]
+        arch: [x64, x86, arm64]
 
     steps:
       - name: Checkout repository source code
@@ -119,7 +119,7 @@ jobs:
         run: >
           dotnet publish src/Nagi.WinUI/Nagi.WinUI.csproj
           -c ReleaseUnpackaged
-          -r ${{ matrix.platform }}
+          -r win-${{ matrix.arch }}
           --self-contained false
           -o ./publish/${{ matrix.platform }}
 
@@ -133,7 +133,7 @@ jobs:
           --outputDir ./Releases/${{ matrix.platform }}
           --channel ${{ matrix.platform }}
           --runtime ${{ matrix.platform }}
-          --framework net9.0-${{ replace(matrix.platform, 'win-', '') }}-desktop
+          --framework net9.0-${{ matrix.arch }}-desktop
 
       - name: Upload Velopack release artifacts
         # Uploads the generated Velopack release assets for this job's platform.
