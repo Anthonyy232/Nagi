@@ -133,6 +133,7 @@ jobs:
           --outputDir ./Releases/${{ matrix.platform }}
           --channel ${{ matrix.platform }}
           --runtime ${{ matrix.platform }}
+          --framework net9.0-${{ matrix.platform }}-desktop
 
       - name: Upload Velopack release artifacts
         # Uploads the generated Velopack release assets for this job's platform.
