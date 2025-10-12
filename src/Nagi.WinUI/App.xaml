@@ -9,6 +9,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
                 <ResourceDictionary Source="ms-appx:///Styles/Colors.xaml" />
+                <ResourceDictionary Source="ms-appx:///Styles/NavigationViewColors.xaml" />
                 <ResourceDictionary Source="ms-appx:///Styles/MediaControlPlayerColors.xaml" />
                 <ResourceDictionary Source="ms-appx:///Styles/LibraryPageColors.xaml" />
                 <ResourceDictionary Source="ms-appx:///Styles/PlaylistSongViewPageColors.xaml" />
