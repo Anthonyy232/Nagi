@@ -316,6 +316,7 @@
                                 CommandParameter="{x:Bind}"
                                 IsEnabled="{x:Bind IsLast, Converter={StaticResource BooleanToInverseBooleanConverter}, Mode=OneWay}"
                                 FontSize="13"
+                                Foreground="{StaticResource AppPrimaryColorBrush}"
                                 Padding="4,2">
                                 <HyperlinkButton.Resources>
                                 </HyperlinkButton.Resources>
