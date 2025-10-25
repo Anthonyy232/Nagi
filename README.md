@@ -99,9 +99,9 @@ This project is built using C# and the Windows App SDK.
 3.  In Visual Studio, set the Solution Platform to `x64` (or your target architecture).
 4.  Press `F5` or click the `▶ Nagi (Package)` button to build and run the application.
 
-    To build msixbundle, two commands must be ran (the first one will fail but create the proper R2R images): 
+    To build msixbundle, two commands must be ran in src/Nagi.WinUI (the first one will fail but create the proper R2R images): 
     ```bash
-    dotnet publish Nagi.WinUI.csproj -c Release -r win-x86 -a x86 -p:GenerateAppxPackageOnBuild=true
+    dotnet publish Nagi.WinUI.csproj -c Release -r win-x86 -p:GenerateAppxPackageOnBuild=true
     msbuild Nagi.WinUI.csproj -p:Configuration=Release -p:Platform=x86 -p:GenerateAppxPackageOnBuild=true
     ```
 
