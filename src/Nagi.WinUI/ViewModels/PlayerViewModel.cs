@@ -311,7 +311,10 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
 
     partial void OnCurrentPositionChanged(double value)
     {
-        CurrentTimeText = TimeSpan.FromSeconds(value).ToString(@"m\:ss");
+        var timeSpan = TimeSpan.FromSeconds(value);
+        CurrentTimeText = timeSpan.TotalHours >= 1 
+            ? timeSpan.ToString(@"h\:mm\:ss") 
+            : timeSpan.ToString(@"m\:ss");
         if (_isUpdatingFromService || IsUserDraggingSlider) return;
 
         var newPosition = TimeSpan.FromSeconds(value);
@@ -321,7 +324,10 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
 
     partial void OnTotalDurationChanged(double value)
     {
-        TotalDurationText = TimeSpan.FromSeconds(value).ToString(@"m\:ss");
+        var timeSpan = TimeSpan.FromSeconds(value);
+        TotalDurationText = timeSpan.TotalHours >= 1 
+            ? timeSpan.ToString(@"h\:mm\:ss") 
+            : timeSpan.ToString(@"m\:ss");
     }
 
     private void UpdateEfficiencyMode()
