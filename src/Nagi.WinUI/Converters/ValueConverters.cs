@@ -13,7 +13,7 @@ using Nagi.WinUI.Models;
 namespace Nagi.WinUI.Converters;
 
 /// <summary>
-///     Converts a TimeSpan or a double (representing seconds) to a formatted time string (m:ss).
+///     Converts a TimeSpan or a double (representing seconds) to a formatted time string (m:ss or h:mm:ss).
 /// </summary>
 public class TimeSpanToTimeStringConverter : IValueConverter
 {
@@ -26,8 +26,10 @@ public class TimeSpanToTimeStringConverter : IValueConverter
             _ => TimeSpan.Zero
         };
 
-        // The @"m\:ss" format ensures the colon is treated as a literal character.
-        return timeSpan.ToString(@"m\:ss");
+        // Show hours if duration is 1 hour or longer
+        return timeSpan.TotalHours >= 1 
+            ? timeSpan.ToString(@"h\:mm\:ss") 
+            : timeSpan.ToString(@"m\:ss");
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)
