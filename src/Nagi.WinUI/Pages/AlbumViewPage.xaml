@@ -252,7 +252,7 @@
                                 Style="{ThemeResource BodyStrongTextBlockStyle}"
                                 Foreground="{ThemeResource TextFillColorSecondary}"
                                 FontSize="13"
-                                Margin="24,0,0,0" />
+                                Margin="0,0,0,0" />
                         </DataTemplate>
                     </local:DiscGroupTemplateSelector.HeaderTemplate>
                     <local:DiscGroupTemplateSelector.SongTemplate>
