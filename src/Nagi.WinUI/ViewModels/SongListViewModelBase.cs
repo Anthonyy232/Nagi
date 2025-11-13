@@ -65,14 +65,14 @@ public abstract partial class SongListViewModelBase : ObservableObject
 
     [ObservableProperty] public partial ObservableCollection<Song> Songs { get; set; } = new();
 
-    protected virtual void OnSongsCollectionChanged()
-    {
-        // Override in derived classes to react to Songs collection changes
-    }
-
     partial void OnSongsChanged(ObservableCollection<Song> value)
     {
         OnSongsCollectionChanged();
+    }
+
+    protected virtual void OnSongsCollectionChanged()
+    {
+        // Override in derived classes to react to Songs collection changes
     }
 
     [ObservableProperty] public partial ObservableCollection<Song> SelectedSongs { get; set; } = new();
