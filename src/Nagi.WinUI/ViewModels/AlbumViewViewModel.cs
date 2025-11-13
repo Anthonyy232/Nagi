@@ -56,6 +56,10 @@ public partial class AlbumViewViewModel : SongListViewModelBase
 
     [ObservableProperty] public partial string SearchTerm { get; set; }
 
+    [ObservableProperty] public partial ObservableCollection<object> GroupedSongsFlat { get; set; } = new();
+
+    [ObservableProperty] public partial bool IsGroupedByDisc { get; set; }
+
     private bool IsSearchActive => !string.IsNullOrWhiteSpace(SearchTerm);
 
     protected override bool IsPagingSupported => true;
@@ -213,6 +217,47 @@ public partial class AlbumViewViewModel : SongListViewModelBase
         }, token);
     }
 
+    protected override void OnSongsCollectionChanged()
+    {
+        base.OnSongsCollectionChanged();
+        UpdateGrouping();
+    }
+
+    private void UpdateGrouping()
+    {
+        // Only group by disc when sorting by TrackNumberAsc and not searching
+        IsGroupedByDisc = CurrentSortOrder == SongSortOrder.TrackNumberAsc && !IsSearchActive;
+
+        if (IsGroupedByDisc)
+        {
+            GroupedSongsFlat.Clear();
+
+            // Group songs by disc number (null/0 goes to group -1 to appear first)
+            var groups = Songs
+                .GroupBy(s => s.DiscNumber ?? -1)
+                .OrderBy(g => g.Key);
+
+            foreach (var group in groups)
+            {
+                // Add header only for actual disc numbers (1, 2, 3, etc.)
+                if (group.Key > 0)
+                {
+                    GroupedSongsFlat.Add(new DiscHeader { DiscNumber = group.Key });
+                }
+
+                // Add all songs in this disc group
+                foreach (var song in group)
+                {
+                    GroupedSongsFlat.Add(song);
+                }
+            }
+        }
+        else
+        {
+            GroupedSongsFlat.Clear();
+        }
+    }
+
     public override void Cleanup()
     {
         _debounceCts?.Cancel();
@@ -221,4 +266,13 @@ public partial class AlbumViewViewModel : SongListViewModelBase
 
         base.Cleanup();
     }
+}
+
+/// <summary>
+///     Represents a disc section header.
+/// </summary>
+public class DiscHeader
+{
+    public int DiscNumber { get; set; }
+    public string Title => $"Disc {DiscNumber}";
 }

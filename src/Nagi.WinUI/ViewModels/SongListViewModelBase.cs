@@ -65,6 +65,16 @@ public abstract partial class SongListViewModelBase : ObservableObject
 
     [ObservableProperty] public partial ObservableCollection<Song> Songs { get; set; } = new();
 
+    protected virtual void OnSongsCollectionChanged()
+    {
+        // Override in derived classes to react to Songs collection changes
+    }
+
+    partial void OnSongsChanged(ObservableCollection<Song> value)
+    {
+        OnSongsCollectionChanged();
+    }
+
     [ObservableProperty] public partial ObservableCollection<Song> SelectedSongs { get; set; } = new();
 
     [ObservableProperty] public partial ObservableCollection<Playlist> AvailablePlaylists { get; set; } = new();
@@ -454,6 +464,7 @@ public abstract partial class SongListViewModelBase : ObservableObject
             SongSortOrder.DateAddedAsc => "Sort By: Oldest",
             SongSortOrder.AlbumAsc => "Sort By: Album",
             SongSortOrder.ArtistAsc => "Sort By: Artist",
+            SongSortOrder.TrackNumberAsc => "Sort By: Disc",
             _ => "Sort By: A to Z"
         };
     }
