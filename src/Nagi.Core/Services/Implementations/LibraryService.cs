@@ -2649,10 +2649,14 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             SongSortOrder.DateAddedDesc => query.OrderByDescending(s => s.DateAddedToLibrary).ThenBy(s => s.Title),
             SongSortOrder.DateAddedAsc => query.OrderBy(s => s.DateAddedToLibrary).ThenBy(s => s.Title),
             SongSortOrder.AlbumAsc or SongSortOrder.TrackNumberAsc => query
-                .OrderBy(s => s.Album != null ? s.Album.Title : string.Empty).ThenBy(s => s.TrackNumber)
+                .OrderBy(s => s.Album != null ? s.Album.Title : string.Empty)
+                .ThenBy(s => s.DiscNumber ?? 0)
+                .ThenBy(s => s.TrackNumber)
                 .ThenBy(s => s.Title),
             SongSortOrder.ArtistAsc => query.OrderBy(s => s.Artist != null ? s.Artist.Name : string.Empty)
-                .ThenBy(s => s.Album != null ? s.Album.Title : string.Empty).ThenBy(s => s.TrackNumber),
+                .ThenBy(s => s.Album != null ? s.Album.Title : string.Empty)
+                .ThenBy(s => s.DiscNumber ?? 0)
+                .ThenBy(s => s.TrackNumber),
             _ => query.OrderBy(s => s.Title).ThenBy(s => s.Id)
         };
     }

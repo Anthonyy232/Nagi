@@ -65,6 +65,16 @@ public abstract partial class SongListViewModelBase : ObservableObject
 
     [ObservableProperty] public partial ObservableCollection<Song> Songs { get; set; } = new();
 
+    partial void OnSongsChanged(ObservableCollection<Song> value)
+    {
+        OnSongsCollectionChanged();
+    }
+
+    protected virtual void OnSongsCollectionChanged()
+    {
+        // Override in derived classes to react to Songs collection changes
+    }
+
     [ObservableProperty] public partial ObservableCollection<Song> SelectedSongs { get; set; } = new();
 
     [ObservableProperty] public partial ObservableCollection<Playlist> AvailablePlaylists { get; set; } = new();
@@ -454,6 +464,7 @@ public abstract partial class SongListViewModelBase : ObservableObject
             SongSortOrder.DateAddedAsc => "Sort By: Oldest",
             SongSortOrder.AlbumAsc => "Sort By: Album",
             SongSortOrder.ArtistAsc => "Sort By: Artist",
+            SongSortOrder.TrackNumberAsc => "Sort By: Disc",
             _ => "Sort By: A to Z"
         };
     }
@@ -485,9 +496,12 @@ public abstract partial class SongListViewModelBase : ObservableObject
             SongSortOrder.DateAddedDesc => songs.OrderByDescending(s => s.DateAddedToLibrary),
             SongSortOrder.DateAddedAsc => songs.OrderBy(s => s.DateAddedToLibrary),
             SongSortOrder.AlbumAsc => songs.OrderBy(s => s.Album?.Title, StringComparer.OrdinalIgnoreCase)
+                .ThenBy(s => s.DiscNumber ?? 0)
                 .ThenBy(s => s.TrackNumber),
             SongSortOrder.ArtistAsc => songs.OrderBy(s => s.Artist?.Name, StringComparer.OrdinalIgnoreCase)
-                .ThenBy(s => s.Album?.Title).ThenBy(s => s.TrackNumber),
+                .ThenBy(s => s.Album?.Title)
+                .ThenBy(s => s.DiscNumber ?? 0)
+                .ThenBy(s => s.TrackNumber),
             _ => songs.OrderBy(s => s.Title, StringComparer.OrdinalIgnoreCase)
         };
     }

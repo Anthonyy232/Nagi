@@ -5,8 +5,10 @@
     xmlns:controls="using:ImageEx"
     xmlns:converters="using:Nagi.WinUI.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:Nagi.WinUI.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:Nagi.Core.Models"
+    xmlns:viewmodels="using:Nagi.WinUI.ViewModels"
     x:Name="pageRoot"
     Background="Transparent"
     mc:Ignorable="d">
@@ -14,6 +16,7 @@
     <Page.Resources>
         <ResourceDictionary>
             <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+            <converters:BooleanToVisibilityConverter x:Key="InvertedBooleanToVisibilityConverter" Invert="True" />
             <converters:TimeSpanToTimeStringConverter x:Key="TimeSpanToTimeStringConverter" />
             <converters:CollectionToVisibilityConverter x:Key="CollectionToVisibilityConverter" />
         </ResourceDictionary>
@@ -201,7 +204,7 @@
                         <Button.Flyout>
                             <MenuFlyout Placement="Bottom">
                                 <MenuFlyoutItem Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                                CommandParameter="TrackNumberAsc" Text="Track #" />
+                                                CommandParameter="TrackNumberAsc" Text="Disc" />
                                 <MenuFlyoutItem Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
                                                 CommandParameter="TitleAsc" Text="A to Z" />
                                 <MenuFlyoutItem Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
@@ -214,6 +217,80 @@
             </Grid>
         </StackPanel>
 
+        <!-- Grouped ListView for Disc mode -->
+        <ListView
+            Grid.Row="1"
+            x:Name="GroupedSongsListView"
+            Padding="24,0,24,132"
+            IsItemClickEnabled="True"
+            ItemsSource="{x:Bind ViewModel.GroupedSongsFlat, Mode=OneWay}"
+            SelectionChanged="GroupedSongsListView_SelectionChanged"
+            SelectionMode="Extended"
+            DoubleTapped="GroupedSongsListView_DoubleTapped"
+            Visibility="{x:Bind ViewModel.IsGroupedByDisc, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <ListView.ItemContainerStyleSelector>
+                <local:DiscGroupStyleSelector>
+                    <local:DiscGroupStyleSelector.HeaderStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="MinHeight" Value="0" />
+                            <Setter Property="Padding" Value="0,16,0,8" />
+                            <Setter Property="IsHitTestVisible" Value="False" />
+                            <Setter Property="IsTabStop" Value="False" />
+                        </Style>
+                    </local:DiscGroupStyleSelector.HeaderStyle>
+                    <local:DiscGroupStyleSelector.SongStyle>
+                        <Style TargetType="ListViewItem" BasedOn="{StaticResource SongListViewPageListViewItemStyle}" />
+                    </local:DiscGroupStyleSelector.SongStyle>
+                </local:DiscGroupStyleSelector>
+            </ListView.ItemContainerStyleSelector>
+            <ListView.ItemTemplateSelector>
+                <local:DiscGroupTemplateSelector>
+                    <local:DiscGroupTemplateSelector.HeaderTemplate>
+                        <DataTemplate x:DataType="viewmodels:DiscHeader">
+                            <TextBlock
+                                Text="{x:Bind Title}"
+                                Style="{ThemeResource BodyStrongTextBlockStyle}"
+                                Foreground="{ThemeResource TextFillColorSecondary}"
+                                FontSize="13"
+                                Margin="0,0,0,0" />
+                        </DataTemplate>
+                    </local:DiscGroupTemplateSelector.HeaderTemplate>
+                    <local:DiscGroupTemplateSelector.SongTemplate>
+                        <DataTemplate x:DataType="models:Song">
+                            <Grid Height="54" ColumnSpacing="12" Background="Transparent">
+                                <Grid.ContextFlyout>
+                                    <MenuFlyout Opening="SongItemMenuFlyout_Opening">
+                                        <MenuFlyoutItem Command="{Binding DataContext.PlaySelectedSongsCommand, ElementName=pageRoot}" Text="Play" />
+                                        <MenuFlyoutItem Command="{Binding DataContext.PlaySelectedSongsNextCommand, ElementName=pageRoot}" Text="Play Next" />
+                                        <MenuFlyoutItem Command="{Binding DataContext.AddSelectedSongsToQueueCommand, ElementName=pageRoot}" Text="Add to Queue" />
+                                        <MenuFlyoutSubItem x:Name="AddToPlaylistSubMenuGrouped" Text="Add to playlist" />
+                                        <MenuFlyoutSeparator Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                        <MenuFlyoutItem Command="{Binding DataContext.GoToArtistCommand, ElementName=pageRoot}" Text="Go to artist" Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                        <MenuFlyoutItem Command="{Binding DataContext.ShowInFileExplorerCommand, ElementName=pageRoot}" Text="Show in explorer" Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                    </MenuFlyout>
+                                </Grid.ContextFlyout>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition MinWidth="50" Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Button Grid.Column="0" Command="{Binding DataContext.PlaySongCommand, ElementName=pageRoot}" CommandParameter="{x:Bind}" Style="{StaticResource SongListViewPageSongPlayButtonStyle}">
+                                    <Border Width="42" Height="42" CornerRadius="12" Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                        <controls:ImageEx IsCacheEnabled="True" Stretch="UniformToFill" Source="{x:Bind AlbumArtUriFromTrack, FallbackValue=null}" />
+                                    </Border>
+                                </Button>
+                                <TextBlock Grid.Column="1" MinWidth="30" HorizontalAlignment="Center" Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}" Text="{x:Bind TrackNumber}" />
+                                <TextBlock Grid.Column="2" Style="{StaticResource SongListViewPageBodyStrongTextBlockStyle}" Text="{x:Bind Title}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                                <TextBlock Grid.Column="3" Margin="0,0,12,0" HorizontalAlignment="Right" Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}" Text="{x:Bind Duration, Converter={StaticResource TimeSpanToTimeStringConverter}}" />
+                            </Grid>
+                        </DataTemplate>
+                    </local:DiscGroupTemplateSelector.SongTemplate>
+                </local:DiscGroupTemplateSelector>
+            </ListView.ItemTemplateSelector>
+        </ListView>
+
+        <!-- Regular ListView for other sort modes -->
         <ListView
             Grid.Row="1"
             x:Name="SongsListView"
@@ -223,7 +300,8 @@
             ItemsSource="{x:Bind ViewModel.Songs, Mode=OneWay}"
             SelectionChanged="SongsListView_SelectionChanged"
             SelectionMode="Extended"
-            DoubleTapped="SongsListView_DoubleTapped">
+            DoubleTapped="SongsListView_DoubleTapped"
+            Visibility="{x:Bind ViewModel.IsGroupedByDisc, Mode=OneWay, Converter={StaticResource InvertedBooleanToVisibilityConverter}}">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="models:Song">
                     <Grid Height="54" ColumnSpacing="12" Background="Transparent">
@@ -273,9 +351,9 @@
                             </Border>
                         </Button>
 
-                        <TextBlock Grid.Column="1" MinWidth="20" HorizontalAlignment="Center"
+                        <TextBlock Grid.Column="1" MinWidth="30" HorizontalAlignment="Center"
                                    Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}"
-                                   Text="{x:Bind TrackNumber}" />
+                                   Text="{x:Bind TrackDisplay}" />
 
                         <TextBlock Grid.Column="2"
                                    Style="{StaticResource SongListViewPageBodyStrongTextBlockStyle}"
