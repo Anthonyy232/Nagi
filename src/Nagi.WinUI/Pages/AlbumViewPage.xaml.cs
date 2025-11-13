@@ -14,6 +14,34 @@ using Nagi.WinUI.ViewModels;
 namespace Nagi.WinUI.Pages;
 
 /// <summary>
+///     Template selector for disc-grouped list (headers vs songs).
+/// </summary>
+public class DiscGroupTemplateSelector : DataTemplateSelector
+{
+    public DataTemplate? HeaderTemplate { get; set; }
+    public DataTemplate? SongTemplate { get; set; }
+
+    protected override DataTemplate? SelectTemplateCore(object item)
+    {
+        return item is DiscHeader ? HeaderTemplate : SongTemplate;
+    }
+}
+
+/// <summary>
+///     Style selector for disc-grouped list items.
+/// </summary>
+public class DiscGroupStyleSelector : StyleSelector
+{
+    public Style? HeaderStyle { get; set; }
+    public Style? SongStyle { get; set; }
+
+    protected override Style? SelectStyleCore(object item, DependencyObject container)
+    {
+        return item is DiscHeader ? HeaderStyle : SongStyle;
+    }
+}
+
+/// <summary>
 ///     A page that displays detailed information for a specific album, including its track list.
 /// </summary>
 public sealed partial class AlbumViewPage : Page
@@ -168,6 +196,31 @@ public sealed partial class AlbumViewPage : Page
         {
             _logger.LogTrace("Song selection changed. {SelectedCount} items selected.", listView.SelectedItems.Count);
             ViewModel.OnSongsSelectionChanged(listView.SelectedItems);
+        }
+    }
+
+    /// <summary>
+    ///     Updates the view model with the current selection from the grouped song list (filters out headers).
+    /// </summary>
+    private void GroupedSongsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (sender is ListView listView)
+        {
+            var selectedSongs = listView.SelectedItems.OfType<Song>().ToList();
+            _logger.LogTrace("Grouped song selection changed. {SelectedCount} songs selected.", selectedSongs.Count);
+            ViewModel.OnSongsSelectionChanged(selectedSongs);
+        }
+    }
+
+    /// <summary>
+    ///     Handles double-tap on grouped list (ignores headers).
+    /// </summary>
+    private void GroupedSongsListView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+    {
+        if (e.OriginalSource is FrameworkElement { DataContext: Song tappedSong })
+        {
+            _logger.LogInformation("User double-tapped song '{SongTitle}'. Executing play command.", tappedSong.Title);
+            ViewModel.PlaySongCommand.Execute(tappedSong);
         }
     }
 

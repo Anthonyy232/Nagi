@@ -136,6 +136,21 @@ public class Song
 
     [NotMapped] public bool HasTimedLyrics => !string.IsNullOrEmpty(LrcFilePath);
 
+    [NotMapped]
+    public string TrackDisplay
+    {
+        get
+        {
+            if (DiscNumber.HasValue && DiscNumber.Value > 0)
+            {
+                return TrackNumber.HasValue
+                    ? $"{DiscNumber}-{TrackNumber}"
+                    : $"{DiscNumber}";
+            }
+            return TrackNumber?.ToString() ?? string.Empty;
+        }
+    }
+
     // Navigation properties
     public virtual ICollection<Genre> Genres { get; set; } = new List<Genre>();
     public virtual ICollection<PlaylistSong> PlaylistSongs { get; set; } = new List<PlaylistSong>();
