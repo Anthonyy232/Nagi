@@ -485,9 +485,12 @@ public abstract partial class SongListViewModelBase : ObservableObject
             SongSortOrder.DateAddedDesc => songs.OrderByDescending(s => s.DateAddedToLibrary),
             SongSortOrder.DateAddedAsc => songs.OrderBy(s => s.DateAddedToLibrary),
             SongSortOrder.AlbumAsc => songs.OrderBy(s => s.Album?.Title, StringComparer.OrdinalIgnoreCase)
+                .ThenBy(s => s.DiscNumber ?? 0)
                 .ThenBy(s => s.TrackNumber),
             SongSortOrder.ArtistAsc => songs.OrderBy(s => s.Artist?.Name, StringComparer.OrdinalIgnoreCase)
-                .ThenBy(s => s.Album?.Title).ThenBy(s => s.TrackNumber),
+                .ThenBy(s => s.Album?.Title)
+                .ThenBy(s => s.DiscNumber ?? 0)
+                .ThenBy(s => s.TrackNumber),
             _ => songs.OrderBy(s => s.Title, StringComparer.OrdinalIgnoreCase)
         };
     }
