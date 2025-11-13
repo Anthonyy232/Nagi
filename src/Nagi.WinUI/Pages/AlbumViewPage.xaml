@@ -273,9 +273,9 @@
                             </Border>
                         </Button>
 
-                        <TextBlock Grid.Column="1" MinWidth="20" HorizontalAlignment="Center"
+                        <TextBlock Grid.Column="1" MinWidth="30" HorizontalAlignment="Center"
                                    Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}"
-                                   Text="{x:Bind TrackNumber}" />
+                                   Text="{x:Bind TrackDisplay}" />
 
                         <TextBlock Grid.Column="2"
                                    Style="{StaticResource SongListViewPageBodyStrongTextBlockStyle}"
