@@ -194,6 +194,10 @@
                                     <MenuFlyoutItem Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
                                                     CommandParameter="DateAddedAsc" Text="Oldest" />
                                     <MenuFlyoutItem Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                                    CommandParameter="DateModifiedDesc" Text="Date Modified (Newest)" />
+                                    <MenuFlyoutItem Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                                    CommandParameter="DateModifiedAsc" Text="Date Modified (Oldest)" />
+                                    <MenuFlyoutItem Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
                                                     CommandParameter="ArtistAsc" Text="Artist" />
                                     <MenuFlyoutItem Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
                                                     CommandParameter="AlbumAsc" Text="Album" />
