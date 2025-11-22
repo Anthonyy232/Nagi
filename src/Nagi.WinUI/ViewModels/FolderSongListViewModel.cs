@@ -237,7 +237,8 @@ public partial class FolderSongListViewModel : SongListViewModelBase
             foreach (var folder in subfolders.OrderBy(f => f.Name, StringComparer.OrdinalIgnoreCase))
                 FolderContents.Add(FolderContentItem.FromFolder(folder));
 
-            foreach (var song in songs.OrderBy(s => s.Title, StringComparer.OrdinalIgnoreCase))
+            var sortedSongs = SortSongs(songs, CurrentSortOrder);
+            foreach (var song in sortedSongs)
             {
                 FolderContents.Add(FolderContentItem.FromSong(song));
                 Songs.Add(song);

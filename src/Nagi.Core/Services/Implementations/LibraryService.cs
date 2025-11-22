@@ -2648,6 +2648,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             SongSortOrder.TitleDesc => query.OrderByDescending(s => s.Title).ThenBy(s => s.Id),
             SongSortOrder.DateAddedDesc => query.OrderByDescending(s => s.DateAddedToLibrary).ThenBy(s => s.Title),
             SongSortOrder.DateAddedAsc => query.OrderBy(s => s.DateAddedToLibrary).ThenBy(s => s.Title),
+            SongSortOrder.DateModifiedDesc => query.OrderByDescending(s => s.FileModifiedDate).ThenBy(s => s.Title),
+            SongSortOrder.DateModifiedAsc => query.OrderBy(s => s.FileModifiedDate).ThenBy(s => s.Title),
             SongSortOrder.AlbumAsc or SongSortOrder.TrackNumberAsc => query
                 .OrderBy(s => s.Album != null ? s.Album.Title : string.Empty)
                 .ThenBy(s => s.DiscNumber ?? 0)
