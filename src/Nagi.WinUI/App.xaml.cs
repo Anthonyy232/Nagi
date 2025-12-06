@@ -694,10 +694,12 @@ public partial class App : Application
         if (Services is null) return;
         try
         {
-#if !MSIX_PACKAGE
-            var updateService = Services.GetRequiredService<IUpdateService>();
-            await updateService.CheckForUpdatesOnStartupAsync();
-#endif
+            #if !MSIX_PACKAGE
+                var updateService = Services.GetRequiredService<IUpdateService>();
+                await updateService.CheckForUpdatesOnStartupAsync();
+            #else
+                await Task.CompletedTask;
+            #endif
         }
         catch (Exception ex)
         {
