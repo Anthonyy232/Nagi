@@ -2102,14 +2102,13 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     private async Task<int> BatchUpdateDatabaseAsync(Guid folderId, List<SongFileMetadata> metadataList,
         IProgress<ScanProgress>? progress, CancellationToken cancellationToken)
     {
-        const int maxRetries = 3;
-        var retryCount = 0;
-        var saveSucceeded = false;
+        const int batchSize = 500;
+        var totalProcessed = 0;
         var totalMetadataCount = metadataList.Count;
 
         progress?.Report(new ScanProgress
         {
-            StatusText = "Adding songs to your library...",
+            StatusText = $"Preparing to add {totalMetadataCount:N0} songs...",
             IsIndeterminate = true,
             NewSongsFound = totalMetadataCount
         });
@@ -2123,6 +2122,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             return 0;
         }
 
+        // Ensure folders exist for ALL files first, to avoid repeated checks
         var discoveredDirectories = metadataList
             .Select(m => _fileSystem.GetDirectoryName(m.FilePath))
             .Where(d => !string.IsNullOrWhiteSpace(d))
@@ -2132,16 +2132,44 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         await EnsureSubFoldersExistAsync(folderId, rootFolder.Path, discoveredDirectories, cancellationToken);
 
-        while (retryCount < maxRetries && !saveSucceeded)
+        // Chunk the metadata list
+        var chunks = metadataList.Chunk(batchSize).ToList();
+        var currentChunkIndex = 0;
+
+        foreach (var chunk in chunks)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            currentChunkIndex++;
+
+            progress?.Report(new ScanProgress
+            {
+                StatusText = $"Saving batch {currentChunkIndex}/{chunks.Count}...",
+                Percentage = (double)currentChunkIndex / chunks.Count * 100,
+                NewSongsFound = totalMetadataCount // Maintain the total count info
+            });
+
+            var addedInChunk = await ProcessSingleBatchAsync(folderId, chunk, cancellationToken);
+            totalProcessed += addedInChunk;
+        }
+
+        return totalProcessed;
+    }
+
+    private async Task<int> ProcessSingleBatchAsync(Guid folderId, SongFileMetadata[] metadataList, CancellationToken cancellationToken)
+    {
+        const int maxRetries = 3;
+        var retryCount = 0;
+
+        while (retryCount < maxRetries)
+        {
             try
             {
                 await using var context = await _contextFactory.CreateDbContextAsync();
-
-                // CRITICAL: Ensure clean state - no tracked entities from previous iterations
-                context.ChangeTracker.Clear();
-
+                
+                // Disable change tracking for faster reads/inserts where possible
+                // (Though we need tracking for Add, we don't need it for the lookups if we attach properly,
+                // but standard simple Add is safer for complex relationships)
+                
                 var filePaths = metadataList.Select(m => m.FilePath).ToList();
 
                 var existingSongPaths = await context.Songs
@@ -2173,6 +2201,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 var existingGenres = await context.Genres.Where(g => genreNames.Contains(g.Name))
                     .ToDictionaryAsync(g => g.Name, StringComparer.OrdinalIgnoreCase, cancellationToken);
 
+                // Add missing Artists/Genres to Context/Dict
                 foreach (var name in artistNames)
                     if (!existingArtists.ContainsKey(name!))
                     {
@@ -2189,31 +2218,25 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                         existingGenres[name!] = newGenre;
                     }
 
+                // We must save artists/genres first to get IDs if we were using IDs directly, 
+                // but EF Core graph insertion handles nav properties. 
+                // However, to prevent duplicates in the same batch, sharing the entity instance is key.
+
                 foreach (var metadata in metadataToInsert)
                     await AddSongWithDetailsOptimizedAsync(context, folderId, metadata, existingArtists, existingAlbums,
                         existingGenres);
 
                 await context.SaveChangesAsync(cancellationToken);
-                saveSucceeded = true;
-
                 return metadataToInsert.Count;
             }
             catch (DbUpdateException ex) when (IsUniqueConstraintViolation(ex))
             {
                 retryCount++;
-                _logger.LogWarning(ex,
-                    "Concurrency conflict during batch save. Attempt {RetryCount}/{MaxRetries}.", retryCount,
-                    maxRetries);
-                if (retryCount >= maxRetries)
-                {
-                    _logger.LogError(ex, "Batch save failed after max retries. The operation will be aborted.");
-                    throw;
-                }
-
+                _logger.LogWarning(ex, "Concurrency conflict during batch save. Attempt {RetryCount}/{MaxRetries}.", retryCount, maxRetries);
+                if (retryCount >= maxRetries) throw;
                 await Task.Delay(200 * retryCount, cancellationToken);
             }
         }
-
         return 0;
     }
 
