@@ -726,6 +726,7 @@ public class SettingsService : IUISettingsService
     public async Task<bool> GetCheckForUpdatesEnabledAsync()
     {
 #if MSIX_PACKAGE
+        await Task.CompletedTask;
         return false;
 #else
         await EnsureUnpackagedSettingsLoadedAsync();
@@ -745,6 +746,7 @@ public class SettingsService : IUISettingsService
     public async Task<string?> GetLastSkippedUpdateVersionAsync()
     {
 #if MSIX_PACKAGE
+        await Task.CompletedTask;
         return null;
 #else
         await EnsureUnpackagedSettingsLoadedAsync();
