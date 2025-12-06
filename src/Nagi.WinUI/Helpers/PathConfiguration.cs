@@ -17,9 +17,19 @@ public class PathConfiguration : IPathConfiguration
     {
         IsPackaged = IsRunningInPackage();
 
-        AppDataRoot = IsPackaged
-            ? ApplicationData.Current.LocalFolder.Path
-            : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Nagi");
+        try
+        {
+            // Even if packaged, this might throw if the package doesn't have a mutable directory
+            AppDataRoot = IsPackaged
+                ? ApplicationData.Current.LocalFolder.Path
+                : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Nagi");
+        }
+        catch (Exception)
+        {
+            // Fallback to standard local app data if the packaged location is invalid
+            AppDataRoot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "Nagi");
+        }
 
         // Define all other paths based on the determined root.
         SettingsFilePath = Path.Combine(AppDataRoot, "settings.json");

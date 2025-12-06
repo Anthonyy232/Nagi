@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Nagi.Core.Services.Abstractions;
 
@@ -29,7 +30,53 @@ public class FileSystemService : IFileSystemService
 
     public IEnumerable<string> EnumerateFiles(string path, string searchPattern, SearchOption searchOption)
     {
-        return Directory.EnumerateFiles(path, searchPattern, searchOption);
+        if (searchOption == SearchOption.TopDirectoryOnly)
+        {
+            return Directory.EnumerateFiles(path, searchPattern, SearchOption.TopDirectoryOnly);
+        }
+
+        return SafeEnumerateFiles(path, searchPattern);
+    }
+
+    private IEnumerable<string> SafeEnumerateFiles(string rootPath, string searchPattern)
+    {
+        var dirs = new Stack<string>();
+        dirs.Push(rootPath);
+
+        while (dirs.Count > 0)
+        {
+            var currentDir = dirs.Pop();
+
+            // 1. Yield files in current directory
+            IEnumerable<string> files = Enumerable.Empty<string>();
+            try
+            {
+                files = Directory.EnumerateFiles(currentDir, searchPattern);
+            }
+            catch (UnauthorizedAccessException) { /* Skip */ }
+            catch (DirectoryNotFoundException) { /* Skip */ }
+            catch (IOException) { /* Skip generic IO errors */ }
+
+            foreach (var file in files)
+            {
+                yield return file;
+            }
+
+            // 2. Push subdirectories to stack
+            IEnumerable<string> subDirs = Enumerable.Empty<string>();
+            try
+            {
+                subDirs = Directory.EnumerateDirectories(currentDir);
+            }
+            catch (UnauthorizedAccessException) { /* Skip */ }
+            catch (DirectoryNotFoundException) { /* Skip */ }
+            catch (IOException) { /* Skip generic IO errors */ }
+
+            foreach (var str in subDirs)
+            {
+                dirs.Push(str);
+            }
+        }
     }
 
     public string[] GetFiles(string path, string searchPattern)
