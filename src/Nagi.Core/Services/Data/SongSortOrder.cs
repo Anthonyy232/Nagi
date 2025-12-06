@@ -9,6 +9,8 @@ public enum SongSortOrder
     TitleDesc,
     DateAddedDesc,
     DateAddedAsc,
+    DateModifiedDesc,
+    DateModifiedAsc,
     AlbumAsc,
     ArtistAsc,
     TrackNumberAsc

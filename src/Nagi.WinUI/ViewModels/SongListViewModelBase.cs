@@ -462,6 +462,8 @@ public abstract partial class SongListViewModelBase : ObservableObject
             SongSortOrder.TitleDesc => "Sort By: Z to A",
             SongSortOrder.DateAddedDesc => "Sort By: Newest",
             SongSortOrder.DateAddedAsc => "Sort By: Oldest",
+            SongSortOrder.DateModifiedDesc => "Sort By: Modified (Newest)",
+            SongSortOrder.DateModifiedAsc => "Sort By: Modified (Oldest)",
             SongSortOrder.AlbumAsc => "Sort By: Album",
             SongSortOrder.ArtistAsc => "Sort By: Artist",
             SongSortOrder.TrackNumberAsc => "Sort By: Disc",
@@ -495,6 +497,8 @@ public abstract partial class SongListViewModelBase : ObservableObject
             SongSortOrder.TitleDesc => songs.OrderByDescending(s => s.Title, StringComparer.OrdinalIgnoreCase),
             SongSortOrder.DateAddedDesc => songs.OrderByDescending(s => s.DateAddedToLibrary),
             SongSortOrder.DateAddedAsc => songs.OrderBy(s => s.DateAddedToLibrary),
+            SongSortOrder.DateModifiedDesc => songs.OrderByDescending(s => s.FileModifiedDate),
+            SongSortOrder.DateModifiedAsc => songs.OrderBy(s => s.FileModifiedDate),
             SongSortOrder.AlbumAsc => songs.OrderBy(s => s.Album?.Title, StringComparer.OrdinalIgnoreCase)
                 .ThenBy(s => s.DiscNumber ?? 0)
                 .ThenBy(s => s.TrackNumber),
