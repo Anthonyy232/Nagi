@@ -294,6 +294,23 @@
                             <TextBlock Text="Shuffle and play" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
+
+                    <Button Style="{StaticResource SongListViewPageIconButton}"
+                            ToolTipService.ToolTip="{x:Bind ViewModel.CurrentSortOrderText, Mode=OneWay}">
+                        <Button.Flyout>
+                            <MenuFlyout Placement="Bottom">
+                                <MenuFlyoutItem Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                                CommandParameter="TitleAsc" Text="A to Z" />
+                                <MenuFlyoutItem Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                                CommandParameter="TitleDesc" Text="Z to A" />
+                                <MenuFlyoutItem Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                                CommandParameter="DateModifiedDesc" Text="Date Modified (Newest)" />
+                                <MenuFlyoutItem Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                                CommandParameter="DateModifiedAsc" Text="Date Modified (Oldest)" />
+                            </MenuFlyout>
+                        </Button.Flyout>
+                        <FontIcon FontSize="16" Glyph="" />
+                    </Button>
                 </StackPanel>
             </Grid>
 
