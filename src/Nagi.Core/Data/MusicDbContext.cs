@@ -21,6 +21,8 @@ public class MusicDbContext : DbContext
     public DbSet<PlaylistSong> PlaylistSongs { get; set; } = null!;
     public DbSet<Genre> Genres { get; set; } = null!;
     public DbSet<ListenHistory> ListenHistory { get; set; } = null!;
+    public DbSet<SmartPlaylist> SmartPlaylists { get; set; } = null!;
+    public DbSet<SmartPlaylistRule> SmartPlaylistRules { get; set; } = null!;
 
     /// <summary>
     ///     Configures the database model, including table relationships, indexes, and constraints.
@@ -137,6 +139,25 @@ public class MusicDbContext : DbContext
 
             // Index for efficient, ordered retrieval of songs in a playlist.
             entity.HasIndex(ps => new { ps.PlaylistId, ps.Order });
+        });
+
+        // Configure the SmartPlaylist entity.
+        modelBuilder.Entity<SmartPlaylist>(entity =>
+        {
+            entity.Property(sp => sp.Name).UseCollation("NOCASE");
+            entity.HasIndex(sp => sp.Name).IsUnique();
+        });
+
+        // Configure the SmartPlaylistRule entity.
+        modelBuilder.Entity<SmartPlaylistRule>(entity =>
+        {
+            entity.HasOne(r => r.SmartPlaylist)
+                .WithMany(sp => sp.Rules)
+                .HasForeignKey(r => r.SmartPlaylistId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Index for efficient, ordered retrieval of rules in a smart playlist.
+            entity.HasIndex(r => new { r.SmartPlaylistId, r.Order });
         });
     }
 

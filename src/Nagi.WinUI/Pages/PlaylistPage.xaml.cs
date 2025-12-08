@@ -45,6 +45,16 @@ public sealed partial class PlaylistPage : Page
         ViewModel.Dispose();
     }
 
+    private async void PlayPlaylist_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not FrameworkElement { DataContext: PlaylistViewModelItem playlistItem } ||
+            ViewModel.IsAnyOperationInProgress) return;
+
+        _logger.LogInformation("User initiated playback of playlist '{PlaylistName}' (Id: {PlaylistId}).",
+            playlistItem.Name, playlistItem.Id);
+        await ViewModel.PlayPlaylistCommand.ExecuteAsync(new Tuple<Guid, bool>(playlistItem.Id, playlistItem.IsSmart));
+    }
+
     private void PlaylistsGridView_ItemClick(object sender, ItemClickEventArgs e)
     {
         if (e.ClickedItem is PlaylistViewModelItem clickedPlaylist)
@@ -121,6 +131,35 @@ public sealed partial class PlaylistPage : Page
         }
     }
 
+    private async void CreateSmartPlaylistButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (ViewModel.IsAnyOperationInProgress)
+        {
+            _logger.LogDebug("Create smart playlist button clicked, but an operation is already in progress. Ignoring.");
+            return;
+        }
+
+        _logger.LogInformation("Smart playlist creation requested. Opening editor dialog.");
+        
+        var dialog = new Dialogs.SmartPlaylistEditorDialog
+        {
+            XamlRoot = XamlRoot
+        };
+        
+        var result = await dialog.ShowAsync();
+        
+        if (result == ContentDialogResult.Primary && dialog.ResultPlaylist != null)
+        {
+            _logger.LogInformation("User created smart playlist '{PlaylistName}' (Id: {PlaylistId}).",
+                dialog.ResultPlaylist.Name, dialog.ResultPlaylist.Id);
+            await ViewModel.LoadPlaylistsCommand.ExecuteAsync(null);
+        }
+        else
+        {
+            _logger.LogInformation("User cancelled smart playlist creation.");
+        }
+    }
+
     private async void RenamePlaylist_Click(object sender, RoutedEventArgs e)
     {
         if (sender is not FrameworkElement { DataContext: PlaylistViewModelItem playlistItem } ||
@@ -145,7 +184,7 @@ public sealed partial class PlaylistPage : Page
         {
             _logger.LogInformation("User confirmed rename of playlist '{OldName}' to '{NewName}'.", playlistItem.Name,
                 inputTextBox.Text);
-            var argsTuple = new Tuple<Guid, string>(playlistItem.Id, inputTextBox.Text);
+            var argsTuple = new Tuple<Guid, string, bool>(playlistItem.Id, inputTextBox.Text, playlistItem.IsSmart);
             await ViewModel.RenamePlaylistCommand.ExecuteAsync(argsTuple);
         }
         else
@@ -174,7 +213,7 @@ public sealed partial class PlaylistPage : Page
         {
             _logger.LogInformation("User confirmed deletion of playlist '{PlaylistName}' (Id: {PlaylistId}).",
                 playlistItem.Name, playlistItem.Id);
-            await ViewModel.DeletePlaylistCommand.ExecuteAsync(playlistItem.Id);
+            await ViewModel.DeletePlaylistCommand.ExecuteAsync(new Tuple<Guid, bool>(playlistItem.Id, playlistItem.IsSmart));
         }
         else
         {
@@ -194,7 +233,7 @@ public sealed partial class PlaylistPage : Page
         {
             _logger.LogInformation("User selected new cover image for playlist '{PlaylistName}'. Updating.",
                 playlistItem.Name);
-            var argsTuple = new Tuple<Guid, string>(playlistItem.Id, newCoverImageUri);
+            var argsTuple = new Tuple<Guid, string, bool>(playlistItem.Id, newCoverImageUri, playlistItem.IsSmart);
             await ViewModel.UpdatePlaylistCoverCommand.ExecuteAsync(argsTuple);
         }
         else

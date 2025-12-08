@@ -338,6 +338,7 @@ public partial class App : Application
         services.AddSingleton<IPresenceManager, PresenceManager>();
         services.AddSingleton<IPresenceService, DiscordPresenceService>();
         services.AddSingleton<IPresenceService, LastFmPresenceService>();
+        services.AddSingleton<ISmartPlaylistService, SmartPlaylistService>();
         services.AddSingleton<IUpdateService, VelopackUpdateService>();
 
 #if !MSIX_PACKAGE
@@ -384,6 +385,7 @@ public partial class App : Application
         services.AddTransient<SettingsViewModel>();
         services.AddTransient<OnboardingViewModel>();
         services.AddTransient<PlaylistSongListViewModel>();
+        services.AddTransient<SmartPlaylistSongListViewModel>();
         services.AddTransient<FolderViewModel>();
         services.AddTransient<FolderSongListViewModel>();
         services.AddTransient<ArtistViewModel>();

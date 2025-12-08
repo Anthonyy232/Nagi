@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
@@ -16,6 +17,7 @@ namespace Nagi.WinUI.ViewModels;
 
 /// <summary>
 ///     Represents a single playlist item for display in the UI.
+///     Supports both regular playlists and smart playlists.
 /// </summary>
 public partial class PlaylistViewModelItem : ObservableObject
 {
@@ -24,10 +26,28 @@ public partial class PlaylistViewModelItem : ObservableObject
         Id = playlist.Id;
         Name = playlist.Name;
         CoverImageUri = playlist.CoverImageUri;
+        IsSmart = false;
         UpdateSongCount(playlist.PlaylistSongs?.Count ?? 0);
     }
 
+    public PlaylistViewModelItem(SmartPlaylist smartPlaylist, int matchingSongCount = 0)
+    {
+        Id = smartPlaylist.Id;
+        Name = smartPlaylist.Name;
+        CoverImageUri = smartPlaylist.CoverImageUri;
+        IsSmart = true;
+
+        UpdateSongCount(matchingSongCount);
+    }
+
     public Guid Id { get; }
+
+    /// <summary>
+    ///     Indicates whether this is a smart playlist (true) or regular playlist (false).
+    /// </summary>
+    public bool IsSmart { get; }
+
+
 
     [ObservableProperty] public partial string Name { get; set; }
 
@@ -52,7 +72,14 @@ public partial class PlaylistViewModelItem : ObservableObject
         if (SongCount == newSongCount) return;
 
         SongCount = newSongCount;
-        SongCountText = newSongCount == 1 ? "1 song" : $"{newSongCount} songs";
+        if (IsSmart)
+        {
+            SongCountText = newSongCount == 1 ? "Smart • 1 song" : $"Smart • {newSongCount} songs";
+        }
+        else
+        {
+            SongCountText = newSongCount == 1 ? "1 song" : $"{newSongCount} songs";
+        }
     }
 }
 
@@ -63,15 +90,18 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
 {
     private readonly NotifyCollectionChangedEventHandler _collectionChangedHandler;
     private readonly ILibraryService _libraryService;
+    private readonly ISmartPlaylistService _smartPlaylistService;
     private readonly ILogger<PlaylistViewModel> _logger;
     private readonly IMusicPlaybackService _musicPlaybackService;
     private readonly INavigationService _navigationService;
     private bool _isDisposed;
 
-    public PlaylistViewModel(ILibraryService libraryService, IMusicPlaybackService musicPlaybackService,
-        INavigationService navigationService, ILogger<PlaylistViewModel> logger)
+    public PlaylistViewModel(ILibraryService libraryService, ISmartPlaylistService smartPlaylistService,
+        IMusicPlaybackService musicPlaybackService, INavigationService navigationService, 
+        ILogger<PlaylistViewModel> logger)
     {
         _libraryService = libraryService;
+        _smartPlaylistService = smartPlaylistService;
         _musicPlaybackService = musicPlaybackService;
         _navigationService = navigationService;
         _logger = logger;
@@ -133,26 +163,54 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
     {
         if (playlist is null) return;
 
-        var navParam = new PlaylistSongViewNavigationParameter
+        if (playlist.IsSmart)
         {
-            Title = playlist.Name,
-            PlaylistId = playlist.Id
-        };
-        _navigationService.Navigate(typeof(PlaylistSongViewPage), navParam);
+            var navParam = new SmartPlaylistSongViewNavigationParameter
+            {
+                Title = playlist.Name,
+                SmartPlaylistId = playlist.Id
+            };
+            _navigationService.Navigate(typeof(SmartPlaylistSongViewPage), navParam);
+        }
+        else
+        {
+            var navParam = new PlaylistSongViewNavigationParameter
+            {
+                Title = playlist.Name,
+                PlaylistId = playlist.Id
+            };
+            _navigationService.Navigate(typeof(PlaylistSongViewPage), navParam);
+        }
     }
 
     /// <summary>
-    ///     Clears the current queue and starts playing the selected playlist.
+    ///     Clears the current queue and starts playing the selected playlist (regular or smart).
     /// </summary>
     [RelayCommand]
-    private async Task PlayPlaylistAsync(Guid playlistId)
+    private async Task PlayPlaylistAsync(Tuple<Guid, bool> args)
     {
+        var (playlistId, isSmart) = args;
         if (IsAnyOperationInProgress || playlistId == Guid.Empty) return;
 
         StatusMessage = "Starting playlist...";
         try
         {
-            await _musicPlaybackService.PlayPlaylistAsync(playlistId);
+            if (isSmart)
+            {
+                var songs = await _smartPlaylistService.GetMatchingSongsAsync(playlistId);
+                var songList = songs.ToList();
+                if (songList.Count == 0)
+                {
+                    StatusMessage = "No songs match this smart playlist's rules.";
+                    _logger.LogInformation("Smart playlist {PlaylistId} has no matching songs", playlistId);
+                    return;
+                }
+                await _musicPlaybackService.PlayAsync(songList);
+            }
+            else
+            {
+                await _musicPlaybackService.PlayPlaylistAsync(playlistId);
+            }
             StatusMessage = string.Empty;
         }
         catch (Exception ex)
@@ -163,7 +221,7 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
     }
 
     /// <summary>
-    ///     Loads all playlists from the library service.
+    ///     Loads all playlists (both regular and smart) from the services.
     /// </summary>
     [RelayCommand]
     private async Task LoadPlaylistsAsync()
@@ -171,10 +229,28 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
         StatusMessage = "Loading playlists...";
         try
         {
-            var playlistsFromDb = await _libraryService.GetAllPlaylistsAsync();
             Playlists.Clear();
-            foreach (var playlist in playlistsFromDb.OrderBy(p => p.Name, StringComparer.OrdinalIgnoreCase))
-                Playlists.Add(new PlaylistViewModelItem(playlist));
+            var allItems = new List<PlaylistViewModelItem>();
+
+            // Load regular playlists
+            var playlistsFromDb = await _libraryService.GetAllPlaylistsAsync();
+            foreach (var playlist in playlistsFromDb)
+                allItems.Add(new PlaylistViewModelItem(playlist));
+
+            // Load smart playlists with their match counts (batch operation for performance)
+            var smartPlaylistsFromDb = await _smartPlaylistService.GetAllSmartPlaylistsAsync();
+            var matchCounts = await _smartPlaylistService.GetAllMatchingSongCountsAsync();
+            
+            foreach (var smartPlaylist in smartPlaylistsFromDb)
+            {
+                var matchCount = matchCounts.GetValueOrDefault(smartPlaylist.Id, 0);
+                allItems.Add(new PlaylistViewModelItem(smartPlaylist, matchCount));
+            }
+
+            // Sort all playlists by name and add to collection
+            foreach (var item in allItems.OrderBy(p => p.Name, StringComparer.OrdinalIgnoreCase))
+                Playlists.Add(item);
+
             StatusMessage = string.Empty;
         }
         catch (Exception ex)
@@ -223,13 +299,13 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
     }
 
     /// <summary>
-    ///     Updates the cover image for an existing playlist.
+    ///     Updates the cover image for an existing playlist (regular or smart).
     /// </summary>
-    /// <param name="args">A tuple containing the playlist ID and the new cover image URI.</param>
+    /// <param name="args">A tuple containing the playlist ID, the new cover image URI, and whether it's a smart playlist.</param>
     [RelayCommand]
-    private async Task UpdatePlaylistCoverAsync(Tuple<Guid, string> args)
+    private async Task UpdatePlaylistCoverAsync(Tuple<Guid, string, bool> args)
     {
-        var (playlistId, newCoverImageUri) = args;
+        var (playlistId, newCoverImageUri, isSmart) = args;
         if (string.IsNullOrWhiteSpace(newCoverImageUri) || IsAnyOperationInProgress) return;
 
         IsUpdatingCover = true;
@@ -237,7 +313,12 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
 
         try
         {
-            var success = await _libraryService.UpdatePlaylistCoverAsync(playlistId, newCoverImageUri);
+            bool success;
+            if (isSmart)
+                success = await _smartPlaylistService.UpdateSmartPlaylistCoverAsync(playlistId, newCoverImageUri);
+            else
+                success = await _libraryService.UpdatePlaylistCoverAsync(playlistId, newCoverImageUri);
+            
             if (success)
             {
                 var playlistItem = Playlists.FirstOrDefault(p => p.Id == playlistId);
@@ -261,13 +342,13 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
     }
 
     /// <summary>
-    ///     Renames an existing playlist.
+    ///     Renames an existing playlist (regular or smart).
     /// </summary>
-    /// <param name="args">A tuple containing the playlist ID and the new name.</param>
+    /// <param name="args">A tuple containing the playlist ID, the new name, and whether it's a smart playlist.</param>
     [RelayCommand]
-    private async Task RenamePlaylistAsync(Tuple<Guid, string> args)
+    private async Task RenamePlaylistAsync(Tuple<Guid, string, bool> args)
     {
-        var (playlistId, newName) = args;
+        var (playlistId, newName, isSmart) = args;
         if (string.IsNullOrWhiteSpace(newName) || IsAnyOperationInProgress) return;
 
         IsRenamingPlaylist = true;
@@ -275,7 +356,12 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
 
         try
         {
-            var success = await _libraryService.RenamePlaylistAsync(playlistId, newName.Trim());
+            bool success;
+            if (isSmart)
+                success = await _smartPlaylistService.RenameSmartPlaylistAsync(playlistId, newName.Trim());
+            else
+                success = await _libraryService.RenamePlaylistAsync(playlistId, newName.Trim());
+            
             if (success)
             {
                 var playlistItem = Playlists.FirstOrDefault(p => p.Id == playlistId);
@@ -299,11 +385,12 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
     }
 
     /// <summary>
-    ///     Deletes a playlist.
+    ///     Deletes a playlist (regular or smart).
     /// </summary>
     [RelayCommand]
-    private async Task DeletePlaylistAsync(Guid playlistId)
+    private async Task DeletePlaylistAsync(Tuple<Guid, bool> args)
     {
+        var (playlistId, isSmart) = args;
         if (IsAnyOperationInProgress) return;
 
         IsDeletingPlaylist = true;
@@ -311,7 +398,12 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
 
         try
         {
-            var success = await _libraryService.DeletePlaylistAsync(playlistId);
+            bool success;
+            if (isSmart)
+                success = await _smartPlaylistService.DeleteSmartPlaylistAsync(playlistId);
+            else
+                success = await _libraryService.DeletePlaylistAsync(playlistId);
+            
             if (success)
             {
                 var playlistItem = Playlists.FirstOrDefault(p => p.Id == playlistId);

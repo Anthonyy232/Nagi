@@ -239,6 +239,79 @@ namespace Nagi.Core.Data.Migrations
                     b.ToTable("PlaylistSongs");
                 });
 
+            modelBuilder.Entity("Nagi.Core.Models.SmartPlaylist", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CoverImageUri")
+                        .HasMaxLength(2000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("DateModified")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(5000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("MatchAllRules")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT")
+                        .UseCollation("NOCASE");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("SmartPlaylists");
+                });
+
+            modelBuilder.Entity("Nagi.Core.Models.SmartPlaylistRule", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Field")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Operator")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("SecondValue")
+                        .HasMaxLength(1000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("SmartPlaylistId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Value")
+                        .HasMaxLength(1000)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SmartPlaylistId", "Order");
+
+                    b.ToTable("SmartPlaylistRules");
+                });
+
             modelBuilder.Entity("Nagi.Core.Models.Song", b =>
                 {
                     b.Property<Guid>("Id")
@@ -299,8 +372,8 @@ namespace Nagi.Core.Data.Migrations
                     b.Property<int?>("DiscNumber")
                         .HasColumnType("INTEGER");
 
-                    b.Property<TimeSpan>("Duration")
-                        .HasColumnType("TEXT");
+                    b.Property<long>("DurationTicks")
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime?>("FileCreatedDate")
                         .HasColumnType("TEXT");
@@ -470,6 +543,17 @@ namespace Nagi.Core.Data.Migrations
                     b.Navigation("Song");
                 });
 
+            modelBuilder.Entity("Nagi.Core.Models.SmartPlaylistRule", b =>
+                {
+                    b.HasOne("Nagi.Core.Models.SmartPlaylist", "SmartPlaylist")
+                        .WithMany("Rules")
+                        .HasForeignKey("SmartPlaylistId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("SmartPlaylist");
+                });
+
             modelBuilder.Entity("Nagi.Core.Models.Song", b =>
                 {
                     b.HasOne("Nagi.Core.Models.Album", "Album")
@@ -515,6 +599,11 @@ namespace Nagi.Core.Data.Migrations
             modelBuilder.Entity("Nagi.Core.Models.Playlist", b =>
                 {
                     b.Navigation("PlaylistSongs");
+                });
+
+            modelBuilder.Entity("Nagi.Core.Models.SmartPlaylist", b =>
+                {
+                    b.Navigation("Rules");
                 });
 
             modelBuilder.Entity("Nagi.Core.Models.Song", b =>

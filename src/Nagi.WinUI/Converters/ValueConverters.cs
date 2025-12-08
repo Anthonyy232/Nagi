@@ -153,6 +153,31 @@ public class CollectionToVisibilityConverter : IValueConverter
 }
 
 /// <summary>
+///     Converts a collection count (int) to Visibility. Visible if count > 0.
+/// </summary>
+public class CollectionCountToVisibilityConverter : IValueConverter
+{
+    /// <summary>
+    ///     Gets or sets a value indicating whether the conversion should be inverted.
+    ///     If true, 0 becomes Visible and >0 becomes Collapsed.
+    /// </summary>
+    public bool Invert { get; set; }
+
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        var count = value is int c ? c : 0;
+        var isVisible = count > 0;
+        if (Invert) isVisible = !isVisible;
+        return isVisible ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+/// <summary>
 ///     Converts a string to Visibility. Visible if the string is not null or empty.
 /// </summary>
 public class NullOrEmptyStringToVisibilityConverter : IValueConverter
@@ -304,9 +329,6 @@ public class StringToFontFamilyConverter : IValueConverter
 /// <summary>
 ///     Selects a style based on whether the bound boolean value is true or false.
 /// </summary>
-/// <summary>
-///     Selects a style based on whether the bound boolean value is true or false.
-/// </summary>
 public class ActiveLyricToStyleConverter : IValueConverter
 {
     /// <summary>
@@ -371,5 +393,32 @@ public class BooleanToOpacityConverter : IValueConverter
     public object ConvertBack(object value, Type targetType, object parameter, string language)
     {
         throw new NotSupportedException();
+    }
+}
+
+/// <summary>
+///     Converts a boolean IsSmart flag to the appropriate playlist icon glyph.
+///     Smart playlists show a gear icon, regular playlists show a music note.
+/// </summary>
+public class SmartPlaylistIconConverter : IValueConverter
+{
+    /// <summary>
+    ///     Glyph for regular playlists (music note).
+    /// </summary>
+    private const string RegularPlaylistGlyph = "\uE142";
+    
+    /// <summary>
+    ///     Glyph for smart playlists (gear/settings).
+    /// </summary>
+    private const string SmartPlaylistGlyph = "\uE713";
+
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        return value is true ? SmartPlaylistGlyph : RegularPlaylistGlyph;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
+        throw new NotImplementedException();
     }
 }
