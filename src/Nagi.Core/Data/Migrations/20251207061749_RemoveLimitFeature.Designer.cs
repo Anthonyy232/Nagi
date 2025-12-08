@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Nagi.Core.Data;
 
@@ -10,9 +11,11 @@ using Nagi.Core.Data;
 namespace Nagi.Core.Data.Migrations
 {
     [DbContext(typeof(MusicDbContext))]
-    partial class MusicDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251207061749_RemoveLimitFeature")]
+    partial class RemoveLimitFeature
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.8");
@@ -372,8 +375,8 @@ namespace Nagi.Core.Data.Migrations
                     b.Property<int?>("DiscNumber")
                         .HasColumnType("INTEGER");
 
-                    b.Property<long>("DurationTicks")
-                        .HasColumnType("INTEGER");
+                    b.Property<TimeSpan>("Duration")
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("FileCreatedDate")
                         .HasColumnType("TEXT");

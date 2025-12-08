@@ -30,6 +30,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     private readonly Dictionary<Type, string> _detailPageToParentTagMap = new()
     {
         { typeof(PlaylistSongViewPage), "playlists" },
+        { typeof(SmartPlaylistSongViewPage), "playlists" },
         { typeof(FolderSongViewPage), "folders" },
         { typeof(ArtistViewPage), "artists" },
         { typeof(AlbumViewPage), "albums" },

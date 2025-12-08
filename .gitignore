@@ -47,3 +47,8 @@ ehthumbs.db
 # Secrets
 *.key
 [Aa]ppsettings.json
+
+# Build output and temp files
+build_output.txt
+*_sub
+*.bak

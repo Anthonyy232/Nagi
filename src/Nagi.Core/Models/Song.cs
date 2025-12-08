@@ -26,7 +26,20 @@ public class Song
 
     [ForeignKey("FolderId")] public virtual Folder Folder { get; set; } = null!;
 
-    public TimeSpan Duration { get; set; } = TimeSpan.Zero;
+    /// <summary>
+    ///     The duration of the song stored as ticks for database compatibility with SQLite.
+    /// </summary>
+    public long DurationTicks { get; set; }
+
+    /// <summary>
+    ///     The duration of the song as a TimeSpan (computed from DurationTicks).
+    /// </summary>
+    [NotMapped]
+    public TimeSpan Duration
+    {
+        get => TimeSpan.FromTicks(DurationTicks);
+        set => DurationTicks = value.Ticks;
+    }
 
     [MaxLength(2000)] public string? AlbumArtUriFromTrack { get; set; }
 

@@ -1,0 +1,440 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Nagi.Core.Data;
+using Nagi.Core.Models;
+using Nagi.Core.Services.Abstractions;
+
+namespace Nagi.Core.Services.Implementations;
+
+/// <summary>
+///     Manages smart playlist operations including CRUD, rule management, and query execution.
+/// </summary>
+public class SmartPlaylistService : ISmartPlaylistService
+{
+    private readonly IDbContextFactory<MusicDbContext> _contextFactory;
+    private readonly ILogger<SmartPlaylistService> _logger;
+    private readonly SmartPlaylistQueryBuilder _queryBuilder;
+
+    public SmartPlaylistService(
+        IDbContextFactory<MusicDbContext> contextFactory,
+        ILogger<SmartPlaylistService> logger)
+    {
+        _contextFactory = contextFactory;
+        _logger = logger;
+        _queryBuilder = new SmartPlaylistQueryBuilder();
+    }
+
+    #region CRUD Operations
+
+    /// <inheritdoc />
+    public async Task<SmartPlaylist?> CreateSmartPlaylistAsync(string name, string? description = null,
+        string? coverImageUri = null)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ArgumentException("Smart playlist name cannot be empty.", nameof(name));
+
+        await using var context = await _contextFactory.CreateDbContextAsync();
+
+        // Check for duplicate name (case-insensitive)
+        var trimmedName = name.Trim();
+        var exists = await context.SmartPlaylists
+            .AnyAsync(sp => sp.Name.ToLower() == trimmedName.ToLower());
+        
+        if (exists)
+        {
+            _logger.LogWarning("Cannot create smart playlist: name '{Name}' already exists", trimmedName);
+            return null;
+        }
+
+        var smartPlaylist = new SmartPlaylist
+        {
+            Name = trimmedName,
+            Description = description,
+            CoverImageUri = coverImageUri,
+            DateCreated = DateTime.UtcNow,
+            DateModified = DateTime.UtcNow
+        };
+
+        context.SmartPlaylists.Add(smartPlaylist);
+        await context.SaveChangesAsync();
+
+        _logger.LogInformation("Created smart playlist '{Name}' with ID {Id}", smartPlaylist.Name, smartPlaylist.Id);
+        return smartPlaylist;
+    }
+
+    /// <inheritdoc />
+    public async Task<bool> DeleteSmartPlaylistAsync(Guid smartPlaylistId)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        var rowsAffected = await context.SmartPlaylists
+            .Where(sp => sp.Id == smartPlaylistId)
+            .ExecuteDeleteAsync();
+
+        if (rowsAffected > 0)
+            _logger.LogInformation("Deleted smart playlist with ID {Id}", smartPlaylistId);
+
+        return rowsAffected > 0;
+    }
+
+    /// <inheritdoc />
+    public async Task<bool> UpdateSmartPlaylistAsync(SmartPlaylist smartPlaylist)
+    {
+        ArgumentNullException.ThrowIfNull(smartPlaylist);
+
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        
+        // Fetch the existing entity to avoid tracking issues with detached entities
+        var existing = await context.SmartPlaylists.FindAsync(smartPlaylist.Id);
+        if (existing is null) return false;
+
+        // Update properties individually
+        existing.Name = smartPlaylist.Name;
+        existing.Description = smartPlaylist.Description;
+        existing.CoverImageUri = smartPlaylist.CoverImageUri;
+        existing.MatchAllRules = smartPlaylist.MatchAllRules;
+        existing.SortOrder = smartPlaylist.SortOrder;
+        existing.DateModified = DateTime.UtcNow;
+
+        await context.SaveChangesAsync();
+        return true;
+    }
+
+    /// <inheritdoc />
+    public async Task<SmartPlaylist?> GetSmartPlaylistByIdAsync(Guid smartPlaylistId)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        return await context.SmartPlaylists.AsNoTracking()
+            .Include(sp => sp.Rules.OrderBy(r => r.Order))
+            .FirstOrDefaultAsync(sp => sp.Id == smartPlaylistId);
+    }
+
+    /// <inheritdoc />
+    public async Task<IEnumerable<SmartPlaylist>> GetAllSmartPlaylistsAsync()
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        return await context.SmartPlaylists.AsNoTracking()
+            .Include(sp => sp.Rules.OrderBy(r => r.Order))
+            .OrderBy(sp => sp.Name)
+            .ThenBy(sp => sp.Id)
+            .ToListAsync();
+    }
+
+    /// <inheritdoc />
+    public async Task<bool> RenameSmartPlaylistAsync(Guid smartPlaylistId, string newName)
+    {
+        if (string.IsNullOrWhiteSpace(newName))
+            throw new ArgumentException("New smart playlist name cannot be empty.", nameof(newName));
+
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        var smartPlaylist = await context.SmartPlaylists.FindAsync(smartPlaylistId);
+        if (smartPlaylist is null) return false;
+
+        var trimmedName = newName.Trim();
+        
+        // Check if the new name already exists (case-insensitive), excluding the current playlist
+        var nameExists = await context.SmartPlaylists
+            .AnyAsync(sp => sp.Id != smartPlaylistId && sp.Name.ToLower() == trimmedName.ToLower());
+        
+        if (nameExists)
+        {
+            _logger.LogWarning("Cannot rename smart playlist: name '{Name}' already exists", trimmedName);
+            return false;
+        }
+
+        smartPlaylist.Name = trimmedName;
+        smartPlaylist.DateModified = DateTime.UtcNow;
+        await context.SaveChangesAsync();
+        return true;
+    }
+
+    /// <inheritdoc />
+    public async Task<bool> UpdateSmartPlaylistCoverAsync(Guid smartPlaylistId, string? newCoverImageUri)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        var smartPlaylist = await context.SmartPlaylists.FindAsync(smartPlaylistId);
+        if (smartPlaylist is null) return false;
+
+        smartPlaylist.CoverImageUri = newCoverImageUri;
+        smartPlaylist.DateModified = DateTime.UtcNow;
+        await context.SaveChangesAsync();
+        return true;
+    }
+
+    #endregion
+
+    #region Configuration
+
+    /// <inheritdoc />
+    public async Task<bool> SetMatchAllRulesAsync(Guid smartPlaylistId, bool matchAll)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        var smartPlaylist = await context.SmartPlaylists.FindAsync(smartPlaylistId);
+        if (smartPlaylist is null) return false;
+
+        smartPlaylist.MatchAllRules = matchAll;
+        smartPlaylist.DateModified = DateTime.UtcNow;
+        await context.SaveChangesAsync();
+        return true;
+    }
+
+    /// <inheritdoc />
+    public async Task<bool> SetSortOrderAsync(Guid smartPlaylistId, SmartPlaylistSortOrder sortOrder)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        var smartPlaylist = await context.SmartPlaylists.FindAsync(smartPlaylistId);
+        if (smartPlaylist is null) return false;
+
+        smartPlaylist.SortOrder = sortOrder;
+        smartPlaylist.DateModified = DateTime.UtcNow;
+        await context.SaveChangesAsync();
+        return true;
+    }
+
+    #endregion
+
+    #region Rule Management
+
+    /// <inheritdoc />
+    public async Task<SmartPlaylistRule?> AddRuleAsync(Guid smartPlaylistId, SmartPlaylistField field,
+        SmartPlaylistOperator op, string? value, string? secondValue = null)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        var smartPlaylist = await context.SmartPlaylists
+            .Include(sp => sp.Rules)
+            .FirstOrDefaultAsync(sp => sp.Id == smartPlaylistId);
+
+        if (smartPlaylist is null) return null;
+
+        var maxOrder = smartPlaylist.Rules.Any() ? smartPlaylist.Rules.Max(r => r.Order) : -1;
+
+        var rule = new SmartPlaylistRule
+        {
+            SmartPlaylistId = smartPlaylistId,
+            Field = field,
+            Operator = op,
+            Value = value,
+            SecondValue = secondValue,
+            Order = maxOrder + 1
+        };
+
+        context.SmartPlaylistRules.Add(rule);
+        smartPlaylist.DateModified = DateTime.UtcNow;
+        await context.SaveChangesAsync();
+
+        _logger.LogDebug("Added rule to smart playlist {Id}: {Field} {Operator} {Value}",
+            smartPlaylistId, field, op, value);
+
+        return rule;
+    }
+
+    /// <inheritdoc />
+    public async Task<bool> UpdateRuleAsync(Guid ruleId, SmartPlaylistField field, SmartPlaylistOperator op,
+        string? value, string? secondValue = null)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        var rule = await context.SmartPlaylistRules
+            .Include(r => r.SmartPlaylist)
+            .FirstOrDefaultAsync(r => r.Id == ruleId);
+
+        if (rule is null) return false;
+
+        rule.Field = field;
+        rule.Operator = op;
+        rule.Value = value;
+        rule.SecondValue = secondValue;
+        rule.SmartPlaylist.DateModified = DateTime.UtcNow;
+
+        await context.SaveChangesAsync();
+        return true;
+    }
+
+    /// <inheritdoc />
+    public async Task<bool> RemoveRuleAsync(Guid ruleId)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+
+        var rule = await context.SmartPlaylistRules
+            .Include(r => r.SmartPlaylist)
+            .FirstOrDefaultAsync(r => r.Id == ruleId);
+
+        if (rule is null) return false;
+
+        var smartPlaylistId = rule.SmartPlaylistId;
+        context.SmartPlaylistRules.Remove(rule);
+        rule.SmartPlaylist.DateModified = DateTime.UtcNow;
+        await context.SaveChangesAsync();
+
+        // Reindex remaining rules
+        await ReindexRulesAsync(context, smartPlaylistId);
+
+        return true;
+    }
+
+    /// <inheritdoc />
+    public async Task<bool> ReorderRulesAsync(Guid smartPlaylistId, IEnumerable<Guid> orderedRuleIds)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        var smartPlaylist = await context.SmartPlaylists.FindAsync(smartPlaylistId);
+        if (smartPlaylist is null) return false;
+
+        var rules = await context.SmartPlaylistRules
+            .Where(r => r.SmartPlaylistId == smartPlaylistId)
+            .ToListAsync();
+
+        var ruleMap = rules.ToDictionary(r => r.Id);
+        var newOrderList = orderedRuleIds.ToList();
+
+        for (var i = 0; i < newOrderList.Count; i++)
+        {
+            if (ruleMap.TryGetValue(newOrderList[i], out var rule))
+                rule.Order = i;
+        }
+
+        smartPlaylist.DateModified = DateTime.UtcNow;
+        await context.SaveChangesAsync();
+        return true;
+    }
+
+    private static async Task ReindexRulesAsync(MusicDbContext context, Guid smartPlaylistId)
+    {
+        var rules = await context.SmartPlaylistRules
+            .Where(r => r.SmartPlaylistId == smartPlaylistId)
+            .OrderBy(r => r.Order)
+            .ToListAsync();
+
+        for (var i = 0; i < rules.Count; i++)
+            rules[i].Order = i;
+
+        await context.SaveChangesAsync();
+    }
+
+    #endregion
+
+    #region Query Execution
+
+    /// <inheritdoc />
+    public async Task<IEnumerable<Song>> GetMatchingSongsAsync(Guid smartPlaylistId, string? searchTerm = null)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        var smartPlaylist = await context.SmartPlaylists.AsNoTracking()
+            .Include(sp => sp.Rules)
+            .FirstOrDefaultAsync(sp => sp.Id == smartPlaylistId);
+
+        if (smartPlaylist is null)
+            return Enumerable.Empty<Song>();
+
+        return await _queryBuilder.BuildQuery(context, smartPlaylist, searchTerm).ToListAsync();
+    }
+
+    /// <inheritdoc />
+    public async Task<PagedResult<Song>> GetMatchingSongsPagedAsync(Guid smartPlaylistId, int pageNumber, int pageSize, string? searchTerm = null)
+    {
+        SanitizePaging(ref pageNumber, ref pageSize);
+
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        var smartPlaylist = await context.SmartPlaylists.AsNoTracking()
+            .Include(sp => sp.Rules)
+            .FirstOrDefaultAsync(sp => sp.Id == smartPlaylistId);
+
+        if (smartPlaylist is null)
+        {
+            return new PagedResult<Song>
+            {
+                Items = new List<Song>(),
+                TotalCount = 0,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
+        }
+
+        var query = _queryBuilder.BuildQuery(context, smartPlaylist, searchTerm);
+        var totalCount = await _queryBuilder.BuildCountQuery(context, smartPlaylist, searchTerm).CountAsync();
+
+        var pagedData = await query
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return new PagedResult<Song>
+        {
+            Items = pagedData,
+            TotalCount = totalCount,
+            PageNumber = pageNumber,
+            PageSize = pageSize
+        };
+    }
+
+    /// <inheritdoc />
+    public async Task<int> GetMatchingSongCountAsync(Guid smartPlaylistId, string? searchTerm = null)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        var smartPlaylist = await context.SmartPlaylists.AsNoTracking()
+            .Include(sp => sp.Rules)
+            .FirstOrDefaultAsync(sp => sp.Id == smartPlaylistId);
+
+        if (smartPlaylist is null)
+            return 0;
+
+        return await _queryBuilder.BuildCountQuery(context, smartPlaylist, searchTerm).CountAsync();
+    }
+
+    /// <inheritdoc />
+    public async Task<int> GetMatchingSongCountAsync(SmartPlaylist smartPlaylist, string? searchTerm = null)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        return await _queryBuilder.BuildCountQuery(context, smartPlaylist, searchTerm).CountAsync();
+    }
+
+    /// <inheritdoc />
+    public async Task<List<Guid>> GetMatchingSongIdsAsync(Guid smartPlaylistId)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        var smartPlaylist = await context.SmartPlaylists.AsNoTracking()
+            .Include(sp => sp.Rules)
+            .FirstOrDefaultAsync(sp => sp.Id == smartPlaylistId);
+
+        if (smartPlaylist is null)
+            return new List<Guid>();
+
+        return await _queryBuilder.BuildQuery(context, smartPlaylist)
+            .Select(s => s.Id)
+            .ToListAsync();
+    }
+
+    #endregion
+
+    /// <inheritdoc />
+    public async Task<Dictionary<Guid, int>> GetAllMatchingSongCountsAsync()
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        var smartPlaylists = await context.SmartPlaylists.AsNoTracking()
+            .Include(sp => sp.Rules)
+            .ToListAsync();
+
+        if (smartPlaylists.Count == 0)
+            return new Dictionary<Guid, int>();
+
+        // Parallelize count queries for better performance with many smart playlists
+        // Each task gets its own DbContext since EF Core contexts are not thread-safe
+        var countTasks = smartPlaylists.Select(async smartPlaylist =>
+        {
+            await using var countContext = await _contextFactory.CreateDbContextAsync();
+            var count = await _queryBuilder.BuildCountQuery(countContext, smartPlaylist).CountAsync();
+            return (smartPlaylist.Id, count);
+        });
+
+        var results = await Task.WhenAll(countTasks);
+        return results.ToDictionary(r => r.Id, r => r.count);
+    }
+
+    #region Helpers
+
+    private static void SanitizePaging(ref int pageNumber, ref int pageSize)
+    {
+        if (pageNumber < 1) pageNumber = 1;
+        if (pageSize < 1) pageSize = 50;
+        if (pageSize > 500) pageSize = 500;
+    }
+
+    #endregion
+}
