@@ -29,6 +29,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     private Media? _currentMedia;
     private Song? _currentSong;
     private SystemMediaTransportControls? _smtc;
+    private bool _isDisposed;
 
     public LibVlcAudioPlayerService(IDispatcherService dispatcherService, ILogger<LibVlcAudioPlayerService> logger)
     {
@@ -69,11 +70,11 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     public event Action<string>? ErrorOccurred;
     public event Action? SmtcNextButtonPressed, SmtcPreviousButtonPressed;
 
-    public bool IsPlaying => _mediaPlayer.IsPlaying;
-    public TimeSpan CurrentPosition => TimeSpan.FromMilliseconds(_mediaPlayer.Time);
-    public TimeSpan Duration => TimeSpan.FromMilliseconds(_mediaPlayer.Length);
-    public double Volume => _mediaPlayer.Volume / 100.0;
-    public bool IsMuted => _mediaPlayer.Mute;
+    public bool IsPlaying => !_isDisposed && _mediaPlayer.IsPlaying;
+    public TimeSpan CurrentPosition => _isDisposed ? TimeSpan.Zero : TimeSpan.FromMilliseconds(_mediaPlayer.Time);
+    public TimeSpan Duration => _isDisposed ? TimeSpan.Zero : TimeSpan.FromMilliseconds(_mediaPlayer.Length);
+    public double Volume => _isDisposed ? 0 : _mediaPlayer.Volume / 100.0;
+    public bool IsMuted => !_isDisposed && _mediaPlayer.Mute;
 
     public void InitializeSmtc()
     {
@@ -159,6 +160,8 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
 
     public Task PlayAsync()
     {
+        if (_isDisposed) return Task.CompletedTask;
+
         if (_mediaPlayer.Media is not null)
             _mediaPlayer.Play();
         else
@@ -168,6 +171,8 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
 
     public Task PauseAsync()
     {
+        if (_isDisposed) return Task.CompletedTask;
+
         if (_mediaPlayer.CanPause)
             _mediaPlayer.Pause();
         else
@@ -177,6 +182,8 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
 
     public Task StopAsync()
     {
+        if (_isDisposed) return Task.CompletedTask;
+
         _logger.LogInformation("Stop command received.");
         _mediaPlayer.Stop();
         _currentSong = null;
@@ -208,6 +215,8 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
 
     public Task SeekAsync(TimeSpan position)
     {
+        if (_isDisposed) return Task.CompletedTask;
+
         if (_mediaPlayer.IsSeekable)
             _mediaPlayer.SetTime((long)position.TotalMilliseconds, true);
         else
@@ -217,6 +226,8 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
 
     public Task SetVolumeAsync(double volume)
     {
+        if (_isDisposed) return Task.CompletedTask;
+
         var vlcVolume = (int)Math.Clamp(volume * 100, 0, 100);
         _mediaPlayer.SetVolume(vlcVolume);
         return Task.CompletedTask;
@@ -224,6 +235,8 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
 
     public Task SetMuteAsync(bool isMuted)
     {
+        if (_isDisposed) return Task.CompletedTask;
+
         _mediaPlayer.Mute = isMuted;
         return Task.CompletedTask;
     }
@@ -238,9 +251,9 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
 
     public bool ApplyEqualizerSettings(EqualizerSettings settings)
     {
-        if (settings == null)
+        if (_isDisposed || settings == null)
         {
-            _logger.LogWarning("ApplyEqualizerSettings called with null settings. Aborting.");
+            if (settings == null) _logger.LogWarning("ApplyEqualizerSettings called with null settings. Aborting.");
             return false;
         }
 
@@ -257,6 +270,9 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
 
     public void Dispose()
     {
+        if (_isDisposed) return;
+        _isDisposed = true;
+
         _logger.LogInformation("Disposing LibVlcAudioPlayerService.");
         _mediaPlayer.PositionChanged -= OnMediaPlayerPositionChanged;
         _mediaPlayer.Playing -= OnMediaPlayerStateChanged;
