@@ -17,6 +17,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.UI;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Nagi.Core.Data;
 using Nagi.Core.Helpers;
@@ -140,6 +141,8 @@ public partial class App : Application
             var isStartupLaunch = Environment.GetCommandLineArgs()
                 .Any(arg => arg.Equals("--startup", StringComparison.OrdinalIgnoreCase));
             await HandleWindowActivationAsync(isStartupLaunch);
+
+            ShowElevationWarningIfNeededAsync();
 
             PerformPostLaunchTasks();
         }
@@ -555,6 +558,55 @@ public partial class App : Application
             finally
             {
                 Current.Exit();
+            }
+        });
+    }
+
+    /// <summary>
+    ///     Shows a warning dialog if the application is running with administrator privileges.
+    ///     The FolderPicker API doesn't work properly when running elevated.
+    /// </summary>
+    private void ShowElevationWarningIfNeededAsync()
+    {
+        if (!ElevationHelper.IsRunningAsAdministrator()) return;
+
+        // Use the dispatcher to ensure the UI is fully loaded before showing the dialog.
+        MainDispatcherQueue?.TryEnqueue(DispatcherQueuePriority.Low, async () =>
+        {
+            // Wait briefly for XamlRoot to become available after page load.
+            const int maxRetries = 10;
+            for (var i = 0; i < maxRetries && RootWindow?.Content?.XamlRoot is null; i++)
+                await Task.Delay(100);
+
+            if (RootWindow?.Content?.XamlRoot is null)
+            {
+                _logger?.LogWarning("Could not show elevation warning: XamlRoot is not available.");
+                return;
+            }
+
+            _logger?.LogWarning("Application is running with administrator privileges. FolderPicker may not work.");
+
+            var dialog = new ContentDialog
+            {
+                Title = "Running as Administrator",
+                Content = "Nagi is currently running as Administrator. This may prevent some features " +
+                          "(like adding music folders) from working correctly.\n\n" +
+                          "For the best experience, please restart Nagi without administrator privileges.",
+                PrimaryButtonText = "Restart Normally",
+                CloseButtonText = "Continue Anyway",
+                DefaultButton = ContentDialogButton.Primary,
+                XamlRoot = RootWindow.Content.XamlRoot
+            };
+
+            var result = await dialog.ShowAsync();
+            if (result == ContentDialogResult.Primary)
+            {
+                _logger?.LogInformation("User chose to restart without elevation.");
+                ElevationHelper.RestartWithoutElevation();
+            }
+            else
+            {
+                _logger?.LogInformation("User chose to continue running as administrator.");
             }
         });
     }
