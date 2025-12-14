@@ -526,9 +526,16 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                             await CleanUpOrphanedEntitiesAsync(cleanupContext, cancellationToken);
                         }
 
+                        // Check for newly available LRC files for songs that don't currently have lyrics
+                        var lrcUpdates = await UpdateMissingLrcPathsAsync(folderId, cancellationToken);
+                        var hasChanges = allFilePathsToDelete.Any() || lrcUpdates > 0;
+
+                        var statusMessage = lrcUpdates > 0
+                            ? $"Scan complete. Updated {lrcUpdates} song(s) with newly found lyrics."
+                            : "Scan complete. Library is up to date.";
                         progress?.Report(new ScanProgress
-                            { StatusText = "Scan complete. Library is up to date.", Percentage = 100 });
-                        return allFilePathsToDelete.Any();
+                            { StatusText = statusMessage, Percentage = 100 });
+                        return hasChanges;
                     }
 
                     var extractedMetadata =
@@ -542,6 +549,9 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                             await BatchUpdateDatabaseAsync(folderId, extractedMetadata, progress, cancellationToken);
 
                     cancellationToken.ThrowIfCancellationRequested();
+
+                    // Check for newly available LRC files for songs that don't currently have lyrics
+                    await UpdateMissingLrcPathsAsync(folderId, cancellationToken);
 
                     progress?.Report(new ScanProgress { StatusText = "Finalizing...", IsIndeterminate = true });
                     await using (var finalContext = await _contextFactory.CreateDbContextAsync())
@@ -2052,6 +2062,98 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         return (filesToAdd, filesToUpdate, filesRemovedFromDisk);
     }
+
+    /// <summary>
+    ///     Scans for songs in the folder that are missing LRC file references but now have
+    ///     matching .lrc files on disk. This handles the case where a user adds LRC files
+    ///     to an already-scanned folder without modifying the music files themselves.
+    /// </summary>
+    private async Task<int> UpdateMissingLrcPathsAsync(Guid folderId, CancellationToken cancellationToken)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+
+        // Query songs in the folder that don't have an LRC file path set
+        var songsWithoutLrc = await context.Songs
+            .Where(s => s.FolderId == folderId && s.LrcFilePath == null)
+            .Select(s => new { s.Id, s.FilePath })
+            .ToListAsync(cancellationToken);
+
+        if (songsWithoutLrc.Count == 0)
+            return 0;
+
+        // First pass: find all LRC files for songs that need them
+        var songLrcMappings = new Dictionary<Guid, string>();
+        foreach (var song in songsWithoutLrc)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var lrcPath = FindLrcFilePathForAudioFile(song.FilePath);
+            if (lrcPath != null)
+                songLrcMappings[song.Id] = lrcPath;
+        }
+
+        if (songLrcMappings.Count == 0)
+            return 0;
+
+        // Process in batches to avoid SQL parameter limits and memory issues with large libraries
+        const int batchSize = 500;
+        var songIdsToUpdate = songLrcMappings.Keys.ToList();
+        var totalUpdated = 0;
+
+        for (var i = 0; i < songIdsToUpdate.Count; i += batchSize)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var batchIds = songIdsToUpdate.Skip(i).Take(batchSize).ToList();
+            var songsToUpdate = await context.Songs
+                .Where(s => batchIds.Contains(s.Id))
+                .ToListAsync(cancellationToken);
+
+            foreach (var song in songsToUpdate)
+            {
+                if (songLrcMappings.TryGetValue(song.Id, out var lrcPath))
+                    song.LrcFilePath = lrcPath;
+            }
+
+            totalUpdated += songsToUpdate.Count;
+        }
+
+        if (totalUpdated > 0)
+        {
+            await context.SaveChangesAsync(cancellationToken);
+            _logger.LogInformation("Updated {Count} songs with newly discovered LRC files.", totalUpdated);
+        }
+
+        return totalUpdated;
+    }
+
+
+
+    /// <summary>
+    ///     Searches for an external .lrc file in the same directory as the audio file, matching by filename.
+    /// </summary>
+    private string? FindLrcFilePathForAudioFile(string audioFilePath)
+    {
+        try
+        {
+            var directory = _fileSystem.GetDirectoryName(audioFilePath);
+            if (string.IsNullOrEmpty(directory)) return null;
+
+            var audioFileNameWithoutExt = _fileSystem.GetFileNameWithoutExtension(audioFilePath);
+            var lrcFiles = _fileSystem.GetFiles(directory, "*.lrc");
+
+            return lrcFiles.FirstOrDefault(lrcPath =>
+                _fileSystem.GetFileNameWithoutExtension(lrcPath)
+                    .Equals(audioFileNameWithoutExt, StringComparison.OrdinalIgnoreCase));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Error while searching for external LRC file for '{AudioFilePath}'.",
+                audioFilePath);
+            return null;
+        }
+    }
+
 
     private async Task<List<SongFileMetadata>> ExtractMetadataConcurrentlyAsync(List<string> filesToProcess,
         IProgress<ScanProgress>? progress, CancellationToken cancellationToken)
