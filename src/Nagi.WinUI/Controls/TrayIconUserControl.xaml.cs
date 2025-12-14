@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -5,8 +6,10 @@ using Nagi.WinUI.ViewModels;
 
 namespace Nagi.WinUI.Controls;
 
-public sealed partial class TrayIconUserControl : UserControl
+public sealed partial class TrayIconUserControl : UserControl, IDisposable
 {
+    private bool _isDisposed;
+
     public TrayIconUserControl()
     {
         InitializeComponent();
@@ -21,6 +24,20 @@ public sealed partial class TrayIconUserControl : UserControl
     ///     Gets the ViewModel for this control, which manages the tray icon's logic and state.
     /// </summary>
     public TrayIconViewModel ViewModel { get; }
+
+    /// <summary>
+    ///     Disposes the TaskbarIcon control to prevent the "Exception Processing Message 0xc0000005"
+    ///     error that occurs when the application exits.
+    /// </summary>
+    public void Dispose()
+    {
+        if (_isDisposed) return;
+
+        AppTrayIcon?.Dispose();
+        ViewModel?.Dispose();
+
+        _isDisposed = true;
+    }
 
     /// <summary>
     ///     Initializes the ViewModel when the control is loaded into the visual tree.

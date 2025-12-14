@@ -31,6 +31,19 @@ internal static class PopupAnimation
         _logger ??= App.Services!.GetRequiredService<ILoggerFactory>().CreateLogger("PopupAnimation");
 
     /// <summary>
+    ///     Cancels all ongoing animations. Call this during app shutdown to prevent TaskCanceledException.
+    /// </summary>
+    public static void CancelAllAnimations()
+    {
+        if (_animationCts is not null)
+        {
+            _animationCts.Cancel();
+            _animationCts.Dispose();
+            _animationCts = null;
+        }
+    }
+
+    /// <summary>
     ///     Animates a window into view with a scale and fade effect.
     ///     Cancels any previously running animation on the same window.
     /// </summary>
@@ -85,7 +98,7 @@ internal static class PopupAnimation
                 window.AppWindow.MoveAndResize(new RectInt32(newX, newY, newWidth, newHeight));
                 window.SetWindowOpacity(newAlpha);
 
-                await Task.Delay(AnimationFrameDelayMs);
+                await Task.Delay(AnimationFrameDelayMs, token);
             }
 
             // If not cancelled, ensure the final state is set perfectly.
@@ -94,6 +107,11 @@ internal static class PopupAnimation
                 window.AppWindow.MoveAndResize(finalRect);
                 window.SetWindowOpacity(255);
             }
+        }
+        catch (OperationCanceledException)
+        {
+            // Expected during app shutdown - silently exit the animation.
+            Logger.LogDebug("AnimateIn cancelled during shutdown.");
         }
         catch (Exception ex)
         {
@@ -156,7 +174,7 @@ internal static class PopupAnimation
                 window.AppWindow.MoveAndResize(new RectInt32(newX, newY, newWidth, newHeight));
                 window.SetWindowOpacity(newAlpha);
 
-                await Task.Delay(AnimationFrameDelayMs);
+                await Task.Delay(AnimationFrameDelayMs, token);
             }
 
             // If not cancelled, hide and reset the window for the next time it's shown.
@@ -165,6 +183,11 @@ internal static class PopupAnimation
                 window.AppWindow.Hide();
                 window.SetWindowOpacity(255);
             }
+        }
+        catch (OperationCanceledException)
+        {
+            // Expected during app shutdown - silently exit the animation.
+            Logger.LogDebug("AnimateOut cancelled during shutdown.");
         }
         catch (Exception ex)
         {

@@ -230,6 +230,9 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         _settingsService.PlayerAnimationSettingChanged -= OnPlayerAnimationSettingChanged;
         _settingsService.NavigationSettingsChanged -= OnNavigationSettingsChanged;
         _settingsService.TransparencyEffectsSettingChanged -= OnTransparencyEffectsSettingChanged;
+
+        // Dispose the tray icon control to prevent "Exception Processing Message 0xc0000005" errors on exit.
+        AppTrayIconHost?.Dispose();
     }
 
     /// <summary>
