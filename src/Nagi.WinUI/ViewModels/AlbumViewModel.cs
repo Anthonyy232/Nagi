@@ -9,6 +9,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Services.Data;
 using Nagi.WinUI.Navigation;
 using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
@@ -77,6 +78,10 @@ public partial class AlbumViewModel : ObservableObject, IDisposable
 
     [ObservableProperty] public partial bool HasLoadError { get; set; }
 
+    [ObservableProperty] public partial AlbumSortOrder CurrentSortOrder { get; set; } = AlbumSortOrder.ArtistAsc;
+
+    [ObservableProperty] public partial string CurrentSortOrderText { get; set; } = "Sort By: Artist";
+
     public bool HasAlbums => Albums.Any();
 
     /// <summary>
@@ -125,6 +130,30 @@ public partial class AlbumViewModel : ObservableObject, IDisposable
         {
             _logger.LogCritical(ex, "Error playing album {AlbumId}", albumId);
         }
+    }
+
+    /// <summary>
+    ///     Changes the sort order and reloads the album list.
+    /// </summary>
+    [RelayCommand]
+    public async Task ChangeSortOrderAsync(string sortOrderString)
+    {
+        if (Enum.TryParse<AlbumSortOrder>(sortOrderString, out var newSortOrder)
+            && newSortOrder != CurrentSortOrder)
+        {
+            CurrentSortOrder = newSortOrder;
+            UpdateSortOrderText();
+            await LoadAlbumsCommand.ExecuteAsync(CancellationToken.None);
+        }
+    }
+
+    private void UpdateSortOrderText()
+    {
+        CurrentSortOrderText = CurrentSortOrder switch
+        {
+            AlbumSortOrder.AlbumTitleAsc => "Sort By: Album",
+            _ => "Sort By: Artist"
+        };
     }
 
     /// <summary>
@@ -182,7 +211,7 @@ public partial class AlbumViewModel : ObservableObject, IDisposable
     /// </summary>
     private async Task LoadNextPageAsync(CancellationToken cancellationToken)
     {
-        var pagedResult = await _libraryService.GetAllAlbumsPagedAsync(_currentPage, PageSize);
+        var pagedResult = await _libraryService.GetAllAlbumsPagedAsync(_currentPage, PageSize, CurrentSortOrder);
 
         if (cancellationToken.IsCancellationRequested) return;
 

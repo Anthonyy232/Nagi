@@ -25,12 +25,32 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- Page Title -->
-        <TextBlock
-            Grid.Row="0"
-            Margin="0,0,0,28"
-            Style="{StaticResource AlbumPageTitleTextStyle}"
-            Text="Albums" />
+        <!-- Page Header -->
+        <Grid Grid.Row="0" Margin="0,0,0,28">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock
+                Grid.Column="0"
+                Style="{StaticResource AlbumPageTitleTextStyle}"
+                Text="Albums" />
+
+            <Button Grid.Column="1"
+                    Style="{StaticResource SongListViewPageIconButton}"
+                    ToolTipService.ToolTip="{x:Bind ViewModel.CurrentSortOrderText, Mode=OneWay}">
+                <Button.Flyout>
+                    <MenuFlyout Placement="Bottom">
+                        <MenuFlyoutItem Command="{x:Bind ViewModel.ChangeSortOrderCommand}"
+                                        CommandParameter="ArtistAsc" Text="Artist" />
+                        <MenuFlyoutItem Command="{x:Bind ViewModel.ChangeSortOrderCommand}"
+                                        CommandParameter="AlbumTitleAsc" Text="Album Title" />
+                    </MenuFlyout>
+                </Button.Flyout>
+                <FontIcon FontSize="16" Glyph="&#xE8CB;" />
+            </Button>
+        </Grid>
 
         <Grid Grid.Row="1">
             <!-- Displays the collection of albums -->
