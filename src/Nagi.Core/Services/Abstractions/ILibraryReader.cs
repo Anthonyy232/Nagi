@@ -61,7 +61,8 @@ public interface ILibraryReader
     Task<PagedResult<Song>> GetSongsByPlaylistPagedAsync(Guid playlistId, int pageNumber, int pageSize);
     Task<PagedResult<Artist>> GetAllArtistsPagedAsync(int pageNumber, int pageSize);
     Task<PagedResult<Artist>> SearchArtistsPagedAsync(string searchTerm, int pageNumber, int pageSize);
-    Task<PagedResult<Album>> GetAllAlbumsPagedAsync(int pageNumber, int pageSize);
+    Task<PagedResult<Album>> GetAllAlbumsPagedAsync(int pageNumber, int pageSize,
+        AlbumSortOrder sortOrder = AlbumSortOrder.ArtistAsc);
     Task<PagedResult<Album>> SearchAlbumsPagedAsync(string searchTerm, int pageNumber, int pageSize);
     Task<PagedResult<Playlist>> GetAllPlaylistsPagedAsync(int pageNumber, int pageSize);
 

@@ -1436,15 +1436,23 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     }
 
     /// <inheritdoc />
-    public async Task<PagedResult<Album>> GetAllAlbumsPagedAsync(int pageNumber, int pageSize)
+    public async Task<PagedResult<Album>> GetAllAlbumsPagedAsync(int pageNumber, int pageSize,
+        AlbumSortOrder sortOrder = AlbumSortOrder.ArtistAsc)
     {
         SanitizePaging(ref pageNumber, ref pageSize);
 
         await using var context = await _contextFactory.CreateDbContextAsync();
         var query = context.Albums.AsNoTracking().Include(al => al.Artist);
         var totalCount = await query.CountAsync();
-        var pagedData = await query
-            .OrderBy(al => al.Artist != null ? al.Artist.Name : string.Empty).ThenBy(al => al.Title)
+
+        // Apply sort order
+        IOrderedQueryable<Album> orderedQuery = sortOrder switch
+        {
+            AlbumSortOrder.AlbumTitleAsc => query.OrderBy(al => al.Title),
+            _ => query.OrderBy(al => al.Artist != null ? al.Artist.Name : string.Empty).ThenBy(al => al.Title)
+        };
+
+        var pagedData = await orderedQuery
             .Skip((pageNumber - 1) * pageSize).Take(pageSize).AsSplitQuery().ToListAsync();
 
         return new PagedResult<Album>
