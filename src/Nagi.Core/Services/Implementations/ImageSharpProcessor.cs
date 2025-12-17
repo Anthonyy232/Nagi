@@ -45,9 +45,9 @@ public class ImageSharpProcessor : IImageProcessor
 
     /// <inheritdoc />
     public async Task<(string? uri, string? lightSwatchId, string? darkSwatchId)> SaveCoverArtAndExtractColorsAsync(
-        byte[] pictureData, string albumTitle, string artistName)
+        byte[] pictureData, string songFilePath)
     {
-        var stableId = GenerateStableId(artistName, albumTitle);
+        var stableId = GenerateStableId(songFilePath);
         var filename = $"{stableId}.jpg";
         var fullPath = _fileSystem.Combine(_albumArtStoragePath, filename);
 
@@ -111,14 +111,13 @@ public class ImageSharpProcessor : IImageProcessor
     }
 
     /// <summary>
-    ///     Generates a content-based identifier to ensure the same album always maps to the same cached file,
-    ///     enabling efficient cache reuse across rescans and preventing duplicate storage.
+    ///     Generates a content-based identifier from the song's file path to ensure each song
+    ///     has its own unique cached cover art file.
     /// </summary>
-    private static string GenerateStableId(string artistName, string albumTitle)
+    private static string GenerateStableId(string songFilePath)
     {
         using var sha = SHA256.Create();
-        var textToHash = $"{artistName}_{albumTitle}";
-        var hashBytes = sha.ComputeHash(Encoding.UTF8.GetBytes(textToHash));
+        var hashBytes = sha.ComputeHash(Encoding.UTF8.GetBytes(songFilePath));
         return Convert.ToHexString(hashBytes).ToLowerInvariant();
     }
 }

@@ -134,7 +134,7 @@ public class TagLibMetadataServiceTests : IDisposable
             tag.Pictures = new IPicture[] { new Picture(pictureData) };
         });
 
-        _imageProcessor.SaveCoverArtAndExtractColorsAsync(Arg.Any<byte[]>(), "Test Album", "Test Album Artist")
+        _imageProcessor.SaveCoverArtAndExtractColorsAsync(Arg.Any<byte[]>(), filePath)
             .Returns(Task.FromResult<(string?, string?, string?)>(("C:/art/1.jpg", "light1", "dark1")));
 
         // Act
@@ -193,61 +193,11 @@ public class TagLibMetadataServiceTests : IDisposable
         result.CoverArtUri.Should().BeNull();
     }
 
-    /// <summary>
-    ///     Ensures that the album art processing logic is executed only once for the same album,
-    ///     even when multiple tracks from that album are processed concurrently.
-    /// </summary>
-    /// <remarks>
-    ///     <b>Scenario:</b> Two different audio files belonging to the same album and artist are
-    ///     processed in parallel using <see cref="Task.WhenAll" />. The image processor is configured
-    ///     with a delay to simulate a long-running operation.
-    ///     <br />
-    ///     <b>Expected Result:</b> The expensive image processing method should be invoked exactly once.
-    ///     Both resulting <see cref="TagLib.Flac.Metadata" /> objects should share the same successfully processed
-    ///     album art information, demonstrating effective caching/memoization.
-    /// </remarks>
-    [Fact]
-    public async Task ProcessAlbumArtAsync_ForSameAlbumConcurrently_ProcessesImageOnlyOnce()
-    {
-        // Arrange
-        var pictureData = new byte[] { 1, 2, 3 };
-        var filePath1 = CreateTestAudioFile("song1.mp3", tagFile =>
-        {
-            var tag = tagFile.Tag;
-            tag.Album = "Shared Album";
-            tag.AlbumArtists = new[] { "Shared Artist" };
-            tag.Pictures = new IPicture[] { new Picture(pictureData) };
-        });
-        var filePath2 = CreateTestAudioFile("song2.mp3", tagFile =>
-        {
-            var tag = tagFile.Tag;
-            tag.Album = "Shared Album";
-            tag.AlbumArtists = new[] { "Shared Artist" };
-            tag.Pictures = new IPicture[] { new Picture(pictureData) };
-        });
 
-        _imageProcessor.SaveCoverArtAndExtractColorsAsync(Arg.Any<byte[]>(), "Shared Album", "Shared Artist")
-            .Returns(async _ =>
-            {
-                await Task.Delay(100); // Simulate work
-                return ((string?, string?, string?))("C:/art/shared.jpg", "lightS", "darkS");
-            });
-
-        // Act
-        var task1 = _metadataService.ExtractMetadataAsync(filePath1);
-        var task2 = _metadataService.ExtractMetadataAsync(filePath2);
-        var results = await Task.WhenAll(task1, task2);
-
-        // Assert
-        await _imageProcessor.Received(1)
-            .SaveCoverArtAndExtractColorsAsync(Arg.Any<byte[]>(), "Shared Album", "Shared Artist");
-        results[0].CoverArtUri.Should().Be("C:/art/shared.jpg");
-        results[1].CoverArtUri.Should().Be("C:/art/shared.jpg");
-    }
 
     /// <summary>
-    ///     Verifies that if album art processing fails for a given album, the service
-    ///     will retry the operation on a subsequent request for a track from the same album.
+    ///     Verifies that if album art processing fails for a given song, the error is handled
+    ///     gracefully and a subsequent request will retry the operation.
     /// </summary>
     /// <remarks>
     ///     <b>Scenario:</b> An audio file is processed, and the mocked image processor throws an
@@ -256,8 +206,7 @@ public class TagLibMetadataServiceTests : IDisposable
     ///     <br />
     ///     <b>Expected Result:</b> The first attempt should result in null album art info. The
     ///     image processor should be called again on the second attempt, which should then succeed,
-    ///     populating the album art info correctly. This confirms that failed tasks are not
-    ///     permanently cached.
+    ///     populating the album art info correctly.
     /// </remarks>
     [Fact]
     public async Task ProcessAlbumArtAsync_WhenProcessingFails_AllowsRetryOnNextCall()
@@ -273,7 +222,7 @@ public class TagLibMetadataServiceTests : IDisposable
         });
 
         // First call fails
-        _imageProcessor.SaveCoverArtAndExtractColorsAsync(Arg.Any<byte[]>(), "Failing Album", "Failing Artist")
+        _imageProcessor.SaveCoverArtAndExtractColorsAsync(Arg.Any<byte[]>(), filePath)
             .ThrowsAsync(new InvalidOperationException("Processing failed"));
 
         // Act (First attempt)
@@ -282,11 +231,11 @@ public class TagLibMetadataServiceTests : IDisposable
         // Assert (First attempt)
         result1.CoverArtUri.Should().BeNull();
         await _imageProcessor.Received(1)
-            .SaveCoverArtAndExtractColorsAsync(Arg.Any<byte[]>(), "Failing Album", "Failing Artist");
+            .SaveCoverArtAndExtractColorsAsync(Arg.Any<byte[]>(), filePath);
 
         // Arrange (Second attempt succeeds)
         _imageProcessor.ClearReceivedCalls();
-        _imageProcessor.SaveCoverArtAndExtractColorsAsync(Arg.Any<byte[]>(), "Failing Album", "Failing Artist")
+        _imageProcessor.SaveCoverArtAndExtractColorsAsync(Arg.Any<byte[]>(), filePath)
             .Returns(Task.FromResult<(string?, string?, string?)>(("C:/art/success.jpg", "lightOK", "darkOK")));
 
         // Act (Second attempt)
@@ -294,7 +243,7 @@ public class TagLibMetadataServiceTests : IDisposable
 
         // Assert (Second attempt)
         await _imageProcessor.Received(1)
-            .SaveCoverArtAndExtractColorsAsync(Arg.Any<byte[]>(), "Failing Album", "Failing Artist");
+            .SaveCoverArtAndExtractColorsAsync(Arg.Any<byte[]>(), filePath);
         result2.CoverArtUri.Should().Be("C:/art/success.jpg");
     }
 

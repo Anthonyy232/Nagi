@@ -1,5 +1,4 @@
-﻿using System.Collections.Concurrent;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
@@ -20,9 +19,6 @@ public class TagLibMetadataService : IMetadataService
     private const string UnknownArtistName = "Unknown Artist";
     private const string UnknownAlbumName = "Unknown Album";
 
-    private readonly
-        ConcurrentDictionary<string, Lazy<Task<(string? CoverArtUri, string? LightSwatchId, string? DarkSwatchId)>>>
-        _albumArtProcessingTasks = new();
 
     private readonly IFileSystemService _fileSystem;
     private readonly IImageProcessor _imageProcessor;
@@ -160,32 +156,18 @@ public class TagLibMetadataService : IMetadataService
     }
 
     /// <summary>
-    ///     Extracts album art from the tag and processes it. This method ensures the expensive image processing
-    ///     for a given album occurs exactly once, even under high concurrency. All concurrent callers for the
-    ///     same album will await the result of the single, shared operation.
+    ///     Extracts album art from the tag and saves it to the cache. Each song gets its own
+    ///     cached cover art file, keyed by the song's file path.
     /// </summary>
     private async Task ProcessAlbumArtAsync(SongFileMetadata metadata, Tag tag)
     {
         var picture = tag.Pictures?.FirstOrDefault();
         if (picture?.Data?.Data is not { Length: > 0 } pictureData) return;
 
-        var artKey = $"{metadata.AlbumArtist}_{metadata.Album}";
-
-        // Atomically get or create the lazy-initialized task for this album art.
-        // The factory function inside new Lazy<T> will only ever be executed ONCE per artKey.
-        var lazyTask = _albumArtProcessingTasks.GetOrAdd(artKey, _ =>
-            new Lazy<Task<(string?, string?, string?)>>(() =>
-                _imageProcessor.SaveCoverArtAndExtractColorsAsync(pictureData, metadata.Album!, metadata.AlbumArtist!)
-            )
-        );
-
         try
         {
-            // All threads for the same album will await the SAME task instance here.
-            // If the task has already completed, the result is returned instantly.
-            // If it's in progress, they wait for it to finish.
-            // If it hasn't started, awaiting .Value triggers the factory method above.
-            var (coverArtUri, lightSwatchId, darkSwatchId) = await lazyTask.Value;
+            var (coverArtUri, lightSwatchId, darkSwatchId) =
+                await _imageProcessor.SaveCoverArtAndExtractColorsAsync(pictureData, metadata.FilePath);
 
             metadata.CoverArtUri = coverArtUri;
             metadata.LightSwatchId = lightSwatchId;
@@ -193,14 +175,7 @@ public class TagLibMetadataService : IMetadataService
         }
         catch (Exception ex)
         {
-            // CRITICAL: If image processing fails, the Lazy<Task> caches the exception and
-            // will re-throw it on every subsequent access, "poisoning" the cache for this key.
-            // We must remove the failed entry so that a subsequent request can retry the operation.
-            _logger.LogError(ex, "Failed to process album art for key '{ArtKey}'. Removing from cache to allow retry.",
-                artKey);
-            _albumArtProcessingTasks.TryRemove(
-                new KeyValuePair<string,
-                    Lazy<Task<(string? CoverArtUri, string? LightSwatchId, string? DarkSwatchId)>>>(artKey, lazyTask));
+            _logger.LogError(ex, "Failed to process album art for '{FilePath}'.", metadata.FilePath);
             // We don't re-throw, as failing to get album art shouldn't fail the entire metadata extraction.
         }
     }
