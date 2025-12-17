@@ -252,9 +252,9 @@ public sealed partial class AlbumViewPage : Page
                 SongsListView.SelectedItem = rightClickedSong;
         }
 
-        // Find and populate the "Add to Playlist" submenu.
+        // Find and populate the "Add to Playlist" submenu (supports both grouped and regular ListViews).
         if (menuFlyout.Items.OfType<MenuFlyoutSubItem>()
-                .FirstOrDefault(item => item.Name == "AddToPlaylistSubMenu") is { } addToPlaylistSubMenu)
+                .FirstOrDefault(item => item.Name is "AddToPlaylistSubMenu" or "AddToPlaylistSubMenuGrouped") is { } addToPlaylistSubMenu)
         {
             _logger.LogDebug("Populating 'Add to playlist' submenu.");
             PopulatePlaylistSubMenu(addToPlaylistSubMenu);
