@@ -8,6 +8,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
+using Nagi.Core.Constants;
 using Nagi.WinUI.ViewModels;
 using WinRT.Interop;
 
@@ -248,9 +249,8 @@ public sealed partial class PlaylistPage : Page
         var picker = new FileOpenPicker();
         var hwnd = WindowNative.GetWindowHandle(App.RootWindow);
         InitializeWithWindow.Initialize(picker, hwnd);
-        picker.FileTypeFilter.Add(".jpg");
-        picker.FileTypeFilter.Add(".jpeg");
-        picker.FileTypeFilter.Add(".png");
+        foreach (var ext in FileExtensions.ImageFileExtensions)
+            picker.FileTypeFilter.Add(ext);
 
         var file = await picker.PickSingleFileAsync();
         if (file != null)

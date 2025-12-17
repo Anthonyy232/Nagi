@@ -1,6 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Constants;
 using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
@@ -35,7 +36,7 @@ public class TagLibMetadataService : IMetadataService
     }
 
     /// <inheritdoc />
-    public async Task<SongFileMetadata> ExtractMetadataAsync(string filePath)
+    public async Task<SongFileMetadata> ExtractMetadataAsync(string filePath, string? baseFolderPath = null)
     {
         var metadata = new SongFileMetadata { FilePath = filePath };
 
@@ -81,7 +82,7 @@ public class TagLibMetadataService : IMetadataService
             try
             {
                 var tagForArt = await albumArtTask;
-                if (tagForArt != null) await ProcessAlbumArtAsync(metadata, tagForArt);
+                if (tagForArt != null) await ProcessAlbumArtAsync(metadata, tagForArt, baseFolderPath);
             }
             catch (OperationCanceledException)
             {
@@ -157,27 +158,179 @@ public class TagLibMetadataService : IMetadataService
 
     /// <summary>
     ///     Extracts album art from the tag and saves it to the cache. Each song gets its own
-    ///     cached cover art file, keyed by the song's file path.
+    ///     cached cover art file, keyed by the song's file path. If no embedded art is found,
+    ///     falls back to searching directory hierarchy for common cover art files.
     /// </summary>
-    private async Task ProcessAlbumArtAsync(SongFileMetadata metadata, Tag tag)
+    private async Task ProcessAlbumArtAsync(SongFileMetadata metadata, Tag tag, string? baseFolderPath)
     {
         var picture = tag.Pictures?.FirstOrDefault();
-        if (picture?.Data?.Data is not { Length: > 0 } pictureData) return;
+        
+        // First, try embedded album art
+        if (picture?.Data?.Data is { Length: > 0 } pictureData)
+        {
+            try
+            {
+                var (coverArtUri, lightSwatchId, darkSwatchId) =
+                    await _imageProcessor.SaveCoverArtAndExtractColorsAsync(pictureData, metadata.FilePath);
 
+                metadata.CoverArtUri = coverArtUri;
+                metadata.LightSwatchId = lightSwatchId;
+                metadata.DarkSwatchId = darkSwatchId;
+                return; // Successfully found embedded art, no need to search directories
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to process embedded album art for '{FilePath}'.", metadata.FilePath);
+                // Fall through to directory search
+            }
+        }
+
+        // No embedded art found, search directory hierarchy for cover art files
+        await ProcessCoverArtFromDirectoryAsync(metadata, baseFolderPath);
+    }
+
+    /// <summary>
+    ///     Searches for cover art files in the directory hierarchy, starting from the song's
+    ///     directory and walking up to the base folder path.
+    /// </summary>
+    private async Task ProcessCoverArtFromDirectoryAsync(SongFileMetadata metadata, string? baseFolderPath)
+    {
         try
         {
+            var coverArtPath = FindCoverArtInDirectoryHierarchy(metadata.FilePath, baseFolderPath);
+            if (string.IsNullOrEmpty(coverArtPath)) return;
+
+            // Read the image file and process it
+            var imageBytes = await System.IO.File.ReadAllBytesAsync(coverArtPath);
+            if (imageBytes.Length == 0) return;
+
             var (coverArtUri, lightSwatchId, darkSwatchId) =
-                await _imageProcessor.SaveCoverArtAndExtractColorsAsync(pictureData, metadata.FilePath);
+                await _imageProcessor.SaveCoverArtAndExtractColorsAsync(imageBytes, metadata.FilePath);
 
             metadata.CoverArtUri = coverArtUri;
             metadata.LightSwatchId = lightSwatchId;
             metadata.DarkSwatchId = darkSwatchId;
+
+            _logger.LogDebug("Found cover art from directory for '{FilePath}': {CoverArtPath}",
+                metadata.FilePath, coverArtPath);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to process album art for '{FilePath}'.", metadata.FilePath);
-            // We don't re-throw, as failing to get album art shouldn't fail the entire metadata extraction.
+            _logger.LogWarning(ex, "Failed to process directory cover art for '{FilePath}'.", metadata.FilePath);
         }
+    }
+
+    /// <summary>
+    ///     Searches for a cover art file in the directory hierarchy, starting from the song's
+    ///     directory and walking up to the base folder path. Looks for common cover art file
+    ///     names (cover, folder, album, front) with supported image extensions.
+    /// </summary>
+    /// <param name="songFilePath">The path to the song file.</param>
+    /// <param name="baseFolderPath">The root folder path to stop searching at.</param>
+    /// <returns>The full path to the first matching cover art file, or null if none found.</returns>
+    private string? FindCoverArtInDirectoryHierarchy(string songFilePath, string? baseFolderPath)
+    {
+        try
+        {
+            var currentDirectory = _fileSystem.GetDirectoryName(songFilePath);
+            if (string.IsNullOrEmpty(currentDirectory)) return null;
+
+            // Normalize the base folder path for comparison
+            var normalizedBasePath = baseFolderPath?.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+
+            while (!string.IsNullOrEmpty(currentDirectory))
+            {
+                // Search for cover art in the current directory
+                var coverArtPath = FindCoverArtInDirectory(currentDirectory);
+                if (coverArtPath != null) return coverArtPath;
+
+                // Check if we've reached or passed the base folder
+                var normalizedCurrent = currentDirectory.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                if (!string.IsNullOrEmpty(normalizedBasePath) &&
+                    normalizedCurrent.Equals(normalizedBasePath, StringComparison.OrdinalIgnoreCase))
+                {
+                    // We've searched the base folder, stop here
+                    break;
+                }
+
+                // Move up to the parent directory
+                var parentDirectory = _fileSystem.GetDirectoryName(currentDirectory);
+                
+                // Safety check: if parent equals current, we're at the root
+                if (string.IsNullOrEmpty(parentDirectory) || 
+                    parentDirectory.Equals(currentDirectory, StringComparison.OrdinalIgnoreCase))
+                    break;
+
+                currentDirectory = parentDirectory;
+            }
+
+            return null;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Error while searching for cover art in directory hierarchy for '{SongFilePath}'.",
+                songFilePath);
+            return null;
+        }
+    }
+
+    /// <summary>
+    ///     Searches for a cover art file in a specific directory by enumerating files
+    ///     and matching against known cover art file names (case-insensitive).
+    /// </summary>
+    private string? FindCoverArtInDirectory(string directory)
+    {
+        try
+        {
+            // Enumerate files once and find matches - more efficient than checking each combination
+            var files = _fileSystem.GetFiles(directory, "*.*");
+            
+            // First pass: find all matching cover art files
+            string? bestMatch = null;
+            var bestPriority = int.MaxValue;
+            
+            foreach (var filePath in files)
+            {
+                var extension = _fileSystem.GetExtension(filePath);
+                if (!FileExtensions.ImageFileExtensions.Contains(extension))
+                    continue;
+                    
+                var fileNameWithoutExt = _fileSystem.GetFileNameWithoutExtension(filePath);
+                if (!FileExtensions.CoverArtFileNames.Contains(fileNameWithoutExt))
+                    continue;
+                
+                // Determine priority based on position in the priority list
+                var priority = GetCoverArtPriority(fileNameWithoutExt);
+                if (priority < bestPriority)
+                {
+                    bestPriority = priority;
+                    bestMatch = filePath;
+                }
+            }
+            
+            return bestMatch;
+        }
+        catch (Exception)
+        {
+            // If we can't enumerate the directory, return null
+            return null;
+        }
+    }
+    
+    /// <summary>
+    ///     Gets the priority of a cover art file name (lower is higher priority).
+    /// </summary>
+    private static int GetCoverArtPriority(string fileNameWithoutExt)
+    {
+        // Priority order: cover (0), folder (1), album (2), front (3)
+        return fileNameWithoutExt.ToLowerInvariant() switch
+        {
+            "cover" => 0,
+            "folder" => 1,
+            "album" => 2,
+            "front" => 3,
+            _ => int.MaxValue
+        };
     }
 
     /// <summary>
