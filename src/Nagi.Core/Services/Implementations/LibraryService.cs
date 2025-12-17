@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Constants;
 using Nagi.Core.Data;
 using Nagi.Core.Helpers;
 using Nagi.Core.Models;
@@ -18,15 +19,6 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 {
     private const string UnknownArtistName = "Unknown Artist";
     private const string UnknownAlbumName = "Unknown Album";
-
-    private static readonly HashSet<string> MusicFileExtensions = new(new[]
-    {
-        ".aa", ".aax", ".aac", ".aiff", ".ape", ".dsf", ".flac",
-        ".m4a", ".m4b", ".m4p", ".mp3", ".mpc", ".mpp", ".ogg",
-        ".oga", ".opus", ".wav", ".wma", ".wv", ".webm",
-        ".mkv", ".ogv", ".avi", ".wmv", ".asf", ".mp4", ".m4v",
-        ".mpeg", ".mpg", ".mpe", ".mpv", ".m2v"
-    }, StringComparer.OrdinalIgnoreCase);
 
     private readonly ConcurrentDictionary<Guid, Lazy<Task<string?>>> _artistImageProcessingTasks = new();
 
@@ -528,10 +520,18 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
                         // Check for newly available LRC files for songs that don't currently have lyrics
                         var lrcUpdates = await UpdateMissingLrcPathsAsync(folderId, cancellationToken);
-                        var hasChanges = allFilePathsToDelete.Any() || lrcUpdates > 0;
+                        
+                        // Check for newly available cover art files for songs that don't have cover art
+                        var coverArtUpdates = await UpdateMissingCoverArtAsync(folderId, folder.Path, cancellationToken);
+                        
+                        var hasChanges = allFilePathsToDelete.Any() || lrcUpdates > 0 || coverArtUpdates > 0;
 
-                        var statusMessage = lrcUpdates > 0
-                            ? $"Scan complete. Updated {lrcUpdates} song(s) with newly found lyrics."
+                        var updates = new List<string>();
+                        if (lrcUpdates > 0) updates.Add($"{lrcUpdates} song(s) with lyrics");
+                        if (coverArtUpdates > 0) updates.Add($"{coverArtUpdates} song(s) with cover art");
+                        
+                        var statusMessage = updates.Any()
+                            ? $"Scan complete. Updated {string.Join(" and ", updates)}."
                             : "Scan complete. Library is up to date.";
                         progress?.Report(new ScanProgress
                             { StatusText = statusMessage, Percentage = 100 });
@@ -539,7 +539,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                     }
 
                     var extractedMetadata =
-                        await ExtractMetadataConcurrentlyAsync(filesToProcess, progress, cancellationToken);
+                        await ExtractMetadataConcurrentlyAsync(filesToProcess, folder.Path, progress, cancellationToken);
 
                     cancellationToken.ThrowIfCancellationRequested();
 
@@ -552,6 +552,9 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
                     // Check for newly available LRC files for songs that don't currently have lyrics
                     await UpdateMissingLrcPathsAsync(folderId, cancellationToken);
+                    
+                    // Check for newly available cover art files for songs that don't have cover art
+                    await UpdateMissingCoverArtAsync(folderId, folder.Path, cancellationToken);
 
                     progress?.Report(new ScanProgress { StatusText = "Finalizing...", IsIndeterminate = true });
                     await using (var finalContext = await _contextFactory.CreateDbContextAsync())
@@ -2040,7 +2043,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         cancellationToken.ThrowIfCancellationRequested();
 
         var diskFileMap = _fileSystem.EnumerateFiles(folderPath, "*.*", SearchOption.AllDirectories)
-            .Where(file => MusicFileExtensions.Contains(_fileSystem.GetExtension(file)))
+            .Where(file => FileExtensions.MusicFileExtensions.Contains(_fileSystem.GetExtension(file)))
             .Select(path =>
             {
                 try
@@ -2135,6 +2138,208 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         return totalUpdated;
     }
 
+    /// <summary>
+    ///     Scans for songs in the folder that are missing cover art but now have
+    ///     matching cover art files (cover.jpg, folder.png, etc.) on disk in their directory hierarchy.
+    ///     This handles the case where a user adds cover art files to an already-scanned folder
+    ///     without modifying the music files themselves.
+    /// </summary>
+    private async Task<int> UpdateMissingCoverArtAsync(Guid folderId, string baseFolderPath, CancellationToken cancellationToken)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+
+        // Query songs in the folder that don't have cover art set
+        var songsWithoutCoverArt = await context.Songs
+            .Where(s => s.FolderId == folderId && s.AlbumArtUriFromTrack == null)
+            .Select(s => new { s.Id, s.FilePath })
+            .ToListAsync(cancellationToken);
+
+        if (songsWithoutCoverArt.Count == 0)
+            return 0;
+
+        _logger.LogDebug("Found {Count} songs without cover art in folder {FolderId}. Searching for cover art files...",
+            songsWithoutCoverArt.Count, folderId);
+
+        // Find cover art for each song that needs it
+        var songCoverArtMappings = new Dictionary<Guid, (string coverArtPath, string? uri, string? lightSwatch, string? darkSwatch)>();
+
+        foreach (var song in songsWithoutCoverArt)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var coverArtPath = FindCoverArtInDirectoryHierarchy(song.FilePath, baseFolderPath);
+            if (coverArtPath != null)
+            {
+                try
+                {
+                    // Read and process the cover art file
+                    var imageBytes = await System.IO.File.ReadAllBytesAsync(coverArtPath, cancellationToken);
+                    if (imageBytes.Length > 0)
+                    {
+                        // Use the new overload from IMetadataService to get the image processor
+                        // We need to call the image processor directly
+                        var metadata = await _metadataService.ExtractMetadataAsync(song.FilePath, baseFolderPath);
+                        if (!string.IsNullOrEmpty(metadata.CoverArtUri))
+                        {
+                            songCoverArtMappings[song.Id] = (coverArtPath, metadata.CoverArtUri, metadata.LightSwatchId, metadata.DarkSwatchId);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Failed to process cover art file {CoverArtPath} for song {SongId}.",
+                        coverArtPath, song.Id);
+                }
+            }
+        }
+
+        if (songCoverArtMappings.Count == 0)
+            return 0;
+
+        // Update songs with cover art in batches
+        const int batchSize = 500;
+        var songIdsToUpdate = songCoverArtMappings.Keys.ToList();
+        var totalUpdated = 0;
+
+        for (var i = 0; i < songIdsToUpdate.Count; i += batchSize)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var batchIds = songIdsToUpdate.Skip(i).Take(batchSize).ToList();
+            var songsToUpdate = await context.Songs
+                .Where(s => batchIds.Contains(s.Id))
+                .ToListAsync(cancellationToken);
+
+            foreach (var song in songsToUpdate)
+            {
+                if (songCoverArtMappings.TryGetValue(song.Id, out var coverArtInfo))
+                {
+                    song.AlbumArtUriFromTrack = coverArtInfo.uri;
+                    song.LightSwatchId = coverArtInfo.lightSwatch;
+                    song.DarkSwatchId = coverArtInfo.darkSwatch;
+                }
+            }
+
+            totalUpdated += songsToUpdate.Count;
+        }
+
+        if (totalUpdated > 0)
+        {
+            await context.SaveChangesAsync(cancellationToken);
+            _logger.LogInformation("Updated {Count} songs with newly discovered cover art files.", totalUpdated);
+        }
+
+        return totalUpdated;
+    }
+
+    /// <summary>
+    ///     Searches for a cover art file in the directory hierarchy, starting from the song's
+    ///     directory and walking up to the base folder path.
+    /// </summary>
+    private string? FindCoverArtInDirectoryHierarchy(string songFilePath, string? baseFolderPath)
+    {
+        try
+        {
+            var currentDirectory = _fileSystem.GetDirectoryName(songFilePath);
+            if (string.IsNullOrEmpty(currentDirectory)) return null;
+
+            // Normalize the base folder path for comparison
+            var normalizedBasePath = baseFolderPath?.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+
+            while (!string.IsNullOrEmpty(currentDirectory))
+            {
+                // Search for cover art in the current directory
+                var coverArtPath = FindCoverArtInDirectory(currentDirectory);
+                if (coverArtPath != null) return coverArtPath;
+
+                // Check if we've reached or passed the base folder
+                var normalizedCurrent = currentDirectory.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                if (!string.IsNullOrEmpty(normalizedBasePath) &&
+                    normalizedCurrent.Equals(normalizedBasePath, StringComparison.OrdinalIgnoreCase))
+                {
+                    // We've searched the base folder, stop here
+                    break;
+                }
+
+                // Move up to the parent directory
+                var parentDirectory = _fileSystem.GetDirectoryName(currentDirectory);
+
+                // Safety check: if parent equals current, we're at the root
+                if (string.IsNullOrEmpty(parentDirectory) ||
+                    parentDirectory.Equals(currentDirectory, StringComparison.OrdinalIgnoreCase))
+                    break;
+
+                currentDirectory = parentDirectory;
+            }
+
+            return null;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Error while searching for cover art in directory hierarchy for '{SongFilePath}'.",
+                songFilePath);
+            return null;
+        }
+    }
+
+    /// <summary>
+    ///     Searches for a cover art file in a specific directory by enumerating files
+    ///     and matching against known cover art file names (case-insensitive).
+    /// </summary>
+    private string? FindCoverArtInDirectory(string directory)
+    {
+        try
+        {
+            // Enumerate files once and find matches - more efficient than checking each combination
+            var files = _fileSystem.GetFiles(directory, "*.*");
+            
+            // First pass: find all matching cover art files
+            string? bestMatch = null;
+            var bestPriority = int.MaxValue;
+            
+            foreach (var filePath in files)
+            {
+                var extension = _fileSystem.GetExtension(filePath);
+                if (!FileExtensions.ImageFileExtensions.Contains(extension))
+                    continue;
+                    
+                var fileNameWithoutExt = _fileSystem.GetFileNameWithoutExtension(filePath);
+                if (!FileExtensions.CoverArtFileNames.Contains(fileNameWithoutExt))
+                    continue;
+                
+                // Determine priority based on position in the priority list
+                var priority = GetCoverArtPriority(fileNameWithoutExt);
+                if (priority < bestPriority)
+                {
+                    bestPriority = priority;
+                    bestMatch = filePath;
+                }
+            }
+            
+            return bestMatch;
+        }
+        catch (Exception)
+        {
+            // If we can't enumerate the directory, return null
+            return null;
+        }
+    }
+    
+    /// <summary>
+    ///     Gets the priority of a cover art file name (lower is higher priority).
+    /// </summary>
+    private static int GetCoverArtPriority(string fileNameWithoutExt)
+    {
+        // Priority order: cover (0), folder (1), album (2), front (3)
+        return fileNameWithoutExt.ToLowerInvariant() switch
+        {
+            "cover" => 0,
+            "folder" => 1,
+            "album" => 2,
+            "front" => 3,
+            _ => int.MaxValue
+        };
+    }
 
 
     /// <summary>
@@ -2164,7 +2369,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
 
     private async Task<List<SongFileMetadata>> ExtractMetadataConcurrentlyAsync(List<string> filesToProcess,
-        IProgress<ScanProgress>? progress, CancellationToken cancellationToken)
+        string baseFolderPath, IProgress<ScanProgress>? progress, CancellationToken cancellationToken)
     {
         var extractedMetadata = new ConcurrentBag<SongFileMetadata>();
         var degreeOfParallelism = Environment.ProcessorCount;
@@ -2182,7 +2387,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             try
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                var metadata = await _metadataService.ExtractMetadataAsync(filePath);
+                var metadata = await _metadataService.ExtractMetadataAsync(filePath, baseFolderPath);
                 if (!metadata.ExtractionFailed)
                     extractedMetadata.Add(metadata);
                 else

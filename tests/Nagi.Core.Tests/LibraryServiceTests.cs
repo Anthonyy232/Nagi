@@ -333,10 +333,10 @@ public class LibraryServiceTests : IDisposable
         _fileSystem.GetLastWriteTimeUtc("C:\\Music\\Scan\\new.mp3").Returns(new DateTime(2023, 3, 3));
 
         // Arrange: Mock metadata extraction for the new and updated files.
-        _metadataService.ExtractMetadataAsync("C:\\Music\\Scan\\updated.mp3")
+        _metadataService.ExtractMetadataAsync("C:\\Music\\Scan\\updated.mp3", Arg.Any<string?>())
             .Returns(new SongFileMetadata
                 { FilePath = "C:\\Music\\Scan\\updated.mp3", Title = "Updated Song", Artist = "Artist" });
-        _metadataService.ExtractMetadataAsync("C:\\Music\\Scan\\new.mp3")
+        _metadataService.ExtractMetadataAsync("C:\\Music\\Scan\\new.mp3", Arg.Any<string?>())
             .Returns(new SongFileMetadata
                 { FilePath = "C:\\Music\\Scan\\new.mp3", Title = "New Song", Artist = "Artist" });
 
@@ -409,7 +409,7 @@ public class LibraryServiceTests : IDisposable
 
         // Assert: The operation should report failure and should not have proceeded to metadata extraction.
         result.Should().BeFalse();
-        await _metadataService.DidNotReceive().ExtractMetadataAsync(Arg.Any<string>());
+        await _metadataService.DidNotReceive().ExtractMetadataAsync(Arg.Any<string>(), Arg.Any<string?>());
     }
 
     #endregion
