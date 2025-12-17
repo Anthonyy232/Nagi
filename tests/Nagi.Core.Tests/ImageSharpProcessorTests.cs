@@ -19,8 +19,7 @@ namespace Nagi.Core.Tests;
 public class ImageSharpProcessorTests
 {
     private const string AlbumArtPath = "C:\\cache\\art";
-    private const string ArtistName = "Test Artist";
-    private const string AlbumTitle = "Test Album";
+    private const string SongFilePath = "C:\\music\\test-song.mp3";
     private readonly IFileSystemService _fileSystem;
     private readonly ImageSharpProcessor _imageProcessor;
     private readonly ILogger<ImageSharpProcessor> _logger;
@@ -60,13 +59,13 @@ public class ImageSharpProcessorTests
     {
         // Arrange
         var pictureData = CreateTestImageBytes();
-        var stableId = GenerateStableId(ArtistName, AlbumTitle);
+        var stableId = GenerateStableId(SongFilePath);
         var expectedPath = Path.Combine(AlbumArtPath, $"{stableId}.jpg");
         _fileSystem.FileExists(expectedPath).Returns(false);
 
         // Act
         var (uri, lightSwatch, darkSwatch) =
-            await _imageProcessor.SaveCoverArtAndExtractColorsAsync(pictureData, AlbumTitle, ArtistName);
+            await _imageProcessor.SaveCoverArtAndExtractColorsAsync(pictureData, SongFilePath);
 
         // Assert
         uri.Should().Be(expectedPath);
@@ -84,13 +83,13 @@ public class ImageSharpProcessorTests
     {
         // Arrange
         var pictureData = CreateTestImageBytes();
-        var stableId = GenerateStableId(ArtistName, AlbumTitle);
+        var stableId = GenerateStableId(SongFilePath);
         var expectedPath = Path.Combine(AlbumArtPath, $"{stableId}.jpg");
         _fileSystem.FileExists(expectedPath).Returns(true);
 
         // Act
         var (uri, lightSwatch, darkSwatch) =
-            await _imageProcessor.SaveCoverArtAndExtractColorsAsync(pictureData, AlbumTitle, ArtistName);
+            await _imageProcessor.SaveCoverArtAndExtractColorsAsync(pictureData, SongFilePath);
 
         // Assert
         uri.Should().Be(expectedPath);
@@ -108,13 +107,13 @@ public class ImageSharpProcessorTests
     {
         // Arrange
         var invalidPictureData = new byte[] { 1, 2, 3, 4 };
-        var stableId = GenerateStableId(ArtistName, AlbumTitle);
+        var stableId = GenerateStableId(SongFilePath);
         var expectedPath = Path.Combine(AlbumArtPath, $"{stableId}.jpg");
         _fileSystem.FileExists(expectedPath).Returns(false);
 
         // Act
         var (uri, lightSwatch, darkSwatch) =
-            await _imageProcessor.SaveCoverArtAndExtractColorsAsync(invalidPictureData, AlbumTitle, ArtistName);
+            await _imageProcessor.SaveCoverArtAndExtractColorsAsync(invalidPictureData, SongFilePath);
 
         // Assert
         uri.Should().Be(expectedPath);
@@ -132,14 +131,14 @@ public class ImageSharpProcessorTests
     {
         // Arrange
         var pictureData = CreateTestImageBytes();
-        var stableId = GenerateStableId(ArtistName, AlbumTitle);
+        var stableId = GenerateStableId(SongFilePath);
         var expectedPath = Path.Combine(AlbumArtPath, $"{stableId}.jpg");
         _fileSystem.FileExists(expectedPath).Returns(false);
         _fileSystem.WriteAllBytesAsync(expectedPath, pictureData).ThrowsAsync(new IOException("Disk full"));
 
         // Act & Assert
         await _imageProcessor
-            .Awaiting(p => p.SaveCoverArtAndExtractColorsAsync(pictureData, AlbumTitle, ArtistName))
+            .Awaiting(p => p.SaveCoverArtAndExtractColorsAsync(pictureData, SongFilePath))
             .Should().ThrowAsync<IOException>().WithMessage("Disk full");
     }
 
@@ -155,13 +154,12 @@ public class ImageSharpProcessorTests
     }
 
     /// <summary>
-    ///     Generates a stable, deterministic ID based on artist and album names for consistent file naming.
+    ///     Generates a stable, deterministic ID based on file path for consistent file naming.
     /// </summary>
-    private static string GenerateStableId(string artistName, string albumTitle)
+    private static string GenerateStableId(string filePath)
     {
         using var sha = SHA256.Create();
-        var textToHash = $"{artistName}_{albumTitle}";
-        var hashBytes = sha.ComputeHash(Encoding.UTF8.GetBytes(textToHash));
+        var hashBytes = sha.ComputeHash(Encoding.UTF8.GetBytes(filePath));
         return Convert.ToHexString(hashBytes).ToLowerInvariant();
     }
 
