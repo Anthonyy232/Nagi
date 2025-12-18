@@ -1,11 +1,13 @@
 using System;
 using System.Threading.Tasks;
 using Windows.Storage.Pickers;
+using Windows.System;
 using ImageEx;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Core.Constants;
@@ -20,6 +22,7 @@ namespace Nagi.WinUI.Pages;
 public sealed partial class PlaylistPage : Page
 {
     private readonly ILogger<PlaylistPage> _logger;
+    private bool _isSearchExpanded;
 
     public PlaylistPage()
     {
@@ -34,7 +37,8 @@ public sealed partial class PlaylistPage : Page
 
     private async void Page_Loaded(object sender, RoutedEventArgs e)
     {
-        _logger.LogInformation("PlaylistPage loaded. Loading playlists...");
+        _logger.LogInformation("PlaylistPage loaded. Setting initial visual state and loading playlists...");
+        VisualStateManager.GoToState(this, "SearchCollapsed", false);
         await ViewModel.LoadPlaylistsCommand.ExecuteAsync(null);
         _logger.LogInformation("Finished loading playlists.");
     }
@@ -43,9 +47,69 @@ public sealed partial class PlaylistPage : Page
     {
         base.OnNavigatedFrom(e);
         _logger.LogInformation("Navigating away from PlaylistPage. Disposing ViewModel.");
+        ViewModel.Cleanup();
         ViewModel.Dispose();
     }
 
+    /// <summary>
+    ///     Handles the search toggle button click to expand or collapse the search box.
+    /// </summary>
+    private void OnSearchToggleButtonClick(object sender, RoutedEventArgs e)
+    {
+        if (_isSearchExpanded)
+            CollapseSearch();
+        else
+            ExpandSearch();
+    }
+
+    /// <summary>
+    ///     Handles key down events in the search text box.
+    /// </summary>
+    private void OnSearchTextBoxKeyDown(object sender, KeyRoutedEventArgs e)
+    {
+        if (e.Key == VirtualKey.Escape)
+        {
+            _logger.LogDebug("Escape key pressed in search box. Collapsing search.");
+            CollapseSearch();
+            e.Handled = true;
+        }
+    }
+
+    /// <summary>
+    ///     Expands the search interface with an animation.
+    /// </summary>
+    private void ExpandSearch()
+    {
+        if (_isSearchExpanded) return;
+
+        _isSearchExpanded = true;
+        _logger.LogInformation("Search UI expanded.");
+        ToolTipService.SetToolTip(SearchToggleButton, "Close search");
+        VisualStateManager.GoToState(this, "SearchExpanded", true);
+
+        var timer = DispatcherQueue.CreateTimer();
+        timer.Interval = TimeSpan.FromMilliseconds(150);
+        timer.Tick += (s, args) =>
+        {
+            timer.Stop();
+            SearchTextBox.Focus(FocusState.Programmatic);
+        };
+        timer.Start();
+    }
+
+    /// <summary>
+    ///     Collapses the search interface with an animation and resets the filter.
+    /// </summary>
+    private void CollapseSearch()
+    {
+        if (!_isSearchExpanded) return;
+
+        _isSearchExpanded = false;
+        _logger.LogInformation("Search UI collapsed and search term cleared.");
+        ToolTipService.SetToolTip(SearchToggleButton, "Search playlists");
+        VisualStateManager.GoToState(this, "SearchCollapsed", true);
+        ViewModel.SearchTerm = string.Empty;
+    }
     private async void PlayPlaylist_Click(object sender, RoutedEventArgs e)
     {
         if (sender is not FrameworkElement { DataContext: PlaylistViewModelItem playlistItem } ||

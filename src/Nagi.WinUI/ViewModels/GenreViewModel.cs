@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
@@ -29,19 +30,24 @@ public partial class GenreViewModelItem : ObservableObject
 /// </summary>
 public partial class GenreViewModel : ObservableObject, IDisposable
 {
+    private const int SearchDebounceDelay = 300;
     private readonly NotifyCollectionChangedEventHandler _collectionChangedHandler;
+    private readonly IDispatcherService _dispatcherService;
     private readonly ILibraryService _libraryService;
     private readonly ILogger<GenreViewModel> _logger;
     private readonly IMusicPlaybackService _musicPlaybackService;
     private readonly INavigationService _navigationService;
+    private CancellationTokenSource? _debounceCts;
     private bool _isDisposed;
+    private List<GenreViewModelItem> _allGenres = new();
 
     public GenreViewModel(ILibraryService libraryService, IMusicPlaybackService musicPlaybackService,
-        INavigationService navigationService, ILogger<GenreViewModel> logger)
+        INavigationService navigationService, IDispatcherService dispatcherService, ILogger<GenreViewModel> logger)
     {
         _libraryService = libraryService;
         _musicPlaybackService = musicPlaybackService;
         _navigationService = navigationService;
+        _dispatcherService = dispatcherService;
         _logger = logger;
 
         // Store the handler in a field so we can reliably unsubscribe from it later.
@@ -54,6 +60,10 @@ public partial class GenreViewModel : ObservableObject, IDisposable
     [ObservableProperty] public partial bool IsLoading { get; set; }
 
     [ObservableProperty] public partial bool HasLoadError { get; set; }
+
+    [ObservableProperty] public partial string SearchTerm { get; set; } = string.Empty;
+
+    private bool IsSearchActive => !string.IsNullOrWhiteSpace(SearchTerm);
 
     /// <summary>
     ///     Gets a value indicating whether there are any genres to display.
@@ -106,12 +116,13 @@ public partial class GenreViewModel : ObservableObject, IDisposable
             var genreModels = await _libraryService.GetAllGenresAsync();
             if (cancellationToken.IsCancellationRequested) return;
 
-            var sortedGenres = genreModels
+            _allGenres = genreModels
                 .OrderBy(g => g.Name)
-                .Select(g => new GenreViewModelItem { Id = g.Id, Name = g.Name });
+                .Select(g => new GenreViewModelItem { Id = g.Id, Name = g.Name })
+                .ToList();
 
-            // Efficiently replace the entire collection.
-            Genres = new ObservableCollection<GenreViewModelItem>(sortedGenres);
+            // Apply current filter (or show all if no search term)
+            ApplyFilter();
         }
         catch (OperationCanceledException)
         {
@@ -127,6 +138,64 @@ public partial class GenreViewModel : ObservableObject, IDisposable
         {
             IsLoading = false;
         }
+    }
+
+    partial void OnSearchTermChanged(string value)
+    {
+        TriggerDebouncedSearch();
+    }
+
+    private void TriggerDebouncedSearch()
+    {
+        try
+        {
+            _debounceCts?.Cancel();
+        }
+        catch (ObjectDisposedException)
+        {
+            // Ignore exception if the CancellationTokenSource has already been disposed.
+        }
+
+        _debounceCts = new CancellationTokenSource();
+        var token = _debounceCts.Token;
+
+        Task.Run(async () =>
+        {
+            try
+            {
+                await Task.Delay(SearchDebounceDelay, token);
+
+                if (token.IsCancellationRequested) return;
+
+                await _dispatcherService.EnqueueAsync(() =>
+                {
+                    if (!token.IsCancellationRequested)
+                        ApplyFilter();
+                    return Task.CompletedTask;
+                });
+            }
+            catch (TaskCanceledException)
+            {
+                _logger.LogDebug("Debounced genre search cancelled");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Debounced genre search failed");
+            }
+        }, token);
+    }
+
+    private void ApplyFilter()
+    {
+        Genres.Clear();
+
+        IEnumerable<GenreViewModelItem> filtered = _allGenres;
+        if (IsSearchActive)
+            filtered = _allGenres.Where(g =>
+                g.Name?.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase) == true);
+
+        foreach (var item in filtered)
+            Genres.Add(item);
     }
 
     /// <summary>
@@ -146,5 +215,17 @@ public partial class GenreViewModel : ObservableObject, IDisposable
             // This is a critical failure as it directly impacts core user functionality.
             _logger.LogCritical(ex, "Failed to play genre {GenreId}", genreId);
         }
+    }
+
+    /// <summary>
+    ///     Cleans up search state when navigating away from the page.
+    /// </summary>
+    public void Cleanup()
+    {
+        _debounceCts?.Cancel();
+        _debounceCts?.Dispose();
+        _debounceCts = null;
+        SearchTerm = string.Empty;
+        _logger.LogDebug("Cleaned up GenreViewModel search resources");
     }
 }

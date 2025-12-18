@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -88,22 +89,27 @@ public partial class PlaylistViewModelItem : ObservableObject
 /// </summary>
 public partial class PlaylistViewModel : ObservableObject, IDisposable
 {
+    private const int SearchDebounceDelay = 300;
     private readonly NotifyCollectionChangedEventHandler _collectionChangedHandler;
+    private readonly IDispatcherService _dispatcherService;
     private readonly ILibraryService _libraryService;
     private readonly ISmartPlaylistService _smartPlaylistService;
     private readonly ILogger<PlaylistViewModel> _logger;
     private readonly IMusicPlaybackService _musicPlaybackService;
     private readonly INavigationService _navigationService;
+    private CancellationTokenSource? _debounceCts;
     private bool _isDisposed;
+    private List<PlaylistViewModelItem> _allPlaylists = new();
 
     public PlaylistViewModel(ILibraryService libraryService, ISmartPlaylistService smartPlaylistService,
-        IMusicPlaybackService musicPlaybackService, INavigationService navigationService, 
-        ILogger<PlaylistViewModel> logger)
+        IMusicPlaybackService musicPlaybackService, INavigationService navigationService,
+        IDispatcherService dispatcherService, ILogger<PlaylistViewModel> logger)
     {
         _libraryService = libraryService;
         _smartPlaylistService = smartPlaylistService;
         _musicPlaybackService = musicPlaybackService;
         _navigationService = navigationService;
+        _dispatcherService = dispatcherService;
         _logger = logger;
 
         // Store the handler in a field so we can reliably unsubscribe from it later.
@@ -112,6 +118,8 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
     }
 
     [ObservableProperty] public partial ObservableCollection<PlaylistViewModelItem> Playlists { get; set; } = new();
+
+    [ObservableProperty] public partial string SearchTerm { get; set; } = string.Empty;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsAnyOperationInProgress))]
@@ -131,6 +139,8 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
 
     [ObservableProperty] public partial string StatusMessage { get; set; } = string.Empty;
 
+    private bool IsSearchActive => !string.IsNullOrWhiteSpace(SearchTerm);
+
     /// <summary>
     ///     Gets a value indicating whether any background operation is in progress.
     /// </summary>
@@ -138,7 +148,7 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
         IsCreatingPlaylist || IsRenamingPlaylist || IsDeletingPlaylist || IsUpdatingCover;
 
     /// <summary>
-    ///     Gets a value indicating whether there are any playlists in the library.
+    ///     Gets a value indicating whether there are any playlists to display.
     /// </summary>
     public bool HasPlaylists => Playlists.Any();
 
@@ -230,12 +240,12 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
         try
         {
             Playlists.Clear();
-            var allItems = new List<PlaylistViewModelItem>();
+            _allPlaylists.Clear();
 
             // Load regular playlists
             var playlistsFromDb = await _libraryService.GetAllPlaylistsAsync();
             foreach (var playlist in playlistsFromDb)
-                allItems.Add(new PlaylistViewModelItem(playlist));
+                _allPlaylists.Add(new PlaylistViewModelItem(playlist));
 
             // Load smart playlists with their match counts (batch operation for performance)
             var smartPlaylistsFromDb = await _smartPlaylistService.GetAllSmartPlaylistsAsync();
@@ -244,12 +254,14 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
             foreach (var smartPlaylist in smartPlaylistsFromDb)
             {
                 var matchCount = matchCounts.GetValueOrDefault(smartPlaylist.Id, 0);
-                allItems.Add(new PlaylistViewModelItem(smartPlaylist, matchCount));
+                _allPlaylists.Add(new PlaylistViewModelItem(smartPlaylist, matchCount));
             }
 
-            // Sort all playlists by name and add to collection
-            foreach (var item in allItems.OrderBy(p => p.Name, StringComparer.OrdinalIgnoreCase))
-                Playlists.Add(item);
+            // Sort all playlists by name
+            _allPlaylists = _allPlaylists.OrderBy(p => p.Name, StringComparer.OrdinalIgnoreCase).ToList();
+
+            // Apply current filter (or show all if no search term)
+            ApplyFilter();
 
             StatusMessage = string.Empty;
         }
@@ -407,7 +419,11 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
             if (success)
             {
                 var playlistItem = Playlists.FirstOrDefault(p => p.Id == playlistId);
-                if (playlistItem != null) Playlists.Remove(playlistItem);
+                if (playlistItem != null)
+                {
+                    Playlists.Remove(playlistItem);
+                    _allPlaylists.RemoveAll(p => p.Id == playlistId);
+                }
                 StatusMessage = string.Empty;
             }
             else
@@ -424,5 +440,75 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
         {
             IsDeletingPlaylist = false;
         }
+    }
+
+    partial void OnSearchTermChanged(string value)
+    {
+        TriggerDebouncedSearch();
+    }
+
+    private void TriggerDebouncedSearch()
+    {
+        try
+        {
+            _debounceCts?.Cancel();
+        }
+        catch (ObjectDisposedException)
+        {
+            // Ignore exception if the CancellationTokenSource has already been disposed.
+        }
+
+        _debounceCts = new CancellationTokenSource();
+        var token = _debounceCts.Token;
+
+        Task.Run(async () =>
+        {
+            try
+            {
+                await Task.Delay(SearchDebounceDelay, token);
+
+                if (token.IsCancellationRequested) return;
+
+                await _dispatcherService.EnqueueAsync(() =>
+                {
+                    if (!token.IsCancellationRequested)
+                        ApplyFilter();
+                    return Task.CompletedTask;
+                });
+            }
+            catch (TaskCanceledException)
+            {
+                _logger.LogDebug("Debounced playlist search cancelled");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Debounced playlist search failed");
+            }
+        }, token);
+    }
+
+    private void ApplyFilter()
+    {
+        Playlists.Clear();
+
+        IEnumerable<PlaylistViewModelItem> filtered = _allPlaylists;
+        if (IsSearchActive)
+            filtered = _allPlaylists.Where(p =>
+                p.Name?.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase) == true);
+
+        foreach (var item in filtered)
+            Playlists.Add(item);
+    }
+
+    /// <summary>
+    ///     Cleans up search state when navigating away from the page.
+    /// </summary>
+    public void Cleanup()
+    {
+        _debounceCts?.Cancel();
+        _debounceCts?.Dispose();
+        _debounceCts = null;
+        SearchTerm = string.Empty;
+        _logger.LogDebug("Cleaned up PlaylistViewModel search resources");
     }
 }

@@ -48,21 +48,25 @@ public partial class AlbumViewModelItem : ObservableObject
 public partial class AlbumViewModel : ObservableObject, IDisposable
 {
     private const int PageSize = 250;
+    private const int SearchDebounceDelay = 400;
     private readonly NotifyCollectionChangedEventHandler _collectionChangedHandler;
+    private readonly IDispatcherService _dispatcherService;
     private readonly ILibraryService _libraryService;
     private readonly ILogger<AlbumViewModel> _logger;
     private readonly IMusicPlaybackService _musicPlaybackService;
     private readonly INavigationService _navigationService;
     private int _currentPage = 1;
+    private CancellationTokenSource? _debounceCts;
     private bool _isDisposed;
     private bool _isFullyLoaded;
 
     public AlbumViewModel(ILibraryService libraryService, IMusicPlaybackService musicPlaybackService,
-        INavigationService navigationService, ILogger<AlbumViewModel> logger)
+        INavigationService navigationService, IDispatcherService dispatcherService, ILogger<AlbumViewModel> logger)
     {
         _libraryService = libraryService;
         _musicPlaybackService = musicPlaybackService;
         _navigationService = navigationService;
+        _dispatcherService = dispatcherService;
         _logger = logger;
 
         // Store the handler in a field so we can reliably unsubscribe from it later.
@@ -81,6 +85,12 @@ public partial class AlbumViewModel : ObservableObject, IDisposable
     [ObservableProperty] public partial AlbumSortOrder CurrentSortOrder { get; set; } = AlbumSortOrder.ArtistAsc;
 
     [ObservableProperty] public partial string CurrentSortOrderText { get; set; } = "Sort By: Artist";
+
+    [ObservableProperty] public partial string SearchTerm { get; set; } = string.Empty;
+
+    [ObservableProperty] public partial string TotalItemsText { get; set; } = "0 albums";
+
+    private bool IsSearchActive => !string.IsNullOrWhiteSpace(SearchTerm);
 
     public bool HasAlbums => Albums.Any();
 
@@ -211,7 +221,11 @@ public partial class AlbumViewModel : ObservableObject, IDisposable
     /// </summary>
     private async Task LoadNextPageAsync(CancellationToken cancellationToken)
     {
-        var pagedResult = await _libraryService.GetAllAlbumsPagedAsync(_currentPage, PageSize, CurrentSortOrder);
+        PagedResult<Album>? pagedResult;
+        if (IsSearchActive)
+            pagedResult = await _libraryService.SearchAlbumsPagedAsync(SearchTerm, _currentPage, PageSize);
+        else
+            pagedResult = await _libraryService.GetAllAlbumsPagedAsync(_currentPage, PageSize, CurrentSortOrder);
 
         if (cancellationToken.IsCancellationRequested) return;
 
@@ -219,7 +233,70 @@ public partial class AlbumViewModel : ObservableObject, IDisposable
             foreach (var album in pagedResult.Items)
                 Albums.Add(new AlbumViewModelItem(album));
 
+        // Update the total items text.
+        if (pagedResult != null)
+        {
+            var count = pagedResult.TotalCount;
+            TotalItemsText = $"{count:N0} {(count == 1 ? "album" : "albums")}";
+        }
+
         // Determine if all albums have been loaded.
         if (pagedResult == null || Albums.Count >= pagedResult.TotalCount) _isFullyLoaded = true;
+    }
+
+    partial void OnSearchTermChanged(string value)
+    {
+        TriggerDebouncedSearch();
+    }
+
+    private void TriggerDebouncedSearch()
+    {
+        try
+        {
+            _debounceCts?.Cancel();
+        }
+        catch (ObjectDisposedException)
+        {
+            // Ignore exception if the CancellationTokenSource has already been disposed.
+        }
+
+        _debounceCts = new CancellationTokenSource();
+        var token = _debounceCts.Token;
+
+        Task.Run(async () =>
+        {
+            try
+            {
+                await Task.Delay(SearchDebounceDelay, token);
+
+                if (token.IsCancellationRequested) return;
+
+                await _dispatcherService.EnqueueAsync(async () =>
+                {
+                    if (token.IsCancellationRequested) return;
+                    await LoadAlbumsCommand.ExecuteAsync(CancellationToken.None);
+                });
+            }
+            catch (TaskCanceledException)
+            {
+                _logger.LogDebug("Debounced album search cancelled");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Debounced album search failed");
+            }
+        }, token);
+    }
+
+    /// <summary>
+    ///     Cleans up search state when navigating away from the page.
+    /// </summary>
+    public void Cleanup()
+    {
+        _debounceCts?.Cancel();
+        _debounceCts?.Dispose();
+        _debounceCts = null;
+        SearchTerm = string.Empty;
+        _logger.LogDebug("Cleaned up AlbumViewModel search resources");
     }
 }

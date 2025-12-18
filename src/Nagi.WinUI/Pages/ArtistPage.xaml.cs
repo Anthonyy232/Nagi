@@ -1,9 +1,12 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.WinUI.ViewModels;
 
@@ -17,6 +20,7 @@ public sealed partial class ArtistPage : Page
 {
     private readonly ILogger<ArtistPage> _logger;
     private CancellationTokenSource? _cancellationTokenSource;
+    private bool _isSearchExpanded;
 
     public ArtistPage()
     {
@@ -25,6 +29,7 @@ public sealed partial class ArtistPage : Page
         _logger = App.Services!.GetRequiredService<ILogger<ArtistPage>>();
         DataContext = ViewModel;
 
+        Loaded += OnPageLoaded;
         _logger.LogInformation("ArtistPage initialized.");
     }
 
@@ -85,8 +90,79 @@ public sealed partial class ArtistPage : Page
         _cancellationTokenSource?.Dispose();
         _cancellationTokenSource = null;
 
+        ViewModel.Cleanup();
         _logger.LogDebug("Disposing ArtistViewModel.");
         ViewModel.Dispose();
+    }
+
+    /// <summary>
+    ///     Handles the page loaded event to set initial visual state.
+    /// </summary>
+    private void OnPageLoaded(object sender, RoutedEventArgs e)
+    {
+        _logger.LogDebug("ArtistPage loaded. Setting initial visual state.");
+        VisualStateManager.GoToState(this, "SearchCollapsed", false);
+        Loaded -= OnPageLoaded;
+    }
+
+    /// <summary>
+    ///     Handles the search toggle button click to expand or collapse the search box.
+    /// </summary>
+    private void OnSearchToggleButtonClick(object sender, RoutedEventArgs e)
+    {
+        if (_isSearchExpanded)
+            CollapseSearch();
+        else
+            ExpandSearch();
+    }
+
+    /// <summary>
+    ///     Handles key down events in the search text box.
+    /// </summary>
+    private void OnSearchTextBoxKeyDown(object sender, KeyRoutedEventArgs e)
+    {
+        if (e.Key == VirtualKey.Escape)
+        {
+            _logger.LogDebug("Escape key pressed in search box. Collapsing search.");
+            CollapseSearch();
+            e.Handled = true;
+        }
+    }
+
+    /// <summary>
+    ///     Expands the search interface with an animation.
+    /// </summary>
+    private void ExpandSearch()
+    {
+        if (_isSearchExpanded) return;
+
+        _isSearchExpanded = true;
+        _logger.LogInformation("Search UI expanded.");
+        ToolTipService.SetToolTip(SearchToggleButton, "Close search");
+        VisualStateManager.GoToState(this, "SearchExpanded", true);
+
+        var timer = DispatcherQueue.CreateTimer();
+        timer.Interval = TimeSpan.FromMilliseconds(150);
+        timer.Tick += (s, args) =>
+        {
+            timer.Stop();
+            SearchTextBox.Focus(FocusState.Programmatic);
+        };
+        timer.Start();
+    }
+
+    /// <summary>
+    ///     Collapses the search interface with an animation and resets the filter.
+    /// </summary>
+    private void CollapseSearch()
+    {
+        if (!_isSearchExpanded) return;
+
+        _isSearchExpanded = false;
+        _logger.LogInformation("Search UI collapsed and search term cleared.");
+        ToolTipService.SetToolTip(SearchToggleButton, "Search artists");
+        VisualStateManager.GoToState(this, "SearchCollapsed", true);
+        ViewModel.SearchTerm = string.Empty;
     }
 
     /// <summary>
