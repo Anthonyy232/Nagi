@@ -480,31 +480,54 @@ public partial class App : Application
         }
     }
 
+    private bool _isExiting;
+
     private async void OnWindowClosed(object sender, WindowEventArgs args)
     {
-        if (Services is not null)
-            try
+        if (_isExiting)
+        {
+            args.Handled = false;
+            return;
+        }
+
+        _isExiting = true;
+        
+        // We need to handle this manually to ensure async tasks complete before the app exits.
+        args.Handled = true;
+
+        try
+        {
+            if (_window is MainWindow mainWindow)
+            {
+                _logger?.LogInformation("Saving window size...");
+                await mainWindow.SaveWindowSizeAsync();
+                mainWindow.Cleanup();
+            }
+
+            if (Services is not null)
             {
                 _logger?.LogInformation("Window is closing. Shutting down services.");
                 await Services.GetRequiredService<IPresenceManager>().ShutdownAsync();
                 await SaveApplicationStateAsync(Services);
             }
-            catch (Exception ex)
-            {
-                _logger?.LogError(ex, "Error during service shutdown.");
-            }
-            finally
-            {
-                await Log.CloseAndFlushAsync();
-
-                if (Services is IAsyncDisposable asyncDisposableServices)
-                    await asyncDisposableServices.DisposeAsync();
-                else if (Services is IDisposable disposableServices) disposableServices.Dispose();
-            }
-        else
+        }
+        catch (Exception ex)
+        {
+            _logger?.LogError(ex, "Error during application shutdown.");
+        }
+        finally
+        {
             await Log.CloseAndFlushAsync();
 
-        Current?.Exit();
+            if (Services is IAsyncDisposable asyncDisposableServices)
+                await asyncDisposableServices.DisposeAsync();
+            else if (Services is IDisposable disposableServices) 
+                disposableServices.Dispose();
+
+            // Force process exit to ensure all threads (like VLC) are terminated.
+            Current.Exit();
+            Process.GetCurrentProcess().Kill();
+        }
     }
 
     private void OnAppUnhandledException(object sender, UnhandledExceptionEventArgs e)

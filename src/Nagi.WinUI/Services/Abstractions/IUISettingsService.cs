@@ -239,6 +239,55 @@ public interface IUISettingsService : ISettingsService
     Task SetLastSkippedUpdateVersionAsync(string? version);
 
     /// <summary>
+    ///     Gets whether the application should remember and restore the main window size.
+    /// </summary>
+    /// <returns>True if remembering window size is enabled; otherwise, false.</returns>
+    Task<bool> GetRememberWindowSizeEnabledAsync();
+
+    /// <summary>
+    ///     Sets the preference for remembering the main window size.
+    /// </summary>
+    /// <param name="isEnabled">The preference to save.</param>
+    Task SetRememberWindowSizeEnabledAsync(bool isEnabled);
+
+    /// <summary>
+    ///     Gets the last saved main window size.
+    /// </summary>
+    /// <returns>A tuple of (width, height), or null if no size has been saved.</returns>
+    Task<(int Width, int Height)?> GetLastWindowSizeAsync();
+
+    /// <summary>
+    ///     Saves the main window size.
+    /// </summary>
+    /// <param name="width">The window width in pixels.</param>
+    /// <param name="height">The window height in pixels.</param>
+    Task SetLastWindowSizeAsync(int width, int height);
+
+    /// <summary>
+    ///     Gets whether the application should remember and restore the navigation pane state.
+    /// </summary>
+    /// <returns>True if remembering pane state is enabled; otherwise, false.</returns>
+    Task<bool> GetRememberPaneStateEnabledAsync();
+
+    /// <summary>
+    ///     Sets the preference for remembering the navigation pane state.
+    /// </summary>
+    /// <param name="isEnabled">The preference to save.</param>
+    Task SetRememberPaneStateEnabledAsync(bool isEnabled);
+
+    /// <summary>
+    ///     Gets the last saved navigation pane open/closed state.
+    /// </summary>
+    /// <returns>True if the pane was open, false if closed, or null if no state has been saved.</returns>
+    Task<bool?> GetLastPaneOpenAsync();
+
+    /// <summary>
+    ///     Saves the navigation pane open/closed state.
+    /// </summary>
+    /// <param name="isOpen">True if the pane is open; false if closed.</param>
+    Task SetLastPaneOpenAsync(bool isOpen);
+
+    /// <summary>
     ///     Resets all settings to their default values.
     /// </summary>
     Task ResetToDefaultsAsync();

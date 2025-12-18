@@ -29,6 +29,7 @@ public sealed partial class MainWindow : Window
     // State flags to ensure one-time initialization.
     private bool _isBackdropInitialized;
     private bool _isTitleBarInitialized;
+    private bool _isWindowSizeRestored;
     private ILogger<MainWindow>? _logger;
     private FrameworkElement? _rootElement;
     private IUISettingsService? _settingsService;
@@ -50,9 +51,22 @@ public sealed partial class MainWindow : Window
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
         _logger = App.Services!.GetRequiredService<ILogger<MainWindow>>();
         Activated += OnWindowActivated;
-        Closed += OnWindowClosed;
         _settingsService.BackdropMaterialChanged += OnBackdropMaterialChanged;
         _settingsService.TransparencyEffectsSettingChanged += OnTransparencyEffectsChanged;
+    }
+
+    public void Cleanup()
+    {
+        Activated -= OnWindowActivated;
+        
+        if (_rootElement != null) _rootElement.ActualThemeChanged -= OnActualThemeChanged;
+        if (_settingsService != null)
+        {
+            _settingsService.BackdropMaterialChanged -= OnBackdropMaterialChanged;
+            _settingsService.TransparencyEffectsSettingChanged -= OnTransparencyEffectsChanged;
+        }
+
+        _appWindow = null;
     }
 
     /// <summary>
@@ -107,7 +121,7 @@ public sealed partial class MainWindow : Window
         presenter?.SetBorderAndTitleBar(false, true);
     }
 
-    private void OnWindowActivated(object sender, WindowActivatedEventArgs args)
+    private async void OnWindowActivated(object sender, WindowActivatedEventArgs args)
     {
         if (!_isTitleBarInitialized)
         {
@@ -123,21 +137,37 @@ public sealed partial class MainWindow : Window
             _isBackdropInitialized = true;
         }
 
+        if (!_isWindowSizeRestored && _settingsService != null)
+        {
+            _isWindowSizeRestored = true;
+            await RestoreWindowSizeAsync();
+        }
+
         if (Content is MainPage mainPage) mainPage.UpdateActivationVisualState(args.WindowActivationState);
     }
 
-    private void OnWindowClosed(object sender, WindowEventArgs args)
+    /// <summary>
+    ///     Saves the current window size if the setting is enabled.
+    ///     This should be called explicitly by the application before shutdown.
+    /// </summary>
+    public async Task SaveWindowSizeAsync()
     {
-        Activated -= OnWindowActivated;
-        Closed -= OnWindowClosed;
-        if (_rootElement != null) _rootElement.ActualThemeChanged -= OnActualThemeChanged;
-        if (_settingsService != null)
+        if (_settingsService != null && _appWindow != null)
         {
-            _settingsService.BackdropMaterialChanged -= OnBackdropMaterialChanged;
-            _settingsService.TransparencyEffectsSettingChanged -= OnTransparencyEffectsChanged;
+            try
+            {
+                if (await _settingsService.GetRememberWindowSizeEnabledAsync())
+                {
+                    var size = _appWindow.Size;
+                    await _settingsService.SetLastWindowSizeAsync(size.Width, size.Height);
+                    _logger?.LogDebug("Saved window size: {Width}x{Height}", size.Width, size.Height);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger?.LogWarning(ex, "Failed to save window size.");
+            }
         }
-
-        _appWindow = null;
     }
 
     private void OnBackdropMaterialChanged(BackdropMaterial material)
@@ -214,6 +244,34 @@ public sealed partial class MainWindow : Window
             titleBar.ButtonPressedForegroundColor = Colors.Black;
             titleBar.ButtonPressedBackgroundColor = Color.FromArgb(0x40, 0x00, 0x00, 0x00);
             titleBar.ButtonInactiveForegroundColor = Color.FromArgb(0xFF, 0x66, 0x66, 0x66);
+        }
+    }
+
+    /// <summary>
+    ///     Restores the main window size from saved settings if the feature is enabled.
+    /// </summary>
+    private async Task RestoreWindowSizeAsync()
+    {
+        if (_settingsService == null || _appWindow == null) return;
+
+        try
+        {
+            if (await _settingsService.GetRememberWindowSizeEnabledAsync())
+            {
+                var savedSize = await _settingsService.GetLastWindowSizeAsync();
+                if (savedSize.HasValue)
+                {
+                    // Ensure minimum size constraints
+                    var width = Math.Max(savedSize.Value.Width, 400);
+                    var height = Math.Max(savedSize.Value.Height, 300);
+                    _appWindow.Resize(new SizeInt32(width, height));
+                    _logger?.LogDebug("Restored window size: {Width}x{Height}", width, height);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger?.LogWarning(ex, "Failed to restore window size.");
         }
     }
 
@@ -368,6 +426,5 @@ public sealed class MiniPlayerWindow : Window
     {
         _view.RestoreButtonClicked -= OnRestoreButtonClicked;
         _appWindow.Changed -= OnAppWindowChanged;
-        Closed -= OnWindowClosed;
     }
 }

@@ -576,9 +576,14 @@ public class MusicPlaybackServiceTests
     [Fact]
     public async Task SetShuffleAsync_WhenEnabled_GeneratesShuffledQueue()
     {
-        // Arrange
+        // Arrange - Use a larger song list to make the probability of shuffle producing
+        // the same order astronomically low (1/10! = 1/3,628,800 instead of 1/5! = 1/120)
+        var largeSongList = Enumerable.Range(1, 10)
+            .Select(i => new Song { Id = Guid.NewGuid(), Title = $"Song {i}", FilePath = $"C:\\music\\song{i}.mp3" })
+            .ToList();
+
         await _service.InitializeAsync();
-        await _service.PlayAsync(_testSongs);
+        await _service.PlayAsync(largeSongList);
         var eventTracker = new EventTracker(_service);
 
         // Act
@@ -586,9 +591,9 @@ public class MusicPlaybackServiceTests
 
         // Assert
         _service.IsShuffleEnabled.Should().BeTrue();
-        _service.ShuffledQueue.Should().HaveCount(_testSongs.Count);
-        _service.ShuffledQueue.Should().BeEquivalentTo(_testSongs);
-        _service.ShuffledQueue.Should().NotBeEquivalentTo(_testSongs, opt => opt.WithStrictOrdering());
+        _service.ShuffledQueue.Should().HaveCount(largeSongList.Count);
+        _service.ShuffledQueue.Should().BeEquivalentTo(largeSongList);
+        _service.ShuffledQueue.Should().NotBeEquivalentTo(largeSongList, opt => opt.WithStrictOrdering());
         await _settingsService.Received(1).SaveShuffleStateAsync(true);
         eventTracker.ShuffleModeChangedCount.Should().Be(1);
         eventTracker.QueueChangedCount.Should().Be(1);

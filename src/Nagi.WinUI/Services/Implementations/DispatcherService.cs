@@ -8,10 +8,13 @@ namespace Nagi.WinUI.Services.Implementations;
 
 /// <summary>
 ///     A concrete implementation of <see cref="IDispatcherService" /> that wraps the
-///     application's main <see cref="DispatcherQueue" />.
+///     application's main <see cref="DispatcherQueue" />. Includes shutdown-safe error handling.
 /// </summary>
 public class DispatcherService : IDispatcherService
 {
+    private const int RO_E_CLOSED = unchecked((int)0x80000013);
+    private const int RPC_E_WRONG_THREAD = unchecked((int)0x8001010E);
+
     private readonly DispatcherQueue _dispatcherQueue;
 
     public DispatcherService(DispatcherQueue dispatcherQueue)
@@ -22,12 +25,28 @@ public class DispatcherService : IDispatcherService
     /// <inheritdoc />
     public bool TryEnqueue(Action action)
     {
-        return _dispatcherQueue.TryEnqueue(() => action());
+        try
+        {
+            return _dispatcherQueue.TryEnqueue(() => action());
+        }
+        catch (Exception ex) when (ex.HResult == RO_E_CLOSED || ex.HResult == RPC_E_WRONG_THREAD)
+        {
+            // The dispatcher is shutting down or unavailable - silently ignore
+            return false;
+        }
     }
 
     /// <inheritdoc />
     public Task EnqueueAsync(Func<Task> function)
     {
-        return _dispatcherQueue.EnqueueAsync(function);
+        try
+        {
+            return _dispatcherQueue.EnqueueAsync(function);
+        }
+        catch (Exception ex) when (ex.HResult == RO_E_CLOSED || ex.HResult == RPC_E_WRONG_THREAD)
+        {
+            // The dispatcher is shutting down or unavailable - return completed task
+            return Task.CompletedTask;
+        }
     }
 }

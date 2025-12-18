@@ -755,7 +755,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
             try
             {
                 await _audioPlayer.LoadAsync(CurrentTrack);
-                var completedTask = await Task.WhenAny(durationKnownTcs.Task, Task.Delay(5000));
+                var completedTask = await Task.WhenAny(durationKnownTcs.Task, Task.Delay(8000));
 
                 if (completedTask == durationKnownTcs.Task && _audioPlayer.Duration > TimeSpan.Zero)
                 {

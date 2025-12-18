@@ -8,6 +8,7 @@ using LibVLCSharp;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
+using System.Threading;
 using Nagi.WinUI.Services.Abstractions;
 using WinMediaPlayback = Windows.Media.Playback;
 
@@ -29,7 +30,9 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     private Media? _currentMedia;
     private Song? _currentSong;
     private SystemMediaTransportControls? _smtc;
+
     private bool _isDisposed;
+    private readonly CancellationTokenSource _disposeCts = new();
 
     public LibVlcAudioPlayerService(IDispatcherService dispatcherService, ILogger<LibVlcAudioPlayerService> logger)
     {
@@ -99,9 +102,16 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
 
     public void UpdateSmtcButtonStates(bool canNext, bool canPrevious)
     {
-        if (_smtc is null) return;
-        _smtc.IsNextEnabled = canNext;
-        _smtc.IsPreviousEnabled = canPrevious;
+        if (_isDisposed || _smtc is null) return;
+        try
+        {
+            _smtc.IsNextEnabled = canNext;
+            _smtc.IsPreviousEnabled = canPrevious;
+        }
+        catch (Exception ex) when (ex.HResult == unchecked((int)0x80000013)) // RO_E_CLOSED
+        {
+            _logger.LogDebug("SMTC already disposed, ignoring button state update.");
+        }
     }
 
     public Task LoadAsync(Song song)
@@ -203,11 +213,18 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
             _currentMedia = null;
         }
 
-        if (_smtc is not null)
+        if (_smtc is not null && !_isDisposed)
         {
-            _smtc.DisplayUpdater.ClearAll();
-            _smtc.DisplayUpdater.Update();
-            _smtc.PlaybackStatus = MediaPlaybackStatus.Stopped;
+            try
+            {
+                _smtc.DisplayUpdater.ClearAll();
+                _smtc.DisplayUpdater.Update();
+                _smtc.PlaybackStatus = MediaPlaybackStatus.Stopped;
+            }
+            catch (Exception ex) when (ex.HResult == unchecked((int)0x80000013)) // RO_E_CLOSED
+            {
+                _logger.LogDebug("SMTC already disposed during stop.");
+            }
         }
 
         return Task.CompletedTask;
@@ -273,6 +290,10 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         if (_isDisposed) return;
         _isDisposed = true;
 
+
+        _disposeCts.Cancel();
+        _disposeCts.Dispose();
+
         _logger.LogInformation("Disposing LibVlcAudioPlayerService.");
         _mediaPlayer.PositionChanged -= OnMediaPlayerPositionChanged;
         _mediaPlayer.Playing -= OnMediaPlayerStateChanged;
@@ -287,8 +308,15 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
 
         if (_smtc is not null)
         {
-            _smtc.ButtonPressed -= OnSmtcButtonPressed;
-            _smtc.IsEnabled = false;
+            try
+            {
+                _smtc.ButtonPressed -= OnSmtcButtonPressed;
+                _smtc.IsEnabled = false;
+            }
+            catch (Exception ex) when (ex.HResult == unchecked((int)0x80000013)) // RO_E_CLOSED
+            {
+                _logger.LogDebug("SMTC already disposed during cleanup.");
+            }
         }
 
         // Clean up current media before disposing other components
@@ -310,12 +338,22 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         _mediaPlayer.Stop();
         _mediaPlayer.Dispose();
         _libVlc.Dispose();
-        _dummyMediaPlayer.Dispose();
+        try
+        {
+            _dummyMediaPlayer.Dispose();
+        }
+        catch (Exception ex)
+        {
+            // Ignore RO_E_CLOSED or other specific COM errors during shutdown
+            _logger?.LogDebug(ex, "Error disposing dummy media player.");
+        }
+        
         GC.SuppressFinalize(this);
     }
 
     private void OnMediaPlayerMediaChanged(object? sender, MediaPlayerMediaChangedEventArgs e)
     {
+        if (_isDisposed) return;
         if (e.Media is not null)
         {
             _dispatcherService.TryEnqueue(() => MediaOpened?.Invoke());
@@ -325,11 +363,13 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
 
     private void OnMediaPlayerLengthChanged(object? sender, MediaPlayerLengthChangedEventArgs e)
     {
+        if (_isDisposed) return;
         _dispatcherService.TryEnqueue(() => DurationChanged?.Invoke());
     }
 
     private void OnMediaPlayerEncounteredError(object? sender, EventArgs e)
     {
+        if (_isDisposed) return;
         var lastVlcError = _libVlc.LastLibVLCError;
         var errorMessage = string.IsNullOrEmpty(lastVlcError)
             ? "LibVLC encountered an unspecified error."
@@ -337,6 +377,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         _logger.LogError("Playback error occurred. {ErrorMessage}", errorMessage);
         _dispatcherService.TryEnqueue(() =>
         {
+            if (_isDisposed) return;
             ErrorOccurred?.Invoke(errorMessage);
             PlaybackEnded?.Invoke();
         });
@@ -344,8 +385,10 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
 
     private void OnMediaPlayerStateChanged(object? sender, EventArgs e)
     {
+        if (_isDisposed) return;
         _dispatcherService.TryEnqueue(() =>
         {
+            if (_isDisposed) return;
             StateChanged?.Invoke();
             if (_mediaPlayer.State == VLCState.Stopped && _currentSong is not null)
             {
@@ -358,38 +401,50 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
 
     private void OnMediaPlayerPositionChanged(object? sender, MediaPlayerPositionChangedEventArgs e)
     {
+        if (_isDisposed) return;
         _dispatcherService.TryEnqueue(() => PositionChanged?.Invoke());
     }
 
     private void OnMediaPlayerVolumeChanged(object? sender, MediaPlayerVolumeChangedEventArgs e)
     {
+        if (_isDisposed) return;
         _dispatcherService.TryEnqueue(() => VolumeChanged?.Invoke());
     }
 
     private void OnMediaPlayerMuteChanged(object? sender, EventArgs e)
     {
+        if (_isDisposed) return;
         _dispatcherService.TryEnqueue(() => VolumeChanged?.Invoke());
     }
 
     private async void OnSmtcButtonPressed(SystemMediaTransportControls sender,
         SystemMediaTransportControlsButtonPressedEventArgs args)
     {
+        if (_isDisposed) return;
         _logger.LogDebug("SMTC button pressed: {Button}", args.Button);
-        await _dispatcherService.EnqueueAsync(async () =>
+        try
         {
-            switch (args.Button)
+            await _dispatcherService.EnqueueAsync(async () =>
             {
-                case SystemMediaTransportControlsButton.Play: await PlayAsync(); break;
-                case SystemMediaTransportControlsButton.Pause: await PauseAsync(); break;
-                case SystemMediaTransportControlsButton.Next: SmtcNextButtonPressed?.Invoke(); break;
-                case SystemMediaTransportControlsButton.Previous: SmtcPreviousButtonPressed?.Invoke(); break;
-            }
-        });
+                if (_isDisposed) return;
+                switch (args.Button)
+                {
+                    case SystemMediaTransportControlsButton.Play: await PlayAsync(); break;
+                    case SystemMediaTransportControlsButton.Pause: await PauseAsync(); break;
+                    case SystemMediaTransportControlsButton.Next: SmtcNextButtonPressed?.Invoke(); break;
+                    case SystemMediaTransportControlsButton.Previous: SmtcPreviousButtonPressed?.Invoke(); break;
+                }
+            });
+        }
+        catch (Exception ex) when (ex.HResult == unchecked((int)0x80000013)) // RO_E_CLOSED
+        {
+            _logger.LogDebug("SMTC button handler interrupted during disposal.");
+        }
     }
 
     private void UpdateSmtcPlaybackStatus()
     {
-        if (_smtc is null) return;
+        if (_isDisposed || _smtc is null) return;
         var newStatus = _mediaPlayer.State switch
         {
             VLCState.Playing => MediaPlaybackStatus.Playing,
@@ -399,40 +454,61 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
             _ => MediaPlaybackStatus.Closed
         };
 
-        if (_smtc.PlaybackStatus != newStatus)
+        _dispatcherService.TryEnqueue(() =>
         {
-            _logger.LogDebug("Updating SMTC PlaybackStatus from {OldStatus} to {NewStatus}", _smtc.PlaybackStatus,
-                newStatus);
-            _smtc.PlaybackStatus = newStatus;
-        }
+            if (_isDisposed || _smtc is null) return;
+            try
+            {
+                if (_smtc.PlaybackStatus != newStatus)
+                {
+                    _logger.LogDebug("Updating SMTC PlaybackStatus from {OldStatus} to {NewStatus}",
+                        _smtc.PlaybackStatus, newStatus);
+                    _smtc.PlaybackStatus = newStatus;
+                }
+            }
+            catch (Exception ex) when (ex.HResult == unchecked((int)0x80000013)) // RO_E_CLOSED
+            {
+                _logger.LogDebug("SMTC already disposed during playback status update.");
+            }
+        });
     }
 
     private async Task UpdateSmtcDisplayAsync()
     {
-        if (_smtc is null || _currentSong is null) return;
+        if (_isDisposed || _smtc is null || _currentSong is null) return;
 
-        _logger.LogInformation("Updating SMTC display for track '{SongTitle}'.", _currentSong.Title);
-        var updater = _smtc.DisplayUpdater;
-        updater.Type = MediaPlaybackType.Music;
-        updater.MusicProperties.Title = _currentSong.Title ?? string.Empty;
-        updater.MusicProperties.Artist = _currentSong.Artist?.Name ?? "Unknown Artist";
-        updater.MusicProperties.AlbumArtist =
-            _currentSong.Album?.Artist?.Name ?? _currentSong.Artist?.Name ?? "Unknown Album Artist";
-        updater.MusicProperties.AlbumTitle = _currentSong.Album?.Title ?? "Unknown Album";
-        updater.Thumbnail = null;
+        try
+        {
+            _logger.LogInformation("Updating SMTC display for track '{SongTitle}'.", _currentSong.Title);
+            var updater = _smtc.DisplayUpdater;
+            updater.Type = MediaPlaybackType.Music;
+            updater.MusicProperties.Title = _currentSong.Title ?? string.Empty;
+            updater.MusicProperties.Artist = _currentSong.Artist?.Name ?? "Unknown Artist";
+            updater.MusicProperties.AlbumArtist =
+                _currentSong.Album?.Artist?.Name ?? _currentSong.Artist?.Name ?? "Unknown Album Artist";
+            updater.MusicProperties.AlbumTitle = _currentSong.Album?.Title ?? "Unknown Album";
+            updater.Thumbnail = null;
 
-        if (!string.IsNullOrEmpty(_currentSong.AlbumArtUriFromTrack))
-            try
-            {
-                var albumArtFile = await StorageFile.GetFileFromPathAsync(_currentSong.AlbumArtUriFromTrack);
-                updater.Thumbnail = RandomAccessStreamReference.CreateFromFile(albumArtFile);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogWarning(ex, "Failed to load and set SMTC thumbnail from {AlbumArtPath}",
-                    _currentSong.AlbumArtUriFromTrack);
-            }
+            if (!string.IsNullOrEmpty(_currentSong.AlbumArtUriFromTrack))
+                try
+                {
+                    if (_disposeCts.IsCancellationRequested) return;
+                    var albumArtFile = await StorageFile.GetFileFromPathAsync(_currentSong.AlbumArtUriFromTrack);
+                    if (_disposeCts.IsCancellationRequested) return;
+                    updater.Thumbnail = RandomAccessStreamReference.CreateFromFile(albumArtFile);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Failed to load and set SMTC thumbnail from {AlbumArtPath}",
+                        _currentSong.AlbumArtUriFromTrack);
+                }
 
-        updater.Update();
+            if (!_disposeCts.IsCancellationRequested)
+                updater.Update();
+        }
+        catch (Exception ex) when (ex.HResult == unchecked((int)0x80000013)) // RO_E_CLOSED
+        {
+            _logger.LogDebug("SMTC already disposed during display update.");
+        }
     }
 }

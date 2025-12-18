@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.Foundation.Metadata;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -38,6 +39,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     };
 
     private readonly IDispatcherService _dispatcherService;
+    private readonly ILogger<MainPage> _logger;
 
     // Maps navigation item tags to their corresponding page types.
     private readonly Dictionary<string, Type> _pages = new()
@@ -72,7 +74,8 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         ViewModel = App.Services!.GetRequiredService<PlayerViewModel>();
         _settingsService = App.Services!.GetRequiredService<IUISettingsService>();
         _themeService = App.Services!.GetRequiredService<IThemeService>();
-        _dispatcherService = App.Services!.GetRequiredService<IDispatcherService>(); // Injected the service
+        _dispatcherService = App.Services!.GetRequiredService<IDispatcherService>();
+        _logger = App.Services!.GetRequiredService<ILogger<MainPage>>();
         DataContext = ViewModel;
 
         InitializeNavigationService();
@@ -217,6 +220,9 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
         _isPlayerAnimationEnabled = await _settingsService.GetPlayerAnimationEnabledAsync();
 
+        // Restore navigation pane state if the setting is enabled.
+        await RestorePaneStateAsync();
+
         ApplyDynamicThemeForCurrentTrack();
         UpdatePlayerVisualState(false);
     }
@@ -351,6 +357,8 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     private void AppTitleBar_PaneToggleRequested(TitleBar sender, object args)
     {
         NavView.IsPaneOpen = !NavView.IsPaneOpen;
+        // Save the pane state if the setting is enabled.
+        _ = SavePaneStateAsync(NavView.IsPaneOpen);
     }
 
     private void AppTitleBar_BackRequested(TitleBar sender, object args)
@@ -368,5 +376,43 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     {
         _isQueueFlyoutOpen = false;
         UpdatePlayerVisualState();
+    }
+
+    /// <summary>
+    ///     Saves the navigation pane state if the "remember pane state" setting is enabled.
+    /// </summary>
+    private async Task SavePaneStateAsync(bool isOpen)
+    {
+        try
+        {
+            if (await _settingsService.GetRememberPaneStateEnabledAsync())
+                await _settingsService.SetLastPaneOpenAsync(isOpen);
+        }
+        catch (Exception ex)
+        {
+            // Non-critical: log at trace level and continue.
+            _logger.LogTrace(ex, "Failed to save navigation pane state.");
+        }
+    }
+
+    /// <summary>
+    ///     Restores the navigation pane state if the "remember pane state" setting is enabled.
+    ///     This overrides the XAML adaptive trigger's default state.
+    /// </summary>
+    private async Task RestorePaneStateAsync()
+    {
+        try
+        {
+            if (await _settingsService.GetRememberPaneStateEnabledAsync())
+            {
+                var savedState = await _settingsService.GetLastPaneOpenAsync();
+                if (savedState.HasValue) NavView.IsPaneOpen = savedState.Value;
+            }
+        }
+        catch (Exception ex)
+        {
+            // Non-critical: log at trace level and let adaptive triggers handle default state.
+            _logger.LogTrace(ex, "Failed to restore navigation pane state.");
+        }
     }
 }

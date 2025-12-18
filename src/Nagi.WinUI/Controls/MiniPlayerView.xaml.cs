@@ -156,7 +156,9 @@ public sealed partial class MiniPlayerView : UserControl
         e.Handled = true;
     }
 
-    // Ends the window drag operation.
+    // NOTE: This method intentionally does nothing in normal operation. Cleanup is handled by
+    // OnDragHandlePointerCaptureLost for more reliable behavior across edge cases (fast drags,
+    // focus changes, etc.). Explicitly releasing the pointer here causes visual glitches.
     private void OnDragHandlePointerReleased(object sender, PointerRoutedEventArgs e)
     {
         if (!_isUnloaded) return;

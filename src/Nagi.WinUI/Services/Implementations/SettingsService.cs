@@ -56,6 +56,10 @@ public class SettingsService : IUISettingsService
     private const string LastFmScrobblingEnabledKey = "LastFmScrobblingEnabled";
     private const string LastFmNowPlayingEnabledKey = "LastFmNowPlayingEnabled";
     private const string EqualizerSettingsKey = "EqualizerSettings";
+    private const string RememberWindowSizeEnabledKey = "RememberWindowSizeEnabled";
+    private const string LastWindowSizeKey = "LastWindowSize";
+    private const string RememberPaneStateEnabledKey = "RememberPaneStateEnabled";
+    private const string LastPaneOpenKey = "LastPaneOpen";
 
     private static readonly JsonSerializerOptions _serializerOptions = new() { WriteIndented = true };
     private readonly ICredentialLockerService _credentialLockerService;
@@ -66,18 +70,20 @@ public class SettingsService : IUISettingsService
     private readonly TimeSpan _saveDebounceDelay = TimeSpan.FromMilliseconds(500);
     private readonly SemaphoreSlim _settingsFileLock = new(1, 1);
     private readonly UISettings _uiSettings = new();
+    private readonly IDispatcherService _dispatcherService;
     private volatile bool _isInitialized;
     private int _isSaveQueued;
 
     private Dictionary<string, object?> _settings;
 
     public SettingsService(IPathConfiguration pathConfig, ICredentialLockerService credentialLockerService,
-        ILogger<SettingsService> logger)
+        ILogger<SettingsService> logger, IDispatcherService dispatcherService)
     {
         _pathConfig = pathConfig ?? throw new ArgumentNullException(nameof(pathConfig));
         _credentialLockerService =
             credentialLockerService ?? throw new ArgumentNullException(nameof(credentialLockerService));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
         _isPackaged = pathConfig.IsPackaged;
         _settings = new Dictionary<string, object?>();
 
@@ -140,13 +146,15 @@ public class SettingsService : IUISettingsService
         await SetLastSkippedUpdateVersionAsync(null);
         await ClearLastFmCredentialsAsync();
         await SetEqualizerSettingsAsync(new EqualizerSettings());
+        await SetRememberWindowSizeEnabledAsync(false);
+        await SetRememberPaneStateEnabledAsync(true);
 
         _logger.LogInformation("All application settings have been reset to their default values.");
     }
 
     private void OnAdvancedEffectsEnabledChanged(UISettings sender, object args)
     {
-        TransparencyEffectsSettingChanged?.Invoke(_uiSettings.AdvancedEffectsEnabled);
+        _dispatcherService.TryEnqueue(() => TransparencyEffectsSettingChanged?.Invoke(_uiSettings.AdvancedEffectsEnabled));
     }
 
     /// <summary>
@@ -806,6 +814,55 @@ public class SettingsService : IUISettingsService
     {
         await SetValueAsync(PlayerButtonSettingsKey, settings);
         PlayerButtonSettingsChanged?.Invoke();
+    }
+
+    public async Task<bool> GetRememberWindowSizeEnabledAsync()
+    {
+        await EnsureUnpackagedSettingsLoadedAsync();
+        return GetValue(RememberWindowSizeEnabledKey, false);
+    }
+
+    public Task SetRememberWindowSizeEnabledAsync(bool isEnabled)
+    {
+        return SetValueAsync(RememberWindowSizeEnabledKey, isEnabled);
+    }
+
+    public async Task<(int Width, int Height)?> GetLastWindowSizeAsync()
+    {
+        var sizeData = await GetComplexValueAsync<int[]>(LastWindowSizeKey);
+        if (sizeData is { Length: 2 })
+            return (sizeData[0], sizeData[1]);
+        return null;
+    }
+
+    public Task SetLastWindowSizeAsync(int width, int height)
+    {
+        return SetValueAsync(LastWindowSizeKey, new[] { width, height });
+    }
+
+    public async Task<bool> GetRememberPaneStateEnabledAsync()
+    {
+        await EnsureUnpackagedSettingsLoadedAsync();
+        return GetValue(RememberPaneStateEnabledKey, true);
+    }
+
+    public Task SetRememberPaneStateEnabledAsync(bool isEnabled)
+    {
+        return SetValueAsync(RememberPaneStateEnabledKey, isEnabled);
+    }
+
+    public async Task<bool?> GetLastPaneOpenAsync()
+    {
+        await EnsureUnpackagedSettingsLoadedAsync();
+        // Use a string to differentiate between 'never set' and 'set to false'
+        var value = GetValue<string?>(LastPaneOpenKey, null);
+        if (value == null) return null;
+        return value == "true";
+    }
+
+    public Task SetLastPaneOpenAsync(bool isOpen)
+    {
+        return SetValueAsync(LastPaneOpenKey, isOpen ? "true" : "false");
     }
 
     #endregion
