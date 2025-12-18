@@ -54,11 +54,12 @@ internal static class PopupAnimation
 
         try
         {
-            // Cancel any existing animation and create a new cancellation token for this one.
+            // Cancel and dispose any existing animation token before creating a new one.
             if (_animationCts is not null)
             {
                 Logger.LogDebug("Cancelling previous animation before starting AnimateIn.");
                 _animationCts.Cancel();
+                _animationCts.Dispose();
             }
 
             _animationCts = new CancellationTokenSource();
@@ -132,11 +133,12 @@ internal static class PopupAnimation
 
         try
         {
-            // Cancel any existing animation and create a new cancellation token for this one.
+            // Cancel and dispose any existing animation token before creating a new one.
             if (_animationCts is not null)
             {
                 Logger.LogDebug("Cancelling previous animation before starting AnimateOut.");
                 _animationCts.Cancel();
+                _animationCts.Dispose();
             }
 
             _animationCts = new CancellationTokenSource();

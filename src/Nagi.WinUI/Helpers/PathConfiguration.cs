@@ -19,14 +19,13 @@ public class PathConfiguration : IPathConfiguration
 
         try
         {
-            // Even if packaged, this might throw if the package doesn't have a mutable directory
-            AppDataRoot = IsPackaged
-                ? ApplicationData.Current.LocalFolder.Path
-                : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Nagi");
+            // Always prioritize the Windows App Runtime local folder if available.
+            // This is the correct way to handle file storage in both packaged and unpackaged apps using the Windows App SDK.
+            AppDataRoot = ApplicationData.Current.LocalFolder.Path;
         }
         catch (Exception)
         {
-            // Fallback to standard local app data if the packaged location is invalid
+            // Fallback for environments where ApplicationData is not initialized (e.g., unit tests, pure console apps)
             AppDataRoot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 "Nagi");
         }

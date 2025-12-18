@@ -139,6 +139,8 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     [ObservableProperty] public partial bool IsFetchOnlineMetadataEnabled { get; set; }
     [ObservableProperty] public partial bool IsDiscordRichPresenceEnabled { get; set; }
     [ObservableProperty] public partial bool IsCheckForUpdatesEnabled { get; set; }
+    [ObservableProperty] public partial bool IsRememberWindowSizeEnabled { get; set; }
+    [ObservableProperty] public partial bool IsRememberPaneStateEnabled { get; set; }
     [ObservableProperty] public partial float EqualizerPreamp { get; set; }
 
     [ObservableProperty]
@@ -220,6 +222,8 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         IsFetchOnlineMetadataEnabled = await _settingsService.GetFetchOnlineMetadataEnabledAsync();
         IsDiscordRichPresenceEnabled = await _settingsService.GetDiscordRichPresenceEnabledAsync();
         IsCheckForUpdatesEnabled = await _settingsService.GetCheckForUpdatesEnabledAsync();
+        IsRememberWindowSizeEnabled = await _settingsService.GetRememberWindowSizeEnabledAsync();
+        IsRememberPaneStateEnabled = await _settingsService.GetRememberPaneStateEnabledAsync();
 
         var lastFmCredentials = await _settingsService.GetLastFmCredentialsAsync();
         LastFmUsername = lastFmCredentials?.Username;
@@ -504,6 +508,18 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     {
         if (_isInitializing) return;
         _ = _settingsService.SetCheckForUpdatesEnabledAsync(value);
+    }
+
+    partial void OnIsRememberWindowSizeEnabledChanged(bool value)
+    {
+        if (_isInitializing) return;
+        _ = _settingsService.SetRememberWindowSizeEnabledAsync(value);
+    }
+
+    partial void OnIsRememberPaneStateEnabledChanged(bool value)
+    {
+        if (_isInitializing) return;
+        _ = _settingsService.SetRememberPaneStateEnabledAsync(value);
     }
 
     partial void OnIsLastFmScrobblingEnabledChanged(bool value)

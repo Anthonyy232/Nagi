@@ -38,9 +38,9 @@ public class AppInfoService : IAppInfoService
             var version = package.Id.Version;
             return $"{version.Major}.{version.Minor}.{version.Build}";
 #else
-            // For unpackaged apps, use assembly version
-            var assembly = Assembly.GetEntryAssembly();
-            if (assembly?.GetName().Version is { } version) return $"{version.Major}.{version.Minor}.{version.Build}";
+            // For unpackaged apps, use assembly version from this type's assembly
+            var assembly = typeof(AppInfoService).Assembly;
+            if (assembly.GetName().Version is { } version) return $"{version.Major}.{version.Minor}.{version.Build}";
 #endif
         }
         catch (Exception ex)

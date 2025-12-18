@@ -244,11 +244,7 @@ public sealed class WindowService : IWindowService, IDisposable
         if (sender is MiniPlayerWindow window) window.Closed -= OnMiniPlayerClosed;
 
         // If the user manually closed the mini-player, show the main application window
-        if (!_isClosingMiniPlayerProgrammatically)
-        {
-            _miniPlayerWindow = null;
-            ShowAndActivate();
-        }
+        if (!_isClosingMiniPlayerProgrammatically) ShowAndActivate();
 
         _miniPlayerWindow = null;
         UIStateChanged?.Invoke();

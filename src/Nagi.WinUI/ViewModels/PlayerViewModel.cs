@@ -48,6 +48,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     private readonly IWindowService _windowService;
 
     private bool _isUpdatingFromService;
+    private bool _isDisposed;
 
     public PlayerViewModel(IMusicPlaybackService playbackService, INavigationService navigationService,
         IDispatcherService dispatcherService, IUISettingsService settingsService, IWindowService windowService,
@@ -154,6 +155,8 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     /// </summary>
     public void Dispose()
     {
+        if (_isDisposed) return;
+        _isDisposed = true;
         _logger.LogInformation("Disposing and unsubscribing from service events");
         UnsubscribeFromPlaybackServiceEvents();
         UnsubscribeFromSettingsServiceEvents();
@@ -410,8 +413,10 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
 
     private void RunOnUIThread(Action action)
     {
+        if (_isDisposed) return;
         _dispatcherService.TryEnqueue(() =>
         {
+            if (_isDisposed) return;
             using (new ServiceUpdateScope(this))
             {
                 action();
