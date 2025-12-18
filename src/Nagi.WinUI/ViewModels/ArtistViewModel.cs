@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.WinUI.Navigation;
@@ -39,6 +40,7 @@ public partial class ArtistViewModelItem : ObservableObject
 public partial class ArtistViewModel : ObservableObject, IDisposable
 {
     private const int PageSize = 250;
+    private const int SearchDebounceDelay = 400;
     private readonly Dictionary<Guid, ArtistViewModelItem> _artistLookup = new();
     private readonly NotifyCollectionChangedEventHandler _collectionChangedHandler;
     private readonly IDispatcherService _dispatcherService;
@@ -48,6 +50,7 @@ public partial class ArtistViewModel : ObservableObject, IDisposable
     private readonly INavigationService _navigationService;
     private readonly ISettingsService _settingsService;
     private int _currentPage = 1;
+    private CancellationTokenSource? _debounceCts;
     private bool _isDisposed;
     private bool _isFullyLoaded;
 
@@ -78,6 +81,12 @@ public partial class ArtistViewModel : ObservableObject, IDisposable
     [ObservableProperty] public partial bool IsLoadingMore { get; set; }
 
     [ObservableProperty] public partial bool HasLoadError { get; set; }
+
+    [ObservableProperty] public partial string SearchTerm { get; set; } = string.Empty;
+
+    [ObservableProperty] public partial string TotalItemsText { get; set; } = "0 artists";
+
+    private bool IsSearchActive => !string.IsNullOrWhiteSpace(SearchTerm);
 
     public bool HasArtists => Artists.Any();
 
@@ -187,7 +196,11 @@ public partial class ArtistViewModel : ObservableObject, IDisposable
     /// </summary>
     private async Task LoadNextPageAsync(CancellationToken cancellationToken)
     {
-        var pagedResult = await _libraryService.GetAllArtistsPagedAsync(_currentPage, PageSize);
+        PagedResult<Artist>? pagedResult;
+        if (IsSearchActive)
+            pagedResult = await _libraryService.SearchArtistsPagedAsync(SearchTerm, _currentPage, PageSize);
+        else
+            pagedResult = await _libraryService.GetAllArtistsPagedAsync(_currentPage, PageSize);
 
         if (cancellationToken.IsCancellationRequested) return;
 
@@ -200,11 +213,62 @@ public partial class ArtistViewModel : ObservableObject, IDisposable
                     Name = artist.Name,
                     LocalImageCachePath = artist.LocalImageCachePath
                 };
-                _artistLookup.Add(artist.Id, artistVm);
+                _artistLookup[artist.Id] = artistVm;
                 Artists.Add(artistVm);
             }
 
+        // Update the total items text.
+        if (pagedResult != null)
+        {
+            var count = pagedResult.TotalCount;
+            TotalItemsText = $"{count:N0} {(count == 1 ? "artist" : "artists")}";
+        }
+
         if (pagedResult == null || Artists.Count >= pagedResult.TotalCount) _isFullyLoaded = true;
+    }
+
+    partial void OnSearchTermChanged(string value)
+    {
+        TriggerDebouncedSearch();
+    }
+
+    private void TriggerDebouncedSearch()
+    {
+        try
+        {
+            _debounceCts?.Cancel();
+        }
+        catch (ObjectDisposedException)
+        {
+            // Ignore exception if the CancellationTokenSource has already been disposed.
+        }
+
+        _debounceCts = new CancellationTokenSource();
+        var token = _debounceCts.Token;
+
+        Task.Run(async () =>
+        {
+            try
+            {
+                await Task.Delay(SearchDebounceDelay, token);
+
+                if (token.IsCancellationRequested) return;
+
+                await _dispatcherService.EnqueueAsync(async () =>
+                {
+                    if (token.IsCancellationRequested) return;
+                    await LoadArtistsCommand.ExecuteAsync(CancellationToken.None);
+                });
+            }
+            catch (TaskCanceledException)
+            {
+                _logger.LogDebug("Debounced artist search cancelled");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Debounced artist search failed");
+            }
+        }, token);
     }
 
     /// <summary>
@@ -231,5 +295,17 @@ public partial class ArtistViewModel : ObservableObject, IDisposable
     public void UnsubscribeFromEvents()
     {
         _libraryService.ArtistMetadataUpdated -= OnArtistMetadataUpdated;
+    }
+
+    /// <summary>
+    ///     Cleans up search state when navigating away from the page.
+    /// </summary>
+    public void Cleanup()
+    {
+        _debounceCts?.Cancel();
+        _debounceCts?.Dispose();
+        _debounceCts = null;
+        SearchTerm = string.Empty;
+        _logger.LogDebug("Cleaned up ArtistViewModel search resources");
     }
 }

@@ -18,17 +18,136 @@
     </Page.Resources>
 
     <Grid Padding="24">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="SearchStates">
+                <VisualState x:Name="SearchCollapsed">
+                    <Storyboard>
+                        <DoubleAnimation
+                            Storyboard.TargetName="SearchTextBox"
+                            Storyboard.TargetProperty="Width"
+                            To="0"
+                            Duration="0:0:0.3"
+                            EnableDependentAnimation="True">
+                            <DoubleAnimation.EasingFunction>
+                                <CubicEase EasingMode="EaseInOut" />
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
+                        <DoubleAnimation
+                            Storyboard.TargetName="SearchTextBox"
+                            Storyboard.TargetProperty="Opacity"
+                            To="0"
+                            Duration="0:0:0.15" />
+                        <ObjectAnimationUsingKeyFrames
+                            Storyboard.TargetName="SearchTextBox"
+                            Storyboard.TargetProperty="IsHitTestVisible">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="False" />
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames
+                            Storyboard.TargetName="SearchIcon"
+                            Storyboard.TargetProperty="Glyph">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="" />
+                            <DiscreteObjectKeyFrame KeyTime="0:0:0.3" Value="&#xE721;" />
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="SearchExpanded">
+                    <Storyboard>
+                        <DoubleAnimation
+                            Storyboard.TargetName="SearchTextBox"
+                            Storyboard.TargetProperty="Width"
+                            To="300"
+                            Duration="0:0:0.3"
+                            EnableDependentAnimation="True">
+                            <DoubleAnimation.EasingFunction>
+                                <CubicEase EasingMode="EaseInOut" />
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
+                        <DoubleAnimation
+                            Storyboard.TargetName="SearchTextBox"
+                            Storyboard.TargetProperty="Opacity"
+                            To="1"
+                            BeginTime="0:0:0.15"
+                            Duration="0:0:0.15" />
+                        <ObjectAnimationUsingKeyFrames
+                            Storyboard.TargetName="SearchTextBox"
+                            Storyboard.TargetProperty="IsHitTestVisible">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="True" />
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames
+                            Storyboard.TargetName="SearchIcon"
+                            Storyboard.TargetProperty="Glyph">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="&#xE711;" />
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- Page Title -->
-        <TextBlock
-            Grid.Row="0"
-            Margin="0,0,0,28"
-            Style="{StaticResource ArtistPageTitleTextStyle}"
-            Text="Artists" />
+        <!-- Page Header -->
+        <Grid Grid.Row="0" Margin="0,0,0,28">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                <TextBlock Style="{StaticResource ArtistPageTitleTextStyle}" Text="Artists" />
+                <TextBlock
+                    Margin="0,0,0,5"
+                    VerticalAlignment="Bottom"
+                    FontSize="13"
+                    Foreground="{ThemeResource TextFillColorSecondary}"
+                    Text="{x:Bind ViewModel.TotalItemsText, Mode=OneWay}" />
+            </StackPanel>
+
+            <!-- Search functionality -->
+            <Grid Grid.Column="1">
+                <TextBox x:Name="SearchTextBox"
+                         Style="{StaticResource SearchTextBoxStyle}"
+                         PlaceholderText="Search artists..."
+                         Width="0"
+                         Opacity="0"
+                         IsHitTestVisible="False"
+                         HorizontalAlignment="Right"
+                         KeyDown="OnSearchTextBoxKeyDown"
+                         Text="{x:Bind ViewModel.SearchTerm, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         Canvas.ZIndex="0">
+                    <TextBox.Resources>
+                        <ResourceDictionary>
+                            <ResourceDictionary.ThemeDictionaries>
+                                <ResourceDictionary x:Key="Default">
+                                    <StaticResource x:Key="TextControlBorderBrushPointerOver"
+                                                    ResourceKey="AppPrimaryColorBrush" />
+                                    <StaticResource x:Key="TextControlBorderBrushFocused"
+                                                    ResourceKey="AppPrimaryColorBrush" />
+                                </ResourceDictionary>
+                                <ResourceDictionary x:Key="Light">
+                                    <StaticResource x:Key="TextControlBorderBrushPointerOver"
+                                                    ResourceKey="AppPrimaryColorBrush" />
+                                    <StaticResource x:Key="TextControlBorderBrushFocused"
+                                                    ResourceKey="AppPrimaryColorBrush" />
+                                </ResourceDictionary>
+                                <ResourceDictionary x:Key="HighContrast" />
+                            </ResourceDictionary.ThemeDictionaries>
+                        </ResourceDictionary>
+                    </TextBox.Resources>
+                </TextBox>
+                <Button x:Name="SearchToggleButton"
+                        Click="OnSearchToggleButtonClick"
+                        Style="{StaticResource SongListViewPageIconButton}"
+                        ToolTipService.ToolTip="Search artists"
+                        HorizontalAlignment="Right"
+                        Margin="0,0,1,0"
+                        Canvas.ZIndex="1">
+                    <FontIcon x:Name="SearchIcon" FontSize="16" Glyph="&#xE721;" />
+                </Button>
+            </Grid>
+        </Grid>
 
         <Grid Grid.Row="1">
             <!-- Displays the collection of artists -->
