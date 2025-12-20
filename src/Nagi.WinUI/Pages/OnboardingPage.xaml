@@ -221,7 +221,7 @@
                         HorizontalAlignment="Center"
                         Foreground="{ThemeResource TextFillColorSecondary}"
                         Style="{ThemeResource BodyTextBlockStyle}"
-                        Text="{Binding StatusMessage, Mode=OneWay}"
+                        Text="{x:Bind ViewModel.StatusMessage, Mode=OneWay}"
                         TextAlignment="Center"
                         TextWrapping="Wrap" />
 
@@ -241,7 +241,7 @@
                                 x:Name="AddFolderButton"
                                 HorizontalAlignment="Center"
                                 Padding="24,12"
-                                Command="{Binding AddFolderCommand}"
+                                Command="{x:Bind ViewModel.AddFolderCommand}"
                                 Style="{StaticResource BrandAccentButtonStyle}">
                                 <StackPanel x:Name="AddFolderButtonContent" Orientation="Horizontal" Spacing="10"
                                             RenderTransformOrigin="0.5,0.5">
@@ -317,7 +317,7 @@
                                 Height="48"
                                 Foreground="{StaticResource AppPrimaryColorBrush}"
                                 IsActive="True"
-                                Visibility="{Binding IsAddingFolder, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                Visibility="{x:Bind ViewModel.IsAddingFolder, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                             <ProgressBar
                                 Width="300"
@@ -325,10 +325,10 @@
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 Foreground="{StaticResource AppPrimaryColorBrush}"
-                                IsIndeterminate="{Binding IsProgressIndeterminate, Mode=OneWay}"
+                                IsIndeterminate="{x:Bind ViewModel.IsProgressIndeterminate, Mode=OneWay}"
                                 Maximum="100"
-                                Value="{Binding ProgressValue, Mode=OneWay}"
-                                Visibility="{Binding IsParsing, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                Value="{x:Bind ViewModel.ProgressValue, Mode=OneWay}"
+                                Visibility="{x:Bind ViewModel.IsParsing, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                         </StackPanel>
                     </Grid>
                 </Grid>
