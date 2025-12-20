@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Pickers;
@@ -124,6 +126,23 @@ public class UIService : IUIService
         };
 
         await dialog.ShowAsync();
+    }
+
+    public async Task<IReadOnlyList<string>> PickOpenMultipleFilesAsync(IEnumerable<string> fileTypes)
+    {
+        if (App.RootWindow is null) return [];
+
+        var filePicker = new FileOpenPicker();
+        var hwnd = WindowNative.GetWindowHandle(App.RootWindow);
+        InitializeWithWindow.Initialize(filePicker, hwnd);
+
+        foreach (var ext in fileTypes)
+        {
+            filePicker.FileTypeFilter.Add(ext);
+        }
+
+        var files = await filePicker.PickMultipleFilesAsync();
+        return files.Select(f => f.Path).ToList();
     }
 
     private bool TryGetXamlRoot(out XamlRoot? xamlRoot)

@@ -536,6 +536,24 @@
                 </controls:SettingsCard>
 
                 <controls:SettingsCard
+                    Header="Export/Import Playlists"
+                    Description="Export playlists to M3U files for use in other players, or import M3U playlists into Nagi.">
+                    <controls:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8B5;" />
+                    </controls:SettingsCard.HeaderIcon>
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <Button
+                            Content="Export All..."
+                            ToolTipService.ToolTip="Export all playlists to a folder"
+                            Command="{x:Bind ViewModel.ExportAllPlaylistsCommand}" />
+                        <Button
+                            Content="Import..."
+                            ToolTipService.ToolTip="Import one or more M3U files"
+                            Command="{x:Bind ViewModel.ImportMultiplePlaylistsCommand}" />
+                    </StackPanel>
+                </controls:SettingsCard>
+
+                <controls:SettingsCard
                     Header="Reset application"
                     Description="This will delete all library data, playlists, and reset all settings to their defaults. The application will restart.">
                     <controls:SettingsCard.HeaderIcon>

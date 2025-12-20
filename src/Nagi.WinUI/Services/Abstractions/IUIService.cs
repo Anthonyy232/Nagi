@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Nagi.WinUI.Services.Abstractions;
 
@@ -78,4 +79,11 @@ public interface IUIService
     /// <param name="logContent">The content of the log file to display.</param>
     /// <param name="githubUrl">The URL to the GitHub issues page.</param>
     Task ShowCrashReportDialogAsync(string title, string introduction, string logContent, string githubUrl);
+
+    /// <summary>
+    ///     Opens a file open picker dialog that allows selecting multiple files.
+    /// </summary>
+    /// <param name="fileTypes">The file extensions to filter by (e.g., ".m3u", ".m3u8").</param>
+    /// <returns>The paths of the selected files, or an empty list if the user cancelled.</returns>
+    Task<IReadOnlyList<string>> PickOpenMultipleFilesAsync(IEnumerable<string> fileTypes);
 }
