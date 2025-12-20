@@ -64,8 +64,6 @@
         <TieredPGO>true</TieredPGO>
         <Optimize>true</Optimize>
         <JsonSerializerIsReflectionEnabledByDefault>true</JsonSerializerIsReflectionEnabledByDefault>
-        <PublishTrimmed>true</PublishTrimmed>
-        <TrimMode>partial</TrimMode>
     </PropertyGroup>
 
     <!-- =============================================================== -->
