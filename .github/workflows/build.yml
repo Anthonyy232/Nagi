@@ -41,7 +41,7 @@ jobs:
       - name: Install .NET SDK
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 9.0.x
+          dotnet-version: 10.0.x
 
       - name: Run .NET Tests
         # Executes tests and generates a TRX report for diagnostics.
@@ -92,7 +92,7 @@ jobs:
       - name: Install .NET SDK
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 9.0.x
+          dotnet-version: 10.0.x
 
       - name: Install/Update Velopack CLI (vpk)
         run: dotnet tool update -g vpk --prerelease
@@ -140,7 +140,7 @@ jobs:
           --outputDir ./Releases/${{ matrix.platform }}
           --channel ${{ matrix.platform }}
           --runtime ${{ matrix.platform }}
-          --framework net9.0-${{ steps.set_runtime.outputs.rid }}-desktop
+          --framework net10.0-${{ steps.set_runtime.outputs.rid }}-desktop
 
       - name: Upload Velopack release artifacts
         # Uploads the generated Velopack release assets for this job's platform.
