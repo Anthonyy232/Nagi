@@ -18,7 +18,6 @@
             <converters:TimeSpanToTimeStringConverter x:Key="TimeSpanToTimeStringConverter" />
             <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <converters:ObjectToBooleanConverter x:Key="ObjectToBooleanConverter" />
-            <converters:ObjectToVisibilityConverter x:Key="ObjectToVisibilityConverter" />
 
             <Style x:Key="QueueListViewItemStyle" TargetType="ListViewItem">
                 <Setter Property="Padding" Value="12,8" />
@@ -414,28 +413,28 @@
                                         Height="56"
                                         Margin="0,0,12,0"
                                         CornerRadius="6"
-                                        Visibility="{x:Bind ViewModel.IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                                        Visibility="{Binding IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
                                         <imageEx:ImageEx
                                             x:Name="AlbumArt"
                                             IsCacheEnabled="True"
-                                            Source="{x:Bind ViewModel.AlbumArtUri, Mode=OneWay, FallbackValue=null}"
+                                            Source="{Binding AlbumArtUri, Mode=OneWay, FallbackValue=null}"
                                             Stretch="UniformToFill" />
                                     </Border>
                                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
                                         <TextBlock
                                             x:Name="SongTitle"
                                             Style="{ThemeResource BodyStrongTextBlockStyle}"
-                                            Text="{x:Bind ViewModel.SongTitle, Mode=OneWay}"
+                                            Text="{Binding SongTitle, Mode=OneWay}"
                                             TextTrimming="CharacterEllipsis" />
                                         <HyperlinkButton
                                             x:Name="ArtistNameHyperlink"
                                             MaxHeight="0"
                                             Opacity="0"
                                             Style="{StaticResource SongListHyperlinkButtonStyle}"
-                                            Content="{x:Bind ViewModel.ArtistName, Mode=OneWay}"
-                                            Command="{x:Bind ViewModel.GoToArtistCommand}"
-                                            CommandParameter="{x:Bind ViewModel.CurrentPlayingTrack, Mode=OneWay}"
-                                            Visibility="{x:Bind ViewModel.CurrentPlayingTrack, Converter={StaticResource ObjectToVisibilityConverter}, Mode=OneWay}" />
+                                            Content="{Binding ArtistName, Mode=OneWay}"
+                                            Command="{Binding GoToArtistCommand}"
+                                            CommandParameter="{Binding CurrentPlayingTrack, Mode=OneWay}"
+                                            Visibility="{Binding CurrentPlayingTrack, Converter={StaticResource ObjectToBooleanConverter}, Mode=OneWay}" />
                                     </StackPanel>
                                 </Grid>
 
@@ -443,7 +442,7 @@
                                     Grid.Column="1"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
-                                    ItemsSource="{x:Bind ViewModel.MainTransportButtons}"
+                                    ItemsSource="{Binding MainTransportButtons}"
                                     ItemTemplateSelector="{StaticResource PlayerButtonSelector}">
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>
@@ -465,7 +464,7 @@
                                     </StackPanel.RenderTransform>
 
                                     <ItemsControl
-                                        ItemsSource="{x:Bind ViewModel.SecondaryControlsButtons}"
+                                        ItemsSource="{Binding SecondaryControlsButtons}"
                                         ItemTemplateSelector="{StaticResource PlayerButtonSelector}">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
@@ -477,8 +476,8 @@
                                     <Slider
                                         VerticalAlignment="Center"
                                         Style="{StaticResource VolumeSliderStyle}"
-                                        Value="{x:Bind ViewModel.CurrentVolume, Mode=TwoWay}"
-                                        Visibility="{x:Bind ViewModel.IsVolumeControlVisible, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" />
+                                        Value="{Binding CurrentVolume, Mode=TwoWay}"
+                                        Visibility="{Binding IsVolumeControlVisible, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" />
                                 </StackPanel>
                             </Grid>
 
@@ -500,23 +499,23 @@
                                     Margin="0,0,8,0"
                                     VerticalAlignment="Center"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Bind ViewModel.CurrentTimeText, Mode=OneWay, FallbackValue='0:00'}" />
+                                    Text="{Binding CurrentTimeText, Mode=OneWay, FallbackValue='0:00'}" />
                                 <Slider
                                     x:Name="MediaSeekerSlider"
                                     Grid.Column="1"
                                     VerticalAlignment="Center"
                                     IsThumbToolTipEnabled="True"
-                                    Maximum="{x:Bind ViewModel.TotalDuration, Mode=OneWay}"
+                                    Maximum="{Binding TotalDuration, Mode=OneWay}"
                                     Style="{StaticResource MediaSeekerSliderStyle}"
                                     ThumbToolTipValueConverter="{StaticResource TimeSpanToTimeStringConverter}"
-                                    Value="{x:Bind ViewModel.CurrentPosition, Mode=TwoWay}" />
+                                    Value="{Binding CurrentPosition, Mode=TwoWay}" />
                                 <TextBlock
                                     x:Name="TotalTimeTextBlock"
                                     Grid.Column="2"
                                     Margin="8,0,0,0"
                                     VerticalAlignment="Center"
                                     Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Bind ViewModel.TotalDurationText, Mode=OneWay, FallbackValue='0:00'}" />
+                                    Text="{Binding TotalDurationText, Mode=OneWay, FallbackValue='0:00'}" />
                             </Grid>
                         </Grid>
                     </Border>
@@ -532,9 +531,9 @@
         <Grid
             x:Name="ProgressOverlayGrid"
             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-            IsHitTestVisible="{x:Bind ViewModel.IsGlobalOperationInProgress, Mode=OneWay}"
+            IsHitTestVisible="{Binding IsGlobalOperationInProgress, Mode=OneWay}"
             Opacity="0.85"
-            Visibility="{x:Bind ViewModel.IsGlobalOperationInProgress, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+            Visibility="{Binding IsGlobalOperationInProgress, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
             <StackPanel
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
@@ -544,14 +543,14 @@
                     Height="10"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
-                    IsIndeterminate="{x:Bind ViewModel.IsGlobalOperationIndeterminate, Mode=OneWay}"
+                    IsIndeterminate="{Binding IsGlobalOperationIndeterminate, Mode=OneWay}"
                     Maximum="100"
-                    Value="{x:Bind ViewModel.GlobalOperationProgressValue, Mode=OneWay}" />
+                    Value="{Binding GlobalOperationProgressValue, Mode=OneWay}" />
                 <TextBlock
                     MaxWidth="400"
                     HorizontalAlignment="Center"
                     Style="{ThemeResource SubtitleTextBlockStyle}"
-                    Text="{x:Bind ViewModel.GlobalOperationStatusMessage, Mode=OneWay}"
+                    Text="{Binding GlobalOperationStatusMessage, Mode=OneWay}"
                     TextAlignment="Center"
                     TextTrimming="CharacterEllipsis"
                     TextWrapping="NoWrap" />

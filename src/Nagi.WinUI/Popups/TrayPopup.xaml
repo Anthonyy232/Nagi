@@ -36,7 +36,7 @@
 
         <Grid>
             <Border x:Name="CoverArtBackground"
-                    CornerRadius="8">
+                    CornerRadius="{Binding CornerRadius, ElementName=OuterBorder}">
                 <Border.Background>
                     <media:ImageBlendBrush Source="{Binding AlbumArtUri}"
                                            Mode="ColorBurn"
@@ -148,11 +148,11 @@
                                 <StackPanel Margin="0,4">
                                     <TextBlock
                                         Style="{ThemeResource BodyStrongTextBlockStyle}"
-                                        Text="{Binding Title}"
+                                        Text="{x:Bind Title}"
                                         TextTrimming="CharacterEllipsis" />
                                     <TextBlock
                                         Style="{ThemeResource CaptionTextBlockStyle}"
-                                        Text="{Binding Artist.Name}"
+                                        Text="{x:Bind Artist.Name}"
                                         TextTrimming="CharacterEllipsis" />
                                 </StackPanel>
                             </DataTemplate>

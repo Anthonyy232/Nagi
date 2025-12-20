@@ -61,7 +61,7 @@
                         SelectedItem="{x:Bind ViewModel.SelectedTheme, Mode=TwoWay}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate x:DataType="mux:ElementTheme">
-                                <TextBlock Text="{x:Bind Converter={StaticResource ThemeToStringConverter}}" />
+                                <TextBlock Text="{Binding Converter={StaticResource ThemeToStringConverter}}" />
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
@@ -81,7 +81,7 @@
                         <ComboBox.ItemTemplate>
                             <DataTemplate x:DataType="models:BackdropMaterial">
                                 <TextBlock
-                                    Text="{x:Bind Converter={StaticResource BackdropMaterialToStringConverter}}" />
+                                    Text="{Binding Converter={StaticResource BackdropMaterialToStringConverter}}" />
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>

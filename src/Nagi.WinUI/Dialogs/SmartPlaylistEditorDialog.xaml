@@ -5,7 +5,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:ImageEx"
-    xmlns:local="using:Nagi.WinUI.Dialogs"
     mc:Ignorable="d"
     Title="Smart Playlist"
     PrimaryButtonText="Save"
@@ -118,7 +117,7 @@
                                 </Style>
                             </ListView.ItemContainerStyle>
                             <ListView.ItemTemplate>
-                                <DataTemplate x:DataType="local:RuleViewModel">
+                                <DataTemplate>
                                     <Border Style="{StaticResource RuleRowStyle}">
                                         <Grid ColumnSpacing="12">
                                             <Grid.ColumnDefinitions>
@@ -129,19 +128,19 @@
                                             </Grid.ColumnDefinitions>
 
                                             <ComboBox Grid.Column="0" 
-                                                      ItemsSource="{x:Bind AvailableFields}"
-                                                      SelectedItem="{x:Bind SelectedField, Mode=TwoWay}"
+                                                      ItemsSource="{Binding AvailableFields}"
+                                                      SelectedItem="{Binding SelectedField, Mode=TwoWay}"
                                                       DisplayMemberPath="DisplayName"
                                                       HorizontalAlignment="Stretch" />
 
                                             <ComboBox Grid.Column="1"
-                                                      ItemsSource="{x:Bind AvailableOperators, Mode=OneWay}"
-                                                      SelectedItem="{x:Bind SelectedOperator, Mode=TwoWay}"
+                                                      ItemsSource="{Binding AvailableOperators}"
+                                                      SelectedItem="{Binding SelectedOperator, Mode=TwoWay}"
                                                       DisplayMemberPath="DisplayName"
                                                       HorizontalAlignment="Stretch" />
 
                                             <TextBox Grid.Column="2"
-                                                     Text="{x:Bind Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                     Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                      PlaceholderText="Value"
                                                      HorizontalAlignment="Stretch" />
 
