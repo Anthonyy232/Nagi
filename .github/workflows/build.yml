@@ -113,6 +113,12 @@ jobs:
           }
           $appSettings | ConvertTo-Json -Depth 3 | Out-File -FilePath "src/Nagi.WinUI/appsettings.json" -Encoding UTF8
 
+      - name: Set runtime identifier
+        id: set_runtime
+        shell: pwsh
+        run: |
+          $runtime = "${{ matrix.platform }}" -replace 'win-', ''
+          echo "rid=$runtime" >> $env:GITHUB_OUTPUT
 
       - name: Build and Publish Application
         env:
@@ -121,10 +127,11 @@ jobs:
           dotnet publish src/Nagi.WinUI/Nagi.WinUI.csproj
           -c ReleaseUnpackaged
           -r ${{ matrix.platform }}
-          --self-contained true
+          --self-contained false
           -o ./publish/${{ matrix.platform }}
 
       - name: Package with Velopack
+        # Packages the published output into a Velopack release for the specified channel and runtime.
         run: >
           vpk pack --packId Nagi
           --packVersion ${{ steps.get_version.outputs.version }}
@@ -132,6 +139,8 @@ jobs:
           --packDir ./publish/${{ matrix.platform }}
           --outputDir ./Releases/${{ matrix.platform }}
           --channel ${{ matrix.platform }}
+          --runtime ${{ matrix.platform }}
+          --framework net9.0-${{ steps.set_runtime.outputs.rid }}-desktop
 
       - name: Upload Velopack release artifacts
         # Uploads the generated Velopack release assets for this job's platform.

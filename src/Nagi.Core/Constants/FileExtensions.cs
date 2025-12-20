@@ -14,6 +14,7 @@ public static class FileExtensions
         ".m4a", ".m4b", ".m4p", ".mp3", ".mpc", ".mpp", ".ogg",
         ".oga", ".opus", ".wav", ".wma", ".wv", ".webm",
         ".asf", ".mp4", ".m4v"
+        ".mpeg", ".mpg", ".mpe", ".mpv", ".m2v"
     }, StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
