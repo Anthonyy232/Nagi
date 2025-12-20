@@ -1,10 +1,7 @@
 ﻿{
   "sdk": {
-    "version": "9.0.300",
-    // Use the .NET 9 SDK version you have installed
+    "version": "10.0.101",
     "rollForward": "latestFeature",
-    // Or "latestPatch", or remove if not needed for previews
     "allowPrerelease": true
-    // This is appropriate for using preview SDKs like .NET 9
   }
 }

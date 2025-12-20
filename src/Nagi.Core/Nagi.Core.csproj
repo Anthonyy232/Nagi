@@ -1,29 +1,32 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
+        <TargetFramework>net$(NetVersion)</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
         <!-- Data Access: Entity Framework Core -->
-        <PackageReference Include="LrcParser" Version="$(LrcParserVersion)"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="$(EntityFrameworkCoreVersion)"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="$(EntityFrameworkCoreVersion)"/>
+        <PackageReference Include="LrcParser" Version="$(LrcParserVersion)" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="$(EntityFrameworkCoreVersion)" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="$(EntityFrameworkCoreVersion)" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="$(EntityFrameworkCoreVersion)">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="SixLabors.ImageSharp" Version="$(SixLaborsImageSharpVersion)" />
 
         <!-- Core Utilities & Services -->
-        <PackageReference Include="TagLibSharp" Version="$(TagLibSharpVersion)"/>
-        <PackageReference Include="ColorThief.ImageSharp" Version="$(ColorThiefImageSharpVersion)"/>
-        <PackageReference Include="MaterialColorUtilities" Version="$(MaterialColorUtilitiesVersion)"/>
-        <PackageReference Include="DiscordRichPresence" Version="$(DiscordRichPresenceVersion)"/>
+        <PackageReference Include="TagLibSharp" Version="$(TagLibSharpVersion)" />
+        <PackageReference Include="ColorThief.ImageSharp" Version="$(ColorThiefImageSharpVersion)" />
+        <PackageReference Include="MaterialColorUtilities" Version="$(MaterialColorUtilitiesVersion)" />
+        <PackageReference Include="DiscordRichPresence" Version="$(DiscordRichPresenceVersion)" />
 
         <!-- MVVM & Dependency Injection -->
-        <PackageReference Include="CommunityToolkit.Mvvm" Version="$(CommunityToolkitMvvmVersion)"/>
-        <PackageReference Include="Microsoft.Extensions.Http" Version="$(MicrosoftExtensionsHttpVersion)"/>
+        <PackageReference Include="CommunityToolkit.Mvvm" Version="$(CommunityToolkitMvvmVersion)" />
+
+        <!-- HTTP -->
+        <PackageReference Include="Microsoft.Extensions.Http" Version="$(MicrosoftExtensionsHttpVersion)" />
     </ItemGroup>
 </Project>
