@@ -86,6 +86,10 @@ public partial class ArtistViewModel : ObservableObject, IDisposable
 
     [ObservableProperty] public partial string TotalItemsText { get; set; } = "0 artists";
 
+    [ObservableProperty] public partial ArtistSortOrder CurrentSortOrder { get; set; } = ArtistSortOrder.NameAsc;
+
+    [ObservableProperty] public partial string CurrentSortOrderText { get; set; } = "Sort By: Name (A-Z)";
+
     private bool IsSearchActive => !string.IsNullOrWhiteSpace(SearchTerm);
 
     public bool HasArtists => Artists.Any();
@@ -136,6 +140,31 @@ public partial class ArtistViewModel : ObservableObject, IDisposable
         {
             _logger.LogCritical(ex, "Error playing artist {ArtistId}", artistId);
         }
+    }
+
+    /// <summary>
+    ///     Changes the sort order and reloads the artist list.
+    /// </summary>
+    [RelayCommand]
+    public async Task ChangeSortOrderAsync(string sortOrderString)
+    {
+        if (Enum.TryParse<ArtistSortOrder>(sortOrderString, out var newSortOrder)
+            && newSortOrder != CurrentSortOrder)
+        {
+            CurrentSortOrder = newSortOrder;
+            UpdateSortOrderText();
+            await LoadArtistsCommand.ExecuteAsync(CancellationToken.None);
+        }
+    }
+
+    private void UpdateSortOrderText()
+    {
+        CurrentSortOrderText = CurrentSortOrder switch
+        {
+            ArtistSortOrder.NameDesc => "Sort By: Name (Z-A)",
+            ArtistSortOrder.SongCountDesc => "Sort By: Most Songs",
+            _ => "Sort By: Name (A-Z)"
+        };
     }
 
     /// <summary>
@@ -200,7 +229,7 @@ public partial class ArtistViewModel : ObservableObject, IDisposable
         if (IsSearchActive)
             pagedResult = await _libraryService.SearchArtistsPagedAsync(SearchTerm, _currentPage, PageSize);
         else
-            pagedResult = await _libraryService.GetAllArtistsPagedAsync(_currentPage, PageSize);
+            pagedResult = await _libraryService.GetAllArtistsPagedAsync(_currentPage, PageSize, CurrentSortOrder);
 
         if (cancellationToken.IsCancellationRequested) return;
 

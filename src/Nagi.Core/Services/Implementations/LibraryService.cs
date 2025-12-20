@@ -1214,7 +1214,10 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     public async Task<IEnumerable<Genre>> GetAllGenresAsync()
     {
         await using var context = await _contextFactory.CreateDbContextAsync();
-        return await context.Genres.AsNoTracking().OrderBy(g => g.Name).ToListAsync();
+        return await context.Genres.AsNoTracking()
+            .Include(g => g.Songs)
+            .OrderBy(g => g.Name)
+            .ToListAsync();
     }
 
     /// <inheritdoc />
@@ -1407,14 +1410,26 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     }
 
     /// <inheritdoc />
-    public async Task<PagedResult<Artist>> GetAllArtistsPagedAsync(int pageNumber, int pageSize)
+    public async Task<PagedResult<Artist>> GetAllArtistsPagedAsync(int pageNumber, int pageSize,
+        ArtistSortOrder sortOrder = ArtistSortOrder.NameAsc)
     {
         SanitizePaging(ref pageNumber, ref pageSize);
 
         await using var context = await _contextFactory.CreateDbContextAsync();
         var query = context.Artists.AsNoTracking();
         var totalCount = await query.CountAsync();
-        var pagedData = await query.OrderBy(a => a.Name)
+
+        // Apply sort order - for SongCountDesc, we need to join with songs and count
+        IOrderedQueryable<Artist> orderedQuery = sortOrder switch
+        {
+            ArtistSortOrder.NameDesc => query.OrderByDescending(a => a.Name),
+            ArtistSortOrder.SongCountDesc => query
+                .OrderByDescending(a => context.Songs.Count(s => s.ArtistId == a.Id))
+                .ThenBy(a => a.Name),
+            _ => query.OrderBy(a => a.Name)
+        };
+
+        var pagedData = await orderedQuery
             .Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
 
         return new PagedResult<Artist>
@@ -1452,6 +1467,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         IOrderedQueryable<Album> orderedQuery = sortOrder switch
         {
             AlbumSortOrder.AlbumTitleAsc => query.OrderBy(al => al.Title),
+            AlbumSortOrder.YearDesc => query.OrderByDescending(al => al.Year ?? 0).ThenBy(al => al.Title),
+            AlbumSortOrder.YearAsc => query.OrderBy(al => al.Year ?? int.MaxValue).ThenBy(al => al.Title),
             _ => query.OrderBy(al => al.Artist != null ? al.Artist.Name : string.Empty).ThenBy(al => al.Title)
         };
 

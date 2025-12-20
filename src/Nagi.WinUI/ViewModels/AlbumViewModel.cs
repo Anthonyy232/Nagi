@@ -162,6 +162,8 @@ public partial class AlbumViewModel : ObservableObject, IDisposable
         CurrentSortOrderText = CurrentSortOrder switch
         {
             AlbumSortOrder.AlbumTitleAsc => "Sort By: Album",
+            AlbumSortOrder.YearDesc => "Sort By: Year (Newest)",
+            AlbumSortOrder.YearAsc => "Sort By: Year (Oldest)",
             _ => "Sort By: Artist"
         };
     }

@@ -6,5 +6,7 @@ namespace Nagi.Core.Services.Data;
 public enum AlbumSortOrder
 {
     ArtistAsc,
-    AlbumTitleAsc
+    AlbumTitleAsc,
+    YearDesc,
+    YearAsc
 }
