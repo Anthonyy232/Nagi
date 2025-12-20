@@ -29,7 +29,7 @@ public class LrcLibService : IOnlineLyricsService
     }
 
     /// <inheritdoc />
-    public async Task<string?> GetLyricsAsync(string trackName, string artistName, string albumName, TimeSpan duration)
+    public async Task<string?> GetLyricsAsync(string trackName, string? artistName, string? albumName, TimeSpan duration)
     {
         if (string.IsNullOrWhiteSpace(trackName))
         {
@@ -94,7 +94,7 @@ public class LrcLibService : IOnlineLyricsService
         }
     }
 
-    private async Task<string?> SearchLyricsAsync(string trackName, string artistName, string albumName, TimeSpan duration)
+    private async Task<string?> SearchLyricsAsync(string trackName, string? artistName, string? albumName, TimeSpan duration)
     {
         try
         {
