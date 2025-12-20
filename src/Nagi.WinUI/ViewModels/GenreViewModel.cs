@@ -9,6 +9,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Services.Data;
 using Nagi.WinUI.Navigation;
 using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
@@ -23,6 +24,11 @@ public partial class GenreViewModelItem : ObservableObject
     [ObservableProperty] public partial Guid Id { get; set; }
 
     [ObservableProperty] public partial string Name { get; set; } = string.Empty;
+
+    /// <summary>
+    ///     The number of songs in this genre (for sorting purposes).
+    /// </summary>
+    public int SongCount { get; set; }
 }
 
 /// <summary>
@@ -62,6 +68,10 @@ public partial class GenreViewModel : ObservableObject, IDisposable
     [ObservableProperty] public partial bool HasLoadError { get; set; }
 
     [ObservableProperty] public partial string SearchTerm { get; set; } = string.Empty;
+
+    [ObservableProperty] public partial GenreSortOrder CurrentSortOrder { get; set; } = GenreSortOrder.NameAsc;
+
+    [ObservableProperty] public partial string CurrentSortOrderText { get; set; } = "Sort By: Name (A-Z)";
 
     private bool IsSearchActive => !string.IsNullOrWhiteSpace(SearchTerm);
 
@@ -117,11 +127,10 @@ public partial class GenreViewModel : ObservableObject, IDisposable
             if (cancellationToken.IsCancellationRequested) return;
 
             _allGenres = genreModels
-                .OrderBy(g => g.Name)
-                .Select(g => new GenreViewModelItem { Id = g.Id, Name = g.Name })
+                .Select(g => new GenreViewModelItem { Id = g.Id, Name = g.Name, SongCount = g.Songs.Count })
                 .ToList();
 
-            // Apply current filter (or show all if no search term)
+            // Apply current filter and sort
             ApplyFilter();
         }
         catch (OperationCanceledException)
@@ -194,8 +203,41 @@ public partial class GenreViewModel : ObservableObject, IDisposable
             filtered = _allGenres.Where(g =>
                 g.Name?.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase) == true);
 
-        foreach (var item in filtered)
+        // Apply sort order
+        var sorted = CurrentSortOrder switch
+        {
+            GenreSortOrder.NameDesc => filtered.OrderByDescending(g => g.Name),
+            GenreSortOrder.SongCountDesc => filtered.OrderByDescending(g => g.SongCount).ThenBy(g => g.Name),
+            _ => filtered.OrderBy(g => g.Name)
+        };
+
+        foreach (var item in sorted)
             Genres.Add(item);
+    }
+
+    /// <summary>
+    ///     Changes the sort order and reapplies filtering.
+    /// </summary>
+    [RelayCommand]
+    public void ChangeSortOrder(string sortOrderString)
+    {
+        if (Enum.TryParse<GenreSortOrder>(sortOrderString, out var newSortOrder)
+            && newSortOrder != CurrentSortOrder)
+        {
+            CurrentSortOrder = newSortOrder;
+            UpdateSortOrderText();
+            ApplyFilter();
+        }
+    }
+
+    private void UpdateSortOrderText()
+    {
+        CurrentSortOrderText = CurrentSortOrder switch
+        {
+            GenreSortOrder.NameDesc => "Sort By: Name (Z-A)",
+            GenreSortOrder.SongCountDesc => "Sort By: Most Songs",
+            _ => "Sort By: Name (A-Z)"
+        };
     }
 
     /// <summary>

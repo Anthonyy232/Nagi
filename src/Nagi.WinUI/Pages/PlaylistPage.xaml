@@ -100,48 +100,69 @@
 
             <TextBlock Grid.Column="0" Style="{StaticResource PlaylistPageTitleTextStyle}" Text="Playlists" />
 
-            <!-- Search functionality -->
-            <Grid Grid.Column="1" Margin="0,0,8,0">
-                <TextBox x:Name="SearchTextBox"
-                         Style="{StaticResource SearchTextBoxStyle}"
-                         PlaceholderText="Search playlists..."
-                         Width="0"
-                         Opacity="0"
-                         IsHitTestVisible="False"
-                         HorizontalAlignment="Right"
-                         KeyDown="OnSearchTextBoxKeyDown"
-                         Text="{x:Bind ViewModel.SearchTerm, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                         Canvas.ZIndex="0">
-                    <TextBox.Resources>
-                        <ResourceDictionary>
-                            <ResourceDictionary.ThemeDictionaries>
-                                <ResourceDictionary x:Key="Default">
-                                    <StaticResource x:Key="TextControlBorderBrushPointerOver"
-                                                    ResourceKey="AppPrimaryColorBrush" />
-                                    <StaticResource x:Key="TextControlBorderBrushFocused"
-                                                    ResourceKey="AppPrimaryColorBrush" />
-                                </ResourceDictionary>
-                                <ResourceDictionary x:Key="Light">
-                                    <StaticResource x:Key="TextControlBorderBrushPointerOver"
-                                                    ResourceKey="AppPrimaryColorBrush" />
-                                    <StaticResource x:Key="TextControlBorderBrushFocused"
-                                                    ResourceKey="AppPrimaryColorBrush" />
-                                </ResourceDictionary>
-                                <ResourceDictionary x:Key="HighContrast" />
-                            </ResourceDictionary.ThemeDictionaries>
-                        </ResourceDictionary>
-                    </TextBox.Resources>
-                </TextBox>
-                <Button x:Name="SearchToggleButton"
-                        Click="OnSearchToggleButtonClick"
-                        Style="{StaticResource SongListViewPageIconButton}"
-                        ToolTipService.ToolTip="Search playlists"
-                        HorizontalAlignment="Right"
-                        Margin="0,0,1,0"
-                        Canvas.ZIndex="1">
-                    <FontIcon x:Name="SearchIcon" FontSize="16" Glyph="&#xE721;" />
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center" Margin="0,0,8,0">
+                <!-- Search functionality -->
+                <Grid>
+                    <TextBox x:Name="SearchTextBox"
+                             Style="{StaticResource SearchTextBoxStyle}"
+                             PlaceholderText="Search playlists..."
+                             Width="0"
+                             Opacity="0"
+                             IsHitTestVisible="False"
+                             HorizontalAlignment="Right"
+                             KeyDown="OnSearchTextBoxKeyDown"
+                             Text="{x:Bind ViewModel.SearchTerm, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             Canvas.ZIndex="0">
+                        <TextBox.Resources>
+                            <ResourceDictionary>
+                                <ResourceDictionary.ThemeDictionaries>
+                                    <ResourceDictionary x:Key="Default">
+                                        <StaticResource x:Key="TextControlBorderBrushPointerOver"
+                                                        ResourceKey="AppPrimaryColorBrush" />
+                                        <StaticResource x:Key="TextControlBorderBrushFocused"
+                                                        ResourceKey="AppPrimaryColorBrush" />
+                                    </ResourceDictionary>
+                                    <ResourceDictionary x:Key="Light">
+                                        <StaticResource x:Key="TextControlBorderBrushPointerOver"
+                                                        ResourceKey="AppPrimaryColorBrush" />
+                                        <StaticResource x:Key="TextControlBorderBrushFocused"
+                                                        ResourceKey="AppPrimaryColorBrush" />
+                                    </ResourceDictionary>
+                                    <ResourceDictionary x:Key="HighContrast" />
+                                </ResourceDictionary.ThemeDictionaries>
+                            </ResourceDictionary>
+                        </TextBox.Resources>
+                    </TextBox>
+                    <Button x:Name="SearchToggleButton"
+                            Click="OnSearchToggleButtonClick"
+                            Style="{StaticResource SongListViewPageIconButton}"
+                            ToolTipService.ToolTip="Search playlists"
+                            HorizontalAlignment="Right"
+                            Margin="0,0,1,0"
+                            Canvas.ZIndex="1">
+                        <FontIcon x:Name="SearchIcon" FontSize="16" Glyph="&#xE721;" />
+                    </Button>
+                </Grid>
+
+                <Button Style="{StaticResource SongListViewPageIconButton}"
+                        ToolTipService.ToolTip="{x:Bind ViewModel.CurrentSortOrderText, Mode=OneWay}">
+                    <Button.Flyout>
+                        <MenuFlyout Placement="Bottom">
+                            <MenuFlyoutItem Command="{x:Bind ViewModel.ChangeSortOrderCommand}"
+                                            CommandParameter="NameAsc" Text="Name (A-Z)" />
+                            <MenuFlyoutItem Command="{x:Bind ViewModel.ChangeSortOrderCommand}"
+                                            CommandParameter="NameDesc" Text="Name (Z-A)" />
+                            <MenuFlyoutItem Command="{x:Bind ViewModel.ChangeSortOrderCommand}"
+                                            CommandParameter="DateCreatedDesc" Text="Date Created (Newest)" />
+                            <MenuFlyoutItem Command="{x:Bind ViewModel.ChangeSortOrderCommand}"
+                                            CommandParameter="DateCreatedAsc" Text="Date Created (Oldest)" />
+                            <MenuFlyoutItem Command="{x:Bind ViewModel.ChangeSortOrderCommand}"
+                                            CommandParameter="DateModifiedDesc" Text="Recently Modified" />
+                        </MenuFlyout>
+                    </Button.Flyout>
+                    <FontIcon FontSize="16" Glyph="&#xE8CB;" />
                 </Button>
-            </Grid>
+            </StackPanel>
 
             <DropDownButton
                 Grid.Column="2"

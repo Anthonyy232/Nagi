@@ -10,6 +10,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Services.Data;
 using Nagi.WinUI.Navigation;
 using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
@@ -28,6 +29,8 @@ public partial class PlaylistViewModelItem : ObservableObject
         Name = playlist.Name;
         CoverImageUri = playlist.CoverImageUri;
         IsSmart = false;
+        DateCreated = playlist.DateCreated;
+        DateModified = playlist.DateModified;
         UpdateSongCount(playlist.PlaylistSongs?.Count ?? 0);
     }
 
@@ -37,6 +40,8 @@ public partial class PlaylistViewModelItem : ObservableObject
         Name = smartPlaylist.Name;
         CoverImageUri = smartPlaylist.CoverImageUri;
         IsSmart = true;
+        DateCreated = smartPlaylist.DateCreated;
+        DateModified = smartPlaylist.DateModified;
 
         UpdateSongCount(matchingSongCount);
     }
@@ -47,6 +52,10 @@ public partial class PlaylistViewModelItem : ObservableObject
     ///     Indicates whether this is a smart playlist (true) or regular playlist (false).
     /// </summary>
     public bool IsSmart { get; }
+
+    public DateTime DateCreated { get; }
+
+    public DateTime DateModified { get; }
 
 
 
@@ -138,6 +147,10 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
     public partial bool IsUpdatingCover { get; set; }
 
     [ObservableProperty] public partial string StatusMessage { get; set; } = string.Empty;
+
+    [ObservableProperty] public partial PlaylistSortOrder CurrentSortOrder { get; set; } = PlaylistSortOrder.NameAsc;
+
+    [ObservableProperty] public partial string CurrentSortOrderText { get; set; } = "Sort By: Name (A-Z)";
 
     private bool IsSearchActive => !string.IsNullOrWhiteSpace(SearchTerm);
 
@@ -257,10 +270,9 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
                 _allPlaylists.Add(new PlaylistViewModelItem(smartPlaylist, matchCount));
             }
 
-            // Sort all playlists by name
-            _allPlaylists = _allPlaylists.OrderBy(p => p.Name, StringComparer.OrdinalIgnoreCase).ToList();
+            // No need to sort here - ApplyFilter will handle sorting
 
-            // Apply current filter (or show all if no search term)
+            // Apply current filter and sort
             ApplyFilter();
 
             StatusMessage = string.Empty;
@@ -496,8 +508,45 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
             filtered = _allPlaylists.Where(p =>
                 p.Name?.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase) == true);
 
-        foreach (var item in filtered)
+        // Apply sort order
+        var sorted = CurrentSortOrder switch
+        {
+            PlaylistSortOrder.NameDesc => filtered.OrderByDescending(p => p.Name, StringComparer.OrdinalIgnoreCase),
+            PlaylistSortOrder.DateCreatedDesc => filtered.OrderByDescending(p => p.DateCreated).ThenBy(p => p.Name, StringComparer.OrdinalIgnoreCase),
+            PlaylistSortOrder.DateCreatedAsc => filtered.OrderBy(p => p.DateCreated).ThenBy(p => p.Name, StringComparer.OrdinalIgnoreCase),
+            PlaylistSortOrder.DateModifiedDesc => filtered.OrderByDescending(p => p.DateModified).ThenBy(p => p.Name, StringComparer.OrdinalIgnoreCase),
+            _ => filtered.OrderBy(p => p.Name, StringComparer.OrdinalIgnoreCase)
+        };
+
+        foreach (var item in sorted)
             Playlists.Add(item);
+    }
+
+    /// <summary>
+    ///     Changes the sort order and reapplies filtering.
+    /// </summary>
+    [RelayCommand]
+    public void ChangeSortOrder(string sortOrderString)
+    {
+        if (Enum.TryParse<PlaylistSortOrder>(sortOrderString, out var newSortOrder)
+            && newSortOrder != CurrentSortOrder)
+        {
+            CurrentSortOrder = newSortOrder;
+            UpdateSortOrderText();
+            ApplyFilter();
+        }
+    }
+
+    private void UpdateSortOrderText()
+    {
+        CurrentSortOrderText = CurrentSortOrder switch
+        {
+            PlaylistSortOrder.NameDesc => "Sort By: Name (Z-A)",
+            PlaylistSortOrder.DateCreatedDesc => "Sort By: Date Created (Newest)",
+            PlaylistSortOrder.DateCreatedAsc => "Sort By: Date Created (Oldest)",
+            PlaylistSortOrder.DateModifiedDesc => "Sort By: Recently Modified",
+            _ => "Sort By: Name (A-Z)"
+        };
     }
 
     /// <summary>

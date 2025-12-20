@@ -159,6 +159,10 @@
                                             CommandParameter="ArtistAsc" Text="Artist" />
                             <MenuFlyoutItem Command="{x:Bind ViewModel.ChangeSortOrderCommand}"
                                             CommandParameter="AlbumTitleAsc" Text="Album Title" />
+                            <MenuFlyoutItem Command="{x:Bind ViewModel.ChangeSortOrderCommand}"
+                                            CommandParameter="YearDesc" Text="Year (Newest)" />
+                            <MenuFlyoutItem Command="{x:Bind ViewModel.ChangeSortOrderCommand}"
+                                            CommandParameter="YearAsc" Text="Year (Oldest)" />
                         </MenuFlyout>
                     </Button.Flyout>
                     <FontIcon FontSize="16" Glyph="&#xE8CB;" />
