@@ -137,6 +137,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     [ObservableProperty] public partial bool IsMinimizeToMiniPlayerEnabled { get; set; }
     [ObservableProperty] public partial bool IsShowCoverArtInTrayFlyoutEnabled { get; set; }
     [ObservableProperty] public partial bool IsFetchOnlineMetadataEnabled { get; set; }
+    [ObservableProperty] public partial bool IsFetchOnlineLyricsEnabled { get; set; }
     [ObservableProperty] public partial bool IsDiscordRichPresenceEnabled { get; set; }
     [ObservableProperty] public partial bool IsCheckForUpdatesEnabled { get; set; }
     [ObservableProperty] public partial bool IsRememberWindowSizeEnabled { get; set; }
@@ -221,10 +222,11 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         IsShowCoverArtInTrayFlyoutEnabled = await _settingsService.GetShowCoverArtInTrayFlyoutAsync();
         IsFetchOnlineMetadataEnabled = await _settingsService.GetFetchOnlineMetadataEnabledAsync();
         IsDiscordRichPresenceEnabled = await _settingsService.GetDiscordRichPresenceEnabledAsync();
-        IsCheckForUpdatesEnabled = await _settingsService.GetCheckForUpdatesEnabledAsync();
-        IsRememberWindowSizeEnabled = await _settingsService.GetRememberWindowSizeEnabledAsync();
-        IsRememberPaneStateEnabled = await _settingsService.GetRememberPaneStateEnabledAsync();
-
+        IsShowCoverArtInTrayFlyoutEnabled = await _settingsService.GetShowCoverArtInTrayFlyoutAsync();
+        IsFetchOnlineMetadataEnabled = await _settingsService.GetFetchOnlineMetadataEnabledAsync();
+        IsFetchOnlineLyricsEnabled = await _settingsService.GetFetchOnlineLyricsEnabledAsync();
+        IsDiscordRichPresenceEnabled = await _settingsService.GetDiscordRichPresenceEnabledAsync();
+        
         var lastFmCredentials = await _settingsService.GetLastFmCredentialsAsync();
         LastFmUsername = lastFmCredentials?.Username;
         IsLastFmConnected = lastFmCredentials is not null && !string.IsNullOrEmpty(lastFmCredentials.Value.SessionKey);
@@ -496,6 +498,12 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     {
         if (_isInitializing) return;
         _ = _settingsService.SetFetchOnlineMetadataEnabledAsync(value);
+    }
+
+    partial void OnIsFetchOnlineLyricsEnabledChanged(bool value)
+    {
+        if (_isInitializing) return;
+        _ = _settingsService.SetFetchOnlineLyricsEnabledAsync(value);
     }
 
     partial void OnIsDiscordRichPresenceEnabledChanged(bool value)

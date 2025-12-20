@@ -46,6 +46,7 @@ public class SettingsService : IUISettingsService
     private const string ShowQueueButtonEnabledKey = "ShowQueueButtonEnabled";
     private const string ShowCoverArtInTrayFlyoutKey = "ShowCoverArtInTrayFlyout";
     private const string FetchOnlineMetadataKey = "FetchOnlineMetadataEnabled";
+    private const string FetchOnlineLyricsEnabledKey = "FetchOnlineLyricsEnabled";
     private const string DiscordRichPresenceEnabledKey = "DiscordRichPresenceEnabled";
     private const string NavigationItemsKey = "NavigationItems";
     private const string PlayerButtonSettingsKey = "PlayerButtonSettings";
@@ -420,6 +421,17 @@ public class SettingsService : IUISettingsService
     public Task SetFetchOnlineMetadataEnabledAsync(bool isEnabled)
     {
         return SetValueAsync(FetchOnlineMetadataKey, isEnabled);
+    }
+
+    public async Task<bool> GetFetchOnlineLyricsEnabledAsync()
+    {
+        await EnsureUnpackagedSettingsLoadedAsync();
+        return GetValue(FetchOnlineLyricsEnabledKey, false);
+    }
+
+    public Task SetFetchOnlineLyricsEnabledAsync(bool isEnabled)
+    {
+        return SetValueAsync(FetchOnlineLyricsEnabledKey, isEnabled);
     }
 
     public async Task<bool> GetDiscordRichPresenceEnabledAsync()

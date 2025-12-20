@@ -122,6 +122,16 @@ public interface ISettingsService
     Task ClearPlaybackStateAsync();
 
     /// <summary>
+    ///     Gets whether fetching lyrics from online sources is enabled.
+    /// </summary>
+    Task<bool> GetFetchOnlineLyricsEnabledAsync();
+
+    /// <summary>
+    ///     Sets the preference for fetching lyrics from online sources.
+    /// </summary>
+    Task SetFetchOnlineLyricsEnabledAsync(bool isEnabled);
+
+    /// <summary>
     ///     Gets whether scrobbling to Last.fm is enabled.
     /// </summary>
     /// <returns>True if scrobbling is enabled; otherwise, false.</returns>

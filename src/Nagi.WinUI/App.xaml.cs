@@ -343,6 +343,7 @@ public partial class App : Application
         services.AddSingleton<IPresenceService, LastFmPresenceService>();
         services.AddSingleton<ISmartPlaylistService, SmartPlaylistService>();
         services.AddSingleton<IUpdateService, VelopackUpdateService>();
+        services.AddSingleton<IOnlineLyricsService, LrcLibService>();
 
 #if !MSIX_PACKAGE
         services.AddSingleton(_ =>
