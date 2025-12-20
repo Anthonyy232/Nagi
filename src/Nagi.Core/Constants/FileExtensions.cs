@@ -13,8 +13,7 @@ public static class FileExtensions
         ".aa", ".aax", ".aac", ".aiff", ".ape", ".dsf", ".flac",
         ".m4a", ".m4b", ".m4p", ".mp3", ".mpc", ".mpp", ".ogg",
         ".oga", ".opus", ".wav", ".wma", ".wv", ".webm",
-        ".mkv", ".ogv", ".avi", ".wmv", ".asf", ".mp4", ".m4v",
-        ".mpeg", ".mpg", ".mpe", ".mpv", ".m2v"
+        ".asf", ".mp4", ".m4v"
     }, StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
