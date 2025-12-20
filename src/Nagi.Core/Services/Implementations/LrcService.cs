@@ -50,7 +50,7 @@ public class LrcService : ILrcService
         if (await _settingsService.GetFetchOnlineLyricsEnabledAsync())
         {
             var lrcContent = await _onlineLyricsService.GetLyricsAsync(
-                song.Title, song.Artist.Name, song.Album.Title, song.Duration);
+                song.Title, song.Artist?.Name, song.Album?.Title, song.Duration);
             
             if (!string.IsNullOrWhiteSpace(lrcContent))
             {
