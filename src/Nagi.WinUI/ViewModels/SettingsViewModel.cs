@@ -89,6 +89,8 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     private readonly IThemeService _themeService;
     private readonly IUIService _uiService;
     private readonly IUpdateService _updateService;
+    private readonly IPlaylistExportService _playlistExportService;
+    private readonly ILibraryReader _libraryReader;
 
     private bool _isDisposed;
     private bool _isInitializing;
@@ -103,6 +105,8 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         IUpdateService updateService,
         ILastFmAuthService lastFmAuthService,
         IMusicPlaybackService playbackService,
+        IPlaylistExportService playlistExportService,
+        ILibraryReader libraryReader,
         ILogger<SettingsViewModel> logger)
     {
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
@@ -113,6 +117,8 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         _updateService = updateService ?? throw new ArgumentNullException(nameof(updateService));
         _lastFmAuthService = lastFmAuthService ?? throw new ArgumentNullException(nameof(lastFmAuthService));
         _playbackService = playbackService ?? throw new ArgumentNullException(nameof(playbackService));
+        _playlistExportService = playlistExportService ?? throw new ArgumentNullException(nameof(playlistExportService));
+        _libraryReader = libraryReader ?? throw new ArgumentNullException(nameof(libraryReader));
         _logger = logger;
 
         NavigationItems.CollectionChanged += OnNavigationItemsCollectionChanged;
@@ -343,6 +349,52 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     private async Task ResetEqualizerAsync()
     {
         await _playbackService.ResetEqualizerAsync();
+    }
+
+    [RelayCommand]
+    private async Task ExportAllPlaylistsAsync()
+    {
+        var folderPath = await _uiService.PickSingleFolderAsync();
+        if (folderPath is null) return;
+
+        var result = await _playlistExportService.ExportAllPlaylistsAsync(folderPath);
+
+        if (result.Success)
+        {
+            await _uiService.ShowMessageDialogAsync("Export Successful",
+                $"Exported {result.PlaylistsExported} playlists ({result.TotalSongs} total songs) to:\n{folderPath}");
+        }
+        else
+        {
+            await _uiService.ShowMessageDialogAsync("Export Failed", result.ErrorMessage ?? "No playlists to export.");
+        }
+    }
+
+    [RelayCommand]
+    private async Task ImportMultiplePlaylistsAsync()
+    {
+        var filePaths = await _uiService.PickOpenMultipleFilesAsync([".m3u", ".m3u8"]);
+        if (filePaths.Count == 0) return;
+
+        var result = await _playlistExportService.ImportMultiplePlaylistsAsync(filePaths);
+
+        if (result.Success)
+        {
+            var message = $"Successfully imported {result.PlaylistsImported} playlists ({result.TotalMatchedSongs} songs).";
+            if (result.TotalUnmatchedSongs > 0)
+            {
+                message += $"\n\n{result.TotalUnmatchedSongs} songs could not be found in your library.";
+            }
+            if (result.FailedFiles.Count > 0)
+            {
+                message += $"\n\n{result.FailedFiles.Count} files failed to import.";
+            }
+            await _uiService.ShowMessageDialogAsync("Import Successful", message);
+        }
+        else
+        {
+            await _uiService.ShowMessageDialogAsync("Import Failed", "No playlists could be imported.");
+        }
     }
 
     private void LoadEqualizerState()
