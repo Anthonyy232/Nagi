@@ -13,5 +13,5 @@ public interface IOnlineLyricsService
     /// <param name="albumName">The album regarding the track.</param>
     /// <param name="duration">The duration of the track.</param>
     /// <returns>The raw LRC string content if found; otherwise, null.</returns>
-    Task<string?> GetLyricsAsync(string trackName, string artistName, string albumName, TimeSpan duration);
+    Task<string?> GetLyricsAsync(string trackName, string? artistName, string? albumName, TimeSpan duration);
 }
