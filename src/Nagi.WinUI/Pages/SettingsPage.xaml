@@ -525,6 +525,17 @@
                 </controls:SettingsCard>
 
                 <controls:SettingsCard
+                    Header="Fetch online lyrics"
+                    Description="Automatically fetch missing lyrics from LRCLIB. (Privacy: sends track metadata to a third-party service)">
+                    <controls:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE90A;" />
+                    </controls:SettingsCard.HeaderIcon>
+                    <ToggleSwitch
+                        HorizontalAlignment="Right"
+                        IsOn="{x:Bind ViewModel.IsFetchOnlineLyricsEnabled, Mode=TwoWay}" />
+                </controls:SettingsCard>
+
+                <controls:SettingsCard
                     Header="Reset application"
                     Description="This will delete all library data, playlists, and reset all settings to their defaults. The application will restart.">
                     <controls:SettingsCard.HeaderIcon>

@@ -1,4 +1,8 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Security.Cryptography;
+using System.Text;
+using Microsoft.Extensions.Logging;
+using Nagi.Core.Data;
+using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Models.Lyrics;
 using Nagi.Core.Services.Abstractions;
@@ -13,19 +17,52 @@ public class LrcService : ILrcService
 {
     private readonly IFileSystemService _fileSystemService;
     private readonly ILogger<LrcService> _logger;
+    private readonly IOnlineLyricsService _onlineLyricsService;
+    private readonly ISettingsService _settingsService;
+    private readonly IPathConfiguration _pathConfig;
+    private readonly ILibraryWriter _libraryWriter;
     private readonly LrcParser.Parser.Lrc.LrcParser _parser = new();
 
-    public LrcService(IFileSystemService fileSystemService, ILogger<LrcService> logger)
+    public LrcService(
+        IFileSystemService fileSystemService,
+        IOnlineLyricsService onlineLyricsService,
+        ISettingsService settingsService,
+        IPathConfiguration pathConfig,
+        ILibraryWriter libraryWriter,
+        ILogger<LrcService> logger)
     {
         _fileSystemService = fileSystemService;
+        _onlineLyricsService = onlineLyricsService;
+        _settingsService = settingsService;
+        _pathConfig = pathConfig;
+        _libraryWriter = libraryWriter;
         _logger = logger;
     }
 
     /// <inheritdoc />
     public async Task<ParsedLrc?> GetLyricsAsync(Song song)
     {
-        if (string.IsNullOrWhiteSpace(song.LrcFilePath)) return null;
-        return await GetLyricsAsync(song.LrcFilePath);
+        // 1. Try local file path from Song object
+        if (!string.IsNullOrWhiteSpace(song.LrcFilePath) && _fileSystemService.FileExists(song.LrcFilePath))
+            return await GetLyricsAsync(song.LrcFilePath);
+
+        // 2. Try online fallback if enabled
+        if (await _settingsService.GetFetchOnlineLyricsEnabledAsync())
+        {
+            var lrcContent = await _onlineLyricsService.GetLyricsAsync(
+                song.Title, song.Artist.Name, song.Album.Title, song.Duration);
+            
+            if (!string.IsNullOrWhiteSpace(lrcContent))
+            {
+                // Cache the lyrics for future use
+                await CacheLyricsAsync(song, lrcContent);
+
+                // Parse the downloaded lyrics string
+                return ParseLrcContent(lrcContent);
+            }
+        }
+
+        return null;
     }
 
     /// <inheritdoc />
@@ -36,9 +73,53 @@ public class LrcService : ILrcService
         try
         {
             var fileContent = await _fileSystemService.ReadAllTextAsync(lrcFilePath);
-            if (string.IsNullOrWhiteSpace(fileContent)) return new ParsedLrc(Enumerable.Empty<LyricLine>());
+            return ParseLrcContent(fileContent);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to parse LRC file {LrcFilePath}", lrcFilePath);
+            return null;
+        }
+    }
 
-            var parsedSongFromLrc = _parser.Decode(fileContent);
+    private async Task CacheLyricsAsync(Song song, string lrcContent)
+    {
+        try
+        {
+            string cacheKey;
+            using (var sha256 = SHA256.Create())
+            {
+                var hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(song.FilePath));
+                cacheKey = Convert.ToBase64String(hashBytes).Replace('/', '_').Replace('+', '-');
+            }
+
+            var cachedLrcPath = _fileSystemService.Combine(_pathConfig.LrcCachePath, $"{cacheKey}.lrc");
+
+            await _fileSystemService.WriteAllTextAsync(cachedLrcPath, lrcContent);
+            _logger.LogInformation("Cached online lyrics for song {SongId} to {Path}", song.Id, cachedLrcPath);
+
+            // Update the database only if the path has changed
+            if (song.LrcFilePath != cachedLrcPath)
+            {
+                song.LrcFilePath = cachedLrcPath;
+                // We don't persist the full text to 'Lyrics' column here to keep the DB light,
+                // as we rely on the LRC file. The 'Lyrics' column is mostly for unsynced lyrics.
+                await _libraryWriter.UpdateSongLrcPathAsync(song.Id, cachedLrcPath);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to cache lyrics for song {SongId}", song.Id);
+        }
+    }
+
+    private ParsedLrc ParseLrcContent(string? content)
+    {
+        if (string.IsNullOrWhiteSpace(content)) return new ParsedLrc(Enumerable.Empty<LyricLine>());
+
+        try
+        {
+            var parsedSongFromLrc = _parser.Decode(content);
             if (parsedSongFromLrc?.Lyrics == null) return new ParsedLrc(Enumerable.Empty<LyricLine>());
 
             var lyricLines = parsedSongFromLrc.Lyrics
@@ -54,8 +135,8 @@ public class LrcService : ILrcService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to parse LRC file {LrcFilePath}", lrcFilePath);
-            return null;
+            _logger.LogError(ex, "Error parsing LRC content");
+            return new ParsedLrc(Enumerable.Empty<LyricLine>());
         }
     }
 

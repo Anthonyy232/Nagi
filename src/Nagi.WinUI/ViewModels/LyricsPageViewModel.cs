@@ -64,7 +64,9 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
 
     [ObservableProperty] public partial string SongTitle { get; set; } = "No song selected";
 
-    [ObservableProperty] public partial bool HasLyrics { get; set; }
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowNoLyricsMessage))]
+    public partial bool HasLyrics { get; set; }
 
     [ObservableProperty] public partial LyricLine? CurrentLine { get; set; }
 
@@ -72,7 +74,19 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
 
     [ObservableProperty] public partial TimeSpan CurrentPosition { get; set; }
 
-    [ObservableProperty] public partial bool IsPlaying { get; set; }
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowNoLyricsMessage))]
+    public partial bool IsPlaying { get; set; }
+    
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowNoLyricsMessage))]
+    public partial bool IsLoading { get; set; }
+
+    /// <summary>
+    ///     True when the "No timed lyrics found" message should be displayed.
+    ///     This is only when we are not loading and have no lyrics.
+    /// </summary>
+    public bool ShowNoLyricsMessage => !HasLyrics && !IsLoading;
 
     public ObservableCollection<LyricLine> LyricLines { get; } = new();
 
@@ -194,20 +208,28 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
                 : song.Title;
             SongDuration = _playbackService.Duration;
 
-            _parsedLrc = await _lrcService.GetLyricsAsync(song);
+            IsLoading = true;
+            try
+            {
+                _parsedLrc = await _lrcService.GetLyricsAsync(song);
 
-            if (_parsedLrc is null || _parsedLrc.IsEmpty)
-            {
-                _logger.LogInformation("No lyrics found for track '{SongTitle}'", song.Title);
-                HasLyrics = false;
+                if (_parsedLrc is null || _parsedLrc.IsEmpty)
+                {
+                    _logger.LogInformation("No lyrics found for track '{SongTitle}'", song.Title);
+                    HasLyrics = false;
+                }
+                else
+                {
+                    _logger.LogInformation("Successfully parsed lyrics for track '{SongTitle}'", song.Title);
+                    foreach (var line in _parsedLrc.Lines) LyricLines.Add(line);
+                    HasLyrics = true;
+                    UpdateCurrentLineFromPosition(_playbackService.CurrentPosition);
+                    UpdateLineOpacities();
+                }
             }
-            else
+            finally
             {
-                _logger.LogInformation("Successfully parsed lyrics for track '{SongTitle}'", song.Title);
-                foreach (var line in _parsedLrc.Lines) LyricLines.Add(line);
-                HasLyrics = true;
-                UpdateCurrentLineFromPosition(_playbackService.CurrentPosition);
-                UpdateLineOpacities();
+                IsLoading = false;
             }
         });
     }
