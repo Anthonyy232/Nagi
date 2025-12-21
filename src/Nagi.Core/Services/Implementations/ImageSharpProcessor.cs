@@ -152,12 +152,12 @@ public class ImageSharpProcessor : IImageProcessor
         // Atomic move - if target exists now (race), just delete our temp file
         try
         {
-            File.Move(tempPath, fullPath, overwrite: false);
+            _fileSystem.MoveFile(tempPath, fullPath, overwrite: false);
         }
         catch (IOException)
         {
             // File already exists (another thread won the race), delete our temp file
-            try { File.Delete(tempPath); } catch { /* ignore */ }
+            try { _fileSystem.DeleteFile(tempPath); } catch { /* ignore */ }
         }
         
         return fullPath;

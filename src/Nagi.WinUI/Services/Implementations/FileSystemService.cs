@@ -109,6 +109,11 @@ public class FileSystemService : IFileSystemService
         File.Delete(path);
     }
 
+    public void MoveFile(string sourceFileName, string destFileName, bool overwrite)
+    {
+        File.Move(sourceFileName, destFileName, overwrite);
+    }
+
     public DateTime GetLastWriteTimeUtc(string path)
     {
         return File.GetLastWriteTimeUtc(path);
