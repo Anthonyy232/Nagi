@@ -1,6 +1,4 @@
-﻿using System.Security.Cryptography;
-using System.Text;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Nagi.Core.Data;
 using Nagi.Core.Helpers;
 using Nagi.Core.Models;
@@ -86,14 +84,8 @@ public class LrcService : ILrcService
     {
         try
         {
-            string cacheKey;
-            using (var sha256 = SHA256.Create())
-            {
-                var hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(song.FilePath));
-                cacheKey = Convert.ToBase64String(hashBytes).Replace('/', '_').Replace('+', '-');
-            }
-
-            var cachedLrcPath = _fileSystemService.Combine(_pathConfig.LrcCachePath, $"{cacheKey}.lrc");
+            var cacheFileName = FileNameHelper.GenerateLrcCacheFileName(song.Artist?.Name, song.Title);
+            var cachedLrcPath = _fileSystemService.Combine(_pathConfig.LrcCachePath, cacheFileName);
 
             await _fileSystemService.WriteAllTextAsync(cachedLrcPath, lrcContent);
             _logger.LogInformation("Cached online lyrics for song {SongId} to {Path}", song.Id, cachedLrcPath);

@@ -1,6 +1,4 @@
-﻿using System.Security.Cryptography;
-using System.Text;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
 using Nagi.Core.Services.Abstractions;
@@ -266,7 +264,8 @@ public class TagLibMetadataServiceTests : IDisposable
         // Arrange
         var audioFilePath = CreateTestAudioFile("cached.mp3", tagFile =>
         {
-            /* no lyrics needed */
+            tagFile.Tag.Title = "Cached Song";
+            tagFile.Tag.Performers = new[] { "Cache Artist" };
         });
         var audioFileTime = new DateTime(2023, 1, 1, 12, 0, 0, DateTimeKind.Utc);
         var cacheFileTime = audioFileTime.AddHours(1);
@@ -274,14 +273,8 @@ public class TagLibMetadataServiceTests : IDisposable
         System.IO.File.SetLastWriteTimeUtc(audioFilePath, audioFileTime);
         _fileSystem.GetFileInfo(audioFilePath).Returns(new FileInfo(audioFilePath));
 
-        string cacheKey;
-        using (var sha256 = SHA256.Create())
-        {
-            var hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(audioFilePath));
-            cacheKey = Convert.ToBase64String(hashBytes).Replace('/', '_').Replace('+', '-');
-        }
-
-        var expectedCachePath = Path.Combine(LrcCachePath, $"{cacheKey}.lrc");
+        // Use the same helper as the production code to generate the expected cache path
+        var expectedCachePath = Path.Combine(LrcCachePath, FileNameHelper.GenerateLrcCacheFileName("Cache Artist", "Cached Song"));
 
         _fileSystem.FileExists(expectedCachePath).Returns(true);
         _fileSystem.GetLastWriteTimeUtc(expectedCachePath).Returns(cacheFileTime);

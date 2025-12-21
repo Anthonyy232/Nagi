@@ -1,5 +1,6 @@
 using System.Text;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Helpers;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 
@@ -201,7 +202,7 @@ public class M3uPlaylistExportService : IPlaylistExportService
                 }
 
                 // Sanitize playlist name for use as filename
-                var safeName = SanitizeFileName(playlist.Name);
+                var safeName = FileNameHelper.SanitizeFileName(playlist.Name, "playlist");
                 var filePath = Path.Combine(directoryPath, $"{safeName}.m3u8");
 
                 var result = await ExportPlaylistAsync(playlist.Id, filePath);
@@ -255,15 +256,5 @@ public class M3uPlaylistExportService : IPlaylistExportService
             importedCount, totalMatched, totalUnmatched, failedFiles.Count);
 
         return new BatchImportResult(importedCount > 0, importedCount, totalMatched, totalUnmatched, failedFiles);
-    }
-
-    /// <summary>
-    ///     Sanitizes a string for use as a file name by removing invalid characters.
-    /// </summary>
-    private static string SanitizeFileName(string name)
-    {
-        var invalidChars = Path.GetInvalidFileNameChars();
-        var sanitized = new string(name.Where(c => !invalidChars.Contains(c)).ToArray());
-        return string.IsNullOrWhiteSpace(sanitized) ? "playlist" : sanitized;
     }
 }
