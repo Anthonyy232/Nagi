@@ -152,21 +152,25 @@ public sealed partial class MainWindow : Window
     /// </summary>
     public async Task SaveWindowSizeAsync()
     {
-        if (_settingsService != null && _appWindow != null)
+        if (_settingsService == null) return;
+
+        // Ensure _appWindow is available. It might not be set if the window was never
+        // activated (e.g., when starting minimized or hidden to tray).
+        _appWindow ??= GetAppWindowForCurrentWindow();
+        if (_appWindow == null) return;
+
+        try
         {
-            try
+            if (await _settingsService.GetRememberWindowSizeEnabledAsync())
             {
-                if (await _settingsService.GetRememberWindowSizeEnabledAsync())
-                {
-                    var size = _appWindow.Size;
-                    await _settingsService.SetLastWindowSizeAsync(size.Width, size.Height);
-                    _logger?.LogDebug("Saved window size: {Width}x{Height}", size.Width, size.Height);
-                }
+                var size = _appWindow.Size;
+                await _settingsService.SetLastWindowSizeAsync(size.Width, size.Height);
+                _logger?.LogInformation("Saved window size: {Width}x{Height}", size.Width, size.Height);
             }
-            catch (Exception ex)
-            {
-                _logger?.LogWarning(ex, "Failed to save window size.");
-            }
+        }
+        catch (Exception ex)
+        {
+            _logger?.LogWarning(ex, "Failed to save window size.");
         }
     }
 
@@ -252,7 +256,11 @@ public sealed partial class MainWindow : Window
     /// </summary>
     private async Task RestoreWindowSizeAsync()
     {
-        if (_settingsService == null || _appWindow == null) return;
+        if (_settingsService == null) return;
+
+        // Ensure _appWindow is available.
+        _appWindow ??= GetAppWindowForCurrentWindow();
+        if (_appWindow == null) return;
 
         try
         {
@@ -265,7 +273,7 @@ public sealed partial class MainWindow : Window
                     var width = Math.Max(savedSize.Value.Width, 400);
                     var height = Math.Max(savedSize.Value.Height, 300);
                     _appWindow.Resize(new SizeInt32(width, height));
-                    _logger?.LogDebug("Restored window size: {Width}x{Height}", width, height);
+                    _logger?.LogInformation("Restored window size: {Width}x{Height}", width, height);
                 }
             }
         }
