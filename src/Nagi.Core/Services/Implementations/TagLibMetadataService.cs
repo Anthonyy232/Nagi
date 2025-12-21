@@ -1,5 +1,4 @@
-﻿using System.Security.Cryptography;
-using System.Text;
+﻿using System.Text;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Constants;
 using Nagi.Core.Helpers;
@@ -47,12 +46,6 @@ public class TagLibMetadataService : IMetadataService
             metadata.FileModifiedDate = fileInfo.LastWriteTimeUtc;
             metadata.Title = _fileSystem.GetFileNameWithoutExtension(filePath);
 
-            // Get cached or extract new synchronized lyrics.
-            metadata.LrcFilePath = await GetLrcPathAsync(filePath, fileInfo.LastWriteTimeUtc);
-
-            // As a fallback, look for an external .lrc file if no embedded lyrics were found.
-            if (string.IsNullOrWhiteSpace(metadata.LrcFilePath)) metadata.LrcFilePath = FindLrcFilePath(filePath);
-
             // Use a timeout wrapper for TagLib operations to prevent indefinite hangs
             using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30)); // 30-second timeout
             var extractionTask = Task.Run(() =>
@@ -69,6 +62,12 @@ public class TagLibMetadataService : IMetadataService
             var (tag, properties) = await extractionTask;
 
             PopulateMetadataFromTag(metadata, tag, properties);
+
+            // Get cached or extract new synchronized lyrics (after parsing tag so we have artist/title).
+            metadata.LrcFilePath = await GetLrcPathAsync(filePath, fileInfo.LastWriteTimeUtc, metadata.Artist, metadata.Title);
+
+            // As a fallback, look for an external .lrc file if no embedded lyrics were found.
+            if (string.IsNullOrWhiteSpace(metadata.LrcFilePath)) metadata.LrcFilePath = FindLrcFilePath(filePath);
 
             // Process album art with a separate timeout to avoid blocking
             using var albumArtCts =
@@ -337,16 +336,10 @@ public class TagLibMetadataService : IMetadataService
     ///     Gets the path to the LRC file, prioritizing a valid cache entry before
     ///     attempting to extract embedded lyrics from the audio file.
     /// </summary>
-    private async Task<string?> GetLrcPathAsync(string audioFilePath, DateTime audioFileLastWriteTime)
+    private async Task<string?> GetLrcPathAsync(string audioFilePath, DateTime audioFileLastWriteTime, string? artist, string? title)
     {
-        string cacheKey;
-        using (var sha256 = SHA256.Create())
-        {
-            var hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(audioFilePath));
-            cacheKey = Convert.ToBase64String(hashBytes).Replace('/', '_').Replace('+', '-');
-        }
-
-        var cachedLrcPath = _fileSystem.Combine(_pathConfig.LrcCachePath, $"{cacheKey}.lrc");
+        var cacheFileName = FileNameHelper.GenerateLrcCacheFileName(artist, title);
+        var cachedLrcPath = _fileSystem.Combine(_pathConfig.LrcCachePath, cacheFileName);
 
         // Check for a valid cache entry. It's valid if it exists and is newer than the audio file.
         if (_fileSystem.FileExists(cachedLrcPath))
