@@ -39,9 +39,9 @@ public class ImageSharpProcessor : IImageProcessor
     /// <summary>
     ///     Tracks in-flight save operations to prevent race conditions when multiple threads
     ///     try to save the same image content simultaneously. Each key is a content hash,
-    ///     and the value is a task that completes when the save operation finishes.
+    ///     and the value is a lazy task that ensures only one save operation runs per hash.
     /// </summary>
-    private readonly ConcurrentDictionary<string, Task<string>> _inFlightSaves = new();
+    private readonly ConcurrentDictionary<string, Lazy<Task<string>>> _inFlightSaves = new();
 
     public ImageSharpProcessor(IPathConfiguration pathConfig, IFileSystemService fileSystem,
         ILogger<ImageSharpProcessor> logger)
@@ -74,12 +74,8 @@ public class ImageSharpProcessor : IImageProcessor
             var filename = $"{contentHash}.jpg";
             var fullPath = _fileSystem.Combine(_albumArtStoragePath, filename);
 
-            // Check if file already exists (fast path - no locking needed for reads)
-            if (!_fileSystem.FileExists(fullPath))
-            {
-                // File doesn't exist - we need to save it, but handle concurrent attempts
-                await SaveImageWithDeduplicationAsync(contentHash, fullPath, pictureData);
-            }
+            // Save with deduplication - handles both file existence check and concurrent access
+            await SaveImageWithDeduplicationAsync(contentHash, fullPath, pictureData);
 
             // Extract colors (always from original data for best accuracy)
             var (lightHex, darkHex) = ExtractColorSwatches(pictureData);
@@ -94,29 +90,34 @@ public class ImageSharpProcessor : IImageProcessor
 
     /// <summary>
     ///     Saves the image to disk, handling concurrent attempts to save the same content.
-    ///     Uses a ConcurrentDictionary to track in-flight operations and ensure only one
-    ///     thread actually performs the save for a given content hash.
+    ///     Uses a ConcurrentDictionary with Lazy to ensure only one thread actually 
+    ///     performs the save for a given content hash.
     /// </summary>
     private async Task SaveImageWithDeduplicationAsync(string contentHash, string fullPath, byte[] pictureData)
     {
-        // Try to add our save task. If another thread is already saving this hash,
-        // we'll get their task and wait for it instead.
-        var saveTask = _inFlightSaves.GetOrAdd(contentHash, _ => SaveImageToDiskAsync(fullPath, pictureData));
+        // Fast path: if file already exists, skip the save operation entirely
+        if (_fileSystem.FileExists(fullPath))
+            return;
+
+        // Use Lazy<Task> to ensure the save task is only started once per content hash,
+        // even if multiple threads call GetOrAdd simultaneously.
+        var lazyTask = _inFlightSaves.GetOrAdd(contentHash,
+            _ => new Lazy<Task<string>>(() => SaveImageToDiskAsync(fullPath, pictureData)));
 
         try
         {
-            await saveTask;
+            await lazyTask.Value;
         }
         finally
         {
             // Remove from in-flight tracking once complete (whether success or failure)
-            // Use TryRemove with the specific task to avoid removing a newer entry
-            _inFlightSaves.TryRemove(new KeyValuePair<string, Task<string>>(contentHash, saveTask));
+            _inFlightSaves.TryRemove(contentHash, out _);
         }
     }
 
     /// <summary>
     ///     Actually performs the image loading, resizing, and saving to disk.
+    ///     Uses atomic file write via temp file to prevent partial writes.
     /// </summary>
     private async Task<string> SaveImageToDiskAsync(string fullPath, byte[] pictureData)
     {
@@ -139,10 +140,25 @@ public class ImageSharpProcessor : IImageProcessor
                 image.Width, image.Height);
         }
 
-        // Save to memory stream first, then write bytes to disk
+        // Save to memory stream first, then write bytes to disk atomically via temp file
         using var memoryStream = new MemoryStream();
         await image.SaveAsJpegAsync(memoryStream);
-        await _fileSystem.WriteAllBytesAsync(fullPath, memoryStream.ToArray());
+        var imageBytes = memoryStream.ToArray();
+
+        // Write to a temp file first, then move atomically to avoid partial writes
+        var tempPath = fullPath + ".tmp";
+        await _fileSystem.WriteAllBytesAsync(tempPath, imageBytes);
+        
+        // Atomic move - if target exists now (race), just delete our temp file
+        try
+        {
+            File.Move(tempPath, fullPath, overwrite: false);
+        }
+        catch (IOException)
+        {
+            // File already exists (another thread won the race), delete our temp file
+            try { File.Delete(tempPath); } catch { /* ignore */ }
+        }
         
         return fullPath;
     }

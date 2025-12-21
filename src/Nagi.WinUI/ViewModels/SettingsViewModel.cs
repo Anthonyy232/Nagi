@@ -227,11 +227,11 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         IsMinimizeToMiniPlayerEnabled = await _settingsService.GetMinimizeToMiniPlayerEnabledAsync();
         IsShowCoverArtInTrayFlyoutEnabled = await _settingsService.GetShowCoverArtInTrayFlyoutAsync();
         IsFetchOnlineMetadataEnabled = await _settingsService.GetFetchOnlineMetadataEnabledAsync();
-        IsDiscordRichPresenceEnabled = await _settingsService.GetDiscordRichPresenceEnabledAsync();
-        IsShowCoverArtInTrayFlyoutEnabled = await _settingsService.GetShowCoverArtInTrayFlyoutAsync();
-        IsFetchOnlineMetadataEnabled = await _settingsService.GetFetchOnlineMetadataEnabledAsync();
         IsFetchOnlineLyricsEnabled = await _settingsService.GetFetchOnlineLyricsEnabledAsync();
         IsDiscordRichPresenceEnabled = await _settingsService.GetDiscordRichPresenceEnabledAsync();
+        IsCheckForUpdatesEnabled = await _settingsService.GetCheckForUpdatesEnabledAsync();
+        IsRememberWindowSizeEnabled = await _settingsService.GetRememberWindowSizeEnabledAsync();
+        IsRememberPaneStateEnabled = await _settingsService.GetRememberPaneStateEnabledAsync();
         
         var lastFmCredentials = await _settingsService.GetLastFmCredentialsAsync();
         LastFmUsername = lastFmCredentials?.Username;
@@ -570,10 +570,17 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         _ = _settingsService.SetCheckForUpdatesEnabledAsync(value);
     }
 
-    partial void OnIsRememberWindowSizeEnabledChanged(bool value)
+    async partial void OnIsRememberWindowSizeEnabledChanged(bool value)
     {
         if (_isInitializing) return;
-        _ = _settingsService.SetRememberWindowSizeEnabledAsync(value);
+        await _settingsService.SetRememberWindowSizeEnabledAsync(value);
+        
+        // When enabling, immediately save the current window size so the user's 
+        // current window state is captured even if they close the app before resizing again.
+        if (value && App.RootWindow is MainWindow mainWindow)
+        {
+            await mainWindow.SaveWindowSizeAsync();
+        }
     }
 
     partial void OnIsRememberPaneStateEnabledChanged(bool value)
