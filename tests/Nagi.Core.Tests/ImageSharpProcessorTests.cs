@@ -1,5 +1,4 @@
 ﻿using System.Security.Cryptography;
-using System.Text;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
@@ -13,13 +12,12 @@ namespace Nagi.Core.Tests;
 
 /// <summary>
 ///     Contains unit tests for the <see cref="ImageSharpProcessor" />.
-///     These tests verify the service's ability to save cover art, handle existing files,
-///     extract color swatches, and manage errors related to image processing and file I/O.
+///     These tests verify the service's ability to save cover art with content-based deduplication,
+///     handle existing files, extract color swatches, and manage errors related to image processing and file I/O.
 /// </summary>
 public class ImageSharpProcessorTests
 {
     private const string AlbumArtPath = "C:\\cache\\art";
-    private const string SongFilePath = "C:\\music\\test-song.mp3";
     private readonly IFileSystemService _fileSystem;
     private readonly ImageSharpProcessor _imageProcessor;
     private readonly ILogger<ImageSharpProcessor> _logger;
@@ -59,19 +57,19 @@ public class ImageSharpProcessorTests
     {
         // Arrange
         var pictureData = CreateTestImageBytes();
-        var stableId = GenerateStableId(SongFilePath);
-        var expectedPath = Path.Combine(AlbumArtPath, $"{stableId}.jpg");
+        var contentHash = GenerateContentHash(pictureData);
+        var expectedPath = Path.Combine(AlbumArtPath, $"{contentHash}.jpg");
         _fileSystem.FileExists(expectedPath).Returns(false);
 
         // Act
         var (uri, lightSwatch, darkSwatch) =
-            await _imageProcessor.SaveCoverArtAndExtractColorsAsync(pictureData, SongFilePath);
+            await _imageProcessor.SaveCoverArtAndExtractColorsAsync(pictureData);
 
         // Assert
         uri.Should().Be(expectedPath);
         lightSwatch.Should().NotBeNull();
         darkSwatch.Should().NotBeNull();
-        await _fileSystem.Received(1).WriteAllBytesAsync(expectedPath, pictureData);
+        await _fileSystem.Received(1).WriteAllBytesAsync(expectedPath, Arg.Any<byte[]>());
     }
 
     /// <summary>
@@ -83,13 +81,13 @@ public class ImageSharpProcessorTests
     {
         // Arrange
         var pictureData = CreateTestImageBytes();
-        var stableId = GenerateStableId(SongFilePath);
-        var expectedPath = Path.Combine(AlbumArtPath, $"{stableId}.jpg");
+        var contentHash = GenerateContentHash(pictureData);
+        var expectedPath = Path.Combine(AlbumArtPath, $"{contentHash}.jpg");
         _fileSystem.FileExists(expectedPath).Returns(true);
 
         // Act
         var (uri, lightSwatch, darkSwatch) =
-            await _imageProcessor.SaveCoverArtAndExtractColorsAsync(pictureData, SongFilePath);
+            await _imageProcessor.SaveCoverArtAndExtractColorsAsync(pictureData);
 
         // Assert
         uri.Should().Be(expectedPath);
@@ -99,47 +97,95 @@ public class ImageSharpProcessorTests
     }
 
     /// <summary>
-    ///     Verifies that processing invalid or corrupt image data results in null color swatches
-    ///     but still returns a valid file path URI and attempts to save the file.
+    ///     Verifies that identical image data produces the same cache file (deduplication).
     /// </summary>
     [Fact]
-    public async Task SaveCoverArtAndExtractColorsAsync_WithInvalidImageData_ReturnsUriWithNullColors()
+    public async Task SaveCoverArtAndExtractColorsAsync_WithIdenticalData_UsesSameCacheFile()
+    {
+        // Arrange
+        var pictureData = CreateTestImageBytes();
+        var contentHash = GenerateContentHash(pictureData);
+        var expectedPath = Path.Combine(AlbumArtPath, $"{contentHash}.jpg");
+        
+        // First call - file doesn't exist (needs false for both outer check AND inner double-check)
+        // Second call - file exists
+        _fileSystem.FileExists(expectedPath).Returns(false, false, true);
+
+        // Act - call twice with same data
+        var (uri1, _, _) = await _imageProcessor.SaveCoverArtAndExtractColorsAsync(pictureData);
+        var (uri2, _, _) = await _imageProcessor.SaveCoverArtAndExtractColorsAsync(pictureData);
+
+        // Assert - both calls should return the same path
+        uri1.Should().Be(expectedPath);
+        uri2.Should().Be(expectedPath);
+        // File should only be written once
+        await _fileSystem.Received(1).WriteAllBytesAsync(expectedPath, Arg.Any<byte[]>());
+    }
+
+    /// <summary>
+    ///     Verifies that processing invalid or corrupt image data returns null values gracefully.
+    /// </summary>
+    [Fact]
+    public async Task SaveCoverArtAndExtractColorsAsync_WithInvalidImageData_ReturnsNullValues()
     {
         // Arrange
         var invalidPictureData = new byte[] { 1, 2, 3, 4 };
-        var stableId = GenerateStableId(SongFilePath);
-        var expectedPath = Path.Combine(AlbumArtPath, $"{stableId}.jpg");
+        var contentHash = GenerateContentHash(invalidPictureData);
+        var expectedPath = Path.Combine(AlbumArtPath, $"{contentHash}.jpg");
         _fileSystem.FileExists(expectedPath).Returns(false);
 
         // Act
         var (uri, lightSwatch, darkSwatch) =
-            await _imageProcessor.SaveCoverArtAndExtractColorsAsync(invalidPictureData, SongFilePath);
+            await _imageProcessor.SaveCoverArtAndExtractColorsAsync(invalidPictureData);
 
-        // Assert
-        uri.Should().Be(expectedPath);
+        // Assert - invalid image data causes the whole operation to fail gracefully
+        uri.Should().BeNull();
         lightSwatch.Should().BeNull();
         darkSwatch.Should().BeNull();
-        await _fileSystem.Received(1).WriteAllBytesAsync(expectedPath, invalidPictureData);
     }
 
     /// <summary>
-    ///     Verifies that an <see cref="IOException" /> during the file writing process is correctly
-    ///     propagated up to the caller.
+    ///     Verifies that an <see cref="IOException" /> during the file writing process is
+    ///     handled gracefully and returns null values.
     /// </summary>
     [Fact]
-    public async Task SaveCoverArtAndExtractColorsAsync_WhenFileWriteFails_PropagatesException()
+    public async Task SaveCoverArtAndExtractColorsAsync_WhenFileWriteFails_ReturnsNullValues()
     {
         // Arrange
         var pictureData = CreateTestImageBytes();
-        var stableId = GenerateStableId(SongFilePath);
-        var expectedPath = Path.Combine(AlbumArtPath, $"{stableId}.jpg");
+        var contentHash = GenerateContentHash(pictureData);
+        var expectedPath = Path.Combine(AlbumArtPath, $"{contentHash}.jpg");
         _fileSystem.FileExists(expectedPath).Returns(false);
-        _fileSystem.WriteAllBytesAsync(expectedPath, pictureData).ThrowsAsync(new IOException("Disk full"));
+        _fileSystem.WriteAllBytesAsync(expectedPath, Arg.Any<byte[]>()).ThrowsAsync(new IOException("Disk full"));
 
-        // Act & Assert
-        await _imageProcessor
-            .Awaiting(p => p.SaveCoverArtAndExtractColorsAsync(pictureData, SongFilePath))
-            .Should().ThrowAsync<IOException>().WithMessage("Disk full");
+        // Act
+        var (uri, lightSwatch, darkSwatch) =
+            await _imageProcessor.SaveCoverArtAndExtractColorsAsync(pictureData);
+
+        // Assert - IO errors are handled gracefully
+        uri.Should().BeNull();
+        lightSwatch.Should().BeNull();
+        darkSwatch.Should().BeNull();
+    }
+
+    /// <summary>
+    ///     Verifies that empty picture data returns null values without attempting to save.
+    /// </summary>
+    [Fact]
+    public async Task SaveCoverArtAndExtractColorsAsync_WithEmptyData_ReturnsNullValues()
+    {
+        // Arrange
+        var emptyData = Array.Empty<byte>();
+
+        // Act
+        var (uri, lightSwatch, darkSwatch) =
+            await _imageProcessor.SaveCoverArtAndExtractColorsAsync(emptyData);
+
+        // Assert
+        uri.Should().BeNull();
+        lightSwatch.Should().BeNull();
+        darkSwatch.Should().BeNull();
+        await _fileSystem.DidNotReceive().WriteAllBytesAsync(Arg.Any<string>(), Arg.Any<byte[]>());
     }
 
     #region Helper Methods
@@ -154,12 +200,11 @@ public class ImageSharpProcessorTests
     }
 
     /// <summary>
-    ///     Generates a stable, deterministic ID based on file path for consistent file naming.
+    ///     Generates a content-based hash from image data (matches the implementation).
     /// </summary>
-    private static string GenerateStableId(string filePath)
+    private static string GenerateContentHash(byte[] pictureData)
     {
-        using var sha = SHA256.Create();
-        var hashBytes = sha.ComputeHash(Encoding.UTF8.GetBytes(filePath));
+        var hashBytes = SHA256.HashData(pictureData);
         return Convert.ToHexString(hashBytes).ToLowerInvariant();
     }
 

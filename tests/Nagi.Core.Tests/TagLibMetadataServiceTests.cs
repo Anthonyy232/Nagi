@@ -134,7 +134,7 @@ public class TagLibMetadataServiceTests : IDisposable
             tag.Pictures = new IPicture[] { new Picture(pictureData) };
         });
 
-        _imageProcessor.SaveCoverArtAndExtractColorsAsync(Arg.Any<byte[]>(), filePath)
+        _imageProcessor.SaveCoverArtAndExtractColorsAsync(Arg.Any<byte[]>())
             .Returns(Task.FromResult<(string?, string?, string?)>(("C:/art/1.jpg", "light1", "dark1")));
 
         // Act
@@ -222,7 +222,7 @@ public class TagLibMetadataServiceTests : IDisposable
         });
 
         // First call fails
-        _imageProcessor.SaveCoverArtAndExtractColorsAsync(Arg.Any<byte[]>(), filePath)
+        _imageProcessor.SaveCoverArtAndExtractColorsAsync(Arg.Any<byte[]>())
             .ThrowsAsync(new InvalidOperationException("Processing failed"));
 
         // Act (First attempt)
@@ -231,11 +231,11 @@ public class TagLibMetadataServiceTests : IDisposable
         // Assert (First attempt)
         result1.CoverArtUri.Should().BeNull();
         await _imageProcessor.Received(1)
-            .SaveCoverArtAndExtractColorsAsync(Arg.Any<byte[]>(), filePath);
+            .SaveCoverArtAndExtractColorsAsync(Arg.Any<byte[]>());
 
         // Arrange (Second attempt succeeds)
         _imageProcessor.ClearReceivedCalls();
-        _imageProcessor.SaveCoverArtAndExtractColorsAsync(Arg.Any<byte[]>(), filePath)
+        _imageProcessor.SaveCoverArtAndExtractColorsAsync(Arg.Any<byte[]>())
             .Returns(Task.FromResult<(string?, string?, string?)>(("C:/art/success.jpg", "lightOK", "darkOK")));
 
         // Act (Second attempt)
@@ -243,7 +243,7 @@ public class TagLibMetadataServiceTests : IDisposable
 
         // Assert (Second attempt)
         await _imageProcessor.Received(1)
-            .SaveCoverArtAndExtractColorsAsync(Arg.Any<byte[]>(), filePath);
+            .SaveCoverArtAndExtractColorsAsync(Arg.Any<byte[]>());
         result2.CoverArtUri.Should().Be("C:/art/success.jpg");
     }
 
