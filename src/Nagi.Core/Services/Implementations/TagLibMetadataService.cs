@@ -171,7 +171,7 @@ public class TagLibMetadataService : IMetadataService
             try
             {
                 var (coverArtUri, lightSwatchId, darkSwatchId) =
-                    await _imageProcessor.SaveCoverArtAndExtractColorsAsync(pictureData, metadata.FilePath);
+                    await _imageProcessor.SaveCoverArtAndExtractColorsAsync(pictureData);
 
                 metadata.CoverArtUri = coverArtUri;
                 metadata.LightSwatchId = lightSwatchId;
@@ -205,7 +205,7 @@ public class TagLibMetadataService : IMetadataService
             if (imageBytes.Length == 0) return;
 
             var (coverArtUri, lightSwatchId, darkSwatchId) =
-                await _imageProcessor.SaveCoverArtAndExtractColorsAsync(imageBytes, metadata.FilePath);
+                await _imageProcessor.SaveCoverArtAndExtractColorsAsync(imageBytes);
 
             metadata.CoverArtUri = coverArtUri;
             metadata.LightSwatchId = lightSwatchId;

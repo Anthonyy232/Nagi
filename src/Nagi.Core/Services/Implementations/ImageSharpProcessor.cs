@@ -1,6 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Collections.Concurrent;
 using System.Security.Cryptography;
-using System.Text;
 using MaterialColorUtilities.Palettes;
 using MaterialColorUtilities.Schemes;
 using MaterialColorUtilities.Utils;
@@ -15,16 +14,34 @@ namespace Nagi.Core.Services.Implementations;
 
 /// <summary>
 ///     An image processor implementation using ImageSharp for resizing and color extraction.
-///     This service is designed to be simple and fast, relying on the calling service
-///     to handle concurrency control (i.e., not calling methods for the same image
-///     simultaneously from multiple threads).
+///     Uses content-based hashing to deduplicate identical images across multiple songs,
+///     and resizes large images to reduce disk usage.
 /// </summary>
 public class ImageSharpProcessor : IImageProcessor
 {
-    private const int CoverArtResizeDimension = 112;
+    /// <summary>
+    ///     Maximum dimension (width or height) for cached images. Larger images are resized
+    ///     while preserving aspect ratio. 800px provides good quality for high-DPI displays
+    ///     while significantly reducing storage for large album art (4000x4000+).
+    /// </summary>
+    private const int CachedImageMaxDimension = 800;
+
+    /// <summary>
+    ///     Dimension used for color extraction. A small size is sufficient for palette analysis
+    ///     and makes the extraction much faster.
+    /// </summary>
+    private const int ColorExtractionDimension = 112;
+
     private readonly string _albumArtStoragePath;
     private readonly IFileSystemService _fileSystem;
     private readonly ILogger<ImageSharpProcessor> _logger;
+
+    /// <summary>
+    ///     Tracks in-flight save operations to prevent race conditions when multiple threads
+    ///     try to save the same image content simultaneously. Each key is a content hash,
+    ///     and the value is a task that completes when the save operation finishes.
+    /// </summary>
+    private readonly ConcurrentDictionary<string, Task<string>> _inFlightSaves = new();
 
     public ImageSharpProcessor(IPathConfiguration pathConfig, IFileSystemService fileSystem,
         ILogger<ImageSharpProcessor> logger)
@@ -45,29 +62,95 @@ public class ImageSharpProcessor : IImageProcessor
 
     /// <inheritdoc />
     public async Task<(string? uri, string? lightSwatchId, string? darkSwatchId)> SaveCoverArtAndExtractColorsAsync(
-        byte[] pictureData, string songFilePath)
+        byte[] pictureData)
     {
-        var stableId = GenerateStableId(songFilePath);
-        var filename = $"{stableId}.jpg";
-        var fullPath = _fileSystem.Combine(_albumArtStoragePath, filename);
+        if (pictureData.Length == 0)
+            return (null, null, null);
 
-        if (_fileSystem.FileExists(fullPath))
+        try
         {
+            // Generate a content-based hash for deduplication
+            var contentHash = GenerateContentHash(pictureData);
+            var filename = $"{contentHash}.jpg";
+            var fullPath = _fileSystem.Combine(_albumArtStoragePath, filename);
+
+            // Check if file already exists (fast path - no locking needed for reads)
+            if (!_fileSystem.FileExists(fullPath))
+            {
+                // File doesn't exist - we need to save it, but handle concurrent attempts
+                await SaveImageWithDeduplicationAsync(contentHash, fullPath, pictureData);
+            }
+
+            // Extract colors (always from original data for best accuracy)
             var (lightHex, darkHex) = ExtractColorSwatches(pictureData);
             return (fullPath, lightHex, darkHex);
         }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to save cover art and extract colors.");
+            return (null, null, null);
+        }
+    }
 
-        await _fileSystem.WriteAllBytesAsync(fullPath, pictureData);
-        var (lightSwatchHex, darkSwatchHex) = ExtractColorSwatches(pictureData);
+    /// <summary>
+    ///     Saves the image to disk, handling concurrent attempts to save the same content.
+    ///     Uses a ConcurrentDictionary to track in-flight operations and ensure only one
+    ///     thread actually performs the save for a given content hash.
+    /// </summary>
+    private async Task SaveImageWithDeduplicationAsync(string contentHash, string fullPath, byte[] pictureData)
+    {
+        // Try to add our save task. If another thread is already saving this hash,
+        // we'll get their task and wait for it instead.
+        var saveTask = _inFlightSaves.GetOrAdd(contentHash, _ => SaveImageToDiskAsync(fullPath, pictureData));
 
-        return (fullPath, lightSwatchHex, darkSwatchHex);
+        try
+        {
+            await saveTask;
+        }
+        finally
+        {
+            // Remove from in-flight tracking once complete (whether success or failure)
+            // Use TryRemove with the specific task to avoid removing a newer entry
+            _inFlightSaves.TryRemove(new KeyValuePair<string, Task<string>>(contentHash, saveTask));
+        }
+    }
+
+    /// <summary>
+    ///     Actually performs the image loading, resizing, and saving to disk.
+    /// </summary>
+    private async Task<string> SaveImageToDiskAsync(string fullPath, byte[] pictureData)
+    {
+        // Double-check file doesn't exist (another thread may have created it while we were waiting)
+        if (_fileSystem.FileExists(fullPath))
+            return fullPath;
+
+        using var image = Image.Load<Rgba32>(pictureData);
+
+        // Only resize if larger than max dimension
+        if (image.Width > CachedImageMaxDimension || image.Height > CachedImageMaxDimension)
+        {
+            image.Mutate(x => x.Resize(new ResizeOptions
+            {
+                Size = new Size(CachedImageMaxDimension, CachedImageMaxDimension),
+                Mode = ResizeMode.Max // Preserves aspect ratio, fits within bounds
+            }));
+
+            _logger.LogDebug("Resized album art from original to {Width}x{Height} for caching.",
+                image.Width, image.Height);
+        }
+
+        // Save to memory stream first, then write bytes to disk
+        using var memoryStream = new MemoryStream();
+        await image.SaveAsJpegAsync(memoryStream);
+        await _fileSystem.WriteAllBytesAsync(fullPath, memoryStream.ToArray());
+        
+        return fullPath;
     }
 
     /// <summary>
     ///     Extracts primary color swatches for light and dark themes from image data.
+    ///     Uses a small resized version for faster processing.
     /// </summary>
-    /// <param name="pictureData">The raw byte data of the image.</param>
-    /// <returns>A tuple containing the hex color codes for the light and dark swatches.</returns>
     private (string? lightHex, string? darkHex) ExtractColorSwatches(byte[] pictureData)
     {
         try
@@ -75,12 +158,12 @@ public class ImageSharpProcessor : IImageProcessor
             using var image = Image.Load<Rgba32>(pictureData);
             image.Mutate(x => x.Resize(new ResizeOptions
             {
-                Size = new Size(CoverArtResizeDimension, CoverArtResizeDimension),
+                Size = new Size(ColorExtractionDimension, ColorExtractionDimension),
                 Mode = ResizeMode.Max
             }));
 
             var pixels = new uint[image.Width * image.Height];
-            image.CopyPixelDataTo(MemoryMarshal.AsBytes(pixels.AsSpan()));
+            image.CopyPixelDataTo(System.Runtime.InteropServices.MemoryMarshal.AsBytes(pixels.AsSpan()));
 
             // Convert ImageSharp's RGBA format to MaterialColorUtilities' ARGB format
             for (var i = 0; i < pixels.Length; i++)
@@ -111,13 +194,13 @@ public class ImageSharpProcessor : IImageProcessor
     }
 
     /// <summary>
-    ///     Generates a content-based identifier from the song's file path to ensure each song
-    ///     has its own unique cached cover art file.
+    ///     Generates a content-based hash from the image data. This ensures that identical
+    ///     images (e.g., same embedded art across all songs in an album) share a single
+    ///     cached file, dramatically reducing disk usage.
     /// </summary>
-    private static string GenerateStableId(string songFilePath)
+    private static string GenerateContentHash(byte[] pictureData)
     {
-        using var sha = SHA256.Create();
-        var hashBytes = sha.ComputeHash(Encoding.UTF8.GetBytes(songFilePath));
+        var hashBytes = SHA256.HashData(pictureData);
         return Convert.ToHexString(hashBytes).ToLowerInvariant();
     }
 }
