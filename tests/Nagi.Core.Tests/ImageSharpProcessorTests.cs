@@ -59,6 +59,7 @@ public class ImageSharpProcessorTests
         var pictureData = CreateTestImageBytes();
         var contentHash = GenerateContentHash(pictureData);
         var expectedPath = Path.Combine(AlbumArtPath, $"{contentHash}.jpg");
+        var expectedTempPath = expectedPath + ".tmp";
         _fileSystem.FileExists(expectedPath).Returns(false);
 
         // Act
@@ -69,7 +70,9 @@ public class ImageSharpProcessorTests
         uri.Should().Be(expectedPath);
         lightSwatch.Should().NotBeNull();
         darkSwatch.Should().NotBeNull();
-        await _fileSystem.Received(1).WriteAllBytesAsync(expectedPath, Arg.Any<byte[]>());
+        // Verify atomic write pattern: write to temp, then move to final path
+        await _fileSystem.Received(1).WriteAllBytesAsync(expectedTempPath, Arg.Any<byte[]>());
+        _fileSystem.Received(1).MoveFile(expectedTempPath, expectedPath, false);
     }
 
     /// <summary>
@@ -106,6 +109,7 @@ public class ImageSharpProcessorTests
         var pictureData = CreateTestImageBytes();
         var contentHash = GenerateContentHash(pictureData);
         var expectedPath = Path.Combine(AlbumArtPath, $"{contentHash}.jpg");
+        var expectedTempPath = expectedPath + ".tmp";
         
         // First call - file doesn't exist (needs false for both outer check AND inner double-check)
         // Second call - file exists
@@ -118,8 +122,9 @@ public class ImageSharpProcessorTests
         // Assert - both calls should return the same path
         uri1.Should().Be(expectedPath);
         uri2.Should().Be(expectedPath);
-        // File should only be written once
-        await _fileSystem.Received(1).WriteAllBytesAsync(expectedPath, Arg.Any<byte[]>());
+        // File should only be written once (to temp path, then moved)
+        await _fileSystem.Received(1).WriteAllBytesAsync(expectedTempPath, Arg.Any<byte[]>());
+        _fileSystem.Received(1).MoveFile(expectedTempPath, expectedPath, false);
     }
 
     /// <summary>
@@ -155,8 +160,10 @@ public class ImageSharpProcessorTests
         var pictureData = CreateTestImageBytes();
         var contentHash = GenerateContentHash(pictureData);
         var expectedPath = Path.Combine(AlbumArtPath, $"{contentHash}.jpg");
+        var expectedTempPath = expectedPath + ".tmp";
         _fileSystem.FileExists(expectedPath).Returns(false);
-        _fileSystem.WriteAllBytesAsync(expectedPath, Arg.Any<byte[]>()).ThrowsAsync(new IOException("Disk full"));
+        // Throw on temp file write to simulate disk full
+        _fileSystem.WriteAllBytesAsync(expectedTempPath, Arg.Any<byte[]>()).ThrowsAsync(new IOException("Disk full"));
 
         // Act
         var (uri, lightSwatch, darkSwatch) =
