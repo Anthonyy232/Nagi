@@ -108,7 +108,10 @@
                             IsCacheEnabled="True"
                             Source="{x:Bind ViewModel.ArtistImageUri, Mode=OneWay, FallbackValue=null}"
                             Stretch="UniformToFill"
+                            DecodePixelWidth="160"
+                            DecodePixelType="Logical"
                             Visibility="{x:Bind ViewModel.ArtistImageUri, Mode=OneWay, Converter={StaticResource NullToCollapsedConverter}}" />
+
                         <Grid
                             Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                             CornerRadius="75"
@@ -169,7 +172,10 @@
                                         <controls:ImageEx
                                             IsCacheEnabled="True"
                                             Source="{x:Bind CoverArtUri, FallbackValue=null}"
+                                            DecodePixelWidth="160"
+                                            DecodePixelType="Logical"
                                             Stretch="UniformToFill" />
+
                                     </Border>
                                     <TextBlock
                                         Grid.Row="1"
@@ -343,7 +349,10 @@
                                 <controls:ImageEx
                                     IsCacheEnabled="True"
                                     Stretch="UniformToFill"
+                                    DecodePixelWidth="48"
+                                    DecodePixelType="Logical"
                                     Source="{x:Bind AlbumArtUriFromTrack, FallbackValue=null}" />
+
                             </Border>
                         </Button>
 

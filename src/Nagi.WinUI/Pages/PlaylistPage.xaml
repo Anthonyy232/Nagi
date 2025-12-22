@@ -244,6 +244,8 @@
                                 <controls:ImageEx
                                     IsCacheEnabled="True"
                                     Source="{x:Bind CoverImageUri, Mode=OneWay, FallbackValue=null}"
+                                    DecodePixelWidth="160"
+                                    DecodePixelType="Logical"
                                     Stretch="UniformToFill" />
                             </Border>
                             <Grid
