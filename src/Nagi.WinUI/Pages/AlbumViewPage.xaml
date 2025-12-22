@@ -111,7 +111,10 @@
                     <controls:ImageEx
                         IsCacheEnabled="True"
                         Source="{x:Bind ViewModel.CoverArtUri, Mode=OneWay, FallbackValue=null}"
+                        DecodePixelWidth="160"
+                        DecodePixelType="Logical"
                         Stretch="UniformToFill" />
+
                 </Border>
 
                 <StackPanel Grid.Column="1" Margin="24,0,0,0" VerticalAlignment="Bottom" Spacing="8">
@@ -281,7 +284,10 @@
                                 </Grid.ColumnDefinitions>
                                 <Button Grid.Column="0" Command="{Binding DataContext.PlaySongCommand, ElementName=pageRoot}" CommandParameter="{x:Bind}" Style="{StaticResource SongListViewPageSongPlayButtonStyle}">
                                     <Border Width="42" Height="42" CornerRadius="12" Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                        <controls:ImageEx IsCacheEnabled="True" Stretch="UniformToFill" Source="{x:Bind AlbumArtUriFromTrack, FallbackValue=null}" />
+                                        <controls:ImageEx IsCacheEnabled="True" Stretch="UniformToFill"
+                                                          DecodePixelWidth="48" DecodePixelType="Logical"
+                                                          Source="{x:Bind AlbumArtUriFromTrack, FallbackValue=null}" />
+
                                     </Border>
                                 </Button>
                                 <TextBlock Grid.Column="1" MinWidth="30" HorizontalAlignment="Center" Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}" Text="{x:Bind TrackNumber}" />
@@ -351,7 +357,10 @@
                                 <controls:ImageEx
                                     IsCacheEnabled="True"
                                     Stretch="UniformToFill"
+                                    DecodePixelWidth="48"
+                                    DecodePixelType="Logical"
                                     Source="{x:Bind AlbumArtUriFromTrack, FallbackValue=null}" />
+
                             </Border>
                         </Button>
 

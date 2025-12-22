@@ -101,6 +101,8 @@
                                 <controls:ImageEx
                                     IsCacheEnabled="True"
                                     Stretch="UniformToFill"
+                                    DecodePixelWidth="48"
+                                    DecodePixelType="Logical"
                                     Source="{x:Bind Song.AlbumArtUriFromTrack, FallbackValue=null}" />
                             </Border>
                         </Button>

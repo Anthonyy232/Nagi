@@ -43,6 +43,8 @@
                     <controls:ImageEx x:Name="CoverImagePreview" 
                                       Stretch="UniformToFill" 
                                       IsCacheEnabled="True"
+                                      DecodePixelWidth="100"
+                                      DecodePixelType="Logical"
                                       CornerRadius="8"
                                       Visibility="Collapsed" />
                 </Grid>

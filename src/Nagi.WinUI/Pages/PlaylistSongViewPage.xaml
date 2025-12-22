@@ -226,6 +226,8 @@
                                 <controls:ImageEx
                                     Source="{x:Bind AlbumArtUriFromTrack, FallbackValue=null}"
                                     Stretch="UniformToFill"
+                                    DecodePixelWidth="48"
+                                    DecodePixelType="Logical"
                                     IsCacheEnabled="True" />
                             </Border>
                         </Button>
