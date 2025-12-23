@@ -109,4 +109,10 @@ public interface ILibraryReader
     Task<List<Guid>> SearchAllSongIdsInAlbumAsync(Guid albumId, string searchTerm, SongSortOrder sortOrder);
     Task<List<Guid>> SearchAllSongIdsInPlaylistAsync(Guid playlistId, string searchTerm);
     Task<List<Guid>> SearchAllSongIdsInGenreAsync(Guid genreId, string searchTerm, SongSortOrder sortOrder);
+
+    /// <summary>
+    ///     Gets a song by its ID, including all heavy fields like Lyrics, Comment, and Copyright.
+    ///     Use this method when you need the full song data (e.g., for lyrics display or editing).
+    /// </summary>
+    Task<Song?> GetSongWithFullDataAsync(Guid songId);
 }
