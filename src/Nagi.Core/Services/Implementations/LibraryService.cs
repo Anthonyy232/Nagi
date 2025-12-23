@@ -2827,8 +2827,11 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         {
             // Prevent retry storms by removing failed attempts from cache
             _logger.LogError(ex, "Artist image download failed for artist '{ArtistName}'.", artist.Name);
-            _artistImageProcessingTasks.TryRemove(artist.Id, out _);
             return Task.FromResult<string?>(null);
+        }
+        finally
+        {
+            _artistImageProcessingTasks.TryRemove(artist.Id, out _);
         }
     }
 
