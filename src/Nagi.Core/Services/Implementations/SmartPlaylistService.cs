@@ -24,6 +24,60 @@ public class SmartPlaylistService : ISmartPlaylistService
         _queryBuilder = new SmartPlaylistQueryBuilder();
     }
 
+    /// <summary>
+    ///     Creates a projection of Song entities that excludes heavy, rarely-used fields (Lyrics, Comment, Copyright)
+    ///     while preserving essential metadata and top-level navigation properties.
+    /// </summary>
+    private static IQueryable<Song> ExcludeHeavyFields(IQueryable<Song> query)
+    {
+        return query.Select(s => new Song
+        {
+            Id = s.Id,
+            Title = s.Title,
+            AlbumId = s.AlbumId,
+            Album = s.Album,
+            ArtistId = s.ArtistId,
+            Artist = s.Artist,
+            Composer = s.Composer,
+            FolderId = s.FolderId,
+            Folder = s.Folder,
+            DurationTicks = s.DurationTicks,
+            AlbumArtUriFromTrack = s.AlbumArtUriFromTrack,
+            FilePath = s.FilePath,
+            DirectoryPath = s.DirectoryPath,
+            Year = s.Year,
+            TrackNumber = s.TrackNumber,
+            TrackCount = s.TrackCount,
+            DiscNumber = s.DiscNumber,
+            DiscCount = s.DiscCount,
+            SampleRate = s.SampleRate,
+            Bitrate = s.Bitrate,
+            Channels = s.Channels,
+            DateAddedToLibrary = s.DateAddedToLibrary,
+            FileCreatedDate = s.FileCreatedDate,
+            FileModifiedDate = s.FileModifiedDate,
+            LightSwatchId = s.LightSwatchId,
+            DarkSwatchId = s.DarkSwatchId,
+            Rating = s.Rating,
+            IsLoved = s.IsLoved,
+            PlayCount = s.PlayCount,
+            SkipCount = s.SkipCount,
+            LastPlayedDate = s.LastPlayedDate,
+            // Lyrics = null, -- EXCLUDED (up to 50KB per song)
+            LrcFilePath = s.LrcFilePath,
+            Bpm = s.Bpm,
+            Grouping = s.Grouping,
+            // Copyright = null, -- EXCLUDED (up to 1KB per song)
+            // Comment = null, -- EXCLUDED (up to 1KB per song)
+            Conductor = s.Conductor,
+            MusicBrainzTrackId = s.MusicBrainzTrackId,
+            MusicBrainzReleaseId = s.MusicBrainzReleaseId
+            // Collection navigations (Genres, PlaylistSongs, etc.) are excluded from projections 
+            // as EF Core cannot reliably hydrate them in entity-type Select() calls.
+            // Use GetSongByIdAsync(id) for full data.
+        });
+    }
+
     #region CRUD Operations
 
     /// <inheritdoc />
@@ -323,7 +377,7 @@ public class SmartPlaylistService : ISmartPlaylistService
         if (smartPlaylist is null)
             return Enumerable.Empty<Song>();
 
-        return await _queryBuilder.BuildQuery(context, smartPlaylist, searchTerm).ToListAsync();
+        return await ExcludeHeavyFields(_queryBuilder.BuildQuery(context, smartPlaylist, searchTerm)).ToListAsync();
     }
 
     /// <inheritdoc />
@@ -347,7 +401,7 @@ public class SmartPlaylistService : ISmartPlaylistService
             };
         }
 
-        var query = _queryBuilder.BuildQuery(context, smartPlaylist, searchTerm);
+        var query = ExcludeHeavyFields(_queryBuilder.BuildQuery(context, smartPlaylist, searchTerm));
         var totalCount = await _queryBuilder.BuildCountQuery(context, smartPlaylist, searchTerm).CountAsync();
 
         var pagedData = await query
