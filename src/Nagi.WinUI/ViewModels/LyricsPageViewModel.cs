@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -31,6 +34,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
 
     private static readonly TimeSpan OptimisticUpdateGracePeriod = TimeSpan.FromSeconds(2);
     private readonly IDispatcherService _dispatcherService;
+    private readonly ILibraryReader _libraryReader;
     private readonly ILogger<LyricsPageViewModel> _logger;
     private readonly ILrcService _lrcService;
     private readonly IMusicPlaybackService _playbackService;
@@ -46,11 +50,13 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
         IMusicPlaybackService playbackService,
         IDispatcherService dispatcherService,
         ILrcService lrcService,
+        ILibraryReader libraryReader,
         ILogger<LyricsPageViewModel> logger)
     {
         _playbackService = playbackService;
         _dispatcherService = dispatcherService;
         _lrcService = lrcService;
+        _libraryReader = libraryReader;
         _logger = logger;
 
         _playbackService.TrackChanged += OnPlaybackServiceTrackChanged;
@@ -64,9 +70,21 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
 
     [ObservableProperty] public partial string SongTitle { get; set; } = "No song selected";
 
+    /// <summary>
+    ///     True when synchronized (timed) lyrics are available and being displayed.
+    /// </summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ShowNoLyricsMessage))]
+    [NotifyPropertyChangedFor(nameof(ShowTimedLyrics))]
     public partial bool HasLyrics { get; set; }
+
+    /// <summary>
+    ///     True when only unsynchronized (plain text) lyrics are available.
+    /// </summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowNoLyricsMessage))]
+    [NotifyPropertyChangedFor(nameof(ShowTimedLyrics))]
+    public partial bool HasUnsyncedLyrics { get; set; }
 
     [ObservableProperty] public partial LyricLine? CurrentLine { get; set; }
 
@@ -83,12 +101,22 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
     public partial bool IsLoading { get; set; }
 
     /// <summary>
-    ///     True when the "No timed lyrics found" message should be displayed.
-    ///     This is only when we are not loading and have no lyrics.
+    ///     True when the timed lyrics ListView should be displayed.
     /// </summary>
-    public bool ShowNoLyricsMessage => !HasLyrics && !IsLoading;
+    public bool ShowTimedLyrics => HasLyrics && !HasUnsyncedLyrics;
+
+    /// <summary>
+    ///     True when the "No lyrics found" message should be displayed.
+    ///     This is only when we are not loading and have no lyrics of either type.
+    /// </summary>
+    public bool ShowNoLyricsMessage => !HasLyrics && !HasUnsyncedLyrics && !IsLoading;
 
     public ObservableCollection<LyricLine> LyricLines { get; } = new();
+
+    /// <summary>
+    ///     Collection of unsynchronized lyric lines for display in a ListView-like format.
+    /// </summary>
+    public ObservableCollection<string> UnsyncedLyricLines { get; } = new();
 
     public void Dispose()
     {
@@ -187,18 +215,20 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
         await _dispatcherService.EnqueueAsync(async () =>
         {
             LyricLines.Clear();
+            UnsyncedLyricLines.Clear();
             CurrentLine = null;
             _parsedLrc = null;
             _lrcSearchHint = 0;
             _optimisticallySetLine = null;
             SongDuration = TimeSpan.Zero;
             CurrentPosition = TimeSpan.Zero;
+            HasLyrics = false;
+            HasUnsyncedLyrics = false;
 
             if (song is null)
             {
                 _logger.LogInformation("Clearing lyrics view as playback stopped");
                 SongTitle = "No song selected";
-                HasLyrics = false;
                 return;
             }
 
@@ -211,27 +241,60 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
             IsLoading = true;
             try
             {
+                // 1. Try to get synchronized (timed) lyrics first
                 _parsedLrc = await _lrcService.GetLyricsAsync(song);
 
-                if (_parsedLrc is null || _parsedLrc.IsEmpty)
+                if (_parsedLrc is not null && !_parsedLrc.IsEmpty)
                 {
-                    _logger.LogInformation("No lyrics found for track '{SongTitle}'", song.Title);
-                    HasLyrics = false;
-                }
-                else
-                {
-                    _logger.LogInformation("Successfully parsed lyrics for track '{SongTitle}'", song.Title);
+                    _logger.LogInformation("Successfully parsed synchronized lyrics for track '{SongTitle}'", song.Title);
                     foreach (var line in _parsedLrc.Lines) LyricLines.Add(line);
                     HasLyrics = true;
                     UpdateCurrentLineFromPosition(_playbackService.CurrentPosition);
                     UpdateLineOpacities();
+                    return;
                 }
+
+                // 2. No sync lyrics found - try unsynchronized lyrics fallback
+                // Need to fetch full song data since Lyrics is excluded from queue projections
+                var fullSong = await _libraryReader.GetSongWithFullDataAsync(song.Id);
+                if (fullSong is not null && !string.IsNullOrWhiteSpace(fullSong.Lyrics))
+                {
+                    _logger.LogInformation("Using unsynchronized lyrics fallback for track '{SongTitle}'", song.Title);
+                    var lines = ParseUnsyncedLyricsToLines(fullSong.Lyrics);
+                    foreach (var line in lines) UnsyncedLyricLines.Add(line);
+                    HasUnsyncedLyrics = true;
+                    return;
+                }
+
+                _logger.LogInformation("No lyrics found for track '{SongTitle}'", song.Title);
             }
             finally
             {
                 IsLoading = false;
             }
         });
+    }
+
+    /// <summary>
+    ///     Parses unsynchronized lyrics text into individual lines for display,
+    ///     normalizing line breaks and preserving verse structure with blank lines.
+    /// </summary>
+    private static List<string> ParseUnsyncedLyricsToLines(string rawLyrics)
+    {
+        // Normalize different line ending styles to \n
+        var normalized = rawLyrics
+            .Replace("\r\n", "\n")
+            .Replace("\r", "\n");
+
+        // Collapse multiple consecutive blank lines into double line breaks
+        // This preserves verse separation while cleaning up excessive spacing
+        normalized = Regex.Replace(normalized, @"\n{3,}", "\n\n");
+
+        // Split into lines and trim each line
+        return normalized
+            .Split('\n')
+            .Select(line => line.Trim())
+            .ToList();
     }
 
     private void OnPlaybackServiceTrackChanged()
