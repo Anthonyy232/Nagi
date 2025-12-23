@@ -74,7 +74,10 @@ public class PathConfiguration : IPathConfiguration
     /// <inheritdoc />
     public string LogsDirectory { get; }
 
-    private static bool IsRunningInPackage()
+    /// <summary>
+    ///     Determines if the application is running in a packaged (MSIX) context.
+    /// </summary>
+    public static bool IsRunningInPackage()
     {
         try
         {
