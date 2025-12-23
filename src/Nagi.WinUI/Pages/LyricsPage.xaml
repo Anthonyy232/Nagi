@@ -12,7 +12,6 @@
     <Page.Resources>
         <ResourceDictionary>
             <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-            <converters:BooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" Invert="True" />
             <converters:ActiveLyricToStyleConverter
                 x:Key="ActiveLyricToStyleConverter"
                 ActiveStyle="{StaticResource ActiveLyricTextBlockStyle}"
@@ -54,9 +53,10 @@
             Grid.Row="1"
             Style="{StaticResource LyricsProgressBarStyle}"
             Margin="100,16,100,12"
-            Visibility="{x:Bind ViewModel.HasLyrics, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+            Visibility="{x:Bind ViewModel.ShowTimedLyrics, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
             MaxWidth="600" />
 
+        <!-- Synchronized (timed) lyrics display -->
         <ListView
             x:Name="LyricsListView"
             Grid.Row="2"
@@ -68,7 +68,7 @@
             ItemClick="LyricsListView_ItemClick"
             HorizontalContentAlignment="Stretch"
             ItemContainerStyle="{StaticResource LyricsListViewItemStyle}"
-            Visibility="{x:Bind ViewModel.HasLyrics, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+            Visibility="{x:Bind ViewModel.ShowTimedLyrics, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="core:LyricLine">
                     <TextBlock
@@ -79,6 +79,28 @@
             </ListView.ItemTemplate>
         </ListView>
 
+        <!-- Unsynchronized (plain text) lyrics display -->
+        <ListView
+            Grid.Row="2"
+            Padding="24,0,24,132"
+            ItemsSource="{x:Bind ViewModel.UnsyncedLyricLines, Mode=OneWay}"
+            Background="Transparent"
+            SelectionMode="None"
+            IsItemClickEnabled="False"
+            HorizontalContentAlignment="Stretch"
+            ItemContainerStyle="{StaticResource LyricsListViewItemStyle}"
+            Visibility="{x:Bind ViewModel.HasUnsyncedLyrics, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="x:String">
+                    <TextBlock
+                        Text="{x:Bind}"
+                        Style="{StaticResource InactiveLyricLineStyle}"
+                        Opacity="1.0" />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <!-- No lyrics message -->
         <StackPanel
             Grid.Row="2"
             HorizontalAlignment="Center"
@@ -97,7 +119,7 @@
                 Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
             <TextBlock
                 Style="{StaticResource SubtitleTextBlockStyle}"
-                Text="No timed lyrics found for this track"
+                Text="No lyrics found for this track"
                 HorizontalAlignment="Center" />
             <TextBlock
                 Style="{StaticResource BodyTextBlockStyle}"
