@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
+using Windows.Storage;
 using Windows.UI;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -56,14 +57,75 @@ public partial class App : Application
     private ILogger<App>? _logger;
     private Window? _window;
 
+    // Current version of LibVLC.Windows package - update this when upgrading LibVLC
+    private const string LibVlcVersion = "4.0.0-alpha-20250725";
+
     public App()
     {
         CurrentApp = this;
         InitializeComponent();
+        
+        // Always initialize Core before anything else, especially before creating a LibVLC instance
+        LibVLCSharp.Core.Initialize();
+        
         UnhandledException += OnAppUnhandledException;
         CoreApplication.Suspending += OnSuspending;
-        LibVLCSharp.Core.Initialize();
+        EnsureLibVlcPluginCache();
     }
+
+    /// <summary>
+    ///     Generates the LibVLC plugin cache if it doesn't exist or if the LibVLC version has changed.
+    ///     This dramatically improves LibVLC initialization time on subsequent launches.
+    ///     Note: This is skipped for packaged (MSIX) builds as the installation directory is read-only.
+    /// </summary>
+    private static void EnsureLibVlcPluginCache()
+    {
+        // Skip for packaged builds - the installation directory is read-only in MSIX
+        if (PathConfiguration.IsRunningInPackage())
+        {
+            return;
+        }
+
+        try
+        {
+            var appDataPath = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "Nagi");
+
+            var cacheMarkerPath = Path.Combine(appDataPath, ".libvlc-cache-version");
+
+            // Check if we need to regenerate the cache
+            var needsRegeneration = true;
+            if (File.Exists(cacheMarkerPath))
+            {
+                var cachedVersion = File.ReadAllText(cacheMarkerPath).Trim();
+                needsRegeneration = cachedVersion != LibVlcVersion;
+            }
+
+            if (needsRegeneration)
+            {
+                // We use Log.Information here because the Microsoft.Extensions.Logging system 
+                // might not be fully wired up yet in the constructor sequence.
+                Log.Information("Regenerating LibVLC plugin cache for version {Version}...", LibVlcVersion);
+
+                // Generate the plugin cache - this creates plugins.dat in the libvlc plugins folder
+                using var tempVlc = new LibVLCSharp.LibVLC("--reset-plugins-cache");
+                
+                // Write the version marker so we don't regenerate unnecessarily
+                Directory.CreateDirectory(appDataPath);
+                File.WriteAllText(cacheMarkerPath, LibVlcVersion);
+                
+                Log.Information("LibVLC plugin cache generated successfully.");
+            }
+        }
+        catch (Exception ex)
+        {
+            // Silently fail - plugin cache is an optimization, not required for functionality.
+            // However, we log the failure if possible.
+            Log.Warning(ex, "Failed to generate LibVLC plugin cache. This is non-critical but may affect startup performance.");
+        }
+    }
+
 
     /// <summary>
     ///     Gets the current running App instance.
