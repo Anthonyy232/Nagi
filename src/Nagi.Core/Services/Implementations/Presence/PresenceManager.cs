@@ -44,7 +44,7 @@ public class PresenceManager : IPresenceManager, IDisposable
     public async Task InitializeAsync()
     {
         if (_isInitialized) return;
-        _logger.LogInformation("Initializing Presence Manager.");
+        _logger.LogDebug("Initializing Presence Manager.");
 
         // Activate services based on their initial settings.
         foreach (var service in _presenceServices.Values) await UpdateServiceActivationAsync(service);
@@ -56,7 +56,7 @@ public class PresenceManager : IPresenceManager, IDisposable
     public async Task ShutdownAsync()
     {
         if (!_isInitialized) return;
-        _logger.LogInformation("Shutting down Presence Manager.");
+        _logger.LogDebug("Shutting down Presence Manager.");
 
         UnsubscribeFromEvents();
 
@@ -133,7 +133,7 @@ public class PresenceManager : IPresenceManager, IDisposable
             {
                 await service.InitializeAsync();
                 _activeServices.Add(service);
-                _logger.LogInformation("Activated '{ServiceName}' presence service.", service.Name);
+                _logger.LogDebug("Activated '{ServiceName}' presence service.", service.Name);
 
                 // If a track is already playing, immediately update the newly activated service.
                 if (_currentTrack is not null && _playbackService.CurrentListenHistoryId.HasValue)
@@ -152,7 +152,7 @@ public class PresenceManager : IPresenceManager, IDisposable
                 await service.OnPlaybackStoppedAsync();
                 if (service is IAsyncDisposable asyncDisposable) await asyncDisposable.DisposeAsync();
                 _activeServices.Remove(service);
-                _logger.LogInformation("Deactivated '{ServiceName}' presence service.", service.Name);
+                _logger.LogDebug("Deactivated '{ServiceName}' presence service.", service.Name);
             }
             catch (Exception ex)
             {

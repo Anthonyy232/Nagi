@@ -157,7 +157,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     {
         if (_isDisposed) return;
         _isDisposed = true;
-        _logger.LogInformation("Disposing and unsubscribing from service events");
+        _logger.LogDebug("Disposing and unsubscribing from service events");
         UnsubscribeFromPlaybackServiceEvents();
         UnsubscribeFromSettingsServiceEvents();
         UnsubscribeFromWindowServiceEvents();

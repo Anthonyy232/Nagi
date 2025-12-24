@@ -77,7 +77,7 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
     public async Task InitializeAsync(string title, Guid? playlistId)
     {
         if (IsOverallLoading) return;
-        _logger.LogInformation("Initializing for playlist '{Title}' (ID: {PlaylistId})", title, playlistId);
+        _logger.LogDebug("Initializing for playlist '{Title}' (ID: {PlaylistId})", title, playlistId);
 
         // Unsubscribe before refresh to prevent the handler from firing on the initial load.
         Songs.CollectionChanged -= OnSongsCollectionChanged;
@@ -133,7 +133,7 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         if (!_currentPlaylistId.HasValue || !SelectedSongs.Any()) return;
 
         var songIdsToRemove = SelectedSongs.Select(s => s.Id).ToList();
-        _logger.LogInformation("Removing {SongCount} songs from playlist ID {PlaylistId}", songIdsToRemove.Count,
+        _logger.LogDebug("Removing {SongCount} songs from playlist ID {PlaylistId}", songIdsToRemove.Count,
             _currentPlaylistId.Value);
 
         // Temporarily unsubscribe to prevent reorder logic from firing during removal.
@@ -184,7 +184,7 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         if (!_currentPlaylistId.HasValue || Songs.Count == 0) return;
 
         var orderedSongIds = Songs.Select(s => s.Id).ToList();
-        _logger.LogInformation("Persisting new song order for playlist ID {PlaylistId}", _currentPlaylistId.Value);
+        _logger.LogDebug("Persisting new song order for playlist ID {PlaylistId}", _currentPlaylistId.Value);
         await _playlistService.UpdatePlaylistSongOrderAsync(_currentPlaylistId.Value, orderedSongIds);
     }
 

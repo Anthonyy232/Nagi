@@ -122,7 +122,7 @@ public partial class ArtistViewViewModel : SongListViewModelBase
     public async Task LoadArtistDetailsAsync(Guid artistId)
     {
         if (IsOverallLoading) return;
-        _logger.LogInformation("Loading details for artist ID {ArtistId}", artistId);
+        _logger.LogDebug("Loading details for artist ID {ArtistId}", artistId);
 
         // Ensure we don't attach multiple handlers if this method is called again.
         _libraryScanner.ArtistMetadataUpdated -= OnArtistMetadataUpdated;
@@ -175,7 +175,7 @@ public partial class ArtistViewViewModel : SongListViewModelBase
             foreach (var albumVm in albumVms) Albums.Add(albumVm);
         }
 
-        _logger.LogInformation("Populated details for artist '{ArtistName}' ({ArtistId})", artist.Name, artist.Id);
+        _logger.LogDebug("Populated details for artist '{ArtistName}' ({ArtistId})", artist.Name, artist.Id);
     }
 
     /// <summary>
@@ -220,7 +220,7 @@ public partial class ArtistViewViewModel : SongListViewModelBase
             return;
         }
 
-        _logger.LogInformation("Navigating to album '{AlbumName}' ({AlbumId})", album.Name, album.Id);
+        _logger.LogDebug("Navigating to album '{AlbumName}' ({AlbumId})", album.Name, album.Id);
         _navigationService.Navigate(
             typeof(AlbumViewPage),
             new AlbumViewNavigationParameter { AlbumId = album.Id, AlbumTitle = album.Name, ArtistName = ArtistName });
@@ -234,7 +234,7 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         // Update the image only if it's for the currently displayed artist.
         if (e.ArtistId == _artistId)
         {
-            _logger.LogInformation("Received metadata update for artist ID {ArtistId}", _artistId);
+            _logger.LogDebug("Received metadata update for artist ID {ArtistId}", _artistId);
             // Must be run on the UI thread to update the bound property.
             _dispatcherService.TryEnqueue(() => { ArtistImageUri = e.NewLocalImageCachePath; });
         }
@@ -304,6 +304,6 @@ public partial class ArtistViewViewModel : SongListViewModelBase
 
         // Also unsubscribe from the collection changed event for completeness.
         Albums.CollectionChanged -= (s, e) => OnPropertyChanged(nameof(HasAlbums));
-        _logger.LogInformation("Cleaned up for artist ID {ArtistId}", _artistId);
+        _logger.LogDebug("Cleaned up for artist ID {ArtistId}", _artistId);
     }
 }

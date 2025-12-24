@@ -45,7 +45,7 @@ public class ApiKeyService : IApiKeyService, IDisposable
     /// <inheritdoc />
     public Task<string?> RefreshApiKeyAsync(string keyName, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Forcing refresh for API key '{ApiKeyName}'.", keyName);
+        _logger.LogDebug("Forcing refresh for API key '{ApiKeyName}'.", keyName);
         _cachedApiKeys.TryRemove(keyName, out _);
         return GetApiKeyAsync(keyName, cancellationToken);
     }
@@ -81,7 +81,7 @@ public class ApiKeyService : IApiKeyService, IDisposable
         if (!serverUrl.StartsWith("http://") && !serverUrl.StartsWith("https://")) serverUrl = "https://" + serverUrl;
 
         var endpoint = $"{serverUrl.TrimEnd('/')}/api/{keyName}-key";
-        _logger.LogInformation("Fetching API key '{ApiKeyName}' from server: {Endpoint}", keyName, endpoint);
+        _logger.LogDebug("Fetching API key '{ApiKeyName}' from server: {Endpoint}", keyName, endpoint);
 
         try
         {
@@ -116,7 +116,7 @@ public class ApiKeyService : IApiKeyService, IDisposable
                 return null;
             }
 
-            _logger.LogInformation("Successfully fetched API key '{ApiKeyName}'.", keyName);
+            _logger.LogDebug("Successfully fetched API key '{ApiKeyName}'.", keyName);
             return finalKey;
         }
         catch (OperationCanceledException)

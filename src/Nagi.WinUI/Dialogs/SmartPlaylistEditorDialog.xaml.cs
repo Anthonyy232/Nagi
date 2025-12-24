@@ -96,7 +96,7 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
 
     private void OnDialogLoaded(object sender, RoutedEventArgs e)
     {
-        _logger.LogInformation("SmartPlaylistEditorDialog loaded. EditingPlaylist: {EditingPlaylistId}",
+        _logger.LogDebug("SmartPlaylistEditorDialog loaded. EditingPlaylist: {EditingPlaylistId}",
             EditingPlaylist?.Id.ToString() ?? "null (creating new)");
 
         if (EditingPlaylist != null)
@@ -159,7 +159,7 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
         var file = await picker.PickSingleFileAsync();
         if (file != null)
         {
-            _logger.LogInformation("User picked image file: {FilePath}", file.Path);
+            _logger.LogDebug("User picked image file: {FilePath}", file.Path);
             _selectedCoverImageUri = file.Path;
             CoverImagePreview.Source = file.Path;
             CoverImagePreview.Visibility = Visibility.Visible;

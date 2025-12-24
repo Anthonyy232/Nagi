@@ -225,7 +225,7 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
                 if (songList.Count == 0)
                 {
                     StatusMessage = "No songs match this smart playlist's rules.";
-                    _logger.LogInformation("Smart playlist {PlaylistId} has no matching songs", playlistId);
+                    _logger.LogDebug("Smart playlist {PlaylistId} has no matching songs", playlistId);
                     return;
                 }
                 await _musicPlaybackService.PlayAsync(songList);

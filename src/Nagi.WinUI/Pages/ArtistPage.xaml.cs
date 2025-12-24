@@ -30,7 +30,7 @@ public sealed partial class ArtistPage : Page
         DataContext = ViewModel;
 
         Loaded += OnPageLoaded;
-        _logger.LogInformation("ArtistPage initialized.");
+        _logger.LogDebug("ArtistPage initialized.");
     }
 
     /// <summary>
@@ -45,20 +45,20 @@ public sealed partial class ArtistPage : Page
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
-        _logger.LogInformation("Navigated to ArtistPage.");
+        _logger.LogDebug("Navigated to ArtistPage.");
         _cancellationTokenSource = new CancellationTokenSource();
 
         if (ViewModel.Artists.Count == 0)
         {
-            _logger.LogInformation("Artist collection is empty, loading artists...");
+            _logger.LogDebug("Artist collection is empty, loading artists...");
             try
             {
                 await ViewModel.LoadArtistsAsync(_cancellationTokenSource.Token);
-                _logger.LogInformation("Successfully loaded artists.");
+                _logger.LogDebug("Successfully loaded artists.");
             }
             catch (TaskCanceledException)
             {
-                _logger.LogInformation("Artist loading was cancelled.");
+                _logger.LogDebug("Artist loading was cancelled.");
             }
             catch (Exception ex)
             {
@@ -67,7 +67,7 @@ public sealed partial class ArtistPage : Page
         }
         else
         {
-            _logger.LogInformation("Artists already loaded, skipping fetch.");
+            _logger.LogDebug("Artists already loaded, skipping fetch.");
         }
     }
 
@@ -79,7 +79,7 @@ public sealed partial class ArtistPage : Page
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
-        _logger.LogInformation("Navigating away from ArtistPage.");
+        _logger.LogDebug("Navigating away from ArtistPage.");
 
         if (_cancellationTokenSource is { IsCancellationRequested: false })
         {
@@ -137,7 +137,7 @@ public sealed partial class ArtistPage : Page
         if (_isSearchExpanded) return;
 
         _isSearchExpanded = true;
-        _logger.LogInformation("Search UI expanded.");
+        _logger.LogDebug("Search UI expanded.");
         ToolTipService.SetToolTip(SearchToggleButton, "Close search");
         VisualStateManager.GoToState(this, "SearchExpanded", true);
 
@@ -159,7 +159,7 @@ public sealed partial class ArtistPage : Page
         if (!_isSearchExpanded) return;
 
         _isSearchExpanded = false;
-        _logger.LogInformation("Search UI collapsed and search term cleared.");
+        _logger.LogDebug("Search UI collapsed and search term cleared.");
         ToolTipService.SetToolTip(SearchToggleButton, "Search artists");
         VisualStateManager.GoToState(this, "SearchCollapsed", true);
         ViewModel.SearchTerm = string.Empty;
@@ -173,7 +173,7 @@ public sealed partial class ArtistPage : Page
     {
         if (e.ClickedItem is ArtistViewModelItem clickedArtist)
         {
-            _logger.LogInformation(
+            _logger.LogDebug(
                 "User clicked on artist '{ArtistName}' (Id: {ArtistId}). Navigating to detail view.",
                 clickedArtist.Name, clickedArtist.Id);
             ViewModel.NavigateToArtistDetail(clickedArtist);

@@ -206,7 +206,7 @@ public partial class ArtistViewModel : ObservableObject, IDisposable
         }
         catch (OperationCanceledException)
         {
-            _logger.LogInformation("Artist loading was canceled.");
+            _logger.LogDebug("Artist loading was canceled.");
         }
         catch (Exception ex)
         {

@@ -55,6 +55,10 @@ public class TagLibMetadataServiceTests : IDisposable
 
     public void Dispose()
     {
+        // Force garbage collection to release any file handles held by TagLib or FileInfo
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
+
         try
         {
             if (Directory.Exists(_tempDirectory)) Directory.Delete(_tempDirectory, true);

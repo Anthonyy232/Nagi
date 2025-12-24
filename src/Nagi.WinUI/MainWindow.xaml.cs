@@ -165,7 +165,7 @@ public sealed partial class MainWindow : Window
             {
                 var size = _appWindow.Size;
                 await _settingsService.SetLastWindowSizeAsync(size.Width, size.Height);
-                _logger?.LogInformation("Saved window size: {Width}x{Height}", size.Width, size.Height);
+                _logger?.LogDebug("Saved window size: {Width}x{Height}", size.Width, size.Height);
             }
         }
         catch (Exception ex)
@@ -273,7 +273,7 @@ public sealed partial class MainWindow : Window
                     var width = Math.Max(savedSize.Value.Width, 400);
                     var height = Math.Max(savedSize.Value.Height, 300);
                     _appWindow.Resize(new SizeInt32(width, height));
-                    _logger?.LogInformation("Restored window size: {Width}x{Height}", width, height);
+                    _logger?.LogDebug("Restored window size: {Width}x{Height}", width, height);
                 }
             }
         }

@@ -28,7 +28,7 @@ public sealed partial class PlaylistSongViewPage : Page
         DataContext = ViewModel;
 
         Loaded += OnPageLoaded;
-        _logger.LogInformation("PlaylistSongViewPage initialized.");
+        _logger.LogDebug("PlaylistSongViewPage initialized.");
     }
 
     public PlaylistSongListViewModel ViewModel { get; }
@@ -36,13 +36,13 @@ public sealed partial class PlaylistSongViewPage : Page
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
-        _logger.LogInformation("Navigated to PlaylistSongViewPage.");
+        _logger.LogDebug("Navigated to PlaylistSongViewPage.");
 
         try
         {
             if (e.Parameter is PlaylistSongViewNavigationParameter navParam)
             {
-                _logger.LogInformation("Loading songs for playlist '{PlaylistName}' (Id: {PlaylistId}).",
+                _logger.LogDebug("Loading songs for playlist '{PlaylistName}' (Id: {PlaylistId}).",
                     navParam.Title,
                     navParam.PlaylistId);
                 await ViewModel.InitializeAsync(navParam.Title, navParam.PlaylistId);
@@ -65,7 +65,7 @@ public sealed partial class PlaylistSongViewPage : Page
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
-        _logger.LogInformation("Navigating away from PlaylistSongViewPage. Cleaning up ViewModel.");
+        _logger.LogDebug("Navigating away from PlaylistSongViewPage. Cleaning up ViewModel.");
         ViewModel.Cleanup();
     }
 
@@ -99,7 +99,7 @@ public sealed partial class PlaylistSongViewPage : Page
         if (_isSearchExpanded) return;
 
         _isSearchExpanded = true;
-        _logger.LogInformation("Search UI expanded.");
+        _logger.LogDebug("Search UI expanded.");
         ToolTipService.SetToolTip(SearchToggleButton, "Close search");
         VisualStateManager.GoToState(this, "SearchExpanded", true);
 
@@ -118,7 +118,7 @@ public sealed partial class PlaylistSongViewPage : Page
         if (!_isSearchExpanded) return;
 
         _isSearchExpanded = false;
-        _logger.LogInformation("Search UI collapsed and search term cleared.");
+        _logger.LogDebug("Search UI collapsed and search term cleared.");
         ToolTipService.SetToolTip(SearchToggleButton, "Search library");
         VisualStateManager.GoToState(this, "SearchCollapsed", true);
         ViewModel.SearchTerm = string.Empty;
@@ -137,7 +137,7 @@ public sealed partial class PlaylistSongViewPage : Page
     {
         if (e.OriginalSource is FrameworkElement { DataContext: Song tappedSong })
         {
-            _logger.LogInformation("User double-tapped song '{SongTitle}' (Id: {SongId}). Executing play command.",
+            _logger.LogDebug("User double-tapped song '{SongTitle}' (Id: {SongId}). Executing play command.",
                 tappedSong.Title, tappedSong.Id);
             ViewModel.PlaySongCommand.Execute(tappedSong);
         }

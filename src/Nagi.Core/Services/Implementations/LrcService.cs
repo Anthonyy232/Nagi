@@ -88,7 +88,7 @@ public class LrcService : ILrcService
             var cachedLrcPath = _fileSystemService.Combine(_pathConfig.LrcCachePath, cacheFileName);
 
             await _fileSystemService.WriteAllTextAsync(cachedLrcPath, lrcContent);
-            _logger.LogInformation("Cached online lyrics for song {SongId} to {Path}", song.Id, cachedLrcPath);
+            _logger.LogDebug("Cached online lyrics for song {SongId} to {Path}", song.Id, cachedLrcPath);
 
             // Update the database only if the path has changed
             if (song.LrcFilePath != cachedLrcPath)

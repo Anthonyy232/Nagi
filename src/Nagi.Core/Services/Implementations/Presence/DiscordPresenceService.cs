@@ -39,14 +39,14 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
             // Initialize the client if it hasn't been or if it was previously disposed.
             if (_client == null || _client.IsDisposed)
             {
-                _logger.LogInformation("Initializing new Discord RPC client.");
+                _logger.LogDebug("Initializing new Discord RPC client.");
                 _client = new DiscordRpcClient(_discordAppId);
                 _client.OnError += OnRpcError;
                 _client.Initialize();
             }
             else if (!_client.IsInitialized)
             {
-                _logger.LogInformation("Re-initializing existing Discord RPC client.");
+                _logger.LogDebug("Re-initializing existing Discord RPC client.");
                 _client.Initialize();
             }
         }
@@ -62,7 +62,7 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
     {
         if (_client is not { IsInitialized: true }) return Task.CompletedTask;
 
-        _logger.LogInformation("Updating Discord presence for new track: {TrackTitle}", song.Title);
+        _logger.LogDebug("Updating Discord presence for new track: {TrackTitle}", song.Title);
         _currentSong = song;
         _currentProgress = TimeSpan.Zero;
 
@@ -77,7 +77,7 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
     {
         if (_client is not { IsInitialized: true } || _currentSong is null) return Task.CompletedTask;
 
-        _logger.LogInformation("Updating Discord presence for playback state change. IsPlaying: {IsPlaying}",
+        _logger.LogDebug("Updating Discord presence for playback state change. IsPlaying: {IsPlaying}",
             isPlaying);
 
         if (isPlaying)
@@ -94,7 +94,7 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
 
     public Task OnPlaybackStoppedAsync()
     {
-        _logger.LogInformation("Clearing Discord presence due to playback stop.");
+        _logger.LogDebug("Clearing Discord presence due to playback stop.");
         _currentSong = null;
         _currentProgress = TimeSpan.Zero;
         _timestamps = null;
@@ -114,7 +114,7 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
     {
         if (_client is not null)
         {
-            _logger.LogInformation("Disposing Discord RPC client.");
+            _logger.LogDebug("Disposing Discord RPC client.");
             _client.OnError -= OnRpcError;
             if (!_client.IsDisposed) _client.Dispose();
             _client = null;

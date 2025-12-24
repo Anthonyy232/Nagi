@@ -31,6 +31,7 @@ using Nagi.WinUI.Services.Abstractions;
 using Nagi.WinUI.Services.Implementations;
 using Nagi.WinUI.ViewModels;
 using Serilog;
+using Serilog.Events;
 using WinRT;
 using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
 using UnhandledExceptionEventArgs = Microsoft.UI.Xaml.UnhandledExceptionEventArgs;
@@ -70,7 +71,6 @@ public partial class App : Application
         
         UnhandledException += OnAppUnhandledException;
         CoreApplication.Suspending += OnSuspending;
-        EnsureLibVlcPluginCache();
     }
 
     /// <summary>
@@ -170,18 +170,28 @@ public partial class App : Application
             .Build();
         var tempPathConfig = new PathConfiguration(configuration);
 
-        var sessionId = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-        _currentLogFilePath = Path.Combine(tempPathConfig.LogsDirectory, $"log-{sessionId}.txt");
+        _currentLogFilePath = Path.Combine(tempPathConfig.LogsDirectory, "log.txt");
 
         Log.Logger = new LoggerConfiguration()
-            .ReadFrom.Configuration(configuration)
+            .MinimumLevel.Information()
+            .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+            .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
+            .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Warning)
+            .MinimumLevel.Override("Microsoft.EntityFrameworkCore.Database.Command", LogEventLevel.Warning)
+            .Enrich.FromLogContext()
+            .Enrich.WithThreadId()
+            .WriteTo.Debug()
             .WriteTo.File(_currentLogFilePath,
                 rollingInterval: RollingInterval.Day,
-                retainedFileCountLimit: 14,
+                retainedFileCountLimit: 7,
+                fileSizeLimitBytes: 10 * 1024 * 1024,
+                rollOnFileSizeLimit: true,
                 outputTemplate:
                 "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] [{ThreadId}] {Message:lj}{NewLine}{Exception}")
             .WriteTo.Sink(MemoryLog.Instance)
             .CreateLogger();
+
+        EnsureLibVlcPluginCache();
 
         try
         {
@@ -563,7 +573,7 @@ public partial class App : Application
         {
             if (_window is MainWindow mainWindow)
             {
-                _logger?.LogInformation("Saving window size...");
+                _logger?.LogDebug("Saving window size...");
                 await mainWindow.SaveWindowSizeAsync();
                 mainWindow.Cleanup();
             }

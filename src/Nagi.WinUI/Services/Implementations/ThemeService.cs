@@ -31,13 +31,13 @@ public class ThemeService : IThemeService
 
     public void ApplyTheme(ElementTheme theme)
     {
-        _logger.LogInformation("Applying application theme: {Theme}", theme);
+        _logger.LogDebug("Applying application theme: {Theme}", theme);
         _app.ApplyThemeInternal(theme);
     }
 
     public void ReapplyCurrentDynamicTheme()
     {
-        _logger.LogInformation("Reapplying current dynamic theme.");
+        _logger.LogDebug("Reapplying current dynamic theme.");
         var currentTrack = _playbackService.Value.CurrentTrack;
         if (currentTrack is not null)
         {
@@ -83,7 +83,7 @@ public class ThemeService : IThemeService
 
     public void ActivateDefaultPrimaryColor()
     {
-        _logger.LogInformation("Activating default primary color.");
+        _logger.LogDebug("Activating default primary color.");
         _app.SetAppPrimaryColorBrushColor(App.SystemAccentColor);
     }
 }

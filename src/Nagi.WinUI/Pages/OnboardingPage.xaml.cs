@@ -23,7 +23,7 @@ public sealed partial class OnboardingPage : Page, ICustomTitleBarProvider
         DataContext = ViewModel;
         Loaded += OnboardingPage_Loaded;
         Unloaded += OnboardingPage_Unloaded;
-        _logger.LogInformation("OnboardingPage initialized.");
+        _logger.LogDebug("OnboardingPage initialized.");
     }
 
     /// <summary>
@@ -43,7 +43,7 @@ public sealed partial class OnboardingPage : Page, ICustomTitleBarProvider
 
     private void OnboardingPage_Loaded(object sender, RoutedEventArgs e)
     {
-        _logger.LogInformation("OnboardingPage loaded.");
+        _logger.LogDebug("OnboardingPage loaded.");
         VisualStateManager.GoToState(this, "PageLoaded", true);
         ViewModel.PropertyChanged += ViewModel_PropertyChanged;
         UpdateVisualState(ViewModel.IsAnyOperationInProgress);
@@ -51,7 +51,7 @@ public sealed partial class OnboardingPage : Page, ICustomTitleBarProvider
 
     private void OnboardingPage_Unloaded(object sender, RoutedEventArgs e)
     {
-        _logger.LogInformation("OnboardingPage unloaded.");
+        _logger.LogDebug("OnboardingPage unloaded.");
         ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
     }
 

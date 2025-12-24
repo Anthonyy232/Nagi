@@ -39,7 +39,7 @@ public class LastFmPresenceService : IPresenceService, IAsyncDisposable
 
     public async Task InitializeAsync()
     {
-        _logger.LogInformation("Initializing Last.fm Presence Service.");
+        _logger.LogDebug("Initializing Last.fm Presence Service.");
         _settingsService.LastFmSettingsChanged += OnSettingsChanged;
         await UpdateLocalSettingsAsync();
     }
@@ -91,14 +91,14 @@ public class LastFmPresenceService : IPresenceService, IAsyncDisposable
 
             // Mark as eligible in the database. This allows an offline service to scrobble it later if real-time fails.
             await _libraryWriter.MarkListenAsEligibleForScrobblingAsync(_currentListenHistoryId.Value);
-            _logger.LogInformation("Track '{TrackTitle}' is now eligible for scrobbling.", _currentSong.Title);
+            _logger.LogDebug("Track '{TrackTitle}' is now eligible for scrobbling.", _currentSong.Title);
 
             // Attempt to scrobble immediately for a real-time experience.
             try
             {
                 if (await _scrobblerService.ScrobbleAsync(_currentSong, _playbackStartTime))
                 {
-                    _logger.LogInformation("Successfully scrobbled track '{TrackTitle}' in real-time.",
+                    _logger.LogDebug("Successfully scrobbled track '{TrackTitle}' in real-time.",
                         _currentSong.Title);
                     await _libraryWriter.MarkListenAsScrobbledAsync(_currentListenHistoryId.Value);
                 }
@@ -129,7 +129,7 @@ public class LastFmPresenceService : IPresenceService, IAsyncDisposable
     {
         _isNowPlayingEnabled = await _settingsService.GetLastFmNowPlayingEnabledAsync();
         _isScrobblingEnabled = await _settingsService.GetLastFmScrobblingEnabledAsync();
-        _logger.LogInformation(
+        _logger.LogDebug(
             "Updated Last.fm settings. Now Playing: {IsNowPlayingEnabled}, Scrobbling: {IsScrobblingEnabled}",
             _isNowPlayingEnabled, _isScrobblingEnabled);
     }

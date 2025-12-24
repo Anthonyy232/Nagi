@@ -126,7 +126,7 @@ public abstract partial class SongListViewModelBase : ObservableObject
             IsOverallLoading = true;
         }
 
-        _logger.LogInformation("Starting song refresh. Paging: {IsPagingSupported}", IsPagingSupported);
+        _logger.LogDebug("Starting song refresh. Paging: {IsPagingSupported}", IsPagingSupported);
         // Cancel any previous loading task, as it's now obsolete.
         _pagedLoadCts?.Cancel();
 
@@ -134,7 +134,7 @@ public abstract partial class SongListViewModelBase : ObservableObject
             Enum.TryParse<SongSortOrder>(sortOrderString, true, out var newSortOrder))
         {
             CurrentSortOrder = newSortOrder;
-            _logger.LogInformation("Sort order changed to '{SortOrder}'", CurrentSortOrder);
+            _logger.LogDebug("Sort order changed to '{SortOrder}'", CurrentSortOrder);
         }
 
         UpdateSortOrderButtonText(CurrentSortOrder);
@@ -219,7 +219,7 @@ public abstract partial class SongListViewModelBase : ObservableObject
         }
         catch (TaskCanceledException)
         {
-            _logger.LogInformation("Automatic page loading was cancelled");
+            _logger.LogDebug("Automatic page loading was cancelled");
         }
         catch (Exception ex)
         {
@@ -369,7 +369,7 @@ public abstract partial class SongListViewModelBase : ObservableObject
     {
         var targetSong = song ?? SelectedSongs.FirstOrDefault();
         if (targetSong?.AlbumId == null || targetSong.Album == null) return;
-        _logger.LogInformation("Navigating to album '{AlbumTitle}' ({AlbumId})", targetSong.Album.Title,
+        _logger.LogDebug("Navigating to album '{AlbumTitle}' ({AlbumId})", targetSong.Album.Title,
             targetSong.Album.Id);
         var navParam = new AlbumViewNavigationParameter
         {
@@ -385,7 +385,7 @@ public abstract partial class SongListViewModelBase : ObservableObject
     {
         var targetSong = song ?? SelectedSongs.FirstOrDefault();
         if (targetSong?.ArtistId == null || targetSong.Artist == null) return;
-        _logger.LogInformation("Navigating to artist '{ArtistName}' ({ArtistId})", targetSong.Artist.Name,
+        _logger.LogDebug("Navigating to artist '{ArtistName}' ({ArtistId})", targetSong.Artist.Name,
             targetSong.Artist.Id);
         var navParam = new ArtistViewNavigationParameter
         {

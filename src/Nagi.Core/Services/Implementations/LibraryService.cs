@@ -415,7 +415,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         }
         catch (OperationCanceledException)
         {
-            _logger.LogInformation("Scan for folder ID {FolderId} was cancelled before acquiring semaphore.", folderId);
+            _logger.LogDebug("Scan for folder ID {FolderId} was cancelled before acquiring semaphore.", folderId);
             progress?.Report(new ScanProgress { StatusText = "Scan cancelled by user.", Percentage = 100 });
             return false;
         }
@@ -574,7 +574,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 }
                 catch (OperationCanceledException)
                 {
-                    _logger.LogInformation("Scan for folder ID {FolderId} was cancelled.", folderId);
+                    _logger.LogDebug("Scan for folder ID {FolderId} was cancelled.", folderId);
                     progress?.Report(new ScanProgress { StatusText = "Scan cancelled by user.", Percentage = 100 });
                     return false;
                 }
@@ -589,7 +589,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         }
         catch (OperationCanceledException)
         {
-            _logger.LogInformation("Scan for folder ID {FolderId} was cancelled during execution.", folderId);
+            _logger.LogDebug("Scan for folder ID {FolderId} was cancelled during execution.", folderId);
             progress?.Report(new ScanProgress { StatusText = "Scan cancelled by user.", Percentage = 100 });
             return false;
         }
@@ -609,7 +609,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         if (totalFolders == 0)
         {
-            _logger.LogInformation("No folders found in the library to refresh.");
+            _logger.LogDebug("No folders found in the library to refresh.");
             progress?.Report(
                 new ScanProgress { StatusText = "No folders in the library to refresh.", Percentage = 100 });
             return false;
@@ -734,7 +734,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             }
             catch (OperationCanceledException)
             {
-                _logger.LogInformation("Artist metadata background fetch was cancelled.");
+                _logger.LogDebug("Artist metadata background fetch was cancelled.");
             }
             finally
             {

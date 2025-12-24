@@ -39,7 +39,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
         _logger = logger;
 
-        _logger.LogInformation("Initializing LibVLC core.");
+        _logger.LogDebug("Initializing LibVLC core.");
 
         var vlcOptions = new[]
         {
@@ -83,7 +83,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     {
         try
         {
-            _logger.LogInformation("Initializing System Media Transport Controls (SMTC).");
+            _logger.LogDebug("Initializing System Media Transport Controls (SMTC).");
             _smtc = _dummyMediaPlayer.SystemMediaTransportControls;
             _smtc.IsPlayEnabled = true;
             _smtc.IsPauseEnabled = true;
@@ -92,7 +92,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
             _smtc.ButtonPressed += OnSmtcButtonPressed;
             _smtc.IsEnabled = true;
             _smtc.PlaybackStatus = MediaPlaybackStatus.Stopped;
-            _logger.LogInformation("SMTC initialized successfully.");
+            _logger.LogDebug("SMTC initialized successfully.");
         }
         catch (Exception ex)
         {
@@ -119,7 +119,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         _currentSong = song;
         try
         {
-            _logger.LogInformation("Loading media for song '{SongTitle}' from path: {FilePath}", song.Title,
+            _logger.LogDebug("Loading media for song '{SongTitle}' from path: {FilePath}", song.Title,
                 song.FilePath);
 
             // Dispose previous media if it exists
@@ -194,7 +194,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     {
         if (_isDisposed) return Task.CompletedTask;
 
-        _logger.LogInformation("Stop command received.");
+        _logger.LogDebug("Stop command received.");
         _mediaPlayer.Stop();
         _currentSong = null;
 
@@ -294,7 +294,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         _disposeCts.Cancel();
         _disposeCts.Dispose();
 
-        _logger.LogInformation("Disposing LibVlcAudioPlayerService.");
+        _logger.LogDebug("Disposing LibVlcAudioPlayerService.");
         _mediaPlayer.PositionChanged -= OnMediaPlayerPositionChanged;
         _mediaPlayer.Playing -= OnMediaPlayerStateChanged;
         _mediaPlayer.Paused -= OnMediaPlayerStateChanged;
@@ -392,7 +392,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
             StateChanged?.Invoke();
             if (_mediaPlayer.State == VLCState.Stopped && _currentSong is not null)
             {
-                _logger.LogInformation("Detected natural end of playback for song '{SongTitle}'.", _currentSong.Title);
+                _logger.LogDebug("Detected natural end of playback for song '{SongTitle}'.", _currentSong.Title);
                 PlaybackEnded?.Invoke();
             }
         });
@@ -479,7 +479,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
 
         try
         {
-            _logger.LogInformation("Updating SMTC display for track '{SongTitle}'.", _currentSong.Title);
+            _logger.LogDebug("Updating SMTC display for track '{SongTitle}'.", _currentSong.Title);
             var updater = _smtc.DisplayUpdater;
             updater.Type = MediaPlaybackType.Music;
             updater.MusicProperties.Title = _currentSong.Title ?? string.Empty;

@@ -118,7 +118,7 @@ public class Win32InteropService : IWin32InteropService
         catch (EntryPointNotFoundException)
         {
             // Fallback for older OS versions.
-            _logger.LogInformation("GetDpiForWindow not found. Falling back to GetDeviceCaps for older OS.");
+            _logger.LogDebug("GetDpiForWindow not found. Falling back to GetDeviceCaps for older OS.");
             var hdc = NativeMethods.GetDC(hwnd);
             if (hdc != IntPtr.Zero)
                 try

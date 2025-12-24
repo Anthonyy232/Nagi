@@ -79,11 +79,11 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
     {
         if (_isInitialized)
         {
-            _logger.LogInformation("MusicPlaybackService is already initialized.");
+            _logger.LogDebug("MusicPlaybackService is already initialized.");
             return;
         }
 
-        _logger.LogInformation("Initializing MusicPlaybackService...");
+        _logger.LogDebug("Initializing MusicPlaybackService...");
 
         try
         {
@@ -109,7 +109,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
 
             if (!restoredSuccessfully) ClearQueuesInternal();
 
-            _logger.LogInformation("MusicPlaybackService initialized successfully. Session restored: {IsRestored}",
+            _logger.LogDebug("MusicPlaybackService initialized successfully. Session restored: {IsRestored}",
                 restoredSuccessfully);
         }
         catch (Exception ex)
@@ -136,7 +136,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
 
     public async Task PlayTransientFileAsync(string filePath)
     {
-        _logger.LogInformation("Playing transient file: {FilePath}", filePath);
+        _logger.LogDebug("Playing transient file: {FilePath}", filePath);
         var metadata = await _metadataService.ExtractMetadataAsync(filePath);
 
         var transientSong = new Song
@@ -168,7 +168,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
     {
         if (song == null) return;
 
-        _logger.LogInformation("Playing single song: '{SongTitle}' ({SongId})", song.Title, song.Id);
+        _logger.LogDebug("Playing single song: '{SongTitle}' ({SongId})", song.Title, song.Id);
         _playbackQueue = new List<Song> { song };
         if (IsShuffleEnabled)
             _shuffledQueue = new List<Song> { song };
@@ -192,7 +192,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
             return;
         }
 
-        _logger.LogInformation(
+        _logger.LogDebug(
             "Playing a new queue of {SongCount} songs. Start index: {StartIndex}, Shuffled: {IsShuffled}",
             songList.Count, startIndex, startShuffled);
 
@@ -393,7 +393,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         if (IsShuffleEnabled == enable) return;
 
         IsShuffleEnabled = enable;
-        _logger.LogInformation("Shuffle mode set to {ShuffleState}", IsShuffleEnabled);
+        _logger.LogDebug("Shuffle mode set to {ShuffleState}", IsShuffleEnabled);
         if (IsShuffleEnabled)
         {
             GenerateShuffledQueue();
@@ -421,7 +421,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         if (CurrentRepeatMode == mode) return;
 
         CurrentRepeatMode = mode;
-        _logger.LogInformation("Repeat mode set to {RepeatMode}", CurrentRepeatMode);
+        _logger.LogDebug("Repeat mode set to {RepeatMode}", CurrentRepeatMode);
         await _settingsService.SaveRepeatModeAsync(CurrentRepeatMode);
         RepeatModeChanged?.Invoke();
         UpdateSmtcControls();
@@ -516,7 +516,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
 
         if (isRemovingCurrentTrack)
         {
-            _logger.LogInformation("Removing currently playing song '{SongTitle}' from queue.", song.Title);
+            _logger.LogDebug("Removing currently playing song '{SongTitle}' from queue.", song.Title);
             await _audioPlayer.StopAsync();
             _playbackQueue.RemoveAt(originalIndex);
             if (IsShuffleEnabled) _shuffledQueue.Remove(song);
@@ -599,7 +599,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
             }
         }
 
-        _logger.LogInformation("Now playing '{SongTitle}' (Index: {QueueIndex}, Shuffled Index: {ShuffledIndex})",
+        _logger.LogDebug("Now playing '{SongTitle}' (Index: {QueueIndex}, Shuffled Index: {ShuffledIndex})",
             CurrentTrack.Title, CurrentQueueIndex, _currentShuffledIndex);
         await _audioPlayer.LoadAsync(CurrentTrack);
         await _audioPlayer.PlayAsync();
@@ -609,7 +609,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
     public async Task ClearQueueAsync()
     {
         if (!_playbackQueue.Any()) return;
-        _logger.LogInformation("Clearing playback queue.");
+        _logger.LogDebug("Clearing playback queue.");
         await StopAsync();
         ClearQueuesInternal();
         QueueChanged?.Invoke();
@@ -686,7 +686,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
     /// </summary>
     private async Task<bool> RestoreInternalPlaybackStateAsync(PlaybackState state)
     {
-        _logger.LogInformation("Attempting to restore previous playback state.");
+        _logger.LogDebug("Attempting to restore previous playback state.");
         var songIds = new HashSet<Guid>(state.PlaybackQueueTrackIds ?? Enumerable.Empty<Guid>());
         if (!songIds.Any()) return false;
 

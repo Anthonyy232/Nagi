@@ -54,7 +54,7 @@ internal sealed class WindowsSystemDispatcherQueueHelper : IDisposable
         // Create a new DispatcherQueueController for the current thread if one hasn't been created.
         if (_dispatcherQueueController is null)
         {
-            Logger.LogInformation("Creating a new DispatcherQueue for the current thread.");
+            Logger.LogDebug("Creating a new DispatcherQueue for the current thread.");
             var options = new DispatcherQueueOptions
             {
                 dwSize = (uint)Marshal.SizeOf<DispatcherQueueOptions>(),

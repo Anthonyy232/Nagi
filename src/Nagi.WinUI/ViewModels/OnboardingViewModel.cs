@@ -57,7 +57,7 @@ public partial class OnboardingViewModel : ObservableObject
 
             if (folderPath != null)
             {
-                _logger.LogInformation("User selected folder '{FolderPath}' for onboarding", folderPath);
+                _logger.LogDebug("User selected folder '{FolderPath}' for onboarding", folderPath);
                 IsAddingFolder = false;
                 IsParsing = true;
                 StatusMessage = "Building your library...";
@@ -77,7 +77,7 @@ public partial class OnboardingViewModel : ObservableObject
             }
             else
             {
-                _logger.LogInformation("User cancelled folder selection during onboarding");
+                _logger.LogDebug("User cancelled folder selection during onboarding");
                 StatusMessage = InitialWelcomeMessage;
             }
         }

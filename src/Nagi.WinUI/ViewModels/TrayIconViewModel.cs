@@ -69,7 +69,7 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable
     {
         if (_isDisposed) return;
 
-        _logger.LogInformation("Disposing and unsubscribing from events");
+        _logger.LogDebug("Disposing and unsubscribing from events");
         _windowService.Closing -= OnAppWindowClosing;
         _windowService.VisibilityChanged -= OnAppWindowVisibilityChanged;
         _settingsService.HideToTraySettingChanged -= OnHideToTraySettingChanged;
@@ -90,7 +90,7 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable
         _isHideToTrayEnabled = await _settingsService.GetHideToTrayEnabledAsync();
         IsWindowVisible = _windowService.IsVisible;
         UpdateTrayIconVisibility();
-        _logger.LogInformation("Initialized. HideToTray: {IsHideToTrayEnabled}, IsWindowVisible: {IsWindowVisible}",
+        _logger.LogDebug("Initialized. HideToTray: {IsHideToTrayEnabled}, IsWindowVisible: {IsWindowVisible}",
             _isHideToTrayEnabled, IsWindowVisible);
     }
 
@@ -117,7 +117,7 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable
         if (App.RootWindow?.Content is OnboardingPage)
         {
             _windowService.IsExiting = true;
-            _logger.LogInformation("OnboardingPage is active. Allowing application to exit");
+            _logger.LogDebug("OnboardingPage is active. Allowing application to exit");
             return;
         }
 
@@ -125,14 +125,14 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable
         {
             // Cancel the default close operation and hide the window to the tray instead.
             args.Cancel = true;
-            _logger.LogInformation("'Hide to Tray' is enabled. Intercepting close and hiding window");
+            _logger.LogDebug("'Hide to Tray' is enabled. Intercepting close and hiding window");
             _dispatcherService.TryEnqueue(HideWindow);
         }
         else
         {
             // If not hiding to tray, closing the window means exiting the application.
             _windowService.IsExiting = true;
-            _logger.LogInformation("'Hide to Tray' is disabled. Allowing application to exit");
+            _logger.LogDebug("'Hide to Tray' is disabled. Allowing application to exit");
         }
     }
 
@@ -140,7 +140,7 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable
     {
         _dispatcherService.TryEnqueue(() =>
         {
-            _logger.LogInformation("'Hide to Tray' setting changed to {IsEnabled}", isEnabled);
+            _logger.LogDebug("'Hide to Tray' setting changed to {IsEnabled}", isEnabled);
             _isHideToTrayEnabled = isEnabled;
             UpdateTrayIconVisibility();
 

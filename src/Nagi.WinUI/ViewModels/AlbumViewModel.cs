@@ -203,7 +203,7 @@ public partial class AlbumViewModel : ObservableObject, IDisposable
         catch (OperationCanceledException)
         {
             // Log that the operation was intentionally canceled.
-            _logger.LogInformation("Album loading was canceled.");
+            _logger.LogDebug("Album loading was canceled.");
         }
         catch (Exception ex)
         {

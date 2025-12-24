@@ -29,7 +29,7 @@ public sealed partial class GenrePage : Page
         DataContext = ViewModel;
 
         Loaded += OnPageLoaded;
-        _logger.LogInformation("GenrePage initialized.");
+        _logger.LogDebug("GenrePage initialized.");
     }
 
     public GenreViewModel ViewModel { get; }
@@ -40,20 +40,20 @@ public sealed partial class GenrePage : Page
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
-        _logger.LogInformation("Navigated to GenrePage.");
+        _logger.LogDebug("Navigated to GenrePage.");
         _cancellationTokenSource = new CancellationTokenSource();
 
         if (ViewModel.Genres.Count == 0)
         {
-            _logger.LogInformation("Genre collection is empty, loading genres...");
+            _logger.LogDebug("Genre collection is empty, loading genres...");
             try
             {
                 await ViewModel.LoadGenresAsync(_cancellationTokenSource.Token);
-                _logger.LogInformation("Successfully loaded genres.");
+                _logger.LogDebug("Successfully loaded genres.");
             }
             catch (TaskCanceledException)
             {
-                _logger.LogInformation("Genre loading was cancelled.");
+                _logger.LogDebug("Genre loading was cancelled.");
             }
             catch (Exception ex)
             {
@@ -62,7 +62,7 @@ public sealed partial class GenrePage : Page
         }
         else
         {
-            _logger.LogInformation("Genres already loaded, skipping fetch.");
+            _logger.LogDebug("Genres already loaded, skipping fetch.");
         }
     }
 
@@ -73,7 +73,7 @@ public sealed partial class GenrePage : Page
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
-        _logger.LogInformation("Navigating away from GenrePage.");
+        _logger.LogDebug("Navigating away from GenrePage.");
 
         if (_cancellationTokenSource is { IsCancellationRequested: false })
         {
@@ -131,7 +131,7 @@ public sealed partial class GenrePage : Page
         if (_isSearchExpanded) return;
 
         _isSearchExpanded = true;
-        _logger.LogInformation("Search UI expanded.");
+        _logger.LogDebug("Search UI expanded.");
         ToolTipService.SetToolTip(SearchToggleButton, "Close search");
         VisualStateManager.GoToState(this, "SearchExpanded", true);
 
@@ -153,7 +153,7 @@ public sealed partial class GenrePage : Page
         if (!_isSearchExpanded) return;
 
         _isSearchExpanded = false;
-        _logger.LogInformation("Search UI collapsed and search term cleared.");
+        _logger.LogDebug("Search UI collapsed and search term cleared.");
         ToolTipService.SetToolTip(SearchToggleButton, "Search genres");
         VisualStateManager.GoToState(this, "SearchCollapsed", true);
         ViewModel.SearchTerm = string.Empty;
@@ -166,7 +166,7 @@ public sealed partial class GenrePage : Page
     {
         if (e.ClickedItem is GenreViewModelItem clickedGenre)
         {
-            _logger.LogInformation("User clicked on genre '{GenreName}'. Navigating to detail view.",
+            _logger.LogDebug("User clicked on genre '{GenreName}'. Navigating to detail view.",
                 clickedGenre.Name);
             ViewModel.NavigateToGenreDetail(clickedGenre);
         }

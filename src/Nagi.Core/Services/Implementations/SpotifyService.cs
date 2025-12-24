@@ -204,7 +204,7 @@ public class SpotifyService : ISpotifyService, IDisposable
                 _accessToken = accessTokenElement.GetString();
                 var expiresInSeconds = expiresInElement.GetInt32();
                 _accessTokenExpiration = DateTime.UtcNow.AddSeconds(expiresInSeconds);
-                _logger.LogInformation(
+                _logger.LogDebug(
                     "Successfully fetched and cached new Spotify access token, valid for {ExpiresInSeconds} seconds.",
                     expiresInSeconds);
                 return _accessToken;
