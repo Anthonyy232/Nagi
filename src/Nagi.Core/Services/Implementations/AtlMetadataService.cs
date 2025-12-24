@@ -1,32 +1,28 @@
-﻿using System.Text;
+using System.Text;
+using ATL;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Constants;
 using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
-using TagLib;
-using TagLib.Id3v2;
-using File = TagLib.File;
-using Tag = TagLib.Tag;
 
 namespace Nagi.Core.Services.Implementations;
 
 /// <summary>
-///     Extracts music file metadata using the TagLib-Sharp library.
+///     Extracts music file metadata using the ATL.NET library.
 /// </summary>
-public class TagLibMetadataService : IMetadataService
+public class AtlMetadataService : IMetadataService
 {
     private const string UnknownArtistName = "Unknown Artist";
     private const string UnknownAlbumName = "Unknown Album";
 
-
     private readonly IFileSystemService _fileSystem;
     private readonly IImageProcessor _imageProcessor;
-    private readonly ILogger<TagLibMetadataService> _logger;
+    private readonly ILogger<AtlMetadataService> _logger;
     private readonly IPathConfiguration _pathConfig;
 
-    public TagLibMetadataService(IImageProcessor imageProcessor, IFileSystemService fileSystem,
-        IPathConfiguration pathConfig, ILogger<TagLibMetadataService> logger)
+    public AtlMetadataService(IImageProcessor imageProcessor, IFileSystemService fileSystem,
+        IPathConfiguration pathConfig, ILogger<AtlMetadataService> logger)
     {
         _imageProcessor = imageProcessor ?? throw new ArgumentNullException(nameof(imageProcessor));
         _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
@@ -46,47 +42,52 @@ public class TagLibMetadataService : IMetadataService
             metadata.FileModifiedDate = fileInfo.LastWriteTimeUtc;
             metadata.Title = _fileSystem.GetFileNameWithoutExtension(filePath);
 
-            // Use a timeout wrapper for TagLib operations to prevent indefinite hangs
-            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30)); // 30-second timeout
-            var extractionTask = Task.Run(() =>
+            // Use a timeout wrapper for ATL operations to prevent indefinite hangs
+            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+            var extractionTask = Task.Run(() => new Track(filePath), cts.Token);
+
+            var track = await extractionTask;
+
+            // Check if the file is valid - ATL is lenient so we need multiple checks
+            // Check 1: AudioFormat.Readable flag
+            // Check 2: Format name is "Unknown" (indicates ATL couldn't identify the format)
+            // Check 3: Duration is 0 and no audio data detected
+            var isUnknownFormat = track.AudioFormat.Name?.Equals("Unknown", StringComparison.OrdinalIgnoreCase) == true ||
+                                  track.AudioFormat.ID == -1;
+            
+            if (!track.AudioFormat.Readable || isUnknownFormat)
             {
-                // Use a read-only file abstraction for safety and to prevent file locks.
-                using var tagFile = File.Create(new NonWritableFileAbstraction(filePath));
+                metadata.ExtractionFailed = true;
+                metadata.ErrorMessage = isUnknownFormat ? "UnsupportedFormat" : "CorruptFile";
+                return metadata;
+            }
 
-                if (tagFile?.Tag is null || tagFile.Properties is null)
-                    throw new CorruptFileException("TagLib could not read the file's tag or property structures.");
+            PopulateMetadataFromTrack(metadata, track);
 
-                return (tagFile.Tag, tagFile.Properties);
-            }, cts.Token);
-
-            var (tag, properties) = await extractionTask;
-
-            PopulateMetadataFromTag(metadata, tag, properties);
-
-            // Get cached or extract new synchronized lyrics (after parsing tag so we have artist/title).
-            metadata.LrcFilePath = await GetLrcPathAsync(filePath, fileInfo.LastWriteTimeUtc, metadata.Artist, metadata.Title);
+            // Get cached or extract new synchronized lyrics (after parsing track so we have artist/title).
+            using var lrcCts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+            try
+            {
+                metadata.LrcFilePath = await GetLrcPathAsync(filePath, fileInfo.LastWriteTimeUtc, metadata.Artist, metadata.Title, track)
+                    .WaitAsync(lrcCts.Token);
+            }
+            catch (OperationCanceledException)
+            {
+                _logger.LogWarning("LRC extraction timed out for file: {FilePath}", filePath);
+            }
 
             // As a fallback, look for an external .lrc file if no embedded lyrics were found.
             if (string.IsNullOrWhiteSpace(metadata.LrcFilePath)) metadata.LrcFilePath = FindLrcFilePath(filePath);
 
-            // Process album art with a separate timeout to avoid blocking
-            using var albumArtCts =
-                new CancellationTokenSource(TimeSpan.FromSeconds(15)); // 15-second timeout for album art
-            var albumArtTask = Task.Run(() =>
-            {
-                using var tagFileForArt = File.Create(new NonWritableFileAbstraction(filePath));
-                return tagFileForArt?.Tag;
-            }, albumArtCts.Token);
-
+            // Process album art with timeout protection
+            using var albumArtCts = new CancellationTokenSource(TimeSpan.FromSeconds(15));
             try
             {
-                var tagForArt = await albumArtTask;
-                if (tagForArt != null) await ProcessAlbumArtAsync(metadata, tagForArt, baseFolderPath);
+                await ProcessAlbumArtAsync(metadata, track, baseFolderPath).WaitAsync(albumArtCts.Token);
             }
             catch (OperationCanceledException)
             {
                 _logger.LogWarning("Album art extraction timed out for file: {FilePath}", filePath);
-                // Continue without album art rather than failing completely
             }
         }
         catch (OperationCanceledException)
@@ -95,17 +96,17 @@ public class TagLibMetadataService : IMetadataService
             metadata.ExtractionFailed = true;
             metadata.ErrorMessage = "ExtractionTimeout";
         }
-        catch (CorruptFileException ex)
+        catch (IOException ex)
         {
-            _logger.LogWarning(ex, "Corrupt file detected while extracting metadata from '{FilePath}'.", filePath);
+            _logger.LogWarning(ex, "File access error during metadata extraction for '{FilePath}'.", filePath);
             metadata.ExtractionFailed = true;
-            metadata.ErrorMessage = "CorruptFile";
+            metadata.ErrorMessage = "FileAccessError";
         }
-        catch (UnsupportedFormatException)
+        catch (UnauthorizedAccessException ex)
         {
-            _logger.LogWarning("Unsupported file format for metadata extraction: '{FilePath}'.", filePath);
+            _logger.LogWarning(ex, "Access denied during metadata extraction for '{FilePath}'.", filePath);
             metadata.ExtractionFailed = true;
-            metadata.ErrorMessage = "UnsupportedFormat";
+            metadata.ErrorMessage = "AccessDenied";
         }
         catch (Exception ex)
         {
@@ -119,53 +120,82 @@ public class TagLibMetadataService : IMetadataService
     }
 
     /// <summary>
-    ///     Populates the metadata object from the file's tags and properties, providing sane defaults for missing values.
+    ///     Populates the metadata object from the ATL track, providing sane defaults for missing values.
     /// </summary>
-    private void PopulateMetadataFromTag(SongFileMetadata metadata, Tag tag, Properties properties)
+    private void PopulateMetadataFromTrack(SongFileMetadata metadata, Track track)
     {
-        var artist = SanitizeString(tag.Performers?.FirstOrDefault()) ?? UnknownArtistName;
-        var albumArtist = SanitizeString(tag.AlbumArtists?.FirstOrDefault()) ?? artist;
-        var album = SanitizeString(tag.Album) ?? UnknownAlbumName;
+        var artist = SanitizeString(track.Artist) ?? UnknownArtistName;
+        var albumArtist = SanitizeString(track.AlbumArtist) ?? artist;
+        var album = SanitizeString(track.Album) ?? UnknownAlbumName;
 
-        metadata.Title = SanitizeString(tag.Title) ?? metadata.Title;
+        metadata.Title = SanitizeString(track.Title) ?? metadata.Title;
         metadata.Artist = artist;
         metadata.Album = album;
         metadata.AlbumArtist = albumArtist;
-        metadata.Duration = properties.Duration;
-        metadata.Year = tag.Year > 0 ? (int)tag.Year : null;
-        metadata.TrackNumber = tag.Track > 0 ? (int)tag.Track : null;
-        metadata.TrackCount = tag.TrackCount > 0 ? (int)tag.TrackCount : null;
-        metadata.DiscNumber = tag.Disc > 0 ? (int)tag.Disc : null;
-        metadata.DiscCount = tag.DiscCount > 0 ? (int)tag.DiscCount : null;
-        metadata.Bpm = tag.BeatsPerMinute > 0 ? tag.BeatsPerMinute : null;
-        metadata.SampleRate = properties.AudioSampleRate > 0 ? properties.AudioSampleRate : null;
-        metadata.Bitrate = properties.AudioBitrate > 0 ? properties.AudioBitrate : null;
-        metadata.Channels = properties.AudioChannels > 0 ? properties.AudioChannels : null;
-        metadata.Lyrics = SanitizeString(tag.Lyrics);
-        metadata.Composer = SanitizeString(tag.Composers?.FirstOrDefault());
-        metadata.Grouping = SanitizeString(tag.Grouping);
-        metadata.Copyright = SanitizeString(tag.Copyright);
-        metadata.Comment = SanitizeString(tag.Comment);
-        metadata.Conductor = SanitizeString(tag.Conductor);
-        metadata.MusicBrainzTrackId = SanitizeString(tag.MusicBrainzTrackId);
-        metadata.MusicBrainzReleaseId = SanitizeString(tag.MusicBrainzReleaseId);
-        metadata.Genres = tag.Genres?
-            .Select(SanitizeString)
-            .OfType<string>() // Filters out nulls from the sequence.
-            .ToList() ?? [];
+        metadata.Duration = TimeSpan.FromSeconds(track.Duration);
+        metadata.Year = track.Year > 0 ? track.Year : null;
+        metadata.TrackNumber = track.TrackNumber > 0 ? track.TrackNumber : null;
+        metadata.TrackCount = track.TrackTotal > 0 ? track.TrackTotal : null;
+        metadata.DiscNumber = track.DiscNumber > 0 ? track.DiscNumber : null;
+        metadata.DiscCount = track.DiscTotal > 0 ? track.DiscTotal : null;
+        metadata.Bpm = track.BPM > 0 ? track.BPM : null;
+        metadata.SampleRate = track.SampleRate > 0 ? (int)track.SampleRate : null;
+        metadata.Bitrate = track.Bitrate > 0 ? track.Bitrate : null;
+        metadata.Channels = track.ChannelsArrangement?.NbChannels > 0 ? track.ChannelsArrangement.NbChannels : null;
+
+        // Get unsynchronized lyrics from the first lyrics entry if available
+        var lyricsInfo = track.Lyrics?.FirstOrDefault();
+        if (lyricsInfo != null)
+        {
+            metadata.Lyrics = SanitizeString(lyricsInfo.UnsynchronizedLyrics);
+        }
+
+        metadata.Composer = SanitizeString(track.Composer);
+        metadata.Copyright = SanitizeString(track.Copyright);
+        metadata.Comment = SanitizeString(track.Comment);
+        metadata.Conductor = SanitizeString(track.Conductor);
+
+        // ATL uses AdditionalFields for MusicBrainz IDs
+        if (track.AdditionalFields.TryGetValue("MUSICBRAINZ_TRACKID", out var mbTrackId))
+            metadata.MusicBrainzTrackId = SanitizeString(mbTrackId);
+        if (track.AdditionalFields.TryGetValue("MUSICBRAINZ_RELEASEID", out var mbReleaseId) ||
+            track.AdditionalFields.TryGetValue("MUSICBRAINZ_ALBUMID", out mbReleaseId))
+            metadata.MusicBrainzReleaseId = SanitizeString(mbReleaseId);
+
+        // Parse genre (ATL returns a single string, may need to split)
+        var genreString = SanitizeString(track.Genre);
+        if (!string.IsNullOrEmpty(genreString))
+        {
+            metadata.Genres = genreString
+                .Split(new[] { ';', '/', '\\' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(g => g.Trim())
+                .Where(g => !string.IsNullOrEmpty(g))
+                .ToList();
+        }
+        else
+        {
+            metadata.Genres = [];
+        }
+
+        // ATL doesn't have a direct Grouping property, check additional fields
+        if (track.AdditionalFields.TryGetValue("GRP1", out var grouping) ||
+            track.AdditionalFields.TryGetValue("CONTENTGROUP", out grouping) ||
+            track.AdditionalFields.TryGetValue("GROUPING", out grouping) ||
+            track.AdditionalFields.TryGetValue("TIT1", out grouping))
+            metadata.Grouping = SanitizeString(grouping);
     }
 
     /// <summary>
-    ///     Extracts album art from the tag and saves it to the cache. Each song gets its own
+    ///     Extracts album art from the track and saves it to the cache. Each song gets its own
     ///     cached cover art file, keyed by the song's file path. If no embedded art is found,
     ///     falls back to searching directory hierarchy for common cover art files.
     /// </summary>
-    private async Task ProcessAlbumArtAsync(SongFileMetadata metadata, Tag tag, string? baseFolderPath)
+    private async Task ProcessAlbumArtAsync(SongFileMetadata metadata, Track track, string? baseFolderPath)
     {
-        var picture = tag.Pictures?.FirstOrDefault();
-        
+        var picture = track.EmbeddedPictures?.FirstOrDefault();
+
         // First, try embedded album art
-        if (picture?.Data?.Data is { Length: > 0 } pictureData)
+        if (picture?.PictureData is { Length: > 0 } pictureData)
         {
             try
             {
@@ -200,7 +230,7 @@ public class TagLibMetadataService : IMetadataService
             if (string.IsNullOrEmpty(coverArtPath)) return;
 
             // Read the image file and process it
-            var imageBytes = await System.IO.File.ReadAllBytesAsync(coverArtPath);
+            var imageBytes = await _fileSystem.ReadAllBytesAsync(coverArtPath);
             if (imageBytes.Length == 0) return;
 
             var (coverArtUri, lightSwatchId, darkSwatchId) =
@@ -254,9 +284,9 @@ public class TagLibMetadataService : IMetadataService
 
                 // Move up to the parent directory
                 var parentDirectory = _fileSystem.GetDirectoryName(currentDirectory);
-                
+
                 // Safety check: if parent equals current, we're at the root
-                if (string.IsNullOrEmpty(parentDirectory) || 
+                if (string.IsNullOrEmpty(parentDirectory) ||
                     parentDirectory.Equals(currentDirectory, StringComparison.OrdinalIgnoreCase))
                     break;
 
@@ -283,21 +313,21 @@ public class TagLibMetadataService : IMetadataService
         {
             // Enumerate files once and find matches - more efficient than checking each combination
             var files = _fileSystem.GetFiles(directory, "*.*");
-            
+
             // First pass: find all matching cover art files
             string? bestMatch = null;
             var bestPriority = int.MaxValue;
-            
+
             foreach (var filePath in files)
             {
                 var extension = _fileSystem.GetExtension(filePath);
                 if (!FileExtensions.ImageFileExtensions.Contains(extension))
                     continue;
-                    
+
                 var fileNameWithoutExt = _fileSystem.GetFileNameWithoutExtension(filePath);
                 if (!FileExtensions.CoverArtFileNames.Contains(fileNameWithoutExt))
                     continue;
-                
+
                 // Determine priority based on position in the priority list
                 var priority = GetCoverArtPriority(fileNameWithoutExt);
                 if (priority < bestPriority)
@@ -306,16 +336,17 @@ public class TagLibMetadataService : IMetadataService
                     bestMatch = filePath;
                 }
             }
-            
+
             return bestMatch;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            // If we can't enumerate the directory, return null
+            // If we can't enumerate the directory, log and return null
+            _logger.LogDebug(ex, "Failed to enumerate cover art in directory '{Directory}'.", directory);
             return null;
         }
     }
-    
+
     /// <summary>
     ///     Gets the priority of a cover art file name (lower is higher priority).
     /// </summary>
@@ -336,7 +367,7 @@ public class TagLibMetadataService : IMetadataService
     ///     Gets the path to the LRC file, prioritizing a valid cache entry before
     ///     attempting to extract embedded lyrics from the audio file.
     /// </summary>
-    private async Task<string?> GetLrcPathAsync(string audioFilePath, DateTime audioFileLastWriteTime, string? artist, string? title)
+    private async Task<string?> GetLrcPathAsync(string audioFilePath, DateTime audioFileLastWriteTime, string? artist, string? title, Track track)
     {
         var cacheFileName = FileNameHelper.GenerateLrcCacheFileName(artist, title);
         var cachedLrcPath = _fileSystem.Combine(_pathConfig.LrcCachePath, cacheFileName);
@@ -350,28 +381,7 @@ public class TagLibMetadataService : IMetadataService
 
         try
         {
-            // Use timeout for LRC extraction to prevent hangs
-            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10)); // 10-second timeout for LRC
-            var lrcTask = Task.Run(() =>
-            {
-                using var tagFile = File.Create(new NonWritableFileAbstraction(audioFilePath));
-                if (tagFile?.Tag is null) return null;
-                return tagFile;
-            }, cts.Token);
-
-            var tagFile = await lrcTask;
-            if (tagFile == null) return null;
-
-            return await ExtractAndCacheEmbeddedLrcAsync(tagFile, cachedLrcPath);
-        }
-        catch (OperationCanceledException)
-        {
-            _logger.LogWarning("LRC extraction timed out for file: {AudioFilePath}", audioFilePath);
-            return null;
-        }
-        catch (UnsupportedFormatException)
-        {
-            return null;
+            return await ExtractAndCacheEmbeddedLrcAsync(track, cachedLrcPath);
         }
         catch (Exception ex)
         {
@@ -381,46 +391,36 @@ public class TagLibMetadataService : IMetadataService
     }
 
     /// <summary>
-    ///     Extracts embedded synchronized (SYLT) lyrics, converts them to LRC format, and saves them to the cache.
+    ///     Extracts embedded synchronized lyrics from ATL track, converts them to LRC format, and saves them to the cache.
     /// </summary>
-    private async Task<string?> ExtractAndCacheEmbeddedLrcAsync(File tagFile, string cachedLrcPath)
+    private async Task<string?> ExtractAndCacheEmbeddedLrcAsync(Track track, string cachedLrcPath)
     {
-        if (tagFile.GetTag(TagTypes.Id3v2, false) is not TagLib.Id3v2.Tag id3v2Tag) return null;
+        var lyricsInfo = track.Lyrics?.FirstOrDefault();
+        if (lyricsInfo == null) return null;
 
-        // Find the best SYLT frame, preferring longer ones as they likely contain more lyrics.
-        var bestSyltFrame = id3v2Tag.GetFrames<SynchronisedLyricsFrame>()
-            .Where(f => f.Text.Length > 0)
-            .OrderByDescending(f => f.Text.Length)
-            .FirstOrDefault();
-
-        if (bestSyltFrame is null) return null;
-
-        // We only support the most common millisecond-based timestamps.
-        if (bestSyltFrame.Format != TimestampFormat.AbsoluteMilliseconds)
-        {
-            _logger.LogDebug("Skipping embedded lyrics due to unsupported timestamp format: {TimestampFormat}",
-                bestSyltFrame.Format);
-            return null;
-        }
+        var syncLyrics = lyricsInfo.SynchronizedLyrics;
+        if (syncLyrics == null || syncLyrics.Count == 0) return null;
 
         var lrcContentBuilder = new StringBuilder();
-        var linesByTime = bestSyltFrame.Text
-            .OrderBy(line => line.Time)
-            .GroupBy(line => line.Time)
-            .Select(group => new
-            {
-                Time = TimeSpan.FromMilliseconds(group.Key),
-                Text = string.Join(" ", group.Select(l => l.Text?.Trim()).Where(t => !string.IsNullOrEmpty(t)))
-            });
 
-        foreach (var line in linesByTime)
+        foreach (var phrase in syncLyrics.OrderBy(p => p.TimestampStart))
         {
-            if (string.IsNullOrWhiteSpace(line.Text)) continue;
-            lrcContentBuilder.AppendLine($"[{line.Time:mm\\:ss\\.ff}]{line.Text}");
+            var text = phrase.Text?.Trim();
+            if (string.IsNullOrWhiteSpace(text)) continue;
+
+            var time = TimeSpan.FromMilliseconds(phrase.TimestampStart);
+            lrcContentBuilder.AppendLine($"[{time:mm\\:ss\\.fff}]{text}");
         }
 
         var lrcContent = lrcContentBuilder.ToString();
         if (string.IsNullOrWhiteSpace(lrcContent)) return null;
+
+        // Ensure the LRC cache directory exists before writing
+        var cacheDirectory = _fileSystem.GetDirectoryName(cachedLrcPath);
+        if (!string.IsNullOrEmpty(cacheDirectory) && !_fileSystem.DirectoryExists(cacheDirectory))
+        {
+            _fileSystem.CreateDirectory(cacheDirectory);
+        }
 
         await _fileSystem.WriteAllTextAsync(cachedLrcPath, lrcContent);
         return cachedLrcPath;

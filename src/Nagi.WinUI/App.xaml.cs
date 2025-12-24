@@ -402,7 +402,7 @@ public partial class App : Application
         services.AddSingleton<IOfflineScrobbleService, OfflineScrobbleService>();
         services.AddSingleton<IFileSystemService, FileSystemService>();
         services.AddSingleton<IImageProcessor, ImageSharpProcessor>();
-        services.AddSingleton<IMetadataService, TagLibMetadataService>();
+        services.AddSingleton<IMetadataService, AtlMetadataService>();
         services.AddSingleton<ILrcService, LrcService>();
 
         services.AddSingleton<IApiKeyService, ApiKeyService>();
