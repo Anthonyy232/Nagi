@@ -99,6 +99,11 @@ public class FileSystemService : IFileSystemService
         return File.ReadAllTextAsync(path);
     }
 
+    public Task<byte[]> ReadAllBytesAsync(string path)
+    {
+        return File.ReadAllBytesAsync(path);
+    }
+
     public bool FileExists(string path)
     {
         return File.Exists(path);
