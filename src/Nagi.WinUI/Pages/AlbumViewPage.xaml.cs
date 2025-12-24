@@ -57,7 +57,7 @@ public sealed partial class AlbumViewPage : Page
         DataContext = ViewModel;
 
         Loaded += OnPageLoaded;
-        _logger.LogInformation("AlbumViewPage initialized.");
+        _logger.LogDebug("AlbumViewPage initialized.");
     }
 
     /// <summary>
@@ -71,16 +71,16 @@ public sealed partial class AlbumViewPage : Page
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
-        _logger.LogInformation("Navigated to AlbumViewPage.");
+        _logger.LogDebug("Navigated to AlbumViewPage.");
 
         if (e.Parameter is AlbumViewNavigationParameter navParam)
         {
-            _logger.LogInformation("Loading details for AlbumId: {AlbumId}", navParam.AlbumId);
+            _logger.LogDebug("Loading details for AlbumId: {AlbumId}", navParam.AlbumId);
             try
             {
                 await ViewModel.LoadAlbumDetailsAsync(navParam.AlbumId);
                 await ViewModel.LoadAvailablePlaylistsAsync();
-                _logger.LogInformation("Successfully loaded details for AlbumId: {AlbumId}", navParam.AlbumId);
+                _logger.LogDebug("Successfully loaded details for AlbumId: {AlbumId}", navParam.AlbumId);
             }
             catch (Exception ex)
             {
@@ -103,7 +103,7 @@ public sealed partial class AlbumViewPage : Page
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
-        _logger.LogInformation("Navigating away from AlbumViewPage. Cleaning up ViewModel.");
+        _logger.LogDebug("Navigating away from AlbumViewPage. Cleaning up ViewModel.");
         ViewModel.Cleanup();
     }
 
@@ -155,7 +155,7 @@ public sealed partial class AlbumViewPage : Page
         if (_isSearchExpanded) return;
 
         _isSearchExpanded = true;
-        _logger.LogInformation("Search UI expanded.");
+        _logger.LogDebug("Search UI expanded.");
         ToolTipService.SetToolTip(SearchToggleButton, "Close search");
         VisualStateManager.GoToState(this, "SearchExpanded", true);
 
@@ -181,7 +181,7 @@ public sealed partial class AlbumViewPage : Page
         _isSearchExpanded = false;
 
         // Update UI immediately and start the collapse animation.
-        _logger.LogInformation("Search UI collapsed and search term cleared.");
+        _logger.LogDebug("Search UI collapsed and search term cleared.");
         ToolTipService.SetToolTip(SearchToggleButton, "Search library");
         VisualStateManager.GoToState(this, "SearchCollapsed", true);
         ViewModel.SearchTerm = string.Empty;
@@ -219,7 +219,7 @@ public sealed partial class AlbumViewPage : Page
     {
         if (e.OriginalSource is FrameworkElement { DataContext: Song tappedSong })
         {
-            _logger.LogInformation("User double-tapped song '{SongTitle}'. Executing play command.", tappedSong.Title);
+            _logger.LogDebug("User double-tapped song '{SongTitle}'. Executing play command.", tappedSong.Title);
             ViewModel.PlaySongCommand.Execute(tappedSong);
         }
     }
@@ -231,7 +231,7 @@ public sealed partial class AlbumViewPage : Page
     {
         if (e.OriginalSource is FrameworkElement { DataContext: Song tappedSong })
         {
-            _logger.LogInformation("User double-tapped song '{SongTitle}' (Id: {SongId}). Executing play command.",
+            _logger.LogDebug("User double-tapped song '{SongTitle}' (Id: {SongId}). Executing play command.",
                 tappedSong.Title, tappedSong.Id);
             ViewModel.PlaySongCommand.Execute(tappedSong);
         }

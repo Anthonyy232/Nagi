@@ -20,7 +20,7 @@ public sealed partial class SettingsPage : Page
         ViewModel = App.Services!.GetRequiredService<SettingsViewModel>();
         _logger = App.Services!.GetRequiredService<ILogger<SettingsPage>>();
         DataContext = ViewModel;
-        _logger.LogInformation("SettingsPage initialized.");
+        _logger.LogDebug("SettingsPage initialized.");
     }
 
     public SettingsViewModel ViewModel { get; }
@@ -28,11 +28,11 @@ public sealed partial class SettingsPage : Page
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
-        _logger.LogInformation("Navigated to SettingsPage. Loading settings...");
+        _logger.LogDebug("Navigated to SettingsPage. Loading settings...");
         try
         {
             await ViewModel.LoadSettingsAsync();
-            _logger.LogInformation("Settings loaded successfully.");
+            _logger.LogDebug("Settings loaded successfully.");
         }
         catch (Exception ex)
         {
@@ -43,7 +43,7 @@ public sealed partial class SettingsPage : Page
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
-        _logger.LogInformation("Navigating away from SettingsPage. Disposing ViewModel.");
+        _logger.LogDebug("Navigating away from SettingsPage. Disposing ViewModel.");
         ViewModel.Dispose();
     }
 }

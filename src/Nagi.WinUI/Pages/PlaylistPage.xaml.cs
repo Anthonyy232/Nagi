@@ -30,23 +30,23 @@ public sealed partial class PlaylistPage : Page
         ViewModel = App.Services!.GetRequiredService<PlaylistViewModel>();
         _logger = App.Services!.GetRequiredService<ILogger<PlaylistPage>>();
         DataContext = ViewModel;
-        _logger.LogInformation("PlaylistPage initialized.");
+        _logger.LogDebug("PlaylistPage initialized.");
     }
 
     public PlaylistViewModel ViewModel { get; }
 
     private async void Page_Loaded(object sender, RoutedEventArgs e)
     {
-        _logger.LogInformation("PlaylistPage loaded. Setting initial visual state and loading playlists...");
+        _logger.LogDebug("PlaylistPage loaded. Setting initial visual state and loading playlists...");
         VisualStateManager.GoToState(this, "SearchCollapsed", false);
         await ViewModel.LoadPlaylistsCommand.ExecuteAsync(null);
-        _logger.LogInformation("Finished loading playlists.");
+        _logger.LogDebug("Finished loading playlists.");
     }
 
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
-        _logger.LogInformation("Navigating away from PlaylistPage. Disposing ViewModel.");
+        _logger.LogDebug("Navigating away from PlaylistPage. Disposing ViewModel.");
         ViewModel.Cleanup();
         ViewModel.Dispose();
     }
@@ -83,7 +83,7 @@ public sealed partial class PlaylistPage : Page
         if (_isSearchExpanded) return;
 
         _isSearchExpanded = true;
-        _logger.LogInformation("Search UI expanded.");
+        _logger.LogDebug("Search UI expanded.");
         ToolTipService.SetToolTip(SearchToggleButton, "Close search");
         VisualStateManager.GoToState(this, "SearchExpanded", true);
 
@@ -105,7 +105,7 @@ public sealed partial class PlaylistPage : Page
         if (!_isSearchExpanded) return;
 
         _isSearchExpanded = false;
-        _logger.LogInformation("Search UI collapsed and search term cleared.");
+        _logger.LogDebug("Search UI collapsed and search term cleared.");
         ToolTipService.SetToolTip(SearchToggleButton, "Search playlists");
         VisualStateManager.GoToState(this, "SearchCollapsed", true);
         ViewModel.SearchTerm = string.Empty;
@@ -115,7 +115,7 @@ public sealed partial class PlaylistPage : Page
         if (sender is not FrameworkElement { DataContext: PlaylistViewModelItem playlistItem } ||
             ViewModel.IsAnyOperationInProgress) return;
 
-        _logger.LogInformation("User initiated playback of playlist '{PlaylistName}' (Id: {PlaylistId}).",
+        _logger.LogDebug("User initiated playback of playlist '{PlaylistName}' (Id: {PlaylistId}).",
             playlistItem.Name, playlistItem.Id);
         await ViewModel.PlayPlaylistCommand.ExecuteAsync(new Tuple<Guid, bool>(playlistItem.Id, playlistItem.IsSmart));
     }
@@ -124,7 +124,7 @@ public sealed partial class PlaylistPage : Page
     {
         if (e.ClickedItem is PlaylistViewModelItem clickedPlaylist)
         {
-            _logger.LogInformation(
+            _logger.LogDebug(
                 "User clicked on playlist '{PlaylistName}' (Id: {PlaylistId}). Navigating to detail view.",
                 clickedPlaylist.Name, clickedPlaylist.Id);
             ViewModel.NavigateToPlaylistDetail(clickedPlaylist);
@@ -139,7 +139,7 @@ public sealed partial class PlaylistPage : Page
             return;
         }
 
-        _logger.LogInformation("Showing 'Create New Playlist' dialog.");
+        _logger.LogDebug("Showing 'Create New Playlist' dialog.");
         string? selectedCoverImageUriForDialog = null;
 
         var inputTextBox = new TextBox { PlaceholderText = "Enter new playlist name" };
@@ -186,13 +186,13 @@ public sealed partial class PlaylistPage : Page
 
         if (result == ContentDialogResult.Primary)
         {
-            _logger.LogInformation("User confirmed creation of new playlist '{PlaylistName}'.", inputTextBox.Text);
+            _logger.LogDebug("User confirmed creation of new playlist '{PlaylistName}'.", inputTextBox.Text);
             var argsTuple = new Tuple<string, string?>(inputTextBox.Text, selectedCoverImageUriForDialog);
             await ViewModel.CreatePlaylistCommand.ExecuteAsync(argsTuple);
         }
         else
         {
-            _logger.LogInformation("User cancelled 'Create New Playlist' dialog.");
+            _logger.LogDebug("User cancelled 'Create New Playlist' dialog.");
         }
     }
 
@@ -204,7 +204,7 @@ public sealed partial class PlaylistPage : Page
             return;
         }
 
-        _logger.LogInformation("Smart playlist creation requested. Opening editor dialog.");
+        _logger.LogDebug("Smart playlist creation requested. Opening editor dialog.");
         
         var dialog = new Dialogs.SmartPlaylistEditorDialog
         {
@@ -215,13 +215,13 @@ public sealed partial class PlaylistPage : Page
         
         if (result == ContentDialogResult.Primary && dialog.ResultPlaylist != null)
         {
-            _logger.LogInformation("User created smart playlist '{PlaylistName}' (Id: {PlaylistId}).",
+            _logger.LogDebug("User created smart playlist '{PlaylistName}' (Id: {PlaylistId}).",
                 dialog.ResultPlaylist.Name, dialog.ResultPlaylist.Id);
             await ViewModel.LoadPlaylistsCommand.ExecuteAsync(null);
         }
         else
         {
-            _logger.LogInformation("User cancelled smart playlist creation.");
+            _logger.LogDebug("User cancelled smart playlist creation.");
         }
     }
 
@@ -230,7 +230,7 @@ public sealed partial class PlaylistPage : Page
         if (sender is not FrameworkElement { DataContext: PlaylistViewModelItem playlistItem } ||
             ViewModel.IsAnyOperationInProgress) return;
 
-        _logger.LogInformation("Showing 'Rename Playlist' dialog for '{PlaylistName}'.", playlistItem.Name);
+        _logger.LogDebug("Showing 'Rename Playlist' dialog for '{PlaylistName}'.", playlistItem.Name);
         var inputTextBox = new TextBox { Text = playlistItem.Name };
         var dialog = new ContentDialog
         {
@@ -247,14 +247,14 @@ public sealed partial class PlaylistPage : Page
 
         if (result == ContentDialogResult.Primary)
         {
-            _logger.LogInformation("User confirmed rename of playlist '{OldName}' to '{NewName}'.", playlistItem.Name,
+            _logger.LogDebug("User confirmed rename of playlist '{OldName}' to '{NewName}'.", playlistItem.Name,
                 inputTextBox.Text);
             var argsTuple = new Tuple<Guid, string, bool>(playlistItem.Id, inputTextBox.Text, playlistItem.IsSmart);
             await ViewModel.RenamePlaylistCommand.ExecuteAsync(argsTuple);
         }
         else
         {
-            _logger.LogInformation("User cancelled rename of playlist '{PlaylistName}'.", playlistItem.Name);
+            _logger.LogDebug("User cancelled rename of playlist '{PlaylistName}'.", playlistItem.Name);
         }
     }
 
@@ -263,7 +263,7 @@ public sealed partial class PlaylistPage : Page
         if (sender is not FrameworkElement { DataContext: PlaylistViewModelItem playlistItem } ||
             ViewModel.IsAnyOperationInProgress) return;
 
-        _logger.LogInformation("Showing 'Delete Playlist' confirmation for '{PlaylistName}'.", playlistItem.Name);
+        _logger.LogDebug("Showing 'Delete Playlist' confirmation for '{PlaylistName}'.", playlistItem.Name);
         var dialog = new ContentDialog
         {
             Title = "Delete Playlist",
@@ -276,13 +276,13 @@ public sealed partial class PlaylistPage : Page
         var result = await dialog.ShowAsync();
         if (result == ContentDialogResult.Primary)
         {
-            _logger.LogInformation("User confirmed deletion of playlist '{PlaylistName}' (Id: {PlaylistId}).",
+            _logger.LogDebug("User confirmed deletion of playlist '{PlaylistName}' (Id: {PlaylistId}).",
                 playlistItem.Name, playlistItem.Id);
             await ViewModel.DeletePlaylistCommand.ExecuteAsync(new Tuple<Guid, bool>(playlistItem.Id, playlistItem.IsSmart));
         }
         else
         {
-            _logger.LogInformation("User cancelled deletion of playlist '{PlaylistName}'.", playlistItem.Name);
+            _logger.LogDebug("User cancelled deletion of playlist '{PlaylistName}'.", playlistItem.Name);
         }
     }
 
@@ -291,19 +291,19 @@ public sealed partial class PlaylistPage : Page
         if (sender is not FrameworkElement { DataContext: PlaylistViewModelItem playlistItem } ||
             ViewModel.IsAnyOperationInProgress) return;
 
-        _logger.LogInformation("User initiated cover image change for playlist '{PlaylistName}'.", playlistItem.Name);
+        _logger.LogDebug("User initiated cover image change for playlist '{PlaylistName}'.", playlistItem.Name);
         var newCoverImageUri = await PickCoverImageAsync();
 
         if (!string.IsNullOrWhiteSpace(newCoverImageUri))
         {
-            _logger.LogInformation("User selected new cover image for playlist '{PlaylistName}'. Updating.",
+            _logger.LogDebug("User selected new cover image for playlist '{PlaylistName}'. Updating.",
                 playlistItem.Name);
             var argsTuple = new Tuple<Guid, string, bool>(playlistItem.Id, newCoverImageUri, playlistItem.IsSmart);
             await ViewModel.UpdatePlaylistCoverCommand.ExecuteAsync(argsTuple);
         }
         else
         {
-            _logger.LogInformation("User cancelled cover image selection.");
+            _logger.LogDebug("User cancelled cover image selection.");
         }
     }
 
@@ -319,11 +319,11 @@ public sealed partial class PlaylistPage : Page
         var file = await picker.PickSingleFileAsync();
         if (file != null)
         {
-            _logger.LogInformation("User picked image file: {FilePath}", file.Path);
+            _logger.LogDebug("User picked image file: {FilePath}", file.Path);
             return file.Path;
         }
 
-        _logger.LogInformation("User did not pick an image file.");
+        _logger.LogDebug("User did not pick an image file.");
         return null;
     }
 }

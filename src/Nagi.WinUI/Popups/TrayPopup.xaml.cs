@@ -49,7 +49,7 @@ public sealed partial class TrayPopup : Window
         ViewModel.PropertyChanged += OnViewModelPropertyChanged;
         _settingsService.ShowCoverArtInTrayFlyoutSettingChanged += OnShowCoverArtSettingChanged;
 
-        _logger.LogInformation("TrayPopup initialized.");
+        _logger.LogDebug("TrayPopup initialized.");
     }
 
     /// <summary>
@@ -88,12 +88,12 @@ public sealed partial class TrayPopup : Window
 
     private async Task InitializeSettingsAsync()
     {
-        _logger.LogInformation("Initializing settings for tray popup...");
+        _logger.LogDebug("Initializing settings for tray popup...");
         try
         {
             _isCoverArtInFlyoutEnabled = await _settingsService.GetShowCoverArtInTrayFlyoutAsync();
             UpdateCoverArtVisibility();
-            _logger.LogInformation("Successfully initialized settings. ShowCoverArtInTrayFlyout is {IsEnabled}.",
+            _logger.LogDebug("Successfully initialized settings. ShowCoverArtInTrayFlyout is {IsEnabled}.",
                 _isCoverArtInFlyoutEnabled);
         }
         catch (Exception ex)
@@ -138,7 +138,7 @@ public sealed partial class TrayPopup : Window
     {
         if (args.WindowActivationState == WindowActivationState.Deactivated)
         {
-            _logger.LogInformation("Tray popup deactivated. Firing Deactivated event.");
+            _logger.LogDebug("Tray popup deactivated. Firing Deactivated event.");
             Deactivated?.Invoke(this, EventArgs.Empty);
         }
     }
@@ -147,7 +147,7 @@ public sealed partial class TrayPopup : Window
     {
         DispatcherQueue.TryEnqueue(() =>
         {
-            _logger.LogInformation("'ShowCoverArtInTrayFlyout' setting changed to {IsEnabled}. Updating visibility.",
+            _logger.LogDebug("'ShowCoverArtInTrayFlyout' setting changed to {IsEnabled}. Updating visibility.",
                 isEnabled);
             _isCoverArtInFlyoutEnabled = isEnabled;
             UpdateCoverArtVisibility();
@@ -165,7 +165,7 @@ public sealed partial class TrayPopup : Window
 
     private void OnClosed(object sender, WindowEventArgs args)
     {
-        _logger.LogInformation("TrayPopup closed. Unsubscribing from events.");
+        _logger.LogDebug("TrayPopup closed. Unsubscribing from events.");
         ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
         _settingsService.ShowCoverArtInTrayFlyoutSettingChanged -= OnShowCoverArtSettingChanged;
     }

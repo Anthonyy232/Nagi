@@ -89,7 +89,7 @@ public partial class GenreViewViewModel : SongListViewModelBase
     {
         if (IsOverallLoading || navParam is null) return;
 
-        _logger.LogInformation("Loading details for genre '{GenreName}' ({GenreId})", navParam.GenreName,
+        _logger.LogDebug("Loading details for genre '{GenreName}' ({GenreId})", navParam.GenreName,
             navParam.GenreId);
 
         try

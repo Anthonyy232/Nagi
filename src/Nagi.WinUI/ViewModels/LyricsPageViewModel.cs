@@ -227,12 +227,12 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
 
             if (song is null)
             {
-                _logger.LogInformation("Clearing lyrics view as playback stopped");
+                _logger.LogDebug("Clearing lyrics view as playback stopped");
                 SongTitle = "No song selected";
                 return;
             }
 
-            _logger.LogInformation("Updating lyrics for track '{SongTitle}' ({SongId})", song.Title, song.Id);
+            _logger.LogDebug("Updating lyrics for track '{SongTitle}' ({SongId})", song.Title, song.Id);
             SongTitle = !string.IsNullOrWhiteSpace(song.Artist?.Name)
                 ? $"{song.Title} by {song.Artist.Name}"
                 : song.Title;
@@ -246,7 +246,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
 
                 if (_parsedLrc is not null && !_parsedLrc.IsEmpty)
                 {
-                    _logger.LogInformation("Successfully parsed synchronized lyrics for track '{SongTitle}'", song.Title);
+                    _logger.LogDebug("Successfully parsed synchronized lyrics for track '{SongTitle}'", song.Title);
                     foreach (var line in _parsedLrc.Lines) LyricLines.Add(line);
                     HasLyrics = true;
                     UpdateCurrentLineFromPosition(_playbackService.CurrentPosition);
@@ -259,14 +259,14 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
                 var fullSong = await _libraryReader.GetSongWithFullDataAsync(song.Id);
                 if (fullSong is not null && !string.IsNullOrWhiteSpace(fullSong.Lyrics))
                 {
-                    _logger.LogInformation("Using unsynchronized lyrics fallback for track '{SongTitle}'", song.Title);
+                    _logger.LogDebug("Using unsynchronized lyrics fallback for track '{SongTitle}'", song.Title);
                     var lines = ParseUnsyncedLyricsToLines(fullSong.Lyrics);
                     foreach (var line in lines) UnsyncedLyricLines.Add(line);
                     HasUnsyncedLyrics = true;
                     return;
                 }
 
-                _logger.LogInformation("No lyrics found for track '{SongTitle}'", song.Title);
+                _logger.LogDebug("No lyrics found for track '{SongTitle}'", song.Title);
             }
             finally
             {

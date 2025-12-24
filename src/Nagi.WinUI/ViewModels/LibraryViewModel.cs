@@ -80,16 +80,16 @@ public partial class LibraryViewModel : SongListViewModelBase
         {
             try
             {
-                _logger.LogInformation("Starting initial background library refresh");
+                _logger.LogDebug("Starting initial background library refresh");
                 var changesFound = await _libraryScanner.RefreshAllFoldersAsync();
                 if (changesFound)
                 {
-                    _logger.LogInformation("Background refresh found changes. Reloading song list");
+                    _logger.LogDebug("Background refresh found changes. Reloading song list");
                     await _dispatcherService.EnqueueAsync(() => RefreshOrSortSongsCommand.ExecuteAsync(null));
                 }
                 else
                 {
-                    _logger.LogInformation("Background refresh complete. No changes were found");
+                    _logger.LogDebug("Background refresh complete. No changes were found");
                 }
             }
             catch (Exception ex)

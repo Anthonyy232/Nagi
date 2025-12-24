@@ -51,7 +51,7 @@ public class LastFmScrobblerService : ILastFmScrobblerService
 
         var success = await PostToLastFmAsync(parameters, apiSecret);
         if (success)
-            _logger.LogInformation("Successfully updated Last.fm 'Now Playing' for track '{TrackTitle}'.", song.Title);
+            _logger.LogDebug("Successfully updated Last.fm 'Now Playing' for track '{TrackTitle}'.", song.Title);
         return success;
     }
 

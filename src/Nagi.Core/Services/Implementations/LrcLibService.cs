@@ -58,7 +58,7 @@ public class LrcLibService : IOnlineLyricsService
                 query["duration"] = duration.TotalSeconds.ToString("F0");
 
                 var requestUrl = $"{BaseUrl}?{query}";
-                _logger.LogInformation("Fetching lyrics strict lookup from LRCLIB for: {Artist} - {Track}", artistName, trackName);
+                _logger.LogDebug("Fetching lyrics strict lookup from LRCLIB for: {Artist} - {Track}", artistName, trackName);
 
                 using var response = await _httpClient.GetAsync(requestUrl);
 
@@ -80,11 +80,11 @@ public class LrcLibService : IOnlineLyricsService
             }
             else
             {
-                 _logger.LogInformation("Strict lookup skipped (missing artist or album). Proceeding to search for: {Track}", trackName);
+                 _logger.LogDebug("Strict lookup skipped (missing artist or album). Proceeding to search for: {Track}", trackName);
             }
 
             // 2. Search Fallback /api/search
-            _logger.LogInformation("Attempting search fallback for: {Track}", trackName);
+            _logger.LogDebug("Attempting search fallback for: {Track}", trackName);
             return await SearchLyricsAsync(trackName, artistName, albumName, duration);
         }
         catch (Exception ex)
@@ -112,7 +112,7 @@ public class LrcLibService : IOnlineLyricsService
 
             if (searchResults is null || searchResults.Count == 0)
             {
-                _logger.LogInformation("No search results found for: {Artist} - {Track}", artistName, trackName);
+                _logger.LogDebug("No search results found for: {Artist} - {Track}", artistName, trackName);
                 return null;
             }
 
@@ -139,12 +139,12 @@ public class LrcLibService : IOnlineLyricsService
 
             if (bestMatch != null)
             {
-                _logger.LogInformation("Found fallback lyrics via search for: {Artist} - {Track} (Match: {MatchTrack}, Duration Diff: {Diff}s)", 
+                _logger.LogDebug("Found fallback lyrics via search for: {Artist} - {Track} (Match: {MatchTrack}, Duration Diff: {Diff}s)", 
                     artistName, trackName, bestMatch.TrackName, bestMatch.Duration - targetDurationSeconds);
                 return bestMatch.SyncedLyrics;
             }
             
-            _logger.LogInformation("Search results found but none matched criteria for: {Artist} - {Track}", artistName, trackName);
+            _logger.LogDebug("Search results found but none matched criteria for: {Artist} - {Track}", artistName, trackName);
             return null;
         }
         catch (Exception ex)

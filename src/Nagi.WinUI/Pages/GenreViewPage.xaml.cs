@@ -29,7 +29,7 @@ public sealed partial class GenreViewPage : Page
         DataContext = ViewModel;
 
         Loaded += OnPageLoaded;
-        _logger.LogInformation("GenreViewPage initialized.");
+        _logger.LogDebug("GenreViewPage initialized.");
     }
 
     /// <summary>
@@ -43,16 +43,16 @@ public sealed partial class GenreViewPage : Page
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
-        _logger.LogInformation("Navigated to GenreViewPage.");
+        _logger.LogDebug("Navigated to GenreViewPage.");
 
         if (e.Parameter is GenreViewNavigationParameter navParam)
         {
-            _logger.LogInformation("Loading details for genre '{GenreName}'.", navParam.GenreName);
+            _logger.LogDebug("Loading details for genre '{GenreName}'.", navParam.GenreName);
             try
             {
                 await ViewModel.LoadGenreDetailsAsync(navParam);
                 await ViewModel.LoadAvailablePlaylistsAsync();
-                _logger.LogInformation("Successfully loaded details for genre '{GenreName}'.", navParam.GenreName);
+                _logger.LogDebug("Successfully loaded details for genre '{GenreName}'.", navParam.GenreName);
             }
             catch (Exception ex)
             {
@@ -74,7 +74,7 @@ public sealed partial class GenreViewPage : Page
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
-        _logger.LogInformation("Navigating away from GenreViewPage. Cleaning up ViewModel.");
+        _logger.LogDebug("Navigating away from GenreViewPage. Cleaning up ViewModel.");
         ViewModel.Cleanup();
     }
 
@@ -120,7 +120,7 @@ public sealed partial class GenreViewPage : Page
         if (_isSearchExpanded) return;
 
         _isSearchExpanded = true;
-        _logger.LogInformation("Search UI expanded.");
+        _logger.LogDebug("Search UI expanded.");
         ToolTipService.SetToolTip(SearchToggleButton, "Close search");
         VisualStateManager.GoToState(this, "SearchExpanded", true);
 
@@ -142,7 +142,7 @@ public sealed partial class GenreViewPage : Page
         if (!_isSearchExpanded) return;
 
         _isSearchExpanded = false;
-        _logger.LogInformation("Search UI collapsed and search term cleared.");
+        _logger.LogDebug("Search UI collapsed and search term cleared.");
         ToolTipService.SetToolTip(SearchToggleButton, "Search library");
         VisualStateManager.GoToState(this, "SearchCollapsed", true);
         ViewModel.SearchTerm = string.Empty;
@@ -167,7 +167,7 @@ public sealed partial class GenreViewPage : Page
     {
         if (e.OriginalSource is FrameworkElement { DataContext: Song tappedSong })
         {
-            _logger.LogInformation("User double-tapped song '{SongTitle}' (Id: {SongId}). Executing play command.",
+            _logger.LogDebug("User double-tapped song '{SongTitle}' (Id: {SongId}). Executing play command.",
                 tappedSong.Title, tappedSong.Id);
             ViewModel.PlaySongCommand.Execute(tappedSong);
         }

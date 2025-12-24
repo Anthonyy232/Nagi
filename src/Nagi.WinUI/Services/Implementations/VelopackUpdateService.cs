@@ -26,13 +26,13 @@ public class VelopackUpdateService : IUpdateService
 
     public Task CheckForUpdatesOnStartupAsync()
     {
-        _logger.LogInformation("Skipping update check in MSIX packaged mode.");
+        _logger.LogDebug("Skipping update check in MSIX packaged mode.");
         return Task.CompletedTask;
     }
 
     public Task CheckForUpdatesManuallyAsync()
     {
-        _logger.LogInformation("Manual update check is not available for MSIX packages.");
+        _logger.LogDebug("Manual update check is not available for MSIX packages.");
         return Task.CompletedTask;
     }
 }
@@ -68,20 +68,20 @@ public class VelopackUpdateService : IUpdateService {
 #endif
 
         if (!await _settingsService.GetCheckForUpdatesEnabledAsync()) {
-            _logger.LogInformation("Automatic update check is disabled by user setting.");
+            _logger.LogDebug("Automatic update check is disabled by user setting.");
             return;
         }
 
         try {
             UpdateInfo? updateInfo = await _updateManager.CheckForUpdatesAsync();
             if (updateInfo == null) {
-                _logger.LogInformation("No updates found on startup.");
+                _logger.LogDebug("No updates found on startup.");
                 return;
             }
 
             var lastSkippedVersion = await _settingsService.GetLastSkippedUpdateVersionAsync();
             if (lastSkippedVersion == updateInfo.TargetFullRelease.Version.ToString()) {
-                _logger.LogInformation("User has previously skipped version {SkippedVersion}.", lastSkippedVersion);
+                _logger.LogDebug("User has previously skipped version {SkippedVersion}.", lastSkippedVersion);
                 return;
             }
 

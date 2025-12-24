@@ -29,7 +29,7 @@ public sealed partial class AlbumPage : Page
         DataContext = ViewModel;
 
         Loaded += OnPageLoaded;
-        _logger.LogInformation("AlbumPage initialized.");
+        _logger.LogDebug("AlbumPage initialized.");
     }
 
     public AlbumViewModel ViewModel { get; }
@@ -41,20 +41,20 @@ public sealed partial class AlbumPage : Page
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
-        _logger.LogInformation("Navigated to AlbumPage.");
+        _logger.LogDebug("Navigated to AlbumPage.");
         _cancellationTokenSource = new CancellationTokenSource();
 
         if (ViewModel.Albums.Count == 0)
         {
-            _logger.LogInformation("Album collection is empty, loading albums...");
+            _logger.LogDebug("Album collection is empty, loading albums...");
             try
             {
                 await ViewModel.LoadAlbumsAsync(_cancellationTokenSource.Token);
-                _logger.LogInformation("Successfully loaded albums.");
+                _logger.LogDebug("Successfully loaded albums.");
             }
             catch (TaskCanceledException)
             {
-                _logger.LogInformation("Album loading was cancelled.");
+                _logger.LogDebug("Album loading was cancelled.");
             }
             catch (Exception ex)
             {
@@ -63,7 +63,7 @@ public sealed partial class AlbumPage : Page
         }
         else
         {
-            _logger.LogInformation("Albums already loaded, skipping fetch.");
+            _logger.LogDebug("Albums already loaded, skipping fetch.");
         }
     }
 
@@ -74,7 +74,7 @@ public sealed partial class AlbumPage : Page
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
-        _logger.LogInformation("Navigating away from AlbumPage.");
+        _logger.LogDebug("Navigating away from AlbumPage.");
 
         if (_cancellationTokenSource is { IsCancellationRequested: false })
         {
@@ -132,7 +132,7 @@ public sealed partial class AlbumPage : Page
         if (_isSearchExpanded) return;
 
         _isSearchExpanded = true;
-        _logger.LogInformation("Search UI expanded.");
+        _logger.LogDebug("Search UI expanded.");
         ToolTipService.SetToolTip(SearchToggleButton, "Close search");
         VisualStateManager.GoToState(this, "SearchExpanded", true);
 
@@ -154,7 +154,7 @@ public sealed partial class AlbumPage : Page
         if (!_isSearchExpanded) return;
 
         _isSearchExpanded = false;
-        _logger.LogInformation("Search UI collapsed and search term cleared.");
+        _logger.LogDebug("Search UI collapsed and search term cleared.");
         ToolTipService.SetToolTip(SearchToggleButton, "Search albums");
         VisualStateManager.GoToState(this, "SearchCollapsed", true);
         ViewModel.SearchTerm = string.Empty;
@@ -168,7 +168,7 @@ public sealed partial class AlbumPage : Page
     {
         if (e.ClickedItem is AlbumViewModelItem clickedAlbum)
         {
-            _logger.LogInformation(
+            _logger.LogDebug(
                 "User clicked on album '{AlbumTitle}' by '{ArtistName}' (Id: {AlbumId}). Navigating to detail view.",
                 clickedAlbum.Title, clickedAlbum.ArtistName, clickedAlbum.Id);
             ViewModel.NavigateToAlbumDetail(clickedAlbum);

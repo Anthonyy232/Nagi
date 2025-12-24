@@ -135,7 +135,7 @@ public partial class GenreViewModel : ObservableObject, IDisposable
         }
         catch (OperationCanceledException)
         {
-            _logger.LogInformation("Genre loading was canceled");
+            _logger.LogDebug("Genre loading was canceled");
         }
         catch (Exception ex)
         {

@@ -75,7 +75,7 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
     public async Task InitializeAsync(string title, Guid? smartPlaylistId)
     {
         if (IsOverallLoading) return;
-        _logger.LogInformation("Initializing for smart playlist '{Title}' (ID: {SmartPlaylistId})", title, smartPlaylistId);
+        _logger.LogDebug("Initializing for smart playlist '{Title}' (ID: {SmartPlaylistId})", title, smartPlaylistId);
 
         try
         {

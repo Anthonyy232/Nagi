@@ -28,7 +28,7 @@ public sealed partial class SmartPlaylistSongViewPage : Page
         DataContext = ViewModel;
 
         Loaded += OnPageLoaded;
-        _logger.LogInformation("SmartPlaylistSongViewPage initialized.");
+        _logger.LogDebug("SmartPlaylistSongViewPage initialized.");
     }
 
     public SmartPlaylistSongListViewModel ViewModel { get; }
@@ -36,13 +36,13 @@ public sealed partial class SmartPlaylistSongViewPage : Page
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
-        _logger.LogInformation("Navigated to SmartPlaylistSongViewPage.");
+        _logger.LogDebug("Navigated to SmartPlaylistSongViewPage.");
 
         try
         {
             if (e.Parameter is SmartPlaylistSongViewNavigationParameter navParam)
             {
-                _logger.LogInformation("Loading songs for smart playlist '{SmartPlaylistName}' (Id: {SmartPlaylistId}).",
+                _logger.LogDebug("Loading songs for smart playlist '{SmartPlaylistName}' (Id: {SmartPlaylistId}).",
                     navParam.Title,
                     navParam.SmartPlaylistId);
                 await ViewModel.InitializeAsync(navParam.Title, navParam.SmartPlaylistId);
@@ -65,7 +65,7 @@ public sealed partial class SmartPlaylistSongViewPage : Page
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
-        _logger.LogInformation("Navigating away from SmartPlaylistSongViewPage. Cleaning up ViewModel.");
+        _logger.LogDebug("Navigating away from SmartPlaylistSongViewPage. Cleaning up ViewModel.");
         ViewModel.Cleanup();
     }
 
@@ -78,7 +78,7 @@ public sealed partial class SmartPlaylistSongViewPage : Page
 
     private async void EditRulesButton_Click(object sender, RoutedEventArgs e)
     {
-        _logger.LogInformation("Edit rules button clicked.");
+        _logger.LogDebug("Edit rules button clicked.");
         
         var smartPlaylistId = ViewModel.GetSmartPlaylistId();
         if (!smartPlaylistId.HasValue)
@@ -106,13 +106,13 @@ public sealed partial class SmartPlaylistSongViewPage : Page
         
         if (result == ContentDialogResult.Primary && dialog.ResultPlaylist != null)
         {
-            _logger.LogInformation("User edited smart playlist '{PlaylistName}'.", dialog.ResultPlaylist.Name);
+            _logger.LogDebug("User edited smart playlist '{PlaylistName}'.", dialog.ResultPlaylist.Name);
             // Refresh the song list
             await ViewModel.InitializeAsync(dialog.ResultPlaylist.Name, smartPlaylistId);
         }
         else
         {
-            _logger.LogInformation("User cancelled smart playlist edit.");
+            _logger.LogDebug("User cancelled smart playlist edit.");
         }
     }
 
@@ -139,7 +139,7 @@ public sealed partial class SmartPlaylistSongViewPage : Page
         if (_isSearchExpanded) return;
 
         _isSearchExpanded = true;
-        _logger.LogInformation("Search UI expanded.");
+        _logger.LogDebug("Search UI expanded.");
         ToolTipService.SetToolTip(SearchToggleButton, "Close search");
         VisualStateManager.GoToState(this, "SearchExpanded", true);
 
@@ -158,7 +158,7 @@ public sealed partial class SmartPlaylistSongViewPage : Page
         if (!_isSearchExpanded) return;
 
         _isSearchExpanded = false;
-        _logger.LogInformation("Search UI collapsed and search term cleared.");
+        _logger.LogDebug("Search UI collapsed and search term cleared.");
         ToolTipService.SetToolTip(SearchToggleButton, "Search in smart playlist");
         VisualStateManager.GoToState(this, "SearchCollapsed", true);
         ViewModel.SearchTerm = string.Empty;
@@ -177,7 +177,7 @@ public sealed partial class SmartPlaylistSongViewPage : Page
     {
         if (e.OriginalSource is FrameworkElement { DataContext: Song tappedSong })
         {
-            _logger.LogInformation("User double-tapped song '{SongTitle}' (Id: {SongId}). Executing play command.",
+            _logger.LogDebug("User double-tapped song '{SongTitle}' (Id: {SongId}). Executing play command.",
                 tappedSong.Title, tappedSong.Id);
             ViewModel.PlaySongCommand.Execute(tappedSong);
         }

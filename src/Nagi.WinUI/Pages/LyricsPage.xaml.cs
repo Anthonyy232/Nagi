@@ -28,21 +28,21 @@ public sealed partial class LyricsPage : Page
 
         ViewModel.PropertyChanged += OnViewModelPropertyChanged;
         Unloaded += OnPageUnloaded;
-        _logger.LogInformation("LyricsPage initialized.");
+        _logger.LogDebug("LyricsPage initialized.");
     }
 
     public LyricsPageViewModel ViewModel { get; }
 
     private void OnPageLoaded(object sender, RoutedEventArgs e)
     {
-        _logger.LogInformation("LyricsPage loaded.");
+        _logger.LogDebug("LyricsPage loaded.");
         if (Resources["PageLoadStoryboard"] is Storyboard storyboard) storyboard.Begin();
         UpdateProgressBarForCurrentLine();
     }
 
     private void OnPageUnloaded(object sender, RoutedEventArgs e)
     {
-        _logger.LogInformation("LyricsPage unloaded. Cleaning up resources.");
+        _logger.LogDebug("LyricsPage unloaded. Cleaning up resources.");
         ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
         Unloaded -= OnPageUnloaded;
         _progressBarStoryboard.Stop();
@@ -86,7 +86,7 @@ public sealed partial class LyricsPage : Page
     {
         if (e.ClickedItem is LyricLine clickedLine)
         {
-            _logger.LogInformation("User clicked lyric line at {Timestamp}. Seeking.", clickedLine.StartTime);
+            _logger.LogDebug("User clicked lyric line at {Timestamp}. Seeking.", clickedLine.StartTime);
             _ = ViewModel.SeekToLineAsync(clickedLine);
         }
     }

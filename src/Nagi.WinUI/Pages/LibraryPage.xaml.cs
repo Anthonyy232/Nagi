@@ -28,7 +28,7 @@ public sealed partial class LibraryPage : Page
         DataContext = ViewModel;
 
         Loaded += OnPageLoaded;
-        _logger.LogInformation("LibraryPage initialized.");
+        _logger.LogDebug("LibraryPage initialized.");
     }
 
     /// <summary>
@@ -42,7 +42,7 @@ public sealed partial class LibraryPage : Page
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
-        _logger.LogInformation("Navigated to LibraryPage. Initializing...");
+        _logger.LogDebug("Navigated to LibraryPage. Initializing...");
 
         try
         {
@@ -51,7 +51,7 @@ public sealed partial class LibraryPage : Page
 
             // This handles the initial UI load and a background rescan.
             await ViewModel.InitializeAsync();
-            _logger.LogInformation("LibraryPage initialization complete.");
+            _logger.LogDebug("LibraryPage initialization complete.");
         }
         catch (Exception ex)
         {
@@ -65,7 +65,7 @@ public sealed partial class LibraryPage : Page
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
-        _logger.LogInformation("Navigating away from LibraryPage. Cleaning up ViewModel.");
+        _logger.LogDebug("Navigating away from LibraryPage. Cleaning up ViewModel.");
         ViewModel.Cleanup();
     }
 
@@ -111,7 +111,7 @@ public sealed partial class LibraryPage : Page
         if (_isSearchExpanded) return;
 
         _isSearchExpanded = true;
-        _logger.LogInformation("Search UI expanded.");
+        _logger.LogDebug("Search UI expanded.");
         ToolTipService.SetToolTip(SearchToggleButton, "Close search");
         VisualStateManager.GoToState(this, "SearchExpanded", true);
 
@@ -133,7 +133,7 @@ public sealed partial class LibraryPage : Page
         if (!_isSearchExpanded) return;
 
         _isSearchExpanded = false;
-        _logger.LogInformation("Search UI collapsed and search term cleared.");
+        _logger.LogDebug("Search UI collapsed and search term cleared.");
         ToolTipService.SetToolTip(SearchToggleButton, "Search library");
         VisualStateManager.GoToState(this, "SearchCollapsed", true);
         ViewModel.SearchTerm = string.Empty;
@@ -193,7 +193,7 @@ public sealed partial class LibraryPage : Page
     {
         if (e.OriginalSource is FrameworkElement { DataContext: Song tappedSong })
         {
-            _logger.LogInformation("User double-tapped song '{SongTitle}' (Id: {SongId}). Executing play command.",
+            _logger.LogDebug("User double-tapped song '{SongTitle}' (Id: {SongId}). Executing play command.",
                 tappedSong.Title, tappedSong.Id);
             ViewModel.PlaySongCommand.Execute(tappedSong);
         }

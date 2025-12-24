@@ -26,7 +26,7 @@ public sealed partial class FolderPage : Page
         _logger = App.Services!.GetRequiredService<ILogger<FolderPage>>();
         DataContext = ViewModel;
 
-        _logger.LogInformation("FolderPage initialized.");
+        _logger.LogDebug("FolderPage initialized.");
     }
 
     public FolderViewModel ViewModel { get; }
@@ -36,9 +36,9 @@ public sealed partial class FolderPage : Page
     /// </summary>
     private async void Page_Loaded(object sender, RoutedEventArgs e)
     {
-        _logger.LogInformation("FolderPage loaded. Loading folders...");
+        _logger.LogDebug("FolderPage loaded. Loading folders...");
         await ViewModel.LoadFoldersCommand.ExecuteAsync(null);
-        _logger.LogInformation("Finished loading folders.");
+        _logger.LogDebug("Finished loading folders.");
     }
 
     /// <summary>
@@ -48,7 +48,7 @@ public sealed partial class FolderPage : Page
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
-        _logger.LogInformation("Navigating away from FolderPage. Disposing ViewModel.");
+        _logger.LogDebug("Navigating away from FolderPage. Disposing ViewModel.");
         ViewModel.Dispose();
     }
 
@@ -59,7 +59,7 @@ public sealed partial class FolderPage : Page
     {
         if (e.ClickedItem is FolderViewModelItem clickedFolder)
         {
-            _logger.LogInformation("User clicked on folder '{FolderName}' (Id: {FolderId}). Navigating to detail view.",
+            _logger.LogDebug("User clicked on folder '{FolderName}' (Id: {FolderId}). Navigating to detail view.",
                 clickedFolder.Name, clickedFolder.Id);
             ViewModel.NavigateToFolderDetail(clickedFolder);
         }
@@ -76,7 +76,7 @@ public sealed partial class FolderPage : Page
             return;
         }
 
-        _logger.LogInformation("Add folder button clicked. Opening folder picker.");
+        _logger.LogDebug("Add folder button clicked. Opening folder picker.");
         var folderPicker = new FolderPicker();
         var hwnd = WindowNative.GetWindowHandle(App.RootWindow);
         InitializeWithWindow.Initialize(folderPicker, hwnd);
@@ -85,12 +85,12 @@ public sealed partial class FolderPage : Page
         var folder = await folderPicker.PickSingleFolderAsync();
         if (folder != null)
         {
-            _logger.LogInformation("User selected folder '{FolderPath}'. Adding and scanning.", folder.Path);
+            _logger.LogDebug("User selected folder '{FolderPath}'. Adding and scanning.", folder.Path);
             await ViewModel.AddFolderAndScanCommand.ExecuteAsync(folder.Path);
         }
         else
         {
-            _logger.LogInformation("User cancelled the folder picker.");
+            _logger.LogDebug("User cancelled the folder picker.");
         }
     }
 
@@ -101,7 +101,7 @@ public sealed partial class FolderPage : Page
     {
         if (sender is FrameworkElement { DataContext: FolderViewModelItem folderItem })
         {
-            _logger.LogInformation("Delete context menu clicked for folder '{FolderName}' (Id: {FolderId}).",
+            _logger.LogDebug("Delete context menu clicked for folder '{FolderName}' (Id: {FolderId}).",
                 folderItem.Name, folderItem.Id);
             await ShowDeleteFolderConfirmationDialogAsync(folderItem);
         }
@@ -120,7 +120,7 @@ public sealed partial class FolderPage : Page
             return;
         }
 
-        _logger.LogInformation("Showing delete confirmation dialog for folder '{FolderName}'.", folderItem.Name);
+        _logger.LogDebug("Showing delete confirmation dialog for folder '{FolderName}'.", folderItem.Name);
         var dialog = new ContentDialog
         {
             Title = "Delete Folder",
@@ -135,14 +135,14 @@ public sealed partial class FolderPage : Page
         var result = await dialog.ShowAsync();
         if (result == ContentDialogResult.Primary)
         {
-            _logger.LogInformation(
+            _logger.LogDebug(
                 "User confirmed deletion for folder '{FolderName}' (Id: {FolderId}). Executing delete command.",
                 folderItem.Name, folderItem.Id);
             await ViewModel.DeleteFolderCommand.ExecuteAsync(folderItem.Id);
         }
         else
         {
-            _logger.LogInformation("User cancelled deletion for folder '{FolderName}'.", folderItem.Name);
+            _logger.LogDebug("User cancelled deletion for folder '{FolderName}'.", folderItem.Name);
         }
     }
 }

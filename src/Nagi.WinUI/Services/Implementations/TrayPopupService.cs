@@ -35,7 +35,7 @@ public class TrayPopupService : ITrayPopupService, IDisposable
     public void Dispose()
     {
         if (_isDisposed) return;
-        _logger.LogInformation("Disposing TrayPopupService.");
+        _logger.LogDebug("Disposing TrayPopupService.");
         
         // Cancel any ongoing animations first to prevent TaskCanceledException
         PopupAnimation.CancelAllAnimations();
@@ -72,7 +72,7 @@ public class TrayPopupService : ITrayPopupService, IDisposable
     {
         if (_popupWindow != null && _popupWindow.AppWindow.IsVisible && !_isAnimating)
         {
-            _logger.LogInformation("Hiding tray popup.");
+            _logger.LogDebug("Hiding tray popup.");
             _isAnimating = true;
             await PopupAnimation.AnimateOut(_popupWindow);
             _isAnimating = false;
@@ -81,7 +81,7 @@ public class TrayPopupService : ITrayPopupService, IDisposable
 
     private async void ShowPopup()
     {
-        _logger.LogInformation("Showing tray popup.");
+        _logger.LogDebug("Showing tray popup.");
         _isAnimating = true;
         _popupWindow!.ViewModel.ShowPlayerViewCommand.Execute(null);
 
@@ -111,7 +111,7 @@ public class TrayPopupService : ITrayPopupService, IDisposable
     {
         var mainContent = App.RootWindow?.Content as FrameworkElement;
         var currentTheme = mainContent?.ActualTheme ?? ElementTheme.Default;
-        _logger.LogInformation("Creating new tray popup window with theme {Theme}.", currentTheme);
+        _logger.LogDebug("Creating new tray popup window with theme {Theme}.", currentTheme);
         _popupWindow = new TrayPopup(currentTheme);
         _popupWindow.Deactivated += OnPopupDeactivated;
         _popupWindow.Closed += OnPopupWindowClosed;
@@ -129,7 +129,7 @@ public class TrayPopupService : ITrayPopupService, IDisposable
     {
         if (sender is TrayPopup popup)
         {
-            _logger.LogInformation("Tray popup window closed. Cleaning up references.");
+            _logger.LogDebug("Tray popup window closed. Cleaning up references.");
             popup.Deactivated -= OnPopupDeactivated;
             popup.Closed -= OnPopupWindowClosed;
             _popupWindow = null;
