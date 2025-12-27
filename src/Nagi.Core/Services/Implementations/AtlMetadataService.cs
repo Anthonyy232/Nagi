@@ -1,4 +1,6 @@
+using System.Globalization;
 using System.Text;
+using System.Text.RegularExpressions;
 using ATL;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Constants;
@@ -183,6 +185,17 @@ public class AtlMetadataService : IMetadataService
             track.AdditionalFields.TryGetValue("GROUPING", out grouping) ||
             track.AdditionalFields.TryGetValue("TIT1", out grouping))
             metadata.Grouping = SanitizeString(grouping);
+
+        // Extract ReplayGain tags (case-insensitive lookup)
+        var gainKey = track.AdditionalFields.Keys
+            .FirstOrDefault(k => k.Equals("REPLAYGAIN_TRACK_GAIN", StringComparison.OrdinalIgnoreCase));
+        if (gainKey != null && track.AdditionalFields.TryGetValue(gainKey, out var gainStr))
+            metadata.ReplayGainTrackGain = ParseReplayGainValue(gainStr);
+        
+        var peakKey = track.AdditionalFields.Keys
+            .FirstOrDefault(k => k.Equals("REPLAYGAIN_TRACK_PEAK", StringComparison.OrdinalIgnoreCase));
+        if (peakKey != null && track.AdditionalFields.TryGetValue(peakKey, out var peakStr))
+            metadata.ReplayGainTrackPeak = ParseReplayGainValue(peakStr);
     }
 
     /// <summary>
@@ -457,5 +470,24 @@ public class AtlMetadataService : IMetadataService
     private string? SanitizeString(string? input)
     {
         return string.IsNullOrWhiteSpace(input) ? null : input.Trim();
+    }
+
+    /// <summary>
+    ///     Parses a ReplayGain value string (e.g., "-6.54 dB" or "0.98") to a nullable double.
+    ///     Uses regular expressions to extract the numeric part, making it robust against
+    ///     various formats and trailing metadata.
+    /// </summary>
+    private static double? ParseReplayGainValue(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return null;
+
+        // Matches a number optionally preceded by + or -
+        var match = Regex.Match(value.Trim(), @"^[-+]?[0-9]*\.?[0-9]+");
+        if (match.Success && double.TryParse(match.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var result))
+        {
+            return result;
+        }
+
+        return null;
     }
 }

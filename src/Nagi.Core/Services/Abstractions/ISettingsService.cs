@@ -21,6 +21,12 @@ public interface ISettingsService
     event Action<bool>? DiscordRichPresenceSettingChanged;
 
     /// <summary>
+    ///     Occurs when the volume normalization (ReplayGain) setting is changed.
+    ///     The boolean parameter indicates whether volume normalization is enabled.
+    /// </summary>
+    event Action<bool>? VolumeNormalizationEnabledChanged;
+
+    /// <summary>
     ///     Gets the initial volume level for the media player.
     /// </summary>
     /// <returns>A volume level between 0.0 and 1.0.</returns>
@@ -196,4 +202,16 @@ public interface ISettingsService
     /// </summary>
     /// <param name="settings">The equalizer settings to save.</param>
     Task SetEqualizerSettingsAsync(EqualizerSettings settings);
+
+    /// <summary>
+    ///     Gets whether volume normalization (ReplayGain) is enabled.
+    /// </summary>
+    /// <returns>True if volume normalization is enabled; otherwise, false.</returns>
+    Task<bool> GetVolumeNormalizationEnabledAsync();
+
+    /// <summary>
+    ///     Sets the volume normalization (ReplayGain) preference.
+    /// </summary>
+    /// <param name="isEnabled">The preference to save.</param>
+    Task SetVolumeNormalizationEnabledAsync(bool isEnabled);
 }

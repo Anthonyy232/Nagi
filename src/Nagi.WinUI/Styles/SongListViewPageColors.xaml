@@ -61,10 +61,12 @@
                                         <DoubleAnimation Storyboard.TargetName="ScaleTransform"
                                                          Storyboard.TargetProperty="ScaleX" To="1.0"
                                                          Duration="0:0:0.2"
+                                                         EnableDependentAnimation="True"
                                                          EasingFunction="{StaticResource CubicEaseOut}" />
                                         <DoubleAnimation Storyboard.TargetName="ScaleTransform"
                                                          Storyboard.TargetProperty="ScaleY" To="1.0"
                                                          Duration="0:0:0.2"
+                                                         EnableDependentAnimation="True"
                                                          EasingFunction="{StaticResource CubicEaseOut}" />
                                     </Storyboard>
                                 </VisualState>
@@ -78,10 +80,12 @@
                                         <DoubleAnimation Storyboard.TargetName="ScaleTransform"
                                                          Storyboard.TargetProperty="ScaleX" To="1.05"
                                                          Duration="0:0:0.2"
+                                                         EnableDependentAnimation="True"
                                                          EasingFunction="{StaticResource CubicEaseOut}" />
                                         <DoubleAnimation Storyboard.TargetName="ScaleTransform"
                                                          Storyboard.TargetProperty="ScaleY" To="1.05"
                                                          Duration="0:0:0.2"
+                                                         EnableDependentAnimation="True"
                                                          EasingFunction="{StaticResource CubicEaseOut}" />
                                     </Storyboard>
                                 </VisualState>
@@ -95,10 +99,12 @@
                                         <DoubleAnimation Storyboard.TargetName="ScaleTransform"
                                                          Storyboard.TargetProperty="ScaleX" To="0.95"
                                                          Duration="0:0:0.1"
+                                                         EnableDependentAnimation="True"
                                                          EasingFunction="{StaticResource CubicEaseOut}" />
                                         <DoubleAnimation Storyboard.TargetName="ScaleTransform"
                                                          Storyboard.TargetProperty="ScaleY" To="0.95"
                                                          Duration="0:0:0.1"
+                                                         EnableDependentAnimation="True"
                                                          EasingFunction="{StaticResource CubicEaseOut}" />
                                     </Storyboard>
                                 </VisualState>
@@ -165,10 +171,12 @@
                                         <DoubleAnimation Storyboard.TargetName="ScaleTransform"
                                                          Storyboard.TargetProperty="ScaleX" To="1.0"
                                                          Duration="0:0:0.2"
+                                                         EnableDependentAnimation="True"
                                                          EasingFunction="{StaticResource CubicEaseOut}" />
                                         <DoubleAnimation Storyboard.TargetName="ScaleTransform"
                                                          Storyboard.TargetProperty="ScaleY" To="1.0"
                                                          Duration="0:0:0.2"
+                                                         EnableDependentAnimation="True"
                                                          EasingFunction="{StaticResource CubicEaseOut}" />
                                     </Storyboard>
                                 </VisualState>
@@ -185,10 +193,12 @@
                                         <DoubleAnimation Storyboard.TargetName="ScaleTransform"
                                                          Storyboard.TargetProperty="ScaleX" To="1.1"
                                                          Duration="0:0:0.2"
+                                                         EnableDependentAnimation="True"
                                                          EasingFunction="{StaticResource CubicEaseOut}" />
                                         <DoubleAnimation Storyboard.TargetName="ScaleTransform"
                                                          Storyboard.TargetProperty="ScaleY" To="1.1"
                                                          Duration="0:0:0.2"
+                                                         EnableDependentAnimation="True"
                                                          EasingFunction="{StaticResource CubicEaseOut}" />
                                     </Storyboard>
                                 </VisualState>
@@ -209,10 +219,12 @@
                                         <DoubleAnimation Storyboard.TargetName="ScaleTransform"
                                                          Storyboard.TargetProperty="ScaleX" To="0.95"
                                                          Duration="0:0:0.1"
+                                                         EnableDependentAnimation="True"
                                                          EasingFunction="{StaticResource CubicEaseOut}" />
                                         <DoubleAnimation Storyboard.TargetName="ScaleTransform"
                                                          Storyboard.TargetProperty="ScaleY" To="0.95"
                                                          Duration="0:0:0.1"
+                                                         EnableDependentAnimation="True"
                                                          EasingFunction="{StaticResource CubicEaseOut}" />
                                     </Storyboard>
                                 </VisualState>

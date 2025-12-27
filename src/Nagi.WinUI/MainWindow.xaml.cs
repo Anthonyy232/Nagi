@@ -310,7 +310,7 @@ public sealed class MiniPlayerWindow : Window
     private const int InitialWindowSize = 350;
     private const int MinWindowSize = 200;
     private const int MaxWindowSize = 640;
-    private const string AppIconPath = "Assets/AppLogo.ico";
+    private static readonly string AppIconPath = System.IO.Path.Combine(AppContext.BaseDirectory, "Assets/AppLogo.ico");
 
     // Margins to position the window away from the screen edges.
     private const int HorizontalScreenMargin = 10;

@@ -194,6 +194,17 @@
                 <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="Player Management" />
 
                 <controls:SettingsCard
+                    Header="Volume Normalization (ReplayGain)"
+                    Description="Automatically adjust volume to the standard level (-18 LUFS) to avoid sudden loudness changes.">
+                    <controls:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE995;" />
+                    </controls:SettingsCard.HeaderIcon>
+                    <ToggleSwitch
+                        HorizontalAlignment="Right"
+                        IsOn="{x:Bind ViewModel.IsVolumeNormalizationEnabled, Mode=TwoWay}" />
+                </controls:SettingsCard>
+
+                <controls:SettingsCard
                     Header="Audio Equalizer"
                     Description="Adjust frequency bands to customize your sound.">
                     <controls:SettingsCard.HeaderIcon>

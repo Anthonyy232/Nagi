@@ -28,6 +28,8 @@ public class SongFileMetadata
     public string? Lyrics { get; set; }
     public string? LrcFilePath { get; set; }
     public double? Bpm { get; set; }
+    public double? ReplayGainTrackGain { get; set; }
+    public double? ReplayGainTrackPeak { get; set; }
     public string? Composer { get; set; }
     public bool ExtractionFailed { get; set; }
     public string? ErrorMessage { get; set; }

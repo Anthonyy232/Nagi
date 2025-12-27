@@ -110,6 +110,16 @@ public class Song
     public double? Bpm { get; set; }
 
     /// <summary>
+    ///     The ReplayGain track gain value in dB. Used for volume normalization.
+    /// </summary>
+    public double? ReplayGainTrackGain { get; set; }
+
+    /// <summary>
+    ///     The ReplayGain track peak value (0.0 to 1.0). Used to prevent clipping.
+    /// </summary>
+    public double? ReplayGainTrackPeak { get; set; }
+
+    /// <summary>
     ///     A custom grouping category for the song.
     /// </summary>
     [MaxLength(200)]

@@ -61,6 +61,7 @@ public class SettingsService : IUISettingsService
     private const string LastWindowSizeKey = "LastWindowSize";
     private const string RememberPaneStateEnabledKey = "RememberPaneStateEnabled";
     private const string LastPaneOpenKey = "LastPaneOpen";
+    private const string VolumeNormalizationEnabledKey = "VolumeNormalizationEnabled";
 
     private static readonly JsonSerializerOptions _serializerOptions = new() { WriteIndented = true };
     private readonly ICredentialLockerService _credentialLockerService;
@@ -102,6 +103,7 @@ public class SettingsService : IUISettingsService
     public event Action? PlayerButtonSettingsChanged;
     public event Action? LastFmSettingsChanged;
     public event Action<bool>? DiscordRichPresenceSettingChanged;
+    public event Action<bool>? VolumeNormalizationEnabledChanged;
     public event Action<bool>? TransparencyEffectsSettingChanged;
     public event Action<BackdropMaterial>? BackdropMaterialChanged;
 
@@ -322,8 +324,8 @@ public class SettingsService : IUISettingsService
         await EnsureUnpackagedSettingsLoadedAsync();
         var currentValue = GetValue(key, defaultValue);
 
-        if (!EqualityComparer<T>.Default.Equals(currentValue, newValue)) notifier?.Invoke(newValue);
         await SetValueAsync(key, newValue);
+        if (!EqualityComparer<T>.Default.Equals(currentValue, newValue)) notifier?.Invoke(newValue);
     }
 
     private List<NavigationItemSetting> GetDefaultNavigationItems()
@@ -875,6 +877,18 @@ public class SettingsService : IUISettingsService
     public Task SetLastPaneOpenAsync(bool isOpen)
     {
         return SetValueAsync(LastPaneOpenKey, isOpen ? "true" : "false");
+    }
+
+    public async Task<bool> GetVolumeNormalizationEnabledAsync()
+    {
+        await EnsureUnpackagedSettingsLoadedAsync();
+        return GetValue(VolumeNormalizationEnabledKey, false);
+    }
+
+    public Task SetVolumeNormalizationEnabledAsync(bool isEnabled)
+    {
+        return SetValueAndNotifyAsync(VolumeNormalizationEnabledKey, isEnabled, false,
+            VolumeNormalizationEnabledChanged);
     }
 
     #endregion

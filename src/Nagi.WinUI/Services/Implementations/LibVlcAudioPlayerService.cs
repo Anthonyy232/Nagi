@@ -33,6 +33,8 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
 
     private bool _isDisposed;
     private readonly CancellationTokenSource _disposeCts = new();
+    private double _replayGainOffset; // Separate tracking of ReplayGain adjustment
+    private float _basePreamp; // User's EQ preamp setting
 
     public LibVlcAudioPlayerService(IDispatcherService dispatcherService, ILogger<LibVlcAudioPlayerService> logger)
     {
@@ -44,7 +46,8 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         var vlcOptions = new[]
         {
             "--no-video", "--no-spu", "--no-osd", "--no-stats", "--ignore-config",
-            "--no-one-instance", "--no-lua", "--verbose=-1", "--audio-filter=equalizer"
+            "--no-one-instance", "--no-lua", "--verbose=-1", "--audio-filter=equalizer",
+            "--demux=avcodec"
         };
 
         // Log detailed configuration at Debug level
@@ -54,6 +57,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         _dummyMediaPlayer = new WinMediaPlayback.MediaPlayer { CommandManager = { IsEnabled = false } };
 
         _equalizer = new Equalizer();
+        _basePreamp = _equalizer.Preamp;
         _mediaPlayer.SetEqualizer(_equalizer);
 
         // Register event handlers
@@ -274,7 +278,12 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
             return false;
         }
 
-        _equalizer.SetPreamp(settings.Preamp);
+        // Store the user's base preamp setting
+        _basePreamp = settings.Preamp;
+        
+        // Apply combined preamp (base + ReplayGain offset)
+        ApplyCombinedPreamp();
+        
         var bandCount = _equalizer.BandCount;
         for (var i = 0; i < settings.BandGains.Count; i++)
             if (i < bandCount)
@@ -283,6 +292,30 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         var success = _mediaPlayer.SetEqualizer(_equalizer);
         _logger.LogDebug("Re-applied equalizer to MediaPlayer. Success: {Success}", success);
         return success;
+    }
+
+    public Task SetReplayGainAsync(double gainDb)
+    {
+        if (_isDisposed) return Task.CompletedTask;
+
+        _replayGainOffset = gainDb;
+        ApplyCombinedPreamp();
+        _logger.LogDebug("Applied ReplayGain offset: {GainDb} dB (combined preamp applied)", gainDb);
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
+    ///     Applies the combined preamp value from user EQ settings and ReplayGain offset.
+    /// </summary>
+    private void ApplyCombinedPreamp()
+    {
+        if (_isDisposed) return;
+        
+        // VLC equalizer preamp range: -20 to +20 dB
+        // Combine user's base preamp with ReplayGain offset
+        var combinedPreamp = (float)Math.Clamp(_basePreamp + _replayGainOffset, -20.0, 20.0);
+        _equalizer.SetPreamp(combinedPreamp);
+        _mediaPlayer.SetEqualizer(_equalizer);
     }
 
     public void Dispose()

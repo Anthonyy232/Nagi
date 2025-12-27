@@ -434,10 +434,14 @@ public abstract partial class SongListViewModelBase : ObservableObject
             if (token.IsCancellationRequested) return;
 
             if (append)
+            {
                 foreach (var song in pagedResult.Items)
                     Songs.Add(song);
+            }
             else
+            {
                 Songs = new ObservableCollection<Song>(pagedResult.Items);
+            }
         });
 
         // Update internal state within a lock for thread safety.

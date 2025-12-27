@@ -47,10 +47,12 @@ across the application's media player interface.
                                             <DoubleAnimation Storyboard.TargetName="ScaleTransform"
                                                              Storyboard.TargetProperty="ScaleX" To="1.0"
                                                              Duration="0:0:0.2"
+                                                             EnableDependentAnimation="True"
                                                              EasingFunction="{StaticResource CubicEaseOut}" />
                                             <DoubleAnimation Storyboard.TargetName="ScaleTransform"
                                                              Storyboard.TargetProperty="ScaleY" To="1.0"
                                                              Duration="0:0:0.2"
+                                                             EnableDependentAnimation="True"
                                                              EasingFunction="{StaticResource CubicEaseOut}" />
                                         </Storyboard>
                                     </VisualState>
@@ -64,10 +66,12 @@ across the application's media player interface.
                                             <DoubleAnimation Storyboard.TargetName="ScaleTransform"
                                                              Storyboard.TargetProperty="ScaleX" To="1.1"
                                                              Duration="0:0:0.2"
+                                                             EnableDependentAnimation="True"
                                                              EasingFunction="{StaticResource CubicEaseOut}" />
                                             <DoubleAnimation Storyboard.TargetName="ScaleTransform"
                                                              Storyboard.TargetProperty="ScaleY" To="1.1"
                                                              Duration="0:0:0.2"
+                                                             EnableDependentAnimation="True"
                                                              EasingFunction="{StaticResource CubicEaseOut}" />
                                         </Storyboard>
                                     </VisualState>
@@ -81,10 +85,12 @@ across the application's media player interface.
                                             <DoubleAnimation Storyboard.TargetName="ScaleTransform"
                                                              Storyboard.TargetProperty="ScaleX" To="0.95"
                                                              Duration="0:0:0.1"
+                                                             EnableDependentAnimation="True"
                                                              EasingFunction="{StaticResource CubicEaseOut}" />
                                             <DoubleAnimation Storyboard.TargetName="ScaleTransform"
                                                              Storyboard.TargetProperty="ScaleY" To="0.95"
                                                              Duration="0:0:0.1"
+                                                             EnableDependentAnimation="True"
                                                              EasingFunction="{StaticResource CubicEaseOut}" />
                                         </Storyboard>
                                     </VisualState>
@@ -160,10 +166,12 @@ across the application's media player interface.
                                         <DoubleAnimation Storyboard.TargetName="ThumbScaleTransform"
                                                          Storyboard.TargetProperty="ScaleX" To="1.25"
                                                          Duration="0:0:0.1"
+                                                         EnableDependentAnimation="True"
                                                          EasingFunction="{StaticResource CubicEaseOut}" />
                                         <DoubleAnimation Storyboard.TargetName="ThumbScaleTransform"
                                                          Storyboard.TargetProperty="ScaleY" To="1.25"
                                                          Duration="0:0:0.1"
+                                                         EnableDependentAnimation="True"
                                                          EasingFunction="{StaticResource CubicEaseOut}" />
                                     </Storyboard>
                                 </VisualState>
@@ -171,9 +179,11 @@ across the application's media player interface.
                                     <Storyboard>
                                         <DoubleAnimation Storyboard.TargetName="ThumbScaleTransform"
                                                          Storyboard.TargetProperty="ScaleX" To="1.1" Duration="0:0:0.1"
+                                                         EnableDependentAnimation="True"
                                                          EasingFunction="{StaticResource CubicEaseOut}" />
                                         <DoubleAnimation Storyboard.TargetName="ThumbScaleTransform"
                                                          Storyboard.TargetProperty="ScaleY" To="1.1" Duration="0:0:0.1"
+                                                         EnableDependentAnimation="True"
                                                          EasingFunction="{StaticResource CubicEaseOut}" />
                                     </Storyboard>
                                 </VisualState>
@@ -230,10 +240,12 @@ across the application's media player interface.
                                         <DoubleAnimation Storyboard.TargetName="ThumbScaleTransform"
                                                          Storyboard.TargetProperty="ScaleX" To="1.25"
                                                          Duration="0:0:0.1"
+                                                         EnableDependentAnimation="True"
                                                          EasingFunction="{StaticResource CubicEaseOut}" />
                                         <DoubleAnimation Storyboard.TargetName="ThumbScaleTransform"
                                                          Storyboard.TargetProperty="ScaleY" To="1.25"
                                                          Duration="0:0:0.1"
+                                                         EnableDependentAnimation="True"
                                                          EasingFunction="{StaticResource CubicEaseOut}" />
                                     </Storyboard>
                                 </VisualState>
@@ -241,9 +253,11 @@ across the application's media player interface.
                                     <Storyboard>
                                         <DoubleAnimation Storyboard.TargetName="ThumbScaleTransform"
                                                          Storyboard.TargetProperty="ScaleX" To="1.1" Duration="0:0:0.1"
+                                                         EnableDependentAnimation="True"
                                                          EasingFunction="{StaticResource CubicEaseOut}" />
                                         <DoubleAnimation Storyboard.TargetName="ThumbScaleTransform"
                                                          Storyboard.TargetProperty="ScaleY" To="1.1" Duration="0:0:0.1"
+                                                         EnableDependentAnimation="True"
                                                          EasingFunction="{StaticResource CubicEaseOut}" />
                                     </Storyboard>
                                 </VisualState>

@@ -417,6 +417,11 @@ public partial class App : Application
         services.AddSingleton<IUpdateService, VelopackUpdateService>();
         services.AddSingleton<IOnlineLyricsService, LrcLibService>();
         services.AddSingleton<IPlaylistExportService, M3uPlaylistExportService>();
+        
+        // FFmpeg and ReplayGain services
+        services.AddSingleton<IFFmpegService, FFmpegService>();
+        services.AddSingleton<IPcmExtractor, FFmpegPcmExtractor>();
+        services.AddSingleton<IReplayGainService, ReplayGainService>();
 
 #if !MSIX_PACKAGE
         services.AddSingleton(_ =>

@@ -127,10 +127,12 @@
                                         <DoubleAnimation Storyboard.TargetName="ThumbScaleTransform"
                                                          Storyboard.TargetProperty="ScaleX" To="1.25"
                                                          Duration="0:0:0.1"
+                                                         EnableDependentAnimation="True"
                                                          EasingFunction="{StaticResource CubicEaseOut}" />
                                         <DoubleAnimation Storyboard.TargetName="ThumbScaleTransform"
                                                          Storyboard.TargetProperty="ScaleY" To="1.25"
                                                          Duration="0:0:0.1"
+                                                         EnableDependentAnimation="True"
                                                          EasingFunction="{StaticResource CubicEaseOut}" />
                                     </Storyboard>
                                 </VisualState>
@@ -138,9 +140,11 @@
                                     <Storyboard>
                                         <DoubleAnimation Storyboard.TargetName="ThumbScaleTransform"
                                                          Storyboard.TargetProperty="ScaleX" To="1.1" Duration="0:0:0.1"
+                                                         EnableDependentAnimation="True"
                                                          EasingFunction="{StaticResource CubicEaseOut}" />
                                         <DoubleAnimation Storyboard.TargetName="ThumbScaleTransform"
                                                          Storyboard.TargetProperty="ScaleY" To="1.1" Duration="0:0:0.1"
+                                                         EnableDependentAnimation="True"
                                                          EasingFunction="{StaticResource CubicEaseOut}" />
                                     </Storyboard>
                                 </VisualState>
