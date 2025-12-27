@@ -19,6 +19,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
     private readonly ISettingsService _settingsService;
     private int _currentShuffledIndex = -1;
 
+    private bool _isDisposed;
     private bool _isInitialized;
     private List<Song> _playbackQueue = new();
     private List<Song> _shuffledQueue = new();
@@ -675,6 +676,8 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
 
     public void Dispose()
     {
+        if (_isDisposed) return;
+
         _audioPlayer.PlaybackEnded -= OnAudioPlayerPlaybackEnded;
         _audioPlayer.StateChanged -= OnAudioPlayerStateChanged;
         _audioPlayer.VolumeChanged -= OnAudioPlayerVolumeChanged;
@@ -685,6 +688,8 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         _audioPlayer.SmtcNextButtonPressed -= OnAudioPlayerSmtcNextButtonPressed;
         _audioPlayer.SmtcPreviousButtonPressed -= OnAudioPlayerSmtcPreviousButtonPressed;
         _settingsService.VolumeNormalizationEnabledChanged -= OnVolumeNormalizationEnabledChanged;
+        
+        _isDisposed = true;
         GC.SuppressFinalize(this);
     }
 

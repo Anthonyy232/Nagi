@@ -2,7 +2,8 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:animation="using:Microsoft.UI.Xaml.Media.Animation"
-    xmlns:primitives="using:Microsoft.UI.Xaml.Controls.Primitives">
+    xmlns:primitives="using:Microsoft.UI.Xaml.Controls.Primitives"
+    xmlns:behaviors="using:Nagi.WinUI.Behaviors">
 
     <!-- Easing function for animations -->
     <animation:CubicEase x:Key="CubicEaseOut" EasingMode="EaseOut" />
@@ -44,7 +45,11 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Grid x:Name="RootGrid" Background="Transparent">
+                    <Grid x:Name="RootGrid"
+                          Background="Transparent"
+                          behaviors:AnimationBehaviors.EnableScaleAnimation="True"
+                          behaviors:AnimationBehaviors.HoverScale="1.05"
+                          behaviors:AnimationBehaviors.PressedScale="0.95">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -108,46 +113,20 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="primitives:Thumb">
-                    <Grid>
+                    <Grid behaviors:AnimationBehaviors.EnableScaleAnimation="True"
+                           behaviors:AnimationBehaviors.HoverScale="1.25"
+                           behaviors:AnimationBehaviors.PressedScale="1.1">
                         <Ellipse x:Name="ThumbVisual"
                                  Fill="{TemplateBinding Background}"
                                  Width="{TemplateBinding Width}"
                                  Height="{TemplateBinding Height}"
                                  Stroke="{ThemeResource ControlStrokeColorDefaultBrush}"
-                                 StrokeThickness="1">
-                            <Ellipse.RenderTransform>
-                                <ScaleTransform x:Name="ThumbScaleTransform" CenterX="8" CenterY="8" />
-                            </Ellipse.RenderTransform>
-                        </Ellipse>
+                                 StrokeThickness="1" />
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
-                                <VisualState x:Name="PointerOver">
-                                    <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetName="ThumbScaleTransform"
-                                                         Storyboard.TargetProperty="ScaleX" To="1.25"
-                                                         Duration="0:0:0.1"
-                                                         EnableDependentAnimation="True"
-                                                         EasingFunction="{StaticResource CubicEaseOut}" />
-                                        <DoubleAnimation Storyboard.TargetName="ThumbScaleTransform"
-                                                         Storyboard.TargetProperty="ScaleY" To="1.25"
-                                                         Duration="0:0:0.1"
-                                                         EnableDependentAnimation="True"
-                                                         EasingFunction="{StaticResource CubicEaseOut}" />
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="Pressed">
-                                    <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetName="ThumbScaleTransform"
-                                                         Storyboard.TargetProperty="ScaleX" To="1.1" Duration="0:0:0.1"
-                                                         EnableDependentAnimation="True"
-                                                         EasingFunction="{StaticResource CubicEaseOut}" />
-                                        <DoubleAnimation Storyboard.TargetName="ThumbScaleTransform"
-                                                         Storyboard.TargetProperty="ScaleY" To="1.1" Duration="0:0:0.1"
-                                                         EnableDependentAnimation="True"
-                                                         EasingFunction="{StaticResource CubicEaseOut}" />
-                                    </Storyboard>
-                                </VisualState>
+                                <VisualState x:Name="PointerOver" />
+                                <VisualState x:Name="Pressed" />
                                 <VisualState x:Name="Disabled">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ThumbVisual"
@@ -273,19 +252,49 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ListViewItem">
-                    <ListViewItemPresenter
-                        ContentMargin="{TemplateBinding Padding}"
-                        ContentTransitions="{TemplateBinding ContentTransitions}"
-                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                        PointerOverBackground="{ThemeResource SubtleFillColorSecondaryBrush}"
-                        PointerOverForeground="{ThemeResource TextFillColorPrimaryBrush}"
-                        PressedBackground="{ThemeResource SubtleFillColorTertiaryBrush}"
-                        SelectedBackground="Transparent"
-                        SelectedForeground="{ThemeResource TextFillColorPrimaryBrush}"
-                        SelectedPointerOverBackground="{ThemeResource SubtleFillColorSecondaryBrush}"
-                        SelectedPressedBackground="{ThemeResource SubtleFillColorTertiaryBrush}"
-                        SelectionCheckMarkVisualEnabled="False"
-                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                    <Grid x:Name="RootGrid"
+                          Background="Transparent"
+                          behaviors:AnimationBehaviors.EnableScaleAnimation="True"
+                          behaviors:AnimationBehaviors.HoverScale="1.02"
+                          behaviors:AnimationBehaviors.PressedScale="0.98">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
+                                                                       Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource SubtleFillColorSecondaryBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
+                                                                       Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource SubtleFillColorTertiaryBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Selected">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
+                                                                       Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource SubtleFillColorSecondaryBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <ContentPresenter
+                            Margin="{TemplateBinding Padding}"
+                            ContentTransitions="{TemplateBinding ContentTransitions}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

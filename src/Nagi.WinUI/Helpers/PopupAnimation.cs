@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Windows.Graphics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.UI.Xaml.Media;
 using Nagi.WinUI.Popups;
 
 namespace Nagi.WinUI.Helpers;
@@ -20,7 +21,6 @@ internal static class PopupAnimation
     private const float ShowDurationMs = 250f;
     private const float HideDurationMs = 200f;
     private const float StartScale = 0.85f;
-    private const int AnimationFrameDelayMs = 16; // 60 fps
 
     // Manages the cancellation of ongoing animations to prevent conflicts.
     private static CancellationTokenSource? _animationCts;
@@ -47,7 +47,7 @@ internal static class PopupAnimation
     ///     Animates a window into view with a scale and fade effect.
     ///     Cancels any previously running animation on the same window.
     /// </summary>
-    public static async Task AnimateIn(TrayPopup window, RectInt32 finalRect)
+    public static async Task AnimateIn(TrayPopup window, RectInt32 finalRect, RectInt32? sourceRect = null)
     {
         // Defensively check if the window is valid before starting.
         if (window?.AppWindow is null) return;
@@ -68,8 +68,21 @@ internal static class PopupAnimation
             // Calculate the starting geometry, scaled down but centered on the final position.
             var startWidth = (int)(finalRect.Width * StartScale);
             var startHeight = (int)(finalRect.Height * StartScale);
-            var startX = finalRect.X + (finalRect.Width - startWidth) / 2;
-            var startY = finalRect.Y + (finalRect.Height - startHeight) / 2;
+
+            int startX, startY;
+            if (sourceRect is { } source)
+            {
+                // Bloom out from the source (e.g., tray icon)
+                startX = source.X + (source.Width - startWidth) / 2;
+                startY = source.Y + (source.Height - startHeight) / 2;
+            }
+            else
+            {
+                // Expand from the center of the final position
+                startX = finalRect.X + (finalRect.Width - startWidth) / 2;
+                startY = finalRect.Y + (finalRect.Height - startHeight) / 2;
+            }
+
             var startRect = new RectInt32(startX, startY, startWidth, startHeight);
 
             // Set the window to its initial, invisible state and then show it.
@@ -99,7 +112,7 @@ internal static class PopupAnimation
                 window.AppWindow.MoveAndResize(new RectInt32(newX, newY, newWidth, newHeight));
                 window.SetWindowOpacity(newAlpha);
 
-                await Task.Delay(AnimationFrameDelayMs, token);
+                await YieldToRendering(token);
             }
 
             // If not cancelled, ensure the final state is set perfectly.
@@ -176,7 +189,7 @@ internal static class PopupAnimation
                 window.AppWindow.MoveAndResize(new RectInt32(newX, newY, newWidth, newHeight));
                 window.SetWindowOpacity(newAlpha);
 
-                await Task.Delay(AnimationFrameDelayMs, token);
+                await YieldToRendering(token);
             }
 
             // If not cancelled, hide and reset the window for the next time it's shown.
@@ -215,5 +228,41 @@ internal static class PopupAnimation
     private static float EaseInCubic(float progress)
     {
         return progress * progress * progress;
+    }
+
+    /// <summary>
+    ///     Waits for the next CompositionTarget.Rendering event.
+    ///     This ensures the animation is perfectly synced with the monitor's refresh rate.
+    /// </summary>
+    private static Task YieldToRendering(CancellationToken token)
+    {
+        var tcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        
+        // If already cancelled, return immediately.
+        if (token.IsCancellationRequested)
+        {
+            tcs.SetCanceled(token);
+            return tcs.Task;
+        }
+
+        EventHandler<object>? handler = null;
+        CancellationTokenRegistration registration = default;
+
+        handler = (s, e) =>
+        {
+            CompositionTarget.Rendering -= handler;
+            registration.Dispose();
+            tcs.TrySetResult();
+        };
+
+        CompositionTarget.Rendering += handler;
+
+        registration = token.Register(() =>
+        {
+            CompositionTarget.Rendering -= handler;
+            tcs.TrySetCanceled();
+        });
+
+        return tcs.Task;
     }
 }

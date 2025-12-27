@@ -254,58 +254,7 @@
                                 Padding="24,12"
                                 Command="{Binding AddFolderCommand}"
                                 Style="{StaticResource BrandAccentButtonStyle}">
-                                <StackPanel x:Name="AddFolderButtonContent" Orientation="Horizontal" Spacing="10"
-                                            RenderTransformOrigin="0.5,0.5">
-                                    <StackPanel.RenderTransform>
-                                        <TransformGroup>
-                                            <ScaleTransform />
-                                            <TranslateTransform />
-                                        </TransformGroup>
-                                    </StackPanel.RenderTransform>
-                                    <VisualStateManager.VisualStateGroups>
-                                        <VisualStateGroup x:Name="CommonStates">
-                                            <VisualState x:Name="Normal" />
-                                            <VisualState x:Name="PointerOver">
-                                                <Storyboard>
-                                                    <DoubleAnimation
-                                                        Storyboard.TargetName="AddFolderButtonContent"
-                                                        Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.Y)"
-                                                        To="-4" Duration="0:0:0.2"
-                                                        EnableDependentAnimation="True" />
-                                                    <DoubleAnimation
-                                                        Storyboard.TargetName="AddFolderButtonContent"
-                                                        Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)"
-                                                        To="1.05" Duration="0:0:0.2"
-                                                        EnableDependentAnimation="True" />
-                                                    <DoubleAnimation
-                                                        Storyboard.TargetName="AddFolderButtonContent"
-                                                        Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)"
-                                                        To="1.05" Duration="0:0:0.2"
-                                                        EnableDependentAnimation="True" />
-                                                </Storyboard>
-                                            </VisualState>
-                                            <VisualState x:Name="Pressed">
-                                                <Storyboard>
-                                                    <DoubleAnimation
-                                                        Storyboard.TargetName="AddFolderButtonContent"
-                                                        Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.Y)"
-                                                        To="-2" Duration="0:0:0.1"
-                                                        EnableDependentAnimation="True" />
-                                                    <DoubleAnimation
-                                                        Storyboard.TargetName="AddFolderButtonContent"
-                                                        Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)"
-                                                        To="1.02" Duration="0:0:0.1"
-                                                        EnableDependentAnimation="True" />
-                                                    <DoubleAnimation
-                                                        Storyboard.TargetName="AddFolderButtonContent"
-                                                        Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleY)"
-                                                        To="1.02" Duration="0:0:0.1"
-                                                        EnableDependentAnimation="True" />
-                                                </Storyboard>
-                                            </VisualState>
-                                        </VisualStateGroup>
-                                    </VisualStateManager.VisualStateGroups>
-
+                                <StackPanel x:Name="AddFolderButtonContent" Orientation="Horizontal" Spacing="10">
                                     <SymbolIcon Symbol="Add" />
                                     <TextBlock
                                         VerticalAlignment="Center"

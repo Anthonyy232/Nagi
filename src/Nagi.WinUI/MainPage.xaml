@@ -19,10 +19,6 @@
             <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <converters:ObjectToBooleanConverter x:Key="ObjectToBooleanConverter" />
 
-            <Style x:Key="QueueListViewItemStyle" TargetType="ListViewItem">
-                <Setter Property="Padding" Value="12,8" />
-                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-            </Style>
 
             <DataTemplate x:Key="ShuffleButtonTemplate" x:DataType="uiModels:PlayerButtonSetting">
                 <Button
@@ -44,6 +40,7 @@
 
             <DataTemplate x:Key="PlayPauseButtonTemplate" x:DataType="uiModels:PlayerButtonSetting">
                 <Button
+                    x:Name="PlayPauseButton"
                     Command="{Binding DataContext.PlayPauseCommand, ElementName=MainPageRoot}"
                     Style="{StaticResource PlayPauseButtonStyle}"
                     ToolTipService.ToolTip="{Binding DataContext.PlayPauseButtonToolTip, ElementName=MainPageRoot, Mode=OneWay}">
@@ -53,6 +50,7 @@
                         Glyph="{Binding DataContext.PlayPauseIconGlyph, ElementName=MainPageRoot, Mode=OneWay}" />
                 </Button>
             </DataTemplate>
+
 
             <DataTemplate x:Key="NextButtonTemplate" x:DataType="uiModels:PlayerButtonSetting">
                 <Button Command="{Binding DataContext.NextCommand, ElementName=MainPageRoot}"

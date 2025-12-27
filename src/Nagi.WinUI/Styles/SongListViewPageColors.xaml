@@ -1,6 +1,7 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behaviors="using:Nagi.WinUI.Behaviors">
 
     <!-- Resource definitions for TextBox focused border brush -->
     <ResourceDictionary.ThemeDictionaries>
@@ -50,26 +51,12 @@
                     <Grid x:Name="RootGrid"
                           Background="{TemplateBinding Background}"
                           CornerRadius="{TemplateBinding CornerRadius}"
-                          RenderTransformOrigin="0.5,0.5">
-                        <Grid.RenderTransform>
-                            <ScaleTransform x:Name="ScaleTransform" />
-                        </Grid.RenderTransform>
+                          behaviors:AnimationBehaviors.EnableScaleAnimation="True"
+                          behaviors:AnimationBehaviors.HoverScale="1.05"
+                          behaviors:AnimationBehaviors.PressedScale="0.95">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal">
-                                    <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetName="ScaleTransform"
-                                                         Storyboard.TargetProperty="ScaleX" To="1.0"
-                                                         Duration="0:0:0.2"
-                                                         EnableDependentAnimation="True"
-                                                         EasingFunction="{StaticResource CubicEaseOut}" />
-                                        <DoubleAnimation Storyboard.TargetName="ScaleTransform"
-                                                         Storyboard.TargetProperty="ScaleY" To="1.0"
-                                                         Duration="0:0:0.2"
-                                                         EnableDependentAnimation="True"
-                                                         EasingFunction="{StaticResource CubicEaseOut}" />
-                                    </Storyboard>
-                                </VisualState>
+                                <VisualState x:Name="Normal" />
                                 <VisualState x:Name="PointerOver">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
@@ -77,16 +64,6 @@
                                             <DiscreteObjectKeyFrame KeyTime="0"
                                                                     Value="{ThemeResource ButtonBackgroundPointerOver}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <DoubleAnimation Storyboard.TargetName="ScaleTransform"
-                                                         Storyboard.TargetProperty="ScaleX" To="1.05"
-                                                         Duration="0:0:0.2"
-                                                         EnableDependentAnimation="True"
-                                                         EasingFunction="{StaticResource CubicEaseOut}" />
-                                        <DoubleAnimation Storyboard.TargetName="ScaleTransform"
-                                                         Storyboard.TargetProperty="ScaleY" To="1.05"
-                                                         Duration="0:0:0.2"
-                                                         EnableDependentAnimation="True"
-                                                         EasingFunction="{StaticResource CubicEaseOut}" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
@@ -96,16 +73,6 @@
                                             <DiscreteObjectKeyFrame KeyTime="0"
                                                                     Value="{ThemeResource ButtonBackgroundPressed}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <DoubleAnimation Storyboard.TargetName="ScaleTransform"
-                                                         Storyboard.TargetProperty="ScaleX" To="0.95"
-                                                         Duration="0:0:0.1"
-                                                         EnableDependentAnimation="True"
-                                                         EasingFunction="{StaticResource CubicEaseOut}" />
-                                        <DoubleAnimation Storyboard.TargetName="ScaleTransform"
-                                                         Storyboard.TargetProperty="ScaleY" To="0.95"
-                                                         Duration="0:0:0.1"
-                                                         EnableDependentAnimation="True"
-                                                         EasingFunction="{StaticResource CubicEaseOut}" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
@@ -154,10 +121,9 @@
                 <ControlTemplate TargetType="Button">
                     <Grid x:Name="RootGrid" Background="{TemplateBinding Background}"
                           CornerRadius="{TemplateBinding CornerRadius}"
-                          RenderTransformOrigin="0.5,0.5">
-                        <Grid.RenderTransform>
-                            <ScaleTransform x:Name="ScaleTransform" />
-                        </Grid.RenderTransform>
+                          behaviors:AnimationBehaviors.EnableScaleAnimation="True"
+                          behaviors:AnimationBehaviors.HoverScale="1.1"
+                          behaviors:AnimationBehaviors.PressedScale="0.95">
                         <ContentPresenter x:Name="ContentPresenter" Content="{TemplateBinding Content}"
                                           ContentTemplate="{TemplateBinding ContentTemplate}"
                                           Padding="{TemplateBinding Padding}" />
@@ -166,20 +132,7 @@
                         <FontIcon x:Name="PlayIcon" Glyph="" FontSize="20" Foreground="White" Visibility="Collapsed" />
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal">
-                                    <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetName="ScaleTransform"
-                                                         Storyboard.TargetProperty="ScaleX" To="1.0"
-                                                         Duration="0:0:0.2"
-                                                         EnableDependentAnimation="True"
-                                                         EasingFunction="{StaticResource CubicEaseOut}" />
-                                        <DoubleAnimation Storyboard.TargetName="ScaleTransform"
-                                                         Storyboard.TargetProperty="ScaleY" To="1.0"
-                                                         Duration="0:0:0.2"
-                                                         EnableDependentAnimation="True"
-                                                         EasingFunction="{StaticResource CubicEaseOut}" />
-                                    </Storyboard>
-                                </VisualState>
+                                <VisualState x:Name="Normal" />
                                 <VisualState x:Name="PointerOver">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HoverOverlay"
@@ -190,16 +143,6 @@
                                                                        Storyboard.TargetProperty="Visibility">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <DoubleAnimation Storyboard.TargetName="ScaleTransform"
-                                                         Storyboard.TargetProperty="ScaleX" To="1.1"
-                                                         Duration="0:0:0.2"
-                                                         EnableDependentAnimation="True"
-                                                         EasingFunction="{StaticResource CubicEaseOut}" />
-                                        <DoubleAnimation Storyboard.TargetName="ScaleTransform"
-                                                         Storyboard.TargetProperty="ScaleY" To="1.1"
-                                                         Duration="0:0:0.2"
-                                                         EnableDependentAnimation="True"
-                                                         EasingFunction="{StaticResource CubicEaseOut}" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
@@ -216,16 +159,6 @@
                                                                        Storyboard.TargetProperty="Background">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="#A0000000" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <DoubleAnimation Storyboard.TargetName="ScaleTransform"
-                                                         Storyboard.TargetProperty="ScaleX" To="0.95"
-                                                         Duration="0:0:0.1"
-                                                         EnableDependentAnimation="True"
-                                                         EasingFunction="{StaticResource CubicEaseOut}" />
-                                        <DoubleAnimation Storyboard.TargetName="ScaleTransform"
-                                                         Storyboard.TargetProperty="ScaleY" To="0.95"
-                                                         Duration="0:0:0.1"
-                                                         EnableDependentAnimation="True"
-                                                         EasingFunction="{StaticResource CubicEaseOut}" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
@@ -274,7 +207,11 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="HyperlinkButton">
-                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}">
+                    <Grid x:Name="RootGrid"
+                          Background="{TemplateBinding Background}"
+                          behaviors:AnimationBehaviors.EnableScaleAnimation="True"
+                          behaviors:AnimationBehaviors.HoverScale="1.1"
+                          behaviors:AnimationBehaviors.PressedScale="0.9">
                         <ContentPresenter x:Name="ContentPresenter"
                                           Content="{TemplateBinding Content}"
                                           ContentTemplate="{TemplateBinding ContentTemplate}"
@@ -327,6 +264,9 @@
         <Setter Property="Padding" Value="0,4" />
         <Setter Property="MinHeight" Value="52" />
         <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="behaviors:AnimationBehaviors.EnableScaleAnimation" Value="True" />
+        <Setter Property="behaviors:AnimationBehaviors.HoverScale" Value="1.02" />
+        <Setter Property="behaviors:AnimationBehaviors.PressedScale" Value="0.98" />
     </Style>
 
     <!--

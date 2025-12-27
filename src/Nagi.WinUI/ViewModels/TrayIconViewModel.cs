@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Reflection;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Windowing;
+using Windows.Graphics;
 using Nagi.Core.Services.Abstractions;
 using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
@@ -157,9 +159,27 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable
     ///     Shows or hides the popup menu associated with the tray icon.
     /// </summary>
     [RelayCommand]
-    private void ShowPopup()
+    private void ShowPopup(object? parameter)
     {
-        _trayPopupService.ShowOrHidePopup();
+        RectInt32? iconRect = null;
+        if (parameter != null)
+        {
+            try
+            {
+                // Attempt to find the icon's screen position if the library supports it.
+                var method = parameter.GetType().GetMethod("GetIconRect");
+                if (method?.Invoke(parameter, null) is RectInt32 rect)
+                {
+                    iconRect = rect;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogTrace(ex, "Could not retrieve icon rect from parameter.");
+            }
+        }
+
+        _trayPopupService.ShowOrHidePopup(iconRect);
     }
 
     /// <summary>

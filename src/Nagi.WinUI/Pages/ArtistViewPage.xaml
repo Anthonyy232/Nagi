@@ -8,6 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodels="using:Nagi.WinUI.ViewModels"
     xmlns:models="using:Nagi.Core.Models"
+    xmlns:behaviors="using:Nagi.WinUI.Behaviors"
     x:Name="pageRoot"
     Background="Transparent"
     mc:Ignorable="d">
@@ -157,7 +158,11 @@
                                     Width="180"
                                     Height="220"
                                     Margin="8,16,8,16"
-                                    Background="Transparent">
+                                    Background="Transparent"
+                                    behaviors:AnimationBehaviors.EnableTiltAnimation="True"
+                                    behaviors:AnimationBehaviors.EnableScaleAnimation="True"
+                                    behaviors:AnimationBehaviors.HoverScale="1.0"
+                                    behaviors:AnimationBehaviors.PressedScale="0.98">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="*" />
                                         <RowDefinition Height="Auto" />
