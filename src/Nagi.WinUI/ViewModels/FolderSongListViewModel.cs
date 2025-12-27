@@ -351,6 +351,21 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         await LoadFolderContentsAsync();
     }
 
+    public override async Task RefreshOrSortSongsAsync(string? sortOrderString = null)
+    {
+        if (IsOverallLoading) return;
+
+        if (!string.IsNullOrEmpty(sortOrderString) &&
+            Enum.TryParse<SongSortOrder>(sortOrderString, true, out var newSortOrder))
+        {
+            CurrentSortOrder = newSortOrder;
+            _logger.LogDebug("Folder sort order changed to '{SortOrder}'", CurrentSortOrder);
+        }
+
+        UpdateSortOrderButtonText(CurrentSortOrder);
+        await LoadFolderContentsAsync();
+    }
+
     private void TriggerDebouncedSearch()
     {
         try

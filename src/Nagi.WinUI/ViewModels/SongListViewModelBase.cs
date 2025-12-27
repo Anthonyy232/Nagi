@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
@@ -85,7 +86,7 @@ public abstract partial class SongListViewModelBase : ObservableObject
 
     [ObservableProperty] public partial SongSortOrder CurrentSortOrder { get; set; } = SongSortOrder.TitleAsc;
 
-    [ObservableProperty] public partial string CurrentSortOrderText { get; set; } = "Sort By: A to Z";
+    [ObservableProperty] public partial string CurrentSortOrderText { get; set; } = SortOrderHelper.AToZ;
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(RefreshOrSortSongsCommand))]
@@ -117,7 +118,7 @@ public abstract partial class SongListViewModelBase : ObservableObject
     }
 
     [RelayCommand(CanExecute = nameof(CanExecuteLoadCommands))]
-    public async Task RefreshOrSortSongsAsync(string? sortOrderString = null)
+    public virtual async Task RefreshOrSortSongsAsync(string? sortOrderString = null)
     {
         // Prevent concurrent load/sort operations from interfering with each other.
         lock (_loadLock)
@@ -460,19 +461,7 @@ public abstract partial class SongListViewModelBase : ObservableObject
 
     protected void UpdateSortOrderButtonText(SongSortOrder sortOrder)
     {
-        CurrentSortOrderText = sortOrder switch
-        {
-            SongSortOrder.TitleAsc => "Sort By: A to Z",
-            SongSortOrder.TitleDesc => "Sort By: Z to A",
-            SongSortOrder.DateAddedDesc => "Sort By: Newest",
-            SongSortOrder.DateAddedAsc => "Sort By: Oldest",
-            SongSortOrder.DateModifiedDesc => "Sort By: Modified (Newest)",
-            SongSortOrder.DateModifiedAsc => "Sort By: Modified (Oldest)",
-            SongSortOrder.AlbumAsc => "Sort By: Album",
-            SongSortOrder.ArtistAsc => "Sort By: Artist",
-            SongSortOrder.TrackNumberAsc => "Sort By: Disc",
-            _ => "Sort By: A to Z"
-        };
+        CurrentSortOrderText = SortOrderHelper.GetDisplayName(sortOrder);
     }
 
     private void UpdateSelectionDependentCommands()

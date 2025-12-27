@@ -13,6 +13,7 @@ using Nagi.Core.Services.Data;
 using Nagi.WinUI.Navigation;
 using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
+using Nagi.Core.Helpers;
 
 namespace Nagi.WinUI.ViewModels;
 
@@ -71,7 +72,7 @@ public partial class GenreViewModel : ObservableObject, IDisposable
 
     [ObservableProperty] public partial GenreSortOrder CurrentSortOrder { get; set; } = GenreSortOrder.NameAsc;
 
-    [ObservableProperty] public partial string CurrentSortOrderText { get; set; } = "Sort By: Name (A-Z)";
+    [ObservableProperty] public partial string CurrentSortOrderText { get; set; } = SortOrderHelper.AToZ;
 
     private bool IsSearchActive => !string.IsNullOrWhiteSpace(SearchTerm);
 
@@ -232,12 +233,7 @@ public partial class GenreViewModel : ObservableObject, IDisposable
 
     private void UpdateSortOrderText()
     {
-        CurrentSortOrderText = CurrentSortOrder switch
-        {
-            GenreSortOrder.NameDesc => "Sort By: Name (Z-A)",
-            GenreSortOrder.SongCountDesc => "Sort By: Most Songs",
-            _ => "Sort By: Name (A-Z)"
-        };
+        CurrentSortOrderText = SortOrderHelper.GetDisplayName(CurrentSortOrder);
     }
 
     /// <summary>

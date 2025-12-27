@@ -8,6 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local="using:Nagi.WinUI.Models"
     xmlns:vm="using:Nagi.WinUI.ViewModels"
+    xmlns:helpers="using:Nagi.Core.Helpers"
     x:Name="pageRoot"
     Background="Transparent"
     mc:Ignorable="d">
@@ -302,13 +303,13 @@
                         <Button.Flyout>
                             <MenuFlyout Placement="Bottom">
                                 <MenuFlyoutItem Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                                CommandParameter="TitleAsc" Text="A to Z" />
+                                                CommandParameter="TitleAsc" Text="{x:Bind helpers:SortOrderHelper.AToZLabel}" />
                                 <MenuFlyoutItem Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                                CommandParameter="TitleDesc" Text="Z to A" />
+                                                CommandParameter="TitleDesc" Text="{x:Bind helpers:SortOrderHelper.ZToALabel}" />
                                 <MenuFlyoutItem Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                                CommandParameter="DateModifiedDesc" Text="Date Modified (Newest)" />
+                                                CommandParameter="DateModifiedDesc" Text="{x:Bind helpers:SortOrderHelper.ModifiedNewestLabel}" />
                                 <MenuFlyoutItem Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                                CommandParameter="DateModifiedAsc" Text="Date Modified (Oldest)" />
+                                                CommandParameter="DateModifiedAsc" Text="{x:Bind helpers:SortOrderHelper.ModifiedOldestLabel}" />
                             </MenuFlyout>
                         </Button.Flyout>
                         <FontIcon FontSize="16" Glyph="" />

@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:ImageEx"
+    xmlns:helpers="using:Nagi.Core.Helpers"
     mc:Ignorable="d"
     Title="Smart Playlist"
     PrimaryButtonText="Save"
@@ -67,13 +68,13 @@
             <StackPanel Grid.Column="4" Spacing="4" MinWidth="200" VerticalAlignment="Top">
                 <TextBlock Text="Sort Order" Style="{ThemeResource BodyStrongTextBlockStyle}"/>
                 <ComboBox x:Name="SortByComboBox" SelectedIndex="0" HorizontalAlignment="Stretch">
-                    <ComboBoxItem Content="Title (A-Z)" Tag="TitleAsc" />
-                    <ComboBoxItem Content="Title (Z-A)" Tag="TitleDesc" />
-                    <ComboBoxItem Content="Artist (A-Z)" Tag="ArtistAsc" />
-                    <ComboBoxItem Content="Artist (Z-A)" Tag="ArtistDesc" />
-                    <ComboBoxItem Content="Album (A-Z)" Tag="AlbumAsc" />
-                    <ComboBoxItem Content="Album (Z-A)" Tag="AlbumDesc" />
-                    <ComboBoxItem Content="Random" Tag="Random" />
+                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.TitleAscLabel}" Tag="TitleAsc" />
+                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.TitleDescLabel}" Tag="TitleDesc" />
+                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.ArtistAscLabel}" Tag="ArtistAsc" />
+                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.ArtistDescLabel}" Tag="ArtistDesc" />
+                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.AlbumAscLabel}" Tag="AlbumAsc" />
+                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.AlbumDescLabel}" Tag="AlbumDesc" />
+                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.RandomLabel}" Tag="Random" />
                 </ComboBox>
             </StackPanel>
         </Grid>
