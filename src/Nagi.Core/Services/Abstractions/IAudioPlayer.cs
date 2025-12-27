@@ -155,5 +155,11 @@ public interface IAudioPlayer : IDisposable
     /// <returns>A read-only list of band indices and their corresponding frequencies.</returns>
     IReadOnlyList<(uint Index, float Frequency)> GetEqualizerBands();
 
+    /// <summary>
+    ///     Sets the ReplayGain adjustment for volume normalization.
+    /// </summary>
+    /// <param name="gainDb">The gain adjustment in decibels. Use 0 for no adjustment.</param>
+    Task SetReplayGainAsync(double gainDb);
+
     #endregion
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Nagi.WinUI.Services.Abstractions;
@@ -86,4 +87,13 @@ public interface IUIService
     /// <param name="fileTypes">The file extensions to filter by (e.g., ".m3u", ".m3u8").</param>
     /// <returns>The paths of the selected files, or an empty list if the user cancelled.</returns>
     Task<IReadOnlyList<string>> PickOpenMultipleFilesAsync(IEnumerable<string> fileTypes);
+    
+    /// <summary>
+    ///     Shows a dialog for FFmpeg setup with a recheck button that doesn't close the dialog.
+    /// </summary>
+    /// <param name="title">The dialog's title.</param>
+    /// <param name="instructions">The FFmpeg setup instructions to display.</param>
+    /// <param name="checkAction">An async function that checks if FFmpeg is installed. Returns true if detected.</param>
+    /// <returns>True if FFmpeg was detected after a recheck, false if the user cancelled.</returns>
+    Task<bool> ShowFFmpegSetupDialogAsync(string title, string instructions, Func<Task<bool>> checkAction);
 }

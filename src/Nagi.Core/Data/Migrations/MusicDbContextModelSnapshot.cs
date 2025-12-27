@@ -15,7 +15,7 @@ namespace Nagi.Core.Data.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "9.0.8");
+            modelBuilder.HasAnnotation("ProductVersion", "10.0.1");
 
             modelBuilder.Entity("GenreSong", b =>
                 {
@@ -425,6 +425,12 @@ namespace Nagi.Core.Data.Migrations
 
                     b.Property<int?>("Rating")
                         .HasColumnType("INTEGER");
+
+                    b.Property<double?>("ReplayGainTrackGain")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("ReplayGainTrackPeak")
+                        .HasColumnType("REAL");
 
                     b.Property<int?>("SampleRate")
                         .HasColumnType("INTEGER");

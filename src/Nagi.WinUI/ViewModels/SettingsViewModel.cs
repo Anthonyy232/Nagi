@@ -12,6 +12,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Services.Data;
 using Nagi.WinUI.Models;
 using Nagi.WinUI.Navigation;
 using Nagi.WinUI.Services.Abstractions;
@@ -91,10 +92,14 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     private readonly IUpdateService _updateService;
     private readonly IPlaylistExportService _playlistExportService;
     private readonly ILibraryReader _libraryReader;
+    private readonly PlayerViewModel _playerViewModel;
+    private readonly IReplayGainService _replayGainService;
+    private readonly IFFmpegService _ffmpegService;
 
     private bool _isDisposed;
     private bool _isInitializing;
     private CancellationTokenSource? _preampDebounceCts;
+    private CancellationTokenSource? _replayGainScanCts;
 
     public SettingsViewModel(
         IUISettingsService settingsService,
@@ -107,6 +112,9 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         IMusicPlaybackService playbackService,
         IPlaylistExportService playlistExportService,
         ILibraryReader libraryReader,
+        PlayerViewModel playerViewModel,
+        IReplayGainService replayGainService,
+        IFFmpegService ffmpegService,
         ILogger<SettingsViewModel> logger)
     {
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
@@ -119,6 +127,9 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         _playbackService = playbackService ?? throw new ArgumentNullException(nameof(playbackService));
         _playlistExportService = playlistExportService ?? throw new ArgumentNullException(nameof(playlistExportService));
         _libraryReader = libraryReader ?? throw new ArgumentNullException(nameof(libraryReader));
+        _playerViewModel = playerViewModel ?? throw new ArgumentNullException(nameof(playerViewModel));
+        _replayGainService = replayGainService ?? throw new ArgumentNullException(nameof(replayGainService));
+        _ffmpegService = ffmpegService ?? throw new ArgumentNullException(nameof(ffmpegService));
         _logger = logger;
 
         NavigationItems.CollectionChanged += OnNavigationItemsCollectionChanged;
@@ -131,6 +142,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         IsUpdateControlVisible = true;
 #endif
     }
+
 
     [ObservableProperty] public partial ElementTheme SelectedTheme { get; set; }
     [ObservableProperty] public partial BackdropMaterial SelectedBackdropMaterial { get; set; }
@@ -148,6 +160,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     [ObservableProperty] public partial bool IsCheckForUpdatesEnabled { get; set; }
     [ObservableProperty] public partial bool IsRememberWindowSizeEnabled { get; set; }
     [ObservableProperty] public partial bool IsRememberPaneStateEnabled { get; set; }
+    [ObservableProperty] public partial bool IsVolumeNormalizationEnabled { get; set; }
     [ObservableProperty] public partial float EqualizerPreamp { get; set; }
 
     [ObservableProperty]
@@ -187,6 +200,8 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         foreach (var bandVm in EqualizerBands) bandVm.Dispose();
         _preampDebounceCts?.Cancel();
         _preampDebounceCts?.Dispose();
+        _replayGainScanCts?.Cancel();
+        _replayGainScanCts?.Dispose();
 
         _isDisposed = true;
         GC.SuppressFinalize(this);
@@ -232,6 +247,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         IsCheckForUpdatesEnabled = await _settingsService.GetCheckForUpdatesEnabledAsync();
         IsRememberWindowSizeEnabled = await _settingsService.GetRememberWindowSizeEnabledAsync();
         IsRememberPaneStateEnabled = await _settingsService.GetRememberPaneStateEnabledAsync();
+        IsVolumeNormalizationEnabled = await _settingsService.GetVolumeNormalizationEnabledAsync();
         
         var lastFmCredentials = await _settingsService.GetLastFmCredentialsAsync();
         LastFmUsername = lastFmCredentials?.Username;
@@ -587,6 +603,105 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     {
         if (_isInitializing) return;
         _ = _settingsService.SetRememberPaneStateEnabledAsync(value);
+    }
+
+    async partial void OnIsVolumeNormalizationEnabledChanged(bool value)
+    {
+        if (_isInitializing) return;
+
+        // When enabling, check for FFmpeg first
+        if (value)
+        {
+            var isFFmpegInstalled = await _ffmpegService.IsFFmpegInstalledAsync();
+            if (!isFFmpegInstalled)
+            {
+                // Show dialog with recheck capability
+                var ffmpegDetected = await _uiService.ShowFFmpegSetupDialogAsync(
+                    "FFmpeg Not Found",
+                    _ffmpegService.GetFFmpegSetupInstructions(),
+                    () => _ffmpegService.IsFFmpegInstalledAsync(forceRecheck: true));
+                
+                if (!ffmpegDetected)
+                {
+                    // User cancelled or FFmpeg still not found - revert the toggle
+                    _isInitializing = true;
+                    IsVolumeNormalizationEnabled = false;
+                    _isInitializing = false;
+                    return;
+                }
+            }
+
+            // If FFmpeg is present, show confirmation dialog and trigger scan
+            var confirmed = await _uiService.ShowConfirmationDialogAsync(
+                "Enable Volume Normalization",
+                "Volume Normalization (ReplayGain) ensures a consistent volume level across all your music.\n\n" +
+                "This will analyze your music library and directly modify your audio files by writing ReplayGain tags. " +
+                "Only files without existing tags will be processed. This may take some time depending on your library size.\n\n" +
+                "Do you want to continue?",
+                "Enable & Scan",
+                "Cancel");
+
+            if (!confirmed)
+            {
+                // Revert the toggle without triggering this handler again
+                _isInitializing = true;
+                IsVolumeNormalizationEnabled = false;
+                _isInitializing = false;
+                return;
+            }
+
+            await _settingsService.SetVolumeNormalizationEnabledAsync(true);
+            await ScanLibraryForReplayGainAsync();
+        }
+        else
+        {
+            // When disabling, just save the setting (no confirmation needed)
+            await _settingsService.SetVolumeNormalizationEnabledAsync(false);
+        }
+    }
+
+    /// <summary>
+    ///     Scans the library for songs missing ReplayGain data and writes the tags.
+    /// </summary>
+    private async Task ScanLibraryForReplayGainAsync()
+    {
+        if (_playerViewModel.IsGlobalOperationInProgress) return;
+
+        // Cancel any existing scan
+        _replayGainScanCts?.Cancel();
+        _replayGainScanCts?.Dispose();
+        _replayGainScanCts = new CancellationTokenSource();
+        var cancellationToken = _replayGainScanCts.Token;
+
+        _playerViewModel.IsGlobalOperationInProgress = true;
+        _playerViewModel.GlobalOperationStatusMessage = "Preparing volume normalization scan...";
+        _playerViewModel.IsGlobalOperationIndeterminate = true;
+
+        try
+        {
+            var progress = new Progress<ScanProgress>(p =>
+            {
+                _playerViewModel.GlobalOperationStatusMessage = p.StatusText;
+                _playerViewModel.IsGlobalOperationIndeterminate = p.IsIndeterminate || p.Percentage < 5;
+                _playerViewModel.GlobalOperationProgressValue = p.Percentage;
+            });
+
+            await _replayGainService.ScanLibraryAsync(progress, cancellationToken);
+        }
+        catch (OperationCanceledException)
+        {
+            _playerViewModel.GlobalOperationStatusMessage = "Volume normalization scan cancelled.";
+        }
+        catch (Exception ex)
+        {
+            _playerViewModel.GlobalOperationStatusMessage = $"Error during scan: {ex.Message}";
+            _logger.LogError(ex, "Failed to scan library for ReplayGain");
+        }
+        finally
+        {
+            _playerViewModel.IsGlobalOperationInProgress = false;
+            _playerViewModel.IsGlobalOperationIndeterminate = false;
+        }
     }
 
     partial void OnIsLastFmScrobblingEnabledChanged(bool value)

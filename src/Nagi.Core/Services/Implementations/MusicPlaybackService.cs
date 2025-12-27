@@ -46,6 +46,8 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         _audioPlayer.SmtcNextButtonPressed += OnAudioPlayerSmtcNextButtonPressed;
         _audioPlayer.SmtcPreviousButtonPressed += OnAudioPlayerSmtcPreviousButtonPressed;
 
+        _settingsService.VolumeNormalizationEnabledChanged += OnVolumeNormalizationEnabledChanged;
+
         EqualizerBands = _audioPlayer.GetEqualizerBands();
     }
 
@@ -602,6 +604,10 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         _logger.LogDebug("Now playing '{SongTitle}' (Index: {QueueIndex}, Shuffled Index: {ShuffledIndex})",
             CurrentTrack.Title, CurrentQueueIndex, _currentShuffledIndex);
         await _audioPlayer.LoadAsync(CurrentTrack);
+        
+        // Apply ReplayGain if enabled and available in database
+        await ApplyReplayGainIfEnabledAsync();
+        
         await _audioPlayer.PlayAsync();
         UpdateSmtcControls();
     }
@@ -678,6 +684,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         _audioPlayer.DurationChanged -= OnAudioPlayerDurationChanged;
         _audioPlayer.SmtcNextButtonPressed -= OnAudioPlayerSmtcNextButtonPressed;
         _audioPlayer.SmtcPreviousButtonPressed -= OnAudioPlayerSmtcPreviousButtonPressed;
+        _settingsService.VolumeNormalizationEnabledChanged -= OnVolumeNormalizationEnabledChanged;
         GC.SuppressFinalize(this);
     }
 
@@ -971,5 +978,68 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
     private async void OnAudioPlayerSmtcPreviousButtonPressed()
     {
         await PreviousAsync();
+    }
+
+    /// <summary>
+    ///     Applies ReplayGain adjustment if volume normalization is enabled and the current track has gain data.
+    ///     Includes peak-aware limiting to prevent clipping.
+    /// </summary>
+    private async Task ApplyReplayGainIfEnabledAsync(bool? isEnabledOverride = null)
+    {
+        if (CurrentTrack == null) return;
+
+        var isEnabled = isEnabledOverride ?? await _settingsService.GetVolumeNormalizationEnabledAsync().ConfigureAwait(false);
+        
+        // If enabled but missing data in memory, attempt a database refresh.
+        // This handles songs that were in the queue before the projection bug was fixed.
+        if (isEnabled && !CurrentTrack.ReplayGainTrackGain.HasValue)
+        {
+            var refreshedSong = await _libraryService.GetSongByIdAsync(CurrentTrack.Id).ConfigureAwait(false);
+            if (refreshedSong != null && refreshedSong.ReplayGainTrackGain.HasValue)
+            {
+                CurrentTrack.ReplayGainTrackGain = refreshedSong.ReplayGainTrackGain;
+                CurrentTrack.ReplayGainTrackPeak = refreshedSong.ReplayGainTrackPeak;
+                _logger.LogDebug("Refreshed ReplayGain data for current track from database.");
+            }
+        }
+
+        if (isEnabled && CurrentTrack.ReplayGainTrackGain.HasValue)
+        {
+            var gainDb = CurrentTrack.ReplayGainTrackGain.Value;
+            
+            // Apply peak-aware limiting to prevent clipping
+            // If peak * gain > 1.0, reduce gain to prevent clipping
+            if (CurrentTrack.ReplayGainTrackPeak.HasValue && CurrentTrack.ReplayGainTrackPeak.Value > 0)
+            {
+                var maxGainBeforeClip = -20.0 * Math.Log10(CurrentTrack.ReplayGainTrackPeak.Value);
+                if (gainDb > maxGainBeforeClip)
+                {
+                    _logger.LogDebug("Limiting ReplayGain from {OriginalGain:F2} dB to {LimitedGain:F2} dB to prevent clipping",
+                        gainDb, maxGainBeforeClip);
+                    gainDb = maxGainBeforeClip;
+                }
+            }
+            
+            await _audioPlayer.SetReplayGainAsync(gainDb).ConfigureAwait(false);
+            _logger.LogDebug("Applied ReplayGain {Gain:F2} dB for '{Title}'",
+                gainDb, CurrentTrack.Title);
+        }
+        else
+        {
+            // Reset to neutral (no adjustment)
+            await _audioPlayer.SetReplayGainAsync(0).ConfigureAwait(false);
+        }
+    }
+
+    private async void OnVolumeNormalizationEnabledChanged(bool isEnabled)
+    {
+        try
+        {
+            await ApplyReplayGainIfEnabledAsync(isEnabled).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to apply ReplayGain on settings change.");
+        }
     }
 }

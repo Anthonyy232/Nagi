@@ -145,6 +145,82 @@ public class UIService : IUIService
         return files.Select(f => f.Path).ToList();
     }
 
+    public async Task<bool> ShowFFmpegSetupDialogAsync(string title, string instructions, Func<Task<bool>> checkAction)
+    {
+        if (!TryGetXamlRoot(out var xamlRoot)) return false;
+
+        var contentPanel = new StackPanel { Spacing = 12 };
+        
+        var instructionsBlock = new TextBlock
+        {
+            Text = instructions,
+            TextWrapping = TextWrapping.Wrap
+        };
+        contentPanel.Children.Add(instructionsBlock);
+
+        var statusBlock = new TextBlock
+        {
+            Text = "FFmpeg not detected. Please install FFmpeg and click 'Recheck'.",
+            TextWrapping = TextWrapping.Wrap,
+            Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Orange)
+        };
+        contentPanel.Children.Add(statusBlock);
+
+        var dialog = new ContentDialog
+        {
+            Title = title,
+            Content = contentPanel,
+            PrimaryButtonText = "Recheck",
+            CloseButtonText = "Cancel",
+            XamlRoot = xamlRoot,
+            DefaultButton = ContentDialogButton.Primary
+        };
+
+        // Handle the primary button click to recheck without closing
+        dialog.PrimaryButtonClick += async (sender, args) =>
+        {
+            // Get a deferral to prevent the dialog from closing
+            var deferral = args.GetDeferral();
+            
+            // Update status to show we're checking
+            statusBlock.Text = "Checking for FFmpeg...";
+            statusBlock.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Gray);
+            
+            try
+            {
+                var isInstalled = await checkAction();
+                
+                if (isInstalled)
+                {
+                    // FFmpeg found - update status and allow dialog to close
+                    statusBlock.Text = "FFmpeg detected!";
+                    statusBlock.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Green);
+                }
+                else
+                {
+                    // Still not found - prevent dialog from closing
+                    args.Cancel = true;
+                    statusBlock.Text = "FFmpeg still not detected. Please install FFmpeg and click 'Recheck'.";
+                    statusBlock.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Orange);
+                }
+            }
+            catch
+            {
+                // On error, prevent closing and show error state
+                args.Cancel = true;
+                statusBlock.Text = "Error checking for FFmpeg. Please try again.";
+                statusBlock.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Red);
+            }
+            finally
+            {
+                deferral.Complete();
+            }
+        };
+
+        var result = await dialog.ShowAsync();
+        return result == ContentDialogResult.Primary;
+    }
+
     private bool TryGetXamlRoot(out XamlRoot? xamlRoot)
     {
         xamlRoot = App.RootWindow?.Content?.XamlRoot;

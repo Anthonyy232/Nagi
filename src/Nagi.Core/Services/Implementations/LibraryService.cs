@@ -33,9 +33,13 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     private readonly SemaphoreSlim _scanSemaphore = new(1, 1);
     private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly ISpotifyService _spotifyService;
+    private readonly ISettingsService _settingsService;
+    private readonly IReplayGainService _replayGainService;
     private bool _disposed;
     private volatile bool _isMetadataFetchRunning;
+    private volatile bool _isBatchScanning; // Prevents ReplayGain trigger during batch operations
     private CancellationTokenSource _metadataFetchCts;
+    private CancellationTokenSource? _replayGainScanCts;
 
     public LibraryService(
         IDbContextFactory<MusicDbContext> contextFactory,
@@ -46,6 +50,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         IHttpClientFactory httpClientFactory,
         IServiceScopeFactory serviceScopeFactory,
         IPathConfiguration pathConfig,
+        ISettingsService settingsService,
+        IReplayGainService replayGainService,
         ILogger<LibraryService> logger)
     {
         _contextFactory = contextFactory ?? throw new ArgumentNullException(nameof(contextFactory));
@@ -56,6 +62,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
         _serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
         _pathConfig = pathConfig ?? throw new ArgumentNullException(nameof(pathConfig));
+        _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
+        _replayGainService = replayGainService ?? throw new ArgumentNullException(nameof(replayGainService));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _metadataFetchCts = new CancellationTokenSource();
     }
@@ -422,7 +430,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         try
         {
-            return await Task.Run(async () =>
+            var scanResult = await Task.Run(async () =>
             {
                 var folder = await GetFolderByIdAsync(folderId);
                 if (folder is null)
@@ -586,6 +594,15 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                     return false;
                 }
             }, cancellationToken);
+            
+            // Run ReplayGain analysis if enabled, but only for single folder scans
+            // RefreshAllFoldersAsync sets _isBatchScanning=true and triggers once at the end
+            if (scanResult && !_isBatchScanning && await _settingsService.GetVolumeNormalizationEnabledAsync().ConfigureAwait(false))
+            {
+                await RunReplayGainAnalysisAsync(progress, cancellationToken).ConfigureAwait(false);
+            }
+
+            return scanResult;
         }
         catch (OperationCanceledException)
         {
@@ -597,6 +614,48 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         {
             // CRITICAL: Release the semaphore so other scans can proceed.
             _scanSemaphore.Release();
+        }
+    }
+    
+    /// <summary>
+    /// Runs ReplayGain analysis synchronously with progress reporting. Only starts if no analysis is currently running.
+    /// </summary>
+    private async Task RunReplayGainAnalysisAsync(IProgress<ScanProgress>? progress, CancellationToken cancellationToken)
+    {
+        // Only start a new scan if one isn't currently active
+        if (_replayGainScanCts != null && !_replayGainScanCts.IsCancellationRequested)
+        {
+            _logger.LogDebug("ReplayGain analysis is already running. Skipping trigger.");
+            return;
+        }
+        
+        _replayGainScanCts?.Dispose();
+        _replayGainScanCts = new CancellationTokenSource();
+        
+        // Link to the parent cancellation token so cancelling the folder scan also cancels ReplayGain
+        using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _replayGainScanCts.Token);
+        
+        _logger.LogInformation("Volume normalization is enabled. Starting ReplayGain analysis.");
+        
+        try 
+        {
+            await _replayGainService.ScanLibraryAsync(progress, linkedCts.Token).ConfigureAwait(false);
+            _logger.LogInformation("ReplayGain analysis completed.");
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.LogInformation("ReplayGain analysis was cancelled.");
+            throw; // Re-throw so caller knows it was cancelled
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "ReplayGain analysis failed.");
+            progress?.Report(new ScanProgress { StatusText = "Volume normalization failed. Check logs for details.", Percentage = 100 });
+        }
+        finally
+        {
+            _replayGainScanCts?.Dispose();
+            _replayGainScanCts = null;
         }
     }
 
@@ -618,31 +677,48 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         var foldersProcessed = 0;
         var anyChangesMade = false;
 
-        foreach (var folder in folders)
+        // Set batch scanning flag to prevent per-folder ReplayGain triggers
+        _isBatchScanning = true;
+        
+        try
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            var progressWrapper = new Progress<ScanProgress>(scanProgress =>
+            foreach (var folder in folders)
             {
-                var status = scanProgress.Percentage >= 100
-                    ? scanProgress.StatusText
-                    : $"({foldersProcessed + 1}/{totalFolders}) {scanProgress.StatusText}";
+                cancellationToken.ThrowIfCancellationRequested();
 
-                progress?.Report(new ScanProgress
+                var progressWrapper = new Progress<ScanProgress>(scanProgress =>
                 {
-                    StatusText = status,
-                    Percentage = scanProgress.Percentage,
-                    IsIndeterminate = scanProgress.IsIndeterminate,
-                    CurrentFilePath = scanProgress.CurrentFilePath,
-                    TotalFiles = scanProgress.TotalFiles,
-                    NewSongsFound = scanProgress.NewSongsFound
+                    var status = scanProgress.Percentage >= 100
+                        ? scanProgress.StatusText
+                        : $"({foldersProcessed + 1}/{totalFolders}) {scanProgress.StatusText}";
+
+                    progress?.Report(new ScanProgress
+                    {
+                        StatusText = status,
+                        Percentage = scanProgress.Percentage,
+                        IsIndeterminate = scanProgress.IsIndeterminate,
+                        CurrentFilePath = scanProgress.CurrentFilePath,
+                        TotalFiles = scanProgress.TotalFiles,
+                        NewSongsFound = scanProgress.NewSongsFound
+                    });
                 });
-            });
 
-            var result = await RescanFolderForMusicAsync(folder.Id, progressWrapper, cancellationToken);
-            if (result) anyChangesMade = true;
+                var result = await RescanFolderForMusicAsync(folder.Id, progressWrapper, cancellationToken);
+                if (result) anyChangesMade = true;
 
-            foldersProcessed++;
+                foldersProcessed++;
+            }
+        }
+        finally
+        {
+            // Always clear the batch flag
+            _isBatchScanning = false;
+        }
+
+        // Run ReplayGain analysis ONCE after all folders are scanned (if enabled and changes were made)
+        if (anyChangesMade && await _settingsService.GetVolumeNormalizationEnabledAsync().ConfigureAwait(false))
+        {
+            await RunReplayGainAnalysisAsync(progress, cancellationToken).ConfigureAwait(false);
         }
 
         progress?.Report(new ScanProgress { StatusText = "Library refresh complete.", Percentage = 100 });
@@ -2668,7 +2744,9 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             Comment = metadata.Comment,
             Conductor = metadata.Conductor,
             MusicBrainzTrackId = metadata.MusicBrainzTrackId,
-            MusicBrainzReleaseId = metadata.MusicBrainzReleaseId
+            MusicBrainzReleaseId = metadata.MusicBrainzReleaseId,
+            ReplayGainTrackGain = metadata.ReplayGainTrackGain,
+            ReplayGainTrackPeak = metadata.ReplayGainTrackPeak
         };
 
         if (album is not null && string.IsNullOrEmpty(album.CoverArtUri) && !string.IsNullOrEmpty(metadata.CoverArtUri))
@@ -3076,6 +3154,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             // Copyright - EXCLUDED (up to 1KB per song)
             LrcFilePath = s.LrcFilePath,
             Bpm = s.Bpm,
+            ReplayGainTrackGain = s.ReplayGainTrackGain,
+            ReplayGainTrackPeak = s.ReplayGainTrackPeak,
             Grouping = s.Grouping,
             Conductor = s.Conductor,
             MusicBrainzTrackId = s.MusicBrainzTrackId,
@@ -3165,6 +3245,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             {
                 _metadataFetchCts.Cancel();
                 _metadataFetchCts.Dispose();
+                _replayGainScanCts?.Cancel();
+                _replayGainScanCts?.Dispose();
                 _scanSemaphore.Dispose();
             }
 

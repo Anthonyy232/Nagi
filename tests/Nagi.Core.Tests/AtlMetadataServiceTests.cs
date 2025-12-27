@@ -447,4 +447,38 @@ public class AtlMetadataServiceTests : IDisposable
         await _fileSystem.Received(1).WriteAllTextAsync(expectedCachePath, Arg.Any<string>());
         result.LrcFilePath.Should().Be(expectedCachePath);
     }
+
+    /// <summary>
+    ///     Verifies that ReplayGain tags in various formats are correctly extracted and parsed.
+    /// </summary>
+    [Fact]
+    public async Task ExtractMetadataAsync_WithReplayGainTags_ExtractsCorrectly()
+    {
+        // Arrange
+        var filePath = CreateTestAudioFile("replaygain.mp3", track =>
+        {
+            track.Title = "ReplayGain Song";
+            track.AdditionalFields.Add("REPLAYGAIN_TRACK_GAIN", "-6.54 dB");
+            track.AdditionalFields.Add("REPLAYGAIN_TRACK_PEAK", "0.985432");
+        });
+
+        // Act
+        var result = await _metadataService.ExtractMetadataAsync(filePath);
+
+        // Assert
+        result.ReplayGainTrackGain.Should().Be(-6.54);
+        result.ReplayGainTrackPeak.Should().Be(0.985432);
+
+        // Test with different suffixes and messy strings
+        var filePath2 = CreateTestAudioFile("replaygain2.mp3", track =>
+        {
+            track.Title = "ReplayGain Messy";
+            track.AdditionalFields.Add("REPLAYGAIN_TRACK_GAIN", "+2.5dB (more info)");
+            track.AdditionalFields.Add("REPLAYGAIN_TRACK_PEAK", "1.1 peak value");
+        });
+
+        var result2 = await _metadataService.ExtractMetadataAsync(filePath2);
+        result2.ReplayGainTrackGain.Should().Be(2.5);
+        result2.ReplayGainTrackPeak.Should().Be(1.1);
+    }
 }

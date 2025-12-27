@@ -105,6 +105,13 @@ This project is built using C# and the Windows App SDK.
     msbuild Nagi.WinUI.csproj -p:Configuration=Release -p:Platform=x86 -p:GenerateAppxPackageOnBuild=true
     ```
 
+### Development
+  To perform a database migration:
+  
+  ```bash
+  dotnet ef migrations add <name> --project src\Nagi.Core --startup-project src\Nagi.Core --context MusicDbContext --no-build
+  ```
+
 ## 🤝 Contributions
 All contributions are welcome! Feel free to report issues, suggest features, or create pull requests for bug fixes and new features.
 
