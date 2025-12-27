@@ -45,7 +45,7 @@ public class TrayPopupService : ITrayPopupService, IDisposable
         GC.SuppressFinalize(this);
     }
 
-    public void ShowOrHidePopup()
+    public void ShowOrHidePopup(RectInt32? targetRect = null)
     {
         if (_isDisposed)
         {
@@ -65,7 +65,7 @@ public class TrayPopupService : ITrayPopupService, IDisposable
         if (_popupWindow!.AppWindow.IsVisible)
             HidePopup();
         else
-            ShowPopup();
+            ShowPopup(targetRect);
     }
 
     public async void HidePopup()
@@ -79,7 +79,7 @@ public class TrayPopupService : ITrayPopupService, IDisposable
         }
     }
 
-    private async void ShowPopup()
+    private async void ShowPopup(RectInt32? targetRect = null)
     {
         _logger.LogDebug("Showing tray popup.");
         _isAnimating = true;
@@ -94,16 +94,21 @@ public class TrayPopupService : ITrayPopupService, IDisposable
         var cursorPosition = _win32.GetCursorPos();
         var workArea = _win32.GetWorkAreaForPoint(cursorPosition);
 
-        var finalX = cursorPosition.X - finalWidth / 2;
+        // If a target rect (the icon's bounds) is provided, center on it.
+        // Otherwise, center on the cursor position.
+        var centerX = targetRect?.X + targetRect?.Width / 2 ?? cursorPosition.X;
+        var centerY = targetRect?.Y + targetRect?.Height / 2 ?? cursorPosition.Y;
+
+        var finalX = centerX - finalWidth / 2;
         finalX = (int)Math.Max(workArea.Left, Math.Min(workArea.Right - finalWidth, finalX));
 
-        var finalY = cursorPosition.Y - finalHeight - VERTICAL_OFFSET;
-        if (finalY < workArea.Top) finalY = cursorPosition.Y + VERTICAL_OFFSET;
+        var finalY = centerY - finalHeight - VERTICAL_OFFSET;
+        if (finalY < workArea.Top) finalY = centerY + VERTICAL_OFFSET;
 
         var finalRect = new RectInt32(finalX, finalY, finalWidth, finalHeight);
         _logger.LogDebug("Calculated popup position: {PopupRect}", finalRect);
 
-        await PopupAnimation.AnimateIn(_popupWindow, finalRect);
+        await PopupAnimation.AnimateIn(_popupWindow, finalRect, targetRect);
         _isAnimating = false;
     }
 

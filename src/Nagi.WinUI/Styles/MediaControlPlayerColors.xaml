@@ -10,7 +10,8 @@ across the application's media player interface.
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:Microsoft.UI.Xaml.Controls"
     xmlns:animation="using:Microsoft.UI.Xaml.Media.Animation"
-    xmlns:primitives="using:Microsoft.UI.Xaml.Controls.Primitives">
+    xmlns:primitives="using:Microsoft.UI.Xaml.Controls.Primitives"
+    xmlns:behaviors="using:Nagi.WinUI.Behaviors">
 
     <animation:CubicEase x:Key="CubicEaseOut" EasingMode="EaseOut" />
 
@@ -36,26 +37,12 @@ across the application's media player interface.
                         <Grid x:Name="RootGrid"
                               Background="{TemplateBinding Background}"
                               CornerRadius="{TemplateBinding CornerRadius}"
-                              RenderTransformOrigin="0.5,0.5">
-                            <Grid.RenderTransform>
-                                <ScaleTransform x:Name="ScaleTransform" />
-                            </Grid.RenderTransform>
+                              behaviors:AnimationBehaviors.EnableScaleAnimation="True"
+                              behaviors:AnimationBehaviors.HoverScale="1.1"
+                              behaviors:AnimationBehaviors.PressedScale="0.95">
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Normal">
-                                        <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetName="ScaleTransform"
-                                                             Storyboard.TargetProperty="ScaleX" To="1.0"
-                                                             Duration="0:0:0.2"
-                                                             EnableDependentAnimation="True"
-                                                             EasingFunction="{StaticResource CubicEaseOut}" />
-                                            <DoubleAnimation Storyboard.TargetName="ScaleTransform"
-                                                             Storyboard.TargetProperty="ScaleY" To="1.0"
-                                                             Duration="0:0:0.2"
-                                                             EnableDependentAnimation="True"
-                                                             EasingFunction="{StaticResource CubicEaseOut}" />
-                                        </Storyboard>
-                                    </VisualState>
+                                    <VisualState x:Name="Normal" />
                                     <VisualState x:Name="PointerOver">
                                         <Storyboard>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
@@ -63,16 +50,6 @@ across the application's media player interface.
                                                 <DiscreteObjectKeyFrame KeyTime="0"
                                                                         Value="{ThemeResource ControlFillColorSecondaryBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
-                                            <DoubleAnimation Storyboard.TargetName="ScaleTransform"
-                                                             Storyboard.TargetProperty="ScaleX" To="1.1"
-                                                             Duration="0:0:0.2"
-                                                             EnableDependentAnimation="True"
-                                                             EasingFunction="{StaticResource CubicEaseOut}" />
-                                            <DoubleAnimation Storyboard.TargetName="ScaleTransform"
-                                                             Storyboard.TargetProperty="ScaleY" To="1.1"
-                                                             Duration="0:0:0.2"
-                                                             EnableDependentAnimation="True"
-                                                             EasingFunction="{StaticResource CubicEaseOut}" />
                                         </Storyboard>
                                     </VisualState>
                                     <VisualState x:Name="Pressed">
@@ -82,16 +59,6 @@ across the application's media player interface.
                                                 <DiscreteObjectKeyFrame KeyTime="0"
                                                                         Value="{ThemeResource ControlFillColorTertiaryBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
-                                            <DoubleAnimation Storyboard.TargetName="ScaleTransform"
-                                                             Storyboard.TargetProperty="ScaleX" To="0.95"
-                                                             Duration="0:0:0.1"
-                                                             EnableDependentAnimation="True"
-                                                             EasingFunction="{StaticResource CubicEaseOut}" />
-                                            <DoubleAnimation Storyboard.TargetName="ScaleTransform"
-                                                             Storyboard.TargetProperty="ScaleY" To="0.95"
-                                                             Duration="0:0:0.1"
-                                                             EnableDependentAnimation="True"
-                                                             EasingFunction="{StaticResource CubicEaseOut}" />
                                         </Storyboard>
                                     </VisualState>
                                     <VisualState x:Name="Disabled">
@@ -147,46 +114,20 @@ across the application's media player interface.
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="primitives:Thumb">
-                    <Grid>
+                    <Grid behaviors:AnimationBehaviors.EnableScaleAnimation="True"
+                          behaviors:AnimationBehaviors.HoverScale="1.25"
+                          behaviors:AnimationBehaviors.PressedScale="1.1">
                         <Ellipse x:Name="ThumbVisual"
                                  Fill="{TemplateBinding Background}"
                                  Width="{TemplateBinding Width}"
                                  Height="{TemplateBinding Height}"
                                  Stroke="{ThemeResource ControlStrokeColorDefaultBrush}"
-                                 StrokeThickness="1">
-                            <Ellipse.RenderTransform>
-                                <ScaleTransform x:Name="ThumbScaleTransform" CenterX="8" CenterY="8" />
-                            </Ellipse.RenderTransform>
-                        </Ellipse>
+                                 StrokeThickness="1" />
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
-                                <VisualState x:Name="PointerOver">
-                                    <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetName="ThumbScaleTransform"
-                                                         Storyboard.TargetProperty="ScaleX" To="1.25"
-                                                         Duration="0:0:0.1"
-                                                         EnableDependentAnimation="True"
-                                                         EasingFunction="{StaticResource CubicEaseOut}" />
-                                        <DoubleAnimation Storyboard.TargetName="ThumbScaleTransform"
-                                                         Storyboard.TargetProperty="ScaleY" To="1.25"
-                                                         Duration="0:0:0.1"
-                                                         EnableDependentAnimation="True"
-                                                         EasingFunction="{StaticResource CubicEaseOut}" />
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="Pressed">
-                                    <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetName="ThumbScaleTransform"
-                                                         Storyboard.TargetProperty="ScaleX" To="1.1" Duration="0:0:0.1"
-                                                         EnableDependentAnimation="True"
-                                                         EasingFunction="{StaticResource CubicEaseOut}" />
-                                        <DoubleAnimation Storyboard.TargetName="ThumbScaleTransform"
-                                                         Storyboard.TargetProperty="ScaleY" To="1.1" Duration="0:0:0.1"
-                                                         EnableDependentAnimation="True"
-                                                         EasingFunction="{StaticResource CubicEaseOut}" />
-                                    </Storyboard>
-                                </VisualState>
+                                <VisualState x:Name="PointerOver" />
+                                <VisualState x:Name="Pressed" />
                                 <VisualState x:Name="Disabled">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ThumbVisual"
@@ -221,46 +162,20 @@ across the application's media player interface.
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="primitives:Thumb">
-                    <Grid>
+                    <Grid behaviors:AnimationBehaviors.EnableScaleAnimation="True"
+                          behaviors:AnimationBehaviors.HoverScale="1.25"
+                          behaviors:AnimationBehaviors.PressedScale="1.1">
                         <Ellipse x:Name="ThumbVisual"
                                  Fill="{TemplateBinding Background}"
                                  Width="{TemplateBinding Width}"
                                  Height="{TemplateBinding Height}"
                                  Stroke="{ThemeResource ControlStrokeColorDefaultBrush}"
-                                 StrokeThickness="1">
-                            <Ellipse.RenderTransform>
-                                <ScaleTransform x:Name="ThumbScaleTransform" CenterX="6" CenterY="6" />
-                            </Ellipse.RenderTransform>
-                        </Ellipse>
+                                 StrokeThickness="1" />
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
-                                <VisualState x:Name="PointerOver">
-                                    <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetName="ThumbScaleTransform"
-                                                         Storyboard.TargetProperty="ScaleX" To="1.25"
-                                                         Duration="0:0:0.1"
-                                                         EnableDependentAnimation="True"
-                                                         EasingFunction="{StaticResource CubicEaseOut}" />
-                                        <DoubleAnimation Storyboard.TargetName="ThumbScaleTransform"
-                                                         Storyboard.TargetProperty="ScaleY" To="1.25"
-                                                         Duration="0:0:0.1"
-                                                         EnableDependentAnimation="True"
-                                                         EasingFunction="{StaticResource CubicEaseOut}" />
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="Pressed">
-                                    <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetName="ThumbScaleTransform"
-                                                         Storyboard.TargetProperty="ScaleX" To="1.1" Duration="0:0:0.1"
-                                                         EnableDependentAnimation="True"
-                                                         EasingFunction="{StaticResource CubicEaseOut}" />
-                                        <DoubleAnimation Storyboard.TargetName="ThumbScaleTransform"
-                                                         Storyboard.TargetProperty="ScaleY" To="1.1" Duration="0:0:0.1"
-                                                         EnableDependentAnimation="True"
-                                                         EasingFunction="{StaticResource CubicEaseOut}" />
-                                    </Storyboard>
-                                </VisualState>
+                                <VisualState x:Name="PointerOver" />
+                                <VisualState x:Name="Pressed" />
                                 <VisualState x:Name="Disabled">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ThumbVisual"
@@ -426,6 +341,75 @@ across the application's media player interface.
     -->
     <Style x:Key="MediaControlSubtitleStyle" TargetType="TextBlock" BasedOn="{StaticResource SubtitleTextBlockStyle}">
         <Setter Property="Foreground" Value="{StaticResource AppPrimaryColorBrush}" />
+    </Style>
+
+    <!--
+    Style for the ListViewItems in the Current Queue flyout and mini player.
+    Features a subtle scale animation on pointer hover and press.
+    -->
+    <Style x:Key="QueueListViewItemStyle" TargetType="ListViewItem">
+        <Setter Property="Padding" Value="12,8" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListViewItem">
+                    <Grid x:Name="RootGrid"
+                          Background="{TemplateBinding Background}"
+                          CornerRadius="{ThemeResource ControlCornerRadius}"
+                          behaviors:AnimationBehaviors.EnableScaleAnimation="True"
+                          behaviors:AnimationBehaviors.HoverScale="1.02"
+                          behaviors:AnimationBehaviors.PressedScale="0.98">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
+                                                                       Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource SubtleFillColorSecondaryBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
+                                                                       Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource SubtleFillColorTertiaryBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Selected">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
+                                                                       Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource SubtleFillColorSecondaryBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
+                                                                       Storyboard.TargetProperty="Opacity">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource ListViewItemDisabledThemeOpacity}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <ContentPresenter x:Name="ContentPresenter"
+                                          ContentTransitions="{TemplateBinding ContentTransitions}"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          Padding="{TemplateBinding Padding}" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
 </ResourceDictionary>

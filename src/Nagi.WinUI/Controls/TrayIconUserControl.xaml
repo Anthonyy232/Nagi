@@ -17,6 +17,7 @@
         Visibility="{x:Bind ViewModel.IsTrayIconVisible, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}"
         IconSource="ms-appx:///Assets/AppLogo.ico"
         LeftClickCommand="{x:Bind ViewModel.ShowPopupCommand}"
+        LeftClickCommandParameter="{Binding RelativeSource={RelativeSource Self}}"
         NoLeftClickDelay="True"
         ToolTipText="{x:Bind ViewModel.ToolTipText, Mode=OneWay}"
         ContextMenuMode="SecondWindow">

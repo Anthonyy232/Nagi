@@ -26,10 +26,6 @@
             <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <converters:BooleanToVisibilityConverter x:Key="InvertedBooleanToVisibilityConverter" Invert="True" />
 
-            <Style x:Key="QueueListViewItemStyle" TargetType="ListViewItem">
-                <Setter Property="Padding" Value="12,8" />
-                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-            </Style>
 
             <Style x:Key="BackButtonStyle" TargetType="Button" BasedOn="{StaticResource MediaControlButtonStyle}" />
         </Border.Resources>

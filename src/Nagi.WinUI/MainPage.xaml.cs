@@ -16,6 +16,7 @@ using Nagi.WinUI.Controls;
 using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
 using Nagi.WinUI.ViewModels;
+using Nagi.WinUI.Helpers;
 
 namespace Nagi.WinUI;
 
@@ -300,14 +301,17 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         switch (e.PropertyName)
         {
             case nameof(PlayerViewModel.CurrentPlayingTrack):
-                _dispatcherService.TryEnqueue(() =>
-                {
-                    ApplyDynamicThemeForCurrentTrack();
-                    UpdatePlayerVisualState();
-                });
+                ApplyDynamicThemeForCurrentTrack();
+                UpdatePlayerVisualState();
                 break;
             case nameof(PlayerViewModel.IsPlaying):
-                _dispatcherService.TryEnqueue(() => SetPlatformSpecificBrush());
+                SetPlatformSpecificBrush();
+                UpdatePlayerVisualState(); // Expand or collapse the player based on playback state
+                // Trigger pulse animation when playback starts
+                if (ViewModel.IsPlaying)
+                {
+                    TriggerPlayPauseButtonPulse();
+                }
                 break;
         }
     }
@@ -414,5 +418,41 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
             // Non-critical: log at trace level and let adaptive triggers handle default state.
             _logger.LogTrace(ex, "Failed to restore navigation pane state.");
         }
+    }
+
+    /// <summary>
+    ///     Triggers a subtle pulse animation on the play/pause button for visual feedback.
+    /// </summary>
+    private void TriggerPlayPauseButtonPulse()
+    {
+        // Find the play/pause button in the visual tree
+        var playPauseButton = FindDescendant<Button>(this, "PlayPauseButton");
+        if (playPauseButton != null)
+        {
+            CompositionAnimationHelper.TriggerPulse(playPauseButton, 1.12f);
+        }
+    }
+
+    /// <summary>
+    ///     Searches for a descendant element by name in the visual tree.
+    /// </summary>
+    private static T? FindDescendant<T>(DependencyObject parent, string name) where T : FrameworkElement
+    {
+        int childCount = VisualTreeHelper.GetChildrenCount(parent);
+        for (int i = 0; i < childCount; i++)
+        {
+            var child = VisualTreeHelper.GetChild(parent, i);
+            if (child is T element && element.Name == name)
+            {
+                return element;
+            }
+
+            var result = FindDescendant<T>(child, name);
+            if (result != null)
+            {
+                return result;
+            }
+        }
+        return null;
     }
 }

@@ -14,9 +14,12 @@ namespace Nagi.WinUI.Services.Implementations;
 ///     Provides a managed wrapper for native Win32 API functions, offering a safe
 ///     and convenient interface to the underlying Windows platform.
 /// </summary>
-public class Win32InteropService : IWin32InteropService
+public class Win32InteropService : IWin32InteropService, IDisposable
 {
     private readonly ILogger<Win32InteropService> _logger;
+    private IntPtr _hIconBig = IntPtr.Zero;
+    private IntPtr _hIconSmall = IntPtr.Zero;
+    private bool _isDisposed;
 
     public Win32InteropService(ILogger<Win32InteropService> logger)
     {
@@ -40,17 +43,43 @@ public class Win32InteropService : IWin32InteropService
             return;
         }
 
+        // Clean up any previously loaded icons to prevent leaks.
+        CleanupIcons();
+
         // Set the large icon (e.g., for Alt+Tab).
-        var hIconBig = NativeMethods.LoadImage(IntPtr.Zero, fullIconPath, NativeMethods.IMAGE_ICON, 0, 0,
+        _hIconBig = NativeMethods.LoadImage(IntPtr.Zero, fullIconPath, NativeMethods.IMAGE_ICON, 0, 0,
             NativeMethods.LR_LOADFROMFILE);
-        if (hIconBig != IntPtr.Zero)
-            NativeMethods.SendMessage(hwnd, NativeMethods.WM_SETICON, NativeMethods.ICON_BIG, hIconBig);
+        if (_hIconBig != IntPtr.Zero)
+            NativeMethods.SendMessage(hwnd, NativeMethods.WM_SETICON, NativeMethods.ICON_BIG, _hIconBig);
 
         // Set the small icon (e.g., for the title bar).
-        var hIconSmall = NativeMethods.LoadImage(IntPtr.Zero, fullIconPath, NativeMethods.IMAGE_ICON, 16, 16,
+        _hIconSmall = NativeMethods.LoadImage(IntPtr.Zero, fullIconPath, NativeMethods.IMAGE_ICON, 16, 16,
             NativeMethods.LR_LOADFROMFILE);
-        if (hIconSmall != IntPtr.Zero)
-            NativeMethods.SendMessage(hwnd, NativeMethods.WM_SETICON, NativeMethods.ICON_SMALL, hIconSmall);
+        if (_hIconSmall != IntPtr.Zero)
+            NativeMethods.SendMessage(hwnd, NativeMethods.WM_SETICON, NativeMethods.ICON_SMALL, _hIconSmall);
+    }
+
+    private void CleanupIcons()
+    {
+        if (_hIconBig != IntPtr.Zero)
+        {
+            NativeMethods.DestroyIcon(_hIconBig);
+            _hIconBig = IntPtr.Zero;
+        }
+
+        if (_hIconSmall != IntPtr.Zero)
+        {
+            NativeMethods.DestroyIcon(_hIconSmall);
+            _hIconSmall = IntPtr.Zero;
+        }
+    }
+
+    public void Dispose()
+    {
+        if (_isDisposed) return;
+        CleanupIcons();
+        _isDisposed = true;
+        GC.SuppressFinalize(this);
     }
 
     /// <summary>
@@ -199,6 +228,10 @@ public class Win32InteropService : IWin32InteropService
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         public static extern IntPtr LoadImage(IntPtr hinst, string lpszName, uint uType, int cxDesired, int cyDesired,
             uint fuLoad);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool DestroyIcon(IntPtr hIcon);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);

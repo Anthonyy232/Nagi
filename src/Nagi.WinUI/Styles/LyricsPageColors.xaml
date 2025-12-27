@@ -2,7 +2,8 @@
 
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behaviors="using:Nagi.WinUI.Behaviors">
 
     <Style x:Key="InactiveLyricLineStyle" TargetType="TextBlock">
         <Setter Property="FontSize" Value="20" />
@@ -33,7 +34,10 @@
                 <ControlTemplate TargetType="ListViewItem">
                     <Grid x:Name="RootGrid"
                           Background="Transparent"
-                          CornerRadius="{ThemeResource ControlCornerRadius}">
+                          CornerRadius="{ThemeResource ControlCornerRadius}"
+                          behaviors:AnimationBehaviors.EnableScaleAnimation="True"
+                          behaviors:AnimationBehaviors.HoverScale="1.05"
+                          behaviors:AnimationBehaviors.PressedScale="0.95">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />

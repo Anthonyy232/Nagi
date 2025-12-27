@@ -1,4 +1,6 @@
-﻿namespace Nagi.WinUI.Services.Abstractions;
+﻿using Windows.Graphics;
+
+namespace Nagi.WinUI.Services.Abstractions;
 
 /// <summary>
 ///     Defines a service for managing the lifecycle and visibility of a tray-based popup window.
@@ -8,7 +10,7 @@ public interface ITrayPopupService
     /// <summary>
     ///     Shows the popup if it is hidden, or hides it if it is visible.
     /// </summary>
-    void ShowOrHidePopup();
+    void ShowOrHidePopup(RectInt32? targetRect = null);
 
     /// <summary>
     ///     Hides the popup if it is currently visible.
