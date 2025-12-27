@@ -121,6 +121,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
     [RelayCommand]
     private async Task NavigateToSubfolderAsync(Folder folder)
     {
+        if (IsOverallLoading) return;
         if (folder == null || !_rootFolderId.HasValue) return;
 
         try
@@ -141,6 +142,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
     [RelayCommand]
     private async Task NavigateToBreadcrumbAsync(BreadcrumbItem breadcrumb)
     {
+        if (IsOverallLoading) return;
         if (breadcrumb == null || breadcrumb.IsLast) return;
 
         try
@@ -164,6 +166,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
     [RelayCommand]
     private async Task NavigateUpAsync()
     {
+        if (IsOverallLoading) return;
         if (!_rootFolderId.HasValue || IsAtRootLevel) return;
 
         try
@@ -172,8 +175,12 @@ public partial class FolderSongListViewModel : SongListViewModelBase
                 // Already at root
                 return;
 
+            // Normalize path to handle potential trailing slashes which cause Path.GetDirectoryName 
+            // to return the same directory instead of the parent.
+            var normalizedCurrent = _currentDirectoryPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            
             // Navigate to parent directory
-            var parentPath = Path.GetDirectoryName(_currentDirectoryPath);
+            var parentPath = Path.GetDirectoryName(normalizedCurrent);
 
             // If parent is the root folder path or null, go to root level
             if (string.IsNullOrEmpty(parentPath) ||
