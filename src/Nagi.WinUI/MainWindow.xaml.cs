@@ -325,10 +325,21 @@ public sealed class MiniPlayerWindow : Window
     /// </summary>
     public MiniPlayerWindow()
     {
-        _logger = App.Services!.GetRequiredService<ILogger<MiniPlayerWindow>>();
+        var services = App.Services!;
+        _logger = services.GetRequiredService<ILogger<MiniPlayerWindow>>();
         _view = new MiniPlayerView(this);
         Content = _view;
         _appWindow = AppWindow;
+
+        // Apply acrylic backdrop for a premium look
+        SystemBackdrop = new DesktopAcrylicBackdrop();
+
+        // Ensure the mini player follows the application theme
+        var themeService = services.GetRequiredService<IThemeService>();
+        if (Content is FrameworkElement root)
+        {
+            root.RequestedTheme = themeService.CurrentTheme;
+        }
 
         ConfigureAppWindow();
         SubscribeToEvents();

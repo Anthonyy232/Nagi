@@ -260,6 +260,7 @@ internal static class PopupAnimation
         registration = token.Register(() =>
         {
             CompositionTarget.Rendering -= handler;
+            registration.Dispose();
             tcs.TrySetCanceled();
         });
 

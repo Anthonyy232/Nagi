@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:imageex="using:ImageEx"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:media="using:CommunityToolkit.WinUI.Media"
     xmlns:models="using:Nagi.Core.Models"
     xmlns:viewmodels="using:Nagi.WinUI.ViewModels"
     d:DataContext="{d:DesignInstance Type=viewmodels:PlayerViewModel, IsDesignTimeCreatable=True}"
@@ -29,7 +30,7 @@
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="HoverStates">
                 <VisualStateGroup.Transitions>
-                    <VisualTransition GeneratedDuration="0:0:0.2" />
+                    <VisualTransition GeneratedDuration="0:0:0.25" />
                 </VisualStateGroup.Transitions>
                 <VisualState x:Name="Normal">
                     <Storyboard>
@@ -37,7 +38,12 @@
                             Storyboard.TargetName="HoverControlsContainer"
                             Storyboard.TargetProperty="Opacity"
                             To="0"
-                            Duration="0" />
+                            Duration="0:0:0.2" />
+                        <DoubleAnimation
+                            Storyboard.TargetName="AmbientBackground"
+                            Storyboard.TargetProperty="Opacity"
+                            To="1.0"
+                            Duration="0:0:0.4" />
                     </Storyboard>
                 </VisualState>
                 <VisualState x:Name="MouseOver">
@@ -46,25 +52,35 @@
                             Storyboard.TargetName="HoverControlsContainer"
                             Storyboard.TargetProperty="Opacity"
                             To="1"
-                            Duration="0" />
+                            Duration="0:0:0.2" />
+                        <DoubleAnimation
+                            Storyboard.TargetName="AmbientBackground"
+                            Storyboard.TargetProperty="Opacity"
+                            To="1"
+                            Duration="0:0:0.4" />
                     </Storyboard>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
-        <Border Background="{StaticResource AppPrimaryColorBrush}" />
+        <!--  Background Layer: Blends album art with the theme colors for a premium look  -->
+        <Border x:Name="AmbientBackground" Opacity="1.0">
+            <Border.Background>
+                <media:ImageBlendBrush
+                    Mode="Multiply"
+                    Source="{x:Bind ViewModel.AlbumArtUri, Mode=OneWay}"
+                    Stretch="UniformToFill" />
+            </Border.Background>
+        </Border>
 
-        <imageex:ImageEx
-            IsCacheEnabled="True"
-            IsHitTestVisible="False"
-            Source="{x:Bind ViewModel.AlbumArtUri, Mode=OneWay}"
-            Stretch="UniformToFill" />
+        <!--  A subtle dark overlay to ensure readability while exposing the acrylic backdrop slightly  -->
+        <Border Background="{ThemeResource SolidBackgroundFillColorBaseAltBrush}" Opacity="0.15" />
 
         <Border x:Name="DragHandle" Background="Transparent" />
 
         <Grid x:Name="HoverControlsContainer" Opacity="0">
-            <!--  A semi-transparent overlay to ensure text and controls are readable over the album art.  -->
-            <Border Background="#A0000000" IsHitTestVisible="False" />
+            <!--  Overlay for control readability  -->
+            <Border Background="#90000000" IsHitTestVisible="False" />
 
             <Grid>
                 <Grid.RowDefinitions>
@@ -73,14 +89,13 @@
                 </Grid.RowDefinitions>
 
                 <!--  Header: Contains the back button, title/artist info, and restore button.  -->
-                <Grid Grid.Row="0" Margin="12,16,16,0">
+                <Grid Grid.Row="0" Margin="12,20,16,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
-                    <!--  Back Button: Visible only in the queue view to return to the player.  -->
                     <Button
                         Grid.Column="0"
                         Command="{x:Bind ViewModel.ShowPlayerViewCommand}"
@@ -90,11 +105,10 @@
                         <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
                     </Button>
 
-                    <!--  Centered Title Area: Displays either song info or the queue title, spanning all columns for true centering.  -->
                     <StackPanel
                         Grid.Column="0"
                         Grid.ColumnSpan="3"
-                        Margin="40,0"
+                        Margin="44,0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         IsHitTestVisible="False"
@@ -109,7 +123,8 @@
                             TextTrimming="CharacterEllipsis" />
                         <TextBlock
                             HorizontalAlignment="Center"
-                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            FontSize="12"
+                            Foreground="#B0FFFFFF"
                             Style="{ThemeResource BodyTextBlockStyle}"
                             Text="{x:Bind ViewModel.ArtistName, Mode=OneWay, FallbackValue='Artist Name'}"
                             TextAlignment="Center"
@@ -119,11 +134,12 @@
                     <TextBlock
                         Grid.Column="0"
                         Grid.ColumnSpan="3"
-                        Margin="40,0"
+                        Margin="44,0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
+                        FontSize="18"
+                        FontWeight="SemiBold"
                         Foreground="White"
-                        Style="{ThemeResource SubtitleTextBlockStyle}"
                         Text="Current Queue"
                         Visibility="{x:Bind ViewModel.IsQueueViewVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
@@ -136,23 +152,20 @@
                     </Button>
                 </Grid>
 
-                <!--
-                Content Area: Switches between the Player controls and the Queue list
-                based on the ViewModel's IsQueueViewVisible property.
-                -->
                 <Grid Grid.Row="1">
                     <!--  Player View -->
-                    <Grid Padding="16"
+                    <Grid Padding="16,0,16,12"
                           Visibility="{x:Bind ViewModel.IsQueueViewVisible, Mode=OneWay, Converter={StaticResource InvertedBooleanToVisibilityConverter}}">
                         <StackPanel VerticalAlignment="Bottom" Spacing="12">
                             <Slider
+                                Margin="4,0"
                                 IsThumbToolTipEnabled="True"
                                 Maximum="{x:Bind ViewModel.TotalDuration, Mode=OneWay}"
                                 Style="{StaticResource MediaSeekerSliderStyle}"
                                 ThumbToolTipValueConverter="{StaticResource TimeSpanToTimeStringConverter}"
                                 Value="{x:Bind ViewModel.CurrentPosition, Mode=TwoWay}" />
 
-                            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Spacing="4">
+                            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Spacing="2">
                                 <Button Command="{x:Bind ViewModel.ToggleMuteCommand}"
                                         Style="{StaticResource VolumeButtonStyle}"
                                         ToolTipService.ToolTip="{x:Bind ViewModel.VolumeButtonToolTip, Mode=OneWay}">
@@ -196,7 +209,7 @@
 
                     <!--  Queue View -->
                     <ListView
-                        Padding="0,12,4,16"
+                        Padding="16,12,16,20"
                         ItemContainerStyle="{StaticResource QueueListViewItemStyle}"
                         ItemsSource="{x:Bind ViewModel.CurrentQueue}"
                         SelectionMode="None"
@@ -204,11 +217,12 @@
                         Visibility="{x:Bind ViewModel.IsQueueViewVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="models:Song">
-                                <StackPanel Margin="0,4">
+                                <StackPanel Margin="0,6">
                                     <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="{x:Bind Title}"
                                                TextTrimming="CharacterEllipsis" />
                                     <TextBlock
-                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                        FontSize="11"
+                                        Foreground="#B0FFFFFF"
                                         Style="{ThemeResource CaptionTextBlockStyle}"
                                         Text="{x:Bind Artist.Name}"
                                         TextTrimming="CharacterEllipsis" />
