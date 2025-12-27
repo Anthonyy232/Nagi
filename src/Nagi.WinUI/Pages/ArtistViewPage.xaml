@@ -8,6 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodels="using:Nagi.WinUI.ViewModels"
     xmlns:models="using:Nagi.Core.Models"
+    xmlns:helpers="using:Nagi.Core.Helpers"
     xmlns:behaviors="using:Nagi.WinUI.Behaviors"
     x:Name="pageRoot"
     Background="Transparent"
@@ -277,19 +278,19 @@
                             <Button.Flyout>
                                 <MenuFlyout Placement="Bottom">
                                     <MenuFlyoutItem Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                                    CommandParameter="TitleAsc" Text="A to Z" />
+                                                    CommandParameter="TitleAsc" Text="{x:Bind helpers:SortOrderHelper.AToZLabel}" />
                                     <MenuFlyoutItem Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                                    CommandParameter="TitleDesc" Text="Z to A" />
+                                                    CommandParameter="TitleDesc" Text="{x:Bind helpers:SortOrderHelper.ZToALabel}" />
                                     <MenuFlyoutItem Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                                    CommandParameter="DateAddedDesc" Text="Newest" />
+                                                    CommandParameter="DateAddedDesc" Text="{x:Bind helpers:SortOrderHelper.NewestLabel}" />
                                     <MenuFlyoutItem Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                                    CommandParameter="DateAddedAsc" Text="Oldest" />
+                                                    CommandParameter="DateAddedAsc" Text="{x:Bind helpers:SortOrderHelper.OldestLabel}" />
                                     <MenuFlyoutItem Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                                    CommandParameter="DateModifiedDesc" Text="Date Modified (Newest)" />
+                                                    CommandParameter="DateModifiedDesc" Text="{x:Bind helpers:SortOrderHelper.ModifiedNewestLabel}" />
                                     <MenuFlyoutItem Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                                    CommandParameter="DateModifiedAsc" Text="Date Modified (Oldest)" />
+                                                    CommandParameter="DateModifiedAsc" Text="{x:Bind helpers:SortOrderHelper.ModifiedOldestLabel}" />
                                     <MenuFlyoutItem Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                                    CommandParameter="AlbumAsc" Text="Album" />
+                                                    CommandParameter="AlbumAsc" Text="{x:Bind helpers:SortOrderHelper.AlbumLabel}" />
                                 </MenuFlyout>
                             </Button.Flyout>
                             <FontIcon FontSize="16" Glyph="" />

@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:Nagi.WinUI.ViewModels"
+    xmlns:helpers="using:Nagi.Core.Helpers"
     xmlns:controls="using:ImageEx"
     x:Name="PlaylistPageRoot"
     Background="Transparent"
@@ -149,15 +150,15 @@
                     <Button.Flyout>
                         <MenuFlyout Placement="Bottom">
                             <MenuFlyoutItem Command="{x:Bind ViewModel.ChangeSortOrderCommand}"
-                                            CommandParameter="NameAsc" Text="Name (A-Z)" />
+                                            CommandParameter="NameAsc" Text="{x:Bind helpers:SortOrderHelper.AToZLabel}" />
                             <MenuFlyoutItem Command="{x:Bind ViewModel.ChangeSortOrderCommand}"
-                                            CommandParameter="NameDesc" Text="Name (Z-A)" />
+                                            CommandParameter="NameDesc" Text="{x:Bind helpers:SortOrderHelper.ZToALabel}" />
                             <MenuFlyoutItem Command="{x:Bind ViewModel.ChangeSortOrderCommand}"
-                                            CommandParameter="DateCreatedDesc" Text="Date Created (Newest)" />
+                                            CommandParameter="DateCreatedDesc" Text="{x:Bind helpers:SortOrderHelper.NewestLabel}" />
                             <MenuFlyoutItem Command="{x:Bind ViewModel.ChangeSortOrderCommand}"
-                                            CommandParameter="DateCreatedAsc" Text="Date Created (Oldest)" />
+                                            CommandParameter="DateCreatedAsc" Text="{x:Bind helpers:SortOrderHelper.OldestLabel}" />
                             <MenuFlyoutItem Command="{x:Bind ViewModel.ChangeSortOrderCommand}"
-                                            CommandParameter="DateModifiedDesc" Text="Recently Modified" />
+                                            CommandParameter="DateModifiedDesc" Text="{x:Bind helpers:SortOrderHelper.ModifiedNewestLabel}" />
                         </MenuFlyout>
                     </Button.Flyout>
                     <FontIcon FontSize="16" Glyph="&#xE8CB;" />

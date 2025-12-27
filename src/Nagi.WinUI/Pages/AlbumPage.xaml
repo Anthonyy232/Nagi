@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:Nagi.WinUI.ViewModels"
+    xmlns:helpers="using:Nagi.Core.Helpers"
     x:Name="AlbumPageRoot"
     Background="Transparent"
     mc:Ignorable="d">
@@ -156,13 +157,13 @@
                     <Button.Flyout>
                         <MenuFlyout Placement="Bottom">
                             <MenuFlyoutItem Command="{x:Bind ViewModel.ChangeSortOrderCommand}"
-                                            CommandParameter="ArtistAsc" Text="Artist" />
+                                            CommandParameter="ArtistAsc" Text="{x:Bind helpers:SortOrderHelper.ArtistLabel}" />
                             <MenuFlyoutItem Command="{x:Bind ViewModel.ChangeSortOrderCommand}"
-                                            CommandParameter="AlbumTitleAsc" Text="Album Title" />
+                                            CommandParameter="AlbumTitleAsc" Text="{x:Bind helpers:SortOrderHelper.AlbumLabel}" />
                             <MenuFlyoutItem Command="{x:Bind ViewModel.ChangeSortOrderCommand}"
-                                            CommandParameter="YearDesc" Text="Year (Newest)" />
+                                            CommandParameter="YearDesc" Text="{x:Bind helpers:SortOrderHelper.YearNewestLabel}" />
                             <MenuFlyoutItem Command="{x:Bind ViewModel.ChangeSortOrderCommand}"
-                                            CommandParameter="YearAsc" Text="Year (Oldest)" />
+                                            CommandParameter="YearAsc" Text="{x:Bind helpers:SortOrderHelper.YearOldestLabel}" />
                         </MenuFlyout>
                     </Button.Flyout>
                     <FontIcon FontSize="16" Glyph="&#xE8CB;" />

@@ -13,6 +13,7 @@ using Nagi.Core.Services.Data;
 using Nagi.WinUI.Navigation;
 using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
+using Nagi.Core.Helpers;
 
 namespace Nagi.WinUI.ViewModels;
 
@@ -84,7 +85,7 @@ public partial class AlbumViewModel : ObservableObject, IDisposable
 
     [ObservableProperty] public partial AlbumSortOrder CurrentSortOrder { get; set; } = AlbumSortOrder.ArtistAsc;
 
-    [ObservableProperty] public partial string CurrentSortOrderText { get; set; } = "Sort By: Artist";
+    [ObservableProperty] public partial string CurrentSortOrderText { get; set; } = SortOrderHelper.Artist;
 
     [ObservableProperty] public partial string SearchTerm { get; set; } = string.Empty;
 
@@ -159,13 +160,7 @@ public partial class AlbumViewModel : ObservableObject, IDisposable
 
     private void UpdateSortOrderText()
     {
-        CurrentSortOrderText = CurrentSortOrder switch
-        {
-            AlbumSortOrder.AlbumTitleAsc => "Sort By: Album",
-            AlbumSortOrder.YearDesc => "Sort By: Year (Newest)",
-            AlbumSortOrder.YearAsc => "Sort By: Year (Oldest)",
-            _ => "Sort By: Artist"
-        };
+        CurrentSortOrderText = SortOrderHelper.GetDisplayName(CurrentSortOrder);
     }
 
     /// <summary>
