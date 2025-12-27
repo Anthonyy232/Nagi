@@ -29,9 +29,12 @@ public class ThemeService : IThemeService
             new Lazy<IMusicPlaybackService>(() => _serviceProvider.GetRequiredService<IMusicPlaybackService>());
     }
 
+    public ElementTheme CurrentTheme { get; private set; } = ElementTheme.Default;
+
     public void ApplyTheme(ElementTheme theme)
     {
         _logger.LogDebug("Applying application theme: {Theme}", theme);
+        CurrentTheme = theme;
         _app.ApplyThemeInternal(theme);
     }
 

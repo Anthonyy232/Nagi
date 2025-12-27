@@ -11,6 +11,11 @@ public interface IThemeService
     void ReapplyCurrentDynamicTheme();
 
     /// <summary>
+    ///     Gets the currently applied application theme.
+    /// </summary>
+    ElementTheme CurrentTheme { get; }
+
+    /// <summary>
     ///     Applies a dynamic theme color based on color swatches, respecting the current app theme (Light/Dark).
     /// </summary>
     /// <param name="lightSwatchId">The hex color string for the light theme.</param>
