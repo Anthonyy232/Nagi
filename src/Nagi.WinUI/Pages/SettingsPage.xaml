@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:b1="using:Microsoft.Xaml.Interactivity"
     xmlns:controls="using:CommunityToolkit.WinUI.Controls"
+    xmlns:coreModels="using:Nagi.Core.Models"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:localConverters="using:Nagi.WinUI.Converters"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -246,11 +247,27 @@
                             </ItemsRepeater.ItemTemplate>
                         </ItemsRepeater>
 
-                        <Button
+                        <StackPanel
                             HorizontalAlignment="Center"
-                            Command="{x:Bind ViewModel.ResetEqualizerCommand}"
-                            Content="Reset"
-                            Style="{StaticResource SettingsPageResetButtonStyle}" />
+                            Orientation="Horizontal"
+                            Spacing="12">
+                            <ComboBox
+                                MinWidth="160"
+                                ItemsSource="{x:Bind ViewModel.AvailableEqualizerPresets}"
+                                PlaceholderText="Custom"
+                                SelectedItem="{x:Bind ViewModel.SelectedEqualizerPreset, Mode=TwoWay}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate x:DataType="coreModels:EqualizerPreset">
+                                        <TextBlock Text="{x:Bind Name}" />
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                            <Button
+                                Command="{x:Bind ViewModel.ResetEqualizerCommand}"
+                                Content="Reset"
+                                Style="{StaticResource SettingsPageResetButtonStyle}"
+                                ToolTipService.ToolTip="Reset equalizer to default" />
+                        </StackPanel>
                     </StackPanel>
                 </controls:SettingsCard>
 
@@ -600,13 +617,15 @@
                                 HorizontalAlignment="Right"
                                 Command="{x:Bind ViewModel.LastFmInitialAuthCommand}"
                                 Content="Connect to Last.fm"
-                                IsEnabled="{x:Bind ViewModel.IsLastFmInitialAuthEnabled, Mode=OneWay}" />
+                                IsEnabled="{x:Bind ViewModel.IsLastFmInitialAuthEnabled, Mode=OneWay}"
+                                ToolTipService.ToolTip="Start Last.fm connection" />
 
                             <Button
                                 HorizontalAlignment="Right"
                                 Command="{x:Bind ViewModel.LastFmFinalizeAuthCommand}"
                                 Content="Complete Connection"
-                                Visibility="{x:Bind ViewModel.IsConnectingToLastFm, Mode=OneWay}" />
+                                Visibility="{x:Bind ViewModel.IsConnectingToLastFm, Mode=OneWay}"
+                                ToolTipService.ToolTip="Finalize Last.fm connection" />
 
                             <TextBlock
                                 MaxWidth="250"
@@ -628,7 +647,8 @@
                             </TextBlock>
                             <Button
                                 Command="{x:Bind ViewModel.LastFmDisconnectCommand}"
-                                Content="Disconnect" />
+                                Content="Disconnect"
+                                ToolTipService.ToolTip="Disconnect from Last.fm" />
                         </StackPanel>
                     </StackPanel>
                 </controls:SettingsCard>

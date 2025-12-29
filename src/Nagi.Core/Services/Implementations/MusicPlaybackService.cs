@@ -66,6 +66,21 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
     public RepeatMode CurrentRepeatMode { get; private set; } = RepeatMode.Off;
     public bool IsTransitioningTrack { get; private set; }
     public IReadOnlyList<(uint Index, float Frequency)> EqualizerBands { get; }
+    public IReadOnlyList<EqualizerPreset> AvailablePresets { get; } = new List<EqualizerPreset>
+    {
+        new("None", [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
+        new("Classical", [0, 0, 0, 0, 0, 0, -3.2f, -3.2f, -3.2f, -4.0f]),
+        new("Dance", [3.2f, 2.4f, 0.8f, 0, 0, -1.6f, -2.4f, -2.4f, 0, 0]),
+        new("Full Bass", [3.2f, 3.2f, 3.2f, 1.6f, 0, -1.6f, -3.2f, -3.2f, -3.2f, -4.0f]),
+        new("Full Treble", [-3.2f, -3.2f, -3.2f, -1.6f, 0, 1.6f, 3.2f, 3.2f, 3.2f, 4.0f]),
+        new("Jazz", [1.6f, 0.8f, 0, 0.8f, -0.8f, -0.8f, -1.6f, 0, 0.8f, 1.6f]),
+        new("Pop", [-1.6f, 1.6f, 2.4f, 2.4f, 1.6f, 0, -0.8f, -0.8f, -1.6f, -1.6f]),
+        new("Rock", [3.2f, 2.4f, -1.6f, -2.4f, -0.8f, 1.6f, 2.4f, 3.2f, 3.2f, 3.2f]),
+        new("Soft", [1.6f, 0.8f, 0, -0.8f, -0.8f, 0, 0.8f, 1.6f, 2.4f, 3.2f]),
+        new("Techno", [3.2f, 2.4f, 0, -1.6f, -1.6f, 0, 1.6f, 2.4f, 2.4f, 3.2f]),
+        new("Vocal", [-0.8f, -2.4f, -2.4f, 0, 1.6f, 1.6f, 1.6f, 0.8f, 0, -0.8f])
+    };
+
     public EqualizerSettings? CurrentEqualizerSettings { get; private set; }
 
     public event Action? TrackChanged;
@@ -96,11 +111,17 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
             CurrentRepeatMode = await _settingsService.GetInitialRepeatModeAsync();
 
             CurrentEqualizerSettings = await _settingsService.GetEqualizerSettingsAsync();
-            CurrentEqualizerSettings ??= new EqualizerSettings
+            if (CurrentEqualizerSettings == null || CurrentEqualizerSettings.BandGains.Count != EqualizerBands.Count)
             {
-                Preamp = 10.0f,
-                BandGains = Enumerable.Repeat(0.0f, EqualizerBands.Count).ToList()
-            };
+                _logger.LogWarning("Equalizer settings missing or mismatched (Saved: {SavedCount}, Required: {RequiredCount}). Resetting to default.", 
+                    CurrentEqualizerSettings?.BandGains.Count, EqualizerBands.Count);
+                
+                CurrentEqualizerSettings = new EqualizerSettings
+                {
+                    Preamp = 10.0f,
+                    BandGains = Enumerable.Repeat(0.0f, EqualizerBands.Count).ToList()
+                };
+            }
             _audioPlayer.ApplyEqualizerSettings(CurrentEqualizerSettings);
 
             var restoredSuccessfully = false;
@@ -640,23 +661,97 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
 
     public async Task SetEqualizerBandAsync(uint bandIndex, float gain)
     {
-        if (CurrentEqualizerSettings == null || bandIndex >= CurrentEqualizerSettings.BandGains.Count)
+        var currentSettings = CurrentEqualizerSettings;
+        if (currentSettings == null || bandIndex >= currentSettings.BandGains.Count)
         {
             _logger.LogWarning("Invalid equalizer band index: {BandIndex}", bandIndex);
             return;
         }
 
-        CurrentEqualizerSettings.BandGains[(int)bandIndex] = gain;
+        // Create new settings object (deep copy) for atomic update
+        var newSettings = new EqualizerSettings
+        {
+            Preamp = currentSettings.Preamp,
+            BandGains = new List<float>(currentSettings.BandGains)
+        };
+        
+        newSettings.BandGains[(int)bandIndex] = gain;
+
+        // Apply atomically
+        CurrentEqualizerSettings = newSettings;
         _audioPlayer.ApplyEqualizerSettings(CurrentEqualizerSettings);
         await _settingsService.SetEqualizerSettingsAsync(CurrentEqualizerSettings);
         EqualizerChanged?.Invoke();
     }
 
-    public async Task SetEqualizerPreampAsync(float gain)
+    public async Task SetEqualizerGainsAsync(IEnumerable<float> gains)
     {
         if (CurrentEqualizerSettings == null) return;
+        
+        var gainsList = gains.ToList();
+        _logger.LogDebug("Setting bulk equalizer gains: {Gains}", string.Join(", ", gainsList));
+        
+        // Create a new settings object (or deep copy) to ensure atomic update
+        var newSettings = new EqualizerSettings
+        {
+            Preamp = CurrentEqualizerSettings.Preamp,
+            BandGains = new List<float>(CurrentEqualizerSettings.BandGains)
+        };
 
-        CurrentEqualizerSettings.Preamp = gain;
+        for (int i = 0; i < newSettings.BandGains.Count; i++)
+        {
+            if (i < gainsList.Count)
+            {
+                newSettings.BandGains[i] = gainsList[i];
+            }
+        }
+
+        // Apply atomically
+        CurrentEqualizerSettings = newSettings;
+        _audioPlayer.ApplyEqualizerSettings(CurrentEqualizerSettings);
+        await _settingsService.SetEqualizerSettingsAsync(CurrentEqualizerSettings);
+        EqualizerChanged?.Invoke();
+    }
+
+    public EqualizerPreset? GetMatchingPreset(IEnumerable<float> bandGains)
+    {
+        if (bandGains == null) return null;
+        var currentGains = bandGains.ToArray();
+
+        foreach (var preset in AvailablePresets)
+        {
+            if (preset.Gains.Length != currentGains.Length) continue;
+
+            bool match = true;
+            for (int i = 0; i < preset.Gains.Length; i++)
+            {
+                if (Math.Abs(currentGains[i] - preset.Gains[i]) > 0.1f)
+                {
+                    match = false;
+                    break;
+                }
+            }
+
+            if (match) return preset;
+        }
+
+        return null;
+    }
+
+    public async Task SetEqualizerPreampAsync(float gain)
+    {
+        var currentSettings = CurrentEqualizerSettings;
+        if (currentSettings == null) return;
+
+        // Create new settings object (deep copy) for atomic update
+        var newSettings = new EqualizerSettings
+        {
+            Preamp = gain,
+            BandGains = new List<float>(currentSettings.BandGains)
+        };
+
+        // Apply atomically
+        CurrentEqualizerSettings = newSettings;
         _audioPlayer.ApplyEqualizerSettings(CurrentEqualizerSettings);
         await _settingsService.SetEqualizerSettingsAsync(CurrentEqualizerSettings);
         EqualizerChanged?.Invoke();

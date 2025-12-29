@@ -962,6 +962,7 @@ public class MusicPlaybackServiceTests
     {
         // Arrange
         await _service.InitializeAsync();
+        _audioPlayer.ClearReceivedCalls();
         var eventTracker = new EventTracker(_service);
 
         // Act
@@ -970,7 +971,7 @@ public class MusicPlaybackServiceTests
         // Assert
         _service.CurrentEqualizerSettings.Should().NotBeNull();
         _service.CurrentEqualizerSettings!.BandGains[1].Should().Be(3.5f);
-        _audioPlayer.Received(2).ApplyEqualizerSettings(Arg.Is<EqualizerSettings>(s => s.BandGains[1] == 3.5f));
+        _audioPlayer.Received(1).ApplyEqualizerSettings(Arg.Is<EqualizerSettings>(s => s.BandGains[1] == 3.5f));
         await _settingsService.Received(1).SetEqualizerSettingsAsync(Arg.Any<EqualizerSettings>());
         eventTracker.EqualizerChangedCount.Should().Be(1);
     }
@@ -984,6 +985,7 @@ public class MusicPlaybackServiceTests
     {
         // Arrange
         await _service.InitializeAsync();
+        _audioPlayer.ClearReceivedCalls();
         var eventTracker = new EventTracker(_service);
 
         // Act
@@ -992,7 +994,7 @@ public class MusicPlaybackServiceTests
         // Assert
         _service.CurrentEqualizerSettings.Should().NotBeNull();
         _service.CurrentEqualizerSettings!.Preamp.Should().Be(5.0f);
-        _audioPlayer.Received(2).ApplyEqualizerSettings(Arg.Is<EqualizerSettings>(s => s.Preamp == 5.0f));
+        _audioPlayer.Received(1).ApplyEqualizerSettings(Arg.Is<EqualizerSettings>(s => s.Preamp == 5.0f));
         await _settingsService.Received(1).SetEqualizerSettingsAsync(Arg.Any<EqualizerSettings>());
         eventTracker.EqualizerChangedCount.Should().Be(1);
     }

@@ -253,7 +253,8 @@
                                 HorizontalAlignment="Center"
                                 Padding="24,12"
                                 Command="{Binding AddFolderCommand}"
-                                Style="{StaticResource BrandAccentButtonStyle}">
+                                Style="{StaticResource BrandAccentButtonStyle}"
+                                ToolTipService.ToolTip="Add a music folder to get started">
                                 <StackPanel x:Name="AddFolderButtonContent" Orientation="Horizontal" Spacing="10">
                                     <SymbolIcon Symbol="Add" />
                                     <TextBlock

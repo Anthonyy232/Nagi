@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using Nagi.Core.Models;
 using Nagi.WinUI.Models;
 using Nagi.WinUI.Navigation;
 using Nagi.WinUI.Services.Abstractions;
@@ -25,23 +26,30 @@ namespace Nagi.WinUI.ViewModels;
 public partial class EqualizerBandViewModel : ObservableObject, IDisposable
 {
     private const int KiloHertzThreshold = 1000;
-    private const int DebounceDelayMilliseconds = 200;
+    private const int DebounceDelayMilliseconds = 1000;
 
-    private readonly IMusicPlaybackService _playbackService;
     private CancellationTokenSource? _debounceCts;
 
-    public EqualizerBandViewModel(uint index, float frequency, float initialGain, IMusicPlaybackService playbackService)
+    public EqualizerBandViewModel(uint index, float frequency, float initialGain)
     {
         Index = index;
         FrequencyLabel = frequency < KiloHertzThreshold ? $"{frequency:F0}" : $"{frequency / KiloHertzThreshold:F0}K";
         Gain = initialGain;
-        _playbackService = playbackService;
     }
 
     public uint Index { get; }
     public string FrequencyLabel { get; }
+    
+    /// <summary>
+    /// Indicates whether the update comes from an external source (e.g. service event).
+    /// If true, we should skip saving changes back to the service.
+    /// </summary>
+    public bool IsExternalUpdate { get; set; }
 
     [ObservableProperty] public partial float Gain { get; set; }
+    
+    public event Action<EqualizerBandViewModel>? GainChanged;
+    public event Action<EqualizerBandViewModel, float>? GainCommitted;
 
     public void Dispose()
     {
@@ -56,6 +64,10 @@ public partial class EqualizerBandViewModel : ObservableObject, IDisposable
     /// </summary>
     async partial void OnGainChanged(float value)
     {
+        if (IsExternalUpdate) return;
+        
+        GainChanged?.Invoke(this);
+
         _debounceCts?.Cancel();
         _debounceCts?.Dispose();
 
@@ -65,7 +77,7 @@ public partial class EqualizerBandViewModel : ObservableObject, IDisposable
         try
         {
             await Task.Delay(DebounceDelayMilliseconds, token);
-            await _playbackService.SetEqualizerBandAsync(Index, value);
+            GainCommitted?.Invoke(this, value);
         }
         catch (TaskCanceledException)
         {
@@ -74,12 +86,15 @@ public partial class EqualizerBandViewModel : ObservableObject, IDisposable
     }
 }
 
+
+
+
 /// <summary>
 ///     ViewModel for the Settings page, providing properties and commands to manage application settings.
 /// </summary>
 public partial class SettingsViewModel : ObservableObject, IDisposable
 {
-    private const int EqualizerDebounceDelayMilliseconds = 200;
+    private const int EqualizerDebounceDelayMilliseconds = 1000;
 
     private readonly IAppInfoService _appInfoService;
     private readonly IApplicationLifecycle _applicationLifecycle;
@@ -141,7 +156,11 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 #else
         IsUpdateControlVisible = true;
 #endif
+        
+        AvailableEqualizerPresets = _playbackService.AvailablePresets.ToList();
     }
+
+
 
 
     [ObservableProperty] public partial ElementTheme SelectedTheme { get; set; }
@@ -162,6 +181,11 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     [ObservableProperty] public partial bool IsRememberPaneStateEnabled { get; set; }
     [ObservableProperty] public partial bool IsVolumeNormalizationEnabled { get; set; }
     [ObservableProperty] public partial float EqualizerPreamp { get; set; }
+
+    [ObservableProperty] public partial EqualizerPreset? SelectedEqualizerPreset { get; set; }
+    public List<EqualizerPreset> AvailableEqualizerPresets { get; private set; } = new();
+
+    private bool _isApplyingPreset;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsLastFmNotConnected))]
@@ -197,7 +221,12 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
         foreach (var item in PlayerButtons) item.PropertyChanged -= OnPlayerButtonPropertyChanged;
 
-        foreach (var bandVm in EqualizerBands) bandVm.Dispose();
+        foreach (var bandVm in EqualizerBands) 
+        {
+            bandVm.GainChanged -= OnBandGainChanged;
+            bandVm.GainCommitted -= OnBandGainCommitted;
+            bandVm.Dispose();
+        }
         _preampDebounceCts?.Cancel();
         _preampDebounceCts?.Dispose();
         _replayGainScanCts?.Cancel();
@@ -365,6 +394,8 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     private async Task ResetEqualizerAsync()
     {
         await _playbackService.ResetEqualizerAsync();
+        // Resetting will result in all 0s, which matches "None".
+        SelectedEqualizerPreset = AvailableEqualizerPresets.FirstOrDefault(p => p.Name == "None");
     }
 
     [RelayCommand]
@@ -415,8 +446,15 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
     private void LoadEqualizerState()
     {
+        _logger.LogDebug("Loading Equalizer State...");
         var eqSettings = _playbackService.CurrentEqualizerSettings;
-        if (eqSettings == null) return;
+        if (eqSettings == null) 
+        {
+            _logger.LogWarning("Equalizer settings are null.");
+            return;
+        }
+
+        _logger.LogDebug("Loaded Settings - Preamp: {Preamp}, Bands: {Bands}", eqSettings.Preamp, string.Join(", ", eqSettings.BandGains));
 
         EqualizerPreamp = eqSettings.Preamp;
 
@@ -426,8 +464,76 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         foreach (var bandInfo in _playbackService.EqualizerBands)
         {
             var gain = eqSettings.BandGains.ElementAtOrDefault((int)bandInfo.Index);
-            EqualizerBands.Add(new EqualizerBandViewModel(bandInfo.Index, bandInfo.Frequency, gain, _playbackService));
+            var bandVm = new EqualizerBandViewModel(bandInfo.Index, bandInfo.Frequency, gain);
+            bandVm.GainChanged += OnBandGainChanged;
+            bandVm.GainCommitted += OnBandGainCommitted;
+            EqualizerBands.Add(bandVm);
         }
+
+        CheckIfCurrentSettingsMatchPreset();
+    }
+
+    private void OnBandGainCommitted(EqualizerBandViewModel sender, float gain)
+    {
+         if (_isInitializing) return;
+         _playbackService.SetEqualizerBandAsync(sender.Index, gain);
+    }
+
+    private void OnBandGainChanged(EqualizerBandViewModel sender)
+    {
+        if (_isApplyingPreset) return;
+        
+        // If the user manually adjusted a valid "preset match", we might want to keep the preset selected?
+        // No, user requested: "If a user selects another preset, it will overwrite what they currently have set."
+        // And usually manual adjustment means "Custom" or deselecting current preset.
+        // We'll check if the new state matches any preset (including the current one).
+        // If it matches, select it. If not, set to null.
+        CheckIfCurrentSettingsMatchPreset();
+    }
+
+    private void CheckIfCurrentSettingsMatchPreset()
+    {
+        if (_isApplyingPreset) return;
+
+        // Create a temporary array of current values
+        var currentGains = EqualizerBands.Select(b => b.Gain).ToArray();
+        
+        var matchingPreset = _playbackService.GetMatchingPreset(currentGains);
+
+        if (SelectedEqualizerPreset != matchingPreset)
+        {
+            _isApplyingPreset = true; // Prevent re-trigger loop
+            SelectedEqualizerPreset = matchingPreset;
+            _isApplyingPreset = false;
+        }
+    }
+
+    async partial void OnSelectedEqualizerPresetChanged(EqualizerPreset? value)
+    {
+         if (value == null || _isApplyingPreset) return;
+         
+         _isApplyingPreset = true;
+         try 
+         {
+             // Update Service First (Source of Truth)
+             await _playbackService.SetEqualizerGainsAsync(value.Gains);
+             
+             // Then update local UI to match (suppressing external update logic)
+             for (int i = 0; i < EqualizerBands.Count; i++)
+             {
+                 if (i < value.Gains.Length)
+                 {
+                     var band = EqualizerBands[i];
+                     band.IsExternalUpdate = true;
+                     band.Gain = value.Gains[i];
+                     band.IsExternalUpdate = false;
+                 }
+             }
+         }
+         finally 
+         {
+             _isApplyingPreset = false;
+         }
     }
 
     private void OnPlaybackService_EqualizerChanged()
@@ -441,9 +547,16 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             foreach (var bandVM in EqualizerBands)
             {
                 var newGain = eqSettings.BandGains.ElementAtOrDefault((int)bandVM.Index);
-                if (Math.Abs(bandVM.Gain - newGain) > float.Epsilon) bandVM.Gain = newGain;
+                if (Math.Abs(bandVM.Gain - newGain) > float.Epsilon) 
+                {
+                    bandVM.IsExternalUpdate = true;
+                    bandVM.Gain = newGain;
+                    bandVM.IsExternalUpdate = false;
+                }
             }
         }
+
+        CheckIfCurrentSettingsMatchPreset();
 
         _isInitializing = false;
     }
