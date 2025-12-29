@@ -283,7 +283,7 @@
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition MinWidth="50" Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <Button Grid.Column="0" Command="{Binding DataContext.PlaySongCommand, ElementName=pageRoot}" CommandParameter="{x:Bind}" Style="{StaticResource SongListViewPageSongPlayButtonStyle}">
+                                <Button Grid.Column="0" Command="{Binding DataContext.PlaySongCommand, ElementName=pageRoot}" CommandParameter="{x:Bind}" Style="{StaticResource SongListViewPageSongPlayButtonStyle}" ToolTipService.ToolTip="Play">
                                     <Border Width="42" Height="42" CornerRadius="12" Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
                                         <controls:ImageEx IsCacheEnabled="True" Stretch="UniformToFill"
                                                           DecodePixelWidth="48" DecodePixelType="Logical"
@@ -352,7 +352,8 @@
                             Grid.Column="0"
                             Command="{Binding DataContext.PlaySongCommand, ElementName=pageRoot}"
                             CommandParameter="{x:Bind}"
-                            Style="{StaticResource SongListViewPageSongPlayButtonStyle}">
+                            Style="{StaticResource SongListViewPageSongPlayButtonStyle}"
+                            ToolTipService.ToolTip="Play">
                             <Border Width="42" Height="42" CornerRadius="12"
                                     Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
                                 <controls:ImageEx

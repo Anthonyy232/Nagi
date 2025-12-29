@@ -35,7 +35,8 @@
                 Grid.Column="1"
                 Click="AddFolderButton_Click"
                 IsEnabled="{x:Bind ViewModel.IsAnyOperationInProgress, Converter={StaticResource BooleanToInverseBooleanConverter}, Mode=OneWay}"
-                Style="{StaticResource FolderPageAddFolderButtonStyle}">
+                Style="{StaticResource FolderPageAddFolderButtonStyle}"
+                ToolTipService.ToolTip="Add a music folder">
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <FontIcon Glyph="" />
                     <TextBlock Text="Add Folder" />

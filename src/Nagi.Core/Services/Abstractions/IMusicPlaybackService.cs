@@ -276,11 +276,29 @@ public interface IMusicPlaybackService : IDisposable
     Task SavePlaybackStateAsync();
 
     /// <summary>
-    ///     Sets the gain for a specific equalizer band.
+    ///     Sets the gain for a specific band index.
     /// </summary>
-    /// <param name="bandIndex">The index of the band to modify.</param>
+    /// <param name="bandIndex">The index of the band to update.</param>
     /// <param name="gain">The new gain in decibels (-20 to 20).</param>
     Task SetEqualizerBandAsync(uint bandIndex, float gain);
+
+    /// <summary>
+    ///     Sets the gain values for all equalizer bands at once.
+    /// </summary>
+    /// <param name="gains">A collection of gain values in decibels, one for each band.</param>
+    Task SetEqualizerGainsAsync(IEnumerable<float> gains);
+
+    /// <summary>
+    ///     Gets the list of available equalizer presets.
+    /// </summary>
+    IReadOnlyList<EqualizerPreset> AvailablePresets { get; }
+
+    /// <summary>
+    ///     Finds a preset that matches the given band gain values.
+    /// </summary>
+    /// <param name="bandGains">The current band gain values to match against presets.</param>
+    /// <returns>The matching preset, or null if no preset matches the current settings.</returns>
+    EqualizerPreset? GetMatchingPreset(IEnumerable<float> bandGains);
 
     /// <summary>
     ///     Sets the pre-amplification level for the equalizer.

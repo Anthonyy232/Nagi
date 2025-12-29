@@ -52,7 +52,8 @@
                 <Button x:Name="PickCoverImageButton" 
                         Content="Choose Cover" 
                         Click="PickCoverImage_Click"
-                        HorizontalAlignment="Stretch" />
+                        HorizontalAlignment="Stretch"
+                        ToolTipService.ToolTip="Choose a cover image" />
             </StackPanel>
 
             <!-- Name Section -->
@@ -175,7 +176,8 @@
                             <Button Content="Add Your First Rule" 
                                     Click="AddRule_Click" 
                                     Style="{ThemeResource AccentButtonStyle}"
-                                    HorizontalAlignment="Center" />
+                                    HorizontalAlignment="Center"
+                                    ToolTipService.ToolTip="Add your first rule" />
                         </StackPanel>
                     </StackPanel>
                 </ScrollViewer>

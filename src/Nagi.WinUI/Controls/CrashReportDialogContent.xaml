@@ -50,7 +50,7 @@
         </Border>
 
         <StackPanel Grid.Row="3" Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
-            <Button x:Name="CopyButton" Click="CopyButton_Click">
+            <Button x:Name="CopyButton" Click="CopyButton_Click" ToolTipService.ToolTip="Copy log to clipboard">
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <FontIcon Glyph="&#xE8C8;" FontSize="16" />
                     <TextBlock Text="Copy Log" />
