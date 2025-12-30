@@ -17,6 +17,8 @@ using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
 using Nagi.WinUI.ViewModels;
 using Nagi.WinUI.Helpers;
+using Microsoft.UI.Xaml.Hosting;
+using System.Numerics;
 
 namespace Nagi.WinUI;
 
@@ -176,7 +178,58 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         var shouldBeExpanded = !_isPlayerAnimationEnabled || isPlaying || _isPointerOverPlayer || _isQueueFlyoutOpen;
         var stateName = shouldBeExpanded ? "PlayerExpanded" : "PlayerCollapsed";
 
+        // XAML handles MinHeight/MaxHeight (layout-dependent)
         VisualStateManager.GoToState(this, stateName, useTransitions);
+
+        // Composition handles opacity (GPU-accelerated)
+        if (useTransitions)
+        {
+            var targetOpacity = shouldBeExpanded ? 1f : 0f;
+            var duration = shouldBeExpanded ? 350 : 150; // 350ms matches XAML SeekBar timing
+            var delay = shouldBeExpanded ? 100 : 0;
+
+            AnimateOpacity(SeekBarGrid, targetOpacity, duration, delay);
+            AnimateOpacity(ArtistNameHyperlink, targetOpacity, duration, delay);
+            AnimateOpacity(SecondaryControlsContainer, targetOpacity, duration, delay);
+        }
+        else
+        {
+            // Instant state change without animation
+            var targetOpacity = shouldBeExpanded ? 1f : 0f;
+            SetOpacityImmediate(SeekBarGrid, targetOpacity);
+            SetOpacityImmediate(ArtistNameHyperlink, targetOpacity);
+            SetOpacityImmediate(SecondaryControlsContainer, targetOpacity);
+        }
+    }
+
+    /// <summary>
+    ///     Animates an element's opacity using GPU-accelerated Composition animations.
+    /// </summary>
+    private static void AnimateOpacity(UIElement element, float to, int durationMs, int delayMs = 0)
+    {
+        var visual = ElementCompositionPreview.GetElementVisual(element);
+        var compositor = visual.Compositor;
+
+        // Stop any running opacity animation to prevent overlap
+        visual.StopAnimation("Opacity");
+
+        var animation = compositor.CreateScalarKeyFrameAnimation();
+        animation.InsertKeyFrame(1.0f, to, compositor.CreateCubicBezierEasingFunction(
+            new Vector2(0.25f, 0.1f),
+            new Vector2(0.25f, 1.0f)));
+        animation.Duration = TimeSpan.FromMilliseconds(durationMs);
+        animation.DelayTime = TimeSpan.FromMilliseconds(delayMs);
+
+        visual.StartAnimation("Opacity", animation);
+    }
+
+    /// <summary>
+    ///     Sets an element's opacity immediately without animation.
+    /// </summary>
+    private static void SetOpacityImmediate(UIElement element, float opacity)
+    {
+        var visual = ElementCompositionPreview.GetElementVisual(element);
+        visual.Opacity = opacity;
     }
 
     // Populates the NavigationView with items based on user settings.

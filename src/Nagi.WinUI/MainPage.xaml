@@ -211,12 +211,6 @@
                         </DoubleAnimation>
                         <DoubleAnimation
                             BeginTime="0:0:0.1"
-                            Storyboard.TargetName="SeekBarGrid"
-                            Storyboard.TargetProperty="Opacity"
-                            To="1"
-                            Duration="0:0:0.35" />
-                        <DoubleAnimation
-                            BeginTime="0:0:0.1"
                             Storyboard.TargetName="ArtistNameHyperlink"
                             Storyboard.TargetProperty="MaxHeight"
                             To="20"
@@ -226,18 +220,6 @@
                                 <CubicEase EasingMode="EaseOut" />
                             </DoubleAnimation.EasingFunction>
                         </DoubleAnimation>
-                        <DoubleAnimation
-                            BeginTime="0:0:0.1"
-                            Storyboard.TargetName="ArtistNameHyperlink"
-                            Storyboard.TargetProperty="Opacity"
-                            To="1"
-                            Duration="0:0:0.25" />
-                        <DoubleAnimation
-                            BeginTime="0:0:0.1"
-                            Storyboard.TargetName="SecondaryControlsContainer"
-                            Storyboard.TargetProperty="Opacity"
-                            To="1"
-                            Duration="0:0:0.3" />
                     </Storyboard>
                 </VisualState>
                 <VisualState x:Name="PlayerCollapsed">
@@ -253,11 +235,6 @@
                             </DoubleAnimation.EasingFunction>
                         </DoubleAnimation>
                         <DoubleAnimation
-                            Storyboard.TargetName="SeekBarGrid"
-                            Storyboard.TargetProperty="Opacity"
-                            To="0"
-                            Duration="0:0:0.15" />
-                        <DoubleAnimation
                             Storyboard.TargetName="ArtistNameHyperlink"
                             Storyboard.TargetProperty="MaxHeight"
                             To="0"
@@ -267,16 +244,6 @@
                                 <ExponentialEase EasingMode="EaseIn" />
                             </DoubleAnimation.EasingFunction>
                         </DoubleAnimation>
-                        <DoubleAnimation
-                            Storyboard.TargetName="ArtistNameHyperlink"
-                            Storyboard.TargetProperty="Opacity"
-                            To="0"
-                            Duration="0:0:0.15" />
-                        <DoubleAnimation
-                            Storyboard.TargetName="SecondaryControlsContainer"
-                            Storyboard.TargetProperty="Opacity"
-                            To="0"
-                            Duration="0:0:0.15" />
                     </Storyboard>
                 </VisualState>
             </VisualStateGroup>
