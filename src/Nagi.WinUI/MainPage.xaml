@@ -153,7 +153,7 @@
                 <VisualState x:Name="PlayerVisible">
                     <Storyboard>
                         <DoubleAnimation
-                            Storyboard.TargetName="FloatingPlayerContainer"
+                            Storyboard.TargetName="PlayerHitBox"
                             Storyboard.TargetProperty="Opacity"
                             To="1"
                             Duration="0:0:0.3">
@@ -162,7 +162,7 @@
                             </DoubleAnimation.EasingFunction>
                         </DoubleAnimation>
                         <DoubleAnimation
-                            Storyboard.TargetName="FloatingPlayerContainer"
+                            Storyboard.TargetName="PlayerHitBox"
                             Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)"
                             To="0"
                             Duration="0:0:0.3">
@@ -175,7 +175,7 @@
                 <VisualState x:Name="PlayerHidden">
                     <Storyboard>
                         <DoubleAnimation
-                            Storyboard.TargetName="FloatingPlayerContainer"
+                            Storyboard.TargetName="PlayerHitBox"
                             Storyboard.TargetProperty="Opacity"
                             To="0"
                             Duration="0:0:0.3">
@@ -184,7 +184,7 @@
                             </DoubleAnimation.EasingFunction>
                         </DoubleAnimation>
                         <DoubleAnimation
-                            Storyboard.TargetName="FloatingPlayerContainer"
+                            Storyboard.TargetName="PlayerHitBox"
                             Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)"
                             To="150"
                             Duration="0:0:0.3">
@@ -217,16 +217,6 @@
                             Duration="0:0:0.35" />
                         <DoubleAnimation
                             BeginTime="0:0:0.1"
-                            Storyboard.TargetName="SeekBarGrid"
-                            Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)"
-                            To="0"
-                            Duration="0:0:0.5">
-                            <DoubleAnimation.EasingFunction>
-                                <CubicEase EasingMode="EaseOut" />
-                            </DoubleAnimation.EasingFunction>
-                        </DoubleAnimation>
-                        <DoubleAnimation
-                            BeginTime="0:0:0.1"
                             Storyboard.TargetName="ArtistNameHyperlink"
                             Storyboard.TargetProperty="MaxHeight"
                             To="20"
@@ -237,23 +227,13 @@
                             </DoubleAnimation.EasingFunction>
                         </DoubleAnimation>
                         <DoubleAnimation
-                            BeginTime="0:0:0.15"
+                            BeginTime="0:0:0.1"
                             Storyboard.TargetName="ArtistNameHyperlink"
                             Storyboard.TargetProperty="Opacity"
                             To="1"
                             Duration="0:0:0.25" />
                         <DoubleAnimation
-                            BeginTime="0:0:0.2"
-                            Storyboard.TargetName="SecondaryControlsContainer"
-                            Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)"
-                            To="0"
-                            Duration="0:0:0.4">
-                            <DoubleAnimation.EasingFunction>
-                                <CubicEase EasingMode="EaseOut" />
-                            </DoubleAnimation.EasingFunction>
-                        </DoubleAnimation>
-                        <DoubleAnimation
-                            BeginTime="0:0:0.2"
+                            BeginTime="0:0:0.1"
                             Storyboard.TargetName="SecondaryControlsContainer"
                             Storyboard.TargetProperty="Opacity"
                             To="1"
@@ -278,15 +258,6 @@
                             To="0"
                             Duration="0:0:0.15" />
                         <DoubleAnimation
-                            Storyboard.TargetName="SeekBarGrid"
-                            Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)"
-                            To="10"
-                            Duration="0:0:0.2">
-                            <DoubleAnimation.EasingFunction>
-                                <ExponentialEase EasingMode="EaseIn" />
-                            </DoubleAnimation.EasingFunction>
-                        </DoubleAnimation>
-                        <DoubleAnimation
                             Storyboard.TargetName="ArtistNameHyperlink"
                             Storyboard.TargetProperty="MaxHeight"
                             To="0"
@@ -301,15 +272,6 @@
                             Storyboard.TargetProperty="Opacity"
                             To="0"
                             Duration="0:0:0.15" />
-                        <DoubleAnimation
-                            Storyboard.TargetName="SecondaryControlsContainer"
-                            Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)"
-                            To="10"
-                            Duration="0:0:0.25">
-                            <DoubleAnimation.EasingFunction>
-                                <ExponentialEase EasingMode="EaseIn" />
-                            </DoubleAnimation.EasingFunction>
-                        </DoubleAnimation>
                         <DoubleAnimation
                             Storyboard.TargetName="SecondaryControlsContainer"
                             Storyboard.TargetProperty="Opacity"
@@ -377,19 +339,25 @@
                 <Grid>
                     <Frame x:Name="ContentFrame" Padding="12,0,12,0" />
 
-                    <Border
-                        x:Name="FloatingPlayerContainer"
+                    <Grid
+                        x:Name="PlayerHitBox"
+                        Height="116"
                         Margin="12,0,12,12"
-                        Padding="12"
                         VerticalAlignment="Bottom"
-                        CornerRadius="8"
+                        Background="Transparent"
                         PointerEntered="FloatingPlayerContainer_PointerEntered"
                         PointerExited="FloatingPlayerContainer_PointerExited">
-                        <Border.RenderTransform>
+                        <Grid.RenderTransform>
                             <CompositeTransform />
-                        </Border.RenderTransform>
-                        <Grid>
-                            <Grid x:Name="MainControlsGrid" VerticalAlignment="Top">
+                        </Grid.RenderTransform>
+
+                        <Border
+                            x:Name="FloatingPlayerContainer"
+                            Padding="12"
+                            VerticalAlignment="Bottom"
+                            CornerRadius="8">
+                            <Grid>
+                                <Grid x:Name="MainControlsGrid" VerticalAlignment="Top">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition MinWidth="180" Width="*" />
                                     <ColumnDefinition Width="Auto" />
@@ -457,9 +425,6 @@
                                     Orientation="Horizontal"
                                     Spacing="4"
                                     Opacity="0">
-                                    <StackPanel.RenderTransform>
-                                        <CompositeTransform TranslateY="10" />
-                                    </StackPanel.RenderTransform>
 
                                     <ItemsControl
                                         ItemsSource="{Binding SecondaryControlsButtons}"
@@ -483,9 +448,6 @@
                                 x:Name="SeekBarGrid"
                                 VerticalAlignment="Bottom"
                                 Opacity="0">
-                                <Grid.RenderTransform>
-                                    <CompositeTransform TranslateY="10" />
-                                </Grid.RenderTransform>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="*" />
@@ -517,6 +479,7 @@
                             </Grid>
                         </Grid>
                     </Border>
+                    </Grid>
                 </Grid>
             </NavigationView>
         </Grid>
