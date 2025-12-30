@@ -27,41 +27,6 @@
     It contains several layers to create the final appearance.
     -->
     <Grid x:Name="HoverDetector" Background="Transparent">
-        <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup x:Name="HoverStates">
-                <VisualStateGroup.Transitions>
-                    <VisualTransition GeneratedDuration="0:0:0.25" />
-                </VisualStateGroup.Transitions>
-                <VisualState x:Name="Normal">
-                    <Storyboard>
-                        <DoubleAnimation
-                            Storyboard.TargetName="HoverControlsContainer"
-                            Storyboard.TargetProperty="Opacity"
-                            To="0"
-                            Duration="0:0:0.2" />
-                        <DoubleAnimation
-                            Storyboard.TargetName="AmbientBackground"
-                            Storyboard.TargetProperty="Opacity"
-                            To="1.0"
-                            Duration="0:0:0.4" />
-                    </Storyboard>
-                </VisualState>
-                <VisualState x:Name="MouseOver">
-                    <Storyboard>
-                        <DoubleAnimation
-                            Storyboard.TargetName="HoverControlsContainer"
-                            Storyboard.TargetProperty="Opacity"
-                            To="1"
-                            Duration="0:0:0.2" />
-                        <DoubleAnimation
-                            Storyboard.TargetName="AmbientBackground"
-                            Storyboard.TargetProperty="Opacity"
-                            To="1"
-                            Duration="0:0:0.4" />
-                    </Storyboard>
-                </VisualState>
-            </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>
 
         <!--  Background Layer: Blends album art with the theme colors for a premium look  -->
         <Border x:Name="AmbientBackground" Opacity="1.0">

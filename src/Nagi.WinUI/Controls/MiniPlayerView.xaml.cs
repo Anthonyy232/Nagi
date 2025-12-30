@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using Nagi.WinUI.Helpers;
 using Nagi.WinUI.ViewModels;
 
 namespace Nagi.WinUI.Controls;
@@ -62,7 +63,14 @@ public sealed partial class MiniPlayerView : UserControl
         HoverDetector.PointerExited += OnPointerExited;
         HoverDetector.PointerCanceled += OnPointerExited;
 
+        Loaded += OnLoaded;
         Unloaded += OnUnloaded;
+    }
+
+    private void OnLoaded(object sender, RoutedEventArgs e)
+    {
+        // Initialize hover controls visual to ensure first hover works immediately.
+        CompositionAnimationHelper.SetOpacityImmediate(HoverControlsContainer, 0f);
     }
 
     private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -84,6 +92,7 @@ public sealed partial class MiniPlayerView : UserControl
         HoverDetector.PointerExited -= OnPointerExited;
         HoverDetector.PointerCanceled -= OnPointerExited;
 
+        Loaded -= OnLoaded;
         Unloaded -= OnUnloaded;
     }
 
@@ -93,7 +102,7 @@ public sealed partial class MiniPlayerView : UserControl
 
         // Hide hover controls when the window is no longer in the foreground.
         if (args.WindowActivationState == WindowActivationState.Deactivated)
-            VisualStateManager.GoToState(this, "Normal", false);
+            AnimateHoverControls(visible: false, useTransitions: false);
     }
 
     private void OnRestoreButtonClick(object sender, RoutedEventArgs e)
@@ -104,13 +113,30 @@ public sealed partial class MiniPlayerView : UserControl
     private void OnPointerEntered(object sender, PointerRoutedEventArgs e)
     {
         if (_isUnloaded) return;
-        VisualStateManager.GoToState(this, "MouseOver", true);
+        AnimateHoverControls(visible: true);
     }
 
     private void OnPointerExited(object sender, PointerRoutedEventArgs e)
     {
         if (_isUnloaded) return;
-        VisualStateManager.GoToState(this, "Normal", true);
+        AnimateHoverControls(visible: false);
+    }
+
+    /// <summary>
+    ///     Animates the hover controls visibility using GPU-accelerated Composition.
+    /// </summary>
+    private void AnimateHoverControls(bool visible, bool useTransitions = true)
+    {
+        var targetOpacity = visible ? 1f : 0f;
+
+        if (useTransitions)
+        {
+            CompositionAnimationHelper.AnimateOpacity(HoverControlsContainer, targetOpacity, 200);
+        }
+        else
+        {
+            CompositionAnimationHelper.SetOpacityImmediate(HoverControlsContainer, targetOpacity);
+        }
     }
 
     // Initiates a window drag operation when the left mouse button is pressed on the drag handle.
