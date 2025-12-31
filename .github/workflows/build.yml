@@ -6,8 +6,9 @@
 #
 # Workflow Execution Flow:
 # 1. Test: Compiles and runs unit tests as a quality gate.
-# 2. Build & Pack: If tests pass, builds and packages the application for multiple platforms in parallel.
-# 3. Create GitHub Release: If triggered by a tag, collects all packages and publishes them to a GitHub Release.
+# 2. Benchmark: If tests pass, runs performance benchmarks to track regressions.
+# 3. Build & Pack: If tests pass, builds and packages the application for multiple platforms in parallel.
+# 4. Create GitHub Release: If triggered by a tag, collects all packages and publishes them to a GitHub Release.
 #
 # Triggers:
 # - Push to master branch: CI validation only. (git push origin master)
@@ -51,6 +52,9 @@ jobs:
         with:
           dotnet-version: 10.0.x
 
+      - name: Setup FFmpeg
+        uses: FedericoCarboni/setup-ffmpeg@v3
+
       - name: Run .NET Tests
         # Executes tests and generates a TRX report for diagnostics.
         run: >
@@ -65,6 +69,56 @@ jobs:
         with:
           name: test-results
           path: '**/test-results.trx'
+
+  # ===================================================================
+  # JOB: benchmark
+  # Purpose: Tracks performance and memory usage of critical paths.
+  # This job runs after tests to ensure performance standards are met.
+  # ===================================================================
+  benchmark:
+    name: Run Performance Benchmarks
+    runs-on: windows-latest
+    needs: test
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository source code
+        uses: actions/checkout@v4
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '**/Directory.Build.props', '**/NuGet.config') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: Install .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Setup FFmpeg
+        uses: FedericoCarboni/setup-ffmpeg@v3
+
+      - name: Run Benchmarks
+        run: dotnet run -c Release --project benchmarks/Nagi.Benchmarks/Nagi.Benchmarks.csproj -- --filter *LibraryScanBenchmarks*
+
+      - name: Upload Benchmark Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: Benchmark-Results
+          path: BenchmarkDotNet.Artifacts/results/
+
+      - name: Write Benchmark Summary to Job Summary
+        if: always()
+        shell: pwsh
+        run: |
+          $mdFile = Get-ChildItem -Path "BenchmarkDotNet.Artifacts/results/*.md" | Select-Object -First 1
+          if ($mdFile) {
+            Get-Content $mdFile.FullName | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
+          }
 
   # ===================================================================
   # JOB: build-and-pack

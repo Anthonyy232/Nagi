@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8' />
+<title>Nagi.Benchmarks.Benchmarks.LibraryScanBenchmarks-20251231-120921</title>
+
+<style type="text/css">
+	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
+	td, th { padding: 6px 13px; border: 1px solid #ddd; text-align: right; }
+	tr { background-color: #fff; border-top: 1px solid #ccc; }
+	tr:nth-child(even) { background: #f8f8f8; }
+</style>
+</head>
+<body>
+<pre><code>
+BenchmarkDotNet v0.14.0, Windows 11 (10.0.26200.7462)
+Unknown processor
+.NET SDK 10.0.101
+  [Host]     : .NET 10.0.1 (10.0.125.57005), X64 RyuJIT AVX2
+  DefaultJob : .NET 10.0.1 (10.0.125.57005), X64 RyuJIT AVX2
+</code></pre>
+<pre><code></code></pre>
+
+<table>
+<thead><tr><th>Method   </th><th>SongCount</th><th>Mean</th><th>Error</th><th>StdDev</th><th>Gen0</th><th>Gen1</th><th>Allocated</th>
+</tr>
+</thead><tbody><tr><td>InitialScan</td><td>100</td><td>55.36 ms</td><td>1.021 ms</td><td>2.505 ms</td><td>666.6667</td><td>166.6667</td><td>12.83 MB</td>
+</tr><tr><td>RescanNoChanges</td><td>100</td><td>23.05 ms</td><td>0.403 ms</td><td>0.431 ms</td><td>62.5000</td><td>-</td><td>1.24 MB</td>
+</tr><tr><td>InitialScan</td><td>500</td><td>258.36 ms</td><td>4.833 ms</td><td>11.763 ms</td><td>4000.0000</td><td>1000.0000</td><td>76.19 MB</td>
+</tr><tr><td>RescanNoChanges</td><td>500</td><td>113.21 ms</td><td>2.238 ms</td><td>2.577 ms</td><td>250.0000</td><td>-</td><td>4.96 MB</td>
+</tr></tbody></table>
+</body>
+</html>
