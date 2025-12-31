@@ -1,4 +1,5 @@
 ﻿using System;
+using Windows.System;
 using Windows.Graphics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
@@ -202,5 +203,36 @@ public sealed partial class MiniPlayerView : UserControl
     {
         if (_isUnloaded) return;
         _isDragging = false;
+    }
+
+    private void MediaSeekerSlider_PointerPressed(object sender, PointerRoutedEventArgs e)
+    {
+        ViewModel.IsUserDraggingSlider = true;
+    }
+
+    private void MediaSeekerSlider_PointerReleased(object sender, PointerRoutedEventArgs e)
+    {
+        ViewModel.IsUserDraggingSlider = false;
+    }
+
+    private void MediaSeekerSlider_PointerCaptureLost(object sender, PointerRoutedEventArgs e)
+    {
+        ViewModel.IsUserDraggingSlider = false;
+    }
+
+    private void MediaSeekerSlider_KeyDown(object sender, KeyRoutedEventArgs e)
+    {
+        if (e.Key is VirtualKey.Left or VirtualKey.Right or VirtualKey.PageUp or VirtualKey.PageDown or VirtualKey.Home or VirtualKey.End)
+        {
+            ViewModel.IsUserDraggingSlider = true;
+        }
+    }
+
+    private void MediaSeekerSlider_KeyUp(object sender, KeyRoutedEventArgs e)
+    {
+        if (e.Key is VirtualKey.Left or VirtualKey.Right or VirtualKey.PageUp or VirtualKey.PageDown or VirtualKey.Home or VirtualKey.End)
+        {
+            ViewModel.IsUserDraggingSlider = false;
+        }
     }
 }

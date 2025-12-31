@@ -64,11 +64,17 @@
                                    TextWrapping="NoWrap" />
                     </StackPanel>
 
-                    <Slider Grid.Row="1"
+                    <Slider x:Name="MediaSeekerSlider"
+                            Grid.Row="1"
                             Maximum="{Binding TotalDuration}" Value="{Binding CurrentPosition, Mode=TwoWay}"
                             ThumbToolTipValueConverter="{StaticResource TimeSpanToTimeStringConverter}"
                             IsThumbToolTipEnabled="True"
-                            Style="{StaticResource MediaSeekerSliderStyle}" />
+                            Style="{StaticResource MediaSeekerSliderStyle}"
+                            PointerPressed="MediaSeekerSlider_PointerPressed"
+                            PointerReleased="MediaSeekerSlider_PointerReleased"
+                            PointerCaptureLost="MediaSeekerSlider_PointerCaptureLost"
+                            KeyDown="MediaSeekerSlider_KeyDown"
+                            KeyUp="MediaSeekerSlider_KeyUp" />
 
                     <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="8">
                         <Button Command="{Binding ToggleMuteCommand}" Style="{StaticResource VolumeButtonStyle}"

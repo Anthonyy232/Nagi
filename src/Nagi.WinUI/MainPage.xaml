@@ -435,7 +435,12 @@
                                     Maximum="{Binding TotalDuration, Mode=OneWay}"
                                     Style="{StaticResource MediaSeekerSliderStyle}"
                                     ThumbToolTipValueConverter="{StaticResource TimeSpanToTimeStringConverter}"
-                                    Value="{Binding CurrentPosition, Mode=TwoWay}" />
+                                    Value="{Binding CurrentPosition, Mode=TwoWay}"
+                                    PointerPressed="MediaSeekerSlider_PointerPressed"
+                                    PointerReleased="MediaSeekerSlider_PointerReleased"
+                                    PointerCaptureLost="MediaSeekerSlider_PointerCaptureLost"
+                                    KeyDown="MediaSeekerSlider_KeyDown"
+                                    KeyUp="MediaSeekerSlider_KeyUp" />
                                 <TextBlock
                                     x:Name="TotalTimeTextBlock"
                                     Grid.Column="2"
