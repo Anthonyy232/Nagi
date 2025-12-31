@@ -9,6 +9,7 @@
     xmlns:local="using:Nagi.WinUI.Models"
     xmlns:vm="using:Nagi.WinUI.ViewModels"
     xmlns:helpers="using:Nagi.Core.Helpers"
+    xmlns:uihelpers="using:Nagi.WinUI.Helpers"
     x:Name="pageRoot"
     Background="Transparent"
     mc:Ignorable="d">
@@ -18,6 +19,7 @@
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <converters:BooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" Invert="True" />
         <converters:BooleanToInverseBooleanConverter x:Key="BooleanToInverseBooleanConverter" />
+        <converters:StringToImageSourceConverter x:Key="StringToImageSourceConverter" />
 
         <!-- Data template selector for folder/song items -->
         <local:FolderContentItemTemplateSelector x:Key="FolderContentItemTemplateSelector">
@@ -105,7 +107,7 @@
                                     Stretch="UniformToFill"
                                     DecodePixelWidth="48"
                                     DecodePixelType="Logical"
-                                    Source="{x:Bind Song.AlbumArtUriFromTrack, FallbackValue=null}" />
+                                    Source="{x:Bind uihelpers:ImageUriHelper.GetUriWithCacheBuster(Song.AlbumArtUriFromTrack, Song.FileModifiedDate), Mode=OneWay}" />
                             </Border>
                         </Button>
 

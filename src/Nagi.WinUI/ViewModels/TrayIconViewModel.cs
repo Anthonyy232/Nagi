@@ -85,7 +85,6 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable
     /// </summary>
     public async Task InitializeAsync()
     {
-        await _windowService.InitializeAsync();
         _windowService.Closing += OnAppWindowClosing;
         _windowService.VisibilityChanged += OnAppWindowVisibilityChanged;
 
@@ -183,10 +182,13 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable
     }
 
     /// <summary>
-    ///     Toggles the main window's visibility.
+    ///     Handles the double-click action on the tray icon.
+    ///     If the window is hidden, it restores and activates it.
+    ///     If the window is visible and hide-to-tray is enabled, it minimizes the window
+    ///     (which may trigger the mini-player if that setting is enabled).
     /// </summary>
     [RelayCommand]
-    private void ToggleMainWindowVisibility()
+    private void HandleTrayIconDoubleClick()
     {
         if (!IsWindowVisible)
             ShowWindow();

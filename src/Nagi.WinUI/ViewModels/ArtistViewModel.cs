@@ -15,6 +15,7 @@ using Nagi.WinUI.Navigation;
 using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
 using Nagi.Core.Helpers;
+using Nagi.WinUI.Helpers;
 
 namespace Nagi.WinUI.ViewModels;
 
@@ -29,9 +30,12 @@ public partial class ArtistViewModelItem : ObservableObject
 
     public bool IsArtworkAvailable => !string.IsNullOrEmpty(LocalImageCachePath);
 
+    public bool IsCustomImage => LocalImageCachePath?.Contains(".custom.") == true;
+
     partial void OnLocalImageCachePathChanged(string? value)
     {
         OnPropertyChanged(nameof(IsArtworkAvailable));
+        OnPropertyChanged(nameof(IsCustomImage));
     }
 }
 
@@ -104,6 +108,10 @@ public partial class ArtistViewModel : ObservableObject, IDisposable
 
         if (Artists != null) Artists.CollectionChanged -= _collectionChangedHandler;
         _libraryService.ArtistMetadataUpdated -= OnArtistMetadataUpdated;
+        _debounceCts?.Cancel();
+        _debounceCts?.Dispose();
+        _debounceCts = null;
+        _logger.LogDebug("ArtistViewModel state cleaned up.");
 
         _isDisposed = true;
         GC.SuppressFinalize(this);
@@ -236,7 +244,7 @@ public partial class ArtistViewModel : ObservableObject, IDisposable
                 {
                     Id = artist.Id,
                     Name = artist.Name,
-                    LocalImageCachePath = artist.LocalImageCachePath
+                    LocalImageCachePath = ImageUriHelper.GetUriWithCacheBuster(artist.LocalImageCachePath)
                 };
                 _artistLookup[artist.Id] = artistVm;
                 Artists.Add(artistVm);
@@ -303,7 +311,12 @@ public partial class ArtistViewModel : ObservableObject, IDisposable
     {
         if (_artistLookup.TryGetValue(e.ArtistId, out var artistVm))
             // Ensure UI updates are performed on the main thread.
-            _dispatcherService.TryEnqueue(() => { artistVm.LocalImageCachePath = e.NewLocalImageCachePath; });
+            _dispatcherService.TryEnqueue(() =>
+            {
+                // Force refresh by setting to null first, then apply cache-buster
+                artistVm.LocalImageCachePath = null;
+                artistVm.LocalImageCachePath = ImageUriHelper.GetUriWithCacheBuster(e.NewLocalImageCachePath);
+            });
     }
 
     /// <summary>
@@ -332,5 +345,19 @@ public partial class ArtistViewModel : ObservableObject, IDisposable
         _debounceCts = null;
         SearchTerm = string.Empty;
         _logger.LogDebug("Cleaned up ArtistViewModel search resources");
+    }
+
+    [RelayCommand]
+    public async Task UpdateArtistImageAsync(Tuple<Guid, string> artistData)
+    {
+        if (artistData == null) return;
+        var (artistId, localPath) = artistData;
+        await _libraryService.UpdateArtistImageAsync(artistId, localPath);
+    }
+
+    [RelayCommand]
+    public async Task RemoveArtistImageAsync(Guid artistId)
+    {
+        await _libraryService.RemoveArtistImageAsync(artistId);
     }
 }

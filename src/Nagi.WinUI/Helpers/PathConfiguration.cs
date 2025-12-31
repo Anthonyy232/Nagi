@@ -34,7 +34,9 @@ public class PathConfiguration : IPathConfiguration
         SettingsFilePath = Path.Combine(AppDataRoot, "settings.json");
         PlaybackStateFilePath = Path.Combine(AppDataRoot, "playback_state.json");
         AlbumArtCachePath = Path.Combine(AppDataRoot, "AlbumArt");
+        AlbumArtCachePath = Path.Combine(AppDataRoot, "AlbumArt");
         ArtistImageCachePath = Path.Combine(AppDataRoot, "ArtistImages");
+        PlaylistImageCachePath = Path.Combine(AppDataRoot, "PlaylistImages");
         LrcCachePath = Path.Combine(AppDataRoot, "LrcCache");
         DatabasePath = Path.Combine(AppDataRoot, "nagi.db");
         LogsDirectory = Path.Combine(AppDataRoot, "Logs");
@@ -42,7 +44,9 @@ public class PathConfiguration : IPathConfiguration
         // Ensure all necessary directories exist on startup.
         Directory.CreateDirectory(AppDataRoot);
         Directory.CreateDirectory(AlbumArtCachePath);
+        Directory.CreateDirectory(AlbumArtCachePath);
         Directory.CreateDirectory(ArtistImageCachePath);
+        Directory.CreateDirectory(PlaylistImageCachePath);
         Directory.CreateDirectory(LrcCachePath);
         Directory.CreateDirectory(LogsDirectory);
     }
@@ -64,6 +68,9 @@ public class PathConfiguration : IPathConfiguration
 
     /// <inheritdoc />
     public string ArtistImageCachePath { get; }
+    
+    /// <inheritdoc />
+    public string PlaylistImageCachePath { get; }
 
     /// <inheritdoc />
     public string LrcCachePath { get; }

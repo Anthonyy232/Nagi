@@ -12,7 +12,8 @@
     xmlns:mux="using:Microsoft.UI.Xaml"
     xmlns:navigation="using:Nagi.WinUI.Navigation"
     xmlns:viewmodels="using:Nagi.WinUI.ViewModels"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    NavigationCacheMode="Required">
 
     <Page.Resources>
         <localConverters:ElementThemeToFriendlyStringConverter x:Key="ThemeToStringConverter" />
@@ -62,7 +63,7 @@
                         SelectedItem="{x:Bind ViewModel.SelectedTheme, Mode=TwoWay}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate x:DataType="mux:ElementTheme">
-                                <TextBlock Text="{Binding Converter={StaticResource ThemeToStringConverter}}" />
+                                <TextBlock Text="{x:Bind Converter={StaticResource ThemeToStringConverter}}" />
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
@@ -82,7 +83,7 @@
                         <ComboBox.ItemTemplate>
                             <DataTemplate x:DataType="models:BackdropMaterial">
                                 <TextBlock
-                                    Text="{Binding Converter={StaticResource BackdropMaterialToStringConverter}}" />
+                                    Text="{x:Bind Converter={StaticResource BackdropMaterialToStringConverter}}" />
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>

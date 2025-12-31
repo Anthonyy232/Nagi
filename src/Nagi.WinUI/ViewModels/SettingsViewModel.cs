@@ -110,6 +110,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     private readonly PlayerViewModel _playerViewModel;
     private readonly IReplayGainService _replayGainService;
     private readonly IFFmpegService _ffmpegService;
+    private readonly SemaphoreSlim _loadLock = new(1, 1);
 
     private bool _isDisposed;
     private bool _isInitializing;
@@ -232,6 +233,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         _replayGainScanCts?.Cancel();
         _replayGainScanCts?.Dispose();
 
+        _loadLock.Dispose();
         _isDisposed = true;
         GC.SuppressFinalize(this);
     }
@@ -239,61 +241,98 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     [RelayCommand]
     public async Task LoadSettingsAsync()
     {
-        _isInitializing = true;
-
-        foreach (var item in NavigationItems) item.PropertyChanged -= OnNavigationItemPropertyChanged;
-        NavigationItems.Clear();
-
-        var navItems = await _settingsService.GetNavigationItemsAsync();
-        foreach (var item in navItems)
+        if (_isDisposed) return;
+        await _loadLock.WaitAsync();
+        try
         {
-            item.PropertyChanged += OnNavigationItemPropertyChanged;
-            NavigationItems.Add(item);
-        }
+            _isInitializing = true;
 
-        foreach (var item in PlayerButtons) item.PropertyChanged -= OnPlayerButtonPropertyChanged;
-        PlayerButtons.Clear();
-        var playerButtons = await _settingsService.GetPlayerButtonSettingsAsync();
-        foreach (var button in playerButtons)
+            foreach (var item in NavigationItems) item.PropertyChanged -= OnNavigationItemPropertyChanged;
+            NavigationItems.Clear();
+
+            foreach (var item in PlayerButtons) item.PropertyChanged -= OnPlayerButtonPropertyChanged;
+            PlayerButtons.Clear();
+
+            var navItemsTask = _settingsService.GetNavigationItemsAsync();
+            var playerButtonsTask = _settingsService.GetPlayerButtonSettingsAsync();
+            var themeTask = _settingsService.GetThemeAsync();
+            var backdropTask = _settingsService.GetBackdropMaterialAsync();
+            var dynamicThemingTask = _settingsService.GetDynamicThemingAsync();
+            var playerAnimationTask = _settingsService.GetPlayerAnimationEnabledAsync();
+            var restorePlaybackTask = _settingsService.GetRestorePlaybackStateEnabledAsync();
+            var autoLaunchTask = _settingsService.GetAutoLaunchEnabledAsync();
+            var startMinimizedTask = _settingsService.GetStartMinimizedEnabledAsync();
+            var hideToTrayTask = _settingsService.GetHideToTrayEnabledAsync();
+            var miniPlayerTask = _settingsService.GetMinimizeToMiniPlayerEnabledAsync();
+            var trayFlyoutTask = _settingsService.GetShowCoverArtInTrayFlyoutAsync();
+            var onlineMetadataTask = _settingsService.GetFetchOnlineMetadataEnabledAsync();
+            var onlineLyricsTask = _settingsService.GetFetchOnlineLyricsEnabledAsync();
+            var discordRpcTask = _settingsService.GetDiscordRichPresenceEnabledAsync();
+            var checkUpdatesTask = _settingsService.GetCheckForUpdatesEnabledAsync();
+            var rememberWindowTask = _settingsService.GetRememberWindowSizeEnabledAsync();
+            var rememberPaneTask = _settingsService.GetRememberPaneStateEnabledAsync();
+            var volumeNormTask = _settingsService.GetVolumeNormalizationEnabledAsync();
+            var lastFmCredsTask = _settingsService.GetLastFmCredentialsAsync();
+            var lastFmAuthTokenTask = _settingsService.GetLastFmAuthTokenAsync();
+            var scrobblingTask = _settingsService.GetLastFmScrobblingEnabledAsync();
+            var nowPlayingTask = _settingsService.GetLastFmNowPlayingEnabledAsync();
+
+            await Task.WhenAll(
+                navItemsTask, playerButtonsTask, themeTask, backdropTask, dynamicThemingTask,
+                playerAnimationTask, restorePlaybackTask, autoLaunchTask, startMinimizedTask,
+                hideToTrayTask, miniPlayerTask, trayFlyoutTask, onlineMetadataTask,
+                onlineLyricsTask, discordRpcTask, checkUpdatesTask, rememberWindowTask,
+                rememberPaneTask, volumeNormTask, lastFmCredsTask, lastFmAuthTokenTask,
+                scrobblingTask, nowPlayingTask);
+
+            foreach (var item in await navItemsTask)
+            {
+                item.PropertyChanged += OnNavigationItemPropertyChanged;
+                NavigationItems.Add(item);
+            }
+
+            foreach (var button in await playerButtonsTask)
+            {
+                button.PropertyChanged += OnPlayerButtonPropertyChanged;
+                PlayerButtons.Add(button);
+            }
+
+            SelectedTheme = await themeTask;
+            SelectedBackdropMaterial = await backdropTask;
+            IsDynamicThemingEnabled = await dynamicThemingTask;
+            IsPlayerAnimationEnabled = await playerAnimationTask;
+            IsRestorePlaybackStateEnabled = await restorePlaybackTask;
+            IsAutoLaunchEnabled = await autoLaunchTask;
+            IsStartMinimizedEnabled = await startMinimizedTask;
+            IsHideToTrayEnabled = await hideToTrayTask;
+            IsMinimizeToMiniPlayerEnabled = await miniPlayerTask;
+            IsShowCoverArtInTrayFlyoutEnabled = await trayFlyoutTask;
+            IsFetchOnlineMetadataEnabled = await onlineMetadataTask;
+            IsFetchOnlineLyricsEnabled = await onlineLyricsTask;
+            IsDiscordRichPresenceEnabled = await discordRpcTask;
+            IsCheckForUpdatesEnabled = await checkUpdatesTask;
+            IsRememberWindowSizeEnabled = await rememberWindowTask;
+            IsRememberPaneStateEnabled = await rememberPaneTask;
+            IsVolumeNormalizationEnabled = await volumeNormTask;
+
+            var lastFmCredentials = await lastFmCredsTask;
+            LastFmUsername = lastFmCredentials?.Username;
+            IsLastFmConnected = lastFmCredentials is not null && !string.IsNullOrEmpty(lastFmCredentials.Value.SessionKey);
+
+            IsLastFmScrobblingEnabled = await scrobblingTask;
+            IsLastFmNowPlayingEnabled = await nowPlayingTask;
+
+            var authToken = await lastFmAuthTokenTask;
+            IsConnectingToLastFm = !string.IsNullOrEmpty(authToken);
+
+            LoadEqualizerState();
+
+            _isInitializing = false;
+        }
+        finally
         {
-            button.PropertyChanged += OnPlayerButtonPropertyChanged;
-            PlayerButtons.Add(button);
+            _loadLock.Release();
         }
-
-        SelectedTheme = await _settingsService.GetThemeAsync();
-        SelectedBackdropMaterial = await _settingsService.GetBackdropMaterialAsync();
-        IsDynamicThemingEnabled = await _settingsService.GetDynamicThemingAsync();
-        IsPlayerAnimationEnabled = await _settingsService.GetPlayerAnimationEnabledAsync();
-        IsRestorePlaybackStateEnabled = await _settingsService.GetRestorePlaybackStateEnabledAsync();
-        IsAutoLaunchEnabled = await _settingsService.GetAutoLaunchEnabledAsync();
-        IsStartMinimizedEnabled = await _settingsService.GetStartMinimizedEnabledAsync();
-        IsHideToTrayEnabled = await _settingsService.GetHideToTrayEnabledAsync();
-        IsMinimizeToMiniPlayerEnabled = await _settingsService.GetMinimizeToMiniPlayerEnabledAsync();
-        IsShowCoverArtInTrayFlyoutEnabled = await _settingsService.GetShowCoverArtInTrayFlyoutAsync();
-        IsFetchOnlineMetadataEnabled = await _settingsService.GetFetchOnlineMetadataEnabledAsync();
-        IsFetchOnlineLyricsEnabled = await _settingsService.GetFetchOnlineLyricsEnabledAsync();
-        IsDiscordRichPresenceEnabled = await _settingsService.GetDiscordRichPresenceEnabledAsync();
-        IsCheckForUpdatesEnabled = await _settingsService.GetCheckForUpdatesEnabledAsync();
-        IsRememberWindowSizeEnabled = await _settingsService.GetRememberWindowSizeEnabledAsync();
-        IsRememberPaneStateEnabled = await _settingsService.GetRememberPaneStateEnabledAsync();
-        IsVolumeNormalizationEnabled = await _settingsService.GetVolumeNormalizationEnabledAsync();
-        
-        var lastFmCredentials = await _settingsService.GetLastFmCredentialsAsync();
-        LastFmUsername = lastFmCredentials?.Username;
-        IsLastFmConnected = lastFmCredentials is not null && !string.IsNullOrEmpty(lastFmCredentials.Value.SessionKey);
-
-        if (IsLastFmConnected)
-        {
-            IsLastFmScrobblingEnabled = await _settingsService.GetLastFmScrobblingEnabledAsync();
-            IsLastFmNowPlayingEnabled = await _settingsService.GetLastFmNowPlayingEnabledAsync();
-        }
-
-        var authToken = await _settingsService.GetLastFmAuthTokenAsync();
-        IsConnectingToLastFm = !string.IsNullOrEmpty(authToken);
-
-        LoadEqualizerState();
-
-        _isInitializing = false;
     }
 
     [RelayCommand]
@@ -458,7 +497,12 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
         EqualizerPreamp = eqSettings.Preamp;
 
-        foreach (var bandVm in EqualizerBands) bandVm.Dispose();
+        foreach (var bandVm in EqualizerBands)
+        {
+            bandVm.GainChanged -= OnBandGainChanged;
+            bandVm.GainCommitted -= OnBandGainCommitted;
+            bandVm.Dispose();
+        }
         EqualizerBands.Clear();
 
         foreach (var bandInfo in _playbackService.EqualizerBands)

@@ -11,6 +11,7 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.WinUI.Services.Abstractions;
+using Nagi.WinUI.Helpers;
 
 namespace Nagi.WinUI.ViewModels;
 
@@ -120,7 +121,7 @@ public partial class AlbumViewViewModel : SongListViewModelBase
                 ArtistName = album.Artist?.Name ?? "Unknown Artist";
                 PageTitle = album.Title;
                 _albumYear = album.Year;
-                CoverArtUri = album.CoverArtUri;
+                CoverArtUri = ImageUriHelper.GetUriWithCacheBuster(album.CoverArtUri);
 
                 await RefreshOrSortSongsCommand.ExecuteAsync(null);
             }

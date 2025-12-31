@@ -17,10 +17,12 @@ public interface IFileSystemService
 
     bool FileExists(string path);
     void DeleteFile(string path);
+    void CopyFile(string sourceFileName, string destFileName, bool overwrite);
     void MoveFile(string sourceFileName, string destFileName, bool overwrite);
     DateTime GetLastWriteTimeUtc(string path);
     FileInfo GetFileInfo(string path);
     string GetFileNameWithoutExtension(string path);
+    string GetFileName(string path);
     string? GetDirectoryName(string path);
     string GetExtension(string path);
     string Combine(params string[] paths);

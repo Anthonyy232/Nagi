@@ -76,6 +76,7 @@ public class SettingsService : IUISettingsService
     private volatile bool _isInitialized;
     private int _isSaveQueued;
 
+    private readonly object _dictLock = new();
     private Dictionary<string, object?> _settings;
 
     public SettingsService(IPathConfiguration pathConfig, ICredentialLockerService credentialLockerService,
@@ -120,8 +121,10 @@ public class SettingsService : IUISettingsService
         }
         else
         {
-            await EnsureUnpackagedSettingsLoadedAsync();
-            _settings.Clear();
+            lock (_dictLock)
+            {
+                _settings.Clear();
+            }
             if (File.Exists(_pathConfig.SettingsFilePath)) File.Delete(_pathConfig.SettingsFilePath);
         }
 
@@ -168,6 +171,10 @@ public class SettingsService : IUISettingsService
     {
         if (_isPackaged || _isInitialized) return;
 
+        // Perform an early check to avoid the overhead of a lock if we're already initialized.
+        // This is particularly important for parallel calls during page load.
+        if (_isInitialized) return;
+
         await _settingsFileLock.WaitAsync();
         try
         {
@@ -176,8 +183,11 @@ public class SettingsService : IUISettingsService
             if (File.Exists(_pathConfig.SettingsFilePath))
             {
                 var json = await File.ReadAllTextAsync(_pathConfig.SettingsFilePath);
-                _settings = JsonSerializer.Deserialize<Dictionary<string, object?>>(json) ??
-                            new Dictionary<string, object?>();
+                var deserialized = JsonSerializer.Deserialize<Dictionary<string, object?>>(json);
+                lock (_dictLock)
+                {
+                    _settings = deserialized ?? new Dictionary<string, object?>();
+                }
             }
 
             _isInitialized = true;
@@ -185,7 +195,10 @@ public class SettingsService : IUISettingsService
         catch (Exception ex)
         {
             _logger.LogWarning(ex, "Failed to read settings file. A new one will be created.");
-            _settings = new Dictionary<string, object?>();
+            lock (_dictLock)
+            {
+                _settings = new Dictionary<string, object?>();
+            }
             _isInitialized = true;
         }
         finally
@@ -207,7 +220,11 @@ public class SettingsService : IUISettingsService
             await _settingsFileLock.WaitAsync();
             try
             {
-                var json = JsonSerializer.Serialize(_settings, _serializerOptions);
+                string json;
+                lock (_dictLock)
+                {
+                    json = JsonSerializer.Serialize(_settings, _serializerOptions);
+                }
                 await File.WriteAllTextAsync(_pathConfig.SettingsFilePath, json);
             }
             catch (Exception ex)
@@ -230,7 +247,14 @@ public class SettingsService : IUISettingsService
         }
         else
         {
-            if (_settings.TryGetValue(key, out var value) && value != null)
+            bool hasValue;
+            object? value;
+            lock (_dictLock)
+            {
+                hasValue = _settings.TryGetValue(key, out value);
+            }
+
+            if (hasValue && value != null)
                 try
                 {
                     if (value is JsonElement element) return element.Deserialize<T>() ?? defaultValue;
@@ -255,7 +279,14 @@ public class SettingsService : IUISettingsService
         else
         {
             await EnsureUnpackagedSettingsLoadedAsync();
-            if (_settings.TryGetValue(key, out var value) && value != null)
+            bool hasValue;
+            object? value;
+            lock (_dictLock)
+            {
+                hasValue = _settings.TryGetValue(key, out value);
+            }
+
+            if (hasValue && value != null)
                 json = (value as JsonElement?)?.GetRawText() ?? value as string;
         }
 
@@ -284,7 +315,14 @@ public class SettingsService : IUISettingsService
         }
         else
         {
-            if (_settings.TryGetValue(key, out var value) && value is JsonElement element) name = element.GetString();
+            bool hasValue;
+            object? value;
+            lock (_dictLock)
+            {
+                hasValue = _settings.TryGetValue(key, out value);
+            }
+
+            if (hasValue && value is JsonElement element) name = element.GetString();
         }
 
         if (name != null && Enum.TryParse(name, out TEnum result)) return result;
@@ -307,12 +345,19 @@ public class SettingsService : IUISettingsService
 
             if (value is null)
             {
-                _settings[key] = null;
+                lock (_dictLock)
+                {
+                    _settings[key] = null;
+                }
             }
             else
             {
                 var serializedValue = JsonSerializer.Serialize(value);
-                _settings[key] = JsonDocument.Parse(serializedValue).RootElement.Clone();
+                var element = JsonDocument.Parse(serializedValue).RootElement.Clone();
+                lock (_dictLock)
+                {
+                    _settings[key] = element;
+                }
             }
 
             _ = QueueSaveAsync();
@@ -640,8 +685,23 @@ public class SettingsService : IUISettingsService
     {
         if (_isPackaged)
         {
-            var startupTask = await StartupTask.GetAsync(StartupTaskId);
-            return startupTask.State is StartupTaskState.Enabled;
+            try
+            {
+                var startupTask = await StartupTask.GetAsync(StartupTaskId);
+                return startupTask.State is StartupTaskState.Enabled;
+            }
+            catch (Exception ex)
+            {
+                if (ex.HResult == unchecked((int)0x80073D5B))
+                {
+                    _logger.LogDebug("Auto-launch task check skipped: The package does not have a mutable directory.");
+                }
+                else
+                {
+                    _logger.LogWarning(ex, "Failed to get startup task state.");
+                }
+                return false;
+            }
         }
 
         return await Task.Run(() =>

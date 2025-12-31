@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using System.Linq;
 using Windows.System;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,6 +11,10 @@ using Microsoft.UI.Xaml.Navigation;
 using Nagi.Core.Models;
 using Nagi.WinUI.Navigation;
 using Nagi.WinUI.ViewModels;
+using Windows.Storage.Pickers;
+using WinRT.Interop;
+using Nagi.Core.Constants;
+using Microsoft.UI.Xaml.Controls.Primitives;
 
 namespace Nagi.WinUI.Pages;
 
@@ -249,5 +254,59 @@ public sealed partial class ArtistViewPage : Page
             };
             subMenu.Items.Add(playlistMenuItem);
         }
+    }
+
+    private void ArtistImage_PointerEntered(object sender, PointerRoutedEventArgs e)
+    {
+        EditOverlay.Opacity = 1;
+    }
+
+    private void ArtistImage_PointerExited(object sender, PointerRoutedEventArgs e)
+    {
+        EditOverlay.Opacity = 0;
+    }
+
+    private void EditOverlay_PointerPressed(object sender, PointerRoutedEventArgs e)
+    {
+        ImageEditFlyout.ShowAt(EditOverlay, new FlyoutShowOptions { Position = e.GetCurrentPoint(EditOverlay).Position });
+    }
+
+    private async void ChangeImage_Click(object sender, RoutedEventArgs e)
+    {
+        _logger.LogDebug("User initiated image change for artist '{ArtistName}'.", ViewModel.ArtistName);
+        var newImagePath = await PickImageAsync();
+
+        if (!string.IsNullOrWhiteSpace(newImagePath))
+        {
+            _logger.LogDebug("User selected new image for artist '{ArtistName}'. Updating.", ViewModel.ArtistName);
+            await ViewModel.UpdateArtistImageCommand.ExecuteAsync(newImagePath);
+        }
+    }
+
+    private async void RemoveImage_Click(object sender, RoutedEventArgs e)
+    {
+        _logger.LogDebug("User requested removal of custom image for artist '{ArtistName}'.", ViewModel.ArtistName);
+        await ViewModel.RemoveArtistImageCommand.ExecuteAsync(null);
+    }
+
+    private async Task<string?> PickImageAsync()
+    {
+        _logger.LogDebug("Opening file picker for artist image.");
+        var picker = new FileOpenPicker();
+        var hwnd = WindowNative.GetWindowHandle(App.RootWindow);
+        InitializeWithWindow.Initialize(picker, hwnd);
+        
+        foreach (var ext in FileExtensions.ImageFileExtensions)
+            picker.FileTypeFilter.Add(ext);
+
+        var file = await picker.PickSingleFileAsync();
+        if (file != null)
+        {
+            _logger.LogDebug("User picked image file: {FilePath}", file.Path);
+            return file.Path;
+        }
+
+        _logger.LogDebug("User did not pick an image file.");
+        return null;
     }
 }

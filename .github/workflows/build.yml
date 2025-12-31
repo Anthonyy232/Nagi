@@ -72,7 +72,7 @@ jobs:
       packages: read
     strategy:
       matrix:
-        platform: [win-x64, win-x86, win-arm64]
+        platform: [win-x64, win-arm64]
 
     steps:
       - name: Checkout repository source code
@@ -184,7 +184,7 @@ jobs:
         # re-creates the flat './Releases/[platform]' structure required by the vpk upload tool.
         shell: pwsh
         run: |
-          $platforms = @("win-x64", "win-x86", "win-arm64")
+          $platforms = @("win-x64", "win-arm64")
           foreach ($platform in $platforms) {
             $platformDir = "./Releases/$platform"
             New-Item -ItemType Directory -Path $platformDir -Force
@@ -201,7 +201,7 @@ jobs:
         # Uses the Velopack CLI to upload all assets. It will create a new release named after the tag
         # or merge assets into an existing draft release for that tag.
         run: |
-          $platforms = @("win-x64", "win-x86", "win-arm64")
+          $platforms = @("win-x64", "win-arm64")
           $repoUrl = "https://github.com/${{ github.repository }}"
           $releaseName = "Version ${{ github.ref_name }}"
 

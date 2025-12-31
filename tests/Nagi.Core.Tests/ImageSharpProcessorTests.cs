@@ -58,7 +58,7 @@ public class ImageSharpProcessorTests
         // Arrange
         var pictureData = CreateTestImageBytes();
         var contentHash = GenerateContentHash(pictureData);
-        var expectedPath = Path.Combine(AlbumArtPath, $"{contentHash}.jpg");
+        var expectedPath = Path.Combine(AlbumArtPath, $"{contentHash}.fetched.jpg");
         var expectedTempPath = expectedPath + ".tmp";
         _fileSystem.FileExists(expectedPath).Returns(false);
 
@@ -85,7 +85,7 @@ public class ImageSharpProcessorTests
         // Arrange
         var pictureData = CreateTestImageBytes();
         var contentHash = GenerateContentHash(pictureData);
-        var expectedPath = Path.Combine(AlbumArtPath, $"{contentHash}.jpg");
+        var expectedPath = Path.Combine(AlbumArtPath, $"{contentHash}.fetched.jpg");
         _fileSystem.FileExists(expectedPath).Returns(true);
 
         // Act
@@ -108,7 +108,7 @@ public class ImageSharpProcessorTests
         // Arrange
         var pictureData = CreateTestImageBytes();
         var contentHash = GenerateContentHash(pictureData);
-        var expectedPath = Path.Combine(AlbumArtPath, $"{contentHash}.jpg");
+        var expectedPath = Path.Combine(AlbumArtPath, $"{contentHash}.fetched.jpg");
         var expectedTempPath = expectedPath + ".tmp";
         
         // First call - file doesn't exist (needs false for both outer check AND inner double-check)
@@ -136,7 +136,7 @@ public class ImageSharpProcessorTests
         // Arrange
         var invalidPictureData = new byte[] { 1, 2, 3, 4 };
         var contentHash = GenerateContentHash(invalidPictureData);
-        var expectedPath = Path.Combine(AlbumArtPath, $"{contentHash}.jpg");
+        var expectedPath = Path.Combine(AlbumArtPath, $"{contentHash}.fetched.jpg");
         _fileSystem.FileExists(expectedPath).Returns(false);
 
         // Act
@@ -159,7 +159,7 @@ public class ImageSharpProcessorTests
         // Arrange
         var pictureData = CreateTestImageBytes();
         var contentHash = GenerateContentHash(pictureData);
-        var expectedPath = Path.Combine(AlbumArtPath, $"{contentHash}.jpg");
+        var expectedPath = Path.Combine(AlbumArtPath, $"{contentHash}.fetched.jpg");
         var expectedTempPath = expectedPath + ".tmp";
         _fileSystem.FileExists(expectedPath).Returns(false);
         // Throw on temp file write to simulate disk full

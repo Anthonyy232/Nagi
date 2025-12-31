@@ -16,6 +16,7 @@
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <converters:BooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" Invert="True" />
         <converters:BooleanToInverseBooleanConverter x:Key="BooleanToInverseBooleanConverter" />
+        <converters:StringToImageSourceConverter x:Key="StringToImageSourceConverter" />
     </Page.Resources>
 
     <Grid Padding="24">
@@ -195,6 +196,14 @@
                                         CommandParameter="{x:Bind Id}"
                                         IsEnabled="{Binding ViewModel.IsLoading, ElementName=ArtistPageRoot, Converter={StaticResource BooleanToInverseBooleanConverter}}"
                                         Text="Play" />
+                                    <MenuFlyoutSeparator />
+                                    <MenuFlyoutItem
+                                        Click="ChangeImage_Click"
+                                        Text="Change Image" />
+                                    <MenuFlyoutItem
+                                        Click="RemoveImage_Click"
+                                        Visibility="{x:Bind IsCustomImage, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                        Text="Remove Image" />
                                 </MenuFlyout>
                             </Grid.ContextFlyout>
                             <Grid.RowDefinitions>
@@ -209,7 +218,7 @@
                                     Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
                                     <controls:ImageEx
                                         IsCacheEnabled="True"
-                                        Source="{x:Bind LocalImageCachePath, Mode=OneWay, FallbackValue=null}"
+                                        Source="{x:Bind LocalImageCachePath, Mode=OneWay, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
                                         DecodePixelWidth="160"
                                         DecodePixelType="Logical"
                                         Stretch="UniformToFill" />

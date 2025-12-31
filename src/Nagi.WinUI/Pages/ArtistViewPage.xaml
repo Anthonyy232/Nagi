@@ -9,6 +9,7 @@
     xmlns:viewmodels="using:Nagi.WinUI.ViewModels"
     xmlns:models="using:Nagi.Core.Models"
     xmlns:helpers="using:Nagi.Core.Helpers"
+    xmlns:uihelpers="using:Nagi.WinUI.Helpers"
     xmlns:behaviors="using:Nagi.WinUI.Behaviors"
     x:Name="pageRoot"
     Background="Transparent"
@@ -19,6 +20,7 @@
         <converters:TimeSpanToTimeStringConverter x:Key="TimeSpanToTimeStringConverter" />
         <converters:NullOrEmptyStringToVisibilityConverter x:Key="NullToCollapsedConverter" />
         <converters:NullOrEmptyStringToVisibilityConverter x:Key="NullToVisibleConverter" Invert="True" />
+        <converters:StringToImageSourceConverter x:Key="StringToImageSourceConverter" />
     </Page.Resources>
 
     <Grid>
@@ -104,11 +106,13 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
-                    <Grid Grid.Column="0" Width="150" Height="150">
+                    <Grid Grid.Column="0" Width="150" Height="150" CornerRadius="75"
+                          PointerEntered="ArtistImage_PointerEntered" PointerExited="ArtistImage_PointerExited"
+                          Background="Transparent">
                         <controls:ImageEx
                             CornerRadius="75"
                             IsCacheEnabled="True"
-                            Source="{x:Bind ViewModel.ArtistImageUri, Mode=OneWay, FallbackValue=null}"
+                            Source="{x:Bind ViewModel.ArtistImageUri, Mode=OneWay, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
                             Stretch="UniformToFill"
                             DecodePixelWidth="160"
                             DecodePixelType="Logical"
@@ -123,6 +127,25 @@
                                 VerticalAlignment="Center"
                                 FontSize="64"
                                 Glyph="" />
+                        </Grid>
+
+                        <!-- Edit Overlay -->
+                        <Grid x:Name="EditOverlay" 
+                              Background="#66000000" 
+                              CornerRadius="75" 
+                              Opacity="0" 
+                              PointerPressed="EditOverlay_PointerPressed">
+                            <FontIcon Glyph="&#xE70F;" Foreground="White" FontSize="32" />
+                            <ToolTipService.ToolTip>
+                                <ToolTip Content="Change artist image" />
+                            </ToolTipService.ToolTip>
+                            <Grid.ContextFlyout>
+                                <MenuFlyout x:Name="ImageEditFlyout">
+                                    <MenuFlyoutItem Text="Change Image" Click="ChangeImage_Click" />
+                                    <MenuFlyoutItem Text="Remove Image" Click="RemoveImage_Click" 
+                                                    Visibility="{x:Bind ViewModel.IsCustomImage, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                </MenuFlyout>
+                            </Grid.ContextFlyout>
                         </Grid>
                     </Grid>
 
@@ -177,7 +200,7 @@
                                             Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
                                         <controls:ImageEx
                                             IsCacheEnabled="True"
-                                            Source="{x:Bind CoverArtUri, FallbackValue=null}"
+                                            Source="{x:Bind uihelpers:ImageUriHelper.GetUriWithCacheBuster(CoverArtUri), Mode=OneWay}"
                                             DecodePixelWidth="160"
                                             DecodePixelType="Logical"
                                             Stretch="UniformToFill" />
@@ -358,7 +381,7 @@
                                     Stretch="UniformToFill"
                                     DecodePixelWidth="48"
                                     DecodePixelType="Logical"
-                                    Source="{x:Bind AlbumArtUriFromTrack, FallbackValue=null}" />
+                                    Source="{x:Bind uihelpers:ImageUriHelper.GetUriWithCacheBuster(AlbumArtUriFromTrack, FileModifiedDate), Mode=OneWay}" />
 
                             </Border>
                         </Button>

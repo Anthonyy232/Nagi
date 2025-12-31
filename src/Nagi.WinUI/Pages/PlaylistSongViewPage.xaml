@@ -7,6 +7,7 @@
     xmlns:converters="using:Nagi.WinUI.Converters"
     xmlns:controls="using:ImageEx"
     xmlns:models="using:Nagi.Core.Models"
+    xmlns:uihelpers="using:Nagi.WinUI.Helpers"
     mc:Ignorable="d"
     Background="Transparent"
     x:Name="pageRoot">
@@ -14,6 +15,7 @@
     <Page.Resources>
         <converters:TimeSpanToTimeStringConverter x:Key="TimeSpanToTimeStringConverter" />
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <converters:StringToImageSourceConverter x:Key="StringToImageSourceConverter" />
     </Page.Resources>
 
     <Grid>
@@ -225,7 +227,7 @@
                             <Border Width="42" Height="42" CornerRadius="12"
                                     Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
                                 <controls:ImageEx
-                                    Source="{x:Bind AlbumArtUriFromTrack, FallbackValue=null}"
+                                    Source="{x:Bind uihelpers:ImageUriHelper.GetUriWithCacheBuster(AlbumArtUriFromTrack, FileModifiedDate), Mode=OneWay}"
                                     Stretch="UniformToFill"
                                     DecodePixelWidth="48"
                                     DecodePixelType="Logical"

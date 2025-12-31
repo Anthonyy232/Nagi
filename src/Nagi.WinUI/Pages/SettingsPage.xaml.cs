@@ -43,7 +43,6 @@ public sealed partial class SettingsPage : Page
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
-        _logger.LogDebug("Navigating away from SettingsPage. Disposing ViewModel.");
-        ViewModel.Dispose();
+        _logger.LogDebug("Navigating away from SettingsPage.");
     }
 }

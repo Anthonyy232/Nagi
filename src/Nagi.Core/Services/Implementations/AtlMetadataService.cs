@@ -46,9 +46,9 @@ public class AtlMetadataService : IMetadataService
 
             // Use a timeout wrapper for ATL operations to prevent indefinite hangs
             using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
-            var extractionTask = Task.Run(() => new Track(filePath), cts.Token);
-
-            var track = await extractionTask;
+            
+            // Track does not implement IDisposable, using Task.Run for async-like behavior
+            var track = await Task.Run(() => new Track(filePath), cts.Token);
 
             // Check if the file is valid - ATL is lenient so we need multiple checks
             // Check 1: AudioFormat.Readable flag

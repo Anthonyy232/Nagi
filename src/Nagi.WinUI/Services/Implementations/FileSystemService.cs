@@ -114,6 +114,11 @@ public class FileSystemService : IFileSystemService
         File.Delete(path);
     }
 
+    public void CopyFile(string sourceFileName, string destFileName, bool overwrite)
+    {
+        File.Copy(sourceFileName, destFileName, overwrite);
+    }
+
     public void MoveFile(string sourceFileName, string destFileName, bool overwrite)
     {
         File.Move(sourceFileName, destFileName, overwrite);
@@ -132,6 +137,11 @@ public class FileSystemService : IFileSystemService
     public string GetFileNameWithoutExtension(string path)
     {
         return Path.GetFileNameWithoutExtension(path);
+    }
+
+    public string GetFileName(string path)
+    {
+        return Path.GetFileName(path);
     }
 
     public string? GetDirectoryName(string path)

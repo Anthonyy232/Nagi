@@ -13,6 +13,7 @@ using Nagi.WinUI.Models;
 using Nagi.WinUI.Navigation;
 using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
+using Nagi.WinUI.Helpers;
 
 namespace Nagi.WinUI.ViewModels;
 
@@ -49,6 +50,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
 
     private bool _isUpdatingFromService;
     private bool _isDisposed;
+    private bool _isEfficiencyModeEnabled;
 
     public PlayerViewModel(IMusicPlaybackService playbackService, INavigationService navigationService,
         IDispatcherService dispatcherService, IUISettingsService settingsService, IWindowService windowService,
@@ -325,6 +327,20 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
             _ = _playbackService.SeekAsync(newPosition);
     }
 
+    partial void OnIsUserDraggingSliderChanged(bool value)
+    {
+        // When the user finishes dragging, perform the final seek.
+        if (!value && !_isUpdatingFromService)
+        {
+            var newPosition = TimeSpan.FromSeconds(CurrentPosition);
+            // Seek only if the position is meaningfully different from the player's known position.
+            if (Math.Abs(_playbackService.CurrentPosition.TotalSeconds - newPosition.TotalSeconds) > 0.1)
+            {
+                _ = _playbackService.SeekAsync(newPosition);
+            }
+        }
+    }
+
     partial void OnTotalDurationChanged(double value)
     {
         var timeSpan = TimeSpan.FromSeconds(value);
@@ -335,15 +351,20 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
 
     private void UpdateEfficiencyMode()
     {
-        var isPaused = !_playbackService.IsPlaying;
-        var isMainWindowVisible = _windowService.IsVisible;
-        var isMiniPlayerActive = _windowService.IsMiniPlayerActive;
-        var isMinimized = _windowService.IsMinimized;
+        // Snapshot state to ensure consistent evaluation (thread safety).
+        var (isVisible, isMiniPlayerActive, isMinimized, isPlaying) =
+            (_windowService.IsVisible, _windowService.IsMiniPlayerActive,
+             _windowService.IsMinimized, _playbackService.IsPlaying);
 
-        var isInBackgroundState = !isMainWindowVisible || isMiniPlayerActive || isMinimized;
-        var shouldBeEfficient = isPaused && isInBackgroundState;
+        var isInBackgroundState = !isVisible || isMiniPlayerActive || isMinimized;
+        var shouldBeEfficient = !isPlaying && isInBackgroundState;
 
-        _windowService.SetEfficiencyMode(shouldBeEfficient);
+        // Only call the API if the mode has actually changed.
+        if (_isEfficiencyModeEnabled != shouldBeEfficient)
+        {
+            _isEfficiencyModeEnabled = shouldBeEfficient;
+            _windowService.SetEfficiencyMode(shouldBeEfficient);
+        }
     }
 
     private void UpdateTrackDetails(Song? song)
@@ -353,7 +374,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
         {
             SongTitle = song.Title;
             ArtistName = song.Artist?.Name ?? string.Empty;
-            AlbumArtUri = song.AlbumArtUriFromTrack;
+            AlbumArtUri = ImageUriHelper.GetUriWithCacheBuster(song.AlbumArtUriFromTrack);
         }
         else
         {
