@@ -111,11 +111,16 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
             CurrentRepeatMode = await _settingsService.GetInitialRepeatModeAsync();
 
             CurrentEqualizerSettings = await _settingsService.GetEqualizerSettingsAsync();
-            if (CurrentEqualizerSettings == null || CurrentEqualizerSettings.BandGains.Count != EqualizerBands.Count)
+            if (CurrentEqualizerSettings != null && CurrentEqualizerSettings.BandGains.Count != EqualizerBands.Count)
             {
-                _logger.LogWarning("Equalizer settings missing or mismatched (Saved: {SavedCount}, Required: {RequiredCount}). Resetting to default.", 
-                    CurrentEqualizerSettings?.BandGains.Count, EqualizerBands.Count);
+                _logger.LogWarning("Equalizer settings mismatched (Saved: {SavedCount}, Required: {RequiredCount}). Resetting to default.", 
+                    CurrentEqualizerSettings.BandGains.Count, EqualizerBands.Count);
                 
+                CurrentEqualizerSettings = null; // Force recreation below
+            }
+
+            if (CurrentEqualizerSettings == null)
+            {
                 CurrentEqualizerSettings = new EqualizerSettings
                 {
                     Preamp = 10.0f,
