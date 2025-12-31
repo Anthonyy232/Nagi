@@ -123,12 +123,18 @@
                           Visibility="{x:Bind ViewModel.IsQueueViewVisible, Mode=OneWay, Converter={StaticResource InvertedBooleanToVisibilityConverter}}">
                         <StackPanel VerticalAlignment="Bottom" Spacing="12">
                             <Slider
+                                x:Name="MediaSeekerSlider"
                                 Margin="4,0"
                                 IsThumbToolTipEnabled="True"
                                 Maximum="{x:Bind ViewModel.TotalDuration, Mode=OneWay}"
                                 Style="{StaticResource MediaSeekerSliderStyle}"
                                 ThumbToolTipValueConverter="{StaticResource TimeSpanToTimeStringConverter}"
-                                Value="{x:Bind ViewModel.CurrentPosition, Mode=TwoWay}" />
+                                Value="{x:Bind ViewModel.CurrentPosition, Mode=TwoWay}"
+                                PointerPressed="MediaSeekerSlider_PointerPressed"
+                                PointerReleased="MediaSeekerSlider_PointerReleased"
+                                PointerCaptureLost="MediaSeekerSlider_PointerCaptureLost"
+                                KeyDown="MediaSeekerSlider_KeyDown"
+                                KeyUp="MediaSeekerSlider_KeyUp" />
 
                             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Spacing="2">
                                 <Button Command="{x:Bind ViewModel.ToggleMuteCommand}"

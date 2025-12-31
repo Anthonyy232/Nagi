@@ -1,4 +1,5 @@
 using System;
+using Windows.System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Nagi.WinUI.Services.Abstractions;
 using Nagi.WinUI.ViewModels;
@@ -168,6 +170,37 @@ public sealed partial class TrayPopup : Window
         _logger.LogDebug("TrayPopup closed. Unsubscribing from events.");
         ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
         _settingsService.ShowCoverArtInTrayFlyoutSettingChanged -= OnShowCoverArtSettingChanged;
+    }
+
+    private void MediaSeekerSlider_PointerPressed(object sender, PointerRoutedEventArgs e)
+    {
+        ViewModel.IsUserDraggingSlider = true;
+    }
+
+    private void MediaSeekerSlider_PointerReleased(object sender, PointerRoutedEventArgs e)
+    {
+        ViewModel.IsUserDraggingSlider = false;
+    }
+
+    private void MediaSeekerSlider_PointerCaptureLost(object sender, PointerRoutedEventArgs e)
+    {
+        ViewModel.IsUserDraggingSlider = false;
+    }
+
+    private void MediaSeekerSlider_KeyDown(object sender, KeyRoutedEventArgs e)
+    {
+        if (e.Key is VirtualKey.Left or VirtualKey.Right or VirtualKey.PageUp or VirtualKey.PageDown or VirtualKey.Home or VirtualKey.End)
+        {
+            ViewModel.IsUserDraggingSlider = true;
+        }
+    }
+
+    private void MediaSeekerSlider_KeyUp(object sender, KeyRoutedEventArgs e)
+    {
+        if (e.Key is VirtualKey.Left or VirtualKey.Right or VirtualKey.PageUp or VirtualKey.PageDown or VirtualKey.Home or VirtualKey.End)
+        {
+            ViewModel.IsUserDraggingSlider = false;
+        }
     }
 
     #region Win32 Interop
