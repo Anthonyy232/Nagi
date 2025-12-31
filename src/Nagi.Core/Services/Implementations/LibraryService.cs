@@ -575,7 +575,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                     if (newSongsFound > 100)
                     {
                         _logger.LogDebug("Triggering LOH compaction after adding {Count} songs.", newSongsFound);
-                        GC.Collect(2, GCCollectionMode.Aggressive, blocking: false, compacting: true);
+                        GC.Collect(2, GCCollectionMode.Aggressive, blocking: true, compacting: true);
                     }
 
                     var pluralSong = newSongsFound == 1 ? "song" : "songs";
