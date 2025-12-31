@@ -1,4 +1,5 @@
 ﻿using Nagi.Core.Models;
+using Nagi.Core.Services.Data;
 
 namespace Nagi.Core.Services.Abstractions;
 
@@ -7,6 +8,8 @@ namespace Nagi.Core.Services.Abstractions;
 /// </summary>
 public interface IPlaylistService
 {
+    event EventHandler<PlaylistUpdatedEventArgs>? PlaylistUpdated;
+
     Task<Playlist?> CreatePlaylistAsync(string name, string? description = null, string? coverImageUri = null);
     Task<bool> DeletePlaylistAsync(Guid playlistId);
     Task<bool> RenamePlaylistAsync(Guid playlistId, string newName);

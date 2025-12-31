@@ -16,6 +16,7 @@
         <converters:TimeSpanToTimeStringConverter x:Key="TimeSpanToTimeStringConverter" />
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <converters:BooleanToVisibilityConverter x:Key="InvertedBooleanToVisibilityConverter" Invert="True" />
+        <converters:StringToImageSourceConverter x:Key="StringToImageSourceConverter" />
 
 
         <Style x:Key="BackButtonStyle" BasedOn="{StaticResource MediaControlButtonStyle}" TargetType="Button" />
@@ -33,7 +34,7 @@
             <Border.Background>
                 <media:ImageBlendBrush
                     Mode="Multiply"
-                    Source="{x:Bind ViewModel.AlbumArtUri, Mode=OneWay}"
+                    Source="{x:Bind ViewModel.AlbumArtUri, Mode=OneWay, Converter={StaticResource StringToImageSourceConverter}}"
                     Stretch="UniformToFill" />
             </Border.Background>
         </Border>

@@ -18,6 +18,7 @@
         <converters:BooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" Invert="True" />
         <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
         <converters:BooleanToInverseBooleanConverter x:Key="BooleanToInverseBooleanConverter" />
+        <converters:StringToImageSourceConverter x:Key="StringToImageSourceConverter" />
     </Page.Resources>
 
     <Grid Padding="24">
@@ -225,7 +226,13 @@
                                     IsEnabled="{Binding DataContext.IsAnyOperationInProgress, ElementName=PlaylistPageRoot, Converter={StaticResource BooleanToInverseBooleanConverter}}"
                                     Text="Play" />
                                 <MenuFlyoutItem Click="RenamePlaylist_Click" Text="Rename" />
-                                <MenuFlyoutItem Click="ChangeCover_Click" Text="Change Cover" />
+                                <MenuFlyoutSeparator />
+                                <MenuFlyoutItem Click="ChangeCover_Click" Text="Change Image" />
+                                <MenuFlyoutItem
+                                    Click="RemoveImage_Click"
+                                    Text="Remove Image"
+                                    Visibility="{x:Bind IsCustomImage, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                <MenuFlyoutSeparator />
                                 <MenuFlyoutItem Click="DeletePlaylist_Click" Text="Delete" />
                             </MenuFlyout>
                         </Grid.ContextFlyout>
@@ -245,7 +252,7 @@
                                 Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
                                 <controls:ImageEx
                                     IsCacheEnabled="True"
-                                    Source="{x:Bind CoverImageUri, Mode=OneWay, FallbackValue=null}"
+                                    Source="{x:Bind CoverImageUri, Mode=OneWay, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
                                     DecodePixelWidth="160"
                                     DecodePixelType="Logical"
                                     Stretch="UniformToFill" />

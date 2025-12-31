@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Threading.Channels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -8,6 +9,7 @@ using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using System.IO;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -72,6 +74,9 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     ///     Occurs when an artist's metadata (e.g., biography, image) has been successfully updated from a remote source.
     /// </summary>
     public event EventHandler<ArtistMetadataUpdatedEventArgs>? ArtistMetadataUpdated;
+
+    /// <inheritdoc />
+    public event EventHandler<PlaylistUpdatedEventArgs>? PlaylistUpdated;
 
     #region Data Reset
 
@@ -548,15 +553,9 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                         return hasChanges;
                     }
 
-                    var extractedMetadata =
-                        await ExtractMetadataConcurrentlyAsync(filesToProcess, folder.Path, progress, cancellationToken);
-
-                    cancellationToken.ThrowIfCancellationRequested();
-
-                    var newSongsFound = 0;
-                    if (extractedMetadata.Any())
-                        newSongsFound =
-                            await BatchUpdateDatabaseAsync(folderId, extractedMetadata, progress, cancellationToken);
+                    // Use streaming extraction for better memory efficiency
+                    var newSongsFound = await ExtractAndSaveMetadataStreamingAsync(
+                        folderId, filesToProcess, folder.Path, progress, cancellationToken);
 
                     cancellationToken.ThrowIfCancellationRequested();
 
@@ -570,6 +569,13 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                     await using (var finalContext = await _contextFactory.CreateDbContextAsync())
                     {
                         await CleanUpOrphanedEntitiesAsync(finalContext, cancellationToken);
+                    }
+
+                    // Trigger LOH compaction for large scans to release fragmented memory from image processing
+                    if (newSongsFound > 100)
+                    {
+                        _logger.LogDebug("Triggering LOH compaction after adding {Count} songs.", newSongsFound);
+                        GC.Collect(2, GCCollectionMode.Aggressive, blocking: false, compacting: true);
                     }
 
                     var pluralSong = newSongsFound == 1 ? "song" : "songs";
@@ -1140,10 +1146,17 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         {
             Name = name.Trim(),
             Description = description,
-            CoverImageUri = coverImageUri,
             DateCreated = DateTime.UtcNow,
             DateModified = DateTime.UtcNow
         };
+
+        if (!string.IsNullOrEmpty(coverImageUri) && _fileSystem.FileExists(coverImageUri))
+        {
+            var cachePath = _pathConfig.PlaylistImageCachePath;
+            ImageStorageHelper.SaveImage(_fileSystem, cachePath, playlist.Id.ToString(), ".custom", coverImageUri);
+            playlist.CoverImageUri = ImageStorageHelper.FindImage(_fileSystem, cachePath, playlist.Id.ToString(), ".custom");
+        }
+
         context.Playlists.Add(playlist);
         await context.SaveChangesAsync();
         return playlist;
@@ -1170,6 +1183,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         playlist.Name = newName.Trim();
         playlist.DateModified = DateTime.UtcNow;
         await context.SaveChangesAsync();
+        PlaylistUpdated?.Invoke(this, new PlaylistUpdatedEventArgs(playlist.Id, playlist.CoverImageUri));
         return true;
     }
 
@@ -1180,9 +1194,26 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         var playlist = await context.Playlists.FindAsync(playlistId);
         if (playlist is null) return false;
 
-        playlist.CoverImageUri = newCoverImageUri;
+        if (!string.IsNullOrEmpty(newCoverImageUri) && _fileSystem.FileExists(newCoverImageUri))
+        {
+            // Save as custom image
+            var cachePath = _pathConfig.PlaylistImageCachePath;
+            ImageStorageHelper.SaveImage(_fileSystem, cachePath, playlistId.ToString(), ".custom", newCoverImageUri);
+            
+            var newPath = ImageStorageHelper.FindImage(_fileSystem, cachePath, playlistId.ToString(), ".custom");
+            playlist.CoverImageUri = newPath;
+        }
+        else
+        {
+            // Remove custom image if setting to null/empty
+            var cachePath = _pathConfig.PlaylistImageCachePath;
+            ImageStorageHelper.DeleteImage(_fileSystem, cachePath, playlistId.ToString(), ".custom");
+            playlist.CoverImageUri = null;
+        }
+
         playlist.DateModified = DateTime.UtcNow;
         await context.SaveChangesAsync();
+        PlaylistUpdated?.Invoke(this, new PlaylistUpdatedEventArgs(playlist.Id, playlist.CoverImageUri));
         return true;
     }
 
@@ -2483,107 +2514,143 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     }
 
 
-    private async Task<List<SongFileMetadata>> ExtractMetadataConcurrentlyAsync(List<string> filesToProcess,
-        string baseFolderPath, IProgress<ScanProgress>? progress, CancellationToken cancellationToken)
+    /// <summary>
+    ///     Extracts metadata from files and writes to a Channel for streaming consumption.
+    ///     This allows the database batch writer to start processing immediately rather than
+    ///     waiting for all files to be extracted first, reducing peak memory usage.
+    /// </summary>
+    private async Task<int> ExtractAndSaveMetadataStreamingAsync(
+        Guid folderId,
+        List<string> filesToProcess,
+        string baseFolderPath,
+        IProgress<ScanProgress>? progress,
+        CancellationToken cancellationToken)
     {
-        var extractedMetadata = new ConcurrentBag<SongFileMetadata>();
-        var degreeOfParallelism = Environment.ProcessorCount;
-        using var semaphore = new SemaphoreSlim(degreeOfParallelism);
-        var processedCount = 0;
+        const int channelCapacity = 500; // Matches batch size to limit memory
+        var channel = Channel.CreateBounded<SongFileMetadata>(new BoundedChannelOptions(channelCapacity)
+        {
+            FullMode = BoundedChannelFullMode.Wait,
+            SingleReader = true,
+            SingleWriter = false
+        });
+
         var totalFiles = filesToProcess.Count;
+        var processedCount = 0;
+        var extractedCount = 0;
         const int progressReportingBatchSize = 25;
 
         progress?.Report(new ScanProgress
             { StatusText = "Reading song details...", TotalFiles = totalFiles, Percentage = 0 });
 
-        var extractionTasks = filesToProcess.Select(async filePath =>
+        // Producer: Extract metadata concurrently and write to channel
+        var producerTask = Task.Run(async () =>
         {
-            await semaphore.WaitAsync(cancellationToken);
             try
             {
-                cancellationToken.ThrowIfCancellationRequested();
-                var metadata = await _metadataService.ExtractMetadataAsync(filePath, baseFolderPath);
-                if (!metadata.ExtractionFailed)
-                    extractedMetadata.Add(metadata);
-                else
-                    _logger.LogWarning("Failed to extract metadata from file: {FilePath}", filePath);
-            }
-            finally
-            {
-                var currentCount = Interlocked.Increment(ref processedCount);
+                var degreeOfParallelism = Environment.ProcessorCount;
+                using var semaphore = new SemaphoreSlim(degreeOfParallelism);
 
-                if (currentCount % progressReportingBatchSize == 0 || currentCount == totalFiles)
+                var extractionTasks = filesToProcess.Select(async filePath =>
+                {
+                    await semaphore.WaitAsync(cancellationToken);
+                    try
+                    {
+                        cancellationToken.ThrowIfCancellationRequested();
+                        var metadata = await _metadataService.ExtractMetadataAsync(filePath, baseFolderPath);
+                        
+                        if (!metadata.ExtractionFailed)
+                        {
+                            await channel.Writer.WriteAsync(metadata, cancellationToken);
+                            Interlocked.Increment(ref extractedCount);
+                        }
+                        else
+                        {
+                            _logger.LogWarning("Failed to extract metadata from file: {FilePath}", filePath);
+                        }
+                    }
+                    finally
+                    {
+                        var currentCount = Interlocked.Increment(ref processedCount);
+
+                        if (currentCount % progressReportingBatchSize == 0 || currentCount == totalFiles)
+                            progress?.Report(new ScanProgress
+                            {
+                                StatusText = "Reading song details...",
+                                CurrentFilePath = filePath,
+                                Percentage = (double)currentCount / totalFiles * 50, // First 50% is extraction
+                                TotalFiles = totalFiles,
+                                NewSongsFound = extractedCount
+                            });
+                        semaphore.Release();
+                    }
+                });
+
+                await Task.WhenAll(extractionTasks);
+                channel.Writer.Complete();
+            }
+            catch (Exception ex)
+            {
+                channel.Writer.TryComplete(ex);
+                throw;
+            }
+        }, cancellationToken);
+
+        // Consumer: Batch and save to database as metadata arrives
+        var totalSaved = 0;
+        var consumerTask = Task.Run(async () =>
+        {
+            try
+            {
+                var batch = new List<SongFileMetadata>(500);
+                var batchNumber = 0;
+
+                await foreach (var metadata in channel.Reader.ReadAllAsync(cancellationToken))
+                {
+                    batch.Add(metadata);
+
+                    if (batch.Count >= 500)
+                    {
+                        batchNumber++;
+                        progress?.Report(new ScanProgress
+                        {
+                            StatusText = $"Saving batch {batchNumber}...",
+                            Percentage = 50 + ((double)totalSaved / totalFiles * 50), // Second 50% is saving
+                            NewSongsFound = extractedCount
+                        });
+
+                        var saved = await ProcessSingleBatchAsync(folderId, batch.ToArray(), cancellationToken);
+                        totalSaved += saved;
+                        batch.Clear();
+                    }
+                }
+
+                // Process remaining items
+                if (batch.Count > 0)
+                {
+                    batchNumber++;
                     progress?.Report(new ScanProgress
                     {
-                        StatusText = "Reading song details...",
-                        CurrentFilePath = filePath,
-                        Percentage = (double)currentCount / totalFiles * 100,
-                        TotalFiles = totalFiles,
-                        NewSongsFound = extractedMetadata.Count
+                        StatusText = $"Saving batch {batchNumber}...",
+                        Percentage = 95,
+                        NewSongsFound = extractedCount
                     });
-                semaphore.Release();
+
+                    var saved = await ProcessSingleBatchAsync(folderId, batch.ToArray(), cancellationToken);
+                    totalSaved += saved;
+                }
             }
-        });
-
-        await Task.WhenAll(extractionTasks);
-        return extractedMetadata.ToList();
-    }
-
-    private async Task<int> BatchUpdateDatabaseAsync(Guid folderId, List<SongFileMetadata> metadataList,
-        IProgress<ScanProgress>? progress, CancellationToken cancellationToken)
-    {
-        const int batchSize = 500;
-        var totalProcessed = 0;
-        var totalMetadataCount = metadataList.Count;
-
-        progress?.Report(new ScanProgress
-        {
-            StatusText = $"Preparing to add {totalMetadataCount:N0} songs...",
-            IsIndeterminate = true,
-            NewSongsFound = totalMetadataCount
-        });
-
-        await using var folderContext = await _contextFactory.CreateDbContextAsync();
-        var rootFolder = await folderContext.Folders.AsNoTracking()
-            .FirstOrDefaultAsync(f => f.Id == folderId, cancellationToken);
-        if (rootFolder == null)
-        {
-            _logger.LogError("Root folder with ID {FolderId} not found during batch update.", folderId);
-            return 0;
-        }
-
-        // Ensure folders exist for ALL files first, to avoid repeated checks
-        var discoveredDirectories = metadataList
-            .Select(m => _fileSystem.GetDirectoryName(m.FilePath))
-            .Where(d => !string.IsNullOrWhiteSpace(d))
-            .Select(d => d!)
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .ToHashSet(StringComparer.OrdinalIgnoreCase);
-
-        await EnsureSubFoldersExistAsync(folderId, rootFolder.Path, discoveredDirectories, cancellationToken);
-
-        // Chunk the metadata list
-        var chunks = metadataList.Chunk(batchSize).ToList();
-        var currentChunkIndex = 0;
-
-        foreach (var chunk in chunks)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            currentChunkIndex++;
-
-            progress?.Report(new ScanProgress
+            catch (Exception ex) when (ex is not OperationCanceledException)
             {
-                StatusText = $"Saving batch {currentChunkIndex}/{chunks.Count}...",
-                Percentage = (double)currentChunkIndex / chunks.Count * 100,
-                NewSongsFound = totalMetadataCount // Maintain the total count info
-            });
+                _logger.LogError(ex, "Consumer failed in streaming metadata extraction for folder {FolderId}", folderId);
+                throw;
+            }
+        }, cancellationToken);
 
-            var addedInChunk = await ProcessSingleBatchAsync(folderId, chunk, cancellationToken);
-            totalProcessed += addedInChunk;
-        }
-
-        return totalProcessed;
+        await Task.WhenAll(producerTask, consumerTask);
+        return totalSaved;
     }
+
+
 
     private async Task<int> ProcessSingleBatchAsync(Guid folderId, SongFileMetadata[] metadataList, CancellationToken cancellationToken)
     {
@@ -2842,6 +2909,77 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         }
     }
 
+    /// <inheritdoc />
+    public async Task<bool> UpdateArtistImageAsync(Guid artistId, string localFilePath)
+    {
+        if (string.IsNullOrWhiteSpace(localFilePath) || !_fileSystem.FileExists(localFilePath)) return false;
+
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        var artist = await context.Artists.FindAsync(artistId);
+        if (artist == null) return false;
+
+        try
+        {
+            var cachePath = _pathConfig.ArtistImageCachePath;
+            
+            // Use helper to save the image (handles deletion of old files and preservation of extension)
+            ImageStorageHelper.SaveImage(_fileSystem, cachePath, artistId.ToString(), ".custom", localFilePath);
+
+            // Find the file we just saved to get the correct path (since extension might be different)
+            var newPath = ImageStorageHelper.FindImage(_fileSystem, cachePath, artistId.ToString(), ".custom");
+
+            artist.LocalImageCachePath = newPath;
+            await context.SaveChangesAsync();
+
+            ArtistMetadataUpdated?.Invoke(this, new ArtistMetadataUpdatedEventArgs(artist.Id, artist.LocalImageCachePath));
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to update custom image for artist {ArtistName} (Id: {ArtistId})", artist.Name, artistId);
+            return false;
+        }
+    }
+
+    /// <inheritdoc />
+    public async Task<bool> RemoveArtistImageAsync(Guid artistId)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        var artist = await context.Artists.FindAsync(artistId);
+        if (artist == null) return false;
+
+        try
+        {
+            var cachePath = _pathConfig.ArtistImageCachePath;
+
+            // Remove all variants of custom images
+            ImageStorageHelper.DeleteImage(_fileSystem, cachePath, artistId.ToString(), ".custom");
+
+            // Look for a fetched image as fallback
+            var fetchedPath = ImageStorageHelper.FindImage(_fileSystem, cachePath, artistId.ToString(), ".fetched");
+
+            if (!string.IsNullOrEmpty(fetchedPath))
+            {
+                artist.LocalImageCachePath = fetchedPath;
+                _logger.LogInformation("Reverted to fetched image for artist {ArtistId}: {Path}", artistId, fetchedPath);
+            }
+            else
+            {
+                artist.LocalImageCachePath = null;
+                _logger.LogInformation("No fallback fetched image found for artist {ArtistId}. Cleared image path.", artistId);
+            }
+
+            await context.SaveChangesAsync();
+            ArtistMetadataUpdated?.Invoke(this, new ArtistMetadataUpdatedEventArgs(artist.Id, artist.LocalImageCachePath));
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to remove image for artist {ArtistName} (Id: {ArtistId})", artist.Name, artistId);
+            return false;
+        }
+    }
+
     private async Task FetchAndUpdateArtistFromRemoteAsync(MusicDbContext context, Artist artist)
     {
         using var httpClient = _httpClientFactory.CreateClient("ImageDownloader");
@@ -2870,12 +3008,16 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         if (spotifyResult.Status == ServiceResultStatus.Success && spotifyResult.Data?.ImageUrl is not null)
         {
-            var downloadedPath =
-                await DownloadAndCacheArtistImageAsync(artist, new Uri(spotifyResult.Data.ImageUrl), httpClient);
-            if (!string.IsNullOrEmpty(downloadedPath))
+            // Skip fetching metadata image if a custom image is already set
+            if (artist.LocalImageCachePath == null || !artist.LocalImageCachePath.Contains(".custom."))
             {
-                artist.LocalImageCachePath = downloadedPath;
-                wasMetadataFoundAndUpdated = true;
+                var downloadedPath =
+                    await DownloadAndCacheArtistImageAsync(artist, new Uri(spotifyResult.Data.ImageUrl), httpClient);
+                if (!string.IsNullOrEmpty(downloadedPath))
+                {
+                    artist.LocalImageCachePath = downloadedPath;
+                    wasMetadataFoundAndUpdated = true;
+                }
             }
         }
 
@@ -2892,7 +3034,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         var lazyTask = _artistImageProcessingTasks.GetOrAdd(artist.Id, _ =>
             new Lazy<Task<string?>>(() =>
             {
-                var localPath = _fileSystem.Combine(_pathConfig.ArtistImageCachePath, $"{artist.Id}.jpg");
+                var localPath = _fileSystem.Combine(_pathConfig.ArtistImageCachePath, $"{artist.Id}.fetched.jpg");
                 return DownloadAndWriteImageInternalAsync(localPath, imageUrl, httpClient);
             })
         );
@@ -3082,18 +3224,82 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         {
             var idsToDelete = orphanedArtists.Select(a => a.Id).ToList();
             await context.Artists.Where(a => idsToDelete.Contains(a.Id)).ExecuteDeleteAsync(cancellationToken);
+            
             foreach (var artist in orphanedArtists)
-                if (!string.IsNullOrEmpty(artist.LocalImageCachePath) &&
-                    _fileSystem.FileExists(artist.LocalImageCachePath))
-                    try
+            {
+                // Delete all possible image variants for the orphaned artist
+                ImageStorageHelper.DeleteImage(_fileSystem, _pathConfig.ArtistImageCachePath, artist.Id.ToString(), ".fetched");
+                ImageStorageHelper.DeleteImage(_fileSystem, _pathConfig.ArtistImageCachePath, artist.Id.ToString(), ".custom");
+                
+                // Cleanup legacy legacy as well
+                ImageStorageHelper.DeleteImage(_fileSystem, _pathConfig.ArtistImageCachePath, artist.Id.ToString(), "");
+            }
+        }
+
+        // Aggressive Cleanup: Remove any files in the artist image cache that don't match the new naming convention
+        // or are for artists that no longer exist.
+        try
+        {
+            var cachePath = _pathConfig.ArtistImageCachePath;
+            if (_fileSystem.DirectoryExists(cachePath))
+            {
+                var allArtistIds = await context.Artists.Select(a => a.Id).ToListAsync(cancellationToken);
+                var artistIdSet = new HashSet<Guid>(allArtistIds);
+                // 3 argument overload not available on interface, using EnumerateFiles
+                var files = _fileSystem.EnumerateFiles(cachePath, "*.*", SearchOption.TopDirectoryOnly);
+
+                foreach (var file in files)
+                {
+                    var fileName = _fileSystem.GetFileName(file);
+                    if (string.IsNullOrEmpty(fileName)) continue;
+
+                    bool shouldDelete = false;
+
+                    // 1. Check if it's a legacy .jpg file or has an invalid suffix
+                    // We only want to keep: {id}.fetched.* OR {id}.custom.*
+                    if (!fileName.Contains(".fetched.") && !fileName.Contains(".custom."))
                     {
-                        _fileSystem.DeleteFile(artist.LocalImageCachePath);
+                        shouldDelete = true;
                     }
-                    catch (Exception ex)
+                    else if (fileName.Contains(".fetched.") || fileName.Contains(".custom."))
                     {
-                        _logger.LogWarning(ex, "Failed to delete orphaned artist image {ArtistImagePath}.",
-                            artist.LocalImageCachePath);
+                        // 2. Extract Guid and check if artist exists
+                        var guidPart = fileName.Split('.')[0];
+                        if (Guid.TryParse(guidPart, out var artistId))
+                        {
+                            if (!artistIdSet.Contains(artistId))
+                            {
+                                shouldDelete = true;
+                            }
+                        }
+                        else
+                        {
+                            shouldDelete = true;
+                        }
                     }
+                    else
+                    {
+                        // Not a jpg file we manage
+                        shouldDelete = true;
+                    }
+
+                    if (shouldDelete)
+                    {
+                        try
+                        {
+                            _fileSystem.DeleteFile(file);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogWarning(ex, "Failed to delete invalid/legacy artist image file {FilePath}.", file);
+                        }
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error during aggressive artist image cache cleanup.");
         }
 
         await context.Genres.Where(g => !g.Songs.Any()).ExecuteDeleteAsync(cancellationToken);

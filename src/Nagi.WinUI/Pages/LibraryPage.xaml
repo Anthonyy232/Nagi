@@ -8,6 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:Nagi.Core.Models"
     xmlns:helpers="using:Nagi.Core.Helpers"
+    xmlns:uihelpers="using:Nagi.WinUI.Helpers"
     x:Name="pageRoot"
     Background="Transparent"
     mc:Ignorable="d">
@@ -15,6 +16,7 @@
     <Page.Resources>
         <converters:TimeSpanToTimeStringConverter x:Key="TimeSpanToTimeStringConverter" />
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <converters:StringToImageSourceConverter x:Key="StringToImageSourceConverter" />
     </Page.Resources>
 
     <Grid>
@@ -258,7 +260,7 @@
                                     Stretch="UniformToFill"
                                     DecodePixelWidth="48"
                                     DecodePixelType="Logical"
-                                    Source="{x:Bind AlbumArtUriFromTrack, FallbackValue=null}" />
+                                    Source="{x:Bind uihelpers:ImageUriHelper.GetUriWithCacheBuster(AlbumArtUriFromTrack, FileModifiedDate), Mode=OneWay}" />
                             </Border>
                         </Button>
 

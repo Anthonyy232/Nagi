@@ -8,8 +8,8 @@
         <TargetPlatformMinVersion>$(WindowsTargetPlatformMinVersion)</TargetPlatformMinVersion>
         <SupportedOSPlatformVersion>10.0.18362.0</SupportedOSPlatformVersion>
         <ApplicationManifest>app.manifest</ApplicationManifest>
-        <Platforms>x86;x64;ARM64</Platforms>
-        <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+        <Platforms>x64;ARM64</Platforms>
+        <RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
         <UseWinUI>true</UseWinUI>
         <EnableMsixTooling>true</EnableMsixTooling>
         <Nullable>enable</Nullable>
@@ -77,7 +77,7 @@
         <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
         <GenerateTestArtifacts>True</GenerateTestArtifacts>
         <AppxBundle>Always</AppxBundle>
-        <AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
+        <AppxBundlePlatforms>x64|arm64</AppxBundlePlatforms>
         <GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
         <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
     </PropertyGroup>

@@ -9,6 +9,9 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.WinUI.ViewModels;
+using Windows.Storage.Pickers;
+using WinRT.Interop;
+using Nagi.Core.Constants;
 
 namespace Nagi.WinUI.Pages;
 
@@ -47,6 +50,7 @@ public sealed partial class ArtistPage : Page
         base.OnNavigatedTo(e);
         _logger.LogDebug("Navigated to ArtistPage.");
         _cancellationTokenSource = new CancellationTokenSource();
+        ViewModel.SubscribeToEvents();
 
         if (ViewModel.Artists.Count == 0)
         {
@@ -80,6 +84,7 @@ public sealed partial class ArtistPage : Page
     {
         base.OnNavigatedFrom(e);
         _logger.LogDebug("Navigating away from ArtistPage.");
+        ViewModel.UnsubscribeFromEvents();
 
         if (_cancellationTokenSource is { IsCancellationRequested: false })
         {
@@ -178,5 +183,48 @@ public sealed partial class ArtistPage : Page
                 clickedArtist.Name, clickedArtist.Id);
             ViewModel.NavigateToArtistDetail(clickedArtist);
         }
+    }
+
+    private async void ChangeImage_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not FrameworkElement { DataContext: ArtistViewModelItem artistItem }) return;
+
+        _logger.LogDebug("User initiated image change for artist '{ArtistName}'.", artistItem.Name);
+        var newImagePath = await PickImageAsync();
+
+        if (!string.IsNullOrWhiteSpace(newImagePath))
+        {
+            _logger.LogDebug("User selected new image for artist '{ArtistName}'. Updating.", artistItem.Name);
+            await ViewModel.UpdateArtistImageCommand.ExecuteAsync(new Tuple<Guid, string>(artistItem.Id, newImagePath));
+        }
+    }
+
+    private async void RemoveImage_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not FrameworkElement { DataContext: ArtistViewModelItem artistItem }) return;
+
+        _logger.LogDebug("User requested removal of custom image for artist '{ArtistName}'.", artistItem.Name);
+        await ViewModel.RemoveArtistImageCommand.ExecuteAsync(artistItem.Id);
+    }
+
+    private async Task<string?> PickImageAsync()
+    {
+        _logger.LogDebug("Opening file picker for artist image.");
+        var picker = new FileOpenPicker();
+        var hwnd = WindowNative.GetWindowHandle(App.RootWindow);
+        InitializeWithWindow.Initialize(picker, hwnd);
+        
+        foreach (var ext in FileExtensions.ImageFileExtensions)
+            picker.FileTypeFilter.Add(ext);
+
+        var file = await picker.PickSingleFileAsync();
+        if (file != null)
+        {
+            _logger.LogDebug("User picked image file: {FilePath}", file.Path);
+            return file.Path;
+        }
+
+        _logger.LogDebug("User did not pick an image file.");
+        return null;
     }
 }

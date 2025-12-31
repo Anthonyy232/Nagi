@@ -89,6 +89,9 @@ public partial class GenreViewModel : ObservableObject, IDisposable
         if (_isDisposed) return;
 
         if (Genres != null) Genres.CollectionChanged -= _collectionChangedHandler;
+        _debounceCts?.Cancel();
+        _debounceCts?.Dispose();
+        _debounceCts = null;
 
         _isDisposed = true;
         GC.SuppressFinalize(this);

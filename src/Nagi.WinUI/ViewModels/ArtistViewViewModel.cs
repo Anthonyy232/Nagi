@@ -13,6 +13,7 @@ using Nagi.Core.Services.Data;
 using Nagi.WinUI.Navigation;
 using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
+using Nagi.WinUI.Helpers;
 
 namespace Nagi.WinUI.ViewModels;
 
@@ -26,7 +27,7 @@ public partial class ArtistAlbumViewModelItem : ObservableObject
         Id = album.Id;
         Name = album.Title;
         YearText = album.Year?.ToString() ?? string.Empty;
-        CoverArtUri = album.CoverArtUri;
+        CoverArtUri = ImageUriHelper.GetUriWithCacheBuster(album.CoverArtUri);
     }
 
     public Guid Id { get; }
@@ -77,6 +78,13 @@ public partial class ArtistViewViewModel : SongListViewModelBase
     [ObservableProperty] public partial string ArtistBio { get; set; }
 
     [ObservableProperty] public partial string? ArtistImageUri { get; set; }
+
+    partial void OnArtistImageUriChanged(string? value)
+    {
+        OnPropertyChanged(nameof(IsCustomImage));
+    }
+
+    public bool IsCustomImage => ArtistImageUri?.Contains(".custom.") == true;
 
     [ObservableProperty] public partial string SearchTerm { get; set; }
 
@@ -158,7 +166,7 @@ public partial class ArtistViewViewModel : SongListViewModelBase
     {
         ArtistName = artist.Name;
         PageTitle = artist.Name;
-        ArtistImageUri = artist.LocalImageCachePath;
+        ArtistImageUri = ImageUriHelper.GetUriWithCacheBuster(artist.LocalImageCachePath);
         ArtistBio = string.IsNullOrWhiteSpace(artist.Biography)
             ? "No biography available for this artist."
             : artist.Biography;
@@ -236,7 +244,12 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         {
             _logger.LogDebug("Received metadata update for artist ID {ArtistId}", _artistId);
             // Must be run on the UI thread to update the bound property.
-            _dispatcherService.TryEnqueue(() => { ArtistImageUri = e.NewLocalImageCachePath; });
+            _dispatcherService.TryEnqueue(() =>
+            {
+                // Force refresh by setting to null first, then apply cache-buster
+                ArtistImageUri = null;
+                ArtistImageUri = ImageUriHelper.GetUriWithCacheBuster(e.NewLocalImageCachePath);
+            });
         }
     }
 
@@ -305,5 +318,30 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         // Also unsubscribe from the collection changed event for completeness.
         Albums.CollectionChanged -= (s, e) => OnPropertyChanged(nameof(HasAlbums));
         _logger.LogDebug("Cleaned up for artist ID {ArtistId}", _artistId);
+    }
+
+    [RelayCommand]
+    public async Task UpdateArtistImageAsync(string localPath)
+    {
+        if (string.IsNullOrWhiteSpace(localPath)) return;
+
+        _logger.LogInformation("Updating custom image for current artist ({ArtistName}) from {Path}", ArtistName, localPath);
+        
+        // Use the library scanner's writer capability (it usually wraps ILibraryService)
+        if (_libraryScanner is ILibraryWriter writer)
+        {
+            await writer.UpdateArtistImageAsync(_artistId, localPath);
+        }
+    }
+
+    [RelayCommand]
+    public async Task RemoveArtistImageAsync()
+    {
+        _logger.LogInformation("Removing custom image for current artist ({ArtistName})", ArtistName);
+        
+        if (_libraryScanner is ILibraryWriter writer)
+        {
+            await writer.RemoveArtistImageAsync(_artistId);
+        }
     }
 }

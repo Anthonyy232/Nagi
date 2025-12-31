@@ -6,6 +6,8 @@ using Nagi.Core.Services.Implementations;
 using Nagi.Core.Tests.Utils;
 using NSubstitute;
 using Xunit;
+using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Helpers;
 
 namespace Nagi.Core.Tests;
 
@@ -17,13 +19,22 @@ public class SmartPlaylistServiceTests : IDisposable
 {
     private readonly DbContextFactoryTestHelper _dbHelper;
     private readonly ILogger<SmartPlaylistService> _logger;
+    private readonly IFileSystemService _fileSystem;
+    private readonly IPathConfiguration _pathConfig;
     private readonly SmartPlaylistService _service;
 
     public SmartPlaylistServiceTests()
     {
         _dbHelper = new DbContextFactoryTestHelper();
         _logger = Substitute.For<ILogger<SmartPlaylistService>>();
-        _service = new SmartPlaylistService(_dbHelper.ContextFactory, _logger);
+        _fileSystem = Substitute.For<IFileSystemService>();
+        _pathConfig = Substitute.For<IPathConfiguration>();
+
+        _pathConfig.PlaylistImageCachePath.Returns("C:\\cache\\playlists");
+        _fileSystem.Combine(Arg.Any<string>(), Arg.Any<string>())
+            .Returns(callInfo => Path.Combine(callInfo.ArgAt<string[]>(0)));
+
+        _service = new SmartPlaylistService(_dbHelper.ContextFactory, _fileSystem, _pathConfig, _logger);
 
         // Seed test data
         SeedTestData();
@@ -326,15 +337,22 @@ public class SmartPlaylistServiceTests : IDisposable
     {
         // Arrange
         var playlist = await _service.CreateSmartPlaylistAsync("Cover Test");
+        const string localPath = "C:\\cover.jpg";
+        _fileSystem.FileExists(localPath).Returns(true);
+        _fileSystem.DirectoryExists(Arg.Any<string>()).Returns(true);
+        _fileSystem.GetExtension(localPath).Returns(".jpg");
+
+        var expectedPath = Path.Combine("C:\\cache\\playlists", $"{playlist!.Id}.custom.jpg");
+        _fileSystem.FileExists(expectedPath).Returns(true);
 
         // Act
-        var result = await _service.UpdateSmartPlaylistCoverAsync(playlist!.Id, "C:\\cover.jpg");
+        var result = await _service.UpdateSmartPlaylistCoverAsync(playlist.Id, localPath);
 
         // Assert
         result.Should().BeTrue();
 
         var fetched = await _service.GetSmartPlaylistByIdAsync(playlist.Id);
-        fetched!.CoverImageUri.Should().Be("C:\\cover.jpg");
+        fetched!.CoverImageUri.Should().Be(expectedPath);
     }
 
     [Fact]

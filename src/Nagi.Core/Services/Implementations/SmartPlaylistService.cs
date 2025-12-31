@@ -1,8 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Data;
+using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Services.Data;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -12,14 +14,23 @@ namespace Nagi.Core.Services.Implementations;
 public class SmartPlaylistService : ISmartPlaylistService
 {
     private readonly IDbContextFactory<MusicDbContext> _contextFactory;
+    private readonly IFileSystemService _fileSystem;
+    private readonly IPathConfiguration _pathConfig;
     private readonly ILogger<SmartPlaylistService> _logger;
     private readonly SmartPlaylistQueryBuilder _queryBuilder;
 
+    /// <inheritdoc />
+    public event EventHandler<PlaylistUpdatedEventArgs>? PlaylistUpdated;
+
     public SmartPlaylistService(
         IDbContextFactory<MusicDbContext> contextFactory,
+        IFileSystemService fileSystem,
+        IPathConfiguration pathConfig,
         ILogger<SmartPlaylistService> logger)
     {
         _contextFactory = contextFactory;
+        _fileSystem = fileSystem;
+        _pathConfig = pathConfig;
         _logger = logger;
         _queryBuilder = new SmartPlaylistQueryBuilder();
     }
@@ -104,10 +115,16 @@ public class SmartPlaylistService : ISmartPlaylistService
         {
             Name = trimmedName,
             Description = description,
-            CoverImageUri = coverImageUri,
             DateCreated = DateTime.UtcNow,
             DateModified = DateTime.UtcNow
         };
+
+        if (!string.IsNullOrEmpty(coverImageUri) && _fileSystem.FileExists(coverImageUri))
+        {
+            var cachePath = _pathConfig.PlaylistImageCachePath;
+            ImageStorageHelper.SaveImage(_fileSystem, cachePath, smartPlaylist.Id.ToString(), ".custom", coverImageUri);
+            smartPlaylist.CoverImageUri = ImageStorageHelper.FindImage(_fileSystem, cachePath, smartPlaylist.Id.ToString(), ".custom");
+        }
 
         context.SmartPlaylists.Add(smartPlaylist);
         await context.SaveChangesAsync();
@@ -150,6 +167,7 @@ public class SmartPlaylistService : ISmartPlaylistService
         existing.DateModified = DateTime.UtcNow;
 
         await context.SaveChangesAsync();
+        PlaylistUpdated?.Invoke(this, new PlaylistUpdatedEventArgs(existing.Id, existing.CoverImageUri));
         return true;
     }
 
@@ -198,6 +216,7 @@ public class SmartPlaylistService : ISmartPlaylistService
         smartPlaylist.Name = trimmedName;
         smartPlaylist.DateModified = DateTime.UtcNow;
         await context.SaveChangesAsync();
+        PlaylistUpdated?.Invoke(this, new PlaylistUpdatedEventArgs(smartPlaylist.Id, smartPlaylist.CoverImageUri));
         return true;
     }
 
@@ -208,9 +227,26 @@ public class SmartPlaylistService : ISmartPlaylistService
         var smartPlaylist = await context.SmartPlaylists.FindAsync(smartPlaylistId);
         if (smartPlaylist is null) return false;
 
-        smartPlaylist.CoverImageUri = newCoverImageUri;
+        if (!string.IsNullOrEmpty(newCoverImageUri) && _fileSystem.FileExists(newCoverImageUri))
+        {
+            // Save as custom image
+            var cachePath = _pathConfig.PlaylistImageCachePath;
+            ImageStorageHelper.SaveImage(_fileSystem, cachePath, smartPlaylistId.ToString(), ".custom", newCoverImageUri);
+            
+            var newPath = ImageStorageHelper.FindImage(_fileSystem, cachePath, smartPlaylistId.ToString(), ".custom");
+            smartPlaylist.CoverImageUri = newPath;
+        }
+        else
+        {
+            // Remove custom image if setting to null/empty
+            var cachePath = _pathConfig.PlaylistImageCachePath;
+            ImageStorageHelper.DeleteImage(_fileSystem, cachePath, smartPlaylistId.ToString(), ".custom");
+            smartPlaylist.CoverImageUri = null;
+        }
+
         smartPlaylist.DateModified = DateTime.UtcNow;
         await context.SaveChangesAsync();
+        PlaylistUpdated?.Invoke(this, new PlaylistUpdatedEventArgs(smartPlaylist.Id, smartPlaylist.CoverImageUri));
         return true;
     }
 

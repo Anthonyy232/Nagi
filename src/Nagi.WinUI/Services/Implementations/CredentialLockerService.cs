@@ -48,7 +48,7 @@ public class CredentialLockerService : ICredentialLockerService
     {
         try
         {
-            var credential = _vault.FindAllByResource(resource).FirstOrDefault();
+            var credential = _vault.RetrieveAll().FirstOrDefault(c => c.Resource == resource);
 
             if (credential != null)
             {
@@ -79,8 +79,8 @@ public class CredentialLockerService : ICredentialLockerService
     {
         try
         {
-            var credentials = _vault.FindAllByResource(resource);
-            if (!credentials.Any()) return;
+            var credentials = _vault.RetrieveAll().Where(c => c.Resource == resource).ToList();
+            if (credentials.Count == 0) return;
 
             foreach (var credential in credentials) _vault.Remove(credential);
             _logger.LogDebug("Removed {Count} credential(s) for resource {Resource}", credentials.Count, resource);

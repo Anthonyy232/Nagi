@@ -15,6 +15,7 @@ using Nagi.WinUI.Navigation;
 using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
 using Nagi.Core.Helpers;
+using Nagi.WinUI.Helpers;
 
 namespace Nagi.WinUI.ViewModels;
 
@@ -28,7 +29,7 @@ public partial class PlaylistViewModelItem : ObservableObject
     {
         Id = playlist.Id;
         Name = playlist.Name;
-        CoverImageUri = playlist.CoverImageUri;
+        CoverImageUri = ImageUriHelper.GetUriWithCacheBuster(playlist.CoverImageUri);
         IsSmart = false;
         DateCreated = playlist.DateCreated;
         DateModified = playlist.DateModified;
@@ -39,7 +40,7 @@ public partial class PlaylistViewModelItem : ObservableObject
     {
         Id = smartPlaylist.Id;
         Name = smartPlaylist.Name;
-        CoverImageUri = smartPlaylist.CoverImageUri;
+        CoverImageUri = ImageUriHelper.GetUriWithCacheBuster(smartPlaylist.CoverImageUri);
         IsSmart = true;
         DateCreated = smartPlaylist.DateCreated;
         DateModified = smartPlaylist.DateModified;
@@ -65,6 +66,7 @@ public partial class PlaylistViewModelItem : ObservableObject
     [ObservableProperty] public partial string? CoverImageUri { get; set; }
 
     public bool IsArtworkAvailable => !string.IsNullOrEmpty(CoverImageUri);
+    public bool IsCustomImage => CoverImageUri?.Contains(".custom.") == true;
 
     [ObservableProperty] public partial int SongCount { get; set; }
 
@@ -73,6 +75,7 @@ public partial class PlaylistViewModelItem : ObservableObject
     partial void OnCoverImageUriChanged(string? value)
     {
         OnPropertyChanged(nameof(IsArtworkAvailable));
+        OnPropertyChanged(nameof(IsCustomImage));
     }
 
     /// <summary>
@@ -125,6 +128,9 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
         // Store the handler in a field so we can reliably unsubscribe from it later.
         _collectionChangedHandler = (s, e) => OnPropertyChanged(nameof(HasPlaylists));
         Playlists.CollectionChanged += _collectionChangedHandler;
+
+        _libraryService.PlaylistUpdated += OnPlaylistUpdated;
+        _smartPlaylistService.PlaylistUpdated += OnPlaylistUpdated;
     }
 
     [ObservableProperty] public partial ObservableCollection<PlaylistViewModelItem> Playlists { get; set; } = new();
@@ -172,10 +178,15 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
     public void Dispose()
     {
         if (_isDisposed) return;
+        _isDisposed = true;
 
         if (Playlists != null) Playlists.CollectionChanged -= _collectionChangedHandler;
-
-        _isDisposed = true;
+        _libraryService.PlaylistUpdated -= OnPlaylistUpdated;
+        _smartPlaylistService.PlaylistUpdated -= OnPlaylistUpdated;
+        _debounceCts?.Cancel();
+        _debounceCts?.Dispose();
+        _debounceCts = null;
+        _logger.LogDebug("PlaylistViewModel state cleaned up.");
         GC.SuppressFinalize(this);
     }
 
@@ -304,7 +315,9 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
                 await _libraryService.CreatePlaylistAsync(playlistName.Trim(), coverImageUri: coverImageUri);
             if (newPlaylist != null)
             {
-                Playlists.Add(new PlaylistViewModelItem(newPlaylist));
+                var newItem = new PlaylistViewModelItem(newPlaylist);
+                Playlists.Add(newItem);
+                _allPlaylists.Add(newItem);
                 StatusMessage = string.Empty;
             }
             else
@@ -347,7 +360,20 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
             if (success)
             {
                 var playlistItem = Playlists.FirstOrDefault(p => p.Id == playlistId);
-                if (playlistItem != null) playlistItem.CoverImageUri = newCoverImageUri;
+                if (playlistItem != null)
+                {
+                    // Force refresh by setting to null first, then apply cache-buster
+                    playlistItem.CoverImageUri = null;
+                    playlistItem.CoverImageUri = ImageUriHelper.GetUriWithCacheBuster(newCoverImageUri);
+                }
+
+                // Also update the backing list
+                var backingItem = _allPlaylists.FirstOrDefault(p => p.Id == playlistId);
+                if (backingItem != null)
+                {
+                    backingItem.CoverImageUri = ImageUriHelper.GetUriWithCacheBuster(newCoverImageUri);
+                }
+
                 StatusMessage = string.Empty;
             }
             else
@@ -359,6 +385,57 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
         {
             StatusMessage = "An error occurred while updating the playlist cover.";
             _logger.LogError(ex, "Error updating playlist cover for {PlaylistId}", playlistId);
+        }
+        finally
+        {
+            IsUpdatingCover = false;
+        }
+    }
+
+    [RelayCommand]
+    private async Task RemovePlaylistCoverAsync(Tuple<Guid, bool> args)
+    {
+        var (playlistId, isSmart) = args;
+        if (IsAnyOperationInProgress || playlistId == Guid.Empty) return;
+
+        IsUpdatingCover = true;
+        StatusMessage = "Removing playlist image...";
+
+        try
+        {
+            bool success;
+            if (isSmart)
+                success = await _smartPlaylistService.UpdateSmartPlaylistCoverAsync(playlistId, null);
+            else
+                success = await _libraryService.UpdatePlaylistCoverAsync(playlistId, null);
+            
+            if (success)
+            {
+                var playlistItem = Playlists.FirstOrDefault(p => p.Id == playlistId);
+                if (playlistItem != null)
+                {
+                    // Force refresh by setting to null first
+                    playlistItem.CoverImageUri = null;
+                }
+
+                // Also update the backing list
+                var backingItem = _allPlaylists.FirstOrDefault(p => p.Id == playlistId);
+                if (backingItem != null)
+                {
+                    backingItem.CoverImageUri = null;
+                }
+
+                StatusMessage = string.Empty;
+            }
+            else
+            {
+                StatusMessage = "Failed to remove playlist image.";
+            }
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = "An error occurred while removing the playlist image.";
+            _logger.LogError(ex, "Error removing playlist cover for {PlaylistId}", playlistId);
         }
         finally
         {
@@ -391,6 +468,11 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
             {
                 var playlistItem = Playlists.FirstOrDefault(p => p.Id == playlistId);
                 if (playlistItem != null) playlistItem.Name = newName.Trim();
+
+                // Also update the backing list to keep filter/sort in sync
+                var backingItem = _allPlaylists.FirstOrDefault(p => p.Id == playlistId);
+                if (backingItem != null) backingItem.Name = newName.Trim();
+
                 StatusMessage = string.Empty;
             }
             else
@@ -412,6 +494,7 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
     /// <summary>
     ///     Deletes a playlist (regular or smart).
     /// </summary>
+    /// <param name="args">A tuple containing the playlist ID, the new cover image URI, and whether it's a smart playlist.</param>
     [RelayCommand]
     private async Task DeletePlaylistAsync(Tuple<Guid, bool> args)
     {
@@ -502,8 +585,6 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
 
     private void ApplyFilter()
     {
-        Playlists.Clear();
-
         IEnumerable<PlaylistViewModelItem> filtered = _allPlaylists;
         if (IsSearchActive)
             filtered = _allPlaylists.Where(p =>
@@ -519,8 +600,15 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
             _ => filtered.OrderBy(p => p.Name, StringComparer.OrdinalIgnoreCase)
         };
 
-        foreach (var item in sorted)
-            Playlists.Add(item);
+        // Replace collection in one operation to minimize CollectionChanged events
+        // Must manage event subscription when swapping instances
+        var newItems = sorted.ToList();
+        
+        Playlists.CollectionChanged -= _collectionChangedHandler;
+        Playlists = new ObservableCollection<PlaylistViewModelItem>(newItems);
+        Playlists.CollectionChanged += _collectionChangedHandler;
+        
+        OnPropertyChanged(nameof(HasPlaylists));
     }
 
     /// <summary>
@@ -553,5 +641,29 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
         _debounceCts = null;
         SearchTerm = string.Empty;
         _logger.LogDebug("Cleaned up PlaylistViewModel search resources");
+    }
+
+    private void OnPlaylistUpdated(object? sender, PlaylistUpdatedEventArgs e)
+    {
+        _dispatcherService.TryEnqueue(() =>
+        {
+            // Update the main observable collection
+            var playlist = Playlists.FirstOrDefault(p => p.Id == e.PlaylistId);
+            if (playlist != null)
+            {
+                // Force refresh by setting to null first, then apply cache-buster
+                playlist.CoverImageUri = null;
+                playlist.CoverImageUri = ImageUriHelper.GetUriWithCacheBuster(e.CoverImageUri);
+            }
+
+            // Also update the backing list to keep filter/sort in sync
+            var backingItem = _allPlaylists.FirstOrDefault(p => p.Id == e.PlaylistId);
+            if (backingItem != null)
+            {
+                // Force refresh by setting to null first, then apply cache-buster
+                backingItem.CoverImageUri = null;
+                backingItem.CoverImageUri = ImageUriHelper.GetUriWithCacheBuster(e.CoverImageUri);
+            }
+        });
     }
 }

@@ -12,6 +12,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
+using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Services.Abstractions;
 using Nagi.WinUI.ViewModels;
 using WinRT.Interop;
@@ -108,6 +109,10 @@ public sealed partial class TrayPopup : Window
     {
         var shouldBeVisible = _isCoverArtInFlyoutEnabled && !string.IsNullOrEmpty(ViewModel.AlbumArtUri);
         CoverArtBackground.Visibility = shouldBeVisible ? Visibility.Visible : Visibility.Collapsed;
+        
+        // Update the brush source safely - SafeGetImageSource handles null/empty strings
+        CoverArtBrush.Source = ImageUriHelper.SafeGetImageSource(ViewModel.AlbumArtUri)!;
+        
         _logger.LogTrace("Cover art visibility updated to {Visibility}", CoverArtBackground.Visibility);
     }
 
@@ -124,10 +129,10 @@ public sealed partial class TrayPopup : Window
 
         var windowHandle = WindowNative.GetWindowHandle(this);
 
-        var exStyle = GetWindowLong(windowHandle, GWL_EXSTYLE);
+        var exStyle = (int)GetWindowLongPtr(windowHandle, GWL_EXSTYLE);
         exStyle |= WS_EX_TOOLWINDOW;
         exStyle |= WS_EX_LAYERED;
-        SetWindowLong(windowHandle, GWL_EXSTYLE, exStyle);
+        SetWindowLongPtr(windowHandle, GWL_EXSTYLE, (IntPtr)exStyle);
 
         if (Environment.OSVersion.Version.Build >= 22000)
         {
@@ -212,11 +217,11 @@ public sealed partial class TrayPopup : Window
     private const uint DWMWA_WINDOW_CORNER_PREFERENCE = 33;
     private const uint DWMWCP_ROUND = 2;
 
-    [DllImport("user32.dll")]
-    private static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+    [DllImport("user32.dll", EntryPoint = "GetWindowLongPtr")]
+    private static extern IntPtr GetWindowLongPtr(IntPtr hWnd, int nIndex);
 
-    [DllImport("user32.dll")]
-    private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
+    [DllImport("user32.dll", EntryPoint = "SetWindowLongPtr")]
+    private static extern IntPtr SetWindowLongPtr(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
 
     [DllImport("user32.dll")]
     private static extern bool SetLayeredWindowAttributes(IntPtr hwnd, uint crKey, byte bAlpha, uint dwFlags);

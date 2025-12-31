@@ -40,7 +40,14 @@ public class TrayPopupService : ITrayPopupService, IDisposable
         // Cancel any ongoing animations first to prevent TaskCanceledException
         PopupAnimation.CancelAllAnimations();
         
+        // Explicitly unsubscribe before closing to prevent callbacks during disposal
+        if (_popupWindow is not null)
+        {
+            _popupWindow.Deactivated -= OnPopupDeactivated;
+            _popupWindow.Closed -= OnPopupWindowClosed;
+        }
         _popupWindow?.Close();
+        _popupWindow = null;
         _isDisposed = true;
         GC.SuppressFinalize(this);
     }

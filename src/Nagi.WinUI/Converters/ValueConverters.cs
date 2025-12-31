@@ -7,7 +7,6 @@ using Windows.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Media.Imaging;
 using Nagi.WinUI.Models;
 
 namespace Nagi.WinUI.Converters;
@@ -415,6 +414,22 @@ public class SmartPlaylistIconConverter : IValueConverter
     public object Convert(object value, Type targetType, object parameter, string language)
     {
         return value is true ? SmartPlaylistGlyph : RegularPlaylistGlyph;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+/// <summary>
+///     Safely converts a URI string to a BitmapImage. Returns null for empty or invalid strings.
+/// </summary>
+public class StringToImageSourceConverter : IValueConverter
+{
+    public object? Convert(object? value, Type targetType, object? parameter, string language)
+    {
+        return Helpers.ImageUriHelper.SafeGetImageSource(value as string);
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)

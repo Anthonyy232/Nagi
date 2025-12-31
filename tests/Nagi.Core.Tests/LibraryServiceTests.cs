@@ -462,7 +462,7 @@ public class LibraryServiceTests : IDisposable
 
         // Arrange: Configure file system mocks for image caching.
         var artistCachePath = _pathConfig.ArtistImageCachePath;
-        var artistImageFilename = $"{artist.Id}.jpg";
+        var artistImageFilename = $"{artist.Id}.fetched.jpg";
         var expectedImagePath = Path.Combine(artistCachePath, artistImageFilename);
         _fileSystem.Combine(artistCachePath, artistImageFilename).Returns(expectedImagePath);
         _fileSystem.FileExists(expectedImagePath).Returns(false);

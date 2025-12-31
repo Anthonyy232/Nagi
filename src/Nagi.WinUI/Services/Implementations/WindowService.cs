@@ -22,7 +22,7 @@ public sealed class WindowService : IWindowService, IDisposable
     private AppWindow? _appWindow;
     private bool _isClosingMiniPlayerProgrammatically;
     private bool _isDisposed;
-    private bool _isMiniPlayerEnabled;
+    private volatile bool _isMiniPlayerEnabled;
 
     private MiniPlayerWindow? _miniPlayerWindow;
     private Window? _window;
@@ -44,6 +44,9 @@ public sealed class WindowService : IWindowService, IDisposable
         if (_isDisposed) return;
 
         _logger.LogDebug("Disposing and cleaning up resources.");
+
+        // Ensure we exit efficiency mode before shutdown for a clean exit.
+        SetEfficiencyMode(false);
 
         if (_appWindow is not null)
         {
@@ -128,6 +131,7 @@ public sealed class WindowService : IWindowService, IDisposable
     /// <inheritdoc />
     public void SetEfficiencyMode(bool isEnabled)
     {
+        _logger.LogDebug("Setting efficiency mode to: {IsEnabled}", isEnabled);
         EfficiencyModeUtilities.SetEfficiencyMode(isEnabled);
     }
 

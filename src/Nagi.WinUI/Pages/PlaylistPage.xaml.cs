@@ -154,7 +154,7 @@ public sealed partial class PlaylistPage : Page
         imageGrid.Children.Add(imagePreview);
         var pickImageButton = new Button
         {
-            Content = "Pick Cover Image", Margin = new Thickness(0, 12, 0, 0),
+            Content = "Pick Image", Margin = new Thickness(0, 12, 0, 0),
             HorizontalAlignment = HorizontalAlignment.Stretch
         };
         var dialogContent = new StackPanel();
@@ -174,7 +174,7 @@ public sealed partial class PlaylistPage : Page
             if (!string.IsNullOrWhiteSpace(pickedUri))
             {
                 selectedCoverImageUriForDialog = pickedUri;
-                imagePreview.Source = pickedUri;
+                imagePreview.Source = Helpers.ImageUriHelper.SafeGetImageSource(pickedUri);
                 imagePlaceholder.Visibility = Visibility.Collapsed;
             }
         };
@@ -325,5 +325,14 @@ public sealed partial class PlaylistPage : Page
 
         _logger.LogDebug("User did not pick an image file.");
         return null;
+    }
+
+    private async void RemoveImage_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not FrameworkElement { DataContext: PlaylistViewModelItem playlistItem }) return;
+
+        _logger.LogDebug("User requested removal of custom image for playlist '{PlaylistName}'.", playlistItem.Name);
+
+        await ViewModel.RemovePlaylistCoverCommand.ExecuteAsync(new Tuple<Guid, bool>(playlistItem.Id, playlistItem.IsSmart));
     }
 }

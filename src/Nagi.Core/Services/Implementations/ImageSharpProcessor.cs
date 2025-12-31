@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
 using Nagi.Core.Services.Abstractions;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Memory;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 
@@ -43,6 +44,21 @@ public class ImageSharpProcessor : IImageProcessor
     /// </summary>
     private readonly ConcurrentDictionary<string, Lazy<Task<string>>> _inFlightSaves = new();
 
+    /// <summary>
+    ///     Static constructor to configure ImageSharp memory settings globally.
+    ///     This helps reduce Large Object Heap fragmentation during high-volume image processing.
+    /// </summary>
+    static ImageSharpProcessor()
+    {
+        // Configure ImageSharp to use a more memory-efficient allocator
+        // This helps reduce LOH fragmentation during batch processing
+        Configuration.Default.MemoryAllocator = MemoryAllocator.Create(new MemoryAllocatorOptions
+        {
+            // Limit maximum pool size to prevent excessive memory retention
+            MaximumPoolSizeMegabytes = 32
+        });
+    }
+
     public ImageSharpProcessor(IPathConfiguration pathConfig, IFileSystemService fileSystem,
         ILogger<ImageSharpProcessor> logger)
     {
@@ -71,7 +87,8 @@ public class ImageSharpProcessor : IImageProcessor
         {
             // Generate a content-based hash for deduplication
             var contentHash = GenerateContentHash(pictureData);
-            var filename = $"{contentHash}.jpg";
+            // Use standardized naming convention for fetched/processed images
+            var filename = $"{contentHash}.fetched.jpg";
             var fullPath = _fileSystem.Combine(_albumArtStoragePath, filename);
 
             // Save with deduplication - handles both file existence check and concurrent access

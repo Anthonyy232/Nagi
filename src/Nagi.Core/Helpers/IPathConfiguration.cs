@@ -36,6 +36,11 @@ public interface IPathConfiguration
     string ArtistImageCachePath { get; }
 
     /// <summary>
+    ///     Gets the full path to the directory for caching playlist images.
+    /// </summary>
+    string PlaylistImageCachePath { get; }
+
+    /// <summary>
     ///     Gets the full path to the directory for caching .lrc files extracted from metadata.
     /// </summary>
     string LrcCachePath { get; }

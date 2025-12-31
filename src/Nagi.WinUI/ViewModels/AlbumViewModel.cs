@@ -14,6 +14,7 @@ using Nagi.WinUI.Navigation;
 using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
 using Nagi.Core.Helpers;
+using Nagi.WinUI.Helpers;
 
 namespace Nagi.WinUI.ViewModels;
 
@@ -27,7 +28,7 @@ public partial class AlbumViewModelItem : ObservableObject
         Id = album.Id;
         Title = album.Title;
         ArtistName = album.Artist?.Name ?? "Unknown Artist";
-        CoverArtUri = album.CoverArtUri;
+        CoverArtUri = ImageUriHelper.GetUriWithCacheBuster(album.CoverArtUri);
     }
 
     public Guid Id { get; }
@@ -103,6 +104,9 @@ public partial class AlbumViewModel : ObservableObject, IDisposable
         if (_isDisposed) return;
 
         if (Albums != null) Albums.CollectionChanged -= _collectionChangedHandler;
+        _debounceCts?.Cancel();
+        _debounceCts?.Dispose();
+        _debounceCts = null;
 
         _isDisposed = true;
         GC.SuppressFinalize(this);
