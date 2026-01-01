@@ -182,6 +182,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     [ObservableProperty] public partial bool IsRememberPaneStateEnabled { get; set; }
     [ObservableProperty] public partial bool IsVolumeNormalizationEnabled { get; set; }
     [ObservableProperty] public partial float EqualizerPreamp { get; set; }
+    [ObservableProperty] public partial Windows.UI.Color AccentColor { get; set; }
 
     [ObservableProperty] public partial EqualizerPreset? SelectedEqualizerPreset { get; set; }
     public List<EqualizerPreset> AvailableEqualizerPresets { get; private set; } = new();
@@ -277,13 +278,15 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             var scrobblingTask = _settingsService.GetLastFmScrobblingEnabledAsync();
             var nowPlayingTask = _settingsService.GetLastFmNowPlayingEnabledAsync();
 
+            var accentColorTask = _settingsService.GetAccentColorAsync();
+
             await Task.WhenAll(
                 navItemsTask, playerButtonsTask, themeTask, backdropTask, dynamicThemingTask,
                 playerAnimationTask, restorePlaybackTask, autoLaunchTask, startMinimizedTask,
                 hideToTrayTask, miniPlayerTask, trayFlyoutTask, onlineMetadataTask,
                 onlineLyricsTask, discordRpcTask, checkUpdatesTask, rememberWindowTask,
                 rememberPaneTask, volumeNormTask, lastFmCredsTask, lastFmAuthTokenTask,
-                scrobblingTask, nowPlayingTask);
+                scrobblingTask, nowPlayingTask, accentColorTask);
 
             foreach (var item in await navItemsTask)
             {
@@ -324,6 +327,16 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
             var authToken = await lastFmAuthTokenTask;
             IsConnectingToLastFm = !string.IsNullOrEmpty(authToken);
+
+            var accentColor = await accentColorTask;
+            if (accentColor != null)
+            {
+                AccentColor = accentColor.Value;
+            }
+            else
+            {
+                AccentColor = App.SystemAccentColor;
+            }
 
             LoadEqualizerState();
 
@@ -674,7 +687,15 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     {
         if (_isInitializing) return;
         await _settingsService.SetDynamicThemingAsync(value);
-        _themeService.ReapplyCurrentDynamicTheme();
+        if (value)
+        {
+            _themeService.ReapplyCurrentDynamicTheme();
+        }
+        else
+        {
+            var accentColor = await _settingsService.GetAccentColorAsync();
+            _themeService.ApplyAccentColor(accentColor);
+        }
     }
 
     partial void OnIsPlayerAnimationEnabledChanged(bool value)
@@ -891,6 +912,29 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         catch (TaskCanceledException)
         {
             // Debounce was cancelled, which is expected behavior.
+        }
+    }
+    async partial void OnAccentColorChanged(Windows.UI.Color value)
+    {
+        if (_isInitializing) return;
+        await _settingsService.SetAccentColorAsync(value);
+        if (!IsDynamicThemingEnabled)
+        {
+            _themeService.ApplyAccentColor(value);
+        }
+    }
+
+    [RelayCommand]
+    private async Task ResetAccentColorAsync()
+    {
+        _isInitializing = true;
+        AccentColor = App.SystemAccentColor;
+        _isInitializing = false;
+        
+        await _settingsService.SetAccentColorAsync(null);
+        if (!IsDynamicThemingEnabled)
+        {
+            _themeService.ApplyAccentColor(null);
         }
     }
 }

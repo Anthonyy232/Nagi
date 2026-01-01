@@ -62,6 +62,7 @@ public class SettingsService : IUISettingsService
     private const string RememberPaneStateEnabledKey = "RememberPaneStateEnabled";
     private const string LastPaneOpenKey = "LastPaneOpen";
     private const string VolumeNormalizationEnabledKey = "VolumeNormalizationEnabled";
+    private const string AccentColorKey = "AccentColor";
 
     private static readonly JsonSerializerOptions _serializerOptions = new() { WriteIndented = true };
     private readonly ICredentialLockerService _credentialLockerService;
@@ -154,6 +155,7 @@ public class SettingsService : IUISettingsService
         await SetEqualizerSettingsAsync(new EqualizerSettings());
         await SetRememberWindowSizeEnabledAsync(false);
         await SetRememberPaneStateEnabledAsync(true);
+        await SetAccentColorAsync(null);
 
         _logger.LogInformation("All application settings have been reset to their default values.");
     }
@@ -803,6 +805,31 @@ public class SettingsService : IUISettingsService
     {
         return SetValueAndNotifyAsync(ShowCoverArtInTrayFlyoutKey, isEnabled, true,
             ShowCoverArtInTrayFlyoutSettingChanged);
+    }
+
+    public async Task<Windows.UI.Color?> GetAccentColorAsync()
+    {
+        await EnsureUnpackagedSettingsLoadedAsync();
+        var hex = GetValue<string?>(AccentColorKey, null);
+        if (string.IsNullOrEmpty(hex)) return null;
+
+        if (App.CurrentApp!.TryParseHexColor(hex, out var color))
+        {
+            return color;
+        }
+
+        return null;
+    }
+
+    public Task SetAccentColorAsync(Windows.UI.Color? color)
+    {
+        if (color == null)
+        {
+            return SetValueAsync<string?>(AccentColorKey, null);
+        }
+
+        var hex = $"#{color.Value.A:X2}{color.Value.R:X2}{color.Value.G:X2}{color.Value.B:X2}";
+        return SetValueAsync(AccentColorKey, hex);
     }
 
     public async Task<bool> GetCheckForUpdatesEnabledAsync()

@@ -26,4 +26,10 @@ public interface IThemeService
     ///     Resets the application's primary color to the default system accent color.
     /// </summary>
     void ActivateDefaultPrimaryColor();
+
+    /// <summary>
+    ///     Applies the specified accent color to the application's primary color.
+    /// </summary>
+    /// <param name="color">The accent color to apply, or null to use the system default.</param>
+    void ApplyAccentColor(Windows.UI.Color? color);
 }

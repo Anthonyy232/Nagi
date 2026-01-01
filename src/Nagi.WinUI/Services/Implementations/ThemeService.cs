@@ -84,9 +84,30 @@ public class ThemeService : IThemeService
         }
     }
 
-    public void ActivateDefaultPrimaryColor()
+    public async void ActivateDefaultPrimaryColor()
     {
         _logger.LogDebug("Activating default primary color.");
-        _app.SetAppPrimaryColorBrushColor(App.SystemAccentColor);
+        var accentColor = await _settingsService.Value.GetAccentColorAsync();
+        if (accentColor != null)
+        {
+            _app.SetAppPrimaryColorBrushColor(accentColor.Value);
+        }
+        else
+        {
+            _app.SetAppPrimaryColorBrushColor(App.SystemAccentColor);
+        }
+    }
+
+    public void ApplyAccentColor(Windows.UI.Color? color)
+    {
+        if (color == null)
+        {
+            ActivateDefaultPrimaryColor();
+        }
+        else
+        {
+            _logger.LogDebug("Applying manual accent color: {Color}", color);
+            _app.SetAppPrimaryColorBrushColor(color.Value);
+        }
     }
 }

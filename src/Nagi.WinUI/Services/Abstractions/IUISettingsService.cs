@@ -291,4 +291,16 @@ public interface IUISettingsService : ISettingsService
     ///     Resets all settings to their default values.
     /// </summary>
     Task ResetToDefaultsAsync();
+
+    /// <summary>
+    ///     Gets the user-defined accent color, if any.
+    /// </summary>
+    /// <returns>The saved <see cref="Windows.UI.Color" />, or null if none has been saved.</returns>
+    Task<Windows.UI.Color?> GetAccentColorAsync();
+
+    /// <summary>
+    ///     Saves the user-defined accent color.
+    /// </summary>
+    /// <param name="color">The color to save, or null to clear the setting.</param>
+    Task SetAccentColorAsync(Windows.UI.Color? color);
 }
