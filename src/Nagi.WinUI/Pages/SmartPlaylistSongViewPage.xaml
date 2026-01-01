@@ -123,25 +123,6 @@
                              KeyDown="OnSearchTextBoxKeyDown"
                              Text="{x:Bind ViewModel.SearchTerm, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              Canvas.ZIndex="0">
-                        <TextBox.Resources>
-                            <ResourceDictionary>
-                                <ResourceDictionary.ThemeDictionaries>
-                                    <ResourceDictionary x:Key="Default">
-                                        <StaticResource x:Key="TextControlBorderBrushPointerOver"
-                                                        ResourceKey="AppPrimaryColorBrush" />
-                                        <StaticResource x:Key="TextControlBorderBrushFocused"
-                                                        ResourceKey="AppPrimaryColorBrush" />
-                                    </ResourceDictionary>
-                                    <ResourceDictionary x:Key="Light">
-                                        <StaticResource x:Key="TextControlBorderBrushPointerOver"
-                                                        ResourceKey="AppPrimaryColorBrush" />
-                                        <StaticResource x:Key="TextControlBorderBrushFocused"
-                                                        ResourceKey="AppPrimaryColorBrush" />
-                                    </ResourceDictionary>
-                                    <ResourceDictionary x:Key="HighContrast" />
-                                </ResourceDictionary.ThemeDictionaries>
-                            </ResourceDictionary>
-                        </TextBox.Resources>
                     </TextBox>
 
                     <Button x:Name="SearchToggleButton"

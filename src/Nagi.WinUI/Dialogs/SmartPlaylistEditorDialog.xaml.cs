@@ -50,6 +50,9 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
         _smartPlaylistService = App.Services!.GetRequiredService<ISmartPlaylistService>();
         _logger = App.Services!.GetRequiredService<ILogger<SmartPlaylistEditorDialog>>();
         
+        // Apply app theme overrides for TextBox styling inside ContentDialog
+        DialogThemeHelper.ApplyThemeOverrides(this);
+        
         Rules.CollectionChanged += OnRulesCollectionChanged;
         Unloaded += OnDialogUnloaded;
     }

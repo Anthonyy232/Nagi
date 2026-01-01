@@ -182,6 +182,7 @@ public sealed partial class PlaylistPage : Page
             dialog.IsPrimaryButtonEnabled = !string.IsNullOrWhiteSpace(inputTextBox.Text);
         dialog.IsPrimaryButtonEnabled = false;
 
+        Helpers.DialogThemeHelper.ApplyThemeOverrides(dialog);
         var result = await dialog.ShowAsync();
 
         if (result == ContentDialogResult.Primary)
@@ -243,6 +244,7 @@ public sealed partial class PlaylistPage : Page
                                             inputTextBox.Text.Trim() != playlistItem.Name;
         dialog.IsPrimaryButtonEnabled = false;
 
+        Helpers.DialogThemeHelper.ApplyThemeOverrides(dialog);
         var result = await dialog.ShowAsync();
 
         if (result == ContentDialogResult.Primary)
