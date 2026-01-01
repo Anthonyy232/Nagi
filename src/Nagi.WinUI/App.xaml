@@ -12,19 +12,15 @@
                 <ResourceDictionary Source="ms-appx:///Styles/NavigationViewColors.xaml" />
                 <ResourceDictionary Source="ms-appx:///Styles/MediaControlPlayerColors.xaml" />
                 <ResourceDictionary Source="ms-appx:///Styles/LibraryPageColors.xaml" />
-                <ResourceDictionary Source="ms-appx:///Styles/PlaylistSongViewPageColors.xaml" />
                 <ResourceDictionary Source="ms-appx:///Styles/PlaylistPageColors.xaml" />
                 <ResourceDictionary Source="ms-appx:///Styles/FolderPageColors.xaml" />
-                <ResourceDictionary Source="ms-appx:///Styles/FolderSongViewPageColors.xaml" />
                 <ResourceDictionary Source="ms-appx:///Styles/SettingsPageColors.xaml" />
                 <ResourceDictionary Source="ms-appx:///Styles/ArtistPageColors.xaml" />
                 <ResourceDictionary Source="ms-appx:///Styles/ArtistViewPageColors.xaml" />
                 <ResourceDictionary Source="ms-appx:///Styles/SongListViewPageColors.xaml" />
                 <ResourceDictionary Source="ms-appx:///Styles/AlbumPageColors.xaml" />
-                <ResourceDictionary Source="ms-appx:///Styles/AlbumViewPageColors.xaml" />
                 <ResourceDictionary Source="ms-appx:///Styles/OnboardingPageColors.xaml" />
                 <ResourceDictionary Source="ms-appx:///Styles/GenrePageColors.xaml" />
-                <ResourceDictionary Source="ms-appx:///Styles/GenreViewPageColors.xaml" />
                 <ResourceDictionary Source="ms-appx:///Styles/LyricsPageColors.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

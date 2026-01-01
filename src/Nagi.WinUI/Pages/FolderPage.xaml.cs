@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
+using Nagi.WinUI.Helpers;
 using Nagi.WinUI.ViewModels;
 using WinRT.Interop;
 
@@ -132,6 +133,7 @@ public sealed partial class FolderPage : Page
             XamlRoot = XamlRoot
         };
 
+        DialogThemeHelper.ApplyThemeOverrides(dialog);
         var result = await dialog.ShowAsync();
         if (result == ContentDialogResult.Primary)
         {

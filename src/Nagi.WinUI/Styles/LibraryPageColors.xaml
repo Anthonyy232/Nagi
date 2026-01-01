@@ -4,16 +4,6 @@
     xmlns:behaviors="using:Nagi.WinUI.Behaviors">
 
     <!--
-    Style for the main title TextBlock on the Library page.
-    -->
-    <Style x:Key="LibraryTitleTextStyle" TargetType="TextBlock">
-        <Setter Property="Foreground" Value="{StaticResource AppPrimaryColorBrush}" />
-        <Setter Property="FontSize" Value="28" />
-        <Setter Property="FontWeight" Value="SemiBold" />
-        <Setter Property="VerticalAlignment" Value="Center" />
-    </Style>
-
-    <!--
     Style for transparent, icon-only buttons used in the Library page header.
     -->
     <Style x:Key="LibraryIconButton" TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">

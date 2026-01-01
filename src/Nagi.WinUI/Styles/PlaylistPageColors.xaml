@@ -3,20 +3,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:behaviors="using:Nagi.WinUI.Behaviors">
 
-    <!-- Style for the main title on the Playlist page. -->
-    <Style x:Key="PlaylistPageTitleTextStyle" TargetType="TextBlock">
-        <Setter Property="Foreground" Value="{StaticResource AppPrimaryColorBrush}" />
-        <Setter Property="FontSize" Value="28" />
-        <Setter Property="FontWeight" Value="SemiBold" />
-        <Setter Property="VerticalAlignment" Value="Center" />
-    </Style>
-
     <!-- Style for the "Create Playlist" button with hover and press animations. -->
     <Style x:Key="PlaylistPageCreatePlaylistButtonStyle" TargetType="Button"
-           BasedOn="{StaticResource AccentButtonStyle}">
-        <Setter Property="Background" Value="{StaticResource AppPrimaryColorBrush}" />
-        <Setter Property="Padding" Value="16,10" />
-        <Setter Property="CornerRadius" Value="12" />
+           BasedOn="{StaticResource AnimatedAccentButtonStyle}">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
@@ -75,13 +64,7 @@
     </Style>
 
     <!-- Defines the visual appearance and interactive states for playlist items in a GridView. -->
-    <Style x:Key="PlaylistPageGridViewItemStyle" TargetType="GridViewItem">
-        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-        <Setter Property="VerticalContentAlignment" Value="Stretch" />
-        <Setter Property="Margin" Value="4" />
-        <Setter Property="Padding" Value="0" />
-        <Setter Property="UseSystemFocusVisuals" Value="True" />
-        <Setter Property="FocusVisualMargin" Value="-2" />
+    <Style x:Key="PlaylistPageGridViewItemStyle" TargetType="GridViewItem" BasedOn="{StaticResource AnimatedGridViewItemStyle}">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="GridViewItem">

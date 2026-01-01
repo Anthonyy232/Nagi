@@ -3,29 +3,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:behaviors="using:Nagi.WinUI.Behaviors">
 
-    <!-- Resource definitions for TextBox focused border brush -->
-    <ResourceDictionary.ThemeDictionaries>
-        <ResourceDictionary x:Key="Default">
-            <StaticResource x:Key="TextBoxBorderBrushFocused" ResourceKey="AppPrimaryColorBrush" />
-        </ResourceDictionary>
-        <ResourceDictionary x:Key="Light">
-            <StaticResource x:Key="TextBoxBorderBrushFocused" ResourceKey="AppPrimaryColorBrush" />
-        </ResourceDictionary>
-        <ResourceDictionary x:Key="HighContrast">
-            <SolidColorBrush x:Key="TextBoxBorderBrushFocused" Color="{ThemeResource SystemColorHighlightColor}" />
-        </ResourceDictionary>
-    </ResourceDictionary.ThemeDictionaries>
-
-    <!--
-    Defines the style for the main title text on pages that display a list of songs.
-    -->
-    <Style x:Key="SongListViewPageTitleTextStyle" TargetType="TextBlock">
-        <Setter Property="Foreground" Value="{StaticResource AppPrimaryColorBrush}" />
-        <Setter Property="FontSize" Value="28" />
-        <Setter Property="FontWeight" Value="SemiBold" />
-        <Setter Property="VerticalAlignment" Value="Center" />
-    </Style>
-
     <!--
     Defines a style for circular, transparent, icon-only buttons.
     -->

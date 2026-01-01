@@ -100,7 +100,7 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                <TextBlock Style="{StaticResource AlbumPageTitleTextStyle}" Text="Albums" />
+                <TextBlock Style="{StaticResource PageTitleTextStyle}" Text="Albums" />
                 <TextBlock
                     Margin="0,0,0,5"
                     VerticalAlignment="Bottom"

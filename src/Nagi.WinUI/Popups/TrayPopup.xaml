@@ -27,7 +27,6 @@
             <converters:TimeSpanToTimeStringConverter x:Key="TimeSpanToTimeStringConverter" />
             <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <converters:BooleanToVisibilityConverter x:Key="InvertedBooleanToVisibilityConverter" Invert="True" />
-            <Style x:Key="BackButtonStyle" TargetType="Button" BasedOn="{StaticResource MediaControlButtonStyle}" />
         </Border.Resources>
 
         <Grid>
@@ -124,7 +123,7 @@
                     <Grid Grid.Row="0">
                         <Button HorizontalAlignment="Left"
                                 Command="{x:Bind ViewModel.ShowPlayerViewCommand}"
-                                Style="{StaticResource BackButtonStyle}"
+                                Style="{StaticResource MediaControlButtonStyle}"
                                 ToolTipService.ToolTip="Back to Player">
                             <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
                         </Button>

@@ -98,7 +98,7 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                <TextBlock Style="{StaticResource ArtistPageTitleTextStyle}" Text="Artists" />
+                <TextBlock Style="{StaticResource PageTitleTextStyle}" Text="Artists" />
                 <TextBlock
                     Margin="0,0,0,5"
                     VerticalAlignment="Bottom"

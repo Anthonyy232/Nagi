@@ -101,7 +101,7 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                <TextBlock Style="{StaticResource SongListViewPageTitleTextStyle}" Text="Library" />
+                <TextBlock Style="{StaticResource PageTitleTextStyle}" Text="Library" />
                 <TextBlock
                     Margin="0,0,0,5"
                     VerticalAlignment="Bottom"
