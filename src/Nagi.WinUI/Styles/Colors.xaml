@@ -37,6 +37,17 @@
             <StaticResource x:Key="ListViewItemSelectionIndicatorPointerOverBrush" ResourceKey="AppPrimaryColorBrush" />
             <StaticResource x:Key="ListViewItemSelectionIndicatorPressedBrush" ResourceKey="AppPrimaryColorBrush" />
             <StaticResource x:Key="ListViewItemSelectionIndicatorDisabledBrush" ResourceKey="AppPrimaryColorBrush" />
+
+            <!-- TextBox focused underline override -->
+            <LinearGradientBrush x:Key="TextControlElevationBorderFocusedBrush" MappingMode="Absolute" StartPoint="0,0" EndPoint="0,2">
+                <LinearGradientBrush.RelativeTransform>
+                    <ScaleTransform ScaleY="-1" CenterY="0.5" />
+                </LinearGradientBrush.RelativeTransform>
+                <GradientStop Offset="0.0" Color="{Binding Color, Source={StaticResource AppPrimaryColorBrush}}" />
+                <GradientStop Offset="1.0" Color="{Binding Color, Source={StaticResource AppPrimaryColorBrush}}" />
+                <GradientStop Offset="1.0" Color="{ThemeResource ControlStrokeColorDefault}" />
+            </LinearGradientBrush>
+            <StaticResource x:Key="TextControlBorderBrushFocused" ResourceKey="TextControlElevationBorderFocusedBrush" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="Light">
             <!-- Same overrides for light theme -->
@@ -44,6 +55,17 @@
             <StaticResource x:Key="ListViewItemSelectionIndicatorPointerOverBrush" ResourceKey="AppPrimaryColorBrush" />
             <StaticResource x:Key="ListViewItemSelectionIndicatorPressedBrush" ResourceKey="AppPrimaryColorBrush" />
             <StaticResource x:Key="ListViewItemSelectionIndicatorDisabledBrush" ResourceKey="AppPrimaryColorBrush" />
+
+            <!-- TextBox focused underline override -->
+            <LinearGradientBrush x:Key="TextControlElevationBorderFocusedBrush" MappingMode="Absolute" StartPoint="0,0" EndPoint="0,2">
+                <LinearGradientBrush.RelativeTransform>
+                    <ScaleTransform ScaleY="-1" CenterY="0.5" />
+                </LinearGradientBrush.RelativeTransform>
+                <GradientStop Offset="0.0" Color="{Binding Color, Source={StaticResource AppPrimaryColorBrush}}" />
+                <GradientStop Offset="1.0" Color="{Binding Color, Source={StaticResource AppPrimaryColorBrush}}" />
+                <GradientStop Offset="1.0" Color="{ThemeResource ControlStrokeColorDefault}" />
+            </LinearGradientBrush>
+            <StaticResource x:Key="TextControlBorderBrushFocused" ResourceKey="TextControlElevationBorderFocusedBrush" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="HighContrast">
             <!-- High contrast uses system colors, no overrides needed -->
