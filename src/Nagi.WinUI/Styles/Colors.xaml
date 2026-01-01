@@ -6,38 +6,6 @@
     <!-- App Primary Color Brush - used throughout the app for accent color -->
     <SolidColorBrush x:Key="AppPrimaryColorBrush" Color="{ThemeResource SystemAccentColor}" />
 
-    <!--
-      Global theme overrides to ensure ListView selection indicators use the app's accent color.
-      This includes all selection indicator states: normal, pointer over, pressed, and disabled.
-    -->
-    <ResourceDictionary.ThemeDictionaries>
-        <ResourceDictionary x:Key="Default">
-            <!-- ListView/ListViewItem selection indicator (the pill/strip on the left) - all states -->
-            <SolidColorBrush x:Key="ListViewItemSelectionIndicatorBrush" Color="{ThemeResource SystemAccentColor}" />
-            <SolidColorBrush x:Key="ListViewItemSelectionIndicatorPointerOverBrush" Color="{ThemeResource SystemAccentColor}" />
-            <SolidColorBrush x:Key="ListViewItemSelectionIndicatorPressedBrush" Color="{ThemeResource SystemAccentColor}" />
-            <SolidColorBrush x:Key="ListViewItemSelectionIndicatorDisabledBrush" Color="{ThemeResource SystemAccentColor}" />
-            
-            <!-- ListViewItemPresenter selection/check brushes -->
-            <SolidColorBrush x:Key="ListViewItemCheckBrush" Color="{ThemeResource SystemAccentColor}" />
-            <SolidColorBrush x:Key="ListViewItemCheckBoxBrush" Color="{ThemeResource SystemAccentColor}" />
-        </ResourceDictionary>
-        <ResourceDictionary x:Key="Light">
-            <!-- ListView selection indicator - all states -->
-            <SolidColorBrush x:Key="ListViewItemSelectionIndicatorBrush" Color="{ThemeResource SystemAccentColor}" />
-            <SolidColorBrush x:Key="ListViewItemSelectionIndicatorPointerOverBrush" Color="{ThemeResource SystemAccentColor}" />
-            <SolidColorBrush x:Key="ListViewItemSelectionIndicatorPressedBrush" Color="{ThemeResource SystemAccentColor}" />
-            <SolidColorBrush x:Key="ListViewItemSelectionIndicatorDisabledBrush" Color="{ThemeResource SystemAccentColor}" />
-            
-            <!-- ListViewItemPresenter selection/check brushes -->
-            <SolidColorBrush x:Key="ListViewItemCheckBrush" Color="{ThemeResource SystemAccentColor}" />
-            <SolidColorBrush x:Key="ListViewItemCheckBoxBrush" Color="{ThemeResource SystemAccentColor}" />
-        </ResourceDictionary>
-        <ResourceDictionary x:Key="HighContrast">
-            <!-- High contrast uses system colors, no overrides needed -->
-        </ResourceDictionary>
-    </ResourceDictionary.ThemeDictionaries>
-
     <!-- Windows 11 style acrylic brush. -->
     <media:AcrylicBrush
         x:Key="Win11AcrylicBrush"
@@ -56,5 +24,30 @@
     <SolidColorBrush
         x:Key="NonTransparentBrush"
         Color="{ThemeResource SolidBackgroundFillColorBase}" />
+
+    <!--
+      Global theme overrides to ensure ListView selection indicators use the app's accent color.
+      Both Default (dark) and Light themes need separate entries for the overrides to apply in both modes.
+      ThemeDictionaries MUST be placed at the end of the ResourceDictionary.
+    -->
+    <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Default">
+            <!-- ListView/ListViewItem selection indicator (the pill/strip on the left) - all states -->
+            <StaticResource x:Key="ListViewItemSelectionIndicatorBrush" ResourceKey="AppPrimaryColorBrush" />
+            <StaticResource x:Key="ListViewItemSelectionIndicatorPointerOverBrush" ResourceKey="AppPrimaryColorBrush" />
+            <StaticResource x:Key="ListViewItemSelectionIndicatorPressedBrush" ResourceKey="AppPrimaryColorBrush" />
+            <StaticResource x:Key="ListViewItemSelectionIndicatorDisabledBrush" ResourceKey="AppPrimaryColorBrush" />
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Light">
+            <!-- Same overrides for light theme -->
+            <StaticResource x:Key="ListViewItemSelectionIndicatorBrush" ResourceKey="AppPrimaryColorBrush" />
+            <StaticResource x:Key="ListViewItemSelectionIndicatorPointerOverBrush" ResourceKey="AppPrimaryColorBrush" />
+            <StaticResource x:Key="ListViewItemSelectionIndicatorPressedBrush" ResourceKey="AppPrimaryColorBrush" />
+            <StaticResource x:Key="ListViewItemSelectionIndicatorDisabledBrush" ResourceKey="AppPrimaryColorBrush" />
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="HighContrast">
+            <!-- High contrast uses system colors, no overrides needed -->
+        </ResourceDictionary>
+    </ResourceDictionary.ThemeDictionaries>
 
 </ResourceDictionary>
