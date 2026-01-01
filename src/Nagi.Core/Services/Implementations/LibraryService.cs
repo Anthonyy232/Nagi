@@ -548,6 +548,28 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                         var statusMessage = updates.Any()
                             ? $"Scan complete. Updated {string.Join(" and ", updates)}."
                             : "Scan complete. Library is up to date.";
+                        
+                        // Ensure subfolder hierarchy exists for existing songs.
+                        // This handles the case where songs existed before subfolder records were implemented.
+                        await using (var subfolderContext = await _contextFactory.CreateDbContextAsync())
+                        {
+                            var allDirectoryPaths = await subfolderContext.Songs
+                                .AsNoTracking()
+                                .Where(s => s.FolderId == folderId)
+                                .Select(s => s.DirectoryPath)
+                                .Distinct()
+                                .ToListAsync(cancellationToken);
+                            
+                            if (allDirectoryPaths.Count > 0)
+                            {
+                                var discoveredDirectories = allDirectoryPaths
+                                    .Where(d => !string.IsNullOrEmpty(d))
+                                    .ToHashSet(StringComparer.OrdinalIgnoreCase)!;
+                                
+                                await EnsureSubFoldersExistAsync(folderId, folder.Path, discoveredDirectories!, cancellationToken);
+                            }
+                        }
+                        
                         progress?.Report(new ScanProgress
                             { StatusText = statusMessage, Percentage = 100 });
                         return hasChanges;
@@ -566,6 +588,25 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                     await UpdateMissingCoverArtAsync(folderId, folder.Path, cancellationToken);
 
                     progress?.Report(new ScanProgress { StatusText = "Finalizing...", IsIndeterminate = true });
+                    
+                    // Ensure subfolder hierarchy exists for ALL songs in this folder.
+                    // This handles both newly added songs and existing songs from before this fix was added.
+                    await using (var subfolderContext = await _contextFactory.CreateDbContextAsync())
+                    {
+                        var allDirectoryPaths = await subfolderContext.Songs
+                            .AsNoTracking()
+                            .Where(s => s.FolderId == folderId)
+                            .Select(s => s.DirectoryPath)
+                            .Distinct()
+                            .ToListAsync(cancellationToken);
+                        
+                        var discoveredDirectories = allDirectoryPaths
+                            .Where(d => !string.IsNullOrEmpty(d))
+                            .ToHashSet(StringComparer.OrdinalIgnoreCase)!;
+                        
+                        await EnsureSubFoldersExistAsync(folderId, folder.Path, discoveredDirectories!, cancellationToken);
+                    }
+                    
                     await using (var finalContext = await _contextFactory.CreateDbContextAsync())
                     {
                         await CleanUpOrphanedEntitiesAsync(finalContext, cancellationToken);
@@ -1695,7 +1736,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         var query = context.Songs.AsNoTracking()
             .Where(s => s.FolderId == folderId &&
                         (s.DirectoryPath == normalizedPath ||
-                         s.DirectoryPath.StartsWith(normalizedPath + "\\\\") ||
+                         s.DirectoryPath.StartsWith(normalizedPath + "\\") ||
                          s.DirectoryPath.StartsWith(normalizedPath + "/")));
 
         return await ApplySongSortOrder(query, sortOrder).Select(s => s.Id).ToListAsync();
