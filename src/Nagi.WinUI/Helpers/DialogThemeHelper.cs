@@ -18,6 +18,7 @@ public static class DialogThemeHelper
     
     /// <summary>
     /// Applies the app's theme overrides to a ContentDialog to ensure consistent styling.
+    /// This includes TextBox focused underline and accent button colors.
     /// This should be called before showing the dialog.
     /// </summary>
     public static void ApplyThemeOverrides(ContentDialog dialog)
@@ -31,6 +32,17 @@ public static class DialogThemeHelper
             return;
         }
 
+        ApplyTextBoxOverrides(dialog, accentBrush);
+        ApplyAccentButtonOverrides(dialog, accentBrush);
+        ApplySelectionControlOverrides(dialog, accentBrush);
+        ApplyProgressIndicatorOverrides(dialog, accentBrush);
+    }
+    
+    /// <summary>
+    /// Applies TextBox focused underline overrides using the gradient trick.
+    /// </summary>
+    private static void ApplyTextBoxOverrides(ContentDialog dialog, SolidColorBrush accentBrush)
+    {
         // Create the gradient brush for the TextBox underline (dotMorten's trick)
         // The gradient creates a 2px underline at the bottom while keeping the rest transparent
         var gradientBrush = new LinearGradientBrush
@@ -53,6 +65,73 @@ public static class DialogThemeHelper
         // Apply to dialog resources - these keys override the TextBox's focused border
         dialog.Resources["TextControlElevationBorderFocusedBrush"] = gradientBrush;
         dialog.Resources["TextControlBorderBrushFocused"] = gradientBrush;
+        dialog.Resources["TextBoxBorderBrushFocused"] = accentBrush;
+        
+        // Apply text selection highlight color
+        dialog.Resources["TextSelectionHighlightColor"] = accentBrush;
+    }
+    
+    /// <summary>
+    /// Applies accent button background color overrides to use the app's primary color.
+    /// </summary>
+    private static void ApplyAccentButtonOverrides(ContentDialog dialog, SolidColorBrush accentBrush)
+    {
+        // Create brushes for different button states
+        // PointerOver and Pressed states use slightly modified opacity for visual feedback
+        var normalBrush = new SolidColorBrush(accentBrush.Color);
+        var pointerOverBrush = new SolidColorBrush(accentBrush.Color) { Opacity = 0.9 };
+        var pressedBrush = new SolidColorBrush(accentBrush.Color) { Opacity = 0.8 };
+        
+        // Apply accent button background overrides
+        // These keys are used by the built-in AccentButtonStyle
+        dialog.Resources["AccentButtonBackground"] = normalBrush;
+        dialog.Resources["AccentButtonBackgroundPointerOver"] = pointerOverBrush;
+        dialog.Resources["AccentButtonBackgroundPressed"] = pressedBrush;
+        
+        // Also apply to the ContentDialog's own primary button (Save, Create, etc.)
+        // These are the button-specific keys for ContentDialog
+        dialog.Resources["ContentDialogButtonBackground"] = normalBrush;
+        dialog.Resources["ContentDialogButtonBackgroundPointerOver"] = pointerOverBrush;
+        dialog.Resources["ContentDialogButtonBackgroundPressed"] = pressedBrush;
+        
+        // HyperlinkButton foreground
+        dialog.Resources["HyperlinkButtonForeground"] = accentBrush;
+        dialog.Resources["HyperlinkButtonForegroundPointerOver"] = accentBrush;
+        dialog.Resources["HyperlinkButtonForegroundPressed"] = accentBrush;
+    }
+    
+    /// <summary>
+    /// Applies accent colors to selection controls like ToggleSwitch, CheckBox, and RadioButton.
+    /// </summary>
+    private static void ApplySelectionControlOverrides(ContentDialog dialog, SolidColorBrush accentBrush)
+    {
+        // ToggleSwitch
+        dialog.Resources["ToggleSwitchFillOn"] = accentBrush;
+        dialog.Resources["ToggleSwitchFillOnPointerOver"] = accentBrush;
+        dialog.Resources["ToggleSwitchFillOnPressed"] = accentBrush;
+        
+        // CheckBox
+        dialog.Resources["CheckBoxFillOn"] = accentBrush;
+        dialog.Resources["CheckBoxFillOnPointerOver"] = accentBrush;
+        dialog.Resources["CheckBoxFillOnPressed"] = accentBrush;
+        
+        // RadioButton
+        dialog.Resources["RadioButtonOuterEllipseCheckedFill"] = accentBrush;
+        dialog.Resources["RadioButtonOuterEllipseCheckedFillPointerOver"] = accentBrush;
+        dialog.Resources["RadioButtonOuterEllipseCheckedFillPressed"] = accentBrush;
+        
+        // ComboBox selection indicator
+        dialog.Resources["ComboBoxItemPillFillBrush"] = accentBrush;
+    }
+    
+    /// <summary>
+    /// Applies accent colors to progress indicators.
+    /// </summary>
+    private static void ApplyProgressIndicatorOverrides(ContentDialog dialog, SolidColorBrush accentBrush)
+    {
+        dialog.Resources["ProgressBarForeground"] = accentBrush;
+        dialog.Resources["ProgressBarIndeterminateForeground"] = accentBrush;
+        dialog.Resources["ProgressRingForeground"] = accentBrush;
     }
     
     /// <summary>

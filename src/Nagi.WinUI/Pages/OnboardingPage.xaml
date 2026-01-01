@@ -283,7 +283,6 @@
                             <ProgressRing
                                 Width="48"
                                 Height="48"
-                                Foreground="{StaticResource AppPrimaryColorBrush}"
                                 IsActive="True"
                                 Visibility="{x:Bind ViewModel.IsAddingFolder, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
@@ -292,7 +291,6 @@
                                 Height="6"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                Foreground="{StaticResource AppPrimaryColorBrush}"
                                 IsIndeterminate="{x:Bind ViewModel.IsProgressIndeterminate, Mode=OneWay}"
                                 Maximum="100"
                                 Value="{x:Bind ViewModel.ProgressValue, Mode=OneWay}"

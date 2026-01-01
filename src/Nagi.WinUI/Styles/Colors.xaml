@@ -6,6 +6,14 @@
     <!-- App Primary Color Brush - used throughout the app for accent color -->
     <SolidColorBrush x:Key="AppPrimaryColorBrush" Color="{ThemeResource SystemAccentColor}" />
 
+    <!-- Consolidated page title style used by all pages -->
+    <Style x:Key="PageTitleTextStyle" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{StaticResource AppPrimaryColorBrush}" />
+        <Setter Property="FontSize" Value="28" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
     <!-- Windows 11 style acrylic brush. -->
     <media:AcrylicBrush
         x:Key="Win11AcrylicBrush"
@@ -24,6 +32,29 @@
     <SolidColorBrush
         x:Key="NonTransparentBrush"
         Color="{ThemeResource SolidBackgroundFillColorBase}" />
+
+    <!--
+    Consolidated animated accent button style.
+    Used by: OnboardingPage, SettingsPage, FolderPage, PlaylistPage
+    Pages can extend this with BasedOn for any custom variations.
+    -->
+    <Style x:Key="AnimatedAccentButtonStyle" TargetType="Button" BasedOn="{StaticResource AccentButtonStyle}">
+        <Setter Property="Padding" Value="16,10" />
+        <Setter Property="CornerRadius" Value="12" />
+    </Style>
+
+    <!--
+    Consolidated animated GridViewItem style with tilt and scale animations.
+    Used by: AlbumPage, ArtistPage, FolderPage, GenrePage, PlaylistPage
+    -->
+    <Style x:Key="AnimatedGridViewItemStyle" TargetType="GridViewItem">
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="Margin" Value="4" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="UseSystemFocusVisuals" Value="True" />
+        <Setter Property="FocusVisualMargin" Value="-2" />
+    </Style>
 
     <!--
       Global theme overrides to ensure ListView selection indicators use the app's accent color.
@@ -48,6 +79,46 @@
                 <GradientStop Offset="1.0" Color="{ThemeResource ControlStrokeColorDefault}" />
             </LinearGradientBrush>
             <StaticResource x:Key="TextControlBorderBrushFocused" ResourceKey="TextControlElevationBorderFocusedBrush" />
+            <StaticResource x:Key="TextBoxBorderBrushFocused" ResourceKey="AppPrimaryColorBrush" />
+
+            <!-- HyperlinkButton foreground overrides -->
+            <StaticResource x:Key="HyperlinkButtonForeground" ResourceKey="AppPrimaryColorBrush" />
+            <StaticResource x:Key="HyperlinkButtonForegroundPointerOver" ResourceKey="AppPrimaryColorBrush" />
+            <StaticResource x:Key="HyperlinkButtonForegroundPressed" ResourceKey="AppPrimaryColorBrush" />
+
+            <!-- ComboBox dropdown selection indicator (the pill for the selected item) -->
+            <StaticResource x:Key="ComboBoxItemPillFillBrush" ResourceKey="AppPrimaryColorBrush" />
+
+            <!-- ToggleSwitch accent color overrides -->
+            <StaticResource x:Key="ToggleSwitchFillOn" ResourceKey="AppPrimaryColorBrush" />
+            <StaticResource x:Key="ToggleSwitchFillOnPointerOver" ResourceKey="AppPrimaryColorBrush" />
+            <StaticResource x:Key="ToggleSwitchFillOnPressed" ResourceKey="AppPrimaryColorBrush" />
+
+            <!-- ProgressBar and ProgressRing overrides -->
+            <StaticResource x:Key="ProgressBarForeground" ResourceKey="AppPrimaryColorBrush" />
+            <StaticResource x:Key="ProgressBarIndeterminateForeground" ResourceKey="AppPrimaryColorBrush" />
+            <StaticResource x:Key="ProgressRingForeground" ResourceKey="AppPrimaryColorBrush" />
+
+            <!-- CheckBox and RadioButton selection colors -->
+            <StaticResource x:Key="CheckBoxFillOn" ResourceKey="AppPrimaryColorBrush" />
+            <StaticResource x:Key="CheckBoxFillOnPointerOver" ResourceKey="AppPrimaryColorBrush" />
+            <StaticResource x:Key="CheckBoxFillOnPressed" ResourceKey="AppPrimaryColorBrush" />
+            <StaticResource x:Key="RadioButtonOuterEllipseCheckedFill" ResourceKey="AppPrimaryColorBrush" />
+            <StaticResource x:Key="RadioButtonOuterEllipseCheckedFillPointerOver" ResourceKey="AppPrimaryColorBrush" />
+            <StaticResource x:Key="RadioButtonOuterEllipseCheckedFillPressed" ResourceKey="AppPrimaryColorBrush" />
+
+            <!-- Text selection highlight color -->
+            <StaticResource x:Key="TextSelectionHighlightColor" ResourceKey="AppPrimaryColorBrush" />
+
+            <!-- Accent Button overrides -->
+            <StaticResource x:Key="AccentButtonBackground" ResourceKey="AppPrimaryColorBrush" />
+            <StaticResource x:Key="AccentButtonBackgroundPointerOver" ResourceKey="AppPrimaryColorBrush" />
+            <StaticResource x:Key="AccentButtonBackgroundPressed" ResourceKey="AppPrimaryColorBrush" />
+
+            <!-- Inline Hyperlink overrides -->
+            <StaticResource x:Key="TextControlHyperlinkForeground" ResourceKey="AppPrimaryColorBrush" />
+            <StaticResource x:Key="TextControlHyperlinkForegroundPointerOver" ResourceKey="AppPrimaryColorBrush" />
+            <StaticResource x:Key="TextControlHyperlinkForegroundPressed" ResourceKey="AppPrimaryColorBrush" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="Light">
             <!-- Same overrides for light theme -->
@@ -66,6 +137,46 @@
                 <GradientStop Offset="1.0" Color="{ThemeResource ControlStrokeColorDefault}" />
             </LinearGradientBrush>
             <StaticResource x:Key="TextControlBorderBrushFocused" ResourceKey="TextControlElevationBorderFocusedBrush" />
+            <StaticResource x:Key="TextBoxBorderBrushFocused" ResourceKey="AppPrimaryColorBrush" />
+
+            <!-- HyperlinkButton foreground overrides -->
+            <StaticResource x:Key="HyperlinkButtonForeground" ResourceKey="AppPrimaryColorBrush" />
+            <StaticResource x:Key="HyperlinkButtonForegroundPointerOver" ResourceKey="AppPrimaryColorBrush" />
+            <StaticResource x:Key="HyperlinkButtonForegroundPressed" ResourceKey="AppPrimaryColorBrush" />
+
+            <!-- ComboBox dropdown selection indicator (the pill for the selected item) -->
+            <StaticResource x:Key="ComboBoxItemPillFillBrush" ResourceKey="AppPrimaryColorBrush" />
+
+            <!-- ToggleSwitch accent color overrides -->
+            <StaticResource x:Key="ToggleSwitchFillOn" ResourceKey="AppPrimaryColorBrush" />
+            <StaticResource x:Key="ToggleSwitchFillOnPointerOver" ResourceKey="AppPrimaryColorBrush" />
+            <StaticResource x:Key="ToggleSwitchFillOnPressed" ResourceKey="AppPrimaryColorBrush" />
+
+            <!-- ProgressBar and ProgressRing overrides -->
+            <StaticResource x:Key="ProgressBarForeground" ResourceKey="AppPrimaryColorBrush" />
+            <StaticResource x:Key="ProgressBarIndeterminateForeground" ResourceKey="AppPrimaryColorBrush" />
+            <StaticResource x:Key="ProgressRingForeground" ResourceKey="AppPrimaryColorBrush" />
+
+            <!-- CheckBox and RadioButton selection colors -->
+            <StaticResource x:Key="CheckBoxFillOn" ResourceKey="AppPrimaryColorBrush" />
+            <StaticResource x:Key="CheckBoxFillOnPointerOver" ResourceKey="AppPrimaryColorBrush" />
+            <StaticResource x:Key="CheckBoxFillOnPressed" ResourceKey="AppPrimaryColorBrush" />
+            <StaticResource x:Key="RadioButtonOuterEllipseCheckedFill" ResourceKey="AppPrimaryColorBrush" />
+            <StaticResource x:Key="RadioButtonOuterEllipseCheckedFillPointerOver" ResourceKey="AppPrimaryColorBrush" />
+            <StaticResource x:Key="RadioButtonOuterEllipseCheckedFillPressed" ResourceKey="AppPrimaryColorBrush" />
+
+            <!-- Text selection highlight color -->
+            <StaticResource x:Key="TextSelectionHighlightColor" ResourceKey="AppPrimaryColorBrush" />
+
+            <!-- Accent Button overrides -->
+            <StaticResource x:Key="AccentButtonBackground" ResourceKey="AppPrimaryColorBrush" />
+            <StaticResource x:Key="AccentButtonBackgroundPointerOver" ResourceKey="AppPrimaryColorBrush" />
+            <StaticResource x:Key="AccentButtonBackgroundPressed" ResourceKey="AppPrimaryColorBrush" />
+
+            <!-- Inline Hyperlink overrides -->
+            <StaticResource x:Key="TextControlHyperlinkForeground" ResourceKey="AppPrimaryColorBrush" />
+            <StaticResource x:Key="TextControlHyperlinkForegroundPointerOver" ResourceKey="AppPrimaryColorBrush" />
+            <StaticResource x:Key="TextControlHyperlinkForegroundPressed" ResourceKey="AppPrimaryColorBrush" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="HighContrast">
             <!-- High contrast uses system colors, no overrides needed -->

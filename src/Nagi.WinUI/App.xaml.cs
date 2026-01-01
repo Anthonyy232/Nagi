@@ -701,6 +701,7 @@ public partial class App : Application
                 XamlRoot = RootWindow.Content.XamlRoot
             };
 
+            DialogThemeHelper.ApplyThemeOverrides(dialog);
             var result = await dialog.ShowAsync();
             if (result == ContentDialogResult.Primary)
             {

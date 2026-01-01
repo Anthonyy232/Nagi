@@ -3,5 +3,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <StaticResource x:Key="NavigationViewSelectionIndicatorForeground" ResourceKey="AppPrimaryColorBrush" />
+    <StaticResource x:Key="NavigationViewItemIconForegroundSelected" ResourceKey="AppPrimaryColorBrush" />
+    <StaticResource x:Key="NavigationViewItemIconForegroundSelectedPointerOver" ResourceKey="AppPrimaryColorBrush" />
+    <StaticResource x:Key="NavigationViewItemIconForegroundSelectedPressed" ResourceKey="AppPrimaryColorBrush" />
     
 </ResourceDictionary>

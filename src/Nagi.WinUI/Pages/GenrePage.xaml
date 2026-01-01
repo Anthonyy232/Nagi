@@ -96,7 +96,7 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Column="0" Style="{StaticResource GenrePageTitleTextStyle}" Text="Genres" />
+            <TextBlock Grid.Column="0" Style="{StaticResource PageTitleTextStyle}" Text="Genres" />
 
             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                 <!-- Search functionality -->

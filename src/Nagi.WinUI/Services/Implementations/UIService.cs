@@ -9,6 +9,7 @@ using Windows.System;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Nagi.WinUI.Controls;
+using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Services.Abstractions;
 using WinRT.Interop;
 
@@ -34,6 +35,7 @@ public class UIService : IUIService
             DefaultButton = ContentDialogButton.Primary
         };
 
+        DialogThemeHelper.ApplyThemeOverrides(dialog);
         var result = await dialog.ShowAsync();
         return result == ContentDialogResult.Primary;
     }
@@ -79,6 +81,7 @@ public class UIService : IUIService
             DefaultButton = ContentDialogButton.Primary
         };
 
+        DialogThemeHelper.ApplyThemeOverrides(dialog);
         var result = await dialog.ShowAsync();
 
         return result switch
@@ -102,6 +105,7 @@ public class UIService : IUIService
             XamlRoot = xamlRoot
         };
 
+        DialogThemeHelper.ApplyThemeOverrides(dialog);
         await dialog.ShowAsync();
     }
 
@@ -125,6 +129,7 @@ public class UIService : IUIService
             XamlRoot = xamlRoot
         };
 
+        DialogThemeHelper.ApplyThemeOverrides(dialog);
         await dialog.ShowAsync();
     }
 
@@ -217,6 +222,7 @@ public class UIService : IUIService
             }
         };
 
+        DialogThemeHelper.ApplyThemeOverrides(dialog);
         var result = await dialog.ShowAsync();
         return result == ContentDialogResult.Primary;
     }

@@ -76,7 +76,6 @@
         <Setter Property="Height" Value="3" />
         <Setter Property="Margin" Value="0,0,0,0" />
         <Setter Property="Maximum" Value="100" />
-        <Setter Property="Foreground" Value="{StaticResource AppPrimaryColorBrush}" />
     </Style>
 
 </ResourceDictionary>

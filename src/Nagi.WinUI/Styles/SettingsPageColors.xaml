@@ -24,13 +24,6 @@
         <Setter Property="Foreground" Value="{ThemeResource AppPrimaryColorBrush}" />
     </Style>
 
-    <!-- Define the accent color brushes for toggle switch at dictionary level -->
-    <SolidColorBrush x:Key="ToggleSwitchFillOn" Color="{Binding Color, Source={ThemeResource AppPrimaryColorBrush}}" />
-    <SolidColorBrush x:Key="ToggleSwitchFillOnPointerOver"
-                     Color="{Binding Color, Source={ThemeResource AppPrimaryColorBrush}}" Opacity="0.9" />
-    <SolidColorBrush x:Key="ToggleSwitchFillOnPressed"
-                     Color="{Binding Color, Source={ThemeResource AppPrimaryColorBrush}}" Opacity="0.8" />
-
     <!-- Implicit style for all ToggleSwitch controls on the page. -->
     <Style TargetType="ToggleSwitch" BasedOn="{StaticResource DefaultToggleSwitchStyle}">
         <Setter Property="OnContent" Value="" />
@@ -39,7 +32,7 @@
 
     <!-- Defines the appearance of the "Reset" buttons. -->
     <Style x:Key="SettingsPageResetButtonStyle" TargetType="Button" BasedOn="{StaticResource AccentButtonStyle}">
-        <Setter Property="Background" Value="{ThemeResource AppPrimaryColorBrush}" />
+
         <Setter Property="Padding" Value="16,10" />
         <Setter Property="CornerRadius" Value="{StaticResource ControlCornerRadius}" />
         <Setter Property="Template">

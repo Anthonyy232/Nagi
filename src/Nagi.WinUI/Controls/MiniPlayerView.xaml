@@ -19,8 +19,6 @@
         <converters:StringToImageSourceConverter x:Key="StringToImageSourceConverter" />
 
 
-        <Style x:Key="BackButtonStyle" BasedOn="{StaticResource MediaControlButtonStyle}" TargetType="Button" />
-        <Style x:Key="FullScreenButtonStyle" BasedOn="{StaticResource MediaControlButtonStyle}" TargetType="Button" />
     </UserControl.Resources>
 
     <!--
@@ -112,7 +110,7 @@
                     <Button
                         x:Name="RestoreButton"
                         Grid.Column="2"
-                        Style="{StaticResource FullScreenButtonStyle}"
+                        Style="{StaticResource MediaControlButtonStyle}"
                         ToolTipService.ToolTip="Show Nagi">
                         <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" FontSize="20" Glyph="" />
                     </Button>

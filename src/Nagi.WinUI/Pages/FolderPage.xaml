@@ -29,7 +29,7 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Column="0" Style="{StaticResource FolderPageTitleTextStyle}" Text="Folders" />
+            <TextBlock Grid.Column="0" Style="{StaticResource PageTitleTextStyle}" Text="Folders" />
 
             <Button
                 Grid.Column="1"

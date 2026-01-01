@@ -11,7 +11,7 @@
     Style for the main brand-colored button used for primary actions.
     -->
     <Style x:Key="BrandAccentButtonStyle" TargetType="Button" BasedOn="{StaticResource AccentButtonStyle}">
-        <Setter Property="Background" Value="{ThemeResource AppPrimaryColorBrush}" />
+
         <Setter Property="Padding" Value="16,10" />
         <Setter Property="CornerRadius" Value="{StaticResource ControlCornerRadius}" />
         <Setter Property="Template">

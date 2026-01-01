@@ -100,7 +100,7 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Column="0" Style="{StaticResource PlaylistPageTitleTextStyle}" Text="Playlists" />
+            <TextBlock Grid.Column="0" Style="{StaticResource PageTitleTextStyle}" Text="Playlists" />
 
             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center" Margin="0,0,8,0">
                 <!-- Search functionality -->
@@ -176,7 +176,7 @@
         <TextBlock
             Grid.Row="1"
             Margin="0,0,0,12"
-            Foreground="{ThemeResource SystemAccentColor}"
+            Foreground="{StaticResource AppPrimaryColorBrush}"
             Style="{ThemeResource CaptionTextBlockStyle}"
             Text="{x:Bind ViewModel.StatusMessage, Mode=OneWay}"
             Visibility="{x:Bind ViewModel.StatusMessage, Converter={StaticResource StringToVisibilityConverter}, Mode=OneWay}" />

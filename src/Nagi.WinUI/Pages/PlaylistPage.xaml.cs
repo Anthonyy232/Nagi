@@ -11,6 +11,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Core.Constants;
+using Nagi.WinUI.Helpers;
 using Nagi.WinUI.ViewModels;
 using WinRT.Interop;
 
@@ -275,6 +276,7 @@ public sealed partial class PlaylistPage : Page
             XamlRoot = XamlRoot
         };
 
+        DialogThemeHelper.ApplyThemeOverrides(dialog);
         var result = await dialog.ShowAsync();
         if (result == ContentDialogResult.Primary)
         {

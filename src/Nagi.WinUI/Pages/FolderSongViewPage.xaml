@@ -229,7 +229,7 @@
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                    <TextBlock Style="{StaticResource SongListViewPageTitleTextStyle}"
+                    <TextBlock Style="{StaticResource PageTitleTextStyle}"
                                Text="{x:Bind ViewModel.PageTitle, Mode=OneWay}" />
                     <TextBlock
                         Margin="0,0,0,5"
