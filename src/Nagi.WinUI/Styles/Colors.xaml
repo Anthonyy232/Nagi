@@ -3,12 +3,40 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:media="using:Microsoft.UI.Xaml.Media">
 
-    <!--
-      This converter creates a darker shade of a given color by blending it with black.
-      The BlendFactor of 0.3 means the resulting color is 70% the original and 30% black.
-    -->
-
+    <!-- App Primary Color Brush - used throughout the app for accent color -->
     <SolidColorBrush x:Key="AppPrimaryColorBrush" Color="{ThemeResource SystemAccentColor}" />
+
+    <!--
+      Global theme overrides to ensure ListView selection indicators use the app's accent color.
+      This includes all selection indicator states: normal, pointer over, pressed, and disabled.
+    -->
+    <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Default">
+            <!-- ListView/ListViewItem selection indicator (the pill/strip on the left) - all states -->
+            <SolidColorBrush x:Key="ListViewItemSelectionIndicatorBrush" Color="{ThemeResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="ListViewItemSelectionIndicatorPointerOverBrush" Color="{ThemeResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="ListViewItemSelectionIndicatorPressedBrush" Color="{ThemeResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="ListViewItemSelectionIndicatorDisabledBrush" Color="{ThemeResource SystemAccentColor}" />
+            
+            <!-- ListViewItemPresenter selection/check brushes -->
+            <SolidColorBrush x:Key="ListViewItemCheckBrush" Color="{ThemeResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="ListViewItemCheckBoxBrush" Color="{ThemeResource SystemAccentColor}" />
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Light">
+            <!-- ListView selection indicator - all states -->
+            <SolidColorBrush x:Key="ListViewItemSelectionIndicatorBrush" Color="{ThemeResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="ListViewItemSelectionIndicatorPointerOverBrush" Color="{ThemeResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="ListViewItemSelectionIndicatorPressedBrush" Color="{ThemeResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="ListViewItemSelectionIndicatorDisabledBrush" Color="{ThemeResource SystemAccentColor}" />
+            
+            <!-- ListViewItemPresenter selection/check brushes -->
+            <SolidColorBrush x:Key="ListViewItemCheckBrush" Color="{ThemeResource SystemAccentColor}" />
+            <SolidColorBrush x:Key="ListViewItemCheckBoxBrush" Color="{ThemeResource SystemAccentColor}" />
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="HighContrast">
+            <!-- High contrast uses system colors, no overrides needed -->
+        </ResourceDictionary>
+    </ResourceDictionary.ThemeDictionaries>
 
     <!-- Windows 11 style acrylic brush. -->
     <media:AcrylicBrush
@@ -23,7 +51,6 @@
         x:Key="Win10AcrylicBrush"
         Opacity="0.98"
         Color="{ThemeResource SolidBackgroundFillColorBase}" />
-
 
     <!-- No transparency brush. -->
     <SolidColorBrush
