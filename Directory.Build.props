@@ -16,7 +16,7 @@
         <AppxPackageVersion>1.5.0.0</AppxPackageVersion>
 
         <!-- NuGet Package Versions -->
-        <ColorThiefImageSharpVersion>1.0.0</ColorThiefImageSharpVersion>
+
         <CommunityToolkitMvvmVersion>8.4.0</CommunityToolkitMvvmVersion>
         <CommunityToolkitWinUIVersion>8.2.251219</CommunityToolkitWinUIVersion>
         <DependencyInjectionVersion>9.0.8</DependencyInjectionVersion>

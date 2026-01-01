@@ -19,7 +19,7 @@
 
         <!-- Core Utilities & Services -->
         <PackageReference Include="z440.atl.core" Version="7.9.0" />
-        <PackageReference Include="ColorThief.ImageSharp" Version="$(ColorThiefImageSharpVersion)" />
+
         <PackageReference Include="MaterialColorUtilities" Version="$(MaterialColorUtilitiesVersion)" />
         <PackageReference Include="DiscordRichPresence" Version="$(DiscordRichPresenceVersion)" />
 
