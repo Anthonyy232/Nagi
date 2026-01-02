@@ -159,6 +159,16 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 #endif
         
         AvailableEqualizerPresets = _playbackService.AvailablePresets.ToList();
+        
+        _isInitializing = true;
+        IsDynamicThemingEnabled = true;
+        IsPlayerAnimationEnabled = true;
+        IsRestorePlaybackStateEnabled = true;
+        IsHideToTrayEnabled = true;
+        IsShowCoverArtInTrayFlyoutEnabled = true;
+        IsCheckForUpdatesEnabled = true;
+        IsRememberPaneStateEnabled = true;
+        _isInitializing = false;
     }
 
 
