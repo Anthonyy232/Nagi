@@ -109,7 +109,7 @@ jobs:
       - name: Deploy to Azure Functions
         uses: Azure/functions-action@v1
         with:
-          app-name: 'NagiAppFunctions'
+          app-name: 'nagiflexapiserver'
           package: './functions-output'
 
   # ===================================================================
