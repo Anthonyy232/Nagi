@@ -13,14 +13,7 @@
     Background="Transparent"
     mc:Ignorable="d">
 
-    <Page.Resources>
-        <ResourceDictionary>
-            <converters:GenreToGradientConverter x:Key="GenreToGradientConverter" />
-            <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-            <converters:TimeSpanToTimeStringConverter x:Key="TimeSpanToTimeStringConverter" />
-            <converters:StringToImageSourceConverter x:Key="StringToImageSourceConverter" />
-        </ResourceDictionary>
-    </Page.Resources>
+
 
     <Grid>
         <VisualStateManager.VisualStateGroups>

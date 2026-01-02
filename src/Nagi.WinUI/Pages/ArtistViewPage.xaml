@@ -15,13 +15,7 @@
     Background="Transparent"
     mc:Ignorable="d">
 
-    <Page.Resources>
-        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-        <converters:TimeSpanToTimeStringConverter x:Key="TimeSpanToTimeStringConverter" />
-        <converters:NullOrEmptyStringToVisibilityConverter x:Key="NullToCollapsedConverter" />
-        <converters:NullOrEmptyStringToVisibilityConverter x:Key="NullToVisibleConverter" Invert="True" />
-        <converters:StringToImageSourceConverter x:Key="StringToImageSourceConverter" />
-    </Page.Resources>
+
 
     <Grid>
         <VisualStateManager.VisualStateGroups>
@@ -116,12 +110,12 @@
                             Stretch="UniformToFill"
                             DecodePixelWidth="160"
                             DecodePixelType="Logical"
-                            Visibility="{x:Bind ViewModel.ArtistImageUri, Mode=OneWay, Converter={StaticResource NullToCollapsedConverter}}" />
+                            Visibility="{x:Bind ViewModel.ArtistImageUri, Mode=OneWay, Converter={StaticResource NullOrEmptyStringToVisibilityConverter}}" />
 
                         <Grid
                             Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                             CornerRadius="75"
-                            Visibility="{x:Bind ViewModel.ArtistImageUri, Mode=OneWay, Converter={StaticResource NullToVisibleConverter}}">
+                            Visibility="{x:Bind ViewModel.ArtistImageUri, Mode=OneWay, Converter={StaticResource InverseNullOrEmptyStringToVisibilityConverter}}">
                             <FontIcon
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"

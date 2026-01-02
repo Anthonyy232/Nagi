@@ -11,7 +11,6 @@
 
     <Page.Resources>
         <ResourceDictionary>
-            <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <converters:ActiveLyricToStyleConverter
                 x:Key="ActiveLyricToStyleConverter"
                 ActiveStyle="{StaticResource ActiveLyricTextBlockStyle}"

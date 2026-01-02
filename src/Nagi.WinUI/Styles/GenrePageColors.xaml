@@ -4,7 +4,7 @@
     xmlns:converters="using:Nagi.WinUI.Converters"
     xmlns:behaviors="using:Nagi.WinUI.Behaviors">
 
-    <converters:GenreToGradientConverter x:Key="GenreToGradientConverter" />
+
 
     <!-- Defines the visual appearance and interactive states for genre items in a GridView. -->
     <Style x:Key="GenrePageGridViewItemStyle" TargetType="GridViewItem" BasedOn="{StaticResource AnimatedGridViewItemStyle}">

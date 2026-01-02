@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+This ResourceDictionary centralizes commonly-used value converters
+to avoid duplicate declarations across pages and controls.
+-->
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="using:Nagi.WinUI.Converters">
+
+    <!-- Boolean to Visibility converters -->
+    <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    <converters:BooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" Invert="True" />
+
+    <!-- String and collection converters -->
+    <converters:StringToImageSourceConverter x:Key="StringToImageSourceConverter" />
+    <converters:CollectionToVisibilityConverter x:Key="CollectionToVisibilityConverter" />
+    <converters:CollectionCountToVisibilityConverter x:Key="CollectionCountToVisibilityConverter" />
+    <converters:CollectionCountToVisibilityConverter x:Key="InverseCollectionCountToVisibilityConverter" Invert="True" />
+    <converters:BooleanToInverseBooleanConverter x:Key="BooleanToInverseBooleanConverter" />
+    <converters:ObjectToVisibilityConverter x:Key="ObjectToVisibilityConverter" />
+    <converters:NullOrEmptyStringToVisibilityConverter x:Key="NullOrEmptyStringToVisibilityConverter" />
+    <converters:NullOrEmptyStringToVisibilityConverter x:Key="InverseNullOrEmptyStringToVisibilityConverter" Invert="True" />
+    <converters:BooleanToOpacityConverter x:Key="BooleanToOpacityConverter" />
+    <converters:GenreToGradientConverter x:Key="GenreToGradientConverter" />
+    <converters:ObjectToBooleanConverter x:Key="ObjectToBooleanConverter" />
+    <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
+
+    <!-- Time converters -->
+    <converters:TimeSpanToTimeStringConverter x:Key="TimeSpanToTimeStringConverter" />
+
+</ResourceDictionary>

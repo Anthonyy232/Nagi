@@ -9,9 +9,6 @@
     mc:Ignorable="d"
     Background="Transparent">
 
-    <Page.Resources>
-        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-    </Page.Resources>
 
     <Grid x:Name="RootGrid" Opacity="0">
         <Grid.RowDefinitions>

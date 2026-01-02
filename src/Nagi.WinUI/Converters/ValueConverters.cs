@@ -395,32 +395,7 @@ public class BooleanToOpacityConverter : IValueConverter
     }
 }
 
-/// <summary>
-///     Converts a boolean IsSmart flag to the appropriate playlist icon glyph.
-///     Smart playlists show a gear icon, regular playlists show a music note.
-/// </summary>
-public class SmartPlaylistIconConverter : IValueConverter
-{
-    /// <summary>
-    ///     Glyph for regular playlists (music note).
-    /// </summary>
-    private const string RegularPlaylistGlyph = "\uE142";
-    
-    /// <summary>
-    ///     Glyph for smart playlists (gear/settings).
-    /// </summary>
-    private const string SmartPlaylistGlyph = "\uE713";
 
-    public object Convert(object value, Type targetType, object parameter, string language)
-    {
-        return value is true ? SmartPlaylistGlyph : RegularPlaylistGlyph;
-    }
-
-    public object ConvertBack(object value, Type targetType, object parameter, string language)
-    {
-        throw new NotImplementedException();
-    }
-}
 
 /// <summary>
 ///     Safely converts a URI string to a BitmapImage. Returns null for empty or invalid strings.

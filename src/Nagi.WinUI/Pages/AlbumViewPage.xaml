@@ -17,11 +17,6 @@
 
     <Page.Resources>
         <ResourceDictionary>
-            <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-            <converters:BooleanToVisibilityConverter x:Key="InvertedBooleanToVisibilityConverter" Invert="True" />
-            <converters:TimeSpanToTimeStringConverter x:Key="TimeSpanToTimeStringConverter" />
-            <converters:CollectionToVisibilityConverter x:Key="CollectionToVisibilityConverter" />
-            <converters:StringToImageSourceConverter x:Key="StringToImageSourceConverter" />
         </ResourceDictionary>
     </Page.Resources>
 
@@ -294,7 +289,7 @@
             SelectionChanged="SongsListView_SelectionChanged"
             SelectionMode="Extended"
             DoubleTapped="SongsListView_DoubleTapped"
-            Visibility="{x:Bind ViewModel.IsGroupedByDisc, Mode=OneWay, Converter={StaticResource InvertedBooleanToVisibilityConverter}}">
+            Visibility="{x:Bind ViewModel.IsGroupedByDisc, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="models:Song">
                     <Grid Height="54" ColumnSpacing="12" Background="Transparent">

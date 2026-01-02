@@ -13,10 +13,7 @@
     x:Name="pageRoot">
 
     <Page.Resources>
-        <converters:TimeSpanToTimeStringConverter x:Key="TimeSpanToTimeStringConverter" />
-        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-        <converters:StringToImageSourceConverter x:Key="StringToImageSourceConverter" />
-        <converters:CollectionCountToVisibilityConverter x:Key="CountToVisibilityConverter" Invert="True" />
+
     </Page.Resources>
 
     <Grid>
@@ -271,7 +268,7 @@
 
         <!-- Empty State -->
         <StackPanel Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="16"
-                    Visibility="{x:Bind ViewModel.Songs.Count, Mode=OneWay, Converter={StaticResource CountToVisibilityConverter}}">
+                    Visibility="{x:Bind ViewModel.Songs.Count, Mode=OneWay, Converter={StaticResource InverseCollectionCountToVisibilityConverter}}">
             <FontIcon Glyph="&#xE99A;" FontSize="48" Foreground="{ThemeResource TextFillColorSecondary}" HorizontalAlignment="Center" />
             <TextBlock Text="No songs match the current rules" 
                        Style="{StaticResource SubtitleTextBlockStyle}" 

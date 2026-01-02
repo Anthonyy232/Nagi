@@ -9,7 +9,6 @@
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </UserControl.Resources>
 
     <tb:TaskbarIcon

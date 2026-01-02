@@ -13,9 +13,6 @@
     x:Name="pageRoot">
 
     <Page.Resources>
-        <converters:TimeSpanToTimeStringConverter x:Key="TimeSpanToTimeStringConverter" />
-        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-        <converters:StringToImageSourceConverter x:Key="StringToImageSourceConverter" />
     </Page.Resources>
 
     <Grid>

@@ -13,13 +13,7 @@
     Loaded="Page_Loaded"
     mc:Ignorable="d">
 
-    <Page.Resources>
-        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-        <converters:BooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" Invert="True" />
-        <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
-        <converters:BooleanToInverseBooleanConverter x:Key="BooleanToInverseBooleanConverter" />
-        <converters:StringToImageSourceConverter x:Key="StringToImageSourceConverter" />
-    </Page.Resources>
+
 
     <Grid Padding="24">
         <VisualStateManager.VisualStateGroups>

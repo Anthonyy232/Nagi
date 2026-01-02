@@ -12,14 +12,7 @@
     Background="Transparent"
     mc:Ignorable="d">
 
-    <Page.Resources>
-        <ResourceDictionary>
-            <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-            <converters:BooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" Invert="True" />
-            <converters:BooleanToInverseBooleanConverter x:Key="BooleanToInverseBooleanConverter" />
-            <converters:StringToImageSourceConverter x:Key="StringToImageSourceConverter" />
-        </ResourceDictionary>
-    </Page.Resources>
+
 
     <Grid Padding="24">
         <VisualStateManager.VisualStateGroups>

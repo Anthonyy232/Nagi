@@ -13,12 +13,6 @@
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <converters:TimeSpanToTimeStringConverter x:Key="TimeSpanToTimeStringConverter" />
-        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-        <converters:BooleanToVisibilityConverter x:Key="InvertedBooleanToVisibilityConverter" Invert="True" />
-        <converters:StringToImageSourceConverter x:Key="StringToImageSourceConverter" />
-
-
     </UserControl.Resources>
 
     <!--
@@ -77,7 +71,7 @@
                         VerticalAlignment="Center"
                         IsHitTestVisible="False"
                         Spacing="2"
-                        Visibility="{x:Bind ViewModel.IsQueueViewVisible, Mode=OneWay, Converter={StaticResource InvertedBooleanToVisibilityConverter}}">
+                        Visibility="{x:Bind ViewModel.IsQueueViewVisible, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
                         <TextBlock
                             HorizontalAlignment="Center"
                             Foreground="White"
@@ -119,7 +113,7 @@
                 <Grid Grid.Row="1">
                     <!--  Player View -->
                     <Grid Padding="16,0,16,12"
-                          Visibility="{x:Bind ViewModel.IsQueueViewVisible, Mode=OneWay, Converter={StaticResource InvertedBooleanToVisibilityConverter}}">
+                          Visibility="{x:Bind ViewModel.IsQueueViewVisible, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
                         <StackPanel VerticalAlignment="Bottom" Spacing="12">
                             <Slider
                                 x:Name="MediaSeekerSlider"
