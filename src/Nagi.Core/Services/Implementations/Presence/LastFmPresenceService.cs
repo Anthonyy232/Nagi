@@ -122,7 +122,14 @@ public class LastFmPresenceService : IPresenceService, IAsyncDisposable
 
     private async void OnSettingsChanged()
     {
-        await UpdateLocalSettingsAsync();
+        try
+        {
+            await UpdateLocalSettingsAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to update Last.fm settings.");
+        }
     }
 
     private async Task UpdateLocalSettingsAsync()

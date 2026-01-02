@@ -70,7 +70,7 @@ public class AtlMetadataService : IMetadataService
             using var lrcCts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
             try
             {
-                metadata.LrcFilePath = await GetLrcPathAsync(filePath, fileInfo.LastWriteTimeUtc, metadata.Artist, metadata.Title, track)
+                metadata.LrcFilePath = await GetLrcPathAsync(filePath, fileInfo.LastWriteTimeUtc, metadata.Artist, metadata.Album, metadata.Title, track)
                     .WaitAsync(lrcCts.Token);
             }
             catch (OperationCanceledException)
@@ -380,9 +380,9 @@ public class AtlMetadataService : IMetadataService
     ///     Gets the path to the LRC file, prioritizing a valid cache entry before
     ///     attempting to extract embedded lyrics from the audio file.
     /// </summary>
-    private async Task<string?> GetLrcPathAsync(string audioFilePath, DateTime audioFileLastWriteTime, string? artist, string? title, Track track)
+    private async Task<string?> GetLrcPathAsync(string audioFilePath, DateTime audioFileLastWriteTime, string? artist, string? album, string? title, Track track)
     {
-        var cacheFileName = FileNameHelper.GenerateLrcCacheFileName(artist, title);
+        var cacheFileName = FileNameHelper.GenerateLrcCacheFileName(artist, album, title);
         var cachedLrcPath = _fileSystem.Combine(_pathConfig.LrcCachePath, cacheFileName);
 
         // Check for a valid cache entry. It's valid if it exists and is newer than the audio file.

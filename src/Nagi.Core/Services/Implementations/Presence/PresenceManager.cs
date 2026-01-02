@@ -92,12 +92,26 @@ public class PresenceManager : IPresenceManager, IDisposable
 
     private async void OnDiscordRichPresenceSettingChanged(bool isEnabled)
     {
-        if (_presenceServices.TryGetValue("Discord", out var service)) await SetServiceActiveAsync(service, isEnabled);
+        try
+        {
+            if (_presenceServices.TryGetValue("Discord", out var service)) await SetServiceActiveAsync(service, isEnabled);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to update Discord presence setting.");
+        }
     }
 
     private async void OnLastFmSettingsChanged()
     {
-        if (_presenceServices.TryGetValue("Last.fm", out var service)) await UpdateServiceActivationAsync(service);
+        try
+        {
+            if (_presenceServices.TryGetValue("Last.fm", out var service)) await UpdateServiceActivationAsync(service);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to update Last.fm presence setting.");
+        }
     }
 
     private async Task UpdateServiceActivationAsync(IPresenceService service)
@@ -162,32 +176,53 @@ public class PresenceManager : IPresenceManager, IDisposable
 
     private async void OnTrackChanged()
     {
-        var newTrack = _playbackService.CurrentTrack;
-        if (_currentTrack?.Id == newTrack?.Id) return;
+        try
+        {
+            var newTrack = _playbackService.CurrentTrack;
+            if (_currentTrack?.Id == newTrack?.Id) return;
 
-        _currentTrack = newTrack;
-        _logger.LogDebug("Track changed to '{TrackTitle}'. Broadcasting to active services.",
-            _currentTrack?.Title ?? "None");
+            _currentTrack = newTrack;
+            _logger.LogDebug("Track changed to '{TrackTitle}'. Broadcasting to active services.",
+                _currentTrack?.Title ?? "None");
 
-        if (_currentTrack is not null && _playbackService.CurrentListenHistoryId.HasValue)
-            await BroadcastAsync(s =>
-                s.OnTrackChangedAsync(_currentTrack, _playbackService.CurrentListenHistoryId.Value));
-        else
-            await BroadcastAsync(s => s.OnPlaybackStoppedAsync());
+            if (_currentTrack is not null && _playbackService.CurrentListenHistoryId.HasValue)
+                await BroadcastAsync(s =>
+                    s.OnTrackChangedAsync(_currentTrack, _playbackService.CurrentListenHistoryId.Value));
+            else
+                await BroadcastAsync(s => s.OnPlaybackStoppedAsync());
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to handle track change event.");
+        }
     }
 
     private async void OnPlaybackStateChanged()
     {
-        _logger.LogDebug("Playback state changed. IsPlaying: {IsPlaying}. Broadcasting to active services.",
-            _playbackService.IsPlaying);
-        await BroadcastAsync(s => s.OnPlaybackStateChangedAsync(_playbackService.IsPlaying));
+        try
+        {
+            _logger.LogDebug("Playback state changed. IsPlaying: {IsPlaying}. Broadcasting to active services.",
+                _playbackService.IsPlaying);
+            await BroadcastAsync(s => s.OnPlaybackStateChangedAsync(_playbackService.IsPlaying));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to handle playback state change event.");
+        }
     }
 
     private async void OnPositionChanged()
     {
-        if (_currentTrack is null || _playbackService.Duration <= TimeSpan.Zero) return;
+        try
+        {
+            if (_currentTrack is null || _playbackService.Duration <= TimeSpan.Zero) return;
 
-        await BroadcastAsync(s => s.OnTrackProgressAsync(_playbackService.CurrentPosition, _playbackService.Duration));
+            await BroadcastAsync(s => s.OnTrackProgressAsync(_playbackService.CurrentPosition, _playbackService.Duration));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to handle position change event.");
+        }
     }
 
     private async Task BroadcastAsync(Func<IPresenceService, Task> action)

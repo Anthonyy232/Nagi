@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
@@ -49,17 +48,11 @@ public class LastFmMetadataService : ILastFmMetadataService
             try
             {
                 using var response = await _httpClient.GetAsync(requestUrl, cancellationToken);
-
-                // Copy to a memory stream to allow for re-reading (e.g., for error parsing).
-                await using var contentStream = new MemoryStream();
-                await response.Content.CopyToAsync(contentStream, cancellationToken);
-                contentStream.Position = 0;
+                var content = await response.Content.ReadAsStringAsync(cancellationToken);
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var lastFmResponse =
-                        await JsonSerializer.DeserializeAsync<LastFmArtistResponse>(contentStream, _jsonOptions,
-                            cancellationToken);
+                    var lastFmResponse = JsonSerializer.Deserialize<LastFmArtistResponse>(content, _jsonOptions);
                     var artistInfo = lastFmResponse?.Artist != null ? ToArtistInfo(lastFmResponse.Artist) : null;
 
                     return artistInfo != null
@@ -69,10 +62,8 @@ public class LastFmMetadataService : ILastFmMetadataService
 
                 // Handle API-specific errors
                 LastFmErrorResponse? errorResponse = null;
-                if (contentStream.Length > 0)
-                    errorResponse =
-                        await JsonSerializer.DeserializeAsync<LastFmErrorResponse>(contentStream, _jsonOptions,
-                            cancellationToken);
+                if (!string.IsNullOrEmpty(content))
+                    errorResponse = JsonSerializer.Deserialize<LastFmErrorResponse>(content, _jsonOptions);
 
                 if (errorResponse?.ErrorCode == InvalidApiKeyErrorCode && attempt < MaxRetries)
                 {
@@ -126,7 +117,7 @@ public class LastFmMetadataService : ILastFmMetadataService
     /// <summary>
     ///     Maps the Last.fm API response to the application's ArtistInfo DTO.
     /// </summary>
-    private static ArtistInfo? ToArtistInfo(LastFmArtist artist)
+    private static ArtistInfo? ToArtistInfo(Data.LastFmArtist artist)
     {
         var bio = SanitizeBiography(artist.Bio?.Summary);
         var imageUrl = SelectBestImageUrl(artist.Image);
@@ -154,7 +145,7 @@ public class LastFmMetadataService : ILastFmMetadataService
     /// <summary>
     ///     Selects the most appropriate image URL from the available sizes.
     /// </summary>
-    private static string? SelectBestImageUrl(IEnumerable<LastFmImage>? images)
+    private static string? SelectBestImageUrl(IEnumerable<Data.LastFmImage>? images)
     {
         if (images is null) return null;
         var imageList = images.ToList();
@@ -165,34 +156,4 @@ public class LastFmMetadataService : ILastFmMetadataService
                ?? imageList.LastOrDefault(i => !string.IsNullOrEmpty(i.Url))?.Url;
     }
 
-    // Private DTOs for deserializing the Last.fm API response.
-    // Encapsulating them here prevents polluting the global namespace.
-    private class LastFmArtistResponse
-    {
-        public LastFmArtist? Artist { get; set; }
-    }
-
-    private class LastFmArtist
-    {
-        public LastFmBio? Bio { get; set; }
-        public IEnumerable<LastFmImage>? Image { get; set; }
-    }
-
-    private class LastFmBio
-    {
-        public string? Summary { get; set; }
-    }
-
-
-    private class LastFmImage
-    {
-        [JsonPropertyName("#text")] public string? Url { get; set; }
-        public string? Size { get; set; }
-    }
-
-    private class LastFmErrorResponse
-    {
-        [JsonPropertyName("error")] public int ErrorCode { get; set; }
-        public string? Message { get; set; }
-    }
 }

@@ -32,14 +32,25 @@ public class ApiKeyService : IApiKeyService, IDisposable
     }
 
     /// <inheritdoc />
-    public Task<string?> GetApiKeyAsync(string keyName, CancellationToken cancellationToken = default)
+    public async Task<string?> GetApiKeyAsync(string keyName, CancellationToken cancellationToken = default)
     {
         // GetOrAdd ensures the factory function is only executed once for a given key.
         // The Lazy<Task<T>> wrapper caches the task, so the fetch operation only runs once.
+        // IMPORTANT: We use CancellationToken.None for the fetch to avoid caching cancelled tasks.
         var lazyTask = _cachedApiKeys.GetOrAdd(keyName,
-            _ => new Lazy<Task<string?>>(() => FetchKeyFromServerAsync(keyName, cancellationToken)));
+            _ => new Lazy<Task<string?>>(() => FetchKeyFromServerAsync(keyName, CancellationToken.None)));
 
-        return lazyTask.Value;
+        try
+        {
+            // Use WaitAsync to respect the caller's cancellation token without affecting the cached task.
+            return await lazyTask.Value.WaitAsync(cancellationToken);
+        }
+        catch (Exception) when (lazyTask.Value.IsFaulted || lazyTask.Value.IsCanceled)
+        {
+            // If the underlying task failed, remove it from cache so subsequent calls can retry.
+            _cachedApiKeys.TryRemove(keyName, out _);
+            throw;
+        }
     }
 
     /// <inheritdoc />
@@ -74,7 +85,7 @@ public class ApiKeyService : IApiKeyService, IDisposable
         if (string.IsNullOrEmpty(serverUrl) || string.IsNullOrEmpty(serverKey))
         {
             _logger.LogCritical("Nagi API Server URL or ApiKey is not configured. API key retrieval will fail.");
-            return null;
+            throw new InvalidOperationException("Nagi API Server configuration is missing.");
         }
 
         // Ensure the URL has a scheme to prevent URI format exceptions.
@@ -99,7 +110,7 @@ public class ApiKeyService : IApiKeyService, IDisposable
                 _logger.LogError(
                     "Error fetching API key '{ApiKeyName}'. Status: {StatusCode}. Response: {ErrorContent}",
                     keyName, response.StatusCode, errorContent);
-                return null;
+                throw new HttpRequestException($"Failed to fetch API key '{keyName}'. Status: {response.StatusCode}");
             }
 
             var jsonContent = await response.Content.ReadAsStringAsync(cancellationToken);
@@ -113,7 +124,7 @@ public class ApiKeyService : IApiKeyService, IDisposable
                 _logger.LogError(
                     "API key response for '{ApiKeyName}' is invalid. It is missing the 'Value' field or is empty.",
                     keyName);
-                return null;
+                throw new InvalidOperationException($"API key response for '{keyName}' is invalid.");
             }
 
             _logger.LogDebug("Successfully fetched API key '{ApiKeyName}'.", keyName);
@@ -127,7 +138,7 @@ public class ApiKeyService : IApiKeyService, IDisposable
         catch (Exception ex)
         {
             _logger.LogError(ex, "An exception occurred while fetching API key '{ApiKeyName}'.", keyName);
-            return null;
+            throw;
         }
     }
 }
