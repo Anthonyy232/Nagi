@@ -19,10 +19,8 @@
         <localConverters:ElementThemeToFriendlyStringConverter x:Key="ThemeToStringConverter" />
         <localConverters:BackdropMaterialToStringConverter x:Key="BackdropMaterialToStringConverter" />
         <localConverters:StringToFontFamilyConverter x:Key="StringToFontFamilyConverter" />
-        <localConverters:BooleanToOpacityConverter x:Key="BooleanToOpacityConverter" FalseValue="0.4" />
-        <localConverters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-        <localConverters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityInverseConverter" Invert="True" />
-        <localConverters:BooleanToInverseBooleanConverter x:Key="InverseBooleanConverter" />
+
+
     </Page.Resources>
 
     <Grid>
@@ -57,7 +55,7 @@
                 <controls:SettingsExpander
                     Header="Theme"
                     Description="Choose the application theme."
-                    IsExpanded="{x:Bind ViewModel.IsDynamicThemingEnabled, Mode=OneWay, Converter={StaticResource InverseBooleanConverter}}">
+                    IsExpanded="{x:Bind ViewModel.IsDynamicThemingEnabled, Mode=OneWay, Converter={StaticResource BooleanToInverseBooleanConverter}}">
                     <controls:SettingsExpander.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE793;" />
                     </controls:SettingsExpander.HeaderIcon>
@@ -77,7 +75,7 @@
                         <controls:SettingsCard
                             Header="Accent Color"
                             Description="Choose a custom accent color for the app when dynamic theming is disabled."
-                            Visibility="{x:Bind ViewModel.IsDynamicThemingEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityInverseConverter}}">
+                            Visibility="{x:Bind ViewModel.IsDynamicThemingEnabled, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
                             <StackPanel HorizontalAlignment="Right" Spacing="12">
                                 <ColorPicker
                                     Color="{x:Bind ViewModel.AccentColor, Mode=TwoWay}"

@@ -15,11 +15,8 @@
 
     <UserControl.Resources>
         <ResourceDictionary>
-            <converters:TimeSpanToTimeStringConverter x:Key="TimeSpanToTimeStringConverter" />
-            <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-            <converters:ObjectToBooleanConverter x:Key="ObjectToBooleanConverter" />
-            <converters:ObjectToVisibilityConverter x:Key="ObjectToVisibilityConverter" />
-            <converters:StringToImageSourceConverter x:Key="StringToImageSourceConverter" />
+
+
 
 
             <DataTemplate x:Key="ShuffleButtonTemplate" x:DataType="uiModels:PlayerButtonSetting">

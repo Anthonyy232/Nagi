@@ -11,11 +11,7 @@
     Loaded="Page_Loaded"
     mc:Ignorable="d">
 
-    <Page.Resources>
-        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-        <converters:BooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" Invert="True" />
-        <converters:BooleanToInverseBooleanConverter x:Key="BooleanToInverseBooleanConverter" />
-    </Page.Resources>
+
 
     <Grid Padding="24">
         <Grid.RowDefinitions>

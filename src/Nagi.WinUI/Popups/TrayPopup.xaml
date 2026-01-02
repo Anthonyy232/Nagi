@@ -24,9 +24,6 @@
             d:DataContext="{d:DesignInstance Type=viewmodels:PlayerViewModel}">
 
         <Border.Resources>
-            <converters:TimeSpanToTimeStringConverter x:Key="TimeSpanToTimeStringConverter" />
-            <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-            <converters:BooleanToVisibilityConverter x:Key="InvertedBooleanToVisibilityConverter" Invert="True" />
         </Border.Resources>
 
         <Grid>
@@ -43,7 +40,7 @@
             <Grid>
                 <!-- Player View: Contains track info, seek bar, and media controls. -->
                 <Grid Padding="16" RowSpacing="24"
-                      Visibility="{Binding IsQueueViewVisible, Converter={StaticResource InvertedBooleanToVisibilityConverter}}"
+                      Visibility="{Binding IsQueueViewVisible, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
                       Background="Transparent">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />

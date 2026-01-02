@@ -13,9 +13,7 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <converters:GenreToGradientConverter x:Key="GenreToGradientConverter" />
-        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-        <converters:BooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" Invert="True" />
+
     </Page.Resources>
 
     <Grid Padding="24">
