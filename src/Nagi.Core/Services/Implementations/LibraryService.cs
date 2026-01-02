@@ -710,7 +710,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     public async Task<bool> RefreshAllFoldersAsync(IProgress<ScanProgress>? progress = null,
         CancellationToken cancellationToken = default)
     {
-        var folders = (await GetAllFoldersAsync()).ToList();
+        var folders = (await GetRootFoldersAsync()).ToList();
         var totalFolders = folders.Count;
 
         if (totalFolders == 0)
