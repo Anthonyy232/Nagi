@@ -84,7 +84,7 @@ public class LrcService : ILrcService
     {
         try
         {
-            var cacheFileName = FileNameHelper.GenerateLrcCacheFileName(song.Artist?.Name, song.Title);
+            var cacheFileName = FileNameHelper.GenerateLrcCacheFileName(song.Artist?.Name, song.Album?.Title, song.Title);
             var cachedLrcPath = _fileSystemService.Combine(_pathConfig.LrcCachePath, cacheFileName);
 
             await _fileSystemService.WriteAllTextAsync(cachedLrcPath, lrcContent);

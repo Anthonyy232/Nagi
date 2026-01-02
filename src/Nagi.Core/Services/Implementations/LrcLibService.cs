@@ -20,10 +20,11 @@ public class LrcLibService : IOnlineLyricsService
     private readonly HttpClient _httpClient;
     private readonly ILogger<LrcLibService> _logger;
     private readonly JsonSerializerOptions _jsonOptions = new() { PropertyNameCaseInsensitive = true };
+    private bool _isRateLimited;
 
     public LrcLibService(IHttpClientFactory httpClientFactory, ILogger<LrcLibService> logger)
     {
-        _httpClient = httpClientFactory.CreateClient();
+        _httpClient = httpClientFactory.CreateClient("LrcLib");
         _httpClient.DefaultRequestHeaders.Add("User-Agent", UserAgent);
         _logger = logger;
     }
@@ -33,6 +34,12 @@ public class LrcLibService : IOnlineLyricsService
     {
         if (string.IsNullOrWhiteSpace(trackName))
         {
+            return null;
+        }
+
+        if (_isRateLimited)
+        {
+            _logger.LogDebug("Skipping lyrics fetch - rate limited.");
             return null;
         }
 
@@ -72,6 +79,12 @@ public class LrcLibService : IOnlineLyricsService
                         return lrcResponse.SyncedLyrics;
                     }
                 }
+                else if (response.StatusCode == HttpStatusCode.TooManyRequests)
+                {
+                    _logger.LogWarning("LRCLIB rate limit hit. Disabling lyrics fetching for this session.");
+                    _isRateLimited = true;
+                    return null;
+                }
                 else if (response.StatusCode != HttpStatusCode.NotFound)
                 {
                      // Log other errors but proceed to fallback just in case
@@ -105,6 +118,14 @@ public class LrcLibService : IOnlineLyricsService
             
             var requestUrl = $"{SearchUrl}?{query}";
             using var response = await _httpClient.GetAsync(requestUrl);
+            
+            if (response.StatusCode == HttpStatusCode.TooManyRequests)
+            {
+                _logger.LogWarning("LRCLIB rate limit hit during search. Disabling lyrics fetching for this session.");
+                _isRateLimited = true;
+                return null;
+            }
+            
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();

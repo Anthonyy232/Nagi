@@ -13,7 +13,8 @@ namespace Nagi.Core.Services.Implementations;
 public class OfflineScrobbleService : IOfflineScrobbleService, IDisposable
 {
     private static readonly TimeSpan InitialDelay = TimeSpan.FromMinutes(1);
-    private static readonly TimeSpan CheckInterval = TimeSpan.FromMinutes(15);
+    private static readonly TimeSpan BaseCheckInterval = TimeSpan.FromMinutes(15);
+    private static readonly TimeSpan MaxCheckInterval = TimeSpan.FromHours(4);
     private readonly CancellationTokenSource _cancellationTokenSource = new();
     private readonly IDbContextFactory<MusicDbContext> _contextFactory;
     private readonly ILogger<OfflineScrobbleService> _logger;
@@ -23,6 +24,9 @@ public class OfflineScrobbleService : IOfflineScrobbleService, IDisposable
     // A lock-free flag to ensure only one processing task runs at a time.
     // 0 = not processing, 1 = processing.
     private int _isProcessingQueue;
+    
+    // Tracks consecutive failures for exponential backoff.
+    private int _consecutiveFailures;
 
     public OfflineScrobbleService(
         IDbContextFactory<MusicDbContext> contextFactory,
@@ -133,6 +137,13 @@ public class OfflineScrobbleService : IOfflineScrobbleService, IDisposable
             {
                 await context.SaveChangesAsync(cancellationToken);
                 _logger.LogDebug("Successfully submitted {ScrobbleCount} scrobbles.", successfulScrobbles);
+                // Reset backoff counter on success.
+                _consecutiveFailures = 0;
+            }
+            else if (pendingScrobbles.Count > 0)
+            {
+                // We had pending scrobbles but submitted none - track as failure for backoff.
+                _consecutiveFailures++;
             }
         }
         finally
@@ -162,9 +173,19 @@ public class OfflineScrobbleService : IOfflineScrobbleService, IDisposable
                 catch (Exception ex) when (ex is not OperationCanceledException)
                 {
                     _logger.LogCritical(ex, "An unhandled exception occurred in the scrobble processing loop.");
+                    _consecutiveFailures++;
                 }
 
-                await Task.Delay(CheckInterval, cancellationToken);
+                // Calculate wait time with exponential backoff based on consecutive failures.
+                var backoffMultiplier = Math.Pow(2, Math.Min(_consecutiveFailures, 4)); // Cap at 16x
+                var waitTime = TimeSpan.FromTicks((long)(BaseCheckInterval.Ticks * backoffMultiplier));
+                if (waitTime > MaxCheckInterval) waitTime = MaxCheckInterval;
+                
+                if (_consecutiveFailures > 0)
+                    _logger.LogDebug("Consecutive failures: {FailureCount}. Next check in {WaitTime}.", 
+                        _consecutiveFailures, waitTime);
+                
+                await Task.Delay(waitTime, cancellationToken);
             }
         }
         catch (OperationCanceledException)

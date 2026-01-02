@@ -2,6 +2,7 @@
 using DiscordRPC.Message;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 
@@ -14,6 +15,7 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
 {
     private readonly string? _discordAppId;
     private readonly ILogger<DiscordPresenceService> _logger;
+    private readonly SemaphoreSlim _initLock = new(1, 1);
     private DiscordRpcClient? _client;
     private TimeSpan _currentProgress;
     private Song? _currentSong;
@@ -30,10 +32,11 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
 
     public string Name => "Discord";
 
-    public Task InitializeAsync()
+    public async Task InitializeAsync()
     {
-        if (string.IsNullOrEmpty(_discordAppId)) return Task.CompletedTask;
+        if (string.IsNullOrEmpty(_discordAppId)) return;
 
+        await _initLock.WaitAsync();
         try
         {
             // Initialize the client if it hasn't been or if it was previously disposed.
@@ -54,8 +57,10 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
         {
             _logger.LogError(ex, "Failed to initialize Discord RPC client.");
         }
-
-        return Task.CompletedTask;
+        finally
+        {
+            _initLock.Release();
+        }
     }
 
     public Task OnTrackChangedAsync(Song song, long listenHistoryId)
@@ -112,6 +117,8 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
 
     public ValueTask DisposeAsync()
     {
+        _initLock.Dispose();
+
         if (_client is not null)
         {
             _logger.LogDebug("Disposing Discord RPC client.");

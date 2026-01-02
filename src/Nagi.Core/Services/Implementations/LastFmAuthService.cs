@@ -1,6 +1,4 @@
-﻿using System.Security.Cryptography;
-using System.Text;
-using System.Text.Json;
+﻿using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Services.Abstractions;
 
@@ -135,25 +133,7 @@ public class LastFmAuthService : ILastFmAuthService
 
     private static string CreateSignature(IDictionary<string, string> parameters, string secret)
     {
-        var sb = new StringBuilder();
-
-        // Parameters must be ordered alphabetically by key.
-        foreach (var kvp in parameters.OrderBy(p => p.Key))
-        {
-            sb.Append(kvp.Key);
-            sb.Append(kvp.Value);
-        }
-
-        sb.Append(secret);
-
-        using var md5 = MD5.Create();
-        var inputBytes = Encoding.UTF8.GetBytes(sb.ToString());
-        var hashBytes = md5.ComputeHash(inputBytes);
-
-        var hashStringBuilder = new StringBuilder();
-        foreach (var t in hashBytes) hashStringBuilder.Append(t.ToString("x2"));
-
-        return hashStringBuilder.ToString();
+        return Helpers.LastFmApiHelper.CreateSignature(parameters, secret);
     }
 
     // Helper classes for deserializing Last.fm API responses.
