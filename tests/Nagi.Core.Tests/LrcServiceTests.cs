@@ -24,6 +24,7 @@ public class LrcServiceTests
     private readonly IPathConfiguration _pathConfig;
     private readonly ILibraryWriter _libraryWriter;
     private readonly ILogger<LrcService> _logger;
+    private readonly INetEaseLyricsService _netEaseLyricsService;
     private readonly LrcService _lrcService;
 
     public LrcServiceTests()
@@ -34,9 +35,11 @@ public class LrcServiceTests
         _pathConfig = Substitute.For<IPathConfiguration>();
         _libraryWriter = Substitute.For<ILibraryWriter>();
         _logger = Substitute.For<ILogger<LrcService>>();
+        _netEaseLyricsService = Substitute.For<INetEaseLyricsService>();
         _lrcService = new LrcService(
             _fileSystem,
             _onlineLyricsService,
+            _netEaseLyricsService,
             _settingsService,
             _pathConfig,
             _libraryWriter,
@@ -265,6 +268,124 @@ public class LrcServiceTests
         // Assert
         result?.Text.Should().Be("Line 1");
         searchIndex.Should().Be(0); // Index should be updated
+    }
+
+    #endregion
+
+    #region Online Fallback Tests
+
+    /// <summary>
+    ///     Verifies that when local lyrics are not available and online fetch is enabled,
+    ///     LRCLIB is tried first before NetEase.
+    /// </summary>
+    [Fact]
+    public async Task GetLyricsAsync_WithNoLocalFile_TriesLrcLibFirst()
+    {
+        // Arrange
+        var song = new Song { Title = "Test", LrcFilePath = null, Duration = TimeSpan.FromMinutes(3) };
+        _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
+        _onlineLyricsService.GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(), 
+            Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>()).Returns("[00:01.00]From LRCLIB");
+
+        // Act
+        var result = await _lrcService.GetLyricsAsync(song);
+
+        // Assert
+        result.Should().NotBeNull();
+        result!.Lines.Should().HaveCount(1);
+        result.Lines[0].Text.Should().Be("From LRCLIB");
+        await _netEaseLyricsService.DidNotReceive().SearchLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>());
+    }
+
+    /// <summary>
+    ///     Verifies that when LRCLIB returns no results, the service falls back to NetEase.
+    /// </summary>
+    [Fact]
+    public async Task GetLyricsAsync_WhenLrcLibFails_FallsBackToNetEase()
+    {
+        // Arrange
+        var song = new Song { Title = "Japanese Song", LrcFilePath = null, Duration = TimeSpan.FromMinutes(3) };
+        _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
+        _onlineLyricsService.GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(), 
+            Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>()).Returns((string?)null);
+        _netEaseLyricsService.SearchLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>())
+            .Returns("[00:01.00]From NetEase");
+
+        // Act
+        var result = await _lrcService.GetLyricsAsync(song);
+
+        // Assert
+        result.Should().NotBeNull();
+        result!.Lines[0].Text.Should().Be("From NetEase");
+    }
+
+    /// <summary>
+    ///     Verifies that when online lyrics fetch is disabled, no remote services are called.
+    /// </summary>
+    [Fact]
+    public async Task GetLyricsAsync_WhenOnlineFetchDisabled_DoesNotCallRemoteServices()
+    {
+        // Arrange
+        var song = new Song { Title = "Test", LrcFilePath = null };
+        _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(false);
+
+        // Act
+        var result = await _lrcService.GetLyricsAsync(song);
+
+        // Assert
+        result.Should().BeNull();
+        await _onlineLyricsService.DidNotReceive().GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), 
+            Arg.Any<string?>(), Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>());
+        await _netEaseLyricsService.DidNotReceive().SearchLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>());
+    }
+
+    #endregion
+
+    #region Cancellation Tests
+
+    /// <summary>
+    ///     Verifies that when already cancelled, neither LRCLIB nor NetEase is called.
+    /// </summary>
+    [Fact]
+    public async Task GetLyricsAsync_WhenAlreadyCancelled_DoesNotCallOnlineServices()
+    {
+        // Arrange
+        var song = new Song { Title = "Test", LrcFilePath = null, Duration = TimeSpan.FromMinutes(3) };
+        _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
+        
+        var cts = new CancellationTokenSource();
+        cts.Cancel(); // Cancel BEFORE the call
+
+        // Act
+        var result = await _lrcService.GetLyricsAsync(song, cts.Token);
+
+        // Assert - Should return null and NOT call any online services
+        result.Should().BeNull();
+        await _onlineLyricsService.DidNotReceive().GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), 
+            Arg.Any<string?>(), Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>());
+        await _netEaseLyricsService.DidNotReceive().SearchLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>());
+    }
+
+    /// <summary>
+    ///     Verifies that local file access takes priority and doesn't trigger online fetch.
+    /// </summary>
+    [Fact]
+    public async Task GetLyricsAsync_WithLocalFile_DoesNotFetchOnline()
+    {
+        // Arrange
+        var song = new Song { Title = "Test", LrcFilePath = LrcPath };
+        _fileSystem.FileExists(LrcPath).Returns(true);
+        _fileSystem.ReadAllTextAsync(LrcPath).Returns("[00:01.00]Local Lyrics");
+        _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
+
+        // Act
+        var result = await _lrcService.GetLyricsAsync(song);
+
+        // Assert
+        result.Should().NotBeNull();
+        result!.Lines[0].Text.Should().Be("Local Lyrics");
+        await _onlineLyricsService.DidNotReceive().GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), 
+            Arg.Any<string?>(), Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>());
     }
 
     #endregion

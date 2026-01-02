@@ -130,32 +130,36 @@ public class SettingsService : IUISettingsService
         }
 
         await ClearPlaybackStateAsync();
-        await SetAutoLaunchEnabledAsync(false);
-        await SetPlayerAnimationEnabledAsync(true);
-        await SetShowQueueButtonEnabledAsync(true);
-        await SetHideToTrayEnabledAsync(true);
-        await SetMinimizeToMiniPlayerEnabledAsync(false);
-        await SetShowCoverArtInTrayFlyoutAsync(true);
-        await SetFetchOnlineMetadataEnabledAsync(false);
-        await SetDiscordRichPresenceEnabledAsync(false);
-        await SetThemeAsync(ElementTheme.Default);
-        await SetBackdropMaterialAsync(BackdropMaterial.Mica);
-        await SetDynamicThemingAsync(true);
-        await SetRestorePlaybackStateEnabledAsync(true);
-        await SetStartMinimizedEnabledAsync(false);
+        await SetAutoLaunchEnabledAsync(SettingsDefaults.AutoLaunchEnabled);
+        await SetPlayerAnimationEnabledAsync(SettingsDefaults.PlayerAnimationEnabled);
+        await SetShowQueueButtonEnabledAsync(SettingsDefaults.ShowQueueButtonEnabled);
+        await SetHideToTrayEnabledAsync(SettingsDefaults.HideToTrayEnabled);
+        await SetMinimizeToMiniPlayerEnabledAsync(SettingsDefaults.MinimizeToMiniPlayerEnabled);
+        await SetShowCoverArtInTrayFlyoutAsync(SettingsDefaults.ShowCoverArtInTrayFlyoutEnabled);
+        await SetFetchOnlineMetadataEnabledAsync(SettingsDefaults.FetchOnlineMetadataEnabled);
+        await SetFetchOnlineLyricsEnabledAsync(SettingsDefaults.FetchOnlineLyricsEnabled);
+        await SetDiscordRichPresenceEnabledAsync(SettingsDefaults.DiscordRichPresenceEnabled);
+        await SetThemeAsync(SettingsDefaults.Theme);
+        await SetBackdropMaterialAsync(SettingsDefaults.BackdropMaterial);
+        await SetDynamicThemingAsync(SettingsDefaults.DynamicThemingEnabled);
+        await SetRestorePlaybackStateEnabledAsync(SettingsDefaults.RestorePlaybackStateEnabled);
+        await SetStartMinimizedEnabledAsync(SettingsDefaults.StartMinimizedEnabled);
         await SetNavigationItemsAsync(GetDefaultNavigationItems());
         await SetPlayerButtonSettingsAsync(GetDefaultPlayerButtonSettings());
-        await SaveVolumeAsync(0.5);
-        await SaveMuteStateAsync(false);
-        await SaveShuffleStateAsync(false);
-        await SaveRepeatModeAsync(RepeatMode.Off);
-        await SetCheckForUpdatesEnabledAsync(true);
+        await SaveVolumeAsync(SettingsDefaults.Volume);
+        await SaveMuteStateAsync(SettingsDefaults.MuteState);
+        await SaveShuffleStateAsync(SettingsDefaults.ShuffleState);
+        await SaveRepeatModeAsync(SettingsDefaults.RepeatMode);
+        await SetCheckForUpdatesEnabledAsync(SettingsDefaults.CheckForUpdatesEnabled);
         await SetLastSkippedUpdateVersionAsync(null);
+        await SetLastFmScrobblingEnabledAsync(SettingsDefaults.LastFmScrobblingEnabled);
+        await SetLastFmNowPlayingEnabledAsync(SettingsDefaults.LastFmNowPlayingEnabled);
         await ClearLastFmCredentialsAsync();
         await SetEqualizerSettingsAsync(new EqualizerSettings());
-        await SetRememberWindowSizeEnabledAsync(false);
-        await SetRememberPaneStateEnabledAsync(true);
-        await SetAccentColorAsync(null);
+        await SetRememberWindowSizeEnabledAsync(SettingsDefaults.RememberWindowSizeEnabled);
+        await SetRememberPaneStateEnabledAsync(SettingsDefaults.RememberPaneStateEnabled);
+        await SetVolumeNormalizationEnabledAsync(SettingsDefaults.VolumeNormalizationEnabled);
+        await SetAccentColorAsync(SettingsDefaults.AccentColor);
 
         _logger.LogInformation("All application settings have been reset to their default values.");
     }
@@ -409,7 +413,7 @@ public class SettingsService : IUISettingsService
     public async Task<double> GetInitialVolumeAsync()
     {
         await EnsureUnpackagedSettingsLoadedAsync();
-        return Math.Clamp(GetValue(VolumeKey, 0.5), 0.0, 1.0);
+        return Math.Clamp(GetValue(VolumeKey, SettingsDefaults.Volume), 0.0, 1.0);
     }
 
     public Task SaveVolumeAsync(double volume)
@@ -420,7 +424,7 @@ public class SettingsService : IUISettingsService
     public async Task<bool> GetInitialMuteStateAsync()
     {
         await EnsureUnpackagedSettingsLoadedAsync();
-        return GetValue(MuteStateKey, false);
+        return GetValue(MuteStateKey, SettingsDefaults.MuteState);
     }
 
     public Task SaveMuteStateAsync(bool isMuted)
@@ -431,7 +435,7 @@ public class SettingsService : IUISettingsService
     public async Task<bool> GetInitialShuffleStateAsync()
     {
         await EnsureUnpackagedSettingsLoadedAsync();
-        return GetValue(ShuffleStateKey, false);
+        return GetValue(ShuffleStateKey, SettingsDefaults.ShuffleState);
     }
 
     public Task SaveShuffleStateAsync(bool isEnabled)
@@ -442,7 +446,7 @@ public class SettingsService : IUISettingsService
     public async Task<RepeatMode> GetInitialRepeatModeAsync()
     {
         await EnsureUnpackagedSettingsLoadedAsync();
-        return GetEnumValue(RepeatModeKey, RepeatMode.Off);
+        return GetEnumValue(RepeatModeKey, SettingsDefaults.RepeatMode);
     }
 
     public Task SaveRepeatModeAsync(RepeatMode mode)
@@ -453,7 +457,7 @@ public class SettingsService : IUISettingsService
     public async Task<bool> GetRestorePlaybackStateEnabledAsync()
     {
         await EnsureUnpackagedSettingsLoadedAsync();
-        return GetValue(RestorePlaybackStateEnabledKey, true);
+        return GetValue(RestorePlaybackStateEnabledKey, SettingsDefaults.RestorePlaybackStateEnabled);
     }
 
     public Task SetRestorePlaybackStateEnabledAsync(bool isEnabled)
@@ -464,7 +468,7 @@ public class SettingsService : IUISettingsService
     public async Task<bool> GetFetchOnlineMetadataEnabledAsync()
     {
         await EnsureUnpackagedSettingsLoadedAsync();
-        return GetValue(FetchOnlineMetadataKey, false);
+        return GetValue(FetchOnlineMetadataKey, SettingsDefaults.FetchOnlineMetadataEnabled);
     }
 
     public Task SetFetchOnlineMetadataEnabledAsync(bool isEnabled)
@@ -475,7 +479,7 @@ public class SettingsService : IUISettingsService
     public async Task<bool> GetFetchOnlineLyricsEnabledAsync()
     {
         await EnsureUnpackagedSettingsLoadedAsync();
-        return GetValue(FetchOnlineLyricsEnabledKey, false);
+        return GetValue(FetchOnlineLyricsEnabledKey, SettingsDefaults.FetchOnlineLyricsEnabled);
     }
 
     public Task SetFetchOnlineLyricsEnabledAsync(bool isEnabled)
@@ -486,12 +490,12 @@ public class SettingsService : IUISettingsService
     public async Task<bool> GetDiscordRichPresenceEnabledAsync()
     {
         await EnsureUnpackagedSettingsLoadedAsync();
-        return GetValue(DiscordRichPresenceEnabledKey, false);
+        return GetValue(DiscordRichPresenceEnabledKey, SettingsDefaults.DiscordRichPresenceEnabled);
     }
 
     public Task SetDiscordRichPresenceEnabledAsync(bool isEnabled)
     {
-        return SetValueAndNotifyAsync(DiscordRichPresenceEnabledKey, isEnabled, false,
+        return SetValueAndNotifyAsync(DiscordRichPresenceEnabledKey, isEnabled, SettingsDefaults.DiscordRichPresenceEnabled,
             DiscordRichPresenceSettingChanged);
     }
 
@@ -573,7 +577,7 @@ public class SettingsService : IUISettingsService
     public async Task<bool> GetLastFmScrobblingEnabledAsync()
     {
         await EnsureUnpackagedSettingsLoadedAsync();
-        return GetValue(LastFmScrobblingEnabledKey, false);
+        return GetValue(LastFmScrobblingEnabledKey, SettingsDefaults.LastFmScrobblingEnabled);
     }
 
     public async Task SetLastFmScrobblingEnabledAsync(bool isEnabled)
@@ -585,7 +589,7 @@ public class SettingsService : IUISettingsService
     public async Task<bool> GetLastFmNowPlayingEnabledAsync()
     {
         await EnsureUnpackagedSettingsLoadedAsync();
-        return GetValue(LastFmNowPlayingEnabledKey, false);
+        return GetValue(LastFmNowPlayingEnabledKey, SettingsDefaults.LastFmNowPlayingEnabled);
     }
 
     public async Task SetLastFmNowPlayingEnabledAsync(bool isEnabled)
@@ -641,7 +645,7 @@ public class SettingsService : IUISettingsService
     public async Task<ElementTheme> GetThemeAsync()
     {
         await EnsureUnpackagedSettingsLoadedAsync();
-        return GetEnumValue(ThemeKey, ElementTheme.Default);
+        return GetEnumValue(ThemeKey, SettingsDefaults.Theme);
     }
 
     public Task SetThemeAsync(ElementTheme theme)
@@ -652,7 +656,7 @@ public class SettingsService : IUISettingsService
     public async Task<BackdropMaterial> GetBackdropMaterialAsync()
     {
         await EnsureUnpackagedSettingsLoadedAsync();
-        return GetEnumValue(BackdropMaterialKey, BackdropMaterial.Mica);
+        return GetEnumValue(BackdropMaterialKey, SettingsDefaults.BackdropMaterial);
     }
 
     public async Task SetBackdropMaterialAsync(BackdropMaterial material)
@@ -664,7 +668,7 @@ public class SettingsService : IUISettingsService
     public async Task<bool> GetDynamicThemingAsync()
     {
         await EnsureUnpackagedSettingsLoadedAsync();
-        return GetValue(DynamicThemingKey, true);
+        return GetValue(DynamicThemingKey, SettingsDefaults.DynamicThemingEnabled);
     }
 
     public Task SetDynamicThemingAsync(bool isEnabled)
@@ -675,12 +679,12 @@ public class SettingsService : IUISettingsService
     public async Task<bool> GetPlayerAnimationEnabledAsync()
     {
         await EnsureUnpackagedSettingsLoadedAsync();
-        return GetValue(PlayerAnimationEnabledKey, true);
+        return GetValue(PlayerAnimationEnabledKey, SettingsDefaults.PlayerAnimationEnabled);
     }
 
     public Task SetPlayerAnimationEnabledAsync(bool isEnabled)
     {
-        return SetValueAndNotifyAsync(PlayerAnimationEnabledKey, isEnabled, true, PlayerAnimationSettingChanged);
+        return SetValueAndNotifyAsync(PlayerAnimationEnabledKey, isEnabled, SettingsDefaults.PlayerAnimationEnabled, PlayerAnimationSettingChanged);
     }
 
     public async Task<bool> GetAutoLaunchEnabledAsync()
@@ -753,7 +757,7 @@ public class SettingsService : IUISettingsService
     public async Task<bool> GetStartMinimizedEnabledAsync()
     {
         await EnsureUnpackagedSettingsLoadedAsync();
-        return GetValue(StartMinimizedEnabledKey, false);
+        return GetValue(StartMinimizedEnabledKey, SettingsDefaults.StartMinimizedEnabled);
     }
 
     public Task SetStartMinimizedEnabledAsync(bool isEnabled)
@@ -764,46 +768,46 @@ public class SettingsService : IUISettingsService
     public async Task<bool> GetHideToTrayEnabledAsync()
     {
         await EnsureUnpackagedSettingsLoadedAsync();
-        return GetValue(HideToTrayEnabledKey, true);
+        return GetValue(HideToTrayEnabledKey, SettingsDefaults.HideToTrayEnabled);
     }
 
     public Task SetHideToTrayEnabledAsync(bool isEnabled)
     {
-        return SetValueAndNotifyAsync(HideToTrayEnabledKey, isEnabled, true, HideToTraySettingChanged);
+        return SetValueAndNotifyAsync(HideToTrayEnabledKey, isEnabled, SettingsDefaults.HideToTrayEnabled, HideToTraySettingChanged);
     }
 
     public async Task<bool> GetMinimizeToMiniPlayerEnabledAsync()
     {
         await EnsureUnpackagedSettingsLoadedAsync();
-        return GetValue(MinimizeToMiniPlayerEnabledKey, false);
+        return GetValue(MinimizeToMiniPlayerEnabledKey, SettingsDefaults.MinimizeToMiniPlayerEnabled);
     }
 
     public Task SetMinimizeToMiniPlayerEnabledAsync(bool isEnabled)
     {
-        return SetValueAndNotifyAsync(MinimizeToMiniPlayerEnabledKey, isEnabled, false,
+        return SetValueAndNotifyAsync(MinimizeToMiniPlayerEnabledKey, isEnabled, SettingsDefaults.MinimizeToMiniPlayerEnabled,
             MinimizeToMiniPlayerSettingChanged);
     }
 
     public async Task<bool> GetShowQueueButtonEnabledAsync()
     {
         await EnsureUnpackagedSettingsLoadedAsync();
-        return GetValue(ShowQueueButtonEnabledKey, true);
+        return GetValue(ShowQueueButtonEnabledKey, SettingsDefaults.ShowQueueButtonEnabled);
     }
 
     public Task SetShowQueueButtonEnabledAsync(bool isEnabled)
     {
-        return SetValueAndNotifyAsync(ShowQueueButtonEnabledKey, isEnabled, true, ShowQueueButtonSettingChanged);
+        return SetValueAndNotifyAsync(ShowQueueButtonEnabledKey, isEnabled, SettingsDefaults.ShowQueueButtonEnabled, ShowQueueButtonSettingChanged);
     }
 
     public async Task<bool> GetShowCoverArtInTrayFlyoutAsync()
     {
         await EnsureUnpackagedSettingsLoadedAsync();
-        return GetValue(ShowCoverArtInTrayFlyoutKey, true);
+        return GetValue(ShowCoverArtInTrayFlyoutKey, SettingsDefaults.ShowCoverArtInTrayFlyoutEnabled);
     }
 
     public Task SetShowCoverArtInTrayFlyoutAsync(bool isEnabled)
     {
-        return SetValueAndNotifyAsync(ShowCoverArtInTrayFlyoutKey, isEnabled, true,
+        return SetValueAndNotifyAsync(ShowCoverArtInTrayFlyoutKey, isEnabled, SettingsDefaults.ShowCoverArtInTrayFlyoutEnabled,
             ShowCoverArtInTrayFlyoutSettingChanged);
     }
 
@@ -839,7 +843,7 @@ public class SettingsService : IUISettingsService
         return false;
 #else
         await EnsureUnpackagedSettingsLoadedAsync();
-        return GetValue(CheckForUpdatesEnabledKey, true);
+        return GetValue(CheckForUpdatesEnabledKey, SettingsDefaults.CheckForUpdatesEnabled);
 #endif
     }
 
@@ -920,7 +924,7 @@ public class SettingsService : IUISettingsService
     public async Task<bool> GetRememberWindowSizeEnabledAsync()
     {
         await EnsureUnpackagedSettingsLoadedAsync();
-        return GetValue(RememberWindowSizeEnabledKey, false);
+        return GetValue(RememberWindowSizeEnabledKey, SettingsDefaults.RememberWindowSizeEnabled);
     }
 
     public Task SetRememberWindowSizeEnabledAsync(bool isEnabled)
@@ -944,7 +948,7 @@ public class SettingsService : IUISettingsService
     public async Task<bool> GetRememberPaneStateEnabledAsync()
     {
         await EnsureUnpackagedSettingsLoadedAsync();
-        return GetValue(RememberPaneStateEnabledKey, true);
+        return GetValue(RememberPaneStateEnabledKey, SettingsDefaults.RememberPaneStateEnabled);
     }
 
     public Task SetRememberPaneStateEnabledAsync(bool isEnabled)
@@ -969,12 +973,12 @@ public class SettingsService : IUISettingsService
     public async Task<bool> GetVolumeNormalizationEnabledAsync()
     {
         await EnsureUnpackagedSettingsLoadedAsync();
-        return GetValue(VolumeNormalizationEnabledKey, false);
+        return GetValue(VolumeNormalizationEnabledKey, SettingsDefaults.VolumeNormalizationEnabled);
     }
 
     public Task SetVolumeNormalizationEnabledAsync(bool isEnabled)
     {
-        return SetValueAndNotifyAsync(VolumeNormalizationEnabledKey, isEnabled, false,
+        return SetValueAndNotifyAsync(VolumeNormalizationEnabledKey, isEnabled, SettingsDefaults.VolumeNormalizationEnabled,
             VolumeNormalizationEnabledChanged);
     }
 

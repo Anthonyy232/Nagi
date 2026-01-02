@@ -89,6 +89,34 @@ public class KeyProviderFunctions
         return response;
     }
 
+    [Function("GetFanartTvKey")]
+    [OpenApiOperation("GetFanartTvKey", "Keys", Summary = "Gets the Fanart.tv API Key")]
+    [OpenApiSecurity("ApiKey", SecuritySchemeType.ApiKey, Name = "X-API-KEY", In = OpenApiSecurityLocationType.Header)]
+    [OpenApiResponseWithBody(HttpStatusCode.OK, "application/json", typeof(KeyResponse),
+        Description = "A JSON object containing the Fanart.tv API Key.")]
+    [OpenApiResponseWithBody(HttpStatusCode.ServiceUnavailable, "text/plain", typeof(string),
+        Description = "The requested key is not configured on the server.")]
+    public async Task<HttpResponseData> GetFanartTvKey(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "fanarttv-key")]
+        HttpRequestData req)
+    {
+        return await CreateKeyResponseAsync(req, "FanartTv:ApiKey", "Fanart.tv API Key");
+    }
+
+    [Function("GetTheAudioDbKey")]
+    [OpenApiOperation("GetTheAudioDbKey", "Keys", Summary = "Gets TheAudioDB API Key")]
+    [OpenApiSecurity("ApiKey", SecuritySchemeType.ApiKey, Name = "X-API-KEY", In = OpenApiSecurityLocationType.Header)]
+    [OpenApiResponseWithBody(HttpStatusCode.OK, "application/json", typeof(KeyResponse),
+        Description = "A JSON object containing TheAudioDB API Key.")]
+    [OpenApiResponseWithBody(HttpStatusCode.ServiceUnavailable, "text/plain", typeof(string),
+        Description = "The requested key is not configured on the server.")]
+    public async Task<HttpResponseData> GetTheAudioDbKey(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "theaudiodb-key")]
+        HttpRequestData req)
+    {
+        return await CreateKeyResponseAsync(req, "TheAudioDb:ApiKey", "TheAudioDB API Key");
+    }
+
     /// <summary>
     ///     A generic helper to retrieve a configuration value and create an appropriate HTTP response.
     /// </summary>

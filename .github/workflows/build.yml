@@ -71,6 +71,41 @@ jobs:
           path: '**/test-results.trx'
 
   # ===================================================================
+  # JOB: deploy-functions
+  # Purpose: Deploys the NagiAppFunctions Azure Functions app after tests pass.
+  # This job only runs on pushes to master (not on tag pushes for releases).
+  # ===================================================================
+  deploy-functions:
+    name: Deploy Azure Functions
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/master'
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository source code
+        uses: actions/checkout@v4
+
+      - name: Install .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Build and Publish Functions
+        run: >
+          dotnet publish api/NagiAppFunctions/NagiAppFunctions.csproj
+          -c Release
+          -o ./functions-output
+
+      - name: Deploy to Azure Functions
+        uses: Azure/functions-action@v1
+        with:
+          app-name: 'NagiAppFunctions'
+          package: './functions-output'
+          publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
+
+  # ===================================================================
   # JOB: benchmark
   # Purpose: Tracks performance and memory usage of critical paths.
   # This job runs after tests to ensure performance standards are met.

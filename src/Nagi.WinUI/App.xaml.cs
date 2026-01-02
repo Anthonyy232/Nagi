@@ -411,6 +411,9 @@ public partial class App : Application
         services.AddSingleton<ILastFmMetadataService, LastFmMetadataService>();
         services.AddSingleton<ILastFmAuthService, LastFmAuthService>();
         services.AddSingleton<ISpotifyService, SpotifyService>();
+        services.AddSingleton<IMusicBrainzService, MusicBrainzService>();
+        services.AddSingleton<IFanartTvService, FanartTvService>();
+        services.AddSingleton<INetEaseLyricsService, NetEaseLyricsService>();
         services.AddSingleton<ILastFmScrobblerService, LastFmScrobblerService>();
         services.AddSingleton<IPresenceManager, PresenceManager>();
         services.AddSingleton<IPresenceService, DiscordPresenceService>();

@@ -273,7 +273,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
         try
         {
             // 1. Try to get synchronized (timed) lyrics first (runs on background thread)
-            parsedLrc = await _lrcService.GetLyricsAsync(song).ConfigureAwait(false);
+            parsedLrc = await _lrcService.GetLyricsAsync(song, cancellationToken).ConfigureAwait(false);
 
             // Check if a newer track change occurred while we were fetching
             if (cancellationToken.IsCancellationRequested)

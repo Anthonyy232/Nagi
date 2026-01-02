@@ -161,13 +161,26 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         AvailableEqualizerPresets = _playbackService.AvailablePresets.ToList();
         
         _isInitializing = true;
-        IsDynamicThemingEnabled = true;
-        IsPlayerAnimationEnabled = true;
-        IsRestorePlaybackStateEnabled = true;
-        IsHideToTrayEnabled = true;
-        IsShowCoverArtInTrayFlyoutEnabled = true;
-        IsCheckForUpdatesEnabled = true;
-        IsRememberPaneStateEnabled = true;
+        
+        SelectedTheme = SettingsDefaults.Theme;
+        SelectedBackdropMaterial = SettingsDefaults.BackdropMaterial;
+        IsDynamicThemingEnabled = SettingsDefaults.DynamicThemingEnabled;
+        IsPlayerAnimationEnabled = SettingsDefaults.PlayerAnimationEnabled;
+        IsRestorePlaybackStateEnabled = SettingsDefaults.RestorePlaybackStateEnabled;
+        IsAutoLaunchEnabled = SettingsDefaults.AutoLaunchEnabled;
+        IsStartMinimizedEnabled = SettingsDefaults.StartMinimizedEnabled;
+        IsHideToTrayEnabled = SettingsDefaults.HideToTrayEnabled;
+        IsMinimizeToMiniPlayerEnabled = SettingsDefaults.MinimizeToMiniPlayerEnabled;
+        IsShowCoverArtInTrayFlyoutEnabled = SettingsDefaults.ShowCoverArtInTrayFlyoutEnabled;
+        IsFetchOnlineMetadataEnabled = SettingsDefaults.FetchOnlineMetadataEnabled;
+        IsFetchOnlineLyricsEnabled = SettingsDefaults.FetchOnlineLyricsEnabled;
+        IsDiscordRichPresenceEnabled = SettingsDefaults.DiscordRichPresenceEnabled;
+        IsCheckForUpdatesEnabled = SettingsDefaults.CheckForUpdatesEnabled;
+        IsRememberWindowSizeEnabled = SettingsDefaults.RememberWindowSizeEnabled;
+        IsRememberPaneStateEnabled = SettingsDefaults.RememberPaneStateEnabled;
+        IsVolumeNormalizationEnabled = SettingsDefaults.VolumeNormalizationEnabled;
+        EqualizerPreamp = SettingsDefaults.EqualizerPreamp;
+        
         _isInitializing = false;
     }
 
