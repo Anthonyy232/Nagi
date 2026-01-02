@@ -1,5 +1,6 @@
 using Microsoft.UI.Xaml;
 using Nagi.Core.Models;
+using Nagi.Core.Services.Data;
 using Nagi.WinUI.Models;
 using Windows.UI;
 
@@ -21,14 +22,14 @@ public static class SettingsDefaults
     public const bool FetchOnlineLyricsEnabled = false;
     public const bool DiscordRichPresenceEnabled = false;
     public const ElementTheme Theme = ElementTheme.Default;
-    public const BackdropMaterial BackdropMaterial = BackdropMaterial.Mica;
+    public const BackdropMaterial DefaultBackdropMaterial = BackdropMaterial.Mica;
     public const bool DynamicThemingEnabled = true;
     public const bool RestorePlaybackStateEnabled = true;
     public const bool StartMinimizedEnabled = false;
     public const double Volume = 0.5;
     public const bool MuteState = false;
     public const bool ShuffleState = false;
-    public const RepeatMode RepeatMode = Core.Models.RepeatMode.Off;
+    public const RepeatMode DefaultRepeatMode = RepeatMode.Off;
     public const bool CheckForUpdatesEnabled = true;
     public const bool LastFmScrobblingEnabled = false;
     public const bool LastFmNowPlayingEnabled = false;

@@ -140,7 +140,7 @@ public class SettingsService : IUISettingsService
         await SetFetchOnlineLyricsEnabledAsync(SettingsDefaults.FetchOnlineLyricsEnabled);
         await SetDiscordRichPresenceEnabledAsync(SettingsDefaults.DiscordRichPresenceEnabled);
         await SetThemeAsync(SettingsDefaults.Theme);
-        await SetBackdropMaterialAsync(SettingsDefaults.BackdropMaterial);
+        await SetBackdropMaterialAsync(SettingsDefaults.DefaultBackdropMaterial);
         await SetDynamicThemingAsync(SettingsDefaults.DynamicThemingEnabled);
         await SetRestorePlaybackStateEnabledAsync(SettingsDefaults.RestorePlaybackStateEnabled);
         await SetStartMinimizedEnabledAsync(SettingsDefaults.StartMinimizedEnabled);
@@ -149,7 +149,7 @@ public class SettingsService : IUISettingsService
         await SaveVolumeAsync(SettingsDefaults.Volume);
         await SaveMuteStateAsync(SettingsDefaults.MuteState);
         await SaveShuffleStateAsync(SettingsDefaults.ShuffleState);
-        await SaveRepeatModeAsync(SettingsDefaults.RepeatMode);
+        await SaveRepeatModeAsync(SettingsDefaults.DefaultRepeatMode);
         await SetCheckForUpdatesEnabledAsync(SettingsDefaults.CheckForUpdatesEnabled);
         await SetLastSkippedUpdateVersionAsync(null);
         await SetLastFmScrobblingEnabledAsync(SettingsDefaults.LastFmScrobblingEnabled);
@@ -446,7 +446,7 @@ public class SettingsService : IUISettingsService
     public async Task<RepeatMode> GetInitialRepeatModeAsync()
     {
         await EnsureUnpackagedSettingsLoadedAsync();
-        return GetEnumValue(RepeatModeKey, SettingsDefaults.RepeatMode);
+        return GetEnumValue(RepeatModeKey, SettingsDefaults.DefaultRepeatMode);
     }
 
     public Task SaveRepeatModeAsync(RepeatMode mode)
@@ -656,7 +656,7 @@ public class SettingsService : IUISettingsService
     public async Task<BackdropMaterial> GetBackdropMaterialAsync()
     {
         await EnsureUnpackagedSettingsLoadedAsync();
-        return GetEnumValue(BackdropMaterialKey, SettingsDefaults.BackdropMaterial);
+        return GetEnumValue(BackdropMaterialKey, SettingsDefaults.DefaultBackdropMaterial);
     }
 
     public async Task SetBackdropMaterialAsync(BackdropMaterial material)
