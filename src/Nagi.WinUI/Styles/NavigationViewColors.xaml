@@ -2,18 +2,6 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <!-- Selection indicator -->
     <StaticResource x:Key="NavigationViewSelectionIndicatorForeground" ResourceKey="AppPrimaryColorBrush" />
-
-    <!-- Icon foreground - Normal states (unselected) -->
-    <StaticResource x:Key="NavigationViewItemIconForeground" ResourceKey="AppPrimaryColorBrush" />
-    <StaticResource x:Key="NavigationViewItemIconForegroundPointerOver" ResourceKey="AppPrimaryColorBrush" />
-    <StaticResource x:Key="NavigationViewItemIconForegroundPressed" ResourceKey="AppPrimaryColorBrush" />
-    <StaticResource x:Key="NavigationViewItemIconForegroundDisabled" ResourceKey="AppPrimaryColorBrush" />
-
-    <!-- Icon foreground - Selected states -->
-    <StaticResource x:Key="NavigationViewItemIconForegroundSelected" ResourceKey="AppPrimaryColorBrush" />
-    <StaticResource x:Key="NavigationViewItemIconForegroundSelectedPointerOver" ResourceKey="AppPrimaryColorBrush" />
-    <StaticResource x:Key="NavigationViewItemIconForegroundSelectedPressed" ResourceKey="AppPrimaryColorBrush" />
 
 </ResourceDictionary>

@@ -59,6 +59,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
     private readonly IUISettingsService _settingsService;
     private readonly IThemeService _themeService;
+    private readonly ILocalizationService _localizationService;
 
     // A flag to control the player's expand/collapse animation based on user settings.
     private bool _isPlayerAnimationEnabled = true;
@@ -79,6 +80,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         _settingsService = App.Services!.GetRequiredService<IUISettingsService>();
         _themeService = App.Services!.GetRequiredService<IThemeService>();
         _dispatcherService = App.Services!.GetRequiredService<IDispatcherService>();
+        _localizationService = App.Services!.GetRequiredService<ILocalizationService>();
         _logger = App.Services!.GetRequiredService<ILogger<MainPage>>();
         DataContext = ViewModel;
 
@@ -243,7 +245,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         {
             var navViewItem = new NavigationViewItem
             {
-                Content = item.DisplayName,
+                Content = _localizationService.GetString($"NavItem_{item.Tag}", item.DisplayName),
                 Tag = item.Tag,
                 Icon = new FontIcon { Glyph = item.IconGlyph }
             };

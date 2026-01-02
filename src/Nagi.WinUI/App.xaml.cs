@@ -378,6 +378,7 @@ public partial class App : Application
 
     private static void ConfigureAppSettingsServices(IServiceCollection services)
     {
+        services.AddSingleton<ILocalizationService, LocalizationService>();
         services.AddSingleton<ICredentialLockerService, CredentialLockerService>();
         services.AddSingleton<SettingsService>();
         services.AddSingleton<IUISettingsService>(sp => sp.GetRequiredService<SettingsService>());
