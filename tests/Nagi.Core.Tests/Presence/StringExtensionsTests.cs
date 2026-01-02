@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using Nagi.Core.Services.Implementations.Presence;
+using Nagi.Core.Helpers;
 using Xunit;
 
 namespace Nagi.Core.Tests.Presence;
