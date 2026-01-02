@@ -13,7 +13,7 @@ public interface ILrcService
     /// </summary>
     /// <param name="song">The song object containing the LrcFilePath.</param>
     /// <returns>A ParsedLrc object containing the timed lyrics, or null if parsing fails or the file doesn't exist.</returns>
-    Task<ParsedLrc?> GetLyricsAsync(Song song);
+    Task<ParsedLrc?> GetLyricsAsync(Song song, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Asynchronously loads and parses an LRC file from a direct file path.

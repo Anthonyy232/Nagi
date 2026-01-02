@@ -45,6 +45,13 @@ public class Artist
     public DateTime? MetadataLastCheckedUtc { get; set; }
 
     /// <summary>
+    ///     The MusicBrainz identifier for this artist.
+    ///     Used to fetch metadata from services like Fanart.tv that require MBID.
+    /// </summary>
+    [MaxLength(100)]
+    public string? MusicBrainzId { get; set; }
+
+    /// <summary>
     ///     A collection of songs by this artist.
     /// </summary>
     public virtual ICollection<Song> Songs { get; set; } = new List<Song>();

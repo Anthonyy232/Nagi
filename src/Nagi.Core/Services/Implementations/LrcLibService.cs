@@ -30,7 +30,7 @@ public class LrcLibService : IOnlineLyricsService
     }
 
     /// <inheritdoc />
-    public async Task<string?> GetLyricsAsync(string trackName, string? artistName, string? albumName, TimeSpan duration)
+    public async Task<string?> GetLyricsAsync(string trackName, string? artistName, string? albumName, TimeSpan duration, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(trackName))
         {
@@ -67,11 +67,11 @@ public class LrcLibService : IOnlineLyricsService
                 var requestUrl = $"{BaseUrl}?{query}";
                 _logger.LogDebug("Fetching lyrics strict lookup from LRCLIB for: {Artist} - {Track}", artistName, trackName);
 
-                using var response = await _httpClient.GetAsync(requestUrl);
+                using var response = await _httpClient.GetAsync(requestUrl, cancellationToken);
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var content = await response.Content.ReadAsStringAsync();
+                    var content = await response.Content.ReadAsStringAsync(cancellationToken);
                     var lrcResponse = JsonSerializer.Deserialize<LrcLibResponse>(content, _jsonOptions);
 
                     if (!string.IsNullOrEmpty(lrcResponse?.SyncedLyrics))
@@ -98,7 +98,12 @@ public class LrcLibService : IOnlineLyricsService
 
             // 2. Search Fallback /api/search
             _logger.LogDebug("Attempting search fallback for: {Track}", trackName);
-            return await SearchLyricsAsync(trackName, artistName, albumName, duration);
+            return await SearchLyricsAsync(trackName, artistName, albumName, duration, cancellationToken);
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.LogDebug("Lyrics fetch cancelled for {Artist} - {Track}", artistName, trackName);
+            return null;
         }
         catch (Exception ex)
         {
@@ -107,7 +112,7 @@ public class LrcLibService : IOnlineLyricsService
         }
     }
 
-    private async Task<string?> SearchLyricsAsync(string trackName, string? artistName, string? albumName, TimeSpan duration)
+    private async Task<string?> SearchLyricsAsync(string trackName, string? artistName, string? albumName, TimeSpan duration, CancellationToken cancellationToken)
     {
         try
         {
@@ -117,7 +122,7 @@ public class LrcLibService : IOnlineLyricsService
             // Note: Not sending album_name to search to be more permissive, we will filter locally.
             
             var requestUrl = $"{SearchUrl}?{query}";
-            using var response = await _httpClient.GetAsync(requestUrl);
+            using var response = await _httpClient.GetAsync(requestUrl, cancellationToken);
             
             if (response.StatusCode == HttpStatusCode.TooManyRequests)
             {
@@ -128,7 +133,7 @@ public class LrcLibService : IOnlineLyricsService
             
             response.EnsureSuccessStatusCode();
 
-            var content = await response.Content.ReadAsStringAsync();
+            var content = await response.Content.ReadAsStringAsync(cancellationToken);
             var searchResults = JsonSerializer.Deserialize<List<LrcLibResponse>>(content, _jsonOptions);
 
             if (searchResults is null || searchResults.Count == 0)

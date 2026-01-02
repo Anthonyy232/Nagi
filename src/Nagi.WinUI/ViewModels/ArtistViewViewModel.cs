@@ -48,6 +48,7 @@ public partial class ArtistViewViewModel : SongListViewModelBase
     private readonly ISettingsService _settingsService;
     private Guid _artistId;
     private CancellationTokenSource? _debounceCts;
+    private CancellationTokenSource _pageCts = new();
 
     public ArtistViewViewModel(
         ILibraryReader libraryReader,
@@ -140,7 +141,7 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         {
             _artistId = artistId;
             var shouldFetchOnline = await _settingsService.GetFetchOnlineMetadataEnabledAsync();
-            var artist = await _libraryScanner.GetArtistDetailsAsync(artistId, shouldFetchOnline);
+            var artist = await _libraryScanner.GetArtistDetailsAsync(artistId, shouldFetchOnline, _pageCts.Token);
 
             if (artist != null)
             {
@@ -310,6 +311,8 @@ public partial class ArtistViewViewModel : SongListViewModelBase
     {
         _debounceCts?.Cancel();
         _debounceCts?.Dispose();
+        _pageCts.Cancel();
+        _pageCts.Dispose();
         SearchTerm = string.Empty;
 
         base.Cleanup();

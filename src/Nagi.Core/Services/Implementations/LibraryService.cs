@@ -28,6 +28,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     private readonly IFileSystemService _fileSystem;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILastFmMetadataService _lastFmService;
+    private readonly IMusicBrainzService _musicBrainzService;
+    private readonly IFanartTvService _fanartTvService;
     private readonly ILogger<LibraryService> _logger;
     private readonly object _metadataFetchLock = new();
     private readonly IMetadataService _metadataService;
@@ -49,6 +51,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         IMetadataService metadataService,
         ILastFmMetadataService lastFmService,
         ISpotifyService spotifyService,
+        IMusicBrainzService musicBrainzService,
+        IFanartTvService fanartTvService,
         IHttpClientFactory httpClientFactory,
         IServiceScopeFactory serviceScopeFactory,
         IPathConfiguration pathConfig,
@@ -61,6 +65,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         _metadataService = metadataService ?? throw new ArgumentNullException(nameof(metadataService));
         _lastFmService = lastFmService ?? throw new ArgumentNullException(nameof(lastFmService));
         _spotifyService = spotifyService ?? throw new ArgumentNullException(nameof(spotifyService));
+        _musicBrainzService = musicBrainzService ?? throw new ArgumentNullException(nameof(musicBrainzService));
+        _fanartTvService = fanartTvService ?? throw new ArgumentNullException(nameof(fanartTvService));
         _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
         _serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
         _pathConfig = pathConfig ?? throw new ArgumentNullException(nameof(pathConfig));
@@ -773,7 +779,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     }
 
     /// <inheritdoc />
-    public async Task<Artist?> GetArtistDetailsAsync(Guid artistId, bool allowOnlineFetch)
+    public async Task<Artist?> GetArtistDetailsAsync(Guid artistId, bool allowOnlineFetch, CancellationToken cancellationToken = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync();
         var artist = await context.Artists.AsTracking().FirstOrDefaultAsync(a => a.Id == artistId);
@@ -783,7 +789,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         var needsUpdate = string.IsNullOrWhiteSpace(artist.Biography) ||
                           string.IsNullOrWhiteSpace(artist.LocalImageCachePath);
         if (allowOnlineFetch && needsUpdate)
-            await FetchAndUpdateArtistFromRemoteAsync(context, artist);
+            await FetchAndUpdateArtistFromRemoteAsync(context, artist, cancellationToken);
 
         return await context.Artists.AsNoTracking().FirstOrDefaultAsync(a => a.Id == artistId);
     }
@@ -840,7 +846,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                         if (token.IsCancellationRequested) break;
                         try
                         {
-                            await FetchAndUpdateArtistFromRemoteAsync(batchContext, artist);
+                            await FetchAndUpdateArtistFromRemoteAsync(batchContext, artist, token);
                         }
                         catch (DbUpdateConcurrencyException)
                         {
@@ -3021,39 +3027,58 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         }
     }
 
-    private async Task FetchAndUpdateArtistFromRemoteAsync(MusicDbContext context, Artist artist)
+    private async Task FetchAndUpdateArtistFromRemoteAsync(MusicDbContext context, Artist artist, CancellationToken cancellationToken = default)
     {
-        using var httpClient = _httpClientFactory.CreateClient("ImageDownloader");
-        var lastFmResultTask = _lastFmService.GetArtistInfoAsync(artist.Name);
-        var spotifyResultTask = _spotifyService.GetArtistImageUrlAsync(artist.Name);
-        await Task.WhenAll(lastFmResultTask, spotifyResultTask);
-
-        var lastFmResult = await lastFmResultTask;
-        var spotifyResult = await spotifyResultTask;
-
-        if (!lastFmResult.IsConclusive || !spotifyResult.IsConclusive)
-        {
-            _logger.LogWarning(
-                "Skipping metadata update for '{ArtistName}' due to a temporary service error. Will retry later.",
-                artist.Name);
-            return;
-        }
-
         var wasMetadataFoundAndUpdated = false;
 
+        // Branch A: Resolving high-quality images (MBID -> Fanart.tv -> Spotify)
+        // We run this in parallel with Branch B (Last.fm) to reduce total latency.
+        var primaryMetadataTask = ResolvePrimaryMetadataAsync(artist.Name, artist.MusicBrainzId, cancellationToken);
+
+        // Branch B: Fetching Biography and fallback image from Last.fm
+        var lastFmTask = _lastFmService.GetArtistInfoAsync(artist.Name, cancellationToken);
+
+        // Wait for both independent branches to complete
+        await Task.WhenAll(primaryMetadataTask, lastFmTask);
+
+        var (primaryImageUrl, resolvedMbid) = await primaryMetadataTask;
+        var lastFmResult = await lastFmTask;
+
+        // --- Sequential Update Phase (Thread-Safe) ---
+        // We update the 'artist' entity tracked by the DB context after all remote calls are finished.
+
+        // 1. Apply MusicBrainz ID if resolved
+        if (string.IsNullOrEmpty(artist.MusicBrainzId) && !string.IsNullOrEmpty(resolvedMbid))
+        {
+            artist.MusicBrainzId = resolvedMbid;
+            wasMetadataFoundAndUpdated = true;
+            _logger.LogInformation("Resolved MusicBrainz ID {MBID} for artist '{ArtistName}'", resolvedMbid, artist.Name);
+        }
+
+        // 2. Apply Biography from Last.fm
         if (lastFmResult.Status == ServiceResultStatus.Success && lastFmResult.Data?.Biography is not null)
         {
             artist.Biography = lastFmResult.Data.Biography;
             wasMetadataFoundAndUpdated = true;
         }
 
-        if (spotifyResult.Status == ServiceResultStatus.Success && spotifyResult.Data?.ImageUrl is not null)
+        // 3. Determine best Image URL (Fanart/Spotify > Last.fm)
+        var finalImageUrl = primaryImageUrl;
+        if (string.IsNullOrEmpty(finalImageUrl) && 
+            lastFmResult.Status == ServiceResultStatus.Success && 
+            lastFmResult.Data?.ImageUrl is not null)
+        {
+            finalImageUrl = lastFmResult.Data.ImageUrl;
+        }
+
+        // 4. Download and cache the best image found
+        if (!string.IsNullOrEmpty(finalImageUrl))
         {
             // Skip fetching metadata image if a custom image is already set
             if (artist.LocalImageCachePath == null || !artist.LocalImageCachePath.Contains(".custom."))
             {
                 var downloadedPath =
-                    await DownloadAndCacheArtistImageAsync(artist, new Uri(spotifyResult.Data.ImageUrl), httpClient);
+                    await DownloadAndCacheArtistImageAsync(artist, new Uri(finalImageUrl), cancellationToken);
                 if (!string.IsNullOrEmpty(downloadedPath))
                 {
                     artist.LocalImageCachePath = downloadedPath;
@@ -3068,15 +3093,52 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         if (wasMetadataFoundAndUpdated)
             ArtistMetadataUpdated?.Invoke(this,
                 new ArtistMetadataUpdatedEventArgs(artist.Id, artist.LocalImageCachePath));
+
+        return;
+
+        // Nested helper to encapsulate Branch A logic
+        async Task<(string? ImageUrl, string? Mbid)> ResolvePrimaryMetadataAsync(string artistName, string? currentMbid, CancellationToken ct)
+        {
+            var mbid = currentMbid;
+            string? url = null;
+
+            // Step 1: Resolve MusicBrainz ID
+            if (string.IsNullOrEmpty(mbid))
+            {
+                mbid = await _musicBrainzService.SearchArtistAsync(artistName, ct);
+            }
+
+            // Step 2: Try Fanart.tv (needs MBID)
+            if (!string.IsNullOrEmpty(mbid))
+            {
+                var fanartResult = await _fanartTvService.GetArtistImagesAsync(mbid, ct);
+                if (fanartResult.Status == ServiceResultStatus.Success && fanartResult.Data is not null)
+                {
+                    url = fanartResult.Data.BackgroundUrl ?? fanartResult.Data.ThumbUrl;
+                }
+            }
+
+            // Step 3: Try Spotify fallback
+            if (string.IsNullOrEmpty(url))
+            {
+                var spotifyResult = await _spotifyService.GetArtistImageUrlAsync(artistName, ct);
+                if (spotifyResult.Status == ServiceResultStatus.Success && spotifyResult.Data?.ImageUrl is not null)
+                {
+                    url = spotifyResult.Data.ImageUrl;
+                }
+            }
+
+            return (url, mbid);
+        }
     }
 
-    private Task<string?> DownloadAndCacheArtistImageAsync(Artist artist, Uri imageUrl, HttpClient httpClient)
+    private Task<string?> DownloadAndCacheArtistImageAsync(Artist artist, Uri imageUrl, CancellationToken cancellationToken)
     {
         var lazyTask = _artistImageProcessingTasks.GetOrAdd(artist.Id, _ =>
             new Lazy<Task<string?>>(() =>
             {
                 var localPath = _fileSystem.Combine(_pathConfig.ArtistImageCachePath, $"{artist.Id}.fetched.jpg");
-                return DownloadAndWriteImageInternalAsync(localPath, imageUrl, httpClient);
+                return DownloadAndWriteImageInternalAsync(localPath, imageUrl, cancellationToken);
             })
         );
 
@@ -3096,16 +3158,24 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         }
     }
 
-    private async Task<string?> DownloadAndWriteImageInternalAsync(string localPath, Uri imageUrl,
-        HttpClient httpClient)
+    private async Task<string?> DownloadAndWriteImageInternalAsync(string localPath, Uri imageUrl, CancellationToken cancellationToken)
     {
         if (_fileSystem.FileExists(localPath)) return localPath;
 
-        using var response = await httpClient.GetAsync(imageUrl);
-        response.EnsureSuccessStatusCode();
-        var imageBytes = await response.Content.ReadAsByteArrayAsync();
-        await _fileSystem.WriteAllBytesAsync(localPath, imageBytes);
-        return localPath;
+        try
+        {
+            using var httpClient = _httpClientFactory.CreateClient("ImageDownloader");
+            using var response = await httpClient.GetAsync(imageUrl, cancellationToken);
+            response.EnsureSuccessStatusCode();
+            var imageBytes = await response.Content.ReadAsByteArrayAsync(cancellationToken);
+            await _fileSystem.WriteAllBytesAsync(localPath, imageBytes);
+            return localPath;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to download artist image from {ImageUrl}", imageUrl);
+            return null;
+        }
     }
 
     private async Task<Artist> GetOrCreateArtistAsync(MusicDbContext context, string? name)

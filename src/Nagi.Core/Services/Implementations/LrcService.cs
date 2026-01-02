@@ -16,6 +16,7 @@ public class LrcService : ILrcService
     private readonly IFileSystemService _fileSystemService;
     private readonly ILogger<LrcService> _logger;
     private readonly IOnlineLyricsService _onlineLyricsService;
+    private readonly INetEaseLyricsService _netEaseLyricsService;
     private readonly ISettingsService _settingsService;
     private readonly IPathConfiguration _pathConfig;
     private readonly ILibraryWriter _libraryWriter;
@@ -24,6 +25,7 @@ public class LrcService : ILrcService
     public LrcService(
         IFileSystemService fileSystemService,
         IOnlineLyricsService onlineLyricsService,
+        INetEaseLyricsService netEaseLyricsService,
         ISettingsService settingsService,
         IPathConfiguration pathConfig,
         ILibraryWriter libraryWriter,
@@ -31,6 +33,7 @@ public class LrcService : ILrcService
     {
         _fileSystemService = fileSystemService;
         _onlineLyricsService = onlineLyricsService;
+        _netEaseLyricsService = netEaseLyricsService;
         _settingsService = settingsService;
         _pathConfig = pathConfig;
         _libraryWriter = libraryWriter;
@@ -38,7 +41,7 @@ public class LrcService : ILrcService
     }
 
     /// <inheritdoc />
-    public async Task<ParsedLrc?> GetLyricsAsync(Song song)
+    public async Task<ParsedLrc?> GetLyricsAsync(Song song, CancellationToken cancellationToken = default)
     {
         // 1. Try local file path from Song object
         if (!string.IsNullOrWhiteSpace(song.LrcFilePath) && _fileSystemService.FileExists(song.LrcFilePath))
@@ -47,8 +50,20 @@ public class LrcService : ILrcService
         // 2. Try online fallback if enabled
         if (await _settingsService.GetFetchOnlineLyricsEnabledAsync())
         {
+            // Check for cancellation before making any online calls
+            if (cancellationToken.IsCancellationRequested)
+                return null;
+
+            // 2a. Try LRCLIB first (strict matching)
             var lrcContent = await _onlineLyricsService.GetLyricsAsync(
-                song.Title, song.Artist?.Name, song.Album?.Title, song.Duration);
+                song.Title, song.Artist?.Name, song.Album?.Title, song.Duration, cancellationToken);
+            
+            // 2b. Fallback to NetEase for Asian music coverage (if not cancelled)
+            if (string.IsNullOrWhiteSpace(lrcContent) && !cancellationToken.IsCancellationRequested)
+            {
+                _logger.LogDebug("LRCLIB returned no results for '{Title}', trying NetEase fallback.", song.Title);
+                lrcContent = await _netEaseLyricsService.SearchLyricsAsync(song.Title, song.Artist?.Name, cancellationToken);
+            }
             
             if (!string.IsNullOrWhiteSpace(lrcContent))
             {
