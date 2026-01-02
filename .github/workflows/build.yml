@@ -82,6 +82,7 @@ jobs:
     if: github.ref == 'refs/heads/master'
     permissions:
       contents: read
+      id-token: write
 
     steps:
       - name: Checkout repository source code
@@ -98,12 +99,18 @@ jobs:
           -c Release
           -o ./functions-output
 
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
       - name: Deploy to Azure Functions
         uses: Azure/functions-action@v1
         with:
           app-name: 'NagiAppFunctions'
           package: './functions-output'
-          publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
 
   # ===================================================================
   # JOB: benchmark
