@@ -16,6 +16,7 @@ using Nagi.Core.Services.Data;
 using Nagi.Core.Models;
 using Nagi.WinUI.Models;
 using Nagi.WinUI.Navigation;
+using Nagi.WinUI.Services;
 using Nagi.WinUI.Services.Abstractions;
 
 namespace Nagi.WinUI.ViewModels;
@@ -163,7 +164,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         _isInitializing = true;
         
         SelectedTheme = SettingsDefaults.Theme;
-        SelectedBackdropMaterial = SettingsDefaults.BackdropMaterial;
+        SelectedBackdropMaterial = SettingsDefaults.DefaultBackdropMaterial;
         IsDynamicThemingEnabled = SettingsDefaults.DynamicThemingEnabled;
         IsPlayerAnimationEnabled = SettingsDefaults.PlayerAnimationEnabled;
         IsRestorePlaybackStateEnabled = SettingsDefaults.RestorePlaybackStateEnabled;
