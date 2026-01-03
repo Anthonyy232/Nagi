@@ -276,32 +276,38 @@ public class LrcServiceTests
 
     /// <summary>
     ///     Verifies that when local lyrics are not available and online fetch is enabled,
-    ///     LRCLIB is tried first before NetEase.
+    ///     both LRCLIB and NetEase are fetched in parallel, with LRCLIB result preferred.
     /// </summary>
     [Fact]
-    public async Task GetLyricsAsync_WithNoLocalFile_TriesLrcLibFirst()
+    public async Task GetLyricsAsync_WithNoLocalFile_FetchesBothInParallel_PrefersLrcLib()
     {
         // Arrange
         var song = new Song { Title = "Test", LrcFilePath = null, Duration = TimeSpan.FromMinutes(3) };
         _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
         _onlineLyricsService.GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(), 
             Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>()).Returns("[00:01.00]From LRCLIB");
+        _netEaseLyricsService.SearchLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>())
+            .Returns("[00:01.00]From NetEase");
 
         // Act
         var result = await _lrcService.GetLyricsAsync(song);
 
-        // Assert
+        // Assert - LRCLIB result should be used even though both were called
         result.Should().NotBeNull();
         result!.Lines.Should().HaveCount(1);
         result.Lines[0].Text.Should().Be("From LRCLIB");
-        await _netEaseLyricsService.DidNotReceive().SearchLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>());
+        
+        // Both services should be called (parallel fetching)
+        await _onlineLyricsService.Received(1).GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), 
+            Arg.Any<string?>(), Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>());
+        await _netEaseLyricsService.Received(1).SearchLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>());
     }
 
     /// <summary>
-    ///     Verifies that when LRCLIB returns no results, the service falls back to NetEase.
+    ///     Verifies that when LRCLIB returns no results, the NetEase result (fetched in parallel) is used.
     /// </summary>
     [Fact]
-    public async Task GetLyricsAsync_WhenLrcLibFails_FallsBackToNetEase()
+    public async Task GetLyricsAsync_WhenLrcLibReturnsNull_UsesNetEaseResult()
     {
         // Arrange
         var song = new Song { Title = "Japanese Song", LrcFilePath = null, Duration = TimeSpan.FromMinutes(3) };
@@ -314,7 +320,7 @@ public class LrcServiceTests
         // Act
         var result = await _lrcService.GetLyricsAsync(song);
 
-        // Assert
+        // Assert - NetEase result used since LRCLIB returned null
         result.Should().NotBeNull();
         result!.Lines[0].Text.Should().Be("From NetEase");
     }

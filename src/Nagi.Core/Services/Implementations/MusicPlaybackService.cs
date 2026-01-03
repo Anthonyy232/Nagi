@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
@@ -17,7 +17,6 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
     private readonly IMetadataService _metadataService;
     private readonly Random _random = new();
     private readonly ISettingsService _settingsService;
-    private int _currentShuffledIndex = -1;
 
     private bool _isDisposed;
     private bool _isInitialized;
@@ -62,6 +61,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
     public IReadOnlyList<Song> PlaybackQueue => _playbackQueue.AsReadOnly();
     public IReadOnlyList<Song> ShuffledQueue => _shuffledQueue.AsReadOnly();
     public int CurrentQueueIndex { get; private set; } = -1;
+    public int CurrentShuffledIndex { get; private set; } = -1;
     public bool IsShuffleEnabled { get; private set; }
     public RepeatMode CurrentRepeatMode { get; private set; } = RepeatMode.Off;
     public bool IsTransitioningTrack { get; private set; }
@@ -281,7 +281,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
 
             if (IsShuffleEnabled && _shuffledQueue.Any())
             {
-                var shuffledIndex = _currentShuffledIndex >= 0 ? _currentShuffledIndex : 0;
+                var shuffledIndex = CurrentShuffledIndex >= 0 ? CurrentShuffledIndex : 0;
                 var songToPlay = _shuffledQueue.ElementAtOrDefault(shuffledIndex);
                 if (songToPlay != null)
                 {
@@ -426,17 +426,17 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         if (IsShuffleEnabled)
         {
             GenerateShuffledQueue();
-            _currentShuffledIndex = CurrentTrack != null ? _shuffledQueue.IndexOf(CurrentTrack) : -1;
-            if (CurrentTrack != null && _currentShuffledIndex == -1)
+            CurrentShuffledIndex = CurrentTrack != null ? _shuffledQueue.IndexOf(CurrentTrack) : -1;
+            if (CurrentTrack != null && CurrentShuffledIndex == -1)
             {
                 _logger.LogWarning("Current track not found in new shuffle. This should not happen.");
-                _currentShuffledIndex = 0;
+                CurrentShuffledIndex = 0;
             }
         }
         else
         {
             _shuffledQueue.Clear();
-            _currentShuffledIndex = -1;
+            CurrentShuffledIndex = -1;
         }
 
         await _settingsService.SaveShuffleStateAsync(IsShuffleEnabled);
@@ -466,11 +466,11 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
             GenerateShuffledQueue();
             if (CurrentTrack != null)
             {
-                _currentShuffledIndex = _shuffledQueue.IndexOf(CurrentTrack);
-                if (_currentShuffledIndex == -1)
+                CurrentShuffledIndex = _shuffledQueue.IndexOf(CurrentTrack);
+                if (CurrentShuffledIndex == -1)
                 {
                     _logger.LogWarning("Current track lost in shuffle after queue addition. Resetting shuffle.");
-                    _currentShuffledIndex = 0;
+                    CurrentShuffledIndex = 0;
                 }
             }
         }
@@ -495,11 +495,11 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
                 GenerateShuffledQueue();
                 if (CurrentTrack != null)
                 {
-                    _currentShuffledIndex = _shuffledQueue.IndexOf(CurrentTrack);
-                    if (_currentShuffledIndex == -1)
+                    CurrentShuffledIndex = _shuffledQueue.IndexOf(CurrentTrack);
+                    if (CurrentShuffledIndex == -1)
                     {
                         _logger.LogWarning("Current track lost in shuffle after range addition. Resetting shuffle.");
-                        _currentShuffledIndex = 0;
+                        CurrentShuffledIndex = 0;
                     }
                 }
             }
@@ -524,7 +524,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
 
         if (IsShuffleEnabled)
         {
-            var shuffledInsertIndex = _currentShuffledIndex == -1 ? 0 : _currentShuffledIndex + 1;
+            var shuffledInsertIndex = CurrentShuffledIndex == -1 ? 0 : CurrentShuffledIndex + 1;
             shuffledInsertIndex = Math.Min(shuffledInsertIndex, _shuffledQueue.Count);
             _shuffledQueue.Insert(shuffledInsertIndex, song);
         }
@@ -587,12 +587,12 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
                 if (originalIndex < CurrentQueueIndex) CurrentQueueIndex--;
                 if (IsShuffleEnabled)
                 {
-                    _currentShuffledIndex = _shuffledQueue.IndexOf(CurrentTrack);
-                    if (_currentShuffledIndex == -1)
+                    CurrentShuffledIndex = _shuffledQueue.IndexOf(CurrentTrack);
+                    if (CurrentShuffledIndex == -1)
                     {
                         _logger.LogWarning("Current track lost in shuffle after removal. Regenerating.");
                         GenerateShuffledQueue();
-                        _currentShuffledIndex = _shuffledQueue.IndexOf(CurrentTrack);
+                        CurrentShuffledIndex = _shuffledQueue.IndexOf(CurrentTrack);
                     }
                 }
             }
@@ -618,25 +618,25 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
 
         if (IsShuffleEnabled)
         {
-            _currentShuffledIndex = _shuffledQueue.IndexOf(CurrentTrack);
-            if (_currentShuffledIndex == -1)
+            CurrentShuffledIndex = _shuffledQueue.IndexOf(CurrentTrack);
+            if (CurrentShuffledIndex == -1)
             {
                 _logger.LogWarning("Track '{SongTitle}' not found in shuffled queue. Regenerating shuffle.",
                     CurrentTrack.Title);
                 GenerateShuffledQueue();
-                _currentShuffledIndex = _shuffledQueue.IndexOf(CurrentTrack);
+                CurrentShuffledIndex = _shuffledQueue.IndexOf(CurrentTrack);
             }
         }
 
         _logger.LogDebug("Now playing '{SongTitle}' (Index: {QueueIndex}, Shuffled Index: {ShuffledIndex})",
-            CurrentTrack.Title, CurrentQueueIndex, _currentShuffledIndex);
+            CurrentTrack.Title, CurrentQueueIndex, CurrentShuffledIndex);
         await _audioPlayer.LoadAsync(CurrentTrack);
         
         // Apply ReplayGain if enabled and available in database
         await ApplyReplayGainIfEnabledAsync();
         
         await _audioPlayer.PlayAsync();
-        UpdateSmtcControls();
+        // Note: UpdateSmtcControls() is called by OnAudioPlayerMediaOpened after LoadAsync completes
     }
 
     public async Task ClearQueueAsync()
@@ -659,7 +659,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
             PlaybackQueueTrackIds = _playbackQueue.Select(s => s.Id).ToList(),
             CurrentPlaybackQueueIndex = CurrentQueueIndex,
             ShuffledQueueTrackIds = IsShuffleEnabled ? _shuffledQueue.Select(s => s.Id).ToList() : new List<Guid>(),
-            CurrentShuffledQueueIndex = _currentShuffledIndex
+            CurrentShuffledQueueIndex = CurrentShuffledIndex
         };
         await _settingsService.SavePlaybackStateAsync(state);
     }
@@ -718,29 +718,14 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         EqualizerChanged?.Invoke();
     }
 
-    public EqualizerPreset? GetMatchingPreset(IEnumerable<float> bandGains)
+    public EqualizerPreset? GetMatchingPreset(IEnumerable<float>? bandGains)
     {
         if (bandGains == null) return null;
         var currentGains = bandGains.ToArray();
 
-        foreach (var preset in AvailablePresets)
-        {
-            if (preset.Gains.Length != currentGains.Length) continue;
-
-            bool match = true;
-            for (int i = 0; i < preset.Gains.Length; i++)
-            {
-                if (Math.Abs(currentGains[i] - preset.Gains[i]) > 0.1f)
-                {
-                    match = false;
-                    break;
-                }
-            }
-
-            if (match) return preset;
-        }
-
-        return null;
+        return AvailablePresets.FirstOrDefault(preset => 
+            preset.Gains.Length == currentGains.Length && 
+            preset.Gains.Zip(currentGains).All(pair => Math.Abs(pair.First - pair.Second) <= 0.1f));
     }
 
     public async Task SetEqualizerPreampAsync(float gain)
@@ -766,9 +751,14 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
     {
         if (CurrentEqualizerSettings == null) return;
 
-        CurrentEqualizerSettings.Preamp = 10.0f;
-        for (var i = 0; i < CurrentEqualizerSettings.BandGains.Count; i++) CurrentEqualizerSettings.BandGains[i] = 0.0f;
+        // Create new settings object (deep copy) for atomic update - matches SetEqualizerBandAsync pattern
+        var newSettings = new EqualizerSettings
+        {
+            Preamp = 10.0f,
+            BandGains = Enumerable.Repeat(0.0f, CurrentEqualizerSettings.BandGains.Count).ToList()
+        };
 
+        CurrentEqualizerSettings = newSettings;
         _audioPlayer.ApplyEqualizerSettings(CurrentEqualizerSettings);
         await _settingsService.SetEqualizerSettingsAsync(CurrentEqualizerSettings);
         EqualizerChanged?.Invoke();
@@ -842,12 +832,12 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
 
             if (IsShuffleEnabled)
             {
-                _currentShuffledIndex = _shuffledQueue.IndexOf(currentSong);
-                if (_currentShuffledIndex == -1)
+                CurrentShuffledIndex = _shuffledQueue.IndexOf(currentSong);
+                if (CurrentShuffledIndex == -1)
                 {
                     _logger.LogWarning("Current track not found in shuffled queue. Regenerating shuffle.");
                     GenerateShuffledQueue();
-                    _currentShuffledIndex = _shuffledQueue.IndexOf(currentSong);
+                    CurrentShuffledIndex = _shuffledQueue.IndexOf(currentSong);
                 }
             }
 
@@ -887,7 +877,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         {
             // Restore indices even if the track itself isn't loaded.
             CurrentQueueIndex = state.CurrentPlaybackQueueIndex;
-            _currentShuffledIndex = state.CurrentShuffledQueueIndex;
+            CurrentShuffledIndex = state.CurrentShuffledQueueIndex;
         }
 
         return true;
@@ -918,7 +908,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         _shuffledQueue.Clear();
         CurrentTrack = null;
         CurrentQueueIndex = -1;
-        _currentShuffledIndex = -1;
+        CurrentShuffledIndex = -1;
         CurrentListenHistoryId = null;
     }
 
@@ -951,11 +941,11 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         nextPlaybackQueueIndex = -1;
         if (!_playbackQueue.Any() || CurrentQueueIndex == -1) return false;
 
-        if (IsShuffleEnabled && (_shuffledQueue.Count != _playbackQueue.Count || _currentShuffledIndex == -1))
+        if (IsShuffleEnabled && (_shuffledQueue.Count != _playbackQueue.Count || CurrentShuffledIndex == -1))
         {
             _logger.LogWarning("Shuffled queue desynchronized. Regenerating.");
             GenerateShuffledQueue();
-            if (CurrentTrack != null) _currentShuffledIndex = _shuffledQueue.IndexOf(CurrentTrack);
+            if (CurrentTrack != null) CurrentShuffledIndex = _shuffledQueue.IndexOf(CurrentTrack);
         }
 
         var nextIndex = -1;
@@ -965,14 +955,14 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
             var nextShuffledIndex = -1;
             if (moveForward)
             {
-                if (_currentShuffledIndex < _shuffledQueue.Count - 1)
-                    nextShuffledIndex = _currentShuffledIndex + 1;
+                if (CurrentShuffledIndex < _shuffledQueue.Count - 1)
+                    nextShuffledIndex = CurrentShuffledIndex + 1;
                 else if (CurrentRepeatMode == RepeatMode.RepeatAll) nextShuffledIndex = 0;
             }
             else // move backward
             {
-                if (_currentShuffledIndex > 0)
-                    nextShuffledIndex = _currentShuffledIndex - 1;
+                if (CurrentShuffledIndex > 0)
+                    nextShuffledIndex = CurrentShuffledIndex - 1;
                 else if (CurrentRepeatMode == RepeatMode.RepeatAll) nextShuffledIndex = _shuffledQueue.Count - 1;
             }
 
@@ -1018,8 +1008,8 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
             }
             else if (IsShuffleEnabled)
             {
-                canGoNext = _currentShuffledIndex < _shuffledQueue.Count - 1;
-                canGoPrevious = _currentShuffledIndex > 0;
+                canGoNext = CurrentShuffledIndex < _shuffledQueue.Count - 1;
+                canGoPrevious = CurrentShuffledIndex > 0;
             }
             else
             {

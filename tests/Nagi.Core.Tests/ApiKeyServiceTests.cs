@@ -31,8 +31,9 @@ public class ApiKeyServiceTests : IDisposable
         _httpMessageHandler = new TestHttpMessageHandler();
         _logger = Substitute.For<ILogger<ApiKeyService>>();
 
-        var httpClient = new HttpClient(_httpMessageHandler);
-        _httpClientFactory.CreateClient(Arg.Any<string>()).Returns(httpClient);
+        // Must create a new HttpClient for each call - production code disposes HttpClient after use
+        _httpClientFactory.CreateClient(Arg.Any<string>())
+            .Returns(_ => new HttpClient(_httpMessageHandler));
 
         _apiKeyService = new ApiKeyService(_httpClientFactory, _configuration, _logger);
     }
@@ -366,17 +367,21 @@ public class ApiKeyServiceTests : IDisposable
 
     /// <summary>
     ///     Configures the mock <see cref="TestHttpMessageHandler" /> to return a specific <see cref="HttpResponseMessage" />.
+    ///     Creates a new response for each request to avoid content stream reuse issues.
     /// </summary>
     private void SetupHttpResponse(HttpStatusCode statusCode, object? content = null)
     {
-        var response = new HttpResponseMessage(statusCode);
-        if (content != null)
+        // Must create a new HttpResponseMessage for each request - content stream can only be read once
+        _httpMessageHandler.SendAsyncFunc = (_, _) =>
         {
-            var jsonContent = JsonSerializer.Serialize(content);
-            response.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-        }
-
-        _httpMessageHandler.SendAsyncFunc = (_, _) => Task.FromResult(response);
+            var response = new HttpResponseMessage(statusCode);
+            if (content != null)
+            {
+                var jsonContent = JsonSerializer.Serialize(content);
+                response.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+            }
+            return Task.FromResult(response);
+        };
     }
 
     #endregion

@@ -340,6 +340,9 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
                 HasLyrics = true;
                 UpdateCurrentLineFromPosition(_playbackService.CurrentPosition);
                 UpdateLineOpacities();
+                
+                // Pre-fetch lyrics for next track in queue (fire-and-forget)
+                PrefetchNextTrackLyrics();
             }
             else if (unsyncedLines is not null)
             {
@@ -393,5 +396,66 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
             if (_isDisposed) return;
             IsPlaying = _playbackService.IsPlaying; 
         });
+    }
+    
+    /// <summary>
+    ///     Pre-fetches lyrics for the next track in the queue to reduce perceived latency.
+    ///     This is fire-and-forget - failures are silently logged and don't affect current playback.
+    /// </summary>
+    private async void PrefetchNextTrackLyrics()
+    {
+        CancellationTokenSource? prefetchCts = null;
+        try
+        {
+            var nextSong = GetNextSongInQueue();
+            if (nextSong is null) return;
+            
+            // Only prefetch if lyrics haven't been checked yet
+            if (nextSong.LyricsLastCheckedUtc != null) return;
+            
+            _logger.LogDebug("Pre-fetching lyrics for next track: {Title}", nextSong.Title);
+            
+            // Link to main CTS for fast cancellation on track change/navigation, with 15s timeout as fallback
+            lock (_lyricsFetchLock)
+            {
+                if (_lyricsFetchCts == null || _isDisposed) return;
+                prefetchCts = CancellationTokenSource.CreateLinkedTokenSource(_lyricsFetchCts.Token);
+            }
+            
+            // Check if already cancelled immediately after creation (handles race where main CTS was cancelled during lock)
+            if (prefetchCts.Token.IsCancellationRequested) return;
+            prefetchCts.CancelAfter(TimeSpan.FromSeconds(15));
+            
+            await _lrcService.GetLyricsAsync(nextSong, prefetchCts.Token);
+        }
+        catch (OperationCanceledException)
+        {
+            // Expected when the pre-fetch times out or is cancelled - no need to log
+        }
+        catch (Exception ex)
+        {
+            // Pre-fetch failures are non-critical
+            _logger.LogDebug(ex, "Pre-fetch failed for next track (non-critical)");
+        }
+        finally
+        {
+            prefetchCts?.Dispose();
+        }
+    }
+    
+    private Core.Models.Song? GetNextSongInQueue()
+    {
+        if (_playbackService.IsShuffleEnabled)
+        {
+            var nextIndex = _playbackService.CurrentShuffledIndex + 1;
+            return nextIndex < _playbackService.ShuffledQueue.Count 
+                ? _playbackService.ShuffledQueue[nextIndex] 
+                : null;
+        }
+        
+        var nextQueueIndex = _playbackService.CurrentQueueIndex + 1;
+        return nextQueueIndex < _playbackService.PlaybackQueue.Count 
+            ? _playbackService.PlaybackQueue[nextQueueIndex] 
+            : null;
     }
 }

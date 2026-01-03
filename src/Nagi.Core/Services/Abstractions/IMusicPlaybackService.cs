@@ -60,6 +60,13 @@ public interface IMusicPlaybackService : IDisposable
     int CurrentQueueIndex { get; }
 
     /// <summary>
+    ///     Gets the index of the current track in the <see cref="ShuffledQueue" />.
+    ///     Returns -1 if shuffle is disabled or no track is playing.
+    /// </summary>
+    int CurrentShuffledIndex { get; }
+
+
+    /// <summary>
     ///     Gets a value indicating whether shuffle mode is enabled.
     /// </summary>
     bool IsShuffleEnabled { get; }

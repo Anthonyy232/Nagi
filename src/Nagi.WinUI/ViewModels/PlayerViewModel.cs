@@ -206,10 +206,24 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     private static void UpdateCollectionIfChanged(ObservableCollection<PlayerButtonSetting> collection,
         List<PlayerButtonSetting> newItems)
     {
-        if (collection.Select(b => b.Id).SequenceEqual(newItems.Select(b => b.Id))) return;
-
-        collection.Clear();
-        foreach (var item in newItems) collection.Add(item);
+        // Fast path: check if counts differ
+        if (collection.Count != newItems.Count)
+        {
+            collection.Clear();
+            foreach (var item in newItems) collection.Add(item);
+            return;
+        }
+        
+        // Check if all IDs match by index (avoids LINQ allocations)
+        for (var i = 0; i < collection.Count; i++)
+        {
+            if (collection[i].Id != newItems[i].Id)
+            {
+                collection.Clear();
+                foreach (var item in newItems) collection.Add(item);
+                return;
+            }
+        }
     }
 
     [RelayCommand]
@@ -396,18 +410,34 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
 
         if (currentTrack != null)
         {
-            var sourceQueueList = sourceQueue.ToList();
-            var currentTrackIndex = sourceQueueList.FindIndex(s => s.Id == currentTrack.Id);
+            // Find current track index directly without ToList() allocation
+            var currentTrackIndex = -1;
+            for (var i = 0; i < sourceQueue.Count; i++)
+            {
+                if (sourceQueue[i].Id == currentTrack.Id)
+                {
+                    currentTrackIndex = i;
+                    break;
+                }
+            }
 
             if (currentTrackIndex != -1)
             {
-                newDisplayQueue.AddRange(sourceQueueList.Skip(currentTrackIndex));
+                // Add songs from current position to end
+                for (var i = currentTrackIndex; i < sourceQueue.Count; i++)
+                    newDisplayQueue.Add(sourceQueue[i]);
+                    
+                // If repeating, add songs from beginning to current position
                 if (_playbackService.CurrentRepeatMode == RepeatMode.RepeatAll)
-                    newDisplayQueue.AddRange(sourceQueueList.Take(currentTrackIndex));
+                {
+                    for (var i = 0; i < currentTrackIndex; i++)
+                        newDisplayQueue.Add(sourceQueue[i]);
+                }
             }
             else
             {
-                newDisplayQueue.AddRange(sourceQueueList);
+                foreach (var song in sourceQueue)
+                    newDisplayQueue.Add(song);
             }
         }
 
@@ -585,7 +615,14 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
 
     private async void InitializeSettingsAsync()
     {
-        await LoadPlayerButtonSettingsAsync();
+        try
+        {
+            await LoadPlayerButtonSettingsAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to load player button settings during initialization");
+        }
     }
 
     private void SubscribeToSettingsServiceEvents()
