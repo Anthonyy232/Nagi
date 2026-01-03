@@ -1,6 +1,7 @@
 ﻿using System.Net;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Enums;
 using Microsoft.Extensions.Configuration;
@@ -38,11 +39,11 @@ public class KeyProviderFunctions
         Description = "A JSON object containing the Last.fm API Key.")]
     [OpenApiResponseWithBody(HttpStatusCode.ServiceUnavailable, "text/plain", typeof(string),
         Description = "The requested key is not configured on the server.")]
-    public async Task<HttpResponseData> GetLastFmKey(
+    public IActionResult GetLastFmKey(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "lastfm-key")]
-        HttpRequestData req)
+        HttpRequest req)
     {
-        return await CreateKeyResponseAsync(req, "LastFm:ApiKey", "Last.fm API Key");
+        return CreateKeyResponse(req, "LastFm:ApiKey", "Last.fm API Key");
     }
 
     [Function("GetLastFmSecretKey")]
@@ -52,11 +53,11 @@ public class KeyProviderFunctions
         Description = "A JSON object containing the Last.fm Shared Secret.")]
     [OpenApiResponseWithBody(HttpStatusCode.ServiceUnavailable, "text/plain", typeof(string),
         Description = "The requested key is not configured on the server.")]
-    public async Task<HttpResponseData> GetLastFmSecretKey(
+    public IActionResult GetLastFmSecretKey(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "lastfm-secret-key")]
-        HttpRequestData req)
+        HttpRequest req)
     {
-        return await CreateKeyResponseAsync(req, "LastFm:SharedSecret", "Last.fm Shared Secret");
+        return CreateKeyResponse(req, "LastFm:SharedSecret", "Last.fm Shared Secret");
     }
 
     [Function("GetSpotifyKey")]
@@ -67,9 +68,9 @@ public class KeyProviderFunctions
         Description = "A JSON object containing the Spotify credentials in the format 'ClientId:ClientSecret'.")]
     [OpenApiResponseWithBody(HttpStatusCode.ServiceUnavailable, "text/plain", typeof(string),
         Description = "The requested key is not configured on the server.")]
-    public async Task<HttpResponseData> GetSpotifyKey(
+    public IActionResult GetSpotifyKey(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "spotify-key")]
-        HttpRequestData req)
+        HttpRequest req)
     {
         // The client expects a single string "ClientId:ClientSecret".
         var clientId = _config["Spotify:ClientId"];
@@ -79,14 +80,13 @@ public class KeyProviderFunctions
         if (string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(clientSecret))
         {
             _logger.LogError("{KeyName} is not configured correctly on the server.", keyName);
-            var errorResponse = req.CreateResponse(HttpStatusCode.ServiceUnavailable);
-            await errorResponse.WriteStringAsync($"{keyName} is not configured on the server.");
-            return errorResponse;
+            return new ObjectResult($"{keyName} is not configured on the server.")
+            {
+                StatusCode = (int)HttpStatusCode.ServiceUnavailable
+            };
         }
 
-        var response = req.CreateResponse(HttpStatusCode.OK);
-        await response.WriteAsJsonAsync(new KeyResponse { Value = $"{clientId}:{clientSecret}" });
-        return response;
+        return new OkObjectResult(new KeyResponse { Value = $"{clientId}:{clientSecret}" });
     }
 
     [Function("GetFanartTvKey")]
@@ -96,48 +96,29 @@ public class KeyProviderFunctions
         Description = "A JSON object containing the Fanart.tv API Key.")]
     [OpenApiResponseWithBody(HttpStatusCode.ServiceUnavailable, "text/plain", typeof(string),
         Description = "The requested key is not configured on the server.")]
-    public async Task<HttpResponseData> GetFanartTvKey(
+    public IActionResult GetFanartTvKey(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "fanarttv-key")]
-        HttpRequestData req)
+        HttpRequest req)
     {
-        return await CreateKeyResponseAsync(req, "FanartTv:ApiKey", "Fanart.tv API Key");
-    }
-
-    [Function("GetTheAudioDbKey")]
-    [OpenApiOperation("GetTheAudioDbKey", "Keys", Summary = "Gets TheAudioDB API Key")]
-    [OpenApiSecurity("ApiKey", SecuritySchemeType.ApiKey, Name = "X-API-KEY", In = OpenApiSecurityLocationType.Header)]
-    [OpenApiResponseWithBody(HttpStatusCode.OK, "application/json", typeof(KeyResponse),
-        Description = "A JSON object containing TheAudioDB API Key.")]
-    [OpenApiResponseWithBody(HttpStatusCode.ServiceUnavailable, "text/plain", typeof(string),
-        Description = "The requested key is not configured on the server.")]
-    public async Task<HttpResponseData> GetTheAudioDbKey(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "theaudiodb-key")]
-        HttpRequestData req)
-    {
-        return await CreateKeyResponseAsync(req, "TheAudioDb:ApiKey", "TheAudioDB API Key");
+        return CreateKeyResponse(req, "FanartTv:ApiKey", "Fanart.tv API Key");
     }
 
     /// <summary>
     ///     A generic helper to retrieve a configuration value and create an appropriate HTTP response.
     /// </summary>
-    /// <param name="req">The incoming HTTP request data.</param>
-    /// <param name="configPath">The path to the key in the application configuration (e.g., "LastFm:ApiKey").</param>
-    /// <param name="keyName">A user-friendly name for the key, used in error messages.</param>
-    /// <returns>An HttpResponseData object containing the key or an error.</returns>
-    private async Task<HttpResponseData> CreateKeyResponseAsync(HttpRequestData req, string configPath, string keyName)
+    private IActionResult CreateKeyResponse(HttpRequest req, string configPath, string keyName)
     {
         var keyValue = _config[configPath];
 
         if (string.IsNullOrEmpty(keyValue))
         {
             _logger.LogError("{KeyName} is not configured on the server. Path: {ConfigPath}", keyName, configPath);
-            var errorResponse = req.CreateResponse(HttpStatusCode.ServiceUnavailable);
-            await errorResponse.WriteStringAsync($"{keyName} is not configured on the server.");
-            return errorResponse;
+            return new ObjectResult($"{keyName} is not configured on the server.")
+            {
+                StatusCode = (int)HttpStatusCode.ServiceUnavailable
+            };
         }
 
-        var response = req.CreateResponse(HttpStatusCode.OK);
-        await response.WriteAsJsonAsync(new KeyResponse { Value = keyValue });
-        return response;
+        return new OkObjectResult(new KeyResponse { Value = keyValue });
     }
 }

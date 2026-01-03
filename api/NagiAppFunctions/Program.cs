@@ -4,7 +4,7 @@ using Microsoft.Extensions.Hosting;
 using NagiAppFunctions;
 
 var host = new HostBuilder()
-    .ConfigureFunctionsWorkerDefaults(builder =>
+    .ConfigureFunctionsWebApplication(builder =>
     {
         // Register API key authentication middleware
         builder.UseMiddleware<ApiKeyMiddleware>();
