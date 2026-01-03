@@ -30,6 +30,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     private readonly ILastFmMetadataService _lastFmService;
     private readonly IMusicBrainzService _musicBrainzService;
     private readonly IFanartTvService _fanartTvService;
+    private readonly ITheAudioDbService _theAudioDbService;
     private readonly ILogger<LibraryService> _logger;
     private readonly object _metadataFetchLock = new();
     private readonly IMetadataService _metadataService;
@@ -39,6 +40,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     private readonly ISpotifyService _spotifyService;
     private readonly ISettingsService _settingsService;
     private readonly IReplayGainService _replayGainService;
+    private readonly IApiKeyService _apiKeyService;
     private bool _disposed;
     private volatile bool _isMetadataFetchRunning;
     private volatile bool _isBatchScanning; // Prevents ReplayGain trigger during batch operations
@@ -53,11 +55,13 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         ISpotifyService spotifyService,
         IMusicBrainzService musicBrainzService,
         IFanartTvService fanartTvService,
+        ITheAudioDbService theAudioDbService,
         IHttpClientFactory httpClientFactory,
         IServiceScopeFactory serviceScopeFactory,
         IPathConfiguration pathConfig,
         ISettingsService settingsService,
         IReplayGainService replayGainService,
+        IApiKeyService apiKeyService,
         ILogger<LibraryService> logger)
     {
         _contextFactory = contextFactory ?? throw new ArgumentNullException(nameof(contextFactory));
@@ -67,11 +71,13 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         _spotifyService = spotifyService ?? throw new ArgumentNullException(nameof(spotifyService));
         _musicBrainzService = musicBrainzService ?? throw new ArgumentNullException(nameof(musicBrainzService));
         _fanartTvService = fanartTvService ?? throw new ArgumentNullException(nameof(fanartTvService));
+        _theAudioDbService = theAudioDbService ?? throw new ArgumentNullException(nameof(theAudioDbService));
         _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
         _serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
         _pathConfig = pathConfig ?? throw new ArgumentNullException(nameof(pathConfig));
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
         _replayGainService = replayGainService ?? throw new ArgumentNullException(nameof(replayGainService));
+        _apiKeyService = apiKeyService ?? throw new ArgumentNullException(nameof(apiKeyService));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _metadataFetchCts = new CancellationTokenSource();
     }
@@ -3048,17 +3054,28 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     {
         var wasMetadataFoundAndUpdated = false;
 
-        // Branch A: Resolving high-quality images (MBID -> Fanart.tv -> Spotify)
+        // Pre-warm API keys in parallel with MusicBrainz lookup.
+        // MusicBrainz doesn't require an API key, so we can fetch keys concurrently.
+        // ApiKeyService caches results, so subsequent service calls hit the cache instantly.
+        // We wrap each fetch in a task that catches exceptions to ensure the whole fetch isn't cancelled.
+        var keyWarmupTask = Task.WhenAll(
+            Task.Run(async () => { try { await _apiKeyService.GetApiKeyAsync("theaudiodb", cancellationToken); } catch { /* Ignore warmup failure */ } }, cancellationToken),
+            Task.Run(async () => { try { await _apiKeyService.GetApiKeyAsync("fanarttv", cancellationToken); } catch { /* Ignore warmup failure */ } }, cancellationToken),
+            Task.Run(async () => { try { await _apiKeyService.GetApiKeyAsync("spotify", cancellationToken); } catch { /* Ignore warmup failure */ } }, cancellationToken),
+            Task.Run(async () => { try { await _apiKeyService.GetApiKeyAsync("lastfm", cancellationToken); } catch { /* Ignore warmup failure */ } }, cancellationToken)
+        );
+
+        // Branch A: Resolving high-quality images and biography (MBID -> TheAudioDB -> Fanart.tv -> Spotify)
         // We run this in parallel with Branch B (Last.fm) to reduce total latency.
         var primaryMetadataTask = ResolvePrimaryMetadataAsync(artist.Name, artist.MusicBrainzId, cancellationToken);
 
         // Branch B: Fetching Biography and fallback image from Last.fm
         var lastFmTask = _lastFmService.GetArtistInfoAsync(artist.Name, cancellationToken);
 
-        // Wait for both independent branches to complete
-        await Task.WhenAll(primaryMetadataTask, lastFmTask);
+        // Wait for all branches and warmup to complete
+        await Task.WhenAll(keyWarmupTask, primaryMetadataTask, lastFmTask);
 
-        var (primaryImageUrl, resolvedMbid) = await primaryMetadataTask;
+        var (primaryImageUrl, primaryBiography, resolvedMbid) = await primaryMetadataTask;
         var lastFmResult = await lastFmTask;
 
         // --- Sequential Update Phase (Thread-Safe) ---
@@ -3072,14 +3089,21 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             _logger.LogInformation("Resolved MusicBrainz ID {MBID} for artist '{ArtistName}'", resolvedMbid, artist.Name);
         }
 
-        // 2. Apply Biography from Last.fm
-        if (lastFmResult.Status == ServiceResultStatus.Success && lastFmResult.Data?.Biography is not null)
+        // 2. Apply Biography (TheAudioDB > Last.fm)
+        var finalBiography = primaryBiography;
+        if (string.IsNullOrEmpty(finalBiography) && 
+            lastFmResult.Status == ServiceResultStatus.Success && 
+            lastFmResult.Data?.Biography is not null)
         {
-            artist.Biography = lastFmResult.Data.Biography;
+            finalBiography = lastFmResult.Data.Biography;
+        }
+        if (!string.IsNullOrEmpty(finalBiography))
+        {
+            artist.Biography = finalBiography;
             wasMetadataFoundAndUpdated = true;
         }
 
-        // 3. Determine best Image URL (Fanart/Spotify > Last.fm)
+        // 3. Determine best Image URL (TheAudioDB > Fanart.tv > Spotify > Last.fm)
         var finalImageUrl = primaryImageUrl;
         if (string.IsNullOrEmpty(finalImageUrl) && 
             lastFmResult.Status == ServiceResultStatus.Success && 
@@ -3114,10 +3138,11 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         return;
 
         // Nested helper to encapsulate Branch A logic
-        async Task<(string? ImageUrl, string? Mbid)> ResolvePrimaryMetadataAsync(string artistName, string? currentMbid, CancellationToken ct)
+        async Task<(string? ImageUrl, string? Biography, string? Mbid)> ResolvePrimaryMetadataAsync(string artistName, string? currentMbid, CancellationToken ct)
         {
             var mbid = currentMbid;
             string? url = null;
+            string? biography = null;
 
             // Step 1: Resolve MusicBrainz ID
             if (string.IsNullOrEmpty(mbid))
@@ -3125,8 +3150,20 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 mbid = await _musicBrainzService.SearchArtistAsync(artistName, ct);
             }
 
-            // Step 2: Try Fanart.tv (needs MBID)
+            // Step 2: Try TheAudioDB first (needs MBID) - provides both biography and images
             if (!string.IsNullOrEmpty(mbid))
+            {
+                var audioDbResult = await _theAudioDbService.GetArtistMetadataAsync(mbid, ct);
+                if (audioDbResult.Status == ServiceResultStatus.Success && audioDbResult.Data is not null)
+                {
+                    biography = audioDbResult.Data.Biography;
+                    // Prefer fanart > thumb for images
+                    url = audioDbResult.Data.FanartUrl ?? audioDbResult.Data.ThumbUrl;
+                }
+            }
+
+            // Step 3: Try Fanart.tv if TheAudioDB didn't provide an image (needs MBID)
+            if (string.IsNullOrEmpty(url) && !string.IsNullOrEmpty(mbid))
             {
                 var fanartResult = await _fanartTvService.GetArtistImagesAsync(mbid, ct);
                 if (fanartResult.Status == ServiceResultStatus.Success && fanartResult.Data is not null)
@@ -3135,7 +3172,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 }
             }
 
-            // Step 3: Try Spotify fallback
+            // Step 4: Try Spotify fallback
             if (string.IsNullOrEmpty(url))
             {
                 var spotifyResult = await _spotifyService.GetArtistImageUrlAsync(artistName, ct);
@@ -3145,7 +3182,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 }
             }
 
-            return (url, mbid);
+            return (url, biography, mbid);
         }
     }
 

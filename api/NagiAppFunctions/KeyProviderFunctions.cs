@@ -103,6 +103,20 @@ public class KeyProviderFunctions
         return CreateKeyResponse(req, "FanartTv:ApiKey", "Fanart.tv API Key");
     }
 
+    [Function("GetTheAudioDbKey")]
+    [OpenApiOperation("GetTheAudioDbKey", "Keys", Summary = "Gets TheAudioDB API Key")]
+    [OpenApiSecurity("ApiKey", SecuritySchemeType.ApiKey, Name = "X-API-KEY", In = OpenApiSecurityLocationType.Header)]
+    [OpenApiResponseWithBody(HttpStatusCode.OK, "application/json", typeof(KeyResponse),
+        Description = "A JSON object containing TheAudioDB API Key.")]
+    [OpenApiResponseWithBody(HttpStatusCode.ServiceUnavailable, "text/plain", typeof(string),
+        Description = "The requested key is not configured on the server.")]
+    public IActionResult GetTheAudioDbKey(
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "theaudiodb-key")]
+        HttpRequest req)
+    {
+        return CreateKeyResponse(req, "TheAudioDb:ApiKey", "TheAudioDB API Key");
+    }
+
     /// <summary>
     ///     A generic helper to retrieve a configuration value and create an appropriate HTTP response.
     /// </summary>

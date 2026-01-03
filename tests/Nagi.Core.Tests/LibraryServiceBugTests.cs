@@ -27,6 +27,8 @@ public class LibraryServiceBugTests : IDisposable
     private readonly IReplayGainService _replayGainService;
     private readonly IMusicBrainzService _musicBrainzService;
     private readonly IFanartTvService _fanartTvService;
+    private readonly ITheAudioDbService _theAudioDbService;
+    private readonly IApiKeyService _apiKeyService;
 
     public LibraryServiceBugTests()
     {
@@ -41,6 +43,8 @@ public class LibraryServiceBugTests : IDisposable
         _replayGainService = Substitute.For<IReplayGainService>();
         _musicBrainzService = Substitute.For<IMusicBrainzService>();
         _fanartTvService = Substitute.For<IFanartTvService>();
+        _theAudioDbService = Substitute.For<ITheAudioDbService>();
+        _apiKeyService = Substitute.For<IApiKeyService>();
         _logger = Substitute.For<ILogger<LibraryService>>();
 
         _dbHelper = new DbContextFactoryTestHelper();
@@ -53,11 +57,13 @@ public class LibraryServiceBugTests : IDisposable
             _spotifyService,
             _musicBrainzService,
             _fanartTvService,
+            _theAudioDbService,
             _httpClientFactory,
             _serviceScopeFactory,
             _pathConfig,
             _settingsService,
             _replayGainService,
+            _apiKeyService,
             _logger);
     }
 
