@@ -49,8 +49,16 @@ public class LibraryScanBenchmarks
         services.AddSingleton<IImageProcessor>(Substitute.For<IImageProcessor>());
         services.AddSingleton<ILastFmMetadataService>(Substitute.For<ILastFmMetadataService>());
         services.AddSingleton<ISpotifyService>(Substitute.For<ISpotifyService>());
-        services.AddSingleton<ISettingsService>(Substitute.For<ISettingsService>());
+        
+        var settingsService = Substitute.For<ISettingsService>();
+        settingsService.GetVolumeNormalizationEnabledAsync().Returns(false);
+        services.AddSingleton<ISettingsService>(settingsService);
+        
         services.AddSingleton<IReplayGainService>(Substitute.For<IReplayGainService>());
+        services.AddSingleton<IMusicBrainzService>(Substitute.For<IMusicBrainzService>());
+        services.AddSingleton<IFanartTvService>(Substitute.For<IFanartTvService>());
+        services.AddSingleton<ITheAudioDbService>(Substitute.For<ITheAudioDbService>());
+        services.AddSingleton<IApiKeyService>(Substitute.For<IApiKeyService>());
         services.AddSingleton<IMetadataService, AtlMetadataService>();
         services.AddHttpClient();
         services.AddLogging(b => b.AddProvider(NullLoggerProvider.Instance));
