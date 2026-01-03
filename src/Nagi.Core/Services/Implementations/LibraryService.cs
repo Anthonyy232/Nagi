@@ -791,7 +791,16 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         // Only fetch if never checked before. Once checked, respect the result.
         var neverChecked = artist.MetadataLastCheckedUtc == null;
         if (allowOnlineFetch && needsUpdate && neverChecked)
-            await FetchAndUpdateArtistFromRemoteAsync(context, artist, cancellationToken);
+        {
+            try
+            {
+                await FetchAndUpdateArtistFromRemoteAsync(context, artist, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Failed to fetch online metadata for artist '{ArtistName}'. Proceeding with local data.", artist.Name);
+            }
+        }
 
         return await context.Artists.AsNoTracking().FirstOrDefaultAsync(a => a.Id == artistId);
     }

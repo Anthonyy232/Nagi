@@ -45,11 +45,17 @@ public class ApiKeyService : IApiKeyService, IDisposable
             // Use WaitAsync to respect the caller's cancellation token without affecting the cached task.
             return await lazyTask.Value.WaitAsync(cancellationToken);
         }
-        catch (Exception) when (lazyTask.Value.IsFaulted || lazyTask.Value.IsCanceled)
+        catch (OperationCanceledException)
+        {
+            // Let cancellation propagate normally; caller requested cancellation.
+            throw;
+        }
+        catch (Exception)
         {
             // If the underlying task failed, remove it from cache so subsequent calls can retry.
+            // Return null to allow callers to handle the failure gracefully.
             _cachedApiKeys.TryRemove(keyName, out _);
-            throw;
+            return null;
         }
     }
 
