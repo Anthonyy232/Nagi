@@ -11,8 +11,8 @@ using Nagi.Core.Data;
 namespace Nagi.Core.Data.Migrations
 {
     [DbContext(typeof(MusicDbContext))]
-    [Migration("20260103040059_AddLyricsLastCheckedUtc")]
-    partial class AddLyricsLastCheckedUtc
+    [Migration("20260103051427_AddLyricsLastCheckedUtcToSong")]
+    partial class AddLyricsLastCheckedUtcToSong
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -417,6 +417,9 @@ namespace Nagi.Core.Data.Migrations
 
                     b.Property<string>("Lyrics")
                         .HasMaxLength(50000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("LyricsLastCheckedUtc")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("MusicBrainzReleaseId")
