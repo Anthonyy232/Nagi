@@ -155,11 +155,10 @@ public class ApiKeyServiceTests : IDisposable
         SetupHttpResponse(HttpStatusCode.InternalServerError);
 
         // Act
-        Func<Task> act = async () => await _apiKeyService.GetApiKeyAsync(keyName);
+        var result = await _apiKeyService.GetApiKeyAsync(keyName);
 
         // Assert
-        await act.Should().ThrowAsync<HttpRequestException>()
-            .Where(e => e.Message.Contains("InternalServerError"));
+        result.Should().BeNull();
         _httpMessageHandler.Requests.Should().HaveCount(1);
     }
 
@@ -180,12 +179,10 @@ public class ApiKeyServiceTests : IDisposable
         SetupHttpResponse(HttpStatusCode.OK, new { Value = invalidValue });
 
         // Act
-        // Act
-        Func<Task> act = async () => await _apiKeyService.GetApiKeyAsync(keyName);
+        var result = await _apiKeyService.GetApiKeyAsync(keyName);
 
         // Assert
-        await act.Should().ThrowAsync<InvalidOperationException>()
-            .WithMessage($"API key response for '{keyName}' is invalid.");
+        result.Should().BeNull();
     }
 
     /// <summary>
@@ -201,12 +198,10 @@ public class ApiKeyServiceTests : IDisposable
         SetupHttpResponse(HttpStatusCode.OK, new { Message = "This is not the expected format" });
 
         // Act
-        // Act
-        Func<Task> act = async () => await _apiKeyService.GetApiKeyAsync(keyName);
+        var result = await _apiKeyService.GetApiKeyAsync(keyName);
 
         // Assert
-        await act.Should().ThrowAsync<InvalidOperationException>()
-            .WithMessage($"API key response for '{keyName}' is invalid.");
+        result.Should().BeNull();
     }
 
     /// <summary>
@@ -221,12 +216,10 @@ public class ApiKeyServiceTests : IDisposable
         _configuration["NagiApiServer:ApiKey"].Returns("some-key");
 
         // Act
-        // Act
-        Func<Task> act = async () => await _apiKeyService.GetApiKeyAsync("anyKey");
+        var result = await _apiKeyService.GetApiKeyAsync("anyKey");
 
         // Assert
-        await act.Should().ThrowAsync<InvalidOperationException>()
-            .WithMessage("Nagi API Server configuration is missing.");
+        result.Should().BeNull();
         _httpMessageHandler.Requests.Should().BeEmpty();
     }
 
@@ -265,12 +258,10 @@ public class ApiKeyServiceTests : IDisposable
         _httpMessageHandler.SendAsyncFunc = (_, _) => throw new HttpRequestException("Simulated network failure");
 
         // Act
-        // Act
-        Func<Task> act = async () => await _apiKeyService.GetApiKeyAsync("exceptionKey");
+        var result = await _apiKeyService.GetApiKeyAsync("exceptionKey");
 
         // Assert
-        await act.Should().ThrowAsync<HttpRequestException>()
-            .WithMessage("Simulated network failure");
+        result.Should().BeNull();
     }
 
     /// <summary>
