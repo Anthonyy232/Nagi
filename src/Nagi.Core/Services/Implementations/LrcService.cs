@@ -68,6 +68,7 @@ public class LrcService : ILrcService
             
             // Mark as checked regardless of whether we found lyrics
             await _libraryWriter.UpdateSongLyricsLastCheckedAsync(song.Id);
+            song.LyricsLastCheckedUtc = DateTime.UtcNow;
             
             if (!string.IsNullOrWhiteSpace(lrcContent))
             {
