@@ -49,7 +49,7 @@ public partial class NetEaseLyricsService : INetEaseLyricsService
                 ? trackName 
                 : $"{trackName} {artistName}";
 
-            var songId = await SearchSongAsync(query, cancellationToken);
+            var songId = await SearchSongAsync(query, trackName, artistName, cancellationToken);
             if (songId is null)
             {
                 _logger.LogDebug("No NetEase match found for: {Query}", query);
@@ -73,13 +73,13 @@ public partial class NetEaseLyricsService : INetEaseLyricsService
         }
     }
 
-    private async Task<long?> SearchSongAsync(string query, CancellationToken cancellationToken)
+    private async Task<long?> SearchSongAsync(string query, string trackName, string? artistName, CancellationToken cancellationToken)
     {
         using var content = new FormUrlEncodedContent(new Dictionary<string, string>
         {
             ["s"] = query,
             ["type"] = "1", // 1 = songs
-            ["limit"] = "1",
+            ["limit"] = "10", // Request more results for better matching
             ["offset"] = "0"
         });
 
@@ -99,7 +99,33 @@ public partial class NetEaseLyricsService : INetEaseLyricsService
         var result = await response.Content.ReadFromJsonAsync<NetEaseSearchResult>(
             cancellationToken: cancellationToken);
 
-        return result?.Result?.Songs?.FirstOrDefault()?.Id;
+        var songs = result?.Result?.Songs;
+        if (songs is null || songs.Count == 0)
+            return null;
+
+        // Find best match in a single pass - O(n) with only one allocation per song
+        // Score breakdown: TrackExact=4, TrackContains=2, ArtistMatch=1
+        var bestMatch = songs
+            .Select(s =>
+            {
+                var trackExact = s.Name != null && s.Name.Equals(trackName, StringComparison.OrdinalIgnoreCase);
+                var trackContains = s.Name != null && s.Name.Contains(trackName, StringComparison.OrdinalIgnoreCase);
+                var artistMatch = !string.IsNullOrWhiteSpace(artistName) &&
+                                  s.Artists?.Any(a => a.Name != null &&
+                                      a.Name.Contains(artistName, StringComparison.OrdinalIgnoreCase)) == true;
+
+                // Skip songs with no track match at all
+                if (!trackExact && !trackContains)
+                    return (Song: (NetEaseSong?)null, Score: -1);
+
+                var score = (trackExact ? 4 : 0) + (trackContains ? 2 : 0) + (artistMatch ? 1 : 0);
+                return (Song: (NetEaseSong?)s, Score: score);
+            })
+            .Where(x => x.Song != null)
+            .OrderByDescending(x => x.Score)
+            .FirstOrDefault();
+
+        return bestMatch.Song?.Id;
     }
 
     private async Task<string?> GetLyricsAsync(long songId, CancellationToken cancellationToken)
@@ -150,6 +176,18 @@ public partial class NetEaseLyricsService : INetEaseLyricsService
     }
 
     private sealed class NetEaseSong
+    {
+        [JsonPropertyName("id")]
+        public long Id { get; set; }
+
+        [JsonPropertyName("name")]
+        public string? Name { get; set; }
+
+        [JsonPropertyName("artists")]
+        public List<NetEaseArtist>? Artists { get; set; }
+    }
+
+    private sealed class NetEaseArtist
     {
         [JsonPropertyName("id")]
         public long Id { get; set; }

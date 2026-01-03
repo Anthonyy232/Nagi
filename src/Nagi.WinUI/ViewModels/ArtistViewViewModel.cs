@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -49,6 +50,7 @@ public partial class ArtistViewViewModel : SongListViewModelBase
     private Guid _artistId;
     private CancellationTokenSource? _debounceCts;
     private CancellationTokenSource _pageCts = new();
+    private readonly NotifyCollectionChangedEventHandler _albumsChangedHandler;
 
     public ArtistViewViewModel(
         ILibraryReader libraryReader,
@@ -71,7 +73,8 @@ public partial class ArtistViewViewModel : SongListViewModelBase
 
         CurrentSortOrder = SongSortOrder.AlbumAsc;
         UpdateSortOrderButtonText(CurrentSortOrder);
-        Albums.CollectionChanged += (s, e) => OnPropertyChanged(nameof(HasAlbums));
+        _albumsChangedHandler = (s, e) => OnPropertyChanged(nameof(HasAlbums));
+        Albums.CollectionChanged += _albumsChangedHandler;
     }
 
     [ObservableProperty] public partial string ArtistName { get; set; }
@@ -247,6 +250,10 @@ public partial class ArtistViewViewModel : SongListViewModelBase
             // Must be run on the UI thread to update the bound property.
             _dispatcherService.TryEnqueue(() =>
             {
+                // Guard against updates after the page has been cleaned up.
+                // This prevents COMException crashes when navigating away quickly after an image update.
+                if (_pageCts.IsCancellationRequested) return;
+                
                 // Force refresh by setting to null first, then apply cache-buster
                 ArtistImageUri = null;
                 ArtistImageUri = ImageUriHelper.GetUriWithCacheBuster(e.NewLocalImageCachePath);
@@ -318,8 +325,8 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         base.Cleanup();
         _libraryScanner.ArtistMetadataUpdated -= OnArtistMetadataUpdated;
 
-        // Also unsubscribe from the collection changed event for completeness.
-        Albums.CollectionChanged -= (s, e) => OnPropertyChanged(nameof(HasAlbums));
+        // Properly unsubscribe using the stored handler reference.
+        Albums.CollectionChanged -= _albumsChangedHandler;
         _logger.LogDebug("Cleaned up for artist ID {ArtistId}", _artistId);
     }
 

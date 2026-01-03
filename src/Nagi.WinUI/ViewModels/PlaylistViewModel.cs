@@ -647,6 +647,8 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
     {
         _dispatcherService.TryEnqueue(() =>
         {
+            if (_isDisposed) return;
+
             // Update the main observable collection
             var playlist = Playlists.FirstOrDefault(p => p.Id == e.PlaylistId);
             if (playlist != null)

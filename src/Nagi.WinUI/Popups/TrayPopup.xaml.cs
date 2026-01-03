@@ -26,6 +26,7 @@ public sealed partial class TrayPopup : Window
 {
     private readonly ILogger<TrayPopup> _logger;
     private readonly IUISettingsService _settingsService;
+    private bool _isClosed;
     private bool _isCoverArtInFlyoutEnabled;
 
     public TrayPopup(ElementTheme initialTheme)
@@ -154,6 +155,8 @@ public sealed partial class TrayPopup : Window
     {
         DispatcherQueue.TryEnqueue(() =>
         {
+            if (_isClosed) return;
+            
             _logger.LogDebug("'ShowCoverArtInTrayFlyout' setting changed to {IsEnabled}. Updating visibility.",
                 isEnabled);
             _isCoverArtInFlyoutEnabled = isEnabled;
@@ -172,6 +175,7 @@ public sealed partial class TrayPopup : Window
 
     private void OnClosed(object sender, WindowEventArgs args)
     {
+        _isClosed = true;
         _logger.LogDebug("TrayPopup closed. Unsubscribing from events.");
         ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
         _settingsService.ShowCoverArtInTrayFlyoutSettingChanged -= OnShowCoverArtSettingChanged;

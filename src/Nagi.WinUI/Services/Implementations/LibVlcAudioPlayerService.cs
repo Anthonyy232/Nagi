@@ -389,7 +389,11 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         if (_isDisposed) return;
         if (e.Media is not null)
         {
-            _dispatcherService.TryEnqueue(() => MediaOpened?.Invoke());
+            _dispatcherService.TryEnqueue(() =>
+            {
+                if (_isDisposed) return;
+                MediaOpened?.Invoke();
+            });
             _ = UpdateSmtcDisplayAsync();
         }
     }
@@ -397,7 +401,11 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     private void OnMediaPlayerLengthChanged(object? sender, MediaPlayerLengthChangedEventArgs e)
     {
         if (_isDisposed) return;
-        _dispatcherService.TryEnqueue(() => DurationChanged?.Invoke());
+        _dispatcherService.TryEnqueue(() =>
+        {
+            if (_isDisposed) return;
+            DurationChanged?.Invoke();
+        });
     }
 
     private void OnMediaPlayerEncounteredError(object? sender, EventArgs e)
@@ -435,19 +443,31 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     private void OnMediaPlayerPositionChanged(object? sender, MediaPlayerPositionChangedEventArgs e)
     {
         if (_isDisposed) return;
-        _dispatcherService.TryEnqueue(() => PositionChanged?.Invoke());
+        _dispatcherService.TryEnqueue(() =>
+        {
+            if (_isDisposed) return;
+            PositionChanged?.Invoke();
+        });
     }
 
     private void OnMediaPlayerVolumeChanged(object? sender, MediaPlayerVolumeChangedEventArgs e)
     {
         if (_isDisposed) return;
-        _dispatcherService.TryEnqueue(() => VolumeChanged?.Invoke());
+        _dispatcherService.TryEnqueue(() =>
+        {
+            if (_isDisposed) return;
+            VolumeChanged?.Invoke();
+        });
     }
 
     private void OnMediaPlayerMuteChanged(object? sender, EventArgs e)
     {
         if (_isDisposed) return;
-        _dispatcherService.TryEnqueue(() => VolumeChanged?.Invoke());
+        _dispatcherService.TryEnqueue(() =>
+        {
+            if (_isDisposed) return;
+            VolumeChanged?.Invoke();
+        });
     }
 
     private async void OnSmtcButtonPressed(SystemMediaTransportControls sender,

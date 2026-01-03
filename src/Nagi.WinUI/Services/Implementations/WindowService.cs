@@ -144,6 +144,8 @@ public sealed class WindowService : IWindowService, IDisposable
 
         _dispatcherService.TryEnqueue(() =>
         {
+            if (_isDisposed) return;
+            
             try
             {
                 // Re-check inside the dispatched action to handle race conditions.
@@ -220,6 +222,8 @@ public sealed class WindowService : IWindowService, IDisposable
 
         _dispatcherService.TryEnqueue(() =>
         {
+            if (_isDisposed) return;
+            
             try
             {
                 if (_miniPlayerWindow is null) return;

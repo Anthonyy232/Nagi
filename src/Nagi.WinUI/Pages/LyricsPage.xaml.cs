@@ -19,6 +19,7 @@ public sealed partial class LyricsPage : Page
     private const double ScrollIntoViewRatio = 0.40;
     private readonly ILogger<LyricsPage> _logger;
     private readonly Storyboard _progressBarStoryboard = new();
+    private bool _isUnloaded;
 
     public LyricsPage()
     {
@@ -42,6 +43,7 @@ public sealed partial class LyricsPage : Page
 
     private void OnPageUnloaded(object sender, RoutedEventArgs e)
     {
+        _isUnloaded = true;
         _logger.LogDebug("LyricsPage unloaded. Cleaning up resources.");
         ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
         Unloaded -= OnPageUnloaded;
@@ -60,6 +62,7 @@ public sealed partial class LyricsPage : Page
                 _logger.LogDebug("Current lyric line changed. Updating UI.");
                 DispatcherQueue.TryEnqueue(() =>
                 {
+                    if (_isUnloaded) return;
                     ScrollToCurrentLine();
                     UpdateProgressBarForCurrentLine();
                 });
@@ -70,6 +73,7 @@ public sealed partial class LyricsPage : Page
                     ViewModel.IsPlaying);
                 DispatcherQueue.TryEnqueue(() =>
                 {
+                    if (_isUnloaded) return;
                     if (ViewModel.IsPlaying)
                         UpdateProgressBarForCurrentLine();
                     else

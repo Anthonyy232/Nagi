@@ -169,6 +169,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
 
         _dispatcherService.TryEnqueue(() =>
         {
+            if (_isDisposed) return;
             CurrentPosition = position;
             var newCurrentLine = _lrcService.GetCurrentLine(_parsedLrc, position, ref _lrcSearchHint);
 
@@ -236,6 +237,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
         // Reset UI state immediately on dispatcher
         _dispatcherService.TryEnqueue(() =>
         {
+            if (_isDisposed) return;
             LyricLines.Clear();
             UnsyncedLyricLines.Clear();
             CurrentLine = null;
@@ -327,7 +329,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
         _dispatcherService.TryEnqueue(() =>
         {
             // Double-check cancellation on UI thread in case a new fetch started
-            if (cancellationToken.IsCancellationRequested) return;
+            if (cancellationToken.IsCancellationRequested || _isDisposed) return;
 
             IsLoading = false;
 
@@ -376,12 +378,20 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
 
     private void OnPlaybackServiceDurationChanged()
     {
-        _dispatcherService.TryEnqueue(() => { SongDuration = _playbackService.Duration; });
+        _dispatcherService.TryEnqueue(() => 
+        { 
+            if (_isDisposed) return;
+            SongDuration = _playbackService.Duration; 
+        });
     }
 
 
     private void OnPlaybackServicePlaybackStateChanged()
     {
-        _dispatcherService.TryEnqueue(() => { IsPlaying = _playbackService.IsPlaying; });
+        _dispatcherService.TryEnqueue(() => 
+        { 
+            if (_isDisposed) return;
+            IsPlaying = _playbackService.IsPlaying; 
+        });
     }
 }

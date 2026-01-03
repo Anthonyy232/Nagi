@@ -43,14 +43,14 @@ public class NetEaseLyricsServiceTests : IDisposable
     public async Task SearchLyricsAsync_WithValidTrack_ReturnsLrcContent()
     {
         // Arrange
-        var searchResponse = new { result = new { songs = new[] { new { id = 12345L } } } };
+        var searchResponse = new { result = new { songs = new[] { new { id = 12345L, name = "Test Track" } } } };
         var lyricsResponse = new { lrc = new { lyric = "[00:01.00]Hello World\n[00:05.00]Goodbye" } };
 
         var callCount = 0;
         _httpHandler.SendAsyncFunc = (request, _) =>
         {
             callCount++;
-            if (request.RequestUri!.AbsolutePath.Contains("/search"))
+            if (request.RequestUri!.AbsolutePath.Contains("/api/search/get"))
             {
                 return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
                 {
@@ -76,12 +76,12 @@ public class NetEaseLyricsServiceTests : IDisposable
     public async Task SearchLyricsAsync_WithNullArtist_StillSearches()
     {
         // Arrange
-        var searchResponse = new { result = new { songs = new[] { new { id = 12345L } } } };
+        var searchResponse = new { result = new { songs = new[] { new { id = 12345L, name = "Track Name" } } } };
         var lyricsResponse = new { lrc = new { lyric = "[00:01.00]Found It" } };
 
         _httpHandler.SendAsyncFunc = (request, _) =>
         {
-            if (request.RequestUri!.AbsolutePath.Contains("/search"))
+            if (request.RequestUri!.AbsolutePath.Contains("/api/search/get"))
             {
                 return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
                 {
@@ -147,12 +147,12 @@ public class NetEaseLyricsServiceTests : IDisposable
     public async Task SearchLyricsAsync_WhenLyricsAreNotLrcFormat_ReturnsNull()
     {
         // Arrange
-        var searchResponse = new { result = new { songs = new[] { new { id = 12345L } } } };
+        var searchResponse = new { result = new { songs = new[] { new { id = 12345L, name = "Track" } } } };
         var lyricsResponse = new { lrc = new { lyric = "Plain text lyrics without timestamps" } };
 
         _httpHandler.SendAsyncFunc = (request, _) =>
         {
-            if (request.RequestUri!.AbsolutePath.Contains("/search"))
+            if (request.RequestUri!.AbsolutePath.Contains("/api/search/get"))
             {
                 return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
                 {
@@ -228,11 +228,11 @@ public class NetEaseLyricsServiceTests : IDisposable
     public async Task SearchLyricsAsync_WhenLyricsFetchReturns403_DisablesServiceForSession()
     {
         // Arrange
-        var searchResponse = new { result = new { songs = new[] { new { id = 12345L } } } };
+        var searchResponse = new { result = new { songs = new[] { new { id = 12345L, name = "Track1" } } } };
 
         _httpHandler.SendAsyncFunc = (request, _) =>
         {
-            if (request.RequestUri!.AbsolutePath.Contains("/search"))
+            if (request.RequestUri!.AbsolutePath.Contains("/api/search/get"))
             {
                 return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
                 {
@@ -276,22 +276,21 @@ public class NetEaseLyricsServiceTests : IDisposable
     {
         // Arrange
         var cts = new CancellationTokenSource();
-        var searchResponse = new { result = new { songs = new[] { new { id = 12345L } } } };
+        var searchResponse = new { result = new { songs = new[] { new { id = 12345L, name = "Track" } } } };
 
-        _httpHandler.SendAsyncFunc = async (request, ct) =>
+        _httpHandler.SendAsyncFunc = (request, ct) =>
         {
-            if (request.RequestUri!.AbsolutePath.Contains("/search"))
+            if (request.RequestUri!.AbsolutePath.Contains("/api/search/get"))
             {
-                return new HttpResponseMessage(HttpStatusCode.OK)
+                return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
                 {
                     Content = new StringContent(JsonSerializer.Serialize(searchResponse))
-                };
+                });
             }
 
-            // Cancel during lyrics fetch
+            // Cancel and throw during lyrics fetch
             cts.Cancel();
-            ct.ThrowIfCancellationRequested();
-            return new HttpResponseMessage(HttpStatusCode.OK);
+            throw new OperationCanceledException(cts.Token);
         };
 
         // Act & Assert - Cancelled during fetch should throw
