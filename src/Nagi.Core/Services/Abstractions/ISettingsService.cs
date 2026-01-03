@@ -214,4 +214,9 @@ public interface ISettingsService
     /// </summary>
     /// <param name="isEnabled">The preference to save.</param>
     Task SetVolumeNormalizationEnabledAsync(bool isEnabled);
+
+    /// <summary>
+    ///     Resets all application-wide settings to their default values.
+    /// </summary>
+    Task ResetToDefaultsAsync();
 }
