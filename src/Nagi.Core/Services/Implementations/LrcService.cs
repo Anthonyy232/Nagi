@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Linq;
+using System.Text.RegularExpressions;
+using Microsoft.Extensions.Logging;
 using Nagi.Core.Data;
 using Nagi.Core.Helpers;
 using Nagi.Core.Models;
@@ -131,8 +133,13 @@ public class LrcService : ILrcService
 
         try
         {
+            // Normalize NetEase-style 3-digit milliseconds ([mm:ss.fff]) to 2-digit ([mm:ss.ff]) 
+            // for better compatibility with standard LRC parsers.
+            content = Regex.Replace(content, @"(\[\d{2}:\d{2}\.\d{2})\d", "$1");
+
             var parsedSongFromLrc = _parser.Decode(content);
-            if (parsedSongFromLrc?.Lyrics == null) return new ParsedLrc(Enumerable.Empty<LyricLine>());
+            if (parsedSongFromLrc?.Lyrics == null || !parsedSongFromLrc.Lyrics.Any())
+                return new ParsedLrc(Enumerable.Empty<LyricLine>());
 
             var lyricLines = parsedSongFromLrc.Lyrics
                 .Select(lyric => new LyricLine
