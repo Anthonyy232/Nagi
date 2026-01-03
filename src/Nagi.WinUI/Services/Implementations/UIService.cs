@@ -109,9 +109,9 @@ public class UIService : IUIService
         await dialog.ShowAsync();
     }
 
-    public async Task ShowCrashReportDialogAsync(string title, string introduction, string logContent, string githubUrl)
+    public async Task<CrashReportResult> ShowCrashReportDialogAsync(string title, string introduction, string logContent, string githubUrl)
     {
-        if (!TryGetXamlRoot(out var xamlRoot)) return;
+        if (!TryGetXamlRoot(out var xamlRoot)) return CrashReportResult.Close;
 
         var dialogContent = new CrashReportDialogContent
         {
@@ -124,13 +124,16 @@ public class UIService : IUIService
         {
             Title = title,
             Content = dialogContent,
+            PrimaryButtonText = "Reset App & Data",
             CloseButtonText = "Close",
             DefaultButton = ContentDialogButton.Close,
             XamlRoot = xamlRoot
         };
 
         DialogThemeHelper.ApplyThemeOverrides(dialog);
-        await dialog.ShowAsync();
+        var result = await dialog.ShowAsync();
+
+        return result == ContentDialogResult.Primary ? CrashReportResult.Reset : CrashReportResult.Close;
     }
 
     public async Task<IReadOnlyList<string>> PickOpenMultipleFilesAsync(IEnumerable<string> fileTypes)

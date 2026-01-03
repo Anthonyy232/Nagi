@@ -342,14 +342,27 @@ public partial class App : Application
         if (Services is null) return;
         try
         {
-            await Services.GetRequiredService<IWindowService>().InitializeAsync();
-            await Services.GetRequiredService<IMusicPlaybackService>().InitializeAsync(restoreSession);
-            await Services.GetRequiredService<IPresenceManager>().InitializeAsync();
-            await Services.GetRequiredService<TrayIconViewModel>().InitializeAsync();
+            _logger?.LogDebug("Starting core services initialization.");
+
+            // 1. Foundation Phase: Initialize Database and WindowService in parallel.
+            // These are independent and required for the next phase.
+            var dbTask = InitializeDatabaseAsync(Services);
+            var windowTask = Services.GetRequiredService<IWindowService>().InitializeAsync();
+            await Task.WhenAll(dbTask, windowTask);
+
+            // 2. Services Phase: Parallelize independent service initializations.
+            var playbackTask = Services.GetRequiredService<IMusicPlaybackService>().InitializeAsync(restoreSession);
+            var presenceTask = Services.GetRequiredService<IPresenceManager>().InitializeAsync();
+            var trayTask = Services.GetRequiredService<TrayIconViewModel>().InitializeAsync();
 
             var offlineScrobbleService = Services.GetRequiredService<IOfflineScrobbleService>();
             offlineScrobbleService.Start();
-            await offlineScrobbleService.ProcessQueueAsync();
+            var scrobbleTask = offlineScrobbleService.ProcessQueueAsync();
+
+            // Wait for all non-dependent services to finish initializing.
+            await Task.WhenAll(playbackTask, presenceTask, trayTask, scrobbleTask);
+
+            _logger?.LogInformation("Core services initialized successfully.");
         }
         catch (Exception ex)
         {
@@ -413,6 +426,7 @@ public partial class App : Application
         services.AddSingleton<ISpotifyService, SpotifyService>();
         services.AddSingleton<IMusicBrainzService, MusicBrainzService>();
         services.AddSingleton<IFanartTvService, FanartTvService>();
+        services.AddSingleton<ITheAudioDbService, TheAudioDbService>();
         services.AddSingleton<INetEaseLyricsService, NetEaseLyricsService>();
         services.AddSingleton<ILastFmScrobblerService, LastFmScrobblerService>();
         services.AddSingleton<IPresenceManager, PresenceManager>();
@@ -484,13 +498,13 @@ public partial class App : Application
         services.AddTransient<LyricsPageViewModel>();
     }
 
-    private static void InitializeDatabase(IServiceProvider services)
+    private static async Task InitializeDatabaseAsync(IServiceProvider services)
     {
         try
         {
             var dbContextFactory = services.GetRequiredService<IDbContextFactory<MusicDbContext>>();
-            using var dbContext = dbContextFactory.CreateDbContext();
-            dbContext.Database.Migrate();
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
+            await dbContext.Database.MigrateAsync();
         }
         catch (Exception ex)
         {
@@ -509,8 +523,6 @@ public partial class App : Application
 
             if (_window is MainWindow mainWindow)
                 mainWindow.InitializeDependencies(Services.GetRequiredService<IUISettingsService>());
-
-            InitializeDatabase(Services);
         }
         catch (Exception ex)
         {
@@ -623,7 +635,6 @@ public partial class App : Application
         Log.Fatal(e.Exception,
             "An unhandled exception occurred. Application will now terminate. Log path at time of crash: {LogPath}",
             originalLogPath);
-        Log.CloseAndFlush();
 
         // Primary strategy: Get logs from the in-memory sink.
         var logContent = MemoryLog.Instance.GetContent();
@@ -645,18 +656,34 @@ public partial class App : Application
 
         var fullCrashReport = $"{logContent}\n\n--- UNHANDLED EXCEPTION DETAILS ---\n{exceptionDetails}";
 
-        MainDispatcherQueue?.TryEnqueue(async () =>
+        if (MainDispatcherQueue == null)
+        {
+            Log.CloseAndFlush();
+            Current?.Exit();
+            Process.GetCurrentProcess().Kill();
+            return;
+        }
+
+        MainDispatcherQueue.TryEnqueue(async () =>
         {
             try
             {
                 var uiService = Services?.GetRequiredService<IUIService>();
                 if (uiService != null)
-                    await uiService.ShowCrashReportDialogAsync(
+                {
+                    var result = await uiService.ShowCrashReportDialogAsync(
                         "Application Error",
                         "Nagi has encountered a critical error and must close. We are sorry for the inconvenience.",
                         fullCrashReport,
                         "https://github.com/Anthonyy232/Nagi/issues"
                     );
+
+                    if (result == CrashReportResult.Reset)
+                    {
+                        await ResetApplicationDataAsync();
+                        return; // App will restart in ResetApplicationDataAsync
+                    }
+                }
             }
             catch (Exception dialogEx)
             {
@@ -664,9 +691,129 @@ public partial class App : Application
             }
             finally
             {
-                Current.Exit();
+                Log.CloseAndFlush();
+                Current?.Exit();
+                Process.GetCurrentProcess().Kill();
             }
         });
+    }
+
+    private async Task ResetApplicationDataAsync()
+    {
+        try
+        {
+            Log.Information("User requested a full application data reset from the crash dialog.");
+
+            // Determine paths first so we have them for manual fallback
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(AppContext.BaseDirectory)
+                .AddJsonFile("appsettings.json", true, true)
+                .Build();
+            var pathConfig = new PathConfiguration(configuration);
+
+            if (Services != null)
+            {
+                try
+                {
+                    var settingsService = Services.GetRequiredService<ISettingsService>();
+                    var libraryService = Services.GetRequiredService<ILibraryService>();
+
+                    // Use robust service methods first
+                    await settingsService.ResetToDefaultsAsync();
+                    await libraryService.ClearAllLibraryDataAsync();
+                }
+                catch (Exception serviceEx)
+                {
+                    Log.Warning(serviceEx, "Service-based reset failed. Falling back to manual file deletion.");
+                    PerformManualFileReset(pathConfig);
+                }
+            }
+            else
+            {
+                // Fallback: Manually delete files if DI hasn't initialized
+                Log.Warning("Services not available during reset. Performing manual file deletion.");
+                PerformManualFileReset(pathConfig);
+            }
+
+            Log.Information("Reset complete. Restarting application.");
+            await Log.CloseAndFlushAsync();
+
+            // Restart the app cleanly
+            ElevationHelper.RestartWithoutElevation();
+            
+            // Just in case RestartWithoutElevation doesn't exit the process immediately
+            Current.Exit();
+            Process.GetCurrentProcess().Kill();
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Critical failure during app reset: {ex}");
+            Log.Fatal(ex, "Critical failure during app reset.");
+            Current.Exit();
+            Process.GetCurrentProcess().Kill();
+        }
+    }
+
+    private void PerformManualFileReset(IPathConfiguration pathConfig)
+    {
+        try
+        {
+            // 1. Packaged apps store settings in LocalSettings, not settings.json
+            if (PathConfiguration.IsRunningInPackage())
+            {
+                try
+                {
+                    ApplicationData.Current.LocalSettings.Values.Clear();
+                }
+                catch (Exception ex)
+                {
+                    Log.Warning(ex, "Failed to clear LocalSettings in packaged mode.");
+                }
+            }
+
+            // 2. Clear known settings and state files (unpackaged uses these, packaged might have fallbacks)
+            SafelyDeleteFile(pathConfig.SettingsFilePath);
+            SafelyDeleteFile(pathConfig.PlaybackStateFilePath);
+            
+            // 3. Delete the database
+            SafelyDeleteFile(pathConfig.DatabasePath);
+
+            // 4. Clear cache directories
+            SafelyDeleteDir(pathConfig.AlbumArtCachePath);
+            SafelyDeleteDir(pathConfig.ArtistImageCachePath);
+            SafelyDeleteDir(pathConfig.PlaylistImageCachePath);
+            SafelyDeleteDir(pathConfig.LrcCachePath);
+            
+            Log.Information("Manual file reset completed.");
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Critical failure during manual file reset.");
+        }
+    }
+
+    private void SafelyDeleteFile(string path)
+    {
+        try
+        {
+            if (File.Exists(path)) File.Delete(path);
+        }
+        catch (Exception ex)
+        {
+            Log.Warning(ex, "Failed to delete file: {Path}", path);
+        }
+    }
+
+    private void SafelyDeleteDir(string path)
+    {
+        try
+        {
+            if (Directory.Exists(path)) Directory.Delete(path, true);
+        }
+        catch (Exception ex)
+        {
+            Log.Warning(ex, "Failed to delete directory: {Path}", path);
+        }
     }
 
     /// <summary>

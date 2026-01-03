@@ -26,6 +26,22 @@ public enum UpdateDialogResult
 }
 
 /// <summary>
+///     Represents the user's choice in a crash report dialog.
+/// </summary>
+public enum CrashReportResult
+{
+    /// <summary>
+    ///    The user chose to close the application.
+    /// </summary>
+    Close,
+
+    /// <summary>
+    ///     The user chose to reset the application data.
+    /// </summary>
+    Reset
+}
+
+/// <summary>
 ///     Abstracts UI-related operations like showing dialogs or pickers.
 /// </summary>
 public interface IUIService
@@ -79,7 +95,8 @@ public interface IUIService
     /// <param name="introduction">The introductory message to the user.</param>
     /// <param name="logContent">The content of the log file to display.</param>
     /// <param name="githubUrl">The URL to the GitHub issues page.</param>
-    Task ShowCrashReportDialogAsync(string title, string introduction, string logContent, string githubUrl);
+    /// <returns>A <see cref="CrashReportResult" /> indicating the user's choice.</returns>
+    Task<CrashReportResult> ShowCrashReportDialogAsync(string title, string introduction, string logContent, string githubUrl);
 
     /// <summary>
     ///     Opens a file open picker dialog that allows selecting multiple files.
