@@ -173,6 +173,12 @@ public class LrcLibService : IOnlineLyricsService
             _logger.LogDebug("Search results found but none matched criteria for: {Artist} - {Track}", artistName, trackName);
             return null;
         }
+        catch (TaskCanceledException)
+        {
+            // Expected when user skips to next song - don't log as error
+            _logger.LogDebug("Lyrics search cancelled for {Artist} - {Track} (user skipped song)", artistName, trackName);
+            return null;
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to search lyrics fallback for {Artist} - {Track}", artistName, trackName);

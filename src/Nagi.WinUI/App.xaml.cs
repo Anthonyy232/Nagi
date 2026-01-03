@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
@@ -380,6 +382,34 @@ public partial class App : Application
         services.AddSingleton(configuration);
         services.AddSingleton<IPathConfiguration, PathConfiguration>();
         services.AddHttpClient();
+        
+        // Configure named HTTP clients with strict timeouts for lyrics APIs
+        // Force HTTP/1.1 and limit connection lifetime to avoid "Response Ended Prematurely" 
+        // errors caused by servers closing idle connections that HttpClient tries to reuse
+        services.AddHttpClient("LrcLib")
+            .ConfigureHttpClient(client =>
+            {
+                client.Timeout = TimeSpan.FromSeconds(10);
+                client.DefaultRequestVersion = HttpVersion.Version11;
+                client.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionExact;
+            })
+            .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
+            {
+                PooledConnectionLifetime = TimeSpan.FromSeconds(30),
+                PooledConnectionIdleTimeout = TimeSpan.FromSeconds(15),
+            });
+        services.AddHttpClient("NetEase")
+            .ConfigureHttpClient(client =>
+            {
+                client.Timeout = TimeSpan.FromSeconds(10);
+                client.DefaultRequestVersion = HttpVersion.Version11;
+                client.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionExact;
+            })
+            .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
+            {
+                PooledConnectionLifetime = TimeSpan.FromSeconds(30),
+                PooledConnectionIdleTimeout = TimeSpan.FromSeconds(15),
+            });
 
         ConfigureAppSettingsServices(services);
         ConfigureCoreLogicServices(services);

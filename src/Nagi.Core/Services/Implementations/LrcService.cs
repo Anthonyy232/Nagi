@@ -57,20 +57,42 @@ public class LrcService : ILrcService
             if (cancellationToken.IsCancellationRequested)
                 return null;
 
-            // 2a. Try LRCLIB first (strict matching)
-            var lrcContent = await _onlineLyricsService.GetLyricsAsync(
+            // 2a. Fire both requests in parallel for faster resolution
+            var lrcLibTask = _onlineLyricsService.GetLyricsAsync(
                 song.Title, song.Artist?.Name, song.Album?.Title, song.Duration, cancellationToken);
+            var netEaseTask = _netEaseLyricsService.SearchLyricsAsync(
+                song.Title, song.Artist?.Name, cancellationToken);
             
-            // 2b. Fallback to NetEase for Asian music coverage (if not cancelled)
+            // Wait for LRCLIB first (preferred source - community-curated, better quality)
+            var lrcContent = await lrcLibTask;
+            
+            // 2b. Use LRCLIB result if available, otherwise wait for NetEase
             if (string.IsNullOrWhiteSpace(lrcContent) && !cancellationToken.IsCancellationRequested)
             {
-                _logger.LogDebug("LRCLIB returned no results for '{Title}', trying NetEase fallback.", song.Title);
-                lrcContent = await _netEaseLyricsService.SearchLyricsAsync(song.Title, song.Artist?.Name, cancellationToken);
+                _logger.LogDebug("LRCLIB returned no results for '{Title}', using NetEase result.", song.Title);
+                lrcContent = await netEaseTask;
+            }
+            else
+            {
+                // Observe the NetEase task to prevent unobserved exceptions (handles both faults and cancellations)
+                _ = netEaseTask.ContinueWith(
+                    static (t, state) =>
+                    {
+                        var logger = (ILogger<LrcService>)state!;
+                        if (t.IsFaulted)
+                            logger.LogDebug(t.Exception?.InnerException, "NetEase task faulted (ignored, LRCLIB succeeded)");
+                        // Cancelled tasks are silently observed - no logging needed
+                    },
+                    _logger,
+                    TaskContinuationOptions.NotOnRanToCompletion);
             }
             
-            // Mark as checked regardless of whether we found lyrics
-            await _libraryWriter.UpdateSongLyricsLastCheckedAsync(song.Id);
-            song.LyricsLastCheckedUtc = DateTime.UtcNow;
+            // Only mark as checked if the operation wasn't cancelled - otherwise we'll retry next time
+            if (!cancellationToken.IsCancellationRequested)
+            {
+                await _libraryWriter.UpdateSongLyricsLastCheckedAsync(song.Id);
+                song.LyricsLastCheckedUtc = DateTime.UtcNow;
+            }
             
             if (!string.IsNullOrWhiteSpace(lrcContent))
             {

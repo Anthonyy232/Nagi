@@ -22,7 +22,7 @@ public partial class NetEaseLyricsService : INetEaseLyricsService
 
     public NetEaseLyricsService(IHttpClientFactory httpClientFactory, ILogger<NetEaseLyricsService> logger)
     {
-        _httpClient = httpClientFactory.CreateClient();
+        _httpClient = httpClientFactory.CreateClient("NetEase");
         _httpClient.DefaultRequestHeaders.Add("Referer", "https://music.163.com/");
         _httpClient.DefaultRequestHeaders.Add("User-Agent", 
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36");

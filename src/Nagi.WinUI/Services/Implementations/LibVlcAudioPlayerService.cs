@@ -32,6 +32,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     private SystemMediaTransportControls? _smtc;
 
     private bool _isDisposed;
+    private bool _isExplicitStop; // Prevents false PlaybackEnded events on user/error stop
     private readonly CancellationTokenSource _disposeCts = new();
     private double _replayGainOffset; // Separate tracking of ReplayGain adjustment
     private float _basePreamp; // User's EQ preamp setting
@@ -199,6 +200,9 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         if (_isDisposed) return Task.CompletedTask;
 
         _logger.LogDebug("Stop command received.");
+        
+        // Mark as explicit stop to prevent false PlaybackEnded in state changed handler
+        _isExplicitStop = true;
         _mediaPlayer.Stop();
         _currentSong = null;
 
@@ -411,6 +415,10 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     private void OnMediaPlayerEncounteredError(object? sender, EventArgs e)
     {
         if (_isDisposed) return;
+        
+        // Mark as explicit stop to prevent double PlaybackEnded (error handler fires it below)
+        _isExplicitStop = true;
+        
         var lastVlcError = _libVlc.LastLibVLCError;
         var errorMessage = string.IsNullOrEmpty(lastVlcError)
             ? "LibVLC encountered an unspecified error."
@@ -431,10 +439,18 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         {
             if (_isDisposed) return;
             StateChanged?.Invoke();
-            if (_mediaPlayer.State == VLCState.Stopped && _currentSong is not null)
+            
+            // Only fire PlaybackEnded for natural end of playback, not explicit stops
+            if (_mediaPlayer.State == VLCState.Stopped && _currentSong is not null && !_isExplicitStop)
             {
                 _logger.LogDebug("Detected natural end of playback for song '{SongTitle}'.", _currentSong.Title);
                 PlaybackEnded?.Invoke();
+            }
+            
+            // Reset flag when playback starts
+            if (_mediaPlayer.State == VLCState.Playing)
+            {
+                _isExplicitStop = false;
             }
         });
         UpdateSmtcPlaybackStatus();
@@ -492,6 +508,10 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         catch (Exception ex) when (ex.HResult == unchecked((int)0x80000013)) // RO_E_CLOSED
         {
             _logger.LogDebug("SMTC button handler interrupted during disposal.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unhandled error in SMTC button handler for {Button}", args.Button);
         }
     }
 
