@@ -3478,6 +3478,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             // Comment - EXCLUDED (up to 1KB per song)
             // Copyright - EXCLUDED (up to 1KB per song)
             LrcFilePath = s.LrcFilePath,
+            LyricsLastCheckedUtc = s.LyricsLastCheckedUtc,
             Bpm = s.Bpm,
             ReplayGainTrackGain = s.ReplayGainTrackGain,
             ReplayGainTrackPeak = s.ReplayGainTrackPeak,
