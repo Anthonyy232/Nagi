@@ -1,6 +1,6 @@
 ﻿using System.Net;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Azure.Functions.Worker.Middleware;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -28,16 +28,18 @@ public class ApiKeyMiddleware : IFunctionsWorkerMiddleware
     /// </summary>
     public async Task Invoke(FunctionContext context, FunctionExecutionDelegate next)
     {
-        // Attempt to get HTTP request data. If it's not an HTTP trigger, do nothing.
-        var requestData = await context.GetHttpRequestDataAsync();
-        if (requestData == null)
+        // Get the native ASP.NET Core HttpContext
+        var httpContext = context.GetHttpContext();
+        if (httpContext == null)
         {
             await next(context);
             return;
         }
 
+        var request = httpContext.Request;
+        var requestPath = request.Path.Value ?? string.Empty;
+
         // Bypass authentication for public OpenAPI/Swagger documentation endpoints.
-        var requestPath = requestData.Url.AbsolutePath;
         if (requestPath.StartsWith("/api/swagger") || requestPath.StartsWith("/api/openapi"))
         {
             await next(context);
@@ -49,17 +51,17 @@ public class ApiKeyMiddleware : IFunctionsWorkerMiddleware
         {
             _logger.LogCritical("Server is misconfigured. The API key at '{ApiKeyConfigPath}' is missing.",
                 ApiKeyConfigPath);
-            await CreateErrorResponse(context, requestData, HttpStatusCode.ServiceUnavailable,
+            await CreateErrorResponse(httpContext, HttpStatusCode.ServiceUnavailable,
                 "Error: The service is not configured correctly.");
             return;
         }
 
         // Validate the API key provided in the request header.
-        if (!requestData.Headers.TryGetValues(ApiKeyHeaderName, out var values) ||
+        if (!request.Headers.TryGetValue(ApiKeyHeaderName, out var values) ||
             !_serverApiKey.Equals(values.FirstOrDefault()))
         {
             _logger.LogWarning("Unauthorized access attempt to '{Path}'. Missing or invalid API Key.", requestPath);
-            await CreateErrorResponse(context, requestData, HttpStatusCode.Unauthorized,
+            await CreateErrorResponse(httpContext, HttpStatusCode.Unauthorized,
                 "Unauthorized: A valid API key is required.");
             return;
         }
@@ -69,16 +71,12 @@ public class ApiKeyMiddleware : IFunctionsWorkerMiddleware
     }
 
     /// <summary>
-    ///     Creates and sets a standardized error response on the function context.
+    ///     Creates a standardized error response using the HttpContext.
     /// </summary>
-    private static async Task CreateErrorResponse(FunctionContext context, HttpRequestData request,
-        HttpStatusCode statusCode, string message)
+    private static async Task CreateErrorResponse(HttpContext context, HttpStatusCode statusCode, string message)
     {
-        var response = request.CreateResponse(statusCode);
-        response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
-        await response.WriteStringAsync(message);
-
-        // Set the response on the invocation result to terminate the request and return the error.
-        context.GetInvocationResult().Value = response;
+        context.Response.StatusCode = (int)statusCode;
+        context.Response.ContentType = "text/plain; charset=utf-8";
+        await context.Response.WriteAsync(message);
     }
 }
