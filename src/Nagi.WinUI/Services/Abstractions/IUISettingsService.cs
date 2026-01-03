@@ -287,10 +287,6 @@ public interface IUISettingsService : ISettingsService
     /// <param name="isOpen">True if the pane is open; false if closed.</param>
     Task SetLastPaneOpenAsync(bool isOpen);
 
-    /// <summary>
-    ///     Resets all settings to their default values.
-    /// </summary>
-    Task ResetToDefaultsAsync();
 
     /// <summary>
     ///     Gets the user-defined accent color, if any.
