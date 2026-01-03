@@ -416,6 +416,9 @@ namespace Nagi.Core.Data.Migrations
                         .HasMaxLength(50000)
                         .HasColumnType("TEXT");
 
+                    b.Property<DateTime?>("LyricsLastCheckedUtc")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("MusicBrainzReleaseId")
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
