@@ -788,7 +788,9 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         var needsUpdate = string.IsNullOrWhiteSpace(artist.Biography) ||
                           string.IsNullOrWhiteSpace(artist.LocalImageCachePath);
-        if (allowOnlineFetch && needsUpdate)
+        // Only fetch if never checked before. Once checked, respect the result.
+        var neverChecked = artist.MetadataLastCheckedUtc == null;
+        if (allowOnlineFetch && needsUpdate && neverChecked)
             await FetchAndUpdateArtistFromRemoteAsync(context, artist, cancellationToken);
 
         return await context.Artists.AsNoTracking().FirstOrDefaultAsync(a => a.Id == artistId);
@@ -1100,6 +1102,12 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     public Task<bool> UpdateSongLrcPathAsync(Guid songId, string? lrcPath)
     {
         return UpdateSongPropertyAsync(songId, s => s.LrcFilePath = lrcPath);
+    }
+
+    /// <inheritdoc />
+    public Task<bool> UpdateSongLyricsLastCheckedAsync(Guid songId)
+    {
+        return UpdateSongPropertyAsync(songId, s => s.LyricsLastCheckedUtc = DateTime.UtcNow);
     }
 
     #endregion

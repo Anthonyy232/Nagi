@@ -47,8 +47,9 @@ public class LrcService : ILrcService
         if (!string.IsNullOrWhiteSpace(song.LrcFilePath) && _fileSystemService.FileExists(song.LrcFilePath))
             return await GetLyricsAsync(song.LrcFilePath);
 
-        // 2. Try online fallback if enabled
-        if (await _settingsService.GetFetchOnlineLyricsEnabledAsync())
+        // 2. Try online fallback if enabled AND never checked before
+        var neverChecked = song.LyricsLastCheckedUtc == null;
+        if (neverChecked && await _settingsService.GetFetchOnlineLyricsEnabledAsync())
         {
             // Check for cancellation before making any online calls
             if (cancellationToken.IsCancellationRequested)
@@ -64,6 +65,9 @@ public class LrcService : ILrcService
                 _logger.LogDebug("LRCLIB returned no results for '{Title}', trying NetEase fallback.", song.Title);
                 lrcContent = await _netEaseLyricsService.SearchLyricsAsync(song.Title, song.Artist?.Name, cancellationToken);
             }
+            
+            // Mark as checked regardless of whether we found lyrics
+            await _libraryWriter.UpdateSongLyricsLastCheckedAsync(song.Id);
             
             if (!string.IsNullOrWhiteSpace(lrcContent))
             {

@@ -14,6 +14,7 @@ namespace Nagi.WinUI.Pages;
 public sealed partial class OnboardingPage : Page, ICustomTitleBarProvider
 {
     private readonly ILogger<OnboardingPage> _logger;
+    private bool _isUnloaded;
 
     public OnboardingPage()
     {
@@ -51,6 +52,7 @@ public sealed partial class OnboardingPage : Page, ICustomTitleBarProvider
 
     private void OnboardingPage_Unloaded(object sender, RoutedEventArgs e)
     {
+        _isUnloaded = true;
         _logger.LogDebug("OnboardingPage unloaded.");
         ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
     }
@@ -61,7 +63,11 @@ public sealed partial class OnboardingPage : Page, ICustomTitleBarProvider
     private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(ViewModel.IsAnyOperationInProgress))
-            DispatcherQueue.TryEnqueue(() => { UpdateVisualState(ViewModel.IsAnyOperationInProgress); });
+            DispatcherQueue.TryEnqueue(() =>
+            {
+                if (_isUnloaded) return;
+                UpdateVisualState(ViewModel.IsAnyOperationInProgress);
+            });
     }
 
     /// <summary>

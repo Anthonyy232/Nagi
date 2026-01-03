@@ -105,6 +105,12 @@ public class Song
     public string? LrcFilePath { get; set; }
 
     /// <summary>
+    ///     The date and time when online lyrics were last searched.
+    ///     Null indicates never checked. If set, online fetch will be skipped.
+    /// </summary>
+    public DateTime? LyricsLastCheckedUtc { get; set; }
+
+    /// <summary>
     ///     The beats per minute of the track.
     /// </summary>
     public double? Bpm { get; set; }

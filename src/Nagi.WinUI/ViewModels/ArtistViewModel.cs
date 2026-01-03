@@ -313,6 +313,9 @@ public partial class ArtistViewModel : ObservableObject, IDisposable
             // Ensure UI updates are performed on the main thread.
             _dispatcherService.TryEnqueue(() =>
             {
+                // Guard against updates after the ViewModel has been disposed.
+                if (_isDisposed) return;
+
                 // Force refresh by setting to null first, then apply cache-buster
                 artistVm.LocalImageCachePath = null;
                 artistVm.LocalImageCachePath = ImageUriHelper.GetUriWithCacheBuster(e.NewLocalImageCachePath);

@@ -104,6 +104,7 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable
     {
         _dispatcherService.TryEnqueue(() =>
         {
+            if (_isDisposed) return;
             IsWindowVisible = _windowService.IsVisible;
             UpdateTrayIconVisibility();
         });
@@ -127,7 +128,11 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable
             // Cancel the default close operation and hide the window to the tray instead.
             args.Cancel = true;
             _logger.LogDebug("'Hide to Tray' is enabled. Intercepting close and hiding window");
-            _dispatcherService.TryEnqueue(HideWindow);
+            _dispatcherService.TryEnqueue(() =>
+            {
+                if (_isDisposed) return;
+                HideWindow();
+            });
         }
         else
         {
@@ -141,6 +146,8 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable
     {
         _dispatcherService.TryEnqueue(() =>
         {
+            if (_isDisposed) return;
+            
             _logger.LogDebug("'Hide to Tray' setting changed to {IsEnabled}", isEnabled);
             _isHideToTrayEnabled = isEnabled;
             UpdateTrayIconVisibility();

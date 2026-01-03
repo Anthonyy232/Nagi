@@ -73,6 +73,9 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     // A flag to prevent re-entrant navigation while the selection is being updated programmatically.
     private bool _isUpdatingNavViewSelection;
 
+    // A flag to track if the page has been unloaded, to prevent dispatcher callbacks from updating UI.
+    private bool _isUnloaded;
+
     public MainPage()
     {
         InitializeComponent();
@@ -287,6 +290,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     // Cleans up event handlers when the page is unloaded.
     private void OnMainPageUnloaded(object sender, RoutedEventArgs e)
     {
+        _isUnloaded = true;
         ActualThemeChanged -= OnActualThemeChanged;
         ContentFrame.Navigated -= OnContentFrameNavigated;
         ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
@@ -318,7 +322,11 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
     private void OnTransparencyEffectsSettingChanged(bool isEnabled)
     {
-        _dispatcherService.TryEnqueue(SetPlatformSpecificBrush);
+        _dispatcherService.TryEnqueue(() =>
+        {
+            if (_isUnloaded) return;
+            SetPlatformSpecificBrush();
+        });
     }
 
     // Responds to changes in the player animation setting.
@@ -326,6 +334,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     {
         _dispatcherService.TryEnqueue(() =>
         {
+            if (_isUnloaded) return;
             _isPlayerAnimationEnabled = isEnabled;
             UpdatePlayerVisualState(false);
         });
@@ -338,6 +347,8 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         // for this background UI update. The discard `_ =` signifies this intent.
         _ = _dispatcherService.EnqueueAsync(async () =>
         {
+            if (_isUnloaded) return;
+            
             _isUpdatingNavViewSelection = true;
             await PopulateNavigationAsync();
             if (ContentFrame.CurrentSourcePageType == typeof(SettingsPage)) NavView.SelectedItem = NavView.SettingsItem;

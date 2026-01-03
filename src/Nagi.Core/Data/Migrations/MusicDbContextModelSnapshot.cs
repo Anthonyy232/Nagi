@@ -85,6 +85,10 @@ namespace Nagi.Core.Data.Migrations
                     b.Property<DateTime?>("MetadataLastCheckedUtc")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("MusicBrainzId")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(500)
