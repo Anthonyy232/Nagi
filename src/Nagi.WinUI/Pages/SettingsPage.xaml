@@ -19,8 +19,7 @@
         <localConverters:ElementThemeToFriendlyStringConverter x:Key="ThemeToStringConverter" />
         <localConverters:BackdropMaterialToStringConverter x:Key="BackdropMaterialToStringConverter" />
         <localConverters:StringToFontFamilyConverter x:Key="StringToFontFamilyConverter" />
-
-
+        <localConverters:FloatToDecimalStringConverter x:Key="FloatToDecimalStringConverter" />
     </Page.Resources>
 
     <Grid>
@@ -233,35 +232,54 @@
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE9E9;" />
                     </controls:SettingsCard.HeaderIcon>
-                    <StackPanel Spacing="16">
-                        <StackPanel Spacing="4">
-                            <TextBlock FontWeight="SemiBold" Text="Preamp" />
+                    <StackPanel Spacing="20" HorizontalAlignment="Center">
+                        <!-- Preamp slider -->
+                        <StackPanel Spacing="6" Width="320">
+                            <TextBlock FontWeight="SemiBold" Text="Preamp" HorizontalAlignment="Center" />
                             <Slider
                                 Maximum="20"
                                 Minimum="-20"
                                 StepFrequency="0.1"
                                 Style="{StaticResource EqualizerSliderStyle}"
                                 Value="{x:Bind ViewModel.EqualizerPreamp, Mode=TwoWay}" />
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Style="{ThemeResource CaptionTextBlockStyle}">
+                                <Run Text="{x:Bind ViewModel.EqualizerPreamp, Mode=OneWay, Converter={StaticResource FloatToDecimalStringConverter}}" />
+                                <Run Text=" dB" />
+                            </TextBlock>
                         </StackPanel>
 
-                        <ItemsRepeater ItemsSource="{x:Bind ViewModel.EqualizerBands}">
+                        <!-- EQ Bands -->
+                        <ItemsRepeater ItemsSource="{x:Bind ViewModel.EqualizerBands}" HorizontalAlignment="Center">
                             <ItemsRepeater.Layout>
-                                <StackLayout Orientation="Horizontal" Spacing="12" />
+                                <StackLayout Orientation="Horizontal" Spacing="8" />
                             </ItemsRepeater.Layout>
                             <ItemsRepeater.ItemTemplate>
                                 <DataTemplate x:DataType="viewmodels:EqualizerBandViewModel">
-                                    <StackPanel Width="40" Spacing="8">
-                                        <Slider
-                                            Height="150"
-                                            HorizontalContentAlignment="Center"
-                                            Maximum="20"
-                                            Minimum="-20"
-                                            Orientation="Vertical"
-                                            StepFrequency="0.1"
-                                            Style="{StaticResource EqualizerSliderStyle}"
-                                            Value="{x:Bind Gain, Mode=TwoWay}" />
+                                    <StackPanel Width="44" Spacing="6">
+                                        <!-- 0 dB indicator and slider container -->
+                                        <Grid Height="140">
+                                            <!-- 0 dB center line -->
+                                            <Border
+                                                Height="1"
+                                                VerticalAlignment="Center"
+                                                Background="{ThemeResource TextFillColorTertiaryBrush}"
+                                                Opacity="0.5" />
+                                            <!-- Vertical slider -->
+                                            <Slider
+                                                HorizontalAlignment="Center"
+                                                Maximum="20"
+                                                Minimum="-20"
+                                                Orientation="Vertical"
+                                                StepFrequency="0.1"
+                                                Style="{StaticResource EqualizerSliderStyle}"
+                                                Value="{x:Bind Gain, Mode=TwoWay}" />
+                                        </Grid>
                                         <TextBlock
                                             HorizontalAlignment="Center"
+                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                             Style="{ThemeResource CaptionTextBlockStyle}"
                                             Text="{x:Bind FrequencyLabel}" />
                                     </StackPanel>
@@ -269,6 +287,7 @@
                             </ItemsRepeater.ItemTemplate>
                         </ItemsRepeater>
 
+                        <!-- Preset selector and reset -->
                         <StackPanel
                             HorizontalAlignment="Center"
                             Orientation="Horizontal"
