@@ -1,9 +1,12 @@
 using System;
 using System.Buffers;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics;
 using Nagi.Core.Services.Abstractions;
 
 namespace Nagi.Core.Services.Implementations;
@@ -11,7 +14,7 @@ namespace Nagi.Core.Services.Implementations;
 /// <summary>
 ///     Pure C# implementation of EBU R128 integrated loudness measurement.
 ///     Optimized for extreme performance with SIMD-accelerated peak detection,
-///     O(1) sliding window buffers, zero-copy memory patterns, and ArrayPool allocation.
+///     O(1) sliding window buffers, zero-copy memory patterns, and allocation-free processing.
 /// </summary>
 public class LoudnessMeter
 {
@@ -61,8 +64,10 @@ public class LoudnessMeter
                 var v = new Vector<float>(samples.Slice(i));
                 vMax = Vector.Max(vMax, Vector.Abs(v));
             }
+            float maxV = 0;
             for (int j = 0; j < Vector<float>.Count; j++)
-                if (vMax[j] > max) max = vMax[j];
+                if (vMax[j] > maxV) maxV = vMax[j];
+            max = maxV;
         }
         for (; i < samples.Length; i++)
         {
@@ -148,55 +153,42 @@ public class LoudnessMeter
             if (_disposed) throw new ObjectDisposedException(nameof(Session));
             if (chunk.Samples.Length == 0) return;
 
+            // 1. SIMD Peak
             var chunkPeak = CalculatePeakSimd(chunk.Samples);
             if (chunkPeak > _peak) _peak = chunkPeak;
 
-            // 2. Optimized Filtering & Integrated Processing
-            // Filter returns samples in channel-major order: [Ch0 samples, Ch1 samples, ...]
-            float[] filteredNewSamples = ArrayPool<float>.Shared.Rent(chunk.Samples.Length);
-            try
+            // 2. Optimized Fused Filtering & Distribution
+            var samplesPerChannel = chunk.Samples.Length / _channels;
+            int offset = 0; 
+
+            while (offset < samplesPerChannel)
             {
-                _filter.Process(chunk.Samples, filteredNewSamples);
-                var samplesPerChannel = chunk.Samples.Length / _channels;
+                int remainingFramesInChunk = samplesPerChannel - offset;
+                int spaceInBuffer = _framesPerBlock - _bufferFillCount;
+                int take = Math.Min(spaceInBuffer, remainingFramesInChunk);
 
-                int framesToProcess = samplesPerChannel;
-                int offset = 0;
+                _filter.ProcessAndDistribute(
+                    chunk.Samples.AsSpan(), 
+                    _channelBuffers, 
+                    _bufferFillCount,
+                    offset,
+                    take);
 
-                while (framesToProcess > 0)
+                _bufferFillCount += take;
+                offset += take;
+
+                if (_bufferFillCount == _framesPerBlock)
                 {
-                    int spaceInBuffer = _framesPerBlock - _bufferFillCount;
-                    int take = Math.Min(spaceInBuffer, framesToProcess);
-
+                    ProcessFullBlock();
+                    
+                    int overlap = _framesPerBlock - _framesPerStep;
                     for (int ch = 0; ch < _channels; ch++)
                     {
-                        ReadOnlySpan<float> source = filteredNewSamples.AsSpan(ch * samplesPerChannel + offset, take);
-                        Span<float> target = _channelBuffers[ch].AsSpan(_bufferFillCount, take);
-                        source.CopyTo(target);
+                        var span = _channelBuffers[ch].AsSpan();
+                        span.Slice(_framesPerStep, overlap).CopyTo(span);
                     }
-
-                    _bufferFillCount += take;
-                    offset += take;
-                    framesToProcess -= take;
-
-                    if (_bufferFillCount == _framesPerBlock)
-                    {
-                        ProcessFullBlock();
-                        
-                        // Sliding Window Shift: O(1) in terms of computational complexity per sample session
-                        // Move overlap to the start
-                        int overlap = _framesPerBlock - _framesPerStep;
-                        for (int ch = 0; ch < _channels; ch++)
-                        {
-                            var span = _channelBuffers[ch].AsSpan();
-                            span.Slice(_framesPerStep, overlap).CopyTo(span);
-                        }
-                        _bufferFillCount = overlap;
-                    }
+                    _bufferFillCount = overlap;
                 }
-            }
-            finally
-            {
-                ArrayPool<float>.Shared.Return(filteredNewSamples);
             }
         }
 
@@ -243,14 +235,28 @@ public class LoudnessMeter
             if (_disposed) throw new ObjectDisposedException(nameof(Session));
             if (_blockPowers.Count == 0) return double.NegativeInfinity;
 
-            var ungatedMeanPower = _blockPowers.Average();
+            double sum = 0;
+            int count = _blockPowers.Count;
+            for(int i = 0; i < count; i++) sum += _blockPowers[i];
+            
+            var ungatedMeanPower = sum / count;
             var ungatedLoudness = PowerToLufs(ungatedMeanPower);
             var relativeThreshold = ungatedLoudness + RelativeGateThreshold;
 
-            var gatedPowers = _blockPowers.Where(p => PowerToLufs(p) > relativeThreshold).ToList();
-            if (gatedPowers.Count == 0) return double.NegativeInfinity;
+            double gatedSum = 0;
+            int gatedCount = 0;
+            for(int i = 0; i < count; i++)
+            {
+                var p = _blockPowers[i];
+                if (PowerToLufs(p) > relativeThreshold)
+                {
+                    gatedSum += p;
+                    gatedCount++;
+                }
+            }
 
-            return PowerToLufs(gatedPowers.Average());
+            if (gatedCount == 0) return double.NegativeInfinity;
+            return PowerToLufs(gatedSum / gatedCount);
         }
 
         public void Dispose() => _disposed = true;
@@ -258,16 +264,21 @@ public class LoudnessMeter
 
     private class KWeightingFilter
     {
+        private static readonly ConcurrentDictionary<double, (double[] b, double[] a)> _coefficientCache = new();
+        
         private readonly double[] _b;
         private readonly double[] _a;
         private readonly double[][] _filterState;
         private readonly int _channels;
-        private const int DenormalFlushInterval = 20000;
+        
+        private const int DenormalFlushInterval = 16384; 
+        private const int DenormalFlushMask = DenormalFlushInterval - 1;
 
         public KWeightingFilter(int sampleRate, int channels)
         {
             _channels = channels;
-            (_b, _a) = CalculateFilterCoefficients(sampleRate);
+            (_b, _a) = _coefficientCache.GetOrAdd((double)sampleRate, CalculateFilterCoefficients);
+            
             _filterState = new double[channels][];
             for (var i = 0; i < channels; i++)
                 _filterState[i] = new double[4];
@@ -308,33 +319,170 @@ public class LoudnessMeter
             return (b, a);
         }
 
-        public void Process(float[] interleavedSamples, float[] output)
+        public float[] Process(float[] interleavedSamples)
         {
-            var framesPerChannel = interleavedSamples.Length / _channels;
+            var frames = interleavedSamples.Length / _channels;
+            var output = new float[interleavedSamples.Length];
+            var outputWrappers = new float[_channels][];
+            for (int i = 0; i < _channels; i++) outputWrappers[i] = new float[frames];
+            
+            ProcessAndDistribute(interleavedSamples, outputWrappers, 0, 0, frames);
+            
+            // Interleave back
+            for (int ch = 0; ch < _channels; ch++) {
+                var chSrc = outputWrappers[ch];
+                for (int f = 0; f < frames; f++) output[ch * frames + f] = chSrc[f]; 
+            }
+            return output;
+        }
 
-            for (var ch = 0; ch < _channels; ch++)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void ProcessAndDistribute(
+            ReadOnlySpan<float> inputInterleaved, 
+            float[][] outputPlanar, 
+            int writeOffset,
+            int frameReadOffset,
+            int count)
+        {
+            // Register blocking (caching array elements in locals)
+            var b0 = _b[0]; var b1 = _b[1]; var b2 = _b[2]; var b3 = _b[3]; var b4 = _b[4];
+            var a1 = _a[1]; var a2 = _a[2]; var a3 = _a[3]; var a4 = _a[4];
+            int channels = _channels;
+
+            // Specialized loop for Stereo (SIMD-ready logic & Register Blocking)
+            if (channels == 2)
             {
-                var state = _filterState[ch];
-                var channelOffset = ch * framesPerChannel;
+                // Cache array references
+                var stateL = _filterState[0];
+                var stateR = _filterState[1];
+                var outL = outputPlanar[0];
+                var outR = outputPlanar[1];
 
-                for (var f = 0; f < framesPerChannel; f++)
+                // Load state into registers (locals)
+                double sL0 = stateL[0], sL1 = stateL[1], sL2 = stateL[2], sL3 = stateL[3];
+                double sR0 = stateR[0], sR1 = stateR[1], sR2 = stateR[2], sR3 = stateR[3];
+
+                // Check for SIMD support - process 2 channels in parallel using Vector128
+                if (Vector128.IsHardwareAccelerated)
                 {
-                    double input = interleavedSamples[f * _channels + ch];
-                    var filtered = _b[0] * input + state[0];
-                    state[0] = _b[1] * input - _a[1] * filtered + state[1];
-                    state[1] = _b[2] * input - _a[2] * filtered + state[2];
-                    state[2] = _b[3] * input - _a[3] * filtered + state[3];
-                    state[3] = _b[4] * input - _a[4] * filtered;
+                    var vB0 = Vector128.Create(b0); var vB1 = Vector128.Create(b1);
+                    var vB2 = Vector128.Create(b2); var vB3 = Vector128.Create(b3); var vB4 = Vector128.Create(b4);
+                    var vA1 = Vector128.Create(a1); var vA2 = Vector128.Create(a2);
+                    var vA3 = Vector128.Create(a3); var vA4 = Vector128.Create(a4);
 
-                    if (f % DenormalFlushInterval == 0)
+                    var vState0 = Vector128.Create(sL0, sR0);
+                    var vState1 = Vector128.Create(sL1, sR1);
+                    var vState2 = Vector128.Create(sL2, sR2);
+                    var vState3 = Vector128.Create(sL3, sR3);
+                    
+                    var small = Vector128.Create(1e-15);
+
+                    for (var f = 0; f < count; f++)
                     {
-                        for (var i = 0; i < 4; i++)
-                            if (Math.Abs(state[i]) < 1e-15) state[i] = 0.0;
+                        int inputIdx = (frameReadOffset + f) * 2;
+                        
+                        // Load input L/R
+                        double inL = inputInterleaved[inputIdx];
+                        double inR = inputInterleaved[inputIdx + 1];
+                        var vIn = Vector128.Create(inL, inR);
+
+                        var vFiltered = vB0 * vIn + vState0;
+                        vState0 = vB1 * vIn - vA1 * vFiltered + vState1;
+                        vState1 = vB2 * vIn - vA2 * vFiltered + vState2;
+                        vState2 = vB3 * vIn - vA3 * vFiltered + vState3;
+                        vState3 = vB4 * vIn - vA4 * vFiltered;
+
+                        // Extract and write results
+                        outL[writeOffset + f] = (float)vFiltered.GetElement(0);
+                        outR[writeOffset + f] = (float)vFiltered.GetElement(1);
+
+                        // Denormal check
+                        if (((frameReadOffset + f) & DenormalFlushMask) == 0)
+                        {
+                            // Abs(vState) < small ? 0 : vState
+                            // Using Vector128.Abs (requires .NET 7+)
+                            if (Vector128.GreaterThanAll(small, Vector128.Abs(vState0))) vState0 = Vector128<double>.Zero;
+                            if (Vector128.GreaterThanAll(small, Vector128.Abs(vState1))) vState1 = Vector128<double>.Zero;
+                            if (Vector128.GreaterThanAll(small, Vector128.Abs(vState2))) vState2 = Vector128<double>.Zero;
+                            if (Vector128.GreaterThanAll(small, Vector128.Abs(vState3))) vState3 = Vector128<double>.Zero;
+                        }
                     }
-                    output[channelOffset + f] = (float)filtered;
+
+                    // Write-back state
+                    stateL[0] = vState0.GetElement(0); stateL[1] = vState1.GetElement(0); 
+                    stateL[2] = vState2.GetElement(0); stateL[3] = vState3.GetElement(0);
+                    stateR[0] = vState0.GetElement(1); stateR[1] = vState1.GetElement(1);
+                    stateR[2] = vState2.GetElement(1); stateR[3] = vState3.GetElement(1);
                 }
-                for (var i = 0; i < 4; i++)
-                    if (Math.Abs(state[i]) < 1e-15) state[i] = 0.0;
+                else
+                {
+                    // Fallback to Scalar Register Blocking
+                    for (var f = 0; f < count; f++)
+                    {
+                        int inputIdx = (frameReadOffset + f) * 2;
+                        double inL = inputInterleaved[inputIdx];
+                        double inR = inputInterleaved[inputIdx + 1];
+
+                        // Left
+                        var filtL = b0 * inL + sL0;
+                        sL0 = b1 * inL - a1 * filtL + sL1;
+                        sL1 = b2 * inL - a2 * filtL + sL2;
+                        sL2 = b3 * inL - a3 * filtL + sL3;
+                        sL3 = b4 * inL - a4 * filtL;
+                        outL[writeOffset + f] = (float)filtL;
+
+                        // Right
+                        var filtR = b0 * inR + sR0;
+                        sR0 = b1 * inR - a1 * filtR + sR1;
+                        sR1 = b2 * inR - a2 * filtR + sR2;
+                        sR2 = b3 * inR - a3 * filtR + sR3;
+                        sR3 = b4 * inR - a4 * filtR;
+                        outR[writeOffset + f] = (float)filtR;
+                        
+                        // Denormal check
+                        if (((frameReadOffset + f) & DenormalFlushMask) == 0)
+                        {
+                             if (Math.Abs(sL0) < 1e-15) sL0 = 0; if (Math.Abs(sL1) < 1e-15) sL1 = 0;
+                             if (Math.Abs(sL2) < 1e-15) sL2 = 0; if (Math.Abs(sL3) < 1e-15) sL3 = 0;
+                             if (Math.Abs(sR0) < 1e-15) sR0 = 0; if (Math.Abs(sR1) < 1e-15) sR1 = 0;
+                             if (Math.Abs(sR2) < 1e-15) sR2 = 0; if (Math.Abs(sR3) < 1e-15) sR3 = 0;
+                        }
+                    }
+
+                    // Write-back state
+                    stateL[0] = sL0; stateL[1] = sL1; stateL[2] = sL2; stateL[3] = sL3;
+                    stateR[0] = sR0; stateR[1] = sR1; stateR[2] = sR2; stateR[3] = sR3;
+                }
+            }
+            else
+            {
+                // Generic (Multi-channel)
+                for (var f = 0; f < count; f++)
+                {
+                    int inputIdx = (frameReadOffset + f) * channels;
+                    
+                    for (var ch = 0; ch < channels; ch++)
+                    {
+                        double val = inputInterleaved[inputIdx + ch]; 
+                        var state = _filterState[ch];
+                        
+                        var filtered = b0 * val + state[0];
+                        state[0] = b1 * val - a1 * filtered + state[1];
+                        state[1] = b2 * val - a2 * filtered + state[2];
+                        state[2] = b3 * val - a3 * filtered + state[3];
+                        state[3] = b4 * val - a4 * filtered;
+
+                        if (((frameReadOffset + f) & DenormalFlushMask) == 0)
+                        {
+                             if (Math.Abs(state[0]) < 1e-15) state[0] = 0;
+                             if (Math.Abs(state[1]) < 1e-15) state[1] = 0;
+                             if (Math.Abs(state[2]) < 1e-15) state[2] = 0;
+                             if (Math.Abs(state[3]) < 1e-15) state[3] = 0;
+                        }
+                        
+                        outputPlanar[ch][writeOffset + f] = (float)filtered;
+                    }
+                }
             }
         }
     }

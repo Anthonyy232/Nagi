@@ -6,7 +6,7 @@ namespace Nagi.Core.Services.Abstractions;
 /// <param name="Samples">Interleaved float samples normalized to [-1, 1].</param>
 /// <param name="SampleRate">Sample rate in Hz.</param>
 /// <param name="Channels">Number of audio channels.</param>
-public record AudioChunk(float[] Samples, int SampleRate, int Channels);
+public readonly record struct AudioChunk(float[] Samples, int SampleRate, int Channels);
 
 /// <summary>
 ///     Defines a service for extracting raw PCM audio samples from audio files.
