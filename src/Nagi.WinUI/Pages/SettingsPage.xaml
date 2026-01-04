@@ -300,187 +300,139 @@
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE768;" />
                     </controls:SettingsCard.HeaderIcon>
 
-                    <StackPanel Spacing="16" HorizontalAlignment="Right">
+                    <StackPanel Spacing="12" HorizontalAlignment="Right">
                         <Border
-                            Width="Auto"
                             MinWidth="520"
-                            Height="120"
-                            Padding="20,12"
+                            Padding="16"
                             HorizontalAlignment="Right"
                             Background="{ThemeResource LayerFillColorDefaultBrush}"
                             BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                             BorderThickness="1"
                             CornerRadius="{StaticResource OverlayCornerRadius}">
 
-                            <Grid>
-                                <ListView
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    AllowDrop="True"
-                                    CanDragItems="True"
-                                    CanReorderItems="True"
-                                    ItemsSource="{x:Bind ViewModel.PlayerButtons, Mode=OneWay}"
-                                    SelectionMode="None"
-                                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                    ScrollViewer.HorizontalScrollMode="Disabled"
-                                    ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                                    ScrollViewer.VerticalScrollMode="Disabled">
+                            <ListView
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                AllowDrop="True"
+                                CanDragItems="True"
+                                CanReorderItems="True"
+                                ItemsSource="{x:Bind ViewModel.PlayerButtons, Mode=OneWay}"
+                                SelectionMode="None"
+                                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                ScrollViewer.HorizontalScrollMode="Disabled"
+                                ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                                ScrollViewer.VerticalScrollMode="Disabled">
 
-                                    <ListView.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <ItemsStackPanel Orientation="Horizontal" />
-                                        </ItemsPanelTemplate>
-                                    </ListView.ItemsPanel>
+                                <ListView.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <ItemsStackPanel Orientation="Horizontal" />
+                                    </ItemsPanelTemplate>
+                                </ListView.ItemsPanel>
 
-                                    <ListView.ItemContainerStyle>
-                                        <Style TargetType="ListViewItem">
-                                            <Setter Property="Padding" Value="0" />
-                                            <Setter Property="Margin" Value="4,0" />
-                                            <Setter Property="MinHeight" Value="0" />
-                                            <Setter Property="MinWidth" Value="0" />
-                                            <Setter Property="VerticalContentAlignment" Value="Center" />
-                                            <Setter Property="Template">
-                                                <Setter.Value>
-                                                    <ControlTemplate TargetType="ListViewItem">
-                                                        <ListViewItemPresenter
-                                                            ContentMargin="{TemplateBinding Padding}"
-                                                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                            DragBackground="Transparent"
-                                                            DragForeground="{ThemeResource TextFillColorPrimaryBrush}"
-                                                            PointerOverBackground="Transparent"
-                                                            SelectedBackground="Transparent"
-                                                            SelectionCheckMarkVisualEnabled="False" />
-                                                    </ControlTemplate>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </Style>
-                                    </ListView.ItemContainerStyle>
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="ListViewItem">
+                                        <Setter Property="Padding" Value="0" />
+                                        <Setter Property="Margin" Value="2,0" />
+                                        <Setter Property="MinHeight" Value="0" />
+                                        <Setter Property="MinWidth" Value="0" />
+                                        <Setter Property="VerticalContentAlignment" Value="Center" />
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="ListViewItem">
+                                                    <ListViewItemPresenter
+                                                        ContentMargin="{TemplateBinding Padding}"
+                                                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                        DragBackground="Transparent"
+                                                        DragForeground="{ThemeResource TextFillColorPrimaryBrush}"
+                                                        PointerOverBackground="Transparent"
+                                                        SelectedBackground="Transparent"
+                                                        SelectionCheckMarkVisualEnabled="False" />
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </ListView.ItemContainerStyle>
 
-                                    <ListView.ItemTemplate>
-                                        <DataTemplate x:DataType="models:PlayerButtonSetting">
-                                            <Grid
-                                                x:Name="ButtonContainer"
-                                                Width="48"
-                                                Height="88"
-                                                Padding="4"
-                                                Background="Transparent"
-                                                CornerRadius="8"
-                                                ToolTipService.ToolTip="{x:Bind DisplayName}">
-                                                <b1:Interaction.Behaviors>
-                                                    <b1:EventTriggerBehavior EventName="PointerEntered">
-                                                        <b1:ChangePropertyAction
-                                                            PropertyName="Visibility"
-                                                            TargetObject="{Binding ElementName=EnableDisableToggle}"
-                                                            Value="Visible" />
-                                                        <b1:ChangePropertyAction
-                                                            PropertyName="Visibility"
-                                                            TargetObject="{Binding ElementName=DragIndicator}"
-                                                            Value="Visible" />
-                                                    </b1:EventTriggerBehavior>
-                                                    <b1:EventTriggerBehavior EventName="PointerExited">
-                                                        <b1:ChangePropertyAction
-                                                            PropertyName="Visibility"
-                                                            TargetObject="{Binding ElementName=EnableDisableToggle}"
-                                                            Value="Collapsed" />
-                                                        <b1:ChangePropertyAction
-                                                            PropertyName="Visibility"
-                                                            TargetObject="{Binding ElementName=DragIndicator}"
-                                                            Value="Collapsed" />
-                                                    </b1:EventTriggerBehavior>
-                                                </b1:Interaction.Behaviors>
-                                                <Border
-                                                    x:Name="SeparatorVisual"
-                                                    Width="2"
-                                                    Height="30"
+                                <ListView.ItemTemplate>
+                                    <DataTemplate x:DataType="models:PlayerButtonSetting">
+                                        <Grid
+                                            x:Name="ButtonContainer"
+                                            Width="50"
+                                            Padding="4,8"
+                                            Background="Transparent"
+                                            CornerRadius="6"
+                                            PointerEntered="PlayerButtonItem_PointerEntered"
+                                            PointerExited="PlayerButtonItem_PointerExited"
+                                            ToolTipService.ToolTip="{x:Bind DisplayName}">
+
+                                            <!-- Separator visual -->
+                                            <Border
+                                                x:Name="SeparatorVisual"
+                                                Width="2"
+                                                Height="64"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                Background="{ThemeResource TextFillColorSecondaryBrush}"
+                                                Opacity="0.7"
+                                                CornerRadius="1"
+                                                Visibility="{x:Bind IsSeparator, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                                            <!-- Button content -->
+                                            <StackPanel
+                                                Spacing="4"
+                                                VerticalAlignment="Center"
+                                                Visibility="{x:Bind IsNotSeparator, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                                                <!-- Drag indicator (shown on hover) -->
+                                                <FontIcon
+                                                    x:Name="DragIndicator"
                                                     HorizontalAlignment="Center"
-                                                    VerticalAlignment="Top"
-                                                    Margin="0,24,0,0"
-                                                    Background="{ThemeResource TextFillColorSecondaryBrush}"
-                                                    CornerRadius="1"
-                                                    Visibility="{x:Bind IsSeparator, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                                                <Grid
-                                                    Visibility="{x:Bind IsNotSeparator, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                                    <Grid.RowDefinitions>
-                                                        <RowDefinition Height="12" />
-                                                        <RowDefinition Height="36" />
-                                                        <RowDefinition Height="8" />
-                                                        <RowDefinition Height="24" />
-                                                        <RowDefinition Height="8" />
-                                                    </Grid.RowDefinitions>
+                                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                                    FontSize="10"
+                                                    Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                                                    Glyph="&#xE76F;"
+                                                    Opacity="0" />
+
+                                                <!-- Button preview -->
+                                                <Button
+                                                    Width="36"
+                                                    Height="36"
+                                                    HorizontalAlignment="Center"
+                                                    IsHitTestVisible="False"
+                                                    Opacity="{x:Bind IsEnabled, Converter={StaticResource BooleanToOpacityConverter}, Mode=OneWay}"
+                                                    Style="{StaticResource MediaControlButtonStyle}">
                                                     <FontIcon
-                                                        x:Name="DragIndicator"
-                                                        Grid.Row="0"
-                                                        HorizontalAlignment="Center"
-                                                        VerticalAlignment="Center"
                                                         FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                                        FontSize="10"
-                                                        Foreground="{ThemeResource TextFillColorTertiaryBrush}"
-                                                        Glyph="&#xE76F;"
-                                                        Visibility="Collapsed" />
-                                                    <Button
-                                                        Grid.Row="1"
-                                                        Width="36"
-                                                        Height="36"
-                                                        IsHitTestVisible="False"
-                                                        Opacity="{x:Bind IsEnabled, Converter={StaticResource BooleanToOpacityConverter}, Mode=OneWay}"
-                                                        Style="{StaticResource MediaControlButtonStyle}">
-                                                        <FontIcon
-                                                            FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                                            FontSize="14"
-                                                            Glyph="{x:Bind IconGlyph}" />
-                                                    </Button>
-                                                    <ToggleSwitch
-                                                        x:Name="EnableDisableToggle"
-                                                        Grid.Row="3"
-                                                        HorizontalAlignment="Center"
-                                                        VerticalAlignment="Center"
-                                                        MinWidth="0"
-                                                        MinHeight="0"
-                                                        IsOn="{x:Bind IsEnabled, Mode=TwoWay}"
-                                                        OffContent=""
-                                                        OnContent=""
-                                                        Visibility="Collapsed">
-                                                        <ToggleSwitch.Resources>
-                                                        </ToggleSwitch.Resources>
-                                                    </ToggleSwitch>
-                                                </Grid>
-                                                <VisualStateManager.VisualStateGroups>
-                                                    <VisualStateGroup x:Name="CommonStates">
-                                                        <VisualState x:Name="Normal" />
-                                                        <VisualState x:Name="PointerOver">
-                                                            <Storyboard>
-                                                                <ObjectAnimationUsingKeyFrames
-                                                                    Storyboard.TargetName="ButtonContainer"
-                                                                    Storyboard.TargetProperty="Background">
-                                                                    <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{ThemeResource SubtleFillColorSecondaryBrush}" />
-                                                                </ObjectAnimationUsingKeyFrames>
-                                                                <DoubleAnimation
-                                                                    Storyboard.TargetName="ButtonContainer"
-                                                                    Storyboard.TargetProperty="Opacity"
-                                                                    To="1"
-                                                                    Duration="0:0:0.1" />
-                                                            </Storyboard>
-                                                        </VisualState>
-                                                    </VisualStateGroup>
-                                                </VisualStateManager.VisualStateGroups>
-                                            </Grid>
-                                        </DataTemplate>
-                                    </ListView.ItemTemplate>
-                                </ListView>
-                            </Grid>
+                                                        FontSize="14"
+                                                        Glyph="{x:Bind IconGlyph}" />
+                                                </Button>
+
+                                                <!-- Enable/Disable toggle (shown on hover) -->
+                                                <ToggleSwitch
+                                                    x:Name="EnableDisableToggle"
+                                                    HorizontalAlignment="Center"
+                                                    MinWidth="0"
+                                                    MinHeight="0"
+                                                    IsOn="{x:Bind IsEnabled, Mode=TwoWay}"
+                                                    OffContent=""
+                                                    OnContent=""
+                                                    Opacity="0" />
+                                            </StackPanel>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
                         </Border>
 
                         <TextBlock
                             MaxWidth="450"
                             HorizontalAlignment="Center"
-                            Opacity="0.8"
                             Style="{StaticResource CaptionTextBlockStyle}"
-                            Text="Drag items to reorder. The divider separates the center and the right side."
+                            Text="Hover to toggle visibility. Drag to reorder. The divider separates center and right controls."
                             TextAlignment="Center"
                             TextWrapping="Wrap"
-                            Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                            Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
                     </StackPanel>
                 </controls:SettingsCard>
 
