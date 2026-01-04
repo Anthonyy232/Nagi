@@ -68,23 +68,26 @@
 
                     <controls:SettingsExpander.Items>
                         <controls:SettingsCard
-                            Header="Accent Color"
-                            Description="Choose a custom accent color for the app when dynamic theming is disabled."
-                            Visibility="{x:Bind ViewModel.IsDynamicThemingEnabled, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-                            <StackPanel HorizontalAlignment="Right" Spacing="12">
-                                <ColorPicker
-                                    Color="{x:Bind ViewModel.AccentColor, Mode=TwoWay}"
-                                    IsAlphaEnabled="False"
-                                    IsColorChannelTextInputVisible="False"
-                                    IsColorSliderVisible="True"
-                                    IsColorSpectrumVisible="True"
-                                    IsHexInputVisible="True" />
-                                <Button
-                                    HorizontalAlignment="Right"
-                                    Command="{x:Bind ViewModel.ResetAccentColorCommand}"
-                                    Content="Reset to Default"
-                                    Style="{StaticResource SettingsPageResetButtonStyle}" />
-                            </StackPanel>
+                            Description="Choose a custom accent color for the app when dynamic theming is disabled.">
+                            <controls:SettingsCard.Header>
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <TextBlock Text="Accent Color" VerticalAlignment="Center" />
+                                    <HyperlinkButton
+                                        VerticalAlignment="Center"
+                                        Command="{x:Bind ViewModel.ResetAccentColorCommand}"
+                                        Content="Reset to default"
+                                        FontSize="12"
+                                        Padding="4,2" />
+                                </StackPanel>
+                            </controls:SettingsCard.Header>
+                            <ColorPicker
+                                HorizontalAlignment="Right"
+                                Color="{x:Bind ViewModel.AccentColor, Mode=TwoWay}"
+                                IsAlphaEnabled="False"
+                                IsColorChannelTextInputVisible="False"
+                                IsColorSliderVisible="True"
+                                IsColorSpectrumVisible="True"
+                                IsHexInputVisible="True" />
                         </controls:SettingsCard>
                     </controls:SettingsExpander.Items>
                 </controls:SettingsExpander>
@@ -584,87 +587,62 @@
 
                 <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="Integrations" />
 
-                <controls:SettingsCard
+                <controls:SettingsExpander
                     Header="Last.fm"
-                    Description="Connect your Last.fm account to scrobble tracks and show your currently playing song.">
-                    <controls:SettingsCard.HeaderIcon>
+                    Description="Connect your Last.fm account to scrobble tracks and show your currently playing song."
+                    IsExpanded="{x:Bind ViewModel.IsLastFmConnected, Mode=OneWay}">
+                    <controls:SettingsExpander.HeaderIcon>
                         <PathIcon
                             Data="M10.584 17.209l-.88-2.392s-1.43 1.595-3.573 1.595c-1.897 0-3.244-1.65-3.244-4.289 0-3.381 1.704-4.591 3.382-4.591 2.419 0 3.188 1.567 3.849 3.574l.88 2.75c.879 2.667 2.528 4.811 7.284 4.811 3.409 0 5.719-1.044 5.719-3.793 0-2.227-1.265-3.381-3.629-3.932l-1.76-.385c-1.209-.275-1.566-.77-1.566-1.594 0-.935.742-1.485 1.952-1.485 1.319 0 2.034.495 2.144 1.677l2.749-.33c-.22-2.474-1.924-3.491-4.729-3.491-2.474 0-4.893.935-4.893 3.931 0 1.87.907 3.052 3.188 3.602l1.869.439c1.402.33 1.869.907 1.869 1.705 0 1.017-.989 1.43-2.858 1.43-2.776 0-3.932-1.457-4.591-3.464l-.907-2.749c-1.155-3.574-2.997-4.894-6.653-4.894-4.041-.001-6.186 2.556-6.186 6.899 0 4.179 2.145 6.433 5.993 6.433 3.107.001 4.591-1.457 4.591-1.457z"
                             Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
-                    </controls:SettingsCard.HeaderIcon>
+                    </controls:SettingsExpander.HeaderIcon>
 
-                    <StackPanel
-                        HorizontalAlignment="Right"
-                        Orientation="Vertical"
-                        Spacing="8">
-                        <StackPanel
-                            Orientation="Vertical"
-                            Spacing="8"
-                            Visibility="{x:Bind ViewModel.IsLastFmNotConnected, Mode=OneWay}">
-                            <Button
-                                HorizontalAlignment="Right"
-                                Command="{x:Bind ViewModel.LastFmInitialAuthCommand}"
-                                Content="Connect to Last.fm"
-                                IsEnabled="{x:Bind ViewModel.IsLastFmInitialAuthEnabled, Mode=OneWay}"
-                                ToolTipService.ToolTip="Start Last.fm connection" />
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <!-- Initial Connect Button -->
+                        <Button
+                            Command="{x:Bind ViewModel.LastFmInitialAuthCommand}"
+                            Content="Connect"
+                            Visibility="{x:Bind ViewModel.IsLastFmNotConnected, Mode=OneWay}"
+                            IsEnabled="{x:Bind ViewModel.IsLastFmInitialAuthEnabled, Mode=OneWay}" />
 
+                        <!-- Flow during connection -->
+                        <StackPanel Orientation="Horizontal" Spacing="8" Visibility="{x:Bind ViewModel.IsConnectingToLastFm, Mode=OneWay}">
                             <Button
-                                HorizontalAlignment="Right"
                                 Command="{x:Bind ViewModel.LastFmFinalizeAuthCommand}"
-                                Content="Complete Connection"
-                                Visibility="{x:Bind ViewModel.IsConnectingToLastFm, Mode=OneWay}"
-                                ToolTipService.ToolTip="Finalize Last.fm connection" />
-
-                            <TextBlock
-                                MaxWidth="250"
-                                HorizontalAlignment="Right"
-                                Style="{ThemeResource CaptionTextBlockStyle}"
-                                Text="After authorizing in your browser, click 'Complete Connection'."
-                                TextWrapping="Wrap"
-                                Visibility="{x:Bind ViewModel.IsConnectingToLastFm, Mode=OneWay}" />
-                        </StackPanel>
-
-                        <StackPanel
-                            Orientation="Horizontal"
-                            Spacing="12"
-                            VerticalAlignment="Center"
-                            Visibility="{x:Bind ViewModel.IsLastFmConnected, Mode=OneWay}">
-                            <TextBlock VerticalAlignment="Center">
-                                <Run Text="Connected as" />
-                                <Run FontWeight="SemiBold" Text="{x:Bind ViewModel.LastFmUsername, Mode=OneWay}" />
-                            </TextBlock>
+                                Content="Complete"
+                                Style="{StaticResource AccentButtonStyle}" />
                             <Button
-                                Command="{x:Bind ViewModel.LastFmDisconnectCommand}"
-                                Content="Disconnect"
-                                ToolTipService.ToolTip="Disconnect from Last.fm" />
+                                Command="{x:Bind ViewModel.CancelLastFmAuthCommand}"
+                                Content="Cancel" />
                         </StackPanel>
+
+                        <!-- Disconnect Button -->
+                        <Button
+                            Command="{x:Bind ViewModel.LastFmDisconnectCommand}"
+                            Content="Disconnect"
+                            Visibility="{x:Bind ViewModel.IsLastFmConnected, Mode=OneWay}" />
                     </StackPanel>
-                </controls:SettingsCard>
 
-                <StackPanel Spacing="{StaticResource SettingsCardSpacing}"
-                            Visibility="{x:Bind ViewModel.IsLastFmConnected, Mode=OneWay}">
-                    <controls:SettingsCard
-                        Header="Enable scrobbling"
-                        Description="Automatically add the tracks you listen to on Nagi to your Last.fm profile.">
-                        <controls:SettingsCard.HeaderIcon>
-                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE121;" />
-                        </controls:SettingsCard.HeaderIcon>
-                        <ToggleSwitch
-                            HorizontalAlignment="Right"
-                            IsOn="{x:Bind ViewModel.IsLastFmScrobblingEnabled, Mode=TwoWay}" />
-                    </controls:SettingsCard>
+                    <controls:SettingsExpander.Items>
+                        <controls:SettingsCard
+                            Header="Enable scrobbling"
+                            Description="Automatically add the tracks you listen to on Nagi to your Last.fm profile.">
+                            <controls:SettingsCard.HeaderIcon>
+                                <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE121;" />
+                            </controls:SettingsCard.HeaderIcon>
+                            <ToggleSwitch IsOn="{x:Bind ViewModel.IsLastFmScrobblingEnabled, Mode=TwoWay}" />
+                        </controls:SettingsCard>
 
-                    <controls:SettingsCard
-                        Header="Update 'Now Playing'"
-                        Description="Show your friends on Last.fm what you're currently listening to in real-time.">
-                        <controls:SettingsCard.HeaderIcon>
-                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE9A8;" />
-                        </controls:SettingsCard.HeaderIcon>
-                        <ToggleSwitch
-                            HorizontalAlignment="Right"
-                            IsOn="{x:Bind ViewModel.IsLastFmNowPlayingEnabled, Mode=TwoWay}" />
-                    </controls:SettingsCard>
-                </StackPanel>
+                        <controls:SettingsCard
+                            Header="Update 'Now Playing'"
+                            Description="Show your friends on Last.fm what you're currently listening to in real-time.">
+                            <controls:SettingsCard.HeaderIcon>
+                                <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE9A8;" />
+                            </controls:SettingsCard.HeaderIcon>
+                            <ToggleSwitch IsOn="{x:Bind ViewModel.IsLastFmNowPlayingEnabled, Mode=TwoWay}" />
+                        </controls:SettingsCard>
+                    </controls:SettingsExpander.Items>
+                </controls:SettingsExpander>
 
                 <controls:SettingsCard
                     Header="Discord"
