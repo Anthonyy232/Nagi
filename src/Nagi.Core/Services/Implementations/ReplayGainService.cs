@@ -4,13 +4,12 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Data;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Nagi.Core.Services.Implementations;
 
 /// <summary>
 ///     Service for calculating, writing, and managing ReplayGain metadata.
+///     Uses streaming PCM extraction for memory-efficient processing.
 /// </summary>
 public class ReplayGainService : IReplayGainService
 {
@@ -19,7 +18,8 @@ public class ReplayGainService : IReplayGainService
     private readonly ILogger<ReplayGainService> _logger;
     private readonly LoudnessMeter _loudnessMeter;
     private readonly IPcmExtractor _pcmExtractor;
-    private readonly SemaphoreSlim _dbLock = new SemaphoreSlim(1, 1);
+    private readonly SemaphoreSlim _dbLock = new(1, 1);
+    private bool _disposed;
 
     public ReplayGainService(
         IDbContextFactory<MusicDbContext> contextFactory,
@@ -37,24 +37,29 @@ public class ReplayGainService : IReplayGainService
     {
         try
         {
-            // Extract PCM samples from the audio file
-            var result = await _pcmExtractor.ExtractAsync(filePath, cancellationToken);
-            if (result == null)
+            // Use streaming extraction for memory efficiency
+            var hasData = false;
+            LoudnessMeter.Session? session = null;
+
+            await foreach (var chunk in _pcmExtractor.ExtractStreamingAsync(filePath, cancellationToken).ConfigureAwait(false))
+            {
+                // Initialize session on first chunk
+                session ??= _loudnessMeter.CreateSession(chunk.SampleRate, chunk.Channels);
+                
+                session.ProcessChunk(chunk);
+                hasData = true;
+            }
+
+            if (!hasData || session == null)
             {
                 _logger.LogWarning("Failed to extract PCM samples from: {FilePath}", filePath);
                 return null;
             }
 
-            var (samples, sampleRate, channels) = result.Value;
-            
-            if (samples.Length == 0)
-            {
-                _logger.LogWarning("No samples extracted from: {FilePath}", filePath);
-                return null;
-            }
-
             // Calculate integrated loudness using EBU R128
-            var integratedLoudness = _loudnessMeter.MeasureIntegratedLoudness(samples, sampleRate, channels);
+            var integratedLoudness = session.GetIntegratedLoudness();
+            var peak = session.Peak;
+            session.Dispose();
             
             if (double.IsNegativeInfinity(integratedLoudness))
             {
@@ -64,14 +69,16 @@ public class ReplayGainService : IReplayGainService
 
             // Calculate ReplayGain: difference from reference level
             var gainDb = ReplayGain2Reference - integratedLoudness;
-            
-            // Calculate sample peak
-            var peak = _loudnessMeter.CalculateSamplePeak(samples);
 
             _logger.LogDebug("Calculated ReplayGain for {FilePath}: LUFS={Lufs:F2}, Gain={Gain:F2} dB, Peak={Peak:F6}",
                 filePath, integratedLoudness, gainDb, peak);
 
             return (gainDb, peak);
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.LogDebug("ReplayGain calculation cancelled for: {FilePath}", filePath);
+            return null;
         }
         catch (Exception ex)
         {
@@ -193,5 +200,14 @@ public class ReplayGainService : IReplayGainService
 
         progress?.Report(new ScanProgress { StatusText = $"Volume normalization complete. Processed {processed} songs.", Percentage = 100 });
         _logger.LogInformation("ReplayGain scan complete. Processed {Count} songs.", processed);
+    }
+
+    /// <inheritdoc />
+    public void Dispose()
+    {
+        if (_disposed) return;
+        _dbLock.Dispose();
+        _disposed = true;
+        GC.SuppressFinalize(this);
     }
 }
