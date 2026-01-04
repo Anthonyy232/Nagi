@@ -113,10 +113,13 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     private readonly IFFmpegService _ffmpegService;
     private readonly SemaphoreSlim _loadLock = new(1, 1);
 
+    private const int PlayerButtonSaveDebounceMs = 300;
+
     private bool _isDisposed;
     private bool _isInitializing;
     private CancellationTokenSource? _preampDebounceCts;
     private CancellationTokenSource? _replayGainScanCts;
+    private CancellationTokenSource? _playerButtonSaveCts;
 
     public SettingsViewModel(
         IUISettingsService settingsService,
@@ -257,6 +260,8 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         _preampDebounceCts?.Dispose();
         _replayGainScanCts?.Cancel();
         _replayGainScanCts?.Dispose();
+        _playerButtonSaveCts?.Cancel();
+        _playerButtonSaveCts?.Dispose();
 
         _loadLock.Dispose();
         _isDisposed = true;
@@ -654,18 +659,52 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             foreach (PlayerButtonSetting item in e.OldItems)
                 item.PropertyChanged -= OnPlayerButtonPropertyChanged;
 
-        _ = SavePlayerButtonSettingsAsync();
+        QueuePlayerButtonSave();
     }
 
     private void OnPlayerButtonPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (_isInitializing || e.PropertyName != nameof(PlayerButtonSetting.IsEnabled)) return;
-        _ = SavePlayerButtonSettingsAsync();
+        QueuePlayerButtonSave();
     }
 
-    private async Task SavePlayerButtonSettingsAsync()
+    /// <summary>
+    ///     Queues a debounced save for player button settings to prevent rapid saves during drag operations.
+    /// </summary>
+    private void QueuePlayerButtonSave()
     {
-        await _settingsService.SetPlayerButtonSettingsAsync(PlayerButtons.ToList());
+        _playerButtonSaveCts?.Cancel();
+        _playerButtonSaveCts?.Dispose();
+        _playerButtonSaveCts = new CancellationTokenSource();
+        var token = _playerButtonSaveCts.Token;
+
+        // Capture snapshot on UI thread to avoid cross-thread access to ObservableCollection
+        var snapshot = PlayerButtons.ToList();
+
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                await Task.Delay(PlayerButtonSaveDebounceMs, token);
+                await SavePlayerButtonSettingsAsync(snapshot);
+            }
+            catch (TaskCanceledException)
+            {
+                // Expected during rapid changes - debounce is working.
+            }
+        }, token);
+    }
+
+    private async Task SavePlayerButtonSettingsAsync(List<PlayerButtonSetting> settings)
+    {
+        try
+        {
+            await _settingsService.SetPlayerButtonSettingsAsync(settings);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to save player button settings");
+        }
     }
 
     private void OnNavigationItemsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
