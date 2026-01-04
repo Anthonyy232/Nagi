@@ -228,7 +228,8 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     [NotifyPropertyChangedFor(nameof(IsLastFmInitialAuthEnabled))]
     public partial bool IsConnectingToLastFm { get; set; }
 
-    [ObservableProperty] public partial string? LastFmUsername { get; set; }
+    [ObservableProperty]
+    public partial string? LastFmUsername { get; set; }
     [ObservableProperty] public partial bool IsLastFmScrobblingEnabled { get; set; }
     [ObservableProperty] public partial bool IsLastFmNowPlayingEnabled { get; set; }
 
@@ -453,6 +454,13 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
                 "Could not get a session from Last.fm. Please try connecting again.");
         }
 
+        IsConnectingToLastFm = false;
+        await _settingsService.SaveLastFmAuthTokenAsync(null);
+    }
+
+    [RelayCommand]
+    private async Task CancelLastFmAuthAsync()
+    {
         IsConnectingToLastFm = false;
         await _settingsService.SaveLastFmAuthTokenAsync(null);
     }
