@@ -48,7 +48,7 @@ public class AtlMetadataService : IMetadataService
             using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
             
             // Track does not implement IDisposable, using Task.Run for async-like behavior
-            var track = await Task.Run(() => new Track(filePath), cts.Token);
+            var track = await Task.Run(() => new Track(filePath), cts.Token).ConfigureAwait(false);
 
             // Check if the file is valid - ATL is lenient so we need multiple checks
             // Check 1: AudioFormat.Readable flag
@@ -71,7 +71,7 @@ public class AtlMetadataService : IMetadataService
             try
             {
                 metadata.LrcFilePath = await GetLrcPathAsync(filePath, fileInfo.LastWriteTimeUtc, metadata.Artist, metadata.Album, metadata.Title, track)
-                    .WaitAsync(lrcCts.Token);
+                    .WaitAsync(lrcCts.Token).ConfigureAwait(false);
             }
             catch (OperationCanceledException)
             {
@@ -85,7 +85,7 @@ public class AtlMetadataService : IMetadataService
             using var albumArtCts = new CancellationTokenSource(TimeSpan.FromSeconds(15));
             try
             {
-                await ProcessAlbumArtAsync(metadata, track, baseFolderPath).WaitAsync(albumArtCts.Token);
+                await ProcessAlbumArtAsync(metadata, track, baseFolderPath).WaitAsync(albumArtCts.Token).ConfigureAwait(false);
             }
             catch (OperationCanceledException)
             {
@@ -213,7 +213,7 @@ public class AtlMetadataService : IMetadataService
             try
             {
                 var (coverArtUri, lightSwatchId, darkSwatchId) =
-                    await _imageProcessor.SaveCoverArtAndExtractColorsAsync(pictureData);
+                    await _imageProcessor.SaveCoverArtAndExtractColorsAsync(pictureData).ConfigureAwait(false);
 
                 metadata.CoverArtUri = coverArtUri;
                 metadata.LightSwatchId = lightSwatchId;
@@ -228,7 +228,7 @@ public class AtlMetadataService : IMetadataService
         }
 
         // No embedded art found, search directory hierarchy for cover art files
-        await ProcessCoverArtFromDirectoryAsync(metadata, baseFolderPath);
+        await ProcessCoverArtFromDirectoryAsync(metadata, baseFolderPath).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -243,11 +243,11 @@ public class AtlMetadataService : IMetadataService
             if (string.IsNullOrEmpty(coverArtPath)) return;
 
             // Read the image file and process it
-            var imageBytes = await _fileSystem.ReadAllBytesAsync(coverArtPath);
+            var imageBytes = await _fileSystem.ReadAllBytesAsync(coverArtPath).ConfigureAwait(false);
             if (imageBytes.Length == 0) return;
 
             var (coverArtUri, lightSwatchId, darkSwatchId) =
-                await _imageProcessor.SaveCoverArtAndExtractColorsAsync(imageBytes);
+                await _imageProcessor.SaveCoverArtAndExtractColorsAsync(imageBytes).ConfigureAwait(false);
 
             metadata.CoverArtUri = coverArtUri;
             metadata.LightSwatchId = lightSwatchId;
@@ -394,7 +394,7 @@ public class AtlMetadataService : IMetadataService
 
         try
         {
-            return await ExtractAndCacheEmbeddedLrcAsync(track, cachedLrcPath);
+            return await ExtractAndCacheEmbeddedLrcAsync(track, cachedLrcPath).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -435,7 +435,7 @@ public class AtlMetadataService : IMetadataService
             _fileSystem.CreateDirectory(cacheDirectory);
         }
 
-        await _fileSystem.WriteAllTextAsync(cachedLrcPath, lrcContent);
+        await _fileSystem.WriteAllTextAsync(cachedLrcPath, lrcContent).ConfigureAwait(false);
         return cachedLrcPath;
     }
 

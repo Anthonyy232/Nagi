@@ -30,14 +30,14 @@ public class M3uPlaylistExportService : IPlaylistExportService
     {
         try
         {
-            var playlist = await _libraryReader.GetPlaylistByIdAsync(playlistId);
+            var playlist = await _libraryReader.GetPlaylistByIdAsync(playlistId).ConfigureAwait(false);
             if (playlist is null)
             {
                 _logger.LogWarning("Playlist not found for export: {PlaylistId}", playlistId);
                 return new PlaylistExportResult(false, 0, "Playlist not found.");
             }
 
-            var songs = await _libraryReader.GetSongsInPlaylistOrderedAsync(playlistId);
+            var songs = await _libraryReader.GetSongsInPlaylistOrderedAsync(playlistId).ConfigureAwait(false);
             var songList = songs.ToList();
 
             var sb = new StringBuilder();
@@ -56,7 +56,7 @@ public class M3uPlaylistExportService : IPlaylistExportService
             }
 
             // Write as UTF-8 (M3U8 format) for better international character support
-            await File.WriteAllTextAsync(filePath, sb.ToString(), Encoding.UTF8);
+            await File.WriteAllTextAsync(filePath, sb.ToString(), Encoding.UTF8).ConfigureAwait(false);
 
             _logger.LogInformation("Exported playlist '{PlaylistName}' with {SongCount} songs to {FilePath}",
                 playlist.Name, songList.Count, filePath);
@@ -89,12 +89,12 @@ public class M3uPlaylistExportService : IPlaylistExportService
             var extension = Path.GetExtension(filePath)?.ToLowerInvariant();
             if (extension == ".m3u8")
             {
-                lines = await File.ReadAllLinesAsync(filePath, Encoding.UTF8);
+                lines = await File.ReadAllLinesAsync(filePath, Encoding.UTF8).ConfigureAwait(false);
             }
             else
             {
                 // For .m3u files, try default encoding which handles ANSI/local codepages
-                lines = await File.ReadAllLinesAsync(filePath);
+                lines = await File.ReadAllLinesAsync(filePath).ConfigureAwait(false);
             }
 
             var matchedSongIds = new List<Guid>();
@@ -123,7 +123,7 @@ public class M3uPlaylistExportService : IPlaylistExportService
                 // Normalize the path for matching
                 songPath = Path.GetFullPath(songPath);
 
-                var song = await _libraryReader.GetSongByFilePathAsync(songPath);
+                var song = await _libraryReader.GetSongByFilePathAsync(songPath).ConfigureAwait(false);
                 if (song is not null)
                 {
                     matchedSongIds.Add(song.Id);
@@ -143,7 +143,7 @@ public class M3uPlaylistExportService : IPlaylistExportService
             }
 
             // Create the playlist with matched songs
-            var playlist = await _playlistService.CreatePlaylistAsync(playlistName);
+            var playlist = await _playlistService.CreatePlaylistAsync(playlistName).ConfigureAwait(false);
             if (playlist is null)
             {
                 _logger.LogError("Failed to create playlist during import");
@@ -151,7 +151,7 @@ public class M3uPlaylistExportService : IPlaylistExportService
                     unmatchedPaths, "Failed to create playlist.");
             }
 
-            await _playlistService.AddSongsToPlaylistAsync(playlist.Id, matchedSongIds);
+            await _playlistService.AddSongsToPlaylistAsync(playlist.Id, matchedSongIds).ConfigureAwait(false);
 
             _logger.LogInformation(
                 "Imported playlist '{PlaylistName}' from {FilePath}: {Matched} matched, {Unmatched} unmatched",
@@ -177,7 +177,7 @@ public class M3uPlaylistExportService : IPlaylistExportService
                 Directory.CreateDirectory(directoryPath);
             }
 
-            var playlists = await _libraryReader.GetAllPlaylistsAsync();
+            var playlists = await _libraryReader.GetAllPlaylistsAsync().ConfigureAwait(false);
             var playlistList = playlists.ToList();
 
             if (playlistList.Count == 0)
@@ -191,7 +191,7 @@ public class M3uPlaylistExportService : IPlaylistExportService
             foreach (var playlist in playlistList)
             {
                 // Get songs to check if playlist is empty
-                var songs = await _libraryReader.GetSongsInPlaylistOrderedAsync(playlist.Id);
+                var songs = await _libraryReader.GetSongsInPlaylistOrderedAsync(playlist.Id).ConfigureAwait(false);
                 var songCount = songs.Count();
                 
                 // Skip empty playlists
@@ -205,7 +205,7 @@ public class M3uPlaylistExportService : IPlaylistExportService
                 var safeName = FileNameHelper.SanitizeFileName(playlist.Name, "playlist");
                 var filePath = Path.Combine(directoryPath, $"{safeName}.m3u8");
 
-                var result = await ExportPlaylistAsync(playlist.Id, filePath);
+                var result = await ExportPlaylistAsync(playlist.Id, filePath).ConfigureAwait(false);
                 if (result.Success)
                 {
                     exportedCount++;
@@ -237,7 +237,7 @@ public class M3uPlaylistExportService : IPlaylistExportService
         foreach (var filePath in pathList)
         {
             var playlistName = Path.GetFileNameWithoutExtension(filePath);
-            var result = await ImportPlaylistAsync(filePath, playlistName);
+            var result = await ImportPlaylistAsync(filePath, playlistName).ConfigureAwait(false);
 
             if (result.Success)
             {

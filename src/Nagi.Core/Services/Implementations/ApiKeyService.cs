@@ -48,7 +48,7 @@ public class ApiKeyService : IApiKeyService, IDisposable
         try
         {
             // Use WaitAsync to respect the caller's cancellation token without affecting the cached task.
-            return await lazyTask.Value.WaitAsync(cancellationToken);
+            return await lazyTask.Value.WaitAsync(cancellationToken).ConfigureAwait(false);
         }
         catch (OperationCanceledException)
         {
@@ -103,11 +103,11 @@ public class ApiKeyService : IApiKeyService, IDisposable
                 request.Headers.Add("Ocp-Apim-Subscription-Key", subscriptionKey);
 
             using var httpClient = _httpClientFactory.CreateClient();
-            var response = await httpClient.SendAsync(request, cancellationToken);
+            var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
 
             if (!response.IsSuccessStatusCode)
             {
-                var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
+                var errorContent = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
                 
                 if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized || 
                     response.StatusCode == System.Net.HttpStatusCode.Forbidden)
@@ -128,7 +128,7 @@ public class ApiKeyService : IApiKeyService, IDisposable
                 return null;
             }
 
-            var jsonContent = await response.Content.ReadAsStringAsync(cancellationToken);
+            var jsonContent = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
             var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             var apiKeyResponse = JsonSerializer.Deserialize<ApiKeyResponse>(jsonContent, options);
 

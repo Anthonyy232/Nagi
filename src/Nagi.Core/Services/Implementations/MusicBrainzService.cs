@@ -35,14 +35,14 @@ public class MusicBrainzService : IMusicBrainzService
             return null;
 
         // Acquire semaphore and hold it through the entire request to prevent bursts
-        await _rateLimitSemaphore.WaitAsync(cancellationToken);
+        await _rateLimitSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
             // Enforce minimum 1 second between requests
             var elapsed = DateTime.UtcNow - _lastRequestTime;
             if (elapsed < TimeSpan.FromSeconds(1))
             {
-                await Task.Delay(TimeSpan.FromSeconds(1) - elapsed, cancellationToken);
+                await Task.Delay(TimeSpan.FromSeconds(1) - elapsed, cancellationToken).ConfigureAwait(false);
             }
 
             // Quote the artist name for multi-word names (Lucene syntax)
@@ -52,7 +52,7 @@ public class MusicBrainzService : IMusicBrainzService
 
             _logger.LogDebug("Searching MusicBrainz for artist: {ArtistName}", artistName);
 
-            using var response = await _httpClient.GetAsync(url, cancellationToken);
+            using var response = await _httpClient.GetAsync(url, cancellationToken).ConfigureAwait(false);
 
             // Update timestamp AFTER request completes
             _lastRequestTime = DateTime.UtcNow;
@@ -72,7 +72,7 @@ public class MusicBrainzService : IMusicBrainzService
             }
 
             var result = await response.Content.ReadFromJsonAsync<MusicBrainzSearchResult>(
-                cancellationToken: cancellationToken);
+                cancellationToken: cancellationToken).ConfigureAwait(false);
 
             var artist = result?.Artists?.FirstOrDefault();
             if (artist is null)

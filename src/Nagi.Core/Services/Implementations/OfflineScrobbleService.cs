@@ -64,7 +64,7 @@ public class OfflineScrobbleService : IOfflineScrobbleService, IDisposable
     {
         if (cancellationToken.IsCancellationRequested) return;
 
-        if (!await _settingsService.GetLastFmScrobblingEnabledAsync())
+        if (!await _settingsService.GetLastFmScrobblingEnabledAsync().ConfigureAwait(false))
         {
             _logger.LogDebug("Scrobbling is disabled; skipping queue processing.");
             return;
@@ -82,7 +82,7 @@ public class OfflineScrobbleService : IOfflineScrobbleService, IDisposable
         {
             _logger.LogDebug("Starting to process pending scrobbles...");
             // Pass the token to all async EF Core operations for clean cancellation.
-            await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+            await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
 
             var pendingScrobbles = await context.ListenHistory
                 .AsTracking()
@@ -90,7 +90,7 @@ public class OfflineScrobbleService : IOfflineScrobbleService, IDisposable
                 .Include(lh => lh.Song).ThenInclude(s => s!.Artist)
                 .Include(lh => lh.Song).ThenInclude(s => s!.Album)
                 .OrderBy(lh => lh.ListenTimestampUtc)
-                .ToListAsync(cancellationToken);
+                .ToListAsync(cancellationToken).ConfigureAwait(false);
 
             if (cancellationToken.IsCancellationRequested) return;
 
@@ -111,7 +111,7 @@ public class OfflineScrobbleService : IOfflineScrobbleService, IDisposable
                 try
                 {
                     var success =
-                        await _scrobblerService.ScrobbleAsync(historyEntry.Song, historyEntry.ListenTimestampUtc);
+                        await _scrobblerService.ScrobbleAsync(historyEntry.Song, historyEntry.ListenTimestampUtc).ConfigureAwait(false);
                     if (success)
                     {
                         historyEntry.IsScrobbled = true;
@@ -135,7 +135,7 @@ public class OfflineScrobbleService : IOfflineScrobbleService, IDisposable
 
             if (successfulScrobbles > 0)
             {
-                await context.SaveChangesAsync(cancellationToken);
+                await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
                 _logger.LogDebug("Successfully submitted {ScrobbleCount} scrobbles.", successfulScrobbles);
                 // Reset backoff counter on success.
                 _consecutiveFailures = 0;
@@ -160,7 +160,7 @@ public class OfflineScrobbleService : IOfflineScrobbleService, IDisposable
     {
         try
         {
-            await Task.Delay(InitialDelay, cancellationToken);
+            await Task.Delay(InitialDelay, cancellationToken).ConfigureAwait(false);
 
             while (!cancellationToken.IsCancellationRequested)
             {
@@ -168,7 +168,7 @@ public class OfflineScrobbleService : IOfflineScrobbleService, IDisposable
                 // A single failed run will not terminate the background service.
                 try
                 {
-                    await ProcessQueueAsync(cancellationToken);
+                    await ProcessQueueAsync(cancellationToken).ConfigureAwait(false);
                 }
                 catch (Exception ex) when (ex is not OperationCanceledException)
                 {
@@ -185,7 +185,7 @@ public class OfflineScrobbleService : IOfflineScrobbleService, IDisposable
                     _logger.LogDebug("Consecutive failures: {FailureCount}. Next check in {WaitTime}.", 
                         _consecutiveFailures, waitTime);
                 
-                await Task.Delay(waitTime, cancellationToken);
+                await Task.Delay(waitTime, cancellationToken).ConfigureAwait(false);
             }
         }
         catch (OperationCanceledException)

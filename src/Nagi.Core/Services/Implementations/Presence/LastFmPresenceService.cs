@@ -41,7 +41,7 @@ public class LastFmPresenceService : IPresenceService, IAsyncDisposable
     {
         _logger.LogDebug("Initializing Last.fm Presence Service.");
         _settingsService.LastFmSettingsChanged += OnSettingsChanged;
-        await UpdateLocalSettingsAsync();
+        await UpdateLocalSettingsAsync().ConfigureAwait(false);
     }
 
     public async Task OnTrackChangedAsync(Song song, long listenHistoryId)
@@ -54,7 +54,7 @@ public class LastFmPresenceService : IPresenceService, IAsyncDisposable
         if (_isNowPlayingEnabled)
             try
             {
-                await _scrobblerService.UpdateNowPlayingAsync(song);
+                await _scrobblerService.UpdateNowPlayingAsync(song).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -90,17 +90,17 @@ public class LastFmPresenceService : IPresenceService, IAsyncDisposable
             _isEligibilityMarked = true;
 
             // Mark as eligible in the database. This allows an offline service to scrobble it later if real-time fails.
-            await _libraryWriter.MarkListenAsEligibleForScrobblingAsync(_currentListenHistoryId.Value);
+            await _libraryWriter.MarkListenAsEligibleForScrobblingAsync(_currentListenHistoryId.Value).ConfigureAwait(false);
             _logger.LogDebug("Track '{TrackTitle}' is now eligible for scrobbling.", _currentSong.Title);
 
             // Attempt to scrobble immediately for a real-time experience.
             try
             {
-                if (await _scrobblerService.ScrobbleAsync(_currentSong, _playbackStartTime))
+                if (await _scrobblerService.ScrobbleAsync(_currentSong, _playbackStartTime).ConfigureAwait(false))
                 {
                     _logger.LogDebug("Successfully scrobbled track '{TrackTitle}' in real-time.",
                         _currentSong.Title);
-                    await _libraryWriter.MarkListenAsScrobbledAsync(_currentListenHistoryId.Value);
+                    await _libraryWriter.MarkListenAsScrobbledAsync(_currentListenHistoryId.Value).ConfigureAwait(false);
                 }
             }
             catch (Exception ex)
@@ -124,7 +124,7 @@ public class LastFmPresenceService : IPresenceService, IAsyncDisposable
     {
         try
         {
-            await UpdateLocalSettingsAsync();
+            await UpdateLocalSettingsAsync().ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -134,8 +134,8 @@ public class LastFmPresenceService : IPresenceService, IAsyncDisposable
 
     private async Task UpdateLocalSettingsAsync()
     {
-        _isNowPlayingEnabled = await _settingsService.GetLastFmNowPlayingEnabledAsync();
-        _isScrobblingEnabled = await _settingsService.GetLastFmScrobblingEnabledAsync();
+        _isNowPlayingEnabled = await _settingsService.GetLastFmNowPlayingEnabledAsync().ConfigureAwait(false);
+        _isScrobblingEnabled = await _settingsService.GetLastFmScrobblingEnabledAsync().ConfigureAwait(false);
         _logger.LogDebug(
             "Updated Last.fm settings. Now Playing: {IsNowPlayingEnabled}, Scrobbling: {IsScrobblingEnabled}",
             _isNowPlayingEnabled, _isScrobblingEnabled);

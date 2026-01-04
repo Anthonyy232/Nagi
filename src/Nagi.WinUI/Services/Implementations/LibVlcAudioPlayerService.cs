@@ -566,7 +566,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
                 try
                 {
                     if (_disposeCts.IsCancellationRequested) return;
-                    var albumArtFile = await StorageFile.GetFileFromPathAsync(_currentSong.AlbumArtUriFromTrack);
+                    var albumArtFile = await StorageFile.GetFileFromPathAsync(_currentSong.AlbumArtUriFromTrack).AsTask().ConfigureAwait(false);
                     if (_disposeCts.IsCancellationRequested) return;
                     updater.Thumbnail = RandomAccessStreamReference.CreateFromFile(albumArtFile);
                 }

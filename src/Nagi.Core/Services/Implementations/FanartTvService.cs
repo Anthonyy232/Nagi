@@ -42,7 +42,7 @@ public class FanartTvService : IFanartTvService
 
         try
         {
-            var apiKey = await _apiKeyService.GetApiKeyAsync(ApiKeyName, cancellationToken);
+            var apiKey = await _apiKeyService.GetApiKeyAsync(ApiKeyName, cancellationToken).ConfigureAwait(false);
             if (string.IsNullOrEmpty(apiKey))
             {
                 _logger.LogWarning("Fanart.tv API key not available.");
@@ -52,7 +52,7 @@ public class FanartTvService : IFanartTvService
             var url = $"{BaseUrl}/{musicBrainzId}?api_key={apiKey}";
             _logger.LogDebug("Fetching Fanart.tv images for MBID: {MBID}", musicBrainzId);
 
-            using var response = await _httpClient.GetAsync(url, cancellationToken);
+            using var response = await _httpClient.GetAsync(url, cancellationToken).ConfigureAwait(false);
 
             if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
@@ -74,7 +74,7 @@ public class FanartTvService : IFanartTvService
             }
 
             var result = await response.Content.ReadFromJsonAsync<FanartTvResponse>(
-                cancellationToken: cancellationToken);
+                cancellationToken: cancellationToken).ConfigureAwait(false);
 
             if (result is null)
                 return ServiceResult<FanartTvArtistImages>.FromSuccessNotFound();

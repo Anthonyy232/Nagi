@@ -49,14 +49,14 @@ public partial class NetEaseLyricsService : INetEaseLyricsService
                 ? trackName 
                 : $"{trackName} {artistName}";
 
-            var songId = await SearchSongAsync(query, trackName, artistName, cancellationToken);
+            var songId = await SearchSongAsync(query, trackName, artistName, cancellationToken).ConfigureAwait(false);
             if (songId is null)
             {
                 _logger.LogDebug("No NetEase match found for: {Query}", query);
                 return null;
             }
 
-            var lyrics = await GetLyricsAsync(songId.Value, cancellationToken);
+            var lyrics = await GetLyricsAsync(songId.Value, cancellationToken).ConfigureAwait(false);
             if (string.IsNullOrWhiteSpace(lyrics))
             {
                 _logger.LogDebug("No lyrics found for NetEase song ID: {SongId}", songId);
@@ -83,7 +83,7 @@ public partial class NetEaseLyricsService : INetEaseLyricsService
             ["offset"] = "0"
         });
 
-        using var response = await _httpClient.PostAsync(SearchUrl, content, cancellationToken);
+        using var response = await _httpClient.PostAsync(SearchUrl, content, cancellationToken).ConfigureAwait(false);
 
         if (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests ||
             response.StatusCode == System.Net.HttpStatusCode.Forbidden)
@@ -97,7 +97,7 @@ public partial class NetEaseLyricsService : INetEaseLyricsService
             return null;
 
         var result = await response.Content.ReadFromJsonAsync<NetEaseSearchResult>(
-            cancellationToken: cancellationToken);
+            cancellationToken: cancellationToken).ConfigureAwait(false);
 
         var songs = result?.Result?.Songs;
         if (songs is null || songs.Count == 0)
@@ -131,7 +131,7 @@ public partial class NetEaseLyricsService : INetEaseLyricsService
     private async Task<string?> GetLyricsAsync(long songId, CancellationToken cancellationToken)
     {
         var url = $"{LyricsUrl}?id={songId}&lv=1";
-        using var response = await _httpClient.GetAsync(url, cancellationToken);
+        using var response = await _httpClient.GetAsync(url, cancellationToken).ConfigureAwait(false);
 
         // Check for rate limiting on lyrics endpoint too
         if (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests ||
@@ -146,7 +146,7 @@ public partial class NetEaseLyricsService : INetEaseLyricsService
             return null;
 
         var result = await response.Content.ReadFromJsonAsync<NetEaseLyricsResult>(
-            cancellationToken: cancellationToken);
+            cancellationToken: cancellationToken).ConfigureAwait(false);
 
         var lrcContent = result?.Lrc?.Lyric;
         if (string.IsNullOrWhiteSpace(lrcContent))

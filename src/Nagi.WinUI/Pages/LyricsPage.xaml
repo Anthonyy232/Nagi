@@ -41,6 +41,7 @@
             Margin="0,32,0,8"
             Style="{StaticResource TitleTextBlockStyle}"
             Text="{x:Bind ViewModel.SongTitle, Mode=OneWay}"
+            Foreground="{StaticResource AppPrimaryColorBrush}"
             FontWeight="SemiBold"
             HorizontalAlignment="Center"
             TextTrimming="CharacterEllipsis"

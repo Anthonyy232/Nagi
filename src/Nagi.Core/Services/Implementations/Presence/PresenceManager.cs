@@ -47,7 +47,7 @@ public class PresenceManager : IPresenceManager, IDisposable
         _logger.LogDebug("Initializing Presence Manager.");
 
         // Activate services based on their initial settings.
-        foreach (var service in _presenceServices.Values) await UpdateServiceActivationAsync(service);
+        foreach (var service in _presenceServices.Values) await UpdateServiceActivationAsync(service).ConfigureAwait(false);
 
         SubscribeToEvents();
         _isInitialized = true;
@@ -60,13 +60,13 @@ public class PresenceManager : IPresenceManager, IDisposable
 
         UnsubscribeFromEvents();
 
-        await BroadcastAsync(service => service.OnPlaybackStoppedAsync());
+        await BroadcastAsync(service => service.OnPlaybackStoppedAsync()).ConfigureAwait(false);
 
         var disposalTasks = _activeServices
             .OfType<IAsyncDisposable>()
             .Select(service => service.DisposeAsync().AsTask());
 
-        await Task.WhenAll(disposalTasks);
+        await Task.WhenAll(disposalTasks).ConfigureAwait(false);
 
         _activeServices.Clear();
         _isInitialized = false;
@@ -94,7 +94,7 @@ public class PresenceManager : IPresenceManager, IDisposable
     {
         try
         {
-            if (_presenceServices.TryGetValue("Discord", out var service)) await SetServiceActiveAsync(service, isEnabled);
+            if (_presenceServices.TryGetValue("Discord", out var service)) await SetServiceActiveAsync(service, isEnabled).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -106,7 +106,7 @@ public class PresenceManager : IPresenceManager, IDisposable
     {
         try
         {
-            if (_presenceServices.TryGetValue("Last.fm", out var service)) await UpdateServiceActivationAsync(service);
+            if (_presenceServices.TryGetValue("Last.fm", out var service)) await UpdateServiceActivationAsync(service).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -118,21 +118,21 @@ public class PresenceManager : IPresenceManager, IDisposable
     {
         var shouldActivate = service.Name switch
         {
-            "Discord" => await _settingsService.GetDiscordRichPresenceEnabledAsync(),
-            "Last.fm" => await IsLastFmServiceEnabledAsync(),
+            "Discord" => await _settingsService.GetDiscordRichPresenceEnabledAsync().ConfigureAwait(false),
+            "Last.fm" => await IsLastFmServiceEnabledAsync().ConfigureAwait(false),
             _ => false
         };
 
-        await SetServiceActiveAsync(service, shouldActivate);
+        await SetServiceActiveAsync(service, shouldActivate).ConfigureAwait(false);
     }
 
     private async Task<bool> IsLastFmServiceEnabledAsync()
     {
-        var hasCredentials = await _settingsService.GetLastFmCredentialsAsync() != null;
+        var hasCredentials = await _settingsService.GetLastFmCredentialsAsync().ConfigureAwait(false) != null;
         if (!hasCredentials) return false;
 
-        var isScrobblingEnabled = await _settingsService.GetLastFmScrobblingEnabledAsync();
-        var isNowPlayingEnabled = await _settingsService.GetLastFmNowPlayingEnabledAsync();
+        var isScrobblingEnabled = await _settingsService.GetLastFmScrobblingEnabledAsync().ConfigureAwait(false);
+        var isNowPlayingEnabled = await _settingsService.GetLastFmNowPlayingEnabledAsync().ConfigureAwait(false);
 
         return isScrobblingEnabled || isNowPlayingEnabled;
     }
@@ -145,15 +145,15 @@ public class PresenceManager : IPresenceManager, IDisposable
         if (shouldBeActive)
             try
             {
-                await service.InitializeAsync();
+                await service.InitializeAsync().ConfigureAwait(false);
                 _activeServices.Add(service);
                 _logger.LogDebug("Activated '{ServiceName}' presence service.", service.Name);
 
                 // If a track is already playing, immediately update the newly activated service.
                 if (_currentTrack is not null && _playbackService.CurrentListenHistoryId.HasValue)
                 {
-                    await service.OnTrackChangedAsync(_currentTrack, _playbackService.CurrentListenHistoryId.Value);
-                    await service.OnPlaybackStateChangedAsync(_playbackService.IsPlaying);
+                    await service.OnTrackChangedAsync(_currentTrack, _playbackService.CurrentListenHistoryId.Value).ConfigureAwait(false);
+                    await service.OnPlaybackStateChangedAsync(_playbackService.IsPlaying).ConfigureAwait(false);
                 }
             }
             catch (Exception ex)
@@ -163,8 +163,8 @@ public class PresenceManager : IPresenceManager, IDisposable
         else
             try
             {
-                await service.OnPlaybackStoppedAsync();
-                if (service is IAsyncDisposable asyncDisposable) await asyncDisposable.DisposeAsync();
+                await service.OnPlaybackStoppedAsync().ConfigureAwait(false);
+                if (service is IAsyncDisposable asyncDisposable) await asyncDisposable.DisposeAsync().ConfigureAwait(false);
                 _activeServices.Remove(service);
                 _logger.LogDebug("Deactivated '{ServiceName}' presence service.", service.Name);
             }
@@ -187,9 +187,9 @@ public class PresenceManager : IPresenceManager, IDisposable
 
             if (_currentTrack is not null && _playbackService.CurrentListenHistoryId.HasValue)
                 await BroadcastAsync(s =>
-                    s.OnTrackChangedAsync(_currentTrack, _playbackService.CurrentListenHistoryId.Value));
+                    s.OnTrackChangedAsync(_currentTrack, _playbackService.CurrentListenHistoryId.Value)).ConfigureAwait(false);
             else
-                await BroadcastAsync(s => s.OnPlaybackStoppedAsync());
+                await BroadcastAsync(s => s.OnPlaybackStoppedAsync()).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -203,7 +203,7 @@ public class PresenceManager : IPresenceManager, IDisposable
         {
             _logger.LogDebug("Playback state changed. IsPlaying: {IsPlaying}. Broadcasting to active services.",
                 _playbackService.IsPlaying);
-            await BroadcastAsync(s => s.OnPlaybackStateChangedAsync(_playbackService.IsPlaying));
+            await BroadcastAsync(s => s.OnPlaybackStateChangedAsync(_playbackService.IsPlaying)).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -217,7 +217,7 @@ public class PresenceManager : IPresenceManager, IDisposable
         {
             if (_currentTrack is null || _playbackService.Duration <= TimeSpan.Zero) return;
 
-            await BroadcastAsync(s => s.OnTrackProgressAsync(_playbackService.CurrentPosition, _playbackService.Duration));
+            await BroadcastAsync(s => s.OnTrackProgressAsync(_playbackService.CurrentPosition, _playbackService.Duration)).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -230,14 +230,14 @@ public class PresenceManager : IPresenceManager, IDisposable
         if (!_activeServices.Any()) return;
 
         var broadcastTasks = _activeServices.Select(service => SafeExecuteAsync(service, action));
-        await Task.WhenAll(broadcastTasks);
+        await Task.WhenAll(broadcastTasks).ConfigureAwait(false);
     }
 
     private async Task SafeExecuteAsync(IPresenceService service, Func<IPresenceService, Task> action)
     {
         try
         {
-            await action(service);
+            await action(service).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
