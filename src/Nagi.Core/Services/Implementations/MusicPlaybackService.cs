@@ -1086,9 +1086,10 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         var isEnabled = isEnabledOverride ?? await _settingsService.GetVolumeNormalizationEnabledAsync().ConfigureAwait(false);
         
         // If enabled but missing data in memory, attempt a database refresh.
-        // This handles songs that were in the queue before the projection bug was fixed.
-        if (isEnabled && !CurrentTrack.ReplayGainTrackGain.HasValue)
+        // Use the transient flag to avoid repeated lookups for songs without ReplayGain data.
+        if (isEnabled && !CurrentTrack.ReplayGainTrackGain.HasValue && !CurrentTrack.ReplayGainCheckPerformed)
         {
+            CurrentTrack.ReplayGainCheckPerformed = true; // Mark as checked before DB call
             var refreshedSong = await _libraryService.GetSongByIdAsync(CurrentTrack.Id).ConfigureAwait(false);
             if (refreshedSong != null && refreshedSong.ReplayGainTrackGain.HasValue)
             {

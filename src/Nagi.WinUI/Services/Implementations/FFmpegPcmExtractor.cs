@@ -1,8 +1,10 @@
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,13 +15,13 @@ namespace Nagi.WinUI.Services.Implementations;
 
 /// <summary>
 ///     Extracts raw PCM audio samples from audio files using FFmpeg.
-///     More robust and efficient than LibVLC for this specific task.
 /// </summary>
 public class FFmpegPcmExtractor : IPcmExtractor
 {
     private const int TargetSampleRate = 48000;
     private const int TargetChannels = 2;
-    private const int BytesPerSample = 4; // F32
+    private const int BytesPerSample = 4; // F32LE
+    private const int ReadBufferSize = 65536; // 64KB read buffer
     
     private readonly ILogger<FFmpegPcmExtractor> _logger;
 
@@ -28,14 +30,8 @@ public class FFmpegPcmExtractor : IPcmExtractor
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    /// <inheritdoc />
-    public async Task<(float[] Samples, int SampleRate, int Channels)?> ExtractAsync(
-        string filePath, 
-        CancellationToken cancellationToken = default)
+    private static ProcessStartInfo CreateFFmpegStartInfo(string filePath)
     {
-        var startTime = DateTime.UtcNow;
-        _logger.LogDebug("Starting FFmpeg PCM extraction: {FilePath}", filePath);
-
         var startInfo = new ProcessStartInfo
         {
             FileName = "ffmpeg",
@@ -45,7 +41,6 @@ public class FFmpegPcmExtractor : IPcmExtractor
             CreateNoWindow = true
         };
 
-        // Use ArgumentList for safer path handling (handles spaces/quotes correctly)
         startInfo.ArgumentList.Add("-v");
         startInfo.ArgumentList.Add("error");
         startInfo.ArgumentList.Add("-nostdin");
@@ -57,121 +52,160 @@ public class FFmpegPcmExtractor : IPcmExtractor
         startInfo.ArgumentList.Add(TargetChannels.ToString());
         startInfo.ArgumentList.Add("-ar");
         startInfo.ArgumentList.Add(TargetSampleRate.ToString());
-        startInfo.ArgumentList.Add("-vn"); // No video
-        startInfo.ArgumentList.Add("-sn"); // No subtitles
-        startInfo.ArgumentList.Add("-dn"); // No data
+        startInfo.ArgumentList.Add("-vn");
+        startInfo.ArgumentList.Add("-sn");
+        startInfo.ArgumentList.Add("-dn");
         startInfo.ArgumentList.Add("pipe:1");
 
+        return startInfo;
+    }
+
+    private void KillProcessSafely(Process? process, string filePath)
+    {
+        if (process == null) return;
         try
         {
-            using var process = Process.Start(startInfo);
+            if (!process.HasExited)
+            {
+                process.Kill(entireProcessTree: true);
+                _logger.LogDebug("Killed FFmpeg process for {FilePath}", filePath);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogDebug(ex, "Failed to kill FFmpeg process for {FilePath}", filePath);
+        }
+    }
+
+    /// <inheritdoc />
+    public async Task<(float[] Samples, int SampleRate, int Channels)?> ExtractAsync(
+        string filePath, 
+        CancellationToken cancellationToken = default)
+    {
+        var startTime = DateTime.UtcNow;
+        var samplesList = new List<float[]>();
+        
+        await foreach (var chunk in ExtractStreamingAsync(filePath, cancellationToken))
+        {
+            // For full extract, we make a defensive copy because chunk.Samples might be pooled 
+            // if we were using pooling in ExtractStreamingAsync (though presently we allocate new arrays for chunks)
+            samplesList.Add(chunk.Samples);
+        }
+
+        if (samplesList.Count == 0) return null;
+
+        var totalSamples = samplesList.Sum(s => s.Length);
+        var result = new float[totalSamples];
+        int offset = 0;
+        foreach (var chunk in samplesList)
+        {
+            Array.Copy(chunk, 0, result, offset, chunk.Length);
+            offset += chunk.Length;
+        }
+
+        var duration = DateTime.UtcNow - startTime;
+        _logger.LogInformation("Successfully extracted {SampleCount} samples from {FilePath} in {Duration}ms", 
+            result.Length, filePath, (int)duration.TotalMilliseconds);
+
+        return (result, TargetSampleRate, TargetChannels);
+    }
+
+    /// <inheritdoc />
+    public async IAsyncEnumerable<AudioChunk> ExtractStreamingAsync(
+        string filePath,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        _logger.LogDebug("Starting optimized streaming FFmpeg extraction: {FilePath}", filePath);
+
+        Process? process = null;
+        try
+        {
+            process = Process.Start(CreateFFmpegStartInfo(filePath));
             if (process == null)
             {
                 _logger.LogError("Failed to start FFmpeg process");
-                return null;
+                yield break;
             }
 
-            var samplesList = new List<float[]>();
-            var buffer = new byte[65536];
-            var leftover = new byte[BytesPerSample];
+            // Zero-copy strategy:
+            // 1. Read raw bytes into a pooled buffer
+            // 2. Combine with previous leftovers
+            // 3. Cast the span of bytes directly to floats using MemoryMarshal
+            byte[] buffer = ArrayPool<byte>.Shared.Rent(ReadBufferSize);
+            byte[] leftovers = new byte[BytesPerSample];
             int leftoverCount = 0;
             
-            using var stream = process.StandardOutput.BaseStream;
-            int bytesRead;
-            while ((bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length, cancellationToken).ConfigureAwait(false)) > 0)
+            try
             {
-                int totalAvailable = bytesRead + leftoverCount;
-                int floatCount = totalAvailable / BytesPerSample;
+                using var stream = process.StandardOutput.BaseStream;
+                int bytesRead;
                 
-                if (floatCount > 0)
+                while ((bytesRead = await stream.ReadAsync(buffer, 0, ReadBufferSize, cancellationToken).ConfigureAwait(false)) > 0)
                 {
-                    var floatArray = new float[floatCount];
-                    int floatsFilled = 0;
-
-                    // Handle leftovers from previous read
-                    int bufferOffset = 0;
-                    if (leftoverCount > 0)
+                    int totalAvailable = bytesRead + leftoverCount;
+                    int floatCount = totalAvailable / BytesPerSample;
+                    
+                    if (floatCount > 0)
                     {
-                        int bytesNeeded = BytesPerSample - leftoverCount;
-                        if (bytesRead >= bytesNeeded)
+                        // Use a fresh array for the chunk as it will be consumed asynchronously
+                        float[] floatArray = new float[floatCount];
+                        var byteSpan = floatArray.AsSpan().AsBytes();
+                        
+                        int bytesToCopyFromBuffer = bytesRead;
+                        int bytesCopiedFromLeftovers = 0;
+                        
+                        if (leftoverCount > 0)
                         {
-                            var temp = new byte[BytesPerSample];
-                            Buffer.BlockCopy(leftover, 0, temp, 0, leftoverCount);
-                            Buffer.BlockCopy(buffer, 0, temp, leftoverCount, bytesNeeded);
-                            floatArray[0] = BitConverter.ToSingle(temp, 0);
-                            floatsFilled = 1;
-                            bufferOffset = bytesNeeded;
+                            leftovers.AsSpan(0, leftoverCount).CopyTo(byteSpan);
+                            bytesCopiedFromLeftovers = leftoverCount;
+                        }
+                        
+                        int remainingSpaceInResult = byteSpan.Length - bytesCopiedFromLeftovers;
+                        int bytesActuallyConsumedFromBuffer = Math.Min(bytesRead, remainingSpaceInResult);
+                        
+                        buffer.AsSpan(0, bytesActuallyConsumedFromBuffer)
+                              .CopyTo(byteSpan.Slice(bytesCopiedFromLeftovers));
+                        
+                        yield return new AudioChunk(floatArray, TargetSampleRate, TargetChannels);
+                        
+                        // Update leftovers
+                        leftoverCount = bytesRead - bytesActuallyConsumedFromBuffer;
+                        if (leftoverCount > 0)
+                        {
+                            buffer.AsSpan(bytesActuallyConsumedFromBuffer, leftoverCount)
+                                  .CopyTo(leftovers);
                         }
                     }
-
-                    // Process bulk from current buffer
-                    int remainingBytesInBuf = bytesRead - bufferOffset;
-                    int floatsInBuf = remainingBytesInBuf / BytesPerSample;
-                    if (floatsInBuf > 0)
+                    else
                     {
-                        Buffer.BlockCopy(buffer, bufferOffset, floatArray, floatsFilled, floatsInBuf * BytesPerSample);
-                        floatsFilled += floatsInBuf;
-                        bufferOffset += floatsInBuf * BytesPerSample;
-                    }
-
-                    samplesList.Add(floatArray);
-                    
-                    // Update leftovers
-                    leftoverCount = bytesRead - bufferOffset;
-                    if (leftoverCount > 0)
-                    {
-                        Buffer.BlockCopy(buffer, bufferOffset, leftover, 0, leftoverCount);
+                        // Update leftovers
+                        buffer.AsSpan(0, bytesRead).CopyTo(leftovers.AsSpan(leftoverCount));
+                        leftoverCount += bytesRead;
                     }
                 }
-                else
-                {
-                    // Not enough bytes for even one float, add all to leftovers
-                    Buffer.BlockCopy(buffer, 0, leftover, leftoverCount, bytesRead);
-                    leftoverCount += bytesRead;
-                }
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.Return(buffer);
             }
 
             await process.WaitForExitAsync(cancellationToken).ConfigureAwait(false);
-
             if (process.ExitCode != 0)
             {
                 var error = await process.StandardError.ReadToEndAsync(cancellationToken).ConfigureAwait(false);
                 _logger.LogWarning("FFmpeg exited with error code {ExitCode}: {Error}", process.ExitCode, error);
-                
-                // If we got some samples, we might still want to return them if it's just a non-fatal error at the end
-                if (samplesList.Count == 0) return null;
             }
-
-            var totalSamples = samplesList.Sum(s => s.Length);
-            if (totalSamples == 0)
-            {
-                _logger.LogWarning("No samples extracted from: {FilePath}", filePath);
-                return null;
-            }
-
-            var result = new float[totalSamples];
-            int offset = 0;
-            foreach (var chunk in samplesList)
-            {
-                Array.Copy(chunk, 0, result, offset, chunk.Length);
-                offset += chunk.Length;
-            }
-
-            var duration = DateTime.UtcNow - startTime;
-            _logger.LogInformation("Successfully extracted {SampleCount} samples from {FilePath} in {Duration}ms", 
-                result.Length, filePath, (int)duration.TotalMilliseconds);
-
-            return (result, TargetSampleRate, TargetChannels);
         }
-        catch (OperationCanceledException)
+        finally
         {
-            _logger.LogDebug("FFmpeg extraction cancelled for {FilePath}", filePath);
-            return null;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error extracting PCM with FFmpeg from {FilePath}", filePath);
-            return null;
+            KillProcessSafely(process, filePath);
+            process?.Dispose();
         }
     }
+}
+
+internal static class SpanExtensions
+{
+    public static Span<byte> AsBytes(this Span<float> floatSpan) 
+        => MemoryMarshal.AsBytes(floatSpan);
 }

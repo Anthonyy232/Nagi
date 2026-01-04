@@ -5,7 +5,7 @@ using Nagi.Core.Services.Data;
 /// <summary>
 ///     Defines a service for calculating and managing ReplayGain values for audio normalization.
 /// </summary>
-public interface IReplayGainService
+public interface IReplayGainService : IDisposable
 {
     /// <summary>
     ///     Calculates the ReplayGain track gain and peak for an audio file.

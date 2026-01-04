@@ -126,6 +126,13 @@ public class Song
     public double? ReplayGainTrackPeak { get; set; }
 
     /// <summary>
+    ///     Transient flag indicating if ReplayGain data has been checked for this song instance.
+    ///     Used to prevent repeated database lookups during playback when no data exists.
+    /// </summary>
+    [NotMapped]
+    public bool ReplayGainCheckPerformed { get; set; }
+
+    /// <summary>
     ///     A custom grouping category for the song.
     /// </summary>
     [MaxLength(200)]
