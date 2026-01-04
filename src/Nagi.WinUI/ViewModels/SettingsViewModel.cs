@@ -111,6 +111,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     private readonly PlayerViewModel _playerViewModel;
     private readonly IReplayGainService _replayGainService;
     private readonly IFFmpegService _ffmpegService;
+    private readonly IDispatcherService _dispatcherService;
     private readonly SemaphoreSlim _loadLock = new(1, 1);
 
     private const int PlayerButtonSaveDebounceMs = 300;
@@ -135,6 +136,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         PlayerViewModel playerViewModel,
         IReplayGainService replayGainService,
         IFFmpegService ffmpegService,
+        IDispatcherService dispatcherService,
         ILogger<SettingsViewModel> logger)
     {
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
@@ -150,6 +152,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         _playerViewModel = playerViewModel ?? throw new ArgumentNullException(nameof(playerViewModel));
         _replayGainService = replayGainService ?? throw new ArgumentNullException(nameof(replayGainService));
         _ffmpegService = ffmpegService ?? throw new ArgumentNullException(nameof(ffmpegService));
+        _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
         _logger = logger;
 
         NavigationItems.CollectionChanged += OnNavigationItemsCollectionChanged;
@@ -624,27 +627,32 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
     private void OnPlaybackService_EqualizerChanged()
     {
-        _isInitializing = true;
-        var eqSettings = _playbackService.CurrentEqualizerSettings;
-        if (eqSettings != null)
+        _dispatcherService.TryEnqueue(() =>
         {
-            if (Math.Abs(EqualizerPreamp - eqSettings.Preamp) > float.Epsilon) EqualizerPreamp = eqSettings.Preamp;
+            if (_isDisposed) return;
 
-            foreach (var bandVM in EqualizerBands)
+            _isInitializing = true;
+            var eqSettings = _playbackService.CurrentEqualizerSettings;
+            if (eqSettings != null)
             {
-                var newGain = eqSettings.BandGains.ElementAtOrDefault((int)bandVM.Index);
-                if (Math.Abs(bandVM.Gain - newGain) > float.Epsilon) 
+                if (Math.Abs(EqualizerPreamp - eqSettings.Preamp) > float.Epsilon) EqualizerPreamp = eqSettings.Preamp;
+
+                foreach (var bandVM in EqualizerBands)
                 {
-                    bandVM.IsExternalUpdate = true;
-                    bandVM.Gain = newGain;
-                    bandVM.IsExternalUpdate = false;
+                    var newGain = eqSettings.BandGains.ElementAtOrDefault((int)bandVM.Index);
+                    if (Math.Abs(bandVM.Gain - newGain) > float.Epsilon)
+                    {
+                        bandVM.IsExternalUpdate = true;
+                        bandVM.Gain = newGain;
+                        bandVM.IsExternalUpdate = false;
+                    }
                 }
             }
-        }
 
-        CheckIfCurrentSettingsMatchPreset();
+            CheckIfCurrentSettingsMatchPreset();
 
-        _isInitializing = false;
+            _isInitializing = false;
+        });
     }
 
     private void OnPlayerButtonsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)

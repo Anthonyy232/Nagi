@@ -412,3 +412,28 @@ public class StringToImageSourceConverter : IValueConverter
         throw new NotImplementedException();
     }
 }
+
+/// <summary>
+///     Converts a float or double to a formatted string with a fixed number of decimal places.
+///     Default is 1 decimal place (e.g., "3.5" or "-12.0").
+/// </summary>
+public class FloatToDecimalStringConverter : IValueConverter
+{
+    public int DecimalPlaces { get; set; } = 1;
+
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        var format = $"F{DecimalPlaces}";
+        return value switch
+        {
+            float f => f.ToString(format),
+            double d => d.ToString(format),
+            _ => value?.ToString() ?? string.Empty
+        };
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
+        throw new NotImplementedException();
+    }
+}
