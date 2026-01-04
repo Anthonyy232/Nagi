@@ -36,7 +36,7 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
     {
         if (string.IsNullOrEmpty(_discordAppId)) return;
 
-        await _initLock.WaitAsync();
+        await _initLock.WaitAsync().ConfigureAwait(false);
         try
         {
             // Initialize the client if it hasn't been or if it was previously disposed.

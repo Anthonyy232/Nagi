@@ -76,7 +76,7 @@ public class SpotifyService : ISpotifyService, IDisposable
         // Return the cached token if it's valid and not expiring soon.
         if (!string.IsNullOrEmpty(_accessToken) && _accessTokenExpiration > DateTime.UtcNow.AddMinutes(5))
             return _accessToken;
-        return await FetchAndCacheAccessTokenAsync(cancellationToken);
+        return await FetchAndCacheAccessTokenAsync(cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -89,7 +89,7 @@ public class SpotifyService : ISpotifyService, IDisposable
         if (string.IsNullOrWhiteSpace(artistName))
             return ServiceResult<SpotifyImageResult>.FromPermanentError("Artist name cannot be empty.");
 
-        var token = await GetAccessTokenAsync(cancellationToken);
+        var token = await GetAccessTokenAsync(cancellationToken).ConfigureAwait(false);
         if (string.IsNullOrEmpty(token))
             return ServiceResult<SpotifyImageResult>.FromTemporaryError("Could not retrieve Spotify access token.");
 
@@ -99,7 +99,7 @@ public class SpotifyService : ISpotifyService, IDisposable
 
         try
         {
-            var response = await _httpClient.SendAsync(request, cancellationToken);
+            var response = await _httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
 
             // If rate limited, disable the service for the current session to avoid further errors.
             if (response.StatusCode == HttpStatusCode.TooManyRequests)
@@ -111,7 +111,7 @@ public class SpotifyService : ISpotifyService, IDisposable
 
             if (!response.IsSuccessStatusCode)
             {
-                var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
+                var errorContent = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
                 _logger.LogWarning(
                     "Spotify artist search failed. Status: {StatusCode}, Content: {ErrorContent}",
                     response.StatusCode, errorContent);
@@ -119,7 +119,7 @@ public class SpotifyService : ISpotifyService, IDisposable
                     $"Spotify artist search failed. Status: {response.StatusCode}");
             }
 
-            var jsonResponse = await response.Content.ReadAsStringAsync(cancellationToken);
+            var jsonResponse = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
             var searchResponse = JsonSerializer.Deserialize<SpotifySearchResponse>(jsonResponse, _jsonOptions);
 
             var artist = searchResponse?.Artists?.Items?.FirstOrDefault();
@@ -155,7 +155,7 @@ public class SpotifyService : ISpotifyService, IDisposable
     /// </summary>
     private async Task<string?> FetchAndCacheAccessTokenAsync(CancellationToken cancellationToken)
     {
-        var spotifyCredentials = await _apiKeyService.GetApiKeyAsync(ApiKeyName, cancellationToken);
+        var spotifyCredentials = await _apiKeyService.GetApiKeyAsync(ApiKeyName, cancellationToken).ConfigureAwait(false);
         if (string.IsNullOrEmpty(spotifyCredentials))
         {
             _logger.LogWarning("Cannot get access token; credentials for API key '{ApiKeyName}' are unavailable.",
@@ -182,18 +182,18 @@ public class SpotifyService : ISpotifyService, IDisposable
             request.Content = new StringContent("grant_type=client_credentials", Encoding.UTF8,
                 "application/x-www-form-urlencoded");
 
-            var response = await _httpClient.SendAsync(request, cancellationToken);
+            var response = await _httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
 
             if (!response.IsSuccessStatusCode)
             {
-                var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
+                var errorContent = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
                 _logger.LogError(
                     "Error fetching Spotify access token. Status: {StatusCode}, Content: {ErrorContent}",
                     response.StatusCode, errorContent);
                 return null;
             }
 
-            var jsonResponse = await response.Content.ReadAsStringAsync(cancellationToken);
+            var jsonResponse = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
             using var doc = JsonDocument.Parse(jsonResponse);
             var root = doc.RootElement;
 

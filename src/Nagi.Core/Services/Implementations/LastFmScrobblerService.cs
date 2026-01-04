@@ -32,7 +32,7 @@ public class LastFmScrobblerService : ILastFmScrobblerService
 
     public async Task<bool> UpdateNowPlayingAsync(Song song)
     {
-        var (apiKey, apiSecret, sessionKey) = await GetApiCredentialsAsync();
+        var (apiKey, apiSecret, sessionKey) = await GetApiCredentialsAsync().ConfigureAwait(false);
         if (apiKey is null || apiSecret is null || sessionKey is null) return false;
 
         var parameters = new Dictionary<string, string>
@@ -47,7 +47,7 @@ public class LastFmScrobblerService : ILastFmScrobblerService
         if (song.Album != null) parameters.Add("album", song.Album.Title);
         if (song.Duration > TimeSpan.Zero) parameters.Add("duration", ((int)song.Duration.TotalSeconds).ToString());
 
-        var success = await PostToLastFmAsync(parameters, apiSecret);
+        var success = await PostToLastFmAsync(parameters, apiSecret).ConfigureAwait(false);
         if (success)
             _logger.LogDebug("Successfully updated Last.fm 'Now Playing' for track '{TrackTitle}'.", song.Title);
         return success;
@@ -55,7 +55,7 @@ public class LastFmScrobblerService : ILastFmScrobblerService
 
     public async Task<bool> ScrobbleAsync(Song song, DateTime playStartTime)
     {
-        var (apiKey, apiSecret, sessionKey) = await GetApiCredentialsAsync();
+        var (apiKey, apiSecret, sessionKey) = await GetApiCredentialsAsync().ConfigureAwait(false);
         if (apiKey is null || apiSecret is null || sessionKey is null) return false;
 
         var timestamp = new DateTimeOffset(playStartTime).ToUnixTimeSeconds().ToString();
@@ -72,7 +72,7 @@ public class LastFmScrobblerService : ILastFmScrobblerService
 
         if (song.Album != null) parameters.Add("album", song.Album.Title);
 
-        return await PostToLastFmAsync(parameters, apiSecret);
+        return await PostToLastFmAsync(parameters, apiSecret).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -86,10 +86,10 @@ public class LastFmScrobblerService : ILastFmScrobblerService
 
         try
         {
-            using var response = await _httpClient.PostAsync(LastFmApiBaseUrl, formContent);
+            using var response = await _httpClient.PostAsync(LastFmApiBaseUrl, formContent).ConfigureAwait(false);
             if (response.IsSuccessStatusCode) return true;
 
-            var errorContent = await response.Content.ReadAsStringAsync();
+            var errorContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             _logger.LogWarning(
                 "Last.fm API call for method '{Method}' failed. Status: {StatusCode}, Response: {ResponseContent}",
                 parameters["method"], response.StatusCode, errorContent);
@@ -112,7 +112,7 @@ public class LastFmScrobblerService : ILastFmScrobblerService
         var apiSecretTask = _apiKeyService.GetApiKeyAsync(ApiSecretName);
         var credentialsTask = _settingsService.GetLastFmCredentialsAsync();
 
-        await Task.WhenAll(apiKeyTask, apiSecretTask, credentialsTask);
+        await Task.WhenAll(apiKeyTask, apiSecretTask, credentialsTask).ConfigureAwait(false);
 
         var apiKey = apiKeyTask.Result;
         var apiSecret = apiSecretTask.Result;

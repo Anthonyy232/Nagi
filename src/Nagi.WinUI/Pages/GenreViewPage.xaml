@@ -117,7 +117,7 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                        <TextBlock Style="{StaticResource SectionHeaderTextBlockStyle}" Text="Songs" />
+                        <TextBlock Style="{StaticResource SectionHeaderTextBlockStyle}" Text="Songs" Foreground="{StaticResource AppPrimaryColorBrush}" />
                         <TextBlock VerticalAlignment="Center" FontSize="13"
                                    Foreground="{ThemeResource TextFillColorSecondary}"
                                    Text="{x:Bind ViewModel.TotalItemsText, Mode=OneWay}" />

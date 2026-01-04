@@ -27,6 +27,18 @@ public interface ISettingsService
     event Action<bool>? VolumeNormalizationEnabledChanged;
 
     /// <summary>
+    ///     Occurs when the fetch online metadata setting is changed.
+    ///     The boolean parameter indicates whether fetching online metadata is enabled.
+    /// </summary>
+    event Action<bool>? FetchOnlineMetadataEnabledChanged;
+
+    /// <summary>
+    ///     Occurs when the fetch online lyrics setting is changed.
+    ///     The boolean parameter indicates whether fetching online lyrics is enabled.
+    /// </summary>
+    event Action<bool>? FetchOnlineLyricsEnabledChanged;
+
+    /// <summary>
     ///     Gets the initial volume level for the media player.
     /// </summary>
     /// <returns>A volume level between 0.0 and 1.0.</returns>

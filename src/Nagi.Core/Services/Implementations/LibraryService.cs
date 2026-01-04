@@ -80,6 +80,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         _apiKeyService = apiKeyService ?? throw new ArgumentNullException(nameof(apiKeyService));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _metadataFetchCts = new CancellationTokenSource();
+        _settingsService.FetchOnlineMetadataEnabledChanged += OnFetchOnlineMetadataEnabledChanged;
     }
 
     /// <summary>
@@ -100,28 +101,28 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     {
         _logger.LogInformation("Starting to clear all library data and cache files.");
         _metadataFetchCts.Cancel();
-        await Task.Delay(250);
+        await Task.Delay(250).ConfigureAwait(false);
 
-        await using var context = await _contextFactory.CreateDbContextAsync();
-        await using var transaction = await context.Database.BeginTransactionAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        await using var transaction = await context.Database.BeginTransactionAsync().ConfigureAwait(false);
 
         try
         {
-            await context.PlaylistSongs.ExecuteDeleteAsync();
-            await context.ListenHistory.ExecuteDeleteAsync();
-            await context.Songs.ExecuteDeleteAsync();
-            await context.Playlists.ExecuteDeleteAsync();
-            await context.Albums.ExecuteDeleteAsync();
-            await context.Artists.ExecuteDeleteAsync();
-            await context.Genres.ExecuteDeleteAsync();
-            await context.Folders.ExecuteDeleteAsync();
+            await context.PlaylistSongs.ExecuteDeleteAsync().ConfigureAwait(false);
+            await context.ListenHistory.ExecuteDeleteAsync().ConfigureAwait(false);
+            await context.Songs.ExecuteDeleteAsync().ConfigureAwait(false);
+            await context.Playlists.ExecuteDeleteAsync().ConfigureAwait(false);
+            await context.Albums.ExecuteDeleteAsync().ConfigureAwait(false);
+            await context.Artists.ExecuteDeleteAsync().ConfigureAwait(false);
+            await context.Genres.ExecuteDeleteAsync().ConfigureAwait(false);
+            await context.Folders.ExecuteDeleteAsync().ConfigureAwait(false);
 
-            await transaction.CommitAsync();
+            await transaction.CommitAsync().ConfigureAwait(false);
             _logger.LogInformation("Successfully deleted all data from the database.");
         }
         catch (Exception ex)
         {
-            await transaction.RollbackAsync();
+            await transaction.RollbackAsync().ConfigureAwait(false);
             _logger.LogError(ex, "Database reset failed and was rolled back.");
             throw;
         }
@@ -156,12 +157,12 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     {
         if (string.IsNullOrWhiteSpace(path)) return null;
 
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
 
         var normalizedPath = path.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 
         var existingFolder = await context.Folders.AsNoTracking()
-            .FirstOrDefaultAsync(f => f.Path == normalizedPath);
+            .FirstOrDefaultAsync(f => f.Path == normalizedPath).ConfigureAwait(false);
         if (existingFolder is not null)
             return existingFolder;
 
@@ -181,15 +182,15 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         }
 
         context.Folders.Add(folder);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync().ConfigureAwait(false);
         return folder;
     }
 
     /// <inheritdoc />
     public async Task<bool> RemoveFolderAsync(Guid folderId)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
-        var folder = await context.Folders.FindAsync(folderId);
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        var folder = await context.Folders.FindAsync(folderId).ConfigureAwait(false);
         if (folder is null)
         {
             _logger.LogWarning("Could not remove folder: Folder with ID {FolderId} not found.", folderId);
@@ -199,7 +200,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         List<string> albumArtPathsToDelete;
         List<string> lrcPathsToDelete;
 
-        await using var transaction = await context.Database.BeginTransactionAsync();
+        await using var transaction = await context.Database.BeginTransactionAsync().ConfigureAwait(false);
         try
         {
             if (folder.ParentFolderId == null)
@@ -210,14 +211,14 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                     .Where(s => s.AlbumArtUriFromTrack != null)
                     .Select(s => s.AlbumArtUriFromTrack!)
                     .Distinct()
-                    .ToListAsync();
+                    .ToListAsync().ConfigureAwait(false);
 
                 lrcPathsToDelete = await songsInFolder
                     .Where(s => s.LrcFilePath != null)
                     .Select(s => s.LrcFilePath!)
-                    .ToListAsync();
+                    .ToListAsync().ConfigureAwait(false);
 
-                await songsInFolder.ExecuteDeleteAsync();
+                await songsInFolder.ExecuteDeleteAsync().ConfigureAwait(false);
             }
             else
             {
@@ -226,17 +227,17 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             }
 
             context.Folders.Remove(folder);
-            await context.SaveChangesAsync();
+            await context.SaveChangesAsync().ConfigureAwait(false);
 
-            await CleanUpOrphanedEntitiesAsync(context);
+            await CleanUpOrphanedEntitiesAsync(context).ConfigureAwait(false);
 
-            await transaction.CommitAsync();
+            await transaction.CommitAsync().ConfigureAwait(false);
             _logger.LogInformation("Removed folder '{FolderName}' and associated data.", folder.Name);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Folder removal for ID {FolderId} failed and was rolled back.", folderId);
-            await transaction.RollbackAsync();
+            await transaction.RollbackAsync().ConfigureAwait(false);
             return false;
         }
 
@@ -270,7 +271,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     public async Task<bool> UpdateFolderAsync(Folder folder)
     {
         ArgumentNullException.ThrowIfNull(folder);
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
 
         try
         {
@@ -282,15 +283,15 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         }
 
         context.Folders.Update(folder);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync().ConfigureAwait(false);
         return true;
     }
 
     /// <inheritdoc />
     public async Task<Folder?> GetFolderByIdAsync(Guid folderId)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
-        return await context.Folders.AsNoTracking().FirstOrDefaultAsync(f => f.Id == folderId);
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        return await context.Folders.AsNoTracking().FirstOrDefaultAsync(f => f.Id == folderId).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -299,44 +300,44 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         if (string.IsNullOrWhiteSpace(path)) return null;
 
         var normalizedPath = path.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-        await using var context = await _contextFactory.CreateDbContextAsync();
-        return await context.Folders.AsNoTracking().FirstOrDefaultAsync(f => f.Path == normalizedPath);
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        return await context.Folders.AsNoTracking().FirstOrDefaultAsync(f => f.Path == normalizedPath).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async Task<IEnumerable<Folder>> GetAllFoldersAsync()
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
-        return await context.Folders.AsNoTracking().OrderBy(f => f.Name).ThenBy(f => f.Path).ToListAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        return await context.Folders.AsNoTracking().OrderBy(f => f.Name).ThenBy(f => f.Path).ToListAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async Task<int> GetSongCountForFolderAsync(Guid folderId)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
-        return await context.Songs.CountAsync(s => s.FolderId == folderId);
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        return await context.Songs.CountAsync(s => s.FolderId == folderId).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async Task<IEnumerable<Folder>> GetRootFoldersAsync()
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         return await context.Folders.AsNoTracking()
             .Where(f => f.ParentFolderId == null)
             .OrderBy(f => f.Name)
             .ThenBy(f => f.Path)
-            .ToListAsync();
+            .ToListAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async Task<IEnumerable<Folder>> GetSubFoldersAsync(Guid parentFolderId)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         return await context.Folders.AsNoTracking()
             .Where(f => f.ParentFolderId == parentFolderId)
             .OrderBy(f => f.Name)
             .ThenBy(f => f.Path)
-            .ToListAsync();
+            .ToListAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -344,10 +345,10 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     {
         if (string.IsNullOrWhiteSpace(directoryPath)) return null;
 
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
 
         var folder = await context.Folders.AsNoTracking()
-            .FirstOrDefaultAsync(f => f.Path == directoryPath);
+            .FirstOrDefaultAsync(f => f.Path == directoryPath).ConfigureAwait(false);
 
         if (folder != null) return folder;
 
@@ -357,7 +358,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     /// <inheritdoc />
     public async Task<IEnumerable<Song>> GetSongsInDirectoryAsync(Guid folderId, string directoryPath)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
 
         var normalizedPath = directoryPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 
@@ -370,23 +371,23 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             .ThenBy(s => s.TrackNumber)
             .ThenBy(s => s.Title)
             .AsSplitQuery()
-            .ToListAsync();
+            .ToListAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async Task<int> GetSongCountInDirectoryAsync(Guid folderId, string directoryPath)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
 
         var normalizedPath = directoryPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 
-        return await context.Songs.CountAsync(s => s.FolderId == folderId && s.DirectoryPath == normalizedPath);
+        return await context.Songs.CountAsync(s => s.FolderId == folderId && s.DirectoryPath == normalizedPath).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async Task<IEnumerable<Song>> GetSongsInDirectoryRecursiveAsync(Guid folderId, string directoryPath)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
 
         var normalizedPath = directoryPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 
@@ -403,14 +404,14 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             .ThenBy(s => s.TrackNumber)
             .ThenBy(s => s.Title)
             .AsSplitQuery()
-            .ToListAsync();
+            .ToListAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async Task<int> GetSubFolderCountAsync(Guid parentFolderId)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
-        return await context.Folders.CountAsync(f => f.ParentFolderId == parentFolderId);
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        return await context.Folders.CountAsync(f => f.ParentFolderId == parentFolderId).ConfigureAwait(false);
     }
 
     #endregion
@@ -421,7 +422,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     public async Task ScanFolderForMusicAsync(string folderPath, IProgress<ScanProgress>? progress = null,
         CancellationToken cancellationToken = default)
     {
-        var folder = await GetFolderByPathAsync(folderPath) ?? await AddFolderAsync(folderPath);
+        var folder = await GetFolderByPathAsync(folderPath).ConfigureAwait(false) ?? await AddFolderAsync(folderPath).ConfigureAwait(false);
         if (folder is null)
         {
             _logger.LogWarning("Failed to add or find folder for path {FolderPath}, aborting scan.", folderPath);
@@ -429,7 +430,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             return;
         }
 
-        await RescanFolderForMusicAsync(folder.Id, progress, cancellationToken);
+        await RescanFolderForMusicAsync(folder.Id, progress, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -439,7 +440,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         try
         {
             // Wait to acquire the semaphore. If the operation is cancelled while waiting, it will throw.
-            await _scanSemaphore.WaitAsync(cancellationToken);
+            await _scanSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
         }
         catch (OperationCanceledException)
         {
@@ -452,7 +453,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         {
             var scanResult = await Task.Run(async () =>
             {
-                var folder = await GetFolderByIdAsync(folderId);
+                var folder = await GetFolderByIdAsync(folderId).ConfigureAwait(false);
                 if (folder is null)
                 {
                     _logger.LogWarning("Cannot rescan folder: Folder with ID {FolderId} not found.", folderId);
@@ -473,13 +474,13 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                             folder.Path, folder.Id);
                         progress?.Report(new ScanProgress
                             { StatusText = "Folder path no longer exists. Removing from library.", Percentage = 100 });
-                        return await RemoveFolderAsync(folderId);
+                        return await RemoveFolderAsync(folderId).ConfigureAwait(false);
                     }
 
                     progress?.Report(new ScanProgress
                         { StatusText = $"Analyzing '{folder.Name}'...", IsIndeterminate = true });
                     var (filesToAdd, filesToUpdate, filesRemovedFromDisk) =
-                        await AnalyzeFolderChangesAsync(folderId, folder.Path, cancellationToken);
+                        await AnalyzeFolderChangesAsync(folderId, folder.Path, cancellationToken).ConfigureAwait(false);
 
                     if (filesToAdd.Any() || filesToUpdate.Any() || filesRemovedFromDisk.Any())
                         _logger.LogInformation("Changes detected: +{New} ~{Updated} -{Removed}",
@@ -493,7 +494,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                     {
                         progress?.Report(new ScanProgress
                             { StatusText = "Cleaning up your library...", IsIndeterminate = true });
-                        await using var deleteContext = await _contextFactory.CreateDbContextAsync();
+                        await using var deleteContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
 
                         var songsToDeleteQuery = deleteContext.Songs
                             .Where(s => s.FolderId == folderId && allFilePathsToDelete.Contains(s.FilePath));
@@ -501,15 +502,15 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                         var lrcPathsToDelete = await songsToDeleteQuery
                             .Where(s => s.LrcFilePath != null)
                             .Select(s => s.LrcFilePath!)
-                            .ToListAsync(cancellationToken);
+                            .ToListAsync(cancellationToken).ConfigureAwait(false);
 
                         var albumArtPathsToDelete = await songsToDeleteQuery
                             .Where(s => s.AlbumArtUriFromTrack != null)
                             .Select(s => s.AlbumArtUriFromTrack!)
                             .Distinct()
-                            .ToListAsync(cancellationToken);
+                            .ToListAsync(cancellationToken).ConfigureAwait(false);
 
-                        await songsToDeleteQuery.ExecuteDeleteAsync(cancellationToken);
+                        await songsToDeleteQuery.ExecuteDeleteAsync(cancellationToken).ConfigureAwait(false);
 
                         // Clean up associated files
                         foreach (var lrcPath in lrcPathsToDelete)
@@ -544,15 +545,15 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                         {
                             progress?.Report(new ScanProgress
                                 { StatusText = "Finalizing cleanup...", IsIndeterminate = true });
-                            await using var cleanupContext = await _contextFactory.CreateDbContextAsync();
-                            await CleanUpOrphanedEntitiesAsync(cleanupContext, cancellationToken);
+                            await using var cleanupContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+                            await CleanUpOrphanedEntitiesAsync(cleanupContext, cancellationToken).ConfigureAwait(false);
                         }
 
                         // Check for newly available LRC files for songs that don't currently have lyrics
-                        var lrcUpdates = await UpdateMissingLrcPathsAsync(folderId, cancellationToken);
+                        var lrcUpdates = await UpdateMissingLrcPathsAsync(folderId, cancellationToken).ConfigureAwait(false);
                         
                         // Check for newly available cover art files for songs that don't have cover art
-                        var coverArtUpdates = await UpdateMissingCoverArtAsync(folderId, folder.Path, cancellationToken);
+                        var coverArtUpdates = await UpdateMissingCoverArtAsync(folderId, folder.Path, cancellationToken).ConfigureAwait(false);
                         
                         var hasChanges = allFilePathsToDelete.Any() || lrcUpdates > 0 || coverArtUpdates > 0;
 
@@ -566,14 +567,14 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                         
                         // Ensure subfolder hierarchy exists for existing songs.
                         // This handles the case where songs existed before subfolder records were implemented.
-                        await using (var subfolderContext = await _contextFactory.CreateDbContextAsync())
+                        await using (var subfolderContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false))
                         {
                             var allDirectoryPaths = await subfolderContext.Songs
                                 .AsNoTracking()
                                 .Where(s => s.FolderId == folderId)
                                 .Select(s => s.DirectoryPath)
                                 .Distinct()
-                                .ToListAsync(cancellationToken);
+                                .ToListAsync(cancellationToken).ConfigureAwait(false);
                             
                             if (allDirectoryPaths.Count > 0)
                             {
@@ -581,7 +582,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                                     .Where(d => !string.IsNullOrEmpty(d))
                                     .ToHashSet(StringComparer.OrdinalIgnoreCase)!;
                                 
-                                await EnsureSubFoldersExistAsync(folderId, folder.Path, discoveredDirectories!, cancellationToken);
+                                await EnsureSubFoldersExistAsync(folderId, folder.Path, discoveredDirectories!, cancellationToken).ConfigureAwait(false);
                             }
                         }
                         
@@ -592,39 +593,39 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
                     // Use streaming extraction for better memory efficiency
                     var newSongsFound = await ExtractAndSaveMetadataStreamingAsync(
-                        folderId, filesToProcess, folder.Path, progress, cancellationToken);
+                        folderId, filesToProcess, folder.Path, progress, cancellationToken).ConfigureAwait(false);
 
                     cancellationToken.ThrowIfCancellationRequested();
 
                     // Check for newly available LRC files for songs that don't currently have lyrics
-                    await UpdateMissingLrcPathsAsync(folderId, cancellationToken);
+                    await UpdateMissingLrcPathsAsync(folderId, cancellationToken).ConfigureAwait(false);
                     
                     // Check for newly available cover art files for songs that don't have cover art
-                    await UpdateMissingCoverArtAsync(folderId, folder.Path, cancellationToken);
+                    await UpdateMissingCoverArtAsync(folderId, folder.Path, cancellationToken).ConfigureAwait(false);
 
                     progress?.Report(new ScanProgress { StatusText = "Finalizing...", IsIndeterminate = true });
                     
                     // Ensure subfolder hierarchy exists for ALL songs in this folder.
                     // This handles both newly added songs and existing songs from before this fix was added.
-                    await using (var subfolderContext = await _contextFactory.CreateDbContextAsync())
+                    await using (var subfolderContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false))
                     {
                         var allDirectoryPaths = await subfolderContext.Songs
                             .AsNoTracking()
                             .Where(s => s.FolderId == folderId)
                             .Select(s => s.DirectoryPath)
                             .Distinct()
-                            .ToListAsync(cancellationToken);
+                            .ToListAsync(cancellationToken).ConfigureAwait(false);
                         
                         var discoveredDirectories = allDirectoryPaths
                             .Where(d => !string.IsNullOrEmpty(d))
                             .ToHashSet(StringComparer.OrdinalIgnoreCase)!;
                         
-                        await EnsureSubFoldersExistAsync(folderId, folder.Path, discoveredDirectories!, cancellationToken);
+                        await EnsureSubFoldersExistAsync(folderId, folder.Path, discoveredDirectories!, cancellationToken).ConfigureAwait(false);
                     }
                     
-                    await using (var finalContext = await _contextFactory.CreateDbContextAsync())
+                    await using (var finalContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false))
                     {
-                        await CleanUpOrphanedEntitiesAsync(finalContext, cancellationToken);
+                        await CleanUpOrphanedEntitiesAsync(finalContext, cancellationToken).ConfigureAwait(false);
                     }
 
                     // Trigger LOH compaction for large scans to release fragmented memory from image processing
@@ -727,7 +728,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     {
         try
         {
-            var folders = (await GetRootFoldersAsync()).ToList();
+            var folders = (await GetRootFoldersAsync().ConfigureAwait(false)).ToList();
             var totalFolders = folders.Count;
 
             if (totalFolders == 0)
@@ -768,7 +769,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                         });
                     });
 
-                    var result = await RescanFolderForMusicAsync(folder.Id, progressWrapper, cancellationToken);
+                    var result = await RescanFolderForMusicAsync(folder.Id, progressWrapper, cancellationToken).ConfigureAwait(false);
                     if (result) anyChangesMade = true;
 
                     foldersProcessed++;
@@ -801,8 +802,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     /// <inheritdoc />
     public async Task<Artist?> GetArtistDetailsAsync(Guid artistId, bool allowOnlineFetch, CancellationToken cancellationToken = default)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
-        var artist = await context.Artists.AsTracking().FirstOrDefaultAsync(a => a.Id == artistId);
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        var artist = await context.Artists.AsTracking().FirstOrDefaultAsync(a => a.Id == artistId).ConfigureAwait(false);
 
         if (artist is null) return null;
 
@@ -814,7 +815,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         {
             try
             {
-                await FetchAndUpdateArtistFromRemoteAsync(context, artist, cancellationToken);
+                await FetchAndUpdateArtistFromRemoteAsync(context, artist, cancellationToken).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -822,7 +823,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             }
         }
 
-        return await context.Artists.AsNoTracking().FirstOrDefaultAsync(a => a.Id == artistId);
+        return await context.Artists.AsNoTracking().FirstOrDefaultAsync(a => a.Id == artistId).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -852,7 +853,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 while (!token.IsCancellationRequested)
                 {
                     List<Guid> artistIdsToUpdate;
-                    await using (var idContext = await _contextFactory.CreateDbContextAsync())
+                    await using (var idContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false))
                     {
                         artistIdsToUpdate = await idContext.Artists
                             .AsNoTracking()
@@ -860,7 +861,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                             .OrderBy(a => a.Name)
                             .Select(a => a.Id)
                             .Take(batchSize)
-                            .ToListAsync(token);
+                            .ToListAsync(token).ConfigureAwait(false);
                     }
 
                     if (artistIdsToUpdate.Count == 0 || token.IsCancellationRequested) break;
@@ -868,16 +869,16 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                     using var scope = _serviceScopeFactory.CreateScope();
                     var scopedContextFactory =
                         scope.ServiceProvider.GetRequiredService<IDbContextFactory<MusicDbContext>>();
-                    await using var batchContext = await scopedContextFactory.CreateDbContextAsync();
+                    await using var batchContext = await scopedContextFactory.CreateDbContextAsync().ConfigureAwait(false);
 
                     var artistsInBatch = await batchContext.Artists.Where(a => artistIdsToUpdate.Contains(a.Id))
-                        .ToListAsync(token);
+                        .ToListAsync(token).ConfigureAwait(false);
                     foreach (var artist in artistsInBatch)
                     {
                         if (token.IsCancellationRequested) break;
                         try
                         {
-                            await FetchAndUpdateArtistFromRemoteAsync(batchContext, artist, token);
+                            await FetchAndUpdateArtistFromRemoteAsync(batchContext, artist, token).ConfigureAwait(false);
                         }
                         catch (DbUpdateConcurrencyException)
                         {
@@ -915,37 +916,37 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     public async Task<Song?> AddSongAsync(Song songData)
     {
         ArgumentNullException.ThrowIfNull(songData);
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
 
-        var existingSong = await context.Songs.AsNoTracking().FirstOrDefaultAsync(s => s.FilePath == songData.FilePath);
+        var existingSong = await context.Songs.AsNoTracking().FirstOrDefaultAsync(s => s.FilePath == songData.FilePath).ConfigureAwait(false);
         if (existingSong is not null) return existingSong;
 
         context.Songs.Add(songData);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync().ConfigureAwait(false);
         return songData;
     }
 
     /// <inheritdoc />
     public async Task<Song?> AddSongWithDetailsAsync(Guid folderId, SongFileMetadata metadata)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
-        var song = await AddSongWithDetailsAsync(context, folderId, metadata);
-        if (song is not null) await context.SaveChangesAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        var song = await AddSongWithDetailsAsync(context, folderId, metadata).ConfigureAwait(false);
+        if (song is not null) await context.SaveChangesAsync().ConfigureAwait(false);
         return song;
     }
 
     /// <inheritdoc />
     public async Task<bool> RemoveSongAsync(Guid songId)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
-        var song = await context.Songs.FindAsync(songId);
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        var song = await context.Songs.FindAsync(songId).ConfigureAwait(false);
         if (song is null) return false;
 
         var albumArtPathToDelete = song.AlbumArtUriFromTrack;
         var lrcPathToDelete = song.LrcFilePath;
 
         context.Songs.Remove(song);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync().ConfigureAwait(false);
 
         if (IsPathInLrcCache(lrcPathToDelete))
             try
@@ -969,20 +970,20 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                     albumArtPathToDelete, songId);
             }
 
-        await CleanUpOrphanedEntitiesAsync(context);
+        await CleanUpOrphanedEntitiesAsync(context).ConfigureAwait(false);
         return true;
     }
 
     /// <inheritdoc />
     public async Task<Song?> GetSongByIdAsync(Guid songId)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         return await context.Songs.AsNoTracking()
             .Include(s => s.Artist)
             .Include(s => s.Album).ThenInclude(a => a!.Artist)
             .Include(s => s.Folder)
             .AsSplitQuery()
-            .FirstOrDefaultAsync(s => s.Id == songId);
+            .FirstOrDefaultAsync(s => s.Id == songId).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -990,20 +991,20 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     {
         // Currently identical to GetSongByIdAsync as it already includes all fields.
         // This provides an explicit API for full-data requirements.
-        return await GetSongByIdAsync(songId);
+        return await GetSongByIdAsync(songId).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async Task<Song?> GetSongByFilePathAsync(string filePath)
     {
         if (string.IsNullOrWhiteSpace(filePath)) return null;
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         return await context.Songs.AsNoTracking()
             .Include(s => s.Artist)
             .Include(s => s.Album).ThenInclude(a => a!.Artist)
             .Include(s => s.Folder)
             .AsSplitQuery()
-            .FirstOrDefaultAsync(s => s.FilePath == filePath);
+            .FirstOrDefaultAsync(s => s.FilePath == filePath).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -1011,7 +1012,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     {
         if (songIds is null || !songIds.Any()) return new Dictionary<Guid, Song>();
 
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var uniqueIds = songIds.Distinct().ToList();
 
         var query = context.Songs.AsNoTracking()
@@ -1021,7 +1022,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         var songs = await ExcludeHeavyFields(query)
             .AsSplitQuery()
-            .ToListAsync();
+            .ToListAsync().ConfigureAwait(false);
 
         return songs.ToDictionary(s => s.Id);
     }
@@ -1030,40 +1031,40 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     public async Task<bool> UpdateSongAsync(Song songToUpdate)
     {
         ArgumentNullException.ThrowIfNull(songToUpdate);
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         context.Songs.Update(songToUpdate);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync().ConfigureAwait(false);
         return true;
     }
 
     /// <inheritdoc />
     public async Task<IEnumerable<Song>> GetAllSongsAsync(SongSortOrder sortOrder = SongSortOrder.TitleAsc)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var query = ExcludeHeavyFields(
             context.Songs.AsNoTracking()
                 .Include(s => s.Artist)
                 .Include(s => s.Album).ThenInclude(a => a!.Artist));
 
-        return await ApplySongSortOrder(query, sortOrder).AsSplitQuery().ToListAsync();
+        return await ApplySongSortOrder(query, sortOrder).AsSplitQuery().ToListAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async Task<IEnumerable<Song>> GetSongsByAlbumIdAsync(Guid albumId)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         return await ExcludeHeavyFields(
             context.Songs.AsNoTracking()
                 .Where(s => s.AlbumId == albumId)
                 .Include(s => s.Artist))
             .OrderBy(s => s.TrackNumber).ThenBy(s => s.Title)
-            .ToListAsync();
+            .ToListAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async Task<IEnumerable<Song>> GetSongsByArtistIdAsync(Guid artistId)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         return await ExcludeHeavyFields(
             context.Songs.AsNoTracking()
                 .Where(s => s.ArtistId == artistId)
@@ -1072,13 +1073,13 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             .OrderBy(s => s.Album != null ? s.Album.Title : string.Empty)
             .ThenBy(s => s.TrackNumber)
             .AsSplitQuery()
-            .ToListAsync();
+            .ToListAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async Task<IEnumerable<Song>> GetSongsByFolderIdAsync(Guid folderId)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         return await ExcludeHeavyFields(
             context.Songs.AsNoTracking()
                 .Where(s => s.FolderId == folderId)
@@ -1087,19 +1088,19 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             .OrderBy(s => s.Album != null ? s.Album.Title : string.Empty)
             .ThenBy(s => s.TrackNumber).ThenBy(s => s.Title)
             .AsSplitQuery()
-            .ToListAsync();
+            .ToListAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async Task<IEnumerable<Song>> SearchSongsAsync(string searchTerm)
     {
-        if (string.IsNullOrWhiteSpace(searchTerm)) return await GetAllSongsAsync();
+        if (string.IsNullOrWhiteSpace(searchTerm)) return await GetAllSongsAsync().ConfigureAwait(false);
 
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         return await ExcludeHeavyFields(BuildSongSearchQuery(context, searchTerm.Trim()))
             .OrderBy(s => s.Title).ThenBy(s => s.Id)
             .AsSplitQuery()
-            .ToListAsync();
+            .ToListAsync().ConfigureAwait(false);
     }
 
     #endregion
@@ -1146,33 +1147,33 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     /// <inheritdoc />
     public async Task<Artist?> GetArtistByIdAsync(Guid artistId)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
-        return await context.Artists.AsNoTracking().FirstOrDefaultAsync(a => a.Id == artistId);
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        return await context.Artists.AsNoTracking().FirstOrDefaultAsync(a => a.Id == artistId).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async Task<Artist?> GetArtistByNameAsync(string name)
     {
         if (string.IsNullOrWhiteSpace(name)) return null;
-        await using var context = await _contextFactory.CreateDbContextAsync();
-        return await context.Artists.AsNoTracking().FirstOrDefaultAsync(a => a.Name == name.Trim());
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        return await context.Artists.AsNoTracking().FirstOrDefaultAsync(a => a.Name == name.Trim()).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async Task<IEnumerable<Artist>> GetAllArtistsAsync()
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
-        return await context.Artists.AsNoTracking().OrderBy(a => a.Name).ToListAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        return await context.Artists.AsNoTracking().OrderBy(a => a.Name).ToListAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async Task<IEnumerable<Artist>> SearchArtistsAsync(string searchTerm)
     {
-        if (string.IsNullOrWhiteSpace(searchTerm)) return await GetAllArtistsAsync();
+        if (string.IsNullOrWhiteSpace(searchTerm)) return await GetAllArtistsAsync().ConfigureAwait(false);
 
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         return await BuildArtistSearchQuery(context, searchTerm.Trim()).AsNoTracking().OrderBy(a => a.Name)
-            .ToListAsync();
+            .ToListAsync().ConfigureAwait(false);
     }
 
     #endregion
@@ -1182,36 +1183,36 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     /// <inheritdoc />
     public async Task<Album?> GetAlbumByIdAsync(Guid albumId)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         return await context.Albums.AsNoTracking()
             .Include(al => al.Artist)
             .AsSplitQuery()
-            .FirstOrDefaultAsync(al => al.Id == albumId);
+            .FirstOrDefaultAsync(al => al.Id == albumId).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async Task<IEnumerable<Album>> GetAllAlbumsAsync()
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         return await context.Albums.AsNoTracking()
             .Include(al => al.Artist)
             .OrderBy(al => al.Artist != null ? al.Artist.Name : string.Empty)
             .ThenBy(al => al.Title)
             .AsSplitQuery()
-            .ToListAsync();
+            .ToListAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async Task<IEnumerable<Album>> SearchAlbumsAsync(string searchTerm)
     {
-        if (string.IsNullOrWhiteSpace(searchTerm)) return await GetAllAlbumsAsync();
+        if (string.IsNullOrWhiteSpace(searchTerm)) return await GetAllAlbumsAsync().ConfigureAwait(false);
 
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         return await BuildAlbumSearchQuery(context, searchTerm.Trim())
             .OrderBy(al => al.Artist != null ? al.Artist.Name : string.Empty)
             .ThenBy(al => al.Title)
             .AsSplitQuery()
-            .ToListAsync();
+            .ToListAsync().ConfigureAwait(false);
     }
 
     #endregion
@@ -1225,7 +1226,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("Playlist name cannot be empty.", nameof(name));
 
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var playlist = new Playlist
         {
             Name = name.Trim(),
@@ -1242,15 +1243,15 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         }
 
         context.Playlists.Add(playlist);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync().ConfigureAwait(false);
         return playlist;
     }
 
     /// <inheritdoc />
     public async Task<bool> DeletePlaylistAsync(Guid playlistId)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
-        var rowsAffected = await context.Playlists.Where(p => p.Id == playlistId).ExecuteDeleteAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        var rowsAffected = await context.Playlists.Where(p => p.Id == playlistId).ExecuteDeleteAsync().ConfigureAwait(false);
         return rowsAffected > 0;
     }
 
@@ -1260,13 +1261,13 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         if (string.IsNullOrWhiteSpace(newName))
             throw new ArgumentException("New playlist name cannot be empty.", nameof(newName));
 
-        await using var context = await _contextFactory.CreateDbContextAsync();
-        var playlist = await context.Playlists.FindAsync(playlistId);
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        var playlist = await context.Playlists.FindAsync(playlistId).ConfigureAwait(false);
         if (playlist is null) return false;
 
         playlist.Name = newName.Trim();
         playlist.DateModified = DateTime.UtcNow;
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync().ConfigureAwait(false);
         PlaylistUpdated?.Invoke(this, new PlaylistUpdatedEventArgs(playlist.Id, playlist.CoverImageUri));
         return true;
     }
@@ -1274,8 +1275,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     /// <inheritdoc />
     public async Task<bool> UpdatePlaylistCoverAsync(Guid playlistId, string? newCoverImageUri)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
-        var playlist = await context.Playlists.FindAsync(playlistId);
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        var playlist = await context.Playlists.FindAsync(playlistId).ConfigureAwait(false);
         if (playlist is null) return false;
 
         if (!string.IsNullOrEmpty(newCoverImageUri) && _fileSystem.FileExists(newCoverImageUri))
@@ -1296,7 +1297,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         }
 
         playlist.DateModified = DateTime.UtcNow;
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync().ConfigureAwait(false);
         PlaylistUpdated?.Invoke(this, new PlaylistUpdatedEventArgs(playlist.Id, playlist.CoverImageUri));
         return true;
     }
@@ -1306,20 +1307,20 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     {
         if (songIds is null || !songIds.Any()) return false;
 
-        await using var context = await _contextFactory.CreateDbContextAsync();
-        var playlist = await context.Playlists.FindAsync(playlistId);
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        var playlist = await context.Playlists.FindAsync(playlistId).ConfigureAwait(false);
         if (playlist is null) return false;
 
         var existingSongIds = await context.PlaylistSongs
             .Where(ps => ps.PlaylistId == playlistId)
             .Select(ps => ps.SongId)
-            .ToHashSetAsync();
+            .ToHashSetAsync().ConfigureAwait(false);
 
         var songIdsToAdd = songIds.Distinct().Except(existingSongIds).ToList();
         if (songIdsToAdd.Count == 0) return true;
 
         var maxOrder =
-            await context.PlaylistSongs.Where(ps => ps.PlaylistId == playlistId).MaxAsync(ps => (int?)ps.Order) ?? -1;
+            await context.PlaylistSongs.Where(ps => ps.PlaylistId == playlistId).MaxAsync(ps => (int?)ps.Order).ConfigureAwait(false) ?? -1;
         var playlistSongsToAdd = songIdsToAdd.Select(songId => new PlaylistSong
         {
             PlaylistId = playlistId,
@@ -1329,7 +1330,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         context.PlaylistSongs.AddRange(playlistSongsToAdd);
         playlist.DateModified = DateTime.UtcNow;
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync().ConfigureAwait(false);
         return true;
     }
 
@@ -1338,31 +1339,31 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     {
         if (songIds is null || !songIds.Any()) return false;
 
-        await using var context = await _contextFactory.CreateDbContextAsync();
-        var playlist = await context.Playlists.FindAsync(playlistId);
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        var playlist = await context.Playlists.FindAsync(playlistId).ConfigureAwait(false);
         if (playlist is null) return false;
 
         await context.PlaylistSongs
             .Where(ps => ps.PlaylistId == playlistId && songIds.Contains(ps.SongId))
-            .ExecuteDeleteAsync();
+            .ExecuteDeleteAsync().ConfigureAwait(false);
 
-        await ReindexPlaylistAsync(context, playlistId);
+        await ReindexPlaylistAsync(context, playlistId).ConfigureAwait(false);
 
         playlist.DateModified = DateTime.UtcNow;
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync().ConfigureAwait(false);
         return true;
     }
 
     /// <inheritdoc />
     public async Task<bool> UpdatePlaylistSongOrderAsync(Guid playlistId, IEnumerable<Guid> orderedSongIds)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
-        var playlist = await context.Playlists.FindAsync(playlistId);
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        var playlist = await context.Playlists.FindAsync(playlistId).ConfigureAwait(false);
         if (playlist is null) return false;
 
         var playlistSongs = await context.PlaylistSongs
             .Where(ps => ps.PlaylistId == playlistId)
-            .ToListAsync();
+            .ToListAsync().ConfigureAwait(false);
 
         var songMap = playlistSongs.ToDictionary(ps => ps.SongId);
         var newOrderList = orderedSongIds.ToList();
@@ -1372,37 +1373,37 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 playlistSong.Order = i;
 
         playlist.DateModified = DateTime.UtcNow;
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync().ConfigureAwait(false);
         return true;
     }
 
     /// <inheritdoc />
     public async Task<Playlist?> GetPlaylistByIdAsync(Guid playlistId)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         return await context.Playlists.AsNoTracking()
             .Include(p => p.PlaylistSongs.OrderBy(ps => ps.Order)).ThenInclude(ps => ps.Song)
             .ThenInclude(s => s!.Artist)
             .Include(p => p.PlaylistSongs.OrderBy(ps => ps.Order)).ThenInclude(ps => ps.Song).ThenInclude(s => s!.Album)
             .ThenInclude(a => a!.Artist)
             .AsSplitQuery()
-            .FirstOrDefaultAsync(p => p.Id == playlistId);
+            .FirstOrDefaultAsync(p => p.Id == playlistId).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async Task<IEnumerable<Playlist>> GetAllPlaylistsAsync()
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         return await context.Playlists.AsNoTracking()
             .Include(p => p.PlaylistSongs)
             .OrderBy(p => p.Name).ThenBy(p => p.Id)
-            .ToListAsync();
+            .ToListAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async Task<IEnumerable<Song>> GetSongsInPlaylistOrderedAsync(Guid playlistId)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         return await ExcludeHeavyFields(
             context.PlaylistSongs.AsNoTracking()
                 .Where(ps => ps.PlaylistId == playlistId)
@@ -1411,7 +1412,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 .Include(ps => ps.Song).ThenInclude(s => s!.Album).ThenInclude(a => a!.Artist)
                 .Select(ps => ps.Song!))
             .AsSplitQuery()
-            .ToListAsync();
+            .ToListAsync().ConfigureAwait(false);
     }
 
     #endregion
@@ -1421,17 +1422,17 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     /// <inheritdoc />
     public async Task<IEnumerable<Genre>> GetAllGenresAsync()
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         return await context.Genres.AsNoTracking()
             .Include(g => g.Songs)
             .OrderBy(g => g.Name)
-            .ToListAsync();
+            .ToListAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async Task<IEnumerable<Song>> GetSongsByGenreIdAsync(Guid genreId)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         return await ExcludeHeavyFields(
             context.Songs.AsNoTracking()
                 .Where(s => s.Genres.Any(g => g.Id == genreId))
@@ -1439,7 +1440,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 .Include(s => s.Album).ThenInclude(a => a!.Artist))
             .OrderBy(s => s.Title)
             .AsSplitQuery()
-            .ToListAsync();
+            .ToListAsync().ConfigureAwait(false);
     }
 
     #endregion
@@ -1449,8 +1450,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     /// <inheritdoc />
     public async Task<long?> CreateListenHistoryEntryAsync(Guid songId)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
-        var song = await context.Songs.FindAsync(songId);
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        var song = await context.Songs.FindAsync(songId).ConfigureAwait(false);
         if (song is null) return null;
 
         song.PlayCount++;
@@ -1460,50 +1461,50 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             { SongId = songId, ListenTimestampUtc = DateTime.UtcNow, IsScrobbled = false };
         context.ListenHistory.Add(historyEntry);
 
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync().ConfigureAwait(false);
         return historyEntry.Id;
     }
 
     /// <inheritdoc />
     public async Task<bool> MarkListenAsEligibleForScrobblingAsync(long listenHistoryId)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
-        var historyEntry = await context.ListenHistory.FindAsync(listenHistoryId);
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        var historyEntry = await context.ListenHistory.FindAsync(listenHistoryId).ConfigureAwait(false);
         if (historyEntry is null) return false;
 
         historyEntry.IsEligibleForScrobbling = true;
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync().ConfigureAwait(false);
         return true;
     }
 
     /// <inheritdoc />
     public async Task<bool> MarkListenAsScrobbledAsync(long listenHistoryId)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
-        var historyEntry = await context.ListenHistory.FindAsync(listenHistoryId);
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        var historyEntry = await context.ListenHistory.FindAsync(listenHistoryId).ConfigureAwait(false);
         if (historyEntry is null) return false;
 
         historyEntry.IsScrobbled = true;
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync().ConfigureAwait(false);
         return true;
     }
 
     /// <inheritdoc />
     public async Task LogSkipAsync(Guid songId)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
-        var song = await context.Songs.FindAsync(songId);
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        var song = await context.Songs.FindAsync(songId).ConfigureAwait(false);
         if (song is null) return;
 
         song.SkipCount++;
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async Task<int> GetListenCountForSongAsync(Guid songId)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
-        return await context.ListenHistory.CountAsync(lh => lh.SongId == songId);
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        return await context.ListenHistory.CountAsync(lh => lh.SongId == songId).ConfigureAwait(false);
     }
 
     #endregion
@@ -1516,12 +1517,12 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     {
         SanitizePaging(ref pageNumber, ref pageSize);
 
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var baseQuery = context.Songs.AsNoTracking().Include(s => s.Artist).Include(s => s.Album)
             .ThenInclude(a => a!.Artist);
-        var totalCount = await baseQuery.CountAsync();
+        var totalCount = await baseQuery.CountAsync().ConfigureAwait(false);
         var pagedData = await ApplySongSortOrder(ExcludeHeavyFields(baseQuery), sortOrder)
-            .Skip((pageNumber - 1) * pageSize).Take(pageSize).AsSplitQuery().ToListAsync();
+            .Skip((pageNumber - 1) * pageSize).Take(pageSize).AsSplitQuery().ToListAsync().ConfigureAwait(false);
 
         return new PagedResult<Song>
             { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
@@ -1532,15 +1533,15 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     {
         SanitizePaging(ref pageNumber, ref pageSize);
 
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
 
-        if (string.IsNullOrWhiteSpace(searchTerm)) return await GetAllSongsPagedAsync(pageNumber, pageSize);
+        if (string.IsNullOrWhiteSpace(searchTerm)) return await GetAllSongsPagedAsync(pageNumber, pageSize).ConfigureAwait(false);
 
         var query = BuildSongSearchQuery(context, searchTerm.Trim());
 
-        var totalCount = await query.CountAsync();
+        var totalCount = await query.CountAsync().ConfigureAwait(false);
         var pagedData = await ApplySongSortOrder(ExcludeHeavyFields(query), SongSortOrder.TitleAsc)
-            .Skip((pageNumber - 1) * pageSize).Take(pageSize).AsSplitQuery().ToListAsync();
+            .Skip((pageNumber - 1) * pageSize).Take(pageSize).AsSplitQuery().ToListAsync().ConfigureAwait(false);
 
         return new PagedResult<Song>
             { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
@@ -1552,12 +1553,12 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     {
         SanitizePaging(ref pageNumber, ref pageSize);
 
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var baseQuery = context.Songs.AsNoTracking().Where(s => s.AlbumId == albumId).Include(s => s.Artist)
             .Include(s => s.Album);
-        var totalCount = await baseQuery.CountAsync();
+        var totalCount = await baseQuery.CountAsync().ConfigureAwait(false);
         var pagedData = await ApplySongSortOrder(ExcludeHeavyFields(baseQuery), sortOrder)
-            .Skip((pageNumber - 1) * pageSize).Take(pageSize).AsSplitQuery().ToListAsync();
+            .Skip((pageNumber - 1) * pageSize).Take(pageSize).AsSplitQuery().ToListAsync().ConfigureAwait(false);
 
         return new PagedResult<Song>
             { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
@@ -1569,12 +1570,12 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     {
         SanitizePaging(ref pageNumber, ref pageSize);
 
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var baseQuery = context.Songs.AsNoTracking().Where(s => s.ArtistId == artistId).Include(s => s.Artist)
             .Include(s => s.Album).ThenInclude(a => a!.Artist);
-        var totalCount = await baseQuery.CountAsync();
+        var totalCount = await baseQuery.CountAsync().ConfigureAwait(false);
         var pagedData = await ApplySongSortOrder(ExcludeHeavyFields(baseQuery), sortOrder)
-            .Skip((pageNumber - 1) * pageSize).Take(pageSize).AsSplitQuery().ToListAsync();
+            .Skip((pageNumber - 1) * pageSize).Take(pageSize).AsSplitQuery().ToListAsync().ConfigureAwait(false);
 
         return new PagedResult<Song>
             { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
@@ -1586,12 +1587,12 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     {
         SanitizePaging(ref pageNumber, ref pageSize);
 
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var baseQuery = context.Songs.AsNoTracking().Where(s => s.Genres.Any(g => g.Id == genreId)).Include(s => s.Artist)
             .Include(s => s.Album).ThenInclude(a => a!.Artist);
-        var totalCount = await baseQuery.CountAsync();
+        var totalCount = await baseQuery.CountAsync().ConfigureAwait(false);
         var pagedData = await ApplySongSortOrder(ExcludeHeavyFields(baseQuery), sortOrder)
-            .Skip((pageNumber - 1) * pageSize).Take(pageSize).AsSplitQuery().ToListAsync();
+            .Skip((pageNumber - 1) * pageSize).Take(pageSize).AsSplitQuery().ToListAsync().ConfigureAwait(false);
 
         return new PagedResult<Song>
             { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
@@ -1602,7 +1603,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     {
         SanitizePaging(ref pageNumber, ref pageSize);
 
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var baseQuery = context.PlaylistSongs.AsNoTracking()
             .Where(ps => ps.PlaylistId == playlistId)
             .OrderBy(ps => ps.Order)
@@ -1610,9 +1611,9 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             .Include(ps => ps.Song).ThenInclude(s => s!.Album).ThenInclude(a => a!.Artist)
             .Select(ps => ps.Song!);
 
-        var totalCount = await baseQuery.CountAsync();
+        var totalCount = await baseQuery.CountAsync().ConfigureAwait(false);
         var pagedData = await ExcludeHeavyFields(baseQuery)
-            .Skip((pageNumber - 1) * pageSize).Take(pageSize).AsSplitQuery().ToListAsync();
+            .Skip((pageNumber - 1) * pageSize).Take(pageSize).AsSplitQuery().ToListAsync().ConfigureAwait(false);
 
         return new PagedResult<Song>
             { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
@@ -1624,9 +1625,9 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     {
         SanitizePaging(ref pageNumber, ref pageSize);
 
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var query = context.Artists.AsNoTracking();
-        var totalCount = await query.CountAsync();
+        var totalCount = await query.CountAsync().ConfigureAwait(false);
 
         // Apply sort order - for SongCountDesc, we need to join with songs and count
         IOrderedQueryable<Artist> orderedQuery = sortOrder switch
@@ -1639,7 +1640,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         };
 
         var pagedData = await orderedQuery
-            .Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+            .Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync().ConfigureAwait(false);
 
         return new PagedResult<Artist>
             { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
@@ -1650,13 +1651,13 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     {
         SanitizePaging(ref pageNumber, ref pageSize);
 
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var query = string.IsNullOrWhiteSpace(searchTerm)
             ? context.Artists
             : BuildArtistSearchQuery(context, searchTerm.Trim());
-        var totalCount = await query.CountAsync();
+        var totalCount = await query.CountAsync().ConfigureAwait(false);
         var pagedData = await query.AsNoTracking().OrderBy(a => a.Name)
-            .Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+            .Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync().ConfigureAwait(false);
 
         return new PagedResult<Artist>
             { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
@@ -1668,9 +1669,9 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     {
         SanitizePaging(ref pageNumber, ref pageSize);
 
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var query = context.Albums.AsNoTracking().Include(al => al.Artist);
-        var totalCount = await query.CountAsync();
+        var totalCount = await query.CountAsync().ConfigureAwait(false);
 
         // Apply sort order
         IOrderedQueryable<Album> orderedQuery = sortOrder switch
@@ -1682,7 +1683,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         };
 
         var pagedData = await orderedQuery
-            .Skip((pageNumber - 1) * pageSize).Take(pageSize).AsSplitQuery().ToListAsync();
+            .Skip((pageNumber - 1) * pageSize).Take(pageSize).AsSplitQuery().ToListAsync().ConfigureAwait(false);
 
         return new PagedResult<Album>
             { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
@@ -1693,14 +1694,14 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     {
         SanitizePaging(ref pageNumber, ref pageSize);
 
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var query = string.IsNullOrWhiteSpace(searchTerm)
             ? context.Albums.Include(al => al.Artist)
             : BuildAlbumSearchQuery(context, searchTerm.Trim());
-        var totalCount = await query.CountAsync();
+        var totalCount = await query.CountAsync().ConfigureAwait(false);
         var pagedData = await query.AsNoTracking()
             .OrderBy(al => al.Artist != null ? al.Artist.Name : string.Empty).ThenBy(al => al.Title)
-            .Skip((pageNumber - 1) * pageSize).Take(pageSize).AsSplitQuery().ToListAsync();
+            .Skip((pageNumber - 1) * pageSize).Take(pageSize).AsSplitQuery().ToListAsync().ConfigureAwait(false);
 
         return new PagedResult<Album>
             { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
@@ -1711,12 +1712,12 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     {
         SanitizePaging(ref pageNumber, ref pageSize);
 
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var query = context.Playlists.AsNoTracking().Include(p => p.PlaylistSongs);
-        var totalCount = await query.CountAsync();
+        var totalCount = await query.CountAsync().ConfigureAwait(false);
         var pagedData = await query
             .OrderBy(p => p.Name).ThenBy(p => p.Id)
-            .Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+            .Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync().ConfigureAwait(false);
 
         return new PagedResult<Playlist>
             { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
@@ -1728,12 +1729,12 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     {
         SanitizePaging(ref pageNumber, ref pageSize);
 
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var baseQuery = context.Songs.AsNoTracking().Where(s => s.FolderId == folderId).Include(s => s.Artist)
             .Include(s => s.Album).ThenInclude(a => a!.Artist);
-        var totalCount = await baseQuery.CountAsync();
+        var totalCount = await baseQuery.CountAsync().ConfigureAwait(false);
         var pagedData = await ApplySongSortOrder(ExcludeHeavyFields(baseQuery), sortOrder)
-            .Skip((pageNumber - 1) * pageSize).Take(pageSize).AsSplitQuery().ToListAsync();
+            .Skip((pageNumber - 1) * pageSize).Take(pageSize).AsSplitQuery().ToListAsync().ConfigureAwait(false);
 
         return new PagedResult<Song>
             { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
@@ -1742,34 +1743,34 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     /// <inheritdoc />
     public async Task<List<Guid>> GetAllSongIdsAsync(SongSortOrder sortOrder)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
-        return await ApplySongSortOrder(context.Songs.AsNoTracking(), sortOrder).Select(s => s.Id).ToListAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        return await ApplySongSortOrder(context.Songs.AsNoTracking(), sortOrder).Select(s => s.Id).ToListAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async Task<List<Guid>> SearchAllSongIdsAsync(string searchTerm, SongSortOrder sortOrder)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
 
-        if (string.IsNullOrWhiteSpace(searchTerm)) return await GetAllSongIdsAsync(sortOrder);
+        if (string.IsNullOrWhiteSpace(searchTerm)) return await GetAllSongIdsAsync(sortOrder).ConfigureAwait(false);
 
         var query = BuildSongSearchQuery(context, searchTerm.Trim());
-        return await ApplySongSortOrder(query, sortOrder).Select(s => s.Id).ToListAsync();
+        return await ApplySongSortOrder(query, sortOrder).Select(s => s.Id).ToListAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async Task<List<Guid>> GetAllSongIdsByFolderIdAsync(Guid folderId, SongSortOrder sortOrder)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var query = context.Songs.AsNoTracking().Where(s => s.FolderId == folderId);
-        return await ApplySongSortOrder(query, sortOrder).Select(s => s.Id).ToListAsync();
+        return await ApplySongSortOrder(query, sortOrder).Select(s => s.Id).ToListAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async Task<List<Guid>> GetAllSongIdsInDirectoryRecursiveAsync(Guid folderId, string directoryPath,
         SongSortOrder sortOrder)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
 
         // Normalize the directory path for comparison
         var normalizedPath = directoryPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
@@ -1782,39 +1783,39 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                          s.DirectoryPath.StartsWith(normalizedPath + "\\") ||
                          s.DirectoryPath.StartsWith(normalizedPath + "/")));
 
-        return await ApplySongSortOrder(query, sortOrder).Select(s => s.Id).ToListAsync();
+        return await ApplySongSortOrder(query, sortOrder).Select(s => s.Id).ToListAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async Task<List<Guid>> GetAllSongIdsByArtistIdAsync(Guid artistId, SongSortOrder sortOrder)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var query = context.Songs.AsNoTracking().Where(s => s.ArtistId == artistId);
-        return await ApplySongSortOrder(query, sortOrder).Select(s => s.Id).ToListAsync();
+        return await ApplySongSortOrder(query, sortOrder).Select(s => s.Id).ToListAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async Task<List<Guid>> GetAllSongIdsByAlbumIdAsync(Guid albumId, SongSortOrder sortOrder)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var query = context.Songs.AsNoTracking().Where(s => s.AlbumId == albumId);
-        return await ApplySongSortOrder(query, sortOrder).Select(s => s.Id).ToListAsync();
+        return await ApplySongSortOrder(query, sortOrder).Select(s => s.Id).ToListAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async Task<List<Guid>> GetAllSongIdsByPlaylistIdAsync(Guid playlistId)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         return await context.PlaylistSongs.AsNoTracking()
-            .Where(ps => ps.PlaylistId == playlistId).OrderBy(ps => ps.Order).Select(ps => ps.SongId).ToListAsync();
+            .Where(ps => ps.PlaylistId == playlistId).OrderBy(ps => ps.Order).Select(ps => ps.SongId).ToListAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async Task<List<Guid>> GetAllSongIdsByGenreIdAsync(Guid genreId, SongSortOrder sortOrder)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var query = context.Songs.AsNoTracking().Where(s => s.Genres.Any(g => g.Id == genreId));
-        return await ApplySongSortOrder(query, sortOrder).Select(s => s.Id).ToListAsync();
+        return await ApplySongSortOrder(query, sortOrder).Select(s => s.Id).ToListAsync().ConfigureAwait(false);
     }
 
     #endregion
@@ -1824,9 +1825,9 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     /// <inheritdoc />
     public async Task<IEnumerable<Song>> SearchSongsInFolderAsync(Guid folderId, string searchTerm)
     {
-        if (string.IsNullOrWhiteSpace(searchTerm)) return await GetSongsByFolderIdAsync(folderId);
+        if (string.IsNullOrWhiteSpace(searchTerm)) return await GetSongsByFolderIdAsync(folderId).ConfigureAwait(false);
 
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var term = $"%{searchTerm.Trim()}%";
         var query = context.Songs.AsNoTracking().Where(s => s.FolderId == folderId
                                                              && (EF.Functions.Like(s.Title, term)
@@ -1837,15 +1838,15 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             .Include(s => s.Artist).Include(s => s.Album).ThenInclude(a => a!.Artist)
             .OrderBy(s => s.Title);
 
-        return await ExcludeHeavyFields(query).AsSplitQuery().ToListAsync();
+        return await ExcludeHeavyFields(query).AsSplitQuery().ToListAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async Task<IEnumerable<Song>> SearchSongsInAlbumAsync(Guid albumId, string searchTerm)
     {
-        if (string.IsNullOrWhiteSpace(searchTerm)) return await GetSongsByAlbumIdAsync(albumId);
+        if (string.IsNullOrWhiteSpace(searchTerm)) return await GetSongsByAlbumIdAsync(albumId).ConfigureAwait(false);
 
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var term = $"%{searchTerm.Trim()}%";
         var query = context.Songs.AsNoTracking().Where(s => s.AlbumId == albumId
                                                              && (EF.Functions.Like(s.Title, term) ||
@@ -1854,15 +1855,15 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             .Include(s => s.Artist).Include(s => s.Album)
             .OrderBy(s => s.TrackNumber);
 
-        return await ExcludeHeavyFields(query).AsSplitQuery().ToListAsync();
+        return await ExcludeHeavyFields(query).AsSplitQuery().ToListAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async Task<IEnumerable<Song>> SearchSongsInArtistAsync(Guid artistId, string searchTerm)
     {
-        if (string.IsNullOrWhiteSpace(searchTerm)) return await GetSongsByArtistIdAsync(artistId);
+        if (string.IsNullOrWhiteSpace(searchTerm)) return await GetSongsByArtistIdAsync(artistId).ConfigureAwait(false);
 
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var term = $"%{searchTerm.Trim()}%";
         var query = context.Songs.AsNoTracking().Where(s => s.ArtistId == artistId
                                                              && (EF.Functions.Like(s.Title, term) ||
@@ -1871,15 +1872,15 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             .Include(s => s.Artist).Include(s => s.Album)
             .OrderBy(s => s.Album != null ? s.Album.Title : string.Empty).ThenBy(s => s.TrackNumber);
 
-        return await ExcludeHeavyFields(query).AsSplitQuery().ToListAsync();
+        return await ExcludeHeavyFields(query).AsSplitQuery().ToListAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async Task<IEnumerable<Song>> SearchSongsInPlaylistAsync(Guid playlistId, string searchTerm)
     {
-        if (string.IsNullOrWhiteSpace(searchTerm)) return await GetSongsInPlaylistOrderedAsync(playlistId);
+        if (string.IsNullOrWhiteSpace(searchTerm)) return await GetSongsInPlaylistOrderedAsync(playlistId).ConfigureAwait(false);
 
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var term = $"%{searchTerm.Trim()}%";
         var query = context.PlaylistSongs.AsNoTracking()
             .Where(ps => ps.PlaylistId == playlistId && ps.Song != null &&
@@ -1893,15 +1894,15 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             .Include(ps => ps.Song).ThenInclude(s => s!.Album).ThenInclude(a => a!.Artist)
             .Select(ps => ps.Song!));
 
-        return await songsQuery.AsSplitQuery().ToListAsync();
+        return await songsQuery.AsSplitQuery().ToListAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async Task<IEnumerable<Song>> SearchSongsInGenreAsync(Guid genreId, string searchTerm)
     {
-        if (string.IsNullOrWhiteSpace(searchTerm)) return await GetSongsByGenreIdAsync(genreId);
+        if (string.IsNullOrWhiteSpace(searchTerm)) return await GetSongsByGenreIdAsync(genreId).ConfigureAwait(false);
 
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var term = $"%{searchTerm.Trim()}%";
         var query = context.Songs.AsNoTracking()
             .Where(s => s.Genres.Any(g => g.Id == genreId)
@@ -1911,7 +1912,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             .Include(s => s.Artist).Include(s => s.Album).ThenInclude(a => a!.Artist)
             .OrderBy(s => s.Title);
 
-        return await ExcludeHeavyFields(query).AsSplitQuery().ToListAsync();
+        return await ExcludeHeavyFields(query).AsSplitQuery().ToListAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -1919,7 +1920,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         int pageSize)
     {
         SanitizePaging(ref pageNumber, ref pageSize);
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
 
         var query = context.Songs.AsNoTracking().Where(s => s.FolderId == folderId);
         if (!string.IsNullOrWhiteSpace(searchTerm))
@@ -1931,9 +1932,9 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         }
 
         query = query.Include(s => s.Artist).Include(s => s.Album).ThenInclude(a => a!.Artist);
-        var totalCount = await query.CountAsync();
+        var totalCount = await query.CountAsync().ConfigureAwait(false);
         var pagedData = await ApplySongSortOrder(ExcludeHeavyFields(query), SongSortOrder.TitleAsc)
-            .Skip((pageNumber - 1) * pageSize).Take(pageSize).AsSplitQuery().ToListAsync();
+            .Skip((pageNumber - 1) * pageSize).Take(pageSize).AsSplitQuery().ToListAsync().ConfigureAwait(false);
 
         return new PagedResult<Song>
             { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
@@ -1944,7 +1945,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         int pageSize)
     {
         SanitizePaging(ref pageNumber, ref pageSize);
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
 
         var query = context.Songs.AsNoTracking().Where(s => s.AlbumId == albumId);
         if (!string.IsNullOrWhiteSpace(searchTerm))
@@ -1955,9 +1956,9 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         }
 
         query = query.Include(s => s.Artist).Include(s => s.Album);
-        var totalCount = await query.CountAsync();
+        var totalCount = await query.CountAsync().ConfigureAwait(false);
         var pagedData = await ApplySongSortOrder(ExcludeHeavyFields(query), SongSortOrder.TrackNumberAsc)
-            .Skip((pageNumber - 1) * pageSize).Take(pageSize).AsSplitQuery().ToListAsync();
+            .Skip((pageNumber - 1) * pageSize).Take(pageSize).AsSplitQuery().ToListAsync().ConfigureAwait(false);
 
         return new PagedResult<Song>
             { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
@@ -1968,7 +1969,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         int pageSize)
     {
         SanitizePaging(ref pageNumber, ref pageSize);
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
 
         var query = context.Songs.AsNoTracking().Where(s => s.ArtistId == artistId);
         if (!string.IsNullOrWhiteSpace(searchTerm))
@@ -1979,9 +1980,9 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         }
 
         query = query.Include(s => s.Artist).Include(s => s.Album);
-        var totalCount = await query.CountAsync();
+        var totalCount = await query.CountAsync().ConfigureAwait(false);
         var pagedData = await ApplySongSortOrder(ExcludeHeavyFields(query), SongSortOrder.AlbumAsc)
-            .Skip((pageNumber - 1) * pageSize).Take(pageSize).AsSplitQuery().ToListAsync();
+            .Skip((pageNumber - 1) * pageSize).Take(pageSize).AsSplitQuery().ToListAsync().ConfigureAwait(false);
 
         return new PagedResult<Song>
             { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
@@ -1992,7 +1993,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         int pageNumber, int pageSize)
     {
         SanitizePaging(ref pageNumber, ref pageSize);
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
 
         var query = context.PlaylistSongs.AsNoTracking()
             .Where(ps => ps.PlaylistId == playlistId);
@@ -2012,11 +2013,11 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             .Include(ps => ps.Song).ThenInclude(s => s!.Album).ThenInclude(a => a!.Artist)
             .Select(ps => ps.Song!);
 
-        var totalCount = await songQuery.CountAsync();
+        var totalCount = await songQuery.CountAsync().ConfigureAwait(false);
         var pagedData = await ExcludeHeavyFields(songQuery)
             .Skip((pageNumber - 1) * pageSize).Take(pageSize)
             .AsSplitQuery()
-            .ToListAsync();
+            .ToListAsync().ConfigureAwait(false);
 
         return new PagedResult<Song>
             { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
@@ -2027,7 +2028,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         int pageSize)
     {
         SanitizePaging(ref pageNumber, ref pageSize);
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
 
         var query = context.Songs.AsNoTracking()
             .Where(s => s.Genres.Any(g => g.Id == genreId));
@@ -2041,11 +2042,11 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         }
 
         query = query.Include(s => s.Artist).Include(s => s.Album).ThenInclude(a => a!.Artist);
-        var totalCount = await query.CountAsync();
+        var totalCount = await query.CountAsync().ConfigureAwait(false);
         var pagedData = await ApplySongSortOrder(ExcludeHeavyFields(query), SongSortOrder.TitleAsc)
             .Skip((pageNumber - 1) * pageSize).Take(pageSize)
             .AsSplitQuery()
-            .ToListAsync();
+            .ToListAsync().ConfigureAwait(false);
 
         return new PagedResult<Song>
             { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
@@ -2055,7 +2056,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     public async Task<List<Guid>> SearchAllSongIdsInFolderAsync(Guid folderId, string searchTerm,
         SongSortOrder sortOrder)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var query = context.Songs.AsNoTracking().Where(s => s.FolderId == folderId);
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
@@ -2066,14 +2067,14 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                                      || (s.Artist != null && EF.Functions.Like(s.Artist.Name, term)));
         }
 
-        return await ApplySongSortOrder(query, sortOrder).Select(s => s.Id).ToListAsync();
+        return await ApplySongSortOrder(query, sortOrder).Select(s => s.Id).ToListAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async Task<List<Guid>> SearchAllSongIdsInArtistAsync(Guid artistId, string searchTerm,
         SongSortOrder sortOrder)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var query = context.Songs.AsNoTracking().Where(s => s.ArtistId == artistId);
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
@@ -2083,13 +2084,13 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                                      || (s.Album != null && EF.Functions.Like(s.Album.Title, term)));
         }
 
-        return await ApplySongSortOrder(query, sortOrder).Select(s => s.Id).ToListAsync();
+        return await ApplySongSortOrder(query, sortOrder).Select(s => s.Id).ToListAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async Task<List<Guid>> SearchAllSongIdsInAlbumAsync(Guid albumId, string searchTerm, SongSortOrder sortOrder)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var query = context.Songs.AsNoTracking().Where(s => s.AlbumId == albumId);
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
@@ -2099,13 +2100,13 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                                      || (s.Artist != null && EF.Functions.Like(s.Artist.Name, term)));
         }
 
-        return await ApplySongSortOrder(query, sortOrder).Select(s => s.Id).ToListAsync();
+        return await ApplySongSortOrder(query, sortOrder).Select(s => s.Id).ToListAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async Task<List<Guid>> SearchAllSongIdsInPlaylistAsync(Guid playlistId, string searchTerm)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var query = context.PlaylistSongs.AsNoTracking()
             .Where(ps => ps.PlaylistId == playlistId);
 
@@ -2121,13 +2122,13 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         return await query
             .OrderBy(ps => ps.Order)
             .Select(ps => ps.SongId)
-            .ToListAsync();
+            .ToListAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async Task<List<Guid>> SearchAllSongIdsInGenreAsync(Guid genreId, string searchTerm, SongSortOrder sortOrder)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var query = context.Songs.AsNoTracking().Where(s => s.Genres.Any(g => g.Id == genreId));
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
@@ -2138,7 +2139,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                                      || (s.Artist != null && EF.Functions.Like(s.Artist.Name, term)));
         }
 
-        return await ApplySongSortOrder(query, sortOrder).Select(s => s.Id).ToListAsync();
+        return await ApplySongSortOrder(query, sortOrder).Select(s => s.Id).ToListAsync().ConfigureAwait(false);
     }
 
     #endregion
@@ -2175,9 +2176,9 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     {
         if (discoveredDirectories.Count == 0) return;
 
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
 
-        var allFolders = await context.Folders.AsNoTracking().ToListAsync(cancellationToken);
+        var allFolders = await context.Folders.AsNoTracking().ToListAsync(cancellationToken).ConfigureAwait(false);
         var existingFolders = allFolders.ToDictionary(f => f.Path, StringComparer.OrdinalIgnoreCase);
 
         var foldersToCreate = new List<Folder>();
@@ -2255,19 +2256,19 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         if (foldersToCreate.Count > 0)
         {
             context.Folders.AddRange(foldersToCreate);
-            await context.SaveChangesAsync(cancellationToken);
+            await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         }
     }
 
     private async Task<(List<string> filesToAdd, List<string> filesToUpdate, List<string> filesRemovedFromDisk)>
         AnalyzeFolderChangesAsync(Guid folderId, string folderPath, CancellationToken cancellationToken)
     {
-        await using var analysisContext = await _contextFactory.CreateDbContextAsync();
+        await using var analysisContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var dbFileMap = (await analysisContext.Songs
                 .AsNoTracking()
                 .Where(s => s.FolderId == folderId)
                 .Select(s => new { s.FilePath, s.FileModifiedDate })
-                .ToListAsync(cancellationToken))
+                .ToListAsync(cancellationToken).ConfigureAwait(false))
             .ToDictionary(s => s.FilePath, s => s.FileModifiedDate, StringComparer.OrdinalIgnoreCase);
 
         cancellationToken.ThrowIfCancellationRequested();
@@ -2311,13 +2312,13 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     /// </summary>
     private async Task<int> UpdateMissingLrcPathsAsync(Guid folderId, CancellationToken cancellationToken)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
 
         // Query songs in the folder that don't have an LRC file path set
         var songsWithoutLrc = await context.Songs
             .Where(s => s.FolderId == folderId && s.LrcFilePath == null)
             .Select(s => new { s.Id, s.FilePath })
-            .ToListAsync(cancellationToken);
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
 
         if (songsWithoutLrc.Count == 0)
             return 0;
@@ -2348,7 +2349,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             var batchIds = songIdsToUpdate.Skip(i).Take(batchSize).ToList();
             var songsToUpdate = await context.Songs
                 .Where(s => batchIds.Contains(s.Id))
-                .ToListAsync(cancellationToken);
+                .ToListAsync(cancellationToken).ConfigureAwait(false);
 
             foreach (var song in songsToUpdate)
             {
@@ -2361,7 +2362,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         if (totalUpdated > 0)
         {
-            await context.SaveChangesAsync(cancellationToken);
+            await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             _logger.LogInformation("Updated {Count} songs with newly discovered LRC files.", totalUpdated);
         }
 
@@ -2376,13 +2377,13 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     /// </summary>
     private async Task<int> UpdateMissingCoverArtAsync(Guid folderId, string baseFolderPath, CancellationToken cancellationToken)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
 
         // Query songs in the folder that don't have cover art set
         var songsWithoutCoverArt = await context.Songs
             .Where(s => s.FolderId == folderId && s.AlbumArtUriFromTrack == null)
             .Select(s => new { s.Id, s.FilePath })
-            .ToListAsync(cancellationToken);
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
 
         if (songsWithoutCoverArt.Count == 0)
             return 0;
@@ -2403,12 +2404,12 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 try
                 {
                     // Read and process the cover art file
-                    var imageBytes = await System.IO.File.ReadAllBytesAsync(coverArtPath, cancellationToken);
+                    var imageBytes = await System.IO.File.ReadAllBytesAsync(coverArtPath, cancellationToken).ConfigureAwait(false);
                     if (imageBytes.Length > 0)
                     {
                         // Use the new overload from IMetadataService to get the image processor
                         // We need to call the image processor directly
-                        var metadata = await _metadataService.ExtractMetadataAsync(song.FilePath, baseFolderPath);
+                        var metadata = await _metadataService.ExtractMetadataAsync(song.FilePath, baseFolderPath).ConfigureAwait(false);
                         if (!string.IsNullOrEmpty(metadata.CoverArtUri))
                         {
                             songCoverArtMappings[song.Id] = (coverArtPath, metadata.CoverArtUri, metadata.LightSwatchId, metadata.DarkSwatchId);
@@ -2438,7 +2439,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             var batchIds = songIdsToUpdate.Skip(i).Take(batchSize).ToList();
             var songsToUpdate = await context.Songs
                 .Where(s => batchIds.Contains(s.Id))
-                .ToListAsync(cancellationToken);
+                .ToListAsync(cancellationToken).ConfigureAwait(false);
 
             foreach (var song in songsToUpdate)
             {
@@ -2455,7 +2456,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         if (totalUpdated > 0)
         {
-            await context.SaveChangesAsync(cancellationToken);
+            await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             _logger.LogInformation("Updated {Count} songs with newly discovered cover art files.", totalUpdated);
         }
 
@@ -2636,15 +2637,15 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
                 var extractionTasks = filesToProcess.Select(async filePath =>
                 {
-                    await semaphore.WaitAsync(cancellationToken);
+                    await semaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
                     try
                     {
                         cancellationToken.ThrowIfCancellationRequested();
-                        var metadata = await _metadataService.ExtractMetadataAsync(filePath, baseFolderPath);
+                        var metadata = await _metadataService.ExtractMetadataAsync(filePath, baseFolderPath).ConfigureAwait(false);
                         
                         if (!metadata.ExtractionFailed)
                         {
-                            await channel.Writer.WriteAsync(metadata, cancellationToken);
+                            await channel.Writer.WriteAsync(metadata, cancellationToken).ConfigureAwait(false);
                             Interlocked.Increment(ref extractedCount);
                         }
                         else
@@ -2669,7 +2670,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                     }
                 });
 
-                await Task.WhenAll(extractionTasks);
+                await Task.WhenAll(extractionTasks).ConfigureAwait(false);
                 channel.Writer.Complete();
             }
             catch (Exception ex)
@@ -2688,7 +2689,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 var batch = new List<SongFileMetadata>(500);
                 var batchNumber = 0;
 
-                await foreach (var metadata in channel.Reader.ReadAllAsync(cancellationToken))
+                await foreach (var metadata in channel.Reader.ReadAllAsync(cancellationToken).ConfigureAwait(false))
                 {
                     batch.Add(metadata);
 
@@ -2702,7 +2703,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                             NewSongsFound = extractedCount
                         });
 
-                        var saved = await ProcessSingleBatchAsync(folderId, batch.ToArray(), cancellationToken);
+                        var saved = await ProcessSingleBatchAsync(folderId, batch.ToArray(), cancellationToken).ConfigureAwait(false);
                         totalSaved += saved;
                         batch.Clear();
                     }
@@ -2719,7 +2720,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                         NewSongsFound = extractedCount
                     });
 
-                    var saved = await ProcessSingleBatchAsync(folderId, batch.ToArray(), cancellationToken);
+                    var saved = await ProcessSingleBatchAsync(folderId, batch.ToArray(), cancellationToken).ConfigureAwait(false);
                     totalSaved += saved;
                 }
             }
@@ -2730,7 +2731,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             }
         }, cancellationToken);
 
-        await Task.WhenAll(producerTask, consumerTask);
+        await Task.WhenAll(producerTask, consumerTask).ConfigureAwait(false);
         return totalSaved;
     }
 
@@ -2745,7 +2746,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         {
             try
             {
-                await using var context = await _contextFactory.CreateDbContextAsync();
+                await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
                 
                 // Disable change tracking for faster reads/inserts where possible
                 // (Though we need tracking for Add, we don't need it for the lookups if we attach properly,
@@ -2757,7 +2758,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                     .AsNoTracking()
                     .Where(s => filePaths.Contains(s.FilePath))
                     .Select(s => s.FilePath)
-                    .ToListAsync(cancellationToken);
+                    .ToListAsync(cancellationToken).ConfigureAwait(false);
 
                 var existingSongPathsSet = new HashSet<string>(existingSongPaths, StringComparer.OrdinalIgnoreCase);
 
@@ -2776,11 +2777,11 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                     .Where(g => !string.IsNullOrWhiteSpace(g)).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
 
                 var existingArtists = await context.Artists.Where(a => artistNames.Contains(a.Name))
-                    .ToDictionaryAsync(a => a.Name, StringComparer.OrdinalIgnoreCase, cancellationToken);
+                    .ToDictionaryAsync(a => a.Name, StringComparer.OrdinalIgnoreCase, cancellationToken).ConfigureAwait(false);
                 var existingAlbums = await context.Albums.Where(a => albumTitles.Contains(a.Title))
-                    .ToListAsync(cancellationToken);
+                    .ToListAsync(cancellationToken).ConfigureAwait(false);
                 var existingGenres = await context.Genres.Where(g => genreNames.Contains(g.Name))
-                    .ToDictionaryAsync(g => g.Name, StringComparer.OrdinalIgnoreCase, cancellationToken);
+                    .ToDictionaryAsync(g => g.Name, StringComparer.OrdinalIgnoreCase, cancellationToken).ConfigureAwait(false);
 
                 // Add missing Artists/Genres to Context/Dict
                 foreach (var name in artistNames)
@@ -2807,7 +2808,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                     await AddSongWithDetailsOptimizedAsync(context, folderId, metadata, existingArtists, existingAlbums,
                         existingGenres);
 
-                await context.SaveChangesAsync(cancellationToken);
+                await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
                 return metadataToInsert.Count;
             }
             catch (DbUpdateException ex) when (IsUniqueConstraintViolation(ex))
@@ -2911,16 +2912,16 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     {
         try
         {
-            var trackArtist = await GetOrCreateArtistAsync(context, metadata.Artist);
+            var trackArtist = await GetOrCreateArtistAsync(context, metadata.Artist).ConfigureAwait(false);
             var albumArtist = !string.IsNullOrWhiteSpace(metadata.AlbumArtist)
-                ? await GetOrCreateArtistAsync(context, metadata.AlbumArtist)
+                ? await GetOrCreateArtistAsync(context, metadata.AlbumArtist).ConfigureAwait(false)
                 : trackArtist;
 
             var album = !string.IsNullOrWhiteSpace(metadata.Album)
-                ? await GetOrCreateAlbumAsync(context, metadata.Album, albumArtist.Id, metadata.Year)
+                ? await GetOrCreateAlbumAsync(context, metadata.Album, albumArtist.Id, metadata.Year).ConfigureAwait(false)
                 : null;
 
-            var genres = await EnsureGenresExistAsync(context, metadata.Genres);
+            var genres = await EnsureGenresExistAsync(context, metadata.Genres).ConfigureAwait(false);
 
             var directoryPath = _fileSystem.GetDirectoryName(metadata.FilePath) ?? string.Empty;
 
@@ -2976,14 +2977,14 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
     private async Task<bool> UpdateSongPropertyAsync(Guid songId, Action<Song> updateAction)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
-        var song = await context.Songs.FindAsync(songId);
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        var song = await context.Songs.FindAsync(songId).ConfigureAwait(false);
         if (song is null) return false;
 
         updateAction(song);
         try
         {
-            await context.SaveChangesAsync();
+            await context.SaveChangesAsync().ConfigureAwait(false);
             return true;
         }
         catch (DbUpdateException ex)
@@ -2998,8 +2999,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     {
         if (string.IsNullOrWhiteSpace(localFilePath) || !_fileSystem.FileExists(localFilePath)) return false;
 
-        await using var context = await _contextFactory.CreateDbContextAsync();
-        var artist = await context.Artists.FindAsync(artistId);
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        var artist = await context.Artists.FindAsync(artistId).ConfigureAwait(false);
         if (artist == null) return false;
 
         try
@@ -3013,7 +3014,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             var newPath = ImageStorageHelper.FindImage(_fileSystem, cachePath, artistId.ToString(), ".custom");
 
             artist.LocalImageCachePath = newPath;
-            await context.SaveChangesAsync();
+            await context.SaveChangesAsync().ConfigureAwait(false);
 
             ArtistMetadataUpdated?.Invoke(this, new ArtistMetadataUpdatedEventArgs(artist.Id, artist.LocalImageCachePath));
             return true;
@@ -3028,8 +3029,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     /// <inheritdoc />
     public async Task<bool> RemoveArtistImageAsync(Guid artistId)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
-        var artist = await context.Artists.FindAsync(artistId);
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        var artist = await context.Artists.FindAsync(artistId).ConfigureAwait(false);
         if (artist == null) return false;
 
         try
@@ -3053,7 +3054,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 _logger.LogInformation("No fallback fetched image found for artist {ArtistId}. Cleared image path.", artistId);
             }
 
-            await context.SaveChangesAsync();
+            await context.SaveChangesAsync().ConfigureAwait(false);
             ArtistMetadataUpdated?.Invoke(this, new ArtistMetadataUpdatedEventArgs(artist.Id, artist.LocalImageCachePath));
             return true;
         }
@@ -3073,10 +3074,10 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         // ApiKeyService caches results, so subsequent service calls hit the cache instantly.
         // We wrap each fetch in a task that catches exceptions to ensure the whole fetch isn't cancelled.
         var keyWarmupTask = Task.WhenAll(
-            Task.Run(async () => { try { await _apiKeyService.GetApiKeyAsync("theaudiodb", cancellationToken); } catch { /* Ignore warmup failure */ } }, cancellationToken),
-            Task.Run(async () => { try { await _apiKeyService.GetApiKeyAsync("fanarttv", cancellationToken); } catch { /* Ignore warmup failure */ } }, cancellationToken),
-            Task.Run(async () => { try { await _apiKeyService.GetApiKeyAsync("spotify", cancellationToken); } catch { /* Ignore warmup failure */ } }, cancellationToken),
-            Task.Run(async () => { try { await _apiKeyService.GetApiKeyAsync("lastfm", cancellationToken); } catch { /* Ignore warmup failure */ } }, cancellationToken)
+            Task.Run(async () => { try { await _apiKeyService.GetApiKeyAsync("theaudiodb", cancellationToken).ConfigureAwait(false); } catch { /* Ignore warmup failure */ } }, cancellationToken),
+            Task.Run(async () => { try { await _apiKeyService.GetApiKeyAsync("fanarttv", cancellationToken).ConfigureAwait(false); } catch { /* Ignore warmup failure */ } }, cancellationToken),
+            Task.Run(async () => { try { await _apiKeyService.GetApiKeyAsync("spotify", cancellationToken).ConfigureAwait(false); } catch { /* Ignore warmup failure */ } }, cancellationToken),
+            Task.Run(async () => { try { await _apiKeyService.GetApiKeyAsync("lastfm", cancellationToken).ConfigureAwait(false); } catch { /* Ignore warmup failure */ } }, cancellationToken)
         );
 
         // Branch A: Resolving high-quality images and biography (MBID -> TheAudioDB -> Fanart.tv -> Spotify)
@@ -3087,10 +3088,10 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         var lastFmTask = _lastFmService.GetArtistInfoAsync(artist.Name, cancellationToken);
 
         // Wait for all branches and warmup to complete
-        await Task.WhenAll(keyWarmupTask, primaryMetadataTask, lastFmTask);
+        await Task.WhenAll(keyWarmupTask, primaryMetadataTask, lastFmTask).ConfigureAwait(false);
 
-        var (primaryImageUrl, primaryBiography, resolvedMbid) = await primaryMetadataTask;
-        var lastFmResult = await lastFmTask;
+        var (primaryImageUrl, primaryBiography, resolvedMbid) = await primaryMetadataTask.ConfigureAwait(false);
+        var lastFmResult = await lastFmTask.ConfigureAwait(false);
 
         // --- Sequential Update Phase (Thread-Safe) ---
         // We update the 'artist' entity tracked by the DB context after all remote calls are finished.
@@ -3133,7 +3134,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             if (artist.LocalImageCachePath == null || !artist.LocalImageCachePath.Contains(".custom."))
             {
                 var downloadedPath =
-                    await DownloadAndCacheArtistImageAsync(artist, new Uri(finalImageUrl), cancellationToken);
+                    await DownloadAndCacheArtistImageAsync(artist, new Uri(finalImageUrl), cancellationToken).ConfigureAwait(false);
                 if (!string.IsNullOrEmpty(downloadedPath))
                 {
                     artist.LocalImageCachePath = downloadedPath;
@@ -3143,7 +3144,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         }
 
         artist.MetadataLastCheckedUtc = DateTime.UtcNow;
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync().ConfigureAwait(false);
 
         if (wasMetadataFoundAndUpdated)
             ArtistMetadataUpdated?.Invoke(this,
@@ -3161,13 +3162,13 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             // Step 1: Resolve MusicBrainz ID
             if (string.IsNullOrEmpty(mbid))
             {
-                mbid = await _musicBrainzService.SearchArtistAsync(artistName, ct);
+                mbid = await _musicBrainzService.SearchArtistAsync(artistName, ct).ConfigureAwait(false);
             }
 
             // Step 2: Try TheAudioDB first (needs MBID) - provides both biography and images
             if (!string.IsNullOrEmpty(mbid))
             {
-                var audioDbResult = await _theAudioDbService.GetArtistMetadataAsync(mbid, ct);
+                var audioDbResult = await _theAudioDbService.GetArtistMetadataAsync(mbid, ct).ConfigureAwait(false);
                 if (audioDbResult.Status == ServiceResultStatus.Success && audioDbResult.Data is not null)
                 {
                     biography = audioDbResult.Data.Biography;
@@ -3179,7 +3180,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             // Step 3: Try Fanart.tv if TheAudioDB didn't provide an image (needs MBID)
             if (string.IsNullOrEmpty(url) && !string.IsNullOrEmpty(mbid))
             {
-                var fanartResult = await _fanartTvService.GetArtistImagesAsync(mbid, ct);
+                var fanartResult = await _fanartTvService.GetArtistImagesAsync(mbid, ct).ConfigureAwait(false);
                 if (fanartResult.Status == ServiceResultStatus.Success && fanartResult.Data is not null)
                 {
                     url = fanartResult.Data.BackgroundUrl ?? fanartResult.Data.ThumbUrl;
@@ -3189,7 +3190,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             // Step 4: Try Spotify fallback
             if (string.IsNullOrEmpty(url))
             {
-                var spotifyResult = await _spotifyService.GetArtistImageUrlAsync(artistName, ct);
+                var spotifyResult = await _spotifyService.GetArtistImageUrlAsync(artistName, ct).ConfigureAwait(false);
                 if (spotifyResult.Status == ServiceResultStatus.Success && spotifyResult.Data?.ImageUrl is not null)
                 {
                     url = spotifyResult.Data.ImageUrl;
@@ -3233,10 +3234,10 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         try
         {
             using var httpClient = _httpClientFactory.CreateClient("ImageDownloader");
-            using var response = await httpClient.GetAsync(imageUrl, cancellationToken);
+            using var response = await httpClient.GetAsync(imageUrl, cancellationToken).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
-            var imageBytes = await response.Content.ReadAsByteArrayAsync(cancellationToken);
-            await _fileSystem.WriteAllBytesAsync(localPath, imageBytes);
+            var imageBytes = await response.Content.ReadAsByteArrayAsync(cancellationToken).ConfigureAwait(false);
+            await _fileSystem.WriteAllBytesAsync(localPath, imageBytes).ConfigureAwait(false);
             return localPath;
         }
         catch (Exception ex)
@@ -3258,7 +3259,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         if (trackedArtist is not null) return trackedArtist;
 
-        var dbArtist = await context.Artists.FirstOrDefaultAsync(a => a.Name == normalizedName);
+        var dbArtist = await context.Artists.FirstOrDefaultAsync(a => a.Name == normalizedName).ConfigureAwait(false);
         if (dbArtist is not null) return dbArtist;
 
         var newArtist = new Artist { Name = normalizedName };
@@ -3277,7 +3278,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             ?.Entity;
 
         var album = trackedAlbum ??
-                    await context.Albums.FirstOrDefaultAsync(a => a.Title == normalizedTitle && a.ArtistId == artistId);
+                    await context.Albums.FirstOrDefaultAsync(a => a.Title == normalizedTitle && a.ArtistId == artistId).ConfigureAwait(false);
 
         if (album is not null)
         {
@@ -3306,7 +3307,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         var existingDbGenres = await context.Genres
             .Where(g => distinctNames.Contains(g.Name))
-            .ToListAsync();
+            .ToListAsync().ConfigureAwait(false);
 
         var trackedGenres = context.ChangeTracker.Entries<Genre>()
             .Where(e => e.State == EntityState.Added)
@@ -3335,7 +3336,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     private async Task ReindexPlaylistAsync(MusicDbContext context, Guid playlistId)
     {
         var playlistSongs = await context.PlaylistSongs
-            .Where(ps => ps.PlaylistId == playlistId).OrderBy(ps => ps.Order).ToListAsync();
+            .Where(ps => ps.PlaylistId == playlistId).OrderBy(ps => ps.Order).ToListAsync().ConfigureAwait(false);
 
         for (var i = 0; i < playlistSongs.Count; i++) playlistSongs[i].Order = i;
     }
@@ -3351,7 +3352,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 .Where(f => f.ParentFolderId != null) // Only subfolders, never root folders
                 .Where(f => !f.SubFolders.Any()) // No child folders
                 .Select(f => new { f.Id, f.Path })
-                .ToListAsync(cancellationToken);
+                .ToListAsync(cancellationToken).ConfigureAwait(false);
 
             if (!orphanedSubFolders.Any())
             {
@@ -3373,7 +3374,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                     .AnyAsync(s => s.DirectoryPath == normalizedPath ||
                                    s.DirectoryPath.StartsWith(normalizedPath + Path.DirectorySeparatorChar) ||
                                    s.DirectoryPath.StartsWith(normalizedPath + Path.AltDirectorySeparatorChar),
-                        cancellationToken);
+                        cancellationToken).ConfigureAwait(false);
 
                 if (hasSongs) pathsWithSongsOrDescendants.Add(folderPath);
             }
@@ -3386,23 +3387,23 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             if (foldersToDelete.Any())
                 await context.Folders
                     .Where(f => foldersToDelete.Contains(f.Id))
-                    .ExecuteDeleteAsync(cancellationToken);
+                    .ExecuteDeleteAsync(cancellationToken).ConfigureAwait(false);
             else
                 deletedAny = false;
         }
 
-        await context.Albums.Where(a => !a.Songs.Any()).ExecuteDeleteAsync(cancellationToken);
+        await context.Albums.Where(a => !a.Songs.Any()).ExecuteDeleteAsync(cancellationToken).ConfigureAwait(false);
 
         var orphanedArtists = await context.Artists
             .AsNoTracking()
             .Where(a => !a.Songs.Any() && !a.Albums.Any())
             .Select(a => new { a.Id, a.LocalImageCachePath })
-            .ToListAsync(cancellationToken);
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
 
         if (orphanedArtists.Any())
         {
             var idsToDelete = orphanedArtists.Select(a => a.Id).ToList();
-            await context.Artists.Where(a => idsToDelete.Contains(a.Id)).ExecuteDeleteAsync(cancellationToken);
+            await context.Artists.Where(a => idsToDelete.Contains(a.Id)).ExecuteDeleteAsync(cancellationToken).ConfigureAwait(false);
             
             foreach (var artist in orphanedArtists)
             {
@@ -3422,7 +3423,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             var cachePath = _pathConfig.ArtistImageCachePath;
             if (_fileSystem.DirectoryExists(cachePath))
             {
-                var allArtistIds = await context.Artists.Select(a => a.Id).ToListAsync(cancellationToken);
+                var allArtistIds = await context.Artists.Select(a => a.Id).ToListAsync(cancellationToken).ConfigureAwait(false);
                 var artistIdSet = new HashSet<Guid>(allArtistIds);
                 // 3 argument overload not available on interface, using EnumerateFiles
                 var files = _fileSystem.EnumerateFiles(cachePath, "*.*", SearchOption.TopDirectoryOnly);
@@ -3481,7 +3482,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             _logger.LogError(ex, "Error during aggressive artist image cache cleanup.");
         }
 
-        await context.Genres.Where(g => !g.Songs.Any()).ExecuteDeleteAsync(cancellationToken);
+        await context.Genres.Where(g => !g.Songs.Any()).ExecuteDeleteAsync(cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -3621,21 +3622,44 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
     #endregion
 
+    private void OnFetchOnlineMetadataEnabledChanged(bool isEnabled)
+    {
+        if (isEnabled) return;
+        
+        lock (_metadataFetchLock)
+        {
+            if (_disposed) return;
+            if (_isMetadataFetchRunning && !_metadataFetchCts.IsCancellationRequested)
+            {
+                _logger.LogInformation("Fetch online metadata disabled. Cancelling background fetch.");
+                _metadataFetchCts.Cancel();
+            }
+        }
+    }
+
     #region IDisposable Implementation
 
     protected virtual void Dispose(bool disposing)
     {
-        if (!_disposed)
+        if (_disposed) return;
+        
+        if (disposing)
         {
-            if (disposing)
+            _settingsService.FetchOnlineMetadataEnabledChanged -= OnFetchOnlineMetadataEnabledChanged;
+            
+            lock (_metadataFetchLock)
             {
                 _metadataFetchCts.Cancel();
                 _metadataFetchCts.Dispose();
-                _replayGainScanCts?.Cancel();
-                _replayGainScanCts?.Dispose();
-                _scanSemaphore.Dispose();
+                _disposed = true;
             }
-
+            
+            _replayGainScanCts?.Cancel();
+            _replayGainScanCts?.Dispose();
+            _scanSemaphore.Dispose();
+        }
+        else
+        {
             _disposed = true;
         }
     }

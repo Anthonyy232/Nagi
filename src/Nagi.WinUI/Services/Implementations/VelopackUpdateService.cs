@@ -67,19 +67,19 @@ public class VelopackUpdateService : IUpdateService {
         return;
 #endif
 
-        if (!await _settingsService.GetCheckForUpdatesEnabledAsync()) {
+        if (!await _settingsService.GetCheckForUpdatesEnabledAsync().ConfigureAwait(false)) {
             _logger.LogDebug("Automatic update check is disabled by user setting.");
             return;
         }
 
         try {
-            UpdateInfo? updateInfo = await _updateManager.CheckForUpdatesAsync();
+            UpdateInfo? updateInfo = await _updateManager.CheckForUpdatesAsync().ConfigureAwait(false);
             if (updateInfo == null) {
                 _logger.LogDebug("No updates found on startup.");
                 return;
             }
 
-            var lastSkippedVersion = await _settingsService.GetLastSkippedUpdateVersionAsync();
+            var lastSkippedVersion = await _settingsService.GetLastSkippedUpdateVersionAsync().ConfigureAwait(false);
             if (lastSkippedVersion == updateInfo.TargetFullRelease.Version.ToString()) {
                 _logger.LogDebug("User has previously skipped version {SkippedVersion}.", lastSkippedVersion);
                 return;
@@ -98,7 +98,7 @@ public class VelopackUpdateService : IUpdateService {
                     break;
                 case UpdateDialogResult.Skip:
                     await _settingsService.SetLastSkippedUpdateVersionAsync(updateInfo.TargetFullRelease.Version
-                        .ToString());
+                        .ToString()).ConfigureAwait(false);
                     break;
                 case UpdateDialogResult.RemindLater:
                 default:
@@ -123,7 +123,7 @@ public class VelopackUpdateService : IUpdateService {
 #endif
 
         try {
-            UpdateInfo? updateInfo = await _updateManager.CheckForUpdatesAsync();
+            UpdateInfo? updateInfo = await _updateManager.CheckForUpdatesAsync().ConfigureAwait(false);
 
             if (updateInfo == null) {
                 await _uiService.ShowMessageDialogAsync("Up to Date", "You are running the latest version of Nagi.");
@@ -149,7 +149,7 @@ public class VelopackUpdateService : IUpdateService {
         try {
             await _uiService.ShowMessageDialogAsync("Downloading Update",
                 $"Version {updateInfo.TargetFullRelease.Version} is being downloaded. The application will restart automatically when it's ready.");
-            await _updateManager.DownloadUpdatesAsync(updateInfo);
+            await _updateManager.DownloadUpdatesAsync(updateInfo).ConfigureAwait(false);
             _updateManager.ApplyUpdatesAndRestart(updateInfo);
         }
         catch (Exception ex) {

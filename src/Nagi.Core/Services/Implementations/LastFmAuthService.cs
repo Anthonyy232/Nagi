@@ -30,8 +30,8 @@ public class LastFmAuthService : ILastFmAuthService
     /// <inheritdoc />
     public async Task<(string Token, string AuthUrl)?> GetAuthenticationTokenAsync()
     {
-        var apiKey = await _apiKeyService.GetApiKeyAsync(ApiKeyName);
-        var apiSecret = await _apiKeyService.GetApiKeyAsync(ApiSecretName);
+        var apiKey = await _apiKeyService.GetApiKeyAsync(ApiKeyName).ConfigureAwait(false);
+        var apiSecret = await _apiKeyService.GetApiKeyAsync(ApiSecretName).ConfigureAwait(false);
 
         if (string.IsNullOrEmpty(apiKey) || string.IsNullOrEmpty(apiSecret))
         {
@@ -50,8 +50,8 @@ public class LastFmAuthService : ILastFmAuthService
 
         try
         {
-            using var response = await _httpClient.GetAsync(requestUrl);
-            var content = await response.Content.ReadAsStringAsync();
+            using var response = await _httpClient.GetAsync(requestUrl).ConfigureAwait(false);
+            var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -80,8 +80,8 @@ public class LastFmAuthService : ILastFmAuthService
     /// <inheritdoc />
     public async Task<(string Username, string SessionKey)?> GetSessionAsync(string token)
     {
-        var apiKey = await _apiKeyService.GetApiKeyAsync(ApiKeyName);
-        var apiSecret = await _apiKeyService.GetApiKeyAsync(ApiSecretName);
+        var apiKey = await _apiKeyService.GetApiKeyAsync(ApiKeyName).ConfigureAwait(false);
+        var apiSecret = await _apiKeyService.GetApiKeyAsync(ApiSecretName).ConfigureAwait(false);
 
         if (string.IsNullOrEmpty(apiKey) || string.IsNullOrEmpty(apiSecret))
         {
@@ -102,8 +102,8 @@ public class LastFmAuthService : ILastFmAuthService
 
         try
         {
-            using var response = await _httpClient.GetAsync(requestUrl);
-            var content = await response.Content.ReadAsStringAsync();
+            using var response = await _httpClient.GetAsync(requestUrl).ConfigureAwait(false);
+            var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
             if (!response.IsSuccessStatusCode)
             {

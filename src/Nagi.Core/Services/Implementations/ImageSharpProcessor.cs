@@ -92,7 +92,7 @@ public class ImageSharpProcessor : IImageProcessor
             var fullPath = _fileSystem.Combine(_albumArtStoragePath, filename);
 
             // Save with deduplication - handles both file existence check and concurrent access
-            await SaveImageWithDeduplicationAsync(contentHash, fullPath, pictureData);
+            await SaveImageWithDeduplicationAsync(contentHash, fullPath, pictureData).ConfigureAwait(false);
 
             // Extract colors (always from original data for best accuracy)
             var (lightHex, darkHex) = ExtractColorSwatches(pictureData);
@@ -123,7 +123,7 @@ public class ImageSharpProcessor : IImageProcessor
 
         try
         {
-            await lazyTask.Value;
+            await lazyTask.Value.ConfigureAwait(false);
         }
         finally
         {
@@ -159,12 +159,12 @@ public class ImageSharpProcessor : IImageProcessor
 
         // Save to memory stream first, then write bytes to disk atomically via temp file
         using var memoryStream = new MemoryStream();
-        await image.SaveAsJpegAsync(memoryStream);
+        await image.SaveAsJpegAsync(memoryStream).ConfigureAwait(false);
         var imageBytes = memoryStream.ToArray();
 
         // Write to a temp file first, then move atomically to avoid partial writes
         var tempPath = fullPath + ".tmp";
-        await _fileSystem.WriteAllBytesAsync(tempPath, imageBytes);
+        await _fileSystem.WriteAllBytesAsync(tempPath, imageBytes).ConfigureAwait(false);
         
         // Atomic move - if target exists now (race), just delete our temp file
         try

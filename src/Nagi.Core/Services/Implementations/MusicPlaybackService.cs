@@ -105,12 +105,12 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
 
         try
         {
-            await _audioPlayer.SetVolumeAsync(await _settingsService.GetInitialVolumeAsync());
-            await _audioPlayer.SetMuteAsync(await _settingsService.GetInitialMuteStateAsync());
-            IsShuffleEnabled = await _settingsService.GetInitialShuffleStateAsync();
-            CurrentRepeatMode = await _settingsService.GetInitialRepeatModeAsync();
+            await _audioPlayer.SetVolumeAsync(await _settingsService.GetInitialVolumeAsync().ConfigureAwait(false)).ConfigureAwait(false);
+            await _audioPlayer.SetMuteAsync(await _settingsService.GetInitialMuteStateAsync().ConfigureAwait(false)).ConfigureAwait(false);
+            IsShuffleEnabled = await _settingsService.GetInitialShuffleStateAsync().ConfigureAwait(false);
+            CurrentRepeatMode = await _settingsService.GetInitialRepeatModeAsync().ConfigureAwait(false);
 
-            CurrentEqualizerSettings = await _settingsService.GetEqualizerSettingsAsync();
+            CurrentEqualizerSettings = await _settingsService.GetEqualizerSettingsAsync().ConfigureAwait(false);
             if (CurrentEqualizerSettings != null && CurrentEqualizerSettings.BandGains.Count != EqualizerBands.Count)
             {
                 _logger.LogWarning("Equalizer settings mismatched (Saved: {SavedCount}, Required: {RequiredCount}). Resetting to default.", 
@@ -130,10 +130,10 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
             _audioPlayer.ApplyEqualizerSettings(CurrentEqualizerSettings);
 
             var restoredSuccessfully = false;
-            if (restoreLastSession && await _settingsService.GetRestorePlaybackStateEnabledAsync())
+            if (restoreLastSession && await _settingsService.GetRestorePlaybackStateEnabledAsync().ConfigureAwait(false))
             {
-                var savedState = await _settingsService.GetPlaybackStateAsync();
-                if (savedState != null) restoredSuccessfully = await RestoreInternalPlaybackStateAsync(savedState);
+                var savedState = await _settingsService.GetPlaybackStateAsync().ConfigureAwait(false);
+                if (savedState != null) restoredSuccessfully = await RestoreInternalPlaybackStateAsync(savedState).ConfigureAwait(false);
             }
 
             if (!restoredSuccessfully) ClearQueuesInternal();
@@ -144,8 +144,8 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         catch (Exception ex)
         {
             _logger.LogError(ex, "MusicPlaybackService initialization failed. Using default settings.");
-            await _audioPlayer.SetVolumeAsync(0.5);
-            await _audioPlayer.SetMuteAsync(false);
+            await _audioPlayer.SetVolumeAsync(0.5).ConfigureAwait(false);
+            await _audioPlayer.SetMuteAsync(false).ConfigureAwait(false);
             IsShuffleEnabled = false;
             CurrentRepeatMode = RepeatMode.Off;
             ClearQueuesInternal();
@@ -166,7 +166,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
     public async Task PlayTransientFileAsync(string filePath)
     {
         _logger.LogDebug("Playing transient file: {FilePath}", filePath);
-        var metadata = await _metadataService.ExtractMetadataAsync(filePath);
+        var metadata = await _metadataService.ExtractMetadataAsync(filePath).ConfigureAwait(false);
 
         var transientSong = new Song
         {
@@ -186,8 +186,8 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         CurrentQueueIndex = -1;
         CurrentListenHistoryId = null;
 
-        await _audioPlayer.LoadAsync(CurrentTrack);
-        await _audioPlayer.PlayAsync();
+        await _audioPlayer.LoadAsync(CurrentTrack).ConfigureAwait(false);
+        await _audioPlayer.PlayAsync().ConfigureAwait(false);
         UpdateSmtcControls();
 
         TrackChanged?.Invoke();
@@ -205,7 +205,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
             _shuffledQueue.Clear();
 
         QueueChanged?.Invoke();
-        await PlayQueueItemAsync(0);
+        await PlayQueueItemAsync(0).ConfigureAwait(false);
     }
 
     public async Task PlayAsync(IEnumerable<Song> songs, int startIndex = 0, bool startShuffled = false)
@@ -225,7 +225,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
             "Playing a new queue of {SongCount} songs. Start index: {StartIndex}, Shuffled: {IsShuffled}",
             songList.Count, startIndex, startShuffled);
 
-        if (IsShuffleEnabled != startShuffled) await SetShuffleAsync(startShuffled);
+        if (IsShuffleEnabled != startShuffled) await SetShuffleAsync(startShuffled).ConfigureAwait(false);
 
         _playbackQueue = songList;
         QueueChanged?.Invoke();
@@ -244,19 +244,19 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
             {
                 var actualPlaybackIndex = _playbackQueue.IndexOf(songToPlay);
                 if (actualPlaybackIndex >= 0)
-                    await PlayQueueItemAsync(actualPlaybackIndex);
+                    await PlayQueueItemAsync(actualPlaybackIndex).ConfigureAwait(false);
                 else
-                    await StopAsync();
+                    await StopAsync().ConfigureAwait(false);
             }
             else
             {
-                await StopAsync();
+                await StopAsync().ConfigureAwait(false);
             }
         }
         else
         {
             if (startIndex < 0 || startIndex >= _playbackQueue.Count) startIndex = 0;
-            await PlayQueueItemAsync(startIndex);
+            await PlayQueueItemAsync(startIndex).ConfigureAwait(false);
         }
     }
 
@@ -264,13 +264,13 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
     {
         if (_audioPlayer.IsPlaying)
         {
-            await _audioPlayer.PauseAsync();
+            await _audioPlayer.PauseAsync().ConfigureAwait(false);
             return;
         }
 
         if (CurrentTrack != null)
         {
-            await _audioPlayer.PlayAsync();
+            await _audioPlayer.PlayAsync().ConfigureAwait(false);
             return;
         }
 
@@ -290,13 +290,13 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
                 }
             }
 
-            if (indexToPlay >= 0 && indexToPlay < _playbackQueue.Count) await PlayQueueItemAsync(indexToPlay);
+            if (indexToPlay >= 0 && indexToPlay < _playbackQueue.Count) await PlayQueueItemAsync(indexToPlay).ConfigureAwait(false);
         }
     }
 
     public async Task StopAsync()
     {
-        await _audioPlayer.StopAsync();
+        await _audioPlayer.StopAsync().ConfigureAwait(false);
 
         // Null the track to indicate a "stopped" state but preserve the queue indices.
         // This is crucial for Next/Previous commands to work correctly from a stopped state.
@@ -312,7 +312,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
     {
         if (CurrentRepeatMode == RepeatMode.RepeatOne && CurrentTrack != null)
         {
-            await PlayQueueItemAsync(CurrentQueueIndex);
+            await PlayQueueItemAsync(CurrentQueueIndex).ConfigureAwait(false);
             return;
         }
 
@@ -321,16 +321,16 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         {
             // Case 1: A track is currently active. Find the next one in the sequence.
             if (TryGetNextTrackIndex(true, out var nextIndex))
-                await PlayQueueItemAsync(nextIndex);
+                await PlayQueueItemAsync(nextIndex).ConfigureAwait(false);
             else
                 // Reached the end of the queue.
-                await StopAsync();
+                await StopAsync().ConfigureAwait(false);
         }
         else if (_playbackQueue.Any())
         {
             // Case 2: The player is stopped at a queue boundary.
             // Pressing Next should resume playback from the current position.
-            await PlayQueueItemAsync(CurrentQueueIndex);
+            await PlayQueueItemAsync(CurrentQueueIndex).ConfigureAwait(false);
         }
     }
 
@@ -340,14 +340,14 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         if (CurrentTrack != null && _audioPlayer.CurrentPosition.TotalSeconds > 3 &&
             CurrentRepeatMode != RepeatMode.RepeatOne)
         {
-            await SeekAsync(TimeSpan.Zero);
-            if (!_audioPlayer.IsPlaying) await _audioPlayer.PlayAsync();
+            await SeekAsync(TimeSpan.Zero).ConfigureAwait(false);
+            if (!_audioPlayer.IsPlaying) await _audioPlayer.PlayAsync().ConfigureAwait(false);
             return;
         }
 
         if (CurrentRepeatMode == RepeatMode.RepeatOne && CurrentTrack != null)
         {
-            await PlayQueueItemAsync(CurrentQueueIndex);
+            await PlayQueueItemAsync(CurrentQueueIndex).ConfigureAwait(false);
             return;
         }
 
@@ -356,65 +356,65 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         {
             // Case 1: A track is currently active. Find the previous one in the sequence.
             if (TryGetNextTrackIndex(false, out var prevIndex))
-                await PlayQueueItemAsync(prevIndex);
+                await PlayQueueItemAsync(prevIndex).ConfigureAwait(false);
             else
                 // Reached the beginning of the queue.
-                await StopAsync();
+                await StopAsync().ConfigureAwait(false);
         }
         else if (_playbackQueue.Any())
         {
             // Case 2: The player is stopped at a queue boundary.
             // Pressing Previous should resume playback from the current position.
-            await PlayQueueItemAsync(CurrentQueueIndex);
+            await PlayQueueItemAsync(CurrentQueueIndex).ConfigureAwait(false);
         }
     }
 
     public async Task SeekAsync(TimeSpan position)
     {
-        if (CurrentTrack != null) await _audioPlayer.SeekAsync(position);
+        if (CurrentTrack != null) await _audioPlayer.SeekAsync(position).ConfigureAwait(false);
     }
 
     public async Task PlayAlbumAsync(Guid albumId)
     {
-        var songIds = await _libraryService.GetAllSongIdsByAlbumIdAsync(albumId, SongSortOrder.TrackNumberAsc);
-        await PlayFromOrderedIdsAsync(songIds, false);
+        var songIds = await _libraryService.GetAllSongIdsByAlbumIdAsync(albumId, SongSortOrder.TrackNumberAsc).ConfigureAwait(false);
+        await PlayFromOrderedIdsAsync(songIds, false).ConfigureAwait(false);
     }
 
     public async Task PlayArtistAsync(Guid artistId)
     {
-        var songIds = await _libraryService.GetAllSongIdsByArtistIdAsync(artistId, SongSortOrder.TitleAsc);
-        await PlayFromOrderedIdsAsync(songIds, false);
+        var songIds = await _libraryService.GetAllSongIdsByArtistIdAsync(artistId, SongSortOrder.TitleAsc).ConfigureAwait(false);
+        await PlayFromOrderedIdsAsync(songIds, false).ConfigureAwait(false);
     }
 
     public async Task PlayFolderAsync(Guid folderId)
     {
-        var songIds = await _libraryService.GetAllSongIdsByFolderIdAsync(folderId, SongSortOrder.TitleAsc);
-        await PlayFromOrderedIdsAsync(songIds, false);
+        var songIds = await _libraryService.GetAllSongIdsByFolderIdAsync(folderId, SongSortOrder.TitleAsc).ConfigureAwait(false);
+        await PlayFromOrderedIdsAsync(songIds, false).ConfigureAwait(false);
     }
 
     public async Task PlayPlaylistAsync(Guid playlistId)
     {
-        var orderedSongs = (await _libraryService.GetSongsInPlaylistOrderedAsync(playlistId))?.ToList();
-        await PlayAsync(orderedSongs ?? new List<Song>());
+        var orderedSongs = (await _libraryService.GetSongsInPlaylistOrderedAsync(playlistId).ConfigureAwait(false))?.ToList();
+        await PlayAsync(orderedSongs ?? new List<Song>()).ConfigureAwait(false);
     }
 
     public async Task PlayGenreAsync(Guid genreId)
     {
-        var songIds = await _libraryService.GetAllSongIdsByGenreIdAsync(genreId, SongSortOrder.TitleAsc);
-        await PlayFromOrderedIdsAsync(songIds, false);
+        var songIds = await _libraryService.GetAllSongIdsByGenreIdAsync(genreId, SongSortOrder.TitleAsc).ConfigureAwait(false);
+        await PlayFromOrderedIdsAsync(songIds, false).ConfigureAwait(false);
     }
 
     public async Task SetVolumeAsync(double volume)
     {
-        await _audioPlayer.SetVolumeAsync(volume);
-        await _settingsService.SaveVolumeAsync(volume);
+        await _audioPlayer.SetVolumeAsync(volume).ConfigureAwait(false);
+        await _settingsService.SaveVolumeAsync(volume).ConfigureAwait(false);
     }
 
     public async Task ToggleMuteAsync()
     {
         var newMuteState = !_audioPlayer.IsMuted;
-        await _audioPlayer.SetMuteAsync(newMuteState);
-        await _settingsService.SaveMuteStateAsync(newMuteState);
+        await _audioPlayer.SetMuteAsync(newMuteState).ConfigureAwait(false);
+        await _settingsService.SaveMuteStateAsync(newMuteState).ConfigureAwait(false);
     }
 
     public async Task SetShuffleAsync(bool enable)
@@ -439,7 +439,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
             CurrentShuffledIndex = -1;
         }
 
-        await _settingsService.SaveShuffleStateAsync(IsShuffleEnabled);
+        await _settingsService.SaveShuffleStateAsync(IsShuffleEnabled).ConfigureAwait(false);
         ShuffleModeChanged?.Invoke();
         QueueChanged?.Invoke();
         UpdateSmtcControls();
@@ -451,7 +451,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
 
         CurrentRepeatMode = mode;
         _logger.LogDebug("Repeat mode set to {RepeatMode}", CurrentRepeatMode);
-        await _settingsService.SaveRepeatModeAsync(CurrentRepeatMode);
+        await _settingsService.SaveRepeatModeAsync(CurrentRepeatMode).ConfigureAwait(false);
         RepeatModeChanged?.Invoke();
         UpdateSmtcControls();
     }
@@ -546,7 +546,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         if (isRemovingCurrentTrack)
         {
             _logger.LogDebug("Removing currently playing song '{SongTitle}' from queue.", song.Title);
-            await _audioPlayer.StopAsync();
+            await _audioPlayer.StopAsync().ConfigureAwait(false);
             _playbackQueue.RemoveAt(originalIndex);
             if (IsShuffleEnabled) _shuffledQueue.Remove(song);
 
@@ -560,11 +560,11 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
 
                 if (nextIndexToPlay != -1)
                 {
-                    await PlayQueueItemAsync(nextIndexToPlay);
+                    await PlayQueueItemAsync(nextIndexToPlay).ConfigureAwait(false);
                 }
                 else
                 {
-                    await StopAsync();
+                    await StopAsync().ConfigureAwait(false);
                     ClearQueuesInternal();
                     QueueChanged?.Invoke();
                 }
@@ -572,7 +572,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
             else
             {
                 // The queue is now empty.
-                await StopAsync();
+                await StopAsync().ConfigureAwait(false);
                 ClearQueuesInternal();
                 QueueChanged?.Invoke();
             }
@@ -606,7 +606,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
     {
         if (originalQueueIndex < 0 || originalQueueIndex >= _playbackQueue.Count)
         {
-            await StopAsync();
+            await StopAsync().ConfigureAwait(false);
             return;
         }
 
@@ -614,7 +614,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         CurrentTrack = _playbackQueue[originalQueueIndex];
         CurrentQueueIndex = originalQueueIndex;
 
-        CurrentListenHistoryId = await _libraryService.CreateListenHistoryEntryAsync(CurrentTrack.Id);
+        CurrentListenHistoryId = await _libraryService.CreateListenHistoryEntryAsync(CurrentTrack.Id).ConfigureAwait(false);
 
         if (IsShuffleEnabled)
         {
@@ -630,12 +630,12 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
 
         _logger.LogDebug("Now playing '{SongTitle}' (Index: {QueueIndex}, Shuffled Index: {ShuffledIndex})",
             CurrentTrack.Title, CurrentQueueIndex, CurrentShuffledIndex);
-        await _audioPlayer.LoadAsync(CurrentTrack);
+        await _audioPlayer.LoadAsync(CurrentTrack).ConfigureAwait(false);
         
         // Apply ReplayGain if enabled and available in database
-        await ApplyReplayGainIfEnabledAsync();
+        await ApplyReplayGainIfEnabledAsync().ConfigureAwait(false);
         
-        await _audioPlayer.PlayAsync();
+        await _audioPlayer.PlayAsync().ConfigureAwait(false);
         // Note: UpdateSmtcControls() is called by OnAudioPlayerMediaOpened after LoadAsync completes
     }
 
@@ -643,7 +643,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
     {
         if (!_playbackQueue.Any()) return;
         _logger.LogDebug("Clearing playback queue.");
-        await StopAsync();
+        await StopAsync().ConfigureAwait(false);
         ClearQueuesInternal();
         QueueChanged?.Invoke();
         UpdateSmtcControls();
@@ -661,7 +661,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
             ShuffledQueueTrackIds = IsShuffleEnabled ? _shuffledQueue.Select(s => s.Id).ToList() : new List<Guid>(),
             CurrentShuffledQueueIndex = CurrentShuffledIndex
         };
-        await _settingsService.SavePlaybackStateAsync(state);
+        await _settingsService.SavePlaybackStateAsync(state).ConfigureAwait(false);
     }
 
     public async Task SetEqualizerBandAsync(uint bandIndex, float gain)
@@ -792,7 +792,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         var songIds = new HashSet<Guid>(state.PlaybackQueueTrackIds ?? Enumerable.Empty<Guid>());
         if (!songIds.Any()) return false;
 
-        var songMap = await _libraryService.GetSongsByIdsAsync(songIds);
+        var songMap = await _libraryService.GetSongsByIdsAsync(songIds).ConfigureAwait(false);
         if (!songMap.Any())
         {
             _logger.LogWarning("Could not restore playback state: No songs from the previous queue were found.");
@@ -856,8 +856,8 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
 
             try
             {
-                await _audioPlayer.LoadAsync(CurrentTrack);
-                var completedTask = await Task.WhenAny(durationKnownTcs.Task, Task.Delay(8000));
+                await _audioPlayer.LoadAsync(CurrentTrack).ConfigureAwait(false);
+                var completedTask = await Task.WhenAny(durationKnownTcs.Task, Task.Delay(8000)).ConfigureAwait(false);
 
                 if (completedTask == durationKnownTcs.Task && _audioPlayer.Duration > TimeSpan.Zero)
                 {
@@ -887,11 +887,11 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
     {
         if (orderedSongIds == null || !orderedSongIds.Any())
         {
-            await PlayAsync(new List<Song>());
+            await PlayAsync(new List<Song>()).ConfigureAwait(false);
             return;
         }
 
-        var songMap = await _libraryService.GetSongsByIdsAsync(orderedSongIds);
+        var songMap = await _libraryService.GetSongsByIdsAsync(orderedSongIds).ConfigureAwait(false);
 
         var orderedSongs = orderedSongIds
             .Select(id => songMap.GetValueOrDefault(id))
@@ -899,7 +899,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
             .Cast<Song>()
             .ToList();
 
-        await PlayAsync(orderedSongs, 0, startShuffled);
+        await PlayAsync(orderedSongs, 0, startShuffled).ConfigureAwait(false);
     }
 
     private void ClearQueuesInternal()
@@ -1027,7 +1027,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
     private async void OnAudioPlayerPlaybackEnded()
     {
         // When the current track finishes naturally, advance to the next one.
-        await NextAsync();
+        await NextAsync().ConfigureAwait(false);
     }
 
     private void OnAudioPlayerStateChanged()
@@ -1038,7 +1038,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
 
     private async void OnAudioPlayerVolumeChanged()
     {
-        await _settingsService.SaveVolumeAsync(_audioPlayer.Volume);
+        await _settingsService.SaveVolumeAsync(_audioPlayer.Volume).ConfigureAwait(false);
         VolumeStateChanged?.Invoke();
     }
 
@@ -1056,7 +1056,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
     {
         _logger.LogError("Audio player error occurred: {ErrorMessage}", errorMessage);
         IsTransitioningTrack = false;
-        await StopAsync();
+        await StopAsync().ConfigureAwait(false);
     }
 
     private void OnAudioPlayerMediaOpened()
@@ -1067,12 +1067,12 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
 
     private async void OnAudioPlayerSmtcNextButtonPressed()
     {
-        await NextAsync();
+        await NextAsync().ConfigureAwait(false);
     }
 
     private async void OnAudioPlayerSmtcPreviousButtonPressed()
     {
-        await PreviousAsync();
+        await PreviousAsync().ConfigureAwait(false);
     }
 
     /// <summary>

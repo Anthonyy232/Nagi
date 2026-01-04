@@ -267,6 +267,9 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
         if (song is null) return;
 
         _logger.LogDebug("Updating lyrics for track '{SongTitle}' ({SongId})", song.Title, song.Id);
+        
+        // Start prefetch for next track immediately (runs in parallel with current fetch)
+        PrefetchNextTrackLyrics();
 
         // Perform I/O-bound operations on background thread to avoid blocking audio playback
         ParsedLrc? parsedLrc = null;
@@ -340,9 +343,6 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
                 HasLyrics = true;
                 UpdateCurrentLineFromPosition(_playbackService.CurrentPosition);
                 UpdateLineOpacities();
-                
-                // Pre-fetch lyrics for next track in queue (fire-and-forget)
-                PrefetchNextTrackLyrics();
             }
             else if (unsyncedLines is not null)
             {
@@ -426,7 +426,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
             if (prefetchCts.Token.IsCancellationRequested) return;
             prefetchCts.CancelAfter(TimeSpan.FromSeconds(15));
             
-            await _lrcService.GetLyricsAsync(nextSong, prefetchCts.Token);
+            await _lrcService.GetLyricsAsync(nextSong, prefetchCts.Token).ConfigureAwait(false);
         }
         catch (OperationCanceledException)
         {

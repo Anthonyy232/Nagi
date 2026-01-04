@@ -91,17 +91,17 @@ public class TheAudioDbService : ITheAudioDbService, IDisposable
             return ServiceResult<TheAudioDbArtistInfo>.FromPermanentError("TheAudioDB API is disabled for this session.");
 
         // Acquire semaphore and hold it through the entire request to prevent bursts
-        await _rateLimitSemaphore.WaitAsync(cancellationToken);
+        await _rateLimitSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
             // Enforce minimum delay between requests
             var elapsed = DateTime.UtcNow - _lastRequestTime;
             if (elapsed < _minRequestInterval)
             {
-                await Task.Delay(_minRequestInterval - elapsed, cancellationToken);
+                await Task.Delay(_minRequestInterval - elapsed, cancellationToken).ConfigureAwait(false);
             }
 
-            var apiKey = await _apiKeyService.GetApiKeyAsync(ApiKeyName, cancellationToken);
+            var apiKey = await _apiKeyService.GetApiKeyAsync(ApiKeyName, cancellationToken).ConfigureAwait(false);
             if (string.IsNullOrEmpty(apiKey))
             {
                 _logger.LogWarning("TheAudioDB API key not available.");
@@ -111,7 +111,7 @@ public class TheAudioDbService : ITheAudioDbService, IDisposable
             var url = $"{BaseUrl}/{apiKey}/artist-mb.php?i={musicBrainzId}";
             _logger.LogDebug("Fetching TheAudioDB metadata for MBID: {MBID}", musicBrainzId);
 
-            using var response = await _httpClient.GetAsync(url, cancellationToken);
+            using var response = await _httpClient.GetAsync(url, cancellationToken).ConfigureAwait(false);
 
             // Update timestamp AFTER request completes
             _lastRequestTime = DateTime.UtcNow;
@@ -136,7 +136,7 @@ public class TheAudioDbService : ITheAudioDbService, IDisposable
             }
 
             var result = await response.Content.ReadFromJsonAsync<TheAudioDbResponse>(
-                cancellationToken: cancellationToken);
+                cancellationToken: cancellationToken).ConfigureAwait(false);
 
             var artist = result?.Artists?.FirstOrDefault();
             if (artist is null)

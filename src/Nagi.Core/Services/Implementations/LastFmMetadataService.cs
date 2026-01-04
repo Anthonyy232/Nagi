@@ -15,6 +15,11 @@ public class LastFmMetadataService : ILastFmMetadataService
     private const int InvalidApiKeyErrorCode = 10;
     private const string ApiKeyName = "lastfm";
 
+    /// <summary>
+    ///     The hash component of Last.fm's placeholder star image URL, returned for artists without images.
+    /// </summary>
+    private const string PlaceholderImageHash = "2a96cbd8b46e442fc41c2b86b821562f";
+
     private static readonly JsonSerializerOptions _jsonOptions = new() { PropertyNameCaseInsensitive = true };
 
     private readonly IApiKeyService _apiKeyService;
@@ -33,7 +38,7 @@ public class LastFmMetadataService : ILastFmMetadataService
     public async Task<ServiceResult<ArtistInfo>> GetArtistInfoAsync(string artistName,
         CancellationToken cancellationToken = default)
     {
-        var apiKey = await _apiKeyService.GetApiKeyAsync(ApiKeyName, cancellationToken);
+        var apiKey = await _apiKeyService.GetApiKeyAsync(ApiKeyName, cancellationToken).ConfigureAwait(false);
         if (string.IsNullOrEmpty(apiKey))
         {
             _logger.LogError("Cannot fetch Last.fm metadata; API key '{ApiKeyName}' is unavailable.", ApiKeyName);
@@ -47,8 +52,8 @@ public class LastFmMetadataService : ILastFmMetadataService
 
             try
             {
-                using var response = await _httpClient.GetAsync(requestUrl, cancellationToken);
-                var content = await response.Content.ReadAsStringAsync(cancellationToken);
+                using var response = await _httpClient.GetAsync(requestUrl, cancellationToken).ConfigureAwait(false);
+                var content = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -70,7 +75,7 @@ public class LastFmMetadataService : ILastFmMetadataService
                     _logger.LogWarning(
                         "Last.fm API key is invalid. Refreshing and retrying request for artist '{ArtistName}'.",
                         artistName);
-                    apiKey = await _apiKeyService.RefreshApiKeyAsync(ApiKeyName, cancellationToken);
+                    apiKey = await _apiKeyService.RefreshApiKeyAsync(ApiKeyName, cancellationToken).ConfigureAwait(false);
                     if (string.IsNullOrEmpty(apiKey))
                     {
                         _logger.LogError(
@@ -143,17 +148,25 @@ public class LastFmMetadataService : ILastFmMetadataService
     }
 
     /// <summary>
-    ///     Selects the most appropriate image URL from the available sizes.
+    ///     Selects the most appropriate image URL from the available sizes, filtering out placeholder images.
     /// </summary>
     private static string? SelectBestImageUrl(IEnumerable<Data.LastFmImage>? images)
     {
         if (images is null) return null;
-        var imageList = images.ToList();
+
+        var imageList = images
+            .Where(i => !string.IsNullOrEmpty(i.Url) && !IsPlaceholderImage(i.Url))
+            .ToList();
 
         // Prefer larger images, but fall back to any available image.
-        return imageList.FirstOrDefault(i => i.Size == "extralarge" && !string.IsNullOrEmpty(i.Url))?.Url
-               ?? imageList.FirstOrDefault(i => i.Size == "large" && !string.IsNullOrEmpty(i.Url))?.Url
-               ?? imageList.LastOrDefault(i => !string.IsNullOrEmpty(i.Url))?.Url;
+        return imageList.FirstOrDefault(i => i.Size == "extralarge")?.Url
+               ?? imageList.FirstOrDefault(i => i.Size == "large")?.Url
+               ?? imageList.LastOrDefault()?.Url;
     }
 
+    /// <summary>
+    ///     Checks if the given URL points to Last.fm's placeholder star image.
+    /// </summary>
+    private static bool IsPlaceholderImage(string url)
+        => url.Contains(PlaceholderImageHash, StringComparison.OrdinalIgnoreCase);
 }

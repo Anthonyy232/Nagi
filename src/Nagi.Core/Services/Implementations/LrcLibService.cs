@@ -20,7 +20,7 @@ public class LrcLibService : IOnlineLyricsService
     private readonly HttpClient _httpClient;
     private readonly ILogger<LrcLibService> _logger;
     private readonly JsonSerializerOptions _jsonOptions = new() { PropertyNameCaseInsensitive = true };
-    private bool _isRateLimited;
+    private volatile bool _isRateLimited;
 
     public LrcLibService(IHttpClientFactory httpClientFactory, ILogger<LrcLibService> logger)
     {
@@ -52,53 +52,40 @@ public class LrcLibService : IOnlineLyricsService
             var hasValidArtist = !string.IsNullOrWhiteSpace(artistName) &&
                                  !artistName.Equals(unknownArtist, StringComparison.OrdinalIgnoreCase);
             var hasValidAlbum = !string.IsNullOrWhiteSpace(albumName) &&
-                                !albumName.Equals(unknownAlbum, StringComparison.OrdinalIgnoreCase);
+                                 !albumName.Equals(unknownAlbum, StringComparison.OrdinalIgnoreCase);
+
+            // Fire both requests in parallel for faster resolution when nothing is found.
+            // We prefer the strict result if it succeeds; otherwise use search.
+            Task<string?>? strictTask = null;
+            var searchTask = SearchLyricsAsync(trackName, artistName, albumName, duration, cancellationToken);
 
             // 1. Try Strict Match /api/get (Requires Track + Artist + Album)
             // If any are missing or placeholders, we skip directly to search.
             if (hasValidArtist && hasValidAlbum)
             {
-                var query = HttpUtility.ParseQueryString(string.Empty);
-                query["track_name"] = trackName;
-                query["artist_name"] = artistName;
-                query["album_name"] = albumName;
-                query["duration"] = duration.TotalSeconds.ToString("F0");
-
-                var requestUrl = $"{BaseUrl}?{query}";
-                _logger.LogDebug("Fetching lyrics strict lookup from LRCLIB for: {Artist} - {Track}", artistName, trackName);
-
-                using var response = await _httpClient.GetAsync(requestUrl, cancellationToken);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var content = await response.Content.ReadAsStringAsync(cancellationToken);
-                    var lrcResponse = JsonSerializer.Deserialize<LrcLibResponse>(content, _jsonOptions);
-
-                    if (!string.IsNullOrEmpty(lrcResponse?.SyncedLyrics))
-                    {
-                        return lrcResponse.SyncedLyrics;
-                    }
-                }
-                else if (response.StatusCode == HttpStatusCode.TooManyRequests)
-                {
-                    _logger.LogWarning("LRCLIB rate limit hit. Disabling lyrics fetching for this session.");
-                    _isRateLimited = true;
-                    return null;
-                }
-                else if (response.StatusCode != HttpStatusCode.NotFound)
-                {
-                     // Log other errors but proceed to fallback just in case
-                     _logger.LogWarning("Strict lookup failed with status {Status}. Proceeding to search.", response.StatusCode);
-                }
+                strictTask = TryStrictLookupAsync(trackName, artistName!, albumName!, duration, cancellationToken);
             }
             else
             {
-                 _logger.LogDebug("Strict lookup skipped (missing artist or album). Proceeding to search for: {Track}", trackName);
+                _logger.LogDebug("Strict lookup skipped (missing artist or album). Using search for: {Track}", trackName);
             }
 
-            // 2. Search Fallback /api/search
-            _logger.LogDebug("Attempting search fallback for: {Track}", trackName);
-            return await SearchLyricsAsync(trackName, artistName, albumName, duration, cancellationToken);
+            // If strict lookup is possible, await it first (preferred source)
+            if (strictTask != null)
+            {
+                var strictResult = await strictTask.ConfigureAwait(false);
+                if (!string.IsNullOrEmpty(strictResult))
+                {
+                    // Strict succeeded - observe (but don't wait for) the search task to prevent unobserved exceptions
+                    _ = searchTask.ContinueWith(
+                        static t => { _ = t.Exception; },
+                        TaskContinuationOptions.OnlyOnFaulted);
+                    return strictResult;
+                }
+            }
+
+            // 2. Search Fallback - strict was skipped, returned null, or returned empty
+            return await searchTask.ConfigureAwait(false);
         }
         catch (OperationCanceledException)
         {
@@ -112,6 +99,42 @@ public class LrcLibService : IOnlineLyricsService
         }
     }
 
+    private async Task<string?> TryStrictLookupAsync(string trackName, string artistName, string albumName, TimeSpan duration, CancellationToken cancellationToken)
+    {
+        var query = HttpUtility.ParseQueryString(string.Empty);
+        query["track_name"] = trackName;
+        query["artist_name"] = artistName;
+        query["album_name"] = albumName;
+        query["duration"] = duration.TotalSeconds.ToString("F0");
+
+        var requestUrl = $"{BaseUrl}?{query}";
+        _logger.LogDebug("Fetching lyrics strict lookup from LRCLIB for: {Artist} - {Track}", artistName, trackName);
+
+        using var response = await _httpClient.GetAsync(requestUrl, cancellationToken).ConfigureAwait(false);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+            var lrcResponse = JsonSerializer.Deserialize<LrcLibResponse>(content, _jsonOptions);
+
+            if (!string.IsNullOrEmpty(lrcResponse?.SyncedLyrics))
+            {
+                return lrcResponse.SyncedLyrics;
+            }
+        }
+        else if (response.StatusCode == HttpStatusCode.TooManyRequests)
+        {
+            _logger.LogWarning("LRCLIB rate limit hit. Disabling lyrics fetching for this session.");
+            _isRateLimited = true;
+        }
+        else if (response.StatusCode != HttpStatusCode.NotFound)
+        {
+            _logger.LogWarning("Strict lookup failed with status {Status}.", response.StatusCode);
+        }
+
+        return null;
+    }
+
     private async Task<string?> SearchLyricsAsync(string trackName, string? artistName, string? albumName, TimeSpan duration, CancellationToken cancellationToken)
     {
         try
@@ -122,7 +145,7 @@ public class LrcLibService : IOnlineLyricsService
             // Note: Not sending album_name to search to be more permissive, we will filter locally.
             
             var requestUrl = $"{SearchUrl}?{query}";
-            using var response = await _httpClient.GetAsync(requestUrl, cancellationToken);
+            using var response = await _httpClient.GetAsync(requestUrl, cancellationToken).ConfigureAwait(false);
             
             if (response.StatusCode == HttpStatusCode.TooManyRequests)
             {
@@ -133,7 +156,7 @@ public class LrcLibService : IOnlineLyricsService
             
             response.EnsureSuccessStatusCode();
 
-            var content = await response.Content.ReadAsStringAsync(cancellationToken);
+            var content = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
             var searchResults = JsonSerializer.Deserialize<List<LrcLibResponse>>(content, _jsonOptions);
 
             if (searchResults is null || searchResults.Count == 0)

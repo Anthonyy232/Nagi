@@ -13,7 +13,7 @@ namespace Nagi.Core.Services.Implementations;
 ///     Service for loading, parsing, and interacting with .lrc lyric files,
 ///     optimized for high-performance playback synchronization.
 /// </summary>
-public class LrcService : ILrcService
+public class LrcService : ILrcService, IDisposable
 {
     private readonly IFileSystemService _fileSystemService;
     private readonly ILogger<LrcService> _logger;
@@ -23,6 +23,11 @@ public class LrcService : ILrcService
     private readonly IPathConfiguration _pathConfig;
     private readonly ILibraryWriter _libraryWriter;
     private readonly LrcParser.Parser.Lrc.LrcParser _parser = new();
+    
+    private readonly object _ctsLock = new();
+    private CancellationTokenSource _settingsCts = new();
+    private readonly List<CancellationTokenSource> _staleCts = new();
+    private bool _disposed;
 
     public LrcService(
         IFileSystemService fileSystemService,
@@ -40,6 +45,7 @@ public class LrcService : ILrcService
         _pathConfig = pathConfig;
         _libraryWriter = libraryWriter;
         _logger = logger;
+        _settingsService.FetchOnlineLyricsEnabledChanged += OnFetchOnlineLyricsEnabledChanged;
     }
 
     /// <inheritdoc />
@@ -47,30 +53,41 @@ public class LrcService : ILrcService
     {
         // 1. Try local file path from Song object
         if (!string.IsNullOrWhiteSpace(song.LrcFilePath) && _fileSystemService.FileExists(song.LrcFilePath))
-            return await GetLyricsAsync(song.LrcFilePath);
+            return await GetLyricsAsync(song.LrcFilePath).ConfigureAwait(false);
 
         // 2. Try online fallback if enabled AND never checked before
         var neverChecked = song.LyricsLastCheckedUtc == null;
-        if (neverChecked && await _settingsService.GetFetchOnlineLyricsEnabledAsync())
+        if (neverChecked && await _settingsService.GetFetchOnlineLyricsEnabledAsync().ConfigureAwait(false))
         {
+            CancellationToken settingsToken;
+            lock (_ctsLock)
+            {
+                if (_disposed) return null;
+                settingsToken = _settingsCts.Token;
+            }
+
+            // Use a linked token source to handle both caller cancellation AND settings toggle
+            using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, settingsToken);
+            var token = linkedCts.Token;
+
             // Check for cancellation before making any online calls
-            if (cancellationToken.IsCancellationRequested)
+            if (token.IsCancellationRequested)
                 return null;
 
-            // 2a. Fire both requests in parallel for faster resolution
+            // Fire both requests in parallel for faster resolution
             var lrcLibTask = _onlineLyricsService.GetLyricsAsync(
-                song.Title, song.Artist?.Name, song.Album?.Title, song.Duration, cancellationToken);
+                song.Title, song.Artist?.Name, song.Album?.Title, song.Duration, token);
             var netEaseTask = _netEaseLyricsService.SearchLyricsAsync(
-                song.Title, song.Artist?.Name, cancellationToken);
+                song.Title, song.Artist?.Name, token);
             
             // Wait for LRCLIB first (preferred source - community-curated, better quality)
-            var lrcContent = await lrcLibTask;
+            var lrcContent = await lrcLibTask.ConfigureAwait(false);
             
-            // 2b. Use LRCLIB result if available, otherwise wait for NetEase
-            if (string.IsNullOrWhiteSpace(lrcContent) && !cancellationToken.IsCancellationRequested)
+            // Use LRCLIB result if available, otherwise wait for NetEase
+            if (string.IsNullOrWhiteSpace(lrcContent) && !token.IsCancellationRequested)
             {
                 _logger.LogDebug("LRCLIB returned no results for '{Title}', using NetEase result.", song.Title);
-                lrcContent = await netEaseTask;
+                lrcContent = await netEaseTask.ConfigureAwait(false);
             }
             else
             {
@@ -88,16 +105,16 @@ public class LrcService : ILrcService
             }
             
             // Only mark as checked if the operation wasn't cancelled - otherwise we'll retry next time
-            if (!cancellationToken.IsCancellationRequested)
+            if (!token.IsCancellationRequested)
             {
-                await _libraryWriter.UpdateSongLyricsLastCheckedAsync(song.Id);
+                await _libraryWriter.UpdateSongLyricsLastCheckedAsync(song.Id).ConfigureAwait(false);
                 song.LyricsLastCheckedUtc = DateTime.UtcNow;
             }
             
             if (!string.IsNullOrWhiteSpace(lrcContent))
             {
                 // Cache the lyrics for future use
-                await CacheLyricsAsync(song, lrcContent);
+                await CacheLyricsAsync(song, lrcContent).ConfigureAwait(false);
 
                 // Parse the downloaded lyrics string
                 return ParseLrcContent(lrcContent);
@@ -114,7 +131,7 @@ public class LrcService : ILrcService
 
         try
         {
-            var fileContent = await _fileSystemService.ReadAllTextAsync(lrcFilePath);
+            var fileContent = await _fileSystemService.ReadAllTextAsync(lrcFilePath).ConfigureAwait(false);
             return ParseLrcContent(fileContent);
         }
         catch (Exception ex)
@@ -131,7 +148,7 @@ public class LrcService : ILrcService
             var cacheFileName = FileNameHelper.GenerateLrcCacheFileName(song.Artist?.Name, song.Album?.Title, song.Title);
             var cachedLrcPath = _fileSystemService.Combine(_pathConfig.LrcCachePath, cacheFileName);
 
-            await _fileSystemService.WriteAllTextAsync(cachedLrcPath, lrcContent);
+            await _fileSystemService.WriteAllTextAsync(cachedLrcPath, lrcContent).ConfigureAwait(false);
             _logger.LogDebug("Cached online lyrics for song {SongId} to {Path}", song.Id, cachedLrcPath);
 
             // Update the database only if the path has changed
@@ -140,7 +157,7 @@ public class LrcService : ILrcService
                 song.LrcFilePath = cachedLrcPath;
                 // We don't persist the full text to 'Lyrics' column here to keep the DB light,
                 // as we rely on the LRC file. The 'Lyrics' column is mostly for unsynced lyrics.
-                await _libraryWriter.UpdateSongLrcPathAsync(song.Id, cachedLrcPath);
+                await _libraryWriter.UpdateSongLrcPathAsync(song.Id, cachedLrcPath).ConfigureAwait(false);
             }
         }
         catch (Exception ex)
@@ -240,5 +257,63 @@ public class LrcService : ILrcService
         }
 
         return latestMatchIndex;
+    }
+
+    private void OnFetchOnlineLyricsEnabledChanged(bool isEnabled)
+    {
+        lock (_ctsLock)
+        {
+            if (_disposed) return;
+
+            if (!isEnabled)
+            {
+                _logger.LogInformation("Fetch online lyrics disabled. Cancelling ongoing fetches.");
+                if (!_settingsCts.IsCancellationRequested)
+                {
+                    _settingsCts.Cancel();
+                }
+            }
+            else
+            {
+                if (_settingsCts.IsCancellationRequested)
+                {
+                    _staleCts.Add(_settingsCts);
+                    _settingsCts = new CancellationTokenSource();
+                }
+            }
+        }
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (_disposed) return;
+        
+        if (disposing)
+        {
+            _settingsService.FetchOnlineLyricsEnabledChanged -= OnFetchOnlineLyricsEnabledChanged;
+            
+            lock (_ctsLock)
+            {
+                _settingsCts.Cancel();
+                _settingsCts.Dispose();
+                
+                foreach (var cts in _staleCts)
+                {
+                    cts.Dispose();
+                }
+                _staleCts.Clear();
+                _disposed = true;
+            }
+        }
+        else
+        {
+            _disposed = true;
+        }
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
     }
 }
