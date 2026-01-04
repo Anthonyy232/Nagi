@@ -36,6 +36,15 @@ public class LrcServiceTests
         _libraryWriter = Substitute.For<ILibraryWriter>();
         _logger = Substitute.For<ILogger<LrcService>>();
         _netEaseLyricsService = Substitute.For<INetEaseLyricsService>();
+        
+        // Default mock: return both providers enabled in standard priority order
+        _settingsService.GetEnabledServiceProvidersAsync(ServiceCategory.Lyrics)
+            .Returns(new List<ServiceProviderSetting>
+            {
+                new() { Id = "lrclib", DisplayName = "LRCLIB", Category = ServiceCategory.Lyrics, IsEnabled = true, Order = 0 },
+                new() { Id = "netease", DisplayName = "NetEase", Category = ServiceCategory.Lyrics, IsEnabled = true, Order = 1 }
+            });
+        
         _lrcService = new LrcService(
             _fileSystem,
             _onlineLyricsService,
@@ -343,6 +352,84 @@ public class LrcServiceTests
         await _onlineLyricsService.DidNotReceive().GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), 
             Arg.Any<string?>(), Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>());
         await _netEaseLyricsService.DidNotReceive().SearchLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>());
+    }
+
+    /// <summary>
+    ///     Verifies that when no lyrics providers are enabled, no remote services are called.
+    /// </summary>
+    [Fact]
+    public async Task GetLyricsAsync_WhenNoProvidersEnabled_DoesNotCallRemoteServices()
+    {
+        // Arrange
+        var song = new Song { Title = "Test", LrcFilePath = null, Duration = TimeSpan.FromMinutes(3) };
+        _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
+        _settingsService.GetEnabledServiceProvidersAsync(ServiceCategory.Lyrics)
+            .Returns(new List<ServiceProviderSetting>()); // Empty list - no providers enabled
+
+        // Act
+        var result = await _lrcService.GetLyricsAsync(song);
+
+        // Assert
+        result.Should().BeNull();
+        await _onlineLyricsService.DidNotReceive().GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), 
+            Arg.Any<string?>(), Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>());
+        await _netEaseLyricsService.DidNotReceive().SearchLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>());
+    }
+
+    /// <summary>
+    ///     Verifies that when only NetEase is enabled, only NetEase is called.
+    /// </summary>
+    [Fact]
+    public async Task GetLyricsAsync_WhenOnlyNetEaseEnabled_OnlyCallsNetEase()
+    {
+        // Arrange
+        var song = new Song { Title = "Test", LrcFilePath = null, Duration = TimeSpan.FromMinutes(3) };
+        _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
+        _settingsService.GetEnabledServiceProvidersAsync(ServiceCategory.Lyrics)
+            .Returns(new List<ServiceProviderSetting>
+            {
+                new() { Id = "netease", DisplayName = "NetEase", Category = ServiceCategory.Lyrics, IsEnabled = true, Order = 0 }
+            });
+        _netEaseLyricsService.SearchLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>())
+            .Returns("[00:01.00]From NetEase");
+
+        // Act
+        var result = await _lrcService.GetLyricsAsync(song);
+
+        // Assert
+        result.Should().NotBeNull();
+        result!.Lines[0].Text.Should().Be("From NetEase");
+        
+        // Verify LRCLIB was NOT called
+        await _onlineLyricsService.DidNotReceive().GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), 
+            Arg.Any<string?>(), Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>());
+        // Verify NetEase WAS called
+        await _netEaseLyricsService.Received(1).SearchLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>());
+    }
+
+    #endregion
+
+    #region LyricsLastChecked Tests
+
+    /// <summary>
+    ///     Verifies that LyricsLastCheckedUtc is NOT set when no providers are enabled,
+    ///     allowing future retry when providers are enabled.
+    /// </summary>
+    [Fact]
+    public async Task GetLyricsAsync_WhenNoProvidersEnabled_DoesNotSetLyricsLastChecked()
+    {
+        // Arrange
+        var song = new Song { Title = "Test", LrcFilePath = null, Duration = TimeSpan.FromMinutes(3) };
+        _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
+        _settingsService.GetEnabledServiceProvidersAsync(ServiceCategory.Lyrics)
+            .Returns(new List<ServiceProviderSetting>()); // Empty list
+
+        // Act
+        await _lrcService.GetLyricsAsync(song);
+
+        // Assert - LyricsLastCheckedUtc should NOT be set
+        await _libraryWriter.DidNotReceive().UpdateSongLyricsLastCheckedAsync(Arg.Any<Guid>());
+        song.LyricsLastCheckedUtc.Should().BeNull();
     }
 
     #endregion

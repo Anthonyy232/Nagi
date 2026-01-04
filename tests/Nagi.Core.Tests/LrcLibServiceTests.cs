@@ -28,7 +28,7 @@ public class LrcLibServiceTests : IDisposable
         _httpHandler = new TestHttpMessageHandler();
         var httpClient = new HttpClient(_httpHandler) { BaseAddress = new Uri("https://lrclib.net") };
         var httpClientFactory = Substitute.For<IHttpClientFactory>();
-        httpClientFactory.CreateClient("LrcLib").Returns(httpClient);
+        httpClientFactory.CreateClient(Arg.Any<string>()).Returns(httpClient);
         _logger = Substitute.For<ILogger<LrcLibService>>();
 
         _service = new LrcLibService(httpClientFactory, _logger);
