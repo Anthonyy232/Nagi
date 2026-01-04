@@ -60,7 +60,7 @@ public class ApiKeyServiceTests : IDisposable
     public async Task GetApiKeyAsync_FirstCall_FetchesKeyFromServerSuccessfully()
     {
         // Arrange
-        const string keyName = "testKey";
+        const string keyName = ApiKeyServices.TheAudioDb;
         const string expectedApiKey = "12345-abcde";
         SetupValidConfiguration();
         SetupHttpResponse(HttpStatusCode.OK, new { Value = expectedApiKey });
@@ -73,7 +73,7 @@ public class ApiKeyServiceTests : IDisposable
         _httpMessageHandler.Requests.Should().HaveCount(1);
         var request = _httpMessageHandler.Requests[0];
         request.Method.Should().Be(HttpMethod.Get);
-        request.RequestUri!.ToString().Should().Be($"https://api.test.com/api/{keyName}-key");
+        request.RequestUri!.ToString().Should().Be("https://api.test.com/api/theaudiodb-key");
         request.Headers.Contains("X-API-KEY").Should().BeTrue();
         request.Headers.Contains("Ocp-Apim-Subscription-Key").Should().BeTrue();
     }
@@ -92,7 +92,7 @@ public class ApiKeyServiceTests : IDisposable
     public async Task GetApiKeyAsync_SecondCallForSameKey_ReturnsFromCacheWithoutHttpCall()
     {
         // Arrange
-        const string keyName = "testKey";
+        const string keyName = ApiKeyServices.TheAudioDb;
         const string expectedApiKey = "12345-abcde";
         SetupValidConfiguration();
         SetupHttpResponse(HttpStatusCode.OK, new { Value = expectedApiKey });
@@ -123,7 +123,7 @@ public class ApiKeyServiceTests : IDisposable
     public async Task RefreshApiKeyAsync_ForcesNewFetchFromServer_AndUpdatesCache()
     {
         // Arrange
-        const string keyName = "testKey";
+        const string keyName = ApiKeyServices.Spotify;
         const string initialApiKey = "initial-key";
         const string refreshedApiKey = "refreshed-key";
         SetupValidConfiguration();
@@ -151,7 +151,7 @@ public class ApiKeyServiceTests : IDisposable
     public async Task GetApiKeyAsync_WhenHttpCallFails_ReturnsNull()
     {
         // Arrange
-        const string keyName = "errorKey";
+        const string keyName = ApiKeyServices.LastFm;
         SetupValidConfiguration();
         SetupHttpResponse(HttpStatusCode.InternalServerError);
 
@@ -175,7 +175,7 @@ public class ApiKeyServiceTests : IDisposable
     public async Task GetApiKeyAsync_WhenApiResponseValueIsInvalid_ReturnsNull(string? invalidValue)
     {
         // Arrange
-        const string keyName = "badValueKey";
+        const string keyName = ApiKeyServices.FanartTv;
         SetupValidConfiguration();
         SetupHttpResponse(HttpStatusCode.OK, new { Value = invalidValue });
 
@@ -194,7 +194,7 @@ public class ApiKeyServiceTests : IDisposable
     public async Task GetApiKeyAsync_WhenApiResponseIsMalformedJson_ReturnsNull()
     {
         // Arrange
-        const string keyName = "badJsonKey";
+        const string keyName = ApiKeyServices.LastFmSecret;
         SetupValidConfiguration();
         SetupHttpResponse(HttpStatusCode.OK, new { Message = "This is not the expected format" });
 
@@ -217,7 +217,7 @@ public class ApiKeyServiceTests : IDisposable
         _configuration["NagiApiServer:ApiKey"].Returns("some-key");
 
         // Act
-        var result = await _apiKeyService.GetApiKeyAsync("anyKey");
+        var result = await _apiKeyService.GetApiKeyAsync(ApiKeyServices.TheAudioDb);
 
         // Assert
         result.Should().BeNull();
@@ -240,7 +240,7 @@ public class ApiKeyServiceTests : IDisposable
         _httpMessageHandler.SendAsyncFunc = (_, _) => tcs.Task;
 
         // Act
-        var apiTask = _apiKeyService.GetApiKeyAsync("cancelKey", cts.Token);
+        var apiTask = _apiKeyService.GetApiKeyAsync(ApiKeyServices.Spotify, cts.Token);
         cts.Cancel();
 
         // Assert
@@ -259,7 +259,7 @@ public class ApiKeyServiceTests : IDisposable
         _httpMessageHandler.SendAsyncFunc = (_, _) => throw new HttpRequestException("Simulated network failure");
 
         // Act
-        var result = await _apiKeyService.GetApiKeyAsync("exceptionKey");
+        var result = await _apiKeyService.GetApiKeyAsync(ApiKeyServices.LastFm);
 
         // Assert
         result.Should().BeNull();
@@ -270,9 +270,9 @@ public class ApiKeyServiceTests : IDisposable
     ///     URL from various formats of the base URL provided in the configuration.
     /// </summary>
     [Theory]
-    [InlineData("https://api.test.com/", "https://api.test.com/api/myKey-key")]
-    [InlineData("https://api.test.com", "https://api.test.com/api/myKey-key")]
-    [InlineData("api.test.com", "https://api.test.com/api/myKey-key")]
+    [InlineData("https://api.test.com/", "https://api.test.com/api/fanarttv-key")]
+    [InlineData("https://api.test.com", "https://api.test.com/api/fanarttv-key")]
+    [InlineData("api.test.com", "https://api.test.com/api/fanarttv-key")]
     public async Task GetApiKeyAsync_ConstructsRequestUrlCorrectly(string configuredUrl, string expectedRequestUrl)
     {
         // Arrange
@@ -280,7 +280,7 @@ public class ApiKeyServiceTests : IDisposable
         SetupHttpResponse(HttpStatusCode.OK, new { Value = "some-key" });
 
         // Act
-        await _apiKeyService.GetApiKeyAsync("myKey");
+        await _apiKeyService.GetApiKeyAsync(ApiKeyServices.FanartTv);
 
         // Assert
         _httpMessageHandler.Requests.Should().HaveCount(1);
@@ -304,7 +304,7 @@ public class ApiKeyServiceTests : IDisposable
         SetupHttpResponse(HttpStatusCode.OK, new { Value = "some-key" });
 
         // Act
-        await _apiKeyService.GetApiKeyAsync("testKey");
+        await _apiKeyService.GetApiKeyAsync(ApiKeyServices.TheAudioDb);
 
         // Assert
         _httpMessageHandler.Requests.Should().HaveCount(1);
@@ -328,7 +328,7 @@ public class ApiKeyServiceTests : IDisposable
     public async Task GetApiKeyAsync_ConcurrentCallsForSameKey_ResultInSingleHttpCall()
     {
         // Arrange
-        const string keyName = "concurrentKey";
+        const string keyName = ApiKeyServices.TheAudioDb;
         const string expectedApiKey = "shared-key";
         SetupValidConfiguration();
 

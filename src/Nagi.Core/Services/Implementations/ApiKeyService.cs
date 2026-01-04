@@ -13,6 +13,18 @@ file class ApiKeyResponse
 }
 
 /// <summary>
+///     Well-known service names for API key retrieval.
+/// </summary>
+public static class ApiKeyServices
+{
+    public const string TheAudioDb = "theaudiodb";
+    public const string Spotify = "spotify";
+    public const string LastFm = "lastfm";
+    public const string LastFmSecret = "lastfm-secret";
+    public const string FanartTv = "fanarttv";
+}
+
+/// <summary>
 ///     Manages the retrieval and thread-safe caching of API keys from a secure server endpoint.
 /// </summary>
 public class ApiKeyService : IApiKeyService, IDisposable
@@ -93,10 +105,21 @@ public class ApiKeyService : IApiKeyService, IDisposable
             // Ensure the URL has a scheme to prevent URI format exceptions.
             if (!serverUrl.StartsWith("http://") && !serverUrl.StartsWith("https://")) serverUrl = "https://" + serverUrl;
 
-            var endpoint = $"{serverUrl.TrimEnd('/')}/api/{keyName}-key";
-            _logger.LogDebug("Fetching API key '{ApiKeyName}' from server: {Endpoint}", keyName, endpoint);
+            // Build the request URL.
+            var route = keyName switch
+            {
+                ApiKeyServices.TheAudioDb => "theaudiodb-key",
+                ApiKeyServices.Spotify => "spotify-key",
+                ApiKeyServices.LastFm => "lastfm-key",
+                ApiKeyServices.LastFmSecret => "lastfm-secret-key",
+                ApiKeyServices.FanartTv => "fanarttv-key",
+                _ => throw new ArgumentException($"Unknown service: {keyName}", nameof(keyName))
+            };
 
-            using var request = new HttpRequestMessage(HttpMethod.Get, endpoint);
+            var requestUri = $"{serverUrl.TrimEnd('/')}/api/{route}";
+            _logger.LogDebug("Fetching API key '{ApiKeyName}' from server: {Endpoint}", keyName, requestUri);
+
+            using var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
             request.Headers.Add("X-API-KEY", serverKey);
 
             if (!string.IsNullOrEmpty(subscriptionKey))
