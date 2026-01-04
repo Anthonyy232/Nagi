@@ -154,7 +154,7 @@ public class LastFmScrobblerServiceTests : IDisposable
 
     /// <summary>
     ///     Verifies that <see cref="LastFmScrobblerService.UpdateNowPlayingAsync" /> returns false when
-    ///     the Last.fm API returns a non-success status code.
+    ///     the Last.fm API returns a non-success status code (after retry attempts).
     /// </summary>
     [Fact]
     public async Task UpdateNowPlayingAsync_WhenApiCallFails_ReturnsFalse()
@@ -168,7 +168,7 @@ public class LastFmScrobblerServiceTests : IDisposable
 
         // Assert
         result.Should().BeFalse();
-        _httpMessageHandler.Requests.Should().HaveCount(1);
+        _httpMessageHandler.Requests.Should().HaveCount(3); // 3 attempts due to retry on 500 error
     }
 
     /// <summary>

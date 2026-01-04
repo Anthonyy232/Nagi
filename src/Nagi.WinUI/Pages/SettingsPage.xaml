@@ -20,6 +20,51 @@
         <localConverters:BackdropMaterialToStringConverter x:Key="BackdropMaterialToStringConverter" />
         <localConverters:StringToFontFamilyConverter x:Key="StringToFontFamilyConverter" />
         <localConverters:FloatToDecimalStringConverter x:Key="FloatToDecimalStringConverter" />
+        <localConverters:BooleanToOpacityConverter x:Key="BooleanToOpacityConverter" />
+        <localConverters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        
+        <!-- Shared template for service provider items in Lyrics and Metadata source lists -->
+        <DataTemplate x:Key="ServiceProviderItemTemplate" x:DataType="viewmodels:ServiceProviderSettingViewModel">
+            <Grid Padding="12,8" VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="28" />
+                    <ColumnDefinition Width="32" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Drag Handle -->
+                <FontIcon
+                    Grid.Column="0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontFamily="{StaticResource SymbolThemeFontFamily}"
+                    FontSize="12"
+                    Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                    Glyph="&#xE76F;"
+                    Opacity="{x:Bind CanDrag, Converter={StaticResource BooleanToOpacityConverter}, Mode=OneWay}" />
+
+                <FontIcon
+                    Grid.Column="1"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontFamily="{StaticResource SymbolThemeFontFamily}"
+                    Foreground="{ThemeResource AppPrimaryColorBrush}"
+                    Glyph="&#xE944;" />
+
+                <TextBlock
+                    Grid.Column="2"
+                    Margin="8,0,12,0"
+                    VerticalAlignment="Center"
+                    FontWeight="SemiBold"
+                    Text="{x:Bind DisplayName}" />
+
+                <ToggleSwitch
+                    Grid.Column="3"
+                    VerticalAlignment="Center"
+                    IsOn="{x:Bind IsEnabled, Mode=TwoWay}" />
+            </Grid>
+        </DataTemplate>
     </Page.Resources>
 
     <Grid>
@@ -532,27 +577,72 @@
 
                 <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="Data Management" />
 
-                <controls:SettingsCard
+                <controls:SettingsExpander
                     Header="Retrieve online metadata"
-                    Description="Fetch additional information like artist images and biographies from online services (e.g., Spotify, Last.fm).">
-                    <controls:SettingsCard.HeaderIcon>
+                    Description="Fetch additional information like artist images and biographies from online services (e.g., Spotify, Last.fm)."
+                    IsExpanded="{x:Bind ViewModel.IsFetchOnlineMetadataEnabled, Mode=OneWay}">
+                    <controls:SettingsExpander.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8EC;" />
-                    </controls:SettingsCard.HeaderIcon>
+                    </controls:SettingsExpander.HeaderIcon>
                     <ToggleSwitch
                         HorizontalAlignment="Right"
                         IsOn="{x:Bind ViewModel.IsFetchOnlineMetadataEnabled, Mode=TwoWay}" />
-                </controls:SettingsCard>
 
-                <controls:SettingsCard
+                    <controls:SettingsExpander.Items>
+                        <controls:SettingsCard Header="Sources" Description="Drag to reorder metadata sources.">
+                            <ListView
+                                x:Name="MetadataProvidersListView"
+                                    Width="350"
+                                    HorizontalAlignment="Right"
+                                    AllowDrop="True"
+                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    CanDragItems="True"
+                                    CanReorderItems="True"
+                                    CornerRadius="{StaticResource ControlCornerRadius}"
+                                    ItemsSource="{x:Bind ViewModel.MetadataProviders}"
+                                    DragItemsStarting="ProvidersListView_DragItemsStarting"
+                                    ItemContainerStyle="{StaticResource NavigationListViewItemStyle}"
+                                    ItemTemplate="{StaticResource ServiceProviderItemTemplate}"
+                                    SelectionMode="Single" />
+                        </controls:SettingsCard>
+                    </controls:SettingsExpander.Items>
+                </controls:SettingsExpander>
+
+                <controls:SettingsExpander
                     Header="Fetch online lyrics"
-                    Description="Automatically fetch missing lyrics from LRCLIB. (Privacy: sends track metadata to a third-party service)">
-                    <controls:SettingsCard.HeaderIcon>
+                    Description="Automatically fetch missing lyrics from online sources. (Privacy: sends track metadata to third-party services)"
+                    IsExpanded="{x:Bind ViewModel.IsFetchOnlineLyricsEnabled, Mode=OneWay}">
+                    <controls:SettingsExpander.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE90A;" />
-                    </controls:SettingsCard.HeaderIcon>
+                    </controls:SettingsExpander.HeaderIcon>
                     <ToggleSwitch
                         HorizontalAlignment="Right"
                         IsOn="{x:Bind ViewModel.IsFetchOnlineLyricsEnabled, Mode=TwoWay}" />
-                </controls:SettingsCard>
+
+                    <controls:SettingsExpander.Items>
+                        <controls:SettingsCard Header="Sources" Description="Drag to reorder lyrics sources.">
+                            <ListView
+                                x:Name="LyricsProvidersListView"
+                                Width="350"
+                                HorizontalAlignment="Right"
+                                AllowDrop="True"
+                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                CanDragItems="True"
+                                CanReorderItems="True"
+                                CornerRadius="{StaticResource ControlCornerRadius}"
+                                ItemsSource="{x:Bind ViewModel.LyricsProviders}"
+                                DragItemsStarting="ProvidersListView_DragItemsStarting"
+                                ItemContainerStyle="{StaticResource NavigationListViewItemStyle}"
+                                ItemTemplate="{StaticResource ServiceProviderItemTemplate}"
+                                SelectionMode="Single" />
+                        </controls:SettingsCard>
+                    </controls:SettingsExpander.Items>
+                </controls:SettingsExpander>
+
 
                 <controls:SettingsCard
                     Header="Export/Import Playlists"

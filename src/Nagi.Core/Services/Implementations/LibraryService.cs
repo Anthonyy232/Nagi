@@ -9,6 +9,7 @@ using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using Nagi.Core.Http;
 using System.IO;
 
 namespace Nagi.Core.Services.Implementations;
@@ -3069,65 +3070,146 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     {
         var wasMetadataFoundAndUpdated = false;
 
-        // Pre-warm API keys in parallel with MusicBrainz lookup.
-        // MusicBrainz doesn't require an API key, so we can fetch keys concurrently.
-        // ApiKeyService caches results, so subsequent service calls hit the cache instantly.
-        // We wrap each fetch in a task that catches exceptions to ensure the whole fetch isn't cancelled.
-        var keyWarmupTask = Task.WhenAll(
-            Task.Run(async () => { try { await _apiKeyService.GetApiKeyAsync("theaudiodb", cancellationToken).ConfigureAwait(false); } catch { /* Ignore warmup failure */ } }, cancellationToken),
-            Task.Run(async () => { try { await _apiKeyService.GetApiKeyAsync("fanarttv", cancellationToken).ConfigureAwait(false); } catch { /* Ignore warmup failure */ } }, cancellationToken),
-            Task.Run(async () => { try { await _apiKeyService.GetApiKeyAsync("spotify", cancellationToken).ConfigureAwait(false); } catch { /* Ignore warmup failure */ } }, cancellationToken),
-            Task.Run(async () => { try { await _apiKeyService.GetApiKeyAsync("lastfm", cancellationToken).ConfigureAwait(false); } catch { /* Ignore warmup failure */ } }, cancellationToken)
-        );
-
-        // Branch A: Resolving high-quality images and biography (MBID -> TheAudioDB -> Fanart.tv -> Spotify)
-        // We run this in parallel with Branch B (Last.fm) to reduce total latency.
-        var primaryMetadataTask = ResolvePrimaryMetadataAsync(artist.Name, artist.MusicBrainzId, cancellationToken);
-
-        // Branch B: Fetching Biography and fallback image from Last.fm
-        var lastFmTask = _lastFmService.GetArtistInfoAsync(artist.Name, cancellationToken);
-
-        // Wait for all branches and warmup to complete
-        await Task.WhenAll(keyWarmupTask, primaryMetadataTask, lastFmTask).ConfigureAwait(false);
-
-        var (primaryImageUrl, primaryBiography, resolvedMbid) = await primaryMetadataTask.ConfigureAwait(false);
-        var lastFmResult = await lastFmTask.ConfigureAwait(false);
-
-        // --- Sequential Update Phase (Thread-Safe) ---
-        // We update the 'artist' entity tracked by the DB context after all remote calls are finished.
-
-        // 1. Apply MusicBrainz ID if resolved
-        if (string.IsNullOrEmpty(artist.MusicBrainzId) && !string.IsNullOrEmpty(resolvedMbid))
+        // Get enabled metadata providers in priority order
+        var enabledProviders = await _settingsService.GetEnabledServiceProvidersAsync(Models.ServiceCategory.Metadata).ConfigureAwait(false);
+        
+        if (enabledProviders.Count == 0)
         {
-            artist.MusicBrainzId = resolvedMbid;
-            wasMetadataFoundAndUpdated = true;
-            _logger.LogInformation("Resolved MusicBrainz ID {MBID} for artist '{ArtistName}'", resolvedMbid, artist.Name);
+            _logger.LogDebug("No metadata providers enabled. Skipping remote fetch for artist '{ArtistName}'.", artist.Name);
+            return;
         }
 
-        // 2. Apply Biography (TheAudioDB > Last.fm)
-        var finalBiography = primaryBiography;
-        if (string.IsNullOrEmpty(finalBiography) && 
-            lastFmResult.Status == ServiceResultStatus.Success && 
-            lastFmResult.Data?.Biography is not null)
+        _logger.LogDebug("Using metadata providers for '{ArtistName}': {Providers}", 
+            artist.Name, string.Join(", ", enabledProviders.Select(p => p.Id)));
+
+        var enabledIds = enabledProviders.Select(p => p.Id).ToHashSet();
+
+        // Initialize task storage
+        var tasks = new Dictionary<string, Task<(string? ImageUrl, string? Biography)>>();
+
+        // Pre-warm API keys in parallel for enabled providers only.
+        // Start warmup FIRST so it runs concurrently with all provider tasks.
+        // Warmup failures are acceptable - the actual service calls handle missing keys gracefully.
+        var warmupTasks = new List<Task>();
+        if (enabledIds.Contains(ServiceProviderIds.TheAudioDb))
+            warmupTasks.Add(WarmupApiKeyAsync(ServiceProviderIds.TheAudioDb, cancellationToken));
+        if (enabledIds.Contains(ServiceProviderIds.FanartTv))
+            warmupTasks.Add(WarmupApiKeyAsync(ServiceProviderIds.FanartTv, cancellationToken));
+        if (enabledIds.Contains(ServiceProviderIds.Spotify))
+            warmupTasks.Add(WarmupApiKeyAsync(ServiceProviderIds.Spotify, cancellationToken));
+        if (enabledIds.Contains(ServiceProviderIds.LastFm))
+            warmupTasks.Add(WarmupApiKeyAsync(ServiceProviderIds.LastFm, cancellationToken));
+
+        // Start MusicBrainz lookup in parallel with warmup (don't block other tasks)
+        var mbid = artist.MusicBrainzId;
+        Task<string?>? musicBrainzTask = null;
+        if (string.IsNullOrEmpty(mbid) && enabledIds.Contains(ServiceProviderIds.MusicBrainz))
         {
-            finalBiography = lastFmResult.Data.Biography;
+            musicBrainzTask = _musicBrainzService.SearchArtistAsync(artist.Name, cancellationToken);
         }
+
+        // Start MBID-independent tasks immediately (in parallel with warmup and MusicBrainz)
+        if (enabledIds.Contains(ServiceProviderIds.Spotify))
+            tasks[ServiceProviderIds.Spotify] = FetchFromSpotifyAsync(artist.Name, cancellationToken);
+        if (enabledIds.Contains(ServiceProviderIds.LastFm))
+            tasks[ServiceProviderIds.LastFm] = FetchFromLastFmAsync(artist.Name, cancellationToken);
+
+        // Wait for MusicBrainz to complete (if started)
+        // Note: Warmup tasks continue in background - they're best-effort cache warming
+        if (musicBrainzTask != null)
+        {
+            var resolvedMbid = await musicBrainzTask.ConfigureAwait(false);
+            if (!string.IsNullOrEmpty(resolvedMbid))
+            {
+                mbid = resolvedMbid;
+                artist.MusicBrainzId = mbid;
+                wasMetadataFoundAndUpdated = true;
+                _logger.LogInformation("Resolved MusicBrainz ID {MBID} for artist '{ArtistName}'", mbid, artist.Name);
+            }
+        }
+
+        // Start MBID-dependent tasks now that we have (or don't have) the MBID.
+        // NOTE: TheAudioDB and Fanart.tv require a MusicBrainz ID to function.
+        // If MusicBrainz is disabled and the artist has no existing MBID, these providers will be skipped.
+        if (!string.IsNullOrEmpty(mbid))
+        {
+            if (enabledIds.Contains(ServiceProviderIds.TheAudioDb))
+                tasks[ServiceProviderIds.TheAudioDb] = FetchFromTheAudioDbAsync(mbid, cancellationToken);
+            if (enabledIds.Contains(ServiceProviderIds.FanartTv))
+                tasks[ServiceProviderIds.FanartTv] = FetchFromFanartTvAsync(mbid, cancellationToken);
+        }
+
+        // Wait for warmup tasks to complete (these have been running in parallel with provider tasks above).
+        // This ensures API key cache is populated before we evaluate results, reducing latency for the awaits below.
+        await Task.WhenAll(warmupTasks).ConfigureAwait(false);
+
+        // Evaluate results in priority order for image and biography
+        string? finalImageUrl = null;
+        string? finalBiography = null;
+
+        foreach (var provider in enabledProviders)
+        {
+            if (!tasks.TryGetValue(provider.Id, out var task)) continue;
+            
+            try
+            {
+                // Sequential await in priority order. If a higher priority task is still running, 
+                // we wait for it. If it finishes and has data, we break early and ignore lower priority ones.
+                var (imageUrl, biography) = await task.ConfigureAwait(false);
+                
+                if (string.IsNullOrEmpty(finalImageUrl) && !string.IsNullOrEmpty(imageUrl))
+                {
+                    finalImageUrl = imageUrl;
+                    _logger.LogDebug("Using image from {Provider} for artist '{ArtistName}'.", provider.DisplayName, artist.Name);
+                }
+                
+                if (string.IsNullOrEmpty(finalBiography) && !string.IsNullOrEmpty(biography))
+                {
+                    finalBiography = biography;
+                    _logger.LogDebug("Using biography from {Provider} for artist '{ArtistName}'.", provider.DisplayName, artist.Name);
+                }
+                
+                // Early exit if we have both primary values
+                if (!string.IsNullOrEmpty(finalImageUrl) && !string.IsNullOrEmpty(finalBiography))
+                    break;
+            }
+            catch (OperationCanceledException)
+            {
+                break;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogDebug(ex, "Metadata provider {Provider} failed for '{ArtistName}'.", provider.DisplayName, artist.Name);
+            }
+        }
+
+        // Fire-and-forget pattern: Observe remaining tasks to prevent UnobservedTaskException.
+        // We use ContinueWith with a static lambda to avoid closure allocations. The logger is
+        // passed via state parameter. NotOnRanToCompletion ensures we only handle faults/cancellations.
+        foreach (var kvp in tasks)
+        {
+            if (kvp.Value.IsCompleted) continue;
+            _ = kvp.Value.ContinueWith(
+                static (t, state) =>
+                {
+                    if (t.IsFaulted)
+                    {
+                        var logger = (ILogger<LibraryService>)state!;
+                        logger.LogDebug(t.Exception?.InnerException, "Metadata provider task faulted (ignored, already resolved)");
+                    }
+                },
+                _logger,
+                TaskContinuationOptions.NotOnRanToCompletion);
+        }
+
+        // Apply Biography
         if (!string.IsNullOrEmpty(finalBiography))
         {
             artist.Biography = finalBiography;
             wasMetadataFoundAndUpdated = true;
         }
 
-        // 3. Determine best Image URL (TheAudioDB > Fanart.tv > Spotify > Last.fm)
-        var finalImageUrl = primaryImageUrl;
-        if (string.IsNullOrEmpty(finalImageUrl) && 
-            lastFmResult.Status == ServiceResultStatus.Success && 
-            lastFmResult.Data?.ImageUrl is not null)
-        {
-            finalImageUrl = lastFmResult.Data.ImageUrl;
-        }
-
-        // 4. Download and cache the best image found
+        // Download and cache the best image found
         if (!string.IsNullOrEmpty(finalImageUrl))
         {
             // Skip fetching metadata image if a custom image is already set
@@ -3144,61 +3226,69 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         }
 
         artist.MetadataLastCheckedUtc = DateTime.UtcNow;
-        await context.SaveChangesAsync().ConfigureAwait(false);
+        await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
         if (wasMetadataFoundAndUpdated)
             ArtistMetadataUpdated?.Invoke(this,
                 new ArtistMetadataUpdatedEventArgs(artist.Id, artist.LocalImageCachePath));
+    }
 
-        return;
-
-        // Nested helper to encapsulate Branch A logic
-        async Task<(string? ImageUrl, string? Biography, string? Mbid)> ResolvePrimaryMetadataAsync(string artistName, string? currentMbid, CancellationToken ct)
+    /// <summary>
+    ///     Warms up the API key cache for a specific service. Failures are swallowed
+    ///     as this is a best-effort optimization - actual service calls handle missing keys.
+    /// </summary>
+    private async Task WarmupApiKeyAsync(string serviceKey, CancellationToken cancellationToken)
+    {
+        try
         {
-            var mbid = currentMbid;
-            string? url = null;
-            string? biography = null;
-
-            // Step 1: Resolve MusicBrainz ID
-            if (string.IsNullOrEmpty(mbid))
-            {
-                mbid = await _musicBrainzService.SearchArtistAsync(artistName, ct).ConfigureAwait(false);
-            }
-
-            // Step 2: Try TheAudioDB first (needs MBID) - provides both biography and images
-            if (!string.IsNullOrEmpty(mbid))
-            {
-                var audioDbResult = await _theAudioDbService.GetArtistMetadataAsync(mbid, ct).ConfigureAwait(false);
-                if (audioDbResult.Status == ServiceResultStatus.Success && audioDbResult.Data is not null)
-                {
-                    biography = audioDbResult.Data.Biography;
-                    // Prefer fanart > thumb for images
-                    url = audioDbResult.Data.FanartUrl ?? audioDbResult.Data.ThumbUrl;
-                }
-            }
-
-            // Step 3: Try Fanart.tv if TheAudioDB didn't provide an image (needs MBID)
-            if (string.IsNullOrEmpty(url) && !string.IsNullOrEmpty(mbid))
-            {
-                var fanartResult = await _fanartTvService.GetArtistImagesAsync(mbid, ct).ConfigureAwait(false);
-                if (fanartResult.Status == ServiceResultStatus.Success && fanartResult.Data is not null)
-                {
-                    url = fanartResult.Data.BackgroundUrl ?? fanartResult.Data.ThumbUrl;
-                }
-            }
-
-            // Step 4: Try Spotify fallback
-            if (string.IsNullOrEmpty(url))
-            {
-                var spotifyResult = await _spotifyService.GetArtistImageUrlAsync(artistName, ct).ConfigureAwait(false);
-                if (spotifyResult.Status == ServiceResultStatus.Success && spotifyResult.Data?.ImageUrl is not null)
-                {
-                    url = spotifyResult.Data.ImageUrl;
-                }
-            }
-
-            return (url, biography, mbid);
+            await _apiKeyService.GetApiKeyAsync(serviceKey, cancellationToken).ConfigureAwait(false);
         }
+        catch
+        {
+            // Warmup failures are acceptable - the actual service call will handle missing keys gracefully
+        }
+    }
+
+    private async Task<(string? ImageUrl, string? Biography)> FetchFromTheAudioDbAsync(string mbid, CancellationToken ct)
+    {
+        var result = await _theAudioDbService.GetArtistMetadataAsync(mbid, ct).ConfigureAwait(false);
+        if (result.Status == ServiceResultStatus.Success && result.Data is not null)
+        {
+            var url = result.Data.FanartUrl ?? result.Data.ThumbUrl;
+            return (url, result.Data.Biography);
+        }
+        return (null, null);
+    }
+
+    private async Task<(string? ImageUrl, string? Biography)> FetchFromFanartTvAsync(string mbid, CancellationToken ct)
+    {
+        var result = await _fanartTvService.GetArtistImagesAsync(mbid, ct).ConfigureAwait(false);
+        if (result.Status == ServiceResultStatus.Success && result.Data is not null)
+        {
+            var url = result.Data.BackgroundUrl ?? result.Data.ThumbUrl;
+            return (url, null); // Fanart.tv doesn't provide biography
+        }
+        return (null, null);
+    }
+
+    private async Task<(string? ImageUrl, string? Biography)> FetchFromSpotifyAsync(string artistName, CancellationToken ct)
+    {
+        var result = await _spotifyService.GetArtistImageUrlAsync(artistName, ct).ConfigureAwait(false);
+        if (result.Status == ServiceResultStatus.Success && result.Data?.ImageUrl is not null)
+        {
+            return (result.Data.ImageUrl, null); // Spotify doesn't provide biography
+        }
+        return (null, null);
+    }
+
+    private async Task<(string? ImageUrl, string? Biography)> FetchFromLastFmAsync(string artistName, CancellationToken ct)
+    {
+        var result = await _lastFmService.GetArtistInfoAsync(artistName, ct).ConfigureAwait(false);
+        if (result.Status == ServiceResultStatus.Success && result.Data is not null)
+        {
+            return (result.Data.ImageUrl, result.Data.Biography);
+        }
+        return (null, null);
     }
 
     private Task<string?> DownloadAndCacheArtistImageAsync(Artist artist, Uri imageUrl, CancellationToken cancellationToken)
@@ -3231,20 +3321,35 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     {
         if (_fileSystem.FileExists(localPath)) return localPath;
 
-        try
-        {
-            using var httpClient = _httpClientFactory.CreateClient("ImageDownloader");
-            using var response = await httpClient.GetAsync(imageUrl, cancellationToken).ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
-            var imageBytes = await response.Content.ReadAsByteArrayAsync(cancellationToken).ConfigureAwait(false);
-            await _fileSystem.WriteAllBytesAsync(localPath, imageBytes).ConfigureAwait(false);
-            return localPath;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Failed to download artist image from {ImageUrl}", imageUrl);
-            return null;
-        }
+        var operationName = $"Image download from {imageUrl}";
+        using var httpClient = _httpClientFactory.CreateClient("ImageDownloader");
+
+        var result = await HttpRetryHelper.ExecuteWithRetryAsync<string>(
+            async attempt =>
+            {
+                _logger.LogDebug("Downloading artist image (Attempt {Attempt}/3): {ImageUrl}", attempt, imageUrl);
+
+                using var response = await httpClient.GetAsync(imageUrl, cancellationToken).ConfigureAwait(false);
+                
+                if (response.IsSuccessStatusCode)
+                {
+                    var imageBytes = await response.Content.ReadAsByteArrayAsync(cancellationToken).ConfigureAwait(false);
+                    await _fileSystem.WriteAllBytesAsync(localPath, imageBytes).ConfigureAwait(false);
+                    return RetryResult<string>.Success(localPath);
+                }
+
+                if (HttpRetryHelper.IsRetryableStatusCode(response.StatusCode))
+                    return RetryResult<string>.TransientFailure();
+
+                return RetryResult<string>.SuccessEmpty();
+            },
+            _logger,
+            operationName,
+            cancellationToken,
+            3
+        ).ConfigureAwait(false);
+
+        return result;
     }
 
     private async Task<Artist> GetOrCreateArtistAsync(MusicDbContext context, string? name)

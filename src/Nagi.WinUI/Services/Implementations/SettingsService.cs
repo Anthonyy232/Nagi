@@ -63,6 +63,8 @@ public class SettingsService : IUISettingsService
     private const string LastPaneOpenKey = "LastPaneOpen";
     private const string VolumeNormalizationEnabledKey = "VolumeNormalizationEnabled";
     private const string AccentColorKey = "AccentColor";
+    private const string LyricsServiceProvidersKey = "LyricsServiceProviders";
+    private const string MetadataServiceProvidersKey = "MetadataServiceProviders";
 
     private static readonly JsonSerializerOptions _serializerOptions = new() { WriteIndented = true };
     private readonly ICredentialLockerService _credentialLockerService;
@@ -110,6 +112,7 @@ public class SettingsService : IUISettingsService
     public event Action<BackdropMaterial>? BackdropMaterialChanged;
     public event Action<bool>? FetchOnlineMetadataEnabledChanged;
     public event Action<bool>? FetchOnlineLyricsEnabledChanged;
+    public event Action<ServiceCategory>? ServiceProvidersChanged;
 
     public bool IsTransparencyEffectsEnabled()
     {
@@ -638,6 +641,141 @@ public class SettingsService : IUISettingsService
     public Task SetEqualizerSettingsAsync(EqualizerSettings settings)
     {
         return SetValueAsync(EqualizerSettingsKey, settings);
+    }
+
+    public async Task<List<ServiceProviderSetting>> GetServiceProvidersAsync(ServiceCategory category)
+    {
+        await EnsureUnpackagedSettingsLoadedAsync().ConfigureAwait(false);
+        var key = category == ServiceCategory.Lyrics ? LyricsServiceProvidersKey : MetadataServiceProvidersKey;
+        var items = await GetComplexValueAsync<List<ServiceProviderSetting>>(key).ConfigureAwait(false);
+
+        if (items is { Count: > 0 })
+        {
+            // Merge with defaults to handle new services added in updates
+            var defaults = GetDefaultServiceProviders(category);
+            var knownIds = defaults.Select(d => d.Id).ToHashSet();
+            
+            // Filter out unknown providers (handles removal of providers in future versions)
+            items = items.Where(i => knownIds.Contains(i.Id)).ToList();
+            
+            var existingIds = items.Select(i => i.Id).ToHashSet();
+            var newProviders = defaults.Where(d => !existingIds.Contains(d.Id)).ToList();
+
+            if (newProviders.Count > 0)
+            {
+                // Append new providers at the end with lowest priority
+                var maxOrder = items.Count > 0 ? items.Max(i => i.Order) : -1;
+                foreach (var provider in newProviders)
+                {
+                    provider.Order = ++maxOrder;
+                    items.Add(provider);
+                }
+            }
+
+            // Migration: Update NetEase display name if it's the old default
+            foreach (var item in items.Where(i => i.Id == ServiceProviderIds.NetEase && i.DisplayName == "NetEase Music 163"))
+            {
+                item.DisplayName = "NetEase";
+            }
+
+            return items.OrderBy(i => i.Order).ToList();
+        }
+
+        return GetDefaultServiceProviders(category);
+    }
+
+    public async Task SetServiceProvidersAsync(ServiceCategory category, List<ServiceProviderSetting> providers)
+    {
+        // Normalize order values based on list position
+        for (var i = 0; i < providers.Count; i++)
+            providers[i].Order = i;
+
+        var key = category == ServiceCategory.Lyrics ? LyricsServiceProvidersKey : MetadataServiceProvidersKey;
+        await SetValueAsync(key, providers).ConfigureAwait(false);
+        ServiceProvidersChanged?.Invoke(category);
+    }
+
+    public async Task<List<ServiceProviderSetting>> GetEnabledServiceProvidersAsync(ServiceCategory category)
+    {
+        var providers = await GetServiceProvidersAsync(category).ConfigureAwait(false);
+        return providers.Where(p => p.IsEnabled).OrderBy(p => p.Order).ToList();
+    }
+
+    private static List<ServiceProviderSetting> GetDefaultServiceProviders(ServiceCategory category)
+    {
+        return category switch
+        {
+            ServiceCategory.Lyrics => new List<ServiceProviderSetting>
+            {
+                new()
+                {
+                    Id = ServiceProviderIds.LrcLib,
+                    DisplayName = "LRCLIB",
+                    Category = ServiceCategory.Lyrics,
+                    IsEnabled = true,
+                    Order = 0,
+                    Description = "Community-curated lyrics database"
+                },
+                new()
+                {
+                    Id = ServiceProviderIds.NetEase,
+                    DisplayName = "NetEase",
+                    Category = ServiceCategory.Lyrics,
+                    IsEnabled = true,
+                    Order = 1,
+                    Description = "Chinese music service, great for Asian music"
+                }
+            },
+            ServiceCategory.Metadata => new List<ServiceProviderSetting>
+            {
+                new()
+                {
+                    Id = ServiceProviderIds.MusicBrainz,
+                    DisplayName = "MusicBrainz",
+                    Category = ServiceCategory.Metadata,
+                    IsEnabled = true,
+                    Order = 0,
+                    Description = "Open music encyclopedia, provides artist IDs"
+                },
+                new()
+                {
+                    Id = ServiceProviderIds.TheAudioDb,
+                    DisplayName = "TheAudioDB",
+                    Category = ServiceCategory.Metadata,
+                    IsEnabled = true,
+                    Order = 1,
+                    Description = "High-quality artist images and biographies"
+                },
+                new()
+                {
+                    Id = ServiceProviderIds.FanartTv,
+                    DisplayName = "Fanart.tv",
+                    Category = ServiceCategory.Metadata,
+                    IsEnabled = true,
+                    Order = 2,
+                    Description = "Fan-contributed artist artwork"
+                },
+                new()
+                {
+                    Id = ServiceProviderIds.Spotify,
+                    DisplayName = "Spotify",
+                    Category = ServiceCategory.Metadata,
+                    IsEnabled = true,
+                    Order = 3,
+                    Description = "Backup source for artist images"
+                },
+                new()
+                {
+                    Id = ServiceProviderIds.LastFm,
+                    DisplayName = "Last.fm",
+                    Category = ServiceCategory.Metadata,
+                    IsEnabled = true,
+                    Order = 4,
+                    Description = "Fallback for images and biographies"
+                }
+            },
+            _ => new List<ServiceProviderSetting>()
+        };
     }
 
     #endregion

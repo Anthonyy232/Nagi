@@ -122,6 +122,8 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     private CancellationTokenSource? _replayGainScanCts;
     private CancellationTokenSource? _playerButtonSaveCts;
     private CancellationTokenSource? _navigationItemSaveCts;
+    private CancellationTokenSource? _lyricsProviderSaveCts;
+    private CancellationTokenSource? _metadataProviderSaveCts;
 
     public SettingsViewModel(
         IUISettingsService settingsService,
@@ -158,6 +160,8 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
         NavigationItems.CollectionChanged += OnNavigationItemsCollectionChanged;
         PlayerButtons.CollectionChanged += OnPlayerButtonsCollectionChanged;
+        LyricsProviders.CollectionChanged += OnLyricsProvidersCollectionChanged;
+        MetadataProviders.CollectionChanged += OnMetadataProvidersCollectionChanged;
         _playbackService.EqualizerChanged += OnPlaybackService_EqualizerChanged;
 
 #if MSIX_PACKAGE
@@ -239,6 +243,10 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     public bool IsLastFmNotConnected => !IsLastFmConnected;
     public bool IsLastFmInitialAuthEnabled => !IsConnectingToLastFm;
     public ObservableCollection<NavigationItemSetting> NavigationItems { get; } = new();
+    public ObservableCollection<ServiceProviderSettingViewModel> LyricsProviders { get; } = new();
+    public ObservableCollection<ServiceProviderSettingViewModel> MetadataProviders { get; } = new();
+
+
     public List<ElementTheme> AvailableThemes { get; } = Enum.GetValues<ElementTheme>().ToList();
     public List<BackdropMaterial> AvailableBackdropMaterials { get; } = Enum.GetValues<BackdropMaterial>().ToList();
     public string ApplicationVersion => _appInfoService.GetAppVersion();
@@ -249,11 +257,17 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
         NavigationItems.CollectionChanged -= OnNavigationItemsCollectionChanged;
         PlayerButtons.CollectionChanged -= OnPlayerButtonsCollectionChanged;
+        LyricsProviders.CollectionChanged -= OnLyricsProvidersCollectionChanged;
+        MetadataProviders.CollectionChanged -= OnMetadataProvidersCollectionChanged;
         _playbackService.EqualizerChanged -= OnPlaybackService_EqualizerChanged;
 
         foreach (var item in NavigationItems) item.PropertyChanged -= OnNavigationItemPropertyChanged;
 
         foreach (var item in PlayerButtons) item.PropertyChanged -= OnPlayerButtonPropertyChanged;
+
+        foreach (var item in LyricsProviders) item.PropertyChanged -= OnLyricsProviderPropertyChanged;
+
+        foreach (var item in MetadataProviders) item.PropertyChanged -= OnMetadataProviderPropertyChanged;
 
         foreach (var bandVm in EqualizerBands) 
         {
@@ -269,6 +283,10 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         _playerButtonSaveCts?.Dispose();
         _navigationItemSaveCts?.Cancel();
         _navigationItemSaveCts?.Dispose();
+        _lyricsProviderSaveCts?.Cancel();
+        _lyricsProviderSaveCts?.Dispose();
+        _metadataProviderSaveCts?.Cancel();
+        _metadataProviderSaveCts?.Dispose();
 
         _loadLock.Dispose();
         _isDisposed = true;
@@ -289,6 +307,12 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
             foreach (var item in PlayerButtons) item.PropertyChanged -= OnPlayerButtonPropertyChanged;
             PlayerButtons.Clear();
+
+            foreach (var item in LyricsProviders) item.PropertyChanged -= OnLyricsProviderPropertyChanged;
+            LyricsProviders.Clear();
+
+            foreach (var item in MetadataProviders) item.PropertyChanged -= OnMetadataProviderPropertyChanged;
+            MetadataProviders.Clear();
 
             var navItemsTask = _settingsService.GetNavigationItemsAsync();
             var playerButtonsTask = _settingsService.GetPlayerButtonSettingsAsync();
@@ -316,13 +340,16 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
             var accentColorTask = _settingsService.GetAccentColorAsync();
 
+            var lyricsProvidersTask = _settingsService.GetServiceProvidersAsync(ServiceCategory.Lyrics);
+            var metadataProvidersTask = _settingsService.GetServiceProvidersAsync(ServiceCategory.Metadata);
+
             await Task.WhenAll(
                 navItemsTask, playerButtonsTask, themeTask, backdropTask, dynamicThemingTask,
                 playerAnimationTask, restorePlaybackTask, autoLaunchTask, startMinimizedTask,
                 hideToTrayTask, miniPlayerTask, trayFlyoutTask, onlineMetadataTask,
                 onlineLyricsTask, discordRpcTask, checkUpdatesTask, rememberWindowTask,
                 rememberPaneTask, volumeNormTask, lastFmCredsTask, lastFmAuthTokenTask,
-                scrobblingTask, nowPlayingTask, accentColorTask);
+                scrobblingTask, nowPlayingTask, accentColorTask, lyricsProvidersTask, metadataProvidersTask);
 
             foreach (var item in await navItemsTask)
             {
@@ -375,6 +402,29 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             }
 
             LoadEqualizerState();
+
+            // Load service providers
+            foreach (var provider in await lyricsProvidersTask)
+            {
+                LyricsProviders.Add(ServiceProviderSettingViewModel.FromSetting(provider));
+            }
+
+            var metadataProviders = (await metadataProvidersTask)
+                .Select(ServiceProviderSettingViewModel.FromSetting)
+                .ToList();
+
+            // Ensure MusicBrainz is always first while preserving relative order of others
+            var mbProvider = metadataProviders.FirstOrDefault(p => p.Id == ServiceProviderIds.MusicBrainz);
+            if (mbProvider != null)
+            {
+                metadataProviders.Remove(mbProvider);
+                metadataProviders.Insert(0, mbProvider);
+            }
+
+            foreach (var provider in metadataProviders)
+            {
+                MetadataProviders.Add(provider);
+            }
 
             _isInitializing = false;
         }
@@ -728,8 +778,6 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
     private void OnNavigationItemsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        if (_isInitializing) return;
-
         if (e.NewItems != null)
             foreach (NavigationItemSetting item in e.NewItems)
                 item.PropertyChanged += OnNavigationItemPropertyChanged;
@@ -738,7 +786,8 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             foreach (NavigationItemSetting item in e.OldItems)
                 item.PropertyChanged -= OnNavigationItemPropertyChanged;
 
-        QueueNavigationItemSave();
+        if (!_isInitializing)
+            QueueNavigationItemSave();
     }
 
     private void OnNavigationItemPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -784,6 +833,154 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             _logger.LogError(ex, "Failed to save navigation items");
         }
     }
+
+    #region Service Provider Handlers
+
+    private void OnLyricsProvidersCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        if (e.NewItems != null)
+            foreach (ServiceProviderSettingViewModel item in e.NewItems)
+                item.PropertyChanged += OnLyricsProviderPropertyChanged;
+
+        if (e.OldItems != null)
+            foreach (ServiceProviderSettingViewModel item in e.OldItems)
+                item.PropertyChanged -= OnLyricsProviderPropertyChanged;
+
+        if (!_isInitializing)
+            QueueLyricsProviderSave();
+    }
+
+    private void OnLyricsProviderPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (_isInitializing || e.PropertyName != nameof(ServiceProviderSettingViewModel.IsEnabled)) return;
+        QueueLyricsProviderSave();
+    }
+
+    private void QueueLyricsProviderSave()
+    {
+        _lyricsProviderSaveCts?.Cancel();
+        _lyricsProviderSaveCts?.Dispose();
+        _lyricsProviderSaveCts = new CancellationTokenSource();
+        var token = _lyricsProviderSaveCts.Token;
+
+        var snapshot = LyricsProviders.Select((vm, i) => vm.ToSetting(i)).ToList();
+
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                await Task.Delay(SettingsSaveDebounceMs, token);
+                await _settingsService.SetServiceProvidersAsync(ServiceCategory.Lyrics, snapshot);
+            }
+            catch (TaskCanceledException)
+            {
+                // Expected during rapid changes.
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to save lyrics providers");
+            }
+        }, token);
+    }
+
+    private void OnMetadataProvidersCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        if (e.NewItems != null)
+            foreach (ServiceProviderSettingViewModel item in e.NewItems)
+                item.PropertyChanged += OnMetadataProviderPropertyChanged;
+
+        if (e.OldItems != null)
+            foreach (ServiceProviderSettingViewModel item in e.OldItems)
+                item.PropertyChanged -= OnMetadataProviderPropertyChanged;
+
+        if (!_isInitializing)
+        {
+            // Always use dispatcher to check and enforce MusicBrainz position
+            // This avoids race conditions between the check and the fix
+            _dispatcherService.TryEnqueue(() =>
+            {
+                // Check if MusicBrainz needs to be moved to first position
+                var musicBrainzIndex = -1;
+                for (var i = 0; i < MetadataProviders.Count; i++)
+                {
+                    if (MetadataProviders[i].Id == ServiceProviderIds.MusicBrainz)
+                    {
+                        musicBrainzIndex = i;
+                        break;
+                    }
+                }
+
+                if (musicBrainzIndex > 0)
+                {
+                    var mb = MetadataProviders[musicBrainzIndex];
+                    _isInitializing = true;
+                    MetadataProviders.RemoveAt(musicBrainzIndex);
+                    MetadataProviders.Insert(0, mb);
+                    _isInitializing = false;
+                }
+
+                QueueMetadataProviderSave();
+            });
+        }
+    }
+
+    private void OnMetadataProviderPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (_isInitializing || e.PropertyName != nameof(ServiceProviderSettingViewModel.IsEnabled)) return;
+ 
+        if (sender is ServiceProviderSettingViewModel provider)
+        {
+            // If MusicBrainz is disabled, disable dependent services
+            if (provider.Id == ServiceProviderIds.MusicBrainz && !provider.IsEnabled)
+            {
+                var dependents = MetadataProviders.Where(p => p.Id == ServiceProviderIds.TheAudioDb || p.Id == ServiceProviderIds.FanartTv).ToList();
+                foreach (var dependent in dependents)
+                {
+                    dependent.IsEnabled = false;
+                }
+            }
+            // If trying to enable a dependent service while MusicBrainz is disabled, revert it
+            else if ((provider.Id == ServiceProviderIds.TheAudioDb || provider.Id == ServiceProviderIds.FanartTv) && provider.IsEnabled)
+            {
+                var musicBrainz = MetadataProviders.FirstOrDefault(p => p.Id == ServiceProviderIds.MusicBrainz);
+                if (musicBrainz is not { IsEnabled: true })
+                {
+                    provider.IsEnabled = false;
+                }
+            }
+        }
+
+        QueueMetadataProviderSave();
+    }
+
+    private void QueueMetadataProviderSave()
+    {
+        _metadataProviderSaveCts?.Cancel();
+        _metadataProviderSaveCts?.Dispose();
+        _metadataProviderSaveCts = new CancellationTokenSource();
+        var token = _metadataProviderSaveCts.Token;
+
+        var snapshot = MetadataProviders.Select((vm, i) => vm.ToSetting(i)).ToList();
+
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                await Task.Delay(SettingsSaveDebounceMs, token);
+                await _settingsService.SetServiceProvidersAsync(ServiceCategory.Metadata, snapshot);
+            }
+            catch (TaskCanceledException)
+            {
+                // Expected during rapid changes.
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to save metadata providers");
+            }
+        }, token);
+    }
+
+    #endregion
 
     async partial void OnSelectedThemeChanged(ElementTheme value)
     {
