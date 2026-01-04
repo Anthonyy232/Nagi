@@ -171,6 +171,8 @@ public class ReplayGainService : IReplayGainService
         _logger.LogInformation("Found {Count} songs without ReplayGain data.", totalCount);
         progress?.Report(new ScanProgress { StatusText = $"Calculating volume for {totalCount} songs...", IsIndeterminate = true });
 
+        // Batching strategy: Process in parallel but commit in chunks to minimize SQLite lock contention
+        const int BatchSize = 50;
         var parallelOptions = new ParallelOptions
         {
             MaxDegreeOfParallelism = Math.Max(1, Environment.ProcessorCount / 2),
@@ -178,28 +180,149 @@ public class ReplayGainService : IReplayGainService
         };
 
         var processed = 0;
-        await Parallel.ForEachAsync(songsWithoutReplayGain, parallelOptions, async (songId, ct) =>
+        
+        // Use Chunks to allow batching within each parallel worker
+        var songGroups = songsWithoutReplayGain.Chunk(BatchSize);
+
+        await Parallel.ForEachAsync(songGroups, parallelOptions, async (batch, ct) =>
         {
+            // Each parallel worker gets its own DB context and recycled session
+            await using var workerContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
+            LoudnessMeter.Session? recycledSession = null;
+
             try
             {
-                await CalculateAndWriteAsync(songId, ct).ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogWarning(ex, "Failed to calculate ReplayGain for song {SongId}", songId);
-            }
+                foreach (var songId in batch)
+                {
+                    var song = await workerContext.Songs.FindAsync(new object[] { songId }, ct).ConfigureAwait(false);
+                    if (song == null) continue;
 
-            var currentProcessed = Interlocked.Increment(ref processed);
-            var percentage = totalCount > 0 ? (double)currentProcessed / totalCount * 100 : 100;
-            progress?.Report(new ScanProgress
+                    try 
+                    {
+                        // Calculate - ensure we capture the session whether success or failure
+                        var calcResult = await CalculateStreamingInternalAsync(song.FilePath, recycledSession, ct).ConfigureAwait(false);
+                        recycledSession = calcResult.SessionBuffer; // Always update the reference
+
+                        if (calcResult.GainDb.HasValue && calcResult.Peak.HasValue)
+                        {
+                            var gainDb = calcResult.GainDb.Value;
+                            var peak = calcResult.Peak.Value;
+
+                            // Tag file
+                            if (TagFileSafely(song.FilePath, gainDb, peak))
+                            {
+                                // Stage for DB (No SaveChanges yet)
+                                song.ReplayGainTrackGain = gainDb;
+                                song.ReplayGainTrackPeak = peak;
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogWarning(ex, "Failed to process song {SongId}", songId);
+                    }
+
+                    // Granular progress reporting
+                    var currentProcessed = Interlocked.Increment(ref processed);
+                    var percentage = totalCount > 0 ? (double)currentProcessed / totalCount * 100 : 100;
+                    progress?.Report(new ScanProgress
+                    {
+                        StatusText = $"Calculating volume normalization ({currentProcessed}/{totalCount})...",
+                        Percentage = percentage
+                    });
+                }
+
+                // Batch Save to DB
+                await _dbLock.WaitAsync(ct).ConfigureAwait(false);
+                try
+                {
+                    await workerContext.SaveChangesAsync(ct).ConfigureAwait(false);
+                }
+                finally
+                {
+                    _dbLock.Release();
+                }
+            }
+            finally
             {
-                StatusText = $"Calculating volume normalization ({currentProcessed}/{totalCount})...",
-                Percentage = percentage
-            });
+                recycledSession?.Dispose();
+            }
         }).ConfigureAwait(false);
 
         progress?.Report(new ScanProgress { StatusText = $"Volume normalization complete. Processed {processed} songs.", Percentage = 100 });
         _logger.LogInformation("ReplayGain scan complete. Processed {Count} songs.", processed);
+    }
+
+    private record InternalCalculationResult(double? GainDb, double? Peak, LoudnessMeter.Session? SessionBuffer);
+
+    private async Task<InternalCalculationResult> CalculateStreamingInternalAsync(
+        string filePath, 
+        LoudnessMeter.Session? existingSession,
+        CancellationToken ct)
+    {
+        var hasData = false;
+        var session = existingSession;
+        var initialized = false;
+
+        try
+        {
+            await foreach (var chunk in _pcmExtractor.ExtractStreamingAsync(filePath, ct).ConfigureAwait(false))
+            {
+                if (!initialized)
+                {
+                    // Validate if existing session matches current audio properties
+                    if (session == null || session.SampleRate != chunk.SampleRate || session.Channels != chunk.Channels)
+                    {
+                        session?.Dispose();
+                        session = _loudnessMeter.CreateSession(chunk.SampleRate, chunk.Channels);
+                    }
+                    else
+                    {
+                        session.Reset();
+                    }
+                    initialized = true;
+                }
+                
+                // Use ! because we know it's initialized after the block above
+                session!.ProcessChunk(chunk);
+                hasData = true;
+            }
+
+            if (!hasData || session == null) 
+                return new InternalCalculationResult(null, null, session);
+
+            var integratedLoudness = session.GetIntegratedLoudness();
+            if (double.IsNegativeInfinity(integratedLoudness)) 
+                return new InternalCalculationResult(null, null, session);
+
+            var gainDb = ReplayGain2Reference - integratedLoudness;
+            return new InternalCalculationResult(gainDb, session.Peak, session);
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogDebug(ex, "Error during streaming calculation for {FilePath}", filePath);
+            return new InternalCalculationResult(null, null, session);
+        }
+    }
+
+    private bool TagFileSafely(string filePath, double gainDb, double peak)
+    {
+        try
+        {
+            var track = new Track(filePath);
+            track.AdditionalFields["REPLAYGAIN_TRACK_GAIN"] = $"{gainDb:F2} dB";
+            track.AdditionalFields["REPLAYGAIN_TRACK_PEAK"] = $"{peak:F6}";
+            return track.Save();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error writing ReplayGain tags to file: {FilePath}", filePath);
+            return false;
+        }
     }
 
     /// <inheritdoc />

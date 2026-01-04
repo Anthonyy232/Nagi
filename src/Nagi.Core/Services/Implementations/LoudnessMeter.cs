@@ -42,7 +42,7 @@ public class LoudnessMeter
             return double.NegativeInfinity;
 
         using var session = CreateSession(sampleRate, channels, channelMap);
-        session.ProcessChunk(new AudioChunk(samples, sampleRate, channels));
+        session.ProcessChunk(new AudioChunk(samples, samples.Length, sampleRate, channels));
         return session.GetIntegratedLoudness();
     }
 
@@ -116,6 +116,7 @@ public class LoudnessMeter
     public sealed class Session : IDisposable
     {
         private readonly int _channels;
+        private readonly int _sampleRate;
         private readonly Channel[] _channelMap;
         private readonly KWeightingFilter _filter;
         private readonly List<double> _blockPowers;
@@ -130,10 +131,11 @@ public class LoudnessMeter
 
         internal Session(int sampleRate, int channels, Channel[]? channelMap)
         {
+            _sampleRate = sampleRate;
             _channels = channels;
             _channelMap = channelMap ?? GetDefaultChannelMap(channels);
             _filter = new KWeightingFilter(sampleRate, channels);
-            _blockPowers = new List<double>();
+            _blockPowers = new List<double>(10000); // Pre-size for typical ~15 min song to avoid reallocs
             _framesPerBlock = (int)(sampleRate * BlockDurationMs / 1000.0);
             _framesPerStep = (int)(_framesPerBlock * (1.0 - BlockOverlap));
             
@@ -146,18 +148,20 @@ public class LoudnessMeter
         }
 
         public double Peak => _peak;
+        public int SampleRate => _sampleRate;
+        public int Channels => _channels;
 
         public void ProcessChunk(AudioChunk chunk)
         {
             if (_disposed) throw new ObjectDisposedException(nameof(Session));
-            if (chunk.Samples.Length == 0) return;
+            if (chunk.Length == 0) return;
 
             // 1. SIMD Peak
-            float chunkPeak = CalculatePeakSimd(chunk.Samples);
+            float chunkPeak = CalculatePeakSimd(chunk.Span);
             if (chunkPeak > _peak) _peak = chunkPeak;
 
             // 2. Fused Filtering & Distribution
-            int samplesPerChannel = chunk.Samples.Length / _channels;
+            int samplesPerChannel = chunk.Length / _channels;
             int offset = 0; 
 
             while (offset < samplesPerChannel)
@@ -167,7 +171,7 @@ public class LoudnessMeter
                 int take = Math.Min(spaceInBuffer, remainingFramesInChunk);
 
                 _filter.ProcessAndDistribute(
-                    chunk.Samples, 
+                    chunk.Span, 
                     _channelBuffers, 
                     _bufferFillCount,
                     offset,
@@ -184,12 +188,21 @@ public class LoudnessMeter
                     int overlap = _framesPerBlock - _framesPerStep;
                     for (int ch = 0; ch < _channels; ch++)
                     {
-                        Span<float> span = _channelBuffers[ch].AsSpan();
-                        span.Slice(_framesPerStep, overlap).CopyTo(span);
+                        _channelBuffers[ch].AsSpan(_framesPerStep, overlap).CopyTo(_channelBuffers[ch]);
                     }
                     _bufferFillCount = overlap;
                 }
             }
+        }
+
+        public void Reset()
+        {
+            if (_disposed) throw new ObjectDisposedException(nameof(Session));
+            _peak = 0;
+            _bufferFillCount = 0;
+            _blockPowers.Clear();
+            _filter.Reset();
+            // No need to clear _channelBuffers as they are overwritten by ProcessChunk
         }
 
         private void ProcessFullBlock()
@@ -203,15 +216,20 @@ public class LoudnessMeter
                 double channelSum = 0.0;
                 ReadOnlySpan<float> span = _channelBuffers[ch].AsSpan(0, _framesPerBlock);
                 
-                // SIMD Sum of Squares via Vector.Dot (High performance reduction)
+                // SIMD Sum of Squares (Deferred horizontal sum for max throughput)
                 int i = 0;
                 if (Vector.IsHardwareAccelerated && span.Length >= Vector<float>.Count)
                 {
+                    var vSumSq = Vector<float>.Zero;
                     for (; i <= span.Length - Vector<float>.Count; i += Vector<float>.Count)
                     {
                         var v = new Vector<float>(span.Slice(i));
-                        channelSum += Vector.Dot(v, v);
+                        vSumSq += v * v;
                     }
+                    
+                    // Horizontal sum only once per channel
+                    for (int j = 0; j < Vector<float>.Count; j++)
+                        channelSum += vSumSq[j];
                 }
                 
                 // Scalar remainder
@@ -225,29 +243,36 @@ public class LoudnessMeter
             }
 
             double blockPower = sum / _framesPerBlock;
-            if (PowerToLufs(blockPower) > AbsoluteGateThreshold)
+            
+            // Algorithmic Thresholding (No Log10 in the hot path)
+            // Power equivalent of -70.0 LUFS is ~1.1724285e-7
+            const double PowerAbsoluteGate = 1.1724285e-7;
+            if (blockPower > PowerAbsoluteGate)
                 _blockPowers.Add(blockPower);
         }
 
         public double GetIntegratedLoudness()
         {
             if (_disposed) throw new ObjectDisposedException(nameof(Session));
-            if (_blockPowers.Count == 0) return double.NegativeInfinity;
+            int count = _blockPowers.Count;
+            if (count == 0) return double.NegativeInfinity;
 
             double sum = 0;
-            int count = _blockPowers.Count;
             for(int i = 0; i < count; i++) sum += _blockPowers[i];
             
             double ungatedMeanPower = sum / count;
             double ungatedLoudness = PowerToLufs(ungatedMeanPower);
+            
+            // Optimization: Relative Thresholding without per-iteration Log10
             double relativeThreshold = ungatedLoudness + RelativeGateThreshold;
+            double powerThreshold = Math.Pow(10.0, (relativeThreshold + 0.691) / 10.0) - 1e-15;
 
             double gatedSum = 0;
             int gatedCount = 0;
             for(int i = 0; i < count; i++)
             {
                 double p = _blockPowers[i];
-                if (PowerToLufs(p) > relativeThreshold)
+                if (p > powerThreshold)
                 {
                     gatedSum += p;
                     gatedCount++;
@@ -281,6 +306,14 @@ public class LoudnessMeter
             _filterState = new double[channels][];
             for (var i = 0; i < channels; i++)
                 _filterState[i] = new double[4];
+        }
+
+        public void Reset()
+        {
+            for (int i = 0; i < _channels; i++)
+            {
+                Array.Clear(_filterState[i]);
+            }
         }
 
         private static (double[] b, double[] a) CalculateFilterCoefficients(double rate)
@@ -357,12 +390,14 @@ public class LoudnessMeter
                     
                     var threshold = Vector128.Create(1e-15);
                     var inputPtr = inputInterleaved.Slice(frameReadOffset * 2);
+                    ref float baseRef = ref MemoryMarshal.GetReference(inputPtr);
 
                     for (int f = 0; f < count; f++)
                     {
-                        // Use indexing from sliced span for cache efficiency
-                        int idx = f * 2;
-                        var vIn = Vector128.Create((double)inputPtr[idx], (double)inputPtr[idx + 1]);
+                        // Optimization: Low-latency 64-bit load (L/R) + conversion
+                        // This avoids scalar double-casts and is safe against buffer over-reads.
+                        long bits = Unsafe.ReadUnaligned<long>(ref Unsafe.As<float, byte>(ref Unsafe.Add(ref baseRef, f * 2)));
+                        Vector128<double> vIn = Vector128.WidenLower(Vector128.CreateScalarUnsafe(bits).AsSingle());
 
                         var vFiltered = vB0 * vIn + vState0;
                         vState0 = vB1 * vIn - vA1 * vFiltered + vState1;
