@@ -87,9 +87,8 @@ public class FFmpegPcmExtractor : IPcmExtractor
         
         await foreach (var chunk in ExtractStreamingAsync(filePath, cancellationToken))
         {
-            // For full extract, we make a defensive copy because chunk.Samples might be pooled 
-            // if we were using pooling in ExtractStreamingAsync (though presently we allocate new arrays for chunks)
-            samplesList.Add(chunk.Samples);
+            // Defensive copy because the streaming chunk likely uses a pooled array
+            samplesList.Add(chunk.Span.ToArray());
         }
 
         if (samplesList.Count == 0) return null;
@@ -147,33 +146,38 @@ public class FFmpegPcmExtractor : IPcmExtractor
                     
                     if (floatCount > 0)
                     {
-                        // Use a fresh array for the chunk as it will be consumed asynchronously
-                        float[] floatArray = new float[floatCount];
-                        var byteSpan = floatArray.AsSpan().AsBytes();
-                        
-                        int bytesToCopyFromBuffer = bytesRead;
-                        int bytesCopiedFromLeftovers = 0;
-                        
-                        if (leftoverCount > 0)
+                        // Use ArrayPool for floats to minimize transient allocations
+                        float[] floatArray = ArrayPool<float>.Shared.Rent(floatCount);
+                        try
                         {
-                            leftovers.AsSpan(0, leftoverCount).CopyTo(byteSpan);
-                            bytesCopiedFromLeftovers = leftoverCount;
+                            var byteSpan = floatArray.AsSpan(0, floatCount).AsBytes();
+                            
+                            int bytesCopiedFromLeftovers = 0;
+                            if (leftoverCount > 0)
+                            {
+                                leftovers.AsSpan(0, leftoverCount).CopyTo(byteSpan);
+                                bytesCopiedFromLeftovers = leftoverCount;
+                            }
+                            
+                            int remainingSpaceInResult = byteSpan.Length - bytesCopiedFromLeftovers;
+                            int bytesActuallyConsumedFromBuffer = Math.Min(bytesRead, remainingSpaceInResult);
+                            
+                            buffer.AsSpan(0, bytesActuallyConsumedFromBuffer)
+                                  .CopyTo(byteSpan.Slice(bytesCopiedFromLeftovers));
+                            
+                            yield return new AudioChunk(floatArray, floatCount, TargetSampleRate, TargetChannels);
+                            
+                            // Update leftovers
+                            leftoverCount = bytesRead - bytesActuallyConsumedFromBuffer;
+                            if (leftoverCount > 0)
+                            {
+                                buffer.AsSpan(bytesActuallyConsumedFromBuffer, leftoverCount)
+                                      .CopyTo(leftovers);
+                            }
                         }
-                        
-                        int remainingSpaceInResult = byteSpan.Length - bytesCopiedFromLeftovers;
-                        int bytesActuallyConsumedFromBuffer = Math.Min(bytesRead, remainingSpaceInResult);
-                        
-                        buffer.AsSpan(0, bytesActuallyConsumedFromBuffer)
-                              .CopyTo(byteSpan.Slice(bytesCopiedFromLeftovers));
-                        
-                        yield return new AudioChunk(floatArray, TargetSampleRate, TargetChannels);
-                        
-                        // Update leftovers
-                        leftoverCount = bytesRead - bytesActuallyConsumedFromBuffer;
-                        if (leftoverCount > 0)
+                        finally
                         {
-                            buffer.AsSpan(bytesActuallyConsumedFromBuffer, leftoverCount)
-                                  .CopyTo(leftovers);
+                            ArrayPool<float>.Shared.Return(floatArray);
                         }
                     }
                     else
