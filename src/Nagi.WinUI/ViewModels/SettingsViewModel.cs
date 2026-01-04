@@ -114,13 +114,14 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     private readonly IDispatcherService _dispatcherService;
     private readonly SemaphoreSlim _loadLock = new(1, 1);
 
-    private const int PlayerButtonSaveDebounceMs = 300;
+    private const int SettingsSaveDebounceMs = 300;
 
     private bool _isDisposed;
     private bool _isInitializing;
     private CancellationTokenSource? _preampDebounceCts;
     private CancellationTokenSource? _replayGainScanCts;
     private CancellationTokenSource? _playerButtonSaveCts;
+    private CancellationTokenSource? _navigationItemSaveCts;
 
     public SettingsViewModel(
         IUISettingsService settingsService,
@@ -265,6 +266,8 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         _replayGainScanCts?.Dispose();
         _playerButtonSaveCts?.Cancel();
         _playerButtonSaveCts?.Dispose();
+        _navigationItemSaveCts?.Cancel();
+        _navigationItemSaveCts?.Dispose();
 
         _loadLock.Dispose();
         _isDisposed = true;
@@ -693,7 +696,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         {
             try
             {
-                await Task.Delay(PlayerButtonSaveDebounceMs, token);
+                await Task.Delay(SettingsSaveDebounceMs, token);
                 await SavePlayerButtonSettingsAsync(snapshot);
             }
             catch (TaskCanceledException)
@@ -727,18 +730,51 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             foreach (NavigationItemSetting item in e.OldItems)
                 item.PropertyChanged -= OnNavigationItemPropertyChanged;
 
-        _ = SaveNavigationItemsAsync();
+        QueueNavigationItemSave();
     }
 
     private void OnNavigationItemPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (_isInitializing || e.PropertyName != nameof(NavigationItemSetting.IsEnabled)) return;
-        _ = SaveNavigationItemsAsync();
+        QueueNavigationItemSave();
     }
 
-    private async Task SaveNavigationItemsAsync()
+    /// <summary>
+    ///     Queues a debounced save for navigation items to prevent rapid saves.
+    /// </summary>
+    private void QueueNavigationItemSave()
     {
-        await _settingsService.SetNavigationItemsAsync(NavigationItems.ToList());
+        _navigationItemSaveCts?.Cancel();
+        _navigationItemSaveCts?.Dispose();
+        _navigationItemSaveCts = new CancellationTokenSource();
+        var token = _navigationItemSaveCts.Token;
+
+        var snapshot = NavigationItems.ToList();
+
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                await Task.Delay(SettingsSaveDebounceMs, token);
+                await SaveNavigationItemsAsync(snapshot);
+            }
+            catch (TaskCanceledException)
+            {
+                // Expected during rapid changes.
+            }
+        }, token);
+    }
+
+    private async Task SaveNavigationItemsAsync(List<NavigationItemSetting> settings)
+    {
+        try
+        {
+            await _settingsService.SetNavigationItemsAsync(settings);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to save navigation items");
+        }
     }
 
     async partial void OnSelectedThemeChanged(ElementTheme value)

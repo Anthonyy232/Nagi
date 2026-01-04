@@ -161,11 +161,11 @@
                         CornerRadius="{StaticResource ControlCornerRadius}"
                         ItemContainerStyle="{StaticResource NavigationListViewItemStyle}"
                         ItemsSource="{x:Bind ViewModel.NavigationItems}"
-                        SelectionMode="None">
+                        SelectionMode="Single">
 
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="navigation:NavigationItemSetting">
-                                <Grid Padding="12,10" VerticalAlignment="Center">
+                                <Grid Padding="12,8" VerticalAlignment="Center">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="28" />
                                         <ColumnDefinition Width="32" />
@@ -173,14 +173,15 @@
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
 
+                                    <!-- Drag Handle -->
                                     <FontIcon
                                         Grid.Column="0"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
                                         FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                        FontSize="16"
+                                        FontSize="12"
                                         Foreground="{ThemeResource TextFillColorTertiaryBrush}"
-                                        Glyph="&#xE784;" />
+                                        Glyph="&#xE76F;" />
 
                                     <FontIcon
                                         Grid.Column="1"
@@ -201,12 +202,6 @@
                                         Grid.Column="3"
                                         VerticalAlignment="Center"
                                         IsOn="{x:Bind IsEnabled, Mode=TwoWay}" />
-
-                                    <Border
-                                        Grid.ColumnSpan="4"
-                                        Height="1"
-                                        VerticalAlignment="Bottom"
-                                        Background="{ThemeResource CardStrokeColorDefaultBrush}" />
                                 </Grid>
                             </DataTemplate>
                         </ListView.ItemTemplate>

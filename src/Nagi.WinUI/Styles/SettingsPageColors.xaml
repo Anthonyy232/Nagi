@@ -245,49 +245,20 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ListViewItem">
-                    <Grid x:Name="RootGrid"
-                          Background="Transparent"
-                          behaviors:AnimationBehaviors.EnableScaleAnimation="True"
-                          behaviors:AnimationBehaviors.HoverScale="1.02"
-                          behaviors:AnimationBehaviors.PressedScale="0.98">
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal" />
-                                <VisualState x:Name="PointerOver">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
-                                                                       Storyboard.TargetProperty="Background">
-                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource SubtleFillColorSecondaryBrush}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="Pressed">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
-                                                                       Storyboard.TargetProperty="Background">
-                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource SubtleFillColorTertiaryBrush}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="Selected">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
-                                                                       Storyboard.TargetProperty="Background">
-                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource SubtleFillColorSecondaryBrush}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
-                        <ContentPresenter
-                            Margin="{TemplateBinding Padding}"
-                            ContentTransitions="{TemplateBinding ContentTransitions}"
-                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
-                    </Grid>
+                    <ListViewItemPresenter
+                        x:Name="Root"
+                        ContentMargin="{TemplateBinding Padding}"
+                        ContentTransitions="{TemplateBinding ContentTransitions}"
+                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                        PointerOverBackground="{ThemeResource SubtleFillColorSecondaryBrush}"
+                        PressedBackground="{ThemeResource SubtleFillColorTertiaryBrush}"
+                        SelectedBackground="{ThemeResource SubtleFillColorSecondaryBrush}"
+                        SelectedPressedBackground="{ThemeResource SubtleFillColorTertiaryBrush}"
+                        SelectedPointerOverBackground="{ThemeResource SubtleFillColorSecondaryBrush}"
+                        DragBackground="{ThemeResource LayerFillColorDefaultBrush}"
+                        DragForeground="{ThemeResource TextFillColorPrimaryBrush}"
+                        SelectionCheckMarkVisualEnabled="False" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
