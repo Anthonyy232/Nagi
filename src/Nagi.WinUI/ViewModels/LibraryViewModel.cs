@@ -36,6 +36,7 @@ public partial class LibraryViewModel : SongListViewModelBase
         : base(libraryReader, playlistService, playbackService, navigationService, dispatcherService, uiService, logger)
     {
         _libraryScanner = libraryScanner;
+        _libraryScanner.ScanCompleted += OnScanCompleted;
     }
 
     [ObservableProperty] public partial string SearchTerm { get; set; }
@@ -70,33 +71,30 @@ public partial class LibraryViewModel : SongListViewModelBase
 
     public async Task InitializeAsync()
     {
-        await RefreshOrSortSongsCommand.ExecuteAsync(null);
-
-        if (_isInitialScanTriggered) return;
+        var shouldTriggerScan = !_isInitialScanTriggered;
         _isInitialScanTriggered = true;
 
-        // Perform the initial, potentially long-running, library scan on a background thread.
-        _ = Task.Run(async () =>
+        await RefreshOrSortSongsCommand.ExecuteAsync(null);
+
+        if (!shouldTriggerScan) return;
+
+        _logger.LogDebug("Starting initial background library refresh");
+        // We don't await this because we want the UI to be responsive.
+        // The ScanCompleted event will trigger a refresh when it finishes.
+        _ = _libraryScanner.RefreshAllFoldersAsync();
+    }
+
+    private async void OnScanCompleted(object? sender, bool changesFound)
+    {
+        if (changesFound)
         {
-            try
-            {
-                _logger.LogDebug("Starting initial background library refresh");
-                var changesFound = await _libraryScanner.RefreshAllFoldersAsync();
-                if (changesFound)
-                {
-                    _logger.LogDebug("Background refresh found changes. Reloading song list");
-                    await _dispatcherService.EnqueueAsync(() => RefreshOrSortSongsCommand.ExecuteAsync(null));
-                }
-                else
-                {
-                    _logger.LogDebug("Background refresh complete. No changes were found");
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Background library refresh failed");
-            }
-        });
+            _logger.LogDebug("Scan completed with changes. Refreshing song list");
+            await _dispatcherService.EnqueueAsync(() => RefreshOrSortSongsCommand.ExecuteAsync(null));
+        }
+        else
+        {
+            _logger.LogDebug("Scan completed with no changes");
+        }
     }
 
     /// <summary>
@@ -152,6 +150,7 @@ public partial class LibraryViewModel : SongListViewModelBase
     public override void Cleanup()
     {
         base.Cleanup();
+        _libraryScanner.ScanCompleted -= OnScanCompleted;
         _debounceCts?.Cancel();
         _debounceCts?.Dispose();
         SearchTerm = string.Empty;

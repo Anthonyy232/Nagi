@@ -90,6 +90,9 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     /// <inheritdoc />
     public event EventHandler<PlaylistUpdatedEventArgs>? PlaylistUpdated;
 
+    /// <inheritdoc />
+    public event EventHandler<bool>? ScanCompleted;
+
     #region Data Reset
 
     /// <inheritdoc />
@@ -722,66 +725,77 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     public async Task<bool> RefreshAllFoldersAsync(IProgress<ScanProgress>? progress = null,
         CancellationToken cancellationToken = default)
     {
-        var folders = (await GetRootFoldersAsync()).ToList();
-        var totalFolders = folders.Count;
-
-        if (totalFolders == 0)
-        {
-            _logger.LogDebug("No folders found in the library to refresh.");
-            progress?.Report(
-                new ScanProgress { StatusText = "No folders in the library to refresh.", Percentage = 100 });
-            return false;
-        }
-
-        var foldersProcessed = 0;
-        var anyChangesMade = false;
-
-        // Set batch scanning flag to prevent per-folder ReplayGain triggers
-        _isBatchScanning = true;
-        
         try
         {
-            foreach (var folder in folders)
+            var folders = (await GetRootFoldersAsync()).ToList();
+            var totalFolders = folders.Count;
+
+            if (totalFolders == 0)
             {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                var progressWrapper = new Progress<ScanProgress>(scanProgress =>
-                {
-                    var status = scanProgress.Percentage >= 100
-                        ? scanProgress.StatusText
-                        : $"({foldersProcessed + 1}/{totalFolders}) {scanProgress.StatusText}";
-
-                    progress?.Report(new ScanProgress
-                    {
-                        StatusText = status,
-                        Percentage = scanProgress.Percentage,
-                        IsIndeterminate = scanProgress.IsIndeterminate,
-                        CurrentFilePath = scanProgress.CurrentFilePath,
-                        TotalFiles = scanProgress.TotalFiles,
-                        NewSongsFound = scanProgress.NewSongsFound
-                    });
-                });
-
-                var result = await RescanFolderForMusicAsync(folder.Id, progressWrapper, cancellationToken);
-                if (result) anyChangesMade = true;
-
-                foldersProcessed++;
+                _logger.LogDebug("No folders found in the library to refresh.");
+                progress?.Report(
+                    new ScanProgress { StatusText = "No folders in the library to refresh.", Percentage = 100 });
+                ScanCompleted?.Invoke(this, false);
+                return false;
             }
-        }
-        finally
-        {
-            // Always clear the batch flag
-            _isBatchScanning = false;
-        }
 
-        // Run ReplayGain analysis ONCE after all folders are scanned (if enabled and changes were made)
-        if (anyChangesMade && await _settingsService.GetVolumeNormalizationEnabledAsync().ConfigureAwait(false))
-        {
-            await RunReplayGainAnalysisAsync(progress, cancellationToken).ConfigureAwait(false);
-        }
+            var foldersProcessed = 0;
+            var anyChangesMade = false;
 
-        progress?.Report(new ScanProgress { StatusText = "Library refresh complete.", Percentage = 100 });
-        return anyChangesMade;
+            // Set batch scanning flag to prevent per-folder ReplayGain triggers
+            _isBatchScanning = true;
+
+            try
+            {
+                foreach (var folder in folders)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    var progressWrapper = new Progress<ScanProgress>(scanProgress =>
+                    {
+                        var status = scanProgress.Percentage >= 100
+                            ? scanProgress.StatusText
+                            : $"({foldersProcessed + 1}/{totalFolders}) {scanProgress.StatusText}";
+
+                        progress?.Report(new ScanProgress
+                        {
+                            StatusText = status,
+                            Percentage = scanProgress.Percentage,
+                            IsIndeterminate = scanProgress.IsIndeterminate,
+                            CurrentFilePath = scanProgress.CurrentFilePath,
+                            TotalFiles = scanProgress.TotalFiles,
+                            NewSongsFound = scanProgress.NewSongsFound
+                        });
+                    });
+
+                    var result = await RescanFolderForMusicAsync(folder.Id, progressWrapper, cancellationToken);
+                    if (result) anyChangesMade = true;
+
+                    foldersProcessed++;
+                }
+            }
+            finally
+            {
+                // Always clear the batch flag
+                _isBatchScanning = false;
+            }
+
+            // Run ReplayGain analysis ONCE after all folders are scanned (if enabled and changes were made)
+            if (anyChangesMade && await _settingsService.GetVolumeNormalizationEnabledAsync().ConfigureAwait(false))
+            {
+                await RunReplayGainAnalysisAsync(progress, cancellationToken).ConfigureAwait(false);
+            }
+
+            progress?.Report(new ScanProgress { StatusText = "Library refresh complete.", Percentage = 100 });
+            ScanCompleted?.Invoke(this, anyChangesMade);
+            return anyChangesMade;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to refresh all library folders.");
+            ScanCompleted?.Invoke(this, false);
+            return false;
+        }
     }
 
     /// <inheritdoc />

@@ -224,8 +224,7 @@ public partial class App : Application
         catch (Exception ex)
         {
             Log.Fatal(ex, "Application terminated unexpectedly during startup.");
-            await Log.CloseAndFlushAsync();
-            throw;
+            await ShowCrashReportAndExitAsync(ex);
         }
     }
 
@@ -350,7 +349,7 @@ public partial class App : Application
             // These are independent and required for the next phase.
             var dbTask = InitializeDatabaseAsync(Services);
             var windowTask = Services.GetRequiredService<IWindowService>().InitializeAsync();
-            await Task.WhenAll(dbTask, windowTask);
+            await Task.WhenAll(dbTask, windowTask).ConfigureAwait(false);
 
             // 2. Services Phase: Parallelize independent service initializations.
             var playbackTask = Services.GetRequiredService<IMusicPlaybackService>().InitializeAsync(restoreSession);
@@ -362,7 +361,7 @@ public partial class App : Application
             var scrobbleTask = offlineScrobbleService.ProcessQueueAsync();
 
             // Wait for all non-dependent services to finish initializing.
-            await Task.WhenAll(playbackTask, presenceTask, trayTask, scrobbleTask);
+            await Task.WhenAll(playbackTask, presenceTask, trayTask, scrobbleTask).ConfigureAwait(false);
 
             _logger?.LogInformation("Core services initialized successfully.");
         }
@@ -533,12 +532,18 @@ public partial class App : Application
         try
         {
             var dbContextFactory = services.GetRequiredService<IDbContextFactory<MusicDbContext>>();
-            await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-            await dbContext.Database.MigrateAsync();
+            await using var dbContext = await dbContextFactory.CreateDbContextAsync().ConfigureAwait(false);
+            
+            // Enable WAL mode for better concurrency and performance.
+            // This is more reliable than setting it in the connection string for Microsoft.Data.Sqlite.
+            await dbContext.Database.ExecuteSqlRawAsync("PRAGMA journal_mode=WAL;").ConfigureAwait(false);
+            
+            await dbContext.Database.MigrateAsync().ConfigureAwait(false);
         }
         catch (Exception ex)
         {
             Log.Fatal(ex, "Failed to initialize or migrate database.");
+            throw; // Re-throw to propagate the failure to the startup handler.
         }
     }
 
@@ -659,11 +664,16 @@ public partial class App : Application
     private void OnAppUnhandledException(object sender, UnhandledExceptionEventArgs e)
     {
         e.Handled = true;
-        var exceptionDetails = e.Exception.ToString();
+        _ = ShowCrashReportAndExitAsync(e.Exception);
+    }
+
+    private async Task ShowCrashReportAndExitAsync(Exception ex)
+    {
+        var exceptionDetails = ex.ToString();
         var originalLogPath = _currentLogFilePath ?? "Not set";
 
-        Log.Fatal(e.Exception,
-            "An unhandled exception occurred. Application will now terminate. Log path at time of crash: {LogPath}",
+        Log.Fatal(ex,
+            "A critical error occurred. Application will now terminate. Log path: {LogPath}",
             originalLogPath);
 
         // Primary strategy: Get logs from the in-memory sink.
@@ -673,8 +683,8 @@ public partial class App : Application
         if (string.IsNullOrWhiteSpace(logContent))
             try
             {
-                Thread.Sleep(250);
-                logContent = File.ReadAllText(originalLogPath);
+                await Task.Delay(250).ConfigureAwait(false);
+                logContent = await File.ReadAllTextAsync(originalLogPath).ConfigureAwait(false);
             }
             catch (Exception fileEx)
             {
@@ -684,17 +694,31 @@ public partial class App : Application
                     $"Error: {fileEx.Message}";
             }
 
-        var fullCrashReport = $"{logContent}\n\n--- UNHANDLED EXCEPTION DETAILS ---\n{exceptionDetails}";
+        var fullCrashReport = $"{logContent}\n\n--- EXCEPTION DETAILS ---\n{exceptionDetails}";
 
         if (MainDispatcherQueue == null)
         {
-            Log.CloseAndFlush();
+            await Log.CloseAndFlushAsync();
             Current?.Exit();
             Process.GetCurrentProcess().Kill();
             return;
         }
 
-        MainDispatcherQueue.TryEnqueue(async () =>
+        var dispatcherService = Services?.GetService<IDispatcherService>();
+        if (dispatcherService == null && MainDispatcherQueue != null)
+        {
+            dispatcherService = new DispatcherService(MainDispatcherQueue);
+        }
+
+        if (dispatcherService == null)
+        {
+            await Log.CloseAndFlushAsync();
+            Current?.Exit();
+            Process.GetCurrentProcess().Kill();
+            return;
+        }
+
+        await dispatcherService.EnqueueAsync(async () =>
         {
             try
             {
@@ -702,7 +726,7 @@ public partial class App : Application
                 if (uiService != null)
                 {
                     var result = await uiService.ShowCrashReportDialogAsync(
-                        "Application Error",
+                        "Critical Error",
                         "Nagi has encountered a critical error and must close. We are sorry for the inconvenience.",
                         fullCrashReport,
                         "https://github.com/Anthonyy232/Nagi/issues"
@@ -721,7 +745,7 @@ public partial class App : Application
             }
             finally
             {
-                Log.CloseAndFlush();
+                await Log.CloseAndFlushAsync();
                 Current?.Exit();
                 Process.GetCurrentProcess().Kill();
             }
@@ -911,7 +935,6 @@ public partial class App : Application
         if (hasFolders)
         {
             if (RootWindow.Content is not MainPage) RootWindow.Content = new MainPage();
-            await Services.GetRequiredService<LibraryViewModel>().InitializeAsync();
         }
         else
         {
