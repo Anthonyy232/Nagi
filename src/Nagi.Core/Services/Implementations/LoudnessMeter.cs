@@ -13,8 +13,8 @@ namespace Nagi.Core.Services.Implementations;
 
 /// <summary>
 ///     Pure C# implementation of EBU R128 integrated loudness measurement.
-///     Optimized for extreme performance with SIMD-accelerated peak detection,
-///     O(1) sliding window buffers, zero-copy memory patterns, and allocation-free processing.
+///     Optimized for extreme performance with SIMD-accelerated reductions,
+///     fused filtering, and branchless denormal flushing.
 /// </summary>
 public class LoudnessMeter
 {
@@ -64,14 +64,13 @@ public class LoudnessMeter
                 var v = new Vector<float>(samples.Slice(i));
                 vMax = Vector.Max(vMax, Vector.Abs(v));
             }
-            float maxV = 0;
+            // Reduction loop - branchless or highly predictable
             for (int j = 0; j < Vector<float>.Count; j++)
-                if (vMax[j] > maxV) maxV = vMax[j];
-            max = maxV;
+                if (vMax[j] > max) max = vMax[j];
         }
         for (; i < samples.Length; i++)
         {
-            var abs = Math.Abs(samples[i]);
+            float abs = Math.Abs(samples[i]);
             if (abs > max) max = abs;
         }
         return max;
@@ -154,11 +153,11 @@ public class LoudnessMeter
             if (chunk.Samples.Length == 0) return;
 
             // 1. SIMD Peak
-            var chunkPeak = CalculatePeakSimd(chunk.Samples);
+            float chunkPeak = CalculatePeakSimd(chunk.Samples);
             if (chunkPeak > _peak) _peak = chunkPeak;
 
-            // 2. Optimized Fused Filtering & Distribution
-            var samplesPerChannel = chunk.Samples.Length / _channels;
+            // 2. Fused Filtering & Distribution
+            int samplesPerChannel = chunk.Samples.Length / _channels;
             int offset = 0; 
 
             while (offset < samplesPerChannel)
@@ -168,7 +167,7 @@ public class LoudnessMeter
                 int take = Math.Min(spaceInBuffer, remainingFramesInChunk);
 
                 _filter.ProcessAndDistribute(
-                    chunk.Samples.AsSpan(), 
+                    chunk.Samples, 
                     _channelBuffers, 
                     _bufferFillCount,
                     offset,
@@ -181,10 +180,11 @@ public class LoudnessMeter
                 {
                     ProcessFullBlock();
                     
+                    // Sliding Window Shift: O(1)
                     int overlap = _framesPerBlock - _framesPerStep;
                     for (int ch = 0; ch < _channels; ch++)
                     {
-                        var span = _channelBuffers[ch].AsSpan();
+                        Span<float> span = _channelBuffers[ch].AsSpan();
                         span.Slice(_framesPerStep, overlap).CopyTo(span);
                     }
                     _bufferFillCount = overlap;
@@ -194,38 +194,37 @@ public class LoudnessMeter
 
         private void ProcessFullBlock()
         {
-            var sum = 0.0;
-            for (var ch = 0; ch < _channels; ch++)
+            double sum = 0.0;
+            for (int ch = 0; ch < _channels; ch++)
             {
-                var channelType = _channelMap[ch];
+                Channel channelType = _channelMap[ch];
                 if (channelType == Channel.Unused) continue;
 
-                var channelSum = 0.0;
-                var span = _channelBuffers[ch].AsSpan(0, _framesPerBlock);
+                double channelSum = 0.0;
+                ReadOnlySpan<float> span = _channelBuffers[ch].AsSpan(0, _framesPerBlock);
                 
+                // SIMD Sum of Squares via Vector.Dot (High performance reduction)
+                int i = 0;
                 if (Vector.IsHardwareAccelerated && span.Length >= Vector<float>.Count)
                 {
-                    var vSum = Vector<float>.Zero;
-                    var i = 0;
                     for (; i <= span.Length - Vector<float>.Count; i += Vector<float>.Count)
                     {
                         var v = new Vector<float>(span.Slice(i));
-                        vSum += v * v;
+                        channelSum += Vector.Dot(v, v);
                     }
-                    float total = 0;
-                    for (int j = 0; j < Vector<float>.Count; j++) total += vSum[j];
-                    channelSum = total;
-                    for (; i < span.Length; i++) channelSum += (double)span[i] * span[i];
                 }
-                else
+                
+                // Scalar remainder
+                for (; i < span.Length; i++)
                 {
-                    foreach (var sample in span) channelSum += (double)sample * sample;
+                    float val = span[i];
+                    channelSum += (double)val * val;
                 }
 
                 sum += channelSum * GetChannelWeight(channelType);
             }
 
-            var blockPower = sum / _framesPerBlock;
+            double blockPower = sum / _framesPerBlock;
             if (PowerToLufs(blockPower) > AbsoluteGateThreshold)
                 _blockPowers.Add(blockPower);
         }
@@ -239,15 +238,15 @@ public class LoudnessMeter
             int count = _blockPowers.Count;
             for(int i = 0; i < count; i++) sum += _blockPowers[i];
             
-            var ungatedMeanPower = sum / count;
-            var ungatedLoudness = PowerToLufs(ungatedMeanPower);
-            var relativeThreshold = ungatedLoudness + RelativeGateThreshold;
+            double ungatedMeanPower = sum / count;
+            double ungatedLoudness = PowerToLufs(ungatedMeanPower);
+            double relativeThreshold = ungatedLoudness + RelativeGateThreshold;
 
             double gatedSum = 0;
             int gatedCount = 0;
             for(int i = 0; i < count; i++)
             {
-                var p = _blockPowers[i];
+                double p = _blockPowers[i];
                 if (PowerToLufs(p) > relativeThreshold)
                 {
                     gatedSum += p;
@@ -290,16 +289,16 @@ public class LoudnessMeter
             const double G = 3.999843853973347;
             const double Q_pre = 0.7071752369554196;
 
-            var K = Math.Tan(Math.PI * f0_pre / rate);
-            var Vh = Math.Pow(10.0, G / 20.0);
-            var Vb = Math.Pow(Vh, 0.4996667741545416);
+            double K = Math.Tan(Math.PI * f0_pre / rate);
+            double Vh = Math.Pow(10.0, G / 20.0);
+            double Vb = Math.Pow(Vh, 0.4996667741545416);
 
             var pb = new double[3];
             var pa = new double[] { 1.0, 0.0, 0.0 };
             var rb = new double[] { 1.0, -2.0, 1.0 };
             var ra = new double[] { 1.0, 0.0, 0.0 };
 
-            var a0 = 1.0 + K / Q_pre + K * K;
+            double a0 = 1.0 + K / Q_pre + K * K;
             pb[0] = (Vh + Vb * K / Q_pre + K * K) / a0;
             pb[1] = 2.0 * (K * K - Vh) / a0;
             pb[2] = (Vh - Vb * K / Q_pre + K * K) / a0;
@@ -319,23 +318,6 @@ public class LoudnessMeter
             return (b, a);
         }
 
-        public float[] Process(float[] interleavedSamples)
-        {
-            var frames = interleavedSamples.Length / _channels;
-            var output = new float[interleavedSamples.Length];
-            var outputWrappers = new float[_channels][];
-            for (int i = 0; i < _channels; i++) outputWrappers[i] = new float[frames];
-            
-            ProcessAndDistribute(interleavedSamples, outputWrappers, 0, 0, frames);
-            
-            // Interleave back
-            for (int ch = 0; ch < _channels; ch++) {
-                var chSrc = outputWrappers[ch];
-                for (int f = 0; f < frames; f++) output[ch * frames + f] = chSrc[f]; 
-            }
-            return output;
-        }
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void ProcessAndDistribute(
             ReadOnlySpan<float> inputInterleaved, 
@@ -344,25 +326,23 @@ public class LoudnessMeter
             int frameReadOffset,
             int count)
         {
-            // Register blocking (caching array elements in locals)
-            var b0 = _b[0]; var b1 = _b[1]; var b2 = _b[2]; var b3 = _b[3]; var b4 = _b[4];
-            var a1 = _a[1]; var a2 = _a[2]; var a3 = _a[3]; var a4 = _a[4];
+            // Register blocking: Pre-load coefficients to registers
+            double b0 = _b[0], b1 = _b[1], b2 = _b[2], b3 = _b[3], b4 = _b[4];
+            double a1 = _a[1], a2 = _a[2], a3 = _a[3], a4 = _a[4];
             int channels = _channels;
 
-            // Specialized loop for Stereo (SIMD-ready logic & Register Blocking)
+            // Specialized loop for Stereo (SIMD-across-channels)
             if (channels == 2)
             {
-                // Cache array references
-                var stateL = _filterState[0];
-                var stateR = _filterState[1];
-                var outL = outputPlanar[0];
-                var outR = outputPlanar[1];
+                double[] stateL = _filterState[0];
+                double[] stateR = _filterState[1];
+                float[] outL = outputPlanar[0];
+                float[] outR = outputPlanar[1];
 
-                // Load state into registers (locals)
+                // Load state into CPU registers (locals)
                 double sL0 = stateL[0], sL1 = stateL[1], sL2 = stateL[2], sL3 = stateL[3];
                 double sR0 = stateR[0], sR1 = stateR[1], sR2 = stateR[2], sR3 = stateR[3];
 
-                // Check for SIMD support - process 2 channels in parallel using Vector128
                 if (Vector128.IsHardwareAccelerated)
                 {
                     var vB0 = Vector128.Create(b0); var vB1 = Vector128.Create(b1);
@@ -375,16 +355,14 @@ public class LoudnessMeter
                     var vState2 = Vector128.Create(sL2, sR2);
                     var vState3 = Vector128.Create(sL3, sR3);
                     
-                    var small = Vector128.Create(1e-15);
+                    var threshold = Vector128.Create(1e-15);
+                    var inputPtr = inputInterleaved.Slice(frameReadOffset * 2);
 
-                    for (var f = 0; f < count; f++)
+                    for (int f = 0; f < count; f++)
                     {
-                        int inputIdx = (frameReadOffset + f) * 2;
-                        
-                        // Load input L/R
-                        double inL = inputInterleaved[inputIdx];
-                        double inR = inputInterleaved[inputIdx + 1];
-                        var vIn = Vector128.Create(inL, inR);
+                        // Use indexing from sliced span for cache efficiency
+                        int idx = f * 2;
+                        var vIn = Vector128.Create((double)inputPtr[idx], (double)inputPtr[idx + 1]);
 
                         var vFiltered = vB0 * vIn + vState0;
                         vState0 = vB1 * vIn - vA1 * vFiltered + vState1;
@@ -392,23 +370,20 @@ public class LoudnessMeter
                         vState2 = vB3 * vIn - vA3 * vFiltered + vState3;
                         vState3 = vB4 * vIn - vA4 * vFiltered;
 
-                        // Extract and write results
                         outL[writeOffset + f] = (float)vFiltered.GetElement(0);
                         outR[writeOffset + f] = (float)vFiltered.GetElement(1);
 
-                        // Denormal check
+                        // Branchless Denormal Flush: per-element conditional select
                         if (((frameReadOffset + f) & DenormalFlushMask) == 0)
                         {
-                            // Abs(vState) < small ? 0 : vState
-                            // Using Vector128.Abs (requires .NET 7+)
-                            if (Vector128.GreaterThanAll(small, Vector128.Abs(vState0))) vState0 = Vector128<double>.Zero;
-                            if (Vector128.GreaterThanAll(small, Vector128.Abs(vState1))) vState1 = Vector128<double>.Zero;
-                            if (Vector128.GreaterThanAll(small, Vector128.Abs(vState2))) vState2 = Vector128<double>.Zero;
-                            if (Vector128.GreaterThanAll(small, Vector128.Abs(vState3))) vState3 = Vector128<double>.Zero;
+                            vState0 = Vector128.ConditionalSelect(Vector128.GreaterThan(threshold, Vector128.Abs(vState0)), Vector128<double>.Zero, vState0);
+                            vState1 = Vector128.ConditionalSelect(Vector128.GreaterThan(threshold, Vector128.Abs(vState1)), Vector128<double>.Zero, vState1);
+                            vState2 = Vector128.ConditionalSelect(Vector128.GreaterThan(threshold, Vector128.Abs(vState2)), Vector128<double>.Zero, vState2);
+                            vState3 = Vector128.ConditionalSelect(Vector128.GreaterThan(threshold, Vector128.Abs(vState3)), Vector128<double>.Zero, vState3);
                         }
                     }
 
-                    // Write-back state
+                    // Store state back
                     stateL[0] = vState0.GetElement(0); stateL[1] = vState1.GetElement(0); 
                     stateL[2] = vState2.GetElement(0); stateL[3] = vState3.GetElement(0);
                     stateR[0] = vState0.GetElement(1); stateR[1] = vState1.GetElement(1);
@@ -416,30 +391,28 @@ public class LoudnessMeter
                 }
                 else
                 {
-                    // Fallback to Scalar Register Blocking
-                    for (var f = 0; f < count; f++)
+                    // Fallback Scalar Register Blocking
+                    var inputPtr = inputInterleaved.Slice(frameReadOffset * 2);
+                    for (int f = 0; f < count; f++)
                     {
-                        int inputIdx = (frameReadOffset + f) * 2;
-                        double inL = inputInterleaved[inputIdx];
-                        double inR = inputInterleaved[inputIdx + 1];
+                        int idx = f * 2;
+                        double inL = inputPtr[idx];
+                        double inR = inputPtr[idx + 1];
 
-                        // Left
-                        var filtL = b0 * inL + sL0;
+                        double filtL = b0 * inL + sL0;
                         sL0 = b1 * inL - a1 * filtL + sL1;
                         sL1 = b2 * inL - a2 * filtL + sL2;
                         sL2 = b3 * inL - a3 * filtL + sL3;
                         sL3 = b4 * inL - a4 * filtL;
                         outL[writeOffset + f] = (float)filtL;
 
-                        // Right
-                        var filtR = b0 * inR + sR0;
+                        double filtR = b0 * inR + sR0;
                         sR0 = b1 * inR - a1 * filtR + sR1;
                         sR1 = b2 * inR - a2 * filtR + sR2;
                         sR2 = b3 * inR - a3 * filtR + sR3;
                         sR3 = b4 * inR - a4 * filtR;
                         outR[writeOffset + f] = (float)filtR;
                         
-                        // Denormal check
                         if (((frameReadOffset + f) & DenormalFlushMask) == 0)
                         {
                              if (Math.Abs(sL0) < 1e-15) sL0 = 0; if (Math.Abs(sL1) < 1e-15) sL1 = 0;
@@ -448,8 +421,6 @@ public class LoudnessMeter
                              if (Math.Abs(sR2) < 1e-15) sR2 = 0; if (Math.Abs(sR3) < 1e-15) sR3 = 0;
                         }
                     }
-
-                    // Write-back state
                     stateL[0] = sL0; stateL[1] = sL1; stateL[2] = sL2; stateL[3] = sL3;
                     stateR[0] = sR0; stateR[1] = sR1; stateR[2] = sR2; stateR[3] = sR3;
                 }
@@ -457,16 +428,16 @@ public class LoudnessMeter
             else
             {
                 // Generic (Multi-channel)
-                for (var f = 0; f < count; f++)
+                var inputPtr = inputInterleaved.Slice(frameReadOffset * channels);
+                for (int f = 0; f < count; f++)
                 {
-                    int inputIdx = (frameReadOffset + f) * channels;
-                    
-                    for (var ch = 0; ch < channels; ch++)
+                    int baseIdx = f * channels;
+                    for (int ch = 0; ch < channels; ch++)
                     {
-                        double val = inputInterleaved[inputIdx + ch]; 
-                        var state = _filterState[ch];
+                        double val = inputPtr[baseIdx + ch]; 
+                        double[] state = _filterState[ch];
                         
-                        var filtered = b0 * val + state[0];
+                        double filtered = b0 * val + state[0];
                         state[0] = b1 * val - a1 * filtered + state[1];
                         state[1] = b2 * val - a2 * filtered + state[2];
                         state[2] = b3 * val - a3 * filtered + state[3];
@@ -479,7 +450,6 @@ public class LoudnessMeter
                              if (Math.Abs(state[2]) < 1e-15) state[2] = 0;
                              if (Math.Abs(state[3]) < 1e-15) state[3] = 0;
                         }
-                        
                         outputPlanar[ch][writeOffset + f] = (float)filtered;
                     }
                 }
