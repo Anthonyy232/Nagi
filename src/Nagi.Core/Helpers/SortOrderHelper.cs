@@ -4,89 +4,96 @@ namespace Nagi.Core.Helpers;
 
 public static class SortOrderHelper
 {
-    // Base Labels (for Dropdowns)
-    public const string AToZLabel = "A to Z";
-    public const string ZToALabel = "Z to A";
-    public const string NewestLabel = "Newest";
-    public const string OldestLabel = "Oldest";
-    public const string ModifiedNewestLabel = "Date Modified (Newest)";
-    public const string ModifiedOldestLabel = "Date Modified (Oldest)";
-    public const string MostSongsLabel = "Most Songs";
-    public const string AlbumLabel = "Album";
-    public const string ArtistLabel = "Artist";
-    public const string DiscLabel = "Disc";
-    public const string YearNewestLabel = "Year (Newest)";
-    public const string YearOldestLabel = "Year (Oldest)";
-    public const string TrackNumberLabel = "Disc";
+    // Settings Keys
+    public const string LibrarySortOrderKey = "SortOrder_Library";
+    public const string AlbumsSortOrderKey = "SortOrder_Albums";
+    public const string ArtistsSortOrderKey = "SortOrder_Artists";
+    public const string GenresSortOrderKey = "SortOrder_Genres";
+    public const string PlaylistsSortOrderKey = "SortOrder_Playlists";
+    public const string FolderViewSortOrderKey = "SortOrder_FolderView";
+    public const string AlbumViewSortOrderKey = "SortOrder_AlbumView";
+    public const string ArtistViewSortOrderKey = "SortOrder_ArtistView";
+    public const string GenreViewSortOrderKey = "SortOrder_GenreView";
 
+    // Base Labels (for Dropdowns)
     public const string TitleAscLabel = "Title (A to Z)";
     public const string TitleDescLabel = "Title (Z to A)";
+    public const string DateCreatedNewestLabel = "Date Created (Newest)";
+    public const string DateCreatedOldestLabel = "Date Created (Oldest)";
+    public const string ModifiedNewestLabel = "Date Modified (Newest)";
+    public const string ModifiedOldestLabel = "Date Modified (Oldest)";
     public const string ArtistAscLabel = "Artist (A to Z)";
     public const string ArtistDescLabel = "Artist (Z to A)";
     public const string AlbumAscLabel = "Album (A to Z)";
     public const string AlbumDescLabel = "Album (Z to A)";
+    public const string YearNewestLabel = "Year (Newest)";
+    public const string YearOldestLabel = "Year (Oldest)";
+    public const string MostSongsLabel = "Most Songs";
+    public const string TrackNumberLabel = "Track Number";
+    public const string MostPlayedLabel = "Most Played";
     public const string RandomLabel = "Random";
 
     // Full Display Text (for Buttons/Tooltips)
-    public const string AToZ = $"Sort By: {AToZLabel}";
-    public const string ZToA = $"Sort By: {ZToALabel}";
-    public const string Newest = $"Sort By: {NewestLabel}";
-    public const string Oldest = $"Sort By: {OldestLabel}";
-    public const string ModifiedNewest = $"Sort By: {ModifiedNewestLabel}";
-    public const string ModifiedOldest = $"Sort By: {ModifiedOldestLabel}";
-    public const string MostSongs = $"Sort By: {MostSongsLabel}";
-    public const string Album = $"Sort By: {AlbumLabel}";
-    public const string Artist = $"Sort By: {ArtistLabel}";
-    public const string Disc = $"Sort By: {DiscLabel}";
-    public const string YearNewest = $"Sort By: {YearNewestLabel}";
-    public const string YearOldest = $"Sort By: {YearOldestLabel}";
+    public const string SortByTitleAsc = $"Sort By: {TitleAscLabel}";
+    public const string SortByTitleDesc = $"Sort By: {TitleDescLabel}";
+    public const string SortByArtistAsc = $"Sort By: {ArtistAscLabel}";
+    public const string SortByArtistDesc = $"Sort By: {ArtistDescLabel}";
+    public const string SortByAlbumAsc = $"Sort By: {AlbumAscLabel}";
+    public const string SortByAlbumDesc = $"Sort By: {AlbumDescLabel}";
+    public const string SortByYearNewest = $"Sort By: {YearNewestLabel}";
+    public const string SortByYearOldest = $"Sort By: {YearOldestLabel}";
+    public const string SortByMostSongs = $"Sort By: {MostSongsLabel}";
+    public const string SortByTrackNumber = $"Sort By: {TrackNumberLabel}";
+    public const string SortByRandom = $"Sort By: {RandomLabel}";
 
     public static string GetDisplayName(SongSortOrder sortOrder) => sortOrder switch
     {
-        SongSortOrder.TitleAsc => AToZ,
-        SongSortOrder.TitleDesc => ZToA,
-        SongSortOrder.DateAddedDesc => Newest,
-        SongSortOrder.DateAddedAsc => Oldest,
-        SongSortOrder.DateModifiedDesc => ModifiedNewest,
-        SongSortOrder.DateModifiedAsc => ModifiedOldest,
-        SongSortOrder.AlbumAsc => Album,
-        SongSortOrder.ArtistAsc => Artist,
-        SongSortOrder.TrackNumberAsc => Disc,
-        _ => AToZ
+        SongSortOrder.TitleAsc => SortByTitleAsc,
+        SongSortOrder.AlbumAsc => SortByAlbumAsc,
+        SongSortOrder.AlbumDesc => SortByAlbumDesc,
+        SongSortOrder.YearAsc => SortByYearOldest,
+        SongSortOrder.YearDesc => SortByYearNewest,
+        SongSortOrder.ArtistAsc => SortByArtistAsc,
+        SongSortOrder.TrackNumberAsc => SortByTrackNumber,
+        _ => SortByTitleAsc
     };
 
     public static string GetDisplayName(PlaylistSortOrder sortOrder) => sortOrder switch
     {
-        PlaylistSortOrder.NameAsc => AToZ,
-        PlaylistSortOrder.NameDesc => ZToA,
-        PlaylistSortOrder.DateCreatedDesc => Newest,
-        PlaylistSortOrder.DateCreatedAsc => Oldest,
-        PlaylistSortOrder.DateModifiedDesc => ModifiedNewest,
-        _ => AToZ
+        PlaylistSortOrder.NameAsc => SortByTitleAsc,
+        PlaylistSortOrder.NameDesc => SortByTitleDesc,
+        PlaylistSortOrder.DateCreatedDesc => DateCreatedNewestLabel,
+        PlaylistSortOrder.DateCreatedAsc => DateCreatedOldestLabel,
+        PlaylistSortOrder.DateModifiedDesc => ModifiedNewestLabel,
+        PlaylistSortOrder.DateModifiedAsc => ModifiedOldestLabel,
+        _ => SortByTitleAsc
     };
 
     public static string GetDisplayName(GenreSortOrder sortOrder) => sortOrder switch
     {
-        GenreSortOrder.NameAsc => AToZ,
-        GenreSortOrder.NameDesc => ZToA,
-        GenreSortOrder.SongCountDesc => MostSongs,
-        _ => AToZ
+        GenreSortOrder.NameAsc => SortByTitleAsc,
+        GenreSortOrder.NameDesc => SortByTitleDesc,
+        GenreSortOrder.SongCountDesc => SortByMostSongs,
+        _ => SortByTitleAsc
     };
 
     public static string GetDisplayName(ArtistSortOrder sortOrder) => sortOrder switch
     {
-        ArtistSortOrder.NameAsc => AToZ,
-        ArtistSortOrder.NameDesc => ZToA,
-        ArtistSortOrder.SongCountDesc => MostSongs,
-        _ => AToZ
+        ArtistSortOrder.NameAsc => SortByTitleAsc,
+        ArtistSortOrder.NameDesc => SortByTitleDesc,
+        ArtistSortOrder.SongCountDesc => SortByMostSongs,
+        _ => SortByTitleAsc
     };
 
     public static string GetDisplayName(AlbumSortOrder sortOrder) => sortOrder switch
     {
-        AlbumSortOrder.AlbumTitleAsc => Album,
-        AlbumSortOrder.YearDesc => YearNewest,
-        AlbumSortOrder.YearAsc => YearOldest,
-        AlbumSortOrder.ArtistAsc => Artist,
-        _ => Artist
+        AlbumSortOrder.ArtistAsc => SortByArtistAsc,
+        AlbumSortOrder.ArtistDesc => SortByArtistDesc,
+        AlbumSortOrder.AlbumTitleAsc => SortByAlbumAsc,
+        AlbumSortOrder.AlbumTitleDesc => SortByAlbumDesc,
+        AlbumSortOrder.YearDesc => SortByYearNewest,
+        AlbumSortOrder.YearAsc => SortByYearOldest,
+        AlbumSortOrder.SongCountDesc => SortByMostSongs,
+        _ => SortByArtistAsc
     };
 }

@@ -15,6 +15,7 @@ using Nagi.WinUI.Navigation;
 using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
 using Nagi.WinUI.Helpers;
+using Nagi.Core.Helpers;
 
 namespace Nagi.WinUI.ViewModels;
 
@@ -46,7 +47,7 @@ public partial class ArtistViewViewModel : SongListViewModelBase
 {
     private const int SearchDebounceDelay = 400;
     private readonly ILibraryScanner _libraryScanner;
-    private readonly ISettingsService _settingsService;
+    private readonly IUISettingsService _settingsService;
     private Guid _artistId;
     private CancellationTokenSource? _debounceCts;
     private CancellationTokenSource _pageCts = new();
@@ -58,7 +59,7 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         ILibraryScanner libraryScanner,
         IMusicPlaybackService playbackService,
         INavigationService navigationService,
-        ISettingsService settingsService,
+        IUISettingsService settingsService,
         IDispatcherService dispatcherService,
         IUIService uiService,
         ILogger<ArtistViewViewModel> logger)
@@ -149,6 +150,9 @@ public partial class ArtistViewViewModel : SongListViewModelBase
             if (artist != null)
             {
                 PopulateArtistDetails(artist);
+                
+                CurrentSortOrder = await _settingsService.GetSortOrderAsync<SongSortOrder>(SortOrderHelper.ArtistViewSortOrderKey);
+
                 // After populating artist details, load the associated song list.
                 await RefreshOrSortSongsCommand.ExecuteAsync(null);
             }
@@ -181,7 +185,8 @@ public partial class ArtistViewViewModel : SongListViewModelBase
             // Order albums by year descending, then alphabetically for a standard discography view.
             var albumVms = artist.Albums
                 .OrderByDescending(a => a.Year)
-                .ThenBy(a => a.Title)
+                .ThenBy(a => a.Title, StringComparer.OrdinalIgnoreCase)
+                .ThenBy(a => a.Id)
                 .Select(album => new ArtistAlbumViewModelItem(album));
 
             foreach (var albumVm in albumVms) Albums.Add(albumVm);
@@ -309,6 +314,11 @@ public partial class ArtistViewViewModel : SongListViewModelBase
                 _logger.LogError(ex, "Debounced search failed for artist {ArtistId}", _artistId);
             }
         }, token);
+    }
+
+    protected override Task SaveSortOrderAsync(SongSortOrder sortOrder)
+    {
+        return _settingsService.SetSortOrderAsync(SortOrderHelper.ArtistViewSortOrderKey, sortOrder);
     }
 
     /// <summary>

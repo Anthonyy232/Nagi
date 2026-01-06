@@ -489,7 +489,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
                     cancellationToken.ThrowIfCancellationRequested();
 
-                    var allFilePathsToDelete = filesRemovedFromDisk.Concat(filesToUpdate).Distinct().ToList();
+                    var allFilePathsToDelete = filesRemovedFromDisk.Distinct().ToList();
 
                     if (allFilePathsToDelete.Any())
                     {
@@ -1058,7 +1058,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             context.Songs.AsNoTracking()
                 .Where(s => s.AlbumId == albumId)
                 .Include(s => s.Artist))
-            .OrderBy(s => s.TrackNumber).ThenBy(s => s.Title)
+            .OrderBy(s => s.TrackNumber).ThenBy(s => s.Title).ThenBy(s => s.Id)
             .ToListAsync().ConfigureAwait(false);
     }
 
@@ -1073,6 +1073,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 .Include(s => s.Artist))
             .OrderBy(s => s.Album != null ? s.Album.Title : string.Empty)
             .ThenBy(s => s.TrackNumber)
+            .ThenBy(s => s.Id)
             .AsSplitQuery()
             .ToListAsync().ConfigureAwait(false);
     }
@@ -1408,7 +1409,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         return await ExcludeHeavyFields(
             context.PlaylistSongs.AsNoTracking()
                 .Where(ps => ps.PlaylistId == playlistId)
-                .OrderBy(ps => ps.Order)
+                .OrderBy(ps => ps.Order).ThenBy(ps => ps.SongId)
                 .Include(ps => ps.Song).ThenInclude(s => s!.Artist)
                 .Include(ps => ps.Song).ThenInclude(s => s!.Album).ThenInclude(a => a!.Artist)
                 .Select(ps => ps.Song!))
@@ -1426,7 +1427,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         return await context.Genres.AsNoTracking()
             .Include(g => g.Songs)
-            .OrderBy(g => g.Name)
+            .OrderBy(g => g.Name).ThenBy(g => g.Id)
             .ToListAsync().ConfigureAwait(false);
     }
 
@@ -1439,7 +1440,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 .Where(s => s.Genres.Any(g => g.Id == genreId))
                 .Include(s => s.Artist)
                 .Include(s => s.Album).ThenInclude(a => a!.Artist))
-            .OrderBy(s => s.Title)
+            .OrderBy(s => s.Title).ThenBy(s => s.Id)
             .AsSplitQuery()
             .ToListAsync().ConfigureAwait(false);
     }
@@ -1607,7 +1608,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var baseQuery = context.PlaylistSongs.AsNoTracking()
             .Where(ps => ps.PlaylistId == playlistId)
-            .OrderBy(ps => ps.Order)
+            .OrderBy(ps => ps.Order).ThenBy(ps => ps.SongId)
             .Include(ps => ps.Song).ThenInclude(s => s!.Artist)
             .Include(ps => ps.Song).ThenInclude(s => s!.Album).ThenInclude(a => a!.Artist)
             .Select(ps => ps.Song!);
@@ -1633,11 +1634,12 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         // Apply sort order - for SongCountDesc, we need to join with songs and count
         IOrderedQueryable<Artist> orderedQuery = sortOrder switch
         {
-            ArtistSortOrder.NameDesc => query.OrderByDescending(a => a.Name),
+            ArtistSortOrder.NameDesc => query.OrderByDescending(a => a.Name).ThenBy(a => a.Id),
             ArtistSortOrder.SongCountDesc => query
                 .OrderByDescending(a => context.Songs.Count(s => s.ArtistId == a.Id))
-                .ThenBy(a => a.Name),
-            _ => query.OrderBy(a => a.Name)
+                .ThenBy(a => a.Name)
+                .ThenBy(a => a.Id),
+            _ => query.OrderBy(a => a.Name).ThenBy(a => a.Id)
         };
 
         var pagedData = await orderedQuery
@@ -1677,10 +1679,13 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         // Apply sort order
         IOrderedQueryable<Album> orderedQuery = sortOrder switch
         {
-            AlbumSortOrder.AlbumTitleAsc => query.OrderBy(al => al.Title),
-            AlbumSortOrder.YearDesc => query.OrderByDescending(al => al.Year ?? 0).ThenBy(al => al.Title),
-            AlbumSortOrder.YearAsc => query.OrderBy(al => al.Year ?? int.MaxValue).ThenBy(al => al.Title),
-            _ => query.OrderBy(al => al.Artist != null ? al.Artist.Name : string.Empty).ThenBy(al => al.Title)
+            AlbumSortOrder.ArtistDesc => query.OrderByDescending(al => al.Artist != null ? al.Artist.Name : string.Empty).ThenBy(al => al.Title).ThenBy(al => al.Id),
+            AlbumSortOrder.AlbumTitleAsc => query.OrderBy(al => al.Title).ThenBy(al => al.Id),
+            AlbumSortOrder.AlbumTitleDesc => query.OrderByDescending(al => al.Title).ThenBy(al => al.Id),
+            AlbumSortOrder.YearDesc => query.OrderByDescending(al => al.Year ?? 0).ThenBy(al => al.Title).ThenBy(al => al.Id),
+            AlbumSortOrder.YearAsc => query.OrderBy(al => al.Year ?? int.MaxValue).ThenBy(al => al.Title).ThenBy(al => al.Id),
+            AlbumSortOrder.SongCountDesc => query.OrderByDescending(al => context.Songs.Count(s => s.AlbumId == al.Id)).ThenBy(al => al.Title).ThenBy(al => al.Id),
+            _ => query.OrderBy(al => al.Artist != null ? al.Artist.Name : string.Empty).ThenBy(al => al.Title).ThenBy(al => al.Id)
         };
 
         var pagedData = await orderedQuery
@@ -2009,7 +2014,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         }
 
         var songQuery = query
-            .OrderBy(ps => ps.Order)
+            .OrderBy(ps => ps.Order).ThenBy(ps => ps.SongId)
             .Include(ps => ps.Song).ThenInclude(s => s!.Artist)
             .Include(ps => ps.Song).ThenInclude(s => s!.Album).ThenInclude(a => a!.Artist)
             .Select(ps => ps.Song!);
@@ -2755,34 +2760,39 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 
                 var filePaths = metadataList.Select(m => m.FilePath).ToList();
 
-                var existingSongPaths = await context.Songs
-                    .AsNoTracking()
+                // Fetch existing songs for this batch to support updating existing records.
+                // Including Genres is crucial for safe many-to-many updates without duplication.
+                var existingSongs = await context.Songs
+                    .Include(s => s.Genres)
                     .Where(s => filePaths.Contains(s.FilePath))
-                    .Select(s => s.FilePath)
-                    .ToListAsync(cancellationToken).ConfigureAwait(false);
+                    .ToDictionaryAsync(s => s.FilePath, StringComparer.OrdinalIgnoreCase, cancellationToken).ConfigureAwait(false);
 
-                var existingSongPathsSet = new HashSet<string>(existingSongPaths, StringComparer.OrdinalIgnoreCase);
+                var metadataToProcess = metadataList;
 
-                var metadataToInsert = metadataList
-                    .Where(m => !existingSongPathsSet.Contains(m.FilePath))
-                    .ToList();
-
-                if (metadataToInsert.Count == 0)
+                if (metadataToProcess.Length == 0)
                     return 0;
 
-                var artistNames = metadataToInsert.SelectMany(m => new[] { m.Artist, m.AlbumArtist })
-                    .Where(n => !string.IsNullOrWhiteSpace(n)).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
-                var albumTitles = metadataToInsert.Select(m => m.Album).Where(t => !string.IsNullOrWhiteSpace(t))
+                var artistNames = metadataToProcess.SelectMany(m =>
+                    {
+                        var trackArtist = string.IsNullOrWhiteSpace(m.Artist) ? UnknownArtistName : m.Artist.Trim();
+                        var albumArtist = string.IsNullOrWhiteSpace(m.AlbumArtist) ? trackArtist : m.AlbumArtist.Trim();
+                        return new[] { trackArtist, albumArtist };
+                    })
                     .Distinct(StringComparer.OrdinalIgnoreCase).ToList();
-                var genreNames = metadataToInsert.SelectMany(m => m.Genres ?? Enumerable.Empty<string>())
+                var albumTitles = metadataToProcess.Select(m => m.Album).Where(t => !string.IsNullOrWhiteSpace(t))
+                    .Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+                var genreNames = metadataToProcess.SelectMany(m => m.Genres ?? Enumerable.Empty<string>())
                     .Where(g => !string.IsNullOrWhiteSpace(g)).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
 
                 var existingArtists = await context.Artists.Where(a => artistNames.Contains(a.Name))
                     .ToDictionaryAsync(a => a.Name, StringComparer.OrdinalIgnoreCase, cancellationToken).ConfigureAwait(false);
-                var existingAlbums = await context.Albums.Where(a => albumTitles.Contains(a.Title))
+                var existingAlbumList = await context.Albums.Where(a => albumTitles.Contains(a.Title))
                     .ToListAsync(cancellationToken).ConfigureAwait(false);
                 var existingGenres = await context.Genres.Where(g => genreNames.Contains(g.Name))
                     .ToDictionaryAsync(g => g.Name, StringComparer.OrdinalIgnoreCase, cancellationToken).ConfigureAwait(false);
+
+                // Convert album list to dictionary for efficient lookups by Title and ArtistId
+                var albumLookup = existingAlbumList.ToDictionary(a => $"{a.Title}|{a.ArtistId}", StringComparer.OrdinalIgnoreCase);
 
                 // Add missing Artists/Genres to Context/Dict
                 foreach (var name in artistNames)
@@ -2805,12 +2815,15 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 // but EF Core graph insertion handles nav properties. 
                 // However, to prevent duplicates in the same batch, sharing the entity instance is key.
 
-                foreach (var metadata in metadataToInsert)
-                    await AddSongWithDetailsOptimizedAsync(context, folderId, metadata, existingArtists, existingAlbums,
-                        existingGenres);
+                foreach (var metadata in metadataToProcess)
+                {
+                    existingSongs.TryGetValue(metadata.FilePath, out var existingSong);
+                    await AddSongWithDetailsOptimizedAsync(context, folderId, metadata, existingArtists, albumLookup,
+                        existingGenres, existingSong);
+                }
 
                 await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-                return metadataToInsert.Count;
+                return metadataToProcess.Length;
             }
             catch (DbUpdateException ex) when (IsUniqueConstraintViolation(ex))
             {
@@ -2828,8 +2841,9 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         Guid folderId,
         SongFileMetadata metadata,
         Dictionary<string, Artist> artistLookup,
-        List<Album> existingAlbumList,
-        Dictionary<string, Genre> genreLookup)
+        Dictionary<string, Album> albumLookup, // Changed from List to support faster batch lookups
+        Dictionary<string, Genre> genreLookup,
+        Song? existingSong = null)
     {
         var trackArtistName = string.IsNullOrWhiteSpace(metadata.Artist) ? UnknownArtistName : metadata.Artist.Trim();
         var albumArtistName = string.IsNullOrWhiteSpace(metadata.AlbumArtist)
@@ -2843,13 +2857,13 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         if (!string.IsNullOrWhiteSpace(metadata.Album))
         {
             var albumTitle = metadata.Album.Trim();
-            album = existingAlbumList.FirstOrDefault(a =>
-                a.Title.Equals(albumTitle, StringComparison.OrdinalIgnoreCase) && a.ArtistId == albumArtist.Id);
-            if (album == null)
+            var albumKey = $"{albumTitle}|{albumArtist.Id}";
+            
+            if (!albumLookup.TryGetValue(albumKey, out album))
             {
                 album = new Album { Title = albumTitle, ArtistId = albumArtist.Id, Year = metadata.Year };
                 context.Albums.Add(album);
-                existingAlbumList.Add(album);
+                albumLookup[albumKey] = album;
             }
             else if (album.Year is null && metadata.Year.HasValue)
             {
@@ -2864,48 +2878,58 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         var directoryPath = _fileSystem.GetDirectoryName(metadata.FilePath) ?? string.Empty;
 
-        var song = new Song
+        var song = existingSong ?? new Song();
+
+        song.FilePath = metadata.FilePath;
+        song.DirectoryPath = directoryPath;
+        song.Title = metadata.Title;
+        song.DurationTicks = metadata.Duration.Ticks;
+        song.AlbumArtUriFromTrack = metadata.CoverArtUri;
+        song.LightSwatchId = metadata.LightSwatchId;
+        song.DarkSwatchId = metadata.DarkSwatchId;
+        song.Year = metadata.Year;
+        song.TrackNumber = metadata.TrackNumber;
+        song.TrackCount = metadata.TrackCount;
+        song.DiscNumber = metadata.DiscNumber;
+        song.DiscCount = metadata.DiscCount;
+        song.SampleRate = metadata.SampleRate;
+        song.Bitrate = metadata.Bitrate;
+        song.Channels = metadata.Channels;
+        song.FileCreatedDate = metadata.FileCreatedDate;
+        song.FileModifiedDate = metadata.FileModifiedDate;
+        song.FolderId = folderId;
+        song.Composer = metadata.Composer;
+        song.Bpm = metadata.Bpm;
+        song.Lyrics = metadata.Lyrics;
+        song.LrcFilePath = metadata.LrcFilePath;
+        song.ArtistId = trackArtist.Id;
+        song.AlbumId = album?.Id;
+        
+        // Synchronize Genres collection instead of replacing it to avoid EF Core many-to-many churn.
+        if (!song.Genres.SequenceEqual(genres))
         {
-            FilePath = metadata.FilePath,
-            DirectoryPath = directoryPath,
-            Title = metadata.Title,
-            Duration = metadata.Duration,
-            AlbumArtUriFromTrack = metadata.CoverArtUri,
-            LightSwatchId = metadata.LightSwatchId,
-            DarkSwatchId = metadata.DarkSwatchId,
-            Year = metadata.Year,
-            TrackNumber = metadata.TrackNumber,
-            TrackCount = metadata.TrackCount,
-            DiscNumber = metadata.DiscNumber,
-            DiscCount = metadata.DiscCount,
-            SampleRate = metadata.SampleRate,
-            Bitrate = metadata.Bitrate,
-            Channels = metadata.Channels,
-            DateAddedToLibrary = DateTime.UtcNow,
-            FileCreatedDate = metadata.FileCreatedDate,
-            FileModifiedDate = metadata.FileModifiedDate,
-            FolderId = folderId,
-            Composer = metadata.Composer,
-            Bpm = metadata.Bpm,
-            Lyrics = metadata.Lyrics,
-            LrcFilePath = metadata.LrcFilePath,
-            ArtistId = trackArtist.Id,
-            AlbumId = album?.Id,
-            Genres = genres,
-            Grouping = metadata.Grouping,
-            Copyright = metadata.Copyright,
-            Comment = metadata.Comment,
-            Conductor = metadata.Conductor,
-            MusicBrainzTrackId = metadata.MusicBrainzTrackId,
-            MusicBrainzReleaseId = metadata.MusicBrainzReleaseId,
-            ReplayGainTrackGain = metadata.ReplayGainTrackGain,
-            ReplayGainTrackPeak = metadata.ReplayGainTrackPeak
-        };
+            song.Genres.Clear();
+            foreach (var genre in genres)
+                song.Genres.Add(genre);
+        }
+
+        song.Grouping = metadata.Grouping;
+        song.Copyright = metadata.Copyright;
+        song.Comment = metadata.Comment;
+        song.Conductor = metadata.Conductor;
+        song.MusicBrainzTrackId = metadata.MusicBrainzTrackId;
+        song.MusicBrainzReleaseId = metadata.MusicBrainzReleaseId;
+        song.ReplayGainTrackGain = metadata.ReplayGainTrackGain;
+        song.ReplayGainTrackPeak = metadata.ReplayGainTrackPeak;
+
+        if (existingSong == null)
+        {
+            song.DateAddedToLibrary = DateTime.UtcNow;
+            context.Songs.Add(song);
+        }
 
         if (album is not null && string.IsNullOrEmpty(album.CoverArtUri) && !string.IsNullOrEmpty(metadata.CoverArtUri))
             album.CoverArtUri = metadata.CoverArtUri;
-
-        context.Songs.Add(song);
         return Task.CompletedTask;
     }
 
@@ -2926,47 +2950,61 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
             var directoryPath = _fileSystem.GetDirectoryName(metadata.FilePath) ?? string.Empty;
 
-            var song = new Song
+            var existingSong = await context.Songs
+                .Include(s => s.Genres)
+                .FirstOrDefaultAsync(s => s.FilePath == metadata.FilePath).ConfigureAwait(false);
+            var song = existingSong ?? new Song();
+
+            song.FilePath = metadata.FilePath;
+            song.DirectoryPath = directoryPath;
+            song.Title = metadata.Title;
+            song.Duration = metadata.Duration;
+            song.AlbumArtUriFromTrack = metadata.CoverArtUri;
+            song.LightSwatchId = metadata.LightSwatchId;
+            song.DarkSwatchId = metadata.DarkSwatchId;
+            song.Year = metadata.Year;
+            song.TrackNumber = metadata.TrackNumber;
+            song.TrackCount = metadata.TrackCount;
+            song.DiscNumber = metadata.DiscNumber;
+            song.DiscCount = metadata.DiscCount;
+            song.SampleRate = metadata.SampleRate;
+            song.Bitrate = metadata.Bitrate;
+            song.Channels = metadata.Channels;
+            song.FileCreatedDate = metadata.FileCreatedDate;
+            song.FileModifiedDate = metadata.FileModifiedDate;
+            song.FolderId = folderId;
+            song.Composer = metadata.Composer;
+            song.Bpm = metadata.Bpm;
+            song.Lyrics = metadata.Lyrics;
+            song.LrcFilePath = metadata.LrcFilePath;
+            song.ArtistId = trackArtist.Id;
+            song.AlbumId = album?.Id;
+            
+            // Synchronize Genres collection
+            if (!song.Genres.SequenceEqual(genres))
             {
-                FilePath = metadata.FilePath,
-                DirectoryPath = directoryPath,
-                Title = metadata.Title,
-                Duration = metadata.Duration,
-                AlbumArtUriFromTrack = metadata.CoverArtUri,
-                LightSwatchId = metadata.LightSwatchId,
-                DarkSwatchId = metadata.DarkSwatchId,
-                Year = metadata.Year,
-                TrackNumber = metadata.TrackNumber,
-                TrackCount = metadata.TrackCount,
-                DiscNumber = metadata.DiscNumber,
-                DiscCount = metadata.DiscCount,
-                SampleRate = metadata.SampleRate,
-                Bitrate = metadata.Bitrate,
-                Channels = metadata.Channels,
-                DateAddedToLibrary = DateTime.UtcNow,
-                FileCreatedDate = metadata.FileCreatedDate,
-                FileModifiedDate = metadata.FileModifiedDate,
-                FolderId = folderId,
-                Composer = metadata.Composer,
-                Bpm = metadata.Bpm,
-                Lyrics = metadata.Lyrics,
-                LrcFilePath = metadata.LrcFilePath,
-                ArtistId = trackArtist.Id,
-                AlbumId = album?.Id,
-                Genres = genres,
-                Grouping = metadata.Grouping,
-                Copyright = metadata.Copyright,
-                Comment = metadata.Comment,
-                Conductor = metadata.Conductor,
-                MusicBrainzTrackId = metadata.MusicBrainzTrackId,
-                MusicBrainzReleaseId = metadata.MusicBrainzReleaseId
-            };
+                song.Genres.Clear();
+                foreach (var genre in genres)
+                    song.Genres.Add(genre);
+            }
+
+            song.Grouping = metadata.Grouping;
+            song.Copyright = metadata.Copyright;
+            song.Comment = metadata.Comment;
+            song.Conductor = metadata.Conductor;
+            song.MusicBrainzTrackId = metadata.MusicBrainzTrackId;
+            song.MusicBrainzReleaseId = metadata.MusicBrainzReleaseId;
+
+            if (existingSong == null)
+            {
+                song.DateAddedToLibrary = DateTime.UtcNow;
+                context.Songs.Add(song);
+            }
 
             if (album is not null && string.IsNullOrEmpty(album.CoverArtUri) &&
                 !string.IsNullOrEmpty(metadata.CoverArtUri))
                 album.CoverArtUri = metadata.CoverArtUri;
 
-            context.Songs.Add(song);
             return song;
         }
         catch (Exception ex)
@@ -3661,20 +3699,25 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     {
         return sortOrder switch
         {
-            SongSortOrder.TitleDesc => query.OrderByDescending(s => s.Title).ThenBy(s => s.Id),
-            SongSortOrder.DateAddedDesc => query.OrderByDescending(s => s.DateAddedToLibrary).ThenBy(s => s.Title),
-            SongSortOrder.DateAddedAsc => query.OrderBy(s => s.DateAddedToLibrary).ThenBy(s => s.Title),
-            SongSortOrder.DateModifiedDesc => query.OrderByDescending(s => s.FileModifiedDate).ThenBy(s => s.Title),
-            SongSortOrder.DateModifiedAsc => query.OrderBy(s => s.FileModifiedDate).ThenBy(s => s.Title),
+            SongSortOrder.YearAsc => query.OrderBy(s => s.Year).ThenBy(s => s.Artist.Name).ThenBy(s => s.Album.Title).ThenBy(s => s.TrackNumber).ThenBy(s => s.Id),
+            SongSortOrder.YearDesc => query.OrderByDescending(s => s.Year).ThenBy(s => s.Artist.Name).ThenBy(s => s.Album.Title).ThenBy(s => s.TrackNumber).ThenBy(s => s.Id),
             SongSortOrder.AlbumAsc or SongSortOrder.TrackNumberAsc => query
                 .OrderBy(s => s.Album != null ? s.Album.Title : string.Empty)
                 .ThenBy(s => s.DiscNumber ?? 0)
                 .ThenBy(s => s.TrackNumber)
-                .ThenBy(s => s.Title),
+                .ThenBy(s => s.Title)
+                .ThenBy(s => s.Id),
+            SongSortOrder.AlbumDesc => query
+                .OrderByDescending(s => s.Album != null ? s.Album.Title : string.Empty)
+                .ThenByDescending(s => s.DiscNumber ?? 0)
+                .ThenByDescending(s => s.TrackNumber)
+                .ThenByDescending(s => s.Title)
+                .ThenBy(s => s.Id),
             SongSortOrder.ArtistAsc => query.OrderBy(s => s.Artist != null ? s.Artist.Name : string.Empty)
                 .ThenBy(s => s.Album != null ? s.Album.Title : string.Empty)
                 .ThenBy(s => s.DiscNumber ?? 0)
-                .ThenBy(s => s.TrackNumber),
+                .ThenBy(s => s.TrackNumber)
+                .ThenBy(s => s.Id),
             _ => query.OrderBy(s => s.Title).ThenBy(s => s.Id)
         };
     }

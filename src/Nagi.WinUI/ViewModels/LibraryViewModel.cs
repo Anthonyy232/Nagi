@@ -10,6 +10,7 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.WinUI.Services.Abstractions;
+using Nagi.Core.Helpers;
 
 namespace Nagi.WinUI.ViewModels;
 
@@ -22,6 +23,7 @@ public partial class LibraryViewModel : SongListViewModelBase
 
     private static bool _isInitialScanTriggered;
     private readonly ILibraryScanner _libraryScanner;
+    private readonly IUISettingsService _settingsService;
     private CancellationTokenSource? _debounceCts;
 
     public LibraryViewModel(
@@ -31,11 +33,13 @@ public partial class LibraryViewModel : SongListViewModelBase
         IMusicPlaybackService playbackService,
         INavigationService navigationService,
         IDispatcherService dispatcherService,
+        IUISettingsService settingsService,
         IUIService uiService,
         ILogger<LibraryViewModel> logger)
         : base(libraryReader, playlistService, playbackService, navigationService, dispatcherService, uiService, logger)
     {
         _libraryScanner = libraryScanner;
+        _settingsService = settingsService;
         _libraryScanner.ScanCompleted += OnScanCompleted;
     }
 
@@ -73,6 +77,8 @@ public partial class LibraryViewModel : SongListViewModelBase
     {
         var shouldTriggerScan = !_isInitialScanTriggered;
         _isInitialScanTriggered = true;
+
+        CurrentSortOrder = await _settingsService.GetSortOrderAsync<SongSortOrder>(SortOrderHelper.LibrarySortOrderKey);
 
         await RefreshOrSortSongsCommand.ExecuteAsync(null);
 
@@ -145,6 +151,11 @@ public partial class LibraryViewModel : SongListViewModelBase
                 _logger.LogError(ex, "Debounced search failed");
             }
         }, token);
+    }
+
+    protected override Task SaveSortOrderAsync(SongSortOrder sortOrder)
+    {
+        return _settingsService.SetSortOrderAsync(SortOrderHelper.LibrarySortOrderKey, sortOrder);
     }
 
     public override void Cleanup()

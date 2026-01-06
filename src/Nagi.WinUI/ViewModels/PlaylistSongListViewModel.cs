@@ -162,10 +162,15 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
     /// </summary>
     private void OnSongsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
+        // WinUI ListView may fire Remove + Add instead of a single Move event for drag-drop operations.
+        // Listen to all three action types to ensure reorder is saved correctly.
         if (e.Action is NotifyCollectionChangedAction.Move or NotifyCollectionChangedAction.Add
             or NotifyCollectionChangedAction.Remove)
-            // Instead of saving on every micro-change, start a timer. If no more changes occur, the timer's tick will save.
+        {
+            // Restart the timer on each change to debounce rapid drag operations.
+            _reorderSaveTimer.Stop();
             _reorderSaveTimer.Start();
+        }
     }
 
     /// <summary>

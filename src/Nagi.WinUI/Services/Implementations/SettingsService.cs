@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Frozen;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -165,6 +166,19 @@ public class SettingsService : IUISettingsService
         await SetRememberPaneStateEnabledAsync(SettingsDefaults.RememberPaneStateEnabled).ConfigureAwait(false);
         await SetVolumeNormalizationEnabledAsync(SettingsDefaults.VolumeNormalizationEnabled).ConfigureAwait(false);
         await SetAccentColorAsync(SettingsDefaults.AccentColor).ConfigureAwait(false);
+
+        // Clear sort order settings
+        lock (_dictLock)
+        {
+            var keysToRemove = _settings.Keys.Where(k => k.StartsWith("SortOrder_")).ToList();
+            foreach (var key in keysToRemove) _settings.Remove(key);
+        }
+        if (!_isPackaged) _ = QueueSaveAsync();
+        else
+        {
+            var keysToRemove = _localSettings!.Values.Keys.Where(k => k.StartsWith("SortOrder_")).ToList();
+            foreach (var key in keysToRemove) _localSettings.Values.Remove(key);
+        }
 
         _logger.LogInformation("All application settings have been reset to their default values.");
     }
@@ -1120,6 +1134,38 @@ public class SettingsService : IUISettingsService
     {
         return SetValueAndNotifyAsync(VolumeNormalizationEnabledKey, isEnabled, SettingsDefaults.VolumeNormalizationEnabled,
             VolumeNormalizationEnabledChanged);
+    }
+
+    public async Task<TEnum> GetSortOrderAsync<TEnum>(string pageKey) where TEnum : struct, Enum
+    {
+        await EnsureUnpackagedSettingsLoadedAsync().ConfigureAwait(false);
+        var defaultValue = GetDefaultSortOrder<TEnum>(pageKey);
+        return GetEnumValue(pageKey, defaultValue);
+    }
+
+    private static readonly FrozenDictionary<string, object> _defaultSortOrders = new Dictionary<string, object>()
+    {
+        { SortOrderHelper.LibrarySortOrderKey, SettingsDefaults.LibrarySortOrder },
+        { SortOrderHelper.AlbumsSortOrderKey, SettingsDefaults.AlbumsSortOrder },
+        { SortOrderHelper.ArtistsSortOrderKey, SettingsDefaults.ArtistsSortOrder },
+        { SortOrderHelper.GenresSortOrderKey, SettingsDefaults.GenresSortOrder },
+        { SortOrderHelper.PlaylistsSortOrderKey, SettingsDefaults.PlaylistsSortOrder },
+        { SortOrderHelper.FolderViewSortOrderKey, SettingsDefaults.FolderViewSortOrder },
+        { SortOrderHelper.AlbumViewSortOrderKey, SettingsDefaults.AlbumViewSortOrder },
+        { SortOrderHelper.ArtistViewSortOrderKey, SettingsDefaults.ArtistViewSortOrder },
+        { SortOrderHelper.GenreViewSortOrderKey, SettingsDefaults.GenreViewSortOrder }
+    }.ToFrozenDictionary();
+
+    private static TEnum GetDefaultSortOrder<TEnum>(string pageKey) where TEnum : struct, Enum
+    {
+        if (_defaultSortOrders.TryGetValue(pageKey, out var defaultValue) && defaultValue is TEnum enumValue)
+            return enumValue;
+        return default;
+    }
+
+    public Task SetSortOrderAsync<TEnum>(string pageKey, TEnum sortOrder) where TEnum : struct, Enum
+    {
+        return SetValueAsync(pageKey, sortOrder.ToString());
     }
 
     #endregion

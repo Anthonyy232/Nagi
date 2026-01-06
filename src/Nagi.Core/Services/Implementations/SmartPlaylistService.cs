@@ -398,6 +398,36 @@ public class SmartPlaylistService : ISmartPlaylistService
         await context.SaveChangesAsync().ConfigureAwait(false);
     }
 
+    /// <inheritdoc />
+    public async Task<bool> ReplaceAllRulesAsync(Guid smartPlaylistId, IEnumerable<SmartPlaylistRule> newRules)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        var smartPlaylist = await context.SmartPlaylists
+            .Include(sp => sp.Rules)
+            .FirstOrDefaultAsync(sp => sp.Id == smartPlaylistId).ConfigureAwait(false);
+
+        if (smartPlaylist is null) return false;
+
+        // Remove all existing rules
+        context.SmartPlaylistRules.RemoveRange(smartPlaylist.Rules);
+
+        // Add new rules with proper order and playlist ID
+        var order = 0;
+        foreach (var rule in newRules)
+        {
+            rule.Id = Guid.NewGuid();
+            rule.SmartPlaylistId = smartPlaylistId;
+            rule.Order = order++;
+            context.SmartPlaylistRules.Add(rule);
+        }
+
+        smartPlaylist.DateModified = DateTime.UtcNow;
+        await context.SaveChangesAsync().ConfigureAwait(false);
+
+        _logger.LogDebug("Replaced all rules for smart playlist {Id} with {Count} new rules", smartPlaylistId, order);
+        return true;
+    }
+
     #endregion
 
     #region Query Execution

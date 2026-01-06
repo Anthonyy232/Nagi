@@ -38,4 +38,15 @@ public static class SettingsDefaults
     public const bool VolumeNormalizationEnabled = false;
     public const float EqualizerPreamp = 0.0f;
     public static readonly Color? AccentColor = null;
+
+    // Default Sort Orders
+    public const SongSortOrder LibrarySortOrder = SongSortOrder.TitleAsc;
+    public const AlbumSortOrder AlbumsSortOrder = AlbumSortOrder.ArtistAsc;
+    public const ArtistSortOrder ArtistsSortOrder = ArtistSortOrder.NameAsc;
+    public const GenreSortOrder GenresSortOrder = GenreSortOrder.NameAsc;
+    public const PlaylistSortOrder PlaylistsSortOrder = PlaylistSortOrder.NameAsc;
+    public const SongSortOrder FolderViewSortOrder = SongSortOrder.TitleAsc;
+    public const SongSortOrder AlbumViewSortOrder = SongSortOrder.TrackNumberAsc;
+    public const SongSortOrder ArtistViewSortOrder = SongSortOrder.AlbumAsc;
+    public const SongSortOrder GenreViewSortOrder = SongSortOrder.TitleAsc;
 }
