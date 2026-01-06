@@ -12,6 +12,7 @@ using Microsoft.UI.Xaml.Media;
 using Nagi.WinUI.Controls;
 using Nagi.WinUI.Models;
 using Nagi.WinUI.Pages;
+using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Services.Abstractions;
 using WinRT.Interop;
 
@@ -33,6 +34,8 @@ public sealed partial class MainWindow : Window
     private ILogger<MainWindow>? _logger;
     private FrameworkElement? _rootElement;
     private IUISettingsService? _settingsService;
+    private ITaskbarService? _taskbarService;
+    private bool _isTaskbarInitialized;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="MainWindow" /> class.
@@ -50,6 +53,7 @@ public sealed partial class MainWindow : Window
     {
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
         _logger = App.Services!.GetRequiredService<ILogger<MainWindow>>();
+        _taskbarService = App.Services!.GetRequiredService<ITaskbarService>();
         Activated += OnWindowActivated;
         _settingsService.BackdropMaterialChanged += OnBackdropMaterialChanged;
         _settingsService.TransparencyEffectsSettingChanged += OnTransparencyEffectsChanged;
@@ -141,6 +145,14 @@ public sealed partial class MainWindow : Window
         {
             _isWindowSizeRestored = true;
             await RestoreWindowSizeAsync();
+        }
+
+        if (!_isTaskbarInitialized && _taskbarService != null)
+        {
+            _isTaskbarInitialized = true;
+            var windowHandle = WindowNative.GetWindowHandle(this);
+            _taskbarService.Initialize(windowHandle);
+            InitializeWndProc();
         }
 
         if (Content is MainPage mainPage) mainPage.UpdateActivationVisualState(args.WindowActivationState);
@@ -298,6 +310,27 @@ public sealed partial class MainWindow : Window
             return null;
         }
     }
+
+    #region WndProc
+
+    private TaskbarNativeMethods.WindowProc? _wndProcDelegate;
+    private nint _oldWndProc;
+
+    private void InitializeWndProc()
+    {
+        var windowHandle = WindowNative.GetWindowHandle(this);
+        _wndProcDelegate = WndProc;
+        var wndProcPtr = System.Runtime.InteropServices.Marshal.GetFunctionPointerForDelegate(_wndProcDelegate);
+        _oldWndProc = TaskbarNativeMethods.SetWindowLongPtr(windowHandle, TaskbarNativeMethods.GWLP_WNDPROC, wndProcPtr);
+    }
+
+    private nint WndProc(nint hWnd, int msg, nint wParam, nint lParam)
+    {
+        _taskbarService?.HandleWindowMessage(msg, wParam, lParam);
+        return TaskbarNativeMethods.CallWindowProc(_oldWndProc, hWnd, msg, wParam, lParam);
+    }
+
+    #endregion
 }
 
 /// <summary>

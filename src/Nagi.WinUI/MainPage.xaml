@@ -460,6 +460,39 @@
             VerticalAlignment="Top" HorizontalAlignment="Left"
             Width="1" Height="1" Opacity="0" IsTabStop="False" />
 
+        <Grid Opacity="1" IsHitTestVisible="False" Margin="-1000,-1000,0,0" VerticalAlignment="Top" HorizontalAlignment="Left">
+            <StackPanel Orientation="Horizontal">
+                <FontIcon
+                    x:Name="PreviousIcon"
+                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                    Glyph="&#xE892;"
+                    FontSize="32"
+                    Width="32" Height="32"
+                    Opacity="1" />
+                <FontIcon
+                    x:Name="PlayIcon"
+                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                    Glyph="&#xE768;"
+                    FontSize="32"
+                    Width="32" Height="32"
+                    Opacity="1" />
+                <FontIcon
+                    x:Name="PauseIcon"
+                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                    Glyph="&#xE769;"
+                    FontSize="32"
+                    Width="32" Height="32"
+                    Opacity="1" />
+                <FontIcon
+                    x:Name="NextIcon"
+                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                    Glyph="&#xE893;"
+                    FontSize="32"
+                    Width="32" Height="32"
+                    Opacity="1" />
+            </StackPanel>
+        </Grid>
+
         <Grid
             x:Name="ProgressOverlayGrid"
             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"

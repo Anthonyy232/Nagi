@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Globalization;
@@ -381,7 +381,7 @@ public partial class App : Application
         services.AddSingleton(configuration);
         services.AddSingleton<IPathConfiguration, PathConfiguration>();
         services.AddHttpClient();
-        
+
         // Configure named HTTP clients with strict timeouts for lyrics APIs
         // Force HTTP/1.1 and limit connection lifetime to avoid "Response Ended Prematurely" 
         // errors caused by servers closing idle connections that HttpClient tries to reuse
@@ -503,6 +503,10 @@ public partial class App : Application
         services.AddSingleton<IAudioPlayer>(provider =>
             new LibVlcAudioPlayerService(provider.GetRequiredService<IDispatcherService>(),
                 provider.GetRequiredService<ILogger<LibVlcAudioPlayerService>>()));
+        services.AddSingleton<ITaskbarService>(provider =>
+            new TaskbarService(
+                provider.GetRequiredService<ILogger<TaskbarService>>(),
+                provider.GetRequiredService<IMusicPlaybackService>()));
     }
 
     private static void ConfigureViewModels(IServiceCollection services)
@@ -533,11 +537,11 @@ public partial class App : Application
         {
             var dbContextFactory = services.GetRequiredService<IDbContextFactory<MusicDbContext>>();
             await using var dbContext = await dbContextFactory.CreateDbContextAsync().ConfigureAwait(false);
-            
+
             // Enable WAL mode for better concurrency and performance.
             // This is more reliable than setting it in the connection string for Microsoft.Data.Sqlite.
             await dbContext.Database.ExecuteSqlRawAsync("PRAGMA journal_mode=WAL;").ConfigureAwait(false);
-            
+
             await dbContext.Database.MigrateAsync().ConfigureAwait(false);
         }
         catch (Exception ex)
@@ -935,6 +939,7 @@ public partial class App : Application
         if (hasFolders)
         {
             if (RootWindow.Content is not MainPage) RootWindow.Content = new MainPage();
+            
         }
         else
         {
