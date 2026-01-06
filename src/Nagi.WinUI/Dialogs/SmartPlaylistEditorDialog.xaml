@@ -76,6 +76,9 @@
                     <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.ArtistDescLabel}" Tag="ArtistDesc" />
                     <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.AlbumAscLabel}" Tag="AlbumAsc" />
                     <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.AlbumDescLabel}" Tag="AlbumDesc" />
+                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.YearNewestLabel}" Tag="YearDesc" />
+                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.YearOldestLabel}" Tag="YearAsc" />
+                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.MostPlayedLabel}" Tag="PlayCountDesc" />
                     <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.RandomLabel}" Tag="Random" />
                 </ComboBox>
             </StackPanel>

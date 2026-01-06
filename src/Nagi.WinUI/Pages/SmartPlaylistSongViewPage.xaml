@@ -145,13 +145,10 @@
                     <FontIcon Glyph="&#xE768;" FontSize="16" Foreground="{StaticResource AppPrimaryColorBrush}" />
                 </Button>
 
-                <Button Style="{StaticResource SongListViewPageFilledButtonStyle}"
+                <Button Style="{StaticResource SongListViewPageIconButton}"
                         ToolTipService.ToolTip="Shuffle and play all"
                         Command="{x:Bind ViewModel.ShuffleAndPlayAllSongsCommand}">
-                    <StackPanel Orientation="Horizontal" Spacing="6">
-                        <FontIcon Glyph="" FontSize="14" />
-                        <TextBlock Text="Shuffle and play" VerticalAlignment="Center" />
-                    </StackPanel>
+                    <FontIcon Glyph="" FontSize="16" />
                 </Button>
             </StackPanel>
         </Grid>

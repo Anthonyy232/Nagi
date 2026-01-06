@@ -13,6 +13,7 @@ using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.WinUI.Models;
 using Nagi.WinUI.Services.Abstractions;
+using Nagi.Core.Helpers;
 
 namespace Nagi.WinUI.ViewModels;
 
@@ -34,6 +35,7 @@ public partial class BreadcrumbItem : ObservableObject
 public partial class FolderSongListViewModel : SongListViewModelBase
 {
     private const int SearchDebounceDelay = 400;
+    private readonly IUISettingsService _settingsService;
     private string? _currentDirectoryPath;
     private CancellationTokenSource? _debounceCts;
     private Guid? _rootFolderId;
@@ -45,10 +47,12 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         IMusicPlaybackService playbackService,
         INavigationService navigationService,
         IDispatcherService dispatcherService,
+        IUISettingsService settingsService,
         IUIService uiService,
         ILogger<FolderSongListViewModel> logger)
         : base(libraryReader, playlistService, playbackService, navigationService, dispatcherService, uiService, logger)
     {
+        _settingsService = settingsService;
     }
 
     [ObservableProperty] public partial string SearchTerm { get; set; } = string.Empty;
@@ -102,6 +106,8 @@ public partial class FolderSongListViewModel : SongListViewModelBase
             }
 
             PageTitle = title;
+            CurrentSortOrder = await _settingsService.GetSortOrderAsync<SongSortOrder>(SortOrderHelper.FolderViewSortOrderKey);
+
             await LoadFolderContentsAsync();
             UpdateBreadcrumbs();
         }
@@ -363,10 +369,14 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         if (IsOverallLoading) return;
 
         if (!string.IsNullOrEmpty(sortOrderString) &&
-            Enum.TryParse<SongSortOrder>(sortOrderString, true, out var newSortOrder))
+            Enum.TryParse<SongSortOrder>(sortOrderString, true, out var newSortOrder)
+            && newSortOrder != CurrentSortOrder)
         {
             CurrentSortOrder = newSortOrder;
             _logger.LogDebug("Folder sort order changed to '{SortOrder}'", CurrentSortOrder);
+            _ = SaveSortOrderAsync(newSortOrder)
+                .ContinueWith(t => _logger.LogError(t.Exception, "Failed to save folder sort order"),
+                    TaskContinuationOptions.OnlyOnFaulted);
         }
 
         UpdateSortOrderButtonText(CurrentSortOrder);
@@ -430,6 +440,11 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         {
             _logger.LogError(ex, "Error playing subfolder {SubfolderPath}", folder.Path);
         }
+    }
+
+    protected override Task SaveSortOrderAsync(SongSortOrder sortOrder)
+    {
+        return _settingsService.SetSortOrderAsync(SortOrderHelper.FolderViewSortOrderKey, sortOrder);
     }
 
     public override void Cleanup()

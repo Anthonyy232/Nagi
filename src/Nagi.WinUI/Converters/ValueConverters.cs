@@ -437,3 +437,23 @@ public class FloatToDecimalStringConverter : IValueConverter
         throw new NotImplementedException();
     }
 }
+
+/// <summary>
+///     Compares an enum value to a string parameter and returns true if they match.
+///     Used for RadioMenuFlyoutItem IsChecked bindings to indicate the selected sort order.
+/// </summary>
+public class SortOrderEqualsConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        if (value is null || parameter is not string paramString)
+            return false;
+
+        return string.Equals(value.ToString(), paramString, StringComparison.OrdinalIgnoreCase);
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
+        throw new NotImplementedException();
+    }
+}

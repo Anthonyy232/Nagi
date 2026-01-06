@@ -44,22 +44,27 @@ public partial class GenreViewModel : ObservableObject, IDisposable
     private readonly ILogger<GenreViewModel> _logger;
     private readonly IMusicPlaybackService _musicPlaybackService;
     private readonly INavigationService _navigationService;
+    private readonly IUISettingsService _settingsService;
     private CancellationTokenSource? _debounceCts;
     private bool _isDisposed;
+    private bool _hasSortOrderLoaded;
     private List<GenreViewModelItem> _allGenres = new();
 
     public GenreViewModel(ILibraryService libraryService, IMusicPlaybackService musicPlaybackService,
-        INavigationService navigationService, IDispatcherService dispatcherService, ILogger<GenreViewModel> logger)
+        INavigationService navigationService, IUISettingsService settingsService, IDispatcherService dispatcherService, ILogger<GenreViewModel> logger)
     {
         _libraryService = libraryService;
         _musicPlaybackService = musicPlaybackService;
         _navigationService = navigationService;
+        _settingsService = settingsService;
         _dispatcherService = dispatcherService;
         _logger = logger;
 
         // Store the handler in a field so we can reliably unsubscribe from it later.
         _collectionChangedHandler = (s, e) => OnPropertyChanged(nameof(HasGenres));
         Genres.CollectionChanged += _collectionChangedHandler;
+        
+        UpdateSortOrderText();
     }
 
     [ObservableProperty] public partial ObservableCollection<GenreViewModelItem> Genres { get; set; } = new();
@@ -72,7 +77,9 @@ public partial class GenreViewModel : ObservableObject, IDisposable
 
     [ObservableProperty] public partial GenreSortOrder CurrentSortOrder { get; set; } = GenreSortOrder.NameAsc;
 
-    [ObservableProperty] public partial string CurrentSortOrderText { get; set; } = SortOrderHelper.AToZ;
+    [ObservableProperty] public partial string CurrentSortOrderText { get; set; } = string.Empty;
+
+    partial void OnCurrentSortOrderChanged(GenreSortOrder value) => UpdateSortOrderText();
 
     private bool IsSearchActive => !string.IsNullOrWhiteSpace(SearchTerm);
 
@@ -95,6 +102,11 @@ public partial class GenreViewModel : ObservableObject, IDisposable
 
         _isDisposed = true;
         GC.SuppressFinalize(this);
+    }
+
+    private void UpdateSortOrderText()
+    {
+        CurrentSortOrderText = SortOrderHelper.GetDisplayName(CurrentSortOrder);
     }
 
     /// <summary>
@@ -127,6 +139,12 @@ public partial class GenreViewModel : ObservableObject, IDisposable
 
         try
         {
+            if (!_hasSortOrderLoaded)
+            {
+                CurrentSortOrder = await _settingsService.GetSortOrderAsync<GenreSortOrder>(SortOrderHelper.GenresSortOrderKey);
+                _hasSortOrderLoaded = true;
+            }
+
             var genreModels = await _libraryService.GetAllGenresAsync();
             if (cancellationToken.IsCancellationRequested) return;
 
@@ -210,9 +228,9 @@ public partial class GenreViewModel : ObservableObject, IDisposable
         // Apply sort order
         var sorted = CurrentSortOrder switch
         {
-            GenreSortOrder.NameDesc => filtered.OrderByDescending(g => g.Name),
-            GenreSortOrder.SongCountDesc => filtered.OrderByDescending(g => g.SongCount).ThenBy(g => g.Name),
-            _ => filtered.OrderBy(g => g.Name)
+            GenreSortOrder.NameDesc => filtered.OrderByDescending(g => g.Name, StringComparer.OrdinalIgnoreCase).ThenBy(g => g.Id),
+            GenreSortOrder.SongCountDesc => filtered.OrderByDescending(g => g.SongCount).ThenBy(g => g.Name, StringComparer.OrdinalIgnoreCase).ThenBy(g => g.Id),
+            _ => filtered.OrderBy(g => g.Name, StringComparer.OrdinalIgnoreCase).ThenBy(g => g.Id)
         };
 
         foreach (var item in sorted)
@@ -223,20 +241,18 @@ public partial class GenreViewModel : ObservableObject, IDisposable
     ///     Changes the sort order and reapplies filtering.
     /// </summary>
     [RelayCommand]
-    public void ChangeSortOrder(string sortOrderString)
+    public Task ChangeSortOrderAsync(string sortOrderString)
     {
         if (Enum.TryParse<GenreSortOrder>(sortOrderString, out var newSortOrder)
             && newSortOrder != CurrentSortOrder)
         {
             CurrentSortOrder = newSortOrder;
-            UpdateSortOrderText();
+            _ = _settingsService.SetSortOrderAsync(SortOrderHelper.GenresSortOrderKey, newSortOrder)
+                .ContinueWith(t => _logger.LogError(t.Exception, "Failed to save genre sort order"),
+                    TaskContinuationOptions.OnlyOnFaulted);
             ApplyFilter();
         }
-    }
-
-    private void UpdateSortOrderText()
-    {
-        CurrentSortOrderText = SortOrderHelper.GetDisplayName(CurrentSortOrder);
+        return Task.CompletedTask;
     }
 
     /// <summary>

@@ -53,15 +53,16 @@ public partial class ArtistViewModel : ObservableObject, IDisposable
     private readonly ILogger<ArtistViewModel> _logger;
     private readonly IMusicPlaybackService _musicPlaybackService;
     private readonly INavigationService _navigationService;
-    private readonly ISettingsService _settingsService;
+    private readonly IUISettingsService _settingsService;
     private int _currentPage = 1;
     private CancellationTokenSource? _debounceCts;
     private bool _isDisposed;
     private bool _isFullyLoaded;
+    private bool _hasSortOrderLoaded;
 
     public ArtistViewModel(
         ILibraryService libraryService,
-        ISettingsService settingsService,
+        IUISettingsService settingsService,
         IMusicPlaybackService musicPlaybackService,
         IDispatcherService dispatcherService,
         INavigationService navigationService,
@@ -77,6 +78,8 @@ public partial class ArtistViewModel : ObservableObject, IDisposable
         // Store the handler in a field so we can reliably unsubscribe from it later.
         _collectionChangedHandler = (s, e) => OnPropertyChanged(nameof(HasArtists));
         Artists.CollectionChanged += _collectionChangedHandler;
+        
+        UpdateSortOrderText();
     }
 
     [ObservableProperty] public partial ObservableCollection<ArtistViewModelItem> Artists { get; set; } = new();
@@ -93,7 +96,9 @@ public partial class ArtistViewModel : ObservableObject, IDisposable
 
     [ObservableProperty] public partial ArtistSortOrder CurrentSortOrder { get; set; } = ArtistSortOrder.NameAsc;
 
-    [ObservableProperty] public partial string CurrentSortOrderText { get; set; } = SortOrderHelper.AToZ;
+    [ObservableProperty] public partial string CurrentSortOrderText { get; set; } = string.Empty;
+
+    partial void OnCurrentSortOrderChanged(ArtistSortOrder value) => UpdateSortOrderText();
 
     private bool IsSearchActive => !string.IsNullOrWhiteSpace(SearchTerm);
 
@@ -161,7 +166,9 @@ public partial class ArtistViewModel : ObservableObject, IDisposable
             && newSortOrder != CurrentSortOrder)
         {
             CurrentSortOrder = newSortOrder;
-            UpdateSortOrderText();
+            _ = _settingsService.SetSortOrderAsync(SortOrderHelper.ArtistsSortOrderKey, newSortOrder)
+                .ContinueWith(t => _logger.LogError(t.Exception, "Failed to save artist sort order"),
+                    TaskContinuationOptions.OnlyOnFaulted);
             await LoadArtistsCommand.ExecuteAsync(CancellationToken.None);
         }
     }
@@ -185,6 +192,13 @@ public partial class ArtistViewModel : ObservableObject, IDisposable
         _currentPage = 1;
         _isFullyLoaded = false;
         _artistLookup.Clear();
+        
+        if (!_hasSortOrderLoaded)
+        {
+            CurrentSortOrder = await _settingsService.GetSortOrderAsync<ArtistSortOrder>(SortOrderHelper.ArtistsSortOrderKey);
+            _hasSortOrderLoaded = true;
+        }
+
         Artists.Clear();
 
         try

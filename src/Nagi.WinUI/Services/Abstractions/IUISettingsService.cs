@@ -299,4 +299,8 @@ public interface IUISettingsService : ISettingsService
     /// </summary>
     /// <param name="color">The color to save, or null to clear the setting.</param>
     Task SetAccentColorAsync(Windows.UI.Color? color);
+
+    // Sort Order Persistence
+    Task<TEnum> GetSortOrderAsync<TEnum>(string pageKey) where TEnum : struct, Enum;
+    Task SetSortOrderAsync<TEnum>(string pageKey, TEnum sortOrder) where TEnum : struct, Enum;
 }
