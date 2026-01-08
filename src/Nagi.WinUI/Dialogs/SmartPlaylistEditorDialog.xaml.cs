@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage.Pickers;
@@ -28,6 +27,7 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
     private readonly ILogger<SmartPlaylistEditorDialog> _logger;
     private CancellationTokenSource? _matchCountCts;
     private string? _selectedCoverImageUri;
+    private bool _isInitialized;
     
     /// <summary>
     ///     Gets or sets the smart playlist being edited (null for new playlists).
@@ -46,15 +46,18 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
 
     public SmartPlaylistEditorDialog()
     {
-        InitializeComponent();
         _smartPlaylistService = App.Services!.GetRequiredService<ISmartPlaylistService>();
         _logger = App.Services!.GetRequiredService<ILogger<SmartPlaylistEditorDialog>>();
+
+        InitializeComponent();
         
         // Apply app theme overrides for TextBox styling inside ContentDialog
         DialogThemeHelper.ApplyThemeOverrides(this);
         
         Rules.CollectionChanged += OnRulesCollectionChanged;
         Unloaded += OnDialogUnloaded;
+        
+        _isInitialized = true;
     }
 
     private void OnRulesCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -78,6 +81,9 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
                 rule.PropertyChanged -= OnRulePropertyChanged;
             }
         }
+
+        // Addition or removal of rules affects the match count
+        UpdateMatchCountAsync();
     }
 
     private void OnRulePropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -159,6 +165,13 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
 
     private void OnPlaylistNameChanged(object sender, TextChangedEventArgs e)
     {
+        // Name change affects whether we can calculate match count
+        UpdateMatchCountAsync();
+    }
+
+    private void OnComboBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        // Match logic or sort order change affects the query/count
         UpdateMatchCountAsync();
     }
 
@@ -207,13 +220,19 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
 
     private async void UpdateMatchCountAsync()
     {
+        // Guard against early execution before UI is fully initialized.
+        // XAML event handlers (e.g., OnComboBoxSelectionChanged) may fire during
+        // InitializeComponent() before services are available.
+        if (!_isInitialized)
+        {
+            return;
+        }
+
         // Dispose the old CTS to prevent resource leaks
         _matchCountCts?.Cancel();
         _matchCountCts?.Dispose();
         _matchCountCts = new CancellationTokenSource();
         var token = _matchCountCts.Token;
-
-        MatchCountText.Text = "Calculating...";
 
         try
         {
@@ -235,7 +254,7 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
 
             MatchCountText.Text = count >= 0 
                 ? $"{count:N0} songs match current rules" 
-                : "Save to see matching songs";
+                : "Enter a name to see matching songs";
         }
         catch (TaskCanceledException)
         {
@@ -309,6 +328,12 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
             }
 
             var isEditing = EditingPlaylist != null;
+            
+            // Build rules list once for both paths
+            var newRules = Rules
+                .Select(ruleVm => ruleVm.ToSmartPlaylistRule())
+                .OfType<SmartPlaylistRule>()
+                .ToList();
 
             if (isEditing)
             {
@@ -316,25 +341,17 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
                 EditingPlaylist!.Name = name;
                 EditingPlaylist.MatchAllRules = MatchLogicComboBox.SelectedIndex == 0;
                 EditingPlaylist.SortOrder = GetSelectedSortOrder();
-                EditingPlaylist.CoverImageUri = _selectedCoverImageUri;
 
                 await _smartPlaylistService.UpdateSmartPlaylistAsync(EditingPlaylist);
+                
+                // Update cover image separately if needed to handle cache properly
+                if (!string.Equals(_selectedCoverImageUri, EditingPlaylist.CoverImageUri, StringComparison.Ordinal))
+                {
+                    await _smartPlaylistService.UpdateSmartPlaylistCoverAsync(EditingPlaylist.Id, _selectedCoverImageUri);
+                }
 
-                // Remove existing rules in parallel
-                var removeRuleIds = EditingPlaylist.Rules.Select(r => r.Id).ToList();
-                await Task.WhenAll(removeRuleIds.Select(id => _smartPlaylistService.RemoveRuleAsync(id)));
-
-                // Add new rules in parallel
-                var addRuleTasks = Rules
-                    .Select(ruleVm => ruleVm.ToSmartPlaylistRule())
-                    .Where(rule => rule != null)
-                    .Select(rule => _smartPlaylistService.AddRuleAsync(
-                        EditingPlaylist.Id,
-                        rule!.Field,
-                        rule.Operator,
-                        rule.Value,
-                        rule.SecondValue));
-                await Task.WhenAll(addRuleTasks);
+                // Replace all rules in a single transaction
+                await _smartPlaylistService.ReplaceAllRulesAsync(EditingPlaylist.Id, newRules);
 
                 // Refresh the playlist from the DB to get the updated rules and properties
                 ResultPlaylist = await _smartPlaylistService.GetSmartPlaylistByIdAsync(EditingPlaylist.Id);
@@ -357,18 +374,8 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
                 await _smartPlaylistService.SetMatchAllRulesAsync(newPlaylist.Id, MatchLogicComboBox.SelectedIndex == 0);
                 await _smartPlaylistService.SetSortOrderAsync(newPlaylist.Id, GetSelectedSortOrder());
 
-
-                // Add rules in parallel
-                var addRuleTasks = Rules
-                    .Select(ruleVm => ruleVm.ToSmartPlaylistRule())
-                    .Where(rule => rule != null)
-                    .Select(rule => _smartPlaylistService.AddRuleAsync(
-                        newPlaylist.Id,
-                        rule!.Field,
-                        rule.Operator,
-                        rule.Value,
-                        rule.SecondValue));
-                await Task.WhenAll(addRuleTasks);
+                // Add all rules in a single transaction
+                await _smartPlaylistService.ReplaceAllRulesAsync(newPlaylist.Id, newRules);
 
                 ResultPlaylist = await _smartPlaylistService.GetSmartPlaylistByIdAsync(newPlaylist.Id);
                 _logger.LogInformation("Created smart playlist {PlaylistId}", newPlaylist.Id);
@@ -601,10 +608,7 @@ public class RuleViewModel : INotifyPropertyChanged
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
+
 
     private enum FieldType { Text, Numeric, Date, Boolean }
 }

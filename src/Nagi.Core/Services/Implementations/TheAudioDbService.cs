@@ -1,6 +1,9 @@
+using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Http;
+using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 
@@ -44,7 +47,9 @@ file class TheAudioDbArtist
 public class TheAudioDbService : ITheAudioDbService, IDisposable
 {
     private const string BaseUrl = "https://www.theaudiodb.com/api/v1/json";
-    private const string ApiKeyName = "theaudiodb";
+    private const string ApiKeyName = ServiceProviderIds.TheAudioDb;
+    private const int MaxRetries = 3;
+    private const int RateLimitDelayMultiplier = 5;
 
     // Rate limiting: 30 req/min = 1 request per 2 seconds
     private static readonly SemaphoreSlim _rateLimitSemaphore = new(1, 1);
@@ -55,7 +60,7 @@ public class TheAudioDbService : ITheAudioDbService, IDisposable
     private readonly IApiKeyService _apiKeyService;
     private readonly ILogger<TheAudioDbService> _logger;
 
-    private bool _isApiDisabled;
+    private volatile bool _isApiDisabled;
     private bool _isDisposed;
 
     public TheAudioDbService(
@@ -90,91 +95,128 @@ public class TheAudioDbService : ITheAudioDbService, IDisposable
         if (_isApiDisabled)
             return ServiceResult<TheAudioDbArtistInfo>.FromPermanentError("TheAudioDB API is disabled for this session.");
 
-        // Acquire semaphore and hold it through the entire request to prevent bursts
-        await _rateLimitSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
+        var operationName = $"TheAudioDB metadata for MBID {musicBrainzId}";
+
         try
         {
-            // Enforce minimum delay between requests
-            var elapsed = DateTime.UtcNow - _lastRequestTime;
-            if (elapsed < _minRequestInterval)
-            {
-                await Task.Delay(_minRequestInterval - elapsed, cancellationToken).ConfigureAwait(false);
-            }
+            var result = await HttpRetryHelper.ExecuteWithRetryAsync<ServiceResult<TheAudioDbArtistInfo>>(
+                async attempt =>
+                {
+                    // Acquire semaphore for rate limiting - only held during HTTP request
+                    await _rateLimitSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
+                    try
+                    {
+                        // Enforce minimum delay between requests
+                        var elapsed = DateTime.UtcNow - _lastRequestTime;
+                        if (elapsed < _minRequestInterval)
+                        {
+                            await Task.Delay(_minRequestInterval - elapsed, cancellationToken).ConfigureAwait(false);
+                        }
 
-            var apiKey = await _apiKeyService.GetApiKeyAsync(ApiKeyName, cancellationToken).ConfigureAwait(false);
-            if (string.IsNullOrEmpty(apiKey))
-            {
-                _logger.LogWarning("TheAudioDB API key not available.");
-                return ServiceResult<TheAudioDbArtistInfo>.FromTemporaryError("API key not available.");
-            }
+                        var apiKey = await _apiKeyService.GetApiKeyAsync(ApiKeyName, cancellationToken).ConfigureAwait(false);
+                        if (string.IsNullOrEmpty(apiKey))
+                        {
+                            _logger.LogWarning("TheAudioDB API key not available.");
+                            return RetryResult<ServiceResult<TheAudioDbArtistInfo>>.Success(
+                                ServiceResult<TheAudioDbArtistInfo>.FromTemporaryError("API key not available."));
+                        }
 
-            var url = $"{BaseUrl}/{apiKey}/artist-mb.php?i={musicBrainzId}";
-            _logger.LogDebug("Fetching TheAudioDB metadata for MBID: {MBID}", musicBrainzId);
+                        var url = $"{BaseUrl}/{apiKey}/artist-mb.php?i={musicBrainzId}";
+                        _logger.LogDebug("Fetching TheAudioDB metadata for MBID: {MBID} (Attempt {Attempt}/{MaxRetries})", 
+                            musicBrainzId, attempt, MaxRetries);
 
-            using var response = await _httpClient.GetAsync(url, cancellationToken).ConfigureAwait(false);
+                        using var response = await _httpClient.GetAsync(url, cancellationToken).ConfigureAwait(false);
 
-            // Update timestamp AFTER request completes
-            _lastRequestTime = DateTime.UtcNow;
+                        // Update timestamp AFTER request completes
+                        _lastRequestTime = DateTime.UtcNow;
 
-            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
-            {
-                _logger.LogDebug("No TheAudioDB data found for MBID: {MBID}", musicBrainzId);
-                return ServiceResult<TheAudioDbArtistInfo>.FromSuccessNotFound();
-            }
+                        if (response.StatusCode == HttpStatusCode.NotFound)
+                        {
+                            _logger.LogDebug("No TheAudioDB data found for MBID: {MBID}", musicBrainzId);
+                            return RetryResult<ServiceResult<TheAudioDbArtistInfo>>.Success(
+                                ServiceResult<TheAudioDbArtistInfo>.FromSuccessNotFound());
+                        }
 
-            if (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
-            {
-                _logger.LogWarning("TheAudioDB rate limit reached. Disabling for this session.");
-                _isApiDisabled = true;
-                return ServiceResult<TheAudioDbArtistInfo>.FromPermanentError("Rate limited.");
-            }
+                        if (response.StatusCode == HttpStatusCode.TooManyRequests)
+                        {
+                            _logger.LogWarning("TheAudioDB rate limit reached for MBID: {MBID}. Attempt {Attempt}/{MaxRetries}", 
+                                musicBrainzId, attempt, MaxRetries);
+                            
+                            if (attempt >= MaxRetries)
+                            {
+                                _logger.LogError("TheAudioDB rate limit reached repeatedly. Disabling for this session.");
+                                _isApiDisabled = true;
+                                return RetryResult<ServiceResult<TheAudioDbArtistInfo>>.Success(
+                                    ServiceResult<TheAudioDbArtistInfo>.FromPermanentError("Rate limited."));
+                            }
 
-            if (!response.IsSuccessStatusCode)
-            {
-                _logger.LogWarning("TheAudioDB request failed with status {StatusCode}", response.StatusCode);
-                return ServiceResult<TheAudioDbArtistInfo>.FromTemporaryError($"HTTP {response.StatusCode}");
-            }
+                            return RetryResult<ServiceResult<TheAudioDbArtistInfo>>.RateLimitFailure(RateLimitDelayMultiplier);
+                        }
 
-            var result = await response.Content.ReadFromJsonAsync<TheAudioDbResponse>(
-                cancellationToken: cancellationToken).ConfigureAwait(false);
+                        if (!response.IsSuccessStatusCode)
+                        {
+                            _logger.LogWarning("TheAudioDB request failed with status {StatusCode} for MBID: {MBID}. Attempt {Attempt}/{MaxRetries}", 
+                                response.StatusCode, musicBrainzId, attempt, MaxRetries);
+                            
+                            if (HttpRetryHelper.IsRetryableStatusCode(response.StatusCode))
+                                return RetryResult<ServiceResult<TheAudioDbArtistInfo>>.TransientFailure();
 
-            var artist = result?.Artists?.FirstOrDefault();
-            if (artist is null)
-            {
-                _logger.LogDebug("TheAudioDB returned null/empty artist data for MBID: {MBID}", musicBrainzId);
-                return ServiceResult<TheAudioDbArtistInfo>.FromSuccessNotFound();
-            }
+                            return RetryResult<ServiceResult<TheAudioDbArtistInfo>>.Success(
+                                ServiceResult<TheAudioDbArtistInfo>.FromTemporaryError($"HTTP {response.StatusCode}"));
+                        }
 
-            // Select the best available fanart image
-            var fanartUrl = GetFirstNonEmpty(artist.ArtistFanart, artist.ArtistFanart2, artist.ArtistFanart3);
+                        var apiResult = await response.Content.ReadFromJsonAsync<TheAudioDbResponse>(
+                            cancellationToken: cancellationToken).ConfigureAwait(false);
 
-            var info = new TheAudioDbArtistInfo(
-                Biography: SanitizeBiography(artist.BiographyEN),
-                ThumbUrl: NullIfEmpty(artist.ArtistThumb),
-                FanartUrl: fanartUrl,
-                WideThumbUrl: NullIfEmpty(artist.ArtistWideThumb),
-                LogoUrl: NullIfEmpty(artist.ArtistLogo)
-            );
+                        var artist = apiResult?.Artists?.FirstOrDefault();
+                        if (artist is null)
+                        {
+                            _logger.LogDebug("TheAudioDB returned null/empty artist data for MBID: {MBID}", musicBrainzId);
+                            return RetryResult<ServiceResult<TheAudioDbArtistInfo>>.Success(
+                                ServiceResult<TheAudioDbArtistInfo>.FromSuccessNotFound());
+                        }
 
-            // Check if we actually got any usable data
-            if (info.Biography is null && info.ThumbUrl is null && info.FanartUrl is null &&
-                info.WideThumbUrl is null && info.LogoUrl is null)
-            {
-                _logger.LogDebug("TheAudioDB returned empty metadata for MBID: {MBID}", musicBrainzId);
-                return ServiceResult<TheAudioDbArtistInfo>.FromSuccessNotFound();
-            }
+                        // Select the best available fanart image
+                        var fanartUrl = GetFirstNonEmpty(artist.ArtistFanart, artist.ArtistFanart2, artist.ArtistFanart3);
 
-            _logger.LogInformation("Found TheAudioDB metadata for MBID: {MBID}", musicBrainzId);
-            return ServiceResult<TheAudioDbArtistInfo>.FromSuccess(info);
+                        var info = new TheAudioDbArtistInfo(
+                            Biography: SanitizeBiography(artist.BiographyEN),
+                            ThumbUrl: NullIfEmpty(artist.ArtistThumb),
+                            FanartUrl: fanartUrl,
+                            WideThumbUrl: NullIfEmpty(artist.ArtistWideThumb),
+                            LogoUrl: NullIfEmpty(artist.ArtistLogo)
+                        );
+
+                        // Check if we actually got any usable data
+                        if (info.Biography is null && info.ThumbUrl is null && info.FanartUrl is null &&
+                            info.WideThumbUrl is null && info.LogoUrl is null)
+                        {
+                            _logger.LogDebug("TheAudioDB returned empty metadata for MBID: {MBID}", musicBrainzId);
+                            return RetryResult<ServiceResult<TheAudioDbArtistInfo>>.Success(
+                                ServiceResult<TheAudioDbArtistInfo>.FromSuccessNotFound());
+                        }
+
+                        _logger.LogInformation("Found TheAudioDB metadata for MBID: {MBID}", musicBrainzId);
+                        return RetryResult<ServiceResult<TheAudioDbArtistInfo>>.Success(
+                            ServiceResult<TheAudioDbArtistInfo>.FromSuccess(info));
+                    }
+                    finally
+                    {
+                        _rateLimitSemaphore.Release();
+                    }
+                },
+                _logger,
+                operationName,
+                cancellationToken,
+                MaxRetries
+            ).ConfigureAwait(false);
+
+            return result ?? ServiceResult<TheAudioDbArtistInfo>.FromTemporaryError("Failed after exhausting retries.");
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
-            _logger.LogError(ex, "Error fetching TheAudioDB metadata for MBID: {MBID}", musicBrainzId);
+            _logger.LogError(ex, "Error fetching TheAudioDB metadata for MBID: {MBID} after exhausting retries.", musicBrainzId);
             return ServiceResult<TheAudioDbArtistInfo>.FromTemporaryError(ex.Message);
-        }
-        finally
-        {
-            _rateLimitSemaphore.Release();
         }
     }
 

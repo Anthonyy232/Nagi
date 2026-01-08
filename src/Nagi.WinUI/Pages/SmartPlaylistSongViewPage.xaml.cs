@@ -45,7 +45,7 @@ public sealed partial class SmartPlaylistSongViewPage : Page
                 _logger.LogDebug("Loading songs for smart playlist '{SmartPlaylistName}' (Id: {SmartPlaylistId}).",
                     navParam.Title,
                     navParam.SmartPlaylistId);
-                await ViewModel.InitializeAsync(navParam.Title, navParam.SmartPlaylistId);
+                await ViewModel.InitializeAsync(navParam.Title, navParam.SmartPlaylistId, navParam.CoverImageUri);
             }
             else
             {

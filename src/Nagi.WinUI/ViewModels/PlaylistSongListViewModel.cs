@@ -11,6 +11,7 @@ using Microsoft.UI.Xaml;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Services.Abstractions;
 
 namespace Nagi.WinUI.ViewModels;
@@ -60,6 +61,12 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
     [NotifyPropertyChangedFor(nameof(IsReorderingEnabled))]
     public partial bool IsCurrentViewAPlaylist { get; set; }
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsArtworkAvailable))]
+    public partial string? CoverImageUri { get; set; }
+
+    public bool IsArtworkAvailable => !string.IsNullOrEmpty(CoverImageUri);
+
     /// <summary>
     ///     Gets a value indicating whether drag-and-drop reordering is enabled.
     ///     Reordering is only allowed for actual playlists and when a search is not active.
@@ -74,7 +81,7 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
     /// <summary>
     ///     Initializes the view model for a specific playlist.
     /// </summary>
-    public async Task InitializeAsync(string title, Guid? playlistId)
+    public async Task InitializeAsync(string title, Guid? playlistId, string? coverImageUri = null)
     {
         if (IsOverallLoading) return;
         _logger.LogDebug("Initializing for playlist '{Title}' (ID: {PlaylistId})", title, playlistId);
@@ -87,6 +94,7 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
             PageTitle = title;
             _currentPlaylistId = playlistId;
             IsCurrentViewAPlaylist = playlistId.HasValue;
+            CoverImageUri = coverImageUri;
 
             await RefreshOrSortSongsCommand.ExecuteAsync(null);
 
@@ -162,10 +170,15 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
     /// </summary>
     private void OnSongsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
+        // WinUI ListView may fire Remove + Add instead of a single Move event for drag-drop operations.
+        // Listen to all three action types to ensure reorder is saved correctly.
         if (e.Action is NotifyCollectionChangedAction.Move or NotifyCollectionChangedAction.Add
             or NotifyCollectionChangedAction.Remove)
-            // Instead of saving on every micro-change, start a timer. If no more changes occur, the timer's tick will save.
+        {
+            // Restart the timer on each change to debounce rapid drag operations.
+            _reorderSaveTimer.Stop();
             _reorderSaveTimer.Start();
+        }
     }
 
     /// <summary>

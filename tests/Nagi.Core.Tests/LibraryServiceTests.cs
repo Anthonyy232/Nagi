@@ -477,6 +477,14 @@ public class LibraryServiceTests : IDisposable
             await context.SaveChangesAsync();
         }
 
+        // Arrange: Mock enabled metadata providers.
+        _settingsService.GetEnabledServiceProvidersAsync(ServiceCategory.Metadata)
+            .Returns(new List<ServiceProviderSetting>
+            {
+                new() { Id = ServiceProviderIds.LastFm, IsEnabled = true, Category = ServiceCategory.Metadata },
+                new() { Id = ServiceProviderIds.Spotify, IsEnabled = true, Category = ServiceCategory.Metadata }
+            });
+
         // Arrange: Mock successful responses from remote metadata services.
         _lastFmService.GetArtistInfoAsync(artist.Name)
             .Returns(ServiceResult<ArtistInfo>.FromSuccess(new ArtistInfo { Biography = "A cool bio." }));

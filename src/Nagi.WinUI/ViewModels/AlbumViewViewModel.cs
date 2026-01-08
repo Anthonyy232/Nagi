@@ -12,6 +12,7 @@ using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.WinUI.Services.Abstractions;
 using Nagi.WinUI.Helpers;
+using Nagi.Core.Helpers;
 
 namespace Nagi.WinUI.ViewModels;
 
@@ -22,6 +23,7 @@ namespace Nagi.WinUI.ViewModels;
 public partial class AlbumViewViewModel : SongListViewModelBase
 {
     private const int SearchDebounceDelay = 400;
+    private readonly IUISettingsService _settingsService;
     private Guid _albumId;
     private int? _albumYear;
     private CancellationTokenSource? _debounceCts;
@@ -32,10 +34,12 @@ public partial class AlbumViewViewModel : SongListViewModelBase
         IMusicPlaybackService playbackService,
         INavigationService navigationService,
         IDispatcherService dispatcherService,
+        IUISettingsService settingsService,
         IUIService uiService,
         ILogger<AlbumViewViewModel> logger)
         : base(libraryReader, playlistService, playbackService, navigationService, dispatcherService, uiService, logger)
     {
+        _settingsService = settingsService;
         AlbumTitle = "Album";
         ArtistName = "Artist";
         AlbumDetailsText = string.Empty;
@@ -122,6 +126,8 @@ public partial class AlbumViewViewModel : SongListViewModelBase
                 PageTitle = album.Title;
                 _albumYear = album.Year;
                 CoverArtUri = ImageUriHelper.GetUriWithCacheBuster(album.CoverArtUri);
+
+                CurrentSortOrder = await _settingsService.GetSortOrderAsync<SongSortOrder>(SortOrderHelper.AlbumViewSortOrderKey);
 
                 await RefreshOrSortSongsCommand.ExecuteAsync(null);
             }
@@ -258,6 +264,11 @@ public partial class AlbumViewViewModel : SongListViewModelBase
         {
             GroupedSongsFlat.Clear();
         }
+    }
+
+    protected override Task SaveSortOrderAsync(SongSortOrder sortOrder)
+    {
+        return _settingsService.SetSortOrderAsync(SortOrderHelper.AlbumViewSortOrderKey, sortOrder);
     }
 
     public override void Cleanup()

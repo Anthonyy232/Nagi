@@ -3,6 +3,8 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Http;
+using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 
@@ -39,7 +41,9 @@ public class SpotifyService : ISpotifyService, IDisposable
 {
     private const string SpotifyAccountsBaseUrl = "https://accounts.spotify.com/";
     private const string SpotifyApiBaseUrl = "https://api.spotify.com/v1/";
-    private const string ApiKeyName = "spotify";
+    private const string ApiKeyName = ServiceProviderIds.Spotify;
+    private const int MaxRetries = 3;
+    private const int RateLimitDelayMultiplier = 5;
     private static readonly JsonSerializerOptions _jsonOptions = new() { PropertyNameCaseInsensitive = true };
 
     private readonly IApiKeyService _apiKeyService;
@@ -48,7 +52,7 @@ public class SpotifyService : ISpotifyService, IDisposable
 
     private string? _accessToken;
     private DateTime _accessTokenExpiration;
-    private bool _isApiPermanentlyDisabled;
+    private volatile bool _isApiPermanentlyDisabled;
     private bool _isDisposed;
 
     public SpotifyService(IHttpClientFactory httpClientFactory, IApiKeyService apiKeyService,
@@ -89,52 +93,85 @@ public class SpotifyService : ISpotifyService, IDisposable
         if (string.IsNullOrWhiteSpace(artistName))
             return ServiceResult<SpotifyImageResult>.FromPermanentError("Artist name cannot be empty.");
 
-        var token = await GetAccessTokenAsync(cancellationToken).ConfigureAwait(false);
-        if (string.IsNullOrEmpty(token))
-            return ServiceResult<SpotifyImageResult>.FromTemporaryError("Could not retrieve Spotify access token.");
-
-        var requestUrl = $"{SpotifyApiBaseUrl}search?q={Uri.EscapeDataString(artistName)}&type=artist&limit=1";
-        using var request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        var operationName = $"Spotify artist search for {artistName}";
 
         try
         {
-            var response = await _httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
+            var result = await HttpRetryHelper.ExecuteWithRetryAsync<ServiceResult<SpotifyImageResult>>(
+                async attempt =>
+                {
+                    var token = await GetAccessTokenAsync(cancellationToken).ConfigureAwait(false);
+                    if (string.IsNullOrEmpty(token))
+                        return RetryResult<ServiceResult<SpotifyImageResult>>.Success(
+                            ServiceResult<SpotifyImageResult>.FromTemporaryError("Could not retrieve Spotify access token."));
 
-            // If rate limited, disable the service for the current session to avoid further errors.
-            if (response.StatusCode == HttpStatusCode.TooManyRequests)
-            {
-                _logger.LogWarning("Spotify API rate limit hit. Disabling service for the current session.");
-                _isApiPermanentlyDisabled = true;
-                return ServiceResult<SpotifyImageResult>.FromPermanentError("Spotify API rate limit exceeded.");
-            }
+                    var requestUrl = $"{SpotifyApiBaseUrl}search?q={Uri.EscapeDataString(artistName)}&type=artist&limit=1";
+                    using var request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            if (!response.IsSuccessStatusCode)
-            {
-                var errorContent = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
-                _logger.LogWarning(
-                    "Spotify artist search failed. Status: {StatusCode}, Content: {ErrorContent}",
-                    response.StatusCode, errorContent);
-                return ServiceResult<SpotifyImageResult>.FromTemporaryError(
-                    $"Spotify artist search failed. Status: {response.StatusCode}");
-            }
+                    _logger.LogDebug("Searching Spotify for artist: {ArtistName} (Attempt {Attempt}/{MaxRetries})", 
+                        artistName, attempt, MaxRetries);
 
-            var jsonResponse = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
-            var searchResponse = JsonSerializer.Deserialize<SpotifySearchResponse>(jsonResponse, _jsonOptions);
+                    using var response = await _httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
 
-            var artist = searchResponse?.Artists?.Items?.FirstOrDefault();
-            if (artist?.Images is null || !artist.Images.Any())
-                return ServiceResult<SpotifyImageResult>.FromSuccessNotFound();
+                    if (response.StatusCode == HttpStatusCode.TooManyRequests)
+                    {
+                        _logger.LogWarning("Spotify API rate limit hit for '{ArtistName}'. Attempt {Attempt}/{MaxRetries}", 
+                            artistName, attempt, MaxRetries);
+                        
+                        if (attempt >= MaxRetries)
+                        {
+                            _logger.LogError("Spotify rate limit reached repeatedly. Disabling for this session.");
+                            _isApiPermanentlyDisabled = true;
+                            return RetryResult<ServiceResult<SpotifyImageResult>>.Success(
+                                ServiceResult<SpotifyImageResult>.FromPermanentError("Spotify API rate limit exceeded."));
+                        }
 
-            // Find the largest image available by area.
-            var largestImage = artist.Images
-                .Where(img => !string.IsNullOrEmpty(img.Url))
-                .OrderByDescending(img => img.Height * img.Width)
-                .FirstOrDefault();
+                        return RetryResult<ServiceResult<SpotifyImageResult>>.RateLimitFailure(RateLimitDelayMultiplier);
+                    }
 
-            return largestImage != null
-                ? ServiceResult<SpotifyImageResult>.FromSuccess(new SpotifyImageResult { ImageUrl = largestImage.Url! })
-                : ServiceResult<SpotifyImageResult>.FromSuccessNotFound();
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        var errorContent = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+                        _logger.LogWarning(
+                            "Spotify artist search failed. Status: {StatusCode}, Content: {ErrorContent}. Attempt {Attempt}/{MaxRetries}",
+                            response.StatusCode, errorContent, attempt, MaxRetries);
+                        
+                        if (HttpRetryHelper.IsRetryableStatusCode(response.StatusCode))
+                            return RetryResult<ServiceResult<SpotifyImageResult>>.TransientFailure();
+
+                        return RetryResult<ServiceResult<SpotifyImageResult>>.Success(
+                            ServiceResult<SpotifyImageResult>.FromTemporaryError(
+                                $"Spotify artist search failed. Status: {response.StatusCode}"));
+                    }
+
+                    var jsonResponse = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+                    var searchResponse = JsonSerializer.Deserialize<SpotifySearchResponse>(jsonResponse, _jsonOptions);
+
+                    var artist = searchResponse?.Artists?.Items?.FirstOrDefault();
+                    if (artist?.Images is null || !artist.Images.Any())
+                        return RetryResult<ServiceResult<SpotifyImageResult>>.Success(
+                            ServiceResult<SpotifyImageResult>.FromSuccessNotFound());
+
+                    // Find the largest image available by area.
+                    var largestImage = artist.Images
+                        .Where(img => !string.IsNullOrEmpty(img.Url))
+                        .OrderByDescending(img => img.Height * img.Width)
+                        .FirstOrDefault();
+
+                    return largestImage != null
+                        ? RetryResult<ServiceResult<SpotifyImageResult>>.Success(
+                            ServiceResult<SpotifyImageResult>.FromSuccess(new SpotifyImageResult { ImageUrl = largestImage.Url! }))
+                        : RetryResult<ServiceResult<SpotifyImageResult>>.Success(
+                            ServiceResult<SpotifyImageResult>.FromSuccessNotFound());
+                },
+                _logger,
+                operationName,
+                cancellationToken,
+                MaxRetries
+            ).ConfigureAwait(false);
+
+            return result ?? ServiceResult<SpotifyImageResult>.FromTemporaryError("Max retries exceeded for Spotify artist image fetch.");
         }
         catch (JsonException ex)
         {
@@ -144,7 +181,7 @@ public class SpotifyService : ISpotifyService, IDisposable
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
-            _logger.LogWarning(ex, "Exception while fetching Spotify artist image for '{ArtistName}'.", artistName);
+            _logger.LogError(ex, "Exception while fetching Spotify artist image for '{ArtistName}'.", artistName);
             return ServiceResult<SpotifyImageResult>.FromTemporaryError(
                 $"Exception while fetching Spotify artist image for '{artistName}'.");
         }
@@ -173,50 +210,55 @@ public class SpotifyService : ISpotifyService, IDisposable
         }
 
         var (clientId, clientSecret) = (parts[0], parts[1]);
+        var operationName = "Spotify access token fetch";
 
-        try
-        {
-            using var request = new HttpRequestMessage(HttpMethod.Post, $"{SpotifyAccountsBaseUrl}api/token");
-            var authHeader = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{clientId}:{clientSecret}"));
-            request.Headers.Authorization = new AuthenticationHeaderValue("Basic", authHeader);
-            request.Content = new StringContent("grant_type=client_credentials", Encoding.UTF8,
-                "application/x-www-form-urlencoded");
-
-            var response = await _httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
-
-            if (!response.IsSuccessStatusCode)
+        return await HttpRetryHelper.ExecuteWithRetryAsync<string>(
+            async attempt =>
             {
-                var errorContent = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
-                _logger.LogError(
-                    "Error fetching Spotify access token. Status: {StatusCode}, Content: {ErrorContent}",
-                    response.StatusCode, errorContent);
-                return null;
-            }
+                using var request = new HttpRequestMessage(HttpMethod.Post, $"{SpotifyAccountsBaseUrl}api/token");
+                var authHeader = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{clientId}:{clientSecret}"));
+                request.Headers.Authorization = new AuthenticationHeaderValue("Basic", authHeader);
+                request.Content = new StringContent("grant_type=client_credentials", Encoding.UTF8,
+                    "application/x-www-form-urlencoded");
 
-            var jsonResponse = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
-            using var doc = JsonDocument.Parse(jsonResponse);
-            var root = doc.RootElement;
+                _logger.LogDebug("Fetching Spotify access token (Attempt {Attempt}/{MaxRetries})", attempt, MaxRetries);
 
-            if (root.TryGetProperty("access_token", out var accessTokenElement) &&
-                root.TryGetProperty("expires_in", out var expiresInElement) &&
-                accessTokenElement.ValueKind == JsonValueKind.String)
-            {
-                _accessToken = accessTokenElement.GetString();
-                var expiresInSeconds = expiresInElement.GetInt32();
-                _accessTokenExpiration = DateTime.UtcNow.AddSeconds(expiresInSeconds);
-                _logger.LogDebug(
-                    "Successfully fetched and cached new Spotify access token, valid for {ExpiresInSeconds} seconds.",
-                    expiresInSeconds);
-                return _accessToken;
-            }
+                using var response = await _httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
 
-            _logger.LogError("Spotify token response is missing 'access_token' or 'expires_in'.");
-            return null;
-        }
-        catch (Exception ex) when (ex is not OperationCanceledException)
-        {
-            _logger.LogError(ex, "Exception while fetching Spotify access token.");
-            return null;
-        }
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+                    _logger.LogError(
+                        "Error fetching Spotify access token. Status: {StatusCode}, Content: {ErrorContent}. Attempt {Attempt}/{MaxRetries}",
+                        response.StatusCode, errorContent, attempt, MaxRetries);
+                    
+                    return RetryResult<string>.FromHttpStatus(response.StatusCode);
+                }
+
+                var jsonResponse = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+                using var doc = JsonDocument.Parse(jsonResponse);
+                var root = doc.RootElement;
+
+                if (root.TryGetProperty("access_token", out var accessTokenElement) &&
+                    root.TryGetProperty("expires_in", out var expiresInElement) &&
+                    accessTokenElement.ValueKind == JsonValueKind.String)
+                {
+                    _accessToken = accessTokenElement.GetString();
+                    var expiresInSeconds = expiresInElement.GetInt32();
+                    _accessTokenExpiration = DateTime.UtcNow.AddSeconds(expiresInSeconds);
+                    _logger.LogDebug(
+                        "Successfully fetched and cached new Spotify access token, valid for {ExpiresInSeconds} seconds.",
+                        expiresInSeconds);
+                    return RetryResult<string>.Success(_accessToken!);
+                }
+
+                _logger.LogError("Spotify token response is missing 'access_token' or 'expires_in'.");
+                return RetryResult<string>.PermanentFailure();
+            },
+            _logger,
+            operationName,
+            cancellationToken,
+            MaxRetries
+        ).ConfigureAwait(false);
     }
 }

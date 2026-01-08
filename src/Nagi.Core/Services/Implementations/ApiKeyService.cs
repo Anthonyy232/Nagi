@@ -2,7 +2,10 @@
 using System.Text.Json;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Helpers;
+using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Http;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -11,6 +14,8 @@ file class ApiKeyResponse
 {
     public string? Value { get; set; }
 }
+
+
 
 /// <summary>
 ///     Manages the retrieval and thread-safe caching of API keys from a secure server endpoint.
@@ -78,82 +83,87 @@ public class ApiKeyService : IApiKeyService, IDisposable
     /// </summary>
     private async Task<string?> FetchKeyFromServerAsync(string keyName, CancellationToken cancellationToken)
     {
-        try
+        var serverUrl = _configuration["NagiApiServer:Url"];
+        var serverKey = _configuration["NagiApiServer:ApiKey"];
+        var subscriptionKey = _configuration["NagiApiServer:SubscriptionKey"];
+
+        if (string.IsNullOrEmpty(serverUrl) || string.IsNullOrEmpty(serverKey))
         {
-            var serverUrl = _configuration["NagiApiServer:Url"];
-            var serverKey = _configuration["NagiApiServer:ApiKey"];
-            var subscriptionKey = _configuration["NagiApiServer:SubscriptionKey"];
+            _logger.LogCritical("Nagi API Server URL or ApiKey is not configured. API key retrieval will fail.");
+            return null;
+        }
 
-            if (string.IsNullOrEmpty(serverUrl) || string.IsNullOrEmpty(serverKey))
+        // Ensure the URL has a scheme to prevent URI format exceptions.
+        if (!serverUrl.StartsWith("http://") && !serverUrl.StartsWith("https://")) serverUrl = "https://" + serverUrl;
+
+        // Build the request URL.
+        var route = keyName switch
+        {
+            ServiceProviderIds.TheAudioDb => "theaudiodb-key",
+            ServiceProviderIds.Spotify => "spotify-key",
+            ServiceProviderIds.LastFm => "lastfm-key",
+            ServiceProviderIds.LastFmSecret => "lastfm-secret-key",
+            ServiceProviderIds.FanartTv => "fanarttv-key",
+            _ => throw new ArgumentException($"Unknown service: {keyName}", nameof(keyName))
+        };
+
+        var requestUri = $"{serverUrl.TrimEnd('/')}/api/{route}";
+        var operationName = $"API key fetch for {keyName}";
+        using var httpClient = _httpClientFactory.CreateClient();
+
+        return await HttpRetryHelper.ExecuteWithRetryAsync<string>(
+            async attempt =>
             {
-                _logger.LogCritical("Nagi API Server URL or ApiKey is not configured. API key retrieval will fail.");
-                return null;
-            }
+                using var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
+                request.Headers.Add("X-API-KEY", serverKey);
 
-            // Ensure the URL has a scheme to prevent URI format exceptions.
-            if (!serverUrl.StartsWith("http://") && !serverUrl.StartsWith("https://")) serverUrl = "https://" + serverUrl;
+                if (!string.IsNullOrEmpty(subscriptionKey))
+                    request.Headers.Add("Ocp-Apim-Subscription-Key", subscriptionKey);
 
-            var endpoint = $"{serverUrl.TrimEnd('/')}/api/{keyName}-key";
-            _logger.LogDebug("Fetching API key '{ApiKeyName}' from server: {Endpoint}", keyName, endpoint);
+                _logger.LogDebug("Fetching API key '{ApiKeyName}' from server (Attempt {Attempt}/3)", keyName, attempt);
 
-            using var request = new HttpRequestMessage(HttpMethod.Get, endpoint);
-            request.Headers.Add("X-API-KEY", serverKey);
+                using var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
 
-            if (!string.IsNullOrEmpty(subscriptionKey))
-                request.Headers.Add("Ocp-Apim-Subscription-Key", subscriptionKey);
+                if (response.IsSuccessStatusCode)
+                {
+                    var jsonContent = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+                    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    var apiKeyResponse = JsonSerializer.Deserialize<ApiKeyResponse>(jsonContent, options);
+                    var key = apiKeyResponse?.Value;
 
-            using var httpClient = _httpClientFactory.CreateClient();
-            var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
+                    if (string.IsNullOrWhiteSpace(key))
+                    {
+                        _logger.LogError("API key response for '{ApiKeyName}' is invalid (missing 'Value').", keyName);
+                        return RetryResult<string>.PermanentFailure();
+                    }
 
-            if (!response.IsSuccessStatusCode)
-            {
+                    return RetryResult<string>.Success(key);
+                }
+
                 var errorContent = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
-                
+
                 if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized || 
                     response.StatusCode == System.Net.HttpStatusCode.Forbidden)
                 {
                     _globalAuthFailed = true;
                     _logger.LogCritical(
-                        "Authentication failed for Nagi API Server. API Key or Subscription Key is invalid. " +
-                        "Status: {StatusCode}. Response: {ErrorContent}. All future API key requests for this session will be disabled.",
+                        "Authentication failed for Nagi API Server. All future requests disabled. Status: {StatusCode}. Response: {ErrorContent}",
                         response.StatusCode, errorContent);
+                    return RetryResult<string>.PermanentFailure();
                 }
-                else
-                {
-                    _logger.LogError(
-                        "Error fetching API key '{ApiKeyName}'. Status: {StatusCode}. Response: {ErrorContent}",
-                        keyName, response.StatusCode, errorContent);
-                }
-                
-                return null;
-            }
 
-            var jsonContent = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
-            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            var apiKeyResponse = JsonSerializer.Deserialize<ApiKeyResponse>(jsonContent, options);
+                _logger.LogError("Error fetching API key '{ApiKeyName}'. Status: {StatusCode}. Response: {ErrorContent}",
+                    keyName, response.StatusCode, errorContent);
 
-            var finalKey = apiKeyResponse?.Value;
+                if (HttpRetryHelper.IsRetryableStatusCode(response.StatusCode))
+                    return RetryResult<string>.TransientFailure();
 
-            if (string.IsNullOrWhiteSpace(finalKey))
-            {
-                _logger.LogError(
-                    "API key response for '{ApiKeyName}' is invalid. It is missing the 'Value' field or is empty.",
-                    keyName);
-                return null;
-            }
-
-            _logger.LogDebug("Successfully fetched API key '{ApiKeyName}'.", keyName);
-            return finalKey;
-        }
-        catch (OperationCanceledException)
-        {
-            _logger.LogWarning("Fetching API key '{ApiKeyName}' was canceled.", keyName);
-            return null;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An exception occurred while fetching API key '{ApiKeyName}'.", keyName);
-            return null;
-        }
+                return RetryResult<string>.PermanentFailure();
+            },
+            _logger,
+            operationName,
+            cancellationToken,
+            3
+        ).ConfigureAwait(false);
     }
 }

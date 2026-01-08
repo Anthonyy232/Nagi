@@ -26,6 +26,9 @@ to avoid duplicate declarations across pages and controls.
     <converters:ObjectToBooleanConverter x:Key="ObjectToBooleanConverter" />
     <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
 
+    <!-- Sort order comparison converter -->
+    <converters:SortOrderEqualsConverter x:Key="SortOrderEqualsConverter" />
+
     <!-- Time converters -->
     <converters:TimeSpanToTimeStringConverter x:Key="TimeSpanToTimeStringConverter" />
 

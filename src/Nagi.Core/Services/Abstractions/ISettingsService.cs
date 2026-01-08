@@ -231,4 +231,31 @@ public interface ISettingsService
     ///     Resets all application-wide settings to their default values.
     /// </summary>
     Task ResetToDefaultsAsync();
+
+    /// <summary>
+    ///     Occurs when service provider configurations have changed.
+    ///     The parameter indicates which category was modified.
+    /// </summary>
+    event Action<ServiceCategory>? ServiceProvidersChanged;
+
+    /// <summary>
+    ///     Gets the configured service providers for a specific category.
+    /// </summary>
+    /// <param name="category">The service category to retrieve.</param>
+    /// <returns>A list of service provider settings, ordered by priority.</returns>
+    Task<List<ServiceProviderSetting>> GetServiceProvidersAsync(ServiceCategory category);
+
+    /// <summary>
+    ///     Sets the configured service providers for a specific category.
+    /// </summary>
+    /// <param name="category">The service category to update.</param>
+    /// <param name="providers">The list of service provider settings to save.</param>
+    Task SetServiceProvidersAsync(ServiceCategory category, List<ServiceProviderSetting> providers);
+
+    /// <summary>
+    ///     Gets enabled service providers for a category, sorted by priority (lowest Order first).
+    /// </summary>
+    /// <param name="category">The service category to retrieve.</param>
+    /// <returns>A list of enabled service providers, sorted by priority.</returns>
+    Task<List<ServiceProviderSetting>> GetEnabledServiceProvidersAsync(ServiceCategory category);
 }

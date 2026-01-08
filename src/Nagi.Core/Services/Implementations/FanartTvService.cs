@@ -1,6 +1,9 @@
+using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Http;
+using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 
@@ -12,13 +15,15 @@ namespace Nagi.Core.Services.Implementations;
 public class FanartTvService : IFanartTvService
 {
     private const string BaseUrl = "https://webservice.fanart.tv/v3/music";
-    private const string ApiKeyName = "fanarttv";
+    private const string ApiKeyName = ServiceProviderIds.FanartTv;
+    private const int MaxRetries = 3;
+    private const int RateLimitDelayMultiplier = 5;
 
     private readonly HttpClient _httpClient;
     private readonly IApiKeyService _apiKeyService;
     private readonly ILogger<FanartTvService> _logger;
 
-    private bool _isApiDisabled;
+    private volatile bool _isApiDisabled;
 
     public FanartTvService(
         IHttpClientFactory httpClientFactory,
@@ -40,66 +45,100 @@ public class FanartTvService : IFanartTvService
         if (_isApiDisabled)
             return ServiceResult<FanartTvArtistImages>.FromPermanentError("Fanart.tv API is disabled for this session.");
 
+        var operationName = $"Fanart.tv images for MBID {musicBrainzId}";
+
         try
         {
-            var apiKey = await _apiKeyService.GetApiKeyAsync(ApiKeyName, cancellationToken).ConfigureAwait(false);
-            if (string.IsNullOrEmpty(apiKey))
-            {
-                _logger.LogWarning("Fanart.tv API key not available.");
-                return ServiceResult<FanartTvArtistImages>.FromTemporaryError("API key not available.");
-            }
+            var result = await HttpRetryHelper.ExecuteWithRetryAsync<ServiceResult<FanartTvArtistImages>>(
+                async attempt =>
+                {
+                    var apiKey = await _apiKeyService.GetApiKeyAsync(ApiKeyName, cancellationToken).ConfigureAwait(false);
+                    if (string.IsNullOrEmpty(apiKey))
+                    {
+                        _logger.LogWarning("Fanart.tv API key not available.");
+                        return RetryResult<ServiceResult<FanartTvArtistImages>>.Success(
+                            ServiceResult<FanartTvArtistImages>.FromTemporaryError("API key not available."));
+                    }
 
-            var url = $"{BaseUrl}/{musicBrainzId}?api_key={apiKey}";
-            _logger.LogDebug("Fetching Fanart.tv images for MBID: {MBID}", musicBrainzId);
+                    var url = $"{BaseUrl}/{musicBrainzId}?api_key={apiKey}";
+                    _logger.LogDebug("Fetching Fanart.tv images for MBID: {MBID} (Attempt {Attempt}/{MaxRetries})", 
+                        musicBrainzId, attempt, MaxRetries);
 
-            using var response = await _httpClient.GetAsync(url, cancellationToken).ConfigureAwait(false);
+                    using var response = await _httpClient.GetAsync(url, cancellationToken).ConfigureAwait(false);
 
-            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
-            {
-                _logger.LogDebug("No Fanart.tv images found for MBID: {MBID}", musicBrainzId);
-                return ServiceResult<FanartTvArtistImages>.FromSuccessNotFound();
-            }
+                    if (response.StatusCode == HttpStatusCode.NotFound)
+                    {
+                        _logger.LogDebug("No Fanart.tv images found for MBID: {MBID}", musicBrainzId);
+                        return RetryResult<ServiceResult<FanartTvArtistImages>>.Success(
+                            ServiceResult<FanartTvArtistImages>.FromSuccessNotFound());
+                    }
 
-            if (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
-            {
-                _logger.LogWarning("Fanart.tv rate limit reached. Disabling for this session.");
-                _isApiDisabled = true;
-                return ServiceResult<FanartTvArtistImages>.FromPermanentError("Rate limited.");
-            }
+                    if (response.StatusCode == HttpStatusCode.TooManyRequests)
+                    {
+                        _logger.LogWarning("Fanart.tv rate limit reached for MBID: {MBID}. Attempt {Attempt}/{MaxRetries}", 
+                            musicBrainzId, attempt, MaxRetries);
+                        
+                        if (attempt >= MaxRetries)
+                        {
+                            _logger.LogError("Fanart.tv rate limit reached repeatedly. Disabling for this session.");
+                            _isApiDisabled = true;
+                            return RetryResult<ServiceResult<FanartTvArtistImages>>.Success(
+                                ServiceResult<FanartTvArtistImages>.FromPermanentError("Rate limited."));
+                        }
 
-            if (!response.IsSuccessStatusCode)
-            {
-                _logger.LogWarning("Fanart.tv request failed with status {StatusCode}", response.StatusCode);
-                return ServiceResult<FanartTvArtistImages>.FromTemporaryError($"HTTP {response.StatusCode}");
-            }
+                        return RetryResult<ServiceResult<FanartTvArtistImages>>.RateLimitFailure(RateLimitDelayMultiplier);
+                    }
 
-            var result = await response.Content.ReadFromJsonAsync<FanartTvResponse>(
-                cancellationToken: cancellationToken).ConfigureAwait(false);
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        _logger.LogWarning("Fanart.tv request failed with status {StatusCode} for MBID: {MBID}. Attempt {Attempt}/{MaxRetries}", 
+                            response.StatusCode, musicBrainzId, attempt, MaxRetries);
+                        
+                        if (HttpRetryHelper.IsRetryableStatusCode(response.StatusCode))
+                            return RetryResult<ServiceResult<FanartTvArtistImages>>.TransientFailure();
 
-            if (result is null)
-                return ServiceResult<FanartTvArtistImages>.FromSuccessNotFound();
+                        return RetryResult<ServiceResult<FanartTvArtistImages>>.Success(
+                            ServiceResult<FanartTvArtistImages>.FromTemporaryError($"HTTP {response.StatusCode}"));
+                    }
 
-            var images = new FanartTvArtistImages(
-                BackgroundUrl: result.ArtistBackgrounds?.FirstOrDefault()?.Url,
-                LogoUrl: result.HdMusicLogos?.FirstOrDefault()?.Url ?? result.MusicLogos?.FirstOrDefault()?.Url,
-                BannerUrl: result.MusicBanners?.FirstOrDefault()?.Url,
-                ThumbUrl: result.ArtistThumbs?.FirstOrDefault()?.Url
-            );
+                    var apiResult = await response.Content.ReadFromJsonAsync<FanartTvResponse>(
+                        cancellationToken: cancellationToken).ConfigureAwait(false);
 
-            // Check if we actually got any usable images
-            if (images.BackgroundUrl is null && images.LogoUrl is null && 
-                images.BannerUrl is null && images.ThumbUrl is null)
-            {
-                _logger.LogDebug("Fanart.tv returned empty images for MBID: {MBID}", musicBrainzId);
-                return ServiceResult<FanartTvArtistImages>.FromSuccessNotFound();
-            }
+                    if (apiResult is null)
+                        return RetryResult<ServiceResult<FanartTvArtistImages>>.Success(
+                            ServiceResult<FanartTvArtistImages>.FromSuccessNotFound());
 
-            _logger.LogInformation("Found Fanart.tv images for MBID: {MBID}", musicBrainzId);
-            return ServiceResult<FanartTvArtistImages>.FromSuccess(images);
+                    var images = new FanartTvArtistImages(
+                        BackgroundUrl: apiResult.ArtistBackgrounds?.FirstOrDefault()?.Url,
+                        LogoUrl: apiResult.HdMusicLogos?.FirstOrDefault()?.Url ?? apiResult.MusicLogos?.FirstOrDefault()?.Url,
+                        BannerUrl: apiResult.MusicBanners?.FirstOrDefault()?.Url,
+                        ThumbUrl: apiResult.ArtistThumbs?.FirstOrDefault()?.Url
+                    );
+
+                    // Check if we actually got any usable images
+                    if (images.BackgroundUrl is null && images.LogoUrl is null && 
+                        images.BannerUrl is null && images.ThumbUrl is null)
+                    {
+                        _logger.LogDebug("Fanart.tv returned empty images for MBID: {MBID}", musicBrainzId);
+                        return RetryResult<ServiceResult<FanartTvArtistImages>>.Success(
+                            ServiceResult<FanartTvArtistImages>.FromSuccessNotFound());
+                    }
+
+                    _logger.LogInformation("Found Fanart.tv images for MBID: {MBID}", musicBrainzId);
+                    return RetryResult<ServiceResult<FanartTvArtistImages>>.Success(
+                        ServiceResult<FanartTvArtistImages>.FromSuccess(images));
+                },
+                _logger,
+                operationName,
+                cancellationToken,
+                MaxRetries
+            ).ConfigureAwait(false);
+
+            return result ?? ServiceResult<FanartTvArtistImages>.FromTemporaryError("Failed after exhausting retries.");
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
-            _logger.LogError(ex, "Error fetching Fanart.tv images for MBID: {MBID}", musicBrainzId);
+            _logger.LogError(ex, "Error fetching Fanart.tv images for MBID: {MBID} after exhausting retries.", musicBrainzId);
             return ServiceResult<FanartTvArtistImages>.FromTemporaryError(ex.Message);
         }
     }

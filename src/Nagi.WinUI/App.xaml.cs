@@ -381,11 +381,13 @@ public partial class App : Application
         services.AddSingleton(configuration);
         services.AddSingleton<IPathConfiguration, PathConfiguration>();
         services.AddHttpClient();
-
-        // Configure named HTTP clients with strict timeouts for lyrics APIs
-        // Force HTTP/1.1 and limit connection lifetime to avoid "Response Ended Prematurely" 
-        // errors caused by servers closing idle connections that HttpClient tries to reuse
-        services.AddHttpClient("LrcLib")
+        
+        // Configure the default HTTP client with standardized settings:
+        // - 10s timeout to fail fast on unresponsive servers
+        // - HTTP/1.1 forced for compatibility
+        // - 30s connection lifetime, 15s idle timeout to prevent "Response Ended Prematurely"
+        //   errors from servers closing idle connections that HttpClient tries to reuse
+        services.AddHttpClient("")
             .ConfigureHttpClient(client =>
             {
                 client.Timeout = TimeSpan.FromSeconds(10);
@@ -394,20 +396,11 @@ public partial class App : Application
             })
             .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
             {
-                PooledConnectionLifetime = TimeSpan.FromSeconds(30),
-                PooledConnectionIdleTimeout = TimeSpan.FromSeconds(15),
-            });
-        services.AddHttpClient("NetEase")
-            .ConfigureHttpClient(client =>
-            {
-                client.Timeout = TimeSpan.FromSeconds(10);
-                client.DefaultRequestVersion = HttpVersion.Version11;
-                client.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionExact;
-            })
-            .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
-            {
-                PooledConnectionLifetime = TimeSpan.FromSeconds(30),
-                PooledConnectionIdleTimeout = TimeSpan.FromSeconds(15),
+                // Shorter lifetimes to avoid stale connections being reset by servers
+                PooledConnectionLifetime = TimeSpan.FromSeconds(15),
+                PooledConnectionIdleTimeout = TimeSpan.FromSeconds(10),
+                // Fail fast if connection cannot be established
+                ConnectTimeout = TimeSpan.FromSeconds(5),
             });
 
         ConfigureAppSettingsServices(services);

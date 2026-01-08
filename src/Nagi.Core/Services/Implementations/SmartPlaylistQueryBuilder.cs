@@ -22,44 +22,10 @@ public class SmartPlaylistQueryBuilder
             .Include(s => s.Genres)
             .AsSplitQuery();
 
-        var orderedRules = smartPlaylist.Rules.OrderBy(r => r.Order).ToList();
+        query = ApplyRuleFilters(query, smartPlaylist);
 
-        if (orderedRules.Count > 0)
-        {
-            if (smartPlaylist.MatchAllRules)
-            {
-                // AND logic: chain Where clauses
-                foreach (var rule in orderedRules)
-                {
-                    var predicate = BuildRulePredicate(rule);
-                    if (predicate != null)
-                        query = query.Where(predicate);
-                }
-            }
-            else
-            {
-                // OR logic: combine predicates
-                var predicates = orderedRules
-                    .Select(BuildRulePredicate)
-                    .Where(p => p != null)
-                    .Cast<Expression<Func<Song, bool>>>()
-                    .ToList();
-
-                if (predicates.Count > 0)
-                {
-                    var combined = predicates.Aggregate(CombineWithOr);
-                    query = query.Where(combined);
-                }
-            }
-        }
-
-        // Apply search filter if present (Server-side search)
         if (!string.IsNullOrWhiteSpace(searchTerm))
-        {
             query = ApplySearchFilter(query, searchTerm);
-        }
-
-        // Apply sorting
 
         query = ApplySortOrder(query, smartPlaylist.SortOrder);
 
@@ -73,45 +39,52 @@ public class SmartPlaylistQueryBuilder
     {
         var query = context.Songs.AsNoTracking();
 
+        query = ApplyRuleFilters(query, smartPlaylist);
+
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+            query = ApplySearchFilter(query, searchTerm);
+
+        return query;
+    }
+
+    /// <summary>
+    ///     Applies rule-based filtering to a query based on the smart playlist's rules and match logic.
+    /// </summary>
+    private static IQueryable<Song> ApplyRuleFilters(IQueryable<Song> query, SmartPlaylist smartPlaylist)
+    {
         var orderedRules = smartPlaylist.Rules.OrderBy(r => r.Order).ToList();
+        if (orderedRules.Count == 0)
+            return query;
 
-        if (orderedRules.Count > 0)
+        if (smartPlaylist.MatchAllRules)
         {
-            if (smartPlaylist.MatchAllRules)
+            // AND logic: chain Where clauses
+            foreach (var rule in orderedRules)
             {
-                foreach (var rule in orderedRules)
-                {
-                    var predicate = BuildRulePredicate(rule);
-                    if (predicate != null)
-                        query = query.Where(predicate);
-                }
-            }
-            else
-            {
-                var predicates = orderedRules
-                    .Select(BuildRulePredicate)
-                    .Where(p => p != null)
-                    .Cast<Expression<Func<Song, bool>>>()
-                    .ToList();
-
-                if (predicates.Count > 0)
-                {
-                    var combined = predicates.Aggregate(CombineWithOr);
-                    query = query.Where(combined);
-                }
+                var predicate = BuildRulePredicate(rule);
+                if (predicate != null)
+                    query = query.Where(predicate);
             }
         }
-
-        // Apply search filter to count query as well for accurate pagination counts
-        if (!string.IsNullOrWhiteSpace(searchTerm))
+        else
         {
-            query = ApplySearchFilter(query, searchTerm);
+            // OR logic: combine predicates
+            var predicates = orderedRules
+                .Select(BuildRulePredicate)
+                .OfType<Expression<Func<Song, bool>>>()
+                .ToList();
+
+            if (predicates.Count > 0)
+            {
+                var combined = predicates.Aggregate(CombineWithOr);
+                query = query.Where(combined);
+            }
         }
 
         return query;
     }
 
-    private Expression<Func<Song, bool>>? BuildRulePredicate(SmartPlaylistRule rule)
+    private static Expression<Func<Song, bool>>? BuildRulePredicate(SmartPlaylistRule rule)
     {
         return rule.Field switch
         {
@@ -243,10 +216,13 @@ public class SmartPlaylistQueryBuilder
     {
         if (!double.TryParse(rule.Value, out var value)) return null;
 
+        // Use range check instead of Math.Abs for better SQL translation
+        const double epsilon = 0.5; // BPM tolerance (e.g., 120 matches 119.5-120.5)
+
         return rule.Operator switch
         {
-            SmartPlaylistOperator.Equals => CombineSelector(selector, v => v.HasValue && Math.Abs(v.Value - value) < 0.01),
-            SmartPlaylistOperator.NotEquals => CombineSelector(selector, v => !v.HasValue || Math.Abs(v.Value - value) >= 0.01),
+            SmartPlaylistOperator.Equals => CombineSelector(selector, v => v.HasValue && v.Value >= value - epsilon && v.Value <= value + epsilon),
+            SmartPlaylistOperator.NotEquals => CombineSelector(selector, v => !v.HasValue || v.Value < value - epsilon || v.Value > value + epsilon),
             SmartPlaylistOperator.GreaterThan => CombineSelector(selector, v => v.HasValue && v.Value > value),
             SmartPlaylistOperator.LessThan => CombineSelector(selector, v => v.HasValue && v.Value < value),
             SmartPlaylistOperator.GreaterThanOrEqual => CombineSelector(selector, v => v.HasValue && v.Value >= value),
@@ -334,22 +310,63 @@ public class SmartPlaylistQueryBuilder
         return sortOrder switch
         {
             SmartPlaylistSortOrder.TitleAsc => query.OrderBy(s => s.Title).ThenBy(s => s.Id),
-            SmartPlaylistSortOrder.TitleDesc => query.OrderByDescending(s => s.Title).ThenBy(s => s.Id),
+            SmartPlaylistSortOrder.TitleDesc => query.OrderByDescending(s => s.Title).ThenByDescending(s => s.Id),
             SmartPlaylistSortOrder.ArtistAsc => query.OrderBy(s => s.Artist != null ? s.Artist.Name : string.Empty)
-                .ThenBy(s => s.Title).ThenBy(s => s.Id),
+                .ThenBy(s => s.Album != null ? s.Album.Title : string.Empty)
+                .ThenBy(s => s.DiscNumber ?? 0)
+                .ThenBy(s => s.TrackNumber)
+                .ThenBy(s => s.Title)
+                .ThenBy(s => s.Id),
             SmartPlaylistSortOrder.ArtistDesc => query.OrderByDescending(s => s.Artist != null ? s.Artist.Name : string.Empty)
-                .ThenBy(s => s.Title).ThenBy(s => s.Id),
+                .ThenByDescending(s => s.Album != null ? s.Album.Title : string.Empty)
+                .ThenByDescending(s => s.DiscNumber ?? 0)
+                .ThenByDescending(s => s.TrackNumber)
+                .ThenByDescending(s => s.Title)
+                .ThenByDescending(s => s.Id),
             SmartPlaylistSortOrder.AlbumAsc => query.OrderBy(s => s.Album != null ? s.Album.Title : string.Empty)
-                .ThenBy(s => s.TrackNumber).ThenBy(s => s.Id),
+                .ThenBy(s => s.DiscNumber ?? 0)
+                .ThenBy(s => s.TrackNumber)
+                .ThenBy(s => s.Title)
+                .ThenBy(s => s.Id),
             SmartPlaylistSortOrder.AlbumDesc => query.OrderByDescending(s => s.Album != null ? s.Album.Title : string.Empty)
-                .ThenBy(s => s.TrackNumber).ThenBy(s => s.Id),
-            SmartPlaylistSortOrder.DateAddedAsc => query.OrderBy(s => s.DateAddedToLibrary).ThenBy(s => s.Id),
-            SmartPlaylistSortOrder.DateAddedDesc => query.OrderByDescending(s => s.DateAddedToLibrary).ThenBy(s => s.Id),
+                .ThenByDescending(s => s.DiscNumber ?? 0)
+                .ThenByDescending(s => s.TrackNumber)
+                .ThenByDescending(s => s.Title)
+                .ThenByDescending(s => s.Id),
+            SmartPlaylistSortOrder.YearAsc => query.OrderBy(s => s.Year)
+                .ThenBy(s => s.Artist != null ? s.Artist.Name : string.Empty)
+                .ThenBy(s => s.Album != null ? s.Album.Title : string.Empty)
+                .ThenBy(s => s.DiscNumber ?? 0)
+                .ThenBy(s => s.TrackNumber)
+                .ThenBy(s => s.Id),
+            SmartPlaylistSortOrder.YearDesc => query.OrderByDescending(s => s.Year)
+                .ThenByDescending(s => s.Artist != null ? s.Artist.Name : string.Empty)
+                .ThenByDescending(s => s.Album != null ? s.Album.Title : string.Empty)
+                .ThenByDescending(s => s.DiscNumber ?? 0)
+                .ThenByDescending(s => s.TrackNumber)
+                .ThenByDescending(s => s.Title)
+                .ThenByDescending(s => s.Id),
             SmartPlaylistSortOrder.PlayCountAsc => query.OrderBy(s => s.PlayCount).ThenBy(s => s.Title).ThenBy(s => s.Id),
-            SmartPlaylistSortOrder.PlayCountDesc => query.OrderByDescending(s => s.PlayCount).ThenBy(s => s.Title).ThenBy(s => s.Id),
+            SmartPlaylistSortOrder.PlayCountDesc => query.OrderByDescending(s => s.PlayCount).ThenByDescending(s => s.Title).ThenByDescending(s => s.Id),
             SmartPlaylistSortOrder.LastPlayedAsc => query.OrderBy(s => s.LastPlayedDate).ThenBy(s => s.Id),
-            SmartPlaylistSortOrder.LastPlayedDesc => query.OrderByDescending(s => s.LastPlayedDate).ThenBy(s => s.Id),
-            SmartPlaylistSortOrder.Random => query.OrderBy(s => EF.Functions.Random()),
+            SmartPlaylistSortOrder.LastPlayedDesc => query.OrderByDescending(s => s.LastPlayedDate).ThenByDescending(s => s.Id),
+            SmartPlaylistSortOrder.DateAddedAsc => query.OrderBy(s => s.DateAddedToLibrary).ThenBy(s => s.Id),
+            SmartPlaylistSortOrder.DateAddedDesc => query.OrderByDescending(s => s.DateAddedToLibrary).ThenByDescending(s => s.Id),
+            SmartPlaylistSortOrder.TrackNumberAsc => query.OrderBy(s => s.Album != null ? s.Album.Title : string.Empty)
+                .ThenBy(s => s.DiscNumber ?? 0)
+                .ThenBy(s => s.TrackNumber)
+                .ThenBy(s => s.Title)
+                .ThenBy(s => s.Id),
+            SmartPlaylistSortOrder.TrackNumberDesc => query.OrderByDescending(s => s.Album != null ? s.Album.Title : string.Empty)
+                .ThenByDescending(s => s.DiscNumber ?? 0)
+                .ThenByDescending(s => s.TrackNumber)
+                .ThenByDescending(s => s.Title)
+                .ThenByDescending(s => s.Id),
+            SmartPlaylistSortOrder.DurationAsc => query.OrderBy(s => s.DurationTicks).ThenBy(s => s.Title).ThenBy(s => s.Id),
+            SmartPlaylistSortOrder.DurationDesc => query.OrderByDescending(s => s.DurationTicks).ThenByDescending(s => s.Title).ThenByDescending(s => s.Id),
+            SmartPlaylistSortOrder.BpmAsc => query.OrderBy(s => s.Bpm ?? 0).ThenBy(s => s.Title).ThenBy(s => s.Id),
+            SmartPlaylistSortOrder.BpmDesc => query.OrderByDescending(s => s.Bpm ?? 0).ThenByDescending(s => s.Title).ThenByDescending(s => s.Id),
+            SmartPlaylistSortOrder.Random => query.OrderBy(_ => EF.Functions.Random()),
             _ => query.OrderBy(s => s.Title).ThenBy(s => s.Id)
         };
     }
@@ -403,6 +420,8 @@ public class SmartPlaylistQueryBuilder
 
     #endregion
 
+    #region Search
+
     private static IQueryable<Song> ApplySearchFilter(IQueryable<Song> query, string searchTerm)
     {
         var lowerTerm = searchTerm.ToLower();
@@ -411,5 +430,6 @@ public class SmartPlaylistQueryBuilder
             (s.Artist != null && s.Artist.Name.ToLower().Contains(lowerTerm)) ||
             (s.Album != null && s.Album.Title.ToLower().Contains(lowerTerm)));
     }
-}
 
+    #endregion
+}

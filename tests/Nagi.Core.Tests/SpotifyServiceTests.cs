@@ -252,9 +252,12 @@ public class SpotifyServiceTests : IDisposable
         SetupValidApiKey();
         var tokenResponse = CreateTokenResponseJson(AccessToken);
 
+        // Need to return enough 429s to exhaust all retries (max 3 retries)
         var responseQueue = new Queue<HttpResponseMessage>(new[]
         {
             new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(tokenResponse) },
+            new HttpResponseMessage(HttpStatusCode.TooManyRequests),
+            new HttpResponseMessage(HttpStatusCode.TooManyRequests),
             new HttpResponseMessage(HttpStatusCode.TooManyRequests)
         });
         _httpMessageHandler.SendAsyncFunc = (_, _) => Task.FromResult(responseQueue.Dequeue());
@@ -296,29 +299,30 @@ public class SpotifyServiceTests : IDisposable
 
     /// <summary>
     ///     Verifies that <see cref="SpotifyService.GetArtistImageUrlAsync" /> returns a
-    ///     <see cref="ServiceResultStatus.PermanentError" /> if the artist search API returns a
-    ///     malformed JSON response that cannot be deserialized.
+    ///     <see cref="ServiceResultStatus.TemporaryError" /> if the artist search API returns a
+    ///     malformed JSON response that cannot be deserialized (after retry attempts).
     /// </summary>
     [Fact]
-    public async Task GetArtistImageUrlAsync_WhenSearchResponseIsMalformedJson_ReturnsPermanentError()
+    public async Task GetArtistImageUrlAsync_WhenSearchResponseIsMalformedJson_ReturnsTemporaryError()
     {
         // Arrange
         SetupValidApiKey();
         var tokenResponse = CreateTokenResponseJson(AccessToken);
 
-        var responseQueue = new Queue<HttpResponseMessage>(new[]
+        // With retry logic, malformed JSON causes transient failures and retries
+        _httpMessageHandler.SendAsyncFunc = (request, _) =>
         {
-            new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(tokenResponse) },
-            new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("{ not valid json }") }
-        });
-        _httpMessageHandler.SendAsyncFunc = (_, _) => Task.FromResult(responseQueue.Dequeue());
+            if (request.RequestUri!.AbsoluteUri.Contains("accounts.spotify.com"))
+                return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(tokenResponse) });
+            return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("{ not valid json }") });
+        };
 
         // Act
         var result = await _service.GetArtistImageUrlAsync(ArtistName);
 
         // Assert
-        result.Status.Should().Be(ServiceResultStatus.PermanentError);
-        result.ErrorMessage.Should().Contain("Failed to deserialize");
+        result.Status.Should().Be(ServiceResultStatus.TemporaryError);
+        result.ErrorMessage.Should().Contain("Max retries exceeded");
     }
 
     #endregion
