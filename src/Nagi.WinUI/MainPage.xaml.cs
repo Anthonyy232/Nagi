@@ -20,9 +20,6 @@ using Nagi.WinUI.ViewModels;
 using Nagi.WinUI.Helpers;
 using Microsoft.UI.Xaml.Hosting;
 using System.Numerics;
-using Microsoft.UI.Xaml.Media.Imaging;
-using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace Nagi.WinUI;
 
@@ -269,8 +266,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     {
         SetPlatformSpecificBrush();
 
-        await GenerateAndSetTaskbarIconsAsync();
-
         ActualThemeChanged += OnActualThemeChanged;
         ContentFrame.Navigated += OnContentFrameNavigated;
         ViewModel.PropertyChanged += OnViewModelPropertyChanged;
@@ -365,103 +360,10 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     private void OnActualThemeChanged(FrameworkElement sender, object args)
     {
         _themeService.ReapplyCurrentDynamicTheme();
-        _ = GenerateAndSetTaskbarIconsAsync();
-    }
 
-    private async Task GenerateAndSetTaskbarIconsAsync()
-    {
-        try
-        {
-            var taskbarService = App.Services?.GetRequiredService<ITaskbarService>();
-            if (taskbarService == null) return;
-
-            // We must wait for the UI to be ready.
-            // If the controls are not laid out, render target bitmap might fail or return empty.
-            if (PreviousIcon.ActualWidth == 0)
-            {
-                 // Wait a short bit for layout to settle.
-                 // Since items have fixed size and are in tree, they should arrange quickly.
-                 await Task.Delay(50);
-            }
-
-            var prevIcon = await RenderIconToHIcon(PreviousIcon);
-            var playIcon = await RenderIconToHIcon(PlayIcon);
-            var pauseIcon = await RenderIconToHIcon(PauseIcon);
-            var nextIcon = await RenderIconToHIcon(NextIcon);
-
-            taskbarService.UpdateIcons(prevIcon, playIcon, pauseIcon, nextIcon);
-        }
-        catch (Exception ex)
-        {
-            _logger?.LogError(ex, "Failed to generate taskbar icons");
-        }
-    }
-
-    private async Task<nint> RenderIconToHIcon(UIElement element)
-    {
-        // 1. Render the XAML element to a bitmap
-        var rtb = new RenderTargetBitmap();
-        await rtb.RenderAsync(element);
-        var pixelBuffer = await rtb.GetPixelsAsync();
-
-        var width = rtb.PixelWidth;
-        var height = rtb.PixelHeight;
-
-        // 2. Get raw pixels (BGRA8 format)
-        using var stream = pixelBuffer.AsStream();
-        var pixels = new byte[stream.Length];
-        stream.Read(pixels, 0, pixels.Length);
-
-        // 3. Create a DIB Section (Device Independent Bitmap) to preserve Alpha channel.
-        // GDI's standard CreateBitmap often ignores alpha, resulting in black backgrounds.
-        // A DIB section is required for proper alpha transparency with CreateIconIndirect.
-
-        var bmi = new TaskbarNativeMethods.BITMAPINFO
-        {
-            bmiHeader = new TaskbarNativeMethods.BITMAPINFOHEADER
-            {
-                biSize = Marshal.SizeOf<TaskbarNativeMethods.BITMAPINFOHEADER>(),
-                biWidth = width,
-                biHeight = -height, // Negative height for top-down DIB
-                biPlanes = 1,
-                biBitCount = 32,
-                biCompression = TaskbarNativeMethods.BI_RGB
-            }
-        };
-
-        var hDC = IntPtr.Zero; // Use screen DC or NULL
-        var hBmColor = TaskbarNativeMethods.CreateDIBSection(hDC, ref bmi, TaskbarNativeMethods.DIB_RGB_COLORS, out var ppvBits, IntPtr.Zero, 0);
-
-        if (hBmColor == IntPtr.Zero)
-        {
-            _logger.LogError("CreateDIBSection failed.");
-            return IntPtr.Zero;
-        }
-
-        // Copy our BGRA pixels into the DIB section's memory
-        Marshal.Copy(pixels, 0, ppvBits, pixels.Length);
-
-        // 4. Create an empty mask bitmap (1bpp).
-        // For alpha icons, the mask is ignored but must be present.
-        var hBmMask = TaskbarNativeMethods.CreateBitmap(width, height, 1, 1, null);
-
-        // 5. Create the HICON
-        var iconInfo = new TaskbarNativeMethods.ICONINFO
-        {
-            fIcon = true,
-            xHotspot = 0,
-            yHotspot = 0,
-            hbmMask = hBmMask,
-            hbmColor = hBmColor
-        };
-
-        var hIcon = TaskbarNativeMethods.CreateIconIndirect(ref iconInfo);
-
-        // 6. Cleanup GDI objects (the icon has its own copy now)
-        TaskbarNativeMethods.DeleteObject(hBmColor);
-        TaskbarNativeMethods.DeleteObject(hBmMask);
-
-        return hIcon;
+        // Notify the taskbar service to refresh icons for the new theme.
+        // The service handles debouncing internally.
+        _ = (App.RootWindow as MainWindow)?.TaskbarService?.RefreshIconsAsync();
     }
 
     // Responds to property changes in the PlayerViewModel.

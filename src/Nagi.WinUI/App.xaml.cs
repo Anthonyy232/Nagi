@@ -503,10 +503,12 @@ public partial class App : Application
         services.AddSingleton<IAudioPlayer>(provider =>
             new LibVlcAudioPlayerService(provider.GetRequiredService<IDispatcherService>(),
                 provider.GetRequiredService<ILogger<LibVlcAudioPlayerService>>()));
-        services.AddSingleton<ITaskbarService>(provider =>
+        services.AddTransient<ITaskbarService>(provider =>
             new TaskbarService(
                 provider.GetRequiredService<ILogger<TaskbarService>>(),
-                provider.GetRequiredService<IMusicPlaybackService>()));
+                provider.GetRequiredService<IMusicPlaybackService>(),
+                provider.GetRequiredService<IDispatcherService>(),
+                provider.GetRequiredService<IWin32InteropService>()));
     }
 
     private static void ConfigureViewModels(IServiceCollection services)
@@ -939,7 +941,6 @@ public partial class App : Application
         if (hasFolders)
         {
             if (RootWindow.Content is not MainPage) RootWindow.Content = new MainPage();
-            
         }
         else
         {
