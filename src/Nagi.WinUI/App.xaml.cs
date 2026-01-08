@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Globalization;
@@ -496,6 +496,12 @@ public partial class App : Application
         services.AddSingleton<IAudioPlayer>(provider =>
             new LibVlcAudioPlayerService(provider.GetRequiredService<IDispatcherService>(),
                 provider.GetRequiredService<ILogger<LibVlcAudioPlayerService>>()));
+        services.AddTransient<ITaskbarService>(provider =>
+            new TaskbarService(
+                provider.GetRequiredService<ILogger<TaskbarService>>(),
+                provider.GetRequiredService<IMusicPlaybackService>(),
+                provider.GetRequiredService<IDispatcherService>(),
+                provider.GetRequiredService<IWin32InteropService>()));
     }
 
     private static void ConfigureViewModels(IServiceCollection services)
@@ -526,11 +532,11 @@ public partial class App : Application
         {
             var dbContextFactory = services.GetRequiredService<IDbContextFactory<MusicDbContext>>();
             await using var dbContext = await dbContextFactory.CreateDbContextAsync().ConfigureAwait(false);
-            
+
             // Enable WAL mode for better concurrency and performance.
             // This is more reliable than setting it in the connection string for Microsoft.Data.Sqlite.
             await dbContext.Database.ExecuteSqlRawAsync("PRAGMA journal_mode=WAL;").ConfigureAwait(false);
-            
+
             await dbContext.Database.MigrateAsync().ConfigureAwait(false);
         }
         catch (Exception ex)
@@ -964,7 +970,14 @@ public partial class App : Application
         if (Resources.TryGetValue("AppPrimaryColorBrush", out var brushObject) &&
             brushObject is SolidColorBrush appPrimaryColorBrush)
         {
-            if (appPrimaryColorBrush.Color != newColor) appPrimaryColorBrush.Color = newColor;
+            if (appPrimaryColorBrush.Color != newColor)
+            {
+                appPrimaryColorBrush.Color = newColor;
+
+                // Refresh taskbar icons to match the new primary color.
+                // The service handles debouncing internally.
+                _ = (RootWindow as MainWindow)?.TaskbarService?.RefreshIconsAsync();
+            }
         }
         else
         {

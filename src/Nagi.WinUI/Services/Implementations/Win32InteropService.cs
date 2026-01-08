@@ -203,6 +203,8 @@ public class Win32InteropService : IWin32InteropService, IDisposable
     }
 
     /// <inheritdoc />
+    public bool IsWindows11OrNewer => Environment.OSVersion.Version.Build >= 22000;
+    
     public int ShowMessageBox(IntPtr hWnd, string text, string caption, uint type)
     {
         return NativeMethods.MessageBox(hWnd, text, caption, type);
