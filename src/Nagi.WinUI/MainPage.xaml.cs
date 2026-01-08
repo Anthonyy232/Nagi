@@ -60,6 +60,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     private readonly IUISettingsService _settingsService;
     private readonly IThemeService _themeService;
     private readonly ILocalizationService _localizationService;
+    private readonly IWin32InteropService _win32InteropService;
 
     // A flag to control the player's expand/collapse animation based on user settings.
     private bool _isPlayerAnimationEnabled = true;
@@ -84,6 +85,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         _themeService = App.Services!.GetRequiredService<IThemeService>();
         _dispatcherService = App.Services!.GetRequiredService<IDispatcherService>();
         _localizationService = App.Services!.GetRequiredService<ILocalizationService>();
+        _win32InteropService = App.Services!.GetRequiredService<IWin32InteropService>();
         _logger = App.Services!.GetRequiredService<ILogger<MainPage>>();
         DataContext = ViewModel;
 
@@ -312,7 +314,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         if (!isAcrylicEnabled)
             // Transparency effects are disabled
             FloatingPlayerContainer.Background = (Brush)Application.Current.Resources["NonTransparentBrush"];
-        else if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 14))
+        else if (_win32InteropService.IsWindows11OrNewer)
             // We are on Windows 11 or newer
             FloatingPlayerContainer.Background = (Brush)Application.Current.Resources["Win11AcrylicBrush"];
         else
@@ -360,10 +362,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     private void OnActualThemeChanged(FrameworkElement sender, object args)
     {
         _themeService.ReapplyCurrentDynamicTheme();
-
-        // Notify the taskbar service to refresh icons for the new theme.
-        // The service handles debouncing internally.
-        _ = (App.RootWindow as MainWindow)?.TaskbarService?.RefreshIconsAsync();
     }
 
     // Responds to property changes in the PlayerViewModel.

@@ -202,6 +202,9 @@ public class Win32InteropService : IWin32InteropService, IDisposable
         return NativeMethods.GetCurrentThreadId();
     }
 
+    /// <inheritdoc />
+    public bool IsWindows11OrNewer => Environment.OSVersion.Version.Build >= 22000;
+
     /// <summary>
     ///     Contains P/Invoke definitions for native Win32 API calls used by this service.
     /// </summary>

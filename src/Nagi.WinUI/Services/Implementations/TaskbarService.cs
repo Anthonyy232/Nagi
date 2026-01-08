@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Text;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.WinUI.Helpers;
@@ -42,17 +43,25 @@ public sealed class TaskbarService : ITaskbarService
     // Standard DPI base value.
     private const double BaseDpi = 96.0;
 
-    // Font size multiplier for the icon within the render target (provides slight padding).
-    private const float FontSizeMultiplier = 0.85f;
+    // Font size multiplier for the icon within the render target.
+    private const float FontSizeMultiplier = 1.0f;
 
-    // Glyph codes for media control icons (Segoe MDL2 Assets).
-    private const string PreviousGlyph = "\xE892";
-    private const string PlayGlyph = "\xE768";
-    private const string PauseGlyph = "\xE769";
-    private const string NextGlyph = "\xE893";
+    // Glyph codes for media control icons.
+    // Windows 11+ uses Segoe Fluent Icons (filled/bolder variants).
+    // Windows 10 falls back to Segoe MDL2 Assets.
+    private const string PreviousGlyphFluent = "\uF8AC";
+    private const string PlayGlyphFluent = "\uF5B0";
+    private const string PauseGlyphFluent = "\uF8AE";
+    private const string NextGlyphFluent = "\uF8AD";
 
-    // Icon font family name.
-    private const string IconFontFamily = "Segoe MDL2 Assets";
+    private const string PreviousGlyphMdl2 = "\uE892";
+    private const string PlayGlyphMdl2 = "\uE768";
+    private const string PauseGlyphMdl2 = "\uE769";
+    private const string NextGlyphMdl2 = "\uE893";
+
+    // Icon font family names.
+    private const string FluentIconFontFamily = "Segoe Fluent Icons";
+    private const string Mdl2IconFontFamily = "Segoe MDL2 Assets";
 
     private readonly ILogger<TaskbarService> _logger;
     private readonly IMusicPlaybackService _playbackService;
@@ -259,10 +268,18 @@ public sealed class TaskbarService : ITaskbarService
         {
             var iconSize = GetIconSizeForDpi();
 
-            newPrevIcon = RenderGlyphToIcon(PreviousGlyph, iconSize, foreground);
-            newPlayIcon = RenderGlyphToIcon(PlayGlyph, iconSize, foreground);
-            newPauseIcon = RenderGlyphToIcon(PauseGlyph, iconSize, foreground);
-            newNextIcon = RenderGlyphToIcon(NextGlyph, iconSize, foreground);
+            // Select appropriate glyphs and font based on OS version.
+            var isWin11 = _win32InteropService.IsWindows11OrNewer;
+            var fontFamily = isWin11 ? FluentIconFontFamily : Mdl2IconFontFamily;
+            var prevGlyph = isWin11 ? PreviousGlyphFluent : PreviousGlyphMdl2;
+            var playGlyph = isWin11 ? PlayGlyphFluent : PlayGlyphMdl2;
+            var pauseGlyph = isWin11 ? PauseGlyphFluent : PauseGlyphMdl2;
+            var nextGlyph = isWin11 ? NextGlyphFluent : NextGlyphMdl2;
+
+            newPrevIcon = RenderGlyphToIcon(prevGlyph, iconSize, foreground, fontFamily);
+            newPlayIcon = RenderGlyphToIcon(playGlyph, iconSize, foreground, fontFamily);
+            newPauseIcon = RenderGlyphToIcon(pauseGlyph, iconSize, foreground, fontFamily);
+            newNextIcon = RenderGlyphToIcon(nextGlyph, iconSize, foreground, fontFamily);
 
             // Atomically swap icons and destroy old ones
             lock (_iconLock)
@@ -330,25 +347,35 @@ public sealed class TaskbarService : ITaskbarService
     }
 
     /// <summary>
-    ///     Gets the current theme foreground color for icon rendering.
+    ///     Gets the app primary color for icon rendering.
+    ///     Falls back to theme-based foreground if the resource is not found.
     ///     Must be called from the UI thread.
     /// </summary>
     private static Color GetCurrentThemeForegroundColor()
     {
+        // Try to get the app's primary color brush (system accent color)
+        if (Application.Current.Resources.TryGetValue("AppPrimaryColorBrush", out var resource)
+            && resource is SolidColorBrush brush)
+        {
+            return brush.Color;
+        }
+
+        // Fallback to theme-based foreground color
         return Application.Current.RequestedTheme == ApplicationTheme.Dark
             ? Color.FromArgb(255, 255, 255, 255)
             : Color.FromArgb(255, 0, 0, 0);
     }
 
     /// <summary>
-    ///     Renders a glyph from the Segoe MDL2 Assets font to an HICON using Win2D.
+    ///     Renders a glyph to an HICON using Win2D.
     ///     This method uses GPU-accelerated rendering and does not require the UI thread.
     /// </summary>
     /// <param name="glyph">The Unicode glyph character to render.</param>
     /// <param name="size">The size of the icon in pixels.</param>
     /// <param name="foreground">The foreground color for the glyph.</param>
+    /// <param name="fontFamily">The font family to use for rendering.</param>
     /// <returns>A handle to the created icon, or IntPtr.Zero on failure.</returns>
-    private nint RenderGlyphToIcon(string glyph, int size, Color foreground)
+    private nint RenderGlyphToIcon(string glyph, int size, Color foreground, string fontFamily)
     {
         try
         {
@@ -361,7 +388,7 @@ public sealed class TaskbarService : ITaskbarService
             // Configure text format for centered icon rendering
             using var textFormat = new CanvasTextFormat
             {
-                FontFamily = IconFontFamily,
+                FontFamily = fontFamily,
                 FontSize = size * FontSizeMultiplier,
                 HorizontalAlignment = CanvasHorizontalAlignment.Center,
                 VerticalAlignment = CanvasVerticalAlignment.Center
