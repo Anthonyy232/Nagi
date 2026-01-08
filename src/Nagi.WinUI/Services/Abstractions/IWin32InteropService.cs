@@ -90,8 +90,7 @@ public interface IWin32InteropService
     ///     Gets a value indicating whether the current operating system is Windows 11 or newer.
     /// </summary>
     bool IsWindows11OrNewer { get; }
-}
-    
+
     /// <summary>
     ///    Shows a standard Win32 message box.
     /// </summary>
