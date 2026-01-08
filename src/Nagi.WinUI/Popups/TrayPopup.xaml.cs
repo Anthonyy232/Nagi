@@ -135,7 +135,8 @@ public sealed partial class TrayPopup : Window
         exStyle |= WS_EX_LAYERED;
         SetWindowLongPtr(windowHandle, GWL_EXSTYLE, (IntPtr)exStyle);
 
-        if (Environment.OSVersion.Version.Build >= 22000)
+        var win32Service = App.Services!.GetRequiredService<IWin32InteropService>();
+        if (win32Service.IsWindows11OrNewer)
         {
             var preference = DWMWCP_ROUND; // DWM_WINDOW_CORNER_PREFERENCE.DWMWCP_ROUND
             DwmSetWindowAttribute(windowHandle, DWMWA_WINDOW_CORNER_PREFERENCE, ref preference, sizeof(uint));

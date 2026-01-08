@@ -977,7 +977,14 @@ public partial class App : Application
         if (Resources.TryGetValue("AppPrimaryColorBrush", out var brushObject) &&
             brushObject is SolidColorBrush appPrimaryColorBrush)
         {
-            if (appPrimaryColorBrush.Color != newColor) appPrimaryColorBrush.Color = newColor;
+            if (appPrimaryColorBrush.Color != newColor)
+            {
+                appPrimaryColorBrush.Color = newColor;
+
+                // Refresh taskbar icons to match the new primary color.
+                // The service handles debouncing internally.
+                _ = (RootWindow as MainWindow)?.TaskbarService?.RefreshIconsAsync();
+            }
         }
         else
         {
