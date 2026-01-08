@@ -85,6 +85,12 @@ public interface IWin32InteropService
     /// </summary>
     /// <returns>The thread identifier.</returns>
     uint GetCurrentThreadId();
+
+    /// <summary>
+    ///     Gets a value indicating whether the current operating system is Windows 11 or newer.
+    /// </summary>
+    bool IsWindows11OrNewer { get; }
+}
     
     /// <summary>
     ///    Shows a standard Win32 message box.
