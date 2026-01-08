@@ -9,5 +9,7 @@ public enum PlaylistSortOrder
     NameDesc,
     DateCreatedDesc,
     DateCreatedAsc,
-    DateModifiedDesc
+    DateModifiedDesc,
+    DateModifiedAsc
 }
+

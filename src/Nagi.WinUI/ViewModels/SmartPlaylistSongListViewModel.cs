@@ -63,6 +63,12 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
     [ObservableProperty]
     public partial string RuleSummary { get; set; } = string.Empty;
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsArtworkAvailable))]
+    public partial string? CoverImageUri { get; set; }
+
+    public bool IsArtworkAvailable => !string.IsNullOrEmpty(CoverImageUri);
+
 
     partial void OnSearchTermChanged(string value)
     {
@@ -72,7 +78,7 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
     /// <summary>
     ///     Initializes the view model for a specific smart playlist.
     /// </summary>
-    public async Task InitializeAsync(string title, Guid? smartPlaylistId)
+    public async Task InitializeAsync(string title, Guid? smartPlaylistId, string? coverImageUri = null)
     {
         if (IsOverallLoading) return;
         _logger.LogDebug("Initializing for smart playlist '{Title}' (ID: {SmartPlaylistId})", title, smartPlaylistId);
@@ -81,6 +87,7 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
         {
             PageTitle = title;
             _currentSmartPlaylistId = smartPlaylistId;
+            CoverImageUri = coverImageUri;
 
             if (smartPlaylistId.HasValue)
             {

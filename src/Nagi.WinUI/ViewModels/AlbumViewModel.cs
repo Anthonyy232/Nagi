@@ -56,24 +56,29 @@ public partial class AlbumViewModel : ObservableObject, IDisposable
     private readonly ILibraryService _libraryService;
     private readonly ILogger<AlbumViewModel> _logger;
     private readonly IMusicPlaybackService _musicPlaybackService;
+    private readonly IUISettingsService _settingsService;
     private readonly INavigationService _navigationService;
     private int _currentPage = 1;
     private CancellationTokenSource? _debounceCts;
     private bool _isDisposed;
     private bool _isFullyLoaded;
+    private bool _hasSortOrderLoaded;
 
     public AlbumViewModel(ILibraryService libraryService, IMusicPlaybackService musicPlaybackService,
-        INavigationService navigationService, IDispatcherService dispatcherService, ILogger<AlbumViewModel> logger)
+        INavigationService navigationService, IUISettingsService settingsService, IDispatcherService dispatcherService, ILogger<AlbumViewModel> logger)
     {
         _libraryService = libraryService;
         _musicPlaybackService = musicPlaybackService;
         _navigationService = navigationService;
+        _settingsService = settingsService;
         _dispatcherService = dispatcherService;
         _logger = logger;
 
         // Store the handler in a field so we can reliably unsubscribe from it later.
         _collectionChangedHandler = (sender, args) => OnPropertyChanged(nameof(HasAlbums));
         Albums.CollectionChanged += _collectionChangedHandler;
+        
+        UpdateSortOrderText();
     }
 
     [ObservableProperty] public partial ObservableCollection<AlbumViewModelItem> Albums { get; set; } = new();
@@ -86,11 +91,13 @@ public partial class AlbumViewModel : ObservableObject, IDisposable
 
     [ObservableProperty] public partial AlbumSortOrder CurrentSortOrder { get; set; } = AlbumSortOrder.ArtistAsc;
 
-    [ObservableProperty] public partial string CurrentSortOrderText { get; set; } = SortOrderHelper.Artist;
+    [ObservableProperty] public partial string CurrentSortOrderText { get; set; } = string.Empty;
 
     [ObservableProperty] public partial string SearchTerm { get; set; } = string.Empty;
 
     [ObservableProperty] public partial string TotalItemsText { get; set; } = "0 albums";
+
+    partial void OnCurrentSortOrderChanged(AlbumSortOrder value) => UpdateSortOrderText();
 
     private bool IsSearchActive => !string.IsNullOrWhiteSpace(SearchTerm);
 
@@ -110,6 +117,11 @@ public partial class AlbumViewModel : ObservableObject, IDisposable
 
         _isDisposed = true;
         GC.SuppressFinalize(this);
+    }
+
+    private void UpdateSortOrderText()
+    {
+        CurrentSortOrderText = SortOrderHelper.GetDisplayName(CurrentSortOrder);
     }
 
     /// <summary>
@@ -157,14 +169,11 @@ public partial class AlbumViewModel : ObservableObject, IDisposable
             && newSortOrder != CurrentSortOrder)
         {
             CurrentSortOrder = newSortOrder;
-            UpdateSortOrderText();
+            _ = _settingsService.SetSortOrderAsync(SortOrderHelper.AlbumsSortOrderKey, newSortOrder)
+                .ContinueWith(t => _logger.LogError(t.Exception, "Failed to save album sort order"),
+                    TaskContinuationOptions.OnlyOnFaulted);
             await LoadAlbumsCommand.ExecuteAsync(CancellationToken.None);
         }
-    }
-
-    private void UpdateSortOrderText()
-    {
-        CurrentSortOrderText = SortOrderHelper.GetDisplayName(CurrentSortOrder);
     }
 
     /// <summary>
@@ -180,6 +189,13 @@ public partial class AlbumViewModel : ObservableObject, IDisposable
         HasLoadError = false;
         _currentPage = 1;
         _isFullyLoaded = false;
+        
+        if (!_hasSortOrderLoaded)
+        {
+            CurrentSortOrder = await _settingsService.GetSortOrderAsync<AlbumSortOrder>(SortOrderHelper.AlbumsSortOrderKey);
+            _hasSortOrderLoaded = true;
+        }
+
         Albums.Clear();
 
         try

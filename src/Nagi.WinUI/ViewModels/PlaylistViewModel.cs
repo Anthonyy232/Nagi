@@ -110,18 +110,21 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
     private readonly ILogger<PlaylistViewModel> _logger;
     private readonly IMusicPlaybackService _musicPlaybackService;
     private readonly INavigationService _navigationService;
+    private readonly IUISettingsService _settingsService;
     private CancellationTokenSource? _debounceCts;
     private bool _isDisposed;
+    private bool _hasSortOrderLoaded;
     private List<PlaylistViewModelItem> _allPlaylists = new();
 
     public PlaylistViewModel(ILibraryService libraryService, ISmartPlaylistService smartPlaylistService,
         IMusicPlaybackService musicPlaybackService, INavigationService navigationService,
-        IDispatcherService dispatcherService, ILogger<PlaylistViewModel> logger)
+        IUISettingsService settingsService, IDispatcherService dispatcherService, ILogger<PlaylistViewModel> logger)
     {
         _libraryService = libraryService;
         _smartPlaylistService = smartPlaylistService;
         _musicPlaybackService = musicPlaybackService;
         _navigationService = navigationService;
+        _settingsService = settingsService;
         _dispatcherService = dispatcherService;
         _logger = logger;
 
@@ -131,6 +134,13 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
 
         _libraryService.PlaylistUpdated += OnPlaylistUpdated;
         _smartPlaylistService.PlaylistUpdated += OnPlaylistUpdated;
+        
+        UpdateSortOrderText();
+    }
+
+    private void UpdateSortOrderText()
+    {
+        CurrentSortOrderText = SortOrderHelper.GetDisplayName(CurrentSortOrder);
     }
 
     [ObservableProperty] public partial ObservableCollection<PlaylistViewModelItem> Playlists { get; set; } = new();
@@ -157,7 +167,9 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
 
     [ObservableProperty] public partial PlaylistSortOrder CurrentSortOrder { get; set; } = PlaylistSortOrder.NameAsc;
 
-    [ObservableProperty] public partial string CurrentSortOrderText { get; set; } = SortOrderHelper.AToZ;
+    [ObservableProperty] public partial string CurrentSortOrderText { get; set; } = string.Empty;
+
+    partial void OnCurrentSortOrderChanged(PlaylistSortOrder value) => UpdateSortOrderText();
 
     private bool IsSearchActive => !string.IsNullOrWhiteSpace(SearchTerm);
 
@@ -203,7 +215,8 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
             var navParam = new SmartPlaylistSongViewNavigationParameter
             {
                 Title = playlist.Name,
-                SmartPlaylistId = playlist.Id
+                SmartPlaylistId = playlist.Id,
+                CoverImageUri = playlist.CoverImageUri
             };
             _navigationService.Navigate(typeof(SmartPlaylistSongViewPage), navParam);
         }
@@ -212,7 +225,8 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
             var navParam = new PlaylistSongViewNavigationParameter
             {
                 Title = playlist.Name,
-                PlaylistId = playlist.Id
+                PlaylistId = playlist.Id,
+                CoverImageUri = playlist.CoverImageUri
             };
             _navigationService.Navigate(typeof(PlaylistSongViewPage), navParam);
         }
@@ -264,6 +278,12 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
         StatusMessage = "Loading playlists...";
         try
         {
+            if (!_hasSortOrderLoaded)
+            {
+                CurrentSortOrder = await _settingsService.GetSortOrderAsync<PlaylistSortOrder>(SortOrderHelper.PlaylistsSortOrderKey);
+                _hasSortOrderLoaded = true;
+            }
+
             Playlists.Clear();
             _allPlaylists.Clear();
 
@@ -593,11 +613,12 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
         // Apply sort order
         var sorted = CurrentSortOrder switch
         {
-            PlaylistSortOrder.NameDesc => filtered.OrderByDescending(p => p.Name, StringComparer.OrdinalIgnoreCase),
+            PlaylistSortOrder.NameDesc => filtered.OrderByDescending(p => p.Name, StringComparer.OrdinalIgnoreCase).ThenBy(p => p.Id),
             PlaylistSortOrder.DateCreatedDesc => filtered.OrderByDescending(p => p.DateCreated).ThenBy(p => p.Name, StringComparer.OrdinalIgnoreCase),
             PlaylistSortOrder.DateCreatedAsc => filtered.OrderBy(p => p.DateCreated).ThenBy(p => p.Name, StringComparer.OrdinalIgnoreCase),
             PlaylistSortOrder.DateModifiedDesc => filtered.OrderByDescending(p => p.DateModified).ThenBy(p => p.Name, StringComparer.OrdinalIgnoreCase),
-            _ => filtered.OrderBy(p => p.Name, StringComparer.OrdinalIgnoreCase)
+            PlaylistSortOrder.DateModifiedAsc => filtered.OrderBy(p => p.DateModified).ThenBy(p => p.Name, StringComparer.OrdinalIgnoreCase),
+            _ => filtered.OrderBy(p => p.Name, StringComparer.OrdinalIgnoreCase).ThenBy(p => p.Id)
         };
 
         // Replace collection in one operation to minimize CollectionChanged events
@@ -615,20 +636,18 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
     ///     Changes the sort order and reapplies filtering.
     /// </summary>
     [RelayCommand]
-    public void ChangeSortOrder(string sortOrderString)
+    public Task ChangeSortOrderAsync(string sortOrderString)
     {
         if (Enum.TryParse<PlaylistSortOrder>(sortOrderString, out var newSortOrder)
             && newSortOrder != CurrentSortOrder)
         {
             CurrentSortOrder = newSortOrder;
-            UpdateSortOrderText();
+            _ = _settingsService.SetSortOrderAsync(SortOrderHelper.PlaylistsSortOrderKey, newSortOrder)
+                .ContinueWith(t => _logger.LogError(t.Exception, "Failed to save playlist sort order"),
+                    TaskContinuationOptions.OnlyOnFaulted);
             ApplyFilter();
         }
-    }
-
-    private void UpdateSortOrderText()
-    {
-        CurrentSortOrderText = SortOrderHelper.GetDisplayName(CurrentSortOrder);
+        return Task.CompletedTask;
     }
 
     /// <summary>

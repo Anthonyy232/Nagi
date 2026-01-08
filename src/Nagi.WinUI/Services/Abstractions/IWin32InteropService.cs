@@ -91,3 +91,14 @@ public interface IWin32InteropService
     /// </summary>
     bool IsWindows11OrNewer { get; }
 }
+    
+    /// <summary>
+    ///    Shows a standard Win32 message box.
+    /// </summary>
+    /// <param name="hWnd">The handle to the owner window.</param>
+    /// <param name="text">The text to display.</param>
+    /// <param name="caption">The caption of the message box.</param>
+    /// <param name="type">The type of the message box.</param>
+    /// <returns>the result of the message box call.</returns>
+    int ShowMessageBox(IntPtr hWnd, string text, string caption, uint type);
+}

@@ -86,7 +86,7 @@ public abstract partial class SongListViewModelBase : ObservableObject
 
     [ObservableProperty] public partial SongSortOrder CurrentSortOrder { get; set; } = SongSortOrder.TitleAsc;
 
-    [ObservableProperty] public partial string CurrentSortOrderText { get; set; } = SortOrderHelper.AToZ;
+    [ObservableProperty] public partial string CurrentSortOrderText { get; set; } = string.Empty;
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(RefreshOrSortSongsCommand))]
@@ -132,10 +132,14 @@ public abstract partial class SongListViewModelBase : ObservableObject
         _pagedLoadCts?.Cancel();
 
         if (!string.IsNullOrEmpty(sortOrderString) &&
-            Enum.TryParse<SongSortOrder>(sortOrderString, true, out var newSortOrder))
+            Enum.TryParse<SongSortOrder>(sortOrderString, true, out var newSortOrder)
+            && newSortOrder != CurrentSortOrder)
         {
             CurrentSortOrder = newSortOrder;
             _logger.LogDebug("Sort order changed to '{SortOrder}'", CurrentSortOrder);
+            _ = SaveSortOrderAsync(newSortOrder)
+                .ContinueWith(t => _logger.LogError(t.Exception, "Failed to save sort order"),
+                    TaskContinuationOptions.OnlyOnFaulted);
         }
 
         UpdateSortOrderButtonText(CurrentSortOrder);
@@ -181,6 +185,8 @@ public abstract partial class SongListViewModelBase : ObservableObject
         finally
         {
             IsOverallLoading = false;
+            PlayAllSongsCommand.NotifyCanExecuteChanged();
+            ShuffleAndPlayAllSongsCommand.NotifyCanExecuteChanged();
         }
     }
 
@@ -456,12 +462,19 @@ public abstract partial class SongListViewModelBase : ObservableObject
         _dispatcherService.TryEnqueue(() =>
         {
             TotalItemsText = $"{pagedResult.TotalCount} {(pagedResult.TotalCount == 1 ? "item" : "items")}";
+            PlayAllSongsCommand.NotifyCanExecuteChanged();
+            ShuffleAndPlayAllSongsCommand.NotifyCanExecuteChanged();
         });
     }
 
     protected void UpdateSortOrderButtonText(SongSortOrder sortOrder)
     {
         CurrentSortOrderText = SortOrderHelper.GetDisplayName(sortOrder);
+    }
+
+    protected virtual Task SaveSortOrderAsync(SongSortOrder sortOrder)
+    {
+        return Task.CompletedTask;
     }
 
     private void UpdateSelectionDependentCommands()
@@ -487,19 +500,32 @@ public abstract partial class SongListViewModelBase : ObservableObject
     {
         return sortOrder switch
         {
-            SongSortOrder.TitleDesc => songs.OrderByDescending(s => s.Title, StringComparer.OrdinalIgnoreCase),
-            SongSortOrder.DateAddedDesc => songs.OrderByDescending(s => s.DateAddedToLibrary),
-            SongSortOrder.DateAddedAsc => songs.OrderBy(s => s.DateAddedToLibrary),
-            SongSortOrder.DateModifiedDesc => songs.OrderByDescending(s => s.FileModifiedDate),
-            SongSortOrder.DateModifiedAsc => songs.OrderBy(s => s.FileModifiedDate),
-            SongSortOrder.AlbumAsc => songs.OrderBy(s => s.Album?.Title, StringComparer.OrdinalIgnoreCase)
+            SongSortOrder.YearAsc => songs.OrderBy(s => s.Year)
+                .ThenBy(s => s.Artist?.Name, StringComparer.OrdinalIgnoreCase)
+                .ThenBy(s => s.Album?.Title, StringComparer.OrdinalIgnoreCase)
+                .ThenBy(s => s.TrackNumber)
+                .ThenBy(s => s.Id),
+            SongSortOrder.YearDesc => songs.OrderByDescending(s => s.Year)
+                .ThenBy(s => s.Artist?.Name, StringComparer.OrdinalIgnoreCase)
+                .ThenBy(s => s.Album?.Title, StringComparer.OrdinalIgnoreCase)
+                .ThenBy(s => s.TrackNumber)
+                .ThenBy(s => s.Id),
+            SongSortOrder.AlbumAsc or SongSortOrder.TrackNumberAsc => songs.OrderBy(s => s.Album?.Title, StringComparer.OrdinalIgnoreCase)
                 .ThenBy(s => s.DiscNumber ?? 0)
-                .ThenBy(s => s.TrackNumber),
+                .ThenBy(s => s.TrackNumber)
+                .ThenBy(s => s.Title, StringComparer.OrdinalIgnoreCase)
+                .ThenBy(s => s.Id),
+            SongSortOrder.AlbumDesc => songs.OrderByDescending(s => s.Album?.Title, StringComparer.OrdinalIgnoreCase)
+                .ThenByDescending(s => s.DiscNumber ?? 0)
+                .ThenByDescending(s => s.TrackNumber)
+                .ThenByDescending(s => s.Title, StringComparer.OrdinalIgnoreCase)
+                .ThenBy(s => s.Id),
             SongSortOrder.ArtistAsc => songs.OrderBy(s => s.Artist?.Name, StringComparer.OrdinalIgnoreCase)
-                .ThenBy(s => s.Album?.Title)
+                .ThenBy(s => s.Album?.Title, StringComparer.OrdinalIgnoreCase)
                 .ThenBy(s => s.DiscNumber ?? 0)
-                .ThenBy(s => s.TrackNumber),
-            _ => songs.OrderBy(s => s.Title, StringComparer.OrdinalIgnoreCase)
+                .ThenBy(s => s.TrackNumber)
+                .ThenBy(s => s.Id),
+            _ => songs.OrderBy(s => s.Title, StringComparer.OrdinalIgnoreCase).ThenBy(s => s.Id)
         };
     }
 

@@ -95,7 +95,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Padding="24" Spacing="16">
+        <StackPanel Grid.Row="0" Padding="24,24,24,0" Spacing="16">
             <Grid Margin="0,0,0,16">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -104,7 +104,7 @@
                 <Border Grid.Column="0"
                         Width="150"
                         Height="150"
-                        CornerRadius="8"
+                        CornerRadius="12"
                         Visibility="{x:Bind ViewModel.IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
                     <controls:ImageEx
                         IsCacheEnabled="True"
@@ -173,32 +173,37 @@
                         <FontIcon Glyph="" FontSize="16" Foreground="{StaticResource AppPrimaryColorBrush}" />
                     </Button>
 
-                    <Button Style="{StaticResource SongListViewPageFilledButtonStyle}"
+                    <Button Style="{StaticResource SongListViewPageIconButton}"
                             ToolTipService.ToolTip="Shuffle and play all"
                             Command="{x:Bind ViewModel.ShuffleAndPlayAllSongsCommand}">
-                        <StackPanel Orientation="Horizontal" Spacing="6">
-                            <FontIcon Glyph="" FontSize="14" />
-                            <TextBlock Text="Shuffle and play" VerticalAlignment="Center" />
-                        </StackPanel>
+                        <FontIcon Glyph="" FontSize="16" />
                     </Button>
 
                     <Button Style="{StaticResource SongListViewPageIconButton}"
                             ToolTipService.ToolTip="{x:Bind ViewModel.CurrentSortOrderText, Mode=OneWay}">
                         <Button.Flyout>
                             <MenuFlyout Placement="Bottom">
-                                <MenuFlyoutItem Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                                CommandParameter="TrackNumberAsc" Text="{x:Bind helpers:SortOrderHelper.TrackNumberLabel}" />
-                                <MenuFlyoutItem Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                                CommandParameter="TitleAsc" Text="{x:Bind helpers:SortOrderHelper.AToZLabel}" />
-                                <MenuFlyoutItem Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                                CommandParameter="TitleDesc" Text="{x:Bind helpers:SortOrderHelper.ZToALabel}" />
-                                <MenuFlyoutItem Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                                CommandParameter="DateModifiedDesc" Text="{x:Bind helpers:SortOrderHelper.ModifiedNewestLabel}" />
-                                <MenuFlyoutItem Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                                CommandParameter="DateModifiedAsc" Text="{x:Bind helpers:SortOrderHelper.ModifiedOldestLabel}" />
+                                <RadioMenuFlyoutItem GroupName="AlbumViewSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                                CommandParameter="TrackNumberAsc" Text="{x:Bind helpers:SortOrderHelper.TrackNumberAscLabel}"
+                                                IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=TrackNumberAsc}" />
+                                <RadioMenuFlyoutItem GroupName="AlbumViewSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                                CommandParameter="TrackNumberDesc" Text="{x:Bind helpers:SortOrderHelper.TrackNumberDescLabel}"
+                                                IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=TrackNumberDesc}" />
+                                <RadioMenuFlyoutItem GroupName="AlbumViewSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                                CommandParameter="TitleAsc" Text="{x:Bind helpers:SortOrderHelper.TitleAscLabel}"
+                                                IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=TitleAsc}" />
+                                <RadioMenuFlyoutItem GroupName="AlbumViewSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                                CommandParameter="TitleDesc" Text="{x:Bind helpers:SortOrderHelper.TitleDescLabel}"
+                                                IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=TitleDesc}" />
+                                <RadioMenuFlyoutItem GroupName="AlbumViewSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                                CommandParameter="YearAsc" Text="{x:Bind helpers:SortOrderHelper.YearOldestLabel}"
+                                                IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=YearAsc}" />
+                                <RadioMenuFlyoutItem GroupName="AlbumViewSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                                CommandParameter="YearDesc" Text="{x:Bind helpers:SortOrderHelper.YearNewestLabel}"
+                                                IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=YearDesc}" />
                             </MenuFlyout>
                         </Button.Flyout>
-                        <FontIcon FontSize="16" Glyph="" />
+                        <FontIcon FontSize="16" Glyph="&#xE8CB;" />
                     </Button>
                 </StackPanel>
             </Grid>

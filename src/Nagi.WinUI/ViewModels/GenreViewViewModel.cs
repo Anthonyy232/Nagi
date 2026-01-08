@@ -11,6 +11,7 @@ using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.WinUI.Navigation;
 using Nagi.WinUI.Services.Abstractions;
+using Nagi.Core.Helpers;
 
 namespace Nagi.WinUI.ViewModels;
 
@@ -20,6 +21,7 @@ namespace Nagi.WinUI.ViewModels;
 public partial class GenreViewViewModel : SongListViewModelBase
 {
     private const int SearchDebounceDelay = 400;
+    private readonly IUISettingsService _settingsService;
     private CancellationTokenSource? _debounceCts;
     private Guid _genreId;
 
@@ -29,10 +31,12 @@ public partial class GenreViewViewModel : SongListViewModelBase
         IMusicPlaybackService playbackService,
         INavigationService navigationService,
         IDispatcherService dispatcherService,
+        IUISettingsService settingsService,
         IUIService uiService,
         ILogger<GenreViewViewModel> logger)
         : base(libraryReader, playlistService, playbackService, navigationService, dispatcherService, uiService, logger)
     {
+        _settingsService = settingsService;
         GenreName = "Genre";
 
         CurrentSortOrder = SongSortOrder.TitleAsc;
@@ -98,6 +102,8 @@ public partial class GenreViewViewModel : SongListViewModelBase
             GenreName = navParam.GenreName;
             PageTitle = navParam.GenreName;
 
+            CurrentSortOrder = await _settingsService.GetSortOrderAsync<SongSortOrder>(SortOrderHelper.GenreViewSortOrderKey);
+
             await RefreshOrSortSongsCommand.ExecuteAsync(null);
         }
         catch (Exception ex)
@@ -158,6 +164,11 @@ public partial class GenreViewViewModel : SongListViewModelBase
                 _logger.LogError(ex, "Debounced search failed for genre {GenreId}", _genreId);
             }
         }, token);
+    }
+
+    protected override Task SaveSortOrderAsync(SongSortOrder sortOrder)
+    {
+        return _settingsService.SetSortOrderAsync(SortOrderHelper.GenreViewSortOrderKey, sortOrder);
     }
 
     public override void Cleanup()

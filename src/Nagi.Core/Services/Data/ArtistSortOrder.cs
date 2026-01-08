@@ -7,5 +7,6 @@ public enum ArtistSortOrder
 {
     NameAsc,
     NameDesc,
-    SongCountDesc
+    SongCountDesc,
+    SongCountAsc
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
@@ -8,6 +9,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.WinUI.ViewModels;
+using Nagi.Core.Models;
 
 namespace Nagi.WinUI.Pages;
 
@@ -137,5 +139,14 @@ public sealed partial class SettingsPage : Page
             if (result != null) return result;
         }
         return null;
+    }
+
+    private void ProvidersListView_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
+    {
+        // Prevent dragging MusicBrainz metadata provider
+        if (e.Items.Any(i => i is ServiceProviderSettingViewModel { Id: ServiceProviderIds.MusicBrainz }))
+        {
+            e.Cancel = true;
+        }
     }
 }

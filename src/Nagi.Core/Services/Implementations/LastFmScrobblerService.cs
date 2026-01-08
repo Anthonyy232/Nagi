@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Net;
+using System.Net.Http;
+using Microsoft.Extensions.Logging;
+using Nagi.Core.Http;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 
@@ -10,8 +13,9 @@ namespace Nagi.Core.Services.Implementations;
 public class LastFmScrobblerService : ILastFmScrobblerService
 {
     private const string LastFmApiBaseUrl = "https://ws.audioscrobbler.com/2.0/";
-    private const string ApiKeyName = "lastfm";
-    private const string ApiSecretName = "lastfm-secret";
+    private const string ApiKeyName = ServiceProviderIds.LastFm;
+    private const string ApiSecretName = ServiceProviderIds.LastFmSecret;
+    private const int MaxRetries = 3;
 
     private readonly IApiKeyService _apiKeyService;
     private readonly HttpClient _httpClient;
@@ -24,7 +28,7 @@ public class LastFmScrobblerService : ILastFmScrobblerService
         ISettingsService settingsService,
         ILogger<LastFmScrobblerService> logger)
     {
-        _httpClient = httpClientFactory.CreateClient("LastFm");
+        _httpClient = httpClientFactory.CreateClient();
         _apiKeyService = apiKeyService;
         _settingsService = settingsService;
         _logger = logger;
@@ -47,7 +51,7 @@ public class LastFmScrobblerService : ILastFmScrobblerService
         if (song.Album != null) parameters.Add("album", song.Album.Title);
         if (song.Duration > TimeSpan.Zero) parameters.Add("duration", ((int)song.Duration.TotalSeconds).ToString());
 
-        var success = await PostToLastFmAsync(parameters, apiSecret).ConfigureAwait(false);
+        var success = await PostToLastFmAsync(parameters, apiSecret, CancellationToken.None).ConfigureAwait(false);
         if (success)
             _logger.LogDebug("Successfully updated Last.fm 'Now Playing' for track '{TrackTitle}'.", song.Title);
         return success;
@@ -72,35 +76,48 @@ public class LastFmScrobblerService : ILastFmScrobblerService
 
         if (song.Album != null) parameters.Add("album", song.Album.Title);
 
-        return await PostToLastFmAsync(parameters, apiSecret).ConfigureAwait(false);
+        return await PostToLastFmAsync(parameters, apiSecret, CancellationToken.None).ConfigureAwait(false);
     }
 
     /// <summary>
     ///     Sends a POST request to the Last.fm API with the provided parameters.
     /// </summary>
-    private async Task<bool> PostToLastFmAsync(Dictionary<string, string> parameters, string apiSecret)
+    private async Task<bool> PostToLastFmAsync(
+        Dictionary<string, string> parameters, 
+        string apiSecret,
+        CancellationToken cancellationToken = default)
     {
         parameters["api_sig"] = CreateSignature(parameters, apiSecret);
+        var method = parameters["method"];
+        var operationName = $"Last.fm {method}";
 
-        using var formContent = new FormUrlEncodedContent(parameters);
+        var result = await HttpRetryHelper.ExecuteWithRetryAsync<bool>(
+            async attempt =>
+            {
+                using var formContent = new FormUrlEncodedContent(parameters);
+                _logger.LogDebug("Calling Last.fm method '{Method}' (Attempt {Attempt}/{MaxRetries})", 
+                    method, attempt, MaxRetries);
 
-        try
-        {
-            using var response = await _httpClient.PostAsync(LastFmApiBaseUrl, formContent).ConfigureAwait(false);
-            if (response.IsSuccessStatusCode) return true;
+                using var response = await _httpClient.PostAsync(LastFmApiBaseUrl, formContent, cancellationToken).ConfigureAwait(false);
+                if (response.IsSuccessStatusCode) 
+                    return RetryResult<bool>.Success(true);
 
-            var errorContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            _logger.LogWarning(
-                "Last.fm API call for method '{Method}' failed. Status: {StatusCode}, Response: {ResponseContent}",
-                parameters["method"], response.StatusCode, errorContent);
-            return false;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "An exception occurred during Last.fm API call for method '{Method}'.",
-                parameters["method"]);
-            return false;
-        }
+                var errorContent = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+                _logger.LogWarning(
+                    "Last.fm API call for method '{Method}' failed. Status: {StatusCode}, Response: {ResponseContent}. Attempt {Attempt}/{MaxRetries}",
+                    method, response.StatusCode, errorContent, attempt, MaxRetries);
+                
+                if (HttpRetryHelper.IsRetryableStatusCode(response.StatusCode))
+                    return RetryResult<bool>.TransientFailure();
+                
+                return RetryResult<bool>.Success(false);
+            },
+            _logger,
+            operationName,
+            cancellationToken
+        ).ConfigureAwait(false);
+
+        return result;
     }
 
     /// <summary>

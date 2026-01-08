@@ -34,6 +34,12 @@ public interface ISmartPlaylistService
 
     Task<bool> RemoveRuleAsync(Guid ruleId);
     Task<bool> ReorderRulesAsync(Guid smartPlaylistId, IEnumerable<Guid> orderedRuleIds);
+    
+    /// <summary>
+    ///     Replaces all rules for a smart playlist in a single transaction.
+    ///     More efficient than removing and adding rules individually.
+    /// </summary>
+    Task<bool> ReplaceAllRulesAsync(Guid smartPlaylistId, IEnumerable<SmartPlaylistRule> newRules);
 
     // Query Execution
     Task<IEnumerable<Song>> GetMatchingSongsAsync(Guid smartPlaylistId, string? searchTerm = null);

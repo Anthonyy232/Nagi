@@ -45,7 +45,7 @@ public sealed partial class PlaylistSongViewPage : Page
                 _logger.LogDebug("Loading songs for playlist '{PlaylistName}' (Id: {PlaylistId}).",
                     navParam.Title,
                     navParam.PlaylistId);
-                await ViewModel.InitializeAsync(navParam.Title, navParam.PlaylistId);
+                await ViewModel.InitializeAsync(navParam.Title, navParam.PlaylistId, navParam.CoverImageUri);
             }
             else
             {

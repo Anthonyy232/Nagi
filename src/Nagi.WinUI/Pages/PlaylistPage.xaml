@@ -83,10 +83,10 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
+        <!-- Page Header -->
         <Grid Grid.Row="0" Margin="0,0,0,28">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -94,7 +94,16 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Column="0" Style="{StaticResource PageTitleTextStyle}" Text="Playlists" />
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                <TextBlock Style="{StaticResource PageTitleTextStyle}" Text="Playlists" />
+                <TextBlock
+                    Margin="0,0,0,5"
+                    VerticalAlignment="Bottom"
+                    FontSize="13"
+                    Foreground="{ThemeResource TextFillColorSecondary}"
+                    Text="{x:Bind ViewModel.StatusMessage, Mode=OneWay}"
+                    Visibility="{x:Bind ViewModel.StatusMessage, Converter={StaticResource StringToVisibilityConverter}, Mode=OneWay}" />
+            </StackPanel>
 
             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center" Margin="0,0,8,0">
                 <!-- Search functionality -->
@@ -125,16 +134,28 @@
                         ToolTipService.ToolTip="{x:Bind ViewModel.CurrentSortOrderText, Mode=OneWay}">
                     <Button.Flyout>
                         <MenuFlyout Placement="Bottom">
-                            <MenuFlyoutItem Command="{x:Bind ViewModel.ChangeSortOrderCommand}"
-                                            CommandParameter="NameAsc" Text="{x:Bind helpers:SortOrderHelper.AToZLabel}" />
-                            <MenuFlyoutItem Command="{x:Bind ViewModel.ChangeSortOrderCommand}"
-                                            CommandParameter="NameDesc" Text="{x:Bind helpers:SortOrderHelper.ZToALabel}" />
-                            <MenuFlyoutItem Command="{x:Bind ViewModel.ChangeSortOrderCommand}"
-                                            CommandParameter="DateCreatedDesc" Text="{x:Bind helpers:SortOrderHelper.NewestLabel}" />
-                            <MenuFlyoutItem Command="{x:Bind ViewModel.ChangeSortOrderCommand}"
-                                            CommandParameter="DateCreatedAsc" Text="{x:Bind helpers:SortOrderHelper.OldestLabel}" />
-                            <MenuFlyoutItem Command="{x:Bind ViewModel.ChangeSortOrderCommand}"
-                                            CommandParameter="DateModifiedDesc" Text="{x:Bind helpers:SortOrderHelper.ModifiedNewestLabel}" />
+                            <RadioMenuFlyoutItem GroupName="PlaylistSort" Command="{x:Bind ViewModel.ChangeSortOrderCommand}"
+                                            CommandParameter="NameAsc" Text="{x:Bind helpers:SortOrderHelper.TitleAscLabel}"
+                                            IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=NameAsc}" />
+                            <RadioMenuFlyoutItem GroupName="PlaylistSort" Command="{x:Bind ViewModel.ChangeSortOrderCommand}"
+                                            CommandParameter="NameDesc" Text="{x:Bind helpers:SortOrderHelper.TitleDescLabel}"
+                                            IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=NameDesc}" />
+                            <RadioMenuFlyoutItem GroupName="PlaylistSort" Command="{x:Bind ViewModel.ChangeSortOrderCommand}"
+                                            CommandParameter="DateCreatedAsc"
+                                            Text="{x:Bind helpers:SortOrderHelper.DateCreatedOldestLabel}"
+                                            IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=DateCreatedAsc}" />
+                            <RadioMenuFlyoutItem GroupName="PlaylistSort" Command="{x:Bind ViewModel.ChangeSortOrderCommand}"
+                                            CommandParameter="DateCreatedDesc"
+                                            Text="{x:Bind helpers:SortOrderHelper.DateCreatedNewestLabel}"
+                                            IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=DateCreatedDesc}" />
+                            <RadioMenuFlyoutItem GroupName="PlaylistSort" Command="{x:Bind ViewModel.ChangeSortOrderCommand}"
+                                            CommandParameter="DateModifiedAsc"
+                                            Text="{x:Bind helpers:SortOrderHelper.ModifiedOldestLabel}"
+                                            IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=DateModifiedAsc}" />
+                            <RadioMenuFlyoutItem GroupName="PlaylistSort" Command="{x:Bind ViewModel.ChangeSortOrderCommand}"
+                                            CommandParameter="DateModifiedDesc"
+                                            Text="{x:Bind helpers:SortOrderHelper.ModifiedNewestLabel}"
+                                            IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=DateModifiedDesc}" />
                         </MenuFlyout>
                     </Button.Flyout>
                     <FontIcon FontSize="16" Glyph="&#xE8CB;" />
@@ -167,21 +188,14 @@
             </DropDownButton>
         </Grid>
 
-        <TextBlock
-            Grid.Row="1"
-            Margin="0,0,0,12"
-            Foreground="{StaticResource AppPrimaryColorBrush}"
-            Style="{ThemeResource CaptionTextBlockStyle}"
-            Text="{x:Bind ViewModel.StatusMessage, Mode=OneWay}"
-            Visibility="{x:Bind ViewModel.StatusMessage, Converter={StaticResource StringToVisibilityConverter}, Mode=OneWay}" />
-
-        <GridView
-            Grid.Row="2"
-            IsItemClickEnabled="True"
-            ItemClick="PlaylistsGridView_ItemClick"
-            ItemContainerStyle="{StaticResource PlaylistPageGridViewItemStyle}"
-            ItemsSource="{x:Bind ViewModel.Playlists, Mode=OneWay}"
-            Visibility="{x:Bind ViewModel.HasPlaylists, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+        <Grid Grid.Row="1">
+            <GridView
+                IsItemClickEnabled="True"
+                ItemClick="PlaylistsGridView_ItemClick"
+                ItemContainerStyle="{StaticResource PlaylistPageGridViewItemStyle}"
+                ItemsSource="{x:Bind ViewModel.Playlists, Mode=OneWay}"
+                SelectionMode="None"
+                Visibility="{x:Bind ViewModel.HasPlaylists, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
             <GridView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <ItemsWrapGrid ItemWidth="200" Orientation="Horizontal" />
@@ -272,19 +286,25 @@
                     </Grid>
                 </DataTemplate>
             </GridView.ItemTemplate>
-        </GridView>
+            </GridView>
 
-        <StackPanel
-            Grid.Row="2"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            Spacing="12"
-            Visibility="{x:Bind ViewModel.HasPlaylists, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}">
-            <FontIcon FontSize="48" Glyph="&#xE142;" />
-            <TextBlock HorizontalAlignment="Center" Style="{ThemeResource SubtitleTextBlockStyle}"
-                       Text="No playlists yet" />
-            <TextBlock HorizontalAlignment="Center" Opacity="0.7" Style="{ThemeResource BodyTextBlockStyle}"
-                       Text="Create a playlist to get started" />
-        </StackPanel>
+            <!-- This panel is shown when the playlist list is empty. -->
+            <StackPanel
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Spacing="12"
+                Visibility="{x:Bind ViewModel.HasPlaylists, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}">
+                <FontIcon FontSize="48" Glyph="&#xE142;" />
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    Style="{ThemeResource SubtitleTextBlockStyle}"
+                    Text="No playlists yet" />
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    Opacity="0.7"
+                    Style="{ThemeResource BodyTextBlockStyle}"
+                    Text="Create a playlist to get started" />
+            </StackPanel>
+        </Grid>
     </Grid>
 </Page>

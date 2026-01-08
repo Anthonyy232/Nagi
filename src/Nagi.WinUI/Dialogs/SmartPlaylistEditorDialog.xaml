@@ -38,7 +38,7 @@
             <StackPanel Grid.Column="0" Spacing="8" VerticalAlignment="Top">
                 <Grid x:Name="CoverImageGrid" Width="100" Height="100" 
                       Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" 
-                      CornerRadius="8">
+                      CornerRadius="12">
                     <FontIcon x:Name="CoverImagePlaceholder" Glyph="&#xE91B;" FontSize="40" 
                               HorizontalAlignment="Center" VerticalAlignment="Center"
                               Foreground="{ThemeResource TextFillColorSecondary}" />
@@ -47,7 +47,7 @@
                                       IsCacheEnabled="True"
                                       DecodePixelWidth="100"
                                       DecodePixelType="Logical"
-                                      CornerRadius="8"
+                                      CornerRadius="12"
                                       Visibility="Collapsed" />
                 </Grid>
                 <Button x:Name="PickCoverImageButton" 
@@ -69,13 +69,28 @@
             <!-- Sort Order Section -->
             <StackPanel Grid.Column="4" Spacing="4" MinWidth="200" VerticalAlignment="Top">
                 <TextBlock Text="Sort Order" Style="{ThemeResource BodyStrongTextBlockStyle}"/>
-                <ComboBox x:Name="SortByComboBox" SelectedIndex="0" HorizontalAlignment="Stretch">
+                <ComboBox x:Name="SortByComboBox" SelectedIndex="0" HorizontalAlignment="Stretch"
+                          SelectionChanged="OnComboBoxSelectionChanged">
                     <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.TitleAscLabel}" Tag="TitleAsc" />
                     <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.TitleDescLabel}" Tag="TitleDesc" />
                     <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.ArtistAscLabel}" Tag="ArtistAsc" />
                     <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.ArtistDescLabel}" Tag="ArtistDesc" />
                     <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.AlbumAscLabel}" Tag="AlbumAsc" />
                     <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.AlbumDescLabel}" Tag="AlbumDesc" />
+                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.YearOldestLabel}" Tag="YearAsc" />
+                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.YearNewestLabel}" Tag="YearDesc" />
+                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.PlayCountAscLabel}" Tag="PlayCountAsc" />
+                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.PlayCountDescLabel}" Tag="PlayCountDesc" />
+                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.LastPlayedAscLabel}" Tag="LastPlayedAsc" />
+                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.LastPlayedDescLabel}" Tag="LastPlayedDesc" />
+                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.DateAddedAscLabel}" Tag="DateAddedAsc" />
+                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.DateAddedDescLabel}" Tag="DateAddedDesc" />
+                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.TrackNumberAscLabel}" Tag="TrackNumberAsc" />
+                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.TrackNumberDescLabel}" Tag="TrackNumberDesc" />
+                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.DurationAscLabel}" Tag="DurationAsc" />
+                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.DurationDescLabel}" Tag="DurationDesc" />
+                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.BpmAscLabel}" Tag="BpmAsc" />
+                    <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.BpmDescLabel}" Tag="BpmDesc" />
                     <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.RandomLabel}" Tag="Random" />
                 </ComboBox>
             </StackPanel>
@@ -85,7 +100,8 @@
         <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto" Margin="0,0,0,12">
             <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                 <TextBlock Text="Match" VerticalAlignment="Center"/>
-                <ComboBox x:Name="MatchLogicComboBox" SelectedIndex="0" MinWidth="80">
+                <ComboBox x:Name="MatchLogicComboBox" SelectedIndex="0" MinWidth="80"
+                          SelectionChanged="OnComboBoxSelectionChanged">
                     <ComboBoxItem Content="All" Tag="All" />
                     <ComboBoxItem Content="Any" Tag="Any" />
                 </ComboBox>

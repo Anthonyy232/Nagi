@@ -7,5 +7,6 @@ public enum GenreSortOrder
 {
     NameAsc,
     NameDesc,
-    SongCountDesc
+    SongCountDesc,
+    SongCountAsc
 }

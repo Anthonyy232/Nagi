@@ -7,11 +7,12 @@ public enum SongSortOrder
 {
     TitleAsc,
     TitleDesc,
-    DateAddedDesc,
-    DateAddedAsc,
-    DateModifiedDesc,
-    DateModifiedAsc,
     AlbumAsc,
+    AlbumDesc,
     ArtistAsc,
-    TrackNumberAsc
+    ArtistDesc,
+    TrackNumberAsc,
+    TrackNumberDesc,
+    YearAsc,
+    YearDesc
 }

@@ -150,25 +150,34 @@
                     </StackPanel>
                 </Button>
 
-                <Button Style="{StaticResource SongListViewPageFilledButtonStyle}" ToolTipService.ToolTip="Sort items">
+                <Button Style="{StaticResource SongListViewPageFilledButtonStyle}" 
+                        ToolTipService.ToolTip="{x:Bind ViewModel.CurrentSortOrderText, Mode=OneWay}">
                     <Button.Flyout>
                         <MenuFlyout Placement="Bottom">
-                            <MenuFlyoutItem Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                            CommandParameter="TitleAsc" Text="{x:Bind helpers:SortOrderHelper.AToZLabel}" />
-                            <MenuFlyoutItem Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                            CommandParameter="TitleDesc" Text="{x:Bind helpers:SortOrderHelper.ZToALabel}" />
-                            <MenuFlyoutItem Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                            CommandParameter="DateAddedDesc" Text="{x:Bind helpers:SortOrderHelper.NewestLabel}" />
-                            <MenuFlyoutItem Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                            CommandParameter="DateAddedAsc" Text="{x:Bind helpers:SortOrderHelper.OldestLabel}" />
-                            <MenuFlyoutItem Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                            CommandParameter="DateModifiedDesc" Text="{x:Bind helpers:SortOrderHelper.ModifiedNewestLabel}" />
-                            <MenuFlyoutItem Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                            CommandParameter="DateModifiedAsc" Text="{x:Bind helpers:SortOrderHelper.ModifiedOldestLabel}" />
-                            <MenuFlyoutItem Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                            CommandParameter="AlbumAsc" Text="{x:Bind helpers:SortOrderHelper.AlbumLabel}" />
-                            <MenuFlyoutItem Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                            CommandParameter="ArtistAsc" Text="{x:Bind helpers:SortOrderHelper.ArtistLabel}" />
+                            <RadioMenuFlyoutItem GroupName="LibrarySort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                            CommandParameter="TitleAsc" Text="{x:Bind helpers:SortOrderHelper.TitleAscLabel}"
+                                            IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=TitleAsc}" />
+                            <RadioMenuFlyoutItem GroupName="LibrarySort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                            CommandParameter="TitleDesc" Text="{x:Bind helpers:SortOrderHelper.TitleDescLabel}"
+                                            IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=TitleDesc}" />
+                            <RadioMenuFlyoutItem GroupName="LibrarySort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                            CommandParameter="YearAsc" Text="{x:Bind helpers:SortOrderHelper.YearOldestLabel}"
+                                            IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=YearAsc}" />
+                            <RadioMenuFlyoutItem GroupName="LibrarySort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                            CommandParameter="YearDesc" Text="{x:Bind helpers:SortOrderHelper.YearNewestLabel}"
+                                            IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=YearDesc}" />
+                            <RadioMenuFlyoutItem GroupName="LibrarySort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                            CommandParameter="ArtistAsc" Text="{x:Bind helpers:SortOrderHelper.ArtistAscLabel}"
+                                            IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=ArtistAsc}" />
+                            <RadioMenuFlyoutItem GroupName="LibrarySort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                            CommandParameter="ArtistDesc" Text="{x:Bind helpers:SortOrderHelper.ArtistDescLabel}"
+                                            IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=ArtistDesc}" />
+                            <RadioMenuFlyoutItem GroupName="LibrarySort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                            CommandParameter="AlbumAsc" Text="{x:Bind helpers:SortOrderHelper.AlbumAscLabel}"
+                                            IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=AlbumAsc}" />
+                            <RadioMenuFlyoutItem GroupName="LibrarySort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                            CommandParameter="AlbumDesc" Text="{x:Bind helpers:SortOrderHelper.AlbumDescLabel}"
+                                            IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=AlbumDesc}" />
                         </MenuFlyout>
                     </Button.Flyout>
                     <TextBlock Text="{x:Bind ViewModel.CurrentSortOrderText, Mode=OneWay}" VerticalAlignment="Center" />
