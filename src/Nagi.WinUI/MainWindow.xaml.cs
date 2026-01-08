@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Graphics;
 using Windows.UI;
@@ -35,7 +36,11 @@ public sealed partial class MainWindow : Window
     private FrameworkElement? _rootElement;
     private IUISettingsService? _settingsService;
     private ITaskbarService? _taskbarService;
+
+    internal ITaskbarService? TaskbarService => _taskbarService;
+
     private bool _isTaskbarInitialized;
+    private int _isCleanedUp;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="MainWindow" /> class.
@@ -61,14 +66,30 @@ public sealed partial class MainWindow : Window
 
     public void Cleanup()
     {
+        // Ensure cleanup only runs once to prevent race conditions
+        if (Interlocked.Exchange(ref _isCleanedUp, 1) != 0) return;
+
         Activated -= OnWindowActivated;
-        
+
         if (_rootElement != null) _rootElement.ActualThemeChanged -= OnActualThemeChanged;
         if (_settingsService != null)
         {
             _settingsService.BackdropMaterialChanged -= OnBackdropMaterialChanged;
             _settingsService.TransparencyEffectsSettingChanged -= OnTransparencyEffectsChanged;
         }
+
+        // Restore original WndProc before window destruction to prevent crashes
+        // from callbacks to a deallocated delegate.
+        if (_oldWndProc != 0)
+        {
+            var windowHandle = WinRT.Interop.WindowNative.GetWindowHandle(this);
+            TaskbarNativeMethods.SetWindowLongPtr(windowHandle, TaskbarNativeMethods.GWLP_WNDPROC, _oldWndProc);
+            _oldWndProc = 0;
+            _wndProcDelegate = null;
+        }
+
+        // Dispose the taskbar service to release COM objects and icons.
+        _taskbarService?.Dispose();
 
         _appWindow = null;
     }
