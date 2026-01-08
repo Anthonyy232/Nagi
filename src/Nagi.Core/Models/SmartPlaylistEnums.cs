@@ -85,5 +85,13 @@ public enum SmartPlaylistSortOrder
     PlayCountDesc,
     LastPlayedAsc,
     LastPlayedDesc,
+    DateAddedAsc,
+    DateAddedDesc,
+    TrackNumberAsc,
+    TrackNumberDesc,
+    DurationAsc,
+    DurationDesc,
+    BpmAsc,
+    BpmDesc,
     Random
 }

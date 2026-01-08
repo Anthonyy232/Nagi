@@ -1556,14 +1556,14 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
         var results = _queryBuilder.BuildQuery(context, playlist).ToList();
 
         // Assert - Null artist first (sorted as empty string), then Pink Floyd, then The Beatles
-        // Within same artist, should be sorted by title
+        // Within same artist, should be sorted by album, then track number, then title
         results.Should().HaveCount(5);
         results[0].Title.Should().Be("Fly Me to the Moon"); // No artist
         results[1].Title.Should().Be("Another Brick in the Wall"); // Pink Floyd
-        // The Beatles songs sorted by title
-        results[2].Title.Should().Be("Come Together");
-        results[3].Title.Should().Be("Let It Be");
-        results[4].Title.Should().Be("Something");
+        // The Beatles songs sorted by album (null first), then track
+        results[2].Title.Should().Be("Let It Be"); // No album
+        results[3].Title.Should().Be("Come Together"); // Abbey Road, Track 1
+        results[4].Title.Should().Be("Something"); // Abbey Road, Track 2
     }
 
     [Fact]

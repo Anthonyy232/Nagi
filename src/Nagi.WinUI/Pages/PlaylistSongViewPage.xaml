@@ -7,6 +7,7 @@
     xmlns:converters="using:Nagi.WinUI.Converters"
     xmlns:controls="using:ImageEx"
     xmlns:models="using:Nagi.Core.Models"
+    xmlns:helpers="using:Nagi.Core.Helpers"
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
     mc:Ignorable="d"
     Background="Transparent"
@@ -90,59 +91,128 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Padding="24,20,24,20" VerticalAlignment="Center">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
+        <StackPanel Grid.Row="0" Padding="24,24,24,0" Spacing="16">
+            <Grid Margin="0,0,0,16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
 
-            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                <TextBlock Text="{x:Bind ViewModel.PageTitle, Mode=OneWay}"
-                           Style="{StaticResource PageTitleTextStyle}" />
-                <TextBlock Text="{x:Bind ViewModel.TotalItemsText, Mode=OneWay}"
-                           Foreground="{ThemeResource TextFillColorSecondary}" VerticalAlignment="Bottom"
-                           Margin="0,0,0,5" FontSize="13" />
-            </StackPanel>
-
-            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                <!-- Search functionality -->
-                <Grid>
-                    <TextBox x:Name="SearchTextBox"
-                             Style="{StaticResource SearchTextBoxStyle}"
-                             PlaceholderText="Search in playlist..."
-                             Width="0"
-                             Opacity="0"
-                             IsHitTestVisible="False"
-                             HorizontalAlignment="Right"
-                             KeyDown="OnSearchTextBoxKeyDown"
-                             Text="{x:Bind ViewModel.SearchTerm, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                             Canvas.ZIndex="0">
-                    </TextBox>
-
-                    <Button x:Name="SearchToggleButton"
-                            Click="OnSearchToggleButtonClick"
-                            Style="{StaticResource SongListViewPageIconButton}"
-                            ToolTipService.ToolTip="Search in playlist"
-                            HorizontalAlignment="Right"
-                            Margin="0,0,1,0"
-                            IsHitTestVisible="True"
-                            Canvas.ZIndex="1">
-                        <FontIcon x:Name="SearchIcon" FontSize="16" Glyph="&#xE721;" />
-                    </Button>
+                <!-- Playlist Cover Art -->
+                <Grid Grid.Column="0" Width="150" Height="150">
+                    <Border CornerRadius="12"
+                            Visibility="{x:Bind ViewModel.IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                        <controls:ImageEx
+                            IsCacheEnabled="True"
+                            Source="{x:Bind ViewModel.CoverImageUri, Mode=OneWay, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
+                            DecodePixelWidth="160"
+                            DecodePixelType="Logical"
+                            Stretch="UniformToFill" />
+                    </Border>
+                    <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                          CornerRadius="12"
+                          Visibility="{x:Bind ViewModel.IsArtworkAvailable, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}">
+                        <FontIcon
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            FontSize="48"
+                            Glyph="&#xE142;" />
+                    </Grid>
                 </Grid>
 
-                <Button Style="{StaticResource SongListViewPageIconButton}" ToolTipService.ToolTip="Play all"
-                        Command="{x:Bind ViewModel.PlayAllSongsCommand}">
-                    <FontIcon Glyph="" FontSize="16" Foreground="{StaticResource AppPrimaryColorBrush}" />
-                </Button>
+                <StackPanel Grid.Column="1" Margin="24,0,0,0" VerticalAlignment="Bottom" Spacing="8">
+                    <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Text="Playlist" />
+                    <TextBlock Style="{ThemeResource HeaderTextBlockStyle}"
+                               Text="{x:Bind ViewModel.PageTitle, Mode=OneWay}" />
+                </StackPanel>
+            </Grid>
 
-                <Button Style="{StaticResource SongListViewPageIconButton}"
-                        ToolTipService.ToolTip="Shuffle and play all"
-                        Command="{x:Bind ViewModel.ShuffleAndPlayAllSongsCommand}">
-                    <FontIcon Glyph="" FontSize="16" />
-                </Button>
-            </StackPanel>
-        </Grid>
+            <Grid Margin="0,8,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                    <TextBlock Style="{StaticResource SectionHeaderTextBlockStyle}" Text="Songs" Foreground="{StaticResource AppPrimaryColorBrush}" />
+                    <TextBlock Text="{x:Bind ViewModel.TotalItemsText, Mode=OneWay}"
+                               Foreground="{ThemeResource TextFillColorSecondary}" VerticalAlignment="Center"
+                               FontSize="13" />
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                    <!-- Search functionality -->
+                    <Grid>
+                        <TextBox x:Name="SearchTextBox"
+                                 Style="{StaticResource SearchTextBoxStyle}"
+                                 PlaceholderText="Search in playlist..."
+                                 Width="0"
+                                 Opacity="0"
+                                 IsHitTestVisible="False"
+                                 HorizontalAlignment="Right"
+                                 KeyDown="OnSearchTextBoxKeyDown"
+                                 Text="{x:Bind ViewModel.SearchTerm, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 Canvas.ZIndex="0">
+                        </TextBox>
+
+                        <Button x:Name="SearchToggleButton"
+                                Click="OnSearchToggleButtonClick"
+                                Style="{StaticResource SongListViewPageIconButton}"
+                                ToolTipService.ToolTip="Search in playlist"
+                                HorizontalAlignment="Right"
+                                Margin="0,0,1,0"
+                                IsHitTestVisible="True"
+                                Canvas.ZIndex="1">
+                            <FontIcon x:Name="SearchIcon" FontSize="16" Glyph="&#xE721;" />
+                        </Button>
+                    </Grid>
+
+                    <Button Style="{StaticResource SongListViewPageIconButton}" ToolTipService.ToolTip="Play all"
+                            Command="{x:Bind ViewModel.PlayAllSongsCommand}">
+                        <FontIcon Glyph="" FontSize="16" Foreground="{StaticResource AppPrimaryColorBrush}" />
+                    </Button>
+
+                    <Button Style="{StaticResource SongListViewPageIconButton}"
+                            ToolTipService.ToolTip="Shuffle and play all"
+                            Command="{x:Bind ViewModel.ShuffleAndPlayAllSongsCommand}">
+                        <FontIcon Glyph="" FontSize="16" />
+                    </Button>
+
+                    <Button Style="{StaticResource SongListViewPageIconButton}"
+                            ToolTipService.ToolTip="{x:Bind ViewModel.CurrentSortOrderText, Mode=OneWay}">
+                        <Button.Flyout>
+                            <MenuFlyout Placement="Bottom">
+                                 <RadioMenuFlyoutItem GroupName="PlaylistSongSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                                CommandParameter="TitleAsc" Text="{x:Bind helpers:SortOrderHelper.TitleAscLabel}"
+                                                IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=TitleAsc}" />
+                                <RadioMenuFlyoutItem GroupName="PlaylistSongSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                                CommandParameter="TitleDesc" Text="{x:Bind helpers:SortOrderHelper.TitleDescLabel}"
+                                                IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=TitleDesc}" />
+                                <RadioMenuFlyoutItem GroupName="PlaylistSongSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                                CommandParameter="YearAsc" Text="{x:Bind helpers:SortOrderHelper.YearOldestLabel}"
+                                                IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=YearAsc}" />
+                                <RadioMenuFlyoutItem GroupName="PlaylistSongSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                                CommandParameter="YearDesc" Text="{x:Bind helpers:SortOrderHelper.YearNewestLabel}"
+                                                IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=YearDesc}" />
+                                <RadioMenuFlyoutItem GroupName="PlaylistSongSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                                CommandParameter="ArtistAsc" Text="{x:Bind helpers:SortOrderHelper.ArtistAscLabel}"
+                                                IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=ArtistAsc}" />
+                                <RadioMenuFlyoutItem GroupName="PlaylistSongSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                                CommandParameter="ArtistDesc" Text="{x:Bind helpers:SortOrderHelper.ArtistDescLabel}"
+                                                IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=ArtistDesc}" />
+                                <RadioMenuFlyoutItem GroupName="PlaylistSongSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                                CommandParameter="AlbumAsc" Text="{x:Bind helpers:SortOrderHelper.AlbumAscLabel}"
+                                                IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=AlbumAsc}" />
+                                <RadioMenuFlyoutItem GroupName="PlaylistSongSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                                CommandParameter="AlbumDesc" Text="{x:Bind helpers:SortOrderHelper.AlbumDescLabel}"
+                                                IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=AlbumDesc}" />
+                            </MenuFlyout>
+                        </Button.Flyout>
+                        <FontIcon FontSize="16" Glyph="&#xE8CB;" />
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </StackPanel>
 
         <ListView Grid.Row="1"
                   x:Name="SongsListView"

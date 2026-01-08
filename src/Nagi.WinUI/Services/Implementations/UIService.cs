@@ -20,6 +20,17 @@ namespace Nagi.WinUI.Services.Implementations;
 /// </summary>
 public class UIService : IUIService
 {
+    // Win32 MessageBox constants
+    private const uint MB_OK = 0x00000000;
+    private const uint MB_ICONERROR = 0x00000010;
+    
+    private readonly IWin32InteropService _win32InteropService;
+
+    public UIService(IWin32InteropService win32InteropService)
+    {
+        _win32InteropService = win32InteropService;
+    }
+
     public async Task<bool> ShowConfirmationDialogAsync(string title, string content, string primaryButtonText,
         string? closeButtonText)
     {
@@ -131,9 +142,20 @@ public class UIService : IUIService
         };
 
         DialogThemeHelper.ApplyThemeOverrides(dialog);
-        var result = await dialog.ShowAsync();
-
-        return result == ContentDialogResult.Primary ? CrashReportResult.Reset : CrashReportResult.Close;
+        
+        try
+        {
+            var result = await dialog.ShowAsync();
+            return result == ContentDialogResult.Primary ? CrashReportResult.Reset : CrashReportResult.Close;
+        }
+        catch (Exception)
+        {
+            // Fallback to Win32 MessageBox if ContentDialog fails (e.g. another dialog is open)
+            var hwnd = App.RootWindow != null ? WindowNative.GetWindowHandle(App.RootWindow) : IntPtr.Zero;
+            var message = $"{introduction}\n\n{logContent}";
+            _win32InteropService.ShowMessageBox(hwnd, message, title, MB_ICONERROR | MB_OK);
+            return CrashReportResult.Close;
+        }
     }
 
     public async Task<IReadOnlyList<string>> PickOpenMultipleFilesAsync(IEnumerable<string> fileTypes)

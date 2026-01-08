@@ -212,36 +212,85 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Padding="24,20,24,0" VerticalAlignment="Top">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
+        <!-- Header Content -->
+        <StackPanel Grid.Row="0" Padding="24,24,24,0" Spacing="16">
+            <Grid Margin="0,0,0,16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
 
-            <Grid Grid.Row="0" Padding="0,0,0,12">
+                <!-- Folder Icon Replacement for Cover Art -->
+                <Grid Grid.Column="0" Width="150" Height="150">
+                    <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                          CornerRadius="12">
+                        <FontIcon
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            FontSize="64"
+                            Glyph="&#xE8B7;" />
+                    </Grid>
+                </Grid>
+
+                <StackPanel Grid.Column="1" Margin="24,0,0,0" VerticalAlignment="Bottom" Spacing="8">
+                    <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Text="Folder" />
+                    <TextBlock Style="{ThemeResource HeaderTextBlockStyle}"
+                               Text="{x:Bind ViewModel.PageTitle, Mode=OneWay}" />
+                </StackPanel>
+            </Grid>
+
+            <!-- Breadcrumb Bar -->
+            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" 
+                    Padding="16,8" CornerRadius="8"
+                    Visibility="{x:Bind ViewModel.IsAtRootLevel, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}">
+                <ItemsControl ItemsSource="{x:Bind ViewModel.Breadcrumbs, Mode=OneWay}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" Spacing="4" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="vm:BreadcrumbItem">
+                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                <HyperlinkButton
+                                    Content="{x:Bind Name}"
+                                    Command="{Binding DataContext.NavigateToBreadcrumbCommand, ElementName=pageRoot}"
+                                    CommandParameter="{x:Bind}"
+                                    IsEnabled="{x:Bind IsLast, Converter={StaticResource BooleanToInverseBooleanConverter}, Mode=OneWay}"
+                                    FontSize="13"
+                                    Foreground="{StaticResource AppPrimaryColorBrush}"
+                                    Padding="4,2" />
+                                <TextBlock Text="/"
+                                           FontSize="13"
+                                           Foreground="{ThemeResource TextFillColorTertiary}"
+                                           VerticalAlignment="Center"
+                                           Visibility="{x:Bind IsLast, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Border>
+
+            <!-- Action Bar -->
+            <Grid Margin="0,8,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                    <TextBlock Style="{StaticResource PageTitleTextStyle}"
-                               Text="{x:Bind ViewModel.PageTitle, Mode=OneWay}" />
-                    <TextBlock
-                        Margin="0,0,0,5"
-                        VerticalAlignment="Bottom"
-                        FontSize="13"
-                        Foreground="{ThemeResource TextFillColorSecondary}"
-                        Text="{x:Bind ViewModel.TotalItemsText, Mode=OneWay}" />
+                    <TextBlock Style="{StaticResource SectionHeaderTextBlockStyle}" Text="Songs" Foreground="{StaticResource AppPrimaryColorBrush}" />
+                    <TextBlock Text="{x:Bind ViewModel.TotalItemsText, Mode=OneWay}"
+                               Foreground="{ThemeResource TextFillColorSecondary}" VerticalAlignment="Center"
+                               FontSize="13" />
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
                     <!-- Search functionality -->
                     <Grid>
-                        <!-- Search TextBox (initially collapsed, expands to the left) -->
                         <TextBox x:Name="SearchTextBox"
                                  Style="{StaticResource SearchTextBoxStyle}"
-                                 PlaceholderText="Search folder..."
+                                 PlaceholderText="Search in folder..."
                                  Width="0"
                                  Opacity="0"
                                  IsHitTestVisible="False"
@@ -251,11 +300,10 @@
                                  Canvas.ZIndex="0">
                         </TextBox>
 
-                        <!-- Combined Search/Close Button -->
                         <Button x:Name="SearchToggleButton"
                                 Click="OnSearchToggleButtonClick"
                                 Style="{StaticResource SongListViewPageIconButton}"
-                                ToolTipService.ToolTip="Search folder"
+                                ToolTipService.ToolTip="Search in folder"
                                 HorizontalAlignment="Right"
                                 Margin="0,0,1,0"
                                 IsHitTestVisible="True"
@@ -279,65 +327,37 @@
                             ToolTipService.ToolTip="{x:Bind ViewModel.CurrentSortOrderText, Mode=OneWay}">
                         <Button.Flyout>
                             <MenuFlyout Placement="Bottom">
-                                <RadioMenuFlyoutItem GroupName="FolderSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                <RadioMenuFlyoutItem GroupName="FolderSongSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
                                                 CommandParameter="TitleAsc" Text="{x:Bind helpers:SortOrderHelper.TitleAscLabel}"
                                                 IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=TitleAsc}" />
-                                <RadioMenuFlyoutItem GroupName="FolderSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                <RadioMenuFlyoutItem GroupName="FolderSongSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
                                                 CommandParameter="TitleDesc" Text="{x:Bind helpers:SortOrderHelper.TitleDescLabel}"
                                                 IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=TitleDesc}" />
-                                <RadioMenuFlyoutItem GroupName="FolderSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                                CommandParameter="YearDesc" Text="{x:Bind helpers:SortOrderHelper.YearNewestLabel}"
-                                                IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=YearDesc}" />
-                                <RadioMenuFlyoutItem GroupName="FolderSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                <RadioMenuFlyoutItem GroupName="FolderSongSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
                                                 CommandParameter="YearAsc" Text="{x:Bind helpers:SortOrderHelper.YearOldestLabel}"
                                                 IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=YearAsc}" />
-                                <RadioMenuFlyoutItem GroupName="FolderSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                <RadioMenuFlyoutItem GroupName="FolderSongSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                                CommandParameter="YearDesc" Text="{x:Bind helpers:SortOrderHelper.YearNewestLabel}"
+                                                IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=YearDesc}" />
+                                <RadioMenuFlyoutItem GroupName="FolderSongSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
                                                 CommandParameter="ArtistAsc" Text="{x:Bind helpers:SortOrderHelper.ArtistAscLabel}"
                                                 IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=ArtistAsc}" />
-                                <RadioMenuFlyoutItem GroupName="FolderSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                <RadioMenuFlyoutItem GroupName="FolderSongSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                                CommandParameter="ArtistDesc" Text="{x:Bind helpers:SortOrderHelper.ArtistDescLabel}"
+                                                IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=ArtistDesc}" />
+                                <RadioMenuFlyoutItem GroupName="FolderSongSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
                                                 CommandParameter="AlbumAsc" Text="{x:Bind helpers:SortOrderHelper.AlbumAscLabel}"
                                                 IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=AlbumAsc}" />
+                                <RadioMenuFlyoutItem GroupName="FolderSongSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                                CommandParameter="AlbumDesc" Text="{x:Bind helpers:SortOrderHelper.AlbumDescLabel}"
+                                                IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=AlbumDesc}" />
                             </MenuFlyout>
                         </Button.Flyout>
                         <FontIcon FontSize="16" Glyph="&#xE8CB;" />
                     </Button>
                 </StackPanel>
             </Grid>
-
-            <!-- Breadcrumb navigation -->
-            <ItemsControl Grid.Row="1"
-                          Padding="0,0,0,12"
-                          ItemsSource="{x:Bind ViewModel.Breadcrumbs, Mode=OneWay}"
-                          Visibility="{x:Bind ViewModel.IsAtRootLevel, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal" Spacing="4" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate x:DataType="vm:BreadcrumbItem">
-                        <StackPanel Orientation="Horizontal" Spacing="4">
-                            <HyperlinkButton
-                                Content="{x:Bind Name}"
-                                Command="{Binding DataContext.NavigateToBreadcrumbCommand, ElementName=pageRoot}"
-                                CommandParameter="{x:Bind}"
-                                IsEnabled="{x:Bind IsLast, Converter={StaticResource BooleanToInverseBooleanConverter}, Mode=OneWay}"
-                                FontSize="13"
-                                Foreground="{StaticResource AppPrimaryColorBrush}"
-                                Padding="4,2">
-                                <HyperlinkButton.Resources>
-                                </HyperlinkButton.Resources>
-                            </HyperlinkButton>
-                            <TextBlock Text="/"
-                                       FontSize="13"
-                                       Foreground="{ThemeResource TextFillColorTertiary}"
-                                       VerticalAlignment="Center"
-                                       Visibility="{x:Bind IsLast, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}" />
-                        </StackPanel>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </Grid>
+        </StackPanel>
 
         <ListView
             x:Name="FolderContentsListView"

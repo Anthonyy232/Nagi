@@ -95,7 +95,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Padding="24" Spacing="16">
+        <StackPanel Grid.Row="0" Padding="24,24,24,0" Spacing="16">
             <Grid Margin="0,0,0,16">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -104,7 +104,7 @@
                 <Border Grid.Column="0"
                         Width="150"
                         Height="150"
-                        CornerRadius="8"
+                        CornerRadius="12"
                         Visibility="{x:Bind ViewModel.IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
                     <controls:ImageEx
                         IsCacheEnabled="True"
@@ -184,8 +184,11 @@
                         <Button.Flyout>
                             <MenuFlyout Placement="Bottom">
                                 <RadioMenuFlyoutItem GroupName="AlbumViewSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                                CommandParameter="TrackNumberAsc" Text="{x:Bind helpers:SortOrderHelper.TrackNumberLabel}"
+                                                CommandParameter="TrackNumberAsc" Text="{x:Bind helpers:SortOrderHelper.TrackNumberAscLabel}"
                                                 IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=TrackNumberAsc}" />
+                                <RadioMenuFlyoutItem GroupName="AlbumViewSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                                CommandParameter="TrackNumberDesc" Text="{x:Bind helpers:SortOrderHelper.TrackNumberDescLabel}"
+                                                IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=TrackNumberDesc}" />
                                 <RadioMenuFlyoutItem GroupName="AlbumViewSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
                                                 CommandParameter="TitleAsc" Text="{x:Bind helpers:SortOrderHelper.TitleAscLabel}"
                                                 IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=TitleAsc}" />
@@ -193,11 +196,11 @@
                                                 CommandParameter="TitleDesc" Text="{x:Bind helpers:SortOrderHelper.TitleDescLabel}"
                                                 IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=TitleDesc}" />
                                 <RadioMenuFlyoutItem GroupName="AlbumViewSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                                CommandParameter="YearDesc" Text="{x:Bind helpers:SortOrderHelper.YearNewestLabel}"
-                                                IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=YearDesc}" />
-                                <RadioMenuFlyoutItem GroupName="AlbumViewSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
                                                 CommandParameter="YearAsc" Text="{x:Bind helpers:SortOrderHelper.YearOldestLabel}"
                                                 IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=YearAsc}" />
+                                <RadioMenuFlyoutItem GroupName="AlbumViewSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                                CommandParameter="YearDesc" Text="{x:Bind helpers:SortOrderHelper.YearNewestLabel}"
+                                                IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=YearDesc}" />
                             </MenuFlyout>
                         </Button.Flyout>
                         <FontIcon FontSize="16" Glyph="&#xE8CB;" />

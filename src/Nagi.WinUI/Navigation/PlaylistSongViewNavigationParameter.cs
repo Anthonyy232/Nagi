@@ -17,4 +17,9 @@ public class PlaylistSongViewNavigationParameter
     ///     A null value indicates that no specific playlist is targeted.
     /// </summary>
     public Guid? PlaylistId { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the URI to the playlist's cover image.
+    /// </summary>
+    public string? CoverImageUri { get; set; }
 }

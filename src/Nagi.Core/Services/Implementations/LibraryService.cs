@@ -1634,9 +1634,13 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         // Apply sort order - for SongCountDesc, we need to join with songs and count
         IOrderedQueryable<Artist> orderedQuery = sortOrder switch
         {
-            ArtistSortOrder.NameDesc => query.OrderByDescending(a => a.Name).ThenBy(a => a.Id),
+            ArtistSortOrder.NameDesc => query.OrderByDescending(a => a.Name).ThenByDescending(a => a.Id),
             ArtistSortOrder.SongCountDesc => query
                 .OrderByDescending(a => context.Songs.Count(s => s.ArtistId == a.Id))
+                .ThenByDescending(a => a.Name)
+                .ThenByDescending(a => a.Id),
+            ArtistSortOrder.SongCountAsc => query
+                .OrderBy(a => context.Songs.Count(s => s.ArtistId == a.Id))
                 .ThenBy(a => a.Name)
                 .ThenBy(a => a.Id),
             _ => query.OrderBy(a => a.Name).ThenBy(a => a.Id)
@@ -1679,12 +1683,14 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         // Apply sort order
         IOrderedQueryable<Album> orderedQuery = sortOrder switch
         {
-            AlbumSortOrder.ArtistDesc => query.OrderByDescending(al => al.Artist != null ? al.Artist.Name : string.Empty).ThenBy(al => al.Title).ThenBy(al => al.Id),
+            AlbumSortOrder.ArtistDesc => query.OrderByDescending(al => al.Artist != null ? al.Artist.Name : string.Empty).ThenByDescending(al => al.Title).ThenByDescending(al => al.Id),
+            AlbumSortOrder.ArtistAsc => query.OrderBy(al => al.Artist != null ? al.Artist.Name : string.Empty).ThenBy(al => al.Title).ThenBy(al => al.Id),
             AlbumSortOrder.AlbumTitleAsc => query.OrderBy(al => al.Title).ThenBy(al => al.Id),
-            AlbumSortOrder.AlbumTitleDesc => query.OrderByDescending(al => al.Title).ThenBy(al => al.Id),
-            AlbumSortOrder.YearDesc => query.OrderByDescending(al => al.Year ?? 0).ThenBy(al => al.Title).ThenBy(al => al.Id),
-            AlbumSortOrder.YearAsc => query.OrderBy(al => al.Year ?? int.MaxValue).ThenBy(al => al.Title).ThenBy(al => al.Id),
-            AlbumSortOrder.SongCountDesc => query.OrderByDescending(al => context.Songs.Count(s => s.AlbumId == al.Id)).ThenBy(al => al.Title).ThenBy(al => al.Id),
+            AlbumSortOrder.AlbumTitleDesc => query.OrderByDescending(al => al.Title).ThenByDescending(al => al.Id),
+            AlbumSortOrder.YearDesc => query.OrderByDescending(al => al.Year ?? 0).ThenByDescending(al => al.Artist != null ? al.Artist.Name : string.Empty).ThenByDescending(al => al.Title).ThenByDescending(al => al.Id),
+            AlbumSortOrder.YearAsc => query.OrderBy(al => al.Year ?? int.MaxValue).ThenBy(al => al.Artist != null ? al.Artist.Name : string.Empty).ThenBy(al => al.Title).ThenBy(al => al.Id),
+            AlbumSortOrder.SongCountDesc => query.OrderByDescending(al => context.Songs.Count(s => s.AlbumId == al.Id)).ThenByDescending(al => al.Title).ThenByDescending(al => al.Id),
+            AlbumSortOrder.SongCountAsc => query.OrderBy(al => context.Songs.Count(s => s.AlbumId == al.Id)).ThenBy(al => al.Title).ThenBy(al => al.Id),
             _ => query.OrderBy(al => al.Artist != null ? al.Artist.Name : string.Empty).ThenBy(al => al.Title).ThenBy(al => al.Id)
         };
 
@@ -3699,9 +3705,22 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     {
         return sortOrder switch
         {
-            SongSortOrder.YearAsc => query.OrderBy(s => s.Year).ThenBy(s => s.Artist.Name).ThenBy(s => s.Album.Title).ThenBy(s => s.TrackNumber).ThenBy(s => s.Id),
-            SongSortOrder.YearDesc => query.OrderByDescending(s => s.Year).ThenBy(s => s.Artist.Name).ThenBy(s => s.Album.Title).ThenBy(s => s.TrackNumber).ThenBy(s => s.Id),
-            SongSortOrder.AlbumAsc or SongSortOrder.TrackNumberAsc => query
+            SongSortOrder.TitleAsc => query.OrderBy(s => s.Title).ThenBy(s => s.Id),
+            SongSortOrder.TitleDesc => query.OrderByDescending(s => s.Title).ThenByDescending(s => s.Id),
+            SongSortOrder.YearAsc => query.OrderBy(s => s.Year)
+                .ThenBy(s => s.Artist != null ? s.Artist.Name : string.Empty)
+                .ThenBy(s => s.Album != null ? s.Album.Title : string.Empty)
+                .ThenBy(s => s.DiscNumber ?? 0)
+                .ThenBy(s => s.TrackNumber)
+                .ThenBy(s => s.Id),
+            SongSortOrder.YearDesc => query.OrderByDescending(s => s.Year)
+                .ThenByDescending(s => s.Artist != null ? s.Artist.Name : string.Empty)
+                .ThenByDescending(s => s.Album != null ? s.Album.Title : string.Empty)
+                .ThenByDescending(s => s.DiscNumber ?? 0)
+                .ThenByDescending(s => s.TrackNumber)
+                .ThenByDescending(s => s.Title)
+                .ThenByDescending(s => s.Id),
+            SongSortOrder.AlbumAsc => query
                 .OrderBy(s => s.Album != null ? s.Album.Title : string.Empty)
                 .ThenBy(s => s.DiscNumber ?? 0)
                 .ThenBy(s => s.TrackNumber)
@@ -3712,12 +3731,31 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 .ThenByDescending(s => s.DiscNumber ?? 0)
                 .ThenByDescending(s => s.TrackNumber)
                 .ThenByDescending(s => s.Title)
+                .ThenByDescending(s => s.Id),
+            SongSortOrder.TrackNumberAsc => query
+                .OrderBy(s => s.Album != null ? s.Album.Title : string.Empty)
+                .ThenBy(s => s.DiscNumber ?? 0)
+                .ThenBy(s => s.TrackNumber)
+                .ThenBy(s => s.Title)
                 .ThenBy(s => s.Id),
+            SongSortOrder.TrackNumberDesc => query
+                .OrderByDescending(s => s.Album != null ? s.Album.Title : string.Empty)
+                .ThenByDescending(s => s.DiscNumber ?? 0)
+                .ThenByDescending(s => s.TrackNumber)
+                .ThenByDescending(s => s.Title)
+                .ThenByDescending(s => s.Id),
             SongSortOrder.ArtistAsc => query.OrderBy(s => s.Artist != null ? s.Artist.Name : string.Empty)
                 .ThenBy(s => s.Album != null ? s.Album.Title : string.Empty)
                 .ThenBy(s => s.DiscNumber ?? 0)
                 .ThenBy(s => s.TrackNumber)
+                .ThenBy(s => s.Title)
                 .ThenBy(s => s.Id),
+            SongSortOrder.ArtistDesc => query.OrderByDescending(s => s.Artist != null ? s.Artist.Name : string.Empty)
+                .ThenByDescending(s => s.Album != null ? s.Album.Title : string.Empty)
+                .ThenByDescending(s => s.DiscNumber ?? 0)
+                .ThenByDescending(s => s.TrackNumber)
+                .ThenByDescending(s => s.Title)
+                .ThenByDescending(s => s.Id),
             _ => query.OrderBy(s => s.Title).ThenBy(s => s.Id)
         };
     }

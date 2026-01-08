@@ -202,6 +202,12 @@ public class Win32InteropService : IWin32InteropService, IDisposable
         return NativeMethods.GetCurrentThreadId();
     }
 
+    /// <inheritdoc />
+    public int ShowMessageBox(IntPtr hWnd, string text, string caption, uint type)
+    {
+        return NativeMethods.MessageBox(hWnd, text, caption, type);
+    }
+
     /// <summary>
     ///     Contains P/Invoke definitions for native Win32 API calls used by this service.
     /// </summary>
@@ -280,6 +286,9 @@ public class Win32InteropService : IWin32InteropService, IDisposable
 
         [DllImport("user32.dll")]
         public static extern int ReleaseDC(IntPtr hWnd, IntPtr hDC);
+
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        public static extern int MessageBox(IntPtr hWnd, string text, string caption, uint type);
 
         [DllImport("gdi32.dll")]
         public static extern int GetDeviceCaps(IntPtr hdc, int nIndex);
