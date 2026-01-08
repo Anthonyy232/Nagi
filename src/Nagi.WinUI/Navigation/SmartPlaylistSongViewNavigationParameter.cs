@@ -17,4 +17,9 @@ public class SmartPlaylistSongViewNavigationParameter
     ///     A null value indicates that no specific smart playlist is targeted.
     /// </summary>
     public Guid? SmartPlaylistId { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the URI to the smart playlist's cover image.
+    /// </summary>
+    public string? CoverImageUri { get; set; }
 }

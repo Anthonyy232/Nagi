@@ -6,10 +6,13 @@
 public enum SongSortOrder
 {
     TitleAsc,
+    TitleDesc,
     AlbumAsc,
     AlbumDesc,
     ArtistAsc,
+    ArtistDesc,
     TrackNumberAsc,
+    TrackNumberDesc,
     YearAsc,
     YearDesc
 }

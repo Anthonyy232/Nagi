@@ -131,6 +131,9 @@
                             <RadioMenuFlyoutItem GroupName="GenreSort" Command="{x:Bind ViewModel.ChangeSortOrderCommand}"
                                             CommandParameter="NameDesc" Text="{x:Bind helpers:SortOrderHelper.TitleDescLabel}"
                                             IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=NameDesc}" />
+                             <RadioMenuFlyoutItem GroupName="GenreSort" Command="{x:Bind ViewModel.ChangeSortOrderCommand}"
+                                             CommandParameter="SongCountAsc" Text="{x:Bind helpers:SortOrderHelper.LeastSongsLabel}"
+                                             IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=SongCountAsc}" />
                             <RadioMenuFlyoutItem GroupName="GenreSort" Command="{x:Bind ViewModel.ChangeSortOrderCommand}"
                                             CommandParameter="SongCountDesc" Text="{x:Bind helpers:SortOrderHelper.MostSongsLabel}"
                                             IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=SongCountDesc}" />

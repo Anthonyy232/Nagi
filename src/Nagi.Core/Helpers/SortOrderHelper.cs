@@ -1,3 +1,4 @@
+using Nagi.Core.Models;
 using Nagi.Core.Services.Data;
 
 namespace Nagi.Core.Helpers;
@@ -29,8 +30,19 @@ public static class SortOrderHelper
     public const string YearNewestLabel = "Year (Newest)";
     public const string YearOldestLabel = "Year (Oldest)";
     public const string MostSongsLabel = "Most Songs";
-    public const string TrackNumberLabel = "Track Number";
-    public const string MostPlayedLabel = "Most Played";
+    public const string LeastSongsLabel = "Least Songs";
+    public const string TrackNumberAscLabel = "Track Number (Asc)";
+    public const string TrackNumberDescLabel = "Track Number (Desc)";
+    public const string PlayCountAscLabel = "Least Played";
+    public const string PlayCountDescLabel = "Most Played";
+    public const string DateAddedAscLabel = "Date Added (Oldest)";
+    public const string DateAddedDescLabel = "Date Added (Newest)";
+    public const string LastPlayedAscLabel = "Last Played (Oldest)";
+    public const string LastPlayedDescLabel = "Last Played (Newest)";
+    public const string DurationAscLabel = "Shortest First";
+    public const string DurationDescLabel = "Longest First";
+    public const string BpmAscLabel = "Slowest First (BPM)";
+    public const string BpmDescLabel = "Fastest First (BPM)";
     public const string RandomLabel = "Random";
 
     // Full Display Text (for Buttons/Tooltips)
@@ -43,18 +55,33 @@ public static class SortOrderHelper
     public const string SortByYearNewest = $"Sort By: {YearNewestLabel}";
     public const string SortByYearOldest = $"Sort By: {YearOldestLabel}";
     public const string SortByMostSongs = $"Sort By: {MostSongsLabel}";
-    public const string SortByTrackNumber = $"Sort By: {TrackNumberLabel}";
+    public const string SortByLeastSongs = $"Sort By: {LeastSongsLabel}";
+    public const string SortByTrackNumberAsc = $"Sort By: {TrackNumberAscLabel}";
+    public const string SortByTrackNumberDesc = $"Sort By: {TrackNumberDescLabel}";
+    public const string SortByPlayCountAsc = $"Sort By: {PlayCountAscLabel}";
+    public const string SortByPlayCountDesc = $"Sort By: {PlayCountDescLabel}";
+    public const string SortByDateAddedAsc = $"Sort By: {DateAddedAscLabel}";
+    public const string SortByDateAddedDesc = $"Sort By: {DateAddedDescLabel}";
+    public const string SortByLastPlayedAsc = $"Sort By: {LastPlayedAscLabel}";
+    public const string SortByLastPlayedDesc = $"Sort By: {LastPlayedDescLabel}";
+    public const string SortByDurationAsc = $"Sort By: {DurationAscLabel}";
+    public const string SortByDurationDesc = $"Sort By: {DurationDescLabel}";
+    public const string SortByBpmAsc = $"Sort By: {BpmAscLabel}";
+    public const string SortByBpmDesc = $"Sort By: {BpmDescLabel}";
     public const string SortByRandom = $"Sort By: {RandomLabel}";
 
     public static string GetDisplayName(SongSortOrder sortOrder) => sortOrder switch
     {
         SongSortOrder.TitleAsc => SortByTitleAsc,
+        SongSortOrder.TitleDesc => SortByTitleDesc,
         SongSortOrder.AlbumAsc => SortByAlbumAsc,
         SongSortOrder.AlbumDesc => SortByAlbumDesc,
         SongSortOrder.YearAsc => SortByYearOldest,
         SongSortOrder.YearDesc => SortByYearNewest,
         SongSortOrder.ArtistAsc => SortByArtistAsc,
-        SongSortOrder.TrackNumberAsc => SortByTrackNumber,
+        SongSortOrder.ArtistDesc => SortByArtistDesc,
+        SongSortOrder.TrackNumberAsc => SortByTrackNumberAsc,
+        SongSortOrder.TrackNumberDesc => SortByTrackNumberDesc,
         _ => SortByTitleAsc
     };
 
@@ -74,6 +101,7 @@ public static class SortOrderHelper
         GenreSortOrder.NameAsc => SortByTitleAsc,
         GenreSortOrder.NameDesc => SortByTitleDesc,
         GenreSortOrder.SongCountDesc => SortByMostSongs,
+        GenreSortOrder.SongCountAsc => SortByLeastSongs,
         _ => SortByTitleAsc
     };
 
@@ -82,6 +110,7 @@ public static class SortOrderHelper
         ArtistSortOrder.NameAsc => SortByTitleAsc,
         ArtistSortOrder.NameDesc => SortByTitleDesc,
         ArtistSortOrder.SongCountDesc => SortByMostSongs,
+        ArtistSortOrder.SongCountAsc => SortByLeastSongs,
         _ => SortByTitleAsc
     };
 
@@ -94,6 +123,33 @@ public static class SortOrderHelper
         AlbumSortOrder.YearDesc => SortByYearNewest,
         AlbumSortOrder.YearAsc => SortByYearOldest,
         AlbumSortOrder.SongCountDesc => SortByMostSongs,
+        AlbumSortOrder.SongCountAsc => SortByLeastSongs,
         _ => SortByArtistAsc
+    };
+
+    public static string GetDisplayName(SmartPlaylistSortOrder sortOrder) => sortOrder switch
+    {
+        SmartPlaylistSortOrder.TitleAsc => SortByTitleAsc,
+        SmartPlaylistSortOrder.TitleDesc => SortByTitleDesc,
+        SmartPlaylistSortOrder.ArtistAsc => SortByArtistAsc,
+        SmartPlaylistSortOrder.ArtistDesc => SortByArtistDesc,
+        SmartPlaylistSortOrder.AlbumAsc => SortByAlbumAsc,
+        SmartPlaylistSortOrder.AlbumDesc => SortByAlbumDesc,
+        SmartPlaylistSortOrder.YearAsc => SortByYearOldest,
+        SmartPlaylistSortOrder.YearDesc => SortByYearNewest,
+        SmartPlaylistSortOrder.PlayCountAsc => SortByPlayCountAsc,
+        SmartPlaylistSortOrder.PlayCountDesc => SortByPlayCountDesc,
+        SmartPlaylistSortOrder.LastPlayedAsc => SortByLastPlayedAsc,
+        SmartPlaylistSortOrder.LastPlayedDesc => SortByLastPlayedDesc,
+        SmartPlaylistSortOrder.DateAddedAsc => SortByDateAddedAsc,
+        SmartPlaylistSortOrder.DateAddedDesc => SortByDateAddedDesc,
+        SmartPlaylistSortOrder.TrackNumberAsc => SortByTrackNumberAsc,
+        SmartPlaylistSortOrder.TrackNumberDesc => SortByTrackNumberDesc,
+        SmartPlaylistSortOrder.DurationAsc => SortByDurationAsc,
+        SmartPlaylistSortOrder.DurationDesc => SortByDurationDesc,
+        SmartPlaylistSortOrder.BpmAsc => SortByBpmAsc,
+        SmartPlaylistSortOrder.BpmDesc => SortByBpmDesc,
+        SmartPlaylistSortOrder.Random => SortByRandom,
+        _ => SortByTitleAsc
     };
 }

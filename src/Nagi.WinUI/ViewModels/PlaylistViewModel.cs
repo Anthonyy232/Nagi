@@ -215,7 +215,8 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
             var navParam = new SmartPlaylistSongViewNavigationParameter
             {
                 Title = playlist.Name,
-                SmartPlaylistId = playlist.Id
+                SmartPlaylistId = playlist.Id,
+                CoverImageUri = playlist.CoverImageUri
             };
             _navigationService.Navigate(typeof(SmartPlaylistSongViewPage), navParam);
         }
@@ -224,7 +225,8 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
             var navParam = new PlaylistSongViewNavigationParameter
             {
                 Title = playlist.Name,
-                PlaylistId = playlist.Id
+                PlaylistId = playlist.Id,
+                CoverImageUri = playlist.CoverImageUri
             };
             _navigationService.Navigate(typeof(PlaylistSongViewPage), navParam);
         }

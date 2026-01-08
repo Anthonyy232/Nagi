@@ -11,6 +11,7 @@ public enum AlbumSortOrder
     AlbumTitleDesc,
     YearDesc,
     YearAsc,
-    SongCountDesc
+    SongCountDesc,
+    SongCountAsc
 }
 

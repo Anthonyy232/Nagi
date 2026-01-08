@@ -93,7 +93,7 @@
         </Grid.RowDefinitions>
 
         <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
-            <StackPanel Padding="24" Spacing="16">
+            <StackPanel Padding="24,24,24,0" Spacing="16">
                 <Grid Margin="0,0,0,16">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -190,7 +190,7 @@
                                             Width="160"
                                             Height="160"
                                             HorizontalAlignment="Center"
-                                            CornerRadius="8"
+                                            CornerRadius="12"
                                             Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
                                         <controls:ImageEx
                                             IsCacheEnabled="True"
@@ -279,11 +279,11 @@
                                                     CommandParameter="TitleDesc" Text="{x:Bind helpers:SortOrderHelper.TitleDescLabel}"
                                                     IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=TitleDesc}" />
                                     <RadioMenuFlyoutItem GroupName="ArtistViewSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
-                                                    CommandParameter="YearDesc" Text="{x:Bind helpers:SortOrderHelper.YearNewestLabel}"
-                                                    IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=YearDesc}" />
-                                    <RadioMenuFlyoutItem GroupName="ArtistViewSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
                                                     CommandParameter="YearAsc" Text="{x:Bind helpers:SortOrderHelper.YearOldestLabel}"
                                                     IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=YearAsc}" />
+                                    <RadioMenuFlyoutItem GroupName="ArtistViewSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                                    CommandParameter="YearDesc" Text="{x:Bind helpers:SortOrderHelper.YearNewestLabel}"
+                                                    IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=YearDesc}" />
                                     <RadioMenuFlyoutItem GroupName="ArtistViewSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
                                                     CommandParameter="AlbumAsc" Text="{x:Bind helpers:SortOrderHelper.AlbumAscLabel}"
                                                     IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=AlbumAsc}" />
