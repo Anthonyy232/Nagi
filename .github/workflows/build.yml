@@ -215,12 +215,11 @@ jobs:
         run: |
           $appSettings = @{
             Discord = @{
-              AppId = "${{ secrets.NAGI_DISCORD_KEY }}"
+              AppId = '${{ secrets.NAGI_DISCORD_KEY }}'
             }
             NagiApiServer = @{
-              Url = "https://nagiflexapiserver.azurewebsites.net"
-              ApiKey = "${{ secrets.NAGI_API_KEY }}"
-              SubscriptionKey = "${{ secrets.NAGI_SUBSCRIPTION_KEY }}"
+              Url = 'https://nagiflexapiserver.azurewebsites.net'
+              ApiKey = '${{ secrets.NAGI_API_KEY }}'
             }
           }
           $appSettings | ConvertTo-Json -Depth 3 | Out-File -FilePath "src/Nagi.WinUI/appsettings.json" -Encoding UTF8
