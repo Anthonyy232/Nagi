@@ -52,6 +52,11 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     private bool _isDisposed;
     private bool _isEfficiencyModeEnabled;
 
+    // Position update throttling
+    private double _lastReportedPosition;
+    private int _lastDisplayedSecond = -1;
+    private const double PositionThrottleSeconds = 0.1; // 100ms
+
     public PlayerViewModel(IMusicPlaybackService playbackService, INavigationService navigationService,
         IDispatcherService dispatcherService, IUISettingsService settingsService, IWindowService windowService,
         ILogger<PlayerViewModel> logger)
@@ -330,10 +335,17 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
 
     partial void OnCurrentPositionChanged(double value)
     {
-        var timeSpan = TimeSpan.FromSeconds(value);
-        CurrentTimeText = timeSpan.TotalHours >= 1 
-            ? timeSpan.ToString(@"h\:mm\:ss") 
-            : timeSpan.ToString(@"m\:ss");
+        // Only update time text when the displayed second changes
+        var currentSecond = (int)value;
+        if (currentSecond != _lastDisplayedSecond)
+        {
+            _lastDisplayedSecond = currentSecond;
+            var timeSpan = TimeSpan.FromSeconds(value);
+            CurrentTimeText = timeSpan.TotalHours >= 1 
+                ? timeSpan.ToString(@"h\:mm\:ss") 
+                : timeSpan.ToString(@"m\:ss");
+        }
+
         if (_isUpdatingFromService || IsUserDraggingSlider) return;
 
         var newPosition = TimeSpan.FromSeconds(value);
@@ -465,6 +477,17 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     private void RunOnUIThread(Action action)
     {
         if (_isDisposed) return;
+
+        // Avoid redundant dispatching if already on UI thread
+        if (_dispatcherService.HasThreadAccess)
+        {
+            using (new ServiceUpdateScope(this))
+            {
+                action();
+            }
+            return;
+        }
+
         _dispatcherService.TryEnqueue(() =>
         {
             if (_isDisposed) return;
@@ -549,6 +572,10 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
 
     private void OnPlaybackService_TrackChanged()
     {
+        // Reset throttle state so new track gets immediate updates
+        _lastReportedPosition = 0;
+        _lastDisplayedSecond = -1;
+
         RunOnUIThread(() =>
         {
             UpdateTrackDetails(_playbackService.CurrentTrack);
@@ -587,9 +614,17 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
 
     private void OnPlaybackService_PositionChanged()
     {
+        var newPosition = _playbackService.CurrentPosition.TotalSeconds;
+
+        // Throttle: Skip if change is less than 100ms
+        if (Math.Abs(newPosition - _lastReportedPosition) < PositionThrottleSeconds)
+            return;
+
+        _lastReportedPosition = newPosition;
+
         RunOnUIThread(() =>
         {
-            if (!IsUserDraggingSlider) CurrentPosition = _playbackService.CurrentPosition.TotalSeconds;
+            if (!IsUserDraggingSlider) CurrentPosition = newPosition;
         });
     }
 

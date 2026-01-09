@@ -9,6 +9,11 @@ namespace Nagi.WinUI.Services.Abstractions;
 public interface IDispatcherService
 {
     /// <summary>
+    ///     Returns true if the calling code is already on the UI thread.
+    /// </summary>
+    bool HasThreadAccess { get; }
+
+    /// <summary>
     ///     Schedules the provided action on the UI thread.
     /// </summary>
     /// <returns>True if the action was enqueued, false otherwise.</returns>

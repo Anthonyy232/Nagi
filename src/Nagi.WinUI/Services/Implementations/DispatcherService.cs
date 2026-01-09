@@ -23,6 +23,9 @@ public class DispatcherService : IDispatcherService
     }
 
     /// <inheritdoc />
+    public bool HasThreadAccess => _dispatcherQueue.HasThreadAccess;
+
+    /// <inheritdoc />
     public bool TryEnqueue(Action action)
     {
         try
