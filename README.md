@@ -30,16 +30,18 @@
 </div>
 
 ## ✨ Features
-- **Fluent & Modern UI**: A beautiful and responsive interface built with the latest WinUI 3, featuring customizable backdrops like Mica, Mica Alt, and Acrylic.
-- **Resizable Mini-Player**: A sleek, always-on-top mini-player for easy control while you work. Features playback controls, album art, a draggable interface, and an efficiency mode to reduce resource usage.
-- **Lyrics Support**: View lyrics from embedded tags or external `.lrc` files. Click any line to seek directly to that part of the song.
-- **Folder-Based Library**: Simply add your music folders, and Nagi will automatically scan and organize your collection.
-- **Dynamic Theming**: The color scheme dynamically adapts to the art of the currently playing song.
-- **Playlist Management**: Create, edit, and enjoy your own custom playlists.
-- **Tray Controls**: Control your music from a convenient pop-up in the Windows system tray.
-- **Last.fm and Discord Integrations**: Automatically fetches artist metadata from Last.fm, scrobbles your tracks, and showcases your activity with improved Discord Rich Presence.
-- **Equalizer Support**: Personalize your listening experience with a 10-band equalizer with pregain support
-- **Wide Codec Support**: Nagi plays a vast array of audio formats, including: `.aa`, `.aax`, `.aac`, `.aiff`, `.ape`, `.dsf`, `.flac`, `.m4a`, `.m4b`, `.m4p`, `.mp3`, `.mpc`, `.mpp`, `.ogg`, `.oga`, `.wav`, `.wma`, `.wv`, and `.webm`.
+- **Fluent & Modern UI**: A beautiful, responsive interface built with WinUI 3, featuring customizable backdrops (Mica, Mica Alt, Acrylic) and smooth animations.
+- **Dynamic Theming**: The app's color scheme adapts in real-time to the artwork of the currently playing song for a truly immersive experience.
+- **Synced Lyrics**: Display synced lyrics from embedded tags or external `.lrc` files. Tap any line to jump directly to that moment in the song.
+- **Resizable Mini-Player**: A sleek, always-on-top mini-player with playback controls, album art, and an efficiency mode for low resource usage.
+- **Folder-Based Library**: Add your music folders and Nagi automatically scans, organizes, and keeps your collection up to date.
+- **Playlists & Smart Playlists**: Create custom playlists or powerful rule-based smart playlists that automatically update as your library grows.
+- **Queue Management**: Build and customize your listening queue on the fly with full shuffle and repeat controls.
+- **10-Band Equalizer**: Fine-tune your sound with a fully customizable 10-band equalizer and pregain control.
+- **Volume Normalization**: ReplayGain support ensures consistent volume levels across your entire library.
+- **Last.fm & Discord Integration**: Scrobble your tracks to Last.fm, fetch artist metadata, and show off your listening activity with Discord Rich Presence.
+- **System Tray & Media Controls**: Control playback from the system tray popup or use Windows media keys and transport controls.
+- **Wide Format Support**: Play virtually any audio format including MP3, FLAC, AAC, OGG, WAV, AIFF, APE, DSD, M4A, WMA, WavPack, and more.
 
 ## 🖼️ Screenshots
 
@@ -68,15 +70,20 @@
 Localization support is planned for a future release. Contributions to add new languages are welcome!
 
 ## 🛠️ Technologies
-- **[C#](https://docs.microsoft.com/en-us/dotnet/csharp/)** & **[.NET](https://dotnet.microsoft.com/)**: The core programming language and framework for building robust Windows applications.
+- **[C#](https://docs.microsoft.com/en-us/dotnet/csharp/)** & **[.NET 10](https://dotnet.microsoft.com/)**: The core programming language and framework for building robust Windows applications.
 - **[WinUI 3](https://docs.microsoft.com/en-us/windows/apps/winui/winui3/)** in **[Windows App SDK](https://github.com/microsoft/WindowsAppSDK)**: The native UI platform for crafting modern, fluent interfaces on Windows.
 - **[LibVLCSharp](https://github.com/videolan/libvlcsharp)**: A cross-platform .NET binding for LibVLC, enabling robust and wide-ranging audio format support.
 - **[Community Toolkit for WinUI](https://github.com/CommunityToolkit/WindowsCommunityToolkit)**: A collection of controls, helpers, and services to simplify app development (e.g., ColorPicker, SettingsControls).
 - **[Community Toolkit MVVM](https://docs.microsoft.com/en-us/dotnet/communitytoolkit/mvvm/)**: A modern, fast, and platform-agnostic MVVM library.
 - **[Entity Framework Core (SQLite)](https://docs.microsoft.com/en-us/ef/core/)**: A modern object-relational mapper for .NET, used for local database storage.
-- **[TagLib#](https://github.com/mono/taglib-sharp)**: A library for reading and writing metadata in audio files.
+- **[ATL (Audio Tools Library)](https://github.com/Zeugma440/atldotnet)**: A versatile library for reading and writing metadata in audio files.
+- **[LrcParser](https://github.com/OpportunityLiu/LrcParser)**: For parsing LRC lyrics files.
+- **[SixLabors.ImageSharp](https://github.com/SixLabors/ImageSharp)**: A cross-platform library for image processing.
 - **[MaterialColorUtilities](https://github.com/material-foundation/material-color-utilities)**: For generating dynamic color schemes from artwork.
 - **[H.NotifyIcon.WinUI](https://github.com/HavenDV/H.NotifyIcon)**: For creating and managing the Windows tray icon.
+- **[Serilog](https://serilog.net/)**: A structured logging library for diagnostics and debugging.
+- **[XAML Behaviors](https://github.com/Microsoft/XamlBehaviors)**: For implementing UI behaviors declaratively in XAML.
+- **[Velopack](https://velopack.io/)**: For automatic application updates (GitHub releases).
 - **[Microsoft Dependency Injection](https://docs.microsoft.com/en-us/dotnet/core/extensions/dependency-injection)**: For implementing a loosely coupled and testable architecture.
 
 *Thanks to the creators and maintainers of all the open-source libraries that make Nagi possible.*
@@ -88,7 +95,7 @@ This project is built using C# and the Windows App SDK.
 ### Prerequisites
 - Visual Studio 2022 or later
 - The **".NET Desktop Development"** and **"Universal Windows Platform development"** workloads installed (includes Windows App SDK).
-- .NET 8 SDK (or as specified in the project file)
+- .NET 10 SDK
 
 ### Steps
 1.  Clone the repository:
