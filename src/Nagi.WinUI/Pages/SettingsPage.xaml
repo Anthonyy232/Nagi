@@ -5,6 +5,7 @@
     xmlns:b1="using:Microsoft.Xaml.Interactivity"
     xmlns:controls="using:CommunityToolkit.WinUI.Controls"
     xmlns:coreModels="using:Nagi.Core.Models"
+    xmlns:behaviors="using:Nagi.WinUI.Behaviors"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:localConverters="using:Nagi.WinUI.Converters"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -25,7 +26,7 @@
         
         <!-- Shared template for service provider items in Lyrics and Metadata source lists -->
         <DataTemplate x:Key="ServiceProviderItemTemplate" x:DataType="viewmodels:ServiceProviderSettingViewModel">
-            <Grid Padding="12,8" VerticalAlignment="Center">
+            <Grid x:Name="ProviderItemRoot" Padding="12,8" VerticalAlignment="Center">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="28" />
                     <ColumnDefinition Width="32" />
@@ -38,11 +39,14 @@
                     Grid.Column="0"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
+                    behaviors:AnimationBehaviors.EnableFadeAnimation="{x:Bind CanDrag}"
+                    behaviors:AnimationBehaviors.FadeTrigger="{Binding ElementName=ProviderItemRoot}"
+                    behaviors:AnimationBehaviors.HoverOpacity="1"
+                    behaviors:AnimationBehaviors.NormalOpacity="0"
                     FontFamily="{StaticResource SymbolThemeFontFamily}"
                     FontSize="12"
                     Foreground="{ThemeResource TextFillColorTertiaryBrush}"
-                    Glyph="&#xE76F;"
-                    Opacity="{x:Bind CanDrag, Converter={StaticResource BooleanToOpacityConverter}, Mode=OneWay}" />
+                    Glyph="&#xE76F;" />
 
                 <FontIcon
                     Grid.Column="1"
@@ -93,9 +97,10 @@
                 <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="Appearance" />
 
                 <controls:SettingsExpander
+                    x:Name="ThemeSettingsExpander"
                     Header="Theme"
                     Description="Choose the application theme."
-                    IsExpanded="{x:Bind ViewModel.IsDynamicThemingEnabled, Mode=OneWay, Converter={StaticResource BooleanToInverseBooleanConverter}}">
+                    IsExpanded="False">
                     <controls:SettingsExpander.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE793;" />
                     </controls:SettingsExpander.HeaderIcon>
@@ -213,7 +218,7 @@
 
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="navigation:NavigationItemSetting">
-                                <Grid Padding="12,8" VerticalAlignment="Center">
+                                <Grid x:Name="NavItemRoot" Padding="12,8" VerticalAlignment="Center">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="28" />
                                         <ColumnDefinition Width="32" />
@@ -226,6 +231,10 @@
                                         Grid.Column="0"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
+                                        behaviors:AnimationBehaviors.EnableFadeAnimation="True"
+                                        behaviors:AnimationBehaviors.FadeTrigger="{Binding ElementName=NavItemRoot}"
+                                        behaviors:AnimationBehaviors.HoverOpacity="1"
+                                        behaviors:AnimationBehaviors.NormalOpacity="0"
                                         FontFamily="{StaticResource SymbolThemeFontFamily}"
                                         FontSize="12"
                                         Foreground="{ThemeResource TextFillColorTertiaryBrush}"
@@ -270,8 +279,18 @@
                 </controls:SettingsCard>
 
                 <controls:SettingsCard
-                    Header="Audio Equalizer"
                     Description="Adjust frequency bands to customize your sound.">
+                    <controls:SettingsCard.Header>
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <TextBlock Text="Audio Equalizer" VerticalAlignment="Center" />
+                            <HyperlinkButton
+                                VerticalAlignment="Center"
+                                Command="{x:Bind ViewModel.ResetEqualizerCommand}"
+                                Content="Reset to default"
+                                FontSize="12"
+                                Padding="4,2" />
+                        </StackPanel>
+                    </controls:SettingsCard.Header>
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE9E9;" />
                     </controls:SettingsCard.HeaderIcon>
@@ -330,34 +349,34 @@
                             </ItemsRepeater.ItemTemplate>
                         </ItemsRepeater>
 
-                        <!-- Preset selector and reset -->
-                        <StackPanel
+                        <ComboBox
                             HorizontalAlignment="Center"
-                            Orientation="Horizontal"
-                            Spacing="12">
-                            <ComboBox
-                                MinWidth="160"
-                                ItemsSource="{x:Bind ViewModel.AvailableEqualizerPresets}"
-                                PlaceholderText="Custom"
-                                SelectedItem="{x:Bind ViewModel.SelectedEqualizerPreset, Mode=TwoWay}">
-                                <ComboBox.ItemTemplate>
-                                    <DataTemplate x:DataType="coreModels:EqualizerPreset">
-                                        <TextBlock Text="{x:Bind Name}" />
-                                    </DataTemplate>
-                                </ComboBox.ItemTemplate>
-                            </ComboBox>
-                            <Button
-                                Command="{x:Bind ViewModel.ResetEqualizerCommand}"
-                                Content="Reset"
-                                Style="{StaticResource SettingsPageResetButtonStyle}"
-                                ToolTipService.ToolTip="Reset equalizer to default" />
-                        </StackPanel>
+                            MinWidth="160"
+                            ItemsSource="{x:Bind ViewModel.AvailableEqualizerPresets}"
+                            PlaceholderText="Custom"
+                            SelectedItem="{x:Bind ViewModel.SelectedEqualizerPreset, Mode=TwoWay}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate x:DataType="coreModels:EqualizerPreset">
+                                    <TextBlock Text="{x:Bind Name}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
                     </StackPanel>
                 </controls:SettingsCard>
 
                 <controls:SettingsCard
-                    Header="Customize Player Controls"
                     Description="Drag buttons to reorder them on the player.">
+                    <controls:SettingsCard.Header>
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <TextBlock Text="Customize Player Controls" VerticalAlignment="Center" />
+                            <HyperlinkButton
+                                VerticalAlignment="Center"
+                                Command="{x:Bind ViewModel.ResetPlayerButtonsCommand}"
+                                Content="Reset to default"
+                                FontSize="12"
+                                Padding="4,2" />
+                        </StackPanel>
+                    </controls:SettingsCard.Header>
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE768;" />
                     </controls:SettingsCard.HeaderIcon>
@@ -424,9 +443,16 @@
                                             Padding="4,8"
                                             Background="Transparent"
                                             CornerRadius="6"
-                                            PointerEntered="PlayerButtonItem_PointerEntered"
-                                            PointerExited="PlayerButtonItem_PointerExited"
                                             ToolTipService.ToolTip="{x:Bind DisplayName}">
+
+                                            <Border
+                                                x:Name="HoverHighlight"
+                                                behaviors:AnimationBehaviors.EnableFadeAnimation="True"
+                                                behaviors:AnimationBehaviors.FadeTrigger="{Binding ElementName=ButtonContainer}"
+                                                behaviors:AnimationBehaviors.HoverOpacity="1"
+                                                behaviors:AnimationBehaviors.NormalOpacity="0"
+                                                Background="{ThemeResource SubtleFillColorSecondaryBrush}"
+                                                CornerRadius="6" />
 
                                             <!-- Separator visual -->
                                             <Border
@@ -450,11 +476,14 @@
                                                 <FontIcon
                                                     x:Name="DragIndicator"
                                                     HorizontalAlignment="Center"
+                                                    behaviors:AnimationBehaviors.EnableFadeAnimation="True"
+                                                    behaviors:AnimationBehaviors.FadeTrigger="{Binding ElementName=ButtonContainer}"
+                                                    behaviors:AnimationBehaviors.HoverOpacity="1"
+                                                    behaviors:AnimationBehaviors.NormalOpacity="0"
                                                     FontFamily="{StaticResource SymbolThemeFontFamily}"
                                                     FontSize="10"
                                                     Foreground="{ThemeResource TextFillColorTertiaryBrush}"
-                                                    Glyph="&#xE76F;"
-                                                    Opacity="0" />
+                                                    Glyph="&#xE76F;" />
 
                                                 <!-- Button preview -->
                                                 <Button
@@ -474,12 +503,15 @@
                                                 <ToggleSwitch
                                                     x:Name="EnableDisableToggle"
                                                     HorizontalAlignment="Center"
+                                                    behaviors:AnimationBehaviors.EnableFadeAnimation="True"
+                                                    behaviors:AnimationBehaviors.FadeTrigger="{Binding ElementName=ButtonContainer}"
+                                                    behaviors:AnimationBehaviors.HoverOpacity="1"
+                                                    behaviors:AnimationBehaviors.NormalOpacity="0"
                                                     MinWidth="0"
                                                     MinHeight="0"
                                                     IsOn="{x:Bind IsEnabled, Mode=TwoWay}"
                                                     OffContent=""
-                                                    OnContent=""
-                                                    Opacity="0" />
+                                                    OnContent="" />
                                             </StackPanel>
                                         </Grid>
                                     </DataTemplate>
@@ -578,9 +610,9 @@
                 <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="Data Management" />
 
                 <controls:SettingsExpander
+                    x:Name="MetadataSettingsExpander"
                     Header="Retrieve online metadata"
-                    Description="Fetch additional information like artist images and biographies from online services (e.g., Spotify, Last.fm)."
-                    IsExpanded="{x:Bind ViewModel.IsFetchOnlineMetadataEnabled, Mode=OneWay}">
+                    Description="Fetch additional information like artist images and biographies from online services (e.g., Spotify, Last.fm).">
                     <controls:SettingsExpander.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8EC;" />
                     </controls:SettingsExpander.HeaderIcon>
@@ -590,6 +622,9 @@
 
                     <controls:SettingsExpander.Items>
                         <controls:SettingsCard Header="Sources" Description="Drag to reorder metadata sources.">
+                            <controls:SettingsCard.HeaderIcon>
+                                <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE179;" />
+                            </controls:SettingsCard.HeaderIcon>
                             <ListView
                                 x:Name="MetadataProvidersListView"
                                     Width="350"
@@ -611,9 +646,9 @@
                 </controls:SettingsExpander>
 
                 <controls:SettingsExpander
+                    x:Name="LyricsSettingsExpander"
                     Header="Fetch online lyrics"
-                    Description="Automatically fetch missing lyrics from online sources. (Privacy: sends track metadata to third-party services)"
-                    IsExpanded="{x:Bind ViewModel.IsFetchOnlineLyricsEnabled, Mode=OneWay}">
+                    Description="Automatically fetch missing lyrics from online sources. (Privacy: sends track metadata to third-party services)">
                     <controls:SettingsExpander.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE90A;" />
                     </controls:SettingsExpander.HeaderIcon>
@@ -623,6 +658,9 @@
 
                     <controls:SettingsExpander.Items>
                         <controls:SettingsCard Header="Sources" Description="Drag to reorder lyrics sources.">
+                            <controls:SettingsCard.HeaderIcon>
+                                <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE179;" />
+                            </controls:SettingsCard.HeaderIcon>
                             <ListView
                                 x:Name="LyricsProvidersListView"
                                 Width="350"
@@ -678,9 +716,9 @@
                 <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="Integrations" />
 
                 <controls:SettingsExpander
+                    x:Name="LastFmSettingsExpander"
                     Header="Last.fm"
-                    Description="Connect your Last.fm account to scrobble tracks and show your currently playing song."
-                    IsExpanded="{x:Bind ViewModel.IsLastFmConnected, Mode=OneWay}">
+                    Description="Connect your Last.fm account to scrobble tracks and show your currently playing song.">
                     <controls:SettingsExpander.HeaderIcon>
                         <PathIcon
                             Data="M10.584 17.209l-.88-2.392s-1.43 1.595-3.573 1.595c-1.897 0-3.244-1.65-3.244-4.289 0-3.381 1.704-4.591 3.382-4.591 2.419 0 3.188 1.567 3.849 3.574l.88 2.75c.879 2.667 2.528 4.811 7.284 4.811 3.409 0 5.719-1.044 5.719-3.793 0-2.227-1.265-3.381-3.629-3.932l-1.76-.385c-1.209-.275-1.566-.77-1.566-1.594 0-.935.742-1.485 1.952-1.485 1.319 0 2.034.495 2.144 1.677l2.749-.33c-.22-2.474-1.924-3.491-4.729-3.491-2.474 0-4.893.935-4.893 3.931 0 1.87.907 3.052 3.188 3.602l1.869.439c1.402.33 1.869.907 1.869 1.705 0 1.017-.989 1.43-2.858 1.43-2.776 0-3.932-1.457-4.591-3.464l-.907-2.749c-1.155-3.574-2.997-4.894-6.653-4.894-4.041-.001-6.186 2.556-6.186 6.899 0 4.179 2.145 6.433 5.993 6.433 3.107.001 4.591-1.457 4.591-1.457z"

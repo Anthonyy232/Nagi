@@ -411,7 +411,7 @@ public class SettingsService : IUISettingsService
         };
     }
 
-    private List<PlayerButtonSetting> GetDefaultPlayerButtonSettings()
+    public List<PlayerButtonSetting> GetDefaultPlayerButtonSettings()
     {
         return new List<PlayerButtonSetting>
         {

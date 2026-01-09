@@ -27,7 +27,6 @@ namespace Nagi.WinUI.ViewModels;
 public partial class EqualizerBandViewModel : ObservableObject, IDisposable
 {
     private const int KiloHertzThreshold = 1000;
-    private const int DebounceDelayMilliseconds = 1000;
 
     private CancellationTokenSource? _debounceCts;
 
@@ -77,7 +76,7 @@ public partial class EqualizerBandViewModel : ObservableObject, IDisposable
 
         try
         {
-            await Task.Delay(DebounceDelayMilliseconds, token);
+            await Task.Delay(SettingsViewModel.EqualizerDebounceDelayMilliseconds, token);
             GainCommitted?.Invoke(this, value);
         }
         catch (TaskCanceledException)
@@ -95,7 +94,7 @@ public partial class EqualizerBandViewModel : ObservableObject, IDisposable
 /// </summary>
 public partial class SettingsViewModel : ObservableObject, IDisposable
 {
-    private const int EqualizerDebounceDelayMilliseconds = 1000;
+    internal const int EqualizerDebounceDelayMilliseconds = 300;
 
     private readonly IAppInfoService _appInfoService;
     private readonly IApplicationLifecycle _applicationLifecycle;
@@ -541,6 +540,22 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         await _playbackService.ResetEqualizerAsync();
         // Resetting will result in all 0s, which matches "None".
         SelectedEqualizerPreset = AvailableEqualizerPresets.FirstOrDefault(p => p.Name == "None");
+    }
+
+    [RelayCommand]
+    private async Task ResetPlayerButtonsAsync()
+    {
+        foreach (var item in PlayerButtons) item.PropertyChanged -= OnPlayerButtonPropertyChanged;
+        PlayerButtons.Clear();
+
+        var defaultButtons = _settingsService.GetDefaultPlayerButtonSettings();
+        foreach (var button in defaultButtons)
+        {
+            button.PropertyChanged += OnPlayerButtonPropertyChanged;
+            PlayerButtons.Add(button);
+        }
+
+        await _settingsService.SetPlayerButtonSettingsAsync(defaultButtons);
     }
 
     [RelayCommand]

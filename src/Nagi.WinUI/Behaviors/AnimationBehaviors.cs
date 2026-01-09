@@ -13,6 +13,147 @@ namespace Nagi.WinUI.Behaviors;
 /// </summary>
 public static class AnimationBehaviors
 {
+    #region EnableFadeAnimation Attached Property
+
+    /// <summary>
+    /// Gets whether fade animation (opacity) is enabled on hover.
+    /// </summary>
+    public static bool GetEnableFadeAnimation(DependencyObject obj)
+        => (bool)obj.GetValue(EnableFadeAnimationProperty);
+
+    /// <summary>
+    /// Sets whether fade animation (opacity) is enabled on hover.
+    /// </summary>
+    public static void SetEnableFadeAnimation(DependencyObject obj, bool value)
+        => obj.SetValue(EnableFadeAnimationProperty, value);
+
+    public static readonly DependencyProperty EnableFadeAnimationProperty =
+        DependencyProperty.RegisterAttached(
+            "EnableFadeAnimation",
+            typeof(bool),
+            typeof(AnimationBehaviors),
+            new PropertyMetadata(false, OnEnableFadeAnimationChanged));
+
+    private static void OnEnableFadeAnimationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is not FrameworkElement element)
+            return;
+
+        if (e.NewValue is true)
+        {
+            element.Loaded += Element_LoadedForFade;
+        }
+        else
+        {
+            // Clean up when disabled
+            element.Loaded -= Element_LoadedForFade;
+            if (element.GetValue(FadeCleanupActionProperty) is Action cleanup)
+            {
+                cleanup();
+                element.ClearValue(FadeCleanupActionProperty);
+            }
+        }
+    }
+
+    private static void Element_LoadedForFade(object sender, RoutedEventArgs e)
+    {
+        if (sender is not FrameworkElement element)
+            return;
+
+        element.Loaded -= Element_LoadedForFade;
+
+        var hoverOpacity = GetHoverOpacity(element);
+        var normalOpacity = GetNormalOpacity(element);
+        var pressedOpacity = GetPressedOpacity(element);
+
+        SetupFadeImplicitAnimations(element, (float)hoverOpacity, (float)normalOpacity, (float)pressedOpacity);
+    }
+
+    #endregion
+
+    #region NormalOpacity and HoverOpacity Properties
+
+    public static double GetNormalOpacity(DependencyObject obj)
+        => (double)obj.GetValue(NormalOpacityProperty);
+
+    public static void SetNormalOpacity(DependencyObject obj, double value)
+        => obj.SetValue(NormalOpacityProperty, value);
+
+    public static readonly DependencyProperty NormalOpacityProperty =
+        DependencyProperty.RegisterAttached(
+            "NormalOpacity",
+            typeof(double),
+            typeof(AnimationBehaviors),
+            new PropertyMetadata(0.0d));
+
+    public static double GetHoverOpacity(DependencyObject obj)
+        => (double)obj.GetValue(HoverOpacityProperty);
+
+    public static void SetHoverOpacity(DependencyObject obj, double value)
+        => obj.SetValue(HoverOpacityProperty, value);
+
+    public static readonly DependencyProperty HoverOpacityProperty =
+        DependencyProperty.RegisterAttached(
+            "HoverOpacity",
+            typeof(double),
+            typeof(AnimationBehaviors),
+            new PropertyMetadata(1.0d));
+
+    public static double GetPressedOpacity(DependencyObject obj)
+        => (double)obj.GetValue(PressedOpacityProperty);
+
+    public static void SetPressedOpacity(DependencyObject obj, double value)
+        => obj.SetValue(PressedOpacityProperty, value);
+
+    public static readonly DependencyProperty PressedOpacityProperty =
+        DependencyProperty.RegisterAttached(
+            "PressedOpacity",
+            typeof(double),
+            typeof(AnimationBehaviors),
+            new PropertyMetadata(1.0d));
+
+    #endregion
+
+    #region FadeTrigger Attached Property
+
+    /// <summary>
+    /// Gets the element that triggers the fade animation on hover.
+    /// If null, the element itself will be the trigger.
+    /// </summary>
+    public static UIElement GetFadeTrigger(DependencyObject obj)
+        => (UIElement)obj.GetValue(FadeTriggerProperty);
+
+    /// <summary>
+    /// Sets the element that triggers the fade animation on hover.
+    /// If null, the element itself will be the trigger.
+    /// </summary>
+    public static void SetFadeTrigger(DependencyObject obj, UIElement value)
+        => obj.SetValue(FadeTriggerProperty, value);
+
+    public static readonly DependencyProperty FadeTriggerProperty =
+        DependencyProperty.RegisterAttached(
+            "FadeTrigger",
+            typeof(UIElement),
+            typeof(AnimationBehaviors),
+            new PropertyMetadata(null, OnFadeTriggerChanged));
+
+    private static void OnFadeTriggerChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is not FrameworkElement element || !GetEnableFadeAnimation(element))
+            return;
+
+        // If already loaded, re-setup to hook new trigger
+        if (element.IsLoaded && e.NewValue is UIElement)
+        {
+            var hoverOpacity = GetHoverOpacity(element);
+            var normalOpacity = GetNormalOpacity(element);
+            var pressedOpacity = GetPressedOpacity(element);
+            SetupFadeImplicitAnimations(element, (float)hoverOpacity, (float)normalOpacity, (float)pressedOpacity);
+        }
+    }
+
+    #endregion
+
     #region EnableScaleAnimation Attached Property
 
     /// <summary>
@@ -215,6 +356,88 @@ public static class AnimationBehaviors
             frameworkElement.Unloaded += unloadedHandler;
         }
     }
+
+    private static void SetupFadeImplicitAnimations(UIElement element, float hoverOpacity, float normalOpacity, float pressedOpacity)
+    {
+        var visual = ElementCompositionPreview.GetElementVisual(element);
+        var compositor = visual.Compositor;
+
+        // Use this.FinalValue to animate towards whatever value we set on the property
+        var fadeAnimation = compositor.CreateScalarKeyFrameAnimation();
+        fadeAnimation.InsertExpressionKeyFrame(1.0f, "this.FinalValue");
+        fadeAnimation.Duration = TimeSpan.FromMilliseconds(200);
+        fadeAnimation.Target = "Opacity";
+
+        // Implicit animations for Opacity
+        var implicitAnimations = visual.ImplicitAnimations ?? compositor.CreateImplicitAnimationCollection();
+        implicitAnimations["Opacity"] = fadeAnimation;
+        visual.ImplicitAnimations = implicitAnimations;
+
+        var trigger = GetFadeTrigger(element) ?? element;
+
+        bool isPointerOver = false;
+        bool isPressed = false;
+
+        void UpdateOpacity()
+        {
+            if (isPressed)
+                visual.Opacity = pressedOpacity;
+            else if (isPointerOver)
+                visual.Opacity = hoverOpacity;
+            else
+                visual.Opacity = normalOpacity;
+        }
+
+        PointerEventHandler enteredHandler = (s, e) => { isPointerOver = true; UpdateOpacity(); };
+        PointerEventHandler exitedHandler = (s, e) => { isPointerOver = false; isPressed = false; UpdateOpacity(); };
+        PointerEventHandler pressedHandler = (s, e) => { isPressed = true; UpdateOpacity(); };
+        PointerEventHandler releasedHandler = (s, e) => { isPressed = false; UpdateOpacity(); };
+        PointerEventHandler captureLostHandler = (s, e) => { isPressed = false; UpdateOpacity(); };
+
+        // Clean up previous handlers if we are re-hooking
+        if (element.GetValue(FadeCleanupActionProperty) is Action oldCleanup)
+        {
+            oldCleanup();
+        }
+
+        trigger.PointerEntered += enteredHandler;
+        trigger.PointerExited += exitedHandler;
+        trigger.PointerPressed += pressedHandler;
+        trigger.PointerReleased += releasedHandler;
+        trigger.PointerCaptureLost += captureLostHandler;
+
+        // Capture the current trigger reference for cleanup to avoid closure issues
+        var currentTrigger = trigger;
+        Action cleanup = () =>
+        {
+            currentTrigger.PointerEntered -= enteredHandler;
+            currentTrigger.PointerExited -= exitedHandler;
+            currentTrigger.PointerPressed -= pressedHandler;
+            currentTrigger.PointerReleased -= releasedHandler;
+            currentTrigger.PointerCaptureLost -= captureLostHandler;
+        };
+
+        element.SetValue(FadeCleanupActionProperty, cleanup);
+
+        if (element is FrameworkElement fe)
+        {
+            // Use a named handler to avoid leak
+            RoutedEventHandler? unloadedHandler = null;
+            unloadedHandler = (s, args) =>
+            {
+                fe.Unloaded -= unloadedHandler;
+                cleanup();
+                fe.ClearValue(FadeCleanupActionProperty);
+            };
+            fe.Unloaded += unloadedHandler;
+        }
+
+        // Ensure initial state
+        UpdateOpacity();
+    }
+
+    private static readonly DependencyProperty FadeCleanupActionProperty =
+        DependencyProperty.RegisterAttached("FadeCleanupAction", typeof(Action), typeof(AnimationBehaviors), new PropertyMetadata(null));
 
     private static void SetupTiltAnimation(UIElement element)
     {
