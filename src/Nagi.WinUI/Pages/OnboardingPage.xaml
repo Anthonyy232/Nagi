@@ -225,11 +225,10 @@
 
                     <TextBlock
                         Grid.Row="2"
-                        Grid.RowSpan="1"
                         MaxWidth="350"
                         HorizontalAlignment="Center"
                         Foreground="{ThemeResource TextFillColorSecondary}"
-                        Style="{ThemeResource BodyTextBlockStyle}"
+                        Style="{ThemeResource SubtitleTextBlockStyle}"
                         Text="{x:Bind ViewModel.StatusMessage, Mode=OneWay}"
                         TextAlignment="Center"
                         TextWrapping="Wrap" />
