@@ -163,6 +163,28 @@ jobs:
           }
 
   # ===================================================================
+  # JOB: verify-api-connectivity
+  # Purpose: Ensures the Nagi API key is valid by hitting a test endpoint.
+  # This prevents release builds with corrupted or invalid secret keys.
+  # ===================================================================
+  verify-api-connectivity:
+    name: Verify API Connectivity
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Smoke test Nagi API Server
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 5 --max-time 10 --retry 3 --retry-delay 5 \
+            -H "X-API-KEY: ${{ secrets.NAGI_API_KEY }}" \
+            "https://nagiflexapiserver.azurewebsites.net/api/lastfm-key")
+          
+          if [ "$STATUS" -ne 200 ]; then
+            echo "::error::API connectivity test failed with status $STATUS. Check if NAGI_API_KEY is valid and not corrupted."
+            exit 1
+          fi
+          echo "API connectivity verified (Status $STATUS)."
+
+  # ===================================================================
   # JOB: build-and-pack
   # Purpose: Builds, publishes, and packages the application for multiple target platforms.
   # Utilizes a matrix strategy to run these steps in parallel for each platform.
@@ -170,7 +192,7 @@ jobs:
   build-and-pack:
     name: Build & Pack (${{ matrix.platform }})
     runs-on: windows-latest
-    needs: test # Ensures this job only runs if all tests pass.
+    needs: [test, verify-api-connectivity] # Ensures this job only runs if all tests and API verification pass.
     permissions:
       contents: read
       packages: read
