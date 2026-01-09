@@ -278,5 +278,34 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+
+        <!-- Empty State -->
+        <StackPanel
+            Grid.Row="1"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Spacing="16"
+            Visibility="{x:Bind ViewModel.Songs.Count, Mode=OneWay, Converter={StaticResource InverseCollectionCountToVisibilityConverter}}">
+            <StackPanel.ChildrenTransitions>
+                <TransitionCollection>
+                    <EntranceThemeTransition FromVerticalOffset="20" />
+                </TransitionCollection>
+            </StackPanel.ChildrenTransitions>
+            <FontIcon
+                Glyph="&#xE8D6;"
+                FontSize="48"
+                Margin="0,0,0,12"
+                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                HorizontalAlignment="Center" />
+            <TextBlock
+                Style="{StaticResource TitleTextBlockStyle}"
+                Text="Your library is empty"
+                HorizontalAlignment="Center" />
+            <TextBlock
+                Style="{StaticResource SubtitleTextBlockStyle}"
+                Text="Add folders to your library in Settings"
+                HorizontalAlignment="Center"
+                Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
+        </StackPanel>
     </Grid>
 </Page>

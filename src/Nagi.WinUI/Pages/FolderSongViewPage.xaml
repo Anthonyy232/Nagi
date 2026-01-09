@@ -371,5 +371,34 @@
             SelectionChanged="FolderContentsListView_SelectionChanged"
             SelectionMode="Extended"
             DoubleTapped="FolderContentsListView_DoubleTapped" />
+
+        <!-- Empty State -->
+        <StackPanel
+            Grid.Row="1"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Spacing="16"
+            Visibility="{x:Bind ViewModel.FolderContents.Count, Mode=OneWay, Converter={StaticResource InverseCollectionCountToVisibilityConverter}}">
+            <StackPanel.ChildrenTransitions>
+                <TransitionCollection>
+                    <EntranceThemeTransition FromVerticalOffset="20" />
+                </TransitionCollection>
+            </StackPanel.ChildrenTransitions>
+            <FontIcon
+                Glyph="&#xE8B7;"
+                FontSize="48"
+                Margin="0,0,0,12"
+                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                HorizontalAlignment="Center" />
+            <TextBlock
+                Style="{StaticResource TitleTextBlockStyle}"
+                Text="This folder is empty"
+                HorizontalAlignment="Center" />
+            <TextBlock
+                Style="{StaticResource SubtitleTextBlockStyle}"
+                Text="No songs or subfolders found"
+                HorizontalAlignment="Center"
+                Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
+        </StackPanel>
     </Grid>
 </Page>

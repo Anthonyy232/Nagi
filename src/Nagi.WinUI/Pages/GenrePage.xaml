@@ -200,18 +200,28 @@
             <StackPanel
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                Spacing="12"
+                Spacing="16"
                 Visibility="{x:Bind ViewModel.HasGenres, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}">
-                <FontIcon FontSize="48" Glyph="&#xE8EC;" />
+                <StackPanel.ChildrenTransitions>
+                    <TransitionCollection>
+                        <EntranceThemeTransition FromVerticalOffset="20" />
+                    </TransitionCollection>
+                </StackPanel.ChildrenTransitions>
+                <FontIcon
+                    Glyph="&#xE8EC;"
+                    FontSize="48"
+                    Margin="0,0,0,12"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    HorizontalAlignment="Center" />
                 <TextBlock
                     HorizontalAlignment="Center"
-                    Style="{ThemeResource SubtitleTextBlockStyle}"
+                    Style="{StaticResource TitleTextBlockStyle}"
                     Text="No genres found" />
                 <TextBlock
                     HorizontalAlignment="Center"
-                    Opacity="0.7"
-                    Style="{ThemeResource BodyTextBlockStyle}"
-                    Text="Scan your music library to populate genres." />
+                    Style="{StaticResource SubtitleTextBlockStyle}"
+                    Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                    Text="Scan your music library to populate genres" />
             </StackPanel>
         </Grid>
     </Grid>

@@ -292,13 +292,37 @@
         </ListView>
 
         <!-- Empty State -->
-        <StackPanel Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="16"
-                    Visibility="{x:Bind ViewModel.Songs.Count, Mode=OneWay, Converter={StaticResource InverseCollectionCountToVisibilityConverter}}">
-            <FontIcon Glyph="&#xE99A;" FontSize="48" Foreground="{ThemeResource TextFillColorSecondary}" HorizontalAlignment="Center" />
-            <TextBlock Text="No songs match the current rules" 
-                       Style="{StaticResource SubtitleTextBlockStyle}" 
-                       Foreground="{ThemeResource TextFillColorSecondary}" HorizontalAlignment="Center" />
-            <Button Content="Edit Rules" Click="EditRulesButton_Click" HorizontalAlignment="Center" ToolTipService.ToolTip="Edit rules" />
+        <StackPanel
+            Grid.Row="2"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Spacing="16"
+            Visibility="{x:Bind ViewModel.Songs.Count, Mode=OneWay, Converter={StaticResource InverseCollectionCountToVisibilityConverter}}">
+            <StackPanel.ChildrenTransitions>
+                <TransitionCollection>
+                    <EntranceThemeTransition FromVerticalOffset="20" />
+                </TransitionCollection>
+            </StackPanel.ChildrenTransitions>
+            <FontIcon
+                Glyph="&#xE99A;"
+                FontSize="48"
+                Margin="0,0,0,12"
+                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                HorizontalAlignment="Center" />
+            <TextBlock
+                Style="{StaticResource TitleTextBlockStyle}"
+                Text="No songs match the current rules"
+                HorizontalAlignment="Center" />
+            <TextBlock
+                Style="{StaticResource SubtitleTextBlockStyle}"
+                Text="Try editing the rules"
+                HorizontalAlignment="Center"
+                Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
+            <Button
+                Content="Edit Rules"
+                Click="EditRulesButton_Click"
+                HorizontalAlignment="Center"
+                ToolTipService.ToolTip="Edit rules" />
         </StackPanel>
     </Grid>
 </Page>
