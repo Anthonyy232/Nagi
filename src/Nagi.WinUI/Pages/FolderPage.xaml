@@ -113,13 +113,28 @@
             Grid.Row="1"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            Spacing="12"
+            Spacing="16"
             Visibility="{x:Bind ViewModel.HasFolders, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}">
-            <FontIcon FontSize="48" Glyph="" />
-            <TextBlock HorizontalAlignment="Center" Style="{ThemeResource SubtitleTextBlockStyle}"
-                       Text="No folders added yet" />
-            <TextBlock HorizontalAlignment="Center" Opacity="0.7" Style="{ThemeResource BodyTextBlockStyle}"
-                       Text="Add music folders to get started" />
+            <StackPanel.ChildrenTransitions>
+                <TransitionCollection>
+                    <EntranceThemeTransition FromVerticalOffset="20" />
+                </TransitionCollection>
+            </StackPanel.ChildrenTransitions>
+            <FontIcon
+                Glyph="&#xED25;"
+                FontSize="48"
+                Margin="0,0,0,12"
+                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                HorizontalAlignment="Center" />
+            <TextBlock
+                HorizontalAlignment="Center"
+                Style="{StaticResource TitleTextBlockStyle}"
+                Text="No folders added yet" />
+            <TextBlock
+                HorizontalAlignment="Center"
+                Style="{StaticResource SubtitleTextBlockStyle}"
+                Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                Text="Add music folders to get started" />
         </StackPanel>
     </Grid>
 </Page>

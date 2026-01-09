@@ -105,7 +105,7 @@
             Grid.Row="2"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            Spacing="8"
+            Spacing="16"
             Visibility="{x:Bind ViewModel.ShowNoLyricsMessage, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
             <StackPanel.ChildrenTransitions>
                 <TransitionCollection>
@@ -113,16 +113,17 @@
                 </TransitionCollection>
             </StackPanel.ChildrenTransitions>
             <FontIcon
-                Glyph=""
-                FontSize="36"
-                Margin="0,0,0,8"
-                Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                Glyph="&#xED1E;"
+                FontSize="48"
+                Margin="0,0,0,12"
+                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                HorizontalAlignment="Center" />
             <TextBlock
-                Style="{StaticResource SubtitleTextBlockStyle}"
+                Style="{StaticResource TitleTextBlockStyle}"
                 Text="No lyrics found for this track"
                 HorizontalAlignment="Center" />
             <TextBlock
-                Style="{StaticResource BodyTextBlockStyle}"
+                Style="{StaticResource SubtitleTextBlockStyle}"
                 Text="Try another song"
                 HorizontalAlignment="Center"
                 Foreground="{ThemeResource TextFillColorTertiaryBrush}" />

@@ -292,17 +292,27 @@
             <StackPanel
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                Spacing="12"
+                Spacing="16"
                 Visibility="{x:Bind ViewModel.HasPlaylists, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}">
-                <FontIcon FontSize="48" Glyph="&#xE142;" />
+                <StackPanel.ChildrenTransitions>
+                    <TransitionCollection>
+                        <EntranceThemeTransition FromVerticalOffset="20" />
+                    </TransitionCollection>
+                </StackPanel.ChildrenTransitions>
+                <FontIcon
+                    Glyph="&#xE90B;"
+                    FontSize="48"
+                    Margin="0,0,0,12"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    HorizontalAlignment="Center" />
                 <TextBlock
                     HorizontalAlignment="Center"
-                    Style="{ThemeResource SubtitleTextBlockStyle}"
+                    Style="{StaticResource TitleTextBlockStyle}"
                     Text="No playlists yet" />
                 <TextBlock
                     HorizontalAlignment="Center"
-                    Opacity="0.7"
-                    Style="{ThemeResource BodyTextBlockStyle}"
+                    Style="{StaticResource SubtitleTextBlockStyle}"
+                    Foreground="{ThemeResource TextFillColorTertiaryBrush}"
                     Text="Create a playlist to get started" />
             </StackPanel>
         </Grid>
