@@ -215,6 +215,12 @@ public interface IUISettingsService : ISettingsService
     Task SetPlayerButtonSettingsAsync(List<PlayerButtonSetting> settings);
 
     /// <summary>
+    ///     Gets the default list of player control buttons.
+    /// </summary>
+    /// <returns>A list of <see cref="PlayerButtonSetting" /> with default settings.</returns>
+    List<PlayerButtonSetting> GetDefaultPlayerButtonSettings();
+
+    /// <summary>
     ///     Gets whether the application should automatically check for updates on startup.
     /// </summary>
     /// <returns>True if automatic checks are enabled; otherwise, false.</returns>

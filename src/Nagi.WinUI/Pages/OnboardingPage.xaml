@@ -219,7 +219,7 @@
                         Grid.Row="1"
                         Margin="0,0,0,8"
                         HorizontalAlignment="Center"
-                        Style="{ThemeResource TitleTextBlockStyle}"
+                        Style="{StaticResource PageTitleTextStyle}"
                         Text="Welcome to Nagi"
                         TextWrapping="NoWrap" />
 
@@ -227,8 +227,8 @@
                         Grid.Row="2"
                         MaxWidth="350"
                         HorizontalAlignment="Center"
-                        Foreground="{ThemeResource TextFillColorSecondary}"
-                        Style="{ThemeResource SubtitleTextBlockStyle}"
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        Style="{ThemeResource BodyTextBlockStyle}"
                         Text="{x:Bind ViewModel.StatusMessage, Mode=OneWay}"
                         TextAlignment="Center"
                         TextWrapping="Wrap" />
