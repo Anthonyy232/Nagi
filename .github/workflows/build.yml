@@ -173,7 +173,11 @@ jobs:
     needs: test
     steps:
       - name: Smoke test Nagi API Server
+        env:
+          API_KEY: ${{ secrets.NAGI_API_KEY }}
         run: |
+          echo "API Key length: ${#API_KEY}"
+          echo "API Key preview: ${API_KEY:0:2}...${API_KEY: -2}"
           STATUS=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 5 --max-time 10 --retry 3 --retry-delay 5 \
             -H 'X-API-KEY: ${{ secrets.NAGI_API_KEY }}' \
             "https://nagiflexapiserver.azurewebsites.net/api/lastfm-key")
