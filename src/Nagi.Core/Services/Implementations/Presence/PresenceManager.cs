@@ -20,6 +20,10 @@ public class PresenceManager : IPresenceManager, IDisposable
     private Song? _currentTrack;
     private bool _isInitialized;
 
+    // Presence position updates don't need to be frequent
+    private DateTime _lastPresencePositionUpdate = DateTime.MinValue;
+    private static readonly TimeSpan PresenceThrottleInterval = TimeSpan.FromSeconds(5);
+
     public PresenceManager(
         IMusicPlaybackService playbackService,
         IEnumerable<IPresenceService> presenceServices,
@@ -182,6 +186,10 @@ public class PresenceManager : IPresenceManager, IDisposable
             if (_currentTrack?.Id == newTrack?.Id) return;
 
             _currentTrack = newTrack;
+            
+            // Reset throttle state so new track gets immediate presence update
+            _lastPresencePositionUpdate = DateTime.MinValue;
+
             _logger.LogDebug("Track changed to '{TrackTitle}'. Broadcasting to active services.",
                 _currentTrack?.Title ?? "None");
 
@@ -216,6 +224,12 @@ public class PresenceManager : IPresenceManager, IDisposable
         try
         {
             if (_currentTrack is null || _playbackService.Duration <= TimeSpan.Zero) return;
+
+            // Throttle presence updates to every 5 seconds
+            var now = DateTime.UtcNow;
+            if (now - _lastPresencePositionUpdate < PresenceThrottleInterval)
+                return;
+            _lastPresencePositionUpdate = now;
 
             await BroadcastAsync(s => s.OnTrackProgressAsync(_playbackService.CurrentPosition, _playbackService.Duration)).ConfigureAwait(false);
         }
