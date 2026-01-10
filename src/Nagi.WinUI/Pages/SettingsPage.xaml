@@ -432,7 +432,8 @@
                                     <DataTemplate x:DataType="models:PlayerButtonSetting">
                                         <Grid
                                             x:Name="ButtonContainer"
-                                            Width="50"
+                                            Width="Auto"
+                                            MinWidth="28"
                                             Padding="4,8"
                                             Background="Transparent"
                                             CornerRadius="6"
@@ -440,6 +441,7 @@
 
                                             <Border
                                                 x:Name="HoverHighlight"
+                                                Width="57"
                                                 Background="{ThemeResource SubtleFillColorSecondaryBrush}"
                                                 CornerRadius="6"
                                                 Visibility="{x:Bind IsNotSeparator, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
@@ -448,7 +450,7 @@
                                             <Border
                                                 x:Name="SeparatorVisual"
                                                 Width="2"
-                                                Height="90"
+                                                Height="100"
                                                 HorizontalAlignment="Center"
                                                 VerticalAlignment="Center"
                                                 Background="{ThemeResource TextFillColorSecondaryBrush}"
@@ -458,7 +460,9 @@
 
                                             <!-- Button content -->
                                             <StackPanel
-                                                Spacing="4"
+                                                Width="57"
+                                                Padding="0,8"
+                                                Spacing="6"
                                                 VerticalAlignment="Center"
                                                 Visibility="{x:Bind IsNotSeparator, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
 
@@ -488,6 +492,8 @@
                                                 <!-- Enable/Disable toggle (shown on hover) -->
                                                 <ToggleSwitch
                                                     x:Name="EnableDisableToggle"
+                                                    Width="40"
+                                                    Margin="0"
                                                     HorizontalAlignment="Center"
                                                     MinWidth="0"
                                                     MinHeight="0"
