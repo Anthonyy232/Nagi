@@ -89,18 +89,26 @@ public class LrcService : ILrcService, IDisposable
                 var tasks = new Dictionary<string, Task<string?>>();
                 foreach (var provider in enabledProviders)
                 {
-                tasks[provider.Id] = provider.Id switch
+                    try
                     {
-                        ServiceProviderIds.LrcLib => _onlineLyricsService.GetLyricsAsync(
-                            song.Title, song.Artist?.Name, song.Album?.Title, song.Duration, token),
-                        ServiceProviderIds.NetEase => _netEaseLyricsService.SearchLyricsAsync(
-                            song.Title, song.Artist?.Name, token),
-                        _ => LogUnknownProviderAndReturnNull(provider.Id)
-                    };
+                        tasks[provider.Id] = provider.Id switch
+                        {
+                            ServiceProviderIds.LrcLib => _onlineLyricsService.GetLyricsAsync(
+                                song.Title, song.Artist?.Name, song.Album?.Title, song.Duration, token),
+                            ServiceProviderIds.NetEase => _netEaseLyricsService.SearchLyricsAsync(
+                                song.Title, song.Artist?.Name, token),
+                             _ => LogUnknownProviderAndReturnNull(provider.Id)
+                        };
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Failed to initiate lyrics fetch for provider {Provider}", provider.DisplayName);
+                    }
                 }
 
                 // Evaluate results in priority order (but all tasks already running in parallel)
                 string? lrcContent = null;
+                var anyProviderSuccess = false;
                 foreach (var provider in enabledProviders)
                 {
                     if (!tasks.TryGetValue(provider.Id, out var task)) continue;
@@ -108,6 +116,7 @@ public class LrcService : ILrcService, IDisposable
                     try
                     {
                         var result = await task.ConfigureAwait(false);
+                        anyProviderSuccess = true;
                         if (!string.IsNullOrWhiteSpace(result))
                         {
                             lrcContent = result;
@@ -157,7 +166,7 @@ public class LrcService : ILrcService, IDisposable
             
             // Only mark as checked if providers were attempted AND operation wasn't cancelled.
             // This allows retry if providers are enabled later or if the fetch was cancelled.
-            if (enabledProviders.Count > 0 && !token.IsCancellationRequested)
+            if (enabledProviders.Count > 0 && !token.IsCancellationRequested && anyProviderSuccess)
             {
                 await _libraryWriter.UpdateSongLyricsLastCheckedAsync(song.Id).ConfigureAwait(false);
                 song.LyricsLastCheckedUtc = DateTime.UtcNow;
@@ -223,7 +232,7 @@ public class LrcService : ILrcService, IDisposable
         {
             // Normalize NetEase-style 3-digit milliseconds ([mm:ss.fff]) to 2-digit ([mm:ss.ff]) 
             // for better compatibility with standard LRC parsers.
-            content = Regex.Replace(content, @"(\[\d{2}:\d{2}\.\d{2})\d", "$1");
+            content = Regex.Replace(content, @"\[(\d{2}:\d{2}\.\d{2})\d\]", "[$1]");
 
             var parsedSongFromLrc = _parser.Decode(content);
             if (parsedSongFromLrc?.Lyrics == null || !parsedSongFromLrc.Lyrics.Any())
