@@ -68,9 +68,6 @@ public partial class App : Application
         CurrentApp = this;
         InitializeComponent();
         
-        // Always initialize Core before anything else, especially before creating a LibVLC instance
-        LibVLCSharp.Core.Initialize();
-        
         UnhandledException += OnAppUnhandledException;
         CoreApplication.Suspending += OnSuspending;
     }
@@ -111,6 +108,7 @@ public partial class App : Application
                 Log.Information("Regenerating LibVLC plugin cache for version {Version}...", LibVlcVersion);
 
                 // Generate the plugin cache - this creates plugins.dat in the libvlc plugins folder
+                // Note: Core.Initialize() is already called by the audioWarmupTask before this runs
                 using var tempVlc = new LibVLCSharp.LibVLC("--reset-plugins-cache");
                 
                 // Write the version marker so we don't regenerate unnecessarily
@@ -193,8 +191,6 @@ public partial class App : Application
                 "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] [{ThreadId}] {Message:lj}{NewLine}{Exception}")
             .WriteTo.Sink(MemoryLog.Instance)
             .CreateLogger();
-
-        EnsureLibVlcPluginCache();
 
         try
         {
@@ -347,13 +343,16 @@ public partial class App : Application
 
             // Pre-warm the audio player on a background thread.
             // This runs concurrently with database/window init so LibVLC is ready when user presses play.
-            var audioWarmupTask = Task.Run(() =>
+            var audioWarmupTask = Task.Run(async () =>
             {
                 try
                 {
+                    // Initialize LibVLC core first (registers native library paths)
+                    LibVLCSharp.Core.Initialize();
+
                     // Ensure plugin cache exists BEFORE creating LibVLC instance
                     EnsureLibVlcPluginCache();
-                    Services.GetRequiredService<IAudioPlayer>().EnsureInitialized();
+                    await Services.GetRequiredService<IAudioPlayer>().EnsureInitializedAsync().ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {
@@ -365,7 +364,7 @@ public partial class App : Application
             // These are independent and required for the next phase.
             var dbTask = InitializeDatabaseAsync(Services);
             var windowTask = Services.GetRequiredService<IWindowService>().InitializeAsync();
-            await Task.WhenAll(dbTask, windowTask, audioWarmupTask).ConfigureAwait(false);
+            await Task.WhenAll(dbTask, windowTask).ConfigureAwait(false);
 
             // 2. Services Phase: Parallelize independent service initializations.
             var playbackTask = Services.GetRequiredService<IMusicPlaybackService>().InitializeAsync(restoreSession);

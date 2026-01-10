@@ -92,10 +92,19 @@ public interface IAudioPlayer : IDisposable
 
     /// <summary>
     ///     Ensures the audio player is initialized and ready for playback.
-    ///     This can be called from a background thread to pre-warm the audio engine
-    ///     without blocking the UI thread during app startup.
+    ///     This synchronous version is for use by sync callers. For async contexts,
+    ///     prefer <see cref="EnsureInitializedAsync"/> to avoid blocking.
     /// </summary>
     void EnsureInitialized();
+
+    /// <summary>
+    ///     Asynchronously ensures the audio player is initialized and ready for playback.
+    ///     This can be called from a background thread to pre-warm the audio engine
+    ///     without blocking the UI thread during app startup. Multiple concurrent calls
+    ///     will await the same initialization task.
+    /// </summary>
+    /// <returns>A task that completes when initialization is done.</returns>
+    Task EnsureInitializedAsync();
 
     /// <summary>
     ///     Initializes the System Media Transport Controls for integration with the OS.
