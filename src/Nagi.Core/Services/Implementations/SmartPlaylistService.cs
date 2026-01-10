@@ -17,6 +17,7 @@ public class SmartPlaylistService : ISmartPlaylistService
     private readonly IFileSystemService _fileSystem;
     private readonly IPathConfiguration _pathConfig;
     private readonly ILogger<SmartPlaylistService> _logger;
+    private readonly IImageProcessor _imageProcessor;
     private readonly SmartPlaylistQueryBuilder _queryBuilder;
 
     /// <inheritdoc />
@@ -26,11 +27,13 @@ public class SmartPlaylistService : ISmartPlaylistService
         IDbContextFactory<MusicDbContext> contextFactory,
         IFileSystemService fileSystem,
         IPathConfiguration pathConfig,
+        IImageProcessor imageProcessor,
         ILogger<SmartPlaylistService> logger)
     {
         _contextFactory = contextFactory;
         _fileSystem = fileSystem;
         _pathConfig = pathConfig;
+        _imageProcessor = imageProcessor;
         _logger = logger;
         _queryBuilder = new SmartPlaylistQueryBuilder();
     }
@@ -121,8 +124,11 @@ public class SmartPlaylistService : ISmartPlaylistService
 
         if (!string.IsNullOrEmpty(coverImageUri) && _fileSystem.FileExists(coverImageUri))
         {
+            // Read, process, and save the image
             var cachePath = _pathConfig.PlaylistImageCachePath;
-            ImageStorageHelper.SaveImage(_fileSystem, cachePath, smartPlaylist.Id.ToString(), ".custom", coverImageUri);
+            var originalBytes = await _fileSystem.ReadAllBytesAsync(coverImageUri).ConfigureAwait(false);
+            var processedBytes = await _imageProcessor.ProcessImageBytesAsync(originalBytes).ConfigureAwait(false);
+            await ImageStorageHelper.SaveImageBytesAsync(_fileSystem, cachePath, smartPlaylist.Id.ToString(), ".custom", processedBytes).ConfigureAwait(false);
             smartPlaylist.CoverImageUri = ImageStorageHelper.FindImage(_fileSystem, cachePath, smartPlaylist.Id.ToString(), ".custom");
         }
 
@@ -229,9 +235,11 @@ public class SmartPlaylistService : ISmartPlaylistService
 
         if (!string.IsNullOrEmpty(newCoverImageUri) && _fileSystem.FileExists(newCoverImageUri))
         {
-            // Save as custom image
+            // Read, process, and save the image
             var cachePath = _pathConfig.PlaylistImageCachePath;
-            ImageStorageHelper.SaveImage(_fileSystem, cachePath, smartPlaylistId.ToString(), ".custom", newCoverImageUri);
+            var originalBytes = await _fileSystem.ReadAllBytesAsync(newCoverImageUri).ConfigureAwait(false);
+            var processedBytes = await _imageProcessor.ProcessImageBytesAsync(originalBytes).ConfigureAwait(false);
+            await ImageStorageHelper.SaveImageBytesAsync(_fileSystem, cachePath, smartPlaylistId.ToString(), ".custom", processedBytes).ConfigureAwait(false);
             
             var newPath = ImageStorageHelper.FindImage(_fileSystem, cachePath, smartPlaylistId.ToString(), ".custom");
             smartPlaylist.CoverImageUri = newPath;

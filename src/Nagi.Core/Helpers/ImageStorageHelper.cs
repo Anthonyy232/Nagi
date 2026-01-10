@@ -78,4 +78,31 @@ public static class ImageStorageHelper
             }
         }
     }
+
+    /// <summary>
+    ///     Saves processed image bytes to the destination directory.
+    ///     Deletes any existing images with the same base name and suffix.
+    /// </summary>
+    /// <param name="fs">File system service.</param>
+    /// <param name="directory">Target directory.</param>
+    /// <param name="baseFileName">Base file name (typically entity ID).</param>
+    /// <param name="suffix">File suffix (e.g., ".custom", ".fetched").</param>
+    /// <param name="imageBytes">Processed image bytes to save.</param>
+    /// <param name="extension">File extension to use (default ".jpg").</param>
+    public static async Task SaveImageBytesAsync(IFileSystemService fs, string directory,
+        string baseFileName, string suffix, byte[] imageBytes, string extension = ".jpg")
+    {
+        if (imageBytes.Length == 0) return;
+
+        if (!fs.DirectoryExists(directory))
+            fs.CreateDirectory(directory);
+
+        // Delete all existing variants to prevent duplicates
+        DeleteImage(fs, directory, baseFileName, suffix);
+
+        // Save new file
+        var newFileName = $"{baseFileName}{suffix}{extension}";
+        var destinationPath = fs.Combine(directory, newFileName);
+        await fs.WriteAllBytesAsync(destinationPath, imageBytes).ConfigureAwait(false);
+    }
 }

@@ -21,11 +21,11 @@ namespace Nagi.Core.Services.Implementations;
 public class ImageSharpProcessor : IImageProcessor
 {
     /// <summary>
-    ///     Maximum dimension (width or height) for cached images. Larger images are resized
-    ///     while preserving aspect ratio. 800px provides good quality for high-DPI displays
-    ///     while significantly reducing storage for large album art (4000x4000+).
+    ///     Standardized maximum dimension for all cached images.
+    ///     600px provides crisp display at 3x DPI (160px * 3 = 480px with buffer)
+    ///     while significantly reducing storage for large source images.
     /// </summary>
-    private const int CachedImageMaxDimension = 800;
+    private const int CachedImageMaxDimension = 600;
 
     /// <summary>
     ///     Dimension used for color extraction. A small size is sufficient for palette analysis
@@ -235,5 +235,41 @@ public class ImageSharpProcessor : IImageProcessor
     {
         var hashBytes = SHA256.HashData(pictureData);
         return Convert.ToHexString(hashBytes).ToLowerInvariant();
+    }
+
+    /// <inheritdoc />
+    public async Task<byte[]> ProcessImageBytesAsync(byte[] imageData, int maxDimension = 600)
+    {
+        if (imageData.Length == 0) return imageData;
+
+        try
+        {
+            using var image = Image.Load<Rgba32>(imageData);
+
+            // Only resize if larger than max dimension
+            if (image.Width <= maxDimension && image.Height <= maxDimension)
+                return imageData;
+
+            var originalWidth = image.Width;
+            var originalHeight = image.Height;
+
+            image.Mutate(x => x.Resize(new ResizeOptions
+            {
+                Size = new Size(maxDimension, maxDimension),
+                Mode = ResizeMode.Max // Preserves aspect ratio, fits within bounds
+            }));
+
+            _logger.LogDebug("Resized image from {OrigWidth}x{OrigHeight} to {Width}x{Height}",
+                originalWidth, originalHeight, image.Width, image.Height);
+
+            using var memoryStream = new MemoryStream(imageData.Length);
+            await image.SaveAsJpegAsync(memoryStream).ConfigureAwait(false);
+            return memoryStream.ToArray();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to process image, returning original bytes.");
+            return imageData;
+        }
     }
 }
