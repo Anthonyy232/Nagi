@@ -35,6 +35,7 @@ public class ServiceProviderIntegrationTests
     private readonly IReplayGainService _replayGainService;
     private readonly IApiKeyService _apiKeyService;
     private readonly IMetadataService _metadataService;
+    private readonly IImageProcessor _imageProcessor;
     private readonly DbContextFactoryTestHelper _dbHelper;
 
     private readonly LrcService _lrcService;
@@ -58,6 +59,7 @@ public class ServiceProviderIntegrationTests
         _replayGainService = Substitute.For<IReplayGainService>();
         _apiKeyService = Substitute.For<IApiKeyService>();
         _metadataService = Substitute.For<IMetadataService>();
+        _imageProcessor = Substitute.For<IImageProcessor>();
         _dbHelper = new DbContextFactoryTestHelper();
 
         var loggerFactory = Substitute.For<ILoggerFactory>();
@@ -86,6 +88,7 @@ public class ServiceProviderIntegrationTests
             _settingsService,
             _replayGainService,
             _apiKeyService,
+            _imageProcessor,
             Substitute.For<ILogger<LibraryService>>());
 
         _pathConfig.ArtistImageCachePath.Returns("C:\\cache\\artistimages");
