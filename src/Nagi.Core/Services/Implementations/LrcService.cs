@@ -77,7 +77,7 @@ public class LrcService : ILrcService, IDisposable
             // Get enabled providers sorted by priority
             var enabledProviders = await _settingsService.GetEnabledServiceProvidersAsync(Models.ServiceCategory.Lyrics).ConfigureAwait(false);
 
-            if (enabledProviders.Count == 0)
+            var anyProviderSuccess = false;
             {
                 _logger.LogDebug("No lyrics providers enabled. Skipping online fetch for '{Title}'.", song.Title);
             }
@@ -108,7 +108,6 @@ public class LrcService : ILrcService, IDisposable
 
                 // Evaluate results in priority order (but all tasks already running in parallel)
                 string? lrcContent = null;
-                var anyProviderSuccess = false;
                 foreach (var provider in enabledProviders)
                 {
                     if (!tasks.TryGetValue(provider.Id, out var task)) continue;

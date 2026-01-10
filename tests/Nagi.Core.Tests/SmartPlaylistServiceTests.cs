@@ -21,6 +21,7 @@ public class SmartPlaylistServiceTests : IDisposable
     private readonly ILogger<SmartPlaylistService> _logger;
     private readonly IFileSystemService _fileSystem;
     private readonly IPathConfiguration _pathConfig;
+    private readonly IImageProcessor _imageProcessor;
     private readonly SmartPlaylistService _service;
 
     public SmartPlaylistServiceTests()
@@ -29,12 +30,13 @@ public class SmartPlaylistServiceTests : IDisposable
         _logger = Substitute.For<ILogger<SmartPlaylistService>>();
         _fileSystem = Substitute.For<IFileSystemService>();
         _pathConfig = Substitute.For<IPathConfiguration>();
+        _imageProcessor = Substitute.For<IImageProcessor>();
 
         _pathConfig.PlaylistImageCachePath.Returns("C:\\cache\\playlists");
         _fileSystem.Combine(Arg.Any<string>(), Arg.Any<string>())
             .Returns(callInfo => Path.Combine(callInfo.ArgAt<string[]>(0)));
 
-        _service = new SmartPlaylistService(_dbHelper.ContextFactory, _fileSystem, _pathConfig, _logger);
+        _service = new SmartPlaylistService(_dbHelper.ContextFactory, _fileSystem, _pathConfig, _imageProcessor, _logger);
 
         // Seed test data
         SeedTestData();

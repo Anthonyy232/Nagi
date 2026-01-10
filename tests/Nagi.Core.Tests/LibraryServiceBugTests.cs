@@ -29,6 +29,7 @@ public class LibraryServiceBugTests : IDisposable
     private readonly IFanartTvService _fanartTvService;
     private readonly ITheAudioDbService _theAudioDbService;
     private readonly IApiKeyService _apiKeyService;
+    private readonly IImageProcessor _imageProcessor;
 
     public LibraryServiceBugTests()
     {
@@ -45,6 +46,7 @@ public class LibraryServiceBugTests : IDisposable
         _fanartTvService = Substitute.For<IFanartTvService>();
         _theAudioDbService = Substitute.For<ITheAudioDbService>();
         _apiKeyService = Substitute.For<IApiKeyService>();
+        _imageProcessor = Substitute.For<IImageProcessor>();
         _logger = Substitute.For<ILogger<LibraryService>>();
 
         _dbHelper = new DbContextFactoryTestHelper();
@@ -64,6 +66,7 @@ public class LibraryServiceBugTests : IDisposable
             _settingsService,
             _replayGainService,
             _apiKeyService,
+            _imageProcessor,
             _logger);
     }
 
