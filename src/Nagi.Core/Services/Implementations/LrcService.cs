@@ -78,6 +78,7 @@ public class LrcService : ILrcService, IDisposable
             var enabledProviders = await _settingsService.GetEnabledServiceProvidersAsync(Models.ServiceCategory.Lyrics).ConfigureAwait(false);
 
             var anyProviderSuccess = false;
+            if (enabledProviders.Count == 0)
             {
                 _logger.LogDebug("No lyrics providers enabled. Skipping online fetch for '{Title}'.", song.Title);
             }
