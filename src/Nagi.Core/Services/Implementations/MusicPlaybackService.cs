@@ -55,7 +55,9 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
     public long? CurrentListenHistoryId { get; private set; }
     public bool IsPlaying => _audioPlayer.IsPlaying;
     public TimeSpan CurrentPosition => _audioPlayer.CurrentPosition;
-    public TimeSpan Duration => _audioPlayer.Duration;
+    public TimeSpan Duration => _audioPlayer.Duration > TimeSpan.Zero
+        ? _audioPlayer.Duration
+        : (CurrentTrack?.Duration ?? TimeSpan.Zero);
     public double Volume => _audioPlayer.Volume;
     public bool IsMuted => _audioPlayer.IsMuted;
     public IReadOnlyList<Song> PlaybackQueue => _playbackQueue.AsReadOnly();
@@ -842,36 +844,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
             }
 
             CurrentListenHistoryId = null;
-
-            // Wait for the media duration to be known before seeking to the saved position.
-            var durationKnownTcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-
-            void OnDurationChangedHandler()
-            {
-                _audioPlayer.DurationChanged -= OnDurationChangedHandler;
-                durationKnownTcs.TrySetResult();
-            }
-
-            _audioPlayer.DurationChanged += OnDurationChangedHandler;
-
-            try
-            {
-                await _audioPlayer.LoadAsync(CurrentTrack).ConfigureAwait(false);
-                var completedTask = await Task.WhenAny(durationKnownTcs.Task, Task.Delay(8000)).ConfigureAwait(false);
-
-                if (completedTask == durationKnownTcs.Task && _audioPlayer.Duration > TimeSpan.Zero)
-                {
-                    // previously we sought to the saved position; position restore intentionally removed
-                }
-                else if (completedTask != durationKnownTcs.Task)
-                {
-                    _logger.LogWarning("Timed out waiting for media duration during session restore.");
-                }
-            }
-            finally
-            {
-                _audioPlayer.DurationChanged -= OnDurationChangedHandler;
-            }
+            await _audioPlayer.LoadAsync(CurrentTrack).ConfigureAwait(false);
         }
         else
         {

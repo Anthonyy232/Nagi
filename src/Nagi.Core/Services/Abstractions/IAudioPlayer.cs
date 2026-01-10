@@ -91,6 +91,13 @@ public interface IAudioPlayer : IDisposable
     #region Methods
 
     /// <summary>
+    ///     Ensures the audio player is initialized and ready for playback.
+    ///     This can be called from a background thread to pre-warm the audio engine
+    ///     without blocking the UI thread during app startup.
+    /// </summary>
+    void EnsureInitialized();
+
+    /// <summary>
     ///     Initializes the System Media Transport Controls for integration with the OS.
     /// </summary>
     void InitializeSmtc();
