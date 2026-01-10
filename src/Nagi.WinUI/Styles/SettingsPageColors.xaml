@@ -4,8 +4,7 @@
     xmlns:animation="using:Microsoft.UI.Xaml.Media.Animation"
     xmlns:primitives="using:Microsoft.UI.Xaml.Controls.Primitives">
 
-    <!-- Easing function for animations -->
-    <animation:CubicEase x:Key="CubicEaseOut" EasingMode="EaseOut" />
+
 
     <!-- Spacing resource for consistency between settings cards. -->
     <x:Double x:Key="SettingsCardSpacing">4</x:Double>
@@ -30,50 +29,9 @@
     </Style>
 
     <!-- Defines the appearance of the "Reset" buttons. -->
-    <Style x:Key="SettingsPageResetButtonStyle" TargetType="Button" BasedOn="{StaticResource AccentButtonStyle}">
-
+    <Style x:Key="SettingsPageResetButtonStyle" TargetType="Button" BasedOn="{StaticResource AnimatedAccentButtonStyle}">
         <Setter Property="Padding" Value="16,10" />
         <Setter Property="CornerRadius" Value="{StaticResource ControlCornerRadius}" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="Button">
-                    <Grid x:Name="RootGrid"
-                          Background="Transparent">
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal" />
-                                <VisualState x:Name="PointerOver" />
-                                <VisualState x:Name="Pressed" />
-                                <VisualState x:Name="Disabled">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
-                                                                       Storyboard.TargetProperty="Opacity">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="0.5" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
-
-                        <Border
-                            x:Name="ButtonBackground"
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="{TemplateBinding CornerRadius}">
-                            <ContentPresenter
-                                x:Name="ContentPresenter"
-                                Padding="{TemplateBinding Padding}"
-                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                AutomationProperties.AccessibilityView="Raw"
-                                Content="{TemplateBinding Content}"
-                                ContentTemplate="{TemplateBinding ContentTemplate}" />
-                        </Border>
-                    </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
     </Style>
 
     <!--
@@ -88,7 +46,10 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="primitives:Thumb">
-                    <Grid>
+                    <Grid RenderTransformOrigin="0.5,0.5">
+                        <Grid.RenderTransform>
+                            <ScaleTransform x:Name="thumbScale" />
+                        </Grid.RenderTransform>
                         <Ellipse x:Name="ThumbVisual"
                                  Fill="{TemplateBinding Background}"
                                  Width="{TemplateBinding Width}"
@@ -97,9 +58,24 @@
                                  StrokeThickness="1" />
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal" />
-                                <VisualState x:Name="PointerOver" />
-                                <VisualState x:Name="Pressed" />
+                                <VisualState x:Name="Normal">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="thumbScale" Storyboard.TargetProperty="ScaleX" To="1.0" Duration="0:0:0.2" EasingFunction="{StaticResource CubicEaseOut}" />
+                                        <DoubleAnimation Storyboard.TargetName="thumbScale" Storyboard.TargetProperty="ScaleY" To="1.0" Duration="0:0:0.2" EasingFunction="{StaticResource CubicEaseOut}" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="thumbScale" Storyboard.TargetProperty="ScaleX" To="1.25" Duration="0:0:0.3" EasingFunction="{StaticResource CubicEaseOut}" />
+                                        <DoubleAnimation Storyboard.TargetName="thumbScale" Storyboard.TargetProperty="ScaleY" To="1.25" Duration="0:0:0.3" EasingFunction="{StaticResource CubicEaseOut}" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="thumbScale" Storyboard.TargetProperty="ScaleX" To="0.9" Duration="0:0:0.1" EasingFunction="{StaticResource CubicEaseOut}" />
+                                        <DoubleAnimation Storyboard.TargetName="thumbScale" Storyboard.TargetProperty="ScaleY" To="0.9" Duration="0:0:0.1" EasingFunction="{StaticResource CubicEaseOut}" />
+                                    </Storyboard>
+                                </VisualState>
                                 <VisualState x:Name="Disabled">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ThumbVisual"
@@ -218,30 +194,11 @@
     </Style>
 
     <!-- Style for the ListViewItems in the "Customize Navigation" card. -->
-    <Style x:Key="NavigationListViewItemStyle" TargetType="ListViewItem">
+    <Style x:Key="NavigationListViewItemStyle" TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="Padding" Value="0" />
         <Setter Property="MinHeight" Value="0" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="ListViewItem">
-                    <ListViewItemPresenter
-                        x:Name="Root"
-                        ContentMargin="{TemplateBinding Padding}"
-                        ContentTransitions="{TemplateBinding ContentTransitions}"
-                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                        PointerOverBackground="{ThemeResource SubtleFillColorSecondaryBrush}"
-                        PressedBackground="{ThemeResource SubtleFillColorTertiaryBrush}"
-                        SelectedBackground="{ThemeResource SubtleFillColorSecondaryBrush}"
-                        SelectedPressedBackground="{ThemeResource SubtleFillColorTertiaryBrush}"
-                        SelectedPointerOverBackground="{ThemeResource SubtleFillColorSecondaryBrush}"
-                        DragBackground="{ThemeResource LayerFillColorDefaultBrush}"
-                        DragForeground="{ThemeResource TextFillColorPrimaryBrush}"
-                        SelectionCheckMarkVisualEnabled="False" />
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
+        <Setter Property="CornerRadius" Value="8" />
     </Style>
 
 </ResourceDictionary>

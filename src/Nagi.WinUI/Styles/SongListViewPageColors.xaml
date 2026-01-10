@@ -1,6 +1,9 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:animation="using:Microsoft.UI.Xaml.Media.Animation">
+
+
 
     <!--
     Defines a style for circular, transparent, icon-only buttons.
@@ -12,71 +15,12 @@
         <Setter Property="Height" Value="36" />
     </Style>
 
-    <!--
-    Defines a style for standard filled buttons with subtle hover and pressed states.
-    -->
-    <Style x:Key="SongListViewPageFilledButtonStyle" TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
+    <Style x:Key="SongListViewPageFilledButtonStyle" TargetType="Button" BasedOn="{StaticResource AnimatedAccentButtonStyle}">
         <Setter Property="Background" Value="{ThemeResource ButtonBackground}" />
         <Setter Property="Padding" Value="12,8" />
         <Setter Property="CornerRadius" Value="8" />
         <Setter Property="FontSize" Value="12" />
         <Setter Property="MinHeight" Value="36" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="Button">
-                    <Grid x:Name="RootGrid"
-                          Background="{TemplateBinding Background}"
-                          CornerRadius="{TemplateBinding CornerRadius}">
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal" />
-                                <VisualState x:Name="PointerOver">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
-                                                                       Storyboard.TargetProperty="Background">
-                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource ButtonBackgroundPointerOver}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="Pressed">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
-                                                                       Storyboard.TargetProperty="Background">
-                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource ButtonBackgroundPressed}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="Disabled">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
-                                                                       Storyboard.TargetProperty="Background">
-                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource ButtonBackgroundDisabled}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
-                                                                       Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource ButtonForegroundDisabled}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
-                        <ContentPresenter x:Name="ContentPresenter"
-                                          AutomationProperties.AccessibilityView="Raw"
-                                          Content="{TemplateBinding Content}"
-                                          ContentTemplate="{TemplateBinding ContentTemplate}"
-                                          ContentTransitions="{TemplateBinding ContentTransitions}"
-                                          Foreground="{TemplateBinding Foreground}"
-                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                          Padding="{TemplateBinding Padding}" />
-                    </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
     </Style>
 
     <!--
@@ -99,10 +43,19 @@
                                           Padding="{TemplateBinding Padding}" />
                         <Border x:Name="HoverOverlay" Background="Black" Opacity="0"
                                 CornerRadius="{TemplateBinding CornerRadius}" />
-                        <FontIcon x:Name="PlayIcon" Glyph="" FontSize="20" Foreground="White" Opacity="0" />
+                        <FontIcon x:Name="PlayIcon" Glyph="" FontSize="20" Opacity="0" RenderTransformOrigin="0.5,0.5">
+                            <FontIcon.RenderTransform>
+                                <ScaleTransform x:Name="IconScale" />
+                            </FontIcon.RenderTransform>
+                        </FontIcon>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="Normal">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="IconScale" Storyboard.TargetProperty="ScaleX" To="1.0" Duration="0:0:0.2" EasingFunction="{StaticResource CubicEaseOut}" />
+                                        <DoubleAnimation Storyboard.TargetName="IconScale" Storyboard.TargetProperty="ScaleY" To="1.0" Duration="0:0:0.2" EasingFunction="{StaticResource CubicEaseOut}" />
+                                    </Storyboard>
+                                </VisualState>
                                 <VisualState x:Name="PointerOver">
                                     <Storyboard>
                                         <DoubleAnimation Storyboard.TargetName="HoverOverlay"
@@ -111,6 +64,8 @@
                                         <DoubleAnimation Storyboard.TargetName="PlayIcon"
                                                          Storyboard.TargetProperty="Opacity"
                                                          To="1" Duration="0:0:0.1" />
+                                        <DoubleAnimation Storyboard.TargetName="IconScale" Storyboard.TargetProperty="ScaleX" To="1.15" Duration="0:0:0.2" EasingFunction="{StaticResource CubicEaseOut}" />
+                                        <DoubleAnimation Storyboard.TargetName="IconScale" Storyboard.TargetProperty="ScaleY" To="1.15" Duration="0:0:0.2" EasingFunction="{StaticResource CubicEaseOut}" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
@@ -121,14 +76,16 @@
                                         <DoubleAnimation Storyboard.TargetName="PlayIcon"
                                                          Storyboard.TargetProperty="Opacity"
                                                          To="0.8" Duration="0:0:0.1" />
+                                        <DoubleAnimation Storyboard.TargetName="IconScale" Storyboard.TargetProperty="ScaleX" To="0.9" Duration="0:0:0.1" EasingFunction="{StaticResource CubicEaseOut}" />
+                                        <DoubleAnimation Storyboard.TargetName="IconScale" Storyboard.TargetProperty="ScaleY" To="0.9" Duration="0:0:0.1" EasingFunction="{StaticResource CubicEaseOut}" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
-                                                                       Storyboard.TargetProperty="Opacity">
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlayIcon"
+                                                                       Storyboard.TargetProperty="Foreground">
                                             <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource ListViewItemDisabledThemeOpacity}" />
+                                                                    Value="{ThemeResource TextFillColorDisabledBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -160,84 +117,99 @@
     <!--
      Defines the style for clickable links within a song list, such as artist or album names.
      -->
-    <Style x:Key="SongListHyperlinkButtonStyle" TargetType="HyperlinkButton">
+    <Style x:Key="SongListHyperlinkButtonStyle" TargetType="HyperlinkButton" BasedOn="{StaticResource AnimatedHyperlinkButtonStyle}">
         <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondary}" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="FontSize" Value="13" />
         <Setter Property="Padding" Value="0" />
         <Setter Property="HorizontalAlignment" Value="Left" />
+    </Style>
+
+    <!-- ListView Item Style -->
+    <Style x:Key="SongListViewPageListViewItemStyle" TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
+        <Setter Property="Margin" Value="0,1" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="MinHeight" Value="54" />
+        <Setter Property="CornerRadius" Value="8" />
+    </Style>
+
+    <Style x:Key="SearchTextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource DefaultTextBoxStyle}">
+        <Setter Property="Background" Value="{ThemeResource ControlFillColorDefaultBrush}" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Padding" Value="12,8,40,8" />
+        <Setter Property="Height" Value="36" />
+        <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="HyperlinkButton">
-                    <Grid x:Name="RootGrid"
-                          Background="{TemplateBinding Background}">
-                        <ContentPresenter x:Name="ContentPresenter"
-                                          Content="{TemplateBinding Content}"
-                                          ContentTemplate="{TemplateBinding ContentTemplate}"
-                                          Padding="{TemplateBinding Padding}"
-                                          HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
-                                          VerticalAlignment="{TemplateBinding VerticalAlignment}" />
+                <ControlTemplate TargetType="TextBox">
+                    <Grid x:Name="RootGrid" RenderTransformOrigin="0.5,0.5">
+                        <Grid.RenderTransform>
+                            <ScaleTransform x:Name="BoxScale" />
+                        </Grid.RenderTransform>
+                        <ContentPresenter x:Name="HeaderContentPresenter"
+                                          Grid.Row="0"
+                                          Content="{TemplateBinding Header}"
+                                          ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                          Visibility="Collapsed" />
+                        <Border x:Name="BackgroundElement"
+                                Grid.Row="1"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="{TemplateBinding CornerRadius}"
+                                MinWidth="{TemplateBinding MinWidth}"
+                                MinHeight="{TemplateBinding MinHeight}" />
+                        <ScrollViewer x:Name="ContentElement"
+                                      Grid.Row="1"
+                                      Margin="{TemplateBinding BorderThickness}"
+                                      Padding="{TemplateBinding Padding}"
+                                      IsTabStop="False"
+                                      AutomationProperties.AccessibilityView="Raw"
+                                      HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                                      VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
+                                      IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}"
+                                      IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}"
+                                      IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
+                                      ZoomMode="Disabled" />
+                        <TextBlock x:Name="PlaceholderTextContentPresenter"
+                                   Grid.Row="1"
+                                   Margin="{TemplateBinding BorderThickness}"
+                                   Padding="{TemplateBinding Padding}"
+                                   Text="{TemplateBinding PlaceholderText}"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                   IsHitTestVisible="False"
+                                   VerticalAlignment="Center" />
+                        
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="Normal">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="BoxScale" Storyboard.TargetProperty="ScaleX" To="1.0" Duration="0:0:0.2" EasingFunction="{StaticResource CubicEaseOut}" />
+                                        <DoubleAnimation Storyboard.TargetName="BoxScale" Storyboard.TargetProperty="ScaleY" To="1.0" Duration="0:0:0.2" EasingFunction="{StaticResource CubicEaseOut}" />
+                                    </Storyboard>
+                                </VisualState>
                                 <VisualState x:Name="PointerOver">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
-                                                                       Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{StaticResource AppPrimaryColorBrush}" />
-                                        </ObjectAnimationUsingKeyFrames>
+                                        <DoubleAnimation Storyboard.TargetName="BoxScale" Storyboard.TargetProperty="ScaleX" To="1.01" Duration="0:0:0.3" EasingFunction="{StaticResource CubicEaseOut}" />
+                                        <DoubleAnimation Storyboard.TargetName="BoxScale" Storyboard.TargetProperty="ScaleY" To="1.01" Duration="0:0:0.3" EasingFunction="{StaticResource CubicEaseOut}" />
                                     </Storyboard>
                                 </VisualState>
-                                <VisualState x:Name="Pressed">
+                                <VisualState x:Name="Focused">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
-                                                                       Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{StaticResource AppPrimaryColorBrush}" />
-                                        </ObjectAnimationUsingKeyFrames>
+                                        <DoubleAnimation Storyboard.TargetName="BoxScale" Storyboard.TargetProperty="ScaleX" To="1.02" Duration="0:0:0.3" EasingFunction="{StaticResource CubicEaseOut}" />
+                                        <DoubleAnimation Storyboard.TargetName="BoxScale" Storyboard.TargetProperty="ScaleY" To="1.02" Duration="0:0:0.3" EasingFunction="{StaticResource CubicEaseOut}" />
                                     </Storyboard>
                                 </VisualState>
-                                <VisualState x:Name="Disabled">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
-                                                                       Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource TextFillColorDisabledBrush}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
+                                <VisualState x:Name="Disabled" />
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-    </Style>
-
-    <!--
-    Defines a custom style for ListViewItems used in song lists.
-    -->
-    <Style x:Key="SongListViewPageListViewItemStyle" TargetType="ListViewItem"
-           BasedOn="{StaticResource DefaultListViewItemStyle}">
-        <Setter Property="Padding" Value="0,4" />
-        <Setter Property="MinHeight" Value="52" />
-        <Setter Property="CornerRadius" Value="8" />
-    </Style>
-
-    <!--
-    Defines the style for the expanding search box in the page header.
-    The focused accent color is applied separately on the control instance.
-    -->
-    <Style x:Key="SearchTextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource DefaultTextBoxStyle}">
-        <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
-        <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="8" />
-        <Setter Property="FontSize" Value="13" />
-        <Setter Property="Padding" Value="12,8,40,8" />
-        <Setter Property="Height" Value="36" />
-        <Setter Property="VerticalAlignment" Value="Center" />
     </Style>
 
 </ResourceDictionary>

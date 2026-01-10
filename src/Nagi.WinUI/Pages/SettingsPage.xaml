@@ -119,6 +119,7 @@
                                     <HyperlinkButton
                                         VerticalAlignment="Center"
                                         Command="{x:Bind ViewModel.ResetAccentColorCommand}"
+                                        Style="{StaticResource AnimatedHyperlinkButtonStyle}"
                                         Content="Reset to default"
                                         FontSize="12"
                                         Padding="4,2" />
@@ -276,6 +277,7 @@
                             <HyperlinkButton
                                 VerticalAlignment="Center"
                                 Command="{x:Bind ViewModel.ResetEqualizerCommand}"
+                                Style="{StaticResource AnimatedHyperlinkButtonStyle}"
                                 Content="Reset to default"
                                 FontSize="12"
                                 Padding="4,2" />
@@ -362,6 +364,7 @@
                             <HyperlinkButton
                                 VerticalAlignment="Center"
                                 Command="{x:Bind ViewModel.ResetPlayerButtonsCommand}"
+                                Style="{StaticResource AnimatedHyperlinkButtonStyle}"
                                 Content="Reset to default"
                                 FontSize="12"
                                 Padding="4,2" />
@@ -438,13 +441,14 @@
                                             <Border
                                                 x:Name="HoverHighlight"
                                                 Background="{ThemeResource SubtleFillColorSecondaryBrush}"
-                                                CornerRadius="6" />
+                                                CornerRadius="6"
+                                                Visibility="{x:Bind IsNotSeparator, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                                             <!-- Separator visual -->
                                             <Border
                                                 x:Name="SeparatorVisual"
                                                 Width="2"
-                                                Height="64"
+                                                Height="90"
                                                 HorizontalAlignment="Center"
                                                 VerticalAlignment="Center"
                                                 Background="{ThemeResource TextFillColorSecondaryBrush}"
@@ -783,9 +787,11 @@
                             <StackPanel Orientation="Horizontal">
                                 <HyperlinkButton
                                     Content="View Licenses"
+                                    Style="{StaticResource AnimatedHyperlinkButtonStyle}"
                                     NavigateUri="https://github.com/Anthonyy232/Nagi/blob/master/LICENSE" />
                                 <HyperlinkButton
                                     Content="Source Code"
+                                    Style="{StaticResource AnimatedHyperlinkButtonStyle}"
                                     NavigateUri="https://github.com/Anthonyy232/Nagi" />
                             </StackPanel>
                         </controls:SettingsCard>
@@ -811,9 +817,11 @@
                     <HyperlinkButton
                         Command="{x:Bind ViewModel.CheckForUpdatesManuallyCommand}"
                         Content="Check for Updates"
+                        Style="{StaticResource AnimatedHyperlinkButtonStyle}"
                         Visibility="{x:Bind ViewModel.IsUpdateControlVisible, Mode=OneWay}" />
                     <HyperlinkButton
                         Content="Send Feedback"
+                        Style="{StaticResource AnimatedHyperlinkButtonStyle}"
                         NavigateUri="mailto:anthonyyla.dev@gmail.com" />
                 </StackPanel>
             </StackPanel>

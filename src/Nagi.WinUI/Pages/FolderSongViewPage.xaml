@@ -167,7 +167,7 @@
                         <ObjectAnimationUsingKeyFrames
                             Storyboard.TargetName="SearchIcon"
                             Storyboard.TargetProperty="Glyph">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="" />
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="&#xE721;" />
                             <DiscreteObjectKeyFrame KeyTime="0:0:0.3" Value="&#xE721;" />
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
@@ -256,6 +256,7 @@
                                     Content="{x:Bind Name}"
                                     Command="{Binding DataContext.NavigateToBreadcrumbCommand, ElementName=pageRoot}"
                                     CommandParameter="{x:Bind}"
+                                    Style="{StaticResource AnimatedHyperlinkButtonStyle}"
                                     IsEnabled="{x:Bind IsLast, Converter={StaticResource BooleanToInverseBooleanConverter}, Mode=OneWay}"
                                     FontSize="13"
                                     Foreground="{StaticResource AppPrimaryColorBrush}"
@@ -314,7 +315,7 @@
 
                     <Button Command="{x:Bind ViewModel.PlayAllSongsCommand}"
                             Style="{StaticResource SongListViewPageIconButton}" ToolTipService.ToolTip="Play all">
-                        <FontIcon FontSize="16" Foreground="{StaticResource AppPrimaryColorBrush}" Glyph="" />
+                        <FontIcon FontSize="16" Glyph="" />
                     </Button>
 
                     <Button Command="{x:Bind ViewModel.ShuffleAndPlayAllSongsCommand}"
