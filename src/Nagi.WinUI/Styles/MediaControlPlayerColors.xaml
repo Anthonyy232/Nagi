@@ -12,80 +12,15 @@ across the application's media player interface.
     xmlns:animation="using:Microsoft.UI.Xaml.Media.Animation"
     xmlns:primitives="using:Microsoft.UI.Xaml.Controls.Primitives">
 
-    <animation:CubicEase x:Key="CubicEaseOut" EasingMode="EaseOut" />
+
 
     <!--
     Base style for all circular media control buttons.
     It defines a common appearance and interaction behavior (pointer over, pressed).
     The foreground color is bound to the application's primary color brush.
     -->
-    <Style x:Key="MediaControlButtonStyle" TargetType="Button">
-        <Setter Property="Background" Value="Transparent" />
+    <Style x:Key="MediaControlButtonStyle" TargetType="Button" BasedOn="{StaticResource AnimatedIconButtonStyle}">
         <Setter Property="Foreground" Value="{StaticResource AppPrimaryColorBrush}" />
-        <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="Padding" Value="8" />
-        <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
-        <Setter Property="HorizontalAlignment" Value="Center" />
-        <Setter Property="VerticalAlignment" Value="Center" />
-        <Setter Property="Height" Value="40" />
-        <Setter Property="Width" Value="40" />
-        <Setter Property="UseSystemFocusVisuals" Value="True" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="Button">
-                        <Grid x:Name="RootGrid"
-                              Background="{TemplateBinding Background}"
-                              CornerRadius="{TemplateBinding CornerRadius}">
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Normal" />
-                                    <VisualState x:Name="PointerOver">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
-                                                                           Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{ThemeResource ControlFillColorSecondaryBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Pressed">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
-                                                                           Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{ThemeResource ControlFillColorTertiaryBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Disabled">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid"
-                                                                           Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{ThemeResource ControlFillColorDisabledBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
-                                                                           Storyboard.TargetProperty="Foreground">
-                                                <DiscreteObjectKeyFrame KeyTime="0"
-                                                                        Value="{ThemeResource TextFillColorDisabledBrush}" />
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                        <ContentPresenter x:Name="ContentPresenter"
-                                          AutomationProperties.AccessibilityView="Raw"
-                                          Content="{TemplateBinding Content}"
-                                          ContentTemplate="{TemplateBinding ContentTemplate}"
-                                          ContentTransitions="{TemplateBinding ContentTransitions}"
-                                          Foreground="{TemplateBinding Foreground}"
-                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                          Padding="{TemplateBinding Padding}" />
-                    </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
     </Style>
 
     <!-- Styles for specific media buttons, inheriting from the base style. -->
@@ -110,7 +45,10 @@ across the application's media player interface.
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="primitives:Thumb">
-                    <Grid>
+                    <Grid RenderTransformOrigin="0.5,0.5">
+                        <Grid.RenderTransform>
+                            <ScaleTransform x:Name="thumbScale" />
+                        </Grid.RenderTransform>
                         <Ellipse x:Name="ThumbVisual"
                                  Fill="{TemplateBinding Background}"
                                  Width="{TemplateBinding Width}"
@@ -119,9 +57,24 @@ across the application's media player interface.
                                  StrokeThickness="1" />
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal" />
-                                <VisualState x:Name="PointerOver" />
-                                <VisualState x:Name="Pressed" />
+                                <VisualState x:Name="Normal">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="thumbScale" Storyboard.TargetProperty="ScaleX" To="1.0" Duration="0:0:0.2" EasingFunction="{StaticResource CubicEaseOut}" />
+                                        <DoubleAnimation Storyboard.TargetName="thumbScale" Storyboard.TargetProperty="ScaleY" To="1.0" Duration="0:0:0.2" EasingFunction="{StaticResource CubicEaseOut}" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="thumbScale" Storyboard.TargetProperty="ScaleX" To="1.25" Duration="0:0:0.3" EasingFunction="{StaticResource CubicEaseOut}" />
+                                        <DoubleAnimation Storyboard.TargetName="thumbScale" Storyboard.TargetProperty="ScaleY" To="1.25" Duration="0:0:0.3" EasingFunction="{StaticResource CubicEaseOut}" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="thumbScale" Storyboard.TargetProperty="ScaleX" To="0.9" Duration="0:0:0.1" EasingFunction="{StaticResource CubicEaseOut}" />
+                                        <DoubleAnimation Storyboard.TargetName="thumbScale" Storyboard.TargetProperty="ScaleY" To="0.9" Duration="0:0:0.1" EasingFunction="{StaticResource CubicEaseOut}" />
+                                    </Storyboard>
+                                </VisualState>
                                 <VisualState x:Name="Disabled">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ThumbVisual"
@@ -156,7 +109,10 @@ across the application's media player interface.
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="primitives:Thumb">
-                    <Grid>
+                    <Grid RenderTransformOrigin="0.5,0.5">
+                        <Grid.RenderTransform>
+                            <ScaleTransform x:Name="volThumbScale" />
+                        </Grid.RenderTransform>
                         <Ellipse x:Name="ThumbVisual"
                                  Fill="{TemplateBinding Background}"
                                  Width="{TemplateBinding Width}"
@@ -165,9 +121,24 @@ across the application's media player interface.
                                  StrokeThickness="1" />
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal" />
-                                <VisualState x:Name="PointerOver" />
-                                <VisualState x:Name="Pressed" />
+                                <VisualState x:Name="Normal">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="volThumbScale" Storyboard.TargetProperty="ScaleX" To="1.0" Duration="0:0:0.2" EasingFunction="{StaticResource CubicEaseOut}" />
+                                        <DoubleAnimation Storyboard.TargetName="volThumbScale" Storyboard.TargetProperty="ScaleY" To="1.0" Duration="0:0:0.2" EasingFunction="{StaticResource CubicEaseOut}" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="volThumbScale" Storyboard.TargetProperty="ScaleX" To="1.25" Duration="0:0:0.3" EasingFunction="{StaticResource CubicEaseOut}" />
+                                        <DoubleAnimation Storyboard.TargetName="volThumbScale" Storyboard.TargetProperty="ScaleY" To="1.25" Duration="0:0:0.3" EasingFunction="{StaticResource CubicEaseOut}" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="volThumbScale" Storyboard.TargetProperty="ScaleX" To="0.9" Duration="0:0:0.1" EasingFunction="{StaticResource CubicEaseOut}" />
+                                        <DoubleAnimation Storyboard.TargetName="volThumbScale" Storyboard.TargetProperty="ScaleY" To="0.9" Duration="0:0:0.1" EasingFunction="{StaticResource CubicEaseOut}" />
+                                    </Storyboard>
+                                </VisualState>
                                 <VisualState x:Name="Disabled">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ThumbVisual"

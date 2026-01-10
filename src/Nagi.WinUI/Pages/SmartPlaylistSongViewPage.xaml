@@ -47,7 +47,7 @@
                         <ObjectAnimationUsingKeyFrames
                             Storyboard.TargetName="SearchIcon"
                             Storyboard.TargetProperty="Glyph">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="" />
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="&#xE721;" />
                             <DiscreteObjectKeyFrame KeyTime="0:0:0.3" Value="&#xE721;" />
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
@@ -189,7 +189,7 @@
 
                     <Button Style="{StaticResource SongListViewPageIconButton}" ToolTipService.ToolTip="Play all"
                             Command="{x:Bind ViewModel.PlayAllSongsCommand}">
-                        <FontIcon Glyph="" FontSize="16" Foreground="{StaticResource AppPrimaryColorBrush}" />
+                        <FontIcon Glyph="" FontSize="16" />
                     </Button>
 
                     <Button Style="{StaticResource SongListViewPageIconButton}"
@@ -319,6 +319,7 @@
                 HorizontalAlignment="Center"
                 Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
             <Button
+                Style="{StaticResource AnimatedAccentButtonStyle}"
                 Content="Edit Rules"
                 Click="EditRulesButton_Click"
                 HorizontalAlignment="Center"
