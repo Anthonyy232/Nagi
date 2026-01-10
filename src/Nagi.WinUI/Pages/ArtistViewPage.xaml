@@ -10,7 +10,6 @@
     xmlns:models="using:Nagi.Core.Models"
     xmlns:helpers="using:Nagi.Core.Helpers"
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
-    xmlns:behaviors="using:Nagi.WinUI.Behaviors"
     x:Name="pageRoot"
     Background="Transparent"
     mc:Ignorable="d">
@@ -176,11 +175,7 @@
                                     Width="180"
                                     Height="220"
                                     Margin="8,16,8,16"
-                                    Background="Transparent"
-                                    behaviors:AnimationBehaviors.EnableTiltAnimation="True"
-                                    behaviors:AnimationBehaviors.EnableScaleAnimation="True"
-                                    behaviors:AnimationBehaviors.HoverScale="1.0"
-                                    behaviors:AnimationBehaviors.PressedScale="0.98">
+                                    Background="Transparent">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="*" />
                                         <RowDefinition Height="Auto" />

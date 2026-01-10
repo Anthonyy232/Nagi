@@ -2,8 +2,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:animation="using:Microsoft.UI.Xaml.Media.Animation"
-    xmlns:primitives="using:Microsoft.UI.Xaml.Controls.Primitives"
-    xmlns:behaviors="using:Nagi.WinUI.Behaviors">
+    xmlns:primitives="using:Microsoft.UI.Xaml.Controls.Primitives">
 
     <!-- Easing function for animations -->
     <animation:CubicEase x:Key="CubicEaseOut" EasingMode="EaseOut" />
@@ -39,10 +38,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
                     <Grid x:Name="RootGrid"
-                          Background="Transparent"
-                          behaviors:AnimationBehaviors.EnableScaleAnimation="True"
-                          behaviors:AnimationBehaviors.HoverScale="1.05"
-                          behaviors:AnimationBehaviors.PressedScale="0.95">
+                          Background="Transparent">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -64,11 +60,7 @@
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="{TemplateBinding CornerRadius}"
-                            behaviors:AnimationBehaviors.EnableFadeAnimation="True"
-                            behaviors:AnimationBehaviors.HoverOpacity="0.8"
-                            behaviors:AnimationBehaviors.PressedOpacity="0.6"
-                            behaviors:AnimationBehaviors.NormalOpacity="1.0">
+                            CornerRadius="{TemplateBinding CornerRadius}">
                             <ContentPresenter
                                 x:Name="ContentPresenter"
                                 Padding="{TemplateBinding Padding}"
@@ -96,9 +88,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="primitives:Thumb">
-                    <Grid behaviors:AnimationBehaviors.EnableScaleAnimation="True"
-                           behaviors:AnimationBehaviors.HoverScale="1.25"
-                           behaviors:AnimationBehaviors.PressedScale="1.1">
+                    <Grid>
                         <Ellipse x:Name="ThumbVisual"
                                  Fill="{TemplateBinding Background}"
                                  Width="{TemplateBinding Width}"
