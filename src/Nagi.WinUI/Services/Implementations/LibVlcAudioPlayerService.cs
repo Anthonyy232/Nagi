@@ -26,7 +26,8 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     private readonly CancellationTokenSource _disposeCts = new();
     
     // Lazy initialization support
-    private readonly object _initLock = new();
+    private readonly SemaphoreSlim _initSemaphore = new(1, 1);
+    private Task? _initTask;
     private volatile bool _isInitialized;
     
     // Deferred LibVLC components (nullable until initialized)
@@ -56,53 +57,97 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         _logger = logger;
     }
 
-    /// <summary>
-    ///     Ensures LibVLC is initialized. Thread-safe and idempotent.
-    ///     Can be called from background thread to pre-warm the audio engine.
-    /// </summary>
+    /// <inheritdoc />
     public void EnsureInitialized()
     {
-        // Fast-path: already initialized or disposed (avoid lock acquisition)
-        if (_isInitialized || _isDisposed) return;
+        // Sync callers block on the async initialization
+        EnsureInitializedAsync().GetAwaiter().GetResult();
+    }
+
+    /// <inheritdoc />
+    public Task EnsureInitializedAsync()
+    {
+        // Fast-path: already initialized or disposed
+        if (_isInitialized || _isDisposed) return Task.CompletedTask;
         
-        lock (_initLock)
+        // Fast-path: if initialization is in progress, await the existing task
+        var task = _initTask;
+        if (task is not null) return task;
+        
+        return EnsureInitializedCoreAsync();
+    }
+
+    private async Task EnsureInitializedCoreAsync()
+    {
+        await _initSemaphore.WaitAsync().ConfigureAwait(false);
+        try
         {
-            // Double-check after acquiring lock
+            // Double-check after acquiring semaphore
             if (_isInitialized || _isDisposed) return;
 
-            _logger.LogDebug("Initializing LibVLC core (deferred).");
-
-            var vlcOptions = new[]
+            // If another caller set _initTask while we waited, await it
+            if (_initTask is not null)
             {
-                "--no-video", "--no-spu", "--no-osd", "--no-stats", "--ignore-config",
-                "--no-one-instance", "--no-lua", "--verbose=-1", "--audio-filter=equalizer",
-                "--demux=avcodec"
-            };
+                await _initTask.ConfigureAwait(false);
+                return;
+            }
 
-            _logger.LogDebug("Initializing LibVLC with options: {VlcOptions}", string.Join(" ", vlcOptions));
-            _libVlc = new LibVLC(false, vlcOptions);
-            _mediaPlayer = new MediaPlayer(_libVlc);
-            _dummyMediaPlayer = new WinMediaPlayback.MediaPlayer { CommandManager = { IsEnabled = false } };
-
-            _equalizer = new Equalizer();
-            _basePreamp = _equalizer.Preamp;
-            _mediaPlayer.SetEqualizer(_equalizer);
-
-            // Register event handlers
-            _mediaPlayer.PositionChanged += OnMediaPlayerPositionChanged;
-            _mediaPlayer.Playing += OnMediaPlayerStateChanged;
-            _mediaPlayer.Paused += OnMediaPlayerStateChanged;
-            _mediaPlayer.Stopped += OnMediaPlayerStateChanged;
-            _mediaPlayer.EncounteredError += OnMediaPlayerEncounteredError;
-            _mediaPlayer.MediaChanged += OnMediaPlayerMediaChanged;
-            _mediaPlayer.LengthChanged += OnMediaPlayerLengthChanged;
-            _mediaPlayer.VolumeChanged += OnMediaPlayerVolumeChanged;
-            _mediaPlayer.Muted += OnMediaPlayerMuteChanged;
-            _mediaPlayer.Unmuted += OnMediaPlayerMuteChanged;
-
-            _isInitialized = true;
-            _logger.LogDebug("LibVLC initialization complete.");
+            // Create a task that other callers can await while we hold the semaphore
+            var tcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            _initTask = tcs.Task;
+            
+            try
+            {
+                InitializeLibVlcCore();
+                tcs.SetResult();
+            }
+            catch (Exception ex)
+            {
+                _initTask = null; // Allow retry on failure
+                tcs.SetException(ex);
+                throw;
+            }
         }
+        finally
+        {
+            _initSemaphore.Release();
+        }
+    }
+
+    private void InitializeLibVlcCore()
+    {
+        _logger.LogDebug("Initializing LibVLC core (deferred).");
+
+        var vlcOptions = new[]
+        {
+            "--no-video", "--no-spu", "--no-osd", "--no-stats", "--ignore-config",
+            "--no-one-instance", "--no-lua", "--verbose=-1", "--audio-filter=equalizer",
+            "--demux=avcodec"
+        };
+
+        _logger.LogDebug("Initializing LibVLC with options: {VlcOptions}", string.Join(" ", vlcOptions));
+        _libVlc = new LibVLC(false, vlcOptions);
+        _mediaPlayer = new MediaPlayer(_libVlc);
+        _dummyMediaPlayer = new WinMediaPlayback.MediaPlayer { CommandManager = { IsEnabled = false } };
+
+        _equalizer = new Equalizer();
+        _basePreamp = _equalizer.Preamp;
+        _mediaPlayer.SetEqualizer(_equalizer);
+
+        // Register event handlers
+        _mediaPlayer.PositionChanged += OnMediaPlayerPositionChanged;
+        _mediaPlayer.Playing += OnMediaPlayerStateChanged;
+        _mediaPlayer.Paused += OnMediaPlayerStateChanged;
+        _mediaPlayer.Stopped += OnMediaPlayerStateChanged;
+        _mediaPlayer.EncounteredError += OnMediaPlayerEncounteredError;
+        _mediaPlayer.MediaChanged += OnMediaPlayerMediaChanged;
+        _mediaPlayer.LengthChanged += OnMediaPlayerLengthChanged;
+        _mediaPlayer.VolumeChanged += OnMediaPlayerVolumeChanged;
+        _mediaPlayer.Muted += OnMediaPlayerMuteChanged;
+        _mediaPlayer.Unmuted += OnMediaPlayerMuteChanged;
+
+        _isInitialized = true;
+        _logger.LogDebug("LibVLC initialization complete.");
     }
 
     public event Action? PlaybackEnded, PositionChanged, StateChanged, VolumeChanged, MediaOpened, DurationChanged;
@@ -378,11 +423,17 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     {
         if (_isDisposed) return;
         
-        // Hold the init lock during disposal to prevent race with EnsureInitialized()
-        lock (_initLock)
+        // Try to acquire semaphore with timeout to prevent deadlock if init is in progress
+        // If timeout, just set _isDisposed flag - init will check it when it completes
+        var acquired = _initSemaphore.Wait(millisecondsTimeout: 1000);
+        try
         {
             if (_isDisposed) return;
             _isDisposed = true;
+        }
+        finally
+        {
+            if (acquired) _initSemaphore.Release();
         }
 
         _disposeCts.Cancel();
@@ -451,6 +502,8 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
             // Ignore RO_E_CLOSED or other specific COM errors during shutdown
             _logger?.LogDebug(ex, "Error disposing dummy media player.");
         }
+
+        _initSemaphore.Dispose();
         
         GC.SuppressFinalize(this);
     }
