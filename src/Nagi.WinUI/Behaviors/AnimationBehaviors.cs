@@ -114,46 +114,6 @@ public static class AnimationBehaviors
 
     #endregion
 
-    #region FadeTrigger Attached Property
-
-    /// <summary>
-    /// Gets the element that triggers the fade animation on hover.
-    /// If null, the element itself will be the trigger.
-    /// </summary>
-    public static UIElement GetFadeTrigger(DependencyObject obj)
-        => (UIElement)obj.GetValue(FadeTriggerProperty);
-
-    /// <summary>
-    /// Sets the element that triggers the fade animation on hover.
-    /// If null, the element itself will be the trigger.
-    /// </summary>
-    public static void SetFadeTrigger(DependencyObject obj, UIElement value)
-        => obj.SetValue(FadeTriggerProperty, value);
-
-    public static readonly DependencyProperty FadeTriggerProperty =
-        DependencyProperty.RegisterAttached(
-            "FadeTrigger",
-            typeof(UIElement),
-            typeof(AnimationBehaviors),
-            new PropertyMetadata(null, OnFadeTriggerChanged));
-
-    private static void OnFadeTriggerChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        if (d is not FrameworkElement element || !GetEnableFadeAnimation(element))
-            return;
-
-        // If already loaded, re-setup to hook new trigger
-        if (element.IsLoaded && e.NewValue is UIElement)
-        {
-            var hoverOpacity = GetHoverOpacity(element);
-            var normalOpacity = GetNormalOpacity(element);
-            var pressedOpacity = GetPressedOpacity(element);
-            SetupFadeImplicitAnimations(element, (float)hoverOpacity, (float)normalOpacity, (float)pressedOpacity);
-        }
-    }
-
-    #endregion
-
     #region EnableScaleAnimation Attached Property
 
     /// <summary>
@@ -373,7 +333,7 @@ public static class AnimationBehaviors
         implicitAnimations["Opacity"] = fadeAnimation;
         visual.ImplicitAnimations = implicitAnimations;
 
-        var trigger = GetFadeTrigger(element) ?? element;
+        var trigger = FindParentContainer(element) ?? element;
 
         bool isPointerOver = false;
         bool isPressed = false;
@@ -438,6 +398,25 @@ public static class AnimationBehaviors
 
     private static readonly DependencyProperty FadeCleanupActionProperty =
         DependencyProperty.RegisterAttached("FadeCleanupAction", typeof(Action), typeof(AnimationBehaviors), new PropertyMetadata(null));
+
+    /// <summary>
+    /// Walks up the visual tree to find the first Grid ancestor.
+    /// Grids are the common container pattern in templates for hover/press interactions.
+    /// </summary>
+    private static UIElement? FindParentContainer(UIElement element)
+    {
+        var current = (element as FrameworkElement)?.Parent as FrameworkElement;
+
+        while (current != null)
+        {
+            if (current is Microsoft.UI.Xaml.Controls.Grid)
+                return current;
+
+            current = current.Parent as FrameworkElement;
+        }
+
+        return null;
+    }
 
     private static void SetupTiltAnimation(UIElement element)
     {

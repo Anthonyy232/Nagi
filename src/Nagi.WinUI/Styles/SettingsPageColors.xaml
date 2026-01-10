@@ -68,8 +68,7 @@
                             behaviors:AnimationBehaviors.EnableFadeAnimation="True"
                             behaviors:AnimationBehaviors.HoverOpacity="0.8"
                             behaviors:AnimationBehaviors.PressedOpacity="0.6"
-                            behaviors:AnimationBehaviors.NormalOpacity="1.0"
-                            behaviors:AnimationBehaviors.FadeTrigger="{Binding ElementName=RootGrid}">
+                            behaviors:AnimationBehaviors.NormalOpacity="1.0">
                             <ContentPresenter
                                 x:Name="ContentPresenter"
                                 Padding="{TemplateBinding Padding}"

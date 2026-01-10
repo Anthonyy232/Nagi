@@ -109,13 +109,11 @@
                                 behaviors:AnimationBehaviors.EnableFadeAnimation="True"
                                 behaviors:AnimationBehaviors.NormalOpacity="0"
                                 behaviors:AnimationBehaviors.HoverOpacity="0.5"
-                                behaviors:AnimationBehaviors.PressedOpacity="0.625"
-                                behaviors:AnimationBehaviors.FadeTrigger="{Binding ElementName=RootGrid}" />
+                                behaviors:AnimationBehaviors.PressedOpacity="0.625" />
                         <FontIcon x:Name="PlayIcon" Glyph="" FontSize="20" Foreground="White"
                                   behaviors:AnimationBehaviors.EnableFadeAnimation="True"
                                   behaviors:AnimationBehaviors.NormalOpacity="0"
-                                  behaviors:AnimationBehaviors.HoverOpacity="1"
-                                  behaviors:AnimationBehaviors.FadeTrigger="{Binding ElementName=RootGrid}" />
+                                  behaviors:AnimationBehaviors.HoverOpacity="1" />
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
