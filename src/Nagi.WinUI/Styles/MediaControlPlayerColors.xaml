@@ -10,8 +10,7 @@ across the application's media player interface.
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:Microsoft.UI.Xaml.Controls"
     xmlns:animation="using:Microsoft.UI.Xaml.Media.Animation"
-    xmlns:primitives="using:Microsoft.UI.Xaml.Controls.Primitives"
-    xmlns:behaviors="using:Nagi.WinUI.Behaviors">
+    xmlns:primitives="using:Microsoft.UI.Xaml.Controls.Primitives">
 
     <animation:CubicEase x:Key="CubicEaseOut" EasingMode="EaseOut" />
 
@@ -36,10 +35,7 @@ across the application's media player interface.
                 <ControlTemplate TargetType="Button">
                         <Grid x:Name="RootGrid"
                               Background="{TemplateBinding Background}"
-                              CornerRadius="{TemplateBinding CornerRadius}"
-                              behaviors:AnimationBehaviors.EnableScaleAnimation="True"
-                              behaviors:AnimationBehaviors.HoverScale="1.1"
-                              behaviors:AnimationBehaviors.PressedScale="0.95">
+                              CornerRadius="{TemplateBinding CornerRadius}">
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup x:Name="CommonStates">
                                     <VisualState x:Name="Normal" />
@@ -114,9 +110,7 @@ across the application's media player interface.
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="primitives:Thumb">
-                    <Grid behaviors:AnimationBehaviors.EnableScaleAnimation="True"
-                          behaviors:AnimationBehaviors.HoverScale="1.25"
-                          behaviors:AnimationBehaviors.PressedScale="1.1">
+                    <Grid>
                         <Ellipse x:Name="ThumbVisual"
                                  Fill="{TemplateBinding Background}"
                                  Width="{TemplateBinding Width}"
@@ -162,9 +156,7 @@ across the application's media player interface.
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="primitives:Thumb">
-                    <Grid behaviors:AnimationBehaviors.EnableScaleAnimation="True"
-                          behaviors:AnimationBehaviors.HoverScale="1.25"
-                          behaviors:AnimationBehaviors.PressedScale="1.1">
+                    <Grid>
                         <Ellipse x:Name="ThumbVisual"
                                  Fill="{TemplateBinding Background}"
                                  Width="{TemplateBinding Width}"
@@ -356,10 +348,7 @@ across the application's media player interface.
                 <ControlTemplate TargetType="ListViewItem">
                     <Grid x:Name="RootGrid"
                           Background="{TemplateBinding Background}"
-                          CornerRadius="{ThemeResource ControlCornerRadius}"
-                          behaviors:AnimationBehaviors.EnableScaleAnimation="True"
-                          behaviors:AnimationBehaviors.HoverScale="1.02"
-                          behaviors:AnimationBehaviors.PressedScale="0.98">
+                          CornerRadius="{ThemeResource ControlCornerRadius}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />

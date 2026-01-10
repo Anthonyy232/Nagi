@@ -1,7 +1,6 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:behaviors="using:Nagi.WinUI.Behaviors">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <!--
     This dictionary contains styles specific to the OnboardingPage.
@@ -17,8 +16,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Grid x:Name="RootGrid" Background="Transparent"
-                          behaviors:AnimationBehaviors.EnableScaleAnimation="True">
+                    <Grid x:Name="RootGrid" Background="Transparent">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
