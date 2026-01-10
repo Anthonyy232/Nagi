@@ -345,11 +345,27 @@ public partial class App : Application
         {
             _logger?.LogDebug("Starting core services initialization.");
 
+            // Pre-warm the audio player on a background thread.
+            // This runs concurrently with database/window init so LibVLC is ready when user presses play.
+            var audioWarmupTask = Task.Run(() =>
+            {
+                try
+                {
+                    // Ensure plugin cache exists BEFORE creating LibVLC instance
+                    EnsureLibVlcPluginCache();
+                    Services.GetRequiredService<IAudioPlayer>().EnsureInitialized();
+                }
+                catch (Exception ex)
+                {
+                    _logger?.LogWarning(ex, "Audio player warm-up failed. Will initialize on first playback.");
+                }
+            });
+
             // 1. Foundation Phase: Initialize Database and WindowService in parallel.
             // These are independent and required for the next phase.
             var dbTask = InitializeDatabaseAsync(Services);
             var windowTask = Services.GetRequiredService<IWindowService>().InitializeAsync();
-            await Task.WhenAll(dbTask, windowTask).ConfigureAwait(false);
+            await Task.WhenAll(dbTask, windowTask, audioWarmupTask).ConfigureAwait(false);
 
             // 2. Services Phase: Parallelize independent service initializations.
             var playbackTask = Services.GetRequiredService<IMusicPlaybackService>().InitializeAsync(restoreSession);
