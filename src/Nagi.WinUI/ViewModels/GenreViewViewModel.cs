@@ -102,9 +102,8 @@ public partial class GenreViewViewModel : SongListViewModelBase
             GenreName = navParam.GenreName;
             PageTitle = navParam.GenreName;
 
-            CurrentSortOrder = await _settingsService.GetSortOrderAsync<SongSortOrder>(SortOrderHelper.GenreViewSortOrderKey);
-
-            await RefreshOrSortSongsCommand.ExecuteAsync(null);
+            CurrentSortOrder = await _settingsService.GetSortOrderAsync<SongSortOrder>(SortOrderHelper.GenreViewSortOrderKey).ConfigureAwait(false);
+            await RefreshOrSortSongsCommand.ExecuteAsync(null).ConfigureAwait(false);
         }
         catch (Exception ex)
         {

@@ -117,7 +117,13 @@ public partial class AlbumViewViewModel : SongListViewModelBase
         try
         {
             _albumId = albumId;
-            var album = await _libraryReader.GetAlbumByIdAsync(albumId);
+            var albumTask = _libraryReader.GetAlbumByIdAsync(albumId);
+            var sortOrderTask = _settingsService.GetSortOrderAsync<SongSortOrder>(SortOrderHelper.AlbumViewSortOrderKey);
+            
+            await Task.WhenAll(albumTask, sortOrderTask).ConfigureAwait(false);
+            
+            var album = albumTask.Result;
+            CurrentSortOrder = sortOrderTask.Result;
 
             if (album != null)
             {
@@ -126,8 +132,6 @@ public partial class AlbumViewViewModel : SongListViewModelBase
                 PageTitle = album.Title;
                 _albumYear = album.Year;
                 CoverArtUri = ImageUriHelper.GetUriWithCacheBuster(album.CoverArtUri);
-
-                CurrentSortOrder = await _settingsService.GetSortOrderAsync<SongSortOrder>(SortOrderHelper.AlbumViewSortOrderKey);
 
                 await RefreshOrSortSongsCommand.ExecuteAsync(null);
             }

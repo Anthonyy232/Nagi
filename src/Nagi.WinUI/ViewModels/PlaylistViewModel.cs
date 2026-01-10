@@ -275,12 +275,27 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private async Task LoadPlaylistsAsync()
     {
-        StatusMessage = "Loading playlists...";
         try
         {
+            StatusMessage = "Loading playlists...";
+            Task<PlaylistSortOrder>? sortTask = null;
             if (!_hasSortOrderLoaded)
             {
-                CurrentSortOrder = await _settingsService.GetSortOrderAsync<PlaylistSortOrder>(SortOrderHelper.PlaylistsSortOrderKey);
+                sortTask = _settingsService.GetSortOrderAsync<PlaylistSortOrder>(SortOrderHelper.PlaylistsSortOrderKey);
+            }
+
+            var playlistsTask = _libraryService.GetAllPlaylistsAsync();
+            var smartPlaylistsTask = _smartPlaylistService.GetAllSmartPlaylistsAsync();
+            var matchCountsTask = _smartPlaylistService.GetAllMatchingSongCountsAsync();
+
+            if (sortTask != null)
+                await Task.WhenAll(sortTask, playlistsTask, smartPlaylistsTask, matchCountsTask).ConfigureAwait(false);
+            else
+                await Task.WhenAll(playlistsTask, smartPlaylistsTask, matchCountsTask).ConfigureAwait(false);
+
+            if (sortTask != null)
+            {
+                CurrentSortOrder = sortTask.Result;
                 _hasSortOrderLoaded = true;
             }
 
@@ -288,13 +303,12 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
             _allPlaylists.Clear();
 
             // Load regular playlists
-            var playlistsFromDb = await _libraryService.GetAllPlaylistsAsync();
-            foreach (var playlist in playlistsFromDb)
+            foreach (var playlist in playlistsTask.Result)
                 _allPlaylists.Add(new PlaylistViewModelItem(playlist));
 
-            // Load smart playlists with their match counts (batch operation for performance)
-            var smartPlaylistsFromDb = await _smartPlaylistService.GetAllSmartPlaylistsAsync();
-            var matchCounts = await _smartPlaylistService.GetAllMatchingSongCountsAsync();
+            // Load smart playlists with their match counts
+            var smartPlaylistsFromDb = smartPlaylistsTask.Result;
+            var matchCounts = matchCountsTask.Result;
             
             foreach (var smartPlaylist in smartPlaylistsFromDb)
             {

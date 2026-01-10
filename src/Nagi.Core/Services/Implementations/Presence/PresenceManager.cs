@@ -16,6 +16,7 @@ public class PresenceManager : IPresenceManager, IDisposable
     private readonly IMusicPlaybackService _playbackService;
     private readonly IReadOnlyDictionary<string, IPresenceService> _presenceServices;
     private readonly ISettingsService _settingsService;
+    private readonly SemaphoreSlim _servicesLock = new(1, 1);
 
     private Song? _currentTrack;
     private bool _isInitialized;
@@ -40,8 +41,8 @@ public class PresenceManager : IPresenceManager, IDisposable
 
     public void Dispose()
     {
-        // This provides a synchronous way to dispose, but calling ShutdownAsync is preferred.
         ShutdownAsync().GetAwaiter().GetResult();
+        _servicesLock.Dispose();
         GC.SuppressFinalize(this);
     }
 
@@ -50,8 +51,9 @@ public class PresenceManager : IPresenceManager, IDisposable
         if (_isInitialized) return;
         _logger.LogDebug("Initializing Presence Manager.");
 
-        // Activate services based on their initial settings.
-        foreach (var service in _presenceServices.Values) await UpdateServiceActivationAsync(service).ConfigureAwait(false);
+        // Activate services based on their initial settings in parallel.
+        var initTasks = _presenceServices.Values.Select(UpdateServiceActivationAsync);
+        await Task.WhenAll(initTasks).ConfigureAwait(false);
 
         SubscribeToEvents();
         _isInitialized = true;
@@ -66,13 +68,21 @@ public class PresenceManager : IPresenceManager, IDisposable
 
         await BroadcastAsync(service => service.OnPlaybackStoppedAsync()).ConfigureAwait(false);
 
-        var disposalTasks = _activeServices
-            .OfType<IAsyncDisposable>()
-            .Select(service => service.DisposeAsync().AsTask());
+        List<IAsyncDisposable> disposables;
+        await _servicesLock.WaitAsync().ConfigureAwait(false);
+        try
+        {
+            disposables = _activeServices.OfType<IAsyncDisposable>().ToList();
+            _activeServices.Clear();
+        }
+        finally
+        {
+            _servicesLock.Release();
+        }
 
+        var disposalTasks = disposables.Select(service => service.DisposeAsync().AsTask());
         await Task.WhenAll(disposalTasks).ConfigureAwait(false);
-
-        _activeServices.Clear();
+        
         _isInitialized = false;
     }
 
@@ -143,39 +153,52 @@ public class PresenceManager : IPresenceManager, IDisposable
 
     private async Task SetServiceActiveAsync(IPresenceService service, bool shouldBeActive)
     {
-        var isActive = _activeServices.Contains(service);
-        if (shouldBeActive == isActive) return;
+        await _servicesLock.WaitAsync().ConfigureAwait(false);
+        try
+        {
+            var isActive = _activeServices.Contains(service);
+            if (shouldBeActive == isActive) return;
 
-        if (shouldBeActive)
-            try
+            if (shouldBeActive)
             {
-                await service.InitializeAsync().ConfigureAwait(false);
-                _activeServices.Add(service);
-                _logger.LogDebug("Activated '{ServiceName}' presence service.", service.Name);
-
-                // If a track is already playing, immediately update the newly activated service.
-                if (_currentTrack is not null && _playbackService.CurrentListenHistoryId.HasValue)
+                try
                 {
-                    await service.OnTrackChangedAsync(_currentTrack, _playbackService.CurrentListenHistoryId.Value).ConfigureAwait(false);
-                    await service.OnPlaybackStateChangedAsync(_playbackService.IsPlaying).ConfigureAwait(false);
+                    await service.InitializeAsync().ConfigureAwait(false);
+                    _activeServices.Add(service);
+                    _logger.LogDebug("Activated '{ServiceName}' presence service.", service.Name);
+
+                    // If a track is already playing, immediately update the newly activated service.
+                    if (_currentTrack is not null && _playbackService.CurrentListenHistoryId.HasValue)
+                    {
+                        await service.OnTrackChangedAsync(_currentTrack, _playbackService.CurrentListenHistoryId.Value).ConfigureAwait(false);
+                        await service.OnPlaybackStateChangedAsync(_playbackService.IsPlaying).ConfigureAwait(false);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to initialize '{ServiceName}' presence service.", service.Name);
                 }
             }
-            catch (Exception ex)
+            else
             {
-                _logger.LogError(ex, "Failed to initialize '{ServiceName}' presence service.", service.Name);
-            }
-        else
-            try
-            {
-                await service.OnPlaybackStoppedAsync().ConfigureAwait(false);
-                if (service is IAsyncDisposable asyncDisposable) await asyncDisposable.DisposeAsync().ConfigureAwait(false);
                 _activeServices.Remove(service);
-                _logger.LogDebug("Deactivated '{ServiceName}' presence service.", service.Name);
+                try
+                {
+                    await service.OnPlaybackStoppedAsync().ConfigureAwait(false);
+                    if (service is IAsyncDisposable asyncDisposable) await asyncDisposable.DisposeAsync().ConfigureAwait(false);
+                    
+                    _logger.LogDebug("Deactivated '{ServiceName}' presence service.", service.Name);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to deactivate '{ServiceName}' presence service.", service.Name);
+                }
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to deactivate '{ServiceName}' presence service.", service.Name);
-            }
+        }
+        finally
+        {
+            _servicesLock.Release();
+        }
     }
 
     private async void OnTrackChanged()
@@ -241,9 +264,19 @@ public class PresenceManager : IPresenceManager, IDisposable
 
     private async Task BroadcastAsync(Func<IPresenceService, Task> action)
     {
-        if (!_activeServices.Any()) return;
+        List<IPresenceService> services;
+        await _servicesLock.WaitAsync().ConfigureAwait(false);
+        try
+        {
+            if (!_activeServices.Any()) return;
+            services = _activeServices.ToList();
+        }
+        finally
+        {
+            _servicesLock.Release();
+        }
 
-        var broadcastTasks = _activeServices.Select(service => SafeExecuteAsync(service, action));
+        var broadcastTasks = services.Select(service => SafeExecuteAsync(service, action));
         await Task.WhenAll(broadcastTasks).ConfigureAwait(false);
     }
 

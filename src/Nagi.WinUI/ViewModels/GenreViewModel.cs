@@ -139,13 +139,26 @@ public partial class GenreViewModel : ObservableObject, IDisposable
 
         try
         {
+            Task<GenreSortOrder>? sortTask = null;
             if (!_hasSortOrderLoaded)
             {
-                CurrentSortOrder = await _settingsService.GetSortOrderAsync<GenreSortOrder>(SortOrderHelper.GenresSortOrderKey);
+                sortTask = _settingsService.GetSortOrderAsync<GenreSortOrder>(SortOrderHelper.GenresSortOrderKey);
+            }
+
+            var genreModelsTask = _libraryService.GetAllGenresAsync();
+
+            if (sortTask != null)
+                await Task.WhenAll(sortTask, genreModelsTask).ConfigureAwait(false);
+            else
+                await genreModelsTask.ConfigureAwait(false);
+
+            if (sortTask != null)
+            {
+                CurrentSortOrder = sortTask.Result;
                 _hasSortOrderLoaded = true;
             }
 
-            var genreModels = await _libraryService.GetAllGenresAsync();
+            var genreModels = genreModelsTask.Result;
             if (cancellationToken.IsCancellationRequested) return;
 
             _allGenres = genreModels

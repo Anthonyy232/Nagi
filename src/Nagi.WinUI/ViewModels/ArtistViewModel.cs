@@ -193,17 +193,16 @@ public partial class ArtistViewModel : ObservableObject, IDisposable
         _isFullyLoaded = false;
         _artistLookup.Clear();
         
-        if (!_hasSortOrderLoaded)
-        {
-            CurrentSortOrder = await _settingsService.GetSortOrderAsync<ArtistSortOrder>(SortOrderHelper.ArtistsSortOrderKey);
-            _hasSortOrderLoaded = true;
-        }
-
-        Artists.Clear();
-
         try
         {
-            await LoadNextPageAsync(cancellationToken);
+            if (!_hasSortOrderLoaded)
+            {
+                CurrentSortOrder = await _settingsService.GetSortOrderAsync<ArtistSortOrder>(SortOrderHelper.ArtistsSortOrderKey).ConfigureAwait(false);
+                _hasSortOrderLoaded = true;
+            }
+
+            await LoadNextPageAsync(cancellationToken).ConfigureAwait(false);
+
             if (cancellationToken.IsCancellationRequested) return;
 
             // Optionally start background metadata fetching after initial load.
