@@ -42,6 +42,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     private readonly ISettingsService _settingsService;
     private readonly IReplayGainService _replayGainService;
     private readonly IApiKeyService _apiKeyService;
+    private readonly IImageProcessor _imageProcessor;
     private bool _disposed;
     private volatile bool _isMetadataFetchRunning;
     private volatile bool _isBatchScanning; // Prevents ReplayGain trigger during batch operations
@@ -63,6 +64,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         ISettingsService settingsService,
         IReplayGainService replayGainService,
         IApiKeyService apiKeyService,
+        IImageProcessor imageProcessor,
         ILogger<LibraryService> logger)
     {
         _contextFactory = contextFactory ?? throw new ArgumentNullException(nameof(contextFactory));
@@ -79,6 +81,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
         _replayGainService = replayGainService ?? throw new ArgumentNullException(nameof(replayGainService));
         _apiKeyService = apiKeyService ?? throw new ArgumentNullException(nameof(apiKeyService));
+        _imageProcessor = imageProcessor ?? throw new ArgumentNullException(nameof(imageProcessor));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _metadataFetchCts = new CancellationTokenSource();
         _settingsService.FetchOnlineMetadataEnabledChanged += OnFetchOnlineMetadataEnabledChanged;
@@ -1283,9 +1286,11 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         if (!string.IsNullOrEmpty(newCoverImageUri) && _fileSystem.FileExists(newCoverImageUri))
         {
-            // Save as custom image
+            // Read, process, and save the image
             var cachePath = _pathConfig.PlaylistImageCachePath;
-            ImageStorageHelper.SaveImage(_fileSystem, cachePath, playlistId.ToString(), ".custom", newCoverImageUri);
+            var originalBytes = await _fileSystem.ReadAllBytesAsync(newCoverImageUri).ConfigureAwait(false);
+            var processedBytes = await _imageProcessor.ProcessImageBytesAsync(originalBytes).ConfigureAwait(false);
+            await ImageStorageHelper.SaveImageBytesAsync(_fileSystem, cachePath, playlistId.ToString(), ".custom", processedBytes).ConfigureAwait(false);
             
             var newPath = ImageStorageHelper.FindImage(_fileSystem, cachePath, playlistId.ToString(), ".custom");
             playlist.CoverImageUri = newPath;
@@ -3052,10 +3057,12 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         {
             var cachePath = _pathConfig.ArtistImageCachePath;
             
-            // Use helper to save the image (handles deletion of old files and preservation of extension)
-            ImageStorageHelper.SaveImage(_fileSystem, cachePath, artistId.ToString(), ".custom", localFilePath);
+            // Read, process, and save the image
+            var originalBytes = await _fileSystem.ReadAllBytesAsync(localFilePath).ConfigureAwait(false);
+            var processedBytes = await _imageProcessor.ProcessImageBytesAsync(originalBytes).ConfigureAwait(false);
+            await ImageStorageHelper.SaveImageBytesAsync(_fileSystem, cachePath, artistId.ToString(), ".custom", processedBytes).ConfigureAwait(false);
 
-            // Find the file we just saved to get the correct path (since extension might be different)
+            // Find the file we just saved to get the correct path
             var newPath = ImageStorageHelper.FindImage(_fileSystem, cachePath, artistId.ToString(), ".custom");
 
             artist.LocalImageCachePath = newPath;
@@ -3298,7 +3305,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         var result = await _theAudioDbService.GetArtistMetadataAsync(mbid, ct).ConfigureAwait(false);
         if (result.Status == ServiceResultStatus.Success && result.Data is not null)
         {
-            var url = result.Data.FanartUrl ?? result.Data.ThumbUrl;
+            // Prefer square thumbnail over landscape fanart for round frame display
+            var url = result.Data.ThumbUrl ?? result.Data.FanartUrl;
             return (url, result.Data.Biography);
         }
         return (null, null);
@@ -3309,7 +3317,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         var result = await _fanartTvService.GetArtistImagesAsync(mbid, ct).ConfigureAwait(false);
         if (result.Status == ServiceResultStatus.Success && result.Data is not null)
         {
-            var url = result.Data.BackgroundUrl ?? result.Data.ThumbUrl;
+            // Prefer square thumbnail over landscape background for round frame display
+            var url = result.Data.ThumbUrl ?? result.Data.BackgroundUrl;
             return (url, null); // Fanart.tv doesn't provide biography
         }
         return (null, null);
@@ -3378,7 +3387,9 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 if (response.IsSuccessStatusCode)
                 {
                     var imageBytes = await response.Content.ReadAsByteArrayAsync(cancellationToken).ConfigureAwait(false);
-                    await _fileSystem.WriteAllBytesAsync(localPath, imageBytes).ConfigureAwait(false);
+                    // Process image to standardized size (600px max, preserves aspect ratio)
+                    var processedBytes = await _imageProcessor.ProcessImageBytesAsync(imageBytes).ConfigureAwait(false);
+                    await _fileSystem.WriteAllBytesAsync(localPath, processedBytes).ConfigureAwait(false);
                     return RetryResult<string>.Success(localPath);
                 }
 

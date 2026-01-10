@@ -114,7 +114,7 @@ public class TheAudioDbServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task GetArtistMetadataAsync_PrefersFanartOverThumb()
+    public async Task GetArtistMetadataAsync_ReturnsBothThumbAndFanartUrls()
     {
         // Arrange
         var audioDbResponse = new
@@ -136,7 +136,8 @@ public class TheAudioDbServiceTests : IDisposable
         // Act
         var result = await _service.GetArtistMetadataAsync(ValidMbid);
 
-        // Assert
+        // Assert - Both URLs should be available for the consumer to choose from
+        result.Data!.ThumbUrl.Should().Be("https://theaudiodb.com/thumb.jpg");
         result.Data!.FanartUrl.Should().Be("https://theaudiodb.com/fanart.jpg");
     }
 

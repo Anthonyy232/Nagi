@@ -8,7 +8,7 @@ public interface IImageProcessor
     /// <summary>
     ///     Saves cover art from a byte array to local storage and extracts primary color swatches.
     ///     Uses content-based hashing to deduplicate identical images across multiple songs.
-    ///     Images larger than 800x800 are resized to reduce disk usage.
+    ///     Images larger than 600x600 are resized to reduce disk usage.
     /// </summary>
     /// <param name="pictureData">The raw byte data of the image file.</param>
     /// <returns>
@@ -17,4 +17,13 @@ public interface IImageProcessor
     /// </returns>
     Task<(string? uri, string? lightSwatchId, string? darkSwatchId)> SaveCoverArtAndExtractColorsAsync(
         byte[] pictureData);
+
+    /// <summary>
+    ///     Processes image bytes: resizes if larger than max dimension, converts to JPEG.
+    ///     Preserves aspect ratio using ResizeMode.Max (fits within bounds without distortion).
+    /// </summary>
+    /// <param name="imageData">Raw image bytes to process.</param>
+    /// <param name="maxDimension">Maximum width or height. Default is 600px.</param>
+    /// <returns>Processed image bytes as JPEG, or original bytes if no resizing needed.</returns>
+    Task<byte[]> ProcessImageBytesAsync(byte[] imageData, int maxDimension = 600);
 }
