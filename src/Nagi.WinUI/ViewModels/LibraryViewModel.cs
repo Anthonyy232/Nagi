@@ -78,9 +78,8 @@ public partial class LibraryViewModel : SongListViewModelBase
         var shouldTriggerScan = !_isInitialScanTriggered;
         _isInitialScanTriggered = true;
 
-        CurrentSortOrder = await _settingsService.GetSortOrderAsync<SongSortOrder>(SortOrderHelper.LibrarySortOrderKey);
-
-        await RefreshOrSortSongsCommand.ExecuteAsync(null);
+        CurrentSortOrder = await _settingsService.GetSortOrderAsync<SongSortOrder>(SortOrderHelper.LibrarySortOrderKey).ConfigureAwait(true);
+        await RefreshOrSortSongsCommand.ExecuteAsync(null).ConfigureAwait(true);
 
         if (!shouldTriggerScan) return;
 

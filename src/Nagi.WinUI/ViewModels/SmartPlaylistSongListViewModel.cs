@@ -91,14 +91,14 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
 
             if (smartPlaylistId.HasValue)
             {
-                _currentSmartPlaylist = await _smartPlaylistService.GetSmartPlaylistByIdAsync(smartPlaylistId.Value);
+                _currentSmartPlaylist = await _smartPlaylistService.GetSmartPlaylistByIdAsync(smartPlaylistId.Value).ConfigureAwait(true);
                 if (_currentSmartPlaylist != null)
                 {
                     RuleSummary = BuildRuleSummary(_currentSmartPlaylist);
                 }
             }
 
-            await RefreshOrSortSongsCommand.ExecuteAsync(null);
+            await RefreshOrSortSongsCommand.ExecuteAsync(null).ConfigureAwait(true);
         }
         catch (Exception ex)
         {

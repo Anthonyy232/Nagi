@@ -107,12 +107,24 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
 
         try
         {
-            await _audioPlayer.SetVolumeAsync(await _settingsService.GetInitialVolumeAsync().ConfigureAwait(false)).ConfigureAwait(false);
-            await _audioPlayer.SetMuteAsync(await _settingsService.GetInitialMuteStateAsync().ConfigureAwait(false)).ConfigureAwait(false);
-            IsShuffleEnabled = await _settingsService.GetInitialShuffleStateAsync().ConfigureAwait(false);
-            CurrentRepeatMode = await _settingsService.GetInitialRepeatModeAsync().ConfigureAwait(false);
+            // Phase 1: Parallelize all independent settings reads for faster startup
+            var volumeTask = _settingsService.GetInitialVolumeAsync();
+            var muteTask = _settingsService.GetInitialMuteStateAsync();
+            var shuffleTask = _settingsService.GetInitialShuffleStateAsync();
+            var repeatTask = _settingsService.GetInitialRepeatModeAsync();
+            var eqTask = _settingsService.GetEqualizerSettingsAsync();
+            var restoreEnabledTask = _settingsService.GetRestorePlaybackStateEnabledAsync();
+            // Phase 2: Optimistically start reading playback state in parallel
+            var playbackStateTask = _settingsService.GetPlaybackStateAsync();
 
-            CurrentEqualizerSettings = await _settingsService.GetEqualizerSettingsAsync().ConfigureAwait(false);
+            await Task.WhenAll(volumeTask, muteTask, shuffleTask, repeatTask, eqTask, restoreEnabledTask, playbackStateTask).ConfigureAwait(false);
+
+            await _audioPlayer.SetVolumeAsync(volumeTask.Result).ConfigureAwait(false);
+            await _audioPlayer.SetMuteAsync(muteTask.Result).ConfigureAwait(false);
+            IsShuffleEnabled = shuffleTask.Result;
+            CurrentRepeatMode = repeatTask.Result;
+
+            CurrentEqualizerSettings = eqTask.Result;
             if (CurrentEqualizerSettings != null && CurrentEqualizerSettings.BandGains.Count != EqualizerBands.Count)
             {
                 _logger.LogWarning("Equalizer settings mismatched (Saved: {SavedCount}, Required: {RequiredCount}). Resetting to default.", 
@@ -132,9 +144,9 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
             _audioPlayer.ApplyEqualizerSettings(CurrentEqualizerSettings);
 
             var restoredSuccessfully = false;
-            if (restoreLastSession && await _settingsService.GetRestorePlaybackStateEnabledAsync().ConfigureAwait(false))
+            if (restoreLastSession && restoreEnabledTask.Result)
             {
-                var savedState = await _settingsService.GetPlaybackStateAsync().ConfigureAwait(false);
+                var savedState = playbackStateTask.Result;
                 if (savedState != null) restoredSuccessfully = await RestoreInternalPlaybackStateAsync(savedState).ConfigureAwait(false);
             }
 

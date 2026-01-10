@@ -148,13 +148,18 @@ public abstract partial class SongListViewModelBase : ObservableObject
         {
             if (IsPagingSupported)
             {
-                // First, get all song IDs for the current view/sort order.
-                _fullSongIdList = await LoadAllSongIdsAsync(CurrentSortOrder);
                 _pagedLoadCts = new CancellationTokenSource();
                 var token = _pagedLoadCts.Token;
 
-                // Load the first page to display something to the user quickly.
-                var pagedResult = await LoadSongsPagedAsync(1, PageSize, CurrentSortOrder);
+                // Overlap fetching the full ID list (for Play All) with loading the first page (for display).
+                var idsTask = LoadAllSongIdsAsync(CurrentSortOrder);
+                var firstPageTask = LoadSongsPagedAsync(1, PageSize, CurrentSortOrder);
+
+                await Task.WhenAll(idsTask, firstPageTask).ConfigureAwait(false);
+
+                _fullSongIdList = idsTask.Result;
+                var pagedResult = firstPageTask.Result;
+
                 ProcessPagedResult(pagedResult, token);
 
                 bool hasMore;

@@ -277,8 +277,21 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
 
         try
         {
-            // 1. Try to get synchronized (timed) lyrics first (runs on background thread)
-            parsedLrc = await _lrcService.GetLyricsAsync(song, cancellationToken).ConfigureAwait(false);
+            // 1. Start fetching both synchronized lyrics (often network/IO) and full song data (local fallback) in parallel.
+            var lrcTask = _lrcService.GetLyricsAsync(song, cancellationToken);
+            var songDataTask = _libraryReader.GetSongWithFullDataAsync(song.Id);
+
+            try
+            {
+                await Task.WhenAll(lrcTask, songDataTask).ConfigureAwait(false);
+            }
+            catch (Exception ex) when (ex is not OperationCanceledException)
+            {
+                _logger.LogWarning(ex, "One or more lyrics fetch tasks failed for '{SongTitle}', attempting to continue with available data.", song.Title);
+            }
+
+            parsedLrc = lrcTask.Status == TaskStatus.RanToCompletion ? lrcTask.Result : null;
+            var fullSong = songDataTask.Status == TaskStatus.RanToCompletion ? songDataTask.Result : null;
 
             // Check if a newer track change occurred while we were fetching
             if (cancellationToken.IsCancellationRequested)
@@ -289,17 +302,6 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
 
             if (parsedLrc is null || parsedLrc.IsEmpty)
             {
-                // 2. No sync lyrics found - try unsynchronized lyrics fallback
-                // Need to fetch full song data since Lyrics is excluded from queue projections
-                var fullSong = await _libraryReader.GetSongWithFullDataAsync(song.Id).ConfigureAwait(false);
-
-                // Check cancellation again after second await
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    _logger.LogDebug("Lyrics fetch for '{SongTitle}' was cancelled (song changed)", song.Title);
-                    return;
-                }
-
                 if (fullSong is not null && !string.IsNullOrWhiteSpace(fullSong.Lyrics))
                 {
                     _logger.LogDebug("Using unsynchronized lyrics fallback for track '{SongTitle}'", song.Title);

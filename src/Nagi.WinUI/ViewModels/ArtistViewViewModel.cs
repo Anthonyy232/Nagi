@@ -144,15 +144,20 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         try
         {
             _artistId = artistId;
-            var shouldFetchOnline = await _settingsService.GetFetchOnlineMetadataEnabledAsync();
+            var onlineMetadataTask = _settingsService.GetFetchOnlineMetadataEnabledAsync();
+            var sortOrderTask = _settingsService.GetSortOrderAsync<SongSortOrder>(SortOrderHelper.ArtistViewSortOrderKey);
+            
+            await Task.WhenAll(onlineMetadataTask, sortOrderTask).ConfigureAwait(false);
+            
+            var shouldFetchOnline = onlineMetadataTask.Result;
+            CurrentSortOrder = sortOrderTask.Result;
+
             var artist = await _libraryScanner.GetArtistDetailsAsync(artistId, shouldFetchOnline, _pageCts.Token);
 
             if (artist != null)
             {
                 PopulateArtistDetails(artist);
                 
-                CurrentSortOrder = await _settingsService.GetSortOrderAsync<SongSortOrder>(SortOrderHelper.ArtistViewSortOrderKey);
-
                 // After populating artist details, load the associated song list.
                 await RefreshOrSortSongsCommand.ExecuteAsync(null);
             }

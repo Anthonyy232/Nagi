@@ -190,17 +190,16 @@ public partial class AlbumViewModel : ObservableObject, IDisposable
         _currentPage = 1;
         _isFullyLoaded = false;
         
-        if (!_hasSortOrderLoaded)
-        {
-            CurrentSortOrder = await _settingsService.GetSortOrderAsync<AlbumSortOrder>(SortOrderHelper.AlbumsSortOrderKey);
-            _hasSortOrderLoaded = true;
-        }
-
-        Albums.Clear();
-
         try
         {
-            await LoadNextPageAsync(cancellationToken);
+            if (!_hasSortOrderLoaded)
+            {
+                CurrentSortOrder = await _settingsService.GetSortOrderAsync<AlbumSortOrder>(SortOrderHelper.AlbumsSortOrderKey).ConfigureAwait(false);
+                _hasSortOrderLoaded = true;
+            }
+
+            await LoadNextPageAsync(cancellationToken).ConfigureAwait(false);
+
             if (cancellationToken.IsCancellationRequested) return;
 
             // Continue loading subsequent pages in the background.

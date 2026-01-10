@@ -135,37 +135,42 @@ public class SettingsService : IUISettingsService
             if (File.Exists(_pathConfig.SettingsFilePath)) File.Delete(_pathConfig.SettingsFilePath);
         }
 
-        await ClearPlaybackStateAsync().ConfigureAwait(false);
-        await SetAutoLaunchEnabledAsync(SettingsDefaults.AutoLaunchEnabled).ConfigureAwait(false);
-        await SetPlayerAnimationEnabledAsync(SettingsDefaults.PlayerAnimationEnabled).ConfigureAwait(false);
-        await SetShowQueueButtonEnabledAsync(SettingsDefaults.ShowQueueButtonEnabled).ConfigureAwait(false);
-        await SetHideToTrayEnabledAsync(SettingsDefaults.HideToTrayEnabled).ConfigureAwait(false);
-        await SetMinimizeToMiniPlayerEnabledAsync(SettingsDefaults.MinimizeToMiniPlayerEnabled).ConfigureAwait(false);
-        await SetShowCoverArtInTrayFlyoutAsync(SettingsDefaults.ShowCoverArtInTrayFlyoutEnabled).ConfigureAwait(false);
-        await SetFetchOnlineMetadataEnabledAsync(SettingsDefaults.FetchOnlineMetadataEnabled).ConfigureAwait(false);
-        await SetFetchOnlineLyricsEnabledAsync(SettingsDefaults.FetchOnlineLyricsEnabled).ConfigureAwait(false);
-        await SetDiscordRichPresenceEnabledAsync(SettingsDefaults.DiscordRichPresenceEnabled).ConfigureAwait(false);
-        await SetThemeAsync(SettingsDefaults.Theme).ConfigureAwait(false);
-        await SetBackdropMaterialAsync(SettingsDefaults.DefaultBackdropMaterial).ConfigureAwait(false);
-        await SetDynamicThemingAsync(SettingsDefaults.DynamicThemingEnabled).ConfigureAwait(false);
-        await SetRestorePlaybackStateEnabledAsync(SettingsDefaults.RestorePlaybackStateEnabled).ConfigureAwait(false);
-        await SetStartMinimizedEnabledAsync(SettingsDefaults.StartMinimizedEnabled).ConfigureAwait(false);
-        await SetNavigationItemsAsync(GetDefaultNavigationItems()).ConfigureAwait(false);
-        await SetPlayerButtonSettingsAsync(GetDefaultPlayerButtonSettings()).ConfigureAwait(false);
-        await SaveVolumeAsync(SettingsDefaults.Volume).ConfigureAwait(false);
-        await SaveMuteStateAsync(SettingsDefaults.MuteState).ConfigureAwait(false);
-        await SaveShuffleStateAsync(SettingsDefaults.ShuffleState).ConfigureAwait(false);
-        await SaveRepeatModeAsync(SettingsDefaults.DefaultRepeatMode).ConfigureAwait(false);
-        await SetCheckForUpdatesEnabledAsync(SettingsDefaults.CheckForUpdatesEnabled).ConfigureAwait(false);
-        await SetLastSkippedUpdateVersionAsync(null).ConfigureAwait(false);
-        await SetLastFmScrobblingEnabledAsync(SettingsDefaults.LastFmScrobblingEnabled).ConfigureAwait(false);
-        await SetLastFmNowPlayingEnabledAsync(SettingsDefaults.LastFmNowPlayingEnabled).ConfigureAwait(false);
-        await ClearLastFmCredentialsAsync().ConfigureAwait(false);
-        await SetEqualizerSettingsAsync(new EqualizerSettings()).ConfigureAwait(false);
-        await SetRememberWindowSizeEnabledAsync(SettingsDefaults.RememberWindowSizeEnabled).ConfigureAwait(false);
-        await SetRememberPaneStateEnabledAsync(SettingsDefaults.RememberPaneStateEnabled).ConfigureAwait(false);
-        await SetVolumeNormalizationEnabledAsync(SettingsDefaults.VolumeNormalizationEnabled).ConfigureAwait(false);
-        await SetAccentColorAsync(SettingsDefaults.AccentColor).ConfigureAwait(false);
+        var tasks = new List<Task>
+        {
+            ClearPlaybackStateAsync(),
+            SetAutoLaunchEnabledAsync(SettingsDefaults.AutoLaunchEnabled),
+            SetPlayerAnimationEnabledAsync(SettingsDefaults.PlayerAnimationEnabled),
+            SetShowQueueButtonEnabledAsync(SettingsDefaults.ShowQueueButtonEnabled),
+            SetHideToTrayEnabledAsync(SettingsDefaults.HideToTrayEnabled),
+            SetMinimizeToMiniPlayerEnabledAsync(SettingsDefaults.MinimizeToMiniPlayerEnabled),
+            SetShowCoverArtInTrayFlyoutAsync(SettingsDefaults.ShowCoverArtInTrayFlyoutEnabled),
+            SetFetchOnlineMetadataEnabledAsync(SettingsDefaults.FetchOnlineMetadataEnabled),
+            SetFetchOnlineLyricsEnabledAsync(SettingsDefaults.FetchOnlineLyricsEnabled),
+            SetDiscordRichPresenceEnabledAsync(SettingsDefaults.DiscordRichPresenceEnabled),
+            SetThemeAsync(SettingsDefaults.Theme),
+            SetBackdropMaterialAsync(SettingsDefaults.DefaultBackdropMaterial),
+            SetDynamicThemingAsync(SettingsDefaults.DynamicThemingEnabled),
+            SetRestorePlaybackStateEnabledAsync(SettingsDefaults.RestorePlaybackStateEnabled),
+            SetStartMinimizedEnabledAsync(SettingsDefaults.StartMinimizedEnabled),
+            SetNavigationItemsAsync(GetDefaultNavigationItems()),
+            SetPlayerButtonSettingsAsync(GetDefaultPlayerButtonSettings()),
+            SaveVolumeAsync(SettingsDefaults.Volume),
+            SaveMuteStateAsync(SettingsDefaults.MuteState),
+            SaveShuffleStateAsync(SettingsDefaults.ShuffleState),
+            SaveRepeatModeAsync(SettingsDefaults.DefaultRepeatMode),
+            SetCheckForUpdatesEnabledAsync(SettingsDefaults.CheckForUpdatesEnabled),
+            SetLastSkippedUpdateVersionAsync(null),
+            SetLastFmScrobblingEnabledAsync(SettingsDefaults.LastFmScrobblingEnabled),
+            SetLastFmNowPlayingEnabledAsync(SettingsDefaults.LastFmNowPlayingEnabled),
+            ClearLastFmCredentialsAsync(),
+            SetEqualizerSettingsAsync(new EqualizerSettings()),
+            SetRememberWindowSizeEnabledAsync(SettingsDefaults.RememberWindowSizeEnabled),
+            SetRememberPaneStateEnabledAsync(SettingsDefaults.RememberPaneStateEnabled),
+            SetVolumeNormalizationEnabledAsync(SettingsDefaults.VolumeNormalizationEnabled),
+            SetAccentColorAsync(SettingsDefaults.AccentColor)
+        };
+
+        await Task.WhenAll(tasks).ConfigureAwait(false);
 
         // Clear sort order settings
         lock (_dictLock)

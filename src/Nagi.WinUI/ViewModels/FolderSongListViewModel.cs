@@ -101,13 +101,20 @@ public partial class FolderSongListViewModel : SongListViewModelBase
 
             if (_rootFolderId.HasValue)
             {
-                var rootFolder = await _libraryReader.GetFolderByIdAsync(_rootFolderId.Value);
-                _rootFolderPath = rootFolder?.Path;
+                var rootFolderTask = _libraryReader.GetFolderByIdAsync(_rootFolderId.Value);
+                var sortTask = _settingsService.GetSortOrderAsync<SongSortOrder>(SortOrderHelper.FolderViewSortOrderKey);
+                
+                await Task.WhenAll(rootFolderTask, sortTask).ConfigureAwait(true);
+                
+                _rootFolderPath = rootFolderTask.Result?.Path;
+                CurrentSortOrder = sortTask.Result;
+            }
+            else
+            {
+                CurrentSortOrder = await _settingsService.GetSortOrderAsync<SongSortOrder>(SortOrderHelper.FolderViewSortOrderKey);
             }
 
             PageTitle = title;
-            CurrentSortOrder = await _settingsService.GetSortOrderAsync<SongSortOrder>(SortOrderHelper.FolderViewSortOrderKey);
-
             await LoadFolderContentsAsync();
             UpdateBreadcrumbs();
         }
