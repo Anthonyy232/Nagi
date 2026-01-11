@@ -1014,21 +1014,35 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     /// <inheritdoc />
     public async Task<IReadOnlyDictionary<Guid, Song>> GetSongsByIdsAsync(IEnumerable<Guid> songIds)
     {
-        if (songIds is null || !songIds.Any()) return new Dictionary<Guid, Song>();
-
-        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        if (songIds is null) return new Dictionary<Guid, Song>();
         var uniqueIds = songIds.Distinct().ToList();
+        if (!uniqueIds.Any()) return new Dictionary<Guid, Song>();
 
-        var query = context.Songs.AsNoTracking()
-            .Where(s => uniqueIds.Contains(s.Id))
-            .Include(s => s.Artist)
-            .Include(s => s.Album).ThenInclude(a => a!.Artist);
+        const int chunkSize = 500;
+        var result = new Dictionary<Guid, Song>();
 
-        var songs = await ExcludeHeavyFields(query)
-            .AsSplitQuery()
-            .ToListAsync().ConfigureAwait(false);
+        for (var i = 0; i < uniqueIds.Count; i += chunkSize)
+        {
+            var count = Math.Min(chunkSize, uniqueIds.Count - i);
+            var chunk = uniqueIds.GetRange(i, count);
+            await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+            
+            var query = context.Songs.AsNoTracking()
+                .Where(s => chunk.Contains(s.Id))
+                .Include(s => s.Artist)
+                .Include(s => s.Album).ThenInclude(a => a!.Artist);
 
-        return songs.ToDictionary(s => s.Id);
+            var batch = await ExcludeHeavyFields(query)
+                .AsSplitQuery()
+                .ToListAsync().ConfigureAwait(false);
+
+            foreach (var song in batch)
+            {
+                result[song.Id] = song;
+            }
+        }
+
+        return result;
     }
 
     /// <inheritdoc />

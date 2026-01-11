@@ -80,7 +80,7 @@
 
             <DataTemplate x:Key="QueueButtonTemplate" x:DataType="uiModels:PlayerButtonSetting">
                 <Button Style="{StaticResource QueueButtonStyle}"
-                        ToolTipService.ToolTip="Current Queue">
+                        ToolTipService.ToolTip="Up Next">
                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
                     <Button.Flyout>
                         <Flyout x:Name="QueueFlyout"
@@ -95,7 +95,7 @@
                                 <TextBlock
                                     Margin="12,0,12,4"
                                     Style="{ThemeResource MediaControlSubtitleStyle}"
-                                    Text="Current Queue" />
+                                    Text="Up Next" />
                                 <ListView
                                     Grid.Row="1"
                                     ItemContainerStyle="{StaticResource QueueListViewItemStyle}"

@@ -102,7 +102,7 @@
                                       Glyph="{x:Bind ViewModel.RepeatIconGlyph, Mode=OneWay}" />
                         </Button>
                         <Button Command="{x:Bind ViewModel.ShowQueueViewCommand}" Style="{StaticResource QueueButtonStyle}"
-                                ToolTipService.ToolTip="Current Queue">
+                                ToolTipService.ToolTip="Up Next">
                             <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
                         </Button>
                     </StackPanel>
@@ -127,7 +127,7 @@
 
                         <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center"
                                    Style="{ThemeResource SubtitleTextBlockStyle}"
-                                   Text="Current Queue"
+                                   Text="Up Next"
                                    Margin="12,0,12,4" />
                     </Grid>
 

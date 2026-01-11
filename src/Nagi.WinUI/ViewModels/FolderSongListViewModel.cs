@@ -438,10 +438,9 @@ public partial class FolderSongListViewModel : SongListViewModelBase
 
         try
         {
-            var songs = await _libraryReader.GetSongsInDirectoryRecursiveAsync(_rootFolderId.Value, folder.Path);
-            var songList = songs.ToList();
+            var songIds = await _libraryReader.GetAllSongIdsInDirectoryRecursiveAsync(_rootFolderId.Value, folder.Path, SongSortOrder.TitleAsc);
 
-            if (songList.Any()) await _playbackService.PlayAsync(songList);
+            if (songIds.Any()) await _playbackService.PlayAsync(songIds);
         }
         catch (Exception ex)
         {

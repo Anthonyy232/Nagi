@@ -14,6 +14,7 @@ using Nagi.WinUI.Navigation;
 using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
 using Nagi.WinUI.Helpers;
+using System.Threading;
 
 namespace Nagi.WinUI.ViewModels;
 
@@ -47,6 +48,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     private readonly IMusicPlaybackService _playbackService;
     private readonly IUISettingsService _settingsService;
     private readonly IWindowService _windowService;
+    private readonly ILibraryService _libraryService;
 
     private bool _isUpdatingFromService;
     private bool _isDisposed;
@@ -57,15 +59,19 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     private int _lastDisplayedSecond = -1;
     private const double PositionThrottleSeconds = 0.1; // 100ms
 
+    // Queue display update cancellation
+    private CancellationTokenSource? _queueDisplayCts;
+
     public PlayerViewModel(IMusicPlaybackService playbackService, INavigationService navigationService,
         IDispatcherService dispatcherService, IUISettingsService settingsService, IWindowService windowService,
-        ILogger<PlayerViewModel> logger)
+        ILibraryService libraryService, ILogger<PlayerViewModel> logger)
     {
         _playbackService = playbackService ?? throw new ArgumentNullException(nameof(playbackService));
         _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
         _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
         _windowService = windowService ?? throw new ArgumentNullException(nameof(windowService));
+        _libraryService = libraryService ?? throw new ArgumentNullException(nameof(libraryService));
         _logger = logger;
 
         // Initialize properties with default values
@@ -168,6 +174,8 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
         UnsubscribeFromPlaybackServiceEvents();
         UnsubscribeFromSettingsServiceEvents();
         UnsubscribeFromWindowServiceEvents();
+        _queueDisplayCts?.Cancel();
+        _queueDisplayCts?.Dispose();
         GC.SuppressFinalize(this);
     }
 
@@ -411,52 +419,97 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
         }
     }
 
-    private void UpdateCurrentQueueDisplay()
+    private async void UpdateCurrentQueueDisplay()
     {
-        var sourceQueue = _playbackService.IsShuffleEnabled
-            ? _playbackService.ShuffledQueue
-            : _playbackService.PlaybackQueue;
+        // Cancel any previous in-flight fetch to prevent stale data from arriving out of order
+        _queueDisplayCts?.Cancel();
+        _queueDisplayCts?.Dispose();
+        _queueDisplayCts = new CancellationTokenSource();
+        var token = _queueDisplayCts.Token;
 
-        var newDisplayQueue = new List<Song>();
-        var currentTrack = _playbackService.CurrentTrack;
-
-        if (currentTrack != null)
+        try
         {
-            // Find current track index directly without ToList() allocation
-            var currentTrackIndex = -1;
-            for (var i = 0; i < sourceQueue.Count; i++)
+            // Capture state upfront to prevent race conditions if the queue changes during the async call.
+            // This snapshot ensures we work with a consistent view of the queue.
+            var isShuffleEnabled = _playbackService.IsShuffleEnabled;
+            var repeatMode = _playbackService.CurrentRepeatMode;
+            var sourceQueue = isShuffleEnabled
+                ? _playbackService.ShuffledQueue
+                : _playbackService.PlaybackQueue;
+
+            if (sourceQueue.Count == 0)
             {
-                if (sourceQueue[i].Id == currentTrack.Id)
-                {
-                    currentTrackIndex = i;
-                    break;
-                }
+                CurrentQueue.Clear();
+                return;
             }
 
-            if (currentTrackIndex != -1)
+            var currentTrackIndexInSource = isShuffleEnabled 
+                ? _playbackService.CurrentShuffledIndex 
+                : _playbackService.CurrentQueueIndex;
+
+            // For large libraries, we only show a window of the queue to keep the UI snappy
+            // and avoid allocating 500k objects in the ObservableCollection.
+            const int displayWindowSize = 100;
+            var idsToShow = new List<Guid>(Math.Min(displayWindowSize, sourceQueue.Count));
+
+            if (currentTrackIndexInSource >= 0 && currentTrackIndexInSource < sourceQueue.Count)
             {
-                // Add songs from current position to end
-                for (var i = currentTrackIndex; i < sourceQueue.Count; i++)
-                    newDisplayQueue.Add(sourceQueue[i]);
-                    
-                // If repeating, add songs from beginning to current position
-                if (_playbackService.CurrentRepeatMode == RepeatMode.RepeatAll)
+                // Show up to displayWindowSize songs starting from the current track
+                var countToShow = Math.Min(displayWindowSize, sourceQueue.Count - currentTrackIndexInSource);
+                for (var i = 0; i < countToShow; i++)
                 {
-                    for (var i = 0; i < currentTrackIndex; i++)
-                        newDisplayQueue.Add(sourceQueue[i]);
+                    idsToShow.Add(sourceQueue[currentTrackIndexInSource + i]);
+                }
+
+                // If we have room and repeat is on, wrap around
+                if (idsToShow.Count < displayWindowSize && repeatMode == RepeatMode.RepeatAll)
+                {
+                    var remaining = displayWindowSize - idsToShow.Count;
+                    var wrapCount = Math.Min(remaining, currentTrackIndexInSource);
+                    for (var i = 0; i < wrapCount; i++)
+                    {
+                        idsToShow.Add(sourceQueue[i]);
+                    }
                 }
             }
             else
             {
-                foreach (var song in sourceQueue)
-                    newDisplayQueue.Add(song);
+                // Fallback: just show the first few
+                var countToShow = Math.Min(displayWindowSize, sourceQueue.Count);
+                for (var i = 0; i < countToShow; i++)
+                {
+                    idsToShow.Add(sourceQueue[i]);
+                }
+            }
+
+            // Check for cancellation before the async DB call
+            if (token.IsCancellationRequested) return;
+
+            // Fetch metadata for the IDs we're about to display
+            var fetchedSongs = await _libraryService.GetSongsByIdsAsync(idsToShow).ConfigureAwait(true);
+
+            // Check for cancellation or disposal after the async call, before updating UI
+            if (token.IsCancellationRequested || _isDisposed) return;
+
+            var newDisplayQueue = idsToShow
+                .Select(id => fetchedSongs.GetValueOrDefault(id))
+                .Where(s => s != null)
+                .Cast<Song>()
+                .ToList();
+
+            if (!CurrentQueue.SequenceEqual(newDisplayQueue))
+            {
+                CurrentQueue.Clear();
+                foreach (var song in newDisplayQueue) CurrentQueue.Add(song);
             }
         }
-
-        if (!CurrentQueue.SequenceEqual(newDisplayQueue))
+        catch (OperationCanceledException)
         {
-            CurrentQueue.Clear();
-            foreach (var song in newDisplayQueue) CurrentQueue.Add(song);
+            // Expected when a newer queue update supersedes this one
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to update queue display");
         }
     }
 
