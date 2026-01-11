@@ -631,7 +631,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unhandled error in SMTC button handler for {Button}", args.Button);
+            _logger.LogError(ex, "Error handling SMTC button press for button {Button}.", args.Button);
         }
     }
 

@@ -1,4 +1,5 @@
 using System;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -8,14 +9,16 @@ namespace Nagi.WinUI.Controls;
 
 public sealed partial class TrayIconUserControl : UserControl, IDisposable
 {
+    private readonly ILogger<TrayIconUserControl>? _logger;
     private bool _isDisposed;
 
     public TrayIconUserControl()
     {
         InitializeComponent();
 
-        // Retrieve the shared ViewModel instance from the application's service provider.
+        // Retrieve services from the application's service provider.
         ViewModel = App.Services!.GetRequiredService<TrayIconViewModel>();
+        _logger = App.Services!.GetRequiredService<ILogger<TrayIconUserControl>>();
 
         Loaded += OnLoaded;
     }
@@ -44,7 +47,16 @@ public sealed partial class TrayIconUserControl : UserControl, IDisposable
     /// </summary>
     private async void OnLoaded(object sender, RoutedEventArgs e)
     {
-        // The ViewModel initializes itself and hooks into application events.
-        await ViewModel.InitializeAsync();
+        try
+        {
+            // The ViewModel initializes itself and hooks into application events.
+            await ViewModel.InitializeAsync();
+        }
+        catch (Exception ex)
+        {
+            // The TaskbarIcon initialization is critical for the tray icon.
+            // If it fails, we log it and prevent the app from crashing.
+            _logger?.LogError(ex, "Failed to initialize tray icon.");
+        }
     }
 }

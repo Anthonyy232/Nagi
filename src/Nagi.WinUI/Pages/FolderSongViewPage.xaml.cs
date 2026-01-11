@@ -145,9 +145,16 @@ public sealed partial class FolderSongViewPage : Page
     /// </summary>
     private async void FolderContentsListView_ItemClick(object sender, ItemClickEventArgs e)
     {
-        if (e.ClickedItem is FolderContentItem contentItem)
-            if (contentItem.IsFolder && contentItem.Folder != null)
-                await ViewModel.NavigateToSubfolderCommand.ExecuteAsync(contentItem.Folder);
+        try
+        {
+            if (e.ClickedItem is FolderContentItem contentItem)
+                if (contentItem.IsFolder && contentItem.Folder != null)
+                    await ViewModel.NavigateToSubfolderCommand.ExecuteAsync(contentItem.Folder);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error handling folder content item click");
+        }
     }
 
     /// <summary>
@@ -172,12 +179,19 @@ public sealed partial class FolderSongViewPage : Page
     /// </summary>
     private async void FolderContentsListView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
     {
-        if (e.OriginalSource is FrameworkElement { DataContext: FolderContentItem contentItem })
+        try
         {
-            if (contentItem.IsFolder && contentItem.Folder != null)
-                await ViewModel.NavigateToSubfolderCommand.ExecuteAsync(contentItem.Folder);
-            else if (contentItem.IsSong && contentItem.Song != null)
-                ViewModel.PlaySongCommand.Execute(contentItem.Song);
+            if (e.OriginalSource is FrameworkElement { DataContext: FolderContentItem contentItem })
+            {
+                if (contentItem.IsFolder && contentItem.Folder != null)
+                    await ViewModel.NavigateToSubfolderCommand.ExecuteAsync(contentItem.Folder);
+                else if (contentItem.IsSong && contentItem.Song != null)
+                    ViewModel.PlaySongCommand.Execute(contentItem.Song);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error handling folder content double tap");
         }
     }
 

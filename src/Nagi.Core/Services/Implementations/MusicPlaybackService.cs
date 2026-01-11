@@ -1011,8 +1011,15 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
 
     private async void OnAudioPlayerPlaybackEnded()
     {
-        // When the current track finishes naturally, advance to the next one.
-        await NextAsync().ConfigureAwait(false);
+        try
+        {
+            // When the current track finishes naturally, advance to the next one.
+            await NextAsync().ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error handled in playback ended transition");
+        }
     }
 
     private void OnAudioPlayerStateChanged()
@@ -1023,8 +1030,15 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
 
     private async void OnAudioPlayerVolumeChanged()
     {
-        await _settingsService.SaveVolumeAsync(_audioPlayer.Volume).ConfigureAwait(false);
-        VolumeStateChanged?.Invoke();
+        try
+        {
+            await _settingsService.SaveVolumeAsync(_audioPlayer.Volume).ConfigureAwait(false);
+            VolumeStateChanged?.Invoke();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error saving volume on change");
+        }
     }
 
     private void OnAudioPlayerPositionChanged()
@@ -1039,9 +1053,15 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
 
     private async void OnAudioPlayerErrorOccurred(string errorMessage)
     {
-        _logger.LogError("Audio player error occurred: {ErrorMessage}", errorMessage);
-        IsTransitioningTrack = false;
-        await StopAsync().ConfigureAwait(false);
+        try
+        {
+            IsTransitioningTrack = false;
+            await StopAsync().ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error handling audio player error event");
+        }
     }
 
     private void OnAudioPlayerMediaOpened()
@@ -1052,12 +1072,26 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
 
     private async void OnAudioPlayerSmtcNextButtonPressed()
     {
-        await NextAsync().ConfigureAwait(false);
+        try
+        {
+            await NextAsync().ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error handling SMTC next button press");
+        }
     }
 
     private async void OnAudioPlayerSmtcPreviousButtonPressed()
     {
-        await PreviousAsync().ConfigureAwait(false);
+        try
+        {
+            await PreviousAsync().ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error handling SMTC previous button press");
+        }
     }
 
     /// <summary>

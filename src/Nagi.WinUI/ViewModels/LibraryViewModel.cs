@@ -91,14 +91,21 @@ public partial class LibraryViewModel : SongListViewModelBase
 
     private async void OnScanCompleted(object? sender, bool changesFound)
     {
-        if (changesFound)
+        try
         {
-            _logger.LogDebug("Scan completed with changes. Refreshing song list");
-            await _dispatcherService.EnqueueAsync(() => RefreshOrSortSongsCommand.ExecuteAsync(null));
+            if (changesFound)
+            {
+                _logger.LogDebug("Scan completed with changes. Refreshing song list");
+                await _dispatcherService.EnqueueAsync(() => RefreshOrSortSongsCommand.ExecuteAsync(null));
+            }
+            else
+            {
+                _logger.LogDebug("Scan completed with no changes");
+            }
         }
-        else
+        catch (Exception ex)
         {
-            _logger.LogDebug("Scan completed with no changes");
+            _logger.LogError(ex, "Error handling scan completion in LibraryViewModel");
         }
     }
 

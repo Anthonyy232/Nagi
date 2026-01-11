@@ -189,13 +189,20 @@ public sealed partial class ArtistPage : Page
     {
         if (sender is not FrameworkElement { DataContext: ArtistViewModelItem artistItem }) return;
 
-        _logger.LogDebug("User initiated image change for artist '{ArtistName}'.", artistItem.Name);
-        var newImagePath = await PickImageAsync();
-
-        if (!string.IsNullOrWhiteSpace(newImagePath))
+        try
         {
-            _logger.LogDebug("User selected new image for artist '{ArtistName}'. Updating.", artistItem.Name);
-            await ViewModel.UpdateArtistImageCommand.ExecuteAsync(new Tuple<Guid, string>(artistItem.Id, newImagePath));
+            _logger.LogDebug("User initiated image change for artist '{ArtistName}'.", artistItem.Name);
+            var newImagePath = await PickImageAsync();
+
+            if (!string.IsNullOrWhiteSpace(newImagePath))
+            {
+                _logger.LogDebug("User selected new image for artist '{ArtistName}'. Updating.", artistItem.Name);
+                await ViewModel.UpdateArtistImageCommand.ExecuteAsync(new Tuple<Guid, string>(artistItem.Id, newImagePath));
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error changing image for artist {ArtistName}", artistItem.Name);
         }
     }
 
@@ -203,8 +210,15 @@ public sealed partial class ArtistPage : Page
     {
         if (sender is not FrameworkElement { DataContext: ArtistViewModelItem artistItem }) return;
 
-        _logger.LogDebug("User requested removal of custom image for artist '{ArtistName}'.", artistItem.Name);
-        await ViewModel.RemoveArtistImageCommand.ExecuteAsync(artistItem.Id);
+        try
+        {
+            _logger.LogDebug("User requested removal of custom image for artist '{ArtistName}'.", artistItem.Name);
+            await ViewModel.RemoveArtistImageCommand.ExecuteAsync(artistItem.Id);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error removing image for artist {ArtistName}", artistItem.Name);
+        }
     }
 
     private async Task<string?> PickImageAsync()

@@ -679,30 +679,34 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
     async partial void OnSelectedEqualizerPresetChanged(EqualizerPreset? value)
     {
-         if (value == null || _isApplyingPreset) return;
-         
-         _isApplyingPreset = true;
-         try 
-         {
-             // Update Service First (Source of Truth)
-             await _playbackService.SetEqualizerGainsAsync(value.Gains);
-             
-             // Then update local UI to match (suppressing external update logic)
-             for (int i = 0; i < EqualizerBands.Count; i++)
-             {
-                 if (i < value.Gains.Length)
-                 {
-                     var band = EqualizerBands[i];
-                     band.IsExternalUpdate = true;
-                     band.Gain = value.Gains[i];
-                     band.IsExternalUpdate = false;
-                 }
-             }
-         }
-         finally 
-         {
-             _isApplyingPreset = false;
-         }
+        if (value == null || _isApplyingPreset) return;
+
+        _isApplyingPreset = true;
+        try
+        {
+            // Update Service First (Source of Truth)
+            await _playbackService.SetEqualizerGainsAsync(value.Gains);
+
+            // Then update local UI to match (suppressing external update logic)
+            for (int i = 0; i < EqualizerBands.Count; i++)
+            {
+                if (i < value.Gains.Length)
+                {
+                    var band = EqualizerBands[i];
+                    band.IsExternalUpdate = true;
+                    band.Gain = value.Gains[i];
+                    band.IsExternalUpdate = false;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error applying equalizer preset {PresetName}", value.Name);
+        }
+        finally
+        {
+            _isApplyingPreset = false;
+        }
     }
 
     private void OnPlaybackService_EqualizerChanged()
@@ -1004,8 +1008,15 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     async partial void OnSelectedThemeChanged(ElementTheme value)
     {
         if (_isInitializing) return;
-        await _settingsService.SetThemeAsync(value);
-        _themeService.ApplyTheme(value);
+        try
+        {
+            await _settingsService.SetThemeAsync(value);
+            _themeService.ApplyTheme(value);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error changing app theme to {Theme}", value);
+        }
     }
 
     partial void OnSelectedBackdropMaterialChanged(BackdropMaterial value)
@@ -1017,15 +1028,22 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     async partial void OnIsDynamicThemingEnabledChanged(bool value)
     {
         if (_isInitializing) return;
-        await _settingsService.SetDynamicThemingAsync(value);
-        if (value)
+        try
         {
-            _themeService.ReapplyCurrentDynamicTheme();
+            await _settingsService.SetDynamicThemingAsync(value);
+            if (value)
+            {
+                _ = _themeService.ReapplyCurrentDynamicThemeAsync();
+            }
+            else
+            {
+                var accentColor = await _settingsService.GetAccentColorAsync();
+                _ = _themeService.ApplyAccentColorAsync(accentColor);
+            }
         }
-        else
+        catch (Exception ex)
         {
-            var accentColor = await _settingsService.GetAccentColorAsync();
-            _themeService.ApplyAccentColor(accentColor);
+            _logger.LogError(ex, "Error updating dynamic theming to {Value}", value);
         }
     }
 
@@ -1117,54 +1135,61 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     {
         if (_isInitializing) return;
 
-        // When enabling, check for FFmpeg first
-        if (value)
+        try
         {
-            var isFFmpegInstalled = await _ffmpegService.IsFFmpegInstalledAsync();
-            if (!isFFmpegInstalled)
+            // When enabling, check for FFmpeg first
+            if (value)
             {
-                // Show dialog with recheck capability
-                var ffmpegDetected = await _uiService.ShowFFmpegSetupDialogAsync(
-                    "FFmpeg Not Found",
-                    _ffmpegService.GetFFmpegSetupInstructions(),
-                    () => _ffmpegService.IsFFmpegInstalledAsync(forceRecheck: true));
-                
-                if (!ffmpegDetected)
+                var isFFmpegInstalled = await _ffmpegService.IsFFmpegInstalledAsync();
+                if (!isFFmpegInstalled)
                 {
-                    // User cancelled or FFmpeg still not found - revert the toggle
+                    // Show dialog with recheck capability
+                    var ffmpegDetected = await _uiService.ShowFFmpegSetupDialogAsync(
+                        "FFmpeg Not Found",
+                        _ffmpegService.GetFFmpegSetupInstructions(),
+                        () => _ffmpegService.IsFFmpegInstalledAsync(forceRecheck: true));
+
+                    if (!ffmpegDetected)
+                    {
+                        // User cancelled or FFmpeg still not found - revert the toggle
+                        _isInitializing = true;
+                        IsVolumeNormalizationEnabled = false;
+                        _isInitializing = false;
+                        return;
+                    }
+                }
+
+                // If FFmpeg is present, show confirmation dialog and trigger scan
+                var confirmed = await _uiService.ShowConfirmationDialogAsync(
+                    "Enable Volume Normalization",
+                    "Volume Normalization (ReplayGain) ensures a consistent volume level across all your music.\n\n" +
+                    "This will analyze your music library and directly modify your audio files by writing ReplayGain tags. " +
+                    "Only files without existing tags will be processed. This may take some time depending on your library size.\n\n" +
+                    "Do you want to continue?",
+                    "Enable & Scan",
+                    "Cancel");
+
+                if (!confirmed)
+                {
+                    // Revert the toggle without triggering this handler again
                     _isInitializing = true;
                     IsVolumeNormalizationEnabled = false;
                     _isInitializing = false;
                     return;
                 }
+
+                await _settingsService.SetVolumeNormalizationEnabledAsync(true);
+                await ScanLibraryForReplayGainAsync();
             }
-
-            // If FFmpeg is present, show confirmation dialog and trigger scan
-            var confirmed = await _uiService.ShowConfirmationDialogAsync(
-                "Enable Volume Normalization",
-                "Volume Normalization (ReplayGain) ensures a consistent volume level across all your music.\n\n" +
-                "This will analyze your music library and directly modify your audio files by writing ReplayGain tags. " +
-                "Only files without existing tags will be processed. This may take some time depending on your library size.\n\n" +
-                "Do you want to continue?",
-                "Enable & Scan",
-                "Cancel");
-
-            if (!confirmed)
+            else
             {
-                // Revert the toggle without triggering this handler again
-                _isInitializing = true;
-                IsVolumeNormalizationEnabled = false;
-                _isInitializing = false;
-                return;
+                // When disabling, just save the setting (no confirmation needed)
+                await _settingsService.SetVolumeNormalizationEnabledAsync(false);
             }
-
-            await _settingsService.SetVolumeNormalizationEnabledAsync(true);
-            await ScanLibraryForReplayGainAsync();
         }
-        else
+        catch (Exception ex)
         {
-            // When disabling, just save the setting (no confirmation needed)
-            await _settingsService.SetVolumeNormalizationEnabledAsync(false);
+            _logger.LogError(ex, "Error toggling volume normalization to {Value}", value);
         }
     }
 
@@ -1243,14 +1268,25 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         {
             // Debounce was cancelled, which is expected behavior.
         }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error applying equalizer preamp {Value}", value);
+        }
     }
     async partial void OnAccentColorChanged(Windows.UI.Color value)
     {
         if (_isInitializing) return;
-        await _settingsService.SetAccentColorAsync(value);
-        if (!IsDynamicThemingEnabled)
+        try
         {
-            _themeService.ApplyAccentColor(value);
+            await _settingsService.SetAccentColorAsync(value);
+            if (!IsDynamicThemingEnabled)
+            {
+                _ = _themeService.ApplyAccentColorAsync(value);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating accent color to {Color}", value);
         }
     }
 
@@ -1264,7 +1300,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         await _settingsService.SetAccentColorAsync(null);
         if (!IsDynamicThemingEnabled)
         {
-            _themeService.ApplyAccentColor(null);
+            _ = _themeService.ApplyAccentColorAsync(null);
         }
     }
 }

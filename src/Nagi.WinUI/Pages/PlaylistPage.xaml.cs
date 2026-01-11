@@ -38,10 +38,17 @@ public sealed partial class PlaylistPage : Page
 
     private async void Page_Loaded(object sender, RoutedEventArgs e)
     {
-        _logger.LogDebug("PlaylistPage loaded. Setting initial visual state and loading playlists...");
-        VisualStateManager.GoToState(this, "SearchCollapsed", false);
-        await ViewModel.LoadPlaylistsCommand.ExecuteAsync(null);
-        _logger.LogDebug("Finished loading playlists.");
+        try
+        {
+            _logger.LogDebug("PlaylistPage loaded. Setting initial visual state and loading playlists...");
+            VisualStateManager.GoToState(this, "SearchCollapsed", false);
+            await ViewModel.LoadPlaylistsCommand.ExecuteAsync(null);
+            _logger.LogDebug("Finished loading playlists.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error during PlaylistPage initial loading");
+        }
     }
 
     protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -116,9 +123,16 @@ public sealed partial class PlaylistPage : Page
         if (sender is not FrameworkElement { DataContext: PlaylistViewModelItem playlistItem } ||
             ViewModel.IsAnyOperationInProgress) return;
 
-        _logger.LogDebug("User initiated playback of playlist '{PlaylistName}' (Id: {PlaylistId}).",
-            playlistItem.Name, playlistItem.Id);
-        await ViewModel.PlayPlaylistCommand.ExecuteAsync(new Tuple<Guid, bool>(playlistItem.Id, playlistItem.IsSmart));
+        try
+        {
+            _logger.LogDebug("User initiated playback of playlist '{PlaylistName}' (Id: {PlaylistId}).",
+                playlistItem.Name, playlistItem.Id);
+            await ViewModel.PlayPlaylistCommand.ExecuteAsync(new Tuple<Guid, bool>(playlistItem.Id, playlistItem.IsSmart));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error starting playback of playlist {PlaylistName}", playlistItem.Name);
+        }
     }
 
     private void PlaylistsGridView_ItemClick(object sender, ItemClickEventArgs e)
@@ -140,61 +154,82 @@ public sealed partial class PlaylistPage : Page
             return;
         }
 
-        _logger.LogDebug("Showing 'Create New Playlist' dialog.");
-        string? selectedCoverImageUriForDialog = null;
+        try
+        {
+            _logger.LogDebug("Showing 'Create New Playlist' dialog.");
+            string? selectedCoverImageUriForDialog = null;
 
-        var inputTextBox = new TextBox { PlaceholderText = "Enter new playlist name" };
-        var imagePreview = new ImageEx.ImageEx { Stretch = Stretch.UniformToFill, IsCacheEnabled = true };
-        var imagePlaceholder = new FontIcon { Glyph = "\uE91B", FontSize = 48 };
-        var imageGrid = new Grid
-        {
-            Width = 80, Height = 80, Margin = new Thickness(0, 0, 0, 12),
-            HorizontalAlignment = HorizontalAlignment.Center
-        };
-        imageGrid.Children.Add(imagePlaceholder);
-        imageGrid.Children.Add(imagePreview);
-        var pickImageButton = new Button
-        {
-            Content = "Pick Image", Margin = new Thickness(0, 12, 0, 0),
-            HorizontalAlignment = HorizontalAlignment.Stretch
-        };
-        var dialogContent = new StackPanel();
-        dialogContent.Children.Add(imageGrid);
-        dialogContent.Children.Add(inputTextBox);
-        dialogContent.Children.Add(pickImageButton);
-
-        var dialog = new ContentDialog
-        {
-            Title = "Create New Playlist", Content = dialogContent, PrimaryButtonText = "Create",
-            CloseButtonText = "Cancel", DefaultButton = ContentDialogButton.Primary, XamlRoot = XamlRoot
-        };
-
-        pickImageButton.Click += async (s, args) =>
-        {
-            var pickedUri = await PickCoverImageAsync();
-            if (!string.IsNullOrWhiteSpace(pickedUri))
+            var inputTextBox = new TextBox { PlaceholderText = "Enter new playlist name" };
+            var imagePreview = new ImageEx.ImageEx { Stretch = Stretch.UniformToFill, IsCacheEnabled = true };
+            var imagePlaceholder = new FontIcon { Glyph = "\uE91B", FontSize = 48 };
+            var imageGrid = new Grid
             {
-                selectedCoverImageUriForDialog = pickedUri;
-                imagePreview.Source = Helpers.ImageUriHelper.SafeGetImageSource(pickedUri);
-                imagePlaceholder.Visibility = Visibility.Collapsed;
+                Width = 80,
+                Height = 80,
+                Margin = new Thickness(0, 0, 0, 12),
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+            imageGrid.Children.Add(imagePlaceholder);
+            imageGrid.Children.Add(imagePreview);
+            var pickImageButton = new Button
+            {
+                Content = "Pick Image",
+                Margin = new Thickness(0, 12, 0, 0),
+                HorizontalAlignment = HorizontalAlignment.Stretch
+            };
+            var dialogContent = new StackPanel();
+            dialogContent.Children.Add(imageGrid);
+            dialogContent.Children.Add(inputTextBox);
+            dialogContent.Children.Add(pickImageButton);
+
+            var dialog = new ContentDialog
+            {
+                Title = "Create New Playlist",
+                Content = dialogContent,
+                PrimaryButtonText = "Create",
+                CloseButtonText = "Cancel",
+                DefaultButton = ContentDialogButton.Primary,
+                XamlRoot = XamlRoot
+            };
+
+            pickImageButton.Click += async (s, args) =>
+            {
+                try
+                {
+                    var pickedUri = await PickCoverImageAsync();
+                    if (!string.IsNullOrWhiteSpace(pickedUri))
+                    {
+                        selectedCoverImageUriForDialog = pickedUri;
+                        imagePreview.Source = Helpers.ImageUriHelper.SafeGetImageSource(pickedUri);
+                        imagePlaceholder.Visibility = Visibility.Collapsed;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error picking cover image for new playlist");
+                }
+            };
+            inputTextBox.TextChanged += (s, args) =>
+                dialog.IsPrimaryButtonEnabled = !string.IsNullOrWhiteSpace(inputTextBox.Text);
+            dialog.IsPrimaryButtonEnabled = false;
+
+            Helpers.DialogThemeHelper.ApplyThemeOverrides(dialog);
+            var result = await dialog.ShowAsync();
+
+            if (result == ContentDialogResult.Primary)
+            {
+                _logger.LogDebug("User confirmed creation of new playlist '{PlaylistName}'.", inputTextBox.Text);
+                var argsTuple = new Tuple<string, string?>(inputTextBox.Text, selectedCoverImageUriForDialog);
+                await ViewModel.CreatePlaylistCommand.ExecuteAsync(argsTuple);
             }
-        };
-        inputTextBox.TextChanged += (s, args) =>
-            dialog.IsPrimaryButtonEnabled = !string.IsNullOrWhiteSpace(inputTextBox.Text);
-        dialog.IsPrimaryButtonEnabled = false;
-
-        Helpers.DialogThemeHelper.ApplyThemeOverrides(dialog);
-        var result = await dialog.ShowAsync();
-
-        if (result == ContentDialogResult.Primary)
-        {
-            _logger.LogDebug("User confirmed creation of new playlist '{PlaylistName}'.", inputTextBox.Text);
-            var argsTuple = new Tuple<string, string?>(inputTextBox.Text, selectedCoverImageUriForDialog);
-            await ViewModel.CreatePlaylistCommand.ExecuteAsync(argsTuple);
+            else
+            {
+                _logger.LogDebug("User cancelled 'Create New Playlist' dialog.");
+            }
         }
-        else
+        catch (Exception ex)
         {
-            _logger.LogDebug("User cancelled 'Create New Playlist' dialog.");
+            _logger.LogError(ex, "Error in create new playlist dialog flow");
         }
     }
 
@@ -206,24 +241,31 @@ public sealed partial class PlaylistPage : Page
             return;
         }
 
-        _logger.LogDebug("Smart playlist creation requested. Opening editor dialog.");
-        
-        var dialog = new Dialogs.SmartPlaylistEditorDialog
+        try
         {
-            XamlRoot = XamlRoot
-        };
-        
-        var result = await dialog.ShowAsync();
-        
-        if (result == ContentDialogResult.Primary && dialog.ResultPlaylist != null)
-        {
-            _logger.LogDebug("User created smart playlist '{PlaylistName}' (Id: {PlaylistId}).",
-                dialog.ResultPlaylist.Name, dialog.ResultPlaylist.Id);
-            await ViewModel.LoadPlaylistsCommand.ExecuteAsync(null);
+            _logger.LogDebug("Smart playlist creation requested. Opening editor dialog.");
+
+            var dialog = new Dialogs.SmartPlaylistEditorDialog
+            {
+                XamlRoot = XamlRoot
+            };
+
+            var result = await dialog.ShowAsync();
+
+            if (result == ContentDialogResult.Primary && dialog.ResultPlaylist != null)
+            {
+                _logger.LogDebug("User created smart playlist '{PlaylistName}' (Id: {PlaylistId}).",
+                    dialog.ResultPlaylist.Name, dialog.ResultPlaylist.Id);
+                await ViewModel.LoadPlaylistsCommand.ExecuteAsync(null);
+            }
+            else
+            {
+                _logger.LogDebug("User cancelled smart playlist creation.");
+            }
         }
-        else
+        catch (Exception ex)
         {
-            _logger.LogDebug("User cancelled smart playlist creation.");
+            _logger.LogError(ex, "Error in create smart playlist dialog flow");
         }
     }
 
@@ -232,32 +274,43 @@ public sealed partial class PlaylistPage : Page
         if (sender is not FrameworkElement { DataContext: PlaylistViewModelItem playlistItem } ||
             ViewModel.IsAnyOperationInProgress) return;
 
-        _logger.LogDebug("Showing 'Rename Playlist' dialog for '{PlaylistName}'.", playlistItem.Name);
-        var inputTextBox = new TextBox { Text = playlistItem.Name };
-        var dialog = new ContentDialog
+        try
         {
-            Title = $"Rename '{playlistItem.Name}'", Content = inputTextBox, PrimaryButtonText = "Rename",
-            CloseButtonText = "Cancel", DefaultButton = ContentDialogButton.Primary, XamlRoot = XamlRoot
-        };
+            _logger.LogDebug("Showing 'Rename Playlist' dialog for '{PlaylistName}'.", playlistItem.Name);
+            var inputTextBox = new TextBox { Text = playlistItem.Name };
+            var dialog = new ContentDialog
+            {
+                Title = $"Rename '{playlistItem.Name}'",
+                Content = inputTextBox,
+                PrimaryButtonText = "Rename",
+                CloseButtonText = "Cancel",
+                DefaultButton = ContentDialogButton.Primary,
+                XamlRoot = XamlRoot
+            };
 
-        inputTextBox.TextChanged += (s, args) =>
-            dialog.IsPrimaryButtonEnabled = !string.IsNullOrWhiteSpace(inputTextBox.Text) &&
-                                            inputTextBox.Text.Trim() != playlistItem.Name;
-        dialog.IsPrimaryButtonEnabled = false;
+            inputTextBox.TextChanged += (s, args) =>
+                dialog.IsPrimaryButtonEnabled = !string.IsNullOrWhiteSpace(inputTextBox.Text) &&
+                                                inputTextBox.Text.Trim() != playlistItem.Name;
+            dialog.IsPrimaryButtonEnabled = false;
 
-        Helpers.DialogThemeHelper.ApplyThemeOverrides(dialog);
-        var result = await dialog.ShowAsync();
+            Helpers.DialogThemeHelper.ApplyThemeOverrides(dialog);
+            var result = await dialog.ShowAsync();
 
-        if (result == ContentDialogResult.Primary)
-        {
-            _logger.LogDebug("User confirmed rename of playlist '{OldName}' to '{NewName}'.", playlistItem.Name,
-                inputTextBox.Text);
-            var argsTuple = new Tuple<Guid, string, bool>(playlistItem.Id, inputTextBox.Text, playlistItem.IsSmart);
-            await ViewModel.RenamePlaylistCommand.ExecuteAsync(argsTuple);
+            if (result == ContentDialogResult.Primary)
+            {
+                _logger.LogDebug("User confirmed rename of playlist '{OldName}' to '{NewName}'.", playlistItem.Name,
+                    inputTextBox.Text);
+                var argsTuple = new Tuple<Guid, string, bool>(playlistItem.Id, inputTextBox.Text, playlistItem.IsSmart);
+                await ViewModel.RenamePlaylistCommand.ExecuteAsync(argsTuple);
+            }
+            else
+            {
+                _logger.LogDebug("User cancelled rename of playlist '{PlaylistName}'.", playlistItem.Name);
+            }
         }
-        else
+        catch (Exception ex)
         {
-            _logger.LogDebug("User cancelled rename of playlist '{PlaylistName}'.", playlistItem.Name);
+            _logger.LogError(ex, "Error renaming playlist {PlaylistName}", playlistItem.Name);
         }
     }
 
@@ -266,27 +319,36 @@ public sealed partial class PlaylistPage : Page
         if (sender is not FrameworkElement { DataContext: PlaylistViewModelItem playlistItem } ||
             ViewModel.IsAnyOperationInProgress) return;
 
-        _logger.LogDebug("Showing 'Delete Playlist' confirmation for '{PlaylistName}'.", playlistItem.Name);
-        var dialog = new ContentDialog
+        try
         {
-            Title = "Delete Playlist",
-            Content =
-                $"Are you sure you want to delete the playlist '{playlistItem.Name}'? This action cannot be undone.",
-            PrimaryButtonText = "Delete", CloseButtonText = "Cancel", DefaultButton = ContentDialogButton.Close,
-            XamlRoot = XamlRoot
-        };
+            _logger.LogDebug("Showing 'Delete Playlist' confirmation for '{PlaylistName}'.", playlistItem.Name);
+            var dialog = new ContentDialog
+            {
+                Title = "Delete Playlist",
+                Content =
+                    $"Are you sure you want to delete the playlist '{playlistItem.Name}'? This action cannot be undone.",
+                PrimaryButtonText = "Delete",
+                CloseButtonText = "Cancel",
+                DefaultButton = ContentDialogButton.Close,
+                XamlRoot = XamlRoot
+            };
 
-        DialogThemeHelper.ApplyThemeOverrides(dialog);
-        var result = await dialog.ShowAsync();
-        if (result == ContentDialogResult.Primary)
-        {
-            _logger.LogDebug("User confirmed deletion of playlist '{PlaylistName}' (Id: {PlaylistId}).",
-                playlistItem.Name, playlistItem.Id);
-            await ViewModel.DeletePlaylistCommand.ExecuteAsync(new Tuple<Guid, bool>(playlistItem.Id, playlistItem.IsSmart));
+            DialogThemeHelper.ApplyThemeOverrides(dialog);
+            var result = await dialog.ShowAsync();
+            if (result == ContentDialogResult.Primary)
+            {
+                _logger.LogDebug("User confirmed deletion of playlist '{PlaylistName}' (Id: {PlaylistId}).",
+                    playlistItem.Name, playlistItem.Id);
+                await ViewModel.DeletePlaylistCommand.ExecuteAsync(new Tuple<Guid, bool>(playlistItem.Id, playlistItem.IsSmart));
+            }
+            else
+            {
+                _logger.LogDebug("User cancelled deletion of playlist '{PlaylistName}'.", playlistItem.Name);
+            }
         }
-        else
+        catch (Exception ex)
         {
-            _logger.LogDebug("User cancelled deletion of playlist '{PlaylistName}'.", playlistItem.Name);
+            _logger.LogError(ex, "Error deleting playlist {PlaylistName}", playlistItem.Name);
         }
     }
 
@@ -295,19 +357,26 @@ public sealed partial class PlaylistPage : Page
         if (sender is not FrameworkElement { DataContext: PlaylistViewModelItem playlistItem } ||
             ViewModel.IsAnyOperationInProgress) return;
 
-        _logger.LogDebug("User initiated cover image change for playlist '{PlaylistName}'.", playlistItem.Name);
-        var newCoverImageUri = await PickCoverImageAsync();
+        try
+        {
+            _logger.LogDebug("User initiated cover image change for playlist '{PlaylistName}'.", playlistItem.Name);
+            var newCoverImageUri = await PickCoverImageAsync();
 
-        if (!string.IsNullOrWhiteSpace(newCoverImageUri))
-        {
-            _logger.LogDebug("User selected new cover image for playlist '{PlaylistName}'. Updating.",
-                playlistItem.Name);
-            var argsTuple = new Tuple<Guid, string, bool>(playlistItem.Id, newCoverImageUri, playlistItem.IsSmart);
-            await ViewModel.UpdatePlaylistCoverCommand.ExecuteAsync(argsTuple);
+            if (!string.IsNullOrWhiteSpace(newCoverImageUri))
+            {
+                _logger.LogDebug("User selected new cover image for playlist '{PlaylistName}'. Updating.",
+                    playlistItem.Name);
+                var argsTuple = new Tuple<Guid, string, bool>(playlistItem.Id, newCoverImageUri, playlistItem.IsSmart);
+                await ViewModel.UpdatePlaylistCoverCommand.ExecuteAsync(argsTuple);
+            }
+            else
+            {
+                _logger.LogDebug("User cancelled cover image selection.");
+            }
         }
-        else
+        catch (Exception ex)
         {
-            _logger.LogDebug("User cancelled cover image selection.");
+            _logger.LogError(ex, "Error changing cover image for playlist {PlaylistName}", playlistItem.Name);
         }
     }
 
@@ -335,8 +404,14 @@ public sealed partial class PlaylistPage : Page
     {
         if (sender is not FrameworkElement { DataContext: PlaylistViewModelItem playlistItem }) return;
 
-        _logger.LogDebug("User requested removal of custom image for playlist '{PlaylistName}'.", playlistItem.Name);
-
-        await ViewModel.RemovePlaylistCoverCommand.ExecuteAsync(new Tuple<Guid, bool>(playlistItem.Id, playlistItem.IsSmart));
+        try
+        {
+            _logger.LogDebug("User requested removal of custom image for playlist '{PlaylistName}'.", playlistItem.Name);
+            await ViewModel.RemovePlaylistCoverCommand.ExecuteAsync(new Tuple<Guid, bool>(playlistItem.Id, playlistItem.IsSmart));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error removing cover image for playlist {PlaylistName}", playlistItem.Name);
+        }
     }
 }

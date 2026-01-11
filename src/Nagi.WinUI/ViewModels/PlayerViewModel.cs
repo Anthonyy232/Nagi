@@ -81,7 +81,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
         SubscribeToSettingsServiceEvents();
         SubscribeToWindowServiceEvents();
         InitializeStateFromService();
-        InitializeSettingsAsync();
+        _ = InitializeSettingsAsync();
     }
 
     [ObservableProperty]
@@ -648,7 +648,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
         RunOnUIThread(UpdateEfficiencyMode);
     }
 
-    private async void InitializeSettingsAsync()
+    private async Task InitializeSettingsAsync()
     {
         try
         {

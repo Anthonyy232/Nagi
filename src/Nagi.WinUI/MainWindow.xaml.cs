@@ -255,31 +255,38 @@ public sealed partial class MainWindow : Window
     {
         if (_settingsService is null) return;
 
-        // Use the high-level XAML MicaBackdrop and DesktopAcrylicBackdrop objects.
-        // The framework handles the controllers and configuration automatically.
-        if (_settingsService.IsTransparencyEffectsEnabled())
+        try
         {
-            material ??= await _settingsService.GetBackdropMaterialAsync();
-
-            switch (material)
+            // Use the high-level XAML MicaBackdrop and DesktopAcrylicBackdrop objects.
+            // The framework handles the controllers and configuration automatically.
+            if (_settingsService.IsTransparencyEffectsEnabled())
             {
-                case BackdropMaterial.Mica:
-                    SystemBackdrop = new MicaBackdrop { Kind = MicaKind.Base };
-                    break;
-                case BackdropMaterial.MicaAlt:
-                    SystemBackdrop = new MicaBackdrop { Kind = MicaKind.BaseAlt };
-                    break;
-                case BackdropMaterial.Acrylic:
-                    SystemBackdrop = new DesktopAcrylicBackdrop();
-                    break;
-                default:
-                    SystemBackdrop = null;
-                    break;
+                material ??= await _settingsService.GetBackdropMaterialAsync();
+
+                switch (material)
+                {
+                    case BackdropMaterial.Mica:
+                        SystemBackdrop = new MicaBackdrop { Kind = MicaKind.Base };
+                        break;
+                    case BackdropMaterial.MicaAlt:
+                        SystemBackdrop = new MicaBackdrop { Kind = MicaKind.BaseAlt };
+                        break;
+                    case BackdropMaterial.Acrylic:
+                        SystemBackdrop = new DesktopAcrylicBackdrop();
+                        break;
+                    default:
+                        SystemBackdrop = null;
+                        break;
+                }
+            }
+            else
+            {
+                SystemBackdrop = null;
             }
         }
-        else
+        catch (Exception ex)
         {
-            SystemBackdrop = null;
+            _logger?.LogError(ex, "Failed to set system backdrop.");
         }
     }
 

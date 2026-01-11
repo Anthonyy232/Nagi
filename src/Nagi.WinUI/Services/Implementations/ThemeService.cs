@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
@@ -38,34 +39,34 @@ public class ThemeService : IThemeService
         _app.ApplyThemeInternal(theme);
     }
 
-    public void ReapplyCurrentDynamicTheme()
+    public async Task ReapplyCurrentDynamicThemeAsync()
     {
         _logger.LogDebug("Reapplying current dynamic theme.");
         var currentTrack = _playbackService.Value.CurrentTrack;
         if (currentTrack is not null)
         {
-            ApplyDynamicThemeFromSwatches(currentTrack.LightSwatchId, currentTrack.DarkSwatchId);
+            await ApplyDynamicThemeFromSwatchesAsync(currentTrack.LightSwatchId, currentTrack.DarkSwatchId);
         }
         else
         {
             _logger.LogDebug("No track is playing. Reverting to default primary color.");
-            ActivateDefaultPrimaryColor();
+            await ActivateDefaultPrimaryColorAsync();
         }
     }
 
-    public async void ApplyDynamicThemeFromSwatches(string? lightSwatchId, string? darkSwatchId)
+    public async Task ApplyDynamicThemeFromSwatchesAsync(string? lightSwatchId, string? darkSwatchId)
     {
         if (!await _settingsService.Value.GetDynamicThemingAsync())
         {
             _logger.LogDebug("Dynamic theming is disabled. Activating default primary color.");
-            ActivateDefaultPrimaryColor();
+            await ActivateDefaultPrimaryColorAsync();
             return;
         }
 
         if (App.RootWindow?.Content is not FrameworkElement rootElement)
         {
             _logger.LogWarning("Could not get root FrameworkElement. Cannot apply dynamic theme.");
-            ActivateDefaultPrimaryColor();
+            await ActivateDefaultPrimaryColorAsync();
             return;
         }
 
@@ -80,11 +81,11 @@ public class ThemeService : IThemeService
         else
         {
             _logger.LogDebug("No valid swatch found for current theme. Activating default primary color.");
-            ActivateDefaultPrimaryColor();
+            await ActivateDefaultPrimaryColorAsync();
         }
     }
 
-    public async void ActivateDefaultPrimaryColor()
+    public async Task ActivateDefaultPrimaryColorAsync()
     {
         _logger.LogDebug("Activating default primary color.");
         var accentColor = await _settingsService.Value.GetAccentColorAsync();
@@ -98,11 +99,11 @@ public class ThemeService : IThemeService
         }
     }
 
-    public void ApplyAccentColor(Windows.UI.Color? color)
+    public async Task ApplyAccentColorAsync(Windows.UI.Color? color)
     {
         if (color == null)
         {
-            ActivateDefaultPrimaryColor();
+            await ActivateDefaultPrimaryColorAsync();
         }
         else
         {

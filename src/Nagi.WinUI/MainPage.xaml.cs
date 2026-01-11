@@ -173,10 +173,10 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     }
 
     // Applies a dynamic theme based on the currently playing track's album art.
-    private void ApplyDynamicThemeForCurrentTrack()
+    private Task ApplyDynamicThemeForCurrentTrackAsync()
     {
         var song = ViewModel.CurrentPlayingTrack;
-        _themeService.ApplyDynamicThemeFromSwatches(song?.LightSwatchId, song?.DarkSwatchId);
+        return _themeService.ApplyDynamicThemeFromSwatchesAsync(song?.LightSwatchId, song?.DarkSwatchId);
     }
 
     // Updates the visual state of the floating player (expanded or collapsed).
@@ -266,27 +266,34 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     // Sets up event handlers and initial state when the page is loaded.
     private async void OnMainPageLoaded(object sender, RoutedEventArgs e)
     {
-        SetPlatformSpecificBrush();
+        try
+        {
+            SetPlatformSpecificBrush();
 
-        ActualThemeChanged += OnActualThemeChanged;
-        ContentFrame.Navigated += OnContentFrameNavigated;
-        ViewModel.PropertyChanged += OnViewModelPropertyChanged;
-        _settingsService.PlayerAnimationSettingChanged += OnPlayerAnimationSettingChanged;
-        _settingsService.NavigationSettingsChanged += OnNavigationSettingsChanged;
-        _settingsService.TransparencyEffectsSettingChanged += OnTransparencyEffectsSettingChanged;
+            ActualThemeChanged += OnActualThemeChanged;
+            ContentFrame.Navigated += OnContentFrameNavigated;
+            ViewModel.PropertyChanged += OnViewModelPropertyChanged;
+            _settingsService.PlayerAnimationSettingChanged += OnPlayerAnimationSettingChanged;
+            _settingsService.NavigationSettingsChanged += OnNavigationSettingsChanged;
+            _settingsService.TransparencyEffectsSettingChanged += OnTransparencyEffectsSettingChanged;
 
-        await PopulateNavigationAsync();
+            await PopulateNavigationAsync();
 
-        if (NavView.MenuItems.Any() && NavView.SelectedItem == null) NavView.SelectedItem = NavView.MenuItems.First();
-        UpdateNavViewSelection(ContentFrame.CurrentSourcePageType);
+            if (NavView.MenuItems.Any() && NavView.SelectedItem == null) NavView.SelectedItem = NavView.MenuItems.First();
+            UpdateNavViewSelection(ContentFrame.CurrentSourcePageType);
 
-        _isPlayerAnimationEnabled = await _settingsService.GetPlayerAnimationEnabledAsync();
+            _isPlayerAnimationEnabled = await _settingsService.GetPlayerAnimationEnabledAsync();
 
-        // Restore navigation pane state if the setting is enabled.
-        await RestorePaneStateAsync();
+            // Restore navigation pane state if the setting is enabled.
+            await RestorePaneStateAsync();
 
-        ApplyDynamicThemeForCurrentTrack();
-        UpdatePlayerVisualState(false);
+            _ = ApplyDynamicThemeForCurrentTrackAsync();
+            UpdatePlayerVisualState(false);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error during MainPage initialization");
+        }
     }
 
     // Cleans up event handlers when the page is unloaded.
@@ -361,7 +368,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     // Reapplies the dynamic theme when the system or app theme changes.
     private void OnActualThemeChanged(FrameworkElement sender, object args)
     {
-        _themeService.ReapplyCurrentDynamicTheme();
+        _ = _themeService.ReapplyCurrentDynamicThemeAsync();
     }
 
     // Responds to property changes in the PlayerViewModel.
@@ -370,7 +377,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         switch (e.PropertyName)
         {
             case nameof(PlayerViewModel.CurrentPlayingTrack):
-                ApplyDynamicThemeForCurrentTrack();
+                _ = ApplyDynamicThemeForCurrentTrackAsync();
                 UpdatePlayerVisualState();
                 break;
             case nameof(PlayerViewModel.IsPlaying):

@@ -40,30 +40,33 @@ public sealed partial class AlbumPage : Page
     /// </summary>
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
-        base.OnNavigatedTo(e);
-        _logger.LogDebug("Navigated to AlbumPage.");
-        _cancellationTokenSource = new CancellationTokenSource();
-
-        if (ViewModel.Albums.Count == 0)
+        try
         {
-            _logger.LogDebug("Album collection is empty, loading albums...");
-            try
+            base.OnNavigatedTo(e);
+            _logger.LogDebug("Navigated to AlbumPage.");
+            _cancellationTokenSource = new CancellationTokenSource();
+
+            if (ViewModel.Albums.Count == 0)
             {
-                await ViewModel.LoadAlbumsAsync(_cancellationTokenSource.Token);
-                _logger.LogDebug("Successfully loaded albums.");
+                _logger.LogDebug("Album collection is empty, loading albums...");
+                try
+                {
+                    await ViewModel.LoadAlbumsAsync(_cancellationTokenSource.Token);
+                    _logger.LogDebug("Successfully loaded albums.");
+                }
+                catch (TaskCanceledException)
+                {
+                    _logger.LogDebug("Album loading was cancelled.");
+                }
             }
-            catch (TaskCanceledException)
+            else
             {
-                _logger.LogDebug("Album loading was cancelled.");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An unexpected error occurred while loading albums.");
+                _logger.LogDebug("Albums already loaded, skipping fetch.");
             }
         }
-        else
+        catch (Exception ex)
         {
-            _logger.LogDebug("Albums already loaded, skipping fetch.");
+            _logger.LogError(ex, "Failed to navigate to AlbumPage correctly.");
         }
     }
 

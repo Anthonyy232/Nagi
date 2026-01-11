@@ -39,30 +39,33 @@ public sealed partial class GenrePage : Page
     /// </summary>
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
-        base.OnNavigatedTo(e);
-        _logger.LogDebug("Navigated to GenrePage.");
-        _cancellationTokenSource = new CancellationTokenSource();
-
-        if (ViewModel.Genres.Count == 0)
+        try
         {
-            _logger.LogDebug("Genre collection is empty, loading genres...");
-            try
+            base.OnNavigatedTo(e);
+            _logger.LogDebug("Navigated to GenrePage.");
+            _cancellationTokenSource = new CancellationTokenSource();
+
+            if (ViewModel.Genres.Count == 0)
             {
-                await ViewModel.LoadGenresAsync(_cancellationTokenSource.Token);
-                _logger.LogDebug("Successfully loaded genres.");
+                _logger.LogDebug("Genre collection is empty, loading genres...");
+                try
+                {
+                    await ViewModel.LoadGenresAsync(_cancellationTokenSource.Token);
+                    _logger.LogDebug("Successfully loaded genres.");
+                }
+                catch (TaskCanceledException)
+                {
+                    _logger.LogDebug("Genre loading was cancelled.");
+                }
             }
-            catch (TaskCanceledException)
+            else
             {
-                _logger.LogDebug("Genre loading was cancelled.");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An unexpected error occurred while loading genres.");
+                _logger.LogDebug("Genres already loaded, skipping fetch.");
             }
         }
-        else
+        catch (Exception ex)
         {
-            _logger.LogDebug("Genres already loaded, skipping fetch.");
+            _logger.LogError(ex, "Failed to navigate to GenrePage correctly.");
         }
     }
 
