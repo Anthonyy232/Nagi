@@ -83,7 +83,7 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
         }
 
         // Addition or removal of rules affects the match count
-        UpdateMatchCountAsync();
+        _ = UpdateMatchCountAsync();
     }
 
     private void OnRulePropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -95,7 +95,7 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
             nameof(RuleViewModel.SelectedField) or 
             nameof(RuleViewModel.SelectedOperator))
         {
-            UpdateMatchCountAsync();
+            _ = UpdateMatchCountAsync();
         }
     }
 
@@ -146,7 +146,7 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
         }
 
         UpdateNoRulesVisibility();
-        UpdateMatchCountAsync();
+        _ = UpdateMatchCountAsync();
     }
 
     private void SelectSortByComboBoxItem(SmartPlaylistSortOrder sortOrder)
@@ -166,32 +166,39 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
     private void OnPlaylistNameChanged(object sender, TextChangedEventArgs e)
     {
         // Name change affects whether we can calculate match count
-        UpdateMatchCountAsync();
+        _ = UpdateMatchCountAsync();
     }
 
     private void OnComboBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         // Match logic or sort order change affects the query/count
-        UpdateMatchCountAsync();
+        _ = UpdateMatchCountAsync();
     }
 
     private async void PickCoverImage_Click(object sender, RoutedEventArgs e)
     {
-        _logger.LogDebug("Opening file picker for cover image.");
-        var picker = new FileOpenPicker();
-        var hwnd = WindowNative.GetWindowHandle(App.RootWindow);
-        InitializeWithWindow.Initialize(picker, hwnd);
-        foreach (var ext in FileExtensions.ImageFileExtensions)
-            picker.FileTypeFilter.Add(ext);
-
-        var file = await picker.PickSingleFileAsync();
-        if (file != null)
+        try
         {
-            _logger.LogDebug("User picked image file: {FilePath}", file.Path);
-            _selectedCoverImageUri = file.Path;
-            CoverImagePreview.Source = ImageUriHelper.SafeGetImageSource(ImageUriHelper.GetUriWithCacheBuster(file.Path));
-            CoverImagePreview.Visibility = Visibility.Visible;
-            CoverImagePlaceholder.Visibility = Visibility.Collapsed;
+            _logger.LogDebug("Opening file picker for cover image.");
+            var picker = new FileOpenPicker();
+            var hwnd = WindowNative.GetWindowHandle(App.RootWindow);
+            InitializeWithWindow.Initialize(picker, hwnd);
+            foreach (var ext in FileExtensions.ImageFileExtensions)
+                picker.FileTypeFilter.Add(ext);
+
+            var file = await picker.PickSingleFileAsync();
+            if (file != null)
+            {
+                _logger.LogDebug("User picked image file: {FilePath}", file.Path);
+                _selectedCoverImageUri = file.Path;
+                CoverImagePreview.Source = ImageUriHelper.SafeGetImageSource(ImageUriHelper.GetUriWithCacheBuster(file.Path));
+                CoverImagePreview.Visibility = Visibility.Visible;
+                CoverImagePlaceholder.Visibility = Visibility.Collapsed;
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error picking cover image");
         }
     }
 
@@ -218,7 +225,7 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
         NoRulesPanel.Visibility = Rules.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
     }
 
-    private async void UpdateMatchCountAsync()
+    private async Task UpdateMatchCountAsync()
     {
         // Guard against early execution before UI is fully initialized.
         // XAML event handlers (e.g., OnComboBoxSelectionChanged) may fire during

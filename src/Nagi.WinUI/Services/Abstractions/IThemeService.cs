@@ -1,4 +1,5 @@
-﻿using Microsoft.UI.Xaml;
+﻿using System.Threading.Tasks;
+using Microsoft.UI.Xaml;
 
 namespace Nagi.WinUI.Services.Abstractions;
 
@@ -8,7 +9,7 @@ namespace Nagi.WinUI.Services.Abstractions;
 public interface IThemeService
 {
     void ApplyTheme(ElementTheme theme);
-    void ReapplyCurrentDynamicTheme();
+    Task ReapplyCurrentDynamicThemeAsync();
 
     /// <summary>
     ///     Gets the currently applied application theme.
@@ -20,16 +21,16 @@ public interface IThemeService
     /// </summary>
     /// <param name="lightSwatchId">The hex color string for the light theme.</param>
     /// <param name="darkSwatchId">The hex color string for the dark theme.</param>
-    void ApplyDynamicThemeFromSwatches(string? lightSwatchId, string? darkSwatchId);
+    Task ApplyDynamicThemeFromSwatchesAsync(string? lightSwatchId, string? darkSwatchId);
 
     /// <summary>
     ///     Resets the application's primary color to the default system accent color.
     /// </summary>
-    void ActivateDefaultPrimaryColor();
+    Task ActivateDefaultPrimaryColorAsync();
 
     /// <summary>
     ///     Applies the specified accent color to the application's primary color.
     /// </summary>
     /// <param name="color">The accent color to apply, or null to use the system default.</param>
-    void ApplyAccentColor(Windows.UI.Color? color);
+    Task ApplyAccentColorAsync(Windows.UI.Color? color);
 }

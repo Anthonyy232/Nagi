@@ -273,20 +273,34 @@ public sealed partial class ArtistViewPage : Page
 
     private async void ChangeImage_Click(object sender, RoutedEventArgs e)
     {
-        _logger.LogDebug("User initiated image change for artist '{ArtistName}'.", ViewModel.ArtistName);
-        var newImagePath = await PickImageAsync();
-
-        if (!string.IsNullOrWhiteSpace(newImagePath))
+        try
         {
-            _logger.LogDebug("User selected new image for artist '{ArtistName}'. Updating.", ViewModel.ArtistName);
-            await ViewModel.UpdateArtistImageCommand.ExecuteAsync(newImagePath);
+            _logger.LogDebug("User initiated image change for artist '{ArtistName}'.", ViewModel.ArtistName);
+            var newImagePath = await PickImageAsync();
+
+            if (!string.IsNullOrWhiteSpace(newImagePath))
+            {
+                _logger.LogDebug("User selected new image for artist '{ArtistName}'. Updating.", ViewModel.ArtistName);
+                await ViewModel.UpdateArtistImageCommand.ExecuteAsync(newImagePath);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error changing image for artist {ArtistName}", ViewModel.ArtistName);
         }
     }
 
     private async void RemoveImage_Click(object sender, RoutedEventArgs e)
     {
-        _logger.LogDebug("User requested removal of custom image for artist '{ArtistName}'.", ViewModel.ArtistName);
-        await ViewModel.RemoveArtistImageCommand.ExecuteAsync(null);
+        try
+        {
+            _logger.LogDebug("User requested removal of custom image for artist '{ArtistName}'.", ViewModel.ArtistName);
+            await ViewModel.RemoveArtistImageCommand.ExecuteAsync(null);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error removing image for artist {ArtistName}", ViewModel.ArtistName);
+        }
     }
 
     private async Task<string?> PickImageAsync()

@@ -608,9 +608,18 @@ public partial class App : Application
     private async void OnSuspending(object? sender, SuspendingEventArgs e)
     {
         var deferral = e.SuspendingOperation.GetDeferral();
-        if (Services is not null) await SaveApplicationStateAsync(Services);
-
-        deferral.Complete();
+        try
+        {
+            if (Services is not null) await SaveApplicationStateAsync(Services);
+        }
+        catch (Exception ex)
+        {
+            _logger?.LogError(ex, "Error during application suspension.");
+        }
+        finally
+        {
+            deferral.Complete();
+        }
     }
 
     private async Task SaveApplicationStateAsync(IServiceProvider services)
@@ -983,7 +992,7 @@ public partial class App : Application
         if (RootWindow?.Content is not FrameworkElement rootElement) return;
 
         rootElement.RequestedTheme = themeToApply;
-        Services?.GetRequiredService<IThemeService>().ReapplyCurrentDynamicTheme();
+        Services?.GetRequiredService<IThemeService>().ReapplyCurrentDynamicThemeAsync();
 
         if (RootWindow is MainWindow mainWindow) mainWindow.InitializeCustomTitleBar();
     }

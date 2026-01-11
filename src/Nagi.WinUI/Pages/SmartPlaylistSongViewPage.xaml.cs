@@ -78,41 +78,48 @@ public sealed partial class SmartPlaylistSongViewPage : Page
 
     private async void EditRulesButton_Click(object sender, RoutedEventArgs e)
     {
-        _logger.LogDebug("Edit rules button clicked.");
-        
-        var smartPlaylistId = ViewModel.GetSmartPlaylistId();
-        if (!smartPlaylistId.HasValue)
+        try
         {
-            _logger.LogWarning("Cannot edit rules - no smart playlist ID available.");
-            return;
-        }
+            _logger.LogDebug("Edit rules button clicked.");
 
-        var smartPlaylistService = App.Services!.GetRequiredService<Core.Services.Abstractions.ISmartPlaylistService>();
-        var smartPlaylist = await smartPlaylistService.GetSmartPlaylistByIdAsync(smartPlaylistId.Value);
-        
-        if (smartPlaylist == null)
-        {
-            _logger.LogWarning("Could not find smart playlist with ID {SmartPlaylistId}", smartPlaylistId);
-            return;
-        }
+            var smartPlaylistId = ViewModel.GetSmartPlaylistId();
+            if (!smartPlaylistId.HasValue)
+            {
+                _logger.LogWarning("Cannot edit rules - no smart playlist ID available.");
+                return;
+            }
 
-        var dialog = new Dialogs.SmartPlaylistEditorDialog
-        {
-            XamlRoot = XamlRoot,
-            EditingPlaylist = smartPlaylist
-        };
-        
-        var result = await dialog.ShowAsync();
-        
-        if (result == ContentDialogResult.Primary && dialog.ResultPlaylist != null)
-        {
-            _logger.LogDebug("User edited smart playlist '{PlaylistName}'.", dialog.ResultPlaylist.Name);
-            // Refresh the song list
-            await ViewModel.InitializeAsync(dialog.ResultPlaylist.Name, smartPlaylistId);
+            var smartPlaylistService = App.Services!.GetRequiredService<Core.Services.Abstractions.ISmartPlaylistService>();
+            var smartPlaylist = await smartPlaylistService.GetSmartPlaylistByIdAsync(smartPlaylistId.Value);
+
+            if (smartPlaylist == null)
+            {
+                _logger.LogWarning("Could not find smart playlist with ID {SmartPlaylistId}", smartPlaylistId);
+                return;
+            }
+
+            var dialog = new Dialogs.SmartPlaylistEditorDialog
+            {
+                XamlRoot = XamlRoot,
+                EditingPlaylist = smartPlaylist
+            };
+
+            var result = await dialog.ShowAsync();
+
+            if (result == ContentDialogResult.Primary && dialog.ResultPlaylist != null)
+            {
+                _logger.LogDebug("User edited smart playlist '{PlaylistName}'.", dialog.ResultPlaylist.Name);
+                // Refresh the song list
+                await ViewModel.InitializeAsync(dialog.ResultPlaylist.Name, smartPlaylistId);
+            }
+            else
+            {
+                _logger.LogDebug("User cancelled smart playlist edit.");
+            }
         }
-        else
+        catch (Exception ex)
         {
-            _logger.LogDebug("User cancelled smart playlist edit.");
+            _logger.LogError(ex, "Error opening smart playlist editor");
         }
     }
 

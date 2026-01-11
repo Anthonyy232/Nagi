@@ -67,7 +67,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
         _playbackService.DurationChanged += OnPlaybackServiceDurationChanged;
         _playbackService.PlaybackStateChanged += OnPlaybackServicePlaybackStateChanged;
 
-        UpdateForTrack(_playbackService.CurrentTrack);
+        _ = UpdateForTrack(_playbackService.CurrentTrack);
         IsPlaying = _playbackService.IsPlaying;
     }
 
@@ -222,7 +222,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
         }
     }
 
-    private async void UpdateForTrack(Song? song)
+    private async Task UpdateForTrack(Song? song)
     {
         // Cancel any previous lyrics fetch operation to prevent stale data when skipping songs
         CancellationToken cancellationToken;
@@ -269,7 +269,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
         _logger.LogDebug("Updating lyrics for track '{SongTitle}' ({SongId})", song.Title, song.Id);
         
         // Start prefetch for next track immediately (runs in parallel with current fetch)
-        PrefetchNextTrackLyrics();
+        _ = PrefetchNextTrackLyrics();
 
         // Perform I/O-bound operations on background thread to avoid blocking audio playback
         ParsedLrc? parsedLrc = null;
@@ -378,7 +378,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
 
     private void OnPlaybackServiceTrackChanged()
     {
-        UpdateForTrack(_playbackService.CurrentTrack);
+        _ = UpdateForTrack(_playbackService.CurrentTrack);
     }
 
     private void OnPlaybackServiceDurationChanged()
@@ -404,7 +404,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
     ///     Pre-fetches lyrics for the next track in the queue to reduce perceived latency.
     ///     This is fire-and-forget - failures are silently logged and don't affect current playback.
     /// </summary>
-    private async void PrefetchNextTrackLyrics()
+    private async Task PrefetchNextTrackLyrics()
     {
         CancellationTokenSource? prefetchCts = null;
         try

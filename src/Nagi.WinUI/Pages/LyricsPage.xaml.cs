@@ -63,7 +63,7 @@ public sealed partial class LyricsPage : Page
                 DispatcherQueue.TryEnqueue(() =>
                 {
                     if (_isUnloaded) return;
-                    ScrollToCurrentLine();
+                    _ = ScrollToCurrentLine();
                     UpdateProgressBarForCurrentLine();
                 });
                 break;
@@ -152,7 +152,7 @@ public sealed partial class LyricsPage : Page
     /// <summary>
     ///     Smoothly scrolls the lyrics list to bring the current active line into view.
     /// </summary>
-    private async void ScrollToCurrentLine()
+    private async Task ScrollToCurrentLine()
     {
         var lineToScrollTo = ViewModel.CurrentLine;
         if (lineToScrollTo == null) return;

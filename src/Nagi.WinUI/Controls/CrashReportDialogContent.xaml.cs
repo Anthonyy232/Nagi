@@ -1,6 +1,8 @@
 using System;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
@@ -12,6 +14,8 @@ namespace Nagi.WinUI.Controls;
 /// </summary>
 public sealed partial class CrashReportDialogContent : UserControl
 {
+    private readonly ILogger<CrashReportDialogContent>? _logger;
+
     public static readonly DependencyProperty IntroductionProperty =
         DependencyProperty.Register(nameof(Introduction), typeof(string), typeof(CrashReportDialogContent),
             new PropertyMetadata(string.Empty));
@@ -27,6 +31,7 @@ public sealed partial class CrashReportDialogContent : UserControl
     public CrashReportDialogContent()
     {
         InitializeComponent();
+        _logger = App.Services?.GetService<ILogger<CrashReportDialogContent>>();
     }
 
     /// <summary>
@@ -58,13 +63,20 @@ public sealed partial class CrashReportDialogContent : UserControl
 
     private async void CopyButton_Click(object sender, RoutedEventArgs e)
     {
-        var dataPackage = new DataPackage();
-        dataPackage.SetText(LogContent);
-        Clipboard.SetContent(dataPackage);
+        try
+        {
+            var dataPackage = new DataPackage();
+            dataPackage.SetText(LogContent);
+            Clipboard.SetContent(dataPackage);
 
-        // Provide visual feedback by briefly disabling and re-enabling the button.
-        CopyButton.IsEnabled = false;
-        await Task.Delay(TimeSpan.FromMilliseconds(300));
-        CopyButton.IsEnabled = true;
+            // Provide visual feedback by briefly disabling and re-enabling the button.
+            CopyButton.IsEnabled = false;
+            await Task.Delay(TimeSpan.FromMilliseconds(300));
+            CopyButton.IsEnabled = true;
+        }
+        catch (Exception ex)
+        {
+            _logger?.LogError(ex, "Failed to copy crash log.");
+        }
     }
 }

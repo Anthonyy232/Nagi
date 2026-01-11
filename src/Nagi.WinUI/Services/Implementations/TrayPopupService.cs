@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Windows.Graphics;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
@@ -70,12 +71,12 @@ public class TrayPopupService : ITrayPopupService, IDisposable
         if (_popupWindow == null) CreateWindow();
 
         if (_popupWindow!.AppWindow.IsVisible)
-            HidePopup();
+            _ = HidePopup();
         else
-            ShowPopup(targetRect);
+            _ = ShowPopup(targetRect);
     }
 
-    public async void HidePopup()
+    public async Task HidePopup()
     {
         if (_popupWindow != null && _popupWindow.AppWindow.IsVisible && !_isAnimating)
         {
@@ -86,7 +87,7 @@ public class TrayPopupService : ITrayPopupService, IDisposable
         }
     }
 
-    private async void ShowPopup(RectInt32? targetRect = null)
+    private async Task ShowPopup(RectInt32? targetRect = null)
     {
         _logger.LogDebug("Showing tray popup.");
         _isAnimating = true;
@@ -133,7 +134,7 @@ public class TrayPopupService : ITrayPopupService, IDisposable
     {
         _lastDeactivatedTime = _win32.GetTickCount();
         _logger.LogDebug("Popup deactivated. Hiding.");
-        HidePopup();
+        _ = HidePopup();
     }
 
 

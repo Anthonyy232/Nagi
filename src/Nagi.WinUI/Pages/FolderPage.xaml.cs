@@ -37,9 +37,16 @@ public sealed partial class FolderPage : Page
     /// </summary>
     private async void Page_Loaded(object sender, RoutedEventArgs e)
     {
-        _logger.LogDebug("FolderPage loaded. Loading folders...");
-        await ViewModel.LoadFoldersCommand.ExecuteAsync(null);
-        _logger.LogDebug("Finished loading folders.");
+        try
+        {
+            _logger.LogDebug("FolderPage loaded. Loading folders...");
+            await ViewModel.LoadFoldersCommand.ExecuteAsync(null);
+            _logger.LogDebug("Finished loading folders.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error during FolderPage initial loading");
+        }
     }
 
     /// <summary>
@@ -77,21 +84,28 @@ public sealed partial class FolderPage : Page
             return;
         }
 
-        _logger.LogDebug("Add folder button clicked. Opening folder picker.");
-        var folderPicker = new FolderPicker();
-        var hwnd = WindowNative.GetWindowHandle(App.RootWindow);
-        InitializeWithWindow.Initialize(folderPicker, hwnd);
-        folderPicker.FileTypeFilter.Add("*");
+        try
+        {
+            _logger.LogDebug("Add folder button clicked. Opening folder picker.");
+            var folderPicker = new FolderPicker();
+            var hwnd = WindowNative.GetWindowHandle(App.RootWindow);
+            InitializeWithWindow.Initialize(folderPicker, hwnd);
+            folderPicker.FileTypeFilter.Add("*");
 
-        var folder = await folderPicker.PickSingleFolderAsync();
-        if (folder != null)
-        {
-            _logger.LogDebug("User selected folder '{FolderPath}'. Adding and scanning.", folder.Path);
-            await ViewModel.AddFolderAndScanCommand.ExecuteAsync(folder.Path);
+            var folder = await folderPicker.PickSingleFolderAsync();
+            if (folder != null)
+            {
+                _logger.LogDebug("User selected folder '{FolderPath}'. Adding and scanning.", folder.Path);
+                await ViewModel.AddFolderAndScanCommand.ExecuteAsync(folder.Path);
+            }
+            else
+            {
+                _logger.LogDebug("User cancelled the folder picker.");
+            }
         }
-        else
+        catch (Exception ex)
         {
-            _logger.LogDebug("User cancelled the folder picker.");
+            _logger.LogError(ex, "Error adding folder to library");
         }
     }
 
@@ -102,9 +116,16 @@ public sealed partial class FolderPage : Page
     {
         if (sender is FrameworkElement { DataContext: FolderViewModelItem folderItem })
         {
-            _logger.LogDebug("Delete context menu clicked for folder '{FolderName}' (Id: {FolderId}).",
-                folderItem.Name, folderItem.Id);
-            await ShowDeleteFolderConfirmationDialogAsync(folderItem);
+            try
+            {
+                _logger.LogDebug("Delete context menu clicked for folder '{FolderName}' (Id: {FolderId}).",
+                    folderItem.Name, folderItem.Id);
+                await ShowDeleteFolderConfirmationDialogAsync(folderItem);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error initiating folder deletion for {FolderName}", folderItem.Name);
+            }
         }
     }
 
