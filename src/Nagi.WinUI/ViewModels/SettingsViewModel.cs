@@ -188,6 +188,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         IsDiscordRichPresenceEnabled = SettingsDefaults.DiscordRichPresenceEnabled;
         IsCheckForUpdatesEnabled = SettingsDefaults.CheckForUpdatesEnabled;
         IsRememberWindowSizeEnabled = SettingsDefaults.RememberWindowSizeEnabled;
+        IsRememberWindowPositionEnabled = SettingsDefaults.RememberWindowPositionEnabled;
         IsRememberPaneStateEnabled = SettingsDefaults.RememberPaneStateEnabled;
         IsVolumeNormalizationEnabled = SettingsDefaults.VolumeNormalizationEnabled;
         EqualizerPreamp = SettingsDefaults.EqualizerPreamp;
@@ -213,6 +214,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     [ObservableProperty] public partial bool IsDiscordRichPresenceEnabled { get; set; }
     [ObservableProperty] public partial bool IsCheckForUpdatesEnabled { get; set; }
     [ObservableProperty] public partial bool IsRememberWindowSizeEnabled { get; set; }
+    [ObservableProperty] public partial bool IsRememberWindowPositionEnabled { get; set; }
     [ObservableProperty] public partial bool IsRememberPaneStateEnabled { get; set; }
     [ObservableProperty] public partial bool IsVolumeNormalizationEnabled { get; set; }
     [ObservableProperty] public partial float EqualizerPreamp { get; set; }
@@ -330,6 +332,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             var discordRpcTask = _settingsService.GetDiscordRichPresenceEnabledAsync();
             var checkUpdatesTask = _settingsService.GetCheckForUpdatesEnabledAsync();
             var rememberWindowTask = _settingsService.GetRememberWindowSizeEnabledAsync();
+            var rememberPositionTask = _settingsService.GetRememberWindowPositionEnabledAsync();
             var rememberPaneTask = _settingsService.GetRememberPaneStateEnabledAsync();
             var volumeNormTask = _settingsService.GetVolumeNormalizationEnabledAsync();
             var lastFmCredsTask = _settingsService.GetLastFmCredentialsAsync();
@@ -347,50 +350,51 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
                 playerAnimationTask, restorePlaybackTask, autoLaunchTask, startMinimizedTask,
                 hideToTrayTask, miniPlayerTask, trayFlyoutTask, onlineMetadataTask,
                 onlineLyricsTask, discordRpcTask, checkUpdatesTask, rememberWindowTask,
-                rememberPaneTask, volumeNormTask, lastFmCredsTask, lastFmAuthTokenTask,
+                rememberPositionTask, rememberPaneTask, volumeNormTask, lastFmCredsTask, lastFmAuthTokenTask,
                 scrobblingTask, nowPlayingTask, accentColorTask, lyricsProvidersTask, metadataProvidersTask);
 
-            foreach (var item in await navItemsTask)
+            foreach (var item in navItemsTask.Result)
             {
                 item.PropertyChanged += OnNavigationItemPropertyChanged;
                 NavigationItems.Add(item);
             }
 
-            foreach (var button in await playerButtonsTask)
+            foreach (var button in playerButtonsTask.Result)
             {
                 button.PropertyChanged += OnPlayerButtonPropertyChanged;
                 PlayerButtons.Add(button);
             }
 
-            SelectedTheme = await themeTask;
-            SelectedBackdropMaterial = await backdropTask;
-            IsDynamicThemingEnabled = await dynamicThemingTask;
-            IsPlayerAnimationEnabled = await playerAnimationTask;
-            IsRestorePlaybackStateEnabled = await restorePlaybackTask;
-            IsAutoLaunchEnabled = await autoLaunchTask;
-            IsStartMinimizedEnabled = await startMinimizedTask;
-            IsHideToTrayEnabled = await hideToTrayTask;
-            IsMinimizeToMiniPlayerEnabled = await miniPlayerTask;
-            IsShowCoverArtInTrayFlyoutEnabled = await trayFlyoutTask;
-            IsFetchOnlineMetadataEnabled = await onlineMetadataTask;
-            IsFetchOnlineLyricsEnabled = await onlineLyricsTask;
-            IsDiscordRichPresenceEnabled = await discordRpcTask;
-            IsCheckForUpdatesEnabled = await checkUpdatesTask;
-            IsRememberWindowSizeEnabled = await rememberWindowTask;
-            IsRememberPaneStateEnabled = await rememberPaneTask;
-            IsVolumeNormalizationEnabled = await volumeNormTask;
+            SelectedTheme = themeTask.Result;
+            SelectedBackdropMaterial = backdropTask.Result;
+            IsDynamicThemingEnabled = dynamicThemingTask.Result;
+            IsPlayerAnimationEnabled = playerAnimationTask.Result;
+            IsRestorePlaybackStateEnabled = restorePlaybackTask.Result;
+            IsAutoLaunchEnabled = autoLaunchTask.Result;
+            IsStartMinimizedEnabled = startMinimizedTask.Result;
+            IsHideToTrayEnabled = hideToTrayTask.Result;
+            IsMinimizeToMiniPlayerEnabled = miniPlayerTask.Result;
+            IsShowCoverArtInTrayFlyoutEnabled = trayFlyoutTask.Result;
+            IsFetchOnlineMetadataEnabled = onlineMetadataTask.Result;
+            IsFetchOnlineLyricsEnabled = onlineLyricsTask.Result;
+            IsDiscordRichPresenceEnabled = discordRpcTask.Result;
+            IsCheckForUpdatesEnabled = checkUpdatesTask.Result;
+            IsRememberWindowSizeEnabled = rememberWindowTask.Result;
+            IsRememberWindowPositionEnabled = rememberPositionTask.Result;
+            IsRememberPaneStateEnabled = rememberPaneTask.Result;
+            IsVolumeNormalizationEnabled = volumeNormTask.Result;
 
-            var lastFmCredentials = await lastFmCredsTask;
+            var lastFmCredentials = lastFmCredsTask.Result;
             LastFmUsername = lastFmCredentials?.Username;
             IsLastFmConnected = lastFmCredentials is not null && !string.IsNullOrEmpty(lastFmCredentials.Value.SessionKey);
 
-            IsLastFmScrobblingEnabled = await scrobblingTask;
-            IsLastFmNowPlayingEnabled = await nowPlayingTask;
+            IsLastFmScrobblingEnabled = scrobblingTask.Result;
+            IsLastFmNowPlayingEnabled = nowPlayingTask.Result;
 
-            var authToken = await lastFmAuthTokenTask;
+            var authToken = lastFmAuthTokenTask.Result;
             IsConnectingToLastFm = !string.IsNullOrEmpty(authToken);
 
-            var accentColor = await accentColorTask;
+            var accentColor = accentColorTask.Result;
             if (accentColor != null)
             {
                 AccentColor = accentColor.Value;
@@ -403,12 +407,12 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             LoadEqualizerState();
 
             // Load service providers
-            foreach (var provider in await lyricsProvidersTask)
+            foreach (var provider in lyricsProvidersTask.Result)
             {
                 LyricsProviders.Add(ServiceProviderSettingViewModel.FromSetting(provider));
             }
 
-            var metadataProviders = (await metadataProvidersTask)
+            var metadataProviders = metadataProvidersTask.Result
                 .Select(ServiceProviderSettingViewModel.FromSetting)
                 .ToList();
 
@@ -1091,17 +1095,16 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         _ = _settingsService.SetCheckForUpdatesEnabledAsync(value);
     }
 
-    async partial void OnIsRememberWindowSizeEnabledChanged(bool value)
+    partial void OnIsRememberWindowSizeEnabledChanged(bool value)
     {
         if (_isInitializing) return;
-        await _settingsService.SetRememberWindowSizeEnabledAsync(value);
-        
-        // When enabling, immediately save the current window size so the user's 
-        // current window state is captured even if they close the app before resizing again.
-        if (value && App.RootWindow is MainWindow mainWindow)
-        {
-            await mainWindow.SaveWindowSizeAsync();
-        }
+        _ = _settingsService.SetRememberWindowSizeEnabledAsync(value);
+    }
+
+    partial void OnIsRememberWindowPositionEnabledChanged(bool value)
+    {
+        if (_isInitializing) return;
+        _ = _settingsService.SetRememberWindowPositionEnabledAsync(value);
     }
 
     partial void OnIsRememberPaneStateEnabledChanged(bool value)

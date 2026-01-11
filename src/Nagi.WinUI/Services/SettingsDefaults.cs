@@ -34,6 +34,7 @@ public static class SettingsDefaults
     public const bool LastFmScrobblingEnabled = false;
     public const bool LastFmNowPlayingEnabled = false;
     public const bool RememberWindowSizeEnabled = false;
+    public const bool RememberWindowPositionEnabled = false;
     public const bool RememberPaneStateEnabled = true;
     public const bool VolumeNormalizationEnabled = false;
     public const float EqualizerPreamp = 0.0f;

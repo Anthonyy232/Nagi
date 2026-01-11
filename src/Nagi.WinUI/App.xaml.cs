@@ -200,6 +200,12 @@ public partial class App : Application
 
             InitializeSystemIntegration();
 
+            // Restore window state BEFORE showing the window to prevent flash of default position
+            if (_window is MainWindow mainWindow)
+            {
+                await mainWindow.RestoreWindowStateAsync();
+            }
+
             HandleInitialActivation(args.UWPLaunchActivatedEventArgs);
 
             var restoreSession = _fileActivationQueue.IsEmpty;
@@ -618,10 +624,12 @@ public partial class App : Application
                 await musicPlaybackService.SavePlaybackStateAsync();
             else
                 await settingsService.ClearPlaybackStateAsync();
+
+            await settingsService.FlushAsync();
         }
         catch (Exception ex)
         {
-            _logger?.LogError(ex, "Failed to save or clear playback state");
+            _logger?.LogError(ex, "Failed to save application state or flush settings");
         }
     }
 
@@ -644,8 +652,8 @@ public partial class App : Application
         {
             if (_window is MainWindow mainWindow)
             {
-                _logger?.LogDebug("Saving window size...");
-                await mainWindow.SaveWindowSizeAsync();
+                _logger?.LogDebug(\"Saving window state...\");
+                await mainWindow.SaveWindowStateAsync();
                 mainWindow.Cleanup();
             }
 
@@ -1050,7 +1058,10 @@ public partial class App : Application
         else
         {
             // Default behavior: activate and show the main window.
-            _window.Activate();
+            // Use ShowAndActivate to reliably bring the window to the foreground,
+            // bypassing Windows' focus-stealing prevention.
+            var win32Service = Services.GetRequiredService<IWin32InteropService>();
+            WindowActivator.ShowAndActivate(_window, win32Service);
         }
     }
 

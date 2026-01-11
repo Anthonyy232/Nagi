@@ -174,7 +174,8 @@ public class ImageSharpProcessor : IImageProcessor
         catch (IOException)
         {
             // File already exists (another thread won the race), delete our temp file
-            try { _fileSystem.DeleteFile(tempPath); } catch { /* ignore */ }
+            try { _fileSystem.DeleteFile(tempPath); } 
+            catch (Exception ex) { _logger.LogDebug(ex, "Failed to clean up temp file {TempPath}", tempPath); }
         }
         
         return fullPath;

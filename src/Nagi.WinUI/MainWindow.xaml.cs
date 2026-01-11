@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Graphics;
@@ -25,13 +26,16 @@ namespace Nagi.WinUI;
 /// </summary>
 public sealed partial class MainWindow : Window
 {
+    // Minimum window size constraints when restoring saved dimensions.
+    private const int MinMainWindowWidth = 400;
+    private const int MinMainWindowHeight = 300;
+    
     // Core windowing and service references.
     private AppWindow? _appWindow;
 
     // State flags to ensure one-time initialization.
     private bool _isBackdropInitialized;
     private bool _isTitleBarInitialized;
-    private bool _isWindowSizeRestored;
     private ILogger<MainWindow>? _logger;
     private FrameworkElement? _rootElement;
     private IUISettingsService? _settingsService;
@@ -162,12 +166,6 @@ public sealed partial class MainWindow : Window
             _isBackdropInitialized = true;
         }
 
-        if (!_isWindowSizeRestored && _settingsService != null)
-        {
-            _isWindowSizeRestored = true;
-            await RestoreWindowSizeAsync();
-        }
-
         if (!_isTaskbarInitialized && _taskbarService != null)
         {
             _isTaskbarInitialized = true;
@@ -180,10 +178,10 @@ public sealed partial class MainWindow : Window
     }
 
     /// <summary>
-    ///     Saves the current window size if the setting is enabled.
+    ///     Saves the current window size and/or position if the respective settings are enabled.
     ///     This should be called explicitly by the application before shutdown.
     /// </summary>
-    public async Task SaveWindowSizeAsync()
+    public async Task SaveWindowStateAsync()
     {
         if (_settingsService == null) return;
 
@@ -194,16 +192,39 @@ public sealed partial class MainWindow : Window
 
         try
         {
-            if (await _settingsService.GetRememberWindowSizeEnabledAsync())
+            var saveSizeTask = _settingsService.GetRememberWindowSizeEnabledAsync();
+            var savePositionTask = _settingsService.GetRememberWindowPositionEnabledAsync();
+            
+            await Task.WhenAll(saveSizeTask, savePositionTask);
+
+            var saveSize = saveSizeTask.Result;
+            var savePosition = savePositionTask.Result;
+            
+            // Parallelize the actual save operations when both are enabled
+            var saveTasks = new List<Task>();
+            
+            if (saveSize)
             {
                 var size = _appWindow.Size;
-                await _settingsService.SetLastWindowSizeAsync(size.Width, size.Height);
-                _logger?.LogDebug("Saved window size: {Width}x{Height}", size.Width, size.Height);
+                saveTasks.Add(_settingsService.SetLastWindowSizeAsync(size.Width, size.Height));
+                _logger?.LogDebug("Saving window size: {Width}x{Height}", size.Width, size.Height);
+            }
+            
+            if (savePosition)
+            {
+                var position = _appWindow.Position;
+                saveTasks.Add(_settingsService.SetLastWindowPositionAsync(position.X, position.Y));
+                _logger?.LogDebug("Saving window position: ({X}, {Y})", position.X, position.Y);
+            }
+            
+            if (saveTasks.Count > 0)
+            {
+                await Task.WhenAll(saveTasks);
             }
         }
         catch (Exception ex)
         {
-            _logger?.LogWarning(ex, "Failed to save window size.");
+            _logger?.LogWarning(ex, "Failed to save window state.");
         }
     }
 
@@ -285,9 +306,10 @@ public sealed partial class MainWindow : Window
     }
 
     /// <summary>
-    ///     Restores the main window size from saved settings if the feature is enabled.
+    ///     Restores the main window size and/or position from saved settings if the features are enabled.
+    ///     This should be called before the window is shown to prevent visual flashes.
     /// </summary>
-    private async Task RestoreWindowSizeAsync()
+    public async Task RestoreWindowStateAsync()
     {
         if (_settingsService == null) return;
 
@@ -297,22 +319,94 @@ public sealed partial class MainWindow : Window
 
         try
         {
-            if (await _settingsService.GetRememberWindowSizeEnabledAsync())
+            var restoreSizeTask = _settingsService.GetRememberWindowSizeEnabledAsync();
+            var restorePositionTask = _settingsService.GetRememberWindowPositionEnabledAsync();
+            
+            await Task.WhenAll(restoreSizeTask, restorePositionTask);
+
+            var restoreSize = restoreSizeTask.Result;
+            var restorePosition = restorePositionTask.Result;
+            
+            // Parallelize fetching saved values when both are enabled
+            var savedSizeTask = restoreSize 
+                ? _settingsService.GetLastWindowSizeAsync() 
+                : Task.FromResult<(int Width, int Height)?>(null);
+            var savedPositionTask = restorePosition 
+                ? _settingsService.GetLastWindowPositionAsync() 
+                : Task.FromResult<(int X, int Y)?>(null);
+            
+            await Task.WhenAll(savedSizeTask, savedPositionTask);
+            
+            SizeInt32? newSize = null;
+            PointInt32? newPosition = null;
+            
+            var savedSize = savedSizeTask.Result;
+            if (savedSize.HasValue)
             {
-                var savedSize = await _settingsService.GetLastWindowSizeAsync();
-                if (savedSize.HasValue)
-                {
-                    // Ensure minimum size constraints
-                    var width = Math.Max(savedSize.Value.Width, 400);
-                    var height = Math.Max(savedSize.Value.Height, 300);
-                    _appWindow.Resize(new SizeInt32(width, height));
-                    _logger?.LogDebug("Restored window size: {Width}x{Height}", width, height);
-                }
+                // Ensure minimum size constraints
+                var width = Math.Max(savedSize.Value.Width, MinMainWindowWidth);
+                var height = Math.Max(savedSize.Value.Height, MinMainWindowHeight);
+                newSize = new SizeInt32(width, height);
+            }
+            
+            var savedPosition = savedPositionTask.Result;
+            if (savedPosition.HasValue && IsPositionOnScreen(savedPosition.Value.X, savedPosition.Value.Y))
+            {
+                newPosition = new PointInt32(savedPosition.Value.X, savedPosition.Value.Y);
+            }
+            
+            // Apply size and/or position using the most efficient method
+            if (newSize.HasValue && newPosition.HasValue)
+            {
+                _appWindow.MoveAndResize(new RectInt32(
+                    newPosition.Value.X, newPosition.Value.Y,
+                    newSize.Value.Width, newSize.Value.Height));
+                _logger?.LogDebug("Restored window state: ({X}, {Y}) {Width}x{Height}", 
+                    newPosition.Value.X, newPosition.Value.Y, newSize.Value.Width, newSize.Value.Height);
+            }
+            else if (newSize.HasValue)
+            {
+                _appWindow.Resize(newSize.Value);
+                _logger?.LogDebug("Restored window size: {Width}x{Height}", newSize.Value.Width, newSize.Value.Height);
+            }
+            else if (newPosition.HasValue)
+            {
+                _appWindow.Move(newPosition.Value);
+                _logger?.LogDebug("Restored window position: ({X}, {Y})", newPosition.Value.X, newPosition.Value.Y);
             }
         }
         catch (Exception ex)
         {
-            _logger?.LogWarning(ex, "Failed to restore window size.");
+            _logger?.LogWarning(ex, "Failed to restore window state.");
+        }
+    }
+
+    /// <summary>
+    ///     Validates that a screen position is visible on at least one connected display.
+    ///     This prevents restoring a window to an off-screen position if a monitor was disconnected.
+    /// </summary>
+    private bool IsPositionOnScreen(int x, int y)
+    {
+        try
+        {
+            // Check if the point is within any available display's bounds
+            var displays = DisplayArea.FindAll();
+            foreach (var display in displays)
+            {
+                var bounds = display.OuterBounds;
+                if (x >= bounds.X && x < bounds.X + bounds.Width &&
+                    y >= bounds.Y && y < bounds.Y + bounds.Height)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        catch (Exception ex)
+        {
+            // If we can't check, allow the position (Windows will handle it)
+            _logger?.LogWarning(ex, "Failed to enumerate displays for position validation");
+            return true;
         }
     }
 

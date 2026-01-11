@@ -180,6 +180,17 @@
                 </controls:SettingsCard>
 
                 <controls:SettingsCard
+                    Header="Remember window position"
+                    Description="Restore the main window to its previous screen location on next launch.">
+                    <controls:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE737;" />
+                    </controls:SettingsCard.HeaderIcon>
+                    <ToggleSwitch
+                        HorizontalAlignment="Right"
+                        IsOn="{x:Bind ViewModel.IsRememberWindowPositionEnabled, Mode=TwoWay}" />
+                </controls:SettingsCard>
+
+                <controls:SettingsCard
                     Header="Remember navigation panel state"
                     Description="Keep the left navigation panel open or closed as you left it.">
                     <controls:SettingsCard.HeaderIcon>
