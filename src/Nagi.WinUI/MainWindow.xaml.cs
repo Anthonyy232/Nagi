@@ -188,7 +188,11 @@ public sealed partial class MainWindow : Window
         // Ensure _appWindow is available. It might not be set if the window was never
         // activated (e.g., when starting minimized or hidden to tray).
         _appWindow ??= GetAppWindowForCurrentWindow();
-        if (_appWindow == null) return;
+        if (_appWindow == null)
+        {
+            _logger?.LogDebug("Cannot save window state: AppWindow not available");
+            return;
+        }
 
         try
         {
@@ -315,7 +319,11 @@ public sealed partial class MainWindow : Window
 
         // Ensure _appWindow is available.
         _appWindow ??= GetAppWindowForCurrentWindow();
-        if (_appWindow == null) return;
+        if (_appWindow == null)
+        {
+            _logger?.LogDebug("Cannot restore window state: AppWindow not available");
+            return;
+        }
 
         try
         {
@@ -343,9 +351,17 @@ public sealed partial class MainWindow : Window
             var savedSize = savedSizeTask.Result;
             if (savedSize.HasValue)
             {
-                // Ensure minimum size constraints
-                var width = Math.Max(savedSize.Value.Width, MinMainWindowWidth);
-                var height = Math.Max(savedSize.Value.Height, MinMainWindowHeight);
+                // Clamp size between minimum and the largest connected display dimensions.
+                // This handles multi-monitor setups where secondary monitors may be larger than primary.
+                var displays = DisplayArea.FindAll();
+                var maxWidth = displays.Length > 0 
+                    ? displays.Max(d => d.WorkArea.Width) 
+                    : int.MaxValue;
+                var maxHeight = displays.Length > 0 
+                    ? displays.Max(d => d.WorkArea.Height) 
+                    : int.MaxValue;
+                var width = Math.Clamp(savedSize.Value.Width, MinMainWindowWidth, maxWidth);
+                var height = Math.Clamp(savedSize.Value.Height, MinMainWindowHeight, maxHeight);
                 newSize = new SizeInt32(width, height);
             }
             
@@ -382,20 +398,25 @@ public sealed partial class MainWindow : Window
     }
 
     /// <summary>
-    ///     Validates that a screen position is visible on at least one connected display.
+    ///     Validates that a meaningful portion of the window would be visible on at least one connected display.
     ///     This prevents restoring a window to an off-screen position if a monitor was disconnected.
     /// </summary>
-    private bool IsPositionOnScreen(int x, int y)
+    /// <param name="x">The X coordinate of the window's top-left corner.</param>
+    /// <param name="y">The Y coordinate of the window's top-left corner.</param>
+    /// <param name="width">The minimum visible width to consider valid (default 100px).</param>
+    /// <param name="height">The minimum visible height to consider valid (default 100px).</param>
+    private bool IsPositionOnScreen(int x, int y, int width = 100, int height = 100)
     {
         try
         {
-            // Check if the point is within any available display's bounds
+            // Check if at least a meaningful portion of the window overlaps any display
             var displays = DisplayArea.FindAll();
             foreach (var display in displays)
             {
                 var bounds = display.OuterBounds;
-                if (x >= bounds.X && x < bounds.X + bounds.Width &&
-                    y >= bounds.Y && y < bounds.Y + bounds.Height)
+                // Check for overlap between the window rect and display bounds
+                if (x < bounds.X + bounds.Width && x + width > bounds.X &&
+                    y < bounds.Y + bounds.Height && y + height > bounds.Y)
                 {
                     return true;
                 }
