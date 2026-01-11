@@ -65,6 +65,12 @@ public class MusicPlaybackServiceTests
             _logger);
 
         _testSongs = CreateTestSongs(5);
+
+        // Mock LibraryService.GetSongByIdAsync for all test songs to support lazy-loading
+        foreach (var song in _testSongs)
+        {
+            _libraryService.GetSongByIdAsync(song.Id).Returns(song);
+        }
     }
 
     /// <summary>
@@ -207,7 +213,7 @@ public class MusicPlaybackServiceTests
         await _service.InitializeAsync();
 
         // Assert
-        _service.PlaybackQueue.Should().BeEquivalentTo(_testSongs);
+        _service.PlaybackQueue.Should().BeEquivalentTo(_testSongs.Select(s => s.Id));
         _service.CurrentTrack.Should().Be(_testSongs[1]);
         _service.CurrentQueueIndex.Should().Be(1);
         await _audioPlayer.Received(1).LoadAsync(_testSongs[1]);
@@ -231,30 +237,33 @@ public class MusicPlaybackServiceTests
     }
 
     /// <summary>
-    ///     Verifies that if session restore is enabled but the songs from the saved state
-    ///     cannot be found in the library, the service gracefully clears the queue.
+    ///     Verifies that if session restore is enabled but the current track from the saved state
+    ///     cannot be found in the library, the service preserves the queue but resets to index zero.
     /// </summary>
     [Fact]
-    public async Task InitializeAsync_WithSessionRestoreAndMissingSongs_ClearsQueue()
+    public async Task InitializeAsync_WithSessionRestoreAndMissingCurrentTrack_ResetsToIndexZero()
     {
         // Arrange
+        var songIds = _testSongs.Select(s => s.Id).ToList();
         var savedState = new PlaybackState
         {
-            PlaybackQueueTrackIds = _testSongs.Select(s => s.Id).ToList(),
-            CurrentTrackId = _testSongs[1].Id
+            PlaybackQueueTrackIds = songIds,
+            CurrentTrackId = _testSongs[1].Id,
+            CurrentPlaybackQueueIndex = 1
         };
         _settingsService.GetRestorePlaybackStateEnabledAsync().Returns(true);
         _settingsService.GetPlaybackStateAsync().Returns(savedState);
-        // Simulate songs not being found in the library
-        _libraryService.GetSongsByIdsAsync(Arg.Any<IEnumerable<Guid>>())
-            .Returns(new Dictionary<Guid, Song>());
+        
+        // Current track is missing in DB!
+        _libraryService.GetSongByIdAsync(_testSongs[1].Id).Returns((Song?)null);
 
         // Act
         await _service.InitializeAsync();
 
         // Assert
-        _service.PlaybackQueue.Should().BeEmpty();
+        _service.PlaybackQueue.Should().BeEquivalentTo(songIds);
         _service.CurrentTrack.Should().BeNull();
+        _service.CurrentQueueIndex.Should().Be(0);
         await _audioPlayer.DidNotReceive().LoadAsync(Arg.Any<Song>());
     }
 
@@ -277,7 +286,7 @@ public class MusicPlaybackServiceTests
         await _service.PlayAsync(song);
 
         // Assert
-        _service.PlaybackQueue.Should().HaveCount(1).And.Contain(song);
+        _service.PlaybackQueue.Should().HaveCount(1).And.Contain(song.Id);
         _service.CurrentTrack.Should().Be(song);
         _service.CurrentQueueIndex.Should().Be(0);
         await _audioPlayer.Received(1).LoadAsync(song);
@@ -298,7 +307,7 @@ public class MusicPlaybackServiceTests
         await _service.PlayAsync(_testSongs, 2);
 
         // Assert
-        _service.PlaybackQueue.Should().BeEquivalentTo(_testSongs, options => options.WithStrictOrdering());
+        _service.PlaybackQueue.Should().BeEquivalentTo(_testSongs.Select(s => s.Id), options => options.WithStrictOrdering());
         _service.CurrentTrack.Should().Be(_testSongs[2]);
         _service.CurrentQueueIndex.Should().Be(2);
         await _audioPlayer.Received(1).LoadAsync(_testSongs[2]);
@@ -592,10 +601,11 @@ public class MusicPlaybackServiceTests
         // Assert
         _service.IsShuffleEnabled.Should().BeTrue();
         _service.ShuffledQueue.Should().HaveCount(largeSongList.Count);
-        _service.ShuffledQueue.Should().BeEquivalentTo(largeSongList);
-        _service.ShuffledQueue.Should().NotBeEquivalentTo(largeSongList, opt => opt.WithStrictOrdering());
+        _service.ShuffledQueue.Should().BeEquivalentTo(largeSongList.Select(s => s.Id));
+        _service.ShuffledQueue.Should().NotBeEquivalentTo(largeSongList.Select(s => s.Id), opt => opt.WithStrictOrdering());
         await _settingsService.Received(1).SaveShuffleStateAsync(true);
         eventTracker.ShuffleModeChangedCount.Should().Be(1);
+        // QueueChanged is invoked in CommitQueueChanges
         eventTracker.QueueChangedCount.Should().Be(1);
     }
 
@@ -634,11 +644,12 @@ public class MusicPlaybackServiceTests
         await _service.SetShuffleAsync(true);
 
         // Manually set the current track to the first in the shuffled queue to have a known start point
-        var firstShuffledSong = _service.ShuffledQueue[0];
-        var firstShuffledSongOriginalIndex = _testSongs.IndexOf(firstShuffledSong);
+        var firstShuffledSongId = _service.ShuffledQueue[0];
+        var firstShuffledSongOriginalIndex = _testSongs.FindIndex(s => s.Id == firstShuffledSongId);
         await _service.PlayQueueItemAsync(firstShuffledSongOriginalIndex);
 
-        var expectedNextSong = _service.ShuffledQueue[1];
+        var expectedNextSongId = _service.ShuffledQueue[1];
+        var expectedNextSong = _testSongs.First(s => s.Id == expectedNextSongId);
         _audioPlayer.ClearReceivedCalls();
 
         // Act
@@ -666,7 +677,7 @@ public class MusicPlaybackServiceTests
         // Assert
         _service.IsShuffleEnabled.Should().BeTrue();
         _service.CurrentTrack.Should().Be(currentTrackBeforeShuffle);
-        _service.ShuffledQueue.Should().Contain(currentTrackBeforeShuffle!);
+        _service.ShuffledQueue.Should().Contain(currentTrackBeforeShuffle!.Id);
     }
 
     #endregion
@@ -690,7 +701,7 @@ public class MusicPlaybackServiceTests
 
         // Assert
         _service.PlaybackQueue.Should().HaveCount(3);
-        _service.PlaybackQueue.Last().Should().Be(songToAdd);
+        _service.PlaybackQueue.Last().Should().Be(songToAdd.Id);
     }
 
     /// <summary>
@@ -710,8 +721,8 @@ public class MusicPlaybackServiceTests
         await _service.AddToQueueAsync(songToAdd);
 
         // Assert
-        _service.PlaybackQueue.Should().Contain(songToAdd);
-        _service.ShuffledQueue.Should().Contain(songToAdd);
+        _service.PlaybackQueue.Should().Contain(songToAdd.Id);
+        _service.ShuffledQueue.Should().Contain(songToAdd.Id);
         _service.PlaybackQueue.Count.Should().Be(_testSongs.Count + 1);
         _service.ShuffledQueue.Count.Should().Be(_testSongs.Count + 1);
     }
@@ -727,13 +738,14 @@ public class MusicPlaybackServiceTests
         await _service.InitializeAsync();
         await _service.PlayAsync(_testSongs, 1); // Playing Song 2
         var songToPlayNext = new Song { Id = Guid.NewGuid(), Title = "Next Song" };
+        _libraryService.GetSongByIdAsync(songToPlayNext.Id).Returns(songToPlayNext);
 
         // Act
         await _service.PlayNextAsync(songToPlayNext);
 
         // Assert
         _service.PlaybackQueue.Should().HaveCount(_testSongs.Count + 1);
-        _service.PlaybackQueue[2].Should().Be(songToPlayNext); // Index 0: S1, 1: S2, 2: Next, 3: S3...
+        _service.PlaybackQueue[2].Should().Be(songToPlayNext.Id); // Index 0: S1, 1: S2, 2: Next, 3: S3...
     }
 
     /// <summary>
@@ -753,7 +765,7 @@ public class MusicPlaybackServiceTests
 
         // Assert
         _service.PlaybackQueue.Should().HaveCount(_testSongs.Count); // Count should not change
-        _service.PlaybackQueue[1].Should().Be(songToMove); // Song 4 should now be at index 1
+        _service.PlaybackQueue[1].Should().Be(songToMove.Id); // Song 4 should now be at index 1
     }
 
     /// <summary>
@@ -764,14 +776,14 @@ public class MusicPlaybackServiceTests
     {
         // Arrange
         await _service.InitializeAsync();
-        var songToAdd = new Song { Id = Guid.NewGuid(), Title = "First Song" };
+        var songToAdd = _testSongs[0];
 
         // Act
         await _service.PlayNextAsync(songToAdd);
 
         // Assert
         _service.PlaybackQueue.Should().HaveCount(1);
-        _service.PlaybackQueue[0].Should().Be(songToAdd);
+        _service.PlaybackQueue[0].Should().Be(songToAdd.Id);
     }
 
     /// <summary>
@@ -782,16 +794,16 @@ public class MusicPlaybackServiceTests
     {
         // Arrange
         await _service.InitializeAsync();
-        var firstSong = new Song { Id = Guid.NewGuid(), Title = "First Song" };
+        var firstSong = _testSongs[0];
         await _service.PlayAsync(new[] { firstSong });
-        var songToAdd = new Song { Id = Guid.NewGuid(), Title = "Second Song" };
+        var songToAdd = _testSongs[1];
 
         // Act
         await _service.PlayNextAsync(songToAdd);
 
         // Assert
         _service.PlaybackQueue.Should().HaveCount(2);
-        _service.PlaybackQueue[1].Should().Be(songToAdd);
+        _service.PlaybackQueue[1].Should().Be(songToAdd.Id);
     }
 
     /// <summary>
@@ -810,7 +822,7 @@ public class MusicPlaybackServiceTests
         await _service.RemoveFromQueueAsync(songToRemove);
 
         // Assert
-        _service.PlaybackQueue.Should().NotContain(songToRemove);
+        _service.PlaybackQueue.Should().NotContain(songToRemove.Id);
         _service.CurrentTrack.Should().Be(_testSongs[2]); // Should have advanced to the next song
         await _audioPlayer.Received(1).StopAsync();
         await _audioPlayer.Received(1).LoadAsync(_testSongs[2]);
@@ -832,7 +844,7 @@ public class MusicPlaybackServiceTests
         await _service.RemoveFromQueueAsync(songToRemove);
 
         // Assert
-        _service.PlaybackQueue.Should().NotContain(songToRemove);
+        _service.PlaybackQueue.Should().NotContain(songToRemove.Id);
         _service.CurrentTrack.Should().Be(_testSongs[2]); // Still playing Song 3
         _service.CurrentQueueIndex.Should().Be(1); // Index should now be 1
     }
@@ -853,7 +865,7 @@ public class MusicPlaybackServiceTests
         await _service.RemoveFromQueueAsync(songToRemove);
 
         // Assert
-        _service.PlaybackQueue.Should().NotContain(songToRemove);
+        _service.PlaybackQueue.Should().NotContain(songToRemove.Id);
         _service.CurrentTrack.Should().Be(_testSongs[1]); // Current track should be unaffected
         await _audioPlayer.DidNotReceive().StopAsync();
     }
@@ -876,7 +888,7 @@ public class MusicPlaybackServiceTests
         // Assert
         _service.PlaybackQueue.Should().BeEmpty();
         _service.CurrentTrack.Should().BeNull();
-        await _audioPlayer.Received(2).StopAsync(); // Once from Remove, once from StopAsync call inside
+        await _audioPlayer.Received(2).StopAsync(); // 1 from PlayAsync, 1 from RemoveFromQueueAsync
     }
 
     /// <summary>

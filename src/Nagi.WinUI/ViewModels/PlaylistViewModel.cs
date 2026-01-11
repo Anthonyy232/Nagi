@@ -246,15 +246,14 @@ public partial class PlaylistViewModel : ObservableObject, IDisposable
         {
             if (isSmart)
             {
-                var songs = await _smartPlaylistService.GetMatchingSongsAsync(playlistId);
-                var songList = songs.ToList();
-                if (songList.Count == 0)
+                var songIds = await _smartPlaylistService.GetMatchingSongIdsAsync(playlistId);
+                if (songIds.Count == 0)
                 {
                     StatusMessage = "No songs match this smart playlist's rules.";
                     _logger.LogDebug("Smart playlist {PlaylistId} has no matching songs", playlistId);
                     return;
                 }
-                await _musicPlaybackService.PlayAsync(songList);
+                await _musicPlaybackService.PlayAsync(songIds);
             }
             else
             {

@@ -99,7 +99,7 @@
                         FontSize="18"
                         FontWeight="SemiBold"
                         Foreground="White"
-                        Text="Current Queue"
+                        Text="Up Next"
                         Visibility="{x:Bind ViewModel.IsQueueViewVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                     <Button
@@ -165,7 +165,7 @@
                                 </Button>
                                 <Button Command="{x:Bind ViewModel.ShowQueueViewCommand}"
                                         Style="{StaticResource QueueButtonStyle}"
-                                        ToolTipService.ToolTip="Current Queue">
+                                        ToolTipService.ToolTip="Up Next">
                                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
                                 </Button>
                             </StackPanel>

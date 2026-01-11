@@ -268,17 +268,11 @@ public abstract partial class SongListViewModelBase : ObservableObject
         if (IsPagingSupported)
         {
             // For paged views, we use the full ID list to build the queue, which is more memory efficient.
-            var songMap = await _libraryReader.GetSongsByIdsAsync(_fullSongIdList);
-            if (!songMap.Any()) return;
-            var orderedSongs = _fullSongIdList
-                .Select(id => songMap.TryGetValue(id, out var song) ? song : null)
-                .Where(song => song != null)
-                .ToList();
-            await _playbackService.PlayAsync(orderedSongs!);
+            await _playbackService.PlayAsync(_fullSongIdList);
         }
         else
         {
-            await _playbackService.PlayAsync(Songs.ToList());
+            await _playbackService.PlayAsync(Songs.Select(s => s.Id).ToList());
         }
     }
 
@@ -289,12 +283,11 @@ public abstract partial class SongListViewModelBase : ObservableObject
         if (IsPagingSupported)
         {
             // For paged views, we fetch all songs by their IDs to shuffle and play them.
-            var songsToPlay = await _libraryReader.GetSongsByIdsAsync(_fullSongIdList);
-            if (songsToPlay.Any()) await _playbackService.PlayAsync(songsToPlay.Values.ToList(), 0, true);
+            await _playbackService.PlayAsync(_fullSongIdList, 0, true);
         }
         else
         {
-            await _playbackService.PlayAsync(Songs.ToList(), 0, true);
+            await _playbackService.PlayAsync(Songs.Select(s => s.Id).ToList(), 0, true);
         }
     }
 
@@ -311,25 +304,19 @@ public abstract partial class SongListViewModelBase : ObservableObject
             if (startIndex == -1)
             {
                 // Fallback for a song not in the list for some reason.
-                await _playbackService.PlayAsync(song);
+                await _playbackService.PlayAsync(song.Id);
                 return;
             }
 
-            var songMap = await _libraryReader.GetSongsByIdsAsync(_fullSongIdList);
-            if (!songMap.Any()) return;
-            var orderedSongs = _fullSongIdList
-                .Select(id => songMap.TryGetValue(id, out var s) ? s : null)
-                .Where(s => s != null)
-                .ToList();
-            await _playbackService.PlayAsync(orderedSongs!, startIndex);
+            await _playbackService.PlayAsync(_fullSongIdList, startIndex);
         }
         else
         {
             var startIndex = Songs.IndexOf(song);
             if (startIndex != -1)
-                await _playbackService.PlayAsync(Songs.ToList(), startIndex);
+                await _playbackService.PlayAsync(Songs.Select(s => s.Id).ToList(), startIndex);
             else
-                await _playbackService.PlayAsync(song);
+                await _playbackService.PlayAsync(song.Id);
         }
     }
 
@@ -337,20 +324,20 @@ public abstract partial class SongListViewModelBase : ObservableObject
     private async Task PlaySelectedSongsAsync()
     {
         await EnsureRepeatOneIsOffAsync();
-        await _playbackService.PlayAsync(SelectedSongs.ToList());
+        await _playbackService.PlayAsync(SelectedSongs.Select(s => s.Id).ToList());
     }
 
     [RelayCommand(CanExecute = nameof(CanExecuteSelectedSongsCommands))]
     private async Task PlaySelectedSongsNextAsync()
     {
         // Reverse the list so songs are added in the selected order after the current track.
-        foreach (var song in SelectedSongs.Reverse()) await _playbackService.PlayNextAsync(song);
+        foreach (var song in SelectedSongs.Reverse()) await _playbackService.PlayNextAsync(song.Id);
     }
 
     [RelayCommand(CanExecute = nameof(CanExecuteSelectedSongsCommands))]
     private async Task AddSelectedSongsToQueueAsync()
     {
-        await _playbackService.AddRangeToQueueAsync(SelectedSongs);
+        await _playbackService.AddRangeToQueueAsync(SelectedSongs.Select(s => s.Id));
     }
 
     [RelayCommand(CanExecute = nameof(CanAddSelectedSongsToPlaylist))]

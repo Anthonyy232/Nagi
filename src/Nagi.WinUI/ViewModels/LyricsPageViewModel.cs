@@ -409,7 +409,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
         CancellationTokenSource? prefetchCts = null;
         try
         {
-            var nextSong = GetNextSongInQueue();
+            var nextSong = await GetNextSongInQueueAsync();
             if (nextSong is null) return;
             
             // Only prefetch if lyrics haven't been checked yet
@@ -445,19 +445,25 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
         }
     }
     
-    private Core.Models.Song? GetNextSongInQueue()
+    private async Task<Core.Models.Song?> GetNextSongInQueueAsync()
     {
+        Guid nextId = Guid.Empty;
         if (_playbackService.IsShuffleEnabled)
         {
             var nextIndex = _playbackService.CurrentShuffledIndex + 1;
-            return nextIndex < _playbackService.ShuffledQueue.Count 
-                ? _playbackService.ShuffledQueue[nextIndex] 
-                : null;
+            if (nextIndex < _playbackService.ShuffledQueue.Count)
+                nextId = _playbackService.ShuffledQueue[nextIndex];
         }
-        
-        var nextQueueIndex = _playbackService.CurrentQueueIndex + 1;
-        return nextQueueIndex < _playbackService.PlaybackQueue.Count 
-            ? _playbackService.PlaybackQueue[nextQueueIndex] 
-            : null;
+        else
+        {
+            var nextQueueIndex = _playbackService.CurrentQueueIndex + 1;
+            if (nextQueueIndex < _playbackService.PlaybackQueue.Count)
+                nextId = _playbackService.PlaybackQueue[nextQueueIndex];
+        }
+
+        if (nextId == Guid.Empty) return null;
+
+        // Fetch basic metadata for the next song (single lookup is more efficient than dictionary)
+        return await _libraryReader.GetSongByIdAsync(nextId).ConfigureAwait(false);
     }
 }

@@ -44,10 +44,11 @@ public class MusicDbContext : DbContext
             entity.HasIndex(s => s.ArtistId);
             entity.HasIndex(s => s.AlbumId);
             entity.HasIndex(s => s.FolderId);
-            entity.HasIndex(s => s.LastPlayedDate);
             entity.HasIndex(s => s.DateAddedToLibrary);
+            entity.HasIndex(s => s.LastPlayedDate);
             entity.HasIndex(s => s.PlayCount);
             entity.HasIndex(s => s.IsLoved);
+            entity.HasIndex(s => s.Year);
 
             // Composite index for sorting tracks within an album.
             entity.HasIndex(s => new { s.AlbumId, s.DiscNumber, s.TrackNumber });
