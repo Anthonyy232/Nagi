@@ -270,6 +270,31 @@ public interface IUISettingsService : ISettingsService
     Task SetLastWindowSizeAsync(int width, int height);
 
     /// <summary>
+    ///     Gets whether the application should remember and restore the main window position.
+    /// </summary>
+    /// <returns>True if remembering window position is enabled; otherwise, false.</returns>
+    Task<bool> GetRememberWindowPositionEnabledAsync();
+
+    /// <summary>
+    ///     Sets the preference for remembering the main window position.
+    /// </summary>
+    /// <param name="isEnabled">The preference to save.</param>
+    Task SetRememberWindowPositionEnabledAsync(bool isEnabled);
+
+    /// <summary>
+    ///     Gets the last saved main window position.
+    /// </summary>
+    /// <returns>A tuple of (x, y), or null if no position has been saved.</returns>
+    Task<(int X, int Y)?> GetLastWindowPositionAsync();
+
+    /// <summary>
+    ///     Saves the main window position.
+    /// </summary>
+    /// <param name="x">The window X position in pixels.</param>
+    /// <param name="y">The window Y position in pixels.</param>
+    Task SetLastWindowPositionAsync(int x, int y);
+
+    /// <summary>
     ///     Gets whether the application should remember and restore the navigation pane state.
     /// </summary>
     /// <returns>True if remembering pane state is enabled; otherwise, false.</returns>

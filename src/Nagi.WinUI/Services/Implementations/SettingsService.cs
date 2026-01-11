@@ -60,6 +60,8 @@ public class SettingsService : IUISettingsService
     private const string EqualizerSettingsKey = "EqualizerSettings";
     private const string RememberWindowSizeEnabledKey = "RememberWindowSizeEnabled";
     private const string LastWindowSizeKey = "LastWindowSize";
+    private const string RememberWindowPositionEnabledKey = "RememberWindowPositionEnabled";
+    private const string LastWindowPositionKey = "LastWindowPosition";
     private const string RememberPaneStateEnabledKey = "RememberPaneStateEnabled";
     private const string LastPaneOpenKey = "LastPaneOpen";
     private const string VolumeNormalizationEnabledKey = "VolumeNormalizationEnabled";
@@ -165,6 +167,7 @@ public class SettingsService : IUISettingsService
             ClearLastFmCredentialsAsync(),
             SetEqualizerSettingsAsync(new EqualizerSettings()),
             SetRememberWindowSizeEnabledAsync(SettingsDefaults.RememberWindowSizeEnabled),
+            SetRememberWindowPositionEnabledAsync(SettingsDefaults.RememberWindowPositionEnabled),
             SetRememberPaneStateEnabledAsync(SettingsDefaults.RememberPaneStateEnabled),
             SetVolumeNormalizationEnabledAsync(SettingsDefaults.VolumeNormalizationEnabled),
             SetAccentColorAsync(SettingsDefaults.AccentColor)
@@ -1104,6 +1107,30 @@ public class SettingsService : IUISettingsService
         return SetValueAsync(LastWindowSizeKey, new[] { width, height });
     }
 
+    public async Task<bool> GetRememberWindowPositionEnabledAsync()
+    {
+        await EnsureUnpackagedSettingsLoadedAsync().ConfigureAwait(false);
+        return GetValue(RememberWindowPositionEnabledKey, SettingsDefaults.RememberWindowPositionEnabled);
+    }
+
+    public Task SetRememberWindowPositionEnabledAsync(bool isEnabled)
+    {
+        return SetValueAsync(RememberWindowPositionEnabledKey, isEnabled);
+    }
+
+    public async Task<(int X, int Y)?> GetLastWindowPositionAsync()
+    {
+        var positionData = await GetComplexValueAsync<int[]>(LastWindowPositionKey).ConfigureAwait(false);
+        if (positionData is { Length: 2 })
+            return (positionData[0], positionData[1]);
+        return null;
+    }
+
+    public Task SetLastWindowPositionAsync(int x, int y)
+    {
+        return SetValueAsync(LastWindowPositionKey, new[] { x, y });
+    }
+
     public async Task<bool> GetRememberPaneStateEnabledAsync()
     {
         await EnsureUnpackagedSettingsLoadedAsync().ConfigureAwait(false);
@@ -1171,6 +1198,48 @@ public class SettingsService : IUISettingsService
     public Task SetSortOrderAsync<TEnum>(string pageKey, TEnum sortOrder) where TEnum : struct, Enum
     {
         return SetValueAsync(pageKey, sortOrder.ToString());
+    }
+
+    public async Task FlushAsync()
+    {
+        if (_isPackaged)
+        {
+            _logger.LogDebug("FlushAsync skipped: packaged app uses ApplicationData which handles persistence automatically.");
+            return;
+        }
+
+        try
+        {
+            await _settingsFileLock.WaitAsync().ConfigureAwait(false);
+        }
+        catch (ObjectDisposedException)
+        {
+            // Semaphore was disposed (service is shutting down), nothing we can do.
+            _logger.LogDebug("FlushAsync aborted: semaphore was disposed.");
+            return;
+        }
+        
+        try
+        {
+            string json;
+            lock (_dictLock)
+            {
+                json = JsonSerializer.Serialize(_settings, _serializerOptions);
+            }
+            await File.WriteAllTextAsync(_pathConfig.SettingsFilePath, json).ConfigureAwait(false);
+            
+            // Critical: Reset the queued flag so that the debounced QueueSaveAsync
+            // doesn't think it still needs to run if it wakes up later (though it won't matter much).
+            Interlocked.Exchange(ref _isSaveQueued, 0);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to flush settings to file.");
+        }
+        finally
+        {
+            _settingsFileLock.Release();
+        }
     }
 
     #endregion

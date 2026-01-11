@@ -258,4 +258,9 @@ public interface ISettingsService
     /// <param name="category">The service category to retrieve.</param>
     /// <returns>A list of enabled service providers, sorted by priority.</returns>
     Task<List<ServiceProviderSetting>> GetEnabledServiceProvidersAsync(ServiceCategory category);
+    /// <summary>
+    ///     Ensures all pending settings changes are written to persistent storage.
+    ///     For unpackaged deployments, this bypasses the save debounce delay.
+    /// </summary>
+    Task FlushAsync();
 }
