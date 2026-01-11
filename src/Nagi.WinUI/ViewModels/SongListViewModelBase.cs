@@ -31,18 +31,18 @@ public abstract partial class SongListViewModelBase : ObservableObject
     protected readonly INavigationService _navigationService;
     protected readonly IMusicPlaybackService _playbackService;
     protected readonly IPlaylistService _playlistService;
-    private readonly object _stateLock = new();
+    protected readonly object _stateLock = new();
     private readonly IUIService _uiService;
 
-    private int _currentPage;
+    protected int _currentPage;
 
     // For paged views, this holds all song IDs to enable "Play All" without loading all song objects into memory.
     private List<Guid> _fullSongIdList = new();
-    private bool _hasNextPage;
+    protected bool _hasNextPage;
 
     // Used to cancel any ongoing paged loading, e.g., when the user changes the sort order.
     private CancellationTokenSource? _pagedLoadCts;
-    private int _totalItemCount;
+    protected int _totalItemCount;
 
     protected SongListViewModelBase(
         ILibraryReader libraryReader,
@@ -66,15 +66,7 @@ public abstract partial class SongListViewModelBase : ObservableObject
 
     [ObservableProperty] public partial ObservableCollection<Song> Songs { get; set; } = new();
 
-    partial void OnSongsChanged(ObservableCollection<Song> value)
-    {
-        OnSongsCollectionChanged();
-    }
 
-    protected virtual void OnSongsCollectionChanged()
-    {
-        // Override in derived classes to react to Songs collection changes
-    }
 
     [ObservableProperty] public partial ObservableCollection<Song> SelectedSongs { get; set; } = new();
 
@@ -96,6 +88,12 @@ public abstract partial class SongListViewModelBase : ObservableObject
 
     [ObservableProperty] public partial bool IsLoadingNextPage { get; set; }
 
+    /// <summary>
+    ///     Indicates whether background page loading is in progress.
+    ///     Derived classes can use this to suppress side effects (e.g., reorder saves) during background loading.
+    /// </summary>
+    protected bool IsBackgroundPageLoading { get; private set; }
+
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ShowInFileExplorerCommand))]
     [NotifyCanExecuteChangedFor(nameof(GoToAlbumCommand))]
@@ -103,7 +101,7 @@ public abstract partial class SongListViewModelBase : ObservableObject
     public partial bool IsSingleSongSelected { get; set; }
 
     public bool HasSelectedSongs => SelectedSongs.Any();
-    protected virtual bool IsDataPreSortedAfterLoad => false;
+
     protected virtual bool IsPagingSupported => false;
     protected abstract Task<IEnumerable<Song>> LoadSongsAsync();
 
@@ -173,11 +171,16 @@ public abstract partial class SongListViewModelBase : ObservableObject
             }
             else
             {
-                // For non-paged views, load all songs at once.
-                var fetchedSongs = await LoadSongsAsync() ?? Enumerable.Empty<Song>();
-                var songsToDisplay = IsDataPreSortedAfterLoad
-                    ? fetchedSongs
-                    : SortSongs(fetchedSongs, CurrentSortOrder);
+                // For non-paged views, load all songs and IDs in parallel for uniform playback handling.
+                var songsTask = LoadSongsAsync();
+                var idsTask = LoadAllSongIdsAsync(CurrentSortOrder);
+
+                await Task.WhenAll(songsTask, idsTask).ConfigureAwait(false);
+
+                var fetchedSongs = songsTask.Result ?? Enumerable.Empty<Song>();
+                _fullSongIdList = idsTask.Result;
+
+                var songsToDisplay = SortSongs(fetchedSongs, CurrentSortOrder);
                 Songs = new ObservableCollection<Song>(songsToDisplay);
                 TotalItemsText = $"{Songs.Count} {(Songs.Count == 1 ? "item" : "items")}";
             }
@@ -200,6 +203,7 @@ public abstract partial class SongListViewModelBase : ObservableObject
     /// </summary>
     private async Task StartAutomaticPagedLoadingAsync(CancellationToken token)
     {
+        IsBackgroundPageLoading = true;
         try
         {
             bool hasMore;
@@ -237,6 +241,10 @@ public abstract partial class SongListViewModelBase : ObservableObject
         {
             _logger.LogError(ex, "Failed during automatic page loading");
         }
+        finally
+        {
+            IsBackgroundPageLoading = false;
+        }
     }
 
     public async Task LoadAvailablePlaylistsAsync()
@@ -265,30 +273,16 @@ public abstract partial class SongListViewModelBase : ObservableObject
     private async Task PlayAllSongsAsync()
     {
         await EnsureRepeatOneIsOffAsync();
-        if (IsPagingSupported)
-        {
-            // For paged views, we use the full ID list to build the queue, which is more memory efficient.
-            await _playbackService.PlayAsync(_fullSongIdList);
-        }
-        else
-        {
-            await _playbackService.PlayAsync(Songs.Select(s => s.Id).ToList());
-        }
+        // Always use the pre-fetched full ID list for memory efficiency and consistency.
+        await _playbackService.PlayAsync(_fullSongIdList);
     }
 
     [RelayCommand(CanExecute = nameof(CanExecutePlayAllCommands))]
     private async Task ShuffleAndPlayAllSongsAsync()
     {
         await EnsureRepeatOneIsOffAsync();
-        if (IsPagingSupported)
-        {
-            // For paged views, we fetch all songs by their IDs to shuffle and play them.
-            await _playbackService.PlayAsync(_fullSongIdList, 0, true);
-        }
-        else
-        {
-            await _playbackService.PlayAsync(Songs.Select(s => s.Id).ToList(), 0, true);
-        }
+        // Always use the pre-fetched full ID list for memory efficiency and consistency.
+        await _playbackService.PlayAsync(_fullSongIdList, 0, true);
     }
 
     [RelayCommand]
@@ -297,27 +291,16 @@ public abstract partial class SongListViewModelBase : ObservableObject
         if (song == null) return;
         await EnsureRepeatOneIsOffAsync();
 
-        if (IsPagingSupported)
+        // Always use the pre-fetched full ID list to find the song's position.
+        var startIndex = _fullSongIdList.IndexOf(song.Id);
+        if (startIndex == -1)
         {
-            // For paged views, find the song's index in the full ID list to build the correct queue.
-            var startIndex = _fullSongIdList.IndexOf(song.Id);
-            if (startIndex == -1)
-            {
-                // Fallback for a song not in the list for some reason.
-                await _playbackService.PlayAsync(song.Id);
-                return;
-            }
+            // Fallback for a song not in the list for some reason.
+            await _playbackService.PlayAsync(song.Id);
+            return;
+        }
 
-            await _playbackService.PlayAsync(_fullSongIdList, startIndex);
-        }
-        else
-        {
-            var startIndex = Songs.IndexOf(song);
-            if (startIndex != -1)
-                await _playbackService.PlayAsync(Songs.Select(s => s.Id).ToList(), startIndex);
-            else
-                await _playbackService.PlayAsync(song.Id);
-        }
+        await _playbackService.PlayAsync(_fullSongIdList, startIndex);
     }
 
     [RelayCommand(CanExecute = nameof(CanExecuteSelectedSongsCommands))]
@@ -401,8 +384,8 @@ public abstract partial class SongListViewModelBase : ObservableObject
 
     private bool CanExecutePlayAllCommands()
     {
-        if (IsPagingSupported) return !IsOverallLoading && _fullSongIdList.Any();
-        return !IsOverallLoading && Songs.Any();
+        // Always use the pre-fetched full ID list for consistency.
+        return !IsOverallLoading && _fullSongIdList.Any();
     }
 
     private bool CanExecuteSelectedSongsCommands()
@@ -422,8 +405,9 @@ public abstract partial class SongListViewModelBase : ObservableObject
 
     /// <summary>
     ///     Processes a page of results, updating the UI-bound collection and internal paging state.
+    ///     Derived classes can override to update additional collections (e.g., FolderContents).
     /// </summary>
-    private void ProcessPagedResult(PagedResult<Song> pagedResult, CancellationToken token, bool append = false)
+    protected virtual void ProcessPagedResult(PagedResult<Song> pagedResult, CancellationToken token, bool append = false)
     {
         if (pagedResult?.Items == null || token.IsCancellationRequested) return;
 
@@ -492,31 +476,44 @@ public abstract partial class SongListViewModelBase : ObservableObject
     {
         return sortOrder switch
         {
+            SongSortOrder.TitleAsc => songs.OrderBy(s => s.Title, StringComparer.OrdinalIgnoreCase).ThenBy(s => s.Id),
+            SongSortOrder.TitleDesc => songs.OrderByDescending(s => s.Title, StringComparer.OrdinalIgnoreCase).ThenByDescending(s => s.Id),
             SongSortOrder.YearAsc => songs.OrderBy(s => s.Year)
                 .ThenBy(s => s.Artist?.Name, StringComparer.OrdinalIgnoreCase)
                 .ThenBy(s => s.Album?.Title, StringComparer.OrdinalIgnoreCase)
+                .ThenBy(s => s.DiscNumber ?? 0)
                 .ThenBy(s => s.TrackNumber)
+                .ThenBy(s => s.Title, StringComparer.OrdinalIgnoreCase)
                 .ThenBy(s => s.Id),
             SongSortOrder.YearDesc => songs.OrderByDescending(s => s.Year)
-                .ThenBy(s => s.Artist?.Name, StringComparer.OrdinalIgnoreCase)
-                .ThenBy(s => s.Album?.Title, StringComparer.OrdinalIgnoreCase)
-                .ThenBy(s => s.TrackNumber)
-                .ThenBy(s => s.Id),
+                .ThenByDescending(s => s.Artist?.Name, StringComparer.OrdinalIgnoreCase)
+                .ThenByDescending(s => s.Album?.Title, StringComparer.OrdinalIgnoreCase)
+                .ThenByDescending(s => s.DiscNumber ?? 0)
+                .ThenByDescending(s => s.TrackNumber)
+                .ThenByDescending(s => s.Title, StringComparer.OrdinalIgnoreCase)
+                .ThenByDescending(s => s.Id),
             SongSortOrder.AlbumAsc or SongSortOrder.TrackNumberAsc => songs.OrderBy(s => s.Album?.Title, StringComparer.OrdinalIgnoreCase)
                 .ThenBy(s => s.DiscNumber ?? 0)
                 .ThenBy(s => s.TrackNumber)
                 .ThenBy(s => s.Title, StringComparer.OrdinalIgnoreCase)
                 .ThenBy(s => s.Id),
-            SongSortOrder.AlbumDesc => songs.OrderByDescending(s => s.Album?.Title, StringComparer.OrdinalIgnoreCase)
+            SongSortOrder.AlbumDesc or SongSortOrder.TrackNumberDesc => songs.OrderByDescending(s => s.Album?.Title, StringComparer.OrdinalIgnoreCase)
                 .ThenByDescending(s => s.DiscNumber ?? 0)
                 .ThenByDescending(s => s.TrackNumber)
                 .ThenByDescending(s => s.Title, StringComparer.OrdinalIgnoreCase)
-                .ThenBy(s => s.Id),
+                .ThenByDescending(s => s.Id),
             SongSortOrder.ArtistAsc => songs.OrderBy(s => s.Artist?.Name, StringComparer.OrdinalIgnoreCase)
                 .ThenBy(s => s.Album?.Title, StringComparer.OrdinalIgnoreCase)
                 .ThenBy(s => s.DiscNumber ?? 0)
                 .ThenBy(s => s.TrackNumber)
+                .ThenBy(s => s.Title, StringComparer.OrdinalIgnoreCase)
                 .ThenBy(s => s.Id),
+            SongSortOrder.ArtistDesc => songs.OrderByDescending(s => s.Artist?.Name, StringComparer.OrdinalIgnoreCase)
+                .ThenByDescending(s => s.Album?.Title, StringComparer.OrdinalIgnoreCase)
+                .ThenByDescending(s => s.DiscNumber ?? 0)
+                .ThenByDescending(s => s.TrackNumber)
+                .ThenByDescending(s => s.Title, StringComparer.OrdinalIgnoreCase)
+                .ThenByDescending(s => s.Id),
             _ => songs.OrderBy(s => s.Title, StringComparer.OrdinalIgnoreCase).ThenBy(s => s.Id)
         };
     }

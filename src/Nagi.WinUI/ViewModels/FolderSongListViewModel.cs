@@ -36,10 +36,11 @@ public partial class FolderSongListViewModel : SongListViewModelBase
 {
     private const int SearchDebounceDelay = 400;
     private readonly IUISettingsService _settingsService;
-    private string? _currentDirectoryPath;
+    private string _currentDirectoryPath = string.Empty;
     private CancellationTokenSource? _debounceCts;
     private Guid? _rootFolderId;
     private string? _rootFolderPath;
+    private int _currentFolderCount;
 
     public FolderSongListViewModel(
         ILibraryReader libraryReader,
@@ -76,20 +77,18 @@ public partial class FolderSongListViewModel : SongListViewModelBase
     public partial bool IsAtRootLevel { get; set; } = true;
 
     private bool IsSearchActive => !string.IsNullOrWhiteSpace(SearchTerm);
-    protected override bool IsPagingSupported => false; // Disable paging for folder view
+    
+    // Always use paging for efficient loading of large folders.
+    protected override bool IsPagingSupported => true;
 
     partial void OnSearchTermChanged(string value)
     {
-        // When the user types in the search box, trigger a debounced search.
         TriggerDebouncedSearch();
     }
 
     /// <summary>
     ///     Initializes the view model with the details of a specific folder and optional directory path.
     /// </summary>
-    /// <param name="title">The title of the folder to display.</param>
-    /// <param name="rootFolderId">The unique identifier of the root folder.</param>
-    /// <param name="directoryPath">Optional: The directory path within the folder to navigate to.</param>
     public async Task InitializeAsync(string title, Guid? rootFolderId, string? directoryPath = null)
     {
         if (IsOverallLoading) return;
@@ -97,7 +96,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         try
         {
             _rootFolderId = rootFolderId;
-            _currentDirectoryPath = directoryPath;
+            _currentDirectoryPath = directoryPath ?? string.Empty;
 
             if (_rootFolderId.HasValue)
             {
@@ -108,6 +107,10 @@ public partial class FolderSongListViewModel : SongListViewModelBase
                 
                 _rootFolderPath = rootFolderTask.Result?.Path;
                 CurrentSortOrder = sortTask.Result;
+                
+                // Use root folder path if no specific directory is provided.
+                if (string.IsNullOrEmpty(_currentDirectoryPath))
+                    _currentDirectoryPath = _rootFolderPath ?? string.Empty;
             }
             else
             {
@@ -115,8 +118,13 @@ public partial class FolderSongListViewModel : SongListViewModelBase
             }
 
             PageTitle = title;
-            await LoadFolderContentsAsync();
+            
+            // Load folders first (typically few), then trigger base class song paging.
+            await LoadFoldersAsync();
             UpdateBreadcrumbs();
+            
+            // Use base class to load songs with paging.
+            await RefreshOrSortSongsCommand.ExecuteAsync(null);
         }
         catch (Exception ex)
         {
@@ -126,6 +134,41 @@ public partial class FolderSongListViewModel : SongListViewModelBase
             FolderContents.Clear();
             Songs.Clear();
         }
+    }
+
+    /// <summary>
+    ///     Loads only the subfolders for the current directory.
+    /// </summary>
+    private async Task LoadFoldersAsync()
+    {
+        if (!_rootFolderId.HasValue) return;
+
+        IsAtRootLevel = string.IsNullOrEmpty(_currentDirectoryPath) ||
+                        string.Equals(_currentDirectoryPath, _rootFolderPath, StringComparison.OrdinalIgnoreCase);
+
+        // Clear all folder content and reset folder count.
+        FolderContents.Clear();
+        _currentFolderCount = 0;
+
+        IEnumerable<Folder> subfolders;
+        if (IsAtRootLevel)
+        {
+            subfolders = await _libraryReader.GetSubFoldersAsync(_rootFolderId.Value);
+        }
+        else
+        {
+            // _currentDirectoryPath is always set to _rootFolderPath or a valid path during initialization.
+            var currentFolder = await _libraryReader.GetFolderByDirectoryPathAsync(_rootFolderId.Value, _currentDirectoryPath);
+            subfolders = currentFolder != null
+                ? await _libraryReader.GetSubFoldersAsync(currentFolder.Id)
+                : Enumerable.Empty<Folder>();
+        }
+
+        var orderedFolders = subfolders.OrderBy(f => f.Name, StringComparer.OrdinalIgnoreCase).ThenBy(f => f.Id).ToList();
+        _currentFolderCount = orderedFolders.Count;
+        
+        foreach (var folder in orderedFolders)
+            FolderContents.Add(FolderContentItem.FromFolder(folder));
     }
 
     /// <summary>
@@ -140,8 +183,11 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         try
         {
             _currentDirectoryPath = folder.Path;
-            await LoadFolderContentsAsync();
+            Songs.Clear();
+            
+            await LoadFoldersAsync();
             UpdateBreadcrumbs();
+            await RefreshOrSortSongsCommand.ExecuteAsync(null);
         }
         catch (Exception ex)
         {
@@ -162,10 +208,14 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         {
             _currentDirectoryPath = string.IsNullOrEmpty(breadcrumb.Path) ||
                                     string.Equals(breadcrumb.Path, _rootFolderPath, StringComparison.OrdinalIgnoreCase)
-                ? null
+                ? _rootFolderPath ?? string.Empty
                 : breadcrumb.Path;
-            await LoadFolderContentsAsync();
+            
+            Songs.Clear();
+            
+            await LoadFoldersAsync();
             UpdateBreadcrumbs();
+            await RefreshOrSortSongsCommand.ExecuteAsync(null);
         }
         catch (Exception ex)
         {
@@ -185,118 +235,26 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         try
         {
             if (string.IsNullOrEmpty(_currentDirectoryPath))
-                // Already at root
                 return;
 
-            // Normalize path to handle potential trailing slashes which cause Path.GetDirectoryName 
-            // to return the same directory instead of the parent.
             var normalizedCurrent = _currentDirectoryPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-            
-            // Navigate to parent directory
             var parentPath = Path.GetDirectoryName(normalizedCurrent);
 
-            // If parent is the root folder path or null, go to root level
             if (string.IsNullOrEmpty(parentPath) ||
                 string.Equals(parentPath, _rootFolderPath, StringComparison.OrdinalIgnoreCase))
-                _currentDirectoryPath = null;
+                _currentDirectoryPath = _rootFolderPath ?? string.Empty;
             else
                 _currentDirectoryPath = parentPath;
 
-            await LoadFolderContentsAsync();
+            Songs.Clear();
+            
+            await LoadFoldersAsync();
             UpdateBreadcrumbs();
+            await RefreshOrSortSongsCommand.ExecuteAsync(null);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to navigate up from {CurrentPath}", _currentDirectoryPath);
-        }
-    }
-
-    /// <summary>
-    ///     Loads the contents (subfolders and songs) of the current directory.
-    /// </summary>
-    private async Task LoadFolderContentsAsync()
-    {
-        if (!_rootFolderId.HasValue)
-        {
-            FolderContents.Clear();
-            Songs.Clear();
-            return;
-        }
-
-        try
-        {
-            IsOverallLoading = true;
-            FolderContents.Clear();
-            Songs.Clear();
-
-            var effectivePath = _currentDirectoryPath ?? _rootFolderPath ?? string.Empty;
-            IsAtRootLevel = string.IsNullOrEmpty(_currentDirectoryPath) ||
-                            string.Equals(_currentDirectoryPath, _rootFolderPath, StringComparison.OrdinalIgnoreCase);
-
-            IEnumerable<Folder> subfolders;
-            if (IsAtRootLevel)
-            {
-                subfolders = await _libraryReader.GetSubFoldersAsync(_rootFolderId.Value);
-            }
-            else
-            {
-                var currentFolder =
-                    await _libraryReader.GetFolderByDirectoryPathAsync(_rootFolderId.Value, effectivePath);
-                if (currentFolder != null)
-                    subfolders = await _libraryReader.GetSubFoldersAsync(currentFolder.Id);
-                else
-                    subfolders = Enumerable.Empty<Folder>();
-            }
-
-            IEnumerable<Song> songs;
-            if (IsSearchActive)
-                songs = await _libraryReader.SearchSongsInFolderAsync(_rootFolderId.Value, SearchTerm);
-            else
-                songs = await _libraryReader.GetSongsInDirectoryAsync(_rootFolderId.Value, effectivePath);
-
-            foreach (var folder in subfolders.OrderBy(f => f.Name, StringComparer.OrdinalIgnoreCase))
-                FolderContents.Add(FolderContentItem.FromFolder(folder));
-
-            var sortedSongs = SortSongs(songs, CurrentSortOrder);
-            foreach (var song in sortedSongs)
-            {
-                FolderContents.Add(FolderContentItem.FromSong(song));
-                Songs.Add(song);
-            }
-
-            var folderCount = subfolders.Count();
-            var songCount = songs.Count();
-
-            if (folderCount > 0 && songCount > 0)
-            {
-                var folderText = folderCount == 1 ? "folder" : "folders";
-                var songText = songCount == 1 ? "song" : "songs";
-                TotalItemsText = $"{folderCount:N0} {folderText}, {songCount:N0} {songText}";
-            }
-            else if (folderCount > 0)
-            {
-                var folderText = folderCount == 1 ? "folder" : "folders";
-                TotalItemsText = $"{folderCount:N0} {folderText}";
-            }
-            else if (songCount > 0)
-            {
-                var songText = songCount == 1 ? "song" : "songs";
-                TotalItemsText = $"{songCount:N0} {songText}";
-            }
-            else
-            {
-                TotalItemsText = "No items";
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to load folder contents for {FolderId} at {DirectoryPath}", _rootFolderId,
-                _currentDirectoryPath);
-            TotalItemsText = "Error loading contents";
-        }
-        finally
-        {
-            IsOverallLoading = false;
         }
     }
 
@@ -309,7 +267,6 @@ public partial class FolderSongListViewModel : SongListViewModelBase
 
         if (!_rootFolderId.HasValue || string.IsNullOrEmpty(_rootFolderPath)) return;
 
-        // Add root breadcrumb
         var rootName = Path.GetFileName(_rootFolderPath) ?? PageTitle;
         Breadcrumbs.Add(new BreadcrumbItem
         {
@@ -348,17 +305,116 @@ public partial class FolderSongListViewModel : SongListViewModelBase
     protected override Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
         SongSortOrder sortOrder)
     {
-        return Task.FromResult(new PagedResult<Song>());
+        if (!_rootFolderId.HasValue || string.IsNullOrEmpty(_currentDirectoryPath))
+            return Task.FromResult(new PagedResult<Song>());
+        
+        if (IsSearchActive)
+            return _libraryReader.SearchSongsInFolderPagedAsync(_rootFolderId.Value, SearchTerm, pageNumber, pageSize);
+        
+        return _libraryReader.GetSongsInDirectoryPagedAsync(_rootFolderId.Value, _currentDirectoryPath, pageNumber, pageSize, sortOrder);
     }
 
     protected override Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder)
     {
-        return Task.FromResult(Songs.Select(s => s.Id).ToList());
+        if (!_rootFolderId.HasValue || string.IsNullOrEmpty(_currentDirectoryPath))
+            return Task.FromResult(new List<Guid>());
+        
+        if (IsSearchActive)
+            return _libraryReader.SearchAllSongIdsInFolderAsync(_rootFolderId.Value, SearchTerm, sortOrder);
+        
+        return _libraryReader.GetSongIdsInDirectoryAsync(_rootFolderId.Value, _currentDirectoryPath, sortOrder);
     }
 
     protected override Task<IEnumerable<Song>> LoadSongsAsync()
     {
+        // Not used since IsPagingSupported is always true.
         return Task.FromResult(Enumerable.Empty<Song>());
+    }
+
+    /// <summary>
+    ///     Processes a page of results, updating both Songs and FolderContents in a single dispatch.
+    ///     This override consolidates all UI updates to avoid race conditions from multiple dispatches.
+    /// </summary>
+    protected override void ProcessPagedResult(PagedResult<Song> pagedResult, CancellationToken token, bool append = false)
+    {
+        // Guard against cancelled operations before doing any work to prevent stale data from corrupting the view.
+        if (token.IsCancellationRequested || pagedResult?.Items == null) return;
+
+        // Update internal paging state (same as base class, but we handle UI updates ourselves).
+        lock (_stateLock)
+        {
+            _hasNextPage = pagedResult.HasNextPage;
+            _totalItemCount = pagedResult.TotalCount;
+            _currentPage = pagedResult.PageNumber;
+        }
+
+        // Consolidate ALL UI updates into a single dispatch to avoid race conditions.
+        _dispatcherService.TryEnqueue(() =>
+        {
+            if (token.IsCancellationRequested) return;
+
+            if (append)
+            {
+                // Append new songs to both collections.
+                foreach (var song in pagedResult.Items)
+                {
+                    Songs.Add(song);
+                    FolderContents.Add(FolderContentItem.FromSong(song));
+                }
+            }
+            else
+            {
+                // First page: replace Songs and clear/repopulate song items in FolderContents.
+                Songs = new ObservableCollection<Song>(pagedResult.Items);
+                ClearSongItemsFromFolderContents();
+                foreach (var song in pagedResult.Items)
+                    FolderContents.Add(FolderContentItem.FromSong(song));
+            }
+
+            // Update TotalItemsText to include folder count.
+            UpdateTotalItemsText(pagedResult.TotalCount);
+            PlayAllSongsCommand.NotifyCanExecuteChanged();
+            ShuffleAndPlayAllSongsCommand.NotifyCanExecuteChanged();
+        });
+    }
+    
+    /// <summary>
+    ///     Clears only the song items from FolderContents, keeping folder items.
+    ///     Uses filter-and-replace for fewer UI change notifications than individual removals.
+    /// </summary>
+    private void ClearSongItemsFromFolderContents()
+    {
+        var foldersOnly = FolderContents.Where(x => !x.IsSong).ToList();
+        FolderContents.Clear();
+        foreach (var folder in foldersOnly)
+            FolderContents.Add(folder);
+    }
+
+    /// <summary>
+    ///     Updates the TotalItemsText to show folder and song counts.
+    /// </summary>
+    private void UpdateTotalItemsText(int songCount)
+    {
+        if (_currentFolderCount > 0 && songCount > 0)
+        {
+            var folderText = _currentFolderCount == 1 ? "folder" : "folders";
+            var songText = songCount == 1 ? "song" : "songs";
+            TotalItemsText = $"{_currentFolderCount:N0} {folderText}, {songCount:N0} {songText}";
+        }
+        else if (_currentFolderCount > 0)
+        {
+            var folderText = _currentFolderCount == 1 ? "folder" : "folders";
+            TotalItemsText = $"{_currentFolderCount:N0} {folderText}";
+        }
+        else if (songCount > 0)
+        {
+            var songText = songCount == 1 ? "song" : "songs";
+            TotalItemsText = $"{songCount:N0} {songText}";
+        }
+        else
+        {
+            TotalItemsText = "No items";
+        }
     }
 
     /// <summary>
@@ -368,13 +424,13 @@ public partial class FolderSongListViewModel : SongListViewModelBase
     private async Task SearchAsync()
     {
         _debounceCts?.Cancel();
-        await LoadFolderContentsAsync();
+        await RefreshOrSortSongsCommand.ExecuteAsync(null);
     }
 
     public override async Task RefreshOrSortSongsAsync(string? sortOrderString = null)
     {
         if (IsOverallLoading) return;
-
+        
         if (!string.IsNullOrEmpty(sortOrderString) &&
             Enum.TryParse<SongSortOrder>(sortOrderString, true, out var newSortOrder)
             && newSortOrder != CurrentSortOrder)
@@ -387,7 +443,9 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         }
 
         UpdateSortOrderButtonText(CurrentSortOrder);
-        await LoadFolderContentsAsync();
+        
+        // Use base class paging to load songs.
+        await base.RefreshOrSortSongsAsync(sortOrderString);
     }
 
     private void TriggerDebouncedSearch()
@@ -398,6 +456,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         }
         catch (ObjectDisposedException)
         {
+            _logger.LogDebug("CancellationTokenSource was already disposed during search cancellation");
         }
 
         _debounceCts = new CancellationTokenSource();
@@ -414,12 +473,12 @@ public partial class FolderSongListViewModel : SongListViewModelBase
                 await _dispatcherService.EnqueueAsync(async () =>
                 {
                     if (token.IsCancellationRequested) return;
-                    await LoadFolderContentsAsync();
+                    await RefreshOrSortSongsCommand.ExecuteAsync(null);
                 });
             }
             catch (TaskCanceledException)
             {
-                _logger.LogDebug("Debounced search cancelled.");
+                _logger.LogDebug("Debounced search cancelled");
             }
             catch (Exception ex)
             {
@@ -458,9 +517,11 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         base.Cleanup();
         _debounceCts?.Cancel();
         _debounceCts?.Dispose();
+        _debounceCts = null;
         SearchTerm = string.Empty;
         FolderContents.Clear();
         Breadcrumbs.Clear();
+        _currentFolderCount = 0;
         _logger.LogDebug("Cleaned up resources for folder {FolderId}", _rootFolderId);
     }
 }

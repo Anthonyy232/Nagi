@@ -1,31 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
-using Microsoft.UI.Xaml;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
-using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Services.Abstractions;
 
 namespace Nagi.WinUI.ViewModels;
 
 /// <summary>
 ///     A specialized song list view model for displaying and managing songs within a single playlist.
-///     Supports drag-and-drop reordering.
 /// </summary>
 public partial class PlaylistSongListViewModel : SongListViewModelBase
 {
     private const int SearchDebounceDelay = 400;
 
-    // Debounces save operations during rapid drag-and-drop reordering to prevent excessive database writes.
-    private readonly DispatcherTimer _reorderSaveTimer;
     private Guid? _currentPlaylistId;
     private CancellationTokenSource? _debounceCts;
 
@@ -39,26 +33,19 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         ILogger<PlaylistSongListViewModel> logger)
         : base(libraryReader, playlistService, playbackService, navigationService, dispatcherService, uiService, logger)
     {
-        _reorderSaveTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(200) };
-        _reorderSaveTimer.Tick += ReorderSaveTimer_Tick;
     }
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsReorderingEnabled))]
-    [NotifyPropertyChangedFor(nameof(IsPagingSupported))]
-    public partial string SearchTerm { get; set; }
+    public partial string SearchTerm { get; set; } = string.Empty;
 
     private bool IsSearchActive => !string.IsNullOrWhiteSpace(SearchTerm);
 
-    // Paging is only supported when a search is active. Otherwise, all songs are loaded for reordering.
-    protected override bool IsPagingSupported => IsSearchActive;
+    // Always use paging for efficient loading of large playlists.
+    protected override bool IsPagingSupported => true;
 
-    // Playlist songs are pre-sorted by position when not searching.
-    protected override bool IsDataPreSortedAfterLoad => !IsSearchActive;
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(RemoveSelectedSongsFromPlaylistCommand))]
-    [NotifyPropertyChangedFor(nameof(IsReorderingEnabled))]
     public partial bool IsCurrentViewAPlaylist { get; set; }
 
     [ObservableProperty]
@@ -66,12 +53,6 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
     public partial string? CoverImageUri { get; set; }
 
     public bool IsArtworkAvailable => !string.IsNullOrEmpty(CoverImageUri);
-
-    /// <summary>
-    ///     Gets a value indicating whether drag-and-drop reordering is enabled.
-    ///     Reordering is only allowed for actual playlists and when a search is not active.
-    /// </summary>
-    public bool IsReorderingEnabled => IsCurrentViewAPlaylist && !IsSearchActive;
 
     partial void OnSearchTermChanged(string value)
     {
@@ -83,11 +64,9 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
     /// </summary>
     public async Task InitializeAsync(string title, Guid? playlistId, string? coverImageUri = null)
     {
+        CurrentSortOrder = SongSortOrder.TitleAsc;
         if (IsOverallLoading) return;
         _logger.LogDebug("Initializing for playlist '{Title}' (ID: {PlaylistId})", title, playlistId);
-
-        // Unsubscribe before refresh to prevent the handler from firing on the initial load.
-        Songs.CollectionChanged -= OnSongsCollectionChanged;
 
         try
         {
@@ -97,9 +76,6 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
             CoverImageUri = coverImageUri;
 
             await RefreshOrSortSongsCommand.ExecuteAsync(null);
-
-            // Re-subscribe only if it's a real playlist, enabling reordering logic.
-            if (IsCurrentViewAPlaylist) Songs.CollectionChanged += OnSongsCollectionChanged;
         }
         catch (Exception ex)
         {
@@ -109,30 +85,32 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         }
     }
 
-    protected override async Task<IEnumerable<Song>> LoadSongsAsync()
+    protected override Task<IEnumerable<Song>> LoadSongsAsync()
     {
-        // This method is now only called when IsPagingSupported is false (i.e., not searching).
-        if (!_currentPlaylistId.HasValue) return Enumerable.Empty<Song>();
-        return await _libraryReader.GetSongsInPlaylistOrderedAsync(_currentPlaylistId.Value);
+        // Not used since IsPagingSupported is always true.
+        return Task.FromResult(Enumerable.Empty<Song>());
     }
 
     protected override Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
         SongSortOrder sortOrder)
     {
-        // This method is only called when IsPagingSupported is true (i.e., searching).
-        if (!_currentPlaylistId.HasValue || !IsSearchActive) return Task.FromResult(new PagedResult<Song>());
-        return _libraryReader.SearchSongsInPlaylistPagedAsync(_currentPlaylistId.Value, SearchTerm, pageNumber,
-            pageSize);
+        if (!_currentPlaylistId.HasValue) return Task.FromResult(new PagedResult<Song>());
+
+        if (IsSearchActive)
+            return _libraryReader.SearchSongsInPlaylistPagedAsync(_currentPlaylistId.Value, SearchTerm, pageNumber, pageSize, sortOrder);
+
+        return _libraryReader.GetSongsByPlaylistPagedAsync(_currentPlaylistId.Value, pageNumber, pageSize, sortOrder);
     }
 
     protected override Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder)
     {
         if (!_currentPlaylistId.HasValue) return Task.FromResult(new List<Guid>());
 
-        if (IsSearchActive) return _libraryReader.SearchAllSongIdsInPlaylistAsync(_currentPlaylistId.Value, SearchTerm);
+        if (IsSearchActive)
+            return _libraryReader.SearchAllSongIdsInPlaylistAsync(_currentPlaylistId.Value, SearchTerm, sortOrder);
 
-        // When not searching, get all song IDs in their saved order.
-        return _libraryReader.GetAllSongIdsByPlaylistIdAsync(_currentPlaylistId.Value);
+        // When not searching, get all song IDs in the requested order.
+        return _libraryReader.GetAllSongIdsByPlaylistIdAsync(_currentPlaylistId.Value, sortOrder);
     }
 
     [RelayCommand(CanExecute = nameof(CanRemoveSongs))]
@@ -144,61 +122,15 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         _logger.LogDebug("Removing {SongCount} songs from playlist ID {PlaylistId}", songIdsToRemove.Count,
             _currentPlaylistId.Value);
 
-        // Temporarily unsubscribe to prevent reorder logic from firing during removal.
-        Songs.CollectionChanged -= OnSongsCollectionChanged;
-        try
-        {
-            var success =
-                await _playlistService.RemoveSongsFromPlaylistAsync(_currentPlaylistId.Value, songIdsToRemove);
-            if (success)
-                // Reload the list from the database to reflect the changes.
-                await RefreshOrSortSongsCommand.ExecuteAsync(null);
-        }
-        finally
-        {
-            if (IsCurrentViewAPlaylist) Songs.CollectionChanged += OnSongsCollectionChanged;
-        }
+        var success =
+            await _playlistService.RemoveSongsFromPlaylistAsync(_currentPlaylistId.Value, songIdsToRemove);
+        if (success)
+            await RefreshOrSortSongsCommand.ExecuteAsync(null);
     }
 
     private bool CanRemoveSongs()
     {
         return IsCurrentViewAPlaylist && HasSelectedSongs;
-    }
-
-    /// <summary>
-    ///     Listens for user-driven changes to the song collection (like drag-drop) to trigger a debounced save.
-    /// </summary>
-    private void OnSongsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-    {
-        // WinUI ListView may fire Remove + Add instead of a single Move event for drag-drop operations.
-        // Listen to all three action types to ensure reorder is saved correctly.
-        if (e.Action is NotifyCollectionChangedAction.Move or NotifyCollectionChangedAction.Add
-            or NotifyCollectionChangedAction.Remove)
-        {
-            // Restart the timer on each change to debounce rapid drag operations.
-            _reorderSaveTimer.Stop();
-            _reorderSaveTimer.Start();
-        }
-    }
-
-    /// <summary>
-    ///     Called by the debouncing timer to execute the save operation.
-    /// </summary>
-    private void ReorderSaveTimer_Tick(object? sender, object e)
-    {
-        _reorderSaveTimer.Stop();
-        _logger.LogDebug("Reorder save timer ticked. Executing update");
-        if (UpdatePlaylistOrderCommand.CanExecute(null)) UpdatePlaylistOrderCommand.Execute(null);
-    }
-
-    [RelayCommand]
-    private async Task UpdatePlaylistOrderAsync()
-    {
-        if (!_currentPlaylistId.HasValue || Songs.Count == 0) return;
-
-        var orderedSongIds = Songs.Select(s => s.Id).ToList();
-        _logger.LogDebug("Persisting new song order for playlist ID {PlaylistId}", _currentPlaylistId.Value);
-        await _playlistService.UpdatePlaylistSongOrderAsync(_currentPlaylistId.Value, orderedSongIds);
     }
 
     /// <summary>
@@ -216,16 +148,17 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         try
         {
             _debounceCts?.Cancel();
+            _debounceCts?.Dispose();
         }
         catch (ObjectDisposedException)
         {
-            // Ignore exception if the CancellationTokenSource has already been disposed.
+            _logger.LogDebug("CancellationTokenSource was already disposed during search cancellation");
         }
 
         _debounceCts = new CancellationTokenSource();
         var token = _debounceCts.Token;
 
-        Task.Run(async () =>
+        _ = Task.Run(async () =>
         {
             try
             {
@@ -252,23 +185,18 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
     }
 
     /// <summary>
-    ///     Cleans up resources specific to this view model, such as timers and event subscriptions,
-    ///     and then calls the base class's cleanup logic.
+    ///     Cleans up resources specific to this view model.
     /// </summary>
     public override void Cleanup()
     {
-        _logger.LogDebug("Cleaning up resources");
+        _logger.LogDebug("Cleaning up PlaylistSongListViewModel resources");
 
         _debounceCts?.Cancel();
         _debounceCts?.Dispose();
+        _debounceCts = null;
+        _currentPlaylistId = null;
         SearchTerm = string.Empty;
 
-        // Stop the timer and unsubscribe to prevent it from firing after disposal
-        // and to allow the ViewModel to be garbage collected.
-        _reorderSaveTimer.Stop();
-        _reorderSaveTimer.Tick -= ReorderSaveTimer_Tick;
-
-        Songs.CollectionChanged -= OnSongsCollectionChanged;
         base.Cleanup();
     }
 }
