@@ -192,6 +192,7 @@ public partial class ArtistViewModel : ObservableObject, IDisposable
         _currentPage = 1;
         _isFullyLoaded = false;
         _artistLookup.Clear();
+        Artists.Clear();
         
         try
         {

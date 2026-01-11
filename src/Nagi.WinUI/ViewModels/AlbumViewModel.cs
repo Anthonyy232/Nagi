@@ -189,6 +189,7 @@ public partial class AlbumViewModel : ObservableObject, IDisposable
         HasLoadError = false;
         _currentPage = 1;
         _isFullyLoaded = false;
+        Albums.Clear();
         
         try
         {

@@ -1243,7 +1243,9 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         if (!string.IsNullOrEmpty(coverImageUri) && _fileSystem.FileExists(coverImageUri))
         {
             var cachePath = _pathConfig.PlaylistImageCachePath;
-            ImageStorageHelper.SaveImage(_fileSystem, cachePath, playlist.Id.ToString(), ".custom", coverImageUri);
+            var originalBytes = await _fileSystem.ReadAllBytesAsync(coverImageUri).ConfigureAwait(false);
+            var processedBytes = await _imageProcessor.ProcessImageBytesAsync(originalBytes).ConfigureAwait(false);
+            await ImageStorageHelper.SaveImageBytesAsync(_fileSystem, cachePath, playlist.Id.ToString(), ".custom", processedBytes).ConfigureAwait(false);
             playlist.CoverImageUri = ImageStorageHelper.FindImage(_fileSystem, cachePath, playlist.Id.ToString(), ".custom");
         }
 
