@@ -330,6 +330,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             .Where(f => f.ParentFolderId == null)
             .OrderBy(f => f.Name)
             .ThenBy(f => f.Path)
+            .ThenBy(f => f.Id)
             .ToListAsync().ConfigureAwait(false);
     }
 
@@ -341,6 +342,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             .Where(f => f.ParentFolderId == parentFolderId)
             .OrderBy(f => f.Name)
             .ThenBy(f => f.Path)
+            .ThenBy(f => f.Id)
             .ToListAsync().ConfigureAwait(false);
     }
 
@@ -1182,7 +1184,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     public async Task<IEnumerable<Artist>> GetAllArtistsAsync()
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        return await context.Artists.AsNoTracking().OrderBy(a => a.Name).ToListAsync().ConfigureAwait(false);
+        return await context.Artists.AsNoTracking().OrderBy(a => a.Name).ThenBy(a => a.Id).ToListAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -1191,7 +1193,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         if (string.IsNullOrWhiteSpace(searchTerm)) return await GetAllArtistsAsync().ConfigureAwait(false);
 
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        return await BuildArtistSearchQuery(context, searchTerm.Trim()).AsNoTracking().OrderBy(a => a.Name)
+        return await BuildArtistSearchQuery(context, searchTerm.Trim()).AsNoTracking().OrderBy(a => a.Name).ThenBy(a => a.Id)
             .ToListAsync().ConfigureAwait(false);
     }
 
@@ -1217,6 +1219,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             .Include(al => al.Artist)
             .OrderBy(al => al.Artist != null ? al.Artist.Name : string.Empty)
             .ThenBy(al => al.Title)
+            .ThenBy(al => al.Id)
             .AsSplitQuery()
             .ToListAsync().ConfigureAwait(false);
     }
@@ -1230,6 +1233,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         return await BuildAlbumSearchQuery(context, searchTerm.Trim())
             .OrderBy(al => al.Artist != null ? al.Artist.Name : string.Empty)
             .ThenBy(al => al.Title)
+            .ThenBy(al => al.Id)
             .AsSplitQuery()
             .ToListAsync().ConfigureAwait(false);
     }
@@ -1342,13 +1346,10 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         var songIdsToAdd = songIds.Distinct().Except(existingSongIds).ToList();
         if (songIdsToAdd.Count == 0) return true;
 
-        var maxOrder =
-            await context.PlaylistSongs.Where(ps => ps.PlaylistId == playlistId).MaxAsync(ps => (int?)ps.Order).ConfigureAwait(false) ?? -1;
         var playlistSongsToAdd = songIdsToAdd.Select(songId => new PlaylistSong
         {
             PlaylistId = playlistId,
-            SongId = songId,
-            Order = ++maxOrder
+            SongId = songId
         });
 
         context.PlaylistSongs.AddRange(playlistSongsToAdd);
@@ -1370,44 +1371,23 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             .Where(ps => ps.PlaylistId == playlistId && songIds.Contains(ps.SongId))
             .ExecuteDeleteAsync().ConfigureAwait(false);
 
-        await ReindexPlaylistAsync(context, playlistId).ConfigureAwait(false);
+
 
         playlist.DateModified = DateTime.UtcNow;
         await context.SaveChangesAsync().ConfigureAwait(false);
         return true;
     }
 
-    /// <inheritdoc />
-    public async Task<bool> UpdatePlaylistSongOrderAsync(Guid playlistId, IEnumerable<Guid> orderedSongIds)
-    {
-        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        var playlist = await context.Playlists.FindAsync(playlistId).ConfigureAwait(false);
-        if (playlist is null) return false;
 
-        var playlistSongs = await context.PlaylistSongs
-            .Where(ps => ps.PlaylistId == playlistId)
-            .ToListAsync().ConfigureAwait(false);
-
-        var songMap = playlistSongs.ToDictionary(ps => ps.SongId);
-        var newOrderList = orderedSongIds.ToList();
-
-        for (var i = 0; i < newOrderList.Count; i++)
-            if (songMap.TryGetValue(newOrderList[i], out var playlistSong))
-                playlistSong.Order = i;
-
-        playlist.DateModified = DateTime.UtcNow;
-        await context.SaveChangesAsync().ConfigureAwait(false);
-        return true;
-    }
 
     /// <inheritdoc />
     public async Task<Playlist?> GetPlaylistByIdAsync(Guid playlistId)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         return await context.Playlists.AsNoTracking()
-            .Include(p => p.PlaylistSongs.OrderBy(ps => ps.Order)).ThenInclude(ps => ps.Song)
+            .Include(p => p.PlaylistSongs).ThenInclude(ps => ps.Song)
             .ThenInclude(s => s!.Artist)
-            .Include(p => p.PlaylistSongs.OrderBy(ps => ps.Order)).ThenInclude(ps => ps.Song).ThenInclude(s => s!.Album)
+            .Include(p => p.PlaylistSongs).ThenInclude(ps => ps.Song).ThenInclude(s => s!.Album)
             .ThenInclude(a => a!.Artist)
             .AsSplitQuery()
             .FirstOrDefaultAsync(p => p.Id == playlistId).ConfigureAwait(false);
@@ -1427,13 +1407,13 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     public async Task<IEnumerable<Song>> GetSongsInPlaylistOrderedAsync(Guid playlistId)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        return await ExcludeHeavyFields(
-            context.PlaylistSongs.AsNoTracking()
-                .Where(ps => ps.PlaylistId == playlistId)
-                .OrderBy(ps => ps.Order).ThenBy(ps => ps.SongId)
-                .Include(ps => ps.Song).ThenInclude(s => s!.Artist)
-                .Include(ps => ps.Song).ThenInclude(s => s!.Album).ThenInclude(a => a!.Artist)
-                .Select(ps => ps.Song!))
+        var query = context.PlaylistSongs.AsNoTracking()
+            .Where(ps => ps.PlaylistId == playlistId)
+            .Include(ps => ps.Song).ThenInclude(s => s!.Artist)
+            .Include(ps => ps.Song).ThenInclude(s => s!.Album).ThenInclude(a => a!.Artist)
+            .Select(ps => ps.Song!);
+
+        return await ApplySongSortOrder(ExcludeHeavyFields(query), SongSortOrder.TrackNumberAsc)
             .AsSplitQuery()
             .ToListAsync().ConfigureAwait(false);
     }
@@ -1622,20 +1602,19 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     }
 
     /// <inheritdoc />
-    public async Task<PagedResult<Song>> GetSongsByPlaylistPagedAsync(Guid playlistId, int pageNumber, int pageSize)
+    public async Task<PagedResult<Song>> GetSongsByPlaylistPagedAsync(Guid playlistId, int pageNumber, int pageSize, SongSortOrder sortOrder)
     {
         SanitizePaging(ref pageNumber, ref pageSize);
 
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var baseQuery = context.PlaylistSongs.AsNoTracking()
             .Where(ps => ps.PlaylistId == playlistId)
-            .OrderBy(ps => ps.Order).ThenBy(ps => ps.SongId)
             .Include(ps => ps.Song).ThenInclude(s => s!.Artist)
             .Include(ps => ps.Song).ThenInclude(s => s!.Album).ThenInclude(a => a!.Artist)
             .Select(ps => ps.Song!);
 
         var totalCount = await baseQuery.CountAsync().ConfigureAwait(false);
-        var pagedData = await ExcludeHeavyFields(baseQuery)
+        var pagedData = await ApplySongSortOrder(ExcludeHeavyFields(baseQuery), sortOrder)
             .Skip((pageNumber - 1) * pageSize).Take(pageSize).AsSplitQuery().ToListAsync().ConfigureAwait(false);
 
         return new PagedResult<Song>
@@ -1684,7 +1663,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             ? context.Artists
             : BuildArtistSearchQuery(context, searchTerm.Trim());
         var totalCount = await query.CountAsync().ConfigureAwait(false);
-        var pagedData = await query.AsNoTracking().OrderBy(a => a.Name)
+        var pagedData = await query.AsNoTracking().OrderBy(a => a.Name).ThenBy(a => a.Id)
             .Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync().ConfigureAwait(false);
 
         return new PagedResult<Artist>
@@ -1733,7 +1712,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             : BuildAlbumSearchQuery(context, searchTerm.Trim());
         var totalCount = await query.CountAsync().ConfigureAwait(false);
         var pagedData = await query.AsNoTracking()
-            .OrderBy(al => al.Artist != null ? al.Artist.Name : string.Empty).ThenBy(al => al.Title)
+            .OrderBy(al => al.Artist != null ? al.Artist.Name : string.Empty).ThenBy(al => al.Title).ThenBy(al => al.Id)
             .Skip((pageNumber - 1) * pageSize).Take(pageSize).AsSplitQuery().ToListAsync().ConfigureAwait(false);
 
         return new PagedResult<Album>
@@ -1820,6 +1799,42 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     }
 
     /// <inheritdoc />
+    public async Task<PagedResult<Song>> GetSongsInDirectoryPagedAsync(Guid folderId, string directoryPath,
+        int pageNumber, int pageSize, SongSortOrder sortOrder)
+    {
+        SanitizePaging(ref pageNumber, ref pageSize);
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+
+        var normalizedPath = directoryPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+
+        var baseQuery = context.Songs.AsNoTracking()
+            .Where(s => s.FolderId == folderId && s.DirectoryPath == normalizedPath)
+            .Include(s => s.Artist)
+            .Include(s => s.Album).ThenInclude(a => a!.Artist);
+
+        var totalCount = await baseQuery.CountAsync().ConfigureAwait(false);
+        var pagedData = await ApplySongSortOrder(ExcludeHeavyFields(baseQuery), sortOrder)
+            .Skip((pageNumber - 1) * pageSize).Take(pageSize).AsSplitQuery().ToListAsync().ConfigureAwait(false);
+
+        return new PagedResult<Song>
+            { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
+    }
+
+    /// <inheritdoc />
+    public async Task<List<Guid>> GetSongIdsInDirectoryAsync(Guid folderId, string directoryPath,
+        SongSortOrder sortOrder)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+
+        var normalizedPath = directoryPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+
+        var query = context.Songs.AsNoTracking()
+            .Where(s => s.FolderId == folderId && s.DirectoryPath == normalizedPath);
+
+        return await ApplySongSortOrder(query, sortOrder).Select(s => s.Id).ToListAsync().ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
     public async Task<List<Guid>> GetAllSongIdsByArtistIdAsync(Guid artistId, SongSortOrder sortOrder)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
@@ -1836,11 +1851,14 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     }
 
     /// <inheritdoc />
-    public async Task<List<Guid>> GetAllSongIdsByPlaylistIdAsync(Guid playlistId)
+    public async Task<List<Guid>> GetAllSongIdsByPlaylistIdAsync(Guid playlistId, SongSortOrder sortOrder)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        return await context.PlaylistSongs.AsNoTracking()
-            .Where(ps => ps.PlaylistId == playlistId).OrderBy(ps => ps.Order).Select(ps => ps.SongId).ToListAsync().ConfigureAwait(false);
+        var query = context.PlaylistSongs.AsNoTracking()
+            .Where(ps => ps.PlaylistId == playlistId)
+            .Select(ps => ps.Song!);
+
+        return await ApplySongSortOrder(query, sortOrder).Select(s => s.Id).ToListAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -1869,7 +1887,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                                                                  || (s.Artist != null &&
                                                                      EF.Functions.Like(s.Artist.Name, term))))
             .Include(s => s.Artist).Include(s => s.Album).ThenInclude(a => a!.Artist)
-            .OrderBy(s => s.Title);
+            .OrderBy(s => s.Title).ThenBy(s => s.Id);
 
         return await ExcludeHeavyFields(query).AsSplitQuery().ToListAsync().ConfigureAwait(false);
     }
@@ -1886,7 +1904,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                                                                  (s.Artist != null &&
                                                                   EF.Functions.Like(s.Artist.Name, term))))
             .Include(s => s.Artist).Include(s => s.Album)
-            .OrderBy(s => s.TrackNumber);
+            .OrderBy(s => s.TrackNumber).ThenBy(s => s.Id);
 
         return await ExcludeHeavyFields(query).AsSplitQuery().ToListAsync().ConfigureAwait(false);
     }
@@ -1903,7 +1921,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                                                                  (s.Album != null &&
                                                                   EF.Functions.Like(s.Album.Title, term))))
             .Include(s => s.Artist).Include(s => s.Album)
-            .OrderBy(s => s.Album != null ? s.Album.Title : string.Empty).ThenBy(s => s.TrackNumber);
+            .OrderBy(s => s.Album != null ? s.Album.Title : string.Empty).ThenBy(s => s.TrackNumber).ThenBy(s => s.Id);
 
         return await ExcludeHeavyFields(query).AsSplitQuery().ToListAsync().ConfigureAwait(false);
     }
@@ -1921,11 +1939,10 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                           || (ps.Song.Album != null && EF.Functions.Like(ps.Song.Album.Title, term))
                           || (ps.Song.Artist != null && EF.Functions.Like(ps.Song.Artist.Name, term))));
 
-        var songsQuery = ExcludeHeavyFields(query
-            .OrderBy(ps => ps.Order)
+        var songsQuery = ApplySongSortOrder(ExcludeHeavyFields(query
             .Include(ps => ps.Song).ThenInclude(s => s!.Artist)
             .Include(ps => ps.Song).ThenInclude(s => s!.Album).ThenInclude(a => a!.Artist)
-            .Select(ps => ps.Song!));
+            .Select(ps => ps.Song!)), SongSortOrder.TrackNumberAsc);
 
         return await songsQuery.AsSplitQuery().ToListAsync().ConfigureAwait(false);
     }
@@ -1943,7 +1960,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                             || (s.Album != null && EF.Functions.Like(s.Album.Title, term))
                             || (s.Artist != null && EF.Functions.Like(s.Artist.Name, term))))
             .Include(s => s.Artist).Include(s => s.Album).ThenInclude(a => a!.Artist)
-            .OrderBy(s => s.Title);
+            .OrderBy(s => s.Title).ThenBy(s => s.Id);
 
         return await ExcludeHeavyFields(query).AsSplitQuery().ToListAsync().ConfigureAwait(false);
     }
@@ -2023,7 +2040,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
     /// <inheritdoc />
     public async Task<PagedResult<Song>> SearchSongsInPlaylistPagedAsync(Guid playlistId, string searchTerm,
-        int pageNumber, int pageSize)
+        int pageNumber, int pageSize, SongSortOrder sortOrder)
     {
         SanitizePaging(ref pageNumber, ref pageSize);
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
@@ -2041,13 +2058,12 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         }
 
         var songQuery = query
-            .OrderBy(ps => ps.Order).ThenBy(ps => ps.SongId)
             .Include(ps => ps.Song).ThenInclude(s => s!.Artist)
             .Include(ps => ps.Song).ThenInclude(s => s!.Album).ThenInclude(a => a!.Artist)
             .Select(ps => ps.Song!);
 
         var totalCount = await songQuery.CountAsync().ConfigureAwait(false);
-        var pagedData = await ExcludeHeavyFields(songQuery)
+        var pagedData = await ApplySongSortOrder(ExcludeHeavyFields(songQuery), sortOrder)
             .Skip((pageNumber - 1) * pageSize).Take(pageSize)
             .AsSplitQuery()
             .ToListAsync().ConfigureAwait(false);
@@ -2137,7 +2153,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     }
 
     /// <inheritdoc />
-    public async Task<List<Guid>> SearchAllSongIdsInPlaylistAsync(Guid playlistId, string searchTerm)
+    public async Task<List<Guid>> SearchAllSongIdsInPlaylistAsync(Guid playlistId, string searchTerm, SongSortOrder sortOrder)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var query = context.PlaylistSongs.AsNoTracking()
@@ -2152,9 +2168,10 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                                        || (ps.Song.Artist != null && EF.Functions.Like(ps.Song.Artist.Name, term))));
         }
 
-        return await query
-            .OrderBy(ps => ps.Order)
-            .Select(ps => ps.SongId)
+        var songQuery = query.Select(ps => ps.Song!);
+
+        return await ApplySongSortOrder(songQuery, sortOrder)
+            .Select(s => s.Id)
             .ToListAsync().ConfigureAwait(false);
     }
 
@@ -3509,13 +3526,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         return finalGenres;
     }
 
-    private async Task ReindexPlaylistAsync(MusicDbContext context, Guid playlistId)
-    {
-        var playlistSongs = await context.PlaylistSongs
-            .Where(ps => ps.PlaylistId == playlistId).OrderBy(ps => ps.Order).ToListAsync().ConfigureAwait(false);
 
-        for (var i = 0; i < playlistSongs.Count; i++) playlistSongs[i].Order = i;
-    }
 
     private async Task CleanUpOrphanedEntitiesAsync(MusicDbContext context,
         CancellationToken cancellationToken = default)
@@ -3739,6 +3750,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 .ThenBy(s => s.Album != null ? s.Album.Title : string.Empty)
                 .ThenBy(s => s.DiscNumber ?? 0)
                 .ThenBy(s => s.TrackNumber)
+                .ThenBy(s => s.Title)
                 .ThenBy(s => s.Id),
             SongSortOrder.YearDesc => query.OrderByDescending(s => s.Year)
                 .ThenByDescending(s => s.Artist != null ? s.Artist.Name : string.Empty)

@@ -41,7 +41,6 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
     }
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsPagingSupported))]
     public partial string SearchTerm { get; set; } = string.Empty;
 
     private bool IsSearchActive => !string.IsNullOrWhiteSpace(SearchTerm);
@@ -49,8 +48,6 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
     // Always support paging for smart playlists since they can be large
     protected override bool IsPagingSupported => true;
 
-    // Smart playlist songs are sorted by the smart playlist's sort order
-    protected override bool IsDataPreSortedAfterLoad => true;
 
     /// <summary>
     ///     Gets the current smart playlist ID for editing purposes.
@@ -167,7 +164,7 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
         }
         catch (ObjectDisposedException)
         {
-            // Ignore exception if the CancellationTokenSource has already been disposed.
+            _logger.LogDebug("CancellationTokenSource was already disposed during search cancellation");
         }
 
         _debounceCts = new CancellationTokenSource();

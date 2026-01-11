@@ -182,7 +182,7 @@
                             ToolTipService.ToolTip="{x:Bind ViewModel.CurrentSortOrderText, Mode=OneWay}">
                         <Button.Flyout>
                             <MenuFlyout Placement="Bottom">
-                                 <RadioMenuFlyoutItem GroupName="PlaylistSongSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                <RadioMenuFlyoutItem GroupName="PlaylistSongSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
                                                 CommandParameter="TitleAsc" Text="{x:Bind helpers:SortOrderHelper.TitleAscLabel}"
                                                 IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=TitleAsc}" />
                                 <RadioMenuFlyoutItem GroupName="PlaylistSongSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
@@ -222,9 +222,6 @@
                   ItemsSource="{x:Bind ViewModel.Songs, Mode=OneWay}"
                   ItemContainerStyle="{StaticResource SongListViewPageListViewItemStyle}"
                   SelectionChanged="SongsListView_SelectionChanged"
-                  CanDragItems="{x:Bind ViewModel.IsReorderingEnabled, Mode=OneWay}"
-                  CanReorderItems="{x:Bind ViewModel.IsReorderingEnabled, Mode=OneWay}"
-                  AllowDrop="{x:Bind ViewModel.IsReorderingEnabled, Mode=OneWay}"
                   DoubleTapped="SongsListView_DoubleTapped">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="models:Song">

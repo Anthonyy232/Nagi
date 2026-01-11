@@ -138,8 +138,6 @@ public class MusicDbContext : DbContext
                 .HasForeignKey(ps => ps.SongId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Index for efficient, ordered retrieval of songs in a playlist.
-            entity.HasIndex(ps => new { ps.PlaylistId, ps.Order });
         });
 
         // Configure the SmartPlaylist entity.

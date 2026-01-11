@@ -26,8 +26,4 @@ public class PlaylistSong
     /// </summary>
     public virtual Song Song { get; set; } = null!;
 
-    /// <summary>
-    ///     The zero-based position of the song within the playlist.
-    /// </summary>
-    public int Order { get; set; }
 }

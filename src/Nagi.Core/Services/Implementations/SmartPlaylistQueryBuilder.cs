@@ -338,6 +338,7 @@ public class SmartPlaylistQueryBuilder
                 .ThenBy(s => s.Album != null ? s.Album.Title : string.Empty)
                 .ThenBy(s => s.DiscNumber ?? 0)
                 .ThenBy(s => s.TrackNumber)
+                .ThenBy(s => s.Title)
                 .ThenBy(s => s.Id),
             SmartPlaylistSortOrder.YearDesc => query.OrderByDescending(s => s.Year)
                 .ThenByDescending(s => s.Artist != null ? s.Artist.Name : string.Empty)
@@ -348,10 +349,10 @@ public class SmartPlaylistQueryBuilder
                 .ThenByDescending(s => s.Id),
             SmartPlaylistSortOrder.PlayCountAsc => query.OrderBy(s => s.PlayCount).ThenBy(s => s.Title).ThenBy(s => s.Id),
             SmartPlaylistSortOrder.PlayCountDesc => query.OrderByDescending(s => s.PlayCount).ThenByDescending(s => s.Title).ThenByDescending(s => s.Id),
-            SmartPlaylistSortOrder.LastPlayedAsc => query.OrderBy(s => s.LastPlayedDate).ThenBy(s => s.Id),
-            SmartPlaylistSortOrder.LastPlayedDesc => query.OrderByDescending(s => s.LastPlayedDate).ThenByDescending(s => s.Id),
-            SmartPlaylistSortOrder.DateAddedAsc => query.OrderBy(s => s.DateAddedToLibrary).ThenBy(s => s.Id),
-            SmartPlaylistSortOrder.DateAddedDesc => query.OrderByDescending(s => s.DateAddedToLibrary).ThenByDescending(s => s.Id),
+            SmartPlaylistSortOrder.LastPlayedAsc => query.OrderBy(s => s.LastPlayedDate).ThenBy(s => s.Title).ThenBy(s => s.Id),
+            SmartPlaylistSortOrder.LastPlayedDesc => query.OrderByDescending(s => s.LastPlayedDate).ThenByDescending(s => s.Title).ThenByDescending(s => s.Id),
+            SmartPlaylistSortOrder.DateAddedAsc => query.OrderBy(s => s.DateAddedToLibrary).ThenBy(s => s.Title).ThenBy(s => s.Id),
+            SmartPlaylistSortOrder.DateAddedDesc => query.OrderByDescending(s => s.DateAddedToLibrary).ThenByDescending(s => s.Title).ThenByDescending(s => s.Id),
             SmartPlaylistSortOrder.TrackNumberAsc => query.OrderBy(s => s.Album != null ? s.Album.Title : string.Empty)
                 .ThenBy(s => s.DiscNumber ?? 0)
                 .ThenBy(s => s.TrackNumber)

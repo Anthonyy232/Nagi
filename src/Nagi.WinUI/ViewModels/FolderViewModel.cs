@@ -174,6 +174,7 @@ public partial class FolderViewModel : ObservableObject, IDisposable
 
             var newItems = (await Task.WhenAll(folderItemTasks))
                 .OrderBy(item => item.Name, StringComparer.OrdinalIgnoreCase)
+                .ThenBy(item => item.Id)
                 .ToList();
 
             // Update the UI collection efficiently without clearing and re-populating.

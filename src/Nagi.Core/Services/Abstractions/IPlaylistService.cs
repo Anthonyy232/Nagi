@@ -16,5 +16,5 @@ public interface IPlaylistService
     Task<bool> UpdatePlaylistCoverAsync(Guid playlistId, string? newCoverImageUri);
     Task<bool> AddSongsToPlaylistAsync(Guid playlistId, IEnumerable<Guid> songIds);
     Task<bool> RemoveSongsFromPlaylistAsync(Guid playlistId, IEnumerable<Guid> songIds);
-    Task<bool> UpdatePlaylistSongOrderAsync(Guid playlistId, IEnumerable<Guid> orderedSongIds);
+
 }

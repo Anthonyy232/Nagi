@@ -229,10 +229,15 @@ public partial class AlbumViewViewModel : SongListViewModelBase
         }, token);
     }
 
-    protected override void OnSongsCollectionChanged()
+    protected override void ProcessPagedResult(PagedResult<Song> pagedResult, CancellationToken token, bool append = false)
     {
-        base.OnSongsCollectionChanged();
-        UpdateGrouping();
+        base.ProcessPagedResult(pagedResult, token, append);
+        
+        // Update grouping after the songs collection has been updated
+        _dispatcherService.TryEnqueue(() =>
+        {
+             if (!token.IsCancellationRequested) UpdateGrouping();
+        });
     }
 
     private void UpdateGrouping()

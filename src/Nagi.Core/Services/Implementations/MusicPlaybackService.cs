@@ -524,7 +524,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
 
     public async Task PlayPlaylistAsync(Guid playlistId)
     {
-        var songIds = await _libraryService.GetAllSongIdsByPlaylistIdAsync(playlistId).ConfigureAwait(false);
+        var songIds = await _libraryService.GetAllSongIdsByPlaylistIdAsync(playlistId, SongSortOrder.TrackNumberAsc).ConfigureAwait(false);
         await PlayFromOrderedIdsAsync(songIds, false).ConfigureAwait(false);
     }
 
