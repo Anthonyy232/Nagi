@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -354,10 +355,10 @@ public sealed partial class MainWindow : Window
                 // Clamp size between minimum and the largest connected display dimensions.
                 // This handles multi-monitor setups where secondary monitors may be larger than primary.
                 var displays = DisplayArea.FindAll();
-                var maxWidth = displays.Length > 0 
+                var maxWidth = displays.Count > 0 
                     ? displays.Max(d => d.WorkArea.Width) 
                     : int.MaxValue;
-                var maxHeight = displays.Length > 0 
+                var maxHeight = displays.Count > 0 
                     ? displays.Max(d => d.WorkArea.Height) 
                     : int.MaxValue;
                 var width = Math.Clamp(savedSize.Value.Width, MinMainWindowWidth, maxWidth);

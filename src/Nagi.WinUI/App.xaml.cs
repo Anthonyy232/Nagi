@@ -652,7 +652,7 @@ public partial class App : Application
         {
             if (_window is MainWindow mainWindow)
             {
-                _logger?.LogDebug(\"Saving window state...\");
+                _logger?.LogDebug("Saving window state...");
                 await mainWindow.SaveWindowStateAsync();
                 mainWindow.Cleanup();
             }
