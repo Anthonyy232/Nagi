@@ -340,7 +340,7 @@ public abstract partial class SongListViewModelBase : ObservableObject
     {
         var ids = await GetCurrentSelectionIdsAsync();
         // Reverse the list so songs are added in the selected order after the current track.
-        foreach (var id in ids.Reverse()) await _playbackService.PlayNextAsync(id);
+        foreach (var id in ids.AsEnumerable().Reverse()) await _playbackService.PlayNextAsync(id);
     }
 
     [RelayCommand(CanExecute = nameof(CanExecuteSelectedSongsCommands))]
