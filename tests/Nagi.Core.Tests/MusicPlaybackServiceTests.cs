@@ -975,6 +975,7 @@ public class MusicPlaybackServiceTests
         // Arrange
         await _service.InitializeAsync();
         _audioPlayer.ClearReceivedCalls();
+        _settingsService.ClearReceivedCalls();
         var eventTracker = new EventTracker(_service);
 
         // Act
@@ -998,6 +999,7 @@ public class MusicPlaybackServiceTests
         // Arrange
         await _service.InitializeAsync();
         _audioPlayer.ClearReceivedCalls();
+        _settingsService.ClearReceivedCalls();
         var eventTracker = new EventTracker(_service);
 
         // Act
