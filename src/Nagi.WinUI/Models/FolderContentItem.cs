@@ -1,4 +1,5 @@
 using Nagi.Core.Models;
+using System;
 
 namespace Nagi.WinUI.Models;
 
