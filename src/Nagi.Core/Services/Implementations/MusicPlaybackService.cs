@@ -146,6 +146,10 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
                     Preamp = 10.0f,
                     BandGains = Enumerable.Repeat(0.0f, EqualizerBands.Count).ToList()
                 };
+                
+                // Save the new default settings immediately.
+                // If we don't, the file remains empty/invalid, causing issues on next startup.
+                await _settingsService.SetEqualizerSettingsAsync(CurrentEqualizerSettings).ConfigureAwait(false);
             }
             _audioPlayer.ApplyEqualizerSettings(CurrentEqualizerSettings);
 
