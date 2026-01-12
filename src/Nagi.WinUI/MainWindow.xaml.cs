@@ -353,89 +353,39 @@ public sealed partial class MainWindow : Window
             
             await Task.WhenAll(savedSizeTask, savedPositionTask);
             
-            SizeInt32? newSize = null;
-            PointInt32? newPosition = null;
-            
             var savedSize = savedSizeTask.Result;
-            if (savedSize.HasValue)
-            {
-                // Clamp size between minimum and the largest connected display dimensions.
-                // This handles multi-monitor setups where secondary monitors may be larger than primary.
-                var displays = DisplayArea.FindAll();
-                var maxWidth = displays.Count > 0 
-                    ? displays.Max(d => d.WorkArea.Width) 
-                    : int.MaxValue;
-                var maxHeight = displays.Count > 0 
-                    ? displays.Max(d => d.WorkArea.Height) 
-                    : int.MaxValue;
-                var width = Math.Clamp(savedSize.Value.Width, MinMainWindowWidth, maxWidth);
-                var height = Math.Clamp(savedSize.Value.Height, MinMainWindowHeight, maxHeight);
-                newSize = new SizeInt32(width, height);
-            }
-            
             var savedPosition = savedPositionTask.Result;
-            if (savedPosition.HasValue && IsPositionOnScreen(savedPosition.Value.X, savedPosition.Value.Y))
-            {
-                newPosition = new PointInt32(savedPosition.Value.X, savedPosition.Value.Y);
-            }
-            
+
             // Apply size and/or position using the most efficient method
-            if (newSize.HasValue && newPosition.HasValue)
+            if (savedSize.HasValue && savedPosition.HasValue)
             {
+                var width = Math.Max(savedSize.Value.Width, MinMainWindowWidth);
+                var height = Math.Max(savedSize.Value.Height, MinMainWindowHeight);
+                
                 _appWindow.MoveAndResize(new RectInt32(
-                    newPosition.Value.X, newPosition.Value.Y,
-                    newSize.Value.Width, newSize.Value.Height));
+                    savedPosition.Value.X, savedPosition.Value.Y,
+                    width, height));
+                    
                 _logger?.LogDebug("Restored window state: ({X}, {Y}) {Width}x{Height}", 
-                    newPosition.Value.X, newPosition.Value.Y, newSize.Value.Width, newSize.Value.Height);
+                    savedPosition.Value.X, savedPosition.Value.Y, width, height);
             }
-            else if (newSize.HasValue)
+            else if (savedSize.HasValue)
             {
-                _appWindow.Resize(newSize.Value);
-                _logger?.LogDebug("Restored window size: {Width}x{Height}", newSize.Value.Width, newSize.Value.Height);
+                var width = Math.Max(savedSize.Value.Width, MinMainWindowWidth);
+                var height = Math.Max(savedSize.Value.Height, MinMainWindowHeight);
+                
+                _appWindow.Resize(new SizeInt32(width, height));
+                _logger?.LogDebug("Restored window size: {Width}x{Height}", width, height);
             }
-            else if (newPosition.HasValue)
+            else if (savedPosition.HasValue)
             {
-                _appWindow.Move(newPosition.Value);
-                _logger?.LogDebug("Restored window position: ({X}, {Y})", newPosition.Value.X, newPosition.Value.Y);
+                _appWindow.Move(new PointInt32(savedPosition.Value.X, savedPosition.Value.Y));
+                _logger?.LogDebug("Restored window position: ({X}, {Y})", savedPosition.Value.X, savedPosition.Value.Y);
             }
         }
         catch (Exception ex)
         {
             _logger?.LogWarning(ex, "Failed to restore window state.");
-        }
-    }
-
-    /// <summary>
-    ///     Validates that a meaningful portion of the window would be visible on at least one connected display.
-    ///     This prevents restoring a window to an off-screen position if a monitor was disconnected.
-    /// </summary>
-    /// <param name="x">The X coordinate of the window's top-left corner.</param>
-    /// <param name="y">The Y coordinate of the window's top-left corner.</param>
-    /// <param name="width">The minimum visible width to consider valid (default 100px).</param>
-    /// <param name="height">The minimum visible height to consider valid (default 100px).</param>
-    private bool IsPositionOnScreen(int x, int y, int width = 100, int height = 100)
-    {
-        try
-        {
-            // Check if at least a meaningful portion of the window overlaps any display
-            var displays = DisplayArea.FindAll();
-            foreach (var display in displays)
-            {
-                var bounds = display.OuterBounds;
-                // Check for overlap between the window rect and display bounds
-                if (x < bounds.X + bounds.Width && x + width > bounds.X &&
-                    y < bounds.Y + bounds.Height && y + height > bounds.Y)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-        catch (Exception ex)
-        {
-            // If we can't check, allow the position (Windows will handle it)
-            _logger?.LogWarning(ex, "Failed to enumerate displays for position validation");
-            return true;
         }
     }
 
