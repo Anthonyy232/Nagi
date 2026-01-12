@@ -97,17 +97,10 @@ public partial class ArtistViewViewModel : SongListViewModelBase
 
     public ObservableCollection<ArtistAlbumViewModelItem> Albums { get; } = new();
     public bool HasAlbums => Albums.Any();
-    protected override bool IsPagingSupported => true;
-
     partial void OnSearchTermChanged(string value)
     {
+        DeselectAll();
         TriggerDebouncedSearch();
-    }
-
-    // Paging is handled by the specialized methods below.
-    protected override Task<IEnumerable<Song>> LoadSongsAsync()
-    {
-        return Task.FromResult(Enumerable.Empty<Song>());
     }
 
     protected override async Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,

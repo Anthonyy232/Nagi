@@ -20,6 +20,7 @@ public sealed partial class FolderSongViewPage : Page
 {
     private readonly ILogger<FolderSongViewPage> _logger;
     private bool _isSearchExpanded;
+    private bool _isUpdatingSelection;
 
     public FolderSongViewPage()
     {
@@ -162,16 +163,62 @@ public sealed partial class FolderSongViewPage : Page
     /// </summary>
     private void FolderContentsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (sender is ListView listView)
-        {
-            var selectedSongs = listView.SelectedItems
-                .OfType<FolderContentItem>()
-                .Where(item => item.IsSong && item.Song != null)
-                .Select(item => item.Song!)
-                .ToList();
+        if (_isUpdatingSelection || sender is not ListView listView) return;
 
-            ViewModel.OnSongsSelectionChanged(selectedSongs);
+        // Update logical selection state based on individual changes
+        foreach (var item in e.AddedItems.OfType<FolderContentItem>())
+            ViewModel.SelectionState.Select(item.Id);
+
+        foreach (var item in e.RemovedItems.OfType<FolderContentItem>())
+            ViewModel.SelectionState.Deselect(item.Id);
+
+        var selectedSongs = listView.SelectedItems
+            .OfType<FolderContentItem>()
+            .Where(item => item.IsSong && item.Song != null)
+            .Select(item => item.Song!)
+            .ToList();
+
+        ViewModel.OnSongsSelectionChanged(selectedSongs);
+    }
+
+    private void OnSongsListViewContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+    {
+        if (args.Item is not FolderContentItem contentItem) return;
+
+        // Ensure the visual selection state matches our logical state as containers are reused.
+        try
+        {
+            _isUpdatingSelection = true;
+            args.ItemContainer.IsSelected = ViewModel.SelectionState.IsSelected(contentItem.Id);
         }
+        finally
+        {
+            _isUpdatingSelection = false;
+        }
+    }
+
+    private void OnSelectAllAcceleratorInvoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+    {
+        // Don't hijack selection if a text input control is focused.
+        var focused = FocusManager.GetFocusedElement(this.XamlRoot);
+        if (focused is TextBox or PasswordBox or RichEditBox) return;
+
+        _logger.LogDebug("Ctrl+A invoked. Selecting all songs in folder.");
+        ViewModel.SelectAllCommand.Execute(null);
+
+        // Sync the current visible items (only song items will be visually selected in the list via ContainerContentChanging if we use logical state)
+        // But for visual feedback, we call SelectAll on the list view.
+        try
+        {
+            _isUpdatingSelection = true;
+            FolderContentsListView.SelectAll();
+        }
+        finally
+        {
+            _isUpdatingSelection = false;
+        }
+
+        args.Handled = true;
     }
 
     /// <summary>

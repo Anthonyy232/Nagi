@@ -78,11 +78,12 @@ public partial class FolderSongListViewModel : SongListViewModelBase
 
     private bool IsSearchActive => !string.IsNullOrWhiteSpace(SearchTerm);
     
-    // Always use paging for efficient loading of large folders.
-    protected override bool IsPagingSupported => true;
+    public override int SelectedItemsCount => SelectionState.GetSelectedCount(_fullSongIdList.Count + _currentFolderCount);
+    
 
     partial void OnSearchTermChanged(string value)
     {
+        DeselectAll();
         TriggerDebouncedSearch();
     }
 
@@ -166,6 +167,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
 
         var orderedFolders = subfolders.OrderBy(f => f.Name, StringComparer.OrdinalIgnoreCase).ThenBy(f => f.Id).ToList();
         _currentFolderCount = orderedFolders.Count;
+        UpdateSelectionStatus();
         
         foreach (var folder in orderedFolders)
             FolderContents.Add(FolderContentItem.FromFolder(folder));
@@ -182,6 +184,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
 
         try
         {
+            DeselectAll();
             _currentDirectoryPath = folder.Path;
             Songs.Clear();
             
@@ -206,6 +209,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
 
         try
         {
+            DeselectAll();
             _currentDirectoryPath = string.IsNullOrEmpty(breadcrumb.Path) ||
                                     string.Equals(breadcrumb.Path, _rootFolderPath, StringComparison.OrdinalIgnoreCase)
                 ? _rootFolderPath ?? string.Empty
@@ -234,6 +238,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
 
         try
         {
+            DeselectAll();
             if (string.IsNullOrEmpty(_currentDirectoryPath))
                 return;
 
@@ -325,11 +330,6 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         return _libraryReader.GetSongIdsInDirectoryAsync(_rootFolderId.Value, _currentDirectoryPath, sortOrder);
     }
 
-    protected override Task<IEnumerable<Song>> LoadSongsAsync()
-    {
-        // Not used since IsPagingSupported is always true.
-        return Task.FromResult(Enumerable.Empty<Song>());
-    }
 
     /// <summary>
     ///     Processes a page of results, updating both Songs and FolderContents in a single dispatch.
@@ -505,6 +505,46 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         {
             _logger.LogError(ex, "Error playing subfolder {SubfolderPath}", folder.Path);
         }
+    }
+
+    protected override async Task<List<Guid>> GetCurrentSelectionIdsAsync()
+    {
+        // 1. Get the base selection (this handles Select All vs explicit songs in current view)
+        var selectedIds = SelectionState.GetSelectedIds(_fullSongIdList).ToList();
+        
+        // 2. We also need to get any Folder IDs that are explicitly selected.
+        // SelectionState.GetSelectedIds only returns IDs from the provided master list (which is songs only).
+        // So we get the raw explicitly selected IDs and find which ones are folders.
+        
+        // Find folder IDs in the current folder contents that are selected.
+        var selectedFolderIds = FolderContents
+            .Where(x => x.IsFolder && SelectionState.IsSelected(x.Id))
+            .Select(x => x.Folder!)
+            .ToList();
+
+        if (!selectedFolderIds.Any())
+            return selectedIds;
+
+        var resultSet = new HashSet<Guid>(selectedIds);
+        
+        // 3. Resolve each folder recursively.
+        foreach (var folder in selectedFolderIds)
+        {
+            try
+            {
+                var folderSongs = await _libraryReader.GetAllSongIdsInDirectoryRecursiveAsync(
+                    _rootFolderId!.Value, folder.Path, SongSortOrder.TitleAsc);
+                
+                foreach (var id in folderSongs)
+                    resultSet.Add(id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to resolve songs for selected folder {Path}", folder.Path);
+            }
+        }
+
+        return resultSet.ToList();
     }
 
     protected override Task SaveSortOrderAsync(SongSortOrder sortOrder)

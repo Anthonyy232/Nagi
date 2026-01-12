@@ -48,6 +48,7 @@ public sealed partial class AlbumViewPage : Page
 {
     private readonly ILogger<AlbumViewPage> _logger;
     private bool _isSearchExpanded;
+    private bool _isUpdatingSelection;
 
     public AlbumViewPage()
     {
@@ -192,11 +193,10 @@ public sealed partial class AlbumViewPage : Page
     /// </summary>
     private void SongsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (sender is ListView listView)
-        {
-            _logger.LogTrace("Song selection changed. {SelectedCount} items selected.", listView.SelectedItems.Count);
-            ViewModel.OnSongsSelectionChanged(listView.SelectedItems);
-        }
+        if (_isUpdatingSelection || sender is not ListView listView) return;
+
+        UpdateLogicalSelection(e);
+        ViewModel.OnSongsSelectionChanged(listView.SelectedItems);
     }
 
     /// <summary>
@@ -204,12 +204,61 @@ public sealed partial class AlbumViewPage : Page
     /// </summary>
     private void GroupedSongsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (sender is ListView listView)
+        if (_isUpdatingSelection || sender is not ListView listView) return;
+
+        UpdateLogicalSelection(e);
+        ViewModel.OnSongsSelectionChanged(listView.SelectedItems);
+    }
+
+    private void UpdateLogicalSelection(SelectionChangedEventArgs e)
+    {
+        foreach (var song in e.AddedItems.OfType<Song>())
+            ViewModel.SelectionState.Select(song.Id);
+
+        foreach (var song in e.RemovedItems.OfType<Song>())
+            ViewModel.SelectionState.Deselect(song.Id);
+    }
+
+    private void OnSongsListViewContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+    {
+        if (args.Item is not Song song) return;
+
+        // Ensure the visual selection state matches our logical state as containers are reused.
+        try
         {
-            var selectedSongs = listView.SelectedItems.OfType<Song>().ToList();
-            _logger.LogTrace("Grouped song selection changed. {SelectedCount} songs selected.", selectedSongs.Count);
-            ViewModel.OnSongsSelectionChanged(selectedSongs);
+            _isUpdatingSelection = true;
+            args.ItemContainer.IsSelected = ViewModel.SelectionState.IsSelected(song.Id);
         }
+        finally
+        {
+            _isUpdatingSelection = false;
+        }
+    }
+
+    private void OnSelectAllAcceleratorInvoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+    {
+        // Don't hijack selection if a text input control is focused.
+        var focused = FocusManager.GetFocusedElement(this.XamlRoot);
+        if (focused is TextBox or PasswordBox or RichEditBox) return;
+
+        _logger.LogDebug("Ctrl+A invoked. Selecting all songs in album.");
+        ViewModel.SelectAllCommand.Execute(null);
+
+        // Sync the current visible items
+        try
+        {
+            _isUpdatingSelection = true;
+            if (ViewModel.IsGroupedByDisc)
+                GroupedSongsListView.SelectAll();
+            else
+                SongsListView.SelectAll();
+        }
+        finally
+        {
+            _isUpdatingSelection = false;
+        }
+
+        args.Handled = true;
     }
 
     /// <summary>
