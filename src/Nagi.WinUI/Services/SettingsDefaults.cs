@@ -37,7 +37,7 @@ public static class SettingsDefaults
     public const bool RememberWindowPositionEnabled = false;
     public const bool RememberPaneStateEnabled = true;
     public const bool VolumeNormalizationEnabled = false;
-    public const float EqualizerPreamp = 0.0f;
+    public const float EqualizerPreamp = 10.0f;
     public static readonly Color? AccentColor = null;
 
     // Default Sort Orders
