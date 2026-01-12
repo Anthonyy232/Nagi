@@ -174,16 +174,64 @@ public sealed partial class LibraryPage : Page
             SongsListView.SelectedItem = rightClickedSong;
     }
 
+    private bool _isUpdatingSelection;
+
     /// <summary>
     ///     Notifies the ViewModel when the ListView's selection has changed.
     /// </summary>
     private void OnListViewSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (sender is ListView listView)
+        if (_isUpdatingSelection || sender is not ListView listView) return;
+
+
+
+        // Update logical selection state based on individual changes
+        foreach (var song in e.AddedItems.OfType<Song>())
+            ViewModel.SelectionState.Select(song.Id);
+
+        foreach (var song in e.RemovedItems.OfType<Song>())
+            ViewModel.SelectionState.Deselect(song.Id);
+
+        ViewModel.OnSongsSelectionChanged(listView.SelectedItems);
+    }
+
+    private void OnSongsListViewContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+    {
+        if (args.Item is not Song song) return;
+
+        // Ensure the visual selection state matches our logical state as containers are reused.
+        try
         {
-            _logger.LogTrace("Song selection changed. {SelectedCount} items selected.", listView.SelectedItems.Count);
-            ViewModel.OnSongsSelectionChanged(listView.SelectedItems);
+            _isUpdatingSelection = true;
+            args.ItemContainer.IsSelected = ViewModel.SelectionState.IsSelected(song.Id);
         }
+        finally
+        {
+            _isUpdatingSelection = false;
+        }
+    }
+
+    private void OnSelectAllAcceleratorInvoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+    {
+        // Don't hijack selection if a text input control is focused.
+        var focused = FocusManager.GetFocusedElement(this.XamlRoot);
+        if (focused is TextBox or PasswordBox or RichEditBox) return;
+
+        _logger.LogDebug("Ctrl+A invoked. Selecting all songs.");
+        ViewModel.SelectAllCommand.Execute(null);
+
+        // Sync the current visible items
+        try
+        {
+            _isUpdatingSelection = true;
+            SongsListView.SelectAll();
+        }
+        finally
+        {
+            _isUpdatingSelection = false;
+        }
+
+        args.Handled = true;
     }
 
     /// <summary>

@@ -45,8 +45,6 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
 
     private bool IsSearchActive => !string.IsNullOrWhiteSpace(SearchTerm);
 
-    // Always support paging for smart playlists since they can be large
-    protected override bool IsPagingSupported => true;
 
 
     /// <summary>
@@ -69,6 +67,7 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
 
     partial void OnSearchTermChanged(string value)
     {
+        DeselectAll();
         TriggerDebouncedSearch();
     }
 
@@ -120,11 +119,6 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
         return summary;
     }
 
-    protected override async Task<IEnumerable<Song>> LoadSongsAsync()
-    {
-        if (!_currentSmartPlaylistId.HasValue) return Enumerable.Empty<Song>();
-        return await _smartPlaylistService.GetMatchingSongsAsync(_currentSmartPlaylistId.Value);
-    }
 
     protected override async Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
         SongSortOrder sortOrder)

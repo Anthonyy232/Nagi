@@ -42,6 +42,11 @@ public class FolderContentItem
     public bool IsSong => ContentType == FolderContentType.Song;
 
     /// <summary>
+    ///     Gets the unique identifier for this item (Folder ID or Song ID).
+    /// </summary>
+    public Guid Id => ContentType == FolderContentType.Folder ? Folder?.Id ?? Guid.Empty : Song?.Id ?? Guid.Empty;
+
+    /// <summary>
     ///     Creates a folder content item from a Folder object.
     /// </summary>
     public static FolderContentItem FromFolder(Folder folder)

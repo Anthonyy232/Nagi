@@ -40,8 +40,6 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
 
     private bool IsSearchActive => !string.IsNullOrWhiteSpace(SearchTerm);
 
-    // Always use paging for efficient loading of large playlists.
-    protected override bool IsPagingSupported => true;
 
 
     [ObservableProperty]
@@ -56,6 +54,7 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
 
     partial void OnSearchTermChanged(string value)
     {
+        DeselectAll();
         TriggerDebouncedSearch();
     }
 
@@ -85,11 +84,6 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         }
     }
 
-    protected override Task<IEnumerable<Song>> LoadSongsAsync()
-    {
-        // Not used since IsPagingSupported is always true.
-        return Task.FromResult(Enumerable.Empty<Song>());
-    }
 
     protected override Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
         SongSortOrder sortOrder)
@@ -116,9 +110,9 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
     [RelayCommand(CanExecute = nameof(CanRemoveSongs))]
     private async Task RemoveSelectedSongsFromPlaylistAsync()
     {
-        if (!_currentPlaylistId.HasValue || !SelectedSongs.Any()) return;
+        if (!_currentPlaylistId.HasValue || !HasSelectedSongs) return;
 
-        var songIdsToRemove = SelectedSongs.Select(s => s.Id).ToList();
+        var songIdsToRemove = await GetCurrentSelectionIdsAsync();
         _logger.LogDebug("Removing {SongCount} songs from playlist ID {PlaylistId}", songIdsToRemove.Count,
             _currentPlaylistId.Value);
 

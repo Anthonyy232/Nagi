@@ -37,12 +37,17 @@ public abstract partial class SongListViewModelBase : ObservableObject
     protected int _currentPage;
 
     // For paged views, this holds all song IDs to enable "Play All" without loading all song objects into memory.
-    private List<Guid> _fullSongIdList = new();
+    protected List<Guid> _fullSongIdList = new();
     protected bool _hasNextPage;
 
     // Used to cancel any ongoing paged loading, e.g., when the user changes the sort order.
     private CancellationTokenSource? _pagedLoadCts;
     protected int _totalItemCount;
+
+    /// <summary>
+    ///     Gets the logical selection state for this view.
+    /// </summary>
+    public SelectionState SelectionState { get; } = new();
 
     protected SongListViewModelBase(
         ILibraryReader libraryReader,
@@ -76,6 +81,15 @@ public abstract partial class SongListViewModelBase : ObservableObject
 
     [ObservableProperty] public partial string TotalItemsText { get; set; } = "0 items";
 
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(PlaySelectedSongsCommand))]
+    [NotifyCanExecuteChangedFor(nameof(PlaySelectedSongsNextCommand))]
+    [NotifyCanExecuteChangedFor(nameof(AddSelectedSongsToQueueCommand))]
+    [NotifyCanExecuteChangedFor(nameof(AddSelectedSongsToPlaylistCommand))]
+    public partial string SelectedItemsCountText { get; set; } = string.Empty;
+
+    public virtual int SelectedItemsCount => SelectionState.GetSelectedCount(_fullSongIdList.Count);
+
     [ObservableProperty] public partial SongSortOrder CurrentSortOrder { get; set; } = SongSortOrder.TitleAsc;
 
     [ObservableProperty] public partial string CurrentSortOrderText { get; set; } = string.Empty;
@@ -100,10 +114,8 @@ public abstract partial class SongListViewModelBase : ObservableObject
     [NotifyCanExecuteChangedFor(nameof(GoToArtistCommand))]
     public partial bool IsSingleSongSelected { get; set; }
 
-    public bool HasSelectedSongs => SelectedSongs.Any();
+    public bool HasSelectedSongs => SelectedItemsCount > 0;
 
-    protected virtual bool IsPagingSupported => false;
-    protected abstract Task<IEnumerable<Song>> LoadSongsAsync();
 
     protected virtual Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize, SongSortOrder sortOrder)
     {
@@ -125,7 +137,7 @@ public abstract partial class SongListViewModelBase : ObservableObject
             IsOverallLoading = true;
         }
 
-        _logger.LogDebug("Starting song refresh. Paging: {IsPagingSupported}", IsPagingSupported);
+        _logger.LogDebug("Starting song refresh.");
         // Cancel any previous loading task, as it's now obsolete.
         _pagedLoadCts?.Cancel();
 
@@ -141,49 +153,32 @@ public abstract partial class SongListViewModelBase : ObservableObject
         }
 
         UpdateSortOrderButtonText(CurrentSortOrder);
+        UpdateSelectionStatus();
 
         try
         {
-            if (IsPagingSupported)
+            _pagedLoadCts = new CancellationTokenSource();
+            var token = _pagedLoadCts.Token;
+
+            // Overlap fetching the full ID list (for Play All) with loading the first page (for display).
+            var idsTask = LoadAllSongIdsAsync(CurrentSortOrder);
+            var firstPageTask = LoadSongsPagedAsync(1, PageSize, CurrentSortOrder);
+
+            await Task.WhenAll(idsTask, firstPageTask).ConfigureAwait(false);
+
+            _fullSongIdList = idsTask.Result;
+            var pagedResult = firstPageTask.Result;
+
+            ProcessPagedResult(pagedResult, token);
+
+            bool hasMore;
+            lock (_stateLock)
             {
-                _pagedLoadCts = new CancellationTokenSource();
-                var token = _pagedLoadCts.Token;
-
-                // Overlap fetching the full ID list (for Play All) with loading the first page (for display).
-                var idsTask = LoadAllSongIdsAsync(CurrentSortOrder);
-                var firstPageTask = LoadSongsPagedAsync(1, PageSize, CurrentSortOrder);
-
-                await Task.WhenAll(idsTask, firstPageTask).ConfigureAwait(false);
-
-                _fullSongIdList = idsTask.Result;
-                var pagedResult = firstPageTask.Result;
-
-                ProcessPagedResult(pagedResult, token);
-
-                bool hasMore;
-                lock (_stateLock)
-                {
-                    hasMore = _hasNextPage;
-                }
-
-                // If there are more pages, start loading them automatically in the background.
-                if (hasMore && !token.IsCancellationRequested) _ = StartAutomaticPagedLoadingAsync(token);
+                hasMore = _hasNextPage;
             }
-            else
-            {
-                // For non-paged views, load all songs and IDs in parallel for uniform playback handling.
-                var songsTask = LoadSongsAsync();
-                var idsTask = LoadAllSongIdsAsync(CurrentSortOrder);
 
-                await Task.WhenAll(songsTask, idsTask).ConfigureAwait(false);
-
-                var fetchedSongs = songsTask.Result ?? Enumerable.Empty<Song>();
-                _fullSongIdList = idsTask.Result;
-
-                var songsToDisplay = SortSongs(fetchedSongs, CurrentSortOrder);
-                Songs = new ObservableCollection<Song>(songsToDisplay);
-                TotalItemsText = $"{Songs.Count} {(Songs.Count == 1 ? "item" : "items")}";
-            }
+            // If there are more pages, start loading them automatically in the background.
+            if (hasMore && !token.IsCancellationRequested) _ = StartAutomaticPagedLoadingAsync(token);
         }
         catch (Exception ex)
         {
@@ -265,8 +260,37 @@ public abstract partial class SongListViewModelBase : ObservableObject
     {
         SelectedSongs.Clear();
         foreach (var item in selectedItems.OfType<Song>()) SelectedSongs.Add(item);
-        IsSingleSongSelected = SelectedSongs.Count == 1;
-        UpdateSelectionDependentCommands();
+        UpdateSelectionStatus();
+    }
+
+    /// <summary>
+    ///     Forces a "Select All" state for the current view.
+    /// </summary>
+    [RelayCommand]
+    public virtual void SelectAll()
+    {
+        SelectionState.SelectAll();
+        UpdateSelectionStatus();
+        OnSelectionStateChanged();
+    }
+
+    /// <summary>
+    ///     Clears the current selection state.
+    /// </summary>
+    [RelayCommand]
+    public virtual void DeselectAll()
+    {
+        SelectionState.DeselectAll();
+        UpdateSelectionStatus();
+        OnSelectionStateChanged();
+    }
+
+    /// <summary>
+    ///     Called when the logical selection state changes (e.g. Select All).
+    ///     Derived classes (pages) should override this to sync UI.
+    /// </summary>
+    protected virtual void OnSelectionStateChanged()
+    {
     }
 
     [RelayCommand(CanExecute = nameof(CanExecutePlayAllCommands))]
@@ -307,28 +331,31 @@ public abstract partial class SongListViewModelBase : ObservableObject
     private async Task PlaySelectedSongsAsync()
     {
         await EnsureRepeatOneIsOffAsync();
-        await _playbackService.PlayAsync(SelectedSongs.Select(s => s.Id).ToList());
+        var ids = await GetCurrentSelectionIdsAsync();
+        await _playbackService.PlayAsync(ids);
     }
 
     [RelayCommand(CanExecute = nameof(CanExecuteSelectedSongsCommands))]
     private async Task PlaySelectedSongsNextAsync()
     {
+        var ids = await GetCurrentSelectionIdsAsync();
         // Reverse the list so songs are added in the selected order after the current track.
-        foreach (var song in SelectedSongs.Reverse()) await _playbackService.PlayNextAsync(song.Id);
+        foreach (var id in ids.Reverse()) await _playbackService.PlayNextAsync(id);
     }
 
     [RelayCommand(CanExecute = nameof(CanExecuteSelectedSongsCommands))]
     private async Task AddSelectedSongsToQueueAsync()
     {
-        await _playbackService.AddRangeToQueueAsync(SelectedSongs.Select(s => s.Id));
+        var ids = await GetCurrentSelectionIdsAsync();
+        await _playbackService.AddRangeToQueueAsync(ids);
     }
 
     [RelayCommand(CanExecute = nameof(CanAddSelectedSongsToPlaylist))]
     private async Task AddSelectedSongsToPlaylistAsync(Playlist? playlist)
     {
-        if (playlist == null || !SelectedSongs.Any()) return;
-        var songIdsToAdd = SelectedSongs.Select(s => s.Id).ToList();
-        await _playlistService.AddSongsToPlaylistAsync(playlist.Id, songIdsToAdd);
+        if (playlist == null || !HasSelectedSongs) return;
+        var ids = await GetCurrentSelectionIdsAsync();
+        await _playlistService.AddSongsToPlaylistAsync(playlist.Id, ids);
     }
 
     [RelayCommand(CanExecute = nameof(CanExecuteSingleSongCommands))]
@@ -390,7 +417,7 @@ public abstract partial class SongListViewModelBase : ObservableObject
 
     private bool CanExecuteSelectedSongsCommands()
     {
-        return HasSelectedSongs;
+        return SelectedItemsCount > 0;
     }
 
     private bool CanExecuteSingleSongCommands()
@@ -400,7 +427,7 @@ public abstract partial class SongListViewModelBase : ObservableObject
 
     private bool CanAddSelectedSongsToPlaylist()
     {
-        return HasSelectedSongs && AvailablePlaylists.Any();
+        return CanExecuteSelectedSongsCommands() && AvailablePlaylists.Any();
     }
 
     /// <summary>
@@ -438,9 +465,25 @@ public abstract partial class SongListViewModelBase : ObservableObject
         _dispatcherService.TryEnqueue(() =>
         {
             TotalItemsText = $"{pagedResult.TotalCount} {(pagedResult.TotalCount == 1 ? "item" : "items")}";
+            UpdateSelectionStatus();
             PlayAllSongsCommand.NotifyCanExecuteChanged();
             ShuffleAndPlayAllSongsCommand.NotifyCanExecuteChanged();
         });
+    }
+
+    protected void UpdateSelectionStatus()
+    {
+        var count = SelectedItemsCount;
+        SelectedItemsCountText = count > 0 ? $"{count} selected" : string.Empty;
+        IsSingleSongSelected = count == 1;
+        OnPropertyChanged(nameof(SelectedItemsCount));
+        OnPropertyChanged(nameof(HasSelectedSongs));
+        UpdateSelectionDependentCommands();
+    }
+
+    protected virtual Task<List<Guid>> GetCurrentSelectionIdsAsync()
+    {
+        return Task.FromResult(SelectionState.GetSelectedIds(_fullSongIdList).ToList());
     }
 
     protected void UpdateSortOrderButtonText(SongSortOrder sortOrder)
@@ -523,6 +566,7 @@ public abstract partial class SongListViewModelBase : ObservableObject
     /// </summary>
     public virtual void Cleanup()
     {
+        SelectionState.DeselectAll();
         _pagedLoadCts?.Cancel();
         _pagedLoadCts?.Dispose();
         _pagedLoadCts = null;

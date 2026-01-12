@@ -68,16 +68,10 @@ public partial class AlbumViewViewModel : SongListViewModelBase
 
     private bool IsSearchActive => !string.IsNullOrWhiteSpace(SearchTerm);
 
-    protected override bool IsPagingSupported => true;
-
     partial void OnSearchTermChanged(string value)
     {
+        DeselectAll();
         TriggerDebouncedSearch();
-    }
-
-    protected override Task<IEnumerable<Song>> LoadSongsAsync()
-    {
-        return Task.FromResult(Enumerable.Empty<Song>());
     }
 
     protected override async Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
