@@ -188,17 +188,14 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable
     }
 
     /// <summary>
-    ///     Handles the double-click action on the tray icon.
+    ///     Restores the main application window from the system tray.
     ///     If the window is hidden, it restores and activates it.
-    ///     If the window is visible and hide-to-tray is enabled, it minimizes the window
-    ///     (which may trigger the mini-player if that setting is enabled).
+    ///     If it is already visible (e.g., minimized to mini-player), it activates the main window.
     /// </summary>
     [RelayCommand]
-    private void HandleTrayIconDoubleClick()
+    private void RestoreWindow()
     {
-        if (!IsWindowVisible)
-            ShowWindow();
-        else if (_isHideToTrayEnabled) _windowService.MinimizeToMiniPlayer();
+        ShowWindow();
     }
 
     private void HideWindow()

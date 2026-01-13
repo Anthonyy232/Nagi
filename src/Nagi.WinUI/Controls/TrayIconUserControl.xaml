@@ -24,7 +24,7 @@
         <tb:TaskbarIcon.ContextFlyout>
             <MenuFlyout AreOpenCloseAnimationsEnabled="True">
                 <MenuFlyoutItem
-                    Command="{x:Bind ViewModel.HandleTrayIconDoubleClickCommand}"
+                    Command="{x:Bind ViewModel.RestoreWindowCommand}"
                     Text="Show Window">
                     <MenuFlyoutItem.Icon>
                         <SymbolIcon Symbol="FullScreen" />
