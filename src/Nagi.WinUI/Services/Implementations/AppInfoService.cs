@@ -24,7 +24,7 @@ public class AppInfoService : IAppInfoService
         catch (InvalidOperationException)
         {
             _logger.LogDebug("Application is running unpackaged. Falling back to default app name.");
-            return "Nagi.WinUI";
+            return "Nagi";
         }
     }
 
