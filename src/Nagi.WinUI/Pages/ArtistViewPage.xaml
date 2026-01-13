@@ -96,7 +96,7 @@
 
         <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
             <StackPanel Padding="24,24,24,0" Spacing="16">
-                <Grid Margin="0,0,0,16">
+                <Grid Margin="0,0,0,6">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
@@ -159,7 +159,7 @@
                     </StackPanel>
                 </Grid>
 
-                <StackPanel Spacing="16"
+                <StackPanel Spacing="6" Margin="0,8,0,10"
                             Visibility="{x:Bind ViewModel.HasAlbums, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
                     <TextBlock Style="{StaticResource SectionHeaderTextBlockStyle}" Text="Albums" />
                     <GridView
@@ -217,7 +217,7 @@
                     </GridView>
                 </StackPanel>
 
-                <Grid Margin="0,8,0,0">
+                <Grid Margin="0,8,0,10">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />

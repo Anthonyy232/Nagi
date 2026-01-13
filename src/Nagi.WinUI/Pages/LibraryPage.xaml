@@ -94,7 +94,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Padding="24,20,24,20" VerticalAlignment="Center">
+        <Grid Grid.Row="0" Padding="24,30,24,10" VerticalAlignment="Center">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />

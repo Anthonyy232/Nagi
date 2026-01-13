@@ -99,7 +99,7 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Padding="24,24,24,0" Spacing="16">
-            <Grid Margin="0,0,0,16">
+            <Grid Margin="0,0,0,6">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
@@ -131,7 +131,7 @@
                 </StackPanel>
             </Grid>
 
-            <Grid Margin="0,8,0,0">
+            <Grid Margin="0,8,0,10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />

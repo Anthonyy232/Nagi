@@ -97,7 +97,7 @@
 
         <!-- Header Content -->
         <StackPanel Grid.Row="0" Padding="24,24,24,0" Spacing="16">
-            <Grid Margin="0,0,0,16">
+            <Grid Margin="0,0,0,6">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
@@ -134,7 +134,7 @@
 
             <!-- Rule Summary Bar -->
             <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" 
-                    Padding="16,8" CornerRadius="8">
+                    Padding="16,8" CornerRadius="8" Margin="0,8,0,10">
                 <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                     <FontIcon Glyph="&#xE946;" FontSize="14" Foreground="{ThemeResource TextFillColorSecondary}" />
                     <TextBlock Text="{x:Bind ViewModel.RuleSummary, Mode=OneWay}" 
@@ -144,7 +144,7 @@
             </Border>
 
             <!-- Action Bar -->
-            <Grid Margin="0,8,0,0">
+            <Grid Margin="0,8,0,10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
