@@ -217,7 +217,7 @@
 
         <!-- Header Content -->
         <StackPanel Grid.Row="0" Padding="24,24,24,0" Spacing="16">
-            <Grid Margin="0,0,0,16">
+            <Grid Margin="0,0,0,6">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
@@ -245,7 +245,8 @@
             <!-- Breadcrumb Bar -->
             <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" 
                     Padding="16,8" CornerRadius="8"
-                    Visibility="{x:Bind ViewModel.IsAtRootLevel, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}">
+                    Visibility="{x:Bind ViewModel.IsAtRootLevel, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}"
+                    Margin="0,8,0,10">
                 <ItemsControl ItemsSource="{x:Bind ViewModel.Breadcrumbs, Mode=OneWay}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -276,7 +277,7 @@
             </Border>
 
             <!-- Action Bar -->
-            <Grid Margin="0,8,0,0">
+            <Grid Margin="0,8,0,10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
