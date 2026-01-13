@@ -30,6 +30,9 @@ public static class Program
     {
         #if !MSIX_PACKAGE
                 VelopackApp.Build().Run();
+                // Set the AppUserModelId for unpackaged runs to ensure Windows correctly identifies the app
+                // for features like the Taskbar and System Media Transport Controls (SMTC).
+                SetCurrentProcessExplicitAppUserModelID("Nagi.MusicPlayer");
         #endif
 
         ComWrappersSupport.InitializeComWrappers();
@@ -254,6 +257,9 @@ public static class Program
 
     [DllImport("shell32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
     private static extern IntPtr CommandLineToArgvW(string lpCmdLine, out int pNumArgs);
+
+    [DllImport("shell32.dll", SetLastError = true)]
+    private static extern int SetCurrentProcessExplicitAppUserModelID([MarshalAs(UnmanagedType.LPWStr)] string AppID);
 
     [DllImport("kernel32.dll")]
     private static extern IntPtr LocalFree(IntPtr hMem);
