@@ -61,8 +61,7 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable
     /// <summary>
     ///     Gets the tooltip text for the tray icon.
     /// </summary>
-    public string ToolTipText =>
-        $"{_appInfoService.GetAppName()} - {(IsWindowVisible ? "Window Visible" : "Hidden in Tray")}";
+    public string ToolTipText => _appInfoService.GetAppName();
 
     /// <summary>
     ///     Cleans up resources and unsubscribes from events to prevent memory leaks.
