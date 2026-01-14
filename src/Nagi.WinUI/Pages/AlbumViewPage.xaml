@@ -147,7 +147,8 @@
                         Visibility="{x:Bind ViewModel.HasSelectedSongs, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                     <TextBlock Text="{x:Bind ViewModel.TotalItemsText, Mode=OneWay}"
                                Foreground="{ThemeResource TextFillColorSecondary}" VerticalAlignment="Center"
-                               FontSize="13" />
+                               FontSize="13"
+                               Visibility="{x:Bind ViewModel.HasSelectedSongs, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
