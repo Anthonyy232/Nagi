@@ -243,6 +243,24 @@ public sealed partial class FolderSongViewPage : Page
     }
 
     /// <summary>
+    ///     Handles the opening of the context menu for a folder item.
+    /// </summary>
+    private void FolderItemMenuFlyout_Opening(object sender, object e)
+    {
+        if (sender is not MenuFlyout menuFlyout) return;
+
+        if (menuFlyout.Target?.DataContext is FolderContentItem { IsFolder: true, Folder: not null } contentItem)
+        {
+            var listView = FindName("FolderContentsListView") as ListView;
+            if (listView != null && !listView.SelectedItems.Contains(contentItem)) listView.SelectedItem = contentItem;
+        }
+
+        if (menuFlyout.Items.OfType<MenuFlyoutSubItem>()
+                .FirstOrDefault(item => item.Name == "FolderAddToPlaylistSubMenu") is { } addToPlaylistSubMenu)
+            PopulatePlaylistSubMenu(addToPlaylistSubMenu);
+    }
+
+    /// <summary>
     ///     Handles the opening of the context menu for a content item.
     /// </summary>
     private void SongItemMenuFlyout_Opening(object sender, object e)
