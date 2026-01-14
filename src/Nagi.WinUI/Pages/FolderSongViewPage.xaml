@@ -23,11 +23,12 @@
                 <DataTemplate x:DataType="local:FolderContentItem">
                     <Grid Height="54" ColumnSpacing="12" Background="Transparent">
                         <Grid.ContextFlyout>
-                            <MenuFlyout>
+                            <MenuFlyout Opening="FolderItemMenuFlyout_Opening">
                                 <MenuFlyoutItem
                                     Command="{Binding DataContext.PlaySubfolderCommand, ElementName=pageRoot}"
                                     CommandParameter="{x:Bind Folder}"
                                     Text="Play" />
+                                <MenuFlyoutSubItem x:Name="FolderAddToPlaylistSubMenu" Text="Add to playlist" />
                             </MenuFlyout>
                         </Grid.ContextFlyout>
 
