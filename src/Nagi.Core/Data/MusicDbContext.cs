@@ -138,6 +138,7 @@ public class MusicDbContext : DbContext
                 .HasForeignKey(ps => ps.SongId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            entity.HasIndex(ps => new { ps.PlaylistId, ps.Order });
         });
 
         // Configure the SmartPlaylist entity.

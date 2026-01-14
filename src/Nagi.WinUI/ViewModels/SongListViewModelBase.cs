@@ -23,7 +23,7 @@ namespace Nagi.WinUI.ViewModels;
 /// </summary>
 public abstract partial class SongListViewModelBase : ObservableObject
 {
-    private const int PageSize = 250;
+    protected const int PageSize = 250;
     protected readonly IDispatcherService _dispatcherService;
     protected readonly ILibraryReader _libraryReader;
     private readonly object _loadLock = new();
@@ -31,7 +31,7 @@ public abstract partial class SongListViewModelBase : ObservableObject
     protected readonly INavigationService _navigationService;
     protected readonly IMusicPlaybackService _playbackService;
     protected readonly IPlaylistService _playlistService;
-    protected readonly object _stateLock = new();
+    protected readonly ReaderWriterLockSlim _stateLock = new(LockRecursionPolicy.SupportsRecursion);
     private readonly IUIService _uiService;
 
     protected int _currentPage;
@@ -71,6 +71,15 @@ public abstract partial class SongListViewModelBase : ObservableObject
 
     [ObservableProperty] public partial ObservableCollection<Song> Songs { get; set; } = new();
 
+    partial void OnSongsChanged(ObservableCollection<Song> oldValue, ObservableCollection<Song> newValue)
+    {
+        OnSongsChangedInternal(oldValue, newValue);
+    }
+
+    protected virtual void OnSongsChangedInternal(ObservableCollection<Song> oldValue, ObservableCollection<Song> newValue)
+    {
+    }
+
 
 
     [ObservableProperty] public partial ObservableCollection<Song> SelectedSongs { get; set; } = new();
@@ -88,9 +97,39 @@ public abstract partial class SongListViewModelBase : ObservableObject
     [NotifyCanExecuteChangedFor(nameof(AddSelectedSongsToPlaylistCommand))]
     public partial string SelectedItemsCountText { get; set; } = string.Empty;
 
-    public virtual int SelectedItemsCount => SelectionState.GetSelectedCount(_fullSongIdList.Count);
-
+    public virtual int SelectedItemsCount
+    {
+        get
+        {
+            try
+            {
+                _stateLock.EnterReadLock();
+                try
+                {
+                    return SelectionState.GetSelectedCount(_fullSongIdList.Count);
+                }
+                finally
+                {
+                    _stateLock.ExitReadLock();
+                }
+            }
+            catch (ObjectDisposedException)
+            {
+                return 0;
+            }
+        }
+    }
+    
     [ObservableProperty] public partial SongSortOrder CurrentSortOrder { get; set; } = SongSortOrder.TitleAsc;
+
+    partial void OnCurrentSortOrderChanged(SongSortOrder oldValue, SongSortOrder newValue)
+    {
+        OnCurrentSortOrderChangedInternal(oldValue, newValue);
+    }
+
+    protected virtual void OnCurrentSortOrderChangedInternal(SongSortOrder oldOrder, SongSortOrder newOrder)
+    {
+    }
 
     [ObservableProperty] public partial string CurrentSortOrderText { get; set; } = string.Empty;
 
@@ -166,15 +205,29 @@ public abstract partial class SongListViewModelBase : ObservableObject
 
             await Task.WhenAll(idsTask, firstPageTask).ConfigureAwait(false);
 
-            _fullSongIdList = idsTask.Result;
             var pagedResult = firstPageTask.Result;
+
+            _stateLock.EnterWriteLock();
+            try
+            {
+                _fullSongIdList = idsTask.Result;
+            }
+            finally
+            {
+                _stateLock.ExitWriteLock();
+            }
 
             ProcessPagedResult(pagedResult, token);
 
             bool hasMore;
-            lock (_stateLock)
+            _stateLock.EnterReadLock();
+            try
             {
                 hasMore = _hasNextPage;
+            }
+            finally
+            {
+                _stateLock.ExitReadLock();
             }
 
             // If there are more pages, start loading them automatically in the background.
@@ -202,9 +255,14 @@ public abstract partial class SongListViewModelBase : ObservableObject
         try
         {
             bool hasMore;
-            lock (_stateLock)
+            _stateLock.EnterReadLock();
+            try
             {
                 hasMore = _hasNextPage;
+            }
+            finally
+            {
+                _stateLock.ExitReadLock();
             }
 
             while (hasMore && !token.IsCancellationRequested)
@@ -214,23 +272,37 @@ public abstract partial class SongListViewModelBase : ObservableObject
                 if (token.IsCancellationRequested) break;
 
                 int nextPage;
-                lock (_stateLock)
+                _stateLock.EnterReadLock();
+                try
                 {
                     nextPage = _currentPage + 1;
+                }
+                finally
+                {
+                    _stateLock.ExitReadLock();
                 }
 
                 var pagedResult = await LoadSongsPagedAsync(nextPage, PageSize, CurrentSortOrder);
                 ProcessPagedResult(pagedResult, token, true);
 
-                lock (_stateLock)
+                _stateLock.EnterReadLock();
+                try
                 {
                     hasMore = _hasNextPage;
                 }
+                finally
+                {
+                    _stateLock.ExitReadLock();
+                }
             }
         }
-        catch (TaskCanceledException)
+        catch (OperationCanceledException)
         {
-            _logger.LogDebug("Automatic page loading was cancelled");
+            _logger.LogDebug("Automatic page loading was cancelled.");
+        }
+        catch (ObjectDisposedException)
+        {
+            _logger.LogDebug("Automatic page loading stopped because the view model was disposed");
         }
         catch (Exception ex)
         {
@@ -298,7 +370,17 @@ public abstract partial class SongListViewModelBase : ObservableObject
     {
         await EnsureRepeatOneIsOffAsync();
         // Always use the pre-fetched full ID list for memory efficiency and consistency.
-        await _playbackService.PlayAsync(_fullSongIdList);
+        List<Guid> ids;
+        _stateLock.EnterReadLock();
+        try
+        {
+            ids = _fullSongIdList.ToList();
+        }
+        finally
+        {
+            _stateLock.ExitReadLock();
+        }
+        await _playbackService.PlayAsync(ids);
     }
 
     [RelayCommand(CanExecute = nameof(CanExecutePlayAllCommands))]
@@ -306,7 +388,17 @@ public abstract partial class SongListViewModelBase : ObservableObject
     {
         await EnsureRepeatOneIsOffAsync();
         // Always use the pre-fetched full ID list for memory efficiency and consistency.
-        await _playbackService.PlayAsync(_fullSongIdList, 0, true);
+        List<Guid> ids;
+        _stateLock.EnterReadLock();
+        try
+        {
+            ids = _fullSongIdList.ToList();
+        }
+        finally
+        {
+            _stateLock.ExitReadLock();
+        }
+        await _playbackService.PlayAsync(ids, 0, true);
     }
 
     [RelayCommand]
@@ -316,7 +408,19 @@ public abstract partial class SongListViewModelBase : ObservableObject
         await EnsureRepeatOneIsOffAsync();
 
         // Always use the pre-fetched full ID list to find the song's position.
-        var startIndex = _fullSongIdList.IndexOf(song.Id);
+        int startIndex;
+        List<Guid> ids;
+        _stateLock.EnterReadLock();
+        try
+        {
+            startIndex = _fullSongIdList.IndexOf(song.Id);
+            ids = _fullSongIdList.ToList();
+        }
+        finally
+        {
+            _stateLock.ExitReadLock();
+        }
+
         if (startIndex == -1)
         {
             // Fallback for a song not in the list for some reason.
@@ -324,7 +428,7 @@ public abstract partial class SongListViewModelBase : ObservableObject
             return;
         }
 
-        await _playbackService.PlayAsync(_fullSongIdList, startIndex);
+        await _playbackService.PlayAsync(ids, startIndex);
     }
 
     [RelayCommand(CanExecute = nameof(CanExecuteSelectedSongsCommands))]
@@ -412,7 +516,15 @@ public abstract partial class SongListViewModelBase : ObservableObject
     private bool CanExecutePlayAllCommands()
     {
         // Always use the pre-fetched full ID list for consistency.
-        return !IsOverallLoading && _fullSongIdList.Any();
+        _stateLock.EnterReadLock();
+        try
+        {
+            return !IsOverallLoading && _fullSongIdList.Any();
+        }
+        finally
+        {
+            _stateLock.ExitReadLock();
+        }
     }
 
     private bool CanExecuteSelectedSongsCommands()
@@ -455,11 +567,16 @@ public abstract partial class SongListViewModelBase : ObservableObject
         });
 
         // Update internal state within a lock for thread safety.
-        lock (_stateLock)
+        _stateLock.EnterWriteLock();
+        try
         {
             _hasNextPage = pagedResult.HasNextPage;
             _totalItemCount = pagedResult.TotalCount;
             _currentPage = pagedResult.PageNumber;
+        }
+        finally
+        {
+            _stateLock.ExitWriteLock();
         }
 
         _dispatcherService.TryEnqueue(() =>
@@ -483,7 +600,15 @@ public abstract partial class SongListViewModelBase : ObservableObject
 
     protected virtual Task<List<Guid>> GetCurrentSelectionIdsAsync()
     {
-        return Task.FromResult(SelectionState.GetSelectedIds(_fullSongIdList).ToList());
+        _stateLock.EnterReadLock();
+        try
+        {
+            return Task.FromResult(SelectionState.GetSelectedIds(_fullSongIdList).ToList());
+        }
+        finally
+        {
+            _stateLock.ExitReadLock();
+        }
     }
 
     protected void UpdateSortOrderButtonText(SongSortOrder sortOrder)
@@ -570,6 +695,11 @@ public abstract partial class SongListViewModelBase : ObservableObject
         _pagedLoadCts?.Cancel();
         _pagedLoadCts?.Dispose();
         _pagedLoadCts = null;
+        
+        // Note: Do NOT dispose _stateLock here. ViewModels are reused via DI,
+        // and disposing the lock would cause ObjectDisposedException on re-initialization.
+        // The lock will be cleaned up when the ViewModel is garbage collected.
+        
         _logger.LogDebug("Cleaned up resources");
     }
 }

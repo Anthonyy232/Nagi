@@ -78,7 +78,28 @@ public partial class FolderSongListViewModel : SongListViewModelBase
 
     private bool IsSearchActive => !string.IsNullOrWhiteSpace(SearchTerm);
     
-    public override int SelectedItemsCount => SelectionState.GetSelectedCount(_fullSongIdList.Count + _currentFolderCount);
+    public override int SelectedItemsCount
+    {
+        get
+        {
+            try
+            {
+                _stateLock.EnterReadLock();
+                try
+                {
+                    return SelectionState.GetSelectedCount(_fullSongIdList.Count + _currentFolderCount);
+                }
+                finally
+                {
+                    _stateLock.ExitReadLock();
+                }
+            }
+            catch (ObjectDisposedException)
+            {
+                return 0;
+            }
+        }
+    }
     
 
     partial void OnSearchTermChanged(string value)
@@ -341,11 +362,16 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         if (token.IsCancellationRequested || pagedResult?.Items == null) return;
 
         // Update internal paging state (same as base class, but we handle UI updates ourselves).
-        lock (_stateLock)
+        _stateLock.EnterWriteLock();
+        try
         {
             _hasNextPage = pagedResult.HasNextPage;
             _totalItemCount = pagedResult.TotalCount;
             _currentPage = pagedResult.PageNumber;
+        }
+        finally
+        {
+            _stateLock.ExitWriteLock();
         }
 
         // Consolidate ALL UI updates into a single dispatch to avoid race conditions.
@@ -479,6 +505,10 @@ public partial class FolderSongListViewModel : SongListViewModelBase
             catch (TaskCanceledException)
             {
                 _logger.LogDebug("Debounced search cancelled");
+            }
+            catch (ObjectDisposedException)
+            {
+                _logger.LogDebug("Debounced search stopped because the view model was disposed");
             }
             catch (Exception ex)
             {

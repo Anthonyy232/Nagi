@@ -43,6 +43,7 @@ public static class SortOrderHelper
     public const string DurationDescLabel = "Longest First";
     public const string BpmAscLabel = "Slowest First (BPM)";
     public const string BpmDescLabel = "Fastest First (BPM)";
+    public const string PlaylistOrderLabel = "Manual Order";
     public const string RandomLabel = "Random";
 
     // Full Display Text (for Buttons/Tooltips)
@@ -82,6 +83,7 @@ public static class SortOrderHelper
         SongSortOrder.ArtistDesc => SortByArtistDesc,
         SongSortOrder.TrackNumberAsc => SortByTrackNumberAsc,
         SongSortOrder.TrackNumberDesc => SortByTrackNumberDesc,
+        SongSortOrder.PlaylistOrder => PlaylistOrderLabel,
         _ => SortByTitleAsc
     };
 

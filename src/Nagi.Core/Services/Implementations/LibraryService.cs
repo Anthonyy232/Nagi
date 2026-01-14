@@ -1346,10 +1346,19 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         var songIdsToAdd = songIds.Distinct().Except(existingSongIds).ToList();
         if (songIdsToAdd.Count == 0) return true;
 
-        var playlistSongsToAdd = songIdsToAdd.Select(songId => new PlaylistSong
+        var maxOrder = await context.PlaylistSongs
+            .Where(ps => ps.PlaylistId == playlistId)
+            .Select(ps => ps.Order)
+            .OrderByDescending(o => o)
+            .FirstOrDefaultAsync().ConfigureAwait(false);
+
+        var nextOrder = Math.Floor(maxOrder) + 1.0;
+
+        var playlistSongsToAdd = songIdsToAdd.Select((songId, index) => new PlaylistSong
         {
             PlaylistId = playlistId,
-            SongId = songId
+            SongId = songId,
+            Order = nextOrder + (double)index
         });
 
         context.PlaylistSongs.AddRange(playlistSongsToAdd);
@@ -1378,7 +1387,70 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         return true;
     }
 
+    /// <inheritdoc />
+    public async Task<bool> UpdatePlaylistOrderAsync(Guid playlistId, IEnumerable<Guid> orderedSongIds)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        var playlist = await context.Playlists.FindAsync(playlistId).ConfigureAwait(false);
+        if (playlist is null) return false;
 
+        var playlistSongs = await context.PlaylistSongs
+            .Where(ps => ps.PlaylistId == playlistId)
+            .ToListAsync().ConfigureAwait(false);
+
+        var playlistSongMap = playlistSongs.ToDictionary(ps => ps.SongId);
+        var orderedSongIdList = orderedSongIds.ToList();
+        var updated = false;
+
+        for (var i = 0; i < orderedSongIdList.Count; i++)
+        {
+            var songId = orderedSongIdList[i];
+            if (playlistSongMap.TryGetValue(songId, out var playlistSong))
+            {
+                var newOrder = (double)i + 1.0;
+                if (Math.Abs(playlistSong.Order - newOrder) > 1e-10)
+                {
+                    playlistSong.Order = newOrder;
+                    updated = true;
+                }
+            }
+        }
+
+        if (updated)
+        {
+            playlist.DateModified = DateTime.UtcNow;
+            await context.SaveChangesAsync().ConfigureAwait(false);
+            _logger.LogInformation("Successfully normalized order for playlist {PlaylistId}", playlistId);
+        }
+        else
+        {
+            _logger.LogDebug("Normalization for playlist {PlaylistId} resulted in no changes.", playlistId);
+        }
+
+        return updated;
+    }
+
+    /// <inheritdoc />
+    public async Task<bool> MovePlaylistSongAsync(Guid playlistId, Guid songId, double newOrder)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        
+        var playlistSong = await context.PlaylistSongs
+            .FirstOrDefaultAsync(ps => ps.PlaylistId == playlistId && ps.SongId == songId)
+            .ConfigureAwait(false);
+
+        if (playlistSong is null) return false;
+
+        playlistSong.Order = newOrder;
+        _logger.LogDebug("Saving new order {Order} for song {SongId} in playlist {PlaylistId}", newOrder, songId, playlistId);
+        
+        var playlist = await context.Playlists.FindAsync(playlistId).ConfigureAwait(false);
+        if (playlist != null) playlist.DateModified = DateTime.UtcNow;
+
+        await context.SaveChangesAsync().ConfigureAwait(false);
+        _logger.LogDebug("Successfully moved song {SongId} in playlist {PlaylistId} to order {Order}", songId, playlistId, newOrder);
+        return true;
+    }
 
     /// <inheritdoc />
     public async Task<Playlist?> GetPlaylistByIdAsync(Guid playlistId)
@@ -1607,18 +1679,96 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         SanitizePaging(ref pageNumber, ref pageSize);
 
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        var baseQuery = context.PlaylistSongs.AsNoTracking()
-            .Where(ps => ps.PlaylistId == playlistId)
-            .Include(ps => ps.Song).ThenInclude(s => s!.Artist)
-            .Include(ps => ps.Song).ThenInclude(s => s!.Album).ThenInclude(a => a!.Artist)
-            .Select(ps => ps.Song!);
+        var query = context.PlaylistSongs.AsNoTracking()
+            .Where(ps => ps.PlaylistId == playlistId);
 
-        var totalCount = await baseQuery.CountAsync().ConfigureAwait(false);
-        var pagedData = await ApplySongSortOrder(ExcludeHeavyFields(baseQuery), sortOrder)
-            .Skip((pageNumber - 1) * pageSize).Take(pageSize).AsSplitQuery().ToListAsync().ConfigureAwait(false);
+        if (sortOrder == SongSortOrder.PlaylistOrder)
+        {
+            query = query.OrderBy(ps => ps.Order).ThenBy(ps => ps.SongId);
 
-        return new PagedResult<Song>
-            { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
+            var projectedQuery = query
+                .Select(ps => new 
+                { 
+                    ps.Order,
+                    Song = new Song
+                    {
+                        Id = ps.Song!.Id,
+                        Title = ps.Song.Title,
+                        AlbumId = ps.Song.AlbumId,
+                        Album = ps.Song.Album,
+                        ArtistId = ps.Song.ArtistId,
+                        Artist = ps.Song.Artist,
+                        Composer = ps.Song.Composer,
+                        FolderId = ps.Song.FolderId,
+                        Folder = ps.Song.Folder,
+                        DurationTicks = ps.Song.DurationTicks,
+                        AlbumArtUriFromTrack = ps.Song.AlbumArtUriFromTrack,
+                        FilePath = ps.Song.FilePath,
+                        DirectoryPath = ps.Song.DirectoryPath,
+                        Year = ps.Song.Year,
+                        TrackNumber = ps.Song.TrackNumber,
+                        TrackCount = ps.Song.TrackCount,
+                        DiscNumber = ps.Song.DiscNumber,
+                        DiscCount = ps.Song.DiscCount,
+                        SampleRate = ps.Song.SampleRate,
+                        Bitrate = ps.Song.Bitrate,
+                        Channels = ps.Song.Channels,
+                        DateAddedToLibrary = ps.Song.DateAddedToLibrary,
+                        FileCreatedDate = ps.Song.FileCreatedDate,
+                        FileModifiedDate = ps.Song.FileModifiedDate,
+                        LightSwatchId = ps.Song.LightSwatchId,
+                        DarkSwatchId = ps.Song.DarkSwatchId,
+                        Rating = ps.Song.Rating,
+                        IsLoved = ps.Song.IsLoved,
+                        PlayCount = ps.Song.PlayCount,
+                        SkipCount = ps.Song.SkipCount,
+                        LastPlayedDate = ps.Song.LastPlayedDate,
+                        LrcFilePath = ps.Song.LrcFilePath,
+                        LyricsLastCheckedUtc = ps.Song.LyricsLastCheckedUtc,
+                        Bpm = ps.Song.Bpm,
+                        ReplayGainTrackGain = ps.Song.ReplayGainTrackGain,
+                        ReplayGainTrackPeak = ps.Song.ReplayGainTrackPeak,
+                        Grouping = ps.Song.Grouping,
+                        Conductor = ps.Song.Conductor,
+                        MusicBrainzTrackId = ps.Song.MusicBrainzTrackId,
+                        MusicBrainzReleaseId = ps.Song.MusicBrainzReleaseId
+                    }
+                });
+
+            var totalCount = await projectedQuery.CountAsync().ConfigureAwait(false);
+
+            var pagedResults = await projectedQuery
+                .Skip((pageNumber - 1) * pageSize).Take(pageSize)
+                .AsSplitQuery()
+                .ToListAsync().ConfigureAwait(false);
+
+            foreach (var result in pagedResults)
+            {
+                result.Song.Order = result.Order;
+            }
+
+            var pagedSongs = pagedResults.Select(r => r.Song).ToList();
+
+            return new PagedResult<Song>
+                { Items = pagedSongs, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
+        }
+        else
+        {
+            var songQuery = query
+                .Include(ps => ps.Song).ThenInclude(s => s!.Artist)
+                .Include(ps => ps.Song).ThenInclude(s => s!.Album).ThenInclude(a => a!.Artist)
+                .Select(ps => ps.Song!);
+
+            var totalCount = await songQuery.CountAsync().ConfigureAwait(false);
+
+            var pagedSongs = await ApplySongSortOrder(ExcludeHeavyFields(songQuery), sortOrder)
+                .Skip((pageNumber - 1) * pageSize).Take(pageSize)
+                .AsSplitQuery()
+                .ToListAsync().ConfigureAwait(false);
+
+            return new PagedResult<Song>
+                { Items = pagedSongs, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
+        }
     }
 
     /// <inheritdoc />
@@ -1855,10 +2005,15 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var query = context.PlaylistSongs.AsNoTracking()
-            .Where(ps => ps.PlaylistId == playlistId)
-            .Select(ps => ps.Song!);
+            .Where(ps => ps.PlaylistId == playlistId);
 
-        return await ApplySongSortOrder(query, sortOrder).Select(s => s.Id).ToListAsync().ConfigureAwait(false);
+        if (sortOrder == SongSortOrder.PlaylistOrder)
+        {
+            return await query.OrderBy(ps => ps.Order).ThenBy(ps => ps.SongId).Select(ps => ps.SongId).ToListAsync().ConfigureAwait(false);
+        }
+
+        var songQuery = query.Select(ps => ps.Song!);
+        return await ApplySongSortOrder(songQuery, sortOrder).Select(s => s.Id).ToListAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -2063,6 +2218,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             .Select(ps => ps.Song!);
 
         var totalCount = await songQuery.CountAsync().ConfigureAwait(false);
+
         var pagedData = await ApplySongSortOrder(ExcludeHeavyFields(songQuery), sortOrder)
             .Skip((pageNumber - 1) * pageSize).Take(pageSize)
             .AsSplitQuery()
