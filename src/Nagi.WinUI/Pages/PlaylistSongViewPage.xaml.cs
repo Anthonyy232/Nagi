@@ -196,4 +196,27 @@ public sealed partial class PlaylistSongViewPage : Page
         if (!SongsListView.SelectedItems.Contains(rightClickedSong))
             SongsListView.SelectedItem = rightClickedSong;
     }
+
+    private void SongsListView_DragItemsCompleted(ListViewBase sender, DragItemsCompletedEventArgs args)
+    {
+        // WinUI ListView fires Remove+Add events for reorder, not Move events.
+        // DragItemsCompleted fires ONCE after the reorder is complete with the affected items.
+        if (args.DropResult != Windows.ApplicationModel.DataTransfer.DataPackageOperation.Move)
+            return;
+
+        if (args.Items.FirstOrDefault() is not Song movedSong)
+            return;
+
+        var newIndex = ViewModel.Songs.IndexOf(movedSong);
+        if (newIndex < 0)
+        {
+            _logger.LogWarning("Could not find moved song {SongId} in Songs collection after reorder.", movedSong.Id);
+            return;
+        }
+
+        _logger.LogDebug("Drag completed for song '{SongTitle}' to index {NewIndex}.", movedSong.Title, newIndex);
+        
+        // Fire-and-forget with proper error handling - the async method handles its own exceptions internally
+        _ = ViewModel.OnSongReorderedAsync(movedSong, newIndex);
+    }
 }

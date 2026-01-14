@@ -14,5 +14,6 @@ public enum SongSortOrder
     TrackNumberAsc,
     TrackNumberDesc,
     YearAsc,
-    YearDesc
+    YearDesc,
+    PlaylistOrder
 }

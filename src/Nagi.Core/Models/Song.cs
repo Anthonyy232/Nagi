@@ -168,6 +168,7 @@ public class Song
     [MaxLength(100)]
     public string? MusicBrainzReleaseId { get; set; }
 
+    [NotMapped] public double Order { get; set; }
     [NotMapped] public bool IsArtworkAvailable => !string.IsNullOrEmpty(AlbumArtUriFromTrack);
 
     [NotMapped] public bool HasTimedLyrics => !string.IsNullOrEmpty(LrcFilePath);

@@ -231,9 +231,14 @@ namespace Nagi.Core.Data.Migrations
                     b.Property<Guid>("SongId")
                         .HasColumnType("TEXT");
 
+                    b.Property<double>("Order")
+                        .HasColumnType("REAL");
+
                     b.HasKey("PlaylistId", "SongId");
 
                     b.HasIndex("SongId");
+
+                    b.HasIndex("PlaylistId", "Order");
 
                     b.ToTable("PlaylistSongs");
                 });
