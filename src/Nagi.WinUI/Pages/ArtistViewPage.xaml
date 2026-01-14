@@ -230,9 +230,10 @@
                             Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
                             Text="{x:Bind ViewModel.SelectedItemsCountText, Mode=OneWay}"
                             Visibility="{x:Bind ViewModel.HasSelectedSongs, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                        <TextBlock VerticalAlignment="Center" FontSize="13"
+                       <TextBlock VerticalAlignment="Center" FontSize="13"
                                    Foreground="{ThemeResource TextFillColorSecondary}"
-                                   Text="{x:Bind ViewModel.TotalItemsText, Mode=OneWay}" />
+                                   Text="{x:Bind ViewModel.TotalItemsText, Mode=OneWay}"
+                                   Visibility="{x:Bind ViewModel.HasSelectedSongs, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
                     </StackPanel>
                     <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
                         <!-- Search functionality -->
