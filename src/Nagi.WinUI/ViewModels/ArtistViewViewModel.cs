@@ -45,11 +45,9 @@ public partial class ArtistAlbumViewModelItem : ObservableObject
 /// </summary>
 public partial class ArtistViewViewModel : SongListViewModelBase
 {
-    private const int SearchDebounceDelay = 400;
     private readonly ILibraryScanner _libraryScanner;
     private readonly IUISettingsService _settingsService;
     private Guid _artistId;
-    private CancellationTokenSource? _debounceCts;
     private CancellationTokenSource _pageCts = new();
     private readonly NotifyCollectionChangedEventHandler _albumsChangedHandler;
 
@@ -91,17 +89,8 @@ public partial class ArtistViewViewModel : SongListViewModelBase
 
     public bool IsCustomImage => ArtistImageUri?.Contains(".custom.") == true;
 
-    [ObservableProperty] public partial string SearchTerm { get; set; }
-
-    private bool IsSearchActive => !string.IsNullOrWhiteSpace(SearchTerm);
-
     public ObservableCollection<ArtistAlbumViewModelItem> Albums { get; } = new();
     public bool HasAlbums => Albums.Any();
-    partial void OnSearchTermChanged(string value)
-    {
-        DeselectAll();
-        TriggerDebouncedSearch();
-    }
 
     protected override async Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
         SongSortOrder sortOrder)
@@ -264,55 +253,6 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         }
     }
 
-    /// <summary>
-    ///     Executes an immediate search or refresh, cancelling any pending debounced search.
-    /// </summary>
-    [RelayCommand]
-    private async Task SearchAsync()
-    {
-        _debounceCts?.Cancel();
-        await RefreshOrSortSongsCommand.ExecuteAsync(null);
-    }
-
-    private void TriggerDebouncedSearch()
-    {
-        try
-        {
-            _debounceCts?.Cancel();
-        }
-        catch (ObjectDisposedException)
-        {
-            // Ignore exception if the CancellationTokenSource has already been disposed.
-        }
-
-        _debounceCts = new CancellationTokenSource();
-        var token = _debounceCts.Token;
-
-        Task.Run(async () =>
-        {
-            try
-            {
-                await Task.Delay(SearchDebounceDelay, token);
-
-                if (token.IsCancellationRequested) return;
-
-                await _dispatcherService.EnqueueAsync(async () =>
-                {
-                    // Re-check the cancellation token after dispatching to prevent a race condition.
-                    if (token.IsCancellationRequested) return;
-                    await RefreshOrSortSongsCommand.ExecuteAsync(null);
-                });
-            }
-            catch (TaskCanceledException)
-            {
-                _logger.LogDebug("Debounced search cancelled.");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Debounced search failed for artist {ArtistId}", _artistId);
-            }
-        }, token);
-    }
 
     protected override Task SaveSortOrderAsync(SongSortOrder sortOrder)
     {
@@ -324,11 +264,8 @@ public partial class ArtistViewViewModel : SongListViewModelBase
     /// </summary>
     public override void Cleanup()
     {
-        _debounceCts?.Cancel();
-        _debounceCts?.Dispose();
         _pageCts.Cancel();
         _pageCts.Dispose();
-        SearchTerm = string.Empty;
 
         base.Cleanup();
         _libraryScanner.ArtistMetadataUpdated -= OnArtistMetadataUpdated;

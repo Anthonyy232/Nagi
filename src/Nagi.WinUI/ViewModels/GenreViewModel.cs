@@ -35,30 +35,24 @@ public partial class GenreViewModelItem : ObservableObject
 /// <summary>
 ///     Manages the state and logic for the genre list page.
 /// </summary>
-public partial class GenreViewModel : ObservableObject, IDisposable
+public partial class GenreViewModel : SearchableViewModelBase, IDisposable
 {
-    private const int SearchDebounceDelay = 300;
     private readonly NotifyCollectionChangedEventHandler _collectionChangedHandler;
-    private readonly IDispatcherService _dispatcherService;
     private readonly ILibraryService _libraryService;
-    private readonly ILogger<GenreViewModel> _logger;
     private readonly IMusicPlaybackService _musicPlaybackService;
     private readonly INavigationService _navigationService;
     private readonly IUISettingsService _settingsService;
-    private CancellationTokenSource? _debounceCts;
-    private bool _isDisposed;
     private bool _hasSortOrderLoaded;
     private List<GenreViewModelItem> _allGenres = new();
 
     public GenreViewModel(ILibraryService libraryService, IMusicPlaybackService musicPlaybackService,
         INavigationService navigationService, IUISettingsService settingsService, IDispatcherService dispatcherService, ILogger<GenreViewModel> logger)
+        : base(dispatcherService, logger)
     {
         _libraryService = libraryService;
         _musicPlaybackService = musicPlaybackService;
         _navigationService = navigationService;
         _settingsService = settingsService;
-        _dispatcherService = dispatcherService;
-        _logger = logger;
 
         // Store the handler in a field so we can reliably unsubscribe from it later.
         _collectionChangedHandler = (s, e) => OnPropertyChanged(nameof(HasGenres));
@@ -73,15 +67,12 @@ public partial class GenreViewModel : ObservableObject, IDisposable
 
     [ObservableProperty] public partial bool HasLoadError { get; set; }
 
-    [ObservableProperty] public partial string SearchTerm { get; set; } = string.Empty;
-
     [ObservableProperty] public partial GenreSortOrder CurrentSortOrder { get; set; } = GenreSortOrder.NameAsc;
 
     [ObservableProperty] public partial string CurrentSortOrderText { get; set; } = string.Empty;
 
     partial void OnCurrentSortOrderChanged(GenreSortOrder value) => UpdateSortOrderText();
 
-    private bool IsSearchActive => !string.IsNullOrWhiteSpace(SearchTerm);
 
     /// <summary>
     ///     Gets a value indicating whether there are any genres to display.
@@ -96,9 +87,7 @@ public partial class GenreViewModel : ObservableObject, IDisposable
         if (_isDisposed) return;
 
         if (Genres != null) Genres.CollectionChanged -= _collectionChangedHandler;
-        _debounceCts?.Cancel();
-        _debounceCts?.Dispose();
-        _debounceCts = null;
+        CancelPendingSearch();
 
         _isDisposed = true;
         GC.SuppressFinalize(this);
@@ -184,49 +173,13 @@ public partial class GenreViewModel : ObservableObject, IDisposable
         }
     }
 
-    partial void OnSearchTermChanged(string value)
+    protected override async Task ExecuteSearchAsync(CancellationToken token)
     {
-        TriggerDebouncedSearch();
-    }
-
-    private void TriggerDebouncedSearch()
-    {
-        try
+        await _dispatcherService.EnqueueAsync(async () =>
         {
-            _debounceCts?.Cancel();
-        }
-        catch (ObjectDisposedException)
-        {
-            // Ignore exception if the CancellationTokenSource has already been disposed.
-        }
-
-        _debounceCts = new CancellationTokenSource();
-        var token = _debounceCts.Token;
-
-        Task.Run(async () =>
-        {
-            try
-            {
-                await Task.Delay(SearchDebounceDelay, token);
-
-                if (token.IsCancellationRequested) return;
-
-                await _dispatcherService.EnqueueAsync(() =>
-                {
-                    if (!token.IsCancellationRequested)
-                        ApplyFilter();
-                    return Task.CompletedTask;
-                });
-            }
-            catch (TaskCanceledException)
-            {
-                _logger.LogDebug("Debounced genre search cancelled");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Debounced genre search failed");
-            }
-        }, token);
+            if (token.IsCancellationRequested) return;
+            ApplyFilter();
+        });
     }
 
     private void ApplyFilter()
@@ -291,12 +244,9 @@ public partial class GenreViewModel : ObservableObject, IDisposable
     /// <summary>
     ///     Cleans up search state when navigating away from the page.
     /// </summary>
-    public void Cleanup()
+    public override void Cleanup()
     {
-        _debounceCts?.Cancel();
-        _debounceCts?.Dispose();
-        _debounceCts = null;
-        SearchTerm = string.Empty;
+        base.Cleanup();
         _logger.LogDebug("Cleaned up GenreViewModel search resources");
     }
 }

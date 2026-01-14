@@ -22,11 +22,9 @@ namespace Nagi.WinUI.ViewModels;
 /// </summary>
 public partial class AlbumViewViewModel : SongListViewModelBase
 {
-    private const int SearchDebounceDelay = 400;
     private readonly IUISettingsService _settingsService;
     private Guid _albumId;
     private int? _albumYear;
-    private CancellationTokenSource? _debounceCts;
 
     public AlbumViewViewModel(
         ILibraryReader libraryReader,
@@ -60,19 +58,9 @@ public partial class AlbumViewViewModel : SongListViewModelBase
 
     [ObservableProperty] public partial string AlbumDetailsText { get; set; }
 
-    [ObservableProperty] public partial string SearchTerm { get; set; }
-
     [ObservableProperty] public partial ObservableCollection<object> GroupedSongsFlat { get; set; } = new();
 
     [ObservableProperty] public partial bool IsGroupedByDisc { get; set; }
-
-    private bool IsSearchActive => !string.IsNullOrWhiteSpace(SearchTerm);
-
-    partial void OnSearchTermChanged(string value)
-    {
-        DeselectAll();
-        TriggerDebouncedSearch();
-    }
 
     protected override async Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
         SongSortOrder sortOrder)
@@ -173,55 +161,6 @@ public partial class AlbumViewViewModel : SongListViewModelBase
         AlbumDetailsText = string.Join(" • ", detailsParts);
     }
 
-    /// <summary>
-    ///     Executes an immediate search or refresh, cancelling any pending debounced search.
-    /// </summary>
-    [RelayCommand]
-    private async Task SearchAsync()
-    {
-        _debounceCts?.Cancel();
-        await RefreshOrSortSongsCommand.ExecuteAsync(null);
-    }
-
-    private void TriggerDebouncedSearch()
-    {
-        try
-        {
-            _debounceCts?.Cancel();
-        }
-        catch (ObjectDisposedException)
-        {
-            // Ignore exception if the CancellationTokenSource has already been disposed.
-        }
-
-        _debounceCts = new CancellationTokenSource();
-        var token = _debounceCts.Token;
-
-        Task.Run(async () =>
-        {
-            try
-            {
-                await Task.Delay(SearchDebounceDelay, token);
-
-                if (token.IsCancellationRequested) return;
-
-                await _dispatcherService.EnqueueAsync(async () =>
-                {
-                    // Re-check the cancellation token after dispatching to prevent a race condition.
-                    if (token.IsCancellationRequested) return;
-                    await RefreshOrSortSongsCommand.ExecuteAsync(null);
-                });
-            }
-            catch (TaskCanceledException)
-            {
-                _logger.LogDebug("Debounced search cancelled.");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Debounced search failed for album {AlbumId}", _albumId);
-            }
-        }, token);
-    }
 
     protected override void ProcessPagedResult(PagedResult<Song> pagedResult, CancellationToken token, bool append = false)
     {
@@ -276,10 +215,6 @@ public partial class AlbumViewViewModel : SongListViewModelBase
 
     public override void Cleanup()
     {
-        _debounceCts?.Cancel();
-        _debounceCts?.Dispose();
-        SearchTerm = string.Empty;
-
         base.Cleanup();
     }
 }

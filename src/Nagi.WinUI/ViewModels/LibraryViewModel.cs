@@ -19,12 +19,9 @@ namespace Nagi.WinUI.ViewModels;
 /// </summary>
 public partial class LibraryViewModel : SongListViewModelBase
 {
-    private const int SearchDebounceDelay = 400;
-
     private static bool _isInitialScanTriggered;
     private readonly ILibraryScanner _libraryScanner;
     private readonly IUISettingsService _settingsService;
-    private CancellationTokenSource? _debounceCts;
 
     public LibraryViewModel(
         ILibraryReader libraryReader,
@@ -43,14 +40,6 @@ public partial class LibraryViewModel : SongListViewModelBase
         _libraryScanner.ScanCompleted += OnScanCompleted;
     }
 
-    [ObservableProperty] public partial string SearchTerm { get; set; }
-
-    private bool IsSearchActive => !string.IsNullOrWhiteSpace(SearchTerm);
-    partial void OnSearchTermChanged(string value)
-    {
-        DeselectAll();
-        TriggerDebouncedSearch();
-    }
 
     protected override Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
         SongSortOrder sortOrder)
@@ -103,55 +92,6 @@ public partial class LibraryViewModel : SongListViewModelBase
         }
     }
 
-    /// <summary>
-    ///     Executes an immediate search or refresh, cancelling any pending debounced search.
-    /// </summary>
-    [RelayCommand]
-    private async Task SearchAsync()
-    {
-        _debounceCts?.Cancel();
-        await RefreshOrSortSongsCommand.ExecuteAsync(null);
-    }
-
-    private void TriggerDebouncedSearch()
-    {
-        try
-        {
-            _debounceCts?.Cancel();
-        }
-        catch (ObjectDisposedException)
-        {
-            // Ignore exception if the CancellationTokenSource has already been disposed.
-        }
-
-        _debounceCts = new CancellationTokenSource();
-        var token = _debounceCts.Token;
-
-        Task.Run(async () =>
-        {
-            try
-            {
-                await Task.Delay(SearchDebounceDelay, token);
-
-                if (token.IsCancellationRequested) return;
-
-                await _dispatcherService.EnqueueAsync(async () =>
-                {
-                    // Re-check the cancellation token after dispatching to prevent a race condition.
-                    if (token.IsCancellationRequested) return;
-                    await RefreshOrSortSongsCommand.ExecuteAsync(null);
-                });
-            }
-            catch (TaskCanceledException)
-            {
-                _logger.LogDebug("Debounced search cancelled");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Debounced search failed");
-            }
-        }, token);
-    }
 
     protected override Task SaveSortOrderAsync(SongSortOrder sortOrder)
     {
@@ -162,9 +102,6 @@ public partial class LibraryViewModel : SongListViewModelBase
     {
         base.Cleanup();
         _libraryScanner.ScanCompleted -= OnScanCompleted;
-        _debounceCts?.Cancel();
-        _debounceCts?.Dispose();
-        SearchTerm = string.Empty;
         _logger.LogDebug("Cleaned up LibraryViewModel specific resources");
     }
 }
