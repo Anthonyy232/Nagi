@@ -34,10 +34,8 @@ public partial class BreadcrumbItem : ObservableObject
 /// </summary>
 public partial class FolderSongListViewModel : SongListViewModelBase
 {
-    private const int SearchDebounceDelay = 400;
     private readonly IUISettingsService _settingsService;
     private string _currentDirectoryPath = string.Empty;
-    private CancellationTokenSource? _debounceCts;
     private Guid? _rootFolderId;
     private string? _rootFolderPath;
     private int _currentFolderCount;
@@ -56,7 +54,6 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         _settingsService = settingsService;
     }
 
-    [ObservableProperty] public partial string SearchTerm { get; set; } = string.Empty;
 
     /// <summary>
     ///     Collection of folder content items (folders and songs) to display.
@@ -76,7 +73,6 @@ public partial class FolderSongListViewModel : SongListViewModelBase
     [ObservableProperty]
     public partial bool IsAtRootLevel { get; set; } = true;
 
-    private bool IsSearchActive => !string.IsNullOrWhiteSpace(SearchTerm);
     
     public override int SelectedItemsCount
     {
@@ -102,11 +98,6 @@ public partial class FolderSongListViewModel : SongListViewModelBase
     }
     
 
-    partial void OnSearchTermChanged(string value)
-    {
-        DeselectAll();
-        TriggerDebouncedSearch();
-    }
 
     /// <summary>
     ///     Initializes the view model with the details of a specific folder and optional directory path.
@@ -443,79 +434,6 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         }
     }
 
-    /// <summary>
-    ///     Executes an immediate search or refresh, cancelling any pending debounced search.
-    /// </summary>
-    [RelayCommand]
-    private async Task SearchAsync()
-    {
-        _debounceCts?.Cancel();
-        await RefreshOrSortSongsCommand.ExecuteAsync(null);
-    }
-
-    public override async Task RefreshOrSortSongsAsync(string? sortOrderString = null)
-    {
-        if (IsOverallLoading) return;
-        
-        if (!string.IsNullOrEmpty(sortOrderString) &&
-            Enum.TryParse<SongSortOrder>(sortOrderString, true, out var newSortOrder)
-            && newSortOrder != CurrentSortOrder)
-        {
-            CurrentSortOrder = newSortOrder;
-            _logger.LogDebug("Folder sort order changed to '{SortOrder}'", CurrentSortOrder);
-            _ = SaveSortOrderAsync(newSortOrder)
-                .ContinueWith(t => _logger.LogError(t.Exception, "Failed to save folder sort order"),
-                    TaskContinuationOptions.OnlyOnFaulted);
-        }
-
-        UpdateSortOrderButtonText(CurrentSortOrder);
-        
-        // Use base class paging to load songs.
-        await base.RefreshOrSortSongsAsync(sortOrderString);
-    }
-
-    private void TriggerDebouncedSearch()
-    {
-        try
-        {
-            _debounceCts?.Cancel();
-        }
-        catch (ObjectDisposedException)
-        {
-            _logger.LogDebug("CancellationTokenSource was already disposed during search cancellation");
-        }
-
-        _debounceCts = new CancellationTokenSource();
-        var token = _debounceCts.Token;
-
-        Task.Run(async () =>
-        {
-            try
-            {
-                await Task.Delay(SearchDebounceDelay, token);
-
-                if (token.IsCancellationRequested) return;
-
-                await _dispatcherService.EnqueueAsync(async () =>
-                {
-                    if (token.IsCancellationRequested) return;
-                    await RefreshOrSortSongsCommand.ExecuteAsync(null);
-                });
-            }
-            catch (TaskCanceledException)
-            {
-                _logger.LogDebug("Debounced search cancelled");
-            }
-            catch (ObjectDisposedException)
-            {
-                _logger.LogDebug("Debounced search stopped because the view model was disposed");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Debounced search failed for folder {FolderId}", _rootFolderId);
-            }
-        }, token);
-    }
 
     /// <summary>
     ///     Plays all songs in a subfolder recursively, including all its subfolders.
@@ -585,10 +503,6 @@ public partial class FolderSongListViewModel : SongListViewModelBase
     public override void Cleanup()
     {
         base.Cleanup();
-        _debounceCts?.Cancel();
-        _debounceCts?.Dispose();
-        _debounceCts = null;
-        SearchTerm = string.Empty;
         FolderContents.Clear();
         Breadcrumbs.Clear();
         _currentFolderCount = 0;

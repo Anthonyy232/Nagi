@@ -20,10 +20,7 @@ namespace Nagi.WinUI.ViewModels;
 /// </summary>
 public partial class PlaylistSongListViewModel : SongListViewModelBase
 {
-    private const int SearchDebounceDelay = 400;
-
     private Guid? _currentPlaylistId;
-    private CancellationTokenSource? _debounceCts;
     private CancellationTokenSource? _saveOrderCts;
 
     public PlaylistSongListViewModel(
@@ -40,10 +37,6 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         if (Songs != null) Songs.CollectionChanged += OnSongsCollectionChanged;
     }
 
-    [ObservableProperty]
-    public partial string SearchTerm { get; set; } = string.Empty;
-
-    private bool IsSearchActive => !string.IsNullOrWhiteSpace(SearchTerm);
 
     public bool IsReorderingEnabled => IsCurrentViewAPlaylist && CurrentSortOrder == SongSortOrder.PlaylistOrder && !IsSearchActive;
 
@@ -59,10 +52,9 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
 
     public bool IsArtworkAvailable => !string.IsNullOrEmpty(CoverImageUri);
 
-    partial void OnSearchTermChanged(string value)
+    protected override void OnSearchTermChangedInternal(string value)
     {
-        DeselectAll();
-        TriggerDebouncedSearch();
+        base.OnSearchTermChangedInternal(value);
         OnPropertyChanged(nameof(IsReorderingEnabled));
     }
 
@@ -84,7 +76,7 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         {
             // Cancel any pending debounced tasks from previous views
             _saveOrderCts?.Cancel();
-            _debounceCts?.Cancel();
+            CancelPendingSearch();
 
             PageTitle = title;
             _stateLock.EnterWriteLock();
@@ -162,69 +154,23 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         return IsCurrentViewAPlaylist && HasSelectedSongs;
     }
 
-    /// <summary>
-    ///     Executes an immediate search or refresh, cancelling any pending debounced search.
-    /// </summary>
-    [RelayCommand]
-    private async Task SearchAsync()
+    protected override async Task ExecuteSearchAsync(CancellationToken token)
     {
-        _debounceCts?.Cancel();
-        await RefreshOrSortSongsCommand.ExecuteAsync(null);
-    }
-
-    private void TriggerDebouncedSearch()
-    {
-        try
-        {
-            _debounceCts?.Cancel();
-            _debounceCts?.Dispose();
-        }
-        catch (ObjectDisposedException)
-        {
-            _logger.LogDebug("CancellationTokenSource was already disposed during search cancellation");
-        }
-
-        // Capture context for the debounced task to prevent race conditions during navigation
         var targetPlaylistId = _currentPlaylistId;
-        _debounceCts = new CancellationTokenSource();
-        var token = _debounceCts.Token;
-
-        _ = Task.Run(async () =>
+        await _dispatcherService.EnqueueAsync(async () =>
         {
+            // Re-check context before execution
+            _stateLock.EnterReadLock();
             try
             {
-                await Task.Delay(SearchDebounceDelay, token);
-
-                if (token.IsCancellationRequested) return;
-
-                await _dispatcherService.EnqueueAsync(async () =>
-                {
-                    // Re-check context before execution
-                    _stateLock.EnterReadLock();
-                    try
-                    {
-                        if (token.IsCancellationRequested || _currentPlaylistId != targetPlaylistId) return;
-                    }
-                    finally
-                    {
-                        _stateLock.ExitReadLock();
-                    }
-                    await RefreshOrSortSongsCommand.ExecuteAsync(null);
-                });
+                if (token.IsCancellationRequested || _currentPlaylistId != targetPlaylistId) return;
             }
-            catch (TaskCanceledException)
+            finally
             {
-                _logger.LogDebug("Debounced search cancelled for playlist {PlaylistId}", targetPlaylistId);
+                _stateLock.ExitReadLock();
             }
-            catch (ObjectDisposedException)
-            {
-                _logger.LogDebug("Debounced search stopped because the view model was disposed");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Debounced search failed for playlist {PlaylistId}", targetPlaylistId);
-            }
-        }, token);
+            await RefreshOrSortSongsAsync(null, token);
+        });
     }
 
     /// <summary>
@@ -452,16 +398,11 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
             Songs.CollectionChanged -= OnSongsCollectionChanged;
         }
 
-        _debounceCts?.Cancel();
-        _debounceCts?.Dispose();
-        _debounceCts = null;
-
         _saveOrderCts?.Cancel();
         _saveOrderCts?.Dispose();
         _saveOrderCts = null;
 
         _currentPlaylistId = null;
-        SearchTerm = string.Empty;
 
         base.Cleanup();
     }

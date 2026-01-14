@@ -21,13 +21,11 @@ namespace Nagi.WinUI.ViewModels;
 ///     A base class for view models that display a list of songs.
 ///     Provides common functionality for loading, sorting, selection, and playback.
 /// </summary>
-public abstract partial class SongListViewModelBase : ObservableObject
+public abstract partial class SongListViewModelBase : SearchableViewModelBase
 {
     protected const int PageSize = 250;
-    protected readonly IDispatcherService _dispatcherService;
     protected readonly ILibraryReader _libraryReader;
     private readonly object _loadLock = new();
-    protected readonly ILogger _logger;
     protected readonly INavigationService _navigationService;
     protected readonly IMusicPlaybackService _playbackService;
     protected readonly IPlaylistService _playlistService;
@@ -57,14 +55,13 @@ public abstract partial class SongListViewModelBase : ObservableObject
         IDispatcherService dispatcherService,
         IUIService uiService,
         ILogger logger)
+        : base(dispatcherService, logger)
     {
         _libraryReader = libraryReader ?? throw new ArgumentNullException(nameof(libraryReader));
         _playlistService = playlistService ?? throw new ArgumentNullException(nameof(playlistService));
         _playbackService = playbackService ?? throw new ArgumentNullException(nameof(playbackService));
         _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
-        _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
         _uiService = uiService ?? throw new ArgumentNullException(nameof(uiService));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
         UpdateSortOrderButtonText(CurrentSortOrder);
     }
@@ -155,6 +152,20 @@ public abstract partial class SongListViewModelBase : ObservableObject
 
     public bool HasSelectedSongs => SelectedItemsCount > 0;
 
+    protected override void OnSearchTermChangedInternal(string value)
+    {
+        if (HasSelectedSongs) DeselectAll();
+    }
+
+    protected override async Task ExecuteSearchAsync(CancellationToken token)
+    {
+        await _dispatcherService.EnqueueAsync(async () =>
+        {
+            if (token.IsCancellationRequested) return;
+            await RefreshOrSortSongsAsync(null, token);
+        });
+    }
+
 
     protected virtual Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize, SongSortOrder sortOrder)
     {
@@ -167,7 +178,7 @@ public abstract partial class SongListViewModelBase : ObservableObject
     }
 
     [RelayCommand(CanExecute = nameof(CanExecuteLoadCommands))]
-    public virtual async Task RefreshOrSortSongsAsync(string? sortOrderString = null)
+    public virtual async Task RefreshOrSortSongsAsync(string? sortOrderString = null, CancellationToken manualToken = default)
     {
         // Prevent concurrent load/sort operations from interfering with each other.
         lock (_loadLock)
@@ -196,7 +207,9 @@ public abstract partial class SongListViewModelBase : ObservableObject
 
         try
         {
-            _pagedLoadCts = new CancellationTokenSource();
+            _pagedLoadCts = manualToken != default 
+                ? CancellationTokenSource.CreateLinkedTokenSource(manualToken) 
+                : new CancellationTokenSource();
             var token = _pagedLoadCts.Token;
 
             // Overlap fetching the full ID list (for Play All) with loading the first page (for display).
@@ -689,8 +702,9 @@ public abstract partial class SongListViewModelBase : ObservableObject
     /// <summary>
     ///     Cleans up resources, particularly stopping any in-flight background loading tasks.
     /// </summary>
-    public virtual void Cleanup()
+    public override void Cleanup()
     {
+        base.Cleanup();
         SelectionState.DeselectAll();
         _pagedLoadCts?.Cancel();
         _pagedLoadCts?.Dispose();

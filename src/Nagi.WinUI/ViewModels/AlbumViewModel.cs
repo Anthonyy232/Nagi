@@ -47,32 +47,26 @@ public partial class AlbumViewModelItem : ObservableObject
 /// <summary>
 ///     Manages the state and logic for the album list page, featuring gradual data fetching.
 /// </summary>
-public partial class AlbumViewModel : ObservableObject, IDisposable
+public partial class AlbumViewModel : SearchableViewModelBase, IDisposable
 {
     private const int PageSize = 250;
-    private const int SearchDebounceDelay = 400;
     private readonly NotifyCollectionChangedEventHandler _collectionChangedHandler;
-    private readonly IDispatcherService _dispatcherService;
     private readonly ILibraryService _libraryService;
-    private readonly ILogger<AlbumViewModel> _logger;
     private readonly IMusicPlaybackService _musicPlaybackService;
     private readonly IUISettingsService _settingsService;
     private readonly INavigationService _navigationService;
     private int _currentPage = 1;
-    private CancellationTokenSource? _debounceCts;
-    private bool _isDisposed;
     private bool _isFullyLoaded;
     private bool _hasSortOrderLoaded;
 
     public AlbumViewModel(ILibraryService libraryService, IMusicPlaybackService musicPlaybackService,
         INavigationService navigationService, IUISettingsService settingsService, IDispatcherService dispatcherService, ILogger<AlbumViewModel> logger)
+        : base(dispatcherService, logger)
     {
         _libraryService = libraryService;
         _musicPlaybackService = musicPlaybackService;
         _navigationService = navigationService;
         _settingsService = settingsService;
-        _dispatcherService = dispatcherService;
-        _logger = logger;
 
         // Store the handler in a field so we can reliably unsubscribe from it later.
         _collectionChangedHandler = (sender, args) => OnPropertyChanged(nameof(HasAlbums));
@@ -93,13 +87,9 @@ public partial class AlbumViewModel : ObservableObject, IDisposable
 
     [ObservableProperty] public partial string CurrentSortOrderText { get; set; } = string.Empty;
 
-    [ObservableProperty] public partial string SearchTerm { get; set; } = string.Empty;
-
     [ObservableProperty] public partial string TotalItemsText { get; set; } = "0 albums";
 
     partial void OnCurrentSortOrderChanged(AlbumSortOrder value) => UpdateSortOrderText();
-
-    private bool IsSearchActive => !string.IsNullOrWhiteSpace(SearchTerm);
 
     public bool HasAlbums => Albums.Any();
 
@@ -111,9 +101,7 @@ public partial class AlbumViewModel : ObservableObject, IDisposable
         if (_isDisposed) return;
 
         if (Albums != null) Albums.CollectionChanged -= _collectionChangedHandler;
-        _debounceCts?.Cancel();
-        _debounceCts?.Dispose();
-        _debounceCts = null;
+        CancelPendingSearch();
 
         _isDisposed = true;
         GC.SuppressFinalize(this);
@@ -172,7 +160,7 @@ public partial class AlbumViewModel : ObservableObject, IDisposable
             _ = _settingsService.SetSortOrderAsync(SortOrderHelper.AlbumsSortOrderKey, newSortOrder)
                 .ContinueWith(t => _logger.LogError(t.Exception, "Failed to save album sort order"),
                     TaskContinuationOptions.OnlyOnFaulted);
-            await LoadAlbumsCommand.ExecuteAsync(CancellationToken.None);
+            await LoadAlbumsAsync(CancellationToken.None);
         }
     }
 
@@ -261,59 +249,21 @@ public partial class AlbumViewModel : ObservableObject, IDisposable
         if (pagedResult == null || Albums.Count >= pagedResult.TotalCount) _isFullyLoaded = true;
     }
 
-    partial void OnSearchTermChanged(string value)
+    protected override async Task ExecuteSearchAsync(CancellationToken token)
     {
-        TriggerDebouncedSearch();
-    }
-
-    private void TriggerDebouncedSearch()
-    {
-        try
+        await _dispatcherService.EnqueueAsync(async () =>
         {
-            _debounceCts?.Cancel();
-        }
-        catch (ObjectDisposedException)
-        {
-            // Ignore exception if the CancellationTokenSource has already been disposed.
-        }
-
-        _debounceCts = new CancellationTokenSource();
-        var token = _debounceCts.Token;
-
-        Task.Run(async () =>
-        {
-            try
-            {
-                await Task.Delay(SearchDebounceDelay, token);
-
-                if (token.IsCancellationRequested) return;
-
-                await _dispatcherService.EnqueueAsync(async () =>
-                {
-                    if (token.IsCancellationRequested) return;
-                    await LoadAlbumsCommand.ExecuteAsync(CancellationToken.None);
-                });
-            }
-            catch (TaskCanceledException)
-            {
-                _logger.LogDebug("Debounced album search cancelled");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Debounced album search failed");
-            }
-        }, token);
+            if (token.IsCancellationRequested) return;
+            await LoadAlbumsAsync(token);
+        });
     }
 
     /// <summary>
     ///     Cleans up search state when navigating away from the page.
     /// </summary>
-    public void Cleanup()
+    public override void Cleanup()
     {
-        _debounceCts?.Cancel();
-        _debounceCts?.Dispose();
-        _debounceCts = null;
-        SearchTerm = string.Empty;
+        base.Cleanup();
         _logger.LogDebug("Cleaned up AlbumViewModel search resources");
     }
 }

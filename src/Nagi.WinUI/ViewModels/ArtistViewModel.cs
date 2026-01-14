@@ -42,21 +42,16 @@ public partial class ArtistViewModelItem : ObservableObject
 /// <summary>
 ///     Manages the state and logic for the artist list page, including data fetching and live updates.
 /// </summary>
-public partial class ArtistViewModel : ObservableObject, IDisposable
+public partial class ArtistViewModel : SearchableViewModelBase, IDisposable
 {
     private const int PageSize = 250;
-    private const int SearchDebounceDelay = 400;
     private readonly Dictionary<Guid, ArtistViewModelItem> _artistLookup = new();
     private readonly NotifyCollectionChangedEventHandler _collectionChangedHandler;
-    private readonly IDispatcherService _dispatcherService;
     private readonly ILibraryService _libraryService;
-    private readonly ILogger<ArtistViewModel> _logger;
     private readonly IMusicPlaybackService _musicPlaybackService;
     private readonly INavigationService _navigationService;
     private readonly IUISettingsService _settingsService;
     private int _currentPage = 1;
-    private CancellationTokenSource? _debounceCts;
-    private bool _isDisposed;
     private bool _isFullyLoaded;
     private bool _hasSortOrderLoaded;
 
@@ -67,13 +62,12 @@ public partial class ArtistViewModel : ObservableObject, IDisposable
         IDispatcherService dispatcherService,
         INavigationService navigationService,
         ILogger<ArtistViewModel> logger)
+        : base(dispatcherService, logger)
     {
         _libraryService = libraryService;
         _settingsService = settingsService;
         _musicPlaybackService = musicPlaybackService;
-        _dispatcherService = dispatcherService;
         _navigationService = navigationService;
-        _logger = logger;
 
         // Store the handler in a field so we can reliably unsubscribe from it later.
         _collectionChangedHandler = (s, e) => OnPropertyChanged(nameof(HasArtists));
@@ -90,8 +84,6 @@ public partial class ArtistViewModel : ObservableObject, IDisposable
 
     [ObservableProperty] public partial bool HasLoadError { get; set; }
 
-    [ObservableProperty] public partial string SearchTerm { get; set; } = string.Empty;
-
     [ObservableProperty] public partial string TotalItemsText { get; set; } = "0 artists";
 
     [ObservableProperty] public partial ArtistSortOrder CurrentSortOrder { get; set; } = ArtistSortOrder.NameAsc;
@@ -100,7 +92,6 @@ public partial class ArtistViewModel : ObservableObject, IDisposable
 
     partial void OnCurrentSortOrderChanged(ArtistSortOrder value) => UpdateSortOrderText();
 
-    private bool IsSearchActive => !string.IsNullOrWhiteSpace(SearchTerm);
 
     public bool HasArtists => Artists.Any();
 
@@ -113,9 +104,7 @@ public partial class ArtistViewModel : ObservableObject, IDisposable
 
         if (Artists != null) Artists.CollectionChanged -= _collectionChangedHandler;
         _libraryService.ArtistMetadataUpdated -= OnArtistMetadataUpdated;
-        _debounceCts?.Cancel();
-        _debounceCts?.Dispose();
-        _debounceCts = null;
+        CancelPendingSearch();
         _logger.LogDebug("ArtistViewModel state cleaned up.");
 
         _isDisposed = true;
@@ -274,48 +263,13 @@ public partial class ArtistViewModel : ObservableObject, IDisposable
         if (pagedResult == null || Artists.Count >= pagedResult.TotalCount) _isFullyLoaded = true;
     }
 
-    partial void OnSearchTermChanged(string value)
+    protected override async Task ExecuteSearchAsync(CancellationToken token)
     {
-        TriggerDebouncedSearch();
-    }
-
-    private void TriggerDebouncedSearch()
-    {
-        try
+        await _dispatcherService.EnqueueAsync(async () =>
         {
-            _debounceCts?.Cancel();
-        }
-        catch (ObjectDisposedException)
-        {
-            // Ignore exception if the CancellationTokenSource has already been disposed.
-        }
-
-        _debounceCts = new CancellationTokenSource();
-        var token = _debounceCts.Token;
-
-        Task.Run(async () =>
-        {
-            try
-            {
-                await Task.Delay(SearchDebounceDelay, token);
-
-                if (token.IsCancellationRequested) return;
-
-                await _dispatcherService.EnqueueAsync(async () =>
-                {
-                    if (token.IsCancellationRequested) return;
-                    await LoadArtistsCommand.ExecuteAsync(CancellationToken.None);
-                });
-            }
-            catch (TaskCanceledException)
-            {
-                _logger.LogDebug("Debounced artist search cancelled");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Debounced artist search failed");
-            }
-        }, token);
+            if (token.IsCancellationRequested) return;
+            await LoadArtistsAsync(token);
+        });
     }
 
     /// <summary>
@@ -355,12 +309,9 @@ public partial class ArtistViewModel : ObservableObject, IDisposable
     /// <summary>
     ///     Cleans up search state when navigating away from the page.
     /// </summary>
-    public void Cleanup()
+    public override void Cleanup()
     {
-        _debounceCts?.Cancel();
-        _debounceCts?.Dispose();
-        _debounceCts = null;
-        SearchTerm = string.Empty;
+        base.Cleanup();
         _logger.LogDebug("Cleaned up ArtistViewModel search resources");
     }
 

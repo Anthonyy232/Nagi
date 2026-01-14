@@ -19,12 +19,9 @@ namespace Nagi.WinUI.ViewModels;
 /// </summary>
 public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
 {
-    private const int SearchDebounceDelay = 400;
-
     private readonly ISmartPlaylistService _smartPlaylistService;
     private Guid? _currentSmartPlaylistId;
     private SmartPlaylist? _currentSmartPlaylist;
-    private CancellationTokenSource? _debounceCts;
 
     public SmartPlaylistSongListViewModel(
         ILibraryReader libraryReader,
@@ -40,10 +37,6 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
         _smartPlaylistService = smartPlaylistService;
     }
 
-    [ObservableProperty]
-    public partial string SearchTerm { get; set; } = string.Empty;
-
-    private bool IsSearchActive => !string.IsNullOrWhiteSpace(SearchTerm);
 
 
 
@@ -65,11 +58,6 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
     public bool IsArtworkAvailable => !string.IsNullOrEmpty(CoverImageUri);
 
 
-    partial void OnSearchTermChanged(string value)
-    {
-        DeselectAll();
-        TriggerDebouncedSearch();
-    }
 
     /// <summary>
     ///     Initializes the view model for a specific smart playlist.
@@ -138,57 +126,6 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
         return await _smartPlaylistService.GetMatchingSongIdsAsync(_currentSmartPlaylistId.Value);
     }
 
-    /// <summary>
-    ///     Executes an immediate search or refresh, cancelling any pending debounced search.
-    /// </summary>
-    [RelayCommand]
-    private async Task SearchAsync()
-    {
-        _debounceCts?.Cancel();
-        await RefreshOrSortSongsCommand.ExecuteAsync(null);
-    }
-
-    private void TriggerDebouncedSearch()
-    {
-        // Dispose the old CTS to prevent resource leaks
-        try
-        {
-            _debounceCts?.Cancel();
-            _debounceCts?.Dispose();
-        }
-        catch (ObjectDisposedException)
-        {
-            _logger.LogDebug("CancellationTokenSource was already disposed during search cancellation");
-        }
-
-        _debounceCts = new CancellationTokenSource();
-        var token = _debounceCts.Token;
-
-        _ = Task.Run(async () =>
-        {
-            try
-            {
-                await Task.Delay(SearchDebounceDelay, token);
-
-                if (token.IsCancellationRequested) return;
-
-                await _dispatcherService.EnqueueAsync(async () =>
-                {
-                    // Re-check the cancellation token after dispatching to prevent a race condition.
-                    if (token.IsCancellationRequested) return;
-                    await RefreshOrSortSongsCommand.ExecuteAsync(null);
-                });
-            }
-            catch (TaskCanceledException)
-            {
-                _logger.LogDebug("Debounced search cancelled");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Debounced search failed for smart playlist {SmartPlaylistId}", _currentSmartPlaylistId);
-            }
-        }, token);
-    }
 
     /// <summary>
     ///     Cleans up resources specific to this view model.
@@ -197,12 +134,8 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
     {
         _logger.LogDebug("Cleaning up SmartPlaylistSongListViewModel resources");
 
-        _debounceCts?.Cancel();
-        _debounceCts?.Dispose();
-        _debounceCts = null;
         _currentSmartPlaylist = null;
         _currentSmartPlaylistId = null;
-        SearchTerm = string.Empty;
 
         base.Cleanup();
     }
