@@ -302,9 +302,18 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
 
             if (parsedLrc is null || parsedLrc.IsEmpty)
             {
-                if (fullSong is not null && !string.IsNullOrWhiteSpace(fullSong.Lyrics))
+                // Priority Maintained:
+                // 1. Synchronized Lyrics (Checked above, IsEmpty is true here)
+                // 2. External Unsynchronized (ParsedLrc exists but no lines -> RawUnsyncedLyrics)
+                if (parsedLrc != null && !string.IsNullOrWhiteSpace(parsedLrc.RawUnsyncedLyrics))
                 {
-                    _logger.LogDebug("Using unsynchronized lyrics fallback for track '{SongTitle}'", song.Title);
+                    _logger.LogDebug("Using external unsynchronized lyrics for track '{SongTitle}'", song.Title);
+                    unsyncedLines = ParseUnsyncedLyricsToLines(parsedLrc.RawUnsyncedLyrics);
+                }
+                // 3. Embedded Unsynchronized (Fallback)
+                else if (fullSong is not null && !string.IsNullOrWhiteSpace(fullSong.Lyrics))
+                {
+                    _logger.LogDebug("Using embedded unsynchronized lyrics fallback for track '{SongTitle}'", song.Title);
                     unsyncedLines = ParseUnsyncedLyricsToLines(fullSong.Lyrics);
                 }
                 else
