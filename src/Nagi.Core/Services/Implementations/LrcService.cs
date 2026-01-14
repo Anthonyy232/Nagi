@@ -236,7 +236,7 @@ public class LrcService : ILrcService, IDisposable
 
             var parsedSongFromLrc = _parser.Decode(content);
             if (parsedSongFromLrc?.Lyrics == null || !parsedSongFromLrc.Lyrics.Any())
-                return new ParsedLrc(Enumerable.Empty<LyricLine>());
+                return new ParsedLrc(Enumerable.Empty<LyricLine>(), content);
 
             var lyricLines = parsedSongFromLrc.Lyrics
                 .Select(lyric => new LyricLine
@@ -247,12 +247,12 @@ public class LrcService : ILrcService, IDisposable
                 .OrderBy(l => l.StartTime)
                 .ToList();
 
-            return new ParsedLrc(lyricLines);
+            return new ParsedLrc(lyricLines, content);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error parsing LRC content");
-            return new ParsedLrc(Enumerable.Empty<LyricLine>());
+            return new ParsedLrc(Enumerable.Empty<LyricLine>(), content);
         }
     }
 

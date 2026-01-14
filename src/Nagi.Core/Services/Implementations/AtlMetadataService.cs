@@ -451,9 +451,15 @@ public class AtlMetadataService : IMetadataService
 
             var audioFileNameWithoutExt = _fileSystem.GetFileNameWithoutExtension(audioFilePath);
             var lrcFiles = _fileSystem.GetFiles(directory, "*.lrc");
-
-            return lrcFiles.FirstOrDefault(lrcPath =>
+            var match = lrcFiles.FirstOrDefault(lrcPath =>
                 _fileSystem.GetFileNameWithoutExtension(lrcPath)
+                    .Equals(audioFileNameWithoutExt, StringComparison.OrdinalIgnoreCase));
+
+            if (match != null) return match;
+
+            var txtFiles = _fileSystem.GetFiles(directory, "*.txt");
+            return txtFiles.FirstOrDefault(txtPath =>
+                _fileSystem.GetFileNameWithoutExtension(txtPath)
                     .Equals(audioFileNameWithoutExt, StringComparison.OrdinalIgnoreCase));
         }
         catch (Exception ex)
