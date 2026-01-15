@@ -311,6 +311,32 @@ public class AtlMetadataServiceTests : IDisposable
     }
 
     /// <summary>
+    ///     Verifies that the service can find an external TXT lyrics file located in the same
+    ///     directory as the audio file when no LRC file is found.
+    /// </summary>
+    [Fact]
+    public async Task FindLrcFilePath_WithExternalTxtFile_ReturnsTxtPath()
+    {
+        // Arrange
+        var audioFilePath = CreateTestAudioFile("externaltxt.mp3", track =>
+        {
+            /* no lyrics */
+        });
+        var expectedTxtPath = Path.Combine(_tempDirectory, "externaltxt.txt");
+
+        _fileSystem.FileExists(Arg.Is<string>(s => s.Contains(LrcCachePath))).Returns(false);
+        _fileSystem.GetFiles(_tempDirectory, "*.lrc").Returns(Array.Empty<string>()); // No LRC file
+        _fileSystem.GetFiles(_tempDirectory, "*.txt").Returns(new[] { expectedTxtPath });
+        _fileSystem.GetFileNameWithoutExtension(expectedTxtPath).Returns("externaltxt");
+
+        // Act
+        var result = await _metadataService.ExtractMetadataAsync(audioFilePath);
+
+        // Assert
+        result.LrcFilePath.Should().Be(expectedTxtPath);
+    }
+
+    /// <summary>
     ///     Ensures the service handles corrupt audio files gracefully by either returning a
     ///     failed result or providing sensible fallback values. ATL.NET is more lenient than
     ///     TagLibSharp and may not always detect corrupt files.

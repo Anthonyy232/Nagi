@@ -463,6 +463,65 @@ public class LibraryServiceTests : IDisposable
         await _metadataService.DidNotReceive().ExtractMetadataAsync(Arg.Any<string>(), Arg.Any<string?>());
     }
 
+    /// <summary>
+    ///     Verifies that when a folder is rescanned, songs that are missing lyrics
+    ///     but now have a matching .txt lyrics file on disk are updated with the path to that file.
+    ///     This specifically tests the fix for detecting external text lyrics during rescans.
+    /// </summary>
+    [Fact]
+    public async Task RescanFolderForMusicAsync_WithNewTxtLyricsFile_UpdatesSongLrcFilePath()
+    {
+        // Arrange: Initial state - song exists in DB without lyrics.
+        var folder = new Folder { Id = Guid.NewGuid(), Path = "C:\\Music\\Scan", Name = "Scan" };
+        var song = new Song
+        {
+            Id = Guid.NewGuid(),
+            FilePath = "C:\\Music\\Scan\\song.mp3",
+            FolderId = folder.Id,
+            LrcFilePath = null // No lyrics initially
+        };
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.Add(folder);
+            context.Songs.Add(song);
+            await context.SaveChangesAsync();
+        }
+
+        // Mock: File system has both the song and a matching .txt lyrics file.
+        var lastWriteTime = DateTime.UtcNow;
+        _fileSystem.DirectoryExists(folder.Path).Returns(true);
+        _fileSystem.EnumerateFiles(folder.Path, "*.*", SearchOption.AllDirectories)
+            .Returns(new[] { song.FilePath });
+        _fileSystem.GetExtension(Arg.Any<string>()).Returns(".mp3");
+        _fileSystem.GetLastWriteTimeUtc(song.FilePath).Returns(lastWriteTime);
+        
+        // Ensure the song in DB has the same modified date so it's not marked for update
+        song.FileModifiedDate = lastWriteTime;
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Songs.Update(song);
+            await context.SaveChangesAsync();
+        }
+
+        // Mock: FindLrcFilePath behavior inside LibraryService (uses directory enumeration).
+        var lyricsPath = "C:\\Music\\Scan\\song.txt";
+        _fileSystem.GetDirectoryName(song.FilePath).Returns("C:\\Music\\Scan");
+        _fileSystem.GetFileNameWithoutExtension(song.FilePath).Returns("song");
+        _fileSystem.GetFiles("C:\\Music\\Scan", "*.lrc").Returns(Array.Empty<string>());
+        _fileSystem.GetFiles("C:\\Music\\Scan", "*.txt").Returns(new[] { lyricsPath });
+        _fileSystem.GetFileNameWithoutExtension(lyricsPath).Returns("song");
+
+        // Act: Perform a rescan.
+        var result = await _libraryService.RescanFolderForMusicAsync(folder.Id);
+
+        // Assert: The rescan should be successful and the song's LrcFilePath should now point to the .txt file.
+        result.Should().BeTrue();
+        await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
+        var updatedSong = await assertContext.Songs.FindAsync(song.Id);
+        updatedSong.Should().NotBeNull();
+        updatedSong!.LrcFilePath.Should().Be(lyricsPath);
+    }
+
     #endregion
 
     #region Artist Metadata Fetching Tests
