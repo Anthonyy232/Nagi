@@ -37,7 +37,6 @@ public sealed partial class TrayIconUserControl : UserControl, IDisposable
         if (_isDisposed) return;
 
         AppTrayIcon?.Dispose();
-        ViewModel?.Dispose();
 
         _isDisposed = true;
     }

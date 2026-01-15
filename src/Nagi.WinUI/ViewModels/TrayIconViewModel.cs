@@ -76,14 +76,26 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable
         _settingsService.HideToTraySettingChanged -= OnHideToTraySettingChanged;
 
         _isDisposed = true;
+        _isInitialized = false;
         GC.SuppressFinalize(this);
     }
 
     /// <summary>
     ///     Asynchronously initializes the ViewModel by subscribing to window events and loading initial settings.
     /// </summary>
+    private bool _isInitialized;
+
+    /// <summary>
+    ///     Asynchronously initializes the ViewModel by subscribing to window events and loading initial settings.
+    /// </summary>
     public async Task InitializeAsync()
     {
+        // Prevent double initialization and duplicate subscriptions
+        if (_isInitialized) return;
+
+        // Reset disposal state in case it was incorrectly set perfectly
+        _isDisposed = false;
+
         _windowService.Closing += OnAppWindowClosing;
         _windowService.VisibilityChanged += OnAppWindowVisibilityChanged;
 
@@ -92,6 +104,8 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable
         UpdateTrayIconVisibility();
         _logger.LogDebug("Initialized. HideToTray: {IsHideToTrayEnabled}, IsWindowVisible: {IsWindowVisible}",
             _isHideToTrayEnabled, IsWindowVisible);
+            
+        _isInitialized = true;
     }
 
     private void UpdateTrayIconVisibility()
