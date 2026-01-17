@@ -278,21 +278,40 @@ public partial class App : Application
 
             try
             {
-                var shouldActivateWindow = string.IsNullOrEmpty(filePath);
-                if (shouldActivateWindow)
+                var windowService = Services?.GetRequiredService<IWindowService>();
+                var isMiniPlayerActive = windowService?.IsMiniPlayerActive ?? false;
+
+                // If a file path is provided and we are already in the mini-player, we just
+                // play the file without disrupting the mini-player view.
+                if (!string.IsNullOrEmpty(filePath) && isMiniPlayerActive)
                 {
+                    return;
+                }
+
+                // Otherwise, always activate and show the main window on external activation,
+                // whether it was triggered by a file play request or a simple app launch.
+                if (windowService != null)
+                {
+                    // Use the WindowService to activate, which handles closing the mini-player
+                    // and restoring task switcher visibility automatically.
+                    windowService.ShowAndActivate();
+                }
+                else
+                {
+                    // Fallback if services aren't fully initialized (unlikely but possible).
+                    _logger?.LogWarning(
+                        "HandleExternalActivation: WindowService not available, using fallback activation");
                     _window.AppWindow.Show();
                     _window.Activate();
+                    if (_window.AppWindow is not null) _window.AppWindow.IsShownInSwitchers = true;
                 }
             }
             catch (Exception ex)
             {
                 _logger?.LogError(ex, "HandleExternalActivation: Exception during window activation");
-                if (string.IsNullOrEmpty(filePath))
-                {
-                    _window.AppWindow.Show();
-                    _window.Activate();
-                }
+                _window.AppWindow.Show();
+                _window.Activate();
+                if (_window.AppWindow is not null) _window.AppWindow.IsShownInSwitchers = true;
             }
         });
     }
