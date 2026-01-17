@@ -299,11 +299,24 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
         return _playbackService.SeekAsync(TimeSpan.FromSeconds(position));
     }
 
-    [RelayCommand(CanExecute = nameof(CanGoToArtist))]
-    private void GoToArtist(Song? song)
+    [RelayCommand]
+    private async Task GoToArtistAsync(Song? song)
     {
         var targetSong = song ?? CurrentPlayingTrack;
-        if (targetSong?.ArtistId == null || targetSong.Artist == null)
+        if (targetSong == null) return;
+
+        // Ensure we have artist details. In list views, SongArtists is excluded for performance.
+        if (targetSong.SongArtists == null || !targetSong.SongArtists.Any())
+        {
+            _logger.LogDebug("Fetching full song details for navigation to artist (SongId: {SongId})", targetSong.Id);
+            var fullSong = await _libraryService.GetSongByIdAsync(targetSong.Id).ConfigureAwait(true);
+            if (fullSong != null) targetSong = fullSong;
+        }
+
+        // TODO: Support multi-artist selection menu if targetSong.SongArtists.Count > 1
+        var primaryArtist = targetSong?.SongArtists?.OrderBy(sa => sa.Order).FirstOrDefault()?.Artist;
+
+        if (primaryArtist == null)
         {
             _logger.LogWarning("Cannot navigate to Artist page: artist information is missing for song {SongId}",
                 targetSong?.Id);
@@ -311,14 +324,14 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
         }
 
         var navParam = new ArtistViewNavigationParameter
-            { ArtistId = targetSong.Artist.Id, ArtistName = targetSong.Artist.Name };
+            { ArtistId = primaryArtist.Id, ArtistName = primaryArtist.Name };
         _navigationService.Navigate(typeof(ArtistViewPage), navParam);
     }
 
     private bool CanGoToArtist(Song? song)
     {
         var targetSong = song ?? CurrentPlayingTrack;
-        return targetSong?.Artist != null && targetSong.Artist.Id != Guid.Empty;
+        return targetSong != null; // Always allow if song exists; we can fetch details on demand.
     }
 
     [RelayCommand]
@@ -407,7 +420,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
         if (song != null)
         {
             SongTitle = song.Title;
-            ArtistName = song.Artist?.Name ?? string.Empty;
+            ArtistName = song.ArtistName;
             AlbumArtUri = ImageUriHelper.GetUriWithCacheBuster(song.AlbumArtUriFromTrack);
         }
         else

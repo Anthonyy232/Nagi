@@ -256,8 +256,8 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
             }
             else
             {
-                SongTitle = !string.IsNullOrWhiteSpace(song.Artist?.Name)
-                    ? $"{song.Title} by {song.Artist.Name}"
+                SongTitle = !string.IsNullOrWhiteSpace(song.ArtistName)
+                    ? $"{song.Title} by {song.ArtistName}"
                     : song.Title;
                 SongDuration = _playbackService.Duration;
                 IsLoading = true;

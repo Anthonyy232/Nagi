@@ -676,10 +676,11 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
             var updater = _smtc.DisplayUpdater;
             updater.Type = MediaPlaybackType.Music;
             updater.MusicProperties.Title = _currentSong.Title ?? string.Empty;
-            updater.MusicProperties.Artist = _currentSong.Artist?.Name ?? "Unknown Artist";
+            updater.MusicProperties.Artist = _currentSong.ArtistName;
             updater.MusicProperties.AlbumArtist =
-                _currentSong.Album?.Artist?.Name ?? _currentSong.Artist?.Name ?? "Unknown Album Artist";
-            updater.MusicProperties.AlbumTitle = _currentSong.Album?.Title ?? "Unknown Album";
+                _currentSong.Album?.ArtistName ?? _currentSong.ArtistName;
+            updater.MusicProperties.AlbumTitle = _currentSong.Album?.Title ?? Album.UnknownAlbumName;
+
             updater.Thumbnail = null;
 
             if (!string.IsNullOrEmpty(_currentSong.AlbumArtUriFromTrack))

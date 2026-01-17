@@ -27,7 +27,7 @@ public partial class AlbumViewModelItem : ObservableObject
     {
         Id = album.Id;
         Title = album.Title;
-        ArtistName = album.Artist?.Name ?? "Unknown Artist";
+        ArtistName = album.ArtistName;
         CoverArtUri = ImageUriHelper.GetUriWithCacheBuster(album.CoverArtUri);
     }
 

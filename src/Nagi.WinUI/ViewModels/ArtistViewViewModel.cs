@@ -134,14 +134,30 @@ public partial class ArtistViewViewModel : SongListViewModelBase
             var shouldFetchOnline = onlineMetadataTask.Result;
             CurrentSortOrder = sortOrderTask.Result;
 
-            var artist = await _libraryScanner.GetArtistDetailsAsync(artistId, shouldFetchOnline, _pageCts.Token);
+            // Start loading songs in parallel (updates its own UI)
+            var songsTask = RefreshOrSortSongsCommand.ExecuteAsync(null);
+
+            // Start loading artist details and albums in parallel
+            var artistTask = _libraryScanner.GetArtistDetailsAsync(artistId, shouldFetchOnline, _pageCts.Token);
+            var albumsTask = _libraryReader.GetTopAlbumsForArtistAsync(artistId, int.MaxValue);
+
+            await Task.WhenAll(artistTask, albumsTask).ConfigureAwait(false);
+            if (_pageCts.IsCancellationRequested) return;
+
+            var artist = artistTask.Result;
 
             if (artist != null)
             {
-                PopulateArtistDetails(artist);
-                
-                // After populating artist details, load the associated song list.
-                await RefreshOrSortSongsCommand.ExecuteAsync(null);
+                _dispatcherService.TryEnqueue(() =>
+                {
+                    PopulateArtistDetails(artist);
+
+                    var topAlbums = albumsTask.Result;
+                    Albums.Clear();
+                    foreach (var album in topAlbums) Albums.Add(new ArtistAlbumViewModelItem(album));
+                });
+
+                await songsTask.ConfigureAwait(false);
             }
             else
             {
@@ -165,19 +181,6 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         ArtistBio = string.IsNullOrWhiteSpace(artist.Biography)
             ? "No biography available for this artist."
             : artist.Biography;
-
-        Albums.Clear();
-        if (artist.Albums != null)
-        {
-            // Order albums by year descending, then alphabetically for a standard discography view.
-            var albumVms = artist.Albums
-                .OrderByDescending(a => a.Year)
-                .ThenBy(a => a.Title, StringComparer.OrdinalIgnoreCase)
-                .ThenBy(a => a.Id)
-                .Select(album => new ArtistAlbumViewModelItem(album));
-
-            foreach (var albumVm in albumVms) Albums.Add(albumVm);
-        }
 
         _logger.LogDebug("Populated details for artist '{ArtistName}' ({ArtistId})", artist.Name, artist.Id);
     }

@@ -143,7 +143,7 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
         string state;
         if (isPlaying)
         {
-            state = $"by {_currentSong.Artist?.Name ?? "Unknown Artist"}".Truncate(128);
+            state = $"by {_currentSong.ArtistName}".Truncate(128);
         }
         else
         {

@@ -66,9 +66,9 @@ public class LastFmScrobblerServiceTests : IDisposable
         var expectedParams = new Dictionary<string, string>
         {
             { "method", "track.updateNowPlaying" },
-            { "artist", song.Artist!.Name },
+            { "artist", song.ArtistName },
             { "track", song.Title },
-            { "album", song.Album!.Title },
+            { "album", song.Album?.Title ?? string.Empty },
             { "duration", "180" },
             { "api_key", ApiKey },
             { "sk", SessionKey }
@@ -104,9 +104,9 @@ public class LastFmScrobblerServiceTests : IDisposable
         var expectedParams = new Dictionary<string, string>
         {
             { "method", "track.scrobble" },
-            { "artist", song.Artist!.Name },
+            { "artist", song.ArtistName },
             { "track", song.Title },
-            { "album", song.Album!.Title },
+            { "album", song.Album?.Title ?? string.Empty },
             { "timestamp", expectedTimestamp },
             { "api_key", ApiKey },
             { "sk", SessionKey }
@@ -216,7 +216,7 @@ public class LastFmScrobblerServiceTests : IDisposable
     public async Task UpdateNowPlayingAsync_WithMinimalSongData_SendsCorrectParameters()
     {
         // Arrange
-        var song = new Song { Title = "Title Only", Artist = null };
+        var song = new Song { Title = "Title Only" };
         SetupValidCredentials();
         SetupHttpResponse(HttpStatusCode.OK);
 
@@ -229,6 +229,28 @@ public class LastFmScrobblerServiceTests : IDisposable
         _capturedRequestParams!.Should().ContainKey("artist").WhoseValue.Should().Be("Unknown Artist");
         _capturedRequestParams.Should().NotContainKey("album");
         _capturedRequestParams.Should().NotContainKey("duration");
+    }
+
+    [Fact]
+    public async Task UpdateNowPlayingAsync_WithMultipleArtists_SendsJoinedArtistName()
+    {
+        // Arrange
+        var artist1 = new Artist { Name = "Artist A" };
+        var artist2 = new Artist { Name = "Artist B" };
+        var song = new Song { Title = "Duo Track" };
+        song.SongArtists.Add(new SongArtist { Artist = artist1, Order = 0 });
+        song.SongArtists.Add(new SongArtist { Artist = artist2, Order = 1 });
+        song.SyncDenormalizedFields();
+
+        SetupValidCredentials();
+        SetupHttpResponse(HttpStatusCode.OK);
+
+        // Act
+        await _scrobblerService.UpdateNowPlayingAsync(song);
+
+        // Assert
+        _capturedRequestParams.Should().NotBeNull();
+        _capturedRequestParams!["artist"].Should().Be("Artist A");
     }
 
     #region Helper Methods
@@ -262,13 +284,19 @@ public class LastFmScrobblerServiceTests : IDisposable
     /// </summary>
     private static Song CreateTestSong()
     {
-        return new Song
+        var artist = new Artist { Name = "Test Artist" };
+        var album = new Album { Title = "Test Album" };
+        album.AlbumArtists.Add(new AlbumArtist { Artist = artist, Order = 0 });
+        
+        var song = new Song
         {
             Title = "Test Title",
-            Artist = new Artist { Name = "Test Artist" },
-            Album = new Album { Title = "Test Album" },
+            Album = album,
             Duration = TimeSpan.FromSeconds(180)
         };
+        song.SongArtists.Add(new SongArtist { Artist = artist, Order = 0 });
+        song.SyncDenormalizedFields();
+        return song;
     }
 
     /// <summary>

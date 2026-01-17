@@ -17,8 +17,7 @@ public class SmartPlaylistQueryBuilder
     public IQueryable<Song> BuildQuery(MusicDbContext context, SmartPlaylist smartPlaylist, string? searchTerm = null)
     {
         var query = context.Songs.AsNoTracking()
-            .Include(s => s.Artist)
-            .Include(s => s.Album).ThenInclude(a => a!.Artist)
+            .Include(s => s.Album)
             .Include(s => s.Genres)
             .AsSplitQuery();
 
@@ -90,7 +89,7 @@ public class SmartPlaylistQueryBuilder
         {
             // Text fields
             SmartPlaylistField.Title => BuildTextPredicate(s => s.Title, rule),
-            SmartPlaylistField.Artist => BuildTextPredicate(s => s.Artist != null ? s.Artist.Name : null, rule),
+            SmartPlaylistField.Artist => BuildArtistPredicate(rule),
             SmartPlaylistField.Album => BuildTextPredicate(s => s.Album != null ? s.Album.Title : null, rule),
             SmartPlaylistField.Composer => BuildTextPredicate(s => s.Composer, rule),
             SmartPlaylistField.Comment => BuildTextPredicate(s => s.Comment, rule),
@@ -165,6 +164,30 @@ public class SmartPlaylistQueryBuilder
                 s => s.Genres.Any(g => g.Name.ToLower().Contains(value)),
             SmartPlaylistOperator.DoesNotContain =>
                 s => !s.Genres.Any(g => g.Name.ToLower().Contains(value)),
+            _ => null
+        };
+    }
+
+    private static Expression<Func<Song, bool>>? BuildArtistPredicate(SmartPlaylistRule rule)
+    {
+        var value = (rule.Value ?? string.Empty).ToLowerInvariant();
+
+        // Use ANY to check against all artists associated with the song.
+        // This ensures that "Artist IS 'Daft Punk'" matches "Daft Punk & Julian Casablancas"
+        return rule.Operator switch
+        {
+            SmartPlaylistOperator.Is =>
+                s => s.SongArtists.Any(sa => sa.Artist.Name.ToLower() == value),
+            SmartPlaylistOperator.IsNot =>
+                s => !s.SongArtists.Any(sa => sa.Artist.Name.ToLower() == value),
+            SmartPlaylistOperator.Contains =>
+                s => s.SongArtists.Any(sa => sa.Artist.Name.ToLower().Contains(value)),
+            SmartPlaylistOperator.DoesNotContain =>
+                s => !s.SongArtists.Any(sa => sa.Artist.Name.ToLower().Contains(value)),
+            SmartPlaylistOperator.StartsWith =>
+                s => s.SongArtists.Any(sa => sa.Artist.Name.ToLower().StartsWith(value)),
+            SmartPlaylistOperator.EndsWith =>
+                s => s.SongArtists.Any(sa => sa.Artist.Name.ToLower().EndsWith(value)),
             _ => null
         };
     }
@@ -311,13 +334,13 @@ public class SmartPlaylistQueryBuilder
         {
             SmartPlaylistSortOrder.TitleAsc => query.OrderBy(s => s.Title).ThenBy(s => s.Id),
             SmartPlaylistSortOrder.TitleDesc => query.OrderByDescending(s => s.Title).ThenByDescending(s => s.Id),
-            SmartPlaylistSortOrder.ArtistAsc => query.OrderBy(s => s.Artist != null ? s.Artist.Name : string.Empty)
+            SmartPlaylistSortOrder.ArtistAsc => query.OrderBy(s => s.PrimaryArtistName)
                 .ThenBy(s => s.Album != null ? s.Album.Title : string.Empty)
                 .ThenBy(s => s.DiscNumber ?? 0)
                 .ThenBy(s => s.TrackNumber)
                 .ThenBy(s => s.Title)
                 .ThenBy(s => s.Id),
-            SmartPlaylistSortOrder.ArtistDesc => query.OrderByDescending(s => s.Artist != null ? s.Artist.Name : string.Empty)
+            SmartPlaylistSortOrder.ArtistDesc => query.OrderByDescending(s => s.PrimaryArtistName)
                 .ThenByDescending(s => s.Album != null ? s.Album.Title : string.Empty)
                 .ThenByDescending(s => s.DiscNumber ?? 0)
                 .ThenByDescending(s => s.TrackNumber)
@@ -334,14 +357,14 @@ public class SmartPlaylistQueryBuilder
                 .ThenByDescending(s => s.Title)
                 .ThenByDescending(s => s.Id),
             SmartPlaylistSortOrder.YearAsc => query.OrderBy(s => s.Year)
-                .ThenBy(s => s.Artist != null ? s.Artist.Name : string.Empty)
+                .ThenBy(s => s.PrimaryArtistName)
                 .ThenBy(s => s.Album != null ? s.Album.Title : string.Empty)
                 .ThenBy(s => s.DiscNumber ?? 0)
                 .ThenBy(s => s.TrackNumber)
                 .ThenBy(s => s.Title)
                 .ThenBy(s => s.Id),
             SmartPlaylistSortOrder.YearDesc => query.OrderByDescending(s => s.Year)
-                .ThenByDescending(s => s.Artist != null ? s.Artist.Name : string.Empty)
+                .ThenByDescending(s => s.PrimaryArtistName)
                 .ThenByDescending(s => s.Album != null ? s.Album.Title : string.Empty)
                 .ThenByDescending(s => s.DiscNumber ?? 0)
                 .ThenByDescending(s => s.TrackNumber)
@@ -425,12 +448,15 @@ public class SmartPlaylistQueryBuilder
 
     private static IQueryable<Song> ApplySearchFilter(IQueryable<Song> query, string searchTerm)
     {
-        var lowerTerm = searchTerm.ToLower();
+        var term = $"%{searchTerm}%";
         return query.Where(s =>
-            s.Title.ToLower().Contains(lowerTerm) ||
-            (s.Artist != null && s.Artist.Name.ToLower().Contains(lowerTerm)) ||
-            (s.Album != null && s.Album.Title.ToLower().Contains(lowerTerm)));
+            EF.Functions.Like(s.Title, term)
+            || EF.Functions.Like(s.ArtistName, term)
+            || s.SongArtists.Any(sa => EF.Functions.Like(sa.Artist.Name, term))
+            || (s.Album != null && (EF.Functions.Like(s.Album.Title, term) || EF.Functions.Like(s.Album.ArtistName, term) || s.Album.AlbumArtists.Any(aa => EF.Functions.Like(aa.Artist.Name, term)))));
     }
+
+
 
     #endregion
 }

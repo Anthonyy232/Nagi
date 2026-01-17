@@ -95,9 +95,9 @@ public class LrcService : ILrcService, IDisposable
                         tasks[provider.Id] = provider.Id switch
                         {
                             ServiceProviderIds.LrcLib => _onlineLyricsService.GetLyricsAsync(
-                                song.Title, song.Artist?.Name, song.Album?.Title, song.Duration, token),
+                                song.Title, song.PrimaryArtistName, song.Album?.Title, song.Duration, token),
                             ServiceProviderIds.NetEase => _netEaseLyricsService.SearchLyricsAsync(
-                                song.Title, song.Artist?.Name, token),
+                                song.Title, song.PrimaryArtistName, token),
                              _ => LogUnknownProviderAndReturnNull(provider.Id)
                         };
                     }
@@ -197,7 +197,7 @@ public class LrcService : ILrcService, IDisposable
     {
         try
         {
-            var cacheFileName = FileNameHelper.GenerateLrcCacheFileName(song.Artist?.Name, song.Album?.Title, song.Title);
+            var cacheFileName = FileNameHelper.GenerateLrcCacheFileName(song.PrimaryArtistName, song.Album?.Title, song.Title);
             var cachedLrcPath = _fileSystemService.Combine(_pathConfig.LrcCachePath, cacheFileName);
 
             await _fileSystemService.WriteAllTextAsync(cachedLrcPath, lrcContent).ConfigureAwait(false);

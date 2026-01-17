@@ -81,16 +81,23 @@ public class OfflineScrobbleServiceTests : IDisposable
     private async Task<List<ListenHistory>> SeedPendingScrobblesAsync(int count)
     {
         var artist = new Artist { Name = "Test Artist" };
-        var album = new Album { Title = "Test Album", Artist = artist };
+        var album = new Album { Title = "Test Album" };
+        album.AlbumArtists.Add(new AlbumArtist { Artist = artist, Order = 0 });
+        album.SyncDenormalizedFields();
         var folder = new Folder { Name = "Test Folder", Path = "C:/Music/TestFolder" };
         var songs = Enumerable.Range(1, count)
-            .Select(i => new Song
+            .Select(i =>
             {
-                Title = $"Song {i}",
-                Artist = artist,
-                Album = album,
-                Folder = folder,
-                FilePath = $"C:/Music/TestFolder/Song{i}.mp3" // Unique file path per song
+                var s = new Song
+                {
+                    Title = $"Song {i}",
+                    Album = album,
+                    Folder = folder,
+                    FilePath = $"C:/Music/TestFolder/Song{i}.mp3" // Unique file path per song
+                };
+                s.SongArtists.Add(new SongArtist { Artist = artist, Order = 0 });
+                s.SyncDenormalizedFields();
+                return s;
             })
             .ToList();
 
@@ -341,4 +348,43 @@ public class OfflineScrobbleServiceTests : IDisposable
     }
 
     #endregion
+
+    private async Task<ListenHistory> SeedMultiArtistPendingScrobbleAsync()
+    {
+        var artist1 = new Artist { Name = "Artist 1" };
+        var artist2 = new Artist { Name = "Artist 2" };
+        var folder = new Folder { Name = "Test Folder", Path = "C:/Music/TestFolder" };
+        var song = new Song { Title = "Multi Song", Folder = folder, FilePath = "C:/Music/TestFolder/Multi.mp3" };
+        song.SongArtists.Add(new SongArtist { Artist = artist1, Order = 0 });
+        song.SongArtists.Add(new SongArtist { Artist = artist2, Order = 1 });
+        song.SyncDenormalizedFields();
+
+        var entry = new ListenHistory
+        {
+            Song = song,
+            ListenTimestampUtc = DateTime.UtcNow.AddMinutes(-10),
+            IsEligibleForScrobbling = true,
+            IsScrobbled = false
+        };
+
+        await using var context = _dbHelper.ContextFactory.CreateDbContext();
+        context.ListenHistory.Add(entry);
+        await context.SaveChangesAsync();
+        return entry;
+    }
+
+    [Fact]
+    public async Task ProcessQueueAsync_WithMultiArtistSong_ScrobblesJoinedName()
+    {
+        // Arrange
+        await SeedMultiArtistPendingScrobbleAsync();
+
+        // Act
+        await _service.ProcessQueueAsync();
+
+        // Assert
+        await _scrobblerService.Received(1).ScrobbleAsync(
+            Arg.Is<Song>(s => s.ArtistName == "Artist 1 & Artist 2"), 
+            Arg.Any<DateTime>());
+    }
 }

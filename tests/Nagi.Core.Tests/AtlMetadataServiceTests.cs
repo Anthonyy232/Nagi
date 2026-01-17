@@ -162,8 +162,8 @@ public class AtlMetadataServiceTests : IDisposable
         result.Should().NotBeNull();
         result.ExtractionFailed.Should().BeFalse();
         result.Title.Should().Be("Test Title");
-        result.Artist.Should().Be("Test Artist");
-        result.AlbumArtist.Should().Be("Test Album Artist");
+        result.Artists.Should().ContainSingle().Which.Should().Be("Test Artist");
+        result.AlbumArtists.Should().ContainSingle().Which.Should().Be("Test Album Artist");
         result.Album.Should().Be("Test Album");
         result.Year.Should().Be(2023);
         result.TrackNumber.Should().Be(5);
@@ -201,9 +201,9 @@ public class AtlMetadataServiceTests : IDisposable
         // Assert
         result.Should().NotBeNull();
         result.Title.Should().Be("minimal"); // Falls back to filename
-        result.Artist.Should().Be("Unknown Artist");
+        result.Artists.Should().ContainSingle().Which.Should().Be("Unknown Artist");
         result.Album.Should().Be("Unknown Album");
-        result.AlbumArtist.Should().Be("Unknown Artist");
+        result.AlbumArtists.Should().ContainSingle().Which.Should().Be("Unknown Artist");
         result.Year.Should().BeNull();
         result.CoverArtUri.Should().BeNull();
     }
@@ -506,5 +506,35 @@ public class AtlMetadataServiceTests : IDisposable
         var result2 = await _metadataService.ExtractMetadataAsync(filePath2);
         result2.ReplayGainTrackGain.Should().Be(2.5);
         result2.ReplayGainTrackPeak.Should().Be(1.1);
+    }
+
+    /// <summary>
+    ///     Verifies that multiple artists separated by different delimiters (;, /, ,)
+    ///     are correctly split and that the joined artist name is used for LRC identity.
+    /// </summary>
+    [Fact]
+    public async Task ExtractMetadataAsync_WithMultiArtistDelimiters_SplitsCorrectlyAndAlignsLrc()
+    {
+        // Arrange
+        var filePath = CreateTestAudioFile("multiartist.mp3", track =>
+        {
+            track.Title = "Multi Artist Song";
+            track.Artist = "Artist A / Artist B; Artist C; Artist D";
+            track.Album = "Multi Album";
+        });
+
+        var expectedCacheFileName = FileNameHelper.GenerateLrcCacheFileName("Artist A", "Multi Album", "Multi Artist Song");
+        var expectedCachePath = Path.Combine(LrcCachePath, expectedCacheFileName);
+
+        _fileSystem.FileExists(expectedCachePath).Returns(true);
+        _fileSystem.GetLastWriteTimeUtc(expectedCachePath).Returns(DateTime.UtcNow.AddHours(1));
+
+        // Act
+        var result = await _metadataService.ExtractMetadataAsync(filePath);
+
+        // Assert
+        result.Artists.Should().HaveCount(4);
+        result.Artists.Should().ContainInOrder("Artist A", "Artist B", "Artist C", "Artist D");
+        result.LrcFilePath.Should().Be(expectedCachePath);
     }
 }

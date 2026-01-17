@@ -94,7 +94,7 @@ public class MusicPlaybackServiceTests
     {
         // Arrange
         const string filePath = "C:\\temp\\transient.mp3";
-        var metadata = new SongFileMetadata { Title = "Transient Song", Artist = "Temp Artist" };
+        var metadata = new SongFileMetadata { Title = "Transient Song", Artists = new List<string> { "Temp Artist" } };
         _metadataService.ExtractMetadataAsync(filePath).Returns(metadata);
         await _service.InitializeAsync();
         await _service.PlayAsync(_testSongs); // Pre-load a queue
@@ -107,10 +107,31 @@ public class MusicPlaybackServiceTests
         _service.PlaybackQueue.Should().BeEmpty();
         _service.CurrentTrack.Should().NotBeNull();
         _service.CurrentTrack!.Title.Should().Be("Transient Song");
-        _service.CurrentTrack!.Artist!.Name.Should().Be("Temp Artist");
+        _service.CurrentTrack!.ArtistName.Should().Be("Temp Artist");
         _service.CurrentQueueIndex.Should().Be(-1);
         await _audioPlayer.Received(1).LoadAsync(Arg.Is<Song>(s => s.FilePath == filePath));
         await _audioPlayer.Received(1).PlayAsync();
+    }
+
+    [Fact]
+    public async Task PlayTransientFileAsync_WithMultipleArtists_SetsCorrectArtistName()
+    {
+        // Arrange
+        const string filePath = "C:\\temp\\multi.mp3";
+        var metadata = new SongFileMetadata 
+        { 
+            Title = "Multi Track", 
+            Artists = new List<string> { "Artist 1", "Artist 2" } 
+        };
+        _metadataService.ExtractMetadataAsync(filePath).Returns(metadata);
+        await _service.InitializeAsync();
+
+        // Act
+        await _service.PlayTransientFileAsync(filePath);
+
+        // Assert
+        _service.CurrentTrack.Should().NotBeNull();
+        _service.CurrentTrack!.ArtistName.Should().Be("Artist 1 & Artist 2");
     }
 
     #endregion

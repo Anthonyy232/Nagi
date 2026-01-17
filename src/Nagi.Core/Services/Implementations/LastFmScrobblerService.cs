@@ -42,7 +42,7 @@ public class LastFmScrobblerService : ILastFmScrobblerService
         var parameters = new Dictionary<string, string>
         {
             { "method", "track.updateNowPlaying" },
-            { "artist", song.Artist?.Name ?? "Unknown Artist" },
+            { "artist", song.PrimaryArtistName },
             { "track", song.Title },
             { "api_key", apiKey },
             { "sk", sessionKey }
@@ -67,7 +67,7 @@ public class LastFmScrobblerService : ILastFmScrobblerService
         var parameters = new Dictionary<string, string>
         {
             { "method", "track.scrobble" },
-            { "artist", song.Artist?.Name ?? "Unknown Artist" },
+            { "artist", song.PrimaryArtistName },
             { "track", song.Title },
             { "timestamp", timestamp },
             { "api_key", apiKey },

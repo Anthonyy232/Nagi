@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Numerics;
 using Windows.System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -15,6 +16,8 @@ using Windows.Storage.Pickers;
 using WinRT.Interop;
 using Nagi.Core.Constants;
 using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Animation;
 
 namespace Nagi.WinUI.Pages;
 
@@ -26,6 +29,9 @@ public sealed partial class ArtistViewPage : Page
     private readonly ILogger<ArtistViewPage> _logger;
     private bool _isSearchExpanded;
     private bool _isUpdatingSelection;
+    private ScrollViewer? _songsScrollViewer;
+    private double _lastKnownAlbumsHeight;
+    private bool _isAlbumsSectionCollapsed;
 
     public ArtistViewPage()
     {
@@ -35,6 +41,10 @@ public sealed partial class ArtistViewPage : Page
         DataContext = ViewModel;
 
         Loaded += OnPageLoaded;
+        
+        // Ensure we hook up the scroll viewer once the list is loaded
+        SongsListView.Loaded += OnSongsListViewLoaded;
+        
         _logger.LogDebug("ArtistViewPage initialized.");
     }
 
@@ -83,6 +93,10 @@ public sealed partial class ArtistViewPage : Page
         base.OnNavigatedFrom(e);
         _logger.LogDebug("Navigating away from ArtistViewPage. Cleaning up ViewModel.");
         ViewModel.Cleanup();
+        if (_songsScrollViewer != null)
+        {
+            _songsScrollViewer.ViewChanged -= OnSongsScrollViewerViewChanged;
+        }
     }
 
     /// <summary>
@@ -367,5 +381,73 @@ public sealed partial class ArtistViewPage : Page
 
         _logger.LogDebug("User did not pick an image file.");
         return null;
+    }
+
+    private void OnSongsListViewLoaded(object sender, RoutedEventArgs e)
+    {
+        if (_songsScrollViewer != null) return;
+
+        _songsScrollViewer = FindScrollViewer(SongsListView);
+        if (_songsScrollViewer != null)
+        {
+            _songsScrollViewer.ViewChanged += OnSongsScrollViewerViewChanged;
+        }
+    }
+
+    private static ScrollViewer? FindScrollViewer(DependencyObject root)
+    {
+        var queue = new System.Collections.Generic.Queue<DependencyObject>();
+        queue.Enqueue(root);
+
+        while (queue.Count > 0)
+        {
+            var current = queue.Dequeue();
+            if (current is ScrollViewer sv) return sv;
+
+            int count = VisualTreeHelper.GetChildrenCount(current);
+            for (int i = 0; i < count; i++)
+            {
+                queue.Enqueue(VisualTreeHelper.GetChild(current, i));
+            }
+        }
+        return null;
+    }
+
+    private void OnAlbumsContentSizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        _lastKnownAlbumsHeight = e.NewSize.Height;
+        UpdateAlbumsLayout();
+    }
+
+    private void OnSongsScrollViewerViewChanged(object? sender, ScrollViewerViewChangedEventArgs e)
+    {
+        UpdateAlbumsLayout();
+    }
+
+    private void UpdateAlbumsLayout()
+    {
+        if (_songsScrollViewer == null || !ViewModel.HasAlbums) return;
+
+        // Calculate new height: Max - ScrollOffset, clamped to 0
+        var scrollOffset = _songsScrollViewer.VerticalOffset;
+        var newHeight = Math.Max(0, _lastKnownAlbumsHeight - scrollOffset);
+
+        // Apply height
+        AlbumsViewport.Height = newHeight;
+        
+        // Translate the content up to mimic scrolling naturally
+        // We clamp the translation so it doesn't float away if we scroll way past
+        var translationY = (float)-Math.Min(scrollOffset, _lastKnownAlbumsHeight);
+        AlbumsContent.Translation = new Vector3(0, translationY, 0);
+
+        if (_lastKnownAlbumsHeight > 0)
+        {
+            var opacity = Math.Clamp(newHeight / _lastKnownAlbumsHeight, 0, 1);
+            
+            // Optimization: Snap to 0 if very low to save GPU composition effort?
+            if (opacity < 0.05) opacity = 0;
+            
+            AlbumsViewport.Opacity = opacity;
+        }
     }
 }

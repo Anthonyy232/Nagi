@@ -7,9 +7,9 @@ public class SongFileMetadata
 {
     public string FilePath { get; set; } = string.Empty;
     public string Title { get; set; } = string.Empty;
-    public string Artist { get; set; } = string.Empty;
+    public List<string> Artists { get; set; } = new();
     public string? Album { get; set; } = string.Empty;
-    public string? AlbumArtist { get; set; } = string.Empty;
+    public List<string> AlbumArtists { get; set; } = new();
     public TimeSpan Duration { get; set; }
     public string? CoverArtUri { get; set; }
     public string? LightSwatchId { get; set; }

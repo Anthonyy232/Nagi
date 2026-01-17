@@ -47,7 +47,7 @@ public class M3uPlaylistExportService : IPlaylistExportService
             foreach (var song in songList)
             {
                 var durationSeconds = (int)song.Duration.TotalSeconds;
-                var artistName = song.Artist?.Name ?? "Unknown Artist";
+                var artistName = song.ArtistName;
                 var title = song.Title;
 
                 // Extended info line: #EXTINF:{duration},{artist} - {title}

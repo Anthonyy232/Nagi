@@ -95,13 +95,14 @@
         </Grid.RowDefinitions>
 
         <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
-            <StackPanel Padding="24,24,24,0" Spacing="16">
-                <Grid Margin="0,0,0,6">
+            <StackPanel Padding="24,24,24,0">
+                <Grid Margin="0,0,0,16">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-
+                    
+                    <!-- Artist Image and Info Content (unchanged) -->
                     <Grid Grid.Column="0" Width="150" Height="150" CornerRadius="75"
                           PointerEntered="ArtistImage_PointerEntered" PointerExited="ArtistImage_PointerExited"
                           Background="Transparent">
@@ -159,24 +160,30 @@
                     </StackPanel>
                 </Grid>
 
-                <StackPanel Spacing="6" Margin="0,8,0,10"
-                            Visibility="{x:Bind ViewModel.HasAlbums, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
-                    <TextBlock Style="{StaticResource SectionHeaderTextBlockStyle}" Text="Albums" />
+                <Grid x:Name="AlbumsViewport" VerticalAlignment="Top"
+                      Visibility="{x:Bind ViewModel.HasAlbums, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
+                    <StackPanel x:Name="AlbumsContent" Spacing="2" VerticalAlignment="Top" Padding="0,0,0,16" SizeChanged="OnAlbumsContentSizeChanged">
+                    <TextBlock Style="{StaticResource SectionHeaderTextBlockStyle}" Text="Top Albums" Foreground="{StaticResource AppPrimaryColorBrush}" />
                     <GridView
                         IsItemClickEnabled="True"
                         ItemClick="AlbumGridView_ItemClick"
                         ItemsSource="{x:Bind ViewModel.Albums, Mode=OneWay}"
-                        SelectionMode="None">
+                        SelectionMode="None"
+                        ScrollViewer.HorizontalScrollMode="Auto"
+                        ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                        ScrollViewer.IsHorizontalRailEnabled="True"
+                        ScrollViewer.VerticalScrollMode="Disabled"
+                        ScrollViewer.VerticalScrollBarVisibility="Hidden">
                         <GridView.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <ItemsWrapGrid ItemWidth="200" Orientation="Horizontal" />
+                                <ItemsStackPanel Orientation="Horizontal" />
                             </ItemsPanelTemplate>
                         </GridView.ItemsPanel>
                         <GridView.ItemTemplate>
                             <DataTemplate x:DataType="viewmodels:ArtistAlbumViewModelItem">
                                 <Grid
-                                    Width="180"
-                                    Height="220"
+                                    Width="160"
+                                    Height="180"
                                     Margin="8,16,8,16"
                                     Background="Transparent">
                                     <Grid.RowDefinitions>
@@ -185,22 +192,22 @@
                                         <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
                                     <Border Grid.Row="0"
-                                            Width="160"
-                                            Height="160"
+                                            Width="140"
+                                            Height="140"
                                             HorizontalAlignment="Center"
                                             CornerRadius="12"
                                             Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
                                         <controls:ImageEx
                                             IsCacheEnabled="True"
                                             Source="{x:Bind uihelpers:ImageUriHelper.GetUriWithCacheBuster(CoverArtUri), Mode=OneWay}"
-                                            DecodePixelWidth="160"
+                                            DecodePixelWidth="140"
                                             DecodePixelType="Logical"
                                             Stretch="UniformToFill" />
 
                                     </Border>
                                     <TextBlock
                                         Grid.Row="1"
-                                        Margin="0,8,0,0"
+                                        Margin="0,4,0,0"
                                         HorizontalAlignment="Center"
                                         FontWeight="SemiBold"
                                         Text="{x:Bind Name}"
@@ -215,9 +222,10 @@
                             </DataTemplate>
                         </GridView.ItemTemplate>
                     </GridView>
-                </StackPanel>
+                    </StackPanel>
+                </Grid>
 
-                <Grid Margin="0,8,0,10">
+                <Grid Margin="0,0,0,10">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />

@@ -1,4 +1,5 @@
 using System.IO;
+using Nagi.Core.Models;
 
 namespace Nagi.Core.Helpers;
 
@@ -33,9 +34,10 @@ public static class FileNameHelper
     /// <returns>A sanitized file name in the format "Artist - Album - Title.lrc".</returns>
     public static string GenerateLrcCacheFileName(string? artist, string? album, string? title)
     {
-        var sanitizedArtist = SanitizeFileName(artist ?? string.Empty, "Unknown Artist");
-        var sanitizedAlbum = SanitizeFileName(album ?? string.Empty, "Unknown Album");
+        var sanitizedArtist = SanitizeFileName(artist ?? string.Empty, Artist.UnknownArtistName);
+        var sanitizedAlbum = SanitizeFileName(album ?? string.Empty, Album.UnknownAlbumName);
         var sanitizedTitle = SanitizeFileName(title ?? string.Empty, "Unknown Title");
+
         return $"{sanitizedArtist} - {sanitizedAlbum} - {sanitizedTitle}.lrc";
     }
 }

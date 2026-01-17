@@ -40,8 +40,10 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
         // Create test data with a variety of values to test different predicates
         _artist1 = new Artist { Name = "The Beatles" };
         _artist2 = new Artist { Name = "Pink Floyd" };
-        _album1 = new Album { Title = "Abbey Road", Artist = _artist1 };
-        _album2 = new Album { Title = "The Wall", Artist = _artist2 };
+        _album1 = new Album { Title = "Abbey Road" };
+        _album1.AlbumArtists.Add(new AlbumArtist { Artist = _artist1, Order = 0 });
+        _album2 = new Album { Title = "The Wall" };
+        _album2.AlbumArtists.Add(new AlbumArtist { Artist = _artist2, Order = 0 });
         _folder = new Folder { Name = "Music", Path = "C:\\Music" };
         _genreRock = new Genre { Name = "Rock" };
         _genrePop = new Genre { Name = "Pop" };
@@ -50,7 +52,6 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
         _song1 = new Song
         {
             Title = "Come Together",
-            Artist = _artist1,
             Album = _album1,
             Folder = _folder,
             FilePath = "C:\\Music\\come_together.mp3",
@@ -73,12 +74,12 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
             FileCreatedDate = DateTime.UtcNow.AddDays(-365),
             FileModifiedDate = DateTime.UtcNow.AddDays(-30)
         };
+        _song1.SongArtists.Add(new SongArtist { Artist = _artist1, Order = 0 });
         _song1.Genres.Add(_genreRock);
 
         _song2 = new Song
         {
             Title = "Something",
-            Artist = _artist1,
             Album = _album1,
             Folder = _folder,
             FilePath = "C:\\Music\\something.mp3",
@@ -99,13 +100,13 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
             FileCreatedDate = DateTime.UtcNow.AddDays(-365),
             FileModifiedDate = DateTime.UtcNow.AddDays(-60)
         };
+        _song2.SongArtists.Add(new SongArtist { Artist = _artist1, Order = 0 });
         _song2.Genres.Add(_genreRock);
         _song2.Genres.Add(_genrePop);
 
         _song3 = new Song
         {
             Title = "Another Brick in the Wall",
-            Artist = _artist2,
             Album = _album2,
             Folder = _folder,
             FilePath = "C:\\Music\\wall.mp3",
@@ -125,12 +126,12 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
             FileCreatedDate = DateTime.UtcNow.AddDays(-200),
             FileModifiedDate = DateTime.UtcNow.AddDays(-90)
         };
+        _song3.SongArtists.Add(new SongArtist { Artist = _artist2, Order = 0 });
         _song3.Genres.Add(_genreRock);
 
         _song4 = new Song
         {
             Title = "Let It Be",
-            Artist = _artist1,
             Album = null, // No album
             Folder = _folder,
             FilePath = "C:\\Music\\letitbe.mp3",
@@ -142,12 +143,12 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
             Duration = TimeSpan.FromMinutes(4),
             DateAddedToLibrary = DateTime.UtcNow.AddDays(-5)
         };
+        _song4.SongArtists.Add(new SongArtist { Artist = _artist1, Order = 0 });
         _song4.Genres.Add(_genrePop);
 
         _song5 = new Song
         {
             Title = "Fly Me to the Moon",
-            Artist = null, // No artist
             Album = null, // No album
             Folder = _folder,
             FilePath = "C:\\Music\\flyme.mp3",
@@ -159,6 +160,13 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
             DateAddedToLibrary = DateTime.UtcNow.AddDays(-100)
         };
         _song5.Genres.Add(_genreJazz);
+
+        // Sync denormalized fields before saving
+        _song1.SyncDenormalizedFields();
+        _song2.SyncDenormalizedFields();
+        _song3.SyncDenormalizedFields();
+        _song4.SyncDenormalizedFields();
+        _song5.SyncDenormalizedFields();
 
         // Seed the database
         using var context = _dbHelper.ContextFactory.CreateDbContext();
@@ -335,7 +343,7 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
 
         // Assert
         results.Should().HaveCount(3); // _song1, _song2, _song4
-        results.Should().OnlyContain(s => s.Artist!.Name == "The Beatles");
+        results.Should().OnlyContain(s => s.ArtistName == "The Beatles");
     }
 
     [Fact]
@@ -377,6 +385,90 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
         // Assert - Abbey Road songs
         results.Should().HaveCount(2);
         results.Should().OnlyContain(s => s.Album!.Title == "Abbey Road");
+    }
+
+    [Fact]
+    public void BuildQuery_ArtistIs_FindsSecondaryArtist()
+    {
+        // Arrange
+        var artist3 = new Artist { Name = "Secondary Artist" };
+        var songWithTwoArtists = new Song
+        {
+            Title = "Collaboration",
+            AlbumId = _album1.Id,
+            FolderId = _folder.Id,
+            FilePath = "C:\\Music\\collab.mp3"
+        };
+        // Reuse existing artist1 and add new artist3
+        songWithTwoArtists.SongArtists.Add(new SongArtist { ArtistId = _artist1.Id, Order = 0 });
+        songWithTwoArtists.SongArtists.Add(new SongArtist { Artist = artist3, Order = 1 });
+
+        songWithTwoArtists.SyncDenormalizedFields();
+
+        using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Artists.Add(artist3);
+            context.Songs.Add(songWithTwoArtists);
+            context.SaveChanges();
+        }
+
+        var playlist = CreatePlaylist(new SmartPlaylistRule
+        {
+            Field = SmartPlaylistField.Artist,
+            Operator = SmartPlaylistOperator.Is,
+            Value = "Secondary Artist"
+        });
+
+        // Act
+        using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            var results = _queryBuilder.BuildQuery(context, playlist).ToList();
+
+            // Assert
+            results.Should().HaveCount(1);
+            results[0].Title.Should().Be("Collaboration");
+        }
+    }
+
+    [Fact]
+    public void BuildQuery_WithSearchTerm_FindsByAlbumArtist()
+    {
+        // Arrange
+        var albumArtist2 = new Artist { Name = "Different Album Artist" };
+        var albumWithDifferentArtist = new Album { Title = "Special Album" };
+        albumWithDifferentArtist.AlbumArtists.Add(new AlbumArtist { Artist = albumArtist2, Order = 0 });
+        
+        var songWithDifferentAlbumArtist = new Song
+        {
+            Title = "Album Track",
+            Album = albumWithDifferentArtist,
+            FolderId = _folder.Id,
+            FilePath = "C:\\Music\\albumtrack.mp3"
+        };
+        songWithDifferentAlbumArtist.SongArtists.Add(new SongArtist { ArtistId = _artist1.Id, Order = 0 });
+
+        songWithDifferentAlbumArtist.SyncDenormalizedFields();
+        albumWithDifferentArtist.SyncDenormalizedFields();
+
+        using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Artists.Add(albumArtist2);
+            context.Albums.Add(albumWithDifferentArtist);
+            context.Songs.Add(songWithDifferentAlbumArtist);
+            context.SaveChanges();
+        }
+
+        var playlist = CreatePlaylist(); // No rules
+
+        // Act
+        using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            var results = _queryBuilder.BuildQuery(context, playlist, "Different Album Artist").ToList();
+
+            // Assert
+            results.Should().HaveCount(1);
+            results[0].Title.Should().Be("Album Track");
+        }
     }
 
     #endregion
@@ -833,7 +925,7 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
 
         // Assert - _song1 and _song2 are both loved and by The Beatles
         results.Should().HaveCount(2);
-        results.Should().OnlyContain(s => s.IsLoved && s.Artist!.Name == "The Beatles");
+        results.Should().OnlyContain(s => s.IsLoved && s.ArtistName == "The Beatles");
     }
 
     [Fact]
@@ -936,7 +1028,7 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
 
         // Assert - Rock songs by The Beatles
         results.Should().HaveCount(2);
-        results.Should().OnlyContain(s => s.Artist!.Name.Contains("Beatles", StringComparison.OrdinalIgnoreCase));
+        results.Should().OnlyContain(s => s.ArtistName.Contains("Beatles", StringComparison.OrdinalIgnoreCase));
     }
 
     [Fact]
@@ -1558,12 +1650,11 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
         // Assert - Null artist first (sorted as empty string), then Pink Floyd, then The Beatles
         // Within same artist, should be sorted by album, then track number, then title
         results.Should().HaveCount(5);
-        results[0].Title.Should().Be("Fly Me to the Moon"); // No artist
-        results[1].Title.Should().Be("Another Brick in the Wall"); // Pink Floyd
-        // The Beatles songs sorted by album (null first), then track
-        results[2].Title.Should().Be("Let It Be"); // No album
-        results[3].Title.Should().Be("Come Together"); // Abbey Road, Track 1
-        results[4].Title.Should().Be("Something"); // Abbey Road, Track 2
+        results[0].Title.Should().Be("Another Brick in the Wall"); // Pink Floyd
+        results[1].Title.Should().Be("Let It Be"); // The Beatles, No album
+        results[2].Title.Should().Be("Come Together"); // The Beatles, Abbey Road, Track 1
+        results[3].Title.Should().Be("Something"); // The Beatles, Abbey Road, Track 2
+        results[4].Title.Should().Be("Fly Me to the Moon"); // Unknown Artist
     }
 
     [Fact]

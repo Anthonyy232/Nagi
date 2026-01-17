@@ -73,16 +73,25 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
             _currentSmartPlaylistId = smartPlaylistId;
             CoverImageUri = coverImageUri;
 
+            Task<SmartPlaylist?>? playlistTask = null;
             if (smartPlaylistId.HasValue)
             {
-                _currentSmartPlaylist = await _smartPlaylistService.GetSmartPlaylistByIdAsync(smartPlaylistId.Value).ConfigureAwait(true);
+                playlistTask = _smartPlaylistService.GetSmartPlaylistByIdAsync(smartPlaylistId.Value);
+            }
+
+            // Start songs loading in parallel
+            var songsTask = RefreshOrSortSongsCommand.ExecuteAsync(null);
+
+            if (playlistTask != null)
+            {
+                _currentSmartPlaylist = await playlistTask.ConfigureAwait(true);
                 if (_currentSmartPlaylist != null)
                 {
                     RuleSummary = BuildRuleSummary(_currentSmartPlaylist);
                 }
             }
 
-            await RefreshOrSortSongsCommand.ExecuteAsync(null).ConfigureAwait(true);
+            await songsTask.ConfigureAwait(true);
         }
         catch (Exception ex)
         {

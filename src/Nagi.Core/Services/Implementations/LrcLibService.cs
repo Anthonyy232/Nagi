@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Web;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Http;
+using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 
 namespace Nagi.Core.Services.Implementations;
@@ -48,13 +49,13 @@ public class LrcLibService : IOnlineLyricsService
         try
         {
             // Placeholders used when metadata is missing
-            const string unknownArtist = "Unknown Artist";
-            const string unknownAlbum = "Unknown Album";
+
 
             var hasValidArtist = !string.IsNullOrWhiteSpace(artistName) &&
-                                 !artistName.Equals(unknownArtist, StringComparison.OrdinalIgnoreCase);
+                                 !artistName.Equals(Artist.UnknownArtistName, StringComparison.OrdinalIgnoreCase);
             var hasValidAlbum = !string.IsNullOrWhiteSpace(albumName) &&
-                                 !albumName.Equals(unknownAlbum, StringComparison.OrdinalIgnoreCase);
+                                 !albumName.Equals(Album.UnknownAlbumName, StringComparison.OrdinalIgnoreCase);
+
 
             // Fire both requests in parallel for faster resolution when nothing is found.
             // We prefer the strict result if it succeeds; otherwise use search.

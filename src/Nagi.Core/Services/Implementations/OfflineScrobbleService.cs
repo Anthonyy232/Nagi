@@ -87,7 +87,6 @@ public class OfflineScrobbleService : IOfflineScrobbleService, IDisposable
             var pendingScrobbles = await context.ListenHistory
                 .AsTracking()
                 .Where(lh => lh.IsEligibleForScrobbling && !lh.IsScrobbled)
-                .Include(lh => lh.Song).ThenInclude(s => s!.Artist)
                 .Include(lh => lh.Song).ThenInclude(s => s!.Album)
                 .OrderBy(lh => lh.ListenTimestampUtc)
                 .ToListAsync(cancellationToken).ConfigureAwait(false);

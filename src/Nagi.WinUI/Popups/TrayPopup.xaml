@@ -150,7 +150,7 @@
                                         TextTrimming="CharacterEllipsis" />
                                     <TextBlock
                                         Style="{ThemeResource CaptionTextBlockStyle}"
-                                        Text="{x:Bind Artist.Name}"
+                                        Text="{x:Bind ArtistName}"
                                         TextTrimming="CharacterEllipsis" />
                                 </StackPanel>
                             </DataTemplate>

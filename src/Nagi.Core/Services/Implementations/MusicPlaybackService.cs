@@ -286,8 +286,27 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         {
             FilePath = filePath,
             Title = metadata.Title,
-            Artist = new Artist { Name = metadata.Artist ?? "Unknown Artist" },
-            Album = new Album { Title = metadata.Album ?? "Unknown Album" },
+            ArtistName = Artist.GetDisplayName(metadata.Artists),
+            PrimaryArtistName = metadata.Artists.FirstOrDefault() ?? Artist.UnknownArtistName,
+
+            SongArtists = metadata.Artists.Select((a, i) => new SongArtist
+            {
+                Artist = new Artist { Name = a },
+                Order = i
+            }).ToList(),
+            Album = new Album
+            {
+                Title = metadata.Album ?? Album.UnknownAlbumName,
+
+                ArtistName = Artist.GetDisplayName(metadata.AlbumArtists.Any() ? metadata.AlbumArtists : metadata.Artists),
+                PrimaryArtistName = metadata.AlbumArtists.FirstOrDefault() ?? metadata.Artists.FirstOrDefault() ?? Artist.UnknownArtistName,
+
+                AlbumArtists = metadata.AlbumArtists.Select((aa, i) => new AlbumArtist
+                {
+                    Artist = new Artist { Name = aa },
+                    Order = i
+                }).ToList()
+            },
             Duration = metadata.Duration,
             AlbumArtUriFromTrack = metadata.CoverArtUri
         };
