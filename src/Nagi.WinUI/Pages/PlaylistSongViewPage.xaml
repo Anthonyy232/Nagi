@@ -300,7 +300,7 @@
                                    TextTrimming="CharacterEllipsis" />
 
                         <HyperlinkButton Grid.Column="2"
-                                         Content="{x:Bind Artist.Name}"
+                                         Content="{x:Bind ArtistName}"
                                          Command="{Binding DataContext.GoToArtistCommand, ElementName=pageRoot}"
                                          CommandParameter="{x:Bind}"
                                          Style="{StaticResource SongListHyperlinkButtonStyle}" />

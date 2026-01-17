@@ -269,7 +269,7 @@
                                    Text="{x:Bind Title}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
                         <HyperlinkButton Grid.Column="2"
                                          Command="{Binding DataContext.GoToArtistCommand, ElementName=pageRoot}"
-                                         CommandParameter="{x:Bind}" Content="{x:Bind Artist.Name}"
+                                         CommandParameter="{x:Bind}" Content="{x:Bind ArtistName}"
                                          Style="{StaticResource SongListHyperlinkButtonStyle}" />
                         <HyperlinkButton Grid.Column="3"
                                          Command="{Binding DataContext.GoToAlbumCommand, ElementName=pageRoot}"

@@ -291,17 +291,20 @@ public class LibraryServiceTests : IDisposable
         // Arrange: Create a complete data graph (Folder -> Song -> Album -> Artist) to test cascading cleanup.
         var folder = new Folder { Path = "C:\\Music\\Jazz", Name = "Jazz" };
         var artist = new Artist { Name = "Jazz Artist" };
-        var album = new Album { Title = "Jazz Album", Artist = artist };
+        var album = new Album { Title = "Jazz Album" };
+        album.AlbumArtists.Add(new AlbumArtist { Artist = artist, Order = 0 });
         var song = new Song
         {
             FilePath = "C:\\Music\\Jazz\\track1.mp3",
             Title = "Jazz Track",
             Folder = folder,
-            Artist = artist,
             Album = album,
             AlbumArtUriFromTrack = "C:\\cache\\albumart\\art1.jpg",
             LrcFilePath = "C:\\cache\\lrc\\lyrics1.lrc"
         };
+        song.SongArtists.Add(new SongArtist { Artist = artist, Order = 0 });
+        album.SyncDenormalizedFields();
+        song.SyncDenormalizedFields();
         await using (var context = _dbHelper.ContextFactory.CreateDbContext())
         {
             context.Songs.Add(song);
@@ -350,18 +353,21 @@ public class LibraryServiceTests : IDisposable
         var existingSongUnchanged = new Song
         {
             FilePath = "C:\\Music\\Scan\\unchanged.mp3", FileModifiedDate = new DateTime(2023, 1, 1),
-            FolderId = folder.Id, ArtistId = artist.Id
+            FolderId = folder.Id
         };
+        existingSongUnchanged.SongArtists.Add(new SongArtist { ArtistId = artist.Id, Order = 0 });
         var existingSongToUpdate = new Song
         {
             FilePath = "C:\\Music\\Scan\\updated.mp3", FileModifiedDate = new DateTime(2023, 1, 1),
-            FolderId = folder.Id, ArtistId = artist.Id
+            FolderId = folder.Id
         };
+        existingSongToUpdate.SongArtists.Add(new SongArtist { ArtistId = artist.Id, Order = 0 });
         var existingSongToDelete = new Song
         {
             FilePath = "C:\\Music\\Scan\\deleted.mp3", FileModifiedDate = new DateTime(2023, 1, 1),
-            FolderId = folder.Id, ArtistId = artist.Id
+            FolderId = folder.Id
         };
+        existingSongToDelete.SongArtists.Add(new SongArtist { ArtistId = artist.Id, Order = 0 });
         await using (var context = _dbHelper.ContextFactory.CreateDbContext())
         {
             context.Folders.Add(folder);
@@ -386,10 +392,10 @@ public class LibraryServiceTests : IDisposable
         // Arrange: Mock metadata extraction for the new and updated files.
         _metadataService.ExtractMetadataAsync("C:\\Music\\Scan\\updated.mp3", Arg.Any<string?>())
             .Returns(new SongFileMetadata
-                { FilePath = "C:\\Music\\Scan\\updated.mp3", Title = "Updated Song", Artist = "Artist" });
+                { FilePath = "C:\\Music\\Scan\\updated.mp3", Title = "Updated Song", Artists = new List<string> { "Artist" } });
         _metadataService.ExtractMetadataAsync("C:\\Music\\Scan\\new.mp3", Arg.Any<string?>())
             .Returns(new SongFileMetadata
-                { FilePath = "C:\\Music\\Scan\\new.mp3", Title = "New Song", Artist = "Artist" });
+                { FilePath = "C:\\Music\\Scan\\new.mp3", Title = "New Song", Artists = new List<string> { "Artist" } });
 
         // Act
         var result = await _libraryService.RescanFolderForMusicAsync(folder.Id);
@@ -655,9 +661,17 @@ public class LibraryServiceTests : IDisposable
         // Arrange: Create dependent entities and a playlist with one existing song.
         var artist = new Artist { Name = "Artist" };
         var folder = new Folder { Name = "Folder", Path = "C:\\" };
-        var song1 = new Song { Title = "Song 1", Artist = artist, Folder = folder, FilePath = "C:\\song1.mp3" };
-        var song2 = new Song { Title = "Song 2", Artist = artist, Folder = folder, FilePath = "C:\\song2.mp3" };
-        var song3 = new Song { Title = "Song 3", Artist = artist, Folder = folder, FilePath = "C:\\song3.mp3" };
+        var song1 = new Song { Title = "Song 1", Folder = folder, FilePath = "C:\\song1.mp3" };
+        song1.SongArtists.Add(new SongArtist { Artist = artist, Order = 0 });
+        var song2 = new Song { Title = "Song 2", Folder = folder, FilePath = "C:\\song2.mp3" };
+        song2.SongArtists.Add(new SongArtist { Artist = artist, Order = 0 });
+        var song3 = new Song { Title = "Song 3", Folder = folder, FilePath = "C:\\song3.mp3" };
+        song3.SongArtists.Add(new SongArtist { Artist = artist, Order = 0 });
+
+        song1.SyncDenormalizedFields();
+        song2.SyncDenormalizedFields();
+        song3.SyncDenormalizedFields();
+
         var playlist = new Playlist { Name = "Test Playlist" };
         playlist.PlaylistSongs.Add(new PlaylistSong { Song = song1 });
         await using (var context = _dbHelper.ContextFactory.CreateDbContext())
@@ -691,9 +705,17 @@ public class LibraryServiceTests : IDisposable
         // Arrange: Create a playlist with three songs.
         var artist = new Artist { Name = "Artist" };
         var folder = new Folder { Name = "Folder", Path = "C:\\" };
-        var song1 = new Song { Title = "Song 1", Artist = artist, Folder = folder, FilePath = "C:\\song1.mp3" };
-        var song2 = new Song { Title = "Song 2", Artist = artist, Folder = folder, FilePath = "C:\\song2.mp3" };
-        var song3 = new Song { Title = "Song 3", Artist = artist, Folder = folder, FilePath = "C:\\song3.mp3" };
+        var song1 = new Song { Title = "Song 1", Folder = folder, FilePath = "C:\\song1.mp3" };
+        song1.SongArtists.Add(new SongArtist { Artist = artist, Order = 0 });
+        var song2 = new Song { Title = "Song 2", Folder = folder, FilePath = "C:\\song2.mp3" };
+        song2.SongArtists.Add(new SongArtist { Artist = artist, Order = 0 });
+        var song3 = new Song { Title = "Song 3", Folder = folder, FilePath = "C:\\song3.mp3" };
+        song3.SongArtists.Add(new SongArtist { Artist = artist, Order = 0 });
+
+        song1.SyncDenormalizedFields();
+        song2.SyncDenormalizedFields();
+        song3.SyncDenormalizedFields();
+
         var playlist = new Playlist { Name = "Test Playlist" };
         playlist.PlaylistSongs.Add(new PlaylistSong { Song = song1 });
         playlist.PlaylistSongs.Add(new PlaylistSong { Song = song2 });
@@ -732,10 +754,15 @@ public class LibraryServiceTests : IDisposable
             context.Artists.Add(artist);
             context.Folders.Add(folder);
             for (var i = 1; i <= 25; i++)
-                context.Songs.Add(new Song
+            {
+                var s = new Song
                 {
-                    Title = $"Song {i:D2}", ArtistId = artist.Id, FolderId = folder.Id, FilePath = $"C:\\song{i:D2}.mp3"
-                });
+                    Title = $"Song {i:D2}", FolderId = folder.Id, FilePath = $"C:\\song{i:D2}.mp3"
+                };
+                s.SongArtists.Add(new SongArtist { ArtistId = artist.Id, Order = 0 });
+                s.SyncDenormalizedFields();
+                context.Songs.Add(s);
+            }
             await context.SaveChangesAsync();
         }
 
@@ -768,7 +795,10 @@ public class LibraryServiceTests : IDisposable
         var folder = new Folder { Name = "Folder", Path = "C:\\" };
         await using (var context = _dbHelper.ContextFactory.CreateDbContext())
         {
-            context.Songs.Add(new Song { Title = "A", Artist = artist, Folder = folder, FilePath = "C:\\song.mp3" });
+            var s = new Song { Title = "A", Folder = folder, FilePath = "C:\\song.mp3" };
+            s.SongArtists.Add(new SongArtist { Artist = artist, Order = 0 });
+            s.SyncDenormalizedFields();
+            context.Songs.Add(s);
             await context.SaveChangesAsync();
         }
 

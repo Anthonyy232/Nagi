@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Nagi.Core.Data;
 
@@ -10,9 +11,11 @@ using Nagi.Core.Data;
 namespace Nagi.Core.Data.Migrations
 {
     [DbContext(typeof(MusicDbContext))]
-    partial class MusicDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260115065116_AddMultiArtistAndAlbumArtist")]
+    partial class AddMultiArtistAndAlbumArtist
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.1");
@@ -38,18 +41,11 @@ namespace Nagi.Core.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("ArtistName")
-                        .IsRequired()
-                        .HasMaxLength(1000)
+                    b.Property<Guid>("ArtistId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("CoverArtUri")
                         .HasMaxLength(2000)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("PrimaryArtistName")
-                        .IsRequired()
-                        .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Title")
@@ -63,35 +59,16 @@ namespace Nagi.Core.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ArtistName");
-
-                    b.HasIndex("PrimaryArtistName");
+                    b.HasIndex("ArtistId");
 
                     b.HasIndex("Title");
 
                     b.HasIndex("Year");
 
+                    b.HasIndex("Title", "ArtistId")
+                        .IsUnique();
+
                     b.ToTable("Albums");
-                });
-
-            modelBuilder.Entity("Nagi.Core.Models.AlbumArtist", b =>
-                {
-                    b.Property<Guid>("AlbumId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("ArtistId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("Order")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("AlbumId", "ArtistId");
-
-                    b.HasIndex("ArtistId");
-
-                    b.HasIndex("AlbumId", "Order");
-
-                    b.ToTable("AlbumArtists");
                 });
 
             modelBuilder.Entity("Nagi.Core.Models.Artist", b =>
@@ -355,9 +332,7 @@ namespace Nagi.Core.Data.Migrations
                     b.Property<Guid?>("AlbumId")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("ArtistName")
-                        .IsRequired()
-                        .HasMaxLength(1000)
+                    b.Property<Guid?>("ArtistId")
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("Bitrate")
@@ -458,11 +433,6 @@ namespace Nagi.Core.Data.Migrations
                     b.Property<int>("PlayCount")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("PrimaryArtistName")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("TEXT");
-
                     b.Property<int?>("Rating")
                         .HasColumnType("INTEGER");
 
@@ -497,7 +467,7 @@ namespace Nagi.Core.Data.Migrations
 
                     b.HasIndex("AlbumId");
 
-                    b.HasIndex("ArtistName");
+                    b.HasIndex("ArtistId");
 
                     b.HasIndex("DateAddedToLibrary");
 
@@ -514,8 +484,6 @@ namespace Nagi.Core.Data.Migrations
 
                     b.HasIndex("PlayCount");
 
-                    b.HasIndex("PrimaryArtistName");
-
                     b.HasIndex("Title");
 
                     b.HasIndex("Year");
@@ -525,26 +493,6 @@ namespace Nagi.Core.Data.Migrations
                     b.HasIndex("AlbumId", "DiscNumber", "TrackNumber");
 
                     b.ToTable("Songs");
-                });
-
-            modelBuilder.Entity("Nagi.Core.Models.SongArtist", b =>
-                {
-                    b.Property<Guid>("SongId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("ArtistId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("Order")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("SongId", "ArtistId");
-
-                    b.HasIndex("ArtistId");
-
-                    b.HasIndex("SongId", "Order");
-
-                    b.ToTable("SongArtists");
                 });
 
             modelBuilder.Entity("GenreSong", b =>
@@ -562,21 +510,13 @@ namespace Nagi.Core.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Nagi.Core.Models.AlbumArtist", b =>
+            modelBuilder.Entity("Nagi.Core.Models.Album", b =>
                 {
-                    b.HasOne("Nagi.Core.Models.Album", "Album")
-                        .WithMany("AlbumArtists")
-                        .HasForeignKey("AlbumId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Nagi.Core.Models.Artist", "Artist")
-                        .WithMany("AlbumArtists")
+                        .WithMany("Albums")
                         .HasForeignKey("ArtistId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Album");
 
                     b.Navigation("Artist");
                 });
@@ -638,6 +578,10 @@ namespace Nagi.Core.Data.Migrations
                         .WithMany("Songs")
                         .HasForeignKey("AlbumId");
 
+                    b.HasOne("Nagi.Core.Models.Artist", "Artist")
+                        .WithMany("Songs")
+                        .HasForeignKey("ArtistId");
+
                     b.HasOne("Nagi.Core.Models.Folder", "Folder")
                         .WithMany("Songs")
                         .HasForeignKey("FolderId")
@@ -646,40 +590,21 @@ namespace Nagi.Core.Data.Migrations
 
                     b.Navigation("Album");
 
-                    b.Navigation("Folder");
-                });
-
-            modelBuilder.Entity("Nagi.Core.Models.SongArtist", b =>
-                {
-                    b.HasOne("Nagi.Core.Models.Artist", "Artist")
-                        .WithMany("SongArtists")
-                        .HasForeignKey("ArtistId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Nagi.Core.Models.Song", "Song")
-                        .WithMany("SongArtists")
-                        .HasForeignKey("SongId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Artist");
 
-                    b.Navigation("Song");
+                    b.Navigation("Folder");
                 });
 
             modelBuilder.Entity("Nagi.Core.Models.Album", b =>
                 {
-                    b.Navigation("AlbumArtists");
-
                     b.Navigation("Songs");
                 });
 
             modelBuilder.Entity("Nagi.Core.Models.Artist", b =>
                 {
-                    b.Navigation("AlbumArtists");
+                    b.Navigation("Albums");
 
-                    b.Navigation("SongArtists");
+                    b.Navigation("Songs");
                 });
 
             modelBuilder.Entity("Nagi.Core.Models.Folder", b =>
@@ -704,8 +629,6 @@ namespace Nagi.Core.Data.Migrations
                     b.Navigation("ListenHistory");
 
                     b.Navigation("PlaylistSongs");
-
-                    b.Navigation("SongArtists");
                 });
 #pragma warning restore 612, 618
         }

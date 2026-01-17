@@ -267,7 +267,7 @@
                             Grid.Column="2"
                             Command="{Binding DataContext.GoToArtistCommand, ElementName=pageRoot}"
                             CommandParameter="{x:Bind}"
-                            Content="{x:Bind Artist.Name}"
+                            Content="{x:Bind ArtistName}"
                             Style="{StaticResource SongListHyperlinkButtonStyle}" />
 
                         <HyperlinkButton

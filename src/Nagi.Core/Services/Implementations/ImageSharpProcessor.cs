@@ -153,7 +153,7 @@ public class ImageSharpProcessor : IImageProcessor
                 Mode = ResizeMode.Max // Preserves aspect ratio, fits within bounds
             }));
 
-            _logger.LogDebug("Resized album art from original to {Width}x{Height} for caching.",
+            _logger.LogTrace("Resized album art from original to {Width}x{Height} for caching.",
                 image.Width, image.Height);
         }
 

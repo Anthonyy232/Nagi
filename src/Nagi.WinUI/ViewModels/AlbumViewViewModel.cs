@@ -102,20 +102,28 @@ public partial class AlbumViewViewModel : SongListViewModelBase
             var albumTask = _libraryReader.GetAlbumByIdAsync(albumId);
             var sortOrderTask = _settingsService.GetSortOrderAsync<SongSortOrder>(SortOrderHelper.AlbumViewSortOrderKey);
             
-            await Task.WhenAll(albumTask, sortOrderTask).ConfigureAwait(false);
-            
-            var album = albumTask.Result;
+            // Wait for sort order first, as it is required for loading songs
+            await sortOrderTask.ConfigureAwait(false);
             CurrentSortOrder = sortOrderTask.Result;
+            
+            // Start loading songs in parallel with album metadata
+            var songsTask = RefreshOrSortSongsCommand.ExecuteAsync(null);
+            
+            await albumTask.ConfigureAwait(false);
+            var album = albumTask.Result;
 
             if (album != null)
             {
-                AlbumTitle = album.Title;
-                ArtistName = album.Artist?.Name ?? "Unknown Artist";
-                PageTitle = album.Title;
-                _albumYear = album.Year;
-                CoverArtUri = ImageUriHelper.GetUriWithCacheBuster(album.CoverArtUri);
+                _dispatcherService.TryEnqueue(() =>
+                {
+                    AlbumTitle = album.Title;
+                    ArtistName = album.ArtistName;
+                    PageTitle = album.Title;
+                    _albumYear = album.Year;
+                    CoverArtUri = ImageUriHelper.GetUriWithCacheBuster(album.CoverArtUri);
+                });
 
-                await RefreshOrSortSongsCommand.ExecuteAsync(null);
+                await songsTask.ConfigureAwait(false);
             }
             else
             {

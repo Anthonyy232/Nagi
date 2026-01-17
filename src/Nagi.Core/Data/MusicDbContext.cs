@@ -13,12 +13,20 @@ public class MusicDbContext : DbContext
     {
     }
 
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        base.OnConfiguring(optionsBuilder);
+        optionsBuilder.AddInterceptors(new Data.Interceptors.DenormalizationInterceptor());
+    }
+
     public DbSet<Song> Songs { get; set; } = null!;
     public DbSet<Album> Albums { get; set; } = null!;
     public DbSet<Artist> Artists { get; set; } = null!;
     public DbSet<Folder> Folders { get; set; } = null!;
     public DbSet<Playlist> Playlists { get; set; } = null!;
     public DbSet<PlaylistSong> PlaylistSongs { get; set; } = null!;
+    public DbSet<SongArtist> SongArtists { get; set; } = null!;
+    public DbSet<AlbumArtist> AlbumArtists { get; set; } = null!;
     public DbSet<Genre> Genres { get; set; } = null!;
     public DbSet<ListenHistory> ListenHistory { get; set; } = null!;
     public DbSet<SmartPlaylist> SmartPlaylists { get; set; } = null!;
@@ -39,9 +47,10 @@ public class MusicDbContext : DbContext
             entity.Property(s => s.DirectoryPath).UseCollation("NOCASE");
 
             entity.HasIndex(s => s.Title);
+            entity.HasIndex(s => s.ArtistName);
+            entity.HasIndex(s => s.PrimaryArtistName);
             entity.HasIndex(s => s.FilePath).IsUnique();
             entity.HasIndex(s => s.DirectoryPath);
-            entity.HasIndex(s => s.ArtistId);
             entity.HasIndex(s => s.AlbumId);
             entity.HasIndex(s => s.FolderId);
             entity.HasIndex(s => s.DateAddedToLibrary);
@@ -75,9 +84,9 @@ public class MusicDbContext : DbContext
         {
             entity.Property(a => a.Title).UseCollation("NOCASE");
             entity.HasIndex(a => a.Title);
-            entity.HasIndex(a => a.ArtistId);
+            entity.HasIndex(a => a.ArtistName);
+            entity.HasIndex(a => a.PrimaryArtistName);
             entity.HasIndex(a => a.Year);
-            entity.HasIndex(a => new { a.Title, a.ArtistId }).IsUnique();
         });
 
         // Configure the Artist entity.
@@ -158,6 +167,44 @@ public class MusicDbContext : DbContext
 
             // Index for efficient, ordered retrieval of rules in a smart playlist.
             entity.HasIndex(r => new { r.SmartPlaylistId, r.Order });
+        });
+
+        // Configure the SongArtist join entity for multi-artist support.
+        modelBuilder.Entity<SongArtist>(entity =>
+        {
+            entity.HasKey(sa => new { sa.SongId, sa.ArtistId });
+
+            entity.HasOne(sa => sa.Song)
+                .WithMany(s => s.SongArtists)
+                .HasForeignKey(sa => sa.SongId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(sa => sa.Artist)
+                .WithMany(a => a.SongArtists)
+                .HasForeignKey(sa => sa.ArtistId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(sa => new { sa.SongId, sa.Order });
+            entity.HasIndex(sa => sa.ArtistId);
+        });
+
+        // Configure the AlbumArtist join entity for multi-artist support.
+        modelBuilder.Entity<AlbumArtist>(entity =>
+        {
+            entity.HasKey(aa => new { aa.AlbumId, aa.ArtistId });
+
+            entity.HasOne(aa => aa.Album)
+                .WithMany(a => a.AlbumArtists)
+                .HasForeignKey(aa => aa.AlbumId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(aa => aa.Artist)
+                .WithMany(a => a.AlbumArtists)
+                .HasForeignKey(aa => aa.ArtistId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(aa => new { aa.AlbumId, aa.Order });
+            entity.HasIndex(aa => aa.ArtistId);
         });
     }
 

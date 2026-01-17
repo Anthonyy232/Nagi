@@ -15,8 +15,7 @@ namespace Nagi.Core.Services.Implementations;
 /// </summary>
 public class AtlMetadataService : IMetadataService
 {
-    private const string UnknownArtistName = "Unknown Artist";
-    private const string UnknownAlbumName = "Unknown Album";
+
 
     private readonly IFileSystemService _fileSystem;
     private readonly IImageProcessor _imageProcessor;
@@ -70,7 +69,8 @@ public class AtlMetadataService : IMetadataService
             using var lrcCts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
             try
             {
-                metadata.LrcFilePath = await GetLrcPathAsync(filePath, fileInfo.LastWriteTimeUtc, metadata.Artist, metadata.Album, metadata.Title, track)
+                metadata.LrcFilePath = await GetLrcPathAsync(filePath, fileInfo.LastWriteTimeUtc, metadata.Artists?.FirstOrDefault() ?? Artist.UnknownArtistName, metadata.Album, metadata.Title, track)
+
                     .WaitAsync(lrcCts.Token).ConfigureAwait(false);
             }
             catch (OperationCanceledException)
@@ -126,14 +126,20 @@ public class AtlMetadataService : IMetadataService
     /// </summary>
     private void PopulateMetadataFromTrack(SongFileMetadata metadata, Track track)
     {
-        var artist = SanitizeString(track.Artist) ?? UnknownArtistName;
-        var albumArtist = SanitizeString(track.AlbumArtist) ?? artist;
-        var album = SanitizeString(track.Album) ?? UnknownAlbumName;
+        var rawArtist = SanitizeString(track.Artist) ?? Artist.UnknownArtistName;
+        var rawAlbumArtist = SanitizeString(track.AlbumArtist) ?? rawArtist;
+
+
+        var artists = SplitArtists(rawArtist);
+        var albumArtists = SplitArtists(rawAlbumArtist);
+
+        var album = SanitizeString(track.Album) ?? Album.UnknownAlbumName;
+
 
         metadata.Title = SanitizeString(track.Title) ?? metadata.Title;
-        metadata.Artist = artist;
+        metadata.Artists = artists;
         metadata.Album = album;
-        metadata.AlbumArtist = albumArtist;
+        metadata.AlbumArtists = albumArtists;
         metadata.Duration = TimeSpan.FromSeconds(track.Duration);
         metadata.Year = track.Year > 0 ? track.Year : null;
         metadata.TrackNumber = track.TrackNumber > 0 ? track.TrackNumber : null;
@@ -196,6 +202,18 @@ public class AtlMetadataService : IMetadataService
             .FirstOrDefault(k => k.Equals("REPLAYGAIN_TRACK_PEAK", StringComparison.OrdinalIgnoreCase));
         if (peakKey != null && track.AdditionalFields.TryGetValue(peakKey, out var peakStr))
             metadata.ReplayGainTrackPeak = ParseReplayGainValue(peakStr);
+    }
+
+    private List<string> SplitArtists(string artistString)
+    {
+        if (string.IsNullOrWhiteSpace(artistString)) return [];
+        
+        return artistString
+            .Split(new[] { ';', '/', '\\' }, StringSplitOptions.RemoveEmptyEntries)
+            .Select(a => a.Trim())
+            .Where(a => !string.IsNullOrEmpty(a))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
     }
 
     /// <summary>

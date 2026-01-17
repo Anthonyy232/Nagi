@@ -7,6 +7,9 @@ namespace Nagi.Core.Models;
 /// </summary>
 public class Artist
 {
+    public const string UnknownArtistName = "Unknown Artist";
+    public const string ArtistSeparator = " & ";
+
     /// <summary>
     ///     The unique identifier for the artist.
     /// </summary>
@@ -18,7 +21,8 @@ public class Artist
     /// </summary>
     [Required]
     [MaxLength(500)]
-    public string Name { get; set; } = "Unknown Artist";
+    public string Name { get; set; } = UnknownArtistName;
+
 
     /// <summary>
     ///     A biography of the artist, typically fetched from an external service.
@@ -52,16 +56,26 @@ public class Artist
     public string? MusicBrainzId { get; set; }
 
     /// <summary>
-    ///     A collection of songs by this artist.
+    ///     A collection of song-artist associations for this artist.
     /// </summary>
-    public virtual ICollection<Song> Songs { get; set; } = new List<Song>();
+    public virtual ICollection<SongArtist> SongArtists { get; set; } = new List<SongArtist>();
 
     /// <summary>
-    ///     A collection of albums by this artist.
+    ///     A collection of album-artist associations for this artist.
     /// </summary>
-    public virtual ICollection<Album> Albums { get; set; } = new List<Album>();
+    public virtual ICollection<AlbumArtist> AlbumArtists { get; set; } = new List<AlbumArtist>();
+
+    /// <summary>
+    ///     Gets a display name for a list of artist names, joined by the standard separator.
+    /// </summary>
+    public static string GetDisplayName(IEnumerable<string?>? artistNames)
+    {
+        var names = artistNames?.Where(n => !string.IsNullOrWhiteSpace(n)).ToList();
+        return names == null || names.Count == 0 ? UnknownArtistName : string.Join(ArtistSeparator, names);
+    }
 
     public override string ToString()
+
     {
         return Name;
     }

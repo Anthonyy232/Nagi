@@ -481,5 +481,42 @@ public class LrcServiceTests
             Arg.Any<string?>(), Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>());
     }
 
+    /// <summary>
+    ///     Verifies that for a song with multiple artists, online providers are called
+    ///     using only the primary artist name.
+    /// </summary>
+    [Fact]
+    public async Task GetLyricsAsync_WithMultiArtistSong_CallsProvidersWithPrimaryArtist()
+    {
+        // Arrange
+        var song = new Song { Title = "Multi Artist Track", Duration = TimeSpan.FromMinutes(3) };
+        var artist1 = new Artist { Name = "Primary Artist" };
+        var artist2 = new Artist { Name = "Secondary Artist" };
+        song.SongArtists.Add(new SongArtist { Song = song, Artist = artist1, Order = 0 });
+        song.SongArtists.Add(new SongArtist { Song = song, Artist = artist2, Order = 1 });
+        song.SyncDenormalizedFields();
+
+        _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
+        _onlineLyricsService.GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(), 
+            Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>()).Returns("[00:01.00]Found");
+
+        // Act
+        await _lrcService.GetLyricsAsync(song);
+
+        // Assert
+        // Verify it was called with "Primary Artist", NOT "Primary Artist & Secondary Artist"
+        await _onlineLyricsService.Received(1).GetLyricsAsync(
+            Arg.Is("Multi Artist Track"),
+            Arg.Is("Primary Artist"),
+            Arg.Any<string?>(),
+            Arg.Any<TimeSpan>(),
+            Arg.Any<CancellationToken>());
+        
+        await _netEaseLyricsService.Received(1).SearchLyricsAsync(
+            Arg.Is("Multi Artist Track"),
+            Arg.Is("Primary Artist"),
+            Arg.Any<CancellationToken>());
+    }
+
     #endregion
 }

@@ -50,8 +50,7 @@ public class SmartPlaylistService : ISmartPlaylistService
             Title = s.Title,
             AlbumId = s.AlbumId,
             Album = s.Album,
-            ArtistId = s.ArtistId,
-            Artist = s.Artist,
+            // SongArtists = s.SongArtists, -- EXCLUDED for performance. Fetch full song for navigation.
             Composer = s.Composer,
             FolderId = s.FolderId,
             Folder = s.Folder,

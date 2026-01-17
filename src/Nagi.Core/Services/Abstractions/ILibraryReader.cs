@@ -34,6 +34,7 @@ public interface ILibraryReader
     Task<Artist?> GetArtistByNameAsync(string name);
     Task<IEnumerable<Artist>> GetAllArtistsAsync();
     Task<IEnumerable<Artist>> SearchArtistsAsync(string searchTerm);
+    Task<IEnumerable<Album>> GetTopAlbumsForArtistAsync(Guid artistId, int limit);
     Task<Album?> GetAlbumByIdAsync(Guid albumId);
     Task<IEnumerable<Album>> GetAllAlbumsAsync();
     Task<IEnumerable<Album>> SearchAlbumsAsync(string searchTerm);

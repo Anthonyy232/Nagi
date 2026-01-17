@@ -60,7 +60,7 @@ public class SmartPlaylistServiceTests : IDisposable
         var song1 = new Song
         {
             Title = "Song One",
-            Artist = artist,
+            SongArtists = new List<SongArtist> { new SongArtist { Artist = artist, Order = 0 } },
             Folder = folder,
             FilePath = "C:\\Music\\song1.mp3",
             PlayCount = 100,
@@ -71,7 +71,7 @@ public class SmartPlaylistServiceTests : IDisposable
         var song2 = new Song
         {
             Title = "Song Two",
-            Artist = artist,
+            SongArtists = new List<SongArtist> { new SongArtist { Artist = artist, Order = 0 } },
             Folder = folder,
             FilePath = "C:\\Music\\song2.mp3",
             PlayCount = 50,
@@ -82,13 +82,17 @@ public class SmartPlaylistServiceTests : IDisposable
         var song3 = new Song
         {
             Title = "Song Three",
-            Artist = artist,
+            SongArtists = new List<SongArtist> { new SongArtist { Artist = artist, Order = 0 } },
             Folder = folder,
             FilePath = "C:\\Music\\song3.mp3",
             PlayCount = 200,
             IsLoved = true
         };
         song3.Genres.Add(genreRock);
+
+        song1.SyncDenormalizedFields();
+        song2.SyncDenormalizedFields();
+        song3.SyncDenormalizedFields();
 
         context.Genres.AddRange(genreRock, genrePop);
         context.Songs.AddRange(song1, song2, song3);

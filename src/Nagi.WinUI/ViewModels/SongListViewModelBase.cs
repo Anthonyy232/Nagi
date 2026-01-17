@@ -501,22 +501,34 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase
         {
             AlbumId = targetSong.Album.Id,
             AlbumTitle = targetSong.Album.Title,
-            ArtistName = targetSong.Album.Artist?.Name ?? "Unknown Artist"
+            ArtistName = targetSong.Album.ArtistName
         };
         _navigationService.Navigate(typeof(AlbumViewPage), navParam);
     }
 
     [RelayCommand]
-    private void GoToArtist(Song? song)
+    private async Task GoToArtistAsync(Song? song)
     {
         var targetSong = song ?? SelectedSongs.FirstOrDefault();
-        if (targetSong?.ArtistId == null || targetSong.Artist == null) return;
-        _logger.LogDebug("Navigating to artist '{ArtistName}' ({ArtistId})", targetSong.Artist.Name,
-            targetSong.Artist.Id);
+        if (targetSong == null) return;
+
+        // Ensure we have artist details for navigation. In list views, SongArtists is excluded for performance.
+        if (targetSong.SongArtists == null || !targetSong.SongArtists.Any())
+        {
+            _logger.LogDebug("Fetching full song details for navigation to artist (SongId: {SongId})", targetSong.Id);
+            var fullSong = await _libraryReader.GetSongByIdAsync(targetSong.Id).ConfigureAwait(true);
+            if (fullSong != null) targetSong = fullSong;
+        }
+
+        var primaryArtist = targetSong?.SongArtists?.OrderBy(sa => sa.Order).FirstOrDefault()?.Artist;
+        if (primaryArtist == null) return;
+
+        _logger.LogDebug("Navigating to artist '{ArtistName}' ({ArtistId})", primaryArtist.Name,
+            primaryArtist.Id);
         var navParam = new ArtistViewNavigationParameter
         {
-            ArtistId = targetSong.Artist.Id,
-            ArtistName = targetSong.Artist.Name
+            ArtistId = primaryArtist.Id,
+            ArtistName = primaryArtist.Name
         };
         _navigationService.Navigate(typeof(ArtistViewPage), navParam);
     }
@@ -660,14 +672,14 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase
             SongSortOrder.TitleAsc => songs.OrderBy(s => s.Title, StringComparer.OrdinalIgnoreCase).ThenBy(s => s.Id),
             SongSortOrder.TitleDesc => songs.OrderByDescending(s => s.Title, StringComparer.OrdinalIgnoreCase).ThenByDescending(s => s.Id),
             SongSortOrder.YearAsc => songs.OrderBy(s => s.Year)
-                .ThenBy(s => s.Artist?.Name, StringComparer.OrdinalIgnoreCase)
+                .ThenBy(s => s.ArtistName, StringComparer.OrdinalIgnoreCase)
                 .ThenBy(s => s.Album?.Title, StringComparer.OrdinalIgnoreCase)
                 .ThenBy(s => s.DiscNumber ?? 0)
                 .ThenBy(s => s.TrackNumber)
                 .ThenBy(s => s.Title, StringComparer.OrdinalIgnoreCase)
                 .ThenBy(s => s.Id),
             SongSortOrder.YearDesc => songs.OrderByDescending(s => s.Year)
-                .ThenByDescending(s => s.Artist?.Name, StringComparer.OrdinalIgnoreCase)
+                .ThenByDescending(s => s.ArtistName, StringComparer.OrdinalIgnoreCase)
                 .ThenByDescending(s => s.Album?.Title, StringComparer.OrdinalIgnoreCase)
                 .ThenByDescending(s => s.DiscNumber ?? 0)
                 .ThenByDescending(s => s.TrackNumber)
@@ -683,13 +695,13 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase
                 .ThenByDescending(s => s.TrackNumber)
                 .ThenByDescending(s => s.Title, StringComparer.OrdinalIgnoreCase)
                 .ThenByDescending(s => s.Id),
-            SongSortOrder.ArtistAsc => songs.OrderBy(s => s.Artist?.Name, StringComparer.OrdinalIgnoreCase)
+            SongSortOrder.ArtistAsc => songs.OrderBy(s => s.ArtistName, StringComparer.OrdinalIgnoreCase)
                 .ThenBy(s => s.Album?.Title, StringComparer.OrdinalIgnoreCase)
                 .ThenBy(s => s.DiscNumber ?? 0)
                 .ThenBy(s => s.TrackNumber)
                 .ThenBy(s => s.Title, StringComparer.OrdinalIgnoreCase)
                 .ThenBy(s => s.Id),
-            SongSortOrder.ArtistDesc => songs.OrderByDescending(s => s.Artist?.Name, StringComparer.OrdinalIgnoreCase)
+            SongSortOrder.ArtistDesc => songs.OrderByDescending(s => s.ArtistName, StringComparer.OrdinalIgnoreCase)
                 .ThenByDescending(s => s.Album?.Title, StringComparer.OrdinalIgnoreCase)
                 .ThenByDescending(s => s.DiscNumber ?? 0)
                 .ThenByDescending(s => s.TrackNumber)
