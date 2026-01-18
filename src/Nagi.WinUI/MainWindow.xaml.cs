@@ -433,10 +433,11 @@ public sealed partial class MainWindow : Window
 /// </summary>
 public sealed class MiniPlayerWindow : Window
 {
-    // Constants for window appearance and behavior.
-    private const int InitialWindowSize = 350;
-    private const int MinWindowSize = 200;
-    private const int MaxWindowSize = 640;
+    // Constants for window appearance and behavior (in DIPs - device-independent pixels).
+    private const int InitialWindowSizeDips = 350;
+    private const int MinWindowSizeDips = 200;
+    private const int MaxWindowSizeDips = 640;
+    private const float BaseDpi = 96.0f;
     private static readonly string AppIconPath = System.IO.Path.Combine(AppContext.BaseDirectory, "Assets/AppLogo.ico");
 
     // Margins to position the window away from the screen edges.
@@ -446,6 +447,7 @@ public sealed class MiniPlayerWindow : Window
     private readonly AppWindow _appWindow;
     private readonly ILogger<MiniPlayerWindow> _logger;
     private readonly MiniPlayerView _view;
+    private readonly IWin32InteropService _win32InteropService;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="MiniPlayerWindow" /> class.
@@ -454,6 +456,7 @@ public sealed class MiniPlayerWindow : Window
     {
         var services = App.Services!;
         _logger = services.GetRequiredService<ILogger<MiniPlayerWindow>>();
+        _win32InteropService = services.GetRequiredService<IWin32InteropService>();
         _view = new MiniPlayerView(this);
         Content = _view;
         _appWindow = AppWindow;
@@ -481,8 +484,11 @@ public sealed class MiniPlayerWindow : Window
 
         _appWindow.Title = "Nagi";
         _appWindow.SetIcon(AppIconPath);
-        _appWindow.Resize(new SizeInt32(InitialWindowSize, InitialWindowSize));
-        PositionWindowInBottomRight(_appWindow);
+        
+        // Convert logical pixels to physical pixels for AppWindow.Resize()
+        var initialSize = (int)(InitialWindowSizeDips * GetDpiScale());
+        _appWindow.Resize(new SizeInt32(initialSize, initialSize));
+        PositionWindowInBottomRight(_appWindow, initialSize);
 
         if (_appWindow.Presenter is OverlappedPresenter presenter)
         {
@@ -501,7 +507,9 @@ public sealed class MiniPlayerWindow : Window
     /// <summary>
     ///     Positions the window in the bottom-right corner of the primary display's work area.
     /// </summary>
-    private void PositionWindowInBottomRight(AppWindow appWindow)
+    /// <param name="appWindow">The app window to position.</param>
+    /// <param name="windowSize">The physical size of the window in pixels.</param>
+    private void PositionWindowInBottomRight(AppWindow appWindow, int windowSize)
     {
         // Get the display area for the window, falling back to the primary display.
         var displayArea = DisplayArea.GetFromWindowId(appWindow.Id, DisplayAreaFallback.Primary);
@@ -513,8 +521,8 @@ public sealed class MiniPlayerWindow : Window
 
         // Use WorkArea to respect the user's taskbar position and avoid overlapping it.
         var workArea = displayArea.WorkArea;
-        var positionX = workArea.X + workArea.Width - InitialWindowSize - HorizontalScreenMargin;
-        var positionY = workArea.Y + workArea.Height - InitialWindowSize - VerticalScreenMargin;
+        var positionX = workArea.X + workArea.Width - windowSize - HorizontalScreenMargin;
+        var positionY = workArea.Y + workArea.Height - windowSize - VerticalScreenMargin;
         appWindow.Move(new PointInt32(positionX, positionY));
     }
 
@@ -536,15 +544,20 @@ public sealed class MiniPlayerWindow : Window
 
     /// <summary>
     ///     Enforces a square aspect ratio for the window during resizing,
-    ///     clamping the size between defined minimum and maximum values.
+    ///     clamping the size between defined minimum and maximum values (in physical pixels).
     /// </summary>
     private void MaintainSquareAspectRatio(AppWindow window)
     {
         var currentPosition = window.Position;
         var currentSize = window.Size;
 
+        // Convert logical pixel constraints to physical pixels
+        var dpiScale = GetDpiScale();
+        var minSize = (int)(MinWindowSizeDips * dpiScale);
+        var maxSize = (int)(MaxWindowSizeDips * dpiScale);
+
         var desiredSize = Math.Max(currentSize.Width, currentSize.Height);
-        var newSize = Math.Clamp(desiredSize, MinWindowSize, MaxWindowSize);
+        var newSize = Math.Clamp(desiredSize, minSize, maxSize);
         if (currentSize.Width == newSize && currentSize.Height == newSize) return;
 
         // To prevent the window from "jumping" during resize, calculate the new top-left
@@ -558,6 +571,25 @@ public sealed class MiniPlayerWindow : Window
         window.Changed -= OnAppWindowChanged;
         window.MoveAndResize(new RectInt32(newX, newY, newSize, newSize));
         window.Changed += OnAppWindowChanged;
+    }
+
+    /// <summary>
+    ///     Gets the DPI scale factor for this window.
+    ///     Calculates on-demand to handle multi-monitor scenarios where DPI may change.
+    /// </summary>
+    private float GetDpiScale()
+    {
+        try
+        {
+            var windowHandle = WindowNative.GetWindowHandle(this);
+            var dpi = _win32InteropService.GetDpiForWindow(windowHandle);
+            return dpi / BaseDpi;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to get DPI, using default scale of 1.0");
+            return 1.0f;
+        }
     }
 
     private void OnRestoreButtonClicked(object? sender, EventArgs e)
