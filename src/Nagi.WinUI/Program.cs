@@ -5,9 +5,10 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
+using Microsoft.Extensions.Logging;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
-using Microsoft.Windows.AppLifecycle;
+using Nagi.WinUI.Helpers;
 using WinRT;
 #if !MSIX_PACKAGE
 using Velopack;
@@ -16,14 +17,11 @@ using Velopack;
 namespace Nagi.WinUI;
 
 /// <summary>
-///     Application entry point with single-instance enforcement.
+///     Application entry point with single-instance enforcement using Mutex and Named Pipes.
 /// </summary>
 public static class Program
 {
-    private const string AppInstanceKey = "NagiMusicPlayerInstance-9A8B7C6D";
-    private const int MaxRetryAttempts = 3;
-    private const int RetryDelayMs = 100;
-    private const int RedirectionTimeoutMs = 5000;
+    private static SingleInstanceManager? _singleInstanceManager;
 
     [STAThread]
     private static int Main(string[] args)
@@ -42,10 +40,36 @@ public static class Program
                 Thread.Sleep(100);
         #endif
 
-        // Redirect secondary instances to primary
-        if (TryRedirectActivation()) return 0;
+        // Check for single instance
+        var logger = CreateBootstrapLogger();
+        _singleInstanceManager = new SingleInstanceManager(logger);
 
-        Debug.WriteLine("[Program] Primary instance starting.");
+        if (!_singleInstanceManager.TryAcquire())
+        {
+            // Another instance is running, send activation message and exit
+            logger?.LogInformation("Secondary instance detected, sending activation to primary");
+            var filePath = TryGetFilePathFromArgs(args);
+            
+            var sendTask = _singleInstanceManager.SendActivationAsync(filePath);
+            sendTask.Wait(TimeSpan.FromSeconds(5));
+
+            if (sendTask.Result)
+            {
+                logger?.LogInformation("Activation message sent successfully, exiting");
+            }
+            else
+            {
+                logger?.LogWarning("Failed to send activation message, exiting anyway");
+            }
+
+            _singleInstanceManager.Dispose();
+            return 0;
+        }
+
+        // Primary instance - subscribe to activation events
+        _singleInstanceManager.ActivationReceived += OnActivationReceived;
+
+        logger?.LogInformation("Primary instance starting");
 
         Application.Start(p =>
         {
@@ -55,214 +79,61 @@ public static class Program
             _ = new App();
         });
 
+        // Cleanup on exit
+        _singleInstanceManager.ActivationReceived -= OnActivationReceived;
+        _singleInstanceManager.Dispose();
+
         return 0;
     }
 
     /// <summary>
-    ///     Enforces single-instance by redirecting secondary launches to primary.
+    ///     Creates a minimal logger for bootstrapping before the full DI container is available.
     /// </summary>
-    /// <returns>True if redirected to existing instance; false if this becomes primary.</returns>
-    private static bool TryRedirectActivation()
-    {
-        AppInstance? mainInstance = null;
-
-        // Retry AppInstance operations for stability
-        for (var attempt = 0; attempt < MaxRetryAttempts; attempt++)
-            try
-            {
-                mainInstance = AppInstance.FindOrRegisterForKey(AppInstanceKey);
-                break;
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"[Program] Attempt {attempt + 1} failed to find/register app instance: {ex.Message}");
-                if (attempt == MaxRetryAttempts - 1)
-                {
-                    Debug.WriteLine("[Program] All attempts failed, continuing as primary instance.");
-                    return false;
-                }
-
-                Thread.Sleep(RetryDelayMs);
-            }
-
-        if (mainInstance == null)
-        {
-            Debug.WriteLine("[Program] Failed to get app instance, continuing as primary.");
-            return false;
-        }
-
-        if (mainInstance.IsCurrent)
-        {
-            mainInstance.Activated += OnActivated;
-            return false;
-        }
-
-        Debug.WriteLine("[Program] Secondary instance detected. Redirecting activation...");
-
-        // Verify primary instance is still running
-        if (!IsProcessAlive(mainInstance.ProcessId))
-        {
-            Debug.WriteLine("[Program] Main instance process is no longer running, becoming primary.");
-            return false;
-        }
-
-        try
-        {
-            var args = AppInstance.GetCurrent().GetActivatedEventArgs();
-            return RedirectActivationTo(args, mainInstance);
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine($"[Program] Failed to redirect activation: {ex.Message}");
-            return false;
-        }
-    }
-
-    /// <summary>
-    ///     Validates if process is still running.
-    /// </summary>
-    private static bool IsProcessAlive(uint processId)
+    private static ILogger<SingleInstanceManager>? CreateBootstrapLogger()
     {
         try
         {
-            using var process = Process.GetProcessById((int)processId);
-            return !process.HasExited;
+            // We can't use the full logging infrastructure yet, so return null
+            // The SingleInstanceManager will work without logging
+            return null;
         }
         catch
         {
-            return false;
+            return null;
         }
     }
 
     /// <summary>
-    ///     Handles activation from secondary instances.
-    ///     This method's responsibility is to pass the activation arguments
-    ///     to the running App instance for processing on the UI thread.
+    ///     Handles activation messages from secondary instances.
     /// </summary>
-    private static void OnActivated(object? sender, AppActivationArguments args)
+    private static void OnActivationReceived(string? filePath)
     {
-        var filePath = TryGetFilePathFromArgs(args);
-        Debug.WriteLine($"[Program] Primary instance activated. File path found: {filePath ?? "None"}");
-
         App.CurrentApp?.HandleExternalActivation(filePath);
     }
 
     /// <summary>
-    ///     Extracts file path from file association or command line activation.
+    ///     Extracts file path from command line arguments.
     /// </summary>
-    private static string? TryGetFilePathFromArgs(AppActivationArguments args)
+    private static string? TryGetFilePathFromArgs(string[] args)
     {
-        if (args.Kind == ExtendedActivationKind.File && args.Data is IFileActivatedEventArgs fileArgs)
-        {
-            if (fileArgs.Files is { Count: > 0 }) return fileArgs.Files[0].Path;
-        }
-        else if (args.Kind == ExtendedActivationKind.Launch && args.Data is ILaunchActivatedEventArgs launchArgs)
-        {
-            if (string.IsNullOrWhiteSpace(launchArgs.Arguments)) return null;
-            var argv = CommandLineToArgvW(launchArgs.Arguments, out var argc);
-            if (argv == IntPtr.Zero) return null;
+        if (args == null || args.Length == 0) return null;
 
-            try
-            {
-                if (argc > 0)
-                {
-                    // Extract last argument as potential file path
-                    var lastArgPtr = Marshal.ReadIntPtr(argv, (argc - 1) * IntPtr.Size);
-                    var potentialPath = Marshal.PtrToStringUni(lastArgPtr);
+        // The last argument is typically the file path
+        var potentialPath = args[^1];
 
-                    if (!string.IsNullOrEmpty(potentialPath) &&
-                        (File.Exists(potentialPath) || Directory.Exists(potentialPath)))
-                        return potentialPath;
-                }
-            }
-            finally
-            {
-                LocalFree(argv);
-            }
+        if (!string.IsNullOrEmpty(potentialPath) &&
+            (File.Exists(potentialPath) || Directory.Exists(potentialPath)))
+        {
+            return potentialPath;
         }
 
         return null;
     }
 
-    /// <summary>
-    ///     Redirects activation to primary instance with timeout protection.
-    /// </summary>
-    /// <returns>True if redirection succeeded; false if timeout or failure.</returns>
-    private static bool RedirectActivationTo(AppActivationArguments args, AppInstance keyInstance)
-    {
-        var redirectEventHandle = CreateEvent(IntPtr.Zero, true, false, null);
-        if (redirectEventHandle == IntPtr.Zero)
-        {
-            Debug.WriteLine("[Program] Failed to create event handle for redirection.");
-            return false;
-        }
-
-        var redirectionSucceeded = false;
-
-        // Perform redirection on background thread
-        _ = Task.Run(async () =>
-        {
-            try
-            {
-                await keyInstance.RedirectActivationToAsync(args);
-                redirectionSucceeded = true;
-                Debug.WriteLine("[Program] Activation redirection completed successfully.");
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"[Program] RedirectActivationToAsync failed: {ex.Message}");
-            }
-            finally
-            {
-                SetEvent(redirectEventHandle);
-            }
-        });
-
-        // Wait with message pump processing to prevent deadlocks
-        const uint CWMO_DEFAULT = 0;
-        var waitResult = CoWaitForMultipleObjects(
-            CWMO_DEFAULT,
-            RedirectionTimeoutMs,
-            1,
-            new[] { redirectEventHandle },
-            out _);
-
-        CloseHandle(redirectEventHandle);
-
-        // Handle timeout (WAIT_TIMEOUT = 0x00000102)
-        if (waitResult == 0x00000102)
-        {
-            Debug.WriteLine("[Program] Redirection timed out, becoming primary instance.");
-            return false;
-        }
-
-        return redirectionSucceeded;
-    }
-
     #region P/Invoke Declarations
-
-    [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
-    private static extern IntPtr CreateEvent(IntPtr lpEventAttributes, bool bManualReset, bool bInitialState,
-        string? lpName);
-
-    [DllImport("kernel32.dll")]
-    private static extern bool SetEvent(IntPtr hEvent);
-
-    [DllImport("kernel32.dll")]
-    private static extern bool CloseHandle(IntPtr hObject);
-
-    [DllImport("ole32.dll")]
-    private static extern uint CoWaitForMultipleObjects(uint dwFlags, uint dwMilliseconds, uint nHandles,
-        IntPtr[] pHandles, out uint dwIndex);
-
-    [DllImport("shell32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-    private static extern IntPtr CommandLineToArgvW(string lpCmdLine, out int pNumArgs);
 
     [DllImport("shell32.dll", SetLastError = true)]
     private static extern int SetCurrentProcessExplicitAppUserModelID([MarshalAs(UnmanagedType.LPWStr)] string AppID);
-
-    [DllImport("kernel32.dll")]
-    private static extern IntPtr LocalFree(IntPtr hMem);
 
     #endregion
 }
