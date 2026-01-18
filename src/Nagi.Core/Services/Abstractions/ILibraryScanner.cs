@@ -20,6 +20,9 @@ public interface ILibraryScanner
     Task<bool> RefreshAllFoldersAsync(IProgress<ScanProgress>? progress = null,
         CancellationToken cancellationToken = default);
 
+    Task<bool> ForceRescanMetadataAsync(IProgress<ScanProgress>? progress = null,
+        CancellationToken cancellationToken = default);
+
     Task<Artist?> GetArtistDetailsAsync(Guid artistId, bool allowOnlineFetch, CancellationToken cancellationToken = default);
     Task StartArtistMetadataBackgroundFetchAsync();
 }

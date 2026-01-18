@@ -32,6 +32,8 @@ public static class SettingsDefaults
     public const RepeatMode DefaultRepeatMode = RepeatMode.Off;
     public const bool CheckForUpdatesEnabled = true;
     public const bool LastFmScrobblingEnabled = false;
+
+    public const string DefaultArtistSplitCharacters = ""; // No splitting by default
     public const bool LastFmNowPlayingEnabled = false;
     public const bool RememberWindowSizeEnabled = false;
     public const bool RememberWindowPositionEnabled = false;

@@ -271,7 +271,7 @@
 
                 <controls:SettingsCard
                     Header="Volume Normalization (ReplayGain)"
-                    Description="Automatically adjust volume to the standard level (-18 LUFS) to avoid sudden loudness changes.">
+                    Description="Automatically adjust volume to the standard level (-14 LUFS) to avoid sudden loudness changes.">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE995;" />
                     </controls:SettingsCard.HeaderIcon>
@@ -607,6 +607,24 @@
                 </controls:SettingsCard>
 
                 <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="Data Management" />
+
+                <controls:SettingsCard
+                    Header="Artist Splitting"
+                    Description="Define characters used to split multiple artists (e.g. ';/'). Leave empty to disable.">
+                    <controls:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE713;" />
+                    </controls:SettingsCard.HeaderIcon>
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <TextBox
+                            Width="150"
+                            PlaceholderText="e.g. ;/\"
+                            Text="{x:Bind ViewModel.ArtistSplitCharacters, Mode=TwoWay}" />
+                        <Button
+                            Command="{x:Bind ViewModel.RescanMetadataCommand}"
+                            Content="Rescan Library"
+                            ToolTipService.ToolTip="Rescan library to apply splitting changes" />
+                    </StackPanel>
+                </controls:SettingsCard>
 
                 <controls:SettingsExpander
                     x:Name="MetadataSettingsExpander"

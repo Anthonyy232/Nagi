@@ -204,6 +204,23 @@ public interface ISettingsService
     Task<string?> GetLastFmAuthTokenAsync();
 
     /// <summary>
+    ///     Gets the characters used to split multiple artists in a single string.
+    /// </summary>
+    /// <returns>A string containing the split characters.</returns>
+    Task<string> GetArtistSplitCharactersAsync();
+
+    /// <summary>
+    ///     Sets the characters used to split multiple artists in a single string.
+    /// </summary>
+    /// <param name="characters">The characters to save.</param>
+    Task SetArtistSplitCharactersAsync(string characters);
+
+    /// <summary>
+    ///     Occurs when the artist split characters setting has changed.
+    /// </summary>
+    event Action? ArtistSplitCharactersChanged;
+
+    /// <summary>
     ///     Retrieves the last saved equalizer settings.
     /// </summary>
     /// <returns>The saved <see cref="EqualizerSettings" />, or null if none exist.</returns>

@@ -31,7 +31,6 @@ public sealed partial class ArtistViewPage : Page
     private bool _isUpdatingSelection;
     private ScrollViewer? _songsScrollViewer;
     private double _lastKnownAlbumsHeight;
-    private bool _isAlbumsSectionCollapsed;
 
     public ArtistViewPage()
     {
