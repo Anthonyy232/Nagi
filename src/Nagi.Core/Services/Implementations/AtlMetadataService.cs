@@ -13,22 +13,30 @@ namespace Nagi.Core.Services.Implementations;
 /// <summary>
 ///     Extracts music file metadata using the ATL.NET library.
 /// </summary>
-public class AtlMetadataService : IMetadataService
+public class AtlMetadataService : IMetadataService, IDisposable
 {
-
-
     private readonly IFileSystemService _fileSystem;
     private readonly IImageProcessor _imageProcessor;
     private readonly ILogger<AtlMetadataService> _logger;
     private readonly IPathConfiguration _pathConfig;
+    private readonly ISettingsService _settingsService;
+    
+    // Cache for artist split characters to avoid repeated async calls during batch scanning
+    private readonly object _splitCharactersLock = new();
+    private string? _cachedSplitCharacters;
+    private bool _disposed;
 
     public AtlMetadataService(IImageProcessor imageProcessor, IFileSystemService fileSystem,
-        IPathConfiguration pathConfig, ILogger<AtlMetadataService> logger)
+        IPathConfiguration pathConfig, ILogger<AtlMetadataService> logger, ISettingsService settingsService)
     {
         _imageProcessor = imageProcessor ?? throw new ArgumentNullException(nameof(imageProcessor));
         _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
         _pathConfig = pathConfig ?? throw new ArgumentNullException(nameof(pathConfig));
-        _logger = logger;
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
+        
+        // Subscribe to settings changes to invalidate cache
+        _settingsService.ArtistSplitCharactersChanged += OnArtistSplitCharactersChanged;
     }
 
     /// <inheritdoc />
@@ -63,7 +71,8 @@ public class AtlMetadataService : IMetadataService
                 return metadata;
             }
 
-            PopulateMetadataFromTrack(metadata, track);
+            var splitCharacters = await GetCachedSplitCharactersAsync().ConfigureAwait(false);
+            PopulateMetadataFromTrack(metadata, track, splitCharacters);
 
             // Get cached or extract new synchronized lyrics (after parsing track so we have artist/title).
             using var lrcCts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
@@ -124,14 +133,13 @@ public class AtlMetadataService : IMetadataService
     /// <summary>
     ///     Populates the metadata object from the ATL track, providing sane defaults for missing values.
     /// </summary>
-    private void PopulateMetadataFromTrack(SongFileMetadata metadata, Track track)
+    private void PopulateMetadataFromTrack(SongFileMetadata metadata, Track track, string splitCharacters)
     {
         var rawArtist = SanitizeString(track.Artist) ?? Artist.UnknownArtistName;
         var rawAlbumArtist = SanitizeString(track.AlbumArtist) ?? rawArtist;
 
-
-        var artists = SplitArtists(rawArtist);
-        var albumArtists = SplitArtists(rawAlbumArtist);
+        var artists = SplitArtists(rawArtist, splitCharacters);
+        var albumArtists = SplitArtists(rawAlbumArtist, splitCharacters);
 
         var album = SanitizeString(track.Album) ?? Album.UnknownAlbumName;
 
@@ -204,12 +212,18 @@ public class AtlMetadataService : IMetadataService
             metadata.ReplayGainTrackPeak = ParseReplayGainValue(peakStr);
     }
 
-    private List<string> SplitArtists(string artistString)
+    private List<string> SplitArtists(string artistString, string splitCharacters)
     {
         if (string.IsNullOrWhiteSpace(artistString)) return [];
         
+        // If no split characters are provided, return the whole string (trimmed)
+        if (string.IsNullOrEmpty(splitCharacters))
+        {
+            return new List<string> { artistString.Trim() };
+        }
+
         return artistString
-            .Split(new[] { ';', '/', '\\' }, StringSplitOptions.RemoveEmptyEntries)
+            .Split(splitCharacters.ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
             .Select(a => a.Trim())
             .Where(a => !string.IsNullOrEmpty(a))
             .Distinct(StringComparer.OrdinalIgnoreCase)
@@ -513,5 +527,54 @@ public class AtlMetadataService : IMetadataService
         }
 
         return null;
+    }
+
+    /// <summary>
+    ///     Gets the artist split characters from cache, or loads them if not cached.
+    ///     Thread-safe lazy initialization pattern.
+    /// </summary>
+    private async Task<string> GetCachedSplitCharactersAsync()
+    {
+        // Fast path: read from cache without locking if already initialized
+        string? cached;
+        lock (_splitCharactersLock)
+        {
+            cached = _cachedSplitCharacters;
+        }
+        
+        if (cached != null)
+            return cached;
+        
+        // Slow path: load from settings service
+        var splitCharacters = await _settingsService.GetArtistSplitCharactersAsync().ConfigureAwait(false);
+        
+        lock (_splitCharactersLock)
+        {
+            _cachedSplitCharacters = splitCharacters;
+        }
+        
+        return splitCharacters;
+    }
+
+    /// <summary>
+    ///     Invalidates the cached split characters when the setting changes.
+    /// </summary>
+    private void OnArtistSplitCharactersChanged()
+    {
+        lock (_splitCharactersLock)
+        {
+            _cachedSplitCharacters = null;
+        }
+        
+        _logger.LogDebug("Artist split characters cache invalidated due to settings change.");
+    }
+
+    public void Dispose()
+    {
+        if (_disposed) return;
+        _disposed = true;
+        
+        _settingsService.ArtistSplitCharactersChanged -= OnArtistSplitCharactersChanged;
+        GC.SuppressFinalize(this);
     }
 }

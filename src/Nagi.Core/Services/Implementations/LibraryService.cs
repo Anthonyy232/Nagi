@@ -442,6 +442,20 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     public async Task<bool> RescanFolderForMusicAsync(Guid folderId, IProgress<ScanProgress>? progress = null,
         CancellationToken cancellationToken = default)
     {
+        return await RescanFolderForMusicAsync(folderId, false, progress, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    ///     Rescans a specific folder for music files with optional force full scan.
+    /// </summary>
+    /// <param name="folderId">The unique identifier of the folder to rescan.</param>
+    /// <param name="forceFullScan">If true, re-reads metadata for all files regardless of modification time.</param>
+    /// <param name="progress">Optional progress reporter for scan status updates.</param>
+    /// <param name="cancellationToken">Optional cancellation token to cancel the scan.</param>
+    /// <returns>True if changes were made to the library; otherwise, false.</returns>
+    public async Task<bool> RescanFolderForMusicAsync(Guid folderId, bool forceFullScan, IProgress<ScanProgress>? progress = null,
+        CancellationToken cancellationToken = default)
+    {
         try
         {
             // Wait to acquire the semaphore. If the operation is cancelled while waiting, it will throw.
@@ -485,7 +499,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                     progress?.Report(new ScanProgress
                         { StatusText = $"Analyzing '{folder.Name}'...", IsIndeterminate = true });
                     var (filesToAdd, filesToUpdate, filesRemovedFromDisk) =
-                        await AnalyzeFolderChangesAsync(folderId, folder.Path, cancellationToken).ConfigureAwait(false);
+                        await AnalyzeFolderChangesAsync(folderId, folder.Path, forceFullScan, cancellationToken).ConfigureAwait(false);
 
                     if (filesToAdd.Any() || filesToUpdate.Any() || filesRemovedFromDisk.Any())
                         _logger.LogInformation("Changes detected: +{New} ~{Updated} -{Removed}",
@@ -731,6 +745,20 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     public async Task<bool> RefreshAllFoldersAsync(IProgress<ScanProgress>? progress = null,
         CancellationToken cancellationToken = default)
     {
+        return await RefreshAllFoldersAsync(false, progress, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public Task<bool> ForceRescanMetadataAsync(IProgress<ScanProgress>? progress = null,
+        CancellationToken cancellationToken = default)
+    {
+        return RefreshAllFoldersAsync(true, progress, cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async Task<bool> RefreshAllFoldersAsync(bool forceFullScan, IProgress<ScanProgress>? progress = null,
+        CancellationToken cancellationToken = default)
+    {
         try
         {
             var folders = (await GetRootFoldersAsync().ConfigureAwait(false)).ToList();
@@ -748,7 +776,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             var foldersProcessed = 0;
             var anyChangesMade = false;
 
-            // Set batch scanning flag to prevent per-folder ReplayGain triggers
+            // Set batch scanning mode to suppress individual ReplayGain runs
             _isBatchScanning = true;
 
             try
@@ -757,25 +785,31 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 
-                    var progressWrapper = new Progress<ScanProgress>(scanProgress =>
+                    var newProgress = new Progress<ScanProgress>(p =>
                     {
-                        var status = scanProgress.Percentage >= 100
-                            ? scanProgress.StatusText
-                            : $"({foldersProcessed + 1}/{totalFolders}) {scanProgress.StatusText}";
-
+                        // Scale progress: (foldersProcessed + p.Percentage/100) / totalFolders * 100
+                        var totalPercentage = (foldersProcessed + p.Percentage / 100.0) / totalFolders * 100.0;
+                        
+                        // Allow individual steps to show meaningful status text (e.g. "Reading songs...")
+                        // but prefix with folder info if useful
+                        var status = totalFolders > 1
+                            ? $"Scanning folder {foldersProcessed + 1} of {totalFolders}: {folder.Name} - {p.StatusText}"
+                            : p.StatusText;
+                            
                         progress?.Report(new ScanProgress
                         {
                             StatusText = status,
-                            Percentage = scanProgress.Percentage,
-                            IsIndeterminate = scanProgress.IsIndeterminate,
-                            CurrentFilePath = scanProgress.CurrentFilePath,
-                            TotalFiles = scanProgress.TotalFiles,
-                            NewSongsFound = scanProgress.NewSongsFound
+                            Percentage = totalPercentage,
+                            CurrentFilePath = p.CurrentFilePath,
+                            IsIndeterminate = p.IsIndeterminate,
+                            NewSongsFound = p.NewSongsFound, // This might be cumulative or not, UI handles it
+                            TotalFiles = p.TotalFiles 
                         });
                     });
 
-                    var result = await RescanFolderForMusicAsync(folder.Id, progressWrapper, cancellationToken).ConfigureAwait(false);
-                    if (result) anyChangesMade = true;
+                    var changes = await RescanFolderForMusicAsync(folder.Id, forceFullScan, newProgress, cancellationToken)
+                        .ConfigureAwait(false);
+                    if (changes) anyChangesMade = true;
 
                     foldersProcessed++;
                 }
@@ -2474,7 +2508,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     }
 
     private async Task<(List<string> filesToAdd, List<string> filesToUpdate, List<string> filesRemovedFromDisk)>
-        AnalyzeFolderChangesAsync(Guid folderId, string folderPath, CancellationToken cancellationToken)
+        AnalyzeFolderChangesAsync(Guid folderId, string folderPath, bool forceFullScan, CancellationToken cancellationToken)
     {
         await using var analysisContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var dbFileMap = (await analysisContext.Songs
@@ -2509,9 +2543,9 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         var filesToAdd = diskPaths.Except(dbPaths).ToList();
 
         var commonPaths = dbPaths.Intersect(diskPaths);
-        var filesToUpdate = commonPaths
-            .Where(path => dbFileMap[path] != diskFileMap[path])
-            .ToList();
+        var filesToUpdate = forceFullScan 
+            ? commonPaths.ToList() 
+            : commonPaths.Where(path => dbFileMap[path] != diskFileMap[path]).ToList();
 
         var filesRemovedFromDisk = dbPaths.Except(diskPaths).ToList();
 

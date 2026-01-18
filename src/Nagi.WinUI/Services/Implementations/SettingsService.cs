@@ -27,7 +27,7 @@ namespace Nagi.WinUI.Services.Implementations;
 ///     both packaged (MSIX) and unpackaged deployments, storing settings in the appropriate location.
 ///     For unpackaged deployments, file writes are debounced to improve performance.
 /// </summary>
-public class SettingsService : IUISettingsService
+public class SettingsService : IUISettingsService, IDisposable
 {
     private const string AppName = "Nagi";
     private const string AutoLaunchRegistryValueName = AppName;
@@ -68,6 +68,7 @@ public class SettingsService : IUISettingsService
     private const string AccentColorKey = "AccentColor";
     private const string LyricsServiceProvidersKey = "LyricsServiceProviders";
     private const string MetadataServiceProvidersKey = "MetadataServiceProviders";
+    private const string ArtistSplitCharactersKey = "ArtistSplitCharacters";
 
     private static readonly JsonSerializerOptions _serializerOptions = new() { WriteIndented = true };
     private readonly ICredentialLockerService _credentialLockerService;
@@ -81,6 +82,7 @@ public class SettingsService : IUISettingsService
     private readonly IDispatcherService _dispatcherService;
     private volatile bool _isInitialized;
     private int _isSaveQueued;
+    private bool _disposed;
 
     private readonly object _dictLock = new();
     private Dictionary<string, object?> _settings;
@@ -116,6 +118,7 @@ public class SettingsService : IUISettingsService
     public event Action<bool>? FetchOnlineMetadataEnabledChanged;
     public event Action<bool>? FetchOnlineLyricsEnabledChanged;
     public event Action<ServiceCategory>? ServiceProvidersChanged;
+    public event Action? ArtistSplitCharactersChanged;
 
     public bool IsTransparencyEffectsEnabled()
     {
@@ -170,7 +173,8 @@ public class SettingsService : IUISettingsService
             SetRememberWindowPositionEnabledAsync(SettingsDefaults.RememberWindowPositionEnabled),
             SetRememberPaneStateEnabledAsync(SettingsDefaults.RememberPaneStateEnabled),
             SetVolumeNormalizationEnabledAsync(SettingsDefaults.VolumeNormalizationEnabled),
-            SetAccentColorAsync(SettingsDefaults.AccentColor)
+            SetAccentColorAsync(SettingsDefaults.AccentColor),
+            SetArtistSplitCharactersAsync(SettingsDefaults.DefaultArtistSplitCharacters)
         };
 
         await Task.WhenAll(tasks).ConfigureAwait(false);
@@ -206,9 +210,15 @@ public class SettingsService : IUISettingsService
 
         // Perform an early check to avoid the overhead of a lock if we're already initialized.
         // This is particularly important for parallel calls during page load.
-        if (_isInitialized) return;
-
-        await _settingsFileLock.WaitAsync().ConfigureAwait(false);
+        if (_disposed) return;
+        try
+        {
+            await _settingsFileLock.WaitAsync().ConfigureAwait(false);
+        }
+        catch (ObjectDisposedException)
+        {
+            return;
+        }
         try
         {
             if (_isInitialized) return;
@@ -249,8 +259,16 @@ public class SettingsService : IUISettingsService
         if (Interlocked.CompareExchange(ref _isSaveQueued, 1, 0) == 0)
         {
             await Task.Delay(_saveDebounceDelay).ConfigureAwait(false);
-
-            await _settingsFileLock.WaitAsync().ConfigureAwait(false);
+ 
+            if (_disposed) return;
+            try
+            {
+                await _settingsFileLock.WaitAsync().ConfigureAwait(false);
+            }
+            catch (ObjectDisposedException)
+            {
+                return;
+            }
             try
             {
                 string json;
@@ -721,6 +739,21 @@ public class SettingsService : IUISettingsService
     {
         var providers = await GetServiceProvidersAsync(category).ConfigureAwait(false);
         return providers.Where(p => p.IsEnabled).OrderBy(p => p.Order).ToList();
+    }
+
+    public async Task<string> GetArtistSplitCharactersAsync()
+    {
+        await EnsureUnpackagedSettingsLoadedAsync().ConfigureAwait(false);
+        return GetValue(ArtistSplitCharactersKey, SettingsDefaults.DefaultArtistSplitCharacters);
+    }
+
+    public async Task SetArtistSplitCharactersAsync(string characters)
+    {
+        await EnsureUnpackagedSettingsLoadedAsync().ConfigureAwait(false);
+        var currentValue = GetValue(ArtistSplitCharactersKey, SettingsDefaults.DefaultArtistSplitCharacters);
+
+        await SetValueAsync(ArtistSplitCharactersKey, characters).ConfigureAwait(false);
+        if (currentValue != characters) ArtistSplitCharactersChanged?.Invoke();
     }
 
     private static List<ServiceProviderSetting> GetDefaultServiceProviders(ServiceCategory category)
@@ -1202,6 +1235,7 @@ public class SettingsService : IUISettingsService
 
     public async Task FlushAsync()
     {
+        if (_disposed) return;
         if (_isPackaged)
         {
             _logger.LogDebug("FlushAsync skipped: packaged app uses ApplicationData which handles persistence automatically.");
@@ -1240,6 +1274,16 @@ public class SettingsService : IUISettingsService
         {
             _settingsFileLock.Release();
         }
+    }
+
+    public void Dispose()
+    {
+        if (_disposed) return;
+        _disposed = true;
+
+        _uiSettings.AdvancedEffectsEnabledChanged -= OnAdvancedEffectsEnabledChanged;
+        _settingsFileLock.Dispose();
+        GC.SuppressFinalize(this);
     }
 
     #endregion

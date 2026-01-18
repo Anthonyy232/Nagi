@@ -107,6 +107,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     private readonly IUpdateService _updateService;
     private readonly IPlaylistExportService _playlistExportService;
     private readonly ILibraryReader _libraryReader;
+    private readonly ILibraryScanner _libraryScanner;
     private readonly PlayerViewModel _playerViewModel;
     private readonly IReplayGainService _replayGainService;
     private readonly IFFmpegService _ffmpegService;
@@ -123,6 +124,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     private CancellationTokenSource? _navigationItemSaveCts;
     private CancellationTokenSource? _lyricsProviderSaveCts;
     private CancellationTokenSource? _metadataProviderSaveCts;
+    private CancellationTokenSource? _artistSplitSaveCts;
 
     public SettingsViewModel(
         IUISettingsService settingsService,
@@ -135,6 +137,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         IMusicPlaybackService playbackService,
         IPlaylistExportService playlistExportService,
         ILibraryReader libraryReader,
+        ILibraryScanner libraryScanner,
         PlayerViewModel playerViewModel,
         IReplayGainService replayGainService,
         IFFmpegService ffmpegService,
@@ -151,7 +154,9 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         _playbackService = playbackService ?? throw new ArgumentNullException(nameof(playbackService));
         _playlistExportService = playlistExportService ?? throw new ArgumentNullException(nameof(playlistExportService));
         _libraryReader = libraryReader ?? throw new ArgumentNullException(nameof(libraryReader));
+        _libraryScanner = libraryScanner ?? throw new ArgumentNullException(nameof(libraryScanner));
         _playerViewModel = playerViewModel ?? throw new ArgumentNullException(nameof(playerViewModel));
+        _playerViewModel.PropertyChanged += OnPlayerViewModelPropertyChanged;
         _replayGainService = replayGainService ?? throw new ArgumentNullException(nameof(replayGainService));
         _ffmpegService = ffmpegService ?? throw new ArgumentNullException(nameof(ffmpegService));
         _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
@@ -219,6 +224,31 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     [ObservableProperty] public partial bool IsVolumeNormalizationEnabled { get; set; }
     [ObservableProperty] public partial float EqualizerPreamp { get; set; }
     [ObservableProperty] public partial Windows.UI.Color AccentColor { get; set; }
+    [ObservableProperty] public partial string ArtistSplitCharacters { get; set; } = string.Empty;
+
+    async partial void OnArtistSplitCharactersChanged(string value)
+    {
+        if (_isInitializing) return;
+
+        var oldCts = _artistSplitSaveCts;
+        _artistSplitSaveCts = new CancellationTokenSource();
+        var token = _artistSplitSaveCts.Token;
+        
+        // Cancel and dispose the old CTS after creating the new one
+        oldCts?.Cancel();
+        oldCts?.Dispose();
+
+        try
+        {
+            await Task.Delay(SettingsSaveDebounceMs, token);
+            await _settingsService.SetArtistSplitCharactersAsync(value);
+        }
+        catch (TaskCanceledException) { }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error saving artist split characters");
+        }
+    }
 
     [ObservableProperty] public partial EqualizerPreset? SelectedEqualizerPreset { get; set; }
     public List<EqualizerPreset> AvailableEqualizerPresets { get; private set; } = new();
@@ -286,8 +316,11 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         _navigationItemSaveCts?.Dispose();
         _lyricsProviderSaveCts?.Cancel();
         _lyricsProviderSaveCts?.Dispose();
+        _playerViewModel.PropertyChanged -= OnPlayerViewModelPropertyChanged;
         _metadataProviderSaveCts?.Cancel();
         _metadataProviderSaveCts?.Dispose();
+        _artistSplitSaveCts?.Cancel();
+        _artistSplitSaveCts?.Dispose();
 
         _loadLock.Dispose();
         _isDisposed = true;
@@ -341,6 +374,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             var nowPlayingTask = _settingsService.GetLastFmNowPlayingEnabledAsync();
 
             var accentColorTask = _settingsService.GetAccentColorAsync();
+            var artistSplitTask = _settingsService.GetArtistSplitCharactersAsync();
 
             var lyricsProvidersTask = _settingsService.GetServiceProvidersAsync(ServiceCategory.Lyrics);
             var metadataProvidersTask = _settingsService.GetServiceProvidersAsync(ServiceCategory.Metadata);
@@ -351,7 +385,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
                 hideToTrayTask, miniPlayerTask, trayFlyoutTask, onlineMetadataTask,
                 onlineLyricsTask, discordRpcTask, checkUpdatesTask, rememberWindowTask,
                 rememberPositionTask, rememberPaneTask, volumeNormTask, lastFmCredsTask, lastFmAuthTokenTask,
-                scrobblingTask, nowPlayingTask, accentColorTask, lyricsProvidersTask, metadataProvidersTask);
+                scrobblingTask, nowPlayingTask, accentColorTask, artistSplitTask, lyricsProvidersTask, metadataProvidersTask);
 
             foreach (var item in navItemsTask.Result)
             {
@@ -403,6 +437,8 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             {
                 AccentColor = App.SystemAccentColor;
             }
+
+            ArtistSplitCharacters = artistSplitTask.Result;
 
             LoadEqualizerState();
 
@@ -765,10 +801,13 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     /// </summary>
     private void QueuePlayerButtonSave()
     {
-        _playerButtonSaveCts?.Cancel();
-        _playerButtonSaveCts?.Dispose();
+        var oldCts = _playerButtonSaveCts;
         _playerButtonSaveCts = new CancellationTokenSource();
         var token = _playerButtonSaveCts.Token;
+        
+        // Cancel and dispose the old CTS after creating the new one
+        oldCts?.Cancel();
+        oldCts?.Dispose();
 
         // Capture snapshot on UI thread to avoid cross-thread access to ObservableCollection
         var snapshot = PlayerButtons.ToList();
@@ -784,7 +823,62 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             {
                 // Expected during rapid changes - debounce is working.
             }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to save player button settings");
+            }
         }, token);
+    }
+
+    private bool CanRescanMetadata() => !_playerViewModel.IsGlobalOperationInProgress;
+
+    private void OnPlayerViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(PlayerViewModel.IsGlobalOperationInProgress))
+        {
+            RescanMetadataCommand.NotifyCanExecuteChanged();
+        }
+    }
+
+    [RelayCommand(CanExecute = nameof(CanRescanMetadata))]
+    private async Task RescanMetadataAsync()
+    {
+        if (_playerViewModel.IsGlobalOperationInProgress) return;
+
+        var confirmed = await _uiService.ShowConfirmationDialogAsync(
+            "Rescan Metadata",
+            "This will re-scan all songs in your library to apply new metadata settings (like artist split characters). This may take a while depending on library size. Do you want to continue?",
+            "Rescan");
+
+        if (!confirmed) return;
+
+        _playerViewModel.IsGlobalOperationInProgress = true;
+        _playerViewModel.GlobalOperationStatusMessage = "Preparing library rescan...";
+        _playerViewModel.IsGlobalOperationIndeterminate = true;
+
+        try
+        {
+            var progress = new Progress<ScanProgress>(p =>
+            {
+                _playerViewModel.GlobalOperationStatusMessage = p.StatusText;
+                _playerViewModel.IsGlobalOperationIndeterminate = p.IsIndeterminate || p.Percentage < 5;
+                _playerViewModel.GlobalOperationProgressValue = p.Percentage;
+            });
+
+            await _libraryScanner.ForceRescanMetadataAsync(progress);
+            
+            await _uiService.ShowMessageDialogAsync("Rescan Complete", "Library metadata has been updated.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Metadata rescan failed.");
+            await _uiService.ShowMessageDialogAsync("Rescan Failed", "An error occurred while scanning. Check logs for details.");
+        }
+        finally
+        {
+            _playerViewModel.IsGlobalOperationInProgress = false;
+            _playerViewModel.IsGlobalOperationIndeterminate = false;
+        }
     }
 
     private async Task SavePlayerButtonSettingsAsync(List<PlayerButtonSetting> settings)

@@ -24,6 +24,7 @@ public class AtlMetadataServiceTests : IDisposable
     private readonly IFileSystemService _fileSystem;
     private readonly IImageProcessor _imageProcessor;
     private readonly ILogger<AtlMetadataService> _logger;
+    private readonly ISettingsService _settingsService;
     private readonly AtlMetadataService _metadataService;
     private readonly IPathConfiguration _pathConfig;
     private readonly string _tempDirectory;
@@ -38,6 +39,7 @@ public class AtlMetadataServiceTests : IDisposable
         _fileSystem = Substitute.For<IFileSystemService>();
         _pathConfig = Substitute.For<IPathConfiguration>();
         _logger = Substitute.For<ILogger<AtlMetadataService>>();
+        _settingsService = Substitute.For<ISettingsService>();
 
         _tempDirectory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
         Directory.CreateDirectory(_tempDirectory);
@@ -55,7 +57,7 @@ public class AtlMetadataServiceTests : IDisposable
         _fileSystem.GetExtension(Arg.Any<string>())
             .Returns(callInfo => Path.GetExtension(callInfo.ArgAt<string>(0)));
 
-        _metadataService = new AtlMetadataService(_imageProcessor, _fileSystem, _pathConfig, _logger);
+        _metadataService = new AtlMetadataService(_imageProcessor, _fileSystem, _pathConfig, _logger, _settingsService);
     }
 
     /// <summary>
@@ -523,6 +525,8 @@ public class AtlMetadataServiceTests : IDisposable
             track.Album = "Multi Album";
         });
 
+        _settingsService.GetArtistSplitCharactersAsync().Returns(";/\\");
+
         var expectedCacheFileName = FileNameHelper.GenerateLrcCacheFileName("Artist A", "Multi Album", "Multi Artist Song");
         var expectedCachePath = Path.Combine(LrcCachePath, expectedCacheFileName);
 
@@ -536,5 +540,27 @@ public class AtlMetadataServiceTests : IDisposable
         result.Artists.Should().HaveCount(4);
         result.Artists.Should().ContainInOrder("Artist A", "Artist B", "Artist C", "Artist D");
         result.LrcFilePath.Should().Be(expectedCachePath);
+    }
+
+    /// <summary>
+    ///     Verifies that when custom split characters are NOT configured (default), 
+    ///     no splitting occurs and the artist name remains intact.
+    /// </summary>
+    [Fact]
+    public async Task ExtractMetadataAsync_WithEmptySplitCharacters_DoesNotSplitArtists()
+    {
+        // Arrange
+        var filePath = CreateTestAudioFile("nosplit.mp3", track =>
+        {
+            track.Artist = "Artist A / Artist B";
+        });
+
+        _settingsService.GetArtistSplitCharactersAsync().Returns(""); // Default: no splitting
+
+        // Act
+        var result = await _metadataService.ExtractMetadataAsync(filePath);
+
+        // Assert
+        result.Artists.Should().ContainSingle().Which.Should().Be("Artist A / Artist B");
     }
 }

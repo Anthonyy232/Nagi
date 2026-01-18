@@ -13,7 +13,7 @@ namespace Nagi.Core.Services.Implementations;
 /// </summary>
 public class ReplayGainService : IReplayGainService
 {
-    private const double ReplayGain2Reference = -18.0; // ReplayGain 2.0 uses -18 LUFS reference
+    private const double ReplayGainReference = -14.0; // -14 LUFS: matches streaming platforms (Spotify, YouTube, Apple) and RG1
     private readonly IDbContextFactory<MusicDbContext> _contextFactory;
     private readonly ILogger<ReplayGainService> _logger;
     private readonly LoudnessMeter _loudnessMeter;
@@ -68,7 +68,7 @@ public class ReplayGainService : IReplayGainService
             }
 
             // Calculate ReplayGain: difference from reference level
-            var gainDb = ReplayGain2Reference - integratedLoudness;
+            var gainDb = ReplayGainReference - integratedLoudness;
 
             _logger.LogDebug("Calculated ReplayGain for {FilePath}: LUFS={Lufs:F2}, Gain={Gain:F2} dB, Peak={Peak:F6}",
                 filePath, integratedLoudness, gainDb, peak);
@@ -295,7 +295,7 @@ public class ReplayGainService : IReplayGainService
             if (double.IsNegativeInfinity(integratedLoudness)) 
                 return new InternalCalculationResult(null, null, session);
 
-            var gainDb = ReplayGain2Reference - integratedLoudness;
+            var gainDb = ReplayGainReference - integratedLoudness;
             return new InternalCalculationResult(gainDb, session.Peak, session);
         }
         catch (OperationCanceledException)
