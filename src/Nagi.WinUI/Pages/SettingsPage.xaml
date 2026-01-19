@@ -24,7 +24,8 @@
         
         <!-- Shared template for service provider items in Lyrics and Metadata source lists -->
         <DataTemplate x:Key="ServiceProviderItemTemplate" x:DataType="viewmodels:ServiceProviderSettingViewModel">
-            <Grid x:Name="ProviderItemRoot" Padding="12,8" VerticalAlignment="Center">
+            <Grid x:Name="ProviderItemRoot" Padding="12,8" VerticalAlignment="Center"
+                  ToolTipService.ToolTip="{x:Bind Description}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="28" />
                     <ColumnDefinition Width="32" />
@@ -674,7 +675,7 @@
                         IsOn="{x:Bind ViewModel.IsFetchOnlineLyricsEnabled, Mode=TwoWay}" />
 
                     <controls:SettingsExpander.Items>
-                        <controls:SettingsCard Header="Sources" Description="Drag to reorder lyrics sources.">
+                        <controls:SettingsCard Header="Sources" Description="Drag to reorder lyrics sources. Hover over each source for details.">
                             <controls:SettingsCard.HeaderIcon>
                                 <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE179;" />
                             </controls:SettingsCard.HeaderIcon>
