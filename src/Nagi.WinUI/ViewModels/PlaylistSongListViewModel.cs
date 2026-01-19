@@ -28,10 +28,11 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         IPlaylistService playlistService,
         IMusicPlaybackService playbackService,
         INavigationService navigationService,
+        IMusicNavigationService musicNavigationService,
         IDispatcherService dispatcherService,
         IUIService uiService,
         ILogger<PlaylistSongListViewModel> logger)
-        : base(libraryReader, playlistService, playbackService, navigationService, dispatcherService, uiService, logger)
+        : base(libraryReader, playlistService, playbackService, navigationService, musicNavigationService, dispatcherService, uiService, logger)
     {
         // Subscribe to the initial collection.
         if (Songs != null) Songs.CollectionChanged += OnSongsCollectionChanged;

@@ -44,6 +44,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     private readonly IDispatcherService _dispatcherService;
     private readonly ILogger<PlayerViewModel> _logger;
     private readonly INavigationService _navigationService;
+    private readonly IMusicNavigationService _musicNavigationService;
 
     private readonly IMusicPlaybackService _playbackService;
     private readonly IUISettingsService _settingsService;
@@ -63,11 +64,13 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     private CancellationTokenSource? _queueDisplayCts;
 
     public PlayerViewModel(IMusicPlaybackService playbackService, INavigationService navigationService,
+        IMusicNavigationService musicNavigationService,
         IDispatcherService dispatcherService, IUISettingsService settingsService, IWindowService windowService,
         ILibraryService libraryService, ILogger<PlayerViewModel> logger)
     {
         _playbackService = playbackService ?? throw new ArgumentNullException(nameof(playbackService));
         _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
+        _musicNavigationService = musicNavigationService ?? throw new ArgumentNullException(nameof(musicNavigationService));
         _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
         _windowService = windowService ?? throw new ArgumentNullException(nameof(windowService));
@@ -105,6 +108,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(GoToArtistCommand))]
+    [NotifyCanExecuteChangedFor(nameof(GoToAlbumCommand))]
     public partial Song? CurrentPlayingTrack { get; set; }
 
     [ObservableProperty]
@@ -299,39 +303,44 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
         return _playbackService.SeekAsync(TimeSpan.FromSeconds(position));
     }
 
-    [RelayCommand]
-    private async Task GoToArtistAsync(Song? song)
+    [RelayCommand(CanExecute = nameof(CanGoToArtist))]
+    public async Task GoToArtistAsync(object? parameter)
     {
-        var targetSong = song ?? CurrentPlayingTrack;
-        if (targetSong == null) return;
-
-        // Ensure we have artist details. In list views, SongArtists is excluded for performance.
-        if (targetSong.SongArtists == null || !targetSong.SongArtists.Any())
+        if (parameter == null)
         {
-            _logger.LogDebug("Fetching full song details for navigation to artist (SongId: {SongId})", targetSong.Id);
-            var fullSong = await _libraryService.GetSongByIdAsync(targetSong.Id).ConfigureAwait(true);
-            if (fullSong != null) targetSong = fullSong;
+            parameter = CurrentPlayingTrack;
         }
 
-        // TODO: Support multi-artist selection menu if targetSong.SongArtists.Count > 1
-        var primaryArtist = targetSong?.SongArtists?.OrderBy(sa => sa.Order).FirstOrDefault()?.Artist;
-
-        if (primaryArtist == null)
-        {
-            _logger.LogWarning("Cannot navigate to Artist page: artist information is missing for song {SongId}",
-                targetSong?.Id);
-            return;
-        }
-
-        var navParam = new ArtistViewNavigationParameter
-            { ArtistId = primaryArtist.Id, ArtistName = primaryArtist.Name };
-        _navigationService.Navigate(typeof(ArtistViewPage), navParam);
+        await _musicNavigationService.NavigateToArtistAsync(parameter);
     }
 
-    private bool CanGoToArtist(Song? song)
+    [RelayCommand(CanExecute = nameof(CanGoToAlbum))]
+    public async Task GoToAlbumAsync(object? parameter)
     {
-        var targetSong = song ?? CurrentPlayingTrack;
-        return targetSong != null; // Always allow if song exists; we can fetch details on demand.
+        if (parameter == null)
+        {
+            parameter = CurrentPlayingTrack;
+        }
+
+        await _musicNavigationService.NavigateToAlbumAsync(parameter);
+    }
+
+    private bool CanGoToArtist(object? parameter)
+    {
+        // If parameter is present, we can navigate.
+        if (parameter != null) return true;
+        
+        // Otherwise fallback to checking if we have a current track.
+        return CurrentPlayingTrack != null;
+    }
+
+    private bool CanGoToAlbum(object? parameter)
+    {
+        // If parameter is present, we can navigate.
+        if (parameter != null) return true;
+
+        // Otherwise fallback to checking if we have a current track.
+        return CurrentPlayingTrack != null;
     }
 
     [RelayCommand]

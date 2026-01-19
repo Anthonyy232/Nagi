@@ -11,6 +11,7 @@
     xmlns:imageEx="using:ImageEx"
     xmlns:models="using:Nagi.Core.Models"
     xmlns:uiModels="using:Nagi.WinUI.Models"
+    xmlns:uihelpers="using:Nagi.WinUI.Helpers"
     mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -111,8 +112,11 @@
                                                     TextTrimming="CharacterEllipsis" />
                                                 <TextBlock
                                                     Style="{ThemeResource CaptionTextBlockStyle}"
-                                                    Text="{x:Bind ArtistName}"
-                                                    TextTrimming="CharacterEllipsis" />
+                                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                    TextTrimming="CharacterEllipsis"
+                                                    uihelpers:MultiArtistHyperlinkHelper.ArtistName="{x:Bind ArtistName}"
+                                                    uihelpers:MultiArtistHyperlinkHelper.Song="{x:Bind}"
+                                                    uihelpers:MultiArtistHyperlinkHelper.Command="{Binding DataContext.GoToArtistCommand, ElementName=MainPageRoot}" />
                                             </StackPanel>
                                         </DataTemplate>
                                     </ListView.ItemTemplate>
@@ -338,34 +342,54 @@
                                         <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
-                                    <Border
-                                        x:Name="AlbumArtBorder"
+                                    <Button
                                         Grid.Column="0"
-                                        Width="56"
-                                        Height="56"
+                                        Padding="0"
                                         Margin="0,0,12,0"
-                                        CornerRadius="6"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        HorizontalContentAlignment="Stretch"
+                                        VerticalContentAlignment="Stretch"
+                                        Command="{x:Bind ViewModel.GoToAlbumCommand, Mode=OneWay}"
+                                        Style="{StaticResource DefaultButtonStyle}"
+                                        ToolTipService.ToolTip="Go to album"
                                         Visibility="{x:Bind ViewModel.IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
-                                        <imageEx:ImageEx
-                                            x:Name="AlbumArt"
-                                            IsCacheEnabled="True"
-                                            Source="{x:Bind ViewModel.AlbumArtUri, Mode=OneWay, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
-                                            Stretch="UniformToFill" />
-                                    </Border>
+                                        <Border
+                                            x:Name="AlbumArtBorder"
+                                            Width="56"
+                                            Height="56"
+                                            CornerRadius="6">
+                                            <imageEx:ImageEx
+                                                x:Name="AlbumArt"
+                                                IsCacheEnabled="True"
+                                                Source="{x:Bind ViewModel.AlbumArtUri, Mode=OneWay, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
+                                                Stretch="UniformToFill" />
+                                        </Border>
+                                    </Button>
                                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                        <Button
+                                            HorizontalAlignment="Left"
+                                            Padding="0"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            Command="{x:Bind ViewModel.GoToAlbumCommand, Mode=OneWay}"
+                                            Style="{StaticResource DefaultButtonStyle}"
+                                            ToolTipService.ToolTip="Go to album">
+                                            <TextBlock
+                                                x:Name="SongTitle"
+                                                Style="{ThemeResource BodyStrongTextBlockStyle}"
+                                                Text="{x:Bind ViewModel.SongTitle, Mode=OneWay}"
+                                                TextTrimming="CharacterEllipsis" />
+                                        </Button>
                                         <TextBlock
-                                            x:Name="SongTitle"
-                                            Style="{ThemeResource BodyStrongTextBlockStyle}"
-                                            Text="{x:Bind ViewModel.SongTitle, Mode=OneWay}"
-                                            TextTrimming="CharacterEllipsis" />
-                                        <HyperlinkButton
                                             x:Name="ArtistNameHyperlink"
                                             MaxHeight="0"
                                             Opacity="0"
-                                            Style="{StaticResource SongListHyperlinkButtonStyle}"
-                                            Content="{x:Bind ViewModel.ArtistName, Mode=OneWay}"
-                                            Command="{x:Bind ViewModel.GoToArtistCommand}"
-                                            CommandParameter="{x:Bind ViewModel.CurrentPlayingTrack, Mode=OneWay}"
+                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                            Style="{ThemeResource BodyTextBlockStyle}"
+                                            uihelpers:MultiArtistHyperlinkHelper.ArtistName="{x:Bind ViewModel.ArtistName, Mode=OneWay}"
+                                            uihelpers:MultiArtistHyperlinkHelper.Song="{x:Bind ViewModel.CurrentPlayingTrack, Mode=OneWay}"
+                                            uihelpers:MultiArtistHyperlinkHelper.Command="{Binding ViewModel.GoToArtistCommand, ElementName=MainPageRoot}"
                                             Visibility="{x:Bind ViewModel.CurrentPlayingTrack, Converter={StaticResource ObjectToVisibilityConverter}, Mode=OneWay}" />
                                     </StackPanel>
                                 </Grid>

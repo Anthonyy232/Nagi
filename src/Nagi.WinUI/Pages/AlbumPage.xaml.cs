@@ -174,7 +174,7 @@ public sealed partial class AlbumPage : Page
             _logger.LogDebug(
                 "User clicked on album '{AlbumTitle}' by '{ArtistName}' (Id: {AlbumId}). Navigating to detail view.",
                 clickedAlbum.Title, clickedAlbum.ArtistName, clickedAlbum.Id);
-            ViewModel.NavigateToAlbumDetail(clickedAlbum);
+            _ = ViewModel.NavigateToAlbumDetailAsync(clickedAlbum);
         }
     }
 }

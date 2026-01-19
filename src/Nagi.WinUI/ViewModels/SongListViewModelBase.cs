@@ -14,6 +14,7 @@ using Nagi.Core.Services.Data;
 using Nagi.WinUI.Navigation;
 using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
+using Nagi.WinUI.Helpers;
 
 namespace Nagi.WinUI.ViewModels;
 
@@ -31,6 +32,7 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase
     protected readonly IPlaylistService _playlistService;
     protected readonly ReaderWriterLockSlim _stateLock = new(LockRecursionPolicy.SupportsRecursion);
     private readonly IUIService _uiService;
+    protected readonly IMusicNavigationService _musicNavigationService;
 
     protected int _currentPage;
 
@@ -52,6 +54,7 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase
         IPlaylistService playlistService,
         IMusicPlaybackService playbackService,
         INavigationService navigationService,
+        IMusicNavigationService musicNavigationService,
         IDispatcherService dispatcherService,
         IUIService uiService,
         ILogger logger)
@@ -61,12 +64,17 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase
         _playlistService = playlistService ?? throw new ArgumentNullException(nameof(playlistService));
         _playbackService = playbackService ?? throw new ArgumentNullException(nameof(playbackService));
         _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
+        _musicNavigationService = musicNavigationService ?? throw new ArgumentNullException(nameof(musicNavigationService));
         _uiService = uiService ?? throw new ArgumentNullException(nameof(uiService));
 
         UpdateSortOrderButtonText(CurrentSortOrder);
     }
 
-    [ObservableProperty] public partial ObservableCollection<Song> Songs { get; set; } = new();
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(FirstSong))]
+    public partial ObservableCollection<Song> Songs { get; set; } = new();
+
+    public Song? FirstSong => Songs?.FirstOrDefault();
 
     partial void OnSongsChanged(ObservableCollection<Song> oldValue, ObservableCollection<Song> newValue)
     {
@@ -491,47 +499,24 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase
     }
 
     [RelayCommand]
-    private void GoToAlbum(Song? song)
+    private async Task GoToAlbumAsync(object? parameter)
     {
-        var targetSong = song ?? SelectedSongs.FirstOrDefault();
-        if (targetSong?.AlbumId == null || targetSong.Album == null) return;
-        _logger.LogDebug("Navigating to album '{AlbumTitle}' ({AlbumId})", targetSong.Album.Title,
-            targetSong.Album.Id);
-        var navParam = new AlbumViewNavigationParameter
-        {
-            AlbumId = targetSong.Album.Id,
-            AlbumTitle = targetSong.Album.Title,
-            ArtistName = targetSong.Album.ArtistName
-        };
-        _navigationService.Navigate(typeof(AlbumViewPage), navParam);
+        await _musicNavigationService.NavigateToAlbumAsync(parameter);
     }
 
     [RelayCommand]
-    private async Task GoToArtistAsync(Song? song)
+    public async Task GoToArtistAsync(object? parameter)
     {
-        var targetSong = song ?? SelectedSongs.FirstOrDefault();
-        if (targetSong == null) return;
-
-        // Ensure we have artist details for navigation. In list views, SongArtists is excluded for performance.
-        if (targetSong.SongArtists == null || !targetSong.SongArtists.Any())
+        // For the base's "Play All/Selected" context, if no parameter is provided, we use the first selected song.
+        if (parameter == null && SelectedSongs.Any())
         {
-            _logger.LogDebug("Fetching full song details for navigation to artist (SongId: {SongId})", targetSong.Id);
-            var fullSong = await _libraryReader.GetSongByIdAsync(targetSong.Id).ConfigureAwait(true);
-            if (fullSong != null) targetSong = fullSong;
+            parameter = SelectedSongs.First();
         }
 
-        var primaryArtist = targetSong?.SongArtists?.OrderBy(sa => sa.Order).FirstOrDefault()?.Artist;
-        if (primaryArtist == null) return;
-
-        _logger.LogDebug("Navigating to artist '{ArtistName}' ({ArtistId})", primaryArtist.Name,
-            primaryArtist.Id);
-        var navParam = new ArtistViewNavigationParameter
-        {
-            ArtistId = primaryArtist.Id,
-            ArtistName = primaryArtist.Name
-        };
-        _navigationService.Navigate(typeof(ArtistViewPage), navParam);
+        await _musicNavigationService.NavigateToArtistAsync(parameter);
     }
+
+
 
     protected bool CanExecuteLoadCommands()
     {

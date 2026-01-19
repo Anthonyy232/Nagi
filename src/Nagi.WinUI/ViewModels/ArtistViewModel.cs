@@ -51,6 +51,7 @@ public partial class ArtistViewModel : SearchableViewModelBase, IDisposable
     private readonly IMusicPlaybackService _musicPlaybackService;
     private readonly INavigationService _navigationService;
     private readonly IUISettingsService _settingsService;
+    private readonly IMusicNavigationService _musicNavigationService;
     private int _currentPage = 1;
     private bool _isFullyLoaded;
     private bool _hasSortOrderLoaded;
@@ -61,6 +62,7 @@ public partial class ArtistViewModel : SearchableViewModelBase, IDisposable
         IMusicPlaybackService musicPlaybackService,
         IDispatcherService dispatcherService,
         INavigationService navigationService,
+        IMusicNavigationService musicNavigationService,
         ILogger<ArtistViewModel> logger)
         : base(dispatcherService, logger)
     {
@@ -68,6 +70,7 @@ public partial class ArtistViewModel : SearchableViewModelBase, IDisposable
         _settingsService = settingsService;
         _musicPlaybackService = musicPlaybackService;
         _navigationService = navigationService;
+        _musicNavigationService = musicNavigationService;
 
         // Store the handler in a field so we can reliably unsubscribe from it later.
         _collectionChangedHandler = (s, e) => OnPropertyChanged(nameof(HasArtists));
@@ -115,16 +118,9 @@ public partial class ArtistViewModel : SearchableViewModelBase, IDisposable
     ///     Navigates to the detailed view for the selected artist.
     /// </summary>
     [RelayCommand]
-    public void NavigateToArtistDetail(ArtistViewModelItem? artist)
+    public async Task NavigateToArtistDetailAsync(object? parameter)
     {
-        if (artist is null) return;
-
-        var navParam = new ArtistViewNavigationParameter
-        {
-            ArtistId = artist.Id,
-            ArtistName = artist.Name
-        };
-        _navigationService.Navigate(typeof(ArtistViewPage), navParam);
+        await _musicNavigationService.NavigateToArtistAsync(parameter);
     }
 
     /// <summary>

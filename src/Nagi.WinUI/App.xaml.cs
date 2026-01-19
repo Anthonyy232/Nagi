@@ -532,6 +532,7 @@ public partial class App : Application
             new ApplicationLifecycle(appInstance, sp, sp.GetRequiredService<ILogger<ApplicationLifecycle>>()));
         services.AddSingleton<IAppInfoService, AppInfoService>();
         services.AddSingleton<INavigationService, NavigationService>();
+        services.AddSingleton<IMusicNavigationService, MusicNavigationService>();
         services.AddSingleton<ITrayPopupService, TrayPopupService>();
         services.AddSingleton<IAudioPlayer>(provider =>
             new LibVlcAudioPlayerService(provider.GetRequiredService<IDispatcherService>(),
