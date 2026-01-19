@@ -181,7 +181,7 @@ public sealed partial class ArtistPage : Page
             _logger.LogDebug(
                 "User clicked on artist '{ArtistName}' (Id: {ArtistId}). Navigating to detail view.",
                 clickedArtist.Name, clickedArtist.Id);
-            ViewModel.NavigateToArtistDetail(clickedArtist);
+            _ = ViewModel.NavigateToArtistDetailAsync(clickedArtist);
         }
     }
 

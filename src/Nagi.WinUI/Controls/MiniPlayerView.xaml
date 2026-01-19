@@ -9,6 +9,7 @@
     xmlns:media="using:CommunityToolkit.WinUI.Media"
     xmlns:models="using:Nagi.Core.Models"
     xmlns:viewmodels="using:Nagi.WinUI.ViewModels"
+    xmlns:uihelpers="using:Nagi.WinUI.Helpers"
     d:DataContext="{d:DesignInstance Type=viewmodels:PlayerViewModel, IsDesignTimeCreatable=True}"
     mc:Ignorable="d">
 
@@ -70,24 +71,34 @@
                         Margin="44,0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        IsHitTestVisible="False"
                         Spacing="2"
                         Visibility="{x:Bind ViewModel.IsQueueViewVisible, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-                        <TextBlock
+                        <Button
                             HorizontalAlignment="Center"
-                            Foreground="White"
-                            Style="{ThemeResource BodyStrongTextBlockStyle}"
-                            Text="{x:Bind ViewModel.SongTitle, Mode=OneWay, FallbackValue='Song Title'}"
-                            TextAlignment="Center"
-                            TextTrimming="CharacterEllipsis" />
+                            Padding="0"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Command="{x:Bind ViewModel.GoToAlbumCommand, Mode=OneWay}"
+                            Style="{StaticResource DefaultButtonStyle}"
+                            ToolTipService.ToolTip="Go to album">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                Foreground="White"
+                                Style="{ThemeResource BodyStrongTextBlockStyle}"
+                                Text="{x:Bind ViewModel.SongTitle, Mode=OneWay, FallbackValue='Song Title'}"
+                                TextAlignment="Center"
+                                TextTrimming="CharacterEllipsis" />
+                        </Button>
                         <TextBlock
                             HorizontalAlignment="Center"
                             FontSize="12"
                             Foreground="#B0FFFFFF"
                             Style="{ThemeResource BodyTextBlockStyle}"
-                            Text="{x:Bind ViewModel.ArtistName, Mode=OneWay, FallbackValue='Artist Name'}"
                             TextAlignment="Center"
-                            TextTrimming="CharacterEllipsis" />
+                            TextTrimming="CharacterEllipsis"
+                            uihelpers:MultiArtistHyperlinkHelper.ArtistName="{x:Bind ViewModel.ArtistName, Mode=OneWay}"
+                            uihelpers:MultiArtistHyperlinkHelper.Song="{x:Bind ViewModel.CurrentPlayingTrack, Mode=OneWay}"
+                            uihelpers:MultiArtistHyperlinkHelper.Command="{Binding ViewModel.GoToArtistCommand, ElementName=HoverDetector}" />
                     </StackPanel>
 
                     <TextBlock
@@ -187,10 +198,11 @@
                                                TextTrimming="CharacterEllipsis" />
                                     <TextBlock
                                         FontSize="11"
-                                        Foreground="#B0FFFFFF"
                                         Style="{ThemeResource CaptionTextBlockStyle}"
-                                        Text="{x:Bind ArtistName}"
-                                        TextTrimming="CharacterEllipsis" />
+                                        TextTrimming="CharacterEllipsis"
+                                        uihelpers:MultiArtistHyperlinkHelper.ArtistName="{x:Bind ArtistName}"
+                                        uihelpers:MultiArtistHyperlinkHelper.Song="{x:Bind}"
+                                        uihelpers:MultiArtistHyperlinkHelper.Command="{Binding ViewModel.GoToArtistCommand, ElementName=HoverDetector}" />
                                 </StackPanel>
                             </DataTemplate>
                         </ListView.ItemTemplate>

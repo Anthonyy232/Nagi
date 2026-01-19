@@ -8,6 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:Nagi.WinUI.ViewModels"
     xmlns:helpers="using:Nagi.Core.Helpers"
+    xmlns:uihelpers="using:Nagi.WinUI.Helpers"
     x:Name="AlbumPageRoot"
     Background="Transparent"
     mc:Ignorable="d">
@@ -236,8 +237,10 @@
                                 Margin="0,4,0,0"
                                 HorizontalAlignment="Center"
                                 Opacity="0.7"
-                                Text="{x:Bind ArtistName, Mode=OneWay}"
-                                TextTrimming="CharacterEllipsis" />
+                                Style="{ThemeResource CaptionTextBlockStyle}"
+                                TextTrimming="CharacterEllipsis"
+                                uihelpers:MultiArtistHyperlinkHelper.ArtistName="{x:Bind ArtistName, Mode=OneWay}"
+                                uihelpers:MultiArtistHyperlinkHelper.Command="{Binding ViewModel.GoToArtistCommand, ElementName=AlbumPageRoot}" />
                         </Grid>
                     </DataTemplate>
                 </GridView.ItemTemplate>

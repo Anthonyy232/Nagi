@@ -57,11 +57,12 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         ILibraryScanner libraryScanner,
         IMusicPlaybackService playbackService,
         INavigationService navigationService,
+        IMusicNavigationService musicNavigationService,
         IUISettingsService settingsService,
         IDispatcherService dispatcherService,
         IUIService uiService,
         ILogger<ArtistViewViewModel> logger)
-        : base(libraryReader, playlistService, playbackService, navigationService, dispatcherService, uiService, logger)
+        : base(libraryReader, playlistService, playbackService, navigationService, musicNavigationService, dispatcherService, uiService, logger)
     {
         _settingsService = settingsService;
         _libraryScanner = libraryScanner;
@@ -216,21 +217,9 @@ public partial class ArtistViewViewModel : SongListViewModelBase
     }
 
     [RelayCommand(CanExecute = nameof(CanExecuteLoadCommands))]
-    private void ViewAlbum(Guid albumId)
+    private async Task ViewAlbumAsync(object? parameter)
     {
-        if (albumId == Guid.Empty) return;
-
-        var album = Albums.FirstOrDefault(a => a.Id == albumId);
-        if (album == null)
-        {
-            _logger.LogWarning("Attempted to navigate to non-existent album ID {AlbumId}", albumId);
-            return;
-        }
-
-        _logger.LogDebug("Navigating to album '{AlbumName}' ({AlbumId})", album.Name, album.Id);
-        _navigationService.Navigate(
-            typeof(AlbumViewPage),
-            new AlbumViewNavigationParameter { AlbumId = album.Id, AlbumTitle = album.Name, ArtistName = ArtistName });
+        await _musicNavigationService.NavigateToAlbumAsync(parameter);
     }
 
     /// <summary>

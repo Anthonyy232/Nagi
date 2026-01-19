@@ -45,11 +45,12 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         IPlaylistService playlistService,
         IMusicPlaybackService playbackService,
         INavigationService navigationService,
+        IMusicNavigationService musicNavigationService,
         IDispatcherService dispatcherService,
         IUISettingsService settingsService,
         IUIService uiService,
         ILogger<FolderSongListViewModel> logger)
-        : base(libraryReader, playlistService, playbackService, navigationService, dispatcherService, uiService, logger)
+        : base(libraryReader, playlistService, playbackService, navigationService, musicNavigationService, dispatcherService, uiService, logger)
     {
         _settingsService = settingsService;
     }

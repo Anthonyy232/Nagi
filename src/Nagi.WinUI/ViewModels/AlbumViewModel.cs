@@ -55,17 +55,20 @@ public partial class AlbumViewModel : SearchableViewModelBase, IDisposable
     private readonly IMusicPlaybackService _musicPlaybackService;
     private readonly IUISettingsService _settingsService;
     private readonly INavigationService _navigationService;
+    private readonly IMusicNavigationService _musicNavigationService;
     private int _currentPage = 1;
     private bool _isFullyLoaded;
     private bool _hasSortOrderLoaded;
 
     public AlbumViewModel(ILibraryService libraryService, IMusicPlaybackService musicPlaybackService,
-        INavigationService navigationService, IUISettingsService settingsService, IDispatcherService dispatcherService, ILogger<AlbumViewModel> logger)
+        INavigationService navigationService, IMusicNavigationService musicNavigationService,
+        IUISettingsService settingsService, IDispatcherService dispatcherService, ILogger<AlbumViewModel> logger)
         : base(dispatcherService, logger)
     {
         _libraryService = libraryService;
         _musicPlaybackService = musicPlaybackService;
         _navigationService = navigationService;
+        _musicNavigationService = musicNavigationService;
         _settingsService = settingsService;
 
         // Store the handler in a field so we can reliably unsubscribe from it later.
@@ -116,17 +119,9 @@ public partial class AlbumViewModel : SearchableViewModelBase, IDisposable
     ///     Navigates to the detailed view for the selected album.
     /// </summary>
     [RelayCommand]
-    public void NavigateToAlbumDetail(AlbumViewModelItem? album)
+    public async Task NavigateToAlbumDetailAsync(object? parameter)
     {
-        if (album is null) return;
-
-        var navParam = new AlbumViewNavigationParameter
-        {
-            AlbumId = album.Id,
-            AlbumTitle = album.Title,
-            ArtistName = album.ArtistName
-        };
-        _navigationService.Navigate(typeof(AlbumViewPage), navParam);
+        await _musicNavigationService.NavigateToAlbumAsync(parameter);
     }
 
     /// <summary>
@@ -145,6 +140,12 @@ public partial class AlbumViewModel : SearchableViewModelBase, IDisposable
         {
             _logger.LogCritical(ex, "Error playing album {AlbumId}", albumId);
         }
+    }
+
+    [RelayCommand]
+    public async Task GoToArtistAsync(object? parameter)
+    {
+        await _musicNavigationService.NavigateToArtistAsync(parameter);
     }
 
     /// <summary>

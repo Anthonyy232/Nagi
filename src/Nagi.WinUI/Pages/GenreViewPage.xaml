@@ -267,10 +267,13 @@
 
                         <TextBlock Grid.Column="1" Style="{StaticResource SongListViewPageBodyStrongTextBlockStyle}"
                                    Text="{x:Bind Title}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
-                        <HyperlinkButton Grid.Column="2"
-                                         Command="{Binding DataContext.GoToArtistCommand, ElementName=pageRoot}"
-                                         CommandParameter="{x:Bind}" Content="{x:Bind ArtistName}"
-                                         Style="{StaticResource SongListHyperlinkButtonStyle}" />
+                        <TextBlock Grid.Column="2"
+                                   VerticalAlignment="Center"
+                                   TextTrimming="CharacterEllipsis"
+                                   Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}"
+                                   uihelpers:MultiArtistHyperlinkHelper.ArtistName="{x:Bind ArtistName}"
+                                   uihelpers:MultiArtistHyperlinkHelper.Song="{x:Bind}"
+                                   uihelpers:MultiArtistHyperlinkHelper.Command="{Binding DataContext.GoToArtistCommand, ElementName=pageRoot}" />
                         <HyperlinkButton Grid.Column="3"
                                          Command="{Binding DataContext.GoToAlbumCommand, ElementName=pageRoot}"
                                          CommandParameter="{x:Bind}" Content="{x:Bind Album.Title}"

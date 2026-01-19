@@ -9,6 +9,7 @@
     xmlns:media="using:CommunityToolkit.WinUI.Media"
     xmlns:muxm="using:Microsoft.UI.Xaml.Media"
     xmlns:models="using:Nagi.Core.Models"
+    xmlns:uihelpers="using:Nagi.WinUI.Helpers"
     mc:Ignorable="d">
 
     <Window.SystemBackdrop>
@@ -49,15 +50,26 @@
                     </Grid.RowDefinitions>
 
                     <StackPanel Grid.Row="0" HorizontalAlignment="Stretch" Spacing="2">
-                        <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}"
-                                   Text="{x:Bind ViewModel.SongTitle, Mode=OneWay, FallbackValue='A Really Long Song Title That Might Need to be Clipped'}"
-                                   HorizontalAlignment="Center" TextAlignment="Center" TextTrimming="CharacterEllipsis"
-                                   TextWrapping="NoWrap" />
+                        <Button
+                            HorizontalAlignment="Center"
+                            Padding="0"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Command="{x:Bind ViewModel.GoToAlbumCommand, Mode=OneWay}"
+                            Style="{StaticResource DefaultButtonStyle}"
+                            ToolTipService.ToolTip="Go to album">
+                            <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}"
+                                       Text="{x:Bind ViewModel.SongTitle, Mode=OneWay, FallbackValue='A Really Long Song Title That Might Need to be Clipped'}"
+                                       HorizontalAlignment="Center" TextAlignment="Center" TextTrimming="CharacterEllipsis"
+                                       TextWrapping="NoWrap" />
+                        </Button>
                         <TextBlock Style="{ThemeResource BodyTextBlockStyle}"
-                                   Text="{x:Bind ViewModel.ArtistName, Mode=OneWay, FallbackValue='An Artist With an Equally Long Name'}"
-                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                    HorizontalAlignment="Center" TextAlignment="Center" TextTrimming="CharacterEllipsis"
-                                   TextWrapping="NoWrap" />
+                                   TextWrapping="NoWrap"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                   uihelpers:MultiArtistHyperlinkHelper.ArtistName="{x:Bind ViewModel.ArtistName, Mode=OneWay}"
+                                   uihelpers:MultiArtistHyperlinkHelper.Song="{x:Bind ViewModel.CurrentPlayingTrack, Mode=OneWay}"
+                                   uihelpers:MultiArtistHyperlinkHelper.Command="{Binding ViewModel.GoToArtistCommand, ElementName=OuterBorder}" />
                     </StackPanel>
 
                     <Slider x:Name="MediaSeekerSlider"
@@ -150,8 +162,10 @@
                                         TextTrimming="CharacterEllipsis" />
                                     <TextBlock
                                         Style="{ThemeResource CaptionTextBlockStyle}"
-                                        Text="{x:Bind ArtistName}"
-                                        TextTrimming="CharacterEllipsis" />
+                                        TextTrimming="CharacterEllipsis"
+                                        uihelpers:MultiArtistHyperlinkHelper.ArtistName="{x:Bind ArtistName}"
+                                        uihelpers:MultiArtistHyperlinkHelper.Song="{x:Bind}"
+                                        uihelpers:MultiArtistHyperlinkHelper.Command="{Binding ViewModel.GoToArtistCommand, ElementName=OuterBorder}" />
                                 </StackPanel>
                             </DataTemplate>
                         </ListView.ItemTemplate>

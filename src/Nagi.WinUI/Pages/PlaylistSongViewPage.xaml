@@ -282,12 +282,12 @@
 
                         <Button Grid.Column="0" Style="{StaticResource SongListViewPageSongPlayButtonStyle}"
                                 Command="{Binding DataContext.PlaySongCommand, ElementName=pageRoot}"
-                                CommandParameter="{x:Bind}"
+                                CommandParameter="{x:Bind Mode=OneTime}"
                                 ToolTipService.ToolTip="Play">
                             <Border Width="42" Height="42" CornerRadius="12"
-                                    Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneTime}">
                                 <controls:ImageEx
-                                    Source="{x:Bind uihelpers:ImageUriHelper.GetUriWithCacheBuster(AlbumArtUriFromTrack, FileModifiedDate), Mode=OneWay}"
+                                    Source="{x:Bind uihelpers:ImageUriHelper.GetUriWithCacheBuster(AlbumArtUriFromTrack, FileModifiedDate), Mode=OneTime}"
                                     Stretch="UniformToFill"
                                     DecodePixelWidth="48"
                                     DecodePixelType="Logical"
@@ -299,11 +299,13 @@
                                    Style="{StaticResource SongListViewPageBodyStrongTextBlockStyle}"
                                    TextTrimming="CharacterEllipsis" />
 
-                        <HyperlinkButton Grid.Column="2"
-                                         Content="{x:Bind ArtistName}"
-                                         Command="{Binding DataContext.GoToArtistCommand, ElementName=pageRoot}"
-                                         CommandParameter="{x:Bind}"
-                                         Style="{StaticResource SongListHyperlinkButtonStyle}" />
+                        <TextBlock Grid.Column="2"
+                                   VerticalAlignment="Center"
+                                   TextTrimming="CharacterEllipsis"
+                                   Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}"
+                                   uihelpers:MultiArtistHyperlinkHelper.ArtistName="{x:Bind ArtistName}"
+                                   uihelpers:MultiArtistHyperlinkHelper.Song="{x:Bind}"
+                                   uihelpers:MultiArtistHyperlinkHelper.Command="{Binding DataContext.GoToArtistCommand, ElementName=pageRoot}" />
 
                         <HyperlinkButton Grid.Column="3"
                                          Content="{x:Bind Album.Title}"
