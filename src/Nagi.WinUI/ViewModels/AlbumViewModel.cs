@@ -183,11 +183,11 @@ public partial class AlbumViewModel : SearchableViewModelBase, IDisposable
         {
             if (!_hasSortOrderLoaded)
             {
-                CurrentSortOrder = await _settingsService.GetSortOrderAsync<AlbumSortOrder>(SortOrderHelper.AlbumsSortOrderKey).ConfigureAwait(false);
+                CurrentSortOrder = await _settingsService.GetSortOrderAsync<AlbumSortOrder>(SortOrderHelper.AlbumsSortOrderKey);
                 _hasSortOrderLoaded = true;
             }
 
-            await LoadNextPageAsync(cancellationToken).ConfigureAwait(false);
+            await LoadNextPageAsync(cancellationToken);
 
             if (cancellationToken.IsCancellationRequested) return;
 

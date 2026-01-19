@@ -129,8 +129,8 @@ public partial class ArtistViewViewModel : SongListViewModelBase
             var onlineMetadataTask = _settingsService.GetFetchOnlineMetadataEnabledAsync();
             var sortOrderTask = _settingsService.GetSortOrderAsync<SongSortOrder>(SortOrderHelper.ArtistViewSortOrderKey);
             
-            await Task.WhenAll(onlineMetadataTask, sortOrderTask).ConfigureAwait(false);
-            
+            await Task.WhenAll(onlineMetadataTask, sortOrderTask);
+
             var shouldFetchOnline = onlineMetadataTask.Result;
             CurrentSortOrder = sortOrderTask.Result;
 

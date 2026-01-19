@@ -137,9 +137,9 @@ public partial class GenreViewModel : SearchableViewModelBase, IDisposable
             var genreModelsTask = _libraryService.GetAllGenresAsync();
 
             if (sortTask != null)
-                await Task.WhenAll(sortTask, genreModelsTask).ConfigureAwait(false);
+                await Task.WhenAll(sortTask, genreModelsTask);
             else
-                await genreModelsTask.ConfigureAwait(false);
+                await genreModelsTask;
 
             if (sortTask != null)
             {

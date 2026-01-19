@@ -72,24 +72,27 @@ public partial class LibraryViewModel : SongListViewModelBase
         _ = _libraryScanner.RefreshAllFoldersAsync();
     }
 
-    private async void OnScanCompleted(object? sender, bool changesFound)
+    private void OnScanCompleted(object? sender, bool changesFound)
     {
-        try
+        _ = Task.Run(async () =>
         {
-            if (changesFound)
+            try
             {
-                _logger.LogDebug("Scan completed with changes. Refreshing song list");
-                await _dispatcherService.EnqueueAsync(() => RefreshOrSortSongsCommand.ExecuteAsync(null));
+                if (changesFound)
+                {
+                    _logger.LogDebug("Scan completed with changes. Refreshing song list");
+                    await _dispatcherService.EnqueueAsync(() => RefreshOrSortSongsCommand.ExecuteAsync(null));
+                }
+                else
+                {
+                    _logger.LogDebug("Scan completed with no changes");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                _logger.LogDebug("Scan completed with no changes");
+                _logger.LogError(ex, "Error handling scan completion in LibraryViewModel");
             }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error handling scan completion in LibraryViewModel");
-        }
+        });
     }
 
 

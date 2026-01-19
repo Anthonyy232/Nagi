@@ -432,13 +432,20 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
         }
     }
 
-    private async void UpdateCurrentQueueDisplay()
+    private void UpdateCurrentQueueDisplay()
     {
         // Cancel any previous in-flight fetch to prevent stale data from arriving out of order
         _queueDisplayCts?.Cancel();
         _queueDisplayCts?.Dispose();
         _queueDisplayCts = new CancellationTokenSource();
         var token = _queueDisplayCts.Token;
+
+        // Fire-and-forget the async work with proper error handling
+        _ = UpdateCurrentQueueDisplayAsync(token);
+    }
+
+    private async Task UpdateCurrentQueueDisplayAsync(CancellationToken token)
+    {
 
         try
         {

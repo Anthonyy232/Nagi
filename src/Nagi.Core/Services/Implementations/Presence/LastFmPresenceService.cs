@@ -37,6 +37,24 @@ public class LastFmPresenceService : IPresenceService, IAsyncDisposable
 
     public string Name => "Last.fm";
 
+    /// <summary>
+    ///     Executes an async action with proper error handling for event handlers.
+    /// </summary>
+    private void FireAndForgetSafe(Func<Task> asyncAction, string operationName)
+    {
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                await asyncAction().ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in fire-and-forget operation: {Operation}", operationName);
+            }
+        });
+    }
+
     public async Task InitializeAsync()
     {
         _logger.LogDebug("Initializing Last.fm Presence Service.");
@@ -120,16 +138,11 @@ public class LastFmPresenceService : IPresenceService, IAsyncDisposable
         return ValueTask.CompletedTask;
     }
 
-    private async void OnSettingsChanged()
+    private void OnSettingsChanged()
     {
-        try
-        {
-            await UpdateLocalSettingsAsync().ConfigureAwait(false);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to update Last.fm settings.");
-        }
+        FireAndForgetSafe(
+            async () => await UpdateLocalSettingsAsync().ConfigureAwait(false),
+            "Last.fm settings update");
     }
 
     private async Task UpdateLocalSettingsAsync()

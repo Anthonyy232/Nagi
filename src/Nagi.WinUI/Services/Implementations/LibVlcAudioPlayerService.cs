@@ -60,8 +60,13 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     /// <inheritdoc />
     public void EnsureInitialized()
     {
-        // Sync callers block on the async initialization
-        EnsureInitializedAsync().GetAwaiter().GetResult();
+        // Fast-path: already initialized or disposed
+        if (_isInitialized || _isDisposed) return;
+
+        // Use Task.Run to execute initialization on thread pool, avoiding potential
+        // deadlock if called from UI thread while initialization needs to marshal back to UI.
+        // This is safer than direct .GetAwaiter().GetResult() which can deadlock.
+        Task.Run(() => EnsureInitializedAsync()).GetAwaiter().GetResult();
     }
 
     /// <inheritdoc />
@@ -422,89 +427,104 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     public void Dispose()
     {
         if (_isDisposed) return;
-        
-        // Try to acquire semaphore with timeout to prevent deadlock if init is in progress
-        // If timeout, just set _isDisposed flag - init will check it when it completes
-        var acquired = _initSemaphore.Wait(millisecondsTimeout: 1000);
+
+        // Signal disposal intent immediately so any in-progress initialization can check
+        _disposeCts.Cancel();
+
+        // Wait for semaphore to ensure we don't race with initialization.
+        // Use a reasonable timeout to prevent indefinite blocking, but if timeout occurs,
+        // we still proceed with disposal since _isDisposed flag will be set.
+        var acquired = _initSemaphore.Wait(millisecondsTimeout: 5000);
+        if (!acquired)
+        {
+            _logger.LogWarning("Dispose timed out waiting for initialization semaphore. Proceeding with disposal.");
+        }
+
         try
         {
             if (_isDisposed) return;
             _isDisposed = true;
-        }
-        finally
-        {
-            if (acquired) _initSemaphore.Release();
-        }
 
-        _disposeCts.Cancel();
-        _disposeCts.Dispose();
+            _logger.LogDebug("Disposing LibVlcAudioPlayerService.");
 
-        _logger.LogDebug("Disposing LibVlcAudioPlayerService.");
-        
-        // Only cleanup if we were initialized
-        if (_isInitialized && _mediaPlayer is not null)
-        {
-            _mediaPlayer.PositionChanged -= OnMediaPlayerPositionChanged;
-            _mediaPlayer.Playing -= OnMediaPlayerStateChanged;
-            _mediaPlayer.Paused -= OnMediaPlayerStateChanged;
-            _mediaPlayer.Stopped -= OnMediaPlayerStateChanged;
-            _mediaPlayer.EncounteredError -= OnMediaPlayerEncounteredError;
-            _mediaPlayer.MediaChanged -= OnMediaPlayerMediaChanged;
-            _mediaPlayer.LengthChanged -= OnMediaPlayerLengthChanged;
-            _mediaPlayer.VolumeChanged -= OnMediaPlayerVolumeChanged;
-            _mediaPlayer.Muted -= OnMediaPlayerMuteChanged;
-            _mediaPlayer.Unmuted -= OnMediaPlayerMuteChanged;
-        }
+            // Only cleanup if we were initialized
+            if (_isInitialized && _mediaPlayer is not null)
+            {
+                _mediaPlayer.PositionChanged -= OnMediaPlayerPositionChanged;
+                _mediaPlayer.Playing -= OnMediaPlayerStateChanged;
+                _mediaPlayer.Paused -= OnMediaPlayerStateChanged;
+                _mediaPlayer.Stopped -= OnMediaPlayerStateChanged;
+                _mediaPlayer.EncounteredError -= OnMediaPlayerEncounteredError;
+                _mediaPlayer.MediaChanged -= OnMediaPlayerMediaChanged;
+                _mediaPlayer.LengthChanged -= OnMediaPlayerLengthChanged;
+                _mediaPlayer.VolumeChanged -= OnMediaPlayerVolumeChanged;
+                _mediaPlayer.Muted -= OnMediaPlayerMuteChanged;
+                _mediaPlayer.Unmuted -= OnMediaPlayerMuteChanged;
+            }
 
-        if (_smtc is not null)
-        {
+            if (_smtc is not null)
+            {
+                try
+                {
+                    _smtc.ButtonPressed -= OnSmtcButtonPressed;
+                    _smtc.IsEnabled = false;
+                }
+                catch (Exception ex) when (ex.HResult == unchecked((int)0x80000013)) // RO_E_CLOSED
+                {
+                    _logger.LogDebug("SMTC already disposed during cleanup.");
+                }
+            }
+
+            // Clean up current media before disposing other components
+            if (_currentMedia != null)
+            {
+                try
+                {
+                    _currentMedia.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Error disposing media during LibVlcAudioPlayerService disposal");
+                }
+
+                _currentMedia = null;
+            }
+
+            // Dispose LibVLC components if initialized
+            if (_isInitialized)
+            {
+                _equalizer?.Dispose();
+                _mediaPlayer?.Stop();
+                _mediaPlayer?.Dispose();
+                _libVlc?.Dispose();
+            }
+
             try
             {
-                _smtc.ButtonPressed -= OnSmtcButtonPressed;
-                _smtc.IsEnabled = false;
+                _dummyMediaPlayer?.Dispose();
             }
-            catch (Exception ex) when (ex.HResult == unchecked((int)0x80000013)) // RO_E_CLOSED
+            catch (System.Runtime.InteropServices.COMException comEx) when (comEx.HResult == unchecked((int)0x80000013)) // RO_E_CLOSED
             {
-                _logger.LogDebug("SMTC already disposed during cleanup.");
-            }
-        }
-
-        // Clean up current media before disposing other components
-        if (_currentMedia != null)
-        {
-            try
-            {
-                _currentMedia.Dispose();
+                // Expected during shutdown when COM object is already closed - safe to ignore
+                _logger.LogTrace("Dummy media player already closed (RO_E_CLOSED)");
             }
             catch (Exception ex)
             {
-                _logger.LogWarning(ex, "Error disposing media during LibVlcAudioPlayerService disposal");
+                // Unexpected exception - log as warning so it's visible but doesn't crash
+                _logger.LogWarning(ex, "Unexpected error disposing dummy media player");
             }
-
-            _currentMedia = null;
         }
-
-        // Dispose LibVLC components if initialized
-        if (_isInitialized)
+        finally
         {
-            _equalizer?.Dispose();
-            _mediaPlayer?.Stop();
-            _mediaPlayer?.Dispose();
-            _libVlc?.Dispose();
-        }
-        
-        try
-        {
-            _dummyMediaPlayer?.Dispose();
-        }
-        catch (Exception ex)
-        {
-            // Ignore RO_E_CLOSED or other specific COM errors during shutdown
-            _logger?.LogDebug(ex, "Error disposing dummy media player.");
+            // Always release semaphore if we acquired it, then dispose it
+            if (acquired)
+            {
+                _initSemaphore.Release();
+            }
+            _initSemaphore.Dispose();
+            _disposeCts.Dispose();
         }
 
-        _initSemaphore.Dispose();
-        
         GC.SuppressFinalize(this);
     }
 
@@ -606,33 +626,36 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         });
     }
 
-    private async void OnSmtcButtonPressed(SystemMediaTransportControls sender,
+    private void OnSmtcButtonPressed(SystemMediaTransportControls sender,
         SystemMediaTransportControlsButtonPressedEventArgs args)
     {
         if (_isDisposed) return;
         _logger.LogDebug("SMTC button pressed: {Button}", args.Button);
-        try
+        _ = Task.Run(async () =>
         {
-            await _dispatcherService.EnqueueAsync(async () =>
+            try
             {
-                if (_isDisposed) return;
-                switch (args.Button)
+                await _dispatcherService.EnqueueAsync(async () =>
                 {
-                    case SystemMediaTransportControlsButton.Play: await PlayAsync(); break;
-                    case SystemMediaTransportControlsButton.Pause: await PauseAsync(); break;
-                    case SystemMediaTransportControlsButton.Next: SmtcNextButtonPressed?.Invoke(); break;
-                    case SystemMediaTransportControlsButton.Previous: SmtcPreviousButtonPressed?.Invoke(); break;
-                }
-            });
-        }
-        catch (Exception ex) when (ex.HResult == unchecked((int)0x80000013)) // RO_E_CLOSED
-        {
-            _logger.LogDebug("SMTC button handler interrupted during disposal.");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error handling SMTC button press for button {Button}.", args.Button);
-        }
+                    if (_isDisposed) return;
+                    switch (args.Button)
+                    {
+                        case SystemMediaTransportControlsButton.Play: await PlayAsync(); break;
+                        case SystemMediaTransportControlsButton.Pause: await PauseAsync(); break;
+                        case SystemMediaTransportControlsButton.Next: SmtcNextButtonPressed?.Invoke(); break;
+                        case SystemMediaTransportControlsButton.Previous: SmtcPreviousButtonPressed?.Invoke(); break;
+                    }
+                });
+            }
+            catch (Exception ex) when (ex.HResult == unchecked((int)0x80000013)) // RO_E_CLOSED
+            {
+                _logger.LogDebug("SMTC button handler interrupted during disposal.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error handling SMTC button press for button {Button}.", args.Button);
+            }
+        });
     }
 
     private void UpdateSmtcPlaybackStatus()

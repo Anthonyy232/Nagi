@@ -32,7 +32,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     private readonly IFanartTvService _fanartTvService;
     private readonly ITheAudioDbService _theAudioDbService;
     private readonly ILogger<LibraryService> _logger;
-    private readonly object _metadataFetchLock = new();
+    private readonly SemaphoreSlim _metadataFetchSemaphore = new(1, 1);
     private readonly SemaphoreSlim _artistCreationLock = new(1, 1);
     private readonly SemaphoreSlim _albumCreationLock = new(1, 1);
     private readonly IMetadataService _metadataService;
@@ -868,13 +868,18 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     }
 
     /// <inheritdoc />
-    public Task StartArtistMetadataBackgroundFetchAsync()
+    public async Task StartArtistMetadataBackgroundFetchAsync()
     {
-        lock (_metadataFetchLock)
+        // Try to acquire semaphore without waiting - if already running, return immediately
+        if (!await _metadataFetchSemaphore.WaitAsync(0).ConfigureAwait(false))
         {
-            if (_isMetadataFetchRunning)
-                return Task.CompletedTask;
+            _logger.LogDebug("Artist metadata background fetch already running, skipping.");
+            return;
+        }
 
+        try
+        {
+            // Recreate CTS if it was cancelled from a previous run
             if (_metadataFetchCts.IsCancellationRequested)
             {
                 _metadataFetchCts.Dispose();
@@ -882,12 +887,9 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             }
 
             _isMetadataFetchRunning = true;
-        }
+            var token = _metadataFetchCts.Token;
 
-        var token = _metadataFetchCts.Token;
-
-        _ = Task.Run(async () =>
-        {
+            // Run the actual fetch work - note: we keep holding the semaphore during the entire operation
             try
             {
                 const int batchSize = 50;
@@ -938,15 +940,16 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             {
                 _logger.LogDebug("Artist metadata background fetch was cancelled.");
             }
-            finally
+            catch (Exception ex)
             {
-                lock (_metadataFetchLock)
-                {
-                    _isMetadataFetchRunning = false;
-                }
+                _logger.LogError(ex, "Unhandled exception in artist metadata background fetch.");
             }
-        }, token);
-        return Task.CompletedTask;
+        }
+        finally
+        {
+            _isMetadataFetchRunning = false;
+            _metadataFetchSemaphore.Release();
+        }
     }
 
     #endregion
@@ -3089,6 +3092,29 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         return 0;
     }
 
+    /// <summary>
+    ///     Safely gets an artist from the lookup dictionary, creating a new one if not found.
+    ///     This prevents KeyNotFoundException if metadata contains artist names not pre-populated in the lookup.
+    /// </summary>
+    private static Artist GetOrCreateArtist(
+        MusicDbContext context,
+        Dictionary<string, Artist> artistLookup,
+        string artistName,
+        ILogger logger)
+    {
+        if (artistLookup.TryGetValue(artistName, out var artist))
+        {
+            return artist;
+        }
+
+        // Artist not in lookup - this can happen due to race conditions or normalization differences
+        logger.LogDebug("Artist '{ArtistName}' not found in pre-built lookup, creating on-the-fly.", artistName);
+        artist = new Artist { Name = artistName };
+        context.Artists.Add(artist);
+        artistLookup[artistName] = artist;
+        return artist;
+    }
+
     private Task AddSongWithDetailsOptimizedAsync(
         MusicDbContext context,
         Guid folderId,
@@ -3098,10 +3124,26 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         Dictionary<string, Genre> genreLookup,
         Song? existingSong = null)
     {
-        var trackArtistNames = metadata.Artists.Any() ? metadata.Artists : new List<string> { Artist.UnknownArtistName };
-        var albumArtistNames = metadata.AlbumArtists.Any() ? metadata.AlbumArtists : trackArtistNames;
+        // Filter and validate artist names, providing fallback for empty/invalid names
+        var trackArtistNames = metadata.Artists
+            .Where(a => !string.IsNullOrWhiteSpace(a))
+            .Select(a => a.Trim())
+            .ToList();
+        if (trackArtistNames.Count == 0)
+        {
+            trackArtistNames.Add(Artist.UnknownArtistName);
+        }
 
-        var primaryAlbumArtist = artistLookup[albumArtistNames[0]];
+        var albumArtistNames = metadata.AlbumArtists
+            .Where(a => !string.IsNullOrWhiteSpace(a))
+            .Select(a => a.Trim())
+            .ToList();
+        if (albumArtistNames.Count == 0)
+        {
+            albumArtistNames = trackArtistNames;
+        }
+
+        var primaryAlbumArtist = GetOrCreateArtist(context, artistLookup, albumArtistNames[0], _logger);
 
         Album? album = null;
         if (!string.IsNullOrWhiteSpace(metadata.Album))
@@ -3111,19 +3153,19 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             
             if (!albumLookup.TryGetValue(albumKey, out album))
             {
-                album = new Album 
-                { 
-                    Title = albumTitle, 
+                album = new Album
+                {
+                    Title = albumTitle,
                     Year = metadata.Year
                 };
-                // Add all album artists
+                // Add all album artists using safe lookup
                 for (int i = 0; i < albumArtistNames.Count; i++)
                 {
-                    var artist = artistLookup[albumArtistNames[i]];
-                    album.AlbumArtists.Add(new AlbumArtist 
-                    { 
+                    var artist = GetOrCreateArtist(context, artistLookup, albumArtistNames[i], _logger);
+                    album.AlbumArtists.Add(new AlbumArtist
+                    {
                         Artist = artist,
-                        Order = i 
+                        Order = i
                     });
                 }
                 context.Albums.Add(album);
@@ -3136,34 +3178,48 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                     album.Year = metadata.Year;
                 }
 
-                // Synchronize AlbumArtists
-                var newAlbumArtists = albumArtistNames.Select((name, index) => new { ArtistId = artistLookup[name].Id, Order = index }).ToList();
+                // Synchronize AlbumArtists using safe lookup
+                var newAlbumArtists = albumArtistNames.Select((name, index) => new { Artist = GetOrCreateArtist(context, artistLookup, name, _logger), Order = index }).ToList();
                 var currentAlbumArtists = album.AlbumArtists.OrderBy(aa => aa.Order).ToList(); // Requires Include(a => a.AlbumArtists) in caller
 
-                if (currentAlbumArtists.Count != newAlbumArtists.Count || 
-                    currentAlbumArtists.Zip(newAlbumArtists, (c, n) => c.ArtistId == n.ArtistId && c.Order == n.Order).Any(val => !val))
+                if (currentAlbumArtists.Count != newAlbumArtists.Count ||
+                    currentAlbumArtists.Zip(newAlbumArtists, (c, n) => c.ArtistId == n.Artist.Id && c.Order == n.Order).Any(val => !val))
                 {
                     album.AlbumArtists.Clear();
-                    for (int i = 0; i < newAlbumArtists.Count; i++)
+                    foreach (var n in newAlbumArtists)
                     {
-                        var n = newAlbumArtists[i];
-                        var artist = artistLookup[albumArtistNames[n.Order]];
-                        album.AlbumArtists.Add(new AlbumArtist 
-                        { 
-                            ArtistId = n.ArtistId, 
-                            Artist = artist,
-                            Order = n.Order 
+                        album.AlbumArtists.Add(new AlbumArtist
+                        {
+                            ArtistId = n.Artist.Id,
+                            Artist = n.Artist,
+                            Order = n.Order
                         });
                     }
-
                 }
             }
         }
 
-        var genres =
-            metadata.Genres?.Select(g => g.Trim()).Where(g => !string.IsNullOrWhiteSpace(g))
-                .Distinct(StringComparer.OrdinalIgnoreCase).Select(name => genreLookup[name]).ToList() ??
-            new List<Genre>();
+        // Safely get genres using TryGetValue with fallback to create missing ones
+        var genres = new List<Genre>();
+        if (metadata.Genres != null)
+        {
+            foreach (var genreName in metadata.Genres.Select(g => g.Trim()).Where(g => !string.IsNullOrWhiteSpace(g)).Distinct(StringComparer.OrdinalIgnoreCase))
+            {
+                if (genreLookup.TryGetValue(genreName, out var genre))
+                {
+                    genres.Add(genre);
+                }
+                else
+                {
+                    // Genre not in lookup - create on-the-fly
+                    _logger.LogDebug("Genre '{GenreName}' not found in pre-built lookup, creating on-the-fly.", genreName);
+                    genre = new Genre { Name = genreName };
+                    context.Genres.Add(genre);
+                    genreLookup[genreName] = genre;
+                    genres.Add(genre);
+                }
+            }
+        }
 
         var directoryPath = _fileSystem.GetDirectoryName(metadata.FilePath) ?? string.Empty;
 
@@ -3193,18 +3249,17 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         song.LrcFilePath = metadata.LrcFilePath;
         song.AlbumId = album?.Id;
         
-        // Synchronize SongArtists collection
-        var newSongArtists = trackArtistNames.Select((name, index) => new { ArtistId = artistLookup[name].Id, Order = index }).ToList();
+        // Synchronize SongArtists collection using safe lookup
+        var newSongArtists = trackArtistNames.Select((name, index) => new { Artist = GetOrCreateArtist(context, artistLookup, name, _logger), Order = index }).ToList();
         var currentSongArtists = song.SongArtists.OrderBy(sa => sa.Order).ToList();
-        
-        if (currentSongArtists.Count != newSongArtists.Count || 
-            currentSongArtists.Zip(newSongArtists, (c, n) => c.ArtistId == n.ArtistId && c.Order == n.Order).Any(val => !val))
+
+        if (currentSongArtists.Count != newSongArtists.Count ||
+            currentSongArtists.Zip(newSongArtists, (c, n) => c.ArtistId == n.Artist.Id && c.Order == n.Order).Any(val => !val))
         {
             song.SongArtists.Clear();
             foreach (var nsa in newSongArtists)
             {
-                var artist = artistLookup[trackArtistNames[nsa.Order]];
-                song.SongArtists.Add(new SongArtist { ArtistId = nsa.ArtistId, Artist = artist, Order = nsa.Order });
+                song.SongArtists.Add(new SongArtist { ArtistId = nsa.Artist.Id, Artist = nsa.Artist, Order = nsa.Order });
             }
         }
 
@@ -4189,8 +4244,20 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     private void OnFetchOnlineMetadataEnabledChanged(bool isEnabled)
     {
         if (isEnabled) return;
-        
-        lock (_metadataFetchLock)
+
+        // Use synchronous wait with short timeout since this is a settings change handler
+        if (!_metadataFetchSemaphore.Wait(100))
+        {
+            // If we can't acquire quickly, the background fetch is active - just cancel the token
+            if (!_metadataFetchCts.IsCancellationRequested)
+            {
+                _logger.LogInformation("Fetch online metadata disabled. Cancelling background fetch.");
+                _metadataFetchCts.Cancel();
+            }
+            return;
+        }
+
+        try
         {
             if (_disposed) return;
             if (_isMetadataFetchRunning && !_metadataFetchCts.IsCancellationRequested)
@@ -4199,6 +4266,10 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 _metadataFetchCts.Cancel();
             }
         }
+        finally
+        {
+            _metadataFetchSemaphore.Release();
+        }
     }
 
     #region IDisposable Implementation
@@ -4206,23 +4277,22 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     protected virtual void Dispose(bool disposing)
     {
         if (_disposed) return;
-        
+
         if (disposing)
         {
             _settingsService.FetchOnlineMetadataEnabledChanged -= OnFetchOnlineMetadataEnabledChanged;
-            
-            lock (_metadataFetchLock)
-            {
-                _metadataFetchCts.Cancel();
-                _metadataFetchCts.Dispose();
-                _disposed = true;
-            }
-            
+
+            // Cancel and dispose CTS - don't wait for semaphore as we're disposing
+            _metadataFetchCts.Cancel();
+            _metadataFetchCts.Dispose();
+            _disposed = true;
+
             _replayGainScanCts?.Cancel();
             _replayGainScanCts?.Dispose();
             _scanSemaphore.Dispose();
             _artistCreationLock.Dispose();
             _albumCreationLock.Dispose();
+            _metadataFetchSemaphore.Dispose();
         }
         else
         {

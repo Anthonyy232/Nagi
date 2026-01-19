@@ -282,14 +282,34 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         _logger.LogDebug("Playing transient file: {FilePath}", filePath);
         var metadata = await _metadataService.ExtractMetadataAsync(filePath).ConfigureAwait(false);
 
+        // Filter out null/empty artist names and provide fallback if all are invalid
+        var validArtists = metadata.Artists
+            .Where(a => !string.IsNullOrWhiteSpace(a))
+            .Select(a => a.Trim())
+            .ToList();
+        if (validArtists.Count == 0)
+        {
+            validArtists.Add(Artist.UnknownArtistName);
+        }
+
+        var validAlbumArtists = metadata.AlbumArtists
+            .Where(a => !string.IsNullOrWhiteSpace(a))
+            .Select(a => a.Trim())
+            .ToList();
+        // If no valid album artists, fall back to track artists
+        if (validAlbumArtists.Count == 0)
+        {
+            validAlbumArtists = validArtists;
+        }
+
         var transientSong = new Song
         {
             FilePath = filePath,
             Title = metadata.Title,
-            ArtistName = Artist.GetDisplayName(metadata.Artists),
-            PrimaryArtistName = metadata.Artists.FirstOrDefault() ?? Artist.UnknownArtistName,
+            ArtistName = Artist.GetDisplayName(validArtists),
+            PrimaryArtistName = validArtists.First(),
 
-            SongArtists = metadata.Artists.Select((a, i) => new SongArtist
+            SongArtists = validArtists.Select((a, i) => new SongArtist
             {
                 Artist = new Artist { Name = a },
                 Order = i
@@ -298,10 +318,10 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
             {
                 Title = metadata.Album ?? Album.UnknownAlbumName,
 
-                ArtistName = Artist.GetDisplayName(metadata.AlbumArtists.Any() ? metadata.AlbumArtists : metadata.Artists),
-                PrimaryArtistName = metadata.AlbumArtists.FirstOrDefault() ?? metadata.Artists.FirstOrDefault() ?? Artist.UnknownArtistName,
+                ArtistName = Artist.GetDisplayName(validAlbumArtists),
+                PrimaryArtistName = validAlbumArtists.First(),
 
-                AlbumArtists = metadata.AlbumArtists.Select((aa, i) => new AlbumArtist
+                AlbumArtists = validAlbumArtists.Select((aa, i) => new AlbumArtist
                 {
                     Artist = new Artist { Name = aa },
                     Order = i
@@ -790,19 +810,74 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         }
 
         IsTransitioningTrack = true;
-        var songId = _playbackQueue[originalQueueIndex];
-        
-        // Lazy load the full song metadata
-        var song = await _libraryService.GetSongByIdAsync(songId).ConfigureAwait(false);
+
+        // Use iterative approach with skip limit to prevent stack overflow if many
+        // consecutive songs are deleted from disk but still in the queue
+        const int maxSkipAttempts = 20;
+        var currentIndex = originalQueueIndex;
+        var skipCount = 0;
+        Song? song = null;
+
+        while (skipCount < maxSkipAttempts && currentIndex >= 0 && currentIndex < _playbackQueue.Count)
+        {
+            var songId = _playbackQueue[currentIndex];
+            song = await _libraryService.GetSongByIdAsync(songId).ConfigureAwait(false);
+
+            if (song != null)
+            {
+                // Found a valid song
+                break;
+            }
+
+            _logger.LogWarning("Song metadata not found for ID {SongId}. Skipping to next track. (Skip {SkipCount}/{MaxSkip})",
+                songId, skipCount + 1, maxSkipAttempts);
+            skipCount++;
+
+            // Move to next track using the same logic as TryGetNextTrackIndex
+            if (IsShuffleEnabled)
+            {
+                var shuffledIdx = GetShuffledQueueIndex(songId);
+                if (shuffledIdx >= 0 && shuffledIdx < _shuffledQueue.Count - 1)
+                {
+                    var nextShuffledId = _shuffledQueue[shuffledIdx + 1];
+                    currentIndex = GetPlaybackQueueIndex(nextShuffledId);
+                }
+                else if (CurrentRepeatMode == RepeatMode.RepeatAll && _shuffledQueue.Count > 0)
+                {
+                    currentIndex = GetPlaybackQueueIndex(_shuffledQueue[0]);
+                }
+                else
+                {
+                    currentIndex = -1;
+                }
+            }
+            else
+            {
+                if (currentIndex < _playbackQueue.Count - 1)
+                {
+                    currentIndex++;
+                }
+                else if (CurrentRepeatMode == RepeatMode.RepeatAll)
+                {
+                    currentIndex = 0;
+                }
+                else
+                {
+                    currentIndex = -1;
+                }
+            }
+        }
+
         if (song == null)
         {
-            _logger.LogError("Failed to load song metadata for ID {SongId}. Skipping track.", songId);
-            await NextAsync().ConfigureAwait(false);
+            _logger.LogError("Failed to find playable track after skipping {SkipCount} deleted songs. Stopping playback.", skipCount);
+            IsTransitioningTrack = false;
+            await StopAsync().ConfigureAwait(false);
             return;
         }
 
         CurrentTrack = song;
-        CurrentQueueIndex = originalQueueIndex;
+        CurrentQueueIndex = currentIndex;
 
         CurrentListenHistoryId = await _libraryService.CreateListenHistoryEntryAsync(CurrentTrack.Id).ConfigureAwait(false);
 
@@ -821,10 +896,10 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         _logger.LogDebug("Now playing '{SongTitle}' (Index: {QueueIndex}, Shuffled Index: {ShuffledIndex})",
             CurrentTrack.Title, CurrentQueueIndex, CurrentShuffledIndex);
         await _audioPlayer.LoadAsync(CurrentTrack).ConfigureAwait(false);
-        
+
         // Apply ReplayGain if enabled and available in database
         await ApplyReplayGainIfEnabledAsync().ConfigureAwait(false);
-        
+
         await _audioPlayer.PlayAsync().ConfigureAwait(false);
         // Note: UpdateSmtcControls() is called by OnAudioPlayerMediaOpened after LoadAsync completes
     }
@@ -1224,17 +1299,31 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         _audioPlayer.UpdateSmtcButtonStates(canGoNext, canGoPrevious);
     }
 
-    private async void OnAudioPlayerPlaybackEnded()
+    /// <summary>
+    ///     Executes an async action with proper error handling for event handlers.
+    ///     This is the preferred pattern over async void for fire-and-forget scenarios.
+    /// </summary>
+    private void FireAndForgetSafe(Func<Task> asyncAction, string operationName)
     {
-        try
+        _ = Task.Run(async () =>
         {
-            // When the current track finishes naturally, advance to the next one.
-            await NextAsync().ConfigureAwait(false);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error handled in playback ended transition");
-        }
+            try
+            {
+                await asyncAction().ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in fire-and-forget operation: {Operation}", operationName);
+            }
+        });
+    }
+
+    private void OnAudioPlayerPlaybackEnded()
+    {
+        // Use fire-and-forget helper to avoid async void
+        FireAndForgetSafe(
+            async () => await NextAsync().ConfigureAwait(false),
+            "PlaybackEnded transition");
     }
 
     private void OnAudioPlayerStateChanged()
@@ -1243,17 +1332,16 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         if (IsTransitioningTrack && _audioPlayer.IsPlaying) IsTransitioningTrack = false;
     }
 
-    private async void OnAudioPlayerVolumeChanged()
+    private void OnAudioPlayerVolumeChanged()
     {
-        try
-        {
-            await _settingsService.SaveVolumeAsync(_audioPlayer.Volume).ConfigureAwait(false);
-            VolumeStateChanged?.Invoke();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error saving volume on change");
-        }
+        // Use fire-and-forget helper to avoid async void
+        FireAndForgetSafe(
+            async () =>
+            {
+                await _settingsService.SaveVolumeAsync(_audioPlayer.Volume).ConfigureAwait(false);
+                VolumeStateChanged?.Invoke();
+            },
+            "Volume save");
     }
 
     private void OnAudioPlayerPositionChanged()
@@ -1266,17 +1354,16 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         DurationChanged?.Invoke();
     }
 
-    private async void OnAudioPlayerErrorOccurred(string errorMessage)
+    private void OnAudioPlayerErrorOccurred(string errorMessage)
     {
-        try
-        {
-            IsTransitioningTrack = false;
-            await StopAsync().ConfigureAwait(false);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error handling audio player error event");
-        }
+        // Use fire-and-forget helper to avoid async void
+        FireAndForgetSafe(
+            async () =>
+            {
+                IsTransitioningTrack = false;
+                await StopAsync().ConfigureAwait(false);
+            },
+            "Error recovery");
     }
 
     private void OnAudioPlayerMediaOpened()
@@ -1285,28 +1372,20 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         UpdateSmtcControls();
     }
 
-    private async void OnAudioPlayerSmtcNextButtonPressed()
+    private void OnAudioPlayerSmtcNextButtonPressed()
     {
-        try
-        {
-            await NextAsync().ConfigureAwait(false);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error handling SMTC next button press");
-        }
+        // Use fire-and-forget helper to avoid async void
+        FireAndForgetSafe(
+            async () => await NextAsync().ConfigureAwait(false),
+            "SMTC Next");
     }
 
-    private async void OnAudioPlayerSmtcPreviousButtonPressed()
+    private void OnAudioPlayerSmtcPreviousButtonPressed()
     {
-        try
-        {
-            await PreviousAsync().ConfigureAwait(false);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error handling SMTC previous button press");
-        }
+        // Use fire-and-forget helper to avoid async void
+        FireAndForgetSafe(
+            async () => await PreviousAsync().ConfigureAwait(false),
+            "SMTC Previous");
     }
 
     /// <summary>
@@ -1361,15 +1440,11 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         }
     }
 
-    private async void OnVolumeNormalizationEnabledChanged(bool isEnabled)
+    private void OnVolumeNormalizationEnabledChanged(bool isEnabled)
     {
-        try
-        {
-            await ApplyReplayGainIfEnabledAsync(isEnabled).ConfigureAwait(false);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to apply ReplayGain on settings change.");
-        }
+        // Use fire-and-forget helper to avoid async void
+        FireAndForgetSafe(
+            async () => await ApplyReplayGainIfEnabledAsync(isEnabled).ConfigureAwait(false),
+            "ReplayGain settings change");
     }
 }
