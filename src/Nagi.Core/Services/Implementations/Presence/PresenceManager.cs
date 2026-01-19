@@ -9,7 +9,7 @@ namespace Nagi.Core.Services.Implementations.Presence;
 ///     This manager activates, deactivates, and broadcasts updates to all relevant
 ///     IPresenceService implementations like Discord and Last.fm.
 /// </summary>
-public class PresenceManager : IPresenceManager, IDisposable
+public class PresenceManager : IPresenceManager, IAsyncDisposable, IDisposable
 {
     private readonly List<IPresenceService> _activeServices = new();
     private readonly ILogger<PresenceManager> _logger;
@@ -20,6 +20,7 @@ public class PresenceManager : IPresenceManager, IDisposable
 
     private Song? _currentTrack;
     private bool _isInitialized;
+    private bool _isDisposed;
 
     // Presence position updates don't need to be frequent
     private DateTime _lastPresencePositionUpdate = DateTime.MinValue;
@@ -39,9 +40,42 @@ public class PresenceManager : IPresenceManager, IDisposable
         _presenceServices = presenceServices.ToDictionary(s => s.Name, s => s);
     }
 
+    /// <summary>
+    ///     Executes an async action with proper error handling for event handlers.
+    ///     This avoids the problems of async void methods.
+    /// </summary>
+    private void FireAndForgetSafe(Func<Task> asyncAction, string operationName)
+    {
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                await asyncAction().ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in fire-and-forget operation: {Operation}", operationName);
+            }
+        });
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_isDisposed) return;
+        _isDisposed = true;
+
+        await ShutdownAsync().ConfigureAwait(false);
+        _servicesLock.Dispose();
+        GC.SuppressFinalize(this);
+    }
+
     public void Dispose()
     {
-        ShutdownAsync().GetAwaiter().GetResult();
+        if (_isDisposed) return;
+        _isDisposed = true;
+
+        // Synchronous disposal - use Task.Run to avoid deadlock on UI thread
+        Task.Run(() => ShutdownAsync()).GetAwaiter().GetResult();
         _servicesLock.Dispose();
         GC.SuppressFinalize(this);
     }
@@ -104,28 +138,26 @@ public class PresenceManager : IPresenceManager, IDisposable
         _settingsService.DiscordRichPresenceSettingChanged -= OnDiscordRichPresenceSettingChanged;
     }
 
-    private async void OnDiscordRichPresenceSettingChanged(bool isEnabled)
+    private void OnDiscordRichPresenceSettingChanged(bool isEnabled)
     {
-        try
-        {
-            if (_presenceServices.TryGetValue("Discord", out var service)) await SetServiceActiveAsync(service, isEnabled).ConfigureAwait(false);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to update Discord presence setting.");
-        }
+        FireAndForgetSafe(
+            async () =>
+            {
+                if (_presenceServices.TryGetValue("Discord", out var service))
+                    await SetServiceActiveAsync(service, isEnabled).ConfigureAwait(false);
+            },
+            "Discord presence setting change");
     }
 
-    private async void OnLastFmSettingsChanged()
+    private void OnLastFmSettingsChanged()
     {
-        try
-        {
-            if (_presenceServices.TryGetValue("Last.fm", out var service)) await UpdateServiceActivationAsync(service).ConfigureAwait(false);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to update Last.fm presence setting.");
-        }
+        FireAndForgetSafe(
+            async () =>
+            {
+                if (_presenceServices.TryGetValue("Last.fm", out var service))
+                    await UpdateServiceActivationAsync(service).ConfigureAwait(false);
+            },
+            "Last.fm settings change");
     }
 
     private async Task UpdateServiceActivationAsync(IPresenceService service)
@@ -201,65 +233,54 @@ public class PresenceManager : IPresenceManager, IDisposable
         }
     }
 
-    private async void OnTrackChanged()
+    private void OnTrackChanged()
     {
-        try
-        {
-            var newTrack = _playbackService.CurrentTrack;
-            if (_currentTrack?.Id == newTrack?.Id) return;
+        var newTrack = _playbackService.CurrentTrack;
+        if (_currentTrack?.Id == newTrack?.Id) return;
 
-            _currentTrack = newTrack;
-            
-            // Reset throttle state so new track gets immediate presence update
-            _lastPresencePositionUpdate = DateTime.MinValue;
+        _currentTrack = newTrack;
 
-            _logger.LogDebug("Track changed to '{TrackTitle}'. Broadcasting to active services.",
-                _currentTrack?.Title ?? "None");
+        // Reset throttle state so new track gets immediate presence update
+        _lastPresencePositionUpdate = DateTime.MinValue;
 
-            if (_currentTrack is not null && _playbackService.CurrentListenHistoryId.HasValue)
-                await BroadcastAsync(s =>
-                    s.OnTrackChangedAsync(_currentTrack, _playbackService.CurrentListenHistoryId.Value)).ConfigureAwait(false);
-            else
-                await BroadcastAsync(s => s.OnPlaybackStoppedAsync()).ConfigureAwait(false);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to handle track change event.");
-        }
+        _logger.LogDebug("Track changed to '{TrackTitle}'. Broadcasting to active services.",
+            _currentTrack?.Title ?? "None");
+
+        FireAndForgetSafe(
+            async () =>
+            {
+                if (_currentTrack is not null && _playbackService.CurrentListenHistoryId.HasValue)
+                    await BroadcastAsync(s =>
+                        s.OnTrackChangedAsync(_currentTrack, _playbackService.CurrentListenHistoryId.Value)).ConfigureAwait(false);
+                else
+                    await BroadcastAsync(s => s.OnPlaybackStoppedAsync()).ConfigureAwait(false);
+            },
+            "Track change broadcast");
     }
 
-    private async void OnPlaybackStateChanged()
+    private void OnPlaybackStateChanged()
     {
-        try
-        {
-            _logger.LogDebug("Playback state changed. IsPlaying: {IsPlaying}. Broadcasting to active services.",
-                _playbackService.IsPlaying);
-            await BroadcastAsync(s => s.OnPlaybackStateChangedAsync(_playbackService.IsPlaying)).ConfigureAwait(false);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to handle playback state change event.");
-        }
+        _logger.LogDebug("Playback state changed. IsPlaying: {IsPlaying}. Broadcasting to active services.",
+            _playbackService.IsPlaying);
+
+        FireAndForgetSafe(
+            async () => await BroadcastAsync(s => s.OnPlaybackStateChangedAsync(_playbackService.IsPlaying)).ConfigureAwait(false),
+            "Playback state change broadcast");
     }
 
-    private async void OnPositionChanged()
+    private void OnPositionChanged()
     {
-        try
-        {
-            if (_currentTrack is null || _playbackService.Duration <= TimeSpan.Zero) return;
+        if (_currentTrack is null || _playbackService.Duration <= TimeSpan.Zero) return;
 
-            // Throttle presence updates to every 5 seconds
-            var now = DateTime.UtcNow;
-            if (now - _lastPresencePositionUpdate < PresenceThrottleInterval)
-                return;
-            _lastPresencePositionUpdate = now;
+        // Throttle presence updates to every 5 seconds
+        var now = DateTime.UtcNow;
+        if (now - _lastPresencePositionUpdate < PresenceThrottleInterval)
+            return;
+        _lastPresencePositionUpdate = now;
 
-            await BroadcastAsync(s => s.OnTrackProgressAsync(_playbackService.CurrentPosition, _playbackService.Duration)).ConfigureAwait(false);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to handle position change event.");
-        }
+        FireAndForgetSafe(
+            async () => await BroadcastAsync(s => s.OnTrackProgressAsync(_playbackService.CurrentPosition, _playbackService.Duration)).ConfigureAwait(false),
+            "Position change broadcast");
     }
 
     private async Task BroadcastAsync(Func<IPresenceService, Task> action)

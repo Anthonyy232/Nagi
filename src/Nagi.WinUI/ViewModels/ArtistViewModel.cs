@@ -187,11 +187,11 @@ public partial class ArtistViewModel : SearchableViewModelBase, IDisposable
         {
             if (!_hasSortOrderLoaded)
             {
-                CurrentSortOrder = await _settingsService.GetSortOrderAsync<ArtistSortOrder>(SortOrderHelper.ArtistsSortOrderKey).ConfigureAwait(false);
+                CurrentSortOrder = await _settingsService.GetSortOrderAsync<ArtistSortOrder>(SortOrderHelper.ArtistsSortOrderKey);
                 _hasSortOrderLoaded = true;
             }
 
-            await LoadNextPageAsync(cancellationToken).ConfigureAwait(false);
+            await LoadNextPageAsync(cancellationToken);
 
             if (cancellationToken.IsCancellationRequested) return;
 

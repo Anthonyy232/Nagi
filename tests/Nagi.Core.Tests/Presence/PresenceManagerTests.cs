@@ -185,6 +185,7 @@ public class PresenceManagerTests : IDisposable
 
         // Act
         _playbackService.TrackChanged += Raise.Event<Action>();
+        await Task.Delay(100); // Allow async fire-and-forget to complete
 
         // Assert
         await _discordService.Received(1).OnTrackChangedAsync(_testSong, 42L);
@@ -211,6 +212,7 @@ public class PresenceManagerTests : IDisposable
 
         // Act
         _playbackService.PlaybackStateChanged += Raise.Event<Action>();
+        await Task.Delay(100); // Allow async fire-and-forget to complete
 
         // Assert
         await _discordService.Received(1).OnPlaybackStateChangedAsync(true);
@@ -243,7 +245,9 @@ public class PresenceManagerTests : IDisposable
 
         // Act
         _playbackService.TrackChanged += Raise.Event<Action>();
+        await Task.Delay(100); // Allow async fire-and-forget to complete
         _playbackService.PositionChanged += Raise.Event<Action>();
+        await Task.Delay(100); // Allow async fire-and-forget to complete
 
         // Assert
         await _discordService.Received(1).OnTrackProgressAsync(currentPosition, duration);
@@ -272,6 +276,7 @@ public class PresenceManagerTests : IDisposable
 
         // Act
         _settingsService.DiscordRichPresenceSettingChanged += Raise.Event<Action<bool>>(true);
+        await Task.Delay(100); // Allow async fire-and-forget to complete
 
         // Assert
         await _discordService.Received(1).InitializeAsync();
@@ -296,6 +301,7 @@ public class PresenceManagerTests : IDisposable
 
         // Act
         _settingsService.DiscordRichPresenceSettingChanged += Raise.Event<Action<bool>>(false);
+        await Task.Delay(100); // Allow async fire-and-forget to complete
 
         // Assert
         await _discordService.Received(1).OnPlaybackStoppedAsync();
@@ -326,6 +332,7 @@ public class PresenceManagerTests : IDisposable
 
         // Act
         _settingsService.LastFmSettingsChanged += Raise.Event<Action>();
+        await Task.Delay(100); // Allow async fire-and-forget to complete
 
         // Assert
         await _lastFmService.Received(1).InitializeAsync();
@@ -391,6 +398,7 @@ public class PresenceManagerTests : IDisposable
 
         // Act
         _playbackService.TrackChanged += Raise.Event<Action>();
+        await Task.Delay(100); // Allow async fire-and-forget to complete
 
         // Assert
         _logger.Received(1).Log(

@@ -638,7 +638,7 @@
                         IsOn="{x:Bind ViewModel.IsFetchOnlineMetadataEnabled, Mode=TwoWay}" />
 
                     <controls:SettingsExpander.Items>
-                        <controls:SettingsCard Header="Sources" Description="Drag to reorder metadata sources.">
+                        <controls:SettingsCard Header="Sources" Description="Drag to reorder metadata sources. Hover over each source for details.">
                             <controls:SettingsCard.HeaderIcon>
                                 <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE179;" />
                             </controls:SettingsCard.HeaderIcon>

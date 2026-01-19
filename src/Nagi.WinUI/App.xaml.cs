@@ -631,9 +631,21 @@ public partial class App : Application
         {
             if (Services is not null) await SaveApplicationStateAsync(Services);
         }
+        catch (IOException ioEx)
+        {
+            _logger?.LogError(ioEx, "I/O error saving application state during suspension. User data may not be persisted.");
+        }
+        catch (UnauthorizedAccessException accessEx)
+        {
+            _logger?.LogError(accessEx, "Access denied saving application state during suspension. Check file permissions.");
+        }
+        catch (InvalidOperationException invalidOpEx)
+        {
+            _logger?.LogError(invalidOpEx, "Invalid operation during suspension. Services may already be disposed.");
+        }
         catch (Exception ex)
         {
-            _logger?.LogError(ex, "Error during application suspension.");
+            _logger?.LogError(ex, "Unexpected error during application suspension.");
         }
         finally
         {
@@ -655,9 +667,21 @@ public partial class App : Application
 
             await settingsService.FlushAsync();
         }
+        catch (IOException ioEx)
+        {
+            _logger?.LogError(ioEx, "I/O error saving application state. Settings file may be locked or disk full.");
+        }
+        catch (UnauthorizedAccessException accessEx)
+        {
+            _logger?.LogError(accessEx, "Access denied while saving application state. Check LocalAppData permissions.");
+        }
+        catch (ObjectDisposedException disposedEx)
+        {
+            _logger?.LogWarning(disposedEx, "Service already disposed during save. State may be partially saved.");
+        }
         catch (Exception ex)
         {
-            _logger?.LogError(ex, "Failed to save application state or flush settings");
+            _logger?.LogError(ex, "Unexpected error saving application state or flushing settings.");
         }
     }
 

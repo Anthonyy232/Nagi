@@ -790,7 +790,7 @@ public class SettingsService : IUISettingsService, IDisposable
                     Category = ServiceCategory.Metadata,
                     IsEnabled = true,
                     Order = 0,
-                    Description = "Open music encyclopedia, provides artist IDs"
+                    Description = "Fetches artist IDs (required for TheAudioDB and Fanart.tv)"
                 },
                 new()
                 {
@@ -799,7 +799,7 @@ public class SettingsService : IUISettingsService, IDisposable
                     Category = ServiceCategory.Metadata,
                     IsEnabled = true,
                     Order = 1,
-                    Description = "High-quality artist images and biographies"
+                    Description = "High-quality artist images and biographies (requires MusicBrainz)"
                 },
                 new()
                 {
@@ -808,7 +808,7 @@ public class SettingsService : IUISettingsService, IDisposable
                     Category = ServiceCategory.Metadata,
                     IsEnabled = true,
                     Order = 2,
-                    Description = "Fan-contributed artist artwork"
+                    Description = "High-quality artist images only (requires MusicBrainz)"
                 },
                 new()
                 {
@@ -817,7 +817,7 @@ public class SettingsService : IUISettingsService, IDisposable
                     Category = ServiceCategory.Metadata,
                     IsEnabled = true,
                     Order = 3,
-                    Description = "Backup source for artist images"
+                    Description = "Artist images only"
                 },
                 new()
                 {
@@ -826,7 +826,7 @@ public class SettingsService : IUISettingsService, IDisposable
                     Category = ServiceCategory.Metadata,
                     IsEnabled = true,
                     Order = 4,
-                    Description = "Fallback for images and biographies"
+                    Description = "Artist biographies and images (fallback)"
                 }
             },
             _ => new List<ServiceProviderSetting>()
