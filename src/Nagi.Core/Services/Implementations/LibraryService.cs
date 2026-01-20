@@ -134,16 +134,19 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         var albumArtPath = _pathConfig.AlbumArtCachePath;
         var artistImagePath = _pathConfig.ArtistImageCachePath;
+        var playlistImagePath = _pathConfig.PlaylistImageCachePath;
         var lrcCachePath = _pathConfig.LrcCachePath;
 
         try
         {
             if (_fileSystem.DirectoryExists(albumArtPath)) _fileSystem.DeleteDirectory(albumArtPath, true);
             if (_fileSystem.DirectoryExists(artistImagePath)) _fileSystem.DeleteDirectory(artistImagePath, true);
+            if (_fileSystem.DirectoryExists(playlistImagePath)) _fileSystem.DeleteDirectory(playlistImagePath, true);
             if (_fileSystem.DirectoryExists(lrcCachePath)) _fileSystem.DeleteDirectory(lrcCachePath, true);
 
             _fileSystem.CreateDirectory(albumArtPath);
             _fileSystem.CreateDirectory(artistImagePath);
+            _fileSystem.CreateDirectory(playlistImagePath);
             _fileSystem.CreateDirectory(lrcCachePath);
             _logger.LogInformation("Successfully cleared and recreated cache directories.");
         }
@@ -1358,7 +1361,18 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     public async Task<bool> DeletePlaylistAsync(Guid playlistId)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        var rowsAffected = await context.Playlists.Where(p => p.Id == playlistId).ExecuteDeleteAsync().ConfigureAwait(false);
+        
+        // Find playlist to get the cover URI before deleting
+        var playlist = await context.Playlists.FindAsync(playlistId).ConfigureAwait(false);
+        if (playlist is null) return false;
+
+        // Delete custom cover if it exists
+        var cachePath = _pathConfig.PlaylistImageCachePath;
+        ImageStorageHelper.DeleteImage(_fileSystem, cachePath, playlistId.ToString(), ".custom");
+
+        // Delete from database
+        context.Playlists.Remove(playlist);
+        var rowsAffected = await context.SaveChangesAsync().ConfigureAwait(false);
         return rowsAffected > 0;
     }
 
@@ -3161,6 +3175,13 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         var trackArtistNames = metadata.Artists.Select(ArtistNameHelper.Normalize).ToList();
         var albumArtistNames = metadata.AlbumArtists.Select(ArtistNameHelper.Normalize).ToList();
 
+        if (albumArtistNames.Count == 0)
+        {
+            albumArtistNames = trackArtistNames.Count > 0 
+                ? new List<string>(trackArtistNames) 
+                : new List<string> { Artist.UnknownArtistName };
+        }
+
         var primaryAlbumArtist = GetOrCreateArtist(context, artistLookup, albumArtistNames[0], _logger);
 
         Album? album = null;
@@ -3992,7 +4013,17 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 deletedAny = false;
         }
 
-        await context.Albums.Where(a => !a.Songs.Any()).ExecuteDeleteAsync(cancellationToken).ConfigureAwait(false);
+        var emptyAlbumIds = await context.Albums
+            .Where(a => !a.Songs.Any())
+            .Select(a => a.Id)
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
+
+        if (emptyAlbumIds.Any())
+        {
+            await context.Albums
+                .Where(a => emptyAlbumIds.Contains(a.Id))
+                .ExecuteDeleteAsync(cancellationToken).ConfigureAwait(false);
+        }
 
         var orphanedArtists = await context.Artists
             .AsNoTracking()
@@ -4016,16 +4047,13 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             }
         }
 
-        // Aggressive Cleanup: Remove any files in the artist image cache that don't match the new naming convention
-        // or are for artists that no longer exist.
+        // Aggressive Cleanup: Remove any files in the artist image cache that don't match the new naming convention.
+        // We only keep files matching {id}.fetched.* OR {id}.custom.* where {id} is a valid Guid.
         try
         {
             var cachePath = _pathConfig.ArtistImageCachePath;
             if (_fileSystem.DirectoryExists(cachePath))
             {
-                var allArtistIds = await context.Artists.Select(a => a.Id).ToListAsync(cancellationToken).ConfigureAwait(false);
-                var artistIdSet = new HashSet<Guid>(allArtistIds);
-                // 3 argument overload not available on interface, using EnumerateFiles
                 var files = _fileSystem.EnumerateFiles(cachePath, "*.*", SearchOption.TopDirectoryOnly);
 
                 foreach (var file in files)
@@ -4041,26 +4069,14 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                     {
                         shouldDelete = true;
                     }
-                    else if (fileName.Contains(".fetched.") || fileName.Contains(".custom."))
+                    else
                     {
-                        // 2. Extract Guid and check if artist exists
+                        // 2. Extract Guid and check if it's valid
                         var guidPart = fileName.Split('.')[0];
-                        if (Guid.TryParse(guidPart, out var artistId))
-                        {
-                            if (!artistIdSet.Contains(artistId))
-                            {
-                                shouldDelete = true;
-                            }
-                        }
-                        else
+                        if (!Guid.TryParse(guidPart, out _))
                         {
                             shouldDelete = true;
                         }
-                    }
-                    else
-                    {
-                        // Not a jpg file we manage
-                        shouldDelete = true;
                     }
 
                     if (shouldDelete)
@@ -4082,7 +4098,136 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             _logger.LogError(ex, "Error during aggressive artist image cache cleanup.");
         }
 
-        await context.Genres.Where(g => !g.Songs.Any()).ExecuteDeleteAsync(cancellationToken).ConfigureAwait(false);
+        // Aggressive Cleanup for Album Art Cache: Remove files in old format (without embedded colors)
+        // New format: {hash}.{lightHex}.{darkHex}.fetched.jpg (4 dot-separated parts)
+        // Old format: {hash}.fetched.jpg (2 dot-separated parts) - should be deleted
+        try
+        {
+            var albumArtCachePath = _pathConfig.AlbumArtCachePath;
+            if (_fileSystem.DirectoryExists(albumArtCachePath))
+            {
+                var files = _fileSystem.EnumerateFiles(albumArtCachePath, "*.fetched.jpg", SearchOption.TopDirectoryOnly);
+
+                foreach (var file in files)
+                {
+                    var fileName = _fileSystem.GetFileNameWithoutExtension(file); // removes .jpg
+                    if (string.IsNullOrEmpty(fileName)) continue;
+
+                    // Remove .fetched suffix to count parts
+                    if (fileName.EndsWith(".fetched", StringComparison.OrdinalIgnoreCase))
+                        fileName = fileName[..^8];
+
+                    // Optimization: Check for dots to distinguish formats without allocating an array
+                    // Old format (hash) has no dots; New format (hash.light.dark) has dots
+                    if (!fileName.Contains('.'))
+                    {
+                        // Old format - delete it
+                        try
+                        {
+                            _fileSystem.DeleteFile(file);
+                            _logger.LogDebug("Deleted legacy album art cache file: {FilePath}", file);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogWarning(ex, "Failed to delete legacy album art cache file {FilePath}.", file);
+                        }
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error during album art cache cleanup.");
+        }
+
+        var emptyGenreIds = await context.Genres
+            .Where(g => !g.Songs.Any())
+            .Select(g => g.Id)
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
+
+        if (emptyGenreIds.Any())
+        {
+            await context.Genres
+                .Where(g => emptyGenreIds.Contains(g.Id))
+                .ExecuteDeleteAsync(cancellationToken).ConfigureAwait(false);
+        }
+
+        // Aggressive Cleanup: Remove any files in the playlist art cache that don't match the standard naming convention.
+        // We only keep files matching {id}.custom.* where {id} is a valid Guid.
+        try
+        {
+            var playlistCachePath = _pathConfig.PlaylistImageCachePath;
+            if (_fileSystem.DirectoryExists(playlistCachePath))
+            {
+                var files = _fileSystem.EnumerateFiles(playlistCachePath, "*.*", SearchOption.TopDirectoryOnly);
+
+                foreach (var file in files)
+                {
+                    var fileName = _fileSystem.GetFileName(file);
+                    if (string.IsNullOrEmpty(fileName)) continue;
+
+                    bool shouldDelete = false;
+
+                    // We only want to keep: {id}.custom.*
+                    if (!fileName.Contains(".custom."))
+                    {
+                        shouldDelete = true;
+                    }
+                    else
+                    {
+                        var guidPart = fileName.Split('.')[0];
+                        if (!Guid.TryParse(guidPart, out _))
+                        {
+                            shouldDelete = true;
+                        }
+                    }
+
+                    if (shouldDelete)
+                    {
+                        try
+                        {
+                            _fileSystem.DeleteFile(file);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogWarning(ex, "Failed to delete invalid/legacy playlist image file {FilePath}.", file);
+                        }
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error during aggressive playlist image cache cleanup.");
+        }
+
+        // Aggressive Cleanup: Remove any files in the LRC cache that are not actually LRC files.
+        try
+        {
+            var lrcCachePath = _pathConfig.LrcCachePath;
+            if (_fileSystem.DirectoryExists(lrcCachePath))
+            {
+                var files = _fileSystem.EnumerateFiles(lrcCachePath, "*.*", SearchOption.TopDirectoryOnly);
+                foreach (var file in files)
+                {
+                    if (!file.EndsWith(".lrc", StringComparison.OrdinalIgnoreCase))
+                    {
+                        try
+                        {
+                            _fileSystem.DeleteFile(file);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogWarning(ex, "Failed to delete non-LRC file from cache: {FilePath}.", file);
+                        }
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error during aggressive LRC cache cleanup.");
+        }
     }
 
     /// <summary>

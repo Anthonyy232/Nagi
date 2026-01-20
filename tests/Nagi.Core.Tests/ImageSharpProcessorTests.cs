@@ -58,21 +58,23 @@ public class ImageSharpProcessorTests
         // Arrange
         var pictureData = CreateTestImageBytes();
         var contentHash = GenerateContentHash(pictureData);
-        var expectedPath = Path.Combine(AlbumArtPath, $"{contentHash}.fetched.jpg");
-        var expectedTempPath = expectedPath + ".tmp";
-        _fileSystem.FileExists(expectedPath).Returns(false);
+        // File doesn't exist yet - GetFiles returns empty array
+        _fileSystem.GetFiles(AlbumArtPath, $"{contentHash}.*.fetched.jpg").Returns(Array.Empty<string>());
 
         // Act
         var (uri, lightSwatch, darkSwatch) =
             await _imageProcessor.SaveCoverArtAndExtractColorsAsync(pictureData);
 
         // Assert
-        uri.Should().Be(expectedPath);
+        // New format includes colors: {hash}.{light}.{dark}.fetched.jpg
+        uri.Should().NotBeNull();
+        uri.Should().StartWith(Path.Combine(AlbumArtPath, contentHash));
+        uri.Should().EndWith(".fetched.jpg");
         lightSwatch.Should().NotBeNull();
         darkSwatch.Should().NotBeNull();
-        // Verify atomic write pattern: write to temp, then move to final path
-        await _fileSystem.Received(1).WriteAllBytesAsync(expectedTempPath, Arg.Any<byte[]>());
-        _fileSystem.Received(1).MoveFile(expectedTempPath, expectedPath, false);
+        // Verify atomic write pattern
+        await _fileSystem.Received(1).WriteAllBytesAsync(Arg.Any<string>(), Arg.Any<byte[]>());
+        _fileSystem.Received(1).MoveFile(Arg.Any<string>(), Arg.Any<string>(), false);
     }
 
     /// <summary>
@@ -85,17 +87,18 @@ public class ImageSharpProcessorTests
         // Arrange
         var pictureData = CreateTestImageBytes();
         var contentHash = GenerateContentHash(pictureData);
-        var expectedPath = Path.Combine(AlbumArtPath, $"{contentHash}.fetched.jpg");
-        _fileSystem.FileExists(expectedPath).Returns(true);
+        // Simulate existing cached file with embedded colors
+        var cachedPath = Path.Combine(AlbumArtPath, $"{contentHash}.abcdef.123456.fetched.jpg");
+        _fileSystem.GetFiles(AlbumArtPath, $"{contentHash}.*.fetched.jpg").Returns(new[] { cachedPath });
 
         // Act
         var (uri, lightSwatch, darkSwatch) =
             await _imageProcessor.SaveCoverArtAndExtractColorsAsync(pictureData);
 
-        // Assert
-        uri.Should().Be(expectedPath);
-        lightSwatch.Should().NotBeNull();
-        darkSwatch.Should().NotBeNull();
+        // Assert - should return cached path and parse colors from filename
+        uri.Should().Be(cachedPath);
+        lightSwatch.Should().Be("abcdef"); // parsed from filename
+        darkSwatch.Should().Be("123456"); // parsed from filename
         await _fileSystem.DidNotReceive().WriteAllBytesAsync(Arg.Any<string>(), Arg.Any<byte[]>());
     }
 
@@ -108,23 +111,26 @@ public class ImageSharpProcessorTests
         // Arrange
         var pictureData = CreateTestImageBytes();
         var contentHash = GenerateContentHash(pictureData);
-        var expectedPath = Path.Combine(AlbumArtPath, $"{contentHash}.fetched.jpg");
-        var expectedTempPath = expectedPath + ".tmp";
+        string? savedPath = null;
         
-        // First call - file doesn't exist (needs false for both outer check AND inner double-check)
-        // Second call - file exists
-        _fileSystem.FileExists(expectedPath).Returns(false, false, true);
+        // First call - file doesn't exist, then it does after save
+        _fileSystem.GetFiles(AlbumArtPath, $"{contentHash}.*.fetched.jpg")
+            .Returns(_ => savedPath == null ? Array.Empty<string>() : new[] { savedPath });
+        
+        // Capture the saved path when MoveFile is called
+        _fileSystem.When(x => x.MoveFile(Arg.Any<string>(), Arg.Any<string>(), false))
+            .Do(callInfo => savedPath = callInfo.ArgAt<string>(1));
 
         // Act - call twice with same data
         var (uri1, _, _) = await _imageProcessor.SaveCoverArtAndExtractColorsAsync(pictureData);
         var (uri2, _, _) = await _imageProcessor.SaveCoverArtAndExtractColorsAsync(pictureData);
 
         // Assert - both calls should return the same path
-        uri1.Should().Be(expectedPath);
-        uri2.Should().Be(expectedPath);
-        // File should only be written once (to temp path, then moved)
-        await _fileSystem.Received(1).WriteAllBytesAsync(expectedTempPath, Arg.Any<byte[]>());
-        _fileSystem.Received(1).MoveFile(expectedTempPath, expectedPath, false);
+        uri1.Should().Be(savedPath);
+        uri2.Should().Be(savedPath);
+        // File should only be written once
+        await _fileSystem.Received(1).WriteAllBytesAsync(Arg.Any<string>(), Arg.Any<byte[]>());
+        _fileSystem.Received(1).MoveFile(Arg.Any<string>(), Arg.Any<string>(), false);
     }
 
     /// <summary>
@@ -136,8 +142,7 @@ public class ImageSharpProcessorTests
         // Arrange
         var invalidPictureData = new byte[] { 1, 2, 3, 4 };
         var contentHash = GenerateContentHash(invalidPictureData);
-        var expectedPath = Path.Combine(AlbumArtPath, $"{contentHash}.fetched.jpg");
-        _fileSystem.FileExists(expectedPath).Returns(false);
+        _fileSystem.GetFiles(AlbumArtPath, $"{contentHash}.*.fetched.jpg").Returns(Array.Empty<string>());
 
         // Act
         var (uri, lightSwatch, darkSwatch) =
@@ -159,11 +164,9 @@ public class ImageSharpProcessorTests
         // Arrange
         var pictureData = CreateTestImageBytes();
         var contentHash = GenerateContentHash(pictureData);
-        var expectedPath = Path.Combine(AlbumArtPath, $"{contentHash}.fetched.jpg");
-        var expectedTempPath = expectedPath + ".tmp";
-        _fileSystem.FileExists(expectedPath).Returns(false);
+        _fileSystem.GetFiles(AlbumArtPath, $"{contentHash}.*.fetched.jpg").Returns(Array.Empty<string>());
         // Throw on temp file write to simulate disk full
-        _fileSystem.WriteAllBytesAsync(expectedTempPath, Arg.Any<byte[]>()).ThrowsAsync(new IOException("Disk full"));
+        _fileSystem.WriteAllBytesAsync(Arg.Any<string>(), Arg.Any<byte[]>()).ThrowsAsync(new IOException("Disk full"));
 
         // Act
         var (uri, lightSwatch, darkSwatch) =

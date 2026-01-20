@@ -77,6 +77,12 @@ public class ImageSharpProcessor : IImageProcessor
     }
 
     /// <inheritdoc />
+    /// <remarks>
+    /// This method uses a filename-based color cache. The filename pattern is:
+    /// <c>{hash}.{lightHex}.{darkHex}.fetched.jpg</c>
+    /// This allows subsequent calls with the same image content to skip image decoding entirely
+    /// by parsing the colors from the existing filename.
+    /// </remarks>
     public async Task<(string? uri, string? lightSwatchId, string? darkSwatchId)> SaveCoverArtAndExtractColorsAsync(
         byte[] pictureData)
     {
@@ -87,16 +93,17 @@ public class ImageSharpProcessor : IImageProcessor
         {
             // Generate a content-based hash for deduplication
             var contentHash = GenerateContentHash(pictureData);
-            // Use standardized naming convention for fetched/processed images
-            var filename = $"{contentHash}.fetched.jpg";
-            var fullPath = _fileSystem.Combine(_albumArtStoragePath, filename);
 
-            // Save with deduplication - handles both file existence check and concurrent access
-            await SaveImageWithDeduplicationAsync(contentHash, fullPath, pictureData).ConfigureAwait(false);
+            // Fast path: check if a file with this hash already exists (includes colors in filename)
+            var existingFile = FindCachedFileByHash(contentHash);
+            if (existingFile != null)
+            {
+                var (lightHex, darkHex) = ParseColorsFromFilename(existingFile);
+                return (existingFile, lightHex, darkHex);
+            }
 
-            // Extract colors (always from original data for best accuracy)
-            var (lightHex, darkHex) = ExtractColorSwatches(pictureData);
-            return (fullPath, lightHex, darkHex);
+            // Slow path: load image once, save and extract colors
+            return await ProcessAndSaveNewImageAsync(contentHash, pictureData).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -106,98 +113,146 @@ public class ImageSharpProcessor : IImageProcessor
     }
 
     /// <summary>
-    ///     Saves the image to disk, handling concurrent attempts to save the same content.
-    ///     Uses a ConcurrentDictionary with Lazy to ensure only one thread actually 
-    ///     performs the save for a given content hash.
+    ///     Finds an existing cached file by content hash prefix.
+    ///     Returns the full path if found, null otherwise.
     /// </summary>
-    private async Task SaveImageWithDeduplicationAsync(string contentHash, string fullPath, byte[] pictureData)
+    private string? FindCachedFileByHash(string contentHash)
     {
-        // Fast path: if file already exists, skip the save operation entirely
-        if (_fileSystem.FileExists(fullPath))
-            return;
+        try
+        {
+            // Look for files matching the hash prefix pattern
+            var searchPattern = $"{contentHash}.*.fetched.jpg";
+            var matches = _fileSystem.GetFiles(_albumArtStoragePath, searchPattern);
+            return matches.FirstOrDefault();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogDebug(ex, "Error searching for cached file with hash {Hash}", contentHash);
+            return null;
+        }
+    }
 
-        // Use Lazy<Task> to ensure the save task is only started once per content hash,
-        // even if multiple threads call GetOrAdd simultaneously.
+    /// <summary>
+    ///     Parses light and dark color hex values from the filename pattern.
+    ///     Expected pattern: {hash}.{lightHex}.{darkHex}.fetched.jpg
+    /// </summary>
+    private static (string? lightHex, string? darkHex) ParseColorsFromFilename(string filePath)
+    {
+        try
+        {
+            var filename = Path.GetFileNameWithoutExtension(filePath); // removes .jpg
+            if (filename.EndsWith(".fetched", StringComparison.OrdinalIgnoreCase))
+                filename = filename[..^8]; // remove .fetched suffix
+
+            var parts = filename.Split('.');
+            // Expected: [hash, lightHex, darkHex]
+            if (parts.Length >= 3)
+            {
+                return (parts[^2], parts[^1]); // second-to-last and last
+            }
+        }
+        catch
+        {
+            // Parsing failed, return nulls
+        }
+        return (null, null);
+    }
+
+    /// <summary>
+    ///     Processes a new image: loads it once, extracts colors, resizes, saves with colors in filename.
+    /// </summary>
+    private async Task<(string? uri, string? lightSwatchId, string? darkSwatchId)> ProcessAndSaveNewImageAsync(
+        string contentHash, byte[] pictureData)
+    {
+        // Use Lazy<Task> pattern for concurrent deduplication
         var lazyTask = _inFlightSaves.GetOrAdd(contentHash,
-            _ => new Lazy<Task<string>>(() => SaveImageToDiskAsync(fullPath, pictureData)));
+            _ => new Lazy<Task<string>>(() => ProcessAndSaveNewImageCoreAsync(contentHash, pictureData)));
 
         try
         {
-            await lazyTask.Value.ConfigureAwait(false);
+            var fullPath = await lazyTask.Value.ConfigureAwait(false);
+            var (lightHex, darkHex) = ParseColorsFromFilename(fullPath);
+            return (fullPath, lightHex, darkHex);
         }
         finally
         {
-            // Remove from in-flight tracking once complete (whether success or failure)
             _inFlightSaves.TryRemove(contentHash, out _);
         }
     }
 
     /// <summary>
-    ///     Actually performs the image loading, resizing, and saving to disk.
-    ///     Uses atomic file write via temp file to prevent partial writes.
+    ///     Core implementation: loads image once, extracts colors, saves with colors embedded in filename.
     /// </summary>
-    private async Task<string> SaveImageToDiskAsync(string fullPath, byte[] pictureData)
+    private async Task<string> ProcessAndSaveNewImageCoreAsync(string contentHash, byte[] pictureData)
     {
-        // Double-check file doesn't exist (another thread may have created it while we were waiting)
-        if (_fileSystem.FileExists(fullPath))
-            return fullPath;
+        // Double-check: another thread may have created the file while we were waiting
+        var existingFile = FindCachedFileByHash(contentHash);
+        if (existingFile != null)
+            return existingFile;
 
+        // Load image ONCE
         using var image = Image.Load<Rgba32>(pictureData);
 
-        // Only resize if larger than max dimension
+        // Extract colors from the loaded image (resize to small size for speed)
+        var (lightHex, darkHex) = ExtractColorsFromLoadedImage(image);
+
+        // Build filename with embedded colors
+        var safeLight = lightHex ?? "000000";
+        var safeDark = darkHex ?? "000000";
+        var filename = $"{contentHash}.{safeLight}.{safeDark}.fetched.jpg";
+        var fullPath = _fileSystem.Combine(_albumArtStoragePath, filename);
+
+        // Resize for caching if needed (mutates in-place)
         if (image.Width > CachedImageMaxDimension || image.Height > CachedImageMaxDimension)
         {
             image.Mutate(x => x.Resize(new ResizeOptions
             {
                 Size = new Size(CachedImageMaxDimension, CachedImageMaxDimension),
-                Mode = ResizeMode.Max // Preserves aspect ratio, fits within bounds
+                Mode = ResizeMode.Max
             }));
 
-            _logger.LogTrace("Resized album art from original to {Width}x{Height} for caching.",
-                image.Width, image.Height);
+            _logger.LogTrace("Resized album art to {Width}x{Height} for caching.", image.Width, image.Height);
         }
 
-        // Save to memory stream first, then write bytes to disk atomically via temp file
+        // Save to disk atomically
         using var memoryStream = new MemoryStream();
         await image.SaveAsJpegAsync(memoryStream).ConfigureAwait(false);
         var imageBytes = memoryStream.ToArray();
 
-        // Write to a temp file first, then move atomically to avoid partial writes
         var tempPath = fullPath + ".tmp";
         await _fileSystem.WriteAllBytesAsync(tempPath, imageBytes).ConfigureAwait(false);
-        
-        // Atomic move - if target exists now (race), just delete our temp file
+
         try
         {
             _fileSystem.MoveFile(tempPath, fullPath, overwrite: false);
         }
         catch (IOException)
         {
-            // File already exists (another thread won the race), delete our temp file
-            try { _fileSystem.DeleteFile(tempPath); } 
+            // Another thread won the race, clean up our temp file
+            try { _fileSystem.DeleteFile(tempPath); }
             catch (Exception ex) { _logger.LogDebug(ex, "Failed to clean up temp file {TempPath}", tempPath); }
         }
-        
+
         return fullPath;
     }
 
     /// <summary>
-    ///     Extracts primary color swatches for light and dark themes from image data.
-    ///     Uses a small resized version for faster processing.
+    ///     Extracts colors from an already-loaded image by cloning and resizing to a small dimension.
+    ///     This avoids decoding the image twice.
     /// </summary>
-    private (string? lightHex, string? darkHex) ExtractColorSwatches(byte[] pictureData)
+    private (string? lightHex, string? darkHex) ExtractColorsFromLoadedImage(Image<Rgba32> originalImage)
     {
         try
         {
-            using var image = Image.Load<Rgba32>(pictureData);
-            image.Mutate(x => x.Resize(new ResizeOptions
+            // Clone and resize to small dimension for fast color extraction
+            using var colorImage = originalImage.Clone(x => x.Resize(new ResizeOptions
             {
                 Size = new Size(ColorExtractionDimension, ColorExtractionDimension),
                 Mode = ResizeMode.Max
             }));
 
-            var pixels = new uint[image.Width * image.Height];
-            image.CopyPixelDataTo(System.Runtime.InteropServices.MemoryMarshal.AsBytes(pixels.AsSpan()));
+            var pixels = new uint[colorImage.Width * colorImage.Height];
+            colorImage.CopyPixelDataTo(System.Runtime.InteropServices.MemoryMarshal.AsBytes(pixels.AsSpan()));
 
             // Convert ImageSharp's RGBA format to MaterialColorUtilities' ARGB format
             for (var i = 0; i < pixels.Length; i++)
