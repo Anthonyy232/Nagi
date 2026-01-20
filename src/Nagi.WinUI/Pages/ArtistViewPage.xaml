@@ -14,7 +14,101 @@
     Background="Transparent"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <!-- Default album card template -->
+        <DataTemplate x:Key="AlbumCardTemplate" x:DataType="viewmodels:ArtistAlbumViewModelItem">
+            <Grid
+                Width="{StaticResource AlbumCardWidth}"
+                MinHeight="{StaticResource AlbumCardMinHeight}"
+                Margin="8,16,8,16"
+                Background="Transparent">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Border Grid.Row="0"
+                        Width="{StaticResource AlbumCardImageSize}"
+                        Height="{StaticResource AlbumCardImageSize}"
+                        HorizontalAlignment="Center"
+                        CornerRadius="12"
+                        Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <controls:ImageEx
+                        CornerRadius="12"
+                        IsCacheEnabled="True"
+                        Source="{x:Bind uihelpers:ImageUriHelper.GetUriWithCacheBuster(CoverArtUri), Mode=OneWay}"
+                        DecodePixelWidth="{StaticResource AlbumCardImageSize}"
+                        DecodePixelType="Logical"
+                        Stretch="UniformToFill" />
+                </Border>
+                <TextBlock
+                    Grid.Row="1"
+                    Margin="4,8,4,0"
+                    MaxWidth="{StaticResource AlbumCardImageSize}"
+                    HorizontalAlignment="Center"
+                    FontWeight="SemiBold"
+                    Text="{x:Bind Name}"
+                    TextTrimming="CharacterEllipsis"
+                    TextWrapping="NoWrap" />
+                <TextBlock
+                    Grid.Row="2"
+                    Margin="4,2,4,0"
+                    MaxWidth="{StaticResource AlbumCardImageSize}"
+                    HorizontalAlignment="Center"
+                    Opacity="0.7"
+                    Text="{x:Bind YearText}"
+                    TextTrimming="CharacterEllipsis"
+                    TextWrapping="NoWrap" />
+            </Grid>
+        </DataTemplate>
 
+        <!-- Large display album card template -->
+        <DataTemplate x:Key="AlbumCardTemplateLarge" x:DataType="viewmodels:ArtistAlbumViewModelItem">
+            <Grid
+                Width="{StaticResource AlbumCardWidthLarge}"
+                MinHeight="{StaticResource AlbumCardMinHeightLarge}"
+                Margin="8,16,8,16"
+                Background="Transparent">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Border Grid.Row="0"
+                        Width="{StaticResource AlbumCardImageSizeLarge}"
+                        Height="{StaticResource AlbumCardImageSizeLarge}"
+                        HorizontalAlignment="Center"
+                        CornerRadius="12"
+                        Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <controls:ImageEx
+                        CornerRadius="12"
+                        IsCacheEnabled="True"
+                        Source="{x:Bind uihelpers:ImageUriHelper.GetUriWithCacheBuster(CoverArtUri), Mode=OneWay}"
+                        DecodePixelWidth="{StaticResource AlbumCardImageSizeLarge}"
+                        DecodePixelType="Logical"
+                        Stretch="UniformToFill" />
+                </Border>
+                <TextBlock
+                    Grid.Row="1"
+                    Margin="4,8,4,0"
+                    MaxWidth="{StaticResource AlbumCardImageSizeLarge}"
+                    HorizontalAlignment="Center"
+                    FontWeight="SemiBold"
+                    Text="{x:Bind Name}"
+                    TextTrimming="CharacterEllipsis"
+                    TextWrapping="NoWrap" />
+                <TextBlock
+                    Grid.Row="2"
+                    Margin="4,2,4,0"
+                    MaxWidth="{StaticResource AlbumCardImageSizeLarge}"
+                    HorizontalAlignment="Center"
+                    Opacity="0.7"
+                    Text="{x:Bind YearText}"
+                    TextTrimming="CharacterEllipsis"
+                    TextWrapping="NoWrap" />
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
 
     <Grid KeyboardAcceleratorPlacementMode="Hidden">
         <Grid.KeyboardAccelerators>
@@ -59,7 +153,7 @@
                         <DoubleAnimation
                             Storyboard.TargetName="SearchTextBox"
                             Storyboard.TargetProperty="Width"
-                            To="300"
+                            To="{StaticResource SearchBoxExpandedWidth}"
                             Duration="0:0:0.3"
                             EnableDependentAnimation="True">
                             <DoubleAnimation.EasingFunction>
@@ -87,6 +181,28 @@
                     </Storyboard>
                 </VisualState>
             </VisualStateGroup>
+            <VisualStateGroup x:Name="WindowSizeStates">
+                <!-- Large displays (1600px+) -->
+                <VisualState x:Name="WideLayout">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="1600" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <!-- Increase search box width -->
+                        <Setter Target="SearchTextBox.Width" Value="{StaticResource SearchBoxExpandedWidthLarge}" />
+                        <!-- Scale up album cards for better space utilization -->
+                        <Setter Target="AlbumGridView.ItemTemplate" Value="{StaticResource AlbumCardTemplateLarge}" />
+                    </VisualState.Setters>
+                </VisualState>
+
+                <!-- Normal/Small displays -->
+                <VisualState x:Name="NormalLayout">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                    <!-- Default sizing from resources -->
+                </VisualState>
+            </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
         <Grid.RowDefinitions>
@@ -95,7 +211,7 @@
         </Grid.RowDefinitions>
 
         <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
-            <StackPanel Padding="24,24,24,0">
+            <StackPanel Padding="{StaticResource ViewPageHeaderPadding}">
                 <Grid Margin="0,0,0,16">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -103,7 +219,7 @@
                     </Grid.ColumnDefinitions>
                     
                     <!-- Artist Image and Info Content (unchanged) -->
-                    <Grid Grid.Column="0" Width="150" Height="150" CornerRadius="75"
+                    <Grid Grid.Column="0" Width="{StaticResource HeaderImageSize}" Height="{StaticResource HeaderImageSize}" CornerRadius="75"
                           PointerEntered="ArtistImage_PointerEntered" PointerExited="ArtistImage_PointerExited"
                           Background="Transparent">
                         <controls:ImageEx
@@ -111,7 +227,7 @@
                             IsCacheEnabled="True"
                             Source="{x:Bind ViewModel.ArtistImageUri, Mode=OneWay, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
                             Stretch="UniformToFill"
-                            DecodePixelWidth="160"
+                            DecodePixelWidth="{StaticResource HeaderImageSize}"
                             DecodePixelType="Logical"
                             Visibility="{x:Bind ViewModel.ArtistImageUri, Mode=OneWay, Converter={StaticResource NullOrEmptyStringToVisibilityConverter}}" />
 
@@ -162,13 +278,16 @@
 
                 <Grid x:Name="AlbumsViewport" VerticalAlignment="Top"
                       Visibility="{x:Bind ViewModel.HasAlbums, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
-                    <StackPanel x:Name="AlbumsContent" Spacing="2" VerticalAlignment="Top" Padding="0,0,0,16" SizeChanged="OnAlbumsContentSizeChanged">
+                    <StackPanel x:Name="AlbumsContent" Spacing="2" VerticalAlignment="Top" Padding="0,0,0,0" SizeChanged="OnAlbumsContentSizeChanged">
                     <TextBlock Style="{StaticResource SectionHeaderTextBlockStyle}" Text="Top Albums" Foreground="{StaticResource AppPrimaryColorBrush}" />
                     <GridView
+                        x:Name="AlbumGridView"
+                        Padding="0,0,16,0"
                         IsItemClickEnabled="True"
                         ItemClick="AlbumGridView_ItemClick"
                         ItemsSource="{x:Bind ViewModel.Albums, Mode=OneWay}"
                         SelectionMode="None"
+                        ItemTemplate="{StaticResource AlbumCardTemplate}"
                         ScrollViewer.HorizontalScrollMode="Auto"
                         ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                         ScrollViewer.IsHorizontalRailEnabled="True"
@@ -179,48 +298,6 @@
                                 <ItemsStackPanel Orientation="Horizontal" />
                             </ItemsPanelTemplate>
                         </GridView.ItemsPanel>
-                        <GridView.ItemTemplate>
-                            <DataTemplate x:DataType="viewmodels:ArtistAlbumViewModelItem">
-                                <Grid
-                                    Width="160"
-                                    Height="180"
-                                    Margin="8,16,8,16"
-                                    Background="Transparent">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="*" />
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="Auto" />
-                                    </Grid.RowDefinitions>
-                                    <Border Grid.Row="0"
-                                            Width="140"
-                                            Height="140"
-                                            HorizontalAlignment="Center"
-                                            CornerRadius="12"
-                                            Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                        <controls:ImageEx
-                                            IsCacheEnabled="True"
-                                            Source="{x:Bind uihelpers:ImageUriHelper.GetUriWithCacheBuster(CoverArtUri), Mode=OneWay}"
-                                            DecodePixelWidth="140"
-                                            DecodePixelType="Logical"
-                                            Stretch="UniformToFill" />
-
-                                    </Border>
-                                    <TextBlock
-                                        Grid.Row="1"
-                                        Margin="0,4,0,0"
-                                        HorizontalAlignment="Center"
-                                        FontWeight="SemiBold"
-                                        Text="{x:Bind Name}"
-                                        TextTrimming="CharacterEllipsis" />
-                                    <TextBlock
-                                        Grid.Row="2"
-                                        HorizontalAlignment="Center"
-                                        Opacity="0.7"
-                                        Text="{x:Bind YearText}"
-                                        TextTrimming="CharacterEllipsis" />
-                                </Grid>
-                            </DataTemplate>
-                        </GridView.ItemTemplate>
                     </GridView>
                     </StackPanel>
                 </Grid>
@@ -315,7 +392,7 @@
         <ListView
             Grid.Row="1"
             x:Name="SongsListView"
-            Padding="24,0,24,132"
+            Padding="{StaticResource SongListViewPadding}"
             IsItemClickEnabled="True"
             ItemContainerStyle="{StaticResource SongListViewPageListViewItemStyle}"
             ItemsSource="{x:Bind ViewModel.Songs, Mode=OneWay}"

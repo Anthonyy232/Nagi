@@ -15,7 +15,7 @@
 
 
 
-    <Grid Padding="24">
+    <Grid Padding="{StaticResource PageContainerPadding}">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="SearchStates">
                 <VisualState x:Name="SearchCollapsed">
@@ -53,7 +53,7 @@
                         <DoubleAnimation
                             Storyboard.TargetName="SearchTextBox"
                             Storyboard.TargetProperty="Width"
-                            To="300"
+                            To="{StaticResource SearchBoxExpandedWidth}"
                             Duration="0:0:0.3"
                             EnableDependentAnimation="True">
                             <DoubleAnimation.EasingFunction>
@@ -79,6 +79,23 @@
                     </Storyboard>
                 </VisualState>
             </VisualStateGroup>
+            <VisualStateGroup x:Name="WindowSizeStates">
+                <!-- Large displays (1600px+) -->
+                <VisualState x:Name="WideLayout">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="1600" />
+                    </VisualState.StateTriggers>
+                    <!-- Future: Scale up playlist cards for better space utilization -->
+                </VisualState>
+
+                <!-- Normal/Small displays -->
+                <VisualState x:Name="NormalLayout">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                    <!-- Default sizing from resources -->
+                </VisualState>
+            </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
         <Grid.RowDefinitions>
@@ -87,7 +104,9 @@
         </Grid.RowDefinitions>
 
         <!-- Page Header -->
-        <Grid Grid.Row="0" Margin="0,0,0,28">
+        <Grid Grid.Row="0"
+              Margin="{StaticResource PageHeaderMargin}"
+              Padding="{StaticResource PageHeaderPadding}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
@@ -233,8 +252,8 @@
 
                         <Grid
                             Grid.Row="0"
-                            Width="160"
-                            Height="160"
+                            Width="{StaticResource HeaderImageSize}"
+                            Height="{StaticResource HeaderImageSize}"
                             HorizontalAlignment="Center">
                             <Border
                                 CornerRadius="12"
@@ -242,7 +261,7 @@
                                 <controls:ImageEx
                                     IsCacheEnabled="True"
                                     Source="{x:Bind CoverImageUri, Mode=OneWay, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
-                                    DecodePixelWidth="160"
+                                    DecodePixelWidth="{StaticResource HeaderImageSize}"
                                     DecodePixelType="Logical"
                                     Stretch="UniformToFill" />
                             </Border>

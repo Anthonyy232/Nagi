@@ -93,7 +93,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Padding="24,24,24,0" Spacing="16">
+        <StackPanel Grid.Row="0" Padding="{StaticResource ViewPageHeaderPadding}" Spacing="16">
             <Grid Margin="0,0,0,10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -208,7 +208,7 @@
         <ListView
             x:Name="SongsListView"
             Grid.Row="1"
-            Padding="24,0,24,132"
+            Padding="{StaticResource SongListViewPadding}"
             IsItemClickEnabled="True"
             ItemContainerStyle="{StaticResource SongListViewPageListViewItemStyle}"
             ItemsSource="{x:Bind ViewModel.Songs, Mode=OneWay}"
