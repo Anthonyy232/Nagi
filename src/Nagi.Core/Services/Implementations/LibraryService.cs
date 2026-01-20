@@ -1776,10 +1776,11 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                         Bpm = ps.Song.Bpm,
                         ReplayGainTrackGain = ps.Song.ReplayGainTrackGain,
                         ReplayGainTrackPeak = ps.Song.ReplayGainTrackPeak,
-                        Grouping = ps.Song.Grouping,
                         Conductor = ps.Song.Conductor,
                         MusicBrainzTrackId = ps.Song.MusicBrainzTrackId,
-                        MusicBrainzReleaseId = ps.Song.MusicBrainzReleaseId
+                        MusicBrainzReleaseId = ps.Song.MusicBrainzReleaseId,
+                        ArtistName = ps.Song.ArtistName,
+                        PrimaryArtistName = ps.Song.PrimaryArtistName
                     }
                 });
 

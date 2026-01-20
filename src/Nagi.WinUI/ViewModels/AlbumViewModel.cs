@@ -59,6 +59,7 @@ public partial class AlbumViewModel : SearchableViewModelBase, IDisposable
     private int _currentPage = 1;
     private bool _isFullyLoaded;
     private bool _hasSortOrderLoaded;
+    private bool _isNavigating;
 
     public AlbumViewModel(ILibraryService libraryService, IMusicPlaybackService musicPlaybackService,
         INavigationService navigationService, IMusicNavigationService musicNavigationService,
@@ -121,7 +122,16 @@ public partial class AlbumViewModel : SearchableViewModelBase, IDisposable
     [RelayCommand]
     public async Task NavigateToAlbumDetailAsync(object? parameter)
     {
-        await _musicNavigationService.NavigateToAlbumAsync(parameter);
+        if (_isNavigating) return;
+        try
+        {
+            _isNavigating = true;
+            await _musicNavigationService.NavigateToAlbumAsync(parameter);
+        }
+        finally
+        {
+            _isNavigating = false;
+        }
     }
 
     /// <summary>
@@ -145,7 +155,16 @@ public partial class AlbumViewModel : SearchableViewModelBase, IDisposable
     [RelayCommand]
     public async Task GoToArtistAsync(object? parameter)
     {
-        await _musicNavigationService.NavigateToArtistAsync(parameter);
+        if (_isNavigating) return;
+        try
+        {
+            _isNavigating = true;
+            await _musicNavigationService.NavigateToArtistAsync(parameter);
+        }
+        finally
+        {
+            _isNavigating = false;
+        }
     }
 
     /// <summary>

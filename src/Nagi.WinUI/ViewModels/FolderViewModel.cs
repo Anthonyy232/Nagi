@@ -66,6 +66,7 @@ public partial class FolderViewModel : ObservableObject, IDisposable
     private readonly INavigationService _navigationService;
     private readonly PlayerViewModel _playerViewModel;
     private bool _isDisposed;
+    private bool _isNavigating;
 
     public FolderViewModel(ILibraryService libraryService, PlayerViewModel playerViewModel,
         IMusicPlaybackService musicPlaybackService, INavigationService navigationService,
@@ -128,14 +129,22 @@ public partial class FolderViewModel : ObservableObject, IDisposable
     [RelayCommand]
     public void NavigateToFolderDetail(FolderViewModelItem? folder)
     {
-        if (folder is null) return;
+        if (folder is null || _isNavigating) return;
 
-        var navParam = new FolderSongViewNavigationParameter
+        _isNavigating = true;
+        try
         {
-            Title = folder.Name,
-            FolderId = folder.Id
-        };
-        _navigationService.Navigate(typeof(FolderSongViewPage), navParam);
+            var navParam = new FolderSongViewNavigationParameter
+            {
+                Title = folder.Name,
+                FolderId = folder.Id
+            };
+            _navigationService.Navigate(typeof(FolderSongViewPage), navParam);
+        }
+        finally
+        {
+            _isNavigating = false;
+        }
     }
 
     /// <summary>

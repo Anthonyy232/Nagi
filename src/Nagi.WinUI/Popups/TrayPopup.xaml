@@ -62,7 +62,7 @@
                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                        uihelpers:MultiArtistHyperlinkHelper.ArtistName="{x:Bind ViewModel.ArtistName, Mode=OneWay}"
                                        uihelpers:MultiArtistHyperlinkHelper.Song="{x:Bind ViewModel.CurrentPlayingTrack, Mode=OneWay}"
-                                       uihelpers:MultiArtistHyperlinkHelper.Command="{Binding ViewModel.GoToArtistCommand, ElementName=OuterBorder}" />
+                                       uihelpers:MultiArtistHyperlinkHelper.Command="{x:Bind ViewModel.GoToArtistCommand, Mode=OneWay}" />
                         </Grid>
                     </StackPanel>
 
@@ -159,7 +159,7 @@
                                         TextTrimming="CharacterEllipsis"
                                         uihelpers:MultiArtistHyperlinkHelper.ArtistName="{x:Bind ArtistName}"
                                         uihelpers:MultiArtistHyperlinkHelper.Song="{x:Bind}"
-                                        uihelpers:MultiArtistHyperlinkHelper.Command="{Binding ViewModel.GoToArtistCommand, ElementName=OuterBorder}" />
+                                        uihelpers:MultiArtistHyperlinkHelper.Command="{Binding DataContext.GoToArtistCommand, ElementName=OuterBorder}" />
                                 </StackPanel>
                             </DataTemplate>
                         </ListView.ItemTemplate>

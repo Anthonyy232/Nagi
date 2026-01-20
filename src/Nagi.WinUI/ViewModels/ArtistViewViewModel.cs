@@ -48,6 +48,7 @@ public partial class ArtistViewViewModel : SongListViewModelBase
     private readonly ILibraryScanner _libraryScanner;
     private readonly IUISettingsService _settingsService;
     private Guid _artistId;
+    private bool _isNavigatingToAlbum;
     private CancellationTokenSource _pageCts = new();
     private readonly NotifyCollectionChangedEventHandler _albumsChangedHandler;
 
@@ -219,7 +220,17 @@ public partial class ArtistViewViewModel : SongListViewModelBase
     [RelayCommand(CanExecute = nameof(CanExecuteLoadCommands))]
     private async Task ViewAlbumAsync(object? parameter)
     {
-        await _musicNavigationService.NavigateToAlbumAsync(parameter);
+        if (_isNavigatingToAlbum) return;
+
+        try
+        {
+            _isNavigatingToAlbum = true;
+            await _musicNavigationService.NavigateToAlbumAsync(parameter);
+        }
+        finally
+        {
+            _isNavigatingToAlbum = false;
+        }
     }
 
     /// <summary>

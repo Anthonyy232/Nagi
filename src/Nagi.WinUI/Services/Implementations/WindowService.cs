@@ -23,6 +23,7 @@ public sealed class WindowService : IWindowService, IDisposable
     private bool _isClosingMiniPlayerProgrammatically;
     private bool _isDisposed;
     private volatile bool _isMiniPlayerEnabled;
+    private bool? _lastEfficiencyMode;
 
     private MiniPlayerWindow? _miniPlayerWindow;
     private Window? _window;
@@ -111,6 +112,20 @@ public sealed class WindowService : IWindowService, IDisposable
     public void ShowAndActivate()
     {
         if (_window is null) return;
+
+        // Force high priority immediately to prevent black screen lag during activation
+        SetEfficiencyMode(false);
+
+        var windowHandle = WinRT.Interop.WindowNative.GetWindowHandle(_window);
+        var foregroundHandle = _win32InteropService.GetForegroundWindow();
+
+        // If the window is already foreground and visible, we don't need to do the full activation dance
+        if (windowHandle == foregroundHandle && IsVisible && !IsMinimized)
+        {
+            _logger.LogDebug("Window is already foreground and active, skipping redundant activation.");
+            return;
+        }
+
         HideMiniPlayer();
         if (_appWindow is not null) _appWindow.IsShownInSwitchers = true;
         WindowActivator.ShowAndActivate(_window, _win32InteropService);
@@ -131,8 +146,11 @@ public sealed class WindowService : IWindowService, IDisposable
     /// <inheritdoc />
     public void SetEfficiencyMode(bool isEnabled)
     {
+        if (_lastEfficiencyMode == isEnabled) return;
+
         _logger.LogDebug("Setting efficiency mode to: {IsEnabled}", isEnabled);
         EfficiencyModeUtilities.SetEfficiencyMode(isEnabled);
+        _lastEfficiencyMode = isEnabled;
     }
 
     /// <summary>

@@ -110,6 +110,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
     private readonly IUISettingsService _settingsService;
     private bool _hasSortOrderLoaded;
     private List<PlaylistViewModelItem> _allPlaylists = new();
+    private bool _isNavigating;
 
     public PlaylistViewModel(ILibraryService libraryService, ISmartPlaylistService smartPlaylistService,
         IMusicPlaybackService musicPlaybackService, INavigationService navigationService,
@@ -197,27 +198,35 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
     [RelayCommand]
     public void NavigateToPlaylistDetail(PlaylistViewModelItem? playlist)
     {
-        if (playlist is null) return;
+        if (playlist is null || _isNavigating) return;
 
-        if (playlist.IsSmart)
+        _isNavigating = true;
+        try
         {
-            var navParam = new SmartPlaylistSongViewNavigationParameter
+            if (playlist.IsSmart)
             {
-                Title = playlist.Name,
-                SmartPlaylistId = playlist.Id,
-                CoverImageUri = playlist.CoverImageUri
-            };
-            _navigationService.Navigate(typeof(SmartPlaylistSongViewPage), navParam);
+                var navParam = new SmartPlaylistSongViewNavigationParameter
+                {
+                    Title = playlist.Name,
+                    SmartPlaylistId = playlist.Id,
+                    CoverImageUri = playlist.CoverImageUri
+                };
+                _navigationService.Navigate(typeof(SmartPlaylistSongViewPage), navParam);
+            }
+            else
+            {
+                var navParam = new PlaylistSongViewNavigationParameter
+                {
+                    Title = playlist.Name,
+                    PlaylistId = playlist.Id,
+                    CoverImageUri = playlist.CoverImageUri
+                };
+                _navigationService.Navigate(typeof(PlaylistSongViewPage), navParam);
+            }
         }
-        else
+        finally
         {
-            var navParam = new PlaylistSongViewNavigationParameter
-            {
-                Title = playlist.Name,
-                PlaylistId = playlist.Id,
-                CoverImageUri = playlist.CoverImageUri
-            };
-            _navigationService.Navigate(typeof(PlaylistSongViewPage), navParam);
+            _isNavigating = false;
         }
     }
 

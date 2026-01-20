@@ -84,7 +84,9 @@ public class SmartPlaylistService : ISmartPlaylistService
             // Comment = null, -- EXCLUDED (up to 1KB per song)
             Conductor = s.Conductor,
             MusicBrainzTrackId = s.MusicBrainzTrackId,
-            MusicBrainzReleaseId = s.MusicBrainzReleaseId
+            MusicBrainzReleaseId = s.MusicBrainzReleaseId,
+            ArtistName = s.ArtistName,
+            PrimaryArtistName = s.PrimaryArtistName
             // Collection navigations (Genres, PlaylistSongs, etc.) are excluded from projections 
             // as EF Core cannot reliably hydrate them in entity-type Select() calls.
             // Use GetSongByIdAsync(id) for full data.

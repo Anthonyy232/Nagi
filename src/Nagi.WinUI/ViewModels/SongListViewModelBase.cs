@@ -43,6 +43,10 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase
     // Used to cancel any ongoing paged loading, e.g., when the user changes the sort order.
     private CancellationTokenSource? _pagedLoadCts;
     protected int _totalItemCount;
+    
+    // Navigation re-entry guards
+    private bool _isNavigatingToArtist;
+    private bool _isNavigatingToAlbum;
 
     /// <summary>
     ///     Gets the logical selection state for this view.
@@ -501,19 +505,40 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase
     [RelayCommand]
     private async Task GoToAlbumAsync(object? parameter)
     {
-        await _musicNavigationService.NavigateToAlbumAsync(parameter);
+        if (_isNavigatingToAlbum) return;
+
+        try
+        {
+            _isNavigatingToAlbum = true;
+            await _musicNavigationService.NavigateToAlbumAsync(parameter);
+        }
+        finally
+        {
+            _isNavigatingToAlbum = false;
+        }
     }
 
     [RelayCommand]
     public async Task GoToArtistAsync(object? parameter)
     {
-        // For the base's "Play All/Selected" context, if no parameter is provided, we use the first selected song.
-        if (parameter == null && SelectedSongs.Any())
-        {
-            parameter = SelectedSongs.First();
-        }
+        if (_isNavigatingToArtist) return;
 
-        await _musicNavigationService.NavigateToArtistAsync(parameter);
+        try
+        {
+            _isNavigatingToArtist = true;
+
+            // For the base's "Play All/Selected" context, if no parameter is provided, we use the first selected song.
+            if (parameter == null && SelectedSongs.Any())
+            {
+                parameter = SelectedSongs.First();
+            }
+
+            await _musicNavigationService.NavigateToArtistAsync(parameter);
+        }
+        finally
+        {
+            _isNavigatingToArtist = false;
+        }
     }
 
 
