@@ -63,7 +63,7 @@
                         <DoubleAnimation
                             Storyboard.TargetName="SearchTextBox"
                             Storyboard.TargetProperty="Width"
-                            To="300"
+                            To="{StaticResource SearchBoxExpandedWidth}"
                             Duration="0:0:0.3"
                             EnableDependentAnimation="True">
                             <DoubleAnimation.EasingFunction>
@@ -98,21 +98,21 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Padding="24,24,24,0" Spacing="16">
-            <Grid Margin="0,0,0,6">
+        <StackPanel Grid.Row="0" Padding="{StaticResource ViewPageHeaderPadding}" Spacing="16">
+            <Grid Margin="{StaticResource SectionHeaderMargin}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Border Grid.Column="0"
-                        Width="150"
-                        Height="150"
+                        Width="{StaticResource HeaderImageSize}"
+                        Height="{StaticResource HeaderImageSize}"
                         CornerRadius="12"
                         Visibility="{x:Bind ViewModel.IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
                     <controls:ImageEx
                         IsCacheEnabled="True"
                         Source="{x:Bind ViewModel.CoverArtUri, Mode=OneWay, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
-                        DecodePixelWidth="160"
+                        DecodePixelWidth="{StaticResource HeaderImageSize}"
                         DecodePixelType="Logical"
                         Stretch="UniformToFill" />
 
@@ -226,7 +226,7 @@
         <ListView
             Grid.Row="1"
             x:Name="GroupedSongsListView"
-            Padding="24,0,24,132"
+            Padding="{StaticResource SongListViewPadding}"
             IsItemClickEnabled="True"
             ItemsSource="{x:Bind ViewModel.GroupedSongsFlat, Mode=OneWay}"
             SelectionChanged="GroupedSongsListView_SelectionChanged"
@@ -302,7 +302,7 @@
         <ListView
             Grid.Row="1"
             x:Name="SongsListView"
-            Padding="24,0,24,132"
+            Padding="{StaticResource SongListViewPadding}"
             IsItemClickEnabled="True"
             ItemContainerStyle="{StaticResource SongListViewPageListViewItemStyle}"
             ItemsSource="{x:Bind ViewModel.Songs, Mode=OneWay}"

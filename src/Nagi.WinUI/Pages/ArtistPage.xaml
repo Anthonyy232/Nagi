@@ -14,7 +14,7 @@
 
 
 
-    <Grid Padding="24">
+    <Grid Padding="{StaticResource PageContainerPadding}">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="SearchStates">
                 <VisualState x:Name="SearchCollapsed">
@@ -52,7 +52,7 @@
                         <DoubleAnimation
                             Storyboard.TargetName="SearchTextBox"
                             Storyboard.TargetProperty="Width"
-                            To="300"
+                            To="{StaticResource SearchBoxExpandedWidth}"
                             Duration="0:0:0.3"
                             EnableDependentAnimation="True">
                             <DoubleAnimation.EasingFunction>
@@ -78,6 +78,23 @@
                     </Storyboard>
                 </VisualState>
             </VisualStateGroup>
+            <VisualStateGroup x:Name="WindowSizeStates">
+                <!-- Large displays (1600px+) -->
+                <VisualState x:Name="WideLayout">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="1600" />
+                    </VisualState.StateTriggers>
+                    <!-- Future: Scale up artist cards for better space utilization -->
+                </VisualState>
+
+                <!-- Normal/Small displays -->
+                <VisualState x:Name="NormalLayout">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                    <!-- Default sizing from resources -->
+                </VisualState>
+            </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
         <Grid.RowDefinitions>
@@ -86,7 +103,9 @@
         </Grid.RowDefinitions>
 
         <!-- Page Header -->
-        <Grid Grid.Row="0" Margin="0,0,0,28">
+        <Grid Grid.Row="0"
+              Margin="{StaticResource PageHeaderMargin}"
+              Padding="{StaticResource PageHeaderPadding}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
@@ -167,8 +186,8 @@
                 <GridView.ItemTemplate>
                     <DataTemplate x:DataType="vm:ArtistViewModelItem">
                         <Grid
-                            Width="180"
-                            Height="220"
+                            Width="{StaticResource ArtistGridCardWidth}"
+                            Height="{StaticResource ArtistGridCardHeight}"
                             Margin="8,16,8,16"
                             Background="Transparent">
                             <Grid.ContextFlyout>
@@ -194,14 +213,14 @@
                             </Grid.RowDefinitions>
 
                             <!-- Artist Image or Placeholder -->
-                            <Grid Grid.Row="0" Width="160" Height="160" HorizontalAlignment="Center">
+                            <Grid Grid.Row="0" Width="{StaticResource ArtistGridCardImageSize}" Height="{StaticResource ArtistGridCardImageSize}" HorizontalAlignment="Center">
                                 <Border
                                     CornerRadius="80"
                                     Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
                                     <controls:ImageEx
                                         IsCacheEnabled="True"
                                         Source="{x:Bind LocalImageCachePath, Mode=OneWay, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
-                                        DecodePixelWidth="160"
+                                        DecodePixelWidth="{StaticResource ArtistGridCardImageSize}"
                                         DecodePixelType="Logical"
                                         Stretch="UniformToFill" />
                                 </Border>

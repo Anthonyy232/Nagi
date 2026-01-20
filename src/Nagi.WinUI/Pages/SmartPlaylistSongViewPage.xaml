@@ -96,7 +96,7 @@
         </Grid.RowDefinitions>
 
         <!-- Header Content -->
-        <StackPanel Grid.Row="0" Padding="24,24,24,0" Spacing="16">
+        <StackPanel Grid.Row="0" Padding="{StaticResource ViewPageHeaderPadding}" Spacing="16">
             <Grid Margin="0,0,0,6">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -216,7 +216,7 @@
                   x:Name="SongsListView"
                   SelectionMode="Extended"
                   IsItemClickEnabled="True"
-                  Padding="24,0,24,132"
+                  Padding="{StaticResource SongListViewPadding}"
                   ItemsSource="{x:Bind ViewModel.Songs, Mode=OneWay}"
                   ItemContainerStyle="{StaticResource SongListViewPageListViewItemStyle}"
                   SelectionChanged="SongsListView_SelectionChanged"

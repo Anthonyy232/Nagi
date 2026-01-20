@@ -16,7 +16,7 @@
 
     </Page.Resources>
 
-    <Grid Padding="24">
+    <Grid Padding="{StaticResource PageContainerPadding}">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="SearchStates">
                 <VisualState x:Name="SearchCollapsed">

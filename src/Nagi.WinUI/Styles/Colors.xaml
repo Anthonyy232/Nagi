@@ -15,6 +15,50 @@
         <Setter Property="VerticalAlignment" Value="Center" />
     </Style>
 
+    <!-- === DPI-Aware Sizing Tokens === -->
+
+    <!-- Image Sizes - Maintaining visual hierarchy -->
+    <!-- Artist cards (grid view): Larger for prominence -->
+    <x:Double x:Key="ArtistGridCardImageSize">160</x:Double>
+    <!-- Album header images: Medium size for detail views -->
+    <x:Double x:Key="HeaderImageSize">150</x:Double>
+    <!-- Album cards (within artist view): Smaller for compact display -->
+    <x:Double x:Key="AlbumCardImageSize">110</x:Double>
+
+    <!-- Card Container Sizes -->
+    <x:Double x:Key="ArtistGridCardWidth">180</x:Double>
+    <x:Double x:Key="ArtistGridCardHeight">220</x:Double>
+    <x:Double x:Key="AlbumCardWidth">134</x:Double>
+    <x:Double x:Key="AlbumCardMinHeight">150</x:Double>
+
+    <!-- Header Layout -->
+    <Thickness x:Key="PageHeaderMargin">0,0,0,24</Thickness>
+    <Thickness x:Key="PageHeaderPadding">24,0,24,0</Thickness>
+
+    <!-- Page Container Padding -->
+    <Thickness x:Key="PageContainerPadding">24</Thickness>
+
+    <!-- Header StackPanel Padding (for view/detail pages without outer Grid padding) -->
+    <Thickness x:Key="ViewPageHeaderPadding">24,24,24,0</Thickness>
+
+    <!-- ListView/GridView Padding -->
+    <Thickness x:Key="SongListViewPadding">24,0,24,132</Thickness>
+    <Thickness x:Key="SongListViewPaddingNoHorizontal">0,0,0,132</Thickness>
+
+    <!-- Search Box Sizing -->
+    <x:Double x:Key="SearchBoxExpandedWidth">300</x:Double>
+    <x:Double x:Key="SearchBoxExpandedWidthLarge">360</x:Double>
+
+    <!-- Section Spacing -->
+    <Thickness x:Key="SectionHeaderMargin">0,0,0,16</Thickness>
+
+    <!-- === Large Display Overrides (1600px+) === -->
+    <!-- These will be applied via AdaptiveTriggers -->
+    <x:Double x:Key="ArtistGridCardImageSizeLarge">180</x:Double>
+    <x:Double x:Key="AlbumCardImageSizeLarge">130</x:Double>
+    <x:Double x:Key="AlbumCardWidthLarge">154</x:Double>
+    <x:Double x:Key="AlbumCardMinHeightLarge">170</x:Double>
+
     <!-- Windows 11 style acrylic brush. -->
     <media:AcrylicBrush
         x:Key="Win11AcrylicBrush"

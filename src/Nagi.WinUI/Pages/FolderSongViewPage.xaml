@@ -218,7 +218,7 @@
         </Grid.RowDefinitions>
 
         <!-- Header Content -->
-        <StackPanel Grid.Row="0" Padding="24,24,24,0" Spacing="16">
+        <StackPanel Grid.Row="0" Padding="{StaticResource ViewPageHeaderPadding}" Spacing="16">
             <Grid Margin="0,0,0,6">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -376,7 +376,7 @@
         <ListView
             x:Name="FolderContentsListView"
             Grid.Row="1"
-            Padding="24,0,24,132"
+            Padding="{StaticResource SongListViewPadding}"
             IsItemClickEnabled="True"
             ItemClick="FolderContentsListView_ItemClick"
             ItemContainerStyle="{StaticResource SongListViewPageListViewItemStyle}"
