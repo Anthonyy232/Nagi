@@ -120,4 +120,20 @@ public interface ILibraryReader
     ///     Use this method when you need the full song data (e.g., for lyrics display or editing).
     /// </summary>
     Task<Song?> GetSongWithFullDataAsync(Guid songId);
+
+    /// <summary>
+    ///     Calculates the total duration of all songs in an album.
+    /// </summary>
+    /// <param name="albumId">The unique identifier of the album.</param>
+    /// <returns>The total duration of all songs in the album.</returns>
+    Task<TimeSpan> GetAlbumTotalDurationAsync(Guid albumId);
+
+    /// <summary>
+    ///     Calculates the total duration of songs in an album that match the search term.
+    ///     If the search term is empty, returns the total duration of all songs in the album.
+    /// </summary>
+    /// <param name="albumId">The unique identifier of the album.</param>
+    /// <param name="searchTerm">The search term to filter songs. Can be empty or null.</param>
+    /// <returns>The total duration of matching songs in the album.</returns>
+    Task<TimeSpan> GetSearchTotalDurationInAlbumAsync(Guid albumId, string searchTerm);
 }

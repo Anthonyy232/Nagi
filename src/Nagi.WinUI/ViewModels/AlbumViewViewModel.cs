@@ -25,6 +25,9 @@ public partial class AlbumViewViewModel : SongListViewModelBase
     private readonly IUISettingsService _settingsService;
     private Guid _albumId;
     private int? _albumYear;
+    private int _totalSongCount;
+    private TimeSpan _totalDuration;
+    private CancellationTokenSource? _durationFetchCts;
 
     public AlbumViewViewModel(
         ILibraryReader libraryReader,
@@ -122,6 +125,7 @@ public partial class AlbumViewViewModel : SongListViewModelBase
                     PageTitle = album.Title;
                     _albumYear = album.Year;
                     CoverArtUri = ImageUriHelper.GetUriWithCacheBuster(album.CoverArtUri);
+                    RefreshAlbumDetailsText();
                 });
 
                 await songsTask.ConfigureAwait(false);
@@ -162,10 +166,76 @@ public partial class AlbumViewViewModel : SongListViewModelBase
     {
         if (pagedResult?.Items == null) return;
 
-        var songCount = pagedResult.TotalCount;
+        _totalSongCount = pagedResult.TotalCount;
+        
+        // As an optimization, if all songs fit in the first page, we can calculate duration in-memory.
+        // This is true for 99% of albums (PageSize is 250).
+        if (!pagedResult.HasNextPage)
+        {
+            // Cancel any pending duration fetch since we have all the data
+            _durationFetchCts?.Cancel();
+            _durationFetchCts?.Dispose();
+            _durationFetchCts = null;
+            
+            _totalDuration = TimeSpan.FromTicks(pagedResult.Items.Sum(s => s.DurationTicks));
+            RefreshAlbumDetailsText();
+        }
+        else
+        {
+            // Large album or filtered results spanning multiple pages - fetch total sum from DB.
+            // Cancel any previous fetch to avoid race conditions
+            _durationFetchCts?.Cancel();
+            _durationFetchCts?.Dispose();
+            _durationFetchCts = new CancellationTokenSource();
+            
+            // Capture current search term to avoid stale closures
+            var currentSearchTerm = SearchTerm;
+            _ = UpdateTotalDurationAsync(currentSearchTerm, _durationFetchCts.Token);
+            
+            // Show partial duration for now to be responsive
+            _totalDuration = TimeSpan.FromTicks(pagedResult.Items.Sum(s => s.DurationTicks));
+            RefreshAlbumDetailsText();
+        }
+    }
+
+    private async Task UpdateTotalDurationAsync(string searchTerm, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var duration = await _libraryReader.GetSearchTotalDurationInAlbumAsync(_albumId, searchTerm).ConfigureAwait(false);
+            
+            if (!cancellationToken.IsCancellationRequested)
+            {
+                _totalDuration = duration;
+                _dispatcherService.TryEnqueue(RefreshAlbumDetailsText);
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            // Expected when user changes search or navigates away
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to fetch total duration for album {AlbumId}", _albumId);
+        }
+    }
+
+    private void RefreshAlbumDetailsText()
+    {
         var detailsParts = new List<string>();
-        if (_albumYear.HasValue) detailsParts.Add(_albumYear.Value.ToString());
-        detailsParts.Add($"{songCount} song{(songCount != 1 ? "s" : "")}");
+        
+        if (_albumYear.HasValue) 
+            detailsParts.Add(_albumYear.Value.ToString());
+            
+        detailsParts.Add($"{_totalSongCount} song{(_totalSongCount != 1 ? "s" : "")}");
+        
+        if (_totalDuration > TimeSpan.Zero)
+        {
+            var durationText = _totalDuration.TotalHours >= 1 
+                ? _totalDuration.ToString(@"h\:mm\:ss") 
+                : _totalDuration.ToString(@"m\:ss");
+            detailsParts.Add(durationText);
+        }
 
         AlbumDetailsText = string.Join(" • ", detailsParts);
     }
@@ -224,6 +294,9 @@ public partial class AlbumViewViewModel : SongListViewModelBase
 
     public override void Cleanup()
     {
+        _durationFetchCts?.Cancel();
+        _durationFetchCts?.Dispose();
+        _durationFetchCts = null;
         base.Cleanup();
     }
 }
