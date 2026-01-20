@@ -85,6 +85,7 @@ public class LibraryServiceTests : IDisposable
 
         _pathConfig.AlbumArtCachePath.Returns("C:\\cache\\albumart");
         _pathConfig.ArtistImageCachePath.Returns("C:\\cache\\artistimages");
+        _pathConfig.PlaylistImageCachePath.Returns("C:\\cache\\playlistimages");
         _pathConfig.LrcCachePath.Returns("C:\\cache\\lrc");
 
         _libraryService = new LibraryService(
@@ -219,6 +220,40 @@ public class LibraryServiceTests : IDisposable
         _fileSystem.Received(1).CreateDirectory(_pathConfig.AlbumArtCachePath);
         _fileSystem.Received(1).CreateDirectory(_pathConfig.ArtistImageCachePath);
         _fileSystem.Received(1).CreateDirectory(_pathConfig.LrcCachePath);
+    }
+
+    /// <summary>
+    ///     Verifies that <see cref="LibraryService.ClearAllLibraryDataAsync" /> correctly
+    ///     deletes and recreates all cache directories (Album Art, Artist Image, Playlist Image, and LRC).
+    /// </summary>
+    [Fact]
+    public async Task ClearAllLibraryDataAsync_ClearsAllCaches()
+    {
+        // Arrange
+        var albumArtPath = _pathConfig.AlbumArtCachePath;
+        var artistImagePath = _pathConfig.ArtistImageCachePath;
+        var playlistImagePath = _pathConfig.PlaylistImageCachePath;
+        var lrcCachePath = _pathConfig.LrcCachePath;
+
+        _fileSystem.DirectoryExists(albumArtPath).Returns(true);
+        _fileSystem.DirectoryExists(artistImagePath).Returns(true);
+        _fileSystem.DirectoryExists(playlistImagePath).Returns(true);
+        _fileSystem.DirectoryExists(lrcCachePath).Returns(true);
+
+        // Act
+        await _libraryService.ClearAllLibraryDataAsync();
+
+        // Assert: Directories should be deleted
+        _fileSystem.Received(1).DeleteDirectory(albumArtPath, true);
+        _fileSystem.Received(1).DeleteDirectory(artistImagePath, true);
+        _fileSystem.Received(1).DeleteDirectory(playlistImagePath, true);
+        _fileSystem.Received(1).DeleteDirectory(lrcCachePath, true);
+
+        // Assert: Directories should be recreated
+        _fileSystem.Received(1).CreateDirectory(albumArtPath);
+        _fileSystem.Received(1).CreateDirectory(artistImagePath);
+        _fileSystem.Received(1).CreateDirectory(playlistImagePath);
+        _fileSystem.Received(1).CreateDirectory(lrcCachePath);
     }
 
     #endregion
@@ -411,6 +446,163 @@ public class LibraryServiceTests : IDisposable
         songs.Should().Contain(s => s.FilePath == "C:\\Music\\Scan\\updated.mp3" && s.Title == "Updated Song");
         songs.Should().Contain(s => s.FilePath == "C:\\Music\\Scan\\new.mp3" && s.Title == "New Song");
         songs.Should().NotContain(s => s.FilePath == "C:\\Music\\Scan\\deleted.mp3");
+    }
+
+    /// <summary>
+    ///     Verifies that <see cref="LibraryService.CleanUpOrphanedEntitiesAsync" /> correctly
+    ///     cleans up LRC files that are not actually LRC files (.lrc extension),
+    ///     while preserving all valid .lrc files regardless of database state.
+    /// </summary>
+    [Fact]
+    public async Task CleanUpOrphanedEntitiesAsync_WithInvalidLrcFiles_DeletesCorrectFiles()
+    {
+        // Arrange: Setup LRC cache path and files
+        var lrcCachePath = _pathConfig.LrcCachePath;
+        var validLrcFile = Path.Combine(lrcCachePath, "artist - song.lrc");
+        var garbageFile = Path.Combine(lrcCachePath, "something.txt");
+        
+        _fileSystem.DirectoryExists(lrcCachePath).Returns(true);
+        _fileSystem.EnumerateFiles(lrcCachePath, "*.*", SearchOption.TopDirectoryOnly)
+            .Returns(new[] { validLrcFile, garbageFile });
+        
+        _fileSystem.FileExists(validLrcFile).Returns(true);
+        _fileSystem.FileExists(garbageFile).Returns(true);
+
+        // Act: Trigger cleanup (via RemoveFolder)
+        var folder = new Folder { Id = Guid.NewGuid(), Path = "C:\\Empty", Name = "Empty" };
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.Add(folder);
+            await context.SaveChangesAsync();
+        }
+        await _libraryService.RemoveFolderAsync(folder.Id);
+
+        // Assert: Valid LRC file should NOT be deleted by aggressive pass (Safe Mode)
+        _fileSystem.DidNotReceive().DeleteFile(validLrcFile);
+
+        // Assert: Non-LRC file SHOULD be deleted
+        _fileSystem.Received(1).DeleteFile(garbageFile);
+    }
+
+    /// <summary>
+    ///     Verifies that <see cref="LibraryService.CleanUpOrphanedEntitiesAsync" /> correctly
+    ///     cleans up playlist images that are invalid (garbage files),
+    ///     while preserving valid images (correct GUID format) regardless of DB state (Safe Mode).
+    /// </summary>
+    [Fact]
+    public async Task CleanUpOrphanedEntitiesAsync_WithPlaylistImages_DeletesOnlyInvalidFormat()
+    {
+        // Arrange
+        var somePlaylistId = Guid.NewGuid();
+        var cachePath = _pathConfig.PlaylistImageCachePath;
+        var validFile = Path.Combine(cachePath, $"{somePlaylistId}.custom.jpg");
+        var invalidSuffixFile = Path.Combine(cachePath, "garbage_playlist.txt");
+        var invalidGuidFile = Path.Combine(cachePath, "not_a_guid.custom.jpg");
+
+        _fileSystem.DirectoryExists(cachePath).Returns(true);
+        _fileSystem.EnumerateFiles(cachePath, "*.*", SearchOption.TopDirectoryOnly)
+            .Returns(new[] { validFile, invalidSuffixFile, invalidGuidFile });
+
+        _fileSystem.GetFileName(Arg.Any<string>()).Returns(callInfo => Path.GetFileName(callInfo.ArgAt<string>(0)));
+
+        // Act: Trigger cleanup
+        var folder = new Folder { Id = Guid.NewGuid(), Path = "C:\\Empty", Name = "Empty" };
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.Add(folder);
+            await context.SaveChangesAsync();
+        }
+        await _libraryService.RemoveFolderAsync(folder.Id);
+
+        // Assert: Valid format should NOT be deleted by aggressive pass
+        _fileSystem.DidNotReceive().DeleteFile(validFile);
+
+        // Assert: Invalid formats SHOULD be deleted
+        _fileSystem.Received(1).DeleteFile(invalidSuffixFile);
+        _fileSystem.Received(1).DeleteFile(invalidGuidFile);
+    }
+
+    /// <summary>
+    ///     Verifies that <see cref="LibraryService.CleanUpOrphanedEntitiesAsync" /> correctly
+    ///     identifies and removes album art cache files that use the legacy naming convention
+    ///     (hash.fetched.jpg) while preserving files using the new format (hash.light.dark.fetched.jpg).
+    /// </summary>
+    [Fact]
+    public async Task CleanUpOrphanedEntitiesAsync_WithLegacyCacheFiles_DeletesOnlyLegacyFormat()
+    {
+        // Arrange: Setup cache directory with mixed file formats
+        _fileSystem.DirectoryExists(_pathConfig.AlbumArtCachePath).Returns(true);
+        _fileSystem.EnumerateFiles(_pathConfig.AlbumArtCachePath, "*.fetched.jpg", SearchOption.TopDirectoryOnly)
+            .Returns(new[]
+            {
+                "C:\\cache\\albumart\\legacy1.fetched.jpg",           // Legacy: Should be deleted
+                "C:\\cache\\albumart\\legacy2.fetched.jpg",           // Legacy: Should be deleted
+                "C:\\cache\\albumart\\new1.abcdef.123456.fetched.jpg", // New: Should be kept
+                "C:\\cache\\albumart\\new2.000000.ffffff.fetched.jpg"  // New: Should be kept
+            });
+        
+        _fileSystem.GetFileNameWithoutExtension("C:\\cache\\albumart\\legacy1.fetched.jpg").Returns("legacy1.fetched");
+        _fileSystem.GetFileNameWithoutExtension("C:\\cache\\albumart\\legacy2.fetched.jpg").Returns("legacy2.fetched");
+        _fileSystem.GetFileNameWithoutExtension("C:\\cache\\albumart\\new1.abcdef.123456.fetched.jpg").Returns("new1.abcdef.123456.fetched");
+        _fileSystem.GetFileNameWithoutExtension("C:\\cache\\albumart\\new2.000000.ffffff.fetched.jpg").Returns("new2.000000.ffffff.fetched");
+
+        // Act: Trigger cleanup via RemoveFolder (which calls CleanUpOrphanedEntitiesAsync internally)
+        // We use an empty folder removal to trigger the cleanup logic
+        var folder = new Folder { Id = Guid.NewGuid(), Path = "C:\\Empty", Name = "Empty" };
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.Add(folder);
+            await context.SaveChangesAsync();
+        }
+        await _libraryService.RemoveFolderAsync(folder.Id);
+
+        // Assert: Legacy files should be deleted
+        _fileSystem.Received(1).DeleteFile("C:\\cache\\albumart\\legacy1.fetched.jpg");
+        _fileSystem.Received(1).DeleteFile("C:\\cache\\albumart\\legacy2.fetched.jpg");
+
+        // Assert: New format files should NOT be deleted
+        _fileSystem.DidNotReceive().DeleteFile("C:\\cache\\albumart\\new1.abcdef.123456.fetched.jpg");
+        _fileSystem.DidNotReceive().DeleteFile("C:\\cache\\albumart\\new2.000000.ffffff.fetched.jpg");
+    }
+
+    /// <summary>
+    ///     Verifies that <see cref="LibraryService.CleanUpOrphanedEntitiesAsync" /> correctly
+    ///     cleans up artist images that are invalid (garbage files or legacy format),
+    ///     while preserving valid images (correct GUID format) regardless of DB state (Safe Mode).
+    /// </summary>
+    [Fact]
+    public async Task CleanUpOrphanedEntitiesAsync_WithArtistImages_DeletesOnlyInvalidFormat()
+    {
+        // Arrange
+        var someArtistId = Guid.NewGuid();
+        var cachePath = _pathConfig.ArtistImageCachePath;
+        var validFetchedFile = Path.Combine(cachePath, $"{someArtistId}.fetched.jpg");
+        var validCustomFile = Path.Combine(cachePath, $"{someArtistId}.custom.jpg");
+        var invalidSuffixFile = Path.Combine(cachePath, "garbage_file.txt");
+        var invalidGuidFile = Path.Combine(cachePath, "not_a_guid.fetched.jpg");
+
+        _fileSystem.DirectoryExists(cachePath).Returns(true);
+        _fileSystem.EnumerateFiles(cachePath, "*.*", SearchOption.TopDirectoryOnly)
+            .Returns(new[] { validFetchedFile, validCustomFile, invalidSuffixFile, invalidGuidFile });
+
+        _fileSystem.GetFileName(Arg.Any<string>()).Returns(callInfo => Path.GetFileName(callInfo.ArgAt<string>(0)));
+
+        // Act: Trigger cleanup
+        var folder = new Folder { Id = Guid.NewGuid(), Path = "C:\\Empty", Name = "Empty" };
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.Add(folder);
+            await context.SaveChangesAsync();
+        }
+        await _libraryService.RemoveFolderAsync(folder.Id);
+
+        // Assert: Valid format should NOT be deleted by aggressive pass
+        _fileSystem.DidNotReceive().DeleteFile(validFetchedFile);
+        _fileSystem.DidNotReceive().DeleteFile(validCustomFile);
+
+        // Assert: Invalid formats SHOULD be deleted
+        _fileSystem.Received(1).DeleteFile(invalidSuffixFile);
+        _fileSystem.Received(1).DeleteFile(invalidGuidFile);
     }
 
     /// <summary>
@@ -648,6 +840,35 @@ public class LibraryServiceTests : IDisposable
         playlist!.Name.Should().Be("My Awesome Mix");
         await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
         (await assertContext.Playlists.CountAsync()).Should().Be(1);
+    }
+
+    /// <summary>
+    ///     Verifies that <see cref="LibraryService.DeletePlaylistAsync" /> correctly removes
+    ///     the playlist's custom cover image from the disk before deleting the database record.
+    /// </summary>
+    [Fact]
+    public async Task DeletePlaylistAsync_WithCustomCover_DeletesImageFromDisk()
+    {
+        // Arrange
+        var playlistName = "Playlist with Art";
+        var playlist = await _libraryService.CreatePlaylistAsync(playlistName);
+        playlist.Should().NotBeNull();
+        
+        var cachePath = _pathConfig.PlaylistImageCachePath;
+        var expectedImagePath = Path.Combine(cachePath, $"{playlist!.Id}.custom.jpg");
+        _fileSystem.DirectoryExists(cachePath).Returns(true);
+        _fileSystem.FileExists(expectedImagePath).Returns(true);
+        _fileSystem.Combine(Arg.Any<string[]>()).Returns(callInfo => Path.Combine(callInfo.ArgAt<string[]>(0)));
+
+        // Act
+        var result = await _libraryService.DeletePlaylistAsync(playlist.Id);
+
+        // Assert
+        result.Should().BeTrue();
+        _fileSystem.Received(1).DeleteFile(expectedImagePath);
+
+        await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
+        (await assertContext.Playlists.CountAsync()).Should().Be(0);
     }
 
     /// <summary>
