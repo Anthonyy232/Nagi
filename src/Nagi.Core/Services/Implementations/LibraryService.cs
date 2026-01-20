@@ -1270,6 +1270,30 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     }
 
     /// <inheritdoc />
+    public async Task<TimeSpan> GetAlbumTotalDurationAsync(Guid albumId)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        var ticks = await context.Songs
+            .Where(s => s.AlbumId == albumId)
+            .SumAsync(s => s.DurationTicks)
+            .ConfigureAwait(false);
+        return TimeSpan.FromTicks(ticks);
+    }
+
+    /// <inheritdoc />
+    public async Task<TimeSpan> GetSearchTotalDurationInAlbumAsync(Guid albumId, string searchTerm)
+    {
+        if (string.IsNullOrWhiteSpace(searchTerm)) return await GetAlbumTotalDurationAsync(albumId).ConfigureAwait(false);
+
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        var ticks = await BuildSongSearchQuery(context, searchTerm.Trim())
+            .Where(s => s.AlbumId == albumId)
+            .SumAsync(s => s.DurationTicks)
+            .ConfigureAwait(false);
+        return TimeSpan.FromTicks(ticks);
+    }
+
+    /// <inheritdoc />
     public async Task<IEnumerable<Album>> GetAllAlbumsAsync()
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
