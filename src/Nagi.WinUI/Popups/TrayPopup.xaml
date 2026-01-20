@@ -50,19 +50,10 @@
                     </Grid.RowDefinitions>
 
                     <StackPanel Grid.Row="0" HorizontalAlignment="Stretch" Spacing="2">
-                        <Button
-                            HorizontalAlignment="Center"
-                            Padding="0"
-                            Background="Transparent"
-                            BorderThickness="0"
-                            Command="{x:Bind ViewModel.GoToAlbumCommand, Mode=OneWay}"
-                            Style="{StaticResource DefaultButtonStyle}"
-                            ToolTipService.ToolTip="Go to album">
-                            <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}"
-                                       Text="{x:Bind ViewModel.SongTitle, Mode=OneWay, FallbackValue='A Really Long Song Title That Might Need to be Clipped'}"
-                                       HorizontalAlignment="Center" TextAlignment="Center" TextTrimming="CharacterEllipsis"
-                                       TextWrapping="NoWrap" />
-                        </Button>
+                        <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}"
+                                   Text="{x:Bind ViewModel.SongTitle, Mode=OneWay, FallbackValue='A Really Long Song Title That Might Need to be Clipped'}"
+                                   HorizontalAlignment="Center" TextAlignment="Center" TextTrimming="CharacterEllipsis"
+                                   TextWrapping="NoWrap" />
                         <TextBlock Style="{ThemeResource BodyTextBlockStyle}"
                                    HorizontalAlignment="Center" TextAlignment="Center" TextTrimming="CharacterEllipsis"
                                    TextWrapping="NoWrap"
