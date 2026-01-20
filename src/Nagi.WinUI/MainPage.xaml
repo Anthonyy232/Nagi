@@ -368,16 +368,20 @@
                                             Style="{ThemeResource BodyStrongTextBlockStyle}"
                                             Text="{x:Bind ViewModel.SongTitle, Mode=OneWay}"
                                             TextTrimming="CharacterEllipsis" />
-                                        <TextBlock
+                                        <Grid
                                             x:Name="ArtistNameHyperlink"
                                             MaxHeight="0"
                                             Opacity="0"
-                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                            Style="{ThemeResource BodyTextBlockStyle}"
-                                            uihelpers:MultiArtistHyperlinkHelper.ArtistName="{x:Bind ViewModel.ArtistName, Mode=OneWay}"
-                                            uihelpers:MultiArtistHyperlinkHelper.Song="{x:Bind ViewModel.CurrentPlayingTrack, Mode=OneWay}"
-                                            uihelpers:MultiArtistHyperlinkHelper.Command="{Binding ViewModel.GoToArtistCommand, ElementName=MainPageRoot}"
-                                            Visibility="{x:Bind ViewModel.CurrentPlayingTrack, Converter={StaticResource ObjectToVisibilityConverter}, Mode=OneWay}" />
+                                            Visibility="{x:Bind ViewModel.CurrentPlayingTrack, Converter={StaticResource ObjectToVisibilityConverter}, Mode=OneWay}">
+                                            <TextBlock
+                                                VerticalAlignment="Center"
+                                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                Style="{ThemeResource BodyTextBlockStyle}"
+                                                TextTrimming="CharacterEllipsis"
+                                                uihelpers:MultiArtistHyperlinkHelper.ArtistName="{x:Bind ViewModel.ArtistName, Mode=OneWay}"
+                                                uihelpers:MultiArtistHyperlinkHelper.Song="{x:Bind ViewModel.CurrentPlayingTrack, Mode=OneWay}"
+                                                uihelpers:MultiArtistHyperlinkHelper.Command="{Binding ViewModel.GoToArtistCommand, ElementName=MainPageRoot}" />
+                                        </Grid>
                                     </StackPanel>
                                 </Grid>
 
