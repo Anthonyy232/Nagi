@@ -3053,15 +3053,23 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
                 var artistNames = metadataToProcess.SelectMany(m =>
                     {
-                        var trackArtists = m.Artists.Any() ? m.Artists : new List<string> { Artist.UnknownArtistName };
-                        var albumArtists = m.AlbumArtists.Any() ? m.AlbumArtists : trackArtists;
+                        var trackArtists = m.Artists
+                            .Select(ArtistNameHelper.Normalize)
+                            .ToList();
+                        
+                        var albumArtists = m.AlbumArtists
+                            .Select(ArtistNameHelper.Normalize)
+                            .ToList();
+                            
                         return trackArtists.Concat(albumArtists);
                     })
                     .Distinct(StringComparer.OrdinalIgnoreCase).ToList();
                 var albumTitles = metadataToProcess.Select(m => m.Album).Where(t => !string.IsNullOrWhiteSpace(t))
                     .Distinct(StringComparer.OrdinalIgnoreCase).ToList();
                 var genreNames = metadataToProcess.SelectMany(m => m.Genres ?? Enumerable.Empty<string>())
-                    .Where(g => !string.IsNullOrWhiteSpace(g)).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+                    .Select(g => string.IsNullOrWhiteSpace(g) ? null : g.Trim())
+                    .Where(g => !string.IsNullOrEmpty(g))
+                    .Distinct(StringComparer.OrdinalIgnoreCase).ToList();
 
                 var existingArtists = await context.Artists.Where(a => artistNames.Contains(a.Name))
                     .ToDictionaryAsync(a => a.Name, StringComparer.OrdinalIgnoreCase, cancellationToken).ConfigureAwait(false);
@@ -3149,24 +3157,9 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         Dictionary<string, Genre> genreLookup,
         Song? existingSong = null)
     {
-        // Filter and validate artist names, providing fallback for empty/invalid names
-        var trackArtistNames = metadata.Artists
-            .Where(a => !string.IsNullOrWhiteSpace(a))
-            .Select(a => a.Trim())
-            .ToList();
-        if (trackArtistNames.Count == 0)
-        {
-            trackArtistNames.Add(Artist.UnknownArtistName);
-        }
-
-        var albumArtistNames = metadata.AlbumArtists
-            .Where(a => !string.IsNullOrWhiteSpace(a))
-            .Select(a => a.Trim())
-            .ToList();
-        if (albumArtistNames.Count == 0)
-        {
-            albumArtistNames = trackArtistNames;
-        }
+        // Filter and validate artist names with consistent normalization
+        var trackArtistNames = metadata.Artists.Select(ArtistNameHelper.Normalize).ToList();
+        var albumArtistNames = metadata.AlbumArtists.Select(ArtistNameHelper.Normalize).ToList();
 
         var primaryAlbumArtist = GetOrCreateArtist(context, artistLookup, albumArtistNames[0], _logger);
 
@@ -3806,7 +3799,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
     private async Task<Artist> GetOrCreateArtistAsync(MusicDbContext context, string? name)
     {
-        var normalizedName = string.IsNullOrWhiteSpace(name) ? Artist.UnknownArtistName : name.Trim();
+        var normalizedName = ArtistNameHelper.Normalize(name);
 
         await _artistCreationLock.WaitAsync().ConfigureAwait(false);
         try

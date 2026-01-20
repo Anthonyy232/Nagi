@@ -205,4 +205,70 @@ public class LibraryServiceBugTests : IDisposable
             collaboratorFromDb.Should().NotBeNull();
         }
     }
+    [Fact]
+    public async Task RescanFolderForMusicAsync_WithUntrimmedArtistNames_DoesNotThrow()
+    {
+        // Arrange
+        var folderId = Guid.NewGuid();
+        var folder = new Folder { Id = folderId, Path = "C:\\Music\\TrimTest", Name = "TrimTest" };
+        
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.Add(folder);
+            await context.SaveChangesAsync();
+        }
+
+        // Mock file system
+        _fileSystem.DirectoryExists(folder.Path).Returns(true);
+        _fileSystem.EnumerateFiles(folder.Path, "*.*", SearchOption.AllDirectories)
+            .Returns(new[] { "C:\\Music\\TrimTest\\song1.mp3", "C:\\Music\\TrimTest\\song2.mp3" });
+        _fileSystem.GetExtension(Arg.Any<string>()).Returns(".mp3");
+        _fileSystem.GetLastWriteTimeUtc(Arg.Any<string>()).Returns(DateTime.UtcNow);
+
+        // Mock metadata extraction to return untrimmed names and mixed casing
+        // Song 1: " Artist One " (untrimmed)
+        // Song 2: "Artist One" (trimmed)
+        // These should resolve to the SAME artist entity
+        _metadataService.ExtractMetadataAsync("C:\\Music\\TrimTest\\song1.mp3", Arg.Any<string?>())
+            .Returns(new SongFileMetadata 
+            { 
+                FilePath = "C:\\Music\\TrimTest\\song1.mp3", 
+                Title = "Song 1", 
+                Artists = new List<string> { " Artist One " },
+                AlbumArtists = new List<string> { " Artist One " }
+            });
+            
+        _metadataService.ExtractMetadataAsync("C:\\Music\\TrimTest\\song2.mp3", Arg.Any<string?>())
+            .Returns(new SongFileMetadata 
+            { 
+                FilePath = "C:\\Music\\TrimTest\\song2.mp3", 
+                Title = "Song 2", 
+                Artists = new List<string> { "Artist One" },
+                AlbumArtists = new List<string> { "Artist One" }
+            });
+
+        // Act
+        var result = await _libraryService.RescanFolderForMusicAsync(folderId);
+
+        // Assert
+        result.Should().BeTrue();
+        
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            // Verify only ONE artist was created
+            var artists = await context.Artists.ToListAsync();
+            artists.Should().HaveCount(1);
+            artists[0].Name.Should().Be("Artist One");
+
+            // Verify both songs are linked to this artist
+            var songs = await context.Songs
+                .Include(s => s.SongArtists)
+                .ThenInclude(sa => sa.Artist)
+                .ToListAsync();
+                
+            songs.Should().HaveCount(2);
+            songs[0].SongArtists.First().Artist.Name.Should().Be("Artist One");
+            songs[1].SongArtists.First().Artist.Name.Should().Be("Artist One");
+        }
+    }
 }
