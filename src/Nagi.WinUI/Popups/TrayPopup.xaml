@@ -54,13 +54,16 @@
                                    Text="{x:Bind ViewModel.SongTitle, Mode=OneWay, FallbackValue='A Really Long Song Title That Might Need to be Clipped'}"
                                    HorizontalAlignment="Center" TextAlignment="Center" TextTrimming="CharacterEllipsis"
                                    TextWrapping="NoWrap" />
-                        <TextBlock Style="{ThemeResource BodyTextBlockStyle}"
-                                   HorizontalAlignment="Center" TextAlignment="Center" TextTrimming="CharacterEllipsis"
-                                   TextWrapping="NoWrap"
-                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                   uihelpers:MultiArtistHyperlinkHelper.ArtistName="{x:Bind ViewModel.ArtistName, Mode=OneWay}"
-                                   uihelpers:MultiArtistHyperlinkHelper.Song="{x:Bind ViewModel.CurrentPlayingTrack, Mode=OneWay}"
-                                   uihelpers:MultiArtistHyperlinkHelper.Command="{Binding ViewModel.GoToArtistCommand, ElementName=OuterBorder}" />
+                        <Grid HorizontalAlignment="Center">
+                            <TextBlock Style="{ThemeResource BodyTextBlockStyle}"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center" TextAlignment="Center" TextTrimming="CharacterEllipsis"
+                                       TextWrapping="NoWrap"
+                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                       uihelpers:MultiArtistHyperlinkHelper.ArtistName="{x:Bind ViewModel.ArtistName, Mode=OneWay}"
+                                       uihelpers:MultiArtistHyperlinkHelper.Song="{x:Bind ViewModel.CurrentPlayingTrack, Mode=OneWay}"
+                                       uihelpers:MultiArtistHyperlinkHelper.Command="{Binding ViewModel.GoToArtistCommand, ElementName=OuterBorder}" />
+                        </Grid>
                     </StackPanel>
 
                     <Slider x:Name="MediaSeekerSlider"
