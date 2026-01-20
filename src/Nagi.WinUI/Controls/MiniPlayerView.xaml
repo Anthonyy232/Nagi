@@ -73,22 +73,13 @@
                         VerticalAlignment="Center"
                         Spacing="2"
                         Visibility="{x:Bind ViewModel.IsQueueViewVisible, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-                        <Button
+                        <TextBlock
                             HorizontalAlignment="Center"
-                            Padding="0"
-                            Background="Transparent"
-                            BorderThickness="0"
-                            Command="{x:Bind ViewModel.GoToAlbumCommand, Mode=OneWay}"
-                            Style="{StaticResource DefaultButtonStyle}"
-                            ToolTipService.ToolTip="Go to album">
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                Foreground="White"
-                                Style="{ThemeResource BodyStrongTextBlockStyle}"
-                                Text="{x:Bind ViewModel.SongTitle, Mode=OneWay, FallbackValue='Song Title'}"
-                                TextAlignment="Center"
-                                TextTrimming="CharacterEllipsis" />
-                        </Button>
+                            Foreground="White"
+                            Style="{ThemeResource BodyStrongTextBlockStyle}"
+                            Text="{x:Bind ViewModel.SongTitle, Mode=OneWay, FallbackValue='Song Title'}"
+                            TextAlignment="Center"
+                            TextTrimming="CharacterEllipsis" />
                         <TextBlock
                             HorizontalAlignment="Center"
                             FontSize="12"

@@ -16,10 +16,6 @@
 
     <UserControl.Resources>
         <ResourceDictionary>
-
-
-
-
             <DataTemplate x:Key="ShuffleButtonTemplate" x:DataType="uiModels:PlayerButtonSetting">
                 <Button
                     Command="{Binding DataContext.ToggleShuffleCommand, ElementName=MainPageRoot}"
@@ -367,20 +363,11 @@
                                         </Border>
                                     </Button>
                                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                        <Button
-                                            HorizontalAlignment="Left"
-                                            Padding="0"
-                                            Background="Transparent"
-                                            BorderThickness="0"
-                                            Command="{x:Bind ViewModel.GoToAlbumCommand, Mode=OneWay}"
-                                            Style="{StaticResource DefaultButtonStyle}"
-                                            ToolTipService.ToolTip="Go to album">
-                                            <TextBlock
-                                                x:Name="SongTitle"
-                                                Style="{ThemeResource BodyStrongTextBlockStyle}"
-                                                Text="{x:Bind ViewModel.SongTitle, Mode=OneWay}"
-                                                TextTrimming="CharacterEllipsis" />
-                                        </Button>
+                                        <TextBlock
+                                            x:Name="SongTitle"
+                                            Style="{ThemeResource BodyStrongTextBlockStyle}"
+                                            Text="{x:Bind ViewModel.SongTitle, Mode=OneWay}"
+                                            TextTrimming="CharacterEllipsis" />
                                         <TextBlock
                                             x:Name="ArtistNameHyperlink"
                                             MaxHeight="0"
