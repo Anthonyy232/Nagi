@@ -38,7 +38,9 @@ public partial class FolderSongListViewModel : SongListViewModelBase
     private string _currentDirectoryPath = string.Empty;
     private Guid? _rootFolderId;
     private string? _rootFolderPath;
+
     private int _currentFolderCount;
+    private bool _isNavigating;
 
     public FolderSongListViewModel(
         ILibraryReader libraryReader,
@@ -192,11 +194,12 @@ public partial class FolderSongListViewModel : SongListViewModelBase
     [RelayCommand]
     private async Task NavigateToSubfolderAsync(Folder folder)
     {
-        if (IsOverallLoading) return;
+        if (IsOverallLoading || _isNavigating) return;
         if (folder == null || !_rootFolderId.HasValue) return;
 
         try
         {
+            _isNavigating = true;
             DeselectAll();
             _currentDirectoryPath = folder.Path;
             Songs.Clear();
@@ -209,6 +212,10 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         {
             _logger.LogError(ex, "Failed to navigate to subfolder {FolderPath}", folder.Path);
         }
+        finally
+        {
+            _isNavigating = false;
+        }
     }
 
     /// <summary>
@@ -217,11 +224,12 @@ public partial class FolderSongListViewModel : SongListViewModelBase
     [RelayCommand]
     private async Task NavigateToBreadcrumbAsync(BreadcrumbItem breadcrumb)
     {
-        if (IsOverallLoading) return;
+        if (IsOverallLoading || _isNavigating) return;
         if (breadcrumb == null || breadcrumb.IsLast) return;
 
         try
         {
+            _isNavigating = true;
             DeselectAll();
             _currentDirectoryPath = string.IsNullOrEmpty(breadcrumb.Path) ||
                                     string.Equals(breadcrumb.Path, _rootFolderPath, StringComparison.OrdinalIgnoreCase)
@@ -238,6 +246,10 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         {
             _logger.LogError(ex, "Failed to navigate to breadcrumb path {Path}", breadcrumb.Path);
         }
+        finally
+        {
+            _isNavigating = false;
+        }
     }
 
     /// <summary>
@@ -246,11 +258,12 @@ public partial class FolderSongListViewModel : SongListViewModelBase
     [RelayCommand]
     private async Task NavigateUpAsync()
     {
-        if (IsOverallLoading) return;
+        if (IsOverallLoading || _isNavigating) return;
         if (!_rootFolderId.HasValue || IsAtRootLevel) return;
 
         try
         {
+            _isNavigating = true;
             DeselectAll();
             if (string.IsNullOrEmpty(_currentDirectoryPath))
                 return;
@@ -273,6 +286,10 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to navigate up from {CurrentPath}", _currentDirectoryPath);
+        }
+        finally
+        {
+            _isNavigating = false;
         }
     }
 

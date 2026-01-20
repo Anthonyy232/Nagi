@@ -63,6 +63,10 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     // Queue display update cancellation
     private CancellationTokenSource? _queueDisplayCts;
 
+    // Navigation re-entry guards
+    private bool _isNavigatingToArtist;
+    private bool _isNavigatingToAlbum;
+
     public PlayerViewModel(IMusicPlaybackService playbackService, INavigationService navigationService,
         IMusicNavigationService musicNavigationService,
         IDispatcherService dispatcherService, IUISettingsService settingsService, IWindowService windowService,
@@ -306,23 +310,57 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     [RelayCommand(CanExecute = nameof(CanGoToArtist))]
     public async Task GoToArtistAsync(object? parameter)
     {
-        if (parameter == null)
+        // Prevent re-entry while navigation is in progress
+        if (_isNavigatingToArtist)
         {
-            parameter = CurrentPlayingTrack;
+            _logger.LogDebug("GoToArtistAsync already in progress, ignoring duplicate call.");
+            return;
         }
 
-        await _musicNavigationService.NavigateToArtistAsync(parameter);
+        try
+        {
+            _isNavigatingToArtist = true;
+            _windowService.ShowAndActivate();
+
+            if (parameter == null)
+            {
+                parameter = CurrentPlayingTrack;
+            }
+
+            await _musicNavigationService.NavigateToArtistAsync(parameter);
+        }
+        finally
+        {
+            _isNavigatingToArtist = false;
+        }
     }
 
     [RelayCommand(CanExecute = nameof(CanGoToAlbum))]
     public async Task GoToAlbumAsync(object? parameter)
     {
-        if (parameter == null)
+        // Prevent re-entry while navigation is in progress
+        if (_isNavigatingToAlbum)
         {
-            parameter = CurrentPlayingTrack;
+            _logger.LogDebug("GoToAlbumAsync already in progress, ignoring duplicate call.");
+            return;
         }
 
-        await _musicNavigationService.NavigateToAlbumAsync(parameter);
+        try
+        {
+            _isNavigatingToAlbum = true;
+            _windowService.ShowAndActivate();
+
+            if (parameter == null)
+            {
+                parameter = CurrentPlayingTrack;
+            }
+
+            await _musicNavigationService.NavigateToAlbumAsync(parameter);
+        }
+        finally
+        {
+            _isNavigatingToAlbum = false;
+        }
     }
 
     private bool CanGoToArtist(object? parameter)

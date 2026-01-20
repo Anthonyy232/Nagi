@@ -91,7 +91,7 @@
                                 TextTrimming="CharacterEllipsis"
                                 uihelpers:MultiArtistHyperlinkHelper.ArtistName="{x:Bind ViewModel.ArtistName, Mode=OneWay}"
                                 uihelpers:MultiArtistHyperlinkHelper.Song="{x:Bind ViewModel.CurrentPlayingTrack, Mode=OneWay}"
-                                uihelpers:MultiArtistHyperlinkHelper.Command="{Binding ViewModel.GoToArtistCommand, ElementName=HoverDetector}" />
+                                uihelpers:MultiArtistHyperlinkHelper.Command="{x:Bind ViewModel.GoToArtistCommand, Mode=OneWay}" />
                         </Grid>
                     </StackPanel>
 
@@ -196,7 +196,7 @@
                                         TextTrimming="CharacterEllipsis"
                                         uihelpers:MultiArtistHyperlinkHelper.ArtistName="{x:Bind ArtistName}"
                                         uihelpers:MultiArtistHyperlinkHelper.Song="{x:Bind}"
-                                        uihelpers:MultiArtistHyperlinkHelper.Command="{Binding ViewModel.GoToArtistCommand, ElementName=HoverDetector}" />
+                                        uihelpers:MultiArtistHyperlinkHelper.Command="{Binding DataContext.ViewModel.GoToArtistCommand, ElementName=HoverDetector}" />
                                 </StackPanel>
                             </DataTemplate>
                         </ListView.ItemTemplate>

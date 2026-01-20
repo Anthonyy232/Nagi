@@ -44,6 +44,7 @@ public partial class GenreViewModel : SearchableViewModelBase, IDisposable
     private readonly IUISettingsService _settingsService;
     private bool _hasSortOrderLoaded;
     private List<GenreViewModelItem> _allGenres = new();
+    private bool _isNavigating;
 
     public GenreViewModel(ILibraryService libraryService, IMusicPlaybackService musicPlaybackService,
         INavigationService navigationService, IUISettingsService settingsService, IDispatcherService dispatcherService, ILogger<GenreViewModel> logger)
@@ -104,14 +105,21 @@ public partial class GenreViewModel : SearchableViewModelBase, IDisposable
     [RelayCommand]
     public void NavigateToGenreDetail(GenreViewModelItem? genre)
     {
-        if (genre is null) return;
-
-        var navParam = new GenreViewNavigationParameter
+        if (genre is null || _isNavigating) return;
+        _isNavigating = true;
+        try
         {
-            GenreId = genre.Id,
-            GenreName = genre.Name
-        };
-        _navigationService.Navigate(typeof(GenreViewPage), navParam);
+            var navParam = new GenreViewNavigationParameter
+            {
+                GenreId = genre.Id,
+                GenreName = genre.Name
+            };
+            _navigationService.Navigate(typeof(GenreViewPage), navParam);
+        }
+        finally
+        {
+            _isNavigating = false;
+        }
     }
 
     /// <summary>

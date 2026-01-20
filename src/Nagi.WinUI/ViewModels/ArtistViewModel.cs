@@ -55,6 +55,7 @@ public partial class ArtistViewModel : SearchableViewModelBase, IDisposable
     private int _currentPage = 1;
     private bool _isFullyLoaded;
     private bool _hasSortOrderLoaded;
+    private bool _isNavigating;
 
     public ArtistViewModel(
         ILibraryService libraryService,
@@ -120,7 +121,16 @@ public partial class ArtistViewModel : SearchableViewModelBase, IDisposable
     [RelayCommand]
     public async Task NavigateToArtistDetailAsync(object? parameter)
     {
-        await _musicNavigationService.NavigateToArtistAsync(parameter);
+        if (_isNavigating) return;
+        try
+        {
+            _isNavigating = true;
+            await _musicNavigationService.NavigateToArtistAsync(parameter);
+        }
+        finally
+        {
+            _isNavigating = false;
+        }
     }
 
     /// <summary>

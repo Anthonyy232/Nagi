@@ -30,7 +30,7 @@ public static class MultiArtistHyperlinkHelper
             "Command",
             typeof(ICommand),
             typeof(MultiArtistHyperlinkHelper),
-            new PropertyMetadata(null));
+            new PropertyMetadata(null, OnSongOrArtistNameChanged));
 
     public static Song GetSong(DependencyObject obj) => (Song)obj.GetValue(SongProperty);
     public static void SetSong(DependencyObject obj, Song value) => obj.SetValue(SongProperty, value);
@@ -79,7 +79,8 @@ public static class MultiArtistHyperlinkHelper
         var command = GetCommand(textBlock);
 
         // Quick escape if nothing changed to prevent rapid-fire redundant updates during virtualization/scrolling
-        string cacheKey = $"{song?.Id ?? Guid.Empty}_{artistString ?? string.Empty}";
+        // Include Command in cache key to ensure we rebuild if command is late-bound!
+        string cacheKey = $"{song?.Id ?? Guid.Empty}_{artistString ?? string.Empty}_{command?.GetHashCode() ?? 0}";
         if (_lastUpdateMap.TryGetValue(textBlock, out var lastValue) && lastValue == cacheKey)
         {
             return;
@@ -207,8 +208,8 @@ public static class MultiArtistHyperlinkHelper
     }
 }
 
-public class ArtistNavigationRequest
+public record ArtistNavigationRequest
 {
-    public Song? Song { get; set; }
-    public string? ArtistName { get; set; }
+    public Song? Song { get; init; }
+    public string? ArtistName { get; init; }
 }
