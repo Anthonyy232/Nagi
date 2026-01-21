@@ -290,8 +290,8 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
                 _logger.LogWarning(ex, "One or more lyrics fetch tasks failed for '{SongTitle}', attempting to continue with available data.", song.Title);
             }
 
-            parsedLrc = lrcTask.Status == TaskStatus.RanToCompletion ? lrcTask.Result : null;
-            var fullSong = songDataTask.Status == TaskStatus.RanToCompletion ? songDataTask.Result : null;
+            parsedLrc = lrcTask.IsCompletedSuccessfully ? await lrcTask.ConfigureAwait(false) : null;
+            var fullSong = songDataTask.IsCompletedSuccessfully ? await songDataTask.ConfigureAwait(false) : null;
 
             // Check if a newer track change occurred while we were fetching
             if (cancellationToken.IsCancellationRequested)

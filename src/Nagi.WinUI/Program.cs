@@ -24,7 +24,7 @@ public static class Program
     private static SingleInstanceManager? _singleInstanceManager;
 
     [STAThread]
-    private static int Main(string[] args)
+    private static async Task<int> Main(string[] args)
     {
         #if !MSIX_PACKAGE
                 VelopackApp.Build().Run();
@@ -50,16 +50,29 @@ public static class Program
             logger?.LogInformation("Secondary instance detected, sending activation to primary");
             var filePath = TryGetFilePathFromArgs(args);
             
-            var sendTask = _singleInstanceManager.SendActivationAsync(filePath);
-            sendTask.Wait(TimeSpan.FromSeconds(5));
+            try
+            {
+                var sent = await _singleInstanceManager
+                    .SendActivationAsync(filePath)
+                    .WaitAsync(TimeSpan.FromSeconds(5))
+                    .ConfigureAwait(false);
 
-            if (sendTask.Result)
-            {
-                logger?.LogInformation("Activation message sent successfully, exiting");
+                if (sent)
+                {
+                    logger?.LogInformation("Activation message sent successfully, exiting");
+                }
+                else
+                {
+                    logger?.LogWarning("Failed to send activation message, exiting anyway");
+                }
             }
-            else
+            catch (TimeoutException)
             {
-                logger?.LogWarning("Failed to send activation message, exiting anyway");
+                logger?.LogWarning("Timed out waiting to send activation message, exiting anyway");
+            }
+            catch (Exception ex)
+            {
+                logger?.LogError(ex, "Failed to send activation message, exiting anyway");
             }
 
             _singleInstanceManager.Dispose();

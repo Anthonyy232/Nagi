@@ -121,8 +121,9 @@ public partial class FolderSongListViewModel : SongListViewModelBase
                 
                 await Task.WhenAll(rootFolderTask, sortTask).ConfigureAwait(true);
                 
-                _rootFolderPath = rootFolderTask.Result?.Path;
-                CurrentSortOrder = sortTask.Result;
+                var rootFolder = await rootFolderTask.ConfigureAwait(true);
+                _rootFolderPath = rootFolder?.Path;
+                CurrentSortOrder = await sortTask.ConfigureAwait(true);
                 
                 // Use root folder path if no specific directory is provided.
                 if (string.IsNullOrEmpty(_currentDirectoryPath))

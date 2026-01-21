@@ -230,12 +230,12 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase
 
             await Task.WhenAll(idsTask, firstPageTask).ConfigureAwait(false);
 
-            var pagedResult = firstPageTask.Result;
+            var pagedResult = await firstPageTask.ConfigureAwait(false);
 
             _stateLock.EnterWriteLock();
             try
             {
-                _fullSongIdList = idsTask.Result;
+                _fullSongIdList = await idsTask.ConfigureAwait(false);
             }
             finally
             {
