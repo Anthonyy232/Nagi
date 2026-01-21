@@ -29,6 +29,7 @@ public sealed partial class ArtistViewPage : Page
     private readonly ILogger<ArtistViewPage> _logger;
     private bool _isSearchExpanded;
     private bool _isUpdatingSelection;
+    private bool _isUpdatingAlbumsLayout;
     private ScrollViewer? _songsScrollViewer;
     private double _lastKnownAlbumsHeight;
 
@@ -414,6 +415,9 @@ public sealed partial class ArtistViewPage : Page
 
     private void OnAlbumsContentSizeChanged(object sender, SizeChangedEventArgs e)
     {
+        // Only update if the height actually changed and we're not already updating
+        if (_isUpdatingAlbumsLayout || Math.Abs(e.NewSize.Height - _lastKnownAlbumsHeight) < 0.5) return;
+        
         _lastKnownAlbumsHeight = e.NewSize.Height;
         UpdateAlbumsLayout();
     }
@@ -425,28 +429,40 @@ public sealed partial class ArtistViewPage : Page
 
     private void UpdateAlbumsLayout()
     {
-        if (_songsScrollViewer == null || !ViewModel.HasAlbums) return;
+        if (_isUpdatingAlbumsLayout || _songsScrollViewer == null || !ViewModel.HasAlbums) return;
 
-        // Calculate new height: Max - ScrollOffset, clamped to 0
-        var scrollOffset = _songsScrollViewer.VerticalOffset;
-        var newHeight = Math.Max(0, _lastKnownAlbumsHeight - scrollOffset);
-
-        // Apply height
-        AlbumsViewport.Height = newHeight;
-        
-        // Translate the content up to mimic scrolling naturally
-        // We clamp the translation so it doesn't float away if we scroll way past
-        var translationY = (float)-Math.Min(scrollOffset, _lastKnownAlbumsHeight);
-        AlbumsContent.Translation = new Vector3(0, translationY, 0);
-
-        if (_lastKnownAlbumsHeight > 0)
+        try
         {
-            var opacity = Math.Clamp(newHeight / _lastKnownAlbumsHeight, 0, 1);
+            _isUpdatingAlbumsLayout = true;
             
-            // Optimization: Snap to 0 if very low to save GPU composition effort?
-            if (opacity < 0.05) opacity = 0;
+            // Calculate new height: Max - ScrollOffset, clamped to 0
+            var scrollOffset = _songsScrollViewer.VerticalOffset;
+            var newHeight = Math.Max(0, _lastKnownAlbumsHeight - scrollOffset);
+
+            // Only apply height if it changed significantly to avoid layout cycles
+            if (Math.Abs(AlbumsViewport.Height - newHeight) > 0.5 || double.IsNaN(AlbumsViewport.Height))
+            {
+                AlbumsViewport.Height = newHeight;
+            }
             
-            AlbumsViewport.Opacity = opacity;
+            // Translate the content up to mimic scrolling naturally
+            // We clamp the translation so it doesn't float away if we scroll way past
+            var translationY = (float)-Math.Min(scrollOffset, _lastKnownAlbumsHeight);
+            AlbumsContent.Translation = new Vector3(0, translationY, 0);
+
+            if (_lastKnownAlbumsHeight > 0)
+            {
+                var opacity = Math.Clamp(newHeight / _lastKnownAlbumsHeight, 0, 1);
+                
+                // Optimization: Snap to 0 if very low to save GPU composition effort
+                if (opacity < 0.05) opacity = 0;
+                
+                AlbumsViewport.Opacity = opacity;
+            }
+        }
+        finally
+        {
+            _isUpdatingAlbumsLayout = false;
         }
     }
 }
