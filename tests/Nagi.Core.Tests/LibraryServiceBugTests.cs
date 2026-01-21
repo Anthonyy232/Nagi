@@ -165,8 +165,28 @@ public class LibraryServiceBugTests : IDisposable
                 FileModifiedDate = DateTime.UtcNow
             });
 
+        // Capture the exception from the logger to see what happened
+        Exception? loggedException = null;
+        _logger.WhenForAnyArgs(x => x.Log(
+            Arg.Any<LogLevel>(),
+            Arg.Any<EventId>(),
+            Arg.Any<object>(),
+            Arg.Any<Exception?>(),
+            Arg.Any<Func<object, Exception?, string>>()))
+            .Do(call =>
+            {
+                var exc = call.Args()[3] as Exception;
+                if (exc != null) loggedException = exc;
+            });
+
         // Act
         var result = await _libraryService.RescanFolderForMusicAsync(folderId);
+        
+        // If failed, throw the logged exception
+        if (!result && loggedException != null)
+        {
+            throw new InvalidOperationException($"Scan failed with exception: {loggedException.Message}", loggedException);
+        }
 
         // Assert
         result.Should().BeTrue();
