@@ -292,7 +292,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
 
             if (sortTask != null)
             {
-                CurrentSortOrder = sortTask.Result;
+                CurrentSortOrder = await sortTask.ConfigureAwait(false);
                 _hasSortOrderLoaded = true;
             }
 
@@ -300,12 +300,12 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
             _allPlaylists.Clear();
 
             // Load regular playlists
-            foreach (var playlist in playlistsTask.Result)
+            foreach (var playlist in await playlistsTask.ConfigureAwait(false))
                 _allPlaylists.Add(new PlaylistViewModelItem(playlist));
 
             // Load smart playlists with their match counts
-            var smartPlaylistsFromDb = smartPlaylistsTask.Result;
-            var matchCounts = matchCountsTask.Result;
+            var smartPlaylistsFromDb = await smartPlaylistsTask.ConfigureAwait(false);
+            var matchCounts = await matchCountsTask.ConfigureAwait(false);
             
             foreach (var smartPlaylist in smartPlaylistsFromDb)
             {

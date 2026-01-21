@@ -133,8 +133,8 @@ public partial class ArtistViewViewModel : SongListViewModelBase
             
             await Task.WhenAll(onlineMetadataTask, sortOrderTask);
 
-            var shouldFetchOnline = onlineMetadataTask.Result;
-            CurrentSortOrder = sortOrderTask.Result;
+            var shouldFetchOnline = await onlineMetadataTask.ConfigureAwait(false);
+            CurrentSortOrder = await sortOrderTask.ConfigureAwait(false);
 
             // Start loading songs in parallel (updates its own UI)
             var songsTask = RefreshOrSortSongsCommand.ExecuteAsync(null);
@@ -146,7 +146,8 @@ public partial class ArtistViewViewModel : SongListViewModelBase
             await Task.WhenAll(artistTask, albumsTask).ConfigureAwait(false);
             if (_pageCts.IsCancellationRequested) return;
 
-            var artist = artistTask.Result;
+            var artist = await artistTask.ConfigureAwait(false);
+            var topAlbums = await albumsTask.ConfigureAwait(false);
 
             if (artist != null)
             {
@@ -154,7 +155,6 @@ public partial class ArtistViewViewModel : SongListViewModelBase
                 {
                     PopulateArtistDetails(artist);
 
-                    var topAlbums = albumsTask.Result;
                     Albums.Clear();
                     foreach (var album in topAlbums) Albums.Add(new ArtistAlbumViewModelItem(album));
                 });

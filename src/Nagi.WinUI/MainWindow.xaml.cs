@@ -202,8 +202,8 @@ public sealed partial class MainWindow : Window
             
             await Task.WhenAll(saveSizeTask, savePositionTask);
 
-            var saveSize = saveSizeTask.Result;
-            var savePosition = savePositionTask.Result;
+            var saveSize = await saveSizeTask.ConfigureAwait(false);
+            var savePosition = await savePositionTask.ConfigureAwait(false);
             
             // Parallelize the actual save operations when both are enabled
             var saveTasks = new List<Task>();
@@ -340,8 +340,8 @@ public sealed partial class MainWindow : Window
             
             await Task.WhenAll(restoreSizeTask, restorePositionTask);
 
-            var restoreSize = restoreSizeTask.Result;
-            var restorePosition = restorePositionTask.Result;
+            var restoreSize = await restoreSizeTask.ConfigureAwait(false);
+            var restorePosition = await restorePositionTask.ConfigureAwait(false);
             
             // Parallelize fetching saved values when both are enabled
             var savedSizeTask = restoreSize 
@@ -353,8 +353,8 @@ public sealed partial class MainWindow : Window
             
             await Task.WhenAll(savedSizeTask, savedPositionTask);
             
-            var savedSize = savedSizeTask.Result;
-            var savedPosition = savedPositionTask.Result;
+            var savedSize = await savedSizeTask.ConfigureAwait(false);
+            var savedPosition = await savedPositionTask.ConfigureAwait(false);
 
             // Apply size and/or position using the most efficient method
             if (savedSize.HasValue && savedPosition.HasValue)

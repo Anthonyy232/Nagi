@@ -331,6 +331,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     public async Task LoadSettingsAsync()
     {
         if (_isDisposed) return;
+
         await _loadLock.WaitAsync();
         try
         {
@@ -387,48 +388,48 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
                 rememberPositionTask, rememberPaneTask, volumeNormTask, lastFmCredsTask, lastFmAuthTokenTask,
                 scrobblingTask, nowPlayingTask, accentColorTask, artistSplitTask, lyricsProvidersTask, metadataProvidersTask);
 
-            foreach (var item in navItemsTask.Result)
+            foreach (var item in await navItemsTask)
             {
                 item.PropertyChanged += OnNavigationItemPropertyChanged;
                 NavigationItems.Add(item);
             }
 
-            foreach (var button in playerButtonsTask.Result)
+            foreach (var button in await playerButtonsTask)
             {
                 button.PropertyChanged += OnPlayerButtonPropertyChanged;
                 PlayerButtons.Add(button);
             }
 
-            SelectedTheme = themeTask.Result;
-            SelectedBackdropMaterial = backdropTask.Result;
-            IsDynamicThemingEnabled = dynamicThemingTask.Result;
-            IsPlayerAnimationEnabled = playerAnimationTask.Result;
-            IsRestorePlaybackStateEnabled = restorePlaybackTask.Result;
-            IsAutoLaunchEnabled = autoLaunchTask.Result;
-            IsStartMinimizedEnabled = startMinimizedTask.Result;
-            IsHideToTrayEnabled = hideToTrayTask.Result;
-            IsMinimizeToMiniPlayerEnabled = miniPlayerTask.Result;
-            IsShowCoverArtInTrayFlyoutEnabled = trayFlyoutTask.Result;
-            IsFetchOnlineMetadataEnabled = onlineMetadataTask.Result;
-            IsFetchOnlineLyricsEnabled = onlineLyricsTask.Result;
-            IsDiscordRichPresenceEnabled = discordRpcTask.Result;
-            IsCheckForUpdatesEnabled = checkUpdatesTask.Result;
-            IsRememberWindowSizeEnabled = rememberWindowTask.Result;
-            IsRememberWindowPositionEnabled = rememberPositionTask.Result;
-            IsRememberPaneStateEnabled = rememberPaneTask.Result;
-            IsVolumeNormalizationEnabled = volumeNormTask.Result;
+            SelectedTheme = await themeTask;
+            SelectedBackdropMaterial = await backdropTask;
+            IsDynamicThemingEnabled = await dynamicThemingTask;
+            IsPlayerAnimationEnabled = await playerAnimationTask;
+            IsRestorePlaybackStateEnabled = await restorePlaybackTask;
+            IsAutoLaunchEnabled = await autoLaunchTask;
+            IsStartMinimizedEnabled = await startMinimizedTask;
+            IsHideToTrayEnabled = await hideToTrayTask;
+            IsMinimizeToMiniPlayerEnabled = await miniPlayerTask;
+            IsShowCoverArtInTrayFlyoutEnabled = await trayFlyoutTask;
+            IsFetchOnlineMetadataEnabled = await onlineMetadataTask;
+            IsFetchOnlineLyricsEnabled = await onlineLyricsTask;
+            IsDiscordRichPresenceEnabled = await discordRpcTask;
+            IsCheckForUpdatesEnabled = await checkUpdatesTask;
+            IsRememberWindowSizeEnabled = await rememberWindowTask;
+            IsRememberWindowPositionEnabled = await rememberPositionTask;
+            IsRememberPaneStateEnabled = await rememberPaneTask;
+            IsVolumeNormalizationEnabled = await volumeNormTask;
 
-            var lastFmCredentials = lastFmCredsTask.Result;
+            var lastFmCredentials = await lastFmCredsTask;
             LastFmUsername = lastFmCredentials?.Username;
             IsLastFmConnected = lastFmCredentials is not null && !string.IsNullOrEmpty(lastFmCredentials.Value.SessionKey);
 
-            IsLastFmScrobblingEnabled = scrobblingTask.Result;
-            IsLastFmNowPlayingEnabled = nowPlayingTask.Result;
+            IsLastFmScrobblingEnabled = await scrobblingTask;
+            IsLastFmNowPlayingEnabled = await nowPlayingTask;
 
-            var authToken = lastFmAuthTokenTask.Result;
+            var authToken = await lastFmAuthTokenTask;
             IsConnectingToLastFm = !string.IsNullOrEmpty(authToken);
 
-            var accentColor = accentColorTask.Result;
+            var accentColor = await accentColorTask;
             if (accentColor != null)
             {
                 AccentColor = accentColor.Value;
@@ -438,17 +439,17 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
                 AccentColor = App.SystemAccentColor;
             }
 
-            ArtistSplitCharacters = artistSplitTask.Result;
+            ArtistSplitCharacters = await artistSplitTask;
 
             LoadEqualizerState();
 
             // Load service providers
-            foreach (var provider in lyricsProvidersTask.Result)
+            foreach (var provider in await lyricsProvidersTask)
             {
                 LyricsProviders.Add(ServiceProviderSettingViewModel.FromSetting(provider));
             }
 
-            var metadataProviders = metadataProvidersTask.Result
+            var metadataProviders = (await metadataProvidersTask)
                 .Select(ServiceProviderSettingViewModel.FromSetting)
                 .ToList();
 
