@@ -457,3 +457,30 @@ public class SortOrderEqualsConverter : IValueConverter
         throw new NotImplementedException();
     }
 }
+
+/// <summary>
+///     Ensures a slider's Maximum value is always at least 1 to prevent E_INVALIDARG errors.
+///     When Maximum equals Minimum (both 0), the Slider's internal calculations can produce
+///     invalid values which cause XAML rendering errors.
+/// </summary>
+public class SliderMaximumConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        var maximum = value switch
+        {
+            double d => d,
+            float f => f,
+            int i => i,
+            _ => 0.0
+        };
+
+        // Ensure maximum is at least 1 to avoid division by zero in slider calculations
+        return maximum > 0 ? maximum : 1.0;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
+        throw new NotImplementedException();
+    }
+}

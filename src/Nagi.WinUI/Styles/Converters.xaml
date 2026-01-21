@@ -32,4 +32,7 @@ to avoid duplicate declarations across pages and controls.
     <!-- Time converters -->
     <converters:TimeSpanToTimeStringConverter x:Key="TimeSpanToTimeStringConverter" />
 
+    <!-- Slider helper converter to prevent E_INVALIDARG when Maximum is 0 -->
+    <converters:SliderMaximumConverter x:Key="SliderMaximumConverter" />
+
 </ResourceDictionary>
