@@ -125,7 +125,7 @@
                                 x:Name="MediaSeekerSlider"
                                 Margin="4,0"
                                 IsThumbToolTipEnabled="True"
-                                Maximum="{x:Bind ViewModel.TotalDuration, Mode=OneWay}"
+                                Maximum="{x:Bind ViewModel.TotalDuration, Mode=OneWay, Converter={StaticResource SliderMaximumConverter}}"
                                 Style="{StaticResource MediaSeekerSliderStyle}"
                                 ThumbToolTipValueConverter="{StaticResource TimeSpanToTimeStringConverter}"
                                 Value="{x:Bind ViewModel.CurrentPosition, Mode=TwoWay}"
