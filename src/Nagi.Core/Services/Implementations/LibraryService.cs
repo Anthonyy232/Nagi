@@ -33,6 +33,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     private readonly ITheAudioDbService _theAudioDbService;
     private readonly ILogger<LibraryService> _logger;
     private readonly SemaphoreSlim _metadataFetchSemaphore = new(1, 1);
+    private readonly SemaphoreSlim _dbWriteSemaphore = new(1, 1);
+    // These locks are only used by the single-song AddSongWithDetailsAsync API (not batch processing)
     private readonly SemaphoreSlim _artistCreationLock = new(1, 1);
     private readonly SemaphoreSlim _albumCreationLock = new(1, 1);
     private readonly IMetadataService _metadataService;
@@ -49,6 +51,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     private volatile bool _isBatchScanning; // Prevents ReplayGain trigger during batch operations
     private CancellationTokenSource _metadataFetchCts;
     private CancellationTokenSource? _replayGainScanCts;
+    private readonly CancellationTokenSource _shutdownCts = new();
 
     public LibraryService(
         IDbContextFactory<MusicDbContext> contextFactory,
@@ -708,17 +711,20 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     private async Task RunReplayGainAnalysisAsync(IProgress<ScanProgress>? progress, CancellationToken cancellationToken)
     {
         // Only start a new scan if one isn't currently active
-        if (_replayGainScanCts != null && !_replayGainScanCts.IsCancellationRequested)
+        var existingCts = _replayGainScanCts;
+        if (existingCts != null && !existingCts.IsCancellationRequested)
         {
             _logger.LogDebug("ReplayGain analysis is already running. Skipping trigger.");
             return;
         }
         
-        _replayGainScanCts?.Dispose();
-        _replayGainScanCts = new CancellationTokenSource();
+        // Atomically swap in a new CTS and dispose the old one
+        var newCts = new CancellationTokenSource();
+        var oldCts = Interlocked.Exchange(ref _replayGainScanCts, newCts);
+        oldCts?.Dispose();
         
         // Link to the parent cancellation token so cancelling the folder scan also cancels ReplayGain
-        using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _replayGainScanCts.Token);
+        using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, newCts.Token, _shutdownCts.Token);
         
         _logger.LogInformation("Volume normalization is enabled. Starting ReplayGain analysis.");
         
@@ -739,8 +745,9 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         }
         finally
         {
-            _replayGainScanCts?.Dispose();
-            _replayGainScanCts = null;
+            // Clean up by setting to null and disposing the CTS for this run
+            Interlocked.CompareExchange(ref _replayGainScanCts, null, newCts);
+            newCts.Dispose();
         }
     }
 
@@ -882,11 +889,12 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         try
         {
-            // Recreate CTS if it was cancelled from a previous run
+            // Recreate CTS if it was cancelled from a previous run using atomic swap
             if (_metadataFetchCts.IsCancellationRequested)
             {
-                _metadataFetchCts.Dispose();
-                _metadataFetchCts = new CancellationTokenSource();
+                var newCts = new CancellationTokenSource();
+                var oldCts = Interlocked.Exchange(ref _metadataFetchCts, newCts);
+                oldCts.Dispose();
             }
 
             _isMetadataFetchRunning = true;
@@ -2671,7 +2679,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         // Query songs in the folder that don't have cover art set
         var songsWithoutCoverArt = await context.Songs
             .Where(s => s.FolderId == folderId && s.AlbumArtUriFromTrack == null)
-            .Select(s => new { s.Id, s.FilePath })
+            .Select(s => new { s.Id, s.FilePath, s.DirectoryPath })
             .ToListAsync(cancellationToken).ConfigureAwait(false);
 
         if (songsWithoutCoverArt.Count == 0)
@@ -2680,28 +2688,43 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         _logger.LogDebug("Found {Count} songs without cover art in folder {FolderId}. Searching for cover art files...",
             songsWithoutCoverArt.Count, folderId);
 
-        // Find cover art for each song that needs it
-        var songCoverArtMappings = new Dictionary<Guid, (string coverArtPath, string? uri, string? lightSwatch, string? darkSwatch)>();
+        // Cache processed cover art by directory to avoid redundant processing for songs in same folder
+        var directoryCache = new Dictionary<string, (string? uri, string? lightSwatch, string? darkSwatch)?>(StringComparer.OrdinalIgnoreCase);
+        var songCoverArtMappings = new Dictionary<Guid, (string? uri, string? lightSwatch, string? darkSwatch)>();
 
         foreach (var song in songsWithoutCoverArt)
         {
             cancellationToken.ThrowIfCancellationRequested();
+
+            var songDirectory = song.DirectoryPath ?? _fileSystem.GetDirectoryName(song.FilePath) ?? string.Empty;
+            
+            // Check if we've already processed this directory
+            if (directoryCache.TryGetValue(songDirectory, out var cachedResult))
+            {
+                if (cachedResult.HasValue)
+                {
+                    songCoverArtMappings[song.Id] = cachedResult.Value;
+                }
+                continue;
+            }
 
             var coverArtPath = FindCoverArtInDirectoryHierarchy(song.FilePath, baseFolderPath);
             if (coverArtPath != null)
             {
                 try
                 {
-                    // Read and process the cover art file
-                    var imageBytes = await System.IO.File.ReadAllBytesAsync(coverArtPath, cancellationToken).ConfigureAwait(false);
+                    // Read and process the cover art file directly using the image processor
+                    // This is MUCH faster than re-extracting full audio metadata
+                    var imageBytes = await _fileSystem.ReadAllBytesAsync(coverArtPath).ConfigureAwait(false);
                     if (imageBytes.Length > 0)
                     {
-                        // Use the new overload from IMetadataService to get the image processor
-                        // We need to call the image processor directly
-                        var metadata = await _metadataService.ExtractMetadataAsync(song.FilePath, baseFolderPath).ConfigureAwait(false);
-                        if (!string.IsNullOrEmpty(metadata.CoverArtUri))
+                        var coverArtResult = await _imageProcessor.SaveCoverArtAndExtractColorsAsync(imageBytes).ConfigureAwait(false);
+                        if (!string.IsNullOrEmpty(coverArtResult.uri))
                         {
-                            songCoverArtMappings[song.Id] = (coverArtPath, metadata.CoverArtUri, metadata.LightSwatchId, metadata.DarkSwatchId);
+                            var result = (coverArtResult.uri, coverArtResult.lightSwatchId, coverArtResult.darkSwatchId);
+                            directoryCache[songDirectory] = result;
+                            songCoverArtMappings[song.Id] = result;
+                            continue;
                         }
                     }
                 }
@@ -2711,6 +2734,9 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                         coverArtPath, song.Id);
                 }
             }
+
+            // No cover art found for this directory
+            directoryCache[songDirectory] = null;
         }
 
         if (songCoverArtMappings.Count == 0)
@@ -2900,6 +2926,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     ///     Extracts metadata from files and writes to a Channel for streaming consumption.
     ///     This allows the database batch writer to start processing immediately rather than
     ///     waiting for all files to be extracted first, reducing peak memory usage.
+    ///     Uses scan-scoped caches for Artists, Albums, and Genres to prevent duplicate creation
+    ///     across concurrent batches.
     /// </summary>
     private async Task<int> ExtractAndSaveMetadataStreamingAsync(
         Guid folderId,
@@ -2908,7 +2936,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         IProgress<ScanProgress>? progress,
         CancellationToken cancellationToken)
     {
-        const int channelCapacity = 500; // Matches batch size to limit memory
+        const int channelCapacity = 100; // ~2 batches of buffer for backpressure
         var channel = Channel.CreateBounded<SongFileMetadata>(new BoundedChannelOptions(channelCapacity)
         {
             FullMode = BoundedChannelFullMode.Wait,
@@ -2922,52 +2950,104 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         const int progressReportingBatchSize = 25;
 
         progress?.Report(new ScanProgress
+            { StatusText = "Preparing scan caches...", TotalFiles = totalFiles, Percentage = 0 });
+
+        // Pre-load scan-scoped caches (names -> IDs) to prevent duplicate entity creation across batches
+        var artistIdCache = new ConcurrentDictionary<string, Guid>(StringComparer.OrdinalIgnoreCase);
+        var albumIdCache = new ConcurrentDictionary<string, Guid>(StringComparer.OrdinalIgnoreCase);
+        var genreIdCache = new ConcurrentDictionary<string, Guid>(StringComparer.OrdinalIgnoreCase);
+
+        await using (var context = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false))
+        {
+            // Pre-load all existing artists, albums, and genres into caches
+            var existingArtists = await context.Artists.AsNoTracking().ToListAsync(cancellationToken).ConfigureAwait(false);
+            foreach (var artist in existingArtists)
+            {
+                artistIdCache.TryAdd(artist.Name, artist.Id);
+            }
+
+            // Load albums with minimal data - just enough to compute the album key
+            // We don't load the full Artist graph because those entities would conflict 
+            // when attached in ProcessSingleBatchAsync (artists are attached separately)
+            var existingAlbums = await context.Albums
+                .AsNoTracking()
+                .Select(a => new { a.Id, a.Title })
+                .ToListAsync(cancellationToken).ConfigureAwait(false);
+            
+            // Build a lookup for primary artist name by album ID to compute album keys
+            var albumPrimaryArtistNames = await context.AlbumArtists
+                .AsNoTracking()
+                .Where(aa => aa.Order == 0)
+                .Select(aa => new { aa.AlbumId, ArtistName = aa.Artist.Name })
+                .ToDictionaryAsync(x => x.AlbumId, x => x.ArtistName, cancellationToken).ConfigureAwait(false);
+
+            foreach (var album in existingAlbums)
+            {
+                var primaryArtistName = albumPrimaryArtistNames.TryGetValue(album.Id, out var name) ? name : string.Empty;
+                var albumKey = $"{album.Title}|{primaryArtistName}";
+                albumIdCache.TryAdd(albumKey, album.Id);
+            }
+
+            var existingGenres = await context.Genres.AsNoTracking().ToListAsync(cancellationToken).ConfigureAwait(false);
+            foreach (var genre in existingGenres)
+            {
+                genreIdCache.TryAdd(genre.Name, genre.Id);
+            }
+        }
+
+        _logger.LogDebug("Pre-loaded {ArtistCount} artists, {AlbumCount} albums, {GenreCount} genres into scan caches.",
+            artistIdCache.Count, albumIdCache.Count, genreIdCache.Count);
+
+        progress?.Report(new ScanProgress
             { StatusText = "Reading song details...", TotalFiles = totalFiles, Percentage = 0 });
 
-        // Producer: Extract metadata concurrently and write to channel
+        // Producer: Extract metadata concurrently and write to channel using Parallel.ForEachAsync
+        // This limits both concurrency AND task object allocation (unlike Task.WhenAll which creates all tasks upfront)
         var producerTask = Task.Run(async () =>
         {
             try
             {
                 var degreeOfParallelism = Environment.ProcessorCount;
-                using var semaphore = new SemaphoreSlim(degreeOfParallelism);
 
-                var extractionTasks = filesToProcess.Select(async filePath =>
-                {
-                    await semaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
-                    try
+                await Parallel.ForEachAsync(
+                    filesToProcess,
+                    new ParallelOptions
                     {
-                        cancellationToken.ThrowIfCancellationRequested();
-                        var metadata = await _metadataService.ExtractMetadataAsync(filePath, baseFolderPath).ConfigureAwait(false);
-                        
-                        if (!metadata.ExtractionFailed)
-                        {
-                            await channel.Writer.WriteAsync(metadata, cancellationToken).ConfigureAwait(false);
-                            Interlocked.Increment(ref extractedCount);
-                        }
-                        else
-                        {
-                            _logger.LogWarning("Failed to extract metadata from file: {FilePath}", filePath);
-                        }
-                    }
-                    finally
+                        MaxDegreeOfParallelism = degreeOfParallelism,
+                        CancellationToken = cancellationToken
+                    },
+                    async (filePath, ct) =>
                     {
-                        var currentCount = Interlocked.Increment(ref processedCount);
-
-                        if (currentCount % progressReportingBatchSize == 0 || currentCount == totalFiles)
-                            progress?.Report(new ScanProgress
+                        try
+                        {
+                            var metadata = await _metadataService.ExtractMetadataAsync(filePath, baseFolderPath).ConfigureAwait(false);
+                            
+                            if (!metadata.ExtractionFailed)
                             {
-                                StatusText = "Reading song details...",
-                                CurrentFilePath = filePath,
-                                Percentage = (double)currentCount / totalFiles * 50, // First 50% is extraction
-                                TotalFiles = totalFiles,
-                                NewSongsFound = extractedCount
-                            });
-                        semaphore.Release();
-                    }
-                });
+                                await channel.Writer.WriteAsync(metadata, ct).ConfigureAwait(false);
+                                Interlocked.Increment(ref extractedCount);
+                            }
+                            else
+                            {
+                                _logger.LogWarning("Failed to extract metadata from file: {FilePath}", filePath);
+                            }
+                        }
+                        finally
+                        {
+                            var currentCount = Interlocked.Increment(ref processedCount);
 
-                await Task.WhenAll(extractionTasks).ConfigureAwait(false);
+                            if (currentCount % progressReportingBatchSize == 0 || currentCount == totalFiles)
+                                progress?.Report(new ScanProgress
+                                {
+                                    StatusText = "Reading song details...",
+                                    CurrentFilePath = filePath,
+                                    Percentage = (double)currentCount / totalFiles * 50, // First 50% is extraction
+                                    TotalFiles = totalFiles,
+                                    NewSongsFound = extractedCount
+                                });
+                        }
+                    }).ConfigureAwait(false);
+
                 channel.Writer.Complete();
             }
             catch (Exception ex)
@@ -2990,7 +3070,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 {
                     batch.Add(metadata);
 
-                    if (batch.Count >= 500)
+                    if (batch.Count >= 50)
                     {
                         batchNumber++;
                         progress?.Report(new ScanProgress
@@ -3000,7 +3080,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                             NewSongsFound = extractedCount
                         });
 
-                        var saved = await ProcessSingleBatchAsync(folderId, batch.ToArray(), cancellationToken).ConfigureAwait(false);
+                        var saved = await ProcessSingleBatchAsync(folderId, batch.ToArray(), artistIdCache, albumIdCache, genreIdCache, cancellationToken).ConfigureAwait(false);
                         totalSaved += saved;
                         batch.Clear();
                     }
@@ -3017,7 +3097,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                         NewSongsFound = extractedCount
                     });
 
-                    var saved = await ProcessSingleBatchAsync(folderId, batch.ToArray(), cancellationToken).ConfigureAwait(false);
+                    var saved = await ProcessSingleBatchAsync(folderId, batch.ToArray(), artistIdCache, albumIdCache, genreIdCache, cancellationToken).ConfigureAwait(false);
                     totalSaved += saved;
                 }
             }
@@ -3034,135 +3114,415 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
 
 
-    private async Task<int> ProcessSingleBatchAsync(Guid folderId, SongFileMetadata[] metadataList, CancellationToken cancellationToken)
+    /// <summary>
+    ///     Processes a batch of song metadata, using scan-scoped caches for Artists, Albums, and Genres.
+    ///     Uses ConcurrentDictionary.GetOrAdd for thread-safe entity resolution and a semaphore to
+    ///     serialize database writes, preventing duplicate entity creation across concurrent batches.
+    /// </summary>
+    private async Task<int> ProcessSingleBatchAsync(
+        Guid folderId,
+        SongFileMetadata[] metadataList,
+        ConcurrentDictionary<string, Guid> artistIdCache,
+        ConcurrentDictionary<string, Guid> albumIdCache,
+        ConcurrentDictionary<string, Guid> genreIdCache,
+        CancellationToken cancellationToken)
     {
-        const int maxRetries = 3;
-        var retryCount = 0;
+        if (metadataList.Length == 0)
+            return 0;
 
-        while (retryCount < maxRetries)
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
+
+        var filePaths = metadataList.Select(m => m.FilePath).ToList();
+
+        // Fetch existing songs for this batch to support updating existing records.
+        var existingSongs = await context.Songs
+            .Include(s => s.Genres)
+            .Include(s => s.SongArtists)
+            .Where(s => filePaths.Contains(s.FilePath))
+            .AsSplitQuery()
+            .ToDictionaryAsync(s => s.FilePath, StringComparer.OrdinalIgnoreCase, cancellationToken).ConfigureAwait(false);
+
+        // Collect all artist, album, genre names from metadata
+        var artistNames = metadataList.SelectMany(m =>
+            m.Artists.Select(ArtistNameHelper.Normalize)
+                .Concat(m.AlbumArtists.Select(ArtistNameHelper.Normalize)))
+            .Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+
+        if (metadataList.Any(m => !m.AlbumArtists.Any() || !m.Artists.Any()))
         {
-            try
+            artistNames.Add(Artist.UnknownArtistName);
+        }
+
+        var genreNames = metadataList.SelectMany(m => m.Genres ?? Enumerable.Empty<string>())
+            .Select(g => string.IsNullOrWhiteSpace(g) ? null : g.Trim())
+            .Where(g => !string.IsNullOrEmpty(g))
+            .Select(g => g!)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        var artistLookup = await ResolveArtistsForBatchAsync(context, artistNames, artistIdCache, cancellationToken).ConfigureAwait(false);
+        var genreLookup = await ResolveGenresForBatchAsync(context, genreNames, genreIdCache, cancellationToken).ConfigureAwait(false);
+
+        var albumDefinitions = BuildAlbumDefinitions(metadataList);
+        var albumLookup = await ResolveAlbumsForBatchAsync(context, albumDefinitions, artistLookup, albumIdCache, cancellationToken)
+            .ConfigureAwait(false);
+
+        // Process each song using resolved entities
+        foreach (var metadata in metadataList)
+        {
+            existingSongs.TryGetValue(metadata.FilePath, out var existingSong);
+            await AddSongWithDetailsCachedAsync(context, folderId, metadata, artistLookup, albumLookup, genreLookup, existingSong)
+                .ConfigureAwait(false);
+        }
+
+        await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+
+        return metadataList.Length;
+    }
+
+    private static Dictionary<string, (string Title, List<string> ArtistNames, int? Year)> BuildAlbumDefinitions(
+        IEnumerable<SongFileMetadata> metadataList)
+    {
+        var albumDefinitions = new Dictionary<string, (string Title, List<string> ArtistNames, int? Year)>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var metadata in metadataList)
+        {
+            if (string.IsNullOrWhiteSpace(metadata.Album))
+                continue;
+
+            var albumTitle = metadata.Album.Trim();
+            var albumArtistNames = metadata.AlbumArtists.Select(ArtistNameHelper.Normalize).ToList();
+            var trackArtistNames = metadata.Artists.Select(ArtistNameHelper.Normalize).ToList();
+
+            if (albumArtistNames.Count == 0)
             {
-                await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-                
-                // Disable change tracking for faster reads/inserts where possible
-                // (Though we need tracking for Add, we don't need it for the lookups if we attach properly,
-                // but standard simple Add is safer for complex relationships)
-                
-                var filePaths = metadataList.Select(m => m.FilePath).ToList();
+                albumArtistNames = trackArtistNames.Count > 0
+                    ? new List<string>(trackArtistNames)
+                    : new List<string> { Artist.UnknownArtistName };
+            }
 
-                // Fetch existing songs for this batch to support updating existing records.
-                // Including Genres and SongArtists is crucial for safe many-to-many updates.
-                var existingSongs = await context.Songs
-                    .Include(s => s.Genres)
-                    .Include(s => s.SongArtists)
-                    .Where(s => filePaths.Contains(s.FilePath))
-                    .AsSplitQuery()
-                    .ToDictionaryAsync(s => s.FilePath, StringComparer.OrdinalIgnoreCase, cancellationToken).ConfigureAwait(false);
-
-                var metadataToProcess = metadataList;
-
-                if (metadataToProcess.Length == 0)
-                    return 0;
-
-                var artistNames = metadataToProcess.SelectMany(m =>
-                    {
-                        var trackArtists = m.Artists
-                            .Select(ArtistNameHelper.Normalize)
-                            .ToList();
-                        
-                        var albumArtists = m.AlbumArtists
-                            .Select(ArtistNameHelper.Normalize)
-                            .ToList();
-                            
-                        return trackArtists.Concat(albumArtists);
-                    })
-                    .Distinct(StringComparer.OrdinalIgnoreCase).ToList();
-                var albumTitles = metadataToProcess.Select(m => m.Album).Where(t => !string.IsNullOrWhiteSpace(t))
-                    .Distinct(StringComparer.OrdinalIgnoreCase).ToList();
-                var genreNames = metadataToProcess.SelectMany(m => m.Genres ?? Enumerable.Empty<string>())
-                    .Select(g => string.IsNullOrWhiteSpace(g) ? null : g.Trim())
-                    .Where(g => !string.IsNullOrEmpty(g))
-                    .Distinct(StringComparer.OrdinalIgnoreCase).ToList();
-
-                var existingArtists = await context.Artists.Where(a => artistNames.Contains(a.Name))
-                    .ToDictionaryAsync(a => a.Name, StringComparer.OrdinalIgnoreCase, cancellationToken).ConfigureAwait(false);
-                var existingAlbumList = await context.Albums
-                    .Include(a => a.AlbumArtists)
-                    .Where(a => albumTitles.Contains(a.Title))
-                    .ToListAsync(cancellationToken).ConfigureAwait(false);
-                var existingGenres = await context.Genres.Where(g => genreNames.Contains(g.Name))
-                    .ToDictionaryAsync(g => g.Name, StringComparer.OrdinalIgnoreCase, cancellationToken).ConfigureAwait(false);
-
-                // Convert album list to dictionary for efficient lookups by Title and Primary Artist ID
-                var albumLookup = existingAlbumList.ToDictionary(a => $"{a.Title}|{a.AlbumArtists.OrderBy(aa => aa.Order).FirstOrDefault()?.ArtistId}", StringComparer.OrdinalIgnoreCase);
-
-                // Add missing Artists/Genres to Context/Dict
-                foreach (var name in artistNames)
-                    if (!existingArtists.ContainsKey(name!))
-                    {
-                        var newArtist = new Artist { Name = name! };
-                        context.Artists.Add(newArtist);
-                        existingArtists[name!] = newArtist;
-                    }
-
-                foreach (var name in genreNames)
-                    if (!existingGenres.ContainsKey(name!))
-                    {
-                        var newGenre = new Genre { Name = name! };
-                        context.Genres.Add(newGenre);
-                        existingGenres[name!] = newGenre;
-                    }
-
-                // We must save artists/genres first to get IDs if we were using IDs directly, 
-                // but EF Core graph insertion handles nav properties. 
-                // However, to prevent duplicates in the same batch, sharing the entity instance is key.
-
-                foreach (var metadata in metadataToProcess)
+            var albumKey = $"{albumTitle}|{albumArtistNames[0]}";
+            if (albumDefinitions.TryGetValue(albumKey, out var existing))
+            {
+                if (existing.Year is null && metadata.Year.HasValue)
                 {
-                    existingSongs.TryGetValue(metadata.FilePath, out var existingSong);
-                    await AddSongWithDetailsOptimizedAsync(context, folderId, metadata, existingArtists, albumLookup,
-                        existingGenres, existingSong);
+                    albumDefinitions[albumKey] = (existing.Title, existing.ArtistNames, metadata.Year);
+                }
+                continue;
+            }
+
+            albumDefinitions[albumKey] = (albumTitle, albumArtistNames, metadata.Year);
+        }
+
+        return albumDefinitions;
+    }
+
+    private async Task<Dictionary<string, Artist>> ResolveArtistsForBatchAsync(
+        MusicDbContext context,
+        IReadOnlyCollection<string> artistNames,
+        ConcurrentDictionary<string, Guid> artistIdCache,
+        CancellationToken cancellationToken)
+    {
+        if (artistNames.Count == 0)
+            return new Dictionary<string, Artist>(StringComparer.OrdinalIgnoreCase);
+
+        // Query DB for existing artists - we need entity instances for this context
+        var dbArtists = await context.Artists
+            .Where(a => artistNames.Contains(a.Name))
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
+
+        var artistLookup = dbArtists.ToDictionary(a => a.Name, StringComparer.OrdinalIgnoreCase);
+        foreach (var artist in dbArtists)
+        {
+            artistIdCache.TryAdd(artist.Name, artist.Id);
+        }
+
+        var missingNames = artistNames
+            .Where(n => !artistLookup.ContainsKey(n))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        if (missingNames.Count == 0)
+            return artistLookup;
+
+        await _dbWriteSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            var existingMissing = await context.Artists
+                .Where(a => missingNames.Contains(a.Name))
+                .ToListAsync(cancellationToken).ConfigureAwait(false);
+
+            foreach (var artist in existingMissing)
+            {
+                if (!artistLookup.ContainsKey(artist.Name))
+                {
+                    artistLookup[artist.Name] = artist;
+                    artistIdCache.TryAdd(artist.Name, artist.Id);
+                }
+            }
+
+            var stillMissing = missingNames
+                .Where(n => !artistLookup.ContainsKey(n))
+                .ToList();
+
+            if (stillMissing.Count > 0)
+            {
+                foreach (var name in stillMissing)
+                {
+                    var newArtist = new Artist { Name = name };
+                    context.Artists.Add(newArtist);
+                    artistLookup[name] = newArtist;
                 }
 
                 await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-                return metadataToProcess.Length;
-            }
-            catch (DbUpdateException ex) when (IsUniqueConstraintViolation(ex))
-            {
-                retryCount++;
-                _logger.LogWarning(ex, "Concurrency conflict during batch save. Attempt {RetryCount}/{MaxRetries}.", retryCount, maxRetries);
-                if (retryCount >= maxRetries) throw;
-                await Task.Delay(200 * retryCount, cancellationToken);
+
+                foreach (var name in stillMissing)
+                {
+                    artistIdCache.TryAdd(name, artistLookup[name].Id);
+                }
             }
         }
-        return 0;
+        finally
+        {
+            _dbWriteSemaphore.Release();
+        }
+
+        return artistLookup;
+    }
+
+    private async Task<Dictionary<string, Genre>> ResolveGenresForBatchAsync(
+        MusicDbContext context,
+        IReadOnlyCollection<string> genreNames,
+        ConcurrentDictionary<string, Guid> genreIdCache,
+        CancellationToken cancellationToken)
+    {
+        if (genreNames.Count == 0)
+            return new Dictionary<string, Genre>(StringComparer.OrdinalIgnoreCase);
+
+        var dbGenres = await context.Genres
+            .Where(g => genreNames.Contains(g.Name))
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
+
+        var genreLookup = dbGenres.ToDictionary(g => g.Name, StringComparer.OrdinalIgnoreCase);
+        foreach (var genre in dbGenres)
+        {
+            genreIdCache.TryAdd(genre.Name, genre.Id);
+        }
+
+        var missingNames = genreNames
+            .Where(n => !genreLookup.ContainsKey(n))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        if (missingNames.Count == 0)
+            return genreLookup;
+
+        await _dbWriteSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            var existingMissing = await context.Genres
+                .Where(g => missingNames.Contains(g.Name))
+                .ToListAsync(cancellationToken).ConfigureAwait(false);
+
+            foreach (var genre in existingMissing)
+            {
+                if (!genreLookup.ContainsKey(genre.Name))
+                {
+                    genreLookup[genre.Name] = genre;
+                    genreIdCache.TryAdd(genre.Name, genre.Id);
+                }
+            }
+
+            var stillMissing = missingNames
+                .Where(n => !genreLookup.ContainsKey(n))
+                .ToList();
+
+            if (stillMissing.Count > 0)
+            {
+                foreach (var name in stillMissing)
+                {
+                    var newGenre = new Genre { Name = name };
+                    context.Genres.Add(newGenre);
+                    genreLookup[name] = newGenre;
+                }
+
+                await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+
+                foreach (var name in stillMissing)
+                {
+                    genreIdCache.TryAdd(name, genreLookup[name].Id);
+                }
+            }
+        }
+        finally
+        {
+            _dbWriteSemaphore.Release();
+        }
+
+        return genreLookup;
+    }
+
+    private async Task<Dictionary<string, Album>> ResolveAlbumsForBatchAsync(
+        MusicDbContext context,
+        IReadOnlyDictionary<string, (string Title, List<string> ArtistNames, int? Year)> albumDefinitions,
+        Dictionary<string, Artist> artistLookup,
+        ConcurrentDictionary<string, Guid> albumIdCache,
+        CancellationToken cancellationToken)
+    {
+        var albumLookup = new Dictionary<string, Album>(StringComparer.OrdinalIgnoreCase);
+
+        if (albumDefinitions.Count == 0)
+            return albumLookup;
+
+        var albumTitles = albumDefinitions.Values
+            .Select(d => d.Title)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        var dbAlbums = await context.Albums
+            .Include(a => a.AlbumArtists)
+            .ThenInclude(aa => aa.Artist)
+            .Where(a => albumTitles.Contains(a.Title))
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
+
+        foreach (var album in dbAlbums)
+        {
+            var primaryArtistName = album.AlbumArtists
+                .OrderBy(aa => aa.Order)
+                .Select(aa => aa.Artist?.Name)
+                .FirstOrDefault() ?? string.Empty;
+
+            var albumKey = $"{album.Title}|{primaryArtistName}";
+            if (!albumLookup.ContainsKey(albumKey))
+            {
+                albumLookup[albumKey] = album;
+                albumIdCache.TryAdd(albumKey, album.Id);
+                if (albumDefinitions.TryGetValue(albumKey, out var definition))
+                {
+                    SyncAlbumArtists(album, definition.ArtistNames, artistLookup);
+                    if (album.Year is null && definition.Year.HasValue)
+                        album.Year = definition.Year;
+                }
+            }
+        }
+
+        var missingAlbumKeys = albumDefinitions.Keys
+            .Where(k => !albumLookup.ContainsKey(k))
+            .ToList();
+
+        if (missingAlbumKeys.Count == 0)
+            return albumLookup;
+
+        await _dbWriteSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            var missingTitles = missingAlbumKeys
+                .Select(k => albumDefinitions[k].Title)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            var existingMissing = await context.Albums
+                .Include(a => a.AlbumArtists)
+                .ThenInclude(aa => aa.Artist)
+                .Where(a => missingTitles.Contains(a.Title))
+                .ToListAsync(cancellationToken).ConfigureAwait(false);
+
+            foreach (var album in existingMissing)
+            {
+                var primaryArtistName = album.AlbumArtists
+                    .OrderBy(aa => aa.Order)
+                    .Select(aa => aa.Artist?.Name)
+                    .FirstOrDefault() ?? string.Empty;
+
+                var albumKey = $"{album.Title}|{primaryArtistName}";
+                if (!albumLookup.ContainsKey(albumKey))
+                {
+                    albumLookup[albumKey] = album;
+                    albumIdCache.TryAdd(albumKey, album.Id);
+                    if (albumDefinitions.TryGetValue(albumKey, out var definition))
+                    {
+                        SyncAlbumArtists(album, definition.ArtistNames, artistLookup);
+                        if (album.Year is null && definition.Year.HasValue)
+                            album.Year = definition.Year;
+                    }
+                }
+            }
+
+            var stillMissing = missingAlbumKeys
+                .Where(k => !albumLookup.ContainsKey(k))
+                .ToList();
+
+            if (stillMissing.Count > 0)
+            {
+                foreach (var albumKey in stillMissing)
+                {
+                    var definition = albumDefinitions[albumKey];
+                    var newAlbum = new Album
+                    {
+                        Title = definition.Title,
+                        Year = definition.Year
+                    };
+
+                    for (int i = 0; i < definition.ArtistNames.Count; i++)
+                    {
+                        if (!artistLookup.TryGetValue(definition.ArtistNames[i], out var artist))
+                            continue; // Skip artists not in lookup (shouldn't happen normally)
+                        newAlbum.AlbumArtists.Add(new AlbumArtist
+                        {
+                            Artist = artist,
+                            Order = i
+                        });
+                    }
+
+                    context.Albums.Add(newAlbum);
+                    albumLookup[albumKey] = newAlbum;
+                }
+
+                await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+
+                foreach (var albumKey in stillMissing)
+                {
+                    albumIdCache.TryAdd(albumKey, albumLookup[albumKey].Id);
+                }
+            }
+        }
+        finally
+        {
+            _dbWriteSemaphore.Release();
+        }
+
+        return albumLookup;
+    }
+
+    private static void SyncAlbumArtists(Album album, IReadOnlyList<string> artistNames, Dictionary<string, Artist> artistLookup)
+    {
+        var currentArtistNames = album.AlbumArtists
+            .OrderBy(aa => aa.Order)
+            .Select(aa => aa.Artist?.Name ?? string.Empty)
+            .ToList();
+
+        var needsSync = !currentArtistNames.SequenceEqual(artistNames, StringComparer.OrdinalIgnoreCase);
+        if (!needsSync)
+            return;
+
+        album.AlbumArtists.Clear();
+        for (int i = 0; i < artistNames.Count; i++)
+        {
+            if (!artistLookup.TryGetValue(artistNames[i], out var artist))
+                continue; // Skip artists not in lookup (shouldn't happen normally)
+            album.AlbumArtists.Add(new AlbumArtist
+            {
+                Artist = artist,
+                Order = i
+            });
+        }
     }
 
     /// <summary>
-    ///     Safely gets an artist from the lookup dictionary, creating a new one if not found.
-    ///     This prevents KeyNotFoundException if metadata contains artist names not pre-populated in the lookup.
+    ///     Adds or updates a song using scan-scoped caches for artists, albums, and genres.
+    ///     Albums are resolved on-demand since the album key depends on the primary artist.
     /// </summary>
-    private static Artist GetOrCreateArtist(
-        MusicDbContext context,
-        Dictionary<string, Artist> artistLookup,
-        string artistName,
-        ILogger logger)
-    {
-        if (artistLookup.TryGetValue(artistName, out var artist))
-        {
-            return artist;
-        }
-
-        // Artist not in lookup - this can happen due to race conditions or normalization differences
-        logger.LogDebug("Artist '{ArtistName}' not found in pre-built lookup, creating on-the-fly.", artistName);
-        artist = new Artist { Name = artistName };
-        context.Artists.Add(artist);
-        artistLookup[artistName] = artist;
-        return artist;
-    }
-
-    private Task AddSongWithDetailsOptimizedAsync(
+    private Task AddSongWithDetailsCachedAsync(
         MusicDbContext context,
         Guid folderId,
         SongFileMetadata metadata,
@@ -3177,68 +3537,26 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         if (albumArtistNames.Count == 0)
         {
-            albumArtistNames = trackArtistNames.Count > 0 
-                ? new List<string>(trackArtistNames) 
+            albumArtistNames = trackArtistNames.Count > 0
+                ? new List<string>(trackArtistNames)
                 : new List<string> { Artist.UnknownArtistName };
         }
-
-        var primaryAlbumArtist = GetOrCreateArtist(context, artistLookup, albumArtistNames[0], _logger);
 
         Album? album = null;
         if (!string.IsNullOrWhiteSpace(metadata.Album))
         {
             var albumTitle = metadata.Album.Trim();
-            var albumKey = $"{albumTitle}|{primaryAlbumArtist.Id}";
-            
-            if (!albumLookup.TryGetValue(albumKey, out album))
-            {
-                album = new Album
-                {
-                    Title = albumTitle,
-                    Year = metadata.Year
-                };
-                // Add all album artists using safe lookup
-                for (int i = 0; i < albumArtistNames.Count; i++)
-                {
-                    var artist = GetOrCreateArtist(context, artistLookup, albumArtistNames[i], _logger);
-                    album.AlbumArtists.Add(new AlbumArtist
-                    {
-                        Artist = artist,
-                        Order = i
-                    });
-                }
-                context.Albums.Add(album);
-                albumLookup[albumKey] = album;
-            }
-            else
-            {
-                if (album.Year is null && metadata.Year.HasValue)
-                {
-                    album.Year = metadata.Year;
-                }
+            var albumKey = $"{albumTitle}|{albumArtistNames[0]}";
+            albumLookup.TryGetValue(albumKey, out album);
 
-                // Synchronize AlbumArtists using safe lookup
-                var newAlbumArtists = albumArtistNames.Select((name, index) => new { Artist = GetOrCreateArtist(context, artistLookup, name, _logger), Order = index }).ToList();
-                var currentAlbumArtists = album.AlbumArtists.OrderBy(aa => aa.Order).ToList(); // Requires Include(a => a.AlbumArtists) in caller
-
-                if (currentAlbumArtists.Count != newAlbumArtists.Count ||
-                    currentAlbumArtists.Zip(newAlbumArtists, (c, n) => c.ArtistId == n.Artist.Id && c.Order == n.Order).Any(val => !val))
-                {
-                    album.AlbumArtists.Clear();
-                    foreach (var n in newAlbumArtists)
-                    {
-                        album.AlbumArtists.Add(new AlbumArtist
-                        {
-                            ArtistId = n.Artist.Id,
-                            Artist = n.Artist,
-                            Order = n.Order
-                        });
-                    }
-                }
+            // Update year if missing
+            if (album != null && album.Year is null && metadata.Year.HasValue)
+            {
+                album.Year = metadata.Year;
             }
         }
 
-        // Safely get genres using TryGetValue with fallback to create missing ones
+        // Resolve genres from lookup
         var genres = new List<Genre>();
         if (metadata.Genres != null)
         {
@@ -3246,15 +3564,6 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             {
                 if (genreLookup.TryGetValue(genreName, out var genre))
                 {
-                    genres.Add(genre);
-                }
-                else
-                {
-                    // Genre not in lookup - create on-the-fly
-                    _logger.LogDebug("Genre '{GenreName}' not found in pre-built lookup, creating on-the-fly.", genreName);
-                    genre = new Genre { Name = genreName };
-                    context.Genres.Add(genre);
-                    genreLookup[genreName] = genre;
                     genres.Add(genre);
                 }
             }
@@ -3286,10 +3595,33 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         song.Bpm = metadata.Bpm;
         song.Lyrics = metadata.Lyrics;
         song.LrcFilePath = metadata.LrcFilePath;
-        song.AlbumId = album?.Id;
         
-        // Synchronize SongArtists collection using safe lookup
-        var newSongArtists = trackArtistNames.Select((name, index) => new { Artist = GetOrCreateArtist(context, artistLookup, name, _logger), Order = index }).ToList();
+        // Use FK assignment for existing albums to avoid relationship fixup issues
+        if (album != null)
+        {
+            var albumEntry = context.Entry(album);
+            if (albumEntry.State != EntityState.Added && albumEntry.State != EntityState.Detached)
+            {
+                // Album is tracked as existing - safe to use FK assignment
+                song.AlbumId = album.Id;
+            }
+            else
+            {
+                // Album is new or detached - use navigation property for relationship fixup
+                song.Album = album;
+            }
+        }
+        else
+        {
+            song.AlbumId = null;
+        }
+
+        // Synchronize SongArtists collection - use TryGetValue to handle any normalization mismatches
+        var newSongArtists = trackArtistNames
+            .Select((name, index) => artistLookup.TryGetValue(name, out var artist) ? new { Artist = artist, Order = index } : null)
+            .Where(x => x != null)
+            .Select(x => x!)
+            .ToList();
         var currentSongArtists = song.SongArtists.OrderBy(sa => sa.Order).ToList();
 
         if (currentSongArtists.Count != newSongArtists.Count ||
@@ -3298,11 +3630,11 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             song.SongArtists.Clear();
             foreach (var nsa in newSongArtists)
             {
-                song.SongArtists.Add(new SongArtist { ArtistId = nsa.Artist.Id, Artist = nsa.Artist, Order = nsa.Order });
+                song.SongArtists.Add(new SongArtist { Artist = nsa.Artist, Order = nsa.Order });
             }
         }
 
-        // Synchronize Genres collection instead of replacing it to avoid EF Core many-to-many churn.
+        // Synchronize Genres collection
         if (!song.Genres.SequenceEqual(genres))
         {
             song.Genres.Clear();
@@ -3327,9 +3659,15 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         if (album is not null && string.IsNullOrEmpty(album.CoverArtUri) && !string.IsNullOrEmpty(metadata.CoverArtUri))
             album.CoverArtUri = metadata.CoverArtUri;
+
         return Task.CompletedTask;
     }
 
+    /// <summary>
+    ///     Adds or updates a single song with full entity resolution.
+    ///     This method uses semaphore-protected database operations for thread safety
+    ///     and is intended for single-song operations (not batch processing).
+    /// </summary>
     private async Task<Song?> AddSongWithDetailsAsync(MusicDbContext context, Guid folderId, SongFileMetadata metadata)
     {
         try
@@ -3757,11 +4095,25 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
     private Task<string?> DownloadAndCacheArtistImageAsync(Artist artist, Uri imageUrl, CancellationToken cancellationToken)
     {
-        var lazyTask = _artistImageProcessingTasks.GetOrAdd(artist.Id, _ =>
+        var artistId = artist.Id;
+        var lazyTask = _artistImageProcessingTasks.GetOrAdd(artistId, _ =>
             new Lazy<Task<string?>>(() =>
             {
-                var localPath = _fileSystem.Combine(_pathConfig.ArtistImageCachePath, $"{artist.Id}.fetched.jpg");
-                return DownloadAndWriteImageInternalAsync(localPath, imageUrl, cancellationToken);
+                var localPath = _fileSystem.Combine(_pathConfig.ArtistImageCachePath, $"{artistId}.fetched.jpg");
+                // Use ContinueWith to remove from cache AFTER task completes, not immediately
+                return DownloadAndWriteImageInternalAsync(localPath, imageUrl, cancellationToken)
+                    .ContinueWith(t =>
+                    {
+                        _artistImageProcessingTasks.TryRemove(artistId, out var _removed);
+                        if (t.IsFaulted && t.Exception != null)
+                        {
+                            // Log the actual exception from the download task
+                            _logger.LogWarning(t.Exception.InnerException ?? t.Exception, 
+                                "Artist image download task failed for artist ID {ArtistId}.", artistId);
+                            return null;
+                        }
+                        return t.Result;
+                    }, TaskContinuationOptions.ExecuteSynchronously);
             })
         );
 
@@ -3771,13 +4123,10 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         }
         catch (Exception ex)
         {
-            // Prevent retry storms by removing failed attempts from cache
+            // This only catches exceptions from Lazy<T>.Value access, not from the task itself
             _logger.LogError(ex, "Artist image download failed for artist '{ArtistName}'.", artist.Name);
+            _artistImageProcessingTasks.TryRemove(artistId, out var _);
             return Task.FromResult<string?>(null);
-        }
-        finally
-        {
-            _artistImageProcessingTasks.TryRemove(artist.Id, out _);
         }
     }
 
@@ -4407,31 +4756,14 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     private void OnFetchOnlineMetadataEnabledChanged(bool isEnabled)
     {
         if (isEnabled) return;
+        if (_disposed) return;
 
-        // Use synchronous wait with short timeout since this is a settings change handler
-        if (!_metadataFetchSemaphore.Wait(100))
+        // Don't block the event handler - just cancel the token directly
+        // The background fetch will observe the cancellation on its next iteration
+        if (_isMetadataFetchRunning && !_metadataFetchCts.IsCancellationRequested)
         {
-            // If we can't acquire quickly, the background fetch is active - just cancel the token
-            if (!_metadataFetchCts.IsCancellationRequested)
-            {
-                _logger.LogInformation("Fetch online metadata disabled. Cancelling background fetch.");
-                _metadataFetchCts.Cancel();
-            }
-            return;
-        }
-
-        try
-        {
-            if (_disposed) return;
-            if (_isMetadataFetchRunning && !_metadataFetchCts.IsCancellationRequested)
-            {
-                _logger.LogInformation("Fetch online metadata disabled. Cancelling background fetch.");
-                _metadataFetchCts.Cancel();
-            }
-        }
-        finally
-        {
-            _metadataFetchSemaphore.Release();
+            _logger.LogInformation("Fetch online metadata disabled. Cancelling background fetch.");
+            _metadataFetchCts.Cancel();
         }
     }
 
@@ -4440,26 +4772,29 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     protected virtual void Dispose(bool disposing)
     {
         if (_disposed) return;
+        _disposed = true; // Set first to prevent re-entry
 
         if (disposing)
         {
             _settingsService.FetchOnlineMetadataEnabledChanged -= OnFetchOnlineMetadataEnabledChanged;
 
-            // Cancel and dispose CTS - don't wait for semaphore as we're disposing
+            // Cancel shutdown token first - this signals all operations to stop
+            _shutdownCts.Cancel();
+
+            // Cancel and dispose all CTS
             _metadataFetchCts.Cancel();
             _metadataFetchCts.Dispose();
-            _disposed = true;
 
-            _replayGainScanCts?.Cancel();
-            _replayGainScanCts?.Dispose();
+            var replayGainCts = Interlocked.Exchange(ref _replayGainScanCts, null);
+            replayGainCts?.Cancel();
+            replayGainCts?.Dispose();
+
+            _shutdownCts.Dispose();
             _scanSemaphore.Dispose();
+            _dbWriteSemaphore.Dispose();
             _artistCreationLock.Dispose();
             _albumCreationLock.Dispose();
             _metadataFetchSemaphore.Dispose();
-        }
-        else
-        {
-            _disposed = true;
         }
     }
 

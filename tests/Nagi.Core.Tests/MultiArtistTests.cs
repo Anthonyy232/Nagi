@@ -9,6 +9,7 @@ using Nagi.Core.Services.Implementations;
 using Nagi.Core.Tests.Utils;
 using NSubstitute;
 using Xunit;
+using Xunit.Abstractions;
 using System.IO;
 
 namespace Nagi.Core.Tests;
@@ -19,9 +20,12 @@ public class MultiArtistTests : IDisposable
     private readonly IFileSystemService _fileSystem;
     private readonly IMetadataService _metadataService;
     private readonly LibraryService _libraryService;
+    private readonly ITestOutputHelper _output;
+    private Exception? _capturedLoggerException;
 
-    public MultiArtistTests()
+    public MultiArtistTests(ITestOutputHelper output)
     {
+        _output = output;
         _dbHelper = new DbContextFactoryTestHelper();
         _fileSystem = Substitute.For<IFileSystemService>();
         _metadataService = Substitute.For<IMetadataService>();
@@ -35,6 +39,25 @@ public class MultiArtistTests : IDisposable
         pathConfig.LrcCachePath.Returns("C:\\cache\\lrc");
         
         var serviceScopeFactory = Substitute.For<IServiceScopeFactory>();
+
+        // Set up logger to capture exceptions
+        var logger = Substitute.For<ILogger<LibraryService>>();
+        logger.WhenForAnyArgs(x => x.Log(
+            Arg.Any<LogLevel>(), 
+            Arg.Any<EventId>(), 
+            Arg.Any<object>(), 
+            Arg.Any<Exception?>(), 
+            Arg.Any<Func<object, Exception?, string>>()))
+            .Do(callInfo =>
+            {
+                var ex = callInfo.ArgAt<Exception?>(3);
+                if (ex != null)
+                {
+                    _capturedLoggerException = ex;
+                    _output.WriteLine($"LOGGED EXCEPTION: {ex.GetType().Name}: {ex.Message}");
+                    _output.WriteLine($"Stack Trace: {ex.StackTrace}");
+                }
+            });
 
         _libraryService = new LibraryService(
             _dbHelper.ContextFactory,
@@ -52,7 +75,7 @@ public class MultiArtistTests : IDisposable
             Substitute.For<IReplayGainService>(),
             Substitute.For<IApiKeyService>(),
             Substitute.For<IImageProcessor>(),
-            Substitute.For<ILogger<LibraryService>>()
+            logger
         );
     }
 
@@ -65,6 +88,9 @@ public class MultiArtistTests : IDisposable
     [Fact]
     public async Task RescanFolderForMusicAsync_WithMultipleArtists_CorrectlyPopulatesDenormalizedFields()
     {
+        // Reset captured exception from any previous test
+        _capturedLoggerException = null;
+        
         // Arrange
         var folderId = Guid.NewGuid();
         var folderPath = "C:\\Music\\MultiArtist";
@@ -78,8 +104,8 @@ public class MultiArtistTests : IDisposable
 
         _fileSystem.DirectoryExists(folderPath).Returns(true);
         _fileSystem.EnumerateFiles(folderPath, "*.*", SearchOption.AllDirectories).Returns(new[] { filePath });
-        _fileSystem.GetExtension(filePath).Returns(".mp3");
-        _fileSystem.GetLastWriteTimeUtc(filePath).Returns(DateTime.UtcNow);
+        _fileSystem.GetExtension(Arg.Any<string>()).Returns(".mp3");
+        _fileSystem.GetLastWriteTimeUtc(Arg.Any<string>()).Returns(DateTime.UtcNow);
         _fileSystem.GetFileNameWithoutExtension(filePath).Returns("song");
 
         var metadata = new SongFileMetadata
@@ -92,10 +118,19 @@ public class MultiArtistTests : IDisposable
             Duration = TimeSpan.FromMinutes(3)
         };
 
-        _metadataService.ExtractMetadataAsync(filePath, Arg.Any<string?>()).Returns(metadata);
+        _metadataService.ExtractMetadataAsync(Arg.Any<string>(), Arg.Any<string?>()).Returns(metadata);
 
         // Act
-        await _libraryService.RescanFolderForMusicAsync(folderId);
+        var result = await _libraryService.RescanFolderForMusicAsync(folderId);
+        
+        // If scan failed, re-throw the captured exception with context
+        if (!result && _capturedLoggerException != null)
+        {
+            throw new Exception($"Scan failed with exception: {_capturedLoggerException.Message}", _capturedLoggerException);
+        }
+        
+        // Verify the scan succeeded
+        result.Should().BeTrue("the scan should complete without errors");
 
         // Assert
         await using (var context = _dbHelper.ContextFactory.CreateDbContext())
@@ -124,6 +159,9 @@ public class MultiArtistTests : IDisposable
     [Fact]
     public async Task RescanFolderForMusicAsync_SingleArtist_PopulatesFieldsCorrectly()
     {
+        // Reset captured exception from any previous test
+        _capturedLoggerException = null;
+        
         // Arrange
         var folderId = Guid.NewGuid();
         var folderPath = "C:\\Music\\SingleArtist";
@@ -137,8 +175,8 @@ public class MultiArtistTests : IDisposable
 
         _fileSystem.DirectoryExists(folderPath).Returns(true);
         _fileSystem.EnumerateFiles(folderPath, "*.*", SearchOption.AllDirectories).Returns(new[] { filePath });
-        _fileSystem.GetExtension(filePath).Returns(".mp3");
-        _fileSystem.GetLastWriteTimeUtc(filePath).Returns(DateTime.UtcNow);
+        _fileSystem.GetExtension(Arg.Any<string>()).Returns(".mp3");
+        _fileSystem.GetLastWriteTimeUtc(Arg.Any<string>()).Returns(DateTime.UtcNow);
 
         var metadata = new SongFileMetadata
         {
@@ -149,10 +187,19 @@ public class MultiArtistTests : IDisposable
             Duration = TimeSpan.FromMinutes(3)
         };
 
-        _metadataService.ExtractMetadataAsync(filePath, Arg.Any<string?>()).Returns(metadata);
+        _metadataService.ExtractMetadataAsync(Arg.Any<string>(), Arg.Any<string?>()).Returns(metadata);
 
         // Act
-        await _libraryService.RescanFolderForMusicAsync(folderId);
+        var result = await _libraryService.RescanFolderForMusicAsync(folderId);
+        
+        // If scan failed, re-throw the captured exception with context
+        if (!result && _capturedLoggerException != null)
+        {
+            throw new Exception($"Scan failed with exception: {_capturedLoggerException.Message}", _capturedLoggerException);
+        }
+        
+        // Verify the scan succeeded (no exception caught)
+        result.Should().BeTrue("the scan should complete without errors");
 
         // Assert
         await using (var context = _dbHelper.ContextFactory.CreateDbContext())
