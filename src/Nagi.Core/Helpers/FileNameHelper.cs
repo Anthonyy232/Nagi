@@ -22,7 +22,7 @@ public static class FileNameHelper
 
         var invalidChars = Path.GetInvalidFileNameChars();
         var sanitized = new string(name.Where(c => !invalidChars.Contains(c)).ToArray());
-        return string.IsNullOrWhiteSpace(sanitized) ? fallback : sanitized.Trim();
+        return ArtistNameHelper.NormalizeStringCore(sanitized) ?? fallback;
     }
 
     /// <summary>

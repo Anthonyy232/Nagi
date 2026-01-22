@@ -6,6 +6,7 @@ using Nagi.Core.Http;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using Nagi.Core.Helpers;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -226,7 +227,7 @@ public class TheAudioDbService : ITheAudioDbService, IDisposable
     private static string? SanitizeBiography(string? bio)
     {
         if (string.IsNullOrWhiteSpace(bio)) return null;
-        return bio.Trim();
+        return ArtistNameHelper.NormalizeStringCore(bio);
     }
 
     /// <summary>
@@ -247,6 +248,6 @@ public class TheAudioDbService : ITheAudioDbService, IDisposable
     /// </summary>
     private static string? NullIfEmpty(string? value)
     {
-        return string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+        return ArtistNameHelper.NormalizeStringCore(value);
     }
 }
