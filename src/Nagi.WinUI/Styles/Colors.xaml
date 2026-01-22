@@ -41,6 +41,10 @@
     <!-- Header StackPanel Padding (for view/detail pages without outer Grid padding) -->
     <Thickness x:Key="ViewPageHeaderPadding">24,24,24,0</Thickness>
 
+    <!-- Edge-to-Edge Layout Resources -->
+    <Thickness x:Key="PageContainerPaddingVertical">0,24,0,24</Thickness>
+    <Thickness x:Key="PageHeaderMarginIndented">24,0,24,24</Thickness>
+
     <!-- ListView/GridView Padding -->
     <Thickness x:Key="SongListViewPadding">24,0,24,132</Thickness>
     <Thickness x:Key="SongListViewPaddingNoHorizontal">0,0,0,132</Thickness>
