@@ -342,8 +342,8 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
 
         try
         {
-            var newPlaylist =
-                await _libraryService.CreatePlaylistAsync(playlistName.Trim(), coverImageUri: coverImageUri);
+            var normalizedName = ArtistNameHelper.NormalizeStringCore(playlistName) ?? playlistName;
+            var newPlaylist = await _libraryService.CreatePlaylistAsync(normalizedName, coverImageUri: coverImageUri);
             if (newPlaylist != null)
             {
                 var newItem = new PlaylistViewModelItem(newPlaylist);
@@ -490,19 +490,21 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
         try
         {
             bool success;
+            var normalizedName = ArtistNameHelper.NormalizeStringCore(newName) ?? newName;
+
             if (isSmart)
-                success = await _smartPlaylistService.RenameSmartPlaylistAsync(playlistId, newName.Trim());
+                success = await _smartPlaylistService.RenameSmartPlaylistAsync(playlistId, normalizedName);
             else
-                success = await _libraryService.RenamePlaylistAsync(playlistId, newName.Trim());
+                success = await _libraryService.RenamePlaylistAsync(playlistId, normalizedName);
             
             if (success)
             {
                 var playlistItem = Playlists.FirstOrDefault(p => p.Id == playlistId);
-                if (playlistItem != null) playlistItem.Name = newName.Trim();
+                if (playlistItem != null) playlistItem.Name = normalizedName;
 
                 // Also update the backing list to keep filter/sort in sync
                 var backingItem = _allPlaylists.FirstOrDefault(p => p.Id == playlistId);
-                if (backingItem != null) backingItem.Name = newName.Trim();
+                if (backingItem != null) backingItem.Name = normalizedName;
 
                 StatusMessage = string.Empty;
             }

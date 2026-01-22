@@ -7,6 +7,7 @@ using Nagi.Core.Http;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using Nagi.Core.Helpers;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -105,7 +106,8 @@ public class SpotifyService : ISpotifyService, IDisposable
                         return RetryResult<ServiceResult<SpotifyImageResult>>.Success(
                             ServiceResult<SpotifyImageResult>.FromTemporaryError("Could not retrieve Spotify access token."));
 
-                    var requestUrl = $"{SpotifyApiBaseUrl}search?q={Uri.EscapeDataString(artistName)}&type=artist&limit=1";
+                    var normalizedArtist = ArtistNameHelper.NormalizeStringCore(artistName) ?? artistName;
+                    var requestUrl = $"{SpotifyApiBaseUrl}search?q={Uri.EscapeDataString(normalizedArtist)}&type=artist&limit=1";
                     using var request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
                     request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 

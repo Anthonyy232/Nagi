@@ -49,7 +49,7 @@ public class AtlMetadataService : IMetadataService, IDisposable
             var fileInfo = _fileSystem.GetFileInfo(filePath);
             metadata.FileCreatedDate = fileInfo.CreationTimeUtc;
             metadata.FileModifiedDate = fileInfo.LastWriteTimeUtc;
-            metadata.Title = _fileSystem.GetFileNameWithoutExtension(filePath);
+            metadata.Title = ArtistNameHelper.NormalizeStringCore(_fileSystem.GetFileNameWithoutExtension(filePath)) ?? _fileSystem.GetFileNameWithoutExtension(filePath);
 
             // Use a timeout wrapper for ATL operations to prevent indefinite hangs
             using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
@@ -184,8 +184,9 @@ public class AtlMetadataService : IMetadataService, IDisposable
         {
             metadata.Genres = genreString
                 .Split(new[] { ';', '/', '\\' }, StringSplitOptions.RemoveEmptyEntries)
-                .Select(g => g.Trim())
+                .Select(g => ArtistNameHelper.NormalizeStringCore(g))
                 .Where(g => !string.IsNullOrEmpty(g))
+                .Select(g => g!)
                 .ToList();
         }
         else
@@ -216,16 +217,18 @@ public class AtlMetadataService : IMetadataService, IDisposable
     {
         if (string.IsNullOrWhiteSpace(artistString)) return [];
         
-        // If no split characters are provided, return the whole string (trimmed)
+        // If no split characters are provided, normalize and return the whole string
         if (string.IsNullOrEmpty(splitCharacters))
         {
-            return new List<string> { artistString.Trim() };
+            var normalized = ArtistNameHelper.NormalizeStringCore(artistString);
+            return normalized != null ? new List<string> { normalized } : [];
         }
 
         return artistString
             .Split(splitCharacters.ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
-            .Select(a => a.Trim())
+            .Select(a => ArtistNameHelper.NormalizeStringCore(a))
             .Where(a => !string.IsNullOrEmpty(a))
+            .Select(a => a!)
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToList();
     }
@@ -450,7 +453,7 @@ public class AtlMetadataService : IMetadataService, IDisposable
 
         foreach (var phrase in syncLyrics.OrderBy(p => p.TimestampStart))
         {
-            var text = phrase.Text?.Trim();
+            var text = ArtistNameHelper.NormalizeStringCore(phrase.Text);
             if (string.IsNullOrWhiteSpace(text)) continue;
 
             var time = TimeSpan.FromMilliseconds(phrase.TimestampStart);
@@ -507,7 +510,7 @@ public class AtlMetadataService : IMetadataService, IDisposable
     /// </summary>
     private string? SanitizeString(string? input)
     {
-        return string.IsNullOrWhiteSpace(input) ? null : input.Trim();
+        return ArtistNameHelper.NormalizeStringCore(input);
     }
 
     /// <summary>

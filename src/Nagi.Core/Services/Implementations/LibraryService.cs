@@ -11,6 +11,7 @@ using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Core.Http;
 using System.IO;
+using System.Text;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -1161,8 +1162,9 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     {
         if (string.IsNullOrWhiteSpace(searchTerm)) return await GetAllSongsAsync().ConfigureAwait(false);
 
+        var normalizedTerm = NormalizeString(searchTerm) ?? string.Empty;
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        return await ExcludeHeavyFields(BuildSongSearchQuery(context, searchTerm.Trim()))
+        return await ExcludeHeavyFields(BuildSongSearchQuery(context, normalizedTerm))
             .OrderBy(s => s.Title).ThenBy(s => s.Id)
             .AsSplitQuery()
             .ToListAsync().ConfigureAwait(false);
@@ -1220,8 +1222,9 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     public async Task<Artist?> GetArtistByNameAsync(string name)
     {
         if (string.IsNullOrWhiteSpace(name)) return null;
+        var normalizedName = ArtistNameHelper.Normalize(name);
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        return await context.Artists.AsNoTracking().FirstOrDefaultAsync(a => a.Name == name.Trim()).ConfigureAwait(false);
+        return await context.Artists.AsNoTracking().FirstOrDefaultAsync(a => a.Name == normalizedName).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -1236,8 +1239,9 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     {
         if (string.IsNullOrWhiteSpace(searchTerm)) return await GetAllArtistsAsync().ConfigureAwait(false);
 
+        var normalizedTerm = NormalizeString(searchTerm) ?? string.Empty;
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        return await BuildArtistSearchQuery(context, searchTerm.Trim()).AsNoTracking().OrderBy(a => a.Name).ThenBy(a => a.Id)
+        return await BuildArtistSearchQuery(context, normalizedTerm).AsNoTracking().OrderBy(a => a.Name).ThenBy(a => a.Id)
             .ToListAsync().ConfigureAwait(false);
     }
 
@@ -1297,11 +1301,13 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         if (string.IsNullOrWhiteSpace(searchTerm)) return await GetAlbumTotalDurationAsync(albumId).ConfigureAwait(false);
 
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        var ticks = await BuildSongSearchQuery(context, searchTerm.Trim())
+
+        var normalizedTerm = NormalizeString(searchTerm) ?? string.Empty;
+        var ticks = await BuildSongSearchQuery(context, normalizedTerm)
             .Where(s => s.AlbumId == albumId)
-            .SumAsync(s => s.DurationTicks)
-            .ConfigureAwait(false);
-        return TimeSpan.FromTicks(ticks);
+            .SumAsync(s => (long?)s.DurationTicks).ConfigureAwait(false);
+
+        return TimeSpan.FromTicks(ticks ?? 0);
     }
 
     /// <inheritdoc />
@@ -1322,8 +1328,9 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     {
         if (string.IsNullOrWhiteSpace(searchTerm)) return await GetAllAlbumsAsync().ConfigureAwait(false);
 
+        var normalizedTerm = NormalizeString(searchTerm) ?? string.Empty;
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        return await BuildAlbumSearchQuery(context, searchTerm.Trim())
+        return await BuildAlbumSearchQuery(context, normalizedTerm)
             .OrderBy(al => al.PrimaryArtistName)
             .ThenBy(al => al.Title)
             .ThenBy(al => al.Id)
@@ -1345,7 +1352,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var playlist = new Playlist
         {
-            Name = name.Trim(),
+            Name = NormalizeString(name) ?? name,
             Description = description,
             DateCreated = DateTime.UtcNow,
             DateModified = DateTime.UtcNow
@@ -1394,7 +1401,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         var playlist = await context.Playlists.FindAsync(playlistId).ConfigureAwait(false);
         if (playlist is null) return false;
 
-        playlist.Name = newName.Trim();
+        playlist.Name = NormalizeString(newName) ?? newName;
         playlist.DateModified = DateTime.UtcNow;
         await context.SaveChangesAsync().ConfigureAwait(false);
         PlaylistUpdated?.Invoke(this, new PlaylistUpdatedEventArgs(playlist.Id, playlist.CoverImageUri));
@@ -1710,7 +1717,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         if (string.IsNullOrWhiteSpace(searchTerm)) return await GetAllSongsPagedAsync(pageNumber, pageSize).ConfigureAwait(false);
 
-        var query = BuildSongSearchQuery(context, searchTerm.Trim());
+        var query = BuildSongSearchQuery(context, NormalizeString(searchTerm) ?? searchTerm);
 
         var totalCount = await query.CountAsync().ConfigureAwait(false);
         var pagedData = await ApplySongSortOrder(ExcludeHeavyFields(query), SongSortOrder.TitleAsc)
@@ -1900,10 +1907,11 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     {
         SanitizePaging(ref pageNumber, ref pageSize);
 
+        var normalizedTerm = NormalizeString(searchTerm) ?? string.Empty;
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var query = string.IsNullOrWhiteSpace(searchTerm)
             ? context.Artists
-            : BuildArtistSearchQuery(context, searchTerm.Trim());
+            : BuildArtistSearchQuery(context, normalizedTerm);
         var totalCount = await query.CountAsync().ConfigureAwait(false);
         var pagedData = await query.AsNoTracking().OrderBy(a => a.Name).ThenBy(a => a.Id)
             .Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync().ConfigureAwait(false);
@@ -1947,10 +1955,11 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     {
         SanitizePaging(ref pageNumber, ref pageSize);
 
+        var normalizedTerm = NormalizeString(searchTerm) ?? string.Empty;
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var query = string.IsNullOrWhiteSpace(searchTerm)
             ? context.Albums.Include(al => al.AlbumArtists).ThenInclude(aa => aa.Artist)
-            : BuildAlbumSearchQuery(context, searchTerm.Trim());
+            : BuildAlbumSearchQuery(context, normalizedTerm);
         var totalCount = await query.CountAsync().ConfigureAwait(false);
         var pagedData = await query.AsNoTracking()
             .OrderBy(al => al.PrimaryArtistName).ThenBy(al => al.Title).ThenBy(al => al.Id)
@@ -2007,7 +2016,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         if (string.IsNullOrWhiteSpace(searchTerm)) return await GetAllSongIdsAsync(sortOrder).ConfigureAwait(false);
 
-        var query = BuildSongSearchQuery(context, searchTerm.Trim());
+        var normalizedTerm = NormalizeString(searchTerm) ?? string.Empty;
+        var query = BuildSongSearchQuery(context, normalizedTerm);
         return await ApplySongSortOrder(query, sortOrder).Select(s => s.Id).ToListAsync().ConfigureAwait(false);
     }
 
@@ -2125,7 +2135,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         if (string.IsNullOrWhiteSpace(searchTerm)) return await GetSongsByFolderIdAsync(folderId).ConfigureAwait(false);
 
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        var term = $"%{searchTerm.Trim()}%";
+        var term = $"%{NormalizeString(searchTerm) ?? string.Empty}%";
         var query = context.Songs.AsNoTracking().Where(s => s.FolderId == folderId
                                                              && (EF.Functions.Like(s.Title, term)
                                                                  || EF.Functions.Like(s.ArtistName, term)
@@ -2144,7 +2154,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         if (string.IsNullOrWhiteSpace(searchTerm)) return await GetSongsByAlbumIdAsync(albumId).ConfigureAwait(false);
 
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        var term = $"%{searchTerm.Trim()}%";
+        var term = $"%{NormalizeString(searchTerm) ?? string.Empty}%";
         var query = context.Songs.AsNoTracking().Where(s => s.AlbumId == albumId
                                                              && (EF.Functions.Like(s.Title, term) ||
                                                                  EF.Functions.Like(s.ArtistName, term)))
@@ -2161,7 +2171,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         if (string.IsNullOrWhiteSpace(searchTerm)) return await GetSongsByArtistIdAsync(artistId).ConfigureAwait(false);
 
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        var term = $"%{searchTerm.Trim()}%";
+        var term = $"%{NormalizeString(searchTerm) ?? string.Empty}%";
         var query = context.Songs.AsNoTracking().Where(s => s.SongArtists.Any(sa => sa.ArtistId == artistId)
                                                              && (EF.Functions.Like(s.Title, term) ||
                                                                  EF.Functions.Like(s.ArtistName, term) ||
@@ -2180,7 +2190,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         if (string.IsNullOrWhiteSpace(searchTerm)) return await GetSongsInPlaylistOrderedAsync(playlistId).ConfigureAwait(false);
 
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        var term = $"%{searchTerm.Trim()}%";
+        var term = $"%{NormalizeString(searchTerm) ?? string.Empty}%";
         var query = context.PlaylistSongs.AsNoTracking()
             .Where(ps => ps.PlaylistId == playlistId && ps.Song != null &&
                          (EF.Functions.Like(ps.Song.Title, term)
@@ -2201,7 +2211,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         if (string.IsNullOrWhiteSpace(searchTerm)) return await GetSongsByGenreIdAsync(genreId).ConfigureAwait(false);
 
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        var term = $"%{searchTerm.Trim()}%";
+        var term = $"%{NormalizeString(searchTerm) ?? string.Empty}%";
         var query = context.Songs.AsNoTracking()
             .Where(s => s.Genres.Any(g => g.Id == genreId)
                         && (EF.Functions.Like(s.Title, term)
@@ -2224,7 +2234,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         var query = context.Songs.AsNoTracking().Where(s => s.FolderId == folderId);
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
-            var term = $"%{searchTerm.Trim()}%";
+            var term = $"%{NormalizeString(searchTerm) ?? string.Empty}%";
             query = query.Where(s => EF.Functions.Like(s.Title, term)
                                      || EF.Functions.Like(s.ArtistName, term)
                                      || (s.Album != null && (EF.Functions.Like(s.Album.Title, term) || EF.Functions.Like(s.Album.ArtistName, term))));
@@ -2248,7 +2258,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         var query = context.Songs.AsNoTracking().Where(s => s.AlbumId == albumId);
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
-            var term = $"%{searchTerm.Trim()}%";
+            var term = $"%{NormalizeString(searchTerm) ?? string.Empty}%";
             query = query.Where(s =>
                 EF.Functions.Like(s.Title, term) || EF.Functions.Like(s.ArtistName, term));
         }
@@ -2271,7 +2281,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         var query = context.Songs.AsNoTracking().Where(s => s.SongArtists.Any(sa => sa.ArtistId == artistId));
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
-            var term = $"%{searchTerm.Trim()}%";
+            var term = $"%{NormalizeString(searchTerm) ?? string.Empty}%";
             query = query.Where(s =>
                 EF.Functions.Like(s.Title, term) || EF.Functions.Like(s.ArtistName, term) || (s.Album != null && (EF.Functions.Like(s.Album.Title, term) || EF.Functions.Like(s.Album.ArtistName, term))));
         }
@@ -2296,7 +2306,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
-            var term = $"%{searchTerm.Trim()}%";
+            var term = $"%{ArtistNameHelper.NormalizeStringCore(searchTerm) ?? string.Empty}%";
             query = query.Where(ps => ps.Song != null &&
                                       (EF.Functions.Like(ps.Song.Title, term)
                                        || EF.Functions.Like(ps.Song.ArtistName, term)
@@ -2329,7 +2339,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
-            var term = $"%{searchTerm.Trim()}%";
+            var term = $"%{ArtistNameHelper.NormalizeStringCore(searchTerm) ?? string.Empty}%";
             query = query.Where(s => EF.Functions.Like(s.Title, term)
                                      || EF.Functions.Like(s.ArtistName, term)
                                      || (s.Album != null && (EF.Functions.Like(s.Album.Title, term) || EF.Functions.Like(s.Album.ArtistName, term))));
@@ -2354,7 +2364,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
-            var term = $"%{searchTerm.Trim()}%";
+            var term = $"%{ArtistNameHelper.NormalizeStringCore(searchTerm) ?? string.Empty}%";
             query = query.Where(s => EF.Functions.Like(s.Title, term)
                                      || EF.Functions.Like(s.ArtistName, term)
                                      || (s.Album != null && (EF.Functions.Like(s.Album.Title, term) || EF.Functions.Like(s.Album.ArtistName, term))));
@@ -2372,7 +2382,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
-            var term = $"%{searchTerm.Trim()}%";
+            var term = $"%{ArtistNameHelper.NormalizeStringCore(searchTerm) ?? string.Empty}%";
             query = query.Where(s => EF.Functions.Like(s.Title, term)
                                      || EF.Functions.Like(s.ArtistName, term)
                                      || (s.Album != null && (EF.Functions.Like(s.Album.Title, term) || EF.Functions.Like(s.Album.ArtistName, term))));
@@ -2389,7 +2399,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
-            var term = $"%{searchTerm.Trim()}%";
+            var term = $"%{ArtistNameHelper.NormalizeStringCore(searchTerm) ?? string.Empty}%";
             query = query.Where(s => EF.Functions.Like(s.Title, term)
                                      || EF.Functions.Like(s.ArtistName, term)
                                      || (s.Album != null && (EF.Functions.Like(s.Album.Title, term) || EF.Functions.Like(s.Album.ArtistName, term))));
@@ -2407,7 +2417,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
-            var term = $"%{searchTerm.Trim()}%";
+            var term = $"%{ArtistNameHelper.NormalizeStringCore(searchTerm) ?? string.Empty}%";
             query = query.Where(ps => ps.Song != null &&
                                       (EF.Functions.Like(ps.Song.Title, term)
                                        || EF.Functions.Like(ps.Song.ArtistName, term)
@@ -2430,7 +2440,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
-            var term = $"%{searchTerm.Trim()}%";
+            var normalizedTerm = ArtistNameHelper.NormalizeStringCore(searchTerm) ?? searchTerm;
+            var term = $"%{normalizedTerm}%";
             query = query.Where(s => EF.Functions.Like(s.Title, term)
                                      || EF.Functions.Like(s.ArtistName, term)
                                      || (s.Album != null && (EF.Functions.Like(s.Album.Title, term) || EF.Functions.Like(s.Album.ArtistName, term))));
@@ -3037,6 +3048,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                             var currentCount = Interlocked.Increment(ref processedCount);
 
                             if (currentCount % progressReportingBatchSize == 0 || currentCount == totalFiles)
+                            {
+                                _logger.LogInformation("Producer progress: {Count}/{Total}", currentCount, totalFiles);
                                 progress?.Report(new ScanProgress
                                 {
                                     StatusText = "Reading song details...",
@@ -3045,6 +3058,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                                     TotalFiles = totalFiles,
                                     NewSongsFound = extractedCount
                                 });
+                            }
                         }
                     }).ConfigureAwait(false);
 
@@ -3080,7 +3094,9 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                             NewSongsFound = extractedCount
                         });
 
+                        _logger.LogInformation("Consumer processing batch {BatchNumber}...", batchNumber);
                         var saved = await ProcessSingleBatchAsync(folderId, batch.ToArray(), artistIdCache, albumIdCache, genreIdCache, cancellationToken).ConfigureAwait(false);
+                        _logger.LogInformation("Consumer finished batch {BatchNumber}. Saved {Count} items.", batchNumber, saved);
                         totalSaved += saved;
                         batch.Clear();
                     }
@@ -3090,6 +3106,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 if (batch.Count > 0)
                 {
                     batchNumber++;
+                     _logger.LogInformation("Consumer processing FINAL batch {BatchNumber} with {Count} items.", batchNumber, batch.Count);
                     progress?.Report(new ScanProgress
                     {
                         StatusText = $"Saving batch {batchNumber}...",
@@ -3154,7 +3171,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         }
 
         var genreNames = metadataList.SelectMany(m => m.Genres ?? Enumerable.Empty<string>())
-            .Select(g => string.IsNullOrWhiteSpace(g) ? null : g.Trim())
+            .Select(g => NormalizeString(g))
             .Where(g => !string.IsNullOrEmpty(g))
             .Select(g => g!)
             .Distinct(StringComparer.OrdinalIgnoreCase)
@@ -3167,6 +3184,11 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         var albumLookup = await ResolveAlbumsForBatchAsync(context, albumDefinitions, artistLookup, albumIdCache, cancellationToken)
             .ConfigureAwait(false);
 
+        _logger.LogInformation("Processing single batch for folder {FolderId}. Metadata count: {Count}. First file: {First}, Last file: {Last}", 
+            folderId, metadataList.Length, 
+            Path.GetFileName(metadataList.FirstOrDefault()?.FilePath ?? ""), 
+            Path.GetFileName(metadataList.LastOrDefault()?.FilePath ?? ""));
+
         // Process each song using resolved entities
         foreach (var metadata in metadataList)
         {
@@ -3175,7 +3197,9 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 .ConfigureAwait(false);
         }
 
+        _logger.LogInformation("Saving changes for batch...");
         await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        _logger.LogInformation("Batch saved successfully.");
 
         return metadataList.Length;
     }
@@ -3190,7 +3214,9 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             if (string.IsNullOrWhiteSpace(metadata.Album))
                 continue;
 
-            var albumTitle = metadata.Album.Trim();
+            var albumTitle = NormalizeString(metadata.Album) ?? string.Empty;
+            if (string.IsNullOrEmpty(albumTitle))
+                continue;
             var albumArtistNames = metadata.AlbumArtists.Select(ArtistNameHelper.Normalize).ToList();
             var trackArtistNames = metadata.Artists.Select(ArtistNameHelper.Normalize).ToList();
 
@@ -3223,6 +3249,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         ConcurrentDictionary<string, Guid> artistIdCache,
         CancellationToken cancellationToken)
     {
+        _logger.LogInformation("ResolveArtistsForBatchAsync entered. Artist names count: {Count}", artistNames.Count);
         if (artistNames.Count == 0)
             return new Dictionary<string, Artist>(StringComparer.OrdinalIgnoreCase);
 
@@ -3238,6 +3265,12 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 cachedIds.Add(id);
             else
                 uncachedNames.Add(name);
+        }
+
+        _logger.LogDebug("Resolving artists: {Total} total, {Cached} cached, {Uncached} uncached", artistNames.Count, cachedIds.Count, uncachedNames.Count);
+        if (uncachedNames.Count > 0)
+        {
+            _logger.LogDebug("Uncached artist names: {Names}", string.Join(", ", uncachedNames.Select(n => $"'{n}' ({GetHexRepresentation(n)})")));
         }
 
         // Step 2: Load cached artists by ID (robust, no case/unicode issues)
@@ -3266,13 +3299,24 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         await _dbWriteSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
+            _logger.LogDebug("Acquired semaphore for artist resolution. Querying existing uncached...");
             // Double-check DB in case another batch added them or they exist with different case
-            var existingUncached = await context.Artists
-                .Where(a => uncachedNames.Contains(a.Name))
-                .ToListAsync(cancellationToken).ConfigureAwait(false);
+            const int databaseChunkSize = 500;
+            var existingUncached = new List<Artist>();
+            
+            for (int i = 0; i < uncachedNames.Count; i += databaseChunkSize)
+            {
+                var chunk = uncachedNames.Skip(i).Take(databaseChunkSize).ToList();
+                var results = await context.Artists
+                    .Where(a => chunk.Contains(a.Name))
+                    .ToListAsync(cancellationToken).ConfigureAwait(false);
+                existingUncached.AddRange(results);
+            }
 
+            _logger.LogDebug("DB query for uncached artists returned {Count} results.", existingUncached.Count);
             foreach (var artist in existingUncached)
             {
+                _logger.LogDebug("Found in DB: '{Name}' (ID: {Id})", artist.Name, artist.Id);
                 if (!artistLookup.ContainsKey(artist.Name))
                 {
                     artistLookup[artist.Name] = artist;
@@ -3287,6 +3331,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
             if (stillMissing.Count > 0)
             {
+                _logger.LogInformation("Creating {Count} new artists: {Names}", stillMissing.Count, string.Join(", ", stillMissing.Select(n => $"'{n}' ({GetHexRepresentation(n)})")));
                 foreach (var name in stillMissing)
                 {
                     var newArtist = new Artist { Name = name };
@@ -3294,7 +3339,18 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                     artistLookup[name] = newArtist;
                 }
 
-                await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+                _logger.LogDebug("Saving {Count} new artists...", stillMissing.Count);
+                try
+                {
+                    await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+                    _logger.LogInformation("Saved {Count} new artists successfully.", stillMissing.Count);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "FAILED to save new artists. Names were: {Names}", string.Join(", ", stillMissing.Select(n => $"'{n}'")));
+                    throw;
+                }
+                _logger.LogDebug("Saved new artists.");
 
                 foreach (var name in stillMissing)
                 {
@@ -3316,6 +3372,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         ConcurrentDictionary<string, Guid> genreIdCache,
         CancellationToken cancellationToken)
     {
+         _logger.LogInformation("ResolveGenresForBatchAsync entered. Genre count: {Count}", genreNames.Count);
         if (genreNames.Count == 0)
             return new Dictionary<string, Genre>(StringComparer.OrdinalIgnoreCase);
 
@@ -3359,13 +3416,24 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         await _dbWriteSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
+             _logger.LogDebug("Acquired semaphore for genre resolution.");
             // Double-check DB in case another batch added them or they exist with different case
-            var existingUncached = await context.Genres
-                .Where(g => uncachedNames.Contains(g.Name))
-                .ToListAsync(cancellationToken).ConfigureAwait(false);
+            const int databaseChunkSize = 500;
+            var existingUncached = new List<Genre>();
+            
+            for (int i = 0; i < uncachedNames.Count; i += databaseChunkSize)
+            {
+                var chunk = uncachedNames.Skip(i).Take(databaseChunkSize).ToList();
+                var results = await context.Genres
+                    .Where(g => chunk.Contains(g.Name))
+                    .ToListAsync(cancellationToken).ConfigureAwait(false);
+                existingUncached.AddRange(results);
+            }
 
+            _logger.LogDebug("DB query for uncached genres returned {Count} results.", existingUncached.Count);
             foreach (var genre in existingUncached)
             {
+                _logger.LogDebug("Found in DB: genre '{Name}' (ID: {Id})", genre.Name, genre.Id);
                 if (!genreLookup.ContainsKey(genre.Name))
                 {
                     genreLookup[genre.Name] = genre;
@@ -3380,6 +3448,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
             if (stillMissing.Count > 0)
             {
+                _logger.LogInformation("Creating {Count} new genres: {Names}", stillMissing.Count, string.Join(", ", stillMissing.Select(n => $"'{n}' ({GetHexRepresentation(n)})")));
                 foreach (var name in stillMissing)
                 {
                     var newGenre = new Genre { Name = name };
@@ -3387,7 +3456,17 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                     genreLookup[name] = newGenre;
                 }
 
-                await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+                _logger.LogDebug("Saving {Count} new genres...", stillMissing.Count);
+                try
+                {
+                    await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+                    _logger.LogInformation("Saved {Count} new genres successfully.", stillMissing.Count);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "FAILED to save new genres. Names were: {Names}", string.Join(", ", stillMissing.Select(n => $"'{n}'")));
+                    throw;
+                }
 
                 foreach (var name in stillMissing)
                 {
@@ -3403,6 +3482,19 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         return genreLookup;
     }
 
+    /// <summary>
+    ///     Normalizes a string using shared normalization logic from ArtistNameHelper.
+    ///     Returns null if the result is empty.
+    /// </summary>
+    private static string? NormalizeString(string? s) => ArtistNameHelper.NormalizeStringCore(s);
+
+    private static string GetHexRepresentation(string s)
+    {
+        return string.IsNullOrEmpty(s) 
+            ? string.Empty 
+            : BitConverter.ToString(Encoding.Unicode.GetBytes(s)).Replace("-", "");
+    }
+
     private async Task<Dictionary<string, Album>> ResolveAlbumsForBatchAsync(
         MusicDbContext context,
         IReadOnlyDictionary<string, (string Title, List<string> ArtistNames, int? Year)> albumDefinitions,
@@ -3410,6 +3502,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         ConcurrentDictionary<string, Guid> albumIdCache,
         CancellationToken cancellationToken)
     {
+        _logger.LogInformation("ResolveAlbumsForBatchAsync entered. Definition count: {Count}", albumDefinitions.Count);
         var albumLookup = new Dictionary<string, Album>(StringComparer.OrdinalIgnoreCase);
 
         if (albumDefinitions.Count == 0)
@@ -3470,24 +3563,36 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         await _dbWriteSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
+            _logger.LogDebug("Acquired semaphore for album resolution. Querying existing...");
             var uncachedTitles = uncachedKeys
                 .Select(k => albumDefinitions[k].Title)
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .ToList();
 
             // Double-check DB in case another batch added them or they exist with different case
-            var existingUncached = await context.Albums
-                .Include(a => a.AlbumArtists)
-                .ThenInclude(aa => aa.Artist)
-                .Where(a => uncachedTitles.Contains(a.Title))
-                .ToListAsync(cancellationToken).ConfigureAwait(false);
+            const int databaseChunkSize = 500;
+            var existingUncached = new List<Album>();
+            
+            for (int i = 0; i < uncachedTitles.Count; i += databaseChunkSize)
+            {
+                var chunk = uncachedTitles.Skip(i).Take(databaseChunkSize).ToList();
+                var results = await context.Albums
+                    .Include(a => a.AlbumArtists)
+                    .ThenInclude(aa => aa.Artist)
+                    .Where(a => chunk.Contains(a.Title))
+                    .ToListAsync(cancellationToken).ConfigureAwait(false);
+                existingUncached.AddRange(results);
+            }
 
+            _logger.LogDebug("DB query for uncached albums returned {Count} results.", existingUncached.Count);
             foreach (var album in existingUncached)
             {
                 var primaryArtistName = album.AlbumArtists
                     .OrderBy(aa => aa.Order)
                     .Select(aa => aa.Artist?.Name)
                     .FirstOrDefault() ?? string.Empty;
+                
+                _logger.LogDebug("Found in DB: album '{Title}' by '{Artist}' (ID: {Id})", album.Title, primaryArtistName, album.Id);
 
                 var albumKey = $"{album.Title}|{primaryArtistName}";
                 if (!albumLookup.ContainsKey(albumKey))
@@ -3510,6 +3615,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
             if (stillMissing.Count > 0)
             {
+                _logger.LogInformation("Creating {Count} new albums: {Titles}", stillMissing.Count, string.Join(", ", stillMissing.Select(k => $"'{albumDefinitions[k].Title}' ({GetHexRepresentation(albumDefinitions[k].Title)})")));
                 foreach (var albumKey in stillMissing)
                 {
                     var definition = albumDefinitions[albumKey];
@@ -3534,7 +3640,18 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                     albumLookup[albumKey] = newAlbum;
                 }
 
-                await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+                _logger.LogDebug("Saving {Count} new albums...", stillMissing.Count);
+                try
+                {
+                    await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+                    _logger.LogInformation("Saved {Count} new albums successfully.", stillMissing.Count);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "FAILED to save new albums. Titles were: {Titles}", string.Join(", ", stillMissing.Select(k => $"'{albumDefinitions[k].Title}'")));
+                    throw;
+                }
+                _logger.LogDebug("Saved new albums.");
 
                 foreach (var albumKey in stillMissing)
                 {
@@ -3601,7 +3718,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         Album? album = null;
         if (!string.IsNullOrWhiteSpace(metadata.Album))
         {
-            var albumTitle = metadata.Album.Trim();
+            var albumTitle = NormalizeString(metadata.Album) ?? string.Empty;
             var albumKey = $"{albumTitle}|{albumArtistNames[0]}";
             albumLookup.TryGetValue(albumKey, out album);
 
@@ -3616,7 +3733,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         var genres = new List<Genre>();
         if (metadata.Genres != null)
         {
-            foreach (var genreName in metadata.Genres.Select(g => g.Trim()).Where(g => !string.IsNullOrWhiteSpace(g)).Distinct(StringComparer.OrdinalIgnoreCase))
+            foreach (var genreName in metadata.Genres.Select(NormalizeString).Where(g => !string.IsNullOrEmpty(g)).Select(g => g!).Distinct(StringComparer.OrdinalIgnoreCase))
             {
                 if (genreLookup.TryGetValue(genreName, out var genre))
                 {
@@ -3748,7 +3865,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             }
 
             var album = !string.IsNullOrWhiteSpace(metadata.Album)
-                ? await GetOrCreateAlbumAsync(context, metadata.Album.Trim(), albumArtists, metadata.Year).ConfigureAwait(false)
+                ? await GetOrCreateAlbumAsync(context, NormalizeString(metadata.Album) ?? Album.UnknownAlbumName, albumArtists, metadata.Year).ConfigureAwait(false)
                 : null;
 
             var genres = await EnsureGenresExistAsync(context, metadata.Genres).ConfigureAwait(false);
@@ -4260,7 +4377,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
     private async Task<Album> GetOrCreateAlbumAsync(MusicDbContext context, string title, List<Artist> artists, int? year)
     {
-        var normalizedTitle = string.IsNullOrWhiteSpace(title) ? Album.UnknownAlbumName : title.Trim();
+        var normalizedTitle = NormalizeString(title) ?? Album.UnknownAlbumName;
         var primaryArtistId = artists.FirstOrDefault()?.Id;
 
         await _albumCreationLock.WaitAsync().ConfigureAwait(false);
@@ -4332,8 +4449,9 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         if (genreNames is null) return [];
 
         var distinctNames = genreNames
-            .Select(g => g.Trim())
-            .Where(g => !string.IsNullOrWhiteSpace(g))
+            .Select(NormalizeString)
+            .Where(g => !string.IsNullOrEmpty(g))
+            .Select(g => g!)
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToList();
 
@@ -4368,8 +4486,6 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         return finalGenres;
     }
-
-
 
     private async Task CleanUpOrphanedEntitiesAsync(MusicDbContext context,
         CancellationToken cancellationToken = default)

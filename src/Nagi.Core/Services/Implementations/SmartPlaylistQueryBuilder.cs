@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Nagi.Core.Data;
 using Nagi.Core.Models;
+using Nagi.Core.Helpers;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -448,7 +449,8 @@ public class SmartPlaylistQueryBuilder
 
     private static IQueryable<Song> ApplySearchFilter(IQueryable<Song> query, string searchTerm)
     {
-        var term = $"%{searchTerm}%";
+        var normalizedTerm = ArtistNameHelper.NormalizeStringCore(searchTerm) ?? searchTerm;
+        var term = $"%{normalizedTerm}%";
         return query.Where(s =>
             EF.Functions.Like(s.Title, term)
             || EF.Functions.Like(s.ArtistName, term)

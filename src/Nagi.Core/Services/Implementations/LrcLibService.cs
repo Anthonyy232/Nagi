@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Http;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Helpers;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -109,10 +110,14 @@ public class LrcLibService : IOnlineLyricsService
         return await HttpRetryHelper.ExecuteWithRetryAsync<string>(
             async attempt =>
             {
+                var normalizedTrack = ArtistNameHelper.NormalizeStringCore(trackName) ?? trackName;
+                var normalizedArtist = ArtistNameHelper.NormalizeStringCore(artistName) ?? artistName;
+                var normalizedAlbum = ArtistNameHelper.NormalizeStringCore(albumName) ?? albumName;
+
                 var query = HttpUtility.ParseQueryString(string.Empty);
-                query["track_name"] = trackName;
-                query["artist_name"] = artistName;
-                query["album_name"] = albumName;
+                query["track_name"] = normalizedTrack;
+                query["artist_name"] = normalizedArtist;
+                query["album_name"] = normalizedAlbum;
                 query["duration"] = duration.TotalSeconds.ToString("F0");
 
                 var requestUrl = $"{BaseUrl}?{query}";
@@ -164,9 +169,12 @@ public class LrcLibService : IOnlineLyricsService
         return await HttpRetryHelper.ExecuteWithRetryAsync<string>(
             async attempt =>
             {
+                var normalizedTrack = ArtistNameHelper.NormalizeStringCore(trackName) ?? trackName;
+                var normalizedArtist = ArtistNameHelper.NormalizeStringCore(artistName) ?? artistName;
+
                 var query = HttpUtility.ParseQueryString(string.Empty);
-                query["track_name"] = trackName;
-                query["artist_name"] = artistName;
+                query["track_name"] = normalizedTrack;
+                query["artist_name"] = normalizedArtist;
                 // Note: Not sending album_name to search to be more permissive, we will filter locally.
                 
                 var requestUrl = $"{SearchUrl}?{query}";

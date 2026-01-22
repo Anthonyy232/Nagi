@@ -154,7 +154,7 @@ public static class MultiArtistHyperlinkHelper
         {
             stackPanel.Children.Add(new TextBlock 
             { 
-                Text = "Unknown Artist",
+                Text = Artist.UnknownArtistName,
                 Style = Application.Current.Resources["BodyTextBlockStyle"] as Style,
                 Foreground = secondaryBrush
             });

@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Http;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Helpers;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -44,7 +45,8 @@ public class MusicBrainzService : IMusicBrainzService
             return null;
         }
 
-        var operationName = $"MusicBrainz search for {artistName}";
+        var normalizedName = ArtistNameHelper.Normalize(artistName);
+        var operationName = $"MusicBrainz search for {normalizedName}";
 
         try
         {

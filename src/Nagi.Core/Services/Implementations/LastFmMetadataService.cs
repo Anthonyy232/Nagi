@@ -5,6 +5,7 @@ using Nagi.Core.Http;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using Nagi.Core.Helpers;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -55,8 +56,9 @@ public class LastFmMetadataService : ILastFmMetadataService
             return ServiceResult<ArtistInfo>.FromPermanentError($"API key '{ApiKeyName}' is unavailable.");
         }
 
+        var normalizedName = ArtistNameHelper.Normalize(artistName);
         var currentApiKey = apiKey;
-        var operationName = $"Last.fm metadata fetch for {artistName}";
+        var operationName = $"Last.fm metadata fetch for {normalizedName}";
 
         var result = await HttpRetryHelper.ExecuteWithRetryAsync<ServiceResult<ArtistInfo>>(
             async attempt =>
@@ -181,7 +183,7 @@ public class LastFmMetadataService : ILastFmMetadataService
     {
         if (string.IsNullOrWhiteSpace(rawBio)) return null;
         var linkIndex = rawBio.IndexOf("<a href=\"https://www.last.fm", StringComparison.Ordinal);
-        return linkIndex > 0 ? rawBio[..linkIndex].Trim() : rawBio;
+        return linkIndex > 0 ? ArtistNameHelper.NormalizeStringCore(rawBio[..linkIndex]) : ArtistNameHelper.NormalizeStringCore(rawBio);
     }
 
     /// <summary>
