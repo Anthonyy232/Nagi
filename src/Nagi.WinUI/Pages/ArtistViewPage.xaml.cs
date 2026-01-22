@@ -61,6 +61,15 @@ public sealed partial class ArtistViewPage : Page
         base.OnNavigatedTo(e);
         _logger.LogDebug("Navigated to ArtistViewPage.");
 
+        // Reset layout state for new artist
+        if (AlbumsViewport != null)
+        {
+            AlbumsViewport.Height = double.NaN;
+            AlbumsViewport.Opacity = 1;
+            if (AlbumsContent != null) AlbumsContent.Translation = Vector3.Zero;
+        }
+        _lastKnownAlbumsHeight = 0;
+
         if (e.Parameter is ArtistViewNavigationParameter navParam)
         {
             _logger.LogDebug("Loading details for ArtistId: {ArtistId}", navParam.ArtistId);
@@ -448,7 +457,10 @@ public sealed partial class ArtistViewPage : Page
             // Translate the content up to mimic scrolling naturally
             // We clamp the translation so it doesn't float away if we scroll way past
             var translationY = (float)-Math.Min(scrollOffset, _lastKnownAlbumsHeight);
-            AlbumsContent.Translation = new Vector3(0, translationY, 0);
+            if (AlbumsContent != null)
+            {
+                AlbumsContent.Translation = new Vector3(0, translationY, 0);
+            }
 
             if (_lastKnownAlbumsHeight > 0)
             {
