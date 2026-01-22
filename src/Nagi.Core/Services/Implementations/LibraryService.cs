@@ -3226,33 +3226,52 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         if (artistNames.Count == 0)
             return new Dictionary<string, Artist>(StringComparer.OrdinalIgnoreCase);
 
-        // Query DB for existing artists - we need entity instances for this context
-        var dbArtists = await context.Artists
-            .Where(a => artistNames.Contains(a.Name))
-            .ToListAsync(cancellationToken).ConfigureAwait(false);
+        var artistLookup = new Dictionary<string, Artist>(StringComparer.OrdinalIgnoreCase);
 
-        var artistLookup = dbArtists.ToDictionary(a => a.Name, StringComparer.OrdinalIgnoreCase);
-        foreach (var artist in dbArtists)
+        // Step 1: Check the case-insensitive cache first to partition into known vs unknown
+        var cachedIds = new List<Guid>();
+        var uncachedNames = new List<string>();
+
+        foreach (var name in artistNames.Distinct(StringComparer.OrdinalIgnoreCase))
         {
-            artistIdCache.TryAdd(artist.Name, artist.Id);
+            if (artistIdCache.TryGetValue(name, out var id))
+                cachedIds.Add(id);
+            else
+                uncachedNames.Add(name);
         }
 
-        var missingNames = artistNames
-            .Where(n => !artistLookup.ContainsKey(n))
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .ToList();
+        // Step 2: Load cached artists by ID (robust, no case/unicode issues)
+        // Chunk to avoid SQL parameter limits
+        if (cachedIds.Count > 0)
+        {
+            const int chunkSize = 500;
+            for (int i = 0; i < cachedIds.Count; i += chunkSize)
+            {
+                var chunk = cachedIds.Skip(i).Take(chunkSize).ToList();
+                var cachedArtists = await context.Artists
+                    .Where(a => chunk.Contains(a.Id))
+                    .ToListAsync(cancellationToken).ConfigureAwait(false);
 
-        if (missingNames.Count == 0)
+                foreach (var artist in cachedArtists)
+                {
+                    artistLookup[artist.Name] = artist;
+                }
+            }
+        }
+
+        // Step 3: For uncached names, query by name (these are potentially new artists)
+        if (uncachedNames.Count == 0)
             return artistLookup;
 
         await _dbWriteSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
-            var existingMissing = await context.Artists
-                .Where(a => missingNames.Contains(a.Name))
+            // Double-check DB in case another batch added them or they exist with different case
+            var existingUncached = await context.Artists
+                .Where(a => uncachedNames.Contains(a.Name))
                 .ToListAsync(cancellationToken).ConfigureAwait(false);
 
-            foreach (var artist in existingMissing)
+            foreach (var artist in existingUncached)
             {
                 if (!artistLookup.ContainsKey(artist.Name))
                 {
@@ -3261,7 +3280,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 }
             }
 
-            var stillMissing = missingNames
+            // Step 4: Create truly missing artists
+            var stillMissing = uncachedNames
                 .Where(n => !artistLookup.ContainsKey(n))
                 .ToList();
 
@@ -3299,32 +3319,52 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         if (genreNames.Count == 0)
             return new Dictionary<string, Genre>(StringComparer.OrdinalIgnoreCase);
 
-        var dbGenres = await context.Genres
-            .Where(g => genreNames.Contains(g.Name))
-            .ToListAsync(cancellationToken).ConfigureAwait(false);
+        var genreLookup = new Dictionary<string, Genre>(StringComparer.OrdinalIgnoreCase);
 
-        var genreLookup = dbGenres.ToDictionary(g => g.Name, StringComparer.OrdinalIgnoreCase);
-        foreach (var genre in dbGenres)
+        // Step 1: Check the case-insensitive cache first to partition into known vs unknown
+        var cachedIds = new List<Guid>();
+        var uncachedNames = new List<string>();
+
+        foreach (var name in genreNames.Distinct(StringComparer.OrdinalIgnoreCase))
         {
-            genreIdCache.TryAdd(genre.Name, genre.Id);
+            if (genreIdCache.TryGetValue(name, out var id))
+                cachedIds.Add(id);
+            else
+                uncachedNames.Add(name);
         }
 
-        var missingNames = genreNames
-            .Where(n => !genreLookup.ContainsKey(n))
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .ToList();
+        // Step 2: Load cached genres by ID (robust, no case/unicode issues)
+        // Chunk to avoid SQL parameter limits (e.g., SQL Server ~2100 parameter limit)
+        if (cachedIds.Count > 0)
+        {
+            const int chunkSize = 500;
+            for (int i = 0; i < cachedIds.Count; i += chunkSize)
+            {
+                var chunk = cachedIds.Skip(i).Take(chunkSize).ToList();
+                var cachedGenres = await context.Genres
+                    .Where(g => chunk.Contains(g.Id))
+                    .ToListAsync(cancellationToken).ConfigureAwait(false);
 
-        if (missingNames.Count == 0)
+                foreach (var genre in cachedGenres)
+                {
+                    genreLookup[genre.Name] = genre;
+                }
+            }
+        }
+
+        // Step 3: For uncached names, query by name (these are potentially new genres)
+        if (uncachedNames.Count == 0)
             return genreLookup;
 
         await _dbWriteSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
-            var existingMissing = await context.Genres
-                .Where(g => missingNames.Contains(g.Name))
+            // Double-check DB in case another batch added them or they exist with different case
+            var existingUncached = await context.Genres
+                .Where(g => uncachedNames.Contains(g.Name))
                 .ToListAsync(cancellationToken).ConfigureAwait(false);
 
-            foreach (var genre in existingMissing)
+            foreach (var genre in existingUncached)
             {
                 if (!genreLookup.ContainsKey(genre.Name))
                 {
@@ -3333,7 +3373,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 }
             }
 
-            var stillMissing = missingNames
+            // Step 4: Create truly missing genres
+            var stillMissing = uncachedNames
                 .Where(n => !genreLookup.ContainsKey(n))
                 .ToList();
 
@@ -3374,60 +3415,74 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         if (albumDefinitions.Count == 0)
             return albumLookup;
 
-        var albumTitles = albumDefinitions.Values
-            .Select(d => d.Title)
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .ToList();
+        // Step 1: Check the case-insensitive cache first to partition into known vs unknown
+        var cachedIds = new List<Guid>();
+        var uncachedKeys = new List<string>();
 
-        var dbAlbums = await context.Albums
-            .Include(a => a.AlbumArtists)
-            .ThenInclude(aa => aa.Artist)
-            .Where(a => albumTitles.Contains(a.Title))
-            .ToListAsync(cancellationToken).ConfigureAwait(false);
-
-        foreach (var album in dbAlbums)
+        foreach (var albumKey in albumDefinitions.Keys)
         {
-            var primaryArtistName = album.AlbumArtists
-                .OrderBy(aa => aa.Order)
-                .Select(aa => aa.Artist?.Name)
-                .FirstOrDefault() ?? string.Empty;
+            if (albumIdCache.TryGetValue(albumKey, out var id))
+                cachedIds.Add(id);
+            else
+                uncachedKeys.Add(albumKey);
+        }
 
-            var albumKey = $"{album.Title}|{primaryArtistName}";
-            if (!albumLookup.ContainsKey(albumKey))
+        // Step 2: Load cached albums by ID (robust, no case/unicode issues)
+        // Chunk to avoid SQL parameter limits (e.g., SQL Server ~2100 parameter limit)
+        if (cachedIds.Count > 0)
+        {
+            const int chunkSize = 500;
+            for (int i = 0; i < cachedIds.Count; i += chunkSize)
             {
-                albumLookup[albumKey] = album;
-                albumIdCache.TryAdd(albumKey, album.Id);
-                if (albumDefinitions.TryGetValue(albumKey, out var definition))
+                var chunk = cachedIds.Skip(i).Take(chunkSize).ToList();
+                var cachedAlbums = await context.Albums
+                    .Include(a => a.AlbumArtists)
+                    .ThenInclude(aa => aa.Artist)
+                    .Where(a => chunk.Contains(a.Id))
+                    .ToListAsync(cancellationToken).ConfigureAwait(false);
+
+                foreach (var album in cachedAlbums)
                 {
-                    SyncAlbumArtists(album, definition.ArtistNames, artistLookup);
-                    if (album.Year is null && definition.Year.HasValue)
-                        album.Year = definition.Year;
+                    var primaryArtistName = album.AlbumArtists
+                        .OrderBy(aa => aa.Order)
+                        .Select(aa => aa.Artist?.Name)
+                        .FirstOrDefault() ?? string.Empty;
+
+                    var albumKey = $"{album.Title}|{primaryArtistName}";
+                    if (!albumLookup.ContainsKey(albumKey))
+                    {
+                        albumLookup[albumKey] = album;
+                        if (albumDefinitions.TryGetValue(albumKey, out var definition))
+                        {
+                            SyncAlbumArtists(album, definition.ArtistNames, artistLookup);
+                            if (album.Year is null && definition.Year.HasValue)
+                                album.Year = definition.Year;
+                        }
+                    }
                 }
             }
         }
 
-        var missingAlbumKeys = albumDefinitions.Keys
-            .Where(k => !albumLookup.ContainsKey(k))
-            .ToList();
-
-        if (missingAlbumKeys.Count == 0)
+        // Step 3: For uncached keys, query by title (these are potentially new albums)
+        if (uncachedKeys.Count == 0)
             return albumLookup;
 
         await _dbWriteSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
-            var missingTitles = missingAlbumKeys
+            var uncachedTitles = uncachedKeys
                 .Select(k => albumDefinitions[k].Title)
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .ToList();
 
-            var existingMissing = await context.Albums
+            // Double-check DB in case another batch added them or they exist with different case
+            var existingUncached = await context.Albums
                 .Include(a => a.AlbumArtists)
                 .ThenInclude(aa => aa.Artist)
-                .Where(a => missingTitles.Contains(a.Title))
+                .Where(a => uncachedTitles.Contains(a.Title))
                 .ToListAsync(cancellationToken).ConfigureAwait(false);
 
-            foreach (var album in existingMissing)
+            foreach (var album in existingUncached)
             {
                 var primaryArtistName = album.AlbumArtists
                     .OrderBy(aa => aa.Order)
@@ -3448,7 +3503,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 }
             }
 
-            var stillMissing = missingAlbumKeys
+            // Step 4: Create truly missing albums
+            var stillMissing = uncachedKeys
                 .Where(k => !albumLookup.ContainsKey(k))
                 .ToList();
 
@@ -3672,8 +3728,12 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     {
         try
         {
-            var trackArtistNames = metadata.Artists.Any() ? metadata.Artists : new List<string> { Artist.UnknownArtistName };
-            var albumArtistNames = metadata.AlbumArtists.Any() ? metadata.AlbumArtists : trackArtistNames;
+            // Ensure inputs are normalized consistently with batch processing
+            var trackArtistNames = metadata.Artists.Select(ArtistNameHelper.Normalize).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+            if (!trackArtistNames.Any()) trackArtistNames.Add(Artist.UnknownArtistName);
+
+            var albumArtistNames = metadata.AlbumArtists.Select(ArtistNameHelper.Normalize).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+            if (!albumArtistNames.Any()) albumArtistNames = new List<string>(trackArtistNames);
 
             var trackArtists = new List<Artist>();
             foreach (var name in trackArtistNames)
@@ -3688,7 +3748,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             }
 
             var album = !string.IsNullOrWhiteSpace(metadata.Album)
-                ? await GetOrCreateAlbumAsync(context, metadata.Album, albumArtists, metadata.Year).ConfigureAwait(false)
+                ? await GetOrCreateAlbumAsync(context, metadata.Album.Trim(), albumArtists, metadata.Year).ConfigureAwait(false)
                 : null;
 
             var genres = await EnsureGenresExistAsync(context, metadata.Genres).ConfigureAwait(false);
