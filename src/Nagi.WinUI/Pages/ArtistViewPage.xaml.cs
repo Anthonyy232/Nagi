@@ -30,6 +30,7 @@ public sealed partial class ArtistViewPage : Page
     private bool _isSearchExpanded;
     private bool _isUpdatingSelection;
     private bool _isUpdatingAlbumsLayout;
+    private bool _pendingLayoutUpdate;
     private ScrollViewer? _songsScrollViewer;
     private double _lastKnownAlbumsHeight;
 
@@ -424,16 +425,34 @@ public sealed partial class ArtistViewPage : Page
 
     private void OnAlbumsContentSizeChanged(object sender, SizeChangedEventArgs e)
     {
-        // Only update if the height actually changed and we're not already updating
-        if (_isUpdatingAlbumsLayout || Math.Abs(e.NewSize.Height - _lastKnownAlbumsHeight) < 0.5) return;
+        // Only update if the height actually changed
+        if (Math.Abs(e.NewSize.Height - _lastKnownAlbumsHeight) < 0.5) return;
         
         _lastKnownAlbumsHeight = e.NewSize.Height;
-        UpdateAlbumsLayout();
+        ScheduleAlbumsLayoutUpdate();
     }
 
     private void OnSongsScrollViewerViewChanged(object? sender, ScrollViewerViewChangedEventArgs e)
     {
-        UpdateAlbumsLayout();
+        ScheduleAlbumsLayoutUpdate();
+    }
+
+    /// <summary>
+    ///     Schedules a layout update for the albums section on the next dispatcher tick.
+    ///     This prevents layout cycles by ensuring we don't modify layout properties
+    ///     during an active measure/arrange pass. Multiple rapid calls are coalesced.
+    /// </summary>
+    private void ScheduleAlbumsLayoutUpdate()
+    {
+        // Coalesce multiple rapid requests - only schedule if not already pending
+        if (_pendingLayoutUpdate) return;
+        _pendingLayoutUpdate = true;
+        
+        DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
+        {
+            _pendingLayoutUpdate = false;
+            UpdateAlbumsLayout();
+        });
     }
 
     private void UpdateAlbumsLayout()
