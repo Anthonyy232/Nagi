@@ -170,7 +170,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         if (_isDisposed) return;
         EnsureInitialized();
         if (_isDisposed || _dummyMediaPlayer is null) return;
-        
+
         try
         {
             _logger.LogDebug("Initializing System Media Transport Controls (SMTC).");

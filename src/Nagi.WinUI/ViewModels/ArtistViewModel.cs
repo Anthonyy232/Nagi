@@ -168,6 +168,46 @@ public partial class ArtistViewModel : SearchableViewModelBase, IDisposable
         }
     }
 
+    /// <summary>
+    ///     Picks one random artist from the library and plays all their songs.
+    /// </summary>
+    [RelayCommand]
+    private async Task ShuffleArtistsAsync()
+    {
+        if (IsLoading) return;
+
+        try
+        {
+            // Use GetAllArtistsAsync to get the canonical list of artists
+            var allArtists = await _libraryService.GetAllArtistsAsync();
+            var artistList = allArtists.ToList();
+
+            if (artistList.Count == 0) return;
+
+            var randomArtist = artistList[Random.Shared.Next(artistList.Count)];
+
+            // Explicitly fetch all songs for this artist (primary and featured) to ensure
+            // the playback service queues everything correctly, rather than relying on
+            // potentially primary-only logic in PlayArtistAsync (unless we are sure about it).
+            // But PlayArtistAsync is the semantic action. Let's check if we can trust it.
+            // Requirement: "only those artists will be presented in the queue... regardless of their position".
+            // To guarantee this, we manually fetch IDs using GetAllSongIdsByArtistIdAsync which should cover it
+            // (assuming the service implements it correctly as per "AllSongIdsByArtistId").
+
+            var songIds = await _libraryService.GetAllSongIdsByArtistIdAsync(randomArtist.Id, SongSortOrder.TitleAsc);
+
+            if (songIds.Any())
+            {
+                _musicPlaybackService.QueueContextName = randomArtist.Name;
+                await _musicPlaybackService.PlayAsync(songIds);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to shuffle artists");
+        }
+    }
+
     private void UpdateSortOrderText()
     {
         CurrentSortOrderText = SortOrderHelper.GetDisplayName(CurrentSortOrder);

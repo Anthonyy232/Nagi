@@ -185,6 +185,33 @@ public partial class AlbumViewModel : SearchableViewModelBase, IDisposable
     }
 
     /// <summary>
+    ///     Picks one random album from the library and plays it.
+    /// </summary>
+    [RelayCommand]
+    private async Task ShuffleAlbumsAsync()
+    {
+        if (IsLoading) return;
+
+        try
+        {
+            // Ideally we would fetch just IDs or a count, but GetAllAlbumsAsync is the available API.
+            var allAlbums = await _libraryService.GetAllAlbumsAsync();
+            var albumsList = allAlbums.ToList();
+
+            if (albumsList.Count == 0) return;
+
+            var randomAlbum = albumsList[Random.Shared.Next(albumsList.Count)];
+
+            _musicPlaybackService.QueueContextName = randomAlbum.Title;
+            await _musicPlaybackService.PlayAlbumAsync(randomAlbum.Id);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to shuffle albums");
+        }
+    }
+
+    /// <summary>
     ///     Asynchronously loads albums with support for cancellation.
     /// </summary>
     /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>

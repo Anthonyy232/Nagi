@@ -278,30 +278,28 @@
 
                 <Grid x:Name="AlbumsViewport" VerticalAlignment="Top"
                       Visibility="{x:Bind ViewModel.HasAlbums, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
-                    <ScrollViewer VerticalScrollMode="Disabled" VerticalScrollBarVisibility="Hidden">
-                        <StackPanel x:Name="AlbumsContent" Spacing="2" VerticalAlignment="Top" Padding="0,0,0,0" SizeChanged="OnAlbumsContentSizeChanged">
-                        <TextBlock Style="{StaticResource SectionHeaderTextBlockStyle}" Text="Top Albums" Foreground="{StaticResource AppPrimaryColorBrush}" />
-                        <GridView
-                            x:Name="AlbumGridView"
-                            Padding="0,0,16,0"
-                            IsItemClickEnabled="True"
-                            ItemClick="AlbumGridView_ItemClick"
-                            ItemsSource="{x:Bind ViewModel.Albums, Mode=OneWay}"
-                            SelectionMode="None"
-                            ItemTemplate="{StaticResource AlbumCardTemplate}"
-                            ScrollViewer.HorizontalScrollMode="Auto"
-                            ScrollViewer.HorizontalScrollBarVisibility="Hidden"
-                            ScrollViewer.IsHorizontalRailEnabled="True"
-                            ScrollViewer.VerticalScrollMode="Disabled"
-                            ScrollViewer.VerticalScrollBarVisibility="Hidden">
-                            <GridView.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <ItemsStackPanel Orientation="Horizontal" />
-                                </ItemsPanelTemplate>
-                            </GridView.ItemsPanel>
-                        </GridView>
-                        </StackPanel>
-                    </ScrollViewer>
+                    <StackPanel x:Name="AlbumsContent" Spacing="2" VerticalAlignment="Top" Padding="0,0,0,0" SizeChanged="OnAlbumsContentSizeChanged">
+                    <TextBlock Style="{StaticResource SectionHeaderTextBlockStyle}" Text="Top Albums" Foreground="{StaticResource AppPrimaryColorBrush}" />
+                    <GridView
+                        x:Name="AlbumGridView"
+                        Padding="0,0,16,0"
+                        IsItemClickEnabled="True"
+                        ItemClick="AlbumGridView_ItemClick"
+                        ItemsSource="{x:Bind ViewModel.Albums, Mode=OneWay}"
+                        SelectionMode="None"
+                        ItemTemplate="{StaticResource AlbumCardTemplate}"
+                        ScrollViewer.HorizontalScrollMode="Auto"
+                        ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                        ScrollViewer.IsHorizontalRailEnabled="True"
+                        ScrollViewer.VerticalScrollMode="Disabled"
+                        ScrollViewer.VerticalScrollBarVisibility="Hidden">
+                        <GridView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ItemsStackPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </GridView.ItemsPanel>
+                    </GridView>
+                    </StackPanel>
                 </Grid>
 
                 <Grid Margin="0,0,0,10">

@@ -92,7 +92,7 @@
                                 <TextBlock
                                     Margin="12,0,12,4"
                                     Style="{ThemeResource MediaControlSubtitleStyle}"
-                                    Text="Up Next" />
+                                    Text="{Binding DataContext.QueueTitle, ElementName=MainPageRoot, Mode=OneWay}" />
                                 <ListView
                                     Grid.Row="1"
                                     ItemContainerStyle="{StaticResource QueueListViewItemStyle}"
@@ -446,7 +446,7 @@
                                     Grid.Column="1"
                                     VerticalAlignment="Center"
                                     IsThumbToolTipEnabled="True"
-                                    Maximum="{x:Bind ViewModel.TotalDuration, Mode=OneWay, Converter={StaticResource SliderMaximumConverter}}"
+                                    Maximum="{x:Bind ViewModel.TotalDuration, Mode=OneWay}"
                                     Style="{StaticResource MediaSeekerSliderStyle}"
                                     ThumbToolTipValueConverter="{StaticResource TimeSpanToTimeStringConverter}"
                                     Value="{x:Bind ViewModel.CurrentPosition, Mode=TwoWay}"

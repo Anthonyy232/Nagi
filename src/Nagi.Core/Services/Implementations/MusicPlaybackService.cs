@@ -91,6 +91,18 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
 
     public EqualizerSettings? CurrentEqualizerSettings { get; private set; }
 
+    private string? _queueContextName;
+    public string? QueueContextName
+    {
+        get => _queueContextName;
+        set
+        {
+            if (_queueContextName == value) return;
+            _queueContextName = value;
+            QueueContextChanged?.Invoke();
+        }
+    }
+
     public event Action? TrackChanged;
     public event Action? PlaybackStateChanged;
     public event Action? VolumeStateChanged;
@@ -100,6 +112,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
     public event Action? PositionChanged;
     public event Action? DurationChanged;
     public event Action? EqualizerChanged;
+    public event Action? QueueContextChanged;
 
     public async Task InitializeAsync(bool restoreLastSession = true)
     {

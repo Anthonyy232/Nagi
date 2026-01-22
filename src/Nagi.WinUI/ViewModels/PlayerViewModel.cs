@@ -143,6 +143,8 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     [ObservableProperty] public partial bool IsGlobalOperationIndeterminate { get; set; }
     [ObservableProperty] public partial bool IsQueueViewVisible { get; set; }
 
+    [ObservableProperty] public partial string QueueTitle { get; set; } = "Up Next";
+
     [ObservableProperty] public partial bool IsVolumeControlVisible { get; set; }
 
     public ObservableCollection<PlayerButtonSetting> MainTransportButtons { get; } = new();
@@ -650,6 +652,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
         _playbackService.QueueChanged += OnPlaybackService_QueueChanged;
         _playbackService.PositionChanged += OnPlaybackService_PositionChanged;
         _playbackService.DurationChanged += OnPlaybackService_DurationChanged;
+        _playbackService.QueueContextChanged += OnPlaybackService_QueueContextChanged;
     }
 
     private void UnsubscribeFromPlaybackServiceEvents()
@@ -662,6 +665,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
         _playbackService.QueueChanged -= OnPlaybackService_QueueChanged;
         _playbackService.PositionChanged -= OnPlaybackService_PositionChanged;
         _playbackService.DurationChanged -= OnPlaybackService_DurationChanged;
+        _playbackService.QueueContextChanged -= OnPlaybackService_QueueContextChanged;
     }
 
     private void InitializeStateFromService()
@@ -751,6 +755,16 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     private void OnPlaybackService_DurationChanged()
     {
         RunOnUIThread(() => TotalDuration = Math.Max(0, _playbackService.Duration.TotalSeconds));
+    }
+
+    private void OnPlaybackService_QueueContextChanged()
+    {
+        RunOnUIThread(() =>
+        {
+            QueueTitle = string.IsNullOrEmpty(_playbackService.QueueContextName)
+                ? "Up Next"
+                : $"Up Next • {_playbackService.QueueContextName}";
+        });
     }
 
     private void SubscribeToWindowServiceEvents()

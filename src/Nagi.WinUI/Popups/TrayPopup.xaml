@@ -51,7 +51,7 @@
 
                     <StackPanel Grid.Row="0" HorizontalAlignment="Stretch" Spacing="2">
                         <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}"
-                                   Text="{Binding SongTitle, FallbackValue='A Really Long Song Title That Might Need to be Clipped'}"
+                                   Text="{x:Bind ViewModel.SongTitle, Mode=OneWay, FallbackValue='A Really Long Song Title That Might Need to be Clipped'}"
                                    HorizontalAlignment="Center" TextAlignment="Center" TextTrimming="CharacterEllipsis"
                                    TextWrapping="NoWrap" />
                         <Grid HorizontalAlignment="Center">
@@ -60,15 +60,15 @@
                                        HorizontalAlignment="Center" TextAlignment="Center" TextTrimming="CharacterEllipsis"
                                        TextWrapping="NoWrap"
                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                       uihelpers:MultiArtistHyperlinkHelper.ArtistName="{Binding ArtistName}"
-                                       uihelpers:MultiArtistHyperlinkHelper.Song="{Binding CurrentPlayingTrack}"
-                                       uihelpers:MultiArtistHyperlinkHelper.Command="{Binding GoToArtistCommand}" />
+                                       uihelpers:MultiArtistHyperlinkHelper.ArtistName="{x:Bind ViewModel.ArtistName, Mode=OneWay}"
+                                       uihelpers:MultiArtistHyperlinkHelper.Song="{x:Bind ViewModel.CurrentPlayingTrack, Mode=OneWay}"
+                                       uihelpers:MultiArtistHyperlinkHelper.Command="{x:Bind ViewModel.GoToArtistCommand, Mode=OneWay}" />
                         </Grid>
                     </StackPanel>
 
                     <Slider x:Name="MediaSeekerSlider"
                             Grid.Row="1"
-                            Maximum="{Binding TotalDuration, Converter={StaticResource SliderMaximumConverter}}" Value="{Binding CurrentPosition, Mode=TwoWay}"
+                            Maximum="{x:Bind ViewModel.TotalDuration, Mode=OneWay}" Value="{x:Bind ViewModel.CurrentPosition, Mode=TwoWay}"
                             ThumbToolTipValueConverter="{StaticResource TimeSpanToTimeStringConverter}"
                             IsThumbToolTipEnabled="True"
                             Style="{StaticResource MediaSeekerSliderStyle}"
@@ -79,35 +79,35 @@
                             KeyUp="MediaSeekerSlider_KeyUp" />
 
                     <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="8">
-                        <Button Command="{Binding ToggleMuteCommand}" Style="{StaticResource VolumeButtonStyle}"
-                                ToolTipService.ToolTip="{Binding VolumeButtonToolTip}">
+                        <Button Command="{x:Bind ViewModel.ToggleMuteCommand}" Style="{StaticResource VolumeButtonStyle}"
+                                ToolTipService.ToolTip="{x:Bind ViewModel.VolumeButtonToolTip, Mode=OneWay}">
                             <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                      Glyph="{Binding VolumeIconGlyph}" />
+                                      Glyph="{x:Bind ViewModel.VolumeIconGlyph, Mode=OneWay}" />
                         </Button>
-                        <Button Command="{Binding ToggleShuffleCommand}" Style="{StaticResource ShuffleButtonStyle}"
-                                ToolTipService.ToolTip="{Binding ShuffleButtonToolTip}">
+                        <Button Command="{x:Bind ViewModel.ToggleShuffleCommand}" Style="{StaticResource ShuffleButtonStyle}"
+                                ToolTipService.ToolTip="{x:Bind ViewModel.ShuffleButtonToolTip, Mode=OneWay}">
                             <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                      Glyph="{Binding ShuffleIconGlyph}" />
+                                      Glyph="{x:Bind ViewModel.ShuffleIconGlyph, Mode=OneWay}" />
                         </Button>
-                        <Button Command="{Binding PreviousCommand}" Style="{StaticResource PreviousButtonStyle}"
+                        <Button Command="{x:Bind ViewModel.PreviousCommand}" Style="{StaticResource PreviousButtonStyle}"
                                 ToolTipService.ToolTip="Previous">
                             <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
                         </Button>
-                        <Button Command="{Binding PlayPauseCommand}" Style="{StaticResource PlayPauseButtonStyle}"
-                                ToolTipService.ToolTip="{Binding PlayPauseButtonToolTip}">
+                        <Button Command="{x:Bind ViewModel.PlayPauseCommand}" Style="{StaticResource PlayPauseButtonStyle}"
+                                ToolTipService.ToolTip="{x:Bind ViewModel.PlayPauseButtonToolTip, Mode=OneWay}">
                             <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" FontSize="24"
-                                      Glyph="{Binding PlayPauseIconGlyph}" />
+                                      Glyph="{x:Bind ViewModel.PlayPauseIconGlyph, Mode=OneWay}" />
                         </Button>
-                        <Button Command="{Binding NextCommand}" Style="{StaticResource NextButtonStyle}"
+                        <Button Command="{x:Bind ViewModel.NextCommand}" Style="{StaticResource NextButtonStyle}"
                                 ToolTipService.ToolTip="Next">
                             <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
                         </Button>
-                        <Button Command="{Binding CycleRepeatCommand}" Style="{StaticResource RepeatButtonStyle}"
-                                ToolTipService.ToolTip="{Binding RepeatButtonToolTip}">
+                        <Button Command="{x:Bind ViewModel.CycleRepeatCommand}" Style="{StaticResource RepeatButtonStyle}"
+                                ToolTipService.ToolTip="{x:Bind ViewModel.RepeatButtonToolTip, Mode=OneWay}">
                             <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                      Glyph="{Binding RepeatIconGlyph}" />
+                                      Glyph="{x:Bind ViewModel.RepeatIconGlyph, Mode=OneWay}" />
                         </Button>
-                        <Button Command="{Binding ShowQueueViewCommand}" Style="{StaticResource QueueButtonStyle}"
+                        <Button Command="{x:Bind ViewModel.ShowQueueViewCommand}" Style="{StaticResource QueueButtonStyle}"
                                 ToolTipService.ToolTip="Up Next">
                             <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
                         </Button>
@@ -125,7 +125,7 @@
 
                     <Grid Grid.Row="0">
                         <Button HorizontalAlignment="Left"
-                                Command="{Binding ShowPlayerViewCommand}"
+                                Command="{x:Bind ViewModel.ShowPlayerViewCommand}"
                                 Style="{StaticResource MediaControlButtonStyle}"
                                 ToolTipService.ToolTip="Back to Player">
                             <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
@@ -138,7 +138,7 @@
                     </Grid>
 
                     <ListView Grid.Row="1"
-                              ItemsSource="{Binding CurrentQueue}"
+                              ItemsSource="{x:Bind ViewModel.CurrentQueue, Mode=OneWay}"
                               SelectionMode="None"
                               ItemContainerStyle="{StaticResource QueueListViewItemStyle}"
                               VirtualizingStackPanel.VirtualizationMode="Recycling">

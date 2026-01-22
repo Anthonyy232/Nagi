@@ -206,9 +206,11 @@ public class SettingsService : IUISettingsService, IDisposable
     /// </summary>
     private async Task EnsureUnpackagedSettingsLoadedAsync()
     {
-        // Fast path: if packaged or already initialized, return immediately without any lock overhead.
-        // The volatile read of _isInitialized ensures we see the latest value across threads.
-        if (_isPackaged || _isInitialized || _disposed) return;
+        if (_isPackaged || _isInitialized) return;
+
+        // Perform an early check to avoid the overhead of a lock if we're already initialized.
+        // This is particularly important for parallel calls during page load.
+        if (_disposed) return;
         try
         {
             await _settingsFileLock.WaitAsync().ConfigureAwait(false);

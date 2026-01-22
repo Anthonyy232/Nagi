@@ -104,7 +104,7 @@
                         FontSize="18"
                         FontWeight="SemiBold"
                         Foreground="White"
-                        Text="Up Next"
+                        Text="{x:Bind ViewModel.QueueTitle, Mode=OneWay}"
                         Visibility="{x:Bind ViewModel.IsQueueViewVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                     <Button
@@ -125,7 +125,7 @@
                                 x:Name="MediaSeekerSlider"
                                 Margin="4,0"
                                 IsThumbToolTipEnabled="True"
-                                Maximum="{x:Bind ViewModel.TotalDuration, Mode=OneWay, Converter={StaticResource SliderMaximumConverter}}"
+                                Maximum="{x:Bind ViewModel.TotalDuration, Mode=OneWay}"
                                 Style="{StaticResource MediaSeekerSliderStyle}"
                                 ThumbToolTipValueConverter="{StaticResource TimeSpanToTimeStringConverter}"
                                 Value="{x:Bind ViewModel.CurrentPosition, Mode=TwoWay}"

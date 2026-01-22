@@ -29,8 +29,6 @@ public sealed partial class ArtistViewPage : Page
     private readonly ILogger<ArtistViewPage> _logger;
     private bool _isSearchExpanded;
     private bool _isUpdatingSelection;
-    private bool _isUpdatingAlbumsLayout;
-    private bool _pendingLayoutUpdate;
     private ScrollViewer? _songsScrollViewer;
     private double _lastKnownAlbumsHeight;
 
@@ -61,15 +59,6 @@ public sealed partial class ArtistViewPage : Page
     {
         base.OnNavigatedTo(e);
         _logger.LogDebug("Navigated to ArtistViewPage.");
-
-        // Reset layout state for new artist
-        if (AlbumsViewport != null)
-        {
-            AlbumsViewport.Height = double.NaN;
-            AlbumsViewport.Opacity = 1;
-            if (AlbumsContent != null) AlbumsContent.Translation = Vector3.Zero;
-        }
-        _lastKnownAlbumsHeight = 0;
 
         if (e.Parameter is ArtistViewNavigationParameter navParam)
         {
@@ -425,75 +414,39 @@ public sealed partial class ArtistViewPage : Page
 
     private void OnAlbumsContentSizeChanged(object sender, SizeChangedEventArgs e)
     {
-        // Only update if the height actually changed
-        if (Math.Abs(e.NewSize.Height - _lastKnownAlbumsHeight) < 0.5) return;
-        
         _lastKnownAlbumsHeight = e.NewSize.Height;
-        ScheduleAlbumsLayoutUpdate();
+        UpdateAlbumsLayout();
     }
 
     private void OnSongsScrollViewerViewChanged(object? sender, ScrollViewerViewChangedEventArgs e)
     {
-        ScheduleAlbumsLayoutUpdate();
-    }
-
-    /// <summary>
-    ///     Schedules a layout update for the albums section on the next dispatcher tick.
-    ///     This prevents layout cycles by ensuring we don't modify layout properties
-    ///     during an active measure/arrange pass. Multiple rapid calls are coalesced.
-    /// </summary>
-    private void ScheduleAlbumsLayoutUpdate()
-    {
-        // Coalesce multiple rapid requests - only schedule if not already pending
-        if (_pendingLayoutUpdate) return;
-        _pendingLayoutUpdate = true;
-        
-        DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
-        {
-            _pendingLayoutUpdate = false;
-            UpdateAlbumsLayout();
-        });
+        UpdateAlbumsLayout();
     }
 
     private void UpdateAlbumsLayout()
     {
-        if (_isUpdatingAlbumsLayout || _songsScrollViewer == null || !ViewModel.HasAlbums) return;
+        if (_songsScrollViewer == null || !ViewModel.HasAlbums) return;
 
-        try
+        // Calculate new height: Max - ScrollOffset, clamped to 0
+        var scrollOffset = _songsScrollViewer.VerticalOffset;
+        var newHeight = Math.Max(0, _lastKnownAlbumsHeight - scrollOffset);
+
+        // Apply height
+        AlbumsViewport.Height = newHeight;
+
+        // Translate the content up to mimic scrolling naturally
+        // We clamp the translation so it doesn't float away if we scroll way past
+        var translationY = (float)-Math.Min(scrollOffset, _lastKnownAlbumsHeight);
+        AlbumsContent.Translation = new Vector3(0, translationY, 0);
+
+        if (_lastKnownAlbumsHeight > 0)
         {
-            _isUpdatingAlbumsLayout = true;
-            
-            // Calculate new height: Max - ScrollOffset, clamped to 0
-            var scrollOffset = _songsScrollViewer.VerticalOffset;
-            var newHeight = Math.Max(0, _lastKnownAlbumsHeight - scrollOffset);
+            var opacity = Math.Clamp(newHeight / _lastKnownAlbumsHeight, 0, 1);
 
-            // Only apply height if it changed significantly to avoid layout cycles
-            if (Math.Abs(AlbumsViewport.Height - newHeight) > 0.5 || double.IsNaN(AlbumsViewport.Height))
-            {
-                AlbumsViewport.Height = newHeight;
-            }
-            
-            // Translate the content up to mimic scrolling naturally
-            // We clamp the translation so it doesn't float away if we scroll way past
-            var translationY = (float)-Math.Min(scrollOffset, _lastKnownAlbumsHeight);
-            if (AlbumsContent != null)
-            {
-                AlbumsContent.Translation = new Vector3(0, translationY, 0);
-            }
+            // Optimization: Snap to 0 if very low to save GPU composition effort?
+            if (opacity < 0.05) opacity = 0;
 
-            if (_lastKnownAlbumsHeight > 0)
-            {
-                var opacity = Math.Clamp(newHeight / _lastKnownAlbumsHeight, 0, 1);
-                
-                // Optimization: Snap to 0 if very low to save GPU composition effort
-                if (opacity < 0.05) opacity = 0;
-                
-                AlbumsViewport.Opacity = opacity;
-            }
-        }
-        finally
-        {
-            _isUpdatingAlbumsLayout = false;
+            AlbumsViewport.Opacity = opacity;
         }
     }
 }

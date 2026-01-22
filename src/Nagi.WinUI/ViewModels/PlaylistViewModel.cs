@@ -626,6 +626,67 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
     }
 
     /// <summary>
+    ///     Picks one random playlist (regular or smart) and plays it.
+    /// </summary>
+    [RelayCommand]
+    private async Task ShufflePlaylistsAsync()
+    {
+        if (IsAnyOperationInProgress) return;
+
+        try
+        {
+            var playlists = await _libraryService.GetAllPlaylistsAsync();
+            var smartPlaylists = await _smartPlaylistService.GetAllSmartPlaylistsAsync();
+
+            var combined = new List<(Guid Id, bool IsSmart)>();
+            combined.AddRange(playlists.Select(p => (p.Id, false)));
+            combined.AddRange(smartPlaylists.Select(p => (p.Id, true)));
+
+            if (combined.Count == 0) return;
+
+            var randomItem = combined[Random.Shared.Next(combined.Count)];
+
+            // Since we are playing just one playlist, we don't need to fetch song IDs here.
+            // We can reuse the existing logic in PlayPlaylistAsync which handles both types.
+            // However, PlayPlaylistAsync takes a Tuple<Guid, bool> as command parameter from UI.
+            // We can't call that RelayCommand method directly easily without constructing the tuple,
+            // or we can refactor logic. But calling it with a constructed tuple is fine for internal use too
+            // if we weren't in a RelayCommand attribute context.
+            // Actually, PlayPlaylistAsync logic is:
+            /*
+            if (isSmart) { fetch ids -> PlayAsync(ids) }
+            else { _musicPlaybackService.PlayPlaylistAsync(id) }
+            */
+            // We can replicate that simple logic here.
+
+            if (randomItem.IsSmart)
+            {
+                var songIds = await _smartPlaylistService.GetMatchingSongIdsAsync(randomItem.Id);
+                if (songIds.Any())
+                {
+                    // Since combined tuple doesn't have Name, we need to find it from the lists or fetch it.
+                    // Actually, we can fetch the name using the ID. Or simpler:
+                    var name = smartPlaylists.FirstOrDefault(p => p.Id == randomItem.Id)?.Name;
+                    if (!string.IsNullOrEmpty(name)) _musicPlaybackService.QueueContextName = name;
+
+                    await _musicPlaybackService.PlayAsync(songIds);
+                }
+            }
+            else
+            {
+                var name = playlists.FirstOrDefault(p => p.Id == randomItem.Id)?.Name;
+                if (!string.IsNullOrEmpty(name)) _musicPlaybackService.QueueContextName = name;
+
+                await _musicPlaybackService.PlayPlaylistAsync(randomItem.Id);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to shuffle playlists");
+        }
+    }
+
+    /// <summary>
     ///     Cleans up search state when navigating away from the page.
     /// </summary>
     public override void Cleanup()

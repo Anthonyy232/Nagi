@@ -231,6 +231,32 @@ public partial class GenreViewModel : SearchableViewModelBase, IDisposable
     }
 
     /// <summary>
+    ///     Picks one random genre from the library and plays all its songs.
+    /// </summary>
+    [RelayCommand]
+    private async Task ShuffleGenresAsync()
+    {
+        if (IsLoading) return;
+
+        try
+        {
+            var allGenres = await _libraryService.GetAllGenresAsync();
+            var genreList = allGenres.ToList();
+
+            if (genreList.Count == 0) return;
+
+            var randomGenre = genreList[Random.Shared.Next(genreList.Count)];
+
+            _musicPlaybackService.QueueContextName = randomGenre.Name;
+            await _musicPlaybackService.PlayGenreAsync(randomGenre.Id);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to shuffle genres");
+        }
+    }
+
+    /// <summary>
     ///     Clears the current queue and starts playing all songs in the selected genre.
     /// </summary>
     [RelayCommand]

@@ -123,12 +123,19 @@
             </StackPanel>
 
             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                <Button Command="{x:Bind ViewModel.ShuffleAlbumsCommand}"
+                        Style="{StaticResource SongListViewPageIconButton}"
+                        ToolTipService.ToolTip="Shuffle">
+                    <FontIcon FontSize="16" Glyph="" />
+                </Button>
+
                 <!-- Search functionality -->
                 <Grid>
                     <TextBox x:Name="SearchTextBox"
                              Style="{StaticResource SearchTextBoxStyle}"
                              PlaceholderText="Search albums..."
                              Width="0"
+                             MinWidth="0"
                              Opacity="0"
                              IsHitTestVisible="False"
                              HorizontalAlignment="Right"

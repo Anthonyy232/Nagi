@@ -16,7 +16,7 @@
     <Page.Resources>
     </Page.Resources>
 
-    <Grid KeyboardAcceleratorPlacementMode="Hidden" Padding="{StaticResource PageContainerPaddingVertical}">
+    <Grid KeyboardAcceleratorPlacementMode="Hidden" Padding="{StaticResource PageContainerPadding}">
         <Grid.KeyboardAccelerators>
             <KeyboardAccelerator Key="A" Modifiers="Control" Invoked="OnSelectAllAcceleratorInvoked" />
         </Grid.KeyboardAccelerators>
@@ -95,7 +95,7 @@
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0"
-              Margin="{StaticResource PageHeaderMarginIndented}"
+              Margin="{StaticResource PageHeaderMargin}"
               VerticalAlignment="Center">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -198,7 +198,7 @@
         <ListView
             x:Name="SongsListView"
             Grid.Row="1"
-            Padding="{StaticResource SongListViewPadding}"
+            Padding="{StaticResource SongListViewPaddingNoHorizontal}"
             IsItemClickEnabled="True"
             ItemContainerStyle="{StaticResource SongListViewPageListViewItemStyle}"
             ItemsSource="{x:Bind ViewModel.Songs, Mode=OneWay}"

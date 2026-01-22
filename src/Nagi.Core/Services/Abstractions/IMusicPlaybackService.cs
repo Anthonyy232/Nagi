@@ -92,6 +92,12 @@ public interface IMusicPlaybackService : IDisposable
     EqualizerSettings? CurrentEqualizerSettings { get; }
 
     /// <summary>
+    ///     Gets or sets the display name for the current queue context (e.g., "Rock", "Album X", "My Playlist").
+    ///     This is purely metadata for the UI to show what is currently playing.
+    /// </summary>
+    string? QueueContextName { get; set; }
+
+    /// <summary>
     ///     Occurs when the current track changes or playback stops.
     /// </summary>
     event Action? TrackChanged;
@@ -135,6 +141,11 @@ public interface IMusicPlaybackService : IDisposable
     ///     Occurs when the equalizer's values have changed.
     /// </summary>
     event Action? EqualizerChanged;
+
+    /// <summary>
+    ///     Occurs when the queue context name changes.
+    /// </summary>
+    event Action? QueueContextChanged;
 
     /// <summary>
     ///     Initializes the service, loading settings and optionally restoring the last saved playback state.
