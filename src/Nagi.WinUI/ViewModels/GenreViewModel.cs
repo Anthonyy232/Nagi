@@ -151,11 +151,11 @@ public partial class GenreViewModel : SearchableViewModelBase, IDisposable
 
             if (sortTask != null)
             {
-                CurrentSortOrder = await sortTask.ConfigureAwait(false);
+                CurrentSortOrder = sortTask.Result;
                 _hasSortOrderLoaded = true;
             }
 
-            var genreModels = await genreModelsTask.ConfigureAwait(false);
+            var genreModels = genreModelsTask.Result;
             if (cancellationToken.IsCancellationRequested) return;
 
             _allGenres = genreModels

@@ -54,7 +54,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
 
         _settingsService.VolumeNormalizationEnabledChanged += OnVolumeNormalizationEnabledChanged;
 
-        EqualizerBands = Array.Empty<(uint Index, float Frequency)>();
+        EqualizerBands = _audioPlayer.GetEqualizerBands();
     }
 
     public Song? CurrentTrack { get; private set; }
@@ -73,7 +73,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
     public bool IsShuffleEnabled { get; private set; }
     public RepeatMode CurrentRepeatMode { get; private set; } = RepeatMode.Off;
     public bool IsTransitioningTrack { get; private set; }
-    public IReadOnlyList<(uint Index, float Frequency)> EqualizerBands { get; private set; }
+    public IReadOnlyList<(uint Index, float Frequency)> EqualizerBands { get; }
     public IReadOnlyList<EqualizerPreset> AvailablePresets { get; } = new List<EqualizerPreset>
     {
         new("None", [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
@@ -125,16 +125,12 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
 
             await Task.WhenAll(volumeTask, muteTask, shuffleTask, repeatTask, eqTask, restoreEnabledTask, playbackStateTask).ConfigureAwait(false);
 
-            // Ensure the audio player is initialized before accessing equalizer band metadata.
-            await _audioPlayer.EnsureInitializedAsync().ConfigureAwait(false);
-            EqualizerBands = _audioPlayer.GetEqualizerBands();
+            await _audioPlayer.SetVolumeAsync(volumeTask.Result).ConfigureAwait(false);
+            await _audioPlayer.SetMuteAsync(muteTask.Result).ConfigureAwait(false);
+            IsShuffleEnabled = shuffleTask.Result;
+            CurrentRepeatMode = repeatTask.Result;
 
-            await _audioPlayer.SetVolumeAsync(await volumeTask.ConfigureAwait(false)).ConfigureAwait(false);
-            await _audioPlayer.SetMuteAsync(await muteTask.ConfigureAwait(false)).ConfigureAwait(false);
-            IsShuffleEnabled = await shuffleTask.ConfigureAwait(false);
-            CurrentRepeatMode = await repeatTask.ConfigureAwait(false);
-
-            CurrentEqualizerSettings = await eqTask.ConfigureAwait(false);
+            CurrentEqualizerSettings = eqTask.Result;
             if (CurrentEqualizerSettings != null && CurrentEqualizerSettings.BandGains.Count != EqualizerBands.Count)
             {
                 _logger.LogWarning("Equalizer settings mismatched (Saved: {SavedCount}, Required: {RequiredCount}). Resetting to default.", 
@@ -156,12 +152,11 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
                 await _settingsService.SetEqualizerSettingsAsync(CurrentEqualizerSettings).ConfigureAwait(false);
             }
             _audioPlayer.ApplyEqualizerSettings(CurrentEqualizerSettings);
-            EqualizerChanged?.Invoke();
 
             var restoredSuccessfully = false;
-            if (restoreLastSession && await restoreEnabledTask.ConfigureAwait(false))
+            if (restoreLastSession && restoreEnabledTask.Result)
             {
-                var savedState = await playbackStateTask.ConfigureAwait(false);
+                var savedState = playbackStateTask.Result;
                 if (savedState != null) restoredSuccessfully = await RestoreInternalPlaybackStateAsync(savedState).ConfigureAwait(false);
             }
 
