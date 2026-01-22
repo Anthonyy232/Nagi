@@ -64,7 +64,6 @@ public sealed partial class SettingsPage : Page
             LastFmSettingsExpander.IsExpanded = ViewModel.IsLastFmConnected;
 
             // Subscribe to property changes for reactive updates (these will animate)
-            ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
             ViewModel.PropertyChanged += OnViewModelPropertyChanged;
         }
         catch (Exception ex)
@@ -77,7 +76,6 @@ public sealed partial class SettingsPage : Page
     {
         base.OnNavigatedFrom(e);
         _logger.LogDebug("Navigating away from SettingsPage.");
-        ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
     }
 
     private void ProvidersListView_DragItemsStarting(object sender, DragItemsStartingEventArgs e)

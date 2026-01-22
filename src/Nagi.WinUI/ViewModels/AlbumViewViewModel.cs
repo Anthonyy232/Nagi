@@ -107,12 +107,14 @@ public partial class AlbumViewViewModel : SongListViewModelBase
             var sortOrderTask = _settingsService.GetSortOrderAsync<SongSortOrder>(SortOrderHelper.AlbumViewSortOrderKey);
             
             // Wait for sort order first, as it is required for loading songs
-            CurrentSortOrder = await sortOrderTask.ConfigureAwait(false);
+            await sortOrderTask.ConfigureAwait(false);
+            CurrentSortOrder = sortOrderTask.Result;
             
             // Start loading songs in parallel with album metadata
             var songsTask = RefreshOrSortSongsCommand.ExecuteAsync(null);
             
-            var album = await albumTask.ConfigureAwait(false);
+            await albumTask.ConfigureAwait(false);
+            var album = albumTask.Result;
 
             if (album != null)
             {

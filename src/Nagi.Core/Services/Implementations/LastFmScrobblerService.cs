@@ -131,9 +131,9 @@ public class LastFmScrobblerService : ILastFmScrobblerService
 
         await Task.WhenAll(apiKeyTask, apiSecretTask, credentialsTask).ConfigureAwait(false);
 
-        var apiKey = await apiKeyTask.ConfigureAwait(false);
-        var apiSecret = await apiSecretTask.ConfigureAwait(false);
-        var credentials = await credentialsTask.ConfigureAwait(false);
+        var apiKey = apiKeyTask.Result;
+        var apiSecret = apiSecretTask.Result;
+        var credentials = credentialsTask.Result;
 
         if (string.IsNullOrEmpty(apiKey) || string.IsNullOrEmpty(apiSecret) ||
             string.IsNullOrEmpty(credentials?.SessionKey))

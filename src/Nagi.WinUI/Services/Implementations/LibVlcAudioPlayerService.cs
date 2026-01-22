@@ -39,8 +39,6 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     private Media? _currentMedia;
     private Song? _currentSong;
     private SystemMediaTransportControls? _smtc;
-    private readonly object _smtcInitLock = new();
-    private Task? _smtcInitTask;
 
     private bool _isDisposed;
     private bool _isExplicitStop; // Prevents false PlaybackEnded events on user/error stop
@@ -170,46 +168,25 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     public void InitializeSmtc()
     {
         if (_isDisposed) return;
-        lock (_smtcInitLock)
-        {
-            if (_smtc is not null || _smtcInitTask is not null) return;
-            _smtcInitTask = InitializeSmtcAsync();
-        }
-    }
-
-    private async Task InitializeSmtcAsync()
-    {
+        EnsureInitialized();
+        if (_isDisposed || _dummyMediaPlayer is null) return;
+        
         try
         {
-            await EnsureInitializedAsync().ConfigureAwait(false);
-
-            await _dispatcherService.EnqueueAsync(() =>
-            {
-                if (_isDisposed || _dummyMediaPlayer is null || _smtc is not null) return Task.CompletedTask;
-
-                _logger.LogDebug("Initializing System Media Transport Controls (SMTC).");
-                _smtc = _dummyMediaPlayer.SystemMediaTransportControls;
-                _smtc.IsPlayEnabled = true;
-                _smtc.IsPauseEnabled = true;
-                _smtc.IsNextEnabled = false;
-                _smtc.IsPreviousEnabled = false;
-                _smtc.ButtonPressed += OnSmtcButtonPressed;
-                _smtc.IsEnabled = true;
-                _smtc.PlaybackStatus = MediaPlaybackStatus.Stopped;
-                _logger.LogDebug("SMTC initialized successfully.");
-                return Task.CompletedTask;
-            }).ConfigureAwait(false);
+            _logger.LogDebug("Initializing System Media Transport Controls (SMTC).");
+            _smtc = _dummyMediaPlayer.SystemMediaTransportControls;
+            _smtc.IsPlayEnabled = true;
+            _smtc.IsPauseEnabled = true;
+            _smtc.IsNextEnabled = false;
+            _smtc.IsPreviousEnabled = false;
+            _smtc.ButtonPressed += OnSmtcButtonPressed;
+            _smtc.IsEnabled = true;
+            _smtc.PlaybackStatus = MediaPlaybackStatus.Stopped;
+            _logger.LogDebug("SMTC initialized successfully.");
         }
         catch (Exception ex)
         {
             _logger.LogCritical(ex, "Failed to initialize SMTC. System media controls will be unavailable.");
-        }
-        finally
-        {
-            lock (_smtcInitLock)
-            {
-                _smtcInitTask = null;
-            }
         }
     }
 
@@ -227,11 +204,11 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         }
     }
 
-    public async Task LoadAsync(Song song)
+    public Task LoadAsync(Song song)
     {
-        if (_isDisposed) return;
-        await EnsureInitializedAsync().ConfigureAwait(false);
-        if (_isDisposed || _mediaPlayer is null) return;
+        if (_isDisposed) return Task.CompletedTask;
+        EnsureInitialized();
+        if (_isDisposed || _mediaPlayer is null) return Task.CompletedTask;
         
         _currentSong = song;
         try
@@ -282,20 +259,20 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
             }
         }
 
-        return;
+        return Task.CompletedTask;
     }
 
-    public async Task PlayAsync()
+    public Task PlayAsync()
     {
-        if (_isDisposed) return;
-        await EnsureInitializedAsync().ConfigureAwait(false);
-        if (_isDisposed || _mediaPlayer is null) return;
+        if (_isDisposed) return Task.CompletedTask;
+        EnsureInitialized();
+        if (_isDisposed || _mediaPlayer is null) return Task.CompletedTask;
 
         if (_mediaPlayer.Media is not null)
             _mediaPlayer.Play();
         else
             _logger.LogWarning("Play command received, but no media is loaded.");
-        return;
+        return Task.CompletedTask;
     }
 
     public Task PauseAsync()
@@ -363,15 +340,15 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         return Task.CompletedTask;
     }
 
-    public async Task SetVolumeAsync(double volume)
+    public Task SetVolumeAsync(double volume)
     {
-        if (_isDisposed) return;
-        await EnsureInitializedAsync().ConfigureAwait(false);
-        if (_isDisposed || _mediaPlayer is null) return;
+        if (_isDisposed) return Task.CompletedTask;
+        EnsureInitialized();
+        if (_isDisposed || _mediaPlayer is null) return Task.CompletedTask;
 
         var vlcVolume = (int)Math.Clamp(volume * 100, 0, 100);
         _mediaPlayer.SetVolume(vlcVolume);
-        return;
+        return Task.CompletedTask;
     }
 
     public Task SetMuteAsync(bool isMuted)
@@ -384,7 +361,8 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
 
     public IReadOnlyList<(uint Index, float Frequency)> GetEqualizerBands()
     {
-        if (_isDisposed || !_isInitialized) return Array.Empty<(uint, float)>();
+        if (_isDisposed) return Array.Empty<(uint, float)>();
+        EnsureInitialized();
         
         if (_isDisposed || _equalizer is null)
         {
