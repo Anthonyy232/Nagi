@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Http;
+using Nagi.Core.Helpers;
 using Nagi.Core.Services.Abstractions;
 
 namespace Nagi.Core.Services.Implementations;
@@ -49,9 +50,12 @@ public partial class NetEaseLyricsService : INetEaseLyricsService
         try
         {
             // Build search query
-            var query = string.IsNullOrWhiteSpace(artistName) 
-                ? trackName 
-                : $"{trackName} {artistName}";
+            var normalizedTrack = ArtistNameHelper.NormalizeStringCore(trackName) ?? trackName;
+            var normalizedArtist = ArtistNameHelper.NormalizeStringCore(artistName) ?? artistName;
+
+            var query = string.IsNullOrWhiteSpace(normalizedArtist) 
+                ? normalizedTrack 
+                : $"{normalizedTrack} {normalizedArtist}";
 
             var songId = await SearchSongAsync(query, trackName, artistName, cancellationToken).ConfigureAwait(false);
             if (songId is null)
@@ -79,6 +83,8 @@ public partial class NetEaseLyricsService : INetEaseLyricsService
 
     private async Task<long?> SearchSongAsync(string query, string trackName, string? artistName, CancellationToken cancellationToken)
     {
+        var normalizedTrack = ArtistNameHelper.NormalizeStringCore(trackName) ?? trackName;
+        var normalizedArtist = ArtistNameHelper.NormalizeStringCore(artistName) ?? artistName;
         var operationName = $"NetEase search for {query}";
 
         return await HttpRetryHelper.ExecuteWithRetryAsync<long?>(
@@ -127,11 +133,15 @@ public partial class NetEaseLyricsService : INetEaseLyricsService
                 var bestMatch = songs
                     .Select(s =>
                     {
-                        var trackExact = s.Name != null && s.Name.Equals(trackName, StringComparison.OrdinalIgnoreCase);
-                        var trackContains = s.Name != null && s.Name.Contains(trackName, StringComparison.OrdinalIgnoreCase);
-                        var artistMatch = !string.IsNullOrWhiteSpace(artistName) &&
-                                          s.Artists?.Any(a => a.Name != null &&
-                                              a.Name.Contains(artistName, StringComparison.OrdinalIgnoreCase)) == true;
+                        var normalizedSongName = ArtistNameHelper.NormalizeStringCore(s.Name) ?? s.Name;
+                        var trackExact = normalizedSongName != null && normalizedSongName.Equals(normalizedTrack, StringComparison.OrdinalIgnoreCase);
+                        var trackContains = normalizedSongName != null && normalizedSongName.Contains(normalizedTrack, StringComparison.OrdinalIgnoreCase);
+                        var artistMatch = !string.IsNullOrWhiteSpace(normalizedArtist) &&
+                                          s.Artists?.Any(a => 
+                                          {
+                                              var n = ArtistNameHelper.NormalizeStringCore(a.Name) ?? a.Name;
+                                              return n != null && n.Contains(normalizedArtist, StringComparison.OrdinalIgnoreCase);
+                                          }) == true;
 
                         // Skip songs with no track match at all
                         if (!trackExact && !trackContains)

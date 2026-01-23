@@ -105,19 +105,19 @@ public class SmartPlaylistService : ISmartPlaylistService
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
 
         // Check for duplicate name (case-insensitive)
-        var trimmedName = name.Trim();
+        var normalizedName = ArtistNameHelper.NormalizeStringCore(name) ?? name;
         var exists = await context.SmartPlaylists
-            .AnyAsync(sp => sp.Name.ToLower() == trimmedName.ToLower()).ConfigureAwait(false);
+            .AnyAsync(sp => sp.Name.ToLower() == normalizedName.ToLower()).ConfigureAwait(false);
         
         if (exists)
         {
-            _logger.LogWarning("Cannot create smart playlist: name '{Name}' already exists", trimmedName);
+            _logger.LogWarning("Cannot create smart playlist: name '{Name}' already exists", normalizedName);
             return null;
         }
 
         var smartPlaylist = new SmartPlaylist
         {
-            Name = trimmedName,
+            Name = normalizedName,
             Description = description,
             DateCreated = DateTime.UtcNow,
             DateModified = DateTime.UtcNow
@@ -166,7 +166,7 @@ public class SmartPlaylistService : ISmartPlaylistService
         if (existing is null) return false;
 
         // Update properties individually
-        existing.Name = smartPlaylist.Name;
+        existing.Name = ArtistNameHelper.NormalizeStringCore(smartPlaylist.Name) ?? smartPlaylist.Name;
         existing.Description = smartPlaylist.Description;
         existing.CoverImageUri = smartPlaylist.CoverImageUri;
         existing.MatchAllRules = smartPlaylist.MatchAllRules;
@@ -208,19 +208,19 @@ public class SmartPlaylistService : ISmartPlaylistService
         var smartPlaylist = await context.SmartPlaylists.FindAsync(smartPlaylistId).ConfigureAwait(false);
         if (smartPlaylist is null) return false;
 
-        var trimmedName = newName.Trim();
+        var normalizedName = ArtistNameHelper.NormalizeStringCore(newName) ?? newName;
         
         // Check if the new name already exists (case-insensitive), excluding the current playlist
         var nameExists = await context.SmartPlaylists
-            .AnyAsync(sp => sp.Id != smartPlaylistId && sp.Name.ToLower() == trimmedName.ToLower()).ConfigureAwait(false);
+            .AnyAsync(sp => sp.Id != smartPlaylistId && sp.Name.ToLower() == normalizedName.ToLower()).ConfigureAwait(false);
         
         if (nameExists)
         {
-            _logger.LogWarning("Cannot rename smart playlist: name '{Name}' already exists", trimmedName);
+            _logger.LogWarning("Cannot rename smart playlist: name '{Name}' already exists", normalizedName);
             return false;
         }
 
-        smartPlaylist.Name = trimmedName;
+        smartPlaylist.Name = normalizedName;
         smartPlaylist.DateModified = DateTime.UtcNow;
         await context.SaveChangesAsync().ConfigureAwait(false);
         PlaylistUpdated?.Invoke(this, new PlaylistUpdatedEventArgs(smartPlaylist.Id, smartPlaylist.CoverImageUri));
@@ -311,8 +311,8 @@ public class SmartPlaylistService : ISmartPlaylistService
             SmartPlaylistId = smartPlaylistId,
             Field = field,
             Operator = op,
-            Value = value,
-            SecondValue = secondValue,
+            Value = ArtistNameHelper.NormalizeStringCore(value),
+            SecondValue = ArtistNameHelper.NormalizeStringCore(secondValue),
             Order = maxOrder + 1
         };
 
@@ -339,8 +339,8 @@ public class SmartPlaylistService : ISmartPlaylistService
 
         rule.Field = field;
         rule.Operator = op;
-        rule.Value = value;
-        rule.SecondValue = secondValue;
+        rule.Value = ArtistNameHelper.NormalizeStringCore(value);
+        rule.SecondValue = ArtistNameHelper.NormalizeStringCore(secondValue);
         rule.SmartPlaylist.DateModified = DateTime.UtcNow;
 
         await context.SaveChangesAsync().ConfigureAwait(false);
@@ -427,6 +427,8 @@ public class SmartPlaylistService : ISmartPlaylistService
             rule.Id = Guid.NewGuid();
             rule.SmartPlaylistId = smartPlaylistId;
             rule.Order = order++;
+            rule.Value = ArtistNameHelper.NormalizeStringCore(rule.Value);
+            rule.SecondValue = ArtistNameHelper.NormalizeStringCore(rule.SecondValue);
             context.SmartPlaylistRules.Add(rule);
         }
 

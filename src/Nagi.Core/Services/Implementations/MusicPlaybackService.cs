@@ -2,6 +2,7 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
+using Nagi.Core.Helpers;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -298,7 +299,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         // Filter out null/empty artist names and provide fallback if all are invalid
         var validArtists = metadata.Artists
             .Where(a => !string.IsNullOrWhiteSpace(a))
-            .Select(a => a.Trim())
+            .Select(a => ArtistNameHelper.Normalize(a))
             .ToList();
         if (validArtists.Count == 0)
         {
@@ -307,7 +308,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
 
         var validAlbumArtists = metadata.AlbumArtists
             .Where(a => !string.IsNullOrWhiteSpace(a))
-            .Select(a => a.Trim())
+            .Select(a => ArtistNameHelper.Normalize(a))
             .ToList();
         // If no valid album artists, fall back to track artists
         if (validAlbumArtists.Count == 0)
@@ -329,7 +330,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
             }).ToList(),
             Album = new Album
             {
-                Title = metadata.Album ?? Album.UnknownAlbumName,
+                Title = ArtistNameHelper.NormalizeStringCore(metadata.Album) ?? Album.UnknownAlbumName,
 
                 ArtistName = Artist.GetDisplayName(validAlbumArtists),
                 PrimaryArtistName = validAlbumArtists.First(),
