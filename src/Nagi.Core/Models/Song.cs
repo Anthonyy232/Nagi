@@ -197,7 +197,7 @@ public class Song
     ///     Gets or sets the names of all associated artists joined by " & ".
     ///     This is a denormalized field for efficient display and searching.
     /// </summary>
-    [MaxLength(1000)]
+    [MaxLength(2000)]
     public string ArtistName { get; set; } = Artist.UnknownArtistName;
 
 
@@ -215,6 +215,8 @@ public class Song
     /// </summary>
     public void SyncDenormalizedFields()
     {
+        const int MaxArtistNameLength = 2000;
+        
         var artists = SongArtists.OrderBy(sa => sa.Order).Select(sa => sa.Artist?.Name).Where(n => !string.IsNullOrEmpty(n)).ToList();
         if (artists.Count == 0)
         {
@@ -223,7 +225,11 @@ public class Song
         }
         else
         {
-            ArtistName = Artist.GetDisplayName(artists);
+            var displayName = Artist.GetDisplayName(artists);
+            // Truncate to MaxLength to prevent database overflow with many collaborators
+            ArtistName = displayName.Length > MaxArtistNameLength 
+                ? displayName[..(MaxArtistNameLength - 3)] + "..." 
+                : displayName;
             PrimaryArtistName = artists[0] ?? Artist.UnknownArtistName;
         }
 
