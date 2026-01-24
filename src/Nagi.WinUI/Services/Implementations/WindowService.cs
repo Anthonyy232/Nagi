@@ -43,6 +43,7 @@ public sealed class WindowService : IWindowService, IDisposable
     public void Dispose()
     {
         if (_isDisposed) return;
+        _isDisposed = true; // Set FIRST to prevent race conditions in dispatched lambdas
 
         _logger.LogDebug("Disposing and cleaning up resources.");
 
@@ -58,8 +59,30 @@ public sealed class WindowService : IWindowService, IDisposable
 
         _settingsService.MinimizeToMiniPlayerSettingChanged -= OnMinimizeToMiniPlayerSettingChanged;
 
-        HideMiniPlayer();
-        _isDisposed = true;
+        // Synchronous cleanup of mini player state. Capture and null the reference
+        // to prevent any in-flight operations from using a stale window.
+        var window = _miniPlayerWindow;
+        _miniPlayerWindow = null;
+
+        // Attempt graceful close via dispatcher. If the dispatcher is unavailable
+        // (shutdown), TryEnqueue will return false and the window will be cleaned
+        // up when the process terminates.
+        if (window is not null)
+        {
+            window.Closed -= OnMiniPlayerClosed;
+            _dispatcherService.TryEnqueue(() =>
+            {
+                try
+                {
+                    window.Close();
+                }
+                catch
+                {
+                    // Ignore exceptions during shutdown
+                }
+            });
+        }
+
         GC.SuppressFinalize(this);
     }
 
