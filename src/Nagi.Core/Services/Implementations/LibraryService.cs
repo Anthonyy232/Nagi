@@ -723,18 +723,18 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     /// </summary>
     private async Task RunReplayGainAnalysisAsync(IProgress<ScanProgress>? progress, CancellationToken cancellationToken)
     {
-        // Only start a new scan if one isn't currently active
-        var existingCts = _replayGainScanCts;
-        if (existingCts != null && !existingCts.IsCancellationRequested)
+        // Atomically try to set _replayGainScanCts from null to a new CTS.
+        // This prevents the TOCTOU race condition where two threads could both
+        // pass a null check and start concurrent scans.
+        var newCts = new CancellationTokenSource();
+        var previousCts = Interlocked.CompareExchange(ref _replayGainScanCts, newCts, null);
+        if (previousCts != null)
         {
+            // Another scan is already running - dispose our unused CTS and return
+            newCts.Dispose();
             _logger.LogDebug("ReplayGain analysis is already running. Skipping trigger.");
             return;
         }
-        
-        // Atomically swap in a new CTS and dispose the old one
-        var newCts = new CancellationTokenSource();
-        var oldCts = Interlocked.Exchange(ref _replayGainScanCts, newCts);
-        oldCts?.Dispose();
         
         // Link to the parent cancellation token so cancelling the folder scan also cancels ReplayGain
         using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, newCts.Token, _shutdownCts.Token);
