@@ -62,26 +62,51 @@ public class DenormalizationInterceptor : SaveChangesInterceptor
             if (album != null) albumsToSync.Add(album);
         }
 
-        // 3. Perform the synchronization on the collected entities
-        // 3. Perform the synchronization on the collected entities
+        // 3. Batch-load relationships for all affected entities (fixes N+1 query problem)
+        // Instead of loading per-entity (one query per song/album), we batch-load ALL
+        // relationships in a single query per entity type.
+        // We chunk the IDs to prevent SQL parameter limit issues (SQLite: 999, SQL Server: ~2100)
+        const int chunkSize = 500;
+        
+        // Batch-load SongArtists for all non-Added songs
+        var nonAddedSongIds = songsToSync
+            .Where(s => context.Entry(s).State != EntityState.Added)
+            .Select(s => s.Id)
+            .ToList();
+
+        foreach (var chunk in nonAddedSongIds.Chunk(chunkSize))
+        {
+            var chunkList = chunk.ToList();
+            context.Set<SongArtist>()
+                .Include(sa => sa.Artist)
+                .Where(sa => chunkList.Contains(sa.SongId))
+                .Load();
+        }
+
+        // Now sync all songs - their SongArtists collections are already populated via relationship fixup
         foreach (var song in songsToSync)
         {
-            // Critical: Ensure relationships are loaded before syncing.
-            // If the Song was modified but SongArtists weren't included in the query,
-            // SyncDenormalizedFields would see an empty list and wipe the data.
-            if (context.Entry(song).State != EntityState.Added)
-            {
-                context.Entry(song).Collection(s => s.SongArtists).Query().Include(sa => sa.Artist).Load();
-            }
             song.SyncDenormalizedFields();
         }
 
+        // Same pattern for albums - batch-load AlbumArtists for all non-Added albums
+        var nonAddedAlbumIds = albumsToSync
+            .Where(a => context.Entry(a).State != EntityState.Added)
+            .Select(a => a.Id)
+            .ToList();
+
+        foreach (var chunk in nonAddedAlbumIds.Chunk(chunkSize))
+        {
+            var chunkList = chunk.ToList();
+            context.Set<AlbumArtist>()
+                .Include(aa => aa.Artist)
+                .Where(aa => chunkList.Contains(aa.AlbumId))
+                .Load();
+        }
+
+        // Now sync all albums - their AlbumArtists collections are already populated
         foreach (var album in albumsToSync)
         {
-            if (context.Entry(album).State != EntityState.Added)
-            {
-                context.Entry(album).Collection(a => a.AlbumArtists).Query().Include(aa => aa.Artist).Load();
-            }
             album.SyncDenormalizedFields();
         }
     }

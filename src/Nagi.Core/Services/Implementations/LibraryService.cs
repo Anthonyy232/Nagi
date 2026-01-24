@@ -1100,7 +1100,31 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     {
         ArgumentNullException.ThrowIfNull(songToUpdate);
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        context.Songs.Update(songToUpdate);
+        
+        // Check if entity is already tracked (would cause Attach to throw)
+        var existingEntry = context.ChangeTracker.Entries<Song>()
+            .FirstOrDefault(e => e.Entity.Id == songToUpdate.Id);
+        
+        if (existingEntry != null)
+        {
+            // Entity already tracked - detach it first to allow reattachment with new values
+            existingEntry.State = EntityState.Detached;
+        }
+        
+        // Attach the entity to track it
+        context.Songs.Attach(songToUpdate);
+        
+        // Defensive loading: ensure SongArtists are loaded to prevent the interceptor
+        // from seeing an empty collection and wiping artist data when syncing denormalized fields.
+        // This is critical when songs passed in came from AsNoTracking() queries.
+        await context.Entry(songToUpdate)
+            .Collection(s => s.SongArtists)
+            .Query()
+            .Include(sa => sa.Artist)
+            .LoadAsync()
+            .ConfigureAwait(false);
+        
+        context.Entry(songToUpdate).State = EntityState.Modified;
         await context.SaveChangesAsync().ConfigureAwait(false);
         return true;
     }
