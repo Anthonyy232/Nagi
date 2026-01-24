@@ -327,6 +327,11 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         GC.SuppressFinalize(this);
     }
 
+    public void ResetState()
+    {
+        Dispose();
+    }
+
     [RelayCommand]
     public async Task LoadSettingsAsync()
     {

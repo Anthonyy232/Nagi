@@ -54,9 +54,8 @@ public sealed partial class PlaylistPage : Page
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
-        _logger.LogDebug("Navigating away from PlaylistPage. Disposing ViewModel.");
-        ViewModel.Cleanup();
-        ViewModel.Dispose();
+        _logger.LogDebug("Navigating away from PlaylistPage.");
+        // Note: ViewModel is Singleton, do not dispose - state persists across navigations
     }
 
     /// <summary>

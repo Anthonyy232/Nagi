@@ -518,9 +518,10 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         return _settingsService.SetSortOrderAsync(SortOrderHelper.FolderViewSortOrderKey, sortOrder);
     }
 
-    public override void Cleanup()
+    public override void ResetState()
     {
-        base.Cleanup();
+        base.ResetState();
+        _logger.LogDebug("Cleaned up FolderSongListViewModel search resources");
         FolderContents.Clear();
         Breadcrumbs.Clear();
         _currentFolderCount = 0;

@@ -22,7 +22,7 @@ namespace Nagi.WinUI.ViewModels;
 ///     A base class for view models that display a list of songs.
 ///     Provides common functionality for loading, sorting, selection, and playback.
 /// </summary>
-public abstract partial class SongListViewModelBase : SearchableViewModelBase
+public abstract partial class SongListViewModelBase : SearchableViewModelBase, IDisposable
 {
     protected const int PageSize = 250;
     protected readonly ILibraryReader _libraryReader;
@@ -33,6 +33,7 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase
     protected readonly ReaderWriterLockSlim _stateLock = new(LockRecursionPolicy.SupportsRecursion);
     private readonly IUIService _uiService;
     protected readonly IMusicNavigationService _musicNavigationService;
+    private bool _isDisposed;
 
     protected int _currentPage;
 
@@ -99,6 +100,7 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase
 
     [ObservableProperty] public partial string TotalItemsText { get; set; } = "0 items";
 
+
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(PlaySelectedSongsCommand))]
     [NotifyCanExecuteChangedFor(nameof(PlaySelectedSongsNextCommand))]
@@ -110,21 +112,14 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase
     {
         get
         {
+            _stateLock.EnterReadLock();
             try
             {
-                _stateLock.EnterReadLock();
-                try
-                {
-                    return SelectionState.GetSelectedCount(_fullSongIdList.Count);
-                }
-                finally
-                {
-                    _stateLock.ExitReadLock();
-                }
+                return SelectionState.GetSelectedCount(_fullSongIdList.Count);
             }
-            catch (ObjectDisposedException)
+            finally
             {
-                return 0;
+                _stateLock.ExitReadLock();
             }
         }
     }
@@ -324,10 +319,6 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase
         catch (OperationCanceledException)
         {
             _logger.LogDebug("Automatic page loading was cancelled.");
-        }
-        catch (ObjectDisposedException)
-        {
-            _logger.LogDebug("Automatic page loading stopped because the view model was disposed");
         }
         catch (Exception ex)
         {
@@ -583,12 +574,12 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase
     /// </summary>
     protected virtual void ProcessPagedResult(PagedResult<Song> pagedResult, CancellationToken token, bool append = false)
     {
-        if (pagedResult?.Items == null || token.IsCancellationRequested) return;
+        if (pagedResult?.Items == null || token.IsCancellationRequested || _isDisposed) return;
 
         // All UI updates must be marshalled to the UI thread.
         _dispatcherService.TryEnqueue(() =>
         {
-            if (token.IsCancellationRequested) return;
+            if (token.IsCancellationRequested || _isDisposed) return;
 
             if (append)
             {
@@ -616,6 +607,7 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase
 
         _dispatcherService.TryEnqueue(() =>
         {
+            if (_isDisposed) return;
             TotalItemsText = $"{pagedResult.TotalCount} {(pagedResult.TotalCount == 1 ? "item" : "items")}";
             UpdateSelectionStatus();
             PlayAllSongsCommand.NotifyCanExecuteChanged();
@@ -723,19 +715,30 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase
 
     /// <summary>
     ///     Cleans up resources, particularly stopping any in-flight background loading tasks.
+    ///     Doesn't dispose state lock as it's a singleton.
     /// </summary>
-    public override void Cleanup()
+    public override void ResetState()
     {
-        base.Cleanup();
+        base.ResetState();
         SelectionState.DeselectAll();
         _pagedLoadCts?.Cancel();
         _pagedLoadCts?.Dispose();
         _pagedLoadCts = null;
         
-        // Note: Do NOT dispose _stateLock here. ViewModels are reused via DI,
-        // and disposing the lock would cause ObjectDisposedException on re-initialization.
-        // The lock will be cleaned up when the ViewModel is garbage collected.
+        _logger.LogDebug("Reset state for SongListViewModelBase");
+    }
+
+    /// <summary>
+    ///     Disposes all resources including the state lock.
+    /// </summary>
+    public virtual void Dispose()
+    {
+        if (_isDisposed) return;
         
-        _logger.LogDebug("Cleaned up resources");
+        ResetState();
+        _stateLock.Dispose();
+        
+        _isDisposed = true;
+        GC.SuppressFinalize(this);
     }
 }

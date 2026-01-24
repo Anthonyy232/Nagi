@@ -35,7 +35,7 @@ public partial class GenreViewModelItem : ObservableObject
 /// <summary>
 ///     Manages the state and logic for the genre list page.
 /// </summary>
-public partial class GenreViewModel : SearchableViewModelBase, IDisposable
+public partial class GenreViewModel : SearchableViewModelBase
 {
     private readonly NotifyCollectionChangedEventHandler _collectionChangedHandler;
     private readonly ILibraryService _libraryService;
@@ -45,6 +45,7 @@ public partial class GenreViewModel : SearchableViewModelBase, IDisposable
     private bool _hasSortOrderLoaded;
     private List<GenreViewModelItem> _allGenres = new();
     private bool _isNavigating;
+    private CancellationTokenSource? _debouncer;
 
     public GenreViewModel(ILibraryService libraryService, IMusicPlaybackService musicPlaybackService,
         INavigationService navigationService, IUISettingsService settingsService, IDispatcherService dispatcherService, ILogger<GenreViewModel> logger)
@@ -59,7 +60,38 @@ public partial class GenreViewModel : SearchableViewModelBase, IDisposable
         _collectionChangedHandler = (s, e) => OnPropertyChanged(nameof(HasGenres));
         Genres.CollectionChanged += _collectionChangedHandler;
         
+        // Subscribe to library changes to refresh when folders are added/removed
+        _libraryService.LibraryContentChanged += OnLibraryContentChanged;
+        
         UpdateSortOrderText();
+    }
+    
+    private void OnLibraryContentChanged(object? sender, LibraryContentChangedEventArgs e)
+    {
+        // We don't need to refresh the genre list just because a folder container was added (it has no songs yet).
+        if (e.ChangeType == LibraryChangeType.FolderAdded) return;
+        
+        // Debounce to prevent multiple refresh calls during rapid changes.
+        var oldCts = Interlocked.Exchange(ref _debouncer, new CancellationTokenSource());
+        try { oldCts?.Cancel(); } catch (ObjectDisposedException) { }
+        
+        var token = _debouncer.Token;
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                await Task.Delay(1000, token).ConfigureAwait(false);
+                if (token.IsCancellationRequested) return;
+                
+                _logger.LogDebug("Library content changed ({ChangeType}). Refreshing genre list.", e.ChangeType);
+                await _dispatcherService.EnqueueAsync(() => LoadGenresCommand.ExecuteAsync(CancellationToken.None));
+            }
+            catch (OperationCanceledException) { }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error refreshing genres after library content change");
+            }
+        }, token);
     }
 
     [ObservableProperty] public partial ObservableCollection<GenreViewModelItem> Genres { get; set; } = new();
@@ -79,20 +111,6 @@ public partial class GenreViewModel : SearchableViewModelBase, IDisposable
     ///     Gets a value indicating whether there are any genres to display.
     /// </summary>
     public bool HasGenres => Genres.Any();
-
-    /// <summary>
-    ///     Cleans up resources by unsubscribing from event handlers.
-    /// </summary>
-    public void Dispose()
-    {
-        if (_isDisposed) return;
-
-        if (Genres != null) Genres.CollectionChanged -= _collectionChangedHandler;
-        CancelPendingSearch();
-
-        _isDisposed = true;
-        GC.SuppressFinalize(this);
-    }
 
     private void UpdateSortOrderText()
     {
@@ -247,14 +265,5 @@ public partial class GenreViewModel : SearchableViewModelBase, IDisposable
             // This is a critical failure as it directly impacts core user functionality.
             _logger.LogCritical(ex, "Failed to play genre {GenreId}", genreId);
         }
-    }
-
-    /// <summary>
-    ///     Cleans up search state when navigating away from the page.
-    /// </summary>
-    public override void Cleanup()
-    {
-        base.Cleanup();
-        _logger.LogDebug("Cleaned up GenreViewModel search resources");
     }
 }

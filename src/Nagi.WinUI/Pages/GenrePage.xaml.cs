@@ -70,8 +70,7 @@ public sealed partial class GenrePage : Page
     }
 
     /// <summary>
-    ///     Handles the page's navigated-from event. Cancels any ongoing data loading operations
-    ///     and disposes the ViewModel to prevent memory leaks.
+    ///     Handles the page's navigated-from event. Cancels any ongoing data loading operations.
     /// </summary>
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
@@ -86,10 +85,7 @@ public sealed partial class GenrePage : Page
 
         _cancellationTokenSource?.Dispose();
         _cancellationTokenSource = null;
-
-        ViewModel.Cleanup();
-        _logger.LogDebug("Disposing GenreViewModel.");
-        ViewModel.Dispose();
+        // Note: ViewModel is Singleton, do not dispose - state persists across navigations
     }
 
     /// <summary>

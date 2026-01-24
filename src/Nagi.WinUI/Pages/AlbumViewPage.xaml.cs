@@ -104,8 +104,8 @@ public sealed partial class AlbumViewPage : Page
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
-        _logger.LogDebug("Navigating away from AlbumViewPage. Cleaning up ViewModel.");
-        ViewModel.Cleanup();
+        _logger.LogDebug("Navigating away from AlbumViewPage. Disposing ViewModel.");
+        ViewModel.Dispose();
     }
 
     /// <summary>

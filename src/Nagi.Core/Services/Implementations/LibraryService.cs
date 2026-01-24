@@ -103,6 +103,9 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     /// <inheritdoc />
     public event EventHandler<bool>? ScanCompleted;
 
+    /// <inheritdoc />
+    public event EventHandler<LibraryContentChangedEventArgs>? LibraryContentChanged;
+
     #region Data Reset
 
     /// <inheritdoc />
@@ -195,6 +198,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         context.Folders.Add(folder);
         await context.SaveChangesAsync().ConfigureAwait(false);
+        LibraryContentChanged?.Invoke(this, new LibraryContentChangedEventArgs(LibraryChangeType.FolderAdded, folder.Id));
         return folder;
     }
 
@@ -276,6 +280,9 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                         lrcPath);
                 }
 
+        // Notify listeners that the library has changed (songs cascade-deleted with the folder)
+        LibraryContentChanged?.Invoke(this, new LibraryContentChangedEventArgs(LibraryChangeType.FolderRemoved, folderId));
+        
         return true;
     }
 
@@ -614,6 +621,10 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                         
                         progress?.Report(new ScanProgress
                             { StatusText = statusMessage, Percentage = 100 });
+                        if (hasChanges)
+                        {
+                            LibraryContentChanged?.Invoke(this, new LibraryContentChangedEventArgs(LibraryChangeType.FolderRescanned, folderId));
+                        }
                         return hasChanges;
                     }
 
@@ -667,6 +678,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                         : "Scan complete. Library is up to date.";
                     progress?.Report(new ScanProgress
                         { StatusText = summary, Percentage = 100, NewSongsFound = newSongsFound });
+                    LibraryContentChanged?.Invoke(this, new LibraryContentChangedEventArgs(LibraryChangeType.FolderRescanned, folderId));
                     return true;
                 }
                 catch (OperationCanceledException)
@@ -839,6 +851,10 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
             progress?.Report(new ScanProgress { StatusText = "Library refresh complete.", Percentage = 100 });
             ScanCompleted?.Invoke(this, anyChangesMade);
+            if (anyChangesMade)
+            {
+                LibraryContentChanged?.Invoke(this, new LibraryContentChangedEventArgs(LibraryChangeType.LibraryRescanned));
+            }
             return anyChangesMade;
         }
         catch (Exception ex)

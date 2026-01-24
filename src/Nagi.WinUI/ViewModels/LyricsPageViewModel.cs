@@ -142,6 +142,11 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
         GC.SuppressFinalize(this);
     }
 
+    public void ResetState()
+    {
+        Dispose();
+    }
+
     [RelayCommand]
     public async Task SeekToLineAsync(LyricLine? line)
     {

@@ -22,7 +22,7 @@ namespace Nagi.WinUI.ViewModels;
 ///     Manages the state and interactions for the main media player UI. This view model acts as a coordinator
 ///     between the UI and various services like <see cref="IMusicPlaybackService" /> and <see cref="IWindowService" />.
 /// </summary>
-public partial class PlayerViewModel : ObservableObject, IDisposable
+public partial class PlayerViewModel : ObservableObject
 {
     private const string PlayIconGlyph = "\uE768";
     private const string PauseIconGlyph = "\uE769";
@@ -52,7 +52,6 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
     private readonly ILibraryService _libraryService;
 
     private bool _isUpdatingFromService;
-    private bool _isDisposed;
     private bool _isEfficiencyModeEnabled;
 
     // Position update throttling
@@ -173,19 +172,19 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
 
     /// <summary>
     ///     Cleans up resources and unsubscribes from service events.
+    ///     Called during application shutdown.
     /// </summary>
-    public void Dispose()
+    public void Cleanup()
     {
-        if (_isDisposed) return;
-        _isDisposed = true;
-        _logger.LogDebug("Disposing and unsubscribing from service events");
+        _logger.LogDebug("Cleaning up PlayerViewModel resources");
         UnsubscribeFromPlaybackServiceEvents();
         UnsubscribeFromSettingsServiceEvents();
         UnsubscribeFromWindowServiceEvents();
         _queueDisplayCts?.Cancel();
         _queueDisplayCts?.Dispose();
-        GC.SuppressFinalize(this);
+        _queueDisplayCts = null;
     }
+
 
     /// <summary>
     ///     Loads player button settings and splits them into main and secondary controls
@@ -556,7 +555,7 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
             var fetchedSongs = await _libraryService.GetSongsByIdsAsync(idsToShow).ConfigureAwait(true);
 
             // Check for cancellation or disposal after the async call, before updating UI
-            if (token.IsCancellationRequested || _isDisposed) return;
+            if (token.IsCancellationRequested) return;
 
             var newDisplayQueue = idsToShow
                 .Select(id => fetchedSongs.GetValueOrDefault(id))
@@ -596,8 +595,6 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
 
     private void RunOnUIThread(Action action)
     {
-        if (_isDisposed) return;
-
         // Avoid redundant dispatching if already on UI thread
         if (_dispatcherService.HasThreadAccess)
         {
@@ -610,7 +607,6 @@ public partial class PlayerViewModel : ObservableObject, IDisposable
 
         _dispatcherService.TryEnqueue(() =>
         {
-            if (_isDisposed) return;
             using (new ServiceUpdateScope(this))
             {
                 action();

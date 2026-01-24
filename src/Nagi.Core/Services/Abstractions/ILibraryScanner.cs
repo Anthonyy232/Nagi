@@ -10,6 +10,7 @@ public interface ILibraryScanner
 {
     event EventHandler<ArtistMetadataUpdatedEventArgs>? ArtistMetadataUpdated;
     event EventHandler<bool>? ScanCompleted;
+    event EventHandler<LibraryContentChangedEventArgs>? LibraryContentChanged;
 
     Task ScanFolderForMusicAsync(string folderPath, IProgress<ScanProgress>? progress = null,
         CancellationToken cancellationToken = default);

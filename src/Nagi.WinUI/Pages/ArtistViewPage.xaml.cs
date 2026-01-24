@@ -101,12 +101,12 @@ public sealed partial class ArtistViewPage : Page
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
-        _logger.LogDebug("Navigating away from ArtistViewPage. Cleaning up ViewModel.");
-        ViewModel.Cleanup();
+        _logger.LogDebug("Navigating away from ArtistViewPage. Disposing ViewModel.");
         if (_songsScrollViewer != null)
         {
             _songsScrollViewer.ViewChanged -= OnSongsScrollViewerViewChanged;
         }
+        ViewModel.Dispose();
     }
 
     /// <summary>

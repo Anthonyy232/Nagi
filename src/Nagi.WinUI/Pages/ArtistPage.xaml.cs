@@ -77,8 +77,7 @@ public sealed partial class ArtistPage : Page
 
     /// <summary>
     ///     Handles the page's navigated-from event.
-    ///     This is the critical cleanup step. It cancels any ongoing data loading
-    ///     and disposes the ViewModel to prevent memory leaks.
+    ///     Unsubscribes from events but does not dispose the Singleton ViewModel.
     /// </summary>
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
@@ -94,10 +93,7 @@ public sealed partial class ArtistPage : Page
 
         _cancellationTokenSource?.Dispose();
         _cancellationTokenSource = null;
-
-        ViewModel.Cleanup();
-        _logger.LogDebug("Disposing ArtistViewModel.");
-        ViewModel.Dispose();
+        // Note: ViewModel is Singleton, do not dispose - state persists across navigations
     }
 
     /// <summary>

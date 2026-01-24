@@ -390,7 +390,7 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
     /// <summary>
     ///     Cleans up resources specific to this view model.
     /// </summary>
-    public override void Cleanup()
+    public override void ResetState()
     {
         _logger.LogDebug("Cleaning up PlaylistSongListViewModel resources");
 
@@ -405,6 +405,6 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
 
         _currentPlaylistId = null;
 
-        base.Cleanup();
+        base.ResetState();
     }
 }

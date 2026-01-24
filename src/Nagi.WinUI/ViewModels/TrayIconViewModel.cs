@@ -15,7 +15,7 @@ namespace Nagi.WinUI.ViewModels;
 /// <summary>
 ///     Provides the data context and command logic for the application's system tray icon.
 /// </summary>
-public partial class TrayIconViewModel : ObservableObject, IDisposable
+public partial class TrayIconViewModel : ObservableObject
 {
     private readonly IAppInfoService _appInfoService;
     private readonly IDispatcherService _dispatcherService;
@@ -24,7 +24,6 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable
     private readonly ITrayPopupService _trayPopupService;
     private readonly IWindowService _windowService;
 
-    private bool _isDisposed;
     private bool _isHideToTrayEnabled;
 
     public TrayIconViewModel(
@@ -64,21 +63,18 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable
     public string ToolTipText => _appInfoService.GetAppName();
 
     /// <summary>
-    ///     Cleans up resources and unsubscribes from events to prevent memory leaks.
+    ///     Cleans up resources and unsubscribes from events.
+    ///     Called during application shutdown.
     /// </summary>
-    public void Dispose()
+    public void Cleanup()
     {
-        if (_isDisposed) return;
-
-        _logger.LogDebug("Disposing and unsubscribing from events");
+        _logger.LogDebug("Cleaning up TrayIconViewModel resources");
         _windowService.Closing -= OnAppWindowClosing;
         _windowService.VisibilityChanged -= OnAppWindowVisibilityChanged;
         _settingsService.HideToTraySettingChanged -= OnHideToTraySettingChanged;
-
-        _isDisposed = true;
         _isInitialized = false;
-        GC.SuppressFinalize(this);
     }
+
 
     /// <summary>
     ///     Asynchronously initializes the ViewModel by subscribing to window events and loading initial settings.
@@ -92,9 +88,6 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable
     {
         // Prevent double initialization and duplicate subscriptions
         if (_isInitialized) return;
-
-        // Reset disposal state in case it was incorrectly set perfectly
-        _isDisposed = false;
 
         _windowService.Closing += OnAppWindowClosing;
         _windowService.VisibilityChanged += OnAppWindowVisibilityChanged;
@@ -117,7 +110,6 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable
     {
         _dispatcherService.TryEnqueue(() =>
         {
-            if (_isDisposed) return;
             IsWindowVisible = _windowService.IsVisible;
             UpdateTrayIconVisibility();
         });
@@ -143,7 +135,6 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable
             _logger.LogDebug("'Hide to Tray' is enabled. Intercepting close and hiding window");
             _dispatcherService.TryEnqueue(() =>
             {
-                if (_isDisposed) return;
                 HideWindow();
             });
         }
@@ -159,8 +150,6 @@ public partial class TrayIconViewModel : ObservableObject, IDisposable
     {
         _dispatcherService.TryEnqueue(() =>
         {
-            if (_isDisposed) return;
-            
             _logger.LogDebug("'Hide to Tray' setting changed to {IsEnabled}", isEnabled);
             _isHideToTrayEnabled = isEnabled;
             UpdateTrayIconVisibility();

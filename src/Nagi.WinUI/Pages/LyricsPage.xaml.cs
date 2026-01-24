@@ -48,7 +48,7 @@ public sealed partial class LyricsPage : Page
         ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
         Unloaded -= OnPageUnloaded;
         _progressBarStoryboard.Stop();
-        ViewModel.Dispose();
+        ViewModel.ResetState();
     }
 
     /// <summary>

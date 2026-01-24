@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -57,30 +58,86 @@ public partial class FolderViewModelItem : ObservableObject
 ///     Manages the collection of music library folders and orchestrates library operations
 ///     such as adding, deleting, and scanning folders.
 /// </summary>
-public partial class FolderViewModel : ObservableObject, IDisposable
+public partial class FolderViewModel : ObservableObject
 {
     private readonly NotifyCollectionChangedEventHandler _collectionChangedHandler;
     private readonly ILibraryService _libraryService;
     private readonly ILogger<FolderViewModel> _logger;
     private readonly IMusicPlaybackService _musicPlaybackService;
     private readonly INavigationService _navigationService;
+    private readonly IDispatcherService _dispatcherService;
     private readonly PlayerViewModel _playerViewModel;
-    private bool _isDisposed;
+    private CancellationTokenSource? _debouncer;
     private bool _isNavigating;
 
     public FolderViewModel(ILibraryService libraryService, PlayerViewModel playerViewModel,
         IMusicPlaybackService musicPlaybackService, INavigationService navigationService,
-        ILogger<FolderViewModel> logger)
+        IDispatcherService dispatcherService, ILogger<FolderViewModel> logger)
     {
         _libraryService = libraryService;
         _playerViewModel = playerViewModel;
         _musicPlaybackService = musicPlaybackService;
         _navigationService = navigationService;
+        _dispatcherService = dispatcherService;
         _logger = logger;
 
         // Store handler reference to enable proper cleanup in Dispose
         _collectionChangedHandler = (s, e) => OnPropertyChanged(nameof(HasFolders));
         Folders.CollectionChanged += _collectionChangedHandler;
+        
+        _libraryService.LibraryContentChanged += OnLibraryContentChanged;
+    }
+
+    private void OnLibraryContentChanged(object? sender, LibraryContentChangedEventArgs e)
+    {
+        // Refresh folders list on any folder-related change
+        if (e.ChangeType == LibraryChangeType.FolderAdded || 
+            e.ChangeType == LibraryChangeType.FolderRemoved || 
+            e.ChangeType == LibraryChangeType.FolderRescanned ||
+            e.ChangeType == LibraryChangeType.LibraryRescanned)
+        {
+            // Debounce to prevent multiple refresh calls during rapid changes.
+            // We exchange the CTS to ensure only the latest one survives.
+            var oldCts = Interlocked.Exchange(ref _debouncer, new CancellationTokenSource());
+            
+            try
+            {
+                oldCts?.Cancel();
+                // We do NOT dispose oldCts here immediately. 
+                // There is a race condition where the Task using the token might check .IsCancellationRequested 
+                // at the exact moment we dispose it, causing an ObjectDisposedException on a background thread.
+                // Letting GC handle the disposal is safer for this high-frequency transient object, 
+                // or we could schedule disposal, but suppressing finalization isn't critical for simple CTS.
+            }
+            catch (ObjectDisposedException) { }
+
+            var token = _debouncer.Token;
+
+            Task.Run(async () =>
+            {
+                try
+                {
+                    // 1 second is enough to catch all events from a folder scan while still feeling responsive
+                    await Task.Delay(1000, token).ConfigureAwait(false);
+                    
+                    if (token.IsCancellationRequested) return;
+                    
+                    await _dispatcherService.EnqueueAsync(() => LoadFoldersAsync());
+                }
+                catch (OperationCanceledException)
+                {
+                    // Expected when a new event arrives
+                }
+                catch (ObjectDisposedException)
+                {
+                    // Expected if the CTS was disposed immediately after cancellation in a race
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error executing debounced folder refresh");
+                }
+            }, token);
+        }
     }
 
     [ObservableProperty] public partial ObservableCollection<FolderViewModelItem> Folders { get; set; } = new();
@@ -110,18 +167,6 @@ public partial class FolderViewModel : ObservableObject, IDisposable
     /// </summary>
     public bool HasFolders => Folders.Any();
 
-    /// <summary>
-    ///     Cleans up resources by unsubscribing from event handlers.
-    /// </summary>
-    public void Dispose()
-    {
-        if (_isDisposed) return;
-
-        if (Folders != null) Folders.CollectionChanged -= _collectionChangedHandler;
-
-        _isDisposed = true;
-        GC.SuppressFinalize(this);
-    }
 
     /// <summary>
     ///     Navigates to the song list for the selected folder.
@@ -285,8 +330,6 @@ public partial class FolderViewModel : ObservableObject, IDisposable
 
             await _libraryService.ScanFolderForMusicAsync(folder.Path, progress);
 
-            _playerViewModel.GlobalOperationStatusMessage = "Refreshing library...";
-            await LoadFoldersAsync();
             _playerViewModel.GlobalOperationStatusMessage = $"Successfully added and scanned '{folder.Name}'.";
         }
         catch (Exception ex)
@@ -324,7 +367,6 @@ public partial class FolderViewModel : ObservableObject, IDisposable
             var success = await _libraryService.RemoveFolderAsync(folderId);
             if (success)
             {
-                Folders.Remove(folderToDelete);
                 _playerViewModel.GlobalOperationStatusMessage = $"Successfully deleted '{folderToDelete.Name}'.";
             }
             else
@@ -371,9 +413,6 @@ public partial class FolderViewModel : ObservableObject, IDisposable
             });
 
             var changesDetected = await _libraryService.RescanFolderForMusicAsync(folderId, progress);
-
-            _playerViewModel.GlobalOperationStatusMessage = "Refreshing library state...";
-            await LoadFoldersAsync();
 
             _playerViewModel.GlobalOperationStatusMessage = changesDetected
                 ? $"Rescan of '{folderItem.Name}' complete."

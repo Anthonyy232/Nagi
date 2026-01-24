@@ -72,7 +72,7 @@ public sealed partial class FolderSongViewPage : Page
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
-        ViewModel.Cleanup();
+        ViewModel.Dispose();
     }
 
     /// <summary>
