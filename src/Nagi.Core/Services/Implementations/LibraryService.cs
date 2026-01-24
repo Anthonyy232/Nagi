@@ -19,6 +19,22 @@ namespace Nagi.Core.Services.Implementations;
 ///     Manages all aspects of the music library, including file scanning, metadata, and database operations.
 ///     This service is designed to be a singleton and is internally thread-safe.
 /// </summary>
+/// <remarks>
+///     <para>
+///         <b>AsSplitQuery Pattern:</b> This service extensively uses <c>.AsSplitQuery()</c> on EF Core queries
+///         that include multiple navigation properties (e.g., <c>.Include(s => s.SongArtists).Include(s => s.Album)</c>).
+///     </para>
+///     <para>
+///         Without <c>AsSplitQuery()</c>, EF Core generates a single SQL query with multiple JOINs, causing
+///         "Cartesian explosion" where the result set size grows multiplicatively with each Include.
+///         For example, a song with 3 artists and 2 genres would return 6 rows instead of 1, degrading
+///         both database and network performance significantly.
+///     </para>
+///     <para>
+///         With <c>AsSplitQuery()</c>, EF Core issues separate SQL queries for each Include and stitches
+///         results together in memory, avoiding the Cartesian product while maintaining correct data loading.
+///     </para>
+/// </remarks>
 public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 {
 
