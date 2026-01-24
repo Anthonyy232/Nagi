@@ -42,7 +42,7 @@ public partial class ArtistViewModelItem : ObservableObject
 /// <summary>
 ///     Manages the state and logic for the artist list page, including data fetching and live updates.
 /// </summary>
-public partial class ArtistViewModel : SearchableViewModelBase, IDisposable
+public partial class ArtistViewModel : SearchableViewModelBase
 {
     private const int PageSize = 250;
     private readonly Dictionary<Guid, ArtistViewModelItem> _artistLookup = new();
@@ -56,6 +56,7 @@ public partial class ArtistViewModel : SearchableViewModelBase, IDisposable
     private bool _isFullyLoaded;
     private bool _hasSortOrderLoaded;
     private bool _isNavigating;
+    private CancellationTokenSource? _debouncer;
 
     public ArtistViewModel(
         ILibraryService libraryService,
@@ -77,7 +78,38 @@ public partial class ArtistViewModel : SearchableViewModelBase, IDisposable
         _collectionChangedHandler = (s, e) => OnPropertyChanged(nameof(HasArtists));
         Artists.CollectionChanged += _collectionChangedHandler;
         
+        // Subscribe to library changes to refresh when folders are added/removed
+        _libraryService.LibraryContentChanged += OnLibraryContentChanged;
+        
         UpdateSortOrderText();
+    }
+    
+    private void OnLibraryContentChanged(object? sender, LibraryContentChangedEventArgs e)
+    {
+        // We don't need to refresh the artist list just because a folder container was added (it has no songs/artists yet).
+        if (e.ChangeType == LibraryChangeType.FolderAdded) return;
+        
+        // Debounce to prevent multiple refresh calls during rapid changes.
+        var oldCts = Interlocked.Exchange(ref _debouncer, new CancellationTokenSource());
+        try { oldCts?.Cancel(); } catch (ObjectDisposedException) { }
+        
+        var token = _debouncer.Token;
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                await Task.Delay(1000, token).ConfigureAwait(false);
+                if (token.IsCancellationRequested) return;
+                
+                _logger.LogDebug("Library content changed ({ChangeType}). Refreshing artist list.", e.ChangeType);
+                await _dispatcherService.EnqueueAsync(() => LoadArtistsCommand.ExecuteAsync(CancellationToken.None));
+            }
+            catch (OperationCanceledException) { }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error refreshing artists after library content change");
+            }
+        }, token);
     }
 
     [ObservableProperty] public partial ObservableCollection<ArtistViewModelItem> Artists { get; set; } = new();
@@ -98,22 +130,6 @@ public partial class ArtistViewModel : SearchableViewModelBase, IDisposable
 
 
     public bool HasArtists => Artists.Any();
-
-    /// <summary>
-    ///     Cleans up resources by unsubscribing from event handlers.
-    /// </summary>
-    public void Dispose()
-    {
-        if (_isDisposed) return;
-
-        if (Artists != null) Artists.CollectionChanged -= _collectionChangedHandler;
-        _libraryService.ArtistMetadataUpdated -= OnArtistMetadataUpdated;
-        CancelPendingSearch();
-        _logger.LogDebug("ArtistViewModel state cleaned up.");
-
-        _isDisposed = true;
-        GC.SuppressFinalize(this);
-    }
 
     /// <summary>
     ///     Navigates to the detailed view for the selected artist.
@@ -287,9 +303,6 @@ public partial class ArtistViewModel : SearchableViewModelBase, IDisposable
             // Ensure UI updates are performed on the main thread.
             _dispatcherService.TryEnqueue(() =>
             {
-                // Guard against updates after the ViewModel has been disposed.
-                if (_isDisposed) return;
-
                 // Force refresh by setting to null first, then apply cache-buster
                 artistVm.LocalImageCachePath = null;
                 artistVm.LocalImageCachePath = ImageUriHelper.GetUriWithCacheBuster(e.NewLocalImageCachePath);
@@ -315,9 +328,9 @@ public partial class ArtistViewModel : SearchableViewModelBase, IDisposable
     /// <summary>
     ///     Cleans up search state when navigating away from the page.
     /// </summary>
-    public override void Cleanup()
+    public override void ResetState()
     {
-        base.Cleanup();
+        base.ResetState();
         _logger.LogDebug("Cleaned up ArtistViewModel search resources");
     }
 

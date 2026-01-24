@@ -20,13 +20,13 @@ namespace Nagi.WinUI.ViewModels;
 public partial class LibraryViewModel : SongListViewModelBase
 {
     private static bool _isInitialScanTriggered;
-    private readonly ILibraryScanner _libraryScanner;
+    private readonly ILibraryService _libraryService;
     private readonly IUISettingsService _settingsService;
+    private CancellationTokenSource? _debouncer;
 
     public LibraryViewModel(
-        ILibraryReader libraryReader,
+        ILibraryService libraryService,
         IPlaylistService playlistService,
-        ILibraryScanner libraryScanner,
         IMusicPlaybackService playbackService,
         INavigationService navigationService,
         IMusicNavigationService musicNavigationService,
@@ -34,13 +34,12 @@ public partial class LibraryViewModel : SongListViewModelBase
         IUISettingsService settingsService,
         IUIService uiService,
         ILogger<LibraryViewModel> logger)
-        : base(libraryReader, playlistService, playbackService, navigationService, musicNavigationService, dispatcherService, uiService, logger)
+        : base(libraryService, playlistService, playbackService, navigationService, musicNavigationService, dispatcherService, uiService, logger)
     {
-        _libraryScanner = libraryScanner;
+        _libraryService = libraryService;
         _settingsService = settingsService;
-        _libraryScanner.ScanCompleted += OnScanCompleted;
+        _libraryService.LibraryContentChanged += OnLibraryContentChanged;
     }
-
 
     protected override Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
         SongSortOrder sortOrder)
@@ -69,31 +68,37 @@ public partial class LibraryViewModel : SongListViewModelBase
 
         _logger.LogDebug("Starting initial background library refresh");
         // We don't await this because we want the UI to be responsive.
-        // The ScanCompleted event will trigger a refresh when it finishes.
-        _ = _libraryScanner.RefreshAllFoldersAsync();
+        // The LibraryContentChanged event will trigger a refresh when it finishes.
+        _ = _libraryService.RefreshAllFoldersAsync();
     }
 
-    private void OnScanCompleted(object? sender, bool changesFound)
+    private void OnLibraryContentChanged(object? sender, LibraryContentChangedEventArgs e)
     {
+        // We don't need to refresh the song list just because a folder container was added (it has no songs yet).
+        // We wait for the subsequent scan to update us.
+        if (e.ChangeType == LibraryChangeType.FolderAdded) return;
+
+        // Debounce to prevent multiple refresh calls during rapid changes.
+        var oldCts = Interlocked.Exchange(ref _debouncer, new CancellationTokenSource());
+        try { oldCts?.Cancel(); } catch (ObjectDisposedException) { }
+        
+        var token = _debouncer.Token;
         _ = Task.Run(async () =>
         {
             try
             {
-                if (changesFound)
-                {
-                    _logger.LogDebug("Scan completed with changes. Refreshing song list");
-                    await _dispatcherService.EnqueueAsync(() => RefreshOrSortSongsCommand.ExecuteAsync(null));
-                }
-                else
-                {
-                    _logger.LogDebug("Scan completed with no changes");
-                }
+                await Task.Delay(1000, token).ConfigureAwait(false);
+                if (token.IsCancellationRequested) return;
+                
+                _logger.LogDebug("Library content changed ({ChangeType}). Refreshing song list.", e.ChangeType);
+                await _dispatcherService.EnqueueAsync(() => RefreshOrSortSongsCommand.ExecuteAsync(null));
             }
+            catch (OperationCanceledException) { }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error handling scan completion in LibraryViewModel");
+                _logger.LogError(ex, "Error handling library content change in LibraryViewModel");
             }
-        });
+        }, token);
     }
 
 
@@ -102,10 +107,4 @@ public partial class LibraryViewModel : SongListViewModelBase
         return _settingsService.SetSortOrderAsync(SortOrderHelper.LibrarySortOrderKey, sortOrder);
     }
 
-    public override void Cleanup()
-    {
-        base.Cleanup();
-        _libraryScanner.ScanCompleted -= OnScanCompleted;
-        _logger.LogDebug("Cleaned up LibraryViewModel specific resources");
-    }
 }

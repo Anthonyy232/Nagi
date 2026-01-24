@@ -547,22 +547,26 @@ public partial class App : Application
 
     private static void ConfigureViewModels(IServiceCollection services)
     {
+        // Global singletons - persist for app lifetime
         services.AddSingleton<PlayerViewModel>();
         services.AddSingleton<TrayIconViewModel>();
+        
+        // List/Grid ViewModels - Singleton for fast navigation, refresh on data changes
+        services.AddSingleton<LibraryViewModel>();
+        services.AddSingleton<PlaylistViewModel>();
+        services.AddSingleton<FolderViewModel>();
+        services.AddSingleton<ArtistViewModel>();
+        services.AddSingleton<AlbumViewModel>();
+        services.AddSingleton<GenreViewModel>();
 
-        services.AddTransient<LibraryViewModel>();
-        services.AddTransient<PlaylistViewModel>();
+        // Detail/Context ViewModels - Transient, need different params each navigation
         services.AddTransient<SettingsViewModel>();
         services.AddTransient<OnboardingViewModel>();
         services.AddTransient<PlaylistSongListViewModel>();
         services.AddTransient<SmartPlaylistSongListViewModel>();
-        services.AddTransient<FolderViewModel>();
         services.AddTransient<FolderSongListViewModel>();
-        services.AddTransient<ArtistViewModel>();
         services.AddTransient<ArtistViewViewModel>();
         services.AddTransient<AlbumViewViewModel>();
-        services.AddTransient<AlbumViewModel>();
-        services.AddTransient<GenreViewModel>();
         services.AddTransient<GenreViewViewModel>();
         services.AddTransient<LyricsPageViewModel>();
     }
@@ -713,6 +717,11 @@ public partial class App : Application
             if (Services is not null)
             {
                 _logger?.LogInformation("Window is closing. Shutting down services.");
+                
+                // Clean up singleton ViewModels
+                Services.GetRequiredService<PlayerViewModel>().Cleanup();
+                Services.GetRequiredService<TrayIconViewModel>().Cleanup();
+                
                 await Services.GetRequiredService<IPresenceManager>().ShutdownAsync();
                 await SaveApplicationStateAsync(Services);
             }

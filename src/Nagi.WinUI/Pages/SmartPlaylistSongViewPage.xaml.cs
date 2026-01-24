@@ -67,8 +67,8 @@ public sealed partial class SmartPlaylistSongViewPage : Page
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
-        _logger.LogDebug("Navigating away from SmartPlaylistSongViewPage. Cleaning up ViewModel.");
-        ViewModel.Cleanup();
+        _logger.LogDebug("Navigating away from SmartPlaylistSongViewPage. Disposing ViewModel.");
+        ViewModel.Dispose();
     }
 
     private void OnPageLoaded(object sender, RoutedEventArgs e)

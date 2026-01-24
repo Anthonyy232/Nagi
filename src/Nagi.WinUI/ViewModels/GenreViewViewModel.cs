@@ -104,8 +104,9 @@ public partial class GenreViewViewModel : SongListViewModelBase
         return _settingsService.SetSortOrderAsync(SortOrderHelper.GenreViewSortOrderKey, sortOrder);
     }
 
-    public override void Cleanup()
+    public override void ResetState()
     {
-        base.Cleanup();
+        base.ResetState();
+        _logger.LogDebug("Cleaned up GenreViewViewModel search resources");
     }
 }

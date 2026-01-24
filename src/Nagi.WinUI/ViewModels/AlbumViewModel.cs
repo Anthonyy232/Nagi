@@ -47,7 +47,7 @@ public partial class AlbumViewModelItem : ObservableObject
 /// <summary>
 ///     Manages the state and logic for the album list page, featuring gradual data fetching.
 /// </summary>
-public partial class AlbumViewModel : SearchableViewModelBase, IDisposable
+public partial class AlbumViewModel : SearchableViewModelBase
 {
     private const int PageSize = 250;
     private readonly NotifyCollectionChangedEventHandler _collectionChangedHandler;
@@ -60,6 +60,7 @@ public partial class AlbumViewModel : SearchableViewModelBase, IDisposable
     private bool _isFullyLoaded;
     private bool _hasSortOrderLoaded;
     private bool _isNavigating;
+    private CancellationTokenSource? _debouncer;
 
     public AlbumViewModel(ILibraryService libraryService, IMusicPlaybackService musicPlaybackService,
         INavigationService navigationService, IMusicNavigationService musicNavigationService,
@@ -76,7 +77,38 @@ public partial class AlbumViewModel : SearchableViewModelBase, IDisposable
         _collectionChangedHandler = (sender, args) => OnPropertyChanged(nameof(HasAlbums));
         Albums.CollectionChanged += _collectionChangedHandler;
         
+        // Subscribe to library changes to refresh when folders are added/removed
+        _libraryService.LibraryContentChanged += OnLibraryContentChanged;
+        
         UpdateSortOrderText();
+    }
+    
+    private void OnLibraryContentChanged(object? sender, LibraryContentChangedEventArgs e)
+    {
+        // We don't need to refresh the album list just because a folder container was added (it has no songs/albums yet).
+        if (e.ChangeType == LibraryChangeType.FolderAdded) return;
+        
+        // Debounce to prevent multiple refresh calls during rapid changes.
+        var oldCts = Interlocked.Exchange(ref _debouncer, new CancellationTokenSource());
+        try { oldCts?.Cancel(); } catch (ObjectDisposedException) { }
+        
+        var token = _debouncer.Token;
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                await Task.Delay(1000, token).ConfigureAwait(false);
+                if (token.IsCancellationRequested) return;
+                
+                _logger.LogDebug("Library content changed ({ChangeType}). Refreshing album list.", e.ChangeType);
+                await _dispatcherService.EnqueueAsync(() => LoadAlbumsCommand.ExecuteAsync(CancellationToken.None));
+            }
+            catch (OperationCanceledException) { }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error refreshing albums after library content change");
+            }
+        }, token);
     }
 
     [ObservableProperty] public partial ObservableCollection<AlbumViewModelItem> Albums { get; set; } = new();
@@ -96,20 +128,6 @@ public partial class AlbumViewModel : SearchableViewModelBase, IDisposable
     partial void OnCurrentSortOrderChanged(AlbumSortOrder value) => UpdateSortOrderText();
 
     public bool HasAlbums => Albums.Any();
-
-    /// <summary>
-    ///     Cleans up resources by unsubscribing from event handlers.
-    /// </summary>
-    public void Dispose()
-    {
-        if (_isDisposed) return;
-
-        if (Albums != null) Albums.CollectionChanged -= _collectionChangedHandler;
-        CancelPendingSearch();
-
-        _isDisposed = true;
-        GC.SuppressFinalize(this);
-    }
 
     private void UpdateSortOrderText()
     {
@@ -276,14 +294,5 @@ public partial class AlbumViewModel : SearchableViewModelBase, IDisposable
             if (token.IsCancellationRequested) return;
             await LoadAlbumsAsync(token);
         });
-    }
-
-    /// <summary>
-    ///     Cleans up search state when navigating away from the page.
-    /// </summary>
-    public override void Cleanup()
-    {
-        base.Cleanup();
-        _logger.LogDebug("Cleaned up AlbumViewModel search resources");
     }
 }

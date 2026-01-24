@@ -17,7 +17,6 @@ public abstract partial class SearchableViewModelBase : ObservableObject
     protected readonly IDispatcherService _dispatcherService;
     protected readonly ILogger _logger;
     private CancellationTokenSource? _debounceCts;
-    protected bool _isDisposed;
 
     protected SearchableViewModelBase(IDispatcherService dispatcherService, ILogger logger)
     {
@@ -37,7 +36,6 @@ public abstract partial class SearchableViewModelBase : ObservableObject
 
     partial void OnSearchTermChanged(string value)
     {
-        if (_isDisposed) return;
         OnSearchTermChangedInternal(value);
         TriggerDebouncedSearch();
     }
@@ -56,7 +54,6 @@ public abstract partial class SearchableViewModelBase : ObservableObject
     [RelayCommand]
     public virtual async Task SearchAsync()
     {
-        if (_isDisposed) return;
         CancelPendingSearch();
 
         _debounceCts = new CancellationTokenSource();
@@ -81,7 +78,6 @@ public abstract partial class SearchableViewModelBase : ObservableObject
     /// </summary>
     protected void TriggerDebouncedSearch()
     {
-        if (_isDisposed) return;
         CancelPendingSearch();
 
         var cts = new CancellationTokenSource();
@@ -94,17 +90,13 @@ public abstract partial class SearchableViewModelBase : ObservableObject
             {
                 await Task.Delay(SearchDebounceDelay, token);
 
-                if (token.IsCancellationRequested || _isDisposed) return;
+                if (token.IsCancellationRequested) return;
 
                 await ExecuteSearchAsync(token);
             }
             catch (OperationCanceledException)
             {
 
-            }
-            catch (ObjectDisposedException)
-            {
-                _logger.LogDebug("Search cancelled due to object disposal.");
             }
             catch (Exception ex)
             {
@@ -140,12 +132,12 @@ public abstract partial class SearchableViewModelBase : ObservableObject
     protected abstract Task ExecuteSearchAsync(CancellationToken token);
 
     /// <summary>
-    ///     Cleans up search-related resources.
+    ///     Cancels pending operations and resets transient state.
+    ///     For Singletons, this should be called when navigating away, but it must NOT dispose the object.
     /// </summary>
-    public virtual void Cleanup()
+    public virtual void ResetState()
     {
-        _isDisposed = true;
         CancelPendingSearch();
-        SearchTerm = string.Empty;
+        // Option: SearchTerm = string.Empty; // Decided to keep search term for better UX when navigating back
     }
 }

@@ -140,13 +140,13 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
     /// <summary>
     ///     Cleans up resources specific to this view model.
     /// </summary>
-    public override void Cleanup()
+    public override void ResetState()
     {
         _logger.LogDebug("Cleaning up SmartPlaylistSongListViewModel resources");
 
         _currentSmartPlaylist = null;
         _currentSmartPlaylistId = null;
 
-        base.Cleanup();
+        base.ResetState();
     }
 }

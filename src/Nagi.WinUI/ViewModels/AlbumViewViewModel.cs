@@ -292,12 +292,12 @@ public partial class AlbumViewViewModel : SongListViewModelBase
         return _settingsService.SetSortOrderAsync(SortOrderHelper.AlbumViewSortOrderKey, sortOrder);
     }
 
-    public override void Cleanup()
+    public override void ResetState()
     {
         _durationFetchCts?.Cancel();
         _durationFetchCts?.Dispose();
         _durationFetchCts = null;
-        base.Cleanup();
+        base.ResetState();
     }
 }
 

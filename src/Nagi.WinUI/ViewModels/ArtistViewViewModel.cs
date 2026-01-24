@@ -265,12 +265,13 @@ public partial class ArtistViewViewModel : SongListViewModelBase
     /// <summary>
     ///     Unsubscribes from events to prevent memory leaks.
     /// </summary>
-    public override void Cleanup()
+    public override void ResetState()
     {
         _pageCts.Cancel();
         _pageCts.Dispose();
 
-        base.Cleanup();
+        base.ResetState();
+        _logger.LogDebug("Cleaned up ArtistViewViewModel search resources");
         _libraryScanner.ArtistMetadataUpdated -= OnArtistMetadataUpdated;
 
         // Properly unsubscribe using the stored handler reference.

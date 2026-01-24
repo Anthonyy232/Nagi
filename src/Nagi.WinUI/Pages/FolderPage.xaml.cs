@@ -51,13 +51,12 @@ public sealed partial class FolderPage : Page
 
     /// <summary>
     ///     Handles the page's navigated-from event.
-    ///     This is the critical cleanup step that disposes the ViewModel to prevent memory leaks.
     /// </summary>
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
-        _logger.LogDebug("Navigating away from FolderPage. Disposing ViewModel.");
-        ViewModel.Dispose();
+        _logger.LogDebug("Navigating away from FolderPage.");
+        // Note: ViewModel is Singleton, do not dispose - state persists across navigations
     }
 
     /// <summary>

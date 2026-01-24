@@ -72,7 +72,7 @@ public sealed partial class AlbumPage : Page
 
     /// <summary>
     ///     Handles the page's navigated-from event.
-    ///     Cancels any ongoing data loading operations and disposes the ViewModel.
+    ///     Cancels ongoing tasks but does not dispose the Singleton ViewModel.
     /// </summary>
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
@@ -87,10 +87,7 @@ public sealed partial class AlbumPage : Page
 
         _cancellationTokenSource?.Dispose();
         _cancellationTokenSource = null;
-
-        ViewModel.Cleanup();
-        _logger.LogDebug("Disposing AlbumViewModel.");
-        ViewModel.Dispose();
+        // Note: ViewModel is Singleton, do not dispose - state persists across navigations
     }
 
     /// <summary>

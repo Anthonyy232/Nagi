@@ -75,8 +75,8 @@ public sealed partial class GenreViewPage : Page
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
-        _logger.LogDebug("Navigating away from GenreViewPage. Cleaning up ViewModel.");
-        ViewModel.Cleanup();
+        _logger.LogDebug("Navigating away from GenreViewPage. Disposing ViewModel.");
+        ViewModel.Dispose();
     }
 
     /// <summary>

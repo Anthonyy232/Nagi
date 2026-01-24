@@ -100,7 +100,7 @@ public partial class PlaylistViewModelItem : ObservableObject
 /// <summary>
 ///     ViewModel for managing the collection of playlists.
 /// </summary>
-public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
+public partial class PlaylistViewModel : SearchableViewModelBase
 {
     private readonly NotifyCollectionChangedEventHandler _collectionChangedHandler;
     private readonly ILibraryService _libraryService;
@@ -176,21 +176,6 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
     /// </summary>
     public bool HasPlaylists => Playlists.Any();
 
-    /// <summary>
-    ///     Cleans up resources by unsubscribing from event handlers.
-    /// </summary>
-    public void Dispose()
-    {
-        if (_isDisposed) return;
-        _isDisposed = true;
-
-        if (Playlists != null) Playlists.CollectionChanged -= _collectionChangedHandler;
-        _libraryService.PlaylistUpdated -= OnPlaylistUpdated;
-        _smartPlaylistService.PlaylistUpdated -= OnPlaylistUpdated;
-        CancelPendingSearch();
-        _logger.LogDebug("PlaylistViewModel state cleaned up.");
-        GC.SuppressFinalize(this);
-    }
 
     /// <summary>
     ///     Navigates to the song list for the selected playlist.
@@ -630,9 +615,9 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
     /// <summary>
     ///     Cleans up search state when navigating away from the page.
     /// </summary>
-    public override void Cleanup()
+    public override void ResetState()
     {
-        base.Cleanup();
+        base.ResetState();
         _logger.LogDebug("Cleaned up PlaylistViewModel search resources");
     }
 
@@ -640,8 +625,6 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
     {
         _dispatcherService.TryEnqueue(() =>
         {
-            if (_isDisposed) return;
-
             // Update the main observable collection
             var playlist = Playlists.FirstOrDefault(p => p.Id == e.PlaylistId);
             if (playlist != null)
