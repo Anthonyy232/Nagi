@@ -3239,6 +3239,11 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         _logger.LogInformation("Saving changes for batch...");
         await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        
+        // Release all tracked entities immediately to reduce memory pressure during large scans.
+        // This is safe here because we return immediately after - no further entity operations needed.
+        context.ChangeTracker.Clear();
+        
         _logger.LogInformation("Batch saved successfully.");
 
         return metadataList.Length;
