@@ -575,15 +575,21 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     private void OnMediaPlayerStateChanged(object? sender, EventArgs e)
     {
         if (_isDisposed || _mediaPlayer is null) return;
+        
+        // Capture volatile fields before enqueueing to prevent TOCTOU races.
+        // Between the outer check and lambda execution, Dispose/Stop could null these fields.
+        var currentSong = _currentSong;
+        var isExplicitStop = _isExplicitStop;
+        
         _dispatcherService.TryEnqueue(() =>
         {
             if (_isDisposed) return;
             StateChanged?.Invoke();
             
             // Only fire PlaybackEnded for natural end of playback, not explicit stops
-            if (_mediaPlayer?.State == VLCState.Stopped && _currentSong is not null && !_isExplicitStop)
+            if (_mediaPlayer?.State == VLCState.Stopped && currentSong is not null && !isExplicitStop)
             {
-                _logger.LogDebug("Detected natural end of playback for song '{SongTitle}'.", _currentSong.Title);
+                _logger.LogDebug("Detected natural end of playback for song '{SongTitle}'.", currentSong.Title);
                 PlaybackEnded?.Invoke();
             }
             
@@ -691,33 +697,35 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
 
     private async Task UpdateSmtcDisplayAsync()
     {
-        if (_isDisposed || _smtc is null || _currentSong is null) return;
+        // Capture _currentSong to prevent TOCTOU race - field could become null during async operations
+        var currentSong = _currentSong;
+        if (_isDisposed || _smtc is null || currentSong is null) return;
 
         try
         {
-            _logger.LogDebug("Updating SMTC display for track '{SongTitle}'.", _currentSong.Title);
+            _logger.LogDebug("Updating SMTC display for track '{SongTitle}'.", currentSong.Title);
             var updater = _smtc.DisplayUpdater;
             updater.Type = MediaPlaybackType.Music;
-            updater.MusicProperties.Title = _currentSong.Title ?? string.Empty;
-            updater.MusicProperties.Artist = _currentSong.ArtistName;
+            updater.MusicProperties.Title = currentSong.Title ?? string.Empty;
+            updater.MusicProperties.Artist = currentSong.ArtistName;
             updater.MusicProperties.AlbumArtist =
-                _currentSong.Album?.ArtistName ?? _currentSong.ArtistName;
-            updater.MusicProperties.AlbumTitle = _currentSong.Album?.Title ?? Album.UnknownAlbumName;
+                currentSong.Album?.ArtistName ?? currentSong.ArtistName;
+            updater.MusicProperties.AlbumTitle = currentSong.Album?.Title ?? Album.UnknownAlbumName;
 
             updater.Thumbnail = null;
 
-            if (!string.IsNullOrEmpty(_currentSong.AlbumArtUriFromTrack))
+            if (!string.IsNullOrEmpty(currentSong.AlbumArtUriFromTrack))
                 try
                 {
                     if (_disposeCts.IsCancellationRequested) return;
-                    var albumArtFile = await StorageFile.GetFileFromPathAsync(_currentSong.AlbumArtUriFromTrack).AsTask().ConfigureAwait(false);
+                    var albumArtFile = await StorageFile.GetFileFromPathAsync(currentSong.AlbumArtUriFromTrack).AsTask().ConfigureAwait(false);
                     if (_disposeCts.IsCancellationRequested) return;
                     updater.Thumbnail = RandomAccessStreamReference.CreateFromFile(albumArtFile);
                 }
                 catch (Exception ex)
                 {
                     _logger.LogWarning(ex, "Failed to load and set SMTC thumbnail from {AlbumArtPath}",
-                        _currentSong.AlbumArtUriFromTrack);
+                        currentSong.AlbumArtUriFromTrack);
                 }
 
             if (!_disposeCts.IsCancellationRequested)
