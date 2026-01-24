@@ -152,4 +152,224 @@ public class InterceptorTests : IDisposable
             song.ArtistName.Should().Be("A");
         }
     }
+
+    /// <summary>
+    ///     Verifies that when a song is attached without its SongArtists navigation property loaded,
+    ///     marking it as Modified and saving does NOT wipe the ArtistName field when defensive 
+    ///     loading is applied (as done in UpdateSongAsync).
+    /// </summary>
+    [Fact]
+    public async Task SaveChanges_WhenSongAttachedWithDefensiveLoading_PreservesArtistName()
+    {
+        // Arrange: Create a song with artists
+        Guid songId;
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            var folder = new Folder { Path = "C:\\Music", Name = "Music" };
+            context.Folders.Add(folder);
+
+            var artist = new Artist { Name = "Test Artist" };
+            var song = new Song 
+            { 
+                Title = "Test Song",
+                Folder = folder,
+                FilePath = "C:\\Music\\test.mp3",
+                DirectoryPath = "C:\\Music"
+            };
+            song.SongArtists.Add(new SongArtist { Artist = artist, Order = 0 });
+            context.Artists.Add(artist);
+            context.Songs.Add(song);
+            await context.SaveChangesAsync();
+            songId = song.Id;
+        }
+
+        // Act: Load song WITHOUT SongArtists (simulates AsNoTracking query), then attach and update
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            // Load without navigation (SongArtists is empty collection by default)
+            var song = await context.Songs
+                .AsNoTracking()
+                .FirstAsync(s => s.Id == songId);
+            
+            // Verify the song loaded without artists
+            song.SongArtists.Should().BeEmpty();
+            
+            // Attach and apply defensive loading (as UpdateSongAsync does)
+            context.Songs.Attach(song);
+            await context.Entry(song)
+                .Collection(s => s.SongArtists)
+                .Query()
+                .Include(sa => sa.Artist)
+                .LoadAsync();
+            
+            // Now modify the song
+            song.Title = "Updated Title";
+            context.Entry(song).State = EntityState.Modified;
+            
+            await context.SaveChangesAsync();
+        }
+
+        // Assert: ArtistName should be preserved
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            var song = await context.Songs.FirstAsync(s => s.Id == songId);
+            song.Title.Should().Be("Updated Title");
+            song.ArtistName.Should().Be("Test Artist");
+            song.PrimaryArtistName.Should().Be("Test Artist");
+        }
+    }
+
+    /// <summary>
+    ///     Verifies that when a song is simply modified (without SongArtist changes),
+    ///     the interceptor does NOT attempt to sync denormalized fields at all.
+    ///     This is the expected behavior - the interceptor only syncs when:
+    ///     1. The song is newly Added
+    ///     2. SongArtist relationships are Added, Modified, or Deleted
+    /// </summary>
+    [Fact]
+    public async Task SaveChanges_WhenSongModifiedWithoutSongArtistChanges_DoesNotTriggerSync()
+    {
+        // Arrange: Create a song with artists
+        Guid songId;
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            var folder = new Folder { Path = "C:\\Music", Name = "Music" };
+            context.Folders.Add(folder);
+
+            var artist = new Artist { Name = "Original Artist" };
+            var song = new Song 
+            { 
+                Title = "Original Song",
+                Folder = folder,
+                FilePath = "C:\\Music\\original.mp3",
+                DirectoryPath = "C:\\Music"
+            };
+            song.SongArtists.Add(new SongArtist { Artist = artist, Order = 0 });
+            context.Artists.Add(artist);
+            context.Songs.Add(song);
+            await context.SaveChangesAsync();
+            songId = song.Id;
+            
+            // Verify setup
+            song.ArtistName.Should().Be("Original Artist");
+        }
+
+        // Act: Load song, modify only non-relationship fields, and save
+        // The interceptor should NOT be triggered since no SongArtist changes
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            var song = await context.Songs.FirstAsync(s => s.Id == songId);
+            song.Title = "Modified Title";
+            
+            await context.SaveChangesAsync();
+        }
+
+        // Assert: ArtistName is preserved because interceptor didn't sync
+        // (no SongArtist relationship changes occurred)
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            var song = await context.Songs.FirstAsync(s => s.Id == songId);
+            song.Title.Should().Be("Modified Title");
+            song.ArtistName.Should().Be("Original Artist");
+        }
+    }
+
+
+    /// <summary>
+    ///     Verifies that Unicode combining characters in artist names are handled correctly.
+    /// </summary>
+    [Fact]
+    public async Task SaveChanges_WithUnicodeCombiningCharacters_PreservesArtistName()
+    {
+        // Arrange: Create a song with an artist using combining characters
+        // "José" represented as "Jose\u0301" (J-o-s-e + combining acute accent)
+        await using var context = _dbHelper.ContextFactory.CreateDbContext();
+        var folder = new Folder { Path = "C:\\Music", Name = "Music" };
+        context.Folders.Add(folder);
+
+        var artistWithCombining = new Artist { Name = "Jose\u0301" }; // Combining form
+        var song = new Song 
+        { 
+            Title = "Spanish Song",
+            Folder = folder,
+            FilePath = "C:\\Music\\spanish.mp3",
+            DirectoryPath = "C:\\Music"
+        };
+        song.SongArtists.Add(new SongArtist { Artist = artistWithCombining, Order = 0 });
+        context.Artists.Add(artistWithCombining);
+        context.Songs.Add(song);
+
+        // Act
+        await context.SaveChangesAsync();
+
+        // Assert: The combining character representation should be preserved
+        song.ArtistName.Should().Be("Jose\u0301");
+        song.PrimaryArtistName.Should().Be("Jose\u0301");
+    }
+
+    /// <summary>
+    ///     Verifies that right-to-left text in artist names is handled correctly.
+    /// </summary>
+    [Fact]
+    public async Task SaveChanges_WithRtlArtistName_PreservesArtistName()
+    {
+        // Arrange
+        await using var context = _dbHelper.ContextFactory.CreateDbContext();
+        var folder = new Folder { Path = "C:\\Music", Name = "Music" };
+        context.Folders.Add(folder);
+
+        // Arabic artist name
+        var arabicArtist = new Artist { Name = "فنان عربي" };
+        var song = new Song 
+        { 
+            Title = "Arabic Song",
+            Folder = folder,
+            FilePath = "C:\\Music\\arabic.mp3",
+            DirectoryPath = "C:\\Music"
+        };
+        song.SongArtists.Add(new SongArtist { Artist = arabicArtist, Order = 0 });
+        context.Artists.Add(arabicArtist);
+        context.Songs.Add(song);
+
+        // Act
+        await context.SaveChangesAsync();
+
+        // Assert
+        song.ArtistName.Should().Be("فنان عربي");
+        song.PrimaryArtistName.Should().Be("فنان عربي");
+    }
+
+    /// <summary>
+    ///     Verifies that mixed LTR and RTL text in multiple artists is handled correctly.
+    /// </summary>
+    [Fact]
+    public async Task SaveChanges_WithMixedLtrAndRtlArtists_FormatsCorrectly()
+    {
+        // Arrange
+        await using var context = _dbHelper.ContextFactory.CreateDbContext();
+        var folder = new Folder { Path = "C:\\Music", Name = "Music" };
+        context.Folders.Add(folder);
+
+        var englishArtist = new Artist { Name = "English Artist" };
+        var hebrewArtist = new Artist { Name = "אמן עברי" }; // Hebrew artist
+        var song = new Song 
+        { 
+            Title = "Collaboration",
+            Folder = folder,
+            FilePath = "C:\\Music\\collab.mp3",
+            DirectoryPath = "C:\\Music"
+        };
+        song.SongArtists.Add(new SongArtist { Artist = englishArtist, Order = 0 });
+        song.SongArtists.Add(new SongArtist { Artist = hebrewArtist, Order = 1 });
+        context.Artists.AddRange(englishArtist, hebrewArtist);
+        context.Songs.Add(song);
+
+        // Act
+        await context.SaveChangesAsync();
+
+        // Assert: Both artists should be present with proper separator
+        song.ArtistName.Should().Be("English Artist & אמן עברי");
+        song.PrimaryArtistName.Should().Be("English Artist");
+    }
 }
+

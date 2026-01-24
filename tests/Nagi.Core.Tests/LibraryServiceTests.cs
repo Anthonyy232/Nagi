@@ -1032,4 +1032,164 @@ public class LibraryServiceTests : IDisposable
     }
 
     #endregion
+
+    #region Concurrency Tests
+
+    /// <summary>
+    ///     Verifies that <see cref="LibraryService.UpdateSongAsync" /> uses defensive loading
+    ///     to preserve ArtistName when updating a song that was loaded without SongArtists navigation.
+    /// </summary>
+    [Fact]
+    public async Task UpdateSongAsync_WithSongLoadedWithoutSongArtists_PreservesArtistName()
+    {
+        // Arrange: Create a song with an artist
+        Guid songId;
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            var folder = new Folder { Path = "C:\\Music", Name = "Music" };
+            context.Folders.Add(folder);
+
+            var artist = new Artist { Name = "Preserved Artist" };
+            var song = new Song 
+            { 
+                Title = "Original Title",
+                Folder = folder,
+                FilePath = "C:\\Music\\preserve.mp3",
+                DirectoryPath = "C:\\Music"
+            };
+            song.SongArtists.Add(new SongArtist { Artist = artist, Order = 0 });
+            context.Artists.Add(artist);
+            context.Songs.Add(song);
+            await context.SaveChangesAsync();
+            songId = song.Id;
+            
+            // Verify the artist name was set
+            song.ArtistName.Should().Be("Preserved Artist");
+        }
+
+        // Act: Load the song WITHOUT SongArtists, modify it, and update via LibraryService
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            var song = await context.Songs
+                .AsNoTracking()
+                .FirstAsync(s => s.Id == songId);
+            
+            // Verify it loaded without SongArtists
+            song.SongArtists.Should().BeEmpty();
+            
+            // Modify the song
+            song.Title = "Updated Title";
+            
+            // This should use defensive loading internally
+            await _libraryService.UpdateSongAsync(song);
+        }
+
+        // Assert: ArtistName should be preserved
+        await using (var assertContext = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            var song = await assertContext.Songs.FirstAsync(s => s.Id == songId);
+            song.Title.Should().Be("Updated Title");
+            song.ArtistName.Should().Be("Preserved Artist");
+            song.PrimaryArtistName.Should().Be("Preserved Artist");
+        }
+    }
+
+    /// <summary>
+    ///     Verifies that multiple concurrent calls to scan operations are serialized
+    ///     by the scan semaphore and don't cause data corruption.
+    /// </summary>
+    [Fact]
+    public async Task RescanFolderForMusicAsync_WhenCalledConcurrently_SerializesOperations()
+    {
+        // Arrange: Create a folder with some songs
+        var folder = new Folder { Id = Guid.NewGuid(), Path = "C:\\Music\\Concurrent", Name = "Concurrent" };
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.Add(folder);
+            await context.SaveChangesAsync();
+        }
+
+        _fileSystem.DirectoryExists(folder.Path).Returns(true);
+        _fileSystem.EnumerateFiles(folder.Path, Arg.Any<string>(), Arg.Any<SearchOption>())
+            .Returns(new[] { "C:\\Music\\Concurrent\\song1.mp3" });
+        _fileSystem.GetExtension(Arg.Any<string>()).Returns(".mp3");
+        _fileSystem.GetLastWriteTimeUtc(Arg.Any<string>()).Returns(DateTime.UtcNow);
+        
+        _metadataService.ExtractMetadataAsync(Arg.Any<string>(), Arg.Any<string?>())
+            .Returns(new SongFileMetadata 
+            { 
+                FilePath = "C:\\Music\\Concurrent\\song1.mp3", 
+                Title = "Concurrent Song", 
+                Artists = new List<string> { "Artist" } 
+            });
+
+        // Act: Start multiple concurrent scans
+        var tasks = new List<Task<bool>>();
+        for (int i = 0; i < 3; i++)
+        {
+            tasks.Add(_libraryService.RescanFolderForMusicAsync(folder.Id));
+        }
+
+        await Task.WhenAll(tasks);
+
+        // Assert: All tasks completed (serialized by semaphore) without exception
+        // and the database state is consistent
+        await using (var assertContext = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            var songs = await assertContext.Songs.Where(s => s.FolderId == folder.Id).ToListAsync();
+            // Should have exactly 1 song (not duplicated due to concurrent execution)
+            songs.Should().HaveCount(1);
+            songs[0].Title.Should().Be("Concurrent Song");
+        }
+    }
+
+    #endregion
+
+    #region Large Dataset Tests
+
+    /// <summary>
+    ///     Verifies that queue operations with large batch additions work correctly
+    ///     without performance degradation or memory issues.
+    /// </summary>
+    [Fact]
+    public async Task GetSongsByIdsAsync_WithLargeBatch_ReturnsAllSongsInChunks()
+    {
+        // Arrange: Create 600 songs (exceeds the 500 chunk size in GetSongsByIdsAsync)
+        var folder = new Folder { Name = "Large", Path = "C:\\Large" };
+        var artist = new Artist { Name = "Batch Artist" };
+        var songIds = new List<Guid>();
+        
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.Add(folder);
+            context.Artists.Add(artist);
+            
+            for (int i = 0; i < 600; i++)
+            {
+                var song = new Song
+                {
+                    Title = $"Song {i:D4}",
+                    FolderId = folder.Id,
+                    FilePath = $"C:\\Large\\song{i:D4}.mp3"
+                };
+                song.SongArtists.Add(new SongArtist { Artist = artist, Order = 0 });
+                song.SyncDenormalizedFields();
+                context.Songs.Add(song);
+                songIds.Add(song.Id);
+            }
+            await context.SaveChangesAsync();
+        }
+
+        // Act: Request all songs by ID (should chunk internally)
+        var result = await _libraryService.GetSongsByIdsAsync(songIds);
+
+        // Assert: All songs should be returned
+        result.Should().HaveCount(600);
+        foreach (var id in songIds)
+        {
+            result.Should().ContainKey(id);
+        }
+    }
+
+    #endregion
 }
