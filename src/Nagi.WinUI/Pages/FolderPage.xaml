@@ -104,14 +104,16 @@
                             HorizontalAlignment="Left"
                             FontWeight="SemiBold"
                             Text="{x:Bind Name}"
-                            TextTrimming="CharacterEllipsis" />
+                            TextTrimming="CharacterEllipsis"
+                            TextWrapping="NoWrap" />
                         <TextBlock
                             Grid.Row="2"
                             Margin="16,0,0,0"
                             HorizontalAlignment="Left"
                             Opacity="0.7"
                             Text="{x:Bind SongCountText, Mode=OneWay}"
-                            TextTrimming="CharacterEllipsis" />
+                            TextTrimming="CharacterEllipsis"
+                            TextWrapping="NoWrap" />
                     </Grid>
                 </DataTemplate>
             </GridView.ItemTemplate>

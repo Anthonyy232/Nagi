@@ -257,7 +257,8 @@
                                 HorizontalAlignment="Center"
                                 FontWeight="SemiBold"
                                 Text="{x:Bind Title, Mode=OneWay}"
-                                TextTrimming="CharacterEllipsis" />
+                                TextTrimming="CharacterEllipsis"
+                                TextWrapping="NoWrap" />
 
                             <TextBlock
                                 Grid.Row="2"
@@ -266,6 +267,7 @@
                                 Opacity="0.7"
                                 Style="{ThemeResource CaptionTextBlockStyle}"
                                 TextTrimming="CharacterEllipsis"
+                                TextWrapping="NoWrap"
                                 uihelpers:MultiArtistHyperlinkHelper.ArtistName="{x:Bind ArtistName, Mode=OneWay}"
                                 uihelpers:MultiArtistHyperlinkHelper.Command="{Binding ViewModel.GoToArtistCommand, ElementName=AlbumPageRoot}" />
                         </Grid>

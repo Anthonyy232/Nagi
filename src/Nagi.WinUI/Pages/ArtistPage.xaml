@@ -250,7 +250,8 @@
                                 HorizontalAlignment="Center"
                                 FontWeight="SemiBold"
                                 Text="{x:Bind Name, Mode=OneWay}"
-                                TextTrimming="CharacterEllipsis" />
+                                TextTrimming="CharacterEllipsis"
+                                TextWrapping="NoWrap" />
                         </Grid>
                     </DataTemplate>
                 </GridView.ItemTemplate>

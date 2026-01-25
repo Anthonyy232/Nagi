@@ -153,10 +153,12 @@
                                     <TextBlock
                                         Style="{ThemeResource BodyStrongTextBlockStyle}"
                                         Text="{x:Bind Title}"
-                                        TextTrimming="CharacterEllipsis" />
+                                        TextTrimming="CharacterEllipsis"
+                                        TextWrapping="NoWrap" />
                                     <TextBlock
                                         Style="{ThemeResource CaptionTextBlockStyle}"
                                         TextTrimming="CharacterEllipsis"
+                                        TextWrapping="NoWrap"
                                         uihelpers:MultiArtistHyperlinkHelper.ArtistName="{x:Bind ArtistName}"
                                         uihelpers:MultiArtistHyperlinkHelper.Song="{x:Bind}"
                                         uihelpers:MultiArtistHyperlinkHelper.Command="{Binding DataContext.GoToArtistCommand, ElementName=OuterBorder}" />

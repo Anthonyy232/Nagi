@@ -289,7 +289,7 @@
                                     </Border>
                                 </Button>
                                 <TextBlock Grid.Column="1" MinWidth="30" HorizontalAlignment="Center" Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}" Text="{x:Bind TrackNumber}" />
-                                <TextBlock Grid.Column="2" Style="{StaticResource SongListViewPageBodyStrongTextBlockStyle}" Text="{x:Bind Title}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                                <TextBlock Grid.Column="2" Style="{StaticResource SongListViewPageBodyStrongTextBlockStyle}" Text="{x:Bind Title}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Center" />
                                 <TextBlock Grid.Column="3" Margin="0,0,12,0" HorizontalAlignment="Right" Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}" Text="{x:Bind Duration, Converter={StaticResource TimeSpanToTimeStringConverter}}" />
                             </Grid>
                         </DataTemplate>
@@ -370,6 +370,7 @@
                         <TextBlock Grid.Column="2"
                                    Style="{StaticResource SongListViewPageBodyStrongTextBlockStyle}"
                                    Text="{x:Bind Title}" TextTrimming="CharacterEllipsis"
+                                   TextWrapping="NoWrap"
                                    VerticalAlignment="Center" />
 
                         <TextBlock Grid.Column="3" Margin="0,0,12,0" HorizontalAlignment="Right"

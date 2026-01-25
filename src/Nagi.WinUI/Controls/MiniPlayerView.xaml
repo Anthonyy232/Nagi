@@ -79,7 +79,8 @@
                             Style="{ThemeResource BodyStrongTextBlockStyle}"
                             Text="{x:Bind ViewModel.SongTitle, Mode=OneWay, FallbackValue='Song Title'}"
                             TextAlignment="Center"
-                            TextTrimming="CharacterEllipsis" />
+                            TextTrimming="CharacterEllipsis"
+                            TextWrapping="NoWrap" />
                         <Grid HorizontalAlignment="Center">
                             <TextBlock
                                 HorizontalAlignment="Center"
@@ -89,6 +90,7 @@
                                 Style="{ThemeResource BodyTextBlockStyle}"
                                 TextAlignment="Center"
                                 TextTrimming="CharacterEllipsis"
+                                TextWrapping="NoWrap"
                                 uihelpers:MultiArtistHyperlinkHelper.ArtistName="{x:Bind ViewModel.ArtistName, Mode=OneWay}"
                                 uihelpers:MultiArtistHyperlinkHelper.Song="{x:Bind ViewModel.CurrentPlayingTrack, Mode=OneWay}"
                                 uihelpers:MultiArtistHyperlinkHelper.Command="{x:Bind ViewModel.GoToArtistCommand, Mode=OneWay}" />
@@ -189,11 +191,13 @@
                             <DataTemplate x:DataType="models:Song">
                                 <StackPanel Margin="0,6">
                                     <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="{x:Bind Title}"
-                                               TextTrimming="CharacterEllipsis" />
+                                               TextTrimming="CharacterEllipsis"
+                                               TextWrapping="NoWrap" />
                                     <TextBlock
                                         FontSize="11"
                                         Style="{ThemeResource CaptionTextBlockStyle}"
                                         TextTrimming="CharacterEllipsis"
+                                        TextWrapping="NoWrap"
                                         uihelpers:MultiArtistHyperlinkHelper.ArtistName="{x:Bind ArtistName}"
                                         uihelpers:MultiArtistHyperlinkHelper.Song="{x:Bind}"
                                         uihelpers:MultiArtistHyperlinkHelper.Command="{Binding DataContext.ViewModel.GoToArtistCommand, ElementName=HoverDetector}" />

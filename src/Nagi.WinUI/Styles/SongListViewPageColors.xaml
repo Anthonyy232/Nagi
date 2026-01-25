@@ -111,6 +111,7 @@
         <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondary}" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+        <Setter Property="TextWrapping" Value="NoWrap" />
         <Setter Property="FontSize" Value="13" />
     </Style>
 
