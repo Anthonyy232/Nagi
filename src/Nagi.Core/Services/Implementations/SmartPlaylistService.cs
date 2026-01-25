@@ -261,6 +261,51 @@ public class SmartPlaylistService : ISmartPlaylistService
 
     #endregion
 
+    #region Random Access
+
+    /// <inheritdoc />
+    public async Task<Guid?> GetRandomSmartPlaylistIdAsync()
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        return await GetRandomEntityIdAsync(context, context.SmartPlaylists.AsNoTracking()).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task<int> GetSmartPlaylistCountAsync()
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        return await context.SmartPlaylists.CountAsync().ConfigureAwait(false);
+    }
+    
+    /// <summary>
+    ///     Efficiently selects a random ID from a queryable set using the O(log N) "Where Id >= Random" strategy.
+    ///     This avoids the O(N) full table scan caused by "ORDER BY RANDOM()".
+    /// </summary>
+    private async Task<Guid?> GetRandomEntityIdAsync<T>(MusicDbContext context, IQueryable<T> query) where T : class
+    {
+        var randomGuid = Guid.NewGuid();
+
+        var id = await query
+            .Where(e => EF.Property<Guid>(e, "Id") >= randomGuid)
+            .OrderBy(e => EF.Property<Guid>(e, "Id"))
+            .Select(e => EF.Property<Guid>(e, "Id"))
+            .FirstOrDefaultAsync()
+            .ConfigureAwait(false);
+
+        if (id == Guid.Empty)
+        {
+            id = await query
+                .OrderBy(e => EF.Property<Guid>(e, "Id"))
+                .Select(e => EF.Property<Guid>(e, "Id"))
+                .FirstOrDefaultAsync()
+                .ConfigureAwait(false);
+        }
+
+        return id == Guid.Empty ? null : id;
+    }
+    
+    #endregion
+
     #region Configuration
 
     /// <inheritdoc />

@@ -20,6 +20,9 @@ public interface ISmartPlaylistService
     Task<bool> RenameSmartPlaylistAsync(Guid smartPlaylistId, string newName);
     Task<bool> UpdateSmartPlaylistCoverAsync(Guid smartPlaylistId, string? newCoverImageUri);
 
+    Task<Guid?> GetRandomSmartPlaylistIdAsync();
+    Task<int> GetSmartPlaylistCountAsync();
+
     // Configuration
     Task<bool> SetMatchAllRulesAsync(Guid smartPlaylistId, bool matchAll);
 

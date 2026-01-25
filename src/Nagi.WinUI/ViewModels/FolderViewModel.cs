@@ -212,6 +212,34 @@ public partial class FolderViewModel : ObservableObject
     }
 
     /// <summary>
+    ///     Fetches a random folder ID (one that contains songs) and starts playback.
+    /// </summary>
+    [RelayCommand]
+    private async Task PlayRandomFolderAsync()
+    {
+        if (IsAnyOperationInProgress) return;
+
+        try
+        {
+            // The service method already filters for folders that contain songs
+            var randomFolderId = await _libraryService.GetRandomFolderIdAsync();
+            if (randomFolderId.HasValue)
+            {
+                await _musicPlaybackService.PlayFolderAsync(randomFolderId.Value);
+            }
+            else
+            {
+                _playerViewModel.GlobalOperationStatusMessage = "No folders with music found.";
+            }
+        }
+        catch (Exception ex)
+        {
+            _playerViewModel.GlobalOperationStatusMessage = "Error starting random folder playback.";
+            _logger.LogCritical(ex, "Error playing random folder");
+        }
+    }
+
+    /// <summary>
     ///     Asynchronously loads all root folders from the database and updates the UI.
     /// </summary>
     [RelayCommand]

@@ -147,6 +147,13 @@
                 </Grid>
 
                 <Button Style="{StaticResource SongListViewPageIconButton}"
+                        ToolTipService.ToolTip="Pick one at random"
+                        Command="{x:Bind ViewModel.PlayRandomArtistCommand}"
+                        Margin="0,0,1,0">
+                    <FontIcon FontSize="16" Glyph="&#xE945;" />
+                </Button>
+
+                <Button Style="{StaticResource SongListViewPageIconButton}"
                         ToolTipService.ToolTip="{x:Bind ViewModel.CurrentSortOrderText, Mode=OneWay}">
                     <Button.Flyout>
                         <MenuFlyout Placement="Bottom">
