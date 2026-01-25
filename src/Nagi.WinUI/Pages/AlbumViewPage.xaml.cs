@@ -10,6 +10,9 @@ using Microsoft.UI.Xaml.Navigation;
 using Nagi.Core.Models;
 using Nagi.WinUI.Navigation;
 using Nagi.WinUI.ViewModels;
+using System.Threading.Tasks;
+using Nagi.Core.Services.Abstractions;
+using Nagi.WinUI.Helpers;
 
 namespace Nagi.WinUI.Pages;
 
@@ -47,14 +50,18 @@ public class DiscGroupStyleSelector : StyleSelector
 public sealed partial class AlbumViewPage : Page
 {
     private readonly ILogger<AlbumViewPage> _logger;
+    private readonly ILibraryReader _libraryReader;
     private bool _isSearchExpanded;
     private bool _isUpdatingSelection;
+    private readonly Microsoft.UI.Dispatching.DispatcherQueue _dispatcherQueue;
 
     public AlbumViewPage()
     {
         InitializeComponent();
+        _dispatcherQueue = this.DispatcherQueue;
         ViewModel = App.Services!.GetRequiredService<AlbumViewViewModel>();
         _logger = App.Services!.GetRequiredService<ILogger<AlbumViewPage>>();
+        _libraryReader = App.Services!.GetRequiredService<ILibraryReader>(); // Inject ILibraryReader
         DataContext = ViewModel;
 
         Loaded += OnPageLoaded;
@@ -307,6 +314,14 @@ public sealed partial class AlbumViewPage : Page
         {
             _logger.LogDebug("Populating 'Add to playlist' submenu.");
             PopulatePlaylistSubMenu(addToPlaylistSubMenu);
+        }
+
+        // NEW: Populate "Go to artist" submenu (supports both grouped and regular ListViews)
+        if (menuFlyout.Items.OfType<MenuFlyoutSubItem>()
+                .FirstOrDefault(item => item.Name is "GoToArtistSubMenu" or "GoToArtistSubMenuGrouped") is { } goToArtistSubMenu
+            && menuFlyout.Target?.DataContext is Song song)
+        {
+            ArtistMenuFlyoutHelper.PopulateSubMenu(goToArtistSubMenu, song, ViewModel.GoToArtistCommand, _libraryReader, _dispatcherQueue, _logger);
         }
     }
 

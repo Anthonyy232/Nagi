@@ -136,4 +136,10 @@ public interface ILibraryReader
     /// <param name="searchTerm">The search term to filter songs. Can be empty or null.</param>
     /// <returns>The total duration of matching songs in the album.</returns>
     Task<TimeSpan> GetSearchTotalDurationInAlbumAsync(Guid albumId, string searchTerm);
+
+    /// <summary>
+    ///    Gets the artists associated with a song, ordered by their sequence.
+    ///    Returns a lightweight projection containing only Id and Name.
+    /// </summary>
+    Task<IEnumerable<Artist>> GetArtistsForSongAsync(Guid songId);
 }

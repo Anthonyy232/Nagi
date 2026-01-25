@@ -10,6 +10,9 @@ using Microsoft.UI.Xaml.Navigation;
 using Nagi.Core.Models;
 using Nagi.WinUI.Navigation;
 using Nagi.WinUI.ViewModels;
+using System.Threading.Tasks;
+using Nagi.Core.Services.Abstractions;
+using Nagi.WinUI.Helpers;
 
 namespace Nagi.WinUI.Pages;
 
@@ -19,14 +22,18 @@ namespace Nagi.WinUI.Pages;
 public sealed partial class PlaylistSongViewPage : Page
 {
     private readonly ILogger<PlaylistSongViewPage> _logger;
+    private readonly ILibraryReader _libraryReader;
     private bool _isSearchExpanded;
     private bool _isUpdatingSelection;
+    private readonly Microsoft.UI.Dispatching.DispatcherQueue _dispatcherQueue;
 
     public PlaylistSongViewPage()
     {
         InitializeComponent();
+        _dispatcherQueue = this.DispatcherQueue;
         ViewModel = App.Services!.GetRequiredService<PlaylistSongListViewModel>();
         _logger = App.Services!.GetRequiredService<ILogger<PlaylistSongViewPage>>();
+        _libraryReader = App.Services!.GetRequiredService<ILibraryReader>(); // Inject ILibraryReader
         DataContext = ViewModel;
 
         Loaded += OnPageLoaded;
@@ -191,10 +198,19 @@ public sealed partial class PlaylistSongViewPage : Page
 
     private void SongItemMenuFlyout_Opening(object sender, object e)
     {
-        if (sender is not MenuFlyout { Target.DataContext: Song rightClickedSong }) return;
+        if (sender is not MenuFlyout menuFlyout) return;
+        if (menuFlyout.Target?.DataContext is not Song rightClickedSong) return;
+
         _logger.LogDebug("Context menu opening for song '{SongTitle}'.", rightClickedSong.Title);
         if (!SongsListView.SelectedItems.Contains(rightClickedSong))
             SongsListView.SelectedItem = rightClickedSong;
+
+        // NEW: Populate "Go to artist" submenu
+        if (menuFlyout.Items.OfType<MenuFlyoutSubItem>()
+                .FirstOrDefault(item => item.Name == "GoToArtistSubMenu") is { } goToArtistSubMenu)
+        {
+            ArtistMenuFlyoutHelper.PopulateSubMenu(goToArtistSubMenu, rightClickedSong, ViewModel.GoToArtistCommand, _libraryReader, _dispatcherQueue, _logger);
+        }
     }
 
     private void SongsListView_DragItemsCompleted(ListViewBase sender, DragItemsCompletedEventArgs args)
