@@ -212,4 +212,32 @@
         </Setter>
     </Style>
 
+    <Style x:Key="DiceIconStyle" TargetType="ContentControl">
+        <Setter Property="Width" Value="22"/>
+        <Setter Property="Height" Value="22"/>
+        <Setter Property="IsHitTestVisible" Value="False"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ContentControl">
+                    <Viewbox Width="{TemplateBinding Width}" Height="{TemplateBinding Height}">
+                        <Canvas Width="48" Height="48">
+                            <Rectangle Canvas.Left="6.5" Canvas.Top="6.5" Width="35" Height="35" RadiusX="5.5" RadiusY="5.5"
+                                       Stroke="{TemplateBinding Foreground}" StrokeThickness="3" />
+                            <Ellipse Canvas.Left="29" Canvas.Top="13" Width="6" Height="6"
+                                     Fill="{TemplateBinding Foreground}" />
+                            <Ellipse Canvas.Left="13" Canvas.Top="13" Width="6" Height="6"
+                                     Fill="{TemplateBinding Foreground}" />
+                            <Ellipse Canvas.Left="29" Canvas.Top="29" Width="6" Height="6"
+                                     Fill="{TemplateBinding Foreground}" />
+                            <Ellipse Canvas.Left="13" Canvas.Top="29" Width="6" Height="6"
+                                     Fill="{TemplateBinding Foreground}" />
+                            <Ellipse Canvas.Left="21" Canvas.Top="21" Width="6" Height="6"
+                                     Fill="{TemplateBinding Foreground}" />
+                        </Canvas>
+                    </Viewbox>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 </ResourceDictionary>
