@@ -197,7 +197,8 @@
                                     FontWeight="Bold"
                                     Foreground="White"
                                     Text="{x:Bind Name, Mode=OneWay}"
-                                    TextTrimming="CharacterEllipsis" />
+                                    TextTrimming="CharacterEllipsis"
+                                    TextWrapping="NoWrap" />
                             </StackPanel>
                         </Grid>
                     </DataTemplate>

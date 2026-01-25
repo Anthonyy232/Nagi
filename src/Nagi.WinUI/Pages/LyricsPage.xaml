@@ -45,6 +45,7 @@
             FontWeight="SemiBold"
             HorizontalAlignment="Center"
             TextTrimming="CharacterEllipsis"
+            TextWrapping="NoWrap"
             MaxLines="1"
             MaxWidth="1200" />
 

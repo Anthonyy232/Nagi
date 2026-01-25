@@ -47,6 +47,7 @@
                                    Style="{StaticResource SongListViewPageBodyStrongTextBlockStyle}"
                                    Text="{x:Bind Folder.Name}"
                                    TextTrimming="CharacterEllipsis"
+                                   TextWrapping="NoWrap"
                                    VerticalAlignment="Center" />
                     </Grid>
                 </DataTemplate>
@@ -112,11 +113,13 @@
 
                         <TextBlock Grid.Column="1" Style="{StaticResource SongListViewPageBodyStrongTextBlockStyle}"
                                    Text="{x:Bind Song.Title}" TextTrimming="CharacterEllipsis"
+                                   TextWrapping="NoWrap"
                                    VerticalAlignment="Center" />
 
                         <TextBlock Grid.Column="2"
                                    VerticalAlignment="Center"
                                    TextTrimming="CharacterEllipsis"
+                                   TextWrapping="NoWrap"
                                    Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}"
                                    uihelpers:MultiArtistHyperlinkHelper.ArtistName="{x:Bind Song.ArtistName}"
                                    uihelpers:MultiArtistHyperlinkHelper.Song="{x:Bind Song}"

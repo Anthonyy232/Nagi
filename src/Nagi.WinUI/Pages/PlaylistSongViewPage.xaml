@@ -299,11 +299,13 @@
 
                         <TextBlock Grid.Column="1" Text="{x:Bind Title}" VerticalAlignment="Center"
                                    Style="{StaticResource SongListViewPageBodyStrongTextBlockStyle}"
-                                   TextTrimming="CharacterEllipsis" />
+                                   TextTrimming="CharacterEllipsis"
+                                   TextWrapping="NoWrap" />
 
                         <TextBlock Grid.Column="2"
                                    VerticalAlignment="Center"
                                    TextTrimming="CharacterEllipsis"
+                                   TextWrapping="NoWrap"
                                    Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}"
                                    uihelpers:MultiArtistHyperlinkHelper.ArtistName="{x:Bind ArtistName}"
                                    uihelpers:MultiArtistHyperlinkHelper.Song="{x:Bind}"
