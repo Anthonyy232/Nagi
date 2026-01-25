@@ -1192,4 +1192,55 @@ public class LibraryServiceTests : IDisposable
     }
 
     #endregion
+
+    #region Song Artist Tests
+
+    /// <summary>
+    ///    Verifies that <see cref="LibraryService.GetArtistsForSongAsync" /> returns the correct list of artists
+    ///    associated with a song, respects the assigned order, and projects the data correctly.
+    /// </summary>
+    [Fact]
+    public async Task GetArtistsForSongAsync_ReturnsOrderedArtists_WithCorrectProjection()
+    {
+        // Arrange
+        var folder = new Folder { Name = "Test Folder", Path = "C:\\Test" };
+        var artist1 = new Artist { Name = "Second Artist" }; // Alphabetically later, but will be ordered first
+        var artist2 = new Artist { Name = "First Artist" };  // Alphabetically earlier, but will be ordered second
+        
+        var song = new Song 
+        { 
+            Title = "Collaboration", 
+            Folder = folder, 
+            FilePath = "C:\\Test\\collab.mp3" 
+        };
+
+        // Add artists with specific order
+        song.SongArtists.Add(new SongArtist { Artist = artist1, Order = 0 });
+        song.SongArtists.Add(new SongArtist { Artist = artist2, Order = 1 });
+        
+        song.SyncDenormalizedFields(); // Best practice, though not strictly required for this join query
+
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.Add(folder);
+            context.Artists.AddRange(artist1, artist2);
+            context.Songs.Add(song);
+            await context.SaveChangesAsync();
+        }
+
+        // Act
+        var result = (await _libraryService.GetArtistsForSongAsync(song.Id)).ToList();
+
+        // Assert
+        result.Should().HaveCount(2);
+        
+        // Verify Order (Artist1 was Order 0, Artist2 was Order 1)
+        result[0].Name.Should().Be("Second Artist");
+        result[0].Id.Should().Be(artist1.Id);
+        
+        result[1].Name.Should().Be("First Artist");
+        result[1].Id.Should().Be(artist2.Id);
+    }
+
+    #endregion
 }

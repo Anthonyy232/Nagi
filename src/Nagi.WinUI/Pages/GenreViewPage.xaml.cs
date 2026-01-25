@@ -10,6 +10,9 @@ using Microsoft.UI.Xaml.Navigation;
 using Nagi.Core.Models;
 using Nagi.WinUI.Navigation;
 using Nagi.WinUI.ViewModels;
+using System.Threading.Tasks;
+using Nagi.Core.Services.Abstractions;
+using Nagi.WinUI.Helpers;
 
 namespace Nagi.WinUI.Pages;
 
@@ -19,14 +22,18 @@ namespace Nagi.WinUI.Pages;
 public sealed partial class GenreViewPage : Page
 {
     private readonly ILogger<GenreViewPage> _logger;
+    private readonly ILibraryReader _libraryReader;
     private bool _isSearchExpanded;
     private bool _isUpdatingSelection;
+    private readonly Microsoft.UI.Dispatching.DispatcherQueue _dispatcherQueue;
 
     public GenreViewPage()
     {
         InitializeComponent();
+        _dispatcherQueue = this.DispatcherQueue;
         ViewModel = App.Services!.GetRequiredService<GenreViewViewModel>();
         _logger = App.Services!.GetRequiredService<ILogger<GenreViewPage>>();
+        _libraryReader = App.Services!.GetRequiredService<ILibraryReader>(); // Inject ILibraryReader
         DataContext = ViewModel;
 
         Loaded += OnPageLoaded;
@@ -237,6 +244,14 @@ public sealed partial class GenreViewPage : Page
         {
             _logger.LogDebug("Populating 'Add to playlist' submenu.");
             PopulatePlaylistSubMenu(addToPlaylistSubMenu);
+        }
+
+        // NEW: Populate "Go to artist" submenu
+        if (menuFlyout.Items.OfType<MenuFlyoutSubItem>()
+                .FirstOrDefault(item => item.Name == "GoToArtistSubMenu") is { } goToArtistSubMenu
+            && menuFlyout.Target?.DataContext is Song song)
+        {
+            ArtistMenuFlyoutHelper.PopulateSubMenu(goToArtistSubMenu, song, ViewModel.GoToArtistCommand, _libraryReader, _dispatcherQueue, _logger);
         }
     }
 

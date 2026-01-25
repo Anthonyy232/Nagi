@@ -1326,6 +1326,22 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             .ToListAsync().ConfigureAwait(false);
     }
 
+    /// <inheritdoc />
+    public async Task<IEnumerable<Artist>> GetArtistsForSongAsync(Guid songId)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        return await context.SongArtists.AsNoTracking()
+            .Where(sa => sa.SongId == songId)
+            .OrderBy(sa => sa.Order)
+            .Select(sa => new Artist
+            {
+                Id = sa.Artist.Id,
+                Name = sa.Artist.Name
+            })
+            .ToListAsync()
+            .ConfigureAwait(false);
+    }
+
     #endregion
 
     #region Album Management

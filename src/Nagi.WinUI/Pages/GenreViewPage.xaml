@@ -237,10 +237,9 @@
                                                 CommandParameter="{x:Bind}"
                                                 Text="Go to album"
                                                 Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                                <MenuFlyoutItem Command="{Binding DataContext.GoToArtistCommand, ElementName=pageRoot}"
-                                                CommandParameter="{x:Bind}"
-                                                Text="Go to artist"
-                                                Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                <MenuFlyoutSubItem x:Name="GoToArtistSubMenu"
+                                                   Text="Go to artist"
+                                                   Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                 <MenuFlyoutItem
                                     Command="{Binding DataContext.ShowInFileExplorerCommand, ElementName=pageRoot}"
                                     CommandParameter="{x:Bind}"
