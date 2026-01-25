@@ -44,6 +44,16 @@ public interface ILibraryReader
     Task<IEnumerable<Genre>> GetAllGenresAsync();
     Task<IEnumerable<Song>> GetSongsByGenreIdAsync(Guid genreId);
     Task<int> GetListenCountForSongAsync(Guid songId);
+    
+    // Random Access Methods
+    Task<Guid?> GetRandomAlbumIdAsync();
+    Task<Guid?> GetRandomArtistIdAsync();
+    Task<Guid?> GetRandomFolderIdAsync();
+    Task<Guid?> GetRandomGenreIdAsync();
+    Task<Guid?> GetRandomPlaylistIdAsync();
+    
+    // Count Methods
+    Task<int> GetPlaylistCountAsync();
 
     Task<PagedResult<Song>> GetAllSongsPagedAsync(int pageNumber, int pageSize,
         SongSortOrder sortOrder = SongSortOrder.TitleAsc);

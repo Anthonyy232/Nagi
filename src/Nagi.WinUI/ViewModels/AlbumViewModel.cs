@@ -170,6 +170,28 @@ public partial class AlbumViewModel : SearchableViewModelBase
         }
     }
 
+    /// <summary>
+    ///     Fetches a random album ID effectively instantly and starts playback.
+    /// </summary>
+    [RelayCommand]
+    private async Task PlayRandomAlbumAsync()
+    {
+        if (IsLoading) return;
+
+        try
+        {
+            var randomAlbumId = await _libraryService.GetRandomAlbumIdAsync();
+            if (randomAlbumId.HasValue)
+            {
+                await _musicPlaybackService.PlayAlbumAsync(randomAlbumId.Value);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogCritical(ex, "Error playing random album");
+        }
+    }
+
     [RelayCommand]
     public async Task GoToArtistAsync(object? parameter)
     {

@@ -168,6 +168,28 @@ public partial class ArtistViewModel : SearchableViewModelBase
     }
 
     /// <summary>
+    ///     Fetches a random artist ID effectively instantly and starts playback.
+    /// </summary>
+    [RelayCommand]
+    private async Task PlayRandomArtistAsync()
+    {
+        if (IsLoading) return;
+
+        try
+        {
+            var randomArtistId = await _libraryService.GetRandomArtistIdAsync();
+            if (randomArtistId.HasValue)
+            {
+                await _musicPlaybackService.PlayArtistAsync(randomArtistId.Value);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogCritical(ex, "Error playing random artist");
+        }
+    }
+
+    /// <summary>
     ///     Changes the sort order and reloads the artist list.
     /// </summary>
     [RelayCommand]

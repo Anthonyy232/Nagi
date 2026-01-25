@@ -266,4 +266,26 @@ public partial class GenreViewModel : SearchableViewModelBase
             _logger.LogCritical(ex, "Failed to play genre {GenreId}", genreId);
         }
     }
+
+    /// <summary>
+    ///     Fetches a random genre ID effectively instantly and starts playback.
+    /// </summary>
+    [RelayCommand]
+    private async Task PlayRandomGenreAsync()
+    {
+        if (IsLoading) return;
+
+        try
+        {
+            var randomGenreId = await _libraryService.GetRandomGenreIdAsync();
+            if (randomGenreId.HasValue)
+            {
+                await _musicPlaybackService.PlayGenreAsync(randomGenreId.Value);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogCritical(ex, "Error playing random genre");
+        }
+    }
 }

@@ -252,6 +252,77 @@ public partial class PlaylistViewModel : SearchableViewModelBase
     }
 
     /// <summary>
+    ///     Selects a random playlist (Regular or Smart) based on the total counts of each type and starts playback.
+    /// </summary>
+    [RelayCommand]
+    private async Task PlayRandomPlaylistAsync()
+    {
+        if (IsAnyOperationInProgress) return;
+        StatusMessage = "Picking a random playlist...";
+
+        try
+        {
+            // 1. Get current counts directly from services (most accurate)
+            // Even though we load them into memory, fetching count is cheap and ensures we don't pick from stale UI state if not refreshed
+            // However, to keep it fast and consistent with what the user sees, we can try to use standard service calls.
+            
+            // Actually, we need to know the RATIO to pick fairly.
+            // Getting counts is fast.
+            var regularCountTask = _libraryService.GetPlaylistCountAsync();
+            var smartCountTask = _smartPlaylistService.GetSmartPlaylistCountAsync();
+            
+            var regularCount = await regularCountTask;
+            var smartCount = await smartCountTask;
+            
+            var totalCount = regularCount + smartCount;
+            if (totalCount == 0)
+            {
+                StatusMessage = "No playlists found.";
+                return;
+            }
+
+            // 2. Weighted Random Selection
+            var random = Random.Shared;
+            var randomTicket = random.Next(totalCount); // 0 to totalCount - 1
+
+            if (randomTicket < regularCount)
+            {
+                // Pick a Regular Playlist
+                var id = await _libraryService.GetRandomPlaylistIdAsync();
+                if (id.HasValue)
+                {
+                    await _musicPlaybackService.PlayPlaylistAsync(id.Value);
+                    StatusMessage = string.Empty;
+                }
+            }
+            else
+            {
+                // Pick a Smart Playlist
+                var id = await _smartPlaylistService.GetRandomSmartPlaylistIdAsync();
+                if (id.HasValue)
+                {
+                    // For smart playlists, we must resolve the songs first as MusicPlaybackService doesn't native support "PlaySmartPlaylist"
+                    var songIds = await _smartPlaylistService.GetMatchingSongIdsAsync(id.Value);
+                    if (songIds.Count > 0)
+                    {
+                        await _musicPlaybackService.PlayAsync(songIds);
+                        StatusMessage = string.Empty;
+                    }
+                    else
+                    {
+                        StatusMessage = "Selected smart playlist is empty.";
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = "Error playing random playlist.";
+            _logger.LogCritical(ex, "Error playing random playlist");
+        }
+    }
+
+    /// <summary>
     ///     Loads all playlists (both regular and smart) from the services.
     /// </summary>
     [RelayCommand]

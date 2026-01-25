@@ -448,6 +448,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         return await context.Folders.CountAsync(f => f.ParentFolderId == parentFolderId).ConfigureAwait(false);
     }
+    
+
 
     #endregion
 
@@ -734,6 +736,38 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         }
     }
     
+
+    
+    /// <summary>
+    ///     Efficiently selects a random ID from a queryable set using the O(log N) "Where Id >= Random" strategy.
+    ///     This avoids the O(N) full table scan caused by "ORDER BY RANDOM()".
+    /// </summary>
+    private async Task<Guid?> GetRandomEntityIdAsync<T>(MusicDbContext context, IQueryable<T> query) where T : class
+    {
+        // 1. Generate a random Guid to serve as the pivot point
+        var randomGuid = Guid.NewGuid();
+
+        // 2. Try to find the first entity with an ID >= randomGuid
+        var id = await query
+            .Where(e => EF.Property<Guid>(e, "Id") >= randomGuid)
+            .OrderBy(e => EF.Property<Guid>(e, "Id"))
+            .Select(e => EF.Property<Guid>(e, "Id"))
+            .FirstOrDefaultAsync()
+            .ConfigureAwait(false);
+
+        // 3. If no entity was found (randomGuid was higher than all IDs), wrap around to the beginning
+        if (id == Guid.Empty)
+        {
+            id = await query
+                .OrderBy(e => EF.Property<Guid>(e, "Id"))
+                .Select(e => EF.Property<Guid>(e, "Id"))
+                .FirstOrDefaultAsync()
+                .ConfigureAwait(false);
+        }
+
+        return id == Guid.Empty ? null : id;
+    }
+
     /// <summary>
     /// Runs ReplayGain analysis synchronously with progress reporting. Only starts if no analysis is currently running.
     /// </summary>
@@ -1758,6 +1792,51 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         return await context.ListenHistory.CountAsync(lh => lh.SongId == songId).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task<Guid?> GetRandomAlbumIdAsync()
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        return await GetRandomEntityIdAsync(context, context.Albums.AsNoTracking()).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task<Guid?> GetRandomArtistIdAsync()
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        return await GetRandomEntityIdAsync(context, context.Artists.AsNoTracking()).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task<Guid?> GetRandomGenreIdAsync()
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        return await GetRandomEntityIdAsync(context, context.Genres.AsNoTracking()).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task<Guid?> GetRandomPlaylistIdAsync()
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        return await GetRandomEntityIdAsync(context, context.Playlists.AsNoTracking()).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task<int> GetPlaylistCountAsync()
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        return await context.Playlists.CountAsync().ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task<Guid?> GetRandomFolderIdAsync()
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        
+        // Only select folders that actually contain songs to avoid playing empty directory structures
+        var query = context.Folders.AsNoTracking().Where(f => f.Songs.Any());
+        return await GetRandomEntityIdAsync(context, query).ConfigureAwait(false);
     }
 
     #endregion
