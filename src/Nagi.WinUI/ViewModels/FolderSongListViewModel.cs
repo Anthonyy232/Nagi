@@ -357,7 +357,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         if (IsSearchActive)
             return _libraryReader.SearchAllSongIdsInFolderAsync(_rootFolderId.Value, SearchTerm, sortOrder);
         
-        return _libraryReader.GetSongIdsInDirectoryAsync(_rootFolderId.Value, _currentDirectoryPath, sortOrder);
+        return _libraryReader.GetAllSongIdsInDirectoryRecursiveAsync(_rootFolderId.Value, _currentDirectoryPath, sortOrder);
     }
 
 
