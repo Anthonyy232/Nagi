@@ -121,11 +121,12 @@
                     </Button>
                 </Grid>
 
-                <Button Style="{StaticResource SongListViewPageIconButton}"
+                <Button x:Name="RandomGenreButton"
+                        Style="{StaticResource SongListViewPageIconButton}"
                         ToolTipService.ToolTip="Pick one at random"
                         Command="{x:Bind ViewModel.PlayRandomGenreCommand}"
                         Margin="0,0,1,0">
-                    <FontIcon FontSize="16" Glyph="&#xE945;" />
+                    <ContentControl Style="{StaticResource DiceIconStyle}" />
                 </Button>
 
                 <Button Style="{StaticResource SongListViewPageIconButton}"
