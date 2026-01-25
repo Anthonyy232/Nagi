@@ -325,9 +325,8 @@ public partial class ArtistViewModel : SearchableViewModelBase
             // Ensure UI updates are performed on the main thread.
             _dispatcherService.TryEnqueue(() =>
             {
-                // Force refresh by setting to null first, then apply cache-buster
-                artistVm.LocalImageCachePath = null;
-                artistVm.LocalImageCachePath = ImageUriHelper.GetUriWithCacheBuster(e.NewLocalImageCachePath);
+                // Force unique cache buster using current time to ensure UI updates immediately
+                artistVm.LocalImageCachePath = ImageUriHelper.GetUriWithCacheBuster(e.NewLocalImageCachePath, DateTime.UtcNow);
             });
     }
 
