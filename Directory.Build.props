@@ -22,8 +22,8 @@
         <DiscordRichPresenceVersion>1.6.1.70</DiscordRichPresenceVersion>
         <BenchmarkDotNetVersion>0.14.0</BenchmarkDotNetVersion>
         <EntityFrameworkCoreVersion>10.0.2</EntityFrameworkCoreVersion>
-        <LibVLCSharpVersion>4.0.0-alpha-20250725-9054</LibVLCSharpVersion>
-        <LibVLCWindowsVersion>4.0.0-alpha-20250725</LibVLCWindowsVersion>
+        <LibVLCSharpVersion>4.0.0-alpha-20260123-9601</LibVLCSharpVersion>
+        <LibVLCWindowsVersion>4.0.0-alpha-20260125</LibVLCWindowsVersion>
         <LrcParserVersion>2025.623.0</LrcParserVersion>
         <Z440AtlCoreVersion>7.10.0</Z440AtlCoreVersion>
         <!-- For all EF Core packages -->
