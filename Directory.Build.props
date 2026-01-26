@@ -41,6 +41,7 @@
         <MicrosoftXamlBehaviorsWinUIManagedVersion>3.0.1</MicrosoftXamlBehaviorsWinUIManagedVersion>
         <AtlCoreVersion>7.9.0</AtlCoreVersion>
         <VelopackVersion>0.0.1369-g1d5c984</VelopackVersion>
+        <WindowsAppSdkVersion>2.0.0-experimental4</WindowsAppSdkVersion>
         <!-- WinUI component package version (using component-based referencing to exclude unused ML/AI binaries) -->
         <WindowsAppSdkWinUIVersion>2.0.4-experimental</WindowsAppSdkWinUIVersion>
 

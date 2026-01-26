@@ -91,7 +91,7 @@
 
         <!-- Core SDKs and Build Tools -->
         <!-- Exclude the transitive WinAppSDK 1.6 dependency from CommunityToolkit to prevent ML/AI binaries -->
-        <PackageReference Include="Microsoft.WindowsAppSDK" Version="[1.6.250108002]">
+        <PackageReference Include="Microsoft.WindowsAppSDK" Version="$(WindowsAppSdkVersion)">
             <ExcludeAssets>all</ExcludeAssets>
         </PackageReference>
         <!-- Reference only the WinUI component package - excludes unused ML/AI components (~40MB saved) -->
