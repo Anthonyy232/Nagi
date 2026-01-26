@@ -18,7 +18,7 @@
         <!-- NuGet Package Versions -->
         <CommunityToolkitMvvmVersion>8.4.0</CommunityToolkitMvvmVersion>
         <CommunityToolkitWinUIVersion>8.2.251219</CommunityToolkitWinUIVersion>
-        <DependencyInjectionVersion>9.0.8</DependencyInjectionVersion>
+        <DependencyInjectionVersion>10.0.2</DependencyInjectionVersion>
         <DiscordRichPresenceVersion>1.6.1.70</DiscordRichPresenceVersion>
         <BenchmarkDotNetVersion>0.14.0</BenchmarkDotNetVersion>
         <EntityFrameworkCoreVersion>10.0.2</EntityFrameworkCoreVersion>

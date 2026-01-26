@@ -10,7 +10,7 @@
     <ItemGroup>
         <PackageReference Include="BenchmarkDotNet" Version="$(BenchmarkDotNetVersion)" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="$(EntityFrameworkCoreVersion)" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.1" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="$(DependencyInjectionVersion)" />
         <PackageReference Include="Microsoft.Extensions.Logging" Version="$(MicrosoftExtensionsLoggingVersion)" />
         <PackageReference Include="NSubstitute" Version="$(NSubstituteVersion)" />
     </ItemGroup>
