@@ -1,10 +1,10 @@
 <div align="center">
   <img src="https://github.com/user-attachments/assets/58f7a205-113d-463e-a2f3-d9979b935da1" alt="Nagi Logo">
-    
-  # Nagi 
+
+# Nagi
 
   **Rediscover your local music collection. A fast, private, and modern music player for Windows.**
-  
+
 <div align="center">
     <a href="https://github.com/Anthonyy232/Nagi/stargazers"><img src="https://img.shields.io/github/stars/Anthonyy232/Nagi?style=flat-square" alt="GitHub Stars"></a>
     <a href="https://github.com/Anthonyy232/Nagi/releases"><img src="https://img.shields.io/github/downloads/Anthonyy232/Nagi/total?style=flat-square&color=52c65f" alt="Total Downloads"></a>
@@ -24,12 +24,12 @@
     </p>
 </div>
 
-
 <div align="center">
   <img src="https://github.com/user-attachments/assets/a79450a7-d84e-4fe9-92b5-724b890e3e1d" alt="Nagi Library View" width="800" style="border-radius: 8px;">
 </div>
 
 ## ✨ Features
+
 - **Fluent & Modern UI**: A beautiful, responsive interface built with WinUI 3, featuring customizable backdrops (Mica, Mica Alt, Acrylic) and smooth animations.
 - **Dynamic Theming**: The app's color scheme adapts in real-time to the artwork of the currently playing song for a truly immersive experience.
 - **Synced Lyrics**: Display synced lyrics from embedded tags or external `.lrc` files. Tap any line to jump directly to that moment in the song.
@@ -56,20 +56,23 @@
 </div>
 
 ## 📥 Download
+
 <div>
   <a href="https://apps.microsoft.com/detail/9P1V1PPML3QT?referrer=appbadge&launch=true&mode=full">
     <img src="https://get.microsoft.com/images/en-us%20dark.svg" alt="Download from Microsoft Store" width="300">
   </a>
-  &nbsp;&nbsp;&nbsp;&nbsp;
+      
   <a href="https://github.com/Anthonyy232/Nagi/releases">
     <img src="https://github.com/user-attachments/assets/f81e6835-068d-4513-894b-659b5ac7f0ea" alt="Download from GitHub" width="220">
   </a>
 </div>
 
 ## 🌍 Localization
+
 Localization support is planned for a future release. Contributions to add new languages are welcome!
 
 ## 🛠️ Technologies
+
 - **[C#](https://docs.microsoft.com/en-us/dotnet/csharp/)** & **[.NET 10](https://dotnet.microsoft.com/)**: The core programming language and framework for building robust Windows applications.
 - **[WinUI 3](https://docs.microsoft.com/en-us/windows/apps/winui/winui3/)** in **[Windows App SDK](https://github.com/microsoft/WindowsAppSDK)**: The native UI platform for crafting modern, fluent interfaces on Windows.
 - **[LibVLCSharp](https://github.com/videolan/libvlcsharp)**: A cross-platform .NET binding for LibVLC, enabling robust and wide-ranging audio format support.
@@ -93,36 +96,46 @@ Localization support is planned for a future release. Contributions to add new l
 This project is built using C# and the Windows App SDK.
 
 ### Prerequisites
+
 - Visual Studio 2022 or later
 - The **".NET Desktop Development"** and **"Universal Windows Platform development"** workloads installed (includes Windows App SDK).
 - .NET 10 SDK
 
 ### Steps
-1.  Clone the repository:
-    ```bash
-    git clone https://github.com/Anthonyy232/Nagi.git
-    ```
-2.  Navigate to the cloned directory and open `Nagi.sln` with Visual Studio.
-3.  In Visual Studio, set the Solution Platform to `x64` (or your target architecture).
-4.  Press `F5` or click the `▶ Nagi (Package)` button to build and run the application.
 
-    To build msixbundle, two commands must be ran in src/Nagi.WinUI (the first one will fail but create the proper R2R images): 
-    ```bash
-    dotnet publish Nagi.WinUI.csproj -c Release -r win-x86 -p:GenerateAppxPackageOnBuild=true
-    msbuild Nagi.WinUI.csproj -p:Configuration=Release -p:Platform=x86 -p:GenerateAppxPackageOnBuild=true
-    ```
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/Anthonyy232/Nagi.git
+   ```
+2. Navigate to the cloned directory and open `Nagi.sln` with Visual Studio.
+3. In Visual Studio, set the Solution Platform to `x64` (or your target architecture).
+4. Press `F5` or click the `▶ Nagi (Package)` button to build and run the application.
+
+   To build msixbundle, three commands must be ran in src/Nagi.WinUI (the first two will fail but create the proper R2R images):
+
+   ```bash
+   # 1. Pre-build binaries for both platforms (triggers PGO/R2R optimization)
+   dotnet publish Nagi.WinUI.csproj -c Release -r win-x64 -p:Platform=x64 -p:GenerateAppxPackageOnBuild=false
+   dotnet publish Nagi.WinUI.csproj -c Release -r win-arm64 -p:Platform=arm64 -p:GenerateAppxPackageOnBuild=false
+   # 2. Finalize the packaged MSIX bundle
+   msbuild Nagi.WinUI.csproj -p:Configuration=Release -p:Platform=x64 -p:GenerateAppxPackageOnBuild=true
+   ```
 
 ### Development
+
   To perform a database migration:
-  
-  ```bash
+
+```bash
   dotnet ef migrations add <name> --project src\Nagi.Core --startup-project src\Nagi.Core --context MusicDbContext --no-build
-  ```
+```
 
 ## 🤝 Contributions
+
 All contributions are welcome! Feel free to report issues, suggest features, or create pull requests for bug fixes and new features.
 
 ## ❤️ Support
+
 If you enjoy using Nagi and want to support its development, you can do so via GitHub Sponsors. Your support is greatly appreciated!
 
 <div align="center">
@@ -130,4 +143,5 @@ If you enjoy using Nagi and want to support its development, you can do so via G
 </div>
 
 ## 📄 License
+
 This project is licensed under the **GNU General Public License v3.0**. See the [LICENSE](LICENSE) file for details.
