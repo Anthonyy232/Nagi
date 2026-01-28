@@ -463,7 +463,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         if (folder is null)
         {
             _logger.LogWarning("Failed to add or find folder for path {FolderPath}, aborting scan.", folderPath);
-            progress?.Report(new ScanProgress { StatusText = "Failed to add folder.", Percentage = 100 });
+            progress?.Report(new ScanProgress { StatusText = Resources.Strings.Error_FailedToAddFolder, Percentage = 100 });
             return;
         }
 
@@ -496,7 +496,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         catch (OperationCanceledException)
         {
             _logger.LogDebug("Scan for folder ID {FolderId} was cancelled before acquiring semaphore.", folderId);
-            progress?.Report(new ScanProgress { StatusText = "Scan cancelled by user.", Percentage = 100 });
+            progress?.Report(new ScanProgress { StatusText = Resources.Strings.Status_ScanCancelled, Percentage = 100 });
             return false;
         }
 
@@ -508,7 +508,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 if (folder is null)
                 {
                     _logger.LogWarning("Cannot rescan folder: Folder with ID {FolderId} not found.", folderId);
-                    progress?.Report(new ScanProgress { StatusText = "Folder not found.", Percentage = 100 });
+                    progress?.Report(new ScanProgress { StatusText = string.Format(Resources.Strings.Format_NotFound, Resources.Strings.Label_Folder), Percentage = 100 });
                     return false;
                 }
 
@@ -524,12 +524,12 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                             "Folder path '{FolderPath}' no longer exists. Removing folder {FolderId} from library.",
                             folder.Path, folder.Id);
                         progress?.Report(new ScanProgress
-                            { StatusText = "Folder path no longer exists. Removing from library.", Percentage = 100 });
+                            { StatusText = Resources.Strings.Status_ScanFailed, Percentage = 100 });
                         return await RemoveFolderAsync(folderId).ConfigureAwait(false);
                     }
 
                     progress?.Report(new ScanProgress
-                        { StatusText = $"Analyzing '{folder.Name}'...", IsIndeterminate = true });
+                        { StatusText = Resources.Strings.Status_PreparingScanCaches, IsIndeterminate = true });
                     var (filesToAdd, filesToUpdate, filesRemovedFromDisk) =
                         await AnalyzeFolderChangesAsync(folderId, folder.Path, forceFullScan, cancellationToken).ConfigureAwait(false);
 
@@ -544,7 +544,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                     if (allFilePathsToDelete.Any())
                     {
                         progress?.Report(new ScanProgress
-                            { StatusText = "Cleaning up your library...", IsIndeterminate = true });
+                            { StatusText = Resources.Strings.Status_CleaningUpLibrary, IsIndeterminate = true });
                         await using var deleteContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
 
                         var songsToDeleteQuery = deleteContext.Songs
@@ -595,7 +595,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                         if (allFilePathsToDelete.Any())
                         {
                             progress?.Report(new ScanProgress
-                                { StatusText = "Finalizing cleanup...", IsIndeterminate = true });
+                                { StatusText = Resources.Strings.Status_Finalizing, IsIndeterminate = true });
                             await using var cleanupContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
                             await CleanUpOrphanedEntitiesAsync(cleanupContext, cancellationToken).ConfigureAwait(false);
                         }
@@ -609,12 +609,13 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                         var hasChanges = allFilePathsToDelete.Any() || lrcUpdates > 0 || coverArtUpdates > 0;
 
                         var updates = new List<string>();
-                        if (lrcUpdates > 0) updates.Add($"{lrcUpdates} song(s) with lyrics");
-                        if (coverArtUpdates > 0) updates.Add($"{coverArtUpdates} song(s) with cover art");
+                        if (lrcUpdates > 0) updates.Add($"{lrcUpdates} {Resources.Strings.Label_Songs.ToLower()} {Resources.Strings.Label_WithLyrics}");
+                        if (coverArtUpdates > 0) updates.Add($"{coverArtUpdates} {Resources.Strings.Label_Songs.ToLower()} {Resources.Strings.Label_WithCoverArt}");
                         
+                        var andJoiner = $" {Resources.Strings.Label_And} ";
                         var statusMessage = updates.Any()
-                            ? $"Scan complete. Updated {string.Join(" and ", updates)}."
-                            : "Scan complete. Library is up to date.";
+                            ? string.Format(Resources.Strings.Format_ScanCompleteResult, string.Join(andJoiner, updates), "")
+                            : Resources.Strings.Status_ScanCompleteUpToDate;
                         
                         // Ensure subfolder hierarchy exists for existing songs.
                         // This handles the case where songs existed before subfolder records were implemented.
@@ -658,7 +659,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                     // Check for newly available cover art files for songs that don't have cover art
                     await UpdateMissingCoverArtAsync(folderId, folder.Path, cancellationToken).ConfigureAwait(false);
 
-                    progress?.Report(new ScanProgress { StatusText = "Finalizing...", IsIndeterminate = true });
+                    progress?.Report(new ScanProgress { StatusText = Resources.Strings.Status_Finalizing, IsIndeterminate = true });
                     
                     // Ensure subfolder hierarchy exists for ALL songs in this folder.
                     // This handles both newly added songs and existing songs from before this fix was added.
@@ -690,26 +691,24 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                         GC.Collect(2, GCCollectionMode.Forced, blocking: true, compacting: true);
                     }
 
-                    var pluralSong = newSongsFound == 1 ? "song" : "songs";
+                    var labelSong = newSongsFound == 1 ? Resources.Strings.Label_Song : Resources.Strings.Label_Songs;
                     var summary = newSongsFound > 0
-                        ? $"Scan complete. Added or updated {newSongsFound:N0} {pluralSong}."
-                        : "Scan complete. Library is up to date.";
-                    progress?.Report(new ScanProgress
-                        { StatusText = summary, Percentage = 100, NewSongsFound = newSongsFound });
+                        ? string.Format(Resources.Strings.Format_ScanCompleteResult, newSongsFound.ToString("N0"), labelSong.ToLower())
+                        : Resources.Strings.Status_ScanCompleteUpToDate;
                     LibraryContentChanged?.Invoke(this, new LibraryContentChangedEventArgs(LibraryChangeType.FolderRescanned, folderId));
                     return true;
                 }
                 catch (OperationCanceledException)
                 {
                     _logger.LogDebug("Scan for folder ID {FolderId} was cancelled.", folderId);
-                    progress?.Report(new ScanProgress { StatusText = "Scan cancelled by user.", Percentage = 100 });
+                    progress?.Report(new ScanProgress { StatusText = Resources.Strings.Status_ScanCancelled, Percentage = 100 });
                     return false;
                 }
                 catch (Exception ex)
                 {
                     _logger.LogCritical(ex, "FATAL: Rescan for folder ID {FolderId} failed.", folderId);
                     progress?.Report(new ScanProgress
-                        { StatusText = "An error occurred during the scan. Please check the logs.", Percentage = 100 });
+                        { StatusText = Resources.Strings.Status_ScanFailed, Percentage = 100 });
                     return false;
                 }
             }, cancellationToken);
@@ -726,7 +725,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         catch (OperationCanceledException)
         {
             _logger.LogDebug("Scan for folder ID {FolderId} was cancelled during execution.", folderId);
-            progress?.Report(new ScanProgress { StatusText = "Scan cancelled by user.", Percentage = 100 });
+            progress?.Report(new ScanProgress { StatusText = Resources.Strings.Status_ScanCancelled, Percentage = 100 });
             return false;
         }
         finally
@@ -804,7 +803,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         catch (Exception ex)
         {
             _logger.LogError(ex, "ReplayGain analysis failed.");
-            progress?.Report(new ScanProgress { StatusText = "Volume normalization failed. Check logs for details.", Percentage = 100 });
+            progress?.Report(new ScanProgress { StatusText = Resources.Strings.Status_NormalizationFailed, Percentage = 100 });
         }
         finally
         {
@@ -841,7 +840,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             {
                 _logger.LogDebug("No folders found in the library to refresh.");
                 progress?.Report(
-                    new ScanProgress { StatusText = "No folders in the library to refresh.", Percentage = 100 });
+                    new ScanProgress { StatusText = Resources.Strings.Status_NoFoldersToRefresh, Percentage = 100 });
                 ScanCompleted?.Invoke(this, false);
                 return false;
             }
@@ -866,7 +865,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                         // Allow individual steps to show meaningful status text (e.g. "Reading songs...")
                         // but prefix with folder info if useful
                         var status = totalFolders > 1
-                            ? $"Scanning folder {foldersProcessed + 1} of {totalFolders}: {folder.Name} - {p.StatusText}"
+                            ? string.Format(Resources.Strings.Format_ScanFolderProgress, foldersProcessed + 1, totalFolders, folder.Name, p.StatusText)
                             : p.StatusText;
                             
                         progress?.Report(new ScanProgress
@@ -899,7 +898,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 await RunReplayGainAnalysisAsync(progress, cancellationToken).ConfigureAwait(false);
             }
 
-            progress?.Report(new ScanProgress { StatusText = "Library refresh complete.", Percentage = 100 });
+            progress?.Report(new ScanProgress { StatusText = Resources.Strings.Status_LibraryRefreshComplete, Percentage = 100 });
             ScanCompleted?.Invoke(this, anyChangesMade);
             if (anyChangesMade)
             {
@@ -1268,7 +1267,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     public Task<bool> SetSongRatingAsync(Guid songId, int? rating)
     {
         if (rating.HasValue && (rating < 1 || rating > 5))
-            throw new ArgumentOutOfRangeException(nameof(rating), "Rating must be between 1 and 5.");
+            throw new ArgumentOutOfRangeException(nameof(rating), Resources.Strings.Error_RatingRange);
 
         return UpdateSongPropertyAsync(songId, s => s.Rating = rating);
     }
@@ -1453,7 +1452,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         string? coverImageUri = null)
     {
         if (string.IsNullOrWhiteSpace(name))
-            throw new ArgumentException("Playlist name cannot be empty.", nameof(name));
+            throw new ArgumentException(Resources.Strings.Error_PlaylistNameEmpty, nameof(name));
 
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var playlist = new Playlist
@@ -1501,7 +1500,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     public async Task<bool> RenamePlaylistAsync(Guid playlistId, string newName)
     {
         if (string.IsNullOrWhiteSpace(newName))
-            throw new ArgumentException("New playlist name cannot be empty.", nameof(newName));
+            throw new ArgumentException(Resources.Strings.Error_PlaylistNameEmpty, nameof(newName));
 
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var playlist = await context.Playlists.FindAsync(playlistId).ConfigureAwait(false);
@@ -3112,7 +3111,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         const int progressReportingBatchSize = 25;
 
         progress?.Report(new ScanProgress
-            { StatusText = "Preparing scan caches...", TotalFiles = totalFiles, Percentage = 0 });
+            { StatusText = Resources.Strings.Status_PreparingScanCaches, TotalFiles = totalFiles, Percentage = 0 });
 
         // Pre-load scan-scoped caches (names -> IDs) to prevent duplicate entity creation across batches
         var artistIdCache = new ConcurrentDictionary<string, Guid>(StringComparer.OrdinalIgnoreCase);
@@ -3161,7 +3160,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             artistIdCache.Count, albumIdCache.Count, genreIdCache.Count);
 
         progress?.Report(new ScanProgress
-            { StatusText = "Reading song details...", TotalFiles = totalFiles, Percentage = 0 });
+            { StatusText = Resources.Strings.Status_ReadingSongDetails, TotalFiles = totalFiles, Percentage = 0 });
 
         // Producer: Extract metadata concurrently and write to channel using Parallel.ForEachAsync
         // This limits both concurrency AND task object allocation (unlike Task.WhenAll which creates all tasks upfront)
@@ -3203,7 +3202,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                                 _logger.LogInformation("Producer progress: {Count}/{Total}", currentCount, totalFiles);
                                 progress?.Report(new ScanProgress
                                 {
-                                    StatusText = "Reading song details...",
+                                    StatusText = Resources.Strings.Status_ReadingSongDetails,
                                     CurrentFilePath = filePath,
                                     Percentage = (double)currentCount / totalFiles * 50, // First 50% is extraction
                                     TotalFiles = totalFiles,
@@ -3240,7 +3239,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                         batchNumber++;
                         progress?.Report(new ScanProgress
                         {
-                            StatusText = $"Saving batch {batchNumber}...",
+                            StatusText = string.Format(Resources.Strings.Format_SavingBatch, batchNumber),
                             Percentage = 50 + ((double)totalSaved / totalFiles * 50), // Second 50% is saving
                             NewSongsFound = extractedCount
                         });
@@ -3260,7 +3259,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                      _logger.LogInformation("Consumer processing FINAL batch {BatchNumber} with {Count} items.", batchNumber, batch.Count);
                     progress?.Report(new ScanProgress
                     {
-                        StatusText = $"Saving batch {batchNumber}...",
+                        StatusText = string.Format(Resources.Strings.Format_SavingBatch, batchNumber),
                         Percentage = 95,
                         NewSongsFound = extractedCount
                     });

@@ -7,8 +7,8 @@ namespace Nagi.Core.Models;
 /// </summary>
 public class Artist
 {
-    public const string UnknownArtistName = "Unknown Artist";
-    public const string ArtistSeparator = " & ";
+    public static string UnknownArtistName => string.Format(Resources.Strings.Format_Unknown, Resources.Strings.Label_Artist);
+    public static string ArtistSeparator => Resources.Strings.ArtistSeparator;
 
     /// <summary>
     ///     The unique identifier for the artist.
@@ -21,7 +21,7 @@ public class Artist
     /// </summary>
     [Required]
     [MaxLength(500)]
-    public string Name { get; set; } = UnknownArtistName;
+    public string Name { get; set; } = string.Format(Resources.Strings.Format_Unknown, Resources.Strings.Label_Artist);
 
 
     /// <summary>

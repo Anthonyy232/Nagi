@@ -18,7 +18,7 @@ public class Playlist
     /// </summary>
     [Required]
     [MaxLength(500)]
-    public string Name { get; set; } = "New Playlist";
+    public string Name { get; set; } = string.Format(Resources.Strings.Format_New, Resources.Strings.Label_Playlist);
 
     /// <summary>
     ///     The date and time the playlist was created.

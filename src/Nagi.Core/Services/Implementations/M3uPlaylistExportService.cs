@@ -34,7 +34,7 @@ public class M3uPlaylistExportService : IPlaylistExportService
             if (playlist is null)
             {
                 _logger.LogWarning("Playlist not found for export: {PlaylistId}", playlistId);
-                return new PlaylistExportResult(false, 0, "Playlist not found.");
+                return new PlaylistExportResult(false, 0, string.Format(Resources.Strings.Format_NotFound, Resources.Strings.Label_Playlist));
             }
 
             var songs = await _libraryReader.GetSongsInPlaylistOrderedAsync(playlistId).ConfigureAwait(false);
@@ -78,7 +78,7 @@ public class M3uPlaylistExportService : IPlaylistExportService
             if (!File.Exists(filePath))
             {
                 _logger.LogWarning("M3U file not found: {FilePath}", filePath);
-                return new PlaylistImportResult(false, null, 0, 0, [], "File not found.");
+                return new PlaylistImportResult(false, null, 0, 0, [], string.Format(Resources.Strings.Format_NotFound, Resources.Strings.Label_File));
             }
 
             var m3uDirectory = Path.GetDirectoryName(filePath) ?? string.Empty;
@@ -139,7 +139,7 @@ public class M3uPlaylistExportService : IPlaylistExportService
             {
                 _logger.LogWarning("No songs matched during import of {FilePath}", filePath);
                 return new PlaylistImportResult(false, null, 0, unmatchedPaths.Count, unmatchedPaths,
-                    "No songs from the playlist were found in your library.");
+                    Resources.Strings.Error_M3uImportNoSongsMatched);
             }
 
             // Create the playlist with matched songs
@@ -148,7 +148,7 @@ public class M3uPlaylistExportService : IPlaylistExportService
             {
                 _logger.LogError("Failed to create playlist during import");
                 return new PlaylistImportResult(false, null, matchedSongIds.Count, unmatchedPaths.Count,
-                    unmatchedPaths, "Failed to create playlist.");
+                    unmatchedPaths, string.Format(Resources.Strings.Format_NotFound, Resources.Strings.Label_Playlist));
             }
 
             await _playlistService.AddSongsToPlaylistAsync(playlist.Id, matchedSongIds).ConfigureAwait(false);
@@ -182,7 +182,7 @@ public class M3uPlaylistExportService : IPlaylistExportService
 
             if (playlistList.Count == 0)
             {
-                return new BatchExportResult(false, 0, 0, "No playlists to export.");
+                return new BatchExportResult(false, 0, 0, Resources.Strings.Error_NoPlaylistsToExport);
             }
 
             var exportedCount = 0;

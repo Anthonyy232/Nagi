@@ -94,7 +94,7 @@ public class TheAudioDbService : ITheAudioDbService, IDisposable
             return ServiceResult<TheAudioDbArtistInfo>.FromSuccessNotFound();
 
         if (_isApiDisabled)
-            return ServiceResult<TheAudioDbArtistInfo>.FromPermanentError("TheAudioDB API is disabled for this session.");
+            return ServiceResult<TheAudioDbArtistInfo>.FromPermanentError("API is disabled for this session.");
 
         var operationName = $"TheAudioDB metadata for MBID {musicBrainzId}";
 
