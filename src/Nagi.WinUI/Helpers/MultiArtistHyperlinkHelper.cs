@@ -87,10 +87,6 @@ public static class MultiArtistHyperlinkHelper
         }
         _lastUpdateMap.Remove(textBlock);
         _lastUpdateMap.Add(textBlock, cacheKey);
-
-        // Instead of using InlineUIContainer (which causes E_INVALIDARG in virtualized lists),
-        // we'll replace the TextBlock content with a StackPanel containing HyperlinkButtons.
-        // This is more stable and avoids all inline-related crashes.
         
         if (textBlock.Parent is not Panel parentPanel)
         {
@@ -161,15 +157,23 @@ public static class MultiArtistHyperlinkHelper
             return;
         }
 
-        // Split by " & " which is Nagi.Core.Models.Artist.ArtistSeparator
-        string[] separators = { Artist.ArtistSeparator };
-        var parts = artistString.Split(separators, StringSplitOptions.None);
-
-        for (int i = 0; i < parts.Length; i++)
+        // Prefer using structure data from SongArtists if available
+        var artistParts = new List<string>();
+        
+        if (song?.SongArtists?.Any() == true)
         {
-            var artistPart = parts[i].Trim();
-            if (string.IsNullOrEmpty(artistPart)) continue;
+            artistParts = song.SongArtists
+                .OrderBy(sa => sa.Order)
+                .Select(sa => sa.Artist?.Name)
+                .Where(n => !string.IsNullOrWhiteSpace(n))
+                .Select(n => n!)
+                .ToList();
+        }
 
+        for (int i = 0; i < artistParts.Count; i++)
+        {
+            var artistPart = artistParts[i];
+            
             var button = new HyperlinkButton
             {
                 Content = artistPart,
@@ -185,10 +189,8 @@ public static class MultiArtistHyperlinkHelper
 
             stackPanel.Children.Add(button);
 
-            if (i < parts.Length - 1)
+            if (i < artistParts.Count - 1)
             {
-                // Add the separator as a TextBlock with explicit margins
-                // This is more reliable than trailing spaces in WinUI TextBlocks
                 var separatorText = new TextBlock
                 {
                     Text = Artist.ArtistSeparator.Trim(),

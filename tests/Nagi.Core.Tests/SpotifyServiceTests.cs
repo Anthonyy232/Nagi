@@ -269,7 +269,7 @@ public class SpotifyServiceTests : IDisposable
 
         // Assert
         firstResult.Status.Should().Be(ServiceResultStatus.PermanentError);
-        firstResult.ErrorMessage.Should().Contain("rate limit exceeded");
+        firstResult.ErrorMessage.Should().Contain("Rate limited.");
 
         secondResult.Status.Should().Be(ServiceResultStatus.PermanentError);
         secondResult.ErrorMessage.Should().Contain("disabled for this session");
@@ -322,7 +322,7 @@ public class SpotifyServiceTests : IDisposable
 
         // Assert
         result.Status.Should().Be(ServiceResultStatus.TemporaryError);
-        result.ErrorMessage.Should().Contain("Max retries exceeded");
+        result.ErrorMessage.Should().Contain("Failed after exhausting retries.");
     }
 
     #endregion
