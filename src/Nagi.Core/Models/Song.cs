@@ -10,7 +10,7 @@ public class Song
 {
     [Key] public Guid Id { get; set; } = Guid.NewGuid();
 
-    [Required] [MaxLength(500)] public string Title { get; set; } = "Unknown Title";
+    [Required] [MaxLength(500)] public string Title { get; set; } = string.Format(Resources.Strings.Format_Unknown, Resources.Strings.Label_Title);
 
     public Guid? AlbumId { get; set; }
 

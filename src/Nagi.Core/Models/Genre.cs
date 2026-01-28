@@ -18,7 +18,7 @@ public class Genre
     /// </summary>
     [Required]
     [MaxLength(100)]
-    public string Name { get; set; } = "Unknown Genre";
+    public string Name { get; set; } = string.Format(Resources.Strings.Format_Unknown, Resources.Strings.Label_Genre);
 
     /// <summary>
     ///     The collection of songs associated with this genre.

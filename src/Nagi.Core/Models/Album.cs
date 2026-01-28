@@ -8,11 +8,11 @@ namespace Nagi.Core.Models;
 /// </summary>
 public class Album
 {
-    public const string UnknownAlbumName = "Unknown Album";
+    public static string UnknownAlbumName => string.Format(Resources.Strings.Format_Unknown, Resources.Strings.Label_Album);
     [Key] public Guid Id { get; set; } = Guid.NewGuid();
 
 
-    [Required] [MaxLength(500)] public string Title { get; set; } = "Unknown Album";
+    [Required] [MaxLength(500)] public string Title { get; set; } = string.Format(Resources.Strings.Format_Unknown, Resources.Strings.Label_Album);
 
     public int? Year { get; set; }
 

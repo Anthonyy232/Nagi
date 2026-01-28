@@ -15,8 +15,9 @@ public static class FileNameHelper
     /// <param name="name">The string to sanitize.</param>
     /// <param name="fallback">The fallback name if the sanitized result is empty.</param>
     /// <returns>A sanitized string safe for use as a file name.</returns>
-    public static string SanitizeFileName(string name, string fallback = "unknown")
+    public static string SanitizeFileName(string name, string? fallback = null)
     {
+        fallback ??= Resources.Strings.UnknownFilename;
         if (string.IsNullOrWhiteSpace(name))
             return fallback;
 
@@ -36,7 +37,7 @@ public static class FileNameHelper
     {
         var sanitizedArtist = SanitizeFileName(artist ?? string.Empty, Artist.UnknownArtistName);
         var sanitizedAlbum = SanitizeFileName(album ?? string.Empty, Album.UnknownAlbumName);
-        var sanitizedTitle = SanitizeFileName(title ?? string.Empty, "Unknown Title");
+        var sanitizedTitle = SanitizeFileName(title ?? string.Empty, string.Format(Resources.Strings.Format_Unknown, Resources.Strings.Label_Title));
 
         return $"{sanitizedArtist} - {sanitizedAlbum} - {sanitizedTitle}.lrc";
     }

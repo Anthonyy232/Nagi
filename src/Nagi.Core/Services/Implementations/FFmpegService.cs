@@ -70,12 +70,6 @@ public class FFmpegService : IFFmpegService
 
     public string GetFFmpegSetupInstructions()
     {
-        return "FFmpeg is required for High-Precision Volume Normalization (ReplayGain analysis) but was not found on your system.\n\n" +
-               "Follow these steps to set it up:\n\n" +
-               "1. **Download**: Visit https://www.gyan.dev/ffmpeg/builds/ and download the 'ffmpeg-git-full.7z' (or similar) essentials build.\n" +
-               "2. **Guide**: You can follow this guide for detailed instructions: https://phoenixnap.com/kb/ffmpeg-windows\n" +
-               "3. **Extract**: Open the architecture folder and locate the 'bin' directory containing `ffmpeg.exe`.\n" +
-               "4. **Install**: Copy `ffmpeg.exe` to a permanent folder (e.g., `C:\\ffmpeg\\`) and **add that folder to your System PATH** environment variable.\n" +
-               "5. **Restart**: Please restart Nagi after installation for changes to take effect.";
+        return Resources.Strings.FFmpeg_SetupInstructions;
     }
 }

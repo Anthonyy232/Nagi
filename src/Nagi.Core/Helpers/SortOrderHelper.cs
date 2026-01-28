@@ -16,60 +16,60 @@ public static class SortOrderHelper
     public const string ArtistViewSortOrderKey = "SortOrder_ArtistView";
     public const string GenreViewSortOrderKey = "SortOrder_GenreView";
 
-    // Base Labels (for Dropdowns)
-    public const string TitleAscLabel = "Title (A to Z)";
-    public const string TitleDescLabel = "Title (Z to A)";
-    public const string DateCreatedNewestLabel = "Date Created (Newest)";
-    public const string DateCreatedOldestLabel = "Date Created (Oldest)";
-    public const string ModifiedNewestLabel = "Date Modified (Newest)";
-    public const string ModifiedOldestLabel = "Date Modified (Oldest)";
-    public const string ArtistAscLabel = "Artist (A to Z)";
-    public const string ArtistDescLabel = "Artist (Z to A)";
-    public const string AlbumAscLabel = "Album (A to Z)";
-    public const string AlbumDescLabel = "Album (Z to A)";
-    public const string YearNewestLabel = "Year (Newest)";
-    public const string YearOldestLabel = "Year (Oldest)";
-    public const string MostSongsLabel = "Most Songs";
-    public const string LeastSongsLabel = "Least Songs";
-    public const string TrackNumberAscLabel = "Track Number (Asc)";
-    public const string TrackNumberDescLabel = "Track Number (Desc)";
-    public const string PlayCountAscLabel = "Least Played";
-    public const string PlayCountDescLabel = "Most Played";
-    public const string DateAddedAscLabel = "Date Added (Oldest)";
-    public const string DateAddedDescLabel = "Date Added (Newest)";
-    public const string LastPlayedAscLabel = "Last Played (Oldest)";
-    public const string LastPlayedDescLabel = "Last Played (Newest)";
-    public const string DurationAscLabel = "Shortest First";
-    public const string DurationDescLabel = "Longest First";
-    public const string BpmAscLabel = "Slowest First (BPM)";
-    public const string BpmDescLabel = "Fastest First (BPM)";
-    public const string PlaylistOrderLabel = "Manual Order";
-    public const string RandomLabel = "Random";
+    // Base Labels
+    public static string TitleAscLabel => string.Format(Resources.Strings.Format_AlphaAsc, Resources.Strings.Label_Title);
+    public static string TitleDescLabel => string.Format(Resources.Strings.Format_AlphaDesc, Resources.Strings.Label_Title);
+    public static string DateCreatedNewestLabel => string.Format(Resources.Strings.Format_TemporalNewest, Resources.Strings.Label_DateCreated);
+    public static string DateCreatedOldestLabel => string.Format(Resources.Strings.Format_TemporalOldest, Resources.Strings.Label_DateCreated);
+    public static string ModifiedNewestLabel => string.Format(Resources.Strings.Format_TemporalNewest, Resources.Strings.Label_DateModified);
+    public static string ModifiedOldestLabel => string.Format(Resources.Strings.Format_TemporalOldest, Resources.Strings.Label_DateModified);
+    public static string ArtistAscLabel => string.Format(Resources.Strings.Format_AlphaAsc, Resources.Strings.Label_Artist);
+    public static string ArtistDescLabel => string.Format(Resources.Strings.Format_AlphaDesc, Resources.Strings.Label_Artist);
+    public static string AlbumAscLabel => string.Format(Resources.Strings.Format_AlphaAsc, Resources.Strings.Label_Album);
+    public static string AlbumDescLabel => string.Format(Resources.Strings.Format_AlphaDesc, Resources.Strings.Label_Album);
+    public static string YearNewestLabel => string.Format(Resources.Strings.Format_TemporalNewest, Resources.Strings.Label_Year);
+    public static string YearOldestLabel => string.Format(Resources.Strings.Format_TemporalOldest, Resources.Strings.Label_Year);
+    public static string MostSongsLabel => string.Format(Resources.Strings.Format_Most, Resources.Strings.Label_Songs);
+    public static string LeastSongsLabel => string.Format(Resources.Strings.Format_Least, Resources.Strings.Label_Songs);
+    public static string TrackNumberAscLabel => string.Format(Resources.Strings.Format_DirectionalAsc, Resources.Strings.Label_TrackNumber);
+    public static string TrackNumberDescLabel => string.Format(Resources.Strings.Format_DirectionalDesc, Resources.Strings.Label_TrackNumber);
+    public static string PlayCountAscLabel => string.Format(Resources.Strings.Format_Least, Resources.Strings.Label_PlayCount);
+    public static string PlayCountDescLabel => string.Format(Resources.Strings.Format_Most, Resources.Strings.Label_PlayCount);
+    public static string DateAddedAscLabel => string.Format(Resources.Strings.Format_TemporalOldest, Resources.Strings.Label_DateAdded);
+    public static string DateAddedDescLabel => string.Format(Resources.Strings.Format_TemporalNewest, Resources.Strings.Label_DateAdded);
+    public static string LastPlayedAscLabel => string.Format(Resources.Strings.Format_TemporalOldest, Resources.Strings.Label_LastPlayed);
+    public static string LastPlayedDescLabel => string.Format(Resources.Strings.Format_TemporalNewest, Resources.Strings.Label_LastPlayed);
+    public static string DurationAscLabel => Resources.Strings.Format_ShortestFirst;
+    public static string DurationDescLabel => Resources.Strings.Format_LongestFirst;
+    public static string BpmAscLabel => string.Format(Resources.Strings.Format_SlowestFirst, Resources.Strings.Label_Bpm);
+    public static string BpmDescLabel => string.Format(Resources.Strings.Format_FastestFirst, Resources.Strings.Label_Bpm);
+    public static string PlaylistOrderLabel => Resources.Strings.Label_ManualOrder;
+    public static string RandomLabel => Resources.Strings.Label_Random;
 
     // Full Display Text (for Buttons/Tooltips)
-    public const string SortByTitleAsc = $"Sort By: {TitleAscLabel}";
-    public const string SortByTitleDesc = $"Sort By: {TitleDescLabel}";
-    public const string SortByArtistAsc = $"Sort By: {ArtistAscLabel}";
-    public const string SortByArtistDesc = $"Sort By: {ArtistDescLabel}";
-    public const string SortByAlbumAsc = $"Sort By: {AlbumAscLabel}";
-    public const string SortByAlbumDesc = $"Sort By: {AlbumDescLabel}";
-    public const string SortByYearNewest = $"Sort By: {YearNewestLabel}";
-    public const string SortByYearOldest = $"Sort By: {YearOldestLabel}";
-    public const string SortByMostSongs = $"Sort By: {MostSongsLabel}";
-    public const string SortByLeastSongs = $"Sort By: {LeastSongsLabel}";
-    public const string SortByTrackNumberAsc = $"Sort By: {TrackNumberAscLabel}";
-    public const string SortByTrackNumberDesc = $"Sort By: {TrackNumberDescLabel}";
-    public const string SortByPlayCountAsc = $"Sort By: {PlayCountAscLabel}";
-    public const string SortByPlayCountDesc = $"Sort By: {PlayCountDescLabel}";
-    public const string SortByDateAddedAsc = $"Sort By: {DateAddedAscLabel}";
-    public const string SortByDateAddedDesc = $"Sort By: {DateAddedDescLabel}";
-    public const string SortByLastPlayedAsc = $"Sort By: {LastPlayedAscLabel}";
-    public const string SortByLastPlayedDesc = $"Sort By: {LastPlayedDescLabel}";
-    public const string SortByDurationAsc = $"Sort By: {DurationAscLabel}";
-    public const string SortByDurationDesc = $"Sort By: {DurationDescLabel}";
-    public const string SortByBpmAsc = $"Sort By: {BpmAscLabel}";
-    public const string SortByBpmDesc = $"Sort By: {BpmDescLabel}";
-    public const string SortByRandom = $"Sort By: {RandomLabel}";
+    public static string SortByTitleAsc => $"{Resources.Strings.SortByPrefix}{TitleAscLabel}";
+    public static string SortByTitleDesc => $"{Resources.Strings.SortByPrefix}{TitleDescLabel}";
+    public static string SortByArtistAsc => $"{Resources.Strings.SortByPrefix}{ArtistAscLabel}";
+    public static string SortByArtistDesc => $"{Resources.Strings.SortByPrefix}{ArtistDescLabel}";
+    public static string SortByAlbumAsc => $"{Resources.Strings.SortByPrefix}{AlbumAscLabel}";
+    public static string SortByAlbumDesc => $"{Resources.Strings.SortByPrefix}{AlbumDescLabel}";
+    public static string SortByYearNewest => $"{Resources.Strings.SortByPrefix}{YearNewestLabel}";
+    public static string SortByYearOldest => $"{Resources.Strings.SortByPrefix}{YearOldestLabel}";
+    public static string SortByMostSongs => $"{Resources.Strings.SortByPrefix}{MostSongsLabel}";
+    public static string SortByLeastSongs => $"{Resources.Strings.SortByPrefix}{LeastSongsLabel}";
+    public static string SortByTrackNumberAsc => $"{Resources.Strings.SortByPrefix}{TrackNumberAscLabel}";
+    public static string SortByTrackNumberDesc => $"{Resources.Strings.SortByPrefix}{TrackNumberDescLabel}";
+    public static string SortByPlayCountAsc => $"{Resources.Strings.SortByPrefix}{PlayCountAscLabel}";
+    public static string SortByPlayCountDesc => $"{Resources.Strings.SortByPrefix}{PlayCountDescLabel}";
+    public static string SortByDateAddedAsc => $"{Resources.Strings.SortByPrefix}{DateAddedAscLabel}";
+    public static string SortByDateAddedDesc => $"{Resources.Strings.SortByPrefix}{DateAddedDescLabel}";
+    public static string SortByLastPlayedAsc => $"{Resources.Strings.SortByPrefix}{LastPlayedAscLabel}";
+    public static string SortByLastPlayedDesc => $"{Resources.Strings.SortByPrefix}{LastPlayedDescLabel}";
+    public static string SortByDurationAsc => $"{Resources.Strings.SortByPrefix}{DurationAscLabel}";
+    public static string SortByDurationDesc => $"{Resources.Strings.SortByPrefix}{DurationDescLabel}";
+    public static string SortByBpmAsc => $"{Resources.Strings.SortByPrefix}{BpmAscLabel}";
+    public static string SortByBpmDesc => $"{Resources.Strings.SortByPrefix}{BpmDescLabel}";
+    public static string SortByRandom => $"{Resources.Strings.SortByPrefix}{RandomLabel}";
 
     public static string GetDisplayName(SongSortOrder sortOrder) => sortOrder switch
     {
@@ -83,7 +83,7 @@ public static class SortOrderHelper
         SongSortOrder.ArtistDesc => SortByArtistDesc,
         SongSortOrder.TrackNumberAsc => SortByTrackNumberAsc,
         SongSortOrder.TrackNumberDesc => SortByTrackNumberDesc,
-        SongSortOrder.PlaylistOrder => PlaylistOrderLabel,
+        SongSortOrder.PlaylistOrder => Resources.Strings.Label_ManualOrder,
         _ => SortByTitleAsc
     };
 
@@ -91,10 +91,10 @@ public static class SortOrderHelper
     {
         PlaylistSortOrder.NameAsc => SortByTitleAsc,
         PlaylistSortOrder.NameDesc => SortByTitleDesc,
-        PlaylistSortOrder.DateCreatedDesc => DateCreatedNewestLabel,
-        PlaylistSortOrder.DateCreatedAsc => DateCreatedOldestLabel,
-        PlaylistSortOrder.DateModifiedDesc => ModifiedNewestLabel,
-        PlaylistSortOrder.DateModifiedAsc => ModifiedOldestLabel,
+        PlaylistSortOrder.DateCreatedDesc => $"{Resources.Strings.SortByPrefix}{string.Format(Resources.Strings.Format_TemporalNewest, Resources.Strings.Label_DateCreated)}",
+        PlaylistSortOrder.DateCreatedAsc => $"{Resources.Strings.SortByPrefix}{string.Format(Resources.Strings.Format_TemporalOldest, Resources.Strings.Label_DateCreated)}",
+        PlaylistSortOrder.DateModifiedDesc => $"{Resources.Strings.SortByPrefix}{string.Format(Resources.Strings.Format_TemporalNewest, Resources.Strings.Label_DateModified)}",
+        PlaylistSortOrder.DateModifiedAsc => $"{Resources.Strings.SortByPrefix}{string.Format(Resources.Strings.Format_TemporalOldest, Resources.Strings.Label_DateModified)}",
         _ => SortByTitleAsc
     };
 

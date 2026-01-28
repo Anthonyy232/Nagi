@@ -164,12 +164,12 @@ public class ReplayGainService : IReplayGainService
         if (totalCount == 0)
         {
             _logger.LogInformation("All songs already have ReplayGain data.");
-            progress?.Report(new ScanProgress { StatusText = "All songs already have volume data.", Percentage = 100 });
+            progress?.Report(new ScanProgress { StatusText = Resources.Strings.ReplayGain_AllSongsScanned, Percentage = 100 });
             return;
         }
 
         _logger.LogInformation("Found {Count} songs without ReplayGain data.", totalCount);
-        progress?.Report(new ScanProgress { StatusText = $"Calculating volume for {totalCount} songs...", IsIndeterminate = true });
+        progress?.Report(new ScanProgress { StatusText = string.Format(Resources.Strings.ReplayGain_CalculatingCount, totalCount), IsIndeterminate = true });
 
         // Batching strategy: Process in parallel but commit in chunks to minimize SQLite lock contention
         const int BatchSize = 50;
@@ -227,7 +227,7 @@ public class ReplayGainService : IReplayGainService
                     var percentage = totalCount > 0 ? (double)currentProcessed / totalCount * 100 : 100;
                     progress?.Report(new ScanProgress
                     {
-                        StatusText = $"Calculating volume normalization ({currentProcessed}/{totalCount})...",
+                        StatusText = string.Format(Resources.Strings.ReplayGain_CalculatingProgress, currentProcessed, totalCount),
                         Percentage = percentage
                     });
                 }
@@ -249,7 +249,7 @@ public class ReplayGainService : IReplayGainService
             }
         }).ConfigureAwait(false);
 
-        progress?.Report(new ScanProgress { StatusText = $"Volume normalization complete. Processed {processed} songs.", Percentage = 100 });
+        progress?.Report(new ScanProgress { StatusText = string.Format(Resources.Strings.ReplayGain_Complete, processed), Percentage = 100 });
         _logger.LogInformation("ReplayGain scan complete. Processed {Count} songs.", processed);
     }
 

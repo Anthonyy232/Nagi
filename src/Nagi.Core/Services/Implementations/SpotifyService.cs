@@ -90,7 +90,7 @@ public class SpotifyService : ISpotifyService, IDisposable
     {
         if (_isApiPermanentlyDisabled)
             return ServiceResult<SpotifyImageResult>.FromPermanentError(
-                "Spotify API is disabled for this session due to rate limiting.");
+                "API is disabled for this session.");
         if (string.IsNullOrWhiteSpace(artistName))
             return ServiceResult<SpotifyImageResult>.FromPermanentError("Artist name cannot be empty.");
 
@@ -126,7 +126,7 @@ public class SpotifyService : ISpotifyService, IDisposable
                             _logger.LogError("Spotify rate limit reached repeatedly. Disabling for this session.");
                             _isApiPermanentlyDisabled = true;
                             return RetryResult<ServiceResult<SpotifyImageResult>>.Success(
-                                ServiceResult<SpotifyImageResult>.FromPermanentError("Spotify API rate limit exceeded."));
+                                ServiceResult<SpotifyImageResult>.FromPermanentError("Rate limited."));
                         }
 
                         return RetryResult<ServiceResult<SpotifyImageResult>>.RateLimitFailure(RateLimitDelayMultiplier);
@@ -173,13 +173,13 @@ public class SpotifyService : ISpotifyService, IDisposable
                 MaxRetries
             ).ConfigureAwait(false);
 
-            return result ?? ServiceResult<SpotifyImageResult>.FromTemporaryError("Max retries exceeded for Spotify artist image fetch.");
+            return result ?? ServiceResult<SpotifyImageResult>.FromTemporaryError("Failed after exhausting retries.");
         }
         catch (JsonException ex)
         {
             _logger.LogError(ex, "Failed to deserialize Spotify response for artist '{ArtistName}'.", artistName);
             return ServiceResult<SpotifyImageResult>.FromPermanentError(
-                $"Failed to deserialize Spotify response for '{artistName}'.");
+                "Failed to deserialize response.");
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {

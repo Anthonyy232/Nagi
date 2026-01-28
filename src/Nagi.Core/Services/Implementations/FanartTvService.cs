@@ -43,7 +43,7 @@ public class FanartTvService : IFanartTvService
             return ServiceResult<FanartTvArtistImages>.FromSuccessNotFound();
 
         if (_isApiDisabled)
-            return ServiceResult<FanartTvArtistImages>.FromPermanentError("Fanart.tv API is disabled for this session.");
+            return ServiceResult<FanartTvArtistImages>.FromPermanentError("API is disabled for this session.");
 
         var operationName = $"Fanart.tv images for MBID {musicBrainzId}";
 

@@ -47,7 +47,7 @@ public class LastFmMetadataService : ILastFmMetadataService
             return ServiceResult<ArtistInfo>.FromSuccessNotFound();
 
         if (_isApiDisabled)
-            return ServiceResult<ArtistInfo>.FromPermanentError("Last.fm API is disabled for this session.");
+            return ServiceResult<ArtistInfo>.FromPermanentError("API is disabled for this session.");
 
         var apiKey = await _apiKeyService.GetApiKeyAsync(ApiKeyName, cancellationToken).ConfigureAwait(false);
         if (string.IsNullOrEmpty(apiKey))
@@ -146,7 +146,7 @@ public class LastFmMetadataService : ILastFmMetadataService
             return result;
 
         _logger.LogWarning("Max retries exceeded for Last.fm request for artist '{ArtistName}'.", artistName);
-        return ServiceResult<ArtistInfo>.FromTemporaryError("Max retries exceeded for Last.fm request.");
+        return ServiceResult<ArtistInfo>.FromTemporaryError("Failed after exhausting retries.");
     }
 
     /// <summary>
