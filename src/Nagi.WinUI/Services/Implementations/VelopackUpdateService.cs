@@ -133,7 +133,8 @@ public class VelopackUpdateService : IUpdateService {
             var confirmed = await _uiService.ShowConfirmationDialogAsync(
                 "Update Available",
                 $"A new version ({updateInfo.TargetFullRelease.Version}) is available. Would you like to download and install it now?",
-                "Install Now");
+                "Install Now",
+                null);
 
             if (confirmed) await DownloadAndApplyUpdateAsync(updateInfo);
         }

@@ -581,4 +581,34 @@ For the best experience, please restart Nagi without administrator privileges.</
   <data name="AlbumView_DiscHeader" xml:space="preserve">
     <value>Disc {0}</value>
   </data>
+  <data name="Generic_OK" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="Generic_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Generic_Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="Generic_Recheck" xml:space="preserve">
+    <value>Recheck</value>
+  </data>
+  <data name="CrashReport_Button_Reset" xml:space="preserve">
+    <value>Reset App &amp; Data</value>
+  </data>
+  <data name="FFmpeg_Status_NotDetected" xml:space="preserve">
+    <value>FFmpeg not detected. Please install FFmpeg and click 'Recheck'.</value>
+  </data>
+  <data name="FFmpeg_Status_Checking" xml:space="preserve">
+    <value>Checking for FFmpeg...</value>
+  </data>
+  <data name="FFmpeg_Status_Detected" xml:space="preserve">
+    <value>FFmpeg detected!</value>
+  </data>
+  <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
+    <value>FFmpeg still not detected. Please install FFmpeg and click 'Recheck'.</value>
+  </data>
+  <data name="FFmpeg_Status_Error" xml:space="preserve">
+    <value>Error checking for FFmpeg. Please try again.</value>
+  </data>
 </root>

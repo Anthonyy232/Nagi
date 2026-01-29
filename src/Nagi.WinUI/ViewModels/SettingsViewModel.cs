@@ -484,7 +484,8 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         var confirmed = await _uiService.ShowConfirmationDialogAsync(
             Nagi.WinUI.Resources.Strings.Settings_Reset_Title,
             Nagi.WinUI.Resources.Strings.Settings_Reset_Message,
-            Nagi.WinUI.Resources.Strings.Settings_Reset_Button);
+            Nagi.WinUI.Resources.Strings.Settings_Reset_Button,
+            null);
 
         if (!confirmed) return;
 
@@ -565,7 +566,8 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         var confirmed = await _uiService.ShowConfirmationDialogAsync(
             Nagi.WinUI.Resources.Strings.Settings_LastFm_Disconnect_Title,
             Nagi.WinUI.Resources.Strings.Settings_LastFm_Disconnect_Message,
-            Nagi.WinUI.Resources.Strings.Settings_LastFm_Disconnect_Button);
+            Nagi.WinUI.Resources.Strings.Settings_LastFm_Disconnect_Button,
+            null);
 
         if (!confirmed) return;
 
@@ -853,7 +855,8 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         var confirmed = await _uiService.ShowConfirmationDialogAsync(
             "Rescan Metadata",
             "This will re-scan all songs in your library to apply new metadata settings (like artist split characters). This may take a while depending on library size. Do you want to continue?",
-            "Rescan");
+            "Rescan",
+            null);
 
         if (!confirmed) return;
 
@@ -1260,13 +1263,13 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
                 // If FFmpeg is present, show confirmation dialog and trigger scan
                 var confirmed = await _uiService.ShowConfirmationDialogAsync(
-                    "Enable Volume Normalization",
-                    "Volume Normalization (ReplayGain) ensures a consistent volume level across all your music.\n\n" +
+                    title: "Enable Volume Normalization",
+                    content: "Volume Normalization (ReplayGain) ensures a consistent volume level across all your music.\n\n" +
                     "This will analyze your music library and directly modify your audio files by writing ReplayGain tags. " +
                     "Only files without existing tags will be processed. This may take some time depending on your library size.\n\n" +
                     "Do you want to continue?",
-                    "Enable & Scan",
-                    "Cancel");
+                    primaryButtonText: "Enable & Scan",
+                    closeButtonText: "Cancel");
 
                 if (!confirmed)
                 {
