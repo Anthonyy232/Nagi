@@ -426,12 +426,12 @@ public class SettingsService : IUISettingsService, IDisposable
     {
         return new List<NavigationItemSetting>
         {
-            new() { DisplayName = "Library", Tag = "library", IconGlyph = "\uE1D3", IsEnabled = true },
-            new() { DisplayName = "Folders", Tag = "folders", IconGlyph = "\uE8B7", IsEnabled = true },
-            new() { DisplayName = "Playlists", Tag = "playlists", IconGlyph = "\uE90B", IsEnabled = true },
-            new() { DisplayName = "Artists", Tag = "artists", IconGlyph = "\uE77B", IsEnabled = true },
-            new() { DisplayName = "Albums", Tag = "albums", IconGlyph = "\uE93C", IsEnabled = true },
-            new() { DisplayName = "Genres", Tag = "genres", IconGlyph = "\uE8EC", IsEnabled = true }
+            new() { DisplayName = "Library", Tag = "Library", IconGlyph = "\uE1D3", IsEnabled = true },
+            new() { DisplayName = "Folders", Tag = "Folders", IconGlyph = "\uE8B7", IsEnabled = true },
+            new() { DisplayName = "Playlists", Tag = "Playlists", IconGlyph = "\uE90B", IsEnabled = true },
+            new() { DisplayName = "Artists", Tag = "Artists", IconGlyph = "\uE77B", IsEnabled = true },
+            new() { DisplayName = "Albums", Tag = "Albums", IconGlyph = "\uE93C", IsEnabled = true },
+            new() { DisplayName = "Genres", Tag = "Genres", IconGlyph = "\uE8EC", IsEnabled = true }
         };
     }
 

@@ -34,12 +34,12 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     // Maps detail pages back to their parent navigation item for selection synchronization.
     private readonly Dictionary<Type, string> _detailPageToParentTagMap = new()
     {
-        { typeof(PlaylistSongViewPage), "playlists" },
-        { typeof(SmartPlaylistSongViewPage), "playlists" },
-        { typeof(FolderSongViewPage), "folders" },
-        { typeof(ArtistViewPage), "artists" },
-        { typeof(AlbumViewPage), "albums" },
-        { typeof(GenreViewPage), "genres" }
+        { typeof(PlaylistSongViewPage), "Playlists" },
+        { typeof(SmartPlaylistSongViewPage), "Playlists" },
+        { typeof(FolderSongViewPage), "Folders" },
+        { typeof(ArtistViewPage), "Artists" },
+        { typeof(AlbumViewPage), "Albums" },
+        { typeof(GenreViewPage), "Genres" }
     };
 
     private readonly IDispatcherService _dispatcherService;
@@ -48,13 +48,13 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     // Maps navigation item tags to their corresponding page types.
     private readonly Dictionary<string, Type> _pages = new()
     {
-        { "library", typeof(LibraryPage) },
-        { "folders", typeof(FolderPage) },
-        { "playlists", typeof(PlaylistPage) },
-        { "settings", typeof(SettingsPage) },
-        { "artists", typeof(ArtistPage) },
-        { "albums", typeof(AlbumPage) },
-        { "genres", typeof(GenrePage) }
+        { "Library", typeof(LibraryPage) },
+        { "Folders", typeof(FolderPage) },
+        { "Playlists", typeof(PlaylistPage) },
+        { "Settings", typeof(SettingsPage) },
+        { "Artists", typeof(ArtistPage) },
+        { "Albums", typeof(AlbumPage) },
+        { "Genres", typeof(GenrePage) }
     };
 
     private readonly IUISettingsService _settingsService;
@@ -248,10 +248,17 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
         foreach (var item in navItems.Where(i => i.IsEnabled))
         {
+            // Normalize the tag to match Resource keys (PascalCase) even if older settings used lowercase.
+            var tag = item.Tag;
+            if (tag.Length > 0 && char.IsLower(tag[0]))
+            {
+                tag = char.ToUpper(tag[0]) + tag.Substring(1);
+            }
+
             var navViewItem = new NavigationViewItem
             {
-                Content = Nagi.WinUI.Resources.Strings.GetString($"NavItem_{item.Tag}"),
-                Tag = item.Tag,
+                Content = Nagi.WinUI.Resources.Strings.GetString($"NavItem_{tag}"),
+                Tag = tag,
                 Icon = new FontIcon { Glyph = item.IconGlyph }
             };
 
