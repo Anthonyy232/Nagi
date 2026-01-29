@@ -14,6 +14,7 @@ using Nagi.WinUI.Navigation;
 using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
 using Nagi.WinUI.Helpers;
+using Nagi.WinUI.Resources;
 using System.Threading;
 
 namespace Nagi.WinUI.ViewModels;
@@ -35,9 +36,6 @@ public partial class PlayerViewModel : ObservableObject
     private const string VolumeLowIconGlyph = "\uE993";
     private const string VolumeMediumIconGlyph = "\uE994";
     private const string VolumeHighIconGlyph = "\uE767";
-
-    private const string PlayTooltip = "Play";
-    private const string PauseTooltip = "Pause";
 
     private const double VolumeLowThreshold = 33;
     private const double VolumeMediumThreshold = 66;
@@ -81,7 +79,7 @@ public partial class PlayerViewModel : ObservableObject
         _logger = logger;
 
         // Initialize properties with default values
-        SongTitle = "No track playing";
+        SongTitle = Strings.Status_NoTrackPlaying;
         ArtistName = string.Empty;
         VolumeIconGlyph = VolumeMediumIconGlyph;
         CurrentQueue = new ObservableCollection<Song>();
@@ -149,9 +147,9 @@ public partial class PlayerViewModel : ObservableObject
 
     public bool IsArtworkAvailable => !string.IsNullOrWhiteSpace(AlbumArtUri);
     public string PlayPauseIconGlyph => IsPlaying ? PauseIconGlyph : PlayIconGlyph;
-    public string PlayPauseButtonToolTip => IsPlaying ? PauseTooltip : PlayTooltip;
+    public string PlayPauseButtonToolTip => IsPlaying ? Strings.Tooltip_Pause : Strings.Tooltip_Play;
     public string ShuffleIconGlyph => IsShuffleEnabled ? ShuffleOnIconGlyph : ShuffleOffIconGlyph;
-    public string ShuffleButtonToolTip => IsShuffleEnabled ? "Shuffle On" : "Shuffle Off";
+    public string ShuffleButtonToolTip => IsShuffleEnabled ? Strings.Tooltip_ShuffleOn : Strings.Tooltip_ShuffleOff;
 
     public string RepeatIconGlyph => CurrentRepeatMode switch
     {
@@ -162,13 +160,13 @@ public partial class PlayerViewModel : ObservableObject
 
     public string RepeatButtonToolTip => CurrentRepeatMode switch
     {
-        RepeatMode.Off => "Repeat Off",
-        RepeatMode.RepeatAll => "Repeat All",
-        RepeatMode.RepeatOne => "Repeat One",
-        _ => "Repeat"
+        RepeatMode.Off => Strings.Tooltip_RepeatOff,
+        RepeatMode.RepeatAll => Strings.Tooltip_RepeatAll,
+        RepeatMode.RepeatOne => Strings.Tooltip_RepeatOne,
+        _ => Strings.Tooltip_Repeat
     };
 
-    public string VolumeButtonToolTip => IsMuted ? "Unmute" : "Mute";
+    public string VolumeButtonToolTip => IsMuted ? Strings.Tooltip_Unmute : Strings.Tooltip_Mute;
 
     /// <summary>
     ///     Cleans up resources and unsubscribes from service events.
@@ -471,7 +469,7 @@ public partial class PlayerViewModel : ObservableObject
         }
         else
         {
-            SongTitle = "No track playing";
+            SongTitle = Strings.Status_NoTrackPlaying;
             ArtistName = string.Empty;
             AlbumArtUri = null;
             TotalDuration = 0;

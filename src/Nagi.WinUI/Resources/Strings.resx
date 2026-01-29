@@ -58,5 +58,58 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-
+  <data name="NavItem_Library" xml:space="preserve">
+    <value>Library</value>
+  </data>
+  <data name="NavItem_Albums" xml:space="preserve">
+    <value>Albums</value>
+  </data>
+  <data name="NavItem_Artists" xml:space="preserve">
+    <value>Artists</value>
+  </data>
+  <data name="NavItem_Genres" xml:space="preserve">
+    <value>Genres</value>
+  </data>
+  <data name="NavItem_Playlists" xml:space="preserve">
+    <value>Playlists</value>
+  </data>
+  <data name="NavItem_Folders" xml:space="preserve">
+    <value>Folders</value>
+  </data>
+  <data name="NavItem_Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Status_NoTrackPlaying" xml:space="preserve">
+    <value>No track playing</value>
+  </data>
+  <data name="Tooltip_Play" xml:space="preserve">
+    <value>Play</value>
+  </data>
+  <data name="Tooltip_Pause" xml:space="preserve">
+    <value>Pause</value>
+  </data>
+  <data name="Tooltip_ShuffleOn" xml:space="preserve">
+    <value>Shuffle On</value>
+  </data>
+  <data name="Tooltip_ShuffleOff" xml:space="preserve">
+    <value>Shuffle Off</value>
+  </data>
+  <data name="Tooltip_RepeatOff" xml:space="preserve">
+    <value>Repeat Off</value>
+  </data>
+  <data name="Tooltip_RepeatAll" xml:space="preserve">
+    <value>Repeat All</value>
+  </data>
+  <data name="Tooltip_RepeatOne" xml:space="preserve">
+    <value>Repeat One</value>
+  </data>
+  <data name="Tooltip_Repeat" xml:space="preserve">
+    <value>Repeat</value>
+  </data>
+  <data name="Tooltip_Unmute" xml:space="preserve">
+    <value>Unmute</value>
+  </data>
+  <data name="Tooltip_Mute" xml:space="preserve">
+    <value>Mute</value>
+  </data>
 </root>

@@ -250,7 +250,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         {
             var navViewItem = new NavigationViewItem
             {
-                Content = _localizationService.GetString($"NavItem_{item.Tag}", item.DisplayName),
+                Content = Nagi.WinUI.Resources.Strings.GetString($"NavItem_{item.Tag}"),
                 Tag = item.Tag,
                 Icon = new FontIcon { Glyph = item.IconGlyph }
             };
