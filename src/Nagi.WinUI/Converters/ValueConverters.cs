@@ -62,9 +62,9 @@ public class ElementThemeToFriendlyStringConverter : IValueConverter
 {
     private static readonly Dictionary<ElementTheme, string> FriendlyNames = new()
     {
-        { ElementTheme.Light, "Light" },
-        { ElementTheme.Dark, "Dark" },
-        { ElementTheme.Default, "Use system setting" }
+        { ElementTheme.Light, Nagi.WinUI.Resources.Strings.Theme_Light },
+        { ElementTheme.Dark, Nagi.WinUI.Resources.Strings.Theme_Dark },
+        { ElementTheme.Default, Nagi.WinUI.Resources.Strings.Theme_Default }
     };
 
     public object Convert(object value, Type targetType, object parameter, string language)
@@ -362,9 +362,9 @@ public class BackdropMaterialToStringConverter : IValueConverter
         if (value is BackdropMaterial material)
             return material switch
             {
-                BackdropMaterial.Mica => "Mica",
-                BackdropMaterial.MicaAlt => "Mica Alt",
-                BackdropMaterial.Acrylic => "Acrylic",
+                BackdropMaterial.Mica => Nagi.WinUI.Resources.Strings.Backdrop_Mica,
+                BackdropMaterial.MicaAlt => Nagi.WinUI.Resources.Strings.Backdrop_MicaAlt,
+                BackdropMaterial.Acrylic => Nagi.WinUI.Resources.Strings.Backdrop_Acrylic,
                 _ => material.ToString()
             };
         return string.Empty;

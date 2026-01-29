@@ -122,7 +122,7 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
 
         if (EditingPlaylist != null)
         {
-            Title = $"Edit Smart Playlist - {EditingPlaylist.Name}";
+            Title = string.Format(Nagi.WinUI.Resources.Strings.SmartPlaylist_Title_EditFormat, EditingPlaylist.Name);
             PlaylistNameTextBox.Text = EditingPlaylist.Name;
             MatchLogicComboBox.SelectedIndex = EditingPlaylist.MatchAllRules ? 0 : 1;
 
@@ -142,7 +142,7 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
         }
         else
         {
-            Title = "New Smart Playlist";
+            Title = Nagi.WinUI.Resources.Strings.SmartPlaylist_Title_New;
         }
 
         UpdateNoRulesVisibility();
@@ -250,7 +250,7 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
             var tempPlaylist = BuildSmartPlaylistFromUI();
             if (tempPlaylist == null)
             {
-                MatchCountText.Text = "Enter a playlist name";
+                MatchCountText.Text = Nagi.WinUI.Resources.Strings.SmartPlaylist_Status_EnterName;
                 return;
             }
 
@@ -260,8 +260,8 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
             if (token.IsCancellationRequested) return;
 
             MatchCountText.Text = count >= 0 
-                ? $"{count:N0} songs match current rules" 
-                : "Enter a name to see matching songs";
+                ? string.Format(Nagi.WinUI.Resources.Strings.SmartPlaylist_Status_MatchCountFormat, count) 
+                : Nagi.WinUI.Resources.Strings.SmartPlaylist_Status_EnterNameToSeeSongs;
         }
         catch (TaskCanceledException)
         {
@@ -270,7 +270,7 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error calculating match count");
-            MatchCountText.Text = "Unable to calculate";
+            MatchCountText.Text = Nagi.WinUI.Resources.Strings.SmartPlaylist_Status_Error;
         }
     }
 
@@ -330,7 +330,7 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
                 args.Cancel = true;
                 PlaylistNameTextBox.Focus(FocusState.Programmatic);
                 // Visual feedback - highlight the textbox
-                PlaylistNameTextBox.PlaceholderText = "Please enter a name!";
+                PlaylistNameTextBox.PlaceholderText = Nagi.WinUI.Resources.Strings.SmartPlaylist_Error_NameEmptyFeedback;
                 return;
             }
 
@@ -372,7 +372,7 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
                 {
                     args.Cancel = true;
                     PlaylistNameTextBox.Focus(FocusState.Programmatic);
-                    PlaylistNameTextBox.PlaceholderText = "A playlist with this name already exists!";
+                    PlaylistNameTextBox.PlaceholderText = Nagi.WinUI.Resources.Strings.SmartPlaylist_Error_DuplicateName;
                     PlaylistNameTextBox.Text = string.Empty;
                     return;
                 }
@@ -393,7 +393,7 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
             _logger.LogWarning(dbEx, "Duplicate smart playlist name");
             args.Cancel = true;
             PlaylistNameTextBox.Focus(FocusState.Programmatic);
-            PlaylistNameTextBox.PlaceholderText = "A playlist with this name already exists!";
+            PlaylistNameTextBox.PlaceholderText = Nagi.WinUI.Resources.Strings.SmartPlaylist_Error_DuplicateName;
         }
         catch (Exception ex)
         {
@@ -415,54 +415,54 @@ public class RuleViewModel : INotifyPropertyChanged
     // Static cached lists to avoid repeated allocations
     public static IReadOnlyList<FieldOption> AvailableFields { get; } = new List<FieldOption>
     {
-        new(SmartPlaylistField.Title, "Title"),
-        new(SmartPlaylistField.Artist, "Artist"),
-        new(SmartPlaylistField.Album, "Album"),
-        new(SmartPlaylistField.Genre, "Genre"),
-        new(SmartPlaylistField.Year, "Year"),
-        new(SmartPlaylistField.Rating, "Rating"),
-        new(SmartPlaylistField.Duration, "Duration"),
-        new(SmartPlaylistField.Bpm, "BPM"),
-        new(SmartPlaylistField.Comment, "Comment"),
-        new(SmartPlaylistField.Composer, "Composer")
+        new(SmartPlaylistField.Title, Nagi.Core.Resources.Strings.Label_Title),
+        new(SmartPlaylistField.Artist, Nagi.Core.Resources.Strings.Label_Artist),
+        new(SmartPlaylistField.Album, Nagi.Core.Resources.Strings.Label_Album),
+        new(SmartPlaylistField.Genre, Nagi.Core.Resources.Strings.Label_Genre),
+        new(SmartPlaylistField.Year, Nagi.Core.Resources.Strings.Label_Year),
+        new(SmartPlaylistField.Rating, Nagi.WinUI.Resources.Strings.Label_Rating),
+        new(SmartPlaylistField.Duration, Nagi.Core.Resources.Strings.Label_Duration),
+        new(SmartPlaylistField.Bpm, Nagi.Core.Resources.Strings.Label_Bpm),
+        new(SmartPlaylistField.Comment, Nagi.WinUI.Resources.Strings.Label_Comment),
+        new(SmartPlaylistField.Composer, Nagi.WinUI.Resources.Strings.Label_Composer)
     };
 
     private static readonly IReadOnlyList<OperatorOption> TextOperators = new List<OperatorOption>
     {
-        new(SmartPlaylistOperator.Contains, "Contains"),
-        new(SmartPlaylistOperator.DoesNotContain, "Does not contain"),
-        new(SmartPlaylistOperator.Is, "Is exactly"),
-        new(SmartPlaylistOperator.IsNot, "Is not"),
-        new(SmartPlaylistOperator.StartsWith, "Starts with"),
-        new(SmartPlaylistOperator.EndsWith, "Ends with")
+        new(SmartPlaylistOperator.Contains, Nagi.WinUI.Resources.Strings.Operator_Contains),
+        new(SmartPlaylistOperator.DoesNotContain, Nagi.WinUI.Resources.Strings.Operator_DoesNotContain),
+        new(SmartPlaylistOperator.Is, Nagi.WinUI.Resources.Strings.Operator_Is),
+        new(SmartPlaylistOperator.IsNot, Nagi.WinUI.Resources.Strings.Operator_IsNot),
+        new(SmartPlaylistOperator.StartsWith, Nagi.WinUI.Resources.Strings.Operator_StartsWith),
+        new(SmartPlaylistOperator.EndsWith, Nagi.WinUI.Resources.Strings.Operator_EndsWith)
     };
 
     private static readonly IReadOnlyList<OperatorOption> NumericOperators = new List<OperatorOption>
     {
-        new(SmartPlaylistOperator.Equals, "Is equal to"),
-        new(SmartPlaylistOperator.NotEquals, "Is not equal to"),
-        new(SmartPlaylistOperator.GreaterThan, "Is greater than"),
-        new(SmartPlaylistOperator.LessThan, "Is less than"),
-        new(SmartPlaylistOperator.GreaterThanOrEqual, "Is at least"),
-        new(SmartPlaylistOperator.LessThanOrEqual, "Is at most")
+        new(SmartPlaylistOperator.Equals, Nagi.WinUI.Resources.Strings.Operator_Equals),
+        new(SmartPlaylistOperator.NotEquals, Nagi.WinUI.Resources.Strings.Operator_NotEquals),
+        new(SmartPlaylistOperator.GreaterThan, Nagi.WinUI.Resources.Strings.Operator_GreaterThan),
+        new(SmartPlaylistOperator.LessThan, Nagi.WinUI.Resources.Strings.Operator_LessThan),
+        new(SmartPlaylistOperator.GreaterThanOrEqual, Nagi.WinUI.Resources.Strings.Operator_GreaterThanOrEqual),
+        new(SmartPlaylistOperator.LessThanOrEqual, Nagi.WinUI.Resources.Strings.Operator_LessThanOrEqual)
     };
 
     private static readonly IReadOnlyList<OperatorOption> DateOperators = new List<OperatorOption>
     {
-        new(SmartPlaylistOperator.IsInTheLast, "Is in the last (days)"),
-        new(SmartPlaylistOperator.IsNotInTheLast, "Is not in the last (days)")
+        new(SmartPlaylistOperator.IsInTheLast, Nagi.WinUI.Resources.Strings.Operator_IsInTheLast),
+        new(SmartPlaylistOperator.IsNotInTheLast, Nagi.WinUI.Resources.Strings.Operator_IsNotInTheLast)
     };
 
     private static readonly IReadOnlyList<OperatorOption> BooleanOperators = new List<OperatorOption>
     {
-        new(SmartPlaylistOperator.IsTrue, "Is true"),
-        new(SmartPlaylistOperator.IsFalse, "Is false")
+        new(SmartPlaylistOperator.IsTrue, Nagi.WinUI.Resources.Strings.Operator_IsTrue),
+        new(SmartPlaylistOperator.IsFalse, Nagi.WinUI.Resources.Strings.Operator_IsFalse)
     };
 
     private static readonly IReadOnlyList<OperatorOption> FallbackOperators = new List<OperatorOption>
     {
-        new(SmartPlaylistOperator.Contains, "Contains"),
-        new(SmartPlaylistOperator.Is, "Is exactly")
+        new(SmartPlaylistOperator.Contains, Nagi.WinUI.Resources.Strings.Operator_Contains),
+        new(SmartPlaylistOperator.Is, Nagi.WinUI.Resources.Strings.Operator_Is)
     };
 
     // Cached PropertyChangedEventArgs to avoid repeated allocations

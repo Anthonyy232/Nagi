@@ -8,9 +8,7 @@
     xmlns:helpers="using:Nagi.Core.Helpers"
     xmlns:dialogs="using:Nagi.WinUI.Dialogs"
     mc:Ignorable="d"
-    Title="Smart Playlist"
-    PrimaryButtonText="Save"
-    CloseButtonText="Cancel"
+    x:Uid="SmartPlaylist_Dialog"
     DefaultButton="Primary"
     PrimaryButtonClick="OnPrimaryButtonClick"
     Loaded="OnDialogLoaded"
@@ -51,24 +49,23 @@
                                       Visibility="Collapsed" />
                 </Grid>
                 <Button x:Name="PickCoverImageButton" 
-                        Content="Choose Cover" 
+                        x:Uid="SmartPlaylist_PickCoverButton"
                         Click="PickCoverImage_Click"
-                        HorizontalAlignment="Stretch"
-                        ToolTipService.ToolTip="Choose a cover image" />
+                        HorizontalAlignment="Stretch" />
             </StackPanel>
 
             <!-- Name Section -->
             <StackPanel Grid.Column="2" Spacing="4" VerticalAlignment="Top">
-                <TextBlock Text="Playlist Name" Style="{ThemeResource BodyStrongTextBlockStyle}"/>
+                <TextBlock x:Uid="SmartPlaylist_PlaylistNameLabel" Style="{ThemeResource BodyStrongTextBlockStyle}"/>
                 <TextBox x:Name="PlaylistNameTextBox" 
-                         PlaceholderText="Enter a name for your smart playlist" 
+                         x:Uid="SmartPlaylist_PlaylistNameTextBox"
                          TextChanged="OnPlaylistNameChanged"
                          MaxLength="200" />
             </StackPanel>
             
             <!-- Sort Order Section -->
             <StackPanel Grid.Column="4" Spacing="4" MinWidth="200" VerticalAlignment="Top">
-                <TextBlock Text="Sort Order" Style="{ThemeResource BodyStrongTextBlockStyle}"/>
+                <TextBlock x:Uid="SmartPlaylist_SortOrderLabel" Style="{ThemeResource BodyStrongTextBlockStyle}"/>
                 <ComboBox x:Name="SortByComboBox" SelectedIndex="0" HorizontalAlignment="Stretch"
                           SelectionChanged="OnComboBoxSelectionChanged">
                     <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.TitleAscLabel}" Tag="TitleAsc" />
@@ -99,19 +96,19 @@
         <!-- Row 1: Rules Toolbar -->
         <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto" Margin="0,0,0,12">
             <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                <TextBlock Text="Match" VerticalAlignment="Center"/>
+                <TextBlock x:Uid="SmartPlaylist_MatchLabel" VerticalAlignment="Center"/>
                 <ComboBox x:Name="MatchLogicComboBox" SelectedIndex="0" MinWidth="80"
                           SelectionChanged="OnComboBoxSelectionChanged">
-                    <ComboBoxItem Content="All" Tag="All" />
-                    <ComboBoxItem Content="Any" Tag="Any" />
+                    <ComboBoxItem x:Uid="SmartPlaylist_MatchLogic_All" Tag="All" />
+                    <ComboBoxItem x:Uid="SmartPlaylist_MatchLogic_Any" Tag="Any" />
                 </ComboBox>
-                <TextBlock Text="of the following rules:" VerticalAlignment="Center"/>
+                <TextBlock x:Uid="SmartPlaylist_MatchSuffixLabel" VerticalAlignment="Center"/>
             </StackPanel>
             
-            <Button Grid.Column="2" Click="AddRule_Click" ToolTipService.ToolTip="Add a new rule" Style="{ThemeResource AccentButtonStyle}">
+            <Button Grid.Column="2" Click="AddRule_Click" x:Uid="SmartPlaylist_AddRuleButton" Style="{ThemeResource AccentButtonStyle}">
                 <StackPanel Orientation="Horizontal" Spacing="6">
                     <FontIcon Glyph="&#xE710;" FontSize="12" />
-                    <TextBlock Text="Add Rule" />
+                    <TextBlock x:Uid="SmartPlaylist_AddRuleLabel" />
                 </StackPanel>
             </Button>
         </Grid>
@@ -162,12 +159,12 @@
 
                                             <TextBox Grid.Column="2"
                                                      Text="{x:Bind Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                     PlaceholderText="Value"
+                                                     x:Uid="SmartPlaylist_RuleValueTextBox"
                                                      HorizontalAlignment="Stretch" />
 
                                             <Button Grid.Column="3" 
                                                     Click="RemoveRule_Click"
-                                                    ToolTipService.ToolTip="Remove this rule"
+                                                    x:Uid="SmartPlaylist_RemoveRuleButton"
                                                     Style="{ThemeResource SubtleButtonStyle}">
                                                 <FontIcon Glyph="&#xE74D;" FontSize="14" Foreground="{ThemeResource SystemFillColorCriticalBrush}" />
                                             </Button>
@@ -184,17 +181,16 @@
                                    VerticalAlignment="Center"
                                    Spacing="16"
                                    Margin="0,48,0,48">
-                            <TextBlock Text="No rules defined" 
+                            <TextBlock x:Uid="SmartPlaylist_NoRulesTitle" 
                                        Style="{ThemeResource SubtitleTextBlockStyle}" 
                                        HorizontalAlignment="Center"/>
-                            <TextBlock Text="All songs in your library will be included in this playlist."
+                            <TextBlock x:Uid="SmartPlaylist_NoRulesMessage"
                                        Foreground="{ThemeResource TextFillColorSecondary}"
                                        HorizontalAlignment="Center"/>
-                            <Button Content="Add Your First Rule" 
+                            <Button x:Uid="SmartPlaylist_AddFirstRuleButton" 
                                     Click="AddRule_Click" 
                                     Style="{ThemeResource AccentButtonStyle}"
-                                    HorizontalAlignment="Center"
-                                    ToolTipService.ToolTip="Add your first rule" />
+                                    HorizontalAlignment="Center" />
                         </StackPanel>
                     </StackPanel>
                 </ScrollViewer>
