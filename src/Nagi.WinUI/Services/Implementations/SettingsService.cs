@@ -426,12 +426,12 @@ public class SettingsService : IUISettingsService, IDisposable
     {
         return new List<NavigationItemSetting>
         {
-            new() { DisplayName = "Library", Tag = "Library", IconGlyph = "\uE1D3", IsEnabled = true },
-            new() { DisplayName = "Folders", Tag = "Folders", IconGlyph = "\uE8B7", IsEnabled = true },
-            new() { DisplayName = "Playlists", Tag = "Playlists", IconGlyph = "\uE90B", IsEnabled = true },
-            new() { DisplayName = "Artists", Tag = "Artists", IconGlyph = "\uE77B", IsEnabled = true },
-            new() { DisplayName = "Albums", Tag = "Albums", IconGlyph = "\uE93C", IsEnabled = true },
-            new() { DisplayName = "Genres", Tag = "Genres", IconGlyph = "\uE8EC", IsEnabled = true }
+            new() { DisplayName = Resources.Strings.Settings_Nav_Library, Tag = "Library", IconGlyph = "\uE1D3", IsEnabled = true },
+            new() { DisplayName = Resources.Strings.Settings_Nav_Folders, Tag = "Folders", IconGlyph = "\uE8B7", IsEnabled = true },
+            new() { DisplayName = Resources.Strings.Settings_Nav_Playlists, Tag = "Playlists", IconGlyph = "\uE90B", IsEnabled = true },
+            new() { DisplayName = Resources.Strings.Settings_Nav_Artists, Tag = "Artists", IconGlyph = "\uE77B", IsEnabled = true },
+            new() { DisplayName = Resources.Strings.Settings_Nav_Albums, Tag = "Albums", IconGlyph = "\uE93C", IsEnabled = true },
+            new() { DisplayName = Resources.Strings.Settings_Nav_Genres, Tag = "Genres", IconGlyph = "\uE8EC", IsEnabled = true }
         };
     }
 
@@ -439,15 +439,15 @@ public class SettingsService : IUISettingsService, IDisposable
     {
         return new List<PlayerButtonSetting>
         {
-            new() { Id = "Shuffle", DisplayName = "Shuffle", IconGlyph = "\uE8B1", IsEnabled = true },
-            new() { Id = "Previous", DisplayName = "Previous", IconGlyph = "\uE892", IsEnabled = true },
-            new() { Id = "PlayPause", DisplayName = "Play/Pause", IconGlyph = "\uE768", IsEnabled = true },
-            new() { Id = "Next", DisplayName = "Next", IconGlyph = "\uE893", IsEnabled = true },
-            new() { Id = "Repeat", DisplayName = "Repeat", IconGlyph = "\uE8EE", IsEnabled = true },
-            new() { Id = "Separator", DisplayName = "Layout Divider", IconGlyph = "\uE7A3", IsEnabled = true },
-            new() { Id = "Lyrics", DisplayName = "Lyrics", IconGlyph = "\uE8D2", IsEnabled = true },
-            new() { Id = "Queue", DisplayName = "Queue", IconGlyph = "\uE90B", IsEnabled = true },
-            new() { Id = "Volume", DisplayName = "Volume", IconGlyph = "\uE767", IsEnabled = true }
+            new() { Id = "Shuffle", DisplayName = Resources.Strings.Settings_Button_Shuffle, IconGlyph = "\uE8B1", IsEnabled = true },
+            new() { Id = "Previous", DisplayName = Resources.Strings.Settings_Button_Previous, IconGlyph = "\uE892", IsEnabled = true },
+            new() { Id = "PlayPause", DisplayName = Resources.Strings.Settings_Button_PlayPause, IconGlyph = "\uE768", IsEnabled = true },
+            new() { Id = "Next", DisplayName = Resources.Strings.Settings_Button_Next, IconGlyph = "\uE893", IsEnabled = true },
+            new() { Id = "Repeat", DisplayName = Resources.Strings.Settings_Button_Repeat, IconGlyph = "\uE8EE", IsEnabled = true },
+            new() { Id = "Separator", DisplayName = Resources.Strings.Settings_Button_Divider, IconGlyph = "\uE7A3", IsEnabled = true },
+            new() { Id = "Lyrics", DisplayName = Resources.Strings.Settings_Button_Lyrics, IconGlyph = "\uE8D2", IsEnabled = true },
+            new() { Id = "Queue", DisplayName = Resources.Strings.Settings_Button_Queue, IconGlyph = "\uE90B", IsEnabled = true },
+            new() { Id = "Volume", DisplayName = Resources.Strings.Settings_Button_Volume, IconGlyph = "\uE767", IsEnabled = true }
         };
     }
 
@@ -767,7 +767,7 @@ public class SettingsService : IUISettingsService, IDisposable
                     Category = ServiceCategory.Lyrics,
                     IsEnabled = true,
                     Order = 0,
-                    Description = "Community-curated lyrics database"
+                    Description = Resources.Strings.Settings_Provider_LRCLIB_Desc
                 },
                 new()
                 {
@@ -776,7 +776,7 @@ public class SettingsService : IUISettingsService, IDisposable
                     Category = ServiceCategory.Lyrics,
                     IsEnabled = true,
                     Order = 1,
-                    Description = "Chinese music service, great for Asian music"
+                    Description = Resources.Strings.Settings_Provider_NetEase_Desc
                 }
             },
             ServiceCategory.Metadata => new List<ServiceProviderSetting>
@@ -788,7 +788,7 @@ public class SettingsService : IUISettingsService, IDisposable
                     Category = ServiceCategory.Metadata,
                     IsEnabled = true,
                     Order = 0,
-                    Description = "Fetches artist IDs (required for TheAudioDB and Fanart.tv)"
+                    Description = Resources.Strings.Settings_Provider_MusicBrainz_Desc
                 },
                 new()
                 {
@@ -797,7 +797,7 @@ public class SettingsService : IUISettingsService, IDisposable
                     Category = ServiceCategory.Metadata,
                     IsEnabled = true,
                     Order = 1,
-                    Description = "High-quality artist images and biographies (requires MusicBrainz)"
+                    Description = Resources.Strings.Settings_Provider_TheAudioDB_Desc
                 },
                 new()
                 {
@@ -806,7 +806,7 @@ public class SettingsService : IUISettingsService, IDisposable
                     Category = ServiceCategory.Metadata,
                     IsEnabled = true,
                     Order = 2,
-                    Description = "High-quality artist images only (requires MusicBrainz)"
+                    Description = Resources.Strings.Settings_Provider_FanartTv_Desc
                 },
                 new()
                 {
@@ -815,7 +815,7 @@ public class SettingsService : IUISettingsService, IDisposable
                     Category = ServiceCategory.Metadata,
                     IsEnabled = true,
                     Order = 3,
-                    Description = "Artist images only"
+                    Description = Resources.Strings.Settings_Provider_Spotify_Desc
                 },
                 new()
                 {
@@ -824,7 +824,7 @@ public class SettingsService : IUISettingsService, IDisposable
                     Category = ServiceCategory.Metadata,
                     IsEnabled = true,
                     Order = 4,
-                    Description = "Artist biographies and images (fallback)"
+                    Description = Resources.Strings.Settings_Provider_LastFm_Desc
                 }
             },
             _ => new List<ServiceProviderSetting>()
@@ -1101,7 +1101,7 @@ public class SettingsService : IUISettingsService, IDisposable
             if (!settings.Any(b => b.Id == "Separator"))
                 settings.Insert(5,
                     new PlayerButtonSetting
-                        { Id = "Separator", DisplayName = "Layout Divider", IconGlyph = "\uE7A3", IsEnabled = true });
+                        { Id = "Separator", DisplayName = Resources.Strings.Settings_Button_Divider, IconGlyph = "\uE7A3", IsEnabled = true });
             return settings;
         }
 

@@ -492,7 +492,7 @@ public sealed class TaskbarService : ITaskbarService
                     iId = PreviousButtonId,
                     dwMask = THB.ICON | THB.TOOLTIP | THB.FLAGS,
                     hIcon = _prevIcon,
-                    szTip = "Previous",
+                    szTip = Resources.Strings.Taskbar_Tooltip_Previous,
                     dwFlags = CanGoPrevious() ? THBF.ENABLED : THBF.DISABLED
                 },
 
@@ -502,7 +502,7 @@ public sealed class TaskbarService : ITaskbarService
                     iId = PlayPauseButtonId,
                     dwMask = THB.ICON | THB.TOOLTIP | THB.FLAGS,
                     hIcon = _playbackService.IsPlaying ? _pauseIcon : _playIcon,
-                    szTip = _playbackService.IsPlaying ? "Pause" : "Play",
+                    szTip = _playbackService.IsPlaying ? Resources.Strings.Taskbar_Tooltip_Pause : Resources.Strings.Taskbar_Tooltip_Play,
                     dwFlags = THBF.ENABLED
                 },
 
@@ -512,7 +512,7 @@ public sealed class TaskbarService : ITaskbarService
                     iId = NextButtonId,
                     dwMask = THB.ICON | THB.TOOLTIP | THB.FLAGS,
                     hIcon = _nextIcon,
-                    szTip = "Next",
+                    szTip = Resources.Strings.Taskbar_Tooltip_Next,
                     dwFlags = CanGoNext() ? THBF.ENABLED : THBF.DISABLED
                 }
             ];
@@ -543,12 +543,12 @@ public sealed class TaskbarService : ITaskbarService
             if (_playbackService.IsPlaying)
             {
                 _buttons[1].hIcon = _pauseIcon;
-                _buttons[1].szTip = "Pause";
+                _buttons[1].szTip = Resources.Strings.Taskbar_Tooltip_Pause;
             }
             else
             {
                 _buttons[1].hIcon = _playIcon;
-                _buttons[1].szTip = "Play";
+                _buttons[1].szTip = Resources.Strings.Taskbar_Tooltip_Play;
             }
             _buttons[1].dwFlags = THBF.ENABLED;
 

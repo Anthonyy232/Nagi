@@ -238,7 +238,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         }
         catch (Exception ex)
         {
-            var errorMessage = $"Failed to load '{song.Title}'.";
+            var errorMessage = string.Format(Resources.Strings.Player_Error_LoadFailed, song.Title);
             _logger.LogError(ex, "Failed to load song '{SongTitle}' from path: {FilePath}", song.Title, song.FilePath);
             _dispatcherService.TryEnqueue(() => ErrorOccurred?.Invoke(errorMessage));
             _currentSong = null;
@@ -561,8 +561,8 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         
         var lastVlcError = _libVlc.LastLibVLCError;
         var errorMessage = string.IsNullOrEmpty(lastVlcError)
-            ? "LibVLC encountered an unspecified error."
-            : $"LibVLC Error: {lastVlcError}";
+            ? Resources.Strings.Player_Error_LibVLC_Unspecified
+            : string.Format(Resources.Strings.Player_Error_LibVLC_WithDetails, lastVlcError);
         _logger.LogError("Playback error occurred. {ErrorMessage}", errorMessage);
         _dispatcherService.TryEnqueue(() =>
         {
