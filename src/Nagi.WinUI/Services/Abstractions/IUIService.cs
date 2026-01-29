@@ -54,8 +54,8 @@ public interface IUIService
     /// <param name="primaryButtonText">The text for the confirmation button.</param>
     /// <param name="closeButtonText">The text for the cancellation button. If null, the button is not shown.</param>
     /// <returns>True if the user confirmed (primary button), false otherwise.</returns>
-    Task<bool> ShowConfirmationDialogAsync(string title, string content, string primaryButtonText = "OK",
-        string? closeButtonText = "Cancel");
+    Task<bool> ShowConfirmationDialogAsync(string title, string content, string? primaryButtonText = null,
+        string? closeButtonText = null);
 
     /// <summary>
     ///     Opens a folder picker dialog for the user to select a single folder.

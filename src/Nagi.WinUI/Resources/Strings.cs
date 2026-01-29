@@ -241,4 +241,20 @@ public static class Strings
 
     // Mini Player
     public static string MiniPlayer_Title => GetString("MiniPlayer_Title");
+
+    // Generic
+    public static string Generic_OK => GetString("Generic_OK");
+    public static string Generic_Cancel => GetString("Generic_Cancel");
+    public static string Generic_Close => GetString("Generic_Close");
+    public static string Generic_Recheck => GetString("Generic_Recheck");
+
+    // Crash Report Buttons
+    public static string CrashReport_Button_Reset => GetString("CrashReport_Button_Reset");
+
+    // FFmpeg Setup
+    public static string FFmpeg_Status_NotDetected => GetString("FFmpeg_Status_NotDetected");
+    public static string FFmpeg_Status_Checking => GetString("FFmpeg_Status_Checking");
+    public static string FFmpeg_Status_Detected => GetString("FFmpeg_Status_Detected");
+    public static string FFmpeg_Status_StillNotDetected => GetString("FFmpeg_Status_StillNotDetected");
+    public static string FFmpeg_Status_Error => GetString("FFmpeg_Status_Error");
 }

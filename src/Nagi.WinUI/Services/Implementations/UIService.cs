@@ -31,7 +31,7 @@ public class UIService : IUIService
         _win32InteropService = win32InteropService;
     }
 
-    public async Task<bool> ShowConfirmationDialogAsync(string title, string content, string primaryButtonText,
+    public async Task<bool> ShowConfirmationDialogAsync(string title, string content, string? primaryButtonText,
         string? closeButtonText)
     {
         if (!TryGetXamlRoot(out var xamlRoot)) return false;
@@ -40,8 +40,8 @@ public class UIService : IUIService
         {
             Title = title,
             Content = content,
-            PrimaryButtonText = primaryButtonText,
-            CloseButtonText = closeButtonText,
+            PrimaryButtonText = primaryButtonText ?? Resources.Strings.Generic_OK,
+            CloseButtonText = closeButtonText ?? Resources.Strings.Generic_Cancel,
             XamlRoot = xamlRoot,
             DefaultButton = ContentDialogButton.Primary
         };
@@ -112,7 +112,7 @@ public class UIService : IUIService
         {
             Title = title,
             Content = message,
-            PrimaryButtonText = "OK",
+            PrimaryButtonText = Resources.Strings.Generic_OK,
             XamlRoot = xamlRoot
         };
 
@@ -135,8 +135,8 @@ public class UIService : IUIService
         {
             Title = title,
             Content = dialogContent,
-            PrimaryButtonText = "Reset App & Data",
-            CloseButtonText = "Close",
+            PrimaryButtonText = Resources.Strings.CrashReport_Button_Reset,
+            CloseButtonText = Resources.Strings.Generic_Close,
             DefaultButton = ContentDialogButton.Close,
             XamlRoot = xamlRoot
         };
@@ -190,7 +190,7 @@ public class UIService : IUIService
 
         var statusBlock = new TextBlock
         {
-            Text = "FFmpeg not detected. Please install FFmpeg and click 'Recheck'.",
+            Text = Resources.Strings.FFmpeg_Status_NotDetected,
             TextWrapping = TextWrapping.Wrap,
             Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Orange)
         };
@@ -200,8 +200,8 @@ public class UIService : IUIService
         {
             Title = title,
             Content = contentPanel,
-            PrimaryButtonText = "Recheck",
-            CloseButtonText = "Cancel",
+            PrimaryButtonText = Resources.Strings.Generic_Recheck,
+            CloseButtonText = Resources.Strings.Generic_Cancel,
             XamlRoot = xamlRoot,
             DefaultButton = ContentDialogButton.Primary
         };
@@ -213,7 +213,7 @@ public class UIService : IUIService
             var deferral = args.GetDeferral();
             
             // Update status to show we're checking
-            statusBlock.Text = "Checking for FFmpeg...";
+            statusBlock.Text = Resources.Strings.FFmpeg_Status_Checking;
             statusBlock.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Gray);
             
             try
@@ -223,14 +223,14 @@ public class UIService : IUIService
                 if (isInstalled)
                 {
                     // FFmpeg found - update status and allow dialog to close
-                    statusBlock.Text = "FFmpeg detected!";
+                    statusBlock.Text = Resources.Strings.FFmpeg_Status_Detected;
                     statusBlock.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Green);
                 }
                 else
                 {
                     // Still not found - prevent dialog from closing
                     args.Cancel = true;
-                    statusBlock.Text = "FFmpeg still not detected. Please install FFmpeg and click 'Recheck'.";
+                    statusBlock.Text = Resources.Strings.FFmpeg_Status_StillNotDetected;
                     statusBlock.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Orange);
                 }
             }
@@ -238,7 +238,7 @@ public class UIService : IUIService
             {
                 // On error, prevent closing and show error state
                 args.Cancel = true;
-                statusBlock.Text = "Error checking for FFmpeg. Please try again.";
+                statusBlock.Text = Resources.Strings.FFmpeg_Status_Error;
                 statusBlock.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Red);
             }
             finally
