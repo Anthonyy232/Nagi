@@ -482,9 +482,9 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     private async Task ResetApplicationDataAsync()
     {
         var confirmed = await _uiService.ShowConfirmationDialogAsync(
-            "Confirm Reset",
-            "Are you sure you want to reset all application data and settings? This action cannot be undone. The application will return to the initial setup.",
-            "Reset");
+            Nagi.WinUI.Resources.Strings.Settings_Reset_Title,
+            Nagi.WinUI.Resources.Strings.Settings_Reset_Message,
+            Nagi.WinUI.Resources.Strings.Settings_Reset_Button);
 
         if (!confirmed) return;
 
@@ -496,8 +496,8 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         {
             _logger.LogCritical(ex, "Application reset failed");
             await _uiService.ShowMessageDialogAsync(
-                "Reset Error",
-                $"An error occurred while resetting application data: {ex.Message}. Please try restarting the app manually.");
+                Nagi.WinUI.Resources.Strings.Settings_ResetError_Title,
+                string.Format(Nagi.WinUI.Resources.Strings.Settings_ResetError_Message, ex.Message));
         }
     }
 
@@ -519,7 +519,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         }
         else
         {
-            await _uiService.ShowMessageDialogAsync("Error", "Could not connect to Last.fm. Please try again later.");
+            await _uiService.ShowMessageDialogAsync(Nagi.WinUI.Resources.Strings.Settings_LastFm_AuthError_Title, Nagi.WinUI.Resources.Strings.Settings_LastFm_AuthError_Message);
             IsConnectingToLastFm = false;
         }
     }
@@ -544,8 +544,8 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         }
         else
         {
-            await _uiService.ShowMessageDialogAsync("Authentication Failed",
-                "Could not get a session from Last.fm. Please try connecting again.");
+            await _uiService.ShowMessageDialogAsync(Nagi.WinUI.Resources.Strings.Settings_LastFm_FinalizeError_Title,
+                Nagi.WinUI.Resources.Strings.Settings_LastFm_FinalizeError_Message);
         }
 
         IsConnectingToLastFm = false;
@@ -563,9 +563,9 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     private async Task LastFmDisconnectAsync()
     {
         var confirmed = await _uiService.ShowConfirmationDialogAsync(
-            "Disconnect Last.fm",
-            "Are you sure you want to disconnect your Last.fm account? Your scrobbling history will be preserved on Last.fm, but Nagi will no longer be able to scrobble.",
-            "Disconnect");
+            Nagi.WinUI.Resources.Strings.Settings_LastFm_Disconnect_Title,
+            Nagi.WinUI.Resources.Strings.Settings_LastFm_Disconnect_Message,
+            Nagi.WinUI.Resources.Strings.Settings_LastFm_Disconnect_Button);
 
         if (!confirmed) return;
 
@@ -613,12 +613,12 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
         if (result.Success)
         {
-            await _uiService.ShowMessageDialogAsync("Export Successful",
-                $"Exported {result.PlaylistsExported} playlists ({result.TotalSongs} total songs) to:\n{folderPath}");
+            await _uiService.ShowMessageDialogAsync(Nagi.WinUI.Resources.Strings.Settings_Export_Success_Title,
+                string.Format(Nagi.WinUI.Resources.Strings.Settings_Export_Success_Message, result.PlaylistsExported, result.TotalSongs, folderPath));
         }
         else
         {
-            await _uiService.ShowMessageDialogAsync("Export Failed", result.ErrorMessage ?? "No playlists to export.");
+            await _uiService.ShowMessageDialogAsync(Nagi.WinUI.Resources.Strings.Settings_Export_Failed_Title, result.ErrorMessage ?? "No playlists to export.");
         }
     }
 
@@ -632,20 +632,20 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
         if (result.Success)
         {
-            var message = $"Successfully imported {result.PlaylistsImported} playlists ({result.TotalMatchedSongs} songs).";
+            var message = string.Format(Nagi.WinUI.Resources.Strings.Settings_Import_Success_Message, result.PlaylistsImported, result.TotalMatchedSongs);
             if (result.TotalUnmatchedSongs > 0)
             {
-                message += $"\n\n{result.TotalUnmatchedSongs} songs could not be found in your library.";
+                message += string.Format(Nagi.WinUI.Resources.Strings.Settings_Import_Unmatched_Message, result.TotalUnmatchedSongs);
             }
             if (result.FailedFiles.Count > 0)
             {
-                message += $"\n\n{result.FailedFiles.Count} files failed to import.";
+                message += string.Format(Nagi.WinUI.Resources.Strings.Settings_Import_FailedFiles_Message, result.FailedFiles.Count);
             }
-            await _uiService.ShowMessageDialogAsync("Import Successful", message);
+            await _uiService.ShowMessageDialogAsync(Nagi.WinUI.Resources.Strings.Settings_Import_Success_Title, message);
         }
         else
         {
-            await _uiService.ShowMessageDialogAsync("Import Failed", "No playlists could be imported.");
+            await _uiService.ShowMessageDialogAsync(Nagi.WinUI.Resources.Strings.Settings_Import_FailedTotal_Title, Nagi.WinUI.Resources.Strings.Settings_Import_FailedTotal_Message);
         }
     }
 

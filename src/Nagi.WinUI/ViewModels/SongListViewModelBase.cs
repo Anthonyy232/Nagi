@@ -96,9 +96,9 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
 
     [ObservableProperty] public partial ObservableCollection<Playlist> AvailablePlaylists { get; set; } = new();
 
-    [ObservableProperty] public partial string PageTitle { get; set; } = "Songs";
+    [ObservableProperty] public partial string PageTitle { get; set; } = Nagi.WinUI.Resources.Strings.SongList_PageTitle_Default;
 
-    [ObservableProperty] public partial string TotalItemsText { get; set; } = "0 items";
+    [ObservableProperty] public partial string TotalItemsText { get; set; } = Nagi.WinUI.Resources.Strings.SongList_TotalItems_Default;
 
 
     [ObservableProperty]
@@ -256,7 +256,7 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to load or sort songs");
-            TotalItemsText = "Error loading items";
+            TotalItemsText = Nagi.WinUI.Resources.Strings.SongList_ErrorLoading;
         }
         finally
         {
@@ -608,7 +608,9 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
         _dispatcherService.TryEnqueue(() =>
         {
             if (_isDisposed) return;
-            TotalItemsText = $"{pagedResult.TotalCount} {(pagedResult.TotalCount == 1 ? "item" : "items")}";
+            TotalItemsText = pagedResult.TotalCount == 1 
+                ? string.Format(Nagi.WinUI.Resources.Strings.SongList_TotalItems_Format_Singular, pagedResult.TotalCount) 
+                : string.Format(Nagi.WinUI.Resources.Strings.SongList_TotalItems_Format_Plural, pagedResult.TotalCount);
             UpdateSelectionStatus();
             PlayAllSongsCommand.NotifyCanExecuteChanged();
             ShuffleAndPlayAllSongsCommand.NotifyCanExecuteChanged();
@@ -618,7 +620,9 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
     protected void UpdateSelectionStatus()
     {
         var count = SelectedItemsCount;
-        SelectedItemsCountText = count > 0 ? $"{count} selected" : string.Empty;
+        SelectedItemsCountText = count > 0 
+            ? string.Format(Nagi.WinUI.Resources.Strings.SongList_SelectedCount_Format, count) 
+            : string.Empty;
         IsSingleSongSelected = count == 1;
         OnPropertyChanged(nameof(SelectedItemsCount));
         OnPropertyChanged(nameof(HasSelectedSongs));

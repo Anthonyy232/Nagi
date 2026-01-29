@@ -88,11 +88,15 @@ public partial class PlaylistViewModelItem : ObservableObject
         SongCount = newSongCount;
         if (IsSmart)
         {
-            SongCountText = newSongCount == 1 ? "Smart • 1 song" : $"Smart • {newSongCount} songs";
+            SongCountText = newSongCount == 1 
+                ? string.Format(Nagi.WinUI.Resources.Strings.Playlist_Smart_Count_Singular, newSongCount) 
+                : string.Format(Nagi.WinUI.Resources.Strings.Playlist_Smart_Count_Plural, newSongCount);
         }
         else
         {
-            SongCountText = newSongCount == 1 ? "1 song" : $"{newSongCount} songs";
+            SongCountText = newSongCount == 1 
+                ? string.Format(Nagi.WinUI.Resources.Strings.Playlist_Count_Singular, newSongCount) 
+                : string.Format(Nagi.WinUI.Resources.Strings.Playlist_Count_Plural, newSongCount);
         }
     }
 }
@@ -224,7 +228,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase
         var (playlistId, isSmart) = args;
         if (IsAnyOperationInProgress || playlistId == Guid.Empty) return;
 
-        StatusMessage = "Starting playlist...";
+        StatusMessage = Nagi.WinUI.Resources.Strings.Playlist_Status_Starting;
         try
         {
             if (isSmart)
@@ -232,7 +236,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase
                 var songIds = await _smartPlaylistService.GetMatchingSongIdsAsync(playlistId);
                 if (songIds.Count == 0)
                 {
-                    StatusMessage = "No songs match this smart playlist's rules.";
+                    StatusMessage = Nagi.WinUI.Resources.Strings.Playlist_Status_SmartEmpty;
                     _logger.LogDebug("Smart playlist {PlaylistId} has no matching songs", playlistId);
                     return;
                 }
@@ -246,7 +250,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase
         }
         catch (Exception ex)
         {
-            StatusMessage = "Error starting playback for this playlist.";
+            StatusMessage = Nagi.WinUI.Resources.Strings.Playlist_Status_ErrorPlayback;
             _logger.LogCritical(ex, "Error playing playlist {PlaylistId}", playlistId);
         }
     }
@@ -258,7 +262,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase
     private async Task PlayRandomPlaylistAsync()
     {
         if (IsAnyOperationInProgress) return;
-        StatusMessage = "Picking a random playlist...";
+        StatusMessage = Nagi.WinUI.Resources.Strings.Playlist_Status_PickingRandom;
 
         try
         {
@@ -277,7 +281,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase
             var totalCount = regularCount + smartCount;
             if (totalCount == 0)
             {
-                StatusMessage = "No playlists found.";
+                StatusMessage = Nagi.WinUI.Resources.Strings.Playlist_Status_NoPlaylists;
                 return;
             }
 
@@ -310,14 +314,14 @@ public partial class PlaylistViewModel : SearchableViewModelBase
                     }
                     else
                     {
-                        StatusMessage = "Selected smart playlist is empty.";
+                        StatusMessage = Nagi.WinUI.Resources.Strings.Playlist_Status_SmartSelectedEmpty;
                     }
                 }
             }
         }
         catch (Exception ex)
         {
-            StatusMessage = "Error playing random playlist.";
+            StatusMessage = Nagi.WinUI.Resources.Strings.Playlist_Status_ErrorRandom;
             _logger.LogCritical(ex, "Error playing random playlist");
         }
     }
@@ -330,7 +334,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase
     {
         try
         {
-            StatusMessage = "Loading playlists...";
+            StatusMessage = Nagi.WinUI.Resources.Strings.Playlist_Status_Loading;
             Task<PlaylistSortOrder>? sortTask = null;
             if (!_hasSortOrderLoaded)
             {
@@ -378,7 +382,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase
         }
         catch (Exception ex)
         {
-            StatusMessage = "Error loading playlists.";
+            StatusMessage = Nagi.WinUI.Resources.Strings.Playlist_Status_ErrorLoadingPlaylists;
             _logger.LogError(ex, "Error loading playlists");
         }
     }
@@ -394,7 +398,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase
         if (string.IsNullOrWhiteSpace(playlistName) || IsAnyOperationInProgress) return;
 
         IsCreatingPlaylist = true;
-        StatusMessage = "Creating new playlist...";
+        StatusMessage = Nagi.WinUI.Resources.Strings.Playlist_Status_Creating;
 
         try
         {
@@ -409,12 +413,12 @@ public partial class PlaylistViewModel : SearchableViewModelBase
             }
             else
             {
-                StatusMessage = "Failed to create playlist. It may already exist.";
+                StatusMessage = Nagi.WinUI.Resources.Strings.Playlist_Status_CreateFailed;
             }
         }
         catch (Exception ex)
         {
-            StatusMessage = "An error occurred while creating the playlist.";
+            StatusMessage = Nagi.WinUI.Resources.Strings.Playlist_Status_CreateError;
             _logger.LogError(ex, "Error creating playlist");
         }
         finally
@@ -434,7 +438,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase
         if (string.IsNullOrWhiteSpace(newCoverImageUri) || IsAnyOperationInProgress) return;
 
         IsUpdatingCover = true;
-        StatusMessage = "Updating playlist cover...";
+        StatusMessage = Nagi.WinUI.Resources.Strings.Playlist_Status_UpdatingCover;
 
         try
         {
@@ -465,12 +469,12 @@ public partial class PlaylistViewModel : SearchableViewModelBase
             }
             else
             {
-                StatusMessage = "Failed to update playlist cover.";
+                StatusMessage = Nagi.WinUI.Resources.Strings.Playlist_Status_UpdateCoverFailed;
             }
         }
         catch (Exception ex)
         {
-            StatusMessage = "An error occurred while updating the playlist cover.";
+            StatusMessage = Nagi.WinUI.Resources.Strings.Playlist_Status_UpdateCoverError;
             _logger.LogError(ex, "Error updating playlist cover for {PlaylistId}", playlistId);
         }
         finally
@@ -486,7 +490,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase
         if (IsAnyOperationInProgress || playlistId == Guid.Empty) return;
 
         IsUpdatingCover = true;
-        StatusMessage = "Removing playlist image...";
+        StatusMessage = Nagi.WinUI.Resources.Strings.Playlist_Status_RemovingCover;
 
         try
         {
@@ -516,12 +520,12 @@ public partial class PlaylistViewModel : SearchableViewModelBase
             }
             else
             {
-                StatusMessage = "Failed to remove playlist image.";
+                StatusMessage = Nagi.WinUI.Resources.Strings.Playlist_Status_RemoveCoverFailed;
             }
         }
         catch (Exception ex)
         {
-            StatusMessage = "An error occurred while removing the playlist image.";
+            StatusMessage = Nagi.WinUI.Resources.Strings.Playlist_Status_RemoveCoverError;
             _logger.LogError(ex, "Error removing playlist cover for {PlaylistId}", playlistId);
         }
         finally
@@ -541,7 +545,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase
         if (string.IsNullOrWhiteSpace(newName) || IsAnyOperationInProgress) return;
 
         IsRenamingPlaylist = true;
-        StatusMessage = "Renaming playlist...";
+        StatusMessage = Nagi.WinUI.Resources.Strings.Playlist_Status_Renaming;
 
         try
         {
@@ -566,12 +570,12 @@ public partial class PlaylistViewModel : SearchableViewModelBase
             }
             else
             {
-                StatusMessage = "Failed to rename playlist.";
+                StatusMessage = Nagi.WinUI.Resources.Strings.Playlist_Status_RenameFailed;
             }
         }
         catch (Exception ex)
         {
-            StatusMessage = "An error occurred while renaming the playlist.";
+            StatusMessage = Nagi.WinUI.Resources.Strings.Playlist_Status_RenameError;
             _logger.LogError(ex, "Error renaming playlist {PlaylistId}", playlistId);
         }
         finally
@@ -591,7 +595,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase
         if (IsAnyOperationInProgress) return;
 
         IsDeletingPlaylist = true;
-        StatusMessage = "Deleting playlist...";
+        StatusMessage = Nagi.WinUI.Resources.Strings.Playlist_Status_Deleting;
 
         try
         {
@@ -613,12 +617,12 @@ public partial class PlaylistViewModel : SearchableViewModelBase
             }
             else
             {
-                StatusMessage = "Failed to delete playlist.";
+                StatusMessage = Nagi.WinUI.Resources.Strings.Playlist_Status_DeleteFailed;
             }
         }
         catch (Exception ex)
         {
-            StatusMessage = "An error occurred while deleting the playlist.";
+            StatusMessage = Nagi.WinUI.Resources.Strings.Playlist_Status_DeleteError;
             _logger.LogError(ex, "Error deleting playlist {PlaylistId}", playlistId);
         }
         finally

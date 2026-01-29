@@ -69,8 +69,8 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         _libraryScanner = libraryScanner;
 
         // Initialize properties with default values
-        ArtistName = "Artist";
-        ArtistBio = "Loading biography...";
+        ArtistName = Nagi.WinUI.Resources.Strings.ArtistView_DefaultArtistName;
+        ArtistBio = Nagi.WinUI.Resources.Strings.Status_Loading;
 
         CurrentSortOrder = SongSortOrder.AlbumAsc;
         UpdateSortOrderButtonText(CurrentSortOrder);
@@ -181,7 +181,7 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         PageTitle = artist.Name;
         ArtistImageUri = ImageUriHelper.GetUriWithCacheBuster(artist.LocalImageCachePath);
         ArtistBio = string.IsNullOrWhiteSpace(artist.Biography)
-            ? "No biography available for this artist."
+            ? Nagi.WinUI.Resources.Strings.ArtistView_NoBiography
             : artist.Biography;
 
         _logger.LogDebug("Populated details for artist '{ArtistName}' ({ArtistId})", artist.Name, artist.Id);
@@ -193,13 +193,13 @@ public partial class ArtistViewViewModel : SongListViewModelBase
     private void HandleArtistNotFound(Guid artistId)
     {
         _logger.LogWarning("Artist with ID {ArtistId} not found", artistId);
-        ArtistName = "Artist Not Found";
-        PageTitle = "Not Found";
+        ArtistName = Nagi.WinUI.Resources.Strings.ArtistView_ArtistNotFound;
+        PageTitle = Nagi.WinUI.Resources.Strings.Generic_NoItems;
         ArtistBio = string.Empty;
         ArtistImageUri = null;
         Albums.Clear();
         Songs.Clear();
-        TotalItemsText = "0 songs";
+        TotalItemsText = string.Format(Nagi.WinUI.Resources.Strings.Songs_Count_Plural, 0);
     }
 
     /// <summary>
@@ -208,11 +208,11 @@ public partial class ArtistViewViewModel : SongListViewModelBase
     private void HandleLoadError(Guid artistId, Exception ex)
     {
         _logger.LogError(ex, "Failed to load artist with ID {ArtistId}", artistId);
-        ArtistName = "Error Loading Artist";
-        PageTitle = "Error";
-        ArtistBio = "Could not load artist details.";
+        ArtistName = Nagi.WinUI.Resources.Strings.ArtistView_Error;
+        PageTitle = Nagi.WinUI.Resources.Strings.Generic_Error;
+        ArtistBio = string.Empty;
         ArtistImageUri = null;
-        TotalItemsText = "Error";
+        TotalItemsText = Nagi.WinUI.Resources.Strings.Generic_Error;
         Albums.Clear();
         Songs.Clear();
     }

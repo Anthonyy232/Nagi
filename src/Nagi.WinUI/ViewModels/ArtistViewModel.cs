@@ -120,7 +120,7 @@ public partial class ArtistViewModel : SearchableViewModelBase
 
     [ObservableProperty] public partial bool HasLoadError { get; set; }
 
-    [ObservableProperty] public partial string TotalItemsText { get; set; } = "0 artists";
+    [ObservableProperty] public partial string TotalItemsText { get; set; } = string.Format(Nagi.WinUI.Resources.Strings.Artists_Count_Plural, 0);
 
     [ObservableProperty] public partial ArtistSortOrder CurrentSortOrder { get; set; } = ArtistSortOrder.NameAsc;
 
@@ -301,7 +301,9 @@ public partial class ArtistViewModel : SearchableViewModelBase
         if (pagedResult != null)
         {
             var count = pagedResult.TotalCount;
-            TotalItemsText = $"{count:N0} {(count == 1 ? "artist" : "artists")}";
+            TotalItemsText = count == 1 
+                ? string.Format(Nagi.WinUI.Resources.Strings.Artists_Count_Singular, count)
+                : string.Format(Nagi.WinUI.Resources.Strings.Artists_Count_Plural, count);
         }
 
         if (pagedResult == null || Artists.Count >= pagedResult.TotalCount) _isFullyLoaded = true;
