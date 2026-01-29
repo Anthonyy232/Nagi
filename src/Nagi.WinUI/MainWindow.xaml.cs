@@ -482,7 +482,7 @@ public sealed class MiniPlayerWindow : Window
     {
         ExtendsContentIntoTitleBar = true; // Allows content to draw into the title bar area.
 
-        _appWindow.Title = "Nagi";
+        _appWindow.Title = Nagi.WinUI.Resources.Strings.MiniPlayer_Title;
         _appWindow.SetIcon(AppIconPath);
         
         // Convert logical pixels to physical pixels for AppWindow.Resize()

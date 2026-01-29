@@ -14,7 +14,7 @@
             Version="1.6.0.0"/>
 
     <Properties>
-        <DisplayName>Nagi</DisplayName>
+        <DisplayName>ms-resource:AppName</DisplayName>
         <PublisherDisplayName>Nagi</PublisherDisplayName>
         <Logo>Assets\StoreLogo.png</Logo>
     </Properties>
@@ -32,13 +32,13 @@
                      Executable="$targetnametoken$.exe"
                      EntryPoint="$targetentrypoint$">
             <uap:VisualElements
-                    DisplayName="Nagi"
-                    Description="Rediscover your local music collection with Nagi, a music player focused on speed, simplicity, and privacy. Nagi is built with C# and WinUI 3 to offer a clean, native Fluent experience. It's beautiful, efficient, and respects your privacy."
+                    DisplayName="ms-resource:AppName"
+                    Description="ms-resource:AppDescription"
                     BackgroundColor="transparent"
                     Square150x150Logo="Assets\Square150x150Logo.png"
                     Square44x44Logo="Assets\Square44x44Logo.png">
                 <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square71x71Logo="Assets\SmallTile.png"
-                                 Square310x310Logo="Assets\LargeTile.png" ShortName="Nagi">
+                                 Square310x310Logo="Assets\LargeTile.png" ShortName="ms-resource:AppShortName">
                     <uap:ShowNameOnTiles>
                         <uap:ShowOn Tile="square150x150Logo"/>
                         <uap:ShowOn Tile="wide310x150Logo"/>
@@ -54,9 +54,9 @@
             <Extensions>
                 <uap:Extension Category="windows.fileTypeAssociation">
                     <uap:FileTypeAssociation Name="nagi-music-files">
-                        <uap:DisplayName>Nagi Music Player</uap:DisplayName>
+                        <uap:DisplayName>ms-resource:AppDisplayName</uap:DisplayName>
                         <uap:Logo>Assets\AppLogo.png</uap:Logo>
-                        <uap:InfoTip>Open with Nagi Music Player</uap:InfoTip>
+                        <uap:InfoTip>ms-resource:AppInfoTip</uap:InfoTip>
                         <uap:SupportedFileTypes>
                             <!-- Audio Formats -->
                             <uap:FileType>.aa</uap:FileType>
@@ -87,7 +87,7 @@
                     <uap5:StartupTask
                             TaskId="NagiAutolaunchStartup"
                             Enabled="false"
-                            DisplayName="Nagi Startup"/>
+                            DisplayName="ms-resource:StartupTaskDisplayName"/>
                 </uap5:Extension>
             </Extensions>
         </Application>

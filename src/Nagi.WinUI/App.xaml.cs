@@ -61,7 +61,7 @@ public partial class App : Application
     private Window? _window;
 
     // Current version of LibVLC.Windows package - update this when upgrading LibVLC
-    private const string LibVlcVersion = "4.0.0-alpha-20250725";
+    private const string LibVlcVersion = "4.0.0-alpha-20260125";
 
     public App()
     {
@@ -810,8 +810,8 @@ public partial class App : Application
                 if (uiService != null)
                 {
                     var result = await uiService.ShowCrashReportDialogAsync(
-                        "Critical Error",
-                        "Nagi has encountered a critical error and must close. We are sorry for the inconvenience.",
+                        Nagi.WinUI.Resources.Strings.CrashReport_Title,
+                        Nagi.WinUI.Resources.Strings.CrashReport_Message,
                         fullCrashReport,
                         "https://github.com/Anthonyy232/Nagi/issues"
                     );
@@ -980,12 +980,10 @@ public partial class App : Application
 
             var dialog = new ContentDialog
             {
-                Title = "Running as Administrator",
-                Content = "Nagi is currently running as Administrator. This may prevent some features " +
-                          "(like adding music folders) from working correctly.\n\n" +
-                          "For the best experience, please restart Nagi without administrator privileges.",
-                PrimaryButtonText = "Restart Normally",
-                CloseButtonText = "Continue Anyway",
+                Title = Nagi.WinUI.Resources.Strings.ElevationWarning_Title,
+                Content = Nagi.WinUI.Resources.Strings.ElevationWarning_Message,
+                PrimaryButtonText = Nagi.WinUI.Resources.Strings.ElevationWarning_Restart,
+                CloseButtonText = Nagi.WinUI.Resources.Strings.ElevationWarning_Continue,
                 DefaultButton = ContentDialogButton.Primary,
                 XamlRoot = RootWindow.Content.XamlRoot
             };
