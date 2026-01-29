@@ -112,4 +112,106 @@
   <data name="Tooltip_Mute" xml:space="preserve">
     <value>Mute</value>
   </data>
+  <data name="Theme_Light" xml:space="preserve">
+    <value>Light</value>
+  </data>
+  <data name="Theme_Dark" xml:space="preserve">
+    <value>Dark</value>
+  </data>
+  <data name="Theme_Default" xml:space="preserve">
+    <value>Use system setting</value>
+  </data>
+  <data name="Backdrop_Mica" xml:space="preserve">
+    <value>Mica</value>
+  </data>
+  <data name="Backdrop_MicaAlt" xml:space="preserve">
+    <value>Mica Alt</value>
+  </data>
+  <data name="Backdrop_Acrylic" xml:space="preserve">
+    <value>Acrylic</value>
+  </data>
+  <data name="Label_Composer" xml:space="preserve">
+    <value>Composer</value>
+  </data>
+  <data name="Label_Comment" xml:space="preserve">
+    <value>Comment</value>
+  </data>
+  <data name="Label_Rating" xml:space="preserve">
+    <value>Rating</value>
+  </data>
+  <data name="Operator_Contains" xml:space="preserve">
+    <value>Contains</value>
+  </data>
+  <data name="Operator_DoesNotContain" xml:space="preserve">
+    <value>Does not contain</value>
+  </data>
+  <data name="Operator_Is" xml:space="preserve">
+    <value>Is exactly</value>
+  </data>
+  <data name="Operator_IsNot" xml:space="preserve">
+    <value>Is not</value>
+  </data>
+  <data name="Operator_StartsWith" xml:space="preserve">
+    <value>Starts with</value>
+  </data>
+  <data name="Operator_EndsWith" xml:space="preserve">
+    <value>Ends with</value>
+  </data>
+  <data name="Operator_Equals" xml:space="preserve">
+    <value>Is equal to</value>
+  </data>
+  <data name="Operator_NotEquals" xml:space="preserve">
+    <value>Is not equal to</value>
+  </data>
+  <data name="Operator_GreaterThan" xml:space="preserve">
+    <value>Is greater than</value>
+  </data>
+  <data name="Operator_LessThan" xml:space="preserve">
+    <value>Is less than</value>
+  </data>
+  <data name="Operator_GreaterThanOrEqual" xml:space="preserve">
+    <value>Is at least</value>
+  </data>
+  <data name="Operator_LessThanOrEqual" xml:space="preserve">
+    <value>Is at most</value>
+  </data>
+  <data name="Operator_IsInTheLast" xml:space="preserve">
+    <value>Is in the last (days)</value>
+  </data>
+  <data name="Operator_IsNotInTheLast" xml:space="preserve">
+    <value>Is not in the last (days)</value>
+  </data>
+  <data name="Operator_IsTrue" xml:space="preserve">
+    <value>Is true</value>
+  </data>
+  <data name="Operator_IsFalse" xml:space="preserve">
+    <value>Is false</value>
+  </data>
+  <data name="SmartPlaylist_Title_New" xml:space="preserve">
+    <value>New Smart Playlist</value>
+  </data>
+  <data name="SmartPlaylist_Title_EditFormat" xml:space="preserve">
+    <value>Edit Smart Playlist - {0}</value>
+  </data>
+  <data name="SmartPlaylist_Status_EnterName" xml:space="preserve">
+    <value>Enter a playlist name</value>
+  </data>
+  <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
+    <value>{0:N0} songs match current rules</value>
+  </data>
+  <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
+    <value>Enter a name to see matching songs</value>
+  </data>
+  <data name="SmartPlaylist_Status_Error" xml:space="preserve">
+    <value>Unable to calculate</value>
+  </data>
+  <data name="SmartPlaylist_Status_Calculating" xml:space="preserve">
+    <value>Calculating...</value>
+  </data>
+  <data name="SmartPlaylist_Error_DuplicateName" xml:space="preserve">
+    <value>A playlist with this name already exists!</value>
+  </data>
+  <data name="SmartPlaylist_Error_NameEmptyFeedback" xml:space="preserve">
+    <value>Please enter a name!</value>
+  </data>
 </root>
