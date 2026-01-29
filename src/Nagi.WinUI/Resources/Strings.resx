@@ -214,4 +214,10 @@
   <data name="SmartPlaylist_Error_NameEmptyFeedback" xml:space="preserve">
     <value>Please enter a name!</value>
   </data>
+  <data name="Status_Loading" xml:space="preserve">
+    <value>Loading...</value>
+  </data>
+  <data name="Error_FailedToLoadArtists" xml:space="preserve">
+    <value>Failed to load artists</value>
+  </data>
 </root>

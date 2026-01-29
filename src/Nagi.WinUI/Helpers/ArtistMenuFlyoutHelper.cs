@@ -50,7 +50,7 @@ public static class ArtistMenuFlyoutHelper
         }
 
         // 2. Show loading state and fetch asynchronously
-        var loadingItem = new MenuFlyoutItem { Text = "Loading...", IsEnabled = false };
+        var loadingItem = new MenuFlyoutItem { Text = Nagi.WinUI.Resources.Strings.Status_Loading, IsEnabled = false };
         subMenu.Items.Add(loadingItem);
 
         // Fire-and-forget async population
@@ -77,7 +77,7 @@ public static class ArtistMenuFlyoutHelper
 
                 if (artists.Count == 0)
                 {
-                    subMenu.Items.Add(new MenuFlyoutItem { Text = "Unknown Artist", IsEnabled = false });
+                    subMenu.Items.Add(new MenuFlyoutItem { Text = Artist.UnknownArtistName, IsEnabled = false });
                     return;
                 }
 
@@ -92,7 +92,7 @@ public static class ArtistMenuFlyoutHelper
             logger.LogError(ex, "Failed to populate artist submenu for song {SongId}", song.Id);
             dispatcherQueue.TryEnqueue(() =>
             {
-                if (subMenu.Items.Contains(loadingItem)) loadingItem.Text = "Failed to load artists";
+                if (subMenu.Items.Contains(loadingItem)) loadingItem.Text = Nagi.WinUI.Resources.Strings.Error_FailedToLoadArtists;
             });
         }
     }

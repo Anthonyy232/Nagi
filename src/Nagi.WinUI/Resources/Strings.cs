@@ -86,4 +86,10 @@ public static class Strings
     public static string SmartPlaylist_Status_Calculating => GetString("SmartPlaylist_Status_Calculating");
     public static string SmartPlaylist_Error_DuplicateName => GetString("SmartPlaylist_Error_DuplicateName");
     public static string SmartPlaylist_Error_NameEmptyFeedback => GetString("SmartPlaylist_Error_NameEmptyFeedback");
+
+    // Status
+    public static string Status_Loading => GetString("Status_Loading");
+
+    // Errors
+    public static string Error_FailedToLoadArtists => GetString("Error_FailedToLoadArtists");
 }
