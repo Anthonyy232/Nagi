@@ -24,6 +24,7 @@ internal sealed class SingleInstanceManager : IDisposable
     private CancellationTokenSource? _pipeServerCts;
     private Task? _pipeServerTask;
     private bool _isDisposed;
+    private bool _hasOwnership;
 
     public SingleInstanceManager(ILogger<SingleInstanceManager>? logger = null)
     {
@@ -44,6 +45,7 @@ internal sealed class SingleInstanceManager : IDisposable
         try
         {
             _mutex = new Mutex(true, MutexName, out var createdNew);
+            _hasOwnership = createdNew;
 
             if (createdNew)
             {
@@ -110,8 +112,11 @@ internal sealed class SingleInstanceManager : IDisposable
         _pipeServerTask?.Wait(TimeSpan.FromSeconds(2));
         _pipeServerCts?.Dispose();
 
-        // Release the mutex
-        _mutex?.ReleaseMutex();
+        // Release the mutex if we own it
+        if (_hasOwnership)
+        {
+            _mutex?.ReleaseMutex();
+        }
         _mutex?.Dispose();
 
         _isDisposed = true;
