@@ -24,16 +24,16 @@
         <tb:TaskbarIcon.ContextFlyout>
             <MenuFlyout AreOpenCloseAnimationsEnabled="True">
                 <MenuFlyoutItem
-                    Command="{x:Bind ViewModel.RestoreWindowCommand}"
-                    Text="Show Window">
+                    x:Uid="TrayIcon_ShowWindow"
+                    Command="{x:Bind ViewModel.RestoreWindowCommand}">
                     <MenuFlyoutItem.Icon>
                         <SymbolIcon Symbol="FullScreen" />
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
                 <MenuFlyoutSeparator />
                 <MenuFlyoutItem
-                    Command="{x:Bind ViewModel.ExitApplicationCommand}"
-                    Text="Exit">
+                    x:Uid="TrayIcon_Exit"
+                    Command="{x:Bind ViewModel.ExitApplicationCommand}">
                     <MenuFlyoutItem.Icon>
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="" />
                     </MenuFlyoutItem.Icon>
