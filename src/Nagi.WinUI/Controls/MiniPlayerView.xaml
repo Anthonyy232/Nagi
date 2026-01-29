@@ -58,9 +58,9 @@
 
                     <Button
                         Grid.Column="0"
+                        x:Uid="MiniPlayer_BackButton"
                         Command="{x:Bind ViewModel.ShowPlayerViewCommand}"
                         Style="{StaticResource BackButtonStyle}"
-                        ToolTipService.ToolTip="Back to Player"
                         Visibility="{x:Bind ViewModel.IsQueueViewVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
                         <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
                     </Button>
@@ -100,20 +100,20 @@
                     <TextBlock
                         Grid.Column="0"
                         Grid.ColumnSpan="3"
+                        x:Uid="MiniPlayer_UpNextHeader"
                         Margin="44,0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         FontSize="18"
                         FontWeight="SemiBold"
                         Foreground="White"
-                        Text="Up Next"
                         Visibility="{x:Bind ViewModel.IsQueueViewVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                     <Button
                         x:Name="RestoreButton"
                         Grid.Column="2"
-                        Style="{StaticResource MediaControlButtonStyle}"
-                        ToolTipService.ToolTip="Show Nagi">
+                        x:Uid="MiniPlayer_RestoreButton"
+                        Style="{StaticResource MediaControlButtonStyle}">
                         <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" FontSize="20" Glyph="" />
                     </Button>
                 </Grid>
@@ -151,7 +151,8 @@
                                               Glyph="{x:Bind ViewModel.ShuffleIconGlyph, Mode=OneWay}" />
                                 </Button>
                                 <Button Command="{x:Bind ViewModel.PreviousCommand}"
-                                        Style="{StaticResource PreviousButtonStyle}" ToolTipService.ToolTip="Previous">
+                                        x:Uid="MiniPlayer_PreviousButton"
+                                        Style="{StaticResource PreviousButtonStyle}">
                                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
                                 </Button>
                                 <Button Command="{x:Bind ViewModel.PlayPauseCommand}"
@@ -161,7 +162,8 @@
                                               Glyph="{x:Bind ViewModel.PlayPauseIconGlyph, Mode=OneWay}" />
                                 </Button>
                                 <Button Command="{x:Bind ViewModel.NextCommand}"
-                                        Style="{StaticResource NextButtonStyle}" ToolTipService.ToolTip="Next">
+                                        x:Uid="MiniPlayer_NextButton"
+                                        Style="{StaticResource NextButtonStyle}">
                                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
                                 </Button>
                                 <Button Command="{x:Bind ViewModel.CycleRepeatCommand}"
@@ -171,8 +173,8 @@
                                               Glyph="{x:Bind ViewModel.RepeatIconGlyph, Mode=OneWay}" />
                                 </Button>
                                 <Button Command="{x:Bind ViewModel.ShowQueueViewCommand}"
-                                        Style="{StaticResource QueueButtonStyle}"
-                                        ToolTipService.ToolTip="Up Next">
+                                        x:Uid="MiniPlayer_QueueButton"
+                                        Style="{StaticResource QueueButtonStyle}">
                                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
                                 </Button>
                             </StackPanel>

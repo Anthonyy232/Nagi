@@ -22,15 +22,15 @@
             d:Text="An unexpected error occurred. We are sorry for the inconvenience." />
 
         <TextBlock Grid.Row="1" TextWrapping="Wrap">
-            <Run Text="Please consider reporting this by creating an issue on the " />
+            <Run x:Uid="CrashReport_ReportIssuePreLink" />
             <Hyperlink NavigateUri="{x:Bind GitHubUrl, Mode=OneWay}">
-                <Run Text="Issues page" />
+                <Run x:Uid="CrashReport_IssueLink" />
             </Hyperlink>
-            <Run Text="." />
+            <Run x:Uid="CrashReport_ReportIssuePostLink" />
         </TextBlock>
 
         <TextBlock Grid.Row="2" TextWrapping="Wrap" Foreground="{ThemeResource SystemControlErrorTextForegroundBrush}" FontSize="12">
-            <Run Text="If this keeps happening, you can try 'Reset App &amp; Data'. This will wipe your settings and library, which can help recover the app from a broken state." />
+            <Run x:Uid="CrashReport_ResetAppAdvice" />
         </TextBlock>
 
         <Border
@@ -55,10 +55,10 @@
         </Border>
 
         <StackPanel Grid.Row="4" Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
-            <Button x:Name="CopyButton" Click="CopyButton_Click" ToolTipService.ToolTip="Copy log to clipboard">
+            <Button x:Name="CopyButton" Click="CopyButton_Click" x:Uid="CrashReport_CopyLogButton">
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <FontIcon Glyph="&#xE8C8;" FontSize="16" />
-                    <TextBlock Text="Copy Log" />
+                    <TextBlock x:Uid="CrashReport_CopyLogLabel" />
                 </StackPanel>
             </Button>
         </StackPanel>
