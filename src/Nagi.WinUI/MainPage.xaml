@@ -27,9 +27,9 @@
             </DataTemplate>
 
             <DataTemplate x:Key="PreviousButtonTemplate" x:DataType="uiModels:PlayerButtonSetting">
-                <Button Command="{Binding DataContext.PreviousCommand, ElementName=MainPageRoot}"
-                        Style="{StaticResource PreviousButtonStyle}"
-                        ToolTipService.ToolTip="Previous">
+                <Button x:Uid="Player_PreviousButton"
+                        Command="{Binding DataContext.PreviousCommand, ElementName=MainPageRoot}"
+                        Style="{StaticResource PreviousButtonStyle}">
                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
                 </Button>
             </DataTemplate>
@@ -49,8 +49,9 @@
 
 
             <DataTemplate x:Key="NextButtonTemplate" x:DataType="uiModels:PlayerButtonSetting">
-                <Button Command="{Binding DataContext.NextCommand, ElementName=MainPageRoot}"
-                        Style="{StaticResource NextButtonStyle}" ToolTipService.ToolTip="Next">
+                <Button x:Uid="Player_NextButton"
+                        Command="{Binding DataContext.NextCommand, ElementName=MainPageRoot}"
+                        Style="{StaticResource NextButtonStyle}">
                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
                 </Button>
             </DataTemplate>
@@ -68,16 +69,16 @@
 
             <DataTemplate x:Key="LyricsButtonTemplate" x:DataType="uiModels:PlayerButtonSetting">
                 <Button
+                    x:Uid="Player_LyricsButton"
                     Style="{StaticResource LyricsButtonStyle}"
-                    ToolTipService.ToolTip="Lyrics"
                     Command="{Binding DataContext.GoToLyricsPageCommand, ElementName=MainPageRoot}">
                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
                 </Button>
             </DataTemplate>
 
             <DataTemplate x:Key="QueueButtonTemplate" x:DataType="uiModels:PlayerButtonSetting">
-                <Button Style="{StaticResource QueueButtonStyle}"
-                        ToolTipService.ToolTip="Up Next">
+                <Button x:Uid="Player_QueueButton"
+                        Style="{StaticResource QueueButtonStyle}">
                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
                     <Button.Flyout>
                         <Flyout x:Name="QueueFlyout"
@@ -90,9 +91,9 @@
                                     <RowDefinition Height="*" />
                                 </Grid.RowDefinitions>
                                 <TextBlock
+                                    x:Uid="QueueFlyout_Title"
                                     Margin="12,0,12,4"
-                                    Style="{ThemeResource MediaControlSubtitleStyle}"
-                                    Text="Up Next" />
+                                    Style="{ThemeResource MediaControlSubtitleStyle}" />
                                 <ListView
                                     Grid.Row="1"
                                     ItemContainerStyle="{StaticResource QueueListViewItemStyle}"
@@ -341,6 +342,7 @@
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
                                     <Button
+                                        x:Uid="Player_GoToAlbumButton"
                                         Grid.Column="0"
                                         Padding="0"
                                         Margin="0,0,12,0"
@@ -350,7 +352,6 @@
                                         VerticalContentAlignment="Stretch"
                                         Command="{x:Bind ViewModel.GoToAlbumCommand, Mode=OneWay}"
                                         Style="{StaticResource DefaultButtonStyle}"
-                                        ToolTipService.ToolTip="Go to album"
                                         Visibility="{x:Bind ViewModel.IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
                                         <Border
                                             x:Name="AlbumArtBorder"

@@ -28,6 +28,10 @@ public static class Strings
     public static string NavItem_Folders => GetString("NavItem_Folders");
     public static string NavItem_Settings => GetString("NavItem_Settings");
 
+    // App
+    public static string App_Title => GetString("App_Title");
+
+
     // Player Status
     public static string Status_NoTrackPlaying => GetString("Status_NoTrackPlaying");
 
@@ -92,4 +96,17 @@ public static class Strings
 
     // Errors
     public static string Error_FailedToLoadArtists => GetString("Error_FailedToLoadArtists");
+
+    // Crash Report
+    public static string CrashReport_Title => GetString("CrashReport_Title");
+    public static string CrashReport_Message => GetString("CrashReport_Message");
+
+    // Elevation Warning
+    public static string ElevationWarning_Title => GetString("ElevationWarning_Title");
+    public static string ElevationWarning_Message => GetString("ElevationWarning_Message");
+    public static string ElevationWarning_Restart => GetString("ElevationWarning_Restart");
+    public static string ElevationWarning_Continue => GetString("ElevationWarning_Continue");
+
+    // Mini Player
+    public static string MiniPlayer_Title => GetString("MiniPlayer_Title");
 }
