@@ -36,7 +36,7 @@ public partial class GenreViewViewModel : SongListViewModelBase
         : base(libraryReader, playlistService, playbackService, navigationService, musicNavigationService, dispatcherService, uiService, logger)
     {
         _settingsService = settingsService;
-        GenreName = "Genre";
+        GenreName = Nagi.WinUI.Resources.Strings.GenreView_DefaultName;
 
         CurrentSortOrder = SongSortOrder.TitleAsc;
         UpdateSortOrderButtonText(CurrentSortOrder);
@@ -91,9 +91,9 @@ public partial class GenreViewViewModel : SongListViewModelBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to load details for GenreId {GenreId}", navParam?.GenreId);
-            GenreName = "Error Loading Genre";
-            PageTitle = "Error";
-            TotalItemsText = "Error";
+            GenreName = Nagi.WinUI.Resources.Strings.GenreView_Error;
+            PageTitle = Nagi.WinUI.Resources.Strings.Generic_Error;
+            TotalItemsText = Nagi.WinUI.Resources.Strings.Generic_Error;
             Songs.Clear();
         }
     }

@@ -144,9 +144,8 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to initialize folder {FolderId} at path {DirectoryPath}", _rootFolderId,
-                directoryPath);
-            TotalItemsText = "Error loading folder";
+            _logger.LogError(ex, "Failed to load directory items for {Path}", _currentDirectoryPath);
+            TotalItemsText = Nagi.WinUI.Resources.Strings.Folders_ErrorLoading;
             FolderContents.Clear();
             Songs.Clear();
         }
@@ -432,23 +431,29 @@ public partial class FolderSongListViewModel : SongListViewModelBase
     {
         if (_currentFolderCount > 0 && songCount > 0)
         {
-            var folderText = _currentFolderCount == 1 ? "folder" : "folders";
-            var songText = songCount == 1 ? "song" : "songs";
-            TotalItemsText = $"{_currentFolderCount:N0} {folderText}, {songCount:N0} {songText}";
+            var folderText = _currentFolderCount == 1 
+                ? string.Format(Nagi.WinUI.Resources.Strings.Folders_Count_Singular, _currentFolderCount)
+                : string.Format(Nagi.WinUI.Resources.Strings.Folders_Count_Plural, _currentFolderCount);
+            var songText = songCount == 1 
+                ? string.Format(Nagi.WinUI.Resources.Strings.Songs_Count_Singular, songCount)
+                : string.Format(Nagi.WinUI.Resources.Strings.Songs_Count_Plural, songCount);
+            TotalItemsText = $"{folderText}, {songText}";
         }
         else if (_currentFolderCount > 0)
         {
-            var folderText = _currentFolderCount == 1 ? "folder" : "folders";
-            TotalItemsText = $"{_currentFolderCount:N0} {folderText}";
+            TotalItemsText = _currentFolderCount == 1 
+                ? string.Format(Nagi.WinUI.Resources.Strings.Folders_Count_Singular, _currentFolderCount)
+                : string.Format(Nagi.WinUI.Resources.Strings.Folders_Count_Plural, _currentFolderCount);
         }
         else if (songCount > 0)
         {
-            var songText = songCount == 1 ? "song" : "songs";
-            TotalItemsText = $"{songCount:N0} {songText}";
+            TotalItemsText = songCount == 1 
+                ? string.Format(Nagi.WinUI.Resources.Strings.Songs_Count_Singular, songCount)
+                : string.Format(Nagi.WinUI.Resources.Strings.Songs_Count_Plural, songCount);
         }
         else
         {
-            TotalItemsText = "No items";
+            TotalItemsText = Nagi.WinUI.Resources.Strings.Generic_NoItems;
         }
     }
 
@@ -521,7 +526,6 @@ public partial class FolderSongListViewModel : SongListViewModelBase
     public override void ResetState()
     {
         base.ResetState();
-        _logger.LogDebug("Cleaned up FolderSongListViewModel search resources");
         FolderContents.Clear();
         Breadcrumbs.Clear();
         _currentFolderCount = 0;

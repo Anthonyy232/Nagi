@@ -42,8 +42,8 @@ public partial class AlbumViewViewModel : SongListViewModelBase
         : base(libraryReader, playlistService, playbackService, navigationService, musicNavigationService, dispatcherService, uiService, logger)
     {
         _settingsService = settingsService;
-        AlbumTitle = "Album";
-        ArtistName = "Artist";
+        AlbumTitle = Nagi.WinUI.Resources.Strings.AlbumView_DefaultAlbumTitle;
+        ArtistName = Nagi.WinUI.Resources.Strings.AlbumView_DefaultArtistName;
         AlbumDetailsText = string.Empty;
 
         CurrentSortOrder = SongSortOrder.TrackNumberAsc;
@@ -144,21 +144,21 @@ public partial class AlbumViewViewModel : SongListViewModelBase
     private void HandleAlbumNotFound(Guid albumId)
     {
         _logger.LogWarning("Album with ID {AlbumId} not found", albumId);
-        AlbumTitle = "Album Not Found";
-        PageTitle = "Not Found";
+        AlbumTitle = Nagi.WinUI.Resources.Strings.AlbumView_AlbumNotFound;
+        PageTitle = Nagi.WinUI.Resources.Strings.Generic_NoItems;
         ArtistName = string.Empty;
         CoverArtUri = null;
         Songs.Clear();
-        TotalItemsText = "0 songs";
+        TotalItemsText = string.Format(Nagi.WinUI.Resources.Strings.Songs_Count_Plural, 0);
     }
 
     private void HandleLoadError(Guid albumId, Exception ex)
     {
         _logger.LogError(ex, "Failed to load album with ID {AlbumId}", albumId);
-        AlbumTitle = "Error Loading Album";
-        PageTitle = "Error";
+        AlbumTitle = Nagi.WinUI.Resources.Strings.AlbumView_Error;
+        PageTitle = Nagi.WinUI.Resources.Strings.Generic_Error;
         ArtistName = string.Empty;
-        TotalItemsText = "Error";
+        TotalItemsText = Nagi.WinUI.Resources.Strings.Generic_Error;
         Songs.Clear();
     }
 
@@ -227,7 +227,10 @@ public partial class AlbumViewViewModel : SongListViewModelBase
         if (_albumYear.HasValue) 
             detailsParts.Add(_albumYear.Value.ToString());
             
-        detailsParts.Add($"{_totalSongCount} song{(_totalSongCount != 1 ? "s" : "")}");
+        var songCountText = _totalSongCount == 1 
+            ? string.Format(Nagi.WinUI.Resources.Strings.AlbumView_SongCount_Singular, _totalSongCount)
+            : string.Format(Nagi.WinUI.Resources.Strings.AlbumView_SongCount_Plural, _totalSongCount);
+        detailsParts.Add(songCountText);
         
         if (_totalDuration > TimeSpan.Zero)
         {
@@ -307,5 +310,5 @@ public partial class AlbumViewViewModel : SongListViewModelBase
 public class DiscHeader
 {
     public int DiscNumber { get; set; }
-    public string Title => $"Disc {DiscNumber}";
+    public string Title => string.Format(Nagi.WinUI.Resources.Strings.AlbumView_DiscHeader, DiscNumber);
 }

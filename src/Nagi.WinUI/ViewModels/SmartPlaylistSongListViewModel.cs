@@ -97,7 +97,7 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to initialize smart playlist {SmartPlaylistId}", _currentSmartPlaylistId);
-            TotalItemsText = "Error loading smart playlist";
+            TotalItemsText = Nagi.WinUI.Resources.Strings.SmartPlaylist_ErrorLoading;
             Songs.Clear();
         }
     }
@@ -106,15 +106,16 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
     {
         var ruleCount = smartPlaylist.Rules.Count;
         if (ruleCount == 0)
-            return "No rules defined • All songs match";
+            return Nagi.WinUI.Resources.Strings.SmartPlaylist_RuleSummary_NoRules;
 
-        var matchType = smartPlaylist.MatchAllRules ? "all" : "any";
-        var ruleWord = ruleCount == 1 ? "rule" : "rules";
-        var summary = $"Match {matchType} of {ruleCount} {ruleWord}";
-
-
-
-        return summary;
+        var matchType = smartPlaylist.MatchAllRules 
+            ? Nagi.WinUI.Resources.Strings.SmartPlaylist_MatchAll 
+            : Nagi.WinUI.Resources.Strings.SmartPlaylist_MatchAny;
+        var ruleWord = ruleCount == 1 
+            ? Nagi.WinUI.Resources.Strings.SmartPlaylist_Rule_Singular 
+            : Nagi.WinUI.Resources.Strings.SmartPlaylist_Rule_Plural;
+        
+        return string.Format(Nagi.WinUI.Resources.Strings.SmartPlaylist_RuleSummary_Format, matchType, ruleCount, ruleWord);
     }
 
 

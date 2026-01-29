@@ -11,7 +11,7 @@ namespace Nagi.WinUI.ViewModels;
 
 public partial class OnboardingViewModel : ObservableObject
 {
-    private const string InitialWelcomeMessage = "Let's set up your music library to get started.";
+    private static string InitialWelcomeMessage => Nagi.WinUI.Resources.Strings.Onboarding_Welcome;
     private readonly IApplicationLifecycle _applicationLifecycle;
 
     private readonly ILibraryService _libraryService;
@@ -49,7 +49,7 @@ public partial class OnboardingViewModel : ObservableObject
         if (IsAnyOperationInProgress) return;
 
         IsAddingFolder = true;
-        StatusMessage = "Waiting for you to select a folder...";
+        StatusMessage = Nagi.WinUI.Resources.Strings.Onboarding_WaitingForSelection;
 
         try
         {
@@ -60,7 +60,7 @@ public partial class OnboardingViewModel : ObservableObject
                 _logger.LogDebug("User selected folder '{FolderPath}' for onboarding", folderPath);
                 IsAddingFolder = false;
                 IsParsing = true;
-                StatusMessage = "Building your library...";
+                StatusMessage = Nagi.WinUI.Resources.Strings.Onboarding_BuildingLibrary;
                 IsProgressIndeterminate = true;
 
                 var progressReporter = new Progress<ScanProgress>(progress =>
@@ -83,7 +83,7 @@ public partial class OnboardingViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            StatusMessage = "An unexpected error occurred. Please try again.";
+            StatusMessage = Nagi.WinUI.Resources.Strings.Onboarding_Error;
             _logger.LogCritical(ex, "Critical error during onboarding AddFolder operation");
         }
         finally

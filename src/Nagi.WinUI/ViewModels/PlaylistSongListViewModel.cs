@@ -98,7 +98,7 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to initialize playlist {PlaylistId}", _currentPlaylistId);
-            TotalItemsText = "Error loading playlist";
+            TotalItemsText = Nagi.WinUI.Resources.Strings.Playlist_ErrorLoading;
             Songs.Clear();
         }
     }

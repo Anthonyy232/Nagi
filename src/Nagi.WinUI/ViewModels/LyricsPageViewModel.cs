@@ -71,7 +71,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
         IsPlaying = _playbackService.IsPlaying;
     }
 
-    [ObservableProperty] public partial string SongTitle { get; set; } = "No song selected";
+    [ObservableProperty] public partial string SongTitle { get; set; } = Nagi.WinUI.Resources.Strings.Lyrics_NoSongSelected;
 
     /// <summary>
     ///     True when synchronized (timed) lyrics are available and being displayed.
@@ -257,12 +257,12 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
             if (song is null)
             {
                 _logger.LogDebug("Clearing lyrics view as playback stopped");
-                SongTitle = "No song selected";
+                SongTitle = Nagi.WinUI.Resources.Strings.Lyrics_NoSongSelected;
             }
             else
             {
                 SongTitle = !string.IsNullOrWhiteSpace(song.ArtistName)
-                    ? $"{song.Title} by {song.ArtistName}"
+                    ? string.Format(Nagi.WinUI.Resources.Strings.Lyrics_SongTitleFormat, song.Title, song.ArtistName)
                     : song.Title;
                 SongDuration = _playbackService.Duration;
                 IsLoading = true;
