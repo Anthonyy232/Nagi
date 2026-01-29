@@ -86,11 +86,11 @@ public class VelopackUpdateService : IUpdateService {
             }
 
             var result = await _uiService.ShowUpdateDialogAsync(
-                "Update Available",
-                $"A new version ({updateInfo.TargetFullRelease.Version}) is available. Would you like to download and install it now?",
-                "Install Now",
-                "Later",
-                "Skip This Version");
+                Resources.Strings.Update_Available_Title,
+                string.Format(Resources.Strings.Update_Available_Message, updateInfo.TargetFullRelease.Version),
+                Resources.Strings.Update_Button_InstallNow,
+                Resources.Strings.Update_Button_Later,
+                Resources.Strings.Update_Button_Skip);
 
             switch (result) {
                 case UpdateDialogResult.Install:
@@ -118,7 +118,7 @@ public class VelopackUpdateService : IUpdateService {
     /// </summary>
     public async Task CheckForUpdatesManuallyAsync() {
 #if DEBUG
-        await _uiService.ShowMessageDialogAsync("Debug Mode", "Update checks are disabled in debug mode. This dialog indicates the function was called.");
+        await _uiService.ShowMessageDialogAsync(Resources.Strings.Theme_Default, "Update checks are disabled in debug mode. This dialog indicates the function was called.");
         return;
 #endif
 
@@ -126,37 +126,37 @@ public class VelopackUpdateService : IUpdateService {
             UpdateInfo? updateInfo = await _updateManager.CheckForUpdatesAsync().ConfigureAwait(false);
 
             if (updateInfo == null) {
-                await _uiService.ShowMessageDialogAsync("Up to Date", "You are running the latest version of Nagi.");
+                await _uiService.ShowMessageDialogAsync(Resources.Strings.Update_UpToDate_Title, Resources.Strings.Update_UpToDate_Message);
                 return;
             }
 
             var confirmed = await _uiService.ShowConfirmationDialogAsync(
-                "Update Available",
-                $"A new version ({updateInfo.TargetFullRelease.Version}) is available. Would you like to download and install it now?",
-                "Install Now",
+                Resources.Strings.Update_Available_Title,
+                string.Format(Resources.Strings.Update_Available_Message, updateInfo.TargetFullRelease.Version),
+                Resources.Strings.Update_Button_InstallNow,
                 null);
 
             if (confirmed) await DownloadAndApplyUpdateAsync(updateInfo);
         }
         catch (Exception ex) {
             _logger.LogError(ex, "Failed during manual update check.");
-            await _uiService.ShowMessageDialogAsync("Update Error",
-                $"An error occurred while checking for updates: {ex.Message}");
+            await _uiService.ShowMessageDialogAsync(Resources.Strings.Update_Error_Title,
+                string.Format(Resources.Strings.Update_Check_Error_Message, ex.Message));
         }
     }
 
     // Handles the process of downloading and applying an update, providing user feedback.
     private async Task DownloadAndApplyUpdateAsync(UpdateInfo updateInfo) {
         try {
-            await _uiService.ShowMessageDialogAsync("Downloading Update",
-                $"Version {updateInfo.TargetFullRelease.Version} is being downloaded. The application will restart automatically when it's ready.");
+            await _uiService.ShowMessageDialogAsync(Resources.Strings.Update_Downloading_Title,
+                string.Format(Resources.Strings.Update_Downloading_Message, updateInfo.TargetFullRelease.Version));
             await _updateManager.DownloadUpdatesAsync(updateInfo).ConfigureAwait(false);
             _updateManager.ApplyUpdatesAndRestart(updateInfo);
         }
         catch (Exception ex) {
             _logger.LogError(ex, "Failed to download or apply update.");
-            await _uiService.ShowMessageDialogAsync("Update Error",
-                $"An error occurred while installing the update: {ex.Message}");
+            await _uiService.ShowMessageDialogAsync(Resources.Strings.Update_Error_Title,
+                string.Format(Resources.Strings.Update_Install_Error_Message, ex.Message));
         }
     }
 }

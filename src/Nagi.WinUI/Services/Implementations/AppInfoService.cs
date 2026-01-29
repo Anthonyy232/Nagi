@@ -24,7 +24,7 @@ public class AppInfoService : IAppInfoService
         catch (InvalidOperationException)
         {
             _logger.LogDebug("Application is running unpackaged. Falling back to default app name.");
-            return "Nagi";
+            return Resources.Strings.App_Name_Default;
         }
     }
 
@@ -48,6 +48,6 @@ public class AppInfoService : IAppInfoService
             _logger.LogError(ex, "Could not get application version.");
         }
 
-        return "N/A";
+        return Resources.Strings.App_Version_Unknown;
     }
 }

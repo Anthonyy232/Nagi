@@ -611,4 +611,133 @@ For the best experience, please restart Nagi without administrator privileges.</
   <data name="FFmpeg_Status_Error" xml:space="preserve">
     <value>Error checking for FFmpeg. Please try again.</value>
   </data>
+  <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
+    <value>Previous</value>
+  </data>
+  <data name="Taskbar_Tooltip_Play" xml:space="preserve">
+    <value>Play</value>
+  </data>
+  <data name="Taskbar_Tooltip_Pause" xml:space="preserve">
+    <value>Pause</value>
+  </data>
+  <data name="Taskbar_Tooltip_Next" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="Update_Available_Title" xml:space="preserve">
+    <value>Update Available</value>
+  </data>
+  <data name="Update_Available_Message" xml:space="preserve">
+    <value>A new version ({0}) is available. Would you like to download and install it now?</value>
+  </data>
+  <data name="Update_Button_InstallNow" xml:space="preserve">
+    <value>Install Now</value>
+  </data>
+  <data name="Update_Button_Later" xml:space="preserve">
+    <value>Later</value>
+  </data>
+  <data name="Update_Button_Skip" xml:space="preserve">
+    <value>Skip This Version</value>
+  </data>
+  <data name="Update_UpToDate_Title" xml:space="preserve">
+    <value>Up to Date</value>
+  </data>
+  <data name="Update_UpToDate_Message" xml:space="preserve">
+    <value>You are running the latest version of Nagi.</value>
+  </data>
+  <data name="Update_Error_Title" xml:space="preserve">
+    <value>Update Error</value>
+  </data>
+  <data name="Update_Check_Error_Message" xml:space="preserve">
+    <value>An error occurred while checking for updates: {0}</value>
+  </data>
+  <data name="Update_Install_Error_Message" xml:space="preserve">
+    <value>An error occurred while installing the update: {0}</value>
+  </data>
+  <data name="Update_Downloading_Title" xml:space="preserve">
+    <value>Downloading Update</value>
+  </data>
+  <data name="Update_Downloading_Message" xml:space="preserve">
+    <value>Version {0} is being downloaded. The application will restart automatically when it's ready.</value>
+  </data>
+  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
+    <value>LibVLC encountered an unspecified error.</value>
+  </data>
+  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
+    <value>LibVLC Error: {0}</value>
+  </data>
+  <data name="Player_Error_LoadFailed" xml:space="preserve">
+    <value>Failed to load '{0}'.</value>
+  </data>
+  <data name="Settings_Nav_Library" xml:space="preserve">
+    <value>Library</value>
+  </data>
+  <data name="Settings_Nav_Folders" xml:space="preserve">
+    <value>Folders</value>
+  </data>
+  <data name="Settings_Nav_Playlists" xml:space="preserve">
+    <value>Playlists</value>
+  </data>
+  <data name="Settings_Nav_Artists" xml:space="preserve">
+    <value>Artists</value>
+  </data>
+  <data name="Settings_Nav_Albums" xml:space="preserve">
+    <value>Albums</value>
+  </data>
+  <data name="Settings_Nav_Genres" xml:space="preserve">
+    <value>Genres</value>
+  </data>
+  <data name="Settings_Button_Shuffle" xml:space="preserve">
+    <value>Shuffle</value>
+  </data>
+  <data name="Settings_Button_Previous" xml:space="preserve">
+    <value>Previous</value>
+  </data>
+  <data name="Settings_Button_PlayPause" xml:space="preserve">
+    <value>Play/Pause</value>
+  </data>
+  <data name="Settings_Button_Next" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="Settings_Button_Repeat" xml:space="preserve">
+    <value>Repeat</value>
+  </data>
+  <data name="Settings_Button_Divider" xml:space="preserve">
+    <value>Layout Divider</value>
+  </data>
+  <data name="Settings_Button_Lyrics" xml:space="preserve">
+    <value>Lyrics</value>
+  </data>
+  <data name="Settings_Button_Queue" xml:space="preserve">
+    <value>Queue</value>
+  </data>
+  <data name="Settings_Button_Volume" xml:space="preserve">
+    <value>Volume</value>
+  </data>
+  <data name="Settings_Provider_LRCLIB_Desc" xml:space="preserve">
+    <value>Community-curated lyrics database</value>
+  </data>
+  <data name="Settings_Provider_NetEase_Desc" xml:space="preserve">
+    <value>Chinese music service, great for Asian music</value>
+  </data>
+  <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
+    <value>Fetches artist IDs (required for TheAudioDB and Fanart.tv)</value>
+  </data>
+  <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
+    <value>High-quality artist images and biographies (requires MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
+    <value>High-quality artist images only (requires MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_Spotify_Desc" xml:space="preserve">
+    <value>Artist images only</value>
+  </data>
+  <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
+    <value>Artist biographies and images (fallback)</value>
+  </data>
+  <data name="App_Name_Default" xml:space="preserve">
+    <value>Nagi</value>
+  </data>
+  <data name="App_Version_Unknown" xml:space="preserve">
+    <value>N/A</value>
+  </data>
 </root>

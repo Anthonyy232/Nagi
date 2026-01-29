@@ -257,4 +257,59 @@ public static class Strings
     public static string FFmpeg_Status_Detected => GetString("FFmpeg_Status_Detected");
     public static string FFmpeg_Status_StillNotDetected => GetString("FFmpeg_Status_StillNotDetected");
     public static string FFmpeg_Status_Error => GetString("FFmpeg_Status_Error");
+
+    // Taskbar Tooltips
+    public static string Taskbar_Tooltip_Previous => GetString("Taskbar_Tooltip_Previous");
+    public static string Taskbar_Tooltip_Play => GetString("Taskbar_Tooltip_Play");
+    public static string Taskbar_Tooltip_Pause => GetString("Taskbar_Tooltip_Pause");
+    public static string Taskbar_Tooltip_Next => GetString("Taskbar_Tooltip_Next");
+
+    // Updates
+    public static string Update_Available_Title => GetString("Update_Available_Title");
+    public static string Update_Available_Message => GetString("Update_Available_Message");
+    public static string Update_Button_InstallNow => GetString("Update_Button_InstallNow");
+    public static string Update_Button_Later => GetString("Update_Button_Later");
+    public static string Update_Button_Skip => GetString("Update_Button_Skip");
+    public static string Update_UpToDate_Title => GetString("Update_UpToDate_Title");
+    public static string Update_UpToDate_Message => GetString("Update_UpToDate_Message");
+    public static string Update_Error_Title => GetString("Update_Error_Title");
+    public static string Update_Check_Error_Message => GetString("Update_Check_Error_Message");
+    public static string Update_Install_Error_Message => GetString("Update_Install_Error_Message");
+    public static string Update_Downloading_Title => GetString("Update_Downloading_Title");
+    public static string Update_Downloading_Message => GetString("Update_Downloading_Message");
+
+    // Player Errors
+    public static string Player_Error_LibVLC_Unspecified => GetString("Player_Error_LibVLC_Unspecified");
+    public static string Player_Error_LibVLC_WithDetails => GetString("Player_Error_LibVLC_WithDetails");
+    public static string Player_Error_LoadFailed => GetString("Player_Error_LoadFailed");
+
+    // Settings
+    public static string Settings_Nav_Library => GetString("Settings_Nav_Library");
+    public static string Settings_Nav_Folders => GetString("Settings_Nav_Folders");
+    public static string Settings_Nav_Playlists => GetString("Settings_Nav_Playlists");
+    public static string Settings_Nav_Artists => GetString("Settings_Nav_Artists");
+    public static string Settings_Nav_Albums => GetString("Settings_Nav_Albums");
+    public static string Settings_Nav_Genres => GetString("Settings_Nav_Genres");
+
+    public static string Settings_Button_Shuffle => GetString("Settings_Button_Shuffle");
+    public static string Settings_Button_Previous => GetString("Settings_Button_Previous");
+    public static string Settings_Button_PlayPause => GetString("Settings_Button_PlayPause");
+    public static string Settings_Button_Next => GetString("Settings_Button_Next");
+    public static string Settings_Button_Repeat => GetString("Settings_Button_Repeat");
+    public static string Settings_Button_Divider => GetString("Settings_Button_Divider");
+    public static string Settings_Button_Lyrics => GetString("Settings_Button_Lyrics");
+    public static string Settings_Button_Queue => GetString("Settings_Button_Queue");
+    public static string Settings_Button_Volume => GetString("Settings_Button_Volume");
+
+    public static string Settings_Provider_LRCLIB_Desc => GetString("Settings_Provider_LRCLIB_Desc");
+    public static string Settings_Provider_NetEase_Desc => GetString("Settings_Provider_NetEase_Desc");
+    public static string Settings_Provider_MusicBrainz_Desc => GetString("Settings_Provider_MusicBrainz_Desc");
+    public static string Settings_Provider_TheAudioDB_Desc => GetString("Settings_Provider_TheAudioDB_Desc");
+    public static string Settings_Provider_FanartTv_Desc => GetString("Settings_Provider_FanartTv_Desc");
+    public static string Settings_Provider_Spotify_Desc => GetString("Settings_Provider_Spotify_Desc");
+    public static string Settings_Provider_LastFm_Desc => GetString("Settings_Provider_LastFm_Desc");
+
+    // App Info
+    public static string App_Name_Default => GetString("App_Name_Default");
+    public static string App_Version_Unknown => GetString("App_Version_Unknown");
 }
