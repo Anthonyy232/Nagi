@@ -90,7 +90,7 @@
                                       Glyph="{Binding ShuffleIconGlyph}" />
                         </Button>
                         <Button Command="{Binding PreviousCommand}" Style="{StaticResource PreviousButtonStyle}"
-                                ToolTipService.ToolTip="Previous">
+                                x:Uid="TrayPopup_PreviousButton">
                             <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
                         </Button>
                         <Button Command="{Binding PlayPauseCommand}" Style="{StaticResource PlayPauseButtonStyle}"
@@ -99,7 +99,7 @@
                                       Glyph="{Binding PlayPauseIconGlyph}" />
                         </Button>
                         <Button Command="{Binding NextCommand}" Style="{StaticResource NextButtonStyle}"
-                                ToolTipService.ToolTip="Next">
+                                x:Uid="TrayPopup_NextButton">
                             <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
                         </Button>
                         <Button Command="{Binding CycleRepeatCommand}" Style="{StaticResource RepeatButtonStyle}"
@@ -108,7 +108,7 @@
                                       Glyph="{Binding RepeatIconGlyph}" />
                         </Button>
                         <Button Command="{Binding ShowQueueViewCommand}" Style="{StaticResource QueueButtonStyle}"
-                                ToolTipService.ToolTip="Up Next">
+                                x:Uid="TrayPopup_QueueButton">
                             <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
                         </Button>
                     </StackPanel>
@@ -127,13 +127,13 @@
                         <Button HorizontalAlignment="Left"
                                 Command="{Binding ShowPlayerViewCommand}"
                                 Style="{StaticResource MediaControlButtonStyle}"
-                                ToolTipService.ToolTip="Back to Player">
+                                x:Uid="TrayPopup_BackButton">
                             <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
                         </Button>
 
                         <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center"
                                    Style="{ThemeResource SubtitleTextBlockStyle}"
-                                   Text="Up Next"
+                                   x:Uid="TrayPopup_UpNextHeader"
                                    Margin="12,0,12,4" />
                     </Grid>
 
