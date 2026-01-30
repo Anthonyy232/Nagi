@@ -69,6 +69,7 @@ public class SettingsService : IUISettingsService, IDisposable
     private const string LyricsServiceProvidersKey = "LyricsServiceProviders";
     private const string MetadataServiceProvidersKey = "MetadataServiceProviders";
     private const string ArtistSplitCharactersKey = "ArtistSplitCharacters";
+    private const string LanguageKey = "AppLanguage";
 
     private static readonly JsonSerializerOptions _serializerOptions = new() { WriteIndented = true };
     private readonly ICredentialLockerService _credentialLockerService;
@@ -119,6 +120,7 @@ public class SettingsService : IUISettingsService, IDisposable
     public event Action<bool>? FetchOnlineLyricsEnabledChanged;
     public event Action<ServiceCategory>? ServiceProvidersChanged;
     public event Action? ArtistSplitCharactersChanged;
+    public event Action<string>? LanguageChanged;
 
     public bool IsTransparencyEffectsEnabled()
     {
@@ -174,7 +176,8 @@ public class SettingsService : IUISettingsService, IDisposable
             SetRememberPaneStateEnabledAsync(SettingsDefaults.RememberPaneStateEnabled),
             SetVolumeNormalizationEnabledAsync(SettingsDefaults.VolumeNormalizationEnabled),
             SetAccentColorAsync(SettingsDefaults.AccentColor),
-            SetArtistSplitCharactersAsync(SettingsDefaults.DefaultArtistSplitCharacters)
+            SetArtistSplitCharactersAsync(SettingsDefaults.DefaultArtistSplitCharacters),
+            SetLanguageAsync(string.Empty)
         };
 
         await Task.WhenAll(tasks).ConfigureAwait(false);
@@ -752,6 +755,17 @@ public class SettingsService : IUISettingsService, IDisposable
 
         await SetValueAsync(ArtistSplitCharactersKey, characters).ConfigureAwait(false);
         if (currentValue != characters) ArtistSplitCharactersChanged?.Invoke();
+    }
+
+    public async Task<string> GetLanguageAsync()
+    {
+        await EnsureUnpackagedSettingsLoadedAsync().ConfigureAwait(false);
+        return GetValue(LanguageKey, string.Empty);
+    }
+
+    public async Task SetLanguageAsync(string languageCode)
+    {
+        await SetValueAndNotifyAsync(LanguageKey, languageCode, string.Empty, LanguageChanged).ConfigureAwait(false);
     }
 
     private static List<ServiceProviderSetting> GetDefaultServiceProviders(ServiceCategory category)

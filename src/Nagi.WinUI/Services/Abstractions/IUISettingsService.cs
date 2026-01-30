@@ -313,10 +313,28 @@ public interface IUISettingsService : ISettingsService
     Task<bool?> GetLastPaneOpenAsync();
 
     /// <summary>
-    ///     Saves the navigation pane open/closed state.
+    ///     Occurs when the navigation pane open/closed state is preserved.
+    ///     True if the pane was open; false if closed.
     /// </summary>
-    /// <param name="isOpen">True if the pane is open; false if closed.</param>
     Task SetLastPaneOpenAsync(bool isOpen);
+
+    /// <summary>
+    ///     Occurs when the application language setting is changed.
+    ///     The string parameter is the BCP-47 language tag (e.g. "en-US") or empty string for Auto.
+    /// </summary>
+    event Action<string>? LanguageChanged;
+
+    /// <summary>
+    ///     Gets the current application language override.
+    /// </summary>
+    /// <returns>The BCP-47 language tag, or empty string for "Auto".</returns>
+    Task<string> GetLanguageAsync();
+
+    /// <summary>
+    ///     Sets the application language override.
+    /// </summary>
+    /// <param name="languageCode">The BCP-47 language tag, or empty string for "Auto".</param>
+    Task SetLanguageAsync(string languageCode);
 
 
     /// <summary>

@@ -13,6 +13,7 @@ using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
 using Windows.Storage;
 using Windows.UI;
+using Windows.Globalization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -199,6 +200,16 @@ public partial class App : Application
             _logger.LogInformation("Application starting up.");
 
             InitializeSystemIntegration();
+
+            // Apply language setting before showing window
+            var settingsService = Services!.GetRequiredService<IUISettingsService>();
+            var language = await settingsService.GetLanguageAsync();
+            if (!string.IsNullOrEmpty(language))
+            {
+                ApplicationLanguages.PrimaryLanguageOverride = language;
+                CultureInfo.CurrentUICulture = new CultureInfo(language);
+                CultureInfo.CurrentCulture = new CultureInfo(language);
+            }
 
             // Restore window state BEFORE showing the window to prevent flash of default position
             if (_window is MainWindow mainWindow)
