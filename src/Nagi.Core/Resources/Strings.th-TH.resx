@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Noun Labels -->
+  <data name="Label_Artist" xml:space="preserve">
+    <value>ศิลปิน</value>
+  </data>
+  <data name="Label_Album" xml:space="preserve">
+    <value>อัลบั้ม</value>
+  </data>
+  <data name="Label_Genre" xml:space="preserve">
+    <value>แนวเพลง</value>
+  </data>
+  <data name="Label_Title" xml:space="preserve">
+    <value>ชื่อเพลง</value>
+  </data>
+  <data name="Label_Playlist" xml:space="preserve">
+    <value>เพลย์ลิสต์</value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>ไฟล์</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>ปี</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>วันที่เพิ่ม</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>วันที่สร้าง</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>วันที่แก้ไข</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>เล่นล่าสุด</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>ระยะเวลา</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>หมายเลขแทร็ก</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>จำนวนการเล่น</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>เพลง</value>
+  </data>
+  <data name="Label_Song" xml:space="preserve">
+    <value>เพลง</value>
+  </data>
+  <data name="Label_Folder" xml:space="preserve">
+    <value>โฟลเดอร์</value>
+  </data>
+  <data name="Label_Folders" xml:space="preserve">
+    <value>โฟลเดอร์</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>ลำดับเอง</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>สุ่ม</value>
+  </data>
+  <!-- Format Patterns -->
+  <data name="Format_Unknown" xml:space="preserve">
+    <value>{0} ไม่ทราบ</value>
+  </data>
+  <data name="Format_New" xml:space="preserve">
+    <value>{0} ใหม่</value>
+  </data>
+  <data name="Format_NotFound" xml:space="preserve">
+    <value>ไม่พบ {0}</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A ถึง Z)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Z ถึง A)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (ใหม่ที่สุด)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (เก่าที่สุด)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (จากน้อยไปมาก)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (จากมากไปน้อย)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>สั้นที่สุดก่อน</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>ยาวที่สุดก่อน</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>ช้าที่สุดก่อน ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>เร็วที่สุดก่อน ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>{0} มากที่สุด</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>{0} น้อยที่สุด</value>
+  </data>
+  <data name="Format_ScanFolderProgress" xml:space="preserve">
+    <value>กำลังสแกนโฟลเดอร์ {0} จาก {1}: {2} - {3}</value>
+  </data>
+  <data name="Format_ScanCompleteResult" xml:space="preserve">
+    <value>สแกนเสร็จสมบูรณ์ เพิ่มหรืออัปเดต {0} {1}</value>
+  </data>
+  <data name="Format_SavingBatch" xml:space="preserve">
+    <value>กำลังบันทึกชุดที่ {0}...</value>
+  </data>
+  <!-- Status & Success Messages -->
+  <data name="Status_ScanningFolder" xml:space="preserve">
+    <value>กำลังสแกนโฟลเดอร์...</value>
+  </data>
+  <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
+    <value>สแกนเสร็จสมบูรณ์ ไลบรารีเป็นปัจจุบันแล้ว</value>
+  </data>
+  <data name="Status_ScanCancelled" xml:space="preserve">
+    <value>ยกเลิกการสแกนแล้ว</value>
+  </data>
+  <data name="Status_ScanFailed" xml:space="preserve">
+    <value>สแกนล้มเหลว โปรดตรวจสอบบันทึกสำหรับรายละเอียด</value>
+  </data>
+  <data name="Status_PreparingScanCaches" xml:space="preserve">
+    <value>กำลังเตรียมแคชการสแกน...</value>
+  </data>
+  <data name="Status_ReadingSongDetails" xml:space="preserve">
+    <value>กำลังอ่านรายละเอียดเพลง...</value>
+  </data>
+  <data name="Status_CleaningUpLibrary" xml:space="preserve">
+    <value>กำลังล้างข้อมูลในไลบรารีของคุณ...</value>
+  </data>
+  <data name="Status_Finalizing" xml:space="preserve">
+    <value>กำลังดำเนินการขั้นสุดท้าย...</value>
+  </data>
+  <data name="Status_NormalizationFailed" xml:space="preserve">
+    <value>การปรับระดับเสียงล้มเหลว โปรดตรวจสอบบันทึกสำหรับรายละเอียด</value>
+  </data>
+  <data name="Status_NoFoldersToRefresh" xml:space="preserve">
+    <value>ไม่มีโฟลเดอร์ในไลบรารีให้อัปเดต</value>
+  </data>
+  <data name="Status_LibraryRefreshComplete" xml:space="preserve">
+    <value>อัปเดตไลบรารีเสร็จสมบูรณ์</value>
+  </data>
+  <!-- Error Mssages -->
+  <data name="Error_FailedToAddFolder" xml:space="preserve">
+    <value>เพิ่มโฟลเดอร์ไม่สำเร็จ</value>
+  </data>
+  <data name="Error_PlaylistNameEmpty" xml:space="preserve">
+    <value>ชื่อเพลย์ลิสต์ต้องไม่ว่างเปล่า</value>
+  </data>
+  <data name="Error_RatingRange" xml:space="preserve">
+    <value>คะแนนต้องอยู่ระหว่าง 1 ถึง 5</value>
+  </data>
+  <!-- Labels -->
+  <data name="Label_WithLyrics" xml:space="preserve">
+    <value>พร้อมเนื้อเพลง</value>
+  </data>
+  <data name="Label_WithCoverArt" xml:space="preserve">
+    <value>พร้อมปกอัลบั้ม</value>
+  </data>
+  <data name="Label_And" xml:space="preserve">
+    <value>และ</value>
+  </data>
+  <!-- Static Strings -->
+  <data name="UnknownFilename" xml:space="preserve">
+    <value>ไม่ทราบ</value>
+  </data>
+  <data name="ArtistSeparator" xml:space="preserve">
+    <value> &amp; </value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>จัดเรียงตาม: </value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>FFmpeg จำเป็นสำหรับการปรับระดับเสียงความแม่นยำสูง (การวิเคราะห์ ReplayGain) แต่ไม่พบในระบบของคุณ.\n\nทำตามขั้นตอนเหล่านี้เพื่อตั้งค่า:\n\n1. **ดาวน์โหลด**: ไปที่ https://www.gyan.dev/ffmpeg/builds/ และดาวน์โหลด 'ffmpeg-git-full.7z' (หรือไฟล์ที่คล้ายกัน) รุ่น essentials\n2. **คู่มือ**: คุณสามารถทำตามคู่มือนี้สำหรับคำแนะนำโดยละเอียด: https://phoenixnap.com/kb/ffmpeg-windows\n3. **แตกไฟล์**: เปิดโฟลเดอร์สถาปัตยกรรมและค้นหาไดเรกทอรี 'bin' ที่มี `ffmpeg.exe`\n4. **ติดตั้ง**: คัดลอก `ffmpeg.exe` ไปยังโฟลเดอร์ถาวร (เช่น `C:\ffmpeg\`) และ **เพิ่มโฟลเดอร์นั้นไปยังตัวแปรสภาพแวดล้อม System PATH** ของคุณ\n5. **รีสตาร์ท**: โปรดรีสตาร์ท Nagi หลังจากการติดตั้งเพื่อให้การเปลี่ยนแปลงมีผล</value>
+  </data>
+  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
+    <value>ไม่พบเพลงจากเพลย์ลิสต์ในไลบรารีของคุณ</value>
+  </data>
+  <data name="Error_NoPlaylistsToExport" xml:space="preserve">
+    <value>ไม่มีเพลย์ลิสต์ที่จะส่งออก</value>
+  </data>
+  <data name="EqPreset_None" xml:space="preserve">
+    <value>ไม่มี</value>
+  </data>
+  <data name="EqPreset_Classical" xml:space="preserve">
+    <value>คลาสสิก</value>
+  </data>
+  <data name="EqPreset_Dance" xml:space="preserve">
+    <value>แดนซ์</value>
+  </data>
+  <data name="EqPreset_FullBass" xml:space="preserve">
+    <value>เบสเต็ม</value>
+  </data>
+  <data name="EqPreset_FullTreble" xml:space="preserve">
+    <value>เสียงแหลมเต็ม</value>
+  </data>
+  <data name="EqPreset_Jazz" xml:space="preserve">
+    <value>แจ๊ส</value>
+  </data>
+  <data name="EqPreset_Pop" xml:space="preserve">
+    <value>ป๊อป</value>
+  </data>
+  <data name="EqPreset_Rock" xml:space="preserve">
+    <value>ร็อก</value>
+  </data>
+  <data name="EqPreset_Soft" xml:space="preserve">
+    <value>นุ่มนวล</value>
+  </data>
+  <data name="EqPreset_Techno" xml:space="preserve">
+    <value>เทคโน</value>
+  </data>
+  <data name="EqPreset_Vocal" xml:space="preserve">
+    <value>เสียงร้อง</value>
+  </data>
+  <data name="ReplayGain_AllSongsScanned" xml:space="preserve">
+    <value>เพลงทั้งหมดมีข้อมูลระดับเสียงแล้ว</value>
+  </data>
+  <data name="ReplayGain_CalculatingCount" xml:space="preserve">
+    <value>กำลังคำนวณระดับเสียงสำหรับ {0} เพลง...</value>
+  </data>
+  <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
+    <value>กำลังคำนวณการปรับระดับเสียง ({0}/{1})...</value>
+  </data>
+  <data name="ReplayGain_Complete" xml:space="preserve">
+    <value>การปรับระดับเสียงเสร็จสมบูรณ์ ประมวลผล {0} เพลง</value>
+  </data>
+</root>

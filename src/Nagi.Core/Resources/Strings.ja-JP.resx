@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Noun Labels -->
+  <data name="Label_Artist" xml:space="preserve">
+    <value>アーティスト</value>
+  </data>
+  <data name="Label_Album" xml:space="preserve">
+    <value>アルバム</value>
+  </data>
+  <data name="Label_Genre" xml:space="preserve">
+    <value>ジャンル</value>
+  </data>
+  <data name="Label_Title" xml:space="preserve">
+    <value>タイトル</value>
+  </data>
+  <data name="Label_Playlist" xml:space="preserve">
+    <value>プレイリスト</value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>ファイル</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>年</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>追加日</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>作成日</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>更新日</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>最終再生日</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>再生時間</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>トラック番号</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>再生回数</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>曲</value>
+  </data>
+  <data name="Label_Song" xml:space="preserve">
+    <value>曲</value>
+  </data>
+  <data name="Label_Folder" xml:space="preserve">
+    <value>フォルダー</value>
+  </data>
+  <data name="Label_Folders" xml:space="preserve">
+    <value>フォルダー</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>手動順</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>ランダム</value>
+  </data>
+  <!-- Format Patterns -->
+  <data name="Format_Unknown" xml:space="preserve">
+    <value>不明な{0}</value>
+  </data>
+  <data name="Format_New" xml:space="preserve">
+    <value>新しい{0}</value>
+  </data>
+  <data name="Format_NotFound" xml:space="preserve">
+    <value>{0}が見つかりませんでした。</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A-Z順)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Z-A順)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (新しい順)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (古い順)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (昇順)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (降順)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>最短から</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>最長から</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>最も遅い順 ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>最も速い順 ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>最も多い{0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>最も少ない{0}</value>
+  </data>
+  <data name="Format_ScanFolderProgress" xml:space="preserve">
+    <value>フォルダー {1} の {0} をスキャン中: {2} - {3}</value>
+  </data>
+  <data name="Format_ScanCompleteResult" xml:space="preserve">
+    <value>スキャンが完了しました。{0} {1}を追加または更新しました。</value>
+  </data>
+  <data name="Format_SavingBatch" xml:space="preserve">
+    <value>バッチ {0} を保存中...</value>
+  </data>
+  <!-- Status & Success Messages -->
+  <data name="Status_ScanningFolder" xml:space="preserve">
+    <value>フォルダーをスキャン中...</value>
+  </data>
+  <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
+    <value>スキャンが完了しました。ライブラリは最新です。</value>
+  </data>
+  <data name="Status_ScanCancelled" xml:space="preserve">
+    <value>スキャンがキャンセルされました。</value>
+  </data>
+  <data name="Status_ScanFailed" xml:space="preserve">
+    <value>スキャンに失敗しました。詳細はログを確認してください。</value>
+  </data>
+  <data name="Status_PreparingScanCaches" xml:space="preserve">
+    <value>スキャンキャッシュを準備中...</value>
+  </data>
+  <data name="Status_ReadingSongDetails" xml:space="preserve">
+    <value>曲の詳細を読み込み中...</value>
+  </data>
+  <data name="Status_CleaningUpLibrary" xml:space="preserve">
+    <value>ライブラリをクリーンアップ中...</value>
+  </data>
+  <data name="Status_Finalizing" xml:space="preserve">
+    <value>最終処理中...</value>
+  </data>
+  <data name="Status_NormalizationFailed" xml:space="preserve">
+    <value>音量正規化に失敗しました。詳細はログを確認してください。</value>
+  </data>
+  <data name="Status_NoFoldersToRefresh" xml:space="preserve">
+    <value>更新するライブラリ内のフォルダーがありません。</value>
+  </data>
+  <data name="Status_LibraryRefreshComplete" xml:space="preserve">
+    <value>ライブラリの更新が完了しました。</value>
+  </data>
+  <!-- Error Mssages -->
+  <data name="Error_FailedToAddFolder" xml:space="preserve">
+    <value>フォルダーの追加に失敗しました。</value>
+  </data>
+  <data name="Error_PlaylistNameEmpty" xml:space="preserve">
+    <value>プレイリスト名を空にすることはできません。</value>
+  </data>
+  <data name="Error_RatingRange" xml:space="preserve">
+    <value>評価は1から5の間でなければなりません。</value>
+  </data>
+  <!-- Labels -->
+  <data name="Label_WithLyrics" xml:space="preserve">
+    <value>歌詞付き</value>
+  </data>
+  <data name="Label_WithCoverArt" xml:space="preserve">
+    <value>カバーアート付き</value>
+  </data>
+  <data name="Label_And" xml:space="preserve">
+    <value>と</value>
+  </data>
+  <!-- Static Strings -->
+  <data name="UnknownFilename" xml:space="preserve">
+    <value>不明</value>
+  </data>
+  <data name="ArtistSeparator" xml:space="preserve">
+    <value>と</value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>並べ替え: </value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>高精度音量正規化（ReplayGain分析）にはFFmpegが必要ですが、システムで見つかりませんでした。\n\nセットアップの手順は以下の通りです。\n\n1. **ダウンロード**: https://www.gyan.dev/ffmpeg/builds/ にアクセスし、「ffmpeg-git-full.7z」（または類似のもの）のエッセンシャルビルドをダウンロードしてください。\n2. **ガイド**: 詳細な手順については、こちらのガイドを参照してください: https://phoenixnap.com/kb/ffmpeg-windows\n3. **展開**: アーキテクチャフォルダーを開き、"bin"ディレクトリ内の `ffmpeg.exe` を見つけてください。\n4. **インストール**: `ffmpeg.exe` を永続的なフォルダー（例: `C:\\ffmpeg\\`）にコピーし、**そのフォルダーをシステムのPATH環境変数に追加してください**。\n5. **再起動**: 変更を有効にするには、インストール後にNagiを再起動してください。</value>
+  </data>
+  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
+    <value>プレイリスト内の曲がライブラリで見つかりませんでした。</value>
+  </data>
+  <data name="Error_NoPlaylistsToExport" xml:space="preserve">
+    <value>エクスポートするプレイリストがありません。</value>
+  </data>
+  <data name="EqPreset_None" xml:space="preserve">
+    <value>なし</value>
+  </data>
+  <data name="EqPreset_Classical" xml:space="preserve">
+    <value>クラシック</value>
+  </data>
+  <data name="EqPreset_Dance" xml:space="preserve">
+    <value>ダンス</value>
+  </data>
+  <data name="EqPreset_FullBass" xml:space="preserve">
+    <value>フルベース</value>
+  </data>
+  <data name="EqPreset_FullTreble" xml:space="preserve">
+    <value>フルトレブル</value>
+  </data>
+  <data name="EqPreset_Jazz" xml:space="preserve">
+    <value>ジャズ</value>
+  </data>
+  <data name="EqPreset_Pop" xml:space="preserve">
+    <value>ポップ</value>
+  </data>
+  <data name="EqPreset_Rock" xml:space="preserve">
+    <value>ロック</value>
+  </data>
+  <data name="EqPreset_Soft" xml:space="preserve">
+    <value>ソフト</value>
+  </data>
+  <data name="EqPreset_Techno" xml:space="preserve">
+    <value>テクノ</value>
+  </data>
+  <data name="EqPreset_Vocal" xml:space="preserve">
+    <value>ボーカル</value>
+  </data>
+  <data name="ReplayGain_AllSongsScanned" xml:space="preserve">
+    <value>全ての曲に音量データが既に存在します。</value>
+  </data>
+  <data name="ReplayGain_CalculatingCount" xml:space="preserve">
+    <value>{0}曲の音量を計算中...</value>
+  </data>
+  <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
+    <value>音量正規化を計算中 ({0}/{1})...</value>
+  </data>
+  <data name="ReplayGain_Complete" xml:space="preserve">
+    <value>音量正規化が完了しました。{0}曲を処理しました。</value>
+  </data>
+</root>

@@ -1,0 +1,919 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="NavItem_Library" xml:space="preserve">
+    <value>ספרייה</value>
+  </data>
+  <data name="NavItem_Albums" xml:space="preserve">
+    <value>אלבומים</value>
+  </data>
+  <data name="NavItem_Artists" xml:space="preserve">
+    <value>אמנים</value>
+  </data>
+  <data name="NavItem_Genres" xml:space="preserve">
+    <value>ז'אנרים</value>
+  </data>
+  <data name="NavItem_Playlists" xml:space="preserve">
+    <value>רשימות השמעה</value>
+  </data>
+  <data name="NavItem_Folders" xml:space="preserve">
+    <value>תיקיות</value>
+  </data>
+  <data name="NavItem_Settings" xml:space="preserve">
+    <value>הגדרות</value>
+  </data>
+  <data name="Status_NoTrackPlaying" xml:space="preserve">
+    <value>אין רצועה מתנגנת</value>
+  </data>
+  <data name="Tooltip_Play" xml:space="preserve">
+    <value>נגן</value>
+  </data>
+  <data name="Tooltip_Pause" xml:space="preserve">
+    <value>השהה</value>
+  </data>
+  <data name="Tooltip_ShuffleOn" xml:space="preserve">
+    <value>ערבוב מופעל</value>
+  </data>
+  <data name="Tooltip_ShuffleOff" xml:space="preserve">
+    <value>ערבוב כבוי</value>
+  </data>
+  <data name="Tooltip_RepeatOff" xml:space="preserve">
+    <value>חזרה כבויה</value>
+  </data>
+  <data name="Tooltip_RepeatAll" xml:space="preserve">
+    <value>חזור על הכל</value>
+  </data>
+  <data name="Tooltip_RepeatOne" xml:space="preserve">
+    <value>חזור על אחד</value>
+  </data>
+  <data name="Tooltip_Repeat" xml:space="preserve">
+    <value>חזור</value>
+  </data>
+  <data name="Tooltip_Unmute" xml:space="preserve">
+    <value>בטל השתקה</value>
+  </data>
+  <data name="Tooltip_Mute" xml:space="preserve">
+    <value>השתק</value>
+  </data>
+  <data name="Theme_Light" xml:space="preserve">
+    <value>בהיר</value>
+  </data>
+  <data name="Theme_Dark" xml:space="preserve">
+    <value>כהה</value>
+  </data>
+  <data name="Theme_Default" xml:space="preserve">
+    <value>השתמש בהגדרות מערכת</value>
+  </data>
+  <data name="Backdrop_Mica" xml:space="preserve">
+    <value>מיקה</value>
+  </data>
+  <data name="Backdrop_MicaAlt" xml:space="preserve">
+    <value>מיקה חלופית</value>
+  </data>
+  <data name="Backdrop_Acrylic" xml:space="preserve">
+    <value>אקריליק</value>
+  </data>
+  <data name="Label_Composer" xml:space="preserve">
+    <value>מלחין</value>
+  </data>
+  <data name="Label_Comment" xml:space="preserve">
+    <value>הערה</value>
+  </data>
+  <data name="Label_Rating" xml:space="preserve">
+    <value>דירוג</value>
+  </data>
+  <data name="Operator_Contains" xml:space="preserve">
+    <value>מכיל</value>
+  </data>
+  <data name="Operator_DoesNotContain" xml:space="preserve">
+    <value>אינו מכיל</value>
+  </data>
+  <data name="Operator_Is" xml:space="preserve">
+    <value>הוא בדיוק</value>
+  </data>
+  <data name="Operator_IsNot" xml:space="preserve">
+    <value>אינו</value>
+  </data>
+  <data name="Operator_StartsWith" xml:space="preserve">
+    <value>מתחיל ב-</value>
+  </data>
+  <data name="Operator_EndsWith" xml:space="preserve">
+    <value>נגמר ב-</value>
+  </data>
+  <data name="Operator_Equals" xml:space="preserve">
+    <value>שווה ל-</value>
+  </data>
+  <data name="Operator_NotEquals" xml:space="preserve">
+    <value>אינו שווה ל-</value>
+  </data>
+  <data name="Operator_GreaterThan" xml:space="preserve">
+    <value>גדול מ-</value>
+  </data>
+  <data name="Operator_LessThan" xml:space="preserve">
+    <value>קטן מ-</value>
+  </data>
+  <data name="Operator_GreaterThanOrEqual" xml:space="preserve">
+    <value>לפחות</value>
+  </data>
+  <data name="Operator_LessThanOrEqual" xml:space="preserve">
+    <value>לכל היותר</value>
+  </data>
+  <data name="Operator_IsInTheLast" xml:space="preserve">
+    <value>היה ב-{0} הימים האחרונים</value>
+  </data>
+  <data name="Operator_IsNotInTheLast" xml:space="preserve">
+    <value>לא היה ב-{0} הימים האחרונים</value>
+  </data>
+  <data name="Operator_IsTrue" xml:space="preserve">
+    <value>הוא אמת</value>
+  </data>
+  <data name="Operator_IsFalse" xml:space="preserve">
+    <value>הוא שקר</value>
+  </data>
+  <data name="SmartPlaylist_Title_New" xml:space="preserve">
+    <value>רשימת השמעה חכמה חדשה</value>
+  </data>
+  <data name="SmartPlaylist_Title_EditFormat" xml:space="preserve">
+    <value>ערוך רשימת השמעה חכמה - {0}</value>
+  </data>
+  <data name="SmartPlaylist_Status_EnterName" xml:space="preserve">
+    <value>הזן שם לרשימת השמעה</value>
+  </data>
+  <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
+    <value>{0:N0} שירים תואמים את הכללים הנוכחיים</value>
+  </data>
+  <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
+    <value>הזן שם כדי לראות שירים תואמים</value>
+  </data>
+  <data name="SmartPlaylist_Status_Error" xml:space="preserve">
+    <value>לא ניתן לחשב</value>
+  </data>
+  <data name="SmartPlaylist_Status_Calculating" xml:space="preserve">
+    <value>מחשב...</value>
+  </data>
+  <data name="SmartPlaylist_Error_DuplicateName" xml:space="preserve">
+    <value>רשימת השמעה עם שם זה כבר קיימת!</value>
+  </data>
+  <data name="SmartPlaylist_Error_NameEmptyFeedback" xml:space="preserve">
+    <value>אנא הזן שם!</value>
+  </data>
+  <data name="Status_Loading" xml:space="preserve">
+    <value>טוען...</value>
+  </data>
+  <data name="Error_FailedToLoadArtists" xml:space="preserve">
+    <value>טעינת אמנים נכשלה</value>
+  </data>
+  <data name="CrashReport_Title" xml:space="preserve">
+    <value>שגיאה קריטית</value>
+  </data>
+  <data name="CrashReport_Message" xml:space="preserve">
+    <value>Nagi נתקלה בשגיאה קריטית וחייבת להיסגר. אנו מצטערים על אי הנוחות.</value>
+  </data>
+  <data name="ElevationWarning_Title" xml:space="preserve">
+    <value>פועל כמנהל מערכת</value>
+  </data>
+  <data name="ElevationWarning_Message" xml:space="preserve">
+    <value>Nagi פועלת כעת כמנהל מערכת. הדבר עלול למנוע מתכונות מסוימות (כמו הוספת תיקיות מוזיקה) לפעול כראוי.\n\nלחוויה הטובה ביותר, אנא הפעל מחדש את Nagi ללא הרשאות מנהל מערכת.</value>
+  </data>
+  <data name="ElevationWarning_Restart" xml:space="preserve">
+    <value>הפעל מחדש כרגיל</value>
+  </data>
+  <data name="ElevationWarning_Continue" xml:space="preserve">
+    <value>המשך בכל מקרה</value>
+  </data>
+  <data name="MiniPlayer_Title" xml:space="preserve">
+    <value>Nagi</value>
+  </data>
+  <data name="App_Title" xml:space="preserve">
+    <value>Nagi</value>
+  </data>
+  <data name="AlbumView_AlbumNotFound" xml:space="preserve">
+    <value>אלבום לא נמצא</value>
+  </data>
+  <data name="AlbumView_Error" xml:space="preserve">
+    <value>שגיאה בטעינת אלבום</value>
+  </data>
+  <data name="AlbumView_DefaultAlbumTitle" xml:space="preserve">
+    <value>אלבום</value>
+  </data>
+  <data name="AlbumView_DefaultArtistName" xml:space="preserve">
+    <value>אמן</value>
+  </data>
+  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
+    <value>{0} שיר</value>
+  </data>
+  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
+    <value>{0} שירים</value>
+  </data>
+  <data name="ArtistView_ArtistNotFound" xml:space="preserve">
+    <value>אמן לא נמצא</value>
+  </data>
+  <data name="ArtistView_Error" xml:space="preserve">
+    <value>שגיאה בטעינת אמן</value>
+  </data>
+  <data name="ArtistView_DefaultArtistName" xml:space="preserve">
+    <value>אמן</value>
+  </data>
+  <data name="ArtistView_NoBiography" xml:space="preserve">
+    <value>אין ביוגרפיה זמינה לאמן זה.</value>
+  </data>
+  <data name="ArtistView_ErrorLoadingDetails" xml:space="preserve">
+    <value>לא ניתן היה לטעון פרטי אמן.</value>
+  </data>
+  <data name="Folders_ErrorLoading" xml:space="preserve">
+    <value>שגיאה בטעינת תיקיה</value>
+  </data>
+  <data name="Folders_AddFolder_Success" xml:space="preserve">
+    <value>התיקיה '{0}' נוספה ונסרקה בהצלחה.</value>
+  </data>
+  <data name="Folders_AddFolder_Failed" xml:space="preserve">
+    <value>הוספת התיקיה נכשלה. ייתכן שהנתיב אינו חוקי.</value>
+  </data>
+  <data name="Folders_AddFolder_Exists" xml:space="preserve">
+    <value>תיקיה זו כבר קיימת בספרייה.</value>
+  </data>
+  <data name="Folders_AddFolder_InProgress" xml:space="preserve">
+    <value>מוסיף תיקיה לספרייה...</value>
+  </data>
+  <data name="Folders_Delete_Success" xml:space="preserve">
+    <value>התיקיה '{0}' נמחקה בהצלחה.</value>
+  </data>
+  <data name="Folders_Delete_Failed" xml:space="preserve">
+    <value>מחיקת '{0}' נכשלה.</value>
+  </data>
+  <data name="Folders_Delete_InProgress" xml:space="preserve">
+    <value>מוחק את '{0}'...</value>
+  </data>
+  <data name="Folders_Rescan_Complete" xml:space="preserve">
+    <value>סריקה מחדש של '{0}' הושלמה.</value>
+  </data>
+  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
+    <value>לא זוהו שינויים ב-' {0}'.</value>
+  </data>
+  <data name="Folders_Rescan_InProgress" xml:space="preserve">
+    <value>סורק מחדש את '{0}'...</value>
+  </data>
+  <data name="Folders_Empty_NoMusicFound" xml:space="preserve">
+    <value>לא נמצאו תיקיות המכילות מוזיקה.</value>
+  </data>
+  <data name="Folders_Error_Playback" xml:space="preserve">
+    <value>שגיאה בהפעלת נגינה עבור תיקיה זו.</value>
+  </data>
+  <data name="Folders_Error_RandomPlayback" xml:space="preserve">
+    <value>שגיאה בהפעלת נגינה אקראית מתיקיה.</value>
+  </data>
+  <data name="Folders_Error_AddFolder" xml:space="preserve">
+    <value>שגיאה בהוספת תיקיה: {0}</value>
+  </data>
+  <data name="Folders_Error_DeleteFolder" xml:space="preserve">
+    <value>שגיאה במחיקת תיקיה: {0}</value>
+  </data>
+  <data name="Folders_Error_RescanFolder" xml:space="preserve">
+    <value>שגיאה בסריקה מחדש של תיקיה: {0}</value>
+  </data>
+  <data name="Folders_Count_Singular" xml:space="preserve">
+    <value>{0} תיקיה</value>
+  </data>
+  <data name="Folders_Count_Plural" xml:space="preserve">
+    <value>{0} תיקיות</value>
+  </data>
+  <data name="Songs_Count_Singular" xml:space="preserve">
+    <value>{0} שיר</value>
+  </data>
+  <data name="Songs_Count_Plural" xml:space="preserve">
+    <value>{0} שירים</value>
+  </data>
+  <data name="Albums_Count_Singular" xml:space="preserve">
+    <value>{0} אלבום</value>
+  </data>
+  <data name="Albums_Count_Plural" xml:space="preserve">
+    <value>{0} אלבומים</value>
+  </data>
+  <data name="Artists_Count_Singular" xml:space="preserve">
+    <value>{0} אמן</value>
+  </data>
+  <data name="Artists_Count_Plural" xml:space="preserve">
+    <value>{0} אמנים</value>
+  </data>
+  <data name="Generic_NoItems" xml:space="preserve">
+    <value>אין פריטים</value>
+  </data>
+  <data name="Generic_Error" xml:space="preserve">
+    <value>שגיאה</value>
+  </data>
+  <data name="GenreView_DefaultName" xml:space="preserve">
+    <value>ז'אנר</value>
+  </data>
+  <data name="GenreView_Error" xml:space="preserve">
+    <value>שגיאה בטעינת ז'אנר</value>
+  </data>
+  <data name="Lyrics_NoSongSelected" xml:space="preserve">
+    <value>לא נבחר שיר</value>
+  </data>
+  <data name="Lyrics_SongTitleFormat" xml:space="preserve">
+    <value>{0} מאת {1}</value>
+  </data>
+  <data name="Onboarding_Welcome" xml:space="preserve">
+    <value>בוא נגדיר את ספריית המוזיקה שלך כדי להתחיל.</value>
+  </data>
+  <data name="Onboarding_WaitingForSelection" xml:space="preserve">
+    <value>ממתין שתבחר תיקיה...</value>
+  </data>
+  <data name="Onboarding_BuildingLibrary" xml:space="preserve">
+    <value>בונה את הספרייה שלך...</value>
+  </data>
+  <data name="Onboarding_Error" xml:space="preserve">
+    <value>אירעה שגיאה בלתי צפויה. אנא נסה שוב.</value>
+  </data>
+  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
+    <value>חכם • {0} שיר</value>
+  </data>
+  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
+    <value>חכם • {0} שירים</value>
+  </data>
+  <data name="Playlist_Count_Singular" xml:space="preserve">
+    <value>{0} שיר</value>
+  </data>
+  <data name="Playlist_Count_Plural" xml:space="preserve">
+    <value>{0} שירים</value>
+  </data>
+  <data name="Playlist_ErrorLoading" xml:space="preserve">
+    <value>שגיאה בטעינת רשימת השמעה</value>
+  </data>
+  <data name="Playlist_Status_Starting" xml:space="preserve">
+    <value>מפעיל רשימת השמעה...</value>
+  </data>
+  <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
+    <value>אין שירים התואמים את כללי רשימת השמעה חכמה זו.</value>
+  </data>
+  <data name="Playlist_Status_ErrorPlayback" xml:space="preserve">
+    <value>שגיאה בהפעלת נגינה עבור רשימת השמעה זו.</value>
+  </data>
+  <data name="Playlist_Status_PickingRandom" xml:space="preserve">
+    <value>בוחר רשימת השמעה אקראית...</value>
+  </data>
+  <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
+    <value>לא נמצאו רשימות השמעה.</value>
+  </data>
+  <data name="Playlist_Status_SmartSelectedEmpty" xml:space="preserve">
+    <value>רשימת ההשמעה החכמה שנבחרה ריקה.</value>
+  </data>
+  <data name="Playlist_Status_ErrorRandom" xml:space="preserve">
+    <value>שגיאה בהפעלת רשימת השמעה אקראית.</value>
+  </data>
+  <data name="Playlist_Status_Loading" xml:space="preserve">
+    <value>טוען רשימות השמעה...</value>
+  </data>
+  <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
+    <value>שגיאה בטעינת רשימות השמעה.</value>
+  </data>
+  <data name="Playlist_Status_Creating" xml:space="preserve">
+    <value>יוצר רשימת השמעה חדשה...</value>
+  </data>
+  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
+    <value>יצירת רשימת ההשמעה נכשלה. ייתכן שהיא כבר קיימת.</value>
+  </data>
+  <data name="Playlist_Status_CreateError" xml:space="preserve">
+    <value>אירעה שגיאה בעת יצירת רשימת ההשמעה.</value>
+  </data>
+  <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
+    <value>מעדכן עטיפת רשימת השמעה...</value>
+  </data>
+  <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
+    <value>עדכון עטיפת רשימת ההשמעה נכשל.</value>
+  </data>
+  <data name="Playlist_Status_UpdateCoverError" xml:space="preserve">
+    <value>אירעה שגיאה בעת עדכון עטיפת רשימת ההשמעה.</value>
+  </data>
+  <data name="Playlist_Status_RemovingCover" xml:space="preserve">
+    <value>מסיר תמונת רשימת השמעה...</value>
+  </data>
+  <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
+    <value>הסרת תמונת רשימת ההשמעה נכשלה.</value>
+  </data>
+  <data name="Playlist_Status_RemoveCoverError" xml:space="preserve">
+    <value>אירעה שגיאה בעת הסרת תמונת רשימת ההשמעה.</value>
+  </data>
+  <data name="Playlist_Status_Renaming" xml:space="preserve">
+    <value>משנה שם לרשימת השמעה...</value>
+  </data>
+  <data name="Playlist_Status_RenameFailed" xml:space="preserve">
+    <value>שינוי שם רשימת ההשמעה נכשל.</value>
+  </data>
+  <data name="Playlist_Status_RenameError" xml:space="preserve">
+    <value>אירעה שגיאה בעת שינוי שם רשימת ההשמעה.</value>
+  </data>
+  <data name="Playlist_Status_Deleting" xml:space="preserve">
+    <value>מוחק רשימת השמעה...</value>
+  </data>
+  <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
+    <value>מחיקת רשימת ההשמעה נכשלה.</value>
+  </data>
+  <data name="Playlist_Status_DeleteError" xml:space="preserve">
+    <value>אירעה שגיאה בעת מחיקת רשימת ההשמעה.</value>
+  </data>
+  <data name="Settings_Reset_Title" xml:space="preserve">
+    <value>אשר איפוס</value>
+  </data>
+  <data name="Settings_Reset_Message" xml:space="preserve">
+    <value>האם אתה בטוח שברצונך לאפס את כל נתוני והגדרות היישום? פעולה זו אינה ניתנת לביטול. היישום יחזור להגדרות הראשוניות.</value>
+  </data>
+  <data name="Settings_Reset_Button" xml:space="preserve">
+    <value>איפוס</value>
+  </data>
+  <data name="Settings_ResetError_Title" xml:space="preserve">
+    <value>שגיאת איפוס</value>
+  </data>
+  <data name="Settings_ResetError_Message" xml:space="preserve">
+    <value>אירעה שגיאה בעת איפוס נתוני היישום: {0}. אנא נסה להפעיל מחדש את האפליקציה ידנית.</value>
+  </data>
+  <data name="Settings_LastFm_AuthError_Title" xml:space="preserve">
+    <value>שגיאה</value>
+  </data>
+  <data name="Settings_LastFm_AuthError_Message" xml:space="preserve">
+    <value>לא ניתן להתחבר ל-Last.fm. אנא נסה שוב מאוחר יותר.</value>
+  </data>
+  <data name="Settings_LastFm_FinalizeError_Title" xml:space="preserve">
+    <value>אימות נכשל</value>
+  </data>
+  <data name="Settings_LastFm_FinalizeError_Message" xml:space="preserve">
+    <value>לא ניתן לקבל סשן מ-Last.fm. אנא נסה להתחבר שוב.</value>
+  </data>
+  <data name="Settings_LastFm_Disconnect_Title" xml:space="preserve">
+    <value>נתק Last.fm</value>
+  </data>
+  <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
+    <value>האם אתה בטוח שברצונך לנתק את חשבון Last.fm שלך? היסטוריית הסקרובלינג שלך תישמר ב-Last.fm, אך Nagi לא תוכל עוד לבצע סקרובלינג.</value>
+  </data>
+  <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
+    <value>נתק</value>
+  </data>
+  <data name="Settings_Export_Success_Title" xml:space="preserve">
+    <value>ייצוא הושלם בהצלחה</value>
+  </data>
+  <data name="Settings_Export_Success_Message" xml:space="preserve">
+    <value>ייצא {0} רשימות השמעה ({1} שירים סה\"כ) אל:\n{2}</value>
+  </data>
+  <data name="Settings_Export_Failed_Title" xml:space="preserve">
+    <value>ייצוא נכשל</value>
+  </data>
+  <data name="Settings_Import_Success_Title" xml:space="preserve">
+    <value>ייבוא הושלם בהצלחה</value>
+  </data>
+  <data name="Settings_Import_Success_Message" xml:space="preserve">
+    <value>ייבא בהצלחה {0} רשימות השמעה ({1} שירים).</value>
+  </data>
+  <data name="Settings_Import_Unmatched_Message" xml:space="preserve">
+    <value>\n\n{0} שירים לא נמצאו בספרייה שלך.</value>
+  </data>
+  <data name="Settings_Import_FailedFiles_Message" xml:space="preserve">
+    <value>\n\n{0} קבצים נכשלו בייבוא.</value>
+  </data>
+  <data name="Settings_Import_FailedTotal_Title" xml:space="preserve">
+    <value>ייבוא נכשל</value>
+  </data>
+  <data name="Settings_Import_FailedTotal_Message" xml:space="preserve">
+    <value>לא ניתן היה לייבא רשימות השמעה.</value>
+  </data>
+  <data name="SmartPlaylist_ErrorLoading" xml:space="preserve">
+    <value>שגיאה בטעינת רשימת השמעה חכמה</value>
+  </data>
+  <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
+    <value>לא הוגדרו כללים • כל השירים תואמים</value>
+  </data>
+  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
+    <value>התאם {0} מתוך {1} {2}</value>
+  </data>
+  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
+    <value>כל</value>
+  </data>
+  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
+    <value>כלשהו</value>
+  </data>
+  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
+    <value>כלל</value>
+  </data>
+  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
+    <value>כללים</value>
+  </data>
+  <data name="SongList_PageTitle_Default" xml:space="preserve">
+    <value>שירים</value>
+  </data>
+  <data name="SongList_TotalItems_Default" xml:space="preserve">
+    <value>0 פריטים</value>
+  </data>
+  <data name="SongList_ErrorLoading" xml:space="preserve">
+    <value>שגיאה בטעינת פריטים</value>
+  </data>
+  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
+    <value>{0} פריט</value>
+  </data>
+  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
+    <value>{0} פריטים</value>
+  </data>
+  <data name="SongList_SelectedCount_Format" xml:space="preserve">
+    <value>{0} נבחרו</value>
+  </data>
+  <data name="AlbumView_DiscHeader" xml:space="preserve">
+    <value>דיסק {0}</value>
+  </data>
+  <data name="Generic_OK" xml:space="preserve">
+    <value>אישור</value>
+  </data>
+  <data name="Generic_Cancel" xml:space="preserve">
+    <value>ביטול</value>
+  </data>
+  <data name="Generic_Close" xml:space="preserve">
+    <value>סגור</value>
+  </data>
+  <data name="Generic_Recheck" xml:space="preserve">
+    <value>בדיקה חוזרת</value>
+  </data>
+  <data name="CrashReport_Button_Reset" xml:space="preserve">
+    <value>אפס יישום ונתונים</value>
+  </data>
+  <data name="FFmpeg_Status_NotDetected" xml:space="preserve">
+    <value>FFmpeg לא זוהה. אנא התקן את FFmpeg ולחץ על 'בדיקה חוזרת'.</value>
+  </data>
+  <data name="FFmpeg_Status_Checking" xml:space="preserve">
+    <value>בודק עבור FFmpeg...</value>
+  </data>
+  <data name="FFmpeg_Status_Detected" xml:space="preserve">
+    <value>FFmpeg זוהה!</value>
+  </data>
+  <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
+    <value>FFmpeg עדיין לא זוהה. אנא התקן את FFmpeg ולחץ על 'בדיקה חוזרת'.</value>
+  </data>
+  <data name="FFmpeg_Status_Error" xml:space="preserve">
+    <value>שגיאה בבדיקת FFmpeg. אנא נסה שוב.</value>
+  </data>
+  <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
+    <value>קודם</value>
+  </data>
+  <data name="Taskbar_Tooltip_Play" xml:space="preserve">
+    <value>נגן</value>
+  </data>
+  <data name="Taskbar_Tooltip_Pause" xml:space="preserve">
+    <value>השהה</value>
+  </data>
+  <data name="Taskbar_Tooltip_Next" xml:space="preserve">
+    <value>הבא</value>
+  </data>
+  <data name="Update_Available_Title" xml:space="preserve">
+    <value>עדכון זמין</value>
+  </data>
+  <data name="Update_Available_Message" xml:space="preserve">
+    <value>גרסה חדשה ({0}) זמינה. האם תרצה להוריד ולהתקין אותה כעת?</value>
+  </data>
+  <data name="Update_Button_InstallNow" xml:space="preserve">
+    <value>התקן כעת</value>
+  </data>
+  <data name="Update_Button_Later" xml:space="preserve">
+    <value>מאוחר יותר</value>
+  </data>
+  <data name="Update_Button_Skip" xml:space="preserve">
+    <value>דלג על גרסה זו</value>
+  </data>
+  <data name="Update_UpToDate_Title" xml:space="preserve">
+    <value>מעודכן</value>
+  </data>
+  <data name="Update_UpToDate_Message" xml:space="preserve">
+    <value>אתה משתמש בגרסה האחרונה של Nagi.</value>
+  </data>
+  <data name="Update_Error_Title" xml:space="preserve">
+    <value>שגיאת עדכון</value>
+  </data>
+  <data name="Update_Check_Error_Message" xml:space="preserve">
+    <value>אירעה שגיאה בעת בדיקת עדכונים: {0}</value>
+  </data>
+  <data name="Update_Install_Error_Message" xml:space="preserve">
+    <value>אירעה שגיאה בעת התקנת העדכון: {0}</value>
+  </data>
+  <data name="Update_Downloading_Title" xml:space="preserve">
+    <value>מוריד עדכון</value>
+  </data>
+  <data name="Update_Downloading_Message" xml:space="preserve">
+    <value>גרסה {0} מורדת. היישום יופעל מחדש אוטומטית כשיתקין.</value>
+  </data>
+  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
+    <value>LibVLC נתקלה בשגיאה לא מוגדרת.</value>
+  </data>
+  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
+    <value>שגיאת LibVLC: {0}</value>
+  </data>
+  <data name="Player_Error_LoadFailed" xml:space="preserve">
+    <value>טעינת '{0}' נכשלה.</value>
+  </data>
+  <data name="Settings_Nav_Library" xml:space="preserve">
+    <value>ספרייה</value>
+  </data>
+  <data name="Settings_Nav_Folders" xml:space="preserve">
+    <value>תיקיות</value>
+  </data>
+  <data name="Settings_Nav_Playlists" xml:space="preserve">
+    <value>רשימות השמעה</value>
+  </data>
+  <data name="Settings_Nav_Artists" xml:space="preserve">
+    <value>אמנים</value>
+  </data>
+  <data name="Settings_Nav_Albums" xml:space="preserve">
+    <value>אלבומים</value>
+  </data>
+  <data name="Settings_Nav_Genres" xml:space="preserve">
+    <value>ז'אנרים</value>
+  </data>
+  <data name="Settings_Button_Shuffle" xml:space="preserve">
+    <value>ערבוב</value>
+  </data>
+  <data name="Settings_Button_Previous" xml:space="preserve">
+    <value>קודם</value>
+  </data>
+  <data name="Settings_Button_PlayPause" xml:space="preserve">
+    <value>נגן/השהה</value>
+  </data>
+  <data name="Settings_Button_Next" xml:space="preserve">
+    <value>הבא</value>
+  </data>
+  <data name="Settings_Button_Repeat" xml:space="preserve">
+    <value>חזור</value>
+  </data>
+  <data name="Settings_Button_Divider" xml:space="preserve">
+    <value>מפריד פריסה</value>
+  </data>
+  <data name="Settings_Button_Lyrics" xml:space="preserve">
+    <value>מילים</value>
+  </data>
+  <data name="Settings_Button_Queue" xml:space="preserve">
+    <value>תור</value>
+  </data>
+  <data name="Settings_Button_Volume" xml:space="preserve">
+    <value>עוצמת קול</value>
+  </data>
+  <data name="Settings_Provider_LRCLIB_Desc" xml:space="preserve">
+    <value>מאגר מילים לשירים באוצר קהילתי</value>
+  </data>
+  <data name="Settings_Provider_NetEase_Desc" xml:space="preserve">
+    <value>שירות מוזיקה סיני, נהדר למוזיקה אסיאתית</value>
+  </data>
+  <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
+    <value>שולף מזהי אמן (נדרש עבור TheAudioDB ו-Fanart.tv)</value>
+  </data>
+  <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
+    <value>תמונות וביוגרפיות אמנים באיכות גבוהה (דורש MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
+    <value>תמונות אמנים באיכות גבוהה בלבד (דורש MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_Spotify_Desc" xml:space="preserve">
+    <value>תמונות אמנים בלבד</value>
+  </data>
+  <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
+    <value>ביוגרפיות ותמונות אמנים (חלופי)</value>
+  </data>
+  <data name="App_Name_Default" xml:space="preserve">
+    <value>Nagi</value>
+  </data>
+  <data name="App_Version_Unknown" xml:space="preserve">
+    <value>לא זמין</value>
+  </data>
+  <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>סגור חיפוש</value>
+  </data>
+  <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>חפש אלבומים</value>
+  </data>
+  <data name="AlbumViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>סגור חיפוש</value>
+  </data>
+  <data name="AlbumViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>חפש באלבום</value>
+  </data>
+  <data name="AlbumViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>אין רשימות השמעה זמינות</value>
+  </data>
+  <data name="ArtistPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>סגור חיפוש</value>
+  </data>
+  <data name="ArtistPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>חפש אמנים</value>
+  </data>
+  <data name="ArtistViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>סגור חיפוש</value>
+  </data>
+  <data name="ArtistViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>חפש באמן</value>
+  </data>
+  <data name="ArtistViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>אין רשימות השמעה זמינות</value>
+  </data>
+  <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
+    <value>מחק תיקיה</value>
+  </data>
+  <data name="FolderPage_DeleteDialog_Format" xml:space="preserve">
+    <value>האם אתה בטוח שברצונך להסיר את התיקיה '{0}' מהספרייה? פעולה זו לא תמחק את הקבצים מהמחשב שלך.</value>
+  </data>
+  <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
+    <value>מחק</value>
+  </data>
+  <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
+    <value>ביטול</value>
+  </data>
+  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
+    <value>תיקיה לא ידועה</value>
+  </data>
+  <data name="FolderSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>סגור חיפוש</value>
+  </data>
+  <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>חפש בתיקיה</value>
+  </data>
+  <data name="FolderSongViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>אין רשימות השמעה זמינות</value>
+  </data>
+  <data name="GenrePage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>סגור חיפוש</value>
+  </data>
+  <data name="GenrePage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>חפש ז'אנרים</value>
+  </data>
+  <data name="LibraryPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>סגור חיפוש</value>
+  </data>
+  <data name="LibraryPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>חפש בספרייה</value>
+  </data>
+  <data name="LibraryPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>אין רשימות השמעה זמינות</value>
+  </data>
+  <data name="PlaylistPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>סגור חיפוש</value>
+  </data>
+  <data name="PlaylistPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>חפש רשימות השמעה</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_Placeholder" xml:space="preserve">
+    <value>הזן שם לרשימת השמעה חדשה</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_PickImage" xml:space="preserve">
+    <value>בחר תמונה</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_Title" xml:space="preserve">
+    <value>צור רשימת השמעה חדשה</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_CreateButton" xml:space="preserve">
+    <value>צור</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_CancelButton" xml:space="preserve">
+    <value>ביטול</value>
+  </data>
+  <data name="PlaylistPage_RenameDialog_Title_Format" xml:space="preserve">
+    <value>שנה שם ל-'{0}'</value>
+  </data>
+  <data name="PlaylistPage_RenameDialog_RenameButton" xml:space="preserve">
+    <value>שנה שם</value>
+  </data>
+  <data name="PlaylistPage_DeleteDialog_Title" xml:space="preserve">
+    <value>מחק רשימת השמעה</value>
+  </data>
+  <data name="PlaylistPage_DeleteDialog_Content_Format" xml:space="preserve">
+    <value>האם אתה בטוח שברצונך למחוק את רשימת ההשמעה '{0}'? פעולה זו אינה ניתנת לביטול.</value>
+  </data>
+  <data name="PlaylistPage_DeleteDialog_DeleteButton" xml:space="preserve">
+    <value>מחק</value>
+  </data>
+  <data name="PlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>סגור חיפוש</value>
+  </data>
+  <data name="PlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>חפש ברשימת השמעה</value>
+  </data>
+  <data name="GenreViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>סגור חיפוש</value>
+  </data>
+  <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>חפש בספרייה</value>
+  </data>
+  <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>אין רשימות השמעה זמינות</value>
+  </data>
+  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
+    <value>רשימת השמעה לא ידועה</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>סגור חיפוש</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>חפש ברשימת השמעה חכמה</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
+    <value>רשימת השמעה חכמה לא ידועה</value>
+  </data>
+  <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
+    <value>סרוק מחדש מטא-נתונים</value>
+  </data>
+  <data name="Settings_Dialog_Rescan_Content" xml:space="preserve">
+    <value>פעולה זו תסרוק מחדש את כל השירים בספרייה שלך כדי להחיל הגדרות מטא-נתונים חדשות (כמו תווים מפרידים לאמנים). זה עשוי להימשך זמן מה בהתאם לגודל הספרייה. האם ברצונך להמשיך?</value>
+  </data>
+  <data name="Settings_Dialog_Rescan_PrimaryButton" xml:space="preserve">
+    <value>סרוק מחדש</value>
+  </data>
+  <data name="Settings_Status_Rescan_Preparing" xml:space="preserve">
+    <value>מכין סריקה מחדש של הספרייה...</value>
+  </data>
+  <data name="Settings_Dialog_RescanComplete_Title" xml:space="preserve">
+    <value>סריקה מחדש הושלמה</value>
+  </data>
+  <data name="Settings_Dialog_RescanComplete_Content" xml:space="preserve">
+    <value>מטא-נתוני הספרייה עודכנו.</value>
+  </data>
+  <data name="Settings_Dialog_RescanFailed_Title" xml:space="preserve">
+    <value>סריקה מחדש נכשלה</value>
+  </data>
+  <data name="Settings_Dialog_RescanFailed_Content" xml:space="preserve">
+    <value>אירעה שגיאה בעת הסריקה. בדוק את הרישומים לפרטים נוספים.</value>
+  </data>
+  <data name="Settings_Dialog_FFmpegNotFound_Title" xml:space="preserve">
+    <value>FFmpeg לא נמצא</value>
+  </data>
+  <data name="Settings_Dialog_VolumeNorm_Title" xml:space="preserve">
+    <value>אפשר נרמול עוצמת קול</value>
+  </data>
+  <data name="Settings_Dialog_VolumeNorm_Content" xml:space="preserve">
+    <value>נרמול עוצמת קול (ReplayGain) מבטיח רמת עוצמת קול עקבית בכל המוזיקה שלך.\n\nזה ינתח את ספריית המוזיקה שלך וישנה ישירות את קבצי האודיו שלך על ידי כתיבת תגי ReplayGain. רק קבצים ללא תגיות קיימות יעובדו. זה עשוי להימשך זמן מה בהתאם לגודל הספרייה שלך.\n\nהאם ברצונך להמשיך?</value>
+  </data>
+  <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
+    <value>אפשר וסרוק</value>
+  </data>
+  <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
+    <value>מכין סריקת נרמול עוצמת קול...</value>
+  </data>
+  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
+    <value>סריקת נרמול עוצמת קול בוטלה.</value>
+  </data>
+  <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
+    <value>שגיאה במהלך הסריקה: {0}</value>
+  </data>
+  <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
+    <value>לא ניתן לאחזר יומנים מהזיכרון. ניסיון הגיבוי לקריאת קובץ היומן נכשל.\nנתיב צפוי: '{0}'\nשגיאה: {1}</value>
+  </data>
+  <data name="Settings_Export_Failed_Message" xml:space="preserve">
+    <value>אין רשימות השמעה לייצוא.</value>
+  </data>
+</root>

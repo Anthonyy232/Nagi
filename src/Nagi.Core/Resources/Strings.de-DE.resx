@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Noun Labels -->
+  <data name="Label_Artist" xml:space="preserve">
+    <value>Künstler</value>
+  </data>
+  <data name="Label_Album" xml:space="preserve">
+    <value>Album</value>
+  </data>
+  <data name="Label_Genre" xml:space="preserve">
+    <value>Genre</value>
+  </data>
+  <data name="Label_Title" xml:space="preserve">
+    <value>Titel</value>
+  </data>
+  <data name="Label_Playlist" xml:space="preserve">
+    <value>Wiedergabeliste</value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>Datei</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>Jahr</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Hinzugefügt am</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Erstellungsdatum</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Änderungsdatum</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Zuletzt gespielt</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Dauer</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Titelnummer</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Wiedergabezahl</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Lieder</value>
+  </data>
+  <data name="Label_Song" xml:space="preserve">
+    <value>Lied</value>
+  </data>
+  <data name="Label_Folder" xml:space="preserve">
+    <value>Ordner</value>
+  </data>
+  <data name="Label_Folders" xml:space="preserve">
+    <value>Ordner</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Manuelle Reihenfolge</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Zufällig</value>
+  </data>
+  <!-- Format Patterns -->
+  <data name="Format_Unknown" xml:space="preserve">
+    <value>Unbekannt {0}</value>
+  </data>
+  <data name="Format_New" xml:space="preserve">
+    <value>Neu {0}</value>
+  </data>
+  <data name="Format_NotFound" xml:space="preserve">
+    <value>{0} nicht gefunden.</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A bis Z)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Z bis A)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (Neueste)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (Älteste)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (Aufsteigend)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (Absteigend)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>Kürzeste zuerst</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>Längste zuerst</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>Langsamste zuerst ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>Schnellste zuerst ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>Meiste {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>Wenigste {0}</value>
+  </data>
+  <data name="Format_ScanFolderProgress" xml:space="preserve">
+    <value>Ordner {0} von {1} wird gescannt: {2} - {3}</value>
+  </data>
+  <data name="Format_ScanCompleteResult" xml:space="preserve">
+    <value>Scan abgeschlossen. {0} {1} hinzugefügt oder aktualisiert.</value>
+  </data>
+  <data name="Format_SavingBatch" xml:space="preserve">
+    <value>Speichere Stapel {0}...</value>
+  </data>
+  <!-- Status & Success Messages -->
+  <data name="Status_ScanningFolder" xml:space="preserve">
+    <value>Ordner wird gescannt...</value>
+  </data>
+  <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
+    <value>Scan abgeschlossen. Bibliothek ist aktuell.</value>
+  </data>
+  <data name="Status_ScanCancelled" xml:space="preserve">
+    <value>Scan abgebrochen.</value>
+  </data>
+  <data name="Status_ScanFailed" xml:space="preserve">
+    <value>Scan fehlgeschlagen. Überprüfen Sie die Protokolle für Details.</value>
+  </data>
+  <data name="Status_PreparingScanCaches" xml:space="preserve">
+    <value>Scan-Caches werden vorbereitet...</value>
+  </data>
+  <data name="Status_ReadingSongDetails" xml:space="preserve">
+    <value>Lieddetails werden gelesen...</value>
+  </data>
+  <data name="Status_CleaningUpLibrary" xml:space="preserve">
+    <value>Ihre Bibliothek wird bereinigt...</value>
+  </data>
+  <data name="Status_Finalizing" xml:space="preserve">
+    <value>Wird abgeschlossen...</value>
+  </data>
+  <data name="Status_NormalizationFailed" xml:space="preserve">
+    <value>Lautstärkenormalisierung fehlgeschlagen. Überprüfen Sie die Protokolle für Details.</value>
+  </data>
+  <data name="Status_NoFoldersToRefresh" xml:space="preserve">
+    <value>Keine Ordner in der Bibliothek zum Aktualisieren.</value>
+  </data>
+  <data name="Status_LibraryRefreshComplete" xml:space="preserve">
+    <value>Bibliotheksaktualisierung abgeschlossen.</value>
+  </data>
+  <!-- Error Mssages -->
+  <data name="Error_FailedToAddFolder" xml:space="preserve">
+    <value>Ordner konnte nicht hinzugefügt werden.</value>
+  </data>
+  <data name="Error_PlaylistNameEmpty" xml:space="preserve">
+    <value>Der Wiedergabelistenname darf nicht leer sein.</value>
+  </data>
+  <data name="Error_RatingRange" xml:space="preserve">
+    <value>Bewertung muss zwischen 1 und 5 liegen.</value>
+  </data>
+  <!-- Labels -->
+  <data name="Label_WithLyrics" xml:space="preserve">
+    <value>mit Liedtexten</value>
+  </data>
+  <data name="Label_WithCoverArt" xml:space="preserve">
+    <value>mit Cover-Art</value>
+  </data>
+  <data name="Label_And" xml:space="preserve">
+    <value>und</value>
+  </data>
+  <!-- Static Strings -->
+  <data name="UnknownFilename" xml:space="preserve">
+    <value>unbekannt</value>
+  </data>
+  <data name="ArtistSeparator" xml:space="preserve">
+    <value> &amp; </value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Sortieren nach: </value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>FFmpeg ist für die hochpräzise Lautstärkenormalisierung (ReplayGain-Analyse) erforderlich, wurde aber auf Ihrem System nicht gefunden.
+
+Befolgen Sie diese Schritte zur Einrichtung:
+
+1. **Herunterladen**: Besuchen Sie https://www.gyan.dev/ffmpeg/builds/ und laden Sie den 'ffmpeg-git-full.7z' (oder ähnlichen) Essentials-Build herunter.
+2. **Anleitung**: Eine detaillierte Anleitung finden Sie hier: https://phoenixnap.com/kb/ffmpeg-windows
+3. **Extrahieren**: Öffnen Sie den Architekturordner und suchen Sie das 'bin'-Verzeichnis mit der `ffmpeg.exe`.
+4. **Installieren**: Kopieren Sie `ffmpeg.exe` in einen permanenten Ordner (z.B. `C:\ffmpeg\`) und **fügen Sie diesen Ordner zu Ihrer System-PATH-Umgebungsvariable hinzu**.
+5. **Neustart**: Bitte starten Sie Nagi nach der Installation neu, damit die Änderungen wirksam werden.</value>
+  </data>
+  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
+    <value>Es wurden keine Lieder aus der Wiedergabeliste in Ihrer Bibliothek gefunden.</value>
+  </data>
+  <data name="Error_NoPlaylistsToExport" xml:space="preserve">
+    <value>Keine Wiedergabelisten zum Exportieren vorhanden.</value>
+  </data>
+  <data name="EqPreset_None" xml:space="preserve">
+    <value>Keiner</value>
+  </data>
+  <data name="EqPreset_Classical" xml:space="preserve">
+    <value>Klassik</value>
+  </data>
+  <data name="EqPreset_Dance" xml:space="preserve">
+    <value>Tanz</value>
+  </data>
+  <data name="EqPreset_FullBass" xml:space="preserve">
+    <value>Voller Bass</value>
+  </data>
+  <data name="EqPreset_FullTreble" xml:space="preserve">
+    <value>Volle Höhen</value>
+  </data>
+  <data name="EqPreset_Jazz" xml:space="preserve">
+    <value>Jazz</value>
+  </data>
+  <data name="EqPreset_Pop" xml:space="preserve">
+    <value>Pop</value>
+  </data>
+  <data name="EqPreset_Rock" xml:space="preserve">
+    <value>Rock</value>
+  </data>
+  <data name="EqPreset_Soft" xml:space="preserve">
+    <value>Sanft</value>
+  </data>
+  <data name="EqPreset_Techno" xml:space="preserve">
+    <value>Techno</value>
+  </data>
+  <data name="EqPreset_Vocal" xml:space="preserve">
+    <value>Gesang</value>
+  </data>
+  <data name="ReplayGain_AllSongsScanned" xml:space="preserve">
+    <value>Alle Lieder verfügen bereits über Lautstärkedaten.</value>
+  </data>
+  <data name="ReplayGain_CalculatingCount" xml:space="preserve">
+    <value>Lautstärke für {0} Lieder wird berechnet...</value>
+  </data>
+  <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
+    <value>Lautstärkenormalisierung wird berechnet ({0}/{1})...</value>
+  </data>
+  <data name="ReplayGain_Complete" xml:space="preserve">
+    <value>Lautstärkenormalisierung abgeschlossen. {0} Lieder verarbeitet.</value>
+  </data>
+</root>

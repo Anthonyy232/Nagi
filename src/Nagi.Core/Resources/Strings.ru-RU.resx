@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Noun Labels -->
+  <data name="Label_Artist" xml:space="preserve">
+    <value>Исполнитель</value>
+  </data>
+  <data name="Label_Album" xml:space="preserve">
+    <value>Альбом</value>
+  </data>
+  <data name="Label_Genre" xml:space="preserve">
+    <value>Жанр</value>
+  </data>
+  <data name="Label_Title" xml:space="preserve">
+    <value>Название</value>
+  </data>
+  <data name="Label_Playlist" xml:space="preserve">
+    <value>Плейлист</value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>Файл</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>Год</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Дата добавления</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Дата создания</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Дата изменения</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Последнее воспроизведение</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Длительность</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Номер трека</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Количество воспроизведений</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Песни</value>
+  </data>
+  <data name="Label_Song" xml:space="preserve">
+    <value>Песня</value>
+  </data>
+  <data name="Label_Folder" xml:space="preserve">
+    <value>Папка</value>
+  </data>
+  <data name="Label_Folders" xml:space="preserve">
+    <value>Папки</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Ручной порядок</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Случайно</value>
+  </data>
+  <!-- Format Patterns -->
+  <data name="Format_Unknown" xml:space="preserve">
+    <value>Неизвестный {0}</value>
+  </data>
+  <data name="Format_New" xml:space="preserve">
+    <value>Новый {0}</value>
+  </data>
+  <data name="Format_NotFound" xml:space="preserve">
+    <value>{0} не найден.</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (А до Я)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Я до А)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (сначала новые)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (сначала старые)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (по возрастанию)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (по убыванию)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>Сначала короткие</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>Сначала длинные</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>Сначала медленные ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>Сначала быстрые ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>Наиболее {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>Наименее {0}</value>
+  </data>
+  <data name="Format_ScanFolderProgress" xml:space="preserve">
+    <value>Сканирование папки {0} из {1}: {2} - {3}</value>
+  </data>
+  <data name="Format_ScanCompleteResult" xml:space="preserve">
+    <value>Сканирование завершено. Добавлено или обновлено {0} {1}.</value>
+  </data>
+  <data name="Format_SavingBatch" xml:space="preserve">
+    <value>Сохранение пакета {0}...</value>
+  </data>
+  <!-- Status & Success Messages -->
+  <data name="Status_ScanningFolder" xml:space="preserve">
+    <value>Сканирование папки...</value>
+  </data>
+  <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
+    <value>Сканирование завершено. Библиотека обновлена.</value>
+  </data>
+  <data name="Status_ScanCancelled" xml:space="preserve">
+    <value>Сканирование отменено.</value>
+  </data>
+  <data name="Status_ScanFailed" xml:space="preserve">
+    <value>Ошибка сканирования. Подробности в журналах.</value>
+  </data>
+  <data name="Status_PreparingScanCaches" xml:space="preserve">
+    <value>Подготовка кэшей сканирования...</value>
+  </data>
+  <data name="Status_ReadingSongDetails" xml:space="preserve">
+    <value>Чтение сведений о песнях...</value>
+  </data>
+  <data name="Status_CleaningUpLibrary" xml:space="preserve">
+    <value>Очистка вашей библиотеки...</value>
+  </data>
+  <data name="Status_Finalizing" xml:space="preserve">
+    <value>Завершение...</value>
+  </data>
+  <data name="Status_NormalizationFailed" xml:space="preserve">
+    <value>Ошибка нормализации громкости. Подробности в журналах.</value>
+  </data>
+  <data name="Status_NoFoldersToRefresh" xml:space="preserve">
+    <value>Нет папок в библиотеке для обновления.</value>
+  </data>
+  <data name="Status_LibraryRefreshComplete" xml:space="preserve">
+    <value>Обновление библиотеки завершено.</value>
+  </data>
+  <!-- Error Mssages -->
+  <data name="Error_FailedToAddFolder" xml:space="preserve">
+    <value>Не удалось добавить папку.</value>
+  </data>
+  <data name="Error_PlaylistNameEmpty" xml:space="preserve">
+    <value>Имя плейлиста не может быть пустым.</value>
+  </data>
+  <data name="Error_RatingRange" xml:space="preserve">
+    <value>Рейтинг должен быть от 1 до 5.</value>
+  </data>
+  <!-- Labels -->
+  <data name="Label_WithLyrics" xml:space="preserve">
+    <value>с текстом</value>
+  </data>
+  <data name="Label_WithCoverArt" xml:space="preserve">
+    <value>с обложкой</value>
+  </data>
+  <data name="Label_And" xml:space="preserve">
+    <value>и</value>
+  </data>
+  <!-- Static Strings -->
+  <data name="UnknownFilename" xml:space="preserve">
+    <value>неизвестный</value>
+  </data>
+  <data name="ArtistSeparator" xml:space="preserve">
+    <value> и </value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Сортировать по: </value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>Для высокоточной нормализации громкости (анализ ReplayGain) требуется FFmpeg, но он не был найден в вашей системе.\n\nВыполните следующие шаги для его настройки:\n\n1. **Скачать**: Посетите https://www.gyan.dev/ffmpeg/builds/ и загрузите сборку 'ffmpeg-git-full.7z' (или аналогичную).\n2. **Руководство**: Вы можете следовать этому руководству для получения подробных инструкций: https://phoenixnap.com/kb/ffmpeg-windows\n3. **Извлечь**: Откройте папку с архитектурой и найдите каталог 'bin', содержащий `ffmpeg.exe`.\n4. **Установить**: Скопируйте `ffmpeg.exe` в постоянную папку (например, `C:\ffmpeg\`) и **добавьте эту папку в переменную среды System PATH**.\n5. **Перезапустить**: Пожалуйста, перезапустите Nagi после установки, чтобы изменения вступили в силу.</value>
+  </data>
+  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
+    <value>Песни из плейлиста не найдены в вашей библиотеке.</value>
+  </data>
+  <data name="Error_NoPlaylistsToExport" xml:space="preserve">
+    <value>Нет плейлистов для экспорта.</value>
+  </data>
+  <data name="EqPreset_None" xml:space="preserve">
+    <value>Отсутствует</value>
+  </data>
+  <data name="EqPreset_Classical" xml:space="preserve">
+    <value>Классика</value>
+  </data>
+  <data name="EqPreset_Dance" xml:space="preserve">
+    <value>Танцевальная</value>
+  </data>
+  <data name="EqPreset_FullBass" xml:space="preserve">
+    <value>Полные басы</value>
+  </data>
+  <data name="EqPreset_FullTreble" xml:space="preserve">
+    <value>Полные высокие</value>
+  </data>
+  <data name="EqPreset_Jazz" xml:space="preserve">
+    <value>Джаз</value>
+  </data>
+  <data name="EqPreset_Pop" xml:space="preserve">
+    <value>Поп</value>
+  </data>
+  <data name="EqPreset_Rock" xml:space="preserve">
+    <value>Рок</value>
+  </data>
+  <data name="EqPreset_Soft" xml:space="preserve">
+    <value>Мягкий</value>
+  </data>
+  <data name="EqPreset_Techno" xml:space="preserve">
+    <value>Техно</value>
+  </data>
+  <data name="EqPreset_Vocal" xml:space="preserve">
+    <value>Вокал</value>
+  </data>
+  <data name="ReplayGain_AllSongsScanned" xml:space="preserve">
+    <value>Все песни уже имеют данные о громкости.</value>
+  </data>
+  <data name="ReplayGain_CalculatingCount" xml:space="preserve">
+    <value>Расчет громкости для {0} песен...</value>
+  </data>
+  <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
+    <value>Расчет нормализации громкости ({0}/{1})...</value>
+  </data>
+  <data name="ReplayGain_Complete" xml:space="preserve">
+    <value>Нормализация громкости завершена. Обработано {0} песен.</value>
+  </data>
+</root>

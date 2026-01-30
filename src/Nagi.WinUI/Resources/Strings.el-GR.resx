@@ -1,0 +1,919 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="NavItem_Library" xml:space="preserve">
+    <value>Βιβλιοθήκη</value>
+  </data>
+  <data name="NavItem_Albums" xml:space="preserve">
+    <value>Άλμπουμ</value>
+  </data>
+  <data name="NavItem_Artists" xml:space="preserve">
+    <value>Καλλιτέχνες</value>
+  </data>
+  <data name="NavItem_Genres" xml:space="preserve">
+    <value>Είδη</value>
+  </data>
+  <data name="NavItem_Playlists" xml:space="preserve">
+    <value>Λίστες αναπαραγωγής</value>
+  </data>
+  <data name="NavItem_Folders" xml:space="preserve">
+    <value>Φάκελοι</value>
+  </data>
+  <data name="NavItem_Settings" xml:space="preserve">
+    <value>Ρυθμίσεις</value>
+  </data>
+  <data name="Status_NoTrackPlaying" xml:space="preserve">
+    <value>Δεν αναπαράγεται κομμάτι</value>
+  </data>
+  <data name="Tooltip_Play" xml:space="preserve">
+    <value>Αναπαραγωγή</value>
+  </data>
+  <data name="Tooltip_Pause" xml:space="preserve">
+    <value>Παύση</value>
+  </data>
+  <data name="Tooltip_ShuffleOn" xml:space="preserve">
+    <value>Τυχαία σειρά Ενεργή</value>
+  </data>
+  <data name="Tooltip_ShuffleOff" xml:space="preserve">
+    <value>Τυχαία σειρά Ανενεργή</value>
+  </data>
+  <data name="Tooltip_RepeatOff" xml:space="preserve">
+    <value>Επανάληψη Ανενεργή</value>
+  </data>
+  <data name="Tooltip_RepeatAll" xml:space="preserve">
+    <value>Επανάληψη Όλων</value>
+  </data>
+  <data name="Tooltip_RepeatOne" xml:space="preserve">
+    <value>Επανάληψη Ενός</value>
+  </data>
+  <data name="Tooltip_Repeat" xml:space="preserve">
+    <value>Επανάληψη</value>
+  </data>
+  <data name="Tooltip_Unmute" xml:space="preserve">
+    <value>Κατάργηση σίγασης</value>
+  </data>
+  <data name="Tooltip_Mute" xml:space="preserve">
+    <value>Σίγαση</value>
+  </data>
+  <data name="Theme_Light" xml:space="preserve">
+    <value>Φωτεινό</value>
+  </data>
+  <data name="Theme_Dark" xml:space="preserve">
+    <value>Σκοτεινό</value>
+  </data>
+  <data name="Theme_Default" xml:space="preserve">
+    <value>Χρήση ρύθμισης συστήματος</value>
+  </data>
+  <data name="Backdrop_Mica" xml:space="preserve">
+    <value>Μίκα</value>
+  </data>
+  <data name="Backdrop_MicaAlt" xml:space="preserve">
+    <value>Μίκα Εναλλακτικό</value>
+  </data>
+  <data name="Backdrop_Acrylic" xml:space="preserve">
+    <value>Ακρυλικό</value>
+  </data>
+  <data name="Label_Composer" xml:space="preserve">
+    <value>Συνθέτης</value>
+  </data>
+  <data name="Label_Comment" xml:space="preserve">
+    <value>Σχόλιο</value>
+  </data>
+  <data name="Label_Rating" xml:space="preserve">
+    <value>Αξιολόγηση</value>
+  </data>
+  <data name="Operator_Contains" xml:space="preserve">
+    <value>Περιέχει</value>
+  </data>
+  <data name="Operator_DoesNotContain" xml:space="preserve">
+    <value>Δεν περιέχει</value>
+  </data>
+  <data name="Operator_Is" xml:space="preserve">
+    <value>Είναι ακριβώς</value>
+  </data>
+  <data name="Operator_IsNot" xml:space="preserve">
+    <value>Δεν είναι</value>
+  </data>
+  <data name="Operator_StartsWith" xml:space="preserve">
+    <value>Ξεκινά με</value>
+  </data>
+  <data name="Operator_EndsWith" xml:space="preserve">
+    <value>Τελειώνει με</value>
+  </data>
+  <data name="Operator_Equals" xml:space="preserve">
+    <value>Είναι ίσο με</value>
+  </data>
+  <data name="Operator_NotEquals" xml:space="preserve">
+    <value>Δεν είναι ίσο με</value>
+  </data>
+  <data name="Operator_GreaterThan" xml:space="preserve">
+    <value>Είναι μεγαλύτερο από</value>
+  </data>
+  <data name="Operator_LessThan" xml:space="preserve">
+    <value>Είναι μικρότερο από</value>
+  </data>
+  <data name="Operator_GreaterThanOrEqual" xml:space="preserve">
+    <value>Είναι τουλάχιστον</value>
+  </data>
+  <data name="Operator_LessThanOrEqual" xml:space="preserve">
+    <value>Είναι το πολύ</value>
+  </data>
+  <data name="Operator_IsInTheLast" xml:space="preserve">
+    <value>Είναι στις τελευταίες (ημέρες)</value>
+  </data>
+  <data name="Operator_IsNotInTheLast" xml:space="preserve">
+    <value>Δεν είναι στις τελευταίες (ημέρες)</value>
+  </data>
+  <data name="Operator_IsTrue" xml:space="preserve">
+    <value>Είναι αληθές</value>
+  </data>
+  <data name="Operator_IsFalse" xml:space="preserve">
+    <value>Είναι ψευδές</value>
+  </data>
+  <data name="SmartPlaylist_Title_New" xml:space="preserve">
+    <value>Νέα Έξυπνη Λίστα Αναπαραγωγής</value>
+  </data>
+  <data name="SmartPlaylist_Title_EditFormat" xml:space="preserve">
+    <value>Επεξεργασία Έξυπνης Λίστας Αναπαραγωγής - {0}</value>
+  </data>
+  <data name="SmartPlaylist_Status_EnterName" xml:space="preserve">
+    <value>Εισαγάγετε ένα όνομα λίστας αναπαραγωγής</value>
+  </data>
+  <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
+    <value>{0:N0} τραγούδια ταιριάζουν με τους τρέχοντες κανόνες</value>
+  </data>
+  <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
+    <value>Εισαγάγετε ένα όνομα για να δείτε τα αντίστοιχα τραγούδια</value>
+  </data>
+  <data name="SmartPlaylist_Status_Error" xml:space="preserve">
+    <value>Αδυναμία υπολογισμού</value>
+  </data>
+  <data name="SmartPlaylist_Status_Calculating" xml:space="preserve">
+    <value>Υπολογίζεται...</value>
+  </data>
+  <data name="SmartPlaylist_Error_DuplicateName" xml:space="preserve">
+    <value>Υπάρχει ήδη μια λίστα αναπαραγωγής με αυτό το όνομα!</value>
+  </data>
+  <data name="SmartPlaylist_Error_NameEmptyFeedback" xml:space="preserve">
+    <value>Παρακαλώ εισαγάγετε ένα όνομα!</value>
+  </data>
+  <data name="Status_Loading" xml:space="preserve">
+    <value>Φορτώνεται...</value>
+  </data>
+  <data name="Error_FailedToLoadArtists" xml:space="preserve">
+    <value>Αποτυχία φόρτωσης καλλιτεχνών</value>
+  </data>
+  <data name="CrashReport_Title" xml:space="preserve">
+    <value>Κρίσιμο Σφάλμα</value>
+  </data>
+  <data name="CrashReport_Message" xml:space="preserve">
+    <value>Το Nagi αντιμετώπισε ένα κρίσιμο σφάλμα και πρέπει να κλείσει. Ζητούμε συγγνώμη για την αναστάτωση.</value>
+  </data>
+  <data name="ElevationWarning_Title" xml:space="preserve">
+    <value>Εκτελείται ως Διαχειριστής</value>
+  </data>
+  <data name="ElevationWarning_Message" xml:space="preserve">
+    <value>Το Nagi εκτελείται αυτή τη στιγμή ως Διαχειριστής. Αυτό ενδέχεται να εμποδίσει ορισμένες λειτουργίες (όπως η προσθήκη φακέλων μουσικής) να λειτουργούν σωστά.\n\nΓια την καλύτερη εμπειρία, παρακαλούμε επανεκκινήστε το Nagi χωρίς δικαιώματα διαχειριστή.</value>
+  </data>
+  <data name="ElevationWarning_Restart" xml:space="preserve">
+    <value>Επανεκκίνηση κανονικά</value>
+  </data>
+  <data name="ElevationWarning_Continue" xml:space="preserve">
+    <value>Συνέχεια ούτως ή άλλως</value>
+  </data>
+  <data name="MiniPlayer_Title" xml:space="preserve">
+    <value>Nagi</value>
+  </data>
+  <data name="App_Title" xml:space="preserve">
+    <value>Nagi</value>
+  </data>
+  <data name="AlbumView_AlbumNotFound" xml:space="preserve">
+    <value>Το άλμπουμ δεν βρέθηκε</value>
+  </data>
+  <data name="AlbumView_Error" xml:space="preserve">
+    <value>Σφάλμα φόρτωσης άλμπουμ</value>
+  </data>
+  <data name="AlbumView_DefaultAlbumTitle" xml:space="preserve">
+    <value>Άλμπουμ</value>
+  </data>
+  <data name="AlbumView_DefaultArtistName" xml:space="preserve">
+    <value>Καλλιτέχνης</value>
+  </data>
+  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
+    <value>{0} τραγούδι</value>
+  </data>
+  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
+    <value>{0} τραγούδια</value>
+  </data>
+  <data name="ArtistView_ArtistNotFound" xml:space="preserve">
+    <value>Ο καλλιτέχνης δεν βρέθηκε</value>
+  </data>
+  <data name="ArtistView_Error" xml:space="preserve">
+    <value>Σφάλμα φόρτωσης καλλιτέχνη</value>
+  </data>
+  <data name="ArtistView_DefaultArtistName" xml:space="preserve">
+    <value>Καλλιτέχνης</value>
+  </data>
+  <data name="ArtistView_NoBiography" xml:space="preserve">
+    <value>Δεν υπάρχει διαθέσιμη βιογραφία για αυτόν τον καλλιτέχνη.</value>
+  </data>
+  <data name="ArtistView_ErrorLoadingDetails" xml:space="preserve">
+    <value>Αδυναμία φόρτωσης λεπτομερειών καλλιτέχνη.</value>
+  </data>
+  <data name="Folders_ErrorLoading" xml:space="preserve">
+    <value>Σφάλμα φόρτωσης φακέλου</value>
+  </data>
+  <data name="Folders_AddFolder_Success" xml:space="preserve">
+    <value>Προστέθηκε και σαρώθηκε με επιτυχία το '{0}'.</value>
+  </data>
+  <data name="Folders_AddFolder_Failed" xml:space="preserve">
+    <value>Αποτυχία προσθήκης φακέλου. Η διαδρομή ενδέχεται να είναι μη έγκυρη.</value>
+  </data>
+  <data name="Folders_AddFolder_Exists" xml:space="preserve">
+    <value>Αυτός ο φάκελος βρίσκεται ήδη στη βιβλιοθήκη.</value>
+  </data>
+  <data name="Folders_AddFolder_InProgress" xml:space="preserve">
+    <value>Προστίθεται φάκελος στη βιβλιοθήκη...</value>
+  </data>
+  <data name="Folders_Delete_Success" xml:space="preserve">
+    <value>Διαγράφηκε με επιτυχία το '{0}'.</value>
+  </data>
+  <data name="Folders_Delete_Failed" xml:space="preserve">
+    <value>Αποτυχία διαγραφής του '{0}'.</value>
+  </data>
+  <data name="Folders_Delete_InProgress" xml:space="preserve">
+    <value>Διαγράφεται το '{0}'...</value>
+  </data>
+  <data name="Folders_Rescan_Complete" xml:space="preserve">
+    <value>Η επανεξέταση του '{0}' ολοκληρώθηκε.</value>
+  </data>
+  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
+    <value>Δεν εντοπίστηκαν αλλαγές για το '{0}'.</value>
+  </data>
+  <data name="Folders_Rescan_InProgress" xml:space="preserve">
+    <value>Επανεξέταση του '{0}'...</value>
+  </data>
+  <data name="Folders_Empty_NoMusicFound" xml:space="preserve">
+    <value>Δεν βρέθηκαν φάκελοι με μουσική.</value>
+  </data>
+  <data name="Folders_Error_Playback" xml:space="preserve">
+    <value>Σφάλμα κατά την έναρξη αναπαραγωγής για αυτόν τον φάκελο.</value>
+  </data>
+  <data name="Folders_Error_RandomPlayback" xml:space="preserve">
+    <value>Σφάλμα κατά την έναρξη τυχαίας αναπαραγωγής φακέλου.</value>
+  </data>
+  <data name="Folders_Error_AddFolder" xml:space="preserve">
+    <value>Σφάλμα προσθήκης φακέλου: {0}</value>
+  </data>
+  <data name="Folders_Error_DeleteFolder" xml:space="preserve">
+    <value>Σφάλμα διαγραφής φακέλου: {0}</value>
+  </data>
+  <data name="Folders_Error_RescanFolder" xml:space="preserve">
+    <value>Σφάλμα επανεξέτασης φακέλου: {0}</value>
+  </data>
+  <data name="Folders_Count_Singular" xml:space="preserve">
+    <value>{0} φάκελος</value>
+  </data>
+  <data name="Folders_Count_Plural" xml:space="preserve">
+    <value>{0} φάκελοι</value>
+  </data>
+  <data name="Songs_Count_Singular" xml:space="preserve">
+    <value>{0} τραγούδι</value>
+  </data>
+  <data name="Songs_Count_Plural" xml:space="preserve">
+    <value>{0} τραγούδια</value>
+  </data>
+  <data name="Albums_Count_Singular" xml:space="preserve">
+    <value>{0} άλμπουμ</value>
+  </data>
+  <data name="Albums_Count_Plural" xml:space="preserve">
+    <value>{0} άλμπουμ</value>
+  </data>
+  <data name="Artists_Count_Singular" xml:space="preserve">
+    <value>{0} καλλιτέχνης</value>
+  </data>
+  <data name="Artists_Count_Plural" xml:space="preserve">
+    <value>{0} καλλιτέχνες</value>
+  </data>
+  <data name="Generic_NoItems" xml:space="preserve">
+    <value>Κανένα αντικείμενο</value>
+  </data>
+  <data name="Generic_Error" xml:space="preserve">
+    <value>Σφάλμα</value>
+  </data>
+  <data name="GenreView_DefaultName" xml:space="preserve">
+    <value>Είδος</value>
+  </data>
+  <data name="GenreView_Error" xml:space="preserve">
+    <value>Σφάλμα φόρτωσης είδους</value>
+  </data>
+  <data name="Lyrics_NoSongSelected" xml:space="preserve">
+    <value>Δεν έχει επιλεγεί τραγούδι</value>
+  </data>
+  <data name="Lyrics_SongTitleFormat" xml:space="preserve">
+    <value>{0} από {1}</value>
+  </data>
+  <data name="Onboarding_Welcome" xml:space="preserve">
+    <value>Ας ρυθμίσουμε τη μουσική σας βιβλιοθήκη για να ξεκινήσετε.</value>
+  </data>
+  <data name="Onboarding_WaitingForSelection" xml:space="preserve">
+    <value>Αναμονή για να επιλέξετε ένα φάκελο...</value>
+  </data>
+  <data name="Onboarding_BuildingLibrary" xml:space="preserve">
+    <value>Δημιουργείται η βιβλιοθήκη σας...</value>
+  </data>
+  <data name="Onboarding_Error" xml:space="preserve">
+    <value>Παρουσιάστηκε ένα απροσδόκητο σφάλμα. Παρακαλώ δοκιμάστε ξανά.</value>
+  </data>
+  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
+    <value>Έξυπνη • {0} τραγούδι</value>
+  </data>
+  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
+    <value>Έξυπνη • {0} τραγούδια</value>
+  </data>
+  <data name="Playlist_Count_Singular" xml:space="preserve">
+    <value>{0} τραγούδι</value>
+  </data>
+  <data name="Playlist_Count_Plural" xml:space="preserve">
+    <value>{0} τραγούδια</value>
+  </data>
+  <data name="Playlist_ErrorLoading" xml:space="preserve">
+    <value>Σφάλμα φόρτωσης λίστας αναπαραγωγής</value>
+  </data>
+  <data name="Playlist_Status_Starting" xml:space="preserve">
+    <value>Εκκίνηση λίστας αναπαραγωγής...</value>
+  </data>
+  <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
+    <value>Κανένα τραγούδι δεν ταιριάζει με τους κανόνες αυτής της έξυπνης λίστας αναπαραγωγής.</value>
+  </data>
+  <data name="Playlist_Status_ErrorPlayback" xml:space="preserve">
+    <value>Σφάλμα κατά την έναρξη αναπαραγωγής για αυτήν τη λίστα αναπαραγωγής.</value>
+  </data>
+  <data name="Playlist_Status_PickingRandom" xml:space="preserve">
+    <value>Επιλέγεται τυχαία λίστα αναπαραγωγής...</value>
+  </data>
+  <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
+    <value>Δεν βρέθηκαν λίστες αναπαραγωγής.</value>
+  </data>
+  <data name="Playlist_Status_SmartSelectedEmpty" xml:space="preserve">
+    <value>Η επιλεγμένη έξυπνη λίστα αναπαραγωγής είναι κενή.</value>
+  </data>
+  <data name="Playlist_Status_ErrorRandom" xml:space="preserve">
+    <value>Σφάλμα κατά την αναπαραγωγή τυχαίας λίστας αναπαραγωγής.</value>
+  </data>
+  <data name="Playlist_Status_Loading" xml:space="preserve">
+    <value>Φορτώνονται λίστες αναπαραγωγής...</value>
+  </data>
+  <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
+    <value>Σφάλμα φόρτωσης λιστών αναπαραγωγής.</value>
+  </data>
+  <data name="Playlist_Status_Creating" xml:space="preserve">
+    <value>Δημιουργείται νέα λίστα αναπαραγωγής...</value>
+  </data>
+  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
+    <value>Αποτυχία δημιουργίας λίστας αναπαραγωγής. Ενδέχεται να υπάρχει ήδη.</value>
+  </data>
+  <data name="Playlist_Status_CreateError" xml:space="preserve">
+    <value>Παρουσιάστηκε σφάλμα κατά τη δημιουργία της λίστας αναπαραγωγής.</value>
+  </data>
+  <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
+    <value>Ενημερώνεται το εξώφυλλο της λίστας αναπαραγωγής...</value>
+  </data>
+  <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
+    <value>Αποτυχία ενημέρωσης του εξώφυλλου της λίστας αναπαραγωγής.</value>
+  </data>
+  <data name="Playlist_Status_UpdateCoverError" xml:space="preserve">
+    <value>Παρουσιάστηκε σφάλμα κατά την ενημέρωση του εξώφυλλου της λίστας αναπαραγωγής.</value>
+  </data>
+  <data name="Playlist_Status_RemovingCover" xml:space="preserve">
+    <value>Αφαιρείται η εικόνα της λίστας αναπαραγωγής...</value>
+  </data>
+  <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
+    <value>Αποτυχία αφαίρεσης της εικόνας της λίστας αναπαραγωγής.</value>
+  </data>
+  <data name="Playlist_Status_RemoveCoverError" xml:space="preserve">
+    <value>Παρουσιάστηκε σφάλμα κατά την αφαίρεση της εικόνας της λίστας αναπαραγωγής.</value>
+  </data>
+  <data name="Playlist_Status_Renaming" xml:space="preserve">
+    <value>Μετονομάζεται η λίστα αναπαραγωγής...</value>
+  </data>
+  <data name="Playlist_Status_RenameFailed" xml:space="preserve">
+    <value>Αποτυχία μετονομασίας λίστας αναπαραγωγής.</value>
+  </data>
+  <data name="Playlist_Status_RenameError" xml:space="preserve">
+    <value>Παρουσιάστηκε σφάλμα κατά τη μετονομασία της λίστας αναπαραγωγής.</value>
+  </data>
+  <data name="Playlist_Status_Deleting" xml:space="preserve">
+    <value>Διαγράφεται η λίστα αναπαραγωγής...</value>
+  </data>
+  <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
+    <value>Αποτυχία διαγραφής λίστας αναπαραγωγής.</value>
+  </data>
+  <data name="Playlist_Status_DeleteError" xml:space="preserve">
+    <value>Παρουσιάστηκε σφάλμα κατά τη διαγραφή της λίστας αναπαραγωγής.</value>
+  </data>
+  <data name="Settings_Reset_Title" xml:space="preserve">
+    <value>Επιβεβαίωση Επαναφοράς</value>
+  </data>
+  <data name="Settings_Reset_Message" xml:space="preserve">
+    <value>Είστε βέβαιοι ότι θέλετε να επαναφέρετε όλα τα δεδομένα και τις ρυθμίσεις της εφαρμογής; Αυτή η ενέργεια δεν μπορεί να αναιρεθεί. Η εφαρμογή θα επιστρέψει στην αρχική ρύθμιση.</value>
+  </data>
+  <data name="Settings_Reset_Button" xml:space="preserve">
+    <value>Επαναφορά</value>
+  </data>
+  <data name="Settings_ResetError_Title" xml:space="preserve">
+    <value>Σφάλμα Επαναφοράς</value>
+  </data>
+  <data name="Settings_ResetError_Message" xml:space="preserve">
+    <value>Παρουσιάστηκε σφάλμα κατά την επαναφορά των δεδομένων της εφαρμογής: {0}. Παρακαλώ δοκιμάστε να επανεκκινήσετε την εφαρμογή χειροκίνητα.</value>
+  </data>
+  <data name="Settings_LastFm_AuthError_Title" xml:space="preserve">
+    <value>Σφάλμα</value>
+  </data>
+  <data name="Settings_LastFm_AuthError_Message" xml:space="preserve">
+    <value>Αδυναμία σύνδεσης στο Last.fm. Παρακαλώ δοκιμάστε ξανά αργότερα.</value>
+  </data>
+  <data name="Settings_LastFm_FinalizeError_Title" xml:space="preserve">
+    <value>Αποτυχία Αυθεντικοποίησης</value>
+  </data>
+  <data name="Settings_LastFm_FinalizeError_Message" xml:space="preserve">
+    <value>Αδυναμία λήψης συνεδρίας από το Last.fm. Παρακαλώ δοκιμάστε να συνδεθείτε ξανά.</value>
+  </data>
+  <data name="Settings_LastFm_Disconnect_Title" xml:space="preserve">
+    <value>Αποσύνδεση Last.fm</value>
+  </data>
+  <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
+    <value>Είστε βέβαιοι ότι θέλετε να αποσυνδέσετε τον λογαριασμό σας Last.fm; Το ιστορικό scrobbling σας θα διατηρηθεί στο Last.fm, αλλά το Nagi δεν θα μπορεί πλέον να scrobble.</value>
+  </data>
+  <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
+    <value>Αποσύνδεση</value>
+  </data>
+  <data name="Settings_Export_Success_Title" xml:space="preserve">
+    <value>Επιτυχής Εξαγωγή</value>
+  </data>
+  <data name="Settings_Export_Success_Message" xml:space="preserve">
+    <value>Εξήχθησαν {0} λίστες αναπαραγωγής ({1} συνολικά τραγούδια) σε:\n{2}</value>
+  </data>
+  <data name="Settings_Export_Failed_Title" xml:space="preserve">
+    <value>Αποτυχία Εξαγωγής</value>
+  </data>
+  <data name="Settings_Import_Success_Title" xml:space="preserve">
+    <value>Επιτυχής Εισαγωγή</value>
+  </data>
+  <data name="Settings_Import_Success_Message" xml:space="preserve">
+    <value>Εισήχθησαν επιτυχώς {0} λίστες αναπαραγωγής ({1} τραγούδια).</value>
+  </data>
+  <data name="Settings_Import_Unmatched_Message" xml:space="preserve">
+    <value>\n\nΔεν βρέθηκαν {0} τραγούδια στη βιβλιοθήκη σας.</value>
+  </data>
+  <data name="Settings_Import_FailedFiles_Message" xml:space="preserve">
+    <value>\n\nΑποτυχία εισαγωγής {0} αρχείων.</value>
+  </data>
+  <data name="Settings_Import_FailedTotal_Title" xml:space="preserve">
+    <value>Αποτυχία Εισαγωγής</value>
+  </data>
+  <data name="Settings_Import_FailedTotal_Message" xml:space="preserve">
+    <value>Δεν μπόρεσε να εισαχθεί καμία λίστα αναπαραγωγής.</value>
+  </data>
+  <data name="SmartPlaylist_ErrorLoading" xml:space="preserve">
+    <value>Σφάλμα φόρτωσης έξυπνης λίστας αναπαραγωγής</value>
+  </data>
+  <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
+    <value>Δεν ορίστηκαν κανόνες • Όλα τα τραγούδια ταιριάζουν</value>
+  </data>
+  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
+    <value>Αντιστοίχιση {0} από {1} {2}</value>
+  </data>
+  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
+    <value>όλοι</value>
+  </data>
+  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
+    <value>οποιοδήποτε</value>
+  </data>
+  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
+    <value>κανόνας</value>
+  </data>
+  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
+    <value>κανόνες</value>
+  </data>
+  <data name="SongList_PageTitle_Default" xml:space="preserve">
+    <value>Τραγούδια</value>
+  </data>
+  <data name="SongList_TotalItems_Default" xml:space="preserve">
+    <value>0 αντικείμενα</value>
+  </data>
+  <data name="SongList_ErrorLoading" xml:space="preserve">
+    <value>Σφάλμα φόρτωσης αντικειμένων</value>
+  </data>
+  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
+    <value>{0} αντικείμενο</value>
+  </data>
+  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
+    <value>{0} αντικείμενα</value>
+  </data>
+  <data name="SongList_SelectedCount_Format" xml:space="preserve">
+    <value>{0} επιλεγμένο</value>
+  </data>
+  <data name="AlbumView_DiscHeader" xml:space="preserve">
+    <value>Δίσκος {0}</value>
+  </data>
+  <data name="Generic_OK" xml:space="preserve">
+    <value>ΟΚ</value>
+  </data>
+  <data name="Generic_Cancel" xml:space="preserve">
+    <value>Ακύρωση</value>
+  </data>
+  <data name="Generic_Close" xml:space="preserve">
+    <value>Κλείσιμο</value>
+  </data>
+  <data name="Generic_Recheck" xml:space="preserve">
+    <value>Επανέλεγχος</value>
+  </data>
+  <data name="CrashReport_Button_Reset" xml:space="preserve">
+    <value>Επαναφορά Εφαρμογής &amp; Δεδομένων</value>
+  </data>
+  <data name="FFmpeg_Status_NotDetected" xml:space="preserve">
+    <value>Το FFmpeg δεν εντοπίστηκε. Παρακαλώ εγκαταστήστε το FFmpeg και κάντε κλικ στο 'Επανέλεγχος'.</value>
+  </data>
+  <data name="FFmpeg_Status_Checking" xml:space="preserve">
+    <value>Έλεγχος για FFmpeg...</value>
+  </data>
+  <data name="FFmpeg_Status_Detected" xml:space="preserve">
+    <value>Το FFmpeg εντοπίστηκε!</value>
+  </data>
+  <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
+    <value>Το FFmpeg εξακολουθεί να μην εντοπίζεται. Παρακαλώ εγκαταστήστε το FFmpeg και κάντε κλικ στο 'Επανέλεγχος'.</value>
+  </data>
+  <data name="FFmpeg_Status_Error" xml:space="preserve">
+    <value>Σφάλμα κατά τον έλεγχο για FFmpeg. Παρακαλώ δοκιμάστε ξανά.</value>
+  </data>
+  <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
+    <value>Προηγούμενο</value>
+  </data>
+  <data name="Taskbar_Tooltip_Play" xml:space="preserve">
+    <value>Αναπαραγωγή</value>
+  </data>
+  <data name="Taskbar_Tooltip_Pause" xml:space="preserve">
+    <value>Παύση</value>
+  </data>
+  <data name="Taskbar_Tooltip_Next" xml:space="preserve">
+    <value>Επόμενο</value>
+  </data>
+  <data name="Update_Available_Title" xml:space="preserve">
+    <value>Διαθέσιμη ενημέρωση</value>
+  </data>
+  <data name="Update_Available_Message" xml:space="preserve">
+    <value>Μια νέα έκδοση ({0}) είναι διαθέσιμη. Θα θέλατε να την κατεβάσετε και να την εγκαταστήσετε τώρα;</value>
+  </data>
+  <data name="Update_Button_InstallNow" xml:space="preserve">
+    <value>Εγκατάσταση τώρα</value>
+  </data>
+  <data name="Update_Button_Later" xml:space="preserve">
+    <value>Αργότερα</value>
+  </data>
+  <data name="Update_Button_Skip" xml:space="preserve">
+    <value>Παράλειψη αυτής της έκδοσης</value>
+  </data>
+  <data name="Update_UpToDate_Title" xml:space="preserve">
+    <value>Ενημερωμένο</value>
+  </data>
+  <data name="Update_UpToDate_Message" xml:space="preserve">
+    <value>Εκτελείτε την τελευταία έκδοση του Nagi.</value>
+  </data>
+  <data name="Update_Error_Title" xml:space="preserve">
+    <value>Σφάλμα Ενημέρωσης</value>
+  </data>
+  <data name="Update_Check_Error_Message" xml:space="preserve">
+    <value>Παρουσιάστηκε σφάλμα κατά τον έλεγχο για ενημερώσεις: {0}</value>
+  </data>
+  <data name="Update_Install_Error_Message" xml:space="preserve">
+    <value>Παρουσιάστηκε σφάλμα κατά την εγκατάσταση της ενημέρωσης: {0}</value>
+  </data>
+  <data name="Update_Downloading_Title" xml:space="preserve">
+    <value>Λήψη Ενημέρωσης</value>
+  </data>
+  <data name="Update_Downloading_Message" xml:space="preserve">
+    <value>Η έκδοση {0} κατεβαίνει. Η εφαρμογή θα επανεκκινήσει αυτόματα όταν είναι έτοιμη.</value>
+  </data>
+  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
+    <value>Το LibVLC αντιμετώπισε ένα μη καθορισμένο σφάλμα.</value>
+  </data>
+  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
+    <value>Σφάλμα LibVLC: {0}</value>
+  </data>
+  <data name="Player_Error_LoadFailed" xml:space="preserve">
+    <value>Αποτυχία φόρτωσης '{0}'.</value>
+  </data>
+  <data name="Settings_Nav_Library" xml:space="preserve">
+    <value>Βιβλιοθήκη</value>
+  </data>
+  <data name="Settings_Nav_Folders" xml:space="preserve">
+    <value>Φάκελοι</value>
+  </data>
+  <data name="Settings_Nav_Playlists" xml:space="preserve">
+    <value>Λίστες αναπαραγωγής</value>
+  </data>
+  <data name="Settings_Nav_Artists" xml:space="preserve">
+    <value>Καλλιτέχνες</value>
+  </data>
+  <data name="Settings_Nav_Albums" xml:space="preserve">
+    <value>Άλμπουμ</value>
+  </data>
+  <data name="Settings_Nav_Genres" xml:space="preserve">
+    <value>Είδη</value>
+  </data>
+  <data name="Settings_Button_Shuffle" xml:space="preserve">
+    <value>Τυχαία σειρά</value>
+  </data>
+  <data name="Settings_Button_Previous" xml:space="preserve">
+    <value>Προηγούμενο</value>
+  </data>
+  <data name="Settings_Button_PlayPause" xml:space="preserve">
+    <value>Αναπαραγωγή/Παύση</value>
+  </data>
+  <data name="Settings_Button_Next" xml:space="preserve">
+    <value>Επόμενο</value>
+  </data>
+  <data name="Settings_Button_Repeat" xml:space="preserve">
+    <value>Επανάληψη</value>
+  </data>
+  <data name="Settings_Button_Divider" xml:space="preserve">
+    <value>Διαχωριστικό διάταξης</value>
+  </data>
+  <data name="Settings_Button_Lyrics" xml:space="preserve">
+    <value>Στίχοι</value>
+  </data>
+  <data name="Settings_Button_Queue" xml:space="preserve">
+    <value>Ουρά</value>
+  </data>
+  <data name="Settings_Button_Volume" xml:space="preserve">
+    <value>Ένταση</value>
+  </data>
+  <data name="Settings_Provider_LRCLIB_Desc" xml:space="preserve">
+    <value>Βάση δεδομένων στίχων που επιμελείται η κοινότητα</value>
+  </data>
+  <data name="Settings_Provider_NetEase_Desc" xml:space="preserve">
+    <value>Κινεζική υπηρεσία μουσικής, εξαιρετική για ασιατική μουσική</value>
+  </data>
+  <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
+    <value>Ανακτά αναγνωριστικά καλλιτεχνών (απαιτείται για TheAudioDB και Fanart.tv)</value>
+  </data>
+  <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
+    <value>Εικόνες και βιογραφίες καλλιτεχνών υψηλής ποιότητας (απαιτεί MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
+    <value>Μόνο εικόνες καλλιτεχνών υψηλής ποιότητας (απαιτεί MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_Spotify_Desc" xml:space="preserve">
+    <value>Μόνο εικόνες καλλιτεχνών</value>
+  </data>
+  <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
+    <value>Βιογραφίες και εικόνες καλλιτεχνών (εφεδρική)</value>
+  </data>
+  <data name="App_Name_Default" xml:space="preserve">
+    <value>Nagi</value>
+  </data>
+  <data name="App_Version_Unknown" xml:space="preserve">
+    <value>Μη διαθέσιμο</value>
+  </data>
+  <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>Κλείσιμο αναζήτησης</value>
+  </data>
+  <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>Αναζήτηση άλμπουμ</value>
+  </data>
+  <data name="AlbumViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>Κλείσιμο αναζήτησης</value>
+  </data>
+  <data name="AlbumViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>Αναζήτηση σε άλμπουμ</value>
+  </data>
+  <data name="AlbumViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>Δεν υπάρχουν διαθέσιμες λίστες αναπαραγωγής</value>
+  </data>
+  <data name="ArtistPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>Κλείσιμο αναζήτησης</value>
+  </data>
+  <data name="ArtistPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>Αναζήτηση καλλιτεχνών</value>
+  </data>
+  <data name="ArtistViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>Κλείσιμο αναζήτησης</value>
+  </data>
+  <data name="ArtistViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>Αναζήτηση σε καλλιτέχνη</value>
+  </data>
+  <data name="ArtistViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>Δεν υπάρχουν διαθέσιμες λίστες αναπαραγωγής</value>
+  </data>
+  <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
+    <value>Διαγραφή Φακέλου</value>
+  </data>
+  <data name="FolderPage_DeleteDialog_Format" xml:space="preserve">
+    <value>Είστε βέβαιοι ότι θέλετε να αφαιρέσετε το φάκελο '{0}' από τη βιβλιοθήκη; Αυτό δεν θα διαγράψει τα αρχεία από τον υπολογιστή σας.</value>
+  </data>
+  <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
+    <value>Διαγραφή</value>
+  </data>
+  <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
+    <value>Ακύρωση</value>
+  </data>
+  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
+    <value>Άγνωστος Φάκελος</value>
+  </data>
+  <data name="FolderSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>Κλείσιμο αναζήτησης</value>
+  </data>
+  <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>Αναζήτηση σε φάκελο</value>
+  </data>
+  <data name="FolderSongViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>Δεν υπάρχουν διαθέσιμες λίστες αναπαραγωγής</value>
+  </data>
+  <data name="GenrePage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>Κλείσιμο αναζήτησης</value>
+  </data>
+  <data name="GenrePage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>Αναζήτηση ειδών</value>
+  </data>
+  <data name="LibraryPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>Κλείσιμο αναζήτησης</value>
+  </data>
+  <data name="LibraryPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>Αναζήτηση βιβλιοθήκης</value>
+  </data>
+  <data name="LibraryPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>Δεν υπάρχουν διαθέσιμες λίστες αναπαραγωγής</value>
+  </data>
+  <data name="PlaylistPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>Κλείσιμο αναζήτησης</value>
+  </data>
+  <data name="PlaylistPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>Αναζήτηση λιστών αναπαραγωγής</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_Placeholder" xml:space="preserve">
+    <value>Εισαγάγετε νέο όνομα λίστας αναπαραγωγής</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_PickImage" xml:space="preserve">
+    <value>Επιλογή Εικόνας</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_Title" xml:space="preserve">
+    <value>Δημιουργία Νέας Λίστας Αναπαραγωγής</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_CreateButton" xml:space="preserve">
+    <value>Δημιουργία</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_CancelButton" xml:space="preserve">
+    <value>Ακύρωση</value>
+  </data>
+  <data name="PlaylistPage_RenameDialog_Title_Format" xml:space="preserve">
+    <value>Μετονομασία '{0}'</value>
+  </data>
+  <data name="PlaylistPage_RenameDialog_RenameButton" xml:space="preserve">
+    <value>Μετονομασία</value>
+  </data>
+  <data name="PlaylistPage_DeleteDialog_Title" xml:space="preserve">
+    <value>Διαγραφή Λίστας Αναπαραγωγής</value>
+  </data>
+  <data name="PlaylistPage_DeleteDialog_Content_Format" xml:space="preserve">
+    <value>Είστε βέβαιοι ότι θέλετε να διαγράψετε τη λίστα αναπαραγωγής '{0}'; Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.</value>
+  </data>
+  <data name="PlaylistPage_DeleteDialog_DeleteButton" xml:space="preserve">
+    <value>Διαγραφή</value>
+  </data>
+  <data name="PlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>Κλείσιμο αναζήτησης</value>
+  </data>
+  <data name="PlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>Αναζήτηση σε λίστα αναπαραγωγής</value>
+  </data>
+  <data name="GenreViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>Κλείσιμο αναζήτησης</value>
+  </data>
+  <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>Αναζήτηση βιβλιοθήκης</value>
+  </data>
+  <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>Δεν υπάρχουν διαθέσιμες λίστες αναπαραγωγής</value>
+  </data>
+  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
+    <value>Άγνωστη Λίστα Αναπαραγωγής</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>Κλείσιμο αναζήτησης</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>Αναζήτηση σε έξυπνη λίστα αναπαραγωγής</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
+    <value>Άγνωστη Έξυπνη Λίστα Αναπαραγωγής</value>
+  </data>
+  <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
+    <value>Επανεξέταση Μεταδεδομένων</value>
+  </data>
+  <data name="Settings_Dialog_Rescan_Content" xml:space="preserve">
+    <value>Αυτό θα σαρώσει ξανά όλα τα τραγούδια στη βιβλιοθήκη σας για να εφαρμόσει νέες ρυθμίσεις μεταδεδομένων (όπως χαρακτήρες διαχωρισμού καλλιτεχνών). Αυτό μπορεί να διαρκέσει λίγο ανάλογα με το μέγεθος της βιβλιοθήκης. Θέλετε να συνεχίσετε;</value>
+  </data>
+  <data name="Settings_Dialog_Rescan_PrimaryButton" xml:space="preserve">
+    <value>Επανεξέταση</value>
+  </data>
+  <data name="Settings_Status_Rescan_Preparing" xml:space="preserve">
+    <value>Προετοιμασία επανεξέτασης βιβλιοθήκης...</value>
+  </data>
+  <data name="Settings_Dialog_RescanComplete_Title" xml:space="preserve">
+    <value>Ολοκληρώθηκε η Επανεξέταση</value>
+  </data>
+  <data name="Settings_Dialog_RescanComplete_Content" xml:space="preserve">
+    <value>Τα μεταδεδομένα της βιβλιοθήκης έχουν ενημερωθεί.</value>
+  </data>
+  <data name="Settings_Dialog_RescanFailed_Title" xml:space="preserve">
+    <value>Αποτυχία Επανεξέτασης</value>
+  </data>
+  <data name="Settings_Dialog_RescanFailed_Content" xml:space="preserve">
+    <value>Παρουσιάστηκε σφάλμα κατά τη σάρωση. Ελέγξτε τα αρχεία καταγραφής για λεπτομέρειες.</value>
+  </data>
+  <data name="Settings_Dialog_FFmpegNotFound_Title" xml:space="preserve">
+    <value>Το FFmpeg δεν βρέθηκε</value>
+  </data>
+  <data name="Settings_Dialog_VolumeNorm_Title" xml:space="preserve">
+    <value>Ενεργοποίηση Κανονικοποίησης Έντασης</value>
+  </data>
+  <data name="Settings_Dialog_VolumeNorm_Content" xml:space="preserve">
+    <value>Η κανονικοποίηση έντασης (ReplayGain) εξασφαλίζει ένα σταθερό επίπεδο έντασης σε όλη τη μουσική σας.\n\nΑυτό θα αναλύσει τη μουσική σας βιβλιοθήκη και θα τροποποιήσει απευθείας τα αρχεία ήχου σας γράφοντας ετικέτες ReplayGain. Μόνο τα αρχεία χωρίς υπάρχουσες ετικέτες θα υποβληθούν σε επεξεργασία. Αυτό μπορεί να διαρκέσει λίγο ανάλογα με το μέγεθος της βιβλιοθήκης σας.\n\nΘέλετε να συνεχίσετε;</value>
+  </data>
+  <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
+    <value>Ενεργοποίηση &amp; Σάρωση</value>
+  </data>
+  <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
+    <value>Προετοιμασία σάρωσης κανονικοποίησης έντασης...</value>
+  </data>
+  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
+    <value>Η σάρωση κανονικοποίησης έντασης ακυρώθηκε.</value>
+  </data>
+  <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
+    <value>Σφάλμα κατά τη σάρωση: {0}</value>
+  </data>
+  <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
+    <value>Αδυναμία ανάκτησης αρχείων καταγραφής από τη μνήμη. Η εφεδρική προσπάθεια ανάγνωσης του αρχείου καταγραφής απέτυχε.\nΑναμενόμενη Διαδρομή: '{0}'\nΣφάλμα: {1}</value>
+  </data>
+  <data name="Settings_Export_Failed_Message" xml:space="preserve">
+    <value>Δεν υπάρχουν λίστες αναπαραγωγής για εξαγωγή.</value>
+  </data>
+</root>
