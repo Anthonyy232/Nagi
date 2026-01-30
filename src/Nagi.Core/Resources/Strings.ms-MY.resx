@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Noun Labels -->
+  <data name="Label_Artist" xml:space="preserve">
+    <value>Artis</value>
+  </data>
+  <data name="Label_Album" xml:space="preserve">
+    <value>Album</value>
+  </data>
+  <data name="Label_Genre" xml:space="preserve">
+    <value>Genre</value>
+  </data>
+  <data name="Label_Title" xml:space="preserve">
+    <value>Tajuk</value>
+  </data>
+  <data name="Label_Playlist" xml:space="preserve">
+    <value>Senarai Main</value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>Fail</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>Tahun</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Tarikh Ditambah</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Tarikh Dicipta</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Tarikh Diubah Suai</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Terakhir Dimainkan</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Tempoh</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Nombor Trek</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Kiraan Main</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Lagu</value>
+  </data>
+  <data name="Label_Song" xml:space="preserve">
+    <value>Lagu</value>
+  </data>
+  <data name="Label_Folder" xml:space="preserve">
+    <value>Folder</value>
+  </data>
+  <data name="Label_Folders" xml:space="preserve">
+    <value>Folder</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Susunan Manual</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Rawak</value>
+  </data>
+  <!-- Format Patterns -->
+  <data name="Format_Unknown" xml:space="preserve">
+    <value>{0} Tidak Dikenali</value>
+  </data>
+  <data name="Format_New" xml:space="preserve">
+    <value>{0} Baharu</value>
+  </data>
+  <data name="Format_NotFound" xml:space="preserve">
+    <value>{0} tidak ditemui.</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A ke Z)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Z ke A)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (Terbaharu)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (Terdahulu)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (Meningkat)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (Menurun)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>Terpendek Dahulu</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>Terpanjang Dahulu</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>Terperlahan Dahulu ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>Terpantas Dahulu ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>{0} Terbanyak</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>{0} Tersedikit</value>
+  </data>
+  <data name="Format_ScanFolderProgress" xml:space="preserve">
+    <value>Mengimbas folder {0} daripada {1}: {2} - {3}</value>
+  </data>
+  <data name="Format_ScanCompleteResult" xml:space="preserve">
+    <value>Imbasan selesai. {0} {1} ditambahkan atau dikemas kini.</value>
+  </data>
+  <data name="Format_SavingBatch" xml:space="preserve">
+    <value>Menyimpan kelompok {0}...</value>
+  </data>
+  <!-- Status & Success Messages -->
+  <data name="Status_ScanningFolder" xml:space="preserve">
+    <value>Mengimbas folder...</value>
+  </data>
+  <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
+    <value>Imbasan selesai. Pustaka dikemas kini.</value>
+  </data>
+  <data name="Status_ScanCancelled" xml:space="preserve">
+    <value>Imbasan dibatalkan.</value>
+  </data>
+  <data name="Status_ScanFailed" xml:space="preserve">
+    <value>Imbasan gagal. Semak log untuk butiran.</value>
+  </data>
+  <data name="Status_PreparingScanCaches" xml:space="preserve">
+    <value>Menyediakan cache imbasan...</value>
+  </data>
+  <data name="Status_ReadingSongDetails" xml:space="preserve">
+    <value>Membaca butiran lagu...</value>
+  </data>
+  <data name="Status_CleaningUpLibrary" xml:space="preserve">
+    <value>Membersihkan pustaka anda...</value>
+  </data>
+  <data name="Status_Finalizing" xml:space="preserve">
+    <value>Memuktamadkan...</value>
+  </data>
+  <data name="Status_NormalizationFailed" xml:space="preserve">
+    <value>Normalisasi volum gagal. Semak log untuk butiran.</value>
+  </data>
+  <data name="Status_NoFoldersToRefresh" xml:space="preserve">
+    <value>Tiada folder dalam pustaka untuk dimuat semula.</value>
+  </data>
+  <data name="Status_LibraryRefreshComplete" xml:space="preserve">
+    <value>Muat semula pustaka selesai.</value>
+  </data>
+  <!-- Error Mssages -->
+  <data name="Error_FailedToAddFolder" xml:space="preserve">
+    <value>Gagal menambah folder.</value>
+  </data>
+  <data name="Error_PlaylistNameEmpty" xml:space="preserve">
+    <value>Nama senarai main tidak boleh kosong.</value>
+  </data>
+  <data name="Error_RatingRange" xml:space="preserve">
+    <value>Penilaian mesti antara 1 dan 5.</value>
+  </data>
+  <!-- Labels -->
+  <data name="Label_WithLyrics" xml:space="preserve">
+    <value>dengan lirik</value>
+  </data>
+  <data name="Label_WithCoverArt" xml:space="preserve">
+    <value>dengan kulit album</value>
+  </data>
+  <data name="Label_And" xml:space="preserve">
+    <value>dan</value>
+  </data>
+  <!-- Static Strings -->
+  <data name="UnknownFilename" xml:space="preserve">
+    <value>tidak dikenali</value>
+  </data>
+  <data name="ArtistSeparator" xml:space="preserve">
+    <value> &amp; </value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Susun Mengikut: </value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>FFmpeg diperlukan untuk Normalisasi Volum Ketepatan Tinggi (analisis ReplayGain) tetapi tidak ditemui pada sistem anda.\n\nIkuti langkah-langkah ini untuk menyediakannya:\n\n1. **Muat Turun**: Lawati https://www.gyan.dev/ffmpeg/builds/ dan muat turun binaan penting 'ffmpeg-git-full.7z' (atau yang serupa).\n2. **Panduan**: Anda boleh mengikuti panduan ini untuk arahan terperinci: https://phoenixnap.com/kb/ffmpeg-windows\n3. **Ekstrak**: Buka folder seni bina dan cari direktori 'bin' yang mengandungi `ffmpeg.exe`.\n4. **Pasang**: Salin `ffmpeg.exe` ke folder kekal (cth., `C:\ffmpeg\`) dan **tambahkan folder tersebut ke pemboleh ubah persekitaran PATH Sistem anda**.\n5. **Mulakan Semula**: Sila mulakan semula Nagi selepas pemasangan agar perubahan berkuat kuasa.</value>
+  </data>
+  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
+    <value>Tiada lagu daripada senarai main ditemui dalam pustaka anda.</value>
+  </data>
+  <data name="Error_NoPlaylistsToExport" xml:space="preserve">
+    <value>Tiada senarai main untuk dieksport.</value>
+  </data>
+  <data name="EqPreset_None" xml:space="preserve">
+    <value>Tiada</value>
+  </data>
+  <data name="EqPreset_Classical" xml:space="preserve">
+    <value>Klasik</value>
+  </data>
+  <data name="EqPreset_Dance" xml:space="preserve">
+    <value>Tarian</value>
+  </data>
+  <data name="EqPreset_FullBass" xml:space="preserve">
+    <value>Bass Penuh</value>
+  </data>
+  <data name="EqPreset_FullTreble" xml:space="preserve">
+    <value>Trebel Penuh</value>
+  </data>
+  <data name="EqPreset_Jazz" xml:space="preserve">
+    <value>Jazz</value>
+  </data>
+  <data name="EqPreset_Pop" xml:space="preserve">
+    <value>Pop</value>
+  </data>
+  <data name="EqPreset_Rock" xml:space="preserve">
+    <value>Rock</value>
+  </data>
+  <data name="EqPreset_Soft" xml:space="preserve">
+    <value>Lembut</value>
+  </data>
+  <data name="EqPreset_Techno" xml:space="preserve">
+    <value>Tekno</value>
+  </data>
+  <data name="EqPreset_Vocal" xml:space="preserve">
+    <value>Vokal</value>
+  </data>
+  <data name="ReplayGain_AllSongsScanned" xml:space="preserve">
+    <value>Semua lagu sudah mempunyai data volum.</value>
+  </data>
+  <data name="ReplayGain_CalculatingCount" xml:space="preserve">
+    <value>Mengira volum untuk {0} lagu...</value>
+  </data>
+  <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
+    <value>Mengira normalisasi volum ({0}/{1})...</value>
+  </data>
+  <data name="ReplayGain_Complete" xml:space="preserve">
+    <value>Normalisasi volum selesai. {0} lagu diproses.</value>
+  </data>
+</root>

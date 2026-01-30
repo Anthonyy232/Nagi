@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Noun Labels -->
+  <data name="Label_Artist" xml:space="preserve">
+    <value>Artist</value>
+  </data>
+  <data name="Label_Album" xml:space="preserve">
+    <value>Album</value>
+  </data>
+  <data name="Label_Genre" xml:space="preserve">
+    <value>Žanr</value>
+  </data>
+  <data name="Label_Title" xml:space="preserve">
+    <value>Pealkiri</value>
+  </data>
+  <data name="Label_Playlist" xml:space="preserve">
+    <value>Esitusloend</value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>Fail</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>Aasta</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Lisamise kuupäev</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Loomise kuupäev</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Muutmise kuupäev</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Viimati mängitud</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Kestus</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Raja number</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Mängimiskordade arv</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Laule</value>
+  </data>
+  <data name="Label_Song" xml:space="preserve">
+    <value>Lugu</value>
+  </data>
+  <data name="Label_Folder" xml:space="preserve">
+    <value>Kaust</value>
+  </data>
+  <data name="Label_Folders" xml:space="preserve">
+    <value>Kaustad</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Käsitsi järjestus</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Juhuslik</value>
+  </data>
+  <!-- Format Patterns -->
+  <data name="Format_Unknown" xml:space="preserve">
+    <value>Tundmatu {0}</value>
+  </data>
+  <data name="Format_New" xml:space="preserve">
+    <value>Uus {0}</value>
+  </data>
+  <data name="Format_NotFound" xml:space="preserve">
+    <value>{0} ei leitud.</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A-Z)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Z-A)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (Uusim)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (Vanim)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (Kasvavalt)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (Kahanevalt)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>Lühimad enne</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>Pikimad enne</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>Aeglasemad enne ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>Kiiremad enne ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>Kõige rohkem {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>Kõige vähem {0}</value>
+  </data>
+  <data name="Format_ScanFolderProgress" xml:space="preserve">
+    <value>Kausta {0}/{1} skaneerimine: {2} - {3}</value>
+  </data>
+  <data name="Format_ScanCompleteResult" xml:space="preserve">
+    <value>Skaneerimine lõpetatud. Lisatud või uuendatud {0} {1}.</value>
+  </data>
+  <data name="Format_SavingBatch" xml:space="preserve">
+    <value>Salvestatakse partiid {0}...</value>
+  </data>
+  <!-- Status & Success Messages -->
+  <data name="Status_ScanningFolder" xml:space="preserve">
+    <value>Kausta skaneerimine...</value>
+  </data>
+  <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
+    <value>Skaneerimine lõpetatud. Teek on ajakohane.</value>
+  </data>
+  <data name="Status_ScanCancelled" xml:space="preserve">
+    <value>Skaneerimine tühistatud.</value>
+  </data>
+  <data name="Status_ScanFailed" xml:space="preserve">
+    <value>Skaneerimine ebaõnnestus. Vaadake logidest lisateavet.</value>
+  </data>
+  <data name="Status_PreparingScanCaches" xml:space="preserve">
+    <value>Skaneerimisvahemälude ettevalmistamine...</value>
+  </data>
+  <data name="Status_ReadingSongDetails" xml:space="preserve">
+    <value>Loo üksikasjade lugemine...</value>
+  </data>
+  <data name="Status_CleaningUpLibrary" xml:space="preserve">
+    <value>Teegi puhastamine...</value>
+  </data>
+  <data name="Status_Finalizing" xml:space="preserve">
+    <value>Lõpetamine...</value>
+  </data>
+  <data name="Status_NormalizationFailed" xml:space="preserve">
+    <value>Helitugevuse normaliseerimine ebaõnnestus. Vaadake logidest lisateavet.</value>
+  </data>
+  <data name="Status_NoFoldersToRefresh" xml:space="preserve">
+    <value>Teegis pole värskendatavaid kaustu.</value>
+  </data>
+  <data name="Status_LibraryRefreshComplete" xml:space="preserve">
+    <value>Teegi värskendamine lõpetatud.</value>
+  </data>
+  <!-- Error Mssages -->
+  <data name="Error_FailedToAddFolder" xml:space="preserve">
+    <value>Kausta lisamine ebaõnnestus.</value>
+  </data>
+  <data name="Error_PlaylistNameEmpty" xml:space="preserve">
+    <value>Esitusloendi nimi ei tohi olla tühi.</value>
+  </data>
+  <data name="Error_RatingRange" xml:space="preserve">
+    <value>Hinnang peab olema vahemikus 1 kuni 5.</value>
+  </data>
+  <!-- Labels -->
+  <data name="Label_WithLyrics" xml:space="preserve">
+    <value>koos sõnadega</value>
+  </data>
+  <data name="Label_WithCoverArt" xml:space="preserve">
+    <value>koos kaanepildiga</value>
+  </data>
+  <data name="Label_And" xml:space="preserve">
+    <value>ja</value>
+  </data>
+  <!-- Static Strings -->
+  <data name="UnknownFilename" xml:space="preserve">
+    <value>tundmatu</value>
+  </data>
+  <data name="ArtistSeparator" xml:space="preserve">
+    <value> &amp; </value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Sorteeri: </value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>FFmpeg on vajalik suure täpsusega helitugevuse normaliseerimiseks (ReplayGain analüüsiks), kuid seda ei leitud teie süsteemist.\n\nJärgige neid samme seadistamiseks:\n\n1. **Laadi alla**: Külastage aadressi https://www.gyan.dev/ffmpeg/builds/ ja laadige alla 'ffmpeg-git-full.7z' (või sarnane) essentials versioon.\n2. **Juhend**: Saate jälgida seda juhendit üksikasjalike juhiste saamiseks: https://phoenixnap.com/kb/ffmpeg-windows\n3. **Paki lahti**: Avage arhitektuuri kaust ja leidke 'bin' kataloog, mis sisaldab `ffmpeg.exe`.\n4. **Paigalda**: Kopeerige `ffmpeg.exe` püsivasse kausta (nt `C:\ffmpeg\`) ja **lisage see kaust oma süsteemi PATH** keskkonnamuutujasse.\n5. **Taaskäivita**: Palun taaskäivitage Nagi pärast installimist, et muudatused jõustuksid.</value>
+  </data>
+  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
+    <value>Teie teegist ei leitud ühtegi laulu esitusloendist.</value>
+  </data>
+  <data name="Error_NoPlaylistsToExport" xml:space="preserve">
+    <value>Eksportimiseks pole ühtegi esitusloendit.</value>
+  </data>
+  <data name="EqPreset_None" xml:space="preserve">
+    <value>Puudub</value>
+  </data>
+  <data name="EqPreset_Classical" xml:space="preserve">
+    <value>Klassikaline</value>
+  </data>
+  <data name="EqPreset_Dance" xml:space="preserve">
+    <value>Tants</value>
+  </data>
+  <data name="EqPreset_FullBass" xml:space="preserve">
+    <value>Täisbass</value>
+  </data>
+  <data name="EqPreset_FullTreble" xml:space="preserve">
+    <value>Täiskõrged toonid</value>
+  </data>
+  <data name="EqPreset_Jazz" xml:space="preserve">
+    <value>Džäss</value>
+  </data>
+  <data name="EqPreset_Pop" xml:space="preserve">
+    <value>Pop</value>
+  </data>
+  <data name="EqPreset_Rock" xml:space="preserve">
+    <value>Rock</value>
+  </data>
+  <data name="EqPreset_Soft" xml:space="preserve">
+    <value>Pehme</value>
+  </data>
+  <data name="EqPreset_Techno" xml:space="preserve">
+    <value>Techno</value>
+  </data>
+  <data name="EqPreset_Vocal" xml:space="preserve">
+    <value>Vokaal</value>
+  </data>
+  <data name="ReplayGain_AllSongsScanned" xml:space="preserve">
+    <value>Kõigil lugudel on juba helitugevuse andmed.</value>
+  </data>
+  <data name="ReplayGain_CalculatingCount" xml:space="preserve">
+    <value>Arvutatakse helitugevust {0} laulu jaoks...</value>
+  </data>
+  <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
+    <value>Arvutatakse helitugevuse normaliseerimist ({0}/{1})...</value>
+  </data>
+  <data name="ReplayGain_Complete" xml:space="preserve">
+    <value>Helitugevuse normaliseerimine lõpetatud. Töödeldud {0} laulu.</value>
+  </data>
+</root>

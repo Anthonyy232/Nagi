@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Noun Labels -->
+  <data name="Label_Artist" xml:space="preserve">
+    <value>Kunstenaar</value>
+  </data>
+  <data name="Label_Album" xml:space="preserve">
+    <value>Album</value>
+  </data>
+  <data name="Label_Genre" xml:space="preserve">
+    <value>Genre</value>
+  </data>
+  <data name="Label_Title" xml:space="preserve">
+    <value>Titel</value>
+  </data>
+  <data name="Label_Playlist" xml:space="preserve">
+    <value>Snitlys</value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>Lêer</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>Jaar</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Datum Bygevoeg</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Datum Geskep</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Datum Gewysig</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Laas Gespeel</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Duur</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Snitnommer</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Speeltelling</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Liedjies</value>
+  </data>
+  <data name="Label_Song" xml:space="preserve">
+    <value>Liedjie</value>
+  </data>
+  <data name="Label_Folder" xml:space="preserve">
+    <value>Vouer</value>
+  </data>
+  <data name="Label_Folders" xml:space="preserve">
+    <value>Vouers</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Handmatige Volgorde</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Ewekansig</value>
+  </data>
+  <!-- Format Patterns -->
+  <data name="Format_Unknown" xml:space="preserve">
+    <value>Onbekende {0}</value>
+  </data>
+  <data name="Format_New" xml:space="preserve">
+    <value>Nuwe {0}</value>
+  </data>
+  <data name="Format_NotFound" xml:space="preserve">
+    <value>{0} nie gevind nie.</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A tot Z)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Z tot A)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (Nuutste)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (Oudste)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (Oplopend)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (Dalend)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>Kortste Eerste</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>Langste Eerste</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>Stadigste Eerste ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>Vinnigste Eerste ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>Mees {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>Minste {0}</value>
+  </data>
+  <data name="Format_ScanFolderProgress" xml:space="preserve">
+    <value>Skandeer vouer {0} van {1}: {2} - {3}</value>
+  </data>
+  <data name="Format_ScanCompleteResult" xml:space="preserve">
+    <value>Skandering voltooi. {0} {1} bygevoeg of opgedateer.</value>
+  </data>
+  <data name="Format_SavingBatch" xml:space="preserve">
+    <value>Stoor bondel {0}...</value>
+  </data>
+  <!-- Status & Success Messages -->
+  <data name="Status_ScanningFolder" xml:space="preserve">
+    <value>Skandeer vouer...</value>
+  </data>
+  <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
+    <value>Skandering voltooi. Biblioteek is op datum.</value>
+  </data>
+  <data name="Status_ScanCancelled" xml:space="preserve">
+    <value>Skandering gekanselleer.</value>
+  </data>
+  <data name="Status_ScanFailed" xml:space="preserve">
+    <value>Skandering het misluk. Gaan logs na vir besonderhede.</value>
+  </data>
+  <data name="Status_PreparingScanCaches" xml:space="preserve">
+    <value>Berei skanderingskasgeheue voor...</value>
+  </data>
+  <data name="Status_ReadingSongDetails" xml:space="preserve">
+    <value>Lees liedjiebesonderhede...</value>
+  </data>
+  <data name="Status_CleaningUpLibrary" xml:space="preserve">
+    <value>Maak jou biblioteek skoon...</value>
+  </data>
+  <data name="Status_Finalizing" xml:space="preserve">
+    <value>Finaliseer...</value>
+  </data>
+  <data name="Status_NormalizationFailed" xml:space="preserve">
+    <value>Volume-normalisering het misluk. Gaan logs na vir besonderhede.</value>
+  </data>
+  <data name="Status_NoFoldersToRefresh" xml:space="preserve">
+    <value>Geen vouers in die biblioteek om te verfris nie.</value>
+  </data>
+  <data name="Status_LibraryRefreshComplete" xml:space="preserve">
+    <value>Biblioteekverfrissing voltooi.</value>
+  </data>
+  <!-- Error Mssages -->
+  <data name="Error_FailedToAddFolder" xml:space="preserve">
+    <value>Kon nie vouer byvoeg nie.</value>
+  </data>
+  <data name="Error_PlaylistNameEmpty" xml:space="preserve">
+    <value>Snitlysnaam kan nie leeg wees nie.</value>
+  </data>
+  <data name="Error_RatingRange" xml:space="preserve">
+    <value>Gradering moet tussen 1 en 5 wees.</value>
+  </data>
+  <!-- Labels -->
+  <data name="Label_WithLyrics" xml:space="preserve">
+    <value>met lirieke</value>
+  </data>
+  <data name="Label_WithCoverArt" xml:space="preserve">
+    <value>met albumkuns</value>
+  </data>
+  <data name="Label_And" xml:space="preserve">
+    <value>en</value>
+  </data>
+  <!-- Static Strings -->
+  <data name="UnknownFilename" xml:space="preserve">
+    <value>onbekend</value>
+  </data>
+  <data name="ArtistSeparator" xml:space="preserve">
+    <value> &amp; </value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Sorteer Volgens: </value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>FFmpeg word benodig vir Hoë-presisie Volume Normalisering (ReplayGain-analise), maar is nie op u stelsel gevind nie.\n\nVolg hierdie stappe om dit op te stel:\n\n1. **Laai af**: Besoek https://www.gyan.dev/ffmpeg/builds/ en laai die 'ffmpeg-git-full.7z' (of soortgelyke) 'essentials build' af.\n2. **Gids**: U kan hierdie gids volg vir gedetailleerde instruksies: https://phoenixnap.com/kb/ffmpeg-windows\n3. **Onttrek**: Maak die argitektuurvouer oop en vind die 'bin'-gids wat `ffmpeg.exe` bevat.\n4. **Installeer**: Kopieer `ffmpeg.exe` na 'n permanente vouer (bv. `C:\\ffmpeg\\`) en **voeg daardie vouer by u Stelsel-PATH**-omgewingsveranderlike.\n5. **Herbegin**: Herbegin Nagi asseblief na die installasie sodat die veranderinge kan plaasvind.</value>
+  </data>
+  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
+    <value>Geen liedjies van die snitlys is in u biblioteek gevind nie.</value>
+  </data>
+  <data name="Error_NoPlaylistsToExport" xml:space="preserve">
+    <value>Geen snitlyste om uit te voer nie.</value>
+  </data>
+  <data name="EqPreset_None" xml:space="preserve">
+    <value>Geen</value>
+  </data>
+  <data name="EqPreset_Classical" xml:space="preserve">
+    <value>Klassiek</value>
+  </data>
+  <data name="EqPreset_Dance" xml:space="preserve">
+    <value>Dans</value>
+  </data>
+  <data name="EqPreset_FullBass" xml:space="preserve">
+    <value>Volbas</value>
+  </data>
+  <data name="EqPreset_FullTreble" xml:space="preserve">
+    <value>Volle Trebel</value>
+  </data>
+  <data name="EqPreset_Jazz" xml:space="preserve">
+    <value>Jazz</value>
+  </data>
+  <data name="EqPreset_Pop" xml:space="preserve">
+    <value>Pop</value>
+  </data>
+  <data name="EqPreset_Rock" xml:space="preserve">
+    <value>Rock</value>
+  </data>
+  <data name="EqPreset_Soft" xml:space="preserve">
+    <value>Sag</value>
+  </data>
+  <data name="EqPreset_Techno" xml:space="preserve">
+    <value>Techno</value>
+  </data>
+  <data name="EqPreset_Vocal" xml:space="preserve">
+    <value>Vokaal</value>
+  </data>
+  <data name="ReplayGain_AllSongsScanned" xml:space="preserve">
+    <value>Alle liedjies het reeds volumedata.</value>
+  </data>
+  <data name="ReplayGain_CalculatingCount" xml:space="preserve">
+    <value>Bereken volume vir {0} liedjies...</value>
+  </data>
+  <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
+    <value>Bereken volume-normalisering ({0}/{1})...</value>
+  </data>
+  <data name="ReplayGain_Complete" xml:space="preserve">
+    <value>Volume-normalisering voltooi. {0} liedjies verwerk.</value>
+  </data>
+</root>

@@ -1,0 +1,919 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="NavItem_Library" xml:space="preserve">
+    <value>ライブラリ</value>
+  </data>
+  <data name="NavItem_Albums" xml:space="preserve">
+    <value>アルバム</value>
+  </data>
+  <data name="NavItem_Artists" xml:space="preserve">
+    <value>アーティスト</value>
+  </data>
+  <data name="NavItem_Genres" xml:space="preserve">
+    <value>ジャンル</value>
+  </data>
+  <data name="NavItem_Playlists" xml:space="preserve">
+    <value>プレイリスト</value>
+  </data>
+  <data name="NavItem_Folders" xml:space="preserve">
+    <value>フォルダー</value>
+  </data>
+  <data name="NavItem_Settings" xml:space="preserve">
+    <value>設定</value>
+  </data>
+  <data name="Status_NoTrackPlaying" xml:space="preserve">
+    <value>再生中のトラックはありません</value>
+  </data>
+  <data name="Tooltip_Play" xml:space="preserve">
+    <value>再生</value>
+  </data>
+  <data name="Tooltip_Pause" xml:space="preserve">
+    <value>一時停止</value>
+  </data>
+  <data name="Tooltip_ShuffleOn" xml:space="preserve">
+    <value>シャッフルオン</value>
+  </data>
+  <data name="Tooltip_ShuffleOff" xml:space="preserve">
+    <value>シャッフルオフ</value>
+  </data>
+  <data name="Tooltip_RepeatOff" xml:space="preserve">
+    <value>リピートオフ</value>
+  </data>
+  <data name="Tooltip_RepeatAll" xml:space="preserve">
+    <value>すべてリピート</value>
+  </data>
+  <data name="Tooltip_RepeatOne" xml:space="preserve">
+    <value>1曲リピート</value>
+  </data>
+  <data name="Tooltip_Repeat" xml:space="preserve">
+    <value>リピート</value>
+  </data>
+  <data name="Tooltip_Unmute" xml:space="preserve">
+    <value>ミュート解除</value>
+  </data>
+  <data name="Tooltip_Mute" xml:space="preserve">
+    <value>ミュート</value>
+  </data>
+  <data name="Theme_Light" xml:space="preserve">
+    <value>ライト</value>
+  </data>
+  <data name="Theme_Dark" xml:space="preserve">
+    <value>ダーク</value>
+  </data>
+  <data name="Theme_Default" xml:space="preserve">
+    <value>システム設定を使用</value>
+  </data>
+  <data name="Backdrop_Mica" xml:space="preserve">
+    <value>ミカ</value>
+  </data>
+  <data name="Backdrop_MicaAlt" xml:space="preserve">
+    <value>ミカ (代替)</value>
+  </data>
+  <data name="Backdrop_Acrylic" xml:space="preserve">
+    <value>アクリル</value>
+  </data>
+  <data name="Label_Composer" xml:space="preserve">
+    <value>作曲者</value>
+  </data>
+  <data name="Label_Comment" xml:space="preserve">
+    <value>コメント</value>
+  </data>
+  <data name="Label_Rating" xml:space="preserve">
+    <value>評価</value>
+  </data>
+  <data name="Operator_Contains" xml:space="preserve">
+    <value>を含む</value>
+  </data>
+  <data name="Operator_DoesNotContain" xml:space="preserve">
+    <value>を含まない</value>
+  </data>
+  <data name="Operator_Is" xml:space="preserve">
+    <value>と完全に一致する</value>
+  </data>
+  <data name="Operator_IsNot" xml:space="preserve">
+    <value>と一致しない</value>
+  </data>
+  <data name="Operator_StartsWith" xml:space="preserve">
+    <value>で始まる</value>
+  </data>
+  <data name="Operator_EndsWith" xml:space="preserve">
+    <value>で終わる</value>
+  </data>
+  <data name="Operator_Equals" xml:space="preserve">
+    <value>と等しい</value>
+  </data>
+  <data name="Operator_NotEquals" xml:space="preserve">
+    <value>と等しくない</value>
+  </data>
+  <data name="Operator_GreaterThan" xml:space="preserve">
+    <value>より大きい</value>
+  </data>
+  <data name="Operator_LessThan" xml:space="preserve">
+    <value>より小さい</value>
+  </data>
+  <data name="Operator_GreaterThanOrEqual" xml:space="preserve">
+    <value>以上</value>
+  </data>
+  <data name="Operator_LessThanOrEqual" xml:space="preserve">
+    <value>以下</value>
+  </data>
+  <data name="Operator_IsInTheLast" xml:space="preserve">
+    <value>最後の（日数）以内</value>
+  </data>
+  <data name="Operator_IsNotInTheLast" xml:space="preserve">
+    <value>最後の（日数）以外</value>
+  </data>
+  <data name="Operator_IsTrue" xml:space="preserve">
+    <value>真</value>
+  </data>
+  <data name="Operator_IsFalse" xml:space="preserve">
+    <value>偽</value>
+  </data>
+  <data name="SmartPlaylist_Title_New" xml:space="preserve">
+    <value>新しいスマートプレイリスト</value>
+  </data>
+  <data name="SmartPlaylist_Title_EditFormat" xml:space="preserve">
+    <value>スマートプレイリストを編集 - {0}</value>
+  </data>
+  <data name="SmartPlaylist_Status_EnterName" xml:space="preserve">
+    <value>プレイリスト名を入力してください</value>
+  </data>
+  <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
+    <value>現在設定されているルールに一致する曲が{0}件あります</value>
+  </data>
+  <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
+    <value>一致する曲を表示するには名前を入力してください</value>
+  </data>
+  <data name="SmartPlaylist_Status_Error" xml:space="preserve">
+    <value>計算できません</value>
+  </data>
+  <data name="SmartPlaylist_Status_Calculating" xml:space="preserve">
+    <value>計算中...</value>
+  </data>
+  <data name="SmartPlaylist_Error_DuplicateName" xml:space="preserve">
+    <value>この名前のプレイリストはすでに存在します！</value>
+  </data>
+  <data name="SmartPlaylist_Error_NameEmptyFeedback" xml:space="preserve">
+    <value>名前を入力してください！</value>
+  </data>
+  <data name="Status_Loading" xml:space="preserve">
+    <value>読み込み中...</value>
+  </data>
+  <data name="Error_FailedToLoadArtists" xml:space="preserve">
+    <value>アーティストの読み込みに失敗しました</value>
+  </data>
+  <data name="CrashReport_Title" xml:space="preserve">
+    <value>致命的なエラー</value>
+  </data>
+  <data name="CrashReport_Message" xml:space="preserve">
+    <value>Nagiは致命的なエラーが発生したため、終了する必要があります。ご不便をおかけして申し訳ありません。</value>
+  </data>
+  <data name="ElevationWarning_Title" xml:space="preserve">
+    <value>管理者として実行中</value>
+  </data>
+  <data name="ElevationWarning_Message" xml:space="preserve">
+    <value>Nagiは現在、管理者として実行されています。これにより、一部の機能（音楽フォルダーの追加など）が正しく動作しない可能性があります。最適なエクスペリエンスを得るには、管理者権限なしでNagiを再起動してください。</value>
+  </data>
+  <data name="ElevationWarning_Restart" xml:space="preserve">
+    <value>通常起動</value>
+  </data>
+  <data name="ElevationWarning_Continue" xml:space="preserve">
+    <value>とにかく続行</value>
+  </data>
+  <data name="MiniPlayer_Title" xml:space="preserve">
+    <value>Nagi</value>
+  </data>
+  <data name="App_Title" xml:space="preserve">
+    <value>Nagi</value>
+  </data>
+  <data name="AlbumView_AlbumNotFound" xml:space="preserve">
+    <value>アルバムが見つかりません</value>
+  </data>
+  <data name="AlbumView_Error" xml:space="preserve">
+    <value>アルバムの読み込みエラー</value>
+  </data>
+  <data name="AlbumView_DefaultAlbumTitle" xml:space="preserve">
+    <value>アルバム</value>
+  </data>
+  <data name="AlbumView_DefaultArtistName" xml:space="preserve">
+    <value>アーティスト</value>
+  </data>
+  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
+    <value>{0}曲</value>
+  </data>
+  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
+    <value>{0}曲</value>
+  </data>
+  <data name="ArtistView_ArtistNotFound" xml:space="preserve">
+    <value>アーティストが見つかりません</value>
+  </data>
+  <data name="ArtistView_Error" xml:space="preserve">
+    <value>アーティストの読み込みエラー</value>
+  </data>
+  <data name="ArtistView_DefaultArtistName" xml:space="preserve">
+    <value>アーティスト</value>
+  </data>
+  <data name="ArtistView_NoBiography" xml:space="preserve">
+    <value>このアーティストのバイオグラフィーはありません。</value>
+  </data>
+  <data name="ArtistView_ErrorLoadingDetails" xml:space="preserve">
+    <value>アーティストの詳細を読み込めませんでした。</value>
+  </data>
+  <data name="Folders_ErrorLoading" xml:space="preserve">
+    <value>フォルダーの読み込みエラー</value>
+  </data>
+  <data name="Folders_AddFolder_Success" xml:space="preserve">
+    <value>'{0}'の追加とスキャンが完了しました。</value>
+  </data>
+  <data name="Folders_AddFolder_Failed" xml:space="preserve">
+    <value>フォルダーの追加に失敗しました。パスが無効な可能性があります。</value>
+  </data>
+  <data name="Folders_AddFolder_Exists" xml:space="preserve">
+    <value>このフォルダーはすでにライブラリにあります。</value>
+  </data>
+  <data name="Folders_AddFolder_InProgress" xml:space="preserve">
+    <value>ライブラリにフォルダーを追加中...</value>
+  </data>
+  <data name="Folders_Delete_Success" xml:space="preserve">
+    <value>'{0}'を削除しました。</value>
+  </data>
+  <data name="Folders_Delete_Failed" xml:space="preserve">
+    <value>'{0}'の削除に失敗しました。</value>
+  </data>
+  <data name="Folders_Delete_InProgress" xml:space="preserve">
+    <value>'{0}'を削除中...</value>
+  </data>
+  <data name="Folders_Rescan_Complete" xml:space="preserve">
+    <value>'{0}'の再スキャンが完了しました。</value>
+  </data>
+  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
+    <value>'{0}'の変更は検出されませんでした。</value>
+  </data>
+  <data name="Folders_Rescan_InProgress" xml:space="preserve">
+    <value>'{0}'を再スキャン中...</value>
+  </data>
+  <data name="Folders_Empty_NoMusicFound" xml:space="preserve">
+    <value>音楽のあるフォルダーが見つかりません。</value>
+  </data>
+  <data name="Folders_Error_Playback" xml:space="preserve">
+    <value>このフォルダーの再生を開始できませんでした。</value>
+  </data>
+  <data name="Folders_Error_RandomPlayback" xml:space="preserve">
+    <value>ランダムフォルダー再生の開始エラー。</value>
+  </data>
+  <data name="Folders_Error_AddFolder" xml:space="preserve">
+    <value>フォルダーの追加エラー: {0}</value>
+  </data>
+  <data name="Folders_Error_DeleteFolder" xml:space="preserve">
+    <value>フォルダーの削除エラー: {0}</value>
+  </data>
+  <data name="Folders_Error_RescanFolder" xml:space="preserve">
+    <value>フォルダーの再スキャンエラー: {0}</value>
+  </data>
+  <data name="Folders_Count_Singular" xml:space="preserve">
+    <value>{0}フォルダー</value>
+  </data>
+  <data name="Folders_Count_Plural" xml:space="preserve">
+    <value>{0}フォルダー</value>
+  </data>
+  <data name="Songs_Count_Singular" xml:space="preserve">
+    <value>{0}曲</value>
+  </data>
+  <data name="Songs_Count_Plural" xml:space="preserve">
+    <value>{0}曲</value>
+  </data>
+  <data name="Albums_Count_Singular" xml:space="preserve">
+    <value>{0}アルバム</value>
+  </data>
+  <data name="Albums_Count_Plural" xml:space="preserve">
+    <value>{0}アルバム</value>
+  </data>
+  <data name="Artists_Count_Singular" xml:space="preserve">
+    <value>{0}アーティスト</value>
+  </data>
+  <data name="Artists_Count_Plural" xml:space="preserve">
+    <value>{0}アーティスト</value>
+  </data>
+  <data name="Generic_NoItems" xml:space="preserve">
+    <value>アイテムなし</value>
+  </data>
+  <data name="Generic_Error" xml:space="preserve">
+    <value>エラー</value>
+  </data>
+  <data name="GenreView_DefaultName" xml:space="preserve">
+    <value>ジャンル</value>
+  </data>
+  <data name="GenreView_Error" xml:space="preserve">
+    <value>ジャンルの読み込みエラー</value>
+  </data>
+  <data name="Lyrics_NoSongSelected" xml:space="preserve">
+    <value>曲が選択されていません</value>
+  </data>
+  <data name="Lyrics_SongTitleFormat" xml:space="preserve">
+    <value>{1}の{0}</value>
+  </data>
+  <data name="Onboarding_Welcome" xml:space="preserve">
+    <value>まず、音楽ライブラリを設定しましょう。</value>
+  </data>
+  <data name="Onboarding_WaitingForSelection" xml:space="preserve">
+    <value>フォルダーの選択をお待ちしています...</value>
+  </data>
+  <data name="Onboarding_BuildingLibrary" xml:space="preserve">
+    <value>ライブラリを構築中...</value>
+  </data>
+  <data name="Onboarding_Error" xml:space="preserve">
+    <value>予期せぬエラーが発生しました。もう一度お試しください。</value>
+  </data>
+  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
+    <value>スマート • {0}曲</value>
+  </data>
+  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
+    <value>スマート • {0}曲</value>
+  </data>
+  <data name="Playlist_Count_Singular" xml:space="preserve">
+    <value>{0}曲</value>
+  </data>
+  <data name="Playlist_Count_Plural" xml:space="preserve">
+    <value>{0}曲</value>
+  </data>
+  <data name="Playlist_ErrorLoading" xml:space="preserve">
+    <value>プレイリストの読み込みエラー</value>
+  </data>
+  <data name="Playlist_Status_Starting" xml:space="preserve">
+    <value>プレイリストを開始中...</value>
+  </data>
+  <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
+    <value>このスマートプレイリストのルールに一致する曲はありません。</value>
+  </data>
+  <data name="Playlist_Status_ErrorPlayback" xml:space="preserve">
+    <value>このプレイリストの再生を開始できませんでした。</value>
+  </data>
+  <data name="Playlist_Status_PickingRandom" xml:space="preserve">
+    <value>ランダムなプレイリストを選択中...</value>
+  </data>
+  <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
+    <value>プレイリストが見つかりません。</value>
+  </data>
+  <data name="Playlist_Status_SmartSelectedEmpty" xml:space="preserve">
+    <value>選択されたスマートプレイリストは空です。</value>
+  </data>
+  <data name="Playlist_Status_ErrorRandom" xml:space="preserve">
+    <value>ランダムプレイリストの再生エラー。</value>
+  </data>
+  <data name="Playlist_Status_Loading" xml:space="preserve">
+    <value>プレイリストを読み込み中...</value>
+  </data>
+  <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
+    <value>プレイリストの読み込みエラー。</value>
+  </data>
+  <data name="Playlist_Status_Creating" xml:space="preserve">
+    <value>新しいプレイリストを作成中...</value>
+  </data>
+  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
+    <value>プレイリストの作成に失敗しました。すでに存在している可能性があります。</value>
+  </data>
+  <data name="Playlist_Status_CreateError" xml:space="preserve">
+    <value>プレイリストの作成中にエラーが発生しました。</value>
+  </data>
+  <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
+    <value>プレイリストカバーを更新中...</value>
+  </data>
+  <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
+    <value>プレイリストカバーの更新に失敗しました。</value>
+  </data>
+  <data name="Playlist_Status_UpdateCoverError" xml:space="preserve">
+    <value>プレイリストカバーの更新中にエラーが発生しました。</value>
+  </data>
+  <data name="Playlist_Status_RemovingCover" xml:space="preserve">
+    <value>プレイリスト画像を削除中...</value>
+  </data>
+  <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
+    <value>プレイリスト画像の削除に失敗しました。</value>
+  </data>
+  <data name="Playlist_Status_RemoveCoverError" xml:space="preserve">
+    <value>プレイリスト画像の削除中にエラーが発生しました。</value>
+  </data>
+  <data name="Playlist_Status_Renaming" xml:space="preserve">
+    <value>プレイリスト名を変更中...</value>
+  </data>
+  <data name="Playlist_Status_RenameFailed" xml:space="preserve">
+    <value>プレイリスト名の変更に失敗しました。</value>
+  </data>
+  <data name="Playlist_Status_RenameError" xml:space="preserve">
+    <value>プレイリスト名の変更中にエラーが発生しました。</value>
+  </data>
+  <data name="Playlist_Status_Deleting" xml:space="preserve">
+    <value>プレイリストを削除中...</value>
+  </data>
+  <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
+    <value>プレイリストの削除に失敗しました。</value>
+  </data>
+  <data name="Playlist_Status_DeleteError" xml:space="preserve">
+    <value>プレイリストの削除中にエラーが発生しました。</value>
+  </data>
+  <data name="Settings_Reset_Title" xml:space="preserve">
+    <value>リセットの確認</value>
+  </data>
+  <data name="Settings_Reset_Message" xml:space="preserve">
+    <value>すべてのアプリケーションデータと設定をリセットしてもよろしいですか？この操作は元に戻せません。アプリケーションは初期設定に戻ります。</value>
+  </data>
+  <data name="Settings_Reset_Button" xml:space="preserve">
+    <value>リセット</value>
+  </data>
+  <data name="Settings_ResetError_Title" xml:space="preserve">
+    <value>リセットエラー</value>
+  </data>
+  <data name="Settings_ResetError_Message" xml:space="preserve">
+    <value>アプリケーションデータのリセット中にエラーが発生しました: {0}。アプリを手動で再起動してみてください。</value>
+  </data>
+  <data name="Settings_LastFm_AuthError_Title" xml:space="preserve">
+    <value>エラー</value>
+  </data>
+  <data name="Settings_LastFm_AuthError_Message" xml:space="preserve">
+    <value>Last.fmに接続できませんでした。後でもう一度お試しください。</value>
+  </data>
+  <data name="Settings_LastFm_FinalizeError_Title" xml:space="preserve">
+    <value>認証失敗</value>
+  </data>
+  <data name="Settings_LastFm_FinalizeError_Message" xml:space="preserve">
+    <value>Last.fmからセッションを取得できませんでした。もう一度接続してみてください。</value>
+  </data>
+  <data name="Settings_LastFm_Disconnect_Title" xml:space="preserve">
+    <value>Last.fmを切断</value>
+  </data>
+  <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
+    <value>Last.fmアカウントを切断してもよろしいですか？スクロブリング履歴はLast.fmに保持されますが、Nagiはスクロブリングできなくなります。</value>
+  </data>
+  <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
+    <value>切断</value>
+  </data>
+  <data name="Settings_Export_Success_Title" xml:space="preserve">
+    <value>エクスポート成功</value>
+  </data>
+  <data name="Settings_Export_Success_Message" xml:space="preserve">
+    <value>{0}個のプレイリスト（合計{1}曲）を以下にエクスポートしました:\n{2}</value>
+  </data>
+  <data name="Settings_Export_Failed_Title" xml:space="preserve">
+    <value>エクスポート失敗</value>
+  </data>
+  <data name="Settings_Import_Success_Title" xml:space="preserve">
+    <value>インポート成功</value>
+  </data>
+  <data name="Settings_Import_Success_Message" xml:space="preserve">
+    <value>{0}個のプレイリスト（{1}曲）のインポートに成功しました。</value>
+  </data>
+  <data name="Settings_Import_Unmatched_Message" xml:space="preserve">
+    <value>\n\n{0}曲がライブラリで見つかりませんでした。</value>
+  </data>
+  <data name="Settings_Import_FailedFiles_Message" xml:space="preserve">
+    <value>\n\n{0}ファイルのインポートに失敗しました。</value>
+  </data>
+  <data name="Settings_Import_FailedTotal_Title" xml:space="preserve">
+    <value>インポート失敗</value>
+  </data>
+  <data name="Settings_Import_FailedTotal_Message" xml:space="preserve">
+    <value>プレイリストをインポートできませんでした。</value>
+  </data>
+  <data name="SmartPlaylist_ErrorLoading" xml:space="preserve">
+    <value>スマートプレイリストの読み込みエラー</value>
+  </data>
+  <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
+    <value>ルールが定義されていません • すべての曲が一致</value>
+  </data>
+  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
+    <value>{1}{2}のうち{0}に一致</value>
+  </data>
+  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
+    <value>すべて</value>
+  </data>
+  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
+    <value>いずれか</value>
+  </data>
+  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
+    <value>ルール</value>
+  </data>
+  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
+    <value>ルール</value>
+  </data>
+  <data name="SongList_PageTitle_Default" xml:space="preserve">
+    <value>曲</value>
+  </data>
+  <data name="SongList_TotalItems_Default" xml:space="preserve">
+    <value>0アイテム</value>
+  </data>
+  <data name="SongList_ErrorLoading" xml:space="preserve">
+    <value>アイテムの読み込みエラー</value>
+  </data>
+  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
+    <value>{0}アイテム</value>
+  </data>
+  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
+    <value>{0}アイテム</value>
+  </data>
+  <data name="SongList_SelectedCount_Format" xml:space="preserve">
+    <value>{0}選択済み</value>
+  </data>
+  <data name="AlbumView_DiscHeader" xml:space="preserve">
+    <value>ディスク{0}</value>
+  </data>
+  <data name="Generic_OK" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="Generic_Cancel" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="Generic_Close" xml:space="preserve">
+    <value>閉じる</value>
+  </data>
+  <data name="Generic_Recheck" xml:space="preserve">
+    <value>再確認</value>
+  </data>
+  <data name="CrashReport_Button_Reset" xml:space="preserve">
+    <value>アプリとデータをリセット</value>
+  </data>
+  <data name="FFmpeg_Status_NotDetected" xml:space="preserve">
+    <value>FFmpegが検出されませんでした。FFmpegをインストールし、「再確認」をクリックしてください。</value>
+  </data>
+  <data name="FFmpeg_Status_Checking" xml:space="preserve">
+    <value>FFmpegを確認中...</value>
+  </data>
+  <data name="FFmpeg_Status_Detected" xml:space="preserve">
+    <value>FFmpegを検出しました！</value>
+  </data>
+  <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
+    <value>FFmpegはまだ検出されていません。FFmpegをインストールし、「再確認」をクリックしてください。</value>
+  </data>
+  <data name="FFmpeg_Status_Error" xml:space="preserve">
+    <value>FFmpegの確認中にエラーが発生しました。もう一度お試しください。</value>
+  </data>
+  <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
+    <value>前へ</value>
+  </data>
+  <data name="Taskbar_Tooltip_Play" xml:space="preserve">
+    <value>再生</value>
+  </data>
+  <data name="Taskbar_Tooltip_Pause" xml:space="preserve">
+    <value>一時停止</value>
+  </data>
+  <data name="Taskbar_Tooltip_Next" xml:space="preserve">
+    <value>次へ</value>
+  </data>
+  <data name="Update_Available_Title" xml:space="preserve">
+    <value>更新が利用可能です</value>
+  </data>
+  <data name="Update_Available_Message" xml:space="preserve">
+    <value>新しいバージョン（{0}）が利用可能です。今すぐダウンロードしてインストールしますか？</value>
+  </data>
+  <data name="Update_Button_InstallNow" xml:space="preserve">
+    <value>今すぐインストール</value>
+  </data>
+  <data name="Update_Button_Later" xml:space="preserve">
+    <value>後で</value>
+  </data>
+  <data name="Update_Button_Skip" xml:space="preserve">
+    <value>このバージョンをスキップ</value>
+  </data>
+  <data name="Update_UpToDate_Title" xml:space="preserve">
+    <value>最新</value>
+  </data>
+  <data name="Update_UpToDate_Message" xml:space="preserve">
+    <value>Nagiは最新バージョンです。</value>
+  </data>
+  <data name="Update_Error_Title" xml:space="preserve">
+    <value>更新エラー</value>
+  </data>
+  <data name="Update_Check_Error_Message" xml:space="preserve">
+    <value>更新の確認中にエラーが発生しました: {0}</value>
+  </data>
+  <data name="Update_Install_Error_Message" xml:space="preserve">
+    <value>更新のインストール中にエラーが発生しました: {0}</value>
+  </data>
+  <data name="Update_Downloading_Title" xml:space="preserve">
+    <value>更新をダウンロード中</value>
+  </data>
+  <data name="Update_Downloading_Message" xml:space="preserve">
+    <value>バージョン{0}をダウンロード中です。準備が完了するとアプリケーションが自動的に再起動します。</value>
+  </data>
+  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
+    <value>LibVLCで不明なエラーが発生しました。</value>
+  </data>
+  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
+    <value>LibVLCエラー: {0}</value>
+  </data>
+  <data name="Player_Error_LoadFailed" xml:space="preserve">
+    <value>'{0}'の読み込みに失敗しました。</value>
+  </data>
+  <data name="Settings_Nav_Library" xml:space="preserve">
+    <value>ライブラリ</value>
+  </data>
+  <data name="Settings_Nav_Folders" xml:space="preserve">
+    <value>フォルダー</value>
+  </data>
+  <data name="Settings_Nav_Playlists" xml:space="preserve">
+    <value>プレイリスト</value>
+  </data>
+  <data name="Settings_Nav_Artists" xml:space="preserve">
+    <value>アーティスト</value>
+  </data>
+  <data name="Settings_Nav_Albums" xml:space="preserve">
+    <value>アルバム</value>
+  </data>
+  <data name="Settings_Nav_Genres" xml:space="preserve">
+    <value>ジャンル</value>
+  </data>
+  <data name="Settings_Button_Shuffle" xml:space="preserve">
+    <value>シャッフル</value>
+  </data>
+  <data name="Settings_Button_Previous" xml:space="preserve">
+    <value>前へ</value>
+  </data>
+  <data name="Settings_Button_PlayPause" xml:space="preserve">
+    <value>再生/一時停止</value>
+  </data>
+  <data name="Settings_Button_Next" xml:space="preserve">
+    <value>次へ</value>
+  </data>
+  <data name="Settings_Button_Repeat" xml:space="preserve">
+    <value>リピート</value>
+  </data>
+  <data name="Settings_Button_Divider" xml:space="preserve">
+    <value>レイアウト区切り線</value>
+  </data>
+  <data name="Settings_Button_Lyrics" xml:space="preserve">
+    <value>歌詞</value>
+  </data>
+  <data name="Settings_Button_Queue" xml:space="preserve">
+    <value>キュー</value>
+  </data>
+  <data name="Settings_Button_Volume" xml:space="preserve">
+    <value>音量</value>
+  </data>
+  <data name="Settings_Provider_LRCLIB_Desc" xml:space="preserve">
+    <value>コミュニティでキュレーションされた歌詞データベース</value>
+  </data>
+  <data name="Settings_Provider_NetEase_Desc" xml:space="preserve">
+    <value>中国の音楽サービス、アジア音楽に最適</value>
+  </data>
+  <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
+    <value>アーティストIDを取得します (TheAudioDBとFanart.tvに必要)</value>
+  </data>
+  <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
+    <value>高品質のアーティスト画像とバイオグラフィー (MusicBrainzが必要)</value>
+  </data>
+  <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
+    <value>高品質のアーティスト画像のみ (MusicBrainzが必要)</value>
+  </data>
+  <data name="Settings_Provider_Spotify_Desc" xml:space="preserve">
+    <value>アーティスト画像のみ</value>
+  </data>
+  <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
+    <value>アーティストのバイオグラフィーと画像 (フォールバック)</value>
+  </data>
+  <data name="App_Name_Default" xml:space="preserve">
+    <value>Nagi</value>
+  </data>
+  <data name="App_Version_Unknown" xml:space="preserve">
+    <value>N/A</value>
+  </data>
+  <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>検索を閉じる</value>
+  </data>
+  <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>アルバムを検索</value>
+  </data>
+  <data name="AlbumViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>検索を閉じる</value>
+  </data>
+  <data name="AlbumViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>アルバム内を検索</value>
+  </data>
+  <data name="AlbumViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>利用可能なプレイリストはありません</value>
+  </data>
+  <data name="ArtistPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>検索を閉じる</value>
+  </data>
+  <data name="ArtistPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>アーティストを検索</value>
+  </data>
+  <data name="ArtistViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>検索を閉じる</value>
+  </data>
+  <data name="ArtistViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>アーティスト内を検索</value>
+  </data>
+  <data name="ArtistViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>利用可能なプレイリストはありません</value>
+  </data>
+  <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
+    <value>フォルダーを削除</value>
+  </data>
+  <data name="FolderPage_DeleteDialog_Format" xml:space="preserve">
+    <value>フォルダー'{0}'をライブラリから削除してもよろしいですか？これにより、コンピューターからファイルが削除されることはありません。</value>
+  </data>
+  <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
+    <value>削除</value>
+  </data>
+  <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
+    <value>不明なフォルダー</value>
+  </data>
+  <data name="FolderSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>検索を閉じる</value>
+  </data>
+  <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>フォルダー内を検索</value>
+  </data>
+  <data name="FolderSongViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>利用可能なプレイリストはありません</value>
+  </data>
+  <data name="GenrePage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>検索を閉じる</value>
+  </data>
+  <data name="GenrePage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>ジャンルを検索</value>
+  </data>
+  <data name="LibraryPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>検索を閉じる</value>
+  </data>
+  <data name="LibraryPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>ライブラリを検索</value>
+  </data>
+  <data name="LibraryPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>利用可能なプレイリストはありません</value>
+  </data>
+  <data name="PlaylistPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>検索を閉じる</value>
+  </data>
+  <data name="PlaylistPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>プレイリストを検索</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_Placeholder" xml:space="preserve">
+    <value>新しいプレイリスト名を入力</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_PickImage" xml:space="preserve">
+    <value>画像を選択</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_Title" xml:space="preserve">
+    <value>新しいプレイリストを作成</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_CreateButton" xml:space="preserve">
+    <value>作成</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_CancelButton" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="PlaylistPage_RenameDialog_Title_Format" xml:space="preserve">
+    <value>'{0}'の名前を変更</value>
+  </data>
+  <data name="PlaylistPage_RenameDialog_RenameButton" xml:space="preserve">
+    <value>名前を変更</value>
+  </data>
+  <data name="PlaylistPage_DeleteDialog_Title" xml:space="preserve">
+    <value>プレイリストを削除</value>
+  </data>
+  <data name="PlaylistPage_DeleteDialog_Content_Format" xml:space="preserve">
+    <value>プレイリスト'{0}'を削除してもよろしいですか？この操作は元に戻せません。</value>
+  </data>
+  <data name="PlaylistPage_DeleteDialog_DeleteButton" xml:space="preserve">
+    <value>削除</value>
+  </data>
+  <data name="PlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>検索を閉じる</value>
+  </data>
+  <data name="PlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>プレイリスト内を検索</value>
+  </data>
+  <data name="GenreViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>検索を閉じる</value>
+  </data>
+  <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>ライブラリを検索</value>
+  </data>
+  <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>利用可能なプレイリストはありません</value>
+  </data>
+  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
+    <value>不明なプレイリスト</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>検索を閉じる</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>スマートプレイリスト内を検索</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
+    <value>不明なスマートプレイリスト</value>
+  </data>
+  <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
+    <value>メタデータを再スキャン</value>
+  </data>
+  <data name="Settings_Dialog_Rescan_Content" xml:space="preserve">
+    <value>これにより、ライブラリ内のすべての曲が再スキャンされ、新しいメタデータ設定（アーティストの分割文字など）が適用されます。ライブラリのサイズによっては時間がかかる場合があります。続行しますか？</value>
+  </data>
+  <data name="Settings_Dialog_Rescan_PrimaryButton" xml:space="preserve">
+    <value>再スキャン</value>
+  </data>
+  <data name="Settings_Status_Rescan_Preparing" xml:space="preserve">
+    <value>ライブラリの再スキャンを準備中...</value>
+  </data>
+  <data name="Settings_Dialog_RescanComplete_Title" xml:space="preserve">
+    <value>再スキャン完了</value>
+  </data>
+  <data name="Settings_Dialog_RescanComplete_Content" xml:space="preserve">
+    <value>ライブラリのメタデータが更新されました。</value>
+  </data>
+  <data name="Settings_Dialog_RescanFailed_Title" xml:space="preserve">
+    <value>再スキャン失敗</value>
+  </data>
+  <data name="Settings_Dialog_RescanFailed_Content" xml:space="preserve">
+    <value>スキャン中にエラーが発生しました。詳細についてはログを確認してください。</value>
+  </data>
+  <data name="Settings_Dialog_FFmpegNotFound_Title" xml:space="preserve">
+    <value>FFmpegが見つかりません</value>
+  </data>
+  <data name="Settings_Dialog_VolumeNorm_Title" xml:space="preserve">
+    <value>音量ノーマライゼーションを有効にする</value>
+  </data>
+  <data name="Settings_Dialog_VolumeNorm_Content" xml:space="preserve">
+    <value>音量ノーマライゼーション (ReplayGain) により、すべての音楽で一貫した音量レベルが保証されます。\n\nこれにより、音楽ライブラリが分析され、ReplayGainタグを書き込むことによってオーディオファイルが直接変更されます。既存のタグがないファイルのみが処理されます。ライブラリのサイズによっては時間がかかる場合があります。\n\n続行しますか？</value>
+  </data>
+  <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
+    <value>有効にしてスキャン</value>
+  </data>
+  <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
+    <value>音量ノーマライゼーションのスキャンを準備中...</value>
+  </data>
+  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
+    <value>音量ノーマライゼーションのスキャンがキャンセルされました。</value>
+  </data>
+  <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
+    <value>スキャン中にエラーが発生しました: {0}</value>
+  </data>
+  <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
+    <value>メモリからログを取得できませんでした。ログファイルの読み取りのフォールバック試行が失敗しました。\n予期されるパス: '{0}'\nエラー: {1}</value>
+  </data>
+  <data name="Settings_Export_Failed_Message" xml:space="preserve">
+    <value>エクスポートするプレイリストがありません。</value>
+  </data>
+</root>

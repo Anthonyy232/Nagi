@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Noun Labels -->
+  <data name="Label_Artist" xml:space="preserve">
+    <value>Artist</value>
+  </data>
+  <data name="Label_Album" xml:space="preserve">
+    <value>Album</value>
+  </data>
+  <data name="Label_Genre" xml:space="preserve">
+    <value>Gen</value>
+  </data>
+  <data name="Label_Title" xml:space="preserve">
+    <value>Titlu</value>
+  </data>
+  <data name="Label_Playlist" xml:space="preserve">
+    <value>Listă de redare</value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>Fișier</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>An</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Data adăugării</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Data creării</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Data modificării</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Ultima redare</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Durată</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Număr piesă</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Număr redări</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Melodii</value>
+  </data>
+  <data name="Label_Song" xml:space="preserve">
+    <value>Melodie</value>
+  </data>
+  <data name="Label_Folder" xml:space="preserve">
+    <value>Dosar</value>
+  </data>
+  <data name="Label_Folders" xml:space="preserve">
+    <value>Dosare</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Ordine manuală</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Aleatoriu</value>
+  </data>
+  <!-- Format Patterns -->
+  <data name="Format_Unknown" xml:space="preserve">
+    <value>Necunoscut {0}</value>
+  </data>
+  <data name="Format_New" xml:space="preserve">
+    <value>Nou {0}</value>
+  </data>
+  <data name="Format_NotFound" xml:space="preserve">
+    <value>{0} nu a fost găsit.</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A la Z)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Z la A)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (Cel mai nou)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (Cel mai vechi)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (Asc)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (Desc)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>Cel mai scurt, primul</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>Cel mai lung, primul</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>Cel mai lent, primul ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>Cel mai rapid, primul ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>Cele mai multe {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>Cele mai puține {0}</value>
+  </data>
+  <data name="Format_ScanFolderProgress" xml:space="preserve">
+    <value>Scanare dosar {0} din {1}: {2} - {3}</value>
+  </data>
+  <data name="Format_ScanCompleteResult" xml:space="preserve">
+    <value>Scanare finalizată. S-au adăugat sau actualizat {0} {1}.</value>
+  </data>
+  <data name="Format_SavingBatch" xml:space="preserve">
+    <value>Salvare lot {0}...</value>
+  </data>
+  <!-- Status & Success Messages -->
+  <data name="Status_ScanningFolder" xml:space="preserve">
+    <value>Scanare dosar...</value>
+  </data>
+  <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
+    <value>Scanare finalizată. Biblioteca este la zi.</value>
+  </data>
+  <data name="Status_ScanCancelled" xml:space="preserve">
+    <value>Scanare anulată.</value>
+  </data>
+  <data name="Status_ScanFailed" xml:space="preserve">
+    <value>Scanare eșuată. Verificați jurnalele pentru detalii.</value>
+  </data>
+  <data name="Status_PreparingScanCaches" xml:space="preserve">
+    <value>Se pregătesc cache-urile de scanare...</value>
+  </data>
+  <data name="Status_ReadingSongDetails" xml:space="preserve">
+    <value>Se citesc detaliile melodiilor...</value>
+  </data>
+  <data name="Status_CleaningUpLibrary" xml:space="preserve">
+    <value>Se curăță biblioteca...</value>
+  </data>
+  <data name="Status_Finalizing" xml:space="preserve">
+    <value>Finalizare...</value>
+  </data>
+  <data name="Status_NormalizationFailed" xml:space="preserve">
+    <value>Normalizarea volumului a eșuat. Verificați jurnalele pentru detalii.</value>
+  </data>
+  <data name="Status_NoFoldersToRefresh" xml:space="preserve">
+    <value>Nu există dosare în bibliotecă de reîmprospătat.</value>
+  </data>
+  <data name="Status_LibraryRefreshComplete" xml:space="preserve">
+    <value>Reîmprospătare bibliotecă finalizată.</value>
+  </data>
+  <!-- Error Mssages -->
+  <data name="Error_FailedToAddFolder" xml:space="preserve">
+    <value>Adăugarea dosarului a eșuat.</value>
+  </data>
+  <data name="Error_PlaylistNameEmpty" xml:space="preserve">
+    <value>Numele listei de redare nu poate fi gol.</value>
+  </data>
+  <data name="Error_RatingRange" xml:space="preserve">
+    <value>Evaluarea trebuie să fie între 1 și 5.</value>
+  </data>
+  <!-- Labels -->
+  <data name="Label_WithLyrics" xml:space="preserve">
+    <value>cu versuri</value>
+  </data>
+  <data name="Label_WithCoverArt" xml:space="preserve">
+    <value>cu copertă</value>
+  </data>
+  <data name="Label_And" xml:space="preserve">
+    <value>și</value>
+  </data>
+  <!-- Static Strings -->
+  <data name="UnknownFilename" xml:space="preserve">
+    <value>necunoscut</value>
+  </data>
+  <data name="ArtistSeparator" xml:space="preserve">
+    <value> &amp; </value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Sortare după: </value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>FFmpeg este necesar pentru Normalizarea Volumului de Înaltă Precizie (analiza ReplayGain) dar nu a fost găsit pe sistemul dvs.\n\nUrmați acești pași pentru a-l configura:\n\n1. **Descărcați**: Vizitați https://www.gyan.dev/ffmpeg/builds/ și descărcați versiunea esențială 'ffmpeg-git-full.7z' (sau similar).\n2. **Ghid**: Puteți urma acest ghid pentru instrucțiuni detaliate: https://phoenixnap.com/kb/ffmpeg-windows\n3. **Extrageți**: Deschideți folderul de arhitectură și localizați directorul 'bin' care conține `ffmpeg.exe`.\n4. **Instalați**: Copiați `ffmpeg.exe` într-un folder permanent (ex: `C:\ffmpeg\`) și **adăugați acel folder la variabila de mediu System PATH**.\n5. **Reporniți**: Vă rugăm să reporniți Nagi după instalare pentru ca modificările să intre în vigoare.</value>
+  </data>
+  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
+    <value>Niciun cântec din lista de redare nu a fost găsit în biblioteca dvs.</value>
+  </data>
+  <data name="Error_NoPlaylistsToExport" xml:space="preserve">
+    <value>Nu există liste de redare de exportat.</value>
+  </data>
+  <data name="EqPreset_None" xml:space="preserve">
+    <value>Fără</value>
+  </data>
+  <data name="EqPreset_Classical" xml:space="preserve">
+    <value>Clasic</value>
+  </data>
+  <data name="EqPreset_Dance" xml:space="preserve">
+    <value>Dance</value>
+  </data>
+  <data name="EqPreset_FullBass" xml:space="preserve">
+    <value>Bas complet</value>
+  </data>
+  <data name="EqPreset_FullTreble" xml:space="preserve">
+    <value>Înalte complete</value>
+  </data>
+  <data name="EqPreset_Jazz" xml:space="preserve">
+    <value>Jazz</value>
+  </data>
+  <data name="EqPreset_Pop" xml:space="preserve">
+    <value>Pop</value>
+  </data>
+  <data name="EqPreset_Rock" xml:space="preserve">
+    <value>Rock</value>
+  </data>
+  <data name="EqPreset_Soft" xml:space="preserve">
+    <value>Soft</value>
+  </data>
+  <data name="EqPreset_Techno" xml:space="preserve">
+    <value>Techno</value>
+  </data>
+  <data name="EqPreset_Vocal" xml:space="preserve">
+    <value>Vocal</value>
+  </data>
+  <data name="ReplayGain_AllSongsScanned" xml:space="preserve">
+    <value>Toate melodiile au deja date de volum.</value>
+  </data>
+  <data name="ReplayGain_CalculatingCount" xml:space="preserve">
+    <value>Se calculează volumul pentru {0} melodii...</value>
+  </data>
+  <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
+    <value>Se calculează normalizarea volumului ({0}/{1})...</value>
+  </data>
+  <data name="ReplayGain_Complete" xml:space="preserve">
+    <value>Normalizarea volumului finalizată. S-au procesat {0} melodii.</value>
+  </data>
+</root>

@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Noun Labels -->
+  <data name="Label_Artist" xml:space="preserve">
+    <value>கலைஞர்</value>
+  </data>
+  <data name="Label_Album" xml:space="preserve">
+    <value>ஆல்பம்</value>
+  </data>
+  <data name="Label_Genre" xml:space="preserve">
+    <value>வகை</value>
+  </data>
+  <data name="Label_Title" xml:space="preserve">
+    <value>தலைப்பு</value>
+  </data>
+  <data name="Label_Playlist" xml:space="preserve">
+    <value>பிளேலிஸ்ட்</value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>கோப்பு</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>வருடம்</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>சேர்க்கப்பட்ட தேதி</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>உருவாக்கப்பட்ட தேதி</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>மாற்றப்பட்ட தேதி</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>கடைசியாக இயக்கப்பட்டது</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>கால அளவு</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>ட்ராக் எண்</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>இயக்க எண்ணிக்கை</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>பாடல்கள்</value>
+  </data>
+  <data name="Label_Song" xml:space="preserve">
+    <value>பாடல்</value>
+  </data>
+  <data name="Label_Folder" xml:space="preserve">
+    <value>கோப்புறை</value>
+  </data>
+  <data name="Label_Folders" xml:space="preserve">
+    <value>கோப்புறைகள்</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>கைமுறை வரிசை</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>சீரற்ற</value>
+  </data>
+  <!-- Format Patterns -->
+  <data name="Format_Unknown" xml:space="preserve">
+    <value>அறியப்படாத {0}</value>
+  </data>
+  <data name="Format_New" xml:space="preserve">
+    <value>புதிய {0}</value>
+  </data>
+  <data name="Format_NotFound" xml:space="preserve">
+    <value>{0} கண்டறியப்படவில்லை.</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (அ முதல் ஃ வரை)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (ஃ முதல் அ வரை)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (புதியது)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (பழையது)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (ஏறுவரிசை)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (இறங்குவரிசை)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>குறைவான நேரம் முதலில்</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>அதிக நேரம் முதலில்</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>மெதுவானது முதலில் ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>வேகமானது முதலில் ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>அதிகபட்ச {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>குறைந்தபட்ச {0}</value>
+  </data>
+  <data name="Format_ScanFolderProgress" xml:space="preserve">
+    <value>{1} இல் உள்ள {0} கோப்புறையை ஸ்கேன் செய்கிறது: {2} - {3}</value>
+  </data>
+  <data name="Format_ScanCompleteResult" xml:space="preserve">
+    <value>ஸ்கேன் முடிந்தது. {0} {1} சேர்க்கப்பட்டது அல்லது புதுப்பிக்கப்பட்டது.</value>
+  </data>
+  <data name="Format_SavingBatch" xml:space="preserve">
+    <value>தொகுப்பு {0} சேமிக்கப்படுகிறது...</value>
+  </data>
+  <!-- Status & Success Messages -->
+  <data name="Status_ScanningFolder" xml:space="preserve">
+    <value>கோப்புறையை ஸ்கேன் செய்கிறது...</value>
+  </data>
+  <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
+    <value>ஸ்கேன் முடிந்தது. நூலகம் புதுப்பித்த நிலையில் உள்ளது.</value>
+  </data>
+  <data name="Status_ScanCancelled" xml:space="preserve">
+    <value>ஸ்கேன் ரத்து செய்யப்பட்டது.</value>
+  </data>
+  <data name="Status_ScanFailed" xml:space="preserve">
+    <value>ஸ்கேன் தோல்வியடைந்தது. விவரங்களுக்குப் பதிவுகளைச் சரிபார்க்கவும்.</value>
+  </data>
+  <data name="Status_PreparingScanCaches" xml:space="preserve">
+    <value>ஸ்கேன் கேச் தயார் செய்யப்படுகிறது...</value>
+  </data>
+  <data name="Status_ReadingSongDetails" xml:space="preserve">
+    <value>பாடலின் விவரங்கள் படிக்கப்படுகிறது...</value>
+  </data>
+  <data name="Status_CleaningUpLibrary" xml:space="preserve">
+    <value>உங்கள் நூலகம் சுத்தம் செய்யப்படுகிறது...</value>
+  </data>
+  <data name="Status_Finalizing" xml:space="preserve">
+    <value>இறுதிப்படுத்தப்படுகிறது...</value>
+  </data>
+  <data name="Status_NormalizationFailed" xml:space="preserve">
+    <value>ஒலியளவு சீராக்கம் தோல்வியடைந்தது. விவரங்களுக்குப் பதிவுகளைச் சரிபார்க்கவும்.</value>
+  </data>
+  <data name="Status_NoFoldersToRefresh" xml:space="preserve">
+    <value>நூலகத்தில் புதுப்பிக்க எந்தக் கோப்புறைகளும் இல்லை.</value>
+  </data>
+  <data name="Status_LibraryRefreshComplete" xml:space="preserve">
+    <value>நூலகப் புதுப்பித்தல் முடிந்தது.</value>
+  </data>
+  <!-- Error Mssages -->
+  <data name="Error_FailedToAddFolder" xml:space="preserve">
+    <value>கோப்புறையைச் சேர்க்க முடியவில்லை.</value>
+  </data>
+  <data name="Error_PlaylistNameEmpty" xml:space="preserve">
+    <value>பிளேலிஸ்ட் பெயர் காலியாக இருக்க முடியாது.</value>
+  </data>
+  <data name="Error_RatingRange" xml:space="preserve">
+    <value>மதிப்பீடு 1 முதல் 5 வரை இருக்க வேண்டும்.</value>
+  </data>
+  <!-- Labels -->
+  <data name="Label_WithLyrics" xml:space="preserve">
+    <value>பாடல் வரிகளுடன்</value>
+  </data>
+  <data name="Label_WithCoverArt" xml:space="preserve">
+    <value>அட்டைப் படத்துடன்</value>
+  </data>
+  <data name="Label_And" xml:space="preserve">
+    <value>மற்றும்</value>
+  </data>
+  <!-- Static Strings -->
+  <data name="UnknownFilename" xml:space="preserve">
+    <value>அறியப்படாத</value>
+  </data>
+  <data name="ArtistSeparator" xml:space="preserve">
+    <value> &amp; </value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>வரிசைப்படுத்து: </value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>அதிக துல்லியமான ஒலியளவு சீராக்கத்திற்கு (ReplayGain பகுப்பாய்வு) FFmpeg தேவை, ஆனால் அது உங்கள் கணினியில் கண்டறியப்படவில்லை. இதை அமைக்க, இந்த வழிமுறைகளைப் பின்பற்றவும்: 1. **பதிவிறக்குங்கள்**: https://www.gyan.dev/ffmpeg/builds/ ஐப் பார்வையிட்டு 'ffmpeg-git-full.7z' (அல்லது ஒத்த) அத்தியாவசிய கட்டமைப்பைப் பதிவிறக்குங்கள். 2. **வழிகாட்டி**: விரிவான வழிமுறைகளுக்கு இந்த வழிகாட்டியைப் பின்பற்றலாம்: https://phoenixnap.com/kb/ffmpeg-windows 3. **பிரித்தெடுக்கவும்**: Architecture கோப்புறையைத் திறந்து, `ffmpeg.exe` உள்ள 'bin' அடைவைக் கண்டறியவும். 4. **நிறுவவும்**: `ffmpeg.exe` ஐ ஒரு நிரந்தர கோப்புறையில் (எ.கா., `C:\ffmpeg\`) நகலெடுத்து, **அந்த கோப்புறையை உங்கள் கணினி PATH** சூழல் மாறிக்குச் சேர்க்கவும். 5. **மறுதொடக்கம்**: மாற்றங்கள் செயல்பட, நிறுவிய பிறகு Nagi ஐ மறுதொடக்கம் செய்யவும்.</value>
+  </data>
+  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
+    <value>உங்கள் நூலகத்தில் பிளேலிஸ்ட்டில் இருந்து பாடல்கள் எதுவும் கண்டறியப்படவில்லை.</value>
+  </data>
+  <data name="Error_NoPlaylistsToExport" xml:space="preserve">
+    <value>ஏற்றுமதி செய்ய பிளேலிஸ்ட்கள் இல்லை.</value>
+  </data>
+  <data name="EqPreset_None" xml:space="preserve">
+    <value>எதுவுமில்லை</value>
+  </data>
+  <data name="EqPreset_Classical" xml:space="preserve">
+    <value>பாரம்பரியம்</value>
+  </data>
+  <data name="EqPreset_Dance" xml:space="preserve">
+    <value>நடனம்</value>
+  </data>
+  <data name="EqPreset_FullBass" xml:space="preserve">
+    <value>முழு பாஸ்</value>
+  </data>
+  <data name="EqPreset_FullTreble" xml:space="preserve">
+    <value>முழு ட்ரெபிள்</value>
+  </data>
+  <data name="EqPreset_Jazz" xml:space="preserve">
+    <value>ஜாஸ்</value>
+  </data>
+  <data name="EqPreset_Pop" xml:space="preserve">
+    <value>பாப்</value>
+  </data>
+  <data name="EqPreset_Rock" xml:space="preserve">
+    <value>ராக்</value>
+  </data>
+  <data name="EqPreset_Soft" xml:space="preserve">
+    <value>மென்மையானது</value>
+  </data>
+  <data name="EqPreset_Techno" xml:space="preserve">
+    <value>டெக்னோ</value>
+  </data>
+  <data name="EqPreset_Vocal" xml:space="preserve">
+    <value>குரல்</value>
+  </data>
+  <data name="ReplayGain_AllSongsScanned" xml:space="preserve">
+    <value>அனைத்து பாடல்களுக்கும் ஏற்கனவே ஒலியளவு தரவு உள்ளது.</value>
+  </data>
+  <data name="ReplayGain_CalculatingCount" xml:space="preserve">
+    <value>{0} பாடல்களுக்கான ஒலியளவு கணக்கிடப்படுகிறது...</value>
+  </data>
+  <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
+    <value>ஒலியளவு சீராக்கம் கணக்கிடப்படுகிறது ({0}/{1})...</value>
+  </data>
+  <data name="ReplayGain_Complete" xml:space="preserve">
+    <value>ஒலியளவு சீராக்கம் முடிந்தது. {0} பாடல்கள் செயலாக்கப்பட்டது.</value>
+  </data>
+</root>

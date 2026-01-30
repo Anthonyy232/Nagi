@@ -1,0 +1,997 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="TrayIcon_ShowWindow.Text" xml:space="preserve">
+    <value>Prikaži prozor</value>
+  </data>
+  <data name="TrayIcon_Exit.Text" xml:space="preserve">
+    <value>Izlaz</value>
+  </data>
+  <data name="MiniPlayer_BackButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Povratak na reproduktor</value>
+  </data>
+  <data name="MiniPlayer_UpNextHeader.Text" xml:space="preserve">
+    <value>Sljedeće</value>
+  </data>
+  <data name="MiniPlayer_RestoreButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Prikaži Nagi</value>
+  </data>
+  <data name="MiniPlayer_PreviousButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Prethodno</value>
+  </data>
+  <data name="MiniPlayer_NextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Sljedeće</value>
+  </data>
+  <data name="MiniPlayer_QueueButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Sljedeće</value>
+  </data>
+  <data name="CrashReport_ReportIssuePreLink.Text" xml:space="preserve">
+    <value>Molimo razmislite o prijavi ovoga stvaranjem problema na </value>
+  </data>
+  <data name="CrashReport_IssueLink.Text" xml:space="preserve">
+    <value>stranici Problemi</value>
+  </data>
+  <data name="CrashReport_ReportIssuePostLink.Text" xml:space="preserve">
+    <value>.</value>
+  </data>
+  <data name="CrashReport_ResetAppAdvice.Text" xml:space="preserve">
+    <value>Ako se ovo nastavi događati, možete pokušati 'Resetiraj aplikaciju i podatke'. Time ćete izbrisati vaše postavke i knjižnicu, što može pomoći u oporavku aplikacije iz neispravnog stanja.</value>
+  </data>
+  <data name="CrashReport_CopyLogButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Kopiraj zapisnik u međuspremnik</value>
+  </data>
+  <data name="CrashReport_CopyLogLabel.Text" xml:space="preserve">
+    <value>Kopiraj zapisnik</value>
+  </data>
+  <data name="SmartPlaylist_PickCoverButton.Content" xml:space="preserve">
+    <value>Odaberi naslovnicu</value>
+  </data>
+  <data name="SmartPlaylist_PickCoverButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Odaberite sliku naslovnice</value>
+  </data>
+  <data name="SmartPlaylist_PlaylistNameLabel.Text" xml:space="preserve">
+    <value>Naziv popisa za reprodukciju</value>
+  </data>
+  <data name="SmartPlaylist_PlaylistNameTextBox.PlaceholderText" xml:space="preserve">
+    <value>Unesite naziv za vaš pametni popis za reprodukciju</value>
+  </data>
+  <data name="SmartPlaylist_SortOrderLabel.Text" xml:space="preserve">
+    <value>Redoslijed sortiranja</value>
+  </data>
+  <data name="SmartPlaylist_MatchLabel.Text" xml:space="preserve">
+    <value>Podudaranje</value>
+  </data>
+  <data name="SmartPlaylist_MatchLogic_All.Content" xml:space="preserve">
+    <value>Svi</value>
+  </data>
+  <data name="SmartPlaylist_MatchLogic_Any.Content" xml:space="preserve">
+    <value>Bilo koji</value>
+  </data>
+  <data name="SmartPlaylist_MatchSuffixLabel.Text" xml:space="preserve">
+    <value>od sljedećih pravila:</value>
+  </data>
+  <data name="SmartPlaylist_AddRuleButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Dodaj novo pravilo</value>
+  </data>
+  <data name="SmartPlaylist_AddRuleLabel.Text" xml:space="preserve">
+    <value>Dodaj pravilo</value>
+  </data>
+  <data name="SmartPlaylist_RuleValueTextBox.PlaceholderText" xml:space="preserve">
+    <value>Vrijednost</value>
+  </data>
+  <data name="SmartPlaylist_RemoveRuleButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Ukloni ovo pravilo</value>
+  </data>
+  <data name="SmartPlaylist_NoRulesTitle.Text" xml:space="preserve">
+    <value>Nema definiranih pravila</value>
+  </data>
+  <data name="SmartPlaylist_NoRulesMessage.Text" xml:space="preserve">
+    <value>Sve pjesme u vašoj knjižnici bit će uključene u ovaj popis za reprodukciju.</value>
+  </data>
+  <data name="SmartPlaylist_AddFirstRuleButton.Content" xml:space="preserve">
+    <value>Dodajte svoje prvo pravilo</value>
+  </data>
+  <data name="SmartPlaylist_AddFirstRuleButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Dodajte svoje prvo pravilo</value>
+  </data>
+  <data name="SmartPlaylist_Dialog.PrimaryButtonText" xml:space="preserve">
+    <value>Spremi</value>
+  </data>
+  <data name="SmartPlaylist_Dialog.CloseButtonText" xml:space="preserve">
+    <value>Odustani</value>
+  </data>
+  <data name="TrayPopup_PreviousButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Prethodno</value>
+  </data>
+  <data name="TrayPopup_NextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Sljedeće</value>
+  </data>
+  <data name="TrayPopup_QueueButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Sljedeće</value>
+  </data>
+  <data name="TrayPopup_BackButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Povratak na reproduktor</value>
+  </data>
+  <data name="TrayPopup_UpNextHeader.Text" xml:space="preserve">
+    <value>Sljedeće</value>
+  </data>
+  <data name="AppName" xml:space="preserve">
+    <value>Nagi</value>
+  </data>
+  <data name="AppDescription" xml:space="preserve">
+    <value>Ponovno otkrijte svoju lokalnu glazbenu kolekciju uz Nagi, reproduktor glazbe fokusiran na brzinu, jednostavnost i privatnost. Nagi je izgrađen u C# i WinUI 3 kako bi pružio čisto, izvorno Fluent iskustvo. Lijep je, učinkovit i poštuje vašu privatnost.</value>
+  </data>
+  <data name="AppShortName" xml:space="preserve">
+    <value>Nagi</value>
+  </data>
+  <data name="AppDisplayName" xml:space="preserve">
+    <value>Nagi Glazbeni Reproduktor</value>
+  </data>
+  <data name="AppInfoTip" xml:space="preserve">
+    <value>Otvori s Nagi Glazbenim Reproduktorom</value>
+  </data>
+  <data name="StartupTaskDisplayName" xml:space="preserve">
+    <value>Pokretanje Nagija</value>
+  </data>
+  <data name="Player_PreviousButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Prethodno</value>
+  </data>
+  <data name="Player_NextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Sljedeće</value>
+  </data>
+  <data name="Player_LyricsButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Tekst pjesme</value>
+  </data>
+  <data name="Player_QueueButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Sljedeće</value>
+  </data>
+  <data name="Player_GoToAlbumButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Idi na album</value>
+  </data>
+  <data name="QueueFlyout_Title.Text" xml:space="preserve">
+    <value>Sljedeće</value>
+  </data>
+  <data name="AlbumPage_Title.Text" xml:space="preserve">
+    <value>Albumi</value>
+  </data>
+  <data name="AlbumPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>Pretraži albume...</value>
+  </data>
+  <data name="AlbumPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Pretraži albume</value>
+  </data>
+  <data name="AlbumPage_RandomButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Odaberi nasumično</value>
+  </data>
+  <data name="AlbumPage_Menu_Play.Text" xml:space="preserve">
+    <value>Reproduciraj</value>
+  </data>
+  <data name="AlbumPage_Empty_Title.Text" xml:space="preserve">
+    <value>Nema pronađenih albuma</value>
+  </data>
+  <data name="AlbumPage_Empty_Subtitle.Text" xml:space="preserve">
+    <value>Skenirajte svoju glazbenu knjižnicu kako biste popunili albume</value>
+  </data>
+  <data name="AlbumViewPage_Header_Label.Text" xml:space="preserve">
+    <value>Album</value>
+  </data>
+  <data name="AlbumViewPage_Songs_Title.Text" xml:space="preserve">
+    <value>Pjesme</value>
+  </data>
+  <data name="AlbumViewPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>Pretraži u albumu...</value>
+  </data>
+  <data name="AlbumViewPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Pretraži u albumu</value>
+  </data>
+  <data name="AlbumViewPage_PlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Reproduciraj sve</value>
+  </data>
+  <data name="AlbumViewPage_ShufflePlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Nasumično reproduciraj sve</value>
+  </data>
+  <data name="AlbumViewPage_SongMenu_Play.Text" xml:space="preserve">
+    <value>Reproduciraj</value>
+  </data>
+  <data name="AlbumViewPage_SongMenu_PlayNext.Text" xml:space="preserve">
+    <value>Reproduciraj sljedeće</value>
+  </data>
+  <data name="AlbumViewPage_SongMenu_AddToQueue.Text" xml:space="preserve">
+    <value>Dodaj u red čekanja</value>
+  </data>
+  <data name="AlbumViewPage_SongMenu_AddToPlaylist.Text" xml:space="preserve">
+    <value>Dodaj na popis za reprodukciju</value>
+  </data>
+  <data name="AlbumViewPage_SongMenu_GoToArtist.Text" xml:space="preserve">
+    <value>Idi na izvođača</value>
+  </data>
+  <data name="AlbumViewPage_SongMenu_ShowInExplorer.Text" xml:space="preserve">
+    <value>Prikaži u pregledniku</value>
+  </data>
+  <data name="AlbumViewPage_SongPlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Reproduciraj</value>
+  </data>
+  <data name="AlbumViewPage_Empty_Title.Text" xml:space="preserve">
+    <value>Nema pronađenih pjesama u ovom albumu</value>
+  </data>
+  <data name="AlbumViewPage_Empty_Subtitle.Text" xml:space="preserve">
+    <value>Pokušajte pretražiti nešto drugo</value>
+  </data>
+  <data name="ArtistPage_Title.Text" xml:space="preserve">
+    <value>Izvođači</value>
+  </data>
+  <data name="ArtistPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>Pretraži izvođače...</value>
+  </data>
+  <data name="ArtistPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Pretraži izvođače</value>
+  </data>
+  <data name="ArtistPage_RandomButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Odaberi nasumično</value>
+  </data>
+  <data name="ArtistPage_Menu_Play.Text" xml:space="preserve">
+    <value>Reproduciraj</value>
+  </data>
+  <data name="ArtistPage_Menu_ChangeImage.Text" xml:space="preserve">
+    <value>Promijeni sliku</value>
+  </data>
+  <data name="ArtistPage_Menu_RemoveImage.Text" xml:space="preserve">
+    <value>Ukloni sliku</value>
+  </data>
+  <data name="ArtistPage_Empty_Title.Text" xml:space="preserve">
+    <value>Nema pronađenih izvođača</value>
+  </data>
+  <data name="ArtistPage_Empty_Subtitle.Text" xml:space="preserve">
+    <value>Skenirajte svoju glazbenu knjižnicu kako biste popunili izvođače</value>
+  </data>
+  <data name="ArtistViewPage_EditOverlay.Content" xml:space="preserve">
+    <value>Promijeni sliku izvođača</value>
+  </data>
+  <data name="ArtistViewPage_ImageMenu_ChangeImage.Text" xml:space="preserve">
+    <value>Promijeni sliku</value>
+  </data>
+  <data name="ArtistViewPage_ImageMenu_RemoveImage.Text" xml:space="preserve">
+    <value>Ukloni sliku</value>
+  </data>
+  <data name="ArtistViewPage_Header_Label.Text" xml:space="preserve">
+    <value>Izvođač</value>
+  </data>
+  <data name="ArtistViewPage_Albums_Title.Text" xml:space="preserve">
+    <value>Najbolji albumi</value>
+  </data>
+  <data name="ArtistViewPage_Songs_Title.Text" xml:space="preserve">
+    <value>Pjesme</value>
+  </data>
+  <data name="ArtistViewPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>Pretraži u izvođaču...</value>
+  </data>
+  <data name="ArtistViewPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Pretraži u izvođaču</value>
+  </data>
+  <data name="ArtistViewPage_PlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Reproduciraj sve</value>
+  </data>
+  <data name="ArtistViewPage_ShufflePlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Nasumično reproduciraj sve</value>
+  </data>
+  <data name="ArtistViewPage_SongMenu_Play.Text" xml:space="preserve">
+    <value>Reproduciraj</value>
+  </data>
+  <data name="ArtistViewPage_SongMenu_PlayNext.Text" xml:space="preserve">
+    <value>Reproduciraj sljedeće</value>
+  </data>
+  <data name="ArtistViewPage_SongMenu_AddToQueue.Text" xml:space="preserve">
+    <value>Dodaj u red čekanja</value>
+  </data>
+  <data name="ArtistViewPage_SongMenu_AddToPlaylist.Text" xml:space="preserve">
+    <value>Dodaj na popis za reprodukciju</value>
+  </data>
+  <data name="ArtistViewPage_SongMenu_GoToAlbum.Text" xml:space="preserve">
+    <value>Idi na album</value>
+  </data>
+  <data name="ArtistViewPage_SongMenu_ShowInExplorer.Text" xml:space="preserve">
+    <value>Prikaži u pregledniku</value>
+  </data>
+  <data name="ArtistViewPage_SongPlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Reproduciraj</value>
+  </data>
+  <data name="ArtistViewPage_Empty_Title.Text" xml:space="preserve">
+    <value>Nema pronađenih pjesama za ovog izvođača</value>
+  </data>
+  <data name="ArtistViewPage_Empty_Subtitle.Text" xml:space="preserve">
+    <value>Pokušajte pretražiti nešto drugo</value>
+  </data>
+  <data name="FolderPage_Title.Text" xml:space="preserve">
+    <value>Mape</value>
+  </data>
+  <data name="FolderPage_RandomButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Odaberi nasumično</value>
+  </data>
+  <data name="FolderPage_AddFolderButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Dodaj glazbenu mapu</value>
+  </data>
+  <data name="FolderPage_AddFolder_Label.Text" xml:space="preserve">
+    <value>Dodaj mapu</value>
+  </data>
+  <data name="FolderPage_Menu_Play.Text" xml:space="preserve">
+    <value>Reproduciraj</value>
+  </data>
+  <data name="FolderPage_Menu_Rescan.Text" xml:space="preserve">
+    <value>Ponovno skeniraj</value>
+  </data>
+  <data name="FolderPage_Menu_Delete.Text" xml:space="preserve">
+    <value>Izbriši</value>
+  </data>
+  <data name="FolderPage_Empty_Title.Text" xml:space="preserve">
+    <value>Još nema dodanih mapa</value>
+  </data>
+  <data name="FolderPage_Empty_Subtitle.Text" xml:space="preserve">
+    <value>Dodajte glazbene mape za početak</value>
+  </data>
+  <data name="FolderSongViewPage_FolderMenu_Play.Text" xml:space="preserve">
+    <value>Reproduciraj</value>
+  </data>
+  <data name="FolderSongViewPage_FolderMenu_AddToPlaylist.Text" xml:space="preserve">
+    <value>Dodaj na popis za reprodukciju</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_Play.Text" xml:space="preserve">
+    <value>Reproduciraj</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_PlayNext.Text" xml:space="preserve">
+    <value>Reproduciraj sljedeće</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_AddToQueue.Text" xml:space="preserve">
+    <value>Dodaj u red čekanja</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_AddToPlaylist.Text" xml:space="preserve">
+    <value>Dodaj na popis za reprodukciju</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_GoToAlbum.Text" xml:space="preserve">
+    <value>Idi na album</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_GoToArtist.Text" xml:space="preserve">
+    <value>Idi na izvođača</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_ShowInExplorer.Text" xml:space="preserve">
+    <value>Prikaži u pregledniku</value>
+  </data>
+  <data name="FolderSongViewPage_SongPlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Reproduciraj</value>
+  </data>
+  <data name="FolderSongViewPage_Header_Label.Text" xml:space="preserve">
+    <value>Mapa</value>
+  </data>
+  <data name="FolderSongViewPage_Songs_Title.Text" xml:space="preserve">
+    <value>Pjesme</value>
+  </data>
+  <data name="FolderSongViewPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>Pretraži u mapi...</value>
+  </data>
+  <data name="FolderSongViewPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Pretraži u mapi</value>
+  </data>
+  <data name="FolderSongViewPage_PlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Reproduciraj sve</value>
+  </data>
+  <data name="FolderSongViewPage_ShufflePlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Nasumično reproduciraj sve</value>
+  </data>
+  <data name="FolderSongViewPage_Empty_Title.Text" xml:space="preserve">
+    <value>Ova mapa je prazna</value>
+  </data>
+  <data name="FolderSongViewPage_Empty_Subtitle.Text" xml:space="preserve">
+    <value>Nema pronađenih pjesama ili podmapa</value>
+  </data>
+  <data name="GenrePage_Title.Text" xml:space="preserve">
+    <value>Žanrovi</value>
+  </data>
+  <data name="GenrePage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>Pretraži žanrove...</value>
+  </data>
+  <data name="GenrePage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Pretraži žanrove</value>
+  </data>
+  <data name="GenrePage_RandomButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Odaberi nasumično</value>
+  </data>
+  <data name="GenrePage_Menu_Play.Text" xml:space="preserve">
+    <value>Reproduciraj</value>
+  </data>
+  <data name="GenrePage_Empty_Title.Text" xml:space="preserve">
+    <value>Nema pronađenih žanrova</value>
+  </data>
+  <data name="GenrePage_Empty_Subtitle.Text" xml:space="preserve">
+    <value>Skenirajte svoju glazbenu knjižnicu kako biste popunili žanrove</value>
+  </data>
+  <data name="LibraryPage_Title.Text" xml:space="preserve">
+    <value>Knjižnica</value>
+  </data>
+  <data name="LibraryPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>Pretraži knjižnicu...</value>
+  </data>
+  <data name="LibraryPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Pretraži knjižnicu</value>
+  </data>
+  <data name="LibraryPage_PlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Reproduciraj sve</value>
+  </data>
+  <data name="LibraryPage_ShufflePlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Nasumično reproduciraj sve</value>
+  </data>
+  <data name="LibraryPage_Context_Play.Text" xml:space="preserve">
+    <value>Reproduciraj</value>
+  </data>
+  <data name="LibraryPage_Context_PlayNext.Text" xml:space="preserve">
+    <value>Reproduciraj sljedeće</value>
+  </data>
+  <data name="LibraryPage_Context_AddToQueue.Text" xml:space="preserve">
+    <value>Dodaj u red čekanja</value>
+  </data>
+  <data name="LibraryPage_Context_AddToPlaylist.Text" xml:space="preserve">
+    <value>Dodaj na popis za reprodukciju</value>
+  </data>
+  <data name="LibraryPage_Context_GoToAlbum.Text" xml:space="preserve">
+    <value>Idi na album</value>
+  </data>
+  <data name="LibraryPage_Context_GoToArtist.Text" xml:space="preserve">
+    <value>Idi na izvođača</value>
+  </data>
+  <data name="LibraryPage_Context_ShowInExplorer.Text" xml:space="preserve">
+    <value>Prikaži u pregledniku</value>
+  </data>
+  <data name="LibraryPage_SongElement_PlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Reproduciraj</value>
+  </data>
+  <data name="LibraryPage_EmptyState_Title.Text" xml:space="preserve">
+    <value>Vaša knjižnica je prazna</value>
+  </data>
+  <data name="LibraryPage_EmptyState_Subtitle.Text" xml:space="preserve">
+    <value>Dodajte mape u svoju knjižnicu u Postavkama</value>
+  </data>
+  <data name="LyricsPage_NoLyrics_Title.Text" xml:space="preserve">
+    <value>Nema pronađenih tekstova za ovu pjesmu</value>
+  </data>
+  <data name="LyricsPage_NoLyrics_Subtitle.Text" xml:space="preserve">
+    <value>Pokušajte drugu pjesmu</value>
+  </data>
+  <data name="OnboardingPage_Welcome_Title.Text" xml:space="preserve">
+    <value>Dobrodošli u Nagi</value>
+  </data>
+  <data name="OnboardingPage_AddFolderButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Dodajte glazbenu mapu za početak</value>
+  </data>
+  <data name="OnboardingPage_AddFolderButton_Content.Text" xml:space="preserve">
+    <value>Dodaj glazbenu mapu</value>
+  </data>
+  <data name="PlaylistPage_Title.Text" xml:space="preserve">
+    <value>Popisi za reprodukciju</value>
+  </data>
+  <data name="PlaylistPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>Pretraži popise za reprodukciju...</value>
+  </data>
+  <data name="PlaylistPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Pretraži popise za reprodukciju</value>
+  </data>
+  <data name="PlaylistPage_RandomButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Odaberi nasumično</value>
+  </data>
+  <data name="PlaylistPage_NewPlaylistButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Stvori novi popis za reprodukciju</value>
+  </data>
+  <data name="PlaylistPage_NewPlaylistButton_Content.Text" xml:space="preserve">
+    <value>Novi popis za reprodukciju</value>
+  </data>
+  <data name="PlaylistPage_NewPlaylistMenu_Regular.Text" xml:space="preserve">
+    <value>Redoviti popis za reprodukciju</value>
+  </data>
+  <data name="PlaylistPage_NewPlaylistMenu_Smart.Text" xml:space="preserve">
+    <value>Pametni popis za reprodukciju</value>
+  </data>
+  <data name="PlaylistPage_Context_Play.Text" xml:space="preserve">
+    <value>Reproduciraj</value>
+  </data>
+  <data name="PlaylistPage_Context_Rename.Text" xml:space="preserve">
+    <value>Preimenuj</value>
+  </data>
+  <data name="PlaylistPage_Context_ChangeImage.Text" xml:space="preserve">
+    <value>Promijeni sliku</value>
+  </data>
+  <data name="PlaylistPage_Context_RemoveImage.Text" xml:space="preserve">
+    <value>Ukloni sliku</value>
+  </data>
+  <data name="PlaylistPage_Context_Delete.Text" xml:space="preserve">
+    <value>Izbriši</value>
+  </data>
+  <data name="PlaylistPage_EmptyState_Title.Text" xml:space="preserve">
+    <value>Još nema popisa za reprodukciju</value>
+  </data>
+  <data name="PlaylistPage_EmptyState_Subtitle.Text" xml:space="preserve">
+    <value>Stvorite popis za reprodukciju za početak</value>
+  </data>
+  <data name="PlaylistSongViewPage_Header_Caption.Text" xml:space="preserve">
+    <value>Popis za reprodukciju</value>
+  </data>
+  <data name="PlaylistSongViewPage_Section_Songs.Text" xml:space="preserve">
+    <value>Pjesme</value>
+  </data>
+  <data name="PlaylistSongViewPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>Pretraži u popisu za reprodukciju...</value>
+  </data>
+  <data name="PlaylistSongViewPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Pretraži u popisu za reprodukciju</value>
+  </data>
+  <data name="PlaylistSongViewPage_PlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Reproduciraj sve</value>
+  </data>
+  <data name="PlaylistSongViewPage_ShufflePlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Nasumično reproduciraj sve</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_Play.Text" xml:space="preserve">
+    <value>Reproduciraj</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_PlayNext.Text" xml:space="preserve">
+    <value>Reproduciraj sljedeće</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_AddToQueue.Text" xml:space="preserve">
+    <value>Dodaj u red čekanja</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_GoToAlbum.Text" xml:space="preserve">
+    <value>Idi na album</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_GoToArtist.Text" xml:space="preserve">
+    <value>Idi na izvođača</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_ShowInExplorer.Text" xml:space="preserve">
+    <value>Prikaži u pregledniku</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist.Text" xml:space="preserve">
+    <value>Ukloni s popisa za reprodukciju</value>
+  </data>
+  <data name="PlaylistSongViewPage_SongElement_PlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Reproduciraj</value>
+  </data>
+  <data name="PlaylistSongViewPage_EmptyState_Title.Text" xml:space="preserve">
+    <value>Ovaj popis za reprodukciju je prazan</value>
+  </data>
+  <data name="PlaylistSongViewPage_EmptyState_Subtitle.Text" xml:space="preserve">
+    <value>Dodajte pjesme iz svoje knjižnice</value>
+  </data>
+  <data name="GenreViewPage_Header_Caption.Text" xml:space="preserve">
+    <value>Žanr</value>
+  </data>
+  <data name="GenreViewPage_Section_Songs.Text" xml:space="preserve">
+    <value>Pjesme</value>
+  </data>
+  <data name="GenreViewPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>Pretraži u žanru...</value>
+  </data>
+  <data name="GenreViewPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Pretraži u žanru</value>
+  </data>
+  <data name="GenreViewPage_PlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Reproduciraj sve</value>
+  </data>
+  <data name="GenreViewPage_ShufflePlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Nasumično reproduciraj sve</value>
+  </data>
+  <data name="GenreViewPage_Context_Play.Text" xml:space="preserve">
+    <value>Reproduciraj</value>
+  </data>
+  <data name="GenreViewPage_Context_PlayNext.Text" xml:space="preserve">
+    <value>Reproduciraj sljedeće</value>
+  </data>
+  <data name="GenreViewPage_Context_AddToQueue.Text" xml:space="preserve">
+    <value>Dodaj u red čekanja</value>
+  </data>
+  <data name="GenreViewPage_Context_AddToPlaylist.Text" xml:space="preserve">
+    <value>Dodaj na popis za reprodukciju</value>
+  </data>
+  <data name="GenreViewPage_Context_GoToAlbum.Text" xml:space="preserve">
+    <value>Idi na album</value>
+  </data>
+  <data name="GenreViewPage_Context_GoToArtist.Text" xml:space="preserve">
+    <value>Idi na izvođača</value>
+  </data>
+  <data name="GenreViewPage_Context_ShowInExplorer.Text" xml:space="preserve">
+    <value>Prikaži u pregledniku</value>
+  </data>
+  <data name="GenreViewPage_Context_NoPlaylists.Text" xml:space="preserve">
+    <value>Nema dostupnih popisa za reprodukciju</value>
+  </data>
+  <data name="GenreViewPage_SongElement_PlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Reproduciraj</value>
+  </data>
+  <data name="GenreViewPage_EmptyState_Title.Text" xml:space="preserve">
+    <value>Nema pronađenih pjesama za ovaj žanr</value>
+  </data>
+  <data name="GenreViewPage_EmptyState_Subtitle.Text" xml:space="preserve">
+    <value>Pokušajte pretražiti nešto drugo</value>
+  </data>
+  <data name="SettingsPage_Title.Text" xml:space="preserve">
+    <value>Postavke</value>
+  </data>
+  <data name="SettingsPage_Section_Appearance.Text" xml:space="preserve">
+    <value>Izgled</value>
+  </data>
+  <data name="SettingsPage_Theme.Header" xml:space="preserve">
+    <value>Tema</value>
+  </data>
+  <data name="SettingsPage_Theme.Description" xml:space="preserve">
+    <value>Odaberite temu aplikacije.</value>
+  </data>
+  <data name="SettingsPage_AccentColor.Text" xml:space="preserve">
+    <value>Boja naglaska</value>
+  </data>
+
+  <data name="SettingsPage_ResetAccentColor.Content" xml:space="preserve">
+    <value>Vrati na zadano</value>
+  </data>
+  <data name="SettingsPage_WindowMaterial.Header" xml:space="preserve">
+    <value>Materijal prozora</value>
+  </data>
+  <data name="SettingsPage_WindowMaterial.Description" xml:space="preserve">
+    <value>Odaberite materijal pozadine za prozor.</value>
+  </data>
+  <data name="SettingsPage_DynamicTheming.Header" xml:space="preserve">
+    <value>Dinamično tematiziranje</value>
+  </data>
+  <data name="SettingsPage_DynamicTheming.Description" xml:space="preserve">
+    <value>Omogućite i konfigurirajte opcije dinamičnog tematiziranja.</value>
+  </data>
+  <data name="SettingsPage_RememberWindowSize.Header" xml:space="preserve">
+    <value>Zapamti veličinu prozora</value>
+  </data>
+  <data name="SettingsPage_RememberWindowSize.Description" xml:space="preserve">
+    <value>Vratite glavni prozor na prethodnu veličinu pri sljedećem pokretanju.</value>
+  </data>
+  <data name="SettingsPage_RememberWindowPosition.Header" xml:space="preserve">
+    <value>Zapamti položaj prozora</value>
+  </data>
+  <data name="SettingsPage_RememberWindowPosition.Description" xml:space="preserve">
+    <value>Vratite glavni prozor na prethodnu lokaciju zaslona pri sljedećem pokretanju.</value>
+  </data>
+  <data name="SettingsPage_RememberNavState.Header" xml:space="preserve">
+    <value>Zapamti stanje navigacijske ploče</value>
+  </data>
+  <data name="SettingsPage_RememberNavState.Description" xml:space="preserve">
+    <value>Ostavite lijevu navigacijsku ploču otvorenom ili zatvorenom onako kako ste je ostavili.</value>
+  </data>
+  <data name="SettingsPage_CustomizeNav.Header" xml:space="preserve">
+    <value>Prilagodi navigaciju</value>
+  </data>
+  <data name="SettingsPage_CustomizeNav.Description" xml:space="preserve">
+    <value>Povucite za preuređivanje stranica u navigacijskom izborniku. Koristite prekidač za prikaz ili skrivanje stranice.</value>
+  </data>
+  <data name="SettingsPage_Section_Player.Text" xml:space="preserve">
+    <value>Upravljanje reproduktorom</value>
+  </data>
+  <data name="SettingsPage_VolumeNormalization.Header" xml:space="preserve">
+    <value>Normalizacija glasnoće (ReplayGain)</value>
+  </data>
+  <data name="SettingsPage_VolumeNormalization.Description" xml:space="preserve">
+    <value>Automatski prilagodite glasnoću na standardnu razinu (-14 LUFS) kako biste izbjegli iznenadne promjene glasnoće.</value>
+  </data>
+  <data name="SettingsPage_Equalizer.Text" xml:space="preserve">
+    <value>Audio ekvilajzer</value>
+  </data>
+
+  <data name="SettingsPage_ResetEqualizer.Content" xml:space="preserve">
+    <value>Vrati na zadano</value>
+  </data>
+  <data name="SettingsPage_Equalizer_Preamp.Text" xml:space="preserve">
+    <value>Pretpojačalo</value>
+  </data>
+  <data name="SettingsPage_Equalizer_Preset_Custom.PlaceholderText" xml:space="preserve">
+    <value>Prilagođeno</value>
+  </data>
+  <data name="SettingsPage_CustomizePlayer.Text" xml:space="preserve">
+    <value>Prilagodi kontrole reproduktora</value>
+  </data>
+
+  <data name="SettingsPage_ResetPlayerButtons.Content" xml:space="preserve">
+    <value>Vrati na zadano</value>
+  </data>
+  <data name="SettingsPage_CustomizePlayer_Instructions.Text" xml:space="preserve">
+    <value>Zadržite pokazivač za prebacivanje vidljivosti. Povucite za preuređivanje. Razdjelnik odvaja središnje i desne kontrole.</value>
+  </data>
+  <data name="SettingsPage_CollapsablePlayer.Header" xml:space="preserve">
+    <value>Sklopivi reproduktor</value>
+  </data>
+  <data name="SettingsPage_CollapsablePlayer.Description" xml:space="preserve">
+    <value>Animirajte traku reproduktora za proširenje i skupljanje.</value>
+  </data>
+  <data name="SettingsPage_RestorePlayback.Header" xml:space="preserve">
+    <value>Vrati stanje reprodukcije</value>
+  </data>
+  <data name="SettingsPage_RestorePlayback.Description" xml:space="preserve">
+    <value>Spremite trenutno stanje reprodukcije za nastavak pri sljedećem pokretanju.</value>
+  </data>
+  <data name="SettingsPage_AutoLaunch.Header" xml:space="preserve">
+    <value>Automatsko pokretanje pri podizanju sustava</value>
+  </data>
+  <data name="SettingsPage_AutoLaunch.Description" xml:space="preserve">
+    <value>Automatski pokrenite Nagi kada se prijavite na svoje računalo.</value>
+  </data>
+  <data name="SettingsPage_StartMinimized.Header" xml:space="preserve">
+    <value>Pokreni minimizirano</value>
+  </data>
+  <data name="SettingsPage_StartMinimized.Description" xml:space="preserve">
+    <value>Kada se pokrene, prozor aplikacije bit će minimiziran prema zadanim postavkama.</value>
+  </data>
+  <data name="SettingsPage_MinimizeToMiniPlayer.Header" xml:space="preserve">
+    <value>Minimiziraj u mini-reproduktor</value>
+  </data>
+  <data name="SettingsPage_MinimizeToMiniPlayer.Description" xml:space="preserve">
+    <value>Kada je minimiziran, prikažite kompaktni plutajući reproduktor umjesto skrivanja prozora.</value>
+  </data>
+  <data name="SettingsPage_HideToTray.Header" xml:space="preserve">
+    <value>Sakrij u sistemsku traku</value>
+  </data>
+  <data name="SettingsPage_HideToTray.Description" xml:space="preserve">
+    <value>Kada se zatvori, sakrij u sistemsku traku umjesto toga.</value>
+  </data>
+  <data name="SettingsPage_TrayCoverArt.Header" xml:space="preserve">
+    <value>Prikaži naslovnicu u skočnom prozoru</value>
+  </data>
+  <data name="SettingsPage_TrayCoverArt.Description" xml:space="preserve">
+    <value>Prikažite naslovnicu u kompaktnom reproduktoru koji se pojavljuje kada kliknete ikonu u sistemskoj traci.</value>
+  </data>
+  <data name="SettingsPage_Section_Data.Text" xml:space="preserve">
+    <value>Upravljanje podacima</value>
+  </data>
+  <data name="SettingsPage_ArtistSplitting.Header" xml:space="preserve">
+    <value>Razdvajanje izvođača</value>
+  </data>
+  <data name="SettingsPage_ArtistSplitting.Description" xml:space="preserve">
+    <value>Definirajte znakove koji se koriste za razdvajanje više izvođača (npr. ';/'). Ostavite prazno za onemogućavanje.</value>
+  </data>
+  <data name="SettingsPage_RescanLibrary.Content" xml:space="preserve">
+    <value>Ponovno skeniraj knjižnicu</value>
+  </data>
+  <data name="SettingsPage_RescanLibrary.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Ponovno skenirajte knjižnicu kako biste primijenili promjene razdvajanja</value>
+  </data>
+  <data name="SettingsPage_OnlineMetadata.Header" xml:space="preserve">
+    <value>Dohvati mrežne metapodatke</value>
+  </data>
+  <data name="SettingsPage_OnlineMetadata.Description" xml:space="preserve">
+    <value>Dohvatite dodatne informacije poput slika izvođača i biografija s mrežnih usluga (npr. Spotify, Last.fm).</value>
+  </data>
+  <data name="SettingsPage_MetadataSources.Header" xml:space="preserve">
+    <value>Izvori</value>
+  </data>
+  <data name="SettingsPage_MetadataSources.Description" xml:space="preserve">
+    <value>Povucite za preuređivanje izvora metapodataka. Zadržite pokazivač iznad svakog izvora za detalje.</value>
+  </data>
+  <data name="SettingsPage_OnlineLyrics.Header" xml:space="preserve">
+    <value>Dohvati mrežne tekstove pjesama</value>
+  </data>
+  <data name="SettingsPage_OnlineLyrics.Description" xml:space="preserve">
+    <value>Automatski dohvatite nedostajuće tekstove pjesama s mrežnih izvora. (Privatnost: šalje metapodatke pjesama uslugama trećih strana)</value>
+  </data>
+  <data name="SettingsPage_LyricsSources.Header" xml:space="preserve">
+    <value>Izvori</value>
+  </data>
+  <data name="SettingsPage_LyricsSources.Description" xml:space="preserve">
+    <value>Povucite za preuređivanje izvora tekstova pjesama. Zadržite pokazivač iznad svakog izvora za detalje.</value>
+  </data>
+  <data name="SettingsPage_PlaylistsIO.Header" xml:space="preserve">
+    <value>Izvoz/Uvoz popisa za reprodukciju</value>
+  </data>
+  <data name="SettingsPage_PlaylistsIO.Description" xml:space="preserve">
+    <value>Izvezite popise za reprodukciju u M3U datoteke za korištenje u drugim reproduktorima ili uvezite M3U popise za reprodukciju u Nagi.</value>
+  </data>
+  <data name="SettingsPage_ExportPlaylists.Content" xml:space="preserve">
+    <value>Izvezi sve...</value>
+  </data>
+  <data name="SettingsPage_ExportPlaylists.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Izvezi sve popise za reprodukciju u mapu</value>
+  </data>
+  <data name="SettingsPage_ImportPlaylists.Content" xml:space="preserve">
+    <value>Uvezi...</value>
+  </data>
+  <data name="SettingsPage_ImportPlaylists.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Uvezi jednu ili više M3U datoteka</value>
+  </data>
+  <data name="SettingsPage_ResetApp.Header" xml:space="preserve">
+    <value>Poništi aplikaciju</value>
+  </data>
+  <data name="SettingsPage_ResetApp.Description" xml:space="preserve">
+    <value>Ovo će izbrisati sve podatke knjižnice, popise za reprodukciju i vratiti sve postavke na zadane. Aplikacija će se ponovno pokrenuti.</value>
+  </data>
+  <data name="SettingsPage_ResetButton.Content" xml:space="preserve">
+    <value>Poništi sve podatke</value>
+  </data>
+  <data name="SettingsPage_Section_Integrations.Text" xml:space="preserve">
+    <value>Integracije</value>
+  </data>
+  <data name="SettingsPage_LastFm.Header" xml:space="preserve">
+    <value>Last.fm</value>
+  </data>
+  <data name="SettingsPage_LastFm.Description" xml:space="preserve">
+    <value>Povežite svoj Last.fm račun za skroblovavanje pjesama i prikaz trenutno reproducirane pjesme.</value>
+  </data>
+  <data name="SettingsPage_LastFm_Connect.Content" xml:space="preserve">
+    <value>Poveži se</value>
+  </data>
+  <data name="SettingsPage_LastFm_Complete.Content" xml:space="preserve">
+    <value>Dovrši</value>
+  </data>
+  <data name="SettingsPage_LastFm_Cancel.Content" xml:space="preserve">
+    <value>Odustani</value>
+  </data>
+  <data name="SettingsPage_LastFm_Disconnect.Content" xml:space="preserve">
+    <value>Prekini vezu</value>
+  </data>
+  <data name="SettingsPage_LastFm_Scrobbling.Header" xml:space="preserve">
+    <value>Omogući skroblovavanje</value>
+  </data>
+  <data name="SettingsPage_LastFm_Scrobbling.Description" xml:space="preserve">
+    <value>Automatski dodajte pjesme koje slušate na Nagiju na svoj Last.fm profil.</value>
+  </data>
+  <data name="SettingsPage_LastFm_NowPlaying.Header" xml:space="preserve">
+    <value>Ažuriraj 'Sada svira'</value>
+  </data>
+  <data name="SettingsPage_LastFm_NowPlaying.Description" xml:space="preserve">
+    <value>Pokažite svojim prijateljima na Last.fm-u što trenutno slušate u stvarnom vremenu.</value>
+  </data>
+  <data name="SettingsPage_Discord.Header" xml:space="preserve">
+    <value>Discord</value>
+  </data>
+  <data name="SettingsPage_Discord.Description" xml:space="preserve">
+    <value>Prikažite svoju trenutnu aktivnost slušanja kao svoj status na Discordu.</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Header_Caption.Text" xml:space="preserve">
+    <value>Pametni popis za reprodukciju</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Section_Songs.Text" xml:space="preserve">
+    <value>Pjesme</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>Pretraži u pametnom popisu za reprodukciju...</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Pretraži u pametnom popisu za reprodukciju</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_EditRulesButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Uredi pravila</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_PlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Reproduciraj sve</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_ShufflePlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Nasumično reproduciraj sve</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Context_Play.Text" xml:space="preserve">
+    <value>Reproduciraj</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Context_PlayNext.Text" xml:space="preserve">
+    <value>Reproduciraj sljedeće</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Context_AddToQueue.Text" xml:space="preserve">
+    <value>Dodaj u red čekanja</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Context_GoToAlbum.Text" xml:space="preserve">
+    <value>Idi na album</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Context_GoToArtist.Text" xml:space="preserve">
+    <value>Idi na izvođača</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Context_ShowInExplorer.Text" xml:space="preserve">
+    <value>Prikaži u pregledniku</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_SongElement_PlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Reproduciraj</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_EmptyState_Title.Text" xml:space="preserve">
+    <value>Nema pjesama koje odgovaraju trenutnim pravilima</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_EmptyState_Subtitle.Text" xml:space="preserve">
+    <value>Pokušajte urediti pravila</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_EmptyState_Button.Content" xml:space="preserve">
+    <value>Uredi pravila</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_EmptyState_Button.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Uredi pravila</value>
+  </data>
+  <data name="SettingsPage_Section_About.Text" xml:space="preserve">
+    <value>O aplikaciji</value>
+  </data>
+  <data name="SettingsPage_AboutExpander.Header" xml:space="preserve">
+    <value>O Nagiju</value>
+  </data>
+  <data name="SettingsPage_AboutExpander.Description" xml:space="preserve">
+    <value>Ponovno otkrijte svoju lokalnu glazbenu kolekciju uz Nagi, reproduktor glazbe fokusiran na brzinu, jednostavnost i privatnost.</value>
+  </data>
+  <data name="SettingsPage_About_VersionPrefix.Text" xml:space="preserve">
+    <value>Verzija </value>
+  </data>
+  <data name="SettingsPage_About_Licenses.Content" xml:space="preserve">
+    <value>Prikaži licence</value>
+  </data>
+  <data name="SettingsPage_About_SourceCode.Content" xml:space="preserve">
+    <value>Izvorni kod</value>
+  </data>
+  <data name="SettingsPage_About_CheckUpdates.Content" xml:space="preserve">
+    <value>Provjeri ažuriranja</value>
+  </data>
+  <data name="SettingsPage_About_Feedback.Content" xml:space="preserve">
+    <value>Pošalji povratne informacije</value>
+  </data>
+  <data name="SettingsPage_CheckForUpdates.Header" xml:space="preserve">
+    <value>Provjeri ažuriranja pri pokretanju</value>
+  </data>
+  <data name="SettingsPage_CheckForUpdates.Description" xml:space="preserve">
+    <value>Automatski provjerite nove verzije kada se aplikacija pokrene.</value>
+  </data>
+  <data name="SettingsPage_Language.Header" xml:space="preserve">
+    <value>Jezik aplikacije</value>
+  </data>
+  <data name="SettingsPage_Language.[using:CommunityToolkit.WinUI.Controls]SettingsCard.Description" xml:space="preserve">
+    <value>Promjene zahtijevaju ponovno pokretanje da bi stupile na snagu</value>
+  </data>
+  <data name="SettingsPage_RestartRequired_Title" xml:space="preserve">
+    <value>Potrebno je ponovno pokretanje</value>
+  </data>
+  <data name="SettingsPage_RestartRequired_Message" xml:space="preserve">
+    <value>Molimo ponovno pokrenite aplikaciju kako bi promjena jezika u potpunosti stupila na snagu.</value>
+  </data>
+</root>

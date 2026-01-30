@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Noun Labels -->
+  <data name="Label_Artist" xml:space="preserve">
+    <value>Sanatçı</value>
+  </data>
+  <data name="Label_Album" xml:space="preserve">
+    <value>Albüm</value>
+  </data>
+  <data name="Label_Genre" xml:space="preserve">
+    <value>Tür</value>
+  </data>
+  <data name="Label_Title" xml:space="preserve">
+    <value>Başlık</value>
+  </data>
+  <data name="Label_Playlist" xml:space="preserve">
+    <value>Çalma Listesi</value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>Dosya</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>Yıl</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Ekleme Tarihi</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Oluşturulma Tarihi</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Değiştirilme Tarihi</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Son Çalma</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Süre</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Parça Numarası</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Çalma Sayısı</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Şarkılar</value>
+  </data>
+  <data name="Label_Song" xml:space="preserve">
+    <value>Şarkı</value>
+  </data>
+  <data name="Label_Folder" xml:space="preserve">
+    <value>Klasör</value>
+  </data>
+  <data name="Label_Folders" xml:space="preserve">
+    <value>Klasörler</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Manuel Sıra</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Rastgele</value>
+  </data>
+  <!-- Format Patterns -->
+  <data name="Format_Unknown" xml:space="preserve">
+    <value>Bilinmeyen {0}</value>
+  </data>
+  <data name="Format_New" xml:space="preserve">
+    <value>Yeni {0}</value>
+  </data>
+  <data name="Format_NotFound" xml:space="preserve">
+    <value>{0} bulunamadı.</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A'dan Z'ye)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Z'den A'ya)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (En Yeni)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (En Eski)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (Artan)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (Azalan)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>En Kısa Önce</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>En Uzun Önce</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>En Yavaş Önce ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>En Hızlı Önce ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>En Çok {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>En Az {0}</value>
+  </data>
+  <data name="Format_ScanFolderProgress" xml:space="preserve">
+    <value>{1} klasöründen {0} taranıyor: {2} - {3}</value>
+  </data>
+  <data name="Format_ScanCompleteResult" xml:space="preserve">
+    <value>Tarama tamamlandı. {0} {1} eklendi veya güncellendi.</value>
+  </data>
+  <data name="Format_SavingBatch" xml:space="preserve">
+    <value>{0}. parti kaydediliyor...</value>
+  </data>
+  <!-- Status & Success Messages -->
+  <data name="Status_ScanningFolder" xml:space="preserve">
+    <value>Klasör taranıyor...</value>
+  </data>
+  <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
+    <value>Tarama tamamlandı. Kütüphane güncel.</value>
+  </data>
+  <data name="Status_ScanCancelled" xml:space="preserve">
+    <value>Tarama iptal edildi.</value>
+  </data>
+  <data name="Status_ScanFailed" xml:space="preserve">
+    <value>Tarama başarısız oldu. Ayrıntılar için günlükleri kontrol edin.</value>
+  </data>
+  <data name="Status_PreparingScanCaches" xml:space="preserve">
+    <value>Tarama önbellekleri hazırlanıyor...</value>
+  </data>
+  <data name="Status_ReadingSongDetails" xml:space="preserve">
+    <value>Şarkı ayrıntıları okunuyor...</value>
+  </data>
+  <data name="Status_CleaningUpLibrary" xml:space="preserve">
+    <value>Kütüphaneniz temizleniyor...</value>
+  </data>
+  <data name="Status_Finalizing" xml:space="preserve">
+    <value>Sonlandırılıyor...</value>
+  </data>
+  <data name="Status_NormalizationFailed" xml:space="preserve">
+    <value>Ses normalizasyonu başarısız oldu. Ayrıntılar için günlükleri kontrol edin.</value>
+  </data>
+  <data name="Status_NoFoldersToRefresh" xml:space="preserve">
+    <value>Kütüphanede yenilenecek klasör bulunmuyor.</value>
+  </data>
+  <data name="Status_LibraryRefreshComplete" xml:space="preserve">
+    <value>Kütüphane yenileme tamamlandı.</value>
+  </data>
+  <!-- Error Mssages -->
+  <data name="Error_FailedToAddFolder" xml:space="preserve">
+    <value>Klasör eklenemedi.</value>
+  </data>
+  <data name="Error_PlaylistNameEmpty" xml:space="preserve">
+    <value>Çalma listesi adı boş olamaz.</value>
+  </data>
+  <data name="Error_RatingRange" xml:space="preserve">
+    <value>Derecelendirme 1 ile 5 arasında olmalıdır.</value>
+  </data>
+  <!-- Labels -->
+  <data name="Label_WithLyrics" xml:space="preserve">
+    <value>şarkı sözleriyle</value>
+  </data>
+  <data name="Label_WithCoverArt" xml:space="preserve">
+    <value>kapak resmiyle</value>
+  </data>
+  <data name="Label_And" xml:space="preserve">
+    <value>ve</value>
+  </data>
+  <!-- Static Strings -->
+  <data name="UnknownFilename" xml:space="preserve">
+    <value>bilinmiyor</value>
+  </data>
+  <data name="ArtistSeparator" xml:space="preserve">
+    <value> &amp; </value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Sırala: </value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>FFmpeg Yüksek Hassasiyetli Ses Normalizasyonu (ReplayGain analizi) için gereklidir ancak sisteminizde bulunamadı.\n\nKurulum için şu adımları izleyin:\n\n1. **İndir**: https://www.gyan.dev/ffmpeg/builds/ adresini ziyaret edin ve 'ffmpeg-git-full.7z' (veya benzeri) temel sürümü indirin.\n2. **Rehber**: Ayrıntılı talimatlar için bu rehberi takip edebilirsiniz: https://phoenixnap.com/kb/ffmpeg-windows\n3. **Çıkar**: Mimari klasörünü açın ve 'ffmpeg.exe' içeren 'bin' dizinini bulun.\n4. **Kur**: 'ffmpeg.exe' dosyasını kalıcı bir klasöre (örn. 'C:\\ffmpeg\\') kopyalayın ve **bu klasörü Sistem PATH** ortam değişkeninize ekleyin.\n5. **Yeniden Başlat**: Değişikliklerin etkili olması için kurulumdan sonra Nagi'yi yeniden başlatın.</value>
+  </data>
+  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
+    <value>Çalma listesindeki şarkılardan hiçbiri kütüphanenizde bulunamadı.</value>
+  </data>
+  <data name="Error_NoPlaylistsToExport" xml:space="preserve">
+    <value>Dışa aktarılacak çalma listesi bulunmuyor.</value>
+  </data>
+  <data name="EqPreset_None" xml:space="preserve">
+    <value>Yok</value>
+  </data>
+  <data name="EqPreset_Classical" xml:space="preserve">
+    <value>Klasik</value>
+  </data>
+  <data name="EqPreset_Dance" xml:space="preserve">
+    <value>Dans</value>
+  </data>
+  <data name="EqPreset_FullBass" xml:space="preserve">
+    <value>Tam Bas</value>
+  </data>
+  <data name="EqPreset_FullTreble" xml:space="preserve">
+    <value>Tam Tiz</value>
+  </data>
+  <data name="EqPreset_Jazz" xml:space="preserve">
+    <value>Caz</value>
+  </data>
+  <data name="EqPreset_Pop" xml:space="preserve">
+    <value>Pop</value>
+  </data>
+  <data name="EqPreset_Rock" xml:space="preserve">
+    <value>Rock</value>
+  </data>
+  <data name="EqPreset_Soft" xml:space="preserve">
+    <value>Yumuşak</value>
+  </data>
+  <data name="EqPreset_Techno" xml:space="preserve">
+    <value>Tekno</value>
+  </data>
+  <data name="EqPreset_Vocal" xml:space="preserve">
+    <value>Vokal</value>
+  </data>
+  <data name="ReplayGain_AllSongsScanned" xml:space="preserve">
+    <value>Tüm şarkıların ses verileri zaten mevcut.</value>
+  </data>
+  <data name="ReplayGain_CalculatingCount" xml:space="preserve">
+    <value>{0} şarkı için ses hesaplanıyor...</value>
+  </data>
+  <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
+    <value>Ses normalizasyonu hesaplanıyor ({0}/{1})...</value>
+  </data>
+  <data name="ReplayGain_Complete" xml:space="preserve">
+    <value>Ses normalizasyonu tamamlandı. {0} şarkı işlendi.</value>
+  </data>
+</root>

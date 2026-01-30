@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Noun Labels -->
+  <data name="Label_Artist" xml:space="preserve">
+    <value>Atlikėjas</value>
+  </data>
+  <data name="Label_Album" xml:space="preserve">
+    <value>Albumas</value>
+  </data>
+  <data name="Label_Genre" xml:space="preserve">
+    <value>Žanras</value>
+  </data>
+  <data name="Label_Title" xml:space="preserve">
+    <value>Pavadinimas</value>
+  </data>
+  <data name="Label_Playlist" xml:space="preserve">
+    <value>Grojaraštis</value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>Failas</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>Metai</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Pridėjimo data</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Sukūrimo data</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Pakeitimo data</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Paskutinį kartą grojo</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Trukmė</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Takelio numeris</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Grojimų skaičius</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Dainos</value>
+  </data>
+  <data name="Label_Song" xml:space="preserve">
+    <value>Daina</value>
+  </data>
+  <data name="Label_Folder" xml:space="preserve">
+    <value>Aplankas</value>
+  </data>
+  <data name="Label_Folders" xml:space="preserve">
+    <value>Aplankai</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Rankinė tvarka</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Atsitiktinis</value>
+  </data>
+  <!-- Format Patterns -->
+  <data name="Format_Unknown" xml:space="preserve">
+    <value>Nežinoma {0}</value>
+  </data>
+  <data name="Format_New" xml:space="preserve">
+    <value>Nauja {0}</value>
+  </data>
+  <data name="Format_NotFound" xml:space="preserve">
+    <value>{0} nerasta.</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A iki Z)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Z iki A)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (Naujausia)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (Seniausia)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (didėjančiai)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (mažėjančiai)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>Trumpiausi pirmiausia</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>Ilgiausi pirmiausia</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>Lėčiausi pirmiausia ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>Greičiausi pirmiausia ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>Daugiausia {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>Mažiausiai {0}</value>
+  </data>
+  <data name="Format_ScanFolderProgress" xml:space="preserve">
+    <value>Nuskaitomas aplankas {0} iš {1}: {2} - {3}</value>
+  </data>
+  <data name="Format_ScanCompleteResult" xml:space="preserve">
+    <value>Nuskaitymas baigtas. Pridėta arba atnaujinta {0} {1}.</value>
+  </data>
+  <data name="Format_SavingBatch" xml:space="preserve">
+    <value>Saugoma partija {0}...</value>
+  </data>
+  <!-- Status & Success Messages -->
+  <data name="Status_ScanningFolder" xml:space="preserve">
+    <value>Nuskaitomas aplankas...</value>
+  </data>
+  <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
+    <value>Nuskaitymas baigtas. Biblioteka atnaujinta.</value>
+  </data>
+  <data name="Status_ScanCancelled" xml:space="preserve">
+    <value>Nuskaitymas atšauktas.</value>
+  </data>
+  <data name="Status_ScanFailed" xml:space="preserve">
+    <value>Nuskaitymas nepavyko. Išsamią informaciją rasite žurnaluose.</value>
+  </data>
+  <data name="Status_PreparingScanCaches" xml:space="preserve">
+    <value>Ruošiami nuskaitymo talpyklos...</value>
+  </data>
+  <data name="Status_ReadingSongDetails" xml:space="preserve">
+    <value>Skaitoma dainų informacija...</value>
+  </data>
+  <data name="Status_CleaningUpLibrary" xml:space="preserve">
+    <value>Valoma jūsų biblioteka...</value>
+  </data>
+  <data name="Status_Finalizing" xml:space="preserve">
+    <value>Baigiama...</value>
+  </data>
+  <data name="Status_NormalizationFailed" xml:space="preserve">
+    <value>Garso normalizavimas nepavyko. Išsamią informaciją rasite žurnaluose.</value>
+  </data>
+  <data name="Status_NoFoldersToRefresh" xml:space="preserve">
+    <value>Bibliotekoje nėra aplankų, kuriuos būtų galima atnaujinti.</value>
+  </data>
+  <data name="Status_LibraryRefreshComplete" xml:space="preserve">
+    <value>Bibliotekos atnaujinimas baigtas.</value>
+  </data>
+  <!-- Error Mssages -->
+  <data name="Error_FailedToAddFolder" xml:space="preserve">
+    <value>Nepavyko pridėti aplanko.</value>
+  </data>
+  <data name="Error_PlaylistNameEmpty" xml:space="preserve">
+    <value>Grojaraščio pavadinimas negali būti tuščias.</value>
+  </data>
+  <data name="Error_RatingRange" xml:space="preserve">
+    <value>Įvertinimas turi būti nuo 1 iki 5.</value>
+  </data>
+  <!-- Labels -->
+  <data name="Label_WithLyrics" xml:space="preserve">
+    <value>su dainų tekstais</value>
+  </data>
+  <data name="Label_WithCoverArt" xml:space="preserve">
+    <value>su viršeliu</value>
+  </data>
+  <data name="Label_And" xml:space="preserve">
+    <value>ir</value>
+  </data>
+  <!-- Static Strings -->
+  <data name="UnknownFilename" xml:space="preserve">
+    <value>nežinoma</value>
+  </data>
+  <data name="ArtistSeparator" xml:space="preserve">
+    <value> ir </value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Rūšiuoti pagal: </value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>FFmpeg reikalingas didelio tikslumo garso normalizavimui (ReplayGain analizei), tačiau jis nebuvo rastas jūsų sistemoje.\n\nNorėdami jį nustatyti, atlikite šiuos veiksmus:\n\n1. **Atsisiųsti**: Apsilankykite https://www.gyan.dev/ffmpeg/builds/ ir atsisiųskite „ffmpeg-git-full.7z“ (arba panašų) esminį kūrimą.\n2. **Vadovas**: Išsamias instrukcijas rasite šiame vadove: https://phoenixnap.com/kb/ffmpeg-windows\n3. **Išskleisti**: Atidarykite architektūros aplanką ir raskite „bin“ katalogą, kuriame yra `ffmpeg.exe`.\n4. **Įdiegti**: Nukopijuokite `ffmpeg.exe` į nuolatinį aplanką (pvz., `C:\\ffmpeg\\`) ir **pridėkite tą aplanką prie savo sistemos PATH** aplinkos kintamojo.\n5. **Paleisti iš naujo**: Kad pakeitimai įsigaliotų, po įdiegimo iš naujo paleiskite Nagi.</value>
+  </data>
+  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
+    <value>Jūsų bibliotekoje nerasta dainų iš grojaraščio.</value>
+  </data>
+  <data name="Error_NoPlaylistsToExport" xml:space="preserve">
+    <value>Nėra grojaraščių eksportavimui.</value>
+  </data>
+  <data name="EqPreset_None" xml:space="preserve">
+    <value>Nėra</value>
+  </data>
+  <data name="EqPreset_Classical" xml:space="preserve">
+    <value>Klasikinė</value>
+  </data>
+  <data name="EqPreset_Dance" xml:space="preserve">
+    <value>Šokių</value>
+  </data>
+  <data name="EqPreset_FullBass" xml:space="preserve">
+    <value>Visas bosas</value>
+  </data>
+  <data name="EqPreset_FullTreble" xml:space="preserve">
+    <value>Visi aukšti tonai</value>
+  </data>
+  <data name="EqPreset_Jazz" xml:space="preserve">
+    <value>Džiazas</value>
+  </data>
+  <data name="EqPreset_Pop" xml:space="preserve">
+    <value>Pop</value>
+  </data>
+  <data name="EqPreset_Rock" xml:space="preserve">
+    <value>Rokas</value>
+  </data>
+  <data name="EqPreset_Soft" xml:space="preserve">
+    <value>Švelnus</value>
+  </data>
+  <data name="EqPreset_Techno" xml:space="preserve">
+    <value>Techno</value>
+  </data>
+  <data name="EqPreset_Vocal" xml:space="preserve">
+    <value>Vokalinis</value>
+  </data>
+  <data name="ReplayGain_AllSongsScanned" xml:space="preserve">
+    <value>Visos dainos jau turi garso duomenis.</value>
+  </data>
+  <data name="ReplayGain_CalculatingCount" xml:space="preserve">
+    <value>Skaičiuojamas garso lygis {0} dainoms...</value>
+  </data>
+  <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
+    <value>Skaičiuojamas garso normalizavimas ({0}/{1})...</value>
+  </data>
+  <data name="ReplayGain_Complete" xml:space="preserve">
+    <value>Garso normalizavimas baigtas. Apdorota {0} dainų.</value>
+  </data>
+</root>

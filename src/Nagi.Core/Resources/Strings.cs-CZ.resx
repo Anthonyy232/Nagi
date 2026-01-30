@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Noun Labels -->
+  <data name="Label_Artist" xml:space="preserve">
+    <value>Umělec</value>
+  </data>
+  <data name="Label_Album" xml:space="preserve">
+    <value>Album</value>
+  </data>
+  <data name="Label_Genre" xml:space="preserve">
+    <value>Žánr</value>
+  </data>
+  <data name="Label_Title" xml:space="preserve">
+    <value>Název</value>
+  </data>
+  <data name="Label_Playlist" xml:space="preserve">
+    <value>Seznam skladeb</value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>Soubor</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>Rok</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Datum přidání</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Datum vytvoření</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Datum úpravy</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Naposledy přehráno</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Délka</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Číslo stopy</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Počet přehrání</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Skladby</value>
+  </data>
+  <data name="Label_Song" xml:space="preserve">
+    <value>Skladba</value>
+  </data>
+  <data name="Label_Folder" xml:space="preserve">
+    <value>Složka</value>
+  </data>
+  <data name="Label_Folders" xml:space="preserve">
+    <value>Složky</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Ruční pořadí</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Náhodně</value>
+  </data>
+  <!-- Format Patterns -->
+  <data name="Format_Unknown" xml:space="preserve">
+    <value>Neznámý {0}</value>
+  </data>
+  <data name="Format_New" xml:space="preserve">
+    <value>Nový {0}</value>
+  </data>
+  <data name="Format_NotFound" xml:space="preserve">
+    <value>{0} nenalezeno.</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A až Z)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Z až A)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (Nejnovější)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (Nejstarší)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (Vzestupně)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (Sestupně)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>Nejkratší první</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>Nejdelší první</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>Nejpomalejší první ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>Nejrychlejší první ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>Nejvíce {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>Nejméně {0}</value>
+  </data>
+  <data name="Format_ScanFolderProgress" xml:space="preserve">
+    <value>Skenuji složku {0} z {1}: {2} - {3}</value>
+  </data>
+  <data name="Format_ScanCompleteResult" xml:space="preserve">
+    <value>Skenování dokončeno. Přidáno nebo aktualizováno {0} {1}.</value>
+  </data>
+  <data name="Format_SavingBatch" xml:space="preserve">
+    <value>Ukládám dávku {0}...</value>
+  </data>
+  <!-- Status & Success Messages -->
+  <data name="Status_ScanningFolder" xml:space="preserve">
+    <value>Skenuji složku...</value>
+  </data>
+  <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
+    <value>Skenování dokončeno. Knihovna je aktuální.</value>
+  </data>
+  <data name="Status_ScanCancelled" xml:space="preserve">
+    <value>Skenování zrušeno.</value>
+  </data>
+  <data name="Status_ScanFailed" xml:space="preserve">
+    <value>Skenování selhalo. Podrobnosti naleznete v protokolech.</value>
+  </data>
+  <data name="Status_PreparingScanCaches" xml:space="preserve">
+    <value>Připravuji cache skenování...</value>
+  </data>
+  <data name="Status_ReadingSongDetails" xml:space="preserve">
+    <value>Načítám detaily skladeb...</value>
+  </data>
+  <data name="Status_CleaningUpLibrary" xml:space="preserve">
+    <value>Čistím vaši knihovnu...</value>
+  </data>
+  <data name="Status_Finalizing" xml:space="preserve">
+    <value>Dokončuji...</value>
+  </data>
+  <data name="Status_NormalizationFailed" xml:space="preserve">
+    <value>Normalizace hlasitosti selhala. Podrobnosti naleznete v protokolech.</value>
+  </data>
+  <data name="Status_NoFoldersToRefresh" xml:space="preserve">
+    <value>V knihovně nejsou žádné složky k aktualizaci.</value>
+  </data>
+  <data name="Status_LibraryRefreshComplete" xml:space="preserve">
+    <value>Aktualizace knihovny dokončena.</value>
+  </data>
+  <!-- Error Mssages -->
+  <data name="Error_FailedToAddFolder" xml:space="preserve">
+    <value>Nepodařilo se přidat složku.</value>
+  </data>
+  <data name="Error_PlaylistNameEmpty" xml:space="preserve">
+    <value>Název seznamu skladeb nemůže být prázdný.</value>
+  </data>
+  <data name="Error_RatingRange" xml:space="preserve">
+    <value>Hodnocení musí být mezi 1 a 5.</value>
+  </data>
+  <!-- Labels -->
+  <data name="Label_WithLyrics" xml:space="preserve">
+    <value>s textem</value>
+  </data>
+  <data name="Label_WithCoverArt" xml:space="preserve">
+    <value>s obalem</value>
+  </data>
+  <data name="Label_And" xml:space="preserve">
+    <value>a</value>
+  </data>
+  <!-- Static Strings -->
+  <data name="UnknownFilename" xml:space="preserve">
+    <value>neznámý</value>
+  </data>
+  <data name="ArtistSeparator" xml:space="preserve">
+    <value> &amp; </value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Seřadit podle: </value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>FFmpeg je vyžadován pro vysoce přesnou normalizaci hlasitosti (analýza ReplayGain), ale nebyl nalezen ve vašem systému.\n\nPostupujte podle těchto kroků pro nastavení:\n\n1. **Stáhněte**: Navštivte https://www.gyan.dev/ffmpeg/builds/ a stáhněte 'ffmpeg-git-full.7z' (nebo podobnou) základní sestavu.\n2. **Průvodce**: Podrobné pokyny naleznete v tomto průvodci: https://phoenixnap.com/kb/ffmpeg-windows\n3. **Rozbalte**: Otevřete složku architektury a vyhledejte adresář 'bin' obsahující `ffmpeg.exe`.\n4. **Nainstalujte**: Zkopírujte `ffmpeg.exe` do trvalé složky (např. `C:\\ffmpeg\\`) a **přidejte tuto složku do proměnné prostředí System PATH**.\n5. **Restartujte**: Pro projevení změn prosím restartujte Nagi po instalaci.</value>
+  </data>
+  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
+    <value>V knihovně nebyly nalezeny žádné skladby ze seznamu skladeb.</value>
+  </data>
+  <data name="Error_NoPlaylistsToExport" xml:space="preserve">
+    <value>Žádné seznamy skladeb k exportu.</value>
+  </data>
+  <data name="EqPreset_None" xml:space="preserve">
+    <value>Žádné</value>
+  </data>
+  <data name="EqPreset_Classical" xml:space="preserve">
+    <value>Klasika</value>
+  </data>
+  <data name="EqPreset_Dance" xml:space="preserve">
+    <value>Dance</value>
+  </data>
+  <data name="EqPreset_FullBass" xml:space="preserve">
+    <value>Plné basy</value>
+  </data>
+  <data name="EqPreset_FullTreble" xml:space="preserve">
+    <value>Plné výšky</value>
+  </data>
+  <data name="EqPreset_Jazz" xml:space="preserve">
+    <value>Jazz</value>
+  </data>
+  <data name="EqPreset_Pop" xml:space="preserve">
+    <value>Pop</value>
+  </data>
+  <data name="EqPreset_Rock" xml:space="preserve">
+    <value>Rock</value>
+  </data>
+  <data name="EqPreset_Soft" xml:space="preserve">
+    <value>Jemný</value>
+  </data>
+  <data name="EqPreset_Techno" xml:space="preserve">
+    <value>Techno</value>
+  </data>
+  <data name="EqPreset_Vocal" xml:space="preserve">
+    <value>Vokály</value>
+  </data>
+  <data name="ReplayGain_AllSongsScanned" xml:space="preserve">
+    <value>Všechny skladby již mají data o hlasitosti.</value>
+  </data>
+  <data name="ReplayGain_CalculatingCount" xml:space="preserve">
+    <value>Počítám hlasitost pro {0} skladeb...</value>
+  </data>
+  <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
+    <value>Počítám normalizaci hlasitosti ({0}/{1})...</value>
+  </data>
+  <data name="ReplayGain_Complete" xml:space="preserve">
+    <value>Normalizace hlasitosti dokončena. Zpracováno {0} skladeb.</value>
+  </data>
+</root>

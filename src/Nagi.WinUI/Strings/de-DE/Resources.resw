@@ -1,0 +1,997 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="TrayIcon_ShowWindow.Text" xml:space="preserve">
+    <value>Fenster anzeigen</value>
+  </data>
+  <data name="TrayIcon_Exit.Text" xml:space="preserve">
+    <value>Beenden</value>
+  </data>
+  <data name="MiniPlayer_BackButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Zurück zum Player</value>
+  </data>
+  <data name="MiniPlayer_UpNextHeader.Text" xml:space="preserve">
+    <value>Als Nächstes</value>
+  </data>
+  <data name="MiniPlayer_RestoreButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Nagi anzeigen</value>
+  </data>
+  <data name="MiniPlayer_PreviousButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Zurück</value>
+  </data>
+  <data name="MiniPlayer_NextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Weiter</value>
+  </data>
+  <data name="MiniPlayer_QueueButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Als Nächstes</value>
+  </data>
+  <data name="CrashReport_ReportIssuePreLink.Text" xml:space="preserve">
+    <value>Bitte melden Sie dies, indem Sie ein Problem auf der </value>
+  </data>
+  <data name="CrashReport_IssueLink.Text" xml:space="preserve">
+    <value>Probleme-Seite</value>
+  </data>
+  <data name="CrashReport_ReportIssuePostLink.Text" xml:space="preserve">
+    <value>.</value>
+  </data>
+  <data name="CrashReport_ResetAppAdvice.Text" xml:space="preserve">
+    <value>Wenn dies weiterhin passiert, können Sie versuchen, "App &amp; Daten zurücksetzen". Dadurch werden Ihre Einstellungen und Bibliothek gelöscht, was helfen kann, die App aus einem defekten Zustand wiederherzustellen.</value>
+  </data>
+  <data name="CrashReport_CopyLogButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Protokoll in Zwischenablage kopieren</value>
+  </data>
+  <data name="CrashReport_CopyLogLabel.Text" xml:space="preserve">
+    <value>Protokoll kopieren</value>
+  </data>
+  <data name="SmartPlaylist_PickCoverButton.Content" xml:space="preserve">
+    <value>Cover auswählen</value>
+  </data>
+  <data name="SmartPlaylist_PickCoverButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Ein Coverbild auswählen</value>
+  </data>
+  <data name="SmartPlaylist_PlaylistNameLabel.Text" xml:space="preserve">
+    <value>Wiedergabelistenname</value>
+  </data>
+  <data name="SmartPlaylist_PlaylistNameTextBox.PlaceholderText" xml:space="preserve">
+    <value>Geben Sie einen Namen für Ihre intelligente Wiedergabeliste ein</value>
+  </data>
+  <data name="SmartPlaylist_SortOrderLabel.Text" xml:space="preserve">
+    <value>Sortierreihenfolge</value>
+  </data>
+  <data name="SmartPlaylist_MatchLabel.Text" xml:space="preserve">
+    <value>Übereinstimmung</value>
+  </data>
+  <data name="SmartPlaylist_MatchLogic_All.Content" xml:space="preserve">
+    <value>Alle</value>
+  </data>
+  <data name="SmartPlaylist_MatchLogic_Any.Content" xml:space="preserve">
+    <value>Beliebige</value>
+  </data>
+  <data name="SmartPlaylist_MatchSuffixLabel.Text" xml:space="preserve">
+    <value>der folgenden Regeln:</value>
+  </data>
+  <data name="SmartPlaylist_AddRuleButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Eine neue Regel hinzufügen</value>
+  </data>
+  <data name="SmartPlaylist_AddRuleLabel.Text" xml:space="preserve">
+    <value>Regel hinzufügen</value>
+  </data>
+  <data name="SmartPlaylist_RuleValueTextBox.PlaceholderText" xml:space="preserve">
+    <value>Wert</value>
+  </data>
+  <data name="SmartPlaylist_RemoveRuleButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Diese Regel entfernen</value>
+  </data>
+  <data name="SmartPlaylist_NoRulesTitle.Text" xml:space="preserve">
+    <value>Keine Regeln definiert</value>
+  </data>
+  <data name="SmartPlaylist_NoRulesMessage.Text" xml:space="preserve">
+    <value>Alle Lieder in Ihrer Bibliothek werden in dieser Wiedergabeliste enthalten sein.</value>
+  </data>
+  <data name="SmartPlaylist_AddFirstRuleButton.Content" xml:space="preserve">
+    <value>Fügen Sie Ihre erste Regel hinzu</value>
+  </data>
+  <data name="SmartPlaylist_AddFirstRuleButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Fügen Sie Ihre erste Regel hinzu</value>
+  </data>
+  <data name="SmartPlaylist_Dialog.PrimaryButtonText" xml:space="preserve">
+    <value>Speichern</value>
+  </data>
+  <data name="SmartPlaylist_Dialog.CloseButtonText" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="TrayPopup_PreviousButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Zurück</value>
+  </data>
+  <data name="TrayPopup_NextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Weiter</value>
+  </data>
+  <data name="TrayPopup_QueueButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Als Nächstes</value>
+  </data>
+  <data name="TrayPopup_BackButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Zurück zum Player</value>
+  </data>
+  <data name="TrayPopup_UpNextHeader.Text" xml:space="preserve">
+    <value>Als Nächstes</value>
+  </data>
+  <data name="AppName" xml:space="preserve">
+    <value>Nagi</value>
+  </data>
+  <data name="AppDescription" xml:space="preserve">
+    <value>Entdecken Sie Ihre lokale Musiksammlung neu mit Nagi, einem Musikplayer, der auf Geschwindigkeit, Einfachheit und Datenschutz fokussiert ist. Nagi wurde mit C# und WinUI 3 entwickelt, um eine saubere, native Fluent-Erfahrung zu bieten. Es ist schön, effizient und respektiert Ihre Privatsphäre.</value>
+  </data>
+  <data name="AppShortName" xml:space="preserve">
+    <value>Nagi</value>
+  </data>
+  <data name="AppDisplayName" xml:space="preserve">
+    <value>Nagi Musikplayer</value>
+  </data>
+  <data name="AppInfoTip" xml:space="preserve">
+    <value>Mit Nagi Musikplayer öffnen</value>
+  </data>
+  <data name="StartupTaskDisplayName" xml:space="preserve">
+    <value>Nagi Start</value>
+  </data>
+  <data name="Player_PreviousButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Zurück</value>
+  </data>
+  <data name="Player_NextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Weiter</value>
+  </data>
+  <data name="Player_LyricsButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Songtexte</value>
+  </data>
+  <data name="Player_QueueButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Als Nächstes</value>
+  </data>
+  <data name="Player_GoToAlbumButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Zum Album gehen</value>
+  </data>
+  <data name="QueueFlyout_Title.Text" xml:space="preserve">
+    <value>Als Nächstes</value>
+  </data>
+  <data name="AlbumPage_Title.Text" xml:space="preserve">
+    <value>Alben</value>
+  </data>
+  <data name="AlbumPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>Alben suchen...</value>
+  </data>
+  <data name="AlbumPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Alben suchen</value>
+  </data>
+  <data name="AlbumPage_RandomButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Zufällig auswählen</value>
+  </data>
+  <data name="AlbumPage_Menu_Play.Text" xml:space="preserve">
+    <value>Wiedergeben</value>
+  </data>
+  <data name="AlbumPage_Empty_Title.Text" xml:space="preserve">
+    <value>Keine Alben gefunden</value>
+  </data>
+  <data name="AlbumPage_Empty_Subtitle.Text" xml:space="preserve">
+    <value>Scannen Sie Ihre Musikbibliothek, um Alben zu füllen</value>
+  </data>
+  <data name="AlbumViewPage_Header_Label.Text" xml:space="preserve">
+    <value>Album</value>
+  </data>
+  <data name="AlbumViewPage_Songs_Title.Text" xml:space="preserve">
+    <value>Lieder</value>
+  </data>
+  <data name="AlbumViewPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>Im Album suchen...</value>
+  </data>
+  <data name="AlbumViewPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Im Album suchen</value>
+  </data>
+  <data name="AlbumViewPage_PlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Alle wiedergeben</value>
+  </data>
+  <data name="AlbumViewPage_ShufflePlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Alle mischen und wiedergeben</value>
+  </data>
+  <data name="AlbumViewPage_SongMenu_Play.Text" xml:space="preserve">
+    <value>Wiedergeben</value>
+  </data>
+  <data name="AlbumViewPage_SongMenu_PlayNext.Text" xml:space="preserve">
+    <value>Als Nächstes wiedergeben</value>
+  </data>
+  <data name="AlbumViewPage_SongMenu_AddToQueue.Text" xml:space="preserve">
+    <value>Zur Warteschlange hinzufügen</value>
+  </data>
+  <data name="AlbumViewPage_SongMenu_AddToPlaylist.Text" xml:space="preserve">
+    <value>Zur Wiedergabeliste hinzufügen</value>
+  </data>
+  <data name="AlbumViewPage_SongMenu_GoToArtist.Text" xml:space="preserve">
+    <value>Zum Künstler gehen</value>
+  </data>
+  <data name="AlbumViewPage_SongMenu_ShowInExplorer.Text" xml:space="preserve">
+    <value>Im Explorer anzeigen</value>
+  </data>
+  <data name="AlbumViewPage_SongPlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Wiedergeben</value>
+  </data>
+  <data name="AlbumViewPage_Empty_Title.Text" xml:space="preserve">
+    <value>Keine Lieder in diesem Album gefunden</value>
+  </data>
+  <data name="AlbumViewPage_Empty_Subtitle.Text" xml:space="preserve">
+    <value>Versuchen Sie, nach etwas anderem zu suchen</value>
+  </data>
+  <data name="ArtistPage_Title.Text" xml:space="preserve">
+    <value>Künstler</value>
+  </data>
+  <data name="ArtistPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>Künstler suchen...</value>
+  </data>
+  <data name="ArtistPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Künstler suchen</value>
+  </data>
+  <data name="ArtistPage_RandomButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Zufällig auswählen</value>
+  </data>
+  <data name="ArtistPage_Menu_Play.Text" xml:space="preserve">
+    <value>Wiedergeben</value>
+  </data>
+  <data name="ArtistPage_Menu_ChangeImage.Text" xml:space="preserve">
+    <value>Bild ändern</value>
+  </data>
+  <data name="ArtistPage_Menu_RemoveImage.Text" xml:space="preserve">
+    <value>Bild entfernen</value>
+  </data>
+  <data name="ArtistPage_Empty_Title.Text" xml:space="preserve">
+    <value>Keine Künstler gefunden</value>
+  </data>
+  <data name="ArtistPage_Empty_Subtitle.Text" xml:space="preserve">
+    <value>Scannen Sie Ihre Musikbibliothek, um Künstler zu füllen</value>
+  </data>
+  <data name="ArtistViewPage_EditOverlay.Content" xml:space="preserve">
+    <value>Künstlerbild ändern</value>
+  </data>
+  <data name="ArtistViewPage_ImageMenu_ChangeImage.Text" xml:space="preserve">
+    <value>Bild ändern</value>
+  </data>
+  <data name="ArtistViewPage_ImageMenu_RemoveImage.Text" xml:space="preserve">
+    <value>Bild entfernen</value>
+  </data>
+  <data name="ArtistViewPage_Header_Label.Text" xml:space="preserve">
+    <value>Künstler</value>
+  </data>
+  <data name="ArtistViewPage_Albums_Title.Text" xml:space="preserve">
+    <value>Top-Alben</value>
+  </data>
+  <data name="ArtistViewPage_Songs_Title.Text" xml:space="preserve">
+    <value>Lieder</value>
+  </data>
+  <data name="ArtistViewPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>Im Künstler suchen...</value>
+  </data>
+  <data name="ArtistViewPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Im Künstler suchen</value>
+  </data>
+  <data name="ArtistViewPage_PlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Alle wiedergeben</value>
+  </data>
+  <data name="ArtistViewPage_ShufflePlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Alle mischen und wiedergeben</value>
+  </data>
+  <data name="ArtistViewPage_SongMenu_Play.Text" xml:space="preserve">
+    <value>Wiedergeben</value>
+  </data>
+  <data name="ArtistViewPage_SongMenu_PlayNext.Text" xml:space="preserve">
+    <value>Als Nächstes wiedergeben</value>
+  </data>
+  <data name="ArtistViewPage_SongMenu_AddToQueue.Text" xml:space="preserve">
+    <value>Zur Warteschlange hinzufügen</value>
+  </data>
+  <data name="ArtistViewPage_SongMenu_AddToPlaylist.Text" xml:space="preserve">
+    <value>Zur Wiedergabeliste hinzufügen</value>
+  </data>
+  <data name="ArtistViewPage_SongMenu_GoToAlbum.Text" xml:space="preserve">
+    <value>Zum Album gehen</value>
+  </data>
+  <data name="ArtistViewPage_SongMenu_ShowInExplorer.Text" xml:space="preserve">
+    <value>Im Explorer anzeigen</value>
+  </data>
+  <data name="ArtistViewPage_SongPlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Wiedergeben</value>
+  </data>
+  <data name="ArtistViewPage_Empty_Title.Text" xml:space="preserve">
+    <value>Keine Lieder für diesen Künstler gefunden</value>
+  </data>
+  <data name="ArtistViewPage_Empty_Subtitle.Text" xml:space="preserve">
+    <value>Versuchen Sie, nach etwas anderem zu suchen</value>
+  </data>
+  <data name="FolderPage_Title.Text" xml:space="preserve">
+    <value>Ordner</value>
+  </data>
+  <data name="FolderPage_RandomButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Zufällig auswählen</value>
+  </data>
+  <data name="FolderPage_AddFolderButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Einen Musikordner hinzufügen</value>
+  </data>
+  <data name="FolderPage_AddFolder_Label.Text" xml:space="preserve">
+    <value>Ordner hinzufügen</value>
+  </data>
+  <data name="FolderPage_Menu_Play.Text" xml:space="preserve">
+    <value>Wiedergeben</value>
+  </data>
+  <data name="FolderPage_Menu_Rescan.Text" xml:space="preserve">
+    <value>Erneut scannen</value>
+  </data>
+  <data name="FolderPage_Menu_Delete.Text" xml:space="preserve">
+    <value>Löschen</value>
+  </data>
+  <data name="FolderPage_Empty_Title.Text" xml:space="preserve">
+    <value>Noch keine Ordner hinzugefügt</value>
+  </data>
+  <data name="FolderPage_Empty_Subtitle.Text" xml:space="preserve">
+    <value>Musikordner hinzufügen, um zu beginnen</value>
+  </data>
+  <data name="FolderSongViewPage_FolderMenu_Play.Text" xml:space="preserve">
+    <value>Wiedergeben</value>
+  </data>
+  <data name="FolderSongViewPage_FolderMenu_AddToPlaylist.Text" xml:space="preserve">
+    <value>Zur Wiedergabeliste hinzufügen</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_Play.Text" xml:space="preserve">
+    <value>Wiedergeben</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_PlayNext.Text" xml:space="preserve">
+    <value>Als Nächstes wiedergeben</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_AddToQueue.Text" xml:space="preserve">
+    <value>Zur Warteschlange hinzufügen</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_AddToPlaylist.Text" xml:space="preserve">
+    <value>Zur Wiedergabeliste hinzufügen</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_GoToAlbum.Text" xml:space="preserve">
+    <value>Zum Album gehen</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_GoToArtist.Text" xml:space="preserve">
+    <value>Zum Künstler gehen</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_ShowInExplorer.Text" xml:space="preserve">
+    <value>Im Explorer anzeigen</value>
+  </data>
+  <data name="FolderSongViewPage_SongPlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Wiedergeben</value>
+  </data>
+  <data name="FolderSongViewPage_Header_Label.Text" xml:space="preserve">
+    <value>Ordner</value>
+  </data>
+  <data name="FolderSongViewPage_Songs_Title.Text" xml:space="preserve">
+    <value>Lieder</value>
+  </data>
+  <data name="FolderSongViewPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>Im Ordner suchen...</value>
+  </data>
+  <data name="FolderSongViewPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Im Ordner suchen</value>
+  </data>
+  <data name="FolderSongViewPage_PlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Alle wiedergeben</value>
+  </data>
+  <data name="FolderSongViewPage_ShufflePlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Alle mischen und wiedergeben</value>
+  </data>
+  <data name="FolderSongViewPage_Empty_Title.Text" xml:space="preserve">
+    <value>Dieser Ordner ist leer</value>
+  </data>
+  <data name="FolderSongViewPage_Empty_Subtitle.Text" xml:space="preserve">
+    <value>Keine Lieder oder Unterordner gefunden</value>
+  </data>
+  <data name="GenrePage_Title.Text" xml:space="preserve">
+    <value>Genres</value>
+  </data>
+  <data name="GenrePage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>Genres suchen...</value>
+  </data>
+  <data name="GenrePage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Genres suchen</value>
+  </data>
+  <data name="GenrePage_RandomButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Zufällig auswählen</value>
+  </data>
+  <data name="GenrePage_Menu_Play.Text" xml:space="preserve">
+    <value>Wiedergeben</value>
+  </data>
+  <data name="GenrePage_Empty_Title.Text" xml:space="preserve">
+    <value>Keine Genres gefunden</value>
+  </data>
+  <data name="GenrePage_Empty_Subtitle.Text" xml:space="preserve">
+    <value>Scannen Sie Ihre Musikbibliothek, um Genres zu füllen</value>
+  </data>
+  <data name="LibraryPage_Title.Text" xml:space="preserve">
+    <value>Bibliothek</value>
+  </data>
+  <data name="LibraryPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>Bibliothek durchsuchen...</value>
+  </data>
+  <data name="LibraryPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Bibliothek durchsuchen</value>
+  </data>
+  <data name="LibraryPage_PlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Alle wiedergeben</value>
+  </data>
+  <data name="LibraryPage_ShufflePlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Alle mischen und wiedergeben</value>
+  </data>
+  <data name="LibraryPage_Context_Play.Text" xml:space="preserve">
+    <value>Wiedergeben</value>
+  </data>
+  <data name="LibraryPage_Context_PlayNext.Text" xml:space="preserve">
+    <value>Als Nächstes wiedergeben</value>
+  </data>
+  <data name="LibraryPage_Context_AddToQueue.Text" xml:space="preserve">
+    <value>Zur Warteschlange hinzufügen</value>
+  </data>
+  <data name="LibraryPage_Context_AddToPlaylist.Text" xml:space="preserve">
+    <value>Zur Wiedergabeliste hinzufügen</value>
+  </data>
+  <data name="LibraryPage_Context_GoToAlbum.Text" xml:space="preserve">
+    <value>Zum Album gehen</value>
+  </data>
+  <data name="LibraryPage_Context_GoToArtist.Text" xml:space="preserve">
+    <value>Zum Künstler gehen</value>
+  </data>
+  <data name="LibraryPage_Context_ShowInExplorer.Text" xml:space="preserve">
+    <value>Im Explorer anzeigen</value>
+  </data>
+  <data name="LibraryPage_SongElement_PlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Wiedergeben</value>
+  </data>
+  <data name="LibraryPage_EmptyState_Title.Text" xml:space="preserve">
+    <value>Ihre Bibliothek ist leer</value>
+  </data>
+  <data name="LibraryPage_EmptyState_Subtitle.Text" xml:space="preserve">
+    <value>Fügen Sie Ordner zu Ihrer Bibliothek in den Einstellungen hinzu</value>
+  </data>
+  <data name="LyricsPage_NoLyrics_Title.Text" xml:space="preserve">
+    <value>Keine Songtexte für diesen Titel gefunden</value>
+  </data>
+  <data name="LyricsPage_NoLyrics_Subtitle.Text" xml:space="preserve">
+    <value>Versuchen Sie ein anderes Lied</value>
+  </data>
+  <data name="OnboardingPage_Welcome_Title.Text" xml:space="preserve">
+    <value>Willkommen bei Nagi</value>
+  </data>
+  <data name="OnboardingPage_AddFolderButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Fügen Sie einen Musikordner hinzu, um zu beginnen</value>
+  </data>
+  <data name="OnboardingPage_AddFolderButton_Content.Text" xml:space="preserve">
+    <value>Musikordner hinzufügen</value>
+  </data>
+  <data name="PlaylistPage_Title.Text" xml:space="preserve">
+    <value>Wiedergabelisten</value>
+  </data>
+  <data name="PlaylistPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>Wiedergabelisten suchen...</value>
+  </data>
+  <data name="PlaylistPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Wiedergabelisten suchen</value>
+  </data>
+  <data name="PlaylistPage_RandomButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Zufällig auswählen</value>
+  </data>
+  <data name="PlaylistPage_NewPlaylistButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Eine neue Wiedergabeliste erstellen</value>
+  </data>
+  <data name="PlaylistPage_NewPlaylistButton_Content.Text" xml:space="preserve">
+    <value>Neue Wiedergabeliste</value>
+  </data>
+  <data name="PlaylistPage_NewPlaylistMenu_Regular.Text" xml:space="preserve">
+    <value>Reguläre Wiedergabeliste</value>
+  </data>
+  <data name="PlaylistPage_NewPlaylistMenu_Smart.Text" xml:space="preserve">
+    <value>Intelligente Wiedergabeliste</value>
+  </data>
+  <data name="PlaylistPage_Context_Play.Text" xml:space="preserve">
+    <value>Wiedergeben</value>
+  </data>
+  <data name="PlaylistPage_Context_Rename.Text" xml:space="preserve">
+    <value>Umbenennen</value>
+  </data>
+  <data name="PlaylistPage_Context_ChangeImage.Text" xml:space="preserve">
+    <value>Bild ändern</value>
+  </data>
+  <data name="PlaylistPage_Context_RemoveImage.Text" xml:space="preserve">
+    <value>Bild entfernen</value>
+  </data>
+  <data name="PlaylistPage_Context_Delete.Text" xml:space="preserve">
+    <value>Löschen</value>
+  </data>
+  <data name="PlaylistPage_EmptyState_Title.Text" xml:space="preserve">
+    <value>Noch keine Wiedergabelisten</value>
+  </data>
+  <data name="PlaylistPage_EmptyState_Subtitle.Text" xml:space="preserve">
+    <value>Erstellen Sie eine Wiedergabeliste, um zu beginnen</value>
+  </data>
+  <data name="PlaylistSongViewPage_Header_Caption.Text" xml:space="preserve">
+    <value>Wiedergabeliste</value>
+  </data>
+  <data name="PlaylistSongViewPage_Section_Songs.Text" xml:space="preserve">
+    <value>Lieder</value>
+  </data>
+  <data name="PlaylistSongViewPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>In Wiedergabeliste suchen...</value>
+  </data>
+  <data name="PlaylistSongViewPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>In Wiedergabeliste suchen</value>
+  </data>
+  <data name="PlaylistSongViewPage_PlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Alle wiedergeben</value>
+  </data>
+  <data name="PlaylistSongViewPage_ShufflePlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Alle mischen und wiedergeben</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_Play.Text" xml:space="preserve">
+    <value>Wiedergeben</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_PlayNext.Text" xml:space="preserve">
+    <value>Als Nächstes wiedergeben</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_AddToQueue.Text" xml:space="preserve">
+    <value>Zur Warteschlange hinzufügen</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_GoToAlbum.Text" xml:space="preserve">
+    <value>Zum Album gehen</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_GoToArtist.Text" xml:space="preserve">
+    <value>Zum Künstler gehen</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_ShowInExplorer.Text" xml:space="preserve">
+    <value>Im Explorer anzeigen</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist.Text" xml:space="preserve">
+    <value>Aus Wiedergabeliste entfernen</value>
+  </data>
+  <data name="PlaylistSongViewPage_SongElement_PlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Wiedergeben</value>
+  </data>
+  <data name="PlaylistSongViewPage_EmptyState_Title.Text" xml:space="preserve">
+    <value>Diese Wiedergabeliste ist leer</value>
+  </data>
+  <data name="PlaylistSongViewPage_EmptyState_Subtitle.Text" xml:space="preserve">
+    <value>Fügen Sie Lieder aus Ihrer Bibliothek hinzu</value>
+  </data>
+  <data name="GenreViewPage_Header_Caption.Text" xml:space="preserve">
+    <value>Genre</value>
+  </data>
+  <data name="GenreViewPage_Section_Songs.Text" xml:space="preserve">
+    <value>Lieder</value>
+  </data>
+  <data name="GenreViewPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>In Genre suchen...</value>
+  </data>
+  <data name="GenreViewPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>In Genre suchen</value>
+  </data>
+  <data name="GenreViewPage_PlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Alle wiedergeben</value>
+  </data>
+  <data name="GenreViewPage_ShufflePlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Alle mischen und wiedergeben</value>
+  </data>
+  <data name="GenreViewPage_Context_Play.Text" xml:space="preserve">
+    <value>Wiedergeben</value>
+  </data>
+  <data name="GenreViewPage_Context_PlayNext.Text" xml:space="preserve">
+    <value>Als Nächstes wiedergeben</value>
+  </data>
+  <data name="GenreViewPage_Context_AddToQueue.Text" xml:space="preserve">
+    <value>Zur Warteschlange hinzufügen</value>
+  </data>
+  <data name="GenreViewPage_Context_AddToPlaylist.Text" xml:space="preserve">
+    <value>Zur Wiedergabeliste hinzufügen</value>
+  </data>
+  <data name="GenreViewPage_Context_GoToAlbum.Text" xml:space="preserve">
+    <value>Zum Album gehen</value>
+  </data>
+  <data name="GenreViewPage_Context_GoToArtist.Text" xml:space="preserve">
+    <value>Zum Künstler gehen</value>
+  </data>
+  <data name="GenreViewPage_Context_ShowInExplorer.Text" xml:space="preserve">
+    <value>Im Explorer anzeigen</value>
+  </data>
+  <data name="GenreViewPage_Context_NoPlaylists.Text" xml:space="preserve">
+    <value>Keine Wiedergabelisten verfügbar</value>
+  </data>
+  <data name="GenreViewPage_SongElement_PlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Wiedergeben</value>
+  </data>
+  <data name="GenreViewPage_EmptyState_Title.Text" xml:space="preserve">
+    <value>Keine Lieder für dieses Genre gefunden</value>
+  </data>
+  <data name="GenreViewPage_EmptyState_Subtitle.Text" xml:space="preserve">
+    <value>Versuchen Sie, nach etwas anderem zu suchen</value>
+  </data>
+  <data name="SettingsPage_Title.Text" xml:space="preserve">
+    <value>Einstellungen</value>
+  </data>
+  <data name="SettingsPage_Section_Appearance.Text" xml:space="preserve">
+    <value>Erscheinungsbild</value>
+  </data>
+  <data name="SettingsPage_Theme.Header" xml:space="preserve">
+    <value>Design</value>
+  </data>
+  <data name="SettingsPage_Theme.Description" xml:space="preserve">
+    <value>Wählen Sie das Anwendungsthema.</value>
+  </data>
+  <data name="SettingsPage_AccentColor.Text" xml:space="preserve">
+    <value>Akzentfarbe</value>
+  </data>
+
+  <data name="SettingsPage_ResetAccentColor.Content" xml:space="preserve">
+    <value>Auf Standard zurücksetzen</value>
+  </data>
+  <data name="SettingsPage_WindowMaterial.Header" xml:space="preserve">
+    <value>Fenstermaterial</value>
+  </data>
+  <data name="SettingsPage_WindowMaterial.Description" xml:space="preserve">
+    <value>Wählen Sie das Hintergrundmaterial für das Fenster.</value>
+  </data>
+  <data name="SettingsPage_DynamicTheming.Header" xml:space="preserve">
+    <value>Dynamisches Design</value>
+  </data>
+  <data name="SettingsPage_DynamicTheming.Description" xml:space="preserve">
+    <value>Dynamische Designoptionen aktivieren und konfigurieren.</value>
+  </data>
+  <data name="SettingsPage_RememberWindowSize.Header" xml:space="preserve">
+    <value>Fenstergröße speichern</value>
+  </data>
+  <data name="SettingsPage_RememberWindowSize.Description" xml:space="preserve">
+    <value>Das Hauptfenster beim nächsten Start auf die vorherige Größe wiederherstellen.</value>
+  </data>
+  <data name="SettingsPage_RememberWindowPosition.Header" xml:space="preserve">
+    <value>Fensterposition speichern</value>
+  </data>
+  <data name="SettingsPage_RememberWindowPosition.Description" xml:space="preserve">
+    <value>Das Hauptfenster beim nächsten Start an der vorherigen Bildschirmposition wiederherstellen.</value>
+  </data>
+  <data name="SettingsPage_RememberNavState.Header" xml:space="preserve">
+    <value>Navigationspanel-Status speichern</value>
+  </data>
+  <data name="SettingsPage_RememberNavState.Description" xml:space="preserve">
+    <value>Behalten Sie das linke Navigationspanel geöffnet oder geschlossen, wie Sie es verlassen haben.</value>
+  </data>
+  <data name="SettingsPage_CustomizeNav.Header" xml:space="preserve">
+    <value>Navigation anpassen</value>
+  </data>
+  <data name="SettingsPage_CustomizeNav.Description" xml:space="preserve">
+    <value>Ziehen Sie, um Seiten im Navigationsmenü neu anzuordnen. Verwenden Sie den Schalter, um eine Seite anzuzeigen oder auszublenden.</value>
+  </data>
+  <data name="SettingsPage_Section_Player.Text" xml:space="preserve">
+    <value>Player-Verwaltung</value>
+  </data>
+  <data name="SettingsPage_VolumeNormalization.Header" xml:space="preserve">
+    <value>Lautstärkenormalisierung (ReplayGain)</value>
+  </data>
+  <data name="SettingsPage_VolumeNormalization.Description" xml:space="preserve">
+    <value>Passen Sie die Lautstärke automatisch an den Standardpegel (-14 LUFS) an, um plötzliche Lautstärkeänderungen zu vermeiden.</value>
+  </data>
+  <data name="SettingsPage_Equalizer.Text" xml:space="preserve">
+    <value>Audio-Equalizer</value>
+  </data>
+
+  <data name="SettingsPage_ResetEqualizer.Content" xml:space="preserve">
+    <value>Auf Standard zurücksetzen</value>
+  </data>
+  <data name="SettingsPage_Equalizer_Preamp.Text" xml:space="preserve">
+    <value>Vorverstärker</value>
+  </data>
+  <data name="SettingsPage_Equalizer_Preset_Custom.PlaceholderText" xml:space="preserve">
+    <value>Benutzerdefiniert</value>
+  </data>
+  <data name="SettingsPage_CustomizePlayer.Text" xml:space="preserve">
+    <value>Player-Steuerung anpassen</value>
+  </data>
+
+  <data name="SettingsPage_ResetPlayerButtons.Content" xml:space="preserve">
+    <value>Auf Standard zurücksetzen</value>
+  </data>
+  <data name="SettingsPage_CustomizePlayer_Instructions.Text" xml:space="preserve">
+    <value>Darüberfahren, um die Sichtbarkeit umzuschalten. Ziehen, um neu anzuordnen. Die Trennlinie trennt die mittleren und rechten Steuerelemente.</value>
+  </data>
+  <data name="SettingsPage_CollapsablePlayer.Header" xml:space="preserve">
+    <value>Einklappbarer Player</value>
+  </data>
+  <data name="SettingsPage_CollapsablePlayer.Description" xml:space="preserve">
+    <value>Animieren Sie die Player-Leiste zum Erweitern und Einklappen.</value>
+  </data>
+  <data name="SettingsPage_RestorePlayback.Header" xml:space="preserve">
+    <value>Wiedergabestatus wiederherstellen</value>
+  </data>
+  <data name="SettingsPage_RestorePlayback.Description" xml:space="preserve">
+    <value>Speichern Sie den aktuellen Wiedergabestatus, um ihn beim nächsten Start fortzusetzen.</value>
+  </data>
+  <data name="SettingsPage_AutoLaunch.Header" xml:space="preserve">
+    <value>Automatischer Start beim Systemstart</value>
+  </data>
+  <data name="SettingsPage_AutoLaunch.Description" xml:space="preserve">
+    <value>Starten Sie Nagi automatisch, wenn Sie sich an Ihrem Computer anmelden.</value>
+  </data>
+  <data name="SettingsPage_StartMinimized.Header" xml:space="preserve">
+    <value>Minimiert starten</value>
+  </data>
+  <data name="SettingsPage_StartMinimized.Description" xml:space="preserve">
+    <value>Beim Start wird das Anwendungsfenster standardmäßig minimiert.</value>
+  </data>
+  <data name="SettingsPage_MinimizeToMiniPlayer.Header" xml:space="preserve">
+    <value>In Mini-Player minimieren</value>
+  </data>
+  <data name="SettingsPage_MinimizeToMiniPlayer.Description" xml:space="preserve">
+    <value>Wenn minimiert, zeigen Sie einen kompakten schwebenden Player an, anstatt das Fenster auszublenden.</value>
+  </data>
+  <data name="SettingsPage_HideToTray.Header" xml:space="preserve">
+    <value>In Taskleiste minimieren</value>
+  </data>
+  <data name="SettingsPage_HideToTray.Description" xml:space="preserve">
+    <value>Beim Schließen in der Taskleiste ausblenden.</value>
+  </data>
+  <data name="SettingsPage_TrayCoverArt.Header" xml:space="preserve">
+    <value>Cover-Art im Flyout anzeigen</value>
+  </data>
+  <data name="SettingsPage_TrayCoverArt.Description" xml:space="preserve">
+    <value>Zeigt das Cover-Art im kompakten Player an, der beim Klicken auf das Taskleistensymbol erscheint.</value>
+  </data>
+  <data name="SettingsPage_Section_Data.Text" xml:space="preserve">
+    <value>Datenverwaltung</value>
+  </data>
+  <data name="SettingsPage_ArtistSplitting.Header" xml:space="preserve">
+    <value>Künstlertrennung</value>
+  </data>
+  <data name="SettingsPage_ArtistSplitting.Description" xml:space="preserve">
+    <value>Definieren Sie Zeichen, die zum Trennen mehrerer Künstler verwendet werden (z.B. ';/'). Lassen Sie das Feld leer, um die Funktion zu deaktivieren.</value>
+  </data>
+  <data name="SettingsPage_RescanLibrary.Content" xml:space="preserve">
+    <value>Bibliothek erneut scannen</value>
+  </data>
+  <data name="SettingsPage_RescanLibrary.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Bibliothek erneut scannen, um Trennungsänderungen anzuwenden</value>
+  </data>
+  <data name="SettingsPage_OnlineMetadata.Header" xml:space="preserve">
+    <value>Online-Metadaten abrufen</value>
+  </data>
+  <data name="SettingsPage_OnlineMetadata.Description" xml:space="preserve">
+    <value>Zusätzliche Informationen wie Künstlerbilder und Biografien von Online-Diensten (z.B. Spotify, Last.fm) abrufen.</value>
+  </data>
+  <data name="SettingsPage_MetadataSources.Header" xml:space="preserve">
+    <value>Quellen</value>
+  </data>
+  <data name="SettingsPage_MetadataSources.Description" xml:space="preserve">
+    <value>Ziehen Sie, um Metadatenquellen neu anzuordnen. Fahren Sie mit der Maus über jede Quelle für Details.</value>
+  </data>
+  <data name="SettingsPage_OnlineLyrics.Header" xml:space="preserve">
+    <value>Online-Songtexte abrufen</value>
+  </data>
+  <data name="SettingsPage_OnlineLyrics.Description" xml:space="preserve">
+    <value>Fehlende Songtexte automatisch von Online-Quellen abrufen. (Datenschutz: sendet Titelmetadaten an Drittanbieterdienste)</value>
+  </data>
+  <data name="SettingsPage_LyricsSources.Header" xml:space="preserve">
+    <value>Quellen</value>
+  </data>
+  <data name="SettingsPage_LyricsSources.Description" xml:space="preserve">
+    <value>Ziehen Sie, um Songtextquellen neu anzuordnen. Fahren Sie mit der Maus über jede Quelle für Details.</value>
+  </data>
+  <data name="SettingsPage_PlaylistsIO.Header" xml:space="preserve">
+    <value>Wiedergabelisten exportieren/importieren</value>
+  </data>
+  <data name="SettingsPage_PlaylistsIO.Description" xml:space="preserve">
+    <value>Exportieren Sie Wiedergabelisten in M3U-Dateien zur Verwendung in anderen Playern oder importieren Sie M3U-Wiedergabelisten in Nagi.</value>
+  </data>
+  <data name="SettingsPage_ExportPlaylists.Content" xml:space="preserve">
+    <value>Alle exportieren...</value>
+  </data>
+  <data name="SettingsPage_ExportPlaylists.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Alle Wiedergabelisten in einen Ordner exportieren</value>
+  </data>
+  <data name="SettingsPage_ImportPlaylists.Content" xml:space="preserve">
+    <value>Importieren...</value>
+  </data>
+  <data name="SettingsPage_ImportPlaylists.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Eine oder mehrere M3U-Dateien importieren</value>
+  </data>
+  <data name="SettingsPage_ResetApp.Header" xml:space="preserve">
+    <value>Anwendung zurücksetzen</value>
+  </data>
+  <data name="SettingsPage_ResetApp.Description" xml:space="preserve">
+    <value>Dadurch werden alle Bibliotheksdaten und Wiedergabelisten gelöscht und alle Einstellungen auf ihre Standardwerte zurückgesetzt. Die Anwendung wird neu gestartet.</value>
+  </data>
+  <data name="SettingsPage_ResetButton.Content" xml:space="preserve">
+    <value>Alle Daten zurücksetzen</value>
+  </data>
+  <data name="SettingsPage_Section_Integrations.Text" xml:space="preserve">
+    <value>Integrationen</value>
+  </data>
+  <data name="SettingsPage_LastFm.Header" xml:space="preserve">
+    <value>Last.fm</value>
+  </data>
+  <data name="SettingsPage_LastFm.Description" xml:space="preserve">
+    <value>Verbinden Sie Ihr Last.fm-Konto, um Titel zu scrobbeln und Ihr aktuell wiedergegebenes Lied anzuzeigen.</value>
+  </data>
+  <data name="SettingsPage_LastFm_Connect.Content" xml:space="preserve">
+    <value>Verbinden</value>
+  </data>
+  <data name="SettingsPage_LastFm_Complete.Content" xml:space="preserve">
+    <value>Fertigstellen</value>
+  </data>
+  <data name="SettingsPage_LastFm_Cancel.Content" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="SettingsPage_LastFm_Disconnect.Content" xml:space="preserve">
+    <value>Trennen</value>
+  </data>
+  <data name="SettingsPage_LastFm_Scrobbling.Header" xml:space="preserve">
+    <value>Scrobbling aktivieren</value>
+  </data>
+  <data name="SettingsPage_LastFm_Scrobbling.Description" xml:space="preserve">
+    <value>Fügen Sie die Titel, die Sie auf Nagi hören, automatisch Ihrem Last.fm-Profil hinzu.</value>
+  </data>
+  <data name="SettingsPage_LastFm_NowPlaying.Header" xml:space="preserve">
+    <value>„Aktuelle Wiedergabe“ aktualisieren</value>
+  </data>
+  <data name="SettingsPage_LastFm_NowPlaying.Description" xml:space="preserve">
+    <value>Zeigen Sie Ihren Freunden auf Last.fm in Echtzeit, was Sie gerade hören.</value>
+  </data>
+  <data name="SettingsPage_Discord.Header" xml:space="preserve">
+    <value>Discord</value>
+  </data>
+  <data name="SettingsPage_Discord.Description" xml:space="preserve">
+    <value>Zeigen Sie Ihre aktuelle Höraktivität als Status auf Discord an.</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Header_Caption.Text" xml:space="preserve">
+    <value>Intelligente Wiedergabeliste</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Section_Songs.Text" xml:space="preserve">
+    <value>Lieder</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>In intelligenter Wiedergabeliste suchen...</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>In intelligenter Wiedergabeliste suchen</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_EditRulesButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Regeln bearbeiten</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_PlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Alle wiedergeben</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_ShufflePlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Alle mischen und wiedergeben</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Context_Play.Text" xml:space="preserve">
+    <value>Wiedergeben</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Context_PlayNext.Text" xml:space="preserve">
+    <value>Als Nächstes wiedergeben</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Context_AddToQueue.Text" xml:space="preserve">
+    <value>Zur Warteschlange hinzufügen</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Context_GoToAlbum.Text" xml:space="preserve">
+    <value>Zum Album gehen</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Context_GoToArtist.Text" xml:space="preserve">
+    <value>Zum Künstler gehen</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Context_ShowInExplorer.Text" xml:space="preserve">
+    <value>Im Explorer anzeigen</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_SongElement_PlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Wiedergeben</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_EmptyState_Title.Text" xml:space="preserve">
+    <value>Keine Lieder stimmen mit den aktuellen Regeln überein</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_EmptyState_Subtitle.Text" xml:space="preserve">
+    <value>Versuchen Sie, die Regeln zu bearbeiten</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_EmptyState_Button.Content" xml:space="preserve">
+    <value>Regeln bearbeiten</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_EmptyState_Button.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Regeln bearbeiten</value>
+  </data>
+  <data name="SettingsPage_Section_About.Text" xml:space="preserve">
+    <value>Über</value>
+  </data>
+  <data name="SettingsPage_AboutExpander.Header" xml:space="preserve">
+    <value>Über Nagi</value>
+  </data>
+  <data name="SettingsPage_AboutExpander.Description" xml:space="preserve">
+    <value>Entdecken Sie Ihre lokale Musiksammlung neu mit Nagi, einem Musikplayer, der auf Geschwindigkeit, Einfachheit und Datenschutz fokussiert ist.</value>
+  </data>
+  <data name="SettingsPage_About_VersionPrefix.Text" xml:space="preserve">
+    <value>Version </value>
+  </data>
+  <data name="SettingsPage_About_Licenses.Content" xml:space="preserve">
+    <value>Lizenzen anzeigen</value>
+  </data>
+  <data name="SettingsPage_About_SourceCode.Content" xml:space="preserve">
+    <value>Quellcode</value>
+  </data>
+  <data name="SettingsPage_About_CheckUpdates.Content" xml:space="preserve">
+    <value>Nach Updates suchen</value>
+  </data>
+  <data name="SettingsPage_About_Feedback.Content" xml:space="preserve">
+    <value>Feedback senden</value>
+  </data>
+  <data name="SettingsPage_CheckForUpdates.Header" xml:space="preserve">
+    <value>Beim Start nach Updates suchen</value>
+  </data>
+  <data name="SettingsPage_CheckForUpdates.Description" xml:space="preserve">
+    <value>Automatisch nach neuen Versionen suchen, wenn die Anwendung startet.</value>
+  </data>
+  <data name="SettingsPage_Language.Header" xml:space="preserve">
+    <value>Anwendungssprache</value>
+  </data>
+  <data name="SettingsPage_Language.[using:CommunityToolkit.WinUI.Controls]SettingsCard.Description" xml:space="preserve">
+    <value>Änderungen erfordern einen Neustart, um wirksam zu werden</value>
+  </data>
+  <data name="SettingsPage_RestartRequired_Title" xml:space="preserve">
+    <value>Neustart erforderlich</value>
+  </data>
+  <data name="SettingsPage_RestartRequired_Message" xml:space="preserve">
+    <value>Bitte starten Sie die Anwendung neu, damit die Sprachänderung vollständig wirksam wird.</value>
+  </data>
+</root>

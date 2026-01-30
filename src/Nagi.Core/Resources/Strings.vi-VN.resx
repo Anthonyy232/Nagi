@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Noun Labels -->
+  <data name="Label_Artist" xml:space="preserve">
+    <value>Nghệ sĩ</value>
+  </data>
+  <data name="Label_Album" xml:space="preserve">
+    <value>Album</value>
+  </data>
+  <data name="Label_Genre" xml:space="preserve">
+    <value>Thể loại</value>
+  </data>
+  <data name="Label_Title" xml:space="preserve">
+    <value>Tiêu đề</value>
+  </data>
+  <data name="Label_Playlist" xml:space="preserve">
+    <value>Danh sách phát</value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>Tệp</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>Năm</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Ngày thêm</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Ngày tạo</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Ngày sửa đổi</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Phát gần nhất</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Thời lượng</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Số bài hát</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Số lượt phát</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Bài hát</value>
+  </data>
+  <data name="Label_Song" xml:space="preserve">
+    <value>Bài hát</value>
+  </data>
+  <data name="Label_Folder" xml:space="preserve">
+    <value>Thư mục</value>
+  </data>
+  <data name="Label_Folders" xml:space="preserve">
+    <value>Thư mục</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Thứ tự thủ công</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Ngẫu nhiên</value>
+  </data>
+  <!-- Format Patterns -->
+  <data name="Format_Unknown" xml:space="preserve">
+    <value>{0} không xác định</value>
+  </data>
+  <data name="Format_New" xml:space="preserve">
+    <value>{0} mới</value>
+  </data>
+  <data name="Format_NotFound" xml:space="preserve">
+    <value>Không tìm thấy {0}.</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A đến Z)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Z đến A)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (Mới nhất)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (Cũ nhất)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (Tăng dần)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (Giảm dần)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>Ngắn nhất trước</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>Dài nhất trước</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>Chậm nhất trước ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>Nhanh nhất trước ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>Nhiều {0} nhất</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>Ít {0} nhất</value>
+  </data>
+  <data name="Format_ScanFolderProgress" xml:space="preserve">
+    <value>Đang quét thư mục {0} trên {1}: {2} - {3}</value>
+  </data>
+  <data name="Format_ScanCompleteResult" xml:space="preserve">
+    <value>Quét hoàn tất. Đã thêm hoặc cập nhật {0} {1}.</value>
+  </data>
+  <data name="Format_SavingBatch" xml:space="preserve">
+    <value>Đang lưu lô {0}...</value>
+  </data>
+  <!-- Status & Success Messages -->
+  <data name="Status_ScanningFolder" xml:space="preserve">
+    <value>Đang quét thư mục...</value>
+  </data>
+  <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
+    <value>Quét hoàn tất. Thư viện đã được cập nhật.</value>
+  </data>
+  <data name="Status_ScanCancelled" xml:space="preserve">
+    <value>Đã hủy quét.</value>
+  </data>
+  <data name="Status_ScanFailed" xml:space="preserve">
+    <value>Quét thất bại. Kiểm tra nhật ký để biết chi tiết.</value>
+  </data>
+  <data name="Status_PreparingScanCaches" xml:space="preserve">
+    <value>Đang chuẩn bị bộ đệm quét...</value>
+  </data>
+  <data name="Status_ReadingSongDetails" xml:space="preserve">
+    <value>Đang đọc chi tiết bài hát...</value>
+  </data>
+  <data name="Status_CleaningUpLibrary" xml:space="preserve">
+    <value>Đang dọn dẹp thư viện của bạn...</value>
+  </data>
+  <data name="Status_Finalizing" xml:space="preserve">
+    <value>Đang hoàn tất...</value>
+  </data>
+  <data name="Status_NormalizationFailed" xml:space="preserve">
+    <value>Chuẩn hóa âm lượng thất bại. Kiểm tra nhật ký để biết chi tiết.</value>
+  </data>
+  <data name="Status_NoFoldersToRefresh" xml:space="preserve">
+    <value>Không có thư mục nào trong thư viện để làm mới.</value>
+  </data>
+  <data name="Status_LibraryRefreshComplete" xml:space="preserve">
+    <value>Làm mới thư viện hoàn tất.</value>
+  </data>
+  <!-- Error Mssages -->
+  <data name="Error_FailedToAddFolder" xml:space="preserve">
+    <value>Không thể thêm thư mục.</value>
+  </data>
+  <data name="Error_PlaylistNameEmpty" xml:space="preserve">
+    <value>Tên danh sách phát không được để trống.</value>
+  </data>
+  <data name="Error_RatingRange" xml:space="preserve">
+    <value>Đánh giá phải từ 1 đến 5.</value>
+  </data>
+  <!-- Labels -->
+  <data name="Label_WithLyrics" xml:space="preserve">
+    <value>có lời</value>
+  </data>
+  <data name="Label_WithCoverArt" xml:space="preserve">
+    <value>có ảnh bìa</value>
+  </data>
+  <data name="Label_And" xml:space="preserve">
+    <value>và</value>
+  </data>
+  <!-- Static Strings -->
+  <data name="UnknownFilename" xml:space="preserve">
+    <value>không xác định</value>
+  </data>
+  <data name="ArtistSeparator" xml:space="preserve">
+    <value> &amp; </value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Sắp xếp theo: </value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>FFmpeg được yêu cầu để Chuẩn hóa âm lượng độ chính xác cao (phân tích ReplayGain) nhưng không tìm thấy trên hệ thống của bạn.\n\nLàm theo các bước sau để thiết lập:\n\n1. **Tải xuống**: Truy cập https://www.gyan.dev/ffmpeg/builds/ và tải xuống bản 'ffmpeg-git-full.7z' (hoặc tương tự).\n2. **Hướng dẫn**: Bạn có thể làm theo hướng dẫn này để biết chi tiết: https://phoenixnap.com/kb/ffmpeg-windows\n3. **Giải nén**: Mở thư mục kiến trúc và tìm thư mục 'bin' chứa `ffmpeg.exe`.\n4. **Cài đặt**: Sao chép `ffmpeg.exe` vào một thư mục cố định (ví dụ: `C:\\ffmpeg\\`) và **thêm thư mục đó vào biến môi trường System PATH của bạn**.\n5. **Khởi động lại**: Vui lòng khởi động lại Nagi sau khi cài đặt để các thay đổi có hiệu lực.</value>
+  </data>
+  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
+    <value>Không tìm thấy bài hát nào từ danh sách phát trong thư viện của bạn.</value>
+  </data>
+  <data name="Error_NoPlaylistsToExport" xml:space="preserve">
+    <value>Không có danh sách phát nào để xuất.</value>
+  </data>
+  <data name="EqPreset_None" xml:space="preserve">
+    <value>Không</value>
+  </data>
+  <data name="EqPreset_Classical" xml:space="preserve">
+    <value>Cổ điển</value>
+  </data>
+  <data name="EqPreset_Dance" xml:space="preserve">
+    <value>Dance</value>
+  </data>
+  <data name="EqPreset_FullBass" xml:space="preserve">
+    <value>Bass đầy đủ</value>
+  </data>
+  <data name="EqPreset_FullTreble" xml:space="preserve">
+    <value>Treble đầy đủ</value>
+  </data>
+  <data name="EqPreset_Jazz" xml:space="preserve">
+    <value>Jazz</value>
+  </data>
+  <data name="EqPreset_Pop" xml:space="preserve">
+    <value>Pop</value>
+  </data>
+  <data name="EqPreset_Rock" xml:space="preserve">
+    <value>Rock</value>
+  </data>
+  <data name="EqPreset_Soft" xml:space="preserve">
+    <value>Nhẹ nhàng</value>
+  </data>
+  <data name="EqPreset_Techno" xml:space="preserve">
+    <value>Techno</value>
+  </data>
+  <data name="EqPreset_Vocal" xml:space="preserve">
+    <value>Giọng hát</value>
+  </data>
+  <data name="ReplayGain_AllSongsScanned" xml:space="preserve">
+    <value>Tất cả các bài hát đã có dữ liệu âm lượng.</value>
+  </data>
+  <data name="ReplayGain_CalculatingCount" xml:space="preserve">
+    <value>Đang tính toán âm lượng cho {0} bài hát...</value>
+  </data>
+  <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
+    <value>Đang tính toán chuẩn hóa âm lượng ({0}/{1})...</value>
+  </data>
+  <data name="ReplayGain_Complete" xml:space="preserve">
+    <value>Chuẩn hóa âm lượng hoàn tất. Đã xử lý {0} bài hát.</value>
+  </data>
+</root>

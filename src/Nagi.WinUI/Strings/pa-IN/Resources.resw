@@ -1,0 +1,997 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="TrayIcon_ShowWindow.Text" xml:space="preserve">
+    <value>ਵਿੰਡੋ ਦਿਖਾਓ</value>
+  </data>
+  <data name="TrayIcon_Exit.Text" xml:space="preserve">
+    <value>ਬੰਦ ਕਰੋ</value>
+  </data>
+  <data name="MiniPlayer_BackButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਪਲੇਅਰ ਤੇ ਵਾਪਸ</value>
+  </data>
+  <data name="MiniPlayer_UpNextHeader.Text" xml:space="preserve">
+    <value>ਅੱਗੇ</value>
+  </data>
+  <data name="MiniPlayer_RestoreButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਨਾਗੀ ਦਿਖਾਓ</value>
+  </data>
+  <data name="MiniPlayer_PreviousButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਪਿਛਲਾ</value>
+  </data>
+  <data name="MiniPlayer_NextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਅਗਲਾ</value>
+  </data>
+  <data name="MiniPlayer_QueueButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਅੱਗੇ</value>
+  </data>
+  <data name="CrashReport_ReportIssuePreLink.Text" xml:space="preserve">
+    <value>ਕਿਰਪਾ ਕਰਕੇ ਇਸਦੀ ਰਿਪੋਰਟ 'ਤੇ ਇੱਕ ਮੁੱਦਾ ਬਣਾ ਕੇ ਕਰੋ </value>
+  </data>
+  <data name="CrashReport_IssueLink.Text" xml:space="preserve">
+    <value>ਮੁੱਦੇ ਪੰਨਾ</value>
+  </data>
+  <data name="CrashReport_ReportIssuePostLink.Text" xml:space="preserve">
+    <value>.</value>
+  </data>
+  <data name="CrashReport_ResetAppAdvice.Text" xml:space="preserve">
+    <value>ਜੇਕਰ ਅਜਿਹਾ ਹੁੰਦਾ ਰਹਿੰਦਾ ਹੈ, ਤਾਂ ਤੁਸੀਂ 'ਐਪ ਅਤੇ ਡਾਟਾ ਰੀਸੈਟ ਕਰੋ' ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰ ਸਕਦੇ ਹੋ। ਇਹ ਤੁਹਾਡੀਆਂ ਸੈਟਿੰਗਾਂ ਅਤੇ ਲਾਇਬ੍ਰੇਰੀ ਨੂੰ ਮਿਟਾ ਦੇਵੇਗਾ, ਜੋ ਐਪ ਨੂੰ ਖਰਾਬ ਸਥਿਤੀ ਤੋਂ ਠੀਕ ਕਰਨ ਵਿੱਚ ਮਦਦ ਕਰ ਸਕਦਾ ਹੈ।</value>
+  </data>
+  <data name="CrashReport_CopyLogButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਲੌਗ ਨੂੰ ਕਲਿੱਪਬੋਰਡ 'ਤੇ ਕਾਪੀ ਕਰੋ</value>
+  </data>
+  <data name="CrashReport_CopyLogLabel.Text" xml:space="preserve">
+    <value>ਲੌਗ ਕਾਪੀ ਕਰੋ</value>
+  </data>
+  <data name="SmartPlaylist_PickCoverButton.Content" xml:space="preserve">
+    <value>ਕਵਰ ਚੁਣੋ</value>
+  </data>
+  <data name="SmartPlaylist_PickCoverButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਇੱਕ ਕਵਰ ਚਿੱਤਰ ਚੁਣੋ</value>
+  </data>
+  <data name="SmartPlaylist_PlaylistNameLabel.Text" xml:space="preserve">
+    <value>ਪਲੇਲਿਸਟ ਨਾਮ</value>
+  </data>
+  <data name="SmartPlaylist_PlaylistNameTextBox.PlaceholderText" xml:space="preserve">
+    <value>ਆਪਣੀ ਸਮਾਰਟ ਪਲੇਲਿਸਟ ਲਈ ਇੱਕ ਨਾਮ ਦਾਖਲ ਕਰੋ</value>
+  </data>
+  <data name="SmartPlaylist_SortOrderLabel.Text" xml:space="preserve">
+    <value>ਕ੍ਰਮਬੱਧ ਕਰੋ</value>
+  </data>
+  <data name="SmartPlaylist_MatchLabel.Text" xml:space="preserve">
+    <value>ਮੈਚ</value>
+  </data>
+  <data name="SmartPlaylist_MatchLogic_All.Content" xml:space="preserve">
+    <value>ਸਾਰੇ</value>
+  </data>
+  <data name="SmartPlaylist_MatchLogic_Any.Content" xml:space="preserve">
+    <value>ਕੋਈ ਵੀ</value>
+  </data>
+  <data name="SmartPlaylist_MatchSuffixLabel.Text" xml:space="preserve">
+    <value>ਹੇਠ ਲਿਖੇ ਨਿਯਮਾਂ ਵਿੱਚੋਂ:</value>
+  </data>
+  <data name="SmartPlaylist_AddRuleButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਇੱਕ ਨਵਾਂ ਨਿਯਮ ਸ਼ਾਮਲ ਕਰੋ</value>
+  </data>
+  <data name="SmartPlaylist_AddRuleLabel.Text" xml:space="preserve">
+    <value>ਨਿਯਮ ਸ਼ਾਮਲ ਕਰੋ</value>
+  </data>
+  <data name="SmartPlaylist_RuleValueTextBox.PlaceholderText" xml:space="preserve">
+    <value>ਮੁੱਲ</value>
+  </data>
+  <data name="SmartPlaylist_RemoveRuleButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਇਸ ਨਿਯਮ ਨੂੰ ਹਟਾਓ</value>
+  </data>
+  <data name="SmartPlaylist_NoRulesTitle.Text" xml:space="preserve">
+    <value>ਕੋਈ ਨਿਯਮ ਪਰਿਭਾਸ਼ਿਤ ਨਹੀਂ ਕੀਤੇ ਗਏ</value>
+  </data>
+  <data name="SmartPlaylist_NoRulesMessage.Text" xml:space="preserve">
+    <value>ਤੁਹਾਡੀ ਲਾਇਬ੍ਰੇਰੀ ਦੇ ਸਾਰੇ ਗਾਣੇ ਇਸ ਪਲੇਲਿਸਟ ਵਿੱਚ ਸ਼ਾਮਲ ਕੀਤੇ ਜਾਣਗੇ।</value>
+  </data>
+  <data name="SmartPlaylist_AddFirstRuleButton.Content" xml:space="preserve">
+    <value>ਆਪਣਾ ਪਹਿਲਾ ਨਿਯਮ ਸ਼ਾਮਲ ਕਰੋ</value>
+  </data>
+  <data name="SmartPlaylist_AddFirstRuleButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਆਪਣਾ ਪਹਿਲਾ ਨਿਯਮ ਸ਼ਾਮਲ ਕਰੋ</value>
+  </data>
+  <data name="SmartPlaylist_Dialog.PrimaryButtonText" xml:space="preserve">
+    <value>ਸੁਰੱਖਿਅਤ ਕਰੋ</value>
+  </data>
+  <data name="SmartPlaylist_Dialog.CloseButtonText" xml:space="preserve">
+    <value>ਰੱਦ ਕਰੋ</value>
+  </data>
+  <data name="TrayPopup_PreviousButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਪਿਛਲਾ</value>
+  </data>
+  <data name="TrayPopup_NextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਅਗਲਾ</value>
+  </data>
+  <data name="TrayPopup_QueueButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਅੱਗੇ</value>
+  </data>
+  <data name="TrayPopup_BackButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਪਲੇਅਰ ਤੇ ਵਾਪਸ</value>
+  </data>
+  <data name="TrayPopup_UpNextHeader.Text" xml:space="preserve">
+    <value>ਅੱਗੇ</value>
+  </data>
+  <data name="AppName" xml:space="preserve">
+    <value>ਨਾਗੀ</value>
+  </data>
+  <data name="AppDescription" xml:space="preserve">
+    <value>ਨਾਗੀ ਨਾਲ ਆਪਣੇ ਸਥਾਨਕ ਸੰਗੀਤ ਸੰਗ੍ਰਹਿ ਨੂੰ ਮੁੜ ਖੋਜੋ, ਇੱਕ ਸੰਗੀਤ ਪਲੇਅਰ ਜੋ ਗਤੀ, ਸਰਲਤਾ ਅਤੇ ਗੋਪਨੀਯਤਾ 'ਤੇ ਕੇਂਦ੍ਰਿਤ ਹੈ। ਨਾਗੀ ਨੂੰ C# ਅਤੇ WinUI 3 ਨਾਲ ਬਣਾਇਆ ਗਿਆ ਹੈ ਤਾਂ ਜੋ ਇੱਕ ਸਾਫ਼, ਮੂਲ ਫਲੂਏਂਟ ਅਨੁਭਵ ਪ੍ਰਦਾਨ ਕੀਤਾ ਜਾ ਸਕੇ। ਇਹ ਸੁੰਦਰ, ਕੁਸ਼ਲ ਅਤੇ ਤੁਹਾਡੀ ਗੋਪਨੀਯਤਾ ਦਾ ਸਤਿਕਾਰ ਕਰਦਾ ਹੈ।</value>
+  </data>
+  <data name="AppShortName" xml:space="preserve">
+    <value>ਨਾਗੀ</value>
+  </data>
+  <data name="AppDisplayName" xml:space="preserve">
+    <value>ਨਾਗੀ ਸੰਗੀਤ ਪਲੇਅਰ</value>
+  </data>
+  <data name="AppInfoTip" xml:space="preserve">
+    <value>ਨਾਗੀ ਸੰਗੀਤ ਪਲੇਅਰ ਨਾਲ ਖੋਲ੍ਹੋ</value>
+  </data>
+  <data name="StartupTaskDisplayName" xml:space="preserve">
+    <value>ਨਾਗੀ ਸ਼ੁਰੂਆਤ</value>
+  </data>
+  <data name="Player_PreviousButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਪਿਛਲਾ</value>
+  </data>
+  <data name="Player_NextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਅਗਲਾ</value>
+  </data>
+  <data name="Player_LyricsButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਬੋਲ</value>
+  </data>
+  <data name="Player_QueueButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਅੱਗੇ</value>
+  </data>
+  <data name="Player_GoToAlbumButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਐਲਬਮ 'ਤੇ ਜਾਓ</value>
+  </data>
+  <data name="QueueFlyout_Title.Text" xml:space="preserve">
+    <value>ਅੱਗੇ</value>
+  </data>
+  <data name="AlbumPage_Title.Text" xml:space="preserve">
+    <value>ਐਲਬਮਾਂ</value>
+  </data>
+  <data name="AlbumPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>ਐਲਬਮਾਂ ਖੋਜੋ...</value>
+  </data>
+  <data name="AlbumPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਐਲਬਮਾਂ ਖੋਜੋ</value>
+  </data>
+  <data name="AlbumPage_RandomButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਕੋਈ ਇੱਕ ਚੁਣੋ</value>
+  </data>
+  <data name="AlbumPage_Menu_Play.Text" xml:space="preserve">
+    <value>ਚਲਾਓ</value>
+  </data>
+  <data name="AlbumPage_Empty_Title.Text" xml:space="preserve">
+    <value>ਕੋਈ ਐਲਬਮਾਂ ਨਹੀਂ ਮਿਲੀਆਂ</value>
+  </data>
+  <data name="AlbumPage_Empty_Subtitle.Text" xml:space="preserve">
+    <value>ਐਲਬਮਾਂ ਨੂੰ ਭਰਨ ਲਈ ਆਪਣੀ ਸੰਗੀਤ ਲਾਇਬ੍ਰੇਰੀ ਸਕੈਨ ਕਰੋ</value>
+  </data>
+  <data name="AlbumViewPage_Header_Label.Text" xml:space="preserve">
+    <value>ਐਲਬਮ</value>
+  </data>
+  <data name="AlbumViewPage_Songs_Title.Text" xml:space="preserve">
+    <value>ਗਾਣੇ</value>
+  </data>
+  <data name="AlbumViewPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>ਐਲਬਮ ਵਿੱਚ ਖੋਜੋ...</value>
+  </data>
+  <data name="AlbumViewPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਐਲਬਮ ਵਿੱਚ ਖੋਜੋ</value>
+  </data>
+  <data name="AlbumViewPage_PlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਸਾਰੇ ਚਲਾਓ</value>
+  </data>
+  <data name="AlbumViewPage_ShufflePlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਸ਼ਫਲ ਕਰੋ ਅਤੇ ਸਾਰੇ ਚਲਾਓ</value>
+  </data>
+  <data name="AlbumViewPage_SongMenu_Play.Text" xml:space="preserve">
+    <value>ਚਲਾਓ</value>
+  </data>
+  <data name="AlbumViewPage_SongMenu_PlayNext.Text" xml:space="preserve">
+    <value>ਅਗਲਾ ਚਲਾਓ</value>
+  </data>
+  <data name="AlbumViewPage_SongMenu_AddToQueue.Text" xml:space="preserve">
+    <value>ਕਤਾਰ ਵਿੱਚ ਸ਼ਾਮਲ ਕਰੋ</value>
+  </data>
+  <data name="AlbumViewPage_SongMenu_AddToPlaylist.Text" xml:space="preserve">
+    <value>ਪਲੇਲਿਸਟ ਵਿੱਚ ਸ਼ਾਮਲ ਕਰੋ</value>
+  </data>
+  <data name="AlbumViewPage_SongMenu_GoToArtist.Text" xml:space="preserve">
+    <value>ਕਲਾਕਾਰ 'ਤੇ ਜਾਓ</value>
+  </data>
+  <data name="AlbumViewPage_SongMenu_ShowInExplorer.Text" xml:space="preserve">
+    <value>ਐਕਸਪਲੋਰਰ ਵਿੱਚ ਦਿਖਾਓ</value>
+  </data>
+  <data name="AlbumViewPage_SongPlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਚਲਾਓ</value>
+  </data>
+  <data name="AlbumViewPage_Empty_Title.Text" xml:space="preserve">
+    <value>ਇਸ ਐਲਬਮ ਵਿੱਚ ਕੋਈ ਗਾਣੇ ਨਹੀਂ ਮਿਲੇ</value>
+  </data>
+  <data name="AlbumViewPage_Empty_Subtitle.Text" xml:space="preserve">
+    <value>ਕੁਝ ਹੋਰ ਖੋਜਣ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰੋ</value>
+  </data>
+  <data name="ArtistPage_Title.Text" xml:space="preserve">
+    <value>ਕਲਾਕਾਰ</value>
+  </data>
+  <data name="ArtistPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>ਕਲਾਕਾਰ ਖੋਜੋ...</value>
+  </data>
+  <data name="ArtistPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਕਲਾਕਾਰ ਖੋਜੋ</value>
+  </data>
+  <data name="ArtistPage_RandomButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਕੋਈ ਇੱਕ ਚੁਣੋ</value>
+  </data>
+  <data name="ArtistPage_Menu_Play.Text" xml:space="preserve">
+    <value>ਚਲਾਓ</value>
+  </data>
+  <data name="ArtistPage_Menu_ChangeImage.Text" xml:space="preserve">
+    <value>ਤਸਵੀਰ ਬਦਲੋ</value>
+  </data>
+  <data name="ArtistPage_Menu_RemoveImage.Text" xml:space="preserve">
+    <value>ਤਸਵੀਰ ਹਟਾਓ</value>
+  </data>
+  <data name="ArtistPage_Empty_Title.Text" xml:space="preserve">
+    <value>ਕੋਈ ਕਲਾਕਾਰ ਨਹੀਂ ਮਿਲੇ</value>
+  </data>
+  <data name="ArtistPage_Empty_Subtitle.Text" xml:space="preserve">
+    <value>ਕਲਾਕਾਰਾਂ ਨੂੰ ਭਰਨ ਲਈ ਆਪਣੀ ਸੰਗੀਤ ਲਾਇਬ੍ਰੇਰੀ ਸਕੈਨ ਕਰੋ</value>
+  </data>
+  <data name="ArtistViewPage_EditOverlay.Content" xml:space="preserve">
+    <value>ਕਲਾਕਾਰ ਦੀ ਤਸਵੀਰ ਬਦਲੋ</value>
+  </data>
+  <data name="ArtistViewPage_ImageMenu_ChangeImage.Text" xml:space="preserve">
+    <value>ਤਸਵੀਰ ਬਦਲੋ</value>
+  </data>
+  <data name="ArtistViewPage_ImageMenu_RemoveImage.Text" xml:space="preserve">
+    <value>ਤਸਵੀਰ ਹਟਾਓ</value>
+  </data>
+  <data name="ArtistViewPage_Header_Label.Text" xml:space="preserve">
+    <value>ਕਲਾਕਾਰ</value>
+  </data>
+  <data name="ArtistViewPage_Albums_Title.Text" xml:space="preserve">
+    <value>ਪ੍ਰਮੁੱਖ ਐਲਬਮਾਂ</value>
+  </data>
+  <data name="ArtistViewPage_Songs_Title.Text" xml:space="preserve">
+    <value>ਗਾਣੇ</value>
+  </data>
+  <data name="ArtistViewPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>ਕਲਾਕਾਰ ਵਿੱਚ ਖੋਜੋ...</value>
+  </data>
+  <data name="ArtistViewPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਕਲਾਕਾਰ ਵਿੱਚ ਖੋਜੋ</value>
+  </data>
+  <data name="ArtistViewPage_PlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਸਾਰੇ ਚਲਾਓ</value>
+  </data>
+  <data name="ArtistViewPage_ShufflePlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਸ਼ਫਲ ਕਰੋ ਅਤੇ ਸਾਰੇ ਚਲਾਓ</value>
+  </data>
+  <data name="ArtistViewPage_SongMenu_Play.Text" xml:space="preserve">
+    <value>ਚਲਾਓ</value>
+  </data>
+  <data name="ArtistViewPage_SongMenu_PlayNext.Text" xml:space="preserve">
+    <value>ਅਗਲਾ ਚਲਾਓ</value>
+  </data>
+  <data name="ArtistViewPage_SongMenu_AddToQueue.Text" xml:space="preserve">
+    <value>ਕਤਾਰ ਵਿੱਚ ਸ਼ਾਮਲ ਕਰੋ</value>
+  </data>
+  <data name="ArtistViewPage_SongMenu_AddToPlaylist.Text" xml:space="preserve">
+    <value>ਪਲੇਲਿਸਟ ਵਿੱਚ ਸ਼ਾਮਲ ਕਰੋ</value>
+  </data>
+  <data name="ArtistViewPage_SongMenu_GoToAlbum.Text" xml:space="preserve">
+    <value>ਐਲਬਮ 'ਤੇ ਜਾਓ</value>
+  </data>
+  <data name="ArtistViewPage_SongMenu_ShowInExplorer.Text" xml:space="preserve">
+    <value>ਐਕਸਪਲੋਰਰ ਵਿੱਚ ਦਿਖਾਓ</value>
+  </data>
+  <data name="ArtistViewPage_SongPlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਚਲਾਓ</value>
+  </data>
+  <data name="ArtistViewPage_Empty_Title.Text" xml:space="preserve">
+    <value>ਇਸ ਕਲਾਕਾਰ ਲਈ ਕੋਈ ਗਾਣੇ ਨਹੀਂ ਮਿਲੇ</value>
+  </data>
+  <data name="ArtistViewPage_Empty_Subtitle.Text" xml:space="preserve">
+    <value>ਕੁਝ ਹੋਰ ਖੋਜਣ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰੋ</value>
+  </data>
+  <data name="FolderPage_Title.Text" xml:space="preserve">
+    <value>ਫੋਲਡਰ</value>
+  </data>
+  <data name="FolderPage_RandomButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਕੋਈ ਇੱਕ ਚੁਣੋ</value>
+  </data>
+  <data name="FolderPage_AddFolderButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਇੱਕ ਸੰਗੀਤ ਫੋਲਡਰ ਸ਼ਾਮਲ ਕਰੋ</value>
+  </data>
+  <data name="FolderPage_AddFolder_Label.Text" xml:space="preserve">
+    <value>ਫੋਲਡਰ ਸ਼ਾਮਲ ਕਰੋ</value>
+  </data>
+  <data name="FolderPage_Menu_Play.Text" xml:space="preserve">
+    <value>ਚਲਾਓ</value>
+  </data>
+  <data name="FolderPage_Menu_Rescan.Text" xml:space="preserve">
+    <value>ਮੁੜ ਸਕੈਨ ਕਰੋ</value>
+  </data>
+  <data name="FolderPage_Menu_Delete.Text" xml:space="preserve">
+    <value>ਮਿਟਾਓ</value>
+  </data>
+  <data name="FolderPage_Empty_Title.Text" xml:space="preserve">
+    <value>ਅਜੇ ਕੋਈ ਫੋਲਡਰ ਸ਼ਾਮਲ ਨਹੀਂ ਕੀਤੇ ਗਏ</value>
+  </data>
+  <data name="FolderPage_Empty_Subtitle.Text" xml:space="preserve">
+    <value>ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਸੰਗੀਤ ਫੋਲਡਰ ਸ਼ਾਮਲ ਕਰੋ</value>
+  </data>
+  <data name="FolderSongViewPage_FolderMenu_Play.Text" xml:space="preserve">
+    <value>ਚਲਾਓ</value>
+  </data>
+  <data name="FolderSongViewPage_FolderMenu_AddToPlaylist.Text" xml:space="preserve">
+    <value>ਪਲੇਲਿਸਟ ਵਿੱਚ ਸ਼ਾਮਲ ਕਰੋ</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_Play.Text" xml:space="preserve">
+    <value>ਚਲਾਓ</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_PlayNext.Text" xml:space="preserve">
+    <value>ਅਗਲਾ ਚਲਾਓ</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_AddToQueue.Text" xml:space="preserve">
+    <value>ਕਤਾਰ ਵਿੱਚ ਸ਼ਾਮਲ ਕਰੋ</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_AddToPlaylist.Text" xml:space="preserve">
+    <value>ਪਲੇਲਿਸਟ ਵਿੱਚ ਸ਼ਾਮਲ ਕਰੋ</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_GoToAlbum.Text" xml:space="preserve">
+    <value>ਐਲਬਮ 'ਤੇ ਜਾਓ</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_GoToArtist.Text" xml:space="preserve">
+    <value>ਕਲਾਕਾਰ 'ਤੇ ਜਾਓ</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_ShowInExplorer.Text" xml:space="preserve">
+    <value>ਐਕਸਪਲੋਰਰ ਵਿੱਚ ਦਿਖਾਓ</value>
+  </data>
+  <data name="FolderSongViewPage_SongPlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਚਲਾਓ</value>
+  </data>
+  <data name="FolderSongViewPage_Header_Label.Text" xml:space="preserve">
+    <value>ਫੋਲਡਰ</value>
+  </data>
+  <data name="FolderSongViewPage_Songs_Title.Text" xml:space="preserve">
+    <value>ਗਾਣੇ</value>
+  </data>
+  <data name="FolderSongViewPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>ਫੋਲਡਰ ਵਿੱਚ ਖੋਜੋ...</value>
+  </data>
+  <data name="FolderSongViewPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਫੋਲਡਰ ਵਿੱਚ ਖੋਜੋ</value>
+  </data>
+  <data name="FolderSongViewPage_PlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਸਾਰੇ ਚਲਾਓ</value>
+  </data>
+  <data name="FolderSongViewPage_ShufflePlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਸ਼ਫਲ ਕਰੋ ਅਤੇ ਸਾਰੇ ਚਲਾਓ</value>
+  </data>
+  <data name="FolderSongViewPage_Empty_Title.Text" xml:space="preserve">
+    <value>ਇਹ ਫੋਲਡਰ ਖਾਲੀ ਹੈ</value>
+  </data>
+  <data name="FolderSongViewPage_Empty_Subtitle.Text" xml:space="preserve">
+    <value>ਕੋਈ ਗਾਣੇ ਜਾਂ ਸਬਫੋਲਡਰ ਨਹੀਂ ਮਿਲੇ</value>
+  </data>
+  <data name="GenrePage_Title.Text" xml:space="preserve">
+    <value>ਸ਼ੈਲੀਆਂ</value>
+  </data>
+  <data name="GenrePage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>ਸ਼ੈਲੀਆਂ ਖੋਜੋ...</value>
+  </data>
+  <data name="GenrePage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਸ਼ੈਲੀਆਂ ਖੋਜੋ</value>
+  </data>
+  <data name="GenrePage_RandomButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਕੋਈ ਇੱਕ ਚੁਣੋ</value>
+  </data>
+  <data name="GenrePage_Menu_Play.Text" xml:space="preserve">
+    <value>ਚਲਾਓ</value>
+  </data>
+  <data name="GenrePage_Empty_Title.Text" xml:space="preserve">
+    <value>ਕੋਈ ਸ਼ੈਲੀਆਂ ਨਹੀਂ ਮਿਲੀਆਂ</value>
+  </data>
+  <data name="GenrePage_Empty_Subtitle.Text" xml:space="preserve">
+    <value>ਸ਼ੈਲੀਆਂ ਨੂੰ ਭਰਨ ਲਈ ਆਪਣੀ ਸੰਗੀਤ ਲਾਇਬ੍ਰੇਰੀ ਸਕੈਨ ਕਰੋ</value>
+  </data>
+  <data name="LibraryPage_Title.Text" xml:space="preserve">
+    <value>ਲਾਇਬ੍ਰੇਰੀ</value>
+  </data>
+  <data name="LibraryPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>ਲਾਇਬ੍ਰੇਰੀ ਖੋਜੋ...</value>
+  </data>
+  <data name="LibraryPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਲਾਇਬ੍ਰੇਰੀ ਖੋਜੋ</value>
+  </data>
+  <data name="LibraryPage_PlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਸਾਰੇ ਚਲਾਓ</value>
+  </data>
+  <data name="LibraryPage_ShufflePlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਸ਼ਫਲ ਕਰੋ ਅਤੇ ਸਾਰੇ ਚਲਾਓ</value>
+  </data>
+  <data name="LibraryPage_Context_Play.Text" xml:space="preserve">
+    <value>ਚਲਾਓ</value>
+  </data>
+  <data name="LibraryPage_Context_PlayNext.Text" xml:space="preserve">
+    <value>ਅਗਲਾ ਚਲਾਓ</value>
+  </data>
+  <data name="LibraryPage_Context_AddToQueue.Text" xml:space="preserve">
+    <value>ਕਤਾਰ ਵਿੱਚ ਸ਼ਾਮਲ ਕਰੋ</value>
+  </data>
+  <data name="LibraryPage_Context_AddToPlaylist.Text" xml:space="preserve">
+    <value>ਪਲੇਲਿਸਟ ਵਿੱਚ ਸ਼ਾਮਲ ਕਰੋ</value>
+  </data>
+  <data name="LibraryPage_Context_GoToAlbum.Text" xml:space="preserve">
+    <value>ਐਲਬਮ 'ਤੇ ਜਾਓ</value>
+  </data>
+  <data name="LibraryPage_Context_GoToArtist.Text" xml:space="preserve">
+    <value>ਕਲਾਕਾਰ 'ਤੇ ਜਾਓ</value>
+  </data>
+  <data name="LibraryPage_Context_ShowInExplorer.Text" xml:space="preserve">
+    <value>ਐਕਸਪਲੋਰਰ ਵਿੱਚ ਦਿਖਾਓ</value>
+  </data>
+  <data name="LibraryPage_SongElement_PlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਚਲਾਓ</value>
+  </data>
+  <data name="LibraryPage_EmptyState_Title.Text" xml:space="preserve">
+    <value>ਤੁਹਾਡੀ ਲਾਇਬ੍ਰੇਰੀ ਖਾਲੀ ਹੈ</value>
+  </data>
+  <data name="LibraryPage_EmptyState_Subtitle.Text" xml:space="preserve">
+    <value>ਸੈਟਿੰਗਾਂ ਵਿੱਚ ਆਪਣੀ ਲਾਇਬ੍ਰੇਰੀ ਵਿੱਚ ਫੋਲਡਰ ਸ਼ਾਮਲ ਕਰੋ</value>
+  </data>
+  <data name="LyricsPage_NoLyrics_Title.Text" xml:space="preserve">
+    <value>ਇਸ ਟਰੈਕ ਲਈ ਕੋਈ ਬੋਲ ਨਹੀਂ ਮਿਲੇ</value>
+  </data>
+  <data name="LyricsPage_NoLyrics_Subtitle.Text" xml:space="preserve">
+    <value>ਕੋਈ ਹੋਰ ਗਾਣਾ ਅਜ਼ਮਾਓ</value>
+  </data>
+  <data name="OnboardingPage_Welcome_Title.Text" xml:space="preserve">
+    <value>ਨਾਗੀ ਵਿੱਚ ਤੁਹਾਡਾ ਸੁਆਗਤ ਹੈ</value>
+  </data>
+  <data name="OnboardingPage_AddFolderButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਇੱਕ ਸੰਗੀਤ ਫੋਲਡਰ ਸ਼ਾਮਲ ਕਰੋ</value>
+  </data>
+  <data name="OnboardingPage_AddFolderButton_Content.Text" xml:space="preserve">
+    <value>ਸੰਗੀਤ ਫੋਲਡਰ ਸ਼ਾਮਲ ਕਰੋ</value>
+  </data>
+  <data name="PlaylistPage_Title.Text" xml:space="preserve">
+    <value>ਪਲੇਲਿਸਟਾਂ</value>
+  </data>
+  <data name="PlaylistPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>ਪਲੇਲਿਸਟਾਂ ਖੋਜੋ...</value>
+  </data>
+  <data name="PlaylistPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਪਲੇਲਿਸਟਾਂ ਖੋਜੋ</value>
+  </data>
+  <data name="PlaylistPage_RandomButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਕੋਈ ਇੱਕ ਚੁਣੋ</value>
+  </data>
+  <data name="PlaylistPage_NewPlaylistButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਇੱਕ ਨਵੀਂ ਪਲੇਲਿਸਟ ਬਣਾਓ</value>
+  </data>
+  <data name="PlaylistPage_NewPlaylistButton_Content.Text" xml:space="preserve">
+    <value>ਨਵੀਂ ਪਲੇਲਿਸਟ</value>
+  </data>
+  <data name="PlaylistPage_NewPlaylistMenu_Regular.Text" xml:space="preserve">
+    <value>ਨਿਯਮਤ ਪਲੇਲਿਸਟ</value>
+  </data>
+  <data name="PlaylistPage_NewPlaylistMenu_Smart.Text" xml:space="preserve">
+    <value>ਸਮਾਰਟ ਪਲੇਲਿਸਟ</value>
+  </data>
+  <data name="PlaylistPage_Context_Play.Text" xml:space="preserve">
+    <value>ਚਲਾਓ</value>
+  </data>
+  <data name="PlaylistPage_Context_Rename.Text" xml:space="preserve">
+    <value>ਨਾਮ ਬਦਲੋ</value>
+  </data>
+  <data name="PlaylistPage_Context_ChangeImage.Text" xml:space="preserve">
+    <value>ਤਸਵੀਰ ਬਦਲੋ</value>
+  </data>
+  <data name="PlaylistPage_Context_RemoveImage.Text" xml:space="preserve">
+    <value>ਤਸਵੀਰ ਹਟਾਓ</value>
+  </data>
+  <data name="PlaylistPage_Context_Delete.Text" xml:space="preserve">
+    <value>ਮਿਟਾਓ</value>
+  </data>
+  <data name="PlaylistPage_EmptyState_Title.Text" xml:space="preserve">
+    <value>ਅਜੇ ਕੋਈ ਪਲੇਲਿਸਟਾਂ ਨਹੀਂ ਹਨ</value>
+  </data>
+  <data name="PlaylistPage_EmptyState_Subtitle.Text" xml:space="preserve">
+    <value>ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਇੱਕ ਪਲੇਲਿਸਟ ਬਣਾਓ</value>
+  </data>
+  <data name="PlaylistSongViewPage_Header_Caption.Text" xml:space="preserve">
+    <value>ਪਲੇਲਿਸਟ</value>
+  </data>
+  <data name="PlaylistSongViewPage_Section_Songs.Text" xml:space="preserve">
+    <value>ਗਾਣੇ</value>
+  </data>
+  <data name="PlaylistSongViewPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>ਪਲੇਲਿਸਟ ਵਿੱਚ ਖੋਜੋ...</value>
+  </data>
+  <data name="PlaylistSongViewPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਪਲੇਲਿਸਟ ਵਿੱਚ ਖੋਜੋ</value>
+  </data>
+  <data name="PlaylistSongViewPage_PlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਸਾਰੇ ਚਲਾਓ</value>
+  </data>
+  <data name="PlaylistSongViewPage_ShufflePlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਸ਼ਫਲ ਕਰੋ ਅਤੇ ਸਾਰੇ ਚਲਾਓ</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_Play.Text" xml:space="preserve">
+    <value>ਚਲਾਓ</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_PlayNext.Text" xml:space="preserve">
+    <value>ਅਗਲਾ ਚਲਾਓ</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_AddToQueue.Text" xml:space="preserve">
+    <value>ਕਤਾਰ ਵਿੱਚ ਸ਼ਾਮਲ ਕਰੋ</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_GoToAlbum.Text" xml:space="preserve">
+    <value>ਐਲਬਮ 'ਤੇ ਜਾਓ</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_GoToArtist.Text" xml:space="preserve">
+    <value>ਕਲਾਕਾਰ 'ਤੇ ਜਾਓ</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_ShowInExplorer.Text" xml:space="preserve">
+    <value>ਐਕਸਪਲੋਰਰ ਵਿੱਚ ਦਿਖਾਓ</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist.Text" xml:space="preserve">
+    <value>ਪਲੇਲਿਸਟ ਤੋਂ ਹਟਾਓ</value>
+  </data>
+  <data name="PlaylistSongViewPage_SongElement_PlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਚਲਾਓ</value>
+  </data>
+  <data name="PlaylistSongViewPage_EmptyState_Title.Text" xml:space="preserve">
+    <value>ਇਹ ਪਲੇਲਿਸਟ ਖਾਲੀ ਹੈ</value>
+  </data>
+  <data name="PlaylistSongViewPage_EmptyState_Subtitle.Text" xml:space="preserve">
+    <value>ਆਪਣੀ ਲਾਇਬ੍ਰੇਰੀ ਤੋਂ ਗਾਣੇ ਸ਼ਾਮਲ ਕਰੋ</value>
+  </data>
+  <data name="GenreViewPage_Header_Caption.Text" xml:space="preserve">
+    <value>ਸ਼ੈਲੀ</value>
+  </data>
+  <data name="GenreViewPage_Section_Songs.Text" xml:space="preserve">
+    <value>ਗਾਣੇ</value>
+  </data>
+  <data name="GenreViewPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>ਸ਼ੈਲੀ ਵਿੱਚ ਖੋਜੋ...</value>
+  </data>
+  <data name="GenreViewPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਸ਼ੈਲੀ ਵਿੱਚ ਖੋਜੋ</value>
+  </data>
+  <data name="GenreViewPage_PlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਸਾਰੇ ਚਲਾਓ</value>
+  </data>
+  <data name="GenreViewPage_ShufflePlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਸ਼ਫਲ ਕਰੋ ਅਤੇ ਸਾਰੇ ਚਲਾਓ</value>
+  </data>
+  <data name="GenreViewPage_Context_Play.Text" xml:space="preserve">
+    <value>ਚਲਾਓ</value>
+  </data>
+  <data name="GenreViewPage_Context_PlayNext.Text" xml:space="preserve">
+    <value>ਅਗਲਾ ਚਲਾਓ</value>
+  </data>
+  <data name="GenreViewPage_Context_AddToQueue.Text" xml:space="preserve">
+    <value>ਕਤਾਰ ਵਿੱਚ ਸ਼ਾਮਲ ਕਰੋ</value>
+  </data>
+  <data name="GenreViewPage_Context_AddToPlaylist.Text" xml:space="preserve">
+    <value>ਪਲੇਲਿਸਟ ਵਿੱਚ ਸ਼ਾਮਲ ਕਰੋ</value>
+  </data>
+  <data name="GenreViewPage_Context_GoToAlbum.Text" xml:space="preserve">
+    <value>ਐਲਬਮ 'ਤੇ ਜਾਓ</value>
+  </data>
+  <data name="GenreViewPage_Context_GoToArtist.Text" xml:space="preserve">
+    <value>ਕਲਾਕਾਰ 'ਤੇ ਜਾਓ</value>
+  </data>
+  <data name="GenreViewPage_Context_ShowInExplorer.Text" xml:space="preserve">
+    <value>ਐਕਸਪਲੋਰਰ ਵਿੱਚ ਦਿਖਾਓ</value>
+  </data>
+  <data name="GenreViewPage_Context_NoPlaylists.Text" xml:space="preserve">
+    <value>ਕੋਈ ਪਲੇਲਿਸਟਾਂ ਉਪਲਬਧ ਨਹੀਂ</value>
+  </data>
+  <data name="GenreViewPage_SongElement_PlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਚਲਾਓ</value>
+  </data>
+  <data name="GenreViewPage_EmptyState_Title.Text" xml:space="preserve">
+    <value>ਇਸ ਸ਼ੈਲੀ ਲਈ ਕੋਈ ਗਾਣੇ ਨਹੀਂ ਮਿਲੇ</value>
+  </data>
+  <data name="GenreViewPage_EmptyState_Subtitle.Text" xml:space="preserve">
+    <value>ਕੁਝ ਹੋਰ ਖੋਜਣ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰੋ</value>
+  </data>
+  <data name="SettingsPage_Title.Text" xml:space="preserve">
+    <value>ਸੈਟਿੰਗਾਂ</value>
+  </data>
+  <data name="SettingsPage_Section_Appearance.Text" xml:space="preserve">
+    <value>ਦਿੱਖ</value>
+  </data>
+  <data name="SettingsPage_Theme.Header" xml:space="preserve">
+    <value>ਥੀਮ</value>
+  </data>
+  <data name="SettingsPage_Theme.Description" xml:space="preserve">
+    <value>ਐਪਲੀਕੇਸ਼ਨ ਥੀਮ ਚੁਣੋ।</value>
+  </data>
+  <data name="SettingsPage_AccentColor.Text" xml:space="preserve">
+    <value>ਐਕਸੈਂਟ ਰੰਗ</value>
+  </data>
+
+  <data name="SettingsPage_ResetAccentColor.Content" xml:space="preserve">
+    <value>ਮੂਲ ਤੇ ਰੀਸੈਟ ਕਰੋ</value>
+  </data>
+  <data name="SettingsPage_WindowMaterial.Header" xml:space="preserve">
+    <value>ਵਿੰਡੋ ਸਮੱਗਰੀ</value>
+  </data>
+  <data name="SettingsPage_WindowMaterial.Description" xml:space="preserve">
+    <value>ਵਿੰਡੋ ਲਈ ਬੈਕਡ੍ਰੌਪ ਸਮੱਗਰੀ ਚੁਣੋ।</value>
+  </data>
+  <data name="SettingsPage_DynamicTheming.Header" xml:space="preserve">
+    <value>ਡਾਇਨਾਮਿਕ ਥੀਮਿੰਗ</value>
+  </data>
+  <data name="SettingsPage_DynamicTheming.Description" xml:space="preserve">
+    <value>ਡਾਇਨਾਮਿਕ ਥੀਮਿੰਗ ਵਿਕਲਪਾਂ ਨੂੰ ਸਮਰੱਥ ਅਤੇ ਕੌਂਫਿਗਰ ਕਰੋ।</value>
+  </data>
+  <data name="SettingsPage_RememberWindowSize.Header" xml:space="preserve">
+    <value>ਵਿੰਡੋ ਦਾ ਆਕਾਰ ਯਾਦ ਰੱਖੋ</value>
+  </data>
+  <data name="SettingsPage_RememberWindowSize.Description" xml:space="preserve">
+    <value>ਅਗਲੀ ਸ਼ੁਰੂਆਤ 'ਤੇ ਮੁੱਖ ਵਿੰਡੋ ਨੂੰ ਉਸਦੇ ਪਿਛਲੇ ਆਕਾਰ 'ਤੇ ਬਹਾਲ ਕਰੋ।</value>
+  </data>
+  <data name="SettingsPage_RememberWindowPosition.Header" xml:space="preserve">
+    <value>ਵਿੰਡੋ ਦੀ ਸਥਿਤੀ ਯਾਦ ਰੱਖੋ</value>
+  </data>
+  <data name="SettingsPage_RememberWindowPosition.Description" xml:space="preserve">
+    <value>ਅਗਲੀ ਸ਼ੁਰੂਆਤ 'ਤੇ ਮੁੱਖ ਵਿੰਡੋ ਨੂੰ ਉਸਦੇ ਪਿਛਲੇ ਸਕ੍ਰੀਨ ਸਥਾਨ 'ਤੇ ਬਹਾਲ ਕਰੋ।</value>
+  </data>
+  <data name="SettingsPage_RememberNavState.Header" xml:space="preserve">
+    <value>ਨੈਵੀਗੇਸ਼ਨ ਪੈਨਲ ਦੀ ਸਥਿਤੀ ਯਾਦ ਰੱਖੋ</value>
+  </data>
+  <data name="SettingsPage_RememberNavState.Description" xml:space="preserve">
+    <value>ਖੱਬੇ ਨੈਵੀਗੇਸ਼ਨ ਪੈਨਲ ਨੂੰ ਉਸੇ ਤਰ੍ਹਾਂ ਖੁੱਲ੍ਹਾ ਜਾਂ ਬੰਦ ਰੱਖੋ ਜਿਵੇਂ ਤੁਸੀਂ ਇਸਨੂੰ ਛੱਡਿਆ ਸੀ।</value>
+  </data>
+  <data name="SettingsPage_CustomizeNav.Header" xml:space="preserve">
+    <value>ਨੈਵੀਗੇਸ਼ਨ ਨੂੰ ਅਨੁਕੂਲਿਤ ਕਰੋ</value>
+  </data>
+  <data name="SettingsPage_CustomizeNav.Description" xml:space="preserve">
+    <value>ਨੈਵੀਗੇਸ਼ਨ ਮੀਨੂ ਵਿੱਚ ਪੰਨਿਆਂ ਨੂੰ ਮੁੜ ਕ੍ਰਮਬੱਧ ਕਰਨ ਲਈ ਖਿੱਚੋ। ਇੱਕ ਪੰਨੇ ਨੂੰ ਦਿਖਾਉਣ ਜਾਂ ਲੁਕਾਉਣ ਲਈ ਟੌਗਲ ਦੀ ਵਰਤੋਂ ਕਰੋ।</value>
+  </data>
+  <data name="SettingsPage_Section_Player.Text" xml:space="preserve">
+    <value>ਪਲੇਅਰ ਪ੍ਰਬੰਧਨ</value>
+  </data>
+  <data name="SettingsPage_VolumeNormalization.Header" xml:space="preserve">
+    <value>ਵਾਲੀਅਮ ਨੋਰਮਲਾਈਜ਼ੇਸ਼ਨ (ਰੀਪਲੇਅਗੇਨ)</value>
+  </data>
+  <data name="SettingsPage_VolumeNormalization.Description" xml:space="preserve">
+    <value>ਅਚਾਨਕ ਉੱਚੀ ਆਵਾਜ਼ ਵਿੱਚ ਤਬਦੀਲੀਆਂ ਤੋਂ ਬਚਣ ਲਈ ਵਾਲੀਅਮ ਨੂੰ ਸਟੈਂਡਰਡ ਪੱਧਰ (-14 LUFS) 'ਤੇ ਆਪਣੇ ਆਪ ਐਡਜਸਟ ਕਰੋ।</value>
+  </data>
+  <data name="SettingsPage_Equalizer.Text" xml:space="preserve">
+    <value>ਆਡੀਓ ਇਕੁਲਾਈਜ਼ਰ</value>
+  </data>
+
+  <data name="SettingsPage_ResetEqualizer.Content" xml:space="preserve">
+    <value>ਮੂਲ ਤੇ ਰੀਸੈਟ ਕਰੋ</value>
+  </data>
+  <data name="SettingsPage_Equalizer_Preamp.Text" xml:space="preserve">
+    <value>ਪ੍ਰੀਐਂਪ</value>
+  </data>
+  <data name="SettingsPage_Equalizer_Preset_Custom.PlaceholderText" xml:space="preserve">
+    <value>ਕਸਟਮ</value>
+  </data>
+  <data name="SettingsPage_CustomizePlayer.Text" xml:space="preserve">
+    <value>ਪਲੇਅਰ ਨਿਯੰਤਰਣਾਂ ਨੂੰ ਅਨੁਕੂਲਿਤ ਕਰੋ</value>
+  </data>
+
+  <data name="SettingsPage_ResetPlayerButtons.Content" xml:space="preserve">
+    <value>ਮੂਲ ਤੇ ਰੀਸੈਟ ਕਰੋ</value>
+  </data>
+  <data name="SettingsPage_CustomizePlayer_Instructions.Text" xml:space="preserve">
+    <value>ਦਿੱਖ ਨੂੰ ਟੌਗਲ ਕਰਨ ਲਈ ਹੋਵਰ ਕਰੋ। ਮੁੜ ਕ੍ਰਮਬੱਧ ਕਰਨ ਲਈ ਖਿੱਚੋ। ਡਿਵਾਈਡਰ ਕੇਂਦਰ ਅਤੇ ਸੱਜੇ ਨਿਯੰਤਰਣਾਂ ਨੂੰ ਵੱਖ ਕਰਦਾ ਹੈ।</value>
+  </data>
+  <data name="SettingsPage_CollapsablePlayer.Header" xml:space="preserve">
+    <value>ਢਹਿਣਯੋਗ ਪਲੇਅਰ</value>
+  </data>
+  <data name="SettingsPage_CollapsablePlayer.Description" xml:space="preserve">
+    <value>ਪਲੇਅਰ ਬਾਰ ਨੂੰ ਫੈਲਾਉਣ ਅਤੇ ਢਾਹੁਣ ਲਈ ਐਨੀਮੇਟ ਕਰੋ।</value>
+  </data>
+  <data name="SettingsPage_RestorePlayback.Header" xml:space="preserve">
+    <value>ਪਲੇਬੈਕ ਸਥਿਤੀ ਬਹਾਲ ਕਰੋ</value>
+  </data>
+  <data name="SettingsPage_RestorePlayback.Description" xml:space="preserve">
+    <value>ਅਗਲੀ ਸ਼ੁਰੂਆਤ 'ਤੇ ਮੁੜ ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਮੌਜੂਦਾ ਪਲੇਬੈਕ ਸਥਿਤੀ ਨੂੰ ਸੁਰੱਖਿਅਤ ਕਰੋ।</value>
+  </data>
+  <data name="SettingsPage_AutoLaunch.Header" xml:space="preserve">
+    <value>ਸ਼ੁਰੂਆਤ 'ਤੇ ਆਟੋ ਲਾਂਚ</value>
+  </data>
+  <data name="SettingsPage_AutoLaunch.Description" xml:space="preserve">
+    <value>ਜਦੋਂ ਤੁਸੀਂ ਆਪਣੇ ਕੰਪਿਊਟਰ ਵਿੱਚ ਲੌਗ ਇਨ ਕਰਦੇ ਹੋ ਤਾਂ ਨਾਗੀ ਨੂੰ ਆਪਣੇ ਆਪ ਸ਼ੁਰੂ ਕਰੋ।</value>
+  </data>
+  <data name="SettingsPage_StartMinimized.Header" xml:space="preserve">
+    <value>ਘੱਟ ਤੋਂ ਘੱਟ ਸ਼ੁਰੂ ਕਰੋ</value>
+  </data>
+  <data name="SettingsPage_StartMinimized.Description" xml:space="preserve">
+    <value>ਲਾਂਚ ਕੀਤੇ ਜਾਣ 'ਤੇ, ਐਪਲੀਕੇਸ਼ਨ ਵਿੰਡੋ ਮੂਲ ਰੂਪ ਵਿੱਚ ਛੋਟੀ ਹੋ ਜਾਵੇਗੀ।</value>
+  </data>
+  <data name="SettingsPage_MinimizeToMiniPlayer.Header" xml:space="preserve">
+    <value>ਮਿੰਨੀ-ਪਲੇਅਰ 'ਤੇ ਘੱਟ ਕਰੋ</value>
+  </data>
+  <data name="SettingsPage_MinimizeToMiniPlayer.Description" xml:space="preserve">
+    <value>ਘੱਟ ਕੀਤੇ ਜਾਣ 'ਤੇ, ਵਿੰਡੋ ਨੂੰ ਲੁਕਾਉਣ ਦੀ ਬਜਾਏ ਇੱਕ ਸੰਖੇਪ ਫਲੋਟਿੰਗ ਪਲੇਅਰ ਦਿਖਾਓ।</value>
+  </data>
+  <data name="SettingsPage_HideToTray.Header" xml:space="preserve">
+    <value>ਸਿਸਟਮ ਟਰੇ ਵਿੱਚ ਲੁਕਾਓ</value>
+  </data>
+  <data name="SettingsPage_HideToTray.Description" xml:space="preserve">
+    <value>ਬੰਦ ਕੀਤੇ ਜਾਣ 'ਤੇ, ਇਸਨੂੰ ਸਿਸਟਮ ਟਰੇ ਵਿੱਚ ਲੁਕਾਓ।</value>
+  </data>
+  <data name="SettingsPage_TrayCoverArt.Header" xml:space="preserve">
+    <value>ਫਲਾਈਆਊਟ ਵਿੱਚ ਕਵਰ ਆਰਟ ਦਿਖਾਓ</value>
+  </data>
+  <data name="SettingsPage_TrayCoverArt.Description" xml:space="preserve">
+    <value>ਟ੍ਰੇ ਆਈਕਨ 'ਤੇ ਕਲਿੱਕ ਕਰਨ 'ਤੇ ਦਿਖਾਈ ਦੇਣ ਵਾਲੇ ਸੰਖੇਪ ਪਲੇਅਰ ਵਿੱਚ ਕਵਰ ਆਰਟ ਪ੍ਰਦਰਸ਼ਿਤ ਕਰੋ।</value>
+  </data>
+  <data name="SettingsPage_Section_Data.Text" xml:space="preserve">
+    <value>ਡਾਟਾ ਪ੍ਰਬੰਧਨ</value>
+  </data>
+  <data name="SettingsPage_ArtistSplitting.Header" xml:space="preserve">
+    <value>ਕਲਾਕਾਰ ਵੰਡ</value>
+  </data>
+  <data name="SettingsPage_ArtistSplitting.Description" xml:space="preserve">
+    <value>ਕਈ ਕਲਾਕਾਰਾਂ ਨੂੰ ਵੰਡਣ ਲਈ ਵਰਤੇ ਜਾਂਦੇ ਅੱਖਰਾਂ ਨੂੰ ਪਰਿਭਾਸ਼ਿਤ ਕਰੋ (ਉਦਾਹਰਨ ਲਈ ';/')</value>
+  </data>
+  <data name="SettingsPage_RescanLibrary.Content" xml:space="preserve">
+    <value>ਲਾਇਬ੍ਰੇਰੀ ਨੂੰ ਮੁੜ ਸਕੈਨ ਕਰੋ</value>
+  </data>
+  <data name="SettingsPage_RescanLibrary.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਵੰਡ ਬਦਲਾਵਾਂ ਨੂੰ ਲਾਗੂ ਕਰਨ ਲਈ ਲਾਇਬ੍ਰੇਰੀ ਨੂੰ ਮੁੜ ਸਕੈਨ ਕਰੋ</value>
+  </data>
+  <data name="SettingsPage_OnlineMetadata.Header" xml:space="preserve">
+    <value>ਆਨਲਾਈਨ ਮੈਟਾਡੇਟਾ ਪ੍ਰਾਪਤ ਕਰੋ</value>
+  </data>
+  <data name="SettingsPage_OnlineMetadata.Description" xml:space="preserve">
+    <value>ਆਨਲਾਈਨ ਸੇਵਾਵਾਂ (ਉਦਾਹਰਨ ਲਈ, ਸਪੋਟੀਫਾਈ, Last.fm) ਤੋਂ ਕਲਾਕਾਰ ਦੀਆਂ ਤਸਵੀਰਾਂ ਅਤੇ ਜੀਵਨੀਆਂ ਵਰਗੀਆਂ ਵਾਧੂ ਜਾਣਕਾਰੀ ਪ੍ਰਾਪਤ ਕਰੋ।</value>
+  </data>
+  <data name="SettingsPage_MetadataSources.Header" xml:space="preserve">
+    <value>ਸਰੋਤ</value>
+  </data>
+  <data name="SettingsPage_MetadataSources.Description" xml:space="preserve">
+    <value>ਮੈਟਾਡੇਟਾ ਸਰੋਤਾਂ ਨੂੰ ਮੁੜ ਕ੍ਰਮਬੱਧ ਕਰਨ ਲਈ ਖਿੱਚੋ। ਵੇਰਵਿਆਂ ਲਈ ਹਰੇਕ ਸਰੋਤ 'ਤੇ ਹੋਵਰ ਕਰੋ।</value>
+  </data>
+  <data name="SettingsPage_OnlineLyrics.Header" xml:space="preserve">
+    <value>ਆਨਲਾਈਨ ਬੋਲ ਪ੍ਰਾਪਤ ਕਰੋ</value>
+  </data>
+  <data name="SettingsPage_OnlineLyrics.Description" xml:space="preserve">
+    <value>ਆਨਲਾਈਨ ਸਰੋਤਾਂ ਤੋਂ ਗੁੰਮ ਹੋਏ ਬੋਲਾਂ ਨੂੰ ਆਪਣੇ ਆਪ ਪ੍ਰਾਪਤ ਕਰੋ। (ਗੋਪਨੀਯਤਾ: ਟਰੈਕ ਮੈਟਾਡੇਟਾ ਨੂੰ ਤੀਜੀ-ਧਿਰ ਸੇਵਾਵਾਂ 'ਤੇ ਭੇਜਦਾ ਹੈ)</value>
+  </data>
+  <data name="SettingsPage_LyricsSources.Header" xml:space="preserve">
+    <value>ਸਰੋਤ</value>
+  </data>
+  <data name="SettingsPage_LyricsSources.Description" xml:space="preserve">
+    <value>ਬੋਲ ਸਰੋਤਾਂ ਨੂੰ ਮੁੜ ਕ੍ਰਮਬੱਧ ਕਰਨ ਲਈ ਖਿੱਚੋ। ਵੇਰਵਿਆਂ ਲਈ ਹਰੇਕ ਸਰੋਤ 'ਤੇ ਹੋਵਰ ਕਰੋ।</value>
+  </data>
+  <data name="SettingsPage_PlaylistsIO.Header" xml:space="preserve">
+    <value>ਪਲੇਲਿਸਟਾਂ ਐਕਸਪੋਰਟ/ਇੰਪੋਰਟ ਕਰੋ</value>
+  </data>
+  <data name="SettingsPage_PlaylistsIO.Description" xml:space="preserve">
+    <value>ਹੋਰ ਪਲੇਅਰਾਂ ਵਿੱਚ ਵਰਤਣ ਲਈ ਪਲੇਲਿਸਟਾਂ ਨੂੰ M3U ਫਾਈਲਾਂ ਵਿੱਚ ਐਕਸਪੋਰਟ ਕਰੋ, ਜਾਂ Nagi ਵਿੱਚ M3U ਪਲੇਲਿਸਟਾਂ ਨੂੰ ਇੰਪੋਰਟ ਕਰੋ।</value>
+  </data>
+  <data name="SettingsPage_ExportPlaylists.Content" xml:space="preserve">
+    <value>ਸਾਰੇ ਐਕਸਪੋਰਟ ਕਰੋ...</value>
+  </data>
+  <data name="SettingsPage_ExportPlaylists.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਸਾਰੀਆਂ ਪਲੇਲਿਸਟਾਂ ਨੂੰ ਇੱਕ ਫੋਲਡਰ ਵਿੱਚ ਐਕਸਪੋਰਟ ਕਰੋ</value>
+  </data>
+  <data name="SettingsPage_ImportPlaylists.Content" xml:space="preserve">
+    <value>ਇੰਪੋਰਟ ਕਰੋ...</value>
+  </data>
+  <data name="SettingsPage_ImportPlaylists.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਇੱਕ ਜਾਂ ਵੱਧ M3U ਫਾਈਲਾਂ ਇੰਪੋਰਟ ਕਰੋ</value>
+  </data>
+  <data name="SettingsPage_ResetApp.Header" xml:space="preserve">
+    <value>ਐਪਲੀਕੇਸ਼ਨ ਰੀਸੈਟ ਕਰੋ</value>
+  </data>
+  <data name="SettingsPage_ResetApp.Description" xml:space="preserve">
+    <value>ਇਹ ਸਾਰਾ ਲਾਇਬ੍ਰੇਰੀ ਡਾਟਾ, ਪਲੇਲਿਸਟਾਂ ਨੂੰ ਮਿਟਾ ਦੇਵੇਗਾ, ਅਤੇ ਸਾਰੀਆਂ ਸੈਟਿੰਗਾਂ ਨੂੰ ਉਹਨਾਂ ਦੇ ਮੂਲ ਰੂਪ 'ਤੇ ਰੀਸੈਟ ਕਰ ਦੇਵੇਗਾ। ਐਪਲੀਕੇਸ਼ਨ ਮੁੜ ਚਾਲੂ ਹੋ ਜਾਵੇਗੀ।</value>
+  </data>
+  <data name="SettingsPage_ResetButton.Content" xml:space="preserve">
+    <value>ਸਾਰਾ ਡਾਟਾ ਰੀਸੈਟ ਕਰੋ</value>
+  </data>
+  <data name="SettingsPage_Section_Integrations.Text" xml:space="preserve">
+    <value>ਏਕੀਕਰਣ</value>
+  </data>
+  <data name="SettingsPage_LastFm.Header" xml:space="preserve">
+    <value>Last.fm</value>
+  </data>
+  <data name="SettingsPage_LastFm.Description" xml:space="preserve">
+    <value>ਟਰੈਕਾਂ ਨੂੰ ਸਕ੍ਰੌਬਲ ਕਰਨ ਅਤੇ ਆਪਣੇ ਮੌਜੂਦਾ ਚੱਲ ਰਹੇ ਗਾਣੇ ਨੂੰ ਦਿਖਾਉਣ ਲਈ ਆਪਣੇ Last.fm ਖਾਤੇ ਨੂੰ ਕਨੈਕਟ ਕਰੋ।</value>
+  </data>
+  <data name="SettingsPage_LastFm_Connect.Content" xml:space="preserve">
+    <value>ਕਨੈਕਟ ਕਰੋ</value>
+  </data>
+  <data name="SettingsPage_LastFm_Complete.Content" xml:space="preserve">
+    <value>ਪੂਰਾ ਕਰੋ</value>
+  </data>
+  <data name="SettingsPage_LastFm_Cancel.Content" xml:space="preserve">
+    <value>ਰੱਦ ਕਰੋ</value>
+  </data>
+  <data name="SettingsPage_LastFm_Disconnect.Content" xml:space="preserve">
+    <value>ਡਿਸਕਨੈਕਟ ਕਰੋ</value>
+  </data>
+  <data name="SettingsPage_LastFm_Scrobbling.Header" xml:space="preserve">
+    <value>ਸਕ੍ਰੌਬਲਿੰਗ ਸਮਰੱਥ ਕਰੋ</value>
+  </data>
+  <data name="SettingsPage_LastFm_Scrobbling.Description" xml:space="preserve">
+    <value>ਨਾਗੀ 'ਤੇ ਸੁਣੇ ਗਏ ਟਰੈਕਾਂ ਨੂੰ ਆਪਣੇ Last.fm ਪ੍ਰੋਫਾਈਲ ਵਿੱਚ ਆਪਣੇ ਆਪ ਸ਼ਾਮਲ ਕਰੋ।</value>
+  </data>
+  <data name="SettingsPage_LastFm_NowPlaying.Header" xml:space="preserve">
+    <value>'ਹੁਣ ਚੱਲ ਰਿਹਾ' ਅੱਪਡੇਟ ਕਰੋ</value>
+  </data>
+  <data name="SettingsPage_LastFm_NowPlaying.Description" xml:space="preserve">
+    <value>Last.fm 'ਤੇ ਆਪਣੇ ਦੋਸਤਾਂ ਨੂੰ ਦਿਖਾਓ ਕਿ ਤੁਸੀਂ ਅਸਲ-ਸਮੇਂ ਵਿੱਚ ਕੀ ਸੁਣ ਰਹੇ ਹੋ।</value>
+  </data>
+  <data name="SettingsPage_Discord.Header" xml:space="preserve">
+    <value>ਡਿਸਕੋਰਡ</value>
+  </data>
+  <data name="SettingsPage_Discord.Description" xml:space="preserve">
+    <value>ਆਪਣੀ ਮੌਜੂਦਾ ਸੁਣਨ ਦੀ ਗਤੀਵਿਧੀ ਨੂੰ ਡਿਸਕੋਰਡ 'ਤੇ ਆਪਣੀ ਸਥਿਤੀ ਵਜੋਂ ਦਿਖਾਓ।</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Header_Caption.Text" xml:space="preserve">
+    <value>ਸਮਾਰਟ ਪਲੇਲਿਸਟ</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Section_Songs.Text" xml:space="preserve">
+    <value>ਗਾਣੇ</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>ਸਮਾਰਟ ਪਲੇਲਿਸਟ ਵਿੱਚ ਖੋਜੋ...</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਸਮਾਰਟ ਪਲੇਲਿਸਟ ਵਿੱਚ ਖੋਜੋ</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_EditRulesButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਨਿਯਮ ਸੰਪਾਦਿਤ ਕਰੋ</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_PlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਸਾਰੇ ਚਲਾਓ</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_ShufflePlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਸ਼ਫਲ ਕਰੋ ਅਤੇ ਸਾਰੇ ਚਲਾਓ</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Context_Play.Text" xml:space="preserve">
+    <value>ਚਲਾਓ</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Context_PlayNext.Text" xml:space="preserve">
+    <value>ਅਗਲਾ ਚਲਾਓ</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Context_AddToQueue.Text" xml:space="preserve">
+    <value>ਕਤਾਰ ਵਿੱਚ ਸ਼ਾਮਲ ਕਰੋ</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Context_GoToAlbum.Text" xml:space="preserve">
+    <value>ਐਲਬਮ 'ਤੇ ਜਾਓ</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Context_GoToArtist.Text" xml:space="preserve">
+    <value>ਕਲਾਕਾਰ 'ਤੇ ਜਾਓ</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Context_ShowInExplorer.Text" xml:space="preserve">
+    <value>ਐਕਸਪਲੋਰਰ ਵਿੱਚ ਦਿਖਾਓ</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_SongElement_PlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਚਲਾਓ</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_EmptyState_Title.Text" xml:space="preserve">
+    <value>ਕੋਈ ਗਾਣੇ ਮੌਜੂਦਾ ਨਿਯਮਾਂ ਨਾਲ ਮੇਲ ਨਹੀਂ ਖਾਂਦੇ</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_EmptyState_Subtitle.Text" xml:space="preserve">
+    <value>ਨਿਯਮਾਂ ਨੂੰ ਸੰਪਾਦਿਤ ਕਰਨ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰੋ</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_EmptyState_Button.Content" xml:space="preserve">
+    <value>ਨਿਯਮ ਸੰਪਾਦਿਤ ਕਰੋ</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_EmptyState_Button.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ਨਿਯਮ ਸੰਪਾਦਿਤ ਕਰੋ</value>
+  </data>
+  <data name="SettingsPage_Section_About.Text" xml:space="preserve">
+    <value>ਬਾਰੇ</value>
+  </data>
+  <data name="SettingsPage_AboutExpander.Header" xml:space="preserve">
+    <value>ਨਾਗੀ ਬਾਰੇ</value>
+  </data>
+  <data name="SettingsPage_AboutExpander.Description" xml:space="preserve">
+    <value>ਨਾਗੀ ਨਾਲ ਆਪਣੇ ਸਥਾਨਕ ਸੰਗੀਤ ਸੰਗ੍ਰਹਿ ਨੂੰ ਮੁੜ ਖੋਜੋ, ਇੱਕ ਸੰਗੀਤ ਪਲੇਅਰ ਜੋ ਗਤੀ, ਸਰਲਤਾ ਅਤੇ ਗੋਪਨੀਯਤਾ 'ਤੇ ਕੇਂਦ੍ਰਿਤ ਹੈ।</value>
+  </data>
+  <data name="SettingsPage_About_VersionPrefix.Text" xml:space="preserve">
+    <value>ਸੰਸਕਰਨ </value>
+  </data>
+  <data name="SettingsPage_About_Licenses.Content" xml:space="preserve">
+    <value>ਲਾਇਸੈਂਸ ਵੇਖੋ</value>
+  </data>
+  <data name="SettingsPage_About_SourceCode.Content" xml:space="preserve">
+    <value>ਸਰੋਤ ਕੋਡ</value>
+  </data>
+  <data name="SettingsPage_About_CheckUpdates.Content" xml:space="preserve">
+    <value>ਅੱਪਡੇਟ ਲਈ ਜਾਂਚ ਕਰੋ</value>
+  </data>
+  <data name="SettingsPage_About_Feedback.Content" xml:space="preserve">
+    <value>ਫੀਡਬੈਕ ਭੇਜੋ</value>
+  </data>
+  <data name="SettingsPage_CheckForUpdates.Header" xml:space="preserve">
+    <value>ਸ਼ੁਰੂਆਤ 'ਤੇ ਅੱਪਡੇਟ ਲਈ ਜਾਂਚ ਕਰੋ</value>
+  </data>
+  <data name="SettingsPage_CheckForUpdates.Description" xml:space="preserve">
+    <value>ਜਦੋਂ ਐਪਲੀਕੇਸ਼ਨ ਸ਼ੁਰੂ ਹੁੰਦੀ ਹੈ ਤਾਂ ਨਵੇਂ ਸੰਸਕਰਨਾਂ ਲਈ ਆਪਣੇ ਆਪ ਜਾਂਚ ਕਰੋ।</value>
+  </data>
+  <data name="SettingsPage_Language.Header" xml:space="preserve">
+    <value>ਐਪਲੀਕੇਸ਼ਨ ਭਾਸ਼ਾ</value>
+  </data>
+  <data name="SettingsPage_Language.[using:CommunityToolkit.WinUI.Controls]SettingsCard.Description" xml:space="preserve">
+    <value>ਬਦਲਾਵਾਂ ਨੂੰ ਲਾਗੂ ਹੋਣ ਲਈ ਮੁੜ ਚਾਲੂ ਕਰਨ ਦੀ ਲੋੜ ਹੈ</value>
+  </data>
+  <data name="SettingsPage_RestartRequired_Title" xml:space="preserve">
+    <value>ਮੁੜ ਚਾਲੂ ਕਰਨਾ ਜ਼ਰੂਰੀ ਹੈ</value>
+  </data>
+  <data name="SettingsPage_RestartRequired_Message" xml:space="preserve">
+    <value>ਭਾਸ਼ਾ ਬਦਲਾਵ ਨੂੰ ਪੂਰੀ ਤਰ੍ਹਾਂ ਲਾਗੂ ਹੋਣ ਲਈ ਕਿਰਪਾ ਕਰਕੇ ਐਪਲੀਕੇਸ਼ਨ ਨੂੰ ਮੁੜ ਚਾਲੂ ਕਰੋ।</value>
+  </data>
+</root>

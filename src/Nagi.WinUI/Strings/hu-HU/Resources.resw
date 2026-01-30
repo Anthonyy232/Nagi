@@ -1,0 +1,997 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="TrayIcon_ShowWindow.Text" xml:space="preserve">
+    <value>Ablak megjelenítése</value>
+  </data>
+  <data name="TrayIcon_Exit.Text" xml:space="preserve">
+    <value>Kilépés</value>
+  </data>
+  <data name="MiniPlayer_BackButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Vissza a lejátszóhoz</value>
+  </data>
+  <data name="MiniPlayer_UpNextHeader.Text" xml:space="preserve">
+    <value>Következő</value>
+  </data>
+  <data name="MiniPlayer_RestoreButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Nagi megjelenítése</value>
+  </data>
+  <data name="MiniPlayer_PreviousButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Előző</value>
+  </data>
+  <data name="MiniPlayer_NextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Következő</value>
+  </data>
+  <data name="MiniPlayer_QueueButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Következő</value>
+  </data>
+  <data name="CrashReport_ReportIssuePreLink.Text" xml:space="preserve">
+    <value>Kérjük, fontolja meg a hiba bejelentését az </value>
+  </data>
+  <data name="CrashReport_IssueLink.Text" xml:space="preserve">
+    <value>Ügyek oldalán</value>
+  </data>
+  <data name="CrashReport_ReportIssuePostLink.Text" xml:space="preserve">
+    <value>.</value>
+  </data>
+  <data name="CrashReport_ResetAppAdvice.Text" xml:space="preserve">
+    <value>Ha ez továbbra is fennáll, próbálja meg az "Alkalmazás és adatok visszaállítása" lehetőséget. Ez törli a beállításait és a könyvtárát, ami segíthet az alkalmazás helyreállításában, ha hibás állapotba került.</value>
+  </data>
+  <data name="CrashReport_CopyLogButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Napló másolása vágólapra</value>
+  </data>
+  <data name="CrashReport_CopyLogLabel.Text" xml:space="preserve">
+    <value>Napló másolása</value>
+  </data>
+  <data name="SmartPlaylist_PickCoverButton.Content" xml:space="preserve">
+    <value>Borító kiválasztása</value>
+  </data>
+  <data name="SmartPlaylist_PickCoverButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Válasszon borítóképet</value>
+  </data>
+  <data name="SmartPlaylist_PlaylistNameLabel.Text" xml:space="preserve">
+    <value>Lejátszási lista neve</value>
+  </data>
+  <data name="SmartPlaylist_PlaylistNameTextBox.PlaceholderText" xml:space="preserve">
+    <value>Adja meg okos lejátszási listája nevét</value>
+  </data>
+  <data name="SmartPlaylist_SortOrderLabel.Text" xml:space="preserve">
+    <value>Rendezési sorrend</value>
+  </data>
+  <data name="SmartPlaylist_MatchLabel.Text" xml:space="preserve">
+    <value>Egyezés</value>
+  </data>
+  <data name="SmartPlaylist_MatchLogic_All.Content" xml:space="preserve">
+    <value>Összes</value>
+  </data>
+  <data name="SmartPlaylist_MatchLogic_Any.Content" xml:space="preserve">
+    <value>Bármelyik</value>
+  </data>
+  <data name="SmartPlaylist_MatchSuffixLabel.Text" xml:space="preserve">
+    <value>a következő szabályok közül:</value>
+  </data>
+  <data name="SmartPlaylist_AddRuleButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Új szabály hozzáadása</value>
+  </data>
+  <data name="SmartPlaylist_AddRuleLabel.Text" xml:space="preserve">
+    <value>Szabály hozzáadása</value>
+  </data>
+  <data name="SmartPlaylist_RuleValueTextBox.PlaceholderText" xml:space="preserve">
+    <value>Érték</value>
+  </data>
+  <data name="SmartPlaylist_RemoveRuleButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Szabály eltávolítása</value>
+  </data>
+  <data name="SmartPlaylist_NoRulesTitle.Text" xml:space="preserve">
+    <value>Nincsenek definiált szabályok</value>
+  </data>
+  <data name="SmartPlaylist_NoRulesMessage.Text" xml:space="preserve">
+    <value>A könyvtárában lévő összes dal bekerül ebbe a lejátszási listába.</value>
+  </data>
+  <data name="SmartPlaylist_AddFirstRuleButton.Content" xml:space="preserve">
+    <value>Adja hozzá első szabályát</value>
+  </data>
+  <data name="SmartPlaylist_AddFirstRuleButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Adja hozzá első szabályát</value>
+  </data>
+  <data name="SmartPlaylist_Dialog.PrimaryButtonText" xml:space="preserve">
+    <value>Mentés</value>
+  </data>
+  <data name="SmartPlaylist_Dialog.CloseButtonText" xml:space="preserve">
+    <value>Mégse</value>
+  </data>
+  <data name="TrayPopup_PreviousButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Előző</value>
+  </data>
+  <data name="TrayPopup_NextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Következő</value>
+  </data>
+  <data name="TrayPopup_QueueButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Következő</value>
+  </data>
+  <data name="TrayPopup_BackButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Vissza a lejátszóhoz</value>
+  </data>
+  <data name="TrayPopup_UpNextHeader.Text" xml:space="preserve">
+    <value>Következő</value>
+  </data>
+  <data name="AppName" xml:space="preserve">
+    <value>Nagi</value>
+  </data>
+  <data name="AppDescription" xml:space="preserve">
+    <value>Fedezze fel újra helyi zenei gyűjteményét a Nagival, egy sebességre, egyszerűségre és adatvédelemre fókuszáló zenelejátszóval. A Nagi C# és WinUI 3 felhasználásával készült, hogy tiszta, natív Fluent élményt nyújtson. Szép, hatékony és tiszteletben tartja a magánéletét.</value>
+  </data>
+  <data name="AppShortName" xml:space="preserve">
+    <value>Nagi</value>
+  </data>
+  <data name="AppDisplayName" xml:space="preserve">
+    <value>Nagi Zenelejátszó</value>
+  </data>
+  <data name="AppInfoTip" xml:space="preserve">
+    <value>Megnyitás Nagi Zenelejátszóval</value>
+  </data>
+  <data name="StartupTaskDisplayName" xml:space="preserve">
+    <value>Nagi Indítás</value>
+  </data>
+  <data name="Player_PreviousButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Előző</value>
+  </data>
+  <data name="Player_NextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Következő</value>
+  </data>
+  <data name="Player_LyricsButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Dalszöveg</value>
+  </data>
+  <data name="Player_QueueButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Következő</value>
+  </data>
+  <data name="Player_GoToAlbumButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Ugrás az albumhoz</value>
+  </data>
+  <data name="QueueFlyout_Title.Text" xml:space="preserve">
+    <value>Következő</value>
+  </data>
+  <data name="AlbumPage_Title.Text" xml:space="preserve">
+    <value>Albumok</value>
+  </data>
+  <data name="AlbumPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>Albumok keresése...</value>
+  </data>
+  <data name="AlbumPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Albumok keresése</value>
+  </data>
+  <data name="AlbumPage_RandomButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Válasszon egyet véletlenszerűen</value>
+  </data>
+  <data name="AlbumPage_Menu_Play.Text" xml:space="preserve">
+    <value>Lejátszás</value>
+  </data>
+  <data name="AlbumPage_Empty_Title.Text" xml:space="preserve">
+    <value>Nem található album</value>
+  </data>
+  <data name="AlbumPage_Empty_Subtitle.Text" xml:space="preserve">
+    <value>Olvassa be a zenei könyvtárát az albumok feltöltéséhez</value>
+  </data>
+  <data name="AlbumViewPage_Header_Label.Text" xml:space="preserve">
+    <value>Album</value>
+  </data>
+  <data name="AlbumViewPage_Songs_Title.Text" xml:space="preserve">
+    <value>Dalok</value>
+  </data>
+  <data name="AlbumViewPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>Keresés az albumban...</value>
+  </data>
+  <data name="AlbumViewPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Keresés az albumban</value>
+  </data>
+  <data name="AlbumViewPage_PlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Összes lejátszása</value>
+  </data>
+  <data name="AlbumViewPage_ShufflePlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Összes véletlenszerű lejátszása</value>
+  </data>
+  <data name="AlbumViewPage_SongMenu_Play.Text" xml:space="preserve">
+    <value>Lejátszás</value>
+  </data>
+  <data name="AlbumViewPage_SongMenu_PlayNext.Text" xml:space="preserve">
+    <value>Következő lejátszása</value>
+  </data>
+  <data name="AlbumViewPage_SongMenu_AddToQueue.Text" xml:space="preserve">
+    <value>Hozzáadás a sorhoz</value>
+  </data>
+  <data name="AlbumViewPage_SongMenu_AddToPlaylist.Text" xml:space="preserve">
+    <value>Hozzáadás lejátszási listához</value>
+  </data>
+  <data name="AlbumViewPage_SongMenu_GoToArtist.Text" xml:space="preserve">
+    <value>Ugrás az előadóhoz</value>
+  </data>
+  <data name="AlbumViewPage_SongMenu_ShowInExplorer.Text" xml:space="preserve">
+    <value>Megjelenítés a fájlkezelőben</value>
+  </data>
+  <data name="AlbumViewPage_SongPlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Lejátszás</value>
+  </data>
+  <data name="AlbumViewPage_Empty_Title.Text" xml:space="preserve">
+    <value>Nincsenek dalok ebben az albumban</value>
+  </data>
+  <data name="AlbumViewPage_Empty_Subtitle.Text" xml:space="preserve">
+    <value>Próbáljon másra keresni</value>
+  </data>
+  <data name="ArtistPage_Title.Text" xml:space="preserve">
+    <value>Előadók</value>
+  </data>
+  <data name="ArtistPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>Előadók keresése...</value>
+  </data>
+  <data name="ArtistPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Előadók keresése</value>
+  </data>
+  <data name="ArtistPage_RandomButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Válasszon egyet véletlenszerűen</value>
+  </data>
+  <data name="ArtistPage_Menu_Play.Text" xml:space="preserve">
+    <value>Lejátszás</value>
+  </data>
+  <data name="ArtistPage_Menu_ChangeImage.Text" xml:space="preserve">
+    <value>Kép módosítása</value>
+  </data>
+  <data name="ArtistPage_Menu_RemoveImage.Text" xml:space="preserve">
+    <value>Kép eltávolítása</value>
+  </data>
+  <data name="ArtistPage_Empty_Title.Text" xml:space="preserve">
+    <value>Nem található előadó</value>
+  </data>
+  <data name="ArtistPage_Empty_Subtitle.Text" xml:space="preserve">
+    <value>Olvassa be a zenei könyvtárát az előadók feltöltéséhez</value>
+  </data>
+  <data name="ArtistViewPage_EditOverlay.Content" xml:space="preserve">
+    <value>Előadó képének módosítása</value>
+  </data>
+  <data name="ArtistViewPage_ImageMenu_ChangeImage.Text" xml:space="preserve">
+    <value>Kép módosítása</value>
+  </data>
+  <data name="ArtistViewPage_ImageMenu_RemoveImage.Text" xml:space="preserve">
+    <value>Kép eltávolítása</value>
+  </data>
+  <data name="ArtistViewPage_Header_Label.Text" xml:space="preserve">
+    <value>Előadó</value>
+  </data>
+  <data name="ArtistViewPage_Albums_Title.Text" xml:space="preserve">
+    <value>Legjobb albumok</value>
+  </data>
+  <data name="ArtistViewPage_Songs_Title.Text" xml:space="preserve">
+    <value>Dalok</value>
+  </data>
+  <data name="ArtistViewPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>Keresés az előadóban...</value>
+  </data>
+  <data name="ArtistViewPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Keresés az előadóban</value>
+  </data>
+  <data name="ArtistViewPage_PlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Összes lejátszása</value>
+  </data>
+  <data name="ArtistViewPage_ShufflePlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Összes véletlenszerű lejátszása</value>
+  </data>
+  <data name="ArtistViewPage_SongMenu_Play.Text" xml:space="preserve">
+    <value>Lejátszás</value>
+  </data>
+  <data name="ArtistViewPage_SongMenu_PlayNext.Text" xml:space="preserve">
+    <value>Következő lejátszása</value>
+  </data>
+  <data name="ArtistViewPage_SongMenu_AddToQueue.Text" xml:space="preserve">
+    <value>Hozzáadás a sorhoz</value>
+  </data>
+  <data name="ArtistViewPage_SongMenu_AddToPlaylist.Text" xml:space="preserve">
+    <value>Hozzáadás lejátszási listához</value>
+  </data>
+  <data name="ArtistViewPage_SongMenu_GoToAlbum.Text" xml:space="preserve">
+    <value>Ugrás az albumhoz</value>
+  </data>
+  <data name="ArtistViewPage_SongMenu_ShowInExplorer.Text" xml:space="preserve">
+    <value>Megjelenítés a fájlkezelőben</value>
+  </data>
+  <data name="ArtistViewPage_SongPlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Lejátszás</value>
+  </data>
+  <data name="ArtistViewPage_Empty_Title.Text" xml:space="preserve">
+    <value>Nincsenek dalok ehhez az előadóhoz</value>
+  </data>
+  <data name="ArtistViewPage_Empty_Subtitle.Text" xml:space="preserve">
+    <value>Próbáljon másra keresni</value>
+  </data>
+  <data name="FolderPage_Title.Text" xml:space="preserve">
+    <value>Mappák</value>
+  </data>
+  <data name="FolderPage_RandomButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Válasszon egyet véletlenszerűen</value>
+  </data>
+  <data name="FolderPage_AddFolderButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Zenei mappa hozzáadása</value>
+  </data>
+  <data name="FolderPage_AddFolder_Label.Text" xml:space="preserve">
+    <value>Mappa hozzáadása</value>
+  </data>
+  <data name="FolderPage_Menu_Play.Text" xml:space="preserve">
+    <value>Lejátszás</value>
+  </data>
+  <data name="FolderPage_Menu_Rescan.Text" xml:space="preserve">
+    <value>Újraolvasás</value>
+  </data>
+  <data name="FolderPage_Menu_Delete.Text" xml:space="preserve">
+    <value>Törlés</value>
+  </data>
+  <data name="FolderPage_Empty_Title.Text" xml:space="preserve">
+    <value>Még nincsenek mappák hozzáadva</value>
+  </data>
+  <data name="FolderPage_Empty_Subtitle.Text" xml:space="preserve">
+    <value>A kezdéshez adjon hozzá zenei mappákat</value>
+  </data>
+  <data name="FolderSongViewPage_FolderMenu_Play.Text" xml:space="preserve">
+    <value>Lejátszás</value>
+  </data>
+  <data name="FolderSongViewPage_FolderMenu_AddToPlaylist.Text" xml:space="preserve">
+    <value>Hozzáadás lejátszási listához</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_Play.Text" xml:space="preserve">
+    <value>Lejátszás</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_PlayNext.Text" xml:space="preserve">
+    <value>Következő lejátszása</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_AddToQueue.Text" xml:space="preserve">
+    <value>Hozzáadás a sorhoz</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_AddToPlaylist.Text" xml:space="preserve">
+    <value>Hozzáadás lejátszási listához</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_GoToAlbum.Text" xml:space="preserve">
+    <value>Ugrás az albumhoz</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_GoToArtist.Text" xml:space="preserve">
+    <value>Ugrás az előadóhoz</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_ShowInExplorer.Text" xml:space="preserve">
+    <value>Megjelenítés a fájlkezelőben</value>
+  </data>
+  <data name="FolderSongViewPage_SongPlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Lejátszás</value>
+  </data>
+  <data name="FolderSongViewPage_Header_Label.Text" xml:space="preserve">
+    <value>Mappa</value>
+  </data>
+  <data name="FolderSongViewPage_Songs_Title.Text" xml:space="preserve">
+    <value>Dalok</value>
+  </data>
+  <data name="FolderSongViewPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>Keresés a mappában...</value>
+  </data>
+  <data name="FolderSongViewPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Keresés a mappában</value>
+  </data>
+  <data name="FolderSongViewPage_PlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Összes lejátszása</value>
+  </data>
+  <data name="FolderSongViewPage_ShufflePlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Összes véletlenszerű lejátszása</value>
+  </data>
+  <data name="FolderSongViewPage_Empty_Title.Text" xml:space="preserve">
+    <value>Ez a mappa üres</value>
+  </data>
+  <data name="FolderSongViewPage_Empty_Subtitle.Text" xml:space="preserve">
+    <value>Nincsenek dalok vagy almappák</value>
+  </data>
+  <data name="GenrePage_Title.Text" xml:space="preserve">
+    <value>Műfajok</value>
+  </data>
+  <data name="GenrePage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>Műfajok keresése...</value>
+  </data>
+  <data name="GenrePage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Műfajok keresése</value>
+  </data>
+  <data name="GenrePage_RandomButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Válasszon egyet véletlenszerűen</value>
+  </data>
+  <data name="GenrePage_Menu_Play.Text" xml:space="preserve">
+    <value>Lejátszás</value>
+  </data>
+  <data name="GenrePage_Empty_Title.Text" xml:space="preserve">
+    <value>Nem található műfaj</value>
+  </data>
+  <data name="GenrePage_Empty_Subtitle.Text" xml:space="preserve">
+    <value>Olvassa be a zenei könyvtárát a műfajok feltöltéséhez</value>
+  </data>
+  <data name="LibraryPage_Title.Text" xml:space="preserve">
+    <value>Könyvtár</value>
+  </data>
+  <data name="LibraryPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>Keresés a könyvtárban...</value>
+  </data>
+  <data name="LibraryPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Keresés a könyvtárban</value>
+  </data>
+  <data name="LibraryPage_PlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Összes lejátszása</value>
+  </data>
+  <data name="LibraryPage_ShufflePlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Összes véletlenszerű lejátszása</value>
+  </data>
+  <data name="LibraryPage_Context_Play.Text" xml:space="preserve">
+    <value>Lejátszás</value>
+  </data>
+  <data name="LibraryPage_Context_PlayNext.Text" xml:space="preserve">
+    <value>Következő lejátszása</value>
+  </data>
+  <data name="LibraryPage_Context_AddToQueue.Text" xml:space="preserve">
+    <value>Hozzáadás a sorhoz</value>
+  </data>
+  <data name="LibraryPage_Context_AddToPlaylist.Text" xml:space="preserve">
+    <value>Hozzáadás lejátszási listához</value>
+  </data>
+  <data name="LibraryPage_Context_GoToAlbum.Text" xml:space="preserve">
+    <value>Ugrás az albumhoz</value>
+  </data>
+  <data name="LibraryPage_Context_GoToArtist.Text" xml:space="preserve">
+    <value>Ugrás az előadóhoz</value>
+  </data>
+  <data name="LibraryPage_Context_ShowInExplorer.Text" xml:space="preserve">
+    <value>Megjelenítés a fájlkezelőben</value>
+  </data>
+  <data name="LibraryPage_SongElement_PlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Lejátszás</value>
+  </data>
+  <data name="LibraryPage_EmptyState_Title.Text" xml:space="preserve">
+    <value>A könyvtára üres</value>
+  </data>
+  <data name="LibraryPage_EmptyState_Subtitle.Text" xml:space="preserve">
+    <value>Adjon hozzá mappákat a könyvtárához a Beállításokban</value>
+  </data>
+  <data name="LyricsPage_NoLyrics_Title.Text" xml:space="preserve">
+    <value>Nincsenek dalszövegek ehhez a számhoz</value>
+  </data>
+  <data name="LyricsPage_NoLyrics_Subtitle.Text" xml:space="preserve">
+    <value>Próbáljon meg egy másik dalt</value>
+  </data>
+  <data name="OnboardingPage_Welcome_Title.Text" xml:space="preserve">
+    <value>Üdvözöljük a Nagiban</value>
+  </data>
+  <data name="OnboardingPage_AddFolderButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>A kezdéshez adjon hozzá egy zenei mappát</value>
+  </data>
+  <data name="OnboardingPage_AddFolderButton_Content.Text" xml:space="preserve">
+    <value>Zenei mappa hozzáadása</value>
+  </data>
+  <data name="PlaylistPage_Title.Text" xml:space="preserve">
+    <value>Lejátszási listák</value>
+  </data>
+  <data name="PlaylistPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>Lejátszási listák keresése...</value>
+  </data>
+  <data name="PlaylistPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Lejátszási listák keresése</value>
+  </data>
+  <data name="PlaylistPage_RandomButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Válasszon egyet véletlenszerűen</value>
+  </data>
+  <data name="PlaylistPage_NewPlaylistButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Új lejátszási lista létrehozása</value>
+  </data>
+  <data name="PlaylistPage_NewPlaylistButton_Content.Text" xml:space="preserve">
+    <value>Új lejátszási lista</value>
+  </data>
+  <data name="PlaylistPage_NewPlaylistMenu_Regular.Text" xml:space="preserve">
+    <value>Normál lejátszási lista</value>
+  </data>
+  <data name="PlaylistPage_NewPlaylistMenu_Smart.Text" xml:space="preserve">
+    <value>Okos lejátszási lista</value>
+  </data>
+  <data name="PlaylistPage_Context_Play.Text" xml:space="preserve">
+    <value>Lejátszás</value>
+  </data>
+  <data name="PlaylistPage_Context_Rename.Text" xml:space="preserve">
+    <value>Átnevezés</value>
+  </data>
+  <data name="PlaylistPage_Context_ChangeImage.Text" xml:space="preserve">
+    <value>Kép módosítása</value>
+  </data>
+  <data name="PlaylistPage_Context_RemoveImage.Text" xml:space="preserve">
+    <value>Kép eltávolítása</value>
+  </data>
+  <data name="PlaylistPage_Context_Delete.Text" xml:space="preserve">
+    <value>Törlés</value>
+  </data>
+  <data name="PlaylistPage_EmptyState_Title.Text" xml:space="preserve">
+    <value>Még nincsenek lejátszási listák</value>
+  </data>
+  <data name="PlaylistPage_EmptyState_Subtitle.Text" xml:space="preserve">
+    <value>Hozzon létre egy lejátszási listát a kezdéshez</value>
+  </data>
+  <data name="PlaylistSongViewPage_Header_Caption.Text" xml:space="preserve">
+    <value>Lejátszási lista</value>
+  </data>
+  <data name="PlaylistSongViewPage_Section_Songs.Text" xml:space="preserve">
+    <value>Dalok</value>
+  </data>
+  <data name="PlaylistSongViewPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>Keresés a lejátszási listában...</value>
+  </data>
+  <data name="PlaylistSongViewPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Keresés a lejátszási listában</value>
+  </data>
+  <data name="PlaylistSongViewPage_PlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Összes lejátszása</value>
+  </data>
+  <data name="PlaylistSongViewPage_ShufflePlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Összes véletlenszerű lejátszása</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_Play.Text" xml:space="preserve">
+    <value>Lejátszás</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_PlayNext.Text" xml:space="preserve">
+    <value>Következő lejátszása</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_AddToQueue.Text" xml:space="preserve">
+    <value>Hozzáadás a sorhoz</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_GoToAlbum.Text" xml:space="preserve">
+    <value>Ugrás az albumhoz</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_GoToArtist.Text" xml:space="preserve">
+    <value>Ugrás az előadóhoz</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_ShowInExplorer.Text" xml:space="preserve">
+    <value>Megjelenítés a fájlkezelőben</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist.Text" xml:space="preserve">
+    <value>Eltávolítás a lejátszási listából</value>
+  </data>
+  <data name="PlaylistSongViewPage_SongElement_PlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Lejátszás</value>
+  </data>
+  <data name="PlaylistSongViewPage_EmptyState_Title.Text" xml:space="preserve">
+    <value>Ez a lejátszási lista üres</value>
+  </data>
+  <data name="PlaylistSongViewPage_EmptyState_Subtitle.Text" xml:space="preserve">
+    <value>Adjon hozzá dalokat a könyvtárából</value>
+  </data>
+  <data name="GenreViewPage_Header_Caption.Text" xml:space="preserve">
+    <value>Műfaj</value>
+  </data>
+  <data name="GenreViewPage_Section_Songs.Text" xml:space="preserve">
+    <value>Dalok</value>
+  </data>
+  <data name="GenreViewPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>Keresés a műfajban...</value>
+  </data>
+  <data name="GenreViewPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Keresés a műfajban</value>
+  </data>
+  <data name="GenreViewPage_PlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Összes lejátszása</value>
+  </data>
+  <data name="GenreViewPage_ShufflePlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Összes véletlenszerű lejátszása</value>
+  </data>
+  <data name="GenreViewPage_Context_Play.Text" xml:space="preserve">
+    <value>Lejátszás</value>
+  </data>
+  <data name="GenreViewPage_Context_PlayNext.Text" xml:space="preserve">
+    <value>Következő lejátszása</value>
+  </data>
+  <data name="GenreViewPage_Context_AddToQueue.Text" xml:space="preserve">
+    <value>Hozzáadás a sorhoz</value>
+  </data>
+  <data name="GenreViewPage_Context_AddToPlaylist.Text" xml:space="preserve">
+    <value>Hozzáadás lejátszási listához</value>
+  </data>
+  <data name="GenreViewPage_Context_GoToAlbum.Text" xml:space="preserve">
+    <value>Ugrás az albumhoz</value>
+  </data>
+  <data name="GenreViewPage_Context_GoToArtist.Text" xml:space="preserve">
+    <value>Ugrás az előadóhoz</value>
+  </data>
+  <data name="GenreViewPage_Context_ShowInExplorer.Text" xml:space="preserve">
+    <value>Megjelenítés a fájlkezelőben</value>
+  </data>
+  <data name="GenreViewPage_Context_NoPlaylists.Text" xml:space="preserve">
+    <value>Nincsenek elérhető lejátszási listák</value>
+  </data>
+  <data name="GenreViewPage_SongElement_PlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Lejátszás</value>
+  </data>
+  <data name="GenreViewPage_EmptyState_Title.Text" xml:space="preserve">
+    <value>Nincsenek dalok ehhez a műfajhoz</value>
+  </data>
+  <data name="GenreViewPage_EmptyState_Subtitle.Text" xml:space="preserve">
+    <value>Próbáljon másra keresni</value>
+  </data>
+  <data name="SettingsPage_Title.Text" xml:space="preserve">
+    <value>Beállítások</value>
+  </data>
+  <data name="SettingsPage_Section_Appearance.Text" xml:space="preserve">
+    <value>Megjelenés</value>
+  </data>
+  <data name="SettingsPage_Theme.Header" xml:space="preserve">
+    <value>Téma</value>
+  </data>
+  <data name="SettingsPage_Theme.Description" xml:space="preserve">
+    <value>Válassza ki az alkalmazás témáját.</value>
+  </data>
+  <data name="SettingsPage_AccentColor.Text" xml:space="preserve">
+    <value>Kiemelő szín</value>
+  </data>
+
+  <data name="SettingsPage_ResetAccentColor.Content" xml:space="preserve">
+    <value>Visszaállítás alapértelmezettre</value>
+  </data>
+  <data name="SettingsPage_WindowMaterial.Header" xml:space="preserve">
+    <value>Ablak anyaga</value>
+  </data>
+  <data name="SettingsPage_WindowMaterial.Description" xml:space="preserve">
+    <value>Válassza ki az ablak háttéranyagát.</value>
+  </data>
+  <data name="SettingsPage_DynamicTheming.Header" xml:space="preserve">
+    <value>Dinamikus témázás</value>
+  </data>
+  <data name="SettingsPage_DynamicTheming.Description" xml:space="preserve">
+    <value>Engedélyezze és konfigurálja a dinamikus témázási lehetőségeket.</value>
+  </data>
+  <data name="SettingsPage_RememberWindowSize.Header" xml:space="preserve">
+    <value>Ablakméret megjegyzése</value>
+  </data>
+  <data name="SettingsPage_RememberWindowSize.Description" xml:space="preserve">
+    <value>Az alkalmazás következő indításakor állítsa vissza a főablak korábbi méretét.</value>
+  </data>
+  <data name="SettingsPage_RememberWindowPosition.Header" xml:space="preserve">
+    <value>Ablakpozíció megjegyzése</value>
+  </data>
+  <data name="SettingsPage_RememberWindowPosition.Description" xml:space="preserve">
+    <value>Az alkalmazás következő indításakor állítsa vissza a főablak korábbi képernyőpozícióját.</value>
+  </data>
+  <data name="SettingsPage_RememberNavState.Header" xml:space="preserve">
+    <value>Navigációs panel állapotának megjegyzése</value>
+  </data>
+  <data name="SettingsPage_RememberNavState.Description" xml:space="preserve">
+    <value>Tartsa nyitva vagy zárva a bal oldali navigációs panelt, ahogy utoljára hagyta.</value>
+  </data>
+  <data name="SettingsPage_CustomizeNav.Header" xml:space="preserve">
+    <value>Navigáció testreszabása</value>
+  </data>
+  <data name="SettingsPage_CustomizeNav.Description" xml:space="preserve">
+    <value>Húzza a lapokat a navigációs menüben az átrendezéshez. Használja a kapcsolót egy oldal megjelenítéséhez vagy elrejtéséhez.</value>
+  </data>
+  <data name="SettingsPage_Section_Player.Text" xml:space="preserve">
+    <value>Lejátszókezelés</value>
+  </data>
+  <data name="SettingsPage_VolumeNormalization.Header" xml:space="preserve">
+    <value>Hangerő normalizálás (ReplayGain)</value>
+  </data>
+  <data name="SettingsPage_VolumeNormalization.Description" xml:space="preserve">
+    <value>Automatikusan állítsa be a hangerőt a standard szintre (-14 LUFS), hogy elkerülje a hirtelen hangerőváltozásokat.</value>
+  </data>
+  <data name="SettingsPage_Equalizer.Text" xml:space="preserve">
+    <value>Audio Equalizer</value>
+  </data>
+
+  <data name="SettingsPage_ResetEqualizer.Content" xml:space="preserve">
+    <value>Visszaállítás alapértelmezettre</value>
+  </data>
+  <data name="SettingsPage_Equalizer_Preamp.Text" xml:space="preserve">
+    <value>Előerősítő</value>
+  </data>
+  <data name="SettingsPage_Equalizer_Preset_Custom.PlaceholderText" xml:space="preserve">
+    <value>Egyéni</value>
+  </data>
+  <data name="SettingsPage_CustomizePlayer.Text" xml:space="preserve">
+    <value>Lejátszóvezérlők testreszabása</value>
+  </data>
+
+  <data name="SettingsPage_ResetPlayerButtons.Content" xml:space="preserve">
+    <value>Visszaállítás alapértelmezettre</value>
+  </data>
+  <data name="SettingsPage_CustomizePlayer_Instructions.Text" xml:space="preserve">
+    <value>Mutasson rá a láthatóság váltásához. Húzza az átrendezéshez. Az elválasztó választja el a középső és a jobb oldali vezérlőket.</value>
+  </data>
+  <data name="SettingsPage_CollapsablePlayer.Header" xml:space="preserve">
+    <value>Összecsukható lejátszó</value>
+  </data>
+  <data name="SettingsPage_CollapsablePlayer.Description" xml:space="preserve">
+    <value>Animálja a lejátszó sávot a kibontáshoz és összecsukáshoz.</value>
+  </data>
+  <data name="SettingsPage_RestorePlayback.Header" xml:space="preserve">
+    <value>Lejátszási állapot visszaállítása</value>
+  </data>
+  <data name="SettingsPage_RestorePlayback.Description" xml:space="preserve">
+    <value>Mentse el az aktuális lejátszási állapotot, hogy a következő indításkor folytatódjon.</value>
+  </data>
+  <data name="SettingsPage_AutoLaunch.Header" xml:space="preserve">
+    <value>Automatikus indítás</value>
+  </data>
+  <data name="SettingsPage_AutoLaunch.Description" xml:space="preserve">
+    <value>Indítsa el a Nagit automatikusan, amikor bejelentkezik a számítógépére.</value>
+  </data>
+  <data name="SettingsPage_StartMinimized.Header" xml:space="preserve">
+    <value>Indítás minimalizálva</value>
+  </data>
+  <data name="SettingsPage_StartMinimized.Description" xml:space="preserve">
+    <value>Indításkor az alkalmazásablak alapértelmezésben minimalizálva lesz.</value>
+  </data>
+  <data name="SettingsPage_MinimizeToMiniPlayer.Header" xml:space="preserve">
+    <value>Minimalizálás mini-lejátszóba</value>
+  </data>
+  <data name="SettingsPage_MinimizeToMiniPlayer.Description" xml:space="preserve">
+    <value>Minimalizáláskor az ablak elrejtése helyett mutasson egy kompakt lebegő lejátszót.</value>
+  </data>
+  <data name="SettingsPage_HideToTray.Header" xml:space="preserve">
+    <value>Elrejtés a tálcára</value>
+  </data>
+  <data name="SettingsPage_HideToTray.Description" xml:space="preserve">
+    <value>Bezáráskor a tálcára rejtés.</value>
+  </data>
+  <data name="SettingsPage_TrayCoverArt.Header" xml:space="preserve">
+    <value>Borító megjelenítése az előugró ablakban</value>
+  </data>
+  <data name="SettingsPage_TrayCoverArt.Description" xml:space="preserve">
+    <value>Jelenítse meg a borítóképet a kompakt lejátszóban, amely a tálca ikonjára kattintva jelenik meg.</value>
+  </data>
+  <data name="SettingsPage_Section_Data.Text" xml:space="preserve">
+    <value>Adatkezelés</value>
+  </data>
+  <data name="SettingsPage_ArtistSplitting.Header" xml:space="preserve">
+    <value>Előadók felosztása</value>
+  </data>
+  <data name="SettingsPage_ArtistSplitting.Description" xml:space="preserve">
+    <value>Adja meg a több előadó felosztásához használt karaktereket (pl. ';/'). Hagyja üresen a letiltáshoz.</value>
+  </data>
+  <data name="SettingsPage_RescanLibrary.Content" xml:space="preserve">
+    <value>Könyvtár újraolvasása</value>
+  </data>
+  <data name="SettingsPage_RescanLibrary.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Olvassa be újra a könyvtárat a felosztási változtatások alkalmazásához</value>
+  </data>
+  <data name="SettingsPage_OnlineMetadata.Header" xml:space="preserve">
+    <value>Online metaadatok lekérése</value>
+  </data>
+  <data name="SettingsPage_OnlineMetadata.Description" xml:space="preserve">
+    <value>Kérjen le további információkat, például előadói képeket és életrajzokat online szolgáltatásokból (pl. Spotify, Last.fm).</value>
+  </data>
+  <data name="SettingsPage_MetadataSources.Header" xml:space="preserve">
+    <value>Források</value>
+  </data>
+  <data name="SettingsPage_MetadataSources.Description" xml:space="preserve">
+    <value>Húzza a metaadat-forrásokat az átrendezéshez. Vigye az egeret minden forrás fölé a részletekért.</value>
+  </data>
+  <data name="SettingsPage_OnlineLyrics.Header" xml:space="preserve">
+    <value>Online dalszövegek lekérése</value>
+  </data>
+  <data name="SettingsPage_OnlineLyrics.Description" xml:space="preserve">
+    <value>Automatikusan lekéri a hiányzó dalszövegeket online forrásokból. (Adatvédelem: szám metaadatait küldi harmadik fél szolgáltatásainak)</value>
+  </data>
+  <data name="SettingsPage_LyricsSources.Header" xml:space="preserve">
+    <value>Források</value>
+  </data>
+  <data name="SettingsPage_LyricsSources.Description" xml:space="preserve">
+    <value>Húzza a dalszöveg-forrásokat az átrendezéshez. Vigye az egeret minden forrás fölé a részletekért.</value>
+  </data>
+  <data name="SettingsPage_PlaylistsIO.Header" xml:space="preserve">
+    <value>Lejátszási listák exportálása/importálása</value>
+  </data>
+  <data name="SettingsPage_PlaylistsIO.Description" xml:space="preserve">
+    <value>Exportálja a lejátszási listákat M3U fájlokba más lejátszókban való használathoz, vagy importáljon M3U lejátszási listákat a Nagiba.</value>
+  </data>
+  <data name="SettingsPage_ExportPlaylists.Content" xml:space="preserve">
+    <value>Összes exportálása...</value>
+  </data>
+  <data name="SettingsPage_ExportPlaylists.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Összes lejátszási lista exportálása egy mappába</value>
+  </data>
+  <data name="SettingsPage_ImportPlaylists.Content" xml:space="preserve">
+    <value>Importálás...</value>
+  </data>
+  <data name="SettingsPage_ImportPlaylists.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Egy vagy több M3U fájl importálása</value>
+  </data>
+  <data name="SettingsPage_ResetApp.Header" xml:space="preserve">
+    <value>Alkalmazás visszaállítása</value>
+  </data>
+  <data name="SettingsPage_ResetApp.Description" xml:space="preserve">
+    <value>Ez törli az összes könyvtáradatot, lejátszási listát, és visszaállítja az összes beállítást az alapértelmezettekre. Az alkalmazás újraindul.</value>
+  </data>
+  <data name="SettingsPage_ResetButton.Content" xml:space="preserve">
+    <value>Összes adat visszaállítása</value>
+  </data>
+  <data name="SettingsPage_Section_Integrations.Text" xml:space="preserve">
+    <value>Integrációk</value>
+  </data>
+  <data name="SettingsPage_LastFm.Header" xml:space="preserve">
+    <value>Last.fm</value>
+  </data>
+  <data name="SettingsPage_LastFm.Description" xml:space="preserve">
+    <value>Csatlakoztassa Last.fm fiókját a számok scrobble-özéséhez és az aktuálisan lejátszott dal megjelenítéséhez.</value>
+  </data>
+  <data name="SettingsPage_LastFm_Connect.Content" xml:space="preserve">
+    <value>Csatlakoztatás</value>
+  </data>
+  <data name="SettingsPage_LastFm_Complete.Content" xml:space="preserve">
+    <value>Kész</value>
+  </data>
+  <data name="SettingsPage_LastFm_Cancel.Content" xml:space="preserve">
+    <value>Mégse</value>
+  </data>
+  <data name="SettingsPage_LastFm_Disconnect.Content" xml:space="preserve">
+    <value>Leválasztás</value>
+  </data>
+  <data name="SettingsPage_LastFm_Scrobbling.Header" xml:space="preserve">
+    <value>Scrobble engedélyezése</value>
+  </data>
+  <data name="SettingsPage_LastFm_Scrobbling.Description" xml:space="preserve">
+    <value>Automatikusan hozzáadja a Nagin hallgatott számokat a Last.fm profiljához.</value>
+  </data>
+  <data name="SettingsPage_LastFm_NowPlaying.Header" xml:space="preserve">
+    <value>„Most játszott” frissítése</value>
+  </data>
+  <data name="SettingsPage_LastFm_NowPlaying.Description" xml:space="preserve">
+    <value>Mutassa meg barátainak a Last.fm-en, hogy mit hallgat éppen valós időben.</value>
+  </data>
+  <data name="SettingsPage_Discord.Header" xml:space="preserve">
+    <value>Discord</value>
+  </data>
+  <data name="SettingsPage_Discord.Description" xml:space="preserve">
+    <value>Jelenítse meg aktuális zenehallgatási tevékenységét Discord állapotként.</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Header_Caption.Text" xml:space="preserve">
+    <value>Okos lejátszási lista</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Section_Songs.Text" xml:space="preserve">
+    <value>Dalok</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>Keresés okos lejátszási listában...</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Keresés okos lejátszási listában</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_EditRulesButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Szabályok szerkesztése</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_PlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Összes lejátszása</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_ShufflePlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Összes véletlenszerű lejátszása</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Context_Play.Text" xml:space="preserve">
+    <value>Lejátszás</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Context_PlayNext.Text" xml:space="preserve">
+    <value>Következő lejátszása</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Context_AddToQueue.Text" xml:space="preserve">
+    <value>Hozzáadás a sorhoz</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Context_GoToAlbum.Text" xml:space="preserve">
+    <value>Ugrás az albumhoz</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Context_GoToArtist.Text" xml:space="preserve">
+    <value>Ugrás az előadóhoz</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Context_ShowInExplorer.Text" xml:space="preserve">
+    <value>Megjelenítés a fájlkezelőben</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_SongElement_PlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Lejátszás</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_EmptyState_Title.Text" xml:space="preserve">
+    <value>Nincsenek dalok, amelyek megfelelnek az aktuális szabályoknak</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_EmptyState_Subtitle.Text" xml:space="preserve">
+    <value>Próbálja meg szerkeszteni a szabályokat</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_EmptyState_Button.Content" xml:space="preserve">
+    <value>Szabályok szerkesztése</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_EmptyState_Button.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Szabályok szerkesztése</value>
+  </data>
+  <data name="SettingsPage_Section_About.Text" xml:space="preserve">
+    <value>Névjegy</value>
+  </data>
+  <data name="SettingsPage_AboutExpander.Header" xml:space="preserve">
+    <value>A Nagiról</value>
+  </data>
+  <data name="SettingsPage_AboutExpander.Description" xml:space="preserve">
+    <value>Fedezze fel újra helyi zenei gyűjteményét a Nagival, egy sebességre, egyszerűségre és adatvédelemre fókuszáló zenelejátszóval.</value>
+  </data>
+  <data name="SettingsPage_About_VersionPrefix.Text" xml:space="preserve">
+    <value>Verzió </value>
+  </data>
+  <data name="SettingsPage_About_Licenses.Content" xml:space="preserve">
+    <value>Licencek megtekintése</value>
+  </data>
+  <data name="SettingsPage_About_SourceCode.Content" xml:space="preserve">
+    <value>Forráskód</value>
+  </data>
+  <data name="SettingsPage_About_CheckUpdates.Content" xml:space="preserve">
+    <value>Frissítések keresése</value>
+  </data>
+  <data name="SettingsPage_About_Feedback.Content" xml:space="preserve">
+    <value>Visszajelzés küldése</value>
+  </data>
+  <data name="SettingsPage_CheckForUpdates.Header" xml:space="preserve">
+    <value>Frissítések keresése indításkor</value>
+  </data>
+  <data name="SettingsPage_CheckForUpdates.Description" xml:space="preserve">
+    <value>Automatikusan ellenőrizze az új verziókat az alkalmazás indításakor.</value>
+  </data>
+  <data name="SettingsPage_Language.Header" xml:space="preserve">
+    <value>Alkalmazás nyelve</value>
+  </data>
+  <data name="SettingsPage_Language.[using:CommunityToolkit.WinUI.Controls]SettingsCard.Description" xml:space="preserve">
+    <value>A változtatások érvénybe lépéséhez újraindítás szükséges</value>
+  </data>
+  <data name="SettingsPage_RestartRequired_Title" xml:space="preserve">
+    <value>Újraindítás szükséges</value>
+  </data>
+  <data name="SettingsPage_RestartRequired_Message" xml:space="preserve">
+    <value>Kérjük, indítsa újra az alkalmazást, hogy a nyelvi változtatás teljesen érvénybe lépjen.</value>
+  </data>
+</root>
