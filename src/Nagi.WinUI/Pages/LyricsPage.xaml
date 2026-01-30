@@ -121,11 +121,11 @@
                 HorizontalAlignment="Center" />
             <TextBlock
                 Style="{StaticResource TitleTextBlockStyle}"
-                Text="No lyrics found for this track"
+                x:Uid="LyricsPage_NoLyrics_Title"
                 HorizontalAlignment="Center" />
             <TextBlock
                 Style="{StaticResource SubtitleTextBlockStyle}"
-                Text="Try another song"
+                x:Uid="LyricsPage_NoLyrics_Subtitle"
                 HorizontalAlignment="Center"
                 Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
         </StackPanel>

@@ -220,7 +220,7 @@
                         Margin="0,0,0,8"
                         HorizontalAlignment="Center"
                         Style="{StaticResource PageTitleTextStyle}"
-                        Text="Welcome to Nagi"
+                        x:Uid="OnboardingPage_Welcome_Title"
                         TextWrapping="NoWrap" />
 
                     <TextBlock
@@ -251,14 +251,14 @@
                                 Padding="24,12"
                                 Command="{x:Bind ViewModel.AddFolderCommand}"
                                 Style="{StaticResource BrandAccentButtonStyle}"
-                                ToolTipService.ToolTip="Add a music folder to get started">
+                                x:Uid="OnboardingPage_AddFolderButton">
                                 <StackPanel x:Name="AddFolderButtonContent" Orientation="Horizontal" Spacing="10">
                                     <SymbolIcon Symbol="Add" />
                                     <TextBlock
                                         VerticalAlignment="Center"
                                         FontSize="16"
                                         FontWeight="SemiBold"
-                                        Text="Add Music Folder" />
+                                        x:Uid="OnboardingPage_AddFolderButton_Content" />
                                 </StackPanel>
                             </Button>
                         </StackPanel>

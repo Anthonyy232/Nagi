@@ -131,7 +131,7 @@ public sealed partial class GenrePage : Page
 
         _isSearchExpanded = true;
         _logger.LogDebug("Search UI expanded.");
-        ToolTipService.SetToolTip(SearchToggleButton, "Close search");
+        ToolTipService.SetToolTip(SearchToggleButton, Nagi.WinUI.Resources.Strings.GenrePage_SearchButton_Close_ToolTip);
         VisualStateManager.GoToState(this, "SearchExpanded", true);
 
         var timer = DispatcherQueue.CreateTimer();
@@ -153,7 +153,7 @@ public sealed partial class GenrePage : Page
 
         _isSearchExpanded = false;
         _logger.LogDebug("Search UI collapsed and search term cleared.");
-        ToolTipService.SetToolTip(SearchToggleButton, "Search genres");
+        ToolTipService.SetToolTip(SearchToggleButton, Nagi.WinUI.Resources.Strings.GenrePage_SearchButton_Search_ToolTip);
         VisualStateManager.GoToState(this, "SearchCollapsed", true);
         ViewModel.SearchTerm = string.Empty;
     }

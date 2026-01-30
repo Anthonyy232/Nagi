@@ -25,24 +25,24 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Column="0" Style="{StaticResource PageTitleTextStyle}" Text="Folders" />
+            <TextBlock Grid.Column="0" x:Uid="FolderPage_Title" Style="{StaticResource PageTitleTextStyle}" />
 
             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
                 <Button x:Name="RandomFolderButton"
+                        x:Uid="FolderPage_RandomButton"
                         Style="{StaticResource SongListViewPageIconButton}"
-                        ToolTipService.ToolTip="Pick one at random"
                         Command="{x:Bind ViewModel.PlayRandomFolderCommand}"
                         Margin="0,0,1,0">
                     <ContentControl Style="{StaticResource DiceIconStyle}" />
                 </Button>
                 <Button
                     Click="AddFolderButton_Click"
+                    x:Uid="FolderPage_AddFolderButton"
                     IsEnabled="{x:Bind ViewModel.IsAnyOperationInProgress, Converter={StaticResource BooleanToInverseBooleanConverter}, Mode=OneWay}"
-                    Style="{StaticResource FolderPageAddFolderButtonStyle}"
-                    ToolTipService.ToolTip="Add a music folder">
+                    Style="{StaticResource FolderPageAddFolderButtonStyle}">
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <FontIcon Glyph="" />
-                        <TextBlock Text="Add Folder" />
+                        <TextBlock x:Uid="FolderPage_AddFolder_Label" />
                     </StackPanel>
                 </Button>
             </StackPanel>
@@ -70,16 +70,16 @@
                         <Grid.ContextFlyout>
                             <MenuFlyout>
                                 <MenuFlyoutItem
+                                    x:Uid="FolderPage_Menu_Play"
                                     Command="{Binding DataContext.PlayFolderCommand, ElementName=FolderPageRoot}"
                                     CommandParameter="{x:Bind Id}"
-                                    IsEnabled="{Binding DataContext.IsAnyOperationInProgress, ElementName=FolderPageRoot, Converter={StaticResource BooleanToInverseBooleanConverter}}"
-                                    Text="Play" />
+                                    IsEnabled="{Binding DataContext.IsAnyOperationInProgress, ElementName=FolderPageRoot, Converter={StaticResource BooleanToInverseBooleanConverter}}" />
                                 <MenuFlyoutItem
+                                    x:Uid="FolderPage_Menu_Rescan"
                                     Command="{Binding DataContext.RescanFolderCommand, ElementName=FolderPageRoot}"
                                     CommandParameter="{x:Bind Id}"
-                                    IsEnabled="{Binding DataContext.IsAnyOperationInProgress, ElementName=FolderPageRoot, Converter={StaticResource BooleanToInverseBooleanConverter}}"
-                                    Text="Rescan" />
-                                <MenuFlyoutItem Click="DeleteFolder_Click" Text="Delete" />
+                                    IsEnabled="{Binding DataContext.IsAnyOperationInProgress, ElementName=FolderPageRoot, Converter={StaticResource BooleanToInverseBooleanConverter}}" />
+                                <MenuFlyoutItem x:Uid="FolderPage_Menu_Delete" Click="DeleteFolder_Click" />
                             </MenuFlyout>
                         </Grid.ContextFlyout>
                         <Grid.RowDefinitions>
@@ -138,13 +138,13 @@
                 HorizontalAlignment="Center" />
             <TextBlock
                 HorizontalAlignment="Center"
-                Style="{StaticResource TitleTextBlockStyle}"
-                Text="No folders added yet" />
+                x:Uid="FolderPage_Empty_Title"
+                Style="{StaticResource TitleTextBlockStyle}" />
             <TextBlock
                 HorizontalAlignment="Center"
+                x:Uid="FolderPage_Empty_Subtitle"
                 Style="{StaticResource SubtitleTextBlockStyle}"
-                Foreground="{ThemeResource TextFillColorTertiaryBrush}"
-                Text="Add music folders to get started" />
+                Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
         </StackPanel>
     </Grid>
 </Page>

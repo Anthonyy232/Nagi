@@ -119,7 +119,7 @@ public sealed partial class LibraryPage : Page
 
         _isSearchExpanded = true;
         _logger.LogDebug("Search UI expanded.");
-        ToolTipService.SetToolTip(SearchToggleButton, "Close search");
+        ToolTipService.SetToolTip(SearchToggleButton, Nagi.WinUI.Resources.Strings.LibraryPage_SearchButton_Close_ToolTip);
         VisualStateManager.GoToState(this, "SearchExpanded", true);
 
         var timer = DispatcherQueue.CreateTimer();
@@ -141,7 +141,7 @@ public sealed partial class LibraryPage : Page
 
         _isSearchExpanded = false;
         _logger.LogDebug("Search UI collapsed and search term cleared.");
-        ToolTipService.SetToolTip(SearchToggleButton, "Search library");
+        ToolTipService.SetToolTip(SearchToggleButton, Nagi.WinUI.Resources.Strings.LibraryPage_SearchButton_Search_ToolTip);
         VisualStateManager.GoToState(this, "SearchCollapsed", true);
         ViewModel.SearchTerm = string.Empty;
     }
@@ -171,7 +171,7 @@ public sealed partial class LibraryPage : Page
                 }
             else
                 addToPlaylistSubMenu.Items.Add(
-                    new MenuFlyoutItem { Text = "No playlists available", IsEnabled = false });
+                    new MenuFlyoutItem { Text = Nagi.WinUI.Resources.Strings.LibraryPage_PlaylistMenu_NoPlaylists, IsEnabled = false });
         }
 
         if (menuFlyout.Target?.DataContext is not Song rightClickedSong) return;

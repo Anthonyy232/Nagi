@@ -94,14 +94,14 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Column="0" Style="{StaticResource PageTitleTextStyle}" Text="Genres" />
+            <TextBlock Grid.Column="0" x:Uid="GenrePage_Title" Style="{StaticResource PageTitleTextStyle}" />
 
             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                 <!-- Search functionality -->
                 <Grid>
                     <TextBox x:Name="SearchTextBox"
+                             x:Uid="GenrePage_SearchBox"
                              Style="{StaticResource SearchTextBoxStyle}"
-                             PlaceholderText="Search genres..."
                              Width="0"
                              Opacity="0"
                              IsHitTestVisible="False"
@@ -111,9 +111,9 @@
                              Canvas.ZIndex="0">
                         </TextBox>
                     <Button x:Name="SearchToggleButton"
+                            x:Uid="GenrePage_SearchButton"
                             Click="OnSearchToggleButtonClick"
                             Style="{StaticResource SongListViewPageIconButton}"
-                            ToolTipService.ToolTip="Search genres"
                             HorizontalAlignment="Right"
                             Margin="0,0,1,0"
                             Canvas.ZIndex="1">
@@ -122,8 +122,8 @@
                 </Grid>
 
                 <Button x:Name="RandomGenreButton"
+                        x:Uid="GenrePage_RandomButton"
                         Style="{StaticResource SongListViewPageIconButton}"
-                        ToolTipService.ToolTip="Pick one at random"
                         Command="{x:Bind ViewModel.PlayRandomGenreCommand}"
                         Margin="0,0,1,0">
                     <ContentControl Style="{StaticResource DiceIconStyle}" />
@@ -181,9 +181,9 @@
                             <Grid.ContextFlyout>
                                 <MenuFlyout>
                                     <MenuFlyoutItem
+                                        x:Uid="GenrePage_Menu_Play"
                                         Command="{Binding ViewModel.PlayGenreCommand, ElementName=GenrePageRoot}"
-                                        CommandParameter="{x:Bind Id}"
-                                        Text="Play">
+                                        CommandParameter="{x:Bind Id}">
                                         <MenuFlyoutItem.Icon>
                                             <FontIcon Glyph="" />
                                         </MenuFlyoutItem.Icon>
@@ -224,13 +224,13 @@
                     HorizontalAlignment="Center" />
                 <TextBlock
                     HorizontalAlignment="Center"
-                    Style="{StaticResource TitleTextBlockStyle}"
-                    Text="No genres found" />
+                    x:Uid="GenrePage_Empty_Title"
+                    Style="{StaticResource TitleTextBlockStyle}" />
                 <TextBlock
                     HorizontalAlignment="Center"
+                    x:Uid="GenrePage_Empty_Subtitle"
                     Style="{StaticResource SubtitleTextBlockStyle}"
-                    Foreground="{ThemeResource TextFillColorTertiaryBrush}"
-                    Text="Scan your music library to populate genres" />
+                    Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
             </StackPanel>
         </Grid>
     </Grid>

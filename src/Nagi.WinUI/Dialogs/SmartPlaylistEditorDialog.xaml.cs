@@ -58,6 +58,7 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
         Unloaded += OnDialogUnloaded;
         
         _isInitialized = true;
+        MatchCountText.Text = Nagi.WinUI.Resources.Strings.SmartPlaylist_Status_Calculating;
     }
 
     private void OnRulesCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -146,6 +147,7 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
         }
 
         UpdateNoRulesVisibility();
+        MatchCountText.Text = Nagi.WinUI.Resources.Strings.SmartPlaylist_Status_Calculating;
         _ = UpdateMatchCountAsync();
     }
 

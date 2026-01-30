@@ -103,7 +103,7 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                <TextBlock Style="{StaticResource PageTitleTextStyle}" Text="Library" />
+                <TextBlock x:Uid="LibraryPage_Title" Style="{StaticResource PageTitleTextStyle}" />
                 <TextBlock
                     Margin="0,0,0,5"
                     VerticalAlignment="Bottom"
@@ -125,8 +125,8 @@
                 <Grid>
                     <!-- Search TextBox (initially collapsed, expands to the left) -->
                     <TextBox x:Name="SearchTextBox"
+                             x:Uid="LibraryPage_SearchBox"
                              Style="{StaticResource SearchTextBoxStyle}"
-                             PlaceholderText="Search library..."
                              Width="0"
                              Opacity="0"
                              IsHitTestVisible="False"
@@ -138,9 +138,9 @@
 
                     <!-- Combined Search/Close Button -->
                     <Button x:Name="SearchToggleButton"
+                            x:Uid="LibraryPage_SearchButton"
                             Click="OnSearchToggleButtonClick"
                             Style="{StaticResource SongListViewPageIconButton}"
-                            ToolTipService.ToolTip="Search library"
                             HorizontalAlignment="Right"
                             Margin="0,0,1,0"
                             IsHitTestVisible="True"
@@ -150,13 +150,14 @@
                 </Grid>
 
                 <Button Command="{x:Bind ViewModel.PlayAllSongsCommand}"
-                        Style="{StaticResource SongListViewPageIconButton}" ToolTipService.ToolTip="Play all">
+                        x:Uid="LibraryPage_PlayAllButton"
+                        Style="{StaticResource SongListViewPageIconButton}">
                     <FontIcon FontSize="16" Glyph="" />
                 </Button>
 
                 <Button Command="{x:Bind ViewModel.ShuffleAndPlayAllSongsCommand}"
-                        Style="{StaticResource SongListViewPageIconButton}"
-                        ToolTipService.ToolTip="Shuffle and play all">
+                        x:Uid="LibraryPage_ShufflePlayAllButton"
+                        Style="{StaticResource SongListViewPageIconButton}">
                     <FontIcon FontSize="16" Glyph="" />
                 </Button>
 
@@ -212,28 +213,28 @@
                         <Grid.ContextFlyout>
                             <MenuFlyout Opening="SongItemMenuFlyout_Opening">
                                 <MenuFlyoutItem
-                                    Command="{Binding DataContext.PlaySelectedSongsCommand, ElementName=pageRoot}"
-                                    Text="Play" />
+                                    x:Uid="LibraryPage_Context_Play"
+                                    Command="{Binding DataContext.PlaySelectedSongsCommand, ElementName=pageRoot}" />
                                 <MenuFlyoutItem
-                                    Command="{Binding DataContext.PlaySelectedSongsNextCommand, ElementName=pageRoot}"
-                                    Text="Play Next" />
+                                    x:Uid="LibraryPage_Context_PlayNext"
+                                    Command="{Binding DataContext.PlaySelectedSongsNextCommand, ElementName=pageRoot}" />
                                 <MenuFlyoutItem
-                                    Command="{Binding DataContext.AddSelectedSongsToQueueCommand, ElementName=pageRoot}"
-                                    Text="Add to Queue" />
-                                <MenuFlyoutSubItem x:Name="AddToPlaylistSubMenu" Text="Add to playlist" />
+                                    x:Uid="LibraryPage_Context_AddToQueue"
+                                    Command="{Binding DataContext.AddSelectedSongsToQueueCommand, ElementName=pageRoot}" />
+                                <MenuFlyoutSubItem x:Name="AddToPlaylistSubMenu" x:Uid="LibraryPage_Context_AddToPlaylist" />
                                 <MenuFlyoutSeparator
                                     Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                 <MenuFlyoutItem Command="{Binding DataContext.GoToAlbumCommand, ElementName=pageRoot}"
                                                 CommandParameter="{x:Bind}"
-                                                Text="Go to album"
+                                                x:Uid="LibraryPage_Context_GoToAlbum"
                                                 Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                 <MenuFlyoutSubItem x:Name="GoToArtistSubMenu"
-                                                   Text="Go to artist"
+                                                   x:Uid="LibraryPage_Context_GoToArtist"
                                                    Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                 <MenuFlyoutItem
                                     Command="{Binding DataContext.ShowInFileExplorerCommand, ElementName=pageRoot}"
                                     CommandParameter="{x:Bind}"
-                                    Text="Show in explorer"
+                                    x:Uid="LibraryPage_Context_ShowInExplorer"
                                     Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
                             </MenuFlyout>
                         </Grid.ContextFlyout>
@@ -252,7 +253,7 @@
                             Command="{Binding DataContext.PlaySongCommand, ElementName=pageRoot}"
                             CommandParameter="{x:Bind}"
                             Style="{StaticResource SongListViewPageSongPlayButtonStyle}"
-                            ToolTipService.ToolTip="Play">
+                            x:Uid="LibraryPage_SongElement_PlayButton">
                             <Border Width="42" Height="42" CornerRadius="12"
                                     Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
                                 <controls:ImageEx
@@ -315,11 +316,11 @@
                 HorizontalAlignment="Center" />
             <TextBlock
                 Style="{StaticResource TitleTextBlockStyle}"
-                Text="Your library is empty"
+                x:Uid="LibraryPage_EmptyState_Title"
                 HorizontalAlignment="Center" />
             <TextBlock
                 Style="{StaticResource SubtitleTextBlockStyle}"
-                Text="Add folders to your library in Settings"
+                x:Uid="LibraryPage_EmptyState_Subtitle"
                 HorizontalAlignment="Center"
                 Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
         </StackPanel>

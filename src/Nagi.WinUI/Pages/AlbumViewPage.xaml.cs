@@ -164,7 +164,7 @@ public sealed partial class AlbumViewPage : Page
 
         _isSearchExpanded = true;
         _logger.LogDebug("Search UI expanded.");
-        ToolTipService.SetToolTip(SearchToggleButton, "Close search");
+        ToolTipService.SetToolTip(SearchToggleButton, Nagi.WinUI.Resources.Strings.AlbumViewPage_SearchButton_Close_ToolTip);
         VisualStateManager.GoToState(this, "SearchExpanded", true);
 
         // Focus the search text box after the animation has started for a smooth transition.
@@ -190,7 +190,7 @@ public sealed partial class AlbumViewPage : Page
 
         // Update UI immediately and start the collapse animation.
         _logger.LogDebug("Search UI collapsed and search term cleared.");
-        ToolTipService.SetToolTip(SearchToggleButton, "Search library");
+        ToolTipService.SetToolTip(SearchToggleButton, Nagi.WinUI.Resources.Strings.AlbumViewPage_SearchButton_Search_ToolTip);
         VisualStateManager.GoToState(this, "SearchCollapsed", true);
         ViewModel.SearchTerm = string.Empty;
     }
@@ -337,7 +337,7 @@ public sealed partial class AlbumViewPage : Page
         if (availablePlaylists?.Any() != true)
         {
             _logger.LogDebug("No playlists available to populate submenu.");
-            var disabledItem = new MenuFlyoutItem { Text = "No playlists available", IsEnabled = false };
+            var disabledItem = new MenuFlyoutItem { Text = Nagi.WinUI.Resources.Strings.AlbumViewPage_PlaylistMenu_NoPlaylists, IsEnabled = false };
             subMenu.Items.Add(disabledItem);
             return;
         }

@@ -205,7 +205,6 @@
             <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Left">
                 <FontIcon Glyph="&#xE946;" FontSize="14" Foreground="{ThemeResource TextFillColorSecondary}" VerticalAlignment="Center"/>
                 <TextBlock x:Name="MatchCountText" 
-                           Text="Calculating..." 
                            Foreground="{ThemeResource TextFillColorSecondary}" 
                            VerticalAlignment="Center"
                            Style="{ThemeResource CaptionTextBlockStyle}"/>

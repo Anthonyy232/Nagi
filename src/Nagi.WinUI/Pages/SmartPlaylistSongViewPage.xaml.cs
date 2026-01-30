@@ -62,7 +62,7 @@ public sealed partial class SmartPlaylistSongViewPage : Page
                 _logger.LogWarning(
                     "Received invalid navigation parameter. Expected '{ExpectedType}', got '{ActualType}'. Initializing with fallback state.",
                     nameof(SmartPlaylistSongViewNavigationParameter), paramType);
-                await ViewModel.InitializeAsync("Unknown Smart Playlist", null);
+                await ViewModel.InitializeAsync(Nagi.WinUI.Resources.Strings.SmartPlaylistSongViewPage_UnknownPlaylist, null);
             }
         }
         catch (Exception ex)
@@ -156,7 +156,7 @@ public sealed partial class SmartPlaylistSongViewPage : Page
 
         _isSearchExpanded = true;
         _logger.LogDebug("Search UI expanded.");
-        ToolTipService.SetToolTip(SearchToggleButton, "Close search");
+        ToolTipService.SetToolTip(SearchToggleButton, Nagi.WinUI.Resources.Strings.SmartPlaylistSongViewPage_SearchButton_Close_ToolTip);
         VisualStateManager.GoToState(this, "SearchExpanded", true);
 
         var timer = DispatcherQueue.CreateTimer();
@@ -175,7 +175,7 @@ public sealed partial class SmartPlaylistSongViewPage : Page
 
         _isSearchExpanded = false;
         _logger.LogDebug("Search UI collapsed and search term cleared.");
-        ToolTipService.SetToolTip(SearchToggleButton, "Search in smart playlist");
+        ToolTipService.SetToolTip(SearchToggleButton, Nagi.WinUI.Resources.Strings.SmartPlaylistSongViewPage_SearchButton_Search_ToolTip);
         VisualStateManager.GoToState(this, "SearchCollapsed", true);
         ViewModel.SearchTerm = string.Empty;
     }

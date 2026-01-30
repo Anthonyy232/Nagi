@@ -202,6 +202,7 @@ public static class Strings
     public static string Settings_Export_Success_Title => GetString("Settings_Export_Success_Title");
     public static string Settings_Export_Success_Message => GetString("Settings_Export_Success_Message");
     public static string Settings_Export_Failed_Title => GetString("Settings_Export_Failed_Title");
+    public static string Settings_Export_Failed_Message => GetString("Settings_Export_Failed_Message");
     public static string Settings_Import_Success_Title => GetString("Settings_Import_Success_Title");
     public static string Settings_Import_Success_Message => GetString("Settings_Import_Success_Message");
     public static string Settings_Import_Unmatched_Message => GetString("Settings_Import_Unmatched_Message");
@@ -312,4 +313,92 @@ public static class Strings
     // App Info
     public static string App_Name_Default => GetString("App_Name_Default");
     public static string App_Version_Unknown => GetString("App_Version_Unknown");
+
+    // AlbumPage
+    public static string AlbumPage_SearchButton_Close_ToolTip => GetString("AlbumPage_SearchButton_Close_ToolTip");
+    public static string AlbumPage_SearchButton_Search_ToolTip => GetString("AlbumPage_SearchButton_Search_ToolTip");
+
+    // AlbumViewPage
+    public static string AlbumViewPage_SearchButton_Close_ToolTip => GetString("AlbumViewPage_SearchButton_Close_ToolTip");
+    public static string AlbumViewPage_SearchButton_Search_ToolTip => GetString("AlbumViewPage_SearchButton_Search_ToolTip");
+    public static string AlbumViewPage_PlaylistMenu_NoPlaylists => GetString("AlbumViewPage_PlaylistMenu_NoPlaylists");
+
+    // ArtistPage
+    public static string ArtistPage_SearchButton_Close_ToolTip => GetString("ArtistPage_SearchButton_Close_ToolTip");
+    public static string ArtistPage_SearchButton_Search_ToolTip => GetString("ArtistPage_SearchButton_Search_ToolTip");
+
+    // ArtistViewPage
+    public static string ArtistViewPage_SearchButton_Close_ToolTip => GetString("ArtistViewPage_SearchButton_Close_ToolTip");
+    public static string ArtistViewPage_SearchButton_Search_ToolTip => GetString("ArtistViewPage_SearchButton_Search_ToolTip");
+    public static string ArtistViewPage_PlaylistMenu_NoPlaylists => GetString("ArtistViewPage_PlaylistMenu_NoPlaylists");
+
+    // FolderPage
+    public static string FolderPage_DeleteDialog_Title => GetString("FolderPage_DeleteDialog_Title");
+    public static string FolderPage_DeleteDialog_Format => GetString("FolderPage_DeleteDialog_Format");
+    public static string FolderPage_DeleteDialog_PrimaryButton => GetString("FolderPage_DeleteDialog_PrimaryButton");
+    public static string FolderPage_DeleteDialog_CloseButton => GetString("FolderPage_DeleteDialog_CloseButton");
+
+    // FolderSongViewPage
+    public static string FolderSongViewPage_Default_Title => GetString("FolderSongViewPage_Default_Title");
+    public static string FolderSongViewPage_SearchButton_Close_ToolTip => GetString("FolderSongViewPage_SearchButton_Close_ToolTip");
+    public static string FolderSongViewPage_SearchButton_Search_ToolTip => GetString("FolderSongViewPage_SearchButton_Search_ToolTip");
+    public static string FolderSongViewPage_PlaylistMenu_NoPlaylists => GetString("FolderSongViewPage_PlaylistMenu_NoPlaylists");
+
+    // GenrePage
+    public static string GenrePage_SearchButton_Close_ToolTip => GetString("GenrePage_SearchButton_Close_ToolTip");
+    public static string GenrePage_SearchButton_Search_ToolTip => GetString("GenrePage_SearchButton_Search_ToolTip");
+
+    // GenreViewPage
+    public static string GenreViewPage_SearchButton_Close_ToolTip => GetString("GenreViewPage_SearchButton_Close_ToolTip");
+    public static string GenreViewPage_SearchButton_Search_ToolTip => GetString("GenreViewPage_SearchButton_Search_ToolTip");
+    public static string GenreViewPage_PlaylistMenu_NoPlaylists => GetString("GenreViewPage_PlaylistMenu_NoPlaylists");
+
+    // LibraryPage
+    public static string LibraryPage_SearchButton_Close_ToolTip => GetString("LibraryPage_SearchButton_Close_ToolTip");
+    public static string LibraryPage_SearchButton_Search_ToolTip => GetString("LibraryPage_SearchButton_Search_ToolTip");
+    public static string LibraryPage_PlaylistMenu_NoPlaylists => GetString("LibraryPage_PlaylistMenu_NoPlaylists");
+
+    // PlaylistPage
+    public static string PlaylistPage_SearchButton_Close_ToolTip => GetString("PlaylistPage_SearchButton_Close_ToolTip");
+    public static string PlaylistPage_SearchButton_Search_ToolTip => GetString("PlaylistPage_SearchButton_Search_ToolTip");
+    public static string PlaylistPage_CreateDialog_Placeholder => GetString("PlaylistPage_CreateDialog_Placeholder");
+    public static string PlaylistPage_CreateDialog_PickImage => GetString("PlaylistPage_CreateDialog_PickImage");
+    public static string PlaylistPage_CreateDialog_Title => GetString("PlaylistPage_CreateDialog_Title");
+    public static string PlaylistPage_CreateDialog_CreateButton => GetString("PlaylistPage_CreateDialog_CreateButton");
+    public static string PlaylistPage_CreateDialog_CancelButton => GetString("PlaylistPage_CreateDialog_CancelButton");
+    public static string PlaylistPage_RenameDialog_Title_Format => GetString("PlaylistPage_RenameDialog_Title_Format");
+    public static string PlaylistPage_RenameDialog_RenameButton => GetString("PlaylistPage_RenameDialog_RenameButton");
+    public static string PlaylistPage_DeleteDialog_Title => GetString("PlaylistPage_DeleteDialog_Title");
+    public static string PlaylistPage_DeleteDialog_Content_Format => GetString("PlaylistPage_DeleteDialog_Content_Format");
+    public static string PlaylistPage_DeleteDialog_DeleteButton => GetString("PlaylistPage_DeleteDialog_DeleteButton");
+    
+    // PlaylistSongViewPage
+    public static string PlaylistSongViewPage_SearchButton_Close_ToolTip => GetString("PlaylistSongViewPage_SearchButton_Close_ToolTip");
+    public static string PlaylistSongViewPage_SearchButton_Search_ToolTip => GetString("PlaylistSongViewPage_SearchButton_Search_ToolTip");
+    public static string PlaylistSongViewPage_UnknownPlaylist => GetString("PlaylistSongViewPage_UnknownPlaylist");
+
+    // SmartPlaylistSongViewPage
+    public static string SmartPlaylistSongViewPage_SearchButton_Close_ToolTip => GetString("SmartPlaylistSongViewPage_SearchButton_Close_ToolTip");
+    public static string SmartPlaylistSongViewPage_SearchButton_Search_ToolTip => GetString("SmartPlaylistSongViewPage_SearchButton_Search_ToolTip");
+    public static string SmartPlaylistSongViewPage_UnknownPlaylist => GetString("SmartPlaylistSongViewPage_UnknownPlaylist");
+
+    // Settings
+    public static string Settings_Dialog_Rescan_Title => GetString("Settings_Dialog_Rescan_Title");
+    public static string Settings_Dialog_Rescan_Content => GetString("Settings_Dialog_Rescan_Content");
+    public static string Settings_Dialog_Rescan_PrimaryButton => GetString("Settings_Dialog_Rescan_PrimaryButton");
+    public static string Settings_Status_Rescan_Preparing => GetString("Settings_Status_Rescan_Preparing");
+    public static string Settings_Dialog_RescanComplete_Title => GetString("Settings_Dialog_RescanComplete_Title");
+    public static string Settings_Dialog_RescanComplete_Content => GetString("Settings_Dialog_RescanComplete_Content");
+    public static string Settings_Dialog_RescanFailed_Title => GetString("Settings_Dialog_RescanFailed_Title");
+    public static string Settings_Dialog_RescanFailed_Content => GetString("Settings_Dialog_RescanFailed_Content");
+    public static string Settings_Dialog_FFmpegNotFound_Title => GetString("Settings_Dialog_FFmpegNotFound_Title");
+    public static string Settings_Dialog_VolumeNorm_Title => GetString("Settings_Dialog_VolumeNorm_Title");
+    public static string Settings_Dialog_VolumeNorm_Content => GetString("Settings_Dialog_VolumeNorm_Content");
+    public static string Settings_Dialog_VolumeNorm_PrimaryButton => GetString("Settings_Dialog_VolumeNorm_PrimaryButton");
+    public static string Settings_Status_VolumeNorm_Preparing => GetString("Settings_Status_VolumeNorm_Preparing");
+    public static string Settings_Status_VolumeNorm_Cancelled => GetString("Settings_Status_VolumeNorm_Cancelled");
+    public static string Settings_Status_VolumeNorm_Error_Format => GetString("Settings_Status_VolumeNorm_Error_Format");
+
+    // App
+    public static string App_CrashReport_LogFallbackError_Format => GetString("App_CrashReport_LogFallbackError_Format");
 }

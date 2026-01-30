@@ -65,7 +65,7 @@ public sealed partial class FolderSongViewPage : Page
                 _logger.LogWarning(
                     "Received invalid navigation parameter. Expected '{ExpectedType}', got '{ActualType}'. Initializing with fallback state.",
                     nameof(FolderSongViewNavigationParameter), paramType);
-                await ViewModel.InitializeAsync("Unknown Folder", null);
+                await ViewModel.InitializeAsync(Nagi.WinUI.Resources.Strings.FolderSongViewPage_Default_Title, null);
             }
         }
         catch (Exception ex)
@@ -123,7 +123,7 @@ public sealed partial class FolderSongViewPage : Page
         if (_isSearchExpanded) return;
 
         _isSearchExpanded = true;
-        ToolTipService.SetToolTip(SearchToggleButton, "Close search");
+        ToolTipService.SetToolTip(SearchToggleButton, Nagi.WinUI.Resources.Strings.FolderSongViewPage_SearchButton_Close_ToolTip);
         VisualStateManager.GoToState(this, "SearchExpanded", true);
 
         var timer = DispatcherQueue.CreateTimer();
@@ -144,7 +144,7 @@ public sealed partial class FolderSongViewPage : Page
         if (!_isSearchExpanded) return;
 
         _isSearchExpanded = false;
-        ToolTipService.SetToolTip(SearchToggleButton, "Search library");
+        ToolTipService.SetToolTip(SearchToggleButton, Nagi.WinUI.Resources.Strings.FolderSongViewPage_SearchButton_Search_ToolTip);
         VisualStateManager.GoToState(this, "SearchCollapsed", true);
         ViewModel.SearchTerm = string.Empty;
     }
@@ -304,7 +304,7 @@ public sealed partial class FolderSongViewPage : Page
 
         if (availablePlaylists?.Any() != true)
         {
-            subMenu.Items.Add(new MenuFlyoutItem { Text = "No playlists available", IsEnabled = false });
+            subMenu.Items.Add(new MenuFlyoutItem { Text = Nagi.WinUI.Resources.Strings.FolderSongViewPage_PlaylistMenu_NoPlaylists, IsEnabled = false });
             return;
         }
 

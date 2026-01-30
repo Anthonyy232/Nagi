@@ -144,11 +144,10 @@ public sealed partial class FolderPage : Page
         _logger.LogDebug("Showing delete confirmation dialog for folder '{FolderName}'.", folderItem.Name);
         var dialog = new ContentDialog
         {
-            Title = "Delete Folder",
-            Content =
-                $"Are you sure you want to remove the folder '{folderItem.Name}' from the library? This will not delete the files from your computer.",
-            PrimaryButtonText = "Delete",
-            CloseButtonText = "Cancel",
+            Title = Nagi.WinUI.Resources.Strings.FolderPage_DeleteDialog_Title,
+            Content = string.Format(Nagi.WinUI.Resources.Strings.FolderPage_DeleteDialog_Format, folderItem.Name),
+            PrimaryButtonText = Nagi.WinUI.Resources.Strings.FolderPage_DeleteDialog_PrimaryButton,
+            CloseButtonText = Nagi.WinUI.Resources.Strings.FolderPage_DeleteDialog_CloseButton,
             DefaultButton = ContentDialogButton.Close,
             XamlRoot = XamlRoot
         };

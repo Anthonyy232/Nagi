@@ -620,7 +620,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         }
         else
         {
-            await _uiService.ShowMessageDialogAsync(Nagi.WinUI.Resources.Strings.Settings_Export_Failed_Title, result.ErrorMessage ?? "No playlists to export.");
+            await _uiService.ShowMessageDialogAsync(Nagi.WinUI.Resources.Strings.Settings_Export_Failed_Title, result.ErrorMessage ?? Nagi.WinUI.Resources.Strings.Settings_Export_Failed_Message);
         }
     }
 
@@ -853,15 +853,15 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         if (_playerViewModel.IsGlobalOperationInProgress) return;
 
         var confirmed = await _uiService.ShowConfirmationDialogAsync(
-            "Rescan Metadata",
-            "This will re-scan all songs in your library to apply new metadata settings (like artist split characters). This may take a while depending on library size. Do you want to continue?",
-            "Rescan",
+            Nagi.WinUI.Resources.Strings.Settings_Dialog_Rescan_Title,
+            Nagi.WinUI.Resources.Strings.Settings_Dialog_Rescan_Content,
+            Nagi.WinUI.Resources.Strings.Settings_Dialog_Rescan_PrimaryButton,
             null);
 
         if (!confirmed) return;
 
         _playerViewModel.IsGlobalOperationInProgress = true;
-        _playerViewModel.GlobalOperationStatusMessage = "Preparing library rescan...";
+        _playerViewModel.GlobalOperationStatusMessage = Nagi.WinUI.Resources.Strings.Settings_Status_Rescan_Preparing;
         _playerViewModel.IsGlobalOperationIndeterminate = true;
 
         try
@@ -875,12 +875,12 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
             await _libraryScanner.ForceRescanMetadataAsync(progress);
             
-            await _uiService.ShowMessageDialogAsync("Rescan Complete", "Library metadata has been updated.");
+            await _uiService.ShowMessageDialogAsync(Nagi.WinUI.Resources.Strings.Settings_Dialog_RescanComplete_Title, Nagi.WinUI.Resources.Strings.Settings_Dialog_RescanComplete_Content);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Metadata rescan failed.");
-            await _uiService.ShowMessageDialogAsync("Rescan Failed", "An error occurred while scanning. Check logs for details.");
+            await _uiService.ShowMessageDialogAsync(Nagi.WinUI.Resources.Strings.Settings_Dialog_RescanFailed_Title, Nagi.WinUI.Resources.Strings.Settings_Dialog_RescanFailed_Content);
         }
         finally
         {
@@ -1247,7 +1247,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
                 {
                     // Show dialog with recheck capability
                     var ffmpegDetected = await _uiService.ShowFFmpegSetupDialogAsync(
-                        "FFmpeg Not Found",
+                        Nagi.WinUI.Resources.Strings.Settings_Dialog_FFmpegNotFound_Title,
                         _ffmpegService.GetFFmpegSetupInstructions(),
                         () => _ffmpegService.IsFFmpegInstalledAsync(forceRecheck: true));
 
@@ -1263,13 +1263,10 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
                 // If FFmpeg is present, show confirmation dialog and trigger scan
                 var confirmed = await _uiService.ShowConfirmationDialogAsync(
-                    title: "Enable Volume Normalization",
-                    content: "Volume Normalization (ReplayGain) ensures a consistent volume level across all your music.\n\n" +
-                    "This will analyze your music library and directly modify your audio files by writing ReplayGain tags. " +
-                    "Only files without existing tags will be processed. This may take some time depending on your library size.\n\n" +
-                    "Do you want to continue?",
-                    primaryButtonText: "Enable & Scan",
-                    closeButtonText: "Cancel");
+                    title: Nagi.WinUI.Resources.Strings.Settings_Dialog_VolumeNorm_Title,
+                    content: Nagi.WinUI.Resources.Strings.Settings_Dialog_VolumeNorm_Content,
+                    primaryButtonText: Nagi.WinUI.Resources.Strings.Settings_Dialog_VolumeNorm_PrimaryButton,
+                    closeButtonText: Nagi.WinUI.Resources.Strings.Generic_Cancel);
 
                 if (!confirmed)
                 {
@@ -1309,7 +1306,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         var cancellationToken = _replayGainScanCts.Token;
 
         _playerViewModel.IsGlobalOperationInProgress = true;
-        _playerViewModel.GlobalOperationStatusMessage = "Preparing volume normalization scan...";
+        _playerViewModel.GlobalOperationStatusMessage = Nagi.WinUI.Resources.Strings.Settings_Status_VolumeNorm_Preparing;
         _playerViewModel.IsGlobalOperationIndeterminate = true;
 
         try
@@ -1325,11 +1322,11 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         }
         catch (OperationCanceledException)
         {
-            _playerViewModel.GlobalOperationStatusMessage = "Volume normalization scan cancelled.";
+            _playerViewModel.GlobalOperationStatusMessage = Nagi.WinUI.Resources.Strings.Settings_Status_VolumeNorm_Cancelled;
         }
         catch (Exception ex)
         {
-            _playerViewModel.GlobalOperationStatusMessage = $"Error during scan: {ex.Message}";
+            _playerViewModel.GlobalOperationStatusMessage = string.Format(Nagi.WinUI.Resources.Strings.Settings_Status_VolumeNorm_Error_Format, ex.Message);
             _logger.LogError(ex, "Failed to scan library for ReplayGain");
         }
         finally
