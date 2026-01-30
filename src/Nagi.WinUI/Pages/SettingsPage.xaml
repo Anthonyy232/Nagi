@@ -166,6 +166,24 @@
                 </controls:SettingsCard>
 
                 <controls:SettingsCard
+                    x:Uid="SettingsPage_Language">
+                    <controls:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE774;" />
+                    </controls:SettingsCard.HeaderIcon>
+                    <ComboBox
+                        MinWidth="200"
+                        HorizontalAlignment="Right"
+                        ItemsSource="{x:Bind ViewModel.AvailableLanguages}"
+                        SelectedItem="{x:Bind ViewModel.SelectedLanguage, Mode=TwoWay}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="models:LanguageModel">
+                                <TextBlock Text="{x:Bind DisplayName}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </controls:SettingsCard>
+
+                <controls:SettingsCard
                     x:Uid="SettingsPage_RememberWindowSize">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE740;" />

@@ -6,11 +6,13 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Globalization;
 using Windows.System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
+using Microsoft.Windows.ApplicationModel.Resources;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Core.Models;
@@ -250,6 +252,26 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         }
     }
 
+    async partial void OnSelectedLanguageChanged(Nagi.WinUI.Models.LanguageModel value)
+    {
+         if (_isInitializing || value == null) return;
+         
+         try
+         {
+             await _settingsService.SetLanguageAsync(value.Code);
+             
+             var loader = new ResourceLoader();
+             var title = loader.GetString("SettingsPage_RestartRequired_Title");
+             var message = loader.GetString("SettingsPage_RestartRequired_Message");
+             
+             await _uiService.ShowMessageDialogAsync(title, message);
+         }
+         catch (Exception ex)
+         {
+             _logger.LogError(ex, "Failed to set language to {LanguageCode}", value.Code);
+         }
+    }
+
     [ObservableProperty] public partial EqualizerPreset? SelectedEqualizerPreset { get; set; }
     public List<EqualizerPreset> AvailableEqualizerPresets { get; private set; } = new();
 
@@ -280,6 +302,11 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
     public List<ElementTheme> AvailableThemes { get; } = Enum.GetValues<ElementTheme>().ToList();
     public List<BackdropMaterial> AvailableBackdropMaterials { get; } = Enum.GetValues<BackdropMaterial>().ToList();
+    
+    public List<Nagi.WinUI.Models.LanguageModel> AvailableLanguages { get; } = new();
+    
+    [ObservableProperty] public partial Nagi.WinUI.Models.LanguageModel SelectedLanguage { get; set; }
+
     public string ApplicationVersion => _appInfoService.GetAppVersion();
 
     public void Dispose()
@@ -380,6 +407,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
             var accentColorTask = _settingsService.GetAccentColorAsync();
             var artistSplitTask = _settingsService.GetArtistSplitCharactersAsync();
+            var languageTask = _settingsService.GetLanguageAsync();
 
             var lyricsProvidersTask = _settingsService.GetServiceProvidersAsync(ServiceCategory.Lyrics);
             var metadataProvidersTask = _settingsService.GetServiceProvidersAsync(ServiceCategory.Metadata);
@@ -390,7 +418,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
                 hideToTrayTask, miniPlayerTask, trayFlyoutTask, onlineMetadataTask,
                 onlineLyricsTask, discordRpcTask, checkUpdatesTask, rememberWindowTask,
                 rememberPositionTask, rememberPaneTask, volumeNormTask, lastFmCredsTask, lastFmAuthTokenTask,
-                scrobblingTask, nowPlayingTask, accentColorTask, artistSplitTask, lyricsProvidersTask, metadataProvidersTask);
+                scrobblingTask, nowPlayingTask, accentColorTask, artistSplitTask, languageTask, lyricsProvidersTask, metadataProvidersTask);
 
             foreach (var item in navItemsTask.Result)
             {
@@ -444,6 +472,29 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             }
 
             ArtistSplitCharacters = artistSplitTask.Result;
+
+            // Load languages dynamically
+            AvailableLanguages.Clear();
+            AvailableLanguages.Add(new LanguageModel(string.Empty, "Auto"));
+
+            var manifestLanguages = Windows.Globalization.ApplicationLanguages.ManifestLanguages;
+            foreach (var langCode in manifestLanguages)
+            {
+                try
+                {
+                    var culture = new CultureInfo(langCode);
+                    AvailableLanguages.Add(new LanguageModel(langCode, culture.NativeName));
+                }
+                catch (CultureNotFoundException)
+                {
+                    // Fallback if the system doesn't recognize the code
+                    AvailableLanguages.Add(new LanguageModel(langCode, langCode)); 
+                }
+            }
+
+            var currentLangCode = languageTask.Result;
+            SelectedLanguage = AvailableLanguages.FirstOrDefault(l => l.Code == currentLangCode) 
+                               ?? AvailableLanguages.FirstOrDefault(l => l.Code == string.Empty)!;
 
             LoadEqualizerState();
 
