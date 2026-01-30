@@ -1,0 +1,27 @@
+project_id_env: CROWDIN_PROJECT_ID
+api_token_env: CROWDIN_PERSONAL_TOKEN
+base_path: .
+
+preserve_hierarchy: true
+
+# WinUI/C# Specific Language Mapping
+# Ensures Crowdin outputs match BCP-47 tags expected by WinUI
+language_mapping:
+  locale:
+    zh-CN: zh-Hans
+    zh-TW: zh-Hant
+    sr: sr-Cyrl-RS
+    # Add other mappings if specific WinUI tags are required
+
+files:
+  # Nagi.Core Shared Resources (.resx)
+  - source: /src/Nagi.Core/Resources/Strings.resx
+    translation: /src/Nagi.Core/Resources/Strings.%locale%.resx
+
+  # Nagi.WinUI C# Resources (.resx)
+  - source: /src/Nagi.WinUI/Resources/Strings.resx
+    translation: /src/Nagi.WinUI/Resources/Strings.%locale%.resx
+
+  # Nagi.WinUI XAML Resources (.resw)
+  - source: /src/Nagi.WinUI/Strings/en-US/Resources.resw
+    translation: /src/Nagi.WinUI/Strings/%locale%/Resources.resw
