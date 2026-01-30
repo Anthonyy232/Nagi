@@ -772,10 +772,10 @@ public partial class App : Application
             }
             catch (Exception fileEx)
             {
-                logContent =
-                    $"Could not retrieve logs from memory. The fallback attempt to read the log file failed.\n" +
-                    $"Expected Path: '{originalLogPath}'\n" +
-                    $"Error: {fileEx.Message}";
+                logContent = string.Format(
+                    Nagi.WinUI.Resources.Strings.App_CrashReport_LogFallbackError_Format,
+                    originalLogPath,
+                    fileEx.Message);
             }
 
         var fullCrashReport = $"{logContent}\n\n--- EXCEPTION DETAILS ---\n{exceptionDetails}";

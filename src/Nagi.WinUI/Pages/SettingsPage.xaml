@@ -77,7 +77,7 @@
             MaxWidth="1200"
             Margin="36,24,36,0"
             Style="{StaticResource SettingsPageTitleTextStyle}"
-            Text="Settings" />
+            x:Uid="SettingsPage_Title" />
 
         <ScrollView
             Grid.Row="1"
@@ -89,12 +89,11 @@
                 HorizontalAlignment="Stretch"
                 Spacing="{StaticResource SettingsCardSpacing}">
 
-                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="Appearance" />
+                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" x:Uid="SettingsPage_Section_Appearance" />
 
                 <controls:SettingsExpander
                     x:Name="ThemeSettingsExpander"
-                    Header="Theme"
-                    Description="Choose the application theme."
+                    x:Uid="SettingsPage_Theme"
                     IsExpanded="False">
                     <controls:SettingsExpander.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE793;" />
@@ -112,16 +111,15 @@
                     </ComboBox>
 
                     <controls:SettingsExpander.Items>
-                        <controls:SettingsCard
-                            Description="Choose a custom accent color for the app when dynamic theming is disabled.">
+                        <controls:SettingsCard>
                             <controls:SettingsCard.Header>
                                 <StackPanel Orientation="Horizontal" Spacing="8">
-                                    <TextBlock Text="Accent Color" VerticalAlignment="Center" />
+                                    <TextBlock x:Uid="SettingsPage_AccentColor" VerticalAlignment="Center" />
                                     <HyperlinkButton
                                         VerticalAlignment="Center"
                                         Command="{x:Bind ViewModel.ResetAccentColorCommand}"
                                         Style="{StaticResource AnimatedHyperlinkButtonStyle}"
-                                        Content="Reset to default"
+                                        x:Uid="SettingsPage_ResetAccentColor"
                                         FontSize="12"
                                         Padding="4,2" />
                                 </StackPanel>
@@ -139,8 +137,7 @@
                 </controls:SettingsExpander>
 
                 <controls:SettingsCard
-                    Header="Window Material"
-                    Description="Select the backdrop material for the window.">
+                    x:Uid="SettingsPage_WindowMaterial">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7C4;" />
                     </controls:SettingsCard.HeaderIcon>
@@ -159,8 +156,7 @@
                 </controls:SettingsCard>
 
                 <controls:SettingsCard
-                    Header="Dynamic Theming"
-                    Description="Enable and configure dynamic theming options.">
+                    x:Uid="SettingsPage_DynamicTheming">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE790;" />
                     </controls:SettingsCard.HeaderIcon>
@@ -170,8 +166,7 @@
                 </controls:SettingsCard>
 
                 <controls:SettingsCard
-                    Header="Remember window size"
-                    Description="Restore the main window to its previous size on next launch.">
+                    x:Uid="SettingsPage_RememberWindowSize">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE740;" />
                     </controls:SettingsCard.HeaderIcon>
@@ -181,8 +176,7 @@
                 </controls:SettingsCard>
 
                 <controls:SettingsCard
-                    Header="Remember window position"
-                    Description="Restore the main window to its previous screen location on next launch.">
+                    x:Uid="SettingsPage_RememberWindowPosition">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE737;" />
                     </controls:SettingsCard.HeaderIcon>
@@ -192,8 +186,7 @@
                 </controls:SettingsCard>
 
                 <controls:SettingsCard
-                    Header="Remember navigation panel state"
-                    Description="Keep the left navigation panel open or closed as you left it.">
+                    x:Uid="SettingsPage_RememberNavState">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE700;" />
                     </controls:SettingsCard.HeaderIcon>
@@ -203,8 +196,7 @@
                 </controls:SettingsCard>
 
                 <controls:SettingsCard
-                    Header="Customize Navigation"
-                    Description="Drag to reorder pages in the navigation menu. Use the toggle to show or hide a page.">
+                    x:Uid="SettingsPage_CustomizeNav">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE700;" />
                     </controls:SettingsCard.HeaderIcon>
@@ -268,11 +260,10 @@
                     </ListView>
                 </controls:SettingsCard>
 
-                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="Player Management" />
+                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" x:Uid="SettingsPage_Section_Player" />
 
                 <controls:SettingsCard
-                    Header="Volume Normalization (ReplayGain)"
-                    Description="Automatically adjust volume to the standard level (-14 LUFS) to avoid sudden loudness changes.">
+                    x:Uid="SettingsPage_VolumeNormalization">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE995;" />
                     </controls:SettingsCard.HeaderIcon>
@@ -281,16 +272,15 @@
                         IsOn="{x:Bind ViewModel.IsVolumeNormalizationEnabled, Mode=TwoWay}" />
                 </controls:SettingsCard>
 
-                <controls:SettingsCard
-                    Description="Adjust frequency bands to customize your sound.">
+                <controls:SettingsCard>
                     <controls:SettingsCard.Header>
                         <StackPanel Orientation="Horizontal" Spacing="8">
-                            <TextBlock Text="Audio Equalizer" VerticalAlignment="Center" />
+                            <TextBlock x:Uid="SettingsPage_Equalizer" VerticalAlignment="Center" />
                             <HyperlinkButton
                                 VerticalAlignment="Center"
                                 Command="{x:Bind ViewModel.ResetEqualizerCommand}"
                                 Style="{StaticResource AnimatedHyperlinkButtonStyle}"
-                                Content="Reset to default"
+                                x:Uid="SettingsPage_ResetEqualizer"
                                 FontSize="12"
                                 Padding="4,2" />
                         </StackPanel>
@@ -301,7 +291,7 @@
                     <StackPanel Spacing="20" HorizontalAlignment="Center">
                         <!-- Preamp slider -->
                         <StackPanel Spacing="6" Width="320">
-                            <TextBlock FontWeight="SemiBold" Text="Preamp" HorizontalAlignment="Center" />
+                            <TextBlock FontWeight="SemiBold" x:Uid="SettingsPage_Equalizer_Preamp" HorizontalAlignment="Center" />
                             <Slider
                                 Maximum="20"
                                 Minimum="-20"
@@ -357,7 +347,7 @@
                             HorizontalAlignment="Center"
                             MinWidth="160"
                             ItemsSource="{x:Bind ViewModel.AvailableEqualizerPresets}"
-                            PlaceholderText="Custom"
+                            x:Uid="SettingsPage_Equalizer_Preset_Custom"
                             SelectedItem="{x:Bind ViewModel.SelectedEqualizerPreset, Mode=TwoWay}">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate x:DataType="coreModels:EqualizerPreset">
@@ -368,16 +358,15 @@
                     </StackPanel>
                 </controls:SettingsCard>
 
-                <controls:SettingsCard
-                    Description="Drag buttons to reorder them on the player.">
+                <controls:SettingsCard>
                     <controls:SettingsCard.Header>
                         <StackPanel Orientation="Horizontal" Spacing="8">
-                            <TextBlock Text="Customize Player Controls" VerticalAlignment="Center" />
+                            <TextBlock x:Uid="SettingsPage_CustomizePlayer" VerticalAlignment="Center" />
                             <HyperlinkButton
                                 VerticalAlignment="Center"
                                 Command="{x:Bind ViewModel.ResetPlayerButtonsCommand}"
                                 Style="{StaticResource AnimatedHyperlinkButtonStyle}"
-                                Content="Reset to default"
+                                x:Uid="SettingsPage_ResetPlayerButtons"
                                 FontSize="12"
                                 Padding="4,2" />
                         </StackPanel>
@@ -523,7 +512,7 @@
                             MaxWidth="450"
                             HorizontalAlignment="Center"
                             Style="{StaticResource CaptionTextBlockStyle}"
-                            Text="Hover to toggle visibility. Drag to reorder. The divider separates center and right controls."
+                            x:Uid="SettingsPage_CustomizePlayer_Instructions"
                             TextAlignment="Center"
                             TextWrapping="Wrap"
                             Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
@@ -531,8 +520,7 @@
                 </controls:SettingsCard>
 
                 <controls:SettingsCard
-                    Header="Collapsable player"
-                    Description="Animate the player bar to expand and collapse.">
+                    x:Uid="SettingsPage_CollapsablePlayer">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE745;" />
                     </controls:SettingsCard.HeaderIcon>
@@ -542,8 +530,7 @@
                 </controls:SettingsCard>
 
                 <controls:SettingsCard
-                    Header="Restore playback state"
-                    Description="Save the current playback state to resume on next launch.">
+                    x:Uid="SettingsPage_RestorePlayback">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE74E;" />
                     </controls:SettingsCard.HeaderIcon>
@@ -553,8 +540,7 @@
                 </controls:SettingsCard>
 
                 <controls:SettingsCard
-                    Header="Auto launch on startup"
-                    Description="Start Nagi automatically when you log into your computer.">
+                    x:Uid="SettingsPage_AutoLaunch">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7E8;" />
                     </controls:SettingsCard.HeaderIcon>
@@ -564,8 +550,7 @@
                 </controls:SettingsCard>
 
                 <controls:SettingsCard
-                    Header="Start minimized"
-                    Description="When launched, the application window will be minimized by default.">
+                    x:Uid="SettingsPage_StartMinimized">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE92C;" />
                     </controls:SettingsCard.HeaderIcon>
@@ -575,8 +560,7 @@
                 </controls:SettingsCard>
 
                 <controls:SettingsCard
-                    Header="Minimize to mini-player"
-                    Description="When minimized, show a compact floating player instead of hiding the window.">
+                    x:Uid="SettingsPage_MinimizeToMiniPlayer">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE975;" />
                     </controls:SettingsCard.HeaderIcon>
@@ -586,8 +570,7 @@
                 </controls:SettingsCard>
 
                 <controls:SettingsCard
-                    Header="Hide to system tray"
-                    Description="When closed, hide to the system tray instead.">
+                    x:Uid="SettingsPage_HideToTray">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE78B;" />
                     </controls:SettingsCard.HeaderIcon>
@@ -597,8 +580,7 @@
                 </controls:SettingsCard>
 
                 <controls:SettingsCard
-                    Header="Show cover art in flyout"
-                    Description="Display the cover art in the compact player that appears when clicking the tray icon.">
+                    x:Uid="SettingsPage_TrayCoverArt">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEB9F;" />
                     </controls:SettingsCard.HeaderIcon>
@@ -607,11 +589,10 @@
                         IsOn="{x:Bind ViewModel.IsShowCoverArtInTrayFlyoutEnabled, Mode=TwoWay}" />
                 </controls:SettingsCard>
 
-                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="Data Management" />
+                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" x:Uid="SettingsPage_Section_Data" />
 
                 <controls:SettingsCard
-                    Header="Artist Splitting"
-                    Description="Define characters used to split multiple artists (e.g. ';/'). Leave empty to disable.">
+                    x:Uid="SettingsPage_ArtistSplitting">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE713;" />
                     </controls:SettingsCard.HeaderIcon>
@@ -622,15 +603,13 @@
                             Text="{x:Bind ViewModel.ArtistSplitCharacters, Mode=TwoWay}" />
                         <Button
                             Command="{x:Bind ViewModel.RescanMetadataCommand}"
-                            Content="Rescan Library"
-                            ToolTipService.ToolTip="Rescan library to apply splitting changes" />
+                            x:Uid="SettingsPage_RescanLibrary" />
                     </StackPanel>
                 </controls:SettingsCard>
 
                 <controls:SettingsExpander
                     x:Name="MetadataSettingsExpander"
-                    Header="Retrieve online metadata"
-                    Description="Fetch additional information like artist images and biographies from online services (e.g., Spotify, Last.fm).">
+                    x:Uid="SettingsPage_OnlineMetadata">
                     <controls:SettingsExpander.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8EC;" />
                     </controls:SettingsExpander.HeaderIcon>
@@ -639,7 +618,7 @@
                         IsOn="{x:Bind ViewModel.IsFetchOnlineMetadataEnabled, Mode=TwoWay}" />
 
                     <controls:SettingsExpander.Items>
-                        <controls:SettingsCard Header="Sources" Description="Drag to reorder metadata sources. Hover over each source for details.">
+                        <controls:SettingsCard x:Uid="SettingsPage_MetadataSources">
                             <controls:SettingsCard.HeaderIcon>
                                 <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE179;" />
                             </controls:SettingsCard.HeaderIcon>
@@ -665,8 +644,7 @@
 
                 <controls:SettingsExpander
                     x:Name="LyricsSettingsExpander"
-                    Header="Fetch online lyrics"
-                    Description="Automatically fetch missing lyrics from online sources. (Privacy: sends track metadata to third-party services)">
+                    x:Uid="SettingsPage_OnlineLyrics">
                     <controls:SettingsExpander.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE90A;" />
                     </controls:SettingsExpander.HeaderIcon>
@@ -675,7 +653,7 @@
                         IsOn="{x:Bind ViewModel.IsFetchOnlineLyricsEnabled, Mode=TwoWay}" />
 
                     <controls:SettingsExpander.Items>
-                        <controls:SettingsCard Header="Sources" Description="Drag to reorder lyrics sources. Hover over each source for details.">
+                        <controls:SettingsCard x:Uid="SettingsPage_LyricsSources">
                             <controls:SettingsCard.HeaderIcon>
                                 <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE179;" />
                             </controls:SettingsCard.HeaderIcon>
@@ -701,42 +679,37 @@
 
 
                 <controls:SettingsCard
-                    Header="Export/Import Playlists"
-                    Description="Export playlists to M3U files for use in other players, or import M3U playlists into Nagi.">
+                    x:Uid="SettingsPage_PlaylistsIO">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8B5;" />
                     </controls:SettingsCard.HeaderIcon>
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <Button
-                            Content="Export All..."
-                            ToolTipService.ToolTip="Export all playlists to a folder"
+                            x:Uid="SettingsPage_ExportPlaylists"
                             Command="{x:Bind ViewModel.ExportAllPlaylistsCommand}" />
                         <Button
-                            Content="Import..."
-                            ToolTipService.ToolTip="Import one or more M3U files"
+                            x:Uid="SettingsPage_ImportPlaylists"
                             Command="{x:Bind ViewModel.ImportMultiplePlaylistsCommand}" />
                     </StackPanel>
                 </controls:SettingsCard>
 
                 <controls:SettingsCard
-                    Header="Reset application"
-                    Description="This will delete all library data, playlists, and reset all settings to their defaults. The application will restart.">
+                    x:Uid="SettingsPage_ResetApp">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE74D;" />
                     </controls:SettingsCard.HeaderIcon>
                     <Button
                         HorizontalAlignment="Right"
                         Command="{x:Bind ViewModel.ResetApplicationDataCommand}"
-                        Content="Reset All Data"
+                        x:Uid="SettingsPage_ResetButton"
                         Style="{StaticResource SettingsPageResetButtonStyle}" />
                 </controls:SettingsCard>
 
-                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="Integrations" />
+                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" x:Uid="SettingsPage_Section_Integrations" />
 
                 <controls:SettingsExpander
                     x:Name="LastFmSettingsExpander"
-                    Header="Last.fm"
-                    Description="Connect your Last.fm account to scrobble tracks and show your currently playing song.">
+                    x:Uid="SettingsPage_LastFm">
                     <controls:SettingsExpander.HeaderIcon>
                         <PathIcon
                             Data="M10.584 17.209l-.88-2.392s-1.43 1.595-3.573 1.595c-1.897 0-3.244-1.65-3.244-4.289 0-3.381 1.704-4.591 3.382-4.591 2.419 0 3.188 1.567 3.849 3.574l.88 2.75c.879 2.667 2.528 4.811 7.284 4.811 3.409 0 5.719-1.044 5.719-3.793 0-2.227-1.265-3.381-3.629-3.932l-1.76-.385c-1.209-.275-1.566-.77-1.566-1.594 0-.935.742-1.485 1.952-1.485 1.319 0 2.034.495 2.144 1.677l2.749-.33c-.22-2.474-1.924-3.491-4.729-3.491-2.474 0-4.893.935-4.893 3.931 0 1.87.907 3.052 3.188 3.602l1.869.439c1.402.33 1.869.907 1.869 1.705 0 1.017-.989 1.43-2.858 1.43-2.776 0-3.932-1.457-4.591-3.464l-.907-2.749c-1.155-3.574-2.997-4.894-6.653-4.894-4.041-.001-6.186 2.556-6.186 6.899 0 4.179 2.145 6.433 5.993 6.433 3.107.001 4.591-1.457 4.591-1.457z"
@@ -747,7 +720,7 @@
                         <!-- Initial Connect Button -->
                         <Button
                             Command="{x:Bind ViewModel.LastFmInitialAuthCommand}"
-                            Content="Connect"
+                            x:Uid="SettingsPage_LastFm_Connect"
                             Visibility="{x:Bind ViewModel.IsLastFmNotConnected, Mode=OneWay}"
                             IsEnabled="{x:Bind ViewModel.IsLastFmInitialAuthEnabled, Mode=OneWay}" />
 
@@ -755,24 +728,23 @@
                         <StackPanel Orientation="Horizontal" Spacing="8" Visibility="{x:Bind ViewModel.IsConnectingToLastFm, Mode=OneWay}">
                             <Button
                                 Command="{x:Bind ViewModel.LastFmFinalizeAuthCommand}"
-                                Content="Complete"
+                                x:Uid="SettingsPage_LastFm_Complete"
                                 Style="{StaticResource AccentButtonStyle}" />
                             <Button
                                 Command="{x:Bind ViewModel.CancelLastFmAuthCommand}"
-                                Content="Cancel" />
+                                x:Uid="SettingsPage_LastFm_Cancel" />
                         </StackPanel>
 
                         <!-- Disconnect Button -->
                         <Button
                             Command="{x:Bind ViewModel.LastFmDisconnectCommand}"
-                            Content="Disconnect"
+                            x:Uid="SettingsPage_LastFm_Disconnect"
                             Visibility="{x:Bind ViewModel.IsLastFmConnected, Mode=OneWay}" />
                     </StackPanel>
 
                     <controls:SettingsExpander.Items>
                         <controls:SettingsCard
-                            Header="Enable scrobbling"
-                            Description="Automatically add the tracks you listen to on Nagi to your Last.fm profile.">
+                            x:Uid="SettingsPage_LastFm_Scrobbling">
                             <controls:SettingsCard.HeaderIcon>
                                 <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE121;" />
                             </controls:SettingsCard.HeaderIcon>
@@ -780,8 +752,7 @@
                         </controls:SettingsCard>
 
                         <controls:SettingsCard
-                            Header="Update 'Now Playing'"
-                            Description="Show your friends on Last.fm what you're currently listening to in real-time.">
+                            x:Uid="SettingsPage_LastFm_NowPlaying">
                             <controls:SettingsCard.HeaderIcon>
                                 <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE9A8;" />
                             </controls:SettingsCard.HeaderIcon>
@@ -791,8 +762,7 @@
                 </controls:SettingsExpander>
 
                 <controls:SettingsCard
-                    Header="Discord"
-                    Description="Show your current listening activity as your status on Discord.">
+                    x:Uid="SettingsPage_Discord">
                     <controls:SettingsCard.HeaderIcon>
                         <PathIcon
                             Data="M20.317 4.37C18.787 3.66 17.13 3.15 15.4 2.88C15.4 2.88 15.27 3.04 15.12 3.26C13.24 2.99 11.37 2.99 9.52 3.26C9.37 3.04 9.24 2.88 9.24 2.88C7.51 3.15 5.85 3.66 4.32 4.37C0.93 9.21 0.05 13.93 0.51 18.58C2.6 20.01 4.65 20.89 6.66 21.43C7.15 20.77 7.6 20.07 8 19.33C7.32 19.08 6.67 18.78 6.05 18.43C6.2 18.32 6.34 18.21 6.48 18.09C10.36 19.87 14.64 19.87 18.52 18.09C18.66 18.21 18.8 18.32 18.95 18.43C18.33 18.78 17.68 19.08 17 19.33C17.4 20.07 17.85 20.77 18.34 21.43C20.35 20.89 22.4 20.01 24.49 18.58C25.02 13.21 23.6 8.54 20.317 4.37ZM8.62 15.31C7.27 15.31 6.18 14.08 6.18 12.58C6.18 11.08 7.24 9.84 8.62 9.84C9.99 9.84 11.08 11.07 11.06 12.58C11.06 14.08 9.99 15.31 8.62 15.31ZM16.38 15.31C15.03 15.31 13.94 14.08 13.94 12.58C13.94 11.08 15 9.84 16.38 9.84C17.75 9.84 18.84 11.07 18.82 12.58C18.82 14.08 17.75 15.31 16.38 15.31Z"
@@ -803,11 +773,10 @@
                         IsOn="{x:Bind ViewModel.IsDiscordRichPresenceEnabled, Mode=TwoWay}" />
                 </controls:SettingsCard>
 
-                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="About" />
+                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" x:Uid="SettingsPage_Section_About" />
 
                 <controls:SettingsExpander
-                    Header="About Nagi"
-                    Description="Rediscover your local music collection with Nagi, a music player focused on speed, simplicity, and privacy."
+                    x:Uid="SettingsPage_AboutExpander"
                     IsExpanded="False">
                     <controls:SettingsExpander.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE946;" />
@@ -815,18 +784,18 @@
                     <TextBlock
                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                         IsTextSelectionEnabled="True">
-                        <Run Text="Version " />
+                        <Run x:Uid="SettingsPage_About_VersionPrefix" />
                         <Run Text="{x:Bind ViewModel.ApplicationVersion, Mode=OneWay}" />
                     </TextBlock>
                     <controls:SettingsExpander.Items>
                         <controls:SettingsCard ContentAlignment="Left">
-                            <StackPanel Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
                                 <HyperlinkButton
-                                    Content="View Licenses"
+                                    x:Uid="SettingsPage_About_Licenses"
                                     Style="{StaticResource AnimatedHyperlinkButtonStyle}"
                                     NavigateUri="https://github.com/Anthonyy232/Nagi/blob/master/LICENSE" />
                                 <HyperlinkButton
-                                    Content="Source Code"
+                                    x:Uid="SettingsPage_About_SourceCode"
                                     Style="{StaticResource AnimatedHyperlinkButtonStyle}"
                                     NavigateUri="https://github.com/Anthonyy232/Nagi" />
                             </StackPanel>
@@ -835,8 +804,7 @@
                 </controls:SettingsExpander>
 
                 <controls:SettingsCard
-                    Header="Check for updates on startup"
-                    Description="Automatically check for new versions when the application starts."
+                    x:Uid="SettingsPage_CheckForUpdates"
                     Visibility="{x:Bind ViewModel.IsUpdateControlVisible, Mode=OneWay}">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE117;" />
@@ -852,11 +820,11 @@
                     Spacing="12">
                     <HyperlinkButton
                         Command="{x:Bind ViewModel.CheckForUpdatesManuallyCommand}"
-                        Content="Check for Updates"
+                        x:Uid="SettingsPage_About_CheckUpdates"
                         Style="{StaticResource AnimatedHyperlinkButtonStyle}"
                         Visibility="{x:Bind ViewModel.IsUpdateControlVisible, Mode=OneWay}" />
                     <HyperlinkButton
-                        Content="Send Feedback"
+                        x:Uid="SettingsPage_About_Feedback"
                         Style="{StaticResource AnimatedHyperlinkButtonStyle}"
                         NavigateUri="mailto:anthonyyla.dev@gmail.com" />
                 </StackPanel>

@@ -113,7 +113,7 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                <TextBlock Style="{StaticResource PageTitleTextStyle}" Text="Albums" />
+                <TextBlock x:Uid="AlbumPage_Title" Style="{StaticResource PageTitleTextStyle}" />
                 <TextBlock
                     Margin="0,0,0,5"
                     VerticalAlignment="Bottom"
@@ -126,8 +126,8 @@
                 <!-- Search functionality -->
                 <Grid>
                     <TextBox x:Name="SearchTextBox"
+                             x:Uid="AlbumPage_SearchBox"
                              Style="{StaticResource SearchTextBoxStyle}"
-                             PlaceholderText="Search albums..."
                              Width="0"
                              Opacity="0"
                              IsHitTestVisible="False"
@@ -137,9 +137,9 @@
                              Canvas.ZIndex="0">
                     </TextBox>
                     <Button x:Name="SearchToggleButton"
+                            x:Uid="AlbumPage_SearchButton"
                             Click="OnSearchToggleButtonClick"
                             Style="{StaticResource SongListViewPageIconButton}"
-                            ToolTipService.ToolTip="Search albums"
                             HorizontalAlignment="Right"
                             Margin="0,0,1,0"
                             Canvas.ZIndex="1">
@@ -148,8 +148,8 @@
                 </Grid>
 
                 <Button x:Name="RandomAlbumButton"
+                        x:Uid="AlbumPage_RandomButton"
                         Style="{StaticResource SongListViewPageIconButton}"
-                        ToolTipService.ToolTip="Pick one at random"
                         Command="{x:Bind ViewModel.PlayRandomAlbumCommand}"
                         Margin="0,0,1,0">
                     <ContentControl Style="{StaticResource DiceIconStyle}" />
@@ -215,10 +215,10 @@
                             <Grid.ContextFlyout>
                                 <MenuFlyout>
                                     <MenuFlyoutItem
+                                        x:Uid="AlbumPage_Menu_Play"
                                         Command="{Binding ViewModel.PlayAlbumCommand, ElementName=AlbumPageRoot}"
                                         CommandParameter="{x:Bind Id}"
-                                        IsEnabled="{Binding ViewModel.IsLoading, ElementName=AlbumPageRoot, Converter={StaticResource BooleanToInverseBooleanConverter}}"
-                                        Text="Play" />
+                                        IsEnabled="{Binding ViewModel.IsLoading, ElementName=AlbumPageRoot, Converter={StaticResource BooleanToInverseBooleanConverter}}" />
                                 </MenuFlyout>
                             </Grid.ContextFlyout>
                             <Grid.RowDefinitions>
@@ -297,14 +297,14 @@
                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                     HorizontalAlignment="Center" />
                 <TextBlock
+                    x:Uid="AlbumPage_Empty_Title"
                     HorizontalAlignment="Center"
-                    Style="{StaticResource TitleTextBlockStyle}"
-                    Text="No albums found" />
+                    Style="{StaticResource TitleTextBlockStyle}" />
                 <TextBlock
+                    x:Uid="AlbumPage_Empty_Subtitle"
                     HorizontalAlignment="Center"
                     Style="{StaticResource SubtitleTextBlockStyle}"
-                    Foreground="{ThemeResource TextFillColorTertiaryBrush}"
-                    Text="Scan your music library to populate albums" />
+                    Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
             </StackPanel>
         </Grid>
     </Grid>

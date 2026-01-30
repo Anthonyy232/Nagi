@@ -112,7 +112,7 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                <TextBlock Style="{StaticResource PageTitleTextStyle}" Text="Artists" />
+                <TextBlock x:Uid="ArtistPage_Title" Style="{StaticResource PageTitleTextStyle}" />
                 <TextBlock
                     Margin="0,0,0,5"
                     VerticalAlignment="Bottom"
@@ -125,8 +125,8 @@
                 <!-- Search functionality -->
                 <Grid>
                     <TextBox x:Name="SearchTextBox"
+                             x:Uid="ArtistPage_SearchBox"
                              Style="{StaticResource SearchTextBoxStyle}"
-                             PlaceholderText="Search artists..."
                              Width="0"
                              Opacity="0"
                              IsHitTestVisible="False"
@@ -136,9 +136,9 @@
                              Canvas.ZIndex="0">
                         </TextBox>
                     <Button x:Name="SearchToggleButton"
+                            x:Uid="ArtistPage_SearchButton"
                             Click="OnSearchToggleButtonClick"
                             Style="{StaticResource SongListViewPageIconButton}"
-                            ToolTipService.ToolTip="Search artists"
                             HorizontalAlignment="Right"
                             Margin="0,0,1,0"
                             Canvas.ZIndex="1">
@@ -147,8 +147,8 @@
                 </Grid>
 
                 <Button x:Name="RandomArtistButton"
+                        x:Uid="ArtistPage_RandomButton"
                         Style="{StaticResource SongListViewPageIconButton}"
-                        ToolTipService.ToolTip="Pick one at random"
                         Command="{x:Bind ViewModel.PlayRandomArtistCommand}"
                         Margin="0,0,1,0">
                     <ContentControl Style="{StaticResource DiceIconStyle}" />
@@ -201,18 +201,18 @@
                             <Grid.ContextFlyout>
                                 <MenuFlyout>
                                     <MenuFlyoutItem
+                                        x:Uid="ArtistPage_Menu_Play"
                                         Command="{Binding ViewModel.PlayArtistCommand, ElementName=ArtistPageRoot}"
                                         CommandParameter="{x:Bind Id}"
-                                        IsEnabled="{Binding ViewModel.IsLoading, ElementName=ArtistPageRoot, Converter={StaticResource BooleanToInverseBooleanConverter}}"
-                                        Text="Play" />
+                                        IsEnabled="{Binding ViewModel.IsLoading, ElementName=ArtistPageRoot, Converter={StaticResource BooleanToInverseBooleanConverter}}" />
                                     <MenuFlyoutSeparator />
                                     <MenuFlyoutItem
-                                        Click="ChangeImage_Click"
-                                        Text="Change Image" />
+                                        x:Uid="ArtistPage_Menu_ChangeImage"
+                                        Click="ChangeImage_Click" />
                                     <MenuFlyoutItem
+                                        x:Uid="ArtistPage_Menu_RemoveImage"
                                         Click="RemoveImage_Click"
-                                        Visibility="{x:Bind IsCustomImage, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                        Text="Remove Image" />
+                                        Visibility="{x:Bind IsCustomImage, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                 </MenuFlyout>
                             </Grid.ContextFlyout>
                             <Grid.RowDefinitions>
@@ -279,14 +279,14 @@
                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                     HorizontalAlignment="Center" />
                 <TextBlock
+                    x:Uid="ArtistPage_Empty_Title"
                     HorizontalAlignment="Center"
-                    Style="{StaticResource TitleTextBlockStyle}"
-                    Text="No artists found" />
+                    Style="{StaticResource TitleTextBlockStyle}" />
                 <TextBlock
+                    x:Uid="ArtistPage_Empty_Subtitle"
                     HorizontalAlignment="Center"
                     Style="{StaticResource SubtitleTextBlockStyle}"
-                    Foreground="{ThemeResource TextFillColorTertiaryBrush}"
-                    Text="Scan your music library to populate artists" />
+                    Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
             </StackPanel>
         </Grid>
     </Grid>

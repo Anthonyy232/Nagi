@@ -91,7 +91,7 @@ public sealed partial class PlaylistPage : Page
 
         _isSearchExpanded = true;
         _logger.LogDebug("Search UI expanded.");
-        ToolTipService.SetToolTip(SearchToggleButton, "Close search");
+        ToolTipService.SetToolTip(SearchToggleButton, Nagi.WinUI.Resources.Strings.PlaylistPage_SearchButton_Close_ToolTip);
         VisualStateManager.GoToState(this, "SearchExpanded", true);
 
         var timer = DispatcherQueue.CreateTimer();
@@ -113,7 +113,7 @@ public sealed partial class PlaylistPage : Page
 
         _isSearchExpanded = false;
         _logger.LogDebug("Search UI collapsed and search term cleared.");
-        ToolTipService.SetToolTip(SearchToggleButton, "Search playlists");
+        ToolTipService.SetToolTip(SearchToggleButton, Nagi.WinUI.Resources.Strings.PlaylistPage_SearchButton_Search_ToolTip);
         VisualStateManager.GoToState(this, "SearchCollapsed", true);
         ViewModel.SearchTerm = string.Empty;
     }
@@ -158,7 +158,7 @@ public sealed partial class PlaylistPage : Page
             _logger.LogDebug("Showing 'Create New Playlist' dialog.");
             string? selectedCoverImageUriForDialog = null;
 
-            var inputTextBox = new TextBox { PlaceholderText = "Enter new playlist name" };
+            var inputTextBox = new TextBox { PlaceholderText = Nagi.WinUI.Resources.Strings.PlaylistPage_CreateDialog_Placeholder };
             var imagePreview = new ImageEx.ImageEx { Stretch = Stretch.UniformToFill, IsCacheEnabled = true };
             var imagePlaceholder = new FontIcon { Glyph = "\uE91B", FontSize = 48 };
             var imageGrid = new Grid
@@ -172,7 +172,7 @@ public sealed partial class PlaylistPage : Page
             imageGrid.Children.Add(imagePreview);
             var pickImageButton = new Button
             {
-                Content = "Pick Image",
+                Content = Nagi.WinUI.Resources.Strings.PlaylistPage_CreateDialog_PickImage,
                 Margin = new Thickness(0, 12, 0, 0),
                 HorizontalAlignment = HorizontalAlignment.Stretch
             };
@@ -183,10 +183,10 @@ public sealed partial class PlaylistPage : Page
 
             var dialog = new ContentDialog
             {
-                Title = "Create New Playlist",
+                Title = Nagi.WinUI.Resources.Strings.PlaylistPage_CreateDialog_Title,
                 Content = dialogContent,
-                PrimaryButtonText = "Create",
-                CloseButtonText = "Cancel",
+                PrimaryButtonText = Nagi.WinUI.Resources.Strings.PlaylistPage_CreateDialog_CreateButton,
+                CloseButtonText = Nagi.WinUI.Resources.Strings.PlaylistPage_CreateDialog_CancelButton,
                 DefaultButton = ContentDialogButton.Primary,
                 XamlRoot = XamlRoot
             };
@@ -279,10 +279,10 @@ public sealed partial class PlaylistPage : Page
             var inputTextBox = new TextBox { Text = playlistItem.Name };
             var dialog = new ContentDialog
             {
-                Title = $"Rename '{playlistItem.Name}'",
+                Title = string.Format(Nagi.WinUI.Resources.Strings.PlaylistPage_RenameDialog_Title_Format, playlistItem.Name),
                 Content = inputTextBox,
-                PrimaryButtonText = "Rename",
-                CloseButtonText = "Cancel",
+                PrimaryButtonText = Nagi.WinUI.Resources.Strings.PlaylistPage_RenameDialog_RenameButton,
+                CloseButtonText = Nagi.WinUI.Resources.Strings.PlaylistPage_CreateDialog_CancelButton,
                 DefaultButton = ContentDialogButton.Primary,
                 XamlRoot = XamlRoot
             };
@@ -323,11 +323,10 @@ public sealed partial class PlaylistPage : Page
             _logger.LogDebug("Showing 'Delete Playlist' confirmation for '{PlaylistName}'.", playlistItem.Name);
             var dialog = new ContentDialog
             {
-                Title = "Delete Playlist",
-                Content =
-                    $"Are you sure you want to delete the playlist '{playlistItem.Name}'? This action cannot be undone.",
-                PrimaryButtonText = "Delete",
-                CloseButtonText = "Cancel",
+                Title = Nagi.WinUI.Resources.Strings.PlaylistPage_DeleteDialog_Title,
+                Content = string.Format(Nagi.WinUI.Resources.Strings.PlaylistPage_DeleteDialog_Content_Format, playlistItem.Name),
+                PrimaryButtonText = Nagi.WinUI.Resources.Strings.PlaylistPage_DeleteDialog_DeleteButton,
+                CloseButtonText = Nagi.WinUI.Resources.Strings.PlaylistPage_CreateDialog_CancelButton,
                 DefaultButton = ContentDialogButton.Close,
                 XamlRoot = XamlRoot
             };

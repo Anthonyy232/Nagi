@@ -129,7 +129,7 @@ public sealed partial class GenreViewPage : Page
 
         _isSearchExpanded = true;
         _logger.LogDebug("Search UI expanded.");
-        ToolTipService.SetToolTip(SearchToggleButton, "Close search");
+        ToolTipService.SetToolTip(SearchToggleButton, Nagi.WinUI.Resources.Strings.GenreViewPage_SearchButton_Close_ToolTip);
         VisualStateManager.GoToState(this, "SearchExpanded", true);
 
         var timer = DispatcherQueue.CreateTimer();
@@ -151,7 +151,7 @@ public sealed partial class GenreViewPage : Page
 
         _isSearchExpanded = false;
         _logger.LogDebug("Search UI collapsed and search term cleared.");
-        ToolTipService.SetToolTip(SearchToggleButton, "Search library");
+        ToolTipService.SetToolTip(SearchToggleButton, Nagi.WinUI.Resources.Strings.GenreViewPage_SearchButton_Search_ToolTip);
         VisualStateManager.GoToState(this, "SearchCollapsed", true);
         ViewModel.SearchTerm = string.Empty;
     }
@@ -266,7 +266,7 @@ public sealed partial class GenreViewPage : Page
         if (availablePlaylists?.Any() != true)
         {
             _logger.LogDebug("No playlists available to populate submenu.");
-            var disabledItem = new MenuFlyoutItem { Text = "No playlists available", IsEnabled = false };
+            var disabledItem = new MenuFlyoutItem { Text = Nagi.WinUI.Resources.Strings.GenreViewPage_PlaylistMenu_NoPlaylists, IsEnabled = false };
             subMenu.Items.Add(disabledItem);
             return;
         }

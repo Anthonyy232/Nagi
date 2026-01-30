@@ -119,7 +119,7 @@
                 </Border>
 
                 <StackPanel Grid.Column="1" Margin="24,0,0,0" VerticalAlignment="Bottom" Spacing="8">
-                    <TextBlock Style="{ThemeResource CaptionTextBlockStyle}" Text="Album" />
+                    <TextBlock x:Uid="AlbumViewPage_Header_Label" Style="{ThemeResource CaptionTextBlockStyle}" />
                     <TextBlock Style="{ThemeResource HeaderTextBlockStyle}"
                                Text="{x:Bind ViewModel.AlbumTitle, Mode=OneWay}" />
                     <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
@@ -141,7 +141,7 @@
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                    <TextBlock Style="{StaticResource SectionHeaderTextBlockStyle}" Text="Songs" Foreground="{StaticResource AppPrimaryColorBrush}" />
+                    <TextBlock x:Uid="AlbumViewPage_Songs_Title" Style="{StaticResource SectionHeaderTextBlockStyle}" Foreground="{StaticResource AppPrimaryColorBrush}" />
                     <TextBlock
                         VerticalAlignment="Center"
                         FontSize="13"
@@ -158,8 +158,8 @@
                     <!-- Search functionality -->
                     <Grid>
                         <TextBox x:Name="SearchTextBox"
+                                 x:Uid="AlbumViewPage_SearchBox"
                                  Style="{StaticResource SearchTextBoxStyle}"
-                                 PlaceholderText="Search in album..."
                                  Width="0"
                                  Opacity="0"
                                  IsHitTestVisible="False"
@@ -170,9 +170,9 @@
                         </TextBox>
 
                         <Button x:Name="SearchToggleButton"
+                                x:Uid="AlbumViewPage_SearchButton"
                                 Click="OnSearchToggleButtonClick"
                                 Style="{StaticResource SongListViewPageIconButton}"
-                                ToolTipService.ToolTip="Search in album"
                                 HorizontalAlignment="Right"
                                 Margin="0,0,1,0"
                                 IsHitTestVisible="True"
@@ -181,13 +181,12 @@
                         </Button>
                     </Grid>
 
-                    <Button Style="{StaticResource SongListViewPageIconButton}" ToolTipService.ToolTip="Play all"
+                    <Button x:Uid="AlbumViewPage_PlayAllButton" Style="{StaticResource SongListViewPageIconButton}"
                             Command="{x:Bind ViewModel.PlayAllSongsCommand}">
                         <FontIcon Glyph="" FontSize="16" />
                     </Button>
 
-                    <Button Style="{StaticResource SongListViewPageIconButton}"
-                            ToolTipService.ToolTip="Shuffle and play all"
+                    <Button x:Uid="AlbumViewPage_ShufflePlayButton" Style="{StaticResource SongListViewPageIconButton}"
                             Command="{x:Bind ViewModel.ShuffleAndPlayAllSongsCommand}">
                         <FontIcon Glyph="" FontSize="16" />
                     </Button>
@@ -266,13 +265,13 @@
                             <Grid Height="54" ColumnSpacing="12" Background="Transparent">
                                 <Grid.ContextFlyout>
                                     <MenuFlyout Opening="SongItemMenuFlyout_Opening">
-                                        <MenuFlyoutItem Command="{Binding DataContext.PlaySelectedSongsCommand, ElementName=pageRoot}" Text="Play" />
-                                        <MenuFlyoutItem Command="{Binding DataContext.PlaySelectedSongsNextCommand, ElementName=pageRoot}" Text="Play Next" />
-                                        <MenuFlyoutItem Command="{Binding DataContext.AddSelectedSongsToQueueCommand, ElementName=pageRoot}" Text="Add to Queue" />
-                                        <MenuFlyoutSubItem x:Name="AddToPlaylistSubMenuGrouped" Text="Add to playlist" />
+                                        <MenuFlyoutItem x:Uid="AlbumViewPage_SongMenu_Play" Command="{Binding DataContext.PlaySelectedSongsCommand, ElementName=pageRoot}" />
+                                        <MenuFlyoutItem x:Uid="AlbumViewPage_SongMenu_PlayNext" Command="{Binding DataContext.PlaySelectedSongsNextCommand, ElementName=pageRoot}" />
+                                        <MenuFlyoutItem x:Uid="AlbumViewPage_SongMenu_AddToQueue" Command="{Binding DataContext.AddSelectedSongsToQueueCommand, ElementName=pageRoot}" />
+                                        <MenuFlyoutSubItem x:Name="AddToPlaylistSubMenuGrouped" x:Uid="AlbumViewPage_SongMenu_AddToPlaylist" />
                                         <MenuFlyoutSeparator Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                                        <MenuFlyoutSubItem x:Name="GoToArtistSubMenuGrouped" Text="Go to artist" Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                                        <MenuFlyoutItem Command="{Binding DataContext.ShowInFileExplorerCommand, ElementName=pageRoot}" CommandParameter="{x:Bind}" Text="Show in explorer" Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                        <MenuFlyoutSubItem x:Name="GoToArtistSubMenuGrouped" x:Uid="AlbumViewPage_SongMenu_GoToArtist" Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                        <MenuFlyoutItem x:Uid="AlbumViewPage_SongMenu_ShowInExplorer" Command="{Binding DataContext.ShowInFileExplorerCommand, ElementName=pageRoot}" CommandParameter="{x:Bind}" Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                     </MenuFlyout>
                                 </Grid.ContextFlyout>
                                 <Grid.ColumnDefinitions>
@@ -281,7 +280,7 @@
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition MinWidth="50" Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <Button Grid.Column="0" Command="{Binding DataContext.PlaySongCommand, ElementName=pageRoot}" CommandParameter="{x:Bind}" Style="{StaticResource SongListViewPageSongPlayButtonStyle}" ToolTipService.ToolTip="Play">
+                                <Button Grid.Column="0" x:Uid="AlbumViewPage_SongPlayButton" Command="{Binding DataContext.PlaySongCommand, ElementName=pageRoot}" CommandParameter="{x:Bind}" Style="{StaticResource SongListViewPageSongPlayButtonStyle}">
                                     <Border Width="42" Height="42" CornerRadius="12" Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
                                         <controls:ImageEx IsCacheEnabled="True" Stretch="UniformToFill"
                                                           DecodePixelWidth="48" DecodePixelType="Logical"
@@ -317,24 +316,24 @@
                         <Grid.ContextFlyout>
                             <MenuFlyout Opening="SongItemMenuFlyout_Opening">
                                 <MenuFlyoutItem
-                                    Command="{Binding DataContext.PlaySelectedSongsCommand, ElementName=pageRoot}"
-                                    Text="Play" />
+                                    x:Uid="AlbumViewPage_SongMenu_Play"
+                                    Command="{Binding DataContext.PlaySelectedSongsCommand, ElementName=pageRoot}" />
                                 <MenuFlyoutItem
-                                    Command="{Binding DataContext.PlaySelectedSongsNextCommand, ElementName=pageRoot}"
-                                    Text="Play Next" />
+                                    x:Uid="AlbumViewPage_SongMenu_PlayNext"
+                                    Command="{Binding DataContext.PlaySelectedSongsNextCommand, ElementName=pageRoot}" />
                                 <MenuFlyoutItem
-                                    Command="{Binding DataContext.AddSelectedSongsToQueueCommand, ElementName=pageRoot}"
-                                    Text="Add to Queue" />
-                                <MenuFlyoutSubItem x:Name="AddToPlaylistSubMenu" Text="Add to playlist" />
+                                    x:Uid="AlbumViewPage_SongMenu_AddToQueue"
+                                    Command="{Binding DataContext.AddSelectedSongsToQueueCommand, ElementName=pageRoot}" />
+                                <MenuFlyoutSubItem x:Name="AddToPlaylistSubMenu" x:Uid="AlbumViewPage_SongMenu_AddToPlaylist" />
                                 <MenuFlyoutSeparator
                                     Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                 <MenuFlyoutSubItem x:Name="GoToArtistSubMenu"
-                                                   Text="Go to artist"
+                                                   x:Uid="AlbumViewPage_SongMenu_GoToArtist"
                                                    Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                 <MenuFlyoutItem
+                                    x:Uid="AlbumViewPage_SongMenu_ShowInExplorer"
                                     Command="{Binding DataContext.ShowInFileExplorerCommand, ElementName=pageRoot}"
                                     CommandParameter="{x:Bind}"
-                                    Text="Show in explorer"
                                     Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
                             </MenuFlyout>
                         </Grid.ContextFlyout>
@@ -348,10 +347,10 @@
 
                         <Button
                             Grid.Column="0"
+                            x:Uid="AlbumViewPage_SongPlayButton"
                             Command="{Binding DataContext.PlaySongCommand, ElementName=pageRoot}"
                             CommandParameter="{x:Bind}"
-                            Style="{StaticResource SongListViewPageSongPlayButtonStyle}"
-                            ToolTipService.ToolTip="Play">
+                            Style="{StaticResource SongListViewPageSongPlayButtonStyle}">
                             <Border Width="42" Height="42" CornerRadius="12"
                                     Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
                                 <controls:ImageEx
@@ -400,12 +399,12 @@
                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                 HorizontalAlignment="Center" />
             <TextBlock
+                x:Uid="AlbumViewPage_Empty_Title"
                 Style="{StaticResource TitleTextBlockStyle}"
-                Text="No songs found in this album"
                 HorizontalAlignment="Center" />
             <TextBlock
+                x:Uid="AlbumViewPage_Empty_Subtitle"
                 Style="{StaticResource SubtitleTextBlockStyle}"
-                Text="Try searching for something else"
                 HorizontalAlignment="Center"
                 Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
         </StackPanel>
