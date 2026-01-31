@@ -160,8 +160,8 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     public event Action? SmtcNextButtonPressed, SmtcPreviousButtonPressed;
 
     public bool IsPlaying => !_isDisposed && _isInitialized && (_mediaPlayer?.IsPlaying ?? false);
-    public TimeSpan CurrentPosition => _isDisposed || !_isInitialized ? TimeSpan.Zero : TimeSpan.FromMilliseconds(_mediaPlayer?.Time ?? 0);
-    public TimeSpan Duration => _isDisposed || !_isInitialized ? TimeSpan.Zero : TimeSpan.FromMilliseconds(_mediaPlayer?.Length ?? 0);
+    public TimeSpan CurrentPosition => _isDisposed || !_isInitialized ? TimeSpan.Zero : TimeSpan.FromMilliseconds(Math.Max(0, _mediaPlayer?.Time ?? 0));
+    public TimeSpan Duration => _isDisposed || !_isInitialized ? TimeSpan.Zero : TimeSpan.FromMilliseconds(Math.Max(0, _mediaPlayer?.Length ?? 0));
     public double Volume => _isDisposed || !_isInitialized ? 0 : (_mediaPlayer?.Volume ?? 0) / 100.0;
     public bool IsMuted => !_isDisposed && _isInitialized && (_mediaPlayer?.Mute ?? false);
 
@@ -352,6 +352,13 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         EnsureInitialized();
         if (_isDisposed || _mediaPlayer is null) return Task.CompletedTask;
 
+        // Ensure volume is a valid finite number
+        if (!double.IsFinite(volume))
+        {
+            _logger.LogWarning("SetVolumeAsync received invalid volume: {Volume}. Ignoring.", volume);
+            return Task.CompletedTask;
+        }
+
         var vlcVolume = (int)Math.Clamp(volume * 100, 0, 100);
         _mediaPlayer.SetVolume(vlcVolume);
         return Task.CompletedTask;
@@ -399,7 +406,11 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         var bandCount = _equalizer.BandCount;
         for (var i = 0; i < settings.BandGains.Count; i++)
             if (i < bandCount)
-                _equalizer.SetAmp(settings.BandGains[i], (uint)i);
+            {
+                // LibVLC equalizer gain range: -20 to +20 dB
+                var gain = Math.Clamp(settings.BandGains[i], -20.0f, 20.0f);
+                _equalizer.SetAmp(gain, (uint)i);
+            }
 
         var success = _mediaPlayer.SetEqualizer(_equalizer);
         _logger.LogDebug("Re-applied equalizer to MediaPlayer. Success: {Success}", success);
