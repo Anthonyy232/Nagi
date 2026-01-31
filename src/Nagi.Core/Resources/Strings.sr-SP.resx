@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Noun Labels -->
+  <data name="Label_Artist" xml:space="preserve">
+    <value>Уметник</value>
+  </data>
+  <data name="Label_Album" xml:space="preserve">
+    <value>Албум</value>
+  </data>
+  <data name="Label_Genre" xml:space="preserve">
+    <value>Жанр</value>
+  </data>
+  <data name="Label_Title" xml:space="preserve">
+    <value>Наслов</value>
+  </data>
+  <data name="Label_Playlist" xml:space="preserve">
+    <value>Плејлиста</value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>Датотека</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>Година</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Датум додавања</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Датум креирања</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Датум измене</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Последње пуштено</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Трајање</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>БПМ</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Број нумере</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Број пуштања</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Песме</value>
+  </data>
+  <data name="Label_Song" xml:space="preserve">
+    <value>Песма</value>
+  </data>
+  <data name="Label_Folder" xml:space="preserve">
+    <value>Фасцикла</value>
+  </data>
+  <data name="Label_Folders" xml:space="preserve">
+    <value>Фасцикле</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Ручни редослед</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Насумично</value>
+  </data>
+  <!-- Format Patterns -->
+  <data name="Format_Unknown" xml:space="preserve">
+    <value>Непознато {0}</value>
+  </data>
+  <data name="Format_New" xml:space="preserve">
+    <value>Ново {0}</value>
+  </data>
+  <data name="Format_NotFound" xml:space="preserve">
+    <value>{0} није пронађено.</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (А до Ш)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Ш до А)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (Најновије)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (Најстарије)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (Растуће)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (Опадајуће)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>Најкраће прво</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>Најдуже прво</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>Најспорије прво ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>Најбрже прво ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>Највише {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>Најмање {0}</value>
+  </data>
+  <data name="Format_ScanFolderProgress" xml:space="preserve">
+    <value>Скенирам фасциклу {0} од {1}: {2} - {3}</value>
+  </data>
+  <data name="Format_ScanCompleteResult" xml:space="preserve">
+    <value>Скенирање завршено. Додато или ажурирано {0} {1}.</value>
+  </data>
+  <data name="Format_SavingBatch" xml:space="preserve">
+    <value>Чувам групу {0}...</value>
+  </data>
+  <!-- Status & Success Messages -->
+  <data name="Status_ScanningFolder" xml:space="preserve">
+    <value>Скенирам фасциклу...</value>
+  </data>
+  <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
+    <value>Скенирање завршено. Библиотека је ажурна.</value>
+  </data>
+  <data name="Status_ScanCancelled" xml:space="preserve">
+    <value>Скенирање отказано.</value>
+  </data>
+  <data name="Status_ScanFailed" xml:space="preserve">
+    <value>Скенирање није успело. Проверите дневнике за детаље.</value>
+  </data>
+  <data name="Status_PreparingScanCaches" xml:space="preserve">
+    <value>Припремам кеш меморију за скенирање...</value>
+  </data>
+  <data name="Status_ReadingSongDetails" xml:space="preserve">
+    <value>Читам детаље песме...</value>
+  </data>
+  <data name="Status_CleaningUpLibrary" xml:space="preserve">
+    <value>Чистим вашу библиотеку...</value>
+  </data>
+  <data name="Status_Finalizing" xml:space="preserve">
+    <value>Завршавам...</value>
+  </data>
+  <data name="Status_NormalizationFailed" xml:space="preserve">
+    <value>Нормализација јачине звука није успела. Проверите дневнике за детаље.</value>
+  </data>
+  <data name="Status_NoFoldersToRefresh" xml:space="preserve">
+    <value>Нема фасцикли у библиотеци за освежавање.</value>
+  </data>
+  <data name="Status_LibraryRefreshComplete" xml:space="preserve">
+    <value>Освежавање библиотеке завршено.</value>
+  </data>
+  <!-- Error Mssages -->
+  <data name="Error_FailedToAddFolder" xml:space="preserve">
+    <value>Додавање фасцикле није успело.</value>
+  </data>
+  <data name="Error_PlaylistNameEmpty" xml:space="preserve">
+    <value>Назив плејлисте не може бити празан.</value>
+  </data>
+  <data name="Error_RatingRange" xml:space="preserve">
+    <value>Оцена мора бити између 1 и 5.</value>
+  </data>
+  <!-- Labels -->
+  <data name="Label_WithLyrics" xml:space="preserve">
+    <value>са текстом</value>
+  </data>
+  <data name="Label_WithCoverArt" xml:space="preserve">
+    <value>са омотом</value>
+  </data>
+  <data name="Label_And" xml:space="preserve">
+    <value>и</value>
+  </data>
+  <!-- Static Strings -->
+  <data name="UnknownFilename" xml:space="preserve">
+    <value>непознато</value>
+  </data>
+  <data name="ArtistSeparator" xml:space="preserve">
+    <value> и </value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Сортирај по: </value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>FFmpeg је потребан за високопрецизну нормализацију јачине звука (анализу ReplayGain-а), али није пронађен на вашем систему. Пратите ове кораке да бисте га подесили: 1. **Преузмите**: Посетите https://www.gyan.dev/ffmpeg/builds/ и преузмите 'ffmpeg-git-full.7z' (или сличну) основну верзију. 2. **Водич**: Можете пратити овај водич за детаљна упутства: https://phoenixnap.com/kb/ffmpeg-windows 3. **Извуците**: Отворите фасциклу архитектуре и пронађите директоријум 'bin' који садржи `ffmpeg.exe`. 4. **Инсталирајте**: Копирајте `ffmpeg.exe` у сталну фасциклу (нпр. `C:\ffmpeg\`) и **додајте ту фасциклу у системску променљиву PATH**. 5. **Поново покрените**: Молимо поново покрените Nagi након инсталације да би промене ступиле на снагу.</value>
+  </data>
+  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
+    <value>Ниједна песма из плејлисте није пронађена у вашој библиотеци.</value>
+  </data>
+  <data name="Error_NoPlaylistsToExport" xml:space="preserve">
+    <value>Нема плејлиста за извоз.</value>
+  </data>
+  <data name="EqPreset_None" xml:space="preserve">
+    <value>Ништа</value>
+  </data>
+  <data name="EqPreset_Classical" xml:space="preserve">
+    <value>Класична</value>
+  </data>
+  <data name="EqPreset_Dance" xml:space="preserve">
+    <value>Денс</value>
+  </data>
+  <data name="EqPreset_FullBass" xml:space="preserve">
+    <value>Пун бас</value>
+  </data>
+  <data name="EqPreset_FullTreble" xml:space="preserve">
+    <value>Пун високи</value>
+  </data>
+  <data name="EqPreset_Jazz" xml:space="preserve">
+    <value>Џез</value>
+  </data>
+  <data name="EqPreset_Pop" xml:space="preserve">
+    <value>Поп</value>
+  </data>
+  <data name="EqPreset_Rock" xml:space="preserve">
+    <value>Рок</value>
+  </data>
+  <data name="EqPreset_Soft" xml:space="preserve">
+    <value>Мекано</value>
+  </data>
+  <data name="EqPreset_Techno" xml:space="preserve">
+    <value>Техно</value>
+  </data>
+  <data name="EqPreset_Vocal" xml:space="preserve">
+    <value>Вокално</value>
+  </data>
+  <data name="ReplayGain_AllSongsScanned" xml:space="preserve">
+    <value>Све песме већ имају податке о јачини звука.</value>
+  </data>
+  <data name="ReplayGain_CalculatingCount" xml:space="preserve">
+    <value>Израчунавам јачину звука за {0} песама...</value>
+  </data>
+  <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
+    <value>Израчунавам нормализацију јачине звука ({0}/{1})...</value>
+  </data>
+  <data name="ReplayGain_Complete" xml:space="preserve">
+    <value>Нормализација јачине звука завршена. Обрађено је {0} песама.</value>
+  </data>
+</root>
