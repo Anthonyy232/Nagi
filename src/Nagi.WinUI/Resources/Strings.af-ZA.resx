@@ -929,4 +929,7 @@ Fout: {1}</value>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>Geen snitlyste om uit te voer nie.</value>
   </data>
+  <data name="Language_Auto" xml:space="preserve">
+    <value>Auto</value>
+  </data>
 </root>

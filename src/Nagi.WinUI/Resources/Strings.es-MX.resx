@@ -929,4 +929,7 @@ Error: {1}</value>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>No hay listas de reproducción para exportar.</value>
   </data>
+  <data name="Language_Auto" xml:space="preserve">
+    <value>Auto</value>
+  </data>
 </root>
