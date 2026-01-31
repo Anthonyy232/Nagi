@@ -71,6 +71,8 @@ public static class Program
 
         logger?.LogInformation("Primary instance starting");
 
+        LanguageBootstrapper.Bootstrap();
+
         Application.Start(p =>
         {
             // Configure UI thread synchronization context
