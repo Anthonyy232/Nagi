@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Noun Labels -->
+  <data name="Label_Artist" xml:space="preserve">
+    <value>Msanii</value>
+  </data>
+  <data name="Label_Album" xml:space="preserve">
+    <value>Albamu</value>
+  </data>
+  <data name="Label_Genre" xml:space="preserve">
+    <value>Aina</value>
+  </data>
+  <data name="Label_Title" xml:space="preserve">
+    <value>Jina</value>
+  </data>
+  <data name="Label_Playlist" xml:space="preserve">
+    <value>Orodha ya kucheza</value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>Faili</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>Mwaka</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Tarehe Iliyoongezwa</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Tarehe Iliyoundwa</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Tarehe Iliyorekebishwa</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Iliyochezwa Mwisho</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Muda</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Namba ya Wimbo</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Hesabu ya Uchezaji</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Nyimbo</value>
+  </data>
+  <data name="Label_Song" xml:space="preserve">
+    <value>Wimbo</value>
+  </data>
+  <data name="Label_Folder" xml:space="preserve">
+    <value>Jalada</value>
+  </data>
+  <data name="Label_Folders" xml:space="preserve">
+    <value>Majalada</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Mpangilio wa Mwongozo</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Nasibu</value>
+  </data>
+  <!-- Format Patterns -->
+  <data name="Format_Unknown" xml:space="preserve">
+    <value>Haijulikani {0}</value>
+  </data>
+  <data name="Format_New" xml:space="preserve">
+    <value>Mpya {0}</value>
+  </data>
+  <data name="Format_NotFound" xml:space="preserve">
+    <value>{0} haikupatikana.</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A hadi Z)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Z hadi A)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (Mpya Zaidi)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (Kongwe Zaidi)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (Kupanda)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (Kushuka)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>Mfupi Kwanza</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>Mrefu Kwanza</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>Polepole Kwanza ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>Haraka Zaidi Kwanza ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>{0} Zaidi</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>{0} Chache Zaidi</value>
+  </data>
+  <data name="Format_ScanFolderProgress" xml:space="preserve">
+    <value>Inachanganua jalada {0} kati ya {1}: {2} - {3}</value>
+  </data>
+  <data name="Format_ScanCompleteResult" xml:space="preserve">
+    <value>Uchanganuzi umekamilika. Imeongeza au kusasisha {0} {1}.</value>
+  </data>
+  <data name="Format_SavingBatch" xml:space="preserve">
+    <value>Inahifadhi kundi {0}...</value>
+  </data>
+  <!-- Status & Success Messages -->
+  <data name="Status_ScanningFolder" xml:space="preserve">
+    <value>Inachanganua jalada...</value>
+  </data>
+  <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
+    <value>Uchanganuzi umekamilika. Maktaba imesasishwa.</value>
+  </data>
+  <data name="Status_ScanCancelled" xml:space="preserve">
+    <value>Uchanganuzi umeghairiwa.</value>
+  </data>
+  <data name="Status_ScanFailed" xml:space="preserve">
+    <value>Uchanganuzi umeshindwa. Angalia kumbukumbu kwa maelezo.</value>
+  </data>
+  <data name="Status_PreparingScanCaches" xml:space="preserve">
+    <value>Inaandaa kashe za uchanganuzi...</value>
+  </data>
+  <data name="Status_ReadingSongDetails" xml:space="preserve">
+    <value>Inasoma maelezo ya wimbo...</value>
+  </data>
+  <data name="Status_CleaningUpLibrary" xml:space="preserve">
+    <value>Inasafisha maktaba yako...</value>
+  </data>
+  <data name="Status_Finalizing" xml:space="preserve">
+    <value>Inakamilisha...</value>
+  </data>
+  <data name="Status_NormalizationFailed" xml:space="preserve">
+    <value>Usawazishaji wa sauti umeshindwa. Angalia kumbukumbu kwa maelezo.</value>
+  </data>
+  <data name="Status_NoFoldersToRefresh" xml:space="preserve">
+    <value>Hakuna majalada katika maktaba ya kusasisha.</value>
+  </data>
+  <data name="Status_LibraryRefreshComplete" xml:space="preserve">
+    <value>Usasishaji wa maktaba umekamilika.</value>
+  </data>
+  <!-- Error Mssages -->
+  <data name="Error_FailedToAddFolder" xml:space="preserve">
+    <value>Imeshindwa kuongeza jalada.</value>
+  </data>
+  <data name="Error_PlaylistNameEmpty" xml:space="preserve">
+    <value>Jina la orodha ya kucheza haliwezi kuwa tupu.</value>
+  </data>
+  <data name="Error_RatingRange" xml:space="preserve">
+    <value>Ukadiriaji lazima uwe kati ya 1 na 5.</value>
+  </data>
+  <!-- Labels -->
+  <data name="Label_WithLyrics" xml:space="preserve">
+    <value>yenye mashairi</value>
+  </data>
+  <data name="Label_WithCoverArt" xml:space="preserve">
+    <value>yenye picha ya jalada</value>
+  </data>
+  <data name="Label_And" xml:space="preserve">
+    <value>na</value>
+  </data>
+  <!-- Static Strings -->
+  <data name="UnknownFilename" xml:space="preserve">
+    <value>haijulikani</value>
+  </data>
+  <data name="ArtistSeparator" xml:space="preserve">
+    <value> &amp; </value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Panga Kwa: </value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>FFmpeg inahitajika kwa Usawazishaji Sauti wa Usahihi wa Juu (uchambuzi wa ReplayGain) lakini haikupatikana kwenye mfumo wako.\n\nFuata hatua hizi kuiweka:\n\n1. **Pakua**: Tembelea https://www.gyan.dev/ffmpeg/builds/ na pakua 'ffmpeg-git-full.7z' (au sawa na hiyo) toleo muhimu.\n2. **Mwongozo**: Unaweza kufuata mwongozo huu kwa maelekezo ya kina: https://phoenixnap.com/kb/ffmpeg-windows\n3. **Toa**: Fungua folda ya usanifu na upate saraka ya 'bin' iliyo na `ffmpeg.exe`.\n4. **Sakinisha**: Nakili `ffmpeg.exe` kwenye folda ya kudumu (k.m., `C:\ffmpeg\`) na **ongeza folda hiyo kwenye vigezo vyako vya System PATH**.\n5. **Washa Upya**: Tafadhali washa upya Nagi baada ya kusakinisha ili mabadiliko yaanze kutumika.</value>
+  </data>
+  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
+    <value>Hakuna nyimbo kutoka kwenye orodha ya kucheza zilizopatikana kwenye maktaba yako.</value>
+  </data>
+  <data name="Error_NoPlaylistsToExport" xml:space="preserve">
+    <value>Hakuna orodha za kucheza za kusafirisha.</value>
+  </data>
+  <data name="EqPreset_None" xml:space="preserve">
+    <value>Hakuna</value>
+  </data>
+  <data name="EqPreset_Classical" xml:space="preserve">
+    <value>Klasiki</value>
+  </data>
+  <data name="EqPreset_Dance" xml:space="preserve">
+    <value>Dansi</value>
+  </data>
+  <data name="EqPreset_FullBass" xml:space="preserve">
+    <value>Basi Kamili</value>
+  </data>
+  <data name="EqPreset_FullTreble" xml:space="preserve">
+    <value>Treble Kamili</value>
+  </data>
+  <data name="EqPreset_Jazz" xml:space="preserve">
+    <value>Jazz</value>
+  </data>
+  <data name="EqPreset_Pop" xml:space="preserve">
+    <value>Pop</value>
+  </data>
+  <data name="EqPreset_Rock" xml:space="preserve">
+    <value>Rock</value>
+  </data>
+  <data name="EqPreset_Soft" xml:space="preserve">
+    <value>Laini</value>
+  </data>
+  <data name="EqPreset_Techno" xml:space="preserve">
+    <value>Tekno</value>
+  </data>
+  <data name="EqPreset_Vocal" xml:space="preserve">
+    <value>Sauti</value>
+  </data>
+  <data name="ReplayGain_AllSongsScanned" xml:space="preserve">
+    <value>Nyimbo zote tayari zina data ya sauti.</value>
+  </data>
+  <data name="ReplayGain_CalculatingCount" xml:space="preserve">
+    <value>Inakokotoa sauti kwa nyimbo {0}...</value>
+  </data>
+  <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
+    <value>Inakokotoa usawazishaji wa sauti ({0}/{1})...</value>
+  </data>
+  <data name="ReplayGain_Complete" xml:space="preserve">
+    <value>Usawazishaji wa sauti umekamilika. Zimeshughulikiwa nyimbo {0}.</value>
+  </data>
+</root>

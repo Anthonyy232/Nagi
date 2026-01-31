@@ -1,0 +1,932 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="NavItem_Library" xml:space="preserve">
+    <value>المكتبة</value>
+  </data>
+  <data name="NavItem_Albums" xml:space="preserve">
+    <value>الألبومات</value>
+  </data>
+  <data name="NavItem_Artists" xml:space="preserve">
+    <value>الفنانون</value>
+  </data>
+  <data name="NavItem_Genres" xml:space="preserve">
+    <value>الأنواع</value>
+  </data>
+  <data name="NavItem_Playlists" xml:space="preserve">
+    <value>قوائم التشغيل</value>
+  </data>
+  <data name="NavItem_Folders" xml:space="preserve">
+    <value>المجلدات</value>
+  </data>
+  <data name="NavItem_Settings" xml:space="preserve">
+    <value>الإعدادات</value>
+  </data>
+  <data name="Status_NoTrackPlaying" xml:space="preserve">
+    <value>لا توجد أغنية قيد التشغيل</value>
+  </data>
+  <data name="Tooltip_Play" xml:space="preserve">
+    <value>تشغيل</value>
+  </data>
+  <data name="Tooltip_Pause" xml:space="preserve">
+    <value>إيقاف مؤقت</value>
+  </data>
+  <data name="Tooltip_ShuffleOn" xml:space="preserve">
+    <value>تشغيل التبديل العشوائي</value>
+  </data>
+  <data name="Tooltip_ShuffleOff" xml:space="preserve">
+    <value>إيقاف التبديل العشوائي</value>
+  </data>
+  <data name="Tooltip_RepeatOff" xml:space="preserve">
+    <value>إيقاف التكرار</value>
+  </data>
+  <data name="Tooltip_RepeatAll" xml:space="preserve">
+    <value>تكرار الكل</value>
+  </data>
+  <data name="Tooltip_RepeatOne" xml:space="preserve">
+    <value>تكرار واحدة</value>
+  </data>
+  <data name="Tooltip_Repeat" xml:space="preserve">
+    <value>تكرار</value>
+  </data>
+  <data name="Tooltip_Unmute" xml:space="preserve">
+    <value>إلغاء كتم الصوت</value>
+  </data>
+  <data name="Tooltip_Mute" xml:space="preserve">
+    <value>كتم الصوت</value>
+  </data>
+  <data name="Theme_Light" xml:space="preserve">
+    <value>فاتح</value>
+  </data>
+  <data name="Theme_Dark" xml:space="preserve">
+    <value>داكن</value>
+  </data>
+  <data name="Theme_Default" xml:space="preserve">
+    <value>استخدام إعدادات النظام</value>
+  </data>
+  <data name="Backdrop_Mica" xml:space="preserve">
+    <value>ميكا</value>
+  </data>
+  <data name="Backdrop_MicaAlt" xml:space="preserve">
+    <value>ميكا بديل</value>
+  </data>
+  <data name="Backdrop_Acrylic" xml:space="preserve">
+    <value>أكريليك</value>
+  </data>
+  <data name="Label_Composer" xml:space="preserve">
+    <value>ملحن</value>
+  </data>
+  <data name="Label_Comment" xml:space="preserve">
+    <value>تعليق</value>
+  </data>
+  <data name="Label_Rating" xml:space="preserve">
+    <value>التقييم</value>
+  </data>
+  <data name="Operator_Contains" xml:space="preserve">
+    <value>يحتوي على</value>
+  </data>
+  <data name="Operator_DoesNotContain" xml:space="preserve">
+    <value>لا يحتوي على</value>
+  </data>
+  <data name="Operator_Is" xml:space="preserve">
+    <value>مطابق تمامًا</value>
+  </data>
+  <data name="Operator_IsNot" xml:space="preserve">
+    <value>ليس</value>
+  </data>
+  <data name="Operator_StartsWith" xml:space="preserve">
+    <value>يبدأ بـ</value>
+  </data>
+  <data name="Operator_EndsWith" xml:space="preserve">
+    <value>ينتهي بـ</value>
+  </data>
+  <data name="Operator_Equals" xml:space="preserve">
+    <value>يساوي</value>
+  </data>
+  <data name="Operator_NotEquals" xml:space="preserve">
+    <value>لا يساوي</value>
+  </data>
+  <data name="Operator_GreaterThan" xml:space="preserve">
+    <value>أكبر من</value>
+  </data>
+  <data name="Operator_LessThan" xml:space="preserve">
+    <value>أقل من</value>
+  </data>
+  <data name="Operator_GreaterThanOrEqual" xml:space="preserve">
+    <value>على الأقل</value>
+  </data>
+  <data name="Operator_LessThanOrEqual" xml:space="preserve">
+    <value>على الأكثر</value>
+  </data>
+  <data name="Operator_IsInTheLast" xml:space="preserve">
+    <value>في آخر (أيام)</value>
+  </data>
+  <data name="Operator_IsNotInTheLast" xml:space="preserve">
+    <value>ليس في آخر (أيام)</value>
+  </data>
+  <data name="Operator_IsTrue" xml:space="preserve">
+    <value>صحيح</value>
+  </data>
+  <data name="Operator_IsFalse" xml:space="preserve">
+    <value>خطأ</value>
+  </data>
+  <data name="SmartPlaylist_Title_New" xml:space="preserve">
+    <value>قائمة تشغيل ذكية جديدة</value>
+  </data>
+  <data name="SmartPlaylist_Title_EditFormat" xml:space="preserve">
+    <value>تحرير قائمة التشغيل الذكية - {0}</value>
+  </data>
+  <data name="SmartPlaylist_Status_EnterName" xml:space="preserve">
+    <value>أدخل اسم قائمة التشغيل</value>
+  </data>
+  <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
+    <value>{0} أغنية تطابق القواعد الحالية</value>
+  </data>
+  <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
+    <value>أدخل اسمًا لمشاهدة الأغاني المطابقة</value>
+  </data>
+  <data name="SmartPlaylist_Status_Error" xml:space="preserve">
+    <value>تعذر الحساب</value>
+  </data>
+  <data name="SmartPlaylist_Status_Calculating" xml:space="preserve">
+    <value>جاري الحساب...</value>
+  </data>
+  <data name="SmartPlaylist_Error_DuplicateName" xml:space="preserve">
+    <value>قائمة تشغيل بهذا الاسم موجودة بالفعل!</value>
+  </data>
+  <data name="SmartPlaylist_Error_NameEmptyFeedback" xml:space="preserve">
+    <value>الرجاء إدخال اسم!</value>
+  </data>
+  <data name="Status_Loading" xml:space="preserve">
+    <value>جاري التحميل...</value>
+  </data>
+  <data name="Error_FailedToLoadArtists" xml:space="preserve">
+    <value>فشل تحميل الفنانين</value>
+  </data>
+  <data name="CrashReport_Title" xml:space="preserve">
+    <value>خطأ فادح</value>
+  </data>
+  <data name="CrashReport_Message" xml:space="preserve">
+    <value>واجه Nagi خطأً فادحًا ويجب إغلاقه. نأسف للإزعاج.</value>
+  </data>
+  <data name="ElevationWarning_Title" xml:space="preserve">
+    <value>يعمل كمسؤول</value>
+  </data>
+  <data name="ElevationWarning_Message" xml:space="preserve">
+    <value>يعمل Nagi حاليًا كمسؤول. قد يمنع هذا بعض الميزات (مثل إضافة مجلدات الموسيقى) من العمل بشكل صحيح.
+
+للحصول على أفضل تجربة، يرجى إعادة تشغيل Nagi بدون امتيازات المسؤول.</value>
+  </data>
+  <data name="ElevationWarning_Restart" xml:space="preserve">
+    <value>إعادة التشغيل بشكل طبيعي</value>
+  </data>
+  <data name="ElevationWarning_Continue" xml:space="preserve">
+    <value>المتابعة على أي حال</value>
+  </data>
+  <data name="MiniPlayer_Title" xml:space="preserve">
+    <value>ناجي</value>
+  </data>
+  <data name="App_Title" xml:space="preserve">
+    <value>ناجي</value>
+  </data>
+  <data name="AlbumView_AlbumNotFound" xml:space="preserve">
+    <value>الألبوم غير موجود</value>
+  </data>
+  <data name="AlbumView_Error" xml:space="preserve">
+    <value>خطأ في تحميل الألبوم</value>
+  </data>
+  <data name="AlbumView_DefaultAlbumTitle" xml:space="preserve">
+    <value>ألبوم</value>
+  </data>
+  <data name="AlbumView_DefaultArtistName" xml:space="preserve">
+    <value>فنان</value>
+  </data>
+  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
+    <value>{0} أغنية</value>
+  </data>
+  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
+    <value>{0} أغنية</value>
+  </data>
+  <data name="ArtistView_ArtistNotFound" xml:space="preserve">
+    <value>الفنان غير موجود</value>
+  </data>
+  <data name="ArtistView_Error" xml:space="preserve">
+    <value>خطأ في تحميل الفنان</value>
+  </data>
+  <data name="ArtistView_DefaultArtistName" xml:space="preserve">
+    <value>فنان</value>
+  </data>
+  <data name="ArtistView_NoBiography" xml:space="preserve">
+    <value>لا تتوفر سيرة ذاتية لهذا الفنان.</value>
+  </data>
+  <data name="ArtistView_ErrorLoadingDetails" xml:space="preserve">
+    <value>تعذر تحميل تفاصيل الفنان.</value>
+  </data>
+  <data name="Folders_ErrorLoading" xml:space="preserve">
+    <value>خطأ في تحميل المجلد</value>
+  </data>
+  <data name="Folders_AddFolder_Success" xml:space="preserve">
+    <value>تمت إضافة '{0}' وفحصها بنجاح.</value>
+  </data>
+  <data name="Folders_AddFolder_Failed" xml:space="preserve">
+    <value>فشل في إضافة المجلد. قد يكون المسار غير صالح.</value>
+  </data>
+  <data name="Folders_AddFolder_Exists" xml:space="preserve">
+    <value>هذا المجلد موجود بالفعل في المكتبة.</value>
+  </data>
+  <data name="Folders_AddFolder_InProgress" xml:space="preserve">
+    <value>جاري إضافة المجلد إلى المكتبة...</value>
+  </data>
+  <data name="Folders_Delete_Success" xml:space="preserve">
+    <value>تم حذف '{0}' بنجاح.</value>
+  </data>
+  <data name="Folders_Delete_Failed" xml:space="preserve">
+    <value>فشل حذف '{0}'.</value>
+  </data>
+  <data name="Folders_Delete_InProgress" xml:space="preserve">
+    <value>جاري حذف '{0}'...</value>
+  </data>
+  <data name="Folders_Rescan_Complete" xml:space="preserve">
+    <value>اكتملت إعادة فحص '{0}'.</value>
+  </data>
+  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
+    <value>لم يتم اكتشاف أي تغييرات لـ '{0}'.</value>
+  </data>
+  <data name="Folders_Rescan_InProgress" xml:space="preserve">
+    <value>جاري إعادة فحص '{0}'...</value>
+  </data>
+  <data name="Folders_Empty_NoMusicFound" xml:space="preserve">
+    <value>لم يتم العثور على مجلدات تحتوي على موسيقى.</value>
+  </data>
+  <data name="Folders_Error_Playback" xml:space="preserve">
+    <value>خطأ في بدء التشغيل لهذا المجلد.</value>
+  </data>
+  <data name="Folders_Error_RandomPlayback" xml:space="preserve">
+    <value>خطأ في بدء التشغيل العشوائي للمجلد.</value>
+  </data>
+  <data name="Folders_Error_AddFolder" xml:space="preserve">
+    <value>خطأ في إضافة المجلد: {0}</value>
+  </data>
+  <data name="Folders_Error_DeleteFolder" xml:space="preserve">
+    <value>خطأ في حذف المجلد: {0}</value>
+  </data>
+  <data name="Folders_Error_RescanFolder" xml:space="preserve">
+    <value>خطأ في إعادة فحص المجلد: {0}</value>
+  </data>
+  <data name="Folders_Count_Singular" xml:space="preserve">
+    <value>{0} مجلد</value>
+  </data>
+  <data name="Folders_Count_Plural" xml:space="preserve">
+    <value>{0} مجلد</value>
+  </data>
+  <data name="Songs_Count_Singular" xml:space="preserve">
+    <value>{0} أغنية</value>
+  </data>
+  <data name="Songs_Count_Plural" xml:space="preserve">
+    <value>{0} أغنية</value>
+  </data>
+  <data name="Albums_Count_Singular" xml:space="preserve">
+    <value>{0} ألبوم</value>
+  </data>
+  <data name="Albums_Count_Plural" xml:space="preserve">
+    <value>{0} ألبوم</value>
+  </data>
+  <data name="Artists_Count_Singular" xml:space="preserve">
+    <value>{0} فنان</value>
+  </data>
+  <data name="Artists_Count_Plural" xml:space="preserve">
+    <value>{0} فنان</value>
+  </data>
+  <data name="Generic_NoItems" xml:space="preserve">
+    <value>لا توجد عناصر</value>
+  </data>
+  <data name="Generic_Error" xml:space="preserve">
+    <value>خطأ</value>
+  </data>
+  <data name="GenreView_DefaultName" xml:space="preserve">
+    <value>نوع</value>
+  </data>
+  <data name="GenreView_Error" xml:space="preserve">
+    <value>خطأ في تحميل النوع</value>
+  </data>
+  <data name="Lyrics_NoSongSelected" xml:space="preserve">
+    <value>لم يتم تحديد أغنية</value>
+  </data>
+  <data name="Lyrics_SongTitleFormat" xml:space="preserve">
+    <value>{0} بواسطة {1}</value>
+  </data>
+  <data name="Onboarding_Welcome" xml:space="preserve">
+    <value>لنقم بإعداد مكتبة الموسيقى الخاصة بك للبدء.</value>
+  </data>
+  <data name="Onboarding_WaitingForSelection" xml:space="preserve">
+    <value>جاري انتظار تحديدك لمجلد...</value>
+  </data>
+  <data name="Onboarding_BuildingLibrary" xml:space="preserve">
+    <value>جاري بناء مكتبتك...</value>
+  </data>
+  <data name="Onboarding_Error" xml:space="preserve">
+    <value>حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.</value>
+  </data>
+  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
+    <value>ذكي • {0} أغنية</value>
+  </data>
+  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
+    <value>ذكي • {0} أغنية</value>
+  </data>
+  <data name="Playlist_Count_Singular" xml:space="preserve">
+    <value>{0} أغنية</value>
+  </data>
+  <data name="Playlist_Count_Plural" xml:space="preserve">
+    <value>{0} أغنية</value>
+  </data>
+  <data name="Playlist_ErrorLoading" xml:space="preserve">
+    <value>خطأ في تحميل قائمة التشغيل</value>
+  </data>
+  <data name="Playlist_Status_Starting" xml:space="preserve">
+    <value>جاري بدء قائمة التشغيل...</value>
+  </data>
+  <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
+    <value>لا توجد أغاني تطابق قواعد قائمة التشغيل الذكية هذه.</value>
+  </data>
+  <data name="Playlist_Status_ErrorPlayback" xml:space="preserve">
+    <value>خطأ في بدء التشغيل لقائمة التشغيل هذه.</value>
+  </data>
+  <data name="Playlist_Status_PickingRandom" xml:space="preserve">
+    <value>جاري اختيار قائمة تشغيل عشوائية...</value>
+  </data>
+  <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
+    <value>لم يتم العثور على قوائم تشغيل.</value>
+  </data>
+  <data name="Playlist_Status_SmartSelectedEmpty" xml:space="preserve">
+    <value>قائمة التشغيل الذكية المختارة فارغة.</value>
+  </data>
+  <data name="Playlist_Status_ErrorRandom" xml:space="preserve">
+    <value>خطأ في تشغيل قائمة التشغيل العشوائية.</value>
+  </data>
+  <data name="Playlist_Status_Loading" xml:space="preserve">
+    <value>جاري تحميل قوائم التشغيل...</value>
+  </data>
+  <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
+    <value>خطأ في تحميل قوائم التشغيل.</value>
+  </data>
+  <data name="Playlist_Status_Creating" xml:space="preserve">
+    <value>جاري إنشاء قائمة تشغيل جديدة...</value>
+  </data>
+  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
+    <value>فشل إنشاء قائمة التشغيل. قد تكون موجودة بالفعل.</value>
+  </data>
+  <data name="Playlist_Status_CreateError" xml:space="preserve">
+    <value>حدث خطأ أثناء إنشاء قائمة التشغيل.</value>
+  </data>
+  <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
+    <value>جاري تحديث غلاف قائمة التشغيل...</value>
+  </data>
+  <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
+    <value>فشل تحديث غلاف قائمة التشغيل.</value>
+  </data>
+  <data name="Playlist_Status_UpdateCoverError" xml:space="preserve">
+    <value>حدث خطأ أثناء تحديث غلاف قائمة التشغيل.</value>
+  </data>
+  <data name="Playlist_Status_RemovingCover" xml:space="preserve">
+    <value>جاري إزالة صورة قائمة التشغيل...</value>
+  </data>
+  <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
+    <value>فشل إزالة صورة قائمة التشغيل.</value>
+  </data>
+  <data name="Playlist_Status_RemoveCoverError" xml:space="preserve">
+    <value>حدث خطأ أثناء إزالة صورة قائمة التشغيل.</value>
+  </data>
+  <data name="Playlist_Status_Renaming" xml:space="preserve">
+    <value>جاري إعادة تسمية قائمة التشغيل...</value>
+  </data>
+  <data name="Playlist_Status_RenameFailed" xml:space="preserve">
+    <value>فشل إعادة تسمية قائمة التشغيل.</value>
+  </data>
+  <data name="Playlist_Status_RenameError" xml:space="preserve">
+    <value>حدث خطأ أثناء إعادة تسمية قائمة التشغيل.</value>
+  </data>
+  <data name="Playlist_Status_Deleting" xml:space="preserve">
+    <value>جاري حذف قائمة التشغيل...</value>
+  </data>
+  <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
+    <value>فشل حذف قائمة التشغيل.</value>
+  </data>
+  <data name="Playlist_Status_DeleteError" xml:space="preserve">
+    <value>حدث خطأ أثناء حذف قائمة التشغيل.</value>
+  </data>
+  <data name="Settings_Reset_Title" xml:space="preserve">
+    <value>تأكيد إعادة الضبط</value>
+  </data>
+  <data name="Settings_Reset_Message" xml:space="preserve">
+    <value>هل أنت متأكد أنك تريد إعادة ضبط جميع بيانات التطبيق وإعداداته؟ لا يمكن التراجع عن هذا الإجراء. سيعود التطبيق إلى الإعداد الأولي.</value>
+  </data>
+  <data name="Settings_Reset_Button" xml:space="preserve">
+    <value>إعادة ضبط</value>
+  </data>
+  <data name="Settings_ResetError_Title" xml:space="preserve">
+    <value>خطأ في إعادة الضبط</value>
+  </data>
+  <data name="Settings_ResetError_Message" xml:space="preserve">
+    <value>حدث خطأ أثناء إعادة ضبط بيانات التطبيق: {0}. يرجى محاولة إعادة تشغيل التطبيق يدويًا.</value>
+  </data>
+  <data name="Settings_LastFm_AuthError_Title" xml:space="preserve">
+    <value>خطأ</value>
+  </data>
+  <data name="Settings_LastFm_AuthError_Message" xml:space="preserve">
+    <value>تعذر الاتصال بـ Last.fm. يرجى المحاولة مرة أخرى لاحقًا.</value>
+  </data>
+  <data name="Settings_LastFm_FinalizeError_Title" xml:space="preserve">
+    <value>فشل المصادقة</value>
+  </data>
+  <data name="Settings_LastFm_FinalizeError_Message" xml:space="preserve">
+    <value>تعذر الحصول على جلسة من Last.fm. يرجى محاولة الاتصال مرة أخرى.</value>
+  </data>
+  <data name="Settings_LastFm_Disconnect_Title" xml:space="preserve">
+    <value>قطع اتصال Last.fm</value>
+  </data>
+  <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
+    <value>هل أنت متأكد أنك تريد قطع اتصال حسابك في Last.fm؟ سيتم الاحتفاظ بسجل تشغيلك على Last.fm، ولكن Nagi لن يتمكن بعد الآن من تسجيل التشغيل.</value>
+  </data>
+  <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
+    <value>قطع الاتصال</value>
+  </data>
+  <data name="Settings_Export_Success_Title" xml:space="preserve">
+    <value>تم التصدير بنجاح</value>
+  </data>
+  <data name="Settings_Export_Success_Message" xml:space="preserve">
+    <value>تم تصدير {0} قائمة تشغيل ({1} أغنية إجمالية) إلى:
+{2}</value>
+  </data>
+  <data name="Settings_Export_Failed_Title" xml:space="preserve">
+    <value>فشل التصدير</value>
+  </data>
+  <data name="Settings_Import_Success_Title" xml:space="preserve">
+    <value>تم الاستيراد بنجاح</value>
+  </data>
+  <data name="Settings_Import_Success_Message" xml:space="preserve">
+    <value>تم استيراد {0} قائمة تشغيل ({1} أغنية) بنجاح.</value>
+  </data>
+  <data name="Settings_Import_Unmatched_Message" xml:space="preserve">
+    <value>
+
+لم يتم العثور على {0} أغنية في مكتبتك.</value>
+  </data>
+  <data name="Settings_Import_FailedFiles_Message" xml:space="preserve">
+    <value>
+
+فشل استيراد {0} ملف.</value>
+  </data>
+  <data name="Settings_Import_FailedTotal_Title" xml:space="preserve">
+    <value>فشل الاستيراد</value>
+  </data>
+  <data name="Settings_Import_FailedTotal_Message" xml:space="preserve">
+    <value>تعذر استيراد أي قوائم تشغيل.</value>
+  </data>
+  <data name="SmartPlaylist_ErrorLoading" xml:space="preserve">
+    <value>خطأ في تحميل قائمة التشغيل الذكية</value>
+  </data>
+  <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
+    <value>لا توجد قواعد محددة • جميع الأغاني مطابقة</value>
+  </data>
+  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
+    <value>مطابقة {0} من {1} {2}</value>
+  </data>
+  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
+    <value>الكل</value>
+  </data>
+  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
+    <value>أي</value>
+  </data>
+  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
+    <value>قاعدة</value>
+  </data>
+  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
+    <value>قواعد</value>
+  </data>
+  <data name="SongList_PageTitle_Default" xml:space="preserve">
+    <value>أغاني</value>
+  </data>
+  <data name="SongList_TotalItems_Default" xml:space="preserve">
+    <value>0 عناصر</value>
+  </data>
+  <data name="SongList_ErrorLoading" xml:space="preserve">
+    <value>خطأ في تحميل العناصر</value>
+  </data>
+  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
+    <value>{0} عنصر</value>
+  </data>
+  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
+    <value>{0} عنصر</value>
+  </data>
+  <data name="SongList_SelectedCount_Format" xml:space="preserve">
+    <value>{0} محددة</value>
+  </data>
+  <data name="AlbumView_DiscHeader" xml:space="preserve">
+    <value>قرص {0}</value>
+  </data>
+  <data name="Generic_OK" xml:space="preserve">
+    <value>موافق</value>
+  </data>
+  <data name="Generic_Cancel" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="Generic_Close" xml:space="preserve">
+    <value>إغلاق</value>
+  </data>
+  <data name="Generic_Recheck" xml:space="preserve">
+    <value>إعادة الفحص</value>
+  </data>
+  <data name="CrashReport_Button_Reset" xml:space="preserve">
+    <value>إعادة ضبط التطبيق والبيانات</value>
+  </data>
+  <data name="FFmpeg_Status_NotDetected" xml:space="preserve">
+    <value>لم يتم الكشف عن FFmpeg. يرجى تثبيت FFmpeg والنقر على 'إعادة الفحص'.</value>
+  </data>
+  <data name="FFmpeg_Status_Checking" xml:space="preserve">
+    <value>جاري التحقق من FFmpeg...</value>
+  </data>
+  <data name="FFmpeg_Status_Detected" xml:space="preserve">
+    <value>تم الكشف عن FFmpeg!</value>
+  </data>
+  <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
+    <value>لم يتم الكشف عن FFmpeg بعد. يرجى تثبيت FFmpeg والنقر على 'إعادة الفحص'.</value>
+  </data>
+  <data name="FFmpeg_Status_Error" xml:space="preserve">
+    <value>خطأ في التحقق من FFmpeg. يرجى المحاولة مرة أخرى.</value>
+  </data>
+  <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
+    <value>السابق</value>
+  </data>
+  <data name="Taskbar_Tooltip_Play" xml:space="preserve">
+    <value>تشغيل</value>
+  </data>
+  <data name="Taskbar_Tooltip_Pause" xml:space="preserve">
+    <value>إيقاف مؤقت</value>
+  </data>
+  <data name="Taskbar_Tooltip_Next" xml:space="preserve">
+    <value>التالي</value>
+  </data>
+  <data name="Update_Available_Title" xml:space="preserve">
+    <value>تحديث متوفر</value>
+  </data>
+  <data name="Update_Available_Message" xml:space="preserve">
+    <value>يتوفر إصدار جديد ({0}). هل ترغب في تنزيله وتثبيته الآن؟</value>
+  </data>
+  <data name="Update_Button_InstallNow" xml:space="preserve">
+    <value>تثبيت الآن</value>
+  </data>
+  <data name="Update_Button_Later" xml:space="preserve">
+    <value>لاحقًا</value>
+  </data>
+  <data name="Update_Button_Skip" xml:space="preserve">
+    <value>تخطي هذا الإصدار</value>
+  </data>
+  <data name="Update_UpToDate_Title" xml:space="preserve">
+    <value>مُحدّث</value>
+  </data>
+  <data name="Update_UpToDate_Message" xml:space="preserve">
+    <value>أنت تستخدم أحدث إصدار من Nagi.</value>
+  </data>
+  <data name="Update_Error_Title" xml:space="preserve">
+    <value>خطأ في التحديث</value>
+  </data>
+  <data name="Update_Check_Error_Message" xml:space="preserve">
+    <value>حدث خطأ أثناء التحقق من التحديثات: {0}</value>
+  </data>
+  <data name="Update_Install_Error_Message" xml:space="preserve">
+    <value>حدث خطأ أثناء تثبيت التحديث: {0}</value>
+  </data>
+  <data name="Update_Downloading_Title" xml:space="preserve">
+    <value>جاري تنزيل التحديث</value>
+  </data>
+  <data name="Update_Downloading_Message" xml:space="preserve">
+    <value>جاري تنزيل الإصدار {0}. سيعاد تشغيل التطبيق تلقائيًا عند الانتهاء.</value>
+  </data>
+  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
+    <value>واجه LibVLC خطأ غير محدد.</value>
+  </data>
+  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
+    <value>خطأ LibVLC: {0}</value>
+  </data>
+  <data name="Player_Error_LoadFailed" xml:space="preserve">
+    <value>فشل تحميل '{0}'.</value>
+  </data>
+  <data name="Settings_Nav_Library" xml:space="preserve">
+    <value>المكتبة</value>
+  </data>
+  <data name="Settings_Nav_Folders" xml:space="preserve">
+    <value>المجلدات</value>
+  </data>
+  <data name="Settings_Nav_Playlists" xml:space="preserve">
+    <value>قوائم التشغيل</value>
+  </data>
+  <data name="Settings_Nav_Artists" xml:space="preserve">
+    <value>الفنانون</value>
+  </data>
+  <data name="Settings_Nav_Albums" xml:space="preserve">
+    <value>الألبومات</value>
+  </data>
+  <data name="Settings_Nav_Genres" xml:space="preserve">
+    <value>الأنواع</value>
+  </data>
+  <data name="Settings_Button_Shuffle" xml:space="preserve">
+    <value>تبديل عشوائي</value>
+  </data>
+  <data name="Settings_Button_Previous" xml:space="preserve">
+    <value>السابق</value>
+  </data>
+  <data name="Settings_Button_PlayPause" xml:space="preserve">
+    <value>تشغيل/إيقاف مؤقت</value>
+  </data>
+  <data name="Settings_Button_Next" xml:space="preserve">
+    <value>التالي</value>
+  </data>
+  <data name="Settings_Button_Repeat" xml:space="preserve">
+    <value>تكرار</value>
+  </data>
+  <data name="Settings_Button_Divider" xml:space="preserve">
+    <value>فاصل التخطيط</value>
+  </data>
+  <data name="Settings_Button_Lyrics" xml:space="preserve">
+    <value>كلمات الأغاني</value>
+  </data>
+  <data name="Settings_Button_Queue" xml:space="preserve">
+    <value>قائمة الانتظار</value>
+  </data>
+  <data name="Settings_Button_Volume" xml:space="preserve">
+    <value>الصوت</value>
+  </data>
+  <data name="Settings_Provider_LRCLIB_Desc" xml:space="preserve">
+    <value>قاعدة بيانات كلمات الأغاني المنسقة من المجتمع</value>
+  </data>
+  <data name="Settings_Provider_NetEase_Desc" xml:space="preserve">
+    <value>خدمة موسيقية صينية، رائعة للموسيقى الآسيوية</value>
+  </data>
+  <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
+    <value>يجلب معرفات الفنانين (مطلوب لـ TheAudioDB و Fanart.tv)</value>
+  </data>
+  <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
+    <value>صور وسير ذاتية عالية الجودة للفنانين (يتطلب MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
+    <value>صور فنانين عالية الجودة فقط (يتطلب MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_Spotify_Desc" xml:space="preserve">
+    <value>صور الفنانين فقط</value>
+  </data>
+  <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
+    <value>سير ذاتية وصور الفنانين (بديل)</value>
+  </data>
+  <data name="App_Name_Default" xml:space="preserve">
+    <value>ناجي</value>
+  </data>
+  <data name="App_Version_Unknown" xml:space="preserve">
+    <value>غير متوفر</value>
+  </data>
+  <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>إغلاق البحث</value>
+  </data>
+  <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>البحث عن ألبومات</value>
+  </data>
+  <data name="AlbumViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>إغلاق البحث</value>
+  </data>
+  <data name="AlbumViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>البحث في الألبوم</value>
+  </data>
+  <data name="AlbumViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>لا توجد قوائم تشغيل متاحة</value>
+  </data>
+  <data name="ArtistPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>إغلاق البحث</value>
+  </data>
+  <data name="ArtistPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>البحث عن فنانين</value>
+  </data>
+  <data name="ArtistViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>إغلاق البحث</value>
+  </data>
+  <data name="ArtistViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>البحث في الفنان</value>
+  </data>
+  <data name="ArtistViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>لا توجد قوائم تشغيل متاحة</value>
+  </data>
+  <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
+    <value>حذف مجلد</value>
+  </data>
+  <data name="FolderPage_DeleteDialog_Format" xml:space="preserve">
+    <value>هل أنت متأكد أنك تريد إزالة المجلد '{0}' من المكتبة؟ هذا لن يحذف الملفات من جهاز الكمبيوتر الخاص بك.</value>
+  </data>
+  <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
+    <value>حذف</value>
+  </data>
+  <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
+    <value>مجلد غير معروف</value>
+  </data>
+  <data name="FolderSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>إغلاق البحث</value>
+  </data>
+  <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>البحث في المجلد</value>
+  </data>
+  <data name="FolderSongViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>لا توجد قوائم تشغيل متاحة</value>
+  </data>
+  <data name="GenrePage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>إغلاق البحث</value>
+  </data>
+  <data name="GenrePage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>البحث عن أنواع</value>
+  </data>
+  <data name="LibraryPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>إغلاق البحث</value>
+  </data>
+  <data name="LibraryPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>البحث في المكتبة</value>
+  </data>
+  <data name="LibraryPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>لا توجد قوائم تشغيل متاحة</value>
+  </data>
+  <data name="PlaylistPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>إغلاق البحث</value>
+  </data>
+  <data name="PlaylistPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>البحث عن قوائم تشغيل</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_Placeholder" xml:space="preserve">
+    <value>أدخل اسم قائمة تشغيل جديدة</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_PickImage" xml:space="preserve">
+    <value>اختيار صورة</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_Title" xml:space="preserve">
+    <value>إنشاء قائمة تشغيل جديدة</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_CreateButton" xml:space="preserve">
+    <value>إنشاء</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_CancelButton" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="PlaylistPage_RenameDialog_Title_Format" xml:space="preserve">
+    <value>إعادة تسمية '{0}'</value>
+  </data>
+  <data name="PlaylistPage_RenameDialog_RenameButton" xml:space="preserve">
+    <value>إعادة تسمية</value>
+  </data>
+  <data name="PlaylistPage_DeleteDialog_Title" xml:space="preserve">
+    <value>حذف قائمة التشغيل</value>
+  </data>
+  <data name="PlaylistPage_DeleteDialog_Content_Format" xml:space="preserve">
+    <value>هل أنت متأكد أنك تريد حذف قائمة التشغيل '{0}'؟ لا يمكن التراجع عن هذا الإجراء.</value>
+  </data>
+  <data name="PlaylistPage_DeleteDialog_DeleteButton" xml:space="preserve">
+    <value>حذف</value>
+  </data>
+  <data name="PlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>إغلاق البحث</value>
+  </data>
+  <data name="PlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>البحث في قائمة التشغيل</value>
+  </data>
+  <data name="GenreViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>إغلاق البحث</value>
+  </data>
+  <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>البحث في المكتبة</value>
+  </data>
+  <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>لا توجد قوائم تشغيل متاحة</value>
+  </data>
+  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
+    <value>قائمة تشغيل غير معروفة</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>إغلاق البحث</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>البحث في قائمة التشغيل الذكية</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
+    <value>قائمة تشغيل ذكية غير معروفة</value>
+  </data>
+  <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
+    <value>إعادة فحص البيانات الوصفية</value>
+  </data>
+  <data name="Settings_Dialog_Rescan_Content" xml:space="preserve">
+    <value>سيؤدي هذا إلى إعادة فحص جميع الأغاني في مكتبتك لتطبيق إعدادات بيانات وصفية جديدة (مثل أحرف تقسيم الفنانين). قد يستغرق هذا بعض الوقت حسب حجم المكتبة. هل تريد المتابعة؟</value>
+  </data>
+  <data name="Settings_Dialog_Rescan_PrimaryButton" xml:space="preserve">
+    <value>إعادة فحص</value>
+  </data>
+  <data name="Settings_Status_Rescan_Preparing" xml:space="preserve">
+    <value>جاري تحضير إعادة فحص المكتبة...</value>
+  </data>
+  <data name="Settings_Dialog_RescanComplete_Title" xml:space="preserve">
+    <value>اكتملت إعادة الفحص</value>
+  </data>
+  <data name="Settings_Dialog_RescanComplete_Content" xml:space="preserve">
+    <value>تم تحديث البيانات الوصفية للمكتبة.</value>
+  </data>
+  <data name="Settings_Dialog_RescanFailed_Title" xml:space="preserve">
+    <value>فشل إعادة الفحص</value>
+  </data>
+  <data name="Settings_Dialog_RescanFailed_Content" xml:space="preserve">
+    <value>حدث خطأ أثناء الفحص. تحقق من السجلات للحصول على التفاصيل.</value>
+  </data>
+  <data name="Settings_Dialog_FFmpegNotFound_Title" xml:space="preserve">
+    <value>لم يتم العثور على FFmpeg</value>
+  </data>
+  <data name="Settings_Dialog_VolumeNorm_Title" xml:space="preserve">
+    <value>تمكين تسوية مستوى الصوت</value>
+  </data>
+  <data name="Settings_Dialog_VolumeNorm_Content" xml:space="preserve">
+    <value>تضمن تسوية مستوى الصوت (ReplayGain) مستوى صوت ثابتًا لجميع موسيقاك.
+
+سيقوم هذا بتحليل مكتبة الموسيقى الخاصة بك وتعديل ملفاتك الصوتية مباشرة عن طريق كتابة علامات ReplayGain. سيتم معالجة الملفات التي لا تحتوي على علامات موجودة فقط. قد يستغرق هذا بعض الوقت حسب حجم مكتبتك.
+
+هل تريد المتابعة؟</value>
+  </data>
+  <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
+    <value>تمكين وفحص</value>
+  </data>
+  <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
+    <value>جاري تحضير فحص تسوية مستوى الصوت...</value>
+  </data>
+  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
+    <value>تم إلغاء فحص تسوية مستوى الصوت.</value>
+  </data>
+  <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
+    <value>خطأ أثناء الفحص: {0}</value>
+  </data>
+  <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
+    <value>تعذر استرداد السجلات من الذاكرة. فشلت محاولة الاسترجاع لقراءة ملف السجل.
+المسار المتوقع: '{0}'
+الخطأ: {1}</value>
+  </data>
+  <data name="Settings_Export_Failed_Message" xml:space="preserve">
+    <value>لا توجد قوائم تشغيل لتصديرها.</value>
+  </data>
+</root>

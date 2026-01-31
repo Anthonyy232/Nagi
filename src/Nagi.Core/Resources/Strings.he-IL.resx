@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Noun Labels -->
+  <data name="Label_Artist" xml:space="preserve">
+    <value>אמן</value>
+  </data>
+  <data name="Label_Album" xml:space="preserve">
+    <value>אלבום</value>
+  </data>
+  <data name="Label_Genre" xml:space="preserve">
+    <value>ז'אנר</value>
+  </data>
+  <data name="Label_Title" xml:space="preserve">
+    <value>כותרת</value>
+  </data>
+  <data name="Label_Playlist" xml:space="preserve">
+    <value>פלייליסט</value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>קובץ</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>שנה</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>תאריך הוספה</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>תאריך יצירה</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>תאריך שינוי</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>נוגן לאחרונה</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>משך</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>מספר רצועה</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>ספירת השמעות</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>שירים</value>
+  </data>
+  <data name="Label_Song" xml:space="preserve">
+    <value>שיר</value>
+  </data>
+  <data name="Label_Folder" xml:space="preserve">
+    <value>תיקייה</value>
+  </data>
+  <data name="Label_Folders" xml:space="preserve">
+    <value>תיקיות</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>סדר ידני</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>אקראי</value>
+  </data>
+  <!-- Format Patterns -->
+  <data name="Format_Unknown" xml:space="preserve">
+    <value>{0} לא ידוע</value>
+  </data>
+  <data name="Format_New" xml:space="preserve">
+    <value>{0} חדש</value>
+  </data>
+  <data name="Format_NotFound" xml:space="preserve">
+    <value>{0} לא נמצא.</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (א' עד ת')</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (ת' עד א')</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (חדש ביותר)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (ישן ביותר)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (עולה)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (יורד)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>הקצר ביותר תחילה</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>הארוך ביותר תחילה</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>האיטי ביותר תחילה ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>המהיר ביותר תחילה ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>הכי הרבה {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>הכי פחות {0}</value>
+  </data>
+  <data name="Format_ScanFolderProgress" xml:space="preserve">
+    <value>סורק תיקייה {0} מתוך {1}: {2} - {3}</value>
+  </data>
+  <data name="Format_ScanCompleteResult" xml:space="preserve">
+    <value>הסריקה הושלמה. נוספו או עודכנו {0} {1}.</value>
+  </data>
+  <data name="Format_SavingBatch" xml:space="preserve">
+    <value>שומר אצווה {0}...</value>
+  </data>
+  <!-- Status & Success Messages -->
+  <data name="Status_ScanningFolder" xml:space="preserve">
+    <value>סורק תיקייה...</value>
+  </data>
+  <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
+    <value>הסריקה הושלמה. הספרייה מעודכנת.</value>
+  </data>
+  <data name="Status_ScanCancelled" xml:space="preserve">
+    <value>הסריקה בוטלה.</value>
+  </data>
+  <data name="Status_ScanFailed" xml:space="preserve">
+    <value>הסריקה נכשלה. בדוק את יומני הרישום לפרטים.</value>
+  </data>
+  <data name="Status_PreparingScanCaches" xml:space="preserve">
+    <value>מכין מטמוני סריקה...</value>
+  </data>
+  <data name="Status_ReadingSongDetails" xml:space="preserve">
+    <value>קורא פרטי שירים...</value>
+  </data>
+  <data name="Status_CleaningUpLibrary" xml:space="preserve">
+    <value>מנקה את הספרייה שלך...</value>
+  </data>
+  <data name="Status_Finalizing" xml:space="preserve">
+    <value>מסיים...</value>
+  </data>
+  <data name="Status_NormalizationFailed" xml:space="preserve">
+    <value>נורמליזציית עוצמת הקול נכשלה. בדוק את יומני הרישום לפרטים.</value>
+  </data>
+  <data name="Status_NoFoldersToRefresh" xml:space="preserve">
+    <value>אין תיקיות בספרייה לרענון.</value>
+  </data>
+  <data name="Status_LibraryRefreshComplete" xml:space="preserve">
+    <value>רענון הספרייה הושלם.</value>
+  </data>
+  <!-- Error Mssages -->
+  <data name="Error_FailedToAddFolder" xml:space="preserve">
+    <value>הוספת תיקייה נכשלה.</value>
+  </data>
+  <data name="Error_PlaylistNameEmpty" xml:space="preserve">
+    <value>שם הפלייליסט אינו יכול להיות ריק.</value>
+  </data>
+  <data name="Error_RatingRange" xml:space="preserve">
+    <value>הדירוג חייב להיות בין 1 ל-5.</value>
+  </data>
+  <!-- Labels -->
+  <data name="Label_WithLyrics" xml:space="preserve">
+    <value>עם מילים</value>
+  </data>
+  <data name="Label_WithCoverArt" xml:space="preserve">
+    <value>עם עטיפה</value>
+  </data>
+  <data name="Label_And" xml:space="preserve">
+    <value>ו</value>
+  </data>
+  <!-- Static Strings -->
+  <data name="UnknownFilename" xml:space="preserve">
+    <value>לא ידוע</value>
+  </data>
+  <data name="ArtistSeparator" xml:space="preserve">
+    <value> &amp; </value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>מיין לפי: </value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>FFmpeg נדרש לנורמליזציית עוצמת קול ברמת דיוק גבוהה (ניתוח ReplayGain) אך לא נמצא במערכת שלך.\n\nבצע את השלבים הבאים כדי להגדיר אותו:\n\n1. **הורדה**: בקר ב- https://www.gyan.dev/ffmpeg/builds/ והורד את בניית ה- 'ffmpeg-git-full.7z' (או דומה) החיונית.\n2. **מדריך**: תוכל לעקוב אחר מדריך זה לקבלת הוראות מפורטות: https://phoenixnap.com/kb/ffmpeg-windows\n3. **חילוץ**: פתח את תיקיית הארכיטקטורה ואתר את ספריית ה-'bin' המכילה את `ffmpeg.exe`.\n4. **התקנה**: העתק את `ffmpeg.exe` לתיקייה קבועה (לדוגמה, `C:\ffmpeg\`) ו**הוסף תיקייה זו למשתנה סביבת ה-System PATH שלך**.\n5. **הפעלה מחדש**: אנא הפעל מחדש את Nagi לאחר ההתקנה כדי שהשינויים ייכנסו לתוקף.</value>
+  </data>
+  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
+    <value>לא נמצאו שירים מהפלייליסט בספרייה שלך.</value>
+  </data>
+  <data name="Error_NoPlaylistsToExport" xml:space="preserve">
+    <value>אין פלייליסטים לייצוא.</value>
+  </data>
+  <data name="EqPreset_None" xml:space="preserve">
+    <value>ללא</value>
+  </data>
+  <data name="EqPreset_Classical" xml:space="preserve">
+    <value>קלאסי</value>
+  </data>
+  <data name="EqPreset_Dance" xml:space="preserve">
+    <value>ריקוד</value>
+  </data>
+  <data name="EqPreset_FullBass" xml:space="preserve">
+    <value>באס מלא</value>
+  </data>
+  <data name="EqPreset_FullTreble" xml:space="preserve">
+    <value>טרבל מלא</value>
+  </data>
+  <data name="EqPreset_Jazz" xml:space="preserve">
+    <value>ג'אז</value>
+  </data>
+  <data name="EqPreset_Pop" xml:space="preserve">
+    <value>פופ</value>
+  </data>
+  <data name="EqPreset_Rock" xml:space="preserve">
+    <value>רוק</value>
+  </data>
+  <data name="EqPreset_Soft" xml:space="preserve">
+    <value>רך</value>
+  </data>
+  <data name="EqPreset_Techno" xml:space="preserve">
+    <value>טכנו</value>
+  </data>
+  <data name="EqPreset_Vocal" xml:space="preserve">
+    <value>ווקאלי</value>
+  </data>
+  <data name="ReplayGain_AllSongsScanned" xml:space="preserve">
+    <value>לכל השירים כבר יש נתוני עוצמת קול.</value>
+  </data>
+  <data name="ReplayGain_CalculatingCount" xml:space="preserve">
+    <value>מחשב עוצמת קול עבור {0} שירים...</value>
+  </data>
+  <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
+    <value>מחשב נורמליזציית עוצמת קול ({0}/{1})...</value>
+  </data>
+  <data name="ReplayGain_Complete" xml:space="preserve">
+    <value>נורמליזציית עוצמת הקול הושלמה. עובדו {0} שירים.</value>
+  </data>
+</root>

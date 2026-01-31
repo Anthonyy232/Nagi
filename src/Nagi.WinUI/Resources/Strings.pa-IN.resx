@@ -1,0 +1,919 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="NavItem_Library" xml:space="preserve">
+    <value>ਲਾਇਬ੍ਰੇਰੀ</value>
+  </data>
+  <data name="NavItem_Albums" xml:space="preserve">
+    <value>ਐਲਬਮਾਂ</value>
+  </data>
+  <data name="NavItem_Artists" xml:space="preserve">
+    <value>ਕਲਾਕਾਰ</value>
+  </data>
+  <data name="NavItem_Genres" xml:space="preserve">
+    <value>ਸ਼ੈਲੀਆਂ</value>
+  </data>
+  <data name="NavItem_Playlists" xml:space="preserve">
+    <value>ਫੋਲਡਰ</value>
+  </data>
+  <data name="NavItem_Folders" xml:space="preserve">
+    <value>ਫੋਲਡਰ</value>
+  </data>
+  <data name="NavItem_Settings" xml:space="preserve">
+    <value>ਸੈਟਿੰਗਾਂ</value>
+  </data>
+  <data name="Status_NoTrackPlaying" xml:space="preserve">
+    <value>ਕੋਈ ਟਰੈਕ ਨਹੀਂ ਚੱਲ ਰਿਹਾ</value>
+  </data>
+  <data name="Tooltip_Play" xml:space="preserve">
+    <value>ਚਲਾਓ</value>
+  </data>
+  <data name="Tooltip_Pause" xml:space="preserve">
+    <value>ਰੋਕੋ</value>
+  </data>
+  <data name="Tooltip_ShuffleOn" xml:space="preserve">
+    <value>ਸ਼ਫਲ ਚਾਲੂ</value>
+  </data>
+  <data name="Tooltip_ShuffleOff" xml:space="preserve">
+    <value>ਸ਼ਫਲ ਬੰਦ</value>
+  </data>
+  <data name="Tooltip_RepeatOff" xml:space="preserve">
+    <value>ਦੁਹਰਾਓ ਬੰਦ</value>
+  </data>
+  <data name="Tooltip_RepeatAll" xml:space="preserve">
+    <value>ਸਾਰੇ ਦੁਹਰਾਓ</value>
+  </data>
+  <data name="Tooltip_RepeatOne" xml:space="preserve">
+    <value>ਇੱਕ ਦੁਹਰਾਓ</value>
+  </data>
+  <data name="Tooltip_Repeat" xml:space="preserve">
+    <value>ਦੁਹਰਾਓ</value>
+  </data>
+  <data name="Tooltip_Unmute" xml:space="preserve">
+    <value>ਅਨਮਿਊਟ ਕਰੋ</value>
+  </data>
+  <data name="Tooltip_Mute" xml:space="preserve">
+    <value>ਮਿਊਟ ਕਰੋ</value>
+  </data>
+  <data name="Theme_Light" xml:space="preserve">
+    <value>ਹਲਕਾ</value>
+  </data>
+  <data name="Theme_Dark" xml:space="preserve">
+    <value>ਹਨੇਰਾ</value>
+  </data>
+  <data name="Theme_Default" xml:space="preserve">
+    <value>ਸਿਸਟਮ ਸੈਟਿੰਗ ਵਰਤੋ</value>
+  </data>
+  <data name="Backdrop_Mica" xml:space="preserve">
+    <value>ਮੀਕਾ</value>
+  </data>
+  <data name="Backdrop_MicaAlt" xml:space="preserve">
+    <value>ਮੀਕਾ ਆਲਟ</value>
+  </data>
+  <data name="Backdrop_Acrylic" xml:space="preserve">
+    <value>ਐਕ੍ਰੀਲਿਕ</value>
+  </data>
+  <data name="Label_Composer" xml:space="preserve">
+    <value>ਸੰਗੀਤਕਾਰ</value>
+  </data>
+  <data name="Label_Comment" xml:space="preserve">
+    <value>ਟਿੱਪਣੀ</value>
+  </data>
+  <data name="Label_Rating" xml:space="preserve">
+    <value>ਰੇਟਿੰਗ</value>
+  </data>
+  <data name="Operator_Contains" xml:space="preserve">
+    <value>ਸ਼ਾਮਲ ਹੈ</value>
+  </data>
+  <data name="Operator_DoesNotContain" xml:space="preserve">
+    <value>ਸ਼ਾਮਲ ਨਹੀਂ ਹੈ</value>
+  </data>
+  <data name="Operator_Is" xml:space="preserve">
+    <value>ਬਿਲਕੁਲ ਹੈ</value>
+  </data>
+  <data name="Operator_IsNot" xml:space="preserve">
+    <value>ਨਹੀਂ ਹੈ</value>
+  </data>
+  <data name="Operator_StartsWith" xml:space="preserve">
+    <value>ਨਾਲ ਸ਼ੁਰੂ ਹੁੰਦਾ ਹੈ</value>
+  </data>
+  <data name="Operator_EndsWith" xml:space="preserve">
+    <value>ਨਾਲ ਖਤਮ ਹੁੰਦਾ ਹੈ</value>
+  </data>
+  <data name="Operator_Equals" xml:space="preserve">
+    <value>ਦੇ ਬਰਾਬਰ ਹੈ</value>
+  </data>
+  <data name="Operator_NotEquals" xml:space="preserve">
+    <value>ਦੇ ਬਰਾਬਰ ਨਹੀਂ ਹੈ</value>
+  </data>
+  <data name="Operator_GreaterThan" xml:space="preserve">
+    <value>ਤੋਂ ਵੱਡਾ ਹੈ</value>
+  </data>
+  <data name="Operator_LessThan" xml:space="preserve">
+    <value>ਤੋਂ ਛੋਟਾ ਹੈ</value>
+  </data>
+  <data name="Operator_GreaterThanOrEqual" xml:space="preserve">
+    <value>ਘੱਟੋ ਘੱਟ ਹੈ</value>
+  </data>
+  <data name="Operator_LessThanOrEqual" xml:space="preserve">
+    <value>ਵੱਧ ਤੋਂ ਵੱਧ ਹੈ</value>
+  </data>
+  <data name="Operator_IsInTheLast" xml:space="preserve">
+    <value>ਪਿਛਲੇ (ਦਿਨਾਂ) ਵਿੱਚ ਹੈ</value>
+  </data>
+  <data name="Operator_IsNotInTheLast" xml:space="preserve">
+    <value>ਪਿਛਲੇ (ਦਿਨਾਂ) ਵਿੱਚ ਨਹੀਂ ਹੈ</value>
+  </data>
+  <data name="Operator_IsTrue" xml:space="preserve">
+    <value>ਸੱਚ ਹੈ</value>
+  </data>
+  <data name="Operator_IsFalse" xml:space="preserve">
+    <value>ਗਲਤ ਹੈ</value>
+  </data>
+  <data name="SmartPlaylist_Title_New" xml:space="preserve">
+    <value>ਨਵੀਂ ਸਮਾਰਟ ਪਲੇਲਿਸਟ</value>
+  </data>
+  <data name="SmartPlaylist_Title_EditFormat" xml:space="preserve">
+    <value>ਸਮਾਰਟ ਪਲੇਲਿਸਟ ਸੰਪਾਦਿਤ ਕਰੋ - {0}</value>
+  </data>
+  <data name="SmartPlaylist_Status_EnterName" xml:space="preserve">
+    <value>ਇੱਕ ਪਲੇਲਿਸਟ ਨਾਮ ਦਰਜ ਕਰੋ</value>
+  </data>
+  <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
+    <value>{0:N0} ਗੀਤ ਮੌਜੂਦਾ ਨਿਯਮਾਂ ਨਾਲ ਮੇਲ ਖਾਂਦੇ ਹਨ</value>
+  </data>
+  <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
+    <value>ਮੇਲ ਖਾਂਦੇ ਗੀਤਾਂ ਨੂੰ ਦੇਖਣ ਲਈ ਇੱਕ ਨਾਮ ਦਰਜ ਕਰੋ</value>
+  </data>
+  <data name="SmartPlaylist_Status_Error" xml:space="preserve">
+    <value>ਗਣਨਾ ਕਰਨ ਵਿੱਚ ਅਸਮਰੱਥ</value>
+  </data>
+  <data name="SmartPlaylist_Status_Calculating" xml:space="preserve">
+    <value>ਗਣਨਾ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ...</value>
+  </data>
+  <data name="SmartPlaylist_Error_DuplicateName" xml:space="preserve">
+    <value>ਇਸ ਨਾਮ ਦੀ ਇੱਕ ਪਲੇਲਿਸਟ ਪਹਿਲਾਂ ਹੀ ਮੌਜੂਦ ਹੈ!</value>
+  </data>
+  <data name="SmartPlaylist_Error_NameEmptyFeedback" xml:space="preserve">
+    <value>ਕਿਰਪਾ ਕਰਕੇ ਇੱਕ ਨਾਮ ਦਰਜ ਕਰੋ!</value>
+  </data>
+  <data name="Status_Loading" xml:space="preserve">
+    <value>ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ...</value>
+  </data>
+  <data name="Error_FailedToLoadArtists" xml:space="preserve">
+    <value>ਕਲਾਕਾਰਾਂ ਨੂੰ ਲੋਡ ਕਰਨ ਵਿੱਚ ਅਸਫਲ</value>
+  </data>
+  <data name="CrashReport_Title" xml:space="preserve">
+    <value>ਨਾਜ਼ੁਕ ਗਲਤੀ</value>
+  </data>
+  <data name="CrashReport_Message" xml:space="preserve">
+    <value>ਨਾਗੀ ਨੂੰ ਇੱਕ ਨਾਜ਼ੁਕ ਗਲਤੀ ਆਈ ਹੈ ਅਤੇ ਬੰਦ ਹੋਣਾ ਚਾਹੀਦਾ ਹੈ। ਅਸੀਂ ਅਸੁਵਿਧਾ ਲਈ ਮੁਆਫੀ ਚਾਹੁੰਦੇ ਹਾਂ।</value>
+  </data>
+  <data name="ElevationWarning_Title" xml:space="preserve">
+    <value>ਪ੍ਰਸ਼ਾਸਕ ਵਜੋਂ ਚੱਲ ਰਿਹਾ ਹੈ</value>
+  </data>
+  <data name="ElevationWarning_Message" xml:space="preserve">
+    <value>ਨਾਗੀ ਇਸ ਸਮੇਂ ਪ੍ਰਸ਼ਾਸਕ ਵਜੋਂ ਚੱਲ ਰਿਹਾ ਹੈ। ਇਹ ਕੁਝ ਵਿਸ਼ੇਸ਼ਤਾਵਾਂ (ਜਿਵੇਂ ਕਿ ਸੰਗੀਤ ਫੋਲਡਰ ਸ਼ਾਮਲ ਕਰਨਾ) ਨੂੰ ਸਹੀ ਢੰਗ ਨਾਲ ਕੰਮ ਕਰਨ ਤੋਂ ਰੋਕ ਸਕਦਾ ਹੈ।\n\nਸਰਵੋਤਮ ਅਨੁਭਵ ਲਈ, ਕਿਰਪਾ ਕਰਕੇ ਪ੍ਰਸ਼ਾਸਕੀ ਅਧਿਕਾਰਾਂ ਤੋਂ ਬਿਨਾਂ ਨਾਗੀ ਨੂੰ ਮੁੜ ਚਾਲੂ ਕਰੋ।</value>
+  </data>
+  <data name="ElevationWarning_Restart" xml:space="preserve">
+    <value>ਆਮ ਤੌਰ 'ਤੇ ਮੁੜ ਚਾਲੂ ਕਰੋ</value>
+  </data>
+  <data name="ElevationWarning_Continue" xml:space="preserve">
+    <value>ਫਿਰ ਵੀ ਜਾਰੀ ਰੱਖੋ</value>
+  </data>
+  <data name="MiniPlayer_Title" xml:space="preserve">
+    <value>ਨਾਗੀ</value>
+  </data>
+  <data name="App_Title" xml:space="preserve">
+    <value>ਨਾਗੀ</value>
+  </data>
+  <data name="AlbumView_AlbumNotFound" xml:space="preserve">
+    <value>ਐਲਬਮ ਨਹੀਂ ਮਿਲੀ</value>
+  </data>
+  <data name="AlbumView_Error" xml:space="preserve">
+    <value>ਐਲਬਮ ਲੋਡ ਕਰਨ ਵਿੱਚ ਗਲਤੀ</value>
+  </data>
+  <data name="AlbumView_DefaultAlbumTitle" xml:space="preserve">
+    <value>ਐਲਬਮ</value>
+  </data>
+  <data name="AlbumView_DefaultArtistName" xml:space="preserve">
+    <value>ਕਲਾਕਾਰ</value>
+  </data>
+  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
+    <value>{0} ਗੀਤ</value>
+  </data>
+  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
+    <value>{0} ਗੀਤ</value>
+  </data>
+  <data name="ArtistView_ArtistNotFound" xml:space="preserve">
+    <value>ਕਲਾਕਾਰ ਨਹੀਂ ਮਿਲਿਆ</value>
+  </data>
+  <data name="ArtistView_Error" xml:space="preserve">
+    <value>ਕਲਾਕਾਰ ਨੂੰ ਲੋਡ ਕਰਨ ਵਿੱਚ ਗਲਤੀ</value>
+  </data>
+  <data name="ArtistView_DefaultArtistName" xml:space="preserve">
+    <value>ਕਲਾਕਾਰ</value>
+  </data>
+  <data name="ArtistView_NoBiography" xml:space="preserve">
+    <value>ਇਸ ਕਲਾਕਾਰ ਲਈ ਕੋਈ ਜੀਵਨੀ ਉਪਲਬਧ ਨਹੀਂ ਹੈ।</value>
+  </data>
+  <data name="ArtistView_ErrorLoadingDetails" xml:space="preserve">
+    <value>ਕਲਾਕਾਰ ਦੇ ਵੇਰਵੇ ਲੋਡ ਨਹੀਂ ਕੀਤੇ ਜਾ ਸਕੇ।</value>
+  </data>
+  <data name="Folders_ErrorLoading" xml:space="preserve">
+    <value>ਫੋਲਡਰ ਲੋਡ ਕਰਨ ਵਿੱਚ ਗਲਤੀ</value>
+  </data>
+  <data name="Folders_AddFolder_Success" xml:space="preserve">
+    <value>'{0}' ਸਫਲਤਾਪੂਰਵਕ ਜੋੜਿਆ ਗਿਆ ਅਤੇ ਸਕੈਨ ਕੀਤਾ ਗਿਆ।</value>
+  </data>
+  <data name="Folders_AddFolder_Failed" xml:space="preserve">
+    <value>ਫੋਲਡਰ ਜੋੜਨ ਵਿੱਚ ਅਸਫਲ। ਮਾਰਗ ਅਵੈਧ ਹੋ ਸਕਦਾ ਹੈ।</value>
+  </data>
+  <data name="Folders_AddFolder_Exists" xml:space="preserve">
+    <value>ਇਹ ਫੋਲਡਰ ਪਹਿਲਾਂ ਹੀ ਲਾਇਬ੍ਰੇਰੀ ਵਿੱਚ ਹੈ।</value>
+  </data>
+  <data name="Folders_AddFolder_InProgress" xml:space="preserve">
+    <value>ਲਾਇਬ੍ਰੇਰੀ ਵਿੱਚ ਫੋਲਡਰ ਸ਼ਾਮਲ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ...</value>
+  </data>
+  <data name="Folders_Delete_Success" xml:space="preserve">
+    <value>'{0}' ਸਫਲਤਾਪੂਰਵਕ ਮਿਟਾਇਆ ਗਿਆ।</value>
+  </data>
+  <data name="Folders_Delete_Failed" xml:space="preserve">
+    <value>'{0}' ਨੂੰ ਮਿਟਾਉਣ ਵਿੱਚ ਅਸਫਲ।</value>
+  </data>
+  <data name="Folders_Delete_InProgress" xml:space="preserve">
+    <value>'{0}' ਮਿਟਾਇਆ ਜਾ ਰਿਹਾ ਹੈ...</value>
+  </data>
+  <data name="Folders_Rescan_Complete" xml:space="preserve">
+    <value>'{0}' ਦਾ ਮੁੜ-ਸਕੈਨ ਪੂਰਾ ਹੋ ਗਿਆ।</value>
+  </data>
+  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
+    <value>'{0}' ਲਈ ਕੋਈ ਬਦਲਾਅ ਨਹੀਂ ਮਿਲੇ।</value>
+  </data>
+  <data name="Folders_Rescan_InProgress" xml:space="preserve">
+    <value>'{0}' ਮੁੜ-ਸਕੈਨ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ...</value>
+  </data>
+  <data name="Folders_Empty_NoMusicFound" xml:space="preserve">
+    <value>ਸੰਗੀਤ ਵਾਲੇ ਕੋਈ ਫੋਲਡਰ ਨਹੀਂ ਮਿਲੇ।</value>
+  </data>
+  <data name="Folders_Error_Playback" xml:space="preserve">
+    <value>ਇਸ ਫੋਲਡਰ ਲਈ ਪਲੇਬੈਕ ਸ਼ੁਰੂ ਕਰਨ ਵਿੱਚ ਗਲਤੀ।</value>
+  </data>
+  <data name="Folders_Error_RandomPlayback" xml:space="preserve">
+    <value>ਰੈਂਡਮ ਫੋਲਡਰ ਪਲੇਬੈਕ ਸ਼ੁਰੂ ਕਰਨ ਵਿੱਚ ਗਲਤੀ।</value>
+  </data>
+  <data name="Folders_Error_AddFolder" xml:space="preserve">
+    <value>ਫੋਲਡਰ ਜੋੜਨ ਵਿੱਚ ਗਲਤੀ: {0}</value>
+  </data>
+  <data name="Folders_Error_DeleteFolder" xml:space="preserve">
+    <value>ਫੋਲਡਰ ਮਿਟਾਉਣ ਵਿੱਚ ਗਲਤੀ: {0}</value>
+  </data>
+  <data name="Folders_Error_RescanFolder" xml:space="preserve">
+    <value>ਫੋਲਡਰ ਨੂੰ ਮੁੜ-ਸਕੈਨ ਕਰਨ ਵਿੱਚ ਗਲਤੀ: {0}</value>
+  </data>
+  <data name="Folders_Count_Singular" xml:space="preserve">
+    <value>{0} ਫੋਲਡਰ</value>
+  </data>
+  <data name="Folders_Count_Plural" xml:space="preserve">
+    <value>{0} ਫੋਲਡਰ</value>
+  </data>
+  <data name="Songs_Count_Singular" xml:space="preserve">
+    <value>{0} ਗੀਤ</value>
+  </data>
+  <data name="Songs_Count_Plural" xml:space="preserve">
+    <value>{0} ਗੀਤ</value>
+  </data>
+  <data name="Albums_Count_Singular" xml:space="preserve">
+    <value>{0} ਐਲਬਮ</value>
+  </data>
+  <data name="Albums_Count_Plural" xml:space="preserve">
+    <value>{0} ਐਲਬਮਾਂ</value>
+  </data>
+  <data name="Artists_Count_Singular" xml:space="preserve">
+    <value>{0} ਕਲਾਕਾਰ</value>
+  </data>
+  <data name="Artists_Count_Plural" xml:space="preserve">
+    <value>{0} ਕਲਾਕਾਰ</value>
+  </data>
+  <data name="Generic_NoItems" xml:space="preserve">
+    <value>ਕੋਈ ਆਈਟਮ ਨਹੀਂ</value>
+  </data>
+  <data name="Generic_Error" xml:space="preserve">
+    <value>ਗਲਤੀ</value>
+  </data>
+  <data name="GenreView_DefaultName" xml:space="preserve">
+    <value>ਸ਼ੈਲੀ</value>
+  </data>
+  <data name="GenreView_Error" xml:space="preserve">
+    <value>ਸ਼ੈਲੀ ਲੋਡ ਕਰਨ ਵਿੱਚ ਗਲਤੀ</value>
+  </data>
+  <data name="Lyrics_NoSongSelected" xml:space="preserve">
+    <value>ਕੋਈ ਗੀਤ ਚੁਣਿਆ ਨਹੀਂ ਗਿਆ</value>
+  </data>
+  <data name="Lyrics_SongTitleFormat" xml:space="preserve">
+    <value>{1} ਦੁਆਰਾ {0}</value>
+  </data>
+  <data name="Onboarding_Welcome" xml:space="preserve">
+    <value>ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਆਓ ਤੁਹਾਡੀ ਸੰਗੀਤ ਲਾਇਬ੍ਰੇਰੀ ਸੈਟ ਅਪ ਕਰੀਏ।</value>
+  </data>
+  <data name="Onboarding_WaitingForSelection" xml:space="preserve">
+    <value>ਤੁਹਾਡੇ ਦੁਆਰਾ ਫੋਲਡਰ ਚੁਣਨ ਦੀ ਉਡੀਕ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ...</value>
+  </data>
+  <data name="Onboarding_BuildingLibrary" xml:space="preserve">
+    <value>ਤੁਹਾਡੀ ਲਾਇਬ੍ਰੇਰੀ ਬਣਾਈ ਜਾ ਰਹੀ ਹੈ...</value>
+  </data>
+  <data name="Onboarding_Error" xml:space="preserve">
+    <value>ਇੱਕ ਅਚਾਨਕ ਗਲਤੀ ਹੋਈ। ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।</value>
+  </data>
+  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
+    <value>ਸਮਾਰਟ • {0} ਗੀਤ</value>
+  </data>
+  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
+    <value>ਸਮਾਰਟ • {0} ਗੀਤ</value>
+  </data>
+  <data name="Playlist_Count_Singular" xml:space="preserve">
+    <value>{0} ਗੀਤ</value>
+  </data>
+  <data name="Playlist_Count_Plural" xml:space="preserve">
+    <value>{0} ਗੀਤ</value>
+  </data>
+  <data name="Playlist_ErrorLoading" xml:space="preserve">
+    <value>ਪਲੇਲਿਸਟ ਲੋਡ ਕਰਨ ਵਿੱਚ ਗਲਤੀ</value>
+  </data>
+  <data name="Playlist_Status_Starting" xml:space="preserve">
+    <value>ਪਲੇਲਿਸਟ ਸ਼ੁਰੂ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ...</value>
+  </data>
+  <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
+    <value>ਇਸ ਸਮਾਰਟ ਪਲੇਲਿਸਟ ਦੇ ਨਿਯਮਾਂ ਨਾਲ ਕੋਈ ਗੀਤ ਮੇਲ ਨਹੀਂ ਖਾਂਦੇ।</value>
+  </data>
+  <data name="Playlist_Status_ErrorPlayback" xml:space="preserve">
+    <value>ਇਸ ਪਲੇਲਿਸਟ ਲਈ ਪਲੇਬੈਕ ਸ਼ੁਰੂ ਕਰਨ ਵਿੱਚ ਗਲਤੀ।</value>
+  </data>
+  <data name="Playlist_Status_PickingRandom" xml:space="preserve">
+    <value>ਇੱਕ ਰੈਂਡਮ ਪਲੇਲਿਸਟ ਚੁਣੀ ਜਾ ਰਹੀ ਹੈ...</value>
+  </data>
+  <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
+    <value>ਕੋਈ ਪਲੇਲਿਸਟ ਨਹੀਂ ਮਿਲੀ।</value>
+  </data>
+  <data name="Playlist_Status_SmartSelectedEmpty" xml:space="preserve">
+    <value>ਚੁਣੀ ਹੋਈ ਸਮਾਰਟ ਪਲੇਲਿਸਟ ਖਾਲੀ ਹੈ।</value>
+  </data>
+  <data name="Playlist_Status_ErrorRandom" xml:space="preserve">
+    <value>ਰੈਂਡਮ ਪਲੇਲਿਸਟ ਚਲਾਉਣ ਵਿੱਚ ਗਲਤੀ।</value>
+  </data>
+  <data name="Playlist_Status_Loading" xml:space="preserve">
+    <value>ਪਲੇਲਿਸਟਾਂ ਲੋਡ ਕੀਤੀਆਂ ਜਾ ਰਹੀਆਂ ਹਨ...</value>
+  </data>
+  <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
+    <value>ਪਲੇਲਿਸਟਾਂ ਲੋਡ ਕਰਨ ਵਿੱਚ ਗਲਤੀ।</value>
+  </data>
+  <data name="Playlist_Status_Creating" xml:space="preserve">
+    <value>ਨਵੀਂ ਪਲੇਲਿਸਟ ਬਣਾਈ ਜਾ ਰਹੀ ਹੈ...</value>
+  </data>
+  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
+    <value>ਪਲੇਲਿਸਟ ਬਣਾਉਣ ਵਿੱਚ ਅਸਫਲ। ਇਹ ਪਹਿਲਾਂ ਹੀ ਮੌਜੂਦ ਹੋ ਸਕਦੀ ਹੈ।</value>
+  </data>
+  <data name="Playlist_Status_CreateError" xml:space="preserve">
+    <value>ਪਲੇਲਿਸਟ ਬਣਾਉਣ ਦੌਰਾਨ ਇੱਕ ਗਲਤੀ ਹੋਈ।</value>
+  </data>
+  <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
+    <value>ਪਲੇਲਿਸਟ ਕਵਰ ਅਪਡੇਟ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ...</value>
+  </data>
+  <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
+    <value>ਪਲੇਲਿਸਟ ਕਵਰ ਅਪਡੇਟ ਕਰਨ ਵਿੱਚ ਅਸਫਲ।</value>
+  </data>
+  <data name="Playlist_Status_UpdateCoverError" xml:space="preserve">
+    <value>ਪਲੇਲਿਸਟ ਕਵਰ ਅਪਡੇਟ ਕਰਨ ਦੌਰਾਨ ਇੱਕ ਗਲਤੀ ਹੋਈ।</value>
+  </data>
+  <data name="Playlist_Status_RemovingCover" xml:space="preserve">
+    <value>ਪਲੇਲਿਸਟ ਚਿੱਤਰ ਹਟਾਇਆ ਜਾ ਰਿਹਾ ਹੈ...</value>
+  </data>
+  <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
+    <value>ਪਲੇਲਿਸਟ ਚਿੱਤਰ ਹਟਾਉਣ ਵਿੱਚ ਅਸਫਲ।</value>
+  </data>
+  <data name="Playlist_Status_RemoveCoverError" xml:space="preserve">
+    <value>ਪਲੇਲਿਸਟ ਚਿੱਤਰ ਹਟਾਉਣ ਦੌਰਾਨ ਇੱਕ ਗਲਤੀ ਹੋਈ।</value>
+  </data>
+  <data name="Playlist_Status_Renaming" xml:space="preserve">
+    <value>ਪਲੇਲਿਸਟ ਦਾ ਨਾਮ ਬਦਲਿਆ ਜਾ ਰਿਹਾ ਹੈ...</value>
+  </data>
+  <data name="Playlist_Status_RenameFailed" xml:space="preserve">
+    <value>ਪਲੇਲਿਸਟ ਦਾ ਨਾਮ ਬਦਲਣ ਵਿੱਚ ਅਸਫਲ।</value>
+  </data>
+  <data name="Playlist_Status_RenameError" xml:space="preserve">
+    <value>ਪਲੇਲਿਸਟ ਦਾ ਨਾਮ ਬਦਲਣ ਦੌਰਾਨ ਇੱਕ ਗਲਤੀ ਹੋਈ।</value>
+  </data>
+  <data name="Playlist_Status_Deleting" xml:space="preserve">
+    <value>ਪਲੇਲਿਸਟ ਮਿਟਾਈ ਜਾ ਰਹੀ ਹੈ...</value>
+  </data>
+  <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
+    <value>ਪਲੇਲਿਸਟ ਮਿਟਾਉਣ ਵਿੱਚ ਅਸਫਲ।</value>
+  </data>
+  <data name="Playlist_Status_DeleteError" xml:space="preserve">
+    <value>ਪਲੇਲਿਸਟ ਮਿਟਾਉਣ ਦੌਰਾਨ ਇੱਕ ਗਲਤੀ ਹੋਈ।</value>
+  </data>
+  <data name="Settings_Reset_Title" xml:space="preserve">
+    <value>ਰੀਸੈਟ ਦੀ ਪੁਸ਼ਟੀ ਕਰੋ</value>
+  </data>
+  <data name="Settings_Reset_Message" xml:space="preserve">
+    <value>ਕੀ ਤੁਸੀਂ ਸਾਰਾ ਐਪਲੀਕੇਸ਼ਨ ਡਾਟਾ ਅਤੇ ਸੈਟਿੰਗਾਂ ਰੀਸੈਟ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ? ਇਹ ਕਾਰਵਾਈ ਵਾਪਸ ਨਹੀਂ ਲਈ ਜਾ ਸਕਦੀ। ਐਪਲੀਕੇਸ਼ਨ ਸ਼ੁਰੂਆਤੀ ਸੈਟਅਪ 'ਤੇ ਵਾਪਸ ਆ ਜਾਵੇਗੀ।</value>
+  </data>
+  <data name="Settings_Reset_Button" xml:space="preserve">
+    <value>ਰੀਸੈਟ ਕਰੋ</value>
+  </data>
+  <data name="Settings_ResetError_Title" xml:space="preserve">
+    <value>ਰੀਸੈਟ ਗਲਤੀ</value>
+  </data>
+  <data name="Settings_ResetError_Message" xml:space="preserve">
+    <value>ਐਪਲੀਕੇਸ਼ਨ ਡਾਟਾ ਰੀਸੈਟ ਕਰਦੇ ਸਮੇਂ ਇੱਕ ਗਲਤੀ ਹੋਈ: {0}। ਕਿਰਪਾ ਕਰਕੇ ਐਪ ਨੂੰ ਮੈਨੂਅਲੀ ਮੁੜ ਚਾਲੂ ਕਰਨ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰੋ।</value>
+  </data>
+  <data name="Settings_LastFm_AuthError_Title" xml:space="preserve">
+    <value>ਗਲਤੀ</value>
+  </data>
+  <data name="Settings_LastFm_AuthError_Message" xml:space="preserve">
+    <value>Last.fm ਨਾਲ ਕਨੈਕਟ ਨਹੀਂ ਕਰ ਸਕਿਆ। ਕਿਰਪਾ ਕਰਕੇ ਬਾਅਦ ਵਿੱਚ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।</value>
+  </data>
+  <data name="Settings_LastFm_FinalizeError_Title" xml:space="preserve">
+    <value>ਪ੍ਰਮਾਣਿਕਤਾ ਅਸਫਲ</value>
+  </data>
+  <data name="Settings_LastFm_FinalizeError_Message" xml:space="preserve">
+    <value>Last.fm ਤੋਂ ਸੈਸ਼ਨ ਪ੍ਰਾਪਤ ਨਹੀਂ ਕਰ ਸਕਿਆ। ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ ਕਨੈਕਟ ਕਰਨ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰੋ।</value>
+  </data>
+  <data name="Settings_LastFm_Disconnect_Title" xml:space="preserve">
+    <value>Last.fm ਡਿਸਕਨੈਕਟ ਕਰੋ</value>
+  </data>
+  <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
+    <value>ਕੀ ਤੁਸੀਂ ਆਪਣੇ Last.fm ਖਾਤੇ ਨੂੰ ਡਿਸਕਨੈਕਟ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ? ਤੁਹਾਡਾ ਸਕ੍ਰੌਬਲਿੰਗ ਇਤਿਹਾਸ Last.fm 'ਤੇ ਸੁਰੱਖਿਅਤ ਰਹੇਗਾ, ਪਰ ਨਾਗੀ ਹੁਣ ਸਕ੍ਰੌਬਲ ਨਹੀਂ ਕਰ ਸਕੇਗਾ।</value>
+  </data>
+  <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
+    <value>ਡਿਸਕਨੈਕਟ ਕਰੋ</value>
+  </data>
+  <data name="Settings_Export_Success_Title" xml:space="preserve">
+    <value>ਨਿਰਯਾਤ ਸਫਲ</value>
+  </data>
+  <data name="Settings_Export_Success_Message" xml:space="preserve">
+    <value>{0} ਪਲੇਲਿਸਟਾਂ ({1} ਕੁੱਲ ਗੀਤ) ਨੂੰ ਇੱਥੇ ਨਿਰਯਾਤ ਕੀਤਾ ਗਿਆ:\n{2}</value>
+  </data>
+  <data name="Settings_Export_Failed_Title" xml:space="preserve">
+    <value>ਨਿਰਯਾਤ ਅਸਫਲ</value>
+  </data>
+  <data name="Settings_Import_Success_Title" xml:space="preserve">
+    <value>ਆਯਾਤ ਸਫਲ</value>
+  </data>
+  <data name="Settings_Import_Success_Message" xml:space="preserve">
+    <value>{0} ਪਲੇਲਿਸਟਾਂ ({1} ਗੀਤ) ਸਫਲਤਾਪੂਰਵਕ ਆਯਾਤ ਕੀਤੀਆਂ ਗਈਆਂ।</value>
+  </data>
+  <data name="Settings_Import_Unmatched_Message" xml:space="preserve">
+    <value>\n\nਤੁਹਾਡੀ ਲਾਇਬ੍ਰੇਰੀ ਵਿੱਚ {0} ਗੀਤ ਨਹੀਂ ਮਿਲੇ।</value>
+  </data>
+  <data name="Settings_Import_FailedFiles_Message" xml:space="preserve">
+    <value>\n\n{0} ਫਾਈਲਾਂ ਆਯਾਤ ਕਰਨ ਵਿੱਚ ਅਸਫਲ ਰਹੀਆਂ।</value>
+  </data>
+  <data name="Settings_Import_FailedTotal_Title" xml:space="preserve">
+    <value>ਆਯਾਤ ਅਸਫਲ</value>
+  </data>
+  <data name="Settings_Import_FailedTotal_Message" xml:space="preserve">
+    <value>ਕੋਈ ਪਲੇਲਿਸਟ ਆਯਾਤ ਨਹੀਂ ਕੀਤੀ ਜਾ ਸਕੀ।</value>
+  </data>
+  <data name="SmartPlaylist_ErrorLoading" xml:space="preserve">
+    <value>ਸਮਾਰਟ ਪਲੇਲਿਸਟ ਲੋਡ ਕਰਨ ਵਿੱਚ ਗਲਤੀ</value>
+  </data>
+  <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
+    <value>ਕੋਈ ਨਿਯਮ ਪਰਿਭਾਸ਼ਿਤ ਨਹੀਂ • ਸਾਰੇ ਗੀਤ ਮੇਲ ਖਾਂਦੇ ਹਨ</value>
+  </data>
+  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
+    <value>{1} {2} ਵਿੱਚੋਂ {0} ਮੇਲ ਖਾਂਦਾ ਹੈ</value>
+  </data>
+  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
+    <value>ਸਾਰੇ</value>
+  </data>
+  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
+    <value>ਕੋਈ ਵੀ</value>
+  </data>
+  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
+    <value>ਨਿਯਮ</value>
+  </data>
+  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
+    <value>ਨਿਯਮ</value>
+  </data>
+  <data name="SongList_PageTitle_Default" xml:space="preserve">
+    <value>ਗੀਤ</value>
+  </data>
+  <data name="SongList_TotalItems_Default" xml:space="preserve">
+    <value>0 ਆਈਟਮਾਂ</value>
+  </data>
+  <data name="SongList_ErrorLoading" xml:space="preserve">
+    <value>ਆਈਟਮਾਂ ਲੋਡ ਕਰਨ ਵਿੱਚ ਗਲਤੀ</value>
+  </data>
+  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
+    <value>{0} ਆਈਟਮ</value>
+  </data>
+  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
+    <value>{0} ਆਈਟਮਾਂ</value>
+  </data>
+  <data name="SongList_SelectedCount_Format" xml:space="preserve">
+    <value>{0} ਚੁਣਿਆ ਗਿਆ</value>
+  </data>
+  <data name="AlbumView_DiscHeader" xml:space="preserve">
+    <value>ਡਿਸਕ {0}</value>
+  </data>
+  <data name="Generic_OK" xml:space="preserve">
+    <value>ਠੀਕ ਹੈ</value>
+  </data>
+  <data name="Generic_Cancel" xml:space="preserve">
+    <value>ਰੱਦ ਕਰੋ</value>
+  </data>
+  <data name="Generic_Close" xml:space="preserve">
+    <value>ਬੰਦ ਕਰੋ</value>
+  </data>
+  <data name="Generic_Recheck" xml:space="preserve">
+    <value>ਦੁਬਾਰਾ ਜਾਂਚ ਕਰੋ</value>
+  </data>
+  <data name="CrashReport_Button_Reset" xml:space="preserve">
+    <value>ਐਪ ਅਤੇ ਡਾਟਾ ਰੀਸੈਟ ਕਰੋ</value>
+  </data>
+  <data name="FFmpeg_Status_NotDetected" xml:space="preserve">
+    <value>FFmpeg ਨਹੀਂ ਮਿਲਿਆ। ਕਿਰਪਾ ਕਰਕੇ FFmpeg ਇੰਸਟਾਲ ਕਰੋ ਅਤੇ 'ਦੁਬਾਰਾ ਜਾਂਚ ਕਰੋ' 'ਤੇ ਕਲਿੱਕ ਕਰੋ।</value>
+  </data>
+  <data name="FFmpeg_Status_Checking" xml:space="preserve">
+    <value>FFmpeg ਦੀ ਜਾਂਚ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ...</value>
+  </data>
+  <data name="FFmpeg_Status_Detected" xml:space="preserve">
+    <value>FFmpeg ਮਿਲਿਆ!</value>
+  </data>
+  <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
+    <value>FFmpeg ਅਜੇ ਵੀ ਨਹੀਂ ਮਿਲਿਆ। ਕਿਰਪਾ ਕਰਕੇ FFmpeg ਇੰਸਟਾਲ ਕਰੋ ਅਤੇ 'ਦੁਬਾਰਾ ਜਾਂਚ ਕਰੋ' 'ਤੇ ਕਲਿੱਕ ਕਰੋ।</value>
+  </data>
+  <data name="FFmpeg_Status_Error" xml:space="preserve">
+    <value>FFmpeg ਦੀ ਜਾਂਚ ਕਰਨ ਵਿੱਚ ਗਲਤੀ। ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।</value>
+  </data>
+  <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
+    <value>ਪਿਛਲਾ</value>
+  </data>
+  <data name="Taskbar_Tooltip_Play" xml:space="preserve">
+    <value>ਚਲਾਓ</value>
+  </data>
+  <data name="Taskbar_Tooltip_Pause" xml:space="preserve">
+    <value>ਰੋਕੋ</value>
+  </data>
+  <data name="Taskbar_Tooltip_Next" xml:space="preserve">
+    <value>ਅਗਲਾ</value>
+  </data>
+  <data name="Update_Available_Title" xml:space="preserve">
+    <value>ਅੱਪਡੇਟ ਉਪਲਬਧ</value>
+  </data>
+  <data name="Update_Available_Message" xml:space="preserve">
+    <value>ਇੱਕ ਨਵਾਂ ਸੰਸਕਰਣ ({0}) ਉਪਲਬਧ ਹੈ। ਕੀ ਤੁਸੀਂ ਇਸਨੂੰ ਹੁਣੇ ਡਾਊਨਲੋਡ ਅਤੇ ਇੰਸਟਾਲ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?</value>
+  </data>
+  <data name="Update_Button_InstallNow" xml:space="preserve">
+    <value>ਹੁਣੇ ਇੰਸਟਾਲ ਕਰੋ</value>
+  </data>
+  <data name="Update_Button_Later" xml:space="preserve">
+    <value>ਬਾਅਦ ਵਿੱਚ</value>
+  </data>
+  <data name="Update_Button_Skip" xml:space="preserve">
+    <value>ਇਸ ਸੰਸਕਰਣ ਨੂੰ ਛੱਡੋ</value>
+  </data>
+  <data name="Update_UpToDate_Title" xml:space="preserve">
+    <value>ਅੱਪ ਟੂ ਡੇਟ</value>
+  </data>
+  <data name="Update_UpToDate_Message" xml:space="preserve">
+    <value>ਤੁਸੀਂ ਨਾਗੀ ਦਾ ਨਵੀਨਤਮ ਸੰਸਕਰਣ ਚਲਾ ਰਹੇ ਹੋ।</value>
+  </data>
+  <data name="Update_Error_Title" xml:space="preserve">
+    <value>ਅੱਪਡੇਟ ਗਲਤੀ</value>
+  </data>
+  <data name="Update_Check_Error_Message" xml:space="preserve">
+    <value>ਅੱਪਡੇਟਾਂ ਦੀ ਜਾਂਚ ਕਰਦੇ ਸਮੇਂ ਇੱਕ ਗਲਤੀ ਹੋਈ: {0}</value>
+  </data>
+  <data name="Update_Install_Error_Message" xml:space="preserve">
+    <value>ਅੱਪਡੇਟ ਇੰਸਟਾਲ ਕਰਦੇ ਸਮੇਂ ਇੱਕ ਗਲਤੀ ਹੋਈ: {0}</value>
+  </data>
+  <data name="Update_Downloading_Title" xml:space="preserve">
+    <value>ਅੱਪਡੇਟ ਡਾਊਨਲੋਡ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ</value>
+  </data>
+  <data name="Update_Downloading_Message" xml:space="preserve">
+    <value>ਸੰਸਕਰਣ {0} ਡਾਊਨਲੋਡ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ। ਤਿਆਰ ਹੋਣ 'ਤੇ ਐਪਲੀਕੇਸ਼ਨ ਆਪਣੇ ਆਪ ਮੁੜ ਚਾਲੂ ਹੋ ਜਾਵੇਗੀ।</value>
+  </data>
+  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
+    <value>LibVLC ਨੂੰ ਇੱਕ ਅਨਜਾਣੀ ਗਲਤੀ ਆਈ।</value>
+  </data>
+  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
+    <value>LibVLC ਗਲਤੀ: {0}</value>
+  </data>
+  <data name="Player_Error_LoadFailed" xml:space="preserve">
+    <value>'{0}' ਲੋਡ ਕਰਨ ਵਿੱਚ ਅਸਫਲ।</value>
+  </data>
+  <data name="Settings_Nav_Library" xml:space="preserve">
+    <value>ਲਾਇਬ੍ਰੇਰੀ</value>
+  </data>
+  <data name="Settings_Nav_Folders" xml:space="preserve">
+    <value>ਫੋਲਡਰ</value>
+  </data>
+  <data name="Settings_Nav_Playlists" xml:space="preserve">
+    <value>ਪਲੇਲਿਸਟਾਂ</value>
+  </data>
+  <data name="Settings_Nav_Artists" xml:space="preserve">
+    <value>ਕਲਾਕਾਰ</value>
+  </data>
+  <data name="Settings_Nav_Albums" xml:space="preserve">
+    <value>ਐਲਬਮਾਂ</value>
+  </data>
+  <data name="Settings_Nav_Genres" xml:space="preserve">
+    <value>ਸ਼ੈਲੀਆਂ</value>
+  </data>
+  <data name="Settings_Button_Shuffle" xml:space="preserve">
+    <value>ਸ਼ਫਲ</value>
+  </data>
+  <data name="Settings_Button_Previous" xml:space="preserve">
+    <value>ਪਿਛਲਾ</value>
+  </data>
+  <data name="Settings_Button_PlayPause" xml:space="preserve">
+    <value>ਚਲਾਓ/ਰੋਕੋ</value>
+  </data>
+  <data name="Settings_Button_Next" xml:space="preserve">
+    <value>ਅਗਲਾ</value>
+  </data>
+  <data name="Settings_Button_Repeat" xml:space="preserve">
+    <value>ਦੁਹਰਾਓ</value>
+  </data>
+  <data name="Settings_Button_Divider" xml:space="preserve">
+    <value>ਲੇਆਉਟ ਡਿਵਾਈਡਰ</value>
+  </data>
+  <data name="Settings_Button_Lyrics" xml:space="preserve">
+    <value>ਬੋਲ</value>
+  </data>
+  <data name="Settings_Button_Queue" xml:space="preserve">
+    <value>ਕਤਾਰ</value>
+  </data>
+  <data name="Settings_Button_Volume" xml:space="preserve">
+    <value>ਆਵਾਜ਼</value>
+  </data>
+  <data name="Settings_Provider_LRCLIB_Desc" xml:space="preserve">
+    <value>ਭਾਈਚਾਰੇ ਦੁਆਰਾ ਤਿਆਰ ਕੀਤਾ ਗਿਆ ਬੋਲ ਡੇਟਾਬੇਸ</value>
+  </data>
+  <data name="Settings_Provider_NetEase_Desc" xml:space="preserve">
+    <value>ਚੀਨੀ ਸੰਗੀਤ ਸੇਵਾ, ਏਸ਼ੀਆਈ ਸੰਗੀਤ ਲਈ ਵਧੀਆ</value>
+  </data>
+  <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
+    <value>ਕਲਾਕਾਰ ID ਪ੍ਰਾਪਤ ਕਰਦਾ ਹੈ (TheAudioDB ਅਤੇ Fanart.tv ਲਈ ਲੋੜੀਂਦਾ)</value>
+  </data>
+  <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
+    <value>ਉੱਚ-ਗੁਣਵੱਤਾ ਵਾਲੇ ਕਲਾਕਾਰ ਚਿੱਤਰ ਅਤੇ ਜੀਵਨੀ (MusicBrainz ਦੀ ਲੋੜ ਹੈ)</value>
+  </data>
+  <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
+    <value>ਸਿਰਫ਼ ਉੱਚ-ਗੁਣਵੱਤਾ ਵਾਲੇ ਕਲਾਕਾਰ ਚਿੱਤਰ (MusicBrainz ਦੀ ਲੋੜ ਹੈ)</value>
+  </data>
+  <data name="Settings_Provider_Spotify_Desc" xml:space="preserve">
+    <value>ਸਿਰਫ਼ ਕਲਾਕਾਰ ਚਿੱਤਰ</value>
+  </data>
+  <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
+    <value>ਕਲਾਕਾਰ ਦੀਆਂ ਜੀਵਨੀਆਂ ਅਤੇ ਚਿੱਤਰ (ਫਾਲਬੈਕ)</value>
+  </data>
+  <data name="App_Name_Default" xml:space="preserve">
+    <value>ਨਾਗੀ</value>
+  </data>
+  <data name="App_Version_Unknown" xml:space="preserve">
+    <value>ਲਾਗੂ ਨਹੀਂ</value>
+  </data>
+  <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>ਖੋਜ ਬੰਦ ਕਰੋ</value>
+  </data>
+  <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>ਐਲਬਮਾਂ ਖੋਜੋ</value>
+  </data>
+  <data name="AlbumViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>ਖੋਜ ਬੰਦ ਕਰੋ</value>
+  </data>
+  <data name="AlbumViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>ਐਲਬਮ ਵਿੱਚ ਖੋਜੋ</value>
+  </data>
+  <data name="AlbumViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>ਕੋਈ ਪਲੇਲਿਸਟ ਉਪਲਬਧ ਨਹੀਂ</value>
+  </data>
+  <data name="ArtistPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>ਖੋਜ ਬੰਦ ਕਰੋ</value>
+  </data>
+  <data name="ArtistPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>ਕਲਾਕਾਰ ਖੋਜੋ</value>
+  </data>
+  <data name="ArtistViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>ਖੋਜ ਬੰਦ ਕਰੋ</value>
+  </data>
+  <data name="ArtistViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>ਕਲਾਕਾਰ ਵਿੱਚ ਖੋਜੋ</value>
+  </data>
+  <data name="ArtistViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>ਕੋਈ ਪਲੇਲਿਸਟ ਉਪਲਬਧ ਨਹੀਂ</value>
+  </data>
+  <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
+    <value>ਫੋਲਡਰ ਮਿਟਾਓ</value>
+  </data>
+  <data name="FolderPage_DeleteDialog_Format" xml:space="preserve">
+    <value>ਕੀ ਤੁਸੀਂ ਲਾਇਬ੍ਰੇਰੀ ਤੋਂ ਫੋਲਡਰ '{0}' ਨੂੰ ਹਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ? ਇਹ ਤੁਹਾਡੇ ਕੰਪਿਊਟਰ ਤੋਂ ਫਾਈਲਾਂ ਨੂੰ ਨਹੀਂ ਮਿਟਾਏਗਾ।</value>
+  </data>
+  <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
+    <value>ਮਿਟਾਓ</value>
+  </data>
+  <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
+    <value>ਰੱਦ ਕਰੋ</value>
+  </data>
+  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
+    <value>ਅਣਜਾਣ ਫੋਲਡਰ</value>
+  </data>
+  <data name="FolderSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>ਖੋਜ ਬੰਦ ਕਰੋ</value>
+  </data>
+  <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>ਫੋਲਡਰ ਵਿੱਚ ਖੋਜੋ</value>
+  </data>
+  <data name="FolderSongViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>ਕੋਈ ਪਲੇਲਿਸਟ ਉਪਲਬਧ ਨਹੀਂ</value>
+  </data>
+  <data name="GenrePage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>ਖੋਜ ਬੰਦ ਕਰੋ</value>
+  </data>
+  <data name="GenrePage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>ਸ਼ੈਲੀਆਂ ਖੋਜੋ</value>
+  </data>
+  <data name="LibraryPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>ਖੋਜ ਬੰਦ ਕਰੋ</value>
+  </data>
+  <data name="LibraryPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>ਲਾਇਬ੍ਰੇਰੀ ਖੋਜੋ</value>
+  </data>
+  <data name="LibraryPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>ਕੋਈ ਪਲੇਲਿਸਟ ਉਪਲਬਧ ਨਹੀਂ</value>
+  </data>
+  <data name="PlaylistPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>ਖੋਜ ਬੰਦ ਕਰੋ</value>
+  </data>
+  <data name="PlaylistPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>ਪਲੇਲਿਸਟਾਂ ਖੋਜੋ</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_Placeholder" xml:space="preserve">
+    <value>ਨਵਾਂ ਪਲੇਲਿਸਟ ਨਾਮ ਦਰਜ ਕਰੋ</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_PickImage" xml:space="preserve">
+    <value>ਚਿੱਤਰ ਚੁਣੋ</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_Title" xml:space="preserve">
+    <value>ਨਵੀਂ ਪਲੇਲਿਸਟ ਬਣਾਓ</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_CreateButton" xml:space="preserve">
+    <value>ਬਣਾਓ</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_CancelButton" xml:space="preserve">
+    <value>ਰੱਦ ਕਰੋ</value>
+  </data>
+  <data name="PlaylistPage_RenameDialog_Title_Format" xml:space="preserve">
+    <value>'{0}' ਦਾ ਨਾਮ ਬਦਲੋ</value>
+  </data>
+  <data name="PlaylistPage_RenameDialog_RenameButton" xml:space="preserve">
+    <value>ਨਾਮ ਬਦਲੋ</value>
+  </data>
+  <data name="PlaylistPage_DeleteDialog_Title" xml:space="preserve">
+    <value>ਪਲੇਲਿਸਟ ਮਿਟਾਓ</value>
+  </data>
+  <data name="PlaylistPage_DeleteDialog_Content_Format" xml:space="preserve">
+    <value>ਕੀ ਤੁਸੀਂ ਪਲੇਲਿਸਟ '{0}' ਨੂੰ ਮਿਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ? ਇਹ ਕਾਰਵਾਈ ਵਾਪਸ ਨਹੀਂ ਲਈ ਜਾ ਸਕਦੀ।</value>
+  </data>
+  <data name="PlaylistPage_DeleteDialog_DeleteButton" xml:space="preserve">
+    <value>ਮਿਟਾਓ</value>
+  </data>
+  <data name="PlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>ਖੋਜ ਬੰਦ ਕਰੋ</value>
+  </data>
+  <data name="PlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>ਪਲੇਲਿਸਟ ਵਿੱਚ ਖੋਜੋ</value>
+  </data>
+  <data name="GenreViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>ਖੋਜ ਬੰਦ ਕਰੋ</value>
+  </data>
+  <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>ਲਾਇਬ੍ਰੇਰੀ ਖੋਜੋ</value>
+  </data>
+  <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>ਕੋਈ ਪਲੇਲਿਸਟ ਉਪਲਬਧ ਨਹੀਂ</value>
+  </data>
+  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
+    <value>ਅਣਜਾਣ ਪਲੇਲਿਸਟ</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>ਖੋਜ ਬੰਦ ਕਰੋ</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>ਸਮਾਰਟ ਪਲੇਲਿਸਟ ਵਿੱਚ ਖੋਜੋ</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
+    <value>ਅਣਜਾਣ ਸਮਾਰਟ ਪਲੇਲਿਸਟ</value>
+  </data>
+  <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
+    <value>ਮੈਟਾਡਾਟਾ ਮੁੜ-ਸਕੈਨ ਕਰੋ</value>
+  </data>
+  <data name="Settings_Dialog_Rescan_Content" xml:space="preserve">
+    <value>ਇਹ ਤੁਹਾਡੀ ਲਾਇਬ੍ਰੇਰੀ ਦੇ ਸਾਰੇ ਗੀਤਾਂ ਨੂੰ ਨਵੀਆਂ ਮੈਟਾਡਾਟਾ ਸੈਟਿੰਗਾਂ (ਜਿਵੇਂ ਕਿ ਕਲਾਕਾਰ ਵੱਖਰੇ ਅੱਖਰ) ਲਾਗੂ ਕਰਨ ਲਈ ਮੁੜ-ਸਕੈਨ ਕਰੇਗਾ। ਲਾਇਬ੍ਰੇਰੀ ਦੇ ਆਕਾਰ ਦੇ ਆਧਾਰ 'ਤੇ ਇਸ ਵਿੱਚ ਕੁਝ ਸਮਾਂ ਲੱਗ ਸਕਦਾ ਹੈ। ਕੀ ਤੁਸੀਂ ਜਾਰੀ ਰੱਖਣਾ ਚਾਹੁੰਦੇ ਹੋ?</value>
+  </data>
+  <data name="Settings_Dialog_Rescan_PrimaryButton" xml:space="preserve">
+    <value>ਮੁੜ-ਸਕੈਨ ਕਰੋ</value>
+  </data>
+  <data name="Settings_Status_Rescan_Preparing" xml:space="preserve">
+    <value>ਲਾਇਬ੍ਰੇਰੀ ਮੁੜ-ਸਕੈਨ ਦੀ ਤਿਆਰੀ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ...</value>
+  </data>
+  <data name="Settings_Dialog_RescanComplete_Title" xml:space="preserve">
+    <value>ਮੁੜ-ਸਕੈਨ ਪੂਰਾ ਹੋ ਗਿਆ</value>
+  </data>
+  <data name="Settings_Dialog_RescanComplete_Content" xml:space="preserve">
+    <value>ਲਾਇਬ੍ਰੇਰੀ ਮੈਟਾਡਾਟਾ ਅਪਡੇਟ ਕੀਤਾ ਗਿਆ ਹੈ।</value>
+  </data>
+  <data name="Settings_Dialog_RescanFailed_Title" xml:space="preserve">
+    <value>ਮੁੜ-ਸਕੈਨ ਅਸਫਲ</value>
+  </data>
+  <data name="Settings_Dialog_RescanFailed_Content" xml:space="preserve">
+    <value>ਸਕੈਨ ਕਰਦੇ ਸਮੇਂ ਇੱਕ ਗਲਤੀ ਹੋਈ। ਵੇਰਵਿਆਂ ਲਈ ਲੌਗਸ ਦੀ ਜਾਂਚ ਕਰੋ।</value>
+  </data>
+  <data name="Settings_Dialog_FFmpegNotFound_Title" xml:space="preserve">
+    <value>FFmpeg ਨਹੀਂ ਮਿਲਿਆ</value>
+  </data>
+  <data name="Settings_Dialog_VolumeNorm_Title" xml:space="preserve">
+    <value>ਆਵਾਜ਼ ਨੂੰ ਆਮ ਬਣਾਉਣਾ ਸਮਰੱਥ ਕਰੋ</value>
+  </data>
+  <data name="Settings_Dialog_VolumeNorm_Content" xml:space="preserve">
+    <value>ਆਵਾਜ਼ ਨੂੰ ਆਮ ਬਣਾਉਣਾ (ਰੀਪਲੇਗੇਨ) ਤੁਹਾਡੇ ਸਾਰੇ ਸੰਗੀਤ ਵਿੱਚ ਇੱਕ ਸਥਿਰ ਆਵਾਜ਼ ਪੱਧਰ ਨੂੰ ਯਕੀਨੀ ਬਣਾਉਂਦਾ ਹੈ।\n\nਇਹ ਤੁਹਾਡੀ ਸੰਗੀਤ ਲਾਇਬ੍ਰੇਰੀ ਦਾ ਵਿਸ਼ਲੇਸ਼ਣ ਕਰੇਗਾ ਅਤੇ ਰੀਪਲੇਗੇਨ ਟੈਗਸ ਲਿਖ ਕੇ ਤੁਹਾਡੀਆਂ ਆਡੀਓ ਫਾਈਲਾਂ ਨੂੰ ਸਿੱਧਾ ਸੋਧੇਗਾ। ਸਿਰਫ਼ ਉਹ ਫਾਈਲਾਂ ਜਿਨ੍ਹਾਂ ਵਿੱਚ ਮੌਜੂਦਾ ਟੈਗ ਨਹੀਂ ਹਨ, ਉਹਨਾਂ 'ਤੇ ਪ੍ਰਕਿਰਿਆ ਕੀਤੀ ਜਾਵੇਗੀ। ਤੁਹਾਡੀ ਲਾਇਬ੍ਰੇਰੀ ਦੇ ਆਕਾਰ ਦੇ ਆਧਾਰ 'ਤੇ ਇਸ ਵਿੱਚ ਕੁਝ ਸਮਾਂ ਲੱਗ ਸਕਦਾ ਹੈ।\n\nਕੀ ਤੁਸੀਂ ਜਾਰੀ ਰੱਖਣਾ ਚਾਹੁੰਦੇ ਹੋ?</value>
+  </data>
+  <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
+    <value>ਸਮਰੱਥ ਕਰੋ ਅਤੇ ਸਕੈਨ ਕਰੋ</value>
+  </data>
+  <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
+    <value>ਆਵਾਜ਼ ਨੂੰ ਆਮ ਬਣਾਉਣ ਲਈ ਸਕੈਨ ਦੀ ਤਿਆਰੀ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ...</value>
+  </data>
+  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
+    <value>ਆਵਾਜ਼ ਨੂੰ ਆਮ ਬਣਾਉਣ ਲਈ ਸਕੈਨ ਰੱਦ ਕੀਤਾ ਗਿਆ।</value>
+  </data>
+  <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
+    <value>ਸਕੈਨ ਦੌਰਾਨ ਗਲਤੀ: {0}</value>
+  </data>
+  <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
+    <value>ਮੈਮੋਰੀ ਤੋਂ ਲੌਗਸ ਪ੍ਰਾਪਤ ਨਹੀਂ ਕਰ ਸਕਿਆ। ਲੌਗ ਫਾਈਲ ਪੜ੍ਹਨ ਦੀ ਫਾਲਬੈਕ ਕੋਸ਼ਿਸ਼ ਅਸਫਲ ਰਹੀ।\nਅਨੁਮਾਨਿਤ ਮਾਰਗ: '{0}'\nਗਲਤੀ: {1}</value>
+  </data>
+  <data name="Settings_Export_Failed_Message" xml:space="preserve">
+    <value>ਨਿਰਯਾਤ ਕਰਨ ਲਈ ਕੋਈ ਪਲੇਲਿਸਟ ਨਹੀਂ।</value>
+  </data>
+</root>

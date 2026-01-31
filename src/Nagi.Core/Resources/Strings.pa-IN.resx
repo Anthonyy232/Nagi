@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Noun Labels -->
+  <data name="Label_Artist" xml:space="preserve">
+    <value>ਕਲਾਕਾਰ</value>
+  </data>
+  <data name="Label_Album" xml:space="preserve">
+    <value>ਐਲਬਮ</value>
+  </data>
+  <data name="Label_Genre" xml:space="preserve">
+    <value>ਸ਼ੈਲੀ</value>
+  </data>
+  <data name="Label_Title" xml:space="preserve">
+    <value>ਸਿਰਲੇਖ</value>
+  </data>
+  <data name="Label_Playlist" xml:space="preserve">
+    <value>ਪਲੇਲਿਸਟ</value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>ਫਾਈਲ</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>ਸਾਲ</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>ਸ਼ਾਮਲ ਕੀਤੀ ਮਿਤੀ</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>ਬਣਾਈ ਮਿਤੀ</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>ਸੰਸ਼ੋਧਿਤ ਮਿਤੀ</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>ਆਖਰੀ ਵਾਰ ਚਲਾਇਆ ਗਿਆ</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>ਮਿਆਦ</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>ਟਰੈਕ ਨੰਬਰ</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>ਪਲੇ ਕਾਉਂਟ</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>ਗੀਤ</value>
+  </data>
+  <data name="Label_Song" xml:space="preserve">
+    <value>ਗੀਤ</value>
+  </data>
+  <data name="Label_Folder" xml:space="preserve">
+    <value>ਫੋਲਡਰ</value>
+  </data>
+  <data name="Label_Folders" xml:space="preserve">
+    <value>ਫੋਲਡਰ</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>ਮੈਨੂਅਲ ਆਰਡਰ</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>ਬੇਤਰਤੀਬ</value>
+  </data>
+  <!-- Format Patterns -->
+  <data name="Format_Unknown" xml:space="preserve">
+    <value>ਅਣਜਾਣ {0}</value>
+  </data>
+  <data name="Format_New" xml:space="preserve">
+    <value>ਨਵਾਂ {0}</value>
+  </data>
+  <data name="Format_NotFound" xml:space="preserve">
+    <value>{0} ਨਹੀਂ ਲੱਭਿਆ।</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A ਤੋਂ Z)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Z ਤੋਂ A)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (ਨਵਾਂ)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (ਪੁਰਾਣਾ)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (ਚੜ੍ਹਦਾ)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (ਉਤਰਦਾ)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>ਸਭ ਤੋਂ ਛੋਟਾ ਪਹਿਲਾਂ</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>ਸਭ ਤੋਂ ਲੰਬਾ ਪਹਿਲਾਂ</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>ਸਭ ਤੋਂ ਹੌਲੀ ਪਹਿਲਾਂ ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>ਸਭ ਤੋਂ ਤੇਜ਼ ਪਹਿਲਾਂ ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>ਸਭ ਤੋਂ ਵੱਧ {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>ਸਭ ਤੋਂ ਘੱਟ {0}</value>
+  </data>
+  <data name="Format_ScanFolderProgress" xml:space="preserve">
+    <value>{1} ਵਿੱਚੋਂ ਫੋਲਡਰ {0} ਸਕੈਨ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ: {2} - {3}</value>
+  </data>
+  <data name="Format_ScanCompleteResult" xml:space="preserve">
+    <value>ਸਕੈਨ ਪੂਰਾ ਹੋ ਗਿਆ। {0} {1} ਸ਼ਾਮਲ ਕੀਤੇ ਜਾਂ ਅੱਪਡੇਟ ਕੀਤੇ ਗਏ।</value>
+  </data>
+  <data name="Format_SavingBatch" xml:space="preserve">
+    <value>ਬੈਚ {0} ਸੁਰੱਖਿਅਤ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ...</value>
+  </data>
+  <!-- Status & Success Messages -->
+  <data name="Status_ScanningFolder" xml:space="preserve">
+    <value>ਫੋਲਡਰ ਸਕੈਨ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ...</value>
+  </data>
+  <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
+    <value>ਸਕੈਨ ਪੂਰਾ ਹੋ ਗਿਆ। ਲਾਇਬ੍ਰੇਰੀ ਅੱਪ ਟੂ ਡੇਟ ਹੈ।</value>
+  </data>
+  <data name="Status_ScanCancelled" xml:space="preserve">
+    <value>ਸਕੈਨ ਰੱਦ ਕਰ ਦਿੱਤਾ ਗਿਆ।</value>
+  </data>
+  <data name="Status_ScanFailed" xml:space="preserve">
+    <value>ਸਕੈਨ ਅਸਫਲ ਰਿਹਾ। ਵੇਰਵਿਆਂ ਲਈ ਲੌਗਸ ਦੀ ਜਾਂਚ ਕਰੋ।</value>
+  </data>
+  <data name="Status_PreparingScanCaches" xml:space="preserve">
+    <value>ਸਕੈਨ ਕੈਸ਼ ਤਿਆਰ ਕੀਤੇ ਜਾ ਰਹੇ ਹਨ...</value>
+  </data>
+  <data name="Status_ReadingSongDetails" xml:space="preserve">
+    <value>ਗੀਤਾਂ ਦੇ ਵੇਰਵੇ ਪੜ੍ਹੇ ਜਾ ਰਹੇ ਹਨ...</value>
+  </data>
+  <data name="Status_CleaningUpLibrary" xml:space="preserve">
+    <value>ਤੁਹਾਡੀ ਲਾਇਬ੍ਰੇਰੀ ਸਾਫ਼ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ...</value>
+  </data>
+  <data name="Status_Finalizing" xml:space="preserve">
+    <value>ਅੰਤਿਮ ਰੂਪ ਦਿੱਤਾ ਜਾ ਰਿਹਾ ਹੈ...</value>
+  </data>
+  <data name="Status_NormalizationFailed" xml:space="preserve">
+    <value>ਵਾਲੀਅਮ ਨੋਰਮਲਾਈਜ਼ੇਸ਼ਨ ਅਸਫਲ ਰਿਹਾ। ਵੇਰਵਿਆਂ ਲਈ ਲੌਗਸ ਦੀ ਜਾਂਚ ਕਰੋ।</value>
+  </data>
+  <data name="Status_NoFoldersToRefresh" xml:space="preserve">
+    <value>ਰਿਫ੍ਰੈਸ਼ ਕਰਨ ਲਈ ਲਾਇਬ੍ਰੇਰੀ ਵਿੱਚ ਕੋਈ ਫੋਲਡਰ ਨਹੀਂ।</value>
+  </data>
+  <data name="Status_LibraryRefreshComplete" xml:space="preserve">
+    <value>ਲਾਇਬ੍ਰੇਰੀ ਰਿਫ੍ਰੈਸ਼ ਪੂਰਾ ਹੋ ਗਿਆ।</value>
+  </data>
+  <!-- Error Mssages -->
+  <data name="Error_FailedToAddFolder" xml:space="preserve">
+    <value>ਫੋਲਡਰ ਸ਼ਾਮਲ ਕਰਨ ਵਿੱਚ ਅਸਫਲ।</value>
+  </data>
+  <data name="Error_PlaylistNameEmpty" xml:space="preserve">
+    <value>ਪਲੇਲਿਸਟ ਦਾ ਨਾਮ ਖਾਲੀ ਨਹੀਂ ਹੋ ਸਕਦਾ।</value>
+  </data>
+  <data name="Error_RatingRange" xml:space="preserve">
+    <value>ਰੇਟਿੰਗ 1 ਅਤੇ 5 ਦੇ ਵਿਚਕਾਰ ਹੋਣੀ ਚਾਹੀਦੀ ਹੈ।</value>
+  </data>
+  <!-- Labels -->
+  <data name="Label_WithLyrics" xml:space="preserve">
+    <value>ਬੋਲਾਂ ਨਾਲ</value>
+  </data>
+  <data name="Label_WithCoverArt" xml:space="preserve">
+    <value>ਕਵਰ ਆਰਟ ਨਾਲ</value>
+  </data>
+  <data name="Label_And" xml:space="preserve">
+    <value>ਅਤੇ</value>
+  </data>
+  <!-- Static Strings -->
+  <data name="UnknownFilename" xml:space="preserve">
+    <value>ਅਣਜਾਣ</value>
+  </data>
+  <data name="ArtistSeparator" xml:space="preserve">
+    <value> ਅਤੇ </value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>ਦੁਆਰਾ ਕ੍ਰਮਬੱਧ ਕਰੋ: </value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>ਹਾਈ-ਪ੍ਰੀਸੀਜ਼ਨ ਵਾਲੀਅਮ ਨੋਰਮਲਾਈਜ਼ੇਸ਼ਨ (ਰੀਪਲੇਗੇਨ ਵਿਸ਼ਲੇਸ਼ਣ) ਲਈ FFmpeg ਦੀ ਲੋੜ ਹੈ ਪਰ ਇਹ ਤੁਹਾਡੇ ਸਿਸਟਮ 'ਤੇ ਨਹੀਂ ਲੱਭਿਆ ਗਿਆ।\n\nਇਸਨੂੰ ਸਥਾਪਤ ਕਰਨ ਲਈ ਇਹਨਾਂ ਕਦਮਾਂ ਦੀ ਪਾਲਣਾ ਕਰੋ:\n\n1. **ਡਾਊਨਲੋਡ ਕਰੋ**: https://www.gyan.dev/ffmpeg/builds/ 'ਤੇ ਜਾਓ ਅਤੇ 'ffmpeg-git-full.7z' (ਜਾਂ ਇਸੇ ਤਰ੍ਹਾਂ ਦਾ) ਜ਼ਰੂਰੀ ਬਿਲਡ ਡਾਊਨਲੋਡ ਕਰੋ।\n2. **ਗਾਈਡ**: ਤੁਸੀਂ ਵਿਸਤ੍ਰਿਤ ਨਿਰਦੇਸ਼ਾਂ ਲਈ ਇਸ ਗਾਈਡ ਦੀ ਪਾਲਣਾ ਕਰ ਸਕਦੇ ਹੋ: https://phoenixnap.com/kb/ffmpeg-windows\n3. **ਐਕਸਟਰੈਕਟ ਕਰੋ**: ਆਰਕੀਟੈਕਚਰ ਫੋਲਡਰ ਖੋਲ੍ਹੋ ਅਤੇ `ffmpeg.exe` ਵਾਲੀ 'ਬਿਨ' ਡਾਇਰੈਕਟਰੀ ਲੱਭੋ।\n4. **ਸਥਾਪਤ ਕਰੋ**: `ffmpeg.exe` ਨੂੰ ਇੱਕ ਸਥਾਈ ਫੋਲਡਰ (ਜਿਵੇਂ ਕਿ, `C:\ffmpeg\`) ਵਿੱਚ ਕਾਪੀ ਕਰੋ ਅਤੇ **ਉਸ ਫੋਲਡਰ ਨੂੰ ਆਪਣੇ ਸਿਸਟਮ PATH** ਵਾਤਾਵਰਨ ਵੇਰੀਏਬਲ ਵਿੱਚ ਸ਼ਾਮਲ ਕਰੋ।\n5. **ਰੀਸਟਾਰਟ ਕਰੋ**: ਬਦਲਾਵਾਂ ਨੂੰ ਲਾਗੂ ਕਰਨ ਲਈ ਕਿਰਪਾ ਕਰਕੇ ਇੰਸਟਾਲੇਸ਼ਨ ਤੋਂ ਬਾਅਦ Nagi ਨੂੰ ਰੀਸਟਾਰਟ ਕਰੋ।</value>
+  </data>
+  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
+    <value>ਪਲੇਲਿਸਟ ਵਿੱਚੋਂ ਕੋਈ ਵੀ ਗੀਤ ਤੁਹਾਡੀ ਲਾਇਬ੍ਰੇਰੀ ਵਿੱਚ ਨਹੀਂ ਲੱਭਿਆ ਗਿਆ।</value>
+  </data>
+  <data name="Error_NoPlaylistsToExport" xml:space="preserve">
+    <value>ਨਿਰਯਾਤ ਕਰਨ ਲਈ ਕੋਈ ਪਲੇਲਿਸਟ ਨਹੀਂ।</value>
+  </data>
+  <data name="EqPreset_None" xml:space="preserve">
+    <value>ਕੋਈ ਨਹੀਂ</value>
+  </data>
+  <data name="EqPreset_Classical" xml:space="preserve">
+    <value>ਕਲਾਸੀਕਲ</value>
+  </data>
+  <data name="EqPreset_Dance" xml:space="preserve">
+    <value>ਡਾਂਸ</value>
+  </data>
+  <data name="EqPreset_FullBass" xml:space="preserve">
+    <value>ਪੂਰੀ ਬਾਸ</value>
+  </data>
+  <data name="EqPreset_FullTreble" xml:space="preserve">
+    <value>ਪੂਰੀ ਟ੍ਰੇਬਲ</value>
+  </data>
+  <data name="EqPreset_Jazz" xml:space="preserve">
+    <value>ਜੈਜ਼</value>
+  </data>
+  <data name="EqPreset_Pop" xml:space="preserve">
+    <value>ਪੌਪ</value>
+  </data>
+  <data name="EqPreset_Rock" xml:space="preserve">
+    <value>ਰੌਕ</value>
+  </data>
+  <data name="EqPreset_Soft" xml:space="preserve">
+    <value>ਨਰਮ</value>
+  </data>
+  <data name="EqPreset_Techno" xml:space="preserve">
+    <value>ਟੈਕਨੋ</value>
+  </data>
+  <data name="EqPreset_Vocal" xml:space="preserve">
+    <value>ਵੋਕਲ</value>
+  </data>
+  <data name="ReplayGain_AllSongsScanned" xml:space="preserve">
+    <value>ਸਾਰੇ ਗੀਤਾਂ ਵਿੱਚ ਪਹਿਲਾਂ ਹੀ ਵਾਲੀਅਮ ਡੇਟਾ ਹੈ।</value>
+  </data>
+  <data name="ReplayGain_CalculatingCount" xml:space="preserve">
+    <value>{0} ਗੀਤਾਂ ਲਈ ਵਾਲੀਅਮ ਦੀ ਗਣਨਾ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ...</value>
+  </data>
+  <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
+    <value>ਵਾਲੀਅਮ ਨੋਰਮਲਾਈਜ਼ੇਸ਼ਨ ਦੀ ਗਣਨਾ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ ({0}/{1})...</value>
+  </data>
+  <data name="ReplayGain_Complete" xml:space="preserve">
+    <value>ਵਾਲੀਅਮ ਨੋਰਮਲਾਈਜ਼ੇਸ਼ਨ ਪੂਰਾ ਹੋ ਗਿਆ। {0} ਗੀਤ ਪ੍ਰੋਸੈਸ ਕੀਤੇ ਗਏ।</value>
+  </data>
+</root>

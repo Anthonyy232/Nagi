@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Noun Labels -->
+  <data name="Label_Artist" xml:space="preserve">
+    <value>Виконавець</value>
+  </data>
+  <data name="Label_Album" xml:space="preserve">
+    <value>Альбом</value>
+  </data>
+  <data name="Label_Genre" xml:space="preserve">
+    <value>Жанр</value>
+  </data>
+  <data name="Label_Title" xml:space="preserve">
+    <value>Назва</value>
+  </data>
+  <data name="Label_Playlist" xml:space="preserve">
+    <value>Список відтворення</value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>Файл</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>Рік</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Дата додавання</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Дата створення</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Дата зміни</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Востаннє відтворено</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Тривалість</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Номер треку</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Кількість відтворень</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Пісні</value>
+  </data>
+  <data name="Label_Song" xml:space="preserve">
+    <value>Пісня</value>
+  </data>
+  <data name="Label_Folder" xml:space="preserve">
+    <value>Папка</value>
+  </data>
+  <data name="Label_Folders" xml:space="preserve">
+    <value>Папки</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Порядок вручну</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Випадково</value>
+  </data>
+  <!-- Format Patterns -->
+  <data name="Format_Unknown" xml:space="preserve">
+    <value>Невідомий {0}</value>
+  </data>
+  <data name="Format_New" xml:space="preserve">
+    <value>Новий {0}</value>
+  </data>
+  <data name="Format_NotFound" xml:space="preserve">
+    <value>{0} не знайдено.</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (від А до Я)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (від Я до А)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (новіші)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (старіші)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (за зростанням)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (за спаданням)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>Найкоротші спочатку</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>Найдовші спочатку</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>Найповільніші спочатку ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>Найшвидші спочатку ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>Найбільше {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>Найменше {0}</value>
+  </data>
+  <data name="Format_ScanFolderProgress" xml:space="preserve">
+    <value>Сканування папки {0} з {1}: {2} - {3}</value>
+  </data>
+  <data name="Format_ScanCompleteResult" xml:space="preserve">
+    <value>Сканування завершено. Додано або оновлено {0} {1}.</value>
+  </data>
+  <data name="Format_SavingBatch" xml:space="preserve">
+    <value>Збереження партії {0}...</value>
+  </data>
+  <!-- Status & Success Messages -->
+  <data name="Status_ScanningFolder" xml:space="preserve">
+    <value>Сканування папки...</value>
+  </data>
+  <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
+    <value>Сканування завершено. Бібліотека актуальна.</value>
+  </data>
+  <data name="Status_ScanCancelled" xml:space="preserve">
+    <value>Сканування скасовано.</value>
+  </data>
+  <data name="Status_ScanFailed" xml:space="preserve">
+    <value>Помилка сканування. Перевірте журнали для деталей.</value>
+  </data>
+  <data name="Status_PreparingScanCaches" xml:space="preserve">
+    <value>Підготовка кешів сканування...</value>
+  </data>
+  <data name="Status_ReadingSongDetails" xml:space="preserve">
+    <value>Читання деталей пісні...</value>
+  </data>
+  <data name="Status_CleaningUpLibrary" xml:space="preserve">
+    <value>Очищення вашої бібліотеки...</value>
+  </data>
+  <data name="Status_Finalizing" xml:space="preserve">
+    <value>Завершення...</value>
+  </data>
+  <data name="Status_NormalizationFailed" xml:space="preserve">
+    <value>Не вдалося нормалізувати гучність. Перевірте журнали для деталей.</value>
+  </data>
+  <data name="Status_NoFoldersToRefresh" xml:space="preserve">
+    <value>Немає папок у бібліотеці для оновлення.</value>
+  </data>
+  <data name="Status_LibraryRefreshComplete" xml:space="preserve">
+    <value>Оновлення бібліотеки завершено.</value>
+  </data>
+  <!-- Error Mssages -->
+  <data name="Error_FailedToAddFolder" xml:space="preserve">
+    <value>Не вдалося додати папку.</value>
+  </data>
+  <data name="Error_PlaylistNameEmpty" xml:space="preserve">
+    <value>Назва списку відтворення не може бути порожньою.</value>
+  </data>
+  <data name="Error_RatingRange" xml:space="preserve">
+    <value>Рейтинг повинен бути від 1 до 5.</value>
+  </data>
+  <!-- Labels -->
+  <data name="Label_WithLyrics" xml:space="preserve">
+    <value>з текстом пісні</value>
+  </data>
+  <data name="Label_WithCoverArt" xml:space="preserve">
+    <value>з обкладинкою</value>
+  </data>
+  <data name="Label_And" xml:space="preserve">
+    <value>та</value>
+  </data>
+  <!-- Static Strings -->
+  <data name="UnknownFilename" xml:space="preserve">
+    <value>невідомий</value>
+  </data>
+  <data name="ArtistSeparator" xml:space="preserve">
+    <value> і </value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Сортувати за: </value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>FFmpeg потрібен для високоточного вирівнювання гучності (аналіз ReplayGain), але його не знайдено у вашій системі.\n\nВиконайте такі кроки для налаштування:\n\n1. **Завантажте**: Відвідайте https://www.gyan.dev/ffmpeg/builds/ та завантажте 'ffmpeg-git-full.7z' (або подібну) основну збірку.\n2. **Посібник**: Ви можете дотримуватися цього посібника для детальних інструкцій: https://phoenixnap.com/kb/ffmpeg-windows\n3. **Видобудьте**: Відкрийте папку архітектури та знайдіть каталог 'bin', що містить `ffmpeg.exe`.\n4. **Встановіть**: Скопіюйте `ffmpeg.exe` до постійної папки (наприклад, `C:\ffmpeg\`) та **додайте цю папку до змінної середовища System PATH**.\n5. **Перезапустіть**: Будь ласка, перезапустіть Nagi після встановлення, щоб зміни набули чинності.</value>
+  </data>
+  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
+    <value>Пісень зі списку відтворення не знайдено у вашій бібліотеці.</value>
+  </data>
+  <data name="Error_NoPlaylistsToExport" xml:space="preserve">
+    <value>Немає списків відтворення для експорту.</value>
+  </data>
+  <data name="EqPreset_None" xml:space="preserve">
+    <value>Немає</value>
+  </data>
+  <data name="EqPreset_Classical" xml:space="preserve">
+    <value>Класика</value>
+  </data>
+  <data name="EqPreset_Dance" xml:space="preserve">
+    <value>Танцювальна</value>
+  </data>
+  <data name="EqPreset_FullBass" xml:space="preserve">
+    <value>Повний бас</value>
+  </data>
+  <data name="EqPreset_FullTreble" xml:space="preserve">
+    <value>Повні високі частоти</value>
+  </data>
+  <data name="EqPreset_Jazz" xml:space="preserve">
+    <value>Джаз</value>
+  </data>
+  <data name="EqPreset_Pop" xml:space="preserve">
+    <value>Поп</value>
+  </data>
+  <data name="EqPreset_Rock" xml:space="preserve">
+    <value>Рок</value>
+  </data>
+  <data name="EqPreset_Soft" xml:space="preserve">
+    <value>М'який</value>
+  </data>
+  <data name="EqPreset_Techno" xml:space="preserve">
+    <value>Техно</value>
+  </data>
+  <data name="EqPreset_Vocal" xml:space="preserve">
+    <value>Вокал</value>
+  </data>
+  <data name="ReplayGain_AllSongsScanned" xml:space="preserve">
+    <value>Всі пісні вже мають дані про гучність.</value>
+  </data>
+  <data name="ReplayGain_CalculatingCount" xml:space="preserve">
+    <value>Обчислення гучності для {0} пісень...</value>
+  </data>
+  <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
+    <value>Обчислення нормалізації гучності ({0}/{1})...</value>
+  </data>
+  <data name="ReplayGain_Complete" xml:space="preserve">
+    <value>Нормалізацію гучності завершено. Оброблені {0} пісень.</value>
+  </data>
+</root>

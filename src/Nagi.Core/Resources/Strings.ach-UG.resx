@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Noun Labels -->
+  <data name="Label_Artist" xml:space="preserve">
+    <value>Laco nyam</value>
+  </data>
+  <data name="Label_Album" xml:space="preserve">
+    <value>Album</value>
+  </data>
+  <data name="Label_Genre" xml:space="preserve">
+    <value>Kaka wii oring</value>
+  </data>
+  <data name="Label_Title" xml:space="preserve">
+    <value>Wiye</value>
+  </data>
+  <data name="Label_Playlist" xml:space="preserve">
+    <value>Tuŋa nyam</value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>Fail</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>Mwaka</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Nino ma kitye oketo</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Nino ma kitye oketo</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Nino ma kitye oketo anywaŋ</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Ma otuge lacen</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Kare</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Namba wii oring</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Gin ma kitye otugo kare</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Nyami</value>
+  </data>
+  <data name="Label_Song" xml:space="preserve">
+    <value>Nyam</value>
+  </data>
+  <data name="Label_Folder" xml:space="preserve">
+    <value>Folder</value>
+  </data>
+  <data name="Label_Folders" xml:space="preserve">
+    <value>Folders</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Keto twol</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Anywari</value>
+  </data>
+  <!-- Format Patterns -->
+  <data name="Format_Unknown" xml:space="preserve">
+    <value>{0} ma ki pe niŋŋi</value>
+  </data>
+  <data name="Format_New" xml:space="preserve">
+    <value>{0} manyen</value>
+  </data>
+  <data name="Format_NotFound" xml:space="preserve">
+    <value>{0} pe oyubbe.</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A bot Z)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Z bot A)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (Manyen loyo)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (Mio loyo)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (Asc)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (Desc)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>Ma cut loyo mukwanya</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>Ma bor loyo mukwanya</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>Ma pol kare mukwanya ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>Ma kede cel mukwanya ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>{0} ma tye madwoŋ</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>{0} ma tye matidi</value>
+  </data>
+  <data name="Format_ScanFolderProgress" xml:space="preserve">
+    <value>Ka yeny folder {0} i kin {1}: {2} - {3}</value>
+  </data>
+  <data name="Format_ScanCompleteResult" xml:space="preserve">
+    <value>Ka yeny otum. Oketo nyo oketo anywaŋ {0} {1}.</value>
+  </data>
+  <data name="Format_SavingBatch" xml:space="preserve">
+    <value>Ka gamo batc {0}...</value>
+  </data>
+  <!-- Status & Success Messages -->
+  <data name="Status_ScanningFolder" xml:space="preserve">
+    <value>Ka yeny folder...</value>
+  </data>
+  <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
+    <value>Ka yeny otum. Buk nyami tye kit ma tye kwede.</value>
+  </data>
+  <data name="Status_ScanCancelled" xml:space="preserve">
+    <value>Ka yeny ogeŋ.</value>
+  </data>
+  <data name="Status_ScanFailed" xml:space="preserve">
+    <value>Ka yeny ogik. Nen gin ma kiŋolo pi kit ma tye kwede.</value>
+  </data>
+  <data name="Status_PreparingScanCaches" xml:space="preserve">
+    <value>Ka nyiko ka yeny...</value>
+  </data>
+  <data name="Status_ReadingSongDetails" xml:space="preserve">
+    <value>Ka kwano kit ma nyami tye kwede...</value>
+  </data>
+  <data name="Status_CleaningUpLibrary" xml:space="preserve">
+    <value>Ka lwenyo buk nyami...</value>
+  </data>
+  <data name="Status_Finalizing" xml:space="preserve">
+    <value>Ka timo agikki...</value>
+  </data>
+  <data name="Status_NormalizationFailed" xml:space="preserve">
+    <value>Poteka ma gipoto ka yubu duŋ ogeŋ. Nen gin ma kiŋolo pi kit ma tye kwede.</value>
+  </data>
+  <data name="Status_NoFoldersToRefresh" xml:space="preserve">
+    <value>Pe tye folder mo i buk ma myero kilok.</value>
+  </data>
+  <data name="Status_LibraryRefreshComplete" xml:space="preserve">
+    <value>Ka lok buk nyami otum.</value>
+  </data>
+  <!-- Error Mssages -->
+  <data name="Error_FailedToAddFolder" xml:space="preserve">
+    <value>Ogeŋ ka keto folder.</value>
+  </data>
+  <data name="Error_PlaylistNameEmpty" xml:space="preserve">
+    <value>Nyinyi tuŋa nyam pe twero bedo nono.</value>
+  </data>
+  <data name="Error_RatingRange" xml:space="preserve">
+    <value>Kero myero bedo i kin 1 ki 5.</value>
+  </data>
+  <!-- Labels -->
+  <data name="Label_WithLyrics" xml:space="preserve">
+    <value>kede kop nyam</value>
+  </data>
+  <data name="Label_WithCoverArt" xml:space="preserve">
+    <value>kede cal wii album</value>
+  </data>
+  <data name="Label_And" xml:space="preserve">
+    <value>ki</value>
+  </data>
+  <!-- Static Strings -->
+  <data name="UnknownFilename" xml:space="preserve">
+    <value>ma ki pe niŋŋi</value>
+  </data>
+  <data name="ArtistSeparator" xml:space="preserve">
+    <value> &amp; </value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Lworo kede: </value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>FFmpeg myero tye pi poteka ma gipoto ka yubu duŋ ma tye ka yubbe maber (ReplayGain anolises) ento pe ki oyubbe i komputami.\n\nLub yo magi pi keto:\n\n1. **Ŋol**: Cokke https://www.gyan.dev/ffmpeg/builds/ dok ŋol 'ffmpeg-git-full.7z' (nana ma rwatte) gin ma myero tye.\n2. **Tiyo**: Itwero lubo yo man pi bino kede kito ma tye kwede: https://phoenixnap.com/kb/ffmpeg-windows\n3. **Gony**: Yab folder architecture dok yub directory 'bin' ma tye kede `ffmpeg.exe`.\n4. **Keto**: Ko `ffmpeg.exe` i folder ma tye kede (laboŋŋo `C:\ffmpeg\`) dok **ket folder meno i System PATH** environment variable.\n5. **Cak anywaŋ**: Cak Nagi anywaŋ lacen keto pi lokke me gonyo.</value>
+  </data>
+  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
+    <value>Pe tye nyami mo ma ki oyubbe i buk nyami ma a ki i tuŋa nyam.</value>
+  </data>
+  <data name="Error_NoPlaylistsToExport" xml:space="preserve">
+    <value>Pe tye tuŋa nyam mo ma myero ki ŋol.</value>
+  </data>
+  <data name="EqPreset_None" xml:space="preserve">
+    <value>Nonde</value>
+  </data>
+  <data name="EqPreset_Classical" xml:space="preserve">
+    <value>Classical</value>
+  </data>
+  <data name="EqPreset_Dance" xml:space="preserve">
+    <value>Tum</value>
+  </data>
+  <data name="EqPreset_FullBass" xml:space="preserve">
+    <value>Duŋ matye nio</value>
+  </data>
+  <data name="EqPreset_FullTreble" xml:space="preserve">
+    <value>Duŋ matye nio</value>
+  </data>
+  <data name="EqPreset_Jazz" xml:space="preserve">
+    <value>Jazz</value>
+  </data>
+  <data name="EqPreset_Pop" xml:space="preserve">
+    <value>Pop</value>
+  </data>
+  <data name="EqPreset_Rock" xml:space="preserve">
+    <value>Rock</value>
+  </data>
+  <data name="EqPreset_Soft" xml:space="preserve">
+    <value>Manyen</value>
+  </data>
+  <data name="EqPreset_Techno" xml:space="preserve">
+    <value>Techno</value>
+  </data>
+  <data name="EqPreset_Vocal" xml:space="preserve">
+    <value>Duŋ</value>
+  </data>
+  <data name="ReplayGain_AllSongsScanned" xml:space="preserve">
+    <value>Nyami ducu tye kede data duŋ.</value>
+  </data>
+  <data name="ReplayGain_CalculatingCount" xml:space="preserve">
+    <value>Ka kwano duŋ pi nyami {0}...</value>
+  </data>
+  <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
+    <value>Ka kwano poteka ma gipoto ka yubu duŋ ({0}/{1})...</value>
+  </data>
+  <data name="ReplayGain_Complete" xml:space="preserve">
+    <value>Poteka ma gipoto ka yubu duŋ otum. Otimo {0} nyami.</value>
+  </data>
+</root>

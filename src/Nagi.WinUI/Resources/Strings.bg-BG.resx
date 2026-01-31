@@ -1,0 +1,919 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="NavItem_Library" xml:space="preserve">
+    <value>Библиотека</value>
+  </data>
+  <data name="NavItem_Albums" xml:space="preserve">
+    <value>Албуми</value>
+  </data>
+  <data name="NavItem_Artists" xml:space="preserve">
+    <value>Изпълнители</value>
+  </data>
+  <data name="NavItem_Genres" xml:space="preserve">
+    <value>Жанрове</value>
+  </data>
+  <data name="NavItem_Playlists" xml:space="preserve">
+    <value>Плейлисти</value>
+  </data>
+  <data name="NavItem_Folders" xml:space="preserve">
+    <value>Папки</value>
+  </data>
+  <data name="NavItem_Settings" xml:space="preserve">
+    <value>Настройки</value>
+  </data>
+  <data name="Status_NoTrackPlaying" xml:space="preserve">
+    <value>Няма възпроизвеждана песен</value>
+  </data>
+  <data name="Tooltip_Play" xml:space="preserve">
+    <value>Пусни</value>
+  </data>
+  <data name="Tooltip_Pause" xml:space="preserve">
+    <value>Пауза</value>
+  </data>
+  <data name="Tooltip_ShuffleOn" xml:space="preserve">
+    <value>Разбъркване вкл.</value>
+  </data>
+  <data name="Tooltip_ShuffleOff" xml:space="preserve">
+    <value>Разбъркване изкл.</value>
+  </data>
+  <data name="Tooltip_RepeatOff" xml:space="preserve">
+    <value>Повтаряне изкл.</value>
+  </data>
+  <data name="Tooltip_RepeatAll" xml:space="preserve">
+    <value>Повтаряне на всички</value>
+  </data>
+  <data name="Tooltip_RepeatOne" xml:space="preserve">
+    <value>Повтаряне на един</value>
+  </data>
+  <data name="Tooltip_Repeat" xml:space="preserve">
+    <value>Повтаряне</value>
+  </data>
+  <data name="Tooltip_Unmute" xml:space="preserve">
+    <value>Включи звук</value>
+  </data>
+  <data name="Tooltip_Mute" xml:space="preserve">
+    <value>Изключи звук</value>
+  </data>
+  <data name="Theme_Light" xml:space="preserve">
+    <value>Светла</value>
+  </data>
+  <data name="Theme_Dark" xml:space="preserve">
+    <value>Тъмна</value>
+  </data>
+  <data name="Theme_Default" xml:space="preserve">
+    <value>Използване на системна настройка</value>
+  </data>
+  <data name="Backdrop_Mica" xml:space="preserve">
+    <value>Mica</value>
+  </data>
+  <data name="Backdrop_MicaAlt" xml:space="preserve">
+    <value>Mica Alt</value>
+  </data>
+  <data name="Backdrop_Acrylic" xml:space="preserve">
+    <value>Акрил</value>
+  </data>
+  <data name="Label_Composer" xml:space="preserve">
+    <value>Композитор</value>
+  </data>
+  <data name="Label_Comment" xml:space="preserve">
+    <value>Коментар</value>
+  </data>
+  <data name="Label_Rating" xml:space="preserve">
+    <value>Оценка</value>
+  </data>
+  <data name="Operator_Contains" xml:space="preserve">
+    <value>Съдържа</value>
+  </data>
+  <data name="Operator_DoesNotContain" xml:space="preserve">
+    <value>Не съдържа</value>
+  </data>
+  <data name="Operator_Is" xml:space="preserve">
+    <value>Е точно</value>
+  </data>
+  <data name="Operator_IsNot" xml:space="preserve">
+    <value>Не е</value>
+  </data>
+  <data name="Operator_StartsWith" xml:space="preserve">
+    <value>Започва с</value>
+  </data>
+  <data name="Operator_EndsWith" xml:space="preserve">
+    <value>Завършва с</value>
+  </data>
+  <data name="Operator_Equals" xml:space="preserve">
+    <value>Е равно на</value>
+  </data>
+  <data name="Operator_NotEquals" xml:space="preserve">
+    <value>Не е равно на</value>
+  </data>
+  <data name="Operator_GreaterThan" xml:space="preserve">
+    <value>Е по-голямо от</value>
+  </data>
+  <data name="Operator_LessThan" xml:space="preserve">
+    <value>Е по-малко от</value>
+  </data>
+  <data name="Operator_GreaterThanOrEqual" xml:space="preserve">
+    <value>Е поне</value>
+  </data>
+  <data name="Operator_LessThanOrEqual" xml:space="preserve">
+    <value>Е най-много</value>
+  </data>
+  <data name="Operator_IsInTheLast" xml:space="preserve">
+    <value>Е през последните (дни)</value>
+  </data>
+  <data name="Operator_IsNotInTheLast" xml:space="preserve">
+    <value>Не е през последните (дни)</value>
+  </data>
+  <data name="Operator_IsTrue" xml:space="preserve">
+    <value>Е вярно</value>
+  </data>
+  <data name="Operator_IsFalse" xml:space="preserve">
+    <value>Е грешно</value>
+  </data>
+  <data name="SmartPlaylist_Title_New" xml:space="preserve">
+    <value>Нов интелигентен плейлист</value>
+  </data>
+  <data name="SmartPlaylist_Title_EditFormat" xml:space="preserve">
+    <value>Редактиране на интелигентен плейлист - {0}</value>
+  </data>
+  <data name="SmartPlaylist_Status_EnterName" xml:space="preserve">
+    <value>Въведете име на плейлист</value>
+  </data>
+  <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
+    <value>{0:N0} песни съответстват на текущите правила</value>
+  </data>
+  <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
+    <value>Въведете име, за да видите съответстващите песни</value>
+  </data>
+  <data name="SmartPlaylist_Status_Error" xml:space="preserve">
+    <value>Не може да се изчисли</value>
+  </data>
+  <data name="SmartPlaylist_Status_Calculating" xml:space="preserve">
+    <value>Изчисляване...</value>
+  </data>
+  <data name="SmartPlaylist_Error_DuplicateName" xml:space="preserve">
+    <value>Плейлист с това име вече съществува!</value>
+  </data>
+  <data name="SmartPlaylist_Error_NameEmptyFeedback" xml:space="preserve">
+    <value>Моля, въведете име!</value>
+  </data>
+  <data name="Status_Loading" xml:space="preserve">
+    <value>Зареждане...</value>
+  </data>
+  <data name="Error_FailedToLoadArtists" xml:space="preserve">
+    <value>Неуспешно зареждане на изпълнители</value>
+  </data>
+  <data name="CrashReport_Title" xml:space="preserve">
+    <value>Критична грешка</value>
+  </data>
+  <data name="CrashReport_Message" xml:space="preserve">
+    <value>Nagi срещна критична грешка и трябва да се затвори. Извиняваме се за неудобството.</value>
+  </data>
+  <data name="ElevationWarning_Title" xml:space="preserve">
+    <value>Работи като администратор</value>
+  </data>
+  <data name="ElevationWarning_Message" xml:space="preserve">
+    <value>Nagi в момента работи като администратор. Това може да попречи на някои функции (като добавяне на музикални папки) да работят правилно.\n\nЗа най-добро изживяване, моля, рестартирайте Nagi без администраторски привилегии.</value>
+  </data>
+  <data name="ElevationWarning_Restart" xml:space="preserve">
+    <value>Рестартирай нормално</value>
+  </data>
+  <data name="ElevationWarning_Continue" xml:space="preserve">
+    <value>Продължи въпреки това</value>
+  </data>
+  <data name="MiniPlayer_Title" xml:space="preserve">
+    <value>Nagi</value>
+  </data>
+  <data name="App_Title" xml:space="preserve">
+    <value>Nagi</value>
+  </data>
+  <data name="AlbumView_AlbumNotFound" xml:space="preserve">
+    <value>Албумът не е намерен</value>
+  </data>
+  <data name="AlbumView_Error" xml:space="preserve">
+    <value>Грешка при зареждане на албум</value>
+  </data>
+  <data name="AlbumView_DefaultAlbumTitle" xml:space="preserve">
+    <value>Албум</value>
+  </data>
+  <data name="AlbumView_DefaultArtistName" xml:space="preserve">
+    <value>Изпълнител</value>
+  </data>
+  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
+    <value>{0} песен</value>
+  </data>
+  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
+    <value>{0} песни</value>
+  </data>
+  <data name="ArtistView_ArtistNotFound" xml:space="preserve">
+    <value>Изпълнителят не е намерен</value>
+  </data>
+  <data name="ArtistView_Error" xml:space="preserve">
+    <value>Грешка при зареждане на изпълнител</value>
+  </data>
+  <data name="ArtistView_DefaultArtistName" xml:space="preserve">
+    <value>Изпълнител</value>
+  </data>
+  <data name="ArtistView_NoBiography" xml:space="preserve">
+    <value>Няма налична биография за този изпълнител.</value>
+  </data>
+  <data name="ArtistView_ErrorLoadingDetails" xml:space="preserve">
+    <value>Не можаха да се заредят детайли за изпълнителя.</value>
+  </data>
+  <data name="Folders_ErrorLoading" xml:space="preserve">
+    <value>Грешка при зареждане на папка</value>
+  </data>
+  <data name="Folders_AddFolder_Success" xml:space="preserve">
+    <value>Успешно добавена и сканирана '{0}'.</value>
+  </data>
+  <data name="Folders_AddFolder_Failed" xml:space="preserve">
+    <value>Неуспешно добавяне на папка. Пътят може да е невалиден.</value>
+  </data>
+  <data name="Folders_AddFolder_Exists" xml:space="preserve">
+    <value>Тази папка вече е в библиотеката.</value>
+  </data>
+  <data name="Folders_AddFolder_InProgress" xml:space="preserve">
+    <value>Добавяне на папка към библиотеката...</value>
+  </data>
+  <data name="Folders_Delete_Success" xml:space="preserve">
+    <value>Успешно изтрита '{0}'.</value>
+  </data>
+  <data name="Folders_Delete_Failed" xml:space="preserve">
+    <value>Неуспешно изтриване на '{0}'.</value>
+  </data>
+  <data name="Folders_Delete_InProgress" xml:space="preserve">
+    <value>Изтриване на '{0}'...</value>
+  </data>
+  <data name="Folders_Rescan_Complete" xml:space="preserve">
+    <value>Повторно сканиране на '{0}' завършено.</value>
+  </data>
+  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
+    <value>Не са открити промени за '{0}'.</value>
+  </data>
+  <data name="Folders_Rescan_InProgress" xml:space="preserve">
+    <value>Повторно сканиране на '{0}'...</value>
+  </data>
+  <data name="Folders_Empty_NoMusicFound" xml:space="preserve">
+    <value>Не са намерени папки с музика.</value>
+  </data>
+  <data name="Folders_Error_Playback" xml:space="preserve">
+    <value>Грешка при стартиране на възпроизвеждане за тази папка.</value>
+  </data>
+  <data name="Folders_Error_RandomPlayback" xml:space="preserve">
+    <value>Грешка при стартиране на възпроизвеждане на произволна папка.</value>
+  </data>
+  <data name="Folders_Error_AddFolder" xml:space="preserve">
+    <value>Грешка при добавяне на папка: {0}</value>
+  </data>
+  <data name="Folders_Error_DeleteFolder" xml:space="preserve">
+    <value>Грешка при изтриване на папка: {0}</value>
+  </data>
+  <data name="Folders_Error_RescanFolder" xml:space="preserve">
+    <value>Грешка при повторно сканиране на папка: {0}</value>
+  </data>
+  <data name="Folders_Count_Singular" xml:space="preserve">
+    <value>{0} папка</value>
+  </data>
+  <data name="Folders_Count_Plural" xml:space="preserve">
+    <value>{0} папки</value>
+  </data>
+  <data name="Songs_Count_Singular" xml:space="preserve">
+    <value>{0} песен</value>
+  </data>
+  <data name="Songs_Count_Plural" xml:space="preserve">
+    <value>{0} песни</value>
+  </data>
+  <data name="Albums_Count_Singular" xml:space="preserve">
+    <value>{0} албум</value>
+  </data>
+  <data name="Albums_Count_Plural" xml:space="preserve">
+    <value>{0} албума</value>
+  </data>
+  <data name="Artists_Count_Singular" xml:space="preserve">
+    <value>{0} изпълнител</value>
+  </data>
+  <data name="Artists_Count_Plural" xml:space="preserve">
+    <value>{0} изпълнители</value>
+  </data>
+  <data name="Generic_NoItems" xml:space="preserve">
+    <value>Няма елементи</value>
+  </data>
+  <data name="Generic_Error" xml:space="preserve">
+    <value>Грешка</value>
+  </data>
+  <data name="GenreView_DefaultName" xml:space="preserve">
+    <value>Жанр</value>
+  </data>
+  <data name="GenreView_Error" xml:space="preserve">
+    <value>Грешка при зареждане на жанр</value>
+  </data>
+  <data name="Lyrics_NoSongSelected" xml:space="preserve">
+    <value>Няма избрана песен</value>
+  </data>
+  <data name="Lyrics_SongTitleFormat" xml:space="preserve">
+    <value>{0} от {1}</value>
+  </data>
+  <data name="Onboarding_Welcome" xml:space="preserve">
+    <value>Нека настроим вашата музикална библиотека, за да започнем.</value>
+  </data>
+  <data name="Onboarding_WaitingForSelection" xml:space="preserve">
+    <value>Очаквам да изберете папка...</value>
+  </data>
+  <data name="Onboarding_BuildingLibrary" xml:space="preserve">
+    <value>Изграждане на вашата библиотека...</value>
+  </data>
+  <data name="Onboarding_Error" xml:space="preserve">
+    <value>Възникна неочаквана грешка. Моля, опитайте отново.</value>
+  </data>
+  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
+    <value>Интелигентен • {0} песен</value>
+  </data>
+  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
+    <value>Интелигентен • {0} песни</value>
+  </data>
+  <data name="Playlist_Count_Singular" xml:space="preserve">
+    <value>{0} песен</value>
+  </data>
+  <data name="Playlist_Count_Plural" xml:space="preserve">
+    <value>{0} песни</value>
+  </data>
+  <data name="Playlist_ErrorLoading" xml:space="preserve">
+    <value>Грешка при зареждане на плейлист</value>
+  </data>
+  <data name="Playlist_Status_Starting" xml:space="preserve">
+    <value>Стартиране на плейлист...</value>
+  </data>
+  <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
+    <value>Няма песни, които да съответстват на правилата на този интелигентен плейлист.</value>
+  </data>
+  <data name="Playlist_Status_ErrorPlayback" xml:space="preserve">
+    <value>Грешка при стартиране на възпроизвеждане за този плейлист.</value>
+  </data>
+  <data name="Playlist_Status_PickingRandom" xml:space="preserve">
+    <value>Избиране на произволен плейлист...</value>
+  </data>
+  <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
+    <value>Не са намерени плейлисти.</value>
+  </data>
+  <data name="Playlist_Status_SmartSelectedEmpty" xml:space="preserve">
+    <value>Избраният интелигентен плейлист е празен.</value>
+  </data>
+  <data name="Playlist_Status_ErrorRandom" xml:space="preserve">
+    <value>Грешка при възпроизвеждане на произволен плейлист.</value>
+  </data>
+  <data name="Playlist_Status_Loading" xml:space="preserve">
+    <value>Зареждане на плейлисти...</value>
+  </data>
+  <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
+    <value>Грешка при зареждане на плейлисти.</value>
+  </data>
+  <data name="Playlist_Status_Creating" xml:space="preserve">
+    <value>Създаване на нов плейлист...</value>
+  </data>
+  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
+    <value>Неуспешно създаване на плейлист. Може вече да съществува.</value>
+  </data>
+  <data name="Playlist_Status_CreateError" xml:space="preserve">
+    <value>Възникна грешка при създаване на плейлиста.</value>
+  </data>
+  <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
+    <value>Актуализиране на обложка на плейлист...</value>
+  </data>
+  <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
+    <value>Неуспешно актуализиране на обложка на плейлист.</value>
+  </data>
+  <data name="Playlist_Status_UpdateCoverError" xml:space="preserve">
+    <value>Възникна грешка при актуализиране на обложката на плейлиста.</value>
+  </data>
+  <data name="Playlist_Status_RemovingCover" xml:space="preserve">
+    <value>Премахване на изображение на плейлист...</value>
+  </data>
+  <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
+    <value>Неуспешно премахване на изображение на плейлист.</value>
+  </data>
+  <data name="Playlist_Status_RemoveCoverError" xml:space="preserve">
+    <value>Възникна грешка при премахване на изображението на плейлиста.</value>
+  </data>
+  <data name="Playlist_Status_Renaming" xml:space="preserve">
+    <value>Преименуване на плейлист...</value>
+  </data>
+  <data name="Playlist_Status_RenameFailed" xml:space="preserve">
+    <value>Неуспешно преименуване на плейлист.</value>
+  </data>
+  <data name="Playlist_Status_RenameError" xml:space="preserve">
+    <value>Възникна грешка при преименуване на плейлиста.</value>
+  </data>
+  <data name="Playlist_Status_Deleting" xml:space="preserve">
+    <value>Изтриване на плейлист...</value>
+  </data>
+  <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
+    <value>Неуспешно изтриване на плейлист.</value>
+  </data>
+  <data name="Playlist_Status_DeleteError" xml:space="preserve">
+    <value>Възникна грешка при изтриване на плейлиста.</value>
+  </data>
+  <data name="Settings_Reset_Title" xml:space="preserve">
+    <value>Потвърди нулиране</value>
+  </data>
+  <data name="Settings_Reset_Message" xml:space="preserve">
+    <value>Сигурни ли сте, че искате да нулирате всички данни и настройки на приложението? Това действие не може да бъде отменено. Приложението ще се върне към първоначалната настройка.</value>
+  </data>
+  <data name="Settings_Reset_Button" xml:space="preserve">
+    <value>Нулиране</value>
+  </data>
+  <data name="Settings_ResetError_Title" xml:space="preserve">
+    <value>Грешка при нулиране</value>
+  </data>
+  <data name="Settings_ResetError_Message" xml:space="preserve">
+    <value>Възникна грешка при нулиране на данните на приложението: {0}. Моля, опитайте да рестартирате приложението ръчно.</value>
+  </data>
+  <data name="Settings_LastFm_AuthError_Title" xml:space="preserve">
+    <value>Грешка</value>
+  </data>
+  <data name="Settings_LastFm_AuthError_Message" xml:space="preserve">
+    <value>Не може да се свърже с Last.fm. Моля, опитайте отново по-късно.</value>
+  </data>
+  <data name="Settings_LastFm_FinalizeError_Title" xml:space="preserve">
+    <value>Неуспешна автентикация</value>
+  </data>
+  <data name="Settings_LastFm_FinalizeError_Message" xml:space="preserve">
+    <value>Не можа да се получи сесия от Last.fm. Моля, опитайте да се свържете отново.</value>
+  </data>
+  <data name="Settings_LastFm_Disconnect_Title" xml:space="preserve">
+    <value>Изключване от Last.fm</value>
+  </data>
+  <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
+    <value>Сигурни ли сте, че искате да изключите акаунта си в Last.fm? Вашата история на scrobbling ще бъде запазена в Last.fm, но Nagi вече няма да може да scrobble.</value>
+  </data>
+  <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
+    <value>Изключване</value>
+  </data>
+  <data name="Settings_Export_Success_Title" xml:space="preserve">
+    <value>Успешен експорт</value>
+  </data>
+  <data name="Settings_Export_Success_Message" xml:space="preserve">
+    <value>Експортирани {0} плейлиста ({1} общо песни) до:\n{2}</value>
+  </data>
+  <data name="Settings_Export_Failed_Title" xml:space="preserve">
+    <value>Неуспешен експорт</value>
+  </data>
+  <data name="Settings_Import_Success_Title" xml:space="preserve">
+    <value>Успешен импорт</value>
+  </data>
+  <data name="Settings_Import_Success_Message" xml:space="preserve">
+    <value>Успешно импортирани {0} плейлиста ({1} песни).</value>
+  </data>
+  <data name="Settings_Import_Unmatched_Message" xml:space="preserve">
+    <value>\n\n{0} песни не можаха да бъдат намерени във вашата библиотека.</value>
+  </data>
+  <data name="Settings_Import_FailedFiles_Message" xml:space="preserve">
+    <value>\n\n{0} файла не успяха да бъдат импортирани.</value>
+  </data>
+  <data name="Settings_Import_FailedTotal_Title" xml:space="preserve">
+    <value>Неуспешен импорт</value>
+  </data>
+  <data name="Settings_Import_FailedTotal_Message" xml:space="preserve">
+    <value>Не можаха да бъдат импортирани плейлисти.</value>
+  </data>
+  <data name="SmartPlaylist_ErrorLoading" xml:space="preserve">
+    <value>Грешка при зареждане на интелигентен плейлист</value>
+  </data>
+  <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
+    <value>Няма дефинирани правила • Всички песни съответстват</value>
+  </data>
+  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
+    <value>Съвпадат {0} от {1} {2}</value>
+  </data>
+  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
+    <value>всички</value>
+  </data>
+  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
+    <value>всяко</value>
+  </data>
+  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
+    <value>правило</value>
+  </data>
+  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
+    <value>правила</value>
+  </data>
+  <data name="SongList_PageTitle_Default" xml:space="preserve">
+    <value>Песни</value>
+  </data>
+  <data name="SongList_TotalItems_Default" xml:space="preserve">
+    <value>0 елемента</value>
+  </data>
+  <data name="SongList_ErrorLoading" xml:space="preserve">
+    <value>Грешка при зареждане на елементи</value>
+  </data>
+  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
+    <value>{0} елемент</value>
+  </data>
+  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
+    <value>{0} елемента</value>
+  </data>
+  <data name="SongList_SelectedCount_Format" xml:space="preserve">
+    <value>{0} избрани</value>
+  </data>
+  <data name="AlbumView_DiscHeader" xml:space="preserve">
+    <value>Диск {0}</value>
+  </data>
+  <data name="Generic_OK" xml:space="preserve">
+    <value>ОК</value>
+  </data>
+  <data name="Generic_Cancel" xml:space="preserve">
+    <value>Отказ</value>
+  </data>
+  <data name="Generic_Close" xml:space="preserve">
+    <value>Затвори</value>
+  </data>
+  <data name="Generic_Recheck" xml:space="preserve">
+    <value>Провери отново</value>
+  </data>
+  <data name="CrashReport_Button_Reset" xml:space="preserve">
+    <value>Нулирай приложението и данните</value>
+  </data>
+  <data name="FFmpeg_Status_NotDetected" xml:space="preserve">
+    <value>FFmpeg не е открит. Моля, инсталирайте FFmpeg и щракнете "Провери отново".</value>
+  </data>
+  <data name="FFmpeg_Status_Checking" xml:space="preserve">
+    <value>Проверка за FFmpeg...</value>
+  </data>
+  <data name="FFmpeg_Status_Detected" xml:space="preserve">
+    <value>FFmpeg открит!</value>
+  </data>
+  <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
+    <value>FFmpeg все още не е открит. Моля, инсталирайте FFmpeg и щракнете "Провери отново".</value>
+  </data>
+  <data name="FFmpeg_Status_Error" xml:space="preserve">
+    <value>Грешка при проверка за FFmpeg. Моля, опитайте отново.</value>
+  </data>
+  <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
+    <value>Предишна</value>
+  </data>
+  <data name="Taskbar_Tooltip_Play" xml:space="preserve">
+    <value>Пусни</value>
+  </data>
+  <data name="Taskbar_Tooltip_Pause" xml:space="preserve">
+    <value>Пауза</value>
+  </data>
+  <data name="Taskbar_Tooltip_Next" xml:space="preserve">
+    <value>Следваща</value>
+  </data>
+  <data name="Update_Available_Title" xml:space="preserve">
+    <value>Налична актуализация</value>
+  </data>
+  <data name="Update_Available_Message" xml:space="preserve">
+    <value>Налична е нова версия ({0}). Желаете ли да я изтеглите и инсталирате сега?</value>
+  </data>
+  <data name="Update_Button_InstallNow" xml:space="preserve">
+    <value>Инсталирай сега</value>
+  </data>
+  <data name="Update_Button_Later" xml:space="preserve">
+    <value>По-късно</value>
+  </data>
+  <data name="Update_Button_Skip" xml:space="preserve">
+    <value>Пропусни тази версия</value>
+  </data>
+  <data name="Update_UpToDate_Title" xml:space="preserve">
+    <value>Актуален</value>
+  </data>
+  <data name="Update_UpToDate_Message" xml:space="preserve">
+    <value>Използвате най-новата версия на Nagi.</value>
+  </data>
+  <data name="Update_Error_Title" xml:space="preserve">
+    <value>Грешка при актуализация</value>
+  </data>
+  <data name="Update_Check_Error_Message" xml:space="preserve">
+    <value>Възникна грешка при проверка за актуализации: {0}</value>
+  </data>
+  <data name="Update_Install_Error_Message" xml:space="preserve">
+    <value>Възникна грешка при инсталиране на актуализацията: {0}</value>
+  </data>
+  <data name="Update_Downloading_Title" xml:space="preserve">
+    <value>Изтегляне на актуализация</value>
+  </data>
+  <data name="Update_Downloading_Message" xml:space="preserve">
+    <value>Версия {0} се изтегля. Приложението ще се рестартира автоматично, когато е готово.</value>
+  </data>
+  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
+    <value>LibVLC срещна неуточнена грешка.</value>
+  </data>
+  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
+    <value>Грешка на LibVLC: {0}</value>
+  </data>
+  <data name="Player_Error_LoadFailed" xml:space="preserve">
+    <value>Неуспешно зареждане на '{0}'.</value>
+  </data>
+  <data name="Settings_Nav_Library" xml:space="preserve">
+    <value>Библиотека</value>
+  </data>
+  <data name="Settings_Nav_Folders" xml:space="preserve">
+    <value>Папки</value>
+  </data>
+  <data name="Settings_Nav_Playlists" xml:space="preserve">
+    <value>Плейлисти</value>
+  </data>
+  <data name="Settings_Nav_Artists" xml:space="preserve">
+    <value>Изпълнители</value>
+  </data>
+  <data name="Settings_Nav_Albums" xml:space="preserve">
+    <value>Албуми</value>
+  </data>
+  <data name="Settings_Nav_Genres" xml:space="preserve">
+    <value>Жанрове</value>
+  </data>
+  <data name="Settings_Button_Shuffle" xml:space="preserve">
+    <value>Разбъркване</value>
+  </data>
+  <data name="Settings_Button_Previous" xml:space="preserve">
+    <value>Предишна</value>
+  </data>
+  <data name="Settings_Button_PlayPause" xml:space="preserve">
+    <value>Пусни/Пауза</value>
+  </data>
+  <data name="Settings_Button_Next" xml:space="preserve">
+    <value>Следваща</value>
+  </data>
+  <data name="Settings_Button_Repeat" xml:space="preserve">
+    <value>Повтаряне</value>
+  </data>
+  <data name="Settings_Button_Divider" xml:space="preserve">
+    <value>Разделител на оформлението</value>
+  </data>
+  <data name="Settings_Button_Lyrics" xml:space="preserve">
+    <value>Текстове</value>
+  </data>
+  <data name="Settings_Button_Queue" xml:space="preserve">
+    <value>Опашка</value>
+  </data>
+  <data name="Settings_Button_Volume" xml:space="preserve">
+    <value>Сила на звука</value>
+  </data>
+  <data name="Settings_Provider_LRCLIB_Desc" xml:space="preserve">
+    <value>База данни с текстове на песни, подбрани от общността</value>
+  </data>
+  <data name="Settings_Provider_NetEase_Desc" xml:space="preserve">
+    <value>Китайска музикална услуга, чудесна за азиатска музика</value>
+  </data>
+  <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
+    <value>Извлича ID на изпълнители (необходимо за TheAudioDB и Fanart.tv)</value>
+  </data>
+  <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
+    <value>Висококачествени изображения и биографии на изпълнители (изисква MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
+    <value>Само висококачествени изображения на изпълнители (изисква MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_Spotify_Desc" xml:space="preserve">
+    <value>Само изображения на изпълнители</value>
+  </data>
+  <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
+    <value>Биографии и изображения на изпълнители (резервен вариант)</value>
+  </data>
+  <data name="App_Name_Default" xml:space="preserve">
+    <value>Nagi</value>
+  </data>
+  <data name="App_Version_Unknown" xml:space="preserve">
+    <value>Н/Д</value>
+  </data>
+  <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>Затвори търсенето</value>
+  </data>
+  <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>Търсене в албуми</value>
+  </data>
+  <data name="AlbumViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>Затвори търсенето</value>
+  </data>
+  <data name="AlbumViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>Търсене в албума</value>
+  </data>
+  <data name="AlbumViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>Няма налични плейлисти</value>
+  </data>
+  <data name="ArtistPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>Затвори търсенето</value>
+  </data>
+  <data name="ArtistPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>Търсене в изпълнители</value>
+  </data>
+  <data name="ArtistViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>Затвори търсенето</value>
+  </data>
+  <data name="ArtistViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>Търсене в изпълнител</value>
+  </data>
+  <data name="ArtistViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>Няма налични плейлисти</value>
+  </data>
+  <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
+    <value>Изтрий папка</value>
+  </data>
+  <data name="FolderPage_DeleteDialog_Format" xml:space="preserve">
+    <value>Сигурни ли сте, че искате да премахнете папката '{0}' от библиотеката? Това няма да изтрие файловете от компютъра ви.</value>
+  </data>
+  <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
+    <value>Изтрий</value>
+  </data>
+  <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
+    <value>Отказ</value>
+  </data>
+  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
+    <value>Неизвестна папка</value>
+  </data>
+  <data name="FolderSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>Затвори търсенето</value>
+  </data>
+  <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>Търсене в папка</value>
+  </data>
+  <data name="FolderSongViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>Няма налични плейлисти</value>
+  </data>
+  <data name="GenrePage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>Затвори търсенето</value>
+  </data>
+  <data name="GenrePage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>Търсене в жанрове</value>
+  </data>
+  <data name="LibraryPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>Затвори търсенето</value>
+  </data>
+  <data name="LibraryPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>Търсене в библиотека</value>
+  </data>
+  <data name="LibraryPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>Няма налични плейлисти</value>
+  </data>
+  <data name="PlaylistPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>Затвори търсенето</value>
+  </data>
+  <data name="PlaylistPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>Търсене в плейлисти</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_Placeholder" xml:space="preserve">
+    <value>Въведете ново име на плейлист</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_PickImage" xml:space="preserve">
+    <value>Избери изображение</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_Title" xml:space="preserve">
+    <value>Създай нов плейлист</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_CreateButton" xml:space="preserve">
+    <value>Създай</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_CancelButton" xml:space="preserve">
+    <value>Отказ</value>
+  </data>
+  <data name="PlaylistPage_RenameDialog_Title_Format" xml:space="preserve">
+    <value>Преименувай '{0}'</value>
+  </data>
+  <data name="PlaylistPage_RenameDialog_RenameButton" xml:space="preserve">
+    <value>Преименувай</value>
+  </data>
+  <data name="PlaylistPage_DeleteDialog_Title" xml:space="preserve">
+    <value>Изтрий плейлист</value>
+  </data>
+  <data name="PlaylistPage_DeleteDialog_Content_Format" xml:space="preserve">
+    <value>Сигурни ли сте, че искате да изтриете плейлиста '{0}'? Това действие не може да бъде отменено.</value>
+  </data>
+  <data name="PlaylistPage_DeleteDialog_DeleteButton" xml:space="preserve">
+    <value>Изтрий</value>
+  </data>
+  <data name="PlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>Затвори търсенето</value>
+  </data>
+  <data name="PlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>Търсене в плейлист</value>
+  </data>
+  <data name="GenreViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>Затвори търсенето</value>
+  </data>
+  <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>Търсене в библиотека</value>
+  </data>
+  <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>Няма налични плейлисти</value>
+  </data>
+  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
+    <value>Неизвестен плейлист</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>Затвори търсенето</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>Търсене в интелигентен плейлист</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
+    <value>Неизвестен интелигентен плейлист</value>
+  </data>
+  <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
+    <value>Повторно сканиране на метаданни</value>
+  </data>
+  <data name="Settings_Dialog_Rescan_Content" xml:space="preserve">
+    <value>Това ще сканира отново всички песни във вашата библиотека, за да приложи нови настройки за метаданни (като разделители на изпълнители). Това може да отнеме известно време в зависимост от размера на библиотеката. Искате ли да продължите?</value>
+  </data>
+  <data name="Settings_Dialog_Rescan_PrimaryButton" xml:space="preserve">
+    <value>Повторно сканиране</value>
+  </data>
+  <data name="Settings_Status_Rescan_Preparing" xml:space="preserve">
+    <value>Подготовка за повторно сканиране на библиотеката...</value>
+  </data>
+  <data name="Settings_Dialog_RescanComplete_Title" xml:space="preserve">
+    <value>Повторно сканиране завършено</value>
+  </data>
+  <data name="Settings_Dialog_RescanComplete_Content" xml:space="preserve">
+    <value>Метаданните на библиотеката са актуализирани.</value>
+  </data>
+  <data name="Settings_Dialog_RescanFailed_Title" xml:space="preserve">
+    <value>Повторното сканиране е неуспешно</value>
+  </data>
+  <data name="Settings_Dialog_RescanFailed_Content" xml:space="preserve">
+    <value>Възникна грешка по време на сканиране. Проверете дневниците за подробности.</value>
+  </data>
+  <data name="Settings_Dialog_FFmpegNotFound_Title" xml:space="preserve">
+    <value>FFmpeg не е намерен</value>
+  </data>
+  <data name="Settings_Dialog_VolumeNorm_Title" xml:space="preserve">
+    <value>Активирай нормализиране на звука</value>
+  </data>
+  <data name="Settings_Dialog_VolumeNorm_Content" xml:space="preserve">
+    <value>Нормализирането на звука (ReplayGain) осигурява постоянно ниво на звука във цялата ви музика.\n\nТова ще анализира вашата музикална библиотека и директно ще промени вашите аудио файлове, като запише ReplayGain тагове. Ще бъдат обработени само файлове без съществуващи тагове. Това може да отнеме известно време в зависимост от размера на вашата библиотека.\n\nИскате ли да продължите?</value>
+  </data>
+  <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
+    <value>Активирай и сканирай</value>
+  </data>
+  <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
+    <value>Подготовка за сканиране за нормализиране на звука...</value>
+  </data>
+  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
+    <value>Сканирането за нормализиране на звука е отменено.</value>
+  </data>
+  <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
+    <value>Грешка по време на сканиране: {0}</value>
+  </data>
+  <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
+    <value>Не можаха да се извлекат дневници от паметта. Опитът за резервно четене на файла с дневници беше неуспешен.\nОчакван път: '{0}'\nГрешка: {1}</value>
+  </data>
+  <data name="Settings_Export_Failed_Message" xml:space="preserve">
+    <value>Няма плейлисти за експорт.</value>
+  </data>
+</root>

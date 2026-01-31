@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Noun Labels -->
+  <data name="Label_Artist" xml:space="preserve">
+    <value>Artist</value>
+  </data>
+  <data name="Label_Album" xml:space="preserve">
+    <value>Album</value>
+  </data>
+  <data name="Label_Genre" xml:space="preserve">
+    <value>Zhanër</value>
+  </data>
+  <data name="Label_Title" xml:space="preserve">
+    <value>Titull</value>
+  </data>
+  <data name="Label_Playlist" xml:space="preserve">
+    <value>Listë luajtjeje</value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>Skedar</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>Vit</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Data e shtimit</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Data e krijimit</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Data e modifikimit</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Luajtur së fundi</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Kohëzgjatja</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Numri i këngës</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Numri i luajtjeve</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Këngë</value>
+  </data>
+  <data name="Label_Song" xml:space="preserve">
+    <value>Këngë</value>
+  </data>
+  <data name="Label_Folder" xml:space="preserve">
+    <value>Dosje</value>
+  </data>
+  <data name="Label_Folders" xml:space="preserve">
+    <value>Dosje</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Renditje manuale</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Rastësor</value>
+  </data>
+  <!-- Format Patterns -->
+  <data name="Format_Unknown" xml:space="preserve">
+    <value>E panjohur {0}</value>
+  </data>
+  <data name="Format_New" xml:space="preserve">
+    <value>E re {0}</value>
+  </data>
+  <data name="Format_NotFound" xml:space="preserve">
+    <value>{0} nuk u gjet.</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A në Z)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Z në A)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (Më e reja)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (Më e vjetra)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (Rritëse)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (Zbritëse)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>Më e shkurtra fillimisht</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>Më e gjata fillimisht</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>Më e ngadalta fillimisht ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>Më e shpejta fillimisht ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>Më e shumta {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>Më e pakta {0}</value>
+  </data>
+  <data name="Format_ScanFolderProgress" xml:space="preserve">
+    <value>Po skanohet dosja {0} nga {1}: {2} - {3}</value>
+  </data>
+  <data name="Format_ScanCompleteResult" xml:space="preserve">
+    <value>Skanimi u përfundua. U shtuan ose u përditësuan {0} {1}.</value>
+  </data>
+  <data name="Format_SavingBatch" xml:space="preserve">
+    <value>Po ruhet grupi {0}...</value>
+  </data>
+  <!-- Status & Success Messages -->
+  <data name="Status_ScanningFolder" xml:space="preserve">
+    <value>Po skanohet dosja...</value>
+  </data>
+  <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
+    <value>Skanimi u përfundua. Biblioteka është e përditësuar.</value>
+  </data>
+  <data name="Status_ScanCancelled" xml:space="preserve">
+    <value>Skanimi u anulua.</value>
+  </data>
+  <data name="Status_ScanFailed" xml:space="preserve">
+    <value>Skanimi dështoi. Kontrolloni regjistrat për detaje.</value>
+  </data>
+  <data name="Status_PreparingScanCaches" xml:space="preserve">
+    <value>Po përgatiten memot e shpejta të skanimit...</value>
+  </data>
+  <data name="Status_ReadingSongDetails" xml:space="preserve">
+    <value>Po lexohen detajet e këngës...</value>
+  </data>
+  <data name="Status_CleaningUpLibrary" xml:space="preserve">
+    <value>Po pastrohet biblioteka juaj...</value>
+  </data>
+  <data name="Status_Finalizing" xml:space="preserve">
+    <value>Po finalizohet...</value>
+  </data>
+  <data name="Status_NormalizationFailed" xml:space="preserve">
+    <value>Normalizimi i volumit dështoi. Kontrolloni regjistrat për detaje.</value>
+  </data>
+  <data name="Status_NoFoldersToRefresh" xml:space="preserve">
+    <value>Nuk ka dosje në bibliotekë për t'u rifreskuar.</value>
+  </data>
+  <data name="Status_LibraryRefreshComplete" xml:space="preserve">
+    <value>Rifreskimi i bibliotekës u përfundua.</value>
+  </data>
+  <!-- Error Mssages -->
+  <data name="Error_FailedToAddFolder" xml:space="preserve">
+    <value>Dështoi shtimi i dosjes.</value>
+  </data>
+  <data name="Error_PlaylistNameEmpty" xml:space="preserve">
+    <value>Emri i listës së luajtjes nuk mund të jetë bosh.</value>
+  </data>
+  <data name="Error_RatingRange" xml:space="preserve">
+    <value>Vlerësimi duhet të jetë ndërmjet 1 dhe 5.</value>
+  </data>
+  <!-- Labels -->
+  <data name="Label_WithLyrics" xml:space="preserve">
+    <value>me tekst</value>
+  </data>
+  <data name="Label_WithCoverArt" xml:space="preserve">
+    <value>me kopertinë</value>
+  </data>
+  <data name="Label_And" xml:space="preserve">
+    <value>dhe</value>
+  </data>
+  <!-- Static Strings -->
+  <data name="UnknownFilename" xml:space="preserve">
+    <value>i panjohur</value>
+  </data>
+  <data name="ArtistSeparator" xml:space="preserve">
+    <value> &amp; </value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Rendit sipas: </value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>FFmpeg kërkohet për Normalizimin e Vëllimit me Precizion të Lartë (analizë ReplayGain) por nuk u gjet në sistemin tuaj.\n\nNdiqni këto hapa për ta konfiguruar:\n\n1. **Shkarkoni**: Vizitoni https://www.gyan.dev/ffmpeg/builds/ dhe shkarkoni 'ffmpeg-git-full.7z' (ose të ngjashme) ndërtimin thelbësor.\n2. **Udhëzues**: Mund të ndiqni këtë udhëzues për udhëzime të detajuara: https://phoenixnap.com/kb/ffmpeg-windows\n3. **Ekstraktimi**: Hapni dosjen e arkitekturës dhe gjeni direktorinë 'bin' që përmban `ffmpeg.exe`.\n4. **Instalimi**: Kopjoni `ffmpeg.exe` në një dosje të përhershme (p.sh., `C:\\ffmpeg\\`) dhe **shtoni atë dosje në ndryshoren e ambientit System PATH**.\n5. **Rifilloni**: Ju lutemi, rifilloni Nagi-n pas instalimit që ndryshimet të hyjnë në fuqi.</value>
+  </data>
+  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
+    <value>Asnjë këngë nga lista e luajtjes nuk u gjet në bibliotekën tuaj.</value>
+  </data>
+  <data name="Error_NoPlaylistsToExport" xml:space="preserve">
+    <value>Nuk ka lista luajtjeje për t'u eksportuar.</value>
+  </data>
+  <data name="EqPreset_None" xml:space="preserve">
+    <value>Asnjë</value>
+  </data>
+  <data name="EqPreset_Classical" xml:space="preserve">
+    <value>Klasike</value>
+  </data>
+  <data name="EqPreset_Dance" xml:space="preserve">
+    <value>Dance</value>
+  </data>
+  <data name="EqPreset_FullBass" xml:space="preserve">
+    <value>Bas i plotë</value>
+  </data>
+  <data name="EqPreset_FullTreble" xml:space="preserve">
+    <value>Treble i plotë</value>
+  </data>
+  <data name="EqPreset_Jazz" xml:space="preserve">
+    <value>Jazz</value>
+  </data>
+  <data name="EqPreset_Pop" xml:space="preserve">
+    <value>Pop</value>
+  </data>
+  <data name="EqPreset_Rock" xml:space="preserve">
+    <value>Rock</value>
+  </data>
+  <data name="EqPreset_Soft" xml:space="preserve">
+    <value>E butë</value>
+  </data>
+  <data name="EqPreset_Techno" xml:space="preserve">
+    <value>Tekno</value>
+  </data>
+  <data name="EqPreset_Vocal" xml:space="preserve">
+    <value>Vokal</value>
+  </data>
+  <data name="ReplayGain_AllSongsScanned" xml:space="preserve">
+    <value>Të gjitha këngët tashmë kanë të dhëna volumi.</value>
+  </data>
+  <data name="ReplayGain_CalculatingCount" xml:space="preserve">
+    <value>Po llogaritet volumi për {0} këngë...</value>
+  </data>
+  <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
+    <value>Po llogaritet normalizimi i volumit ({0}/{1})...</value>
+  </data>
+  <data name="ReplayGain_Complete" xml:space="preserve">
+    <value>Normalizimi i volumit u përfundua. U përpunuan {0} këngë.</value>
+  </data>
+</root>
