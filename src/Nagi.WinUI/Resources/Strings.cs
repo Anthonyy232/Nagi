@@ -9,7 +9,7 @@ namespace Nagi.WinUI.Resources;
 /// </summary>
 public static class Strings
 {
-    private static readonly ResourceManager _resourceManager =
+    public static readonly ResourceManager ResourceManager =
         new("Nagi.WinUI.Resources.Strings", typeof(Strings).Assembly);
 
     /// <summary>
@@ -17,7 +17,7 @@ public static class Strings
     /// </summary>
     public static string GetString(string name)
     {
-        return _resourceManager.GetString(name, CultureInfo.CurrentUICulture) ?? name;
+        return ResourceManager.GetString(name, CultureInfo.CurrentUICulture) ?? name;
     }
 
     // Navigation View Items
@@ -402,4 +402,5 @@ public static class Strings
 
     // App
     public static string App_CrashReport_LogFallbackError_Format => GetString("App_CrashReport_LogFallbackError_Format");
+    public static string Language_Auto => GetString("Language_Auto");
 }
