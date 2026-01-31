@@ -59,875 +59,864 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="NavItem_Library" xml:space="preserve">
-    <value>المكتبة</value>
+    <value>Библиотека</value>
   </data>
   <data name="NavItem_Albums" xml:space="preserve">
-    <value>الألبومات</value>
+    <value>Албуми</value>
   </data>
   <data name="NavItem_Artists" xml:space="preserve">
-    <value>الفنانون</value>
+    <value>Извођачи</value>
   </data>
   <data name="NavItem_Genres" xml:space="preserve">
-    <value>الأنواع</value>
+    <value>Жанрови</value>
   </data>
   <data name="NavItem_Playlists" xml:space="preserve">
-    <value>قوائم التشغيل</value>
+    <value>Плејлисте</value>
   </data>
   <data name="NavItem_Folders" xml:space="preserve">
-    <value>المجلدات</value>
+    <value>Фасцикле</value>
   </data>
   <data name="NavItem_Settings" xml:space="preserve">
-    <value>الإعدادات</value>
+    <value>Подешавања</value>
   </data>
   <data name="Status_NoTrackPlaying" xml:space="preserve">
-    <value>لا توجد أغنية قيد التشغيل</value>
+    <value>Нема нумере која се репродукује</value>
   </data>
   <data name="Tooltip_Play" xml:space="preserve">
-    <value>تشغيل</value>
+    <value>Пусти</value>
   </data>
   <data name="Tooltip_Pause" xml:space="preserve">
-    <value>إيقاف مؤقت</value>
+    <value>Паузирај</value>
   </data>
   <data name="Tooltip_ShuffleOn" xml:space="preserve">
-    <value>خلط عشوائي تشغيل</value>
+    <value>Насумична репродукција укључена</value>
   </data>
   <data name="Tooltip_ShuffleOff" xml:space="preserve">
-    <value>خلط عشوائي إيقاف</value>
+    <value>Насумична репродукција искључена</value>
   </data>
   <data name="Tooltip_RepeatOff" xml:space="preserve">
-    <value>إعادة إيقاف</value>
+    <value>Понављање искључено</value>
   </data>
   <data name="Tooltip_RepeatAll" xml:space="preserve">
-    <value>إعادة الكل</value>
+    <value>Понављај све</value>
   </data>
   <data name="Tooltip_RepeatOne" xml:space="preserve">
-    <value>إعادة واحدة</value>
+    <value>Понављај једну</value>
   </data>
   <data name="Tooltip_Repeat" xml:space="preserve">
-    <value>إعادة</value>
+    <value>Понављај</value>
   </data>
   <data name="Tooltip_Unmute" xml:space="preserve">
-    <value>إلغاء كتم الصوت</value>
+    <value>Укључи звук</value>
   </data>
   <data name="Tooltip_Mute" xml:space="preserve">
-    <value>كتم الصوت</value>
+    <value>Искључи звук</value>
   </data>
   <data name="Theme_Light" xml:space="preserve">
-    <value>فاتح</value>
+    <value>Светла</value>
   </data>
   <data name="Theme_Dark" xml:space="preserve">
-    <value>داكن</value>
+    <value>Тамна</value>
   </data>
   <data name="Theme_Default" xml:space="preserve">
-    <value>استخدام إعدادات النظام</value>
+    <value>Користи подешавање система</value>
   </data>
   <data name="Backdrop_Mica" xml:space="preserve">
-    <value>ميكا</value>
+    <value>Мика</value>
   </data>
   <data name="Backdrop_MicaAlt" xml:space="preserve">
-    <value>ميكا بديل</value>
+    <value>Мика Алт</value>
   </data>
   <data name="Backdrop_Acrylic" xml:space="preserve">
-    <value>أكريليك</value>
+    <value>Акрил</value>
   </data>
   <data name="Label_Composer" xml:space="preserve">
-    <value>الملحن</value>
+    <value>Композитор</value>
   </data>
   <data name="Label_Comment" xml:space="preserve">
-    <value>تعليق</value>
+    <value>Коментар</value>
   </data>
   <data name="Label_Rating" xml:space="preserve">
-    <value>التقييم</value>
+    <value>Оцена</value>
   </data>
   <data name="Operator_Contains" xml:space="preserve">
-    <value>يحتوي على</value>
+    <value>Садржи</value>
   </data>
   <data name="Operator_DoesNotContain" xml:space="preserve">
-    <value>لا يحتوي على</value>
+    <value>Не садржи</value>
   </data>
   <data name="Operator_Is" xml:space="preserve">
-    <value>هو بالضبط</value>
+    <value>Је тачно</value>
   </data>
   <data name="Operator_IsNot" xml:space="preserve">
-    <value>ليس</value>
+    <value>Није</value>
   </data>
   <data name="Operator_StartsWith" xml:space="preserve">
-    <value>يبدأ بـ</value>
+    <value>Почиње са</value>
   </data>
   <data name="Operator_EndsWith" xml:space="preserve">
-    <value>ينتهي بـ</value>
+    <value>Завршава се са</value>
   </data>
   <data name="Operator_Equals" xml:space="preserve">
-    <value>يساوي</value>
+    <value>Је једнако са</value>
   </data>
   <data name="Operator_NotEquals" xml:space="preserve">
-    <value>لا يساوي</value>
+    <value>Није једнако са</value>
   </data>
   <data name="Operator_GreaterThan" xml:space="preserve">
-    <value>أكبر من</value>
+    <value>Је веће од</value>
   </data>
   <data name="Operator_LessThan" xml:space="preserve">
-    <value>أقل من</value>
+    <value>Је мање од</value>
   </data>
   <data name="Operator_GreaterThanOrEqual" xml:space="preserve">
-    <value>على الأقل</value>
+    <value>Је најмање</value>
   </data>
   <data name="Operator_LessThanOrEqual" xml:space="preserve">
-    <value>على الأكثر</value>
+    <value>Је највише</value>
   </data>
   <data name="Operator_IsInTheLast" xml:space="preserve">
-    <value>في آخر (أيام)</value>
+    <value>Је у последњих (дана)</value>
   </data>
   <data name="Operator_IsNotInTheLast" xml:space="preserve">
-    <value>ليس في آخر (أيام)</value>
+    <value>Није у последњих (дана)</value>
   </data>
   <data name="Operator_IsTrue" xml:space="preserve">
-    <value>صحيح</value>
+    <value>Је тачно</value>
   </data>
   <data name="Operator_IsFalse" xml:space="preserve">
-    <value>خطأ</value>
+    <value>Је нетачно</value>
   </data>
   <data name="SmartPlaylist_Title_New" xml:space="preserve">
-    <value>قائمة تشغيل ذكية جديدة</value>
+    <value>Нова паметна плејлиста</value>
   </data>
   <data name="SmartPlaylist_Title_EditFormat" xml:space="preserve">
-    <value>تعديل قائمة التشغيل الذكية - {0}</value>
+    <value>Уреди паметну плејлисту - {0}</value>
   </data>
   <data name="SmartPlaylist_Status_EnterName" xml:space="preserve">
-    <value>أدخل اسم قائمة التشغيل</value>
+    <value>Унесите назив плејлисте</value>
   </data>
   <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
-    <value>{0} أغنية تطابق القواعد الحالية</value>
+    <value>{0} песама одговара тренутним правилима</value>
   </data>
   <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
-    <value>أدخل اسمًا لمشاهدة الأغاني المطابقة</value>
+    <value>Унесите назив да бисте видели одговарајуће песме</value>
   </data>
   <data name="SmartPlaylist_Status_Error" xml:space="preserve">
-    <value>غير قادر على الحساب</value>
+    <value>Није могуће израчунати</value>
   </data>
   <data name="SmartPlaylist_Status_Calculating" xml:space="preserve">
-    <value>جاري الحساب...</value>
+    <value>Израчунавам...</value>
   </data>
   <data name="SmartPlaylist_Error_DuplicateName" xml:space="preserve">
-    <value>قائمة تشغيل بهذا الاسم موجودة بالفعل!</value>
+    <value>Плејлиста са овим називом већ постоји!</value>
   </data>
   <data name="SmartPlaylist_Error_NameEmptyFeedback" xml:space="preserve">
-    <value>الرجاء إدخال اسم!</value>
+    <value>Молимо унесите назив!</value>
   </data>
   <data name="Status_Loading" xml:space="preserve">
-    <value>جاري التحميل...</value>
+    <value>Учитавам...</value>
   </data>
   <data name="Error_FailedToLoadArtists" xml:space="preserve">
-    <value>فشل تحميل الفنانين</value>
+    <value>Није успело учитавање извођача</value>
   </data>
   <data name="CrashReport_Title" xml:space="preserve">
-    <value>خطأ فادح</value>
+    <value>Критична грешка</value>
   </data>
   <data name="CrashReport_Message" xml:space="preserve">
-    <value>واجه Nagi خطأً فادحًا ويجب إغلاقه. نعتذر عن الإزعاج.</value>
+    <value>Наги је наишао на критичну грешку и мора да се затвори. Жао нам је због непријатности.</value>
   </data>
   <data name="ElevationWarning_Title" xml:space="preserve">
-    <value>التشغيل كمسؤول</value>
+    <value>Покренут као администратор</value>
   </data>
   <data name="ElevationWarning_Message" xml:space="preserve">
-    <value>Nagi يعمل حاليًا كمسؤول. قد يمنع هذا بعض الميزات (مثل إضافة مجلدات الموسيقى) من العمل بشكل صحيح. للحصول على أفضل تجربة، يرجى إعادة تشغيل Nagi بدون امتيازات المسؤول.</value>
+    <value>Наги тренутно ради као администратор. Ово може спречити правилно функционисање неких функција (попут додавања музичких фасцикли).\n\nЗа најбоље искуство, поново покрените Наги без администраторских привилегија.</value>
   </data>
   <data name="ElevationWarning_Restart" xml:space="preserve">
-    <value>إعادة التشغيل بشكل طبيعي</value>
+    <value>Поново покрени нормално</value>
   </data>
   <data name="ElevationWarning_Continue" xml:space="preserve">
-    <value>متابعة على أي حال</value>
+    <value>Настави ипак</value>
   </data>
   <data name="MiniPlayer_Title" xml:space="preserve">
-    <value>Nagi</value>
+    <value>Наги</value>
   </data>
   <data name="App_Title" xml:space="preserve">
-    <value>Nagi</value>
+    <value>Наги</value>
   </data>
   <data name="AlbumView_AlbumNotFound" xml:space="preserve">
-    <value>الألبوم غير موجود</value>
+    <value>Албум није пронађен</value>
   </data>
   <data name="AlbumView_Error" xml:space="preserve">
-    <value>خطأ في تحميل الألبوم</value>
+    <value>Грешка при учитавању албума</value>
   </data>
   <data name="AlbumView_DefaultAlbumTitle" xml:space="preserve">
-    <value>ألبوم</value>
+    <value>Албум</value>
   </data>
   <data name="AlbumView_DefaultArtistName" xml:space="preserve">
-    <value>فنان</value>
+    <value>Извођач</value>
   </data>
   <data name="AlbumView_SongCount_Singular" xml:space="preserve">
-    <value>{0} أغنية</value>
+    <value>{0} песма</value>
   </data>
   <data name="AlbumView_SongCount_Plural" xml:space="preserve">
-    <value>{0} أغاني</value>
+    <value>{0} песама</value>
   </data>
   <data name="ArtistView_ArtistNotFound" xml:space="preserve">
-    <value>الفنان غير موجود</value>
+    <value>Извођач није пронађен</value>
   </data>
   <data name="ArtistView_Error" xml:space="preserve">
-    <value>خطأ في تحميل الفنان</value>
+    <value>Грешка при учитавању извођача</value>
   </data>
   <data name="ArtistView_DefaultArtistName" xml:space="preserve">
-    <value>فنان</value>
+    <value>Извођач</value>
   </data>
   <data name="ArtistView_NoBiography" xml:space="preserve">
-    <value>لا توجد سيرة ذاتية متاحة لهذا الفنان.</value>
+    <value>Биографија за овог извођача није доступна.</value>
   </data>
   <data name="ArtistView_ErrorLoadingDetails" xml:space="preserve">
-    <value>تعذر تحميل تفاصيل الفنان.</value>
+    <value>Није могуће учитати детаље извођача.</value>
   </data>
   <data name="Folders_ErrorLoading" xml:space="preserve">
-    <value>خطأ في تحميل المجلد</value>
+    <value>Грешка при учитавању фасцикле</value>
   </data>
   <data name="Folders_AddFolder_Success" xml:space="preserve">
-    <value>تمت إضافة '{0}' وفحصه بنجاح.</value>
+    <value>Успешно додато и скенирано '{0}'.</value>
   </data>
   <data name="Folders_AddFolder_Failed" xml:space="preserve">
-    <value>فشل في إضافة المجلد. قد يكون المسار غير صالح.</value>
+    <value>Додавање фасцикле није успело. Путања може бити неважећа.</value>
   </data>
   <data name="Folders_AddFolder_Exists" xml:space="preserve">
-    <value>هذا المجلد موجود بالفعل في المكتبة.</value>
+    <value>Ова фасцикла је већ у библиотеци.</value>
   </data>
   <data name="Folders_AddFolder_InProgress" xml:space="preserve">
-    <value>جاري إضافة المجلد إلى المكتبة...</value>
+    <value>Додавање фасцикле у библиотеку...</value>
   </data>
   <data name="Folders_Delete_Success" xml:space="preserve">
-    <value>تم حذف '{0}' بنجاح.</value>
+    <value>Успешно избрисано '{0}'.</value>
   </data>
   <data name="Folders_Delete_Failed" xml:space="preserve">
-    <value>فشل في حذف '{0}'.</value>
+    <value>Брисање '{0}' није успело.</value>
   </data>
   <data name="Folders_Delete_InProgress" xml:space="preserve">
-    <value>جاري حذف '{0}'...</value>
+    <value>Бришем '{0}'...</value>
   </data>
   <data name="Folders_Rescan_Complete" xml:space="preserve">
-    <value>اكتمال إعادة فحص '{0}'.</value>
+    <value>Поновно скенирање '{0}' завршено.</value>
   </data>
   <data name="Folders_Rescan_NoChanges" xml:space="preserve">
-    <value>لم يتم اكتشاف أي تغييرات لـ '{0}'.</value>
+    <value>Нису откривене промене за '{0}'.</value>
   </data>
   <data name="Folders_Rescan_InProgress" xml:space="preserve">
-    <value>جاري إعادة فحص '{0}'...</value>
+    <value>Поново скенирам '{0}'...</value>
   </data>
   <data name="Folders_Empty_NoMusicFound" xml:space="preserve">
-    <value>لم يتم العثور على مجلدات تحتوي على موسيقى.</value>
+    <value>Нису пронађене фасцикле са музиком.</value>
   </data>
   <data name="Folders_Error_Playback" xml:space="preserve">
-    <value>خطأ في بدء التشغيل لهذا المجلد.</value>
+    <value>Грешка при покретању репродукције за ову фасциклу.</value>
   </data>
   <data name="Folders_Error_RandomPlayback" xml:space="preserve">
-    <value>خطأ في بدء تشغيل المجلد العشوائي.</value>
+    <value>Грешка при покретању насумичне репродукције фасцикли.</value>
   </data>
   <data name="Folders_Error_AddFolder" xml:space="preserve">
-    <value>خطأ في إضافة المجلد: {0}</value>
+    <value>Грешка при додавању фасцикле: {0}</value>
   </data>
   <data name="Folders_Error_DeleteFolder" xml:space="preserve">
-    <value>خطأ في حذف المجلد: {0}</value>
+    <value>Грешка при брисању фасцикле: {0}</value>
   </data>
   <data name="Folders_Error_RescanFolder" xml:space="preserve">
-    <value>خطأ في إعادة فحص المجلد: {0}</value>
+    <value>Грешка при поновном скенирању фасцикле: {0}</value>
   </data>
   <data name="Folders_Count_Singular" xml:space="preserve">
-    <value>{0} مجلد</value>
+    <value>{0} фасцикла</value>
   </data>
   <data name="Folders_Count_Plural" xml:space="preserve">
-    <value>{0} مجلدات</value>
+    <value>{0} фасцикле</value>
   </data>
   <data name="Songs_Count_Singular" xml:space="preserve">
-    <value>{0} أغنية</value>
+    <value>{0} песма</value>
   </data>
   <data name="Songs_Count_Plural" xml:space="preserve">
-    <value>{0} أغاني</value>
+    <value>{0} песама</value>
   </data>
   <data name="Albums_Count_Singular" xml:space="preserve">
-    <value>{0} ألبوم</value>
+    <value>{0} албум</value>
   </data>
   <data name="Albums_Count_Plural" xml:space="preserve">
-    <value>{0} ألبومات</value>
+    <value>{0} албума</value>
   </data>
   <data name="Artists_Count_Singular" xml:space="preserve">
-    <value>{0} فنان</value>
+    <value>{0} извођач</value>
   </data>
   <data name="Artists_Count_Plural" xml:space="preserve">
-    <value>{0} فنانين</value>
+    <value>{0} извођача</value>
   </data>
   <data name="Generic_NoItems" xml:space="preserve">
-    <value>لا توجد عناصر</value>
+    <value>Нема ставки</value>
   </data>
   <data name="Generic_Error" xml:space="preserve">
-    <value>خطأ</value>
+    <value>Грешка</value>
   </data>
   <data name="GenreView_DefaultName" xml:space="preserve">
-    <value>نوع</value>
+    <value>Жанр</value>
   </data>
   <data name="GenreView_Error" xml:space="preserve">
-    <value>خطأ في تحميل النوع</value>
+    <value>Грешка при учитавању жанра</value>
   </data>
   <data name="Lyrics_NoSongSelected" xml:space="preserve">
-    <value>لا توجد أغنية مختارة</value>
+    <value>Није изабрана ниједна песма</value>
   </data>
   <data name="Lyrics_SongTitleFormat" xml:space="preserve">
-    <value>{0} بواسطة {1}</value>
+    <value>{0} од {1}</value>
   </data>
   <data name="Onboarding_Welcome" xml:space="preserve">
-    <value>دعنا نُعد مكتبة الموسيقى الخاصة بك للبدء.</value>
+    <value>Хајде да подесимо вашу музичку библиотеку за почетак.</value>
   </data>
   <data name="Onboarding_WaitingForSelection" xml:space="preserve">
-    <value>في انتظارك لاختيار مجلد...</value>
+    <value>Чекам да изаберете фасциклу...</value>
   </data>
   <data name="Onboarding_BuildingLibrary" xml:space="preserve">
-    <value>جاري بناء مكتبتك...</value>
+    <value>Прављење ваше библиотеке...</value>
   </data>
   <data name="Onboarding_Error" xml:space="preserve">
-    <value>حدث خطأ غير متوقع. الرجاء المحاولة مرة أخرى.</value>
+    <value>Дошло је до неочекиване грешке. Молимо покушајте поново.</value>
   </data>
   <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
-    <value>ذكي • {0} أغنية</value>
+    <value>Паметна • {0} песма</value>
   </data>
   <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
-    <value>ذكي • {0} أغاني</value>
+    <value>Паметна • {0} песама</value>
   </data>
   <data name="Playlist_Count_Singular" xml:space="preserve">
-    <value>{0} أغنية</value>
+    <value>{0} песма</value>
   </data>
   <data name="Playlist_Count_Plural" xml:space="preserve">
-    <value>{0} أغاني</value>
+    <value>{0} песама</value>
   </data>
   <data name="Playlist_ErrorLoading" xml:space="preserve">
-    <value>خطأ في تحميل قائمة التشغيل</value>
+    <value>Грешка при учитавању плејлисте</value>
   </data>
   <data name="Playlist_Status_Starting" xml:space="preserve">
-    <value>جاري بدء قائمة التشغيل...</value>
+    <value>Покретање плејлисте...</value>
   </data>
   <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
-    <value>لا توجد أغاني تطابق قواعد قائمة التشغيل الذكية هذه.</value>
+    <value>Ниједна песма не одговара правилима ове паметне плејлисте.</value>
   </data>
   <data name="Playlist_Status_ErrorPlayback" xml:space="preserve">
-    <value>خطأ في بدء التشغيل لقائمة التشغيل هذه.</value>
+    <value>Грешка при покретању репродукције за ову плејлисту.</value>
   </data>
   <data name="Playlist_Status_PickingRandom" xml:space="preserve">
-    <value>جاري اختيار قائمة تشغيل عشوائية...</value>
+    <value>Бирам насумичну плејлисту...</value>
   </data>
   <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
-    <value>لم يتم العثور على قوائم تشغيل.</value>
+    <value>Нису пронађене плејлисте.</value>
   </data>
   <data name="Playlist_Status_SmartSelectedEmpty" xml:space="preserve">
-    <value>قائمة التشغيل الذكية المختارة فارغة.</value>
+    <value>Изабрана паметна плејлиста је празна.</value>
   </data>
   <data name="Playlist_Status_ErrorRandom" xml:space="preserve">
-    <value>خطأ في تشغيل قائمة تشغيل عشوائية.</value>
+    <value>Грешка при репродукцији насумичне плејлисте.</value>
   </data>
   <data name="Playlist_Status_Loading" xml:space="preserve">
-    <value>جاري تحميل قوائم التشغيل...</value>
+    <value>Учитавам плејлисте...</value>
   </data>
   <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
-    <value>خطأ في تحميل قوائم التشغيل.</value>
+    <value>Грешка при учитавању плејлиста.</value>
   </data>
   <data name="Playlist_Status_Creating" xml:space="preserve">
-    <value>جاري إنشاء قائمة تشغيل جديدة...</value>
+    <value>Креирам нову плејлисту...</value>
   </data>
   <data name="Playlist_Status_CreateFailed" xml:space="preserve">
-    <value>فشل في إنشاء قائمة التشغيل. قد تكون موجودة بالفعل.</value>
+    <value>Креирање плејлисте није успело. Можда већ постоји.</value>
   </data>
   <data name="Playlist_Status_CreateError" xml:space="preserve">
-    <value>حدث خطأ أثناء إنشاء قائمة التشغيل.</value>
+    <value>Дошло је до грешке при креирању плејлисте.</value>
   </data>
   <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
-    <value>جاري تحديث غلاف قائمة التشغيل...</value>
+    <value>Ажурирам омот плејлисте...</value>
   </data>
   <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
-    <value>فشل في تحديث غلاف قائمة التشغيل.</value>
+    <value>Ажурирање омота плејлисте није успело.</value>
   </data>
   <data name="Playlist_Status_UpdateCoverError" xml:space="preserve">
-    <value>حدث خطأ أثناء تحديث غلاف قائمة التشغيل.</value>
+    <value>Дошло је до грешке при ажурирању омота плејлисте.</value>
   </data>
   <data name="Playlist_Status_RemovingCover" xml:space="preserve">
-    <value>جاري إزالة صورة قائمة التشغيل...</value>
+    <value>Уклањам слику плејлисте...</value>
   </data>
   <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
-    <value>فشل في إزالة صورة قائمة التشغيل.</value>
+    <value>Уклањање слике плејлисте није успело.</value>
   </data>
   <data name="Playlist_Status_RemoveCoverError" xml:space="preserve">
-    <value>حدث خطأ أثناء إزالة صورة قائمة التشغيل.</value>
+    <value>Дошло је до грешке при уклањању слике плејлисте.</value>
   </data>
   <data name="Playlist_Status_Renaming" xml:space="preserve">
-    <value>جاري إعادة تسمية قائمة التشغيل...</value>
+    <value>Преименовање плејлисте...</value>
   </data>
   <data name="Playlist_Status_RenameFailed" xml:space="preserve">
-    <value>فشل في إعادة تسمية قائمة التشغيل.</value>
+    <value>Преименовање плејлисте није успело.</value>
   </data>
   <data name="Playlist_Status_RenameError" xml:space="preserve">
-    <value>حدث خطأ أثناء إعادة تسمية قائمة التشغيل.</value>
+    <value>Дошло је до грешке при преименовању плејлисте.</value>
   </data>
   <data name="Playlist_Status_Deleting" xml:space="preserve">
-    <value>جاري حذف قائمة التشغيل...</value>
+    <value>Бришем плејлисту...</value>
   </data>
   <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
-    <value>فشل في حذف قائمة التشغيل.</value>
+    <value>Брисање плејлисте није успело.</value>
   </data>
   <data name="Playlist_Status_DeleteError" xml:space="preserve">
-    <value>حدث خطأ أثناء حذف قائمة التشغيل.</value>
+    <value>Дошло је до грешке при брисању плејлисте.</value>
   </data>
   <data name="Settings_Reset_Title" xml:space="preserve">
-    <value>تأكيد إعادة الضبط</value>
+    <value>Потврди ресетовање</value>
   </data>
   <data name="Settings_Reset_Message" xml:space="preserve">
-    <value>هل أنت متأكد أنك تريد إعادة تعيين جميع بيانات وإعدادات التطبيق؟ لا يمكن التراجع عن هذا الإجراء. سيعود التطبيق إلى الإعداد الأولي.</value>
+    <value>Да ли сте сигурни да желите да ресетујете све податке и подешавања апликације? Ова радња се не може опозвати. Апликација ће се вратити на почетно подешавање.</value>
   </data>
   <data name="Settings_Reset_Button" xml:space="preserve">
-    <value>إعادة ضبط</value>
+    <value>Ресетуј</value>
   </data>
   <data name="Settings_ResetError_Title" xml:space="preserve">
-    <value>خطأ في إعادة الضبط</value>
+    <value>Грешка ресетовања</value>
   </data>
   <data name="Settings_ResetError_Message" xml:space="preserve">
-    <value>حدث خطأ أثناء إعادة تعيين بيانات التطبيق: {0}. يرجى محاولة إعادة تشغيل التطبيق يدويًا.</value>
+    <value>Дошло је до грешке при ресетовању података апликације: {0}. Молимо покушајте ручно поново покренути апликацију.</value>
   </data>
   <data name="Settings_LastFm_AuthError_Title" xml:space="preserve">
-    <value>خطأ</value>
+    <value>Грешка</value>
   </data>
   <data name="Settings_LastFm_AuthError_Message" xml:space="preserve">
-    <value>تعذر الاتصال بـ Last.fm. الرجاء المحاولة مرة أخرى لاحقًا.</value>
+    <value>Није могуће повезати се на Last.fm. Молимо покушајте поново касније.</value>
   </data>
   <data name="Settings_LastFm_FinalizeError_Title" xml:space="preserve">
-    <value>فشل المصادقة</value>
+    <value>Аутeнтификација није успела</value>
   </data>
   <data name="Settings_LastFm_FinalizeError_Message" xml:space="preserve">
-    <value>تعذر الحصول على جلسة من Last.fm. الرجاء محاولة الاتصال مرة أخرى.</value>
+    <value>Није могуће добити сесију са Last.fm-а. Молимо покушајте поново да се повежете.</value>
   </data>
   <data name="Settings_LastFm_Disconnect_Title" xml:space="preserve">
-    <value>قطع اتصال Last.fm</value>
+    <value>Искључи Last.fm</value>
   </data>
   <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
-    <value>هل أنت متأكد أنك تريد قطع اتصال حسابك على Last.fm؟ ستظل سجلات التشغيل الخاصة بك محفوظة على Last.fm، لكن Nagi لن يتمكن من تسجيل الأغاني بعد الآن.</value>
+    <value>Да ли сте сигурни да желите да искључите свој Last.fm налог? Ваша историја скробловања ће бити сачувана на Last.fm-у, али Наги више неће моћи да скроблује.</value>
   </data>
   <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
-    <value>قطع الاتصال</value>
+    <value>Искључи</value>
   </data>
   <data name="Settings_Export_Success_Title" xml:space="preserve">
-    <value>تم التصدير بنجاح</value>
+    <value>Извоз успешан</value>
   </data>
   <data name="Settings_Export_Success_Message" xml:space="preserve">
-    <value>تم تصدير {0} قائمة تشغيل ({1} أغنية إجمالاً) إلى:
-{2}</value>
+    <value>Извезено {0} плејлиста ({1} укупно песама) на:\n{2}</value>
   </data>
   <data name="Settings_Export_Failed_Title" xml:space="preserve">
-    <value>فشل التصدير</value>
+    <value>Извоз није успео</value>
   </data>
   <data name="Settings_Import_Success_Title" xml:space="preserve">
-    <value>تم الاستيراد بنجاح</value>
+    <value>Увоз успешан</value>
   </data>
   <data name="Settings_Import_Success_Message" xml:space="preserve">
-    <value>تم استيراد {0} قوائم تشغيل ({1} أغاني) بنجاح.</value>
+    <value>Успешно увезено {0} плејлиста ({1} песама).</value>
   </data>
   <data name="Settings_Import_Unmatched_Message" xml:space="preserve">
-    <value>
-
-لم يتم العثور على {0} أغنية في مكتبتك.</value>
+    <value>\n\n{0} песама није пронађено у вашој библиотеци.</value>
   </data>
   <data name="Settings_Import_FailedFiles_Message" xml:space="preserve">
-    <value>
-
-فشل {0} ملف في الاستيراد.</value>
+    <value>\n\n{0} датотека није успело да се увезе.</value>
   </data>
   <data name="Settings_Import_FailedTotal_Title" xml:space="preserve">
-    <value>فشل الاستيراد</value>
+    <value>Увоз није успео</value>
   </data>
   <data name="Settings_Import_FailedTotal_Message" xml:space="preserve">
-    <value>لم يتم استيراد أي قوائم تشغيل.</value>
+    <value>Ниједна плејлиста није могла бити увезена.</value>
   </data>
   <data name="SmartPlaylist_ErrorLoading" xml:space="preserve">
-    <value>خطأ في تحميل قائمة التشغيل الذكية</value>
+    <value>Грешка при учитавању паметне плејлисте</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
-    <value>لم يتم تحديد قواعد • جميع الأغاني متطابقة</value>
+    <value>Нису дефинисана правила • Све песме се подударају</value>
   </data>
   <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
-    <value>مطابقة {0} من {1} {2}</value>
+    <value>Подудара се {0} од {1} {2}</value>
   </data>
   <data name="SmartPlaylist_MatchAll" xml:space="preserve">
-    <value>كل</value>
+    <value>све</value>
   </data>
   <data name="SmartPlaylist_MatchAny" xml:space="preserve">
-    <value>أي</value>
+    <value>било које</value>
   </data>
   <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
-    <value>قاعدة</value>
+    <value>правило</value>
   </data>
   <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
-    <value>قواعد</value>
+    <value>правила</value>
   </data>
   <data name="SongList_PageTitle_Default" xml:space="preserve">
-    <value>الأغاني</value>
+    <value>Песме</value>
   </data>
   <data name="SongList_TotalItems_Default" xml:space="preserve">
-    <value>0 عناصر</value>
+    <value>0 ставки</value>
   </data>
   <data name="SongList_ErrorLoading" xml:space="preserve">
-    <value>خطأ في تحميل العناصر</value>
+    <value>Грешка при учитавању ставки</value>
   </data>
   <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
-    <value>{0} عنصر</value>
+    <value>{0} ставка</value>
   </data>
   <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
-    <value>{0} عناصر</value>
+    <value>{0} ставки</value>
   </data>
   <data name="SongList_SelectedCount_Format" xml:space="preserve">
-    <value>{0} محدد</value>
+    <value>{0} изабрано</value>
   </data>
   <data name="AlbumView_DiscHeader" xml:space="preserve">
-    <value>قرص {0}</value>
+    <value>Диск {0}</value>
   </data>
   <data name="Generic_OK" xml:space="preserve">
-    <value>موافق</value>
+    <value>У реду</value>
   </data>
   <data name="Generic_Cancel" xml:space="preserve">
-    <value>إلغاء</value>
+    <value>Откажи</value>
   </data>
   <data name="Generic_Close" xml:space="preserve">
-    <value>إغلاق</value>
+    <value>Затвори</value>
   </data>
   <data name="Generic_Recheck" xml:space="preserve">
-    <value>إعادة الفحص</value>
+    <value>Провери поново</value>
   </data>
   <data name="CrashReport_Button_Reset" xml:space="preserve">
-    <value>إعادة ضبط التطبيق والبيانات</value>
+    <value>Ресетуј апликацију и податке</value>
   </data>
   <data name="FFmpeg_Status_NotDetected" xml:space="preserve">
-    <value>لم يتم اكتشاف FFmpeg. يرجى تثبيت FFmpeg والنقر على 'إعادة الفحص'.</value>
+    <value>FFmpeg није детектован. Молимо инсталирајте FFmpeg и кликните на 'Провери поново'.</value>
   </data>
   <data name="FFmpeg_Status_Checking" xml:space="preserve">
-    <value>جاري التحقق من FFmpeg...</value>
+    <value>Проверавам FFmpeg...</value>
   </data>
   <data name="FFmpeg_Status_Detected" xml:space="preserve">
-    <value>تم اكتشاف FFmpeg!</value>
+    <value>FFmpeg детектован!</value>
   </data>
   <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
-    <value>لم يتم اكتشاف FFmpeg بعد. يرجى تثبيت FFmpeg والنقر على 'إعادة الفحص'.</value>
+    <value>FFmpeg и даље није детектован. Молимо инсталирајте FFmpeg и кликните на 'Провери поново'.</value>
   </data>
   <data name="FFmpeg_Status_Error" xml:space="preserve">
-    <value>خطأ أثناء التحقق من FFmpeg. الرجاء المحاولة مرة أخرى.</value>
+    <value>Грешка при провери FFmpeg-а. Молимо покушајте поново.</value>
   </data>
   <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
-    <value>السابق</value>
+    <value>Претходна</value>
   </data>
   <data name="Taskbar_Tooltip_Play" xml:space="preserve">
-    <value>تشغيل</value>
+    <value>Пусти</value>
   </data>
   <data name="Taskbar_Tooltip_Pause" xml:space="preserve">
-    <value>إيقاف مؤقت</value>
+    <value>Паузирај</value>
   </data>
   <data name="Taskbar_Tooltip_Next" xml:space="preserve">
-    <value>التالي</value>
+    <value>Следећа</value>
   </data>
   <data name="Update_Available_Title" xml:space="preserve">
-    <value>تحديث متوفر</value>
+    <value>Доступно ажурирање</value>
   </data>
   <data name="Update_Available_Message" xml:space="preserve">
-    <value>يتوفر إصدار جديد ({0}). هل ترغب في تنزيله وتثبيته الآن؟</value>
+    <value>Доступна је нова верзија ({0}). Желите ли да је преузмете и инсталирате сада?</value>
   </data>
   <data name="Update_Button_InstallNow" xml:space="preserve">
-    <value>تثبيت الآن</value>
+    <value>Инсталирај сада</value>
   </data>
   <data name="Update_Button_Later" xml:space="preserve">
-    <value>لاحقًا</value>
+    <value>Касније</value>
   </data>
   <data name="Update_Button_Skip" xml:space="preserve">
-    <value>تخطي هذا الإصدار</value>
+    <value>Прескочи ову верзију</value>
   </data>
   <data name="Update_UpToDate_Title" xml:space="preserve">
-    <value>محدث</value>
+    <value>Ажурно</value>
   </data>
   <data name="Update_UpToDate_Message" xml:space="preserve">
-    <value>أنت تستخدم أحدث إصدار من Nagi.</value>
+    <value>Користите најновију верзију Нагија.</value>
   </data>
   <data name="Update_Error_Title" xml:space="preserve">
-    <value>خطأ في التحديث</value>
+    <value>Грешка ажурирања</value>
   </data>
   <data name="Update_Check_Error_Message" xml:space="preserve">
-    <value>حدث خطأ أثناء التحقق من التحديثات: {0}</value>
+    <value>Дошло је до грешке при провери ажурирања: {0}</value>
   </data>
   <data name="Update_Install_Error_Message" xml:space="preserve">
-    <value>حدث خطأ أثناء تثبيت التحديث: {0}</value>
+    <value>Дошло је до грешке при инсталирању ажурирања: {0}</value>
   </data>
   <data name="Update_Downloading_Title" xml:space="preserve">
-    <value>جاري تنزيل التحديث</value>
+    <value>Преузимам ажурирање</value>
   </data>
   <data name="Update_Downloading_Message" xml:space="preserve">
-    <value>يتم تنزيل الإصدار {0}. سيعاد تشغيل التطبيق تلقائيًا عندما يكون جاهزًا.</value>
+    <value>Верзија {0} се преузима. Апликација ће се аутоматски поново покренути када буде спремна.</value>
   </data>
   <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
-    <value>واجه LibVLC خطأً غير محدد.</value>
+    <value>LibVLC је наишао на неодређену грешку.</value>
   </data>
   <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
-    <value>خطأ LibVLC: {0}</value>
+    <value>LibVLC Грешка: {0}</value>
   </data>
   <data name="Player_Error_LoadFailed" xml:space="preserve">
-    <value>فشل في تحميل '{0}'.</value>
+    <value>Није успело учитавање '{0}'.</value>
   </data>
   <data name="Settings_Nav_Library" xml:space="preserve">
-    <value>المكتبة</value>
+    <value>Библиотека</value>
   </data>
   <data name="Settings_Nav_Folders" xml:space="preserve">
-    <value>المجلدات</value>
+    <value>Фасцикле</value>
   </data>
   <data name="Settings_Nav_Playlists" xml:space="preserve">
-    <value>قوائم التشغيل</value>
+    <value>Плејлисте</value>
   </data>
   <data name="Settings_Nav_Artists" xml:space="preserve">
-    <value>الفنانون</value>
+    <value>Извођачи</value>
   </data>
   <data name="Settings_Nav_Albums" xml:space="preserve">
-    <value>الألبومات</value>
+    <value>Албуми</value>
   </data>
   <data name="Settings_Nav_Genres" xml:space="preserve">
-    <value>الأنواع</value>
+    <value>Жанрови</value>
   </data>
   <data name="Settings_Button_Shuffle" xml:space="preserve">
-    <value>خلط عشوائي</value>
+    <value>Насумично</value>
   </data>
   <data name="Settings_Button_Previous" xml:space="preserve">
-    <value>السابق</value>
+    <value>Претходно</value>
   </data>
   <data name="Settings_Button_PlayPause" xml:space="preserve">
-    <value>تشغيل/إيقاف مؤقت</value>
+    <value>Пусти/Паузирај</value>
   </data>
   <data name="Settings_Button_Next" xml:space="preserve">
-    <value>التالي</value>
+    <value>Следеће</value>
   </data>
   <data name="Settings_Button_Repeat" xml:space="preserve">
-    <value>إعادة</value>
+    <value>Понављај</value>
   </data>
   <data name="Settings_Button_Divider" xml:space="preserve">
-    <value>فاصل التخطيط</value>
+    <value>Разделник изгледа</value>
   </data>
   <data name="Settings_Button_Lyrics" xml:space="preserve">
-    <value>كلمات الأغاني</value>
+    <value>Текст песме</value>
   </data>
   <data name="Settings_Button_Queue" xml:space="preserve">
-    <value>قائمة الانتظار</value>
+    <value>Ред чекања</value>
   </data>
   <data name="Settings_Button_Volume" xml:space="preserve">
-    <value>الصوت</value>
+    <value>Јачина звука</value>
   </data>
   <data name="Settings_Provider_LRCLIB_Desc" xml:space="preserve">
-    <value>قاعدة بيانات كلمات أغاني منسقة بواسطة المجتمع</value>
+    <value>База података текстова песама коју уређује заједница</value>
   </data>
   <data name="Settings_Provider_NetEase_Desc" xml:space="preserve">
-    <value>خدمة موسيقى صينية، رائعة للموسيقى الآسيوية</value>
+    <value>Кинеска музичка услуга, одлична за азијску музику</value>
   </data>
   <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
-    <value>يجلب معرفات الفنانين (مطلوبة لـ TheAudioDB و Fanart.tv)</value>
+    <value>Преузима ID-је извођача (потребно за TheAudioDB и Fanart.tv)</value>
   </data>
   <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
-    <value>صور وسير ذاتية عالية الجودة للفنانين (تتطلب MusicBrainz)</value>
+    <value>Квалитетне слике и биографије извођача (захтева MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
-    <value>صور فنانين عالية الجودة فقط (تتطلب MusicBrainz)</value>
+    <value>Само квалитетне слике извођача (захтева MusicBrainz)</value>
   </data>
   <data name="Settings_Provider_Spotify_Desc" xml:space="preserve">
-    <value>صور الفنانين فقط</value>
+    <value>Само слике извођача</value>
   </data>
   <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
-    <value>سير وصور الفنانين (بديل)</value>
+    <value>Биографије и слике извођача (алтернатива)</value>
   </data>
   <data name="App_Name_Default" xml:space="preserve">
-    <value>Nagi</value>
+    <value>Наги</value>
   </data>
   <data name="App_Version_Unknown" xml:space="preserve">
-    <value>غير متوفر</value>
+    <value>Н/Д</value>
   </data>
   <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>إغلاق البحث</value>
+    <value>Затвори претрагу</value>
   </data>
   <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>البحث في الألبومات</value>
+    <value>Претражи албуме</value>
   </data>
   <data name="AlbumViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>إغلاق البحث</value>
+    <value>Затвори претрагу</value>
   </data>
   <data name="AlbumViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>البحث في الألبوم</value>
+    <value>Претражи у албуму</value>
   </data>
   <data name="AlbumViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>لا توجد قوائم تشغيل متاحة</value>
+    <value>Нису доступне плејлисте</value>
   </data>
   <data name="ArtistPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>إغلاق البحث</value>
+    <value>Затвори претрагу</value>
   </data>
   <data name="ArtistPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>البحث في الفنانين</value>
+    <value>Претражи извођаче</value>
   </data>
   <data name="ArtistViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>إغلاق البحث</value>
+    <value>Затвори претрагу</value>
   </data>
   <data name="ArtistViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>البحث في الفنان</value>
+    <value>Претражи у извођачу</value>
   </data>
   <data name="ArtistViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>لا توجد قوائم تشغيل متاحة</value>
+    <value>Нису доступне плејлисте</value>
   </data>
   <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
-    <value>حذف مجلد</value>
+    <value>Избриши фасциклу</value>
   </data>
   <data name="FolderPage_DeleteDialog_Format" xml:space="preserve">
-    <value>هل أنت متأكد أنك تريد إزالة المجلد '{0}' من المكتبة؟ هذا لن يحذف الملفات من جهاز الكمبيوتر الخاص بك.</value>
+    <value>Да ли сте сигурни да желите да уклоните фасциклу '{0}' из библиотеке? Ово неће избрисати датотеке са вашег рачунара.</value>
   </data>
   <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
-    <value>حذف</value>
+    <value>Избриши</value>
   </data>
   <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
-    <value>إلغاء</value>
+    <value>Откажи</value>
   </data>
   <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
-    <value>مجلد غير معروف</value>
+    <value>Непозната фасцикла</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>إغلاق البحث</value>
+    <value>Затвори претрагу</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>البحث في المجلد</value>
+    <value>Претражи у фасцикли</value>
   </data>
   <data name="FolderSongViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>لا توجد قوائم تشغيل متاحة</value>
+    <value>Нису доступне плејлисте</value>
   </data>
   <data name="GenrePage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>إغلاق البحث</value>
+    <value>Затвори претрагу</value>
   </data>
   <data name="GenrePage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>البحث في الأنواع</value>
+    <value>Претражи жанрове</value>
   </data>
   <data name="LibraryPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>إغلاق البحث</value>
+    <value>Затвори претрагу</value>
   </data>
   <data name="LibraryPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>البحث في المكتبة</value>
+    <value>Претражи библиотеку</value>
   </data>
   <data name="LibraryPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>لا توجد قوائم تشغيل متاحة</value>
+    <value>Нису доступне плејлисте</value>
   </data>
   <data name="PlaylistPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>إغلاق البحث</value>
+    <value>Затвори претрагу</value>
   </data>
   <data name="PlaylistPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>البحث في قوائم التشغيل</value>
+    <value>Претражи плејлисте</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Placeholder" xml:space="preserve">
-    <value>أدخل اسم قائمة تشغيل جديدة</value>
+    <value>Унесите назив нове плејлисте</value>
   </data>
   <data name="PlaylistPage_CreateDialog_PickImage" xml:space="preserve">
-    <value>اختيار صورة</value>
+    <value>Изабери слику</value>
   </data>
   <data name="PlaylistPage_CreateDialog_Title" xml:space="preserve">
-    <value>إنشاء قائمة تشغيل جديدة</value>
+    <value>Креирај нову плејлисту</value>
   </data>
   <data name="PlaylistPage_CreateDialog_CreateButton" xml:space="preserve">
-    <value>إنشاء</value>
+    <value>Креирај</value>
   </data>
   <data name="PlaylistPage_CreateDialog_CancelButton" xml:space="preserve">
-    <value>إلغاء</value>
+    <value>Откажи</value>
   </data>
   <data name="PlaylistPage_RenameDialog_Title_Format" xml:space="preserve">
-    <value>إعادة تسمية '{0}'</value>
+    <value>Преименуј '{0}'</value>
   </data>
   <data name="PlaylistPage_RenameDialog_RenameButton" xml:space="preserve">
-    <value>إعادة تسمية</value>
+    <value>Преименуј</value>
   </data>
   <data name="PlaylistPage_DeleteDialog_Title" xml:space="preserve">
-    <value>حذف قائمة التشغيل</value>
+    <value>Избриши плејлисту</value>
   </data>
   <data name="PlaylistPage_DeleteDialog_Content_Format" xml:space="preserve">
-    <value>هل أنت متأكد أنك تريد حذف قائمة التشغيل '{0}'؟ لا يمكن التراجع عن هذا الإجراء.</value>
+    <value>Да ли сте сигурни да желите да избришете плејлисту '{0}'? Ова радња се не може опозвати.</value>
   </data>
   <data name="PlaylistPage_DeleteDialog_DeleteButton" xml:space="preserve">
-    <value>حذف</value>
+    <value>Избриши</value>
   </data>
   <data name="PlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>إغلاق البحث</value>
+    <value>Затвори претрагу</value>
   </data>
   <data name="PlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>البحث في قائمة التشغيل</value>
+    <value>Претражи у плејлисти</value>
   </data>
   <data name="GenreViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>إغلاق البحث</value>
+    <value>Затвори претрагу</value>
   </data>
   <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>البحث في المكتبة</value>
+    <value>Претражи библиотеку</value>
   </data>
   <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
-    <value>لا توجد قوائم تشغيل متاحة</value>
+    <value>Нису доступне плејлисте</value>
   </data>
   <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>قائمة تشغيل غير معروفة</value>
+    <value>Непозната плејлиста</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
-    <value>إغلاق البحث</value>
+    <value>Затвори претрагу</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
-    <value>البحث في قائمة التشغيل الذكية</value>
+    <value>Претражи у паметној плејлисти</value>
   </data>
   <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
-    <value>قائمة تشغيل ذكية غير معروفة</value>
+    <value>Непозната паметна плејлиста</value>
   </data>
   <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
-    <value>إعادة فحص البيانات الوصفية</value>
+    <value>Поново скенирај метаподатке</value>
   </data>
   <data name="Settings_Dialog_Rescan_Content" xml:space="preserve">
-    <value>سيؤدي هذا إلى إعادة فحص جميع الأغاني في مكتبتك لتطبيق إعدادات البيانات الوصفية الجديدة (مثل أحرف تقسيم الفنان). قد يستغرق هذا بعض الوقت حسب حجم المكتبة. هل تريد المتابعة؟</value>
+    <value>Ово ће поново скенирати све песме у вашој библиотеци како би се примениле нове поставке метаподатака (попут знакова за раздвајање извођача). Ово може потрајати у зависности од величине библиотеке. Желите ли да наставите?</value>
   </data>
   <data name="Settings_Dialog_Rescan_PrimaryButton" xml:space="preserve">
-    <value>إعادة فحص</value>
+    <value>Поново скенирај</value>
   </data>
   <data name="Settings_Status_Rescan_Preparing" xml:space="preserve">
-    <value>جاري تحضير إعادة فحص المكتبة...</value>
+    <value>Припремам поновно скенирање библиотеке...</value>
   </data>
   <data name="Settings_Dialog_RescanComplete_Title" xml:space="preserve">
-    <value>اكتمال إعادة الفحص</value>
+    <value>Поновно скенирање завршено</value>
   </data>
   <data name="Settings_Dialog_RescanComplete_Content" xml:space="preserve">
-    <value>تم تحديث البيانات الوصفية للمكتبة.</value>
+    <value>Метаподаци библиотеке су ажурирани.</value>
   </data>
   <data name="Settings_Dialog_RescanFailed_Title" xml:space="preserve">
-    <value>فشل إعادة الفحص</value>
+    <value>Поновно скенирање није успело</value>
   </data>
   <data name="Settings_Dialog_RescanFailed_Content" xml:space="preserve">
-    <value>حدث خطأ أثناء الفحص. تحقق من السجلات للحصول على التفاصيل.</value>
+    <value>Дошло је до грешке током скенирања. Проверите дневнике за детаље.</value>
   </data>
   <data name="Settings_Dialog_FFmpegNotFound_Title" xml:space="preserve">
-    <value>لم يتم العثور على FFmpeg</value>
+    <value>FFmpeg није пронађен</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_Title" xml:space="preserve">
-    <value>تمكين تسوية مستوى الصوت</value>
+    <value>Омогући нормализацију јачине звука</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_Content" xml:space="preserve">
-    <value>تضمن تسوية مستوى الصوت (ReplayGain) مستوى صوت ثابتًا عبر جميع ملفات الموسيقى الخاصة بك.
-
-سيقوم هذا بتحليل مكتبة الموسيقى الخاصة بك وتعديل ملفات الصوت مباشرة عن طريق كتابة علامات ReplayGain. سيتم معالجة الملفات التي لا تحتوي على علامات موجودة فقط. قد يستغرق هذا بعض الوقت اعتمادًا على حجم مكتبتك.
-
-هل تريد المتابعة؟</value>
+    <value>Нормализација јачине звука (ReplayGain) обезбеђује доследан ниво јачине звука за сву вашу музику.\n\nОво ће анализирати вашу музичку библиотеку и директно модификовати ваше аудио датотеке уписивањем ReplayGain ознака. Биће обрађене само датотеке без постојећих ознака. Ово може потрајати у зависности од величине ваше библиотеке.\n\nЖелите ли да наставите?</value>
   </data>
   <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
-    <value>تمكين وفحص</value>
+    <value>Омогући и скенирај</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
-    <value>جاري تحضير فحص تسوية مستوى الصوت...</value>
+    <value>Припремам скенирање за нормализацију јачине звука...</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
-    <value>تم إلغاء فحص تسوية مستوى الصوت.</value>
+    <value>Скенирање за нормализацију јачине звука отказано.</value>
   </data>
   <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
-    <value>خطأ أثناء الفحص: {0}</value>
+    <value>Грешка током скенирања: {0}</value>
   </data>
   <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
-    <value>تعذر استرداد السجلات من الذاكرة. فشلت محاولة الاسترجاع لقراءة ملف السجل.
-المسار المتوقع: '{0}'
-الخطأ: {1}</value>
+    <value>Није могуће преузети дневнике из меморије. Резервни покушај читања датотеке дневника није успео.\nОчекивана путања: '{0}'\nГрешка: {1}</value>
   </data>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
-    <value>لا توجد قوائم تشغيل للتصدير.</value>
+    <value>Нема плејлиста за извоз.</value>
   </data>
   <data name="Language_Auto" xml:space="preserve">
-    <value>تلقائي</value>
+    <value>Аутоматски</value>
   </data>
 </root>

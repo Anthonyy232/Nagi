@@ -930,6 +930,6 @@ Chyba: {1}</value>
     <value>Žiadne zoznamy skladieb na export.</value>
   </data>
   <data name="Language_Auto" xml:space="preserve">
-    <value>Auto</value>
+    <value>Automaticky</value>
   </data>
 </root>
