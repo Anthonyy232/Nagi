@@ -305,7 +305,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     public List<ElementTheme> AvailableThemes { get; } = Enum.GetValues<ElementTheme>().ToList();
     public List<BackdropMaterial> AvailableBackdropMaterials { get; } = Enum.GetValues<BackdropMaterial>().ToList();
     
-    public List<Nagi.WinUI.Models.LanguageModel> AvailableLanguages { get; } = new();
+    public ObservableCollection<Nagi.WinUI.Models.LanguageModel> AvailableLanguages { get; } = new();
     
     [ObservableProperty] public partial Nagi.WinUI.Models.LanguageModel SelectedLanguage { get; set; }
 
@@ -477,29 +477,52 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
             // Load languages dynamically
             AvailableLanguages.Clear();
-            AvailableLanguages.Add(new LanguageModel(string.Empty, "Auto"));
+            AvailableLanguages.Add(new LanguageModel(string.Empty, Nagi.WinUI.Resources.Strings.Language_Auto));
 
             var manifestLanguages = Windows.Globalization.ApplicationLanguages.ManifestLanguages;
+            var allSpecificCultures = CultureInfo.GetCultures(CultureTypes.SpecificCultures);
+
             foreach (var langCode in manifestLanguages)
             {
                 try
                 {
-                    var culture = new CultureInfo(langCode);
-                    AvailableLanguages.Add(new LanguageModel(langCode, culture.NativeName));
+                    // Dynamic resolution:
+                    // The manifest might report a neutral culture (e.g., "ja"), but resources might only exist 
+                    // in a specific satellite assembly (e.g., "ja-JP").
+                    // We verify if resources exist for the reported code. If not, we search for a child/specific culture that has resources.
+                    var resolvedCode = ResolveCultureWithResources(langCode, allSpecificCultures);
+
+                    if (AvailableLanguages.Any(l => l.Code == resolvedCode))
+                    {
+                        continue;
+                    }
+                    
+                    var culture = new CultureInfo(resolvedCode);
+                    AvailableLanguages.Add(new LanguageModel(resolvedCode, culture.NativeName));
                 }
                 catch (CultureNotFoundException)
                 {
-                    // Fallback if the system doesn't recognize the code
-                    AvailableLanguages.Add(new LanguageModel(langCode, langCode)); 
+                    if (AvailableLanguages.All(l => l.Code != langCode))
+                    {
+                        // Fallback if the system doesn't recognize the code
+                        AvailableLanguages.Add(new LanguageModel(langCode, langCode));
+                    }
                 }
             }
-
+            
             var currentLangCode = languageTask.Result;
-            SelectedLanguage = AvailableLanguages.FirstOrDefault(l => l.Code == currentLangCode) 
+            
+            // Robust matching:
+            // 1. Exact match (case-insensitive)
+            // 2. Setting is "ja" but list has "ja-JP" (StartsWith)
+            // 3. Setting is "ja-JP" but list has "ja" (StartsWith)
+            SelectedLanguage = AvailableLanguages.FirstOrDefault(l => string.Equals(l.Code, currentLangCode, StringComparison.OrdinalIgnoreCase))
+                               ?? AvailableLanguages.FirstOrDefault(l => !string.IsNullOrEmpty(l.Code) && !string.IsNullOrEmpty(currentLangCode) && 
+                                                                         (l.Code.StartsWith(currentLangCode + "-") || currentLangCode.StartsWith(l.Code + "-")))
                                ?? AvailableLanguages.FirstOrDefault(l => l.Code == string.Empty)!;
 
             LoadEqualizerState();
-
+            
             // Load service providers
             foreach (var provider in lyricsProvidersTask.Result)
             {
@@ -528,6 +551,51 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         finally
         {
             _loadLock.Release();
+        }
+    }
+    
+    /// <summary>
+    /// Attempts to find the best matching culture that actually has resources compiled.
+    /// Solves the issue where "ja" is requested but only "ja-JP" resources exist.
+    /// </summary>
+    private string ResolveCultureWithResources(string cultureCode, CultureInfo[] allSpecificCultures)
+    {
+        try 
+        {
+            var culture = new CultureInfo(cultureCode);
+            var resourceManager = Nagi.WinUI.Resources.Strings.ResourceManager;
+            
+            // 1. Check if the exact requested culture has a resource set.
+            // tryParents: false is crucial - we want to know if THIS specific culture has files.
+            var resourceSet = resourceManager.GetResourceSet(culture, true, false);
+            if (resourceSet != null) return cultureCode;
+
+            // 2. If valid but no resources (e.g. "ja"), look for a specific child that DOES have resources (e.g. "ja-JP").
+            if (culture.IsNeutralCulture)
+            {
+                // Find all specific cultures that are children of this neutral culture
+                var matchingCultures = allSpecificCultures
+                    .Where(c => c.Parent.Name == cultureCode || c.Name.StartsWith(cultureCode + "-")); // Fallback for some non-standard mappings
+
+                foreach (var specific in matchingCultures)
+                {
+                    if (resourceManager.GetResourceSet(specific, true, false) != null)
+                    {
+                        // Found a valid specific culture with resources! Use this one.
+                        return specific.Name;
+                    }
+                }
+            }
+            
+            // 3. Fallback: If we still didn't find anything (or if it was already specific and missing), 
+            // return original. .NET's standard fallback might still pick something up, 
+            // or it prevents us from crashing.
+            return cultureCode;
+        }
+        catch 
+        {
+            // Safety net
+            return cultureCode;
         }
     }
 
