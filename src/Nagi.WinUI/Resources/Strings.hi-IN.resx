@@ -1,0 +1,921 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="NavItem_Library" xml:space="preserve">
+    <value>लाइब्रेरी</value>
+  </data>
+  <data name="NavItem_Albums" xml:space="preserve">
+    <value>एल्बम</value>
+  </data>
+  <data name="NavItem_Artists" xml:space="preserve">
+    <value>कलाकार</value>
+  </data>
+  <data name="NavItem_Genres" xml:space="preserve">
+    <value>शैलियाँ</value>
+  </data>
+  <data name="NavItem_Playlists" xml:space="preserve">
+    <value>प्लेलिस्ट</value>
+  </data>
+  <data name="NavItem_Folders" xml:space="preserve">
+    <value>फ़ोल्डर</value>
+  </data>
+  <data name="NavItem_Settings" xml:space="preserve">
+    <value>सेटिंग्स</value>
+  </data>
+  <data name="Status_NoTrackPlaying" xml:space="preserve">
+    <value>कोई ट्रैक नहीं चल रहा है</value>
+  </data>
+  <data name="Tooltip_Play" xml:space="preserve">
+    <value>चलाएँ</value>
+  </data>
+  <data name="Tooltip_Pause" xml:space="preserve">
+    <value>रोकें</value>
+  </data>
+  <data name="Tooltip_ShuffleOn" xml:space="preserve">
+    <value>शफ़ल चालू</value>
+  </data>
+  <data name="Tooltip_ShuffleOff" xml:space="preserve">
+    <value>शफ़ल बंद</value>
+  </data>
+  <data name="Tooltip_RepeatOff" xml:space="preserve">
+    <value>दोहराव बंद</value>
+  </data>
+  <data name="Tooltip_RepeatAll" xml:space="preserve">
+    <value>सभी दोहराएँ</value>
+  </data>
+  <data name="Tooltip_RepeatOne" xml:space="preserve">
+    <value>एक दोहराएँ</value>
+  </data>
+  <data name="Tooltip_Repeat" xml:space="preserve">
+    <value>दोहराएँ</value>
+  </data>
+  <data name="Tooltip_Unmute" xml:space="preserve">
+    <value>अनम्यूट करें</value>
+  </data>
+  <data name="Tooltip_Mute" xml:space="preserve">
+    <value>म्यूट करें</value>
+  </data>
+  <data name="Theme_Light" xml:space="preserve">
+    <value>हल्का</value>
+  </data>
+  <data name="Theme_Dark" xml:space="preserve">
+    <value>गहरा</value>
+  </data>
+  <data name="Theme_Default" xml:space="preserve">
+    <value>सिस्टम सेटिंग का उपयोग करें</value>
+  </data>
+  <data name="Backdrop_Mica" xml:space="preserve">
+    <value>माइका</value>
+  </data>
+  <data name="Backdrop_MicaAlt" xml:space="preserve">
+    <value>माइका ऑल्ट</value>
+  </data>
+  <data name="Backdrop_Acrylic" xml:space="preserve">
+    <value>एक्रिलिक</value>
+  </data>
+  <data name="Label_Composer" xml:space="preserve">
+    <value>संगीतकार</value>
+  </data>
+  <data name="Label_Comment" xml:space="preserve">
+    <value>टिप्पणी</value>
+  </data>
+  <data name="Label_Rating" xml:space="preserve">
+    <value>रेटिंग</value>
+  </data>
+  <data name="Operator_Contains" xml:space="preserve">
+    <value>शामिल है</value>
+  </data>
+  <data name="Operator_DoesNotContain" xml:space="preserve">
+    <value>शामिल नहीं है</value>
+  </data>
+  <data name="Operator_Is" xml:space="preserve">
+    <value>ठीक है</value>
+  </data>
+  <data name="Operator_IsNot" xml:space="preserve">
+    <value>नहीं है</value>
+  </data>
+  <data name="Operator_StartsWith" xml:space="preserve">
+    <value>इससे शुरू होता है</value>
+  </data>
+  <data name="Operator_EndsWith" xml:space="preserve">
+    <value>इससे समाप्त होता है</value>
+  </data>
+  <data name="Operator_Equals" xml:space="preserve">
+    <value>के बराबर है</value>
+  </data>
+  <data name="Operator_NotEquals" xml:space="preserve">
+    <value>के बराबर नहीं है</value>
+  </data>
+  <data name="Operator_GreaterThan" xml:space="preserve">
+    <value>से अधिक है</value>
+  </data>
+  <data name="Operator_LessThan" xml:space="preserve">
+    <value>से कम है</value>
+  </data>
+  <data name="Operator_GreaterThanOrEqual" xml:space="preserve">
+    <value>कम से कम है</value>
+  </data>
+  <data name="Operator_LessThanOrEqual" xml:space="preserve">
+    <value>अधिकतम है</value>
+  </data>
+  <data name="Operator_IsInTheLast" xml:space="preserve">
+    <value>पिछले (दिनों) में है</value>
+  </data>
+  <data name="Operator_IsNotInTheLast" xml:space="preserve">
+    <value>पिछले (दिनों) में नहीं है</value>
+  </data>
+  <data name="Operator_IsTrue" xml:space="preserve">
+    <value>सही है</value>
+  </data>
+  <data name="Operator_IsFalse" xml:space="preserve">
+    <value>गलत है</value>
+  </data>
+  <data name="SmartPlaylist_Title_New" xml:space="preserve">
+    <value>नई स्मार्ट प्लेलिस्ट</value>
+  </data>
+  <data name="SmartPlaylist_Title_EditFormat" xml:space="preserve">
+    <value>स्मार्ट प्लेलिस्ट संपादित करें - {0}</value>
+  </data>
+  <data name="SmartPlaylist_Status_EnterName" xml:space="preserve">
+    <value>प्लेलिस्ट का नाम दर्ज करें</value>
+  </data>
+  <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
+    <value>वर्तमान नियमों से {0} गाने मेल खाते हैं</value>
+  </data>
+  <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
+    <value>मेल खाने वाले गाने देखने के लिए एक नाम दर्ज करें</value>
+  </data>
+  <data name="SmartPlaylist_Status_Error" xml:space="preserve">
+    <value>गणना करने में असमर्थ</value>
+  </data>
+  <data name="SmartPlaylist_Status_Calculating" xml:space="preserve">
+    <value>गणना की जा रही है...</value>
+  </data>
+  <data name="SmartPlaylist_Error_DuplicateName" xml:space="preserve">
+    <value>इस नाम से एक प्लेलिस्ट पहले से मौजूद है!</value>
+  </data>
+  <data name="SmartPlaylist_Error_NameEmptyFeedback" xml:space="preserve">
+    <value>कृपया एक नाम दर्ज करें!</value>
+  </data>
+  <data name="Status_Loading" xml:space="preserve">
+    <value>लोड हो रहा है...</value>
+  </data>
+  <data name="Error_FailedToLoadArtists" xml:space="preserve">
+    <value>कलाकारों को लोड करने में विफल</value>
+  </data>
+  <data name="CrashReport_Title" xml:space="preserve">
+    <value>गंभीर त्रुटि</value>
+  </data>
+  <data name="CrashReport_Message" xml:space="preserve">
+    <value>नागी को एक गंभीर त्रुटि का सामना करना पड़ा है और उसे बंद करना होगा। असुविधा के लिए हमें खेद है।</value>
+  </data>
+  <data name="ElevationWarning_Title" xml:space="preserve">
+    <value>एडमिनिस्ट्रेटर के रूप में चल रहा है</value>
+  </data>
+  <data name="ElevationWarning_Message" xml:space="preserve">
+    <value>नागी वर्तमान में एडमिनिस्ट्रेटर के रूप में चल रहा है। यह कुछ सुविधाओं (जैसे संगीत फ़ोल्डर जोड़ना) को सही ढंग से काम करने से रोक सकता है।
+
+सर्वोत्तम अनुभव के लिए, कृपया एडमिनिस्ट्रेटर विशेषाधिकारों के बिना नागी को पुनरारंभ करें।</value>
+  </data>
+  <data name="ElevationWarning_Restart" xml:space="preserve">
+    <value>सामान्य रूप से पुनरारंभ करें</value>
+  </data>
+  <data name="ElevationWarning_Continue" xml:space="preserve">
+    <value>वैसे भी जारी रखें</value>
+  </data>
+  <data name="MiniPlayer_Title" xml:space="preserve">
+    <value>नागी</value>
+  </data>
+  <data name="App_Title" xml:space="preserve">
+    <value>नागी</value>
+  </data>
+  <data name="AlbumView_AlbumNotFound" xml:space="preserve">
+    <value>एल्बम नहीं मिला</value>
+  </data>
+  <data name="AlbumView_Error" xml:space="preserve">
+    <value>एल्बम लोड करने में त्रुटि</value>
+  </data>
+  <data name="AlbumView_DefaultAlbumTitle" xml:space="preserve">
+    <value>एल्बम</value>
+  </data>
+  <data name="AlbumView_DefaultArtistName" xml:space="preserve">
+    <value>कलाकार</value>
+  </data>
+  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
+    <value>{0} गाना</value>
+  </data>
+  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
+    <value>{0} गाने</value>
+  </data>
+  <data name="ArtistView_ArtistNotFound" xml:space="preserve">
+    <value>कलाकार नहीं मिला</value>
+  </data>
+  <data name="ArtistView_Error" xml:space="preserve">
+    <value>कलाकार लोड करने में त्रुटि</value>
+  </data>
+  <data name="ArtistView_DefaultArtistName" xml:space="preserve">
+    <value>कलाकार</value>
+  </data>
+  <data name="ArtistView_NoBiography" xml:space="preserve">
+    <value>इस कलाकार के लिए कोई जीवनी उपलब्ध नहीं है।</value>
+  </data>
+  <data name="ArtistView_ErrorLoadingDetails" xml:space="preserve">
+    <value>कलाकार विवरण लोड नहीं कर सका।</value>
+  </data>
+  <data name="Folders_ErrorLoading" xml:space="preserve">
+    <value>फ़ोल्डर लोड करने में त्रुटि</value>
+  </data>
+  <data name="Folders_AddFolder_Success" xml:space="preserve">
+    <value>'{0}' सफलतापूर्वक जोड़ा गया और स्कैन किया गया।</value>
+  </data>
+  <data name="Folders_AddFolder_Failed" xml:space="preserve">
+    <value>फ़ोल्डर जोड़ने में विफल। पथ अमान्य हो सकता है।</value>
+  </data>
+  <data name="Folders_AddFolder_Exists" xml:space="preserve">
+    <value>यह फ़ोल्डर पहले से ही लाइब्रेरी में है।</value>
+  </data>
+  <data name="Folders_AddFolder_InProgress" xml:space="preserve">
+    <value>लाइब्रेरी में फ़ोल्डर जोड़ा जा रहा है...</value>
+  </data>
+  <data name="Folders_Delete_Success" xml:space="preserve">
+    <value>'{0}' सफलतापूर्वक हटाया गया।</value>
+  </data>
+  <data name="Folders_Delete_Failed" xml:space="preserve">
+    <value>'{0}' हटाने में विफल।</value>
+  </data>
+  <data name="Folders_Delete_InProgress" xml:space="preserve">
+    <value>'{0}' हटाया जा रहा है...</value>
+  </data>
+  <data name="Folders_Rescan_Complete" xml:space="preserve">
+    <value>'{0}' का पुन: स्कैन पूरा हुआ।</value>
+  </data>
+  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
+    <value>'{0}' के लिए कोई परिवर्तन नहीं मिला।</value>
+  </data>
+  <data name="Folders_Rescan_InProgress" xml:space="preserve">
+    <value>'{0}' को पुन: स्कैन किया जा रहा है...</value>
+  </data>
+  <data name="Folders_Empty_NoMusicFound" xml:space="preserve">
+    <value>संगीत वाले कोई फ़ोल्डर नहीं मिले।</value>
+  </data>
+  <data name="Folders_Error_Playback" xml:space="preserve">
+    <value>इस फ़ोल्डर के लिए प्लेबैक शुरू करने में त्रुटि।</value>
+  </data>
+  <data name="Folders_Error_RandomPlayback" xml:space="preserve">
+    <value>रैंडम फ़ोल्डर प्लेबैक शुरू करने में त्रुटि।</value>
+  </data>
+  <data name="Folders_Error_AddFolder" xml:space="preserve">
+    <value>फ़ोल्डर जोड़ने में त्रुटि: {0}</value>
+  </data>
+  <data name="Folders_Error_DeleteFolder" xml:space="preserve">
+    <value>फ़ोल्डर हटाने में त्रुटि: {0}</value>
+  </data>
+  <data name="Folders_Error_RescanFolder" xml:space="preserve">
+    <value>फ़ोल्डर को पुन: स्कैन करने में त्रुटि: {0}</value>
+  </data>
+  <data name="Folders_Count_Singular" xml:space="preserve">
+    <value>{0} फ़ोल्डर</value>
+  </data>
+  <data name="Folders_Count_Plural" xml:space="preserve">
+    <value>{0} फ़ोल्डर</value>
+  </data>
+  <data name="Songs_Count_Singular" xml:space="preserve">
+    <value>{0} गाना</value>
+  </data>
+  <data name="Songs_Count_Plural" xml:space="preserve">
+    <value>{0} गाने</value>
+  </data>
+  <data name="Albums_Count_Singular" xml:space="preserve">
+    <value>{0} एल्बम</value>
+  </data>
+  <data name="Albums_Count_Plural" xml:space="preserve">
+    <value>{0} एल्बम</value>
+  </data>
+  <data name="Artists_Count_Singular" xml:space="preserve">
+    <value>{0} कलाकार</value>
+  </data>
+  <data name="Artists_Count_Plural" xml:space="preserve">
+    <value>{0} कलाकार</value>
+  </data>
+  <data name="Generic_NoItems" xml:space="preserve">
+    <value>कोई आइटम नहीं</value>
+  </data>
+  <data name="Generic_Error" xml:space="preserve">
+    <value>त्रुटि</value>
+  </data>
+  <data name="GenreView_DefaultName" xml:space="preserve">
+    <value>शैली</value>
+  </data>
+  <data name="GenreView_Error" xml:space="preserve">
+    <value>शैली लोड करने में त्रुटि</value>
+  </data>
+  <data name="Lyrics_NoSongSelected" xml:space="preserve">
+    <value>कोई गाना नहीं चुना गया</value>
+  </data>
+  <data name="Lyrics_SongTitleFormat" xml:space="preserve">
+    <value>{1} द्वारा {0}</value>
+  </data>
+  <data name="Onboarding_Welcome" xml:space="preserve">
+    <value>शुरू करने के लिए अपनी संगीत लाइब्रेरी सेट अप करें।</value>
+  </data>
+  <data name="Onboarding_WaitingForSelection" xml:space="preserve">
+    <value>आपके फ़ोल्डर चुनने का इंतजार है...</value>
+  </data>
+  <data name="Onboarding_BuildingLibrary" xml:space="preserve">
+    <value>आपकी लाइब्रेरी बनाई जा रही है...</value>
+  </data>
+  <data name="Onboarding_Error" xml:space="preserve">
+    <value>एक अनपेक्षित त्रुटि हुई। कृपया पुनः प्रयास करें।</value>
+  </data>
+  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
+    <value>स्मार्ट • {0} गाना</value>
+  </data>
+  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
+    <value>स्मार्ट • {0} गाने</value>
+  </data>
+  <data name="Playlist_Count_Singular" xml:space="preserve">
+    <value>{0} गाना</value>
+  </data>
+  <data name="Playlist_Count_Plural" xml:space="preserve">
+    <value>{0} गाने</value>
+  </data>
+  <data name="Playlist_ErrorLoading" xml:space="preserve">
+    <value>प्लेलिस्ट लोड करने में त्रुटि</value>
+  </data>
+  <data name="Playlist_Status_Starting" xml:space="preserve">
+    <value>प्लेलिस्ट शुरू हो रही है...</value>
+  </data>
+  <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
+    <value>इस स्मार्ट प्लेलिस्ट के नियमों से कोई गाना मेल नहीं खाता।</value>
+  </data>
+  <data name="Playlist_Status_ErrorPlayback" xml:space="preserve">
+    <value>इस प्लेलिस्ट के लिए प्लेबैक शुरू करने में त्रुटि।</value>
+  </data>
+  <data name="Playlist_Status_PickingRandom" xml:space="preserve">
+    <value>एक रैंडम प्लेलिस्ट चुन रहे हैं...</value>
+  </data>
+  <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
+    <value>कोई प्लेलिस्ट नहीं मिली।</value>
+  </data>
+  <data name="Playlist_Status_SmartSelectedEmpty" xml:space="preserve">
+    <value>चुनी गई स्मार्ट प्लेलिस्ट खाली है।</value>
+  </data>
+  <data name="Playlist_Status_ErrorRandom" xml:space="preserve">
+    <value>रैंडम प्लेलिस्ट चलाने में त्रुटि।</value>
+  </data>
+  <data name="Playlist_Status_Loading" xml:space="preserve">
+    <value>प्लेलिस्ट लोड हो रही हैं...</value>
+  </data>
+  <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
+    <value>प्लेलिस्ट लोड करने में त्रुटि।</value>
+  </data>
+  <data name="Playlist_Status_Creating" xml:space="preserve">
+    <value>नई प्लेलिस्ट बनाई जा रही है...</value>
+  </data>
+  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
+    <value>प्लेलिस्ट बनाने में विफल। यह पहले से मौजूद हो सकती है।</value>
+  </data>
+  <data name="Playlist_Status_CreateError" xml:space="preserve">
+    <value>प्लेलिस्ट बनाते समय एक त्रुटि हुई।</value>
+  </data>
+  <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
+    <value>प्लेलिस्ट कवर अपडेट किया जा रहा है...</value>
+  </data>
+  <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
+    <value>प्लेलिस्ट कवर अपडेट करने में विफल।</value>
+  </data>
+  <data name="Playlist_Status_UpdateCoverError" xml:space="preserve">
+    <value>प्लेलिस्ट कवर अपडेट करते समय एक त्रुटि हुई।</value>
+  </data>
+  <data name="Playlist_Status_RemovingCover" xml:space="preserve">
+    <value>प्लेलिस्ट इमेज हटाई जा रही है...</value>
+  </data>
+  <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
+    <value>प्लेलिस्ट इमेज हटाने में विफल।</value>
+  </data>
+  <data name="Playlist_Status_RemoveCoverError" xml:space="preserve">
+    <value>प्लेलिस्ट इमेज हटाते समय एक त्रुटि हुई।</value>
+  </data>
+  <data name="Playlist_Status_Renaming" xml:space="preserve">
+    <value>प्लेलिस्ट का नाम बदला जा रहा है...</value>
+  </data>
+  <data name="Playlist_Status_RenameFailed" xml:space="preserve">
+    <value>प्लेलिस्ट का नाम बदलने में विफल।</value>
+  </data>
+  <data name="Playlist_Status_RenameError" xml:space="preserve">
+    <value>प्लेलिस्ट का नाम बदलते समय एक त्रुटि हुई।</value>
+  </data>
+  <data name="Playlist_Status_Deleting" xml:space="preserve">
+    <value>प्लेलिस्ट हटाई जा रही है...</value>
+  </data>
+  <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
+    <value>प्लेलिस्ट हटाने में विफल।</value>
+  </data>
+  <data name="Playlist_Status_DeleteError" xml:space="preserve">
+    <value>प्लेलिस्ट हटाते समय एक त्रुटि हुई।</value>
+  </data>
+  <data name="Settings_Reset_Title" xml:space="preserve">
+    <value>रीसेट की पुष्टि करें</value>
+  </data>
+  <data name="Settings_Reset_Message" xml:space="preserve">
+    <value>क्या आप निश्चित हैं कि आप सभी एप्लिकेशन डेटा और सेटिंग्स को रीसेट करना चाहते हैं? इस कार्रवाई को पूर्ववत नहीं किया जा सकता है। एप्लिकेशन प्रारंभिक सेटअप पर वापस आ जाएगा।</value>
+  </data>
+  <data name="Settings_Reset_Button" xml:space="preserve">
+    <value>रीसेट करें</value>
+  </data>
+  <data name="Settings_ResetError_Title" xml:space="preserve">
+    <value>रीसेट त्रुटि</value>
+  </data>
+  <data name="Settings_ResetError_Message" xml:space="preserve">
+    <value>एप्लिकेशन डेटा रीसेट करते समय एक त्रुटि हुई: {0}। कृपया ऐप को मैन्युअल रूप से पुनरारंभ करने का प्रयास करें।</value>
+  </data>
+  <data name="Settings_LastFm_AuthError_Title" xml:space="preserve">
+    <value>त्रुटि</value>
+  </data>
+  <data name="Settings_LastFm_AuthError_Message" xml:space="preserve">
+    <value>Last.fm से कनेक्ट नहीं हो सका। कृपया बाद में पुनः प्रयास करें।</value>
+  </data>
+  <data name="Settings_LastFm_FinalizeError_Title" xml:space="preserve">
+    <value>प्रमाणीकरण विफल</value>
+  </data>
+  <data name="Settings_LastFm_FinalizeError_Message" xml:space="preserve">
+    <value>Last.fm से एक सत्र प्राप्त नहीं हो सका। कृपया फिर से कनेक्ट करने का प्रयास करें।</value>
+  </data>
+  <data name="Settings_LastFm_Disconnect_Title" xml:space="preserve">
+    <value>Last.fm डिस्कनेक्ट करें</value>
+  </data>
+  <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
+    <value>क्या आप अपना Last.fm खाता डिस्कनेक्ट करना चाहते हैं? आपका स्क्रॉबलिंग इतिहास Last.fm पर संरक्षित रहेगा, लेकिन नागी अब स्क्रॉबल नहीं कर पाएगा।</value>
+  </data>
+  <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
+    <value>डिस्कनेक्ट करें</value>
+  </data>
+  <data name="Settings_Export_Success_Title" xml:space="preserve">
+    <value>निर्यात सफल</value>
+  </data>
+  <data name="Settings_Export_Success_Message" xml:space="preserve">
+    <value>निर्यात की गई {0} प्लेलिस्ट ({1} कुल गाने) यहां:\n{2}</value>
+  </data>
+  <data name="Settings_Export_Failed_Title" xml:space="preserve">
+    <value>निर्यात विफल</value>
+  </data>
+  <data name="Settings_Import_Success_Title" xml:space="preserve">
+    <value>आयात सफल</value>
+  </data>
+  <data name="Settings_Import_Success_Message" xml:space="preserve">
+    <value>सफलतापूर्वक {0} प्लेलिस्ट ({1} गाने) आयात किए गए।</value>
+  </data>
+  <data name="Settings_Import_Unmatched_Message" xml:space="preserve">
+    <value>\n\nआपकी लाइब्रेरी में {0} गाने नहीं मिल सके।</value>
+  </data>
+  <data name="Settings_Import_FailedFiles_Message" xml:space="preserve">
+    <value>\n\n{0} फाइलें आयात करने में विफल रहीं।</value>
+  </data>
+  <data name="Settings_Import_FailedTotal_Title" xml:space="preserve">
+    <value>आयात विफल</value>
+  </data>
+  <data name="Settings_Import_FailedTotal_Message" xml:space="preserve">
+    <value>कोई प्लेलिस्ट आयात नहीं की जा सकी।</value>
+  </data>
+  <data name="SmartPlaylist_ErrorLoading" xml:space="preserve">
+    <value>स्मार्ट प्लेलिस्ट लोड करने में त्रुटि</value>
+  </data>
+  <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
+    <value>कोई नियम परिभाषित नहीं • सभी गाने मेल खाते हैं</value>
+  </data>
+  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
+    <value>मिलान {1} में से {0} {2}</value>
+  </data>
+  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
+    <value>सभी</value>
+  </data>
+  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
+    <value>कोई भी</value>
+  </data>
+  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
+    <value>नियम</value>
+  </data>
+  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
+    <value>नियम</value>
+  </data>
+  <data name="SongList_PageTitle_Default" xml:space="preserve">
+    <value>गाने</value>
+  </data>
+  <data name="SongList_TotalItems_Default" xml:space="preserve">
+    <value>0 आइटम</value>
+  </data>
+  <data name="SongList_ErrorLoading" xml:space="preserve">
+    <value>आइटम लोड करने में त्रुटि</value>
+  </data>
+  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
+    <value>{0} आइटम</value>
+  </data>
+  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
+    <value>{0} आइटम</value>
+  </data>
+  <data name="SongList_SelectedCount_Format" xml:space="preserve">
+    <value>{0} चयनित</value>
+  </data>
+  <data name="AlbumView_DiscHeader" xml:space="preserve">
+    <value>डिस्क {0}</value>
+  </data>
+  <data name="Generic_OK" xml:space="preserve">
+    <value>ठीक है</value>
+  </data>
+  <data name="Generic_Cancel" xml:space="preserve">
+    <value>रद्द करें</value>
+  </data>
+  <data name="Generic_Close" xml:space="preserve">
+    <value>बंद करें</value>
+  </data>
+  <data name="Generic_Recheck" xml:space="preserve">
+    <value>पुन: जाँच करें</value>
+  </data>
+  <data name="CrashReport_Button_Reset" xml:space="preserve">
+    <value>ऐप और डेटा रीसेट करें</value>
+  </data>
+  <data name="FFmpeg_Status_NotDetected" xml:space="preserve">
+    <value>FFmpeg का पता नहीं चला। कृपया FFmpeg इंस्टॉल करें और 'पुन: जाँच करें' पर क्लिक करें।</value>
+  </data>
+  <data name="FFmpeg_Status_Checking" xml:space="preserve">
+    <value>FFmpeg की जाँच की जा रही है...</value>
+  </data>
+  <data name="FFmpeg_Status_Detected" xml:space="preserve">
+    <value>FFmpeg का पता चला!</value>
+  </data>
+  <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
+    <value>FFmpeg का अभी भी पता नहीं चला। कृपया FFmpeg इंस्टॉल करें और 'पुन: जाँच करें' पर क्लिक करें।</value>
+  </data>
+  <data name="FFmpeg_Status_Error" xml:space="preserve">
+    <value>FFmpeg की जाँच करने में त्रुटि। कृपया पुनः प्रयास करें।</value>
+  </data>
+  <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
+    <value>पिछला</value>
+  </data>
+  <data name="Taskbar_Tooltip_Play" xml:space="preserve">
+    <value>चलाएँ</value>
+  </data>
+  <data name="Taskbar_Tooltip_Pause" xml:space="preserve">
+    <value>रोकें</value>
+  </data>
+  <data name="Taskbar_Tooltip_Next" xml:space="preserve">
+    <value>अगला</value>
+  </data>
+  <data name="Update_Available_Title" xml:space="preserve">
+    <value>अपडेट उपलब्ध है</value>
+  </data>
+  <data name="Update_Available_Message" xml:space="preserve">
+    <value>एक नया संस्करण ({0}) उपलब्ध है। क्या आप इसे अभी डाउनलोड और इंस्टॉल करना चाहेंगे?</value>
+  </data>
+  <data name="Update_Button_InstallNow" xml:space="preserve">
+    <value>अभी इंस्टॉल करें</value>
+  </data>
+  <data name="Update_Button_Later" xml:space="preserve">
+    <value>बाद में</value>
+  </data>
+  <data name="Update_Button_Skip" xml:space="preserve">
+    <value>इस संस्करण को छोड़ें</value>
+  </data>
+  <data name="Update_UpToDate_Title" xml:space="preserve">
+    <value>अप-टू-डेट</value>
+  </data>
+  <data name="Update_UpToDate_Message" xml:space="preserve">
+    <value>आप नागी का नवीनतम संस्करण चला रहे हैं।</value>
+  </data>
+  <data name="Update_Error_Title" xml:space="preserve">
+    <value>अपडेट त्रुटि</value>
+  </data>
+  <data name="Update_Check_Error_Message" xml:space="preserve">
+    <value>अपडेट की जाँच करते समय एक त्रुटि हुई: {0}</value>
+  </data>
+  <data name="Update_Install_Error_Message" xml:space="preserve">
+    <value>अपडेट इंस्टॉल करते समय एक त्रुटि हुई: {0}</value>
+  </data>
+  <data name="Update_Downloading_Title" xml:space="preserve">
+    <value>अपडेट डाउनलोड हो रहा है</value>
+  </data>
+  <data name="Update_Downloading_Message" xml:space="preserve">
+    <value>संस्करण {0} डाउनलोड किया जा रहा है। तैयार होने पर एप्लिकेशन अपने आप पुनरारंभ हो जाएगा।</value>
+  </data>
+  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
+    <value>LibVLC को एक अनिर्दिष्ट त्रुटि का सामना करना पड़ा।</value>
+  </data>
+  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
+    <value>LibVLC त्रुटि: {0}</value>
+  </data>
+  <data name="Player_Error_LoadFailed" xml:space="preserve">
+    <value>'{0}' लोड करने में विफल।</value>
+  </data>
+  <data name="Settings_Nav_Library" xml:space="preserve">
+    <value>लाइब्रेरी</value>
+  </data>
+  <data name="Settings_Nav_Folders" xml:space="preserve">
+    <value>फ़ोल्डर</value>
+  </data>
+  <data name="Settings_Nav_Playlists" xml:space="preserve">
+    <value>प्लेलिस्ट</value>
+  </data>
+  <data name="Settings_Nav_Artists" xml:space="preserve">
+    <value>कलाकार</value>
+  </data>
+  <data name="Settings_Nav_Albums" xml:space="preserve">
+    <value>एल्बम</value>
+  </data>
+  <data name="Settings_Nav_Genres" xml:space="preserve">
+    <value>शैलियाँ</value>
+  </data>
+  <data name="Settings_Button_Shuffle" xml:space="preserve">
+    <value>शफ़ल</value>
+  </data>
+  <data name="Settings_Button_Previous" xml:space="preserve">
+    <value>पिछला</value>
+  </data>
+  <data name="Settings_Button_PlayPause" xml:space="preserve">
+    <value>चलाएँ/रोकें</value>
+  </data>
+  <data name="Settings_Button_Next" xml:space="preserve">
+    <value>अगला</value>
+  </data>
+  <data name="Settings_Button_Repeat" xml:space="preserve">
+    <value>दोहराएँ</value>
+  </data>
+  <data name="Settings_Button_Divider" xml:space="preserve">
+    <value>लेआउट डिवाइडर</value>
+  </data>
+  <data name="Settings_Button_Lyrics" xml:space="preserve">
+    <value>गीत</value>
+  </data>
+  <data name="Settings_Button_Queue" xml:space="preserve">
+    <value>पंक्ति</value>
+  </data>
+  <data name="Settings_Button_Volume" xml:space="preserve">
+    <value>वॉल्यूम</value>
+  </data>
+  <data name="Settings_Provider_LRCLIB_Desc" xml:space="preserve">
+    <value>समुदाय द्वारा संग्रहित गीत डेटाबेस</value>
+  </data>
+  <data name="Settings_Provider_NetEase_Desc" xml:space="preserve">
+    <value>चीनी संगीत सेवा, एशियाई संगीत के लिए शानदार</value>
+  </data>
+  <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
+    <value>कलाकार ID प्राप्त करता है (TheAudioDB और Fanart.tv के लिए आवश्यक)</value>
+  </data>
+  <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
+    <value>उच्च-गुणवत्ता वाली कलाकार छवियाँ और जीवनियाँ (MusicBrainz आवश्यक है)</value>
+  </data>
+  <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
+    <value>केवल उच्च-गुणवत्ता वाली कलाकार छवियाँ (MusicBrainz आवश्यक है)</value>
+  </data>
+  <data name="Settings_Provider_Spotify_Desc" xml:space="preserve">
+    <value>केवल कलाकार छवियाँ</value>
+  </data>
+  <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
+    <value>कलाकार की जीवनियाँ और छवियाँ (फ़ॉलबैक)</value>
+  </data>
+  <data name="App_Name_Default" xml:space="preserve">
+    <value>नागी</value>
+  </data>
+  <data name="App_Version_Unknown" xml:space="preserve">
+    <value>उपलब्ध नहीं</value>
+  </data>
+  <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>खोज बंद करें</value>
+  </data>
+  <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>एल्बम खोजें</value>
+  </data>
+  <data name="AlbumViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>खोज बंद करें</value>
+  </data>
+  <data name="AlbumViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>एल्बम में खोजें</value>
+  </data>
+  <data name="AlbumViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>कोई प्लेलिस्ट उपलब्ध नहीं</value>
+  </data>
+  <data name="ArtistPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>खोज बंद करें</value>
+  </data>
+  <data name="ArtistPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>कलाकार खोजें</value>
+  </data>
+  <data name="ArtistViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>खोज बंद करें</value>
+  </data>
+  <data name="ArtistViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>कलाकार में खोजें</value>
+  </data>
+  <data name="ArtistViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>कोई प्लेलिस्ट उपलब्ध नहीं</value>
+  </data>
+  <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
+    <value>फ़ोल्डर हटाएँ</value>
+  </data>
+  <data name="FolderPage_DeleteDialog_Format" xml:space="preserve">
+    <value>क्या आप फ़ोल्डर '{0}' को लाइब्रेरी से हटाना चाहते हैं? इससे आपके कंप्यूटर से फ़ाइलें नहीं हटेंगी।</value>
+  </data>
+  <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
+    <value>हटाएँ</value>
+  </data>
+  <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
+    <value>रद्द करें</value>
+  </data>
+  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
+    <value>अज्ञात फ़ोल्डर</value>
+  </data>
+  <data name="FolderSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>खोज बंद करें</value>
+  </data>
+  <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>फ़ोल्डर में खोजें</value>
+  </data>
+  <data name="FolderSongViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>कोई प्लेलिस्ट उपलब्ध नहीं</value>
+  </data>
+  <data name="GenrePage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>खोज बंद करें</value>
+  </data>
+  <data name="GenrePage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>शैलियाँ खोजें</value>
+  </data>
+  <data name="LibraryPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>खोज बंद करें</value>
+  </data>
+  <data name="LibraryPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>लाइब्रेरी खोजें</value>
+  </data>
+  <data name="LibraryPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>कोई प्लेलिस्ट उपलब्ध नहीं</value>
+  </data>
+  <data name="PlaylistPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>खोज बंद करें</value>
+  </data>
+  <data name="PlaylistPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>प्लेलिस्ट खोजें</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_Placeholder" xml:space="preserve">
+    <value>नई प्लेलिस्ट का नाम दर्ज करें</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_PickImage" xml:space="preserve">
+    <value>छवि चुनें</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_Title" xml:space="preserve">
+    <value>नई प्लेलिस्ट बनाएँ</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_CreateButton" xml:space="preserve">
+    <value>बनाएँ</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_CancelButton" xml:space="preserve">
+    <value>रद्द करें</value>
+  </data>
+  <data name="PlaylistPage_RenameDialog_Title_Format" xml:space="preserve">
+    <value>'{0}' का नाम बदलें</value>
+  </data>
+  <data name="PlaylistPage_RenameDialog_RenameButton" xml:space="preserve">
+    <value>नाम बदलें</value>
+  </data>
+  <data name="PlaylistPage_DeleteDialog_Title" xml:space="preserve">
+    <value>प्लेलिस्ट हटाएँ</value>
+  </data>
+  <data name="PlaylistPage_DeleteDialog_Content_Format" xml:space="preserve">
+    <value>क्या आप प्लेलिस्ट '{0}' को हटाना चाहते हैं? इस कार्रवाई को पूर्ववत नहीं किया जा सकता है।</value>
+  </data>
+  <data name="PlaylistPage_DeleteDialog_DeleteButton" xml:space="preserve">
+    <value>हटाएँ</value>
+  </data>
+  <data name="PlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>खोज बंद करें</value>
+  </data>
+  <data name="PlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>प्लेलिस्ट में खोजें</value>
+  </data>
+  <data name="GenreViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>खोज बंद करें</value>
+  </data>
+  <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>लाइब्रेरी खोजें</value>
+  </data>
+  <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>कोई प्लेलिस्ट उपलब्ध नहीं</value>
+  </data>
+  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
+    <value>अज्ञात प्लेलिस्ट</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>खोज बंद करें</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>स्मार्ट प्लेलिस्ट में खोजें</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
+    <value>अज्ञात स्मार्ट प्लेलिस्ट</value>
+  </data>
+  <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
+    <value>मेटाडेटा पुन: स्कैन करें</value>
+  </data>
+  <data name="Settings_Dialog_Rescan_Content" xml:space="preserve">
+    <value>यह आपकी लाइब्रेरी में सभी गानों को नई मेटाडेटा सेटिंग्स (जैसे कलाकार विभाजन वर्ण) लागू करने के लिए पुन: स्कैन करेगा। लाइब्रेरी के आकार के आधार पर इसमें कुछ समय लग सकता है। क्या आप जारी रखना चाहते हैं?</value>
+  </data>
+  <data name="Settings_Dialog_Rescan_PrimaryButton" xml:space="preserve">
+    <value>पुन: स्कैन करें</value>
+  </data>
+  <data name="Settings_Status_Rescan_Preparing" xml:space="preserve">
+    <value>लाइब्रेरी पुन: स्कैन तैयार किया जा रहा है...</value>
+  </data>
+  <data name="Settings_Dialog_RescanComplete_Title" xml:space="preserve">
+    <value>पुन: स्कैन पूरा हुआ</value>
+  </data>
+  <data name="Settings_Dialog_RescanComplete_Content" xml:space="preserve">
+    <value>लाइब्रेरी मेटाडेटा अपडेट कर दिया गया है।</value>
+  </data>
+  <data name="Settings_Dialog_RescanFailed_Title" xml:space="preserve">
+    <value>पुन: स्कैन विफल</value>
+  </data>
+  <data name="Settings_Dialog_RescanFailed_Content" xml:space="preserve">
+    <value>स्कैन करते समय एक त्रुटि हुई। विवरण के लिए लॉग देखें।</value>
+  </data>
+  <data name="Settings_Dialog_FFmpegNotFound_Title" xml:space="preserve">
+    <value>FFmpeg नहीं मिला</value>
+  </data>
+  <data name="Settings_Dialog_VolumeNorm_Title" xml:space="preserve">
+    <value>वॉल्यूम सामान्यीकरण सक्षम करें</value>
+  </data>
+  <data name="Settings_Dialog_VolumeNorm_Content" xml:space="preserve">
+    <value>वॉल्यूम सामान्यीकरण (रिप्लेगेन) आपके सभी संगीत में एक समान वॉल्यूम स्तर सुनिश्चित करता है।\n\nयह आपकी संगीत लाइब्रेरी का विश्लेषण करेगा और रीप्लेगेन टैग लिखकर आपकी ऑडियो फ़ाइलों को सीधे संशोधित करेगा। केवल उन फ़ाइलों को संसाधित किया जाएगा जिनमें मौजूदा टैग नहीं हैं। आपकी लाइब्रेरी के आकार के आधार पर इसमें कुछ समय लग सकता है।\n\nक्या आप जारी रखना चाहते हैं?</value>
+  </data>
+  <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
+    <value>सक्षम करें और स्कैन करें</value>
+  </data>
+  <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
+    <value>वॉल्यूम सामान्यीकरण स्कैन तैयार किया जा रहा है...</value>
+  </data>
+  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
+    <value>वॉल्यूम सामान्यीकरण स्कैन रद्द कर दिया गया।</value>
+  </data>
+  <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
+    <value>स्कैन के दौरान त्रुटि: {0}</value>
+  </data>
+  <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
+    <value>मेमोरी से लॉग पुनर्प्राप्त नहीं कर सका। लॉग फ़ाइल पढ़ने का फॉलबैक प्रयास विफल रहा।\nअपेक्षित पथ: '{0}'\nत्रुटि: {1}</value>
+  </data>
+  <data name="Settings_Export_Failed_Message" xml:space="preserve">
+    <value>निर्यात करने के लिए कोई प्लेलिस्ट नहीं।</value>
+  </data>
+</root>

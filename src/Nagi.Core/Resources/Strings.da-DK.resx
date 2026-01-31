@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Noun Labels -->
+  <data name="Label_Artist" xml:space="preserve">
+    <value>Kunstner</value>
+  </data>
+  <data name="Label_Album" xml:space="preserve">
+    <value>Album</value>
+  </data>
+  <data name="Label_Genre" xml:space="preserve">
+    <value>Genre</value>
+  </data>
+  <data name="Label_Title" xml:space="preserve">
+    <value>Titel</value>
+  </data>
+  <data name="Label_Playlist" xml:space="preserve">
+    <value>Afspilningsliste</value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>Fil</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>År</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Dato tilføjet</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Dato oprettet</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Dato ændret</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Sidst spillet</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Varighed</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Sporenummer</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Afspilningsantal</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Sange</value>
+  </data>
+  <data name="Label_Song" xml:space="preserve">
+    <value>Sang</value>
+  </data>
+  <data name="Label_Folder" xml:space="preserve">
+    <value>Mappe</value>
+  </data>
+  <data name="Label_Folders" xml:space="preserve">
+    <value>Mapper</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Manuel rækkefølge</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Tilfældig</value>
+  </data>
+  <!-- Format Patterns -->
+  <data name="Format_Unknown" xml:space="preserve">
+    <value>Ukendt {0}</value>
+  </data>
+  <data name="Format_New" xml:space="preserve">
+    <value>Ny {0}</value>
+  </data>
+  <data name="Format_NotFound" xml:space="preserve">
+    <value>{0} ikke fundet.</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A til Z)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Z til A)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (Nyeste)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (Ældste)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (Stigende)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (Faldende)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>Korteste først</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>Længste først</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>Langsomste først ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>Hurtigste først ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>Mest {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>Mindst {0}</value>
+  </data>
+  <data name="Format_ScanFolderProgress" xml:space="preserve">
+    <value>Scanner mappe {0} af {1}: {2} - {3}</value>
+  </data>
+  <data name="Format_ScanCompleteResult" xml:space="preserve">
+    <value>Scanning fuldført. Tilføjede eller opdaterede {0} {1}.</value>
+  </data>
+  <data name="Format_SavingBatch" xml:space="preserve">
+    <value>Gemmer batch {0}...</value>
+  </data>
+  <!-- Status & Success Messages -->
+  <data name="Status_ScanningFolder" xml:space="preserve">
+    <value>Scanner mappe...</value>
+  </data>
+  <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
+    <value>Scanning fuldført. Biblioteket er opdateret.</value>
+  </data>
+  <data name="Status_ScanCancelled" xml:space="preserve">
+    <value>Scanning annulleret.</value>
+  </data>
+  <data name="Status_ScanFailed" xml:space="preserve">
+    <value>Scanning mislykkedes. Se logs for detaljer.</value>
+  </data>
+  <data name="Status_PreparingScanCaches" xml:space="preserve">
+    <value>Forbereder scanningscacher...</value>
+  </data>
+  <data name="Status_ReadingSongDetails" xml:space="preserve">
+    <value>Indlæser sangdetaljer...</value>
+  </data>
+  <data name="Status_CleaningUpLibrary" xml:space="preserve">
+    <value>Rydder op i dit bibliotek...</value>
+  </data>
+  <data name="Status_Finalizing" xml:space="preserve">
+    <value>Afslutter...</value>
+  </data>
+  <data name="Status_NormalizationFailed" xml:space="preserve">
+    <value>Volumennormalisering mislykkedes. Se logs for detaljer.</value>
+  </data>
+  <data name="Status_NoFoldersToRefresh" xml:space="preserve">
+    <value>Ingen mapper i biblioteket at opdatere.</value>
+  </data>
+  <data name="Status_LibraryRefreshComplete" xml:space="preserve">
+    <value>Biblioteksopdatering fuldført.</value>
+  </data>
+  <!-- Error Mssages -->
+  <data name="Error_FailedToAddFolder" xml:space="preserve">
+    <value>Kunne ikke tilføje mappe.</value>
+  </data>
+  <data name="Error_PlaylistNameEmpty" xml:space="preserve">
+    <value>Afspilningslistenavn kan ikke være tomt.</value>
+  </data>
+  <data name="Error_RatingRange" xml:space="preserve">
+    <value>Bedømmelse skal være mellem 1 og 5.</value>
+  </data>
+  <!-- Labels -->
+  <data name="Label_WithLyrics" xml:space="preserve">
+    <value>med tekster</value>
+  </data>
+  <data name="Label_WithCoverArt" xml:space="preserve">
+    <value>med cover-art</value>
+  </data>
+  <data name="Label_And" xml:space="preserve">
+    <value>og</value>
+  </data>
+  <!-- Static Strings -->
+  <data name="UnknownFilename" xml:space="preserve">
+    <value>ukendt</value>
+  </data>
+  <data name="ArtistSeparator" xml:space="preserve">
+    <value> &amp; </value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Sortér efter: </value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>FFmpeg er påkrævet for volumennormalisering med høj præcision (ReplayGain-analyse), men blev ikke fundet på dit system.\n\nFølg disse trin for at konfigurere det:\n\n1. **Download**: Besøg https://www.gyan.dev/ffmpeg/builds/ og download 'ffmpeg-git-full.7z' (eller lignende) essentials-bygning.\n2. **Guide**: Du kan følge denne guide for detaljerede instruktioner: https://phoenixnap.com/kb/ffmpeg-windows\n3. **Udpak**: Åbn arkitekturmappen og find 'bin'-mappen, der indeholder `ffmpeg.exe`.\n4. **Installer**: Kopier `ffmpeg.exe` til en permanent mappe (f.eks. `C:\ffmpeg\`) og **tilføj den mappe til din System PATH**-miljøvariabel.\n5. **Genstart**: Genstart Nagi efter installationen for at ændringerne træder i kraft.</value>
+  </data>
+  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
+    <value>Ingen sange fra afspilningslisten blev fundet i dit bibliotek.</value>
+  </data>
+  <data name="Error_NoPlaylistsToExport" xml:space="preserve">
+    <value>Ingen afspilningslister at eksportere.</value>
+  </data>
+  <data name="EqPreset_None" xml:space="preserve">
+    <value>Ingen</value>
+  </data>
+  <data name="EqPreset_Classical" xml:space="preserve">
+    <value>Klassisk</value>
+  </data>
+  <data name="EqPreset_Dance" xml:space="preserve">
+    <value>Dans</value>
+  </data>
+  <data name="EqPreset_FullBass" xml:space="preserve">
+    <value>Fuld bas</value>
+  </data>
+  <data name="EqPreset_FullTreble" xml:space="preserve">
+    <value>Fuld diskant</value>
+  </data>
+  <data name="EqPreset_Jazz" xml:space="preserve">
+    <value>Jazz</value>
+  </data>
+  <data name="EqPreset_Pop" xml:space="preserve">
+    <value>Pop</value>
+  </data>
+  <data name="EqPreset_Rock" xml:space="preserve">
+    <value>Rock</value>
+  </data>
+  <data name="EqPreset_Soft" xml:space="preserve">
+    <value>Blød</value>
+  </data>
+  <data name="EqPreset_Techno" xml:space="preserve">
+    <value>Techno</value>
+  </data>
+  <data name="EqPreset_Vocal" xml:space="preserve">
+    <value>Vokal</value>
+  </data>
+  <data name="ReplayGain_AllSongsScanned" xml:space="preserve">
+    <value>Alle sange har allerede volumedata.</value>
+  </data>
+  <data name="ReplayGain_CalculatingCount" xml:space="preserve">
+    <value>Beregner volumen for {0} sange...</value>
+  </data>
+  <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
+    <value>Beregner volumennormalisering ({0}/{1})...</value>
+  </data>
+  <data name="ReplayGain_Complete" xml:space="preserve">
+    <value>Volumennormalisering fuldført. Behandlede {0} sange.</value>
+  </data>
+</root>

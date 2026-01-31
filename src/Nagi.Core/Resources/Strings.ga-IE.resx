@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Noun Labels -->
+  <data name="Label_Artist" xml:space="preserve">
+    <value>Ealaíontóir</value>
+  </data>
+  <data name="Label_Album" xml:space="preserve">
+    <value>Albam</value>
+  </data>
+  <data name="Label_Genre" xml:space="preserve">
+    <value>Seánra</value>
+  </data>
+  <data name="Label_Title" xml:space="preserve">
+    <value>Teideal</value>
+  </data>
+  <data name="Label_Playlist" xml:space="preserve">
+    <value>Seinnliosta</value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>Comhad</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>Bliain</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Dáta Curtha Leis</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Dáta Cruthaithe</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Dáta Athraithe</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Seinnte Go Deireanach</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Fad</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Uimhir Rian</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Líon Seinnte</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Amhráin</value>
+  </data>
+  <data name="Label_Song" xml:space="preserve">
+    <value>Amhrán</value>
+  </data>
+  <data name="Label_Folder" xml:space="preserve">
+    <value>Fillteán</value>
+  </data>
+  <data name="Label_Folders" xml:space="preserve">
+    <value>Fillteáin</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Ordú Láimhe</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Randamach</value>
+  </data>
+  <!-- Format Patterns -->
+  <data name="Format_Unknown" xml:space="preserve">
+    <value>{0} Anaithnid</value>
+  </data>
+  <data name="Format_New" xml:space="preserve">
+    <value>{0} Nua</value>
+  </data>
+  <data name="Format_NotFound" xml:space="preserve">
+    <value>Níor aimsíodh {0}.</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A go Z)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Z go A)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (Is Nua)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (Is Sine)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (Ard)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (Ísl)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>An Ceann is Giorra ar dTús</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>An Ceann is Faide ar dTús</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>An Ceann is Moille ar dTús ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>An Ceann is Tapa ar dTús ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>An chuid is mó de {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>An chuid is lú de {0}</value>
+  </data>
+  <data name="Format_ScanFolderProgress" xml:space="preserve">
+    <value>Ag scanadh fillteán {0} de {1}: {2} - {3}</value>
+  </data>
+  <data name="Format_ScanCompleteResult" xml:space="preserve">
+    <value>Scanadh críochnaithe. Cuireadh nó nuashonraíodh {0} {1}.</value>
+  </data>
+  <data name="Format_SavingBatch" xml:space="preserve">
+    <value>Ag sábháil baisce {0}...</value>
+  </data>
+  <!-- Status & Success Messages -->
+  <data name="Status_ScanningFolder" xml:space="preserve">
+    <value>Ag scanadh fillteáin...</value>
+  </data>
+  <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
+    <value>Scanadh críochnaithe. Tá an leabharlann cothrom le dáta.</value>
+  </data>
+  <data name="Status_ScanCancelled" xml:space="preserve">
+    <value>Scanadh curtha ar ceal.</value>
+  </data>
+  <data name="Status_ScanFailed" xml:space="preserve">
+    <value>Theip ar an scanadh. Seiceáil logaí le haghaidh sonraí.</value>
+  </data>
+  <data name="Status_PreparingScanCaches" xml:space="preserve">
+    <value>Ag ullmhú taisce scanadh...</value>
+  </data>
+  <data name="Status_ReadingSongDetails" xml:space="preserve">
+    <value>Ag léamh sonraí amhráin...</value>
+  </data>
+  <data name="Status_CleaningUpLibrary" xml:space="preserve">
+    <value>Ag glanadh do leabharlainne...</value>
+  </data>
+  <data name="Status_Finalizing" xml:space="preserve">
+    <value>Ag críochnú...</value>
+  </data>
+  <data name="Status_NormalizationFailed" xml:space="preserve">
+    <value>Theip ar normalú toirte. Seiceáil logaí le haghaidh sonraí.</value>
+  </data>
+  <data name="Status_NoFoldersToRefresh" xml:space="preserve">
+    <value>Níl aon fhillteáin sa leabharlann le hathnuachan.</value>
+  </data>
+  <data name="Status_LibraryRefreshComplete" xml:space="preserve">
+    <value>Athnuachan leabharlainne críochnaithe.</value>
+  </data>
+  <!-- Error Mssages -->
+  <data name="Error_FailedToAddFolder" xml:space="preserve">
+    <value>Theip ar fhillteán a chur leis.</value>
+  </data>
+  <data name="Error_PlaylistNameEmpty" xml:space="preserve">
+    <value>Ní féidir ainm an tseinnliosta a bheith folamh.</value>
+  </data>
+  <data name="Error_RatingRange" xml:space="preserve">
+    <value>Caithfidh an rátáil a bheith idir 1 agus 5.</value>
+  </data>
+  <!-- Labels -->
+  <data name="Label_WithLyrics" xml:space="preserve">
+    <value>le liricí</value>
+  </data>
+  <data name="Label_WithCoverArt" xml:space="preserve">
+    <value>le healaín clúdaigh</value>
+  </data>
+  <data name="Label_And" xml:space="preserve">
+    <value>agus</value>
+  </data>
+  <!-- Static Strings -->
+  <data name="UnknownFilename" xml:space="preserve">
+    <value>anaithnid</value>
+  </data>
+  <data name="ArtistSeparator" xml:space="preserve">
+    <value> &amp; </value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Sórtáil De Réir: </value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>FFmpeg teastaíonn sé le haghaidh Normalú Toirte Ardchruinneas (anailís ReplayGain) ach níor aimsíodh ar do chóras é.\n\nLean na céimeanna seo chun é a chur ar bun:\n\n1. **Íoslódáil**: Tabhair cuairt ar https://www.gyan.dev/ffmpeg/builds/ agus íoslódáil an tógáil riachtanach 'ffmpeg-git-full.7z' (nó a leithéid).\n2. **Treoir**: Is féidir leat an treoir seo a leanúint le haghaidh treoracha mionsonraithe: https://phoenixnap.com/kb/ffmpeg-windows\n3. **Baintear amach**: Oscail an fillteán ailtireachta agus aimsigh an eolaire 'bin' ina bhfuil `ffmpeg.exe`.\n4. **Suiteáil**: Cóipeáil `ffmpeg.exe` chuig fillteán buan (m.sh., `C:\\ffmpeg\\`) agus **cuir an fillteán sin le d'athróg timpeallachta System PATH**.\n5. **Atosaigh**: Atosaigh Nagi le do thoil tar éis na suiteála chun go dtiocfaidh athruithe i bhfeidhm.</value>
+  </data>
+  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
+    <value>Níor aimsíodh aon amhráin ón seinmliosta i do leabharlann.</value>
+  </data>
+  <data name="Error_NoPlaylistsToExport" xml:space="preserve">
+    <value>Níl aon seinmliostaí le heaspórtáil.</value>
+  </data>
+  <data name="EqPreset_None" xml:space="preserve">
+    <value>Dada</value>
+  </data>
+  <data name="EqPreset_Classical" xml:space="preserve">
+    <value>Clasaiceach</value>
+  </data>
+  <data name="EqPreset_Dance" xml:space="preserve">
+    <value>Rince</value>
+  </data>
+  <data name="EqPreset_FullBass" xml:space="preserve">
+    <value>Dord Iomlán</value>
+  </data>
+  <data name="EqPreset_FullTreble" xml:space="preserve">
+    <value>Tréile Iomlán</value>
+  </data>
+  <data name="EqPreset_Jazz" xml:space="preserve">
+    <value>Snagcheol</value>
+  </data>
+  <data name="EqPreset_Pop" xml:space="preserve">
+    <value>Pop</value>
+  </data>
+  <data name="EqPreset_Rock" xml:space="preserve">
+    <value>Rac</value>
+  </data>
+  <data name="EqPreset_Soft" xml:space="preserve">
+    <value>Bog</value>
+  </data>
+  <data name="EqPreset_Techno" xml:space="preserve">
+    <value>Teicneó</value>
+  </data>
+  <data name="EqPreset_Vocal" xml:space="preserve">
+    <value>Gutha</value>
+  </data>
+  <data name="ReplayGain_AllSongsScanned" xml:space="preserve">
+    <value>Tá sonraí toirte ag gach amhrán cheana féin.</value>
+  </data>
+  <data name="ReplayGain_CalculatingCount" xml:space="preserve">
+    <value>Ag ríomh toirte do {0} amhrán...</value>
+  </data>
+  <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
+    <value>Ag ríomh normalú toirte ({0}/{1})...</value>
+  </data>
+  <data name="ReplayGain_Complete" xml:space="preserve">
+    <value>Normalú toirte críochnaithe. Próiseáladh {0} amhrán.</value>
+  </data>
+</root>

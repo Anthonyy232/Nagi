@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Noun Labels -->
+  <data name="Label_Artist" xml:space="preserve">
+    <value>Artista</value>
+  </data>
+  <data name="Label_Album" xml:space="preserve">
+    <value>Album</value>
+  </data>
+  <data name="Label_Genre" xml:space="preserve">
+    <value>Genre</value>
+  </data>
+  <data name="Label_Title" xml:space="preserve">
+    <value>Pamagat</value>
+  </data>
+  <data name="Label_Playlist" xml:space="preserve">
+    <value>Playlist</value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>Taon</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>Petsa ng Pagdagdag</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>Petsa ng Pagkagawa</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>Petsa ng Pagbabago</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>Huling Pinatugtog</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>Tagal</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>Numero ng Track</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>Bilang ng Patugtog</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>Mga Kanta</value>
+  </data>
+  <data name="Label_Song" xml:space="preserve">
+    <value>Kanta</value>
+  </data>
+  <data name="Label_Folder" xml:space="preserve">
+    <value>Folder</value>
+  </data>
+  <data name="Label_Folders" xml:space="preserve">
+    <value>Mga Folder</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>Manu-manong Pagkakasunod</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>Random</value>
+  </data>
+  <!-- Format Patterns -->
+  <data name="Format_Unknown" xml:space="preserve">
+    <value>Hindi Alam na {0}</value>
+  </data>
+  <data name="Format_New" xml:space="preserve">
+    <value>Bagong {0}</value>
+  </data>
+  <data name="Format_NotFound" xml:space="preserve">
+    <value>Hindi natagpuan ang {0}.</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (A hanggang Z)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (Z hanggang A)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (Pinakabago)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (Pinakaluma)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (Pataas)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (Pababa)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>Pinakamaikli Muna</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>Pinakamahaba Muna</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>Pinakamabagal Muna ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>Pinakamabilis Muna ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>Pinakamaraming {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>Pinakakonting {0}</value>
+  </data>
+  <data name="Format_ScanFolderProgress" xml:space="preserve">
+    <value>Ini-scan ang folder {0} sa {1}: {2} - {3}</value>
+  </data>
+  <data name="Format_ScanCompleteResult" xml:space="preserve">
+    <value>Tapos na ang pag-scan. Nagdagdag o nag-update ng {0} {1}.</value>
+  </data>
+  <data name="Format_SavingBatch" xml:space="preserve">
+    <value>Sinisave ang batch {0}...</value>
+  </data>
+  <!-- Status & Success Messages -->
+  <data name="Status_ScanningFolder" xml:space="preserve">
+    <value>Ini-scan ang folder...</value>
+  </data>
+  <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
+    <value>Tapos na ang pag-scan. Ang library ay napapanahon.</value>
+  </data>
+  <data name="Status_ScanCancelled" xml:space="preserve">
+    <value>Kinansela ang pag-scan.</value>
+  </data>
+  <data name="Status_ScanFailed" xml:space="preserve">
+    <value>Nabigo ang pag-scan. Suriin ang mga log para sa detalye.</value>
+  </data>
+  <data name="Status_PreparingScanCaches" xml:space="preserve">
+    <value>Inihahanda ang mga scan cache...</value>
+  </data>
+  <data name="Status_ReadingSongDetails" xml:space="preserve">
+    <value>Binabasa ang mga detalye ng kanta...</value>
+  </data>
+  <data name="Status_CleaningUpLibrary" xml:space="preserve">
+    <value>Nililinis ang iyong library...</value>
+  </data>
+  <data name="Status_Finalizing" xml:space="preserve">
+    <value>Tinutuloy...</value>
+  </data>
+  <data name="Status_NormalizationFailed" xml:space="preserve">
+    <value>Nabigo ang normalisasyon ng volume. Suriin ang mga log para sa detalye.</value>
+  </data>
+  <data name="Status_NoFoldersToRefresh" xml:space="preserve">
+    <value>Walang mga folder sa library na ire-refresh.</value>
+  </data>
+  <data name="Status_LibraryRefreshComplete" xml:space="preserve">
+    <value>Kumpleto na ang pag-refresh ng library.</value>
+  </data>
+  <!-- Error Mssages -->
+  <data name="Error_FailedToAddFolder" xml:space="preserve">
+    <value>Nabigong magdagdag ng folder.</value>
+  </data>
+  <data name="Error_PlaylistNameEmpty" xml:space="preserve">
+    <value>Hindi maaaring walang laman ang pangalan ng playlist.</value>
+  </data>
+  <data name="Error_RatingRange" xml:space="preserve">
+    <value>Ang rating ay dapat nasa pagitan ng 1 at 5.</value>
+  </data>
+  <!-- Labels -->
+  <data name="Label_WithLyrics" xml:space="preserve">
+    <value>may lyrics</value>
+  </data>
+  <data name="Label_WithCoverArt" xml:space="preserve">
+    <value>may cover art</value>
+  </data>
+  <data name="Label_And" xml:space="preserve">
+    <value>at</value>
+  </data>
+  <!-- Static Strings -->
+  <data name="UnknownFilename" xml:space="preserve">
+    <value>hindi alam</value>
+  </data>
+  <data name="ArtistSeparator" xml:space="preserve">
+    <value> &amp; </value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>Pagbukud-bukurin Ayon sa: </value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>Kinakailangan ang FFmpeg para sa High-Precision Volume Normalization (ReplayGain analysis) ngunit hindi ito natagpuan sa iyong system.\n\nSundin ang mga hakbang na ito para i-set up ito:\n\n1. **I-download**: Bisitahin ang https://www.gyan.dev/ffmpeg/builds/ at i-download ang 'ffmpeg-git-full.7z' (o katulad) na essentials build.\n2. **Gabay**: Maaari mong sundin ang gabay na ito para sa detalyadong instruksyon: https://phoenixnap.com/kb/ffmpeg-windows\n3. **I-extract**: Buksan ang folder ng architecture at hanapin ang 'bin' directory na naglalaman ng `ffmpeg.exe`.\n4. **I-install**: Kopyahin ang `ffmpeg.exe` sa isang permanenteng folder (hal., `C:\ffmpeg\`) at **idagdag ang folder na iyon sa iyong System PATH** environment variable.\n5. **I-restart**: Paki-restart si Nagi pagkatapos ng pag-install para magkabisa ang mga pagbabago.</value>
+  </data>
+  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
+    <value>Walang mga kanta mula sa playlist ang natagpuan sa iyong library.</value>
+  </data>
+  <data name="Error_NoPlaylistsToExport" xml:space="preserve">
+    <value>Walang mga playlist na i-e-export.</value>
+  </data>
+  <data name="EqPreset_None" xml:space="preserve">
+    <value>Wala</value>
+  </data>
+  <data name="EqPreset_Classical" xml:space="preserve">
+    <value>Classical</value>
+  </data>
+  <data name="EqPreset_Dance" xml:space="preserve">
+    <value>Dance</value>
+  </data>
+  <data name="EqPreset_FullBass" xml:space="preserve">
+    <value>Buong Bass</value>
+  </data>
+  <data name="EqPreset_FullTreble" xml:space="preserve">
+    <value>Buong Treble</value>
+  </data>
+  <data name="EqPreset_Jazz" xml:space="preserve">
+    <value>Jazz</value>
+  </data>
+  <data name="EqPreset_Pop" xml:space="preserve">
+    <value>Pop</value>
+  </data>
+  <data name="EqPreset_Rock" xml:space="preserve">
+    <value>Rock</value>
+  </data>
+  <data name="EqPreset_Soft" xml:space="preserve">
+    <value>Malambot</value>
+  </data>
+  <data name="EqPreset_Techno" xml:space="preserve">
+    <value>Techno</value>
+  </data>
+  <data name="EqPreset_Vocal" xml:space="preserve">
+    <value>Vocal</value>
+  </data>
+  <data name="ReplayGain_AllSongsScanned" xml:space="preserve">
+    <value>Lahat ng kanta ay mayroon nang data ng volume.</value>
+  </data>
+  <data name="ReplayGain_CalculatingCount" xml:space="preserve">
+    <value>Kinakalkula ang volume para sa {0} kanta...</value>
+  </data>
+  <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
+    <value>Kinakalkula ang normalisasyon ng volume ({0}/{1})...</value>
+  </data>
+  <data name="ReplayGain_Complete" xml:space="preserve">
+    <value>Kumpleto na ang normalisasyon ng volume. Naproseso ang {0} kanta.</value>
+  </data>
+</root>

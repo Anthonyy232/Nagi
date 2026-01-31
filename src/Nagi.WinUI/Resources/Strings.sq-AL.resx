@@ -1,0 +1,919 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="NavItem_Library" xml:space="preserve">
+    <value>Bibliotekë</value>
+  </data>
+  <data name="NavItem_Albums" xml:space="preserve">
+    <value>Albume</value>
+  </data>
+  <data name="NavItem_Artists" xml:space="preserve">
+    <value>Artistë</value>
+  </data>
+  <data name="NavItem_Genres" xml:space="preserve">
+    <value>Zhanre</value>
+  </data>
+  <data name="NavItem_Playlists" xml:space="preserve">
+    <value>Listat e luajtjes</value>
+  </data>
+  <data name="NavItem_Folders" xml:space="preserve">
+    <value>Dosje</value>
+  </data>
+  <data name="NavItem_Settings" xml:space="preserve">
+    <value>Cilësimet</value>
+  </data>
+  <data name="Status_NoTrackPlaying" xml:space="preserve">
+    <value>Asnjë këngë nuk po luhet</value>
+  </data>
+  <data name="Tooltip_Play" xml:space="preserve">
+    <value>Luaj</value>
+  </data>
+  <data name="Tooltip_Pause" xml:space="preserve">
+    <value>Pauzë</value>
+  </data>
+  <data name="Tooltip_ShuffleOn" xml:space="preserve">
+    <value>Përzierje aktiv</value>
+  </data>
+  <data name="Tooltip_ShuffleOff" xml:space="preserve">
+    <value>Përzierje joaktiv</value>
+  </data>
+  <data name="Tooltip_RepeatOff" xml:space="preserve">
+    <value>Përsëritje joaktiv</value>
+  </data>
+  <data name="Tooltip_RepeatAll" xml:space="preserve">
+    <value>Përsërit të gjitha</value>
+  </data>
+  <data name="Tooltip_RepeatOne" xml:space="preserve">
+    <value>Përsërit një</value>
+  </data>
+  <data name="Tooltip_Repeat" xml:space="preserve">
+    <value>Përsërit</value>
+  </data>
+  <data name="Tooltip_Unmute" xml:space="preserve">
+    <value>Çkyç zërin</value>
+  </data>
+  <data name="Tooltip_Mute" xml:space="preserve">
+    <value>Kyç zërin</value>
+  </data>
+  <data name="Theme_Light" xml:space="preserve">
+    <value>Dritë</value>
+  </data>
+  <data name="Theme_Dark" xml:space="preserve">
+    <value>Errët</value>
+  </data>
+  <data name="Theme_Default" xml:space="preserve">
+    <value>Përdor cilësimin e sistemit</value>
+  </data>
+  <data name="Backdrop_Mica" xml:space="preserve">
+    <value>Mica</value>
+  </data>
+  <data name="Backdrop_MicaAlt" xml:space="preserve">
+    <value>Mica Alt</value>
+  </data>
+  <data name="Backdrop_Acrylic" xml:space="preserve">
+    <value>Akrilik</value>
+  </data>
+  <data name="Label_Composer" xml:space="preserve">
+    <value>Kompozitor</value>
+  </data>
+  <data name="Label_Comment" xml:space="preserve">
+    <value>Koment</value>
+  </data>
+  <data name="Label_Rating" xml:space="preserve">
+    <value>Vlerësim</value>
+  </data>
+  <data name="Operator_Contains" xml:space="preserve">
+    <value>Përmban</value>
+  </data>
+  <data name="Operator_DoesNotContain" xml:space="preserve">
+    <value>Nuk përmban</value>
+  </data>
+  <data name="Operator_Is" xml:space="preserve">
+    <value>Është saktësisht</value>
+  </data>
+  <data name="Operator_IsNot" xml:space="preserve">
+    <value>Nuk është</value>
+  </data>
+  <data name="Operator_StartsWith" xml:space="preserve">
+    <value>Fillon me</value>
+  </data>
+  <data name="Operator_EndsWith" xml:space="preserve">
+    <value>Mbaron me</value>
+  </data>
+  <data name="Operator_Equals" xml:space="preserve">
+    <value>Është e barabartë me</value>
+  </data>
+  <data name="Operator_NotEquals" xml:space="preserve">
+    <value>Nuk është e barabartë me</value>
+  </data>
+  <data name="Operator_GreaterThan" xml:space="preserve">
+    <value>Është më e madhe se</value>
+  </data>
+  <data name="Operator_LessThan" xml:space="preserve">
+    <value>Është më e vogël se</value>
+  </data>
+  <data name="Operator_GreaterThanOrEqual" xml:space="preserve">
+    <value>Është të paktën</value>
+  </data>
+  <data name="Operator_LessThanOrEqual" xml:space="preserve">
+    <value>Është maksimumi</value>
+  </data>
+  <data name="Operator_IsInTheLast" xml:space="preserve">
+    <value>Është në (ditët) e fundit</value>
+  </data>
+  <data name="Operator_IsNotInTheLast" xml:space="preserve">
+    <value>Nuk është në (ditët) e fundit</value>
+  </data>
+  <data name="Operator_IsTrue" xml:space="preserve">
+    <value>Është e vërtetë</value>
+  </data>
+  <data name="Operator_IsFalse" xml:space="preserve">
+    <value>Është e pavërtetë</value>
+  </data>
+  <data name="SmartPlaylist_Title_New" xml:space="preserve">
+    <value>Listë e re luajtjeje inteligjente</value>
+  </data>
+  <data name="SmartPlaylist_Title_EditFormat" xml:space="preserve">
+    <value>Redakto listën inteligjente të luajtjes - {0}</value>
+  </data>
+  <data name="SmartPlaylist_Status_EnterName" xml:space="preserve">
+    <value>Vendosni një emër për listën e luajtjes</value>
+  </data>
+  <data name="SmartPlaylist_Status_MatchCountFormat" xml:space="preserve">
+    <value>{0} këngë përputhen me rregullat aktuale</value>
+  </data>
+  <data name="SmartPlaylist_Status_EnterNameToSeeSongs" xml:space="preserve">
+    <value>Vendosni një emër për të parë këngët përputhëse</value>
+  </data>
+  <data name="SmartPlaylist_Status_Error" xml:space="preserve">
+    <value>Nuk mund të llogaritet</value>
+  </data>
+  <data name="SmartPlaylist_Status_Calculating" xml:space="preserve">
+    <value>Duke llogaritur...</value>
+  </data>
+  <data name="SmartPlaylist_Error_DuplicateName" xml:space="preserve">
+    <value>Një listë luajtjeje me këtë emër ekziston tashmë!</value>
+  </data>
+  <data name="SmartPlaylist_Error_NameEmptyFeedback" xml:space="preserve">
+    <value>Ju lutemi vendosni një emër!</value>
+  </data>
+  <data name="Status_Loading" xml:space="preserve">
+    <value>Duke ngarkuar...</value>
+  </data>
+  <data name="Error_FailedToLoadArtists" xml:space="preserve">
+    <value>Dështoi ngarkimi i artistëve</value>
+  </data>
+  <data name="CrashReport_Title" xml:space="preserve">
+    <value>Gabim kritik</value>
+  </data>
+  <data name="CrashReport_Message" xml:space="preserve">
+    <value>Nagi ka hasur një gabim kritik dhe duhet të mbyllet. Na vjen keq për shqetësimin.</value>
+  </data>
+  <data name="ElevationWarning_Title" xml:space="preserve">
+    <value>Po funksionon si administrator</value>
+  </data>
+  <data name="ElevationWarning_Message" xml:space="preserve">
+    <value>Nagi po funksionon aktualisht si administrator. Kjo mund të parandalojë funksionimin korrekt të disa veçorive (si shtimi i dosjeve të muzikës). Për një përvojë më të mirë, ju lutemi rindizni Nagi-n pa privilegje administratori.</value>
+  </data>
+  <data name="ElevationWarning_Restart" xml:space="preserve">
+    <value>Rindizni normalisht</value>
+  </data>
+  <data name="ElevationWarning_Continue" xml:space="preserve">
+    <value>Vazhdo gjithsesi</value>
+  </data>
+  <data name="MiniPlayer_Title" xml:space="preserve">
+    <value>Nagi</value>
+  </data>
+  <data name="App_Title" xml:space="preserve">
+    <value>Nagi</value>
+  </data>
+  <data name="AlbumView_AlbumNotFound" xml:space="preserve">
+    <value>Albumi nuk u gjet</value>
+  </data>
+  <data name="AlbumView_Error" xml:space="preserve">
+    <value>Gabim në ngarkimin e albumit</value>
+  </data>
+  <data name="AlbumView_DefaultAlbumTitle" xml:space="preserve">
+    <value>Album</value>
+  </data>
+  <data name="AlbumView_DefaultArtistName" xml:space="preserve">
+    <value>Artist</value>
+  </data>
+  <data name="AlbumView_SongCount_Singular" xml:space="preserve">
+    <value>{0} këngë</value>
+  </data>
+  <data name="AlbumView_SongCount_Plural" xml:space="preserve">
+    <value>{0} këngë</value>
+  </data>
+  <data name="ArtistView_ArtistNotFound" xml:space="preserve">
+    <value>Artisti nuk u gjet</value>
+  </data>
+  <data name="ArtistView_Error" xml:space="preserve">
+    <value>Gabim në ngarkimin e artistit</value>
+  </data>
+  <data name="ArtistView_DefaultArtistName" xml:space="preserve">
+    <value>Artist</value>
+  </data>
+  <data name="ArtistView_NoBiography" xml:space="preserve">
+    <value>Asnjë biografi nuk është në dispozicion për këtë artist.</value>
+  </data>
+  <data name="ArtistView_ErrorLoadingDetails" xml:space="preserve">
+    <value>Nuk mund të ngarkoheshin detajet e artistit.</value>
+  </data>
+  <data name="Folders_ErrorLoading" xml:space="preserve">
+    <value>Gabim në ngarkimin e dosjes</value>
+  </data>
+  <data name="Folders_AddFolder_Success" xml:space="preserve">
+    <value>'{0}' u shtua dhe skanua me sukses.</value>
+  </data>
+  <data name="Folders_AddFolder_Failed" xml:space="preserve">
+    <value>Dështoi shtimi i dosjes. Shtegu mund të jetë i pavlefshëm.</value>
+  </data>
+  <data name="Folders_AddFolder_Exists" xml:space="preserve">
+    <value>Kjo dosje tashmë është në bibliotekë.</value>
+  </data>
+  <data name="Folders_AddFolder_InProgress" xml:space="preserve">
+    <value>Duke shtuar dosjen në bibliotekë...</value>
+  </data>
+  <data name="Folders_Delete_Success" xml:space="preserve">
+    <value>'{0}' u fshi me sukses.</value>
+  </data>
+  <data name="Folders_Delete_Failed" xml:space="preserve">
+    <value>Dështoi fshirja e '{0}'.</value>
+  </data>
+  <data name="Folders_Delete_InProgress" xml:space="preserve">
+    <value>Duke fshirë '{0}'...</value>
+  </data>
+  <data name="Folders_Rescan_Complete" xml:space="preserve">
+    <value>Riskëllimi i '{0}' përfundoi.</value>
+  </data>
+  <data name="Folders_Rescan_NoChanges" xml:space="preserve">
+    <value>Asnjë ndryshim nuk u zbulua për '{0}'.</value>
+  </data>
+  <data name="Folders_Rescan_InProgress" xml:space="preserve">
+    <value>Duke riskëlluar '{0}'...</value>
+  </data>
+  <data name="Folders_Empty_NoMusicFound" xml:space="preserve">
+    <value>Asnjë dosje me muzikë nuk u gjet.</value>
+  </data>
+  <data name="Folders_Error_Playback" xml:space="preserve">
+    <value>Gabim në fillimin e luajtjes për këtë dosje.</value>
+  </data>
+  <data name="Folders_Error_RandomPlayback" xml:space="preserve">
+    <value>Gabim në fillimin e luajtjes së rastësishme të dosjes.</value>
+  </data>
+  <data name="Folders_Error_AddFolder" xml:space="preserve">
+    <value>Gabim në shtimin e dosjes: {0}</value>
+  </data>
+  <data name="Folders_Error_DeleteFolder" xml:space="preserve">
+    <value>Gabim në fshirjen e dosjes: {0}</value>
+  </data>
+  <data name="Folders_Error_RescanFolder" xml:space="preserve">
+    <value>Gabim në riskëllimin e dosjes: {0}</value>
+  </data>
+  <data name="Folders_Count_Singular" xml:space="preserve">
+    <value>{0} dosje</value>
+  </data>
+  <data name="Folders_Count_Plural" xml:space="preserve">
+    <value>{0} dosje</value>
+  </data>
+  <data name="Songs_Count_Singular" xml:space="preserve">
+    <value>{0} këngë</value>
+  </data>
+  <data name="Songs_Count_Plural" xml:space="preserve">
+    <value>{0} këngë</value>
+  </data>
+  <data name="Albums_Count_Singular" xml:space="preserve">
+    <value>{0} album</value>
+  </data>
+  <data name="Albums_Count_Plural" xml:space="preserve">
+    <value>{0} albume</value>
+  </data>
+  <data name="Artists_Count_Singular" xml:space="preserve">
+    <value>{0} artist</value>
+  </data>
+  <data name="Artists_Count_Plural" xml:space="preserve">
+    <value>{0} artistë</value>
+  </data>
+  <data name="Generic_NoItems" xml:space="preserve">
+    <value>Asnjë artikull</value>
+  </data>
+  <data name="Generic_Error" xml:space="preserve">
+    <value>Gabim</value>
+  </data>
+  <data name="GenreView_DefaultName" xml:space="preserve">
+    <value>Zhanër</value>
+  </data>
+  <data name="GenreView_Error" xml:space="preserve">
+    <value>Gabim në ngarkimin e zhanrit</value>
+  </data>
+  <data name="Lyrics_NoSongSelected" xml:space="preserve">
+    <value>Asnjë këngë e zgjedhur</value>
+  </data>
+  <data name="Lyrics_SongTitleFormat" xml:space="preserve">
+    <value>{0} nga {1}</value>
+  </data>
+  <data name="Onboarding_Welcome" xml:space="preserve">
+    <value>Le të konfigurojmë bibliotekën tuaj të muzikës për të filluar.</value>
+  </data>
+  <data name="Onboarding_WaitingForSelection" xml:space="preserve">
+    <value>Duke pritur që ju të zgjidhni një dosje...</value>
+  </data>
+  <data name="Onboarding_BuildingLibrary" xml:space="preserve">
+    <value>Duke ndërtuar bibliotekën tuaj...</value>
+  </data>
+  <data name="Onboarding_Error" xml:space="preserve">
+    <value>Ndodhi një gabim i papritur. Ju lutemi provoni përsëri.</value>
+  </data>
+  <data name="Playlist_Smart_Count_Singular" xml:space="preserve">
+    <value>Inteligjente • {0} këngë</value>
+  </data>
+  <data name="Playlist_Smart_Count_Plural" xml:space="preserve">
+    <value>Inteligjente • {0} këngë</value>
+  </data>
+  <data name="Playlist_Count_Singular" xml:space="preserve">
+    <value>{0} këngë</value>
+  </data>
+  <data name="Playlist_Count_Plural" xml:space="preserve">
+    <value>{0} këngë</value>
+  </data>
+  <data name="Playlist_ErrorLoading" xml:space="preserve">
+    <value>Gabim në ngarkimin e listës së luajtjes</value>
+  </data>
+  <data name="Playlist_Status_Starting" xml:space="preserve">
+    <value>Duke filluar listën e luajtjes...</value>
+  </data>
+  <data name="Playlist_Status_SmartEmpty" xml:space="preserve">
+    <value>Asnjë këngë nuk përputhet me rregullat e kësaj liste luajtjeje inteligjente.</value>
+  </data>
+  <data name="Playlist_Status_ErrorPlayback" xml:space="preserve">
+    <value>Gabim në fillimin e luajtjes për këtë listë luajtjeje.</value>
+  </data>
+  <data name="Playlist_Status_PickingRandom" xml:space="preserve">
+    <value>Duke zgjedhur një listë luajtjeje të rastësishme...</value>
+  </data>
+  <data name="Playlist_Status_NoPlaylists" xml:space="preserve">
+    <value>Asnjë listë luajtjeje nuk u gjet.</value>
+  </data>
+  <data name="Playlist_Status_SmartSelectedEmpty" xml:space="preserve">
+    <value>Lista e zgjedhur inteligjente e luajtjes është bosh.</value>
+  </data>
+  <data name="Playlist_Status_ErrorRandom" xml:space="preserve">
+    <value>Gabim në luajtjen e listës së rastësishme.</value>
+  </data>
+  <data name="Playlist_Status_Loading" xml:space="preserve">
+    <value>Duke ngarkuar listat e luajtjes...</value>
+  </data>
+  <data name="Playlist_Status_ErrorLoadingPlaylists" xml:space="preserve">
+    <value>Gabim në ngarkimin e listave të luajtjes.</value>
+  </data>
+  <data name="Playlist_Status_Creating" xml:space="preserve">
+    <value>Duke krijuar listë të re luajtjeje...</value>
+  </data>
+  <data name="Playlist_Status_CreateFailed" xml:space="preserve">
+    <value>Dështoi krijimi i listës së luajtjes. Ajo mund të ekzistojë tashmë.</value>
+  </data>
+  <data name="Playlist_Status_CreateError" xml:space="preserve">
+    <value>Ndodhi një gabim gjatë krijimit të listës së luajtjes.</value>
+  </data>
+  <data name="Playlist_Status_UpdatingCover" xml:space="preserve">
+    <value>Duke përditësuar kopertinën e listës së luajtjes...</value>
+  </data>
+  <data name="Playlist_Status_UpdateCoverFailed" xml:space="preserve">
+    <value>Dështoi përditësimi i kopertinës së listës së luajtjes.</value>
+  </data>
+  <data name="Playlist_Status_UpdateCoverError" xml:space="preserve">
+    <value>Ndodhi një gabim gjatë përditësimit të kopertinës së listës së luajtjes.</value>
+  </data>
+  <data name="Playlist_Status_RemovingCover" xml:space="preserve">
+    <value>Duke hequr imazhin e listës së luajtjes...</value>
+  </data>
+  <data name="Playlist_Status_RemoveCoverFailed" xml:space="preserve">
+    <value>Dështoi heqja e imazhit të listës së luajtjes.</value>
+  </data>
+  <data name="Playlist_Status_RemoveCoverError" xml:space="preserve">
+    <value>Ndodhi një gabim gjatë heqjes së imazhit të listës së luajtjes.</value>
+  </data>
+  <data name="Playlist_Status_Renaming" xml:space="preserve">
+    <value>Duke riemëruar listën e luajtjes...</value>
+  </data>
+  <data name="Playlist_Status_RenameFailed" xml:space="preserve">
+    <value>Dështoi riemërimi i listës së luajtjes.</value>
+  </data>
+  <data name="Playlist_Status_RenameError" xml:space="preserve">
+    <value>Ndodhi një gabim gjatë riemërimit të listës së luajtjes.</value>
+  </data>
+  <data name="Playlist_Status_Deleting" xml:space="preserve">
+    <value>Duke fshirë listën e luajtjes...</value>
+  </data>
+  <data name="Playlist_Status_DeleteFailed" xml:space="preserve">
+    <value>Dështoi fshirja e listës së luajtjes.</value>
+  </data>
+  <data name="Playlist_Status_DeleteError" xml:space="preserve">
+    <value>Ndodhi një gabim gjatë fshirjes së listës së luajtjes.</value>
+  </data>
+  <data name="Settings_Reset_Title" xml:space="preserve">
+    <value>Konfirmo rivendosjen</value>
+  </data>
+  <data name="Settings_Reset_Message" xml:space="preserve">
+    <value>Jeni të sigurt që dëshironi të rivendosni të gjitha të dhënat dhe cilësimet e aplikacionit? Ky veprim nuk mund të anulohet. Aplikacioni do të kthehet në konfigurimin fillestar.</value>
+  </data>
+  <data name="Settings_Reset_Button" xml:space="preserve">
+    <value>Rivendos</value>
+  </data>
+  <data name="Settings_ResetError_Title" xml:space="preserve">
+    <value>Gabim rivendosjeje</value>
+  </data>
+  <data name="Settings_ResetError_Message" xml:space="preserve">
+    <value>Ndodhi një gabim gjatë rivendosjes së të dhënave të aplikacionit: {0}. Ju lutemi provoni të rindizni aplikacionin manualisht.</value>
+  </data>
+  <data name="Settings_LastFm_AuthError_Title" xml:space="preserve">
+    <value>Gabim</value>
+  </data>
+  <data name="Settings_LastFm_AuthError_Message" xml:space="preserve">
+    <value>Nuk mund të lidhej me Last.fm. Ju lutemi provoni përsëri më vonë.</value>
+  </data>
+  <data name="Settings_LastFm_FinalizeError_Title" xml:space="preserve">
+    <value>Autentifikimi dështoi</value>
+  </data>
+  <data name="Settings_LastFm_FinalizeError_Message" xml:space="preserve">
+    <value>Nuk mund të merrej një seancë nga Last.fm. Ju lutemi provoni të lidheni përsëri.</value>
+  </data>
+  <data name="Settings_LastFm_Disconnect_Title" xml:space="preserve">
+    <value>Shkëput Last.fm</value>
+  </data>
+  <data name="Settings_LastFm_Disconnect_Message" xml:space="preserve">
+    <value>Jeni të sigurt që dëshironi të shkëputni llogarinë tuaj Last.fm? Historia juaj e scrobbling-ut do të ruhet në Last.fm, por Nagi nuk do të jetë më në gjendje të scrobble-ojë.</value>
+  </data>
+  <data name="Settings_LastFm_Disconnect_Button" xml:space="preserve">
+    <value>Shkëput</value>
+  </data>
+  <data name="Settings_Export_Success_Title" xml:space="preserve">
+    <value>Eksportimi i suksesshëm</value>
+  </data>
+  <data name="Settings_Export_Success_Message" xml:space="preserve">
+    <value>Eksportoi {0} lista luajtjeje ({1} këngë gjithsej) në:\n{2}</value>
+  </data>
+  <data name="Settings_Export_Failed_Title" xml:space="preserve">
+    <value>Eksportimi dështoi</value>
+  </data>
+  <data name="Settings_Import_Success_Title" xml:space="preserve">
+    <value>Importimi i suksesshëm</value>
+  </data>
+  <data name="Settings_Import_Success_Message" xml:space="preserve">
+    <value>U importuan me sukses {0} lista luajtjeje ({1} këngë).</value>
+  </data>
+  <data name="Settings_Import_Unmatched_Message" xml:space="preserve">
+    <value>\n\n{0} këngë nuk u gjetën në bibliotekën tuaj.</value>
+  </data>
+  <data name="Settings_Import_FailedFiles_Message" xml:space="preserve">
+    <value>\n\n{0} skedarë dështuan të importoheshin.</value>
+  </data>
+  <data name="Settings_Import_FailedTotal_Title" xml:space="preserve">
+    <value>Importimi dështoi</value>
+  </data>
+  <data name="Settings_Import_FailedTotal_Message" xml:space="preserve">
+    <value>Asnjë listë luajtjeje nuk mund të importohej.</value>
+  </data>
+  <data name="SmartPlaylist_ErrorLoading" xml:space="preserve">
+    <value>Gabim në ngarkimin e listës inteligjente të luajtjes</value>
+  </data>
+  <data name="SmartPlaylist_RuleSummary_NoRules" xml:space="preserve">
+    <value>Asnjë rregull e përcaktuar • Të gjitha këngët përputhen</value>
+  </data>
+  <data name="SmartPlaylist_RuleSummary_Format" xml:space="preserve">
+    <value>Përputh {0} nga {1} {2}</value>
+  </data>
+  <data name="SmartPlaylist_MatchAll" xml:space="preserve">
+    <value>të gjitha</value>
+  </data>
+  <data name="SmartPlaylist_MatchAny" xml:space="preserve">
+    <value>çdo</value>
+  </data>
+  <data name="SmartPlaylist_Rule_Singular" xml:space="preserve">
+    <value>rregull</value>
+  </data>
+  <data name="SmartPlaylist_Rule_Plural" xml:space="preserve">
+    <value>rregulla</value>
+  </data>
+  <data name="SongList_PageTitle_Default" xml:space="preserve">
+    <value>Këngë</value>
+  </data>
+  <data name="SongList_TotalItems_Default" xml:space="preserve">
+    <value>0 artikuj</value>
+  </data>
+  <data name="SongList_ErrorLoading" xml:space="preserve">
+    <value>Gabim në ngarkimin e artikujve</value>
+  </data>
+  <data name="SongList_TotalItems_Format_Singular" xml:space="preserve">
+    <value>{0} artikull</value>
+  </data>
+  <data name="SongList_TotalItems_Format_Plural" xml:space="preserve">
+    <value>{0} artikuj</value>
+  </data>
+  <data name="SongList_SelectedCount_Format" xml:space="preserve">
+    <value>{0} të zgjedhura</value>
+  </data>
+  <data name="AlbumView_DiscHeader" xml:space="preserve">
+    <value>Disk {0}</value>
+  </data>
+  <data name="Generic_OK" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="Generic_Cancel" xml:space="preserve">
+    <value>Anulo</value>
+  </data>
+  <data name="Generic_Close" xml:space="preserve">
+    <value>Mbyll</value>
+  </data>
+  <data name="Generic_Recheck" xml:space="preserve">
+    <value>Rikontrollo</value>
+  </data>
+  <data name="CrashReport_Button_Reset" xml:space="preserve">
+    <value>Rivendos aplikacionin dhe të dhënat</value>
+  </data>
+  <data name="FFmpeg_Status_NotDetected" xml:space="preserve">
+    <value>FFmpeg nuk u zbulua. Ju lutemi instaloni FFmpeg dhe klikoni 'Rikontrollo'.</value>
+  </data>
+  <data name="FFmpeg_Status_Checking" xml:space="preserve">
+    <value>Duke kontrolluar për FFmpeg...</value>
+  </data>
+  <data name="FFmpeg_Status_Detected" xml:space="preserve">
+    <value>FFmpeg u zbulua!</value>
+  </data>
+  <data name="FFmpeg_Status_StillNotDetected" xml:space="preserve">
+    <value>FFmpeg ende nuk u zbulua. Ju lutemi instaloni FFmpeg dhe klikoni 'Rikontrollo'.</value>
+  </data>
+  <data name="FFmpeg_Status_Error" xml:space="preserve">
+    <value>Gabim në kontrollimin për FFmpeg. Ju lutemi provoni përsëri.</value>
+  </data>
+  <data name="Taskbar_Tooltip_Previous" xml:space="preserve">
+    <value>Paraardhëse</value>
+  </data>
+  <data name="Taskbar_Tooltip_Play" xml:space="preserve">
+    <value>Luaj</value>
+  </data>
+  <data name="Taskbar_Tooltip_Pause" xml:space="preserve">
+    <value>Pauzë</value>
+  </data>
+  <data name="Taskbar_Tooltip_Next" xml:space="preserve">
+    <value>Tjetra</value>
+  </data>
+  <data name="Update_Available_Title" xml:space="preserve">
+    <value>Përditësim i disponueshëm</value>
+  </data>
+  <data name="Update_Available_Message" xml:space="preserve">
+    <value>Një version i ri ({0}) është i disponueshëm. Dëshironi ta shkarkoni dhe instaloni tani?</value>
+  </data>
+  <data name="Update_Button_InstallNow" xml:space="preserve">
+    <value>Instalo tani</value>
+  </data>
+  <data name="Update_Button_Later" xml:space="preserve">
+    <value>Më vonë</value>
+  </data>
+  <data name="Update_Button_Skip" xml:space="preserve">
+    <value>Anashkalo këtë version</value>
+  </data>
+  <data name="Update_UpToDate_Title" xml:space="preserve">
+    <value>I përditësuar</value>
+  </data>
+  <data name="Update_UpToDate_Message" xml:space="preserve">
+    <value>Ju po përdorni versionin më të fundit të Nagi.</value>
+  </data>
+  <data name="Update_Error_Title" xml:space="preserve">
+    <value>Gabim përditësimi</value>
+  </data>
+  <data name="Update_Check_Error_Message" xml:space="preserve">
+    <value>Ndodhi një gabim gjatë kontrollit për përditësime: {0}</value>
+  </data>
+  <data name="Update_Install_Error_Message" xml:space="preserve">
+    <value>Ndodhi një gabim gjatë instalimit të përditësimit: {0}</value>
+  </data>
+  <data name="Update_Downloading_Title" xml:space="preserve">
+    <value>Duke shkarkuar përditësimin</value>
+  </data>
+  <data name="Update_Downloading_Message" xml:space="preserve">
+    <value>Versioni {0} po shkarkohet. Aplikacioni do të rindizet automatikisht kur të jetë gati.</value>
+  </data>
+  <data name="Player_Error_LibVLC_Unspecified" xml:space="preserve">
+    <value>LibVLC ndeshi një gabim të papërcaktuar.</value>
+  </data>
+  <data name="Player_Error_LibVLC_WithDetails" xml:space="preserve">
+    <value>Gabim LibVLC: {0}</value>
+  </data>
+  <data name="Player_Error_LoadFailed" xml:space="preserve">
+    <value>Dështoi ngarkimi i '{0}'.</value>
+  </data>
+  <data name="Settings_Nav_Library" xml:space="preserve">
+    <value>Bibliotekë</value>
+  </data>
+  <data name="Settings_Nav_Folders" xml:space="preserve">
+    <value>Dosje</value>
+  </data>
+  <data name="Settings_Nav_Playlists" xml:space="preserve">
+    <value>Listat e luajtjes</value>
+  </data>
+  <data name="Settings_Nav_Artists" xml:space="preserve">
+    <value>Artistë</value>
+  </data>
+  <data name="Settings_Nav_Albums" xml:space="preserve">
+    <value>Albume</value>
+  </data>
+  <data name="Settings_Nav_Genres" xml:space="preserve">
+    <value>Zhanre</value>
+  </data>
+  <data name="Settings_Button_Shuffle" xml:space="preserve">
+    <value>Përzierje</value>
+  </data>
+  <data name="Settings_Button_Previous" xml:space="preserve">
+    <value>Paraardhëse</value>
+  </data>
+  <data name="Settings_Button_PlayPause" xml:space="preserve">
+    <value>Luaj/Pauzë</value>
+  </data>
+  <data name="Settings_Button_Next" xml:space="preserve">
+    <value>Tjetra</value>
+  </data>
+  <data name="Settings_Button_Repeat" xml:space="preserve">
+    <value>Përsërit</value>
+  </data>
+  <data name="Settings_Button_Divider" xml:space="preserve">
+    <value>Ndarës i paraqitjes</value>
+  </data>
+  <data name="Settings_Button_Lyrics" xml:space="preserve">
+    <value>Tekste</value>
+  </data>
+  <data name="Settings_Button_Queue" xml:space="preserve">
+    <value>Radhë</value>
+  </data>
+  <data name="Settings_Button_Volume" xml:space="preserve">
+    <value>Volum</value>
+  </data>
+  <data name="Settings_Provider_LRCLIB_Desc" xml:space="preserve">
+    <value>Baza e të dhënave të teksteve të kuruar nga komuniteti</value>
+  </data>
+  <data name="Settings_Provider_NetEase_Desc" xml:space="preserve">
+    <value>Shërbim muzikor kinez, i shkëlqyer për muzikën aziatike</value>
+  </data>
+  <data name="Settings_Provider_MusicBrainz_Desc" xml:space="preserve">
+    <value>Marr ID-të e artistëve (e kërkuar për TheAudioDB dhe Fanart.tv)</value>
+  </data>
+  <data name="Settings_Provider_TheAudioDB_Desc" xml:space="preserve">
+    <value>Imazhe dhe biografi artistësh me cilësi të lartë (kërkon MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_FanartTv_Desc" xml:space="preserve">
+    <value>Vetëm imazhe artistësh me cilësi të lartë (kërkon MusicBrainz)</value>
+  </data>
+  <data name="Settings_Provider_Spotify_Desc" xml:space="preserve">
+    <value>Vetëm imazhe artistësh</value>
+  </data>
+  <data name="Settings_Provider_LastFm_Desc" xml:space="preserve">
+    <value>Biografi dhe imazhe artistësh (rezervë)</value>
+  </data>
+  <data name="App_Name_Default" xml:space="preserve">
+    <value>Nagi</value>
+  </data>
+  <data name="App_Version_Unknown" xml:space="preserve">
+    <value>N/A</value>
+  </data>
+  <data name="AlbumPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>Mbyll kërkimin</value>
+  </data>
+  <data name="AlbumPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>Kërko albume</value>
+  </data>
+  <data name="AlbumViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>Mbyll kërkimin</value>
+  </data>
+  <data name="AlbumViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>Kërko në album</value>
+  </data>
+  <data name="AlbumViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>Asnjë listë luajtjeje nuk është në dispozicion</value>
+  </data>
+  <data name="ArtistPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>Mbyll kërkimin</value>
+  </data>
+  <data name="ArtistPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>Kërko artistë</value>
+  </data>
+  <data name="ArtistViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>Mbyll kërkimin</value>
+  </data>
+  <data name="ArtistViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>Kërko në artist</value>
+  </data>
+  <data name="ArtistViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>Asnjë listë luajtjeje nuk është në dispozicion</value>
+  </data>
+  <data name="FolderPage_DeleteDialog_Title" xml:space="preserve">
+    <value>Fshi Dosjen</value>
+  </data>
+  <data name="FolderPage_DeleteDialog_Format" xml:space="preserve">
+    <value>Jeni të sigurt që dëshironi të hiqni dosjen '{0}' nga biblioteka? Kjo nuk do t'i fshijë skedarët nga kompjuteri juaj.</value>
+  </data>
+  <data name="FolderPage_DeleteDialog_PrimaryButton" xml:space="preserve">
+    <value>Fshi</value>
+  </data>
+  <data name="FolderPage_DeleteDialog_CloseButton" xml:space="preserve">
+    <value>Anulo</value>
+  </data>
+  <data name="FolderSongViewPage_Default_Title" xml:space="preserve">
+    <value>Dosje e Panjohur</value>
+  </data>
+  <data name="FolderSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>Mbyll kërkimin</value>
+  </data>
+  <data name="FolderSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>Kërko në dosje</value>
+  </data>
+  <data name="FolderSongViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>Asnjë listë luajtjeje nuk është në dispozicion</value>
+  </data>
+  <data name="GenrePage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>Mbyll kërkimin</value>
+  </data>
+  <data name="GenrePage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>Kërko zhanre</value>
+  </data>
+  <data name="LibraryPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>Mbyll kërkimin</value>
+  </data>
+  <data name="LibraryPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>Kërko në bibliotekë</value>
+  </data>
+  <data name="LibraryPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>Asnjë listë luajtjeje nuk është në dispozicion</value>
+  </data>
+  <data name="PlaylistPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>Mbyll kërkimin</value>
+  </data>
+  <data name="PlaylistPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>Kërko lista luajtjeje</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_Placeholder" xml:space="preserve">
+    <value>Vendosni emrin e ri të listës së luajtjes</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_PickImage" xml:space="preserve">
+    <value>Zgjidh Imazh</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_Title" xml:space="preserve">
+    <value>Krijo Listë të Re Luajtjeje</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_CreateButton" xml:space="preserve">
+    <value>Krijo</value>
+  </data>
+  <data name="PlaylistPage_CreateDialog_CancelButton" xml:space="preserve">
+    <value>Anulo</value>
+  </data>
+  <data name="PlaylistPage_RenameDialog_Title_Format" xml:space="preserve">
+    <value>Riemëro '{0}'</value>
+  </data>
+  <data name="PlaylistPage_RenameDialog_RenameButton" xml:space="preserve">
+    <value>Riemëro</value>
+  </data>
+  <data name="PlaylistPage_DeleteDialog_Title" xml:space="preserve">
+    <value>Fshi Listën e Luajtjes</value>
+  </data>
+  <data name="PlaylistPage_DeleteDialog_Content_Format" xml:space="preserve">
+    <value>Jeni të sigurt që dëshironi të fshini listën e luajtjes '{0}'? Ky veprim nuk mund të anulohet.</value>
+  </data>
+  <data name="PlaylistPage_DeleteDialog_DeleteButton" xml:space="preserve">
+    <value>Fshi</value>
+  </data>
+  <data name="PlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>Mbyll kërkimin</value>
+  </data>
+  <data name="PlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>Kërko në listën e luajtjes</value>
+  </data>
+  <data name="GenreViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>Mbyll kërkimin</value>
+  </data>
+  <data name="GenreViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>Kërko në bibliotekë</value>
+  </data>
+  <data name="GenreViewPage_PlaylistMenu_NoPlaylists" xml:space="preserve">
+    <value>Asnjë listë luajtjeje nuk është në dispozicion</value>
+  </data>
+  <data name="PlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
+    <value>Listë Luajtjeje e Panjohur</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_SearchButton_Close_ToolTip" xml:space="preserve">
+    <value>Mbyll kërkimin</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_SearchButton_Search_ToolTip" xml:space="preserve">
+    <value>Kërko në listën inteligjente të luajtjes</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_UnknownPlaylist" xml:space="preserve">
+    <value>Listë Inteligjente Luajtjeje e Panjohur</value>
+  </data>
+  <data name="Settings_Dialog_Rescan_Title" xml:space="preserve">
+    <value>Riskëlloni Metadadat</value>
+  </data>
+  <data name="Settings_Dialog_Rescan_Content" xml:space="preserve">
+    <value>Kjo do të riskëlliojë të gjitha këngët në bibliotekën tuaj për të aplikuar cilësime të reja të metadadatave (si karakteret ndarëse të artistëve). Kjo mund të zgjasë pak, në varësi të madhësisë së bibliotekës. Dëshironi të vazhdoni?</value>
+  </data>
+  <data name="Settings_Dialog_Rescan_PrimaryButton" xml:space="preserve">
+    <value>Riskëllo</value>
+  </data>
+  <data name="Settings_Status_Rescan_Preparing" xml:space="preserve">
+    <value>Duke përgatitur riskëllimin e bibliotekës...</value>
+  </data>
+  <data name="Settings_Dialog_RescanComplete_Title" xml:space="preserve">
+    <value>Riskëllimi u përfundua</value>
+  </data>
+  <data name="Settings_Dialog_RescanComplete_Content" xml:space="preserve">
+    <value>Metadadat e bibliotekës janë përditësuar.</value>
+  </data>
+  <data name="Settings_Dialog_RescanFailed_Title" xml:space="preserve">
+    <value>Riskëllimi dështoi</value>
+  </data>
+  <data name="Settings_Dialog_RescanFailed_Content" xml:space="preserve">
+    <value>Ndodhi një gabim gjatë skanimit. Kontrolloni regjistrat për detaje.</value>
+  </data>
+  <data name="Settings_Dialog_FFmpegNotFound_Title" xml:space="preserve">
+    <value>FFmpeg nuk u gjet</value>
+  </data>
+  <data name="Settings_Dialog_VolumeNorm_Title" xml:space="preserve">
+    <value>Aktivizo Normalizimin e Volumit</value>
+  </data>
+  <data name="Settings_Dialog_VolumeNorm_Content" xml:space="preserve">
+    <value>Normalizimi i volumit (ReplayGain) siguron një nivel konsistent volumi në të gjithë muzikën tuaj.\n\nKjo do të analizojë bibliotekën tuaj të muzikës dhe do të modifikojë drejtpërdrejt skedarët tuaj audio duke shkruar etiketat ReplayGain. Do të përpunohen vetëm skedarët pa etiketa ekzistuese. Kjo mund të zgjasë pak, në varësi të madhësisë së bibliotekës tuaj.\n\nDëshironi të vazhdoni?</value>
+  </data>
+  <data name="Settings_Dialog_VolumeNorm_PrimaryButton" xml:space="preserve">
+    <value>Aktivizo &amp; Skano</value>
+  </data>
+  <data name="Settings_Status_VolumeNorm_Preparing" xml:space="preserve">
+    <value>Duke përgatitur skanimin e normalizimit të volumit...</value>
+  </data>
+  <data name="Settings_Status_VolumeNorm_Cancelled" xml:space="preserve">
+    <value>Skanimi i normalizimit të volumit u anulua.</value>
+  </data>
+  <data name="Settings_Status_VolumeNorm_Error_Format" xml:space="preserve">
+    <value>Gabim gjatë skanimit: {0}</value>
+  </data>
+  <data name="App_CrashReport_LogFallbackError_Format" xml:space="preserve">
+    <value>Nuk mund të merreshin regjistrat nga memoria. Tentativa rezervë për të lexuar skedarin e regjistrit dështoi.\nShtegu i pritshëm: '{0}'\nGabim: {1}</value>
+  </data>
+  <data name="Settings_Export_Failed_Message" xml:space="preserve">
+    <value>Asnjë listë luajtjeje për të eksportuar.</value>
+  </data>
+</root>

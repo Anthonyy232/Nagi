@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Noun Labels -->
+  <data name="Label_Artist" xml:space="preserve">
+    <value>فنان</value>
+  </data>
+  <data name="Label_Album" xml:space="preserve">
+    <value>ألبوم</value>
+  </data>
+  <data name="Label_Genre" xml:space="preserve">
+    <value>نوع</value>
+  </data>
+  <data name="Label_Title" xml:space="preserve">
+    <value>عنوان</value>
+  </data>
+  <data name="Label_Playlist" xml:space="preserve">
+    <value>قائمة تشغيل</value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>ملف</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>سنة</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>تاريخ الإضافة</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>تاريخ الإنشاء</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>تاريخ التعديل</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>آخر تشغيل</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>المدة</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>رقم المسار</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>عدد مرات التشغيل</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>أغاني</value>
+  </data>
+  <data name="Label_Song" xml:space="preserve">
+    <value>أغنية</value>
+  </data>
+  <data name="Label_Folder" xml:space="preserve">
+    <value>مجلد</value>
+  </data>
+  <data name="Label_Folders" xml:space="preserve">
+    <value>مجلدات</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>ترتيب يدوي</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>عشوائي</value>
+  </data>
+  <!-- Format Patterns -->
+  <data name="Format_Unknown" xml:space="preserve">
+    <value>{0} غير معروف</value>
+  </data>
+  <data name="Format_New" xml:space="preserve">
+    <value>جديد {0}</value>
+  </data>
+  <data name="Format_NotFound" xml:space="preserve">
+    <value>{0} لم يتم العثور عليه.</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0} (من أ إلى ي)</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0} (من ي إلى أ)</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0} (الأحدث)</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0} (الأقدم)</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0} (تصاعدي)</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0} (تنازلي)</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>الأقصر أولاً</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>الأطول أولاً</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>الأبطأ أولاً ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>الأسرع أولاً ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>الأكثر {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>الأقل {0}</value>
+  </data>
+  <data name="Format_ScanFolderProgress" xml:space="preserve">
+    <value>جاري فحص المجلد {0} من {1}: {2} - {3}</value>
+  </data>
+  <data name="Format_ScanCompleteResult" xml:space="preserve">
+    <value>اكتمل الفحص. تمت إضافة أو تحديث {0} {1}.</value>
+  </data>
+  <data name="Format_SavingBatch" xml:space="preserve">
+    <value>جاري حفظ الدفعة {0}...</value>
+  </data>
+  <!-- Status & Success Messages -->
+  <data name="Status_ScanningFolder" xml:space="preserve">
+    <value>جاري فحص المجلد...</value>
+  </data>
+  <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
+    <value>اكتمل الفحص. المكتبة محدثة.</value>
+  </data>
+  <data name="Status_ScanCancelled" xml:space="preserve">
+    <value>تم إلغاء الفحص.</value>
+  </data>
+  <data name="Status_ScanFailed" xml:space="preserve">
+    <value>فشل الفحص. تحقق من السجلات للحصول على التفاصيل.</value>
+  </data>
+  <data name="Status_PreparingScanCaches" xml:space="preserve">
+    <value>جاري تحضير ذاكرة التخزين المؤقت للفحص...</value>
+  </data>
+  <data name="Status_ReadingSongDetails" xml:space="preserve">
+    <value>جاري قراءة تفاصيل الأغنية...</value>
+  </data>
+  <data name="Status_CleaningUpLibrary" xml:space="preserve">
+    <value>جاري تنظيف مكتبتك...</value>
+  </data>
+  <data name="Status_Finalizing" xml:space="preserve">
+    <value>جاري الانتهاء...</value>
+  </data>
+  <data name="Status_NormalizationFailed" xml:space="preserve">
+    <value>فشل تطبيع مستوى الصوت. تحقق من السجلات للحصول على التفاصيل.</value>
+  </data>
+  <data name="Status_NoFoldersToRefresh" xml:space="preserve">
+    <value>لا توجد مجلدات في المكتبة لتحديثها.</value>
+  </data>
+  <data name="Status_LibraryRefreshComplete" xml:space="preserve">
+    <value>اكتمل تحديث المكتبة.</value>
+  </data>
+  <!-- Error Mssages -->
+  <data name="Error_FailedToAddFolder" xml:space="preserve">
+    <value>فشل إضافة المجلد.</value>
+  </data>
+  <data name="Error_PlaylistNameEmpty" xml:space="preserve">
+    <value>لا يمكن أن يكون اسم قائمة التشغيل فارغاً.</value>
+  </data>
+  <data name="Error_RatingRange" xml:space="preserve">
+    <value>يجب أن يكون التقييم بين 1 و 5.</value>
+  </data>
+  <!-- Labels -->
+  <data name="Label_WithLyrics" xml:space="preserve">
+    <value>مع كلمات الأغاني</value>
+  </data>
+  <data name="Label_WithCoverArt" xml:space="preserve">
+    <value>مع غلاف الألبوم</value>
+  </data>
+  <data name="Label_And" xml:space="preserve">
+    <value>و</value>
+  </data>
+  <!-- Static Strings -->
+  <data name="UnknownFilename" xml:space="preserve">
+    <value>غير معروف</value>
+  </data>
+  <data name="ArtistSeparator" xml:space="preserve">
+    <value> &amp; </value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>ترتيب حسب: </value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>يتطلب FFmpeg لتطبيع مستوى الصوت عالي الدقة (تحليل ReplayGain) ولكنه لم يتم العثور عليه على نظامك.\n\nاتبع هذه الخطوات لإعداده:\n\n1. **تنزيل**: قم بزيارة https://www.gyan.dev/ffmpeg/builds/ وقم بتنزيل بنية 'ffmpeg-git-full.7z' (أو ما شابهها) الأساسية.\n2. **دليل**: يمكنك اتباع هذا الدليل للحصول على إرشادات مفصلة: https://phoenixnap.com/kb/ffmpeg-windows\n3. **استخراج**: افتح مجلد البنية وحدد موقع دليل 'bin' الذي يحتوي على `ffmpeg.exe`.\n4. **تثبيت**: انسخ `ffmpeg.exe` إلى مجلد دائم (على سبيل المثال، `C:\ffmpeg\`) و**أضف هذا المجلد إلى متغير بيئة System PATH الخاص بك**.\n5. **إعادة التشغيل**: يرجى إعادة تشغيل Nagi بعد التثبيت حتى تسري التغييرات.</value>
+  </data>
+  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
+    <value>لم يتم العثور على أي أغاني من قائمة التشغيل في مكتبتك.</value>
+  </data>
+  <data name="Error_NoPlaylistsToExport" xml:space="preserve">
+    <value>لا توجد قوائم تشغيل للتصدير.</value>
+  </data>
+  <data name="EqPreset_None" xml:space="preserve">
+    <value>بدون</value>
+  </data>
+  <data name="EqPreset_Classical" xml:space="preserve">
+    <value>كلاسيكي</value>
+  </data>
+  <data name="EqPreset_Dance" xml:space="preserve">
+    <value>رقص</value>
+  </data>
+  <data name="EqPreset_FullBass" xml:space="preserve">
+    <value>صوت جهير كامل</value>
+  </data>
+  <data name="EqPreset_FullTreble" xml:space="preserve">
+    <value>صوت ثلاثي كامل</value>
+  </data>
+  <data name="EqPreset_Jazz" xml:space="preserve">
+    <value>جاز</value>
+  </data>
+  <data name="EqPreset_Pop" xml:space="preserve">
+    <value>بوب</value>
+  </data>
+  <data name="EqPreset_Rock" xml:space="preserve">
+    <value>روك</value>
+  </data>
+  <data name="EqPreset_Soft" xml:space="preserve">
+    <value>ناعم</value>
+  </data>
+  <data name="EqPreset_Techno" xml:space="preserve">
+    <value>تكنو</value>
+  </data>
+  <data name="EqPreset_Vocal" xml:space="preserve">
+    <value>صوتي</value>
+  </data>
+  <data name="ReplayGain_AllSongsScanned" xml:space="preserve">
+    <value>جميع الأغاني تحتوي بالفعل على بيانات مستوى الصوت.</value>
+  </data>
+  <data name="ReplayGain_CalculatingCount" xml:space="preserve">
+    <value>جاري حساب مستوى الصوت لـ {0} أغنية...</value>
+  </data>
+  <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
+    <value>جاري حساب تطبيع مستوى الصوت ({0}/{1})...</value>
+  </data>
+  <data name="ReplayGain_Complete" xml:space="preserve">
+    <value>اكتمل تطبيع مستوى الصوت. تم معالجة {0} أغنية.</value>
+  </data>
+</root>
