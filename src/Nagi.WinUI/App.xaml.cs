@@ -196,7 +196,6 @@ public partial class App : Application
 
         try
         {
-            await BootstrapLanguageAsync(tempPathConfig);
 
             InitializeWindowAndServices(configuration);
             _logger = Services!.GetRequiredService<ILogger<App>>();
@@ -595,65 +594,6 @@ public partial class App : Application
         }
     }
 
-    /// <summary>
-    ///     Reads the persisted language setting before the main window or services are initialized.
-    ///     This ensures that the correct culture is applied to the UI thread and all resources
-    ///     (including XAML parsing) immediately upon startup, preventing localization lag.
-    /// </summary>
-    private async Task BootstrapLanguageAsync(IPathConfiguration pathConfig)
-    {
-        try
-        {
-            string? language = null;
-            if (PathConfiguration.IsRunningInPackage())
-            {
-                if (ApplicationData.Current.LocalSettings.Values.TryGetValue("AppLanguage", out var val) && val is string s)
-                {
-                    language = s;
-                }
-            }
-            else
-            {
-                if (File.Exists(pathConfig.SettingsFilePath))
-                {
-                    var json = await File.ReadAllTextAsync(pathConfig.SettingsFilePath);
-                    using var doc = JsonDocument.Parse(json);
-                    
-                    // The settings file is a dictionary, so we look for the key "AppLanguage"
-                    if (doc.RootElement.TryGetProperty("AppLanguage", out var element) && 
-                        element.ValueKind == JsonValueKind.String)
-                    {
-                        language = element.GetString();
-                    }
-                }
-            }
-
-            if (!string.IsNullOrEmpty(language))
-            {
-                Log.Information("Bootstrapping language: {Language}", language);
-                ApplicationLanguages.PrimaryLanguageOverride = language;
-                var culture = new CultureInfo(language);
-                
-                // Set the culture for the current thread (UI thread)
-                CultureInfo.CurrentUICulture = culture;
-                CultureInfo.CurrentCulture = culture;
-                
-                // Set the default culture for any new threads (Task.Run, ThreadPool, etc.)
-                CultureInfo.DefaultThreadCurrentUICulture = culture;
-                CultureInfo.DefaultThreadCurrentCulture = culture;
-            }
-            else
-            {
-                Log.Information("No language setting found during bootstrap (Language is null or empty).");
-            }
-        }
-        catch (Exception ex)
-        {
-            // If bootstrapping fails (e.g. corrupt JSON), we log and continue.
-            // The SettingsService will handle it (or use defaults) later.
-            Log.Warning(ex, "Failed to bootstrap language settings.");
-        }
-    }
 
     private void InitializeWindowAndServices(IConfiguration configuration)
     {
