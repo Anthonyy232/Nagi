@@ -69,7 +69,11 @@
 
 ## 🌍 Localization
 
-Localization support is planned for a future release. Contributions to add new languages are welcome!
+[![Crowdin](https://badges.crowdin.net/nagi/localized.svg)](https://crowdin.com/project/nagi)
+
+Localization support for Nagi is powered by Crowdin. Contributions to add new languages are always welcome!
+
+[Help Translate Nagi](https://crowdin.com/project/nagi)
 
 ## 🛠️ Technologies
 
