@@ -333,6 +333,12 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     {
         if (_isDisposed || !_isInitialized || _mediaPlayer is null) return Task.CompletedTask;
 
+        if (position < TimeSpan.Zero)
+        {
+            _logger.LogWarning("Seek command received with negative position {Position}. Clamping to Zero.", position);
+            position = TimeSpan.Zero;
+        }
+
         if (_mediaPlayer.IsSeekable)
             _mediaPlayer.SetTime((long)position.TotalMilliseconds, true);
         else
