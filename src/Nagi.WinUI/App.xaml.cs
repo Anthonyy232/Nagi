@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -195,21 +196,13 @@ public partial class App : Application
 
         try
         {
+            await BootstrapLanguageAsync(tempPathConfig);
+
             InitializeWindowAndServices(configuration);
             _logger = Services!.GetRequiredService<ILogger<App>>();
             _logger.LogInformation("Application starting up.");
 
             InitializeSystemIntegration();
-
-            // Apply language setting before showing window
-            var settingsService = Services!.GetRequiredService<IUISettingsService>();
-            var language = await settingsService.GetLanguageAsync();
-            if (!string.IsNullOrEmpty(language))
-            {
-                ApplicationLanguages.PrimaryLanguageOverride = language;
-                CultureInfo.CurrentUICulture = new CultureInfo(language);
-                CultureInfo.CurrentCulture = new CultureInfo(language);
-            }
 
             // Restore window state BEFORE showing the window to prevent flash of default position
             if (_window is MainWindow mainWindow)
@@ -599,6 +592,66 @@ public partial class App : Application
         {
             Log.Fatal(ex, "Failed to initialize or migrate database.");
             throw; // Re-throw to propagate the failure to the startup handler.
+        }
+    }
+
+    /// <summary>
+    ///     Reads the persisted language setting before the main window or services are initialized.
+    ///     This ensures that the correct culture is applied to the UI thread and all resources
+    ///     (including XAML parsing) immediately upon startup, preventing localization lag.
+    /// </summary>
+    private async Task BootstrapLanguageAsync(IPathConfiguration pathConfig)
+    {
+        try
+        {
+            string? language = null;
+            if (PathConfiguration.IsRunningInPackage())
+            {
+                if (ApplicationData.Current.LocalSettings.Values.TryGetValue("AppLanguage", out var val) && val is string s)
+                {
+                    language = s;
+                }
+            }
+            else
+            {
+                if (File.Exists(pathConfig.SettingsFilePath))
+                {
+                    var json = await File.ReadAllTextAsync(pathConfig.SettingsFilePath);
+                    using var doc = JsonDocument.Parse(json);
+                    
+                    // The settings file is a dictionary, so we look for the key "AppLanguage"
+                    if (doc.RootElement.TryGetProperty("AppLanguage", out var element) && 
+                        element.ValueKind == JsonValueKind.String)
+                    {
+                        language = element.GetString();
+                    }
+                }
+            }
+
+            if (!string.IsNullOrEmpty(language))
+            {
+                Log.Information("Bootstrapping language: {Language}", language);
+                ApplicationLanguages.PrimaryLanguageOverride = language;
+                var culture = new CultureInfo(language);
+                
+                // Set the culture for the current thread (UI thread)
+                CultureInfo.CurrentUICulture = culture;
+                CultureInfo.CurrentCulture = culture;
+                
+                // Set the default culture for any new threads (Task.Run, ThreadPool, etc.)
+                CultureInfo.DefaultThreadCurrentUICulture = culture;
+                CultureInfo.DefaultThreadCurrentCulture = culture;
+            }
+            else
+            {
+                Log.Information("No language setting found during bootstrap (Language is null or empty).");
+            }
+        }
+        catch (Exception ex)
+        {
+            // If bootstrapping fails (e.g. corrupt JSON), we log and continue.
+            // The SettingsService will handle it (or use defaults) later.
+            Log.Warning(ex, "Failed to bootstrap language settings.");
         }
     }
 

@@ -11,6 +11,7 @@ language_mapping:
     zh-CN: zh-Hans
     zh-TW: zh-Hant
     sr: sr-Cyrl-RS
+    sr-SP: sr-Cyrl-RS
     # Add other mappings if specific WinUI tags are required
 
 files:

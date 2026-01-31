@@ -1093,6 +1093,10 @@ public class SettingsService : IUISettingsService, IDisposable
             var loadedTags = new HashSet<string>(items.Select(i => i.Tag));
             var missingItems = defaultItems.Where(d => !loadedTags.Contains(d.Tag));
             items.AddRange(missingItems);
+
+            // Refresh localization for all items
+            foreach (var item in items) RefreshNavigationItemLocalization(item);
+
             return items;
         }
 
@@ -1116,6 +1120,10 @@ public class SettingsService : IUISettingsService, IDisposable
                 settings.Insert(5,
                     new PlayerButtonSetting
                         { Id = "Separator", DisplayName = Resources.Strings.Settings_Button_Divider, IconGlyph = "\uE7A3", IsEnabled = true });
+
+            // Refresh localization for all buttons
+            foreach (var setting in settings) RefreshPlayerButtonLocalization(setting);
+
             return settings;
         }
 
@@ -1126,6 +1134,41 @@ public class SettingsService : IUISettingsService, IDisposable
     {
         await SetValueAsync(PlayerButtonSettingsKey, settings).ConfigureAwait(false);
         PlayerButtonSettingsChanged?.Invoke();
+    }
+
+    private void RefreshNavigationItemLocalization(NavigationItemSetting item)
+    {
+        var name = item.Tag switch
+        {
+            "Library" => Resources.Strings.Settings_Nav_Library,
+            "Folders" => Resources.Strings.Settings_Nav_Folders,
+            "Playlists" => Resources.Strings.Settings_Nav_Playlists,
+            "Artists" => Resources.Strings.Settings_Nav_Artists,
+            "Albums" => Resources.Strings.Settings_Nav_Albums,
+            "Genres" => Resources.Strings.Settings_Nav_Genres,
+            _ => null
+        };
+
+        if (!string.IsNullOrEmpty(name)) item.DisplayName = name;
+    }
+
+    private void RefreshPlayerButtonLocalization(PlayerButtonSetting item)
+    {
+        var name = item.Id switch
+        {
+            "Shuffle" => Resources.Strings.Settings_Button_Shuffle,
+            "Previous" => Resources.Strings.Settings_Button_Previous,
+            "PlayPause" => Resources.Strings.Settings_Button_PlayPause,
+            "Next" => Resources.Strings.Settings_Button_Next,
+            "Repeat" => Resources.Strings.Settings_Button_Repeat,
+            "Separator" => Resources.Strings.Settings_Button_Divider,
+            "Lyrics" => Resources.Strings.Settings_Button_Lyrics,
+            "Queue" => Resources.Strings.Settings_Button_Queue,
+            "Volume" => Resources.Strings.Settings_Button_Volume,
+            _ => null
+        };
+
+        if (!string.IsNullOrEmpty(name)) item.DisplayName = name;
     }
 
     public async Task<bool> GetRememberWindowSizeEnabledAsync()

@@ -1,5 +1,6 @@
 using System.Resources;
 using System.Reflection;
+using System.Globalization;
 
 namespace Nagi.WinUI.Resources;
 
@@ -16,7 +17,7 @@ public static class Strings
     /// </summary>
     public static string GetString(string name)
     {
-        return _resourceManager.GetString(name) ?? name;
+        return _resourceManager.GetString(name, CultureInfo.CurrentUICulture) ?? name;
     }
 
     // Navigation View Items
