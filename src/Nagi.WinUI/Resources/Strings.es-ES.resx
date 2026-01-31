@@ -930,6 +930,6 @@ Error: {1}</value>
     <value>No hay listas de reproducción para exportar.</value>
   </data>
   <data name="Language_Auto" xml:space="preserve">
-    <value>Auto</value>
+    <value>Automático</value>
   </data>
 </root>

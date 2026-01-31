@@ -1,0 +1,997 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="TrayIcon_ShowWindow.Text" xml:space="preserve">
+    <value>顯示視窗</value>
+  </data>
+  <data name="TrayIcon_Exit.Text" xml:space="preserve">
+    <value>結束</value>
+  </data>
+  <data name="MiniPlayer_BackButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>返回播放器</value>
+  </data>
+  <data name="MiniPlayer_UpNextHeader.Text" xml:space="preserve">
+    <value>即將播放</value>
+  </data>
+  <data name="MiniPlayer_RestoreButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>顯示 Nagi</value>
+  </data>
+  <data name="MiniPlayer_PreviousButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>上一首</value>
+  </data>
+  <data name="MiniPlayer_NextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>下一首</value>
+  </data>
+  <data name="MiniPlayer_QueueButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>即將播放</value>
+  </data>
+  <data name="CrashReport_ReportIssuePreLink.Text" xml:space="preserve">
+    <value>請考慮在</value>
+  </data>
+  <data name="CrashReport_IssueLink.Text" xml:space="preserve">
+    <value>問題頁面</value>
+  </data>
+  <data name="CrashReport_ReportIssuePostLink.Text" xml:space="preserve">
+    <value>.</value>
+  </data>
+  <data name="CrashReport_ResetAppAdvice.Text" xml:space="preserve">
+    <value>如果此問題持續發生，您可以嘗試「重設應用程式和資料」。這將清除您的設定和媒體庫，有助於從損壞的狀態中恢復應用程式。</value>
+  </data>
+  <data name="CrashReport_CopyLogButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>複製日誌到剪貼簿</value>
+  </data>
+  <data name="CrashReport_CopyLogLabel.Text" xml:space="preserve">
+    <value>複製日誌</value>
+  </data>
+  <data name="SmartPlaylist_PickCoverButton.Content" xml:space="preserve">
+    <value>選擇封面</value>
+  </data>
+  <data name="SmartPlaylist_PickCoverButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>選擇封面圖片</value>
+  </data>
+  <data name="SmartPlaylist_PlaylistNameLabel.Text" xml:space="preserve">
+    <value>播放清單名稱</value>
+  </data>
+  <data name="SmartPlaylist_PlaylistNameTextBox.PlaceholderText" xml:space="preserve">
+    <value>輸入智慧播放清單的名稱</value>
+  </data>
+  <data name="SmartPlaylist_SortOrderLabel.Text" xml:space="preserve">
+    <value>排序順序</value>
+  </data>
+  <data name="SmartPlaylist_MatchLabel.Text" xml:space="preserve">
+    <value>符合</value>
+  </data>
+  <data name="SmartPlaylist_MatchLogic_All.Content" xml:space="preserve">
+    <value>所有</value>
+  </data>
+  <data name="SmartPlaylist_MatchLogic_Any.Content" xml:space="preserve">
+    <value>任一</value>
+  </data>
+  <data name="SmartPlaylist_MatchSuffixLabel.Text" xml:space="preserve">
+    <value>以下規則：</value>
+  </data>
+  <data name="SmartPlaylist_AddRuleButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>新增規則</value>
+  </data>
+  <data name="SmartPlaylist_AddRuleLabel.Text" xml:space="preserve">
+    <value>新增規則</value>
+  </data>
+  <data name="SmartPlaylist_RuleValueTextBox.PlaceholderText" xml:space="preserve">
+    <value>值</value>
+  </data>
+  <data name="SmartPlaylist_RemoveRuleButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>移除此規則</value>
+  </data>
+  <data name="SmartPlaylist_NoRulesTitle.Text" xml:space="preserve">
+    <value>未定義規則</value>
+  </data>
+  <data name="SmartPlaylist_NoRulesMessage.Text" xml:space="preserve">
+    <value>媒體庫中的所有歌曲都將包含在此播放清單中。</value>
+  </data>
+  <data name="SmartPlaylist_AddFirstRuleButton.Content" xml:space="preserve">
+    <value>新增您的第一個規則</value>
+  </data>
+  <data name="SmartPlaylist_AddFirstRuleButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>新增您的第一個規則</value>
+  </data>
+  <data name="SmartPlaylist_Dialog.PrimaryButtonText" xml:space="preserve">
+    <value>儲存</value>
+  </data>
+  <data name="SmartPlaylist_Dialog.CloseButtonText" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="TrayPopup_PreviousButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>上一首</value>
+  </data>
+  <data name="TrayPopup_NextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>下一首</value>
+  </data>
+  <data name="TrayPopup_QueueButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>即將播放</value>
+  </data>
+  <data name="TrayPopup_BackButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>返回播放器</value>
+  </data>
+  <data name="TrayPopup_UpNextHeader.Text" xml:space="preserve">
+    <value>即將播放</value>
+  </data>
+  <data name="AppName" xml:space="preserve">
+    <value>Nagi</value>
+  </data>
+  <data name="AppDescription" xml:space="preserve">
+    <value>使用 Nagi 重新探索您的本地音樂收藏，這是一款專注於速度、簡潔性和隱私的音樂播放器。Nagi 使用 C# 和 WinUI 3 打造，提供簡潔、原生的 Fluent 體驗。它美觀、高效且尊重您的隱私。</value>
+  </data>
+  <data name="AppShortName" xml:space="preserve">
+    <value>Nagi</value>
+  </data>
+  <data name="AppDisplayName" xml:space="preserve">
+    <value>Nagi 音樂播放器</value>
+  </data>
+  <data name="AppInfoTip" xml:space="preserve">
+    <value>使用 Nagi 音樂播放器開啟</value>
+  </data>
+  <data name="StartupTaskDisplayName" xml:space="preserve">
+    <value>Nagi 啟動</value>
+  </data>
+  <data name="Player_PreviousButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>上一首</value>
+  </data>
+  <data name="Player_NextButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>下一首</value>
+  </data>
+  <data name="Player_LyricsButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>歌詞</value>
+  </data>
+  <data name="Player_QueueButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>即將播放</value>
+  </data>
+  <data name="Player_GoToAlbumButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>前往專輯</value>
+  </data>
+  <data name="QueueFlyout_Title.Text" xml:space="preserve">
+    <value>即將播放</value>
+  </data>
+  <data name="AlbumPage_Title.Text" xml:space="preserve">
+    <value>專輯</value>
+  </data>
+  <data name="AlbumPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>搜尋專輯...</value>
+  </data>
+  <data name="AlbumPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>搜尋專輯</value>
+  </data>
+  <data name="AlbumPage_RandomButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>隨機選擇一個</value>
+  </data>
+  <data name="AlbumPage_Menu_Play.Text" xml:space="preserve">
+    <value>播放</value>
+  </data>
+  <data name="AlbumPage_Empty_Title.Text" xml:space="preserve">
+    <value>找不到專輯</value>
+  </data>
+  <data name="AlbumPage_Empty_Subtitle.Text" xml:space="preserve">
+    <value>掃描您的音樂媒體庫以填入專輯</value>
+  </data>
+  <data name="AlbumViewPage_Header_Label.Text" xml:space="preserve">
+    <value>專輯</value>
+  </data>
+  <data name="AlbumViewPage_Songs_Title.Text" xml:space="preserve">
+    <value>歌曲</value>
+  </data>
+  <data name="AlbumViewPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>在專輯中搜尋...</value>
+  </data>
+  <data name="AlbumViewPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>在專輯中搜尋</value>
+  </data>
+  <data name="AlbumViewPage_PlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>播放全部</value>
+  </data>
+  <data name="AlbumViewPage_ShufflePlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>隨機播放全部</value>
+  </data>
+  <data name="AlbumViewPage_SongMenu_Play.Text" xml:space="preserve">
+    <value>播放</value>
+  </data>
+  <data name="AlbumViewPage_SongMenu_PlayNext.Text" xml:space="preserve">
+    <value>下一首播放</value>
+  </data>
+  <data name="AlbumViewPage_SongMenu_AddToQueue.Text" xml:space="preserve">
+    <value>新增至播放佇列</value>
+  </data>
+  <data name="AlbumViewPage_SongMenu_AddToPlaylist.Text" xml:space="preserve">
+    <value>新增至播放清單</value>
+  </data>
+  <data name="AlbumViewPage_SongMenu_GoToArtist.Text" xml:space="preserve">
+    <value>前往藝人</value>
+  </data>
+  <data name="AlbumViewPage_SongMenu_ShowInExplorer.Text" xml:space="preserve">
+    <value>在檔案總管中顯示</value>
+  </data>
+  <data name="AlbumViewPage_SongPlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>播放</value>
+  </data>
+  <data name="AlbumViewPage_Empty_Title.Text" xml:space="preserve">
+    <value>此專輯中找不到歌曲</value>
+  </data>
+  <data name="AlbumViewPage_Empty_Subtitle.Text" xml:space="preserve">
+    <value>嘗試搜尋其他內容</value>
+  </data>
+  <data name="ArtistPage_Title.Text" xml:space="preserve">
+    <value>藝人</value>
+  </data>
+  <data name="ArtistPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>搜尋藝人...</value>
+  </data>
+  <data name="ArtistPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>搜尋藝人</value>
+  </data>
+  <data name="ArtistPage_RandomButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>隨機選擇一個</value>
+  </data>
+  <data name="ArtistPage_Menu_Play.Text" xml:space="preserve">
+    <value>播放</value>
+  </data>
+  <data name="ArtistPage_Menu_ChangeImage.Text" xml:space="preserve">
+    <value>變更圖片</value>
+  </data>
+  <data name="ArtistPage_Menu_RemoveImage.Text" xml:space="preserve">
+    <value>移除圖片</value>
+  </data>
+  <data name="ArtistPage_Empty_Title.Text" xml:space="preserve">
+    <value>找不到藝人</value>
+  </data>
+  <data name="ArtistPage_Empty_Subtitle.Text" xml:space="preserve">
+    <value>掃描您的音樂媒體庫以填入藝人</value>
+  </data>
+  <data name="ArtistViewPage_EditOverlay.Content" xml:space="preserve">
+    <value>變更藝人圖片</value>
+  </data>
+  <data name="ArtistViewPage_ImageMenu_ChangeImage.Text" xml:space="preserve">
+    <value>變更圖片</value>
+  </data>
+  <data name="ArtistViewPage_ImageMenu_RemoveImage.Text" xml:space="preserve">
+    <value>移除圖片</value>
+  </data>
+  <data name="ArtistViewPage_Header_Label.Text" xml:space="preserve">
+    <value>藝人</value>
+  </data>
+  <data name="ArtistViewPage_Albums_Title.Text" xml:space="preserve">
+    <value>熱門專輯</value>
+  </data>
+  <data name="ArtistViewPage_Songs_Title.Text" xml:space="preserve">
+    <value>歌曲</value>
+  </data>
+  <data name="ArtistViewPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>在藝人中搜尋...</value>
+  </data>
+  <data name="ArtistViewPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>在藝人中搜尋</value>
+  </data>
+  <data name="ArtistViewPage_PlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>播放全部</value>
+  </data>
+  <data name="ArtistViewPage_ShufflePlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>隨機播放全部</value>
+  </data>
+  <data name="ArtistViewPage_SongMenu_Play.Text" xml:space="preserve">
+    <value>播放</value>
+  </data>
+  <data name="ArtistViewPage_SongMenu_PlayNext.Text" xml:space="preserve">
+    <value>下一首播放</value>
+  </data>
+  <data name="ArtistViewPage_SongMenu_AddToQueue.Text" xml:space="preserve">
+    <value>新增至播放佇列</value>
+  </data>
+  <data name="ArtistViewPage_SongMenu_AddToPlaylist.Text" xml:space="preserve">
+    <value>新增至播放清單</value>
+  </data>
+  <data name="ArtistViewPage_SongMenu_GoToAlbum.Text" xml:space="preserve">
+    <value>前往專輯</value>
+  </data>
+  <data name="ArtistViewPage_SongMenu_ShowInExplorer.Text" xml:space="preserve">
+    <value>在檔案總管中顯示</value>
+  </data>
+  <data name="ArtistViewPage_SongPlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>播放</value>
+  </data>
+  <data name="ArtistViewPage_Empty_Title.Text" xml:space="preserve">
+    <value>此藝人沒有找到歌曲</value>
+  </data>
+  <data name="ArtistViewPage_Empty_Subtitle.Text" xml:space="preserve">
+    <value>嘗試搜尋其他內容</value>
+  </data>
+  <data name="FolderPage_Title.Text" xml:space="preserve">
+    <value>資料夾</value>
+  </data>
+  <data name="FolderPage_RandomButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>隨機選擇一個</value>
+  </data>
+  <data name="FolderPage_AddFolderButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>新增音樂資料夾</value>
+  </data>
+  <data name="FolderPage_AddFolder_Label.Text" xml:space="preserve">
+    <value>新增資料夾</value>
+  </data>
+  <data name="FolderPage_Menu_Play.Text" xml:space="preserve">
+    <value>播放</value>
+  </data>
+  <data name="FolderPage_Menu_Rescan.Text" xml:space="preserve">
+    <value>重新掃描</value>
+  </data>
+  <data name="FolderPage_Menu_Delete.Text" xml:space="preserve">
+    <value>刪除</value>
+  </data>
+  <data name="FolderPage_Empty_Title.Text" xml:space="preserve">
+    <value>尚未新增資料夾</value>
+  </data>
+  <data name="FolderPage_Empty_Subtitle.Text" xml:space="preserve">
+    <value>新增音樂資料夾以開始使用</value>
+  </data>
+  <data name="FolderSongViewPage_FolderMenu_Play.Text" xml:space="preserve">
+    <value>播放</value>
+  </data>
+  <data name="FolderSongViewPage_FolderMenu_AddToPlaylist.Text" xml:space="preserve">
+    <value>新增至播放清單</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_Play.Text" xml:space="preserve">
+    <value>播放</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_PlayNext.Text" xml:space="preserve">
+    <value>下一首播放</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_AddToQueue.Text" xml:space="preserve">
+    <value>新增至播放佇列</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_AddToPlaylist.Text" xml:space="preserve">
+    <value>新增至播放清單</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_GoToAlbum.Text" xml:space="preserve">
+    <value>前往專輯</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_GoToArtist.Text" xml:space="preserve">
+    <value>前往藝人</value>
+  </data>
+  <data name="FolderSongViewPage_SongMenu_ShowInExplorer.Text" xml:space="preserve">
+    <value>在檔案總管中顯示</value>
+  </data>
+  <data name="FolderSongViewPage_SongPlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>播放</value>
+  </data>
+  <data name="FolderSongViewPage_Header_Label.Text" xml:space="preserve">
+    <value>資料夾</value>
+  </data>
+  <data name="FolderSongViewPage_Songs_Title.Text" xml:space="preserve">
+    <value>歌曲</value>
+  </data>
+  <data name="FolderSongViewPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>在資料夾中搜尋...</value>
+  </data>
+  <data name="FolderSongViewPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>在資料夾中搜尋</value>
+  </data>
+  <data name="FolderSongViewPage_PlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>播放全部</value>
+  </data>
+  <data name="FolderSongViewPage_ShufflePlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>隨機播放全部</value>
+  </data>
+  <data name="FolderSongViewPage_Empty_Title.Text" xml:space="preserve">
+    <value>此資料夾是空的</value>
+  </data>
+  <data name="FolderSongViewPage_Empty_Subtitle.Text" xml:space="preserve">
+    <value>找不到歌曲或子資料夾</value>
+  </data>
+  <data name="GenrePage_Title.Text" xml:space="preserve">
+    <value>類型</value>
+  </data>
+  <data name="GenrePage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>搜尋類型...</value>
+  </data>
+  <data name="GenrePage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>搜尋類型</value>
+  </data>
+  <data name="GenrePage_RandomButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>隨機選擇一個</value>
+  </data>
+  <data name="GenrePage_Menu_Play.Text" xml:space="preserve">
+    <value>播放</value>
+  </data>
+  <data name="GenrePage_Empty_Title.Text" xml:space="preserve">
+    <value>找不到類型</value>
+  </data>
+  <data name="GenrePage_Empty_Subtitle.Text" xml:space="preserve">
+    <value>掃描您的音樂媒體庫以填入類型</value>
+  </data>
+  <data name="LibraryPage_Title.Text" xml:space="preserve">
+    <value>媒體庫</value>
+  </data>
+  <data name="LibraryPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>搜尋媒體庫...</value>
+  </data>
+  <data name="LibraryPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>搜尋媒體庫</value>
+  </data>
+  <data name="LibraryPage_PlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>播放全部</value>
+  </data>
+  <data name="LibraryPage_ShufflePlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>隨機播放全部</value>
+  </data>
+  <data name="LibraryPage_Context_Play.Text" xml:space="preserve">
+    <value>播放</value>
+  </data>
+  <data name="LibraryPage_Context_PlayNext.Text" xml:space="preserve">
+    <value>下一首播放</value>
+  </data>
+  <data name="LibraryPage_Context_AddToQueue.Text" xml:space="preserve">
+    <value>新增至播放佇列</value>
+  </data>
+  <data name="LibraryPage_Context_AddToPlaylist.Text" xml:space="preserve">
+    <value>新增至播放清單</value>
+  </data>
+  <data name="LibraryPage_Context_GoToAlbum.Text" xml:space="preserve">
+    <value>前往專輯</value>
+  </data>
+  <data name="LibraryPage_Context_GoToArtist.Text" xml:space="preserve">
+    <value>前往藝人</value>
+  </data>
+  <data name="LibraryPage_Context_ShowInExplorer.Text" xml:space="preserve">
+    <value>在檔案總管中顯示</value>
+  </data>
+  <data name="LibraryPage_SongElement_PlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>播放</value>
+  </data>
+  <data name="LibraryPage_EmptyState_Title.Text" xml:space="preserve">
+    <value>您的媒體庫是空的</value>
+  </data>
+  <data name="LibraryPage_EmptyState_Subtitle.Text" xml:space="preserve">
+    <value>在「設定」中將資料夾新增至您的媒體庫</value>
+  </data>
+  <data name="LyricsPage_NoLyrics_Title.Text" xml:space="preserve">
+    <value>此曲目找不到歌詞</value>
+  </data>
+  <data name="LyricsPage_NoLyrics_Subtitle.Text" xml:space="preserve">
+    <value>嘗試另一首歌曲</value>
+  </data>
+  <data name="OnboardingPage_Welcome_Title.Text" xml:space="preserve">
+    <value>歡迎使用 Nagi</value>
+  </data>
+  <data name="OnboardingPage_AddFolderButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>新增音樂資料夾以開始使用</value>
+  </data>
+  <data name="OnboardingPage_AddFolderButton_Content.Text" xml:space="preserve">
+    <value>新增音樂資料夾</value>
+  </data>
+  <data name="PlaylistPage_Title.Text" xml:space="preserve">
+    <value>播放清單</value>
+  </data>
+  <data name="PlaylistPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>搜尋播放清單...</value>
+  </data>
+  <data name="PlaylistPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>搜尋播放清單</value>
+  </data>
+  <data name="PlaylistPage_RandomButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>隨機選擇一個</value>
+  </data>
+  <data name="PlaylistPage_NewPlaylistButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>建立新的播放清單</value>
+  </data>
+  <data name="PlaylistPage_NewPlaylistButton_Content.Text" xml:space="preserve">
+    <value>新增播放清單</value>
+  </data>
+  <data name="PlaylistPage_NewPlaylistMenu_Regular.Text" xml:space="preserve">
+    <value>一般播放清單</value>
+  </data>
+  <data name="PlaylistPage_NewPlaylistMenu_Smart.Text" xml:space="preserve">
+    <value>智慧播放清單</value>
+  </data>
+  <data name="PlaylistPage_Context_Play.Text" xml:space="preserve">
+    <value>播放</value>
+  </data>
+  <data name="PlaylistPage_Context_Rename.Text" xml:space="preserve">
+    <value>重新命名</value>
+  </data>
+  <data name="PlaylistPage_Context_ChangeImage.Text" xml:space="preserve">
+    <value>變更圖片</value>
+  </data>
+  <data name="PlaylistPage_Context_RemoveImage.Text" xml:space="preserve">
+    <value>移除圖片</value>
+  </data>
+  <data name="PlaylistPage_Context_Delete.Text" xml:space="preserve">
+    <value>刪除</value>
+  </data>
+  <data name="PlaylistPage_EmptyState_Title.Text" xml:space="preserve">
+    <value>尚未有播放清單</value>
+  </data>
+  <data name="PlaylistPage_EmptyState_Subtitle.Text" xml:space="preserve">
+    <value>建立播放清單以開始使用</value>
+  </data>
+  <data name="PlaylistSongViewPage_Header_Caption.Text" xml:space="preserve">
+    <value>播放清單</value>
+  </data>
+  <data name="PlaylistSongViewPage_Section_Songs.Text" xml:space="preserve">
+    <value>歌曲</value>
+  </data>
+  <data name="PlaylistSongViewPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>在播放清單中搜尋...</value>
+  </data>
+  <data name="PlaylistSongViewPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>在播放清單中搜尋</value>
+  </data>
+  <data name="PlaylistSongViewPage_PlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>播放全部</value>
+  </data>
+  <data name="PlaylistSongViewPage_ShufflePlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>隨機播放全部</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_Play.Text" xml:space="preserve">
+    <value>播放</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_PlayNext.Text" xml:space="preserve">
+    <value>下一首播放</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_AddToQueue.Text" xml:space="preserve">
+    <value>新增至播放佇列</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_GoToAlbum.Text" xml:space="preserve">
+    <value>前往專輯</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_GoToArtist.Text" xml:space="preserve">
+    <value>前往藝人</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_ShowInExplorer.Text" xml:space="preserve">
+    <value>在檔案總管中顯示</value>
+  </data>
+  <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist.Text" xml:space="preserve">
+    <value>從播放清單中移除</value>
+  </data>
+  <data name="PlaylistSongViewPage_SongElement_PlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>播放</value>
+  </data>
+  <data name="PlaylistSongViewPage_EmptyState_Title.Text" xml:space="preserve">
+    <value>此播放清單是空的</value>
+  </data>
+  <data name="PlaylistSongViewPage_EmptyState_Subtitle.Text" xml:space="preserve">
+    <value>從您的媒體庫新增歌曲</value>
+  </data>
+  <data name="GenreViewPage_Header_Caption.Text" xml:space="preserve">
+    <value>類型</value>
+  </data>
+  <data name="GenreViewPage_Section_Songs.Text" xml:space="preserve">
+    <value>歌曲</value>
+  </data>
+  <data name="GenreViewPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>在類型中搜尋...</value>
+  </data>
+  <data name="GenreViewPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>在類型中搜尋</value>
+  </data>
+  <data name="GenreViewPage_PlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>播放全部</value>
+  </data>
+  <data name="GenreViewPage_ShufflePlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>隨機播放全部</value>
+  </data>
+  <data name="GenreViewPage_Context_Play.Text" xml:space="preserve">
+    <value>播放</value>
+  </data>
+  <data name="GenreViewPage_Context_PlayNext.Text" xml:space="preserve">
+    <value>下一首播放</value>
+  </data>
+  <data name="GenreViewPage_Context_AddToQueue.Text" xml:space="preserve">
+    <value>新增至播放佇列</value>
+  </data>
+  <data name="GenreViewPage_Context_AddToPlaylist.Text" xml:space="preserve">
+    <value>新增至播放清單</value>
+  </data>
+  <data name="GenreViewPage_Context_GoToAlbum.Text" xml:space="preserve">
+    <value>前往專輯</value>
+  </data>
+  <data name="GenreViewPage_Context_GoToArtist.Text" xml:space="preserve">
+    <value>前往藝人</value>
+  </data>
+  <data name="GenreViewPage_Context_ShowInExplorer.Text" xml:space="preserve">
+    <value>在檔案總管中顯示</value>
+  </data>
+  <data name="GenreViewPage_Context_NoPlaylists.Text" xml:space="preserve">
+    <value>沒有可用的播放清單</value>
+  </data>
+  <data name="GenreViewPage_SongElement_PlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>播放</value>
+  </data>
+  <data name="GenreViewPage_EmptyState_Title.Text" xml:space="preserve">
+    <value>此類型沒有找到歌曲</value>
+  </data>
+  <data name="GenreViewPage_EmptyState_Subtitle.Text" xml:space="preserve">
+    <value>嘗試搜尋其他內容</value>
+  </data>
+  <data name="SettingsPage_Title.Text" xml:space="preserve">
+    <value>設定</value>
+  </data>
+  <data name="SettingsPage_Section_Appearance.Text" xml:space="preserve">
+    <value>外觀</value>
+  </data>
+  <data name="SettingsPage_Theme.Header" xml:space="preserve">
+    <value>主題</value>
+  </data>
+  <data name="SettingsPage_Theme.Description" xml:space="preserve">
+    <value>選擇應用程式主題。</value>
+  </data>
+  <data name="SettingsPage_AccentColor.Text" xml:space="preserve">
+    <value>強調色彩</value>
+  </data>
+
+  <data name="SettingsPage_ResetAccentColor.Content" xml:space="preserve">
+    <value>重設為預設值</value>
+  </data>
+  <data name="SettingsPage_WindowMaterial.Header" xml:space="preserve">
+    <value>視窗材質</value>
+  </data>
+  <data name="SettingsPage_WindowMaterial.Description" xml:space="preserve">
+    <value>選擇視窗的背景材質。</value>
+  </data>
+  <data name="SettingsPage_DynamicTheming.Header" xml:space="preserve">
+    <value>動態佈景主題</value>
+  </data>
+  <data name="SettingsPage_DynamicTheming.Description" xml:space="preserve">
+    <value>啟用並設定動態佈景主題選項。</value>
+  </data>
+  <data name="SettingsPage_RememberWindowSize.Header" xml:space="preserve">
+    <value>記住視窗大小</value>
+  </data>
+  <data name="SettingsPage_RememberWindowSize.Description" xml:space="preserve">
+    <value>下次啟動時將主視窗恢復到其先前的大小。</value>
+  </data>
+  <data name="SettingsPage_RememberWindowPosition.Header" xml:space="preserve">
+    <value>記住視窗位置</value>
+  </data>
+  <data name="SettingsPage_RememberWindowPosition.Description" xml:space="preserve">
+    <value>下次啟動時將主視窗恢復到其先前的螢幕位置。</value>
+  </data>
+  <data name="SettingsPage_RememberNavState.Header" xml:space="preserve">
+    <value>記住導覽面板狀態</value>
+  </data>
+  <data name="SettingsPage_RememberNavState.Description" xml:space="preserve">
+    <value>保持左側導覽面板在您離開時的開啟或關閉狀態。</value>
+  </data>
+  <data name="SettingsPage_CustomizeNav.Header" xml:space="preserve">
+    <value>自訂導覽</value>
+  </data>
+  <data name="SettingsPage_CustomizeNav.Description" xml:space="preserve">
+    <value>拖曳以重新排列導覽選單中的頁面。使用切換開關來顯示或隱藏頁面。</value>
+  </data>
+  <data name="SettingsPage_Section_Player.Text" xml:space="preserve">
+    <value>播放器管理</value>
+  </data>
+  <data name="SettingsPage_VolumeNormalization.Header" xml:space="preserve">
+    <value>音量正規化 (ReplayGain)</value>
+  </data>
+  <data name="SettingsPage_VolumeNormalization.Description" xml:space="preserve">
+    <value>自動將音量調整到標準水平 (-14 LUFS)，以避免突然的音量變化。</value>
+  </data>
+  <data name="SettingsPage_Equalizer.Text" xml:space="preserve">
+    <value>音訊等化器</value>
+  </data>
+
+  <data name="SettingsPage_ResetEqualizer.Content" xml:space="preserve">
+    <value>重設為預設值</value>
+  </data>
+  <data name="SettingsPage_Equalizer_Preamp.Text" xml:space="preserve">
+    <value>前級放大器</value>
+  </data>
+  <data name="SettingsPage_Equalizer_Preset_Custom.PlaceholderText" xml:space="preserve">
+    <value>自訂</value>
+  </data>
+  <data name="SettingsPage_CustomizePlayer.Text" xml:space="preserve">
+    <value>自訂播放器控制項</value>
+  </data>
+
+  <data name="SettingsPage_ResetPlayerButtons.Content" xml:space="preserve">
+    <value>重設為預設值</value>
+  </data>
+  <data name="SettingsPage_CustomizePlayer_Instructions.Text" xml:space="preserve">
+    <value>懸停以切換可見性。拖曳以重新排列。分隔線分隔中央和右側控制項。</value>
+  </data>
+  <data name="SettingsPage_CollapsablePlayer.Header" xml:space="preserve">
+    <value>可折疊播放器</value>
+  </data>
+  <data name="SettingsPage_CollapsablePlayer.Description" xml:space="preserve">
+    <value>動畫化播放器欄以展開和折疊。</value>
+  </data>
+  <data name="SettingsPage_RestorePlayback.Header" xml:space="preserve">
+    <value>恢復播放狀態</value>
+  </data>
+  <data name="SettingsPage_RestorePlayback.Description" xml:space="preserve">
+    <value>儲存目前的播放狀態，以便在下次啟動時恢復。</value>
+  </data>
+  <data name="SettingsPage_AutoLaunch.Header" xml:space="preserve">
+    <value>開機時自動啟動</value>
+  </data>
+  <data name="SettingsPage_AutoLaunch.Description" xml:space="preserve">
+    <value>當您登入電腦時自動啟動 Nagi。</value>
+  </data>
+  <data name="SettingsPage_StartMinimized.Header" xml:space="preserve">
+    <value>最小化啟動</value>
+  </data>
+  <data name="SettingsPage_StartMinimized.Description" xml:space="preserve">
+    <value>啟動時，應用程式視窗預設將最小化。</value>
+  </data>
+  <data name="SettingsPage_MinimizeToMiniPlayer.Header" xml:space="preserve">
+    <value>最小化為迷你播放器</value>
+  </data>
+  <data name="SettingsPage_MinimizeToMiniPlayer.Description" xml:space="preserve">
+    <value>最小化時，顯示一個精巧的浮動播放器，而不是隱藏視窗。</value>
+  </data>
+  <data name="SettingsPage_HideToTray.Header" xml:space="preserve">
+    <value>隱藏至系統匣</value>
+  </data>
+  <data name="SettingsPage_HideToTray.Description" xml:space="preserve">
+    <value>關閉時，隱藏至系統匣而不是關閉視窗。</value>
+  </data>
+  <data name="SettingsPage_TrayCoverArt.Header" xml:space="preserve">
+    <value>在飛出視窗中顯示專輯封面</value>
+  </data>
+  <data name="SettingsPage_TrayCoverArt.Description" xml:space="preserve">
+    <value>在點擊系統匣圖示時出現的精巧播放器中顯示專輯封面。</value>
+  </data>
+  <data name="SettingsPage_Section_Data.Text" xml:space="preserve">
+    <value>資料管理</value>
+  </data>
+  <data name="SettingsPage_ArtistSplitting.Header" xml:space="preserve">
+    <value>藝人分割</value>
+  </data>
+  <data name="SettingsPage_ArtistSplitting.Description" xml:space="preserve">
+    <value>定義用於分割多個藝人的字元（例如「;/」）。留空則停用。</value>
+  </data>
+  <data name="SettingsPage_RescanLibrary.Content" xml:space="preserve">
+    <value>重新掃描媒體庫</value>
+  </data>
+  <data name="SettingsPage_RescanLibrary.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>重新掃描媒體庫以套用分割變更</value>
+  </data>
+  <data name="SettingsPage_OnlineMetadata.Header" xml:space="preserve">
+    <value>擷取線上後設資料</value>
+  </data>
+  <data name="SettingsPage_OnlineMetadata.Description" xml:space="preserve">
+    <value>從線上服務（例如 Spotify、Last.fm）擷取藝人圖片和傳記等額外資訊。</value>
+  </data>
+  <data name="SettingsPage_MetadataSources.Header" xml:space="preserve">
+    <value>來源</value>
+  </data>
+  <data name="SettingsPage_MetadataSources.Description" xml:space="preserve">
+    <value>拖曳以重新排列後設資料來源。將滑鼠懸停在每個來源上以查看詳細資訊。</value>
+  </data>
+  <data name="SettingsPage_OnlineLyrics.Header" xml:space="preserve">
+    <value>擷取線上歌詞</value>
+  </data>
+  <data name="SettingsPage_OnlineLyrics.Description" xml:space="preserve">
+    <value>自動從線上來源擷取遺失的歌詞。（隱私：將曲目後設資料傳送至第三方服務）</value>
+  </data>
+  <data name="SettingsPage_LyricsSources.Header" xml:space="preserve">
+    <value>來源</value>
+  </data>
+  <data name="SettingsPage_LyricsSources.Description" xml:space="preserve">
+    <value>拖曳以重新排列歌詞來源。將滑鼠懸停在每個來源上以查看詳細資訊。</value>
+  </data>
+  <data name="SettingsPage_PlaylistsIO.Header" xml:space="preserve">
+    <value>匯出/匯入播放清單</value>
+  </data>
+  <data name="SettingsPage_PlaylistsIO.Description" xml:space="preserve">
+    <value>將播放清單匯出為 M3U 檔案，以供其他播放器使用，或將 M3U 播放清單匯入 Nagi。</value>
+  </data>
+  <data name="SettingsPage_ExportPlaylists.Content" xml:space="preserve">
+    <value>匯出全部...</value>
+  </data>
+  <data name="SettingsPage_ExportPlaylists.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>將所有播放清單匯出到資料夾</value>
+  </data>
+  <data name="SettingsPage_ImportPlaylists.Content" xml:space="preserve">
+    <value>匯入...</value>
+  </data>
+  <data name="SettingsPage_ImportPlaylists.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>匯入一個或多個 M3U 檔案</value>
+  </data>
+  <data name="SettingsPage_ResetApp.Header" xml:space="preserve">
+    <value>重設應用程式</value>
+  </data>
+  <data name="SettingsPage_ResetApp.Description" xml:space="preserve">
+    <value>這將刪除所有媒體庫資料、播放清單，並將所有設定重設為預設值。應用程式將重新啟動。</value>
+  </data>
+  <data name="SettingsPage_ResetButton.Content" xml:space="preserve">
+    <value>重設所有資料</value>
+  </data>
+  <data name="SettingsPage_Section_Integrations.Text" xml:space="preserve">
+    <value>整合</value>
+  </data>
+  <data name="SettingsPage_LastFm.Header" xml:space="preserve">
+    <value>Last.fm</value>
+  </data>
+  <data name="SettingsPage_LastFm.Description" xml:space="preserve">
+    <value>連接您的 Last.fm 帳戶以記錄曲目並顯示您正在播放的歌曲。</value>
+  </data>
+  <data name="SettingsPage_LastFm_Connect.Content" xml:space="preserve">
+    <value>連接</value>
+  </data>
+  <data name="SettingsPage_LastFm_Complete.Content" xml:space="preserve">
+    <value>完成</value>
+  </data>
+  <data name="SettingsPage_LastFm_Cancel.Content" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="SettingsPage_LastFm_Disconnect.Content" xml:space="preserve">
+    <value>中斷連接</value>
+  </data>
+  <data name="SettingsPage_LastFm_Scrobbling.Header" xml:space="preserve">
+    <value>啟用記錄</value>
+  </data>
+  <data name="SettingsPage_LastFm_Scrobbling.Description" xml:space="preserve">
+    <value>自動將您在 Nagi 上收聽的曲目新增至您的 Last.fm 個人資料。</value>
+  </data>
+  <data name="SettingsPage_LastFm_NowPlaying.Header" xml:space="preserve">
+    <value>更新「目前播放」</value>
+  </data>
+  <data name="SettingsPage_LastFm_NowPlaying.Description" xml:space="preserve">
+    <value>向 Last.fm 上的朋友即時顯示您目前正在收聽的內容。</value>
+  </data>
+  <data name="SettingsPage_Discord.Header" xml:space="preserve">
+    <value>Discord</value>
+  </data>
+  <data name="SettingsPage_Discord.Description" xml:space="preserve">
+    <value>將您目前的收聽活動顯示為您在 Discord 上的狀態。</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Header_Caption.Text" xml:space="preserve">
+    <value>智慧播放清單</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Section_Songs.Text" xml:space="preserve">
+    <value>歌曲</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>在智慧播放清單中搜尋...</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_SearchButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>在智慧播放清單中搜尋</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_EditRulesButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>編輯規則</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_PlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>播放全部</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_ShufflePlayAllButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>隨機播放全部</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Context_Play.Text" xml:space="preserve">
+    <value>播放</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Context_PlayNext.Text" xml:space="preserve">
+    <value>下一首播放</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Context_AddToQueue.Text" xml:space="preserve">
+    <value>新增至播放佇列</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Context_GoToAlbum.Text" xml:space="preserve">
+    <value>前往專輯</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Context_GoToArtist.Text" xml:space="preserve">
+    <value>前往藝人</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_Context_ShowInExplorer.Text" xml:space="preserve">
+    <value>在檔案總管中顯示</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_SongElement_PlayButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>播放</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_EmptyState_Title.Text" xml:space="preserve">
+    <value>沒有歌曲符合目前的規則</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_EmptyState_Subtitle.Text" xml:space="preserve">
+    <value>嘗試編輯規則</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_EmptyState_Button.Content" xml:space="preserve">
+    <value>編輯規則</value>
+  </data>
+  <data name="SmartPlaylistSongViewPage_EmptyState_Button.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>編輯規則</value>
+  </data>
+  <data name="SettingsPage_Section_About.Text" xml:space="preserve">
+    <value>關於</value>
+  </data>
+  <data name="SettingsPage_AboutExpander.Header" xml:space="preserve">
+    <value>關於 Nagi</value>
+  </data>
+  <data name="SettingsPage_AboutExpander.Description" xml:space="preserve">
+    <value>使用 Nagi 重新探索您的本地音樂收藏，這是一款專注於速度、簡潔性和隱私的音樂播放器。</value>
+  </data>
+  <data name="SettingsPage_About_VersionPrefix.Text" xml:space="preserve">
+    <value>版本 </value>
+  </data>
+  <data name="SettingsPage_About_Licenses.Content" xml:space="preserve">
+    <value>檢視授權</value>
+  </data>
+  <data name="SettingsPage_About_SourceCode.Content" xml:space="preserve">
+    <value>原始碼</value>
+  </data>
+  <data name="SettingsPage_About_CheckUpdates.Content" xml:space="preserve">
+    <value>檢查更新</value>
+  </data>
+  <data name="SettingsPage_About_Feedback.Content" xml:space="preserve">
+    <value>傳送意見反應</value>
+  </data>
+  <data name="SettingsPage_CheckForUpdates.Header" xml:space="preserve">
+    <value>啟動時檢查更新</value>
+  </data>
+  <data name="SettingsPage_CheckForUpdates.Description" xml:space="preserve">
+    <value>應用程式啟動時自動檢查新版本。</value>
+  </data>
+  <data name="SettingsPage_Language.Header" xml:space="preserve">
+    <value>應用程式語言</value>
+  </data>
+  <data name="SettingsPage_Language.[using:CommunityToolkit.WinUI.Controls]SettingsCard.Description" xml:space="preserve">
+    <value>變更需要重新啟動才能生效</value>
+  </data>
+  <data name="SettingsPage_RestartRequired_Title" xml:space="preserve">
+    <value>需要重新啟動</value>
+  </data>
+  <data name="SettingsPage_RestartRequired_Message" xml:space="preserve">
+    <value>請重新啟動應用程式以使語言變更完全生效。</value>
+  </data>
+</root>
