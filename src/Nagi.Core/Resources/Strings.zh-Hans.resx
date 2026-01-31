@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Noun Labels -->
+  <data name="Label_Artist" xml:space="preserve">
+    <value>艺术家</value>
+  </data>
+  <data name="Label_Album" xml:space="preserve">
+    <value>专辑</value>
+  </data>
+  <data name="Label_Genre" xml:space="preserve">
+    <value>流派</value>
+  </data>
+  <data name="Label_Title" xml:space="preserve">
+    <value>标题</value>
+  </data>
+  <data name="Label_Playlist" xml:space="preserve">
+    <value>播放列表</value>
+  </data>
+  <data name="Label_File" xml:space="preserve">
+    <value>文件</value>
+  </data>
+  <data name="Label_Year" xml:space="preserve">
+    <value>年份</value>
+  </data>
+  <data name="Label_DateAdded" xml:space="preserve">
+    <value>添加日期</value>
+  </data>
+  <data name="Label_DateCreated" xml:space="preserve">
+    <value>创建日期</value>
+  </data>
+  <data name="Label_DateModified" xml:space="preserve">
+    <value>修改日期</value>
+  </data>
+  <data name="Label_LastPlayed" xml:space="preserve">
+    <value>上次播放</value>
+  </data>
+  <data name="Label_Duration" xml:space="preserve">
+    <value>时长</value>
+  </data>
+  <data name="Label_Bpm" xml:space="preserve">
+    <value>BPM</value>
+  </data>
+  <data name="Label_TrackNumber" xml:space="preserve">
+    <value>曲目编号</value>
+  </data>
+  <data name="Label_PlayCount" xml:space="preserve">
+    <value>播放次数</value>
+  </data>
+  <data name="Label_Songs" xml:space="preserve">
+    <value>歌曲</value>
+  </data>
+  <data name="Label_Song" xml:space="preserve">
+    <value>歌曲</value>
+  </data>
+  <data name="Label_Folder" xml:space="preserve">
+    <value>文件夹</value>
+  </data>
+  <data name="Label_Folders" xml:space="preserve">
+    <value>文件夹</value>
+  </data>
+  <data name="Label_ManualOrder" xml:space="preserve">
+    <value>手动排序</value>
+  </data>
+  <data name="Label_Random" xml:space="preserve">
+    <value>随机</value>
+  </data>
+  <!-- Format Patterns -->
+  <data name="Format_Unknown" xml:space="preserve">
+    <value>未知 {0}</value>
+  </data>
+  <data name="Format_New" xml:space="preserve">
+    <value>新建 {0}</value>
+  </data>
+  <data name="Format_NotFound" xml:space="preserve">
+    <value>未找到 {0}</value>
+  </data>
+  <data name="Format_AlphaAsc" xml:space="preserve">
+    <value>{0}（A 到 Z）</value>
+  </data>
+  <data name="Format_AlphaDesc" xml:space="preserve">
+    <value>{0}（Z 到 A）</value>
+  </data>
+  <data name="Format_TemporalNewest" xml:space="preserve">
+    <value>{0}（最新）</value>
+  </data>
+  <data name="Format_TemporalOldest" xml:space="preserve">
+    <value>{0}（最旧）</value>
+  </data>
+  <data name="Format_DirectionalAsc" xml:space="preserve">
+    <value>{0}（升序）</value>
+  </data>
+  <data name="Format_DirectionalDesc" xml:space="preserve">
+    <value>{0}（降序）</value>
+  </data>
+  <data name="Format_ShortestFirst" xml:space="preserve">
+    <value>最短优先</value>
+  </data>
+  <data name="Format_LongestFirst" xml:space="preserve">
+    <value>最长优先</value>
+  </data>
+  <data name="Format_SlowestFirst" xml:space="preserve">
+    <value>最慢优先 ({0})</value>
+  </data>
+  <data name="Format_FastestFirst" xml:space="preserve">
+    <value>最快优先 ({0})</value>
+  </data>
+  <data name="Format_Most" xml:space="preserve">
+    <value>最多 {0}</value>
+  </data>
+  <data name="Format_Least" xml:space="preserve">
+    <value>最少 {0}</value>
+  </data>
+  <data name="Format_ScanFolderProgress" xml:space="preserve">
+    <value>正在扫描文件夹 {0} 共 {1} 个：{2} - {3}</value>
+  </data>
+  <data name="Format_ScanCompleteResult" xml:space="preserve">
+    <value>扫描完成。已添加或更新 {0} {1}。</value>
+  </data>
+  <data name="Format_SavingBatch" xml:space="preserve">
+    <value>正在保存批次 {0}...</value>
+  </data>
+  <!-- Status & Success Messages -->
+  <data name="Status_ScanningFolder" xml:space="preserve">
+    <value>正在扫描文件夹...</value>
+  </data>
+  <data name="Status_ScanCompleteUpToDate" xml:space="preserve">
+    <value>扫描完成。资料库已是最新。</value>
+  </data>
+  <data name="Status_ScanCancelled" xml:space="preserve">
+    <value>扫描已取消。</value>
+  </data>
+  <data name="Status_ScanFailed" xml:space="preserve">
+    <value>扫描失败。请检查日志以获取详细信息。</value>
+  </data>
+  <data name="Status_PreparingScanCaches" xml:space="preserve">
+    <value>正在准备扫描缓存...</value>
+  </data>
+  <data name="Status_ReadingSongDetails" xml:space="preserve">
+    <value>正在读取歌曲详情...</value>
+  </data>
+  <data name="Status_CleaningUpLibrary" xml:space="preserve">
+    <value>正在清理资料库...</value>
+  </data>
+  <data name="Status_Finalizing" xml:space="preserve">
+    <value>正在完成...</value>
+  </data>
+  <data name="Status_NormalizationFailed" xml:space="preserve">
+    <value>音量标准化失败。请检查日志以获取详细信息。</value>
+  </data>
+  <data name="Status_NoFoldersToRefresh" xml:space="preserve">
+    <value>资料库中没有可刷新的文件夹。</value>
+  </data>
+  <data name="Status_LibraryRefreshComplete" xml:space="preserve">
+    <value>资料库刷新完成。</value>
+  </data>
+  <!-- Error Mssages -->
+  <data name="Error_FailedToAddFolder" xml:space="preserve">
+    <value>添加文件夹失败。</value>
+  </data>
+  <data name="Error_PlaylistNameEmpty" xml:space="preserve">
+    <value>播放列表名称不能为空。</value>
+  </data>
+  <data name="Error_RatingRange" xml:space="preserve">
+    <value>评分必须在 1 到 5 之间。</value>
+  </data>
+  <!-- Labels -->
+  <data name="Label_WithLyrics" xml:space="preserve">
+    <value>带歌词</value>
+  </data>
+  <data name="Label_WithCoverArt" xml:space="preserve">
+    <value>带封面艺术</value>
+  </data>
+  <data name="Label_And" xml:space="preserve">
+    <value>和</value>
+  </data>
+  <!-- Static Strings -->
+  <data name="UnknownFilename" xml:space="preserve">
+    <value>未知</value>
+  </data>
+  <data name="ArtistSeparator" xml:space="preserve">
+    <value> &amp; </value>
+  </data>
+  <data name="SortByPrefix" xml:space="preserve">
+    <value>排序方式：</value>
+  </data>
+  <data name="FFmpeg_SetupInstructions" xml:space="preserve">
+    <value>高精度音量标准化（ReplayGain 分析）需要 FFmpeg，但在您的系统上未找到。\n\n请按照以下步骤进行设置：\n\n1. **下载**：访问 https://www.gyan.dev/ffmpeg/builds/ 并下载“ffmpeg-git-full.7z”（或类似）基本构建版本。\n2. **指南**：您可以按照此指南获取详细说明：https://phoenixnap.com/kb/ffmpeg-windows\n3. **解压**：打开架构文件夹，找到包含 `ffmpeg.exe` 的“bin”目录。\n4. **安装**：将 `ffmpeg.exe` 复制到一个永久文件夹（例如，`C:\\ffmpeg\\`），并**将该文件夹添加到您的系统 PATH** 环境变量中。\n5. **重启**：安装后请重启 Nagi 以使更改生效。</value>
+  </data>
+  <data name="Error_M3uImportNoSongsMatched" xml:space="preserve">
+    <value>在您的资料库中未找到播放列表中的任何歌曲。</value>
+  </data>
+  <data name="Error_NoPlaylistsToExport" xml:space="preserve">
+    <value>没有可导出的播放列表。</value>
+  </data>
+  <data name="EqPreset_None" xml:space="preserve">
+    <value>无</value>
+  </data>
+  <data name="EqPreset_Classical" xml:space="preserve">
+    <value>古典</value>
+  </data>
+  <data name="EqPreset_Dance" xml:space="preserve">
+    <value>舞曲</value>
+  </data>
+  <data name="EqPreset_FullBass" xml:space="preserve">
+    <value>重低音</value>
+  </data>
+  <data name="EqPreset_FullTreble" xml:space="preserve">
+    <value>高音饱满</value>
+  </data>
+  <data name="EqPreset_Jazz" xml:space="preserve">
+    <value>爵士</value>
+  </data>
+  <data name="EqPreset_Pop" xml:space="preserve">
+    <value>流行</value>
+  </data>
+  <data name="EqPreset_Rock" xml:space="preserve">
+    <value>摇滚</value>
+  </data>
+  <data name="EqPreset_Soft" xml:space="preserve">
+    <value>柔和</value>
+  </data>
+  <data name="EqPreset_Techno" xml:space="preserve">
+    <value>高科技舞曲</value>
+  </data>
+  <data name="EqPreset_Vocal" xml:space="preserve">
+    <value>人声</value>
+  </data>
+  <data name="ReplayGain_AllSongsScanned" xml:space="preserve">
+    <value>所有歌曲均已具有音量数据。</value>
+  </data>
+  <data name="ReplayGain_CalculatingCount" xml:space="preserve">
+    <value>正在计算 {0} 首歌曲的音量...</value>
+  </data>
+  <data name="ReplayGain_CalculatingProgress" xml:space="preserve">
+    <value>正在计算音量标准化 ({0}/{1})...</value>
+  </data>
+  <data name="ReplayGain_Complete" xml:space="preserve">
+    <value>音量标准化完成。已处理 {0} 首歌曲。</value>
+  </data>
+</root>
