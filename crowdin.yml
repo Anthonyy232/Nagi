@@ -4,30 +4,48 @@ base_path: .
 
 preserve_hierarchy: true
 
-# WinUI/C# Specific Language Mapping
-# Ensures Crowdin outputs match BCP-47 tags expected by WinUI
-languages_mapping:
-  locale:
-    zh-CN: zh-Hans
-    zh-TW: zh-Hant
-    sr: sr-Cyrl-RS
-    sr-SP: sr-Cyrl-RS
-    'sr-SP': sr-Cyrl-RS
-    'sr_SP': sr-Cyrl-RS
-    sr-CS: sr-Cyrl-RS
-    sr-RS: sr-Cyrl-RS
-    'sr_RS': sr-Cyrl-RS
-    # Add other mappings if specific WinUI tags are required
-
 files:
   # Nagi.Core Shared Resources (.resx)
   - source: /src/Nagi.Core/Resources/Strings.resx
     translation: /src/Nagi.Core/Resources/Strings.%locale%.resx
+    languages_mapping:
+      locale:
+        zh-CN: zh-Hans
+        zh-TW: zh-Hant
+        sr: sr-Cyrl-RS
+        sr-SP: sr-Cyrl-RS
+        'sr-SP': sr-Cyrl-RS
+        'sr_SP': sr-Cyrl-RS
+        sr-CS: sr-Cyrl-RS
+        sr-RS: sr-Cyrl-RS
+        'sr_RS': sr-Cyrl-RS
 
   # Nagi.WinUI C# Resources (.resx)
   - source: /src/Nagi.WinUI/Resources/Strings.resx
     translation: /src/Nagi.WinUI/Resources/Strings.%locale%.resx
+    languages_mapping:
+      locale:
+        zh-CN: zh-Hans
+        zh-TW: zh-Hant
+        sr: sr-Cyrl-RS
+        sr-SP: sr-Cyrl-RS
+        'sr-SP': sr-Cyrl-RS
+        'sr_SP': sr-Cyrl-RS
+        sr-CS: sr-Cyrl-RS
+        sr-RS: sr-Cyrl-RS
+        'sr_RS': sr-Cyrl-RS
 
   # Nagi.WinUI XAML Resources (.resw)
   - source: /src/Nagi.WinUI/Strings/en-US/Resources.resw
     translation: /src/Nagi.WinUI/Strings/%locale%/Resources.resw
+    languages_mapping:
+      locale:
+        zh-CN: zh-Hans
+        zh-TW: zh-Hant
+        sr: sr-Cyrl-RS
+        sr-SP: sr-Cyrl-RS
+        'sr-SP': sr-Cyrl-RS
+        'sr_SP': sr-Cyrl-RS
+        sr-CS: sr-Cyrl-RS
+        sr-RS: sr-Cyrl-RS
+        'sr_RS': sr-Cyrl-RS
