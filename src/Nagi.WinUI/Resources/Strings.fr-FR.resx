@@ -927,4 +927,7 @@ Erreur : {1}</value>
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>Aucune liste de lecture à exporter.</value>
   </data>
+  <data name="Language_Auto" xml:space="preserve">
+    <value>Auto</value>
+  </data>
 </root>

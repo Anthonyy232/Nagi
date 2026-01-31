@@ -923,4 +923,7 @@
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>রপ্তানি করার জন্য কোনো প্লেলিস্ট নেই।</value>
   </data>
+  <data name="Language_Auto" xml:space="preserve">
+    <value>Auto</value>
+  </data>
 </root>
