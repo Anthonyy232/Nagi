@@ -929,4 +929,7 @@
   <data name="Settings_Export_Failed_Message" xml:space="preserve">
     <value>没有可导出的播放列表。</value>
   </data>
+  <data name="Language_Auto" xml:space="preserve">
+    <value>Auto</value>
+  </data>
 </root>
