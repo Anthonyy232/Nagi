@@ -13,7 +13,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
-using Microsoft.Windows.ApplicationModel.Resources;
+using Nagi.WinUI.Resources;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Core.Models;
@@ -262,9 +262,8 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
          {
              await _settingsService.SetLanguageAsync(value.Code);
              
-             var loader = new ResourceLoader();
-             var title = loader.GetString("SettingsPage_RestartRequired_Title");
-             var message = loader.GetString("SettingsPage_RestartRequired_Message");
+             var title = Strings.SettingsPage_RestartRequired_Title;
+             var message = Strings.SettingsPage_RestartRequired_Message;
              
              await _uiService.ShowMessageDialogAsync(title, message);
              AppInstance.Restart("");
