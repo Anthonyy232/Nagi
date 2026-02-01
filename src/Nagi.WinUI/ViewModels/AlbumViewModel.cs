@@ -123,7 +123,7 @@ public partial class AlbumViewModel : SearchableViewModelBase
 
     [ObservableProperty] public partial string CurrentSortOrderText { get; set; } = string.Empty;
 
-    [ObservableProperty] public partial string TotalItemsText { get; set; } = string.Format(Nagi.WinUI.Resources.Strings.Albums_Count_Plural, 0);
+    [ObservableProperty] public partial string TotalItemsText { get; set; } = ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Albums_Count_Plural, 0);
 
     partial void OnCurrentSortOrderChanged(AlbumSortOrder value) => UpdateSortOrderText();
 
@@ -303,8 +303,8 @@ public partial class AlbumViewModel : SearchableViewModelBase
         {
             var count = pagedResult.TotalCount;
             TotalItemsText = count == 1 
-                ? string.Format(Nagi.WinUI.Resources.Strings.Albums_Count_Singular, count)
-                : string.Format(Nagi.WinUI.Resources.Strings.Albums_Count_Plural, count);
+                ? ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Albums_Count_Singular, count)
+                : ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Albums_Count_Plural, count);
         }
 
         // Determine if all albums have been loaded.

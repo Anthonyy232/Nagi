@@ -89,14 +89,14 @@ public partial class PlaylistViewModelItem : ObservableObject
         if (IsSmart)
         {
             SongCountText = newSongCount == 1 
-                ? string.Format(Nagi.WinUI.Resources.Strings.Playlist_Smart_Count_Singular, newSongCount) 
-                : string.Format(Nagi.WinUI.Resources.Strings.Playlist_Smart_Count_Plural, newSongCount);
+                ? ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Playlist_Smart_Count_Singular, newSongCount) 
+                : ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Playlist_Smart_Count_Plural, newSongCount);
         }
         else
         {
             SongCountText = newSongCount == 1 
-                ? string.Format(Nagi.WinUI.Resources.Strings.Playlist_Count_Singular, newSongCount) 
-                : string.Format(Nagi.WinUI.Resources.Strings.Playlist_Count_Plural, newSongCount);
+                ? ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Playlist_Count_Singular, newSongCount) 
+                : ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Playlist_Count_Plural, newSongCount);
         }
     }
 }

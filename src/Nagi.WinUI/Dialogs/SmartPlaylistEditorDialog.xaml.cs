@@ -123,7 +123,7 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
 
         if (EditingPlaylist != null)
         {
-            Title = string.Format(Nagi.WinUI.Resources.Strings.SmartPlaylist_Title_EditFormat, EditingPlaylist.Name);
+            Title = ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.SmartPlaylist_Title_EditFormat, EditingPlaylist.Name);
             PlaylistNameTextBox.Text = EditingPlaylist.Name;
             MatchLogicComboBox.SelectedIndex = EditingPlaylist.MatchAllRules ? 0 : 1;
 
@@ -262,7 +262,7 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
             if (token.IsCancellationRequested) return;
 
             MatchCountText.Text = count >= 0 
-                ? string.Format(Nagi.WinUI.Resources.Strings.SmartPlaylist_Status_MatchCountFormat, count) 
+                ? ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.SmartPlaylist_Status_MatchCountFormat, count) 
                 : Nagi.WinUI.Resources.Strings.SmartPlaylist_Status_EnterNameToSeeSongs;
         }
         catch (TaskCanceledException)
