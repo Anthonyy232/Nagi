@@ -10,6 +10,7 @@
     xmlns:models="using:Nagi.WinUI.Models"
     xmlns:mux="using:Microsoft.UI.Xaml"
     xmlns:navigation="using:Nagi.WinUI.Navigation"
+    xmlns:resources="using:Nagi.WinUI.Resources"
     xmlns:viewmodels="using:Nagi.WinUI.ViewModels"
     mc:Ignorable="d"
     NavigationCacheMode="Required">
@@ -77,7 +78,7 @@
             MaxWidth="1200"
             Margin="36,24,36,0"
             Style="{StaticResource SettingsPageTitleTextStyle}"
-            x:Uid="SettingsPage_Title" />
+            Text="{x:Bind resources:Strings.SettingsPage_Title, Mode=OneTime}" />
 
         <ScrollView
             Grid.Row="1"
@@ -89,11 +90,11 @@
                 HorizontalAlignment="Stretch"
                 Spacing="{StaticResource SettingsCardSpacing}">
 
-                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" x:Uid="SettingsPage_Section_Appearance" />
+                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="{x:Bind resources:Strings.SettingsPage_Section_Appearance, Mode=OneTime}" />
 
                 <controls:SettingsExpander
                     x:Name="ThemeSettingsExpander"
-                    x:Uid="SettingsPage_Theme"
+                    Header="{x:Bind resources:Strings.SettingsPage_Theme_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_Theme_Description, Mode=OneTime}"
                     IsExpanded="False">
                     <controls:SettingsExpander.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE793;" />
@@ -114,12 +115,12 @@
                         <controls:SettingsCard>
                             <controls:SettingsCard.Header>
                                 <StackPanel Orientation="Horizontal" Spacing="8">
-                                    <TextBlock x:Uid="SettingsPage_AccentColor" VerticalAlignment="Center" />
+                                    <TextBlock Text="{x:Bind resources:Strings.SettingsPage_AccentColor, Mode=OneTime}" VerticalAlignment="Center" />
                                     <HyperlinkButton
                                         VerticalAlignment="Center"
                                         Command="{x:Bind ViewModel.ResetAccentColorCommand}"
                                         Style="{StaticResource AnimatedHyperlinkButtonStyle}"
-                                        x:Uid="SettingsPage_ResetAccentColor"
+                                        Content="{x:Bind resources:Strings.SettingsPage_ResetAccentColor_Content, Mode=OneTime}"
                                         FontSize="12"
                                         Padding="4,2" />
                                 </StackPanel>
@@ -137,7 +138,7 @@
                 </controls:SettingsExpander>
 
                 <controls:SettingsCard
-                    x:Uid="SettingsPage_WindowMaterial">
+                    Header="{x:Bind resources:Strings.SettingsPage_WindowMaterial_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_WindowMaterial_Description, Mode=OneTime}">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7C4;" />
                     </controls:SettingsCard.HeaderIcon>
@@ -156,7 +157,7 @@
                 </controls:SettingsCard>
 
                 <controls:SettingsCard
-                    x:Uid="SettingsPage_DynamicTheming">
+                    Header="{x:Bind resources:Strings.SettingsPage_DynamicTheming_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_DynamicTheming_Description, Mode=OneTime}">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE790;" />
                     </controls:SettingsCard.HeaderIcon>
@@ -166,7 +167,8 @@
                 </controls:SettingsCard>
 
                 <controls:SettingsCard
-                    x:Uid="SettingsPage_Language">
+                    Header="{x:Bind resources:Strings.SettingsPage_Language_Header, Mode=OneTime}"
+                    controls:SettingsCard.Description="{x:Bind resources:Strings.SettingsPage_Language_Description, Mode=OneTime}">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE774;" />
                     </controls:SettingsCard.HeaderIcon>
@@ -184,7 +186,7 @@
                 </controls:SettingsCard>
 
                 <controls:SettingsCard
-                    x:Uid="SettingsPage_RememberWindowSize">
+                    Header="{x:Bind resources:Strings.SettingsPage_RememberWindowSize_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_RememberWindowSize_Description, Mode=OneTime}">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE740;" />
                     </controls:SettingsCard.HeaderIcon>
@@ -194,7 +196,7 @@
                 </controls:SettingsCard>
 
                 <controls:SettingsCard
-                    x:Uid="SettingsPage_RememberWindowPosition">
+                    Header="{x:Bind resources:Strings.SettingsPage_RememberWindowPosition_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_RememberWindowPosition_Description, Mode=OneTime}">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE737;" />
                     </controls:SettingsCard.HeaderIcon>
@@ -204,7 +206,7 @@
                 </controls:SettingsCard>
 
                 <controls:SettingsCard
-                    x:Uid="SettingsPage_RememberNavState">
+                    Header="{x:Bind resources:Strings.SettingsPage_RememberNavState_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_RememberNavState_Description, Mode=OneTime}">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE700;" />
                     </controls:SettingsCard.HeaderIcon>
@@ -214,7 +216,7 @@
                 </controls:SettingsCard>
 
                 <controls:SettingsCard
-                    x:Uid="SettingsPage_CustomizeNav">
+                    Header="{x:Bind resources:Strings.SettingsPage_CustomizeNav_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_CustomizeNav_Description, Mode=OneTime}">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE700;" />
                     </controls:SettingsCard.HeaderIcon>
@@ -278,10 +280,10 @@
                     </ListView>
                 </controls:SettingsCard>
 
-                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" x:Uid="SettingsPage_Section_Player" />
+                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="{x:Bind resources:Strings.SettingsPage_Section_Player, Mode=OneTime}" />
 
                 <controls:SettingsCard
-                    x:Uid="SettingsPage_VolumeNormalization">
+                    Header="{x:Bind resources:Strings.SettingsPage_VolumeNormalization_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_VolumeNormalization_Description, Mode=OneTime}">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE995;" />
                     </controls:SettingsCard.HeaderIcon>
@@ -293,12 +295,12 @@
                 <controls:SettingsCard>
                     <controls:SettingsCard.Header>
                         <StackPanel Orientation="Horizontal" Spacing="8">
-                            <TextBlock x:Uid="SettingsPage_Equalizer" VerticalAlignment="Center" />
+                            <TextBlock Text="{x:Bind resources:Strings.SettingsPage_Equalizer, Mode=OneTime}" VerticalAlignment="Center" />
                             <HyperlinkButton
                                 VerticalAlignment="Center"
                                 Command="{x:Bind ViewModel.ResetEqualizerCommand}"
                                 Style="{StaticResource AnimatedHyperlinkButtonStyle}"
-                                x:Uid="SettingsPage_ResetEqualizer"
+                                Content="{x:Bind resources:Strings.SettingsPage_ResetEqualizer_Content, Mode=OneTime}"
                                 FontSize="12"
                                 Padding="4,2" />
                         </StackPanel>
@@ -309,7 +311,7 @@
                     <StackPanel Spacing="20" HorizontalAlignment="Center">
                         <!-- Preamp slider -->
                         <StackPanel Spacing="6" Width="320">
-                            <TextBlock FontWeight="SemiBold" x:Uid="SettingsPage_Equalizer_Preamp" HorizontalAlignment="Center" />
+                            <TextBlock FontWeight="SemiBold" Text="{x:Bind resources:Strings.SettingsPage_Equalizer_Preamp, Mode=OneTime}" HorizontalAlignment="Center" />
                             <Slider
                                 Maximum="20"
                                 Minimum="-20"
@@ -365,7 +367,7 @@
                             HorizontalAlignment="Center"
                             MinWidth="160"
                             ItemsSource="{x:Bind ViewModel.AvailableEqualizerPresets}"
-                            x:Uid="SettingsPage_Equalizer_Preset_Custom"
+                            PlaceholderText="{x:Bind resources:Strings.SettingsPage_Equalizer_Preset_Custom_Placeholder, Mode=OneTime}"
                             SelectedItem="{x:Bind ViewModel.SelectedEqualizerPreset, Mode=TwoWay}">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate x:DataType="coreModels:EqualizerPreset">
@@ -379,12 +381,12 @@
                 <controls:SettingsCard>
                     <controls:SettingsCard.Header>
                         <StackPanel Orientation="Horizontal" Spacing="8">
-                            <TextBlock x:Uid="SettingsPage_CustomizePlayer" VerticalAlignment="Center" />
+                            <TextBlock Text="{x:Bind resources:Strings.SettingsPage_CustomizePlayer, Mode=OneTime}" VerticalAlignment="Center" />
                             <HyperlinkButton
                                 VerticalAlignment="Center"
                                 Command="{x:Bind ViewModel.ResetPlayerButtonsCommand}"
                                 Style="{StaticResource AnimatedHyperlinkButtonStyle}"
-                                x:Uid="SettingsPage_ResetPlayerButtons"
+                                Content="{x:Bind resources:Strings.SettingsPage_ResetPlayerButtons_Content, Mode=OneTime}"
                                 FontSize="12"
                                 Padding="4,2" />
                         </StackPanel>
@@ -530,7 +532,7 @@
                             MaxWidth="450"
                             HorizontalAlignment="Center"
                             Style="{StaticResource CaptionTextBlockStyle}"
-                            x:Uid="SettingsPage_CustomizePlayer_Instructions"
+                            Text="{x:Bind resources:Strings.SettingsPage_CustomizePlayer_Instructions, Mode=OneTime}"
                             TextAlignment="Center"
                             TextWrapping="Wrap"
                             Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
@@ -538,7 +540,7 @@
                 </controls:SettingsCard>
 
                 <controls:SettingsCard
-                    x:Uid="SettingsPage_CollapsablePlayer">
+                    Header="{x:Bind resources:Strings.SettingsPage_CollapsablePlayer_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_CollapsablePlayer_Description, Mode=OneTime}">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE745;" />
                     </controls:SettingsCard.HeaderIcon>
@@ -548,7 +550,7 @@
                 </controls:SettingsCard>
 
                 <controls:SettingsCard
-                    x:Uid="SettingsPage_RestorePlayback">
+                    Header="{x:Bind resources:Strings.SettingsPage_RestorePlayback_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_RestorePlayback_Description, Mode=OneTime}">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE74E;" />
                     </controls:SettingsCard.HeaderIcon>
@@ -558,7 +560,7 @@
                 </controls:SettingsCard>
 
                 <controls:SettingsCard
-                    x:Uid="SettingsPage_AutoLaunch">
+                    Header="{x:Bind resources:Strings.SettingsPage_AutoLaunch_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_AutoLaunch_Description, Mode=OneTime}">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE7E8;" />
                     </controls:SettingsCard.HeaderIcon>
@@ -568,7 +570,7 @@
                 </controls:SettingsCard>
 
                 <controls:SettingsCard
-                    x:Uid="SettingsPage_StartMinimized">
+                    Header="{x:Bind resources:Strings.SettingsPage_StartMinimized_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_StartMinimized_Description, Mode=OneTime}">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE92C;" />
                     </controls:SettingsCard.HeaderIcon>
@@ -578,7 +580,7 @@
                 </controls:SettingsCard>
 
                 <controls:SettingsCard
-                    x:Uid="SettingsPage_MinimizeToMiniPlayer">
+                    Header="{x:Bind resources:Strings.SettingsPage_MinimizeToMiniPlayer_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_MinimizeToMiniPlayer_Description, Mode=OneTime}">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE975;" />
                     </controls:SettingsCard.HeaderIcon>
@@ -588,7 +590,7 @@
                 </controls:SettingsCard>
 
                 <controls:SettingsCard
-                    x:Uid="SettingsPage_HideToTray">
+                    Header="{x:Bind resources:Strings.SettingsPage_HideToTray_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_HideToTray_Description, Mode=OneTime}">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE78B;" />
                     </controls:SettingsCard.HeaderIcon>
@@ -598,7 +600,7 @@
                 </controls:SettingsCard>
 
                 <controls:SettingsCard
-                    x:Uid="SettingsPage_TrayCoverArt">
+                    Header="{x:Bind resources:Strings.SettingsPage_TrayCoverArt_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_TrayCoverArt_Description, Mode=OneTime}">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEB9F;" />
                     </controls:SettingsCard.HeaderIcon>
@@ -607,10 +609,10 @@
                         IsOn="{x:Bind ViewModel.IsShowCoverArtInTrayFlyoutEnabled, Mode=TwoWay}" />
                 </controls:SettingsCard>
 
-                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" x:Uid="SettingsPage_Section_Data" />
+                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="{x:Bind resources:Strings.SettingsPage_Section_Data, Mode=OneTime}" />
 
                 <controls:SettingsCard
-                    x:Uid="SettingsPage_ArtistSplitting">
+                    Header="{x:Bind resources:Strings.SettingsPage_ArtistSplitting_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_ArtistSplitting_Description, Mode=OneTime}">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE713;" />
                     </controls:SettingsCard.HeaderIcon>
@@ -621,13 +623,13 @@
                             Text="{x:Bind ViewModel.ArtistSplitCharacters, Mode=TwoWay}" />
                         <Button
                             Command="{x:Bind ViewModel.RescanMetadataCommand}"
-                            x:Uid="SettingsPage_RescanLibrary" />
+                            Content="{x:Bind resources:Strings.SettingsPage_RescanLibrary_Content, Mode=OneTime}" ToolTipService.ToolTip="{x:Bind resources:Strings.SettingsPage_RescanLibrary_ToolTip, Mode=OneTime}" />
                     </StackPanel>
                 </controls:SettingsCard>
 
                 <controls:SettingsExpander
                     x:Name="MetadataSettingsExpander"
-                    x:Uid="SettingsPage_OnlineMetadata">
+                    Header="{x:Bind resources:Strings.SettingsPage_OnlineMetadata_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_OnlineMetadata_Description, Mode=OneTime}">
                     <controls:SettingsExpander.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8EC;" />
                     </controls:SettingsExpander.HeaderIcon>
@@ -636,7 +638,7 @@
                         IsOn="{x:Bind ViewModel.IsFetchOnlineMetadataEnabled, Mode=TwoWay}" />
 
                     <controls:SettingsExpander.Items>
-                        <controls:SettingsCard x:Uid="SettingsPage_MetadataSources">
+                        <controls:SettingsCard Header="{x:Bind resources:Strings.SettingsPage_MetadataSources_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_MetadataSources_Description, Mode=OneTime}">
                             <controls:SettingsCard.HeaderIcon>
                                 <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE179;" />
                             </controls:SettingsCard.HeaderIcon>
@@ -662,7 +664,7 @@
 
                 <controls:SettingsExpander
                     x:Name="LyricsSettingsExpander"
-                    x:Uid="SettingsPage_OnlineLyrics">
+                    Header="{x:Bind resources:Strings.SettingsPage_OnlineLyrics_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_OnlineLyrics_Description, Mode=OneTime}">
                     <controls:SettingsExpander.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE90A;" />
                     </controls:SettingsExpander.HeaderIcon>
@@ -671,7 +673,7 @@
                         IsOn="{x:Bind ViewModel.IsFetchOnlineLyricsEnabled, Mode=TwoWay}" />
 
                     <controls:SettingsExpander.Items>
-                        <controls:SettingsCard x:Uid="SettingsPage_LyricsSources">
+                        <controls:SettingsCard Header="{x:Bind resources:Strings.SettingsPage_LyricsSources_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_LyricsSources_Description, Mode=OneTime}">
                             <controls:SettingsCard.HeaderIcon>
                                 <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE179;" />
                             </controls:SettingsCard.HeaderIcon>
@@ -697,37 +699,37 @@
 
 
                 <controls:SettingsCard
-                    x:Uid="SettingsPage_PlaylistsIO">
+                    Header="{x:Bind resources:Strings.SettingsPage_PlaylistsIO_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_PlaylistsIO_Description, Mode=OneTime}">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8B5;" />
                     </controls:SettingsCard.HeaderIcon>
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <Button
-                            x:Uid="SettingsPage_ExportPlaylists"
+                            Content="{x:Bind resources:Strings.SettingsPage_ExportPlaylists_Content, Mode=OneTime}" ToolTipService.ToolTip="{x:Bind resources:Strings.SettingsPage_ExportPlaylists_ToolTip, Mode=OneTime}"
                             Command="{x:Bind ViewModel.ExportAllPlaylistsCommand}" />
                         <Button
-                            x:Uid="SettingsPage_ImportPlaylists"
+                            Content="{x:Bind resources:Strings.SettingsPage_ImportPlaylists_Content, Mode=OneTime}" ToolTipService.ToolTip="{x:Bind resources:Strings.SettingsPage_ImportPlaylists_ToolTip, Mode=OneTime}"
                             Command="{x:Bind ViewModel.ImportMultiplePlaylistsCommand}" />
                     </StackPanel>
                 </controls:SettingsCard>
 
                 <controls:SettingsCard
-                    x:Uid="SettingsPage_ResetApp">
+                    Header="{x:Bind resources:Strings.SettingsPage_ResetApp_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_ResetApp_Description, Mode=OneTime}">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE74D;" />
                     </controls:SettingsCard.HeaderIcon>
                     <Button
                         HorizontalAlignment="Right"
                         Command="{x:Bind ViewModel.ResetApplicationDataCommand}"
-                        x:Uid="SettingsPage_ResetButton"
+                        Content="{x:Bind resources:Strings.SettingsPage_ResetButton_Content, Mode=OneTime}"
                         Style="{StaticResource SettingsPageResetButtonStyle}" />
                 </controls:SettingsCard>
 
-                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" x:Uid="SettingsPage_Section_Integrations" />
+                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="{x:Bind resources:Strings.SettingsPage_Section_Integrations, Mode=OneTime}" />
 
                 <controls:SettingsExpander
                     x:Name="LastFmSettingsExpander"
-                    x:Uid="SettingsPage_LastFm">
+                    Header="{x:Bind resources:Strings.SettingsPage_LastFm_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_LastFm_Description, Mode=OneTime}">
                     <controls:SettingsExpander.HeaderIcon>
                         <PathIcon
                             Data="M10.584 17.209l-.88-2.392s-1.43 1.595-3.573 1.595c-1.897 0-3.244-1.65-3.244-4.289 0-3.381 1.704-4.591 3.382-4.591 2.419 0 3.188 1.567 3.849 3.574l.88 2.75c.879 2.667 2.528 4.811 7.284 4.811 3.409 0 5.719-1.044 5.719-3.793 0-2.227-1.265-3.381-3.629-3.932l-1.76-.385c-1.209-.275-1.566-.77-1.566-1.594 0-.935.742-1.485 1.952-1.485 1.319 0 2.034.495 2.144 1.677l2.749-.33c-.22-2.474-1.924-3.491-4.729-3.491-2.474 0-4.893.935-4.893 3.931 0 1.87.907 3.052 3.188 3.602l1.869.439c1.402.33 1.869.907 1.869 1.705 0 1.017-.989 1.43-2.858 1.43-2.776 0-3.932-1.457-4.591-3.464l-.907-2.749c-1.155-3.574-2.997-4.894-6.653-4.894-4.041-.001-6.186 2.556-6.186 6.899 0 4.179 2.145 6.433 5.993 6.433 3.107.001 4.591-1.457 4.591-1.457z"
@@ -738,7 +740,7 @@
                         <!-- Initial Connect Button -->
                         <Button
                             Command="{x:Bind ViewModel.LastFmInitialAuthCommand}"
-                            x:Uid="SettingsPage_LastFm_Connect"
+                            Content="{x:Bind resources:Strings.SettingsPage_LastFm_Connect_Content, Mode=OneTime}"
                             Visibility="{x:Bind ViewModel.IsLastFmNotConnected, Mode=OneWay}"
                             IsEnabled="{x:Bind ViewModel.IsLastFmInitialAuthEnabled, Mode=OneWay}" />
 
@@ -746,23 +748,23 @@
                         <StackPanel Orientation="Horizontal" Spacing="8" Visibility="{x:Bind ViewModel.IsConnectingToLastFm, Mode=OneWay}">
                             <Button
                                 Command="{x:Bind ViewModel.LastFmFinalizeAuthCommand}"
-                                x:Uid="SettingsPage_LastFm_Complete"
+                                Content="{x:Bind resources:Strings.SettingsPage_LastFm_Complete_Content, Mode=OneTime}"
                                 Style="{StaticResource AccentButtonStyle}" />
                             <Button
                                 Command="{x:Bind ViewModel.CancelLastFmAuthCommand}"
-                                x:Uid="SettingsPage_LastFm_Cancel" />
+                                Content="{x:Bind resources:Strings.SettingsPage_LastFm_Cancel_Content, Mode=OneTime}" />
                         </StackPanel>
 
                         <!-- Disconnect Button -->
                         <Button
                             Command="{x:Bind ViewModel.LastFmDisconnectCommand}"
-                            x:Uid="SettingsPage_LastFm_Disconnect"
+                            Content="{x:Bind resources:Strings.SettingsPage_LastFm_Disconnect_Content, Mode=OneTime}"
                             Visibility="{x:Bind ViewModel.IsLastFmConnected, Mode=OneWay}" />
                     </StackPanel>
 
                     <controls:SettingsExpander.Items>
                         <controls:SettingsCard
-                            x:Uid="SettingsPage_LastFm_Scrobbling">
+                            Header="{x:Bind resources:Strings.SettingsPage_LastFm_Scrobbling_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_LastFm_Scrobbling_Description, Mode=OneTime}">
                             <controls:SettingsCard.HeaderIcon>
                                 <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE121;" />
                             </controls:SettingsCard.HeaderIcon>
@@ -770,7 +772,7 @@
                         </controls:SettingsCard>
 
                         <controls:SettingsCard
-                            x:Uid="SettingsPage_LastFm_NowPlaying">
+                            Header="{x:Bind resources:Strings.SettingsPage_LastFm_NowPlaying_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_LastFm_NowPlaying_Description, Mode=OneTime}">
                             <controls:SettingsCard.HeaderIcon>
                                 <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE9A8;" />
                             </controls:SettingsCard.HeaderIcon>
@@ -780,7 +782,7 @@
                 </controls:SettingsExpander>
 
                 <controls:SettingsCard
-                    x:Uid="SettingsPage_Discord">
+                    Header="{x:Bind resources:Strings.SettingsPage_Discord_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_Discord_Description, Mode=OneTime}">
                     <controls:SettingsCard.HeaderIcon>
                         <PathIcon
                             Data="M20.317 4.37C18.787 3.66 17.13 3.15 15.4 2.88C15.4 2.88 15.27 3.04 15.12 3.26C13.24 2.99 11.37 2.99 9.52 3.26C9.37 3.04 9.24 2.88 9.24 2.88C7.51 3.15 5.85 3.66 4.32 4.37C0.93 9.21 0.05 13.93 0.51 18.58C2.6 20.01 4.65 20.89 6.66 21.43C7.15 20.77 7.6 20.07 8 19.33C7.32 19.08 6.67 18.78 6.05 18.43C6.2 18.32 6.34 18.21 6.48 18.09C10.36 19.87 14.64 19.87 18.52 18.09C18.66 18.21 18.8 18.32 18.95 18.43C18.33 18.78 17.68 19.08 17 19.33C17.4 20.07 17.85 20.77 18.34 21.43C20.35 20.89 22.4 20.01 24.49 18.58C25.02 13.21 23.6 8.54 20.317 4.37ZM8.62 15.31C7.27 15.31 6.18 14.08 6.18 12.58C6.18 11.08 7.24 9.84 8.62 9.84C9.99 9.84 11.08 11.07 11.06 12.58C11.06 14.08 9.99 15.31 8.62 15.31ZM16.38 15.31C15.03 15.31 13.94 14.08 13.94 12.58C13.94 11.08 15 9.84 16.38 9.84C17.75 9.84 18.84 11.07 18.82 12.58C18.82 14.08 17.75 15.31 16.38 15.31Z"
@@ -791,10 +793,10 @@
                         IsOn="{x:Bind ViewModel.IsDiscordRichPresenceEnabled, Mode=TwoWay}" />
                 </controls:SettingsCard>
 
-                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" x:Uid="SettingsPage_Section_About" />
+                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="{x:Bind resources:Strings.SettingsPage_Section_About, Mode=OneTime}" />
 
                 <controls:SettingsExpander
-                    x:Uid="SettingsPage_AboutExpander"
+                    Header="{x:Bind resources:Strings.SettingsPage_AboutExpander_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_AboutExpander_Description, Mode=OneTime}"
                     IsExpanded="False">
                     <controls:SettingsExpander.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE946;" />
@@ -802,18 +804,18 @@
                     <TextBlock
                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                         IsTextSelectionEnabled="True">
-                        <Run x:Uid="SettingsPage_About_VersionPrefix" />
+                        <Run Text="{x:Bind resources:Strings.SettingsPage_About_VersionPrefix, Mode=OneTime}" />
                         <Run Text="{x:Bind ViewModel.ApplicationVersion, Mode=OneWay}" />
                     </TextBlock>
                     <controls:SettingsExpander.Items>
                         <controls:SettingsCard ContentAlignment="Left">
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <HyperlinkButton
-                                    x:Uid="SettingsPage_About_Licenses"
+                                    Content="{x:Bind resources:Strings.SettingsPage_About_Licenses_Content, Mode=OneTime}"
                                     Style="{StaticResource AnimatedHyperlinkButtonStyle}"
                                     NavigateUri="https://github.com/Anthonyy232/Nagi/blob/master/LICENSE" />
                                 <HyperlinkButton
-                                    x:Uid="SettingsPage_About_SourceCode"
+                                    Content="{x:Bind resources:Strings.SettingsPage_About_SourceCode_Content, Mode=OneTime}"
                                     Style="{StaticResource AnimatedHyperlinkButtonStyle}"
                                     NavigateUri="https://github.com/Anthonyy232/Nagi" />
                             </StackPanel>
@@ -822,7 +824,7 @@
                 </controls:SettingsExpander>
 
                 <controls:SettingsCard
-                    x:Uid="SettingsPage_CheckForUpdates"
+                    Header="{x:Bind resources:Strings.SettingsPage_CheckForUpdates_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_CheckForUpdates_Description, Mode=OneTime}"
                     Visibility="{x:Bind ViewModel.IsUpdateControlVisible, Mode=OneWay}">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE117;" />
@@ -838,11 +840,11 @@
                     Spacing="12">
                     <HyperlinkButton
                         Command="{x:Bind ViewModel.CheckForUpdatesManuallyCommand}"
-                        x:Uid="SettingsPage_About_CheckUpdates"
+                        Content="{x:Bind resources:Strings.SettingsPage_About_CheckUpdates_Content, Mode=OneTime}"
                         Style="{StaticResource AnimatedHyperlinkButtonStyle}"
                         Visibility="{x:Bind ViewModel.IsUpdateControlVisible, Mode=OneWay}" />
                     <HyperlinkButton
-                        x:Uid="SettingsPage_About_Feedback"
+                        Content="{x:Bind resources:Strings.SettingsPage_About_Feedback_Content, Mode=OneTime}"
                         Style="{StaticResource AnimatedHyperlinkButtonStyle}"
                         NavigateUri="mailto:anthonyyla.dev@gmail.com" />
                 </StackPanel>

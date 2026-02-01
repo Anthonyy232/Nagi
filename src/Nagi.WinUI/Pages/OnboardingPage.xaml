@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:converters="using:Nagi.WinUI.Converters"
+    xmlns:resources="using:Nagi.WinUI.Resources"
     mc:Ignorable="d"
     Background="Transparent">
 
@@ -220,7 +221,7 @@
                         Margin="0,0,0,8"
                         HorizontalAlignment="Center"
                         Style="{StaticResource PageTitleTextStyle}"
-                        x:Uid="OnboardingPage_Welcome_Title"
+                        Text="{x:Bind resources:Strings.OnboardingPage_Welcome_Title, Mode=OneTime}"
                         TextWrapping="NoWrap" />
 
                     <TextBlock
@@ -251,14 +252,14 @@
                                 Padding="24,12"
                                 Command="{x:Bind ViewModel.AddFolderCommand}"
                                 Style="{StaticResource BrandAccentButtonStyle}"
-                                x:Uid="OnboardingPage_AddFolderButton">
+                                ToolTipService.ToolTip="{x:Bind resources:Strings.OnboardingPage_AddFolderButton_ToolTip, Mode=OneTime}">
                                 <StackPanel x:Name="AddFolderButtonContent" Orientation="Horizontal" Spacing="10">
                                     <SymbolIcon Symbol="Add" />
                                     <TextBlock
                                         VerticalAlignment="Center"
                                         FontSize="16"
                                         FontWeight="SemiBold"
-                                        x:Uid="OnboardingPage_AddFolderButton_Content" />
+                                        Text="{x:Bind resources:Strings.OnboardingPage_AddFolderButton_Content, Mode=OneTime}" />
                                 </StackPanel>
                             </Button>
                         </StackPanel>

@@ -10,6 +10,7 @@
     xmlns:models="using:Nagi.Core.Models"
     xmlns:viewmodels="using:Nagi.WinUI.ViewModels"
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
+    xmlns:resources="using:Nagi.WinUI.Resources"
     d:DataContext="{d:DesignInstance Type=viewmodels:PlayerViewModel, IsDesignTimeCreatable=True}"
     mc:Ignorable="d">
 
@@ -58,7 +59,7 @@
 
                     <Button
                         Grid.Column="0"
-                        x:Uid="MiniPlayer_BackButton"
+                        ToolTipService.ToolTip="{x:Bind resources:Strings.MiniPlayer_BackButton_ToolTip, Mode=OneTime}"
                         Command="{x:Bind ViewModel.ShowPlayerViewCommand}"
                         Style="{StaticResource BackButtonStyle}"
                         Visibility="{x:Bind ViewModel.IsQueueViewVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -100,7 +101,7 @@
                     <TextBlock
                         Grid.Column="0"
                         Grid.ColumnSpan="3"
-                        x:Uid="MiniPlayer_UpNextHeader"
+                        Text="{x:Bind resources:Strings.MiniPlayer_UpNextHeader, Mode=OneTime}"
                         Margin="44,0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
@@ -112,7 +113,7 @@
                     <Button
                         x:Name="RestoreButton"
                         Grid.Column="2"
-                        x:Uid="MiniPlayer_RestoreButton"
+                        ToolTipService.ToolTip="{x:Bind resources:Strings.MiniPlayer_RestoreButton_ToolTip, Mode=OneTime}"
                         Style="{StaticResource MediaControlButtonStyle}">
                         <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" FontSize="20" Glyph="" />
                     </Button>
@@ -151,7 +152,7 @@
                                               Glyph="{x:Bind ViewModel.ShuffleIconGlyph, Mode=OneWay}" />
                                 </Button>
                                 <Button Command="{x:Bind ViewModel.PreviousCommand}"
-                                        x:Uid="MiniPlayer_PreviousButton"
+                                        ToolTipService.ToolTip="{x:Bind resources:Strings.MiniPlayer_PreviousButton_ToolTip, Mode=OneTime}"
                                         Style="{StaticResource PreviousButtonStyle}">
                                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
                                 </Button>
@@ -162,7 +163,7 @@
                                               Glyph="{x:Bind ViewModel.PlayPauseIconGlyph, Mode=OneWay}" />
                                 </Button>
                                 <Button Command="{x:Bind ViewModel.NextCommand}"
-                                        x:Uid="MiniPlayer_NextButton"
+                                        ToolTipService.ToolTip="{x:Bind resources:Strings.MiniPlayer_NextButton_ToolTip, Mode=OneTime}"
                                         Style="{StaticResource NextButtonStyle}">
                                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
                                 </Button>
@@ -173,7 +174,7 @@
                                               Glyph="{x:Bind ViewModel.RepeatIconGlyph, Mode=OneWay}" />
                                 </Button>
                                 <Button Command="{x:Bind ViewModel.ShowQueueViewCommand}"
-                                        x:Uid="MiniPlayer_QueueButton"
+                                        ToolTipService.ToolTip="{x:Bind resources:Strings.MiniPlayer_QueueButton_ToolTip, Mode=OneTime}"
                                         Style="{StaticResource QueueButtonStyle}">
                                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
                                 </Button>
