@@ -15,6 +15,7 @@ using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.WinUI.Controls;
 using Nagi.WinUI.Pages;
+using Nagi.WinUI.Resources;
 using Nagi.WinUI.Services.Abstractions;
 using Nagi.WinUI.ViewModels;
 using Nagi.WinUI.Helpers;
@@ -59,7 +60,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
     private readonly IUISettingsService _settingsService;
     private readonly IThemeService _themeService;
-    private readonly ILocalizationService _localizationService;
     private readonly IWin32InteropService _win32InteropService;
 
     // A flag to control the player's expand/collapse animation based on user settings.
@@ -84,7 +84,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         _settingsService = App.Services!.GetRequiredService<IUISettingsService>();
         _themeService = App.Services!.GetRequiredService<IThemeService>();
         _dispatcherService = App.Services!.GetRequiredService<IDispatcherService>();
-        _localizationService = App.Services!.GetRequiredService<ILocalizationService>();
         _win32InteropService = App.Services!.GetRequiredService<IWin32InteropService>();
         _logger = App.Services!.GetRequiredService<ILogger<MainPage>>();
         DataContext = ViewModel;
@@ -257,7 +256,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
             var navViewItem = new NavigationViewItem
             {
-                Content = Nagi.WinUI.Resources.Strings.GetString($"NavItem_{tag}"),
+                Content = Strings.GetString($"NavItem_{tag}"),
                 Tag = tag,
                 Icon = new FontIcon { Glyph = item.IconGlyph }
             };
