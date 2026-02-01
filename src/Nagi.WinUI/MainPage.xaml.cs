@@ -272,6 +272,10 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     // Sets up event handlers and initial state when the page is loaded.
     private async void OnMainPageLoaded(object sender, RoutedEventArgs e)
     {
+        if (NavView.SettingsItem is NavigationViewItem settingsItem)
+        {
+            settingsItem.Content = Strings.NavItem_Settings;
+        }
         try
         {
             SetPlatformSpecificBrush();
