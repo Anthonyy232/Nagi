@@ -22,6 +22,7 @@ using Nagi.WinUI.Navigation;
 using Nagi.WinUI.Services;
 using Nagi.WinUI.Services.Abstractions;
 using Microsoft.Windows.AppLifecycle;
+using Nagi.WinUI.Helpers;
 
 namespace Nagi.WinUI.ViewModels;
 
