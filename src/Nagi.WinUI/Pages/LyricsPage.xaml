@@ -6,6 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:core="using:Nagi.Core.Models.Lyrics"
     xmlns:converters="using:Nagi.WinUI.Converters"
+    xmlns:resources="using:Nagi.WinUI.Resources"
     mc:Ignorable="d"
     Loaded="OnPageLoaded">
 
@@ -121,11 +122,11 @@
                 HorizontalAlignment="Center" />
             <TextBlock
                 Style="{StaticResource TitleTextBlockStyle}"
-                x:Uid="LyricsPage_NoLyrics_Title"
+                Text="{x:Bind resources:Strings.LyricsPage_NoLyrics_Title, Mode=OneTime}"
                 HorizontalAlignment="Center" />
             <TextBlock
                 Style="{StaticResource SubtitleTextBlockStyle}"
-                x:Uid="LyricsPage_NoLyrics_Subtitle"
+                Text="{x:Bind resources:Strings.LyricsPage_NoLyrics_Subtitle, Mode=OneTime}"
                 HorizontalAlignment="Center"
                 Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
         </StackPanel>

@@ -10,6 +10,7 @@
     xmlns:muxm="using:Microsoft.UI.Xaml.Media"
     xmlns:models="using:Nagi.Core.Models"
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
+    xmlns:resources="using:Nagi.WinUI.Resources"
     mc:Ignorable="d">
 
     <Window.SystemBackdrop>
@@ -90,7 +91,7 @@
                                       Glyph="{Binding ShuffleIconGlyph}" />
                         </Button>
                         <Button Command="{Binding PreviousCommand}" Style="{StaticResource PreviousButtonStyle}"
-                                x:Uid="TrayPopup_PreviousButton">
+                                ToolTipService.ToolTip="{x:Bind resources:Strings.TrayPopup_PreviousButton_ToolTip, Mode=OneTime}">
                             <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
                         </Button>
                         <Button Command="{Binding PlayPauseCommand}" Style="{StaticResource PlayPauseButtonStyle}"
@@ -99,7 +100,7 @@
                                       Glyph="{Binding PlayPauseIconGlyph}" />
                         </Button>
                         <Button Command="{Binding NextCommand}" Style="{StaticResource NextButtonStyle}"
-                                x:Uid="TrayPopup_NextButton">
+                                ToolTipService.ToolTip="{x:Bind resources:Strings.TrayPopup_NextButton_ToolTip, Mode=OneTime}">
                             <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
                         </Button>
                         <Button Command="{Binding CycleRepeatCommand}" Style="{StaticResource RepeatButtonStyle}"
@@ -108,7 +109,7 @@
                                       Glyph="{Binding RepeatIconGlyph}" />
                         </Button>
                         <Button Command="{Binding ShowQueueViewCommand}" Style="{StaticResource QueueButtonStyle}"
-                                x:Uid="TrayPopup_QueueButton">
+                                ToolTipService.ToolTip="{x:Bind resources:Strings.TrayPopup_QueueButton_ToolTip, Mode=OneTime}">
                             <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
                         </Button>
                     </StackPanel>
@@ -127,13 +128,13 @@
                         <Button HorizontalAlignment="Left"
                                 Command="{Binding ShowPlayerViewCommand}"
                                 Style="{StaticResource MediaControlButtonStyle}"
-                                x:Uid="TrayPopup_BackButton">
+                                ToolTipService.ToolTip="{x:Bind resources:Strings.TrayPopup_BackButton_ToolTip, Mode=OneTime}">
                             <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
                         </Button>
 
                         <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center"
                                    Style="{ThemeResource SubtitleTextBlockStyle}"
-                                   x:Uid="TrayPopup_UpNextHeader"
+                                   Text="{x:Bind resources:Strings.TrayPopup_UpNextHeader, Mode=OneTime}"
                                    Margin="12,0,12,4" />
                     </Grid>
 

@@ -7,8 +7,10 @@
     xmlns:controls="using:ImageEx"
     xmlns:helpers="using:Nagi.Core.Helpers"
     xmlns:dialogs="using:Nagi.WinUI.Dialogs"
+    xmlns:resources="using:Nagi.WinUI.Resources"
     mc:Ignorable="d"
-    x:Uid="SmartPlaylist_Dialog"
+    PrimaryButtonText="{x:Bind resources:Strings.SmartPlaylist_Dialog_PrimaryButton, Mode=OneTime}"
+    CloseButtonText="{x:Bind resources:Strings.SmartPlaylist_Dialog_CloseButton, Mode=OneTime}"
     DefaultButton="Primary"
     PrimaryButtonClick="OnPrimaryButtonClick"
     Loaded="OnDialogLoaded"
@@ -48,24 +50,25 @@
                                       CornerRadius="12"
                                       Visibility="Collapsed" />
                 </Grid>
-                <Button x:Name="PickCoverImageButton" 
-                        x:Uid="SmartPlaylist_PickCoverButton"
+                <Button x:Name="PickCoverImageButton"
+                        Content="{x:Bind resources:Strings.SmartPlaylist_PickCoverButton_Content, Mode=OneTime}"
+                        ToolTipService.ToolTip="{x:Bind resources:Strings.SmartPlaylist_PickCoverButton_ToolTip, Mode=OneTime}"
                         Click="PickCoverImage_Click"
                         HorizontalAlignment="Stretch" />
             </StackPanel>
 
             <!-- Name Section -->
             <StackPanel Grid.Column="2" Spacing="4" VerticalAlignment="Top">
-                <TextBlock x:Uid="SmartPlaylist_PlaylistNameLabel" Style="{ThemeResource BodyStrongTextBlockStyle}"/>
-                <TextBox x:Name="PlaylistNameTextBox" 
-                         x:Uid="SmartPlaylist_PlaylistNameTextBox"
+                <TextBlock Text="{x:Bind resources:Strings.SmartPlaylist_PlaylistNameLabel, Mode=OneTime}" Style="{ThemeResource BodyStrongTextBlockStyle}"/>
+                <TextBox x:Name="PlaylistNameTextBox"
+                         PlaceholderText="{x:Bind resources:Strings.SmartPlaylist_PlaylistNameTextBox_Placeholder, Mode=OneTime}"
                          TextChanged="OnPlaylistNameChanged"
                          MaxLength="200" />
             </StackPanel>
             
             <!-- Sort Order Section -->
             <StackPanel Grid.Column="4" Spacing="4" MinWidth="200" VerticalAlignment="Top">
-                <TextBlock x:Uid="SmartPlaylist_SortOrderLabel" Style="{ThemeResource BodyStrongTextBlockStyle}"/>
+                <TextBlock Text="{x:Bind resources:Strings.SmartPlaylist_SortOrderLabel, Mode=OneTime}" Style="{ThemeResource BodyStrongTextBlockStyle}"/>
                 <ComboBox x:Name="SortByComboBox" SelectedIndex="0" HorizontalAlignment="Stretch"
                           SelectionChanged="OnComboBoxSelectionChanged">
                     <ComboBoxItem Content="{x:Bind helpers:SortOrderHelper.TitleAscLabel}" Tag="TitleAsc" />
@@ -96,19 +99,19 @@
         <!-- Row 1: Rules Toolbar -->
         <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto" Margin="0,0,0,12">
             <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                <TextBlock x:Uid="SmartPlaylist_MatchLabel" VerticalAlignment="Center"/>
+                <TextBlock Text="{x:Bind resources:Strings.SmartPlaylist_MatchLabel, Mode=OneTime}" VerticalAlignment="Center"/>
                 <ComboBox x:Name="MatchLogicComboBox" SelectedIndex="0" MinWidth="80"
                           SelectionChanged="OnComboBoxSelectionChanged">
-                    <ComboBoxItem x:Uid="SmartPlaylist_MatchLogic_All" Tag="All" />
-                    <ComboBoxItem x:Uid="SmartPlaylist_MatchLogic_Any" Tag="Any" />
+                    <ComboBoxItem Content="{x:Bind resources:Strings.SmartPlaylist_MatchLogic_All_Content, Mode=OneTime}" Tag="All" />
+                    <ComboBoxItem Content="{x:Bind resources:Strings.SmartPlaylist_MatchLogic_Any_Content, Mode=OneTime}" Tag="Any" />
                 </ComboBox>
-                <TextBlock x:Uid="SmartPlaylist_MatchSuffixLabel" VerticalAlignment="Center"/>
+                <TextBlock Text="{x:Bind resources:Strings.SmartPlaylist_MatchSuffixLabel, Mode=OneTime}" VerticalAlignment="Center"/>
             </StackPanel>
-            
-            <Button Grid.Column="2" Click="AddRule_Click" x:Uid="SmartPlaylist_AddRuleButton" Style="{ThemeResource AccentButtonStyle}">
+
+            <Button Grid.Column="2" Click="AddRule_Click" ToolTipService.ToolTip="{x:Bind resources:Strings.SmartPlaylist_AddRuleButton_ToolTip, Mode=OneTime}" Style="{ThemeResource AccentButtonStyle}">
                 <StackPanel Orientation="Horizontal" Spacing="6">
                     <FontIcon Glyph="&#xE710;" FontSize="12" />
-                    <TextBlock x:Uid="SmartPlaylist_AddRuleLabel" />
+                    <TextBlock Text="{x:Bind resources:Strings.SmartPlaylist_AddRuleLabel, Mode=OneTime}" />
                 </StackPanel>
             </Button>
         </Grid>
@@ -159,12 +162,12 @@
 
                                             <TextBox Grid.Column="2"
                                                      Text="{x:Bind Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                     x:Uid="SmartPlaylist_RuleValueTextBox"
+                                                     PlaceholderText="{x:Bind resources:Strings.SmartPlaylist_RuleValueTextBox_Placeholder, Mode=OneTime}"
                                                      HorizontalAlignment="Stretch" />
 
-                                            <Button Grid.Column="3" 
+                                            <Button Grid.Column="3"
                                                     Click="RemoveRule_Click"
-                                                    x:Uid="SmartPlaylist_RemoveRuleButton"
+                                                    ToolTipService.ToolTip="{x:Bind resources:Strings.SmartPlaylist_RemoveRuleButton_ToolTip, Mode=OneTime}"
                                                     Style="{ThemeResource SubtleButtonStyle}">
                                                 <FontIcon Glyph="&#xE74D;" FontSize="14" Foreground="{ThemeResource SystemFillColorCriticalBrush}" />
                                             </Button>
@@ -175,20 +178,21 @@
                         </ListView>
                         
                         <!-- Empty State -->
-                        <StackPanel x:Name="NoRulesPanel" 
-                                   Visibility="Collapsed" 
+                        <StackPanel x:Name="NoRulesPanel"
+                                   Visibility="Collapsed"
                                    HorizontalAlignment="Center"
                                    VerticalAlignment="Center"
                                    Spacing="16"
                                    Margin="0,48,0,48">
-                            <TextBlock x:Uid="SmartPlaylist_NoRulesTitle" 
-                                       Style="{ThemeResource SubtitleTextBlockStyle}" 
+                            <TextBlock Text="{x:Bind resources:Strings.SmartPlaylist_NoRulesTitle, Mode=OneTime}"
+                                       Style="{ThemeResource SubtitleTextBlockStyle}"
                                        HorizontalAlignment="Center"/>
-                            <TextBlock x:Uid="SmartPlaylist_NoRulesMessage"
+                            <TextBlock Text="{x:Bind resources:Strings.SmartPlaylist_NoRulesMessage, Mode=OneTime}"
                                        Foreground="{ThemeResource TextFillColorSecondary}"
                                        HorizontalAlignment="Center"/>
-                            <Button x:Uid="SmartPlaylist_AddFirstRuleButton" 
-                                    Click="AddRule_Click" 
+                            <Button Content="{x:Bind resources:Strings.SmartPlaylist_AddFirstRuleButton_Content, Mode=OneTime}"
+                                    ToolTipService.ToolTip="{x:Bind resources:Strings.SmartPlaylist_AddFirstRuleButton_ToolTip, Mode=OneTime}"
+                                    Click="AddRule_Click"
                                     Style="{ThemeResource AccentButtonStyle}"
                                     HorizontalAlignment="Center" />
                         </StackPanel>

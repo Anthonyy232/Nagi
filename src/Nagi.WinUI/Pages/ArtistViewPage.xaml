@@ -8,6 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodels="using:Nagi.WinUI.ViewModels"
     xmlns:models="using:Nagi.Core.Models"
+    xmlns:resources="using:Nagi.WinUI.Resources"
     xmlns:helpers="using:Nagi.Core.Helpers"
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
     x:Name="pageRoot"
@@ -250,12 +251,12 @@
                               PointerPressed="EditOverlay_PointerPressed">
                             <FontIcon Glyph="&#xE70F;" Foreground="White" FontSize="32" />
                             <ToolTipService.ToolTip>
-                                <ToolTip x:Uid="ArtistViewPage_EditOverlay" />
+                                <ToolTip Content="{x:Bind resources:Strings.ArtistViewPage_EditOverlay_Content, Mode=OneTime}" />
                             </ToolTipService.ToolTip>
                             <Grid.ContextFlyout>
                                 <MenuFlyout x:Name="ImageEditFlyout">
-                                    <MenuFlyoutItem x:Uid="ArtistViewPage_ImageMenu_ChangeImage" Click="ChangeImage_Click" />
-                                    <MenuFlyoutItem x:Uid="ArtistViewPage_ImageMenu_RemoveImage" Click="RemoveImage_Click" 
+                                    <MenuFlyoutItem Text="{x:Bind resources:Strings.ArtistViewPage_ImageMenu_ChangeImage, Mode=OneTime}" Click="ChangeImage_Click" />
+                                    <MenuFlyoutItem Text="{x:Bind resources:Strings.ArtistViewPage_ImageMenu_RemoveImage, Mode=OneTime}" Click="RemoveImage_Click" 
                                                     Visibility="{x:Bind ViewModel.IsCustomImage, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                 </MenuFlyout>
                             </Grid.ContextFlyout>
@@ -263,7 +264,7 @@
                     </Grid>
 
                     <StackPanel Grid.Column="1" Margin="24,0,0,0" VerticalAlignment="Center" Spacing="8">
-                        <TextBlock x:Uid="ArtistViewPage_Header_Label" Style="{ThemeResource CaptionTextBlockStyle}" />
+                        <TextBlock Text="{x:Bind resources:Strings.ArtistViewPage_Header_Label, Mode=OneTime}" Style="{ThemeResource CaptionTextBlockStyle}" />
                         <TextBlock Style="{ThemeResource HeaderTextBlockStyle}"
                                    Text="{x:Bind ViewModel.ArtistName, Mode=OneWay}" />
                         <TextBlock
@@ -280,7 +281,7 @@
                       Visibility="{x:Bind ViewModel.HasAlbums, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
                     <ScrollViewer VerticalScrollMode="Disabled" VerticalScrollBarVisibility="Hidden">
                         <StackPanel x:Name="AlbumsContent" Spacing="2" VerticalAlignment="Top" Padding="0,0,0,0" SizeChanged="OnAlbumsContentSizeChanged">
-                        <TextBlock x:Uid="ArtistViewPage_Albums_Title" Style="{StaticResource SectionHeaderTextBlockStyle}" Foreground="{StaticResource AppPrimaryColorBrush}" />
+                        <TextBlock Text="{x:Bind resources:Strings.ArtistViewPage_Albums_Title, Mode=OneTime}" Style="{StaticResource SectionHeaderTextBlockStyle}" Foreground="{StaticResource AppPrimaryColorBrush}" />
                         <GridView
                             x:Name="AlbumGridView"
                             Padding="0,0,16,0"
@@ -310,7 +311,7 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                        <TextBlock x:Uid="ArtistViewPage_Songs_Title" Style="{StaticResource SectionHeaderTextBlockStyle}" Foreground="{StaticResource AppPrimaryColorBrush}" />
+                        <TextBlock Text="{x:Bind resources:Strings.ArtistViewPage_Songs_Title, Mode=OneTime}" Style="{StaticResource SectionHeaderTextBlockStyle}" Foreground="{StaticResource AppPrimaryColorBrush}" />
                         <TextBlock
                             VerticalAlignment="Center"
                             FontSize="13"
@@ -326,7 +327,7 @@
                         <!-- Search functionality -->
                         <Grid>
                             <TextBox x:Name="SearchTextBox"
-                                     x:Uid="ArtistViewPage_SearchBox"
+                                     PlaceholderText="{x:Bind resources:Strings.ArtistViewPage_SearchBox_Placeholder, Mode=OneTime}"
                                      Style="{StaticResource SearchTextBoxStyle}"
                                      Width="0"
                                      Opacity="0"
@@ -338,7 +339,7 @@
                                 </TextBox>
 
                             <Button x:Name="SearchToggleButton"
-                                    x:Uid="ArtistViewPage_SearchButton"
+                                    ToolTipService.ToolTip="{x:Bind resources:Strings.ArtistViewPage_SearchButton_ToolTip, Mode=OneTime}"
                                     Click="OnSearchToggleButtonClick"
                                     Style="{StaticResource SongListViewPageIconButton}"
                                     HorizontalAlignment="Right"
@@ -349,12 +350,12 @@
                             </Button>
                         </Grid>
 
-                        <Button x:Uid="ArtistViewPage_PlayAllButton" Style="{StaticResource SongListViewPageIconButton}"
+                        <Button ToolTipService.ToolTip="{x:Bind resources:Strings.ArtistViewPage_PlayAllButton_ToolTip, Mode=OneTime}" Style="{StaticResource SongListViewPageIconButton}"
                                 Command="{x:Bind ViewModel.PlayAllSongsCommand}">
                             <FontIcon Glyph="" FontSize="16" />
                         </Button>
 
-                        <Button x:Uid="ArtistViewPage_ShufflePlayButton" Style="{StaticResource SongListViewPageIconButton}"
+                        <Button ToolTipService.ToolTip="{x:Bind resources:Strings.ArtistViewPage_ShufflePlayButton_ToolTip, Mode=OneTime}" Style="{StaticResource SongListViewPageIconButton}"
                                 Command="{x:Bind ViewModel.ShuffleAndPlayAllSongsCommand}">
                             <FontIcon Glyph="" FontSize="16" />
                         </Button>
@@ -407,24 +408,24 @@
                         <Grid.ContextFlyout>
                             <MenuFlyout Opening="SongItemMenuFlyout_Opening">
                                 <MenuFlyoutItem
-                                    x:Uid="ArtistViewPage_SongMenu_Play"
+                                    Text="{x:Bind resources:Strings.ArtistViewPage_SongMenu_Play, Mode=OneTime}"
                                     Command="{Binding DataContext.PlaySelectedSongsCommand, ElementName=pageRoot}" />
                                 <MenuFlyoutItem
-                                    x:Uid="ArtistViewPage_SongMenu_PlayNext"
+                                    Text="{x:Bind resources:Strings.ArtistViewPage_SongMenu_PlayNext, Mode=OneTime}"
                                     Command="{Binding DataContext.PlaySelectedSongsNextCommand, ElementName=pageRoot}" />
                                 <MenuFlyoutItem
-                                    x:Uid="ArtistViewPage_SongMenu_AddToQueue"
+                                    Text="{x:Bind resources:Strings.ArtistViewPage_SongMenu_AddToQueue, Mode=OneTime}"
                                     Command="{Binding DataContext.AddSelectedSongsToQueueCommand, ElementName=pageRoot}" />
-                                <MenuFlyoutSubItem x:Name="AddToPlaylistSubMenu" x:Uid="ArtistViewPage_SongMenu_AddToPlaylist" />
+                                <MenuFlyoutSubItem x:Name="AddToPlaylistSubMenu" Text="{x:Bind resources:Strings.ArtistViewPage_SongMenu_AddToPlaylist, Mode=OneTime}" />
                                 <MenuFlyoutSeparator
                                     Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                 <MenuFlyoutItem
-                                    x:Uid="ArtistViewPage_SongMenu_GoToAlbum"
+                                    Text="{x:Bind resources:Strings.ArtistViewPage_SongMenu_GoToAlbum, Mode=OneTime}"
                                     Command="{Binding DataContext.GoToAlbumCommand, ElementName=pageRoot}"
                                     CommandParameter="{x:Bind}"
                                     Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                 <MenuFlyoutItem
-                                    x:Uid="ArtistViewPage_SongMenu_ShowInExplorer"
+                                    Text="{x:Bind resources:Strings.ArtistViewPage_SongMenu_ShowInExplorer, Mode=OneTime}"
                                     Command="{Binding DataContext.ShowInFileExplorerCommand, ElementName=pageRoot}"
                                     CommandParameter="{x:Bind}"
                                     Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
@@ -440,7 +441,7 @@
 
                         <Button
                             Grid.Column="0"
-                            x:Uid="ArtistViewPage_SongPlayButton"
+                            ToolTipService.ToolTip="{x:Bind resources:Strings.ArtistViewPage_SongPlayButton_ToolTip, Mode=OneTime}"
                             Command="{Binding DataContext.PlaySongCommand, ElementName=pageRoot}"
                             CommandParameter="{x:Bind}"
                             Style="{StaticResource SongListViewPageSongPlayButtonStyle}">
@@ -499,11 +500,11 @@
                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                 HorizontalAlignment="Center" />
             <TextBlock
-                x:Uid="ArtistViewPage_Empty_Title"
+                Text="{x:Bind resources:Strings.ArtistViewPage_Empty_Title, Mode=OneTime}"
                 Style="{StaticResource TitleTextBlockStyle}"
                 HorizontalAlignment="Center" />
             <TextBlock
-                x:Uid="ArtistViewPage_Empty_Subtitle"
+                Text="{x:Bind resources:Strings.ArtistViewPage_Empty_Subtitle, Mode=OneTime}"
                 Style="{StaticResource SubtitleTextBlockStyle}"
                 HorizontalAlignment="Center"
                 Foreground="{ThemeResource TextFillColorTertiaryBrush}" />

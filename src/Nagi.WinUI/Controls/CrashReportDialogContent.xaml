@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:resources="using:Nagi.WinUI.Resources"
     mc:Ignorable="d">
 
     <Grid RowSpacing="12">
@@ -22,15 +23,15 @@
             d:Text="An unexpected error occurred. We are sorry for the inconvenience." />
 
         <TextBlock Grid.Row="1" TextWrapping="Wrap">
-            <Run x:Uid="CrashReport_ReportIssuePreLink" />
+            <Run Text="{x:Bind resources:Strings.CrashReport_ReportIssuePreLink, Mode=OneTime}" />
             <Hyperlink NavigateUri="{x:Bind GitHubUrl, Mode=OneWay}">
-                <Run x:Uid="CrashReport_IssueLink" />
+                <Run Text="{x:Bind resources:Strings.CrashReport_IssueLink, Mode=OneTime}" />
             </Hyperlink>
-            <Run x:Uid="CrashReport_ReportIssuePostLink" />
+            <Run Text="{x:Bind resources:Strings.CrashReport_ReportIssuePostLink, Mode=OneTime}" />
         </TextBlock>
 
         <TextBlock Grid.Row="2" TextWrapping="Wrap" Foreground="{ThemeResource SystemControlErrorTextForegroundBrush}" FontSize="12">
-            <Run x:Uid="CrashReport_ResetAppAdvice" />
+            <Run Text="{x:Bind resources:Strings.CrashReport_ResetAppAdvice, Mode=OneTime}" />
         </TextBlock>
 
         <Border
@@ -55,10 +56,10 @@
         </Border>
 
         <StackPanel Grid.Row="4" Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
-            <Button x:Name="CopyButton" Click="CopyButton_Click" x:Uid="CrashReport_CopyLogButton">
+            <Button x:Name="CopyButton" Click="CopyButton_Click" ToolTipService.ToolTip="{x:Bind resources:Strings.CrashReport_CopyLogButton_ToolTip, Mode=OneTime}">
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <FontIcon Glyph="&#xE8C8;" FontSize="16" />
-                    <TextBlock x:Uid="CrashReport_CopyLogLabel" />
+                    <TextBlock Text="{x:Bind resources:Strings.CrashReport_CopyLogLabel, Mode=OneTime}" />
                 </StackPanel>
             </Button>
         </StackPanel>

@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local="using:Nagi.WinUI.Models"
+    xmlns:resources="using:Nagi.WinUI.Resources"
     xmlns:vm="using:Nagi.WinUI.ViewModels"
     xmlns:helpers="using:Nagi.Core.Helpers"
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
@@ -25,10 +26,10 @@
                         <Grid.ContextFlyout>
                             <MenuFlyout Opening="FolderItemMenuFlyout_Opening">
                                 <MenuFlyoutItem
-                                    x:Uid="FolderSongViewPage_FolderMenu_Play"
+                                    Text="{x:Bind resources:Strings.FolderSongViewPage_FolderMenu_Play, Mode=OneTime}"
                                     Command="{Binding DataContext.PlaySubfolderCommand, ElementName=pageRoot}"
                                     CommandParameter="{x:Bind Folder}" />
-                                <MenuFlyoutSubItem x:Name="FolderAddToPlaylistSubMenu" x:Uid="FolderSongViewPage_FolderMenu_AddToPlaylist" />
+                                <MenuFlyoutSubItem x:Name="FolderAddToPlaylistSubMenu" Text="{x:Bind resources:Strings.FolderSongViewPage_FolderMenu_AddToPlaylist, Mode=OneTime}" />
                             </MenuFlyout>
                         </Grid.ContextFlyout>
 
@@ -59,26 +60,26 @@
                         <Grid.ContextFlyout>
                             <MenuFlyout Opening="SongItemMenuFlyout_Opening">
                                 <MenuFlyoutItem
-                                    x:Uid="FolderSongViewPage_SongMenu_Play"
+                                    Text="{x:Bind resources:Strings.FolderSongViewPage_SongMenu_Play, Mode=OneTime}"
                                     Command="{Binding DataContext.PlaySelectedSongsCommand, ElementName=pageRoot}" />
                                 <MenuFlyoutItem
-                                    x:Uid="FolderSongViewPage_SongMenu_PlayNext"
+                                    Text="{x:Bind resources:Strings.FolderSongViewPage_SongMenu_PlayNext, Mode=OneTime}"
                                     Command="{Binding DataContext.PlaySelectedSongsNextCommand, ElementName=pageRoot}" />
                                 <MenuFlyoutItem
-                                    x:Uid="FolderSongViewPage_SongMenu_AddToQueue"
+                                    Text="{x:Bind resources:Strings.FolderSongViewPage_SongMenu_AddToQueue, Mode=OneTime}"
                                     Command="{Binding DataContext.AddSelectedSongsToQueueCommand, ElementName=pageRoot}" />
-                                <MenuFlyoutSubItem x:Name="AddToPlaylistSubMenu" x:Uid="FolderSongViewPage_SongMenu_AddToPlaylist" />
+                                <MenuFlyoutSubItem x:Name="AddToPlaylistSubMenu" Text="{x:Bind resources:Strings.FolderSongViewPage_SongMenu_AddToPlaylist, Mode=OneTime}" />
                                 <MenuFlyoutSeparator
                                     Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                                <MenuFlyoutItem x:Uid="FolderSongViewPage_SongMenu_GoToAlbum"
+                                <MenuFlyoutItem Text="{x:Bind resources:Strings.FolderSongViewPage_SongMenu_GoToAlbum, Mode=OneTime}"
                                                 Command="{Binding DataContext.GoToAlbumCommand, ElementName=pageRoot}"
                                                 CommandParameter="{x:Bind Song}"
                                                 Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                 <MenuFlyoutSubItem x:Name="GoToArtistSubMenu"
-                                                   x:Uid="FolderSongViewPage_SongMenu_GoToArtist"
+                                                   Text="{x:Bind resources:Strings.FolderSongViewPage_SongMenu_GoToArtist, Mode=OneTime}"
                                                    Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                 <MenuFlyoutItem
-                                    x:Uid="FolderSongViewPage_SongMenu_ShowInExplorer"
+                                    Text="{x:Bind resources:Strings.FolderSongViewPage_SongMenu_ShowInExplorer, Mode=OneTime}"
                                     Command="{Binding DataContext.ShowInFileExplorerCommand, ElementName=pageRoot}"
                                     CommandParameter="{x:Bind Song}"
                                     Visibility="{Binding DataContext.IsSingleSongSelected, ElementName=pageRoot, Converter={StaticResource BooleanToVisibilityConverter}}" />
@@ -96,7 +97,7 @@
 
                         <Button
                             Grid.Column="0"
-                            x:Uid="FolderSongViewPage_SongPlayButton"
+                            ToolTipService.ToolTip="{x:Bind resources:Strings.FolderSongViewPage_SongPlayButton_ToolTip, Mode=OneTime}"
                             Command="{Binding DataContext.PlaySongCommand, ElementName=pageRoot}"
                             CommandParameter="{x:Bind Song}"
                             Style="{StaticResource SongListViewPageSongPlayButtonStyle}">
@@ -243,7 +244,7 @@
                 </Grid>
 
                 <StackPanel Grid.Column="1" Margin="24,0,0,0" VerticalAlignment="Bottom" Spacing="8">
-                    <TextBlock x:Uid="FolderSongViewPage_Header_Label" Style="{ThemeResource CaptionTextBlockStyle}" />
+                    <TextBlock Text="{x:Bind resources:Strings.FolderSongViewPage_Header_Label, Mode=OneTime}" Style="{ThemeResource CaptionTextBlockStyle}" />
                     <TextBlock Style="{ThemeResource HeaderTextBlockStyle}"
                                Text="{x:Bind ViewModel.PageTitle, Mode=OneWay}" />
                 </StackPanel>
@@ -291,7 +292,7 @@
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                    <TextBlock x:Uid="FolderSongViewPage_Songs_Title" Style="{StaticResource SectionHeaderTextBlockStyle}" Foreground="{StaticResource AppPrimaryColorBrush}" />
+                    <TextBlock Text="{x:Bind resources:Strings.FolderSongViewPage_Songs_Title, Mode=OneTime}" Style="{StaticResource SectionHeaderTextBlockStyle}" Foreground="{StaticResource AppPrimaryColorBrush}" />
                     <TextBlock
                         VerticalAlignment="Center"
                         FontSize="13"
@@ -308,7 +309,7 @@
                     <!-- Search functionality -->
                     <Grid>
                         <TextBox x:Name="SearchTextBox"
-                                 x:Uid="FolderSongViewPage_SearchBox"
+                                 PlaceholderText="{x:Bind resources:Strings.FolderSongViewPage_SearchBox_Placeholder, Mode=OneTime}"
                                  Style="{StaticResource SearchTextBoxStyle}"
                                  Width="0"
                                  Opacity="0"
@@ -320,7 +321,7 @@
                         </TextBox>
 
                         <Button x:Name="SearchToggleButton"
-                                x:Uid="FolderSongViewPage_SearchButton"
+                                ToolTipService.ToolTip="{x:Bind resources:Strings.FolderSongViewPage_SearchButton_ToolTip, Mode=OneTime}"
                                 Click="OnSearchToggleButtonClick"
                                 Style="{StaticResource SongListViewPageIconButton}"
                                 HorizontalAlignment="Right"
@@ -332,13 +333,13 @@
                     </Grid>
 
                     <Button Command="{x:Bind ViewModel.PlayAllSongsCommand}"
-                            x:Uid="FolderSongViewPage_PlayAllButton"
+                            ToolTipService.ToolTip="{x:Bind resources:Strings.FolderSongViewPage_PlayAllButton_ToolTip, Mode=OneTime}"
                             Style="{StaticResource SongListViewPageIconButton}">
                         <FontIcon FontSize="16" Glyph="" />
                     </Button>
 
                     <Button Command="{x:Bind ViewModel.ShuffleAndPlayAllSongsCommand}"
-                            x:Uid="FolderSongViewPage_ShufflePlayButton"
+                            ToolTipService.ToolTip="{x:Bind resources:Strings.FolderSongViewPage_ShufflePlayButton_ToolTip, Mode=OneTime}"
                             Style="{StaticResource SongListViewPageIconButton}">
                         <FontIcon FontSize="16" Glyph="" />
                     </Button>
@@ -412,11 +413,11 @@
                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                 HorizontalAlignment="Center" />
             <TextBlock
-                x:Uid="FolderSongViewPage_Empty_Title"
+                Text="{x:Bind resources:Strings.FolderSongViewPage_Empty_Title, Mode=OneTime}"
                 Style="{StaticResource TitleTextBlockStyle}"
                 HorizontalAlignment="Center" />
             <TextBlock
-                x:Uid="FolderSongViewPage_Empty_Subtitle"
+                Text="{x:Bind resources:Strings.FolderSongViewPage_Empty_Subtitle, Mode=OneTime}"
                 Style="{StaticResource SubtitleTextBlockStyle}"
                 HorizontalAlignment="Center"
                 Foreground="{ThemeResource TextFillColorTertiaryBrush}" />

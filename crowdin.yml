@@ -13,7 +13,3 @@ files:
   # Nagi.WinUI C# Resources (.resx)
   - source: /src/Nagi.WinUI/Resources/Strings.resx
     translation: /src/Nagi.WinUI/Resources/Strings.%locale%.resx
-
-  # Nagi.WinUI XAML Resources (.resw)
-  - source: /src/Nagi.WinUI/Strings/en-US/Resources.resw
-    translation: /src/Nagi.WinUI/Strings/%locale%/Resources.resw

@@ -6,6 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:tb="using:H.NotifyIcon"
     xmlns:converters="using:Nagi.WinUI.Converters"
+    xmlns:resources="using:Nagi.WinUI.Resources"
     mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -24,7 +25,7 @@
         <tb:TaskbarIcon.ContextFlyout>
             <MenuFlyout AreOpenCloseAnimationsEnabled="True">
                 <MenuFlyoutItem
-                    x:Uid="TrayIcon_ShowWindow"
+                    Text="{x:Bind resources:Strings.TrayIcon_ShowWindow, Mode=OneTime}"
                     Command="{x:Bind ViewModel.RestoreWindowCommand}">
                     <MenuFlyoutItem.Icon>
                         <SymbolIcon Symbol="FullScreen" />
@@ -32,7 +33,7 @@
                 </MenuFlyoutItem>
                 <MenuFlyoutSeparator />
                 <MenuFlyoutItem
-                    x:Uid="TrayIcon_Exit"
+                    Text="{x:Bind resources:Strings.TrayIcon_Exit, Mode=OneTime}"
                     Command="{x:Bind ViewModel.ExitApplicationCommand}">
                     <MenuFlyoutItem.Icon>
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="" />

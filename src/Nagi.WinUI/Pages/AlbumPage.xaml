@@ -9,6 +9,7 @@
     xmlns:vm="using:Nagi.WinUI.ViewModels"
     xmlns:helpers="using:Nagi.Core.Helpers"
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
+    xmlns:resources="using:Nagi.WinUI.Resources"
     x:Name="AlbumPageRoot"
     Background="Transparent"
     mc:Ignorable="d">
@@ -113,7 +114,7 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                <TextBlock x:Uid="AlbumPage_Title" Style="{StaticResource PageTitleTextStyle}" />
+                <TextBlock Text="{x:Bind resources:Strings.AlbumPage_Title, Mode=OneTime}" Style="{StaticResource PageTitleTextStyle}" />
                 <TextBlock
                     Margin="0,0,0,5"
                     VerticalAlignment="Bottom"
@@ -126,7 +127,7 @@
                 <!-- Search functionality -->
                 <Grid>
                     <TextBox x:Name="SearchTextBox"
-                             x:Uid="AlbumPage_SearchBox"
+                             PlaceholderText="{x:Bind resources:Strings.AlbumPage_SearchBox_Placeholder, Mode=OneTime}"
                              Style="{StaticResource SearchTextBoxStyle}"
                              Width="0"
                              Opacity="0"
@@ -137,7 +138,7 @@
                              Canvas.ZIndex="0">
                     </TextBox>
                     <Button x:Name="SearchToggleButton"
-                            x:Uid="AlbumPage_SearchButton"
+                            ToolTipService.ToolTip="{x:Bind resources:Strings.AlbumPage_SearchButton_ToolTip, Mode=OneTime}"
                             Click="OnSearchToggleButtonClick"
                             Style="{StaticResource SongListViewPageIconButton}"
                             HorizontalAlignment="Right"
@@ -148,7 +149,7 @@
                 </Grid>
 
                 <Button x:Name="RandomAlbumButton"
-                        x:Uid="AlbumPage_RandomButton"
+                        ToolTipService.ToolTip="{x:Bind resources:Strings.AlbumPage_RandomButton_ToolTip, Mode=OneTime}"
                         Style="{StaticResource SongListViewPageIconButton}"
                         Command="{x:Bind ViewModel.PlayRandomAlbumCommand}"
                         Margin="0,0,1,0">
@@ -215,7 +216,7 @@
                             <Grid.ContextFlyout>
                                 <MenuFlyout>
                                     <MenuFlyoutItem
-                                        x:Uid="AlbumPage_Menu_Play"
+                                        Text="{x:Bind resources:Strings.AlbumPage_Menu_Play, Mode=OneTime}"
                                         Command="{Binding ViewModel.PlayAlbumCommand, ElementName=AlbumPageRoot}"
                                         CommandParameter="{x:Bind Id}"
                                         IsEnabled="{Binding ViewModel.IsLoading, ElementName=AlbumPageRoot, Converter={StaticResource BooleanToInverseBooleanConverter}}" />
@@ -297,11 +298,11 @@
                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                     HorizontalAlignment="Center" />
                 <TextBlock
-                    x:Uid="AlbumPage_Empty_Title"
+                    Text="{x:Bind resources:Strings.AlbumPage_Empty_Title, Mode=OneTime}"
                     HorizontalAlignment="Center"
                     Style="{StaticResource TitleTextBlockStyle}" />
                 <TextBlock
-                    x:Uid="AlbumPage_Empty_Subtitle"
+                    Text="{x:Bind resources:Strings.AlbumPage_Empty_Subtitle, Mode=OneTime}"
                     HorizontalAlignment="Center"
                     Style="{StaticResource SubtitleTextBlockStyle}"
                     Foreground="{ThemeResource TextFillColorTertiaryBrush}" />

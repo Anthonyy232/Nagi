@@ -8,6 +8,7 @@
     xmlns:controls="using:Microsoft.UI.Xaml.Controls"
     xmlns:localControls="using:Nagi.WinUI.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:resources="using:Nagi.WinUI.Resources"
     xmlns:imageEx="using:ImageEx"
     xmlns:models="using:Nagi.Core.Models"
     xmlns:uiModels="using:Nagi.WinUI.Models"
@@ -27,7 +28,7 @@
             </DataTemplate>
 
             <DataTemplate x:Key="PreviousButtonTemplate" x:DataType="uiModels:PlayerButtonSetting">
-                <Button x:Uid="Player_PreviousButton"
+                <Button ToolTipService.ToolTip="{x:Bind resources:Strings.Player_PreviousButton_ToolTip, Mode=OneTime}"
                         Command="{Binding DataContext.PreviousCommand, ElementName=MainPageRoot}"
                         Style="{StaticResource PreviousButtonStyle}">
                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
@@ -49,7 +50,7 @@
 
 
             <DataTemplate x:Key="NextButtonTemplate" x:DataType="uiModels:PlayerButtonSetting">
-                <Button x:Uid="Player_NextButton"
+                <Button ToolTipService.ToolTip="{x:Bind resources:Strings.Player_NextButton_ToolTip, Mode=OneTime}"
                         Command="{Binding DataContext.NextCommand, ElementName=MainPageRoot}"
                         Style="{StaticResource NextButtonStyle}">
                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
@@ -69,7 +70,7 @@
 
             <DataTemplate x:Key="LyricsButtonTemplate" x:DataType="uiModels:PlayerButtonSetting">
                 <Button
-                    x:Uid="Player_LyricsButton"
+                    ToolTipService.ToolTip="{x:Bind resources:Strings.Player_LyricsButton_ToolTip, Mode=OneTime}"
                     Style="{StaticResource LyricsButtonStyle}"
                     Command="{Binding DataContext.GoToLyricsPageCommand, ElementName=MainPageRoot}">
                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
@@ -77,7 +78,7 @@
             </DataTemplate>
 
             <DataTemplate x:Key="QueueButtonTemplate" x:DataType="uiModels:PlayerButtonSetting">
-                <Button x:Uid="Player_QueueButton"
+                <Button ToolTipService.ToolTip="{x:Bind resources:Strings.Player_QueueButton_ToolTip, Mode=OneTime}"
                         Style="{StaticResource QueueButtonStyle}">
                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
                     <Button.Flyout>
@@ -91,7 +92,7 @@
                                     <RowDefinition Height="*" />
                                 </Grid.RowDefinitions>
                                 <TextBlock
-                                    x:Uid="QueueFlyout_Title"
+                                    Text="{x:Bind resources:Strings.QueueFlyout_Title, Mode=OneTime}"
                                     Margin="12,0,12,4"
                                     Style="{ThemeResource MediaControlSubtitleStyle}" />
                                 <ListView
@@ -342,7 +343,7 @@
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
                                     <Button
-                                        x:Uid="Player_GoToAlbumButton"
+                                        ToolTipService.ToolTip="{x:Bind resources:Strings.Player_GoToAlbumButton_ToolTip, Mode=OneTime}"
                                         Grid.Column="0"
                                         Padding="0"
                                         Margin="0,0,12,0"

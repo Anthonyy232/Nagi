@@ -5,6 +5,7 @@
     xmlns:converters="using:Nagi.WinUI.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:resources="using:Nagi.WinUI.Resources"
     xmlns:vm="using:Nagi.WinUI.ViewModels"
     x:Name="FolderPageRoot"
     Background="Transparent"
@@ -25,11 +26,11 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Column="0" x:Uid="FolderPage_Title" Style="{StaticResource PageTitleTextStyle}" />
+            <TextBlock Grid.Column="0" Text="{x:Bind resources:Strings.FolderPage_Title, Mode=OneTime}" Style="{StaticResource PageTitleTextStyle}" />
 
             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
                 <Button x:Name="RandomFolderButton"
-                        x:Uid="FolderPage_RandomButton"
+                        ToolTipService.ToolTip="{x:Bind resources:Strings.FolderPage_RandomButton_ToolTip, Mode=OneTime}"
                         Style="{StaticResource SongListViewPageIconButton}"
                         Command="{x:Bind ViewModel.PlayRandomFolderCommand}"
                         Margin="0,0,1,0">
@@ -37,12 +38,12 @@
                 </Button>
                 <Button
                     Click="AddFolderButton_Click"
-                    x:Uid="FolderPage_AddFolderButton"
+                    ToolTipService.ToolTip="{x:Bind resources:Strings.FolderPage_AddFolderButton_ToolTip, Mode=OneTime}"
                     IsEnabled="{x:Bind ViewModel.IsAnyOperationInProgress, Converter={StaticResource BooleanToInverseBooleanConverter}, Mode=OneWay}"
                     Style="{StaticResource FolderPageAddFolderButtonStyle}">
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <FontIcon Glyph="" />
-                        <TextBlock x:Uid="FolderPage_AddFolder_Label" />
+                        <TextBlock Text="{x:Bind resources:Strings.FolderPage_AddFolder_Label, Mode=OneTime}" />
                     </StackPanel>
                 </Button>
             </StackPanel>
@@ -70,16 +71,16 @@
                         <Grid.ContextFlyout>
                             <MenuFlyout>
                                 <MenuFlyoutItem
-                                    x:Uid="FolderPage_Menu_Play"
+                                    Text="{x:Bind resources:Strings.FolderPage_Menu_Play, Mode=OneTime}"
                                     Command="{Binding DataContext.PlayFolderCommand, ElementName=FolderPageRoot}"
                                     CommandParameter="{x:Bind Id}"
                                     IsEnabled="{Binding DataContext.IsAnyOperationInProgress, ElementName=FolderPageRoot, Converter={StaticResource BooleanToInverseBooleanConverter}}" />
                                 <MenuFlyoutItem
-                                    x:Uid="FolderPage_Menu_Rescan"
+                                    Text="{x:Bind resources:Strings.FolderPage_Menu_Rescan, Mode=OneTime}"
                                     Command="{Binding DataContext.RescanFolderCommand, ElementName=FolderPageRoot}"
                                     CommandParameter="{x:Bind Id}"
                                     IsEnabled="{Binding DataContext.IsAnyOperationInProgress, ElementName=FolderPageRoot, Converter={StaticResource BooleanToInverseBooleanConverter}}" />
-                                <MenuFlyoutItem x:Uid="FolderPage_Menu_Delete" Click="DeleteFolder_Click" />
+                                <MenuFlyoutItem Text="{x:Bind resources:Strings.FolderPage_Menu_Delete, Mode=OneTime}" Click="DeleteFolder_Click" />
                             </MenuFlyout>
                         </Grid.ContextFlyout>
                         <Grid.RowDefinitions>
@@ -138,11 +139,11 @@
                 HorizontalAlignment="Center" />
             <TextBlock
                 HorizontalAlignment="Center"
-                x:Uid="FolderPage_Empty_Title"
+                Text="{x:Bind resources:Strings.FolderPage_Empty_Title, Mode=OneTime}"
                 Style="{StaticResource TitleTextBlockStyle}" />
             <TextBlock
                 HorizontalAlignment="Center"
-                x:Uid="FolderPage_Empty_Subtitle"
+                Text="{x:Bind resources:Strings.FolderPage_Empty_Subtitle, Mode=OneTime}"
                 Style="{StaticResource SubtitleTextBlockStyle}"
                 Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
         </StackPanel>

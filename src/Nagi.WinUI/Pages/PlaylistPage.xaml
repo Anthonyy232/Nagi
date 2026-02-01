@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:Nagi.WinUI.ViewModels"
+    xmlns:resources="using:Nagi.WinUI.Resources"
     xmlns:helpers="using:Nagi.Core.Helpers"
     xmlns:controls="using:ImageEx"
     x:Name="PlaylistPageRoot"
@@ -114,7 +115,7 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
-                <TextBlock x:Uid="PlaylistPage_Title" Style="{StaticResource PageTitleTextStyle}" />
+                <TextBlock Text="{x:Bind resources:Strings.PlaylistPage_Title, Mode=OneTime}" Style="{StaticResource PageTitleTextStyle}" />
                 <TextBlock
                     Margin="0,0,0,5"
                     VerticalAlignment="Bottom"
@@ -128,7 +129,7 @@
                 <!-- Search functionality -->
                 <Grid>
                     <TextBox x:Name="SearchTextBox"
-                             x:Uid="PlaylistPage_SearchBox"
+                             PlaceholderText="{x:Bind resources:Strings.PlaylistPage_SearchBox_Placeholder, Mode=OneTime}"
                              Style="{StaticResource SearchTextBoxStyle}"
                              Width="0"
                              Opacity="0"
@@ -139,7 +140,7 @@
                              Canvas.ZIndex="0">
                     </TextBox>
                     <Button x:Name="SearchToggleButton"
-                            x:Uid="PlaylistPage_SearchButton"
+                            ToolTipService.ToolTip="{x:Bind resources:Strings.PlaylistPage_SearchButton_ToolTip, Mode=OneTime}"
                             Click="OnSearchToggleButtonClick"
                             Style="{StaticResource SongListViewPageIconButton}"
                             HorizontalAlignment="Right"
@@ -150,7 +151,7 @@
                 </Grid>
 
                 <Button x:Name="RandomPlaylistButton"
-                        x:Uid="PlaylistPage_RandomButton"
+                        ToolTipService.ToolTip="{x:Bind resources:Strings.PlaylistPage_RandomButton_ToolTip, Mode=OneTime}"
                         Style="{StaticResource SongListViewPageIconButton}"
                         Command="{x:Bind ViewModel.PlayRandomPlaylistCommand}"
                         Margin="0,0,1,0">
@@ -193,19 +194,19 @@
                 Grid.Column="2"
                 IsEnabled="{x:Bind ViewModel.IsAnyOperationInProgress, Converter={StaticResource BooleanToInverseBooleanConverter}, Mode=OneWay}"
                 Style="{StaticResource PlaylistPageCreatePlaylistButtonStyle}"
-                x:Uid="PlaylistPage_NewPlaylistButton">
+                ToolTipService.ToolTip="{x:Bind resources:Strings.PlaylistPage_NewPlaylistButton_ToolTip, Mode=OneTime}">
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <FontIcon Glyph="&#xE710;" />
-                    <TextBlock x:Uid="PlaylistPage_NewPlaylistButton_Content" />
+                    <TextBlock Text="{x:Bind resources:Strings.PlaylistPage_NewPlaylistButton_Content, Mode=OneTime}" />
                 </StackPanel>
                 <DropDownButton.Flyout>
                     <MenuFlyout Placement="Bottom">
-                        <MenuFlyoutItem x:Uid="PlaylistPage_NewPlaylistMenu_Regular" Click="CreateNewPlaylistButton_Click">
+                        <MenuFlyoutItem Text="{x:Bind resources:Strings.PlaylistPage_NewPlaylistMenu_Regular, Mode=OneTime}" Click="CreateNewPlaylistButton_Click">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE142;" />
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
-                        <MenuFlyoutItem x:Uid="PlaylistPage_NewPlaylistMenu_Smart" Click="CreateSmartPlaylistButton_Click">
+                        <MenuFlyoutItem Text="{x:Bind resources:Strings.PlaylistPage_NewPlaylistMenu_Smart, Mode=OneTime}" Click="CreateSmartPlaylistButton_Click">
                             <MenuFlyoutItem.Icon>
                             <FontIcon Glyph="&#xE762;" />
                             </MenuFlyoutItem.Icon>
@@ -239,17 +240,17 @@
                             <MenuFlyout>
                                 <MenuFlyoutItem
                                     Click="PlayPlaylist_Click"
-                                    x:Uid="PlaylistPage_Context_Play"
+                                    Text="{x:Bind resources:Strings.PlaylistPage_Context_Play, Mode=OneTime}"
                                     IsEnabled="{Binding DataContext.IsAnyOperationInProgress, ElementName=PlaylistPageRoot, Converter={StaticResource BooleanToInverseBooleanConverter}}" />
-                                <MenuFlyoutItem x:Uid="PlaylistPage_Context_Rename" Click="RenamePlaylist_Click" />
+                                <MenuFlyoutItem Text="{x:Bind resources:Strings.PlaylistPage_Context_Rename, Mode=OneTime}" Click="RenamePlaylist_Click" />
                                 <MenuFlyoutSeparator />
-                                <MenuFlyoutItem x:Uid="PlaylistPage_Context_ChangeImage" Click="ChangeCover_Click" />
+                                <MenuFlyoutItem Text="{x:Bind resources:Strings.PlaylistPage_Context_ChangeImage, Mode=OneTime}" Click="ChangeCover_Click" />
                                 <MenuFlyoutItem
                                     Click="RemoveImage_Click"
-                                    x:Uid="PlaylistPage_Context_RemoveImage"
+                                    Text="{x:Bind resources:Strings.PlaylistPage_Context_RemoveImage, Mode=OneTime}"
                                     Visibility="{x:Bind IsCustomImage, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                 <MenuFlyoutSeparator />
-                                <MenuFlyoutItem x:Uid="PlaylistPage_Context_Delete" Click="DeletePlaylist_Click" />
+                                <MenuFlyoutItem Text="{x:Bind resources:Strings.PlaylistPage_Context_Delete, Mode=OneTime}" Click="DeletePlaylist_Click" />
                             </MenuFlyout>
                         </Grid.ContextFlyout>
                         <Grid.RowDefinitions>
@@ -337,12 +338,12 @@
                 <TextBlock
                     HorizontalAlignment="Center"
                     Style="{StaticResource TitleTextBlockStyle}"
-                    x:Uid="PlaylistPage_EmptyState_Title" />
+                    Text="{x:Bind resources:Strings.PlaylistPage_EmptyState_Title, Mode=OneTime}" />
                 <TextBlock
                     HorizontalAlignment="Center"
                     Style="{StaticResource SubtitleTextBlockStyle}"
                     Foreground="{ThemeResource TextFillColorTertiaryBrush}"
-                    x:Uid="PlaylistPage_EmptyState_Subtitle" />
+                    Text="{x:Bind resources:Strings.PlaylistPage_EmptyState_Subtitle, Mode=OneTime}" />
             </StackPanel>
         </Grid>
     </Grid>
