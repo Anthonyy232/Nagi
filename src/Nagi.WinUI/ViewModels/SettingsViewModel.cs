@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Globalization;
+using System.IO;
 using Windows.System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -479,7 +480,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             AvailableLanguages.Clear();
             AvailableLanguages.Add(new LanguageModel(string.Empty, Nagi.WinUI.Resources.Strings.Language_Auto));
 
-            var manifestLanguages = Windows.Globalization.ApplicationLanguages.ManifestLanguages;
+            var manifestLanguages = await _appInfoService.GetAvailableLanguagesAsync();
             var allSpecificCultures = CultureInfo.GetCultures(CultureTypes.SpecificCultures);
 
             foreach (var langCode in manifestLanguages)
