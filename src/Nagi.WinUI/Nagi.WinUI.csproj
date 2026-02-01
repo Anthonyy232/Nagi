@@ -101,7 +101,7 @@
         <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="$(MicrosoftWindowsSDKBuildToolsVersion)" />
 
         <!-- Application Services (DI, Configuration) -->
-        <PackageReference Include="Jeffijoe.MessageFormat" Version="$(MessageFormatVersion)" />
+        <PackageReference Include="MessageFormat" Version="$(MessageFormatVersion)" />
         <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="$(MicrosoftExtensionsConfigurationFileExtensionsVersion)" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="$(MicrosoftExtensionsConfigurationJsonVersion)" />
 
