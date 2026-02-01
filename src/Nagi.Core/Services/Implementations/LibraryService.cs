@@ -3423,10 +3423,6 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         }
 
         _logger.LogDebug("Resolving artists: {Total} total, {Cached} cached, {Uncached} uncached", artistNames.Count, cachedIds.Count, uncachedNames.Count);
-        if (uncachedNames.Count > 0)
-        {
-            _logger.LogDebug("Uncached artist names: {Names}", string.Join(", ", uncachedNames.Select(n => $"'{n}' ({GetHexRepresentation(n)})")));
-        }
 
         // Step 2: Load cached artists by ID (robust, no case/unicode issues)
         // Chunk to avoid SQL parameter limits
@@ -3486,7 +3482,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
             if (stillMissing.Count > 0)
             {
-                _logger.LogInformation("Creating {Count} new artists: {Names}", stillMissing.Count, string.Join(", ", stillMissing.Select(n => $"'{n}' ({GetHexRepresentation(n)})")));
+                _logger.LogInformation("Creating {Count} new artists.", stillMissing.Count);
                 foreach (var name in stillMissing)
                 {
                     var newArtist = new Artist { Name = name };
@@ -3502,7 +3498,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "FAILED to save new artists. Names were: {Names}", string.Join(", ", stillMissing.Select(n => $"'{n}'")));
+                    _logger.LogError(ex, "FAILED to save new artists.");
                     throw;
                 }
                 _logger.LogDebug("Saved new artists.");
@@ -3603,7 +3599,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
             if (stillMissing.Count > 0)
             {
-                _logger.LogInformation("Creating {Count} new genres: {Names}", stillMissing.Count, string.Join(", ", stillMissing.Select(n => $"'{n}' ({GetHexRepresentation(n)})")));
+                _logger.LogInformation("Creating {Count} new genres.", stillMissing.Count);
                 foreach (var name in stillMissing)
                 {
                     var newGenre = new Genre { Name = name };
@@ -3619,7 +3615,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "FAILED to save new genres. Names were: {Names}", string.Join(", ", stillMissing.Select(n => $"'{n}'")));
+                    _logger.LogError(ex, "FAILED to save new genres.");
                     throw;
                 }
 
@@ -3770,7 +3766,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
             if (stillMissing.Count > 0)
             {
-                _logger.LogInformation("Creating {Count} new albums: {Titles}", stillMissing.Count, string.Join(", ", stillMissing.Select(k => $"'{albumDefinitions[k].Title}' ({GetHexRepresentation(albumDefinitions[k].Title)})")));
+                _logger.LogInformation("Creating {Count} new albums.", stillMissing.Count);
                 foreach (var albumKey in stillMissing)
                 {
                     var definition = albumDefinitions[albumKey];
