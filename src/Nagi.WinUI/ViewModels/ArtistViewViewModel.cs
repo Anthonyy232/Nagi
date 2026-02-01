@@ -199,7 +199,7 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         ArtistImageUri = null;
         Albums.Clear();
         Songs.Clear();
-        TotalItemsText = string.Format(Nagi.WinUI.Resources.Strings.Songs_Count_Plural, 0);
+        TotalItemsText = ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Songs_Count_Plural, 0);
     }
 
     /// <summary>

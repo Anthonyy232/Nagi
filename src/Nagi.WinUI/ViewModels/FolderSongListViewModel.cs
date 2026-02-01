@@ -432,24 +432,24 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         if (_currentFolderCount > 0 && songCount > 0)
         {
             var folderText = _currentFolderCount == 1 
-                ? string.Format(Nagi.WinUI.Resources.Strings.Folders_Count_Singular, _currentFolderCount)
-                : string.Format(Nagi.WinUI.Resources.Strings.Folders_Count_Plural, _currentFolderCount);
+                ? ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Folders_Count_Singular, _currentFolderCount)
+                : ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Folders_Count_Plural, _currentFolderCount);
             var songText = songCount == 1 
-                ? string.Format(Nagi.WinUI.Resources.Strings.Songs_Count_Singular, songCount)
-                : string.Format(Nagi.WinUI.Resources.Strings.Songs_Count_Plural, songCount);
+                ? ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Songs_Count_Singular, songCount)
+                : ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Songs_Count_Plural, songCount);
             TotalItemsText = $"{folderText}, {songText}";
         }
         else if (_currentFolderCount > 0)
         {
             TotalItemsText = _currentFolderCount == 1 
-                ? string.Format(Nagi.WinUI.Resources.Strings.Folders_Count_Singular, _currentFolderCount)
-                : string.Format(Nagi.WinUI.Resources.Strings.Folders_Count_Plural, _currentFolderCount);
+                ? ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Folders_Count_Singular, _currentFolderCount)
+                : ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Folders_Count_Plural, _currentFolderCount);
         }
         else if (songCount > 0)
         {
             TotalItemsText = songCount == 1 
-                ? string.Format(Nagi.WinUI.Resources.Strings.Songs_Count_Singular, songCount)
-                : string.Format(Nagi.WinUI.Resources.Strings.Songs_Count_Plural, songCount);
+                ? ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Songs_Count_Singular, songCount)
+                : ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Songs_Count_Plural, songCount);
         }
         else
         {

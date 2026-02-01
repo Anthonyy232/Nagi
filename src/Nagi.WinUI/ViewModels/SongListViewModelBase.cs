@@ -609,8 +609,8 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
         {
             if (_isDisposed) return;
             TotalItemsText = pagedResult.TotalCount == 1 
-                ? string.Format(Nagi.WinUI.Resources.Strings.SongList_TotalItems_Format_Singular, pagedResult.TotalCount) 
-                : string.Format(Nagi.WinUI.Resources.Strings.SongList_TotalItems_Format_Plural, pagedResult.TotalCount);
+                ? ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.SongList_TotalItems_Format_Singular, pagedResult.TotalCount) 
+                : ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.SongList_TotalItems_Format_Plural, pagedResult.TotalCount);
             UpdateSelectionStatus();
             PlayAllSongsCommand.NotifyCanExecuteChanged();
             ShuffleAndPlayAllSongsCommand.NotifyCanExecuteChanged();
@@ -621,7 +621,7 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
     {
         var count = SelectedItemsCount;
         SelectedItemsCountText = count > 0 
-            ? string.Format(Nagi.WinUI.Resources.Strings.SongList_SelectedCount_Format, count) 
+            ? ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.SongList_SelectedCount_Format, count) 
             : string.Empty;
         IsSingleSongSelected = count == 1;
         OnPropertyChanged(nameof(SelectedItemsCount));

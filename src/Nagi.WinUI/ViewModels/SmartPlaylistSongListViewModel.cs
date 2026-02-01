@@ -115,7 +115,7 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
             ? Nagi.WinUI.Resources.Strings.SmartPlaylist_Rule_Singular 
             : Nagi.WinUI.Resources.Strings.SmartPlaylist_Rule_Plural;
         
-        return string.Format(Nagi.WinUI.Resources.Strings.SmartPlaylist_RuleSummary_Format, matchType, ruleCount, ruleWord);
+        return ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.SmartPlaylist_RuleSummary_Format, matchType, ruleCount, ruleWord);
     }
 
 

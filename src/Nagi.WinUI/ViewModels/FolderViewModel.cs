@@ -51,8 +51,8 @@ public partial class FolderViewModelItem : ObservableObject
 
         SongCount = newSongCount;
         SongCountText = newSongCount == 1
-            ? string.Format(Nagi.WinUI.Resources.Strings.Songs_Count_Singular, newSongCount)
-            : string.Format(Nagi.WinUI.Resources.Strings.Songs_Count_Plural, newSongCount);
+            ? ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Songs_Count_Singular, newSongCount)
+            : ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Songs_Count_Plural, newSongCount);
     }
 }
 

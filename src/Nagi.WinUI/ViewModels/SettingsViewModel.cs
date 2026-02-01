@@ -737,7 +737,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         if (result.Success)
         {
             await _uiService.ShowMessageDialogAsync(Nagi.WinUI.Resources.Strings.Settings_Export_Success_Title,
-                string.Format(Nagi.WinUI.Resources.Strings.Settings_Export_Success_Message, result.PlaylistsExported, result.TotalSongs, folderPath));
+                ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Settings_Export_Success_Message, result.PlaylistsExported, result.TotalSongs, folderPath));
         }
         else
         {
@@ -755,14 +755,14 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
         if (result.Success)
         {
-            var message = string.Format(Nagi.WinUI.Resources.Strings.Settings_Import_Success_Message, result.PlaylistsImported, result.TotalMatchedSongs);
+            var message = ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Settings_Import_Success_Message, result.PlaylistsImported, result.TotalMatchedSongs);
             if (result.TotalUnmatchedSongs > 0)
             {
-                message += string.Format(Nagi.WinUI.Resources.Strings.Settings_Import_Unmatched_Message, result.TotalUnmatchedSongs);
+                message += ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Settings_Import_Unmatched_Message, result.TotalUnmatchedSongs);
             }
             if (result.FailedFiles.Count > 0)
             {
-                message += string.Format(Nagi.WinUI.Resources.Strings.Settings_Import_FailedFiles_Message, result.FailedFiles.Count);
+                message += ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Settings_Import_FailedFiles_Message, result.FailedFiles.Count);
             }
             await _uiService.ShowMessageDialogAsync(Nagi.WinUI.Resources.Strings.Settings_Import_Success_Title, message);
         }

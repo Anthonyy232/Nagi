@@ -149,7 +149,7 @@ public partial class AlbumViewViewModel : SongListViewModelBase
         ArtistName = string.Empty;
         CoverArtUri = null;
         Songs.Clear();
-        TotalItemsText = string.Format(Nagi.WinUI.Resources.Strings.Songs_Count_Plural, 0);
+        TotalItemsText = ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Songs_Count_Plural, 0);
     }
 
     private void HandleLoadError(Guid albumId, Exception ex)
@@ -228,8 +228,8 @@ public partial class AlbumViewViewModel : SongListViewModelBase
             detailsParts.Add(_albumYear.Value.ToString());
             
         var songCountText = _totalSongCount == 1 
-            ? string.Format(Nagi.WinUI.Resources.Strings.AlbumView_SongCount_Singular, _totalSongCount)
-            : string.Format(Nagi.WinUI.Resources.Strings.AlbumView_SongCount_Plural, _totalSongCount);
+            ? ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.AlbumView_SongCount_Singular, _totalSongCount)
+            : ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.AlbumView_SongCount_Plural, _totalSongCount);
         detailsParts.Add(songCountText);
         
         if (_totalDuration > TimeSpan.Zero)
