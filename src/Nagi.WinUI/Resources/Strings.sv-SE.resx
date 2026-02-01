@@ -920,936 +920,936 @@
     <value>Auto</value>
   </data>
   <data name="TrayIcon_ShowWindow" xml:space="preserve">
-    <value>Show Window</value>
+    <value>Visa fönster</value>
   </data>
   <data name="TrayIcon_Exit" xml:space="preserve">
-    <value>Exit</value>
+    <value>Avsluta</value>
   </data>
   <data name="MiniPlayer_BackButton_ToolTip" xml:space="preserve">
-    <value>Back to Player</value>
+    <value>Tillbaka till spelaren</value>
   </data>
   <data name="MiniPlayer_UpNextHeader" xml:space="preserve">
-    <value>Up Next</value>
+    <value>Nästa i kö</value>
   </data>
   <data name="MiniPlayer_RestoreButton_ToolTip" xml:space="preserve">
-    <value>Show Nagi</value>
+    <value>Visa Nagi</value>
   </data>
   <data name="MiniPlayer_PreviousButton_ToolTip" xml:space="preserve">
-    <value>Previous</value>
+    <value>Föregående</value>
   </data>
   <data name="MiniPlayer_NextButton_ToolTip" xml:space="preserve">
-    <value>Next</value>
+    <value>Nästa</value>
   </data>
   <data name="MiniPlayer_QueueButton_ToolTip" xml:space="preserve">
-    <value>Up Next</value>
+    <value>Nästa i kö</value>
   </data>
   <data name="CrashReport_ReportIssuePreLink" xml:space="preserve">
-    <value>Please consider reporting this by creating an issue on the </value>
+    <value>Vänligen överväg att rapportera detta genom att skapa ett ärende på </value>
   </data>
   <data name="CrashReport_IssueLink" xml:space="preserve">
-    <value>Issues page</value>
+    <value>Problemsidan</value>
   </data>
   <data name="CrashReport_ReportIssuePostLink" xml:space="preserve">
     <value>.</value>
   </data>
   <data name="CrashReport_ResetAppAdvice" xml:space="preserve">
-    <value>If this keeps happening, you can try 'Reset App &amp; Data'. This will wipe your settings and library, which can help recover the app from a broken state.</value>
+    <value>Om detta fortsätter att hända kan du prova "Återställ app och data". Detta kommer att radera dina inställningar och bibliotek, vilket kan hjälpa till att återställa appen från ett skadat tillstånd.</value>
   </data>
   <data name="CrashReport_CopyLogButton_ToolTip" xml:space="preserve">
-    <value>Copy log to clipboard</value>
+    <value>Kopiera logg till urklipp</value>
   </data>
   <data name="CrashReport_CopyLogLabel" xml:space="preserve">
-    <value>Copy Log</value>
+    <value>Kopiera logg</value>
   </data>
   <data name="SmartPlaylist_PickCoverButton_Content" xml:space="preserve">
-    <value>Choose Cover</value>
+    <value>Välj omslag</value>
   </data>
   <data name="SmartPlaylist_PickCoverButton_ToolTip" xml:space="preserve">
-    <value>Choose a cover image</value>
+    <value>Välj en omslagsbild</value>
   </data>
   <data name="SmartPlaylist_PlaylistNameLabel" xml:space="preserve">
-    <value>Playlist Name</value>
+    <value>Spellistans namn</value>
   </data>
   <data name="SmartPlaylist_PlaylistNameTextBox_Placeholder" xml:space="preserve">
-    <value>Enter a name for your smart playlist</value>
+    <value>Ange ett namn för din smarta spellista</value>
   </data>
   <data name="SmartPlaylist_SortOrderLabel" xml:space="preserve">
-    <value>Sort Order</value>
+    <value>Sorteringsordning</value>
   </data>
   <data name="SmartPlaylist_MatchLabel" xml:space="preserve">
-    <value>Match</value>
+    <value>Matcha</value>
   </data>
   <data name="SmartPlaylist_MatchLogic_All_Content" xml:space="preserve">
-    <value>All</value>
+    <value>Alla</value>
   </data>
   <data name="SmartPlaylist_MatchLogic_Any_Content" xml:space="preserve">
-    <value>Any</value>
+    <value>Någon</value>
   </data>
   <data name="SmartPlaylist_MatchSuffixLabel" xml:space="preserve">
-    <value>of the following rules:</value>
+    <value>av följande regler:</value>
   </data>
   <data name="SmartPlaylist_AddRuleButton_ToolTip" xml:space="preserve">
-    <value>Add a new rule</value>
+    <value>Lägg till en ny regel</value>
   </data>
   <data name="SmartPlaylist_AddRuleLabel" xml:space="preserve">
-    <value>Add Rule</value>
+    <value>Lägg till regel</value>
   </data>
   <data name="SmartPlaylist_RuleValueTextBox_Placeholder" xml:space="preserve">
-    <value>Value</value>
+    <value>Värde</value>
   </data>
   <data name="SmartPlaylist_RemoveRuleButton_ToolTip" xml:space="preserve">
-    <value>Remove this rule</value>
+    <value>Ta bort denna regel</value>
   </data>
   <data name="SmartPlaylist_NoRulesTitle" xml:space="preserve">
-    <value>No rules defined</value>
+    <value>Inga regler definierade</value>
   </data>
   <data name="SmartPlaylist_NoRulesMessage" xml:space="preserve">
-    <value>All songs in your library will be included in this playlist.</value>
+    <value>Alla låtar i ditt bibliotek kommer att inkluderas i denna spellista.</value>
   </data>
   <data name="SmartPlaylist_AddFirstRuleButton_Content" xml:space="preserve">
-    <value>Add Your First Rule</value>
+    <value>Lägg till din första regel</value>
   </data>
   <data name="SmartPlaylist_AddFirstRuleButton_ToolTip" xml:space="preserve">
-    <value>Add your first rule</value>
+    <value>Lägg till din första regel</value>
   </data>
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
-    <value>Save</value>
+    <value>Spara</value>
   </data>
   <data name="SmartPlaylist_Dialog_CloseButton" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Avbryt</value>
   </data>
   <data name="TrayPopup_PreviousButton_ToolTip" xml:space="preserve">
-    <value>Previous</value>
+    <value>Föregående</value>
   </data>
   <data name="TrayPopup_NextButton_ToolTip" xml:space="preserve">
-    <value>Next</value>
+    <value>Nästa</value>
   </data>
   <data name="TrayPopup_QueueButton_ToolTip" xml:space="preserve">
-    <value>Up Next</value>
+    <value>Nästa i kö</value>
   </data>
   <data name="TrayPopup_BackButton_ToolTip" xml:space="preserve">
-    <value>Back to Player</value>
+    <value>Tillbaka till spelaren</value>
   </data>
   <data name="TrayPopup_UpNextHeader" xml:space="preserve">
-    <value>Up Next</value>
+    <value>Nästa i kö</value>
   </data>
   <data name="AppName" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="AppDescription" xml:space="preserve">
-    <value>Rediscover your local music collection with Nagi, a music player focused on speed, simplicity, and privacy. Nagi is built with C# and WinUI 3 to offer a clean, native Fluent experience. It's beautiful, efficient, and respects your privacy.</value>
+    <value>Återupptäck din lokala musiksamling med Nagi, en musikspelare fokuserad på snabbhet, enkelhet och integritet. Nagi är byggd med C# och WinUI 3 för att erbjuda en ren, nativ Fluent-upplevelse. Den är vacker, effektiv och respekterar din integritet.</value>
   </data>
   <data name="AppShortName" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="AppDisplayName" xml:space="preserve">
-    <value>Nagi Music Player</value>
+    <value>Nagi Musikspelare</value>
   </data>
   <data name="AppInfoTip" xml:space="preserve">
-    <value>Open with Nagi Music Player</value>
+    <value>Öppna med Nagi Musikspelare</value>
   </data>
   <data name="StartupTaskDisplayName" xml:space="preserve">
-    <value>Nagi Startup</value>
+    <value>Nagi Start</value>
   </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
-    <value>Previous</value>
+    <value>Föregående</value>
   </data>
   <data name="Player_NextButton_ToolTip" xml:space="preserve">
-    <value>Next</value>
+    <value>Nästa</value>
   </data>
   <data name="Player_LyricsButton_ToolTip" xml:space="preserve">
-    <value>Lyrics</value>
+    <value>Låtext</value>
   </data>
   <data name="Player_QueueButton_ToolTip" xml:space="preserve">
-    <value>Up Next</value>
+    <value>Nästa i kö</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
-    <value>Go to album</value>
+    <value>Gå till album</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
-    <value>Up Next</value>
+    <value>Nästa i kö</value>
   </data>
   <data name="AlbumPage_Title" xml:space="preserve">
-    <value>Albums</value>
+    <value>Album</value>
   </data>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Search albums...</value>
+    <value>Sök album...</value>
   </data>
   <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Search albums</value>
+    <value>Sök album</value>
   </data>
   <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Pick one at random</value>
+    <value>Välj en slumpmässigt</value>
   </data>
   <data name="AlbumPage_Menu_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Spela</value>
   </data>
   <data name="AlbumPage_Empty_Title" xml:space="preserve">
-    <value>No albums found</value>
+    <value>Inga album hittades</value>
   </data>
   <data name="AlbumPage_Empty_Subtitle" xml:space="preserve">
-    <value>Scan your music library to populate albums</value>
+    <value>Skanna ditt musikbibliotek för att fylla på album</value>
   </data>
   <data name="AlbumViewPage_Header_Label" xml:space="preserve">
     <value>Album</value>
   </data>
   <data name="AlbumViewPage_Songs_Title" xml:space="preserve">
-    <value>Songs</value>
+    <value>Låtar</value>
   </data>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Search in album...</value>
+    <value>Sök i album...</value>
   </data>
   <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Search in album</value>
+    <value>Sök i album</value>
   </data>
   <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Play all</value>
+    <value>Spela alla</value>
   </data>
   <data name="AlbumViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Shuffle and play all</value>
+    <value>Blanda och spela alla</value>
   </data>
   <data name="AlbumViewPage_SongMenu_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Spela</value>
   </data>
   <data name="AlbumViewPage_SongMenu_PlayNext" xml:space="preserve">
-    <value>Play Next</value>
+    <value>Spela nästa</value>
   </data>
   <data name="AlbumViewPage_SongMenu_AddToQueue" xml:space="preserve">
-    <value>Add to Queue</value>
+    <value>Lägg till i kö</value>
   </data>
   <data name="AlbumViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Add to playlist</value>
+    <value>Lägg till i spellista</value>
   </data>
   <data name="AlbumViewPage_SongMenu_GoToArtist" xml:space="preserve">
-    <value>Go to artist</value>
+    <value>Gå till artist</value>
   </data>
   <data name="AlbumViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Show in explorer</value>
+    <value>Visa i utforskaren</value>
   </data>
   <data name="AlbumViewPage_SongPlayButton_ToolTip" xml:space="preserve">
-    <value>Play</value>
+    <value>Spela</value>
   </data>
   <data name="AlbumViewPage_Empty_Title" xml:space="preserve">
-    <value>No songs found in this album</value>
+    <value>Inga låtar hittades i detta album</value>
   </data>
   <data name="AlbumViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>Try searching for something else</value>
+    <value>Prova att söka efter något annat</value>
   </data>
   <data name="ArtistPage_Title" xml:space="preserve">
-    <value>Artists</value>
+    <value>Artister</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Search artists...</value>
+    <value>Sök artister...</value>
   </data>
   <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Search artists</value>
+    <value>Sök artister</value>
   </data>
   <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Pick one at random</value>
+    <value>Välj en slumpmässigt</value>
   </data>
   <data name="ArtistPage_Menu_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Spela</value>
   </data>
   <data name="ArtistPage_Menu_ChangeImage" xml:space="preserve">
-    <value>Change Image</value>
+    <value>Ändra bild</value>
   </data>
   <data name="ArtistPage_Menu_RemoveImage" xml:space="preserve">
-    <value>Remove Image</value>
+    <value>Ta bort bild</value>
   </data>
   <data name="ArtistPage_Empty_Title" xml:space="preserve">
-    <value>No artists found</value>
+    <value>Inga artister hittades</value>
   </data>
   <data name="ArtistPage_Empty_Subtitle" xml:space="preserve">
-    <value>Scan your music library to populate artists</value>
+    <value>Skanna ditt musikbibliotek för att fylla på artister</value>
   </data>
   <data name="ArtistViewPage_EditOverlay_Content" xml:space="preserve">
-    <value>Change artist image</value>
+    <value>Ändra artistbild</value>
   </data>
   <data name="ArtistViewPage_ImageMenu_ChangeImage" xml:space="preserve">
-    <value>Change Image</value>
+    <value>Ändra bild</value>
   </data>
   <data name="ArtistViewPage_ImageMenu_RemoveImage" xml:space="preserve">
-    <value>Remove Image</value>
+    <value>Ta bort bild</value>
   </data>
   <data name="ArtistViewPage_Header_Label" xml:space="preserve">
     <value>Artist</value>
   </data>
   <data name="ArtistViewPage_Albums_Title" xml:space="preserve">
-    <value>Top Albums</value>
+    <value>Toppalbum</value>
   </data>
   <data name="ArtistViewPage_Songs_Title" xml:space="preserve">
-    <value>Songs</value>
+    <value>Låtar</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Search in artist...</value>
+    <value>Sök i artist...</value>
   </data>
   <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Search in artist</value>
+    <value>Sök i artist</value>
   </data>
   <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Play all</value>
+    <value>Spela alla</value>
   </data>
   <data name="ArtistViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Shuffle and play all</value>
+    <value>Blanda och spela alla</value>
   </data>
   <data name="ArtistViewPage_SongMenu_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Spela</value>
   </data>
   <data name="ArtistViewPage_SongMenu_PlayNext" xml:space="preserve">
-    <value>Play Next</value>
+    <value>Spela nästa</value>
   </data>
   <data name="ArtistViewPage_SongMenu_AddToQueue" xml:space="preserve">
-    <value>Add to Queue</value>
+    <value>Lägg till i kö</value>
   </data>
   <data name="ArtistViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Add to playlist</value>
+    <value>Lägg till i spellista</value>
   </data>
   <data name="ArtistViewPage_SongMenu_GoToAlbum" xml:space="preserve">
-    <value>Go to album</value>
+    <value>Gå till album</value>
   </data>
   <data name="ArtistViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Show in explorer</value>
+    <value>Visa i utforskaren</value>
   </data>
   <data name="ArtistViewPage_SongPlayButton_ToolTip" xml:space="preserve">
-    <value>Play</value>
+    <value>Spela</value>
   </data>
   <data name="ArtistViewPage_Empty_Title" xml:space="preserve">
-    <value>No songs found for this artist</value>
+    <value>Inga låtar hittades för denna artist</value>
   </data>
   <data name="ArtistViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>Try searching for something else</value>
+    <value>Prova att söka efter något annat</value>
   </data>
   <data name="FolderPage_Title" xml:space="preserve">
-    <value>Folders</value>
+    <value>Mappar</value>
   </data>
   <data name="FolderPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Pick one at random</value>
+    <value>Välj en slumpmässigt</value>
   </data>
   <data name="FolderPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>Add a music folder</value>
+    <value>Lägg till en musikmapp</value>
   </data>
   <data name="FolderPage_AddFolder_Label" xml:space="preserve">
-    <value>Add Folder</value>
+    <value>Lägg till mapp</value>
   </data>
   <data name="FolderPage_Menu_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Spela</value>
   </data>
   <data name="FolderPage_Menu_Rescan" xml:space="preserve">
-    <value>Rescan</value>
+    <value>Skanna om</value>
   </data>
   <data name="FolderPage_Menu_Delete" xml:space="preserve">
-    <value>Delete</value>
+    <value>Ta bort</value>
   </data>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
-    <value>No folders added yet</value>
+    <value>Inga mappar har lagts till än</value>
   </data>
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Add music folders to get started</value>
+    <value>Lägg till musikmappar för att komma igång</value>
   </data>
   <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Spela</value>
   </data>
   <data name="FolderSongViewPage_FolderMenu_AddToPlaylist" xml:space="preserve">
-    <value>Add to playlist</value>
+    <value>Lägg till i spellista</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Spela</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_PlayNext" xml:space="preserve">
-    <value>Play Next</value>
+    <value>Spela nästa</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_AddToQueue" xml:space="preserve">
-    <value>Add to Queue</value>
+    <value>Lägg till i kö</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Add to playlist</value>
+    <value>Lägg till i spellista</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_GoToAlbum" xml:space="preserve">
-    <value>Go to album</value>
+    <value>Gå till album</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_GoToArtist" xml:space="preserve">
-    <value>Go to artist</value>
+    <value>Gå till artist</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Show in explorer</value>
+    <value>Visa i utforskaren</value>
   </data>
   <data name="FolderSongViewPage_SongPlayButton_ToolTip" xml:space="preserve">
-    <value>Play</value>
+    <value>Spela</value>
   </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
-    <value>Folder</value>
+    <value>Mapp</value>
   </data>
   <data name="FolderSongViewPage_Songs_Title" xml:space="preserve">
-    <value>Songs</value>
+    <value>Låtar</value>
   </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Search in folder...</value>
+    <value>Sök i mapp...</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Search in folder</value>
+    <value>Sök i mapp</value>
   </data>
   <data name="FolderSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Play all</value>
+    <value>Spela alla</value>
   </data>
   <data name="FolderSongViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Shuffle and play all</value>
+    <value>Blanda och spela alla</value>
   </data>
   <data name="FolderSongViewPage_Empty_Title" xml:space="preserve">
-    <value>This folder is empty</value>
+    <value>Denna mapp är tom</value>
   </data>
   <data name="FolderSongViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>No songs or subfolders found</value>
+    <value>Inga låtar eller undermappar hittades</value>
   </data>
   <data name="GenrePage_Title" xml:space="preserve">
-    <value>Genres</value>
+    <value>Genrer</value>
   </data>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Search genres...</value>
+    <value>Sök genrer...</value>
   </data>
   <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Search genres</value>
+    <value>Sök genrer</value>
   </data>
   <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Pick one at random</value>
+    <value>Välj en slumpmässigt</value>
   </data>
   <data name="GenrePage_Menu_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Spela</value>
   </data>
   <data name="GenrePage_Empty_Title" xml:space="preserve">
-    <value>No genres found</value>
+    <value>Inga genrer hittades</value>
   </data>
   <data name="GenrePage_Empty_Subtitle" xml:space="preserve">
-    <value>Scan your music library to populate genres</value>
+    <value>Skanna ditt musikbibliotek för att fylla på genrer</value>
   </data>
   <data name="LibraryPage_Title" xml:space="preserve">
-    <value>Library</value>
+    <value>Bibliotek</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Search library...</value>
+    <value>Sök i bibliotek...</value>
   </data>
   <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Search library</value>
+    <value>Sök i bibliotek</value>
   </data>
   <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Play all</value>
+    <value>Spela alla</value>
   </data>
   <data name="LibraryPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Shuffle and play all</value>
+    <value>Blanda och spela alla</value>
   </data>
   <data name="LibraryPage_Context_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Spela</value>
   </data>
   <data name="LibraryPage_Context_PlayNext" xml:space="preserve">
-    <value>Play Next</value>
+    <value>Spela nästa</value>
   </data>
   <data name="LibraryPage_Context_AddToQueue" xml:space="preserve">
-    <value>Add to Queue</value>
+    <value>Lägg till i kö</value>
   </data>
   <data name="LibraryPage_Context_AddToPlaylist" xml:space="preserve">
-    <value>Add to playlist</value>
+    <value>Lägg till i spellista</value>
   </data>
   <data name="LibraryPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Go to album</value>
+    <value>Gå till album</value>
   </data>
   <data name="LibraryPage_Context_GoToArtist" xml:space="preserve">
-    <value>Go to artist</value>
+    <value>Gå till artist</value>
   </data>
   <data name="LibraryPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Show in explorer</value>
+    <value>Visa i utforskaren</value>
   </data>
   <data name="LibraryPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>Play</value>
+    <value>Spela</value>
   </data>
   <data name="LibraryPage_EmptyState_Title" xml:space="preserve">
-    <value>Your library is empty</value>
+    <value>Ditt bibliotek är tomt</value>
   </data>
   <data name="LibraryPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Add folders to your library in Settings</value>
+    <value>Lägg till mappar till ditt bibliotek i Inställningar</value>
   </data>
   <data name="LyricsPage_NoLyrics_Title" xml:space="preserve">
-    <value>No lyrics found for this track</value>
+    <value>Ingen låttext hittades för detta spår</value>
   </data>
   <data name="LyricsPage_NoLyrics_Subtitle" xml:space="preserve">
-    <value>Try another song</value>
+    <value>Prova en annan låt</value>
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
-    <value>Welcome to Nagi</value>
+    <value>Välkommen till Nagi</value>
   </data>
   <data name="OnboardingPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>Add a music folder to get started</value>
+    <value>Lägg till en musikmapp för att komma igång</value>
   </data>
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
-    <value>Add Music Folder</value>
+    <value>Lägg till musikmapp</value>
   </data>
   <data name="PlaylistPage_Title" xml:space="preserve">
-    <value>Playlists</value>
+    <value>Spellistor</value>
   </data>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Search playlists...</value>
+    <value>Sök spellistor...</value>
   </data>
   <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Search playlists</value>
+    <value>Sök spellistor</value>
   </data>
   <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Pick one at random</value>
+    <value>Välj en slumpmässigt</value>
   </data>
   <data name="PlaylistPage_NewPlaylistButton_ToolTip" xml:space="preserve">
-    <value>Create a new playlist</value>
+    <value>Skapa en ny spellista</value>
   </data>
   <data name="PlaylistPage_NewPlaylistButton_Content" xml:space="preserve">
-    <value>New Playlist</value>
+    <value>Ny spellista</value>
   </data>
   <data name="PlaylistPage_NewPlaylistMenu_Regular" xml:space="preserve">
-    <value>Regular Playlist</value>
+    <value>Vanlig spellista</value>
   </data>
   <data name="PlaylistPage_NewPlaylistMenu_Smart" xml:space="preserve">
-    <value>Smart Playlist</value>
+    <value>Smart spellista</value>
   </data>
   <data name="PlaylistPage_Context_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Spela</value>
   </data>
   <data name="PlaylistPage_Context_Rename" xml:space="preserve">
-    <value>Rename</value>
+    <value>Byt namn</value>
   </data>
   <data name="PlaylistPage_Context_ChangeImage" xml:space="preserve">
-    <value>Change Image</value>
+    <value>Ändra bild</value>
   </data>
   <data name="PlaylistPage_Context_RemoveImage" xml:space="preserve">
-    <value>Remove Image</value>
+    <value>Ta bort bild</value>
   </data>
   <data name="PlaylistPage_Context_Delete" xml:space="preserve">
-    <value>Delete</value>
+    <value>Ta bort</value>
   </data>
   <data name="PlaylistPage_EmptyState_Title" xml:space="preserve">
-    <value>No playlists yet</value>
+    <value>Inga spellistor än</value>
   </data>
   <data name="PlaylistPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Create a playlist to get started</value>
+    <value>Skapa en spellista för att komma igång</value>
   </data>
   <data name="PlaylistSongViewPage_Header_Caption" xml:space="preserve">
-    <value>Playlist</value>
+    <value>Spellista</value>
   </data>
   <data name="PlaylistSongViewPage_Section_Songs" xml:space="preserve">
-    <value>Songs</value>
+    <value>Låtar</value>
   </data>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Search in playlist...</value>
+    <value>Sök i spellista...</value>
   </data>
   <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Search in playlist</value>
+    <value>Sök i spellista</value>
   </data>
   <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Play all</value>
+    <value>Spela alla</value>
   </data>
   <data name="PlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Shuffle and play all</value>
+    <value>Blanda och spela alla</value>
   </data>
   <data name="PlaylistSongViewPage_Context_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Spela</value>
   </data>
   <data name="PlaylistSongViewPage_Context_PlayNext" xml:space="preserve">
-    <value>Play Next</value>
+    <value>Spela nästa</value>
   </data>
   <data name="PlaylistSongViewPage_Context_AddToQueue" xml:space="preserve">
-    <value>Add to Queue</value>
+    <value>Lägg till i kö</value>
   </data>
   <data name="PlaylistSongViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Go to album</value>
+    <value>Gå till album</value>
   </data>
   <data name="PlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Go to artist</value>
+    <value>Gå till artist</value>
   </data>
   <data name="PlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Show in explorer</value>
+    <value>Visa i utforskaren</value>
   </data>
   <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
-    <value>Remove from playlist</value>
+    <value>Ta bort från spellista</value>
   </data>
   <data name="PlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>Play</value>
+    <value>Spela</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
-    <value>This playlist is empty</value>
+    <value>Denna spellista är tom</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Add songs from your library</value>
+    <value>Lägg till låtar från ditt bibliotek</value>
   </data>
   <data name="GenreViewPage_Header_Caption" xml:space="preserve">
     <value>Genre</value>
   </data>
   <data name="GenreViewPage_Section_Songs" xml:space="preserve">
-    <value>Songs</value>
+    <value>Låtar</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Search in genre...</value>
+    <value>Sök i genre...</value>
   </data>
   <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Search in genre</value>
+    <value>Sök i genre</value>
   </data>
   <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Play all</value>
+    <value>Spela alla</value>
   </data>
   <data name="GenreViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Shuffle and play all</value>
+    <value>Blanda och spela alla</value>
   </data>
   <data name="GenreViewPage_Context_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Spela</value>
   </data>
   <data name="GenreViewPage_Context_PlayNext" xml:space="preserve">
-    <value>Play Next</value>
+    <value>Spela nästa</value>
   </data>
   <data name="GenreViewPage_Context_AddToQueue" xml:space="preserve">
-    <value>Add to Queue</value>
+    <value>Lägg till i kö</value>
   </data>
   <data name="GenreViewPage_Context_AddToPlaylist" xml:space="preserve">
-    <value>Add to playlist</value>
+    <value>Lägg till i spellista</value>
   </data>
   <data name="GenreViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Go to album</value>
+    <value>Gå till album</value>
   </data>
   <data name="GenreViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Go to artist</value>
+    <value>Gå till artist</value>
   </data>
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Show in explorer</value>
+    <value>Visa i utforskaren</value>
   </data>
   <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
-    <value>No playlists available</value>
+    <value>Inga spellistor tillgängliga</value>
   </data>
   <data name="GenreViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>Play</value>
+    <value>Spela</value>
   </data>
   <data name="GenreViewPage_EmptyState_Title" xml:space="preserve">
-    <value>No songs found for this genre</value>
+    <value>Inga låtar hittades för denna genre</value>
   </data>
   <data name="GenreViewPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Try searching for something else</value>
+    <value>Prova att söka efter något annat</value>
   </data>
   <data name="SettingsPage_Title" xml:space="preserve">
-    <value>Settings</value>
+    <value>Inställningar</value>
   </data>
   <data name="SettingsPage_Section_Appearance" xml:space="preserve">
-    <value>Appearance</value>
+    <value>Utseende</value>
   </data>
   <data name="SettingsPage_Theme_Header" xml:space="preserve">
-    <value>Theme</value>
+    <value>Tema</value>
   </data>
   <data name="SettingsPage_Theme_Description" xml:space="preserve">
-    <value>Choose the application theme.</value>
+    <value>Välj applikationstema.</value>
   </data>
   <data name="SettingsPage_AccentColor" xml:space="preserve">
-    <value>Accent Color</value>
+    <value>Accentfärg</value>
   </data>
   <data name="SettingsPage_ResetAccentColor_Content" xml:space="preserve">
-    <value>Reset to default</value>
+    <value>Återställ till standard</value>
   </data>
   <data name="SettingsPage_WindowMaterial_Header" xml:space="preserve">
-    <value>Window Material</value>
+    <value>Fönstermaterial</value>
   </data>
   <data name="SettingsPage_WindowMaterial_Description" xml:space="preserve">
-    <value>Select the backdrop material for the window.</value>
+    <value>Välj bakgrundsmaterial för fönstret.</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Header" xml:space="preserve">
-    <value>Dynamic Theming</value>
+    <value>Dynamisk tematisering</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Description" xml:space="preserve">
-    <value>Enable and configure dynamic theming options.</value>
+    <value>Aktivera och konfigurera dynamiska temaalternativ.</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Header" xml:space="preserve">
-    <value>Remember window size</value>
+    <value>Kom ihåg fönsterstorlek</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Description" xml:space="preserve">
-    <value>Restore the main window to its previous size on next launch.</value>
+    <value>Återställ huvudfönstret till dess tidigare storlek vid nästa start.</value>
   </data>
   <data name="SettingsPage_RememberWindowPosition_Header" xml:space="preserve">
-    <value>Remember window position</value>
+    <value>Kom ihåg fönsterposition</value>
   </data>
   <data name="SettingsPage_RememberWindowPosition_Description" xml:space="preserve">
-    <value>Restore the main window to its previous screen location on next launch.</value>
+    <value>Återställ huvudfönstret till dess tidigare skärmplats vid nästa start.</value>
   </data>
   <data name="SettingsPage_RememberNavState_Header" xml:space="preserve">
-    <value>Remember navigation panel state</value>
+    <value>Kom ihåg navigationspanelens tillstånd</value>
   </data>
   <data name="SettingsPage_RememberNavState_Description" xml:space="preserve">
-    <value>Keep the left navigation panel open or closed as you left it.</value>
+    <value>Håll vänster navigationspanel öppen eller stängd som du lämnade den.</value>
   </data>
   <data name="SettingsPage_CustomizeNav_Header" xml:space="preserve">
-    <value>Customize Navigation</value>
+    <value>Anpassa navigering</value>
   </data>
   <data name="SettingsPage_CustomizeNav_Description" xml:space="preserve">
-    <value>Drag to reorder pages in the navigation menu. Use the toggle to show or hide a page.</value>
+    <value>Dra för att ändra ordning på sidorna i navigeringsmenyn. Använd växeln för att visa eller dölja en sida.</value>
   </data>
   <data name="SettingsPage_Section_Player" xml:space="preserve">
-    <value>Player Management</value>
+    <value>Spelarhantering</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Header" xml:space="preserve">
-    <value>Volume Normalization (ReplayGain)</value>
+    <value>Volymnormalisering (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
-    <value>Automatically adjust volume to the standard level (-14 LUFS) to avoid sudden loudness changes.</value>
+    <value>Justera volymen automatiskt till standardnivån (-14 LUFS) för att undvika plötsliga volymförändringar.</value>
   </data>
   <data name="SettingsPage_Equalizer" xml:space="preserve">
-    <value>Audio Equalizer</value>
+    <value>Ljudutjämnare</value>
   </data>
   <data name="SettingsPage_ResetEqualizer_Content" xml:space="preserve">
-    <value>Reset to default</value>
+    <value>Återställ till standard</value>
   </data>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
-    <value>Preamp</value>
+    <value>Förförstärkare</value>
   </data>
   <data name="SettingsPage_Equalizer_Preset_Custom_Placeholder" xml:space="preserve">
-    <value>Custom</value>
+    <value>Anpassad</value>
   </data>
   <data name="SettingsPage_CustomizePlayer" xml:space="preserve">
-    <value>Customize Player Controls</value>
+    <value>Anpassa spelarkontroller</value>
   </data>
   <data name="SettingsPage_ResetPlayerButtons_Content" xml:space="preserve">
-    <value>Reset to default</value>
+    <value>Återställ till standard</value>
   </data>
   <data name="SettingsPage_CustomizePlayer_Instructions" xml:space="preserve">
-    <value>Hover to toggle visibility. Drag to reorder. The divider separates center and right controls.</value>
+    <value>Håll muspekaren över för att växla synlighet. Dra för att ändra ordning. Avdelaren separerar mitt- och högerkontroller.</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Header" xml:space="preserve">
-    <value>Collapsable player</value>
+    <value>Hopfällbar spelare</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Description" xml:space="preserve">
-    <value>Animate the player bar to expand and collapse.</value>
+    <value>Animera spelarfältet att expandera och fälla ihop.</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Header" xml:space="preserve">
-    <value>Restore playback state</value>
+    <value>Återställ uppspelningsläge</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Description" xml:space="preserve">
-    <value>Save the current playback state to resume on next launch.</value>
+    <value>Spara det nuvarande uppspelningsläget för att återuppta vid nästa start.</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Header" xml:space="preserve">
-    <value>Auto launch on startup</value>
+    <value>Autostarta vid uppstart</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Description" xml:space="preserve">
-    <value>Start Nagi automatically when you log into your computer.</value>
+    <value>Starta Nagi automatiskt när du loggar in på din dator.</value>
   </data>
   <data name="SettingsPage_StartMinimized_Header" xml:space="preserve">
-    <value>Start minimized</value>
+    <value>Starta minimerad</value>
   </data>
   <data name="SettingsPage_StartMinimized_Description" xml:space="preserve">
-    <value>When launched, the application window will be minimized by default.</value>
+    <value>När applikationen startas kommer fönstret att vara minimerat som standard.</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Header" xml:space="preserve">
-    <value>Minimize to mini-player</value>
+    <value>Minimera till minispelare</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Description" xml:space="preserve">
-    <value>When minimized, show a compact floating player instead of hiding the window.</value>
+    <value>När minimerat, visa en kompakt flytande spelare istället för att dölja fönstret.</value>
   </data>
   <data name="SettingsPage_HideToTray_Header" xml:space="preserve">
-    <value>Hide to system tray</value>
+    <value>Dölj till systemfältet</value>
   </data>
   <data name="SettingsPage_HideToTray_Description" xml:space="preserve">
-    <value>When closed, hide to the system tray instead.</value>
+    <value>När stängt, dölj till systemfältet istället.</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Header" xml:space="preserve">
-    <value>Show cover art in flyout</value>
+    <value>Visa omslag i flyout</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Description" xml:space="preserve">
-    <value>Display the cover art in the compact player that appears when clicking the tray icon.</value>
+    <value>Visa omslagsbilden i den kompakta spelaren som visas när du klickar på systemfältikonen.</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
-    <value>Data Management</value>
+    <value>Datahantering</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Header" xml:space="preserve">
-    <value>Artist Splitting</value>
+    <value>Artistuppdelning</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>Define characters used to split multiple artists (e.g. ';/'). Leave empty to disable.</value>
+    <value>Definiera tecken som används för att dela upp flera artister (t.ex. ';/'). Lämna tomt för att inaktivera.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
-    <value>Rescan Library</value>
+    <value>Skanna om bibliotek</value>
   </data>
   <data name="SettingsPage_RescanLibrary_ToolTip" xml:space="preserve">
-    <value>Rescan library to apply splitting changes</value>
+    <value>Skanna om bibliotek för att tillämpa uppdelningsändringar</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Header" xml:space="preserve">
-    <value>Retrieve online metadata</value>
+    <value>Hämta onlinemetadata</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Fetch additional information like artist images and biographies from online services (e.g., Spotify, Last.fm).</value>
+    <value>Hämta ytterligare information som artistbilder och biografier från onlinetjänster (t.ex. Spotify, Last.fm).</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
-    <value>Sources</value>
+    <value>Källor</value>
   </data>
   <data name="SettingsPage_MetadataSources_Description" xml:space="preserve">
-    <value>Drag to reorder metadata sources. Hover over each source for details.</value>
+    <value>Dra för att ändra ordning på metadatakällor. Håll muspekaren över varje källa för detaljer.</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Header" xml:space="preserve">
-    <value>Fetch online lyrics</value>
+    <value>Hämta online låttexter</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Description" xml:space="preserve">
-    <value>Automatically fetch missing lyrics from online sources. (Privacy: sends track metadata to third-party services)</value>
+    <value>Hämta automatiskt saknade låttexter från onlinekällor. (Integritet: skickar spårmetadata till tredjepartstjänster)</value>
   </data>
   <data name="SettingsPage_LyricsSources_Header" xml:space="preserve">
-    <value>Sources</value>
+    <value>Källor</value>
   </data>
   <data name="SettingsPage_LyricsSources_Description" xml:space="preserve">
-    <value>Drag to reorder lyrics sources. Hover over each source for details.</value>
+    <value>Dra för att ändra ordning på låttextkällor. Håll muspekaren över varje källa för detaljer.</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Header" xml:space="preserve">
-    <value>Export/Import Playlists</value>
+    <value>Exportera/importera spellistor</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Description" xml:space="preserve">
-    <value>Export playlists to M3U files for use in other players, or import M3U playlists into Nagi.</value>
+    <value>Exportera spellistor till M3U-filer för användning i andra spelare, eller importera M3U-spellistor till Nagi.</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_Content" xml:space="preserve">
-    <value>Export All...</value>
+    <value>Exportera alla...</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_ToolTip" xml:space="preserve">
-    <value>Export all playlists to a folder</value>
+    <value>Exportera alla spellistor till en mapp</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_Content" xml:space="preserve">
-    <value>Import...</value>
+    <value>Importera...</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_ToolTip" xml:space="preserve">
-    <value>Import one or more M3U files</value>
+    <value>Importera en eller flera M3U-filer</value>
   </data>
   <data name="SettingsPage_ResetApp_Header" xml:space="preserve">
-    <value>Reset application</value>
+    <value>Återställ applikation</value>
   </data>
   <data name="SettingsPage_ResetApp_Description" xml:space="preserve">
-    <value>This will delete all library data, playlists, and reset all settings to their defaults. The application will restart.</value>
+    <value>Detta kommer att radera all biblioteksdata, spellistor och återställa alla inställningar till standard. Applikationen kommer att startas om.</value>
   </data>
   <data name="SettingsPage_ResetButton_Content" xml:space="preserve">
-    <value>Reset All Data</value>
+    <value>Återställ all data</value>
   </data>
   <data name="SettingsPage_Section_Integrations" xml:space="preserve">
-    <value>Integrations</value>
+    <value>Integrationer</value>
   </data>
   <data name="SettingsPage_LastFm_Header" xml:space="preserve">
     <value>Last.fm</value>
   </data>
   <data name="SettingsPage_LastFm_Description" xml:space="preserve">
-    <value>Connect your Last.fm account to scrobble tracks and show your currently playing song.</value>
+    <value>Anslut ditt Last.fm-konto för att "scrobbla" spår och visa din nuvarande låt.</value>
   </data>
   <data name="SettingsPage_LastFm_Connect_Content" xml:space="preserve">
-    <value>Connect</value>
+    <value>Anslut</value>
   </data>
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
-    <value>Complete</value>
+    <value>Slutför</value>
   </data>
   <data name="SettingsPage_LastFm_Cancel_Content" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Avbryt</value>
   </data>
   <data name="SettingsPage_LastFm_Disconnect_Content" xml:space="preserve">
-    <value>Disconnect</value>
+    <value>Koppla från</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
-    <value>Enable scrobbling</value>
+    <value>Aktivera "scrobbling"</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Description" xml:space="preserve">
-    <value>Automatically add the tracks you listen to on Nagi to your Last.fm profile.</value>
+    <value>Lägg automatiskt till de spår du lyssnar på i Nagi till din Last.fm-profil.</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Header" xml:space="preserve">
-    <value>Update 'Now Playing'</value>
+    <value>Uppdatera "Spelas nu"</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Description" xml:space="preserve">
-    <value>Show your friends on Last.fm what you're currently listening to in real-time.</value>
+    <value>Visa dina vänner på Last.fm vad du lyssnar på i realtid.</value>
   </data>
   <data name="SettingsPage_Discord_Header" xml:space="preserve">
     <value>Discord</value>
   </data>
   <data name="SettingsPage_Discord_Description" xml:space="preserve">
-    <value>Show your current listening activity as your status on Discord.</value>
+    <value>Visa din nuvarande lyssningsaktivitet som din status på Discord.</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
-    <value>Smart Playlist</value>
+    <value>Smart spellista</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Section_Songs" xml:space="preserve">
-    <value>Songs</value>
+    <value>Låtar</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Search in smart playlist...</value>
+    <value>Sök i smart spellista...</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Search in smart playlist</value>
+    <value>Sök i smart spellista</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
-    <value>Edit rules</value>
+    <value>Redigera regler</value>
   </data>
   <data name="SmartPlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Play all</value>
+    <value>Spela alla</value>
   </data>
   <data name="SmartPlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Shuffle and play all</value>
+    <value>Blanda och spela alla</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Spela</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_PlayNext" xml:space="preserve">
-    <value>Play Next</value>
+    <value>Spela nästa</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_AddToQueue" xml:space="preserve">
-    <value>Add to Queue</value>
+    <value>Lägg till i kö</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Go to album</value>
+    <value>Gå till album</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Go to artist</value>
+    <value>Gå till artist</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Show in explorer</value>
+    <value>Visa i utforskaren</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>Play</value>
+    <value>Spela</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
-    <value>No songs match the current rules</value>
+    <value>Inga låtar matchar de nuvarande reglerna</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Try editing the rules</value>
+    <value>Prova att redigera reglerna</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Button_Content" xml:space="preserve">
-    <value>Edit Rules</value>
+    <value>Redigera regler</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Button_ToolTip" xml:space="preserve">
-    <value>Edit rules</value>
+    <value>Redigera regler</value>
   </data>
   <data name="SettingsPage_Section_About" xml:space="preserve">
-    <value>About</value>
+    <value>Om</value>
   </data>
   <data name="SettingsPage_AboutExpander_Header" xml:space="preserve">
-    <value>About Nagi</value>
+    <value>Om Nagi</value>
   </data>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
-    <value>Rediscover your local music collection with Nagi, a music player focused on speed, simplicity, and privacy.</value>
+    <value>Återupptäck din lokala musiksamling med Nagi, en musikspelare fokuserad på snabbhet, enkelhet och integritet.</value>
   </data>
   <data name="SettingsPage_About_VersionPrefix" xml:space="preserve">
     <value>Version </value>
   </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
-    <value>View Licenses</value>
+    <value>Visa licenser</value>
   </data>
   <data name="SettingsPage_About_SourceCode_Content" xml:space="preserve">
-    <value>Source Code</value>
+    <value>Källkod</value>
   </data>
   <data name="SettingsPage_About_CheckUpdates_Content" xml:space="preserve">
-    <value>Check for Updates</value>
+    <value>Sök efter uppdateringar</value>
   </data>
   <data name="SettingsPage_About_Feedback_Content" xml:space="preserve">
-    <value>Send Feedback</value>
+    <value>Skicka feedback</value>
   </data>
   <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>Check for updates on startup</value>
+    <value>Sök efter uppdateringar vid start</value>
   </data>
   <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
-    <value>Automatically check for new versions when the application starts.</value>
+    <value>Kontrollera automatiskt efter nya versioner när applikationen startar.</value>
   </data>
   <data name="SettingsPage_Language_Header" xml:space="preserve">
-    <value>Application Language</value>
+    <value>Applikationsspråk</value>
   </data>
   <data name="SettingsPage_Language_Description" xml:space="preserve">
-    <value>Changes require a restart to take effect</value>
+    <value>Ändringar kräver en omstart för att träda i kraft</value>
   </data>
   <data name="SettingsPage_RestartRequired_Title" xml:space="preserve">
-    <value>Restart Required</value>
+    <value>Omstart krävs</value>
   </data>
   <data name="SettingsPage_RestartRequired_Message" xml:space="preserve">
-    <value>Please restart the application for the language change to fully take effect.</value>
+    <value>Vänligen starta om applikationen för att språkändringen ska träda i kraft helt.</value>
   </data>
 </root>

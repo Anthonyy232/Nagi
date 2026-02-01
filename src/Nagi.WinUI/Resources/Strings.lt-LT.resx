@@ -920,936 +920,936 @@
     <value>Automatinis</value>
   </data>
   <data name="TrayIcon_ShowWindow" xml:space="preserve">
-    <value>Show Window</value>
+    <value>Rodyti langą</value>
   </data>
   <data name="TrayIcon_Exit" xml:space="preserve">
-    <value>Exit</value>
+    <value>Išeiti</value>
   </data>
   <data name="MiniPlayer_BackButton_ToolTip" xml:space="preserve">
-    <value>Back to Player</value>
+    <value>Grįžti į grotuvą</value>
   </data>
   <data name="MiniPlayer_UpNextHeader" xml:space="preserve">
-    <value>Up Next</value>
+    <value>Kitas eilėje</value>
   </data>
   <data name="MiniPlayer_RestoreButton_ToolTip" xml:space="preserve">
-    <value>Show Nagi</value>
+    <value>Rodyti Nagi</value>
   </data>
   <data name="MiniPlayer_PreviousButton_ToolTip" xml:space="preserve">
-    <value>Previous</value>
+    <value>Ankstesnis</value>
   </data>
   <data name="MiniPlayer_NextButton_ToolTip" xml:space="preserve">
-    <value>Next</value>
+    <value>Kitas</value>
   </data>
   <data name="MiniPlayer_QueueButton_ToolTip" xml:space="preserve">
-    <value>Up Next</value>
+    <value>Kitas eilėje</value>
   </data>
   <data name="CrashReport_ReportIssuePreLink" xml:space="preserve">
-    <value>Please consider reporting this by creating an issue on the </value>
+    <value>Apsvarstykite galimybę pranešti apie tai sukurdami užklausą </value>
   </data>
   <data name="CrashReport_IssueLink" xml:space="preserve">
-    <value>Issues page</value>
+    <value>Problemos puslapyje</value>
   </data>
   <data name="CrashReport_ReportIssuePostLink" xml:space="preserve">
     <value>.</value>
   </data>
   <data name="CrashReport_ResetAppAdvice" xml:space="preserve">
-    <value>If this keeps happening, you can try 'Reset App &amp; Data'. This will wipe your settings and library, which can help recover the app from a broken state.</value>
+    <value>Jei tai kartojasi, galite pabandyti „Atstatyti programą ir duomenis“. Tai ištrins jūsų nustatymus ir biblioteką, o tai gali padėti atkurti programą iš neveikiančios būsenos.</value>
   </data>
   <data name="CrashReport_CopyLogButton_ToolTip" xml:space="preserve">
-    <value>Copy log to clipboard</value>
+    <value>Kopijuoti žurnalą į iškarpinę</value>
   </data>
   <data name="CrashReport_CopyLogLabel" xml:space="preserve">
-    <value>Copy Log</value>
+    <value>Kopijuoti žurnalą</value>
   </data>
   <data name="SmartPlaylist_PickCoverButton_Content" xml:space="preserve">
-    <value>Choose Cover</value>
+    <value>Pasirinkti viršelį</value>
   </data>
   <data name="SmartPlaylist_PickCoverButton_ToolTip" xml:space="preserve">
-    <value>Choose a cover image</value>
+    <value>Pasirinkti viršelio paveikslėlį</value>
   </data>
   <data name="SmartPlaylist_PlaylistNameLabel" xml:space="preserve">
-    <value>Playlist Name</value>
+    <value>Grojaraščio pavadinimas</value>
   </data>
   <data name="SmartPlaylist_PlaylistNameTextBox_Placeholder" xml:space="preserve">
-    <value>Enter a name for your smart playlist</value>
+    <value>Įveskite pavadinimą savo išmaniajam grojaraščiui</value>
   </data>
   <data name="SmartPlaylist_SortOrderLabel" xml:space="preserve">
-    <value>Sort Order</value>
+    <value>Rūšiavimo tvarka</value>
   </data>
   <data name="SmartPlaylist_MatchLabel" xml:space="preserve">
-    <value>Match</value>
+    <value>Atitikti</value>
   </data>
   <data name="SmartPlaylist_MatchLogic_All_Content" xml:space="preserve">
-    <value>All</value>
+    <value>Visi</value>
   </data>
   <data name="SmartPlaylist_MatchLogic_Any_Content" xml:space="preserve">
-    <value>Any</value>
+    <value>Bet kuris</value>
   </data>
   <data name="SmartPlaylist_MatchSuffixLabel" xml:space="preserve">
-    <value>of the following rules:</value>
+    <value>iš šių taisyklių:</value>
   </data>
   <data name="SmartPlaylist_AddRuleButton_ToolTip" xml:space="preserve">
-    <value>Add a new rule</value>
+    <value>Pridėti naują taisyklę</value>
   </data>
   <data name="SmartPlaylist_AddRuleLabel" xml:space="preserve">
-    <value>Add Rule</value>
+    <value>Pridėti taisyklę</value>
   </data>
   <data name="SmartPlaylist_RuleValueTextBox_Placeholder" xml:space="preserve">
-    <value>Value</value>
+    <value>Vertė</value>
   </data>
   <data name="SmartPlaylist_RemoveRuleButton_ToolTip" xml:space="preserve">
-    <value>Remove this rule</value>
+    <value>Pašalinti šią taisyklę</value>
   </data>
   <data name="SmartPlaylist_NoRulesTitle" xml:space="preserve">
-    <value>No rules defined</value>
+    <value>Taisyklės neapibrėžtos</value>
   </data>
   <data name="SmartPlaylist_NoRulesMessage" xml:space="preserve">
-    <value>All songs in your library will be included in this playlist.</value>
+    <value>Visos dainos jūsų bibliotekoje bus įtrauktos į šį grojaraštį.</value>
   </data>
   <data name="SmartPlaylist_AddFirstRuleButton_Content" xml:space="preserve">
-    <value>Add Your First Rule</value>
+    <value>Pridėti pirmą taisyklę</value>
   </data>
   <data name="SmartPlaylist_AddFirstRuleButton_ToolTip" xml:space="preserve">
-    <value>Add your first rule</value>
+    <value>Pridėti pirmą taisyklę</value>
   </data>
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
-    <value>Save</value>
+    <value>Išsaugoti</value>
   </data>
   <data name="SmartPlaylist_Dialog_CloseButton" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Atšaukti</value>
   </data>
   <data name="TrayPopup_PreviousButton_ToolTip" xml:space="preserve">
-    <value>Previous</value>
+    <value>Ankstesnis</value>
   </data>
   <data name="TrayPopup_NextButton_ToolTip" xml:space="preserve">
-    <value>Next</value>
+    <value>Kitas</value>
   </data>
   <data name="TrayPopup_QueueButton_ToolTip" xml:space="preserve">
-    <value>Up Next</value>
+    <value>Kitas eilėje</value>
   </data>
   <data name="TrayPopup_BackButton_ToolTip" xml:space="preserve">
-    <value>Back to Player</value>
+    <value>Grįžti į grotuvą</value>
   </data>
   <data name="TrayPopup_UpNextHeader" xml:space="preserve">
-    <value>Up Next</value>
+    <value>Kitas eilėje</value>
   </data>
   <data name="AppName" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="AppDescription" xml:space="preserve">
-    <value>Rediscover your local music collection with Nagi, a music player focused on speed, simplicity, and privacy. Nagi is built with C# and WinUI 3 to offer a clean, native Fluent experience. It's beautiful, efficient, and respects your privacy.</value>
+    <value>Iš naujo atraskite savo vietinę muzikos kolekciją su Nagi – muzikos grotuvu, orientuotu į greitį, paprastumą ir privatumą. Nagi sukurtas naudojant C# ir WinUI 3, kad pasiūlytų švarią, natūralią „Fluent“ patirtį. Jis yra gražus, efektyvus ir gerbia jūsų privatumą.</value>
   </data>
   <data name="AppShortName" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="AppDisplayName" xml:space="preserve">
-    <value>Nagi Music Player</value>
+    <value>Nagi muzikos grotuvas</value>
   </data>
   <data name="AppInfoTip" xml:space="preserve">
-    <value>Open with Nagi Music Player</value>
+    <value>Atidaryti su Nagi muzikos grotuvu</value>
   </data>
   <data name="StartupTaskDisplayName" xml:space="preserve">
-    <value>Nagi Startup</value>
+    <value>Nagi paleistis</value>
   </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
-    <value>Previous</value>
+    <value>Ankstesnis</value>
   </data>
   <data name="Player_NextButton_ToolTip" xml:space="preserve">
-    <value>Next</value>
+    <value>Kitas</value>
   </data>
   <data name="Player_LyricsButton_ToolTip" xml:space="preserve">
-    <value>Lyrics</value>
+    <value>Dainų tekstai</value>
   </data>
   <data name="Player_QueueButton_ToolTip" xml:space="preserve">
-    <value>Up Next</value>
+    <value>Kitas eilėje</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
-    <value>Go to album</value>
+    <value>Eiti į albumą</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
-    <value>Up Next</value>
+    <value>Kitas eilėje</value>
   </data>
   <data name="AlbumPage_Title" xml:space="preserve">
-    <value>Albums</value>
+    <value>Albumai</value>
   </data>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Search albums...</value>
+    <value>Ieškoti albumų...</value>
   </data>
   <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Search albums</value>
+    <value>Ieškoti albumų</value>
   </data>
   <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Pick one at random</value>
+    <value>Pasirinkti atsitiktinį</value>
   </data>
   <data name="AlbumPage_Menu_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Groti</value>
   </data>
   <data name="AlbumPage_Empty_Title" xml:space="preserve">
-    <value>No albums found</value>
+    <value>Albumų nerasta</value>
   </data>
   <data name="AlbumPage_Empty_Subtitle" xml:space="preserve">
-    <value>Scan your music library to populate albums</value>
+    <value>Nuskaitykite savo muzikos biblioteką, kad užpildytumėte albumus</value>
   </data>
   <data name="AlbumViewPage_Header_Label" xml:space="preserve">
-    <value>Album</value>
+    <value>Albumas</value>
   </data>
   <data name="AlbumViewPage_Songs_Title" xml:space="preserve">
-    <value>Songs</value>
+    <value>Dainos</value>
   </data>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Search in album...</value>
+    <value>Ieškoti albume...</value>
   </data>
   <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Search in album</value>
+    <value>Ieškoti albume</value>
   </data>
   <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Play all</value>
+    <value>Groti viską</value>
   </data>
   <data name="AlbumViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Shuffle and play all</value>
+    <value>Maišyti ir groti viską</value>
   </data>
   <data name="AlbumViewPage_SongMenu_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Groti</value>
   </data>
   <data name="AlbumViewPage_SongMenu_PlayNext" xml:space="preserve">
-    <value>Play Next</value>
+    <value>Groti kitą</value>
   </data>
   <data name="AlbumViewPage_SongMenu_AddToQueue" xml:space="preserve">
-    <value>Add to Queue</value>
+    <value>Pridėti į eilę</value>
   </data>
   <data name="AlbumViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Add to playlist</value>
+    <value>Pridėti į grojaraštį</value>
   </data>
   <data name="AlbumViewPage_SongMenu_GoToArtist" xml:space="preserve">
-    <value>Go to artist</value>
+    <value>Eiti į atlikėją</value>
   </data>
   <data name="AlbumViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Show in explorer</value>
+    <value>Rodyti naršyklėje</value>
   </data>
   <data name="AlbumViewPage_SongPlayButton_ToolTip" xml:space="preserve">
-    <value>Play</value>
+    <value>Groti</value>
   </data>
   <data name="AlbumViewPage_Empty_Title" xml:space="preserve">
-    <value>No songs found in this album</value>
+    <value>Šiame albume dainų nerasta</value>
   </data>
   <data name="AlbumViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>Try searching for something else</value>
+    <value>Pabandykite ieškoti ko nors kito</value>
   </data>
   <data name="ArtistPage_Title" xml:space="preserve">
-    <value>Artists</value>
+    <value>Atlikėjai</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Search artists...</value>
+    <value>Ieškoti atlikėjų...</value>
   </data>
   <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Search artists</value>
+    <value>Ieškoti atlikėjų</value>
   </data>
   <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Pick one at random</value>
+    <value>Pasirinkti atsitiktinį</value>
   </data>
   <data name="ArtistPage_Menu_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Groti</value>
   </data>
   <data name="ArtistPage_Menu_ChangeImage" xml:space="preserve">
-    <value>Change Image</value>
+    <value>Pakeisti paveikslėlį</value>
   </data>
   <data name="ArtistPage_Menu_RemoveImage" xml:space="preserve">
-    <value>Remove Image</value>
+    <value>Pašalinti paveikslėlį</value>
   </data>
   <data name="ArtistPage_Empty_Title" xml:space="preserve">
-    <value>No artists found</value>
+    <value>Atlikėjų nerasta</value>
   </data>
   <data name="ArtistPage_Empty_Subtitle" xml:space="preserve">
-    <value>Scan your music library to populate artists</value>
+    <value>Nuskaitykite savo muzikos biblioteką, kad užpildytumėte atlikėjus</value>
   </data>
   <data name="ArtistViewPage_EditOverlay_Content" xml:space="preserve">
-    <value>Change artist image</value>
+    <value>Pakeisti atlikėjo paveikslėlį</value>
   </data>
   <data name="ArtistViewPage_ImageMenu_ChangeImage" xml:space="preserve">
-    <value>Change Image</value>
+    <value>Pakeisti paveikslėlį</value>
   </data>
   <data name="ArtistViewPage_ImageMenu_RemoveImage" xml:space="preserve">
-    <value>Remove Image</value>
+    <value>Pašalinti paveikslėlį</value>
   </data>
   <data name="ArtistViewPage_Header_Label" xml:space="preserve">
-    <value>Artist</value>
+    <value>Atlikėjas</value>
   </data>
   <data name="ArtistViewPage_Albums_Title" xml:space="preserve">
-    <value>Top Albums</value>
+    <value>Populiariausi albumai</value>
   </data>
   <data name="ArtistViewPage_Songs_Title" xml:space="preserve">
-    <value>Songs</value>
+    <value>Dainos</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Search in artist...</value>
+    <value>Ieškoti atlikėjyje...</value>
   </data>
   <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Search in artist</value>
+    <value>Ieškoti atlikėjyje</value>
   </data>
   <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Play all</value>
+    <value>Groti viską</value>
   </data>
   <data name="ArtistViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Shuffle and play all</value>
+    <value>Maišyti ir groti viską</value>
   </data>
   <data name="ArtistViewPage_SongMenu_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Groti</value>
   </data>
   <data name="ArtistViewPage_SongMenu_PlayNext" xml:space="preserve">
-    <value>Play Next</value>
+    <value>Groti kitą</value>
   </data>
   <data name="ArtistViewPage_SongMenu_AddToQueue" xml:space="preserve">
-    <value>Add to Queue</value>
+    <value>Pridėti į eilę</value>
   </data>
   <data name="ArtistViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Add to playlist</value>
+    <value>Pridėti į grojaraštį</value>
   </data>
   <data name="ArtistViewPage_SongMenu_GoToAlbum" xml:space="preserve">
-    <value>Go to album</value>
+    <value>Eiti į albumą</value>
   </data>
   <data name="ArtistViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Show in explorer</value>
+    <value>Rodyti naršyklėje</value>
   </data>
   <data name="ArtistViewPage_SongPlayButton_ToolTip" xml:space="preserve">
-    <value>Play</value>
+    <value>Groti</value>
   </data>
   <data name="ArtistViewPage_Empty_Title" xml:space="preserve">
-    <value>No songs found for this artist</value>
+    <value>Šiam atlikėjui dainų nerasta</value>
   </data>
   <data name="ArtistViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>Try searching for something else</value>
+    <value>Pabandykite ieškoti ko nors kito</value>
   </data>
   <data name="FolderPage_Title" xml:space="preserve">
-    <value>Folders</value>
+    <value>Aplankai</value>
   </data>
   <data name="FolderPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Pick one at random</value>
+    <value>Pasirinkti atsitiktinį</value>
   </data>
   <data name="FolderPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>Add a music folder</value>
+    <value>Pridėti muzikos aplanką</value>
   </data>
   <data name="FolderPage_AddFolder_Label" xml:space="preserve">
-    <value>Add Folder</value>
+    <value>Pridėti aplanką</value>
   </data>
   <data name="FolderPage_Menu_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Groti</value>
   </data>
   <data name="FolderPage_Menu_Rescan" xml:space="preserve">
-    <value>Rescan</value>
+    <value>Nuskaityti iš naujo</value>
   </data>
   <data name="FolderPage_Menu_Delete" xml:space="preserve">
-    <value>Delete</value>
+    <value>Ištrinti</value>
   </data>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
-    <value>No folders added yet</value>
+    <value>Dar nepridėta aplankų</value>
   </data>
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Add music folders to get started</value>
+    <value>Pridėkite muzikos aplankus, kad pradėtumėte</value>
   </data>
   <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Groti</value>
   </data>
   <data name="FolderSongViewPage_FolderMenu_AddToPlaylist" xml:space="preserve">
-    <value>Add to playlist</value>
+    <value>Pridėti į grojaraštį</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Groti</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_PlayNext" xml:space="preserve">
-    <value>Play Next</value>
+    <value>Groti kitą</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_AddToQueue" xml:space="preserve">
-    <value>Add to Queue</value>
+    <value>Pridėti į eilę</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Add to playlist</value>
+    <value>Pridėti į grojaraštį</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_GoToAlbum" xml:space="preserve">
-    <value>Go to album</value>
+    <value>Eiti į albumą</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_GoToArtist" xml:space="preserve">
-    <value>Go to artist</value>
+    <value>Eiti į atlikėją</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Show in explorer</value>
+    <value>Rodyti naršyklėje</value>
   </data>
   <data name="FolderSongViewPage_SongPlayButton_ToolTip" xml:space="preserve">
-    <value>Play</value>
+    <value>Groti</value>
   </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
-    <value>Folder</value>
+    <value>Aplankas</value>
   </data>
   <data name="FolderSongViewPage_Songs_Title" xml:space="preserve">
-    <value>Songs</value>
+    <value>Dainos</value>
   </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Search in folder...</value>
+    <value>Ieškoti aplanke...</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Search in folder</value>
+    <value>Ieškoti aplanke</value>
   </data>
   <data name="FolderSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Play all</value>
+    <value>Groti viską</value>
   </data>
   <data name="FolderSongViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Shuffle and play all</value>
+    <value>Maišyti ir groti viską</value>
   </data>
   <data name="FolderSongViewPage_Empty_Title" xml:space="preserve">
-    <value>This folder is empty</value>
+    <value>Šis aplankas tuščias</value>
   </data>
   <data name="FolderSongViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>No songs or subfolders found</value>
+    <value>Dainų ar poaplankių nerasta</value>
   </data>
   <data name="GenrePage_Title" xml:space="preserve">
-    <value>Genres</value>
+    <value>Žanrai</value>
   </data>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Search genres...</value>
+    <value>Ieškoti žanrų...</value>
   </data>
   <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Search genres</value>
+    <value>Ieškoti žanrų</value>
   </data>
   <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Pick one at random</value>
+    <value>Pasirinkti atsitiktinį</value>
   </data>
   <data name="GenrePage_Menu_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Groti</value>
   </data>
   <data name="GenrePage_Empty_Title" xml:space="preserve">
-    <value>No genres found</value>
+    <value>Žanrų nerasta</value>
   </data>
   <data name="GenrePage_Empty_Subtitle" xml:space="preserve">
-    <value>Scan your music library to populate genres</value>
+    <value>Nuskaitykite savo muzikos biblioteką, kad užpildytumėte žanrus</value>
   </data>
   <data name="LibraryPage_Title" xml:space="preserve">
-    <value>Library</value>
+    <value>Biblioteka</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Search library...</value>
+    <value>Ieškoti bibliotekoje...</value>
   </data>
   <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Search library</value>
+    <value>Ieškoti bibliotekoje</value>
   </data>
   <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Play all</value>
+    <value>Groti viską</value>
   </data>
   <data name="LibraryPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Shuffle and play all</value>
+    <value>Maišyti ir groti viską</value>
   </data>
   <data name="LibraryPage_Context_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Groti</value>
   </data>
   <data name="LibraryPage_Context_PlayNext" xml:space="preserve">
-    <value>Play Next</value>
+    <value>Groti kitą</value>
   </data>
   <data name="LibraryPage_Context_AddToQueue" xml:space="preserve">
-    <value>Add to Queue</value>
+    <value>Pridėti į eilę</value>
   </data>
   <data name="LibraryPage_Context_AddToPlaylist" xml:space="preserve">
-    <value>Add to playlist</value>
+    <value>Pridėti į grojaraštį</value>
   </data>
   <data name="LibraryPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Go to album</value>
+    <value>Eiti į albumą</value>
   </data>
   <data name="LibraryPage_Context_GoToArtist" xml:space="preserve">
-    <value>Go to artist</value>
+    <value>Eiti į atlikėją</value>
   </data>
   <data name="LibraryPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Show in explorer</value>
+    <value>Rodyti naršyklėje</value>
   </data>
   <data name="LibraryPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>Play</value>
+    <value>Groti</value>
   </data>
   <data name="LibraryPage_EmptyState_Title" xml:space="preserve">
-    <value>Your library is empty</value>
+    <value>Jūsų biblioteka tuščia</value>
   </data>
   <data name="LibraryPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Add folders to your library in Settings</value>
+    <value>Pridėkite aplankų į savo biblioteką nustatymuose</value>
   </data>
   <data name="LyricsPage_NoLyrics_Title" xml:space="preserve">
-    <value>No lyrics found for this track</value>
+    <value>Šiam kūriniui dainų tekstų nerasta</value>
   </data>
   <data name="LyricsPage_NoLyrics_Subtitle" xml:space="preserve">
-    <value>Try another song</value>
+    <value>Pabandykite kitą dainą</value>
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
-    <value>Welcome to Nagi</value>
+    <value>Sveiki atvykę į Nagi</value>
   </data>
   <data name="OnboardingPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>Add a music folder to get started</value>
+    <value>Pridėkite muzikos aplanką, kad pradėtumėte</value>
   </data>
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
-    <value>Add Music Folder</value>
+    <value>Pridėti muzikos aplanką</value>
   </data>
   <data name="PlaylistPage_Title" xml:space="preserve">
-    <value>Playlists</value>
+    <value>Grojaraščiai</value>
   </data>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Search playlists...</value>
+    <value>Ieškoti grojaraščių...</value>
   </data>
   <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Search playlists</value>
+    <value>Ieškoti grojaraščių</value>
   </data>
   <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Pick one at random</value>
+    <value>Pasirinkti atsitiktinį</value>
   </data>
   <data name="PlaylistPage_NewPlaylistButton_ToolTip" xml:space="preserve">
-    <value>Create a new playlist</value>
+    <value>Sukurti naują grojaraštį</value>
   </data>
   <data name="PlaylistPage_NewPlaylistButton_Content" xml:space="preserve">
-    <value>New Playlist</value>
+    <value>Naujas grojaraštis</value>
   </data>
   <data name="PlaylistPage_NewPlaylistMenu_Regular" xml:space="preserve">
-    <value>Regular Playlist</value>
+    <value>Įprastas grojaraštis</value>
   </data>
   <data name="PlaylistPage_NewPlaylistMenu_Smart" xml:space="preserve">
-    <value>Smart Playlist</value>
+    <value>Išmanusis grojaraštis</value>
   </data>
   <data name="PlaylistPage_Context_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Groti</value>
   </data>
   <data name="PlaylistPage_Context_Rename" xml:space="preserve">
-    <value>Rename</value>
+    <value>Pervadinti</value>
   </data>
   <data name="PlaylistPage_Context_ChangeImage" xml:space="preserve">
-    <value>Change Image</value>
+    <value>Pakeisti paveikslėlį</value>
   </data>
   <data name="PlaylistPage_Context_RemoveImage" xml:space="preserve">
-    <value>Remove Image</value>
+    <value>Pašalinti paveikslėlį</value>
   </data>
   <data name="PlaylistPage_Context_Delete" xml:space="preserve">
-    <value>Delete</value>
+    <value>Ištrinti</value>
   </data>
   <data name="PlaylistPage_EmptyState_Title" xml:space="preserve">
-    <value>No playlists yet</value>
+    <value>Dar nėra grojaraščių</value>
   </data>
   <data name="PlaylistPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Create a playlist to get started</value>
+    <value>Sukurkite grojaraštį, kad pradėtumėte</value>
   </data>
   <data name="PlaylistSongViewPage_Header_Caption" xml:space="preserve">
-    <value>Playlist</value>
+    <value>Grojaraštis</value>
   </data>
   <data name="PlaylistSongViewPage_Section_Songs" xml:space="preserve">
-    <value>Songs</value>
+    <value>Dainos</value>
   </data>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Search in playlist...</value>
+    <value>Ieškoti grojaraštyje...</value>
   </data>
   <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Search in playlist</value>
+    <value>Ieškoti grojaraštyje</value>
   </data>
   <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Play all</value>
+    <value>Groti viską</value>
   </data>
   <data name="PlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Shuffle and play all</value>
+    <value>Maišyti ir groti viską</value>
   </data>
   <data name="PlaylistSongViewPage_Context_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Groti</value>
   </data>
   <data name="PlaylistSongViewPage_Context_PlayNext" xml:space="preserve">
-    <value>Play Next</value>
+    <value>Groti kitą</value>
   </data>
   <data name="PlaylistSongViewPage_Context_AddToQueue" xml:space="preserve">
-    <value>Add to Queue</value>
+    <value>Pridėti į eilę</value>
   </data>
   <data name="PlaylistSongViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Go to album</value>
+    <value>Eiti į albumą</value>
   </data>
   <data name="PlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Go to artist</value>
+    <value>Eiti į atlikėją</value>
   </data>
   <data name="PlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Show in explorer</value>
+    <value>Rodyti naršyklėje</value>
   </data>
   <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
-    <value>Remove from playlist</value>
+    <value>Pašalinti iš grojaraščio</value>
   </data>
   <data name="PlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>Play</value>
+    <value>Groti</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
-    <value>This playlist is empty</value>
+    <value>Šis grojaraštis tuščias</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Add songs from your library</value>
+    <value>Pridėkite dainų iš savo bibliotekos</value>
   </data>
   <data name="GenreViewPage_Header_Caption" xml:space="preserve">
-    <value>Genre</value>
+    <value>Žanras</value>
   </data>
   <data name="GenreViewPage_Section_Songs" xml:space="preserve">
-    <value>Songs</value>
+    <value>Dainos</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Search in genre...</value>
+    <value>Ieškoti žanre...</value>
   </data>
   <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Search in genre</value>
+    <value>Ieškoti žanre</value>
   </data>
   <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Play all</value>
+    <value>Groti viską</value>
   </data>
   <data name="GenreViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Shuffle and play all</value>
+    <value>Maišyti ir groti viską</value>
   </data>
   <data name="GenreViewPage_Context_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Groti</value>
   </data>
   <data name="GenreViewPage_Context_PlayNext" xml:space="preserve">
-    <value>Play Next</value>
+    <value>Groti kitą</value>
   </data>
   <data name="GenreViewPage_Context_AddToQueue" xml:space="preserve">
-    <value>Add to Queue</value>
+    <value>Pridėti į eilę</value>
   </data>
   <data name="GenreViewPage_Context_AddToPlaylist" xml:space="preserve">
-    <value>Add to playlist</value>
+    <value>Pridėti į grojaraštį</value>
   </data>
   <data name="GenreViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Go to album</value>
+    <value>Eiti į albumą</value>
   </data>
   <data name="GenreViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Go to artist</value>
+    <value>Eiti į atlikėją</value>
   </data>
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Show in explorer</value>
+    <value>Rodyti naršyklėje</value>
   </data>
   <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
-    <value>No playlists available</value>
+    <value>Nėra grojaraščių</value>
   </data>
   <data name="GenreViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>Play</value>
+    <value>Groti</value>
   </data>
   <data name="GenreViewPage_EmptyState_Title" xml:space="preserve">
-    <value>No songs found for this genre</value>
+    <value>Šiam žanrui dainų nerasta</value>
   </data>
   <data name="GenreViewPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Try searching for something else</value>
+    <value>Pabandykite ieškoti ko nors kito</value>
   </data>
   <data name="SettingsPage_Title" xml:space="preserve">
-    <value>Settings</value>
+    <value>Nustatymai</value>
   </data>
   <data name="SettingsPage_Section_Appearance" xml:space="preserve">
-    <value>Appearance</value>
+    <value>Išvaizda</value>
   </data>
   <data name="SettingsPage_Theme_Header" xml:space="preserve">
-    <value>Theme</value>
+    <value>Tema</value>
   </data>
   <data name="SettingsPage_Theme_Description" xml:space="preserve">
-    <value>Choose the application theme.</value>
+    <value>Pasirinkite programos temą.</value>
   </data>
   <data name="SettingsPage_AccentColor" xml:space="preserve">
-    <value>Accent Color</value>
+    <value>Akcento spalva</value>
   </data>
   <data name="SettingsPage_ResetAccentColor_Content" xml:space="preserve">
-    <value>Reset to default</value>
+    <value>Atstatyti numatytuosius</value>
   </data>
   <data name="SettingsPage_WindowMaterial_Header" xml:space="preserve">
-    <value>Window Material</value>
+    <value>Lango medžiaga</value>
   </data>
   <data name="SettingsPage_WindowMaterial_Description" xml:space="preserve">
-    <value>Select the backdrop material for the window.</value>
+    <value>Pasirinkite lango fono medžiagą.</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Header" xml:space="preserve">
-    <value>Dynamic Theming</value>
+    <value>Dinaminė tema</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Description" xml:space="preserve">
-    <value>Enable and configure dynamic theming options.</value>
+    <value>Įjungti ir konfigūruoti dinaminės temos parinktis.</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Header" xml:space="preserve">
-    <value>Remember window size</value>
+    <value>Prisiminti lango dydį</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Description" xml:space="preserve">
-    <value>Restore the main window to its previous size on next launch.</value>
+    <value>Atkūrti pagrindinį langą į ankstesnį dydį kitą kartą paleidus.</value>
   </data>
   <data name="SettingsPage_RememberWindowPosition_Header" xml:space="preserve">
-    <value>Remember window position</value>
+    <value>Prisiminti lango padėtį</value>
   </data>
   <data name="SettingsPage_RememberWindowPosition_Description" xml:space="preserve">
-    <value>Restore the main window to its previous screen location on next launch.</value>
+    <value>Atkūrti pagrindinį langą į ankstesnę ekrano vietą kitą kartą paleidus.</value>
   </data>
   <data name="SettingsPage_RememberNavState_Header" xml:space="preserve">
-    <value>Remember navigation panel state</value>
+    <value>Prisiminti naršymo skydelio būseną</value>
   </data>
   <data name="SettingsPage_RememberNavState_Description" xml:space="preserve">
-    <value>Keep the left navigation panel open or closed as you left it.</value>
+    <value>Palikti kairįjį naršymo skydelį atidarytą arba uždarytą, kaip jį palikote.</value>
   </data>
   <data name="SettingsPage_CustomizeNav_Header" xml:space="preserve">
-    <value>Customize Navigation</value>
+    <value>Tinkinti naršymą</value>
   </data>
   <data name="SettingsPage_CustomizeNav_Description" xml:space="preserve">
-    <value>Drag to reorder pages in the navigation menu. Use the toggle to show or hide a page.</value>
+    <value>Vilkite, kad pertvarkytumėte puslapius naršymo meniu. Naudokite jungiklį puslapiui rodyti arba slėpti.</value>
   </data>
   <data name="SettingsPage_Section_Player" xml:space="preserve">
-    <value>Player Management</value>
+    <value>Grotuvo valdymas</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Header" xml:space="preserve">
-    <value>Volume Normalization (ReplayGain)</value>
+    <value>Garso normalizavimas (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
-    <value>Automatically adjust volume to the standard level (-14 LUFS) to avoid sudden loudness changes.</value>
+    <value>Automatiškai reguliuoti garsumą iki standartinio lygio (-14 LUFS), kad būtų išvengta staigių garsumo pokyčių.</value>
   </data>
   <data name="SettingsPage_Equalizer" xml:space="preserve">
-    <value>Audio Equalizer</value>
+    <value>Garso ekvalaizeris</value>
   </data>
   <data name="SettingsPage_ResetEqualizer_Content" xml:space="preserve">
-    <value>Reset to default</value>
+    <value>Atstatyti numatytuosius</value>
   </data>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
-    <value>Preamp</value>
+    <value>Išankstinis stiprintuvas</value>
   </data>
   <data name="SettingsPage_Equalizer_Preset_Custom_Placeholder" xml:space="preserve">
-    <value>Custom</value>
+    <value>Pasirinktinis</value>
   </data>
   <data name="SettingsPage_CustomizePlayer" xml:space="preserve">
-    <value>Customize Player Controls</value>
+    <value>Tinkinti grotuvo valdiklius</value>
   </data>
   <data name="SettingsPage_ResetPlayerButtons_Content" xml:space="preserve">
-    <value>Reset to default</value>
+    <value>Atstatyti numatytuosius</value>
   </data>
   <data name="SettingsPage_CustomizePlayer_Instructions" xml:space="preserve">
-    <value>Hover to toggle visibility. Drag to reorder. The divider separates center and right controls.</value>
+    <value>Užveskite pelės žymeklį, kad perjungtumėte matomumą. Vilkite, kad pertvarkytumėte. Skirstiklis atskiria centrinius ir dešiniuosius valdiklius.</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Header" xml:space="preserve">
-    <value>Collapsable player</value>
+    <value>Sutraukiamas grotuvas</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Description" xml:space="preserve">
-    <value>Animate the player bar to expand and collapse.</value>
+    <value>Animuoti grotuvo juostą, kad ji išsiplėstų ir susitrauktų.</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Header" xml:space="preserve">
-    <value>Restore playback state</value>
+    <value>Atkurti grojimo būseną</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Description" xml:space="preserve">
-    <value>Save the current playback state to resume on next launch.</value>
+    <value>Išsaugoti dabartinę grojimo būseną, kad būtų galima tęsti kitą kartą paleidus.</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Header" xml:space="preserve">
-    <value>Auto launch on startup</value>
+    <value>Automatinis paleidimas paleidus</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Description" xml:space="preserve">
-    <value>Start Nagi automatically when you log into your computer.</value>
+    <value>Automatiškai paleisti Nagi prisijungus prie kompiuterio.</value>
   </data>
   <data name="SettingsPage_StartMinimized_Header" xml:space="preserve">
-    <value>Start minimized</value>
+    <value>Paleisti sumažintą</value>
   </data>
   <data name="SettingsPage_StartMinimized_Description" xml:space="preserve">
-    <value>When launched, the application window will be minimized by default.</value>
+    <value>Paleidus, programos langas bus numatytai sumažintas.</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Header" xml:space="preserve">
-    <value>Minimize to mini-player</value>
+    <value>Sumažinti iki mini-grotuvo</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Description" xml:space="preserve">
-    <value>When minimized, show a compact floating player instead of hiding the window.</value>
+    <value>Kai sumažintas, rodyti kompaktišką plaukiojantį grotuvą, o ne paslėpti langą.</value>
   </data>
   <data name="SettingsPage_HideToTray_Header" xml:space="preserve">
-    <value>Hide to system tray</value>
+    <value>Slėpti į sistemos dėklą</value>
   </data>
   <data name="SettingsPage_HideToTray_Description" xml:space="preserve">
-    <value>When closed, hide to the system tray instead.</value>
+    <value>Uždarius, paslėpti į sistemos dėklą.</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Header" xml:space="preserve">
-    <value>Show cover art in flyout</value>
+    <value>Rodyti viršelio paveikslėlį iškylančiame lange</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Description" xml:space="preserve">
-    <value>Display the cover art in the compact player that appears when clicking the tray icon.</value>
+    <value>Rodyti viršelio paveikslėlį kompaktiškame grotuve, kuris pasirodo spustelėjus sistemos dėklo piktogramą.</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
-    <value>Data Management</value>
+    <value>Duomenų valdymas</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Header" xml:space="preserve">
-    <value>Artist Splitting</value>
+    <value>Atlikėjų skaidymas</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>Define characters used to split multiple artists (e.g. ';/'). Leave empty to disable.</value>
+    <value>Apibrėžkite simbolius, naudojamus atskirti kelis atlikėjus (pvz., „;/“). Palikite tuščią, kad išjungtumėte.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
-    <value>Rescan Library</value>
+    <value>Nuskaityti biblioteką iš naujo</value>
   </data>
   <data name="SettingsPage_RescanLibrary_ToolTip" xml:space="preserve">
-    <value>Rescan library to apply splitting changes</value>
+    <value>Nuskaitykite biblioteką iš naujo, kad pritaikytumėte skaidymo pakeitimus</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Header" xml:space="preserve">
-    <value>Retrieve online metadata</value>
+    <value>Gauti metaduomenis internetu</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Fetch additional information like artist images and biographies from online services (e.g., Spotify, Last.fm).</value>
+    <value>Gauti papildomą informaciją, pvz., atlikėjų paveikslėlius ir biografijas, iš internetinių paslaugų (pvz., Spotify, Last.fm).</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
-    <value>Sources</value>
+    <value>Šaltiniai</value>
   </data>
   <data name="SettingsPage_MetadataSources_Description" xml:space="preserve">
-    <value>Drag to reorder metadata sources. Hover over each source for details.</value>
+    <value>Vilkite, kad pertvarkytumėte metaduomenų šaltinius. Užveskite pelės žymeklį virš kiekvieno šaltinio, kad gautumėte išsamią informaciją.</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Header" xml:space="preserve">
-    <value>Fetch online lyrics</value>
+    <value>Gauti dainų tekstus internetu</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Description" xml:space="preserve">
-    <value>Automatically fetch missing lyrics from online sources. (Privacy: sends track metadata to third-party services)</value>
+    <value>Automatiškai gauti trūkstamus dainų tekstus iš internetinių šaltinių. (Privatumas: siunčia kūrinių metaduomenis trečiųjų šalių paslaugoms)</value>
   </data>
   <data name="SettingsPage_LyricsSources_Header" xml:space="preserve">
-    <value>Sources</value>
+    <value>Šaltiniai</value>
   </data>
   <data name="SettingsPage_LyricsSources_Description" xml:space="preserve">
-    <value>Drag to reorder lyrics sources. Hover over each source for details.</value>
+    <value>Vilkite, kad pertvarkytumėte dainų tekstų šaltinius. Užveskite pelės žymeklį virš kiekvieno šaltinio, kad gautumėte išsamią informaciją.</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Header" xml:space="preserve">
-    <value>Export/Import Playlists</value>
+    <value>Eksportuoti/Importuoti grojaraščius</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Description" xml:space="preserve">
-    <value>Export playlists to M3U files for use in other players, or import M3U playlists into Nagi.</value>
+    <value>Eksportuoti grojaraščius į M3U failus, skirtus naudoti kituose grotuvuose, arba importuoti M3U grojaraščius į Nagi.</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_Content" xml:space="preserve">
-    <value>Export All...</value>
+    <value>Eksportuoti viską...</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_ToolTip" xml:space="preserve">
-    <value>Export all playlists to a folder</value>
+    <value>Eksportuoti visus grojaraščius į aplanką</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_Content" xml:space="preserve">
-    <value>Import...</value>
+    <value>Importuoti...</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_ToolTip" xml:space="preserve">
-    <value>Import one or more M3U files</value>
+    <value>Importuoti vieną ar daugiau M3U failų</value>
   </data>
   <data name="SettingsPage_ResetApp_Header" xml:space="preserve">
-    <value>Reset application</value>
+    <value>Atstatyti programą</value>
   </data>
   <data name="SettingsPage_ResetApp_Description" xml:space="preserve">
-    <value>This will delete all library data, playlists, and reset all settings to their defaults. The application will restart.</value>
+    <value>Tai ištrins visus bibliotekos duomenis, grojaraščius ir atstatys visus nustatymus į numatytuosius. Programa bus paleista iš naujo.</value>
   </data>
   <data name="SettingsPage_ResetButton_Content" xml:space="preserve">
-    <value>Reset All Data</value>
+    <value>Atstatyti visus duomenis</value>
   </data>
   <data name="SettingsPage_Section_Integrations" xml:space="preserve">
-    <value>Integrations</value>
+    <value>Integracijos</value>
   </data>
   <data name="SettingsPage_LastFm_Header" xml:space="preserve">
     <value>Last.fm</value>
   </data>
   <data name="SettingsPage_LastFm_Description" xml:space="preserve">
-    <value>Connect your Last.fm account to scrobble tracks and show your currently playing song.</value>
+    <value>Prijunkite savo Last.fm paskyrą, kad įrašytumėte kūrinius ir rodytumėte šiuo metu grojančią dainą.</value>
   </data>
   <data name="SettingsPage_LastFm_Connect_Content" xml:space="preserve">
-    <value>Connect</value>
+    <value>Prisijungti</value>
   </data>
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
-    <value>Complete</value>
+    <value>Baigti</value>
   </data>
   <data name="SettingsPage_LastFm_Cancel_Content" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Atšaukti</value>
   </data>
   <data name="SettingsPage_LastFm_Disconnect_Content" xml:space="preserve">
-    <value>Disconnect</value>
+    <value>Atsijungti</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
-    <value>Enable scrobbling</value>
+    <value>Įjungti scrobbling</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Description" xml:space="preserve">
-    <value>Automatically add the tracks you listen to on Nagi to your Last.fm profile.</value>
+    <value>Automatiškai pridėti kūrinius, kurių klausotės Nagi, į savo Last.fm profilį.</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Header" xml:space="preserve">
-    <value>Update 'Now Playing'</value>
+    <value>Atnaujinti „Dabar grojama“</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Description" xml:space="preserve">
-    <value>Show your friends on Last.fm what you're currently listening to in real-time.</value>
+    <value>Rodykite savo draugams Last.fm, ko šiuo metu klausotės realiuoju laiku.</value>
   </data>
   <data name="SettingsPage_Discord_Header" xml:space="preserve">
     <value>Discord</value>
   </data>
   <data name="SettingsPage_Discord_Description" xml:space="preserve">
-    <value>Show your current listening activity as your status on Discord.</value>
+    <value>Rodyti savo dabartinę klausymosi veiklą kaip būseną „Discord“.</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
-    <value>Smart Playlist</value>
+    <value>Išmanusis grojaraštis</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Section_Songs" xml:space="preserve">
-    <value>Songs</value>
+    <value>Dainos</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Search in smart playlist...</value>
+    <value>Ieškoti išmaniajame grojaraštyje...</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Search in smart playlist</value>
+    <value>Ieškoti išmaniajame grojaraštyje</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
-    <value>Edit rules</value>
+    <value>Redaguoti taisykles</value>
   </data>
   <data name="SmartPlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Play all</value>
+    <value>Groti viską</value>
   </data>
   <data name="SmartPlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Shuffle and play all</value>
+    <value>Maišyti ir groti viską</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Groti</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_PlayNext" xml:space="preserve">
-    <value>Play Next</value>
+    <value>Groti kitą</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_AddToQueue" xml:space="preserve">
-    <value>Add to Queue</value>
+    <value>Pridėti į eilę</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Go to album</value>
+    <value>Eiti į albumą</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Go to artist</value>
+    <value>Eiti į atlikėją</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Show in explorer</value>
+    <value>Rodyti naršyklėje</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>Play</value>
+    <value>Groti</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
-    <value>No songs match the current rules</value>
+    <value>Nėra dainų, atitinkančių dabartines taisykles</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Try editing the rules</value>
+    <value>Pabandykite redaguoti taisykles</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Button_Content" xml:space="preserve">
-    <value>Edit Rules</value>
+    <value>Redaguoti taisykles</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Button_ToolTip" xml:space="preserve">
-    <value>Edit rules</value>
+    <value>Redaguoti taisykles</value>
   </data>
   <data name="SettingsPage_Section_About" xml:space="preserve">
-    <value>About</value>
+    <value>Apie</value>
   </data>
   <data name="SettingsPage_AboutExpander_Header" xml:space="preserve">
-    <value>About Nagi</value>
+    <value>Apie Nagi</value>
   </data>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
-    <value>Rediscover your local music collection with Nagi, a music player focused on speed, simplicity, and privacy.</value>
+    <value>Iš naujo atraskite savo vietinę muzikos kolekciją su Nagi – muzikos grotuvu, orientuotu į greitį, paprastumą ir privatumą.</value>
   </data>
   <data name="SettingsPage_About_VersionPrefix" xml:space="preserve">
-    <value>Version </value>
+    <value>Versija </value>
   </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
-    <value>View Licenses</value>
+    <value>Peržiūrėti licencijas</value>
   </data>
   <data name="SettingsPage_About_SourceCode_Content" xml:space="preserve">
-    <value>Source Code</value>
+    <value>Šaltinio kodas</value>
   </data>
   <data name="SettingsPage_About_CheckUpdates_Content" xml:space="preserve">
-    <value>Check for Updates</value>
+    <value>Patikrinti atnaujinimus</value>
   </data>
   <data name="SettingsPage_About_Feedback_Content" xml:space="preserve">
-    <value>Send Feedback</value>
+    <value>Siųsti atsiliepimą</value>
   </data>
   <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>Check for updates on startup</value>
+    <value>Tikrinti atnaujinimus paleidus</value>
   </data>
   <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
-    <value>Automatically check for new versions when the application starts.</value>
+    <value>Automatiškai tikrinti, ar yra naujų versijų, kai programa paleidžiama.</value>
   </data>
   <data name="SettingsPage_Language_Header" xml:space="preserve">
-    <value>Application Language</value>
+    <value>Programos kalba</value>
   </data>
   <data name="SettingsPage_Language_Description" xml:space="preserve">
-    <value>Changes require a restart to take effect</value>
+    <value>Pakeitimams įsigalioti reikia paleisti iš naujo</value>
   </data>
   <data name="SettingsPage_RestartRequired_Title" xml:space="preserve">
-    <value>Restart Required</value>
+    <value>Reikia paleisti iš naujo</value>
   </data>
   <data name="SettingsPage_RestartRequired_Message" xml:space="preserve">
-    <value>Please restart the application for the language change to fully take effect.</value>
+    <value>Norėdami, kad kalbos pakeitimas visiškai įsigaliotų, paleiskite programą iš naujo.</value>
   </data>
 </root>

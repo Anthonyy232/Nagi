@@ -920,936 +920,936 @@
     <value>Automată</value>
   </data>
   <data name="TrayIcon_ShowWindow" xml:space="preserve">
-    <value>Show Window</value>
+    <value>Afișează Fereastra</value>
   </data>
   <data name="TrayIcon_Exit" xml:space="preserve">
-    <value>Exit</value>
+    <value>Ieșire</value>
   </data>
   <data name="MiniPlayer_BackButton_ToolTip" xml:space="preserve">
-    <value>Back to Player</value>
+    <value>Înapoi la Player</value>
   </data>
   <data name="MiniPlayer_UpNextHeader" xml:space="preserve">
-    <value>Up Next</value>
+    <value>Urmează</value>
   </data>
   <data name="MiniPlayer_RestoreButton_ToolTip" xml:space="preserve">
-    <value>Show Nagi</value>
+    <value>Afișează Nagi</value>
   </data>
   <data name="MiniPlayer_PreviousButton_ToolTip" xml:space="preserve">
-    <value>Previous</value>
+    <value>Anterior</value>
   </data>
   <data name="MiniPlayer_NextButton_ToolTip" xml:space="preserve">
-    <value>Next</value>
+    <value>Următor</value>
   </data>
   <data name="MiniPlayer_QueueButton_ToolTip" xml:space="preserve">
-    <value>Up Next</value>
+    <value>Urmează</value>
   </data>
   <data name="CrashReport_ReportIssuePreLink" xml:space="preserve">
-    <value>Please consider reporting this by creating an issue on the </value>
+    <value>Te rugăm să iei în considerare raportarea acestei probleme creând o sesizare pe </value>
   </data>
   <data name="CrashReport_IssueLink" xml:space="preserve">
-    <value>Issues page</value>
+    <value>pagina de Sesizări</value>
   </data>
   <data name="CrashReport_ReportIssuePostLink" xml:space="preserve">
     <value>.</value>
   </data>
   <data name="CrashReport_ResetAppAdvice" xml:space="preserve">
-    <value>If this keeps happening, you can try 'Reset App &amp; Data'. This will wipe your settings and library, which can help recover the app from a broken state.</value>
+    <value>Dacă acest lucru continuă să se întâmple, poți încerca "Resetare aplicație și date". Aceasta va șterge setările și biblioteca ta, ceea ce poate ajuta la recuperarea aplicației dintr-o stare defectă.</value>
   </data>
   <data name="CrashReport_CopyLogButton_ToolTip" xml:space="preserve">
-    <value>Copy log to clipboard</value>
+    <value>Copiază jurnalul în clipboard</value>
   </data>
   <data name="CrashReport_CopyLogLabel" xml:space="preserve">
-    <value>Copy Log</value>
+    <value>Copiază Jurnalul</value>
   </data>
   <data name="SmartPlaylist_PickCoverButton_Content" xml:space="preserve">
-    <value>Choose Cover</value>
+    <value>Alege Coperta</value>
   </data>
   <data name="SmartPlaylist_PickCoverButton_ToolTip" xml:space="preserve">
-    <value>Choose a cover image</value>
+    <value>Alege o imagine de copertă</value>
   </data>
   <data name="SmartPlaylist_PlaylistNameLabel" xml:space="preserve">
-    <value>Playlist Name</value>
+    <value>Nume playlist</value>
   </data>
   <data name="SmartPlaylist_PlaylistNameTextBox_Placeholder" xml:space="preserve">
-    <value>Enter a name for your smart playlist</value>
+    <value>Introdu un nume pentru playlist-ul tău inteligent</value>
   </data>
   <data name="SmartPlaylist_SortOrderLabel" xml:space="preserve">
-    <value>Sort Order</value>
+    <value>Ordine de sortare</value>
   </data>
   <data name="SmartPlaylist_MatchLabel" xml:space="preserve">
-    <value>Match</value>
+    <value>Potrivire</value>
   </data>
   <data name="SmartPlaylist_MatchLogic_All_Content" xml:space="preserve">
-    <value>All</value>
+    <value>Toate</value>
   </data>
   <data name="SmartPlaylist_MatchLogic_Any_Content" xml:space="preserve">
-    <value>Any</value>
+    <value>Oricare</value>
   </data>
   <data name="SmartPlaylist_MatchSuffixLabel" xml:space="preserve">
-    <value>of the following rules:</value>
+    <value>dintre următoarele reguli:</value>
   </data>
   <data name="SmartPlaylist_AddRuleButton_ToolTip" xml:space="preserve">
-    <value>Add a new rule</value>
+    <value>Adaugă o regulă nouă</value>
   </data>
   <data name="SmartPlaylist_AddRuleLabel" xml:space="preserve">
-    <value>Add Rule</value>
+    <value>Adaugă Regulă</value>
   </data>
   <data name="SmartPlaylist_RuleValueTextBox_Placeholder" xml:space="preserve">
-    <value>Value</value>
+    <value>Valoare</value>
   </data>
   <data name="SmartPlaylist_RemoveRuleButton_ToolTip" xml:space="preserve">
-    <value>Remove this rule</value>
+    <value>Elimină această regulă</value>
   </data>
   <data name="SmartPlaylist_NoRulesTitle" xml:space="preserve">
-    <value>No rules defined</value>
+    <value>Nu sunt definite reguli</value>
   </data>
   <data name="SmartPlaylist_NoRulesMessage" xml:space="preserve">
-    <value>All songs in your library will be included in this playlist.</value>
+    <value>Toate melodiile din biblioteca ta vor fi incluse în acest playlist.</value>
   </data>
   <data name="SmartPlaylist_AddFirstRuleButton_Content" xml:space="preserve">
-    <value>Add Your First Rule</value>
+    <value>Adaugă Prima Ta Regulă</value>
   </data>
   <data name="SmartPlaylist_AddFirstRuleButton_ToolTip" xml:space="preserve">
-    <value>Add your first rule</value>
+    <value>Adaugă prima ta regulă</value>
   </data>
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
-    <value>Save</value>
+    <value>Salvează</value>
   </data>
   <data name="SmartPlaylist_Dialog_CloseButton" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Anulează</value>
   </data>
   <data name="TrayPopup_PreviousButton_ToolTip" xml:space="preserve">
-    <value>Previous</value>
+    <value>Anterior</value>
   </data>
   <data name="TrayPopup_NextButton_ToolTip" xml:space="preserve">
-    <value>Next</value>
+    <value>Următor</value>
   </data>
   <data name="TrayPopup_QueueButton_ToolTip" xml:space="preserve">
-    <value>Up Next</value>
+    <value>Urmează</value>
   </data>
   <data name="TrayPopup_BackButton_ToolTip" xml:space="preserve">
-    <value>Back to Player</value>
+    <value>Înapoi la Player</value>
   </data>
   <data name="TrayPopup_UpNextHeader" xml:space="preserve">
-    <value>Up Next</value>
+    <value>Urmează</value>
   </data>
   <data name="AppName" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="AppDescription" xml:space="preserve">
-    <value>Rediscover your local music collection with Nagi, a music player focused on speed, simplicity, and privacy. Nagi is built with C# and WinUI 3 to offer a clean, native Fluent experience. It's beautiful, efficient, and respects your privacy.</value>
+    <value>Redescoperă colecția ta de muzică locală cu Nagi, un player de muzică axat pe viteză, simplitate și confidențialitate. Nagi este construit cu C# și WinUI 3 pentru a oferi o experiență Fluent curată și nativă. Este frumos, eficient și respectă confidențialitatea ta.</value>
   </data>
   <data name="AppShortName" xml:space="preserve">
     <value>Nagi</value>
   </data>
   <data name="AppDisplayName" xml:space="preserve">
-    <value>Nagi Music Player</value>
+    <value>Nagi Player de Muzică</value>
   </data>
   <data name="AppInfoTip" xml:space="preserve">
-    <value>Open with Nagi Music Player</value>
+    <value>Deschide cu Nagi Player de Muzică</value>
   </data>
   <data name="StartupTaskDisplayName" xml:space="preserve">
-    <value>Nagi Startup</value>
+    <value>Pornire Nagi</value>
   </data>
   <data name="Player_PreviousButton_ToolTip" xml:space="preserve">
-    <value>Previous</value>
+    <value>Anterior</value>
   </data>
   <data name="Player_NextButton_ToolTip" xml:space="preserve">
-    <value>Next</value>
+    <value>Următor</value>
   </data>
   <data name="Player_LyricsButton_ToolTip" xml:space="preserve">
-    <value>Lyrics</value>
+    <value>Versuri</value>
   </data>
   <data name="Player_QueueButton_ToolTip" xml:space="preserve">
-    <value>Up Next</value>
+    <value>Urmează</value>
   </data>
   <data name="Player_GoToAlbumButton_ToolTip" xml:space="preserve">
-    <value>Go to album</value>
+    <value>Mergi la album</value>
   </data>
   <data name="QueueFlyout_Title" xml:space="preserve">
-    <value>Up Next</value>
+    <value>Urmează</value>
   </data>
   <data name="AlbumPage_Title" xml:space="preserve">
-    <value>Albums</value>
+    <value>Albume</value>
   </data>
   <data name="AlbumPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Search albums...</value>
+    <value>Căutați albume...</value>
   </data>
   <data name="AlbumPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Search albums</value>
+    <value>Căutați albume</value>
   </data>
   <data name="AlbumPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Pick one at random</value>
+    <value>Alege unul la întâmplare</value>
   </data>
   <data name="AlbumPage_Menu_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Redă</value>
   </data>
   <data name="AlbumPage_Empty_Title" xml:space="preserve">
-    <value>No albums found</value>
+    <value>Nu s-au găsit albume</value>
   </data>
   <data name="AlbumPage_Empty_Subtitle" xml:space="preserve">
-    <value>Scan your music library to populate albums</value>
+    <value>Scanează-ți biblioteca de muzică pentru a popula albumele</value>
   </data>
   <data name="AlbumViewPage_Header_Label" xml:space="preserve">
     <value>Album</value>
   </data>
   <data name="AlbumViewPage_Songs_Title" xml:space="preserve">
-    <value>Songs</value>
+    <value>Melodii</value>
   </data>
   <data name="AlbumViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Search in album...</value>
+    <value>Căutați în album...</value>
   </data>
   <data name="AlbumViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Search in album</value>
+    <value>Căutați în album</value>
   </data>
   <data name="AlbumViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Play all</value>
+    <value>Redă tot</value>
   </data>
   <data name="AlbumViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Shuffle and play all</value>
+    <value>Amestecă și redă tot</value>
   </data>
   <data name="AlbumViewPage_SongMenu_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Redă</value>
   </data>
   <data name="AlbumViewPage_SongMenu_PlayNext" xml:space="preserve">
-    <value>Play Next</value>
+    <value>Redă următorul</value>
   </data>
   <data name="AlbumViewPage_SongMenu_AddToQueue" xml:space="preserve">
-    <value>Add to Queue</value>
+    <value>Adaugă la coadă</value>
   </data>
   <data name="AlbumViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Add to playlist</value>
+    <value>Adaugă la playlist</value>
   </data>
   <data name="AlbumViewPage_SongMenu_GoToArtist" xml:space="preserve">
-    <value>Go to artist</value>
+    <value>Mergi la artist</value>
   </data>
   <data name="AlbumViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Show in explorer</value>
+    <value>Afișează în explorator</value>
   </data>
   <data name="AlbumViewPage_SongPlayButton_ToolTip" xml:space="preserve">
-    <value>Play</value>
+    <value>Redă</value>
   </data>
   <data name="AlbumViewPage_Empty_Title" xml:space="preserve">
-    <value>No songs found in this album</value>
+    <value>Nu s-au găsit melodii în acest album</value>
   </data>
   <data name="AlbumViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>Try searching for something else</value>
+    <value>Încearcă să cauți altceva</value>
   </data>
   <data name="ArtistPage_Title" xml:space="preserve">
-    <value>Artists</value>
+    <value>Artiști</value>
   </data>
   <data name="ArtistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Search artists...</value>
+    <value>Căutați artiști...</value>
   </data>
   <data name="ArtistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Search artists</value>
+    <value>Căutați artiști</value>
   </data>
   <data name="ArtistPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Pick one at random</value>
+    <value>Alege unul la întâmplare</value>
   </data>
   <data name="ArtistPage_Menu_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Redă</value>
   </data>
   <data name="ArtistPage_Menu_ChangeImage" xml:space="preserve">
-    <value>Change Image</value>
+    <value>Schimbă imaginea</value>
   </data>
   <data name="ArtistPage_Menu_RemoveImage" xml:space="preserve">
-    <value>Remove Image</value>
+    <value>Elimină imaginea</value>
   </data>
   <data name="ArtistPage_Empty_Title" xml:space="preserve">
-    <value>No artists found</value>
+    <value>Nu s-au găsit artiști</value>
   </data>
   <data name="ArtistPage_Empty_Subtitle" xml:space="preserve">
-    <value>Scan your music library to populate artists</value>
+    <value>Scanează-ți biblioteca de muzică pentru a popula artiștii</value>
   </data>
   <data name="ArtistViewPage_EditOverlay_Content" xml:space="preserve">
-    <value>Change artist image</value>
+    <value>Schimbă imaginea artistului</value>
   </data>
   <data name="ArtistViewPage_ImageMenu_ChangeImage" xml:space="preserve">
-    <value>Change Image</value>
+    <value>Schimbă imaginea</value>
   </data>
   <data name="ArtistViewPage_ImageMenu_RemoveImage" xml:space="preserve">
-    <value>Remove Image</value>
+    <value>Elimină imaginea</value>
   </data>
   <data name="ArtistViewPage_Header_Label" xml:space="preserve">
     <value>Artist</value>
   </data>
   <data name="ArtistViewPage_Albums_Title" xml:space="preserve">
-    <value>Top Albums</value>
+    <value>Albume de top</value>
   </data>
   <data name="ArtistViewPage_Songs_Title" xml:space="preserve">
-    <value>Songs</value>
+    <value>Melodii</value>
   </data>
   <data name="ArtistViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Search in artist...</value>
+    <value>Căutați în artist...</value>
   </data>
   <data name="ArtistViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Search in artist</value>
+    <value>Căutați în artist</value>
   </data>
   <data name="ArtistViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Play all</value>
+    <value>Redă tot</value>
   </data>
   <data name="ArtistViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Shuffle and play all</value>
+    <value>Amestecă și redă tot</value>
   </data>
   <data name="ArtistViewPage_SongMenu_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Redă</value>
   </data>
   <data name="ArtistViewPage_SongMenu_PlayNext" xml:space="preserve">
-    <value>Play Next</value>
+    <value>Redă următorul</value>
   </data>
   <data name="ArtistViewPage_SongMenu_AddToQueue" xml:space="preserve">
-    <value>Add to Queue</value>
+    <value>Adaugă la coadă</value>
   </data>
   <data name="ArtistViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Add to playlist</value>
+    <value>Adaugă la playlist</value>
   </data>
   <data name="ArtistViewPage_SongMenu_GoToAlbum" xml:space="preserve">
-    <value>Go to album</value>
+    <value>Mergi la album</value>
   </data>
   <data name="ArtistViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Show in explorer</value>
+    <value>Afișează în explorator</value>
   </data>
   <data name="ArtistViewPage_SongPlayButton_ToolTip" xml:space="preserve">
-    <value>Play</value>
+    <value>Redă</value>
   </data>
   <data name="ArtistViewPage_Empty_Title" xml:space="preserve">
-    <value>No songs found for this artist</value>
+    <value>Nu s-au găsit melodii pentru acest artist</value>
   </data>
   <data name="ArtistViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>Try searching for something else</value>
+    <value>Încearcă să cauți altceva</value>
   </data>
   <data name="FolderPage_Title" xml:space="preserve">
-    <value>Folders</value>
+    <value>Dosare</value>
   </data>
   <data name="FolderPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Pick one at random</value>
+    <value>Alege unul la întâmplare</value>
   </data>
   <data name="FolderPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>Add a music folder</value>
+    <value>Adaugă un dosar de muzică</value>
   </data>
   <data name="FolderPage_AddFolder_Label" xml:space="preserve">
-    <value>Add Folder</value>
+    <value>Adaugă dosar</value>
   </data>
   <data name="FolderPage_Menu_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Redă</value>
   </data>
   <data name="FolderPage_Menu_Rescan" xml:space="preserve">
-    <value>Rescan</value>
+    <value>Rescanează</value>
   </data>
   <data name="FolderPage_Menu_Delete" xml:space="preserve">
-    <value>Delete</value>
+    <value>Șterge</value>
   </data>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
-    <value>No folders added yet</value>
+    <value>Nu s-au adăugat dosare încă</value>
   </data>
   <data name="FolderPage_Empty_Subtitle" xml:space="preserve">
-    <value>Add music folders to get started</value>
+    <value>Adaugă dosare de muzică pentru a începe</value>
   </data>
   <data name="FolderSongViewPage_FolderMenu_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Redă</value>
   </data>
   <data name="FolderSongViewPage_FolderMenu_AddToPlaylist" xml:space="preserve">
-    <value>Add to playlist</value>
+    <value>Adaugă la playlist</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Redă</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_PlayNext" xml:space="preserve">
-    <value>Play Next</value>
+    <value>Redă următorul</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_AddToQueue" xml:space="preserve">
-    <value>Add to Queue</value>
+    <value>Adaugă la coadă</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_AddToPlaylist" xml:space="preserve">
-    <value>Add to playlist</value>
+    <value>Adaugă la playlist</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_GoToAlbum" xml:space="preserve">
-    <value>Go to album</value>
+    <value>Mergi la album</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_GoToArtist" xml:space="preserve">
-    <value>Go to artist</value>
+    <value>Mergi la artist</value>
   </data>
   <data name="FolderSongViewPage_SongMenu_ShowInExplorer" xml:space="preserve">
-    <value>Show in explorer</value>
+    <value>Afișează în explorator</value>
   </data>
   <data name="FolderSongViewPage_SongPlayButton_ToolTip" xml:space="preserve">
-    <value>Play</value>
+    <value>Redă</value>
   </data>
   <data name="FolderSongViewPage_Header_Label" xml:space="preserve">
-    <value>Folder</value>
+    <value>Dosar</value>
   </data>
   <data name="FolderSongViewPage_Songs_Title" xml:space="preserve">
-    <value>Songs</value>
+    <value>Melodii</value>
   </data>
   <data name="FolderSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Search in folder...</value>
+    <value>Căutați în dosar...</value>
   </data>
   <data name="FolderSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Search in folder</value>
+    <value>Căutați în dosar</value>
   </data>
   <data name="FolderSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Play all</value>
+    <value>Redă tot</value>
   </data>
   <data name="FolderSongViewPage_ShufflePlayButton_ToolTip" xml:space="preserve">
-    <value>Shuffle and play all</value>
+    <value>Amestecă și redă tot</value>
   </data>
   <data name="FolderSongViewPage_Empty_Title" xml:space="preserve">
-    <value>This folder is empty</value>
+    <value>Acest dosar este gol</value>
   </data>
   <data name="FolderSongViewPage_Empty_Subtitle" xml:space="preserve">
-    <value>No songs or subfolders found</value>
+    <value>Nu s-au găsit melodii sau subdosare</value>
   </data>
   <data name="GenrePage_Title" xml:space="preserve">
-    <value>Genres</value>
+    <value>Genuri</value>
   </data>
   <data name="GenrePage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Search genres...</value>
+    <value>Căutați genuri...</value>
   </data>
   <data name="GenrePage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Search genres</value>
+    <value>Căutați genuri</value>
   </data>
   <data name="GenrePage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Pick one at random</value>
+    <value>Alege unul la întâmplare</value>
   </data>
   <data name="GenrePage_Menu_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Redă</value>
   </data>
   <data name="GenrePage_Empty_Title" xml:space="preserve">
-    <value>No genres found</value>
+    <value>Nu s-au găsit genuri</value>
   </data>
   <data name="GenrePage_Empty_Subtitle" xml:space="preserve">
-    <value>Scan your music library to populate genres</value>
+    <value>Scanează-ți biblioteca de muzică pentru a popula genurile</value>
   </data>
   <data name="LibraryPage_Title" xml:space="preserve">
-    <value>Library</value>
+    <value>Bibliotecă</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Search library...</value>
+    <value>Căutați în bibliotecă...</value>
   </data>
   <data name="LibraryPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Search library</value>
+    <value>Căutați în bibliotecă</value>
   </data>
   <data name="LibraryPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Play all</value>
+    <value>Redă tot</value>
   </data>
   <data name="LibraryPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Shuffle and play all</value>
+    <value>Amestecă și redă tot</value>
   </data>
   <data name="LibraryPage_Context_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Redă</value>
   </data>
   <data name="LibraryPage_Context_PlayNext" xml:space="preserve">
-    <value>Play Next</value>
+    <value>Redă următorul</value>
   </data>
   <data name="LibraryPage_Context_AddToQueue" xml:space="preserve">
-    <value>Add to Queue</value>
+    <value>Adaugă la coadă</value>
   </data>
   <data name="LibraryPage_Context_AddToPlaylist" xml:space="preserve">
-    <value>Add to playlist</value>
+    <value>Adaugă la playlist</value>
   </data>
   <data name="LibraryPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Go to album</value>
+    <value>Mergi la album</value>
   </data>
   <data name="LibraryPage_Context_GoToArtist" xml:space="preserve">
-    <value>Go to artist</value>
+    <value>Mergi la artist</value>
   </data>
   <data name="LibraryPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Show in explorer</value>
+    <value>Afișează în explorator</value>
   </data>
   <data name="LibraryPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>Play</value>
+    <value>Redă</value>
   </data>
   <data name="LibraryPage_EmptyState_Title" xml:space="preserve">
-    <value>Your library is empty</value>
+    <value>Biblioteca ta este goală</value>
   </data>
   <data name="LibraryPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Add folders to your library in Settings</value>
+    <value>Adaugă dosare la biblioteca ta din Setări</value>
   </data>
   <data name="LyricsPage_NoLyrics_Title" xml:space="preserve">
-    <value>No lyrics found for this track</value>
+    <value>Nu s-au găsit versuri pentru această piesă</value>
   </data>
   <data name="LyricsPage_NoLyrics_Subtitle" xml:space="preserve">
-    <value>Try another song</value>
+    <value>Încearcă o altă melodie</value>
   </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
-    <value>Welcome to Nagi</value>
+    <value>Bun venit la Nagi</value>
   </data>
   <data name="OnboardingPage_AddFolderButton_ToolTip" xml:space="preserve">
-    <value>Add a music folder to get started</value>
+    <value>Adaugă un dosar de muzică pentru a începe</value>
   </data>
   <data name="OnboardingPage_AddFolderButton_Content" xml:space="preserve">
-    <value>Add Music Folder</value>
+    <value>Adaugă Dosar Muzică</value>
   </data>
   <data name="PlaylistPage_Title" xml:space="preserve">
-    <value>Playlists</value>
+    <value>Playlisturi</value>
   </data>
   <data name="PlaylistPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Search playlists...</value>
+    <value>Căutați playlisturi...</value>
   </data>
   <data name="PlaylistPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Search playlists</value>
+    <value>Căutați playlisturi</value>
   </data>
   <data name="PlaylistPage_RandomButton_ToolTip" xml:space="preserve">
-    <value>Pick one at random</value>
+    <value>Alege unul la întâmplare</value>
   </data>
   <data name="PlaylistPage_NewPlaylistButton_ToolTip" xml:space="preserve">
-    <value>Create a new playlist</value>
+    <value>Creează un playlist nou</value>
   </data>
   <data name="PlaylistPage_NewPlaylistButton_Content" xml:space="preserve">
-    <value>New Playlist</value>
+    <value>Playlist nou</value>
   </data>
   <data name="PlaylistPage_NewPlaylistMenu_Regular" xml:space="preserve">
-    <value>Regular Playlist</value>
+    <value>Playlist obișnuit</value>
   </data>
   <data name="PlaylistPage_NewPlaylistMenu_Smart" xml:space="preserve">
-    <value>Smart Playlist</value>
+    <value>Playlist inteligent</value>
   </data>
   <data name="PlaylistPage_Context_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Redă</value>
   </data>
   <data name="PlaylistPage_Context_Rename" xml:space="preserve">
-    <value>Rename</value>
+    <value>Redenumește</value>
   </data>
   <data name="PlaylistPage_Context_ChangeImage" xml:space="preserve">
-    <value>Change Image</value>
+    <value>Schimbă imaginea</value>
   </data>
   <data name="PlaylistPage_Context_RemoveImage" xml:space="preserve">
-    <value>Remove Image</value>
+    <value>Elimină imaginea</value>
   </data>
   <data name="PlaylistPage_Context_Delete" xml:space="preserve">
-    <value>Delete</value>
+    <value>Șterge</value>
   </data>
   <data name="PlaylistPage_EmptyState_Title" xml:space="preserve">
-    <value>No playlists yet</value>
+    <value>Încă nu există playlisturi</value>
   </data>
   <data name="PlaylistPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Create a playlist to get started</value>
+    <value>Creează un playlist pentru a începe</value>
   </data>
   <data name="PlaylistSongViewPage_Header_Caption" xml:space="preserve">
     <value>Playlist</value>
   </data>
   <data name="PlaylistSongViewPage_Section_Songs" xml:space="preserve">
-    <value>Songs</value>
+    <value>Melodii</value>
   </data>
   <data name="PlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Search in playlist...</value>
+    <value>Căutați în playlist...</value>
   </data>
   <data name="PlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Search in playlist</value>
+    <value>Căutați în playlist</value>
   </data>
   <data name="PlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Play all</value>
+    <value>Redă tot</value>
   </data>
   <data name="PlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Shuffle and play all</value>
+    <value>Amestecă și redă tot</value>
   </data>
   <data name="PlaylistSongViewPage_Context_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Redă</value>
   </data>
   <data name="PlaylistSongViewPage_Context_PlayNext" xml:space="preserve">
-    <value>Play Next</value>
+    <value>Redă următorul</value>
   </data>
   <data name="PlaylistSongViewPage_Context_AddToQueue" xml:space="preserve">
-    <value>Add to Queue</value>
+    <value>Adaugă la coadă</value>
   </data>
   <data name="PlaylistSongViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Go to album</value>
+    <value>Mergi la album</value>
   </data>
   <data name="PlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Go to artist</value>
+    <value>Mergi la artist</value>
   </data>
   <data name="PlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Show in explorer</value>
+    <value>Afișează în explorator</value>
   </data>
   <data name="PlaylistSongViewPage_Context_RemoveFromPlaylist" xml:space="preserve">
-    <value>Remove from playlist</value>
+    <value>Elimină din playlist</value>
   </data>
   <data name="PlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>Play</value>
+    <value>Redă</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
-    <value>This playlist is empty</value>
+    <value>Acest playlist este gol</value>
   </data>
   <data name="PlaylistSongViewPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Add songs from your library</value>
+    <value>Adaugă melodii din biblioteca ta</value>
   </data>
   <data name="GenreViewPage_Header_Caption" xml:space="preserve">
-    <value>Genre</value>
+    <value>Gen</value>
   </data>
   <data name="GenreViewPage_Section_Songs" xml:space="preserve">
-    <value>Songs</value>
+    <value>Melodii</value>
   </data>
   <data name="GenreViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Search in genre...</value>
+    <value>Căutați în gen...</value>
   </data>
   <data name="GenreViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Search in genre</value>
+    <value>Căutați în gen</value>
   </data>
   <data name="GenreViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Play all</value>
+    <value>Redă tot</value>
   </data>
   <data name="GenreViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Shuffle and play all</value>
+    <value>Amestecă și redă tot</value>
   </data>
   <data name="GenreViewPage_Context_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Redă</value>
   </data>
   <data name="GenreViewPage_Context_PlayNext" xml:space="preserve">
-    <value>Play Next</value>
+    <value>Redă următorul</value>
   </data>
   <data name="GenreViewPage_Context_AddToQueue" xml:space="preserve">
-    <value>Add to Queue</value>
+    <value>Adaugă la coadă</value>
   </data>
   <data name="GenreViewPage_Context_AddToPlaylist" xml:space="preserve">
-    <value>Add to playlist</value>
+    <value>Adaugă la playlist</value>
   </data>
   <data name="GenreViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Go to album</value>
+    <value>Mergi la album</value>
   </data>
   <data name="GenreViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Go to artist</value>
+    <value>Mergi la artist</value>
   </data>
   <data name="GenreViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Show in explorer</value>
+    <value>Afișează în explorator</value>
   </data>
   <data name="GenreViewPage_Context_NoPlaylists" xml:space="preserve">
-    <value>No playlists available</value>
+    <value>Nu sunt disponibile playlisturi</value>
   </data>
   <data name="GenreViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>Play</value>
+    <value>Redă</value>
   </data>
   <data name="GenreViewPage_EmptyState_Title" xml:space="preserve">
-    <value>No songs found for this genre</value>
+    <value>Nu s-au găsit melodii pentru acest gen</value>
   </data>
   <data name="GenreViewPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Try searching for something else</value>
+    <value>Încearcă să cauți altceva</value>
   </data>
   <data name="SettingsPage_Title" xml:space="preserve">
-    <value>Settings</value>
+    <value>Setări</value>
   </data>
   <data name="SettingsPage_Section_Appearance" xml:space="preserve">
-    <value>Appearance</value>
+    <value>Aspect</value>
   </data>
   <data name="SettingsPage_Theme_Header" xml:space="preserve">
-    <value>Theme</value>
+    <value>Temă</value>
   </data>
   <data name="SettingsPage_Theme_Description" xml:space="preserve">
-    <value>Choose the application theme.</value>
+    <value>Alege tema aplicației.</value>
   </data>
   <data name="SettingsPage_AccentColor" xml:space="preserve">
-    <value>Accent Color</value>
+    <value>Culoare accent</value>
   </data>
   <data name="SettingsPage_ResetAccentColor_Content" xml:space="preserve">
-    <value>Reset to default</value>
+    <value>Resetează la valorile implicite</value>
   </data>
   <data name="SettingsPage_WindowMaterial_Header" xml:space="preserve">
-    <value>Window Material</value>
+    <value>Material Fereastră</value>
   </data>
   <data name="SettingsPage_WindowMaterial_Description" xml:space="preserve">
-    <value>Select the backdrop material for the window.</value>
+    <value>Selectează materialul de fundal pentru fereastră.</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Header" xml:space="preserve">
-    <value>Dynamic Theming</value>
+    <value>Tematică dinamică</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Description" xml:space="preserve">
-    <value>Enable and configure dynamic theming options.</value>
+    <value>Activează și configurează opțiunile de tematică dinamică.</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Header" xml:space="preserve">
-    <value>Remember window size</value>
+    <value>Memorează dimensiunea ferestrei</value>
   </data>
   <data name="SettingsPage_RememberWindowSize_Description" xml:space="preserve">
-    <value>Restore the main window to its previous size on next launch.</value>
+    <value>Restabilește fereastra principală la dimensiunea sa anterioară la următoarea pornire.</value>
   </data>
   <data name="SettingsPage_RememberWindowPosition_Header" xml:space="preserve">
-    <value>Remember window position</value>
+    <value>Memorează poziția ferestrei</value>
   </data>
   <data name="SettingsPage_RememberWindowPosition_Description" xml:space="preserve">
-    <value>Restore the main window to its previous screen location on next launch.</value>
+    <value>Restabilește fereastra principală la locația sa anterioară pe ecran la următoarea pornire.</value>
   </data>
   <data name="SettingsPage_RememberNavState_Header" xml:space="preserve">
-    <value>Remember navigation panel state</value>
+    <value>Memorează starea panoului de navigare</value>
   </data>
   <data name="SettingsPage_RememberNavState_Description" xml:space="preserve">
-    <value>Keep the left navigation panel open or closed as you left it.</value>
+    <value>Păstrează panoul de navigare din stânga deschis sau închis așa cum l-ai lăsat.</value>
   </data>
   <data name="SettingsPage_CustomizeNav_Header" xml:space="preserve">
-    <value>Customize Navigation</value>
+    <value>Personalizează navigarea</value>
   </data>
   <data name="SettingsPage_CustomizeNav_Description" xml:space="preserve">
-    <value>Drag to reorder pages in the navigation menu. Use the toggle to show or hide a page.</value>
+    <value>Trage pentru a reordona paginile în meniul de navigare. Folosește comutatorul pentru a afișa sau ascunde o pagină.</value>
   </data>
   <data name="SettingsPage_Section_Player" xml:space="preserve">
-    <value>Player Management</value>
+    <value>Gestionare player</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Header" xml:space="preserve">
-    <value>Volume Normalization (ReplayGain)</value>
+    <value>Normalizare Volum (ReplayGain)</value>
   </data>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
-    <value>Automatically adjust volume to the standard level (-14 LUFS) to avoid sudden loudness changes.</value>
+    <value>Reglează automat volumul la nivelul standard (-14 LUFS) pentru a evita modificările bruște de volum.</value>
   </data>
   <data name="SettingsPage_Equalizer" xml:space="preserve">
-    <value>Audio Equalizer</value>
+    <value>Egalizator audio</value>
   </data>
   <data name="SettingsPage_ResetEqualizer_Content" xml:space="preserve">
-    <value>Reset to default</value>
+    <value>Resetează la valorile implicite</value>
   </data>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>Preamp</value>
   </data>
   <data name="SettingsPage_Equalizer_Preset_Custom_Placeholder" xml:space="preserve">
-    <value>Custom</value>
+    <value>Personalizat</value>
   </data>
   <data name="SettingsPage_CustomizePlayer" xml:space="preserve">
-    <value>Customize Player Controls</value>
+    <value>Personalizează Controalele Playerului</value>
   </data>
   <data name="SettingsPage_ResetPlayerButtons_Content" xml:space="preserve">
-    <value>Reset to default</value>
+    <value>Resetează la valorile implicite</value>
   </data>
   <data name="SettingsPage_CustomizePlayer_Instructions" xml:space="preserve">
-    <value>Hover to toggle visibility. Drag to reorder. The divider separates center and right controls.</value>
+    <value>Treceți cu mouse-ul pentru a comuta vizibilitatea. Trageți pentru a reordona. Separatorul desparte controalele centrale și cele din dreapta.</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Header" xml:space="preserve">
-    <value>Collapsable player</value>
+    <value>Player pliabil</value>
   </data>
   <data name="SettingsPage_CollapsablePlayer_Description" xml:space="preserve">
-    <value>Animate the player bar to expand and collapse.</value>
+    <value>Animați bara playerului pentru a se extinde și a se restrânge.</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Header" xml:space="preserve">
-    <value>Restore playback state</value>
+    <value>Restabilește starea redării</value>
   </data>
   <data name="SettingsPage_RestorePlayback_Description" xml:space="preserve">
-    <value>Save the current playback state to resume on next launch.</value>
+    <value>Salvează starea curentă a redării pentru a o relua la următoarea pornire.</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Header" xml:space="preserve">
-    <value>Auto launch on startup</value>
+    <value>Pornire automată la lansare</value>
   </data>
   <data name="SettingsPage_AutoLaunch_Description" xml:space="preserve">
-    <value>Start Nagi automatically when you log into your computer.</value>
+    <value>Pornește Nagi automat când te conectezi la computer.</value>
   </data>
   <data name="SettingsPage_StartMinimized_Header" xml:space="preserve">
-    <value>Start minimized</value>
+    <value>Pornește minimizat</value>
   </data>
   <data name="SettingsPage_StartMinimized_Description" xml:space="preserve">
-    <value>When launched, the application window will be minimized by default.</value>
+    <value>La lansare, fereastra aplicației va fi minimizată în mod implicit.</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Header" xml:space="preserve">
-    <value>Minimize to mini-player</value>
+    <value>Minimizează în mini-player</value>
   </data>
   <data name="SettingsPage_MinimizeToMiniPlayer_Description" xml:space="preserve">
-    <value>When minimized, show a compact floating player instead of hiding the window.</value>
+    <value>Când este minimizată, afișează un player flotant compact în loc să ascunzi fereastra.</value>
   </data>
   <data name="SettingsPage_HideToTray_Header" xml:space="preserve">
-    <value>Hide to system tray</value>
+    <value>Ascunde în bara de sistem</value>
   </data>
   <data name="SettingsPage_HideToTray_Description" xml:space="preserve">
-    <value>When closed, hide to the system tray instead.</value>
+    <value>Când este închisă, ascunde în bara de sistem în loc.</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Header" xml:space="preserve">
-    <value>Show cover art in flyout</value>
+    <value>Afișează coperta în fereastra pop-up</value>
   </data>
   <data name="SettingsPage_TrayCoverArt_Description" xml:space="preserve">
-    <value>Display the cover art in the compact player that appears when clicking the tray icon.</value>
+    <value>Afișează coperta în playerul compact care apare la clic pe pictograma din bara de sistem.</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
-    <value>Data Management</value>
+    <value>Gestionare date</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Header" xml:space="preserve">
-    <value>Artist Splitting</value>
+    <value>Separare artiști</value>
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
-    <value>Define characters used to split multiple artists (e.g. ';/'). Leave empty to disable.</value>
+    <value>Definește caracterele utilizate pentru a separa mai mulți artiști (ex. ';/'). Lasă gol pentru a dezactiva.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
-    <value>Rescan Library</value>
+    <value>Rescanează Biblioteca</value>
   </data>
   <data name="SettingsPage_RescanLibrary_ToolTip" xml:space="preserve">
-    <value>Rescan library to apply splitting changes</value>
+    <value>Rescanează biblioteca pentru a aplica modificările de separare</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Header" xml:space="preserve">
-    <value>Retrieve online metadata</value>
+    <value>Recuperează metadatele online</value>
   </data>
   <data name="SettingsPage_OnlineMetadata_Description" xml:space="preserve">
-    <value>Fetch additional information like artist images and biographies from online services (e.g., Spotify, Last.fm).</value>
+    <value>Recuperează informații suplimentare, cum ar fi imagini de artiști și biografii de la servicii online (ex. Spotify, Last.fm).</value>
   </data>
   <data name="SettingsPage_MetadataSources_Header" xml:space="preserve">
-    <value>Sources</value>
+    <value>Surse</value>
   </data>
   <data name="SettingsPage_MetadataSources_Description" xml:space="preserve">
-    <value>Drag to reorder metadata sources. Hover over each source for details.</value>
+    <value>Trage pentru a reordona sursele de metadate. Treceți cu mouse-ul peste fiecare sursă pentru detalii.</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Header" xml:space="preserve">
-    <value>Fetch online lyrics</value>
+    <value>Recuperează versuri online</value>
   </data>
   <data name="SettingsPage_OnlineLyrics_Description" xml:space="preserve">
-    <value>Automatically fetch missing lyrics from online sources. (Privacy: sends track metadata to third-party services)</value>
+    <value>Recuperează automat versurile lipsă din surse online. (Confidențialitate: trimite metadatele piesei către servicii terțe)</value>
   </data>
   <data name="SettingsPage_LyricsSources_Header" xml:space="preserve">
-    <value>Sources</value>
+    <value>Surse</value>
   </data>
   <data name="SettingsPage_LyricsSources_Description" xml:space="preserve">
-    <value>Drag to reorder lyrics sources. Hover over each source for details.</value>
+    <value>Trage pentru a reordona sursele de versuri. Treceți cu mouse-ul peste fiecare sursă pentru detalii.</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Header" xml:space="preserve">
-    <value>Export/Import Playlists</value>
+    <value>Export/Import Playlisturi</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Description" xml:space="preserve">
-    <value>Export playlists to M3U files for use in other players, or import M3U playlists into Nagi.</value>
+    <value>Exportează playlisturi în fișiere M3U pentru a le utiliza în alte playere, sau importă playlisturi M3U în Nagi.</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_Content" xml:space="preserve">
-    <value>Export All...</value>
+    <value>Exportează Tot...</value>
   </data>
   <data name="SettingsPage_ExportPlaylists_ToolTip" xml:space="preserve">
-    <value>Export all playlists to a folder</value>
+    <value>Exportează toate playlisturile într-un dosar</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_Content" xml:space="preserve">
-    <value>Import...</value>
+    <value>Importă...</value>
   </data>
   <data name="SettingsPage_ImportPlaylists_ToolTip" xml:space="preserve">
-    <value>Import one or more M3U files</value>
+    <value>Importă unul sau mai multe fișiere M3U</value>
   </data>
   <data name="SettingsPage_ResetApp_Header" xml:space="preserve">
-    <value>Reset application</value>
+    <value>Resetează aplicația</value>
   </data>
   <data name="SettingsPage_ResetApp_Description" xml:space="preserve">
-    <value>This will delete all library data, playlists, and reset all settings to their defaults. The application will restart.</value>
+    <value>Aceasta va șterge toate datele bibliotecii, playlisturile și va reseta toate setările la valorile implicite. Aplicația va reporni.</value>
   </data>
   <data name="SettingsPage_ResetButton_Content" xml:space="preserve">
-    <value>Reset All Data</value>
+    <value>Resetează Toate Datele</value>
   </data>
   <data name="SettingsPage_Section_Integrations" xml:space="preserve">
-    <value>Integrations</value>
+    <value>Integrări</value>
   </data>
   <data name="SettingsPage_LastFm_Header" xml:space="preserve">
     <value>Last.fm</value>
   </data>
   <data name="SettingsPage_LastFm_Description" xml:space="preserve">
-    <value>Connect your Last.fm account to scrobble tracks and show your currently playing song.</value>
+    <value>Conectează-ți contul Last.fm pentru a scrobbla piese și a afișa melodia curentă.</value>
   </data>
   <data name="SettingsPage_LastFm_Connect_Content" xml:space="preserve">
-    <value>Connect</value>
+    <value>Conectează</value>
   </data>
   <data name="SettingsPage_LastFm_Complete_Content" xml:space="preserve">
-    <value>Complete</value>
+    <value>Finalizează</value>
   </data>
   <data name="SettingsPage_LastFm_Cancel_Content" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Anulează</value>
   </data>
   <data name="SettingsPage_LastFm_Disconnect_Content" xml:space="preserve">
-    <value>Disconnect</value>
+    <value>Deconectează</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Header" xml:space="preserve">
-    <value>Enable scrobbling</value>
+    <value>Activează scrobbling-ul</value>
   </data>
   <data name="SettingsPage_LastFm_Scrobbling_Description" xml:space="preserve">
-    <value>Automatically add the tracks you listen to on Nagi to your Last.fm profile.</value>
+    <value>Adaugă automat piesele pe care le asculți pe Nagi la profilul tău Last.fm.</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Header" xml:space="preserve">
-    <value>Update 'Now Playing'</value>
+    <value>Actualizează 'Se redă acum'</value>
   </data>
   <data name="SettingsPage_LastFm_NowPlaying_Description" xml:space="preserve">
-    <value>Show your friends on Last.fm what you're currently listening to in real-time.</value>
+    <value>Arată prietenilor tăi de pe Last.fm ce asculți în timp real.</value>
   </data>
   <data name="SettingsPage_Discord_Header" xml:space="preserve">
     <value>Discord</value>
   </data>
   <data name="SettingsPage_Discord_Description" xml:space="preserve">
-    <value>Show your current listening activity as your status on Discord.</value>
+    <value>Afișează activitatea ta de ascultare curentă ca status pe Discord.</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Header_Caption" xml:space="preserve">
-    <value>Smart Playlist</value>
+    <value>Playlist inteligent</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Section_Songs" xml:space="preserve">
-    <value>Songs</value>
+    <value>Melodii</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchBox_Placeholder" xml:space="preserve">
-    <value>Search in smart playlist...</value>
+    <value>Căutați în playlistul inteligent...</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SearchButton_ToolTip" xml:space="preserve">
-    <value>Search in smart playlist</value>
+    <value>Căutați în playlistul inteligent</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EditRulesButton_ToolTip" xml:space="preserve">
-    <value>Edit rules</value>
+    <value>Editează regulile</value>
   </data>
   <data name="SmartPlaylistSongViewPage_PlayAllButton_ToolTip" xml:space="preserve">
-    <value>Play all</value>
+    <value>Redă tot</value>
   </data>
   <data name="SmartPlaylistSongViewPage_ShufflePlayAllButton_ToolTip" xml:space="preserve">
-    <value>Shuffle and play all</value>
+    <value>Amestecă și redă tot</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_Play" xml:space="preserve">
-    <value>Play</value>
+    <value>Redă</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_PlayNext" xml:space="preserve">
-    <value>Play Next</value>
+    <value>Redă următorul</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_AddToQueue" xml:space="preserve">
-    <value>Add to Queue</value>
+    <value>Adaugă la coadă</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_GoToAlbum" xml:space="preserve">
-    <value>Go to album</value>
+    <value>Mergi la album</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_GoToArtist" xml:space="preserve">
-    <value>Go to artist</value>
+    <value>Mergi la artist</value>
   </data>
   <data name="SmartPlaylistSongViewPage_Context_ShowInExplorer" xml:space="preserve">
-    <value>Show in explorer</value>
+    <value>Afișează în explorator</value>
   </data>
   <data name="SmartPlaylistSongViewPage_SongElement_PlayButton_ToolTip" xml:space="preserve">
-    <value>Play</value>
+    <value>Redă</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Title" xml:space="preserve">
-    <value>No songs match the current rules</value>
+    <value>Nicio melodie nu se potrivește regulilor curente</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Subtitle" xml:space="preserve">
-    <value>Try editing the rules</value>
+    <value>Încearcă să editezi regulile</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Button_Content" xml:space="preserve">
-    <value>Edit Rules</value>
+    <value>Editează Regulile</value>
   </data>
   <data name="SmartPlaylistSongViewPage_EmptyState_Button_ToolTip" xml:space="preserve">
-    <value>Edit rules</value>
+    <value>Editează regulile</value>
   </data>
   <data name="SettingsPage_Section_About" xml:space="preserve">
-    <value>About</value>
+    <value>Despre</value>
   </data>
   <data name="SettingsPage_AboutExpander_Header" xml:space="preserve">
-    <value>About Nagi</value>
+    <value>Despre Nagi</value>
   </data>
   <data name="SettingsPage_AboutExpander_Description" xml:space="preserve">
-    <value>Rediscover your local music collection with Nagi, a music player focused on speed, simplicity, and privacy.</value>
+    <value>Redescoperă colecția ta de muzică locală cu Nagi, un player de muzică axat pe viteză, simplitate și confidențialitate.</value>
   </data>
   <data name="SettingsPage_About_VersionPrefix" xml:space="preserve">
-    <value>Version </value>
+    <value>Versiune </value>
   </data>
   <data name="SettingsPage_About_Licenses_Content" xml:space="preserve">
-    <value>View Licenses</value>
+    <value>Vezi Licențele</value>
   </data>
   <data name="SettingsPage_About_SourceCode_Content" xml:space="preserve">
-    <value>Source Code</value>
+    <value>Cod Sursă</value>
   </data>
   <data name="SettingsPage_About_CheckUpdates_Content" xml:space="preserve">
-    <value>Check for Updates</value>
+    <value>Verifică Actualizări</value>
   </data>
   <data name="SettingsPage_About_Feedback_Content" xml:space="preserve">
-    <value>Send Feedback</value>
+    <value>Trimite feedback</value>
   </data>
   <data name="SettingsPage_CheckForUpdates_Header" xml:space="preserve">
-    <value>Check for updates on startup</value>
+    <value>Verifică actualizări la pornire</value>
   </data>
   <data name="SettingsPage_CheckForUpdates_Description" xml:space="preserve">
-    <value>Automatically check for new versions when the application starts.</value>
+    <value>Verifică automat noi versiuni la pornirea aplicației.</value>
   </data>
   <data name="SettingsPage_Language_Header" xml:space="preserve">
-    <value>Application Language</value>
+    <value>Limba aplicației</value>
   </data>
   <data name="SettingsPage_Language_Description" xml:space="preserve">
-    <value>Changes require a restart to take effect</value>
+    <value>Modificările necesită o repornire pentru a intra în vigoare</value>
   </data>
   <data name="SettingsPage_RestartRequired_Title" xml:space="preserve">
-    <value>Restart Required</value>
+    <value>Repornire necesară</value>
   </data>
   <data name="SettingsPage_RestartRequired_Message" xml:space="preserve">
-    <value>Please restart the application for the language change to fully take effect.</value>
+    <value>Te rugăm să repornești aplicația pentru ca modificarea limbii să intre pe deplin în vigoare.</value>
   </data>
 </root>
