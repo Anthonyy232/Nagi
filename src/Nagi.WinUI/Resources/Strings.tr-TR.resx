@@ -1026,10 +1026,10 @@ Hata: {1}</value>
     <value>Add your first rule</value>
   </data>
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
-    <value>Save</value>
+    <value>Kaydet</value>
   </data>
   <data name="SmartPlaylist_Dialog_CloseButton" xml:space="preserve">
-    <value>Cancel</value>
+    <value>İptal</value>
   </data>
   <data name="TrayPopup_PreviousButton_ToolTip" xml:space="preserve">
     <value>Previous</value>
@@ -1242,7 +1242,7 @@ Hata: {1}</value>
     <value>Add a music folder</value>
   </data>
   <data name="FolderPage_AddFolder_Label" xml:space="preserve">
-    <value>Add Folder</value>
+    <value>Klasör ekle</value>
   </data>
   <data name="FolderPage_Menu_Play" xml:space="preserve">
     <value>Play</value>
@@ -1251,7 +1251,7 @@ Hata: {1}</value>
     <value>Rescan</value>
   </data>
   <data name="FolderPage_Menu_Delete" xml:space="preserve">
-    <value>Delete</value>
+    <value>Sil</value>
   </data>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>No folders added yet</value>
@@ -1335,7 +1335,7 @@ Hata: {1}</value>
     <value>Scan your music library to populate genres</value>
   </data>
   <data name="LibraryPage_Title" xml:space="preserve">
-    <value>Library</value>
+    <value>Arşiv</value>
   </data>
   <data name="LibraryPage_SearchBox_Placeholder" xml:space="preserve">
     <value>Search library...</value>
@@ -1431,7 +1431,7 @@ Hata: {1}</value>
     <value>Remove Image</value>
   </data>
   <data name="PlaylistPage_Context_Delete" xml:space="preserve">
-    <value>Delete</value>
+    <value>Sil</value>
   </data>
   <data name="PlaylistPage_EmptyState_Title" xml:space="preserve">
     <value>No playlists yet</value>
@@ -1542,7 +1542,7 @@ Hata: {1}</value>
     <value>Settings</value>
   </data>
   <data name="SettingsPage_Section_Appearance" xml:space="preserve">
-    <value>Appearance</value>
+    <value>Görünüm</value>
   </data>
   <data name="SettingsPage_Theme_Header" xml:space="preserve">
     <value>Theme</value>
@@ -1746,7 +1746,7 @@ Hata: {1}</value>
     <value>Complete</value>
   </data>
   <data name="SettingsPage_LastFm_Cancel_Content" xml:space="preserve">
-    <value>Cancel</value>
+    <value>İptal</value>
   </data>
   <data name="SettingsPage_LastFm_Disconnect_Content" xml:space="preserve">
     <value>Disconnect</value>

@@ -1561,7 +1561,7 @@
     <value>Select the backdrop material for the window.</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Header" xml:space="preserve">
-    <value>Dynamic Theming</value>
+    <value>Динамічна тема</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Description" xml:space="preserve">
     <value>Enable and configure dynamic theming options.</value>
@@ -1822,7 +1822,7 @@
     <value>Edit rules</value>
   </data>
   <data name="SettingsPage_Section_About" xml:space="preserve">
-    <value>About</value>
+    <value>Про</value>
   </data>
   <data name="SettingsPage_AboutExpander_Header" xml:space="preserve">
     <value>About Nagi</value>

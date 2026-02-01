@@ -1013,10 +1013,10 @@
     <value>Add your first rule</value>
   </data>
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
-    <value>Save</value>
+    <value>Zapisz</value>
   </data>
   <data name="SmartPlaylist_Dialog_CloseButton" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Anuluj</value>
   </data>
   <data name="TrayPopup_PreviousButton_ToolTip" xml:space="preserve">
     <value>Previous</value>
@@ -1085,7 +1085,7 @@
     <value>Play</value>
   </data>
   <data name="AlbumPage_Empty_Title" xml:space="preserve">
-    <value>No albums found</value>
+    <value>Nie znaleziono albumów z tapetami</value>
   </data>
   <data name="AlbumPage_Empty_Subtitle" xml:space="preserve">
     <value>Scan your music library to populate albums</value>
@@ -1229,7 +1229,7 @@
     <value>Add a music folder</value>
   </data>
   <data name="FolderPage_AddFolder_Label" xml:space="preserve">
-    <value>Add Folder</value>
+    <value>Dodaj Folder</value>
   </data>
   <data name="FolderPage_Menu_Play" xml:space="preserve">
     <value>Play</value>
@@ -1238,7 +1238,7 @@
     <value>Rescan</value>
   </data>
   <data name="FolderPage_Menu_Delete" xml:space="preserve">
-    <value>Delete</value>
+    <value>Usuń</value>
   </data>
   <data name="FolderPage_Empty_Title" xml:space="preserve">
     <value>No folders added yet</value>
@@ -1418,7 +1418,7 @@
     <value>Remove Image</value>
   </data>
   <data name="PlaylistPage_Context_Delete" xml:space="preserve">
-    <value>Delete</value>
+    <value>Usuń</value>
   </data>
   <data name="PlaylistPage_EmptyState_Title" xml:space="preserve">
     <value>No playlists yet</value>
@@ -1532,7 +1532,7 @@
     <value>Appearance</value>
   </data>
   <data name="SettingsPage_Theme_Header" xml:space="preserve">
-    <value>Theme</value>
+    <value>Motyw</value>
   </data>
   <data name="SettingsPage_Theme_Description" xml:space="preserve">
     <value>Choose the application theme.</value>
@@ -1541,7 +1541,7 @@
     <value>Accent Color</value>
   </data>
   <data name="SettingsPage_ResetAccentColor_Content" xml:space="preserve">
-    <value>Reset to default</value>
+    <value>Przywróć domyślne ustawienia aplikacji</value>
   </data>
   <data name="SettingsPage_WindowMaterial_Header" xml:space="preserve">
     <value>Window Material</value>
@@ -1550,7 +1550,7 @@
     <value>Select the backdrop material for the window.</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Header" xml:space="preserve">
-    <value>Dynamic Theming</value>
+    <value>Dynamiczne Motywy</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Description" xml:space="preserve">
     <value>Enable and configure dynamic theming options.</value>
@@ -1592,7 +1592,7 @@
     <value>Audio Equalizer</value>
   </data>
   <data name="SettingsPage_ResetEqualizer_Content" xml:space="preserve">
-    <value>Reset to default</value>
+    <value>Przywróć domyślne ustawienia aplikacji</value>
   </data>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>Preamp</value>
@@ -1604,7 +1604,7 @@
     <value>Customize Player Controls</value>
   </data>
   <data name="SettingsPage_ResetPlayerButtons_Content" xml:space="preserve">
-    <value>Reset to default</value>
+    <value>Przywróć domyślne ustawienia aplikacji</value>
   </data>
   <data name="SettingsPage_CustomizePlayer_Instructions" xml:space="preserve">
     <value>Hover to toggle visibility. Drag to reorder. The divider separates center and right controls.</value>
@@ -1733,7 +1733,7 @@
     <value>Complete</value>
   </data>
   <data name="SettingsPage_LastFm_Cancel_Content" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Anuluj</value>
   </data>
   <data name="SettingsPage_LastFm_Disconnect_Content" xml:space="preserve">
     <value>Disconnect</value>

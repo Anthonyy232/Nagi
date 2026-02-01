@@ -1026,7 +1026,7 @@ Error: {1}</value>
     <value>Add your first rule</value>
   </data>
   <data name="SmartPlaylist_Dialog_PrimaryButton" xml:space="preserve">
-    <value>Save</value>
+    <value>Guardar</value>
   </data>
   <data name="SmartPlaylist_Dialog_CloseButton" xml:space="preserve">
     <value>Cancel</value>
@@ -1554,7 +1554,7 @@ Error: {1}</value>
     <value>Accent Color</value>
   </data>
   <data name="SettingsPage_ResetAccentColor_Content" xml:space="preserve">
-    <value>Reset to default</value>
+    <value>Restablecer a valores por defecto</value>
   </data>
   <data name="SettingsPage_WindowMaterial_Header" xml:space="preserve">
     <value>Window Material</value>
@@ -1563,7 +1563,7 @@ Error: {1}</value>
     <value>Select the backdrop material for the window.</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Header" xml:space="preserve">
-    <value>Dynamic Theming</value>
+    <value>Tema dinámico</value>
   </data>
   <data name="SettingsPage_DynamicTheming_Description" xml:space="preserve">
     <value>Enable and configure dynamic theming options.</value>
@@ -1605,7 +1605,7 @@ Error: {1}</value>
     <value>Audio Equalizer</value>
   </data>
   <data name="SettingsPage_ResetEqualizer_Content" xml:space="preserve">
-    <value>Reset to default</value>
+    <value>Restablecer a valores por defecto</value>
   </data>
   <data name="SettingsPage_Equalizer_Preamp" xml:space="preserve">
     <value>Preamp</value>
@@ -1617,7 +1617,7 @@ Error: {1}</value>
     <value>Customize Player Controls</value>
   </data>
   <data name="SettingsPage_ResetPlayerButtons_Content" xml:space="preserve">
-    <value>Reset to default</value>
+    <value>Restablecer a valores por defecto</value>
   </data>
   <data name="SettingsPage_CustomizePlayer_Instructions" xml:space="preserve">
     <value>Hover to toggle visibility. Drag to reorder. The divider separates center and right controls.</value>
