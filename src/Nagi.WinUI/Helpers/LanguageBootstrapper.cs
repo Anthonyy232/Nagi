@@ -70,7 +70,10 @@ public static class LanguageBootstrapper
             if (!string.IsNullOrEmpty(language))
             {
                 // Set the WinRT language override
-                ApplicationLanguages.PrimaryLanguageOverride = language;
+                if (isPackaged)
+                {
+                    ApplicationLanguages.PrimaryLanguageOverride = language;
+                }
                 
                 // Set .NET culture
                 var culture = new CultureInfo(language);
@@ -83,7 +86,10 @@ public static class LanguageBootstrapper
             {
                 // If the setting is empty (System Default), we must clear the override in case it was set previously.
                 // This allows the app to revert to matching the system language.
-                ApplicationLanguages.PrimaryLanguageOverride = string.Empty;
+                if (isPackaged)
+                {
+                    ApplicationLanguages.PrimaryLanguageOverride = string.Empty;
+                }
             }
         }
         catch (Exception)
