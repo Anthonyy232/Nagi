@@ -126,8 +126,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         var vlcOptions = new[]
         {
             "--no-video", "--no-spu", "--no-osd", "--no-stats", "--ignore-config",
-            "--no-one-instance", "--no-lua", "--verbose=-1", "--audio-filter=equalizer",
-            "--demux=avcodec"
+            "--no-one-instance", "--no-lua", "--verbose=-1", "--audio-filter=equalizer"
         };
 
         _logger.LogDebug("Initializing LibVLC with options: {VlcOptions}", string.Join(" ", vlcOptions));
@@ -232,7 +231,19 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
             }
 
             // Create new media and store reference
+            var extension = System.IO.Path.GetExtension(song.FilePath);
+            var isOggContainer = extension.Equals(".opus", StringComparison.OrdinalIgnoreCase) ||
+                                 extension.Equals(".ogg", StringComparison.OrdinalIgnoreCase) ||
+                                 extension.Equals(".oga", StringComparison.OrdinalIgnoreCase);
+
             _currentMedia = new Media(new Uri(song.FilePath));
+            
+            // Use native demuxer for Ogg containers (.opus/.ogg/.oga) to fix sync, force avcodec for others (MP3/FLAC/etc)
+            if (!isOggContainer)
+            {
+                _currentMedia.AddOption(":demux=avcodec");
+            }
+            
             _mediaPlayer.Media = _currentMedia;
             // Do NOT dispose the media immediately - let it be disposed when no longer needed
         }
