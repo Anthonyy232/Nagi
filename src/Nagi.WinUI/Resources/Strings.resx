@@ -1865,4 +1865,7 @@ Error: {1}</value>
   <data name="SettingsPage_RestartRequired_Message" xml:space="preserve">
     <value>Please restart the application for the language change to fully take effect.</value>
   </data>
+  <data name="SettingsPage_About_PrivacyPolicy_Content" xml:space="preserve">
+    <value>Privacy Policy</value>
+  </data>
 </root>
