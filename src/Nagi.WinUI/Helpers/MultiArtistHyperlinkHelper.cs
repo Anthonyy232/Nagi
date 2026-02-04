@@ -18,6 +18,13 @@ public static class MultiArtistHyperlinkHelper
             typeof(MultiArtistHyperlinkHelper),
             new PropertyMetadata(null, OnSongOrArtistNameChanged));
 
+    public static readonly DependencyProperty AlbumArtistsProperty =
+        DependencyProperty.RegisterAttached(
+            "AlbumArtists",
+            typeof(ICollection<AlbumArtist>),
+            typeof(MultiArtistHyperlinkHelper),
+            new PropertyMetadata(null, OnSongOrArtistNameChanged));
+
     public static readonly DependencyProperty ArtistNameProperty =
         DependencyProperty.RegisterAttached(
             "ArtistName",
@@ -34,6 +41,9 @@ public static class MultiArtistHyperlinkHelper
 
     public static Song GetSong(DependencyObject obj) => (Song)obj.GetValue(SongProperty);
     public static void SetSong(DependencyObject obj, Song value) => obj.SetValue(SongProperty, value);
+
+    public static ICollection<AlbumArtist> GetAlbumArtists(DependencyObject obj) => (ICollection<AlbumArtist>)obj.GetValue(AlbumArtistsProperty);
+    public static void SetAlbumArtists(DependencyObject obj, ICollection<AlbumArtist> value) => obj.SetValue(AlbumArtistsProperty, value);
 
     public static string GetArtistName(DependencyObject obj) => (string)obj.GetValue(ArtistNameProperty);
     public static void SetArtistName(DependencyObject obj, string value) => obj.SetValue(ArtistNameProperty, value);
@@ -75,12 +85,13 @@ public static class MultiArtistHyperlinkHelper
     {
         // Capture dependencies
         var song = GetSong(textBlock);
+        var albumArtists = GetAlbumArtists(textBlock);
         var artistString = GetArtistName(textBlock);
         var command = GetCommand(textBlock);
 
         // Quick escape if nothing changed to prevent rapid-fire redundant updates during virtualization/scrolling
         // Include Command in cache key to ensure we rebuild if command is late-bound!
-        string cacheKey = $"{song?.Id ?? Guid.Empty}_{artistString ?? string.Empty}_{command?.GetHashCode() ?? 0}";
+        string cacheKey = $"{song?.Id ?? Guid.Empty}_{albumArtists?.GetHashCode() ?? 0}_{artistString ?? string.Empty}_{command?.GetHashCode() ?? 0}";
         if (_lastUpdateMap.TryGetValue(textBlock, out var lastValue) && lastValue == cacheKey)
         {
             return;
@@ -165,6 +176,15 @@ public static class MultiArtistHyperlinkHelper
             artistParts = song.SongArtists
                 .OrderBy(sa => sa.Order)
                 .Select(sa => sa.Artist?.Name)
+                .Where(n => !string.IsNullOrWhiteSpace(n))
+                .Select(n => n!)
+                .ToList();
+        }
+        else if (albumArtists?.Any() == true)
+        {
+            artistParts = albumArtists
+                .OrderBy(aa => aa.Order)
+                .Select(aa => aa.Artist?.Name)
                 .Where(n => !string.IsNullOrWhiteSpace(n))
                 .Select(n => n!)
                 .ToList();
