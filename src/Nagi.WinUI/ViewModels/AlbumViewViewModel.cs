@@ -53,6 +53,8 @@ public partial class AlbumViewViewModel : SongListViewModelBase
     [ObservableProperty] public partial string AlbumTitle { get; set; }
 
     [ObservableProperty] public partial string ArtistName { get; set; }
+    
+    [ObservableProperty] public partial ICollection<AlbumArtist> AlbumArtists { get; set; } = new List<AlbumArtist>();
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsArtworkAvailable))]
@@ -122,6 +124,7 @@ public partial class AlbumViewViewModel : SongListViewModelBase
                 {
                     AlbumTitle = album.Title;
                     ArtistName = album.ArtistName;
+                    AlbumArtists = album.AlbumArtists;
                     PageTitle = album.Title;
                     _albumYear = album.Year;
                     CoverArtUri = ImageUriHelper.GetUriWithCacheBuster(album.CoverArtUri);
@@ -147,6 +150,7 @@ public partial class AlbumViewViewModel : SongListViewModelBase
         AlbumTitle = Nagi.WinUI.Resources.Strings.AlbumView_AlbumNotFound;
         PageTitle = Nagi.WinUI.Resources.Strings.Generic_NoItems;
         ArtistName = string.Empty;
+        AlbumArtists = new List<AlbumArtist>();
         CoverArtUri = null;
         Songs.Clear();
         TotalItemsText = ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Songs_Count_Plural, 0);
@@ -158,6 +162,7 @@ public partial class AlbumViewViewModel : SongListViewModelBase
         AlbumTitle = Nagi.WinUI.Resources.Strings.AlbumView_Error;
         PageTitle = Nagi.WinUI.Resources.Strings.Generic_Error;
         ArtistName = string.Empty;
+        AlbumArtists = new List<AlbumArtist>();
         TotalItemsText = Nagi.WinUI.Resources.Strings.Generic_Error;
         Songs.Clear();
     }
