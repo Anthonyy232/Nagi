@@ -479,6 +479,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             // Load languages dynamically
             AvailableLanguages.Clear();
             AvailableLanguages.Add(new LanguageModel(string.Empty, Nagi.WinUI.Resources.Strings.Language_Auto));
+            AvailableLanguages.Add(new LanguageModel("en-US", "English"));
 
             var manifestLanguages = await _appInfoService.GetAvailableLanguagesAsync();
             var allSpecificCultures = CultureInfo.GetCultures(CultureTypes.SpecificCultures);
