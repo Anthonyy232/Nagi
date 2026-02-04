@@ -847,6 +847,10 @@
                         Content="{x:Bind resources:Strings.SettingsPage_About_Feedback_Content, Mode=OneTime}"
                         Style="{StaticResource AnimatedHyperlinkButtonStyle}"
                         NavigateUri="mailto:anthonyyla.dev@gmail.com" />
+                    <HyperlinkButton
+                        Content="{x:Bind resources:Strings.SettingsPage_About_PrivacyPolicy_Content, Mode=OneTime}"
+                        Style="{StaticResource AnimatedHyperlinkButtonStyle}"
+                        NavigateUri="https://github.com/Anthonyy232/Nagi/blob/master/PRIVACY.md" />
                 </StackPanel>
             </StackPanel>
         </ScrollView>

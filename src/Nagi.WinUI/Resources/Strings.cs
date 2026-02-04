@@ -716,4 +716,5 @@ public static class Strings
     public static string SettingsPage_Language_Description => GetString("SettingsPage_Language_Description");
     public static string SettingsPage_RestartRequired_Title => GetString("SettingsPage_RestartRequired_Title");
     public static string SettingsPage_RestartRequired_Message => GetString("SettingsPage_RestartRequired_Message");
+    public static string SettingsPage_About_PrivacyPolicy_Content => GetString("SettingsPage_About_PrivacyPolicy_Content");
 }
