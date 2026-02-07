@@ -28,12 +28,14 @@ public partial class AlbumViewModelItem : ObservableObject
         Id = album.Id;
         Title = album.Title;
         ArtistName = album.ArtistName;
+        AlbumArtists = album.AlbumArtists;
         CoverArtUri = ImageUriHelper.GetUriWithCacheBuster(album.CoverArtUri);
     }
 
     public Guid Id { get; }
     [ObservableProperty] public partial string Title { get; set; }
     [ObservableProperty] public partial string ArtistName { get; set; }
+    public ICollection<AlbumArtist> AlbumArtists { get; }
     [ObservableProperty] public partial string? CoverArtUri { get; set; }
 
     public bool IsArtworkAvailable => !string.IsNullOrEmpty(CoverArtUri);
