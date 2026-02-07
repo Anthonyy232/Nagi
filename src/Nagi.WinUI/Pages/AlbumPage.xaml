@@ -270,6 +270,7 @@
                                 TextTrimming="CharacterEllipsis"
                                 TextWrapping="NoWrap"
                                 uihelpers:MultiArtistHyperlinkHelper.ArtistName="{x:Bind ArtistName, Mode=OneWay}"
+                                uihelpers:MultiArtistHyperlinkHelper.AlbumArtists="{x:Bind AlbumArtists, Mode=OneWay}"
                                 uihelpers:MultiArtistHyperlinkHelper.Command="{Binding ViewModel.GoToArtistCommand, ElementName=AlbumPageRoot}" />
                         </Grid>
                     </DataTemplate>
