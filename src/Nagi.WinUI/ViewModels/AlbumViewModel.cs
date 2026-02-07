@@ -15,6 +15,7 @@ using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
 using Nagi.Core.Helpers;
 using Nagi.WinUI.Helpers;
+using System.Collections.Generic;
 
 namespace Nagi.WinUI.ViewModels;
 
