@@ -78,8 +78,19 @@ public static class MultiArtistHyperlinkHelper
         }
     }
 
-    private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<TextBlock, StackPanel> _stackPanelCache = new();
-    private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<TextBlock, string> _lastUpdateMap = new();
+    private static readonly DependencyProperty AssociatedStackPanelProperty =
+        DependencyProperty.RegisterAttached(
+            "AssociatedStackPanel",
+            typeof(StackPanel),
+            typeof(MultiArtistHyperlinkHelper),
+            new PropertyMetadata(null));
+
+    private static readonly DependencyProperty LastCacheKeyProperty =
+        DependencyProperty.RegisterAttached(
+            "LastCacheKey",
+            typeof(string),
+            typeof(MultiArtistHyperlinkHelper),
+            new PropertyMetadata(null));
 
     private static void UpdateHyperlinks(TextBlock textBlock)
     {
@@ -92,12 +103,13 @@ public static class MultiArtistHyperlinkHelper
         // Quick escape if nothing changed to prevent rapid-fire redundant updates during virtualization/scrolling
         // Include Command in cache key to ensure we rebuild if command is late-bound!
         string cacheKey = $"{song?.Id ?? Guid.Empty}_{albumArtists?.GetHashCode() ?? 0}_{artistString ?? string.Empty}_{command?.GetHashCode() ?? 0}";
-        if (_lastUpdateMap.TryGetValue(textBlock, out var lastValue) && lastValue == cacheKey)
+        
+        var lastCacheKey = (string)textBlock.GetValue(LastCacheKeyProperty);
+        if (lastCacheKey == cacheKey)
         {
             return;
         }
-        _lastUpdateMap.Remove(textBlock);
-        _lastUpdateMap.Add(textBlock, cacheKey);
+        textBlock.SetValue(LastCacheKeyProperty, cacheKey);
         
         if (textBlock.Parent is not Panel parentPanel)
         {
@@ -106,8 +118,9 @@ public static class MultiArtistHyperlinkHelper
             return;
         }
 
-        // Get or create the StackPanel (cached per TextBlock)
-        if (!_stackPanelCache.TryGetValue(textBlock, out var stackPanel))
+        // Get or create the StackPanel (cached per TextBlock via attached property)
+        var stackPanel = (StackPanel)textBlock.GetValue(AssociatedStackPanelProperty);
+        if (stackPanel == null)
         {
             stackPanel = new StackPanel
             {
@@ -140,7 +153,7 @@ public static class MultiArtistHyperlinkHelper
                 parentPanel.Children.Add(stackPanel);
             }
             
-            _stackPanelCache.Add(textBlock, stackPanel);
+            textBlock.SetValue(AssociatedStackPanelProperty, stackPanel);
         }
 
         // Clear and rebuild (this is efficient - only happens when content actually changes due to cache check above)
