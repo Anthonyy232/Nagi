@@ -99,6 +99,13 @@ public interface IUIService
     Task<CrashReportResult> ShowCrashReportDialogAsync(string title, string introduction, string logContent, string githubUrl);
 
     /// <summary>
+    ///     Opens a file open picker dialog that allows selecting a single file.
+    /// </summary>
+    /// <param name="fileTypes">The file extensions to filter by (e.g., ".zip").</param>
+    /// <returns>The path of the selected file, or null if the user cancelled.</returns>
+    Task<string?> PickSingleFileAsync(IEnumerable<string> fileTypes);
+
+    /// <summary>
     ///     Opens a file open picker dialog that allows selecting multiple files.
     /// </summary>
     /// <param name="fileTypes">The file extensions to filter by (e.g., ".m3u", ".m3u8").</param>

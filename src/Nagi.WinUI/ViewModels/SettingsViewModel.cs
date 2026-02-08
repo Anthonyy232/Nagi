@@ -116,6 +116,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     private readonly PlayerViewModel _playerViewModel;
     private readonly IReplayGainService _replayGainService;
     private readonly IFFmpegService _ffmpegService;
+    private readonly IBackupRestoreService _backupRestoreService;
     private readonly IDispatcherService _dispatcherService;
     private readonly SemaphoreSlim _loadLock = new(1, 1);
 
@@ -146,6 +147,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         PlayerViewModel playerViewModel,
         IReplayGainService replayGainService,
         IFFmpegService ffmpegService,
+        IBackupRestoreService backupRestoreService,
         IDispatcherService dispatcherService,
         ILogger<SettingsViewModel> logger)
     {
@@ -164,6 +166,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         _playerViewModel.PropertyChanged += OnPlayerViewModelPropertyChanged;
         _replayGainService = replayGainService ?? throw new ArgumentNullException(nameof(replayGainService));
         _ffmpegService = ffmpegService ?? throw new ArgumentNullException(nameof(ffmpegService));
+        _backupRestoreService = backupRestoreService ?? throw new ArgumentNullException(nameof(backupRestoreService));
         _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
         _logger = logger;
 
@@ -771,6 +774,75 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         else
         {
             await _uiService.ShowMessageDialogAsync(Nagi.WinUI.Resources.Strings.Settings_Import_FailedTotal_Title, Nagi.WinUI.Resources.Strings.Settings_Import_FailedTotal_Message);
+        }
+    }
+
+    [RelayCommand]
+    private async Task CreateBackupAsync()
+    {
+        var folderPath = await _uiService.PickSingleFolderAsync();
+        if (folderPath is null) return;
+
+        var result = await _backupRestoreService.CreateBackupAsync(folderPath);
+
+        if (result.Success)
+        {
+            await _uiService.ShowMessageDialogAsync(
+                Resources.Strings.Settings_Backup_Success_Title,
+                string.Format(Resources.Strings.Settings_Backup_Success_Message, result.BackupSizeMB, result.BackupFilePath));
+        }
+        else
+        {
+            await _uiService.ShowMessageDialogAsync(
+                Resources.Strings.Settings_Backup_Failed_Title,
+                result.ErrorMessage ?? Resources.Strings.Settings_Backup_Failed_Message);
+        }
+    }
+
+    [RelayCommand]
+    private async Task RestoreFromBackupAsync()
+    {
+        var backupFilePath = await _uiService.PickSingleFileAsync(new[] { ".zip" });
+        if (string.IsNullOrEmpty(backupFilePath)) return;
+
+        // Validate backup
+        var isValid = await _backupRestoreService.ValidateBackupAsync(backupFilePath);
+        if (!isValid)
+        {
+            await _uiService.ShowMessageDialogAsync(
+                Resources.Strings.Settings_Restore_Invalid_Title,
+                Resources.Strings.Settings_Restore_Invalid_Message);
+            return;
+        }
+
+        // Confirmation dialog
+        var confirmed = await _uiService.ShowConfirmationDialogAsync(
+            Resources.Strings.Settings_Restore_Confirm_Title,
+            Resources.Strings.Settings_Restore_Confirm_Message,
+            Resources.Strings.Settings_Restore_Confirm_Button,
+            Resources.Strings.Generic_Cancel);
+
+        if (!confirmed) return;
+
+        var result = await _backupRestoreService.RestoreFromBackupAsync(backupFilePath);
+
+        if (result.Success)
+        {
+            await _uiService.ShowMessageDialogAsync(
+                Resources.Strings.Settings_Restore_Success_Title,
+                Resources.Strings.Settings_Restore_Success_Message);
+
+            // Restart app
+            if (result.RequiresRestart)
+            {
+                AppInstance.Restart("");
+            }
+        }
+        else
+        {
+            await _uiService.ShowMessageDialogAsync(
+                Resources.Strings.Settings_Restore_Failed_Title,
+                result.ErrorMessage ?? Resources.Strings.Settings_Restore_Failed_Message);
         }
     }
 

@@ -501,6 +501,7 @@ public partial class App : Application
         services.AddSingleton<IUpdateService, VelopackUpdateService>();
         services.AddSingleton<IOnlineLyricsService, LrcLibService>();
         services.AddSingleton<IPlaylistExportService, M3uPlaylistExportService>();
+        services.AddSingleton<IBackupRestoreService, BackupRestoreService>();
         
         // FFmpeg and ReplayGain services
         services.AddSingleton<IFFmpegService, FFmpegService>();

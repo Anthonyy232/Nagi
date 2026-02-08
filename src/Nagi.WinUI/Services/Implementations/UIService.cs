@@ -158,6 +158,23 @@ public class UIService : IUIService
         }
     }
 
+    public async Task<string?> PickSingleFileAsync(IEnumerable<string> fileTypes)
+    {
+        if (App.RootWindow is null) return null;
+
+        var filePicker = new FileOpenPicker();
+        var hwnd = WindowNative.GetWindowHandle(App.RootWindow);
+        InitializeWithWindow.Initialize(filePicker, hwnd);
+
+        foreach (var ext in fileTypes)
+        {
+            filePicker.FileTypeFilter.Add(ext);
+        }
+
+        var file = await filePicker.PickSingleFileAsync();
+        return file?.Path;
+    }
+
     public async Task<IReadOnlyList<string>> PickOpenMultipleFilesAsync(IEnumerable<string> fileTypes)
     {
         if (App.RootWindow is null) return [];
