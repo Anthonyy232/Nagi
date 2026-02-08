@@ -717,4 +717,21 @@ public static class Strings
     public static string SettingsPage_RestartRequired_Title => GetString("SettingsPage_RestartRequired_Title");
     public static string SettingsPage_RestartRequired_Message => GetString("SettingsPage_RestartRequired_Message");
     public static string SettingsPage_About_PrivacyPolicy_Content => GetString("SettingsPage_About_PrivacyPolicy_Content");
+    public static string SettingsPage_BackupRestore_Header => GetString("SettingsPage_BackupRestore_Header");
+    public static string SettingsPage_BackupRestore_Description => GetString("SettingsPage_BackupRestore_Description");
+    public static string SettingsPage_CreateBackup_Content => GetString("SettingsPage_CreateBackup_Content");
+    public static string SettingsPage_RestoreBackup_Content => GetString("SettingsPage_RestoreBackup_Content");
+    public static string Settings_Backup_Success_Title => GetString("Settings_Backup_Success_Title");
+    public static string Settings_Backup_Success_Message => GetString("Settings_Backup_Success_Message");
+    public static string Settings_Backup_Failed_Title => GetString("Settings_Backup_Failed_Title");
+    public static string Settings_Backup_Failed_Message => GetString("Settings_Backup_Failed_Message");
+    public static string Settings_Restore_Invalid_Title => GetString("Settings_Restore_Invalid_Title");
+    public static string Settings_Restore_Invalid_Message => GetString("Settings_Restore_Invalid_Message");
+    public static string Settings_Restore_Confirm_Title => GetString("Settings_Restore_Confirm_Title");
+    public static string Settings_Restore_Confirm_Message => GetString("Settings_Restore_Confirm_Message");
+    public static string Settings_Restore_Confirm_Button => GetString("Settings_Restore_Confirm_Button");
+    public static string Settings_Restore_Success_Title => GetString("Settings_Restore_Success_Title");
+    public static string Settings_Restore_Success_Message => GetString("Settings_Restore_Success_Message");
+    public static string Settings_Restore_Failed_Title => GetString("Settings_Restore_Failed_Title");
+    public static string Settings_Restore_Failed_Message => GetString("Settings_Restore_Failed_Message");
 }
