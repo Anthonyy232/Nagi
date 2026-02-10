@@ -423,11 +423,35 @@
                                         </ItemsControl.ItemsPanel>
                                     </ItemsControl>
 
-                                    <Slider
-                                        VerticalAlignment="Center"
-                                        Style="{StaticResource VolumeSliderStyle}"
-                                        Value="{x:Bind ViewModel.CurrentVolume, Mode=TwoWay}"
-                                        Visibility="{x:Bind ViewModel.IsVolumeControlVisible, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" />
+                                    <Grid
+                                        Height="72"
+                                        Margin="-12,-20,-12,-20"
+                                        Background="Transparent"
+                                        PointerWheelChanged="VolumeSliderContainer_PointerWheelChanged">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <!-- Left padding area -->
+                                        <Rectangle
+                                            Grid.Column="0"
+                                            Width="12"
+                                            Fill="Transparent" />
+
+                                        <Slider
+                                            Grid.Column="1"
+                                            VerticalAlignment="Center"
+                                            Style="{StaticResource VolumeSliderStyle}"
+                                            Value="{x:Bind ViewModel.CurrentVolume, Mode=TwoWay}"
+                                            Visibility="{x:Bind ViewModel.IsVolumeControlVisible, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" />
+
+                                        <!-- Right padding area -->
+                                        <Rectangle
+                                            Grid.Column="2"
+                                            Width="12"
+                                            Fill="Transparent" />
+                                    </Grid>
                                 </StackPanel>
                             </Grid>
 
