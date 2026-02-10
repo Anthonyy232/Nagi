@@ -14,13 +14,13 @@
 
 
 
-    <Grid Padding="{StaticResource PageContainerPadding}">
+    <Grid Padding="{StaticResource PageContainerPaddingVertical}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" Margin="0,0,0,28">
+        <Grid Grid.Row="0" Margin="{StaticResource PageHeaderMarginIndented}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
@@ -55,6 +55,7 @@
             ItemClick="FoldersGridView_ItemClick"
             ItemContainerStyle="{StaticResource FolderPageGridViewItemStyle}"
             ItemsSource="{x:Bind ViewModel.Folders, Mode=OneWay}"
+            Padding="{StaticResource SongListViewPadding}"
             Visibility="{x:Bind ViewModel.HasFolders, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
             <GridView.ItemsPanel>
                 <ItemsPanelTemplate>
