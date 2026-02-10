@@ -511,6 +511,19 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         }
     }
 
+    private void VolumeSliderContainer_PointerWheelChanged(object sender, PointerRoutedEventArgs e)
+    {
+        var pointerPoint = e.GetCurrentPoint((UIElement)sender);
+        var delta = pointerPoint.Properties.MouseWheelDelta;
+
+        if (delta > 0)
+            ViewModel.CurrentVolume = Math.Min(100, ViewModel.CurrentVolume + VolumeChangeStep);
+        else if (delta < 0)
+            ViewModel.CurrentVolume = Math.Max(0, ViewModel.CurrentVolume - VolumeChangeStep);
+
+        e.Handled = true;
+    }
+
     /// <summary>
     ///     Restores the navigation pane state if the "remember pane state" setting is enabled.
     ///     This overrides the XAML adaptive trigger's default state.
