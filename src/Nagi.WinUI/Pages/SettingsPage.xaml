@@ -82,10 +82,11 @@
 
         <ScrollView
             Grid.Row="1"
-            Padding="36,0,36,24"
+            Padding="0,0,0,24"
             VerticalScrollBarVisibility="Auto"
             VerticalScrollMode="Auto">
             <StackPanel
+                Padding="36,0,36,0"
                 MaxWidth="1200"
                 HorizontalAlignment="Stretch"
                 Spacing="{StaticResource SettingsCardSpacing}">

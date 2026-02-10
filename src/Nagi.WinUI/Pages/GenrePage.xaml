@@ -17,7 +17,7 @@
 
     </Page.Resources>
 
-    <Grid Padding="{StaticResource PageContainerPadding}">
+    <Grid Padding="{StaticResource PageContainerPaddingVertical}">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="SearchStates">
                 <VisualState x:Name="SearchCollapsed">
@@ -89,7 +89,7 @@
         </Grid.RowDefinitions>
 
         <!-- Page Header -->
-        <Grid Grid.Row="0" Margin="0,0,0,28">
+        <Grid Grid.Row="0" Margin="{StaticResource PageHeaderMarginIndented}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
@@ -168,6 +168,7 @@
                 ItemsSource="{x:Bind ViewModel.Genres, Mode=OneWay}"
                 SelectionMode="None"
                 Visibility="{x:Bind ViewModel.HasGenres, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}"
+                Padding="{StaticResource SongListViewPadding}"
                 ItemContainerStyle="{StaticResource GenrePageGridViewItemStyle}">
                 <GridView.ItemsPanel>
                     <ItemsPanelTemplate>
