@@ -299,6 +299,8 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
             _ = ApplyDynamicThemeForCurrentTrackAsync();
             UpdatePlayerVisualState(false);
+            
+            AddHandler(PointerPressedEvent, new PointerEventHandler(OnGlobalPointerPressed), true);
         }
         catch (Exception ex)
         {
@@ -319,6 +321,8 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
         // Dispose the tray icon control to prevent "Exception Processing Message 0xc0000005" errors on exit.
         AppTrayIconHost?.Dispose();
+        
+        RemoveHandler(PointerPressedEvent, (PointerEventHandler)OnGlobalPointerPressed);
     }
 
     /// <summary>
@@ -542,6 +546,22 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         {
             // Non-critical: log at trace level and let adaptive triggers handle default state.
             _logger.LogTrace(ex, "Failed to restore navigation pane state.");
+        }
+    }
+
+    /// <summary>
+    ///     Handles global pointer pressed events to enable back navigation using the mouse side button.
+    ///     This is registered with handledEventsToo: true to catch events even if child controls swallow them.
+    /// </summary>
+    private void OnGlobalPointerPressed(object sender, PointerRoutedEventArgs e)
+    {
+        var point = e.GetCurrentPoint(sender as UIElement);
+        var properties = point.Properties;
+
+        if (properties.PointerUpdateKind == Microsoft.UI.Input.PointerUpdateKind.XButton1Pressed)
+        {
+            TryGoBack();
+            e.Handled = true;
         }
     }
 
