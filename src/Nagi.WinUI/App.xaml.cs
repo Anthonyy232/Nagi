@@ -727,8 +727,10 @@ public partial class App : Application
                 Services.GetRequiredService<PlayerViewModel>().Cleanup();
                 Services.GetRequiredService<TrayIconViewModel>().Cleanup();
                 
-                await Services.GetRequiredService<IPresenceManager>().ShutdownAsync();
-                await SaveApplicationStateAsync(Services);
+                var presenceTask = Services.GetRequiredService<IPresenceManager>().ShutdownAsync();
+                var saveStateTask = SaveApplicationStateAsync(Services);
+                
+                await Task.WhenAll(presenceTask, saveStateTask);
             }
         }
         catch (Exception ex)
@@ -1045,31 +1047,79 @@ public partial class App : Application
 
     internal void ApplyThemeInternal(ElementTheme themeToApply)
     {
-        if (RootWindow?.Content is not FrameworkElement rootElement) return;
+        EnsureOnUIThread(() =>
+        {
+            if (RootWindow?.Content is not FrameworkElement rootElement) return;
 
-        rootElement.RequestedTheme = themeToApply;
-        Services?.GetRequiredService<IThemeService>().ReapplyCurrentDynamicThemeAsync();
+            rootElement.RequestedTheme = themeToApply;
+            Services?.GetRequiredService<IThemeService>().ReapplyCurrentDynamicThemeAsync();
 
-        if (RootWindow is MainWindow mainWindow) mainWindow.InitializeCustomTitleBar();
+            if (RootWindow is MainWindow mainWindow) mainWindow.InitializeCustomTitleBar();
+        }, nameof(ApplyThemeInternal));
     }
 
     public void SetAppPrimaryColorBrushColor(Color newColor)
     {
-        if (Resources.TryGetValue("AppPrimaryColorBrush", out var brushObject) &&
-            brushObject is SolidColorBrush appPrimaryColorBrush)
+        EnsureOnUIThread(() =>
         {
-            if (appPrimaryColorBrush.Color != newColor)
+            if (Resources.TryGetValue("AppPrimaryColorBrush", out var brushObject) &&
+                brushObject is SolidColorBrush appPrimaryColorBrush)
             {
-                appPrimaryColorBrush.Color = newColor;
+                if (appPrimaryColorBrush.Color != newColor)
+                {
+                    appPrimaryColorBrush.Color = newColor;
 
-                // Refresh taskbar icons to match the new primary color.
-                // The service handles debouncing internally.
-                _ = (RootWindow as MainWindow)?.TaskbarService?.RefreshIconsAsync();
+                    // Refresh taskbar icons to match the new primary color.
+                    // The service handles debouncing internally.
+                    _ = (RootWindow as MainWindow)?.TaskbarService?.RefreshIconsAsync();
+                }
             }
+            else
+            {
+                _logger?.LogCritical("AppPrimaryColorBrush resource not found");
+            }
+        }, nameof(SetAppPrimaryColorBrushColor));
+    }
+
+    public void SetPlayerTintColorBrushColor(Color newColor)
+    {
+        EnsureOnUIThread(() =>
+        {
+            if (Resources.TryGetValue("PlayerTintColorBrush", out var brushObject) &&
+                brushObject is SolidColorBrush playerTintColorBrush)
+            {
+                if (playerTintColorBrush.Color != newColor)
+                {
+                    playerTintColorBrush.Color = newColor;
+                }
+            }
+            else
+            {
+                _logger?.LogCritical("PlayerTintColorBrush resource not found");
+            }
+        }, nameof(SetPlayerTintColorBrushColor));
+    }
+
+    private void EnsureOnUIThread(Action action, string methodName)
+    {
+        if (RootWindow?.DispatcherQueue is { } dispatcher)
+        {
+            if (dispatcher.HasThreadAccess)
+            {
+                action();
+            }
+            else
+            {
+                dispatcher.TryEnqueue(action.Invoke);
+            }
+        }
+        else if (RootWindow != null)
+        {
+            _logger?.LogWarning("{Method}: RootWindow exists but DispatcherQueue is null. Skipping update.", methodName);
         }
         else
         {
-            _logger?.LogCritical("AppPrimaryColorBrush resource not found");
+            _logger?.LogDebug("{Method}: RootWindow is null. Skipping update.", methodName);
         }
     }
 

@@ -377,6 +377,29 @@ public class BackdropMaterialToStringConverter : IValueConverter
 }
 
 /// <summary>
+///     Converts a PlayerBackgroundMaterial enum value to a user-friendly string for display in the UI.
+/// </summary>
+public class PlayerBackgroundMaterialToStringConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        if (value is PlayerBackgroundMaterial material)
+            return material switch
+            {
+                PlayerBackgroundMaterial.Acrylic => Nagi.WinUI.Resources.Strings.PlayerBackgroundMaterial_Acrylic,
+                PlayerBackgroundMaterial.Solid => Nagi.WinUI.Resources.Strings.PlayerBackgroundMaterial_Solid,
+                _ => material.ToString()
+            };
+        return string.Empty;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+/// <summary>
 ///     Converts a boolean value to a double value for opacity.
 /// </summary>
 public class BooleanToOpacityConverter : IValueConverter
@@ -482,5 +505,33 @@ public class SliderMaximumConverter : IValueConverter
     public object ConvertBack(object value, Type targetType, object parameter, string language)
     {
         throw new NotImplementedException();
+    }
+}
+
+/// <summary>
+///     Converts a double value (0.0 to 1.0) to a percentage string (e.g., "50%").
+/// </summary>
+public class DoubleToPercentageConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        if (value is double d)
+        {
+            return $"{(int)Math.Round(d * 100)}%";
+        }
+        if (value is float f)
+        {
+            return $"{(int)Math.Round(f * 100)}%";
+        }
+        return "0%";
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
+        if (value is string s && s.EndsWith("%") && double.TryParse(s.TrimEnd('%'), out var d))
+        {
+            return d / 100.0;
+        }
+        return 0.0;
     }
 }

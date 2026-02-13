@@ -70,6 +70,8 @@ public class SettingsService : IUISettingsService, IDisposable
     private const string MetadataServiceProvidersKey = "MetadataServiceProviders";
     private const string ArtistSplitCharactersKey = "ArtistSplitCharacters";
     private const string LanguageKey = "AppLanguage";
+    private const string PlayerBackgroundMaterialKey = "PlayerBackgroundMaterial";
+    private const string PlayerTintIntensityKey = "PlayerTintIntensity";
 
     private static readonly JsonSerializerOptions _serializerOptions = new() { WriteIndented = true };
     private readonly ICredentialLockerService _credentialLockerService;
@@ -121,6 +123,7 @@ public class SettingsService : IUISettingsService, IDisposable
     public event Action<ServiceCategory>? ServiceProvidersChanged;
     public event Action? ArtistSplitCharactersChanged;
     public event Action<string>? LanguageChanged;
+    public event Action? PlayerDesignSettingsChanged;
 
     public bool IsTransparencyEffectsEnabled()
     {
@@ -177,7 +180,9 @@ public class SettingsService : IUISettingsService, IDisposable
             SetVolumeNormalizationEnabledAsync(SettingsDefaults.VolumeNormalizationEnabled),
             SetAccentColorAsync(SettingsDefaults.AccentColor),
             SetArtistSplitCharactersAsync(SettingsDefaults.DefaultArtistSplitCharacters),
-            SetLanguageAsync(string.Empty)
+            SetLanguageAsync(string.Empty),
+            SetPlayerBackgroundMaterialAsync(SettingsDefaults.DefaultPlayerBackgroundMaterial),
+            SetPlayerTintIntensityAsync(SettingsDefaults.DefaultPlayerTintIntensity)
         };
 
         await Task.WhenAll(tasks).ConfigureAwait(false);
@@ -374,7 +379,17 @@ public class SettingsService : IUISettingsService, IDisposable
                 hasValue = _settings.TryGetValue(key, out value);
             }
 
-            if (hasValue && value is JsonElement element) name = element.GetString();
+            if (hasValue && value is JsonElement element)
+            {
+                if (element.ValueKind == JsonValueKind.String)
+                {
+                    name = element.GetString();
+                }
+                else if (element.ValueKind == JsonValueKind.Number)
+                {
+                    name = element.ToString(); // Fallback for numeric enums
+                }
+            }
         }
 
         if (name != null && Enum.TryParse(name, out TEnum result)) return result;
@@ -766,6 +781,28 @@ public class SettingsService : IUISettingsService, IDisposable
     public async Task SetLanguageAsync(string languageCode)
     {
         await SetValueAndNotifyAsync(LanguageKey, languageCode, string.Empty, LanguageChanged).ConfigureAwait(false);
+    }
+
+    public async Task<PlayerBackgroundMaterial> GetPlayerBackgroundMaterialAsync()
+    {
+        await EnsureUnpackagedSettingsLoadedAsync().ConfigureAwait(false);
+        return GetEnumValue(PlayerBackgroundMaterialKey, PlayerBackgroundMaterial.Acrylic);
+    }
+
+    public Task SetPlayerBackgroundMaterialAsync(PlayerBackgroundMaterial material)
+    {
+        return SetValueAndNotifyAsync(PlayerBackgroundMaterialKey, material.ToString(), PlayerBackgroundMaterial.Acrylic.ToString(), _ => PlayerDesignSettingsChanged?.Invoke());
+    }
+
+    public async Task<double> GetPlayerTintIntensityAsync()
+    {
+        await EnsureUnpackagedSettingsLoadedAsync().ConfigureAwait(false);
+        return GetValue(PlayerTintIntensityKey, 1.0);
+    }
+
+    public Task SetPlayerTintIntensityAsync(double intensity)
+    {
+        return SetValueAndNotifyAsync(PlayerTintIntensityKey, Math.Clamp(intensity, 0.0, 1.0), 1.0, _ => PlayerDesignSettingsChanged?.Invoke());
     }
 
     private static List<ServiceProviderSetting> GetDefaultServiceProviders(ServiceCategory category)

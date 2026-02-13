@@ -52,4 +52,18 @@ public class DispatcherService : IDispatcherService
             return Task.CompletedTask;
         }
     }
+
+    /// <inheritdoc />
+    public Task<T> EnqueueAsync<T>(Func<T> function)
+    {
+        try
+        {
+            return _dispatcherQueue.EnqueueAsync(function);
+        }
+        catch (Exception ex) when (ex.HResult == RO_E_CLOSED || ex.HResult == RPC_E_WRONG_THREAD)
+        {
+            // The dispatcher is shutting down or unavailable - return default value
+            return Task.FromResult(default(T)!);
+        }
+    }
 }

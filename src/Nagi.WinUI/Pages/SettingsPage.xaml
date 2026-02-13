@@ -13,7 +13,9 @@
     xmlns:resources="using:Nagi.WinUI.Resources"
     xmlns:viewmodels="using:Nagi.WinUI.ViewModels"
     mc:Ignorable="d"
+    Background="Transparent"
     NavigationCacheMode="Required">
+
 
     <Page.Resources>
         <localConverters:ElementThemeToFriendlyStringConverter x:Key="ThemeToStringConverter" />
@@ -22,6 +24,8 @@
         <localConverters:FloatToDecimalStringConverter x:Key="FloatToDecimalStringConverter" />
         <localConverters:BooleanToOpacityConverter x:Key="BooleanToOpacityConverter" />
         <localConverters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <localConverters:PlayerBackgroundMaterialToStringConverter x:Key="PlayerBackgroundMaterialToStringConverter" />
+        <localConverters:DoubleToPercentageConverter x:Key="DoubleToPercentageConverter" />
         
         <!-- Shared template for service provider items in Lyrics and Metadata source lists -->
         <DataTemplate x:Key="ServiceProviderItemTemplate" x:DataType="viewmodels:ServiceProviderSettingViewModel">
@@ -165,6 +169,68 @@
                         HorizontalAlignment="Right"
                         IsOn="{x:Bind ViewModel.IsDynamicThemingEnabled, Mode=TwoWay}" />
                 </controls:SettingsCard>
+
+                <!-- Player Styling Settings -->
+                <controls:SettingsExpander
+                    Description="{x:Bind resources:Strings.SettingsPage_PlayerStyling_Description, Mode=OneTime}">
+                    <controls:SettingsExpander.Header>
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <TextBlock Text="{x:Bind resources:Strings.SettingsPage_PlayerStyling_Header, Mode=OneTime}" VerticalAlignment="Center" />
+                            <HyperlinkButton
+                                VerticalAlignment="Center"
+                                Command="{x:Bind ViewModel.ResetPlayerDesignSettingsCommand}"
+                                Style="{StaticResource AnimatedHyperlinkButtonStyle}"
+                                Content="{x:Bind resources:Strings.SettingsPage_ResetAccentColor_Content, Mode=OneTime}"
+                                FontSize="12"
+                                Padding="4,2" />
+                        </StackPanel>
+                    </controls:SettingsExpander.Header>
+                    <controls:SettingsExpander.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE793;" />
+                    </controls:SettingsExpander.HeaderIcon>
+                    
+                    <ComboBox
+                        MinWidth="300"
+                        HorizontalAlignment="Right"
+                        ItemsSource="{x:Bind ViewModel.AvailablePlayerBackgroundMaterials}"
+                        SelectedItem="{x:Bind ViewModel.SelectedPlayerBackgroundMaterial, Mode=TwoWay}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="models:PlayerBackgroundMaterial">
+                                <TextBlock Text="{x:Bind Converter={StaticResource PlayerBackgroundMaterialToStringConverter}}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
+                    <controls:SettingsExpander.Items>
+                        <controls:SettingsCard>
+                            <controls:SettingsCard.Header>
+                                <StackPanel Orientation="Vertical" Spacing="4">
+                                    <TextBlock Text="{x:Bind resources:Strings.SettingsPage_TintIntensity_Header, Mode=OneTime}" />
+                                    <TextBlock 
+                                        FontSize="12" 
+                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}" 
+                                        Text="{x:Bind resources:Strings.SettingsPage_TintIntensity_Description, Mode=OneTime}" />
+                                </StackPanel>
+                            </controls:SettingsCard.Header>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="12">
+                                <Slider
+                                    Width="300"
+                                    VerticalAlignment="Center"
+                                    Maximum="1.0"
+                                    Minimum="0.0"
+                                    StepFrequency="0.01"
+                                    Style="{StaticResource EqualizerSliderStyle}"
+                                    ThumbToolTipValueConverter="{StaticResource DoubleToPercentageConverter}"
+                                    Value="{x:Bind ViewModel.PlayerTintIntensity, Mode=TwoWay}" />
+                                <TextBlock 
+                                    Width="40"
+                                    VerticalAlignment="Center"
+                                    Style="{ThemeResource CaptionTextBlockStyle}"
+                                    Text="{x:Bind ViewModel.PlayerTintIntensity, Mode=OneWay, Converter={StaticResource DoubleToPercentageConverter}}" />
+                            </StackPanel>
+                        </controls:SettingsCard>
+                    </controls:SettingsExpander.Items>
+                </controls:SettingsExpander>
 
                 <controls:SettingsCard
                     Header="{x:Bind resources:Strings.SettingsPage_Language_Header, Mode=OneTime}"

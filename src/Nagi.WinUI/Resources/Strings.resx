@@ -1919,4 +1919,22 @@ Error: {1}</value>
   <data name="Settings_Restore_Failed_Message" xml:space="preserve">
     <value>Failed to restore from backup. Your data was not modified.</value>
   </data>
+  <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
+    <value>Player Styling</value>
+  </data>
+  <data name="PlayerBackgroundMaterial_Acrylic" xml:space="preserve">
+    <value>Acrylic (Glass)</value>
+  </data>
+  <data name="PlayerBackgroundMaterial_Solid" xml:space="preserve">
+    <value>Solid (Opaque)</value>
+  </data>
+  <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
+    <value>Customize the appearance of the floating player</value>
+  </data>
+  <data name="SettingsPage_TintIntensity_Header" xml:space="preserve">
+    <value>Tint Intensity</value>
+  </data>
+  <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
+    <value>Adjusts the vibrancy of the player background color</value>
+  </data>
 </root>

@@ -19,6 +19,7 @@ using Nagi.WinUI.Resources;
 using Nagi.WinUI.Services.Abstractions;
 using Nagi.WinUI.ViewModels;
 using Nagi.WinUI.Helpers;
+using Nagi.WinUI.Models;
 using Microsoft.UI.Xaml.Hosting;
 using System.Numerics;
 
@@ -276,31 +277,39 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         {
             settingsItem.Content = Strings.NavItem_Settings;
         }
+
         try
         {
-            SetPlatformSpecificBrush();
-
+            // 1. Hook up event handlers first to avoid missing any updates during the async initialization phase.
             ActualThemeChanged += OnActualThemeChanged;
             ContentFrame.Navigated += OnContentFrameNavigated;
             ViewModel.PropertyChanged += OnViewModelPropertyChanged;
             _settingsService.PlayerAnimationSettingChanged += OnPlayerAnimationSettingChanged;
             _settingsService.NavigationSettingsChanged += OnNavigationSettingsChanged;
             _settingsService.TransparencyEffectsSettingChanged += OnTransparencyEffectsSettingChanged;
+            _settingsService.PlayerDesignSettingsChanged += OnPlayerDesignSettingsChanged;
+            AddHandler(PointerPressedEvent, new PointerEventHandler(OnGlobalPointerPressed), true);
 
-            await PopulateNavigationAsync();
+            // 2. Parallelize independent startup tasks to reduce total load time.
+            var brushTask = SetPlatformSpecificBrushAsync();
+            var navTask = PopulateNavigationAsync();
+            var animTask = _settingsService.GetPlayerAnimationEnabledAsync();
+            var paneTask = RestorePaneStateAsync();
 
-            if (NavView.MenuItems.Any() && NavView.SelectedItem == null) NavView.SelectedItem = NavView.MenuItems.First();
+            await Task.WhenAll(brushTask, navTask, animTask, paneTask);
+
+            // 3. Post-initialization UI synchronization.
+            _isPlayerAnimationEnabled = await animTask;
+
+            if (NavView.MenuItems.Any() && NavView.SelectedItem == null)
+            {
+                NavView.SelectedItem = NavView.MenuItems.First();
+            }
+
             UpdateNavViewSelection(ContentFrame.CurrentSourcePageType);
-
-            _isPlayerAnimationEnabled = await _settingsService.GetPlayerAnimationEnabledAsync();
-
-            // Restore navigation pane state if the setting is enabled.
-            await RestorePaneStateAsync();
 
             _ = ApplyDynamicThemeForCurrentTrackAsync();
             UpdatePlayerVisualState(false);
-            
-            AddHandler(PointerPressedEvent, new PointerEventHandler(OnGlobalPointerPressed), true);
         }
         catch (Exception ex)
         {
@@ -318,6 +327,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         _settingsService.PlayerAnimationSettingChanged -= OnPlayerAnimationSettingChanged;
         _settingsService.NavigationSettingsChanged -= OnNavigationSettingsChanged;
         _settingsService.TransparencyEffectsSettingChanged -= OnTransparencyEffectsSettingChanged;
+        _settingsService.PlayerDesignSettingsChanged -= OnPlayerDesignSettingsChanged;
 
         // Dispose the tray icon control to prevent "Exception Processing Message 0xc0000005" errors on exit.
         AppTrayIconHost?.Dispose();
@@ -326,29 +336,53 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     }
 
     /// <summary>
-    ///     Sets the background brush for the floating player based on the current OS.
-    ///     Uses Acrylic for Windows 11+ and a solid color for Windows 10.
+    ///     Sets the background brush for the floating player based on user settings and OS capabilities.
+    ///     Handles switching between Acrylic (glass) and Solid (opaque) materials.
     /// </summary>
-    private void SetPlatformSpecificBrush()
+    private async Task SetPlatformSpecificBrushAsync()
     {
         var isAcrylicEnabled = _settingsService.IsTransparencyEffectsEnabled();
-        if (!isAcrylicEnabled)
-            // Transparency effects are disabled
-            FloatingPlayerContainer.Background = (Brush)Application.Current.Resources["NonTransparentBrush"];
+        var material = await _settingsService.GetPlayerBackgroundMaterialAsync();
+
+        if (!isAcrylicEnabled || material == PlayerBackgroundMaterial.Solid)
+        {
+            // Use solid color (respects system transparency preference or explicit user choice)
+            // We use PlayerTintColorBrush directly to ensure the background opacity is 1.0 (Solid)
+            // but the color matches the calculated tint.
+            FloatingPlayerContainer.Background = (Brush)Application.Current.Resources["PlayerTintColorBrush"];
+        }
         else if (_win32InteropService.IsWindows11OrNewer)
-            // We are on Windows 11 or newer
+        {
+            // We are on Windows 11 or newer - use Acrylic
             FloatingPlayerContainer.Background = (Brush)Application.Current.Resources["Win11AcrylicBrush"];
+        }
         else
-            // We are on Windows 10
+        {
+            // We are on Windows 10 - use Win10 Acrylic
             FloatingPlayerContainer.Background = (Brush)Application.Current.Resources["Win10AcrylicBrush"];
+        }
+    }
+
+    private void OnPlayerDesignSettingsChanged()
+    {
+        _dispatcherService.TryEnqueue(async () =>
+        {
+            if (_isUnloaded) return;
+            
+            // 1. Update the brush (Material change)
+            await SetPlatformSpecificBrushAsync();
+            
+            // 2. Re-calculate the tint color (Intensity change)
+            await _themeService.ReapplyCurrentDynamicThemeAsync();
+        });
     }
 
     private void OnTransparencyEffectsSettingChanged(bool isEnabled)
     {
-        _dispatcherService.TryEnqueue(() =>
+        _dispatcherService.TryEnqueue(async () =>
         {
             if (_isUnloaded) return;
-            SetPlatformSpecificBrush();
+            await SetPlatformSpecificBrushAsync();
         });
     }
 
@@ -388,17 +422,20 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     // Responds to property changes in the PlayerViewModel.
     private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        switch (e.PropertyName)
+        _dispatcherService.TryEnqueue(() =>
         {
-            case nameof(PlayerViewModel.CurrentPlayingTrack):
-                _ = ApplyDynamicThemeForCurrentTrackAsync();
-                UpdatePlayerVisualState();
-                break;
-            case nameof(PlayerViewModel.IsPlaying):
-                SetPlatformSpecificBrush();
-                UpdatePlayerVisualState(); // Expand or collapse the player based on playback state
-                break;
-        }
+            switch (e.PropertyName)
+            {
+                case nameof(PlayerViewModel.CurrentPlayingTrack):
+                    _ = ApplyDynamicThemeForCurrentTrackAsync();
+                    UpdatePlayerVisualState();
+                    break;
+                case nameof(PlayerViewModel.IsPlaying):
+                    _ = SetPlatformSpecificBrushAsync();
+                    UpdatePlayerVisualState(); // Expand or collapse the player based on playback state
+                    break;
+            }
+        });
     }
 
     private void NavView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)

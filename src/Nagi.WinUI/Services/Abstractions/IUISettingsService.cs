@@ -66,6 +66,11 @@ public interface IUISettingsService : ISettingsService
     event Action<BackdropMaterial>? BackdropMaterialChanged;
 
     /// <summary>
+    ///     Occurs when the player design settings (material or tint intensity) have changed.
+    /// </summary>
+    event Action? PlayerDesignSettingsChanged;
+
+    /// <summary>
     ///     Gets whether system-wide transparency effects are currently enabled.
     ///     This is a live value from the OS, not a stored setting.
     /// </summary>
@@ -93,6 +98,28 @@ public interface IUISettingsService : ISettingsService
     ///     Saves the selected window backdrop material.
     /// </summary>
     Task SetBackdropMaterialAsync(BackdropMaterial material);
+
+    /// <summary>
+    ///     Gets the currently configured player background material.
+    /// </summary>
+    Task<PlayerBackgroundMaterial> GetPlayerBackgroundMaterialAsync();
+
+    /// <summary>
+    ///     Saves the selected player background material.
+    /// </summary>
+    Task SetPlayerBackgroundMaterialAsync(PlayerBackgroundMaterial material);
+
+    /// <summary>
+    ///     Gets the currently configured player tint intensity (0.0 to 1.0).
+    /// </summary>
+    /// <returns>A value between 0.0 (neutral) and 1.0 (vibrant).</returns>
+    Task<double> GetPlayerTintIntensityAsync();
+
+    /// <summary>
+    ///     Saves the player tint intensity.
+    /// </summary>
+    /// <param name="intensity">A value between 0.0 and 1.0.</param>
+    Task SetPlayerTintIntensityAsync(double intensity);
 
     /// <summary>
     ///     Gets whether dynamic theming (based on album art) is enabled.

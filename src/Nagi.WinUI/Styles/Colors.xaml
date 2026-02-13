@@ -63,11 +63,14 @@
     <x:Double x:Key="AlbumCardWidthLarge">154</x:Double>
     <x:Double x:Key="AlbumCardMinHeightLarge">170</x:Double>
 
+    <!-- Specific brush for the player background tint. Defaults to primary color but can be overridden. -->
+    <SolidColorBrush x:Key="PlayerTintColorBrush" Color="{ThemeResource SystemAccentColor}" />
+
     <!-- Windows 11 style acrylic brush. -->
     <media:AcrylicBrush
         x:Key="Win11AcrylicBrush"
-        FallbackColor="{Binding Color, Source={StaticResource AppPrimaryColorBrush}}"
-        TintColor="{Binding Color, Source={StaticResource AppPrimaryColorBrush}}"
+        FallbackColor="{Binding Color, Source={StaticResource PlayerTintColorBrush}}"
+        TintColor="{Binding Color, Source={StaticResource PlayerTintColorBrush}}"
         TintLuminosityOpacity="0.15"
         TintOpacity="0.15" />
 
@@ -75,7 +78,7 @@
     <SolidColorBrush
         x:Key="Win10AcrylicBrush"
         Opacity="0.98"
-        Color="{ThemeResource SolidBackgroundFillColorBase}" />
+        Color="{Binding Color, Source={StaticResource PlayerTintColorBrush}}" />
 
     <!-- No transparency brush. -->
     <SolidColorBrush

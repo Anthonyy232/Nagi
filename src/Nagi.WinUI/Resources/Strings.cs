@@ -615,6 +615,12 @@ public static class Strings
     public static string SettingsPage_ResetAccentColor_Content => GetString("SettingsPage_ResetAccentColor_Content");
     public static string SettingsPage_WindowMaterial_Header => GetString("SettingsPage_WindowMaterial_Header");
     public static string SettingsPage_WindowMaterial_Description => GetString("SettingsPage_WindowMaterial_Description");
+    public static string SettingsPage_PlayerStyling_Header => GetString("SettingsPage_PlayerStyling_Header");
+    public static string SettingsPage_PlayerStyling_Description => GetString("SettingsPage_PlayerStyling_Description");
+    public static string PlayerBackgroundMaterial_Acrylic => GetString("PlayerBackgroundMaterial_Acrylic");
+    public static string PlayerBackgroundMaterial_Solid => GetString("PlayerBackgroundMaterial_Solid");
+    public static string SettingsPage_TintIntensity_Header => GetString("SettingsPage_TintIntensity_Header");
+    public static string SettingsPage_TintIntensity_Description => GetString("SettingsPage_TintIntensity_Description");
     public static string SettingsPage_DynamicTheming_Header => GetString("SettingsPage_DynamicTheming_Header");
     public static string SettingsPage_DynamicTheming_Description => GetString("SettingsPage_DynamicTheming_Description");
     public static string SettingsPage_RememberWindowSize_Header => GetString("SettingsPage_RememberWindowSize_Header");

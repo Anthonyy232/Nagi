@@ -18,6 +18,7 @@ public class ThemeService : IThemeService
     private readonly Lazy<IMusicPlaybackService> _playbackService;
     private readonly IServiceProvider _serviceProvider;
     private readonly Lazy<IUISettingsService> _settingsService;
+    private readonly Lazy<IDispatcherService> _dispatcherService;
 
     public ThemeService(App app, IServiceProvider serviceProvider, ILogger<ThemeService> logger)
     {
@@ -28,6 +29,8 @@ public class ThemeService : IThemeService
             new Lazy<IUISettingsService>(() => _serviceProvider.GetRequiredService<IUISettingsService>());
         _playbackService =
             new Lazy<IMusicPlaybackService>(() => _serviceProvider.GetRequiredService<IMusicPlaybackService>());
+        _dispatcherService =
+            new Lazy<IDispatcherService>(() => _serviceProvider.GetRequiredService<IDispatcherService>());
     }
 
     public ElementTheme CurrentTheme { get; private set; } = ElementTheme.Default;
@@ -63,44 +66,41 @@ public class ThemeService : IThemeService
             return;
         }
 
-        if (App.RootWindow?.Content is not FrameworkElement rootElement)
-        {
-            _logger.LogWarning("Could not get root FrameworkElement. Cannot apply dynamic theme.");
-            await ActivateDefaultPrimaryColorAsync();
-            return;
-        }
+        var actualTheme = await GetActualThemeAsync();
 
-        var swatchToUse = rootElement.ActualTheme == ElementTheme.Dark ? darkSwatchId : lightSwatchId;
+        var swatchToUse = actualTheme == ElementTheme.Dark ? darkSwatchId : lightSwatchId;
 
         if (!string.IsNullOrEmpty(swatchToUse) && _app.TryParseHexColor(swatchToUse, out var targetColor))
         {
-            _logger.LogDebug("Applying dynamic theme using {ThemeMode} swatch: {Swatch}", rootElement.ActualTheme,
+            _logger.LogDebug("Applying dynamic theme using {ThemeMode} swatch: {Swatch}", actualTheme,
                 swatchToUse);
-            _app.SetAppPrimaryColorBrushColor(targetColor);
+            await SetAppColorsAsync(targetColor, actualTheme);
         }
         else
         {
             _logger.LogDebug("No valid swatch found for current theme. Activating default primary color.");
-            await ActivateDefaultPrimaryColorAsync();
+            await ActivateDefaultPrimaryColorAsync(actualTheme);
         }
     }
 
-    public async Task ActivateDefaultPrimaryColorAsync()
+    public async Task ActivateDefaultPrimaryColorAsync(ElementTheme? theme = null)
     {
         _logger.LogDebug("Activating default primary color.");
+        var actualTheme = theme ?? await GetActualThemeAsync();
         var accentColor = await _settingsService.Value.GetAccentColorAsync();
         if (accentColor != null)
         {
-            _app.SetAppPrimaryColorBrushColor(accentColor.Value);
+            await SetAppColorsAsync(accentColor.Value, actualTheme);
         }
         else
         {
-            _app.SetAppPrimaryColorBrushColor(App.SystemAccentColor);
+            await SetAppColorsAsync(App.SystemAccentColor, actualTheme);
         }
     }
 
     public async Task ApplyAccentColorAsync(Windows.UI.Color? color)
     {
+        var theme = await GetActualThemeAsync();
         if (color == null)
         {
             await ActivateDefaultPrimaryColorAsync();
@@ -108,7 +108,45 @@ public class ThemeService : IThemeService
         else
         {
             _logger.LogDebug("Applying manual accent color: {Color}", color);
-            _app.SetAppPrimaryColorBrushColor(color.Value);
+            await SetAppColorsAsync(color.Value, theme);
         }
+    }
+
+    private async Task SetAppColorsAsync(Windows.UI.Color primaryColor, ElementTheme theme)
+    {
+        // 1. Set the global primary accent color (for buttons, text, etc.)
+        _app.SetAppPrimaryColorBrushColor(primaryColor);
+        
+        // 2. Calculate and set the player tint color based on intensity setting
+        var intensity = await _settingsService.Value.GetPlayerTintIntensityAsync();
+        
+        // Lerp functionality: Target = Color * Intensity + (Base) * (1 - Intensity)
+        // For Dark theme, Base is Black (0,0,0)
+        // For Light theme, Base is White (255,255,255)
+        
+        byte r, g, b;
+        if (theme == ElementTheme.Light)
+        {
+            r = (byte)((primaryColor.R * intensity) + (255 * (1 - intensity)));
+            g = (byte)((primaryColor.G * intensity) + (255 * (1 - intensity)));
+            b = (byte)((primaryColor.B * intensity) + (255 * (1 - intensity)));
+        }
+        else
+        {
+            r = (byte)(primaryColor.R * intensity);
+            g = (byte)(primaryColor.G * intensity);
+            b = (byte)(primaryColor.B * intensity);
+        }
+
+        var playerTintColor = Windows.UI.Color.FromArgb(255, r, g, b);
+        _app.SetPlayerTintColorBrushColor(playerTintColor);
+    }
+
+    private async Task<ElementTheme> GetActualThemeAsync()
+    {
+        var theme = await _dispatcherService.Value.EnqueueAsync<ElementTheme?>(() =>
+            App.RootWindow?.Content is FrameworkElement root ? root.ActualTheme : (ElementTheme?)null);
+
+        return theme ?? ElementTheme.Default;
     }
 }
