@@ -308,6 +308,36 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
     public List<ElementTheme> AvailableThemes { get; } = Enum.GetValues<ElementTheme>().ToList();
     public List<BackdropMaterial> AvailableBackdropMaterials { get; } = Enum.GetValues<BackdropMaterial>().ToList();
+    public List<PlayerBackgroundMaterial> AvailablePlayerBackgroundMaterials { get; } = Enum.GetValues<PlayerBackgroundMaterial>().ToList();
+    
+    [ObservableProperty] public partial PlayerBackgroundMaterial SelectedPlayerBackgroundMaterial { get; set; }
+    [ObservableProperty] public partial double PlayerTintIntensity { get; set; }
+
+    async partial void OnSelectedPlayerBackgroundMaterialChanged(PlayerBackgroundMaterial value)
+    {
+        if (_isInitializing) return;
+        try
+        {
+            await _settingsService.SetPlayerBackgroundMaterialAsync(value);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to set player background material");
+        }
+    }
+
+    async partial void OnPlayerTintIntensityChanged(double value)
+    {
+        if (_isInitializing) return;
+        try
+        {
+            await _settingsService.SetPlayerTintIntensityAsync(value);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to set player tint intensity");
+        }
+    }
     
     public ObservableCollection<Nagi.WinUI.Models.LanguageModel> AvailableLanguages { get; } = new();
     
@@ -418,13 +448,18 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             var lyricsProvidersTask = _settingsService.GetServiceProvidersAsync(ServiceCategory.Lyrics);
             var metadataProvidersTask = _settingsService.GetServiceProvidersAsync(ServiceCategory.Metadata);
 
+            var playerMaterialTask = _settingsService.GetPlayerBackgroundMaterialAsync();
+            var playerTintTask = _settingsService.GetPlayerTintIntensityAsync();
+            var languagesTask = _appInfoService.GetAvailableLanguagesAsync();
+
             await Task.WhenAll(
                 navItemsTask, playerButtonsTask, themeTask, backdropTask, dynamicThemingTask,
                 playerAnimationTask, restorePlaybackTask, autoLaunchTask, startMinimizedTask,
                 hideToTrayTask, miniPlayerTask, trayFlyoutTask, onlineMetadataTask,
                 onlineLyricsTask, discordRpcTask, checkUpdatesTask, rememberWindowTask,
                 rememberPositionTask, rememberPaneTask, volumeNormTask, lastFmCredsTask, lastFmAuthTokenTask,
-                scrobblingTask, nowPlayingTask, accentColorTask, artistSplitTask, languageTask, lyricsProvidersTask, metadataProvidersTask);
+                scrobblingTask, nowPlayingTask, accentColorTask, artistSplitTask, languageTask, lyricsProvidersTask, metadataProvidersTask,
+                playerMaterialTask, playerTintTask, languagesTask);
 
             foreach (var item in navItemsTask.Result)
             {
@@ -456,6 +491,9 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             IsRememberWindowPositionEnabled = rememberPositionTask.Result;
             IsRememberPaneStateEnabled = rememberPaneTask.Result;
             IsVolumeNormalizationEnabled = volumeNormTask.Result;
+            
+            SelectedPlayerBackgroundMaterial = playerMaterialTask.Result;
+            PlayerTintIntensity = playerTintTask.Result;
 
             var lastFmCredentials = lastFmCredsTask.Result;
             LastFmUsername = lastFmCredentials?.Username;
@@ -484,7 +522,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             AvailableLanguages.Add(new LanguageModel(string.Empty, Nagi.WinUI.Resources.Strings.Language_Auto));
             AvailableLanguages.Add(new LanguageModel("en-US", "English"));
 
-            var manifestLanguages = await _appInfoService.GetAvailableLanguagesAsync();
+            var manifestLanguages = await languagesTask;
             var allSpecificCultures = CultureInfo.GetCultures(CultureTypes.SpecificCultures);
 
             foreach (var langCode in manifestLanguages)
@@ -550,11 +588,10 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             {
                 MetadataProviders.Add(provider);
             }
-
-            _isInitializing = false;
         }
         finally
         {
+            _isInitializing = false;
             _loadLock.Release();
         }
     }
@@ -1596,5 +1633,17 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         {
             _ = _themeService.ApplyAccentColorAsync(null);
         }
+    }
+
+    [RelayCommand]
+    private async Task ResetPlayerDesignSettingsAsync()
+    {
+        _isInitializing = true;
+        SelectedPlayerBackgroundMaterial = SettingsDefaults.DefaultPlayerBackgroundMaterial;
+        PlayerTintIntensity = SettingsDefaults.DefaultPlayerTintIntensity;
+        _isInitializing = false;
+
+        await _settingsService.SetPlayerBackgroundMaterialAsync(SettingsDefaults.DefaultPlayerBackgroundMaterial);
+        await _settingsService.SetPlayerTintIntensityAsync(SettingsDefaults.DefaultPlayerTintIntensity);
     }
 }

@@ -42,6 +42,9 @@ public static class SettingsDefaults
     public const float EqualizerPreamp = 10.0f;
     public static readonly Color? AccentColor = null;
 
+    public const PlayerBackgroundMaterial DefaultPlayerBackgroundMaterial = Models.PlayerBackgroundMaterial.Acrylic;
+    public const double DefaultPlayerTintIntensity = 1.0;
+
     // Default Sort Orders
     public const SongSortOrder LibrarySortOrder = SongSortOrder.TitleAsc;
     public const AlbumSortOrder AlbumsSortOrder = AlbumSortOrder.ArtistAsc;

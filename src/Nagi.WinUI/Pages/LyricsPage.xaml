@@ -8,7 +8,9 @@
     xmlns:converters="using:Nagi.WinUI.Converters"
     xmlns:resources="using:Nagi.WinUI.Resources"
     mc:Ignorable="d"
+    Background="Transparent"
     Loaded="OnPageLoaded">
+
 
     <Page.Resources>
         <ResourceDictionary>

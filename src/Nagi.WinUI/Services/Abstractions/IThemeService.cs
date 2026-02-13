@@ -26,7 +26,8 @@ public interface IThemeService
     /// <summary>
     ///     Resets the application's primary color to the default system accent color.
     /// </summary>
-    Task ActivateDefaultPrimaryColorAsync();
+    /// <param name="theme">The optional theme context to avoid redundant UI thread dispatches.</param>
+    Task ActivateDefaultPrimaryColorAsync(ElementTheme? theme = null);
 
     /// <summary>
     ///     Applies the specified accent color to the application's primary color.

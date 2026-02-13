@@ -23,4 +23,9 @@ public interface IDispatcherService
     ///     Schedules the provided asynchronous function on the UI thread and awaits its completion.
     /// </summary>
     Task EnqueueAsync(Func<Task> function);
+
+    /// <summary>
+    ///     Schedules the provided function on the UI thread and returns its result.
+    /// </summary>
+    Task<T> EnqueueAsync<T>(Func<T> function);
 }
