@@ -148,7 +148,7 @@ public sealed partial class MainWindow : Window
         ExtendsContentIntoTitleBar = false;
         SetTitleBar(null);
         presenter ??= _appWindow?.Presenter as OverlappedPresenter;
-        presenter?.SetBorderAndTitleBar(false, true);
+        presenter?.SetBorderAndTitleBar(true, true);
     }
 
     private async void OnWindowActivated(object sender, WindowActivatedEventArgs args)
