@@ -399,13 +399,14 @@ public partial class App : Application
             var presenceTask = Services.GetRequiredService<IPresenceManager>().InitializeAsync();
             var trayTask = Services.GetRequiredService<TrayIconViewModel>().InitializeAsync();
             var appInfoTask = Services.GetRequiredService<IAppInfoService>().InitializeAsync();
+            var settingsTask = Services.GetRequiredService<SettingsViewModel>().LoadSettingsAsync();
 
             var offlineScrobbleService = Services.GetRequiredService<IOfflineScrobbleService>();
             offlineScrobbleService.Start();
             var scrobbleTask = offlineScrobbleService.ProcessQueueAsync();
 
             // Wait for all non-dependent services to finish initializing.
-            await Task.WhenAll(playbackTask, presenceTask, trayTask, scrobbleTask, appInfoTask).ConfigureAwait(false);
+            await Task.WhenAll(playbackTask, presenceTask, trayTask, scrobbleTask, appInfoTask, settingsTask).ConfigureAwait(false);
 
             _logger?.LogInformation("Core services initialized successfully.");
         }
