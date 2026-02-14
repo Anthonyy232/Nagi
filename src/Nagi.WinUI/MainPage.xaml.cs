@@ -144,7 +144,14 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     // Navigates back if possible.
     private void TryGoBack()
     {
-        if (ContentFrame.CanGoBack) ContentFrame.GoBack();
+        try
+        {
+            if (ContentFrame.CanGoBack) ContentFrame.GoBack();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to navigate back.");
+        }
     }
 
     // Synchronizes the NavigationView's selected item with the currently displayed page.
@@ -457,15 +464,26 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     // Updates UI elements like the back button after a navigation event.
     private void OnContentFrameNavigated(object sender, NavigationEventArgs e)
     {
-        var isDetailPage = _detailPageToParentTagMap.ContainsKey(e.SourcePageType);
-        var isLyricsPage = e.SourcePageType == typeof(LyricsPage);
-        AppTitleBar.IsBackButtonVisible = (ContentFrame.CanGoBack && isDetailPage) || isLyricsPage;
+        try
+        {
+            var isDetailPage = _detailPageToParentTagMap.ContainsKey(e.SourcePageType);
+            var isLyricsPage = e.SourcePageType == typeof(LyricsPage);
+            
+            if (AppTitleBar != null)
+            {
+                AppTitleBar.IsBackButtonVisible = (ContentFrame.CanGoBack && isDetailPage) || isLyricsPage;
+            }
 
-        UpdateNavViewSelection(e.SourcePageType);
+            UpdateNavViewSelection(e.SourcePageType);
 
-        var isSettingsPage = e.SourcePageType == typeof(SettingsPage);
-        var stateName = isSettingsPage ? "PlayerHidden" : "PlayerVisible";
-        VisualStateManager.GoToState(this, stateName, true);
+            var isSettingsPage = e.SourcePageType == typeof(SettingsPage);
+            var stateName = isSettingsPage ? "PlayerHidden" : "PlayerVisible";
+            VisualStateManager.GoToState(this, stateName, true);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error processing OnContentFrameNavigated");
+        }
     }
 
     private void FloatingPlayerContainer_PointerEntered(object sender, PointerRoutedEventArgs e)
