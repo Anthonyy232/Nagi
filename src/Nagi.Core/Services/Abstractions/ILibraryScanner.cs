@@ -9,6 +9,7 @@ namespace Nagi.Core.Services.Abstractions;
 public interface ILibraryScanner
 {
     event EventHandler<ArtistMetadataUpdatedEventArgs>? ArtistMetadataUpdated;
+    event EventHandler<IEnumerable<ArtistMetadataUpdatedEventArgs>>? ArtistMetadataBatchUpdated;
     event EventHandler<bool>? ScanCompleted;
     event EventHandler<LibraryContentChangedEventArgs>? LibraryContentChanged;
 

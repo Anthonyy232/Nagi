@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Threading.Channels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -113,6 +114,9 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     ///     Occurs when an artist's metadata (e.g., biography, image) has been successfully updated from a remote source.
     /// </summary>
     public event EventHandler<ArtistMetadataUpdatedEventArgs>? ArtistMetadataUpdated;
+
+    /// <inheritdoc />
+    public event EventHandler<IEnumerable<ArtistMetadataUpdatedEventArgs>>? ArtistMetadataBatchUpdated;
 
     /// <inheritdoc />
     public event EventHandler<PlaylistUpdatedEventArgs>? PlaylistUpdated;
@@ -931,7 +935,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         {
             try
             {
-                await FetchAndUpdateArtistFromRemoteAsync(context, artist, cancellationToken).ConfigureAwait(false);
+                // For single artist details, we want immediate save and events
+                await FetchAndUpdateArtistFromRemoteAsync(context, artist, cancellationToken, saveChanges: true, suppressEvents: false).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -990,16 +995,40 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                     using var scope = _serviceScopeFactory.CreateScope();
                     var scopedContextFactory =
                         scope.ServiceProvider.GetRequiredService<IDbContextFactory<MusicDbContext>>();
+                    
+                    // We need a context to fetch and update entities
                     await using var batchContext = await scopedContextFactory.CreateDbContextAsync().ConfigureAwait(false);
 
                     var artistsInBatch = await batchContext.Artists.Where(a => artistIdsToUpdate.Contains(a.Id))
                         .ToListAsync(token).ConfigureAwait(false);
+                        
+                    var pendingUpdates = new List<ArtistMetadataUpdatedEventArgs>();
+                    var stopwatch = Stopwatch.StartNew();
+
                     foreach (var artist in artistsInBatch)
                     {
                         if (token.IsCancellationRequested) break;
                         try
                         {
-                            await FetchAndUpdateArtistFromRemoteAsync(batchContext, artist, token).ConfigureAwait(false);
+                            // Pass saveChanges: false and suppressEvents: true to batch operations
+                            var (updated, newImagePath) = await FetchAndUpdateArtistFromRemoteAsync(
+                                batchContext, artist, token, saveChanges: false, suppressEvents: true).ConfigureAwait(false);
+                                
+                            if (updated)
+                            {
+                                pendingUpdates.Add(new ArtistMetadataUpdatedEventArgs(artist.Id, newImagePath));
+                            }
+                            
+                            // Hybrid Flush Check: 10 items or 5 seconds
+                            if (pendingUpdates.Count >= 10 || (pendingUpdates.Count > 0 && stopwatch.Elapsed.TotalSeconds >= 5))
+                            {
+                                await batchContext.SaveChangesAsync(token).ConfigureAwait(false);
+                                _logger.LogInformation("Saved partial batch of {Count} artists metadata (Time: {Elapsed}s).", pendingUpdates.Count, stopwatch.Elapsed.TotalSeconds.ToString("F1"));
+                                
+                                ArtistMetadataBatchUpdated?.Invoke(this, pendingUpdates.ToList());
+                                pendingUpdates.Clear();
+                                stopwatch.Restart();
+                            }
                         }
                         catch (DbUpdateConcurrencyException)
                         {
@@ -1011,6 +1040,18 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                         {
                             _logger.LogError(ex, "Failed to update artist {ArtistId} in background.", artist.Id);
                         }
+                    }
+                    
+                    if (token.IsCancellationRequested) break;
+
+                    // Final flush for remaining items in the batch
+                    if (pendingUpdates.Count > 0)
+                    {
+                        await batchContext.SaveChangesAsync(token).ConfigureAwait(false);
+                        _logger.LogInformation("Saved final batch of {Count} artists metadata.", pendingUpdates.Count);
+                        
+                        // Fire batch event
+                        ArtistMetadataBatchUpdated?.Invoke(this, pendingUpdates);
                     }
                 }
             }
@@ -4195,7 +4236,15 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         }
     }
 
-    private async Task FetchAndUpdateArtistFromRemoteAsync(MusicDbContext context, Artist artist, CancellationToken cancellationToken = default)
+    /// <summary>
+    ///     Fetches metadata from remote sources and updates availability status.
+    /// </summary>
+    private async Task<(bool Updated, string? NewImagePath)> FetchAndUpdateArtistFromRemoteAsync(
+        MusicDbContext context, 
+        Artist artist, 
+        CancellationToken cancellationToken = default,
+        bool saveChanges = true,
+        bool suppressEvents = false)
     {
         var wasMetadataFoundAndUpdated = false;
 
@@ -4205,7 +4254,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         if (enabledProviders.Count == 0)
         {
             _logger.LogDebug("No metadata providers enabled. Skipping remote fetch for artist '{ArtistName}'.", artist.Name);
-            return;
+            return (false, artist.LocalImageCachePath);
         }
 
         _logger.LogDebug("Using metadata providers for '{ArtistName}': {Providers}", 
@@ -4355,11 +4404,17 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         }
 
         artist.MetadataLastCheckedUtc = DateTime.UtcNow;
-        await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        if (saveChanges)
+        {
+            await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        }
 
-        if (wasMetadataFoundAndUpdated)
-            ArtistMetadataUpdated?.Invoke(this,
-                new ArtistMetadataUpdatedEventArgs(artist.Id, artist.LocalImageCachePath));
+        if (!suppressEvents && wasMetadataFoundAndUpdated)
+        {
+            ArtistMetadataUpdated?.Invoke(this, new ArtistMetadataUpdatedEventArgs(artist.Id, artist.LocalImageCachePath));
+        }
+
+        return (wasMetadataFoundAndUpdated, artist.LocalImageCachePath);
     }
 
     /// <summary>
