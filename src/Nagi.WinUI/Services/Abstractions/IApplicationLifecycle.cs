@@ -8,5 +8,5 @@ namespace Nagi.WinUI.Services.Abstractions;
 public interface IApplicationLifecycle
 {
     Task NavigateToMainContentAsync();
-    Task ResetAndNavigateToOnboardingAsync();
+    Task ResetAndRestartAsync();
 }

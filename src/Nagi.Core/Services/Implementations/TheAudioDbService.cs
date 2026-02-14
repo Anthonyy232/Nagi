@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Http;
@@ -21,6 +22,9 @@ file class TheAudioDbArtist
 {
     [JsonPropertyName("strBiographyEN")]
     public string? BiographyEN { get; set; }
+
+    [JsonExtensionData]
+    public Dictionary<string, JsonElement>? ExtensionData { get; set; }
 
     [JsonPropertyName("strArtistThumb")]
     public string? ArtistThumb { get; set; }
@@ -88,6 +92,7 @@ public class TheAudioDbService : ITheAudioDbService, IDisposable
     /// <inheritdoc />
     public async Task<ServiceResult<TheAudioDbArtistInfo>> GetArtistMetadataAsync(
         string musicBrainzId,
+        string? languageCode = null,
         CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(musicBrainzId))
@@ -123,8 +128,9 @@ public class TheAudioDbService : ITheAudioDbService, IDisposable
                         }
 
                         var url = $"{BaseUrl}/{apiKey}/artist-mb.php?i={musicBrainzId}";
-                        _logger.LogDebug("Fetching TheAudioDB metadata for MBID: {MBID} (Attempt {Attempt}/{MaxRetries})", 
-                            musicBrainzId, attempt, MaxRetries);
+                        var isoCode = languageCode?.Length > 2 ? languageCode[..2] : (languageCode ?? "Default");
+                        _logger.LogDebug("Fetching TheAudioDB metadata for MBID: {MBID} (Language: {LanguageCode}, Attempt {Attempt}/{MaxRetries})", 
+                            musicBrainzId, isoCode, attempt, MaxRetries);
 
                         using var response = await _httpClient.GetAsync(url, cancellationToken).ConfigureAwait(false);
 
@@ -180,8 +186,12 @@ public class TheAudioDbService : ITheAudioDbService, IDisposable
                         // Select the best available fanart image
                         var fanartUrl = GetFirstNonEmpty(artist.ArtistFanart, artist.ArtistFanart2, artist.ArtistFanart3);
 
+                        var bio = GetLocalizedBiography(artist.ExtensionData, languageCode);
+                        var isLocalizedBio = !string.IsNullOrEmpty(bio);
+                        bio ??= artist.BiographyEN;
+
                         var info = new TheAudioDbArtistInfo(
-                            Biography: SanitizeBiography(artist.BiographyEN),
+                            Biography: SanitizeBiography(bio),
                             ThumbUrl: NullIfEmpty(artist.ArtistThumb),
                             FanartUrl: fanartUrl,
                             WideThumbUrl: NullIfEmpty(artist.ArtistWideThumb),
@@ -197,7 +207,8 @@ public class TheAudioDbService : ITheAudioDbService, IDisposable
                                 ServiceResult<TheAudioDbArtistInfo>.FromSuccessNotFound());
                         }
 
-                        _logger.LogInformation("Found TheAudioDB metadata for MBID: {MBID}", musicBrainzId);
+                        _logger.LogInformation("Found TheAudioDB metadata for MBID: {MBID} (Language: {LanguageCode}): Bio={HasBio} ({BioSource}), Thumb={HasThumb}, Fanart={HasFanart}, WideThumb={HasWideThumb}, Logo={HasLogo}", 
+                            musicBrainzId, isoCode, !string.IsNullOrEmpty(info.Biography), isLocalizedBio ? isoCode : "en", !string.IsNullOrEmpty(info.ThumbUrl), !string.IsNullOrEmpty(info.FanartUrl), !string.IsNullOrEmpty(info.WideThumbUrl), !string.IsNullOrEmpty(info.LogoUrl));
                         return RetryResult<ServiceResult<TheAudioDbArtistInfo>>.Success(
                             ServiceResult<TheAudioDbArtistInfo>.FromSuccess(info));
                     }
@@ -249,5 +260,30 @@ public class TheAudioDbService : ITheAudioDbService, IDisposable
     private static string? NullIfEmpty(string? value)
     {
         return ArtistNameHelper.NormalizeStringCore(value);
+    }
+
+    private static string? GetLocalizedBiography(Dictionary<string, JsonElement>? extensionData, string? languageCode)
+    {
+        if (string.IsNullOrWhiteSpace(languageCode) || extensionData is null)
+            return null;
+
+        // Ensure we only use the 2-letter ISO 639-1 code (e.g. "de-DE" -> "DE")
+        var isoCode = languageCode.Length > 2 ? languageCode[..2] : languageCode;
+        
+        // API checks: strBiographyDE, strBiographyFR, etc.
+        var targetKey = $"strBiography{isoCode.ToUpperInvariant()}";
+        
+        // Use case-insensitive lookup
+        var entry = extensionData.FirstOrDefault(x => x.Key.Equals(targetKey, StringComparison.OrdinalIgnoreCase));
+        
+        // Check if struct is valid (Key is not null/empty when match found)
+        if (!string.IsNullOrEmpty(entry.Key) && entry.Value.ValueKind == JsonValueKind.String)
+        {
+            var bio = entry.Value.GetString();
+            if (!string.IsNullOrWhiteSpace(bio))
+                return bio;
+        }
+
+        return null;
     }
 }
