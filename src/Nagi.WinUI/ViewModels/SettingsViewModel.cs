@@ -124,6 +124,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
     private bool _isDisposed;
     private bool _isInitializing;
+    private bool _isLoaded;
     private CancellationTokenSource? _preampDebounceCts;
     private CancellationTokenSource? _replayGainScanCts;
     private CancellationTokenSource? _playerButtonSaveCts;
@@ -399,9 +400,16 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     public async Task LoadSettingsAsync()
     {
         if (_isDisposed) return;
+        
+        // If already loaded, don't reload everything.
+        // This ViewModel is a singleton, so we only need to load once per app session.
+        if (_isLoaded) return;
+
         await _loadLock.WaitAsync();
         try
         {
+            if (_isLoaded) return;
+
             _isInitializing = true;
 
             foreach (var item in NavigationItems) item.PropertyChanged -= OnNavigationItemPropertyChanged;
@@ -588,6 +596,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             {
                 MetadataProviders.Add(provider);
             }
+            _isLoaded = true;
         }
         finally
         {
@@ -954,7 +963,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
     async partial void OnSelectedEqualizerPresetChanged(EqualizerPreset? value)
     {
-        if (value == null || _isApplyingPreset) return;
+        if (_isInitializing || value == null || _isApplyingPreset) return;
 
         _isApplyingPreset = true;
         try

@@ -163,7 +163,7 @@ public sealed class WindowService : IWindowService, IDisposable
     /// <inheritdoc />
     public void Close()
     {
-        _window?.Close();
+        _dispatcherService.TryEnqueue(() => _window?.Close());
     }
 
     /// <inheritdoc />

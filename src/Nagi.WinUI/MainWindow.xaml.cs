@@ -594,7 +594,19 @@ public sealed class MiniPlayerWindow : Window
 
     private void OnRestoreButtonClicked(object? sender, EventArgs e)
     {
-        Close();
+        // Simply scheduling the close via DisptacherQueue.TryEnqueue is not enough to prevent
+        // E_UNEXPECTED (0x8000FFFF) crashes in WinUI 3 when closing a window from its own UI event.
+        // We must ensure the window remains alive until the current input event cycle fully completes.
+        
+        // 1. Hide the window immediately to make the UI feel responsive.
+        _appWindow.Hide();
+
+        // 2. Schedule the closure with a delay. This yields control back to the message pump,
+        // allowing the current click event to finish bubbling and any internal XAML state to settle.
+        Task.Delay(50).ContinueWith(_ => 
+        {
+            DispatcherQueue.TryEnqueue(() => Close());
+        });
     }
 
     /// <summary>
