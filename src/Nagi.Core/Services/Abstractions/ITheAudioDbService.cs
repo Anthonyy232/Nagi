@@ -15,6 +15,7 @@ public interface ITheAudioDbService
     /// <returns>A result containing artist metadata if successful.</returns>
     Task<ServiceResult<TheAudioDbArtistInfo>> GetArtistMetadataAsync(
         string musicBrainzId,
+        string? languageCode = null,
         CancellationToken cancellationToken = default);
 }
 

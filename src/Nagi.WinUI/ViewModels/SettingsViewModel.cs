@@ -654,7 +654,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
         try
         {
-            await _applicationLifecycle.ResetAndNavigateToOnboardingAsync();
+            await _applicationLifecycle.ResetAndRestartAsync();
         }
         catch (Exception ex)
         {

@@ -141,6 +141,90 @@ public class TheAudioDbServiceTests : IDisposable
         result.Data!.FanartUrl.Should().Be("https://theaudiodb.com/fanart.jpg");
     }
 
+    [Fact]
+    public async Task GetArtistMetadataAsync_WithLanguageCode_ReturnsLocalizedBio()
+    {
+        // Arrange
+        var audioDbResponse = new
+        {
+            artists = new[]
+            {
+                new
+                {
+                    strBiographyEN = "English Bio",
+                    strBiographyDE = "German Bio"
+                }
+            }
+        };
+        _httpHandler.SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
+        {
+            Content = new StringContent(JsonSerializer.Serialize(audioDbResponse))
+        });
+
+        // Act
+        var result = await _service.GetArtistMetadataAsync(ValidMbid, "de");
+
+        // Assert
+        result.Status.Should().Be(ServiceResultStatus.Success);
+        result.Data!.Biography.Should().Be("German Bio");
+    }
+
+    [Fact]
+    public async Task GetArtistMetadataAsync_WithLanguageCode_FallsBackToEnglish()
+    {
+        // Arrange
+        var audioDbResponse = new
+        {
+            artists = new[]
+            {
+                new
+                {
+                    strBiographyEN = "English Bio"
+                    // No German bio
+                }
+            }
+        };
+        _httpHandler.SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
+        {
+            Content = new StringContent(JsonSerializer.Serialize(audioDbResponse))
+        });
+
+        // Act
+        var result = await _service.GetArtistMetadataAsync(ValidMbid, "de");
+
+        // Assert
+        result.Status.Should().Be(ServiceResultStatus.Success);
+        result.Data!.Biography.Should().Be("English Bio");
+    }
+
+    [Fact]
+    public async Task GetArtistMetadataAsync_WithoutLanguageCode_ReturnsEnglish()
+    {
+        // Arrange
+        var audioDbResponse = new
+        {
+            artists = new[]
+            {
+                new
+                {
+                    strBiographyEN = "English Bio",
+                    strBiographyDE = "German Bio"
+                }
+            }
+        };
+        _httpHandler.SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
+        {
+            Content = new StringContent(JsonSerializer.Serialize(audioDbResponse))
+        });
+
+        // Act
+        var result = await _service.GetArtistMetadataAsync(ValidMbid);
+
+        // Assert
+        result.Status.Should().Be(ServiceResultStatus.Success);
+        result.Data!.Biography.Should().Be("English Bio");
+    }
+
     #endregion
 
     #region Error Handling Tests
@@ -247,7 +331,7 @@ public class TheAudioDbServiceTests : IDisposable
 
         // Act & Assert
         await Assert.ThrowsAnyAsync<OperationCanceledException>(
-            () => _service.GetArtistMetadataAsync(ValidMbid, cts.Token));
+            () => _service.GetArtistMetadataAsync(ValidMbid, null, cts.Token));
     }
 
     #endregion

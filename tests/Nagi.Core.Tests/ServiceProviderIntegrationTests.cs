@@ -172,7 +172,7 @@ public class ServiceProviderIntegrationTests
             .Returns(ServiceResult<SpotifyImageResult>.FromSuccess(new SpotifyImageResult { ImageUrl = "http://spotify.com/img.jpg" }));
         
         // Last.fm returns bio
-        _lastFmService.GetArtistInfoAsync(artist.Name, Arg.Any<CancellationToken>())
+        _lastFmService.GetArtistInfoAsync(artist.Name, Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(ServiceResult<ArtistInfo>.FromSuccess(new ArtistInfo { Biography = "Last.fm Bio", ImageUrl = "http://lastfm.com/img.jpg" }));
 
         // Act
@@ -203,7 +203,7 @@ public class ServiceProviderIntegrationTests
         
         _spotifyService.GetArtistImageUrlAsync(artist.Name, Arg.Any<CancellationToken>())
             .Returns(ServiceResult<SpotifyImageResult>.FromSuccess(new SpotifyImageResult { ImageUrl = "http://spotify.com/img.jpg" }));
-        _lastFmService.GetArtistInfoAsync(artist.Name, Arg.Any<CancellationToken>())
+        _lastFmService.GetArtistInfoAsync(artist.Name, Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(ServiceResult<ArtistInfo>.FromSuccess(new ArtistInfo { ImageUrl = "http://lastfm.com/img.jpg" }));
 
         // Setup image download failure for Spotify but success for Last.fm would be complex here, 
@@ -262,6 +262,6 @@ public class ServiceProviderIntegrationTests
         await _libraryService.GetArtistDetailsAsync(artist.Id, true);
 
         // Assert - TheAudioDB should NOT be called because MBID is missing and MB lookup is disabled
-        await _theAudioDbService.DidNotReceive().GetArtistMetadataAsync(Arg.Any<string>(), Arg.Any<CancellationToken>());
+        await _theAudioDbService.DidNotReceive().GetArtistMetadataAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>());
     }
 }

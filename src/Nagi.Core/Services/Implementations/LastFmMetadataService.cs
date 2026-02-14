@@ -41,6 +41,7 @@ public class LastFmMetadataService : ILastFmMetadataService
 
     /// <inheritdoc />
     public async Task<ServiceResult<ArtistInfo>> GetArtistInfoAsync(string artistName,
+        string? languageCode = null,
         CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(artistName))
@@ -64,12 +65,13 @@ public class LastFmMetadataService : ILastFmMetadataService
             async attempt =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
-                var requestUrl = BuildRequestUrl(artistName, currentApiKey);
+                var requestUrl = BuildRequestUrl(artistName, currentApiKey, languageCode);
 
                 try
                 {
-                    _logger.LogDebug("Fetching Last.fm metadata for artist: {ArtistName} (Attempt {Attempt}/{MaxRetries})", 
-                        artistName, attempt, MaxRetries);
+                    var isoCode = languageCode?.Length > 2 ? languageCode[..2] : (languageCode ?? "Default");
+                    _logger.LogDebug("Fetching Last.fm metadata for artist: {ArtistName} (Language: {LanguageCode}, Attempt {Attempt}/{MaxRetries})", 
+                        artistName, isoCode, attempt, MaxRetries);
 
                     using var response = await _httpClient.GetAsync(requestUrl, cancellationToken).ConfigureAwait(false);
                     var content = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
@@ -79,9 +81,14 @@ public class LastFmMetadataService : ILastFmMetadataService
                         var lastFmResponse = JsonSerializer.Deserialize<LastFmArtistResponse>(content, _jsonOptions);
                         var artistInfo = lastFmResponse?.Artist != null ? ToArtistInfo(lastFmResponse.Artist) : null;
 
-                        return artistInfo != null
-                            ? RetryResult<ServiceResult<ArtistInfo>>.Success(ServiceResult<ArtistInfo>.FromSuccess(artistInfo))
-                            : RetryResult<ServiceResult<ArtistInfo>>.Success(ServiceResult<ArtistInfo>.FromSuccessNotFound());
+                        if (artistInfo != null)
+                        {
+                            _logger.LogInformation("Found Last.fm metadata for {ArtistName} (Requested Language: {LanguageCode}): Bio={HasBio}, Image={HasImage}", 
+                                artistName, isoCode, !string.IsNullOrEmpty(artistInfo.Biography), !string.IsNullOrEmpty(artistInfo.ImageUrl));
+                            return RetryResult<ServiceResult<ArtistInfo>>.Success(ServiceResult<ArtistInfo>.FromSuccess(artistInfo));
+                        }
+                        
+                        return RetryResult<ServiceResult<ArtistInfo>>.Success(ServiceResult<ArtistInfo>.FromSuccessNotFound());
                     }
 
                     // Handle API-specific errors
@@ -152,10 +159,16 @@ public class LastFmMetadataService : ILastFmMetadataService
     /// <summary>
     ///     Constructs the full request URL for the Last.fm artist.getinfo method.
     /// </summary>
-    private static string BuildRequestUrl(string artistName, string apiKey)
+    private static string BuildRequestUrl(string artistName, string apiKey, string? languageCode)
     {
-        return
-            $"{LastFmApiBaseUrl}?method=artist.getinfo&artist={Uri.EscapeDataString(artistName)}&api_key={apiKey}&format=json";
+        var url = $"{LastFmApiBaseUrl}?method=artist.getinfo&artist={Uri.EscapeDataString(artistName)}&api_key={apiKey}&format=json&autocorrect=1";
+        if (!string.IsNullOrWhiteSpace(languageCode))
+        {
+            // Last.fm expects ISO 639-1 (2-letter) language codes.
+            var isoCode = languageCode.Length > 2 ? languageCode[..2] : languageCode;
+            url += $"&lang={Uri.EscapeDataString(isoCode)}";
+        }
+        return url;
     }
 
     /// <summary>

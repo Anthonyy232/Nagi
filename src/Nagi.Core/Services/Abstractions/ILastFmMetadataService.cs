@@ -17,5 +17,5 @@ public interface ILastFmMetadataService
     ///     <see cref="ServiceResult{ArtistInfo}" /> object detailing the outcome of the API call.
     /// </returns>
     Task<ServiceResult<ArtistInfo>>
-        GetArtistInfoAsync(string artistName, CancellationToken cancellationToken = default);
+        GetArtistInfoAsync(string artistName, string? languageCode = null, CancellationToken cancellationToken = default);
 }

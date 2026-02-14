@@ -434,17 +434,16 @@ public partial class App : Application
         services.AddHttpClient("")
             .ConfigureHttpClient(client =>
             {
-                client.Timeout = TimeSpan.FromSeconds(10);
-                client.DefaultRequestVersion = HttpVersion.Version11;
-                client.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionExact;
+                client.Timeout = TimeSpan.FromSeconds(20);
+                client.DefaultRequestHeaders.UserAgent.ParseAdd("Nagi/1.0 (+https://github.com/Anthonyy232/Nagi)");
             })
             .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
             {
-                // Shorter lifetimes to avoid stale connections being reset by servers
-                PooledConnectionLifetime = TimeSpan.FromSeconds(15),
-                PooledConnectionIdleTimeout = TimeSpan.FromSeconds(10),
-                // Fail fast if connection cannot be established
-                ConnectTimeout = TimeSpan.FromSeconds(5),
+                PooledConnectionLifetime = TimeSpan.FromMinutes(2),
+                ConnectTimeout = TimeSpan.FromSeconds(10),
+                KeepAlivePingPolicy = HttpKeepAlivePingPolicy.Always,
+                KeepAlivePingDelay = TimeSpan.FromSeconds(30),
+                KeepAlivePingTimeout = TimeSpan.FromSeconds(5)
             });
 
         ConfigureAppSettingsServices(services);

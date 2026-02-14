@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Services.Abstractions;
 using Nagi.WinUI.Services.Abstractions;
+using Microsoft.Windows.AppLifecycle;
 
 namespace Nagi.WinUI.Services.Implementations;
 
@@ -34,9 +35,9 @@ public class ApplicationLifecycle : IApplicationLifecycle
 
     /// <summary>
     ///     Resets the application to its default state by clearing all settings, library data, and the playback queue,
-    ///     then navigates to the main content (which may trigger the onboarding process).
+    ///     then restarts the application.
     /// </summary>
-    public async Task ResetAndNavigateToOnboardingAsync()
+    public async Task ResetAndRestartAsync()
     {
         _logger.LogInformation("Starting application reset process.");
         try
@@ -53,8 +54,8 @@ public class ApplicationLifecycle : IApplicationLifecycle
             await playbackService.ClearQueueAsync();
             _logger.LogDebug("Playback queue has been cleared.");
 
-            await _app.CheckAndNavigateToMainContent();
-            _logger.LogInformation("Application reset completed successfully.");
+            _logger.LogInformation("Application reset completed successfully. Restarting...");
+            AppInstance.Restart("");
         }
         catch (Exception ex)
         {

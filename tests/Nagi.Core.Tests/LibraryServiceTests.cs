@@ -751,7 +751,7 @@ public class LibraryServiceTests : IDisposable
             });
 
         // Arrange: Mock successful responses from remote metadata services.
-        _lastFmService.GetArtistInfoAsync(artist.Name)
+        _lastFmService.GetArtistInfoAsync(artist.Name, Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(ServiceResult<ArtistInfo>.FromSuccess(new ArtistInfo { Biography = "A cool bio." }));
         _spotifyService.GetArtistImageUrlAsync(artist.Name)
             .Returns(ServiceResult<SpotifyImageResult>.FromSuccess(new SpotifyImageResult
@@ -817,7 +817,7 @@ public class LibraryServiceTests : IDisposable
         result!.Biography.Should().BeNull();
 
         // Assert: No network calls should have been made.
-        await _lastFmService.DidNotReceive().GetArtistInfoAsync(Arg.Any<string>());
+        await _lastFmService.DidNotReceive().GetArtistInfoAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>());
         await _spotifyService.DidNotReceive().GetArtistImageUrlAsync(Arg.Any<string>());
     }
 

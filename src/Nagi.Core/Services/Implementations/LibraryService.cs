@@ -12,6 +12,7 @@ using Nagi.Core.Services.Data;
 using Nagi.Core.Http;
 using System.IO;
 using System.Text;
+using System.Globalization;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -4379,7 +4380,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
     private async Task<(string? ImageUrl, string? Biography)> FetchFromTheAudioDbAsync(string mbid, CancellationToken ct)
     {
-        var result = await _theAudioDbService.GetArtistMetadataAsync(mbid, ct).ConfigureAwait(false);
+        var result = await _theAudioDbService.GetArtistMetadataAsync(mbid, CultureInfo.CurrentCulture.TwoLetterISOLanguageName, ct).ConfigureAwait(false);
         if (result.Status == ServiceResultStatus.Success && result.Data is not null)
         {
             // Prefer square thumbnail over landscape fanart for round frame display
@@ -4413,7 +4414,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
     private async Task<(string? ImageUrl, string? Biography)> FetchFromLastFmAsync(string artistName, CancellationToken ct)
     {
-        var result = await _lastFmService.GetArtistInfoAsync(artistName, ct).ConfigureAwait(false);
+        var result = await _lastFmService.GetArtistInfoAsync(artistName, CultureInfo.CurrentCulture.TwoLetterISOLanguageName, ct).ConfigureAwait(false);
         if (result.Status == ServiceResultStatus.Success && result.Data is not null)
         {
             return (result.Data.ImageUrl, result.Data.Biography);

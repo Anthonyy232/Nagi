@@ -81,6 +81,24 @@ public class LastFmMetadataServiceTests : IDisposable
         query["artist"].Should().Be(ArtistName);
     }
 
+    [Fact]
+    public async Task GetArtistInfoAsync_WithLanguageCode_IncludesLangParamInRequest()
+    {
+        // Arrange
+        var responseContent = CreateValidArtistResponse("Localized Bio", "http://url.jpg", "http://url.jpg");
+        SetupApiKey();
+        SetupHttpResponse(HttpStatusCode.OK, responseContent);
+
+        // Act
+        await _metadataService.GetArtistInfoAsync(ArtistName, "de");
+
+        // Assert
+        _httpMessageHandler.Requests.Should().HaveCount(1);
+        var query = HttpUtility.ParseQueryString(_httpMessageHandler.Requests[0].RequestUri!.Query);
+        query["artist"].Should().Be(ArtistName);
+        query["lang"].Should().Be("de");
+    }
+
     /// <summary>
     ///     Verifies the retry logic for an invalid API key. Ensures that the service attempts to refresh
     ///     the key and successfully retries the request with the new key.
@@ -237,7 +255,7 @@ public class LastFmMetadataServiceTests : IDisposable
         };
 
         // Act
-        var task = _metadataService.GetArtistInfoAsync(ArtistName, cts.Token);
+        var task = _metadataService.GetArtistInfoAsync(ArtistName, null, cts.Token);
         cts.Cancel();
 
         // Assert
