@@ -241,7 +241,10 @@ public partial class ArtistViewModel : SearchableViewModelBase
 
             // Optionally start background metadata fetching after initial load.
             if (await _settingsService.GetFetchOnlineMetadataEnabledAsync())
-                await _libraryService.StartArtistMetadataBackgroundFetchAsync();
+            {
+                // Fire-and-forget to prevent blocking UI loading
+                _ = _libraryService.StartArtistMetadataBackgroundFetchAsync();
+            }
 
             // Continue loading subsequent pages in the background.
             if (!_isFullyLoaded)
