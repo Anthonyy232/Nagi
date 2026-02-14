@@ -975,85 +975,92 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             // Run the actual fetch work - note: we keep holding the semaphore during the entire operation
             try
             {
-                const int batchSize = 50;
-                while (!token.IsCancellationRequested)
+                // Offload the entire loop to a background thread to ensure it doesn't block the caller context
+                await Task.Run(async () =>
                 {
-                    List<Guid> artistIdsToUpdate;
-                    await using (var idContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false))
+                    const int batchSize = 50;
+                    while (!token.IsCancellationRequested)
                     {
-                        artistIdsToUpdate = await idContext.Artists
-                            .AsNoTracking()
-                            .Where(a => a.MetadataLastCheckedUtc == null)
-                            .OrderBy(a => a.Name)
-                            .Select(a => a.Id)
-                            .Take(batchSize)
+                        List<Guid> artistIdsToUpdate;
+                        await using (var idContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false))
+                        {
+                            artistIdsToUpdate = await idContext.Artists
+                                .AsNoTracking()
+                                .Where(a => a.MetadataLastCheckedUtc == null)
+                                .OrderBy(a => a.Name)
+                                .Select(a => a.Id)
+                                .Take(batchSize)
+                                .ToListAsync(token).ConfigureAwait(false);
+                        }
+
+                        if (artistIdsToUpdate.Count == 0 || token.IsCancellationRequested) break;
+
+                        using var scope = _serviceScopeFactory.CreateScope();
+                        var scopedContextFactory =
+                            scope.ServiceProvider.GetRequiredService<IDbContextFactory<MusicDbContext>>();
+                        
+                        // We need a context to fetch and update entities
+                        await using var batchContext = await scopedContextFactory.CreateDbContextAsync().ConfigureAwait(false);
+
+                        var artistsInBatch = await batchContext.Artists.Where(a => artistIdsToUpdate.Contains(a.Id))
                             .ToListAsync(token).ConfigureAwait(false);
-                    }
-
-                    if (artistIdsToUpdate.Count == 0 || token.IsCancellationRequested) break;
-
-                    using var scope = _serviceScopeFactory.CreateScope();
-                    var scopedContextFactory =
-                        scope.ServiceProvider.GetRequiredService<IDbContextFactory<MusicDbContext>>();
-                    
-                    // We need a context to fetch and update entities
-                    await using var batchContext = await scopedContextFactory.CreateDbContextAsync().ConfigureAwait(false);
-
-                    var artistsInBatch = await batchContext.Artists.Where(a => artistIdsToUpdate.Contains(a.Id))
-                        .ToListAsync(token).ConfigureAwait(false);
-                        
-                    var pendingUpdates = new List<ArtistMetadataUpdatedEventArgs>();
-                    var stopwatch = Stopwatch.StartNew();
-
-                    foreach (var artist in artistsInBatch)
-                    {
-                        if (token.IsCancellationRequested) break;
-                        try
-                        {
-                            // Pass saveChanges: false and suppressEvents: true to batch operations
-                            var (updated, newImagePath) = await FetchAndUpdateArtistFromRemoteAsync(
-                                batchContext, artist, token, saveChanges: false, suppressEvents: true).ConfigureAwait(false);
-                                
-                            if (updated)
-                            {
-                                pendingUpdates.Add(new ArtistMetadataUpdatedEventArgs(artist.Id, newImagePath));
-                            }
                             
-                            // Hybrid Flush Check: 10 items or 5 seconds
-                            if (pendingUpdates.Count >= 10 || (pendingUpdates.Count > 0 && stopwatch.Elapsed.TotalSeconds >= 5))
-                            {
-                                await batchContext.SaveChangesAsync(token).ConfigureAwait(false);
-                                _logger.LogInformation("Saved partial batch of {Count} artists metadata (Time: {Elapsed}s).", pendingUpdates.Count, stopwatch.Elapsed.TotalSeconds.ToString("F1"));
-                                
-                                ArtistMetadataBatchUpdated?.Invoke(this, pendingUpdates.ToList());
-                                pendingUpdates.Clear();
-                                stopwatch.Restart();
-                            }
-                        }
-                        catch (DbUpdateConcurrencyException)
-                        {
-                            _logger.LogWarning(
-                                "Concurrency conflict for artist {ArtistId} during background fetch. Ignoring.",
-                                artist.Id);
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.LogError(ex, "Failed to update artist {ArtistId} in background.", artist.Id);
-                        }
-                    }
-                    
-                    if (token.IsCancellationRequested) break;
+                        var pendingUpdates = new List<ArtistMetadataUpdatedEventArgs>();
+                        var stopwatch = Stopwatch.StartNew();
 
-                    // Final flush for remaining items in the batch
-                    if (pendingUpdates.Count > 0)
-                    {
-                        await batchContext.SaveChangesAsync(token).ConfigureAwait(false);
-                        _logger.LogInformation("Saved final batch of {Count} artists metadata.", pendingUpdates.Count);
+                        foreach (var artist in artistsInBatch)
+                        {
+                            if (token.IsCancellationRequested) break;
+                            try
+                            {
+                                // Pass saveChanges: false and suppressEvents: true to batch operations
+                                var (updated, newImagePath) = await FetchAndUpdateArtistFromRemoteAsync(
+                                    batchContext, artist, token, saveChanges: false, suppressEvents: true).ConfigureAwait(false);
+                                    
+                                if (updated)
+                                {
+                                    pendingUpdates.Add(new ArtistMetadataUpdatedEventArgs(artist.Id, newImagePath));
+                                }
+                                
+                                // Hybrid Flush Check: 10 items or 5 seconds
+                                if (pendingUpdates.Count >= 10 || (pendingUpdates.Count > 0 && stopwatch.Elapsed.TotalSeconds >= 5))
+                                {
+                                    await batchContext.SaveChangesAsync(token).ConfigureAwait(false);
+                                    _logger.LogInformation("Saved partial batch of {Count} artists metadata (Time: {Elapsed}s).", pendingUpdates.Count, stopwatch.Elapsed.TotalSeconds.ToString("F1"));
+                                    
+                                    ArtistMetadataBatchUpdated?.Invoke(this, pendingUpdates.ToList());
+                                    pendingUpdates.Clear();
+                                    stopwatch.Restart();
+                                }
+                            }
+                            catch (DbUpdateConcurrencyException)
+                            {
+                                _logger.LogWarning(
+                                    "Concurrency conflict for artist {ArtistId} during background fetch. Ignoring.",
+                                    artist.Id);
+                            }
+                            catch (Exception ex)
+                            {
+                                _logger.LogError(ex, "Failed to update artist {ArtistId} in background.", artist.Id);
+                            }
+
+                            // Throttle: Yield to UI and other threads to prevent CPU starvation
+                            await Task.Delay(50, token).ConfigureAwait(false);
+                        }
                         
-                        // Fire batch event
-                        ArtistMetadataBatchUpdated?.Invoke(this, pendingUpdates);
+                        if (token.IsCancellationRequested) break;
+
+                        // Final flush for remaining items in the batch
+                        if (pendingUpdates.Count > 0)
+                        {
+                            await batchContext.SaveChangesAsync(token).ConfigureAwait(false);
+                            _logger.LogInformation("Saved final batch of {Count} artists metadata.", pendingUpdates.Count);
+                            
+                            // Fire batch event
+                            ArtistMetadataBatchUpdated?.Invoke(this, pendingUpdates);
+                        }
                     }
-                }
+                }, token).ConfigureAwait(false);
             }
             catch (OperationCanceledException)
             {
@@ -4532,7 +4539,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 {
                     var imageBytes = await response.Content.ReadAsByteArrayAsync(cancellationToken).ConfigureAwait(false);
                     // Process image to standardized size (600px max, preserves aspect ratio)
-                    var processedBytes = await _imageProcessor.ProcessImageBytesAsync(imageBytes).ConfigureAwait(false);
+                    // Offload heavy image processing to a background thread to prevent blocking
+                    var processedBytes = await Task.Run(() => _imageProcessor.ProcessImageBytesAsync(imageBytes), cancellationToken).ConfigureAwait(false);
                     await _fileSystem.WriteAllBytesAsync(localPath, processedBytes).ConfigureAwait(false);
                     return RetryResult<string>.Success(localPath);
                 }
