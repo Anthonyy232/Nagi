@@ -333,11 +333,32 @@ public partial class ArtistViewModel : SearchableViewModelBase
     }
 
     /// <summary>
+    ///     Handles batched updates to artist metadata.
+    /// </summary>
+    private void OnArtistMetadataBatchUpdated(object? sender, IEnumerable<ArtistMetadataUpdatedEventArgs> updates)
+    {
+        // Ensure UI updates are performed on the main thread.
+        _dispatcherService.TryEnqueue(() =>
+        {
+            var timestamp = DateTime.UtcNow;
+            foreach (var update in updates)
+            {
+                if (_artistLookup.TryGetValue(update.ArtistId, out var artistVm))
+                {
+                    // Force unique cache buster using current time to ensure UI updates immediately
+                    artistVm.LocalImageCachePath = ImageUriHelper.GetUriWithCacheBuster(update.NewLocalImageCachePath, timestamp);
+                }
+            }
+        });
+    }
+
+    /// <summary>
     ///     Subscribes to necessary service events.
     /// </summary>
     public void SubscribeToEvents()
     {
         _libraryService.ArtistMetadataUpdated += OnArtistMetadataUpdated;
+        _libraryService.ArtistMetadataBatchUpdated += OnArtistMetadataBatchUpdated;
     }
 
     /// <summary>
@@ -346,6 +367,7 @@ public partial class ArtistViewModel : SearchableViewModelBase
     public void UnsubscribeFromEvents()
     {
         _libraryService.ArtistMetadataUpdated -= OnArtistMetadataUpdated;
+        _libraryService.ArtistMetadataBatchUpdated -= OnArtistMetadataBatchUpdated;
     }
 
     /// <summary>

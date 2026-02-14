@@ -123,7 +123,9 @@ public partial class ArtistViewViewModel : SongListViewModelBase
 
         // Ensure we don't attach multiple handlers if this method is called again.
         _libraryScanner.ArtistMetadataUpdated -= OnArtistMetadataUpdated;
+        _libraryScanner.ArtistMetadataBatchUpdated -= OnArtistMetadataBatchUpdated;
         _libraryScanner.ArtistMetadataUpdated += OnArtistMetadataUpdated;
+        _libraryScanner.ArtistMetadataBatchUpdated += OnArtistMetadataBatchUpdated;
 
         try
         {
@@ -256,6 +258,20 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         }
     }
 
+    /// <summary>
+    ///     Handles batched updates to artist metadata.
+    /// </summary>
+    private void OnArtistMetadataBatchUpdated(object? sender, IEnumerable<ArtistMetadataUpdatedEventArgs> updates)
+    {
+        // Check if the current artist is in the batch
+        var update = updates.FirstOrDefault(u => u.ArtistId == _artistId);
+        if (update != null)
+        {
+            _logger.LogDebug("Received batch metadata update for artist ID {ArtistId}", _artistId);
+            OnArtistMetadataUpdated(sender, update);
+        }
+    }
+
 
     protected override Task SaveSortOrderAsync(SongSortOrder sortOrder)
     {
@@ -273,6 +289,7 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         base.ResetState();
         _logger.LogDebug("Cleaned up ArtistViewViewModel search resources");
         _libraryScanner.ArtistMetadataUpdated -= OnArtistMetadataUpdated;
+        _libraryScanner.ArtistMetadataBatchUpdated -= OnArtistMetadataBatchUpdated;
 
         // Properly unsubscribe using the stored handler reference.
         Albums.CollectionChanged -= _albumsChangedHandler;
