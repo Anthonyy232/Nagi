@@ -19,6 +19,7 @@ public class TrayPopupService : ITrayPopupService, IDisposable
     private const uint DEACTIVATION_DEBOUNCE_MS = 200;
     private const int POPUP_WIDTH_DIPS = 384;
     private const float BASE_DPI = 96.0f;
+    private readonly IDispatcherService _dispatcherService;
     private readonly ILogger<TrayPopupService> _logger;
 
     private readonly IWin32InteropService _win32;
@@ -27,9 +28,10 @@ public class TrayPopupService : ITrayPopupService, IDisposable
     private uint _lastDeactivatedTime;
     private TrayPopup? _popupWindow;
 
-    public TrayPopupService(IWin32InteropService win32InteropService, ILogger<TrayPopupService> logger)
+    public TrayPopupService(IWin32InteropService win32InteropService, IDispatcherService dispatcherService, ILogger<TrayPopupService> logger)
     {
         _win32 = win32InteropService;
+        _dispatcherService = dispatcherService;
         _logger = logger;
     }
 
@@ -47,8 +49,15 @@ public class TrayPopupService : ITrayPopupService, IDisposable
             _popupWindow.Deactivated -= OnPopupDeactivated;
             _popupWindow.Closed -= OnPopupWindowClosed;
         }
-        _popupWindow?.Close();
+
+        var popup = _popupWindow;
         _popupWindow = null;
+
+        if (popup != null)
+        {
+            _dispatcherService.TryEnqueue(() => popup.Close());
+        }
+
         _isDisposed = true;
         GC.SuppressFinalize(this);
     }
