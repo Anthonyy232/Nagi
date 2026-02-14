@@ -168,6 +168,33 @@ public partial class PlayerViewModel : ObservableObject
 
     public string VolumeButtonToolTip => IsMuted ? Strings.Tooltip_Unmute : Strings.Tooltip_Mute;
 
+    partial void OnIsPlayingChanged(bool value)
+    {
+        UpdateButtonState("PlayPause", PlayPauseIconGlyph, PlayPauseButtonToolTip);
+    }
+
+    partial void OnIsShuffleEnabledChanged(bool value)
+    {
+        UpdateButtonState("Shuffle", ShuffleIconGlyph, ShuffleButtonToolTip);
+    }
+
+    partial void OnCurrentRepeatModeChanged(RepeatMode value)
+    {
+        UpdateButtonState("Repeat", RepeatIconGlyph, RepeatButtonToolTip);
+    }
+
+    private void UpdateButtonState(string buttonId, string icon, string toolTip)
+    {
+        var button = MainTransportButtons.FirstOrDefault(b => b.Id == buttonId) 
+                     ?? SecondaryControlsButtons.FirstOrDefault(b => b.Id == buttonId);
+        
+        if (button != null)
+        {
+            button.DynamicIcon = icon;
+            button.DynamicToolTip = toolTip;
+        }
+    }
+
     /// <summary>
     ///     Cleans up resources and unsubscribes from service events.
     ///     Called during application shutdown.
@@ -213,6 +240,54 @@ public partial class PlayerViewModel : ObservableObject
             mainButtons.AddRange(enabledButtons.Where(b => b.Id != "Separator"));
         }
 
+        foreach (var button in enabledButtons)
+        {
+            // Initialize dynamic properties
+            switch (button.Id)
+            {
+                case "PlayPause":
+                    button.Command = PlayPauseCommand;
+                    button.DynamicIcon = PlayPauseIconGlyph;
+                    button.DynamicToolTip = PlayPauseButtonToolTip;
+                    break;
+                case "Shuffle":
+                    button.Command = ToggleShuffleCommand;
+                    button.DynamicIcon = ShuffleIconGlyph;
+                    button.DynamicToolTip = ShuffleButtonToolTip;
+                    break;
+                case "Repeat":
+                    button.Command = CycleRepeatCommand;
+                    button.DynamicIcon = RepeatIconGlyph;
+                    button.DynamicToolTip = RepeatButtonToolTip;
+                    break;
+                case "Volume":
+                    button.Command = ToggleMuteCommand;
+                    button.DynamicIcon = VolumeIconGlyph;
+                    button.DynamicToolTip = VolumeButtonToolTip;
+                    break;
+                case "Previous":
+                    button.Command = PreviousCommand;
+                    button.DynamicIcon = "\uE892"; // Previous glyph
+                    button.DynamicToolTip = Strings.Player_PreviousButton_ToolTip;
+                    break;
+                case "Next":
+                    button.Command = NextCommand;
+                    button.DynamicIcon = "\uE893"; // Next glyph
+                    button.DynamicToolTip = Strings.Player_NextButton_ToolTip;
+                    break;
+                case "Lyrics":
+                    button.Command = GoToLyricsPageCommand;
+                    button.DynamicIcon = "\uE8D2"; // Lyrics glyph
+                    button.DynamicToolTip = Strings.Player_LyricsButton_ToolTip;
+                    break;
+                case "Queue":
+                    // Queue button uses a XAML Flyout, so no Command is needed.
+                    button.DynamicIcon = "\uE90B"; // Queue glyph
+                    button.DynamicToolTip = Strings.Player_QueueButton_ToolTip;
+                    break;
+            }
+        }
+
         UpdateCollectionIfChanged(MainTransportButtons, mainButtons);
         UpdateCollectionIfChanged(SecondaryControlsButtons, secondaryButtons);
     }
@@ -243,6 +318,7 @@ public partial class PlayerViewModel : ObservableObject
             }
         }
     }
+
 
     [RelayCommand]
     private void ShowQueueView()
@@ -386,7 +462,20 @@ public partial class PlayerViewModel : ObservableObject
 
     partial void OnIsMutedChanged(bool value)
     {
+        var oldGlyph = VolumeIconGlyph;
         UpdateVolumeIconGlyph();
+        
+        // If the glyph didn't change (e.g. toggling mute at volume 0),
+        // we still need to update the button because the ToolTip changed.
+        if (oldGlyph == VolumeIconGlyph)
+        {
+            UpdateButtonState("Volume", VolumeIconGlyph, VolumeButtonToolTip);
+        }
+    }
+
+    partial void OnVolumeIconGlyphChanged(string value)
+    {
+        UpdateButtonState("Volume", value, VolumeButtonToolTip);
     }
 
     partial void OnCurrentVolumeChanged(double value)
@@ -579,7 +668,7 @@ public partial class PlayerViewModel : ObservableObject
 
     private void UpdateVolumeIconGlyph()
     {
-        var newGlyph = IsMuted || CurrentVolume == 0
+        VolumeIconGlyph = IsMuted || CurrentVolume == 0
             ? MuteIconGlyph
             : CurrentVolume switch
             {
@@ -587,8 +676,6 @@ public partial class PlayerViewModel : ObservableObject
                 <= VolumeMediumThreshold => VolumeMediumIconGlyph,
                 _ => VolumeHighIconGlyph
             };
-
-        if (VolumeIconGlyph != newGlyph) VolumeIconGlyph = newGlyph;
     }
 
     private void RunOnUIThread(Action action)

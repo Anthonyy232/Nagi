@@ -19,68 +19,68 @@
         <ResourceDictionary>
             <DataTemplate x:Key="ShuffleButtonTemplate" x:DataType="uiModels:PlayerButtonSetting">
                 <Button
-                    Command="{Binding DataContext.ToggleShuffleCommand, ElementName=MainPageRoot}"
+                    Command="{x:Bind Command}"
                     Style="{StaticResource ShuffleButtonStyle}"
-                    ToolTipService.ToolTip="{Binding DataContext.ShuffleButtonToolTip, ElementName=MainPageRoot, Mode=OneWay}">
+                    ToolTipService.ToolTip="{x:Bind DynamicToolTip, Mode=OneWay}">
                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                              Glyph="{Binding DataContext.ShuffleIconGlyph, ElementName=MainPageRoot, Mode=OneWay}" />
+                              Glyph="{x:Bind DynamicIcon, Mode=OneWay}" />
                 </Button>
             </DataTemplate>
 
             <DataTemplate x:Key="PreviousButtonTemplate" x:DataType="uiModels:PlayerButtonSetting">
-                <Button ToolTipService.ToolTip="{x:Bind resources:Strings.Player_PreviousButton_ToolTip, Mode=OneTime}"
-                        Command="{Binding DataContext.PreviousCommand, ElementName=MainPageRoot}"
+                <Button ToolTipService.ToolTip="{x:Bind DynamicToolTip, Mode=OneTime}"
+                        Command="{x:Bind Command}"
                         Style="{StaticResource PreviousButtonStyle}">
-                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
+                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="{x:Bind DynamicIcon, Mode=OneWay}" />
                 </Button>
             </DataTemplate>
 
             <DataTemplate x:Key="PlayPauseButtonTemplate" x:DataType="uiModels:PlayerButtonSetting">
                 <Button
                     x:Name="PlayPauseButton"
-                    Command="{Binding DataContext.PlayPauseCommand, ElementName=MainPageRoot}"
+                    Command="{x:Bind Command}"
                     Style="{StaticResource PlayPauseButtonStyle}"
-                    ToolTipService.ToolTip="{Binding DataContext.PlayPauseButtonToolTip, ElementName=MainPageRoot, Mode=OneWay}">
+                    ToolTipService.ToolTip="{x:Bind DynamicToolTip, Mode=OneWay}">
                     <FontIcon
                         FontFamily="{ThemeResource SymbolThemeFontFamily}"
                         FontSize="24"
-                        Glyph="{Binding DataContext.PlayPauseIconGlyph, ElementName=MainPageRoot, Mode=OneWay}" />
+                        Glyph="{x:Bind DynamicIcon, Mode=OneWay}" />
                 </Button>
             </DataTemplate>
 
 
             <DataTemplate x:Key="NextButtonTemplate" x:DataType="uiModels:PlayerButtonSetting">
-                <Button ToolTipService.ToolTip="{x:Bind resources:Strings.Player_NextButton_ToolTip, Mode=OneTime}"
-                        Command="{Binding DataContext.NextCommand, ElementName=MainPageRoot}"
+                <Button ToolTipService.ToolTip="{x:Bind DynamicToolTip, Mode=OneTime}"
+                        Command="{x:Bind Command}"
                         Style="{StaticResource NextButtonStyle}">
-                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
+                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="{x:Bind DynamicIcon, Mode=OneWay}" />
                 </Button>
             </DataTemplate>
 
             <DataTemplate x:Key="RepeatButtonTemplate" x:DataType="uiModels:PlayerButtonSetting">
                 <Button
-                    Command="{Binding DataContext.CycleRepeatCommand, ElementName=MainPageRoot}"
+                    Command="{x:Bind Command}"
                     Style="{StaticResource RepeatButtonStyle}"
-                    ToolTipService.ToolTip="{Binding DataContext.RepeatButtonToolTip, ElementName=MainPageRoot, Mode=OneWay}">
+                    ToolTipService.ToolTip="{x:Bind DynamicToolTip, Mode=OneWay}">
                     <FontIcon
                         FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                        Glyph="{Binding DataContext.RepeatIconGlyph, ElementName=MainPageRoot, Mode=OneWay}" />
+                        Glyph="{x:Bind DynamicIcon, Mode=OneWay}" />
                 </Button>
             </DataTemplate>
 
             <DataTemplate x:Key="LyricsButtonTemplate" x:DataType="uiModels:PlayerButtonSetting">
                 <Button
-                    ToolTipService.ToolTip="{x:Bind resources:Strings.Player_LyricsButton_ToolTip, Mode=OneTime}"
+                    ToolTipService.ToolTip="{x:Bind DynamicToolTip, Mode=OneTime}"
                     Style="{StaticResource LyricsButtonStyle}"
-                    Command="{Binding DataContext.GoToLyricsPageCommand, ElementName=MainPageRoot}">
-                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
+                    Command="{x:Bind Command}">
+                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="{x:Bind DynamicIcon, Mode=OneWay}" />
                 </Button>
             </DataTemplate>
 
             <DataTemplate x:Key="QueueButtonTemplate" x:DataType="uiModels:PlayerButtonSetting">
-                <Button ToolTipService.ToolTip="{x:Bind resources:Strings.Player_QueueButton_ToolTip, Mode=OneTime}"
+                <Button ToolTipService.ToolTip="{x:Bind DynamicToolTip, Mode=OneTime}"
                         Style="{StaticResource QueueButtonStyle}">
-                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="" />
+                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="{x:Bind DynamicIcon, Mode=OneWay}" />
                     <Button.Flyout>
                         <Flyout x:Name="QueueFlyout"
                                 Placement="Top"
@@ -129,12 +129,12 @@
 
             <DataTemplate x:Key="VolumeButtonTemplate" x:DataType="uiModels:PlayerButtonSetting">
                 <Button
-                    Command="{Binding DataContext.ToggleMuteCommand, ElementName=MainPageRoot}"
+                    Command="{x:Bind Command}"
                     Style="{StaticResource VolumeButtonStyle}"
-                    ToolTipService.ToolTip="{Binding DataContext.VolumeButtonToolTip, ElementName=MainPageRoot, Mode=OneWay}">
+                    ToolTipService.ToolTip="{x:Bind DynamicToolTip, Mode=OneWay}">
                     <FontIcon
                         FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                        Glyph="{Binding DataContext.VolumeIconGlyph, ElementName=MainPageRoot, Mode=OneWay}" />
+                        Glyph="{x:Bind DynamicIcon, Mode=OneWay}" />
                 </Button>
             </DataTemplate>
 
