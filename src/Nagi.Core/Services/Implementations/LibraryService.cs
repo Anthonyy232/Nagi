@@ -5115,7 +5115,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
     private IQueryable<Artist> BuildArtistSearchQuery(MusicDbContext context, string searchTerm)
     {
-        return context.Artists.Where(a => EF.Functions.Like(a.Name, $"%{searchTerm}%"));
+        var term = $"%{searchTerm}%";
+        return context.Artists.Where(a => EF.Functions.Like(a.Name, term));
     }
 
     private IQueryable<Album> BuildAlbumSearchQuery(MusicDbContext context, string searchTerm)
