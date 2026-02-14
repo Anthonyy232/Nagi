@@ -75,8 +75,7 @@ public sealed partial class SettingsPage : Page
     protected override void OnNavigatedFrom(NavigationEventArgs e)
     {
         base.OnNavigatedFrom(e);
-        _logger.LogDebug("Navigating away from SettingsPage. Resetting ViewModel state.");
-        ViewModel.ResetState();
+        _logger.LogDebug("Navigated away from SettingsPage.");
     }
 
     private void ProvidersListView_DragItemsStarting(object sender, DragItemsStartingEventArgs e)

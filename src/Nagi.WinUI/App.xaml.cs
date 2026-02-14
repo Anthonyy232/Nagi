@@ -562,8 +562,8 @@ public partial class App : Application
         services.AddSingleton<AlbumViewModel>();
         services.AddSingleton<GenreViewModel>();
 
-        // Detail/Context ViewModels - Transient, need different params each navigation
-        services.AddTransient<SettingsViewModel>();
+        // Detail/Context ViewModels
+        services.AddSingleton<SettingsViewModel>();
         services.AddTransient<OnboardingViewModel>();
         services.AddTransient<PlaylistSongListViewModel>();
         services.AddTransient<SmartPlaylistSongListViewModel>();
