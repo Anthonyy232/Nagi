@@ -78,6 +78,8 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     // A flag to track if the page has been unloaded, to prevent dispatcher callbacks from updating UI.
     private bool _isUnloaded;
 
+    private ElementTheme _lastKnownTheme;
+
     public MainPage()
     {
         InitializeComponent();
@@ -288,6 +290,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         try
         {
             // 1. Hook up event handlers first to avoid missing any updates during the async initialization phase.
+            _lastKnownTheme = ActualTheme;
             ActualThemeChanged += OnActualThemeChanged;
             ContentFrame.Navigated += OnContentFrameNavigated;
             ViewModel.PropertyChanged += OnViewModelPropertyChanged;
@@ -423,6 +426,8 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     // Reapplies the dynamic theme when the system or app theme changes.
     private void OnActualThemeChanged(FrameworkElement sender, object args)
     {
+        if (ActualTheme == _lastKnownTheme) return;
+        _lastKnownTheme = ActualTheme;
         _ = _themeService.ReapplyCurrentDynamicThemeAsync();
     }
 
