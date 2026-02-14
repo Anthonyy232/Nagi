@@ -1,4 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Windows.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
+using System.Text.Json.Serialization;
 
 namespace Nagi.WinUI.Models;
 
@@ -23,4 +25,15 @@ public partial class PlayerButtonSetting : ObservableObject
     ///     This is a convenience property for XAML bindings which do not easily support negation.
     /// </summary>
     public bool IsNotSeparator => Id != "Separator";
+
+    // Dynamic properties for binding - ignored by JSON serializer as they are runtime state
+    [JsonIgnore] public ICommand? Command { get; set; }
+    
+    [ObservableProperty] 
+    [property: JsonIgnore] 
+    public partial string? DynamicIcon { get; set; }
+    
+    [ObservableProperty] 
+    [property: JsonIgnore] 
+    public partial string? DynamicToolTip { get; set; }
 }
