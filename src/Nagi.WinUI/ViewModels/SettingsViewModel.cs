@@ -100,6 +100,7 @@ public partial class EqualizerBandViewModel : ObservableObject, IDisposable
 public partial class SettingsViewModel : ObservableObject, IDisposable
 {
     internal const int EqualizerDebounceDelayMilliseconds = 300;
+    private const int VisualSettingDebounceMs = 200;
 
     private readonly IAppInfoService _appInfoService;
     private readonly IApplicationLifecycle _applicationLifecycle;
@@ -132,6 +133,8 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     private CancellationTokenSource? _lyricsProviderSaveCts;
     private CancellationTokenSource? _metadataProviderSaveCts;
     private CancellationTokenSource? _artistSplitSaveCts;
+    private CancellationTokenSource? _playerTintSaveCts;
+    private CancellationTokenSource? _accentColorSaveCts;
 
     public SettingsViewModel(
         IUISettingsService settingsService,
@@ -330,10 +333,21 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     async partial void OnPlayerTintIntensityChanged(double value)
     {
         if (_isInitializing) return;
+
+        var oldCts = _playerTintSaveCts;
+        _playerTintSaveCts = new CancellationTokenSource();
+        var token = _playerTintSaveCts.Token;
+
+        // Cancel and dispose the old CTS after creating the new one
+        oldCts?.Cancel();
+        oldCts?.Dispose();
+
         try
         {
+            await Task.Delay(VisualSettingDebounceMs, token);
             await _settingsService.SetPlayerTintIntensityAsync(value);
         }
+        catch (TaskCanceledException) { }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to set player tint intensity");
@@ -385,6 +399,10 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         _metadataProviderSaveCts?.Dispose();
         _artistSplitSaveCts?.Cancel();
         _artistSplitSaveCts?.Dispose();
+        _playerTintSaveCts?.Cancel();
+        _playerTintSaveCts?.Dispose();
+        _accentColorSaveCts?.Cancel();
+        _accentColorSaveCts?.Dispose();
 
         _loadLock.Dispose();
         _isDisposed = true;
@@ -1616,14 +1634,24 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     async partial void OnAccentColorChanged(Windows.UI.Color value)
     {
         if (_isInitializing) return;
+
+        var oldCts = _accentColorSaveCts;
+        _accentColorSaveCts = new CancellationTokenSource();
+        var token = _accentColorSaveCts.Token;
+
+        oldCts?.Cancel();
+        oldCts?.Dispose();
+
         try
         {
+            await Task.Delay(VisualSettingDebounceMs, token);
             await _settingsService.SetAccentColorAsync(value);
             if (!IsDynamicThemingEnabled)
             {
                 _ = _themeService.ApplyAccentColorAsync(value);
             }
         }
+        catch (TaskCanceledException) { }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error updating accent color to {Color}", value);
