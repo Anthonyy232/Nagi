@@ -34,6 +34,7 @@ public static class Strings
     public static string Label_PlayCount => GetString("Label_PlayCount");
     public static string Label_Song => GetString("Label_Song");
     public static string Label_Songs => GetString("Label_Songs");
+    public static string Label_Artists => GetString("Label_Artists");
     public static string Label_Folder => GetString("Label_Folder");
     public static string Label_Folders => GetString("Label_Folders");
     public static string Label_ManualOrder => GetString("Label_ManualOrder");
@@ -80,6 +81,7 @@ public static class Strings
     // Labels
     public static string Label_WithLyrics => GetString("Label_WithLyrics");
     public static string Label_WithCoverArt => GetString("Label_WithCoverArt");
+    public static string Label_WithArtistImage => GetString("Label_WithArtistImage");
     public static string Label_And => GetString("Label_And");
 
     // Static Strings

@@ -607,15 +607,33 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
                         // Check for newly available LRC files for songs that don't currently have lyrics
                         var lrcUpdates = await UpdateMissingLrcPathsAsync(folderId, cancellationToken).ConfigureAwait(false);
-                        
+
                         // Check for newly available cover art files for songs that don't have cover art
                         var coverArtUpdates = await UpdateMissingCoverArtAsync(folderId, folder.Path, cancellationToken).ConfigureAwait(false);
+
+                        // Check for artist images in local folders (Navidrome-style priority)
+                        var artistImageUpdates = await UpdateMissingArtistImagesFromFoldersAsync(folderId, cancellationToken).ConfigureAwait(false);
                         
-                        var hasChanges = allFilePathsToDelete.Any() || lrcUpdates > 0 || coverArtUpdates > 0;
+                        var hasChanges = allFilePathsToDelete.Any() || lrcUpdates > 0 || coverArtUpdates > 0 || artistImageUpdates > 0;
 
                         var updates = new List<string>();
-                        if (lrcUpdates > 0) updates.Add($"{lrcUpdates} {Resources.Strings.Label_Songs.ToLower()} {Resources.Strings.Label_WithLyrics}");
-                        if (coverArtUpdates > 0) updates.Add($"{coverArtUpdates} {Resources.Strings.Label_Songs.ToLower()} {Resources.Strings.Label_WithCoverArt}");
+                        if (lrcUpdates > 0)
+                        {
+                            var songLabel = lrcUpdates == 1 ? Resources.Strings.Label_Song : Resources.Strings.Label_Songs;
+                            updates.Add($"{lrcUpdates} {songLabel.ToLower()} {Resources.Strings.Label_WithLyrics}");
+                        }
+
+                        if (coverArtUpdates > 0)
+                        {
+                            var songLabel = coverArtUpdates == 1 ? Resources.Strings.Label_Song : Resources.Strings.Label_Songs;
+                            updates.Add($"{coverArtUpdates} {songLabel.ToLower()} {Resources.Strings.Label_WithCoverArt}");
+                        }
+
+                        if (artistImageUpdates > 0)
+                        {
+                            var artistLabel = artistImageUpdates == 1 ? Resources.Strings.Label_Artist : Resources.Strings.Label_Artists;
+                            updates.Add($"{artistImageUpdates} {artistLabel.ToLower()} {Resources.Strings.Label_WithArtistImage}");
+                        }
                         
                         var andJoiner = $" {Resources.Strings.Label_And} ";
                         var statusMessage = updates.Any()
@@ -660,9 +678,12 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
                     // Check for newly available LRC files for songs that don't currently have lyrics
                     await UpdateMissingLrcPathsAsync(folderId, cancellationToken).ConfigureAwait(false);
-                    
+
                     // Check for newly available cover art files for songs that don't have cover art
                     await UpdateMissingCoverArtAsync(folderId, folder.Path, cancellationToken).ConfigureAwait(false);
+
+                    // Check for artist images in local folders (Navidrome-style priority)
+                    await UpdateMissingArtistImagesFromFoldersAsync(folderId, cancellationToken).ConfigureAwait(false);
 
                     progress?.Report(new ScanProgress { StatusText = Resources.Strings.Status_Finalizing, IsIndeterminate = true });
                     
@@ -2989,6 +3010,89 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     }
 
     /// <summary>
+    ///     Finds artists linked to songs in the given folder that have no local or custom image,
+    ///     then searches their associated directories for artist image files (e.g., artist.jpg).
+    ///     Updates each artist's <see cref="Artist.LocalImageCachePath"/> and fires
+    ///     <see cref="ArtistMetadataUpdated"/> when an image is found.
+    /// </summary>
+    /// <returns>The number of artists updated with newly found local images.</returns>
+    private async Task<int> UpdateMissingArtistImagesFromFoldersAsync(Guid folderId, CancellationToken cancellationToken)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+
+        // Find distinct artists linked to songs in this folder.
+        // Skip if a custom image or a previously-found local folder image is already cached.
+        // We DO NOT skip if they only have a .fetched (external) image, as local files take precedence.
+        var artistsNeedingImages = await context.Artists
+            .Where(a => a.SongArtists.Any(sa => sa.Song.FolderId == folderId))
+            .Where(a => a.LocalImageCachePath == null ||
+                        (!a.LocalImageCachePath.Contains(".local.") && !a.LocalImageCachePath.Contains(".custom.")))
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
+
+        if (artistsNeedingImages.Count == 0) return 0;
+
+        _logger.LogDebug("Checking local artist images for {Count} artists in folder {FolderId}.",
+            artistsNeedingImages.Count, folderId);
+
+        // Batch-load song directories for all target artists in a single query (avoids N+1 round-trips).
+        var artistIds = artistsNeedingImages.Select(a => a.Id).ToList();
+        var songDirPairs = await context.SongArtists
+            .AsNoTracking()
+            .Where(sa => artistIds.Contains(sa.ArtistId))
+            .Select(sa => new { sa.ArtistId, sa.Song.DirectoryPath })
+            .Distinct()
+            .ToListAsync(cancellationToken)
+            .ConfigureAwait(false);
+
+        var songDirsByArtistId = songDirPairs
+            .GroupBy(x => x.ArtistId)
+            .ToDictionary(
+                g => g.Key,
+                g => (IReadOnlyList<string?>)g.Select(x => x.DirectoryPath).Distinct().ToList());
+
+        // Collect events to fire after SaveChangesAsync succeeds, so UI state and DB stay in sync.
+        var pendingEvents = new List<ArtistMetadataUpdatedEventArgs>();
+        var updatedCount = 0;
+        foreach (var artist in artistsNeedingImages)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var dirs = songDirsByArtistId.TryGetValue(artist.Id, out var d) ? d : Array.Empty<string?>();
+            var localImageBytes = await FindArtistImageInDirectoriesAsync(dirs, artist.Name, cancellationToken).ConfigureAwait(false);
+            if (localImageBytes == null) continue;
+
+            try
+            {
+                var processed = await _imageProcessor.ProcessImageBytesAsync(localImageBytes).ConfigureAwait(false);
+                await ImageStorageHelper.SaveImageBytesAsync(_fileSystem,
+                    _pathConfig.ArtistImageCachePath, artist.Id.ToString(), ".local", processed).ConfigureAwait(false);
+                var localPath = ImageStorageHelper.FindImage(_fileSystem, _pathConfig.ArtistImageCachePath, artist.Id.ToString(), ".local");
+                if (string.IsNullOrEmpty(localPath)) continue;
+
+                artist.LocalImageCachePath = localPath;
+                updatedCount++;
+                pendingEvents.Add(new ArtistMetadataUpdatedEventArgs(artist.Id, localPath));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Failed to process local artist image for '{ArtistName}'.", artist.Name);
+            }
+        }
+
+        if (updatedCount > 0)
+        {
+            await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            _logger.LogInformation("Updated {Count} artists with local folder images.", updatedCount);
+            // Fire events only after the DB write succeeds to keep UI state consistent with persisted data.
+            foreach (var eventArgs in pendingEvents)
+                ArtistMetadataUpdated?.Invoke(this, eventArgs);
+        }
+
+        return updatedCount;
+    }
+
+    /// <summary>
     ///     Searches for a cover art file in the directory hierarchy, starting from the song's
     ///     directory and walking up to the base folder path.
     /// </summary>
@@ -3082,21 +3186,130 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     }
     
     /// <summary>
-    ///     Gets the priority of a cover art file name (lower is higher priority).
+    ///     Gets the priority of a cover art file name (lower = higher priority).
+    ///     Delegates to <see cref="FileExtensions.GetCoverArtPriority"/> as the single source of truth.
     /// </summary>
-    private static int GetCoverArtPriority(string fileNameWithoutExt)
+    private static int GetCoverArtPriority(string fileNameWithoutExt) =>
+        FileExtensions.GetCoverArtPriority(fileNameWithoutExt);
+
+
+    /// <summary>
+    ///     Searches for an artist image file (e.g., artist.jpg) in a specific directory.
+    ///     Matches filenames against <see cref="FileExtensions.ArtistImageFileNames"/> in priority order.
+    /// </summary>
+    private string? FindArtistImageInDirectory(string directory)
     {
-        // Priority order: cover (0), folder (1), album (2), front (3)
-        return fileNameWithoutExt.ToLowerInvariant() switch
+        try
         {
-            "cover" => 0,
-            "folder" => 1,
-            "album" => 2,
-            "front" => 3,
-            _ => int.MaxValue
-        };
+            var files = _fileSystem.GetFiles(directory, "*.*");
+            string? bestMatch = null;
+            var bestPriority = int.MaxValue;
+
+            foreach (var filePath in files)
+            {
+                var extension = _fileSystem.GetExtension(filePath);
+                if (!FileExtensions.ImageFileExtensions.Contains(extension))
+                    continue;
+
+                var fileNameWithoutExt = _fileSystem.GetFileNameWithoutExtension(filePath);
+                if (!FileExtensions.ArtistImageFileNames.Contains(fileNameWithoutExt))
+                    continue;
+
+                var priority = FileExtensions.GetArtistArtPriority(fileNameWithoutExt);
+                if (priority < bestPriority)
+                {
+                    bestPriority = priority;
+                    bestMatch = filePath;
+                }
+            }
+            return bestMatch;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to enumerate artist images in directory '{Directory}'.", directory);
+            return null;
+        }
     }
 
+    /// <summary>
+    ///     Searches for an artist image file in the folders associated with the artist's songs.
+    ///     Queries the database for song directories, then delegates to
+    ///     <see cref="FindArtistImageInDirectoriesAsync"/>. Used by single-artist code paths.
+    /// </summary>
+    private async Task<byte[]?> FindArtistImageInFoldersAsync(Artist artist, MusicDbContext context, CancellationToken ct)
+    {
+        var songDirectories = await context.Songs
+            .AsNoTracking()
+            .Where(s => s.SongArtists.Any(sa => sa.ArtistId == artist.Id))
+            .Select(s => s.DirectoryPath)
+            .Distinct()
+            .ToListAsync(ct)
+            .ConfigureAwait(false);
+
+        return await FindArtistImageInDirectoriesAsync(songDirectories, artist.Name, ct).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    ///     Core artist-image scanning logic. Takes a pre-loaded list of song directories and
+    ///     searches them in two passes following Navidrome priority:
+    ///     Pass A — parent directories ("artist folder", e.g. F:/Music/Daft Punk/);
+    ///     Pass B — song directories themselves ("album folder", e.g. F:/Music/Daft Punk/Discovery/).
+    ///     Root directories are excluded from pass A to avoid scanning drive roots.
+    /// </summary>
+    private async Task<byte[]?> FindArtistImageInDirectoriesAsync(
+        IReadOnlyList<string?> songDirectories, string artistName, CancellationToken ct)
+    {
+        if (songDirectories.Count == 0) return null;
+
+        // Pass A: parent directories ("artist folder" — e.g., F:/Music/Daft Punk/)
+        var passADirs = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        // Pass B: song directories themselves ("album/artist" — e.g., F:/Music/Daft Punk/Discovery/)
+        var passBDirs = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var dir in songDirectories)
+        {
+            if (string.IsNullOrEmpty(dir)) continue;
+            passBDirs.Add(dir);
+            var parent = _fileSystem.GetDirectoryName(dir);
+            // Exclude filesystem roots from pass A: a root directory has no grandparent,
+            // so GetDirectoryName returns null/empty for it. Scanning C:\ or / is wasteful.
+            if (!string.IsNullOrEmpty(parent) && !string.IsNullOrEmpty(_fileSystem.GetDirectoryName(parent)))
+                passADirs.Add(parent);
+        }
+
+        // Search Pass A first (artist-level folders), then Pass B (album folders).
+        // Navidrome logic: artist.* in parent folder (A) > artist.* in song folder (B).
+        return await ScanDirectoriesForArtistImageAsync(passADirs, artistName, ct).ConfigureAwait(false) ??
+               await ScanDirectoriesForArtistImageAsync(passBDirs, artistName, ct).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    ///     Helper method to scan a set of directories for a valid artist image file.
+    /// </summary>
+    private async Task<byte[]?> ScanDirectoriesForArtistImageAsync(IEnumerable<string> directories, string artistName, CancellationToken ct)
+    {
+        foreach (var dir in directories)
+        {
+            ct.ThrowIfCancellationRequested();
+            var imagePath = FindArtistImageInDirectory(dir);
+            if (imagePath == null) continue;
+
+            try
+            {
+                var bytes = await _fileSystem.ReadAllBytesAsync(imagePath).ConfigureAwait(false);
+                if (bytes.Length > 0)
+                {
+                    _logger.LogDebug("Found artist image for '{ArtistName}' at '{ImagePath}'.", artistName, imagePath);
+                    return bytes;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Failed to read artist image at '{ImagePath}'.", imagePath);
+            }
+        }
+        return null;
+    }
 
     /// <summary>
     ///     Searches for an external .lrc file in the same directory as the audio file, matching by filename.
@@ -4254,14 +4467,51 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         bool suppressEvents = false)
     {
         var wasMetadataFoundAndUpdated = false;
+        var localImageFound = false;
+
+        // Navidrome priority: local folder images first (artist.*, album/artist.*), then external providers.
+        // Skip if a custom image or a previously-found local folder image is already cached.
+        // We DO NOT skip if they only have a .fetched (external) image, as local files take precedence.
+        if (artist.LocalImageCachePath == null ||
+            (!artist.LocalImageCachePath.Contains(".custom.") && !artist.LocalImageCachePath.Contains(".local.")))
+        {
+            var localImageBytes = await FindArtistImageInFoldersAsync(artist, context, cancellationToken).ConfigureAwait(false);
+            if (localImageBytes != null)
+            {
+                try
+                {
+                    var processed = await _imageProcessor.ProcessImageBytesAsync(localImageBytes).ConfigureAwait(false);
+                    await ImageStorageHelper.SaveImageBytesAsync(_fileSystem,
+                        _pathConfig.ArtistImageCachePath, artist.Id.ToString(), ".local", processed).ConfigureAwait(false);
+                    var localPath = ImageStorageHelper.FindImage(_fileSystem, _pathConfig.ArtistImageCachePath, artist.Id.ToString(), ".local");
+                    if (!string.IsNullOrEmpty(localPath))
+                    {
+                        artist.LocalImageCachePath = localPath;
+                        wasMetadataFoundAndUpdated = true;
+                        localImageFound = true;
+                        _logger.LogInformation("Using local folder image for artist '{ArtistName}'.", artist.Name);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Processing failed (e.g. corrupt image). localImageFound stays false so that
+                    // external providers are tried as a fallback — intentional graceful degradation.
+                    _logger.LogWarning(ex, "Failed to process local artist image for '{ArtistName}'.", artist.Name);
+                }
+            }
+        }
 
         // Get enabled metadata providers in priority order
         var enabledProviders = await _settingsService.GetEnabledServiceProvidersAsync(Models.ServiceCategory.Metadata).ConfigureAwait(false);
-        
+
         if (enabledProviders.Count == 0)
         {
             _logger.LogDebug("No metadata providers enabled. Skipping remote fetch for artist '{ArtistName}'.", artist.Name);
-            return (false, artist.LocalImageCachePath);
+            if (wasMetadataFoundAndUpdated && saveChanges)
+                await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            if (!suppressEvents && wasMetadataFoundAndUpdated)
+                ArtistMetadataUpdated?.Invoke(this, new ArtistMetadataUpdatedEventArgs(artist.Id, artist.LocalImageCachePath));
+            return (wasMetadataFoundAndUpdated, artist.LocalImageCachePath);
         }
 
         _logger.LogDebug("Using metadata providers for '{ArtistName}': {Providers}", 
@@ -4394,10 +4644,10 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             wasMetadataFoundAndUpdated = true;
         }
 
-        // Download and cache the best image found
-        if (!string.IsNullOrEmpty(finalImageUrl))
+        // Download and cache the best image found from external providers.
+        // Skip if a local folder image or custom image is already set.
+        if (!string.IsNullOrEmpty(finalImageUrl) && !localImageFound)
         {
-            // Skip fetching metadata image if a custom image is already set
             if (artist.LocalImageCachePath == null || !artist.LocalImageCachePath.Contains(".custom."))
             {
                 var downloadedPath =
