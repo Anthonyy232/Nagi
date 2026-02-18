@@ -437,6 +437,179 @@ public class AtlMetadataServiceTests : IDisposable
     }
 
     /// <summary>
+    ///     Verifies that directory cover art takes priority over embedded art (Navidrome order).
+    ///     When both a directory cover file and embedded picture exist, the directory file wins.
+    /// </summary>
+    [Fact]
+    public async Task ProcessAlbumArtAsync_DirectoryArtTakesPriorityOverEmbeddedArt()
+    {
+        // Arrange: create file WITH embedded art
+        var embeddedPictureData = new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A }; // PNG header
+        var audioFilePath = CreateTestAudioFile("botharts.mp3", track =>
+        {
+            track.Title = "Both Arts Song";
+            track.EmbeddedPictures.Add(PictureInfo.fromBinaryData(embeddedPictureData));
+        });
+
+        // Directory art wins: mock a cover.jpg in the same folder
+        var coverJpgPath = Path.Combine(_tempDirectory, "cover.jpg");
+        var directoryArtBytes = new byte[] { 0xFF, 0xD8, 0xFF, 0xE0 }; // JPEG SOI header (distinct from embedded)
+        _fileSystem.GetFiles(_tempDirectory, "*.*").Returns(new[] { coverJpgPath });
+        _fileSystem.GetExtension(coverJpgPath).Returns(".jpg");
+        _fileSystem.GetFileNameWithoutExtension(coverJpgPath).Returns("cover");
+        _fileSystem.ReadAllBytesAsync(coverJpgPath).Returns(Task.FromResult(directoryArtBytes));
+
+        // Return different URIs based on which bytes are processed so we can tell them apart
+        _imageProcessor.SaveCoverArtAndExtractColorsAsync(directoryArtBytes)
+            .Returns(Task.FromResult<(string?, string?, string?)>(("C:/art/directory.jpg", "dir-light", "dir-dark")));
+        _imageProcessor.SaveCoverArtAndExtractColorsAsync(embeddedPictureData)
+            .Returns(Task.FromResult<(string?, string?, string?)>(("C:/art/embedded.jpg", "emb-light", "emb-dark")));
+
+        // Act
+        var result = await _metadataService.ExtractMetadataAsync(audioFilePath);
+
+        // Assert: directory art wins
+        result.CoverArtUri.Should().Be("C:/art/directory.jpg", because: "directory art has higher priority than embedded");
+        result.LightSwatchId.Should().Be("dir-light");
+        // Embedded bytes must NOT have been processed — directory art was sufficient
+        await _imageProcessor.DidNotReceive().SaveCoverArtAndExtractColorsAsync(embeddedPictureData);
+    }
+
+    /// <summary>
+    ///     Verifies that when only embedded art exists (no directory cover file), the embedded
+    ///     picture is used as the fallback — confirming the priority chain is complete.
+    /// </summary>
+    [Fact]
+    public async Task ProcessAlbumArtAsync_EmbeddedArtUsedWhenNoDirectoryArtExists()
+    {
+        // Arrange: file with embedded art, no directory cover files
+        var embeddedPictureData = new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
+        var audioFilePath = CreateTestAudioFile("embeddedonly.mp3", track =>
+        {
+            track.Title = "Embedded Only";
+            track.EmbeddedPictures.Add(PictureInfo.fromBinaryData(embeddedPictureData));
+        });
+
+        // Directory scan returns nothing
+        _fileSystem.GetFiles(_tempDirectory, "*.*").Returns(Array.Empty<string>());
+
+        _imageProcessor.SaveCoverArtAndExtractColorsAsync(Arg.Any<byte[]>())
+            .Returns(Task.FromResult<(string?, string?, string?)>(("C:/art/embedded.jpg", "emb-light", "emb-dark")));
+
+        // Act
+        var result = await _metadataService.ExtractMetadataAsync(audioFilePath);
+
+        // Assert: embedded art is used as fallback
+        result.CoverArtUri.Should().Be("C:/art/embedded.jpg");
+        await _imageProcessor.Received(1).SaveCoverArtAndExtractColorsAsync(Arg.Any<byte[]>());
+    }
+
+    /// <summary>
+    ///     Verifies that cover.jpg has higher priority than folder.jpg when both exist in the
+    ///     same directory, matching Navidrome's documented cover art order.
+    /// </summary>
+    [Fact]
+    public async Task ProcessAlbumArtAsync_CoverFileHasHigherPriorityThanFolderFile()
+    {
+        // Arrange: no embedded art; both cover.jpg and folder.jpg exist in directory
+        var audioFilePath = CreateTestAudioFile("prioritytest.mp3", _ => { });
+
+        var folderJpgPath = Path.Combine(_tempDirectory, "folder.jpg");
+        var coverJpgPath = Path.Combine(_tempDirectory, "cover.jpg");
+        var coverBytes = new byte[] { 0x11, 0x22, 0x33 };
+        var folderBytes = new byte[] { 0xAA, 0xBB, 0xCC };
+
+        // folder.jpg is listed first in the array — priority must be determined by name, not order
+        _fileSystem.GetFiles(_tempDirectory, "*.*").Returns(new[] { folderJpgPath, coverJpgPath });
+        _fileSystem.GetExtension(folderJpgPath).Returns(".jpg");
+        _fileSystem.GetFileNameWithoutExtension(folderJpgPath).Returns("folder");
+        _fileSystem.GetExtension(coverJpgPath).Returns(".jpg");
+        _fileSystem.GetFileNameWithoutExtension(coverJpgPath).Returns("cover");
+        _fileSystem.ReadAllBytesAsync(coverJpgPath).Returns(Task.FromResult(coverBytes));
+        _fileSystem.ReadAllBytesAsync(folderJpgPath).Returns(Task.FromResult(folderBytes));
+
+        _imageProcessor.SaveCoverArtAndExtractColorsAsync(coverBytes)
+            .Returns(Task.FromResult<(string?, string?, string?)>(("C:/art/cover.jpg", "c-light", "c-dark")));
+        _imageProcessor.SaveCoverArtAndExtractColorsAsync(folderBytes)
+            .Returns(Task.FromResult<(string?, string?, string?)>(("C:/art/folder.jpg", "f-light", "f-dark")));
+
+        // Act
+        var result = await _metadataService.ExtractMetadataAsync(audioFilePath);
+
+        // Assert: cover.jpg won (priority 0 > priority 1)
+        result.CoverArtUri.Should().Be("C:/art/cover.jpg", because: "cover has index 0 in CoverArtFileNamePriority");
+        await _fileSystem.Received(1).ReadAllBytesAsync(coverJpgPath);
+        await _fileSystem.DidNotReceive().ReadAllBytesAsync(folderJpgPath);
+    }
+
+    /// <summary>
+    ///     Verifies that when directory cover art scanning throws an I/O exception,
+    ///     the service falls back to the embedded image rather than propagating the error.
+    /// </summary>
+    [Fact]
+    public async Task ProcessAlbumArtAsync_DirectoryScanException_FallsBackToEmbeddedArt()
+    {
+        // Arrange: file with embedded art; directory scan throws I/O error
+        var embeddedPictureData = new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
+        var audioFilePath = CreateTestAudioFile("scanfailure.mp3", track =>
+        {
+            track.Title = "Scan Failure";
+            track.EmbeddedPictures.Add(PictureInfo.fromBinaryData(embeddedPictureData));
+        });
+
+        // GetFiles throws an I/O exception (e.g. permission denied)
+        _fileSystem.GetFiles(_tempDirectory, "*.*").Throws(new IOException("Access denied"));
+
+        _imageProcessor.SaveCoverArtAndExtractColorsAsync(Arg.Any<byte[]>())
+            .Returns(Task.FromResult<(string?, string?, string?)>(("C:/art/embedded.jpg", "emb-light", "emb-dark")));
+
+        // Act
+        var result = await _metadataService.ExtractMetadataAsync(audioFilePath);
+
+        // Assert: embedded art is used as fallback; no exception propagated
+        result.CoverArtUri.Should().Be("C:/art/embedded.jpg",
+            because: "an I/O error during directory scanning should not prevent embedded art from being used");
+        await _imageProcessor.Received(1).SaveCoverArtAndExtractColorsAsync(Arg.Any<byte[]>());
+    }
+
+    /// <summary>
+    ///     Verifies that album.jpg has the lowest priority among recognized cover art files,
+    ///     matching the updated CoverArtFileNamePriority (cover > folder > front > album).
+    /// </summary>
+    [Fact]
+    public async Task ProcessAlbumArtAsync_AlbumFileHasLowestPriority()
+    {
+        // Arrange: no embedded art; both front.jpg and album.jpg exist
+        var audioFilePath = CreateTestAudioFile("lowprioritytest.mp3", _ => { });
+
+        var frontJpgPath = Path.Combine(_tempDirectory, "front.jpg");
+        var albumJpgPath = Path.Combine(_tempDirectory, "album.jpg");
+        var frontBytes = new byte[] { 0x11, 0x22 };
+        var albumBytes = new byte[] { 0xAA, 0xBB };
+
+        _fileSystem.GetFiles(_tempDirectory, "*.*").Returns(new[] { albumJpgPath, frontJpgPath });
+        _fileSystem.GetExtension(frontJpgPath).Returns(".jpg");
+        _fileSystem.GetFileNameWithoutExtension(frontJpgPath).Returns("front");
+        _fileSystem.GetExtension(albumJpgPath).Returns(".jpg");
+        _fileSystem.GetFileNameWithoutExtension(albumJpgPath).Returns("album");
+        _fileSystem.ReadAllBytesAsync(frontJpgPath).Returns(Task.FromResult(frontBytes));
+        _fileSystem.ReadAllBytesAsync(albumJpgPath).Returns(Task.FromResult(albumBytes));
+
+        _imageProcessor.SaveCoverArtAndExtractColorsAsync(frontBytes)
+            .Returns(Task.FromResult<(string?, string?, string?)>(("C:/art/front.jpg", "fr-light", "fr-dark")));
+        _imageProcessor.SaveCoverArtAndExtractColorsAsync(albumBytes)
+            .Returns(Task.FromResult<(string?, string?, string?)>(("C:/art/album.jpg", "al-light", "al-dark")));
+
+        // Act
+        var result = await _metadataService.ExtractMetadataAsync(audioFilePath);
+
+        // Assert: front.jpg won (priority 2 > priority 3)
+        result.CoverArtUri.Should().Be("C:/art/front.jpg", because: "front has index 2 and album has index 3");
+        await _fileSystem.Received(1).ReadAllBytesAsync(frontJpgPath);
+        await _fileSystem.DidNotReceive().ReadAllBytesAsync(albumJpgPath);
+    }
+
+    /// <summary>
     ///     Verifies that when caching embedded synchronized lyrics, the service creates
     ///     the LRC cache directory if it doesn't exist.
     /// </summary>

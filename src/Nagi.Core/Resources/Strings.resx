@@ -108,6 +108,9 @@
   <data name="Label_Songs" xml:space="preserve">
     <value>Songs</value>
   </data>
+  <data name="Label_Artists" xml:space="preserve">
+    <value>Artists</value>
+  </data>
   <data name="Label_Song" xml:space="preserve">
     <value>Song</value>
   </data>
@@ -232,6 +235,9 @@
   </data>
   <data name="Label_WithCoverArt" xml:space="preserve">
     <value>with cover art</value>
+  </data>
+  <data name="Label_WithArtistImage" xml:space="preserve">
+    <value>with artist image</value>
   </data>
   <data name="Label_And" xml:space="preserve">
     <value>and</value>

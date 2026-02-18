@@ -240,9 +240,13 @@ public class AtlMetadataService : IMetadataService, IDisposable
     /// </summary>
     private async Task ProcessAlbumArtAsync(SongFileMetadata metadata, Track track, string? baseFolderPath)
     {
-        var picture = track.EmbeddedPictures?.FirstOrDefault();
+        // Navidrome priority: directory files first (cover.*, folder.*, front.*), then embedded, then external.
+        // Search directory hierarchy first.
+        await ProcessCoverArtFromDirectoryAsync(metadata, baseFolderPath).ConfigureAwait(false);
+        if (metadata.CoverArtUri != null) return;
 
-        // First, try embedded album art
+        // No directory art found — fall back to embedded image.
+        var picture = track.EmbeddedPictures?.FirstOrDefault();
         if (picture?.PictureData is { Length: > 0 } pictureData)
         {
             try
@@ -253,17 +257,12 @@ public class AtlMetadataService : IMetadataService, IDisposable
                 metadata.CoverArtUri = coverArtUri;
                 metadata.LightSwatchId = lightSwatchId;
                 metadata.DarkSwatchId = darkSwatchId;
-                return; // Successfully found embedded art, no need to search directories
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed to process embedded album art for '{FilePath}'.", metadata.FilePath);
-                // Fall through to directory search
             }
         }
-
-        // No embedded art found, search directory hierarchy for cover art files
-        await ProcessCoverArtFromDirectoryAsync(metadata, baseFolderPath).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -396,20 +395,11 @@ public class AtlMetadataService : IMetadataService, IDisposable
     }
 
     /// <summary>
-    ///     Gets the priority of a cover art file name (lower is higher priority).
+    ///     Gets the priority of a cover art file name (lower = higher priority).
+    ///     Delegates to <see cref="FileExtensions.GetCoverArtPriority"/> as the single source of truth.
     /// </summary>
-    private static int GetCoverArtPriority(string fileNameWithoutExt)
-    {
-        // Priority order: cover (0), folder (1), album (2), front (3)
-        return fileNameWithoutExt.ToLowerInvariant() switch
-        {
-            "cover" => 0,
-            "folder" => 1,
-            "album" => 2,
-            "front" => 3,
-            _ => int.MaxValue
-        };
-    }
+    private static int GetCoverArtPriority(string fileNameWithoutExt) =>
+        FileExtensions.GetCoverArtPriority(fileNameWithoutExt);
 
     /// <summary>
     ///     Gets the path to the LRC file, prioritizing a valid cache entry before
