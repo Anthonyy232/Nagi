@@ -14,11 +14,12 @@ public class FileExtensionsPriorityTests
     [Fact]
     public void CoverArtFileNamePriority_HasNavidromePriorityOrder()
     {
-        // Priority must be: cover (0), folder (1), front (2)
+        // Priority must be: cover (0), folder (1), front (2), album (3)
         FileExtensions.CoverArtFileNamePriority[0].Should().Be("cover");
         FileExtensions.CoverArtFileNamePriority[1].Should().Be("folder");
         FileExtensions.CoverArtFileNamePriority[2].Should().Be("front");
-        FileExtensions.CoverArtFileNamePriority.Should().HaveCount(3);
+        FileExtensions.CoverArtFileNamePriority[3].Should().Be("album");
+        FileExtensions.CoverArtFileNamePriority.Should().HaveCount(4);
     }
 
     [Fact]
