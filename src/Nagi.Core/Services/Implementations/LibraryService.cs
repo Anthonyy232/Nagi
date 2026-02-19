@@ -5054,8 +5054,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                     bool shouldDelete = false;
 
                     // 1. Check if it's a legacy .jpg file or has an invalid suffix
-                    // We only want to keep: {id}.fetched.* OR {id}.custom.*
-                    if (!fileName.Contains(".fetched.") && !fileName.Contains(".custom."))
+                    // We only want to keep: {id}.fetched.*, {id}.custom.*, OR {id}.local.*
+                    if (!fileName.Contains(".fetched.") && !fileName.Contains(".custom.") && !fileName.Contains(".local."))
                     {
                         shouldDelete = true;
                     }
@@ -5158,8 +5158,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
                     bool shouldDelete = false;
 
-                    // We only want to keep: {id}.custom.*
-                    if (!fileName.Contains(".custom."))
+                    // We only want to keep: {id}.custom.* OR {id}.local.*
+                    if (!fileName.Contains(".custom.") && !fileName.Contains(".local."))
                     {
                         shouldDelete = true;
                     }
