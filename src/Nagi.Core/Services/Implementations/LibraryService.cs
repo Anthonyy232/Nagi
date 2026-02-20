@@ -3051,6 +3051,9 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 g => g.Key,
                 g => (IReadOnlyList<string?>)g.Select(x => x.DirectoryPath).Distinct().ToList());
 
+        // Cache processed directories to avoid redundant GetFiles calls when multiple artists share a directory.
+        var directoryCache = new Dictionary<string, string?>(StringComparer.OrdinalIgnoreCase);
+
         // Collect events to fire after SaveChangesAsync succeeds, so UI state and DB stay in sync.
         var pendingEvents = new List<ArtistMetadataUpdatedEventArgs>();
         var updatedCount = 0;
@@ -3059,7 +3062,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             cancellationToken.ThrowIfCancellationRequested();
 
             var dirs = songDirsByArtistId.TryGetValue(artist.Id, out var d) ? d : Array.Empty<string?>();
-            var localImageBytes = await FindArtistImageInDirectoriesAsync(dirs, artist.Name, cancellationToken).ConfigureAwait(false);
+            var localImageBytes = await FindArtistImageInDirectoriesAsync(dirs, artist.Name, cancellationToken, directoryCache).ConfigureAwait(false);
             if (localImageBytes == null) continue;
 
             try
@@ -3257,7 +3260,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     ///     Root directories are excluded from pass A to avoid scanning drive roots.
     /// </summary>
     private async Task<byte[]?> FindArtistImageInDirectoriesAsync(
-        IReadOnlyList<string?> songDirectories, string artistName, CancellationToken ct)
+        IReadOnlyList<string?> songDirectories, string artistName, CancellationToken ct, Dictionary<string, string?>? directoryCache = null)
     {
         if (songDirectories.Count == 0) return null;
 
@@ -3279,19 +3282,28 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         // Search Pass A first (artist-level folders), then Pass B (album folders).
         // Navidrome logic: artist.* in parent folder (A) > artist.* in song folder (B).
-        return await ScanDirectoriesForArtistImageAsync(passADirs, artistName, ct).ConfigureAwait(false) ??
-               await ScanDirectoriesForArtistImageAsync(passBDirs, artistName, ct).ConfigureAwait(false);
+        return await ScanDirectoriesForArtistImageAsync(passADirs, artistName, ct, directoryCache).ConfigureAwait(false) ??
+               await ScanDirectoriesForArtistImageAsync(passBDirs, artistName, ct, directoryCache).ConfigureAwait(false);
     }
 
     /// <summary>
     ///     Helper method to scan a set of directories for a valid artist image file.
     /// </summary>
-    private async Task<byte[]?> ScanDirectoriesForArtistImageAsync(IEnumerable<string> directories, string artistName, CancellationToken ct)
+    private async Task<byte[]?> ScanDirectoriesForArtistImageAsync(IEnumerable<string> directories, string artistName, CancellationToken ct, Dictionary<string, string?>? directoryCache = null)
     {
         foreach (var dir in directories)
         {
             ct.ThrowIfCancellationRequested();
-            var imagePath = FindArtistImageInDirectory(dir);
+
+            if (directoryCache == null || !directoryCache.TryGetValue(dir, out var imagePath))
+            {
+                imagePath = FindArtistImageInDirectory(dir);
+                if (directoryCache != null)
+                {
+                    directoryCache[dir] = imagePath;
+                }
+            }
+
             if (imagePath == null) continue;
 
             try
@@ -4648,7 +4660,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         // Skip if a local folder image or custom image is already set.
         if (!string.IsNullOrEmpty(finalImageUrl) && !localImageFound)
         {
-            if (artist.LocalImageCachePath == null || !artist.LocalImageCachePath.Contains(".custom."))
+            if (artist.LocalImageCachePath == null || (!artist.LocalImageCachePath.Contains(".custom.") && !artist.LocalImageCachePath.Contains(".local.")))
             {
                 var downloadedPath =
                     await DownloadAndCacheArtistImageAsync(artist, new Uri(finalImageUrl), cancellationToken).ConfigureAwait(false);
