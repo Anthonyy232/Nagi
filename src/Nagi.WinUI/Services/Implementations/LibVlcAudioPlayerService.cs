@@ -24,6 +24,8 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     private readonly IDispatcherService _dispatcherService;
     private readonly ILogger<LibVlcAudioPlayerService> _logger;
     private readonly CancellationTokenSource _disposeCts = new();
+    private readonly SemaphoreSlim _vlcOperationLock = new(1, 1);
+    private CancellationTokenSource? _loadCts;
     
     // Lazy initialization support
     private readonly SemaphoreSlim _initSemaphore = new(1, 1);
@@ -203,49 +205,75 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         }
     }
 
-    public Task LoadAsync(Song song)
+    public async Task LoadAsync(Song song)
     {
-        if (_isDisposed) return Task.CompletedTask;
+        if (_isDisposed) return;
         EnsureInitialized();
-        if (_isDisposed || _mediaPlayer is null) return Task.CompletedTask;
+        if (_isDisposed || _mediaPlayer is null) return;
+        
+        // Cancel any previous in-flight load immediately (cancel-and-supersede pattern).
+        // When user rapidly skips tracks, only the final destination's VLC work executes.
+        _loadCts?.Cancel();
+        _loadCts?.Dispose();
+        var cts = new CancellationTokenSource();
+        _loadCts = cts;
+        var token = cts.Token;
         
         _currentSong = song;
+        
+        await _vlcOperationLock.WaitAsync().ConfigureAwait(false);
         try
         {
+            // If a newer LoadAsync call superseded us while we waited for the lock, skip entirely.
+            token.ThrowIfCancellationRequested();
+            
             _logger.LogDebug("Loading media for song '{SongTitle}' from path: {FilePath}", song.Title,
                 song.FilePath);
 
-            // Dispose previous media if it exists
-            if (_currentMedia != null)
+            // Offload to thread pool to prevent blocking the UI thread.
+            // VLC's Media constructor and Media setter internally parse file headers
+            // and initialize demuxers, which can block for 2-3 seconds on large FLAC files.
+            await Task.Run(() =>
             {
-                try
+                if (_isDisposed) return;
+                
+                // Dispose previous media if it exists
+                if (_currentMedia != null)
                 {
-                    _currentMedia.Dispose();
+                    try
+                    {
+                        _currentMedia.Dispose();
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogWarning(ex, "Error disposing previous media");
+                    }
+
+                    _currentMedia = null;
                 }
-                catch (Exception ex)
+
+                // Create new media and store reference
+                var extension = System.IO.Path.GetExtension(song.FilePath);
+                var isOggContainer = extension.Equals(".opus", StringComparison.OrdinalIgnoreCase) ||
+                                     extension.Equals(".ogg", StringComparison.OrdinalIgnoreCase) ||
+                                     extension.Equals(".oga", StringComparison.OrdinalIgnoreCase);
+
+                _currentMedia = new Media(new Uri(song.FilePath));
+                
+                // Use native demuxer for Ogg containers (.opus/.ogg/.oga) to fix sync, force avcodec for others (MP3/FLAC/etc)
+                if (!isOggContainer)
                 {
-                    _logger.LogWarning(ex, "Error disposing previous media");
+                    _currentMedia.AddOption(":demux=avcodec");
                 }
-
-                _currentMedia = null;
-            }
-
-            // Create new media and store reference
-            var extension = System.IO.Path.GetExtension(song.FilePath);
-            var isOggContainer = extension.Equals(".opus", StringComparison.OrdinalIgnoreCase) ||
-                                 extension.Equals(".ogg", StringComparison.OrdinalIgnoreCase) ||
-                                 extension.Equals(".oga", StringComparison.OrdinalIgnoreCase);
-
-            _currentMedia = new Media(new Uri(song.FilePath));
-            
-            // Use native demuxer for Ogg containers (.opus/.ogg/.oga) to fix sync, force avcodec for others (MP3/FLAC/etc)
-            if (!isOggContainer)
-            {
-                _currentMedia.AddOption(":demux=avcodec");
-            }
-            
-            _mediaPlayer.Media = _currentMedia;
-            // Do NOT dispose the media immediately - let it be disposed when no longer needed
+                
+                _mediaPlayer!.Media = _currentMedia;
+                // Do NOT dispose the media immediately - let it be disposed when no longer needed
+            }).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException)
+        {
+            // Superseded by a newer LoadAsync call — this is expected during rapid skipping.
+            _logger.LogDebug("LoadAsync for '{SongTitle}' was superseded by a newer load request.", song.Title);
         }
         catch (Exception ex)
         {
@@ -269,21 +297,41 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
                 _currentMedia = null;
             }
         }
-
-        return Task.CompletedTask;
+        finally
+        {
+            _vlcOperationLock.Release();
+        }
     }
 
-    public Task PlayAsync()
+    public async Task PlayAsync()
     {
-        if (_isDisposed) return Task.CompletedTask;
+        if (_isDisposed) return;
         EnsureInitialized();
-        if (_isDisposed || _mediaPlayer is null) return Task.CompletedTask;
+        if (_isDisposed || _mediaPlayer is null) return;
 
-        if (_mediaPlayer.Media is not null)
-            _mediaPlayer.Play();
-        else
-            _logger.LogWarning("Play command received, but no media is loaded.");
-        return Task.CompletedTask;
+        await _vlcOperationLock.WaitAsync().ConfigureAwait(false);
+        try
+        {
+            if (_mediaPlayer.Media is not null)
+            {
+                // Offload to thread pool to prevent blocking the UI thread.
+                // VLC's Play() blocks while opening the file and starting the decode pipeline,
+                // which can take seconds for large FLAC files.
+                await Task.Run(() =>
+                {
+                    if (_isDisposed) return;
+                    _mediaPlayer!.Play();
+                }).ConfigureAwait(false);
+            }
+            else
+            {
+                _logger.LogWarning("Play command received, but no media is loaded.");
+            }
+        }
+        finally
+        {
+            _vlcOperationLock.Release();
+        }
     }
 
     public Task PauseAsync()
@@ -297,30 +345,50 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         return Task.CompletedTask;
     }
 
-    public Task StopAsync()
+    public async Task StopAsync()
     {
-        if (_isDisposed || !_isInitialized || _mediaPlayer is null) return Task.CompletedTask;
+        if (_isDisposed || !_isInitialized || _mediaPlayer is null) return;
 
         _logger.LogDebug("Stop command received.");
         
         // Mark as explicit stop to prevent false PlaybackEnded in state changed handler
         _isExplicitStop = true;
-        _mediaPlayer.Stop();
-        _currentSong = null;
+        
+        // Cancel any pending load — no point loading media we're about to stop
+        _loadCts?.Cancel();
 
-        // Clean up current media when stopping
-        if (_currentMedia != null)
+        await _vlcOperationLock.WaitAsync().ConfigureAwait(false);
+        try
         {
-            try
+            // Offload VLC stop and media disposal to thread pool.
+            // _mediaPlayer.Stop() blocks while VLC flushes internal buffers,
+            // which can be slow for large files that were mid-stream.
+            await Task.Run(() =>
             {
-                _currentMedia.Dispose();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogWarning(ex, "Error disposing media during stop");
-            }
+                if (_isDisposed) return;
+                
+                _mediaPlayer!.Stop();
+                _currentSong = null;
 
-            _currentMedia = null;
+                // Clean up current media when stopping
+                if (_currentMedia != null)
+                {
+                    try
+                    {
+                        _currentMedia.Dispose();
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogWarning(ex, "Error disposing media during stop");
+                    }
+
+                    _currentMedia = null;
+                }
+            }).ConfigureAwait(false);
+        }
+        finally
+        {
+            _vlcOperationLock.Release();
         }
 
         if (_smtc is not null && !_isDisposed)
@@ -336,8 +404,6 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
                 _logger.LogDebug("SMTC already disposed during stop.");
             }
         }
-
-        return Task.CompletedTask;
     }
 
     public Task SeekAsync(TimeSpan position)
@@ -458,14 +524,24 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
 
         // Signal disposal intent immediately so any in-progress initialization can check
         _disposeCts.Cancel();
+        
+        // Cancel any pending load operations
+        _loadCts?.Cancel();
 
         // Wait for semaphore to ensure we don't race with initialization.
         // Use a reasonable timeout to prevent indefinite blocking, but if timeout occurs,
         // we still proceed with disposal since _isDisposed flag will be set.
-        var acquired = _initSemaphore.Wait(millisecondsTimeout: 5000);
-        if (!acquired)
+        var acquiredInit = _initSemaphore.Wait(millisecondsTimeout: 5000);
+        if (!acquiredInit)
         {
             _logger.LogWarning("Dispose timed out waiting for initialization semaphore. Proceeding with disposal.");
+        }
+        
+        // Wait for any in-flight VLC operations to complete before tearing down
+        var acquiredVlc = _vlcOperationLock.Wait(millisecondsTimeout: 5000);
+        if (!acquiredVlc)
+        {
+            _logger.LogWarning("Dispose timed out waiting for VLC operation lock. Proceeding with disposal.");
         }
 
         try
@@ -544,12 +620,18 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         }
         finally
         {
-            // Always release semaphore if we acquired it, then dispose it
-            if (acquired)
+            // Always release semaphores if we acquired them, then dispose
+            if (acquiredVlc)
+            {
+                _vlcOperationLock.Release();
+            }
+            if (acquiredInit)
             {
                 _initSemaphore.Release();
             }
+            _vlcOperationLock.Dispose();
             _initSemaphore.Dispose();
+            _loadCts?.Dispose();
             _disposeCts.Dispose();
         }
 

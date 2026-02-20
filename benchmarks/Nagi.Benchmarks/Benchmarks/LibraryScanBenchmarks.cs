@@ -146,5 +146,10 @@ public class LibraryScanBenchmarks
         public void CopyFile(string source, string dest, bool overwrite) => File.Copy(source, dest, overwrite);
         public void MoveFile(string source, string dest, bool overwrite) => File.Move(source, dest, overwrite);
         public FileInfo GetFileInfo(string path) => new FileInfo(path);
+        public bool IsHiddenOrSystemFile(string path)
+        {
+            var attributes = File.GetAttributes(path);
+            return (attributes & (FileAttributes.Hidden | FileAttributes.System)) != 0;
+        }
     }
 }
