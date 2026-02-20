@@ -375,12 +375,12 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         await PlayQueueItemAsync(0).ConfigureAwait(false);
     }
 
-    public Task PlayAsync(IEnumerable<Song> songs, int startIndex = 0, bool startShuffled = false)
+    public Task PlayAsync(IEnumerable<Song> songs, int startIndex = 0, bool? startShuffled = null)
     {
         return PlayAsync(songs?.Select(s => s.Id) ?? Enumerable.Empty<Guid>(), startIndex, startShuffled);
     }
 
-    public async Task PlayAsync(IEnumerable<Guid> songIds, int startIndex = 0, bool startShuffled = false)
+    public async Task PlayAsync(IEnumerable<Guid> songIds, int startIndex = 0, bool? startShuffled = null)
     {
         var idList = songIds?.Distinct().ToList() ?? new List<Guid>();
         if (!idList.Any())
@@ -397,7 +397,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
             "Playing a new queue of {SongCount} songs. Start index: {StartIndex}, Shuffled: {IsShuffled}",
             idList.Count, startIndex, startShuffled);
 
-        if (IsShuffleEnabled != startShuffled) await SetShuffleAsync(startShuffled).ConfigureAwait(false);
+        if (startShuffled.HasValue && IsShuffleEnabled != startShuffled.Value) await SetShuffleAsync(startShuffled.Value).ConfigureAwait(false);
 
         using (BeginQueueUpdate())
         {
@@ -551,31 +551,31 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
     public async Task PlayAlbumAsync(Guid albumId)
     {
         var songIds = await _libraryService.GetAllSongIdsByAlbumIdAsync(albumId, SongSortOrder.TrackNumberAsc).ConfigureAwait(false);
-        await PlayFromOrderedIdsAsync(songIds, false).ConfigureAwait(false);
+        await PlayFromOrderedIdsAsync(songIds, null).ConfigureAwait(false);
     }
 
     public async Task PlayArtistAsync(Guid artistId)
     {
         var songIds = await _libraryService.GetAllSongIdsByArtistIdAsync(artistId, SongSortOrder.TitleAsc).ConfigureAwait(false);
-        await PlayFromOrderedIdsAsync(songIds, false).ConfigureAwait(false);
+        await PlayFromOrderedIdsAsync(songIds, null).ConfigureAwait(false);
     }
 
     public async Task PlayFolderAsync(Guid folderId)
     {
         var songIds = await _libraryService.GetAllSongIdsByFolderIdAsync(folderId, SongSortOrder.TitleAsc).ConfigureAwait(false);
-        await PlayFromOrderedIdsAsync(songIds, false).ConfigureAwait(false);
+        await PlayFromOrderedIdsAsync(songIds, null).ConfigureAwait(false);
     }
 
     public async Task PlayPlaylistAsync(Guid playlistId)
     {
         var songIds = await _libraryService.GetAllSongIdsByPlaylistIdAsync(playlistId, SongSortOrder.TrackNumberAsc).ConfigureAwait(false);
-        await PlayFromOrderedIdsAsync(songIds, false).ConfigureAwait(false);
+        await PlayFromOrderedIdsAsync(songIds, null).ConfigureAwait(false);
     }
 
     public async Task PlayGenreAsync(Guid genreId)
     {
         var songIds = await _libraryService.GetAllSongIdsByGenreIdAsync(genreId, SongSortOrder.TitleAsc).ConfigureAwait(false);
-        await PlayFromOrderedIdsAsync(songIds, false).ConfigureAwait(false);
+        await PlayFromOrderedIdsAsync(songIds, null).ConfigureAwait(false);
     }
 
     public async Task SetVolumeAsync(double volume)
@@ -1119,7 +1119,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         return true;
     }
 
-    private async Task PlayFromOrderedIdsAsync(IList<Guid> orderedSongIds, bool startShuffled)
+    private async Task PlayFromOrderedIdsAsync(IList<Guid> orderedSongIds, bool? startShuffled = null)
     {
         if (orderedSongIds == null || !orderedSongIds.Any())
         {
