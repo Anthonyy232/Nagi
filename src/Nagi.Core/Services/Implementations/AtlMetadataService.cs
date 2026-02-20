@@ -367,6 +367,9 @@ public class AtlMetadataService : IMetadataService, IDisposable
 
             foreach (var filePath in files)
             {
+                if (_fileSystem.IsHiddenOrSystemFile(filePath))
+                    continue;
+
                 var extension = _fileSystem.GetExtension(filePath);
                 if (!FileExtensions.ImageFileExtensions.Contains(extension))
                     continue;

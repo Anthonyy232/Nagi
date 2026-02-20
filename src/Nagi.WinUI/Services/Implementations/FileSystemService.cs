@@ -134,6 +134,19 @@ public class FileSystemService : IFileSystemService
         return new FileInfo(path);
     }
 
+    public bool IsHiddenOrSystemFile(string path)
+    {
+        try
+        {
+            var fileInfo = new FileInfo(path);
+            return fileInfo.Attributes.HasFlag(FileAttributes.Hidden) || fileInfo.Attributes.HasFlag(FileAttributes.System);
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
     public string GetFileNameWithoutExtension(string path)
     {
         return Path.GetFileNameWithoutExtension(path);
