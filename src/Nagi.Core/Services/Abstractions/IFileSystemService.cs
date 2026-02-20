@@ -21,6 +21,7 @@ public interface IFileSystemService
     void MoveFile(string sourceFileName, string destFileName, bool overwrite);
     DateTime GetLastWriteTimeUtc(string path);
     FileInfo GetFileInfo(string path);
+    bool IsHiddenOrSystemFile(string path);
     string GetFileNameWithoutExtension(string path);
     string GetFileName(string path);
     string? GetDirectoryName(string path);
