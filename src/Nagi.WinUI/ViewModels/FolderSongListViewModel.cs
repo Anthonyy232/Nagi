@@ -63,7 +63,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
     ///     Collection of folder content items (folders and songs) to display.
     /// </summary>
     [ObservableProperty]
-    public partial ObservableCollection<FolderContentItem> FolderContents { get; set; } = new();
+    public partial ObservableRangeCollection<FolderContentItem> FolderContents { get; set; } = new();
 
     /// <summary>
     ///     Breadcrumb navigation items showing the current path in the folder hierarchy.
@@ -184,8 +184,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         _currentFolderCount = orderedFolders.Count;
         UpdateSelectionStatus();
         
-        foreach (var folder in orderedFolders)
-            FolderContents.Add(FolderContentItem.FromFolder(folder));
+        FolderContents.AddRange(orderedFolders.Select(FolderContentItem.FromFolder));
     }
 
     /// <summary>
@@ -391,19 +390,15 @@ public partial class FolderSongListViewModel : SongListViewModelBase
             if (append)
             {
                 // Append new songs to both collections.
-                foreach (var song in pagedResult.Items)
-                {
-                    Songs.Add(song);
-                    FolderContents.Add(FolderContentItem.FromSong(song));
-                }
+                Songs.AddRange(pagedResult.Items);
+                FolderContents.AddRange(pagedResult.Items.Select(FolderContentItem.FromSong));
             }
             else
             {
                 // First page: replace Songs and clear/repopulate song items in FolderContents.
-                Songs = new ObservableCollection<Song>(pagedResult.Items);
+                Songs.ReplaceRange(pagedResult.Items);
                 ClearSongItemsFromFolderContents();
-                foreach (var song in pagedResult.Items)
-                    FolderContents.Add(FolderContentItem.FromSong(song));
+                FolderContents.AddRange(pagedResult.Items.Select(FolderContentItem.FromSong));
             }
 
             // Update TotalItemsText to include folder count.
@@ -420,9 +415,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
     private void ClearSongItemsFromFolderContents()
     {
         var foldersOnly = FolderContents.Where(x => !x.IsSong).ToList();
-        FolderContents.Clear();
-        foreach (var folder in foldersOnly)
-            FolderContents.Add(folder);
+        FolderContents.ReplaceRange(foldersOnly);
     }
 
     /// <summary>

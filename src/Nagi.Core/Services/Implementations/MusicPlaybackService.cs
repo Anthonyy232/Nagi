@@ -382,7 +382,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
 
     public async Task PlayAsync(IEnumerable<Guid> songIds, int startIndex = 0, bool? startShuffled = null)
     {
-        var idList = songIds?.Distinct().ToList() ?? new List<Guid>();
+        var idList = songIds?.ToList() ?? new List<Guid>();
         if (!idList.Any())
         {
             _logger.LogWarning("PlayAsync called with an empty song list. Stopping playback.");
@@ -652,8 +652,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
     {
         if (songIds == null || !songIds.Any()) return Task.CompletedTask;
 
-        var currentQueueSet = _playbackQueue.ToHashSet();
-        var idsToAdd = songIds.Where(id => currentQueueSet.Add(id)).ToList();
+        var idsToAdd = songIds.ToList();
 
         if (idsToAdd.Any())
         {

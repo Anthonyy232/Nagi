@@ -301,13 +301,13 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     [ObservableProperty] public partial bool IsLastFmNowPlayingEnabled { get; set; }
 
     public ObservableCollection<EqualizerBandViewModel> EqualizerBands { get; } = new();
-    public ObservableCollection<PlayerButtonSetting> PlayerButtons { get; } = new();
+    public ObservableRangeCollection<PlayerButtonSetting> PlayerButtons { get; } = new();
     public bool IsUpdateControlVisible { get; }
     public bool IsLastFmNotConnected => !IsLastFmConnected;
     public bool IsLastFmInitialAuthEnabled => !IsConnectingToLastFm;
-    public ObservableCollection<NavigationItemSetting> NavigationItems { get; } = new();
-    public ObservableCollection<ServiceProviderSettingViewModel> LyricsProviders { get; } = new();
-    public ObservableCollection<ServiceProviderSettingViewModel> MetadataProviders { get; } = new();
+    public ObservableRangeCollection<NavigationItemSetting> NavigationItems { get; } = new();
+    public ObservableRangeCollection<ServiceProviderSettingViewModel> LyricsProviders { get; } = new();
+    public ObservableRangeCollection<ServiceProviderSettingViewModel> MetadataProviders { get; } = new();
 
 
     public List<ElementTheme> AvailableThemes { get; } = Enum.GetValues<ElementTheme>().ToList();
@@ -490,14 +490,14 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             foreach (var item in navItemsTask.Result)
             {
                 item.PropertyChanged += OnNavigationItemPropertyChanged;
-                NavigationItems.Add(item);
             }
+            NavigationItems.ReplaceRange(navItemsTask.Result);
 
             foreach (var button in playerButtonsTask.Result)
             {
                 button.PropertyChanged += OnPlayerButtonPropertyChanged;
-                PlayerButtons.Add(button);
             }
+            PlayerButtons.ReplaceRange(playerButtonsTask.Result);
 
             SelectedTheme = themeTask.Result;
             SelectedBackdropMaterial = backdropTask.Result;
@@ -593,10 +593,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             LoadEqualizerState();
             
             // Load service providers
-            foreach (var provider in lyricsProvidersTask.Result)
-            {
-                LyricsProviders.Add(ServiceProviderSettingViewModel.FromSetting(provider));
-            }
+            LyricsProviders.ReplaceRange(lyricsProvidersTask.Result.Select(ServiceProviderSettingViewModel.FromSetting));
 
             var metadataProviders = metadataProvidersTask.Result
                 .Select(ServiceProviderSettingViewModel.FromSetting)
@@ -610,10 +607,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
                 metadataProviders.Insert(0, mbProvider);
             }
 
-            foreach (var provider in metadataProviders)
-            {
-                MetadataProviders.Add(provider);
-            }
+            MetadataProviders.ReplaceRange(metadataProviders);
             _isLoaded = true;
         }
         finally

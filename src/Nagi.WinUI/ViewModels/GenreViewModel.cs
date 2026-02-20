@@ -14,6 +14,7 @@ using Nagi.WinUI.Navigation;
 using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
 using Nagi.Core.Helpers;
+using Nagi.WinUI.Helpers;
 
 namespace Nagi.WinUI.ViewModels;
 
@@ -94,7 +95,7 @@ public partial class GenreViewModel : SearchableViewModelBase
         }, token);
     }
 
-    [ObservableProperty] public partial ObservableCollection<GenreViewModelItem> Genres { get; set; } = new();
+    [ObservableProperty] public partial ObservableRangeCollection<GenreViewModelItem> Genres { get; set; } = new();
 
     [ObservableProperty] public partial bool IsLoading { get; set; }
 
