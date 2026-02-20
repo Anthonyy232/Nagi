@@ -142,7 +142,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase
         CurrentSortOrderText = SortOrderHelper.GetDisplayName(CurrentSortOrder);
     }
 
-    [ObservableProperty] public partial ObservableCollection<PlaylistViewModelItem> Playlists { get; set; } = new();
+    [ObservableProperty] public partial ObservableRangeCollection<PlaylistViewModelItem> Playlists { get; set; } = new();
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsAnyOperationInProgress))]
@@ -356,7 +356,6 @@ public partial class PlaylistViewModel : SearchableViewModelBase
                 _hasSortOrderLoaded = true;
             }
 
-            Playlists.Clear();
             _allPlaylists.Clear();
 
             // Load regular playlists
@@ -662,9 +661,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase
         // Must manage event subscription when swapping instances
         var newItems = sorted.ToList();
         
-        Playlists.CollectionChanged -= _collectionChangedHandler;
-        Playlists = new ObservableCollection<PlaylistViewModelItem>(newItems);
-        Playlists.CollectionChanged += _collectionChangedHandler;
+        Playlists.ReplaceRange(newItems);
         
         OnPropertyChanged(nameof(HasPlaylists));
     }

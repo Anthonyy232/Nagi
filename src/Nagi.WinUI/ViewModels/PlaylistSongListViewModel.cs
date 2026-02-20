@@ -12,6 +12,7 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.WinUI.Services.Abstractions;
+using Nagi.WinUI.Helpers;
 
 namespace Nagi.WinUI.ViewModels;
 
@@ -129,7 +130,7 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
     /// <summary>
     ///     Override to manage the CollectionChanged subscription when the Songs collection is replaced in the base class.
     /// </summary>
-    protected override void OnSongsChangedInternal(ObservableCollection<Song> oldValue, ObservableCollection<Song> newValue)
+    protected override void OnSongsChangedInternal(ObservableRangeCollection<Song> oldValue, ObservableRangeCollection<Song> newValue)
     {
         if (oldValue != null) oldValue.CollectionChanged -= OnSongsCollectionChanged;
         if (newValue != null) newValue.CollectionChanged += OnSongsCollectionChanged;

@@ -12,6 +12,7 @@ using Nagi.Core.Models;
 using Nagi.Core.Models.Lyrics;
 using Nagi.Core.Services.Abstractions;
 using Nagi.WinUI.Services.Abstractions;
+using Nagi.WinUI.Helpers;
 
 namespace Nagi.WinUI.ViewModels;
 
@@ -114,12 +115,12 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
     /// </summary>
     public bool ShowNoLyricsMessage => !HasLyrics && !HasUnsyncedLyrics && !IsLoading;
 
-    public ObservableCollection<LyricLine> LyricLines { get; } = new();
+    public ObservableRangeCollection<LyricLine> LyricLines { get; } = new();
 
     /// <summary>
     ///     Collection of unsynchronized lyric lines for display in a ListView-like format.
     /// </summary>
-    public ObservableCollection<string> UnsyncedLyricLines { get; } = new();
+    public ObservableRangeCollection<string> UnsyncedLyricLines { get; } = new();
 
     public void Dispose()
     {
@@ -355,14 +356,14 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
             if (parsedLrc is not null && !parsedLrc.IsEmpty)
             {
                 _parsedLrc = parsedLrc;
-                foreach (var line in parsedLrc.Lines) LyricLines.Add(line);
+                LyricLines.AddRange(parsedLrc.Lines);
                 HasLyrics = true;
                 UpdateCurrentLineFromPosition(_playbackService.CurrentPosition);
                 UpdateLineOpacities();
             }
             else if (unsyncedLines is not null)
             {
-                foreach (var line in unsyncedLines) UnsyncedLyricLines.Add(line);
+                UnsyncedLyricLines.AddRange(unsyncedLines);
                 HasUnsyncedLyrics = true;
             }
         });

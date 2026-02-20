@@ -143,7 +143,7 @@ public partial class FolderViewModel : ObservableObject
         }
     }
 
-    [ObservableProperty] public partial ObservableCollection<FolderViewModelItem> Folders { get; set; } = new();
+    [ObservableProperty] public partial ObservableRangeCollection<FolderViewModelItem> Folders { get; set; } = new();
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsAnyOperationInProgress))]

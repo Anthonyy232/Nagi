@@ -77,16 +77,16 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(FirstSong))]
-    public partial ObservableCollection<Song> Songs { get; set; } = new();
+    public partial ObservableRangeCollection<Song> Songs { get; set; } = new();
 
     public Song? FirstSong => Songs?.FirstOrDefault();
 
-    partial void OnSongsChanged(ObservableCollection<Song> oldValue, ObservableCollection<Song> newValue)
+    partial void OnSongsChanged(ObservableRangeCollection<Song> oldValue, ObservableRangeCollection<Song> newValue)
     {
         OnSongsChangedInternal(oldValue, newValue);
     }
 
-    protected virtual void OnSongsChangedInternal(ObservableCollection<Song> oldValue, ObservableCollection<Song> newValue)
+    protected virtual void OnSongsChangedInternal(ObservableRangeCollection<Song> oldValue, ObservableRangeCollection<Song> newValue)
     {
     }
 
@@ -579,12 +579,11 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
 
             if (append)
             {
-                foreach (var song in pagedResult.Items)
-                    Songs.Add(song);
+                Songs.AddRange(pagedResult.Items);
             }
             else
             {
-                Songs = new ObservableCollection<Song>(pagedResult.Items);
+                Songs.ReplaceRange(pagedResult.Items);
             }
         });
 

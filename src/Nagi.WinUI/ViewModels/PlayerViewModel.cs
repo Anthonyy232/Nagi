@@ -82,7 +82,7 @@ public partial class PlayerViewModel : ObservableObject
         SongTitle = Strings.Status_NoTrackPlaying;
         ArtistName = string.Empty;
         VolumeIconGlyph = VolumeMediumIconGlyph;
-        CurrentQueue = new ObservableCollection<Song>();
+        CurrentQueue = new ObservableRangeCollection<Song>();
         CurrentTimeText = "0:00";
         TotalDurationText = "0:00";
         GlobalOperationStatusMessage = string.Empty;
@@ -128,7 +128,7 @@ public partial class PlayerViewModel : ObservableObject
 
     [ObservableProperty] public partial double CurrentVolume { get; set; }
     [ObservableProperty] public partial string VolumeIconGlyph { get; set; }
-    [ObservableProperty] public partial ObservableCollection<Song> CurrentQueue { get; set; }
+    [ObservableProperty] public partial ObservableRangeCollection<Song> CurrentQueue { get; set; }
     [ObservableProperty] public partial double CurrentPosition { get; set; }
     [ObservableProperty] public partial string CurrentTimeText { get; set; }
     [ObservableProperty] public partial bool IsUserDraggingSlider { get; set; }
@@ -142,8 +142,8 @@ public partial class PlayerViewModel : ObservableObject
 
     [ObservableProperty] public partial bool IsVolumeControlVisible { get; set; }
 
-    public ObservableCollection<PlayerButtonSetting> MainTransportButtons { get; } = new();
-    public ObservableCollection<PlayerButtonSetting> SecondaryControlsButtons { get; } = new();
+    public ObservableRangeCollection<PlayerButtonSetting> MainTransportButtons { get; } = new();
+    public ObservableRangeCollection<PlayerButtonSetting> SecondaryControlsButtons { get; } = new();
 
     public bool IsArtworkAvailable => !string.IsNullOrWhiteSpace(AlbumArtUri);
     public string PlayPauseIconGlyph => IsPlaying ? PauseIconGlyph : PlayIconGlyph;
@@ -296,14 +296,13 @@ public partial class PlayerViewModel : ObservableObject
     ///     Efficiently updates an ObservableCollection by comparing its current items
     ///     with a new list, preventing unnecessary UI refreshes if they are identical.
     /// </summary>
-    private static void UpdateCollectionIfChanged(ObservableCollection<PlayerButtonSetting> collection,
+    private static void UpdateCollectionIfChanged(ObservableRangeCollection<PlayerButtonSetting> collection,
         List<PlayerButtonSetting> newItems)
     {
         // Fast path: check if counts differ
         if (collection.Count != newItems.Count)
         {
-            collection.Clear();
-            foreach (var item in newItems) collection.Add(item);
+            collection.ReplaceRange(newItems);
             return;
         }
         
@@ -312,8 +311,7 @@ public partial class PlayerViewModel : ObservableObject
         {
             if (collection[i].Id != newItems[i].Id)
             {
-                collection.Clear();
-                foreach (var item in newItems) collection.Add(item);
+                collection.ReplaceRange(newItems);
                 return;
             }
         }
@@ -652,8 +650,7 @@ public partial class PlayerViewModel : ObservableObject
 
             if (!CurrentQueue.SequenceEqual(newDisplayQueue))
             {
-                CurrentQueue.Clear();
-                foreach (var song in newDisplayQueue) CurrentQueue.Add(song);
+                CurrentQueue.ReplaceRange(newDisplayQueue);
             }
         }
         catch (OperationCanceledException)

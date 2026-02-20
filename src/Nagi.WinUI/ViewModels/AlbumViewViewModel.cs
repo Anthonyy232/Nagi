@@ -64,7 +64,7 @@ public partial class AlbumViewViewModel : SongListViewModelBase
 
     [ObservableProperty] public partial string AlbumDetailsText { get; set; }
 
-    [ObservableProperty] public partial ObservableCollection<object> GroupedSongsFlat { get; set; } = new();
+    [ObservableProperty] public partial ObservableRangeCollection<object> GroupedSongsFlat { get; set; } = new();
 
     [ObservableProperty] public partial bool IsGroupedByDisc { get; set; }
 
@@ -267,7 +267,7 @@ public partial class AlbumViewViewModel : SongListViewModelBase
 
         if (IsGroupedByDisc)
         {
-            GroupedSongsFlat.Clear();
+            var tempList = new List<object>();
 
             // Group songs by disc number (null/0 goes to group -1 to appear first)
             var groups = Songs
@@ -279,15 +279,14 @@ public partial class AlbumViewViewModel : SongListViewModelBase
                 // Add header only for actual disc numbers (1, 2, 3, etc.)
                 if (group.Key > 0)
                 {
-                    GroupedSongsFlat.Add(new DiscHeader { DiscNumber = group.Key });
+                    tempList.Add(new DiscHeader { DiscNumber = group.Key });
                 }
 
                 // Add all songs in this disc group
-                foreach (var song in group)
-                {
-                    GroupedSongsFlat.Add(song);
-                }
+                tempList.AddRange(group);
             }
+            
+            GroupedSongsFlat.ReplaceRange(tempList);
         }
         else
         {

@@ -91,7 +91,7 @@ public partial class ArtistViewViewModel : SongListViewModelBase
 
     public bool IsCustomImage => ArtistImageUri?.Contains(".custom.") == true;
 
-    public ObservableCollection<ArtistAlbumViewModelItem> Albums { get; } = new();
+    public ObservableRangeCollection<ArtistAlbumViewModelItem> Albums { get; } = new();
     public bool HasAlbums => Albums.Any();
 
     protected override async Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
@@ -157,8 +157,7 @@ public partial class ArtistViewViewModel : SongListViewModelBase
                     PopulateArtistDetails(artist);
 
                     var topAlbums = albumsTask.Result;
-                    Albums.Clear();
-                    foreach (var album in topAlbums) Albums.Add(new ArtistAlbumViewModelItem(album));
+                    Albums.ReplaceRange(topAlbums.Select(a => new ArtistAlbumViewModelItem(a)));
                 });
 
                 await songsTask.ConfigureAwait(false);
