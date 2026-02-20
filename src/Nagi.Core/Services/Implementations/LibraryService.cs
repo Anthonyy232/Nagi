@@ -3439,6 +3439,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         progress?.Report(new ScanProgress
             { StatusText = Resources.Strings.Status_ReadingSongDetails, TotalFiles = totalFiles, Percentage = 0 });
 
+        var totalSaved = 0;
+
         // Producer: Extract metadata concurrently and write to channel using Parallel.ForEachAsync
         // This limits both concurrency AND task object allocation (unlike Task.WhenAll which creates all tasks upfront)
         var producerTask = Task.Run(async () =>
@@ -3481,7 +3483,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                                 {
                                     StatusText = Resources.Strings.Status_ReadingSongDetails,
                                     CurrentFilePath = filePath,
-                                    Percentage = (double)currentCount / totalFiles * 50, // First 50% is extraction
+                                    Percentage = (processedCount + Volatile.Read(ref totalSaved)) / (double)(totalFiles * 2) * 100,
                                     TotalFiles = totalFiles,
                                     NewSongsFound = extractedCount
                                 });
@@ -3499,7 +3501,6 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         }, cancellationToken);
 
         // Consumer: Batch and save to database as metadata arrives
-        var totalSaved = 0;
         var consumerTask = Task.Run(async () =>
         {
             try
@@ -3516,8 +3517,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                         batchNumber++;
                         progress?.Report(new ScanProgress
                         {
-                            StatusText = string.Format(Resources.Strings.Format_SavingBatch, batchNumber),
-                            Percentage = 50 + ((double)totalSaved / totalFiles * 50), // Second 50% is saving
+                            StatusText = Resources.Strings.Status_ReadingSongDetails,
+                            Percentage = (Volatile.Read(ref processedCount) + totalSaved) / (double)(totalFiles * 2) * 100,
                             NewSongsFound = extractedCount
                         });
 
@@ -3536,8 +3537,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                      _logger.LogInformation("Consumer processing FINAL batch {BatchNumber} with {Count} items.", batchNumber, batch.Count);
                     progress?.Report(new ScanProgress
                     {
-                        StatusText = string.Format(Resources.Strings.Format_SavingBatch, batchNumber),
-                        Percentage = 95,
+                        StatusText = Resources.Strings.Status_ReadingSongDetails,
+                        Percentage = (Volatile.Read(ref processedCount) + totalSaved) / (double)(totalFiles * 2) * 100,
                         NewSongsFound = extractedCount
                     });
 
