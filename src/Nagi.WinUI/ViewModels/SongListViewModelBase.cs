@@ -384,7 +384,6 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
     [RelayCommand(CanExecute = nameof(CanExecutePlayAllCommands))]
     private async Task PlayAllSongsAsync()
     {
-        await EnsureRepeatOneIsOffAsync();
         // Always use the pre-fetched full ID list for memory efficiency and consistency.
         List<Guid> ids;
         _stateLock.EnterReadLock();
@@ -402,7 +401,6 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
     [RelayCommand(CanExecute = nameof(CanExecutePlayAllCommands))]
     private async Task ShuffleAndPlayAllSongsAsync()
     {
-        await EnsureRepeatOneIsOffAsync();
         // Always use the pre-fetched full ID list for memory efficiency and consistency.
         List<Guid> ids;
         _stateLock.EnterReadLock();
@@ -421,7 +419,6 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
     private async Task PlaySongAsync(Song? song)
     {
         if (song == null) return;
-        await EnsureRepeatOneIsOffAsync();
 
         // Always use the pre-fetched full ID list to find the song's position.
         int startIndex;
@@ -450,7 +447,6 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
     [RelayCommand(CanExecute = nameof(CanExecuteSelectedSongsCommands))]
     private async Task PlaySelectedSongsAsync()
     {
-        await EnsureRepeatOneIsOffAsync();
         var ids = await GetCurrentSelectionIdsAsync();
         await _playbackService.PlayAsync(ids);
     }
@@ -661,15 +657,7 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
         AddSelectedSongsToPlaylistCommand.NotifyCanExecuteChanged();
     }
 
-    /// <summary>
-    ///     A UX improvement to ensure that when a user explicitly plays a list,
-    ///     it doesn't get stuck on the first song if "Repeat One" was previously enabled.
-    /// </summary>
-    private async Task EnsureRepeatOneIsOffAsync()
-    {
-        if (_playbackService.CurrentRepeatMode == RepeatMode.RepeatOne)
-            await _playbackService.SetRepeatModeAsync(RepeatMode.Off);
-    }
+
 
     protected static IEnumerable<Song> SortSongs(IEnumerable<Song> songs, SongSortOrder sortOrder)
     {

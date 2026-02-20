@@ -167,16 +167,16 @@ public interface IMusicPlaybackService : IDisposable
     /// </summary>
     /// <param name="songs">The collection of songs to play.</param>
     /// <param name="startIndex">The index in the collection to start playing from.</param>
-    /// <param name="startShuffled">If true, shuffle will be enabled before playing.</param>
-    Task PlayAsync(IEnumerable<Song> songs, int startIndex = 0, bool startShuffled = false);
+    /// <param name="startShuffled">If true, shuffle will be enabled; if false, disabled; if null, preserved.</param>
+    Task PlayAsync(IEnumerable<Song> songs, int startIndex = 0, bool? startShuffled = null);
 
     /// <summary>
     ///     Plays a list of songs by their IDs, replacing the current queue.
     /// </summary>
     /// <param name="songIds">The collection of song IDs to play.</param>
     /// <param name="startIndex">The index in the collection to start playing from.</param>
-    /// <param name="startShuffled">If true, shuffle will be enabled before playing.</param>
-    Task PlayAsync(IEnumerable<Guid> songIds, int startIndex = 0, bool startShuffled = false);
+    /// <param name="startShuffled">If true, shuffle will be enabled; if false, disabled; if null, preserved.</param>
+    Task PlayAsync(IEnumerable<Guid> songIds, int startIndex = 0, bool? startShuffled = null);
 
     /// <summary>
     ///     Toggles between playing and pausing the current track. If no track is loaded, it starts the current queue.
