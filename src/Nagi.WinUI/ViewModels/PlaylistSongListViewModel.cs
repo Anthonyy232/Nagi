@@ -31,9 +31,10 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         INavigationService navigationService,
         IMusicNavigationService musicNavigationService,
         IDispatcherService dispatcherService,
+        IUISettingsService settingsService,
         IUIService uiService,
         ILogger<PlaylistSongListViewModel> logger)
-        : base(libraryReader, playlistService, playbackService, navigationService, musicNavigationService, dispatcherService, uiService, logger)
+        : base(libraryReader, playlistService, playbackService, navigationService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
     {
         // Subscribe to the initial collection.
         if (Songs != null) Songs.CollectionChanged += OnSongsCollectionChanged;
@@ -314,7 +315,7 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
     {
         // This handler now only manages the _fullSongIdList for Remove operations.
         // Reordering is handled by OnSongReordered via DragItemsCompleted event.
-        if (!IsReorderingEnabled || IsOverallLoading || IsBackgroundPageLoading) return;
+        if (!IsReorderingEnabled || IsOverallLoading) return;
 
         if (e.Action == NotifyCollectionChangedAction.Remove)
         {

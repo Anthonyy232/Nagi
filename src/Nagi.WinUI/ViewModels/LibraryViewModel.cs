@@ -21,7 +21,6 @@ public partial class LibraryViewModel : SongListViewModelBase
 {
     private static bool _isInitialScanTriggered;
     private readonly ILibraryService _libraryService;
-    private readonly IUISettingsService _settingsService;
     private CancellationTokenSource? _debouncer;
 
     public LibraryViewModel(
@@ -34,10 +33,9 @@ public partial class LibraryViewModel : SongListViewModelBase
         IUISettingsService settingsService,
         IUIService uiService,
         ILogger<LibraryViewModel> logger)
-        : base(libraryService, playlistService, playbackService, navigationService, musicNavigationService, dispatcherService, uiService, logger)
+        : base(libraryService, playlistService, playbackService, navigationService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
     {
         _libraryService = libraryService;
-        _settingsService = settingsService;
         _libraryService.LibraryContentChanged += OnLibraryContentChanged;
     }
 

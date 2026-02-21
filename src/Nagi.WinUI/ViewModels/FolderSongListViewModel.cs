@@ -35,7 +35,6 @@ public partial class BreadcrumbItem : ObservableObject
 /// </summary>
 public partial class FolderSongListViewModel : SongListViewModelBase
 {
-    private readonly IUISettingsService _settingsService;
     private string _currentDirectoryPath = string.Empty;
     private Guid? _rootFolderId;
     private string? _rootFolderPath;
@@ -53,9 +52,8 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         IUISettingsService settingsService,
         IUIService uiService,
         ILogger<FolderSongListViewModel> logger)
-        : base(libraryReader, playlistService, playbackService, navigationService, musicNavigationService, dispatcherService, uiService, logger)
+        : base(libraryReader, playlistService, playbackService, navigationService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
     {
-        _settingsService = settingsService;
     }
 
 
@@ -364,7 +362,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
     ///     Processes a page of results, updating both Songs and FolderContents in a single dispatch.
     ///     This override consolidates all UI updates to avoid race conditions from multiple dispatches.
     /// </summary>
-    protected override void ProcessPagedResult(PagedResult<Song> pagedResult, CancellationToken token, bool append = false)
+    protected override void ProcessPagedResult(PagedResult<Song> pagedResult, CancellationToken token)
     {
         // Guard against cancelled operations before doing any work to prevent stale data from corrupting the view.
         if (token.IsCancellationRequested || pagedResult?.Items == null) return;
@@ -373,9 +371,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         _stateLock.EnterWriteLock();
         try
         {
-            _hasNextPage = pagedResult.HasNextPage;
             _totalItemCount = pagedResult.TotalCount;
-            _currentPage = pagedResult.PageNumber;
         }
         finally
         {
@@ -387,19 +383,15 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         {
             if (token.IsCancellationRequested) return;
 
-            if (append)
-            {
-                // Append new songs to both collections.
-                Songs.AddRange(pagedResult.Items);
-                FolderContents.AddRange(pagedResult.Items.Select(FolderContentItem.FromSong));
-            }
-            else
-            {
-                // First page: replace Songs and clear/repopulate song items in FolderContents.
-                Songs.ReplaceRange(pagedResult.Items);
-                ClearSongItemsFromFolderContents();
-                FolderContents.AddRange(pagedResult.Items.Select(FolderContentItem.FromSong));
-            }
+            CurrentPage = pagedResult.PageNumber;
+            HasNextPage = pagedResult.HasNextPage;
+            HasPreviousPage = CurrentPage > 1;
+            TotalPages = Math.Max(1, (int)Math.Ceiling((double)_totalItemCount / SongsPerPage));
+
+            // Replace Songs and clear/repopulate song items in FolderContents.
+            Songs.ReplaceRange(pagedResult.Items);
+            ClearSongItemsFromFolderContents();
+            FolderContents.AddRange(pagedResult.Items.Select(FolderContentItem.FromSong));
 
             // Update TotalItemsText to include folder count.
             UpdateTotalItemsText(pagedResult.TotalCount);

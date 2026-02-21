@@ -10,6 +10,7 @@
     xmlns:resources="using:Nagi.WinUI.Resources"
     xmlns:helpers="using:Nagi.Core.Helpers"
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
+    xmlns:uicontrols="using:Nagi.WinUI.Controls"
     x:Name="pageRoot"
     Background="Transparent"
     mc:Ignorable="d">
@@ -208,6 +209,12 @@
             SelectionMode="Extended"
             ContainerContentChanging="OnSongsListViewContainerContentChanging"
             DoubleTapped="SongsListView_DoubleTapped">
+            <ListView.Footer>
+                <uicontrols:PaginationControl 
+                    ViewModel="{x:Bind ViewModel}" 
+                    HorizontalAlignment="Right"
+                    Margin="0,24,24,16" />
+            </ListView.Footer>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="models:Song">
                     <Grid Height="54" ColumnSpacing="12" Background="Transparent">
@@ -325,5 +332,6 @@
                 HorizontalAlignment="Center"
                 Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
         </StackPanel>
+        
     </Grid>
 </Page>

@@ -22,7 +22,6 @@ namespace Nagi.WinUI.ViewModels;
 /// </summary>
 public partial class AlbumViewViewModel : SongListViewModelBase
 {
-    private readonly IUISettingsService _settingsService;
     private Guid _albumId;
     private int? _albumYear;
     private int _totalSongCount;
@@ -39,9 +38,8 @@ public partial class AlbumViewViewModel : SongListViewModelBase
         IUISettingsService settingsService,
         IUIService uiService,
         ILogger<AlbumViewViewModel> logger)
-        : base(libraryReader, playlistService, playbackService, navigationService, musicNavigationService, dispatcherService, uiService, logger)
+        : base(libraryReader, playlistService, playbackService, navigationService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
     {
-        _settingsService = settingsService;
         AlbumTitle = Nagi.WinUI.Resources.Strings.AlbumView_DefaultAlbumTitle;
         ArtistName = Nagi.WinUI.Resources.Strings.AlbumView_DefaultArtistName;
         AlbumDetailsText = string.Empty;
@@ -249,9 +247,9 @@ public partial class AlbumViewViewModel : SongListViewModelBase
     }
 
 
-    protected override void ProcessPagedResult(PagedResult<Song> pagedResult, CancellationToken token, bool append = false)
+    protected override void ProcessPagedResult(PagedResult<Song> pagedResult, CancellationToken token)
     {
-        base.ProcessPagedResult(pagedResult, token, append);
+        base.ProcessPagedResult(pagedResult, token);
         
         // Update grouping after the songs collection has been updated
         _dispatcherService.TryEnqueue(() =>

@@ -72,6 +72,7 @@ public class SettingsService : IUISettingsService, IDisposable
     private const string LanguageKey = "AppLanguage";
     private const string PlayerBackgroundMaterialKey = "PlayerBackgroundMaterial";
     private const string PlayerTintIntensityKey = "PlayerTintIntensity";
+    private const string SongsPerPageKey = "SongsPerPage";
 
     private static readonly JsonSerializerOptions _serializerOptions = new() { WriteIndented = true };
     private readonly ICredentialLockerService _credentialLockerService;
@@ -124,6 +125,7 @@ public class SettingsService : IUISettingsService, IDisposable
     public event Action? ArtistSplitCharactersChanged;
     public event Action<string>? LanguageChanged;
     public event Action? PlayerDesignSettingsChanged;
+    public event Action<int>? SongsPerPageChanged;
 
     public bool IsTransparencyEffectsEnabled()
     {
@@ -182,7 +184,8 @@ public class SettingsService : IUISettingsService, IDisposable
             SetArtistSplitCharactersAsync(SettingsDefaults.DefaultArtistSplitCharacters),
             SetLanguageAsync(string.Empty),
             SetPlayerBackgroundMaterialAsync(SettingsDefaults.DefaultPlayerBackgroundMaterial),
-            SetPlayerTintIntensityAsync(SettingsDefaults.DefaultPlayerTintIntensity)
+            SetPlayerTintIntensityAsync(SettingsDefaults.DefaultPlayerTintIntensity),
+            SetSongsPerPageAsync(SettingsDefaults.DefaultSongsPerPage)
         };
 
         await Task.WhenAll(tasks).ConfigureAwait(false);
@@ -803,6 +806,17 @@ public class SettingsService : IUISettingsService, IDisposable
     public Task SetPlayerTintIntensityAsync(double intensity)
     {
         return SetValueAndNotifyAsync(PlayerTintIntensityKey, Math.Clamp(intensity, 0.0, 1.0), 1.0, _ => PlayerDesignSettingsChanged?.Invoke());
+    }
+
+    public async Task<int> GetSongsPerPageAsync()
+    {
+        await EnsureUnpackagedSettingsLoadedAsync().ConfigureAwait(false);
+        return GetValue(SongsPerPageKey, SettingsDefaults.DefaultSongsPerPage);
+    }
+
+    public Task SetSongsPerPageAsync(int songsPerPage)
+    {
+        return SetValueAndNotifyAsync(SongsPerPageKey, songsPerPage, SettingsDefaults.DefaultSongsPerPage, SongsPerPageChanged);
     }
 
     private static List<ServiceProviderSetting> GetDefaultServiceProviders(ServiceCategory category)
