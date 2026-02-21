@@ -20,7 +20,6 @@ namespace Nagi.WinUI.ViewModels;
 /// </summary>
 public partial class GenreViewViewModel : SongListViewModelBase
 {
-    private readonly IUISettingsService _settingsService;
     private Guid _genreId;
 
     public GenreViewViewModel(
@@ -33,9 +32,8 @@ public partial class GenreViewViewModel : SongListViewModelBase
         IUISettingsService settingsService,
         IUIService uiService,
         ILogger<GenreViewViewModel> logger)
-        : base(libraryReader, playlistService, playbackService, navigationService, musicNavigationService, dispatcherService, uiService, logger)
+        : base(libraryReader, playlistService, playbackService, navigationService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
     {
-        _settingsService = settingsService;
         GenreName = Nagi.WinUI.Resources.Strings.GenreView_DefaultName;
 
         CurrentSortOrder = SongSortOrder.TitleAsc;

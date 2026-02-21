@@ -10,6 +10,7 @@
     xmlns:models="using:Nagi.Core.Models"
     xmlns:helpers="using:Nagi.Core.Helpers"
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
+    xmlns:uicontrols="using:Nagi.WinUI.Controls"
     mc:Ignorable="d"
     Background="Transparent"
     x:Name="pageRoot">
@@ -214,7 +215,7 @@
         </StackPanel>
 
         <!-- Song List -->
-        <ListView Grid.Row="2"
+        <ListView Grid.Row="1"
                   x:Name="SongsListView"
                   SelectionMode="Extended"
                   IsItemClickEnabled="True"
@@ -227,6 +228,12 @@
                   CanReorderItems="False"
                   AllowDrop="False"
                   DoubleTapped="SongsListView_DoubleTapped">
+            <ListView.Footer>
+                <uicontrols:PaginationControl 
+                    ViewModel="{x:Bind ViewModel}" 
+                    HorizontalAlignment="Right"
+                    Margin="0,24,24,16" />
+            </ListView.Footer>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="models:Song">
                     <Grid Height="54" ColumnSpacing="12" Background="Transparent">
@@ -312,7 +319,7 @@
 
         <!-- Empty State -->
         <StackPanel
-            Grid.Row="2"
+            Grid.Row="1"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             Spacing="16"
@@ -343,5 +350,7 @@
                 Click="EditRulesButton_Click"
                 HorizontalAlignment="Center" />
         </StackPanel>
+        
     </Grid>
 </Page>
+

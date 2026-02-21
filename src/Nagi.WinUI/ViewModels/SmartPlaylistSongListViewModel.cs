@@ -32,9 +32,10 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
         INavigationService navigationService,
         IMusicNavigationService musicNavigationService,
         IDispatcherService dispatcherService,
+        IUISettingsService settingsService,
         IUIService uiService,
         ILogger<SmartPlaylistSongListViewModel> logger)
-        : base(libraryReader, playlistService, playbackService, navigationService, musicNavigationService, dispatcherService, uiService, logger)
+        : base(libraryReader, playlistService, playbackService, navigationService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
     {
         _smartPlaylistService = smartPlaylistService;
     }

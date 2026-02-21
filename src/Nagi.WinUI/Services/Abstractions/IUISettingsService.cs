@@ -71,6 +71,11 @@ public interface IUISettingsService : ISettingsService
     event Action? PlayerDesignSettingsChanged;
 
     /// <summary>
+    ///     Occurs when the number of songs per page setting has changed.
+    /// </summary>
+    event Action<int>? SongsPerPageChanged;
+
+    /// <summary>
     ///     Gets whether system-wide transparency effects are currently enabled.
     ///     This is a live value from the OS, not a stored setting.
     /// </summary>
@@ -379,4 +384,14 @@ public interface IUISettingsService : ISettingsService
     // Sort Order Persistence
     Task<TEnum> GetSortOrderAsync<TEnum>(string pageKey) where TEnum : struct, Enum;
     Task SetSortOrderAsync<TEnum>(string pageKey, TEnum sortOrder) where TEnum : struct, Enum;
+
+    /// <summary>
+    ///     Gets the number of songs to display per page in song lists.
+    /// </summary>
+    Task<int> GetSongsPerPageAsync();
+
+    /// <summary>
+    ///     Sets the number of songs to display per page in song lists.
+    /// </summary>
+    Task SetSongsPerPageAsync(int songsPerPage);
 }

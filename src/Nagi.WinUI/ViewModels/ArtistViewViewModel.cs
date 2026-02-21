@@ -46,7 +46,6 @@ public partial class ArtistAlbumViewModelItem : ObservableObject
 public partial class ArtistViewViewModel : SongListViewModelBase
 {
     private readonly ILibraryScanner _libraryScanner;
-    private readonly IUISettingsService _settingsService;
     private Guid _artistId;
     private bool _isNavigatingToAlbum;
     private CancellationTokenSource _pageCts = new();
@@ -63,9 +62,8 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         IDispatcherService dispatcherService,
         IUIService uiService,
         ILogger<ArtistViewViewModel> logger)
-        : base(libraryReader, playlistService, playbackService, navigationService, musicNavigationService, dispatcherService, uiService, logger)
+        : base(libraryReader, playlistService, playbackService, navigationService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
     {
-        _settingsService = settingsService;
         _libraryScanner = libraryScanner;
 
         // Initialize properties with default values
