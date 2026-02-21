@@ -407,12 +407,16 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
 
         if (IsShuffleEnabled)
         {
-            var songIdToPlay = _shuffledQueue.ElementAtOrDefault(startIndex);
-            if (songIdToPlay == Guid.Empty)
+            // If playing from a specific item (not just "Shuffle All"), ensure it plays first
+            if (startShuffled != true && startIndex >= 0 && startIndex < _playbackQueue.Count)
             {
-                startIndex = 0;
-                songIdToPlay = _shuffledQueue.FirstOrDefault();
+                var targetSongId = _playbackQueue[startIndex];
+                _shuffledQueue.Remove(targetSongId);
+                _shuffledQueue.Insert(0, targetSongId);
+                RebuildShuffledQueueIndex();
             }
+
+            var songIdToPlay = _shuffledQueue.FirstOrDefault();
 
             if (songIdToPlay != Guid.Empty)
             {

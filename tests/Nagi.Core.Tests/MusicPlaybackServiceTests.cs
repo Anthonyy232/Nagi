@@ -701,6 +701,32 @@ public class MusicPlaybackServiceTests
         _service.ShuffledQueue.Should().Contain(currentTrackBeforeShuffle!.Id);
     }
 
+    /// <summary>
+    ///     Verifies that when PlayAsync is called with a specific startIndex and shuffle is enabled,
+    ///     the selected song is moved to the front of the shuffled queue and played first.
+    /// </summary>
+    [Fact]
+    public async Task PlayAsync_WithShuffleEnabledAndStartIndex_PlaysSelectedSongFirst()
+    {
+        // Arrange
+        await _service.InitializeAsync();
+        await _service.SetShuffleAsync(true);
+        var targetIndex = 2; // We want to play _testSongs[2]
+        var targetSong = _testSongs[targetIndex];
+
+        // Act
+        // Pass startShuffled: null so it leaves the existing IsShuffleEnabled state as-is
+        await _service.PlayAsync(_testSongs, targetIndex, startShuffled: null);
+
+        // Assert
+        _service.IsShuffleEnabled.Should().BeTrue();
+        _service.CurrentTrack.Should().Be(targetSong);
+        
+        // The first item in the shuffled queue MUST be the selected song
+        _service.ShuffledQueue.First().Should().Be(targetSong.Id);
+        
+        await _audioPlayer.Received(1).LoadAsync(targetSong);
+    }
     #endregion
 
     #region Queue Management Tests
