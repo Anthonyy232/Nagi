@@ -44,7 +44,7 @@ public partial class GenreViewViewModel : SongListViewModelBase
 
 
     protected override async Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
-        SongSortOrder sortOrder)
+        SongSortOrder sortOrder, CancellationToken cancellationToken = default)
     {
         if (_genreId == Guid.Empty) return new PagedResult<Song>();
 

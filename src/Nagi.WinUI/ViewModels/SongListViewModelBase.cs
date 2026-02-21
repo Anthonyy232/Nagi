@@ -40,6 +40,9 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
     [ObservableProperty] public partial int SongsPerPage { get; set; } = 50;
     [ObservableProperty] public partial bool HasNextPage { get; set; }
     [ObservableProperty] public partial bool HasPreviousPage { get; set; }
+    
+    // Configures whether this view uses bounded pagination or infinite continuous scrolling.
+    public bool IsPaginationEnabled { get; set; } = true;
 
     // For paged views, this holds all song IDs to enable "Play All" without loading all song objects into memory.
     protected List<Guid> _fullSongIdList = new();
@@ -133,20 +136,20 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
     [RelayCommand]
     public async Task NextPageAsync()
     {
-        if (HasNextPage && !IsOverallLoading)
+        if (HasNextPage && !IsOverallLoading && IsPaginationEnabled)
         {
-            CurrentPage++;
-            await LoadPageAsync();
+            var targetPage = CurrentPage + 1;
+            await LoadPageAsync(targetPage);
         }
     }
 
     [RelayCommand]
     public async Task PreviousPageAsync()
     {
-        if (HasPreviousPage && !IsOverallLoading)
+        if (HasPreviousPage && !IsOverallLoading && IsPaginationEnabled)
         {
-            CurrentPage--;
-            await LoadPageAsync();
+            var targetPage = CurrentPage - 1;
+            await LoadPageAsync(targetPage);
         }
     }
 
@@ -218,6 +221,14 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
     [NotifyCanExecuteChangedFor(nameof(ShuffleAndPlayAllSongsCommand))]
     public partial bool IsOverallLoading { get; set; }
 
+    private int _backgroundLoaders;
+
+    /// <summary>
+    ///     Indicates whether background page loading is in progress.
+    ///     Derived classes can use this to suppress side effects (e.g., reorder saves) during background loading.
+    /// </summary>
+    protected bool IsBackgroundPageLoading => _backgroundLoaders > 0;
+
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ShowInFileExplorerCommand))]
     [NotifyCanExecuteChangedFor(nameof(GoToAlbumCommand))]
@@ -241,7 +252,7 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
     }
 
 
-    protected virtual Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize, SongSortOrder sortOrder)
+    protected virtual Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize, SongSortOrder sortOrder, CancellationToken cancellationToken = default)
     {
         return Task.FromResult(new PagedResult<Song>());
     }
@@ -289,7 +300,7 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
 
             // Overlap fetching the full ID list (for Play All) with loading the current page (for display).
             var idsTask = LoadAllSongIdsAsync(CurrentSortOrder);
-            var firstPageTask = LoadSongsPagedAsync(CurrentPage, SongsPerPage, CurrentSortOrder);
+            var firstPageTask = LoadSongsPagedAsync(1, SongsPerPage, CurrentSortOrder, token);
 
             await Task.WhenAll(idsTask, firstPageTask).ConfigureAwait(false);
 
@@ -306,6 +317,20 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
             }
 
             ProcessPagedResult(pagedResult, token);
+
+            bool hasMore;
+            _stateLock.EnterReadLock();
+            try
+            {
+                hasMore = HasNextPage;
+            }
+            finally
+            {
+                _stateLock.ExitReadLock();
+            }
+
+            // If there are more pages and pagination is disabled, start loading them automatically in the background.
+            if (hasMore && !IsPaginationEnabled && !token.IsCancellationRequested) _ = StartAutomaticPagedLoadingAsync(token);
         }
         catch (Exception ex)
         {
@@ -321,14 +346,64 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
     }
 
     /// <summary>
-    ///     Loads the current page of songs without re-fetching all song IDs.
+    ///     Transparently loads subsequent pages in the background to create a smooth "infinite scroll" experience.
+    /// </summary>
+    private async Task StartAutomaticPagedLoadingAsync(CancellationToken token)
+    {
+        Interlocked.Increment(ref _backgroundLoaders);
+        try
+        {
+            int nextPageToLoad;
+            bool hasMore;
+            _stateLock.EnterReadLock();
+            try
+            {
+                nextPageToLoad = CurrentPage + 1;
+                hasMore = HasNextPage;
+            }
+            finally
+            {
+                _stateLock.ExitReadLock();
+            }
+
+            while (hasMore && !token.IsCancellationRequested)
+            {
+                // A small delay to prevent overwhelming the system and to allow UI to remain responsive.
+                await Task.Delay(250, token);
+                if (token.IsCancellationRequested) break;
+
+                var pagedResult = await LoadSongsPagedAsync(nextPageToLoad, SongsPerPage, CurrentSortOrder, token);
+                if (pagedResult == null) break;
+
+                ProcessPagedResult(pagedResult, token, true);
+
+                hasMore = pagedResult.HasNextPage;
+                nextPageToLoad++;
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.LogDebug("Automatic page loading was cancelled.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed during automatic page loading");
+        }
+        finally
+        {
+            Interlocked.Decrement(ref _backgroundLoaders);
+        }
+    }
+
+    /// <summary>
+    ///     Loads a specific page of songs without re-fetching all song IDs.
     ///     Useful for pagination where the overall sort order and ID list remain unchanged.
     /// </summary>
-    public virtual async Task LoadPageAsync()
+    public virtual async Task LoadPageAsync(int pageNumber)
     {
         lock (_loadLock)
         {
-            if (IsOverallLoading) return;
+            if (IsOverallLoading || !IsPaginationEnabled) return;
             IsOverallLoading = true;
         }
 
@@ -339,7 +414,7 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
             _pagedLoadCts = new CancellationTokenSource();
             var token = _pagedLoadCts.Token;
 
-            var pagedResult = await LoadSongsPagedAsync(CurrentPage, SongsPerPage, CurrentSortOrder);
+            var pagedResult = await LoadSongsPagedAsync(pageNumber, SongsPerPage, CurrentSortOrder, token);
             ProcessPagedResult(pagedResult, token);
         }
         catch (Exception ex)
@@ -590,19 +665,11 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
     ///     Processes a page of results, updating the UI-bound collection and internal paging state.
     ///     Derived classes can override to update additional collections (e.g., FolderContents).
     /// </summary>
-    protected virtual void ProcessPagedResult(PagedResult<Song> pagedResult, CancellationToken token)
+    protected virtual void ProcessPagedResult(PagedResult<Song> pagedResult, CancellationToken token, bool append = false)
     {
         if (pagedResult?.Items == null || token.IsCancellationRequested || _isDisposed) return;
 
-        // All UI updates must be marshalled to the UI thread.
-        _dispatcherService.TryEnqueue(() =>
-        {
-            if (token.IsCancellationRequested || _isDisposed) return;
-
-            Songs.ReplaceRange(pagedResult.Items);
-        });
-
-        // Update internal state within a lock for thread safety.
+        // Update internal state within a lock for thread safety before UI updates.
         _stateLock.EnterWriteLock();
         try
         {
@@ -613,16 +680,29 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
             _stateLock.ExitWriteLock();
         }
 
+        // All UI updates must be marshalled to the UI thread.
         _dispatcherService.TryEnqueue(() =>
         {
-            if (_isDisposed) return;
+            if (token.IsCancellationRequested || _isDisposed) return;
+
+            if (append)
+            {
+                Songs.AddRange(pagedResult.Items);
+            }
+            else
+            {
+                Songs.ReplaceRange(pagedResult.Items);
+            }
+
             CurrentPage = pagedResult.PageNumber;
             HasNextPage = pagedResult.HasNextPage;
             HasPreviousPage = CurrentPage > 1;
-            TotalPages = Math.Max(1, (int)Math.Ceiling((double)_totalItemCount / SongsPerPage));
+            TotalPages = Math.Max(1, (pagedResult.TotalCount + SongsPerPage - 1) / SongsPerPage);
+            
             TotalItemsText = pagedResult.TotalCount == 1 
                 ? ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.SongList_TotalItems_Format_Singular, pagedResult.TotalCount) 
                 : ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.SongList_TotalItems_Format_Plural, pagedResult.TotalCount);
+            
             UpdateSelectionStatus();
             PlayAllSongsCommand.NotifyCanExecuteChanged();
             ShuffleAndPlayAllSongsCommand.NotifyCanExecuteChanged();
