@@ -335,7 +335,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
     }
 
     protected override Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
-        SongSortOrder sortOrder)
+        SongSortOrder sortOrder, CancellationToken cancellationToken = default)
     {
         if (!_rootFolderId.HasValue || string.IsNullOrEmpty(_currentDirectoryPath))
             return Task.FromResult(new PagedResult<Song>());
@@ -362,7 +362,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
     ///     Processes a page of results, updating both Songs and FolderContents in a single dispatch.
     ///     This override consolidates all UI updates to avoid race conditions from multiple dispatches.
     /// </summary>
-    protected override void ProcessPagedResult(PagedResult<Song> pagedResult, CancellationToken token)
+    protected override void ProcessPagedResult(PagedResult<Song> pagedResult, CancellationToken token, bool append = false)
     {
         // Guard against cancelled operations before doing any work to prevent stale data from corrupting the view.
         if (token.IsCancellationRequested || pagedResult?.Items == null) return;
@@ -383,15 +383,24 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         {
             if (token.IsCancellationRequested) return;
 
+            if (append)
+            {
+                // Append new songs to both collections.
+                Songs.AddRange(pagedResult.Items);
+                FolderContents.AddRange(pagedResult.Items.Select(FolderContentItem.FromSong));
+            }
+            else
+            {
+                // Replace Songs and clear/repopulate song items in FolderContents.
+                Songs.ReplaceRange(pagedResult.Items);
+                ClearSongItemsFromFolderContents();
+                FolderContents.AddRange(pagedResult.Items.Select(FolderContentItem.FromSong));
+            }
+
             CurrentPage = pagedResult.PageNumber;
             HasNextPage = pagedResult.HasNextPage;
             HasPreviousPage = CurrentPage > 1;
-            TotalPages = Math.Max(1, (int)Math.Ceiling((double)_totalItemCount / SongsPerPage));
-
-            // Replace Songs and clear/repopulate song items in FolderContents.
-            Songs.ReplaceRange(pagedResult.Items);
-            ClearSongItemsFromFolderContents();
-            FolderContents.AddRange(pagedResult.Items.Select(FolderContentItem.FromSong));
+            TotalPages = Math.Max(1, (pagedResult.TotalCount + SongsPerPage - 1) / SongsPerPage);
 
             // Update TotalItemsText to include folder count.
             UpdateTotalItemsText(pagedResult.TotalCount);

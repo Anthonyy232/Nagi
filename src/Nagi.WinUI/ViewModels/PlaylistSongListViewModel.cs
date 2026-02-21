@@ -36,6 +36,8 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         ILogger<PlaylistSongListViewModel> logger)
         : base(libraryReader, playlistService, playbackService, navigationService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
     {
+        IsPaginationEnabled = false;
+        
         // Subscribe to the initial collection.
         if (Songs != null) Songs.CollectionChanged += OnSongsCollectionChanged;
     }
@@ -107,7 +109,7 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
 
 
     protected override Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
-        SongSortOrder sortOrder)
+        SongSortOrder sortOrder, CancellationToken cancellationToken = default)
     {
         if (!_currentPlaylistId.HasValue) return Task.FromResult(new PagedResult<Song>());
 

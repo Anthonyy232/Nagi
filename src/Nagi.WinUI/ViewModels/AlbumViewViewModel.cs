@@ -67,7 +67,7 @@ public partial class AlbumViewViewModel : SongListViewModelBase
     [ObservableProperty] public partial bool IsGroupedByDisc { get; set; }
 
     protected override async Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
-        SongSortOrder sortOrder)
+        SongSortOrder sortOrder, CancellationToken cancellationToken = default)
     {
         if (_albumId == Guid.Empty) return new PagedResult<Song>();
 
@@ -247,9 +247,9 @@ public partial class AlbumViewViewModel : SongListViewModelBase
     }
 
 
-    protected override void ProcessPagedResult(PagedResult<Song> pagedResult, CancellationToken token)
+    protected override void ProcessPagedResult(PagedResult<Song> pagedResult, CancellationToken token, bool append = false)
     {
-        base.ProcessPagedResult(pagedResult, token);
+        base.ProcessPagedResult(pagedResult, token, append);
         
         // Update grouping after the songs collection has been updated
         _dispatcherService.TryEnqueue(() =>

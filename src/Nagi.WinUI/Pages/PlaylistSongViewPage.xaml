@@ -244,12 +244,6 @@
                   ContainerContentChanging="OnSongsListViewContainerContentChanging"
                   DoubleTapped="SongsListView_DoubleTapped"
                   DragItemsCompleted="SongsListView_DragItemsCompleted">
-            <ListView.Footer>
-                <uicontrols:PaginationControl 
-                    ViewModel="{x:Bind ViewModel}" 
-                    HorizontalAlignment="Right"
-                    Margin="0,24,24,16" />
-            </ListView.Footer>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="models:Song">
                     <Grid Height="54" ColumnSpacing="12" Background="Transparent">

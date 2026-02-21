@@ -40,7 +40,7 @@ public partial class LibraryViewModel : SongListViewModelBase
     }
 
     protected override Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
-        SongSortOrder sortOrder)
+        SongSortOrder sortOrder, CancellationToken cancellationToken = default)
     {
         if (IsSearchActive)
             // When searching, a consistent sort order is applied, ignoring the user's current sort selection.

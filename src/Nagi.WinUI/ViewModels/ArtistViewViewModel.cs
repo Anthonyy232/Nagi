@@ -93,7 +93,7 @@ public partial class ArtistViewViewModel : SongListViewModelBase
     public bool HasAlbums => Albums.Any();
 
     protected override async Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
-        SongSortOrder sortOrder)
+        SongSortOrder sortOrder, CancellationToken cancellationToken = default)
     {
         if (_artistId == Guid.Empty) return new PagedResult<Song>();
 

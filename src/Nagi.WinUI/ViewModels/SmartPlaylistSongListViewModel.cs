@@ -122,7 +122,7 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
 
 
     protected override async Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
-        SongSortOrder sortOrder)
+        SongSortOrder sortOrder, CancellationToken cancellationToken = default)
     {
         if (!_currentSmartPlaylistId.HasValue) return new PagedResult<Song>();
 
