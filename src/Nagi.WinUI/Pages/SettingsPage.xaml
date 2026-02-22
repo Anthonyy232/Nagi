@@ -360,6 +360,17 @@
                         IsOn="{x:Bind ViewModel.IsVolumeNormalizationEnabled, Mode=TwoWay}" />
                 </controls:SettingsCard>
 
+                <controls:SettingsCard
+                    Header="{x:Bind resources:Strings.SettingsPage_FadeOnPlayPause_Header, Mode=OneTime}"
+                    Description="{x:Bind resources:Strings.SettingsPage_FadeOnPlayPause_Description, Mode=OneTime}">
+                    <controls:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE9D9;" />
+                    </controls:SettingsCard.HeaderIcon>
+                    <ToggleSwitch
+                        HorizontalAlignment="Right"
+                        IsOn="{x:Bind ViewModel.IsFadeOnPlayPauseEnabled, Mode=TwoWay}" />
+                </controls:SettingsCard>
+
                 <controls:SettingsCard>
                     <controls:SettingsCard.Header>
                         <StackPanel Orientation="Horizontal" Spacing="8">

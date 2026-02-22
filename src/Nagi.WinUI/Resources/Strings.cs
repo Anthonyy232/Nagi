@@ -634,6 +634,8 @@ public static class Strings
     public static string SettingsPage_Section_Player => GetString("SettingsPage_Section_Player");
     public static string SettingsPage_VolumeNormalization_Header => GetString("SettingsPage_VolumeNormalization_Header");
     public static string SettingsPage_VolumeNormalization_Description => GetString("SettingsPage_VolumeNormalization_Description");
+    public static string SettingsPage_FadeOnPlayPause_Header => GetString("SettingsPage_FadeOnPlayPause_Header");
+    public static string SettingsPage_FadeOnPlayPause_Description => GetString("SettingsPage_FadeOnPlayPause_Description");
     public static string SettingsPage_Equalizer => GetString("SettingsPage_Equalizer");
     public static string SettingsPage_ResetEqualizer_Content => GetString("SettingsPage_ResetEqualizer_Content");
     public static string SettingsPage_Equalizer_Preamp => GetString("SettingsPage_Equalizer_Preamp");
