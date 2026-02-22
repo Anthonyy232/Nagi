@@ -34,7 +34,7 @@ public static class SettingsDefaults
     public const bool LastFmScrobblingEnabled = false;
 
     public const string DefaultArtistSplitCharacters = ""; // No splitting by default
-    public const string DefaultGenreSplitCharacters = ";/\\";
+    public const string DefaultGenreSplitCharacters = ""; // No splitting by default
     public const bool LastFmNowPlayingEnabled = false;
     public const bool RememberWindowSizeEnabled = false;
     public const bool RememberWindowPositionEnabled = false;
