@@ -57,6 +57,9 @@ public class AtlMetadataServiceTests : IDisposable
         _fileSystem.GetExtension(Arg.Any<string>())
             .Returns(callInfo => Path.GetExtension(callInfo.ArgAt<string>(0)));
 
+        _settingsService.GetArtistSplitCharactersAsync().Returns(Task.FromResult(string.Empty));
+        _settingsService.GetGenreSplitCharactersAsync().Returns(Task.FromResult(";/\\"));
+
         _metadataService = new AtlMetadataService(_imageProcessor, _fileSystem, _pathConfig, _logger, _settingsService);
     }
 
@@ -179,6 +182,24 @@ public class AtlMetadataServiceTests : IDisposable
         result.Grouping.Should().Be("Test Grouping");
         result.LightSwatchId.Should().Be("light1");
         result.DarkSwatchId.Should().Be("dark1");
+    }
+
+    [Fact]
+    public async Task ExtractMetadataAsync_WithCustomGenreSplitCharacters_SplitsGenresCorrectly()
+    {
+        // Arrange
+        var filePath = CreateTestAudioFile("genresplit.mp3", track =>
+        {
+            track.Genre = "Rock;Pop/Indie\\Jazz";
+        });
+
+        _settingsService.GetGenreSplitCharactersAsync().Returns(Task.FromResult(";/\\"));
+
+        // Act
+        var result = await _metadataService.ExtractMetadataAsync(filePath);
+
+        // Assert
+        result.Genres.Should().ContainInOrder("Rock", "Pop", "Indie", "Jazz");
     }
 
     /// <summary>
