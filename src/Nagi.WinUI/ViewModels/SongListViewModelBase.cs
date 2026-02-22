@@ -33,7 +33,7 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
     protected readonly ReaderWriterLockSlim _stateLock = new(LockRecursionPolicy.SupportsRecursion);
     private readonly IUIService _uiService;
     protected readonly IMusicNavigationService _musicNavigationService;
-    private bool _isDisposed;
+    protected bool _isDisposed;
 
     [ObservableProperty] public partial int CurrentPage { get; set; } = 1;
     [ObservableProperty] public partial int TotalPages { get; set; } = 1;
@@ -88,7 +88,17 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
     {
         try
         {
-            SongsPerPage = await _settingsService.GetSongsPerPageAsync();
+            // Use the guard flag so that setting the initial value doesn't trigger a
+            // spurious SetSongsPerPageAsync write-back or a premature RefreshOrSortSongsAsync call.
+            _isSettingSongsPerPage = true;
+            try
+            {
+                SongsPerPage = await _settingsService.GetSongsPerPageAsync();
+            }
+            finally
+            {
+                _isSettingSongsPerPage = false;
+            }
             _settingsService.SongsPerPageChanged += OnSettingsSongsPerPageChanged;
         }
         catch (Exception ex)
@@ -697,7 +707,9 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
             CurrentPage = pagedResult.PageNumber;
             HasNextPage = pagedResult.HasNextPage;
             HasPreviousPage = CurrentPage > 1;
-            TotalPages = Math.Max(1, (pagedResult.TotalCount + SongsPerPage - 1) / SongsPerPage);
+            // Use the page size baked into the result, not the current SongsPerPage property,
+            // which may have changed between when the query ran and when this dispatch executes.
+            TotalPages = Math.Max(1, pagedResult.TotalPages);
             
             TotalItemsText = pagedResult.TotalCount == 1 
                 ? ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.SongList_TotalItems_Format_Singular, pagedResult.TotalCount) 
