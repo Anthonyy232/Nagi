@@ -24,6 +24,8 @@ public class AtlMetadataService : IMetadataService, IDisposable
     // Cache for artist split characters to avoid repeated async calls during batch scanning
     private readonly object _splitCharactersLock = new();
     private string? _cachedSplitCharacters;
+    private readonly object _genreSplitCharactersLock = new();
+    private string? _cachedGenreSplitCharacters;
     private bool _disposed;
 
     public AtlMetadataService(IImageProcessor imageProcessor, IFileSystemService fileSystem,
@@ -37,6 +39,7 @@ public class AtlMetadataService : IMetadataService, IDisposable
         
         // Subscribe to settings changes to invalidate cache
         _settingsService.ArtistSplitCharactersChanged += OnArtistSplitCharactersChanged;
+        _settingsService.GenreSplitCharactersChanged += OnGenreSplitCharactersChanged;
     }
 
     /// <inheritdoc />
@@ -72,7 +75,8 @@ public class AtlMetadataService : IMetadataService, IDisposable
             }
 
             var splitCharacters = await GetCachedSplitCharactersAsync().ConfigureAwait(false);
-            PopulateMetadataFromTrack(metadata, track, splitCharacters);
+            var genreSplitCharacters = await GetCachedGenreSplitCharactersAsync().ConfigureAwait(false);
+            PopulateMetadataFromTrack(metadata, track, splitCharacters, genreSplitCharacters);
 
             // Get cached or extract new synchronized lyrics (after parsing track so we have artist/title).
             using var lrcCts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
@@ -133,13 +137,13 @@ public class AtlMetadataService : IMetadataService, IDisposable
     /// <summary>
     ///     Populates the metadata object from the ATL track, providing sane defaults for missing values.
     /// </summary>
-    private void PopulateMetadataFromTrack(SongFileMetadata metadata, Track track, string splitCharacters)
+    private void PopulateMetadataFromTrack(SongFileMetadata metadata, Track track, string splitCharacters, string genreSplitCharacters)
     {
         var rawArtist = SanitizeString(track.Artist) ?? Artist.UnknownArtistName;
         var rawAlbumArtist = SanitizeString(track.AlbumArtist) ?? rawArtist;
 
-        var artists = SplitArtists(rawArtist, splitCharacters);
-        var albumArtists = SplitArtists(rawAlbumArtist, splitCharacters);
+        var artists = SplitMetadataList(rawArtist, splitCharacters);
+        var albumArtists = SplitMetadataList(rawAlbumArtist, splitCharacters);
 
         var album = SanitizeString(track.Album) ?? Album.UnknownAlbumName;
 
@@ -180,19 +184,7 @@ public class AtlMetadataService : IMetadataService, IDisposable
 
         // Parse genre (ATL returns a single string, may need to split)
         var genreString = SanitizeString(track.Genre);
-        if (!string.IsNullOrEmpty(genreString))
-        {
-            metadata.Genres = genreString
-                .Split(new[] { ';', '/', '\\' }, StringSplitOptions.RemoveEmptyEntries)
-                .Select(g => ArtistNameHelper.NormalizeStringCore(g))
-                .Where(g => !string.IsNullOrEmpty(g))
-                .Select(g => g!)
-                .ToList();
-        }
-        else
-        {
-            metadata.Genres = [];
-        }
+        metadata.Genres = SplitMetadataList(genreString, genreSplitCharacters);
 
         // ATL doesn't have a direct Grouping property, check additional fields
         if (track.AdditionalFields.TryGetValue("GRP1", out var grouping) ||
@@ -213,22 +205,22 @@ public class AtlMetadataService : IMetadataService, IDisposable
             metadata.ReplayGainTrackPeak = ParseReplayGainValue(peakStr);
     }
 
-    private List<string> SplitArtists(string artistString, string splitCharacters)
+    private List<string> SplitMetadataList(string? input, string splitCharacters)
     {
-        if (string.IsNullOrWhiteSpace(artistString)) return [];
+        if (string.IsNullOrWhiteSpace(input)) return [];
         
         // If no split characters are provided, normalize and return the whole string
         if (string.IsNullOrEmpty(splitCharacters))
         {
-            var normalized = ArtistNameHelper.NormalizeStringCore(artistString);
-            return normalized != null ? new List<string> { normalized } : [];
+            var normalized = ArtistNameHelper.NormalizeStringCore(input);
+            return normalized != null ? [normalized] : [];
         }
 
-        return artistString
+        return input
             .Split(splitCharacters.ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
-            .Select(a => ArtistNameHelper.NormalizeStringCore(a))
-            .Where(a => !string.IsNullOrEmpty(a))
-            .Select(a => a!)
+            .Select(s => ArtistNameHelper.NormalizeStringCore(s))
+            .Where(s => !string.IsNullOrEmpty(s))
+            .Select(s => s!)
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToList();
     }
@@ -540,15 +532,15 @@ public class AtlMetadataService : IMetadataService, IDisposable
         
         if (cached != null)
             return cached;
-        
+
         // Slow path: load from settings service
         var splitCharacters = await _settingsService.GetArtistSplitCharactersAsync().ConfigureAwait(false);
-        
+
         lock (_splitCharactersLock)
         {
             _cachedSplitCharacters = splitCharacters;
         }
-        
+
         return splitCharacters;
     }
 
@@ -571,6 +563,37 @@ public class AtlMetadataService : IMetadataService, IDisposable
         _disposed = true;
         
         _settingsService.ArtistSplitCharactersChanged -= OnArtistSplitCharactersChanged;
+        _settingsService.GenreSplitCharactersChanged -= OnGenreSplitCharactersChanged;
         GC.SuppressFinalize(this);
+    }
+
+    private async Task<string> GetCachedGenreSplitCharactersAsync()
+    {
+        string? cached;
+        lock (_genreSplitCharactersLock)
+        {
+            cached = _cachedGenreSplitCharacters;
+        }
+
+        if (cached != null) return cached;
+
+        var splitCharacters = await _settingsService.GetGenreSplitCharactersAsync().ConfigureAwait(false);
+
+        lock (_genreSplitCharactersLock)
+        {
+            _cachedGenreSplitCharacters = splitCharacters;
+        }
+
+        return splitCharacters;
+    }
+
+    private void OnGenreSplitCharactersChanged()
+    {
+        lock (_genreSplitCharactersLock)
+        {
+            _cachedGenreSplitCharacters = null;
+        }
+
+        _logger.LogDebug("Genre split characters cache invalidated due to settings change.");
     }
 }

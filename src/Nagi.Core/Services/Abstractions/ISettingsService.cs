@@ -219,6 +219,23 @@ public interface ISettingsService
     ///     Occurs when the artist split characters setting has changed.
     /// </summary>
     event Action? ArtistSplitCharactersChanged;
+ 
+    /// <summary>
+    ///     Gets the characters used to split multiple genres in a single string.
+    /// </summary>
+    /// <returns>A string containing the split characters.</returns>
+    Task<string> GetGenreSplitCharactersAsync();
+ 
+    /// <summary>
+    ///     Sets the characters used to split multiple genres in a single string.
+    /// </summary>
+    /// <param name="characters">The characters to save.</param>
+    Task SetGenreSplitCharactersAsync(string characters);
+ 
+    /// <summary>
+    ///     Occurs when the genre split characters setting has changed.
+    /// </summary>
+    event Action? GenreSplitCharactersChanged;
 
     /// <summary>
     ///     Retrieves the last saved equalizer settings.
