@@ -9,7 +9,7 @@
     <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
         <TextBlock Text="Items per page:" VerticalAlignment="Center" Foreground="{ThemeResource TextFillColorSecondaryBrush}" FontSize="12"/>
         
-        <ComboBox ItemsSource="{x:Bind PageSizeOptions}" SelectedItem="{x:Bind ViewModel.SongsPerPage, Mode=TwoWay}" Width="80" Margin="0,0,16,0" FontSize="12" />
+        <ComboBox x:Name="PageSizeComboBox" ItemsSource="{x:Bind PageSizeOptions}" SelectedItem="{x:Bind ViewModel.SongsPerPage, Mode=TwoWay}" Width="80" Margin="0,0,16,0" FontSize="12" />
 
         <Button Command="{x:Bind ViewModel.PreviousPageCommand, Mode=OneWay}" 
                 IsEnabled="{x:Bind ViewModel.HasPreviousPage, Mode=OneWay}"

@@ -364,8 +364,8 @@ public partial class FolderSongListViewModel : SongListViewModelBase
     /// </summary>
     protected override void ProcessPagedResult(PagedResult<Song> pagedResult, CancellationToken token, bool append = false)
     {
-        // Guard against cancelled operations before doing any work to prevent stale data from corrupting the view.
-        if (token.IsCancellationRequested || pagedResult?.Items == null) return;
+        // Guard against cancelled or post-dispose operations before doing any work.
+        if (token.IsCancellationRequested || pagedResult?.Items == null || _isDisposed) return;
 
         // Update internal paging state (same as base class, but we handle UI updates ourselves).
         _stateLock.EnterWriteLock();
@@ -400,7 +400,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
             CurrentPage = pagedResult.PageNumber;
             HasNextPage = pagedResult.HasNextPage;
             HasPreviousPage = CurrentPage > 1;
-            TotalPages = Math.Max(1, (pagedResult.TotalCount + SongsPerPage - 1) / SongsPerPage);
+            TotalPages = Math.Max(1, pagedResult.TotalPages);
 
             // Update TotalItemsText to include folder count.
             UpdateTotalItemsText(pagedResult.TotalCount);
