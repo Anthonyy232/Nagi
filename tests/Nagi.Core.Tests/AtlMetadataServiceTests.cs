@@ -58,7 +58,7 @@ public class AtlMetadataServiceTests : IDisposable
             .Returns(callInfo => Path.GetExtension(callInfo.ArgAt<string>(0)));
 
         _settingsService.GetArtistSplitCharactersAsync().Returns(Task.FromResult(string.Empty));
-        _settingsService.GetGenreSplitCharactersAsync().Returns(Task.FromResult(";/\\"));
+        _settingsService.GetGenreSplitCharactersAsync().Returns(Task.FromResult(string.Empty));
 
         _metadataService = new AtlMetadataService(_imageProcessor, _fileSystem, _pathConfig, _logger, _settingsService);
     }
@@ -177,7 +177,7 @@ public class AtlMetadataServiceTests : IDisposable
         result.DiscCount.Should().Be(2);
         result.Bpm.Should().Be(120);
         result.Lyrics.Should().Be("Some simple lyrics");
-        result.Genres.Should().ContainInOrder("Rock", "Pop");
+        result.Genres.Should().ContainSingle().Which.Should().Be("Rock;Pop");
         result.CoverArtUri.Should().Be("C:/art/1.jpg");
         result.Grouping.Should().Be("Test Grouping");
         result.LightSwatchId.Should().Be("light1");
