@@ -695,6 +695,22 @@
                     </StackPanel>
                 </controls:SettingsCard>
 
+                <controls:SettingsCard
+                    Header="{x:Bind resources:Strings.SettingsPage_GenreSplitting_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_GenreSplitting_Description, Mode=OneTime}">
+                    <controls:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8B0;" />
+                    </controls:SettingsCard.HeaderIcon>
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <TextBox
+                            Width="150"
+                            PlaceholderText="e.g. ;/\"
+                            Text="{x:Bind ViewModel.GenreSplitCharacters, Mode=TwoWay}" />
+                        <Button
+                            Command="{x:Bind ViewModel.RescanMetadataCommand}"
+                            Content="{x:Bind resources:Strings.SettingsPage_RescanLibrary_Content, Mode=OneTime}" ToolTipService.ToolTip="{x:Bind resources:Strings.SettingsPage_RescanLibrary_ToolTip, Mode=OneTime}" />
+                    </StackPanel>
+                </controls:SettingsCard>
+
                 <controls:SettingsExpander
                     x:Name="MetadataSettingsExpander"
                     Header="{x:Bind resources:Strings.SettingsPage_OnlineMetadata_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_OnlineMetadata_Description, Mode=OneTime}">

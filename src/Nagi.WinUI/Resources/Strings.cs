@@ -658,6 +658,8 @@ public static class Strings
     public static string SettingsPage_Section_Data => GetString("SettingsPage_Section_Data");
     public static string SettingsPage_ArtistSplitting_Header => GetString("SettingsPage_ArtistSplitting_Header");
     public static string SettingsPage_ArtistSplitting_Description => GetString("SettingsPage_ArtistSplitting_Description");
+    public static string SettingsPage_GenreSplitting_Header => GetString("SettingsPage_GenreSplitting_Header");
+    public static string SettingsPage_GenreSplitting_Description => GetString("SettingsPage_GenreSplitting_Description");
     public static string SettingsPage_RescanLibrary_Content => GetString("SettingsPage_RescanLibrary_Content");
     public static string SettingsPage_RescanLibrary_ToolTip => GetString("SettingsPage_RescanLibrary_ToolTip");
     public static string SettingsPage_OnlineMetadata_Header => GetString("SettingsPage_OnlineMetadata_Header");
