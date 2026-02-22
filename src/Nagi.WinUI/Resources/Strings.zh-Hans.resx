@@ -1673,6 +1673,12 @@
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
     <value>定义用于拆分多个艺术家的字符（例如“;/”）。留空以禁用。</value>
   </data>
+  <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
+    <value>Genre Splitting</value>
+  </data>
+  <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
+    <value>Define characters used to split multiple genres (e.g. ';/'). Leave empty to disable.</value>
+  </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>重新扫描库</value>
   </data>
@@ -1864,5 +1870,77 @@
   </data>
   <data name="SettingsPage_RestartRequired_Message" xml:space="preserve">
     <value>请重新启动应用程序以使语言更改完全生效。</value>
+  </data>
+  <data name="SettingsPage_About_PrivacyPolicy_Content" xml:space="preserve">
+    <value>隐私政策</value>
+  </data>
+  <data name="SettingsPage_BackupRestore_Header" xml:space="preserve">
+    <value>备份 &amp; 恢复</value>
+  </data>
+  <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
+    <value>创建您的音乐库和设置的备份，或从以前的备份恢复</value>
+  </data>
+  <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
+    <value>创建备份</value>
+  </data>
+  <data name="SettingsPage_RestoreBackup_Content" xml:space="preserve">
+    <value>还原备份</value>
+  </data>
+  <data name="Settings_Backup_Success_Title" xml:space="preserve">
+    <value>已创建备份</value>
+  </data>
+  <data name="Settings_Backup_Success_Message" xml:space="preserve">
+    <value>成功创建备份({0:F2} MB) 于: {1}</value>
+  </data>
+  <data name="Settings_Backup_Failed_Title" xml:space="preserve">
+    <value>备份失败</value>
+  </data>
+  <data name="Settings_Backup_Failed_Message" xml:space="preserve">
+    <value>创建备份失败。请重试。</value>
+  </data>
+  <data name="Settings_Restore_Invalid_Title" xml:space="preserve">
+    <value>无效的备份文件</value>
+  </data>
+  <data name="Settings_Restore_Invalid_Message" xml:space="preserve">
+    <value>选中的文件不是有效的 Nagi 备份。</value>
+  </data>
+  <data name="Settings_Restore_Confirm_Title" xml:space="preserve">
+    <value>还原备份?</value>
+  </data>
+  <data name="Settings_Restore_Confirm_Message" xml:space="preserve">
+    <value>从备份恢复将替换当前所有应用数据。此操作无法撤销。该应用将在恢复后重新启动。是否继续？</value>
+  </data>
+  <data name="Settings_Restore_Confirm_Button" xml:space="preserve">
+    <value>恢复</value>
+  </data>
+  <data name="Settings_Restore_Success_Title" xml:space="preserve">
+    <value>恢复完成</value>
+  </data>
+  <data name="Settings_Restore_Success_Message" xml:space="preserve">
+    <value>成功恢复备份。应用程序现在将重新启动。</value>
+  </data>
+  <data name="Settings_Restore_Failed_Title" xml:space="preserve">
+    <value>恢复失败</value>
+  </data>
+  <data name="Settings_Restore_Failed_Message" xml:space="preserve">
+    <value>从备份恢复失败。您的数据未被修改。</value>
+  </data>
+  <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
+    <value>播放器样式</value>
+  </data>
+  <data name="PlayerBackgroundMaterial_Acrylic" xml:space="preserve">
+    <value>亚克力 （玻璃）</value>
+  </data>
+  <data name="PlayerBackgroundMaterial_Solid" xml:space="preserve">
+    <value>实心 （不透明）</value>
+  </data>
+  <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
+    <value>自定义浮动播放器外观</value>
+  </data>
+  <data name="SettingsPage_TintIntensity_Header" xml:space="preserve">
+    <value>色调强度</value>
+  </data>
+  <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
+    <value>调整播放器背景颜色的振动效果</value>
   </data>
 </root>

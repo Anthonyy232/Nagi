@@ -1660,6 +1660,12 @@
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
     <value>Definiálja azokat a karaktereket, amelyekkel több előadó szétválasztható (pl. ';/'). Hagyja üresen a kikapcsoláshoz.</value>
   </data>
+  <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
+    <value>Genre Splitting</value>
+  </data>
+  <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
+    <value>Define characters used to split multiple genres (e.g. ';/'). Leave empty to disable.</value>
+  </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>Könyvtár újraolvasása</value>
   </data>
@@ -1851,5 +1857,77 @@
   </data>
   <data name="SettingsPage_RestartRequired_Message" xml:space="preserve">
     <value>Kérjük, indítsa újra az alkalmazást, hogy a nyelvi változtatás teljesen érvénybe lépjen.</value>
+  </data>
+  <data name="SettingsPage_About_PrivacyPolicy_Content" xml:space="preserve">
+    <value>Privacy Policy</value>
+  </data>
+  <data name="SettingsPage_BackupRestore_Header" xml:space="preserve">
+    <value>Backup &amp; Restore</value>
+  </data>
+  <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
+    <value>Create backups of your music library and settings, or restore from a previous backup</value>
+  </data>
+  <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
+    <value>Create Backup</value>
+  </data>
+  <data name="SettingsPage_RestoreBackup_Content" xml:space="preserve">
+    <value>Restore Backup</value>
+  </data>
+  <data name="Settings_Backup_Success_Title" xml:space="preserve">
+    <value>Backup Created</value>
+  </data>
+  <data name="Settings_Backup_Success_Message" xml:space="preserve">
+    <value>Successfully created backup ({0:F2} MB) at: {1}</value>
+  </data>
+  <data name="Settings_Backup_Failed_Title" xml:space="preserve">
+    <value>Backup Failed</value>
+  </data>
+  <data name="Settings_Backup_Failed_Message" xml:space="preserve">
+    <value>Failed to create backup. Please try again.</value>
+  </data>
+  <data name="Settings_Restore_Invalid_Title" xml:space="preserve">
+    <value>Invalid Backup File</value>
+  </data>
+  <data name="Settings_Restore_Invalid_Message" xml:space="preserve">
+    <value>The selected file is not a valid Nagi backup.</value>
+  </data>
+  <data name="Settings_Restore_Confirm_Title" xml:space="preserve">
+    <value>Restore Backup?</value>
+  </data>
+  <data name="Settings_Restore_Confirm_Message" xml:space="preserve">
+    <value>Restoring from backup will replace all current app data. This action cannot be undone. The app will restart after restore. Continue?</value>
+  </data>
+  <data name="Settings_Restore_Confirm_Button" xml:space="preserve">
+    <value>Restore</value>
+  </data>
+  <data name="Settings_Restore_Success_Title" xml:space="preserve">
+    <value>Restore Complete</value>
+  </data>
+  <data name="Settings_Restore_Success_Message" xml:space="preserve">
+    <value>Successfully restored backup. The app will now restart.</value>
+  </data>
+  <data name="Settings_Restore_Failed_Title" xml:space="preserve">
+    <value>Restore Failed</value>
+  </data>
+  <data name="Settings_Restore_Failed_Message" xml:space="preserve">
+    <value>Failed to restore from backup. Your data was not modified.</value>
+  </data>
+  <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
+    <value>Player Styling</value>
+  </data>
+  <data name="PlayerBackgroundMaterial_Acrylic" xml:space="preserve">
+    <value>Acrylic (Glass)</value>
+  </data>
+  <data name="PlayerBackgroundMaterial_Solid" xml:space="preserve">
+    <value>Solid (Opaque)</value>
+  </data>
+  <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
+    <value>Customize the appearance of the floating player</value>
+  </data>
+  <data name="SettingsPage_TintIntensity_Header" xml:space="preserve">
+    <value>Tint Intensity</value>
+  </data>
+  <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
+    <value>Adjusts the vibrancy of the player background color</value>
   </data>
 </root>
