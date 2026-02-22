@@ -107,6 +107,9 @@
   <data name="Label_Songs" xml:space="preserve">
     <value>Nyimbo</value>
   </data>
+  <data name="Label_Artists" xml:space="preserve">
+    <value>Artists</value>
+  </data>
   <data name="Label_Song" xml:space="preserve">
     <value>Wimbo</value>
   </data>
@@ -227,6 +230,9 @@
   </data>
   <data name="Label_WithCoverArt" xml:space="preserve">
     <value>yenye picha ya jalada</value>
+  </data>
+  <data name="Label_WithArtistImage" xml:space="preserve">
+    <value>with artist image</value>
   </data>
   <data name="Label_And" xml:space="preserve">
     <value>na</value>
