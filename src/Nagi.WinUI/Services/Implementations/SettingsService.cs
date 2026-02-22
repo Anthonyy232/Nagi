@@ -73,6 +73,7 @@ public class SettingsService : IUISettingsService, IDisposable
     private const string PlayerBackgroundMaterialKey = "PlayerBackgroundMaterial";
     private const string PlayerTintIntensityKey = "PlayerTintIntensity";
     private const string SongsPerPageKey = "SongsPerPage";
+    private const string GenreSplitCharactersKey = "GenreSplitCharacters";
 
     private static readonly JsonSerializerOptions _serializerOptions = new() { WriteIndented = true };
     private readonly ICredentialLockerService _credentialLockerService;
@@ -126,6 +127,7 @@ public class SettingsService : IUISettingsService, IDisposable
     public event Action<string>? LanguageChanged;
     public event Action? PlayerDesignSettingsChanged;
     public event Action<int>? SongsPerPageChanged;
+    public event Action? GenreSplitCharactersChanged;
 
     public bool IsTransparencyEffectsEnabled()
     {
@@ -185,7 +187,8 @@ public class SettingsService : IUISettingsService, IDisposable
             SetLanguageAsync(string.Empty),
             SetPlayerBackgroundMaterialAsync(SettingsDefaults.DefaultPlayerBackgroundMaterial),
             SetPlayerTintIntensityAsync(SettingsDefaults.DefaultPlayerTintIntensity),
-            SetSongsPerPageAsync(SettingsDefaults.DefaultSongsPerPage)
+            SetSongsPerPageAsync(SettingsDefaults.DefaultSongsPerPage),
+            SetGenreSplitCharactersAsync(SettingsDefaults.DefaultGenreSplitCharacters)
         };
 
         await Task.WhenAll(tasks).ConfigureAwait(false);
@@ -773,6 +776,21 @@ public class SettingsService : IUISettingsService, IDisposable
 
         await SetValueAsync(ArtistSplitCharactersKey, characters).ConfigureAwait(false);
         if (currentValue != characters) ArtistSplitCharactersChanged?.Invoke();
+    }
+
+    public async Task<string> GetGenreSplitCharactersAsync()
+    {
+        await EnsureUnpackagedSettingsLoadedAsync().ConfigureAwait(false);
+        return GetValue(GenreSplitCharactersKey, SettingsDefaults.DefaultGenreSplitCharacters);
+    }
+
+    public async Task SetGenreSplitCharactersAsync(string characters)
+    {
+        await EnsureUnpackagedSettingsLoadedAsync().ConfigureAwait(false);
+        var currentValue = GetValue(GenreSplitCharactersKey, SettingsDefaults.DefaultGenreSplitCharacters);
+
+        await SetValueAsync(GenreSplitCharactersKey, characters).ConfigureAwait(false);
+        if (currentValue != characters) GenreSplitCharactersChanged?.Invoke();
     }
 
     public async Task<string> GetLanguageAsync()

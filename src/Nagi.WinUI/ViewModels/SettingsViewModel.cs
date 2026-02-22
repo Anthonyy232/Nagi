@@ -133,6 +133,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     private CancellationTokenSource? _lyricsProviderSaveCts;
     private CancellationTokenSource? _metadataProviderSaveCts;
     private CancellationTokenSource? _artistSplitSaveCts;
+    private CancellationTokenSource? _genreSplitSaveCts;
     private CancellationTokenSource? _playerTintSaveCts;
     private CancellationTokenSource? _accentColorSaveCts;
 
@@ -237,18 +238,18 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     [ObservableProperty] public partial float EqualizerPreamp { get; set; }
     [ObservableProperty] public partial Windows.UI.Color AccentColor { get; set; }
     [ObservableProperty] public partial string ArtistSplitCharacters { get; set; } = string.Empty;
-
+    [ObservableProperty] public partial string GenreSplitCharacters { get; set; } = string.Empty;
     async partial void OnArtistSplitCharactersChanged(string value)
     {
         if (_isInitializing) return;
 
         var oldCts = _artistSplitSaveCts;
-        _artistSplitSaveCts = new CancellationTokenSource();
-        var token = _artistSplitSaveCts.Token;
-        
-        // Cancel and dispose the old CTS after creating the new one
+        // Cancel and dispose the old CTS
         oldCts?.Cancel();
         oldCts?.Dispose();
+
+        _artistSplitSaveCts = new CancellationTokenSource();
+        var token = _artistSplitSaveCts.Token;
 
         try
         {
@@ -259,6 +260,30 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error saving artist split characters");
+        }
+    }
+
+    async partial void OnGenreSplitCharactersChanged(string value)
+    {
+        if (_isInitializing) return;
+
+        var oldCts = _genreSplitSaveCts;
+        // Cancel and dispose the old CTS
+        oldCts?.Cancel();
+        oldCts?.Dispose();
+
+        _genreSplitSaveCts = new CancellationTokenSource();
+        var token = _genreSplitSaveCts.Token;
+
+        try
+        {
+            await Task.Delay(SettingsSaveDebounceMs, token);
+            await _settingsService.SetGenreSplitCharactersAsync(value);
+        }
+        catch (TaskCanceledException) { }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error saving genre split characters");
         }
     }
 
@@ -399,6 +424,8 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         _metadataProviderSaveCts?.Dispose();
         _artistSplitSaveCts?.Cancel();
         _artistSplitSaveCts?.Dispose();
+        _genreSplitSaveCts?.Cancel();
+        _genreSplitSaveCts?.Dispose();
         _playerTintSaveCts?.Cancel();
         _playerTintSaveCts?.Dispose();
         _accentColorSaveCts?.Cancel();
@@ -469,6 +496,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
             var accentColorTask = _settingsService.GetAccentColorAsync();
             var artistSplitTask = _settingsService.GetArtistSplitCharactersAsync();
+            var genreSplitTask = _settingsService.GetGenreSplitCharactersAsync();
             var languageTask = _settingsService.GetLanguageAsync();
 
             var lyricsProvidersTask = _settingsService.GetServiceProvidersAsync(ServiceCategory.Lyrics);
@@ -484,7 +512,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
                 hideToTrayTask, miniPlayerTask, trayFlyoutTask, onlineMetadataTask,
                 onlineLyricsTask, discordRpcTask, checkUpdatesTask, rememberWindowTask,
                 rememberPositionTask, rememberPaneTask, volumeNormTask, lastFmCredsTask, lastFmAuthTokenTask,
-                scrobblingTask, nowPlayingTask, accentColorTask, artistSplitTask, languageTask, lyricsProvidersTask, metadataProvidersTask,
+                scrobblingTask, nowPlayingTask, accentColorTask, artistSplitTask, genreSplitTask, languageTask, lyricsProvidersTask, metadataProvidersTask,
                 playerMaterialTask, playerTintTask, languagesTask);
 
             foreach (var item in navItemsTask.Result)
@@ -542,6 +570,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             }
 
             ArtistSplitCharacters = artistSplitTask.Result;
+            GenreSplitCharacters = genreSplitTask.Result;
 
             // Load languages dynamically
             AvailableLanguages.Clear();
