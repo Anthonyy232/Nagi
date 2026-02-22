@@ -27,6 +27,12 @@ public interface ISettingsService
     event Action<bool>? VolumeNormalizationEnabledChanged;
 
     /// <summary>
+    ///     Occurs when the fade on play/pause setting is changed.
+    ///     The boolean parameter indicates whether fading is enabled.
+    /// </summary>
+    event Action<bool>? FadeOnPlayPauseEnabledChanged;
+
+    /// <summary>
     ///     Occurs when the fetch online metadata setting is changed.
     ///     The boolean parameter indicates whether fetching online metadata is enabled.
     /// </summary>
@@ -260,6 +266,16 @@ public interface ISettingsService
     /// </summary>
     /// <param name="isEnabled">The preference to save.</param>
     Task SetVolumeNormalizationEnabledAsync(bool isEnabled);
+
+    /// <summary>
+    ///     Gets whether fade on play/pause is enabled.
+    /// </summary>
+    Task<bool> GetFadeOnPlayPauseEnabledAsync();
+
+    /// <summary>
+    ///     Sets the fade on play/pause preference.
+    /// </summary>
+    Task SetFadeOnPlayPauseEnabledAsync(bool isEnabled);
 
     /// <summary>
     ///     Resets all application-wide settings to their default values.

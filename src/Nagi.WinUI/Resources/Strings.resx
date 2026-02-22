@@ -1601,6 +1601,12 @@ Error: {1}</value>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
     <value>Automatically adjust volume to the standard level (-14 LUFS) to avoid sudden loudness changes.</value>
   </data>
+  <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
+    <value>Fade on Play / Pause</value>
+  </data>
+  <data name="SettingsPage_FadeOnPlayPause_Description" xml:space="preserve">
+    <value>Smoothly fade the volume in when resuming and out when pausing instead of cutting instantly.</value>
+  </data>
   <data name="SettingsPage_Equalizer" xml:space="preserve">
     <value>Audio Equalizer</value>
   </data>

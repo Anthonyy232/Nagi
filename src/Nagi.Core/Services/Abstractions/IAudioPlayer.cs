@@ -177,5 +177,11 @@ public interface IAudioPlayer : IDisposable
     /// <param name="gainDb">The gain adjustment in decibels. Use 0 for no adjustment.</param>
     Task SetReplayGainAsync(double gainDb);
 
+    /// <summary>
+    ///     Enables or disables the fade-in/fade-out effect on play and pause.
+    ///     When enabled, the volume ramps smoothly instead of cutting instantly.
+    /// </summary>
+    void SetFadeOnPlayPauseEnabled(bool isEnabled);
+
     #endregion
 }

@@ -45,10 +45,17 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     private bool _isDisposed;
     private bool _isExplicitStop; // Prevents false PlaybackEnded events on user/error stop
     private double _replayGainOffset; // Separate tracking of ReplayGain adjustment
-    
+
     // Default preamp of 10.0f is a safe neutral value within VLC's -20 to +20 dB range.
     // This gets overwritten by Equalizer.Preamp (typically 12.0f) once LibVLC initializes.
     private float _basePreamp = 10.0f;
+
+    // Fade support: tracks user-set volume separately from the live VLC volume so that
+    // fade animations do not propagate to the UI or persist to settings.
+    private double _userVolume = 1.0;
+    private volatile bool _isFading;
+    private volatile bool _isFadeOnPlayPauseEnabled;
+    private CancellationTokenSource? _fadeCts;
 
     /// <summary>
     ///     Creates a new instance. LibVLC initialization is deferred until first use.
@@ -163,7 +170,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     public bool IsPlaying => !_isDisposed && _isInitialized && (_mediaPlayer?.IsPlaying ?? false);
     public TimeSpan CurrentPosition => _isDisposed || !_isInitialized ? TimeSpan.Zero : TimeSpan.FromMilliseconds(Math.Max(0, _mediaPlayer?.Time ?? 0));
     public TimeSpan Duration => _isDisposed || !_isInitialized ? TimeSpan.Zero : TimeSpan.FromMilliseconds(Math.Max(0, _mediaPlayer?.Length ?? 0));
-    public double Volume => _isDisposed || !_isInitialized ? 0 : (_mediaPlayer?.Volume ?? 0) / 100.0;
+    public double Volume => _isDisposed || !_isInitialized ? 0 : _userVolume;
     public bool IsMuted => !_isDisposed && _isInitialized && (_mediaPlayer?.Mute ?? false);
 
     public void InitializeSmtc()
@@ -309,6 +316,13 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         EnsureInitialized();
         if (_isDisposed || _mediaPlayer is null) return;
 
+        // Cancel any ongoing fade (e.g. a fade-out from a previous pause that didn't complete)
+        var newPlayCts = new CancellationTokenSource();
+        var oldPlayCts = Interlocked.Exchange(ref _fadeCts, newPlayCts);
+        oldPlayCts?.Cancel();
+        oldPlayCts?.Dispose();
+        var fadeCt = newPlayCts.Token;
+
         await _vlcOperationLock.WaitAsync().ConfigureAwait(false);
         try
         {
@@ -320,6 +334,17 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
                 await Task.Run(() =>
                 {
                     if (_isDisposed) return;
+                    if (_isFadeOnPlayPauseEnabled)
+                    {
+                        // Silence before playing so fade-in starts from zero
+                        _isFading = true;
+                        _mediaPlayer!.SetVolume(0);
+                    }
+                    else
+                    {
+                        // Ensure VLC volume matches user volume; a prior fade-out could have left it at 0
+                        _mediaPlayer!.SetVolume((int)Math.Clamp(_userVolume * 100, 0, 100));
+                    }
                     _mediaPlayer!.Play();
                 }).ConfigureAwait(false);
             }
@@ -332,17 +357,48 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         {
             _vlcOperationLock.Release();
         }
+
+        if (_isFadeOnPlayPauseEnabled)
+            await FadeAsync(0.0, _userVolume, TimeSpan.FromMilliseconds(200), fadeCt).ConfigureAwait(false);
     }
 
-    public Task PauseAsync()
+    public async Task PauseAsync()
     {
-        if (_isDisposed || !_isInitialized || _mediaPlayer is null) return Task.CompletedTask;
+        if (_isDisposed || !_isInitialized || _mediaPlayer is null) return;
 
-        if (_mediaPlayer.CanPause)
-            _mediaPlayer.Pause();
-        else
-            _logger.LogWarning("Pause command received, but player cannot be paused in its current state.");
-        return Task.CompletedTask;
+        if (_isFadeOnPlayPauseEnabled)
+        {
+            var newPauseCts = new CancellationTokenSource();
+            var oldPauseCts = Interlocked.Exchange(ref _fadeCts, newPauseCts);
+            oldPauseCts?.Cancel();
+            oldPauseCts?.Dispose();
+            var fadeCt = newPauseCts.Token;
+
+            // Read the actual VLC volume as the starting point rather than _userVolume.
+            // If a fade-in was canceled mid-way (rapid play→pause), starting from _userVolume
+            // would cause VLC to briefly ramp up before fading out — an audible blip.
+            double fromVolume = Math.Clamp((_mediaPlayer?.Volume ?? 0) / 100.0, 0.0, _userVolume);
+            await FadeAsync(fromVolume, 0.0, TimeSpan.FromMilliseconds(150), fadeCt).ConfigureAwait(false);
+
+            if (_isDisposed || _mediaPlayer is null) return;
+        }
+
+        await _vlcOperationLock.WaitAsync().ConfigureAwait(false);
+        try
+        {
+            // Re-check after acquiring the lock: a stop or track change could have fired
+            // during the 150ms fade and invalidated the player state.
+            if (_isDisposed || _mediaPlayer is null) return;
+
+            if (_mediaPlayer.CanPause)
+                _mediaPlayer.Pause();
+            else
+                _logger.LogWarning("Pause command received, but player cannot be paused in its current state.");
+        }
+        finally
+        {
+            _vlcOperationLock.Release();
+        }
     }
 
     public async Task StopAsync()
@@ -350,10 +406,16 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         if (_isDisposed || !_isInitialized || _mediaPlayer is null) return;
 
         _logger.LogDebug("Stop command received.");
-        
+
+        // Cancel any active fade immediately so audio stops without delay
+        var oldStopCts = Interlocked.Exchange(ref _fadeCts, null);
+        oldStopCts?.Cancel();
+        oldStopCts?.Dispose();
+        _isFading = false;
+
         // Mark as explicit stop to prevent false PlaybackEnded in state changed handler
         _isExplicitStop = true;
-        
+
         // Cancel any pending load — no point loading media we're about to stop
         _loadCts?.Cancel();
 
@@ -436,9 +498,20 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
             return Task.CompletedTask;
         }
 
-        var vlcVolume = (int)Math.Clamp(volume * 100, 0, 100);
-        _mediaPlayer.SetVolume(vlcVolume);
+        // Cancel any in-progress fade so the user's explicit change takes effect immediately
+        var oldVolCts = Interlocked.Exchange(ref _fadeCts, null);
+        oldVolCts?.Cancel();
+        oldVolCts?.Dispose();
+        _isFading = false;
+
+        _userVolume = Math.Clamp(volume, 0.0, 1.0);
+        _mediaPlayer.SetVolume((int)Math.Clamp(_userVolume * 100, 0, 100));
         return Task.CompletedTask;
+    }
+
+    public void SetFadeOnPlayPauseEnabled(bool isEnabled)
+    {
+        _isFadeOnPlayPauseEnabled = isEnabled;
     }
 
     public Task SetMuteAsync(bool isMuted)
@@ -518,15 +591,61 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         _mediaPlayer.SetEqualizer(_equalizer);
     }
 
+    /// <summary>
+    ///     Ramps the VLC player volume from <paramref name="fromVolume"/> to <paramref name="toVolume"/>
+    ///     over <paramref name="duration"/>, suppressing <see cref="VolumeChanged"/> events throughout.
+    ///     Cancelling <paramref name="ct"/> aborts the ramp immediately.
+    /// </summary>
+    private async Task FadeAsync(double fromVolume, double toVolume, TimeSpan duration, CancellationToken ct)
+    {
+        if (_isDisposed || _mediaPlayer is null) return;
+
+        const int stepIntervalMs = 10;
+        int steps = Math.Max(1, (int)(duration.TotalMilliseconds / stepIntervalMs));
+        _isFading = true;
+        try
+        {
+            double delta = toVolume - fromVolume;
+
+            for (int i = 1; i <= steps; i++)
+            {
+                if (ct.IsCancellationRequested || _isDisposed) break;
+                // Equal-power curve: perceptually linear throughout the ramp.
+                // A linear ramp sounds like it snaps on at the end (fade-in) or cuts off
+                // at the start (fade-out) because human hearing is logarithmic.
+                double t = (double)i / steps;
+                double vol = fromVolume + delta * Math.Sin(t * Math.PI / 2.0);
+                _mediaPlayer?.SetVolume((int)Math.Clamp(vol * 100, 0, 100));
+                try { await Task.Delay(stepIntervalMs, ct).ConfigureAwait(false); }
+                catch (OperationCanceledException) { break; }
+            }
+
+            // Snap to target if we completed without cancellation
+            if (!ct.IsCancellationRequested && !_isDisposed)
+                _mediaPlayer?.SetVolume((int)Math.Clamp(toVolume * 100, 0, 100));
+        }
+        finally
+        {
+            // Only clear _isFading if this fade ran to completion.
+            // If canceled, the caller that canceled us (StopAsync, SetVolumeAsync) sets
+            // _isFading = false itself, or a new FadeAsync is already running and owns the flag.
+            // Clearing here on cancellation would race with the new fade's _isFading = true.
+            if (!ct.IsCancellationRequested)
+                _isFading = false;
+        }
+    }
+
     public void Dispose()
     {
         if (_isDisposed) return;
 
         // Signal disposal intent immediately so any in-progress initialization can check
         _disposeCts.Cancel();
-        
-        // Cancel any pending load operations
+
+        // Cancel any pending load or fade operations
         _loadCts?.Cancel();
+        _fadeCts?.Cancel();
+        _fadeCts?.Dispose();
 
         // Wait for semaphore to ensure we don't race with initialization.
         // Use a reasonable timeout to prevent indefinite blocking, but if timeout occurs,
@@ -724,10 +843,10 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
 
     private void OnMediaPlayerVolumeChanged(object? sender, MediaPlayerVolumeChangedEventArgs e)
     {
-        if (_isDisposed) return;
+        if (_isDisposed || _isFading) return;
         _dispatcherService.TryEnqueue(() =>
         {
-            if (_isDisposed) return;
+            if (_isDisposed || _isFading) return;
             VolumeChanged?.Invoke();
         });
     }

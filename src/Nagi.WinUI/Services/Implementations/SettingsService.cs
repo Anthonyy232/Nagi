@@ -65,6 +65,7 @@ public class SettingsService : IUISettingsService, IDisposable
     private const string RememberPaneStateEnabledKey = "RememberPaneStateEnabled";
     private const string LastPaneOpenKey = "LastPaneOpen";
     private const string VolumeNormalizationEnabledKey = "VolumeNormalizationEnabled";
+    private const string FadeOnPlayPauseEnabledKey = "FadeOnPlayPauseEnabled";
     private const string AccentColorKey = "AccentColor";
     private const string LyricsServiceProvidersKey = "LyricsServiceProviders";
     private const string MetadataServiceProvidersKey = "MetadataServiceProviders";
@@ -118,6 +119,7 @@ public class SettingsService : IUISettingsService, IDisposable
     public event Action? LastFmSettingsChanged;
     public event Action<bool>? DiscordRichPresenceSettingChanged;
     public event Action<bool>? VolumeNormalizationEnabledChanged;
+    public event Action<bool>? FadeOnPlayPauseEnabledChanged;
     public event Action<bool>? TransparencyEffectsSettingChanged;
     public event Action<BackdropMaterial>? BackdropMaterialChanged;
     public event Action<bool>? FetchOnlineMetadataEnabledChanged;
@@ -182,6 +184,7 @@ public class SettingsService : IUISettingsService, IDisposable
             SetRememberWindowPositionEnabledAsync(SettingsDefaults.RememberWindowPositionEnabled),
             SetRememberPaneStateEnabledAsync(SettingsDefaults.RememberPaneStateEnabled),
             SetVolumeNormalizationEnabledAsync(SettingsDefaults.VolumeNormalizationEnabled),
+            SetFadeOnPlayPauseEnabledAsync(SettingsDefaults.FadeOnPlayPauseEnabled),
             SetAccentColorAsync(SettingsDefaults.AccentColor),
             SetArtistSplitCharactersAsync(SettingsDefaults.DefaultArtistSplitCharacters),
             SetLanguageAsync(string.Empty),
@@ -1323,6 +1326,18 @@ public class SettingsService : IUISettingsService, IDisposable
     {
         return SetValueAndNotifyAsync(VolumeNormalizationEnabledKey, isEnabled, SettingsDefaults.VolumeNormalizationEnabled,
             VolumeNormalizationEnabledChanged);
+    }
+
+    public async Task<bool> GetFadeOnPlayPauseEnabledAsync()
+    {
+        await EnsureUnpackagedSettingsLoadedAsync().ConfigureAwait(false);
+        return GetValue(FadeOnPlayPauseEnabledKey, SettingsDefaults.FadeOnPlayPauseEnabled);
+    }
+
+    public Task SetFadeOnPlayPauseEnabledAsync(bool isEnabled)
+    {
+        return SetValueAndNotifyAsync(FadeOnPlayPauseEnabledKey, isEnabled, SettingsDefaults.FadeOnPlayPauseEnabled,
+            FadeOnPlayPauseEnabledChanged);
     }
 
     public async Task<TEnum> GetSortOrderAsync<TEnum>(string pageKey) where TEnum : struct, Enum

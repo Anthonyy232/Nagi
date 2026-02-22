@@ -54,6 +54,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         _audioPlayer.SmtcPreviousButtonPressed += OnAudioPlayerSmtcPreviousButtonPressed;
 
         _settingsService.VolumeNormalizationEnabledChanged += OnVolumeNormalizationEnabledChanged;
+        _settingsService.FadeOnPlayPauseEnabledChanged += OnFadeOnPlayPauseEnabledChanged;
 
         EqualizerBands = _audioPlayer.GetEqualizerBands();
     }
@@ -121,13 +122,15 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
             var repeatTask = _settingsService.GetInitialRepeatModeAsync();
             var eqTask = _settingsService.GetEqualizerSettingsAsync();
             var restoreEnabledTask = _settingsService.GetRestorePlaybackStateEnabledAsync();
+            var fadeTask = _settingsService.GetFadeOnPlayPauseEnabledAsync();
             // Phase 2: Optimistically start reading playback state in parallel
             var playbackStateTask = _settingsService.GetPlaybackStateAsync();
 
-            await Task.WhenAll(volumeTask, muteTask, shuffleTask, repeatTask, eqTask, restoreEnabledTask, playbackStateTask).ConfigureAwait(false);
+            await Task.WhenAll(volumeTask, muteTask, shuffleTask, repeatTask, eqTask, restoreEnabledTask, fadeTask, playbackStateTask).ConfigureAwait(false);
 
             await _audioPlayer.SetVolumeAsync(volumeTask.Result).ConfigureAwait(false);
             await _audioPlayer.SetMuteAsync(muteTask.Result).ConfigureAwait(false);
+            _audioPlayer.SetFadeOnPlayPauseEnabled(fadeTask.Result);
             IsShuffleEnabled = shuffleTask.Result;
             CurrentRepeatMode = repeatTask.Result;
 
@@ -1049,6 +1052,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         _audioPlayer.SmtcNextButtonPressed -= OnAudioPlayerSmtcNextButtonPressed;
         _audioPlayer.SmtcPreviousButtonPressed -= OnAudioPlayerSmtcPreviousButtonPressed;
         _settingsService.VolumeNormalizationEnabledChanged -= OnVolumeNormalizationEnabledChanged;
+        _settingsService.FadeOnPlayPauseEnabledChanged -= OnFadeOnPlayPauseEnabledChanged;
         
         _isDisposed = true;
         GC.SuppressFinalize(this);
@@ -1450,5 +1454,10 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         FireAndForgetSafe(
             async () => await ApplyReplayGainIfEnabledAsync(isEnabled).ConfigureAwait(false),
             "ReplayGain settings change");
+    }
+
+    private void OnFadeOnPlayPauseEnabledChanged(bool isEnabled)
+    {
+        _audioPlayer.SetFadeOnPlayPauseEnabled(isEnabled);
     }
 }
