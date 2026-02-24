@@ -1595,6 +1595,12 @@
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
     <value>হঠাৎ শব্দের পরিবর্তন এড়াতে স্বয়ংক্রিয়ভাবে ভলিউমকে স্ট্যান্ডার্ড লেভেলে (-14 LUFS) সামঞ্জস্য করুন।</value>
   </data>
+  <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
+    <value>Fade on Play / Pause</value>
+  </data>
+  <data name="SettingsPage_FadeOnPlayPause_Description" xml:space="preserve">
+    <value>Smoothly fade the volume in when resuming and out when pausing instead of cutting instantly.</value>
+  </data>
   <data name="SettingsPage_Equalizer" xml:space="preserve">
     <value>অডিও ইকুয়ালাইজার</value>
   </data>
@@ -1666,6 +1672,12 @@
   </data>
   <data name="SettingsPage_ArtistSplitting_Description" xml:space="preserve">
     <value>একাধিক শিল্পীকে বিভাজন করতে ব্যবহৃত অক্ষরগুলি সংজ্ঞায়িত করুন (উদাহরণস্বরূপ ';/')। নিষ্ক্রিয় করতে খালি রাখুন।</value>
+  </data>
+  <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
+    <value>Genre Splitting</value>
+  </data>
+  <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
+    <value>Define characters used to split multiple genres (e.g. ';/'). Leave empty to disable.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>লাইব্রেরি পুনরায় স্ক্যান করুন</value>
@@ -1858,5 +1870,77 @@
   </data>
   <data name="SettingsPage_RestartRequired_Message" xml:space="preserve">
     <value>ভাষার পরিবর্তন সম্পূর্ণরূপে কার্যকর হওয়ার জন্য দয়া করে অ্যাপ্লিকেশনটি পুনরায় চালু করুন।</value>
+  </data>
+  <data name="SettingsPage_About_PrivacyPolicy_Content" xml:space="preserve">
+    <value>Privacy Policy</value>
+  </data>
+  <data name="SettingsPage_BackupRestore_Header" xml:space="preserve">
+    <value>Backup &amp; Restore</value>
+  </data>
+  <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
+    <value>Create backups of your music library and settings, or restore from a previous backup</value>
+  </data>
+  <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
+    <value>Create Backup</value>
+  </data>
+  <data name="SettingsPage_RestoreBackup_Content" xml:space="preserve">
+    <value>Restore Backup</value>
+  </data>
+  <data name="Settings_Backup_Success_Title" xml:space="preserve">
+    <value>Backup Created</value>
+  </data>
+  <data name="Settings_Backup_Success_Message" xml:space="preserve">
+    <value>Successfully created backup ({0:F2} MB) at: {1}</value>
+  </data>
+  <data name="Settings_Backup_Failed_Title" xml:space="preserve">
+    <value>Backup Failed</value>
+  </data>
+  <data name="Settings_Backup_Failed_Message" xml:space="preserve">
+    <value>Failed to create backup. Please try again.</value>
+  </data>
+  <data name="Settings_Restore_Invalid_Title" xml:space="preserve">
+    <value>Invalid Backup File</value>
+  </data>
+  <data name="Settings_Restore_Invalid_Message" xml:space="preserve">
+    <value>The selected file is not a valid Nagi backup.</value>
+  </data>
+  <data name="Settings_Restore_Confirm_Title" xml:space="preserve">
+    <value>Restore Backup?</value>
+  </data>
+  <data name="Settings_Restore_Confirm_Message" xml:space="preserve">
+    <value>Restoring from backup will replace all current app data. This action cannot be undone. The app will restart after restore. Continue?</value>
+  </data>
+  <data name="Settings_Restore_Confirm_Button" xml:space="preserve">
+    <value>Restore</value>
+  </data>
+  <data name="Settings_Restore_Success_Title" xml:space="preserve">
+    <value>Restore Complete</value>
+  </data>
+  <data name="Settings_Restore_Success_Message" xml:space="preserve">
+    <value>Successfully restored backup. The app will now restart.</value>
+  </data>
+  <data name="Settings_Restore_Failed_Title" xml:space="preserve">
+    <value>Restore Failed</value>
+  </data>
+  <data name="Settings_Restore_Failed_Message" xml:space="preserve">
+    <value>Failed to restore from backup. Your data was not modified.</value>
+  </data>
+  <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
+    <value>Player Styling</value>
+  </data>
+  <data name="PlayerBackgroundMaterial_Acrylic" xml:space="preserve">
+    <value>Acrylic (Glass)</value>
+  </data>
+  <data name="PlayerBackgroundMaterial_Solid" xml:space="preserve">
+    <value>Solid (Opaque)</value>
+  </data>
+  <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
+    <value>Customize the appearance of the floating player</value>
+  </data>
+  <data name="SettingsPage_TintIntensity_Header" xml:space="preserve">
+    <value>Tint Intensity</value>
+  </data>
+  <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
+    <value>Adjusts the vibrancy of the player background color</value>
   </data>
 </root>

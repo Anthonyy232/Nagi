@@ -107,6 +107,9 @@
   <data name="Label_Songs" xml:space="preserve">
     <value>歌曲</value>
   </data>
+  <data name="Label_Artists" xml:space="preserve">
+    <value>艺术家</value>
+  </data>
   <data name="Label_Song" xml:space="preserve">
     <value>歌曲</value>
   </data>
@@ -227,6 +230,9 @@
   </data>
   <data name="Label_WithCoverArt" xml:space="preserve">
     <value>带封面艺术</value>
+  </data>
+  <data name="Label_WithArtistImage" xml:space="preserve">
+    <value>带有艺人的图像</value>
   </data>
   <data name="Label_And" xml:space="preserve">
     <value>和</value>
