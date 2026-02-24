@@ -626,7 +626,12 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             LoadEqualizerState();
             
             // Load service providers
-            LyricsProviders.ReplaceRange(lyricsProvidersTask.Result.Select(ServiceProviderSettingViewModel.FromSetting));
+            var lyricsMapped = lyricsProvidersTask.Result
+                .Select(ServiceProviderSettingViewModel.FromSetting)
+                .ToList();
+            foreach (var item in lyricsMapped)
+                item.PropertyChanged += OnLyricsProviderPropertyChanged;
+            LyricsProviders.ReplaceRange(lyricsMapped);
 
             var metadataProviders = metadataProvidersTask.Result
                 .Select(ServiceProviderSettingViewModel.FromSetting)
@@ -640,6 +645,8 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
                 metadataProviders.Insert(0, mbProvider);
             }
 
+            foreach (var item in metadataProviders)
+                item.PropertyChanged += OnMetadataProviderPropertyChanged;
             MetadataProviders.ReplaceRange(metadataProviders);
             _isLoaded = true;
         }
