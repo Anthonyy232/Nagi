@@ -490,8 +490,6 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
             }
             await Task.Delay(TimeSpan.FromSeconds(1), earlyCancelToken).ConfigureAwait(false);
 
-            _logger.LogDebug("Pre-fetching lyrics for next track: {Title}", nextSong.Title);
-
             lock (_lyricsFetchLock)
             {
                 if (_lyricsFetchCts == null || _isDisposed) return;
