@@ -23,6 +23,13 @@ public interface ILrcService
     Task<ParsedLrc?> GetLyricsAsync(string lrcFilePath);
 
     /// <summary>
+    ///     Parses a raw LRC string into a ParsedLrc object, which may contain synced or unsynced lyrics.
+    /// </summary>
+    /// <param name="lrcContent">The raw LRC string content.</param>
+    /// <returns>A ParsedLrc object containing the parsed lyrics.</returns>
+    ParsedLrc ParseLyrics(string? lrcContent);
+
+    /// <summary>
     ///     Gets the current lyric line based on the playback time.
     /// </summary>
     /// <param name="parsedLrc">The parsed LRC data.</param>

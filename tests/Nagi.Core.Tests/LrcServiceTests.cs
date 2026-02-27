@@ -117,6 +117,27 @@ public class LrcServiceTests
     }
 
     /// <summary>
+    ///     Verifies that language prefixes like "eng||" at the start of the content are stripped.
+    /// </summary>
+    [Fact]
+    public void ParseLyrics_WithLanguagePrefix_StripsPrefix()
+    {
+        // Arrange
+        var content = "eng||[00:01.00]Line 1\n[00:02.00]Line 2";
+
+        // Act
+        var result = _lrcService.ParseLyrics(content);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.Lines.Should().HaveCount(2);
+        result.Lines[0].Text.Should().Be("Line 1");
+        result.Lines[0].StartTime.Should().Be(TimeSpan.FromSeconds(1));
+        result.Lines[1].Text.Should().Be("Line 2");
+        result.Lines[1].StartTime.Should().Be(TimeSpan.FromSeconds(2));
+    }
+
+    /// <summary>
     ///     Verifies that reading an empty LRC file results in a valid, but empty,
     ///     <see cref="ParsedLrc" /> object.
     /// </summary>

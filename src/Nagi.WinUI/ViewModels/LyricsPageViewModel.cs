@@ -333,7 +333,22 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
             if (fullSong is not null && !string.IsNullOrWhiteSpace(fullSong.Lyrics))
             {
                 _logger.LogDebug("Using embedded lyrics for track '{SongTitle}'", song.Title);
-                var embeddedLines = ParseUnsyncedLyricsToLines(fullSong.Lyrics);
+                var parsedEmbedded = _lrcService.ParseLyrics(fullSong.Lyrics);
+                
+                if (parsedEmbedded is not null && !parsedEmbedded.IsEmpty)
+                {
+                    _dispatcherService.TryEnqueue(() =>
+                    {
+                        if (cancellationToken.IsCancellationRequested || _isDisposed) return;
+                        _parsedLrc = parsedEmbedded;
+                        LyricLines.AddRange(parsedEmbedded.Lines);
+                        HasLyrics = true;
+                        IsLoading = false;
+                        UpdateCurrentLineFromPosition(_playbackService.CurrentPosition);
+                    });
+                    return;
+                }
+                var embeddedLines = ParseUnsyncedLyricsToLines(parsedEmbedded?.RawUnsyncedLyrics ?? fullSong.Lyrics);
                 _dispatcherService.TryEnqueue(() =>
                 {
                     if (cancellationToken.IsCancellationRequested || _isDisposed) return;
@@ -401,6 +416,9 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
     /// </summary>
     private static List<string> ParseUnsyncedLyricsToLines(string rawLyrics)
     {
+        // Strip language prefixes like "eng||" or "jpn||" at the start of the text
+        rawLyrics = LanguagePrefixRegex().Replace(rawLyrics, string.Empty);
+
         // Normalize different line ending styles to \n
         var normalized = rawLyrics
             .Replace("\r\n", "\n")
@@ -501,6 +519,9 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
     
     [GeneratedRegex(@"\n{3,}")]
     private static partial Regex MultipleNewlines();
+
+    [GeneratedRegex(@"^[a-z]{2,3}\|\|", RegexOptions.IgnoreCase)]
+    private static partial Regex LanguagePrefixRegex();
 
     private async Task<Song?> GetNextSongInQueueAsync()
     {
