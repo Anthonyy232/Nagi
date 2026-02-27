@@ -56,121 +56,109 @@ public class LrcService : ILrcService, IDisposable
             return await GetLyricsAsync(song.LrcFilePath).ConfigureAwait(false);
 
         // 2. Try online fallback if enabled AND never checked before
-        var neverChecked = song.LyricsLastCheckedUtc == null;
-        if (neverChecked && await _settingsService.GetFetchOnlineLyricsEnabledAsync().ConfigureAwait(false))
+        if (song.LyricsLastCheckedUtc != null || !await _settingsService.GetFetchOnlineLyricsEnabledAsync().ConfigureAwait(false))
+            return null;
+
+        CancellationToken settingsToken;
+        lock (_ctsLock)
         {
-            CancellationToken settingsToken;
-            lock (_ctsLock)
+            if (_disposed) return null;
+            settingsToken = _settingsCts.Token;
+        }
+
+        // Use a linked token source to handle both caller cancellation AND settings toggle
+        using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, settingsToken);
+        var token = linkedCts.Token;
+
+        // Check for cancellation before making any online calls
+        if (token.IsCancellationRequested)
+            return null;
+
+        if (enabledProviders.Count > 0)
+        {
+            // Start all enabled provider tasks in parallel for speed
+            var tasks = new Dictionary<string, Task<string?>>();
+            foreach (var provider in enabledProviders)
             {
-                if (_disposed) return null;
-                settingsToken = _settingsCts.Token;
-            }
-
-            // Use a linked token source to handle both caller cancellation AND settings toggle
-            using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, settingsToken);
-            var token = linkedCts.Token;
-
-            // Check for cancellation before making any online calls
-            if (token.IsCancellationRequested)
-                return null;
-
-            // Get enabled providers sorted by priority
-            var enabledProviders = await _settingsService.GetEnabledServiceProvidersAsync(Models.ServiceCategory.Lyrics).ConfigureAwait(false);
-
-            var anyProviderSuccess = false;
-            if (enabledProviders.Count == 0)
-            {
-                _logger.LogDebug("No lyrics providers enabled. Skipping online fetch for '{Title}'.", song.Title);
-            }
-            else
-            {
-                _logger.LogDebug("Using lyrics providers for '{Title}': {Providers}", 
-                    song.Title, string.Join(", ", enabledProviders.Select(p => p.Id)));
-                // Start all enabled provider tasks in parallel for speed
-                var tasks = new Dictionary<string, Task<string?>>();
-                foreach (var provider in enabledProviders)
+                try
                 {
-                    try
+                    tasks[provider.Id] = provider.Id switch
                     {
-                        tasks[provider.Id] = provider.Id switch
-                        {
-                            ServiceProviderIds.LrcLib => _onlineLyricsService.GetLyricsAsync(
-                                song.Title, song.PrimaryArtistName, song.Album?.Title, song.Duration, token),
-                            ServiceProviderIds.NetEase => _netEaseLyricsService.SearchLyricsAsync(
-                                song.Title, song.PrimaryArtistName, token),
-                             _ => LogUnknownProviderAndReturnNull(provider.Id)
-                        };
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex, "Failed to initiate lyrics fetch for provider {Provider}", provider.DisplayName);
-                    }
+                        ServiceProviderIds.LrcLib => _onlineLyricsService.GetLyricsAsync(
+                            song.Title, song.PrimaryArtistName, song.Album?.Title, song.Duration, token),
+                        ServiceProviderIds.NetEase => _netEaseLyricsService.SearchLyricsAsync(
+                            song.Title, song.PrimaryArtistName, token),
+                         _ => LogUnknownProviderAndReturnNull(provider.Id)
+                    };
                 }
-
-                // Evaluate results in priority order (but all tasks already running in parallel)
-                string? lrcContent = null;
-                foreach (var provider in enabledProviders)
+                catch (Exception ex)
                 {
-                    if (!tasks.TryGetValue(provider.Id, out var task)) continue;
-                    
-                    try
+                    _logger.LogError(ex, "Failed to initiate lyrics fetch for provider {Provider}", provider.DisplayName);
+                }
+            }
+
+            // Evaluate results in priority order (but all tasks already running in parallel)
+            string? lrcContent = null;
+            foreach (var provider in enabledProviders)
+            {
+                if (!tasks.TryGetValue(provider.Id, out var task)) continue;
+                
+                try
+                {
+                    var result = await task.ConfigureAwait(false);
+                    anyProviderSuccess = true;
+                    if (!string.IsNullOrWhiteSpace(result))
                     {
-                        var result = await task.ConfigureAwait(false);
-                        anyProviderSuccess = true;
-                        if (!string.IsNullOrWhiteSpace(result))
-                        {
-                            lrcContent = result;
-                            _logger.LogDebug("Found lyrics for '{Title}' from {Provider}.", song.Title, provider.DisplayName);
-                            break;
-                        }
-                    }
-                    catch (OperationCanceledException)
-                    {
-                        // Expected when token is cancelled
+                        lrcContent = result;
                         break;
                     }
-                    catch (Exception ex)
-                    {
-                        _logger.LogDebug(ex, "Lyrics provider {Provider} failed for '{Title}'.", provider.DisplayName, song.Title);
-                    }
                 }
-
-                // Fire-and-forget pattern: Observe remaining tasks to prevent UnobservedTaskException.
-                // We use ContinueWith with a static lambda to avoid closure allocations. The logger is
-                // passed via state parameter. NotOnRanToCompletion ensures we only handle faults/cancellations.
-                foreach (var kvp in tasks)
+                catch (OperationCanceledException)
                 {
-                    if (kvp.Value.IsCompleted) continue;
-                    _ = kvp.Value.ContinueWith(
-                        static (t, state) =>
-                        {
-                            if (t.IsFaulted)
-                            {
-                                var logger = (ILogger<LrcService>)state!;
-                                logger.LogDebug(t.Exception?.InnerException, "Lyrics task faulted (ignored, already resolved)");
-                            }
-                        },
-                        _logger,
-                        TaskContinuationOptions.NotOnRanToCompletion);
+                    // Expected when token is cancelled
+                    break;
                 }
-
-                if (!string.IsNullOrWhiteSpace(lrcContent))
+                catch (Exception ex)
                 {
-                    // Cache the lyrics for future use
-                    await CacheLyricsAsync(song, lrcContent).ConfigureAwait(false);
-
-                    // Parse the downloaded lyrics string
-                    return ParseLyrics(lrcContent);
+                    _logger.LogDebug(ex, "Lyrics provider {Provider} failed for '{Title}'.", provider.DisplayName, song.Title);
                 }
             }
-            
-            // Only mark as checked if providers were attempted AND operation wasn't cancelled.
-            // This allows retry if providers are enabled later or if the fetch was cancelled.
-            if (enabledProviders.Count > 0 && !token.IsCancellationRequested && anyProviderSuccess)
+
+            // Fire-and-forget pattern: Observe remaining tasks to prevent UnobservedTaskException.
+            // We use ContinueWith with a static lambda to avoid closure allocations. The logger is
+            // passed via state parameter. NotOnRanToCompletion ensures we only handle faults/cancellations.
+            foreach (var kvp in tasks)
             {
-                await _libraryWriter.UpdateSongLyricsLastCheckedAsync(song.Id).ConfigureAwait(false);
-                song.LyricsLastCheckedUtc = DateTime.UtcNow;
+                if (kvp.Value.IsCompleted) continue;
+                _ = kvp.Value.ContinueWith(
+                    static (t, state) =>
+                    {
+                        if (t.IsFaulted)
+                        {
+                            var logger = (ILogger<LrcService>)state!;
+                            logger.LogDebug(t.Exception?.InnerException, "Lyrics task faulted (ignored, already resolved)");
+                        }
+                    },
+                    _logger,
+                    TaskContinuationOptions.NotOnRanToCompletion);
             }
+
+            if (!string.IsNullOrWhiteSpace(lrcContent))
+            {
+                // Cache the lyrics for future use
+                await CacheLyricsAsync(song, lrcContent).ConfigureAwait(false);
+
+                // Parse the downloaded lyrics string
+                return ParseLyrics(lrcContent);
+            }
+        }
+        
+        // Only mark as checked if providers were attempted AND operation wasn't cancelled.
+        // This allows retry if providers are enabled later or if the fetch was cancelled.
+        if (enabledProviders.Count > 0 && !token.IsCancellationRequested && anyProviderSuccess)
+        {
+            await _libraryWriter.UpdateSongLyricsLastCheckedAsync(song.Id).ConfigureAwait(false);
+            song.LyricsLastCheckedUtc = DateTime.UtcNow;
         }
 
         return null;
