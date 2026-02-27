@@ -160,7 +160,7 @@ public class LrcService : ILrcService, IDisposable
                     await CacheLyricsAsync(song, lrcContent).ConfigureAwait(false);
 
                     // Parse the downloaded lyrics string
-                    return ParseLrcContent(lrcContent);
+                    return ParseLyrics(lrcContent);
                 }
             }
             
@@ -184,7 +184,7 @@ public class LrcService : ILrcService, IDisposable
         try
         {
             var fileContent = await _fileSystemService.ReadAllTextAsync(lrcFilePath).ConfigureAwait(false);
-            return ParseLrcContent(fileContent);
+            return ParseLyrics(fileContent);
         }
         catch (Exception ex)
         {
@@ -224,12 +224,15 @@ public class LrcService : ILrcService, IDisposable
         return Task.FromResult<string?>(null);
     }
 
-    private ParsedLrc ParseLrcContent(string? content)
+    public ParsedLrc ParseLyrics(string? content)
     {
         if (string.IsNullOrWhiteSpace(content)) return new ParsedLrc(Enumerable.Empty<LyricLine>());
 
         try
         {
+            // Strip language prefixes like "eng||" at the start (common in some ID3 tag formats)
+            content = Regex.Replace(content, @"^[a-z]{2,3}\|\|", string.Empty, RegexOptions.IgnoreCase);
+
             // Normalize NetEase-style 3-digit milliseconds ([mm:ss.fff]) to 2-digit ([mm:ss.ff]) 
             // for better compatibility with standard LRC parsers.
             content = Regex.Replace(content, @"\[(\d{2}:\d{2}\.\d{2})\d\]", "[$1]");
