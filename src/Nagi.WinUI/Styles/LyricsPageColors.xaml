@@ -17,11 +17,11 @@
     </Style>
 
     <Style x:Key="ActiveLyricTextBlockStyle" TargetType="TextBlock" BasedOn="{StaticResource InactiveLyricLineStyle}">
-        <Setter Property="FontSize" Value="28" />
+        <Setter Property="FontSize" Value="24" />
         <Setter Property="Foreground" Value="{StaticResource AppPrimaryColorBrush}" />
         <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="Opacity" Value="1.0" />
-        <Setter Property="LineHeight" Value="40" />
+        <Setter Property="LineHeight" Value="34" />
     </Style>
 
     <Style x:Key="LyricsListViewItemStyle" TargetType="ListViewItem">

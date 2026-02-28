@@ -27,7 +27,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
     ///     The base for the exponential fade. A value closer to 1.0 (e.g., 0.9) means a
     ///     very slow and gradual fade. A smaller value (e.g., 0.75) means a faster fade.
     /// </summary>
-    private const double GradualFadeBase = 0.65;
+    private const double GradualFadeBase = 0.75;
 
     /// <summary>
     ///     The minimum opacity a line can have, ensuring it's never fully invisible.
