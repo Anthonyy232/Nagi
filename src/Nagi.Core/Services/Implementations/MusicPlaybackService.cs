@@ -55,6 +55,8 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
 
         _settingsService.VolumeNormalizationEnabledChanged += OnVolumeNormalizationEnabledChanged;
         _settingsService.FadeOnPlayPauseEnabledChanged += OnFadeOnPlayPauseEnabledChanged;
+        _settingsService.FadeInDurationChanged += OnFadeInDurationChanged;
+        _settingsService.FadeOutDurationChanged += OnFadeOutDurationChanged;
 
         EqualizerBands = _audioPlayer.GetEqualizerBands();
     }
@@ -122,22 +124,26 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
             var repeatTask = _settingsService.GetInitialRepeatModeAsync();
             var eqTask = _settingsService.GetEqualizerSettingsAsync();
             var restoreEnabledTask = _settingsService.GetRestorePlaybackStateEnabledAsync();
-            var fadeTask = _settingsService.GetFadeOnPlayPauseEnabledAsync();
+            var fadeEnabledTask = _settingsService.GetFadeOnPlayPauseEnabledAsync();
+            var fadeInTask = _settingsService.GetFadeInDurationMsAsync();
+            var fadeOutTask = _settingsService.GetFadeOutDurationMsAsync();
             // Phase 2: Optimistically start reading playback state in parallel
             var playbackStateTask = _settingsService.GetPlaybackStateAsync();
 
-            await Task.WhenAll(volumeTask, muteTask, shuffleTask, repeatTask, eqTask, restoreEnabledTask, fadeTask, playbackStateTask).ConfigureAwait(false);
+            await Task.WhenAll(volumeTask, muteTask, shuffleTask, repeatTask, eqTask, restoreEnabledTask, fadeEnabledTask, fadeInTask, fadeOutTask, playbackStateTask).ConfigureAwait(false);
 
             await _audioPlayer.SetVolumeAsync(volumeTask.Result).ConfigureAwait(false);
             await _audioPlayer.SetMuteAsync(muteTask.Result).ConfigureAwait(false);
-            _audioPlayer.SetFadeOnPlayPauseEnabled(fadeTask.Result);
+            _audioPlayer.SetFadeOnPlayPauseEnabled(fadeEnabledTask.Result);
+            _audioPlayer.SetFadeInDuration(fadeInTask.Result);
+            _audioPlayer.SetFadeOutDuration(fadeOutTask.Result);
             IsShuffleEnabled = shuffleTask.Result;
             CurrentRepeatMode = repeatTask.Result;
 
             CurrentEqualizerSettings = eqTask.Result;
             if (CurrentEqualizerSettings != null && CurrentEqualizerSettings.BandGains.Count != EqualizerBands.Count)
             {
-                _logger.LogWarning("Equalizer settings mismatched (Saved: {SavedCount}, Required: {RequiredCount}). Resetting to default.", 
+                _logger.LogWarning("Equalizer settings band count ({SavedCount}) does not match available bands ({AvailableCount}). Resetting equalizer to default.", 
                     CurrentEqualizerSettings.BandGains.Count, EqualizerBands.Count);
                 
                 CurrentEqualizerSettings = null; // Force recreation below
@@ -1053,6 +1059,8 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         _audioPlayer.SmtcPreviousButtonPressed -= OnAudioPlayerSmtcPreviousButtonPressed;
         _settingsService.VolumeNormalizationEnabledChanged -= OnVolumeNormalizationEnabledChanged;
         _settingsService.FadeOnPlayPauseEnabledChanged -= OnFadeOnPlayPauseEnabledChanged;
+        _settingsService.FadeInDurationChanged -= OnFadeInDurationChanged;
+        _settingsService.FadeOutDurationChanged -= OnFadeOutDurationChanged;
         
         _isDisposed = true;
         GC.SuppressFinalize(this);
@@ -1459,5 +1467,15 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
     private void OnFadeOnPlayPauseEnabledChanged(bool isEnabled)
     {
         _audioPlayer.SetFadeOnPlayPauseEnabled(isEnabled);
+    }
+    
+    private void OnFadeInDurationChanged(int durationMs)
+    {
+        _audioPlayer.SetFadeInDuration(durationMs);
+    }
+    
+    private void OnFadeOutDurationChanged(int durationMs)
+    {
+        _audioPlayer.SetFadeOutDuration(durationMs);
     }
 }

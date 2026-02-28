@@ -237,6 +237,8 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     [ObservableProperty] public partial bool IsRememberPaneStateEnabled { get; set; }
     [ObservableProperty] public partial bool IsVolumeNormalizationEnabled { get; set; }
     [ObservableProperty] public partial bool IsFadeOnPlayPauseEnabled { get; set; }
+    [ObservableProperty] public partial double FadeInDurationMs { get; set; }
+    [ObservableProperty] public partial double FadeOutDurationMs { get; set; }
     [ObservableProperty] public partial float EqualizerPreamp { get; set; }
     [ObservableProperty] public partial Windows.UI.Color AccentColor { get; set; }
     [ObservableProperty] public partial string ArtistSplitCharacters { get; set; } = string.Empty;
@@ -492,6 +494,8 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             var rememberPaneTask = _settingsService.GetRememberPaneStateEnabledAsync();
             var volumeNormTask = _settingsService.GetVolumeNormalizationEnabledAsync();
             var fadeTask = _settingsService.GetFadeOnPlayPauseEnabledAsync();
+            var fadeInTask = _settingsService.GetFadeInDurationMsAsync();
+            var fadeOutTask = _settingsService.GetFadeOutDurationMsAsync();
             var lastFmCredsTask = _settingsService.GetLastFmCredentialsAsync();
             var lastFmAuthTokenTask = _settingsService.GetLastFmAuthTokenAsync();
             var scrobblingTask = _settingsService.GetLastFmScrobblingEnabledAsync();
@@ -514,7 +518,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
                 playerAnimationTask, restorePlaybackTask, autoLaunchTask, startMinimizedTask,
                 hideToTrayTask, miniPlayerTask, trayFlyoutTask, onlineMetadataTask,
                 onlineLyricsTask, discordRpcTask, checkUpdatesTask, rememberWindowTask,
-                rememberPositionTask, rememberPaneTask, volumeNormTask, fadeTask, lastFmCredsTask, lastFmAuthTokenTask,
+                rememberPositionTask, rememberPaneTask, volumeNormTask, fadeTask, fadeInTask, fadeOutTask, lastFmCredsTask, lastFmAuthTokenTask,
                 scrobblingTask, nowPlayingTask, accentColorTask, artistSplitTask, genreSplitTask, languageTask, lyricsProvidersTask, metadataProvidersTask,
                 playerMaterialTask, playerTintTask, languagesTask);
 
@@ -549,6 +553,8 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             IsRememberPaneStateEnabled = rememberPaneTask.Result;
             IsVolumeNormalizationEnabled = volumeNormTask.Result;
             IsFadeOnPlayPauseEnabled = fadeTask.Result;
+            FadeInDurationMs = fadeInTask.Result;
+            FadeOutDurationMs = fadeOutTask.Result;
             
             SelectedPlayerBackgroundMaterial = playerMaterialTask.Result;
             PlayerTintIntensity = playerTintTask.Result;
@@ -1595,6 +1601,32 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error toggling fade on play/pause to {Value}", value);
+        }
+    }
+
+    async partial void OnFadeInDurationMsChanged(double value)
+    {
+        if (_isInitializing) return;
+        try
+        {
+            await _settingsService.SetFadeInDurationMsAsync((int)value);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error changing fade in duration to {Value}", value);
+        }
+    }
+
+    async partial void OnFadeOutDurationMsChanged(double value)
+    {
+        if (_isInitializing) return;
+        try
+        {
+            await _settingsService.SetFadeOutDurationMsAsync((int)value);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error changing fade out duration to {Value}", value);
         }
     }
 

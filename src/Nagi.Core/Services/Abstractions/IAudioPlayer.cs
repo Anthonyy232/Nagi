@@ -183,5 +183,15 @@ public interface IAudioPlayer : IDisposable
     /// </summary>
     void SetFadeOnPlayPauseEnabled(bool isEnabled);
 
+    /// <summary>
+    ///     Sets the duration of the fade-in effect when playing.
+    /// </summary>
+    void SetFadeInDuration(int durationMs);
+
+    /// <summary>
+    ///     Sets the duration of the fade-out effect when pausing.
+    /// </summary>
+    void SetFadeOutDuration(int durationMs);
+
     #endregion
 }

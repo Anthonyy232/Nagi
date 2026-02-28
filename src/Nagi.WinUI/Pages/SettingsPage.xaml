@@ -360,16 +360,58 @@
                         IsOn="{x:Bind ViewModel.IsVolumeNormalizationEnabled, Mode=TwoWay}" />
                 </controls:SettingsCard>
 
-                <controls:SettingsCard
+                <controls:SettingsExpander
                     Header="{x:Bind resources:Strings.SettingsPage_FadeOnPlayPause_Header, Mode=OneTime}"
                     Description="{x:Bind resources:Strings.SettingsPage_FadeOnPlayPause_Description, Mode=OneTime}">
-                    <controls:SettingsCard.HeaderIcon>
+                    <controls:SettingsExpander.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE9D9;" />
-                    </controls:SettingsCard.HeaderIcon>
+                    </controls:SettingsExpander.HeaderIcon>
                     <ToggleSwitch
                         HorizontalAlignment="Right"
                         IsOn="{x:Bind ViewModel.IsFadeOnPlayPauseEnabled, Mode=TwoWay}" />
-                </controls:SettingsCard>
+                    <controls:SettingsExpander.Items>
+                        <controls:SettingsCard Header="{x:Bind resources:Strings.SettingsPage_FadeInDuration_Header, Mode=OneTime}"
+                            Description="{x:Bind resources:Strings.SettingsPage_FadeInDuration_Description, Mode=OneTime}">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="12">
+                                <Slider
+                                    Width="200"
+                                    VerticalAlignment="Center"
+                                    Maximum="1000"
+                                    Minimum="0"
+                                    StepFrequency="50"
+                                    Style="{StaticResource EqualizerSliderStyle}"
+                                    Value="{x:Bind ViewModel.FadeInDurationMs, Mode=TwoWay}" />
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                    Style="{ThemeResource CaptionTextBlockStyle}">
+                                    <Run Text="{x:Bind ViewModel.FadeInDurationMs, Mode=OneWay}" />
+                                    <Run Text=" ms" />
+                                </TextBlock>
+                            </StackPanel>
+                        </controls:SettingsCard>
+                        <controls:SettingsCard Header="{x:Bind resources:Strings.SettingsPage_FadeOutDuration_Header, Mode=OneTime}"
+                            Description="{x:Bind resources:Strings.SettingsPage_FadeOutDuration_Description, Mode=OneTime}">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="12">
+                                <Slider
+                                    Width="200"
+                                    VerticalAlignment="Center"
+                                    Maximum="1000"
+                                    Minimum="0"
+                                    StepFrequency="50"
+                                    Style="{StaticResource EqualizerSliderStyle}"
+                                    Value="{x:Bind ViewModel.FadeOutDurationMs, Mode=TwoWay}" />
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                    Style="{ThemeResource CaptionTextBlockStyle}">
+                                    <Run Text="{x:Bind ViewModel.FadeOutDurationMs, Mode=OneWay}" />
+                                    <Run Text=" ms" />
+                                </TextBlock>
+                            </StackPanel>
+                        </controls:SettingsCard>
+                    </controls:SettingsExpander.Items>
+                </controls:SettingsExpander>
 
                 <controls:SettingsCard>
                     <controls:SettingsCard.Header>
