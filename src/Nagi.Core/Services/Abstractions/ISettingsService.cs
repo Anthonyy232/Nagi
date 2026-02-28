@@ -33,6 +33,16 @@ public interface ISettingsService
     event Action<bool>? FadeOnPlayPauseEnabledChanged;
 
     /// <summary>
+    ///     Occurs when the fade in duration is changed.
+    /// </summary>
+    event Action<int>? FadeInDurationChanged;
+
+    /// <summary>
+    ///     Occurs when the fade out duration is changed.
+    /// </summary>
+    event Action<int>? FadeOutDurationChanged;
+
+    /// <summary>
     ///     Occurs when the fetch online metadata setting is changed.
     ///     The boolean parameter indicates whether fetching online metadata is enabled.
     /// </summary>
@@ -276,6 +286,26 @@ public interface ISettingsService
     ///     Sets the fade on play/pause preference.
     /// </summary>
     Task SetFadeOnPlayPauseEnabledAsync(bool isEnabled);
+
+    /// <summary>
+    ///     Gets the fade in duration in milliseconds.
+    /// </summary>
+    Task<int> GetFadeInDurationMsAsync();
+
+    /// <summary>
+    ///     Sets the fade in duration in milliseconds.
+    /// </summary>
+    Task SetFadeInDurationMsAsync(int durationMs);
+
+    /// <summary>
+    ///     Gets the fade out duration in milliseconds.
+    /// </summary>
+    Task<int> GetFadeOutDurationMsAsync();
+
+    /// <summary>
+    ///     Sets the fade out duration in milliseconds.
+    /// </summary>
+    Task SetFadeOutDurationMsAsync(int durationMs);
 
     /// <summary>
     ///     Resets all application-wide settings to their default values.

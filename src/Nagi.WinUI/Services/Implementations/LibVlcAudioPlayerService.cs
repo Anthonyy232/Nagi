@@ -55,6 +55,8 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     private double _userVolume = 1.0;
     private volatile bool _isFading;
     private volatile bool _isFadeOnPlayPauseEnabled;
+    private int _fadeInDurationMs = 200;
+    private int _fadeOutDurationMs = 150;
     private CancellationTokenSource? _fadeCts;
 
     /// <summary>
@@ -359,7 +361,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         }
 
         if (_isFadeOnPlayPauseEnabled)
-            await FadeAsync(0.0, _userVolume, TimeSpan.FromMilliseconds(200), fadeCt).ConfigureAwait(false);
+            await FadeAsync(0.0, _userVolume, TimeSpan.FromMilliseconds(_fadeInDurationMs), fadeCt).ConfigureAwait(false);
     }
 
     public async Task PauseAsync()
@@ -378,7 +380,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
             // If a fade-in was canceled mid-way (rapid play→pause), starting from _userVolume
             // would cause VLC to briefly ramp up before fading out — an audible blip.
             double fromVolume = Math.Clamp((_mediaPlayer?.Volume ?? 0) / 100.0, 0.0, _userVolume);
-            await FadeAsync(fromVolume, 0.0, TimeSpan.FromMilliseconds(150), fadeCt).ConfigureAwait(false);
+            await FadeAsync(fromVolume, 0.0, TimeSpan.FromMilliseconds(_fadeOutDurationMs), fadeCt).ConfigureAwait(false);
 
             if (_isDisposed || _mediaPlayer is null) return;
         }
@@ -514,6 +516,16 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         _isFadeOnPlayPauseEnabled = isEnabled;
     }
 
+    public void SetFadeInDuration(int durationMs)
+    {
+        _fadeInDurationMs = durationMs;
+    }
+
+    public void SetFadeOutDuration(int durationMs)
+    {
+        _fadeOutDurationMs = durationMs;
+    }
+
     public Task SetMuteAsync(bool isMuted)
     {
         if (_isDisposed || !_isInitialized || _mediaPlayer is null) return Task.CompletedTask;
@@ -599,6 +611,13 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     private async Task FadeAsync(double fromVolume, double toVolume, TimeSpan duration, CancellationToken ct)
     {
         if (_isDisposed || _mediaPlayer is null) return;
+
+        if (duration <= TimeSpan.Zero)
+        {
+            _mediaPlayer?.SetVolume((int)Math.Clamp(toVolume * 100, 0, 100));
+            _isFading = false;
+            return;
+        }
 
         const int stepIntervalMs = 10;
         int steps = Math.Max(1, (int)(duration.TotalMilliseconds / stepIntervalMs));

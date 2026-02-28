@@ -120,6 +120,8 @@ public class SettingsService : IUISettingsService, IDisposable
     public event Action<bool>? DiscordRichPresenceSettingChanged;
     public event Action<bool>? VolumeNormalizationEnabledChanged;
     public event Action<bool>? FadeOnPlayPauseEnabledChanged;
+    public event Action<int>? FadeInDurationChanged;
+    public event Action<int>? FadeOutDurationChanged;
     public event Action<bool>? TransparencyEffectsSettingChanged;
     public event Action<BackdropMaterial>? BackdropMaterialChanged;
     public event Action<bool>? FetchOnlineMetadataEnabledChanged;
@@ -185,6 +187,8 @@ public class SettingsService : IUISettingsService, IDisposable
             SetRememberPaneStateEnabledAsync(SettingsDefaults.RememberPaneStateEnabled),
             SetVolumeNormalizationEnabledAsync(SettingsDefaults.VolumeNormalizationEnabled),
             SetFadeOnPlayPauseEnabledAsync(SettingsDefaults.FadeOnPlayPauseEnabled),
+            SetFadeInDurationMsAsync(SettingsDefaults.DefaultFadeInDurationMs),
+            SetFadeOutDurationMsAsync(SettingsDefaults.DefaultFadeOutDurationMs),
             SetAccentColorAsync(SettingsDefaults.AccentColor),
             SetArtistSplitCharactersAsync(SettingsDefaults.DefaultArtistSplitCharacters),
             SetLanguageAsync(string.Empty),
@@ -1336,8 +1340,29 @@ public class SettingsService : IUISettingsService, IDisposable
 
     public Task SetFadeOnPlayPauseEnabledAsync(bool isEnabled)
     {
-        return SetValueAndNotifyAsync(FadeOnPlayPauseEnabledKey, isEnabled, SettingsDefaults.FadeOnPlayPauseEnabled,
-            FadeOnPlayPauseEnabledChanged);
+        return SetValueAndNotifyAsync(FadeOnPlayPauseEnabledKey, isEnabled, SettingsDefaults.FadeOnPlayPauseEnabled, FadeOnPlayPauseEnabledChanged);
+    }
+
+    public async Task<int> GetFadeInDurationMsAsync()
+    {
+        await EnsureUnpackagedSettingsLoadedAsync().ConfigureAwait(false);
+        return GetValue("FadeInDurationMs", SettingsDefaults.DefaultFadeInDurationMs);
+    }
+
+    public Task SetFadeInDurationMsAsync(int durationMs)
+    {
+        return SetValueAndNotifyAsync("FadeInDurationMs", durationMs, SettingsDefaults.DefaultFadeInDurationMs, FadeInDurationChanged);
+    }
+
+    public async Task<int> GetFadeOutDurationMsAsync()
+    {
+        await EnsureUnpackagedSettingsLoadedAsync().ConfigureAwait(false);
+        return GetValue("FadeOutDurationMs", SettingsDefaults.DefaultFadeOutDurationMs);
+    }
+
+    public Task SetFadeOutDurationMsAsync(int durationMs)
+    {
+        return SetValueAndNotifyAsync("FadeOutDurationMs", durationMs, SettingsDefaults.DefaultFadeOutDurationMs, FadeOutDurationChanged);
     }
 
     public async Task<TEnum> GetSortOrderAsync<TEnum>(string pageKey) where TEnum : struct, Enum

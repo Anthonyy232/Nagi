@@ -41,6 +41,8 @@ public static class SettingsDefaults
     public const bool RememberPaneStateEnabled = true;
     public const bool VolumeNormalizationEnabled = false;
     public const bool FadeOnPlayPauseEnabled = false;
+    public const int DefaultFadeInDurationMs = 200;
+    public const int DefaultFadeOutDurationMs = 150;
     public const float EqualizerPreamp = 10.0f;
     public static readonly Color? AccentColor = null;
 
