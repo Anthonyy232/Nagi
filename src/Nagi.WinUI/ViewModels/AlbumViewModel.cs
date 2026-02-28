@@ -60,7 +60,6 @@ public partial class AlbumViewModel : SearchableViewModelBase
     private readonly INavigationService _navigationService;
     private readonly IMusicNavigationService _musicNavigationService;
     private int _currentPage = 1;
-    private bool _isFullyLoaded;
     private bool _hasSortOrderLoaded;
     private bool _isNavigating;
     private CancellationTokenSource? _debouncer;
@@ -93,7 +92,7 @@ public partial class AlbumViewModel : SearchableViewModelBase
         
         // Debounce to prevent multiple refresh calls during rapid changes.
         var oldCts = Interlocked.Exchange(ref _debouncer, new CancellationTokenSource());
-        try { oldCts?.Cancel(); } catch (ObjectDisposedException) { }
+        try { oldCts?.Cancel(); oldCts?.Dispose(); } catch (ObjectDisposedException) { }
         
         var token = _debouncer.Token;
         _ = Task.Run(async () =>
@@ -119,6 +118,8 @@ public partial class AlbumViewModel : SearchableViewModelBase
     [ObservableProperty] public partial bool IsLoading { get; set; }
 
     [ObservableProperty] public partial bool IsLoadingMore { get; set; }
+
+    [ObservableProperty] public partial bool IsFullyLoaded { get; private set; }
 
     [ObservableProperty] public partial bool HasLoadError { get; set; }
 
@@ -228,6 +229,42 @@ public partial class AlbumViewModel : SearchableViewModelBase
     }
 
     /// <summary>
+    ///     Asynchronously resumes loading albums from the current page with support for cancellation.
+    /// </summary>
+    /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
+    public async Task ResumeLoadingAsync(CancellationToken cancellationToken)
+    {
+        if (IsLoading || IsFullyLoaded || IsLoadingMore) return;
+
+        try
+        {
+            IsLoadingMore = true;
+            HasLoadError = false;
+
+            while (!IsFullyLoaded && !cancellationToken.IsCancellationRequested)
+            {
+                var nextPage = _currentPage + 1;
+                await LoadNextPageAsync(nextPage, cancellationToken);
+                _currentPage = nextPage;
+                await Task.Delay(250, cancellationToken);
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.LogDebug("Album resuming was canceled.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred while resuming albums");
+            HasLoadError = true;
+        }
+        finally
+        {
+            IsLoadingMore = false;
+        }
+    }
+
+    /// <summary>
     ///     Asynchronously loads albums with support for cancellation.
     /// </summary>
     /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
@@ -239,7 +276,7 @@ public partial class AlbumViewModel : SearchableViewModelBase
         IsLoading = true;
         HasLoadError = false;
         _currentPage = 1;
-        _isFullyLoaded = false;
+        IsFullyLoaded = false;
         Albums.Clear();
         
         try
@@ -250,18 +287,19 @@ public partial class AlbumViewModel : SearchableViewModelBase
                 _hasSortOrderLoaded = true;
             }
 
-            await LoadNextPageAsync(cancellationToken);
+            await LoadNextPageAsync(1, cancellationToken);
 
             if (cancellationToken.IsCancellationRequested) return;
 
             // Continue loading subsequent pages in the background.
-            if (!_isFullyLoaded)
+            if (!IsFullyLoaded)
             {
                 IsLoadingMore = true;
-                while (!_isFullyLoaded && !cancellationToken.IsCancellationRequested)
+                while (!IsFullyLoaded && !cancellationToken.IsCancellationRequested)
                 {
-                    _currentPage++;
-                    await LoadNextPageAsync(cancellationToken);
+                    var nextPage = _currentPage + 1;
+                    await LoadNextPageAsync(nextPage, cancellationToken);
+                    _currentPage = nextPage;
                     await Task.Delay(250, cancellationToken);
                 }
             }
@@ -287,15 +325,15 @@ public partial class AlbumViewModel : SearchableViewModelBase
     /// <summary>
     ///     Fetches a single page of albums from the library service.
     /// </summary>
-    private async Task LoadNextPageAsync(CancellationToken cancellationToken)
+    private async Task LoadNextPageAsync(int pageToLoad, CancellationToken cancellationToken)
     {
         PagedResult<Album>? pagedResult;
         if (IsSearchActive)
-            pagedResult = await _libraryService.SearchAlbumsPagedAsync(SearchTerm, _currentPage, PageSize);
+            pagedResult = await _libraryService.SearchAlbumsPagedAsync(SearchTerm, pageToLoad, PageSize);
         else
-            pagedResult = await _libraryService.GetAllAlbumsPagedAsync(_currentPage, PageSize, CurrentSortOrder);
+            pagedResult = await _libraryService.GetAllAlbumsPagedAsync(pageToLoad, PageSize, CurrentSortOrder);
 
-        if (cancellationToken.IsCancellationRequested) return;
+        cancellationToken.ThrowIfCancellationRequested();
 
         if (pagedResult?.Items?.Any() == true)
             foreach (var album in pagedResult.Items)
@@ -311,7 +349,7 @@ public partial class AlbumViewModel : SearchableViewModelBase
         }
 
         // Determine if all albums have been loaded.
-        if (pagedResult == null || Albums.Count >= pagedResult.TotalCount) _isFullyLoaded = true;
+        if (pagedResult == null || Albums.Count >= pagedResult.TotalCount) IsFullyLoaded = true;
     }
 
     protected override async Task ExecuteSearchAsync(CancellationToken token)

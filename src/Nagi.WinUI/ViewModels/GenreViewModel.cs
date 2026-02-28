@@ -74,7 +74,7 @@ public partial class GenreViewModel : SearchableViewModelBase
         
         // Debounce to prevent multiple refresh calls during rapid changes.
         var oldCts = Interlocked.Exchange(ref _debouncer, new CancellationTokenSource());
-        try { oldCts?.Cancel(); } catch (ObjectDisposedException) { }
+        try { oldCts?.Cancel(); oldCts?.Dispose(); } catch (ObjectDisposedException) { }
         
         var token = _debouncer.Token;
         _ = Task.Run(async () =>
@@ -175,7 +175,7 @@ public partial class GenreViewModel : SearchableViewModelBase
             }
 
             var genreModels = genreModelsTask.Result;
-            if (cancellationToken.IsCancellationRequested) return;
+            cancellationToken.ThrowIfCancellationRequested();
 
             _allGenres = genreModels
                 .Select(g => new GenreViewModelItem { Id = g.Id, Name = g.Name, SongCount = g.Songs.Count })
@@ -186,7 +186,7 @@ public partial class GenreViewModel : SearchableViewModelBase
         }
         catch (OperationCanceledException)
         {
-            _logger.LogDebug("Genre loading was canceled");
+            _logger.LogDebug("Genre loading was canceled.");
         }
         catch (Exception ex)
         {

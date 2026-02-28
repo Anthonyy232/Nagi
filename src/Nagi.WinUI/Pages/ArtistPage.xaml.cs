@@ -47,31 +47,41 @@ public sealed partial class ArtistPage : Page
     /// </summary>
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
-        base.OnNavigatedTo(e);
-        _logger.LogDebug("Navigated to ArtistPage.");
-        _cancellationTokenSource = new CancellationTokenSource();
-        ViewModel.SubscribeToEvents();
-
-        if (ViewModel.Artists.Count == 0)
+        try
         {
-            _logger.LogDebug("Artist collection is empty, loading artists...");
-            try
+            base.OnNavigatedTo(e);
+            _logger.LogDebug("Navigated to ArtistPage.");
+            _cancellationTokenSource = new CancellationTokenSource();
+            ViewModel.SubscribeToEvents();
+
+            if (ViewModel.Artists.Count == 0)
             {
+                _logger.LogDebug("Artist collection is empty, loading artists...");
                 await ViewModel.LoadArtistsAsync(_cancellationTokenSource.Token);
-                _logger.LogDebug("Successfully loaded artists.");
+                
+                if (_cancellationTokenSource.IsCancellationRequested)
+                    _logger.LogDebug("Artist loading was canceled.");
+                else if (!ViewModel.HasLoadError)
+                    _logger.LogDebug("Successfully loaded artists.");
             }
-            catch (TaskCanceledException)
+            else if (!ViewModel.IsFullyLoaded)
             {
-                _logger.LogDebug("Artist loading was cancelled.");
+                _logger.LogDebug("Artists partially loaded, resuming fetch...");
+                await ViewModel.ResumeLoadingAsync(_cancellationTokenSource.Token);
+                
+                if (_cancellationTokenSource.IsCancellationRequested)
+                    _logger.LogDebug("Artist resuming was canceled.");
+                else if (!ViewModel.HasLoadError)
+                    _logger.LogDebug("Successfully resumed loading artists.");
             }
-            catch (Exception ex)
+            else
             {
-                _logger.LogError(ex, "An unexpected error occurred while loading artists.");
+                _logger.LogDebug("Artists already loaded, skipping fetch.");
             }
         }
-        else
+        catch (Exception ex)
         {
-            _logger.LogDebug("Artists already loaded, skipping fetch.");
+            _logger.LogError(ex, "Failed to navigate to ArtistPage correctly.");
         }
     }
 
@@ -87,7 +97,7 @@ public sealed partial class ArtistPage : Page
 
         if (_cancellationTokenSource is { IsCancellationRequested: false })
         {
-            _logger.LogDebug("Cancelling ongoing artist loading task.");
+            _logger.LogDebug("Canceling ongoing artist loading task.");
             _cancellationTokenSource.Cancel();
         }
 

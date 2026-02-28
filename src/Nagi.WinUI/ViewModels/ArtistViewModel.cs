@@ -53,7 +53,6 @@ public partial class ArtistViewModel : SearchableViewModelBase
     private readonly IUISettingsService _settingsService;
     private readonly IMusicNavigationService _musicNavigationService;
     private int _currentPage = 1;
-    private bool _isFullyLoaded;
     private bool _hasSortOrderLoaded;
     private bool _isNavigating;
     private CancellationTokenSource? _debouncer;
@@ -91,7 +90,7 @@ public partial class ArtistViewModel : SearchableViewModelBase
         
         // Debounce to prevent multiple refresh calls during rapid changes.
         var oldCts = Interlocked.Exchange(ref _debouncer, new CancellationTokenSource());
-        try { oldCts?.Cancel(); } catch (ObjectDisposedException) { }
+        try { oldCts?.Cancel(); oldCts?.Dispose(); } catch (ObjectDisposedException) { }
         
         var token = _debouncer.Token;
         _ = Task.Run(async () =>
@@ -117,6 +116,8 @@ public partial class ArtistViewModel : SearchableViewModelBase
     [ObservableProperty] public partial bool IsLoading { get; set; }
 
     [ObservableProperty] public partial bool IsLoadingMore { get; set; }
+
+    [ObservableProperty] public partial bool IsFullyLoaded { get; private set; }
 
     [ObservableProperty] public partial bool HasLoadError { get; set; }
 
@@ -212,6 +213,42 @@ public partial class ArtistViewModel : SearchableViewModelBase
     }
 
     /// <summary>
+    ///     Asynchronously resumes loading artists from the current page with support for cancellation.
+    /// </summary>
+    /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
+    public async Task ResumeLoadingAsync(CancellationToken cancellationToken)
+    {
+        if (IsLoading || IsFullyLoaded || IsLoadingMore) return;
+
+        try
+        {
+            IsLoadingMore = true;
+            HasLoadError = false;
+
+            while (!IsFullyLoaded && !cancellationToken.IsCancellationRequested)
+            {
+                var nextPage = _currentPage + 1;
+                await LoadNextPageAsync(nextPage, cancellationToken);
+                _currentPage = nextPage;
+                await Task.Delay(250, cancellationToken);
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.LogDebug("Artist resuming was canceled.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred while resuming artists");
+            HasLoadError = true;
+        }
+        finally
+        {
+            IsLoadingMore = false;
+        }
+    }
+
+    /// <summary>
     ///     Asynchronously loads artists with support for cancellation.
     /// </summary>
     /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
@@ -223,7 +260,7 @@ public partial class ArtistViewModel : SearchableViewModelBase
         IsLoading = true;
         HasLoadError = false;
         _currentPage = 1;
-        _isFullyLoaded = false;
+        IsFullyLoaded = false;
         _artistLookup.Clear();
         Artists.Clear();
         
@@ -235,7 +272,7 @@ public partial class ArtistViewModel : SearchableViewModelBase
                 _hasSortOrderLoaded = true;
             }
 
-            await LoadNextPageAsync(cancellationToken);
+            await LoadNextPageAsync(1, cancellationToken);
 
             if (cancellationToken.IsCancellationRequested) return;
 
@@ -247,13 +284,14 @@ public partial class ArtistViewModel : SearchableViewModelBase
             }
 
             // Continue loading subsequent pages in the background.
-            if (!_isFullyLoaded)
+            if (!IsFullyLoaded)
             {
                 IsLoadingMore = true;
-                while (!_isFullyLoaded && !cancellationToken.IsCancellationRequested)
+                while (!IsFullyLoaded && !cancellationToken.IsCancellationRequested)
                 {
-                    _currentPage++;
-                    await LoadNextPageAsync(cancellationToken);
+                    var nextPage = _currentPage + 1;
+                    await LoadNextPageAsync(nextPage, cancellationToken);
+                    _currentPage = nextPage;
                     await Task.Delay(250, cancellationToken);
                 }
             }
@@ -277,15 +315,15 @@ public partial class ArtistViewModel : SearchableViewModelBase
     /// <summary>
     ///     Fetches a single page of artists from the library service.
     /// </summary>
-    private async Task LoadNextPageAsync(CancellationToken cancellationToken)
+    private async Task LoadNextPageAsync(int pageToLoad, CancellationToken cancellationToken)
     {
         PagedResult<Artist>? pagedResult;
         if (IsSearchActive)
-            pagedResult = await _libraryService.SearchArtistsPagedAsync(SearchTerm, _currentPage, PageSize);
+            pagedResult = await _libraryService.SearchArtistsPagedAsync(SearchTerm, pageToLoad, PageSize);
         else
-            pagedResult = await _libraryService.GetAllArtistsPagedAsync(_currentPage, PageSize, CurrentSortOrder);
+            pagedResult = await _libraryService.GetAllArtistsPagedAsync(pageToLoad, PageSize, CurrentSortOrder);
 
-        if (cancellationToken.IsCancellationRequested) return;
+        cancellationToken.ThrowIfCancellationRequested();
 
         if (pagedResult?.Items?.Any() == true)
             foreach (var artist in pagedResult.Items)
@@ -309,7 +347,7 @@ public partial class ArtistViewModel : SearchableViewModelBase
                 : ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Artists_Count_Plural, count);
         }
 
-        if (pagedResult == null || Artists.Count >= pagedResult.TotalCount) _isFullyLoaded = true;
+        if (pagedResult == null || Artists.Count >= pagedResult.TotalCount) IsFullyLoaded = true;
     }
 
     protected override async Task ExecuteSearchAsync(CancellationToken token)
