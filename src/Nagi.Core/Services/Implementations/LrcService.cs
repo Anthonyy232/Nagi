@@ -74,6 +74,9 @@ public class LrcService : ILrcService, IDisposable
         if (token.IsCancellationRequested)
             return null;
 
+        var anyProviderSuccess = false;
+        var enabledProviders = await _settingsService.GetEnabledServiceProvidersAsync(ServiceCategory.Lyrics).ConfigureAwait(false);
+
         if (enabledProviders.Count > 0)
         {
             // Start all enabled provider tasks in parallel for speed

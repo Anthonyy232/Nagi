@@ -73,6 +73,11 @@
             HorizontalContentAlignment="Stretch"
             ItemContainerStyle="{StaticResource LyricsListViewItemStyle}"
             Visibility="{x:Bind ViewModel.ShowTimedLyrics, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <ListView.ItemContainerTransitions>
+                <TransitionCollection>
+                    <RepositionThemeTransition />
+                </TransitionCollection>
+            </ListView.ItemContainerTransitions>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="core:LyricLine">
                     <TextBlock

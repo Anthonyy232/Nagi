@@ -16,7 +16,7 @@ namespace Nagi.WinUI.Pages;
 /// </summary>
 public sealed partial class LyricsPage : Page
 {
-    private const double ScrollIntoViewRatio = 0.40;
+    private const double ScrollIntoViewRatio = 0.35;
     private readonly ILogger<LyricsPage> _logger;
     private readonly Storyboard _progressBarStoryboard = new();
     private bool _isUnloaded;
@@ -59,7 +59,6 @@ public sealed partial class LyricsPage : Page
         switch (e.PropertyName)
         {
             case nameof(ViewModel.CurrentLine):
-                _logger.LogDebug("Current lyric line changed. Updating UI.");
                 DispatcherQueue.TryEnqueue(() =>
                 {
                     if (_isUnloaded) return;
@@ -69,8 +68,6 @@ public sealed partial class LyricsPage : Page
                 break;
 
             case nameof(ViewModel.IsPlaying):
-                _logger.LogDebug("Playback state changed to IsPlaying: {IsPlaying}. Updating progress bar.",
-                    ViewModel.IsPlaying);
                 DispatcherQueue.TryEnqueue(() =>
                 {
                     if (_isUnloaded) return;
