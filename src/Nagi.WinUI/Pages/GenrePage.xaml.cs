@@ -48,15 +48,12 @@ public sealed partial class GenrePage : Page
             if (ViewModel.Genres.Count == 0)
             {
                 _logger.LogDebug("Genre collection is empty, loading genres...");
-                try
-                {
-                    await ViewModel.LoadGenresAsync(_cancellationTokenSource.Token);
+                await ViewModel.LoadGenresAsync(_cancellationTokenSource.Token);
+                
+                if (_cancellationTokenSource.IsCancellationRequested)
+                    _logger.LogDebug("Genre loading was canceled.");
+                else if (!ViewModel.HasLoadError)
                     _logger.LogDebug("Successfully loaded genres.");
-                }
-                catch (TaskCanceledException)
-                {
-                    _logger.LogDebug("Genre loading was cancelled.");
-                }
             }
             else
             {
@@ -79,7 +76,7 @@ public sealed partial class GenrePage : Page
 
         if (_cancellationTokenSource is { IsCancellationRequested: false })
         {
-            _logger.LogDebug("Cancelling ongoing genre loading task.");
+            _logger.LogDebug("Canceling ongoing genre loading task.");
             _cancellationTokenSource.Cancel();
         }
 
