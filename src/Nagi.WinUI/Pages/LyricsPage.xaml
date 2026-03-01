@@ -5,8 +5,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:core="using:Nagi.Core.Models.Lyrics"
-    xmlns:converters="using:Nagi.WinUI.Converters"
     xmlns:resources="using:Nagi.WinUI.Resources"
+    xmlns:helpers="using:Nagi.WinUI.Helpers"
     mc:Ignorable="d"
     Background="Transparent"
     Loaded="OnPageLoaded">
@@ -14,10 +14,6 @@
 
     <Page.Resources>
         <ResourceDictionary>
-            <converters:ActiveLyricToStyleConverter
-                x:Key="ActiveLyricToStyleConverter"
-                ActiveStyle="{StaticResource ActiveLyricTextBlockStyle}"
-                InactiveStyle="{StaticResource InactiveLyricLineStyle}" />
             <!-- IMPORTANT: This Storyboard is triggered in code-behind (LyricsPage.xaml.cs, OnPageLoaded) and must NOT be removed by cleanup tools. -->
             <Storyboard x:Key="PageLoadStoryboard">
                 <DoubleAnimation
@@ -61,32 +57,50 @@
             MaxWidth="600" />
 
         <!-- Synchronized (timed) lyrics display -->
-        <ListView
-            x:Name="LyricsListView"
+        <ScrollViewer
+            x:Name="LyricsScrollViewer"
             Grid.Row="2"
-            Padding="24,0,24,132"
-            ItemsSource="{x:Bind ViewModel.LyricLines, Mode=OneWay}"
+            HorizontalScrollBarVisibility="Disabled"
+            VerticalScrollBarVisibility="Auto"
             Background="Transparent"
-            SelectionMode="None"
-            IsItemClickEnabled="True"
-            ItemClick="LyricsListView_ItemClick"
-            HorizontalContentAlignment="Stretch"
-            ItemContainerStyle="{StaticResource LyricsListViewItemStyle}"
+            SizeChanged="LyricsScrollViewer_SizeChanged"
             Visibility="{x:Bind ViewModel.ShowTimedLyrics, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <ListView.ItemContainerTransitions>
-                <TransitionCollection>
-                    <RepositionThemeTransition />
-                </TransitionCollection>
-            </ListView.ItemContainerTransitions>
-            <ListView.ItemTemplate>
-                <DataTemplate x:DataType="core:LyricLine">
-                    <TextBlock
-                        Text="{x:Bind Text}"
-                        Style="{x:Bind IsActive, Mode=OneWay, Converter={StaticResource ActiveLyricToStyleConverter}}"
-                        Opacity="{x:Bind Opacity, Mode=OneWay}" />
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+            <StackPanel>
+                <Border x:Name="TopSpacer" />
+                <ItemsRepeater
+                    x:Name="LyricsRepeater"
+                    ItemsSource="{x:Bind ViewModel.LyricLines, Mode=OneWay}"
+                    ElementPrepared="LyricsRepeater_ElementPrepared"
+                    ElementClearing="LyricsRepeater_ElementClearing">
+                    <ItemsRepeater.Layout>
+                        <helpers:NonVirtualizingStackLayout />
+                    </ItemsRepeater.Layout>
+                    <ItemsRepeater.ItemTemplate>
+                        <DataTemplate x:DataType="core:LyricLine">
+                            <Grid
+                                Padding="32,28"
+                                Background="Transparent"
+                                CornerRadius="{ThemeResource ControlCornerRadius}"
+                                Tag="{x:Bind}"
+                                PointerEntered="LyricItem_PointerEntered"
+                                PointerExited="LyricItem_PointerExited"
+                                Tapped="LyricItem_Tapped">
+                                <!-- Base (inactive) text -->
+                                <TextBlock
+                                    Text="{x:Bind Text}"
+                                    Style="{StaticResource LyricLineTextBlockStyle}" />
+                                <!-- Active color overlay (opacity controlled entirely via Composition) -->
+                                <TextBlock
+                                    Text="{x:Bind Text}"
+                                    Style="{StaticResource LyricLineTextBlockStyle}"
+                                    Foreground="{StaticResource AppPrimaryColorBrush}" />
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsRepeater.ItemTemplate>
+                </ItemsRepeater>
+                <Border x:Name="BottomSpacer" />
+            </StackPanel>
+        </ScrollViewer>
 
         <!-- Unsynchronized (plain text) lyrics display -->
         <ListView

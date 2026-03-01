@@ -11,8 +11,8 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 using Nagi.Core.Models.Lyrics;
 using Nagi.Core.Services.Abstractions;
-using Nagi.WinUI.Services.Abstractions;
 using Nagi.WinUI.Helpers;
+using Nagi.WinUI.Services.Abstractions;
 
 namespace Nagi.WinUI.ViewModels;
 
@@ -23,17 +23,6 @@ namespace Nagi.WinUI.ViewModels;
 /// </summary>
 public partial class LyricsPageViewModel : ObservableObject, IDisposable
 {
-    /// <summary>
-    ///     The base for the exponential fade. A value closer to 1.0 (e.g., 0.9) means a
-    ///     very slow and gradual fade. A smaller value (e.g., 0.75) means a faster fade.
-    /// </summary>
-    private const double GradualFadeBase = 0.75;
-
-    /// <summary>
-    ///     The minimum opacity a line can have, ensuring it's never fully invisible.
-    /// </summary>
-    private const double MinimumOpacity = 0.10;
-
     private static readonly TimeSpan OptimisticUpdateGracePeriod = TimeSpan.FromSeconds(2);
     private readonly IDispatcherService _dispatcherService;
     private readonly ILibraryReader _libraryReader;
@@ -42,17 +31,6 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
     private readonly IMusicPlaybackService _playbackService;
     private static readonly TimeSpan _seekTimeOffset = TimeSpan.FromSeconds(0.2);
     private readonly object _lyricsFetchLock = new();
-    private static readonly double[] _opacityCurve;
-
-    static LyricsPageViewModel()
-    {
-        // Pre-calculate opacity curve for up to 200 lines distance to avoid Math.Pow in hot path
-        _opacityCurve = new double[201];
-        for (var i = 0; i < _opacityCurve.Length; i++)
-        {
-            _opacityCurve[i] = Math.Max(MinimumOpacity, Math.Pow(GradualFadeBase, i));
-        }
-    }
 
     private CancellationTokenSource? _lyricsFetchCts;
     private bool _isDisposed;
@@ -209,44 +187,9 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
 
             if (!ReferenceEquals(newCurrentLine, CurrentLine))
             {
-                if (CurrentLine != null) CurrentLine.IsActive = false;
-                if (newCurrentLine != null) newCurrentLine.IsActive = true;
                 CurrentLine = newCurrentLine;
-                UpdateLineOpacities(_lrcSearchHint);
             }
         });
-    }
-
-    /// <summary>
-    ///     Calculates and applies opacity to each lyric line based on its distance
-    ///     from the currently active line using a pre-calculated exponential curve.
-    /// </summary>
-    private void UpdateLineOpacities(int activeIndex = -1)
-    {
-        if (LyricLines.Count == 0) return;
-
-        // If no index was provided, try to find it (fallback, should be avoided in hot path)
-        if (activeIndex == -1 && CurrentLine != null)
-        {
-            activeIndex = LyricLines.IndexOf(CurrentLine);
-        }
-
-        // If still no line is active, set all lines to the minimum opacity.
-        if (activeIndex < 0 || activeIndex >= LyricLines.Count)
-        {
-            foreach (var line in LyricLines) line.Opacity = MinimumOpacity;
-            return;
-        }
-
-        for (var i = 0; i < LyricLines.Count; i++)
-        {
-            var distance = Math.Abs(i - activeIndex);
-
-            // Use pre-calculated curve if within bounds, otherwise use minimum
-            LyricLines[i].Opacity = distance < _opacityCurve.Length 
-                ? _opacityCurve[distance] 
-                : MinimumOpacity;
-        }
     }
 
     private async Task UpdateForTrack(Song? song)
