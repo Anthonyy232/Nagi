@@ -7,6 +7,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <InternalsVisibleTo Include="Nagi.Core.Tests" />
+    </ItemGroup>
+
+    <ItemGroup>
         <!-- Data Access: Entity Framework Core -->
         <PackageReference Include="LrcParser" Version="$(LrcParserVersion)" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="$(EntityFrameworkCoreVersion)" />

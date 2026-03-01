@@ -92,6 +92,11 @@ public class Song
     public DateTime? LastPlayedDate { get; set; }
 
     /// <summary>
+    ///     The total cumulative time this song has been listened to, stored in ticks.
+    /// </summary>
+    public long TotalListenTimeTicks { get; set; }
+
+    /// <summary>
     ///     The lyrics of the song.
     /// </summary>
     [MaxLength(50000)]

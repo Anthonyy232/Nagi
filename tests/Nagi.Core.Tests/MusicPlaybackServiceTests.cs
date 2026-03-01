@@ -597,6 +597,323 @@ public class MusicPlaybackServiceTests
 
     #endregion
 
+    #region Listen History Session Tests
+
+    [Fact]
+    public async Task PlayAsync_CreatesListenSessionAndSetsContext()
+    {
+        // Arrange
+        await _service.InitializeAsync();
+        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(100L); // Session ID
+        
+        // Act
+        await _service.PlayAsync(_testSongs[0]);
+
+        // Assert
+        _service.CurrentListenHistoryId.Should().Be(100L);
+        await _libraryService.Received(1).StartListenSessionAsync(
+            _testSongs[0].Id, 
+            Arg.Is<PlaybackContext>(c => c.Type == PlaybackContextType.Queue && c.ContextId == null));
+    }
+
+    [Fact]
+    public async Task StopAsync_WithActiveSession_FinalizesSessionAsPausedAndAbandoned()
+    {
+        // Arrange
+        await _service.InitializeAsync();
+        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(200L);
+        await _service.PlayAsync(_testSongs[0]);
+        _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(30));
+
+        // Act
+        await _service.StopAsync();
+        await _service.FlushPendingFinalizationAsync();
+
+        // Assert
+        _service.CurrentListenHistoryId.Should().BeNull();
+        await _libraryService.Received(1).FinalizeListenSessionAsync(
+            200L, 
+            TimeSpan.FromSeconds(30), 
+            PlaybackEndReason.PausedAndAbandoned);
+    }
+
+    [Fact]
+    public async Task NextAsync_WithActiveSession_FinalizesSessionAsSkipped()
+    {
+        // Arrange
+        await _service.InitializeAsync();
+        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(300L);
+        await _service.PlayAsync(_testSongs, 0); // Play Song 0
+        _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(45));
+        
+        // We need to mock StartListenSessionAsync to return a new ID for the NEXT track
+        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(301L);
+
+        // Act
+        await _service.NextAsync(); // Transition to Song 1
+        await _service.FlushPendingFinalizationAsync();
+
+        // Assert
+        // First session should be finalized as skipped
+        await _libraryService.Received(1).FinalizeListenSessionAsync(
+            300L, 
+            TimeSpan.FromSeconds(45), 
+            PlaybackEndReason.Skipped);
+            
+        // Service should now track the NEW session
+        _service.CurrentListenHistoryId.Should().Be(301L);
+    }
+
+    [Fact]
+    public async Task OnPlaybackEnded_FinalizesSessionAsFinishedAndAdvancesQueue()
+    {
+        // Arrange
+        await _service.InitializeAsync();
+        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(400L);
+        await _service.PlayAsync(_testSongs, 0); // Play Song 0
+        
+        // Set the mocked Duration and Position equivalent to reaching the end of the track
+        var duration = TimeSpan.FromMinutes(3);
+        _audioPlayer.Duration.Returns(duration);
+        _audioPlayer.CurrentPosition.Returns(duration);
+
+        // Act
+        _audioPlayer.PlaybackEnded += Raise.Event<Action>();
+        await _service.FlushPendingFinalizationAsync();
+
+        // Assert
+        await _libraryService.Received(1).FinalizeListenSessionAsync(
+            400L, 
+            duration, 
+            PlaybackEndReason.Finished);
+            
+        _service.CurrentTrack.Should().Be(_testSongs[1]); // Next track should be queued
+    }
+
+    [Fact]
+    public async Task PlayAlbumAsync_StartsSessionWithAlbumContext()
+    {
+        // Arrange
+        await _service.InitializeAsync();
+        var albumId = Guid.NewGuid();
+        _libraryService.GetAllSongIdsByAlbumIdAsync(albumId, Arg.Any<SongSortOrder>())
+            .Returns(_testSongs.Select(s => s.Id).ToList());
+            
+        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(500L);
+
+        // Act
+        await _service.PlayAlbumAsync(albumId);
+
+        // Assert
+        await _libraryService.Received(1).StartListenSessionAsync(
+            _testSongs[0].Id, 
+            Arg.Is<PlaybackContext>(c => c.Type == PlaybackContextType.Album && c.ContextId == albumId));
+    }
+
+    [Fact]
+    public async Task DisposeAsync_FinalizesActiveSessionAsPausedAndAbandoned()
+    {
+        // Arrange
+        await _service.InitializeAsync();
+        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(600L);
+        await _service.PlayAsync(_testSongs[0]);
+        _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(15));
+
+        // Act
+        await _service.DisposeAsync();
+
+        // Assert
+        await _libraryService.Received(1).FinalizeListenSessionAsync(
+            600L, 
+            TimeSpan.FromSeconds(15), 
+            PlaybackEndReason.PausedAndAbandoned);
+    }
+
+    [Fact]
+    public async Task PlayTransientFileAsync_StartsTransientSessionAndFinalizesPrevious()
+    {
+        // Arrange
+        await _service.InitializeAsync();
+        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(100L); // Previous session
+        
+        await _service.PlayAsync(_testSongs[0]); // Starts the previous session
+        
+        var filePath = "C:\\temp\\transient.mp3";
+        var metadata = new SongFileMetadata { Title = "Transient Song", Artists = new List<string> { "Temp Artist" } };
+        _metadataService.ExtractMetadataAsync(filePath).Returns(metadata);
+        
+        _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(20)); // Duration of previous session before transient playback
+        _audioPlayer.ClearReceivedCalls();
+        _libraryService.ClearReceivedCalls();
+
+        // Act
+        // Playing a transient file should finalize the previous queue session as Skipped
+        // and NOT start a new session because transient files are not in the database.
+        await _service.PlayTransientFileAsync(filePath);
+        await _service.FlushPendingFinalizationAsync();
+
+        // Assert
+        // Verified the previous session was finalized
+        await _libraryService.Received(1).FinalizeListenSessionAsync(
+            100L, 
+            TimeSpan.FromSeconds(20), 
+            PlaybackEndReason.Skipped);
+
+        // Verification that a new session was NOT created because transient playback is not tracked
+        _service.CurrentListenHistoryId.Should().BeNull();
+        await _libraryService.DidNotReceiveWithAnyArgs().StartListenSessionAsync(Guid.Empty, default!);
+    }
+    
+    [Fact]
+    public async Task PlayQueueItemAsync_WhenSkippingDeletedSongs_FinalizesPreviousSessionCorrectly()
+    {
+        // This test verifies the scenario in PlayQueueItemAsync where the target song is deleted from the DB
+        // so it skips forward until it finds a valid one. It must STILL accurately start the session for the *found* song
+        // and finalize the *previous* session.
+
+        // Arrange
+        await _service.InitializeAsync();
+        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(700L); // First Session
+        await _service.PlayAsync(_testSongs[0]); 
+        
+        // Current Track is Song 0. We want to skip to Song 1, but Song 1 is "deleted"
+        _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(15));
+        
+        // Add Song 1 and Song 2 to queue
+        await _service.AddToQueueAsync(_testSongs[1]);
+        await _service.AddToQueueAsync(_testSongs[2]);
+        
+        // Mock Song 1 as deleted (returns null from DB)
+        _libraryService.GetSongByIdAsync(_testSongs[1].Id).Returns((Song?)null);
+        
+        // Mock Song 2 as valid and returning a new session ID
+        _libraryService.GetSongByIdAsync(_testSongs[2].Id).Returns(_testSongs[2]);
+        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(701L); // Second Session
+
+        // Act
+        // Attempt to play Song 1 (which is deleted). The service should skip to Song 2.
+        await _service.PlayQueueItemAsync(1);
+        await _service.FlushPendingFinalizationAsync();
+
+        // Assert
+        // First session should be finalized as skipped
+        await _libraryService.Received(1).FinalizeListenSessionAsync(
+            700L, 
+            TimeSpan.FromSeconds(15), 
+            PlaybackEndReason.Skipped);
+            
+        // Service should skip the deleted song and track the NEW session for Song 2
+        _service.CurrentTrack.Should().Be(_testSongs[2]);
+        _service.CurrentListenHistoryId.Should().Be(701L);
+    }
+    
+    [Fact]
+    public async Task ClearQueueAsync_WithActiveSession_FinalizesSessionAsPausedAndAbandoned()
+    {
+        // Arrange
+        await _service.InitializeAsync();
+        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(800L);
+        await _service.PlayAsync(_testSongs[0]); // Starts the session
+        
+        // Add more songs to queue
+        await _service.AddToQueueAsync(_testSongs[1]);
+        
+        _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(25));
+
+        // Act
+        await _service.ClearQueueAsync();
+        await _service.FlushPendingFinalizationAsync();
+
+        // Assert
+        // Verified the session was finalized as PausedAndAbandoned (because ClearQueue calls StopAsync)
+        await _libraryService.Received(1).FinalizeListenSessionAsync(
+            800L, 
+            TimeSpan.FromSeconds(25), 
+            PlaybackEndReason.PausedAndAbandoned);
+
+        _service.CurrentListenHistoryId.Should().BeNull();
+        _service.PlaybackQueue.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task PreviousAsync_Under3Seconds_FinalizesSessionAsSkipped()
+    {
+        // Arrange
+        await _service.InitializeAsync();
+        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(900L);
+        await _service.PlayAsync(_testSongs, 1); // Play Song 1 (Index 1)
+        
+        _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(2)); // Under 3 seconds
+        
+        // Mock new session for Previous song
+        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(901L);
+
+        // Act
+        await _service.PreviousAsync(); // Should go back to Song 0
+        await _service.FlushPendingFinalizationAsync();
+
+        // Assert
+        // First session should be finalized as skipped
+        await _libraryService.Received(1).FinalizeListenSessionAsync(
+            900L, 
+            TimeSpan.FromSeconds(2), 
+            PlaybackEndReason.Skipped);
+
+        _service.CurrentListenHistoryId.Should().Be(901L);
+        _service.CurrentTrack.Should().Be(_testSongs[0]);
+    }
+
+    [Fact]
+    public async Task PreviousAsync_Over3Seconds_DoesNotFinalizeSession()
+    {
+        // Arrange
+        await _service.InitializeAsync();
+        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(1000L);
+        await _service.PlayAsync(_testSongs, 1); // Play Song 1
+        
+        _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(10)); // Over 3 seconds
+        _libraryService.ClearReceivedCalls(); // Clear the PlayAsync StartListenSessionAsync call
+        
+        // Act
+        await _service.PreviousAsync(); // Should restart Song 1
+        await _service.FlushPendingFinalizationAsync();
+
+        // Assert
+        // Should NOT finalize the session because it just restarted the track
+        await _libraryService.DidNotReceiveWithAnyArgs().FinalizeListenSessionAsync(default, default, default);
+        
+        // Session ID should remain the same
+        _service.CurrentListenHistoryId.Should().Be(1000L);
+        _service.CurrentTrack.Should().Be(_testSongs[1]);
+        
+        // AudioPlayer should have been sought to zero
+        await _audioPlayer.Received(1).SeekAsync(TimeSpan.Zero);
+    }
+
+    [Fact]
+    public async Task PlayPlaylistAsync_StartsSessionWithPlaylistContext()
+    {
+        // Arrange
+        await _service.InitializeAsync();
+        var playlistId = Guid.NewGuid();
+        _libraryService.GetAllSongIdsByPlaylistIdAsync(playlistId, Arg.Any<SongSortOrder>())
+            .Returns(_testSongs.Select(s => s.Id).ToList());
+            
+        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(1100L);
+
+        // Act
+        await _service.PlayPlaylistAsync(playlistId);
+
+        // Assert
+        await _libraryService.Received(1).StartListenSessionAsync(
+            _testSongs[0].Id, 
+            Arg.Is<PlaybackContext>(c => c.Type == PlaybackContextType.Playlist && c.ContextId == playlistId));
+            
+        _service.CurrentListenHistoryId.Should().Be(1100L);
+    }
+
+    #endregion
+
     #region Shuffle Mode Interaction Tests
 
     /// <summary>
