@@ -326,33 +326,6 @@ public class StringToFontFamilyConverter : IValueConverter
 }
 
 /// <summary>
-///     Selects a style based on whether the bound boolean value is true or false.
-/// </summary>
-public class ActiveLyricToStyleConverter : IValueConverter
-{
-    /// <summary>
-    ///     Gets or sets the style to apply when the bound value is true.
-    /// </summary>
-    public Style? ActiveStyle { get; set; }
-
-    /// <summary>
-    ///     Gets or sets the style to apply when the bound value is false.
-    /// </summary>
-    public Style? InactiveStyle { get; set; }
-
-    public object Convert(object value, Type targetType, object parameter, string language)
-    {
-        if (value is true) return ActiveStyle ?? throw new InvalidOperationException("ActiveStyle must be set");
-        return InactiveStyle ?? throw new InvalidOperationException("InactiveStyle must be set");
-    }
-
-    public object ConvertBack(object value, Type targetType, object parameter, string language)
-    {
-        throw new NotImplementedException();
-    }
-}
-
-/// <summary>
 ///     Converts a BackdropMaterial enum value to a user-friendly string for display in the UI.
 /// </summary>
 public class BackdropMaterialToStringConverter : IValueConverter
