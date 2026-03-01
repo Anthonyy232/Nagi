@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
@@ -1596,10 +1596,10 @@
     <value>হঠাৎ শব্দের পরিবর্তন এড়াতে স্বয়ংক্রিয়ভাবে ভলিউমকে স্ট্যান্ডার্ড লেভেলে (-14 LUFS) সামঞ্জস্য করুন।</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
-    <value>Fade on Play / Pause</value>
+    <value>প্লে / পজে ফেড</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Description" xml:space="preserve">
-    <value>Smoothly fade the volume in when resuming and out when pausing instead of cutting instantly.</value>
+    <value>তাৎক্ষণিকভাবে কাটা না হয়ে, পুনরায় শুরু করার সময় ভলিউম মসৃণভাবে ফেড ইন করুন এবং থামানোর সময় ফেড আউট করুন।</value>
   </data>
   <data name="SettingsPage_Equalizer" xml:space="preserve">
     <value>অডিও ইকুয়ালাইজার</value>
@@ -1674,10 +1674,10 @@
     <value>একাধিক শিল্পীকে বিভাজন করতে ব্যবহৃত অক্ষরগুলি সংজ্ঞায়িত করুন (উদাহরণস্বরূপ ';/')। নিষ্ক্রিয় করতে খালি রাখুন।</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
-    <value>Genre Splitting</value>
+    <value>জেনার বিভাজন</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Define characters used to split multiple genres (e.g. ';/'). Leave empty to disable.</value>
+    <value>একাধিক জেনার বিভক্ত করার জন্য ব্যবহৃত অক্ষরগুলি সংজ্ঞায়িত করুন (যেমন ';/')। নিষ্ক্রিয় করতে খালি রাখুন।</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>লাইব্রেরি পুনরায় স্ক্যান করুন</value>
@@ -1872,75 +1872,87 @@
     <value>ভাষার পরিবর্তন সম্পূর্ণরূপে কার্যকর হওয়ার জন্য দয়া করে অ্যাপ্লিকেশনটি পুনরায় চালু করুন।</value>
   </data>
   <data name="SettingsPage_About_PrivacyPolicy_Content" xml:space="preserve">
-    <value>Privacy Policy</value>
+    <value>গোপনীয়তা নীতি</value>
   </data>
   <data name="SettingsPage_BackupRestore_Header" xml:space="preserve">
-    <value>Backup &amp; Restore</value>
+    <value>ব্যাকআপ এবং পুনরুদ্ধার</value>
   </data>
   <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
-    <value>Create backups of your music library and settings, or restore from a previous backup</value>
+    <value>আপনার সঙ্গীত লাইব্রেরি এবং সেটিংসের ব্যাকআপ তৈরি করুন, অথবা পূর্ববর্তী ব্যাকআপ থেকে পুনরুদ্ধার করুন</value>
   </data>
   <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
-    <value>Create Backup</value>
+    <value>ব্যাকআপ তৈরি করুন</value>
   </data>
   <data name="SettingsPage_RestoreBackup_Content" xml:space="preserve">
-    <value>Restore Backup</value>
+    <value>ব্যাকআপ পুনরুদ্ধার করুন</value>
   </data>
   <data name="Settings_Backup_Success_Title" xml:space="preserve">
-    <value>Backup Created</value>
+    <value>ব্যাকআপ তৈরি হয়েছে</value>
   </data>
   <data name="Settings_Backup_Success_Message" xml:space="preserve">
-    <value>Successfully created backup ({0:F2} MB) at: {1}</value>
+    <value>সফলভাবে ব্যাকআপ তৈরি হয়েছে ({0:F2} MB) এখানে: {1}</value>
   </data>
   <data name="Settings_Backup_Failed_Title" xml:space="preserve">
-    <value>Backup Failed</value>
+    <value>ব্যাকআপ ব্যর্থ হয়েছে</value>
   </data>
   <data name="Settings_Backup_Failed_Message" xml:space="preserve">
-    <value>Failed to create backup. Please try again.</value>
+    <value>ব্যাকআপ তৈরি করতে ব্যর্থ হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।</value>
   </data>
   <data name="Settings_Restore_Invalid_Title" xml:space="preserve">
-    <value>Invalid Backup File</value>
+    <value>অবৈধ ব্যাকআপ ফাইল</value>
   </data>
   <data name="Settings_Restore_Invalid_Message" xml:space="preserve">
-    <value>The selected file is not a valid Nagi backup.</value>
+    <value>নির্বাচিত ফাইলটি একটি বৈধ Nagi ব্যাকআপ নয়।</value>
   </data>
   <data name="Settings_Restore_Confirm_Title" xml:space="preserve">
-    <value>Restore Backup?</value>
+    <value>ব্যাকআপ পুনরুদ্ধার করবেন?</value>
   </data>
   <data name="Settings_Restore_Confirm_Message" xml:space="preserve">
-    <value>Restoring from backup will replace all current app data. This action cannot be undone. The app will restart after restore. Continue?</value>
+    <value>ব্যাকআপ থেকে পুনরুদ্ধার করলে বর্তমান অ্যাপের সমস্ত ডেটা প্রতিস্থাপিত হবে। এই ক্রিয়াটি পূর্বাবস্থায় ফেরানো যাবে না। পুনরুদ্ধার করার পর অ্যাপটি পুনরায় চালু হবে। চালিয়ে যাবেন?</value>
   </data>
   <data name="Settings_Restore_Confirm_Button" xml:space="preserve">
-    <value>Restore</value>
+    <value>পুনরুদ্ধার করুন</value>
   </data>
   <data name="Settings_Restore_Success_Title" xml:space="preserve">
-    <value>Restore Complete</value>
+    <value>পুনরুদ্ধার সম্পন্ন</value>
   </data>
   <data name="Settings_Restore_Success_Message" xml:space="preserve">
-    <value>Successfully restored backup. The app will now restart.</value>
+    <value>সফলভাবে ব্যাকআপ পুনরুদ্ধার করা হয়েছে। অ্যাপটি এখন পুনরায় চালু হবে।</value>
   </data>
   <data name="Settings_Restore_Failed_Title" xml:space="preserve">
-    <value>Restore Failed</value>
+    <value>পুনরুদ্ধার ব্যর্থ হয়েছে</value>
   </data>
   <data name="Settings_Restore_Failed_Message" xml:space="preserve">
-    <value>Failed to restore from backup. Your data was not modified.</value>
+    <value>ব্যাকআপ থেকে পুনরুদ্ধার করতে ব্যর্থ হয়েছে। আপনার ডেটা পরিবর্তন করা হয়নি।</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
-    <value>Player Styling</value>
+    <value>প্লেয়ার স্টাইলিং</value>
   </data>
   <data name="PlayerBackgroundMaterial_Acrylic" xml:space="preserve">
-    <value>Acrylic (Glass)</value>
+    <value>এক্রিলিক (গ্লাস)</value>
   </data>
   <data name="PlayerBackgroundMaterial_Solid" xml:space="preserve">
-    <value>Solid (Opaque)</value>
+    <value>সলিড (অস্বচ্ছ)</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
-    <value>Customize the appearance of the floating player</value>
+    <value>ভাসমান প্লেয়ারের চেহারা কাস্টমাইজ করুন</value>
   </data>
   <data name="SettingsPage_TintIntensity_Header" xml:space="preserve">
-    <value>Tint Intensity</value>
+    <value>টিন্ট তীব্রতা</value>
   </data>
   <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
-    <value>Adjusts the vibrancy of the player background color</value>
+    <value>প্লেয়ারের পটভূমি রঙের প্রাণবন্ততা সামঞ্জস্য করে</value>
+  </data>
+  <data name="SettingsPage_FadeInDuration_Header" xml:space="preserve">
+    <value>Fade-in duration</value>
+  </data>
+  <data name="SettingsPage_FadeInDuration_Description" xml:space="preserve">
+    <value>The duration of the fade-in effect when playing (ms)</value>
+  </data>
+  <data name="SettingsPage_FadeOutDuration_Header" xml:space="preserve">
+    <value>Fade-out duration</value>
+  </data>
+  <data name="SettingsPage_FadeOutDuration_Description" xml:space="preserve">
+    <value>The duration of the fade-out effect when pausing (ms)</value>
   </data>
 </root>

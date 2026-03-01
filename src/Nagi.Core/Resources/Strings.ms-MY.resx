@@ -108,7 +108,7 @@
     <value>Lagu</value>
   </data>
   <data name="Label_Artists" xml:space="preserve">
-    <value>Artists</value>
+    <value>Artis</value>
   </data>
   <data name="Label_Song" xml:space="preserve">
     <value>Lagu</value>
@@ -232,7 +232,7 @@
     <value>dengan kulit album</value>
   </data>
   <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>with artist image</value>
+    <value>dengan gambar artis</value>
   </data>
   <data name="Label_And" xml:space="preserve">
     <value>dan</value>
