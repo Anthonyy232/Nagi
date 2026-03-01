@@ -1804,56 +1804,110 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     #region Listen History
 
     /// <inheritdoc />
-    public async Task<long?> CreateListenHistoryEntryAsync(Guid songId)
+    public async Task<long?> StartListenSessionAsync(Guid songId, PlaybackContext context)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        var song = await context.Songs.FindAsync(songId).ConfigureAwait(false);
-        if (song is null) return null;
-
-        song.PlayCount++;
-        song.LastPlayedDate = DateTime.UtcNow;
+        await using var dbContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        if (!await dbContext.Songs.AnyAsync(s => s.Id == songId).ConfigureAwait(false)) return null;
 
         var historyEntry = new ListenHistory
-            { SongId = songId, ListenTimestampUtc = DateTime.UtcNow, IsScrobbled = false };
-        context.ListenHistory.Add(historyEntry);
+        {
+            SongId = songId,
+            ListenTimestampUtc = DateTime.UtcNow,
+            ContextType = context.Type,
+            ContextId = context.ContextId,
+            EndReason = PlaybackEndReason.PausedAndAbandoned // Default until finalized
+        };
 
-        await context.SaveChangesAsync().ConfigureAwait(false);
+        dbContext.ListenHistory.Add(historyEntry);
+        await dbContext.SaveChangesAsync().ConfigureAwait(false);
         return historyEntry.Id;
+    }
+
+    /// <inheritdoc />
+    public async Task FinalizeListenSessionAsync(long listenHistoryId, TimeSpan finalDuration, PlaybackEndReason endReason)
+    {
+        await using var dbContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        var historyEntry = await dbContext.ListenHistory
+            .Include(lh => lh.Song)
+            .FirstOrDefaultAsync(lh => lh.Id == listenHistoryId)
+            .ConfigureAwait(false);
+
+        if (historyEntry is null) return;
+
+        // Guard against double-finalization races. Once a session is marked Finished,
+        // it must not be downgraded to Skipped or PausedAndAbandoned by a late fire-and-forget.
+        if (historyEntry.EndReason == PlaybackEndReason.Finished)
+        {
+            _logger.LogDebug("FinalizeListenSessionAsync: Session {Id} is already finalized as Finished. Skipping.", listenHistoryId);
+            return;
+        }
+
+        var oldDuration = historyEntry.ListenDurationTicks;
+        historyEntry.ListenDurationTicks = finalDuration.Ticks;
+        historyEntry.EndReason = endReason;
+
+        if (historyEntry.Song != null)
+        {
+            // Update total listen time denormalized field.
+            // Note: Song.SkipCount and Song.PlayCount are all-time denormalized counters for
+            // quick library sorting. StatisticsService computes per-time-range equivalents from
+            // ListenHistory directly — they intentionally diverge for ranged queries.
+            historyEntry.Song.TotalListenTimeTicks += (finalDuration.Ticks - oldDuration);
+
+            // If it was skipped and NOT marked eligible for scrobbling yet, increment skip count
+            if (endReason == PlaybackEndReason.Skipped && !historyEntry.IsEligibleForScrobbling)
+            {
+                historyEntry.Song.SkipCount++;
+            }
+        }
+        else
+        {
+            _logger.LogWarning("FinalizeListenSessionAsync: Song navigation property was null for ListenHistory {Id}. TotalListenTimeTicks not updated.", listenHistoryId);
+        }
+
+        await dbContext.SaveChangesAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async Task<bool> MarkListenAsEligibleForScrobblingAsync(long listenHistoryId)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        var historyEntry = await context.ListenHistory.FindAsync(listenHistoryId).ConfigureAwait(false);
+        await using var dbContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        var historyEntry = await dbContext.ListenHistory
+            .Include(lh => lh.Song)
+            .FirstOrDefaultAsync(lh => lh.Id == listenHistoryId)
+            .ConfigureAwait(false);
+
         if (historyEntry is null) return false;
 
-        historyEntry.IsEligibleForScrobbling = true;
-        await context.SaveChangesAsync().ConfigureAwait(false);
+        // If not already eligible, this is the official "Play" event
+        if (!historyEntry.IsEligibleForScrobbling)
+        {
+            historyEntry.IsEligibleForScrobbling = true;
+            if (historyEntry.Song != null)
+            {
+                historyEntry.Song.PlayCount++;
+                historyEntry.Song.LastPlayedDate = DateTime.UtcNow;
+            }
+            else
+            {
+                _logger.LogWarning("MarkListenAsEligibleForScrobblingAsync: Song navigation property was null for ListenHistory {Id}. PlayCount not updated.", listenHistoryId);
+            }
+            await dbContext.SaveChangesAsync().ConfigureAwait(false);
+        }
+
         return true;
     }
 
     /// <inheritdoc />
     public async Task<bool> MarkListenAsScrobbledAsync(long listenHistoryId)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        var historyEntry = await context.ListenHistory.FindAsync(listenHistoryId).ConfigureAwait(false);
+        await using var dbContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        var historyEntry = await dbContext.ListenHistory.FindAsync(listenHistoryId).ConfigureAwait(false);
         if (historyEntry is null) return false;
 
         historyEntry.IsScrobbled = true;
-        await context.SaveChangesAsync().ConfigureAwait(false);
+        await dbContext.SaveChangesAsync().ConfigureAwait(false);
         return true;
-    }
-
-    /// <inheritdoc />
-    public async Task LogSkipAsync(Guid songId)
-    {
-        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        var song = await context.Songs.FindAsync(songId).ConfigureAwait(false);
-        if (song is null) return;
-
-        song.SkipCount++;
-        await context.SaveChangesAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc />

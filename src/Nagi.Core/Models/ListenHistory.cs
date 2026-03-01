@@ -38,6 +38,26 @@ public class ListenHistory
     public bool IsEligibleForScrobbling { get; set; }
 
     /// <summary>
+    ///     Indicates how much of the track was listened to in this session (in ticks).
+    /// </summary>
+    public long ListenDurationTicks { get; set; }
+
+    /// <summary>
+    ///    The reason why the track finished playing in this session.
+    /// </summary>
+    public PlaybackEndReason EndReason { get; set; }
+
+    /// <summary>
+    ///     The type of context (Album, Playlist, etc.) from which the track was played.
+    /// </summary>
+    public PlaybackContextType ContextType { get; set; }
+
+    /// <summary>
+    ///     The ID of the context from which the track was played (e.g., AlbumId, PlaylistId).
+    /// </summary>
+    public Guid? ContextId { get; set; }
+
+    /// <summary>
     ///     Indicates whether this listen event has been successfully submitted
     ///     to an external scrobbling service (e.g., Last.fm).
     /// </summary>

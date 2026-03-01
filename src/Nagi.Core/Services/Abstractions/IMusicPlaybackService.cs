@@ -6,7 +6,7 @@ namespace Nagi.Core.Services.Abstractions;
 /// <summary>
 ///     Defines the contract for a service that manages music playback, queue, and state.
 /// </summary>
-public interface IMusicPlaybackService : IDisposable
+public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
 {
     /// <summary>
     ///     Gets the currently playing song, or null if nothing is playing or the player is stopped.

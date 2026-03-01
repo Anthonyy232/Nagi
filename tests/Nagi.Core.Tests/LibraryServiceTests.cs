@@ -1243,4 +1243,200 @@ public class LibraryServiceTests : IDisposable
     }
 
     #endregion
+
+    #region Listen History Tracking Tests
+
+    [Fact]
+    public async Task StartListenSessionAsync_CreatesHistoryEntry_WithCorrectContext()
+    {
+        // Arrange
+        var folder = new Folder { Name = "Test Folder", Path = "C:\\Test" };
+        var song = new Song { Title = "Test Song", Folder = folder, FilePath = "C:\\Test\\song.mp3" };
+        
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.Add(folder);
+            context.Songs.Add(song);
+            await context.SaveChangesAsync();
+        }
+
+        var playbackContext = new PlaybackContext(PlaybackContextType.Album, Guid.NewGuid());
+
+        // Act
+        var sessionId = await _libraryService.StartListenSessionAsync(song.Id, playbackContext);
+
+        // Assert
+        sessionId.Should().NotBeNull();
+        
+        await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
+        var historyEntry = await assertContext.ListenHistory.FindAsync(sessionId);
+        
+        historyEntry.Should().NotBeNull();
+        historyEntry!.SongId.Should().Be(song.Id);
+        historyEntry.ContextType.Should().Be(PlaybackContextType.Album);
+        historyEntry.ContextId.Should().Be(playbackContext.ContextId);
+        historyEntry.ListenDurationTicks.Should().Be(0);
+        historyEntry.EndReason.Should().Be(PlaybackEndReason.PausedAndAbandoned); // Initial state
+        historyEntry.IsEligibleForScrobbling.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task StartListenSessionAsync_WithInvalidSongId_ReturnsNull()
+    {
+        // Act
+        var sessionId = await _libraryService.StartListenSessionAsync(Guid.NewGuid(), new PlaybackContext(PlaybackContextType.Queue, null));
+
+        // Assert
+        sessionId.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task MarkListenAsEligibleForScrobblingAsync_IncrementsPlayCountAndSetsLastPlayedDate()
+    {
+        // Arrange
+        var folder = new Folder { Name = "Test Folder", Path = "C:\\Test" };
+        var song = new Song { Title = "Test Song", Folder = folder, FilePath = "C:\\Test\\song.mp3", PlayCount = 5 };
+        var listenHistory = new ListenHistory { Song = song, IsEligibleForScrobbling = false };
+        
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.Add(folder);
+            context.Songs.Add(song);
+            context.ListenHistory.Add(listenHistory);
+            await context.SaveChangesAsync();
+        }
+
+        var beforeUpdate = DateTime.UtcNow;
+
+        // Act
+        var result = await _libraryService.MarkListenAsEligibleForScrobblingAsync(listenHistory.Id);
+
+        // Assert
+        result.Should().BeTrue();
+        
+        await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
+        var updatedHistory = await assertContext.ListenHistory.FindAsync(listenHistory.Id);
+        var updatedSong = await assertContext.Songs.FindAsync(song.Id);
+        
+        updatedHistory!.IsEligibleForScrobbling.Should().BeTrue();
+        updatedSong!.PlayCount.Should().Be(6); // Incremented from 5
+        updatedSong.LastPlayedDate.Should().BeOnOrAfter(beforeUpdate);
+    }
+    
+    [Fact]
+    public async Task MarkListenAsEligibleForScrobblingAsync_WhenAlreadyEligible_DoesNotIncrementPlayCountAgain()
+    {
+        // Arrange
+        var folder = new Folder { Name = "Test Folder", Path = "C:\\Test" };
+        var song = new Song { Title = "Test Song", Folder = folder, FilePath = "C:\\Test\\song.mp3", PlayCount = 5 };
+        var listenHistory = new ListenHistory { Song = song, IsEligibleForScrobbling = true }; // Already marked!
+        
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.Add(folder);
+            context.Songs.Add(song);
+            context.ListenHistory.Add(listenHistory);
+            await context.SaveChangesAsync();
+        }
+
+        // Act
+        var result = await _libraryService.MarkListenAsEligibleForScrobblingAsync(listenHistory.Id);
+
+        // Assert
+        result.Should().BeTrue(); // Still returns true, but nothing changes internally
+        
+        await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
+        var updatedSong = await assertContext.Songs.FindAsync(song.Id);
+        updatedSong!.PlayCount.Should().Be(5); // Not incremented
+    }
+
+    [Fact]
+    public async Task FinalizeListenSessionAsync_WhenCalled_UpdatesDurationAndEndReason()
+    {
+        // Arrange
+        var folder = new Folder { Name = "Test Folder", Path = "C:\\Test" };
+        var song = new Song { Title = "Test Song", Folder = folder, FilePath = "C:\\Test\\song.mp3", TotalListenTimeTicks = 1000 };
+        var listenHistory = new ListenHistory { Song = song, EndReason = PlaybackEndReason.PausedAndAbandoned, ListenDurationTicks = 0, IsEligibleForScrobbling = true };
+        
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.Add(folder);
+            context.Songs.Add(song);
+            context.ListenHistory.Add(listenHistory);
+            await context.SaveChangesAsync();
+        }
+
+        var finalDuration = TimeSpan.FromSeconds(150);
+
+        // Act
+        await _libraryService.FinalizeListenSessionAsync(listenHistory.Id, finalDuration, PlaybackEndReason.Finished);
+
+        // Assert
+        await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
+        var updatedHistory = await assertContext.ListenHistory.FindAsync(listenHistory.Id);
+        var updatedSong = await assertContext.Songs.FindAsync(song.Id);
+        
+        updatedHistory!.EndReason.Should().Be(PlaybackEndReason.Finished);
+        updatedHistory.ListenDurationTicks.Should().Be(finalDuration.Ticks);
+        
+        // Ensure total listen time was updated accurately (1000 + 150 seconds of ticks)
+        updatedSong!.TotalListenTimeTicks.Should().Be(1000 + finalDuration.Ticks);
+    }
+    
+    [Fact]
+    public async Task FinalizeListenSessionAsync_WhenSkippedAndNotEligible_IncrementsSkipCount()
+    {
+        // Arrange
+        var folder = new Folder { Name = "Test Folder", Path = "C:\\Test" };
+        var song = new Song { Title = "Test Song", Folder = folder, FilePath = "C:\\Test\\song.mp3", SkipCount = 2, TotalListenTimeTicks = 0 };
+        
+        // A track was started but quickly skipped before it reached scrobble thresholds
+        var listenHistory = new ListenHistory { Song = song, EndReason = PlaybackEndReason.PausedAndAbandoned, ListenDurationTicks = 0, IsEligibleForScrobbling = false };
+        
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.Add(folder);
+            context.Songs.Add(song);
+            context.ListenHistory.Add(listenHistory);
+            await context.SaveChangesAsync();
+        }
+
+        var finalDuration = TimeSpan.FromSeconds(10); // user listened for only 10 seconds before skipping
+
+        // Act
+        await _libraryService.FinalizeListenSessionAsync(listenHistory.Id, finalDuration, PlaybackEndReason.Skipped);
+
+        // Assert
+        await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
+        var updatedHistory = await assertContext.ListenHistory.FindAsync(listenHistory.Id);
+        var updatedSong = await assertContext.Songs.FindAsync(song.Id);
+        
+        updatedHistory!.EndReason.Should().Be(PlaybackEndReason.Skipped);
+        updatedHistory.ListenDurationTicks.Should().Be(finalDuration.Ticks);
+        
+        updatedSong!.SkipCount.Should().Be(3); // Incremented from 2!
+        updatedSong.TotalListenTimeTicks.Should().Be(finalDuration.Ticks); // 10 seconds of listening added
+    }
+
+    [Fact]
+    public async Task FinalizeListenSessionAsync_WithInvalidHistoryId_ReturnsSilently()
+    {
+        // Act
+        // Shouldn't throw an exception, should just gracefully return
+        await _libraryService.FinalizeListenSessionAsync(99999L, TimeSpan.FromSeconds(10), PlaybackEndReason.Finished);
+        
+        // Assert: no crash means success
+    }
+
+    [Fact]
+    public async Task MarkListenAsEligibleForScrobblingAsync_WithInvalidHistoryId_ReturnsFalse()
+    {
+        // Act
+        var result = await _libraryService.MarkListenAsEligibleForScrobblingAsync(99999L);
+        
+        // Assert
+        result.Should().BeFalse();
+    }
+
+    #endregion
 }

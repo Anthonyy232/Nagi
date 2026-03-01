@@ -58,6 +58,7 @@ public class MusicDbContext : DbContext
             entity.HasIndex(s => s.PlayCount);
             entity.HasIndex(s => s.IsLoved);
             entity.HasIndex(s => s.Year);
+            entity.HasIndex(s => s.TotalListenTimeTicks);
 
             // Composite index for sorting tracks within an album.
             entity.HasIndex(s => new { s.AlbumId, s.DiscNumber, s.TrackNumber });
@@ -109,6 +110,8 @@ public class MusicDbContext : DbContext
             entity.HasIndex(lh => lh.SongId);
             entity.HasIndex(lh => lh.ListenTimestampUtc);
             entity.HasIndex(lh => lh.IsScrobbled);
+            entity.HasIndex(lh => new { lh.ContextType, lh.ContextId });
+            entity.HasIndex(lh => lh.EndReason);
         });
 
         // Configure the Folder entity.

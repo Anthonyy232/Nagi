@@ -21,9 +21,9 @@ public interface ILibraryWriter
     Task<bool> UpdateSongLyricsLastCheckedAsync(Guid songId);
     Task<bool> UpdateArtistImageAsync(Guid artistId, string localFilePath);
     Task<bool> RemoveArtistImageAsync(Guid artistId);
-    Task<long?> CreateListenHistoryEntryAsync(Guid songId);
+    Task<long?> StartListenSessionAsync(Guid songId, PlaybackContext context);
+    Task FinalizeListenSessionAsync(long listenHistoryId, TimeSpan finalDuration, PlaybackEndReason endReason);
     Task<bool> MarkListenAsScrobbledAsync(long listenHistoryId);
     Task<bool> MarkListenAsEligibleForScrobblingAsync(long listenHistoryId);
-    Task LogSkipAsync(Guid songId);
     Task ClearAllLibraryDataAsync();
 }
