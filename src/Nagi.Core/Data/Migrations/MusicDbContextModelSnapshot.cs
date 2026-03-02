@@ -15,7 +15,7 @@ namespace Nagi.Core.Data.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "10.0.1");
+            modelBuilder.HasAnnotation("ProductVersion", "10.0.2");
 
             modelBuilder.Entity("GenreSong", b =>
                 {
@@ -40,7 +40,7 @@ namespace Nagi.Core.Data.Migrations
 
                     b.Property<string>("ArtistName")
                         .IsRequired()
-                        .HasMaxLength(1000)
+                        .HasMaxLength(2000)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("CoverArtUri")
@@ -192,10 +192,22 @@ namespace Nagi.Core.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<Guid?>("ContextId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ContextType")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("EndReason")
+                        .HasColumnType("INTEGER");
+
                     b.Property<bool>("IsEligibleForScrobbling")
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsScrobbled")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("ListenDurationTicks")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("ListenTimestampUtc")
@@ -206,11 +218,15 @@ namespace Nagi.Core.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("EndReason");
+
                     b.HasIndex("IsScrobbled");
 
                     b.HasIndex("ListenTimestampUtc");
 
                     b.HasIndex("SongId");
+
+                    b.HasIndex("ContextType", "ContextId");
 
                     b.ToTable("ListenHistory");
                 });
@@ -357,7 +373,7 @@ namespace Nagi.Core.Data.Migrations
 
                     b.Property<string>("ArtistName")
                         .IsRequired()
-                        .HasMaxLength(1000)
+                        .HasMaxLength(2000)
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("Bitrate")
@@ -484,6 +500,9 @@ namespace Nagi.Core.Data.Migrations
                         .HasColumnType("TEXT")
                         .UseCollation("NOCASE");
 
+                    b.Property<long>("TotalListenTimeTicks")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int?>("TrackCount")
                         .HasColumnType("INTEGER");
 
@@ -517,6 +536,8 @@ namespace Nagi.Core.Data.Migrations
                     b.HasIndex("PrimaryArtistName");
 
                     b.HasIndex("Title");
+
+                    b.HasIndex("TotalListenTimeTicks");
 
                     b.HasIndex("Year");
 

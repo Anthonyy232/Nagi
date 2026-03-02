@@ -563,6 +563,7 @@ public partial class App : Application
         services.AddSingleton<ArtistViewModel>();
         services.AddSingleton<AlbumViewModel>();
         services.AddSingleton<GenreViewModel>();
+        services.AddSingleton<InsightsViewModel>();
 
         // Detail/Context ViewModels
         services.AddSingleton<SettingsViewModel>();

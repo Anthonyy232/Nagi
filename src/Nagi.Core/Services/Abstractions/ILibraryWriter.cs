@@ -25,5 +25,6 @@ public interface ILibraryWriter
     Task FinalizeListenSessionAsync(long listenHistoryId, TimeSpan finalDuration, PlaybackEndReason endReason);
     Task<bool> MarkListenAsScrobbledAsync(long listenHistoryId);
     Task<bool> MarkListenAsEligibleForScrobblingAsync(long listenHistoryId);
+    Task ClearListenHistoryAsync();
     Task ClearAllLibraryDataAsync();
 }

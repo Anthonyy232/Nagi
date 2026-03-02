@@ -6,8 +6,9 @@ namespace Nagi.Core.Services.Implementations.Presence;
 
 /// <summary>
 ///     Manages Last.fm integration, including "Now Playing" updates and scrobbling.
-///     This service determines when a track is eligible for scrobbling based on playback
-///     progress and attempts a real-time submission, with a fallback to an offline queue.
+///     Scrobble eligibility is determined centrally by <see cref="MusicPlaybackService" /> which
+///     raises <c>ScrobbleEligibilityReached</c>; this service is only responsible for submitting
+///     the scrobble to Last.fm and marking the session as scrobbled in the database.
 /// </summary>
 public class LastFmPresenceService : IPresenceService, IAsyncDisposable
 {
@@ -15,10 +16,7 @@ public class LastFmPresenceService : IPresenceService, IAsyncDisposable
     private readonly ILogger<LastFmPresenceService> _logger;
     private readonly ILastFmScrobblerService _scrobblerService;
     private readonly ISettingsService _settingsService;
-    private long? _currentListenHistoryId;
 
-    private Song? _currentSong;
-    private bool _isEligibilityMarked;
     private bool _isNowPlayingEnabled;
     private bool _isScrobblingEnabled;
     private DateTime _playbackStartTime;
@@ -64,10 +62,7 @@ public class LastFmPresenceService : IPresenceService, IAsyncDisposable
 
     public async Task OnTrackChangedAsync(Song song, long listenHistoryId)
     {
-        _currentSong = song;
-        _currentListenHistoryId = listenHistoryId;
         _playbackStartTime = DateTime.UtcNow;
-        _isEligibilityMarked = false;
 
         if (_isNowPlayingEnabled)
             try
@@ -80,55 +75,41 @@ public class LastFmPresenceService : IPresenceService, IAsyncDisposable
             }
     }
 
-    public Task OnPlaybackStateChangedAsync(bool isPlaying)
+    public Task OnPlaybackStateChangedAsync(bool isPlaying) => Task.CompletedTask;
+
+    public Task OnPlaybackStoppedAsync() => Task.CompletedTask;
+
+    /// <summary>
+    ///     No-op: eligibility tracking is handled by <see cref="MusicPlaybackService" />, which
+    ///     raises <c>ScrobbleEligibilityReached</c> and routes it to
+    ///     <see cref="OnTrackEligibleForScrobblingAsync" /> via <see cref="PresenceManager" />.
+    /// </summary>
+    public Task OnTrackProgressAsync(TimeSpan progress, TimeSpan duration) => Task.CompletedTask;
+
+    /// <summary>
+    ///     Attempts to scrobble the track to Last.fm immediately (real-time scrobble).
+    ///     On success, marks the session as scrobbled in the database. On failure, the session
+    ///     remains eligible so a background service can retry later.
+    /// </summary>
+    public async Task OnTrackEligibleForScrobblingAsync(Song song, long listenHistoryId)
     {
-        return Task.CompletedTask;
-    }
+        if (!_isScrobblingEnabled) return;
 
-    public Task OnPlaybackStoppedAsync()
-    {
-        _currentSong = null;
-        _currentListenHistoryId = null;
-        return Task.CompletedTask;
-    }
+        _logger.LogDebug("Track '{TrackTitle}' is eligible for scrobbling. Attempting real-time submission.", song.Title);
 
-    public async Task OnTrackProgressAsync(TimeSpan progress, TimeSpan duration)
-    {
-        if (_currentSong is null || !_isScrobblingEnabled || _isEligibilityMarked ||
-            !_currentListenHistoryId.HasValue || duration <= TimeSpan.Zero) return;
-
-        // A track is scrobbleable if it's longer than 30 seconds and has been played
-        // for at least half its duration or for 4 minutes, whichever comes first.
-        var isLongEnough = duration.TotalSeconds > 30;
-        var hasPlayedEnough = progress.TotalSeconds >= duration.TotalSeconds / 2 || progress.TotalMinutes >= 4;
-
-        if (isLongEnough && hasPlayedEnough)
+        try
         {
-            // Prevent multiple scrobble attempts for the same listening session.
-            _isEligibilityMarked = true;
-
-            // Mark as eligible in the database. This allows an offline service to scrobble it later if real-time fails.
-            await _libraryWriter.MarkListenAsEligibleForScrobblingAsync(_currentListenHistoryId.Value).ConfigureAwait(false);
-            _logger.LogDebug("Track '{TrackTitle}' is now eligible for scrobbling.", _currentSong.Title);
-
-            // Attempt to scrobble immediately for a real-time experience.
-            try
+            if (await _scrobblerService.ScrobbleAsync(song, _playbackStartTime).ConfigureAwait(false))
             {
-                if (await _scrobblerService.ScrobbleAsync(_currentSong, _playbackStartTime).ConfigureAwait(false))
-                {
-                    _logger.LogDebug("Successfully scrobbled track '{TrackTitle}' in real-time.",
-                        _currentSong.Title);
-                    await _libraryWriter.MarkListenAsScrobbledAsync(_currentListenHistoryId.Value).ConfigureAwait(false);
-                }
+                _logger.LogDebug("Successfully scrobbled track '{TrackTitle}' in real-time.", song.Title);
+                await _libraryWriter.MarkListenAsScrobbledAsync(listenHistoryId).ConfigureAwait(false);
             }
-            catch (Exception ex)
-            {
-                // If real-time scrobbling fails, the track remains eligible in the database
-                // for a background service to handle later.
-                _logger.LogWarning(ex,
-                    "Real-time scrobble for '{TrackTitle}' failed. It will be handled by the background service.",
-                    _currentSong.Title);
-            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex,
+                "Real-time scrobble for '{TrackTitle}' failed. It will be handled by the background service.",
+                song.Title);
         }
     }
 

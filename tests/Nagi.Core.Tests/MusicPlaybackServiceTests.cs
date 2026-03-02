@@ -617,6 +617,30 @@ public class MusicPlaybackServiceTests
     }
 
     [Fact]
+    public async Task PlayAsync_RaisesTrackChanged_AfterListenSessionIdIsSet()
+    {
+        // Arrange
+        await _service.InitializeAsync();
+        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(150L);
+
+        long? listenHistoryIdSeenByEvent = null;
+        _service.TrackChanged += () => listenHistoryIdSeenByEvent = _service.CurrentListenHistoryId;
+
+        // Simulate the audio backend raising MediaOpened while LoadAsync is running.
+        _audioPlayer.When(x => x.LoadAsync(Arg.Any<Song>())).Do(_ =>
+        {
+            _audioPlayer.MediaOpened += Raise.Event<Action>();
+        });
+
+        // Act
+        await _service.PlayAsync(_testSongs[0]);
+
+        // Assert
+        listenHistoryIdSeenByEvent.Should().Be(150L,
+            "TrackChanged consumers (e.g. presence) must always see the active listen session ID");
+    }
+
+    [Fact]
     public async Task StopAsync_WithActiveSession_FinalizesSessionAsPausedAndAbandoned()
     {
         // Arrange
@@ -762,6 +786,41 @@ public class MusicPlaybackServiceTests
         // Verification that a new session was NOT created because transient playback is not tracked
         _service.CurrentListenHistoryId.Should().BeNull();
         await _libraryService.DidNotReceiveWithAnyArgs().StartListenSessionAsync(Guid.Empty, default!);
+    }
+
+    [Fact]
+    public async Task PlayTransientFileAsync_WhenFileExistsInLibrary_StartsTransientSession()
+    {
+        // Arrange
+        await _service.InitializeAsync();
+
+        const string filePath = "C:\\temp\\transient-in-library.mp3";
+        var metadata = new SongFileMetadata
+        {
+            Title = "Transient Song",
+            Artists = new List<string> { "Temp Artist" }
+        };
+        _metadataService.ExtractMetadataAsync(filePath).Returns(metadata);
+
+        var mappedSong = new Song
+        {
+            Id = Guid.NewGuid(),
+            Title = "Library Version",
+            FilePath = filePath,
+            Folder = new Folder { Path = "C:\\temp" }
+        };
+
+        _libraryService.GetSongByFilePathAsync(filePath).Returns(mappedSong);
+        _libraryService.StartListenSessionAsync(mappedSong.Id, Arg.Any<PlaybackContext>()).Returns(777L);
+
+        // Act
+        await _service.PlayTransientFileAsync(filePath);
+
+        // Assert
+        _service.CurrentListenHistoryId.Should().Be(777L);
+        await _libraryService.Received(1).StartListenSessionAsync(
+            mappedSong.Id,
+            Arg.Is<PlaybackContext>(c => c.Type == PlaybackContextType.Transient && c.ContextId == null));
     }
     
     [Fact]

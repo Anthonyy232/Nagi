@@ -51,15 +51,16 @@ public sealed partial class ArtistPage : Page
         {
             base.OnNavigatedTo(e);
             _logger.LogDebug("Navigated to ArtistPage.");
-            _cancellationTokenSource = new CancellationTokenSource();
+            var cts = new CancellationTokenSource();
+            _cancellationTokenSource = cts;
             ViewModel.SubscribeToEvents();
 
             if (ViewModel.Artists.Count == 0)
             {
                 _logger.LogDebug("Artist collection is empty, loading artists...");
-                await ViewModel.LoadArtistsAsync(_cancellationTokenSource.Token);
+                await ViewModel.LoadArtistsAsync(cts.Token);
                 
-                if (_cancellationTokenSource.IsCancellationRequested)
+                if (cts.IsCancellationRequested)
                     _logger.LogDebug("Artist loading was canceled.");
                 else if (!ViewModel.HasLoadError)
                     _logger.LogDebug("Successfully loaded artists.");
@@ -67,9 +68,9 @@ public sealed partial class ArtistPage : Page
             else if (!ViewModel.IsFullyLoaded)
             {
                 _logger.LogDebug("Artists partially loaded, resuming fetch...");
-                await ViewModel.ResumeLoadingAsync(_cancellationTokenSource.Token);
+                await ViewModel.ResumeLoadingAsync(cts.Token);
                 
-                if (_cancellationTokenSource.IsCancellationRequested)
+                if (cts.IsCancellationRequested)
                     _logger.LogDebug("Artist resuming was canceled.");
                 else if (!ViewModel.HasLoadError)
                     _logger.LogDebug("Successfully resumed loading artists.");

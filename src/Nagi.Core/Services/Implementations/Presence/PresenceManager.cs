@@ -125,6 +125,7 @@ public class PresenceManager : IPresenceManager, IAsyncDisposable, IDisposable
         _playbackService.TrackChanged += OnTrackChanged;
         _playbackService.PlaybackStateChanged += OnPlaybackStateChanged;
         _playbackService.PositionChanged += OnPositionChanged;
+        _playbackService.ScrobbleEligibilityReached += OnScrobbleEligibilityReached;
         _settingsService.LastFmSettingsChanged += OnLastFmSettingsChanged;
         _settingsService.DiscordRichPresenceSettingChanged += OnDiscordRichPresenceSettingChanged;
     }
@@ -134,6 +135,7 @@ public class PresenceManager : IPresenceManager, IAsyncDisposable, IDisposable
         _playbackService.TrackChanged -= OnTrackChanged;
         _playbackService.PlaybackStateChanged -= OnPlaybackStateChanged;
         _playbackService.PositionChanged -= OnPositionChanged;
+        _playbackService.ScrobbleEligibilityReached -= OnScrobbleEligibilityReached;
         _settingsService.LastFmSettingsChanged -= OnLastFmSettingsChanged;
         _settingsService.DiscordRichPresenceSettingChanged -= OnDiscordRichPresenceSettingChanged;
     }
@@ -281,6 +283,13 @@ public class PresenceManager : IPresenceManager, IAsyncDisposable, IDisposable
         FireAndForgetSafe(
             async () => await BroadcastAsync(s => s.OnTrackProgressAsync(_playbackService.CurrentPosition, _playbackService.Duration)).ConfigureAwait(false),
             "Position change broadcast");
+    }
+
+    private void OnScrobbleEligibilityReached(Song song, long listenHistoryId)
+    {
+        FireAndForgetSafe(
+            async () => await BroadcastAsync(s => s.OnTrackEligibleForScrobblingAsync(song, listenHistoryId)).ConfigureAwait(false),
+            "Scrobble eligibility broadcast");
     }
 
     private async Task BroadcastAsync(Func<IPresenceService, Task> action)

@@ -43,14 +43,15 @@ public sealed partial class GenrePage : Page
         {
             base.OnNavigatedTo(e);
             _logger.LogDebug("Navigated to GenrePage.");
-            _cancellationTokenSource = new CancellationTokenSource();
+            var cts = new CancellationTokenSource();
+            _cancellationTokenSource = cts;
 
             if (ViewModel.Genres.Count == 0)
             {
                 _logger.LogDebug("Genre collection is empty, loading genres...");
-                await ViewModel.LoadGenresAsync(_cancellationTokenSource.Token);
+                await ViewModel.LoadGenresAsync(cts.Token);
                 
-                if (_cancellationTokenSource.IsCancellationRequested)
+                if (cts.IsCancellationRequested)
                     _logger.LogDebug("Genre loading was canceled.");
                 else if (!ViewModel.HasLoadError)
                     _logger.LogDebug("Successfully loaded genres.");

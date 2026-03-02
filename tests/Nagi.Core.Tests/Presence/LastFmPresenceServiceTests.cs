@@ -10,8 +10,10 @@ namespace Nagi.Core.Tests.Presence;
 
 /// <summary>
 ///     Contains unit tests for the <see cref="LastFmPresenceService" />.
-///     These tests verify the service's logic for updating "Now Playing" status and determining
-///     scrobble eligibility based on track progress.
+///     Threshold evaluation (when a track becomes eligible) is handled by
+///     <see cref="MusicPlaybackService" /> and tested in its own test class. These tests verify
+///     only the Last.fm-specific behaviour: Now Playing updates and scrobble submission on the
+///     centralized eligibility signal.
 /// </summary>
 public class LastFmPresenceServiceTests : IDisposable
 {
@@ -52,30 +54,6 @@ public class LastFmPresenceServiceTests : IDisposable
     {
         return new Song { Id = Guid.NewGuid(), Title = "Test Song", Duration = duration };
     }
-
-    #region State Management
-
-    /// <summary>
-    ///     Verifies that stopping playback clears the internal state for the current song and listen ID.
-    /// </summary>
-    [Fact]
-    public async Task OnPlaybackStoppedAsync_ClearsInternalState()
-    {
-        // Arrange
-        await InitializeServiceAsync(false, true);
-        var song = CreateTestSong(TimeSpan.FromMinutes(3));
-        await _service.OnTrackChangedAsync(song, 1);
-
-        // Act
-        await _service.OnPlaybackStoppedAsync();
-        // Try to scrobble after stopping; it should do nothing as the song is cleared.
-        await _service.OnTrackProgressAsync(TimeSpan.FromMinutes(2), song.Duration);
-
-        // Assert
-        await _libraryWriter.DidNotReceive().MarkListenAsEligibleForScrobblingAsync(Arg.Any<long>());
-    }
-
-    #endregion
 
     #region Now Playing Tests
 
@@ -118,11 +96,11 @@ public class LastFmPresenceServiceTests : IDisposable
     #region Scrobbling Tests
 
     /// <summary>
-    ///     Verifies that a track is marked as eligible and scrobbled when it has been played for
-    ///     at least half of its duration.
+    ///     Verifies that when the eligibility signal fires and scrobbling is enabled,
+    ///     the service attempts to scrobble the track.
     /// </summary>
     [Fact]
-    public async Task OnTrackProgressAsync_WhenEligibleByHalfDuration_MarksAndAttemptsScrobble()
+    public async Task OnTrackEligibleForScrobblingAsync_WhenScrobblingEnabled_AttemptsScrobble()
     {
         // Arrange
         await InitializeServiceAsync(false, true);
@@ -130,49 +108,27 @@ public class LastFmPresenceServiceTests : IDisposable
         await _service.OnTrackChangedAsync(song, 1);
 
         // Act
-        await _service.OnTrackProgressAsync(TimeSpan.FromSeconds(91), song.Duration);
+        await _service.OnTrackEligibleForScrobblingAsync(song, 1);
 
         // Assert
-        await _libraryWriter.Received(1).MarkListenAsEligibleForScrobblingAsync(1);
         await _scrobblerService.Received(1).ScrobbleAsync(song, Arg.Any<DateTime>());
     }
 
     /// <summary>
-    ///     Verifies that a track is marked as eligible and scrobbled when it has been played for
-    ///     at least four minutes, even if that is less than half its duration.
+    ///     Verifies that when scrobbling is disabled, the eligibility signal is ignored.
     /// </summary>
     [Fact]
-    public async Task OnTrackProgressAsync_WhenEligibleByFourMinutes_MarksAndAttemptsScrobble()
+    public async Task OnTrackEligibleForScrobblingAsync_WhenScrobblingDisabled_DoesNotScrobble()
     {
         // Arrange
-        await InitializeServiceAsync(false, true);
-        var song = CreateTestSong(TimeSpan.FromMinutes(10));
+        await InitializeServiceAsync(false, false);
+        var song = CreateTestSong(TimeSpan.FromMinutes(3));
         await _service.OnTrackChangedAsync(song, 1);
 
         // Act
-        await _service.OnTrackProgressAsync(TimeSpan.FromMinutes(4), song.Duration);
+        await _service.OnTrackEligibleForScrobblingAsync(song, 1);
 
         // Assert
-        await _libraryWriter.Received(1).MarkListenAsEligibleForScrobblingAsync(1);
-        await _scrobblerService.Received(1).ScrobbleAsync(song, Arg.Any<DateTime>());
-    }
-
-    /// <summary>
-    ///     Verifies that a track is not scrobbled if its total duration is 30 seconds or less.
-    /// </summary>
-    [Fact]
-    public async Task OnTrackProgressAsync_WhenTrackIsTooShort_DoesNotScrobble()
-    {
-        // Arrange
-        await InitializeServiceAsync(false, true);
-        var song = CreateTestSong(TimeSpan.FromSeconds(30));
-        await _service.OnTrackChangedAsync(song, 1);
-
-        // Act
-        await _service.OnTrackProgressAsync(TimeSpan.FromSeconds(20), song.Duration);
-
-        // Assert
-        await _libraryWriter.DidNotReceive().MarkListenAsEligibleForScrobblingAsync(Arg.Any<long>());
         await _scrobblerService.DidNotReceive().ScrobbleAsync(Arg.Any<Song>(), Arg.Any<DateTime>());
     }
 
@@ -180,7 +136,7 @@ public class LastFmPresenceServiceTests : IDisposable
     ///     Verifies that if the real-time scrobble succeeds, the listen is marked as scrobbled in the database.
     /// </summary>
     [Fact]
-    public async Task OnTrackProgressAsync_WhenRealtimeScrobbleSucceeds_MarksAsScrobbled()
+    public async Task OnTrackEligibleForScrobblingAsync_WhenRealtimeScrobbleSucceeds_MarksAsScrobbled()
     {
         // Arrange
         await InitializeServiceAsync(false, true);
@@ -189,18 +145,18 @@ public class LastFmPresenceServiceTests : IDisposable
         _scrobblerService.ScrobbleAsync(song, Arg.Any<DateTime>()).Returns(true);
 
         // Act
-        await _service.OnTrackProgressAsync(TimeSpan.FromMinutes(2), song.Duration);
+        await _service.OnTrackEligibleForScrobblingAsync(song, 1);
 
         // Assert
         await _libraryWriter.Received(1).MarkListenAsScrobbledAsync(1);
     }
 
     /// <summary>
-    ///     Verifies that if the real-time scrobble fails (returns false), the listen is not marked as scrobbled,
-    ///     allowing a background service to retry later.
+    ///     Verifies that if the real-time scrobble fails (returns false), the listen is NOT marked as
+    ///     scrobbled, allowing a background service to retry later.
     /// </summary>
     [Fact]
-    public async Task OnTrackProgressAsync_WhenRealtimeScrobbleFails_DoesNotMarkAsScrobbled()
+    public async Task OnTrackEligibleForScrobblingAsync_WhenRealtimeScrobbleFails_DoesNotMarkAsScrobbled()
     {
         // Arrange
         await InitializeServiceAsync(false, true);
@@ -209,7 +165,7 @@ public class LastFmPresenceServiceTests : IDisposable
         _scrobblerService.ScrobbleAsync(song, Arg.Any<DateTime>()).Returns(false);
 
         // Act
-        await _service.OnTrackProgressAsync(TimeSpan.FromMinutes(2), song.Duration);
+        await _service.OnTrackEligibleForScrobblingAsync(song, 1);
 
         // Assert
         await _libraryWriter.DidNotReceive().MarkListenAsScrobbledAsync(Arg.Any<long>());
@@ -219,7 +175,7 @@ public class LastFmPresenceServiceTests : IDisposable
     ///     Verifies that if the real-time scrobble throws an exception, the listen is not marked as scrobbled.
     /// </summary>
     [Fact]
-    public async Task OnTrackProgressAsync_WhenRealtimeScrobbleThrows_DoesNotMarkAsScrobbled()
+    public async Task OnTrackEligibleForScrobblingAsync_WhenRealtimeScrobbleThrows_DoesNotMarkAsScrobbled()
     {
         // Arrange
         await InitializeServiceAsync(false, true);
@@ -228,31 +184,31 @@ public class LastFmPresenceServiceTests : IDisposable
         _scrobblerService.ScrobbleAsync(song, Arg.Any<DateTime>()).ThrowsAsync(new Exception("Network error"));
 
         // Act
-        await _service.OnTrackProgressAsync(TimeSpan.FromMinutes(2), song.Duration);
+        await _service.OnTrackEligibleForScrobblingAsync(song, 1);
 
         // Assert
         await _libraryWriter.DidNotReceive().MarkListenAsScrobbledAsync(Arg.Any<long>());
     }
 
     /// <summary>
-    ///     Verifies that once a track is marked as eligible for scrobbling, subsequent progress updates
-    ///     for the same listen do not trigger another scrobble attempt.
+    ///     Verifies that OnTrackProgressAsync is a no-op — it should never trigger scrobbling.
+    ///     Threshold evaluation is the sole responsibility of MusicPlaybackService.
     /// </summary>
     [Fact]
-    public async Task OnTrackProgressAsync_AfterBecomingEligible_DoesNotScrobbleAgain()
+    public async Task OnTrackProgressAsync_NeverTriggersScrobble()
     {
         // Arrange
         await InitializeServiceAsync(false, true);
         var song = CreateTestSong(TimeSpan.FromMinutes(3));
         await _service.OnTrackChangedAsync(song, 1);
 
-        // Act
+        // Act — call with values that would have met the old threshold
         await _service.OnTrackProgressAsync(TimeSpan.FromMinutes(2), song.Duration);
-        await _service.OnTrackProgressAsync(TimeSpan.FromMinutes(2.5), song.Duration);
 
         // Assert
-        await _libraryWriter.Received(1).MarkListenAsEligibleForScrobblingAsync(1);
-        await _scrobblerService.Received(1).ScrobbleAsync(song, Arg.Any<DateTime>());
+        await _scrobblerService.DidNotReceive().ScrobbleAsync(Arg.Any<Song>(), Arg.Any<DateTime>());
+        await _libraryWriter.DidNotReceive().MarkListenAsEligibleForScrobblingAsync(Arg.Any<long>());
+        await _libraryWriter.DidNotReceive().MarkListenAsScrobbledAsync(Arg.Any<long>());
     }
 
     #endregion

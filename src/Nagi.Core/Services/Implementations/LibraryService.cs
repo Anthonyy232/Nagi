@@ -130,6 +130,14 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     #region Data Reset
 
     /// <inheritdoc />
+    public async Task ClearListenHistoryAsync()
+    {
+        _logger.LogInformation("Clearing all listen history.");
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        await context.ListenHistory.ExecuteDeleteAsync().ConfigureAwait(false);
+        _logger.LogInformation("Listen history cleared.");
+    }
+
     public async Task ClearAllLibraryDataAsync()
     {
         _logger.LogInformation("Starting to clear all library data and cache files.");
@@ -2761,10 +2769,15 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
 
         var allFolders = await context.Folders.AsNoTracking().ToListAsync(cancellationToken).ConfigureAwait(false);
-        var existingFolders = allFolders.ToDictionary(f => f.Path, StringComparer.OrdinalIgnoreCase);
+        // Normalize stored paths to canonical form (native separator, no trailing separator) for reliable lookups.
+        var existingFolders = allFolders.ToDictionary(
+            f => NormalizeDirectoryPath(f.Path),
+            f => f,
+            StringComparer.OrdinalIgnoreCase);
 
         var foldersToCreate = new List<Folder>();
-        var normalizedRootPath = rootFolderPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+        var foldersToRepair = new List<(Guid Id, Guid? CorrectParentFolderId)>();
+        var normalizedRootPath = NormalizeDirectoryPath(rootFolderPath);
 
         var allDirectoriesToEnsure = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
@@ -2772,7 +2785,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         // in the path hierarchy are also added, so empty intermediate folders show up in the UI
         foreach (var directoryPath in discoveredDirectories)
         {
-            var normalizedDirPath = directoryPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            var normalizedDirPath = NormalizeDirectoryPath(directoryPath);
             var currentPath = normalizedDirPath;
 
             // Walk up the directory tree to the root, collecting all intermediate paths
@@ -2782,7 +2795,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 allDirectoriesToEnsure.Add(currentPath);
                 var parentPath = _fileSystem.GetDirectoryName(currentPath);
                 if (string.IsNullOrEmpty(parentPath)) break;
-                currentPath = parentPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                currentPath = NormalizeDirectoryPath(parentPath);
             }
         }
 
@@ -2795,31 +2808,43 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         {
             var normalizedDirPath = directoryPath;
 
-            if (existingFolders.ContainsKey(normalizedDirPath))
-                continue;
-
-            Guid? parentFolderId = rootFolderId;
+            // Compute the correct parent ID for this directory.
+            Guid? correctParentFolderId = rootFolderId;
             var parentPath = _fileSystem.GetDirectoryName(normalizedDirPath);
 
             if (!string.IsNullOrWhiteSpace(parentPath))
             {
-                var normalizedParentPath =
-                    parentPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                var normalizedParentPath = NormalizeDirectoryPath(parentPath);
 
                 if (!normalizedParentPath.Equals(normalizedRootPath, StringComparison.OrdinalIgnoreCase))
                 {
                     if (existingFolders.TryGetValue(normalizedParentPath, out var parentFolder))
                     {
-                        parentFolderId = parentFolder.Id;
+                        correctParentFolderId = parentFolder.Id;
                     }
                     else
                     {
                         var parentInList = foldersToCreate.FirstOrDefault(f =>
-                            f.Path.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+                            NormalizeDirectoryPath(f.Path)
                                 .Equals(normalizedParentPath, StringComparison.OrdinalIgnoreCase));
-                        if (parentInList != null) parentFolderId = parentInList.Id;
+                        if (parentInList != null) correctParentFolderId = parentInList.Id;
                     }
                 }
+            }
+
+            if (existingFolders.TryGetValue(normalizedDirPath, out var existing))
+            {
+                // Folder already exists — repair ParentFolderId if it is wrong.
+                if (existing.ParentFolderId != correctParentFolderId)
+                {
+                    _logger.LogWarning(
+                        "Repairing ParentFolderId for folder '{Path}': was {Old}, should be {New}.",
+                        normalizedDirPath, existing.ParentFolderId, correctParentFolderId);
+                    foldersToRepair.Add((existing.Id, correctParentFolderId));
+                    // Update the in-memory object (AsNoTracking, so this only affects lookups here).
+                    existing.ParentFolderId = correctParentFolderId;
+                }
+                continue;
             }
 
             var folderName = Path.GetFileName(normalizedDirPath);
@@ -2827,7 +2852,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             {
                 Name = string.IsNullOrWhiteSpace(folderName) ? normalizedDirPath : folderName,
                 Path = normalizedDirPath,
-                ParentFolderId = parentFolderId,
+                ParentFolderId = correctParentFolderId,
                 LastModifiedDate = DateTime.UtcNow
             };
 
@@ -2838,9 +2863,34 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         if (foldersToCreate.Count > 0)
         {
             context.Folders.AddRange(foldersToCreate);
+        }
+
+        if (foldersToRepair.Count > 0)
+        {
+            var repairIds = foldersToRepair.Select(r => r.Id).ToList();
+            var toUpdate = await context.Folders
+                .Where(f => repairIds.Contains(f.Id))
+                .ToListAsync(cancellationToken).ConfigureAwait(false);
+
+            foreach (var folder in toUpdate)
+            {
+                var repair = foldersToRepair.First(r => r.Id == folder.Id);
+                folder.ParentFolderId = repair.CorrectParentFolderId;
+            }
+        }
+
+        if (foldersToCreate.Count > 0 || foldersToRepair.Count > 0)
+        {
             await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         }
     }
+
+    /// <summary>
+    ///     Normalizes a directory path to a canonical form: native path separator, no trailing separator.
+    /// </summary>
+    private static string NormalizeDirectoryPath(string path) =>
+        path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar)
+            .TrimEnd(Path.DirectorySeparatorChar);
 
     private async Task<(List<string> filesToAdd, List<string> filesToUpdate, List<string> filesRemovedFromDisk)>
         AnalyzeFolderChangesAsync(Guid folderId, string folderPath, bool forceFullScan, CancellationToken cancellationToken)

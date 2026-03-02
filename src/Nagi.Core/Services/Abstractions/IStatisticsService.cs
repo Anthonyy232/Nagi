@@ -12,56 +12,56 @@ public interface IStatisticsService
     /// <summary>
     ///     Gets the top songs within a specific time range.
     /// </summary>
-    Task<IEnumerable<SongStats>> GetTopSongsAsync(TimeRange range, int limit = 50, SortMetric metric = SortMetric.PlayCount);
+    Task<IEnumerable<SongStats>> GetTopSongsAsync(TimeRange range, int limit = 50, SortMetric metric = SortMetric.PlayCount, CancellationToken ct = default);
 
     /// <summary>
     ///     Gets the top artists within a specific time range.
     /// </summary>
-    Task<IEnumerable<ArtistStats>> GetTopArtistsAsync(TimeRange range, int limit = 50, SortMetric metric = SortMetric.Duration);
+    Task<IEnumerable<ArtistStats>> GetTopArtistsAsync(TimeRange range, int limit = 50, SortMetric metric = SortMetric.Duration, CancellationToken ct = default);
 
     /// <summary>
     ///     Gets the top albums within a specific time range.
     /// </summary>
-    Task<IEnumerable<AlbumStats>> GetTopAlbumsAsync(TimeRange range, int limit = 50);
+    Task<IEnumerable<AlbumStats>> GetTopAlbumsAsync(TimeRange range, int limit = 50, CancellationToken ct = default);
 
     /// <summary>
     ///     Gets the top genres within a specific time range.
     /// </summary>
-    Task<IEnumerable<GenreStats>> GetTopGenresAsync(TimeRange range, int limit = 10);
+    Task<IEnumerable<GenreStats>> GetTopGenresAsync(TimeRange range, int limit = 10, CancellationToken ct = default);
 
     // --- Aggregate Queries ---
 
     /// <summary>
     ///     Gets the total duration of music listened to within a time range.
     /// </summary>
-    Task<TimeSpan> GetTotalListenTimeAsync(TimeRange range);
+    Task<TimeSpan> GetTotalListenTimeAsync(TimeRange range, CancellationToken ct = default);
 
     /// <summary>
     ///     Gets the count of unique songs played within a time range.
     /// </summary>
-    Task<int> GetUniqueSongsPlayedAsync(TimeRange range);
+    Task<int> GetUniqueSongsPlayedAsync(TimeRange range, CancellationToken ct = default);
 
     /// <summary>
     ///     Gets a timeline of listening activity over a specified range.
     /// </summary>
-    Task<IEnumerable<ActivityDataPoint>> GetListeningActivityTimelineAsync(TimeRange range, ActivityInterval interval);
+    Task<IEnumerable<ActivityDataPoint>> GetListeningActivityTimelineAsync(TimeRange range, ActivityInterval interval, CancellationToken ct = default);
 
     // --- Habit Queries ---
 
     /// <summary>
     ///     Identifies the day of the week with the most listening activity.
     /// </summary>
-    Task<DayOfWeek> GetMostActiveDayOfWeekAsync(TimeRange range);
+    Task<DayOfWeek> GetMostActiveDayOfWeekAsync(TimeRange range, CancellationToken ct = default);
 
     /// <summary>
     ///     Identifies the hour of the day (0-23) with the peak listening activity.
     /// </summary>
-    Task<int> GetPeakListeningHourAsync(TimeRange range);
+    Task<int> GetPeakListeningHourAsync(TimeRange range, CancellationToken ct = default);
 
     /// <summary>
     ///     Gets the distribution of playback sources (Album, Playlist, etc.) used.
     /// </summary>
-    Task<IEnumerable<ContextStats>> GetPlaybackSourceDistributionAsync(TimeRange range);
+    Task<IEnumerable<ContextStats>> GetPlaybackSourceDistributionAsync(TimeRange range, CancellationToken ct = default);
 }
 
 // Support Models for Statistics

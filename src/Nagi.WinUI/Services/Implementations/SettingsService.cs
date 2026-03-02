@@ -462,7 +462,8 @@ public class SettingsService : IUISettingsService, IDisposable
             new() { DisplayName = Resources.Strings.Settings_Nav_Playlists, Tag = "Playlists", IconGlyph = "\uE90B", IsEnabled = true },
             new() { DisplayName = Resources.Strings.Settings_Nav_Artists, Tag = "Artists", IconGlyph = "\uE77B", IsEnabled = true },
             new() { DisplayName = Resources.Strings.Settings_Nav_Albums, Tag = "Albums", IconGlyph = "\uE93C", IsEnabled = true },
-            new() { DisplayName = Resources.Strings.Settings_Nav_Genres, Tag = "Genres", IconGlyph = "\uE8EC", IsEnabled = true }
+            new() { DisplayName = Resources.Strings.Settings_Nav_Genres, Tag = "Genres", IconGlyph = "\uE8EC", IsEnabled = true },
+            new() { DisplayName = Resources.Strings.Settings_Nav_Insights, Tag = "Insights", IconGlyph = "\uE9D9", IsEnabled = false }
         };
     }
 
@@ -1222,6 +1223,7 @@ public class SettingsService : IUISettingsService, IDisposable
             "Artists" => Resources.Strings.Settings_Nav_Artists,
             "Albums" => Resources.Strings.Settings_Nav_Albums,
             "Genres" => Resources.Strings.Settings_Nav_Genres,
+            "Insights" => Resources.Strings.Settings_Nav_Insights,
             _ => null
         };
 

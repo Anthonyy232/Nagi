@@ -15,9 +15,9 @@ public class StatisticsService : IStatisticsService
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<SongStats>> GetTopSongsAsync(TimeRange range, int limit = 50, SortMetric metric = SortMetric.PlayCount)
+    public async Task<IEnumerable<SongStats>> GetTopSongsAsync(TimeRange range, int limit = 50, SortMetric metric = SortMetric.PlayCount, CancellationToken ct = default)
     {
-        await using var dbContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
         var query = dbContext.ListenHistory.AsNoTracking().AsQueryable();
 
         if (range.StartUtc.HasValue)
@@ -29,21 +29,22 @@ public class StatisticsService : IStatisticsService
             .Select(g => new
             {
                 SongId = g.Key,
-                TotalPlays = g.Count(lh => lh.IsEligibleForScrobbling),
+                TotalPlays = g.Sum(lh => lh.IsEligibleForScrobbling || lh.EndReason == PlaybackEndReason.Finished ? 1 : 0),
                 TotalDurationTicks = g.Sum(lh => lh.ListenDurationTicks),
-                Skips = g.Count(lh => lh.EndReason == PlaybackEndReason.Skipped && !lh.IsEligibleForScrobbling)
-            });
+                Skips = g.Sum(lh => lh.EndReason == PlaybackEndReason.Skipped && !lh.IsEligibleForScrobbling ? 1 : 0)
+            })
+            .Where(s => s.TotalPlays > 0);
 
         if (metric == SortMetric.PlayCount)
             statsQuery = statsQuery.OrderByDescending(s => s.TotalPlays);
         else
             statsQuery = statsQuery.OrderByDescending(s => s.TotalDurationTicks);
 
-        var topItems = await statsQuery.Take(limit).ToListAsync().ConfigureAwait(false);
+        var topItems = await statsQuery.Take(limit).ToListAsync(ct).ConfigureAwait(false);
         var songIds = topItems.Select(ti => ti.SongId).ToList();
         var songs = await dbContext.Songs.AsNoTracking()
             .Where(s => songIds.Contains(s.Id))
-            .ToDictionaryAsync(s => s.Id).ConfigureAwait(false);
+            .ToDictionaryAsync(s => s.Id, ct).ConfigureAwait(false);
 
         return topItems
             .Where(ti => songs.ContainsKey(ti.SongId))
@@ -56,9 +57,9 @@ public class StatisticsService : IStatisticsService
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<ArtistStats>> GetTopArtistsAsync(TimeRange range, int limit = 50, SortMetric metric = SortMetric.Duration)
+    public async Task<IEnumerable<ArtistStats>> GetTopArtistsAsync(TimeRange range, int limit = 50, SortMetric metric = SortMetric.Duration, CancellationToken ct = default)
     {
-        await using var dbContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
         var query = dbContext.ListenHistory.AsNoTracking().AsQueryable();
 
         if (range.StartUtc.HasValue)
@@ -74,20 +75,21 @@ public class StatisticsService : IStatisticsService
             .Select(g => new
             {
                 ArtistId = g.Key,
-                TotalPlays = g.Count(x => x.lh.IsEligibleForScrobbling),
+                TotalPlays = g.Sum(x => x.lh.IsEligibleForScrobbling || x.lh.EndReason == PlaybackEndReason.Finished ? 1 : 0),
                 TotalDurationTicks = g.Sum(x => x.lh.ListenDurationTicks)
-            });
+            })
+            .Where(s => s.TotalPlays > 0);
 
         if (metric == SortMetric.PlayCount)
             statsQuery = statsQuery.OrderByDescending(s => s.TotalPlays);
         else
             statsQuery = statsQuery.OrderByDescending(s => s.TotalDurationTicks);
 
-        var topItems = await statsQuery.Take(limit).ToListAsync().ConfigureAwait(false);
+        var topItems = await statsQuery.Take(limit).ToListAsync(ct).ConfigureAwait(false);
         var artistIds = topItems.Select(ti => ti.ArtistId).ToList();
         var artists = await dbContext.Artists.AsNoTracking()
             .Where(a => artistIds.Contains(a.Id))
-            .ToDictionaryAsync(a => a.Id).ConfigureAwait(false);
+            .ToDictionaryAsync(a => a.Id, ct).ConfigureAwait(false);
 
         return topItems
             .Where(ti => artists.ContainsKey(ti.ArtistId))
@@ -99,9 +101,9 @@ public class StatisticsService : IStatisticsService
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<AlbumStats>> GetTopAlbumsAsync(TimeRange range, int limit = 50)
+    public async Task<IEnumerable<AlbumStats>> GetTopAlbumsAsync(TimeRange range, int limit = 50, CancellationToken ct = default)
     {
-        await using var dbContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
         var query = dbContext.ListenHistory.AsNoTracking().AsQueryable();
 
         if (range.StartUtc.HasValue)
@@ -115,16 +117,17 @@ public class StatisticsService : IStatisticsService
             .Select(g => new
             {
                 AlbumId = g.Key,
-                TotalPlays = g.Count(x => x.lh.IsEligibleForScrobbling),
+                TotalPlays = g.Sum(x => x.lh.IsEligibleForScrobbling || x.lh.EndReason == PlaybackEndReason.Finished ? 1 : 0),
                 TotalDurationTicks = g.Sum(x => x.lh.ListenDurationTicks)
             })
+            .Where(s => s.TotalPlays > 0)
             .OrderByDescending(s => s.TotalPlays);
 
-        var topItems = await statsQuery.Take(limit).ToListAsync().ConfigureAwait(false);
+        var topItems = await statsQuery.Take(limit).ToListAsync(ct).ConfigureAwait(false);
         var albumIds = topItems.Select(ti => ti.AlbumId).Where(id => id.HasValue).Cast<Guid>().ToList();
         var albums = await dbContext.Albums.AsNoTracking()
             .Where(a => albumIds.Contains(a.Id))
-            .ToDictionaryAsync(a => a.Id).ConfigureAwait(false);
+            .ToDictionaryAsync(a => a.Id, ct).ConfigureAwait(false);
 
         return topItems
             .Where(ti => ti.AlbumId.HasValue && albums.ContainsKey(ti.AlbumId.Value))
@@ -136,9 +139,9 @@ public class StatisticsService : IStatisticsService
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<GenreStats>> GetTopGenresAsync(TimeRange range, int limit = 10)
+    public async Task<IEnumerable<GenreStats>> GetTopGenresAsync(TimeRange range, int limit = 10, CancellationToken ct = default)
     {
-        await using var dbContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
         var query = dbContext.ListenHistory.AsNoTracking().AsQueryable();
 
         if (range.StartUtc.HasValue)
@@ -153,16 +156,17 @@ public class StatisticsService : IStatisticsService
             .Select(g => new
             {
                 GenreId = g.Key,
-                TotalPlays = g.Count(x => x.lh.IsEligibleForScrobbling),
+                TotalPlays = g.Sum(x => x.lh.IsEligibleForScrobbling || x.lh.EndReason == PlaybackEndReason.Finished ? 1 : 0),
                 TotalDurationTicks = g.Sum(x => x.lh.ListenDurationTicks)
             })
+            .Where(s => s.TotalPlays > 0)
             .OrderByDescending(s => s.TotalPlays);
 
-        var topItems = await statsQuery.Take(limit).ToListAsync().ConfigureAwait(false);
+        var topItems = await statsQuery.Take(limit).ToListAsync(ct).ConfigureAwait(false);
         var genreIds = topItems.Select(ti => ti.GenreId).ToList();
         var genres = await dbContext.Genres.AsNoTracking()
             .Where(g => genreIds.Contains(g.Id))
-            .ToDictionaryAsync(g => g.Id).ConfigureAwait(false);
+            .ToDictionaryAsync(g => g.Id, ct).ConfigureAwait(false);
 
         return topItems
             .Where(ti => genres.ContainsKey(ti.GenreId))
@@ -174,9 +178,9 @@ public class StatisticsService : IStatisticsService
     }
 
     /// <inheritdoc />
-    public async Task<TimeSpan> GetTotalListenTimeAsync(TimeRange range)
+    public async Task<TimeSpan> GetTotalListenTimeAsync(TimeRange range, CancellationToken ct = default)
     {
-        await using var dbContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
         var query = dbContext.ListenHistory.AsNoTracking().AsQueryable();
 
         if (range.StartUtc.HasValue)
@@ -184,14 +188,14 @@ public class StatisticsService : IStatisticsService
         if (range.EndUtc.HasValue)
             query = query.Where(lh => lh.ListenTimestampUtc <= range.EndUtc.Value);
 
-        var totalTicks = await query.SumAsync(lh => lh.ListenDurationTicks).ConfigureAwait(false);
+        var totalTicks = await query.SumAsync(lh => lh.ListenDurationTicks, ct).ConfigureAwait(false);
         return TimeSpan.FromTicks(totalTicks);
     }
 
     /// <inheritdoc />
-    public async Task<int> GetUniqueSongsPlayedAsync(TimeRange range)
+    public async Task<int> GetUniqueSongsPlayedAsync(TimeRange range, CancellationToken ct = default)
     {
-        await using var dbContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
         var query = dbContext.ListenHistory.AsNoTracking().AsQueryable();
 
         if (range.StartUtc.HasValue)
@@ -199,20 +203,25 @@ public class StatisticsService : IStatisticsService
         if (range.EndUtc.HasValue)
             query = query.Where(lh => lh.ListenTimestampUtc <= range.EndUtc.Value);
 
-        return await query.Where(lh => lh.IsEligibleForScrobbling).Select(lh => lh.SongId).Distinct().CountAsync().ConfigureAwait(false);
+        return await query
+            .Where(lh => lh.IsEligibleForScrobbling || lh.EndReason == PlaybackEndReason.Finished)
+            .Select(lh => lh.SongId)
+            .Distinct()
+            .CountAsync(ct)
+            .ConfigureAwait(false);
     }
 
     /// <inheritdoc />
-    public Task<IEnumerable<ActivityDataPoint>> GetListeningActivityTimelineAsync(TimeRange range, ActivityInterval interval)
+    public Task<IEnumerable<ActivityDataPoint>> GetListeningActivityTimelineAsync(TimeRange range, ActivityInterval interval, CancellationToken ct = default)
     {
         // TODO: Requires SQLite strftime grouping by interval (Hour/Day/Week/Month).
         throw new NotImplementedException("GetListeningActivityTimelineAsync is not yet implemented.");
     }
 
     /// <inheritdoc />
-    public async Task<DayOfWeek> GetMostActiveDayOfWeekAsync(TimeRange range)
+    public async Task<DayOfWeek> GetMostActiveDayOfWeekAsync(TimeRange range, CancellationToken ct = default)
     {
-        await using var dbContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
         var query = dbContext.ListenHistory.AsNoTracking().AsQueryable();
 
         if (range.StartUtc.HasValue)
@@ -225,22 +234,22 @@ public class StatisticsService : IStatisticsService
         // parameterised-NULL pitfalls with FormattableString and keeps the code testable.
         var timestamps = await query
             .Select(lh => lh.ListenTimestampUtc)
-            .ToListAsync()
+            .ToListAsync(ct)
             .ConfigureAwait(false);
 
         if (timestamps.Count == 0) return DayOfWeek.Monday;
 
         return timestamps
-            .GroupBy(t => t.DayOfWeek)
+            .GroupBy(t => t.ToLocalTime().DayOfWeek)
             .OrderByDescending(g => g.Count())
             .First()
             .Key;
     }
 
     /// <inheritdoc />
-    public async Task<int> GetPeakListeningHourAsync(TimeRange range)
+    public async Task<int> GetPeakListeningHourAsync(TimeRange range, CancellationToken ct = default)
     {
-        await using var dbContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
         var query = dbContext.ListenHistory.AsNoTracking().AsQueryable();
 
         if (range.StartUtc.HasValue)
@@ -250,22 +259,22 @@ public class StatisticsService : IStatisticsService
 
         var timestamps = await query
             .Select(lh => lh.ListenTimestampUtc)
-            .ToListAsync()
+            .ToListAsync(ct)
             .ConfigureAwait(false);
 
         if (timestamps.Count == 0) return 12;
 
         return timestamps
-            .GroupBy(t => t.Hour)
+            .GroupBy(t => t.ToLocalTime().Hour)
             .OrderByDescending(g => g.Count())
             .First()
             .Key;
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<ContextStats>> GetPlaybackSourceDistributionAsync(TimeRange range)
+    public async Task<IEnumerable<ContextStats>> GetPlaybackSourceDistributionAsync(TimeRange range, CancellationToken ct = default)
     {
-        await using var dbContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
         var query = dbContext.ListenHistory.AsNoTracking().AsQueryable();
 
         if (range.StartUtc.HasValue)
@@ -279,7 +288,7 @@ public class StatisticsService : IStatisticsService
                 Type = g.Key,
                 Count = g.Count(),
                 DurationTicks = g.Sum(lh => lh.ListenDurationTicks)
-            }).ToListAsync().ConfigureAwait(false);
+            }).ToListAsync(ct).ConfigureAwait(false);
 
         return stats.Select(s => new ContextStats(
             s.Type,
