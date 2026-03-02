@@ -22,6 +22,7 @@
                 <ResourceDictionary Source="ms-appx:///Styles/AlbumPageColors.xaml" />
                 <ResourceDictionary Source="ms-appx:///Styles/OnboardingPageColors.xaml" />
                 <ResourceDictionary Source="ms-appx:///Styles/GenrePageColors.xaml" />
+                <ResourceDictionary Source="ms-appx:///Styles/InsightsPageColors.xaml" />
                 <ResourceDictionary Source="ms-appx:///Styles/LyricsPageColors.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

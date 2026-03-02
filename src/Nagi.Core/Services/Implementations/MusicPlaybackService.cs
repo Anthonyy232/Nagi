@@ -18,9 +18,11 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
     private readonly IMetadataService _metadataService;
     private readonly Random _random = new();
     private readonly ISettingsService _settingsService;
+    private readonly object _pendingFinalizationTasksLock = new();
 
     private bool _isDisposed;
     private bool _isInitialized;
+    private bool _isEligibilityMarked;
     private List<Guid> _playbackQueue = new();
     private List<Guid> _shuffledQueue = new();
     
@@ -31,10 +33,10 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
     private PlaybackContext _currentContext = new(PlaybackContextType.Queue, null);
 
     /// <summary>
-    ///     Tracks the most recent fire-and-forget finalization task so it can be
-    ///     awaited during <see cref="DisposeAsync"/> to prevent data loss on shutdown.
+    ///     Tracks all in-flight fire-and-forget finalization tasks so disposal can await
+    ///     every pending write, not only the most recent one.
     /// </summary>
-    private volatile Task _pendingFinalizationTask = Task.CompletedTask;
+    private readonly HashSet<Task> _pendingFinalizationTasks = new();
 
     private int _updateCount;
 
@@ -112,6 +114,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
     public event Action? PositionChanged;
     public event Action? DurationChanged;
     public event Action? EqualizerChanged;
+    public event Action<Song, long>? ScrobbleEligibilityReached;
 
     public async Task InitializeAsync(bool restoreLastSession = true)
     {
@@ -357,6 +360,8 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
             FireAndForgetSafe(async () => await _libraryService.FinalizeListenSessionAsync(sessionId, position, PlaybackEndReason.Skipped).ConfigureAwait(false), "Finalizing session on Transient Playback", trackForDisposal: true);
         }
 
+        _isEligibilityMarked = false;
+
         IsTransitioningTrack = true;
         ClearQueuesInternal();
         QueueChanged?.Invoke();
@@ -365,6 +370,16 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         CurrentQueueIndex = -1;
         CurrentListenHistoryId = null;
         _currentContext = new PlaybackContext(PlaybackContextType.Transient, null);
+
+        // Track listens for transient playback only when the file maps to a known library song.
+        // Truly external files remain untracked because ListenHistory requires a Song FK.
+        var existingLibrarySong = await _libraryService.GetSongByFilePathAsync(filePath).ConfigureAwait(false);
+        if (existingLibrarySong != null)
+        {
+            CurrentListenHistoryId = await _libraryService
+                .StartListenSessionAsync(existingLibrarySong.Id, _currentContext)
+                .ConfigureAwait(false);
+        }
 
         await _audioPlayer.LoadAsync(CurrentTrack).ConfigureAwait(false);
         await _audioPlayer.PlayAsync().ConfigureAwait(false);
@@ -867,6 +882,8 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
             FireAndForgetSafe(async () => await _libraryService.FinalizeListenSessionAsync(previousSessionId, position, PlaybackEndReason.Skipped).ConfigureAwait(false), "Finalizing skipped session", trackForDisposal: true);
         }
 
+        _isEligibilityMarked = false;
+
         IsTransitioningTrack = true;
 
         // Use iterative approach with skip limit to prevent stack overflow if many
@@ -937,7 +954,11 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         CurrentTrack = song;
         CurrentQueueIndex = currentIndex;
 
-        var startSessionTask = _libraryService.StartListenSessionAsync(CurrentTrack.Id, _currentContext);
+        // Start and assign the listen session before media load can raise MediaOpened/TrackChanged.
+        // This guarantees presence listeners can observe a non-null CurrentListenHistoryId.
+        CurrentListenHistoryId = await _libraryService
+            .StartListenSessionAsync(CurrentTrack.Id, _currentContext)
+            .ConfigureAwait(false);
 
         if (IsShuffleEnabled)
         {
@@ -953,11 +974,8 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
 
         _logger.LogDebug("Now playing '{SongTitle}' (Index: {QueueIndex}, Shuffled Index: {ShuffledIndex})",
             CurrentTrack.Title, CurrentQueueIndex, CurrentShuffledIndex);
-            
-        var loadAudioTask = _audioPlayer.LoadAsync(CurrentTrack);
-        
-        await Task.WhenAll(startSessionTask, loadAudioTask).ConfigureAwait(false);
-        CurrentListenHistoryId = await startSessionTask.ConfigureAwait(false);
+
+        await _audioPlayer.LoadAsync(CurrentTrack).ConfigureAwait(false);
 
         // Apply ReplayGain if enabled and available in database
         await ApplyReplayGainIfEnabledAsync().ConfigureAwait(false);
@@ -1097,10 +1115,10 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
     {
         if (_isDisposed) return;
         
-        // Await any in-flight fire-and-forget finalization before checking for a remaining session.
+        // Await all in-flight fire-and-forget finalizations before checking for a remaining session.
         try
         {
-            await _pendingFinalizationTask.ConfigureAwait(false);
+            await AwaitPendingFinalizationTasksAsync().ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -1424,14 +1442,48 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         });
 
         if (trackForDisposal)
-            _pendingFinalizationTask = task;
+            TrackPendingFinalizationTask(task);
+    }
+
+    private void TrackPendingFinalizationTask(Task task)
+    {
+        lock (_pendingFinalizationTasksLock)
+        {
+            _pendingFinalizationTasks.Add(task);
+        }
+
+        _ = task.ContinueWith(
+            _ =>
+            {
+                lock (_pendingFinalizationTasksLock)
+                {
+                    _pendingFinalizationTasks.Remove(task);
+                }
+            },
+            CancellationToken.None,
+            TaskContinuationOptions.ExecuteSynchronously,
+            TaskScheduler.Default);
+    }
+
+    private Task AwaitPendingFinalizationTasksAsync()
+    {
+        Task[] pending;
+        lock (_pendingFinalizationTasksLock)
+        {
+            if (_pendingFinalizationTasks.Count == 0)
+                return Task.CompletedTask;
+
+            pending = _pendingFinalizationTasks.ToArray();
+        }
+
+        return Task.WhenAll(pending);
     }
 
     /// <summary>
     ///     Awaits any pending fire-and-forget finalization tasks.
     ///     Exposed for unit testing to avoid flaky <c>Task.Delay</c>.
     /// </summary>
-    internal Task FlushPendingFinalizationAsync() => _pendingFinalizationTask;
+    internal Task FlushPendingFinalizationAsync() => AwaitPendingFinalizationTasksAsync();
 
     private void OnAudioPlayerPlaybackEnded()
     {
@@ -1473,6 +1525,42 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
     private void OnAudioPlayerPositionChanged()
     {
         PositionChanged?.Invoke();
+        MaybeMarkEligibleForScrobbling();
+    }
+
+    /// <summary>
+    ///     Evaluates the Last.fm/standard scrobble threshold (track > 30 s, played ≥ 50% or ≥ 4 min)
+    ///     and marks the current listen session as eligible in the database once the threshold is met.
+    ///     Running here ensures eligibility is recorded for ALL users, regardless of whether the
+    ///     Last.fm integration is configured.
+    /// </summary>
+    private void MaybeMarkEligibleForScrobbling()
+    {
+        if (_isEligibilityMarked || !CurrentListenHistoryId.HasValue) return;
+
+        var duration = Duration;
+        var progress = _audioPlayer.CurrentPosition;
+
+        if (duration <= TimeSpan.Zero) return;
+
+        var isLongEnough = duration.TotalSeconds > 30;
+        var hasPlayedEnough = progress.TotalSeconds >= duration.TotalSeconds / 2
+                           || progress.TotalMinutes >= 4;
+
+        if (!isLongEnough || !hasPlayedEnough) return;
+
+        // Prevent re-entry within the same listening session.
+        _isEligibilityMarked = true;
+        var sessionId = CurrentListenHistoryId.Value;
+        var song = CurrentTrack!;
+        FireAndForgetSafe(
+            async () =>
+            {
+                await _libraryService.MarkListenAsEligibleForScrobblingAsync(sessionId).ConfigureAwait(false);
+                ScrobbleEligibilityReached?.Invoke(song, sessionId);
+            },
+            "Mark listen eligible for scrobbling",
+            trackForDisposal: true);
     }
 
     private void OnAudioPlayerDurationChanged()

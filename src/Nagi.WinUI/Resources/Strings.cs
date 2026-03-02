@@ -27,6 +27,7 @@ public static class Strings
     public static string NavItem_Genres => GetString("NavItem_Genres");
     public static string NavItem_Playlists => GetString("NavItem_Playlists");
     public static string NavItem_Folders => GetString("NavItem_Folders");
+    public static string NavItem_Insights => GetString("NavItem_Insights");
     public static string NavItem_Settings => GetString("NavItem_Settings");
 
     // App
@@ -292,6 +293,7 @@ public static class Strings
     public static string Settings_Nav_Artists => GetString("Settings_Nav_Artists");
     public static string Settings_Nav_Albums => GetString("Settings_Nav_Albums");
     public static string Settings_Nav_Genres => GetString("Settings_Nav_Genres");
+    public static string Settings_Nav_Insights => GetString("Settings_Nav_Insights");
 
     public static string Settings_Button_Shuffle => GetString("Settings_Button_Shuffle");
     public static string Settings_Button_Previous => GetString("Settings_Button_Previous");
@@ -748,4 +750,32 @@ public static class Strings
     public static string Settings_Restore_Success_Message => GetString("Settings_Restore_Success_Message");
     public static string Settings_Restore_Failed_Title => GetString("Settings_Restore_Failed_Title");
     public static string Settings_Restore_Failed_Message => GetString("Settings_Restore_Failed_Message");
+
+    // Insights Page
+    public static string InsightsPage_Title => GetString("InsightsPage_Title");
+    public static string InsightsPage_TotalTime => GetString("InsightsPage_TotalTime");
+    public static string InsightsPage_UniqueSongs => GetString("InsightsPage_UniqueSongs");
+    public static string InsightsPage_PeakHour => GetString("InsightsPage_PeakHour");
+    public static string InsightsPage_MostActiveDay => GetString("InsightsPage_MostActiveDay");
+    public static string InsightsPage_TopSongs => GetString("InsightsPage_TopSongs");
+    public static string InsightsPage_TopArtists => GetString("InsightsPage_TopArtists");
+    public static string InsightsPage_TopAlbums => GetString("InsightsPage_TopAlbums");
+    public static string InsightsPage_TopGenres => GetString("InsightsPage_TopGenres");
+    public static string InsightsPage_Sources => GetString("InsightsPage_Sources");
+    public static string InsightsPage_Empty_Title => GetString("InsightsPage_Empty_Title");
+    public static string InsightsPage_Empty_Subtitle => GetString("InsightsPage_Empty_Subtitle");
+    public static string InsightsPage_Plays => GetString("InsightsPage_Plays");
+    public static string InsightsPage_Source_Albums => GetString("InsightsPage_Source_Albums");
+    public static string InsightsPage_Source_Artists => GetString("InsightsPage_Source_Artists");
+    public static string InsightsPage_Source_Playlists => GetString("InsightsPage_Source_Playlists");
+    public static string InsightsPage_Source_SmartPlaylists => GetString("InsightsPage_Source_SmartPlaylists");
+    public static string InsightsPage_Source_Folders => GetString("InsightsPage_Source_Folders");
+    public static string InsightsPage_Source_Genres => GetString("InsightsPage_Source_Genres");
+    public static string InsightsPage_Source_Search => GetString("InsightsPage_Source_Search");
+    public static string InsightsPage_Source_Queue => GetString("InsightsPage_Source_Queue");
+    public static string InsightsPage_Source_Files => GetString("InsightsPage_Source_Files");
+    public static string InsightsPage_Reset_ToolTip => GetString("InsightsPage_Reset_ToolTip");
+    public static string InsightsPage_Reset_Confirm_Title => GetString("InsightsPage_Reset_Confirm_Title");
+    public static string InsightsPage_Reset_Confirm_Message => GetString("InsightsPage_Reset_Confirm_Message");
+    public static string InsightsPage_Reset_Confirm_Button => GetString("InsightsPage_Reset_Confirm_Button");
 }

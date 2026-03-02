@@ -56,7 +56,8 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         { "Settings", typeof(SettingsPage) },
         { "Artists", typeof(ArtistPage) },
         { "Albums", typeof(AlbumPage) },
-        { "Genres", typeof(GenrePage) }
+        { "Genres", typeof(GenrePage) },
+        { "Insights", typeof(InsightsPage) }
     };
 
     private readonly IUISettingsService _settingsService;

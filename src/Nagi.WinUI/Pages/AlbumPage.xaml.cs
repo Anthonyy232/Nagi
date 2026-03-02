@@ -44,14 +44,15 @@ public sealed partial class AlbumPage : Page
         {
             base.OnNavigatedTo(e);
             _logger.LogDebug("Navigated to AlbumPage.");
-            _cancellationTokenSource = new CancellationTokenSource();
+            var cts = new CancellationTokenSource();
+            _cancellationTokenSource = cts;
 
             if (ViewModel.Albums.Count == 0)
             {
                 _logger.LogDebug("Album collection is empty, loading albums...");
-                await ViewModel.LoadAlbumsAsync(_cancellationTokenSource.Token);
+                await ViewModel.LoadAlbumsAsync(cts.Token);
                 
-                if (_cancellationTokenSource.IsCancellationRequested)
+                if (cts.IsCancellationRequested)
                     _logger.LogDebug("Album loading was canceled.");
                 else if (!ViewModel.HasLoadError)
                     _logger.LogDebug("Successfully loaded albums.");
@@ -59,9 +60,9 @@ public sealed partial class AlbumPage : Page
             else if (!ViewModel.IsFullyLoaded)
             {
                 _logger.LogDebug("Albums partially loaded, resuming fetch.");
-                await ViewModel.ResumeLoadingAsync(_cancellationTokenSource.Token);
+                await ViewModel.ResumeLoadingAsync(cts.Token);
                 
-                if (_cancellationTokenSource.IsCancellationRequested)
+                if (cts.IsCancellationRequested)
                     _logger.LogDebug("Album resuming was canceled.");
                 else if (!ViewModel.HasLoadError)
                     _logger.LogDebug("Successfully resumed loading albums.");

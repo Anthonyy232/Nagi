@@ -137,6 +137,13 @@ public interface IMusicPlaybackService : IDisposable, IAsyncDisposable
     event Action? EqualizerChanged;
 
     /// <summary>
+    ///     Occurs once per listening session when the current track has been played
+    ///     long enough to be eligible for scrobbling (track &gt; 30 s AND played ≥ 50% or ≥ 4 min).
+    ///     Subscribers receive the song and the listen history session ID.
+    /// </summary>
+    event Action<Song, long>? ScrobbleEligibilityReached;
+
+    /// <summary>
     ///     Initializes the service, loading settings and optionally restoring the last saved playback state.
     /// </summary>
     /// <param name="restoreLastSession">Whether to attempt to restore the last playback session.</param>

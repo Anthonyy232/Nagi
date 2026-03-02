@@ -44,4 +44,15 @@ public interface IPresenceService : IAsyncDisposable
     /// <param name="progress">The current position in the track.</param>
     /// <param name="duration">The total duration of the track.</param>
     Task OnTrackProgressAsync(TimeSpan progress, TimeSpan duration);
+
+    /// <summary>
+    ///     Called exactly once per listening session when the playback engine determines the track
+    ///     has crossed the scrobble eligibility threshold.
+    ///     Presence services that submit to scrobbling APIs (e.g. Last.fm) should perform their
+    ///     submission here rather than re-implementing the threshold check in
+    ///     <see cref="OnTrackProgressAsync" />.
+    /// </summary>
+    /// <param name="song">The song that is now eligible.</param>
+    /// <param name="listenHistoryId">The listen session ID to associate with the submission.</param>
+    Task OnTrackEligibleForScrobblingAsync(Song song, long listenHistoryId);
 }
