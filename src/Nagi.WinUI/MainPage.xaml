@@ -13,6 +13,7 @@
     xmlns:models="using:Nagi.Core.Models"
     xmlns:uiModels="using:Nagi.WinUI.Models"
     xmlns:uihelpers="using:Nagi.WinUI.Helpers"
+    xmlns:vm="using:Nagi.WinUI.ViewModels"
     mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -533,5 +534,151 @@
                     TextWrapping="NoWrap" />
             </StackPanel>
         </Grid>
+
+        <!-- ═══════════════  INSIGHTS SEE ALL OVERLAY  ═══════════════ -->
+        <Grid x:Name="SeeAllOverlay"
+              Visibility="{x:Bind InsightsVm.IsSeeAllOpen, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="18*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Background Scrim -->
+            <Grid Grid.ColumnSpan="3"
+                  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                  Opacity="0.85"
+                  Tapped="OnSeeAllScrimTapped" />
+
+            <Grid x:Name="SeeAllPanel"
+                  Grid.Column="1"
+                  Margin="0,156,0,156"
+                  VerticalAlignment="Stretch"
+                  Opacity="1"
+                  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                  CornerRadius="8"
+                  BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                  BorderThickness="1"
+                  Tapped="OnSeeAllPanelTapped">
+
+                <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" CornerRadius="8">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <!-- Header -->
+                    <Grid Grid.Row="0" Padding="20,20,12,12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0"
+                                   Text="{x:Bind InsightsVm.SeeAllTitle, Mode=OneWay}"
+                                   FontSize="16" FontWeight="SemiBold"
+                                   VerticalAlignment="Center" />
+                        <Button Grid.Column="1"
+                                Click="OnCloseSeeAll"
+                                Style="{StaticResource SubtleButtonStyle}"
+                                Width="32" Height="32" Padding="0">
+                            <FontIcon Glyph="&#xE711;" FontSize="12" />
+                        </Button>
+                    </Grid>
+
+                    <!-- Content -->
+                    <Grid Grid.Row="1">
+                        <ProgressRing IsActive="{x:Bind InsightsVm.IsSeeAllLoading, Mode=OneWay}"
+                                      Visibility="{x:Bind InsightsVm.IsSeeAllLoading, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                      HorizontalAlignment="Center" VerticalAlignment="Center"
+                                      Width="40" Height="40" />
+
+                        <ScrollViewer x:Name="SeeAllSongsPanel"
+                                      x:Load="{x:Bind InsightsVm.IsSeeAllSongs, Mode=OneWay}"
+                                      Visibility="{x:Bind InsightsVm.IsSeeAllLoading, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
+                                      HorizontalScrollBarVisibility="Disabled">
+                            <ListView ItemsSource="{x:Bind InsightsVm.SeeAllSongs, Mode=OneWay}"
+                                      SelectionMode="None" IsItemClickEnabled="False"
+                                      ScrollViewer.VerticalScrollMode="Disabled"
+                                      ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                                      Padding="20,0,20,8"
+                                      ItemContainerStyle="{StaticResource SeeAllListItemStyle}"
+                                      ItemTemplate="{StaticResource TopSongItemTemplate}" />
+                        </ScrollViewer>
+
+                        <ScrollViewer x:Name="SeeAllArtistsPanel"
+                                      x:Load="{x:Bind InsightsVm.IsSeeAllArtists, Mode=OneWay}"
+                                      Visibility="{x:Bind InsightsVm.IsSeeAllLoading, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
+                                      HorizontalScrollBarVisibility="Disabled">
+                            <ListView ItemsSource="{x:Bind InsightsVm.SeeAllArtists, Mode=OneWay}"
+                                      SelectionMode="None" IsItemClickEnabled="False"
+                                      ScrollViewer.VerticalScrollMode="Disabled"
+                                      ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                                      Padding="20,0,20,8"
+                                      ItemContainerStyle="{StaticResource SeeAllListItemStyle}"
+                                      ItemTemplate="{StaticResource TopArtistItemTemplate}" />
+                        </ScrollViewer>
+
+                        <ScrollViewer x:Name="SeeAllAlbumsPanel"
+                                      x:Load="{x:Bind InsightsVm.IsSeeAllAlbums, Mode=OneWay}"
+                                      Visibility="{x:Bind InsightsVm.IsSeeAllLoading, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
+                                      HorizontalScrollBarVisibility="Disabled">
+                            <ListView ItemsSource="{x:Bind InsightsVm.SeeAllAlbums, Mode=OneWay}"
+                                      SelectionMode="None" IsItemClickEnabled="False"
+                                      ScrollViewer.VerticalScrollMode="Disabled"
+                                      ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                                      Padding="20,0,20,8"
+                                      ItemContainerStyle="{StaticResource SeeAllListItemStyle}"
+                                      ItemTemplate="{StaticResource TopAlbumItemTemplate}" />
+                        </ScrollViewer>
+
+                        <ScrollViewer x:Name="SeeAllGenresPanel"
+                                      x:Load="{x:Bind InsightsVm.IsSeeAllGenres, Mode=OneWay}"
+                                      Visibility="{x:Bind InsightsVm.IsSeeAllLoading, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}"
+                                      HorizontalScrollBarVisibility="Disabled">
+                            <ListView ItemsSource="{x:Bind InsightsVm.SeeAllGenres, Mode=OneWay}"
+                                      SelectionMode="None" IsItemClickEnabled="False"
+                                      ScrollViewer.VerticalScrollMode="Disabled"
+                                      ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                                      Padding="20,0,20,8"
+                                      ItemContainerStyle="{StaticResource SeeAllListItemStyle}"
+                                      ItemTemplate="{StaticResource TopGenreItemTemplate}" />
+                        </ScrollViewer>
+                    </Grid>
+
+                    <!-- Pagination footer -->
+                    <Grid Grid.Row="2" Padding="20,8,20,20">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" VerticalAlignment="Center" FontSize="12"
+                                   Foreground="{ThemeResource TextFillColorSecondaryBrush}">
+                            <Run Text="{x:Bind InsightsVm.SeeAllCurrentPage, Mode=OneWay}"
+                                 FontWeight="SemiBold"
+                                 Foreground="{ThemeResource TextFillColorPrimaryBrush}" />
+                            <Run Text=" / " />
+                            <Run Text="{x:Bind InsightsVm.SeeAllTotalPages, Mode=OneWay}" />
+                        </TextBlock>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4">
+                            <Button Command="{x:Bind InsightsVm.SeeAllPreviousPageCommand}"
+                                    IsEnabled="{x:Bind InsightsVm.HasSeeAllPreviousPage, Mode=OneWay}"
+                                    Style="{StaticResource SubtleButtonStyle}"
+                                    Width="32" Height="32" Padding="0">
+                                <FontIcon Glyph="&#xE76B;" FontSize="12" />
+                            </Button>
+                            <Button Command="{x:Bind InsightsVm.SeeAllNextPageCommand}"
+                                    IsEnabled="{x:Bind InsightsVm.HasSeeAllNextPage, Mode=OneWay}"
+                                    Style="{StaticResource SubtleButtonStyle}"
+                                    Width="32" Height="32" Padding="0">
+                                <FontIcon Glyph="&#xE76C;" FontSize="12" />
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </Grid>
+
     </Grid>
 </UserControl>

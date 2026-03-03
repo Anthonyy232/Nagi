@@ -85,6 +85,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     {
         InitializeComponent();
         ViewModel = App.Services!.GetRequiredService<PlayerViewModel>();
+        InsightsVm = App.Services!.GetRequiredService<InsightsViewModel>();
         _settingsService = App.Services!.GetRequiredService<IUISettingsService>();
         _themeService = App.Services!.GetRequiredService<IThemeService>();
         _dispatcherService = App.Services!.GetRequiredService<IDispatcherService>();
@@ -99,6 +100,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     }
 
     public PlayerViewModel ViewModel { get; }
+    public InsightsViewModel InsightsVm { get; }
 
     public TitleBar GetAppTitleBarElement()
     {
@@ -625,5 +627,16 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
             e.Handled = true;
         }
     }
+
+    // ── Insights "See All" overlay handlers ──
+
+    private void OnCloseSeeAll(object sender, RoutedEventArgs e) =>
+        InsightsVm.CloseSeeAllCommand.Execute(null);
+
+    private void OnSeeAllScrimTapped(object sender, TappedRoutedEventArgs e) =>
+        InsightsVm.CloseSeeAllCommand.Execute(null);
+
+    private void OnSeeAllPanelTapped(object sender, TappedRoutedEventArgs e) =>
+        e.Handled = true;
 
 }

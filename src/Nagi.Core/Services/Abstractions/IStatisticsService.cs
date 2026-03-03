@@ -12,22 +12,42 @@ public interface IStatisticsService
     /// <summary>
     ///     Gets the top songs within a specific time range.
     /// </summary>
-    Task<IEnumerable<SongStats>> GetTopSongsAsync(TimeRange range, int limit = 50, SortMetric metric = SortMetric.PlayCount, CancellationToken ct = default);
+    Task<IEnumerable<SongStats>> GetTopSongsAsync(TimeRange range, int limit = 50, SortMetric metric = SortMetric.PlayCount, int offset = 0, CancellationToken ct = default);
+
+    /// <summary>
+    ///     Gets the total number of distinct songs that have qualifying plays within a time range.
+    /// </summary>
+    Task<int> GetTopSongsCountAsync(TimeRange range, CancellationToken ct = default);
 
     /// <summary>
     ///     Gets the top artists within a specific time range.
     /// </summary>
-    Task<IEnumerable<ArtistStats>> GetTopArtistsAsync(TimeRange range, int limit = 50, SortMetric metric = SortMetric.Duration, CancellationToken ct = default);
+    Task<IEnumerable<ArtistStats>> GetTopArtistsAsync(TimeRange range, int limit = 50, SortMetric metric = SortMetric.Duration, int offset = 0, CancellationToken ct = default);
+
+    /// <summary>
+    ///     Gets the total number of distinct artists that have qualifying plays within a time range.
+    /// </summary>
+    Task<int> GetTopArtistsCountAsync(TimeRange range, CancellationToken ct = default);
 
     /// <summary>
     ///     Gets the top albums within a specific time range.
     /// </summary>
-    Task<IEnumerable<AlbumStats>> GetTopAlbumsAsync(TimeRange range, int limit = 50, CancellationToken ct = default);
+    Task<IEnumerable<AlbumStats>> GetTopAlbumsAsync(TimeRange range, int limit = 50, int offset = 0, CancellationToken ct = default);
+
+    /// <summary>
+    ///     Gets the total number of distinct albums that have qualifying plays within a time range.
+    /// </summary>
+    Task<int> GetTopAlbumsCountAsync(TimeRange range, CancellationToken ct = default);
 
     /// <summary>
     ///     Gets the top genres within a specific time range.
     /// </summary>
-    Task<IEnumerable<GenreStats>> GetTopGenresAsync(TimeRange range, int limit = 10, CancellationToken ct = default);
+    Task<IEnumerable<GenreStats>> GetTopGenresAsync(TimeRange range, int limit = 10, int offset = 0, CancellationToken ct = default);
+
+    /// <summary>
+    ///     Gets the total number of distinct genres that have qualifying plays within a time range.
+    /// </summary>
+    Task<int> GetTopGenresCountAsync(TimeRange range, CancellationToken ct = default);
 
     // --- Aggregate Queries ---
 
