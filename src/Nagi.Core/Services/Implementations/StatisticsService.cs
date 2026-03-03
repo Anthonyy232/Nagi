@@ -25,11 +25,7 @@ public class StatisticsService : IStatisticsService
         if (range.EndUtc.HasValue)
             query = query.Where(lh => lh.ListenTimestampUtc <= range.EndUtc.Value);
 
-        if (!string.IsNullOrWhiteSpace(searchTerm))
-        {
-            query = query.Where(lh => dbContext.Songs.Any(s => s.Id == lh.SongId && s.Title.ToLower().Contains(searchTerm.ToLower())));
-        }
-
+        // Aggregate WITHOUT search filter so global ranks are based on the full dataset.
         var statsQuery = query.GroupBy(lh => lh.SongId)
             .Select(g => new
             {
@@ -45,20 +41,39 @@ public class StatisticsService : IStatisticsService
         else
             statsQuery = statsQuery.OrderByDescending(s => s.TotalDurationTicks).ThenBy(s => s.SongId);
 
-        var topItems = await statsQuery.Skip(offset).Take(limit).ToListAsync(ct).ConfigureAwait(false);
-        var songIds = topItems.Select(ti => ti.SongId).ToList();
+        List<(int GlobalRank, Guid SongId, int TotalPlays, long TotalDurationTicks, int Skips)> page;
+
+        if (string.IsNullOrWhiteSpace(searchTerm))
+        {
+            // No search: DB handles pagination. Global rank = offset + position + 1.
+            var topItems = await statsQuery.Skip(offset).Take(limit).ToListAsync(ct).ConfigureAwait(false);
+            page = topItems.Select((s, i) => (offset + i + 1, s.SongId, s.TotalPlays, s.TotalDurationTicks, s.Skips)).ToList();
+        }
+        else
+        {
+            // Search active: fetch all ranked stats, filter by title in-memory, then paginate.
+            var allStats = await statsQuery.ToListAsync(ct).ConfigureAwait(false);
+            var allIds = allStats.Select(s => s.SongId).ToList();
+            var titleMap = await dbContext.Songs.AsNoTracking()
+                .Where(s => allIds.Contains(s.Id))
+                .Select(s => new { s.Id, s.Title })
+                .ToDictionaryAsync(s => s.Id, s => s.Title, ct).ConfigureAwait(false);
+
+            page = allStats
+                .Select((s, i) => (GlobalRank: i + 1, s.SongId, s.TotalPlays, s.TotalDurationTicks, s.Skips))
+                .Where(x => titleMap.TryGetValue(x.SongId, out var t) && t.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+                .Skip(offset).Take(limit)
+                .ToList();
+        }
+
+        var songIds = page.Select(x => x.SongId).ToList();
         var songs = await dbContext.Songs.AsNoTracking()
             .Where(s => songIds.Contains(s.Id))
             .ToDictionaryAsync(s => s.Id, ct).ConfigureAwait(false);
 
-        return topItems
-            .Where(ti => songs.ContainsKey(ti.SongId))
-            .Select(ti => new SongStats(
-                songs[ti.SongId],
-                ti.TotalPlays,
-                TimeSpan.FromTicks(ti.TotalDurationTicks),
-                ti.Skips
-            ));
+        return page
+            .Where(x => songs.ContainsKey(x.SongId))
+            .Select(x => new SongStats(songs[x.SongId], x.TotalPlays, TimeSpan.FromTicks(x.TotalDurationTicks), x.Skips, x.GlobalRank));
     }
 
     /// <inheritdoc />
@@ -72,17 +87,22 @@ public class StatisticsService : IStatisticsService
         if (range.EndUtc.HasValue)
             query = query.Where(lh => lh.ListenTimestampUtc <= range.EndUtc.Value);
 
-        if (!string.IsNullOrWhiteSpace(searchTerm))
-        {
-            query = query.Where(lh => dbContext.Songs.Any(s => s.Id == lh.SongId && s.Title.ToLower().Contains(searchTerm.ToLower())));
-        }
-
-        return await query
+        var statsQuery = query
             .GroupBy(lh => lh.SongId)
-            .Select(g => new { TotalPlays = g.Sum(lh => lh.IsEligibleForScrobbling || lh.EndReason == PlaybackEndReason.Finished ? 1 : 0) })
-            .Where(s => s.TotalPlays > 0)
-            .CountAsync(ct)
-            .ConfigureAwait(false);
+            .Select(g => new { SongId = g.Key, TotalPlays = g.Sum(lh => lh.IsEligibleForScrobbling || lh.EndReason == PlaybackEndReason.Finished ? 1 : 0) })
+            .Where(s => s.TotalPlays > 0);
+
+        if (string.IsNullOrWhiteSpace(searchTerm))
+            return await statsQuery.CountAsync(ct).ConfigureAwait(false);
+
+        var allStats = await statsQuery.ToListAsync(ct).ConfigureAwait(false);
+        var allIds = allStats.Select(s => s.SongId).ToList();
+        var titleMap = await dbContext.Songs.AsNoTracking()
+            .Where(s => allIds.Contains(s.Id))
+            .Select(s => new { s.Id, s.Title })
+            .ToDictionaryAsync(s => s.Id, s => s.Title, ct).ConfigureAwait(false);
+
+        return allStats.Count(s => titleMap.TryGetValue(s.SongId, out var t) && t.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
     }
 
     /// <inheritdoc />
@@ -96,12 +116,7 @@ public class StatisticsService : IStatisticsService
         if (range.EndUtc.HasValue)
             query = query.Where(lh => lh.ListenTimestampUtc <= range.EndUtc.Value);
 
-        if (!string.IsNullOrWhiteSpace(searchTerm))
-        {
-            query = query.Where(lh => dbContext.Songs.Any(s => s.Id == lh.SongId && s.SongArtists.Any(sa => sa.Artist!.Name.ToLower().Contains(searchTerm.ToLower()))));
-        }
-
-        // This is simplified and might need adjustment for multi-artist tracks
+        // Aggregate WITHOUT search filter so global ranks are based on the full dataset.
         var statsQuery = query
             .Join(dbContext.Songs, lh => lh.SongId, s => s.Id, (lh, s) => new { lh, s })
             .SelectMany(x => x.s.SongArtists, (x, sa) => new { x.lh, sa.ArtistId })
@@ -119,19 +134,39 @@ public class StatisticsService : IStatisticsService
         else
             statsQuery = statsQuery.OrderByDescending(s => s.TotalDurationTicks).ThenBy(s => s.ArtistId);
 
-        var topItems = await statsQuery.Skip(offset).Take(limit).ToListAsync(ct).ConfigureAwait(false);
-        var artistIds = topItems.Select(ti => ti.ArtistId).ToList();
+        List<(int GlobalRank, Guid ArtistId, int TotalPlays, long TotalDurationTicks)> page;
+
+        if (string.IsNullOrWhiteSpace(searchTerm))
+        {
+            // No search: DB handles pagination. Global rank = offset + position + 1.
+            var topItems = await statsQuery.Skip(offset).Take(limit).ToListAsync(ct).ConfigureAwait(false);
+            page = topItems.Select((s, i) => (offset + i + 1, s.ArtistId, s.TotalPlays, s.TotalDurationTicks)).ToList();
+        }
+        else
+        {
+            // Search active: fetch all ranked stats, filter by artist name in-memory, then paginate.
+            var allStats = await statsQuery.ToListAsync(ct).ConfigureAwait(false);
+            var allIds = allStats.Select(s => s.ArtistId).ToList();
+            var nameMap = await dbContext.Artists.AsNoTracking()
+                .Where(a => allIds.Contains(a.Id))
+                .Select(a => new { a.Id, a.Name })
+                .ToDictionaryAsync(a => a.Id, a => a.Name, ct).ConfigureAwait(false);
+
+            page = allStats
+                .Select((s, i) => (GlobalRank: i + 1, s.ArtistId, s.TotalPlays, s.TotalDurationTicks))
+                .Where(x => nameMap.TryGetValue(x.ArtistId, out var n) && n.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+                .Skip(offset).Take(limit)
+                .ToList();
+        }
+
+        var artistIds = page.Select(x => x.ArtistId).ToList();
         var artists = await dbContext.Artists.AsNoTracking()
             .Where(a => artistIds.Contains(a.Id))
             .ToDictionaryAsync(a => a.Id, ct).ConfigureAwait(false);
 
-        return topItems
-            .Where(ti => artists.ContainsKey(ti.ArtistId))
-            .Select(ti => new ArtistStats(
-                artists[ti.ArtistId],
-                ti.TotalPlays,
-                TimeSpan.FromTicks(ti.TotalDurationTicks)
-            ));
+        return page
+            .Where(x => artists.ContainsKey(x.ArtistId))
+            .Select(x => new ArtistStats(artists[x.ArtistId], x.TotalPlays, TimeSpan.FromTicks(x.TotalDurationTicks), x.GlobalRank));
     }
 
     /// <inheritdoc />
@@ -145,19 +180,24 @@ public class StatisticsService : IStatisticsService
         if (range.EndUtc.HasValue)
             query = query.Where(lh => lh.ListenTimestampUtc <= range.EndUtc.Value);
 
-        if (!string.IsNullOrWhiteSpace(searchTerm))
-        {
-            query = query.Where(lh => dbContext.Songs.Any(s => s.Id == lh.SongId && s.SongArtists.Any(sa => sa.Artist!.Name.ToLower().Contains(searchTerm.ToLower()))));
-        }
-
-        return await query
+        var statsQuery = query
             .Join(dbContext.Songs, lh => lh.SongId, s => s.Id, (lh, s) => new { lh, s })
             .SelectMany(x => x.s.SongArtists, (x, sa) => new { x.lh, sa.ArtistId })
             .GroupBy(x => x.ArtistId)
-            .Select(g => new { TotalPlays = g.Sum(x => x.lh.IsEligibleForScrobbling || x.lh.EndReason == PlaybackEndReason.Finished ? 1 : 0) })
-            .Where(s => s.TotalPlays > 0)
-            .CountAsync(ct)
-            .ConfigureAwait(false);
+            .Select(g => new { ArtistId = g.Key, TotalPlays = g.Sum(x => x.lh.IsEligibleForScrobbling || x.lh.EndReason == PlaybackEndReason.Finished ? 1 : 0) })
+            .Where(s => s.TotalPlays > 0);
+
+        if (string.IsNullOrWhiteSpace(searchTerm))
+            return await statsQuery.CountAsync(ct).ConfigureAwait(false);
+
+        var allStats = await statsQuery.ToListAsync(ct).ConfigureAwait(false);
+        var allIds = allStats.Select(s => s.ArtistId).ToList();
+        var nameMap = await dbContext.Artists.AsNoTracking()
+            .Where(a => allIds.Contains(a.Id))
+            .Select(a => new { a.Id, a.Name })
+            .ToDictionaryAsync(a => a.Id, a => a.Name, ct).ConfigureAwait(false);
+
+        return allStats.Count(s => nameMap.TryGetValue(s.ArtistId, out var n) && n.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
     }
 
     /// <inheritdoc />
@@ -171,11 +211,7 @@ public class StatisticsService : IStatisticsService
         if (range.EndUtc.HasValue)
             query = query.Where(lh => lh.ListenTimestampUtc <= range.EndUtc.Value);
 
-        if (!string.IsNullOrWhiteSpace(searchTerm))
-        {
-            query = query.Where(lh => dbContext.Songs.Any(s => s.Id == lh.SongId && s.Album!.Title.ToLower().Contains(searchTerm.ToLower())));
-        }
-
+        // Aggregate WITHOUT search filter so global ranks are based on the full dataset.
         var statsQuery = query
             .Join(dbContext.Songs, lh => lh.SongId, s => s.Id, (lh, s) => new { lh, s })
             .GroupBy(x => x.s.AlbumId)
@@ -188,19 +224,47 @@ public class StatisticsService : IStatisticsService
             .Where(s => s.TotalPlays > 0)
             .OrderByDescending(s => s.TotalPlays).ThenBy(s => s.AlbumId);
 
-        var topItems = await statsQuery.Skip(offset).Take(limit).ToListAsync(ct).ConfigureAwait(false);
-        var albumIds = topItems.Select(ti => ti.AlbumId).Where(id => id.HasValue).Cast<Guid>().ToList();
+        List<(int GlobalRank, Guid AlbumId, int TotalPlays, long TotalDurationTicks)> page;
+
+        if (string.IsNullOrWhiteSpace(searchTerm))
+        {
+            // No search: DB handles pagination. Global rank = offset + position + 1.
+            // Assign rank before filtering null AlbumIds so ranks reflect true global position.
+            var topItems = await statsQuery.Skip(offset).Take(limit).ToListAsync(ct).ConfigureAwait(false);
+            page = topItems
+                .Select((s, i) => (GlobalRank: offset + i + 1, s.AlbumId, s.TotalPlays, s.TotalDurationTicks))
+                .Where(x => x.AlbumId.HasValue)
+                .Select(x => (x.GlobalRank, AlbumId: x.AlbumId!.Value, x.TotalPlays, x.TotalDurationTicks))
+                .ToList();
+        }
+        else
+        {
+            // Search active: fetch all ranked stats, filter by album title in-memory, then paginate.
+            // Assign rank before filtering null AlbumIds so ranks reflect true global position.
+            var allStats = await statsQuery.ToListAsync(ct).ConfigureAwait(false);
+            var allIds = allStats.Where(s => s.AlbumId.HasValue).Select(s => s.AlbumId!.Value).ToList();
+            var titleMap = await dbContext.Albums.AsNoTracking()
+                .Where(a => allIds.Contains(a.Id))
+                .Select(a => new { a.Id, a.Title })
+                .ToDictionaryAsync(a => a.Id, a => a.Title, ct).ConfigureAwait(false);
+
+            page = allStats
+                .Select((s, i) => (GlobalRank: i + 1, s.AlbumId, s.TotalPlays, s.TotalDurationTicks))
+                .Where(x => x.AlbumId.HasValue)
+                .Select(x => (x.GlobalRank, AlbumId: x.AlbumId!.Value, x.TotalPlays, x.TotalDurationTicks))
+                .Where(x => titleMap.TryGetValue(x.AlbumId, out var t) && t.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+                .Skip(offset).Take(limit)
+                .ToList();
+        }
+
+        var albumIds = page.Select(x => x.AlbumId).ToList();
         var albums = await dbContext.Albums.AsNoTracking()
             .Where(a => albumIds.Contains(a.Id))
             .ToDictionaryAsync(a => a.Id, ct).ConfigureAwait(false);
 
-        return topItems
-            .Where(ti => ti.AlbumId.HasValue && albums.ContainsKey(ti.AlbumId.Value))
-            .Select(ti => new AlbumStats(
-                albums[ti.AlbumId!.Value],
-                ti.TotalPlays,
-                TimeSpan.FromTicks(ti.TotalDurationTicks)
-            ));
+        return page
+            .Where(x => albums.ContainsKey(x.AlbumId))
+            .Select(x => new AlbumStats(albums[x.AlbumId], x.TotalPlays, TimeSpan.FromTicks(x.TotalDurationTicks), x.GlobalRank));
     }
 
     /// <inheritdoc />
@@ -214,22 +278,23 @@ public class StatisticsService : IStatisticsService
         if (range.EndUtc.HasValue)
             query = query.Where(lh => lh.ListenTimestampUtc <= range.EndUtc.Value);
 
-        if (!string.IsNullOrWhiteSpace(searchTerm))
-        {
-            query = query.Where(lh => dbContext.Songs.Any(s => s.Id == lh.SongId && s.Album!.Title.ToLower().Contains(searchTerm.ToLower())));
-        }
-
-        return await query
+        var statsQuery = query
             .Join(dbContext.Songs, lh => lh.SongId, s => s.Id, (lh, s) => new { lh, s })
             .GroupBy(x => x.s.AlbumId)
-            .Select(g => new
-            {
-                AlbumId = g.Key,
-                TotalPlays = g.Sum(x => x.lh.IsEligibleForScrobbling || x.lh.EndReason == PlaybackEndReason.Finished ? 1 : 0)
-            })
-            .Where(s => s.TotalPlays > 0 && s.AlbumId != null)
-            .CountAsync(ct)
-            .ConfigureAwait(false);
+            .Select(g => new { AlbumId = g.Key, TotalPlays = g.Sum(x => x.lh.IsEligibleForScrobbling || x.lh.EndReason == PlaybackEndReason.Finished ? 1 : 0) })
+            .Where(s => s.TotalPlays > 0 && s.AlbumId != null);
+
+        if (string.IsNullOrWhiteSpace(searchTerm))
+            return await statsQuery.CountAsync(ct).ConfigureAwait(false);
+
+        var allStats = await statsQuery.ToListAsync(ct).ConfigureAwait(false);
+        var allIds = allStats.Where(s => s.AlbumId.HasValue).Select(s => s.AlbumId!.Value).ToList();
+        var titleMap = await dbContext.Albums.AsNoTracking()
+            .Where(a => allIds.Contains(a.Id))
+            .Select(a => new { a.Id, a.Title })
+            .ToDictionaryAsync(a => a.Id, a => a.Title, ct).ConfigureAwait(false);
+
+        return allStats.Count(s => s.AlbumId.HasValue && titleMap.TryGetValue(s.AlbumId.Value, out var t) && t.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
     }
 
     /// <inheritdoc />
@@ -243,11 +308,7 @@ public class StatisticsService : IStatisticsService
         if (range.EndUtc.HasValue)
             query = query.Where(lh => lh.ListenTimestampUtc <= range.EndUtc.Value);
 
-        if (!string.IsNullOrWhiteSpace(searchTerm))
-        {
-            query = query.Where(lh => dbContext.Songs.Any(s => s.Id == lh.SongId && s.Genres.Any(g => g.Name.ToLower().Contains(searchTerm.ToLower()))));
-        }
-
+        // Aggregate WITHOUT search filter so global ranks are based on the full dataset.
         var statsQuery = query
             .Join(dbContext.Songs, lh => lh.SongId, s => s.Id, (lh, s) => new { lh, s })
             .SelectMany(x => x.s.Genres, (x, g) => new { x.lh, g.Id })
@@ -261,19 +322,39 @@ public class StatisticsService : IStatisticsService
             .Where(s => s.TotalPlays > 0)
             .OrderByDescending(s => s.TotalPlays).ThenBy(s => s.GenreId);
 
-        var topItems = await statsQuery.Skip(offset).Take(limit).ToListAsync(ct).ConfigureAwait(false);
-        var genreIds = topItems.Select(ti => ti.GenreId).ToList();
+        List<(int GlobalRank, Guid GenreId, int TotalPlays, long TotalDurationTicks)> page;
+
+        if (string.IsNullOrWhiteSpace(searchTerm))
+        {
+            // No search: DB handles pagination. Global rank = offset + position + 1.
+            var topItems = await statsQuery.Skip(offset).Take(limit).ToListAsync(ct).ConfigureAwait(false);
+            page = topItems.Select((s, i) => (offset + i + 1, s.GenreId, s.TotalPlays, s.TotalDurationTicks)).ToList();
+        }
+        else
+        {
+            // Search active: fetch all ranked stats, filter by genre name in-memory, then paginate.
+            var allStats = await statsQuery.ToListAsync(ct).ConfigureAwait(false);
+            var allIds = allStats.Select(s => s.GenreId).ToList();
+            var nameMap = await dbContext.Genres.AsNoTracking()
+                .Where(g => allIds.Contains(g.Id))
+                .Select(g => new { g.Id, g.Name })
+                .ToDictionaryAsync(g => g.Id, g => g.Name, ct).ConfigureAwait(false);
+
+            page = allStats
+                .Select((s, i) => (GlobalRank: i + 1, s.GenreId, s.TotalPlays, s.TotalDurationTicks))
+                .Where(x => nameMap.TryGetValue(x.GenreId, out var n) && n.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+                .Skip(offset).Take(limit)
+                .ToList();
+        }
+
+        var genreIds = page.Select(x => x.GenreId).ToList();
         var genres = await dbContext.Genres.AsNoTracking()
             .Where(g => genreIds.Contains(g.Id))
             .ToDictionaryAsync(g => g.Id, ct).ConfigureAwait(false);
 
-        return topItems
-            .Where(ti => genres.ContainsKey(ti.GenreId))
-            .Select(ti => new GenreStats(
-                genres[ti.GenreId],
-                ti.TotalPlays,
-                TimeSpan.FromTicks(ti.TotalDurationTicks)
-            ));
+        return page
+            .Where(x => genres.ContainsKey(x.GenreId))
+            .Select(x => new GenreStats(genres[x.GenreId], x.TotalPlays, TimeSpan.FromTicks(x.TotalDurationTicks), x.GlobalRank));
     }
 
     /// <inheritdoc />
@@ -287,19 +368,24 @@ public class StatisticsService : IStatisticsService
         if (range.EndUtc.HasValue)
             query = query.Where(lh => lh.ListenTimestampUtc <= range.EndUtc.Value);
 
-        if (!string.IsNullOrWhiteSpace(searchTerm))
-        {
-            query = query.Where(lh => dbContext.Songs.Any(s => s.Id == lh.SongId && s.Genres.Any(g => g.Name.ToLower().Contains(searchTerm.ToLower()))));
-        }
-
-        return await query
+        var statsQuery = query
             .Join(dbContext.Songs, lh => lh.SongId, s => s.Id, (lh, s) => new { lh, s })
             .SelectMany(x => x.s.Genres, (x, g) => new { x.lh, g.Id })
             .GroupBy(x => x.Id)
-            .Select(g => new { TotalPlays = g.Sum(x => x.lh.IsEligibleForScrobbling || x.lh.EndReason == PlaybackEndReason.Finished ? 1 : 0) })
-            .Where(s => s.TotalPlays > 0)
-            .CountAsync(ct)
-            .ConfigureAwait(false);
+            .Select(g => new { GenreId = g.Key, TotalPlays = g.Sum(x => x.lh.IsEligibleForScrobbling || x.lh.EndReason == PlaybackEndReason.Finished ? 1 : 0) })
+            .Where(s => s.TotalPlays > 0);
+
+        if (string.IsNullOrWhiteSpace(searchTerm))
+            return await statsQuery.CountAsync(ct).ConfigureAwait(false);
+
+        var allStats = await statsQuery.ToListAsync(ct).ConfigureAwait(false);
+        var allIds = allStats.Select(s => s.GenreId).ToList();
+        var nameMap = await dbContext.Genres.AsNoTracking()
+            .Where(g => allIds.Contains(g.Id))
+            .Select(g => new { g.Id, g.Name })
+            .ToDictionaryAsync(g => g.Id, g => g.Name, ct).ConfigureAwait(false);
+
+        return allStats.Count(s => nameMap.TryGetValue(s.GenreId, out var n) && n.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
     }
 
     /// <inheritdoc />
