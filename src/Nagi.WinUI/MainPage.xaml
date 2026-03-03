@@ -539,6 +539,75 @@
         <Grid x:Name="SeeAllOverlay"
               Visibility="{x:Bind InsightsVm.IsSeeAllOpen, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
 
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup x:Name="SeeAllSearchStates">
+                    <VisualState x:Name="SeeAllSearchCollapsed">
+                        <Storyboard>
+                            <DoubleAnimation
+                                Storyboard.TargetName="SeeAllSearchTextBox"
+                                Storyboard.TargetProperty="Width"
+                                To="0"
+                                Duration="0:0:0.3"
+                                EnableDependentAnimation="True">
+                                <DoubleAnimation.EasingFunction>
+                                    <CubicEase EasingMode="EaseInOut" />
+                                </DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+
+                            <DoubleAnimation
+                                Storyboard.TargetName="SeeAllSearchTextBox"
+                                Storyboard.TargetProperty="Opacity"
+                                To="0"
+                                Duration="0:0:0.15" />
+
+                            <ObjectAnimationUsingKeyFrames
+                                Storyboard.TargetName="SeeAllSearchTextBox"
+                                Storyboard.TargetProperty="IsHitTestVisible">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="False" />
+                            </ObjectAnimationUsingKeyFrames>
+                            <ObjectAnimationUsingKeyFrames
+                                Storyboard.TargetName="SeeAllSearchIcon"
+                                Storyboard.TargetProperty="Glyph">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="&#xE721;" />
+                                <DiscreteObjectKeyFrame KeyTime="0:0:0.3" Value="&#xE721;" />
+                            </ObjectAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </VisualState>
+                    <VisualState x:Name="SeeAllSearchExpanded">
+                        <Storyboard>
+                            <DoubleAnimation
+                                Storyboard.TargetName="SeeAllSearchTextBox"
+                                Storyboard.TargetProperty="Width"
+                                To="300"
+                                Duration="0:0:0.3"
+                                EnableDependentAnimation="True">
+                                <DoubleAnimation.EasingFunction>
+                                    <CubicEase EasingMode="EaseInOut" />
+                                </DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+
+                            <DoubleAnimation
+                                Storyboard.TargetName="SeeAllSearchTextBox"
+                                Storyboard.TargetProperty="Opacity"
+                                To="1"
+                                BeginTime="0:0:0.15"
+                                Duration="0:0:0.15" />
+
+                            <ObjectAnimationUsingKeyFrames
+                                Storyboard.TargetName="SeeAllSearchTextBox"
+                                Storyboard.TargetProperty="IsHitTestVisible">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="True" />
+                            </ObjectAnimationUsingKeyFrames>
+                            <ObjectAnimationUsingKeyFrames
+                                Storyboard.TargetName="SeeAllSearchIcon"
+                                Storyboard.TargetProperty="Glyph">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="&#xE711;" />
+                            </ObjectAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="18*" />
@@ -574,12 +643,39 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0"
                                    Text="{x:Bind InsightsVm.SeeAllTitle, Mode=OneWay}"
                                    FontSize="16" FontWeight="SemiBold"
                                    VerticalAlignment="Center" />
-                        <Button Grid.Column="1"
+
+                        <Grid Grid.Column="1" Margin="0,0,8,0">
+                            <TextBox x:Name="SeeAllSearchTextBox"
+                                     PlaceholderText="{x:Bind resources:Strings.FolderSongViewPage_SearchBox_Placeholder, Mode=OneTime}"
+                                     Style="{StaticResource SearchTextBoxStyle}"
+                                     Width="0"
+                                     Opacity="0"
+                                     IsHitTestVisible="False"
+                                     HorizontalAlignment="Right"
+                                     KeyDown="OnSeeAllSearchTextBoxKeyDown"
+                                     Text="{x:Bind InsightsVm.SearchTerm, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     Canvas.ZIndex="0">
+                            </TextBox>
+
+                            <Button x:Name="SeeAllSearchToggleButton"
+                                    ToolTipService.ToolTip="{x:Bind resources:Strings.FolderSongViewPage_SearchButton_ToolTip, Mode=OneTime}"
+                                    Click="OnSeeAllSearchToggleButtonClick"
+                                    Style="{StaticResource SongListViewPageIconButton}"
+                                    HorizontalAlignment="Right"
+                                    Margin="0,0,1,0"
+                                    IsHitTestVisible="True"
+                                    Canvas.ZIndex="1">
+                                <FontIcon x:Name="SeeAllSearchIcon" FontSize="16" Glyph="&#xE721;" />
+                            </Button>
+                        </Grid>
+
+                        <Button Grid.Column="2"
                                 Click="OnCloseSeeAll"
                                 Style="{StaticResource SubtleButtonStyle}"
                                 Width="32" Height="32" Padding="0">
