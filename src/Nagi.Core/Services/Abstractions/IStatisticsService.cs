@@ -109,9 +109,9 @@ public enum ActivityInterval
     Month 
 }
 
-public record SongStats(Song Song, int TotalPlays, TimeSpan TotalDuration, int Skips);
-public record ArtistStats(Artist Artist, int TotalPlays, TimeSpan TotalDuration);
-public record AlbumStats(Album Album, int TotalPlays, TimeSpan TotalDuration);
-public record GenreStats(Genre Genre, int TotalPlays, TimeSpan TotalDuration);
+public record SongStats(Song Song, int TotalPlays, TimeSpan TotalDuration, int Skips, int GlobalRank = 0);
+public record ArtistStats(Artist Artist, int TotalPlays, TimeSpan TotalDuration, int GlobalRank = 0);
+public record AlbumStats(Album Album, int TotalPlays, TimeSpan TotalDuration, int GlobalRank = 0);
+public record GenreStats(Genre Genre, int TotalPlays, TimeSpan TotalDuration, int GlobalRank = 0);
 public record ActivityDataPoint(DateTime Timestamp, int Plays, TimeSpan Duration);
 public record ContextStats(PlaybackContextType Type, int Count, TimeSpan Duration);

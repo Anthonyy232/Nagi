@@ -301,11 +301,11 @@ public partial class InsightsViewModel : ObservableObject
                 MostActiveDayText = CultureInfo.CurrentCulture.DateTimeFormat.GetDayName(activeDayTask.Result);
 
                 // Top songs
-                TopSongs.ReplaceRange(topSongsTask.Result.Select((s, i) => new TopSongItem
+                TopSongs.ReplaceRange(topSongsTask.Result.Select(s => new TopSongItem
                 {
-                    Rank = i + 1,
+                    Rank = s.GlobalRank,
                     Title = s.Song.Title,
-                    Artist = string.Join(", ", s.Song.SongArtists?.Select(sa => sa.Artist?.Name ?? "") ?? []),
+                    Artist = s.Song.ArtistName,
                     ArtworkUri = ImageUriHelper.GetUriWithCacheBuster(s.Song.AlbumArtUriFromTrack),
                     PlayCount = s.TotalPlays,
                     PlayCountText = string.Format(CultureInfo.CurrentCulture, Strings.InsightsPage_Plays, s.TotalPlays),
@@ -314,10 +314,10 @@ public partial class InsightsViewModel : ObservableObject
                 }));
 
                 // Top artists
-                TopArtists.ReplaceRange(topArtistsTask.Result.Select((a, i) => new TopArtistItem
+                TopArtists.ReplaceRange(topArtistsTask.Result.Select(a => new TopArtistItem
                 {
                     ArtistId = a.Artist.Id,
-                    Rank = i + 1,
+                    Rank = a.GlobalRank,
                     Name = a.Artist.Name,
                     ImageUri = ImageUriHelper.GetUriWithCacheBuster(a.Artist.LocalImageCachePath ?? a.Artist.RemoteImageUrl),
                     PlayCount = a.TotalPlays,
@@ -326,10 +326,10 @@ public partial class InsightsViewModel : ObservableObject
                 }));
 
                 // Top albums
-                TopAlbums.ReplaceRange(topAlbumsTask.Result.Select((a, i) => new TopAlbumItem
+                TopAlbums.ReplaceRange(topAlbumsTask.Result.Select(a => new TopAlbumItem
                 {
                     AlbumId = a.Album.Id,
-                    Rank = i + 1,
+                    Rank = a.GlobalRank,
                     Title = a.Album.Title,
                     ArtistName = a.Album.ArtistName ?? "",
                     ArtworkUri = ImageUriHelper.GetUriWithCacheBuster(a.Album.CoverArtUri),
@@ -340,10 +340,10 @@ public partial class InsightsViewModel : ObservableObject
                 }));
 
                 // Top genres
-                TopGenres.ReplaceRange(topGenresTask.Result.Select((g, i) => new TopGenreItem
+                TopGenres.ReplaceRange(topGenresTask.Result.Select(g => new TopGenreItem
                 {
                     GenreId = g.Genre.Id,
-                    Rank = i + 1,
+                    Rank = g.GlobalRank,
                     Name = g.Genre.Name,
                     PlayCount = g.TotalPlays,
                     PlayCountText = string.Format(CultureInfo.CurrentCulture, Strings.InsightsPage_Plays, g.TotalPlays),
@@ -498,11 +498,11 @@ public partial class InsightsViewModel : ObservableObject
                 var songs = await _statisticsService.GetTopSongsAsync(range, SeeAllPageSize, metric: SortMetric.PlayCount, offset: offset, searchTerm: SearchTerm, ct: ct);
                 await _dispatcherService.EnqueueAsync(() =>
                 {
-                    SeeAllSongs.ReplaceRange(songs.Select((s, i) => new TopSongItem
+                    SeeAllSongs.ReplaceRange(songs.Select(s => new TopSongItem
                     {
-                        Rank = offset + i + 1,
+                        Rank = s.GlobalRank,
                         Title = s.Song.Title,
-                        Artist = string.Join(", ", s.Song.SongArtists?.Select(sa => sa.Artist?.Name ?? "") ?? []),
+                        Artist = s.Song.ArtistName,
                         ArtworkUri = ImageUriHelper.GetUriWithCacheBuster(s.Song.AlbumArtUriFromTrack),
                         PlayCount = s.TotalPlays,
                         PlayCountText = string.Format(CultureInfo.CurrentCulture, Strings.InsightsPage_Plays, s.TotalPlays),
@@ -518,10 +518,10 @@ public partial class InsightsViewModel : ObservableObject
                 var artists = await _statisticsService.GetTopArtistsAsync(range, SeeAllPageSize, metric: SortMetric.Duration, offset: offset, searchTerm: SearchTerm, ct: ct);
                 await _dispatcherService.EnqueueAsync(() =>
                 {
-                    SeeAllArtists.ReplaceRange(artists.Select((a, i) => new TopArtistItem
+                    SeeAllArtists.ReplaceRange(artists.Select(a => new TopArtistItem
                     {
                         ArtistId = a.Artist.Id,
-                        Rank = offset + i + 1,
+                        Rank = a.GlobalRank,
                         Name = a.Artist.Name,
                         ImageUri = ImageUriHelper.GetUriWithCacheBuster(a.Artist.LocalImageCachePath ?? a.Artist.RemoteImageUrl),
                         PlayCount = a.TotalPlays,
@@ -537,10 +537,10 @@ public partial class InsightsViewModel : ObservableObject
                 var albums = await _statisticsService.GetTopAlbumsAsync(range, SeeAllPageSize, offset: offset, searchTerm: SearchTerm, ct: ct);
                 await _dispatcherService.EnqueueAsync(() =>
                 {
-                    SeeAllAlbums.ReplaceRange(albums.Select((a, i) => new TopAlbumItem
+                    SeeAllAlbums.ReplaceRange(albums.Select(a => new TopAlbumItem
                     {
                         AlbumId = a.Album.Id,
-                        Rank = offset + i + 1,
+                        Rank = a.GlobalRank,
                         Title = a.Album.Title,
                         ArtistName = a.Album.ArtistName ?? "",
                         ArtworkUri = ImageUriHelper.GetUriWithCacheBuster(a.Album.CoverArtUri),
@@ -558,10 +558,10 @@ public partial class InsightsViewModel : ObservableObject
                 var genres = await _statisticsService.GetTopGenresAsync(range, SeeAllPageSize, offset: offset, searchTerm: SearchTerm, ct: ct);
                 await _dispatcherService.EnqueueAsync(() =>
                 {
-                    SeeAllGenres.ReplaceRange(genres.Select((g, i) => new TopGenreItem
+                    SeeAllGenres.ReplaceRange(genres.Select(g => new TopGenreItem
                     {
                         GenreId = g.Genre.Id,
-                        Rank = offset + i + 1,
+                        Rank = g.GlobalRank,
                         Name = g.Genre.Name,
                         PlayCount = g.TotalPlays,
                         PlayCountText = string.Format(CultureInfo.CurrentCulture, Strings.InsightsPage_Plays, g.TotalPlays),

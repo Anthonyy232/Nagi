@@ -83,7 +83,6 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
     public MainPage()
     {
-        InitializeComponent();
         ViewModel = App.Services!.GetRequiredService<PlayerViewModel>();
         InsightsVm = App.Services!.GetRequiredService<InsightsViewModel>();
         _settingsService = App.Services!.GetRequiredService<IUISettingsService>();
@@ -91,6 +90,8 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         _dispatcherService = App.Services!.GetRequiredService<IDispatcherService>();
         _win32InteropService = App.Services!.GetRequiredService<IWin32InteropService>();
         _logger = App.Services!.GetRequiredService<ILogger<MainPage>>();
+        
+        InitializeComponent();
         DataContext = ViewModel;
 
         InitializeNavigationService();

@@ -153,6 +153,72 @@
 
     <Grid x:Name="OverlayContainerGrid">
         <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="SeeAllSearchStates">
+                <VisualState x:Name="SeeAllSearchCollapsed">
+                    <Storyboard>
+                        <DoubleAnimation
+                            Storyboard.TargetName="SeeAllSearchTextBox"
+                            Storyboard.TargetProperty="Width"
+                            To="0"
+                            Duration="0:0:0.3"
+                            EnableDependentAnimation="True">
+                            <DoubleAnimation.EasingFunction>
+                                <CubicEase EasingMode="EaseInOut" />
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
+
+                        <DoubleAnimation
+                            Storyboard.TargetName="SeeAllSearchTextBox"
+                            Storyboard.TargetProperty="Opacity"
+                            To="0"
+                            Duration="0:0:0.15" />
+
+                        <ObjectAnimationUsingKeyFrames
+                            Storyboard.TargetName="SeeAllSearchTextBox"
+                            Storyboard.TargetProperty="IsHitTestVisible">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="False" />
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames
+                            Storyboard.TargetName="SeeAllSearchIcon"
+                            Storyboard.TargetProperty="Glyph">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="&#xE721;" />
+                            <DiscreteObjectKeyFrame KeyTime="0:0:0.3" Value="&#xE721;" />
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="SeeAllSearchExpanded">
+                    <Storyboard>
+                        <DoubleAnimation
+                            Storyboard.TargetName="SeeAllSearchTextBox"
+                            Storyboard.TargetProperty="Width"
+                            To="300"
+                            Duration="0:0:0.3"
+                            EnableDependentAnimation="True">
+                            <DoubleAnimation.EasingFunction>
+                                <CubicEase EasingMode="EaseInOut" />
+                            </DoubleAnimation.EasingFunction>
+                        </DoubleAnimation>
+
+                        <DoubleAnimation
+                            Storyboard.TargetName="SeeAllSearchTextBox"
+                            Storyboard.TargetProperty="Opacity"
+                            To="1"
+                            BeginTime="0:0:0.15"
+                            Duration="0:0:0.15" />
+
+                        <ObjectAnimationUsingKeyFrames
+                            Storyboard.TargetName="SeeAllSearchTextBox"
+                            Storyboard.TargetProperty="IsHitTestVisible">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="True" />
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames
+                            Storyboard.TargetName="SeeAllSearchIcon"
+                            Storyboard.TargetProperty="Glyph">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="&#xE711;" />
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
             <VisualStateGroup x:Name="PlayerVisibilityStates">
                 <VisualState x:Name="PlayerVisible">
                     <Storyboard>
@@ -539,74 +605,6 @@
         <Grid x:Name="SeeAllOverlay"
               Visibility="{x:Bind InsightsVm.IsSeeAllOpen, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
 
-            <VisualStateManager.VisualStateGroups>
-                <VisualStateGroup x:Name="SeeAllSearchStates">
-                    <VisualState x:Name="SeeAllSearchCollapsed">
-                        <Storyboard>
-                            <DoubleAnimation
-                                Storyboard.TargetName="SeeAllSearchTextBox"
-                                Storyboard.TargetProperty="Width"
-                                To="0"
-                                Duration="0:0:0.3"
-                                EnableDependentAnimation="True">
-                                <DoubleAnimation.EasingFunction>
-                                    <CubicEase EasingMode="EaseInOut" />
-                                </DoubleAnimation.EasingFunction>
-                            </DoubleAnimation>
-
-                            <DoubleAnimation
-                                Storyboard.TargetName="SeeAllSearchTextBox"
-                                Storyboard.TargetProperty="Opacity"
-                                To="0"
-                                Duration="0:0:0.15" />
-
-                            <ObjectAnimationUsingKeyFrames
-                                Storyboard.TargetName="SeeAllSearchTextBox"
-                                Storyboard.TargetProperty="IsHitTestVisible">
-                                <DiscreteObjectKeyFrame KeyTime="0" Value="False" />
-                            </ObjectAnimationUsingKeyFrames>
-                            <ObjectAnimationUsingKeyFrames
-                                Storyboard.TargetName="SeeAllSearchIcon"
-                                Storyboard.TargetProperty="Glyph">
-                                <DiscreteObjectKeyFrame KeyTime="0" Value="&#xE721;" />
-                                <DiscreteObjectKeyFrame KeyTime="0:0:0.3" Value="&#xE721;" />
-                            </ObjectAnimationUsingKeyFrames>
-                        </Storyboard>
-                    </VisualState>
-                    <VisualState x:Name="SeeAllSearchExpanded">
-                        <Storyboard>
-                            <DoubleAnimation
-                                Storyboard.TargetName="SeeAllSearchTextBox"
-                                Storyboard.TargetProperty="Width"
-                                To="300"
-                                Duration="0:0:0.3"
-                                EnableDependentAnimation="True">
-                                <DoubleAnimation.EasingFunction>
-                                    <CubicEase EasingMode="EaseInOut" />
-                                </DoubleAnimation.EasingFunction>
-                            </DoubleAnimation>
-
-                            <DoubleAnimation
-                                Storyboard.TargetName="SeeAllSearchTextBox"
-                                Storyboard.TargetProperty="Opacity"
-                                To="1"
-                                BeginTime="0:0:0.15"
-                                Duration="0:0:0.15" />
-
-                            <ObjectAnimationUsingKeyFrames
-                                Storyboard.TargetName="SeeAllSearchTextBox"
-                                Storyboard.TargetProperty="IsHitTestVisible">
-                                <DiscreteObjectKeyFrame KeyTime="0" Value="True" />
-                            </ObjectAnimationUsingKeyFrames>
-                            <ObjectAnimationUsingKeyFrames
-                                Storyboard.TargetName="SeeAllSearchIcon"
-                                Storyboard.TargetProperty="Glyph">
-                                <DiscreteObjectKeyFrame KeyTime="0" Value="&#xE711;" />
-                            </ObjectAnimationUsingKeyFrames>
-                        </Storyboard>
-                    </VisualState>
-                </VisualStateGroup>
-            </VisualStateManager.VisualStateGroups>
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
