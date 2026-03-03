@@ -112,9 +112,9 @@ public partial class InsightsViewModel : ObservableObject
     private readonly ILibraryService _libraryService;
     private readonly IUIService _uiService;
     private readonly ILogger<InsightsViewModel> _logger;
-
-    private CancellationTokenSource? _loadCts;
+    private CancellationTokenSource? _seeAllSearchDebounceCts;
     private CancellationTokenSource? _seeAllCts;
+    private CancellationTokenSource? _loadCts;
 
     public InsightsViewModel(
         IStatisticsService statisticsService,
@@ -202,6 +202,31 @@ public partial class InsightsViewModel : ObservableObject
     [ObservableProperty] public partial bool IsSeeAllOpen { get; set; }
     [ObservableProperty] public partial string SeeAllTitle { get; set; } = "";
     [ObservableProperty] public partial bool IsSeeAllLoading { get; set; }
+
+    [ObservableProperty] public partial string SearchTerm { get; set; } = string.Empty;
+
+    partial void OnSearchTermChanged(string value)
+    {
+        _seeAllSearchDebounceCts?.Cancel();
+        _seeAllSearchDebounceCts?.Dispose();
+        _seeAllSearchDebounceCts = new CancellationTokenSource();
+        var token = _seeAllSearchDebounceCts.Token;
+
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                await Task.Delay(400, token);
+                if (token.IsCancellationRequested) return;
+
+                if (IsSeeAllOpen)
+                {
+                    await OpenSeeAllAsync(CurrentSeeAllCategory);
+                }
+            }
+            catch (OperationCanceledException) { }
+        }, token);
+    }
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasSeeAllNextPage), nameof(HasSeeAllPreviousPage))]
@@ -428,10 +453,10 @@ public partial class InsightsViewModel : ObservableObject
             // Fetch total count from DB so we can compute pages without loading all data.
             int totalCount = category switch
             {
-                SeeAllCategory.Songs => await _statisticsService.GetTopSongsCountAsync(range, ct),
-                SeeAllCategory.Artists => await _statisticsService.GetTopArtistsCountAsync(range, ct),
-                SeeAllCategory.Albums => await _statisticsService.GetTopAlbumsCountAsync(range, ct),
-                SeeAllCategory.Genres => await _statisticsService.GetTopGenresCountAsync(range, ct),
+                SeeAllCategory.Songs => await _statisticsService.GetTopSongsCountAsync(range, SearchTerm, ct),
+                SeeAllCategory.Artists => await _statisticsService.GetTopArtistsCountAsync(range, SearchTerm, ct),
+                SeeAllCategory.Albums => await _statisticsService.GetTopAlbumsCountAsync(range, SearchTerm, ct),
+                SeeAllCategory.Genres => await _statisticsService.GetTopGenresCountAsync(range, SearchTerm, ct),
                 _ => 0
             };
 
@@ -470,7 +495,7 @@ public partial class InsightsViewModel : ObservableObject
         {
             case SeeAllCategory.Songs:
             {
-                var songs = await _statisticsService.GetTopSongsAsync(range, SeeAllPageSize, metric: SortMetric.PlayCount, offset: offset, ct: ct);
+                var songs = await _statisticsService.GetTopSongsAsync(range, SeeAllPageSize, metric: SortMetric.PlayCount, offset: offset, searchTerm: SearchTerm, ct: ct);
                 await _dispatcherService.EnqueueAsync(() =>
                 {
                     SeeAllSongs.ReplaceRange(songs.Select((s, i) => new TopSongItem
@@ -490,7 +515,7 @@ public partial class InsightsViewModel : ObservableObject
             }
             case SeeAllCategory.Artists:
             {
-                var artists = await _statisticsService.GetTopArtistsAsync(range, SeeAllPageSize, metric: SortMetric.Duration, offset: offset, ct: ct);
+                var artists = await _statisticsService.GetTopArtistsAsync(range, SeeAllPageSize, metric: SortMetric.Duration, offset: offset, searchTerm: SearchTerm, ct: ct);
                 await _dispatcherService.EnqueueAsync(() =>
                 {
                     SeeAllArtists.ReplaceRange(artists.Select((a, i) => new TopArtistItem
@@ -509,7 +534,7 @@ public partial class InsightsViewModel : ObservableObject
             }
             case SeeAllCategory.Albums:
             {
-                var albums = await _statisticsService.GetTopAlbumsAsync(range, SeeAllPageSize, offset: offset, ct: ct);
+                var albums = await _statisticsService.GetTopAlbumsAsync(range, SeeAllPageSize, offset: offset, searchTerm: SearchTerm, ct: ct);
                 await _dispatcherService.EnqueueAsync(() =>
                 {
                     SeeAllAlbums.ReplaceRange(albums.Select((a, i) => new TopAlbumItem
@@ -530,7 +555,7 @@ public partial class InsightsViewModel : ObservableObject
             }
             case SeeAllCategory.Genres:
             {
-                var genres = await _statisticsService.GetTopGenresAsync(range, SeeAllPageSize, offset: offset, ct: ct);
+                var genres = await _statisticsService.GetTopGenresAsync(range, SeeAllPageSize, offset: offset, searchTerm: SearchTerm, ct: ct);
                 await _dispatcherService.EnqueueAsync(() =>
                 {
                     SeeAllGenres.ReplaceRange(genres.Select((g, i) => new TopGenreItem
@@ -554,8 +579,11 @@ public partial class InsightsViewModel : ObservableObject
     private async void CloseSeeAll()
     {
         try { _seeAllCts?.Cancel(); } catch (ObjectDisposedException) { }
+        try { _seeAllSearchDebounceCts?.Cancel(); } catch (ObjectDisposedException) { }
+        
         await _dispatcherService.EnqueueAsync(() =>
         {
+            SearchTerm = string.Empty;
             IsSeeAllOpen = false;
             return Task.CompletedTask;
         });

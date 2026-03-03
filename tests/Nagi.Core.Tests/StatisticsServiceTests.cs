@@ -203,6 +203,122 @@ public class StatisticsServiceTests : IDisposable
         topArtists.Select(a => a.Artist.Id).Should().NotContain(abandonedArtist.Id);
     }
 
+    [Fact]
+    public async Task GetTopSongsAsync_FiltersBySearchTerm()
+    {
+        var folder = new Folder { Name = "Test Folder", Path = "C:\\Music" };
+        var artist = new Artist { Name = "Artist A" };
+        var song1 = CreateSong(folder, artist, "Apple", null, TimeSpan.FromMinutes(3));
+        var song2 = CreateSong(folder, artist, "Banana", null, TimeSpan.FromMinutes(3));
+
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.Add(folder);
+            context.Artists.Add(artist);
+            context.Songs.AddRange(song1, song2);
+            context.ListenHistory.AddRange(
+                new ListenHistory { Song = song1, ListenTimestampUtc = DateTime.UtcNow, EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromMinutes(3).Ticks },
+                new ListenHistory { Song = song2, ListenTimestampUtc = DateTime.UtcNow, EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromMinutes(3).Ticks }
+            );
+            await context.SaveChangesAsync();
+        }
+
+        var result = (await _statisticsService.GetTopSongsAsync(new TimeRange(null, null), 10, SortMetric.PlayCount, searchTerm: "App")).ToList();
+
+        result.Should().ContainSingle();
+        result[0].Song.Title.Should().Be("Apple");
+    }
+
+    [Fact]
+    public async Task GetTopArtistsAsync_FiltersBySearchTerm()
+    {
+        var folder = new Folder { Name = "Test Folder", Path = "C:\\Music" };
+        var artist1 = new Artist { Name = "Alpha" };
+        var artist2 = new Artist { Name = "Beta" };
+        var song1 = CreateSong(folder, artist1, "Song 1", null, TimeSpan.FromMinutes(3));
+        var song2 = CreateSong(folder, artist2, "Song 2", null, TimeSpan.FromMinutes(3));
+
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.Add(folder);
+            context.Artists.AddRange(artist1, artist2);
+            context.Songs.AddRange(song1, song2);
+            context.ListenHistory.AddRange(
+                new ListenHistory { Song = song1, ListenTimestampUtc = DateTime.UtcNow, EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromMinutes(3).Ticks },
+                new ListenHistory { Song = song2, ListenTimestampUtc = DateTime.UtcNow, EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromMinutes(3).Ticks }
+            );
+            await context.SaveChangesAsync();
+        }
+
+        var result = (await _statisticsService.GetTopArtistsAsync(new TimeRange(null, null), 10, SortMetric.Duration, searchTerm: "Alp")).ToList();
+
+        result.Should().ContainSingle();
+        result[0].Artist.Name.Should().Be("Alpha");
+    }
+
+    [Fact]
+    public async Task GetTopAlbumsAsync_FiltersBySearchTerm()
+    {
+        var folder = new Folder { Name = "Test Folder", Path = "C:\\Music" };
+        var artist = new Artist { Name = "Artist A" };
+        var album1 = new Album { Title = "First Album", ArtistName = artist.Name, PrimaryArtistName = artist.Name };
+        var album2 = new Album { Title = "Second Album", ArtistName = artist.Name, PrimaryArtistName = artist.Name };
+        var song1 = CreateSong(folder, artist, "Song 1", album1, TimeSpan.FromMinutes(3));
+        var song2 = CreateSong(folder, artist, "Song 2", album2, TimeSpan.FromMinutes(3));
+
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.Add(folder);
+            context.Artists.Add(artist);
+            context.Albums.AddRange(album1, album2);
+            context.Songs.AddRange(song1, song2);
+            context.ListenHistory.AddRange(
+                new ListenHistory { Song = song1, ListenTimestampUtc = DateTime.UtcNow, EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromMinutes(3).Ticks },
+                new ListenHistory { Song = song2, ListenTimestampUtc = DateTime.UtcNow, EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromMinutes(3).Ticks }
+            );
+            await context.SaveChangesAsync();
+        }
+
+        var result = (await _statisticsService.GetTopAlbumsAsync(new TimeRange(null, null), 10, searchTerm: "First")).ToList();
+
+        result.Should().ContainSingle();
+        result[0].Album.Title.Should().Be("First Album");
+    }
+
+    [Fact]
+    public async Task GetTopGenresAsync_FiltersBySearchTerm()
+    {
+        var folder = new Folder { Name = "Test Folder", Path = "C:\\Music" };
+        var artist = new Artist { Name = "Artist A" };
+        var song1 = CreateSong(folder, artist, "Song 1", null, TimeSpan.FromMinutes(3));
+        var song2 = CreateSong(folder, artist, "Song 2", null, TimeSpan.FromMinutes(3));
+
+        var genre1 = new Genre { Name = "Rock" };
+        var genre2 = new Genre { Name = "Pop" };
+
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.Add(folder);
+            context.Artists.Add(artist);
+            context.Genres.AddRange(genre1, genre2);
+            context.Songs.AddRange(song1, song2);
+
+            song1.Genres.Add(genre1);
+            song2.Genres.Add(genre2);
+
+            context.ListenHistory.AddRange(
+                new ListenHistory { Song = song1, ListenTimestampUtc = DateTime.UtcNow, EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromMinutes(3).Ticks },
+                new ListenHistory { Song = song2, ListenTimestampUtc = DateTime.UtcNow, EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromMinutes(3).Ticks }
+            );
+            await context.SaveChangesAsync();
+        }
+
+        var result = (await _statisticsService.GetTopGenresAsync(new TimeRange(null, null), 10, searchTerm: "Ro")).ToList();
+
+        result.Should().ContainSingle();
+        result[0].Genre.Name.Should().Be("Rock");
+    }
+
     private static Song CreateSong(Folder folder, Artist artist, string title, Album? album, TimeSpan duration)
     {
         var song = new Song

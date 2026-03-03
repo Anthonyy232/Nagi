@@ -630,13 +630,43 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
     // ── Insights "See All" overlay handlers ──
 
-    private void OnCloseSeeAll(object sender, RoutedEventArgs e) =>
+    private void OnCloseSeeAll(object sender, RoutedEventArgs e)
+    {
+        VisualStateManager.GoToState(this, "SeeAllSearchCollapsed", false);
         InsightsVm.CloseSeeAllCommand.Execute(null);
+    }
 
-    private void OnSeeAllScrimTapped(object sender, TappedRoutedEventArgs e) =>
+    private void OnSeeAllScrimTapped(object sender, TappedRoutedEventArgs e)
+    {
+        VisualStateManager.GoToState(this, "SeeAllSearchCollapsed", false);
         InsightsVm.CloseSeeAllCommand.Execute(null);
+    }
 
     private void OnSeeAllPanelTapped(object sender, TappedRoutedEventArgs e) =>
         e.Handled = true;
+
+    private void OnSeeAllSearchToggleButtonClick(object sender, RoutedEventArgs e)
+    {
+        if (SeeAllSearchTextBox.Width > 0)
+        {
+            InsightsVm.SearchTerm = string.Empty;
+            VisualStateManager.GoToState(this, "SeeAllSearchCollapsed", true);
+        }
+        else
+        {
+            VisualStateManager.GoToState(this, "SeeAllSearchExpanded", true);
+            SeeAllSearchTextBox.Focus(FocusState.Programmatic);
+        }
+    }
+
+    private void OnSeeAllSearchTextBoxKeyDown(object sender, KeyRoutedEventArgs e)
+    {
+        if (e.Key == VirtualKey.Escape)
+        {
+            InsightsVm.SearchTerm = string.Empty;
+            VisualStateManager.GoToState(this, "SeeAllSearchCollapsed", true);
+            e.Handled = true;
+        }
+    }
 
 }

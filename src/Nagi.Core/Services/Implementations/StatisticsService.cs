@@ -15,7 +15,7 @@ public class StatisticsService : IStatisticsService
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<SongStats>> GetTopSongsAsync(TimeRange range, int limit = 50, SortMetric metric = SortMetric.PlayCount, int offset = 0, CancellationToken ct = default)
+    public async Task<IEnumerable<SongStats>> GetTopSongsAsync(TimeRange range, int limit = 50, SortMetric metric = SortMetric.PlayCount, int offset = 0, string? searchTerm = null, CancellationToken ct = default)
     {
         await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
         var query = dbContext.ListenHistory.AsNoTracking().AsQueryable();
@@ -24,6 +24,11 @@ public class StatisticsService : IStatisticsService
             query = query.Where(lh => lh.ListenTimestampUtc >= range.StartUtc.Value);
         if (range.EndUtc.HasValue)
             query = query.Where(lh => lh.ListenTimestampUtc <= range.EndUtc.Value);
+
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            query = query.Where(lh => dbContext.Songs.Any(s => s.Id == lh.SongId && s.Title.ToLower().Contains(searchTerm.ToLower())));
+        }
 
         var statsQuery = query.GroupBy(lh => lh.SongId)
             .Select(g => new
@@ -57,7 +62,7 @@ public class StatisticsService : IStatisticsService
     }
 
     /// <inheritdoc />
-    public async Task<int> GetTopSongsCountAsync(TimeRange range, CancellationToken ct = default)
+    public async Task<int> GetTopSongsCountAsync(TimeRange range, string? searchTerm = null, CancellationToken ct = default)
     {
         await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
         var query = dbContext.ListenHistory.AsNoTracking().AsQueryable();
@@ -66,6 +71,11 @@ public class StatisticsService : IStatisticsService
             query = query.Where(lh => lh.ListenTimestampUtc >= range.StartUtc.Value);
         if (range.EndUtc.HasValue)
             query = query.Where(lh => lh.ListenTimestampUtc <= range.EndUtc.Value);
+
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            query = query.Where(lh => dbContext.Songs.Any(s => s.Id == lh.SongId && s.Title.ToLower().Contains(searchTerm.ToLower())));
+        }
 
         return await query
             .GroupBy(lh => lh.SongId)
@@ -76,7 +86,7 @@ public class StatisticsService : IStatisticsService
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<ArtistStats>> GetTopArtistsAsync(TimeRange range, int limit = 50, SortMetric metric = SortMetric.Duration, int offset = 0, CancellationToken ct = default)
+    public async Task<IEnumerable<ArtistStats>> GetTopArtistsAsync(TimeRange range, int limit = 50, SortMetric metric = SortMetric.Duration, int offset = 0, string? searchTerm = null, CancellationToken ct = default)
     {
         await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
         var query = dbContext.ListenHistory.AsNoTracking().AsQueryable();
@@ -85,6 +95,11 @@ public class StatisticsService : IStatisticsService
             query = query.Where(lh => lh.ListenTimestampUtc >= range.StartUtc.Value);
         if (range.EndUtc.HasValue)
             query = query.Where(lh => lh.ListenTimestampUtc <= range.EndUtc.Value);
+
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            query = query.Where(lh => dbContext.Songs.Any(s => s.Id == lh.SongId && s.SongArtists.Any(sa => sa.Artist!.Name.ToLower().Contains(searchTerm.ToLower()))));
+        }
 
         // This is simplified and might need adjustment for multi-artist tracks
         var statsQuery = query
@@ -120,7 +135,7 @@ public class StatisticsService : IStatisticsService
     }
 
     /// <inheritdoc />
-    public async Task<int> GetTopArtistsCountAsync(TimeRange range, CancellationToken ct = default)
+    public async Task<int> GetTopArtistsCountAsync(TimeRange range, string? searchTerm = null, CancellationToken ct = default)
     {
         await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
         var query = dbContext.ListenHistory.AsNoTracking().AsQueryable();
@@ -129,6 +144,11 @@ public class StatisticsService : IStatisticsService
             query = query.Where(lh => lh.ListenTimestampUtc >= range.StartUtc.Value);
         if (range.EndUtc.HasValue)
             query = query.Where(lh => lh.ListenTimestampUtc <= range.EndUtc.Value);
+
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            query = query.Where(lh => dbContext.Songs.Any(s => s.Id == lh.SongId && s.SongArtists.Any(sa => sa.Artist!.Name.ToLower().Contains(searchTerm.ToLower()))));
+        }
 
         return await query
             .Join(dbContext.Songs, lh => lh.SongId, s => s.Id, (lh, s) => new { lh, s })
@@ -141,7 +161,7 @@ public class StatisticsService : IStatisticsService
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<AlbumStats>> GetTopAlbumsAsync(TimeRange range, int limit = 50, int offset = 0, CancellationToken ct = default)
+    public async Task<IEnumerable<AlbumStats>> GetTopAlbumsAsync(TimeRange range, int limit = 50, int offset = 0, string? searchTerm = null, CancellationToken ct = default)
     {
         await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
         var query = dbContext.ListenHistory.AsNoTracking().AsQueryable();
@@ -150,6 +170,11 @@ public class StatisticsService : IStatisticsService
             query = query.Where(lh => lh.ListenTimestampUtc >= range.StartUtc.Value);
         if (range.EndUtc.HasValue)
             query = query.Where(lh => lh.ListenTimestampUtc <= range.EndUtc.Value);
+
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            query = query.Where(lh => dbContext.Songs.Any(s => s.Id == lh.SongId && s.Album!.Title.ToLower().Contains(searchTerm.ToLower())));
+        }
 
         var statsQuery = query
             .Join(dbContext.Songs, lh => lh.SongId, s => s.Id, (lh, s) => new { lh, s })
@@ -179,7 +204,7 @@ public class StatisticsService : IStatisticsService
     }
 
     /// <inheritdoc />
-    public async Task<int> GetTopAlbumsCountAsync(TimeRange range, CancellationToken ct = default)
+    public async Task<int> GetTopAlbumsCountAsync(TimeRange range, string? searchTerm = null, CancellationToken ct = default)
     {
         await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
         var query = dbContext.ListenHistory.AsNoTracking().AsQueryable();
@@ -188,6 +213,11 @@ public class StatisticsService : IStatisticsService
             query = query.Where(lh => lh.ListenTimestampUtc >= range.StartUtc.Value);
         if (range.EndUtc.HasValue)
             query = query.Where(lh => lh.ListenTimestampUtc <= range.EndUtc.Value);
+
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            query = query.Where(lh => dbContext.Songs.Any(s => s.Id == lh.SongId && s.Album!.Title.ToLower().Contains(searchTerm.ToLower())));
+        }
 
         return await query
             .Join(dbContext.Songs, lh => lh.SongId, s => s.Id, (lh, s) => new { lh, s })
@@ -203,7 +233,7 @@ public class StatisticsService : IStatisticsService
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<GenreStats>> GetTopGenresAsync(TimeRange range, int limit = 10, int offset = 0, CancellationToken ct = default)
+    public async Task<IEnumerable<GenreStats>> GetTopGenresAsync(TimeRange range, int limit = 10, int offset = 0, string? searchTerm = null, CancellationToken ct = default)
     {
         await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
         var query = dbContext.ListenHistory.AsNoTracking().AsQueryable();
@@ -212,6 +242,11 @@ public class StatisticsService : IStatisticsService
             query = query.Where(lh => lh.ListenTimestampUtc >= range.StartUtc.Value);
         if (range.EndUtc.HasValue)
             query = query.Where(lh => lh.ListenTimestampUtc <= range.EndUtc.Value);
+
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            query = query.Where(lh => dbContext.Songs.Any(s => s.Id == lh.SongId && s.Genres.Any(g => g.Name.ToLower().Contains(searchTerm.ToLower()))));
+        }
 
         var statsQuery = query
             .Join(dbContext.Songs, lh => lh.SongId, s => s.Id, (lh, s) => new { lh, s })
@@ -242,7 +277,7 @@ public class StatisticsService : IStatisticsService
     }
 
     /// <inheritdoc />
-    public async Task<int> GetTopGenresCountAsync(TimeRange range, CancellationToken ct = default)
+    public async Task<int> GetTopGenresCountAsync(TimeRange range, string? searchTerm = null, CancellationToken ct = default)
     {
         await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
         var query = dbContext.ListenHistory.AsNoTracking().AsQueryable();
@@ -251,6 +286,11 @@ public class StatisticsService : IStatisticsService
             query = query.Where(lh => lh.ListenTimestampUtc >= range.StartUtc.Value);
         if (range.EndUtc.HasValue)
             query = query.Where(lh => lh.ListenTimestampUtc <= range.EndUtc.Value);
+
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            query = query.Where(lh => dbContext.Songs.Any(s => s.Id == lh.SongId && s.Genres.Any(g => g.Name.ToLower().Contains(searchTerm.ToLower()))));
+        }
 
         return await query
             .Join(dbContext.Songs, lh => lh.SongId, s => s.Id, (lh, s) => new { lh, s })
