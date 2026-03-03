@@ -62,6 +62,7 @@ public partial class TopArtistItem : ObservableObject
     public bool IsArtworkAvailable => !string.IsNullOrEmpty(ImageUri);
     public int PlayCount { get; init; }
     public TimeSpan Duration { get; init; }
+    public IRelayCommand<TopArtistItem>? Command { get; init; }
 }
 
 /// <summary>
@@ -78,6 +79,7 @@ public partial class TopAlbumItem : ObservableObject
     public int PlayCount { get; init; }
     public string PlayCountText { get; init; } = string.Empty;
     public TimeSpan Duration { get; init; }
+    public IRelayCommand<TopAlbumItem>? Command { get; init; }
 }
 
 /// <summary>
@@ -91,7 +93,13 @@ public partial class TopGenreItem : ObservableObject
     public int PlayCount { get; init; }
     public string PlayCountText { get; init; } = string.Empty;
     public TimeSpan Duration { get; init; }
+    public IRelayCommand<TopGenreItem>? Command { get; init; }
 }
+
+/// <summary>
+///     Identifies which category is currently shown in the "See All" overlay.
+/// </summary>
+public enum SeeAllCategory { None, Songs, Artists, Albums, Genres }
 
 /// <summary>
 ///     Manages the state and logic for the Listening Insights dashboard page.
@@ -106,6 +114,7 @@ public partial class InsightsViewModel : ObservableObject
     private readonly ILogger<InsightsViewModel> _logger;
 
     private CancellationTokenSource? _loadCts;
+    private CancellationTokenSource? _seeAllCts;
 
     public InsightsViewModel(
         IStatisticsService statisticsService,
@@ -135,6 +144,8 @@ public partial class InsightsViewModel : ObservableObject
 
     async partial void OnSelectedTimeRangeIndexChanged(int value)
     {
+        if (IsSeeAllOpen)
+            CloseSeeAll();
         await LoadInsightsAsync();
     }
 
@@ -176,6 +187,44 @@ public partial class InsightsViewModel : ObservableObject
     [ObservableProperty]
     public partial ObservableRangeCollection<SourceSegment> SourceSegments { get; set; } = new();
 
+    // ── "See All" overlay ────────────────────────────────────────
+
+    private const int SeeAllPageSize = 25;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(
+        nameof(IsSeeAllSongs),
+        nameof(IsSeeAllArtists),
+        nameof(IsSeeAllAlbums),
+        nameof(IsSeeAllGenres))]
+    public partial SeeAllCategory CurrentSeeAllCategory { get; set; } = SeeAllCategory.None;
+
+    [ObservableProperty] public partial bool IsSeeAllOpen { get; set; }
+    [ObservableProperty] public partial string SeeAllTitle { get; set; } = "";
+    [ObservableProperty] public partial bool IsSeeAllLoading { get; set; }
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasSeeAllNextPage), nameof(HasSeeAllPreviousPage))]
+    public partial int SeeAllCurrentPage { get; set; } = 1;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasSeeAllNextPage))]
+    public partial int SeeAllTotalPages { get; set; } = 1;
+
+    public bool HasSeeAllNextPage => SeeAllCurrentPage < SeeAllTotalPages;
+    public bool HasSeeAllPreviousPage => SeeAllCurrentPage > 1;
+
+    public bool IsSeeAllSongs => CurrentSeeAllCategory == SeeAllCategory.Songs;
+    public bool IsSeeAllArtists => CurrentSeeAllCategory == SeeAllCategory.Artists;
+    public bool IsSeeAllAlbums => CurrentSeeAllCategory == SeeAllCategory.Albums;
+    public bool IsSeeAllGenres => CurrentSeeAllCategory == SeeAllCategory.Genres;
+
+    // Paged display collections bound to the overlay ListViews.
+    [ObservableProperty] public partial ObservableRangeCollection<TopSongItem> SeeAllSongs { get; set; } = new();
+    [ObservableProperty] public partial ObservableRangeCollection<TopArtistItem> SeeAllArtists { get; set; } = new();
+    [ObservableProperty] public partial ObservableRangeCollection<TopAlbumItem> SeeAllAlbums { get; set; } = new();
+    [ObservableProperty] public partial ObservableRangeCollection<TopGenreItem> SeeAllGenres { get; set; } = new();
+
     // ── Public API ──────────────────────────────────────────────
 
     /// <summary>
@@ -204,10 +253,10 @@ public partial class InsightsViewModel : ObservableObject
             var uniqueTask = _statisticsService.GetUniqueSongsPlayedAsync(range, ct);
             var peakHourTask = _statisticsService.GetPeakListeningHourAsync(range, ct);
             var activeDayTask = _statisticsService.GetMostActiveDayOfWeekAsync(range, ct);
-            var topSongsTask = _statisticsService.GetTopSongsAsync(range, 10, SortMetric.PlayCount, ct);
-            var topArtistsTask = _statisticsService.GetTopArtistsAsync(range, 10, SortMetric.Duration, ct);
-            var topAlbumsTask = _statisticsService.GetTopAlbumsAsync(range, 10, ct);
-            var topGenresTask = _statisticsService.GetTopGenresAsync(range, 10, ct);
+            var topSongsTask = _statisticsService.GetTopSongsAsync(range, 10, metric: SortMetric.PlayCount, ct: ct);
+            var topArtistsTask = _statisticsService.GetTopArtistsAsync(range, 10, metric: SortMetric.Duration, ct: ct);
+            var topAlbumsTask = _statisticsService.GetTopAlbumsAsync(range, 10, ct: ct);
+            var topGenresTask = _statisticsService.GetTopGenresAsync(range, 10, ct: ct);
             var sourcesTask = _statisticsService.GetPlaybackSourceDistributionAsync(range, ct);
 
             await Task.WhenAll(
@@ -247,7 +296,8 @@ public partial class InsightsViewModel : ObservableObject
                     Name = a.Artist.Name,
                     ImageUri = ImageUriHelper.GetUriWithCacheBuster(a.Artist.LocalImageCachePath ?? a.Artist.RemoteImageUrl),
                     PlayCount = a.TotalPlays,
-                    Duration = a.TotalDuration
+                    Duration = a.TotalDuration,
+                    Command = GoToArtistCommand
                 }));
 
                 // Top albums
@@ -260,7 +310,8 @@ public partial class InsightsViewModel : ObservableObject
                     ArtworkUri = ImageUriHelper.GetUriWithCacheBuster(a.Album.CoverArtUri),
                     PlayCount = a.TotalPlays,
                     PlayCountText = string.Format(CultureInfo.CurrentCulture, Strings.InsightsPage_Plays, a.TotalPlays),
-                    Duration = a.TotalDuration
+                    Duration = a.TotalDuration,
+                    Command = GoToAlbumCommand
                 }));
 
                 // Top genres
@@ -271,7 +322,8 @@ public partial class InsightsViewModel : ObservableObject
                     Name = g.Genre.Name,
                     PlayCount = g.TotalPlays,
                     PlayCountText = string.Format(CultureInfo.CurrentCulture, Strings.InsightsPage_Plays, g.TotalPlays),
-                    Duration = g.TotalDuration
+                    Duration = g.TotalDuration,
+                    Command = GoToGenreCommand
                 }));
 
                 // Playback source distribution
@@ -333,6 +385,253 @@ public partial class InsightsViewModel : ObservableObject
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to reset listen history.");
+        }
+    }
+
+    // ── See All ──────────────────────────────────────────────────
+
+    [RelayCommand] private Task OpenSeeAllSongsAsync() => OpenSeeAllAsync(SeeAllCategory.Songs);
+    [RelayCommand] private Task OpenSeeAllArtistsAsync() => OpenSeeAllAsync(SeeAllCategory.Artists);
+    [RelayCommand] private Task OpenSeeAllAlbumsAsync() => OpenSeeAllAsync(SeeAllCategory.Albums);
+    [RelayCommand] private Task OpenSeeAllGenresAsync() => OpenSeeAllAsync(SeeAllCategory.Genres);
+
+    private async Task OpenSeeAllAsync(SeeAllCategory category)
+    {
+        // Cancel any in-flight see-all load.
+        var newCts = new CancellationTokenSource();
+        var oldCts = Interlocked.Exchange(ref _seeAllCts, newCts);
+        try { oldCts?.Cancel(); oldCts?.Dispose(); } catch (ObjectDisposedException) { }
+
+        var ct = newCts.Token;
+
+        await _dispatcherService.EnqueueAsync(() =>
+        {
+            CurrentSeeAllCategory = category;
+            SeeAllTitle = category switch
+            {
+                SeeAllCategory.Songs => Strings.InsightsPage_TopSongs,
+                SeeAllCategory.Artists => Strings.InsightsPage_TopArtists,
+                SeeAllCategory.Albums => Strings.InsightsPage_TopAlbums,
+                SeeAllCategory.Genres => Strings.InsightsPage_TopGenres,
+                _ => ""
+            };
+            SeeAllCurrentPage = 1;
+            IsSeeAllOpen = true;
+            IsSeeAllLoading = true;
+            return Task.CompletedTask;
+        });
+
+        try
+        {
+            var range = BuildTimeRange();
+
+            // Fetch total count from DB so we can compute pages without loading all data.
+            int totalCount = category switch
+            {
+                SeeAllCategory.Songs => await _statisticsService.GetTopSongsCountAsync(range, ct),
+                SeeAllCategory.Artists => await _statisticsService.GetTopArtistsCountAsync(range, ct),
+                SeeAllCategory.Albums => await _statisticsService.GetTopAlbumsCountAsync(range, ct),
+                SeeAllCategory.Genres => await _statisticsService.GetTopGenresCountAsync(range, ct),
+                _ => 0
+            };
+
+            await _dispatcherService.EnqueueAsync(() =>
+            {
+                SeeAllTotalPages = Math.Max(1, (int)Math.Ceiling(totalCount / (double)SeeAllPageSize));
+                return Task.CompletedTask;
+            });
+
+            await LoadSeeAllPageAsync(category, 1, ct);
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.LogDebug("SeeAll load canceled.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to load see-all data for {Category}", category);
+        }
+        finally
+        {
+            await _dispatcherService.EnqueueAsync(() =>
+            {
+                IsSeeAllLoading = false;
+                return Task.CompletedTask;
+            });
+        }
+    }
+
+    private async Task LoadSeeAllPageAsync(SeeAllCategory category, int page, CancellationToken ct)
+    {
+        var range = BuildTimeRange();
+        var offset = (page - 1) * SeeAllPageSize;
+
+        switch (category)
+        {
+            case SeeAllCategory.Songs:
+            {
+                var songs = await _statisticsService.GetTopSongsAsync(range, SeeAllPageSize, metric: SortMetric.PlayCount, offset: offset, ct: ct);
+                await _dispatcherService.EnqueueAsync(() =>
+                {
+                    SeeAllSongs.ReplaceRange(songs.Select((s, i) => new TopSongItem
+                    {
+                        Rank = offset + i + 1,
+                        Title = s.Song.Title,
+                        Artist = string.Join(", ", s.Song.SongArtists?.Select(sa => sa.Artist?.Name ?? "") ?? []),
+                        ArtworkUri = ImageUriHelper.GetUriWithCacheBuster(s.Song.AlbumArtUriFromTrack),
+                        PlayCount = s.TotalPlays,
+                        PlayCountText = string.Format(CultureInfo.CurrentCulture, Strings.InsightsPage_Plays, s.TotalPlays),
+                        Duration = s.TotalDuration,
+                        Skips = s.Skips
+                    }));
+                    return Task.CompletedTask;
+                });
+                break;
+            }
+            case SeeAllCategory.Artists:
+            {
+                var artists = await _statisticsService.GetTopArtistsAsync(range, SeeAllPageSize, metric: SortMetric.Duration, offset: offset, ct: ct);
+                await _dispatcherService.EnqueueAsync(() =>
+                {
+                    SeeAllArtists.ReplaceRange(artists.Select((a, i) => new TopArtistItem
+                    {
+                        ArtistId = a.Artist.Id,
+                        Rank = offset + i + 1,
+                        Name = a.Artist.Name,
+                        ImageUri = ImageUriHelper.GetUriWithCacheBuster(a.Artist.LocalImageCachePath ?? a.Artist.RemoteImageUrl),
+                        PlayCount = a.TotalPlays,
+                        Duration = a.TotalDuration,
+                        Command = GoToArtistCommand
+                    }));
+                    return Task.CompletedTask;
+                });
+                break;
+            }
+            case SeeAllCategory.Albums:
+            {
+                var albums = await _statisticsService.GetTopAlbumsAsync(range, SeeAllPageSize, offset: offset, ct: ct);
+                await _dispatcherService.EnqueueAsync(() =>
+                {
+                    SeeAllAlbums.ReplaceRange(albums.Select((a, i) => new TopAlbumItem
+                    {
+                        AlbumId = a.Album.Id,
+                        Rank = offset + i + 1,
+                        Title = a.Album.Title,
+                        ArtistName = a.Album.ArtistName ?? "",
+                        ArtworkUri = ImageUriHelper.GetUriWithCacheBuster(a.Album.CoverArtUri),
+                        PlayCount = a.TotalPlays,
+                        PlayCountText = string.Format(CultureInfo.CurrentCulture, Strings.InsightsPage_Plays, a.TotalPlays),
+                        Duration = a.TotalDuration,
+                        Command = GoToAlbumCommand
+                    }));
+                    return Task.CompletedTask;
+                });
+                break;
+            }
+            case SeeAllCategory.Genres:
+            {
+                var genres = await _statisticsService.GetTopGenresAsync(range, SeeAllPageSize, offset: offset, ct: ct);
+                await _dispatcherService.EnqueueAsync(() =>
+                {
+                    SeeAllGenres.ReplaceRange(genres.Select((g, i) => new TopGenreItem
+                    {
+                        GenreId = g.Genre.Id,
+                        Rank = offset + i + 1,
+                        Name = g.Genre.Name,
+                        PlayCount = g.TotalPlays,
+                        PlayCountText = string.Format(CultureInfo.CurrentCulture, Strings.InsightsPage_Plays, g.TotalPlays),
+                        Duration = g.TotalDuration,
+                        Command = GoToGenreCommand
+                    }));
+                    return Task.CompletedTask;
+                });
+                break;
+            }
+        }
+    }
+
+    [RelayCommand]
+    private async void CloseSeeAll()
+    {
+        try { _seeAllCts?.Cancel(); } catch (ObjectDisposedException) { }
+        await _dispatcherService.EnqueueAsync(() =>
+        {
+            IsSeeAllOpen = false;
+            return Task.CompletedTask;
+        });
+    }
+
+    [RelayCommand]
+    private async Task SeeAllNextPage()
+    {
+        if (!HasSeeAllNextPage) return;
+        
+        var newCts = new CancellationTokenSource();
+        var oldCts = Interlocked.Exchange(ref _seeAllCts, newCts);
+        try { oldCts?.Cancel(); oldCts?.Dispose(); } catch (ObjectDisposedException) { }
+        
+        int previousPage = SeeAllCurrentPage;
+        await _dispatcherService.EnqueueAsync(() =>
+        {
+            SeeAllCurrentPage++;
+            IsSeeAllLoading = true;
+            return Task.CompletedTask;
+        });
+
+        try 
+        { 
+            await LoadSeeAllPageAsync(CurrentSeeAllCategory, SeeAllCurrentPage, newCts.Token); 
+        }
+        catch (OperationCanceledException) 
+        {
+            _logger.LogDebug("SeeAll next page canceled.");
+            await _dispatcherService.EnqueueAsync(() => { SeeAllCurrentPage = previousPage; return Task.CompletedTask; });
+        }
+        catch (Exception ex) 
+        { 
+            _logger.LogError(ex, "Failed to load see-all page {Page}", SeeAllCurrentPage); 
+            await _dispatcherService.EnqueueAsync(() => { SeeAllCurrentPage = previousPage; return Task.CompletedTask; });
+        }
+        finally
+        {
+            await _dispatcherService.EnqueueAsync(() => { IsSeeAllLoading = false; return Task.CompletedTask; });
+        }
+    }
+
+    [RelayCommand]
+    private async Task SeeAllPreviousPage()
+    {
+        if (!HasSeeAllPreviousPage) return;
+
+        var newCts = new CancellationTokenSource();
+        var oldCts = Interlocked.Exchange(ref _seeAllCts, newCts);
+        try { oldCts?.Cancel(); oldCts?.Dispose(); } catch (ObjectDisposedException) { }
+        
+        int previousPage = SeeAllCurrentPage;
+        await _dispatcherService.EnqueueAsync(() =>
+        {
+            SeeAllCurrentPage--;
+            IsSeeAllLoading = true;
+            return Task.CompletedTask;
+        });
+
+        try 
+        { 
+            await LoadSeeAllPageAsync(CurrentSeeAllCategory, SeeAllCurrentPage, newCts.Token); 
+        }
+        catch (OperationCanceledException) 
+        {
+            _logger.LogDebug("SeeAll previous page canceled.");
+            await _dispatcherService.EnqueueAsync(() => { SeeAllCurrentPage = previousPage; return Task.CompletedTask; });
+        }
+        catch (Exception ex) 
+        { 
+            _logger.LogError(ex, "Failed to load see-all page {Page}", SeeAllCurrentPage); 
+            await _dispatcherService.EnqueueAsync(() => { SeeAllCurrentPage = previousPage; return Task.CompletedTask; });
+        }
+        finally
+        {
+            await _dispatcherService.EnqueueAsync(() => { IsSeeAllLoading = false; return Task.CompletedTask; });
         }
     }
 

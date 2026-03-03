@@ -13,6 +13,7 @@
     Background="Transparent"
     mc:Ignorable="d">
 
+    <!-- ═══════════════  SHARED ITEM TEMPLATES  ═══════════════ -->
     <Grid Padding="{StaticResource PageContainerPaddingVertical}">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="AdaptiveStates">
@@ -56,7 +57,7 @@
                         <Setter Target="Row2Col1.Width" Value="0" />
                         <Setter Target="TopArtistsCard.(Grid.Column)" Value="0" />
                         <Setter Target="TopArtistsCard.(Grid.Row)" Value="1" />
-                        
+
                         <Setter Target="Row3Col1.Width" Value="0" />
                         <Setter Target="TopGenresCard.(Grid.Column)" Value="0" />
                         <Setter Target="TopGenresCard.(Grid.Row)" Value="1" />
@@ -226,84 +227,35 @@
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
 
-                            <TextBlock Grid.Row="0"
-                                       Text="{x:Bind resources:Strings.InsightsPage_TopSongs, Mode=OneTime}"
-                                       Style="{StaticResource InsightsCardHeaderStyle}" />
+                            <!-- Header row: title (left) + see-all button (right) -->
+                            <Grid Grid.Row="0" Margin="0,0,0,12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0"
+                                           Text="{x:Bind resources:Strings.InsightsPage_TopSongs, Mode=OneTime}"
+                                           FontSize="16" FontWeight="SemiBold"
+                                           VerticalAlignment="Center" />
+                                <Button x:Name="SeeAllSongsButton"
+                                        Grid.Column="1"
+                                        Click="OnSeeAllSongsClick"
+                                        Style="{StaticResource SubtleButtonStyle}"
+                                        Width="28" Height="28" Padding="0"
+                                        VerticalAlignment="Center"
+                                        ToolTipService.ToolTip="See all">
+                                    <FontIcon Glyph="&#xE76C;" FontSize="11" />
+                                </Button>
+                            </Grid>
 
                             <ListView Grid.Row="1"
                                       ItemsSource="{x:Bind ViewModel.TopSongs, Mode=OneWay}"
                                       SelectionMode="None"
                                       ScrollViewer.VerticalScrollMode="Disabled"
                                       ScrollViewer.VerticalScrollBarVisibility="Hidden"
-                                      IsItemClickEnabled="False">
-                                <ListView.ItemContainerStyle>
-                                    <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
-                                        <Setter Property="Padding" Value="0" />
-                                        <Setter Property="MinHeight" Value="0" />
-                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                    </Style>
-                                </ListView.ItemContainerStyle>
-                                <ListView.ItemTemplate>
-                                    <DataTemplate x:DataType="vm:TopSongItem">
-                                        <Grid Padding="0,8" ColumnSpacing="12">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="24" />
-                                                <ColumnDefinition Width="40" />
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="Auto" />
-                                            </Grid.ColumnDefinitions>
-
-                                            <!-- Rank -->
-                                            <TextBlock Grid.Column="0"
-                                                       Text="{x:Bind Rank.ToString()}"
-                                                       VerticalAlignment="Center"
-                                                       HorizontalAlignment="Center"
-                                                       Foreground="{ThemeResource AppPrimaryColorBrush}"
-                                                       FontWeight="Bold" FontSize="14" />
-
-                                            <!-- Artwork -->
-                                            <Grid Grid.Column="1" Width="40" Height="40" HorizontalAlignment="Center">
-                                                <Border CornerRadius="4"
-                                                        Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
-                                                    <controls:ImageEx
-                                                        IsCacheEnabled="True"
-                                                        Source="{x:Bind ArtworkUri, Mode=OneWay, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
-                                                        DecodePixelWidth="40"
-                                                        DecodePixelType="Logical"
-                                                        Stretch="UniformToFill" />
-                                                </Border>
-                                                <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                                        CornerRadius="4"
-                                                        Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}">
-                                                    <FontIcon Glyph="&#xE8D6;" FontSize="16"
-                                                                Foreground="{ThemeResource TextFillColorTertiaryBrush}"
-                                                                HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                                </Grid>
-                                            </Grid>
-
-                                            <!-- Title + Artist -->
-                                            <StackPanel Grid.Column="2" VerticalAlignment="Center" Spacing="1">
-                                                <TextBlock Text="{x:Bind Title}"
-                                                           TextTrimming="CharacterEllipsis"
-                                                           FontSize="13" FontWeight="SemiBold" />
-                                                <TextBlock Text="{x:Bind Artist}"
-                                                           TextTrimming="CharacterEllipsis"
-                                                           FontSize="12"
-                                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-                                            </StackPanel>
-
-                                            <!-- Play count -->
-                                            <StackPanel Grid.Column="3" VerticalAlignment="Center"
-                                                        HorizontalAlignment="Right" Spacing="2">
-                                                <TextBlock HorizontalAlignment="Right"
-                                                           Text="{x:Bind PlayCountText}"
-                                                           FontSize="13" FontWeight="SemiBold"
-                                                           Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
-                                            </StackPanel>
-                                        </Grid>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
+                                      IsItemClickEnabled="False"
+                                      ItemContainerStyle="{StaticResource SeeAllListItemStyle}"
+                                      ItemTemplate="{StaticResource TopSongItemTemplate}" />
                         </Grid>
 
                         <!-- Top Artists Card -->
@@ -313,80 +265,35 @@
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
 
-                            <TextBlock Grid.Row="0"
-                                       Text="{x:Bind resources:Strings.InsightsPage_TopArtists, Mode=OneTime}"
-                                       Style="{StaticResource InsightsCardHeaderStyle}" />
+                            <!-- Header row: title (left) + see-all button (right) -->
+                            <Grid Grid.Row="0" Margin="0,0,0,12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0"
+                                           Text="{x:Bind resources:Strings.InsightsPage_TopArtists, Mode=OneTime}"
+                                           FontSize="16" FontWeight="SemiBold"
+                                           VerticalAlignment="Center" />
+                                <Button x:Name="SeeAllArtistsButton"
+                                        Grid.Column="1"
+                                        Click="OnSeeAllArtistsClick"
+                                        Style="{StaticResource SubtleButtonStyle}"
+                                        Width="28" Height="28" Padding="0"
+                                        VerticalAlignment="Center"
+                                        ToolTipService.ToolTip="See all">
+                                    <FontIcon Glyph="&#xE76C;" FontSize="11" />
+                                </Button>
+                            </Grid>
 
                             <ListView Grid.Row="1"
                                       ItemsSource="{x:Bind ViewModel.TopArtists, Mode=OneWay}"
                                       SelectionMode="None"
                                       ScrollViewer.VerticalScrollMode="Disabled"
                                       ScrollViewer.VerticalScrollBarVisibility="Hidden"
-                                      IsItemClickEnabled="False">
-                                <ListView.ItemContainerStyle>
-                                    <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
-                                        <Setter Property="Padding" Value="0" />
-                                        <Setter Property="MinHeight" Value="0" />
-                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                    </Style>
-                                </ListView.ItemContainerStyle>
-                                <ListView.ItemTemplate>
-                                    <DataTemplate x:DataType="vm:TopArtistItem">
-                                        <Grid Padding="0,8" ColumnSpacing="12">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="24" />
-                                                <ColumnDefinition Width="40" />
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="Auto" />
-                                            </Grid.ColumnDefinitions>
-
-                                            <!-- Rank -->
-                                            <TextBlock Grid.Column="0"
-                                                       Text="{x:Bind Rank.ToString()}"
-                                                       VerticalAlignment="Center"
-                                                       HorizontalAlignment="Center"
-                                                       Foreground="{ThemeResource AppPrimaryColorBrush}"
-                                                       FontWeight="Bold" FontSize="14" />
-
-                                            <!-- Artist image -->
-                                            <Grid Grid.Column="1" Width="40" Height="40" HorizontalAlignment="Center">
-                                                <Border CornerRadius="20"
-                                                        Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
-                                                    <controls:ImageEx
-                                                        IsCacheEnabled="True"
-                                                        Source="{x:Bind ImageUri, Mode=OneWay, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
-                                                        DecodePixelWidth="40"
-                                                        DecodePixelType="Logical"
-                                                        Stretch="UniformToFill" />
-                                                </Border>
-                                                <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                                        CornerRadius="20"
-                                                        Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}">
-                                                    <FontIcon Glyph="&#xE77B;" FontSize="16"
-                                                                Foreground="{ThemeResource TextFillColorTertiaryBrush}"
-                                                                HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                                </Grid>
-                                            </Grid>
-
-                                            <!-- Name -->
-                                            <HyperlinkButton Grid.Column="2"
-                                                             Content="{x:Bind Name}"
-                                                             Command="{Binding ViewModel.GoToArtistCommand, ElementName=InsightsPageRoot}"
-                                                             CommandParameter="{x:Bind}"
-                                                             Style="{StaticResource InsightsHyperlinkButtonStyle}"
-                                                             FontSize="13" FontWeight="SemiBold" />
-
-                                            <!-- Duration -->
-                                            <TextBlock Grid.Column="3"
-                                                       VerticalAlignment="Center"
-                                                       HorizontalAlignment="Right"
-                                                       FontSize="12"
-                                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                       Text="{x:Bind Duration, Converter={StaticResource TimeSpanToTimeStringConverter}}" />
-                                        </Grid>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
+                                      IsItemClickEnabled="False"
+                                      ItemContainerStyle="{StaticResource SeeAllListItemStyle}"
+                                      ItemTemplate="{StaticResource TopArtistItemTemplate}" />
                         </Grid>
                     </Grid>
 
@@ -408,147 +315,73 @@
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
 
-                            <TextBlock Grid.Row="0"
-                                       Text="{x:Bind resources:Strings.InsightsPage_TopAlbums, Mode=OneTime}"
-                                       Style="{StaticResource InsightsCardHeaderStyle}" />
+                            <!-- Header row: title (left) + see-all button (right) -->
+                            <Grid Grid.Row="0" Margin="0,0,0,12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0"
+                                           Text="{x:Bind resources:Strings.InsightsPage_TopAlbums, Mode=OneTime}"
+                                           FontSize="16" FontWeight="SemiBold"
+                                           VerticalAlignment="Center" />
+                                <Button x:Name="SeeAllAlbumsButton"
+                                        Grid.Column="1"
+                                        Click="OnSeeAllAlbumsClick"
+                                        Style="{StaticResource SubtleButtonStyle}"
+                                        Width="28" Height="28" Padding="0"
+                                        VerticalAlignment="Center"
+                                        ToolTipService.ToolTip="See all">
+                                    <FontIcon Glyph="&#xE76C;" FontSize="11" />
+                                </Button>
+                            </Grid>
 
                             <ListView Grid.Row="1"
                                       ItemsSource="{x:Bind ViewModel.TopAlbums, Mode=OneWay}"
                                       SelectionMode="None"
                                       ScrollViewer.VerticalScrollMode="Disabled"
                                       ScrollViewer.VerticalScrollBarVisibility="Hidden"
-                                      IsItemClickEnabled="False">
-                                <ListView.ItemContainerStyle>
-                                    <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
-                                        <Setter Property="Padding" Value="0" />
-                                        <Setter Property="MinHeight" Value="0" />
-                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                    </Style>
-                                </ListView.ItemContainerStyle>
-                                <ListView.ItemTemplate>
-                                    <DataTemplate x:DataType="vm:TopAlbumItem">
-                                        <Grid Padding="0,8" ColumnSpacing="12">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="24" />
-                                                <ColumnDefinition Width="40" />
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="Auto" />
-                                            </Grid.ColumnDefinitions>
-
-                                            <!-- Rank -->
-                                            <TextBlock Grid.Column="0"
-                                                       Text="{x:Bind Rank.ToString()}"
-                                                       VerticalAlignment="Center"
-                                                       HorizontalAlignment="Center"
-                                                       Foreground="{ThemeResource AppPrimaryColorBrush}"
-                                                       FontWeight="Bold" FontSize="14" />
-
-                                            <!-- Album artwork -->
-                                            <Grid Grid.Column="1" Width="40" Height="40" HorizontalAlignment="Center">
-                                                <Border CornerRadius="4"
-                                                        Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
-                                                    <controls:ImageEx
-                                                        IsCacheEnabled="True"
-                                                        Source="{x:Bind ArtworkUri, Mode=OneWay, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
-                                                        DecodePixelWidth="40"
-                                                        DecodePixelType="Logical"
-                                                        Stretch="UniformToFill" />
-                                                </Border>
-                                                <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                                        CornerRadius="4"
-                                                        Visibility="{x:Bind IsArtworkAvailable, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}">
-                                                    <FontIcon Glyph="&#xE93C;" FontSize="16"
-                                                                Foreground="{ThemeResource TextFillColorTertiaryBrush}"
-                                                                HorizontalAlignment="Center" VerticalAlignment="Center" />
-                                                </Grid>
-                                            </Grid>
-
-                                            <!-- Title + Artist -->
-                                            <StackPanel Grid.Column="2" VerticalAlignment="Center" Spacing="1">
-                                                <HyperlinkButton Content="{x:Bind Title}"
-                                                                 Command="{Binding ViewModel.GoToAlbumCommand, ElementName=InsightsPageRoot}"
-                                                                 CommandParameter="{x:Bind}"
-                                                                 Style="{StaticResource InsightsHyperlinkButtonStyle}"
-                                                                 FontSize="13" FontWeight="SemiBold" />
-                                                <TextBlock Text="{x:Bind ArtistName}"
-                                                           TextTrimming="CharacterEllipsis"
-                                                           FontSize="12"
-                                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-                                            </StackPanel>
-
-                                            <!-- Play count -->
-                                            <StackPanel Grid.Column="3" VerticalAlignment="Center"
-                                                        HorizontalAlignment="Right">
-                                                <TextBlock FontSize="13" FontWeight="SemiBold"
-                                                           Text="{x:Bind PlayCountText}"
-                                                           Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
-                                            </StackPanel>
-                                        </Grid>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
+                                      IsItemClickEnabled="False"
+                                      ItemContainerStyle="{StaticResource SeeAllListItemStyle}"
+                                      ItemTemplate="{StaticResource TopAlbumItemTemplate}" />
                         </Grid>
 
-                        <!-- Top Genres + Source Distribution Card -->
+                        <!-- Top Genres Card -->
                         <Grid x:Name="TopGenresCard" Grid.Column="1" Grid.Row="0" Style="{StaticResource InsightsCardStyle}">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
 
-                            <TextBlock Grid.Row="0"
-                                       Text="{x:Bind resources:Strings.InsightsPage_TopGenres, Mode=OneTime}"
-                                       Style="{StaticResource InsightsCardHeaderStyle}" />
+                            <!-- Header row: title (left) + see-all button (right) -->
+                            <Grid Grid.Row="0" Margin="0,0,0,12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0"
+                                           Text="{x:Bind resources:Strings.InsightsPage_TopGenres, Mode=OneTime}"
+                                           FontSize="16" FontWeight="SemiBold"
+                                           VerticalAlignment="Center" />
+                                <Button x:Name="SeeAllGenresButton"
+                                        Grid.Column="1"
+                                        Click="OnSeeAllGenresClick"
+                                        Style="{StaticResource SubtleButtonStyle}"
+                                        Width="28" Height="28" Padding="0"
+                                        VerticalAlignment="Center"
+                                        ToolTipService.ToolTip="See all">
+                                    <FontIcon Glyph="&#xE76C;" FontSize="11" />
+                                </Button>
+                            </Grid>
 
                             <ListView Grid.Row="1"
                                       ItemsSource="{x:Bind ViewModel.TopGenres, Mode=OneWay}"
                                       SelectionMode="None"
                                       ScrollViewer.VerticalScrollMode="Disabled"
                                       ScrollViewer.VerticalScrollBarVisibility="Hidden"
-                                      IsItemClickEnabled="False">
-                                <ListView.ItemContainerStyle>
-                                    <Style TargetType="ListViewItem" BasedOn="{StaticResource DefaultListViewItemStyle}">
-                                        <Setter Property="Padding" Value="0" />
-                                        <Setter Property="MinHeight" Value="0" />
-                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                    </Style>
-                                </ListView.ItemContainerStyle>
-                                <ListView.ItemTemplate>
-                                    <DataTemplate x:DataType="vm:TopGenreItem">
-                                        <Grid Padding="0,6" ColumnSpacing="12">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="24" />
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="Auto" />
-                                            </Grid.ColumnDefinitions>
-
-                                            <!-- Rank -->
-                                            <TextBlock Grid.Column="0"
-                                                       Text="{x:Bind Rank.ToString()}"
-                                                       VerticalAlignment="Center"
-                                                       HorizontalAlignment="Center"
-                                                       Foreground="{ThemeResource AppPrimaryColorBrush}"
-                                                       FontWeight="Bold" FontSize="14" />
-
-                                            <!-- Genre name -->
-                                            <HyperlinkButton Grid.Column="1"
-                                                             Content="{x:Bind Name}"
-                                                             Command="{Binding ViewModel.GoToGenreCommand, ElementName=InsightsPageRoot}"
-                                                             CommandParameter="{x:Bind}"
-                                                             Style="{StaticResource InsightsHyperlinkButtonStyle}"
-                                                             FontSize="13" FontWeight="SemiBold" />
-
-                                            <!-- Play count -->
-                                            <TextBlock Grid.Column="2"
-                                                       VerticalAlignment="Center"
-                                                       FontSize="12"
-                                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                       Text="{x:Bind PlayCountText}" />
-                                        </Grid>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
-
+                                      IsItemClickEnabled="False"
+                                      ItemContainerStyle="{StaticResource SeeAllListItemStyle}"
+                                      ItemTemplate="{StaticResource TopGenreItemTemplate}" />
                         </Grid>
                     </Grid>
 
@@ -638,5 +471,6 @@
                        Style="{StaticResource SubtitleTextBlockStyle}"
                        Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
         </StackPanel>
+
     </Grid>
 </Page>
