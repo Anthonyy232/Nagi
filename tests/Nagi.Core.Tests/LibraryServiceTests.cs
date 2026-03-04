@@ -1284,7 +1284,7 @@ public class LibraryServiceTests : IDisposable
     public async Task StartListenSessionAsync_WithInvalidSongId_ReturnsNull()
     {
         // Act
-        var sessionId = await _libraryService.StartListenSessionAsync(Guid.NewGuid(), new PlaybackContext(PlaybackContextType.Queue, null));
+        var sessionId = await _libraryService.StartListenSessionAsync(Guid.NewGuid(), new PlaybackContext(PlaybackContextType.Library, null));
 
         // Assert
         sessionId.Should().BeNull();

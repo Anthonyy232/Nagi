@@ -145,7 +145,7 @@ public partial class InsightsViewModel : ObservableObject
     async partial void OnSelectedTimeRangeIndexChanged(int value)
     {
         if (IsSeeAllOpen)
-            CloseSeeAll();
+            await CloseSeeAll();
         await LoadInsightsAsync();
     }
 
@@ -576,7 +576,7 @@ public partial class InsightsViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private async void CloseSeeAll()
+    private async Task CloseSeeAll()
     {
         try { _seeAllCts?.Cancel(); } catch (ObjectDisposedException) { }
         try { _seeAllSearchDebounceCts?.Cancel(); } catch (ObjectDisposedException) { }
@@ -732,7 +732,7 @@ public partial class InsightsViewModel : ObservableObject
             PlaybackContextType.Folder => ColorHelper.FromArgb(255, 139, 92, 246), // Violet
             PlaybackContextType.Genre => ColorHelper.FromArgb(255, 236, 72, 153), // Pink
             PlaybackContextType.Search => ColorHelper.FromArgb(255, 99, 102, 241), // Indigo
-            PlaybackContextType.Queue => ColorHelper.FromArgb(255, 245, 158, 11), // Amber
+            PlaybackContextType.Library => ColorHelper.FromArgb(255, 245, 158, 11), // Amber
             PlaybackContextType.Transient => ColorHelper.FromArgb(255, 107, 114, 128), // Gray
             _ => ColorHelper.FromArgb(255, 156, 163, 175)
         };
@@ -748,7 +748,7 @@ public partial class InsightsViewModel : ObservableObject
         PlaybackContextType.Folder => Strings.InsightsPage_Source_Folders,
         PlaybackContextType.Genre => Strings.InsightsPage_Source_Genres,
         PlaybackContextType.Search => Strings.InsightsPage_Source_Search,
-        PlaybackContextType.Queue => Strings.InsightsPage_Source_Queue,
+        PlaybackContextType.Library => Strings.InsightsPage_Source_Library,
         PlaybackContextType.Transient => Strings.InsightsPage_Source_Files,
         _ => type.ToString()
     };

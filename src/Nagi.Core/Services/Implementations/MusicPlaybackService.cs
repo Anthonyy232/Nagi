@@ -30,7 +30,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
     private Dictionary<Guid, int> _playbackQueueIndex = new();
     private Dictionary<Guid, int> _shuffledQueueIndex = new();
 
-    private PlaybackContext _currentContext = new(PlaybackContextType.Queue, null);
+    private PlaybackContext _currentContext = new(PlaybackContextType.Library, null);
 
     /// <summary>
     ///     Tracks all in-flight fire-and-forget finalization tasks so disposal can await
@@ -397,7 +397,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
     {
         if (songId == Guid.Empty) return;
 
-        _currentContext = new PlaybackContext(PlaybackContextType.Queue, null);
+        _currentContext = new PlaybackContext(PlaybackContextType.Library, null);
 
         _logger.LogDebug("Playing single song ID: {SongId}", songId);
         
@@ -425,7 +425,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
 
     public async Task PlayAsync(IEnumerable<Guid> songIds, int startIndex = 0, bool? startShuffled = null)
     {
-        _currentContext = new PlaybackContext(PlaybackContextType.Queue, null);
+        _currentContext = new PlaybackContext(PlaybackContextType.Library, null);
         await PlayInternalAsync(songIds, startIndex, startShuffled).ConfigureAwait(false);
     }
 
@@ -1242,7 +1242,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
 
     private async Task PlayFromOrderedIdsAsync(IList<Guid> orderedSongIds, bool? startShuffled = null, PlaybackContext? context = null)
     {
-        _currentContext = context ?? new PlaybackContext(PlaybackContextType.Queue, null);
+        _currentContext = context ?? new PlaybackContext(PlaybackContextType.Library, null);
 
         if (orderedSongIds == null || !orderedSongIds.Any())
         {

@@ -67,9 +67,9 @@ public enum PlaybackContextType
     Search = 6,
 
     /// <summary>
-    ///     Played directly from the ad-hoc playback queue.
+    ///     Tracks played from the main library or ad-hoc queue.
     /// </summary>
-    Queue = 7,
+    Library = 7,
 
     /// <summary>
     ///     Played as a single file without library context.

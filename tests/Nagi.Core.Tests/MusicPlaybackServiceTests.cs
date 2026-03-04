@@ -613,7 +613,7 @@ public class MusicPlaybackServiceTests
         _service.CurrentListenHistoryId.Should().Be(100L);
         await _libraryService.Received(1).StartListenSessionAsync(
             _testSongs[0].Id, 
-            Arg.Is<PlaybackContext>(c => c.Type == PlaybackContextType.Queue && c.ContextId == null));
+            Arg.Is<PlaybackContext>(c => c.Type == PlaybackContextType.Library && c.ContextId == null));
     }
 
     [Fact]
