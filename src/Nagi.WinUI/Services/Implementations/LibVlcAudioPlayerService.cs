@@ -361,7 +361,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         }
 
         if (_isFadeOnPlayPauseEnabled)
-            await FadeAsync(0.0, _userVolume, TimeSpan.FromMilliseconds(_fadeInDurationMs), fadeCt).ConfigureAwait(false);
+            _ = FadeAsync(0.0, _userVolume, TimeSpan.FromMilliseconds(_fadeInDurationMs), fadeCt);
     }
 
     public async Task PauseAsync()
@@ -376,20 +376,14 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
             oldPauseCts?.Dispose();
             var fadeCt = newPauseCts.Token;
 
-            // Read the actual VLC volume as the starting point rather than _userVolume.
-            // If a fade-in was canceled mid-way (rapid play→pause), starting from _userVolume
-            // would cause VLC to briefly ramp up before fading out — an audible blip.
-            double fromVolume = Math.Clamp((_mediaPlayer?.Volume ?? 0) / 100.0, 0.0, _userVolume);
-            await FadeAsync(fromVolume, 0.0, TimeSpan.FromMilliseconds(_fadeOutDurationMs), fadeCt).ConfigureAwait(false);
-
-            if (_isDisposed || _mediaPlayer is null) return;
+            // Fire and forget the fade-out and pause so the UI command completes immediately
+            _ = FadeAndPauseAsync(newPauseCts, _userVolume);
+            return;
         }
 
         await _vlcOperationLock.WaitAsync().ConfigureAwait(false);
         try
         {
-            // Re-check after acquiring the lock: a stop or track change could have fired
-            // during the 150ms fade and invalidated the player state.
             if (_isDisposed || _mediaPlayer is null) return;
 
             if (_mediaPlayer.CanPause)
@@ -400,6 +394,38 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         finally
         {
             _vlcOperationLock.Release();
+        }
+    }
+
+    private async Task FadeAndPauseAsync(CancellationTokenSource cts, double targetUserVolume)
+    {
+        var fadeCt = cts.Token;
+        try
+        {
+            // Read the actual VLC volume as the starting point rather than _userVolume.
+            // If a fade-in was canceled mid-way (rapid play→pause), starting from _userVolume
+            // would cause VLC to briefly ramp up before fading out — an audible blip.
+            double fromVolume = Math.Clamp((_mediaPlayer?.Volume ?? 0) / 100.0, 0.0, targetUserVolume);
+            await FadeAsync(fromVolume, 0.0, TimeSpan.FromMilliseconds(_fadeOutDurationMs), fadeCt).ConfigureAwait(false);
+
+            if (_isDisposed || _mediaPlayer is null || fadeCt.IsCancellationRequested) return;
+
+            await _vlcOperationLock.WaitAsync(fadeCt).ConfigureAwait(false);
+            try
+            {
+                if (_isDisposed || _mediaPlayer is null || fadeCt.IsCancellationRequested) return;
+
+                if (_mediaPlayer.CanPause)
+                    _mediaPlayer.Pause();
+            }
+            finally
+            {
+                _vlcOperationLock.Release();
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            // Expected if superseded by Play/Stop/Load
         }
     }
 
