@@ -58,6 +58,9 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     private int _fadeInDurationMs = 200;
     private int _fadeOutDurationMs = 150;
     private CancellationTokenSource? _fadeCts;
+    
+    // Tracks if we are currently fading out to pause, so IsPlaying can return false early
+    private volatile bool _isPausing;
 
     /// <summary>
     ///     Creates a new instance. LibVLC initialization is deferred until first use.
@@ -169,7 +172,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     public event Action<string>? ErrorOccurred;
     public event Action? SmtcNextButtonPressed, SmtcPreviousButtonPressed;
 
-    public bool IsPlaying => !_isDisposed && _isInitialized && (_mediaPlayer?.IsPlaying ?? false);
+    public bool IsPlaying => !_isDisposed && _isInitialized && !_isPausing && (_mediaPlayer?.IsPlaying ?? false);
     public TimeSpan CurrentPosition => _isDisposed || !_isInitialized ? TimeSpan.Zero : TimeSpan.FromMilliseconds(Math.Max(0, _mediaPlayer?.Time ?? 0));
     public TimeSpan Duration => _isDisposed || !_isInitialized ? TimeSpan.Zero : TimeSpan.FromMilliseconds(Math.Max(0, _mediaPlayer?.Length ?? 0));
     public double Volume => _isDisposed || !_isInitialized ? 0 : _userVolume;
@@ -324,6 +327,15 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         oldPlayCts?.Cancel();
         oldPlayCts?.Dispose();
         var fadeCt = newPlayCts.Token;
+        
+        _isPausing = false;
+        
+        // Immediately broadcast state change so UI Play/Pause button switches
+        // instantly to play (and registers that IsPausing is now false)
+        _dispatcherService.TryEnqueue(() =>
+        {
+            if (!_isDisposed) StateChanged?.Invoke();
+        });
 
         await _vlcOperationLock.WaitAsync().ConfigureAwait(false);
         try
@@ -376,6 +388,8 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
             oldPauseCts?.Dispose();
             var fadeCt = newPauseCts.Token;
 
+            _isPausing = true;
+
             // Fire and forget the fade-out and pause so the UI command completes immediately
             _ = FadeAndPauseAsync(newPauseCts, _userVolume);
             return;
@@ -402,6 +416,13 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         var fadeCt = cts.Token;
         try
         {
+            // Immediately broadcast state change so UI Play/Pause button switches
+            // instantly, without waiting for the fade to finish.
+            _dispatcherService.TryEnqueue(() =>
+            {
+                if (!_isDisposed) StateChanged?.Invoke();
+            });
+
             // Read the actual VLC volume as the starting point rather than _userVolume.
             // If a fade-in was canceled mid-way (rapid play→pause), starting from _userVolume
             // would cause VLC to briefly ramp up before fading out — an audible blip.
@@ -425,7 +446,9 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         }
         catch (OperationCanceledException)
         {
-            // Expected if superseded by Play/Stop/Load
+            // Expected if superseded by Play/Stop/Load.
+            // Clear the pausing flag since this pause attempt was aborted.
+            _isPausing = false;
         }
     }
 
@@ -440,6 +463,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         oldStopCts?.Cancel();
         oldStopCts?.Dispose();
         _isFading = false;
+        _isPausing = false;
 
         // Mark as explicit stop to prevent false PlaybackEnded in state changed handler
         _isExplicitStop = true;
@@ -871,6 +895,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
             if (_mediaPlayer?.State == VLCState.Playing)
             {
                 _isExplicitStop = false;
+                _isPausing = false;
             }
         });
         UpdateSmtcPlaybackStatus();
