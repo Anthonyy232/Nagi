@@ -256,8 +256,10 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     // Populates the NavigationView with items based on user settings.
     private async Task PopulateNavigationAsync()
     {
-        NavView.MenuItems.Clear();
         var navItems = await _settingsService.GetNavigationItemsAsync();
+        NavView.MenuItems.Clear();
+
+        var addedTags = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         foreach (var item in navItems.Where(i => i.IsEnabled))
         {
@@ -267,6 +269,9 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
             {
                 tag = char.ToUpper(tag[0]) + tag.Substring(1);
             }
+
+            // Deduplicate to ensure no items with the same tag are added multiple times
+            if (!addedTags.Add(tag)) continue;
 
             var navViewItem = new NavigationViewItem
             {
