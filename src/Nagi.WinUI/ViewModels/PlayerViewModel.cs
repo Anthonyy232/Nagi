@@ -331,21 +331,21 @@ public partial class PlayerViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private Task PlayPauseAsync()
+    private void PlayPause()
     {
-        return _playbackService.PlayPauseAsync();
+        _ = _playbackService.PlayPauseAsync();
     }
 
     [RelayCommand]
-    private Task PreviousAsync()
+    private void Previous()
     {
-        return _playbackService.PreviousAsync();
+        _ = _playbackService.PreviousAsync();
     }
 
     [RelayCommand]
-    private Task NextAsync()
+    private void Next()
     {
-        return _playbackService.NextAsync();
+        _ = _playbackService.NextAsync();
     }
 
     [RelayCommand]
