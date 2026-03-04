@@ -19,6 +19,7 @@ public class PresenceManager : IPresenceManager, IAsyncDisposable, IDisposable
     private readonly SemaphoreSlim _servicesLock = new(1, 1);
 
     private Song? _currentTrack;
+    private long? _currentListenSessionId;
     private bool _isInitialized;
     private bool _isDisposed;
 
@@ -238,22 +239,26 @@ public class PresenceManager : IPresenceManager, IAsyncDisposable, IDisposable
     private void OnTrackChanged()
     {
         var newTrack = _playbackService.CurrentTrack;
-        if (_currentTrack?.Id == newTrack?.Id) return;
+        var newSessionId = _playbackService.CurrentListenHistoryId;
+        
+        // Return if both track and session ID are unchanged (prevents redundant updates, but allows loops)
+        if (_currentTrack?.Id == newTrack?.Id && _currentListenSessionId == newSessionId) return;
 
         _currentTrack = newTrack;
+        _currentListenSessionId = newSessionId;
 
         // Reset throttle state so new track gets immediate presence update
         _lastPresencePositionUpdate = DateTime.MinValue;
 
-        _logger.LogDebug("Track changed to '{TrackTitle}'. Broadcasting to active services.",
-            _currentTrack?.Title ?? "None");
+        _logger.LogDebug("Track changed to '{TrackTitle}' (Session: {SessionId}). Broadcasting to active services.",
+            _currentTrack?.Title ?? "None", _currentListenSessionId);
 
         FireAndForgetSafe(
             async () =>
             {
-                if (_currentTrack is not null && _playbackService.CurrentListenHistoryId.HasValue)
+                if (_currentTrack is not null && _currentListenSessionId.HasValue)
                     await BroadcastAsync(s =>
-                        s.OnTrackChangedAsync(_currentTrack, _playbackService.CurrentListenHistoryId.Value)).ConfigureAwait(false);
+                        s.OnTrackChangedAsync(_currentTrack, _currentListenSessionId.Value)).ConfigureAwait(false);
                 else
                     await BroadcastAsync(s => s.OnPlaybackStoppedAsync()).ConfigureAwait(false);
             },

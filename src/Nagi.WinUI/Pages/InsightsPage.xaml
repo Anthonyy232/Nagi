@@ -224,7 +224,7 @@
                         <Grid x:Name="TopSongsCard" Grid.Column="0" Grid.Row="0" Style="{StaticResource InsightsCardStyle}">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
-                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
                             <!-- Header row: title (left) + see-all button (right) -->
@@ -262,7 +262,7 @@
                         <Grid x:Name="TopArtistsCard" Grid.Column="1" Grid.Row="0" Style="{StaticResource InsightsCardStyle}">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
-                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
                             <!-- Header row: title (left) + see-all button (right) -->
@@ -312,7 +312,7 @@
                         <Grid x:Name="TopAlbumsCard" Grid.Column="0" Grid.Row="0" Style="{StaticResource InsightsCardStyle}">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
-                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
                             <!-- Header row: title (left) + see-all button (right) -->
@@ -350,7 +350,7 @@
                         <Grid x:Name="TopGenresCard" Grid.Column="1" Grid.Row="0" Style="{StaticResource InsightsCardStyle}">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
-                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
                             <!-- Header row: title (left) + see-all button (right) -->
@@ -389,7 +389,7 @@
                     <Grid x:Name="Row4Grid" Style="{StaticResource InsightsCardStyle}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
                         <!-- Playback Source Distribution -->
