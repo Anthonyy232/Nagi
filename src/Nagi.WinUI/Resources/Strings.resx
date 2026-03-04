@@ -2027,8 +2027,8 @@ Error: {1}</value>
   <data name="InsightsPage_Source_Search" xml:space="preserve">
     <value>Search</value>
   </data>
-  <data name="InsightsPage_Source_Queue" xml:space="preserve">
-    <value>Queue</value>
+  <data name="InsightsPage_Source_Library" xml:space="preserve">
+    <value>Library</value>
   </data>
   <data name="InsightsPage_Source_Files" xml:space="preserve">
     <value>Files</value>

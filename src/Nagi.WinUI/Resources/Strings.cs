@@ -772,7 +772,7 @@ public static class Strings
     public static string InsightsPage_Source_Folders => GetString("InsightsPage_Source_Folders");
     public static string InsightsPage_Source_Genres => GetString("InsightsPage_Source_Genres");
     public static string InsightsPage_Source_Search => GetString("InsightsPage_Source_Search");
-    public static string InsightsPage_Source_Queue => GetString("InsightsPage_Source_Queue");
+    public static string InsightsPage_Source_Library => GetString("InsightsPage_Source_Library");
     public static string InsightsPage_Source_Files => GetString("InsightsPage_Source_Files");
     public static string InsightsPage_Reset_ToolTip => GetString("InsightsPage_Reset_ToolTip");
     public static string InsightsPage_Reset_Confirm_Title => GetString("InsightsPage_Reset_Confirm_Title");
