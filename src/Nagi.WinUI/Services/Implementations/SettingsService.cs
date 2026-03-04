@@ -721,6 +721,25 @@ public class SettingsService : IUISettingsService, IDisposable
 
         if (items is { Count: > 0 })
         {
+            // Deduplicate items to fix users with duplicate items saved in config file
+            var distinctItems = new List<ServiceProviderSetting>();
+            var seenIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            
+            foreach (var item in items)
+            {
+                if (seenIds.Add(item.Id))
+                {
+                    distinctItems.Add(item);
+                }
+            }
+
+            if (distinctItems.Count != items.Count)
+            {
+                _ = SetValueAsync(key, distinctItems);
+            }
+
+            items = distinctItems;
+
             // Merge with defaults to handle new services added in updates
             var defaults = GetDefaultServiceProviders(category);
             var knownIds = defaults.Select(d => d.Id).ToHashSet();
@@ -1166,6 +1185,25 @@ public class SettingsService : IUISettingsService, IDisposable
 
         if (items != null)
         {
+            // Deduplicate items to fix users with duplicate items saved in config file
+            var distinctItems = new List<NavigationItemSetting>();
+            var seenTags = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            
+            foreach (var item in items)
+            {
+                if (seenTags.Add(item.Tag))
+                {
+                    distinctItems.Add(item);
+                }
+            }
+
+            if (distinctItems.Count != items.Count)
+            {
+                _ = SetValueAsync(NavigationItemsKey, distinctItems);
+            }
+
+            items = distinctItems;
+
             var defaultItems = GetDefaultNavigationItems();
             var loadedTags = new HashSet<string>(items.Select(i => i.Tag));
             var missingItems = defaultItems.Where(d => !loadedTags.Contains(d.Tag));
@@ -1192,6 +1230,25 @@ public class SettingsService : IUISettingsService, IDisposable
 
         if (settings != null)
         {
+            // Deduplicate items to fix users with duplicate items saved in config file
+            var distinctSettings = new List<PlayerButtonSetting>();
+            var seenIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            
+            foreach (var setting in settings)
+            {
+                if (seenIds.Add(setting.Id))
+                {
+                    distinctSettings.Add(setting);
+                }
+            }
+
+            if (distinctSettings.Count != settings.Count)
+            {
+                _ = SetValueAsync(PlayerButtonSettingsKey, distinctSettings);
+            }
+
+            settings = distinctSettings;
+
             // For backward compatibility, ensure the separator exists for users with older settings.
             if (!settings.Any(b => b.Id == "Separator"))
                 settings.Insert(5,
