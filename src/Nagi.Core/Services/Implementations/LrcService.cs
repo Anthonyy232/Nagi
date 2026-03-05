@@ -26,7 +26,6 @@ public class LrcService : ILrcService, IDisposable
     
     private readonly object _ctsLock = new();
     private CancellationTokenSource _settingsCts = new();
-    private readonly List<CancellationTokenSource> _staleCts = new();
     private bool _disposed;
 
     public LrcService(
@@ -329,8 +328,9 @@ public class LrcService : ILrcService, IDisposable
             {
                 if (_settingsCts.IsCancellationRequested)
                 {
-                    _staleCts.Add(_settingsCts);
+                    var old = _settingsCts;
                     _settingsCts = new CancellationTokenSource();
+                    old.Dispose();
                 }
             }
         }
@@ -348,12 +348,6 @@ public class LrcService : ILrcService, IDisposable
             {
                 _settingsCts.Cancel();
                 _settingsCts.Dispose();
-                
-                foreach (var cts in _staleCts)
-                {
-                    cts.Dispose();
-                }
-                _staleCts.Clear();
                 _disposed = true;
             }
         }

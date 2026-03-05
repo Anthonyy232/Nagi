@@ -9,6 +9,8 @@ namespace Nagi.Core.Data;
 /// </summary>
 public class MusicDbContext : DbContext
 {
+    private static readonly Data.Interceptors.DenormalizationInterceptor _interceptor = new();
+
     public MusicDbContext(DbContextOptions<MusicDbContext> options) : base(options)
     {
     }
@@ -16,7 +18,7 @@ public class MusicDbContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         base.OnConfiguring(optionsBuilder);
-        optionsBuilder.AddInterceptors(new Data.Interceptors.DenormalizationInterceptor());
+        optionsBuilder.AddInterceptors(_interceptor);
     }
 
     public DbSet<Song> Songs { get; set; } = null!;

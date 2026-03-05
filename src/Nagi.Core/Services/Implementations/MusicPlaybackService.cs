@@ -697,7 +697,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
 
     public Task AddToQueueAsync(Guid songId)
     {
-        if (songId == Guid.Empty || _playbackQueue.Contains(songId)) return Task.CompletedTask;
+        if (songId == Guid.Empty || _playbackQueueIndex.ContainsKey(songId)) return Task.CompletedTask;
 
         using (BeginQueueUpdate())
         {
@@ -714,11 +714,13 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
 
     public Task AddRangeToQueueAsync(IEnumerable<Guid> songIds)
     {
-        if (songIds == null || !songIds.Any()) return Task.CompletedTask;
+        if (songIds == null) return Task.CompletedTask;
 
-        var idsToAdd = songIds.ToList();
+        var idsToAdd = songIds
+            .Where(id => id != Guid.Empty && !_playbackQueueIndex.ContainsKey(id))
+            .ToList();
 
-        if (idsToAdd.Any())
+        if (idsToAdd.Count > 0)
         {
             using (BeginQueueUpdate())
             {

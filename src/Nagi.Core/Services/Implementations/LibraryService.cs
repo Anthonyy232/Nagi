@@ -142,7 +142,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     {
         _logger.LogInformation("Starting to clear all library data and cache files.");
         _metadataFetchCts.Cancel();
-        await Task.Delay(250).ConfigureAwait(false);
+        if (await _metadataFetchSemaphore.WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false))
+            _metadataFetchSemaphore.Release();
 
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         await using var transaction = await context.Database.BeginTransactionAsync().ConfigureAwait(false);
