@@ -113,7 +113,7 @@ public class SmartPlaylistQueryBuilder
 
             // Boolean fields
             SmartPlaylistField.IsLoved => BuildBooleanPredicate(s => s.IsLoved, rule),
-            SmartPlaylistField.HasLyrics => BuildBooleanPredicate(s => !string.IsNullOrEmpty(s.LrcFilePath), rule),
+            SmartPlaylistField.HasLyrics => BuildBooleanPredicate(s => !string.IsNullOrEmpty(s.LrcFilePath) || !string.IsNullOrEmpty(s.Lyrics), rule),
 
             // Date fields
             SmartPlaylistField.DateAdded => BuildDatePredicate(s => s.DateAddedToLibrary, rule),
