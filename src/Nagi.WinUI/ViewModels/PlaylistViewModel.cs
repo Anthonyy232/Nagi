@@ -240,7 +240,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase
                     _logger.LogDebug("Smart playlist {PlaylistId} has no matching songs", playlistId);
                     return;
                 }
-                await _musicPlaybackService.PlayAsync(songIds);
+                await _musicPlaybackService.PlayAsync(songIds, 0, null, new PlaybackContext(PlaybackContextType.SmartPlaylist, playlistId));
             }
             else
             {
@@ -309,7 +309,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase
                     var songIds = await _smartPlaylistService.GetMatchingSongIdsAsync(id.Value);
                     if (songIds.Count > 0)
                     {
-                        await _musicPlaybackService.PlayAsync(songIds);
+                        await _musicPlaybackService.PlayAsync(songIds, 0, null, new PlaybackContext(PlaybackContextType.SmartPlaylist, id.Value));
                         StatusMessage = string.Empty;
                     }
                     else

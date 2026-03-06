@@ -139,6 +139,9 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
         return await _smartPlaylistService.GetMatchingSongIdsAsync(_currentSmartPlaylistId.Value);
     }
 
+    protected override PlaybackContext GetPlaybackContext() =>
+        _currentSmartPlaylistId.HasValue ? new(PlaybackContextType.SmartPlaylist, _currentSmartPlaylistId.Value) : base.GetPlaybackContext();
+
 
     /// <summary>
     ///     Cleans up resources specific to this view model.
