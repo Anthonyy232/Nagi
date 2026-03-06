@@ -24,6 +24,15 @@
                 MinHeight="{StaticResource AlbumCardMinHeight}"
                 Margin="8,16,8,16"
                 Background="Transparent">
+                <Grid.ContextFlyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem
+                            Text="{x:Bind resources:Strings.AlbumPage_Menu_Play, Mode=OneTime}"
+                            Command="{Binding ViewModel.PlayAlbumCommand, ElementName=pageRoot}"
+                            CommandParameter="{x:Bind Id}"
+                            IsEnabled="{Binding ViewModel.IsOverallLoading, ElementName=pageRoot, Converter={StaticResource BooleanToInverseBooleanConverter}}" />
+                    </MenuFlyout>
+                </Grid.ContextFlyout>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -71,6 +80,15 @@
                 MinHeight="{StaticResource AlbumCardMinHeightLarge}"
                 Margin="8,16,8,16"
                 Background="Transparent">
+                <Grid.ContextFlyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem
+                            Text="{x:Bind resources:Strings.AlbumPage_Menu_Play, Mode=OneTime}"
+                            Command="{Binding ViewModel.PlayAlbumCommand, ElementName=pageRoot}"
+                            CommandParameter="{x:Bind Id}"
+                            IsEnabled="{Binding ViewModel.IsOverallLoading, ElementName=pageRoot, Converter={StaticResource BooleanToInverseBooleanConverter}}" />
+                    </MenuFlyout>
+                </Grid.ContextFlyout>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
