@@ -53,7 +53,7 @@ public class StatisticsService : IStatisticsService
         {
             // Search active: fetch all ranked stats, filter by title in-memory, then paginate.
             var allStats = await statsQuery.ToListAsync(ct).ConfigureAwait(false);
-            var allIds = allStats.Select(s => s.SongId).ToList();
+            var allIds = allStats.Select(s => s.SongId).ToHashSet();
             var titleMap = await dbContext.Songs.AsNoTracking()
                 .Where(s => allIds.Contains(s.Id))
                 .Select(s => new { s.Id, s.Title })
@@ -66,7 +66,7 @@ public class StatisticsService : IStatisticsService
                 .ToList();
         }
 
-        var songIds = page.Select(x => x.SongId).ToList();
+        var songIds = page.Select(x => x.SongId).ToHashSet();
         var songs = await dbContext.Songs.AsNoTracking()
             .Where(s => songIds.Contains(s.Id))
             .ToDictionaryAsync(s => s.Id, ct).ConfigureAwait(false);
@@ -96,7 +96,7 @@ public class StatisticsService : IStatisticsService
             return await statsQuery.CountAsync(ct).ConfigureAwait(false);
 
         var allStats = await statsQuery.ToListAsync(ct).ConfigureAwait(false);
-        var allIds = allStats.Select(s => s.SongId).ToList();
+        var allIds = allStats.Select(s => s.SongId).ToHashSet();
         var titleMap = await dbContext.Songs.AsNoTracking()
             .Where(s => allIds.Contains(s.Id))
             .Select(s => new { s.Id, s.Title })
@@ -146,7 +146,7 @@ public class StatisticsService : IStatisticsService
         {
             // Search active: fetch all ranked stats, filter by artist name in-memory, then paginate.
             var allStats = await statsQuery.ToListAsync(ct).ConfigureAwait(false);
-            var allIds = allStats.Select(s => s.ArtistId).ToList();
+            var allIds = allStats.Select(s => s.ArtistId).ToHashSet();
             var nameMap = await dbContext.Artists.AsNoTracking()
                 .Where(a => allIds.Contains(a.Id))
                 .Select(a => new { a.Id, a.Name })
@@ -159,7 +159,7 @@ public class StatisticsService : IStatisticsService
                 .ToList();
         }
 
-        var artistIds = page.Select(x => x.ArtistId).ToList();
+        var artistIds = page.Select(x => x.ArtistId).ToHashSet();
         var artists = await dbContext.Artists.AsNoTracking()
             .Where(a => artistIds.Contains(a.Id))
             .ToDictionaryAsync(a => a.Id, ct).ConfigureAwait(false);
@@ -191,7 +191,7 @@ public class StatisticsService : IStatisticsService
             return await statsQuery.CountAsync(ct).ConfigureAwait(false);
 
         var allStats = await statsQuery.ToListAsync(ct).ConfigureAwait(false);
-        var allIds = allStats.Select(s => s.ArtistId).ToList();
+        var allIds = allStats.Select(s => s.ArtistId).ToHashSet();
         var nameMap = await dbContext.Artists.AsNoTracking()
             .Where(a => allIds.Contains(a.Id))
             .Select(a => new { a.Id, a.Name })
@@ -242,7 +242,7 @@ public class StatisticsService : IStatisticsService
             // Search active: fetch all ranked stats, filter by album title in-memory, then paginate.
             // Assign rank before filtering null AlbumIds so ranks reflect true global position.
             var allStats = await statsQuery.ToListAsync(ct).ConfigureAwait(false);
-            var allIds = allStats.Where(s => s.AlbumId.HasValue).Select(s => s.AlbumId!.Value).ToList();
+            var allIds = allStats.Where(s => s.AlbumId.HasValue).Select(s => s.AlbumId!.Value).ToHashSet();
             var titleMap = await dbContext.Albums.AsNoTracking()
                 .Where(a => allIds.Contains(a.Id))
                 .Select(a => new { a.Id, a.Title })
@@ -257,7 +257,7 @@ public class StatisticsService : IStatisticsService
                 .ToList();
         }
 
-        var albumIds = page.Select(x => x.AlbumId).ToList();
+        var albumIds = page.Select(x => x.AlbumId).ToHashSet();
         var albums = await dbContext.Albums.AsNoTracking()
             .Where(a => albumIds.Contains(a.Id))
             .ToDictionaryAsync(a => a.Id, ct).ConfigureAwait(false);
@@ -288,7 +288,7 @@ public class StatisticsService : IStatisticsService
             return await statsQuery.CountAsync(ct).ConfigureAwait(false);
 
         var allStats = await statsQuery.ToListAsync(ct).ConfigureAwait(false);
-        var allIds = allStats.Where(s => s.AlbumId.HasValue).Select(s => s.AlbumId!.Value).ToList();
+        var allIds = allStats.Where(s => s.AlbumId.HasValue).Select(s => s.AlbumId!.Value).ToHashSet();
         var titleMap = await dbContext.Albums.AsNoTracking()
             .Where(a => allIds.Contains(a.Id))
             .Select(a => new { a.Id, a.Title })
@@ -334,7 +334,7 @@ public class StatisticsService : IStatisticsService
         {
             // Search active: fetch all ranked stats, filter by genre name in-memory, then paginate.
             var allStats = await statsQuery.ToListAsync(ct).ConfigureAwait(false);
-            var allIds = allStats.Select(s => s.GenreId).ToList();
+            var allIds = allStats.Select(s => s.GenreId).ToHashSet();
             var nameMap = await dbContext.Genres.AsNoTracking()
                 .Where(g => allIds.Contains(g.Id))
                 .Select(g => new { g.Id, g.Name })
@@ -347,7 +347,7 @@ public class StatisticsService : IStatisticsService
                 .ToList();
         }
 
-        var genreIds = page.Select(x => x.GenreId).ToList();
+        var genreIds = page.Select(x => x.GenreId).ToHashSet();
         var genres = await dbContext.Genres.AsNoTracking()
             .Where(g => genreIds.Contains(g.Id))
             .ToDictionaryAsync(g => g.Id, ct).ConfigureAwait(false);
@@ -379,7 +379,7 @@ public class StatisticsService : IStatisticsService
             return await statsQuery.CountAsync(ct).ConfigureAwait(false);
 
         var allStats = await statsQuery.ToListAsync(ct).ConfigureAwait(false);
-        var allIds = allStats.Select(s => s.GenreId).ToList();
+        var allIds = allStats.Select(s => s.GenreId).ToHashSet();
         var nameMap = await dbContext.Genres.AsNoTracking()
             .Where(g => allIds.Contains(g.Id))
             .Select(g => new { g.Id, g.Name })
