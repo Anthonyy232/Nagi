@@ -957,7 +957,7 @@ public class MusicPlaybackServiceTests
         var playlistId = Guid.NewGuid();
         _libraryService.GetAllSongIdsByPlaylistIdAsync(playlistId, Arg.Any<SongSortOrder>())
             .Returns(_testSongs.Select(s => s.Id).ToList());
-            
+
         _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(1100L);
 
         // Act
@@ -965,10 +965,105 @@ public class MusicPlaybackServiceTests
 
         // Assert
         await _libraryService.Received(1).StartListenSessionAsync(
-            _testSongs[0].Id, 
+            _testSongs[0].Id,
             Arg.Is<PlaybackContext>(c => c.Type == PlaybackContextType.Playlist && c.ContextId == playlistId));
-            
+
         _service.CurrentListenHistoryId.Should().Be(1100L);
+    }
+
+    [Fact]
+    public async Task PlayArtistAsync_StartsSessionWithArtistContext()
+    {
+        // Arrange
+        await _service.InitializeAsync();
+        var artistId = Guid.NewGuid();
+        _libraryService.GetAllSongIdsByArtistIdAsync(artistId, Arg.Any<SongSortOrder>())
+            .Returns(_testSongs.Select(s => s.Id).ToList());
+        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(1200L);
+
+        // Act
+        await _service.PlayArtistAsync(artistId);
+
+        // Assert
+        await _libraryService.Received(1).StartListenSessionAsync(
+            _testSongs[0].Id,
+            Arg.Is<PlaybackContext>(c => c.Type == PlaybackContextType.Artist && c.ContextId == artistId));
+        _service.CurrentListenHistoryId.Should().Be(1200L);
+    }
+
+    [Fact]
+    public async Task PlayFolderAsync_StartsSessionWithFolderContext()
+    {
+        // Arrange
+        await _service.InitializeAsync();
+        var folderId = Guid.NewGuid();
+        _libraryService.GetAllSongIdsByFolderIdAsync(folderId, Arg.Any<SongSortOrder>())
+            .Returns(_testSongs.Select(s => s.Id).ToList());
+        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(1300L);
+
+        // Act
+        await _service.PlayFolderAsync(folderId);
+
+        // Assert
+        await _libraryService.Received(1).StartListenSessionAsync(
+            _testSongs[0].Id,
+            Arg.Is<PlaybackContext>(c => c.Type == PlaybackContextType.Folder && c.ContextId == folderId));
+        _service.CurrentListenHistoryId.Should().Be(1300L);
+    }
+
+    [Fact]
+    public async Task PlayGenreAsync_StartsSessionWithGenreContext()
+    {
+        // Arrange
+        await _service.InitializeAsync();
+        var genreId = Guid.NewGuid();
+        _libraryService.GetAllSongIdsByGenreIdAsync(genreId, Arg.Any<SongSortOrder>())
+            .Returns(_testSongs.Select(s => s.Id).ToList());
+        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(1400L);
+
+        // Act
+        await _service.PlayGenreAsync(genreId);
+
+        // Assert
+        await _libraryService.Received(1).StartListenSessionAsync(
+            _testSongs[0].Id,
+            Arg.Is<PlaybackContext>(c => c.Type == PlaybackContextType.Genre && c.ContextId == genreId));
+        _service.CurrentListenHistoryId.Should().Be(1400L);
+    }
+
+    [Fact]
+    public async Task PlayAsync_WithExplicitContext_StartsSessionWithThatContext()
+    {
+        // Arrange — simulates a smart playlist play where the caller resolves IDs and passes the context
+        await _service.InitializeAsync();
+        var smartPlaylistId = Guid.NewGuid();
+        var context = new PlaybackContext(PlaybackContextType.SmartPlaylist, smartPlaylistId);
+        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(1500L);
+
+        // Act
+        await _service.PlayAsync(_testSongs.Select(s => s.Id).ToList(), 0, null, context);
+
+        // Assert
+        await _libraryService.Received(1).StartListenSessionAsync(
+            _testSongs[0].Id,
+            Arg.Is<PlaybackContext>(c => c.Type == PlaybackContextType.SmartPlaylist && c.ContextId == smartPlaylistId));
+        _service.CurrentListenHistoryId.Should().Be(1500L);
+    }
+
+    [Fact]
+    public async Task PlayAsync_WithNullContext_DefaultsToLibraryContext()
+    {
+        // Arrange
+        await _service.InitializeAsync();
+        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(1600L);
+
+        // Act
+        await _service.PlayAsync(_testSongs.Select(s => s.Id).ToList());
+
+        // Assert
+        await _libraryService.Received(1).StartListenSessionAsync(
+            _testSongs[0].Id,
+            Arg.Is<PlaybackContext>(c => c.Type == PlaybackContextType.Library && c.ContextId == null));
     }
 
     #endregion

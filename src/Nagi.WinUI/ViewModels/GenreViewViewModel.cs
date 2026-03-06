@@ -97,6 +97,9 @@ public partial class GenreViewViewModel : SongListViewModelBase
     }
 
 
+    protected override PlaybackContext GetPlaybackContext() =>
+        _genreId != Guid.Empty ? new(PlaybackContextType.Genre, _genreId) : base.GetPlaybackContext();
+
     protected override Task SaveSortOrderAsync(SongSortOrder sortOrder)
     {
         return _settingsService.SetSortOrderAsync(SortOrderHelper.GenreViewSortOrderKey, sortOrder);

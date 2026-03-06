@@ -423,9 +423,9 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         return PlayAsync(songs?.Select(s => s.Id) ?? Enumerable.Empty<Guid>(), startIndex, startShuffled);
     }
 
-    public async Task PlayAsync(IEnumerable<Guid> songIds, int startIndex = 0, bool? startShuffled = null)
+    public async Task PlayAsync(IEnumerable<Guid> songIds, int startIndex = 0, bool? startShuffled = null, PlaybackContext? context = null)
     {
-        _currentContext = new PlaybackContext(PlaybackContextType.Library, null);
+        _currentContext = context ?? new PlaybackContext(PlaybackContextType.Library, null);
         await PlayInternalAsync(songIds, startIndex, startShuffled).ConfigureAwait(false);
     }
 

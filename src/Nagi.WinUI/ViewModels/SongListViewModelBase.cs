@@ -488,6 +488,11 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
     {
     }
 
+    /// <summary>
+    ///     Returns the playback context for this view. Subclasses override to provide the correct source type and ID.
+    /// </summary>
+    protected virtual PlaybackContext GetPlaybackContext() => new(PlaybackContextType.Library, null);
+
     [RelayCommand(CanExecute = nameof(CanExecutePlayAllCommands))]
     private async Task PlayAllSongsAsync()
     {
@@ -502,7 +507,7 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
         {
             _stateLock.ExitReadLock();
         }
-        await _playbackService.PlayAsync(ids);
+        await _playbackService.PlayAsync(ids, 0, null, GetPlaybackContext());
     }
 
     [RelayCommand(CanExecute = nameof(CanExecutePlayAllCommands))]
@@ -519,7 +524,7 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
         {
             _stateLock.ExitReadLock();
         }
-        await _playbackService.PlayAsync(ids, 0, true);
+        await _playbackService.PlayAsync(ids, 0, true, GetPlaybackContext());
     }
 
     [RelayCommand]
@@ -548,14 +553,14 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
             return;
         }
 
-        await _playbackService.PlayAsync(ids, startIndex);
+        await _playbackService.PlayAsync(ids, startIndex, null, GetPlaybackContext());
     }
 
     [RelayCommand(CanExecute = nameof(CanExecuteSelectedSongsCommands))]
     private async Task PlaySelectedSongsAsync()
     {
         var ids = await GetCurrentSelectionIdsAsync();
-        await _playbackService.PlayAsync(ids);
+        await _playbackService.PlayAsync(ids, 0, null, GetPlaybackContext());
     }
 
     [RelayCommand(CanExecute = nameof(CanExecuteSelectedSongsCommands))]

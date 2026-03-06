@@ -130,6 +130,9 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         return _libraryReader.GetAllSongIdsByPlaylistIdAsync(_currentPlaylistId.Value, sortOrder);
     }
 
+    protected override PlaybackContext GetPlaybackContext() =>
+        _currentPlaylistId.HasValue ? new(PlaybackContextType.Playlist, _currentPlaylistId.Value) : base.GetPlaybackContext();
+
     /// <summary>
     ///     Override to manage the CollectionChanged subscription when the Songs collection is replaced in the base class.
     /// </summary>

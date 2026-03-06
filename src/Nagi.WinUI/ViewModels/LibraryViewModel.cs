@@ -54,6 +54,9 @@ public partial class LibraryViewModel : SongListViewModelBase
         return await _libraryReader.GetAllSongIdsAsync(sortOrder);
     }
 
+    protected override PlaybackContext GetPlaybackContext() =>
+        IsSearchActive ? new(PlaybackContextType.Search, null) : new(PlaybackContextType.Library, null);
+
     public async Task InitializeAsync()
     {
         var shouldTriggerScan = !_isInitialScanTriggered;

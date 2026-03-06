@@ -292,6 +292,9 @@ public partial class AlbumViewViewModel : SongListViewModelBase
         }
     }
 
+    protected override PlaybackContext GetPlaybackContext() =>
+        _albumId != Guid.Empty ? new(PlaybackContextType.Album, _albumId) : base.GetPlaybackContext();
+
     protected override Task SaveSortOrderAsync(SongSortOrder sortOrder)
     {
         return _settingsService.SetSortOrderAsync(SortOrderHelper.AlbumViewSortOrderKey, sortOrder);

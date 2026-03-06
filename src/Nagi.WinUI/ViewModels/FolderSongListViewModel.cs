@@ -453,6 +453,9 @@ public partial class FolderSongListViewModel : SongListViewModelBase
     }
 
 
+    protected override PlaybackContext GetPlaybackContext() =>
+        _rootFolderId.HasValue ? new(PlaybackContextType.Folder, _rootFolderId.Value) : base.GetPlaybackContext();
+
     /// <summary>
     ///     Plays all songs in a subfolder recursively, including all its subfolders.
     /// </summary>
@@ -465,7 +468,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         {
             var songIds = await _libraryReader.GetAllSongIdsInDirectoryRecursiveAsync(_rootFolderId.Value, folder.Path, SongSortOrder.TitleAsc);
 
-            if (songIds.Any()) await _playbackService.PlayAsync(songIds);
+            if (songIds.Any()) await _playbackService.PlayAsync(songIds, 0, null, new PlaybackContext(PlaybackContextType.Folder, folder.Id));
         }
         catch (Exception ex)
         {

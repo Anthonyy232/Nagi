@@ -270,6 +270,9 @@ public partial class ArtistViewViewModel : SongListViewModelBase
     }
 
 
+    protected override PlaybackContext GetPlaybackContext() =>
+        _artistId != Guid.Empty ? new(PlaybackContextType.Artist, _artistId) : base.GetPlaybackContext();
+
     protected override Task SaveSortOrderAsync(SongSortOrder sortOrder)
     {
         return _settingsService.SetSortOrderAsync(SortOrderHelper.ArtistViewSortOrderKey, sortOrder);
