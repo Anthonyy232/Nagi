@@ -403,7 +403,7 @@ public partial class InsightsViewModel : ObservableObject
 
         try
         {
-            await _libraryService.ClearListenHistoryAsync().ConfigureAwait(false);
+            await _libraryService.ClearListenHistoryAsync();
             _logger.LogInformation("Listen history reset by user.");
             await LoadInsightsAsync();
         }

@@ -55,12 +55,10 @@ public sealed partial class GenreViewPage : Page
 
         if (e.Parameter is GenreViewNavigationParameter navParam)
         {
-            _logger.LogDebug("Loading details for genre '{GenreName}'.", navParam.GenreName);
             try
             {
                 await ViewModel.LoadGenreDetailsAsync(navParam);
                 await ViewModel.LoadAvailablePlaylistsAsync();
-                _logger.LogDebug("Successfully loaded details for genre '{GenreName}'.", navParam.GenreName);
             }
             catch (Exception ex)
             {

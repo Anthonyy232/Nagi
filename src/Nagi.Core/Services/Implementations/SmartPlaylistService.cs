@@ -503,14 +503,14 @@ public class SmartPlaylistService : ISmartPlaylistService
     }
 
     /// <inheritdoc />
-    public async Task<PagedResult<Song>> GetMatchingSongsPagedAsync(Guid smartPlaylistId, int pageNumber, int pageSize, string? searchTerm = null)
+    public async Task<PagedResult<Song>> GetMatchingSongsPagedAsync(Guid smartPlaylistId, int pageNumber, int pageSize, string? searchTerm = null, CancellationToken token = default)
     {
         SanitizePaging(ref pageNumber, ref pageSize);
 
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var smartPlaylist = await context.SmartPlaylists.AsNoTracking()
             .Include(sp => sp.Rules)
-            .FirstOrDefaultAsync(sp => sp.Id == smartPlaylistId).ConfigureAwait(false);
+            .FirstOrDefaultAsync(sp => sp.Id == smartPlaylistId, token).ConfigureAwait(false);
 
         if (smartPlaylist is null)
         {
@@ -524,12 +524,12 @@ public class SmartPlaylistService : ISmartPlaylistService
         }
 
         var query = ExcludeHeavyFields(_queryBuilder.BuildQuery(context, smartPlaylist, searchTerm));
-        var totalCount = await _queryBuilder.BuildCountQuery(context, smartPlaylist, searchTerm).CountAsync().ConfigureAwait(false);
+        var totalCount = await _queryBuilder.BuildCountQuery(context, smartPlaylist, searchTerm).CountAsync(token).ConfigureAwait(false);
 
         var pagedData = await query
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
-            .ToListAsync().ConfigureAwait(false);
+            .ToListAsync(token).ConfigureAwait(false);
 
         return new PagedResult<Song>
         {
@@ -562,19 +562,19 @@ public class SmartPlaylistService : ISmartPlaylistService
     }
 
     /// <inheritdoc />
-    public async Task<List<Guid>> GetMatchingSongIdsAsync(Guid smartPlaylistId)
+    public async Task<List<Guid>> GetMatchingSongIdsAsync(Guid smartPlaylistId, CancellationToken token = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var smartPlaylist = await context.SmartPlaylists.AsNoTracking()
             .Include(sp => sp.Rules)
-            .FirstOrDefaultAsync(sp => sp.Id == smartPlaylistId).ConfigureAwait(false);
+            .FirstOrDefaultAsync(sp => sp.Id == smartPlaylistId, token).ConfigureAwait(false);
 
         if (smartPlaylist is null)
             return new List<Guid>();
 
         return await _queryBuilder.BuildQuery(context, smartPlaylist)
             .Select(s => s.Id)
-            .ToListAsync().ConfigureAwait(false);
+            .ToListAsync(token).ConfigureAwait(false);
     }
 
     #endregion

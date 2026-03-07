@@ -26,7 +26,7 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
 {
     protected readonly ILibraryReader _libraryReader;
     protected readonly IUISettingsService _settingsService;
-    private readonly object _loadLock = new();
+    protected readonly object _loadLock = new();
     protected readonly INavigationService _navigationService;
     protected readonly IMusicPlaybackService _playbackService;
     protected readonly IPlaylistService _playlistService;
@@ -48,7 +48,7 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
     protected List<Guid> _fullSongIdList = new();
 
     // Used to cancel any ongoing paged loading, e.g., when the user changes the sort order.
-    private CancellationTokenSource? _pagedLoadCts;
+    protected CancellationTokenSource? _pagedLoadCts;
     protected int _totalItemCount;
     
     // Navigation re-entry guards
@@ -267,7 +267,7 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
         return Task.FromResult(new PagedResult<Song>());
     }
 
-    protected virtual Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder)
+    protected virtual Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default)
     {
         return Task.FromResult(new List<Guid>());
     }
@@ -285,6 +285,7 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
         _logger.LogDebug("Starting song refresh.");
         // Cancel any previous loading task, as it's now obsolete.
         _pagedLoadCts?.Cancel();
+        _pagedLoadCts?.Dispose();
 
         if (!string.IsNullOrEmpty(sortOrderString) &&
             Enum.TryParse<SongSortOrder>(sortOrderString, true, out var newSortOrder)
@@ -309,7 +310,7 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
             var token = _pagedLoadCts.Token;
 
             // Overlap fetching the full ID list (for Play All) with loading the current page (for display).
-            var idsTask = LoadAllSongIdsAsync(CurrentSortOrder);
+            var idsTask = LoadAllSongIdsAsync(CurrentSortOrder, token);
             var firstPageTask = LoadSongsPagedAsync(1, SongsPerPage, CurrentSortOrder, token);
 
             await Task.WhenAll(idsTask, firstPageTask).ConfigureAwait(false);
@@ -345,13 +346,16 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to load or sort songs");
-            TotalItemsText = Nagi.WinUI.Resources.Strings.SongList_ErrorLoading;
+            _dispatcherService.TryEnqueue(() => TotalItemsText = Nagi.WinUI.Resources.Strings.SongList_ErrorLoading);
         }
         finally
         {
-            IsOverallLoading = false;
-            PlayAllSongsCommand.NotifyCanExecuteChanged();
-            ShuffleAndPlayAllSongsCommand.NotifyCanExecuteChanged();
+            _dispatcherService.TryEnqueue(() =>
+            {
+                IsOverallLoading = false;
+                PlayAllSongsCommand.NotifyCanExecuteChanged();
+                ShuffleAndPlayAllSongsCommand.NotifyCanExecuteChanged();
+            });
         }
     }
 
@@ -418,7 +422,8 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
         }
 
         _pagedLoadCts?.Cancel();
-        
+        _pagedLoadCts?.Dispose();
+
         try
         {
             _pagedLoadCts = new CancellationTokenSource();
@@ -433,7 +438,7 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
         }
         finally
         {
-            IsOverallLoading = false;
+            _dispatcherService.TryEnqueue(() => IsOverallLoading = false);
         }
     }
 

@@ -114,20 +114,20 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         if (!_currentPlaylistId.HasValue) return Task.FromResult(new PagedResult<Song>());
 
         if (IsSearchActive)
-            return _libraryReader.SearchSongsInPlaylistPagedAsync(_currentPlaylistId.Value, SearchTerm, pageNumber, pageSize, sortOrder);
+            return _libraryReader.SearchSongsInPlaylistPagedAsync(_currentPlaylistId.Value, SearchTerm, pageNumber, pageSize, sortOrder, cancellationToken);
 
-        return _libraryReader.GetSongsByPlaylistPagedAsync(_currentPlaylistId.Value, pageNumber, pageSize, sortOrder);
+        return _libraryReader.GetSongsByPlaylistPagedAsync(_currentPlaylistId.Value, pageNumber, pageSize, sortOrder, cancellationToken);
     }
 
-    protected override Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder)
+    protected override Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default)
     {
         if (!_currentPlaylistId.HasValue) return Task.FromResult(new List<Guid>());
 
         if (IsSearchActive)
-            return _libraryReader.SearchAllSongIdsInPlaylistAsync(_currentPlaylistId.Value, SearchTerm, sortOrder);
+            return _libraryReader.SearchAllSongIdsInPlaylistAsync(_currentPlaylistId.Value, SearchTerm, sortOrder, token);
 
         // When not searching, get all song IDs in the requested order.
-        return _libraryReader.GetAllSongIdsByPlaylistIdAsync(_currentPlaylistId.Value, sortOrder);
+        return _libraryReader.GetAllSongIdsByPlaylistIdAsync(_currentPlaylistId.Value, sortOrder, token);
     }
 
     protected override PlaybackContext GetPlaybackContext() =>

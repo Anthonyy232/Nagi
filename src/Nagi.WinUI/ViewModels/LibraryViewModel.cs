@@ -44,14 +44,14 @@ public partial class LibraryViewModel : SongListViewModelBase
     {
         if (IsSearchActive)
             // When searching, a consistent sort order is applied, ignoring the user's current sort selection.
-            return _libraryReader.SearchSongsPagedAsync(SearchTerm, pageNumber, pageSize);
-        return _libraryReader.GetAllSongsPagedAsync(pageNumber, pageSize, sortOrder);
+            return _libraryReader.SearchSongsPagedAsync(SearchTerm, pageNumber, pageSize, cancellationToken);
+        return _libraryReader.GetAllSongsPagedAsync(pageNumber, pageSize, sortOrder, cancellationToken);
     }
 
-    protected override async Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder)
+    protected override async Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default)
     {
-        if (IsSearchActive) return await _libraryReader.SearchAllSongIdsAsync(SearchTerm, SongSortOrder.TitleAsc);
-        return await _libraryReader.GetAllSongIdsAsync(sortOrder);
+        if (IsSearchActive) return await _libraryReader.SearchAllSongIdsAsync(SearchTerm, SongSortOrder.TitleAsc, token);
+        return await _libraryReader.GetAllSongIdsAsync(sortOrder, token);
     }
 
     protected override PlaybackContext GetPlaybackContext() =>
@@ -59,11 +59,12 @@ public partial class LibraryViewModel : SongListViewModelBase
 
     public async Task InitializeAsync()
     {
+        _logger.LogDebug("Initializing LibraryViewModel");
         var shouldTriggerScan = !_isInitialScanTriggered;
         _isInitialScanTriggered = true;
 
-        CurrentSortOrder = await _settingsService.GetSortOrderAsync<SongSortOrder>(SortOrderHelper.LibrarySortOrderKey).ConfigureAwait(true);
-        await RefreshOrSortSongsCommand.ExecuteAsync(null).ConfigureAwait(true);
+        CurrentSortOrder = await _settingsService.GetSortOrderAsync<SongSortOrder>(SortOrderHelper.LibrarySortOrderKey);
+        await RefreshOrSortSongsCommand.ExecuteAsync(null);
 
         if (!shouldTriggerScan) return;
 

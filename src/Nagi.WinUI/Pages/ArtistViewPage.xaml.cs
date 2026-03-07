@@ -73,12 +73,10 @@ public sealed partial class ArtistViewPage : Page
 
         if (e.Parameter is ArtistViewNavigationParameter navParam)
         {
-            _logger.LogDebug("Loading details for ArtistId: {ArtistId}", navParam.ArtistId);
             try
             {
                 await ViewModel.LoadArtistDetailsAsync(navParam.ArtistId);
                 await ViewModel.LoadAvailablePlaylistsAsync();
-                _logger.LogDebug("Successfully loaded details for ArtistId: {ArtistId}", navParam.ArtistId);
             }
             catch (Exception ex)
             {
