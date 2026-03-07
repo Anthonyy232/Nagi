@@ -73,22 +73,22 @@ public partial class AlbumViewViewModel : SongListViewModelBase
 
         PagedResult<Song> result;
         if (IsSearchActive)
-            result = await _libraryReader.SearchSongsInAlbumPagedAsync(_albumId, SearchTerm, pageNumber, pageSize);
+            result = await _libraryReader.SearchSongsInAlbumPagedAsync(_albumId, SearchTerm, pageNumber, pageSize, cancellationToken);
         else
-            result = await _libraryReader.GetSongsByAlbumIdPagedAsync(_albumId, pageNumber, pageSize, sortOrder);
+            result = await _libraryReader.GetSongsByAlbumIdPagedAsync(_albumId, pageNumber, pageSize, sortOrder, cancellationToken);
 
         if (pageNumber == 1) UpdateAlbumDetails(result);
 
         return result;
     }
 
-    protected override async Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder)
+    protected override async Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default)
     {
         if (_albumId == Guid.Empty) return new List<Guid>();
 
-        if (IsSearchActive) return await _libraryReader.SearchAllSongIdsInAlbumAsync(_albumId, SearchTerm, sortOrder);
+        if (IsSearchActive) return await _libraryReader.SearchAllSongIdsInAlbumAsync(_albumId, SearchTerm, sortOrder, token);
 
-        return await _libraryReader.GetAllSongIdsByAlbumIdAsync(_albumId, sortOrder);
+        return await _libraryReader.GetAllSongIdsByAlbumIdAsync(_albumId, sortOrder, token);
     }
 
     /// <summary>
@@ -100,6 +100,7 @@ public partial class AlbumViewViewModel : SongListViewModelBase
     {
         if (IsOverallLoading) return;
 
+        _logger.LogDebug("Loading details for album {AlbumId}", albumId);
         try
         {
             _albumId = albumId;
@@ -107,13 +108,13 @@ public partial class AlbumViewViewModel : SongListViewModelBase
             var sortOrderTask = _settingsService.GetSortOrderAsync<SongSortOrder>(SortOrderHelper.AlbumViewSortOrderKey);
             
             // Wait for sort order first, as it is required for loading songs
-            await sortOrderTask.ConfigureAwait(false);
+            await sortOrderTask;
             CurrentSortOrder = sortOrderTask.Result;
             
             // Start loading songs in parallel with album metadata
             var songsTask = RefreshOrSortSongsCommand.ExecuteAsync(null);
             
-            await albumTask.ConfigureAwait(false);
+            await albumTask;
             var album = albumTask.Result;
 
             if (album != null)
@@ -129,7 +130,8 @@ public partial class AlbumViewViewModel : SongListViewModelBase
                     RefreshAlbumDetailsText();
                 });
 
-                await songsTask.ConfigureAwait(false);
+                await songsTask;
+                _logger.LogDebug("Populated details for album '{AlbumTitle}' ({AlbumId})", album.Title, albumId);
             }
             else
             {
@@ -205,7 +207,7 @@ public partial class AlbumViewViewModel : SongListViewModelBase
     {
         try
         {
-            var duration = await _libraryReader.GetSearchTotalDurationInAlbumAsync(_albumId, searchTerm).ConfigureAwait(false);
+            var duration = await _libraryReader.GetSearchTotalDurationInAlbumAsync(_albumId, searchTerm, cancellationToken);
             
             if (!cancellationToken.IsCancellationRequested)
             {

@@ -49,8 +49,6 @@ public sealed partial class LibraryPage : Page
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
-        _logger.LogDebug("Navigated to LibraryPage. Initializing...");
-
         try
         {
             // Load playlists first for context menu availability.
@@ -58,7 +56,6 @@ public sealed partial class LibraryPage : Page
 
             // This handles the initial UI load and a background rescan.
             await ViewModel.InitializeAsync();
-            _logger.LogDebug("LibraryPage initialization complete.");
         }
         catch (Exception ex)
         {

@@ -526,21 +526,14 @@
                                 x:Name="SeekBarGrid"
                                 VerticalAlignment="Bottom"
                                 Opacity="0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock
-                                    x:Name="CurrentTimeTextBlock"
-                                    Grid.Column="0"
-                                    Margin="0,0,8,0"
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Bind ViewModel.CurrentTimeText, Mode=OneWay, FallbackValue='0:00'}" />
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
                                 <Slider
                                     x:Name="MediaSeekerSlider"
-                                    Grid.Column="1"
+                                    Grid.Row="0"
+                                    Margin="0,0,0,-4"
                                     VerticalAlignment="Center"
                                     IsThumbToolTipEnabled="True"
                                     Maximum="{x:Bind ViewModel.TotalDuration, Mode=OneWay, Converter={StaticResource SliderMaximumConverter}}"
@@ -552,13 +545,28 @@
                                     PointerCaptureLost="MediaSeekerSlider_PointerCaptureLost"
                                     KeyDown="MediaSeekerSlider_KeyDown"
                                     KeyUp="MediaSeekerSlider_KeyUp" />
-                                <TextBlock
-                                    x:Name="TotalTimeTextBlock"
-                                    Grid.Column="2"
-                                    Margin="8,0,0,0"
-                                    VerticalAlignment="Center"
-                                    Style="{StaticResource CaptionTextBlockStyle}"
-                                    Text="{x:Bind ViewModel.TotalDurationText, Mode=OneWay, FallbackValue='0:00'}" />
+                                <Grid Grid.Row="1" Margin="2,0,2,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock
+                                        x:Name="CurrentTimeTextBlock"
+                                        Grid.Column="0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="{x:Bind ViewModel.CurrentTimeText, Mode=OneWay, FallbackValue='0:00'}" />
+                                    <TextBlock
+                                        x:Name="TotalTimeTextBlock"
+                                        Grid.Column="1"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Top"
+                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                        Text="{x:Bind ViewModel.TotalDurationText, Mode=OneWay, FallbackValue='0:00'}" />
+                                </Grid>
                             </Grid>
                         </Grid>
                     </Border>

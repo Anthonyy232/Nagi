@@ -171,7 +171,7 @@ across the application's media player interface.
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Maximum" Value="100" />
         <Setter Property="Minimum" Value="0" />
-        <Setter Property="StepFrequency" Value="1" />
+        <Setter Property="StepFrequency" Value="0.1" />
         <Setter Property="SnapsTo" Value="StepValues" />
         <Setter Property="Template">
             <Setter.Value>

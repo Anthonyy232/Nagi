@@ -83,12 +83,10 @@ public sealed partial class AlbumViewPage : Page
 
         if (e.Parameter is AlbumViewNavigationParameter navParam)
         {
-            _logger.LogDebug("Loading details for AlbumId: {AlbumId}", navParam.AlbumId);
             try
             {
                 await ViewModel.LoadAlbumDetailsAsync(navParam.AlbumId);
                 await ViewModel.LoadAvailablePlaylistsAsync();
-                _logger.LogDebug("Successfully loaded details for AlbumId: {AlbumId}", navParam.AlbumId);
             }
             catch (Exception ex)
             {

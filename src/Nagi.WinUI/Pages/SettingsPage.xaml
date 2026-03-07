@@ -90,11 +90,11 @@
             VerticalScrollMode="Auto"
             HorizontalScrollMode="Disabled"
             HorizontalScrollBarVisibility="Disabled">
-            <StackPanel
-                Padding="36,0,36,24"
-                MaxWidth="1200"
-                HorizontalAlignment="Stretch"
-                Spacing="{StaticResource SettingsCardSpacing}">
+            <Grid Padding="36,0,36,24">
+                <StackPanel
+                    MaxWidth="1200"
+                    HorizontalAlignment="Stretch"
+                    Spacing="{StaticResource SettingsCardSpacing}">
 
                 <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="{x:Bind resources:Strings.SettingsPage_Section_Appearance, Mode=OneTime}" />
 
@@ -1006,6 +1006,7 @@
                         NavigateUri="https://github.com/Anthonyy232/Nagi/blob/master/PRIVACY.md" />
                 </StackPanel>
             </StackPanel>
+        </Grid>
         </ScrollViewer>
     </Grid>
 </Page>

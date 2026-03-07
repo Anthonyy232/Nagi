@@ -51,9 +51,6 @@ public sealed partial class PlaylistSongViewPage : Page
         {
             if (e.Parameter is PlaylistSongViewNavigationParameter navParam)
             {
-                _logger.LogDebug("Loading songs for playlist '{PlaylistName}' (Id: {PlaylistId}).",
-                    navParam.Title,
-                    navParam.PlaylistId);
                 await ViewModel.InitializeAsync(navParam.Title, navParam.PlaylistId, navParam.CoverImageUri);
             }
             else

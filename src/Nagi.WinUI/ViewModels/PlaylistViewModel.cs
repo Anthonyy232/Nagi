@@ -346,9 +346,9 @@ public partial class PlaylistViewModel : SearchableViewModelBase
             var matchCountsTask = _smartPlaylistService.GetAllMatchingSongCountsAsync();
 
             if (sortTask != null)
-                await Task.WhenAll(sortTask, playlistsTask, smartPlaylistsTask, matchCountsTask).ConfigureAwait(false);
+                await Task.WhenAll(sortTask, playlistsTask, smartPlaylistsTask, matchCountsTask);
             else
-                await Task.WhenAll(playlistsTask, smartPlaylistsTask, matchCountsTask).ConfigureAwait(false);
+                await Task.WhenAll(playlistsTask, smartPlaylistsTask, matchCountsTask);
 
             if (sortTask != null)
             {

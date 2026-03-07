@@ -49,20 +49,19 @@ public partial class GenreViewViewModel : SongListViewModelBase
         if (_genreId == Guid.Empty) return new PagedResult<Song>();
 
         if (IsSearchActive)
-            return await _libraryReader.SearchSongsInGenrePagedAsync(_genreId, SearchTerm, pageNumber, pageSize);
+            return await _libraryReader.SearchSongsInGenrePagedAsync(_genreId, SearchTerm, pageNumber, pageSize, cancellationToken);
 
-        return await _libraryReader.GetSongsByGenreIdPagedAsync(_genreId, pageNumber, pageSize, sortOrder);
+        return await _libraryReader.GetSongsByGenreIdPagedAsync(_genreId, pageNumber, pageSize, sortOrder, cancellationToken);
     }
 
-    protected override async Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder)
+    protected override async Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default)
     {
         if (_genreId == Guid.Empty) return new List<Guid>();
 
         if (IsSearchActive)
-            // Assumes a new method exists in the library reader for scoped searching.
-            return await _libraryReader.SearchAllSongIdsInGenreAsync(_genreId, SearchTerm, sortOrder);
+            return await _libraryReader.SearchAllSongIdsInGenreAsync(_genreId, SearchTerm, sortOrder, token);
 
-        return await _libraryReader.GetAllSongIdsByGenreIdAsync(_genreId, sortOrder);
+        return await _libraryReader.GetAllSongIdsByGenreIdAsync(_genreId, sortOrder, token);
     }
 
     /// <summary>

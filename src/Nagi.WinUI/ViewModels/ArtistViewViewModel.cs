@@ -98,19 +98,19 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         if (_artistId == Guid.Empty) return new PagedResult<Song>();
 
         if (IsSearchActive)
-            return await _libraryReader.SearchSongsInArtistPagedAsync(_artistId, SearchTerm, pageNumber, pageSize);
+            return await _libraryReader.SearchSongsInArtistPagedAsync(_artistId, SearchTerm, pageNumber, pageSize, cancellationToken);
 
-        return await _libraryReader.GetSongsByArtistIdPagedAsync(_artistId, pageNumber, pageSize, sortOrder);
+        return await _libraryReader.GetSongsByArtistIdPagedAsync(_artistId, pageNumber, pageSize, sortOrder, cancellationToken);
     }
 
-    protected override async Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder)
+    protected override async Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default)
     {
         if (_artistId == Guid.Empty) return new List<Guid>();
 
         if (IsSearchActive)
-            return await _libraryReader.SearchAllSongIdsInArtistAsync(_artistId, SearchTerm, sortOrder);
+            return await _libraryReader.SearchAllSongIdsInArtistAsync(_artistId, SearchTerm, sortOrder, token);
 
-        return await _libraryReader.GetAllSongIdsByArtistIdAsync(_artistId, sortOrder);
+        return await _libraryReader.GetAllSongIdsByArtistIdAsync(_artistId, sortOrder, token);
     }
 
     [RelayCommand]
@@ -143,7 +143,7 @@ public partial class ArtistViewViewModel : SongListViewModelBase
             var artistTask = _libraryScanner.GetArtistDetailsAsync(artistId, shouldFetchOnline, _pageCts.Token);
             var albumsTask = _libraryReader.GetTopAlbumsForArtistAsync(artistId, int.MaxValue);
 
-            await Task.WhenAll(artistTask, albumsTask).ConfigureAwait(false);
+            await Task.WhenAll(artistTask, albumsTask);
             if (_pageCts.IsCancellationRequested) return;
 
             var artist = artistTask.Result;
@@ -158,7 +158,7 @@ public partial class ArtistViewViewModel : SongListViewModelBase
                     Albums.ReplaceRange(topAlbums.Select(a => new ArtistAlbumViewModelItem(a)));
                 });
 
-                await songsTask.ConfigureAwait(false);
+                await songsTask;
             }
             else
             {
