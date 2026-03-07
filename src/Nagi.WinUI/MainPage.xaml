@@ -182,7 +182,6 @@
                             Storyboard.TargetName="SeeAllSearchIcon"
                             Storyboard.TargetProperty="Glyph">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="&#xE721;" />
-                            <DiscreteObjectKeyFrame KeyTime="0:0:0.3" Value="&#xE721;" />
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>
@@ -272,7 +271,7 @@
                         <DoubleAnimation
                             Storyboard.TargetName="FloatingPlayerContainer"
                             Storyboard.TargetProperty="MinHeight"
-                            To="116"
+                            To="132"
                             Duration="0:0:0.6"
                             EnableDependentAnimation="True">
                             <DoubleAnimation.EasingFunction>
@@ -378,7 +377,7 @@
 
                     <Grid
                         x:Name="PlayerHitBox"
-                        Height="116"
+                        Height="132"
                         Margin="12,0,12,12"
                         VerticalAlignment="Bottom"
                         Background="Transparent"
@@ -395,11 +394,11 @@
                             CornerRadius="8">
                             <Grid>
                                 <Grid x:Name="MainControlsGrid" VerticalAlignment="Top">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition MinWidth="180" Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition MinWidth="160" Width="*" />
-                                </Grid.ColumnDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition MinWidth="180" Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition MinWidth="160" Width="*" />
+                                    </Grid.ColumnDefinitions>
 
                                 <Grid
                                     Grid.Column="0"
@@ -533,7 +532,7 @@
                                 <Slider
                                     x:Name="MediaSeekerSlider"
                                     Grid.Row="0"
-                                    Margin="0,0,0,-4"
+                                    Margin="0,8,0,-4"
                                     VerticalAlignment="Center"
                                     IsThumbToolTipEnabled="True"
                                     Maximum="{x:Bind ViewModel.TotalDuration, Mode=OneWay, Converter={StaticResource SliderMaximumConverter}}"
