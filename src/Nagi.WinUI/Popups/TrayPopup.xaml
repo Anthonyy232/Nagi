@@ -29,15 +29,18 @@
         </Border.Resources>
 
         <Grid>
-            <Border x:Name="CoverArtBackground"
-                    CornerRadius="8">
-                <Border.Background>
-                    <media:ImageBlendBrush x:Name="CoverArtBrush"
-                                           Mode="ColorBurn"
-                                           Stretch="UniformToFill"
-                                           Opacity="0.2" />
-                </Border.Background>
-            </Border>
+            <Grid x:Name="CoverArtBackground"
+                  CornerRadius="8">
+                <Border Opacity="0.7">
+                    <Border.Background>
+                        <media:ImageBlendBrush x:Name="CoverArtBrush"
+                                               Mode="Multiply"
+                                               Stretch="UniformToFill" />
+                    </Border.Background>
+                </Border>
+                
+                <Border Background="{ThemeResource SolidBackgroundFillColorBaseAltBrush}" Opacity="0.3" />
+            </Grid>
 
             <Grid>
                 <!-- Player View: Contains track info, seek bar, and media controls. -->
