@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using Windows.System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -69,6 +70,10 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
     // A flag to track if the pointer is currently over the floating player control.
     private bool _isPointerOverPlayer;
+
+    // Debounce tokens for hover expand/collapse — prevents stutter from cursor grazing the hit-zone edge.
+    private CancellationTokenSource? _expandDebounce;
+    private CancellationTokenSource? _collapseDebounce;
 
     // A flag to track if the queue flyout is open, to keep the player expanded.
     private bool _isQueueFlyoutOpen;
@@ -206,8 +211,8 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         if (useTransitions)
         {
             var targetOpacity = shouldBeExpanded ? 1f : 0f;
-            var duration = shouldBeExpanded ? 350 : 150; // 350ms matches XAML SeekBar timing
-            var delay = shouldBeExpanded ? 100 : 0;
+            var duration = shouldBeExpanded ? 350 : 150;
+            var delay    = shouldBeExpanded ? 100 : 0;
 
             AnimateOpacity(SeekBarGrid, targetOpacity, duration, delay);
             AnimateOpacity(ArtistNameHyperlink, targetOpacity, duration, delay);
@@ -340,6 +345,10 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
     private void OnMainPageUnloaded(object sender, RoutedEventArgs e)
     {
         _isUnloaded = true;
+        _expandDebounce?.Cancel();
+        _expandDebounce = null;
+        _collapseDebounce?.Cancel();
+        _collapseDebounce = null;
         ActualThemeChanged -= OnActualThemeChanged;
         ContentFrame.Navigated -= OnContentFrameNavigated;
         ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
@@ -452,8 +461,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
                     UpdatePlayerVisualState();
                     break;
                 case nameof(PlayerViewModel.IsPlaying):
-                    _ = SetPlatformSpecificBrushAsync();
-                    UpdatePlayerVisualState(); // Expand or collapse the player based on playback state
+                    UpdatePlayerVisualState();
                     break;
             }
         });
@@ -500,16 +508,54 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         }
     }
 
-    private void FloatingPlayerContainer_PointerEntered(object sender, PointerRoutedEventArgs e)
+    private async void FloatingPlayerContainer_PointerEntered(object sender, PointerRoutedEventArgs e)
     {
-        _isPointerOverPlayer = true;
-        UpdatePlayerVisualState();
+        // Cancel any pending collapse first so it doesn't fire mid-expand.
+        _collapseDebounce?.Cancel();
+
+        // Debounce the expand: cursor must settle for 80ms before animating.
+        // This prevents the transparent hit-zone gap above the collapsed player
+        // from triggering expand/collapse cycles as the cursor passes over it.
+        var cts = new CancellationTokenSource();
+        _expandDebounce = cts;
+        try
+        {
+            await Task.Delay(80, cts.Token);
+            if (_isUnloaded) return;
+            _isPointerOverPlayer = true;
+            UpdatePlayerVisualState();
+        }
+        catch (OperationCanceledException) { }
+        finally
+        {
+            cts.Dispose();
+            if (ReferenceEquals(_expandDebounce, cts))
+                _expandDebounce = null;
+        }
     }
 
-    private void FloatingPlayerContainer_PointerExited(object sender, PointerRoutedEventArgs e)
+    private async void FloatingPlayerContainer_PointerExited(object sender, PointerRoutedEventArgs e)
     {
-        _isPointerOverPlayer = false;
-        UpdatePlayerVisualState();
+        // Cancel any pending expand — a graze that exits before 80ms causes zero animation.
+        _expandDebounce?.Cancel();
+
+        // Debounce the collapse: absorbs rapid boundary crossings and child-element transitions.
+        var cts = new CancellationTokenSource();
+        _collapseDebounce = cts;
+        try
+        {
+            await Task.Delay(120, cts.Token);
+            if (_isUnloaded) return;
+            _isPointerOverPlayer = false;
+            UpdatePlayerVisualState();
+        }
+        catch (OperationCanceledException) { }
+        finally
+        {
+            cts.Dispose();
+            if (ReferenceEquals(_collapseDebounce, cts))
+                _collapseDebounce = null;
+        }
     }
 
     private void AppTitleBar_PaneToggleRequested(TitleBar sender, object args)
