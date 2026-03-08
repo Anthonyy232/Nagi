@@ -14,7 +14,7 @@
         <EnableMsixTooling>true</EnableMsixTooling>
         <Nullable>enable</Nullable>
         <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
-        <Configurations>Debug;Release;DebugUnpackaged;ReleaseUnpackaged</Configurations>
+        <Configurations>Debug;Release</Configurations>
         <AssemblyName>Nagi</AssemblyName>
         <Product>Nagi</Product>
         <ApplicationIcon>Assets\AppLogo.ico</ApplicationIcon>
@@ -25,32 +25,21 @@
     <!-- =============================================================== -->
     <!-- == Packaged (MSIX) Configuration                               == -->
     <!-- =============================================================== -->
-    <PropertyGroup Condition="!$(Configuration.Contains('Unpackaged'))">
+    <PropertyGroup>
         <WindowsPackageType>MSIX</WindowsPackageType>
         <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
         <PublishProfile>win-$(Platform).pubxml</PublishProfile>
         <ApplicationDisplayVersion>$(AppxPackageVersion)</ApplicationDisplayVersion>
         <ApplicationVersion>$(AppxPackageVersion.Replace('.', ''))</ApplicationVersion>
-        <DefineConstants>$(DefineConstants);MSIX_PACKAGE</DefineConstants>
         <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
     </PropertyGroup>
 
-    <!-- =============================================================== -->
-    <!-- == Unpackaged Configuration                                    == -->
-    <!-- =============================================================== -->
-    <PropertyGroup Condition="$(Configuration.Contains('Unpackaged'))">
-        <WindowsPackageType>None</WindowsPackageType>
-        <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
-        <ApplicationIcon>Assets\AppLogo.ico</ApplicationIcon>
-        <AssemblyVersion>$(AppxPackageVersion)</AssemblyVersion>
-        <FileVersion>$(AppxPackageVersion)</FileVersion>
-        <Version>$(AppxPackageVersion)</Version>
-    </PropertyGroup>
+
 
     <!-- =============================================================== -->
     <!-- == Build Configuration: Debug                                  == -->
     <!-- =============================================================== -->
-    <PropertyGroup Condition="'$(Configuration)' == 'Debug' or '$(Configuration)' == 'DebugUnpackaged'">
+    <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
         <PublishReadyToRun>false</PublishReadyToRun>
         <PublishTrimmed>false</PublishTrimmed>
         <Optimize>false</Optimize>
@@ -59,7 +48,7 @@
     <!-- =============================================================== -->
     <!-- == Build Configuration: Release (AOT/Trimming)                 == -->
     <!-- =============================================================== -->
-    <PropertyGroup Condition="'$(Configuration)' == 'Release' or '$(Configuration)' == 'ReleaseUnpackaged'">
+    <PropertyGroup Condition="'$(Configuration)' == 'Release'">
         <PublishReadyToRun>true</PublishReadyToRun>
         <TieredPGO>true</TieredPGO>
         <Optimize>true</Optimize>
@@ -123,8 +112,7 @@
         <PackageReference Include="SixLabors.ImageSharp" Version="$(SixLaborsImageSharpVersion)" />
         <PackageReference Include="VideoLAN.LibVLC.Windows" Version="$(LibVLCWindowsVersion)" />
 
-        <!-- Updater (Unpackaged only) -->
-        <PackageReference Include="Velopack" Version="$(VelopackVersion)" Condition="$(Configuration.Contains('Unpackaged'))" />
+
     </ItemGroup>
 
 
@@ -138,7 +126,7 @@
     <!-- == File/Folder Exclusions & Inclusions                         == -->
     <!-- =============================================================== -->
 
-    <ItemGroup Condition="!$(Configuration.Contains('Unpackaged'))">
+    <ItemGroup>
         <!-- MSIX Assets -->
         <Content Include="Assets\SplashScreen.scale-200.png" />
         <Content Include="Assets\LockScreenLogo.scale-200.png" />

@@ -41,10 +41,7 @@ using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
 using UnhandledExceptionEventArgs = Microsoft.UI.Xaml.UnhandledExceptionEventArgs;
 
 
-#if !MSIX_PACKAGE
-using Velopack;
-using Velopack.Sources;
-#endif
+
 
 namespace Nagi.WinUI;
 
@@ -82,10 +79,7 @@ public partial class App : Application
     private static void EnsureLibVlcPluginCache()
     {
         // Skip for packaged builds - the installation directory is read-only in MSIX
-        if (PathConfiguration.IsRunningInPackage())
-        {
-            return;
-        }
+        return;
 
         try
         {
@@ -498,7 +492,6 @@ public partial class App : Application
         services.AddSingleton<IPresenceService, DiscordPresenceService>();
         services.AddSingleton<IPresenceService, LastFmPresenceService>();
         services.AddSingleton<ISmartPlaylistService, SmartPlaylistService>();
-        services.AddSingleton<IUpdateService, VelopackUpdateService>();
         services.AddSingleton<IOnlineLyricsService, LrcLibService>();
         services.AddSingleton<IPlaylistExportService, M3uPlaylistExportService>();
         services.AddSingleton<IBackupRestoreService, BackupRestoreService>();
@@ -509,13 +502,7 @@ public partial class App : Application
         services.AddSingleton<IPcmExtractor, FFmpegPcmExtractor>();
         services.AddSingleton<IReplayGainService, ReplayGainService>();
 
-#if !MSIX_PACKAGE
-        services.AddSingleton(_ =>
-        {
-            var source = new GithubSource("https://github.com/Anthonyy232/Nagi", null, false);
-            return new UpdateManager(source);
-        });
-#endif
+
     }
 
     private static void ConfigureWinUIServices(IServiceCollection services, Window window,
@@ -632,7 +619,6 @@ public partial class App : Application
 
     private void PerformPostLaunchTasks()
     {
-        _ = CheckForUpdatesOnStartupAsync();
         EnqueuePostLaunchTasks();
     }
 
@@ -918,7 +904,7 @@ public partial class App : Application
                 }
             }
 
-            // 2. Clear known settings and state files (unpackaged uses these, packaged might have fallbacks)
+            // 2. Clear known settings and state files
             SafelyDeleteFile(pathConfig.SettingsFilePath);
             SafelyDeleteFile(pathConfig.PlaybackStateFilePath);
             
@@ -1200,21 +1186,4 @@ public partial class App : Application
         });
     }
 
-    private async Task CheckForUpdatesOnStartupAsync()
-    {
-        if (Services is null) return;
-        try
-        {
-            #if !MSIX_PACKAGE
-                var updateService = Services.GetRequiredService<IUpdateService>();
-                await updateService.CheckForUpdatesOnStartupAsync();
-            #else
-                await Task.CompletedTask;
-            #endif
-        }
-        catch (Exception ex)
-        {
-            _logger?.LogError(ex, "Failed during startup update check");
-        }
-    }
 }

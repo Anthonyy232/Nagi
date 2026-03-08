@@ -340,7 +340,6 @@ public interface ISettingsService
     Task<List<ServiceProviderSetting>> GetEnabledServiceProvidersAsync(ServiceCategory category);
     /// <summary>
     ///     Ensures all pending settings changes are written to persistent storage.
-    ///     For unpackaged deployments, this bypasses the save debounce delay.
     /// </summary>
     Task FlushAsync();
 }

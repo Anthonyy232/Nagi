@@ -110,7 +110,6 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     private readonly IUISettingsService _settingsService;
     private readonly IThemeService _themeService;
     private readonly IUIService _uiService;
-    private readonly IUpdateService _updateService;
     private readonly IPlaylistExportService _playlistExportService;
     private readonly ILibraryReader _libraryReader;
     private readonly ILibraryScanner _libraryScanner;
@@ -143,7 +142,6 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         IThemeService themeService,
         IApplicationLifecycle applicationLifecycle,
         IAppInfoService appInfoService,
-        IUpdateService updateService,
         ILastFmAuthService lastFmAuthService,
         IMusicPlaybackService playbackService,
         IPlaylistExportService playlistExportService,
@@ -161,7 +159,6 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         _themeService = themeService ?? throw new ArgumentNullException(nameof(themeService));
         _applicationLifecycle = applicationLifecycle ?? throw new ArgumentNullException(nameof(applicationLifecycle));
         _appInfoService = appInfoService ?? throw new ArgumentNullException(nameof(appInfoService));
-        _updateService = updateService ?? throw new ArgumentNullException(nameof(updateService));
         _lastFmAuthService = lastFmAuthService ?? throw new ArgumentNullException(nameof(lastFmAuthService));
         _playbackService = playbackService ?? throw new ArgumentNullException(nameof(playbackService));
         _playlistExportService = playlistExportService ?? throw new ArgumentNullException(nameof(playlistExportService));
@@ -181,11 +178,6 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         MetadataProviders.CollectionChanged += OnMetadataProvidersCollectionChanged;
         _playbackService.EqualizerChanged += OnPlaybackService_EqualizerChanged;
 
-#if MSIX_PACKAGE
-        IsUpdateControlVisible = false;
-#else
-        IsUpdateControlVisible = true;
-#endif
         
         AvailableEqualizerPresets = _playbackService.AvailablePresets.ToList();
         
@@ -204,7 +196,6 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         IsFetchOnlineMetadataEnabled = SettingsDefaults.FetchOnlineMetadataEnabled;
         IsFetchOnlineLyricsEnabled = SettingsDefaults.FetchOnlineLyricsEnabled;
         IsDiscordRichPresenceEnabled = SettingsDefaults.DiscordRichPresenceEnabled;
-        IsCheckForUpdatesEnabled = SettingsDefaults.CheckForUpdatesEnabled;
         IsRememberWindowSizeEnabled = SettingsDefaults.RememberWindowSizeEnabled;
         IsRememberWindowPositionEnabled = SettingsDefaults.RememberWindowPositionEnabled;
         IsRememberPaneStateEnabled = SettingsDefaults.RememberPaneStateEnabled;
@@ -231,7 +222,6 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     [ObservableProperty] public partial bool IsFetchOnlineMetadataEnabled { get; set; }
     [ObservableProperty] public partial bool IsFetchOnlineLyricsEnabled { get; set; }
     [ObservableProperty] public partial bool IsDiscordRichPresenceEnabled { get; set; }
-    [ObservableProperty] public partial bool IsCheckForUpdatesEnabled { get; set; }
     [ObservableProperty] public partial bool IsRememberWindowSizeEnabled { get; set; }
     [ObservableProperty] public partial bool IsRememberWindowPositionEnabled { get; set; }
     [ObservableProperty] public partial bool IsRememberPaneStateEnabled { get; set; }
@@ -331,7 +321,6 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
     public ObservableCollection<EqualizerBandViewModel> EqualizerBands { get; } = new();
     public ObservableRangeCollection<PlayerButtonSetting> PlayerButtons { get; } = new();
-    public bool IsUpdateControlVisible { get; }
     public bool IsLastFmNotConnected => !IsLastFmConnected;
     public bool IsLastFmInitialAuthEnabled => !IsConnectingToLastFm;
     public ObservableRangeCollection<NavigationItemSetting> NavigationItems { get; } = new();
@@ -488,7 +477,6 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             var onlineMetadataTask = _settingsService.GetFetchOnlineMetadataEnabledAsync();
             var onlineLyricsTask = _settingsService.GetFetchOnlineLyricsEnabledAsync();
             var discordRpcTask = _settingsService.GetDiscordRichPresenceEnabledAsync();
-            var checkUpdatesTask = _settingsService.GetCheckForUpdatesEnabledAsync();
             var rememberWindowTask = _settingsService.GetRememberWindowSizeEnabledAsync();
             var rememberPositionTask = _settingsService.GetRememberWindowPositionEnabledAsync();
             var rememberPaneTask = _settingsService.GetRememberPaneStateEnabledAsync();
@@ -517,7 +505,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
                 navItemsTask, playerButtonsTask, themeTask, backdropTask, dynamicThemingTask,
                 playerAnimationTask, restorePlaybackTask, autoLaunchTask, startMinimizedTask,
                 hideToTrayTask, miniPlayerTask, trayFlyoutTask, onlineMetadataTask,
-                onlineLyricsTask, discordRpcTask, checkUpdatesTask, rememberWindowTask,
+                onlineLyricsTask, discordRpcTask, rememberWindowTask,
                 rememberPositionTask, rememberPaneTask, volumeNormTask, fadeTask, fadeInTask, fadeOutTask, lastFmCredsTask, lastFmAuthTokenTask,
                 scrobblingTask, nowPlayingTask, accentColorTask, artistSplitTask, genreSplitTask, languageTask, lyricsProvidersTask, metadataProvidersTask,
                 playerMaterialTask, playerTintTask, languagesTask);
@@ -547,7 +535,6 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             IsFetchOnlineMetadataEnabled = onlineMetadataTask.Result;
             IsFetchOnlineLyricsEnabled = onlineLyricsTask.Result;
             IsDiscordRichPresenceEnabled = discordRpcTask.Result;
-            IsCheckForUpdatesEnabled = checkUpdatesTask.Result;
             IsRememberWindowSizeEnabled = rememberWindowTask.Result;
             IsRememberWindowPositionEnabled = rememberPositionTask.Result;
             IsRememberPaneStateEnabled = rememberPaneTask.Result;
@@ -730,12 +717,6 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
                 Nagi.WinUI.Resources.Strings.Settings_ResetError_Title,
                 string.Format(Nagi.WinUI.Resources.Strings.Settings_ResetError_Message, ex.Message));
         }
-    }
-
-    [RelayCommand]
-    private async Task CheckForUpdatesManuallyAsync()
-    {
-        await _updateService.CheckForUpdatesManuallyAsync();
     }
 
     [RelayCommand]
@@ -1508,11 +1489,6 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         _ = _settingsService.SetDiscordRichPresenceEnabledAsync(value);
     }
 
-    partial void OnIsCheckForUpdatesEnabledChanged(bool value)
-    {
-        if (_isInitializing) return;
-        _ = _settingsService.SetCheckForUpdatesEnabledAsync(value);
-    }
 
     partial void OnIsRememberWindowSizeEnabledChanged(bool value)
     {
