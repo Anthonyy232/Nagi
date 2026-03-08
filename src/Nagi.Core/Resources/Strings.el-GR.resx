@@ -108,7 +108,7 @@
     <value>Τραγούδια</value>
   </data>
   <data name="Label_Artists" xml:space="preserve">
-    <value>Artists</value>
+    <value>Καλλιτέχνες</value>
   </data>
   <data name="Label_Song" xml:space="preserve">
     <value>Τραγούδι</value>
@@ -232,7 +232,7 @@
     <value>με εξώφυλλο</value>
   </data>
   <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>with artist image</value>
+    <value>με εικόνα καλλιτέχνη</value>
   </data>
   <data name="Label_And" xml:space="preserve">
     <value>και</value>

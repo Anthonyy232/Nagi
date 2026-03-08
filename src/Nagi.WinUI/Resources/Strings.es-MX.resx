@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
@@ -75,6 +75,9 @@
   </data>
   <data name="NavItem_Folders" xml:space="preserve">
     <value>Carpetas</value>
+  </data>
+  <data name="NavItem_Insights" xml:space="preserve">
+    <value>Estadísticas</value>
   </data>
   <data name="NavItem_Settings" xml:space="preserve">
     <value>Configuración</value>
@@ -1602,10 +1605,10 @@ Error: {1}</value>
     <value>Ajustar automáticamente el volumen al nivel estándar (-14 LUFS) para evitar cambios repentinos de volumen.</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
-    <value>Fade on Play / Pause</value>
+    <value>Fundido al Reproducir / Pausar</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Description" xml:space="preserve">
-    <value>Smoothly fade the volume in when resuming and out when pausing instead of cutting instantly.</value>
+    <value>Atenúa suavemente el volumen al reanudar y desvanécelo al pausar en lugar de cortar instantáneamente.</value>
   </data>
   <data name="SettingsPage_Equalizer" xml:space="preserve">
     <value>Ecualizador de audio</value>
@@ -1680,10 +1683,10 @@ Error: {1}</value>
     <value>Defina los caracteres utilizados para dividir varios artistas (por ejemplo, ';/'). Deje en blanco para deshabilitar.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
-    <value>Genre Splitting</value>
+    <value>División de Géneros</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Define characters used to split multiple genres (e.g. ';/'). Leave empty to disable.</value>
+    <value>Define los caracteres usados para separar múltiples géneros (p. ej., ';/'). Deja vacío para deshabilitar.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>Volver a escanear biblioteca</value>
@@ -1878,75 +1881,168 @@ Error: {1}</value>
     <value>Reinicie la aplicación para que el cambio de idioma surta efecto completo.</value>
   </data>
   <data name="SettingsPage_About_PrivacyPolicy_Content" xml:space="preserve">
-    <value>Privacy Policy</value>
+    <value>Política de privacidad</value>
   </data>
   <data name="SettingsPage_BackupRestore_Header" xml:space="preserve">
-    <value>Backup &amp; Restore</value>
+    <value>Copia de seguridad y Restauración</value>
   </data>
   <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
-    <value>Create backups of your music library and settings, or restore from a previous backup</value>
+    <value>Crea copias de seguridad de tu biblioteca de música y ajustes, o restaura desde una copia de seguridad anterior</value>
   </data>
   <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
-    <value>Create Backup</value>
+    <value>Crear copia de seguridad</value>
   </data>
   <data name="SettingsPage_RestoreBackup_Content" xml:space="preserve">
-    <value>Restore Backup</value>
+    <value>Restaurar copia de seguridad</value>
   </data>
   <data name="Settings_Backup_Success_Title" xml:space="preserve">
-    <value>Backup Created</value>
+    <value>Copia de seguridad creada</value>
   </data>
   <data name="Settings_Backup_Success_Message" xml:space="preserve">
-    <value>Successfully created backup ({0:F2} MB) at: {1}</value>
+    <value>Copia de seguridad creada con éxito ({0:F2} MB) en: {1}</value>
   </data>
   <data name="Settings_Backup_Failed_Title" xml:space="preserve">
-    <value>Backup Failed</value>
+    <value>Error al crear copia de seguridad</value>
   </data>
   <data name="Settings_Backup_Failed_Message" xml:space="preserve">
-    <value>Failed to create backup. Please try again.</value>
+    <value>No se pudo crear la copia de seguridad. Por favor, inténtalo de nuevo.</value>
   </data>
   <data name="Settings_Restore_Invalid_Title" xml:space="preserve">
-    <value>Invalid Backup File</value>
+    <value>Archivo de copia de seguridad no válido</value>
   </data>
   <data name="Settings_Restore_Invalid_Message" xml:space="preserve">
-    <value>The selected file is not a valid Nagi backup.</value>
+    <value>El archivo seleccionado no es una copia de seguridad válida de Nagi.</value>
   </data>
   <data name="Settings_Restore_Confirm_Title" xml:space="preserve">
-    <value>Restore Backup?</value>
+    <value>¿Restaurar copia de seguridad?</value>
   </data>
   <data name="Settings_Restore_Confirm_Message" xml:space="preserve">
-    <value>Restoring from backup will replace all current app data. This action cannot be undone. The app will restart after restore. Continue?</value>
+    <value>La restauración desde una copia de seguridad reemplazará todos los datos actuales de la aplicación. Esta acción no se puede deshacer. La aplicación se reiniciará después de la restauración. ¿Continuar?</value>
   </data>
   <data name="Settings_Restore_Confirm_Button" xml:space="preserve">
-    <value>Restore</value>
+    <value>Restaurar</value>
   </data>
   <data name="Settings_Restore_Success_Title" xml:space="preserve">
-    <value>Restore Complete</value>
+    <value>Restauración completa</value>
   </data>
   <data name="Settings_Restore_Success_Message" xml:space="preserve">
-    <value>Successfully restored backup. The app will now restart.</value>
+    <value>Copia de seguridad restaurada con éxito. La aplicación se reiniciará ahora.</value>
   </data>
   <data name="Settings_Restore_Failed_Title" xml:space="preserve">
-    <value>Restore Failed</value>
+    <value>Error al restaurar</value>
   </data>
   <data name="Settings_Restore_Failed_Message" xml:space="preserve">
-    <value>Failed to restore from backup. Your data was not modified.</value>
+    <value>No se pudo restaurar desde la copia de seguridad. Tus datos no fueron modificados.</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
-    <value>Player Styling</value>
+    <value>Estilo del Reproductor</value>
   </data>
   <data name="PlayerBackgroundMaterial_Acrylic" xml:space="preserve">
-    <value>Acrylic (Glass)</value>
+    <value>Acrílico (Vidrio)</value>
   </data>
   <data name="PlayerBackgroundMaterial_Solid" xml:space="preserve">
-    <value>Solid (Opaque)</value>
+    <value>Sólido (Opaco)</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
-    <value>Customize the appearance of the floating player</value>
+    <value>Personaliza la apariencia del reproductor flotante</value>
   </data>
   <data name="SettingsPage_TintIntensity_Header" xml:space="preserve">
-    <value>Tint Intensity</value>
+    <value>Intensidad del Tinte</value>
   </data>
   <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
-    <value>Adjusts the vibrancy of the player background color</value>
+    <value>Ajusta la viveza del color de fondo del reproductor</value>
+  </data>
+  <data name="SettingsPage_FadeInDuration_Header" xml:space="preserve">
+    <value>Duración del fundido de entrada</value>
+  </data>
+  <data name="SettingsPage_FadeInDuration_Description" xml:space="preserve">
+    <value>La duración del efecto de fundido de entrada al reproducir (ms)</value>
+  </data>
+  <data name="SettingsPage_FadeOutDuration_Header" xml:space="preserve">
+    <value>Duración del fundido de salida</value>
+  </data>
+  <data name="SettingsPage_FadeOutDuration_Description" xml:space="preserve">
+    <value>La duración del efecto de fundido de salida al pausar (ms)</value>
+  </data>
+  <data name="Settings_Nav_Insights" xml:space="preserve">
+    <value>Estadísticas</value>
+  </data>
+  <data name="InsightsPage_Title" xml:space="preserve">
+    <value>Estadísticas</value>
+  </data>
+  <data name="InsightsPage_TotalTime" xml:space="preserve">
+    <value>Tiempo total de escucha</value>
+  </data>
+  <data name="InsightsPage_UniqueSongs" xml:space="preserve">
+    <value>Canciones únicas</value>
+  </data>
+  <data name="InsightsPage_PeakHour" xml:space="preserve">
+    <value>Hora pico</value>
+  </data>
+  <data name="InsightsPage_MostActiveDay" xml:space="preserve">
+    <value>Día más activo</value>
+  </data>
+  <data name="InsightsPage_TopSongs" xml:space="preserve">
+    <value>Canciones principales</value>
+  </data>
+  <data name="InsightsPage_TopArtists" xml:space="preserve">
+    <value>Artistas principales</value>
+  </data>
+  <data name="InsightsPage_TopAlbums" xml:space="preserve">
+    <value>Álbumes principales</value>
+  </data>
+  <data name="InsightsPage_TopGenres" xml:space="preserve">
+    <value>Géneros principales</value>
+  </data>
+  <data name="InsightsPage_Sources" xml:space="preserve">
+    <value>Fuentes de reproducción</value>
+  </data>
+  <data name="InsightsPage_Empty_Title" xml:space="preserve">
+    <value>Aún no hay datos de escucha</value>
+  </data>
+  <data name="InsightsPage_Empty_Subtitle" xml:space="preserve">
+    <value>Empieza a reproducir música para ver tus estadísticas aquí</value>
+  </data>
+  <data name="InsightsPage_Plays" xml:space="preserve">
+    <value>{0} reproducciones</value>
+  </data>
+  <data name="InsightsPage_Source_Albums" xml:space="preserve">
+    <value>Álbumes</value>
+  </data>
+  <data name="InsightsPage_Source_Artists" xml:space="preserve">
+    <value>Artistas</value>
+  </data>
+  <data name="InsightsPage_Source_Playlists" xml:space="preserve">
+    <value>Listas de reproducción</value>
+  </data>
+  <data name="InsightsPage_Source_SmartPlaylists" xml:space="preserve">
+    <value>Listas de reproducción inteligentes</value>
+  </data>
+  <data name="InsightsPage_Source_Folders" xml:space="preserve">
+    <value>Carpetas</value>
+  </data>
+  <data name="InsightsPage_Source_Genres" xml:space="preserve">
+    <value>Géneros</value>
+  </data>
+  <data name="InsightsPage_Source_Search" xml:space="preserve">
+    <value>Búsqueda</value>
+  </data>
+  <data name="InsightsPage_Source_Library" xml:space="preserve">
+    <value>Biblioteca</value>
+  </data>
+  <data name="InsightsPage_Source_Files" xml:space="preserve">
+    <value>Archivos</value>
+  </data>
+  <data name="InsightsPage_Reset_ToolTip" xml:space="preserve">
+    <value>Restablecer historial de escucha</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Title" xml:space="preserve">
+    <value>¿Restablecer historial de escucha?</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Message" xml:space="preserve">
+    <value>Esto eliminará permanentemente todo el historial y las estadísticas de escucha. Esta acción no se puede deshacer.</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Button" xml:space="preserve">
+    <value>Restablecer</value>
   </data>
 </root>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
@@ -75,6 +75,9 @@
   </data>
   <data name="NavItem_Folders" xml:space="preserve">
     <value>پوشه‌ها</value>
+  </data>
+  <data name="NavItem_Insights" xml:space="preserve">
+    <value>بینش‌ها</value>
   </data>
   <data name="NavItem_Settings" xml:space="preserve">
     <value>تنظیمات</value>
@@ -1589,10 +1592,10 @@
     <value>برای جلوگیری از تغییرات ناگهانی بلندی صدا، میزان صدا را به طور خودکار به سطح استاندارد (-14 LUFS) تنظیم کنید.</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
-    <value>Fade on Play / Pause</value>
+    <value>محوشدگی در پخش / مکث</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Description" xml:space="preserve">
-    <value>Smoothly fade the volume in when resuming and out when pausing instead of cutting instantly.</value>
+    <value>به جای قطع ناگهانی، هنگام ازسرگیری پخش به آرامی صدا را افزایش داده و هنگام مکث به آرامی کاهش دهید.</value>
   </data>
   <data name="SettingsPage_Equalizer" xml:space="preserve">
     <value>اکولایزر صدا</value>
@@ -1667,10 +1670,10 @@
     <value>کاراکترهای مورد استفاده برای تفکیک هنرمندان متعدد را تعریف کنید (مثلاً ';/'). برای غیرفعال کردن خالی بگذارید.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
-    <value>Genre Splitting</value>
+    <value>تفکیک ژانر</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Define characters used to split multiple genres (e.g. ';/'). Leave empty to disable.</value>
+    <value>کاراکترهای مورد استفاده برای تفکیک ژانرهای متعدد را تعریف کنید (مثلاً «;/»). برای غیرفعال کردن خالی بگذارید.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>اسکن مجدد کتابخانه</value>
@@ -1865,75 +1868,168 @@
     <value>لطفاً برنامه را برای اعمال کامل تغییر زبان، مجدداً راه‌اندازی کنید.</value>
   </data>
   <data name="SettingsPage_About_PrivacyPolicy_Content" xml:space="preserve">
-    <value>Privacy Policy</value>
+    <value>سیاست حفظ حریم خصوصی</value>
   </data>
   <data name="SettingsPage_BackupRestore_Header" xml:space="preserve">
-    <value>Backup &amp; Restore</value>
+    <value>پشتیبان‌گیری و بازیابی</value>
   </data>
   <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
-    <value>Create backups of your music library and settings, or restore from a previous backup</value>
+    <value>از کتابخانه موسیقی و تنظیمات خود پشتیبان تهیه کنید یا از پشتیبان قبلی بازیابی کنید</value>
   </data>
   <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
-    <value>Create Backup</value>
+    <value>ایجاد پشتیبان</value>
   </data>
   <data name="SettingsPage_RestoreBackup_Content" xml:space="preserve">
-    <value>Restore Backup</value>
+    <value>بازیابی پشتیبان</value>
   </data>
   <data name="Settings_Backup_Success_Title" xml:space="preserve">
-    <value>Backup Created</value>
+    <value>پشتیبان ایجاد شد</value>
   </data>
   <data name="Settings_Backup_Success_Message" xml:space="preserve">
-    <value>Successfully created backup ({0:F2} MB) at: {1}</value>
+    <value>پشتیبان با موفقیت ایجاد شد ({0:F2} مگابایت) در: {1}</value>
   </data>
   <data name="Settings_Backup_Failed_Title" xml:space="preserve">
-    <value>Backup Failed</value>
+    <value>پشتیبان‌گیری ناموفق بود</value>
   </data>
   <data name="Settings_Backup_Failed_Message" xml:space="preserve">
-    <value>Failed to create backup. Please try again.</value>
+    <value>ایجاد پشتیبان ناموفق بود. لطفاً دوباره تلاش کنید.</value>
   </data>
   <data name="Settings_Restore_Invalid_Title" xml:space="preserve">
-    <value>Invalid Backup File</value>
+    <value>فایل پشتیبان نامعتبر</value>
   </data>
   <data name="Settings_Restore_Invalid_Message" xml:space="preserve">
-    <value>The selected file is not a valid Nagi backup.</value>
+    <value>فایل انتخاب شده یک پشتیبان معتبر Nagi نیست.</value>
   </data>
   <data name="Settings_Restore_Confirm_Title" xml:space="preserve">
-    <value>Restore Backup?</value>
+    <value>بازیابی پشتیبان؟</value>
   </data>
   <data name="Settings_Restore_Confirm_Message" xml:space="preserve">
-    <value>Restoring from backup will replace all current app data. This action cannot be undone. The app will restart after restore. Continue?</value>
+    <value>بازیابی از پشتیبان، تمام داده‌های فعلی برنامه را جایگزین می‌کند. این عمل قابل بازگرداندن نیست. برنامه پس از بازیابی مجدداً راه‌اندازی خواهد شد. ادامه می‌دهید؟</value>
   </data>
   <data name="Settings_Restore_Confirm_Button" xml:space="preserve">
-    <value>Restore</value>
+    <value>بازیابی</value>
   </data>
   <data name="Settings_Restore_Success_Title" xml:space="preserve">
-    <value>Restore Complete</value>
+    <value>بازیابی کامل شد</value>
   </data>
   <data name="Settings_Restore_Success_Message" xml:space="preserve">
-    <value>Successfully restored backup. The app will now restart.</value>
+    <value>پشتیبان با موفقیت بازیابی شد. برنامه اکنون مجدداً راه‌اندازی خواهد شد.</value>
   </data>
   <data name="Settings_Restore_Failed_Title" xml:space="preserve">
-    <value>Restore Failed</value>
+    <value>بازیابی ناموفق بود</value>
   </data>
   <data name="Settings_Restore_Failed_Message" xml:space="preserve">
-    <value>Failed to restore from backup. Your data was not modified.</value>
+    <value>بازیابی از پشتیبان ناموفق بود. داده‌های شما تغییر نکردند.</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
-    <value>Player Styling</value>
+    <value>طراحی پخش‌کننده</value>
   </data>
   <data name="PlayerBackgroundMaterial_Acrylic" xml:space="preserve">
-    <value>Acrylic (Glass)</value>
+    <value>اکریلیک (شیشه)</value>
   </data>
   <data name="PlayerBackgroundMaterial_Solid" xml:space="preserve">
-    <value>Solid (Opaque)</value>
+    <value>جامد (مات)</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
-    <value>Customize the appearance of the floating player</value>
+    <value>ظاهر پخش‌کننده شناور را سفارشی کنید</value>
   </data>
   <data name="SettingsPage_TintIntensity_Header" xml:space="preserve">
-    <value>Tint Intensity</value>
+    <value>شدت رنگ</value>
   </data>
   <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
-    <value>Adjusts the vibrancy of the player background color</value>
+    <value>میزان شادابی رنگ پس‌زمینه پخش‌کننده را تنظیم می‌کند</value>
+  </data>
+  <data name="SettingsPage_FadeInDuration_Header" xml:space="preserve">
+    <value>مدت زمان ورودی تدریجی</value>
+  </data>
+  <data name="SettingsPage_FadeInDuration_Description" xml:space="preserve">
+    <value>مدت زمان افکت ورودی تدریجی هنگام پخش (میلی‌ثانیه)</value>
+  </data>
+  <data name="SettingsPage_FadeOutDuration_Header" xml:space="preserve">
+    <value>مدت زمان خروجی تدریجی</value>
+  </data>
+  <data name="SettingsPage_FadeOutDuration_Description" xml:space="preserve">
+    <value>مدت زمان افکت خروجی تدریجی هنگام توقف (میلی‌ثانیه)</value>
+  </data>
+  <data name="Settings_Nav_Insights" xml:space="preserve">
+    <value>بینش‌ها</value>
+  </data>
+  <data name="InsightsPage_Title" xml:space="preserve">
+    <value>بینش‌ها</value>
+  </data>
+  <data name="InsightsPage_TotalTime" xml:space="preserve">
+    <value>کل زمان گوش دادن</value>
+  </data>
+  <data name="InsightsPage_UniqueSongs" xml:space="preserve">
+    <value>آهنگ‌های منحصر به فرد</value>
+  </data>
+  <data name="InsightsPage_PeakHour" xml:space="preserve">
+    <value>ساعت اوج</value>
+  </data>
+  <data name="InsightsPage_MostActiveDay" xml:space="preserve">
+    <value>فعال‌ترین روز</value>
+  </data>
+  <data name="InsightsPage_TopSongs" xml:space="preserve">
+    <value>آهنگ‌های برتر</value>
+  </data>
+  <data name="InsightsPage_TopArtists" xml:space="preserve">
+    <value>هنرمندان برتر</value>
+  </data>
+  <data name="InsightsPage_TopAlbums" xml:space="preserve">
+    <value>آلبوم‌های برتر</value>
+  </data>
+  <data name="InsightsPage_TopGenres" xml:space="preserve">
+    <value>ژانرهای برتر</value>
+  </data>
+  <data name="InsightsPage_Sources" xml:space="preserve">
+    <value>منابع پخش</value>
+  </data>
+  <data name="InsightsPage_Empty_Title" xml:space="preserve">
+    <value>هنوز داده‌ای از گوش دادن وجود ندارد</value>
+  </data>
+  <data name="InsightsPage_Empty_Subtitle" xml:space="preserve">
+    <value>برای مشاهده بینش‌های خود اینجا، شروع به پخش موسیقی کنید</value>
+  </data>
+  <data name="InsightsPage_Plays" xml:space="preserve">
+    <value>{0} پخش</value>
+  </data>
+  <data name="InsightsPage_Source_Albums" xml:space="preserve">
+    <value>آلبوم‌ها</value>
+  </data>
+  <data name="InsightsPage_Source_Artists" xml:space="preserve">
+    <value>هنرمندان</value>
+  </data>
+  <data name="InsightsPage_Source_Playlists" xml:space="preserve">
+    <value>لیست‌های پخش</value>
+  </data>
+  <data name="InsightsPage_Source_SmartPlaylists" xml:space="preserve">
+    <value>لیست‌های پخش هوشمند</value>
+  </data>
+  <data name="InsightsPage_Source_Folders" xml:space="preserve">
+    <value>پوشه‌ها</value>
+  </data>
+  <data name="InsightsPage_Source_Genres" xml:space="preserve">
+    <value>ژانرها</value>
+  </data>
+  <data name="InsightsPage_Source_Search" xml:space="preserve">
+    <value>جستجو</value>
+  </data>
+  <data name="InsightsPage_Source_Library" xml:space="preserve">
+    <value>کتابخانه</value>
+  </data>
+  <data name="InsightsPage_Source_Files" xml:space="preserve">
+    <value>فایل‌ها</value>
+  </data>
+  <data name="InsightsPage_Reset_ToolTip" xml:space="preserve">
+    <value>بازنشانی سابقه گوش دادن</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Title" xml:space="preserve">
+    <value>بازنشانی سابقه گوش دادن؟</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Message" xml:space="preserve">
+    <value>این کار تمام سابقه گوش دادن و آمار را برای همیشه حذف خواهد کرد. این عمل قابل بازگرداندن نیست.</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Button" xml:space="preserve">
+    <value>بازنشانی</value>
   </data>
 </root>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
@@ -75,6 +75,9 @@
   </data>
   <data name="NavItem_Folders" xml:space="preserve">
     <value>資料夾</value>
+  </data>
+  <data name="NavItem_Insights" xml:space="preserve">
+    <value>深入分析</value>
   </data>
   <data name="NavItem_Settings" xml:space="preserve">
     <value>設定</value>
@@ -1589,10 +1592,10 @@
     <value>自動將音量調整到標準等級 (-14 LUFS)，以避免音量突然變化。</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
-    <value>Fade on Play / Pause</value>
+    <value>播放/暫停時淡入淡出</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Description" xml:space="preserve">
-    <value>Smoothly fade the volume in when resuming and out when pausing instead of cutting instantly.</value>
+    <value>在恢復播放時音量平穩淡入，在暫停時音量平穩淡出，而非立即切斷。</value>
   </data>
   <data name="SettingsPage_Equalizer" xml:space="preserve">
     <value>音訊等化器</value>
@@ -1667,10 +1670,10 @@
     <value>定義用於分割多個藝人的字元（例如「;/」）。留空則禁用。</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
-    <value>Genre Splitting</value>
+    <value>類型分隔</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Define characters used to split multiple genres (e.g. ';/'). Leave empty to disable.</value>
+    <value>定義用於分隔多個類型的字元 (例如 ';/')。留空則停用。</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>重新掃描媒體庫</value>
@@ -1865,75 +1868,168 @@
     <value>請重新啟動應用程式，以使語言變更完全生效。</value>
   </data>
   <data name="SettingsPage_About_PrivacyPolicy_Content" xml:space="preserve">
-    <value>Privacy Policy</value>
+    <value>隱私權政策</value>
   </data>
   <data name="SettingsPage_BackupRestore_Header" xml:space="preserve">
-    <value>Backup &amp; Restore</value>
+    <value>備份與還原</value>
   </data>
   <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
-    <value>Create backups of your music library and settings, or restore from a previous backup</value>
+    <value>建立音樂庫與設定的備份，或從之前的備份還原</value>
   </data>
   <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
-    <value>Create Backup</value>
+    <value>建立備份</value>
   </data>
   <data name="SettingsPage_RestoreBackup_Content" xml:space="preserve">
-    <value>Restore Backup</value>
+    <value>還原備份</value>
   </data>
   <data name="Settings_Backup_Success_Title" xml:space="preserve">
-    <value>Backup Created</value>
+    <value>備份已建立</value>
   </data>
   <data name="Settings_Backup_Success_Message" xml:space="preserve">
-    <value>Successfully created backup ({0:F2} MB) at: {1}</value>
+    <value>已成功建立備份 ({0:F2} MB)，位置：{1}</value>
   </data>
   <data name="Settings_Backup_Failed_Title" xml:space="preserve">
-    <value>Backup Failed</value>
+    <value>備份失敗</value>
   </data>
   <data name="Settings_Backup_Failed_Message" xml:space="preserve">
-    <value>Failed to create backup. Please try again.</value>
+    <value>建立備份失敗。請再試一次。</value>
   </data>
   <data name="Settings_Restore_Invalid_Title" xml:space="preserve">
-    <value>Invalid Backup File</value>
+    <value>無效的備份檔案</value>
   </data>
   <data name="Settings_Restore_Invalid_Message" xml:space="preserve">
-    <value>The selected file is not a valid Nagi backup.</value>
+    <value>所選檔案不是有效的 Nagi 備份。</value>
   </data>
   <data name="Settings_Restore_Confirm_Title" xml:space="preserve">
-    <value>Restore Backup?</value>
+    <value>還原備份？</value>
   </data>
   <data name="Settings_Restore_Confirm_Message" xml:space="preserve">
-    <value>Restoring from backup will replace all current app data. This action cannot be undone. The app will restart after restore. Continue?</value>
+    <value>從備份還原將會取代所有目前的應用程式資料。此動作無法復原。還原後應用程式將重新啟動。是否繼續？</value>
   </data>
   <data name="Settings_Restore_Confirm_Button" xml:space="preserve">
-    <value>Restore</value>
+    <value>還原</value>
   </data>
   <data name="Settings_Restore_Success_Title" xml:space="preserve">
-    <value>Restore Complete</value>
+    <value>還原完成</value>
   </data>
   <data name="Settings_Restore_Success_Message" xml:space="preserve">
-    <value>Successfully restored backup. The app will now restart.</value>
+    <value>已成功還原備份。應用程式現在將重新啟動。</value>
   </data>
   <data name="Settings_Restore_Failed_Title" xml:space="preserve">
-    <value>Restore Failed</value>
+    <value>還原失敗</value>
   </data>
   <data name="Settings_Restore_Failed_Message" xml:space="preserve">
-    <value>Failed to restore from backup. Your data was not modified.</value>
+    <value>從備份還原失敗。您的資料未經修改。</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
-    <value>Player Styling</value>
+    <value>播放器樣式</value>
   </data>
   <data name="PlayerBackgroundMaterial_Acrylic" xml:space="preserve">
-    <value>Acrylic (Glass)</value>
+    <value>壓克力 (玻璃)</value>
   </data>
   <data name="PlayerBackgroundMaterial_Solid" xml:space="preserve">
-    <value>Solid (Opaque)</value>
+    <value>純色 (不透明)</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
-    <value>Customize the appearance of the floating player</value>
+    <value>自訂浮動播放器的外觀</value>
   </data>
   <data name="SettingsPage_TintIntensity_Header" xml:space="preserve">
-    <value>Tint Intensity</value>
+    <value>色調強度</value>
   </data>
   <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
-    <value>Adjusts the vibrancy of the player background color</value>
+    <value>調整播放器背景色彩的鮮豔度</value>
+  </data>
+  <data name="SettingsPage_FadeInDuration_Header" xml:space="preserve">
+    <value>淡入持續時間</value>
+  </data>
+  <data name="SettingsPage_FadeInDuration_Description" xml:space="preserve">
+    <value>播放時淡入效果的持續時間 (毫秒)</value>
+  </data>
+  <data name="SettingsPage_FadeOutDuration_Header" xml:space="preserve">
+    <value>淡出持續時間</value>
+  </data>
+  <data name="SettingsPage_FadeOutDuration_Description" xml:space="preserve">
+    <value>暫停時淡出效果的持續時間 (毫秒)</value>
+  </data>
+  <data name="Settings_Nav_Insights" xml:space="preserve">
+    <value>深入分析</value>
+  </data>
+  <data name="InsightsPage_Title" xml:space="preserve">
+    <value>深入分析</value>
+  </data>
+  <data name="InsightsPage_TotalTime" xml:space="preserve">
+    <value>總聆聽時間</value>
+  </data>
+  <data name="InsightsPage_UniqueSongs" xml:space="preserve">
+    <value>獨特歌曲數</value>
+  </data>
+  <data name="InsightsPage_PeakHour" xml:space="preserve">
+    <value>高峰時段</value>
+  </data>
+  <data name="InsightsPage_MostActiveDay" xml:space="preserve">
+    <value>最活躍的一天</value>
+  </data>
+  <data name="InsightsPage_TopSongs" xml:space="preserve">
+    <value>熱門歌曲</value>
+  </data>
+  <data name="InsightsPage_TopArtists" xml:space="preserve">
+    <value>熱門藝人</value>
+  </data>
+  <data name="InsightsPage_TopAlbums" xml:space="preserve">
+    <value>熱門專輯</value>
+  </data>
+  <data name="InsightsPage_TopGenres" xml:space="preserve">
+    <value>熱門類型</value>
+  </data>
+  <data name="InsightsPage_Sources" xml:space="preserve">
+    <value>播放來源</value>
+  </data>
+  <data name="InsightsPage_Empty_Title" xml:space="preserve">
+    <value>尚無聆聽資料</value>
+  </data>
+  <data name="InsightsPage_Empty_Subtitle" xml:space="preserve">
+    <value>開始播放音樂以在此查看您的深入分析</value>
+  </data>
+  <data name="InsightsPage_Plays" xml:space="preserve">
+    <value>{0} 次播放</value>
+  </data>
+  <data name="InsightsPage_Source_Albums" xml:space="preserve">
+    <value>專輯</value>
+  </data>
+  <data name="InsightsPage_Source_Artists" xml:space="preserve">
+    <value>藝人</value>
+  </data>
+  <data name="InsightsPage_Source_Playlists" xml:space="preserve">
+    <value>播放清單</value>
+  </data>
+  <data name="InsightsPage_Source_SmartPlaylists" xml:space="preserve">
+    <value>智慧播放清單</value>
+  </data>
+  <data name="InsightsPage_Source_Folders" xml:space="preserve">
+    <value>資料夾</value>
+  </data>
+  <data name="InsightsPage_Source_Genres" xml:space="preserve">
+    <value>類型</value>
+  </data>
+  <data name="InsightsPage_Source_Search" xml:space="preserve">
+    <value>搜尋</value>
+  </data>
+  <data name="InsightsPage_Source_Library" xml:space="preserve">
+    <value>媒體庫</value>
+  </data>
+  <data name="InsightsPage_Source_Files" xml:space="preserve">
+    <value>檔案</value>
+  </data>
+  <data name="InsightsPage_Reset_ToolTip" xml:space="preserve">
+    <value>重設聆聽歷史記錄</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Title" xml:space="preserve">
+    <value>重設聆聽歷史記錄？</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Message" xml:space="preserve">
+    <value>這將永久刪除所有聆聽歷史記錄和統計資料。此操作無法復原。</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Button" xml:space="preserve">
+    <value>重設</value>
   </data>
 </root>

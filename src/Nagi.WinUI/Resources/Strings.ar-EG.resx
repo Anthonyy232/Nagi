@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
@@ -75,6 +75,9 @@
   </data>
   <data name="NavItem_Folders" xml:space="preserve">
     <value>المجلدات</value>
+  </data>
+  <data name="NavItem_Insights" xml:space="preserve">
+    <value>إحصاءات</value>
   </data>
   <data name="NavItem_Settings" xml:space="preserve">
     <value>الإعدادات</value>
@@ -1600,10 +1603,10 @@
     <value>ضبط مستوى الصوت تلقائيًا إلى المستوى القياسي (-14 LUFS) لتجنب التغيرات المفاجئة في الصوت.</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
-    <value>Fade on Play / Pause</value>
+    <value>تلاشي الصوت عند التشغيل / الإيقاف المؤقت</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Description" xml:space="preserve">
-    <value>Smoothly fade the volume in when resuming and out when pausing instead of cutting instantly.</value>
+    <value>تلاشي الصوت تدريجياً عند الاستئناف وإخفاضه تدريجياً عند الإيقاف المؤقت بدلاً من القطع الفوري.</value>
   </data>
   <data name="SettingsPage_Equalizer" xml:space="preserve">
     <value>معادل الصوت</value>
@@ -1678,10 +1681,10 @@
     <value>حدد الأحرف المستخدمة لتقسيم الفنانين المتعددين (مثل ';/'). اتركها فارغة للتعطيل.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
-    <value>Genre Splitting</value>
+    <value>تقسيم الأنواع</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Define characters used to split multiple genres (e.g. ';/'). Leave empty to disable.</value>
+    <value>حدد الأحرف المستخدمة لتقسيم الأنواع المتعددة (مثل ';/'). اتركها فارغة للتعطيل.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>إعادة فحص المكتبة</value>
@@ -1876,75 +1879,168 @@
     <value>يرجى إعادة تشغيل التطبيق لتصبح تغييرات اللغة سارية المفعول بالكامل.</value>
   </data>
   <data name="SettingsPage_About_PrivacyPolicy_Content" xml:space="preserve">
-    <value>Privacy Policy</value>
+    <value>سياسة الخصوصية</value>
   </data>
   <data name="SettingsPage_BackupRestore_Header" xml:space="preserve">
-    <value>Backup &amp; Restore</value>
+    <value>النسخ الاحتياطي والاستعادة</value>
   </data>
   <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
-    <value>Create backups of your music library and settings, or restore from a previous backup</value>
+    <value>قم بإنشاء نسخ احتياطية لمكتبة الموسيقى والإعدادات الخاصة بك، أو الاستعادة من نسخة احتياطية سابقة</value>
   </data>
   <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
-    <value>Create Backup</value>
+    <value>إنشاء نسخة احتياطية</value>
   </data>
   <data name="SettingsPage_RestoreBackup_Content" xml:space="preserve">
-    <value>Restore Backup</value>
+    <value>استعادة نسخة احتياطية</value>
   </data>
   <data name="Settings_Backup_Success_Title" xml:space="preserve">
-    <value>Backup Created</value>
+    <value>تم إنشاء النسخة الاحتياطية</value>
   </data>
   <data name="Settings_Backup_Success_Message" xml:space="preserve">
-    <value>Successfully created backup ({0:F2} MB) at: {1}</value>
+    <value>تم إنشاء نسخة احتياطية بنجاح ({0:F2} ميجابايت) في: {1}</value>
   </data>
   <data name="Settings_Backup_Failed_Title" xml:space="preserve">
-    <value>Backup Failed</value>
+    <value>فشل النسخ الاحتياطي</value>
   </data>
   <data name="Settings_Backup_Failed_Message" xml:space="preserve">
-    <value>Failed to create backup. Please try again.</value>
+    <value>فشل إنشاء النسخة الاحتياطية. يرجى المحاولة مرة أخرى.</value>
   </data>
   <data name="Settings_Restore_Invalid_Title" xml:space="preserve">
-    <value>Invalid Backup File</value>
+    <value>ملف النسخة الاحتياطية غير صالح</value>
   </data>
   <data name="Settings_Restore_Invalid_Message" xml:space="preserve">
-    <value>The selected file is not a valid Nagi backup.</value>
+    <value>الملف المحدد ليس نسخة احتياطية صالحة لتطبيق Nagi.</value>
   </data>
   <data name="Settings_Restore_Confirm_Title" xml:space="preserve">
-    <value>Restore Backup?</value>
+    <value>استعادة النسخة الاحتياطية؟</value>
   </data>
   <data name="Settings_Restore_Confirm_Message" xml:space="preserve">
-    <value>Restoring from backup will replace all current app data. This action cannot be undone. The app will restart after restore. Continue?</value>
+    <value>ستؤدي الاستعادة من النسخة الاحتياطية إلى استبدال جميع بيانات التطبيق الحالية. لا يمكن التراجع عن هذا الإجراء. سيعاد تشغيل التطبيق بعد الاستعادة. هل تريد المتابعة؟</value>
   </data>
   <data name="Settings_Restore_Confirm_Button" xml:space="preserve">
-    <value>Restore</value>
+    <value>استعادة</value>
   </data>
   <data name="Settings_Restore_Success_Title" xml:space="preserve">
-    <value>Restore Complete</value>
+    <value>اكتملت الاستعادة</value>
   </data>
   <data name="Settings_Restore_Success_Message" xml:space="preserve">
-    <value>Successfully restored backup. The app will now restart.</value>
+    <value>تمت استعادة النسخة الاحتياطية بنجاح. سيعاد تشغيل التطبيق الآن.</value>
   </data>
   <data name="Settings_Restore_Failed_Title" xml:space="preserve">
-    <value>Restore Failed</value>
+    <value>فشلت الاستعادة</value>
   </data>
   <data name="Settings_Restore_Failed_Message" xml:space="preserve">
-    <value>Failed to restore from backup. Your data was not modified.</value>
+    <value>فشل في الاستعادة من النسخة الاحتياطية. لم يتم تعديل بياناتك.</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
-    <value>Player Styling</value>
+    <value>نمط المشغل</value>
   </data>
   <data name="PlayerBackgroundMaterial_Acrylic" xml:space="preserve">
-    <value>Acrylic (Glass)</value>
+    <value>أكريليك (زجاجي)</value>
   </data>
   <data name="PlayerBackgroundMaterial_Solid" xml:space="preserve">
-    <value>Solid (Opaque)</value>
+    <value>مصمت (غير شفاف)</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
-    <value>Customize the appearance of the floating player</value>
+    <value>تخصيص مظهر المشغل العائم</value>
   </data>
   <data name="SettingsPage_TintIntensity_Header" xml:space="preserve">
-    <value>Tint Intensity</value>
+    <value>شدة الصبغة</value>
   </data>
   <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
-    <value>Adjusts the vibrancy of the player background color</value>
+    <value>يضبط حيوية لون خلفية المشغل</value>
+  </data>
+  <data name="SettingsPage_FadeInDuration_Header" xml:space="preserve">
+    <value>مدة الظهور التدريجي</value>
+  </data>
+  <data name="SettingsPage_FadeInDuration_Description" xml:space="preserve">
+    <value>مدة تأثير الظهور التدريجي عند التشغيل (مللي ثانية)</value>
+  </data>
+  <data name="SettingsPage_FadeOutDuration_Header" xml:space="preserve">
+    <value>مدة الاختفاء التدريجي</value>
+  </data>
+  <data name="SettingsPage_FadeOutDuration_Description" xml:space="preserve">
+    <value>مدة تأثير الاختفاء التدريجي عند الإيقاف المؤقت (مللي ثانية)</value>
+  </data>
+  <data name="Settings_Nav_Insights" xml:space="preserve">
+    <value>إحصاءات</value>
+  </data>
+  <data name="InsightsPage_Title" xml:space="preserve">
+    <value>إحصاءات</value>
+  </data>
+  <data name="InsightsPage_TotalTime" xml:space="preserve">
+    <value>إجمالي وقت الاستماع</value>
+  </data>
+  <data name="InsightsPage_UniqueSongs" xml:space="preserve">
+    <value>أغاني فريدة</value>
+  </data>
+  <data name="InsightsPage_PeakHour" xml:space="preserve">
+    <value>ساعة الذروة</value>
+  </data>
+  <data name="InsightsPage_MostActiveDay" xml:space="preserve">
+    <value>اليوم الأكثر نشاطًا</value>
+  </data>
+  <data name="InsightsPage_TopSongs" xml:space="preserve">
+    <value>أفضل الأغاني</value>
+  </data>
+  <data name="InsightsPage_TopArtists" xml:space="preserve">
+    <value>أفضل الفنانين</value>
+  </data>
+  <data name="InsightsPage_TopAlbums" xml:space="preserve">
+    <value>أفضل الألبومات</value>
+  </data>
+  <data name="InsightsPage_TopGenres" xml:space="preserve">
+    <value>أفضل الأنواع</value>
+  </data>
+  <data name="InsightsPage_Sources" xml:space="preserve">
+    <value>مصادر التشغيل</value>
+  </data>
+  <data name="InsightsPage_Empty_Title" xml:space="preserve">
+    <value>لا توجد بيانات استماع بعد</value>
+  </data>
+  <data name="InsightsPage_Empty_Subtitle" xml:space="preserve">
+    <value>ابدأ تشغيل الموسيقى لترى إحصاءاتك هنا</value>
+  </data>
+  <data name="InsightsPage_Plays" xml:space="preserve">
+    <value>{0} تشغيلات</value>
+  </data>
+  <data name="InsightsPage_Source_Albums" xml:space="preserve">
+    <value>ألبومات</value>
+  </data>
+  <data name="InsightsPage_Source_Artists" xml:space="preserve">
+    <value>فنانون</value>
+  </data>
+  <data name="InsightsPage_Source_Playlists" xml:space="preserve">
+    <value>قوائم التشغيل</value>
+  </data>
+  <data name="InsightsPage_Source_SmartPlaylists" xml:space="preserve">
+    <value>قوائم التشغيل الذكية</value>
+  </data>
+  <data name="InsightsPage_Source_Folders" xml:space="preserve">
+    <value>مجلدات</value>
+  </data>
+  <data name="InsightsPage_Source_Genres" xml:space="preserve">
+    <value>أنواع</value>
+  </data>
+  <data name="InsightsPage_Source_Search" xml:space="preserve">
+    <value>بحث</value>
+  </data>
+  <data name="InsightsPage_Source_Library" xml:space="preserve">
+    <value>المكتبة</value>
+  </data>
+  <data name="InsightsPage_Source_Files" xml:space="preserve">
+    <value>ملفات</value>
+  </data>
+  <data name="InsightsPage_Reset_ToolTip" xml:space="preserve">
+    <value>إعادة تعيين سجل الاستماع</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Title" xml:space="preserve">
+    <value>هل تريد إعادة تعيين سجل الاستماع؟</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Message" xml:space="preserve">
+    <value>سيؤدي هذا إلى حذف جميع سجلات الاستماع والإحصاءات نهائيًا. لا يمكن التراجع عن هذا الإجراء.</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Button" xml:space="preserve">
+    <value>إعادة تعيين</value>
   </data>
 </root>

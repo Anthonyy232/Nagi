@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
@@ -75,6 +75,9 @@
   </data>
   <data name="NavItem_Folders" xml:space="preserve">
     <value>Mapper</value>
+  </data>
+  <data name="NavItem_Insights" xml:space="preserve">
+    <value>Innsikt</value>
   </data>
   <data name="NavItem_Settings" xml:space="preserve">
     <value>Innstillinger</value>
@@ -1602,10 +1605,10 @@ Feil: {1}</value>
     <value>Juster volumet automatisk til standardnivået (-14 LUFS) for å unngå plutselige volumendringer.</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
-    <value>Fade on Play / Pause</value>
+    <value>Ton ut/inn ved avspilling / pause</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Description" xml:space="preserve">
-    <value>Smoothly fade the volume in when resuming and out when pausing instead of cutting instantly.</value>
+    <value>Ton volumet jevnt inn ved gjenopptakelse og ut ved pause, i stedet for å kutte lyden umiddelbart.</value>
   </data>
   <data name="SettingsPage_Equalizer" xml:space="preserve">
     <value>Lydequalizer</value>
@@ -1680,10 +1683,10 @@ Feil: {1}</value>
     <value>Definer tegn som brukes til å splitte flere artister (f.eks. ';/'). La stå tomt for å deaktivere.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
-    <value>Genre Splitting</value>
+    <value>Sjangerdeling</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Define characters used to split multiple genres (e.g. ';/'). Leave empty to disable.</value>
+    <value>Definer tegn som brukes til å dele flere sjangere (f.eks. ';/'). La stå tom for å deaktivere.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>Skann bibliotek på nytt</value>
@@ -1878,75 +1881,168 @@ Feil: {1}</value>
     <value>Vennligst start applikasjonen på nytt for at språkendringen skal tre i kraft.</value>
   </data>
   <data name="SettingsPage_About_PrivacyPolicy_Content" xml:space="preserve">
-    <value>Privacy Policy</value>
+    <value>Personvernregler</value>
   </data>
   <data name="SettingsPage_BackupRestore_Header" xml:space="preserve">
-    <value>Backup &amp; Restore</value>
+    <value>Sikkerhetskopiering og gjenoppretting</value>
   </data>
   <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
-    <value>Create backups of your music library and settings, or restore from a previous backup</value>
+    <value>Opprett sikkerhetskopier av musikkbiblioteket og innstillingene dine, eller gjenopprett fra en tidligere sikkerhetskopi</value>
   </data>
   <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
-    <value>Create Backup</value>
+    <value>Opprett sikkerhetskopi</value>
   </data>
   <data name="SettingsPage_RestoreBackup_Content" xml:space="preserve">
-    <value>Restore Backup</value>
+    <value>Gjenopprett sikkerhetskopi</value>
   </data>
   <data name="Settings_Backup_Success_Title" xml:space="preserve">
-    <value>Backup Created</value>
+    <value>Sikkerhetskopi opprettet</value>
   </data>
   <data name="Settings_Backup_Success_Message" xml:space="preserve">
-    <value>Successfully created backup ({0:F2} MB) at: {1}</value>
+    <value>Sikkerhetskopi opprettet ({0:F2} MB) på: {1}</value>
   </data>
   <data name="Settings_Backup_Failed_Title" xml:space="preserve">
-    <value>Backup Failed</value>
+    <value>Sikkerhetskopiering mislyktes</value>
   </data>
   <data name="Settings_Backup_Failed_Message" xml:space="preserve">
-    <value>Failed to create backup. Please try again.</value>
+    <value>Kunne ikke opprette sikkerhetskopi. Vennligst prøv igjen.</value>
   </data>
   <data name="Settings_Restore_Invalid_Title" xml:space="preserve">
-    <value>Invalid Backup File</value>
+    <value>Ugyldig sikkerhetskopifil</value>
   </data>
   <data name="Settings_Restore_Invalid_Message" xml:space="preserve">
-    <value>The selected file is not a valid Nagi backup.</value>
+    <value>Den valgte filen er ikke en gyldig Nagi-sikkerhetskopi.</value>
   </data>
   <data name="Settings_Restore_Confirm_Title" xml:space="preserve">
-    <value>Restore Backup?</value>
+    <value>Gjenopprette sikkerhetskopi?</value>
   </data>
   <data name="Settings_Restore_Confirm_Message" xml:space="preserve">
-    <value>Restoring from backup will replace all current app data. This action cannot be undone. The app will restart after restore. Continue?</value>
+    <value>Gjenoppretting fra sikkerhetskopi vil erstatte alle gjeldende appdata. Denne handlingen kan ikke angres. Appen vil starte på nytt etter gjenoppretting. Fortsett?</value>
   </data>
   <data name="Settings_Restore_Confirm_Button" xml:space="preserve">
-    <value>Restore</value>
+    <value>Gjenopprett</value>
   </data>
   <data name="Settings_Restore_Success_Title" xml:space="preserve">
-    <value>Restore Complete</value>
+    <value>Gjenoppretting fullført</value>
   </data>
   <data name="Settings_Restore_Success_Message" xml:space="preserve">
-    <value>Successfully restored backup. The app will now restart.</value>
+    <value>Sikkerhetskopi gjenopprettet. Appen vil nå starte på nytt.</value>
   </data>
   <data name="Settings_Restore_Failed_Title" xml:space="preserve">
-    <value>Restore Failed</value>
+    <value>Gjenoppretting mislyktes</value>
   </data>
   <data name="Settings_Restore_Failed_Message" xml:space="preserve">
-    <value>Failed to restore from backup. Your data was not modified.</value>
+    <value>Kunne ikke gjenopprette fra sikkerhetskopi. Dataene dine ble ikke endret.</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
-    <value>Player Styling</value>
+    <value>Avspillerstil</value>
   </data>
   <data name="PlayerBackgroundMaterial_Acrylic" xml:space="preserve">
-    <value>Acrylic (Glass)</value>
+    <value>Akryl (Glass)</value>
   </data>
   <data name="PlayerBackgroundMaterial_Solid" xml:space="preserve">
-    <value>Solid (Opaque)</value>
+    <value>Solid (Ugjenomsiktig)</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
-    <value>Customize the appearance of the floating player</value>
+    <value>Tilpass utseendet til den flytende avspilleren</value>
   </data>
   <data name="SettingsPage_TintIntensity_Header" xml:space="preserve">
-    <value>Tint Intensity</value>
+    <value>Fargestyrke</value>
   </data>
   <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
-    <value>Adjusts the vibrancy of the player background color</value>
+    <value>Justerer livligheten til avspillerens bakgrunnsfarge</value>
+  </data>
+  <data name="SettingsPage_FadeInDuration_Header" xml:space="preserve">
+    <value>Innfade-varighet</value>
+  </data>
+  <data name="SettingsPage_FadeInDuration_Description" xml:space="preserve">
+    <value>Varigheten av innfade-effekten ved avspilling (ms)</value>
+  </data>
+  <data name="SettingsPage_FadeOutDuration_Header" xml:space="preserve">
+    <value>Utfade-varighet</value>
+  </data>
+  <data name="SettingsPage_FadeOutDuration_Description" xml:space="preserve">
+    <value>Varigheten av utfade-effekten ved pausing (ms)</value>
+  </data>
+  <data name="Settings_Nav_Insights" xml:space="preserve">
+    <value>Innsikt</value>
+  </data>
+  <data name="InsightsPage_Title" xml:space="preserve">
+    <value>Innsikt</value>
+  </data>
+  <data name="InsightsPage_TotalTime" xml:space="preserve">
+    <value>Total lyttetid</value>
+  </data>
+  <data name="InsightsPage_UniqueSongs" xml:space="preserve">
+    <value>Unike sanger</value>
+  </data>
+  <data name="InsightsPage_PeakHour" xml:space="preserve">
+    <value>Mest aktive time</value>
+  </data>
+  <data name="InsightsPage_MostActiveDay" xml:space="preserve">
+    <value>Mest aktive dag</value>
+  </data>
+  <data name="InsightsPage_TopSongs" xml:space="preserve">
+    <value>Topplåter</value>
+  </data>
+  <data name="InsightsPage_TopArtists" xml:space="preserve">
+    <value>Toppartister</value>
+  </data>
+  <data name="InsightsPage_TopAlbums" xml:space="preserve">
+    <value>Toppalbum</value>
+  </data>
+  <data name="InsightsPage_TopGenres" xml:space="preserve">
+    <value>Toppsjangre</value>
+  </data>
+  <data name="InsightsPage_Sources" xml:space="preserve">
+    <value>Avspillingskilder</value>
+  </data>
+  <data name="InsightsPage_Empty_Title" xml:space="preserve">
+    <value>Ingen lyttedata ennå</value>
+  </data>
+  <data name="InsightsPage_Empty_Subtitle" xml:space="preserve">
+    <value>Start avspilling for å se din innsikt her</value>
+  </data>
+  <data name="InsightsPage_Plays" xml:space="preserve">
+    <value>{0} avspillinger</value>
+  </data>
+  <data name="InsightsPage_Source_Albums" xml:space="preserve">
+    <value>Album</value>
+  </data>
+  <data name="InsightsPage_Source_Artists" xml:space="preserve">
+    <value>Artister</value>
+  </data>
+  <data name="InsightsPage_Source_Playlists" xml:space="preserve">
+    <value>Spillelister</value>
+  </data>
+  <data name="InsightsPage_Source_SmartPlaylists" xml:space="preserve">
+    <value>Smarte spillelister</value>
+  </data>
+  <data name="InsightsPage_Source_Folders" xml:space="preserve">
+    <value>Mapper</value>
+  </data>
+  <data name="InsightsPage_Source_Genres" xml:space="preserve">
+    <value>Sjangre</value>
+  </data>
+  <data name="InsightsPage_Source_Search" xml:space="preserve">
+    <value>Søk</value>
+  </data>
+  <data name="InsightsPage_Source_Library" xml:space="preserve">
+    <value>Bibliotek</value>
+  </data>
+  <data name="InsightsPage_Source_Files" xml:space="preserve">
+    <value>Filer</value>
+  </data>
+  <data name="InsightsPage_Reset_ToolTip" xml:space="preserve">
+    <value>Nullstill lyttehistorikk</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Title" xml:space="preserve">
+    <value>Nullstille lyttehistorikk?</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Message" xml:space="preserve">
+    <value>Dette vil slette all lyttehistorikk og statistikk permanent. Dette kan ikke angres.</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Button" xml:space="preserve">
+    <value>Nullstill</value>
   </data>
 </root>

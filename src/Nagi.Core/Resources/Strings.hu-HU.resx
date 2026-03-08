@@ -108,7 +108,7 @@
     <value>Dalok</value>
   </data>
   <data name="Label_Artists" xml:space="preserve">
-    <value>Artists</value>
+    <value>Előadók</value>
   </data>
   <data name="Label_Song" xml:space="preserve">
     <value>Dal</value>
@@ -232,7 +232,7 @@
     <value>borítóképpel</value>
   </data>
   <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>with artist image</value>
+    <value>előadó képpel</value>
   </data>
   <data name="Label_And" xml:space="preserve">
     <value>és</value>

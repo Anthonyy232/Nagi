@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
@@ -75,6 +75,9 @@
   </data>
   <data name="NavItem_Folders" xml:space="preserve">
     <value>Vouers</value>
+  </data>
+  <data name="NavItem_Insights" xml:space="preserve">
+    <value>Insigte</value>
   </data>
   <data name="NavItem_Settings" xml:space="preserve">
     <value>Instellings</value>
@@ -1602,10 +1605,10 @@ Fout: {1}</value>
     <value>Verstel volume outomaties na die standaardvlak (-14 LUFS) om skielike volume-veranderinge te vermy.</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
-    <value>Fade on Play / Pause</value>
+    <value>Vervaag by Speel / Pouse</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Description" xml:space="preserve">
-    <value>Smoothly fade the volume in when resuming and out when pausing instead of cutting instantly.</value>
+    <value>Vervaag die volume glad in wanneer hervat en uit wanneer gepouseer, in plaas daarvan om onmiddellik te sny.</value>
   </data>
   <data name="SettingsPage_Equalizer" xml:space="preserve">
     <value>Oudiogelykmaker</value>
@@ -1680,10 +1683,10 @@ Fout: {1}</value>
     <value>Definieer karakters wat gebruik word om veelvuldige kunstenaars te skei (bv. ';/'). Laat leeg om te deaktiveer.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
-    <value>Genre Splitting</value>
+    <value>Genre-skeiding</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Define characters used to split multiple genres (e.g. ';/'). Leave empty to disable.</value>
+    <value>Definieer karakters wat gebruik word om veelvuldige genres te skei (bv. ';/'). Laat leeg om te deaktiveer.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>Herskan Biblioteek</value>
@@ -1878,75 +1881,168 @@ Fout: {1}</value>
     <value>Herbegin asseblief die toepassing sodat die taalverandering ten volle in werking kan tree.</value>
   </data>
   <data name="SettingsPage_About_PrivacyPolicy_Content" xml:space="preserve">
-    <value>Privacy Policy</value>
+    <value>Privaatheidsbeleid</value>
   </data>
   <data name="SettingsPage_BackupRestore_Header" xml:space="preserve">
-    <value>Backup &amp; Restore</value>
+    <value>Rugsteun &amp; Herstel</value>
   </data>
   <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
-    <value>Create backups of your music library and settings, or restore from a previous backup</value>
+    <value>Skep rugsteun van jou musiekbiblioteek en -instellings, of herstel vanaf 'n vorige rugsteun</value>
   </data>
   <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
-    <value>Create Backup</value>
+    <value>Skep Rugsteun</value>
   </data>
   <data name="SettingsPage_RestoreBackup_Content" xml:space="preserve">
-    <value>Restore Backup</value>
+    <value>Herstel Rugsteun</value>
   </data>
   <data name="Settings_Backup_Success_Title" xml:space="preserve">
-    <value>Backup Created</value>
+    <value>Rugsteun Geskep</value>
   </data>
   <data name="Settings_Backup_Success_Message" xml:space="preserve">
-    <value>Successfully created backup ({0:F2} MB) at: {1}</value>
+    <value>Rugsteun suksesvol geskep ({0:F2} MB) by: {1}</value>
   </data>
   <data name="Settings_Backup_Failed_Title" xml:space="preserve">
-    <value>Backup Failed</value>
+    <value>Rugsteun Misluk</value>
   </data>
   <data name="Settings_Backup_Failed_Message" xml:space="preserve">
-    <value>Failed to create backup. Please try again.</value>
+    <value>Kon nie rugsteun skep nie. Probeer asseblief weer.</value>
   </data>
   <data name="Settings_Restore_Invalid_Title" xml:space="preserve">
-    <value>Invalid Backup File</value>
+    <value>Ongeldige Rugsteunlêer</value>
   </data>
   <data name="Settings_Restore_Invalid_Message" xml:space="preserve">
-    <value>The selected file is not a valid Nagi backup.</value>
+    <value>Die geselekteerde lêer is nie 'n geldige Nagi-rugsteun nie.</value>
   </data>
   <data name="Settings_Restore_Confirm_Title" xml:space="preserve">
-    <value>Restore Backup?</value>
+    <value>Herstel Rugsteun?</value>
   </data>
   <data name="Settings_Restore_Confirm_Message" xml:space="preserve">
-    <value>Restoring from backup will replace all current app data. This action cannot be undone. The app will restart after restore. Continue?</value>
+    <value>Herstel vanaf rugsteun sal alle huidige toepassingsdata vervang. Hierdie aksie kan nie ongedaan gemaak word nie. Die toepassing sal herbegin na herstel. Gaan voort?</value>
   </data>
   <data name="Settings_Restore_Confirm_Button" xml:space="preserve">
-    <value>Restore</value>
+    <value>Herstel</value>
   </data>
   <data name="Settings_Restore_Success_Title" xml:space="preserve">
-    <value>Restore Complete</value>
+    <value>Herstel Voltooi</value>
   </data>
   <data name="Settings_Restore_Success_Message" xml:space="preserve">
-    <value>Successfully restored backup. The app will now restart.</value>
+    <value>Rugsteun suksesvol herstel. Die toepassing sal nou herbegin.</value>
   </data>
   <data name="Settings_Restore_Failed_Title" xml:space="preserve">
-    <value>Restore Failed</value>
+    <value>Herstel Misluk</value>
   </data>
   <data name="Settings_Restore_Failed_Message" xml:space="preserve">
-    <value>Failed to restore from backup. Your data was not modified.</value>
+    <value>Kon nie vanaf rugsteun herstel nie. Jou data is nie gewysig nie.</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
-    <value>Player Styling</value>
+    <value>Speler-stilering</value>
   </data>
   <data name="PlayerBackgroundMaterial_Acrylic" xml:space="preserve">
-    <value>Acrylic (Glass)</value>
+    <value>Akriel (Glas)</value>
   </data>
   <data name="PlayerBackgroundMaterial_Solid" xml:space="preserve">
-    <value>Solid (Opaque)</value>
+    <value>Solied (Ondeursigtig)</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
-    <value>Customize the appearance of the floating player</value>
+    <value>Pasmaak die voorkoms van die swewende speler</value>
   </data>
   <data name="SettingsPage_TintIntensity_Header" xml:space="preserve">
-    <value>Tint Intensity</value>
+    <value>Tintintensiteit</value>
   </data>
   <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
-    <value>Adjusts the vibrancy of the player background color</value>
+    <value>Verstel die lewendigheid van die speler se agtergrondkleur</value>
+  </data>
+  <data name="SettingsPage_FadeInDuration_Header" xml:space="preserve">
+    <value>Invaar-duur</value>
+  </data>
+  <data name="SettingsPage_FadeInDuration_Description" xml:space="preserve">
+    <value>Die duur van die invaar-effek wanneer musiek speel (ms)</value>
+  </data>
+  <data name="SettingsPage_FadeOutDuration_Header" xml:space="preserve">
+    <value>Uitvaar-duur</value>
+  </data>
+  <data name="SettingsPage_FadeOutDuration_Description" xml:space="preserve">
+    <value>Die duur van die uitvaar-effek wanneer musiek onderbreek word (ms)</value>
+  </data>
+  <data name="Settings_Nav_Insights" xml:space="preserve">
+    <value>Insigte</value>
+  </data>
+  <data name="InsightsPage_Title" xml:space="preserve">
+    <value>Insigte</value>
+  </data>
+  <data name="InsightsPage_TotalTime" xml:space="preserve">
+    <value>Totale luistertyd</value>
+  </data>
+  <data name="InsightsPage_UniqueSongs" xml:space="preserve">
+    <value>Unieke liedjies</value>
+  </data>
+  <data name="InsightsPage_PeakHour" xml:space="preserve">
+    <value>Spitsuur</value>
+  </data>
+  <data name="InsightsPage_MostActiveDay" xml:space="preserve">
+    <value>Mees aktiewe dag</value>
+  </data>
+  <data name="InsightsPage_TopSongs" xml:space="preserve">
+    <value>Top liedjies</value>
+  </data>
+  <data name="InsightsPage_TopArtists" xml:space="preserve">
+    <value>Top kunstenaars</value>
+  </data>
+  <data name="InsightsPage_TopAlbums" xml:space="preserve">
+    <value>Top albums</value>
+  </data>
+  <data name="InsightsPage_TopGenres" xml:space="preserve">
+    <value>Top genres</value>
+  </data>
+  <data name="InsightsPage_Sources" xml:space="preserve">
+    <value>Terugspeelbronne</value>
+  </data>
+  <data name="InsightsPage_Empty_Title" xml:space="preserve">
+    <value>Nog geen luisterdata nie</value>
+  </data>
+  <data name="InsightsPage_Empty_Subtitle" xml:space="preserve">
+    <value>Begin musiek speel om jou insigte hier te sien</value>
+  </data>
+  <data name="InsightsPage_Plays" xml:space="preserve">
+    <value>one: {0} keer gespeel; other: {0} keer gespeel</value>
+  </data>
+  <data name="InsightsPage_Source_Albums" xml:space="preserve">
+    <value>Albums</value>
+  </data>
+  <data name="InsightsPage_Source_Artists" xml:space="preserve">
+    <value>Kunstenaars</value>
+  </data>
+  <data name="InsightsPage_Source_Playlists" xml:space="preserve">
+    <value>Snitlyste</value>
+  </data>
+  <data name="InsightsPage_Source_SmartPlaylists" xml:space="preserve">
+    <value>Slim snitlyste</value>
+  </data>
+  <data name="InsightsPage_Source_Folders" xml:space="preserve">
+    <value>Gidse</value>
+  </data>
+  <data name="InsightsPage_Source_Genres" xml:space="preserve">
+    <value>Genres</value>
+  </data>
+  <data name="InsightsPage_Source_Search" xml:space="preserve">
+    <value>Soek</value>
+  </data>
+  <data name="InsightsPage_Source_Library" xml:space="preserve">
+    <value>Biblioteek</value>
+  </data>
+  <data name="InsightsPage_Source_Files" xml:space="preserve">
+    <value>Lêers</value>
+  </data>
+  <data name="InsightsPage_Reset_ToolTip" xml:space="preserve">
+    <value>Herstel luistergeskiedenis</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Title" xml:space="preserve">
+    <value>Herstel luistergeskiedenis?</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Message" xml:space="preserve">
+    <value>Dit sal alle luistergeskiedenis en statistieke permanent verwyder. Dit kan nie ongedaan gemaak word nie.</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Button" xml:space="preserve">
+    <value>Herstel</value>
   </data>
 </root>

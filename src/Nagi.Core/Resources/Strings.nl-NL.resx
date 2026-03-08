@@ -108,7 +108,7 @@
     <value>Nummers</value>
   </data>
   <data name="Label_Artists" xml:space="preserve">
-    <value>Artists</value>
+    <value>Artiesten</value>
   </data>
   <data name="Label_Song" xml:space="preserve">
     <value>Nummer</value>
@@ -232,7 +232,7 @@
     <value>met albumhoes</value>
   </data>
   <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>with artist image</value>
+    <value>met artiestafbeelding</value>
   </data>
   <data name="Label_And" xml:space="preserve">
     <value>en</value>

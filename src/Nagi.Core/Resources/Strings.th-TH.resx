@@ -108,7 +108,7 @@
     <value>เพลง</value>
   </data>
   <data name="Label_Artists" xml:space="preserve">
-    <value>Artists</value>
+    <value>ศิลปิน</value>
   </data>
   <data name="Label_Song" xml:space="preserve">
     <value>เพลง</value>
@@ -232,7 +232,7 @@
     <value>พร้อมปกอัลบั้ม</value>
   </data>
   <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>with artist image</value>
+    <value>พร้อมรูปภาพศิลปิน</value>
   </data>
   <data name="Label_And" xml:space="preserve">
     <value>และ</value>

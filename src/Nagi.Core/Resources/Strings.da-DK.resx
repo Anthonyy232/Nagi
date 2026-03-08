@@ -108,7 +108,7 @@
     <value>Sange</value>
   </data>
   <data name="Label_Artists" xml:space="preserve">
-    <value>Artists</value>
+    <value>Kunstnere</value>
   </data>
   <data name="Label_Song" xml:space="preserve">
     <value>Sang</value>
@@ -232,7 +232,7 @@
     <value>med cover-art</value>
   </data>
   <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>with artist image</value>
+    <value>med kunstnerbillede</value>
   </data>
   <data name="Label_And" xml:space="preserve">
     <value>og</value>

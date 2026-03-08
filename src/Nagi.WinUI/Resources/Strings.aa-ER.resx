@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
@@ -75,6 +75,9 @@
   </data>
   <data name="NavItem_Folders" xml:space="preserve">
     <value>Galabkōr</value>
+  </data>
+  <data name="NavItem_Insights" xml:space="preserve">
+    <value>Macinnu</value>
   </data>
   <data name="NavItem_Settings" xml:space="preserve">
     <value>Kēma</value>
@@ -1589,10 +1592,10 @@
     <value>Asmat Qeera Akaxxa Keenisoh (-14 LUFS) Akaxxa Keenisoh Akaxxa.</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
-    <value>Fade on Play / Pause</value>
+    <value>Akriyi / Qaadimiyyal Qilaasut</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Description" xml:space="preserve">
-    <value>Smoothly fade the volume in when resuming and out when pausing instead of cutting instantly.</value>
+    <value>Akriyiyak gabaxso gita-gitak elaamah, Qaadimiyyak gabaxso gita-gitak qilaasut elle-cammannam, duddih qalammiyak hinna.</value>
   </data>
   <data name="SettingsPage_Equalizer" xml:space="preserve">
     <value>Cula Akaxxa Keenis</value>
@@ -1667,10 +1670,10 @@
     <value>Fannaani Yabac Keenisoh Akaxxa.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
-    <value>Genre Splitting</value>
+    <value>Maxxagaati Qali</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Define characters used to split multiple genres (e.g. ';/'). Leave empty to disable.</value>
+    <value>Baxaa baxsa maxxagaatit qalittiyok elle-cammannu. Maytanxinum taama. (;/) cakkum</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>Nagaysi Yabac Akaxxa</value>
@@ -1865,75 +1868,168 @@
     <value>Asma Baada Akaxxa Keenisoh Akaxxa Keenisoh.</value>
   </data>
   <data name="SettingsPage_About_PrivacyPolicy_Content" xml:space="preserve">
-    <value>Privacy Policy</value>
+    <value>Sirra Qubluk Maangala</value>
   </data>
   <data name="SettingsPage_BackupRestore_Header" xml:space="preserve">
-    <value>Backup &amp; Restore</value>
+    <value>Rikiyyi &amp; Soolisa</value>
   </data>
   <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
-    <value>Create backups of your music library and settings, or restore from a previous backup</value>
+    <value>Caaca qaraanak kee maqaane sinni rikiyyi gina, hinnay gabah gaba rikiyyeek soolisa.</value>
   </data>
   <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
-    <value>Create Backup</value>
+    <value>Rikiyyi Gini</value>
   </data>
   <data name="SettingsPage_RestoreBackup_Content" xml:space="preserve">
-    <value>Restore Backup</value>
+    <value>Rikiyyi Soolisa</value>
   </data>
   <data name="Settings_Backup_Success_Title" xml:space="preserve">
-    <value>Backup Created</value>
+    <value>Rikiyyi Ginne</value>
   </data>
   <data name="Settings_Backup_Success_Message" xml:space="preserve">
-    <value>Successfully created backup ({0:F2} MB) at: {1}</value>
+    <value>Rikiyyi ({0:F2} MB) edde elle gineh: {1}</value>
   </data>
   <data name="Settings_Backup_Failed_Title" xml:space="preserve">
-    <value>Backup Failed</value>
+    <value>Rikiyyi Mayginna</value>
   </data>
   <data name="Settings_Backup_Failed_Message" xml:space="preserve">
-    <value>Failed to create backup. Please try again.</value>
+    <value>Rikiyyi mayginna. Gaba tabassa.</value>
   </data>
   <data name="Settings_Restore_Invalid_Title" xml:space="preserve">
-    <value>Invalid Backup File</value>
+    <value>Rikiyyi Fayli Maytaama</value>
   </data>
   <data name="Settings_Restore_Invalid_Message" xml:space="preserve">
-    <value>The selected file is not a valid Nagi backup.</value>
+    <value>Elle akammele fayli Nagi rikiyyi maytaama.</value>
   </data>
   <data name="Settings_Restore_Confirm_Title" xml:space="preserve">
-    <value>Restore Backup?</value>
+    <value>Rikiyyi Soolissa?</value>
   </data>
   <data name="Settings_Restore_Confirm_Message" xml:space="preserve">
-    <value>Restoring from backup will replace all current app data. This action cannot be undone. The app will restart after restore. Continue?</value>
+    <value>Rikiyyik soolisam appih caaca sinni kaxxam edde bayissam takkem. Tonih taama mayballelle. Appi soolissak lakal akriye. Oggola?</value>
   </data>
   <data name="Settings_Restore_Confirm_Button" xml:space="preserve">
-    <value>Restore</value>
+    <value>Soolisa</value>
   </data>
   <data name="Settings_Restore_Success_Title" xml:space="preserve">
-    <value>Restore Complete</value>
+    <value>Soolissa Xintem</value>
   </data>
   <data name="Settings_Restore_Success_Message" xml:space="preserve">
-    <value>Successfully restored backup. The app will now restart.</value>
+    <value>Rikiyyi elle-gaagay soolisse. Appi ikriye.</value>
   </data>
   <data name="Settings_Restore_Failed_Title" xml:space="preserve">
-    <value>Restore Failed</value>
+    <value>Soolissa Mayxinnina</value>
   </data>
   <data name="Settings_Restore_Failed_Message" xml:space="preserve">
-    <value>Failed to restore from backup. Your data was not modified.</value>
+    <value>Rikiyyik soolisak mayxinnina. Caaca sinni maytabdilin.</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
-    <value>Player Styling</value>
+    <value>Qaraanak Maxxa-giti</value>
   </data>
   <data name="PlayerBackgroundMaterial_Acrylic" xml:space="preserve">
-    <value>Acrylic (Glass)</value>
+    <value>Akrilik (Maasika)</value>
   </data>
   <data name="PlayerBackgroundMaterial_Solid" xml:space="preserve">
-    <value>Solid (Opaque)</value>
+    <value>Kaaxaga (Mayqanxe)</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
-    <value>Customize the appearance of the floating player</value>
+    <value>Elle akriiyoonu qaraanak maxxa-giti sinni akkam.</value>
   </data>
   <data name="SettingsPage_TintIntensity_Header" xml:space="preserve">
-    <value>Tint Intensity</value>
+    <value>Qilaasut Gati</value>
   </data>
   <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
-    <value>Adjusts the vibrancy of the player background color</value>
+    <value>Qaraanak garci miidag qilaasat xaggara.</value>
+  </data>
+  <data name="SettingsPage_FadeInDuration_Header" xml:space="preserve">
+    <value>Faade-in keenih idda</value>
+  </data>
+  <data name="SettingsPage_FadeInDuration_Description" xml:space="preserve">
+    <value>Qaynaanu yabbixem faade-in keenih idda (ms)</value>
+  </data>
+  <data name="SettingsPage_FadeOutDuration_Header" xml:space="preserve">
+    <value>Faade-out keenih idda</value>
+  </data>
+  <data name="SettingsPage_FadeOutDuration_Description" xml:space="preserve">
+    <value>Yabbixem qaynaanu yayyaaqeemik faade-out keenih idda (ms)</value>
+  </data>
+  <data name="Settings_Nav_Insights" xml:space="preserve">
+    <value>Macinnu</value>
+  </data>
+  <data name="InsightsPage_Title" xml:space="preserve">
+    <value>Macinnu</value>
+  </data>
+  <data name="InsightsPage_TotalTime" xml:space="preserve">
+    <value>Goh lih dhagaysaamih idda</value>
+  </data>
+  <data name="InsightsPage_UniqueSongs" xml:space="preserve">
+    <value>Magaadal qaynaanuh</value>
+  </data>
+  <data name="InsightsPage_PeakHour" xml:space="preserve">
+    <value>Doolih saati</value>
+  </data>
+  <data name="InsightsPage_MostActiveDay" xml:space="preserve">
+    <value>Rakaakayli ayro</value>
+  </data>
+  <data name="InsightsPage_TopSongs" xml:space="preserve">
+    <value>Sayyo qaynaanu</value>
+  </data>
+  <data name="InsightsPage_TopArtists" xml:space="preserve">
+    <value>Sayyo fannanu</value>
+  </data>
+  <data name="InsightsPage_TopAlbums" xml:space="preserve">
+    <value>Sayyo albaamu</value>
+  </data>
+  <data name="InsightsPage_TopGenres" xml:space="preserve">
+    <value>Sayyo qaynaanu karray</value>
+  </data>
+  <data name="InsightsPage_Sources" xml:space="preserve">
+    <value>Dhagaysaamih ginoh</value>
+  </data>
+  <data name="InsightsPage_Empty_Title" xml:space="preserve">
+    <value>Kaadu dhagaysaamih macinnu mali</value>
+  </data>
+  <data name="InsightsPage_Empty_Subtitle" xml:space="preserve">
+    <value>Macinnuk niqaamah qaynaanu yabbixe</value>
+  </data>
+  <data name="InsightsPage_Plays" xml:space="preserve">
+    <value>{0} yabbixime</value>
+  </data>
+  <data name="InsightsPage_Source_Albums" xml:space="preserve">
+    <value>Albaamu</value>
+  </data>
+  <data name="InsightsPage_Source_Artists" xml:space="preserve">
+    <value>Fannanu</value>
+  </data>
+  <data name="InsightsPage_Source_Playlists" xml:space="preserve">
+    <value>Qaynaanu agale</value>
+  </data>
+  <data name="InsightsPage_Source_SmartPlaylists" xml:space="preserve">
+    <value>Macaani qaynaanu agale</value>
+  </data>
+  <data name="InsightsPage_Source_Folders" xml:space="preserve">
+    <value>Kafqa</value>
+  </data>
+  <data name="InsightsPage_Source_Genres" xml:space="preserve">
+    <value>Qaynaanu karray</value>
+  </data>
+  <data name="InsightsPage_Source_Search" xml:space="preserve">
+    <value>Yoomiyyo</value>
+  </data>
+  <data name="InsightsPage_Source_Library" xml:space="preserve">
+    <value>Kitaaba</value>
+  </data>
+  <data name="InsightsPage_Source_Files" xml:space="preserve">
+    <value>Akaba</value>
+  </data>
+  <data name="InsightsPage_Reset_ToolTip" xml:space="preserve">
+    <value>Dhagaysaamih taarikha cabsiisa</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Title" xml:space="preserve">
+    <value>Dhagaysaamih taarikha cabsiisanaah?</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Message" xml:space="preserve">
+    <value>Tani gibdi dhagaysaamih taarikhaay kee macinnu inkih kak yocoyya. Tani koo maxaysam matakka.</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Button" xml:space="preserve">
+    <value>Cabsissa</value>
   </data>
 </root>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
@@ -75,6 +75,9 @@
   </data>
   <data name="NavItem_Folders" xml:space="preserve">
     <value>Mappar</value>
+  </data>
+  <data name="NavItem_Insights" xml:space="preserve">
+    <value>Insikter</value>
   </data>
   <data name="NavItem_Settings" xml:space="preserve">
     <value>Inställningar</value>
@@ -1589,10 +1592,10 @@
     <value>Justera volymen automatiskt till standardnivån (-14 LUFS) för att undvika plötsliga volymförändringar.</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
-    <value>Fade on Play / Pause</value>
+    <value>Tona vid uppspelning / paus</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Description" xml:space="preserve">
-    <value>Smoothly fade the volume in when resuming and out when pausing instead of cutting instantly.</value>
+    <value>Tona smidigt in volymen när du återupptar uppspelningen och ut när du pausar, istället för att klippa direkt.</value>
   </data>
   <data name="SettingsPage_Equalizer" xml:space="preserve">
     <value>Ljudutjämnare</value>
@@ -1667,10 +1670,10 @@
     <value>Definiera tecken som används för att dela upp flera artister (t.ex. ';/'). Lämna tomt för att inaktivera.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
-    <value>Genre Splitting</value>
+    <value>Genreuppdelning</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Define characters used to split multiple genres (e.g. ';/'). Leave empty to disable.</value>
+    <value>Definiera tecken som används för att dela upp flera genrer (t.ex. ';/'). Lämna tomt för att inaktivera.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>Skanna om bibliotek</value>
@@ -1865,75 +1868,168 @@
     <value>Vänligen starta om applikationen för att språkändringen ska träda i kraft helt.</value>
   </data>
   <data name="SettingsPage_About_PrivacyPolicy_Content" xml:space="preserve">
-    <value>Privacy Policy</value>
+    <value>Sekretesspolicy</value>
   </data>
   <data name="SettingsPage_BackupRestore_Header" xml:space="preserve">
-    <value>Backup &amp; Restore</value>
+    <value>Säkerhetskopiera och återställa</value>
   </data>
   <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
-    <value>Create backups of your music library and settings, or restore from a previous backup</value>
+    <value>Skapa säkerhetskopior av ditt musikbibliotek och dina inställningar, eller återställ från en tidigare säkerhetskopia</value>
   </data>
   <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
-    <value>Create Backup</value>
+    <value>Skapa säkerhetskopia</value>
   </data>
   <data name="SettingsPage_RestoreBackup_Content" xml:space="preserve">
-    <value>Restore Backup</value>
+    <value>Återställ säkerhetskopia</value>
   </data>
   <data name="Settings_Backup_Success_Title" xml:space="preserve">
-    <value>Backup Created</value>
+    <value>Säkerhetskopia skapad</value>
   </data>
   <data name="Settings_Backup_Success_Message" xml:space="preserve">
-    <value>Successfully created backup ({0:F2} MB) at: {1}</value>
+    <value>Säkerhetskopia skapades framgångsrikt ({0:F2} MB) vid: {1}</value>
   </data>
   <data name="Settings_Backup_Failed_Title" xml:space="preserve">
-    <value>Backup Failed</value>
+    <value>Säkerhetskopiering misslyckades</value>
   </data>
   <data name="Settings_Backup_Failed_Message" xml:space="preserve">
-    <value>Failed to create backup. Please try again.</value>
+    <value>Misslyckades att skapa säkerhetskopia. Försök igen.</value>
   </data>
   <data name="Settings_Restore_Invalid_Title" xml:space="preserve">
-    <value>Invalid Backup File</value>
+    <value>Ogiltig säkerhetskopiafil</value>
   </data>
   <data name="Settings_Restore_Invalid_Message" xml:space="preserve">
-    <value>The selected file is not a valid Nagi backup.</value>
+    <value>Den valda filen är inte en giltig Nagi-säkerhetskopia.</value>
   </data>
   <data name="Settings_Restore_Confirm_Title" xml:space="preserve">
-    <value>Restore Backup?</value>
+    <value>Återställa säkerhetskopia?</value>
   </data>
   <data name="Settings_Restore_Confirm_Message" xml:space="preserve">
-    <value>Restoring from backup will replace all current app data. This action cannot be undone. The app will restart after restore. Continue?</value>
+    <value>Återställning från säkerhetskopia kommer att ersätta all aktuell appdata. Denna åtgärd kan inte ångras. Appen kommer att starta om efter återställningen. Fortsätt?</value>
   </data>
   <data name="Settings_Restore_Confirm_Button" xml:space="preserve">
-    <value>Restore</value>
+    <value>Återställ</value>
   </data>
   <data name="Settings_Restore_Success_Title" xml:space="preserve">
-    <value>Restore Complete</value>
+    <value>Återställning klar</value>
   </data>
   <data name="Settings_Restore_Success_Message" xml:space="preserve">
-    <value>Successfully restored backup. The app will now restart.</value>
+    <value>Säkerhetskopia återställd. Appen kommer nu att starta om.</value>
   </data>
   <data name="Settings_Restore_Failed_Title" xml:space="preserve">
-    <value>Restore Failed</value>
+    <value>Återställning misslyckades</value>
   </data>
   <data name="Settings_Restore_Failed_Message" xml:space="preserve">
-    <value>Failed to restore from backup. Your data was not modified.</value>
+    <value>Misslyckades att återställa från säkerhetskopia. Dina data ändrades inte.</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
-    <value>Player Styling</value>
+    <value>Spelarstil</value>
   </data>
   <data name="PlayerBackgroundMaterial_Acrylic" xml:space="preserve">
-    <value>Acrylic (Glass)</value>
+    <value>Akryl (glas)</value>
   </data>
   <data name="PlayerBackgroundMaterial_Solid" xml:space="preserve">
-    <value>Solid (Opaque)</value>
+    <value>Solid (ogenomskinlig)</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
-    <value>Customize the appearance of the floating player</value>
+    <value>Anpassa utseendet på den flytande spelaren</value>
   </data>
   <data name="SettingsPage_TintIntensity_Header" xml:space="preserve">
-    <value>Tint Intensity</value>
+    <value>Toningsintensitet</value>
   </data>
   <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
-    <value>Adjusts the vibrancy of the player background color</value>
+    <value>Justerar livfullheten i spelarens bakgrundsfärg</value>
+  </data>
+  <data name="SettingsPage_FadeInDuration_Header" xml:space="preserve">
+    <value>Toningslängd in</value>
+  </data>
+  <data name="SettingsPage_FadeInDuration_Description" xml:space="preserve">
+    <value>Varaktigheten för toningseffekten vid uppspelning (ms)</value>
+  </data>
+  <data name="SettingsPage_FadeOutDuration_Header" xml:space="preserve">
+    <value>Toningslängd ut</value>
+  </data>
+  <data name="SettingsPage_FadeOutDuration_Description" xml:space="preserve">
+    <value>Varaktigheten för toningseffekten vid paus (ms)</value>
+  </data>
+  <data name="Settings_Nav_Insights" xml:space="preserve">
+    <value>Insikter</value>
+  </data>
+  <data name="InsightsPage_Title" xml:space="preserve">
+    <value>Insikter</value>
+  </data>
+  <data name="InsightsPage_TotalTime" xml:space="preserve">
+    <value>Total lyssningstid</value>
+  </data>
+  <data name="InsightsPage_UniqueSongs" xml:space="preserve">
+    <value>Unika låtar</value>
+  </data>
+  <data name="InsightsPage_PeakHour" xml:space="preserve">
+    <value>Topptimme</value>
+  </data>
+  <data name="InsightsPage_MostActiveDay" xml:space="preserve">
+    <value>Mest aktiva dag</value>
+  </data>
+  <data name="InsightsPage_TopSongs" xml:space="preserve">
+    <value>Topplåtar</value>
+  </data>
+  <data name="InsightsPage_TopArtists" xml:space="preserve">
+    <value>Toppartister</value>
+  </data>
+  <data name="InsightsPage_TopAlbums" xml:space="preserve">
+    <value>Toppalbum</value>
+  </data>
+  <data name="InsightsPage_TopGenres" xml:space="preserve">
+    <value>Toppgenrer</value>
+  </data>
+  <data name="InsightsPage_Sources" xml:space="preserve">
+    <value>Uppspelningskällor</value>
+  </data>
+  <data name="InsightsPage_Empty_Title" xml:space="preserve">
+    <value>Ingen lyssningsdata än</value>
+  </data>
+  <data name="InsightsPage_Empty_Subtitle" xml:space="preserve">
+    <value>Börja spela musik för att se dina insikter här</value>
+  </data>
+  <data name="InsightsPage_Plays" xml:space="preserve">
+    <value>{0} spelningar</value>
+  </data>
+  <data name="InsightsPage_Source_Albums" xml:space="preserve">
+    <value>Album</value>
+  </data>
+  <data name="InsightsPage_Source_Artists" xml:space="preserve">
+    <value>Artister</value>
+  </data>
+  <data name="InsightsPage_Source_Playlists" xml:space="preserve">
+    <value>Spellistor</value>
+  </data>
+  <data name="InsightsPage_Source_SmartPlaylists" xml:space="preserve">
+    <value>Smarta spellistor</value>
+  </data>
+  <data name="InsightsPage_Source_Folders" xml:space="preserve">
+    <value>Mappar</value>
+  </data>
+  <data name="InsightsPage_Source_Genres" xml:space="preserve">
+    <value>Genrer</value>
+  </data>
+  <data name="InsightsPage_Source_Search" xml:space="preserve">
+    <value>Sök</value>
+  </data>
+  <data name="InsightsPage_Source_Library" xml:space="preserve">
+    <value>Bibliotek</value>
+  </data>
+  <data name="InsightsPage_Source_Files" xml:space="preserve">
+    <value>Filer</value>
+  </data>
+  <data name="InsightsPage_Reset_ToolTip" xml:space="preserve">
+    <value>Återställ lyssningshistorik</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Title" xml:space="preserve">
+    <value>Återställ lyssningshistorik?</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Message" xml:space="preserve">
+    <value>Detta kommer att permanent ta bort all lyssningshistorik och statistik. Detta kan inte ångras.</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Button" xml:space="preserve">
+    <value>Återställ</value>
   </data>
 </root>
