@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using Jeffijoe.MessageFormat;
 
 namespace Nagi.WinUI.Helpers;
@@ -29,13 +30,21 @@ public static class ResourceFormatter
         {
             var culture = System.Globalization.CultureInfo.CurrentUICulture;
             var formatter = _formatters.GetOrAdd(culture.Name, _ => new MessageFormatter(culture: culture, useCache: true));
-            return formatter.FormatMessage(pattern, args);
+
+            // MessageFormat uses ICU-style named variables, even when patterns use numeric names like {0, plural, ...}.
+            // Passing a raw object[] is not supported — we must convert args to a Dictionary<string, object?>
+            // where keys are the string representations of the indices ("0", "1", etc.).
+            var namedArgs = new Dictionary<string, object?>(args.Length);
+            for (int i = 0; i < args.Length; i++)
+            {
+                namedArgs[i.ToString()] = args[i];
+            }
+
+            return formatter.FormatMessage(pattern, namedArgs);
         }
         catch (Exception)
         {
-            // Fallback to standard string.Format if ICU parsing fails
-            // This ensures we don't crash if the string is just a standard format string that MessageFormat happens to dislike,
-            // or if something else goes wrong.
+            // Fallback to standard string.Format for non-ICU patterns (e.g. plain "{0}" style).
             try
             {
                 return string.Format(pattern, args);
