@@ -27,8 +27,8 @@ public static class ResourceFormatter
 
         try
         {
-            var locale = System.Globalization.CultureInfo.CurrentUICulture.Name;
-            var formatter = _formatters.GetOrAdd(locale, l => new MessageFormatter(locale: l, useCache: true));
+            var culture = System.Globalization.CultureInfo.CurrentUICulture;
+            var formatter = _formatters.GetOrAdd(culture.Name, _ => new MessageFormatter(culture: culture, useCache: true));
             return formatter.FormatMessage(pattern, args);
         }
         catch (Exception)
