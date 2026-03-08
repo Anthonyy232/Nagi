@@ -8,24 +8,20 @@ using Nagi.Core.Helpers;
 namespace Nagi.WinUI.Helpers;
 
 /// <summary>
-///     Provides a centralized source of truth for all application data paths,
-///     automatically adapting to whether the app is running in a packaged or unpackaged context.
+///     Provides a centralized source of truth for all application data paths.
 /// </summary>
 public class PathConfiguration : IPathConfiguration
 {
     public PathConfiguration(IConfiguration configuration)
     {
-        IsPackaged = IsRunningInPackage();
-
         try
         {
-            // Always prioritize the Windows App Runtime local folder if available.
-            // This is the correct way to handle file storage in both packaged and unpackaged apps using the Windows App SDK.
+            // Windows App Runtime local folder is the correct way to handle file storage in packaged apps.
             AppDataRoot = ApplicationData.Current.LocalFolder.Path;
         }
         catch (Exception)
         {
-            // Fallback for environments where ApplicationData is not initialized (e.g., unit tests, pure console apps)
+            // Fallback for environments where ApplicationData is not initialized (e.g., unit tests)
             AppDataRoot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 "Nagi");
         }
@@ -33,7 +29,6 @@ public class PathConfiguration : IPathConfiguration
         // Define all other paths based on the determined root.
         SettingsFilePath = Path.Combine(AppDataRoot, "settings.json");
         PlaybackStateFilePath = Path.Combine(AppDataRoot, "playback_state.json");
-        AlbumArtCachePath = Path.Combine(AppDataRoot, "AlbumArt");
         AlbumArtCachePath = Path.Combine(AppDataRoot, "AlbumArt");
         ArtistImageCachePath = Path.Combine(AppDataRoot, "ArtistImages");
         PlaylistImageCachePath = Path.Combine(AppDataRoot, "PlaylistImages");
@@ -44,15 +39,11 @@ public class PathConfiguration : IPathConfiguration
         // Ensure all necessary directories exist on startup.
         Directory.CreateDirectory(AppDataRoot);
         Directory.CreateDirectory(AlbumArtCachePath);
-        Directory.CreateDirectory(AlbumArtCachePath);
         Directory.CreateDirectory(ArtistImageCachePath);
         Directory.CreateDirectory(PlaylistImageCachePath);
         Directory.CreateDirectory(LrcCachePath);
         Directory.CreateDirectory(LogsDirectory);
     }
-
-    /// <inheritdoc />
-    public bool IsPackaged { get; }
 
     /// <inheritdoc />
     public string AppDataRoot { get; }
@@ -80,21 +71,4 @@ public class PathConfiguration : IPathConfiguration
 
     /// <inheritdoc />
     public string LogsDirectory { get; }
-
-    /// <summary>
-    ///     Determines if the application is running in a packaged (MSIX) context.
-    /// </summary>
-    public static bool IsRunningInPackage()
-    {
-        try
-        {
-            // If this property can be accessed without throwing, we are in a package.
-            return Package.Current != null;
-        }
-        catch
-        {
-            // An exception will be thrown if we are not in a package.
-            return false;
-        }
-    }
 }

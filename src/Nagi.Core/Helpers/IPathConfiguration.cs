@@ -5,10 +5,7 @@
 /// </summary>
 public interface IPathConfiguration
 {
-    /// <summary>
-    ///     Gets a value indicating whether the application is running in a packaged context (e.g., MSIX).
-    /// </summary>
-    bool IsPackaged { get; }
+
 
     /// <summary>
     ///     Gets the root directory for all application data.

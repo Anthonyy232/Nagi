@@ -50,7 +50,6 @@ public class BackupRestoreService : IBackupRestoreService
                     "EBWebView", 
                     "Temp", 
                     "Cache",
-                    "packages",      // Velopack/Squirrel
                     "crashdumps"
 
                 };
@@ -65,13 +64,7 @@ public class BackupRestoreService : IBackupRestoreService
                         continue;
                     }
 
-                    // Skip updater files
-                    if (file.Name.Equals("Update.exe", StringComparison.OrdinalIgnoreCase) ||
-                        file.Extension.Equals(".nupkg", StringComparison.OrdinalIgnoreCase) ||
-                        file.Name.StartsWith("Squirrel", StringComparison.OrdinalIgnoreCase))
-                    {
-                        continue;
-                    }
+
 
                     // Skip cache files
                     if (file.Name.Equals(".libvlc-cache-version", StringComparison.OrdinalIgnoreCase))
@@ -94,8 +87,7 @@ public class BackupRestoreService : IBackupRestoreService
                 {
                     if (excludedDirectories.Contains(dir.Name)) continue;
                     
-                    // Exclude versioned app folders (e.g., app-1.0.0)
-                    if (dir.Name.StartsWith("app-", StringComparison.OrdinalIgnoreCase)) continue;
+
 
                     var destDir = Path.Combine(stagingPath, dir.Name);
                     await CopyDirectoryAsync(dir.FullName, destDir);
