@@ -108,7 +108,7 @@
     <value>Canciones</value>
   </data>
   <data name="Label_Artists" xml:space="preserve">
-    <value>Artists</value>
+    <value>Artistas</value>
   </data>
   <data name="Label_Song" xml:space="preserve">
     <value>Canción</value>
@@ -232,7 +232,7 @@
     <value>con carátula</value>
   </data>
   <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>with artist image</value>
+    <value>con imagen de artista</value>
   </data>
   <data name="Label_And" xml:space="preserve">
     <value>y</value>

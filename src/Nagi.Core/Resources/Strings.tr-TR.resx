@@ -108,7 +108,7 @@
     <value>Şarkılar</value>
   </data>
   <data name="Label_Artists" xml:space="preserve">
-    <value>Artists</value>
+    <value>Sanatçılar</value>
   </data>
   <data name="Label_Song" xml:space="preserve">
     <value>Şarkı</value>
@@ -232,7 +232,7 @@
     <value>kapak resmiyle</value>
   </data>
   <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>with artist image</value>
+    <value>sanatçı resmiyle</value>
   </data>
   <data name="Label_And" xml:space="preserve">
     <value>ve</value>

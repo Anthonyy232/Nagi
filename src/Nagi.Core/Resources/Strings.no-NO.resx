@@ -108,7 +108,7 @@
     <value>Sanger</value>
   </data>
   <data name="Label_Artists" xml:space="preserve">
-    <value>Artists</value>
+    <value>Artister</value>
   </data>
   <data name="Label_Song" xml:space="preserve">
     <value>Sang</value>
@@ -232,7 +232,7 @@
     <value>med plateomslag</value>
   </data>
   <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>with artist image</value>
+    <value>med artistbilde</value>
   </data>
   <data name="Label_And" xml:space="preserve">
     <value>og</value>

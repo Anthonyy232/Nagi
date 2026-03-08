@@ -108,7 +108,7 @@
     <value>Bài hát</value>
   </data>
   <data name="Label_Artists" xml:space="preserve">
-    <value>Artists</value>
+    <value>Nghệ sĩ</value>
   </data>
   <data name="Label_Song" xml:space="preserve">
     <value>Bài hát</value>
@@ -232,7 +232,7 @@
     <value>có ảnh bìa</value>
   </data>
   <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>with artist image</value>
+    <value>có hình ảnh nghệ sĩ</value>
   </data>
   <data name="Label_And" xml:space="preserve">
     <value>và</value>

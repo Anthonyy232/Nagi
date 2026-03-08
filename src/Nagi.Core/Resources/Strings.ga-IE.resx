@@ -108,7 +108,7 @@
     <value>Amhráin</value>
   </data>
   <data name="Label_Artists" xml:space="preserve">
-    <value>Artists</value>
+    <value>Ealaíontóirí</value>
   </data>
   <data name="Label_Song" xml:space="preserve">
     <value>Amhrán</value>
@@ -232,7 +232,7 @@
     <value>le healaín clúdaigh</value>
   </data>
   <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>with artist image</value>
+    <value>le híomhá an ealaíontóra</value>
   </data>
   <data name="Label_And" xml:space="preserve">
     <value>agus</value>

@@ -108,7 +108,7 @@
     <value>Skladby</value>
   </data>
   <data name="Label_Artists" xml:space="preserve">
-    <value>Artists</value>
+    <value>Umělci</value>
   </data>
   <data name="Label_Song" xml:space="preserve">
     <value>Skladba</value>
@@ -232,7 +232,7 @@
     <value>s obalem</value>
   </data>
   <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>with artist image</value>
+    <value>s obrázkem umělce</value>
   </data>
   <data name="Label_And" xml:space="preserve">
     <value>a</value>

@@ -108,7 +108,7 @@
     <value>Dainos</value>
   </data>
   <data name="Label_Artists" xml:space="preserve">
-    <value>Artists</value>
+    <value>Atlikėjai</value>
   </data>
   <data name="Label_Song" xml:space="preserve">
     <value>Daina</value>
@@ -232,7 +232,7 @@
     <value>su viršeliu</value>
   </data>
   <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>with artist image</value>
+    <value>su atlikėjo nuotrauka</value>
   </data>
   <data name="Label_And" xml:space="preserve">
     <value>ir</value>

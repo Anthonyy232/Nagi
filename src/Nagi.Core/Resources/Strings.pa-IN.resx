@@ -108,7 +108,7 @@
     <value>ਗੀਤ</value>
   </data>
   <data name="Label_Artists" xml:space="preserve">
-    <value>Artists</value>
+    <value>ਕਲਾਕਾਰ</value>
   </data>
   <data name="Label_Song" xml:space="preserve">
     <value>ਗੀਤ</value>
@@ -232,7 +232,7 @@
     <value>ਕਵਰ ਆਰਟ ਨਾਲ</value>
   </data>
   <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>with artist image</value>
+    <value>ਕਲਾਕਾਰ ਦੀ ਤਸਵੀਰ ਦੇ ਨਾਲ</value>
   </data>
   <data name="Label_And" xml:space="preserve">
     <value>ਅਤੇ</value>

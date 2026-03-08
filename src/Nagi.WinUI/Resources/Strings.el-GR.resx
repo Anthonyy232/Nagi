@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
@@ -75,6 +75,9 @@
   </data>
   <data name="NavItem_Folders" xml:space="preserve">
     <value>Φάκελοι</value>
+  </data>
+  <data name="NavItem_Insights" xml:space="preserve">
+    <value>Στατιστικά</value>
   </data>
   <data name="NavItem_Settings" xml:space="preserve">
     <value>Ρυθμίσεις</value>
@@ -1589,10 +1592,10 @@
     <value>Αυτόματη ρύθμιση έντασης στο τυπικό επίπεδο (-14 LUFS) για αποφυγή ξαφνικών αλλαγών έντασης.</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
-    <value>Fade on Play / Pause</value>
+    <value>Εξασθένιση στην Αναπαραγωγή / Παύση</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Description" xml:space="preserve">
-    <value>Smoothly fade the volume in when resuming and out when pausing instead of cutting instantly.</value>
+    <value>Εξασθενήστε ομαλά την ένταση του ήχου κατά την επανέναρξη και μειώστε την κατά την παύση αντί για άμεση διακοπή.</value>
   </data>
   <data name="SettingsPage_Equalizer" xml:space="preserve">
     <value>Ισοσταθμιστής ήχου</value>
@@ -1667,10 +1670,10 @@
     <value>Ορίστε χαρακτήρες που χρησιμοποιούνται για τον διαχωρισμό πολλών καλλιτεχνών (π.χ. ';/'). Αφήστε κενό για απενεργοποίηση.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
-    <value>Genre Splitting</value>
+    <value>Διαχωρισμός ειδών</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Define characters used to split multiple genres (e.g. ';/'). Leave empty to disable.</value>
+    <value>Ορίστε τους χαρακτήρες που χρησιμοποιούνται για το διαχωρισμό πολλαπλών ειδών (π.χ. ';/'). Αφήστε κενό για απενεργοποίηση.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>Εκ νέου σάρωση βιβλιοθήκης</value>
@@ -1865,75 +1868,168 @@
     <value>Παρακαλούμε επανεκκινήστε την εφαρμογή για να τεθεί σε πλήρη ισχύ η αλλαγή γλώσσας.</value>
   </data>
   <data name="SettingsPage_About_PrivacyPolicy_Content" xml:space="preserve">
-    <value>Privacy Policy</value>
+    <value>Πολιτική Απορρήτου</value>
   </data>
   <data name="SettingsPage_BackupRestore_Header" xml:space="preserve">
-    <value>Backup &amp; Restore</value>
+    <value>Δημιουργία &amp; Επαναφορά αντιγράφων ασφαλείας</value>
   </data>
   <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
-    <value>Create backups of your music library and settings, or restore from a previous backup</value>
+    <value>Δημιουργήστε αντίγραφα ασφαλείας της μουσικής βιβλιοθήκης και των ρυθμίσεών σας, ή επαναφέρετε από προηγούμενο αντίγραφο ασφαλείας</value>
   </data>
   <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
-    <value>Create Backup</value>
+    <value>Δημιουργία αντιγράφου ασφαλείας</value>
   </data>
   <data name="SettingsPage_RestoreBackup_Content" xml:space="preserve">
-    <value>Restore Backup</value>
+    <value>Επαναφορά αντιγράφου ασφαλείας</value>
   </data>
   <data name="Settings_Backup_Success_Title" xml:space="preserve">
-    <value>Backup Created</value>
+    <value>Δημιουργήθηκε αντίγραφο ασφαλείας</value>
   </data>
   <data name="Settings_Backup_Success_Message" xml:space="preserve">
-    <value>Successfully created backup ({0:F2} MB) at: {1}</value>
+    <value>Το αντίγραφο ασφαλείας δημιουργήθηκε με επιτυχία ({0:F2} MB) στην τοποθεσία: {1}</value>
   </data>
   <data name="Settings_Backup_Failed_Title" xml:space="preserve">
-    <value>Backup Failed</value>
+    <value>Η δημιουργία αντιγράφου ασφαλείας απέτυχε</value>
   </data>
   <data name="Settings_Backup_Failed_Message" xml:space="preserve">
-    <value>Failed to create backup. Please try again.</value>
+    <value>Η δημιουργία αντιγράφου ασφαλείας απέτυχε. Παρακαλώ δοκιμάστε ξανά.</value>
   </data>
   <data name="Settings_Restore_Invalid_Title" xml:space="preserve">
-    <value>Invalid Backup File</value>
+    <value>Μη έγκυρο αρχείο αντιγράφου ασφαλείας</value>
   </data>
   <data name="Settings_Restore_Invalid_Message" xml:space="preserve">
-    <value>The selected file is not a valid Nagi backup.</value>
+    <value>Το επιλεγμένο αρχείο δεν είναι έγκυρο αντίγραφο ασφαλείας Nagi.</value>
   </data>
   <data name="Settings_Restore_Confirm_Title" xml:space="preserve">
-    <value>Restore Backup?</value>
+    <value>Επαναφορά αντιγράφου ασφαλείας;</value>
   </data>
   <data name="Settings_Restore_Confirm_Message" xml:space="preserve">
-    <value>Restoring from backup will replace all current app data. This action cannot be undone. The app will restart after restore. Continue?</value>
+    <value>Η επαναφορά από αντίγραφο ασφαλείας θα αντικαταστήσει όλα τα τρέχοντα δεδομένα της εφαρμογής. Αυτή η ενέργεια δεν μπορεί να αναιρεθεί. Η εφαρμογή θα επανεκκινηθεί μετά την επαναφορά. Συνέχεια;</value>
   </data>
   <data name="Settings_Restore_Confirm_Button" xml:space="preserve">
-    <value>Restore</value>
+    <value>Επαναφορά</value>
   </data>
   <data name="Settings_Restore_Success_Title" xml:space="preserve">
-    <value>Restore Complete</value>
+    <value>Η επαναφορά ολοκληρώθηκε</value>
   </data>
   <data name="Settings_Restore_Success_Message" xml:space="preserve">
-    <value>Successfully restored backup. The app will now restart.</value>
+    <value>Το αντίγραφο ασφαλείας επαναφέρθηκε με επιτυχία. Η εφαρμογή θα επανεκκινηθεί τώρα.</value>
   </data>
   <data name="Settings_Restore_Failed_Title" xml:space="preserve">
-    <value>Restore Failed</value>
+    <value>Η επαναφορά απέτυχε</value>
   </data>
   <data name="Settings_Restore_Failed_Message" xml:space="preserve">
-    <value>Failed to restore from backup. Your data was not modified.</value>
+    <value>Η επαναφορά από αντίγραφο ασφαλείας απέτυχε. Τα δεδομένα σας δεν τροποποιήθηκαν.</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
-    <value>Player Styling</value>
+    <value>Στυλ αναπαραγωγής</value>
   </data>
   <data name="PlayerBackgroundMaterial_Acrylic" xml:space="preserve">
-    <value>Acrylic (Glass)</value>
+    <value>Ακρυλικό (Γυαλί)</value>
   </data>
   <data name="PlayerBackgroundMaterial_Solid" xml:space="preserve">
-    <value>Solid (Opaque)</value>
+    <value>Συμπαγές (Αδιαφανές)</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
-    <value>Customize the appearance of the floating player</value>
+    <value>Προσαρμόστε την εμφάνιση του αιωρούμενου αναπαραγωγέα</value>
   </data>
   <data name="SettingsPage_TintIntensity_Header" xml:space="preserve">
-    <value>Tint Intensity</value>
+    <value>Ένταση απόχρωσης</value>
   </data>
   <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
-    <value>Adjusts the vibrancy of the player background color</value>
+    <value>Ρυθμίζει τη ζωντάνια του χρώματος φόντου του αναπαραγωγέα</value>
+  </data>
+  <data name="SettingsPage_FadeInDuration_Header" xml:space="preserve">
+    <value>Διάρκεια σταδιακής εμφάνισης</value>
+  </data>
+  <data name="SettingsPage_FadeInDuration_Description" xml:space="preserve">
+    <value>Η διάρκεια του εφέ σταδιακής εμφάνισης κατά την αναπαραγωγή (ms)</value>
+  </data>
+  <data name="SettingsPage_FadeOutDuration_Header" xml:space="preserve">
+    <value>Διάρκεια σταδιακής εξόδου</value>
+  </data>
+  <data name="SettingsPage_FadeOutDuration_Description" xml:space="preserve">
+    <value>Η διάρκεια του εφέ σταδιακής εξόδου κατά την παύση (ms)</value>
+  </data>
+  <data name="Settings_Nav_Insights" xml:space="preserve">
+    <value>Στατιστικά</value>
+  </data>
+  <data name="InsightsPage_Title" xml:space="preserve">
+    <value>Στατιστικά</value>
+  </data>
+  <data name="InsightsPage_TotalTime" xml:space="preserve">
+    <value>Συνολικός χρόνος ακρόασης</value>
+  </data>
+  <data name="InsightsPage_UniqueSongs" xml:space="preserve">
+    <value>Μοναδικά τραγούδια</value>
+  </data>
+  <data name="InsightsPage_PeakHour" xml:space="preserve">
+    <value>Ώρα αιχμής</value>
+  </data>
+  <data name="InsightsPage_MostActiveDay" xml:space="preserve">
+    <value>Πιο ενεργή ημέρα</value>
+  </data>
+  <data name="InsightsPage_TopSongs" xml:space="preserve">
+    <value>Κορυφαία τραγούδια</value>
+  </data>
+  <data name="InsightsPage_TopArtists" xml:space="preserve">
+    <value>Κορυφαίοι καλλιτέχνες</value>
+  </data>
+  <data name="InsightsPage_TopAlbums" xml:space="preserve">
+    <value>Κορυφαία άλμπουμ</value>
+  </data>
+  <data name="InsightsPage_TopGenres" xml:space="preserve">
+    <value>Κορυφαία είδη</value>
+  </data>
+  <data name="InsightsPage_Sources" xml:space="preserve">
+    <value>Πηγές αναπαραγωγής</value>
+  </data>
+  <data name="InsightsPage_Empty_Title" xml:space="preserve">
+    <value>Δεν υπάρχουν ακόμα δεδομένα ακρόασης</value>
+  </data>
+  <data name="InsightsPage_Empty_Subtitle" xml:space="preserve">
+    <value>Ξεκινήστε να αναπαράγετε μουσική για να δείτε τα στατιστικά σας εδώ</value>
+  </data>
+  <data name="InsightsPage_Plays" xml:space="preserve">
+    <value>{0} αναπαραγωγές</value>
+  </data>
+  <data name="InsightsPage_Source_Albums" xml:space="preserve">
+    <value>Άλμπουμ</value>
+  </data>
+  <data name="InsightsPage_Source_Artists" xml:space="preserve">
+    <value>Καλλιτέχνες</value>
+  </data>
+  <data name="InsightsPage_Source_Playlists" xml:space="preserve">
+    <value>Λίστες αναπαραγωγής</value>
+  </data>
+  <data name="InsightsPage_Source_SmartPlaylists" xml:space="preserve">
+    <value>Έξυπνες λίστες αναπαραγωγής</value>
+  </data>
+  <data name="InsightsPage_Source_Folders" xml:space="preserve">
+    <value>Φάκελοι</value>
+  </data>
+  <data name="InsightsPage_Source_Genres" xml:space="preserve">
+    <value>Είδη</value>
+  </data>
+  <data name="InsightsPage_Source_Search" xml:space="preserve">
+    <value>Αναζήτηση</value>
+  </data>
+  <data name="InsightsPage_Source_Library" xml:space="preserve">
+    <value>Βιβλιοθήκη</value>
+  </data>
+  <data name="InsightsPage_Source_Files" xml:space="preserve">
+    <value>Αρχεία</value>
+  </data>
+  <data name="InsightsPage_Reset_ToolTip" xml:space="preserve">
+    <value>Επαναφορά ιστορικού ακρόασης</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Title" xml:space="preserve">
+    <value>Επαναφορά ιστορικού ακρόασης;</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Message" xml:space="preserve">
+    <value>Αυτό θα διαγράψει οριστικά όλο το ιστορικό ακρόασης και τα στατιστικά. Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Button" xml:space="preserve">
+    <value>Επαναφορά</value>
   </data>
 </root>

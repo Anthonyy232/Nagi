@@ -108,7 +108,7 @@
     <value>Laule</value>
   </data>
   <data name="Label_Artists" xml:space="preserve">
-    <value>Artists</value>
+    <value>Esitajad</value>
   </data>
   <data name="Label_Song" xml:space="preserve">
     <value>Lugu</value>
@@ -232,7 +232,7 @@
     <value>koos kaanepildiga</value>
   </data>
   <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>with artist image</value>
+    <value>esitaja pildiga</value>
   </data>
   <data name="Label_And" xml:space="preserve">
     <value>ja</value>
