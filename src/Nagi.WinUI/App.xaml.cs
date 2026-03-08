@@ -71,56 +71,7 @@ public partial class App : Application
         CoreApplication.Suspending += OnSuspending;
     }
 
-    /// <summary>
-    ///     Generates the LibVLC plugin cache if it doesn't exist or if the LibVLC version has changed.
-    ///     This dramatically improves LibVLC initialization time on subsequent launches.
-    ///     Note: This is skipped for packaged (MSIX) builds as the installation directory is read-only.
-    /// </summary>
-    private static void EnsureLibVlcPluginCache()
-    {
-        // Skip for packaged builds - the installation directory is read-only in MSIX
-        return;
 
-        try
-        {
-            var appDataPath = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "Nagi");
-
-            var cacheMarkerPath = Path.Combine(appDataPath, ".libvlc-cache-version");
-
-            // Check if we need to regenerate the cache
-            var needsRegeneration = true;
-            if (File.Exists(cacheMarkerPath))
-            {
-                var cachedVersion = File.ReadAllText(cacheMarkerPath).Trim();
-                needsRegeneration = cachedVersion != LibVlcVersion;
-            }
-
-            if (needsRegeneration)
-            {
-                // We use Log.Information here because the Microsoft.Extensions.Logging system 
-                // might not be fully wired up yet in the constructor sequence.
-                Log.Information("Regenerating LibVLC plugin cache for version {Version}...", LibVlcVersion);
-
-                // Generate the plugin cache - this creates plugins.dat in the libvlc plugins folder
-                // Note: Core.Initialize() is already called by the audioWarmupTask before this runs
-                using var tempVlc = new LibVLCSharp.LibVLC("--reset-plugins-cache");
-                
-                // Write the version marker so we don't regenerate unnecessarily
-                Directory.CreateDirectory(appDataPath);
-                File.WriteAllText(cacheMarkerPath, LibVlcVersion);
-                
-                Log.Information("LibVLC plugin cache generated successfully.");
-            }
-        }
-        catch (Exception ex)
-        {
-            // Silently fail - plugin cache is an optimization, not required for functionality.
-            // However, we log the failure if possible.
-            Log.Warning(ex, "Failed to generate LibVLC plugin cache. This is non-critical but may affect startup performance.");
-        }
-    }
 
 
     /// <summary>
@@ -372,8 +323,6 @@ public partial class App : Application
                     // Initialize LibVLC core first (registers native library paths)
                     LibVLCSharp.Core.Initialize();
 
-                    // Ensure plugin cache exists BEFORE creating LibVLC instance
-                    EnsureLibVlcPluginCache();
                     await Services.GetRequiredService<IAudioPlayer>().EnsureInitializedAsync().ConfigureAwait(false);
                 }
                 catch (Exception ex)
@@ -892,16 +841,13 @@ public partial class App : Application
         try
         {
             // 1. Packaged apps store settings in LocalSettings, not settings.json
-            if (PathConfiguration.IsRunningInPackage())
+            try
             {
-                try
-                {
-                    ApplicationData.Current.LocalSettings.Values.Clear();
-                }
-                catch (Exception ex)
-                {
-                    Log.Warning(ex, "Failed to clear LocalSettings in packaged mode.");
-                }
+                ApplicationData.Current.LocalSettings.Values.Clear();
+            }
+            catch (Exception ex)
+            {
+                Log.Warning(ex, "Failed to clear LocalSettings.");
             }
 
             // 2. Clear known settings and state files
