@@ -108,7 +108,7 @@
     <value>Chansons</value>
   </data>
   <data name="Label_Artists" xml:space="preserve">
-    <value>Artists</value>
+    <value>Artistes</value>
   </data>
   <data name="Label_Song" xml:space="preserve">
     <value>Chanson</value>
@@ -232,7 +232,7 @@
     <value>avec pochette</value>
   </data>
   <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>with artist image</value>
+    <value>avec image d'artiste</value>
   </data>
   <data name="Label_And" xml:space="preserve">
     <value>et</value>

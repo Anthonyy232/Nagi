@@ -108,7 +108,7 @@
     <value>Песни</value>
   </data>
   <data name="Label_Artists" xml:space="preserve">
-    <value>Artists</value>
+    <value>Исполнители</value>
   </data>
   <data name="Label_Song" xml:space="preserve">
     <value>Песня</value>
@@ -232,7 +232,7 @@
     <value>с обложкой</value>
   </data>
   <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>with artist image</value>
+    <value>с изображением исполнителя</value>
   </data>
   <data name="Label_And" xml:space="preserve">
     <value>и</value>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
@@ -75,6 +75,9 @@
   </data>
   <data name="NavItem_Folders" xml:space="preserve">
     <value>फ़ोल्डर</value>
+  </data>
+  <data name="NavItem_Insights" xml:space="preserve">
+    <value>इनसाइट्स</value>
   </data>
   <data name="NavItem_Settings" xml:space="preserve">
     <value>सेटिंग्स</value>
@@ -1591,10 +1594,10 @@
     <value>अचानक लाउडनेस परिवर्तनों से बचने के लिए वॉल्यूम को मानक स्तर (-14 LUFS) पर स्वचालित रूप से समायोजित करें।</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
-    <value>Fade on Play / Pause</value>
+    <value>चलाने / रोकने पर फ़ेड करें</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Description" xml:space="preserve">
-    <value>Smoothly fade the volume in when resuming and out when pausing instead of cutting instantly.</value>
+    <value>तुरंत कट करने के बजाय फिर से शुरू करने पर वॉल्यूम को धीरे-धीरे अंदर करें और रोकने पर बाहर करें।</value>
   </data>
   <data name="SettingsPage_Equalizer" xml:space="preserve">
     <value>ऑडियो इक्वलाइज़र</value>
@@ -1669,10 +1672,10 @@
     <value>कई कलाकारों को विभाजित करने के लिए उपयोग किए जाने वाले वर्णों को परिभाषित करें (उदाहरण के लिए ';/')। अक्षम करने के लिए खाली छोड़ दें।</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
-    <value>Genre Splitting</value>
+    <value>शैली विभाजन</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Define characters used to split multiple genres (e.g. ';/'). Leave empty to disable.</value>
+    <value>कई शैलियों को विभाजित करने के लिए उपयोग किए जाने वाले वर्णों को परिभाषित करें (उदाहरण के लिए ';/'). अक्षम करने के लिए खाली छोड़ दें।</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>लाइब्रेरी पुनः स्कैन करें</value>
@@ -1867,75 +1870,168 @@
     <value>भाषा परिवर्तन को पूरी तरह से प्रभावी होने के लिए कृपया एप्लिकेशन को पुनरारंभ करें।</value>
   </data>
   <data name="SettingsPage_About_PrivacyPolicy_Content" xml:space="preserve">
-    <value>Privacy Policy</value>
+    <value>गोपनीयता नीति</value>
   </data>
   <data name="SettingsPage_BackupRestore_Header" xml:space="preserve">
-    <value>Backup &amp; Restore</value>
+    <value>बैकअप और पुनर्स्थापना</value>
   </data>
   <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
-    <value>Create backups of your music library and settings, or restore from a previous backup</value>
+    <value>अपनी संगीत लाइब्रेरी और सेटिंग्स का बैकअप बनाएं, या पिछले बैकअप से पुनर्स्थापित करें</value>
   </data>
   <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
-    <value>Create Backup</value>
+    <value>बैकअप बनाएं</value>
   </data>
   <data name="SettingsPage_RestoreBackup_Content" xml:space="preserve">
-    <value>Restore Backup</value>
+    <value>बैकअप पुनर्स्थापित करें</value>
   </data>
   <data name="Settings_Backup_Success_Title" xml:space="preserve">
-    <value>Backup Created</value>
+    <value>बैकअप बनाया गया</value>
   </data>
   <data name="Settings_Backup_Success_Message" xml:space="preserve">
-    <value>Successfully created backup ({0:F2} MB) at: {1}</value>
+    <value>सफलतापूर्वक बैकअप बनाया गया ({0:F2} MB) यहाँ पर: {1}</value>
   </data>
   <data name="Settings_Backup_Failed_Title" xml:space="preserve">
-    <value>Backup Failed</value>
+    <value>बैकअप असफल रहा</value>
   </data>
   <data name="Settings_Backup_Failed_Message" xml:space="preserve">
-    <value>Failed to create backup. Please try again.</value>
+    <value>बैकअप बनाने में विफल। कृपया पुन: प्रयास करें।</value>
   </data>
   <data name="Settings_Restore_Invalid_Title" xml:space="preserve">
-    <value>Invalid Backup File</value>
+    <value>अमान्य बैकअप फ़ाइल</value>
   </data>
   <data name="Settings_Restore_Invalid_Message" xml:space="preserve">
-    <value>The selected file is not a valid Nagi backup.</value>
+    <value>चुनी गई फ़ाइल मान्य नागी बैकअप नहीं है।</value>
   </data>
   <data name="Settings_Restore_Confirm_Title" xml:space="preserve">
-    <value>Restore Backup?</value>
+    <value>बैकअप पुनर्स्थापित करें?</value>
   </data>
   <data name="Settings_Restore_Confirm_Message" xml:space="preserve">
-    <value>Restoring from backup will replace all current app data. This action cannot be undone. The app will restart after restore. Continue?</value>
+    <value>बैकअप से पुनर्स्थापित करने पर सभी वर्तमान ऐप डेटा बदल जाएगा। इस कार्रवाई को पूर्ववत नहीं किया जा सकता है। पुनर्स्थापना के बाद ऐप पुनरारंभ होगा। जारी रखें?</value>
   </data>
   <data name="Settings_Restore_Confirm_Button" xml:space="preserve">
-    <value>Restore</value>
+    <value>पुनर्स्थापित करें</value>
   </data>
   <data name="Settings_Restore_Success_Title" xml:space="preserve">
-    <value>Restore Complete</value>
+    <value>पुनर्स्थापना पूर्ण</value>
   </data>
   <data name="Settings_Restore_Success_Message" xml:space="preserve">
-    <value>Successfully restored backup. The app will now restart.</value>
+    <value>बैकअप सफलतापूर्वक पुनर्स्थापित किया गया। ऐप अब पुनरारंभ होगा।</value>
   </data>
   <data name="Settings_Restore_Failed_Title" xml:space="preserve">
-    <value>Restore Failed</value>
+    <value>पुनर्स्थापना असफल</value>
   </data>
   <data name="Settings_Restore_Failed_Message" xml:space="preserve">
-    <value>Failed to restore from backup. Your data was not modified.</value>
+    <value>बैकअप से पुनर्स्थापित करने में विफल। आपका डेटा संशोधित नहीं किया गया था।</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
-    <value>Player Styling</value>
+    <value>प्लेयर स्टाइलिंग</value>
   </data>
   <data name="PlayerBackgroundMaterial_Acrylic" xml:space="preserve">
-    <value>Acrylic (Glass)</value>
+    <value>एक्रिलिक (ग्लास)</value>
   </data>
   <data name="PlayerBackgroundMaterial_Solid" xml:space="preserve">
-    <value>Solid (Opaque)</value>
+    <value>ठोस (अपारदर्शी)</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
-    <value>Customize the appearance of the floating player</value>
+    <value>फ़्लोटिंग प्लेयर की उपस्थिति को अनुकूलित करें</value>
   </data>
   <data name="SettingsPage_TintIntensity_Header" xml:space="preserve">
-    <value>Tint Intensity</value>
+    <value>टिंट की तीव्रता</value>
   </data>
   <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
-    <value>Adjusts the vibrancy of the player background color</value>
+    <value>प्लेयर के पृष्ठभूमि रंग की जीवंतता को समायोजित करता है</value>
+  </data>
+  <data name="SettingsPage_FadeInDuration_Header" xml:space="preserve">
+    <value>फ़ेड-इन अवधि</value>
+  </data>
+  <data name="SettingsPage_FadeInDuration_Description" xml:space="preserve">
+    <value>चलाते समय फ़ेड-इन इफ़ेक्ट की अवधि (मिसे.)</value>
+  </data>
+  <data name="SettingsPage_FadeOutDuration_Header" xml:space="preserve">
+    <value>फ़ेड-आउट अवधि</value>
+  </data>
+  <data name="SettingsPage_FadeOutDuration_Description" xml:space="preserve">
+    <value>रोकते समय फ़ेड-आउट इफ़ेक्ट की अवधि (मिसे.)</value>
+  </data>
+  <data name="Settings_Nav_Insights" xml:space="preserve">
+    <value>इनसाइट्स</value>
+  </data>
+  <data name="InsightsPage_Title" xml:space="preserve">
+    <value>इनसाइट्स</value>
+  </data>
+  <data name="InsightsPage_TotalTime" xml:space="preserve">
+    <value>कुल सुनने का समय</value>
+  </data>
+  <data name="InsightsPage_UniqueSongs" xml:space="preserve">
+    <value>अद्वितीय गाने</value>
+  </data>
+  <data name="InsightsPage_PeakHour" xml:space="preserve">
+    <value>व्यस्ततम घंटा</value>
+  </data>
+  <data name="InsightsPage_MostActiveDay" xml:space="preserve">
+    <value>सबसे सक्रिय दिन</value>
+  </data>
+  <data name="InsightsPage_TopSongs" xml:space="preserve">
+    <value>शीर्ष गाने</value>
+  </data>
+  <data name="InsightsPage_TopArtists" xml:space="preserve">
+    <value>शीर्ष कलाकार</value>
+  </data>
+  <data name="InsightsPage_TopAlbums" xml:space="preserve">
+    <value>शीर्ष एल्बम</value>
+  </data>
+  <data name="InsightsPage_TopGenres" xml:space="preserve">
+    <value>शीर्ष शैलियाँ</value>
+  </data>
+  <data name="InsightsPage_Sources" xml:space="preserve">
+    <value>प्लेबैक स्रोत</value>
+  </data>
+  <data name="InsightsPage_Empty_Title" xml:space="preserve">
+    <value>अभी तक सुनने का कोई डेटा नहीं</value>
+  </data>
+  <data name="InsightsPage_Empty_Subtitle" xml:space="preserve">
+    <value>अपनी इनसाइट्स देखने के लिए यहाँ संगीत चलाना शुरू करें</value>
+  </data>
+  <data name="InsightsPage_Plays" xml:space="preserve">
+    <value>{0} प्ले</value>
+  </data>
+  <data name="InsightsPage_Source_Albums" xml:space="preserve">
+    <value>एल्बम</value>
+  </data>
+  <data name="InsightsPage_Source_Artists" xml:space="preserve">
+    <value>कलाकार</value>
+  </data>
+  <data name="InsightsPage_Source_Playlists" xml:space="preserve">
+    <value>प्लेलिस्ट</value>
+  </data>
+  <data name="InsightsPage_Source_SmartPlaylists" xml:space="preserve">
+    <value>स्मार्ट प्लेलिस्ट</value>
+  </data>
+  <data name="InsightsPage_Source_Folders" xml:space="preserve">
+    <value>फ़ोल्डर</value>
+  </data>
+  <data name="InsightsPage_Source_Genres" xml:space="preserve">
+    <value>शैलियाँ</value>
+  </data>
+  <data name="InsightsPage_Source_Search" xml:space="preserve">
+    <value>खोज</value>
+  </data>
+  <data name="InsightsPage_Source_Library" xml:space="preserve">
+    <value>लाइब्रेरी</value>
+  </data>
+  <data name="InsightsPage_Source_Files" xml:space="preserve">
+    <value>फ़ाइलें</value>
+  </data>
+  <data name="InsightsPage_Reset_ToolTip" xml:space="preserve">
+    <value>सुनने का इतिहास रीसेट करें</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Title" xml:space="preserve">
+    <value>सुनने का इतिहास रीसेट करें?</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Message" xml:space="preserve">
+    <value>यह सुनने के सभी इतिहास और आँकड़ों को स्थायी रूप से हटा देगा। इसे पूर्ववत नहीं किया जा सकता है।</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Button" xml:space="preserve">
+    <value>रीसेट करें</value>
   </data>
 </root>

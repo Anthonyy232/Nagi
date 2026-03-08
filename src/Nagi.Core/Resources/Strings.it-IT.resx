@@ -108,7 +108,7 @@
     <value>Brani</value>
   </data>
   <data name="Label_Artists" xml:space="preserve">
-    <value>Artists</value>
+    <value>Artisti</value>
   </data>
   <data name="Label_Song" xml:space="preserve">
     <value>Brano</value>
@@ -232,7 +232,7 @@
     <value>con copertina</value>
   </data>
   <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>with artist image</value>
+    <value>con immagine dell'artista</value>
   </data>
   <data name="Label_And" xml:space="preserve">
     <value>e</value>

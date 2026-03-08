@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
@@ -75,6 +75,9 @@
   </data>
   <data name="NavItem_Folders" xml:space="preserve">
     <value>תיקיות</value>
+  </data>
+  <data name="NavItem_Insights" xml:space="preserve">
+    <value>תובנות</value>
   </data>
   <data name="NavItem_Settings" xml:space="preserve">
     <value>הגדרות</value>
@@ -1589,10 +1592,10 @@
     <value>התאם אוטומטית את עוצמת הקול לרמה הסטנדרטית (-14 LUFS) כדי למנוע שינויי עוצמה פתאומיים.</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
-    <value>Fade on Play / Pause</value>
+    <value>התעמעמות בהפעלה / השהיה</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Description" xml:space="preserve">
-    <value>Smoothly fade the volume in when resuming and out when pausing instead of cutting instantly.</value>
+    <value>הנחתת עוצמת הקול בצורה חלקה בהפעלה מחדש ובהשהיה, במקום חיתוך מיידי.</value>
   </data>
   <data name="SettingsPage_Equalizer" xml:space="preserve">
     <value>אקולייזר שמע</value>
@@ -1667,10 +1670,10 @@
     <value>הגדר תווים המשמשים לפיצול מספר אמנים (לדוגמה: ';/'). השאר ריק כדי להשבית.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
-    <value>Genre Splitting</value>
+    <value>פיצול ז'אנרים</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Define characters used to split multiple genres (e.g. ';/'). Leave empty to disable.</value>
+    <value>הגדר תווים המשמשים לפיצול מספר ז'אנרים (לדוגמה: ';/'). השאר ריק כדי להשבית.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>סרוק מחדש ספרייה</value>
@@ -1865,75 +1868,168 @@
     <value>אנא הפעל מחדש את היישום כדי ששינוי השפה ייכנס לתוקף מלא.</value>
   </data>
   <data name="SettingsPage_About_PrivacyPolicy_Content" xml:space="preserve">
-    <value>Privacy Policy</value>
+    <value>מדיניות פרטיות</value>
   </data>
   <data name="SettingsPage_BackupRestore_Header" xml:space="preserve">
-    <value>Backup &amp; Restore</value>
+    <value>גיבוי ושחזור</value>
   </data>
   <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
-    <value>Create backups of your music library and settings, or restore from a previous backup</value>
+    <value>צור גיבויים של ספריית המוזיקה וההגדרות שלך, או שחזר מגיבוי קודם</value>
   </data>
   <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
-    <value>Create Backup</value>
+    <value>צור גיבוי</value>
   </data>
   <data name="SettingsPage_RestoreBackup_Content" xml:space="preserve">
-    <value>Restore Backup</value>
+    <value>שחזר גיבוי</value>
   </data>
   <data name="Settings_Backup_Success_Title" xml:space="preserve">
-    <value>Backup Created</value>
+    <value>הגיבוי נוצר</value>
   </data>
   <data name="Settings_Backup_Success_Message" xml:space="preserve">
-    <value>Successfully created backup ({0:F2} MB) at: {1}</value>
+    <value>הגיבוי נוצר בהצלחה ({0:F2} מגה-בייט) ב: {1}</value>
   </data>
   <data name="Settings_Backup_Failed_Title" xml:space="preserve">
-    <value>Backup Failed</value>
+    <value>הגיבוי נכשל</value>
   </data>
   <data name="Settings_Backup_Failed_Message" xml:space="preserve">
-    <value>Failed to create backup. Please try again.</value>
+    <value>יצירת הגיבוי נכשלה. אנא נסה שוב.</value>
   </data>
   <data name="Settings_Restore_Invalid_Title" xml:space="preserve">
-    <value>Invalid Backup File</value>
+    <value>קובץ גיבוי לא חוקי</value>
   </data>
   <data name="Settings_Restore_Invalid_Message" xml:space="preserve">
-    <value>The selected file is not a valid Nagi backup.</value>
+    <value>הקובץ שנבחר אינו גיבוי Nagi חוקי.</value>
   </data>
   <data name="Settings_Restore_Confirm_Title" xml:space="preserve">
-    <value>Restore Backup?</value>
+    <value>לשחזר גיבוי?</value>
   </data>
   <data name="Settings_Restore_Confirm_Message" xml:space="preserve">
-    <value>Restoring from backup will replace all current app data. This action cannot be undone. The app will restart after restore. Continue?</value>
+    <value>שחזור מגיבוי יחליף את כל נתוני היישום הנוכחיים. פעולה זו לא ניתנת לביטול. היישום יופעל מחדש לאחר השחזור. להמשיך?</value>
   </data>
   <data name="Settings_Restore_Confirm_Button" xml:space="preserve">
-    <value>Restore</value>
+    <value>שחזר</value>
   </data>
   <data name="Settings_Restore_Success_Title" xml:space="preserve">
-    <value>Restore Complete</value>
+    <value>השחזור הושלם</value>
   </data>
   <data name="Settings_Restore_Success_Message" xml:space="preserve">
-    <value>Successfully restored backup. The app will now restart.</value>
+    <value>הגיבוי שוחזר בהצלחה. היישום יופעל מחדש כעת.</value>
   </data>
   <data name="Settings_Restore_Failed_Title" xml:space="preserve">
-    <value>Restore Failed</value>
+    <value>השחזור נכשל</value>
   </data>
   <data name="Settings_Restore_Failed_Message" xml:space="preserve">
-    <value>Failed to restore from backup. Your data was not modified.</value>
+    <value>השחזור מגיבוי נכשל. הנתונים שלך לא שונו.</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
-    <value>Player Styling</value>
+    <value>עיצוב הנגן</value>
   </data>
   <data name="PlayerBackgroundMaterial_Acrylic" xml:space="preserve">
-    <value>Acrylic (Glass)</value>
+    <value>אקריליק (זכוכית)</value>
   </data>
   <data name="PlayerBackgroundMaterial_Solid" xml:space="preserve">
-    <value>Solid (Opaque)</value>
+    <value>אחיד (אטום)</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
-    <value>Customize the appearance of the floating player</value>
+    <value>התאם אישית את מראה הנגן הצף</value>
   </data>
   <data name="SettingsPage_TintIntensity_Header" xml:space="preserve">
-    <value>Tint Intensity</value>
+    <value>עוצמת גוון</value>
   </data>
   <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
-    <value>Adjusts the vibrancy of the player background color</value>
+    <value>מכוונן את חיות צבע הרקע של הנגן</value>
+  </data>
+  <data name="SettingsPage_FadeInDuration_Header" xml:space="preserve">
+    <value>משך דהייה בכניסה</value>
+  </data>
+  <data name="SettingsPage_FadeInDuration_Description" xml:space="preserve">
+    <value>משך אפקט דהייה בכניסה בעת הפעלה (מ"ש)</value>
+  </data>
+  <data name="SettingsPage_FadeOutDuration_Header" xml:space="preserve">
+    <value>משך דהייה ביציאה</value>
+  </data>
+  <data name="SettingsPage_FadeOutDuration_Description" xml:space="preserve">
+    <value>משך אפקט דהייה ביציאה בעת השהיה (מ"ש)</value>
+  </data>
+  <data name="Settings_Nav_Insights" xml:space="preserve">
+    <value>תובנות</value>
+  </data>
+  <data name="InsightsPage_Title" xml:space="preserve">
+    <value>תובנות</value>
+  </data>
+  <data name="InsightsPage_TotalTime" xml:space="preserve">
+    <value>זמן האזנה כולל</value>
+  </data>
+  <data name="InsightsPage_UniqueSongs" xml:space="preserve">
+    <value>שירים ייחודיים</value>
+  </data>
+  <data name="InsightsPage_PeakHour" xml:space="preserve">
+    <value>שעת שיא</value>
+  </data>
+  <data name="InsightsPage_MostActiveDay" xml:space="preserve">
+    <value>יום פעיל ביותר</value>
+  </data>
+  <data name="InsightsPage_TopSongs" xml:space="preserve">
+    <value>שירים מובילים</value>
+  </data>
+  <data name="InsightsPage_TopArtists" xml:space="preserve">
+    <value>אמנים מובילים</value>
+  </data>
+  <data name="InsightsPage_TopAlbums" xml:space="preserve">
+    <value>אלבומים מובילים</value>
+  </data>
+  <data name="InsightsPage_TopGenres" xml:space="preserve">
+    <value>ז'אנרים מובילים</value>
+  </data>
+  <data name="InsightsPage_Sources" xml:space="preserve">
+    <value>מקורות השמעה</value>
+  </data>
+  <data name="InsightsPage_Empty_Title" xml:space="preserve">
+    <value>אין נתוני האזנה עדיין</value>
+  </data>
+  <data name="InsightsPage_Empty_Subtitle" xml:space="preserve">
+    <value>התחל להשמיע מוזיקה כדי לראות את התובנות שלך כאן</value>
+  </data>
+  <data name="InsightsPage_Plays" xml:space="preserve">
+    <value>{0} השמעות</value>
+  </data>
+  <data name="InsightsPage_Source_Albums" xml:space="preserve">
+    <value>אלבומים</value>
+  </data>
+  <data name="InsightsPage_Source_Artists" xml:space="preserve">
+    <value>אמנים</value>
+  </data>
+  <data name="InsightsPage_Source_Playlists" xml:space="preserve">
+    <value>רשימות השמעה</value>
+  </data>
+  <data name="InsightsPage_Source_SmartPlaylists" xml:space="preserve">
+    <value>רשימות השמעה חכמות</value>
+  </data>
+  <data name="InsightsPage_Source_Folders" xml:space="preserve">
+    <value>תיקיות</value>
+  </data>
+  <data name="InsightsPage_Source_Genres" xml:space="preserve">
+    <value>ז'אנרים</value>
+  </data>
+  <data name="InsightsPage_Source_Search" xml:space="preserve">
+    <value>חיפוש</value>
+  </data>
+  <data name="InsightsPage_Source_Library" xml:space="preserve">
+    <value>ספרייה</value>
+  </data>
+  <data name="InsightsPage_Source_Files" xml:space="preserve">
+    <value>קבצים</value>
+  </data>
+  <data name="InsightsPage_Reset_ToolTip" xml:space="preserve">
+    <value>איפוס היסטוריית האזנה</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Title" xml:space="preserve">
+    <value>לאפס את היסטוריית ההאזנה?</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Message" xml:space="preserve">
+    <value>פעולה זו תמחק לצמיתות את כל היסטוריית ההאזנה והסטטיסטיקות. לא ניתן לבטל פעולה זו.</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Button" xml:space="preserve">
+    <value>איפוס</value>
   </data>
 </root>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
@@ -75,6 +75,9 @@
   </data>
   <data name="NavItem_Folders" xml:space="preserve">
     <value>โฟลเดอร์</value>
+  </data>
+  <data name="NavItem_Insights" xml:space="preserve">
+    <value>ข้อมูลเชิงลึก</value>
   </data>
   <data name="NavItem_Settings" xml:space="preserve">
     <value>การตั้งค่า</value>
@@ -1589,10 +1592,10 @@
     <value>ปรับระดับเสียงโดยอัตโนมัติให้เป็นระดับมาตรฐาน (-14 LUFS) เพื่อหลีกเลี่ยงการเปลี่ยนแปลงความดังของเสียงที่กะทันหัน</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
-    <value>Fade on Play / Pause</value>
+    <value>เฟดเข้า/ออก เมื่อเล่น/หยุดชั่วคราว</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Description" xml:space="preserve">
-    <value>Smoothly fade the volume in when resuming and out when pausing instead of cutting instantly.</value>
+    <value>ค่อยๆ เพิ่มเสียงเมื่อเล่นต่อและลดเสียงเมื่อหยุดชั่วคราว แทนที่จะตัดเสียงทันที</value>
   </data>
   <data name="SettingsPage_Equalizer" xml:space="preserve">
     <value>อีควอไลเซอร์เสียง</value>
@@ -1667,10 +1670,10 @@
     <value>กำหนดอักขระที่ใช้ในการแยกศิลปินหลายคน (เช่น ';/') เว้นว่างไว้เพื่อปิดใช้งาน</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
-    <value>Genre Splitting</value>
+    <value>การแยกประเภทเพลง</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Define characters used to split multiple genres (e.g. ';/'). Leave empty to disable.</value>
+    <value>กำหนดตัวอักษรที่ใช้ในการแยกประเภทเพลงหลายประเภท (เช่น ';/') เว้นว่างไว้เพื่อปิดใช้งาน</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>สแกนไลบรารีซ้ำ</value>
@@ -1865,75 +1868,168 @@
     <value>โปรดรีสตาร์ทแอปพลิเคชันเพื่อให้การเปลี่ยนภาษามีผลอย่างสมบูรณ์</value>
   </data>
   <data name="SettingsPage_About_PrivacyPolicy_Content" xml:space="preserve">
-    <value>Privacy Policy</value>
+    <value>นโยบายความเป็นส่วนตัว</value>
   </data>
   <data name="SettingsPage_BackupRestore_Header" xml:space="preserve">
-    <value>Backup &amp; Restore</value>
+    <value>สำรองและกู้คืน</value>
   </data>
   <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
-    <value>Create backups of your music library and settings, or restore from a previous backup</value>
+    <value>สร้างข้อมูลสำรองของคลังเพลงและการตั้งค่าของคุณ หรือกู้คืนจากข้อมูลสำรองก่อนหน้า</value>
   </data>
   <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
-    <value>Create Backup</value>
+    <value>สร้างข้อมูลสำรอง</value>
   </data>
   <data name="SettingsPage_RestoreBackup_Content" xml:space="preserve">
-    <value>Restore Backup</value>
+    <value>กู้คืนข้อมูลสำรอง</value>
   </data>
   <data name="Settings_Backup_Success_Title" xml:space="preserve">
-    <value>Backup Created</value>
+    <value>สร้างข้อมูลสำรองแล้ว</value>
   </data>
   <data name="Settings_Backup_Success_Message" xml:space="preserve">
-    <value>Successfully created backup ({0:F2} MB) at: {1}</value>
+    <value>สร้างข้อมูลสำรองสำเร็จแล้ว ({0:F2} MB) ที่: {1}</value>
   </data>
   <data name="Settings_Backup_Failed_Title" xml:space="preserve">
-    <value>Backup Failed</value>
+    <value>สร้างข้อมูลสำรองไม่สำเร็จ</value>
   </data>
   <data name="Settings_Backup_Failed_Message" xml:space="preserve">
-    <value>Failed to create backup. Please try again.</value>
+    <value>สร้างข้อมูลสำรองไม่สำเร็จ กรุณาลองอีกครั้ง</value>
   </data>
   <data name="Settings_Restore_Invalid_Title" xml:space="preserve">
-    <value>Invalid Backup File</value>
+    <value>ไฟล์สำรองไม่ถูกต้อง</value>
   </data>
   <data name="Settings_Restore_Invalid_Message" xml:space="preserve">
-    <value>The selected file is not a valid Nagi backup.</value>
+    <value>ไฟล์ที่เลือกไม่ใช่ไฟล์สำรอง Nagi ที่ถูกต้อง</value>
   </data>
   <data name="Settings_Restore_Confirm_Title" xml:space="preserve">
-    <value>Restore Backup?</value>
+    <value>กู้คืนข้อมูลสำรองหรือไม่?</value>
   </data>
   <data name="Settings_Restore_Confirm_Message" xml:space="preserve">
-    <value>Restoring from backup will replace all current app data. This action cannot be undone. The app will restart after restore. Continue?</value>
+    <value>การกู้คืนจากข้อมูลสำรองจะแทนที่ข้อมูลแอปปัจจุบันทั้งหมด การดำเนินการนี้ไม่สามารถยกเลิกได้ แอปจะเริ่มต้นใหม่หลังจากกู้คืน ดำเนินการต่อหรือไม่?</value>
   </data>
   <data name="Settings_Restore_Confirm_Button" xml:space="preserve">
-    <value>Restore</value>
+    <value>กู้คืน</value>
   </data>
   <data name="Settings_Restore_Success_Title" xml:space="preserve">
-    <value>Restore Complete</value>
+    <value>กู้คืนเสร็จสมบูรณ์</value>
   </data>
   <data name="Settings_Restore_Success_Message" xml:space="preserve">
-    <value>Successfully restored backup. The app will now restart.</value>
+    <value>กู้คืนข้อมูลสำรองสำเร็จแล้ว แอปจะเริ่มต้นใหม่</value>
   </data>
   <data name="Settings_Restore_Failed_Title" xml:space="preserve">
-    <value>Restore Failed</value>
+    <value>กู้คืนไม่สำเร็จ</value>
   </data>
   <data name="Settings_Restore_Failed_Message" xml:space="preserve">
-    <value>Failed to restore from backup. Your data was not modified.</value>
+    <value>กู้คืนจากข้อมูลสำรองไม่สำเร็จ ข้อมูลของคุณไม่ได้รับการแก้ไข</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
-    <value>Player Styling</value>
+    <value>สไตล์โปรแกรมเล่น</value>
   </data>
   <data name="PlayerBackgroundMaterial_Acrylic" xml:space="preserve">
-    <value>Acrylic (Glass)</value>
+    <value>อะคริลิก (กระจก)</value>
   </data>
   <data name="PlayerBackgroundMaterial_Solid" xml:space="preserve">
-    <value>Solid (Opaque)</value>
+    <value>ทึบ (ไม่โปร่งใส)</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
-    <value>Customize the appearance of the floating player</value>
+    <value>ปรับแต่งลักษณะของโปรแกรมเล่นแบบลอยตัว</value>
   </data>
   <data name="SettingsPage_TintIntensity_Header" xml:space="preserve">
-    <value>Tint Intensity</value>
+    <value>ความเข้มของสี</value>
   </data>
   <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
-    <value>Adjusts the vibrancy of the player background color</value>
+    <value>ปรับความสดใสของสีพื้นหลังโปรแกรมเล่น</value>
+  </data>
+  <data name="SettingsPage_FadeInDuration_Header" xml:space="preserve">
+    <value>ระยะเวลาเฟดอิน</value>
+  </data>
+  <data name="SettingsPage_FadeInDuration_Description" xml:space="preserve">
+    <value>ระยะเวลาของเอฟเฟกต์เฟดอินเมื่อเล่น (มิลลิวินาที)</value>
+  </data>
+  <data name="SettingsPage_FadeOutDuration_Header" xml:space="preserve">
+    <value>ระยะเวลาเฟดเอาต์</value>
+  </data>
+  <data name="SettingsPage_FadeOutDuration_Description" xml:space="preserve">
+    <value>ระยะเวลาของเอฟเฟกต์เฟดเอาต์เมื่อหยุดชั่วคราว (มิลลิวินาที)</value>
+  </data>
+  <data name="Settings_Nav_Insights" xml:space="preserve">
+    <value>ข้อมูลเชิงลึก</value>
+  </data>
+  <data name="InsightsPage_Title" xml:space="preserve">
+    <value>ข้อมูลเชิงลึก</value>
+  </data>
+  <data name="InsightsPage_TotalTime" xml:space="preserve">
+    <value>เวลาฟังทั้งหมด</value>
+  </data>
+  <data name="InsightsPage_UniqueSongs" xml:space="preserve">
+    <value>เพลงที่ไม่ซ้ำกัน</value>
+  </data>
+  <data name="InsightsPage_PeakHour" xml:space="preserve">
+    <value>ชั่วโมงที่มีผู้ใช้งานมากที่สุด</value>
+  </data>
+  <data name="InsightsPage_MostActiveDay" xml:space="preserve">
+    <value>วันที่ใช้งานมากที่สุด</value>
+  </data>
+  <data name="InsightsPage_TopSongs" xml:space="preserve">
+    <value>เพลงยอดนิยม</value>
+  </data>
+  <data name="InsightsPage_TopArtists" xml:space="preserve">
+    <value>ศิลปินยอดนิยม</value>
+  </data>
+  <data name="InsightsPage_TopAlbums" xml:space="preserve">
+    <value>อัลบั้มยอดนิยม</value>
+  </data>
+  <data name="InsightsPage_TopGenres" xml:space="preserve">
+    <value>แนวเพลงยอดนิยม</value>
+  </data>
+  <data name="InsightsPage_Sources" xml:space="preserve">
+    <value>แหล่งที่มาของการเล่น</value>
+  </data>
+  <data name="InsightsPage_Empty_Title" xml:space="preserve">
+    <value>ยังไม่มีข้อมูลการฟัง</value>
+  </data>
+  <data name="InsightsPage_Empty_Subtitle" xml:space="preserve">
+    <value>เริ่มเล่นเพลงเพื่อดูข้อมูลเชิงลึกของคุณที่นี่</value>
+  </data>
+  <data name="InsightsPage_Plays" xml:space="preserve">
+    <value>{0} ครั้งที่เล่น</value>
+  </data>
+  <data name="InsightsPage_Source_Albums" xml:space="preserve">
+    <value>อัลบั้ม</value>
+  </data>
+  <data name="InsightsPage_Source_Artists" xml:space="preserve">
+    <value>ศิลปิน</value>
+  </data>
+  <data name="InsightsPage_Source_Playlists" xml:space="preserve">
+    <value>เพลย์ลิสต์</value>
+  </data>
+  <data name="InsightsPage_Source_SmartPlaylists" xml:space="preserve">
+    <value>เพลย์ลิสต์อัจฉริยะ</value>
+  </data>
+  <data name="InsightsPage_Source_Folders" xml:space="preserve">
+    <value>โฟลเดอร์</value>
+  </data>
+  <data name="InsightsPage_Source_Genres" xml:space="preserve">
+    <value>แนวเพลง</value>
+  </data>
+  <data name="InsightsPage_Source_Search" xml:space="preserve">
+    <value>ค้นหา</value>
+  </data>
+  <data name="InsightsPage_Source_Library" xml:space="preserve">
+    <value>คลังเพลง</value>
+  </data>
+  <data name="InsightsPage_Source_Files" xml:space="preserve">
+    <value>ไฟล์</value>
+  </data>
+  <data name="InsightsPage_Reset_ToolTip" xml:space="preserve">
+    <value>รีเซ็ตประวัติการฟัง</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Title" xml:space="preserve">
+    <value>รีเซ็ตประวัติการฟังหรือไม่?</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Message" xml:space="preserve">
+    <value>การดำเนินการนี้จะลบประวัติการฟังและสถิติทั้งหมดอย่างถาวร ซึ่งไม่สามารถยกเลิกได้</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Button" xml:space="preserve">
+    <value>รีเซ็ต</value>
   </data>
 </root>

@@ -108,7 +108,7 @@
     <value>Pjesme</value>
   </data>
   <data name="Label_Artists" xml:space="preserve">
-    <value>Artists</value>
+    <value>Izvođači</value>
   </data>
   <data name="Label_Song" xml:space="preserve">
     <value>Pjesma</value>
@@ -232,7 +232,7 @@
     <value>s naslovnicom</value>
   </data>
   <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>with artist image</value>
+    <value>sa slikom izvođača</value>
   </data>
   <data name="Label_And" xml:space="preserve">
     <value>i</value>

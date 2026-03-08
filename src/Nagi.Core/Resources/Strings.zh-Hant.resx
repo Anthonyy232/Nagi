@@ -108,7 +108,7 @@
     <value>歌曲</value>
   </data>
   <data name="Label_Artists" xml:space="preserve">
-    <value>Artists</value>
+    <value>藝人</value>
   </data>
   <data name="Label_Song" xml:space="preserve">
     <value>歌曲</value>
@@ -232,7 +232,7 @@
     <value>附封面藝術</value>
   </data>
   <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>with artist image</value>
+    <value>附帶藝人圖片</value>
   </data>
   <data name="Label_And" xml:space="preserve">
     <value>和</value>

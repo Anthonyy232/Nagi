@@ -108,7 +108,7 @@
     <value>曲</value>
   </data>
   <data name="Label_Artists" xml:space="preserve">
-    <value>Artists</value>
+    <value>アーティスト</value>
   </data>
   <data name="Label_Song" xml:space="preserve">
     <value>曲</value>
@@ -232,7 +232,7 @@
     <value>カバーアート付き</value>
   </data>
   <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>with artist image</value>
+    <value>アーティスト画像付き</value>
   </data>
   <data name="Label_And" xml:space="preserve">
     <value>と</value>
