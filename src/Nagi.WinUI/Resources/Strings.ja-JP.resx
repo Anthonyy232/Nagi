@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
@@ -75,6 +75,9 @@
   </data>
   <data name="NavItem_Folders" xml:space="preserve">
     <value>フォルダー</value>
+  </data>
+  <data name="NavItem_Insights" xml:space="preserve">
+    <value>インサイト</value>
   </data>
   <data name="NavItem_Settings" xml:space="preserve">
     <value>設定</value>
@@ -1589,10 +1592,10 @@
     <value>急な音量変化を避けるため、音量を標準レベル (-14 LUFS) に自動調整します。</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
-    <value>Fade on Play / Pause</value>
+    <value>再生/一時停止時のフェード</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Description" xml:space="preserve">
-    <value>Smoothly fade the volume in when resuming and out when pausing instead of cutting instantly.</value>
+    <value>即座にカットするのではなく、再生再開時に音量をスムーズにフェードインし、一時停止時にフェードアウトさせます。</value>
   </data>
   <data name="SettingsPage_Equalizer" xml:space="preserve">
     <value>オーディオイコライザー</value>
@@ -1667,10 +1670,10 @@
     <value>複数のアーティストを分割するために使用される文字を定義します（例：';/'）。無効にするには空欄にしてください。</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
-    <value>Genre Splitting</value>
+    <value>ジャンルの分割</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Define characters used to split multiple genres (e.g. ';/'). Leave empty to disable.</value>
+    <value>複数のジャンルを分割するために使用される文字を定義します (例: ';/'). 空白のままにすると無効になります。</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>ライブラリを再スキャン</value>
@@ -1865,75 +1868,168 @@
     <value>言語の変更を完全に適用するには、アプリケーションを再起動してください。</value>
   </data>
   <data name="SettingsPage_About_PrivacyPolicy_Content" xml:space="preserve">
-    <value>Privacy Policy</value>
+    <value>プライバシーポリシー</value>
   </data>
   <data name="SettingsPage_BackupRestore_Header" xml:space="preserve">
-    <value>Backup &amp; Restore</value>
+    <value>バックアップと復元</value>
   </data>
   <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
-    <value>Create backups of your music library and settings, or restore from a previous backup</value>
+    <value>音楽ライブラリや設定のバックアップを作成したり、以前のバックアップから復元したりできます。</value>
   </data>
   <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
-    <value>Create Backup</value>
+    <value>バックアップを作成</value>
   </data>
   <data name="SettingsPage_RestoreBackup_Content" xml:space="preserve">
-    <value>Restore Backup</value>
+    <value>バックアップを復元</value>
   </data>
   <data name="Settings_Backup_Success_Title" xml:space="preserve">
-    <value>Backup Created</value>
+    <value>バックアップを作成しました</value>
   </data>
   <data name="Settings_Backup_Success_Message" xml:space="preserve">
-    <value>Successfully created backup ({0:F2} MB) at: {1}</value>
+    <value>バックアップを正常に作成しました ({0:F2} MB): {1}</value>
   </data>
   <data name="Settings_Backup_Failed_Title" xml:space="preserve">
-    <value>Backup Failed</value>
+    <value>バックアップに失敗しました</value>
   </data>
   <data name="Settings_Backup_Failed_Message" xml:space="preserve">
-    <value>Failed to create backup. Please try again.</value>
+    <value>バックアップの作成に失敗しました。もう一度お試しください。</value>
   </data>
   <data name="Settings_Restore_Invalid_Title" xml:space="preserve">
-    <value>Invalid Backup File</value>
+    <value>無効なバックアップファイル</value>
   </data>
   <data name="Settings_Restore_Invalid_Message" xml:space="preserve">
-    <value>The selected file is not a valid Nagi backup.</value>
+    <value>選択されたファイルは有効なNagiバックアップではありません。</value>
   </data>
   <data name="Settings_Restore_Confirm_Title" xml:space="preserve">
-    <value>Restore Backup?</value>
+    <value>バックアップを復元しますか？</value>
   </data>
   <data name="Settings_Restore_Confirm_Message" xml:space="preserve">
-    <value>Restoring from backup will replace all current app data. This action cannot be undone. The app will restart after restore. Continue?</value>
+    <value>バックアップから復元すると、現在のすべてのアプリデータが上書きされます。この操作は元に戻せません。復元後、アプリは再起動します。続行しますか？</value>
   </data>
   <data name="Settings_Restore_Confirm_Button" xml:space="preserve">
-    <value>Restore</value>
+    <value>復元</value>
   </data>
   <data name="Settings_Restore_Success_Title" xml:space="preserve">
-    <value>Restore Complete</value>
+    <value>復元が完了しました</value>
   </data>
   <data name="Settings_Restore_Success_Message" xml:space="preserve">
-    <value>Successfully restored backup. The app will now restart.</value>
+    <value>バックアップが正常に復元されました。アプリを再起動します。</value>
   </data>
   <data name="Settings_Restore_Failed_Title" xml:space="preserve">
-    <value>Restore Failed</value>
+    <value>復元に失敗しました</value>
   </data>
   <data name="Settings_Restore_Failed_Message" xml:space="preserve">
-    <value>Failed to restore from backup. Your data was not modified.</value>
+    <value>バックアップからの復元に失敗しました。データは変更されていません。</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
-    <value>Player Styling</value>
+    <value>プレイヤーのスタイル設定</value>
   </data>
   <data name="PlayerBackgroundMaterial_Acrylic" xml:space="preserve">
-    <value>Acrylic (Glass)</value>
+    <value>アクリル (ガラス)</value>
   </data>
   <data name="PlayerBackgroundMaterial_Solid" xml:space="preserve">
-    <value>Solid (Opaque)</value>
+    <value>ソリッド (不透明)</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
-    <value>Customize the appearance of the floating player</value>
+    <value>フローティングプレイヤーの外観をカスタマイズします</value>
   </data>
   <data name="SettingsPage_TintIntensity_Header" xml:space="preserve">
-    <value>Tint Intensity</value>
+    <value>色合いの強度</value>
   </data>
   <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
-    <value>Adjusts the vibrancy of the player background color</value>
+    <value>プレイヤーの背景色の鮮やかさを調整します</value>
+  </data>
+  <data name="SettingsPage_FadeInDuration_Header" xml:space="preserve">
+    <value>フェードイン時間</value>
+  </data>
+  <data name="SettingsPage_FadeInDuration_Description" xml:space="preserve">
+    <value>再生時のフェードイン効果の持続時間（ミリ秒）</value>
+  </data>
+  <data name="SettingsPage_FadeOutDuration_Header" xml:space="preserve">
+    <value>フェードアウト時間</value>
+  </data>
+  <data name="SettingsPage_FadeOutDuration_Description" xml:space="preserve">
+    <value>一時停止時のフェードアウト効果の持続時間（ミリ秒）</value>
+  </data>
+  <data name="Settings_Nav_Insights" xml:space="preserve">
+    <value>インサイト</value>
+  </data>
+  <data name="InsightsPage_Title" xml:space="preserve">
+    <value>インサイト</value>
+  </data>
+  <data name="InsightsPage_TotalTime" xml:space="preserve">
+    <value>総再生時間</value>
+  </data>
+  <data name="InsightsPage_UniqueSongs" xml:space="preserve">
+    <value>ユニークな曲</value>
+  </data>
+  <data name="InsightsPage_PeakHour" xml:space="preserve">
+    <value>ピーク時間</value>
+  </data>
+  <data name="InsightsPage_MostActiveDay" xml:space="preserve">
+    <value>最もアクティブな日</value>
+  </data>
+  <data name="InsightsPage_TopSongs" xml:space="preserve">
+    <value>トップソング</value>
+  </data>
+  <data name="InsightsPage_TopArtists" xml:space="preserve">
+    <value>トップアーティスト</value>
+  </data>
+  <data name="InsightsPage_TopAlbums" xml:space="preserve">
+    <value>トップアルバム</value>
+  </data>
+  <data name="InsightsPage_TopGenres" xml:space="preserve">
+    <value>トップジャンル</value>
+  </data>
+  <data name="InsightsPage_Sources" xml:space="preserve">
+    <value>再生ソース</value>
+  </data>
+  <data name="InsightsPage_Empty_Title" xml:space="preserve">
+    <value>まだ再生データがありません</value>
+  </data>
+  <data name="InsightsPage_Empty_Subtitle" xml:space="preserve">
+    <value>音楽を再生して、ここにインサイトを表示しましょう</value>
+  </data>
+  <data name="InsightsPage_Plays" xml:space="preserve">
+    <value>{0} 回再生</value>
+  </data>
+  <data name="InsightsPage_Source_Albums" xml:space="preserve">
+    <value>アルバム</value>
+  </data>
+  <data name="InsightsPage_Source_Artists" xml:space="preserve">
+    <value>アーティスト</value>
+  </data>
+  <data name="InsightsPage_Source_Playlists" xml:space="preserve">
+    <value>プレイリスト</value>
+  </data>
+  <data name="InsightsPage_Source_SmartPlaylists" xml:space="preserve">
+    <value>スマートプレイリスト</value>
+  </data>
+  <data name="InsightsPage_Source_Folders" xml:space="preserve">
+    <value>フォルダー</value>
+  </data>
+  <data name="InsightsPage_Source_Genres" xml:space="preserve">
+    <value>ジャンル</value>
+  </data>
+  <data name="InsightsPage_Source_Search" xml:space="preserve">
+    <value>検索</value>
+  </data>
+  <data name="InsightsPage_Source_Library" xml:space="preserve">
+    <value>ライブラリ</value>
+  </data>
+  <data name="InsightsPage_Source_Files" xml:space="preserve">
+    <value>ファイル</value>
+  </data>
+  <data name="InsightsPage_Reset_ToolTip" xml:space="preserve">
+    <value>再生履歴をリセット</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Title" xml:space="preserve">
+    <value>再生履歴をリセットしますか？</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Message" xml:space="preserve">
+    <value>これにより、すべての再生履歴と統計が完全に削除されます。元に戻すことはできません。</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Button" xml:space="preserve">
+    <value>リセット</value>
   </data>
 </root>

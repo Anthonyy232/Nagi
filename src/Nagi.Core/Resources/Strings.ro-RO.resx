@@ -108,7 +108,7 @@
     <value>Melodii</value>
   </data>
   <data name="Label_Artists" xml:space="preserve">
-    <value>Artists</value>
+    <value>Artiști</value>
   </data>
   <data name="Label_Song" xml:space="preserve">
     <value>Melodie</value>
@@ -232,7 +232,7 @@
     <value>cu copertă</value>
   </data>
   <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>with artist image</value>
+    <value>cu imagine artist</value>
   </data>
   <data name="Label_And" xml:space="preserve">
     <value>și</value>

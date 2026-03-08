@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
@@ -75,6 +75,9 @@
   </data>
   <data name="NavItem_Folders" xml:space="preserve">
     <value>Folda</value>
+  </data>
+  <data name="NavItem_Insights" xml:space="preserve">
+    <value>Maarifa</value>
   </data>
   <data name="NavItem_Settings" xml:space="preserve">
     <value>Mipangilio</value>
@@ -1594,10 +1597,10 @@ Je, unataka kuendelea?</value>
     <value>Rekebisha sauti kiotomatiki hadi kiwango cha kawaida (-14 LUFS) ili kuepuka mabadiliko ya ghafla ya sauti.</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
-    <value>Fade on Play / Pause</value>
+    <value>Fifisha wakati wa Cheza / Sitisha</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Description" xml:space="preserve">
-    <value>Smoothly fade the volume in when resuming and out when pausing instead of cutting instantly.</value>
+    <value>Fifisha sauti taratibu inapoanza tena na kufifisha nje inaposimama badala ya kukata ghafla.</value>
   </data>
   <data name="SettingsPage_Equalizer" xml:space="preserve">
     <value>Kisawazisha Sauti</value>
@@ -1672,10 +1675,10 @@ Je, unataka kuendelea?</value>
     <value>Fafanua herufi zinazotumika kugawanya wasanii wengi (k.m. ';/'). Acha tupu ili kuzima.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
-    <value>Genre Splitting</value>
+    <value>Kugawanya Aina</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Define characters used to split multiple genres (e.g. ';/'). Leave empty to disable.</value>
+    <value>Fafanua herufi zinazotumika kugawanya aina nyingi (k.m. ';/'). Acha tupu ili kuzima.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>Changanua Tena Maktaba</value>
@@ -1870,75 +1873,168 @@ Je, unataka kuendelea?</value>
     <value>Tafadhali anzisha upya programu ili mabadiliko ya lugha yaanze kufanya kazi kikamilifu.</value>
   </data>
   <data name="SettingsPage_About_PrivacyPolicy_Content" xml:space="preserve">
-    <value>Privacy Policy</value>
+    <value>Sera ya Faragha</value>
   </data>
   <data name="SettingsPage_BackupRestore_Header" xml:space="preserve">
-    <value>Backup &amp; Restore</value>
+    <value>Hifadhi Nakala &amp; Rejesha</value>
   </data>
   <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
-    <value>Create backups of your music library and settings, or restore from a previous backup</value>
+    <value>Unda nakala za hifadhi za maktaba yako ya muziki na mipangilio, au rejesha kutoka nakala ya hifadhi iliyopita</value>
   </data>
   <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
-    <value>Create Backup</value>
+    <value>Unda Nakala ya Hifadhi</value>
   </data>
   <data name="SettingsPage_RestoreBackup_Content" xml:space="preserve">
-    <value>Restore Backup</value>
+    <value>Rejesha Nakala ya Hifadhi</value>
   </data>
   <data name="Settings_Backup_Success_Title" xml:space="preserve">
-    <value>Backup Created</value>
+    <value>Nakala ya Hifadhi Imeundwa</value>
   </data>
   <data name="Settings_Backup_Success_Message" xml:space="preserve">
-    <value>Successfully created backup ({0:F2} MB) at: {1}</value>
+    <value>Nakala ya hifadhi imeundwa kwa mafanikio ({0:F2} MB) katika: {1}</value>
   </data>
   <data name="Settings_Backup_Failed_Title" xml:space="preserve">
-    <value>Backup Failed</value>
+    <value>Nakala ya Hifadhi Imeshindwa</value>
   </data>
   <data name="Settings_Backup_Failed_Message" xml:space="preserve">
-    <value>Failed to create backup. Please try again.</value>
+    <value>Imeshindwa kuunda nakala ya hifadhi. Tafadhali jaribu tena.</value>
   </data>
   <data name="Settings_Restore_Invalid_Title" xml:space="preserve">
-    <value>Invalid Backup File</value>
+    <value>Faili ya Nakala ya Hifadhi Batili</value>
   </data>
   <data name="Settings_Restore_Invalid_Message" xml:space="preserve">
-    <value>The selected file is not a valid Nagi backup.</value>
+    <value>Faili iliyochaguliwa si nakala halali ya hifadhi ya Nagi.</value>
   </data>
   <data name="Settings_Restore_Confirm_Title" xml:space="preserve">
-    <value>Restore Backup?</value>
+    <value>Rejesha Nakala ya Hifadhi?</value>
   </data>
   <data name="Settings_Restore_Confirm_Message" xml:space="preserve">
-    <value>Restoring from backup will replace all current app data. This action cannot be undone. The app will restart after restore. Continue?</value>
+    <value>Kurejesha kutoka nakala ya hifadhi kutafuta data zote za sasa za programu. Kitendo hiki hakiwezi kutenduliwa. Programu itaanza upya baada ya kurejesha. Endelea?</value>
   </data>
   <data name="Settings_Restore_Confirm_Button" xml:space="preserve">
-    <value>Restore</value>
+    <value>Rejesha</value>
   </data>
   <data name="Settings_Restore_Success_Title" xml:space="preserve">
-    <value>Restore Complete</value>
+    <value>Rejesha Imekamilika</value>
   </data>
   <data name="Settings_Restore_Success_Message" xml:space="preserve">
-    <value>Successfully restored backup. The app will now restart.</value>
+    <value>Nakala ya hifadhi imerejeshwa kwa mafanikio. Programu itaanza upya sasa.</value>
   </data>
   <data name="Settings_Restore_Failed_Title" xml:space="preserve">
-    <value>Restore Failed</value>
+    <value>Kurejesha Kumefeli</value>
   </data>
   <data name="Settings_Restore_Failed_Message" xml:space="preserve">
-    <value>Failed to restore from backup. Your data was not modified.</value>
+    <value>Imeshindwa kurejesha kutoka nakala ya hifadhi. Data yako haikubadilishwa.</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
-    <value>Player Styling</value>
+    <value>Mtindo wa Kichezaji</value>
   </data>
   <data name="PlayerBackgroundMaterial_Acrylic" xml:space="preserve">
-    <value>Acrylic (Glass)</value>
+    <value>Akriliki (Kioo)</value>
   </data>
   <data name="PlayerBackgroundMaterial_Solid" xml:space="preserve">
-    <value>Solid (Opaque)</value>
+    <value>Imara (Isiyoonekana Kupitia)</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
-    <value>Customize the appearance of the floating player</value>
+    <value>Badilisha mwonekano wa kichezaji kinachoelea</value>
   </data>
   <data name="SettingsPage_TintIntensity_Header" xml:space="preserve">
-    <value>Tint Intensity</value>
+    <value>Ukali wa Rangi</value>
   </data>
   <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
-    <value>Adjusts the vibrancy of the player background color</value>
+    <value>Hurekebisha mng'ao wa rangi ya mandharinyuma ya kichezaji</value>
+  </data>
+  <data name="SettingsPage_FadeInDuration_Header" xml:space="preserve">
+    <value>Muda wa kufifia ndani</value>
+  </data>
+  <data name="SettingsPage_FadeInDuration_Description" xml:space="preserve">
+    <value>Muda wa athari ya kufifia ndani wakati wa kucheza (ms)</value>
+  </data>
+  <data name="SettingsPage_FadeOutDuration_Header" xml:space="preserve">
+    <value>Muda wa kufifia nje</value>
+  </data>
+  <data name="SettingsPage_FadeOutDuration_Description" xml:space="preserve">
+    <value>Muda wa athari ya kufifia nje wakati wa kusitisha (ms)</value>
+  </data>
+  <data name="Settings_Nav_Insights" xml:space="preserve">
+    <value>Maarifa</value>
+  </data>
+  <data name="InsightsPage_Title" xml:space="preserve">
+    <value>Maarifa</value>
+  </data>
+  <data name="InsightsPage_TotalTime" xml:space="preserve">
+    <value>Jumla ya muda wa kusikiliza</value>
+  </data>
+  <data name="InsightsPage_UniqueSongs" xml:space="preserve">
+    <value>Nyimbo za kipekee</value>
+  </data>
+  <data name="InsightsPage_PeakHour" xml:space="preserve">
+    <value>Saa ya kilele</value>
+  </data>
+  <data name="InsightsPage_MostActiveDay" xml:space="preserve">
+    <value>Siku yenye shughuli nyingi zaidi</value>
+  </data>
+  <data name="InsightsPage_TopSongs" xml:space="preserve">
+    <value>Nyimbo Bora</value>
+  </data>
+  <data name="InsightsPage_TopArtists" xml:space="preserve">
+    <value>Wasanii Bora</value>
+  </data>
+  <data name="InsightsPage_TopAlbums" xml:space="preserve">
+    <value>Albamu Bora</value>
+  </data>
+  <data name="InsightsPage_TopGenres" xml:space="preserve">
+    <value>Aina Bora za Muziki</value>
+  </data>
+  <data name="InsightsPage_Sources" xml:space="preserve">
+    <value>Vyanzo vya Uchezaji</value>
+  </data>
+  <data name="InsightsPage_Empty_Title" xml:space="preserve">
+    <value>Hakuna data ya usikilizaji bado</value>
+  </data>
+  <data name="InsightsPage_Empty_Subtitle" xml:space="preserve">
+    <value>Anza kucheza muziki ili kuona maarifa yako hapa</value>
+  </data>
+  <data name="InsightsPage_Plays" xml:space="preserve">
+    <value>Uchezaji {0}</value>
+  </data>
+  <data name="InsightsPage_Source_Albums" xml:space="preserve">
+    <value>Albamu</value>
+  </data>
+  <data name="InsightsPage_Source_Artists" xml:space="preserve">
+    <value>Wasanii</value>
+  </data>
+  <data name="InsightsPage_Source_Playlists" xml:space="preserve">
+    <value>Orodha za kucheza</value>
+  </data>
+  <data name="InsightsPage_Source_SmartPlaylists" xml:space="preserve">
+    <value>Orodha Mahiri za kucheza</value>
+  </data>
+  <data name="InsightsPage_Source_Folders" xml:space="preserve">
+    <value>Folda</value>
+  </data>
+  <data name="InsightsPage_Source_Genres" xml:space="preserve">
+    <value>Aina za Muziki</value>
+  </data>
+  <data name="InsightsPage_Source_Search" xml:space="preserve">
+    <value>Tafuta</value>
+  </data>
+  <data name="InsightsPage_Source_Library" xml:space="preserve">
+    <value>Maktaba</value>
+  </data>
+  <data name="InsightsPage_Source_Files" xml:space="preserve">
+    <value>Faili</value>
+  </data>
+  <data name="InsightsPage_Reset_ToolTip" xml:space="preserve">
+    <value>Weka upya historia ya usikilizaji</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Title" xml:space="preserve">
+    <value>Weka upya historia ya usikilizaji?</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Message" xml:space="preserve">
+    <value>Hii itafuta kabisa historia yote ya usikilizaji na takwimu. Hili haliwezi kutenduliwa.</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Button" xml:space="preserve">
+    <value>Weka upya</value>
   </data>
 </root>

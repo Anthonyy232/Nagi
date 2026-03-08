@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
@@ -75,6 +75,9 @@
   </data>
   <data name="NavItem_Folders" xml:space="preserve">
     <value>文件夹</value>
+  </data>
+  <data name="NavItem_Insights" xml:space="preserve">
+    <value>洞察</value>
   </data>
   <data name="NavItem_Settings" xml:space="preserve">
     <value>设置</value>
@@ -1602,10 +1605,10 @@
     <value>自动将音量调整到标准级别 (-14 LUFS)，以避免突然的响度变化。</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
-    <value>Fade on Play / Pause</value>
+    <value>播放/暂停时淡入淡出</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Description" xml:space="preserve">
-    <value>Smoothly fade the volume in when resuming and out when pausing instead of cutting instantly.</value>
+    <value>恢复播放时音量平滑淡入，暂停时音量平滑淡出，而非立即切断。</value>
   </data>
   <data name="SettingsPage_Equalizer" xml:space="preserve">
     <value>音频均衡器</value>
@@ -1680,10 +1683,10 @@
     <value>定义用于拆分多个艺术家的字符（例如“;/”）。留空以禁用。</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
-    <value>Genre Splitting</value>
+    <value>流派拆分</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Define characters used to split multiple genres (e.g. ';/'). Leave empty to disable.</value>
+    <value>定义用于拆分多个流派的字符（例如“;/”）。留空以禁用。</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>重新扫描库</value>
@@ -1948,5 +1951,98 @@
   </data>
   <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
     <value>调整播放器背景颜色的振动效果</value>
+  </data>
+  <data name="SettingsPage_FadeInDuration_Header" xml:space="preserve">
+    <value>淡入时长</value>
+  </data>
+  <data name="SettingsPage_FadeInDuration_Description" xml:space="preserve">
+    <value>播放时淡入效果的持续时间 (ms)</value>
+  </data>
+  <data name="SettingsPage_FadeOutDuration_Header" xml:space="preserve">
+    <value>淡出时长</value>
+  </data>
+  <data name="SettingsPage_FadeOutDuration_Description" xml:space="preserve">
+    <value>暂停时淡出效果的持续时间 (ms)</value>
+  </data>
+  <data name="Settings_Nav_Insights" xml:space="preserve">
+    <value>洞察</value>
+  </data>
+  <data name="InsightsPage_Title" xml:space="preserve">
+    <value>洞察</value>
+  </data>
+  <data name="InsightsPage_TotalTime" xml:space="preserve">
+    <value>总收听时长</value>
+  </data>
+  <data name="InsightsPage_UniqueSongs" xml:space="preserve">
+    <value>独立歌曲</value>
+  </data>
+  <data name="InsightsPage_PeakHour" xml:space="preserve">
+    <value>高峰时段</value>
+  </data>
+  <data name="InsightsPage_MostActiveDay" xml:space="preserve">
+    <value>最活跃日</value>
+  </data>
+  <data name="InsightsPage_TopSongs" xml:space="preserve">
+    <value>热门歌曲</value>
+  </data>
+  <data name="InsightsPage_TopArtists" xml:space="preserve">
+    <value>热门艺术家</value>
+  </data>
+  <data name="InsightsPage_TopAlbums" xml:space="preserve">
+    <value>热门专辑</value>
+  </data>
+  <data name="InsightsPage_TopGenres" xml:space="preserve">
+    <value>热门流派</value>
+  </data>
+  <data name="InsightsPage_Sources" xml:space="preserve">
+    <value>播放来源</value>
+  </data>
+  <data name="InsightsPage_Empty_Title" xml:space="preserve">
+    <value>暂无收听数据</value>
+  </data>
+  <data name="InsightsPage_Empty_Subtitle" xml:space="preserve">
+    <value>开始播放音乐，在此查看您的洞察数据</value>
+  </data>
+  <data name="InsightsPage_Plays" xml:space="preserve">
+    <value>{0} 次播放</value>
+  </data>
+  <data name="InsightsPage_Source_Albums" xml:space="preserve">
+    <value>专辑</value>
+  </data>
+  <data name="InsightsPage_Source_Artists" xml:space="preserve">
+    <value>艺术家</value>
+  </data>
+  <data name="InsightsPage_Source_Playlists" xml:space="preserve">
+    <value>播放列表</value>
+  </data>
+  <data name="InsightsPage_Source_SmartPlaylists" xml:space="preserve">
+    <value>智能播放列表</value>
+  </data>
+  <data name="InsightsPage_Source_Folders" xml:space="preserve">
+    <value>文件夹</value>
+  </data>
+  <data name="InsightsPage_Source_Genres" xml:space="preserve">
+    <value>流派</value>
+  </data>
+  <data name="InsightsPage_Source_Search" xml:space="preserve">
+    <value>搜索</value>
+  </data>
+  <data name="InsightsPage_Source_Library" xml:space="preserve">
+    <value>库</value>
+  </data>
+  <data name="InsightsPage_Source_Files" xml:space="preserve">
+    <value>文件</value>
+  </data>
+  <data name="InsightsPage_Reset_ToolTip" xml:space="preserve">
+    <value>重置收听历史</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Title" xml:space="preserve">
+    <value>重置收听历史？</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Message" xml:space="preserve">
+    <value>这将永久删除所有收听历史和统计数据。此操作无法撤消。</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Button" xml:space="preserve">
+    <value>重置</value>
   </data>
 </root>

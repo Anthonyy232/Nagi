@@ -108,7 +108,7 @@
     <value>שירים</value>
   </data>
   <data name="Label_Artists" xml:space="preserve">
-    <value>Artists</value>
+    <value>אמנים</value>
   </data>
   <data name="Label_Song" xml:space="preserve">
     <value>שיר</value>
@@ -232,7 +232,7 @@
     <value>עם עטיפה</value>
   </data>
   <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>with artist image</value>
+    <value>עם תמונת אמן</value>
   </data>
   <data name="Label_And" xml:space="preserve">
     <value>ו</value>

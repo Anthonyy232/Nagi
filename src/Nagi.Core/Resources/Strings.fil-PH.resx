@@ -108,7 +108,7 @@
     <value>Mga Kanta</value>
   </data>
   <data name="Label_Artists" xml:space="preserve">
-    <value>Artists</value>
+    <value>Mga Artist</value>
   </data>
   <data name="Label_Song" xml:space="preserve">
     <value>Kanta</value>
@@ -232,7 +232,7 @@
     <value>may cover art</value>
   </data>
   <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>with artist image</value>
+    <value>na may larawan ng artist</value>
   </data>
   <data name="Label_And" xml:space="preserve">
     <value>at</value>

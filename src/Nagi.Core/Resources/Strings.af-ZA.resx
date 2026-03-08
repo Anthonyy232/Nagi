@@ -108,7 +108,7 @@
     <value>Liedjies</value>
   </data>
   <data name="Label_Artists" xml:space="preserve">
-    <value>Artists</value>
+    <value>Kunstenaars</value>
   </data>
   <data name="Label_Song" xml:space="preserve">
     <value>Liedjie</value>
@@ -232,7 +232,7 @@
     <value>met albumkuns</value>
   </data>
   <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>with artist image</value>
+    <value>met kunstenaarbeeld</value>
   </data>
   <data name="Label_And" xml:space="preserve">
     <value>en</value>

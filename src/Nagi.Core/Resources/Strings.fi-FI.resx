@@ -108,7 +108,7 @@
     <value>Kappaleet</value>
   </data>
   <data name="Label_Artists" xml:space="preserve">
-    <value>Artists</value>
+    <value>Artistit</value>
   </data>
   <data name="Label_Song" xml:space="preserve">
     <value>Kappale</value>
@@ -232,7 +232,7 @@
     <value>kansikuvalla</value>
   </data>
   <data name="Label_WithArtistImage" xml:space="preserve">
-    <value>with artist image</value>
+    <value>artistikuvalla</value>
   </data>
   <data name="Label_And" xml:space="preserve">
     <value>ja</value>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
@@ -75,6 +75,9 @@
   </data>
   <data name="NavItem_Folders" xml:space="preserve">
     <value>கோப்புறைகள்</value>
+  </data>
+  <data name="NavItem_Insights" xml:space="preserve">
+    <value>நுண்ணறிவுகள்</value>
   </data>
   <data name="NavItem_Settings" xml:space="preserve">
     <value>அமைப்புகள்</value>
@@ -1602,10 +1605,10 @@
     <value>திடீர் சத்த மாற்றங்களைத் தவிர்க்க, ஒலியை தானாகவே நிலையான அளவிற்கு (-14 LUFS) சரிசெய்யவும்.</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
-    <value>Fade on Play / Pause</value>
+    <value>பிளே / இடைநிறுத்தத்தில் மங்கச் செய்</value>
   </data>
   <data name="SettingsPage_FadeOnPlayPause_Description" xml:space="preserve">
-    <value>Smoothly fade the volume in when resuming and out when pausing instead of cutting instantly.</value>
+    <value>உடனடியாக வெட்டுவதற்குப் பதிலாக, மீண்டும் தொடங்கும் போது ஒலியை மெதுவாக அதிகரித்து, இடைநிறுத்தும் போது மெதுவாகக் குறைக்கவும்.</value>
   </data>
   <data name="SettingsPage_Equalizer" xml:space="preserve">
     <value>ஆடியோ ஈக்வலைசர்</value>
@@ -1680,10 +1683,10 @@
     <value>பல கலைஞர்களைப் பிரிக்கப் பயன்படுத்தப்படும் எழுத்துக்களை வரையறுக்கவும் (எ.கா. ';/'). முடக்க காலியாக விடவும்.</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Header" xml:space="preserve">
-    <value>Genre Splitting</value>
+    <value>வகை பிரித்தல்</value>
   </data>
   <data name="SettingsPage_GenreSplitting_Description" xml:space="preserve">
-    <value>Define characters used to split multiple genres (e.g. ';/'). Leave empty to disable.</value>
+    <value>பல வகைகளைப் பிரிக்கப் பயன்படுத்தப்படும் எழுத்துக்களை வரையறுக்கவும் (எ.கா. ';/'). முடக்க காலியாக விடவும்.</value>
   </data>
   <data name="SettingsPage_RescanLibrary_Content" xml:space="preserve">
     <value>நூலகத்தை மீண்டும் ஸ்கேன் செய்</value>
@@ -1878,75 +1881,168 @@
     <value>மொழி மாற்றம் முழுமையாக நடைமுறைக்கு வர, பயன்பாட்டை மறுதொடக்கம் செய்யவும்.</value>
   </data>
   <data name="SettingsPage_About_PrivacyPolicy_Content" xml:space="preserve">
-    <value>Privacy Policy</value>
+    <value>தனியுரிமைக் கொள்கை</value>
   </data>
   <data name="SettingsPage_BackupRestore_Header" xml:space="preserve">
-    <value>Backup &amp; Restore</value>
+    <value>காப்புப்பிரதி &amp; மீட்டமை</value>
   </data>
   <data name="SettingsPage_BackupRestore_Description" xml:space="preserve">
-    <value>Create backups of your music library and settings, or restore from a previous backup</value>
+    <value>உங்கள் இசை நூலகம் மற்றும் அமைப்புகளின் காப்புப்பிரதிகளை உருவாக்கவும் அல்லது முந்தைய காப்புப்பிரதியிலிருந்து மீட்டெடுக்கவும்</value>
   </data>
   <data name="SettingsPage_CreateBackup_Content" xml:space="preserve">
-    <value>Create Backup</value>
+    <value>காப்புப்பிரதியை உருவாக்கு</value>
   </data>
   <data name="SettingsPage_RestoreBackup_Content" xml:space="preserve">
-    <value>Restore Backup</value>
+    <value>காப்புப்பிரதியை மீட்டமை</value>
   </data>
   <data name="Settings_Backup_Success_Title" xml:space="preserve">
-    <value>Backup Created</value>
+    <value>காப்புப்பிரதி உருவாக்கப்பட்டது</value>
   </data>
   <data name="Settings_Backup_Success_Message" xml:space="preserve">
-    <value>Successfully created backup ({0:F2} MB) at: {1}</value>
+    <value>காப்புப்பிரதி வெற்றிகரமாக உருவாக்கப்பட்டது ({0:F2} MB) இங்கே: {1}</value>
   </data>
   <data name="Settings_Backup_Failed_Title" xml:space="preserve">
-    <value>Backup Failed</value>
+    <value>காப்புப்பிரதி தோல்வியடைந்தது</value>
   </data>
   <data name="Settings_Backup_Failed_Message" xml:space="preserve">
-    <value>Failed to create backup. Please try again.</value>
+    <value>காப்புப்பிரதியை உருவாக்கத் தவறிவிட்டது. மீண்டும் முயற்சிக்கவும்.</value>
   </data>
   <data name="Settings_Restore_Invalid_Title" xml:space="preserve">
-    <value>Invalid Backup File</value>
+    <value>தவறான காப்புப்பிரதி கோப்பு</value>
   </data>
   <data name="Settings_Restore_Invalid_Message" xml:space="preserve">
-    <value>The selected file is not a valid Nagi backup.</value>
+    <value>தேர்ந்தெடுக்கப்பட்ட கோப்பு ஒரு செல்லுபடியாகும் Nagi காப்புப்பிரதி அல்ல.</value>
   </data>
   <data name="Settings_Restore_Confirm_Title" xml:space="preserve">
-    <value>Restore Backup?</value>
+    <value>காப்புப்பிரதியை மீட்டெடுக்கவா?</value>
   </data>
   <data name="Settings_Restore_Confirm_Message" xml:space="preserve">
-    <value>Restoring from backup will replace all current app data. This action cannot be undone. The app will restart after restore. Continue?</value>
+    <value>காப்புப்பிரதியிலிருந்து மீட்டெடுப்பது தற்போதைய அனைத்து ஆப் தரவையும் மாற்றும். இந்தச் செயலைத் திரும்பப் பெற முடியாது. மீட்டெடுத்த பிறகு ஆப் மறுதொடக்கம் செய்யப்படும். தொடரவா?</value>
   </data>
   <data name="Settings_Restore_Confirm_Button" xml:space="preserve">
-    <value>Restore</value>
+    <value>மீட்டமை</value>
   </data>
   <data name="Settings_Restore_Success_Title" xml:space="preserve">
-    <value>Restore Complete</value>
+    <value>மீட்டெடுப்பு முடிந்தது</value>
   </data>
   <data name="Settings_Restore_Success_Message" xml:space="preserve">
-    <value>Successfully restored backup. The app will now restart.</value>
+    <value>காப்புப்பிரதி வெற்றிகரமாக மீட்டெடுக்கப்பட்டது. ஆப் இப்போது மறுதொடக்கம் செய்யப்படும்.</value>
   </data>
   <data name="Settings_Restore_Failed_Title" xml:space="preserve">
-    <value>Restore Failed</value>
+    <value>மீட்டெடுப்பு தோல்வியடைந்தது</value>
   </data>
   <data name="Settings_Restore_Failed_Message" xml:space="preserve">
-    <value>Failed to restore from backup. Your data was not modified.</value>
+    <value>காப்புப்பிரதியிலிருந்து மீட்டெடுக்கத் தவறிவிட்டது. உங்கள் தரவு மாற்றப்படவில்லை.</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Header" xml:space="preserve">
-    <value>Player Styling</value>
+    <value>பிளேயர் ஸ்டைலிங்</value>
   </data>
   <data name="PlayerBackgroundMaterial_Acrylic" xml:space="preserve">
-    <value>Acrylic (Glass)</value>
+    <value>அக்ரிலிக் (கண்ணாடி)</value>
   </data>
   <data name="PlayerBackgroundMaterial_Solid" xml:space="preserve">
-    <value>Solid (Opaque)</value>
+    <value>திடமான (அடர்த்தி)</value>
   </data>
   <data name="SettingsPage_PlayerStyling_Description" xml:space="preserve">
-    <value>Customize the appearance of the floating player</value>
+    <value>மிதக்கும் பிளேயரின் தோற்றத்தைத் தனிப்பயனாக்குங்கள்</value>
   </data>
   <data name="SettingsPage_TintIntensity_Header" xml:space="preserve">
-    <value>Tint Intensity</value>
+    <value>வண்ணச் செறிவு</value>
   </data>
   <data name="SettingsPage_TintIntensity_Description" xml:space="preserve">
-    <value>Adjusts the vibrancy of the player background color</value>
+    <value>பிளேயர் பின்னணி நிறத்தின் உயிர்ப்பை சரிசெய்கிறது</value>
+  </data>
+  <data name="SettingsPage_FadeInDuration_Header" xml:space="preserve">
+    <value>மங்கலாகத் தோன்றும் கால அளவு</value>
+  </data>
+  <data name="SettingsPage_FadeInDuration_Description" xml:space="preserve">
+    <value>இசைக்கும் போது மங்கலாகத் தோன்றும் விளைவின் கால அளவு (மில்லிசெகண்டுகளில்)</value>
+  </data>
+  <data name="SettingsPage_FadeOutDuration_Header" xml:space="preserve">
+    <value>மங்கலாக மறையும் கால அளவு</value>
+  </data>
+  <data name="SettingsPage_FadeOutDuration_Description" xml:space="preserve">
+    <value>இடைநிறுத்தும்போது மங்கலாக மறையும் விளைவின் கால அளவு (மில்லிசெகண்டுகளில்)</value>
+  </data>
+  <data name="Settings_Nav_Insights" xml:space="preserve">
+    <value>நுண்ணறிவுகள்</value>
+  </data>
+  <data name="InsightsPage_Title" xml:space="preserve">
+    <value>நுண்ணறிவுகள்</value>
+  </data>
+  <data name="InsightsPage_TotalTime" xml:space="preserve">
+    <value>மொத்த கேட்கும் நேரம்</value>
+  </data>
+  <data name="InsightsPage_UniqueSongs" xml:space="preserve">
+    <value>தனித்துவமான பாடல்கள்</value>
+  </data>
+  <data name="InsightsPage_PeakHour" xml:space="preserve">
+    <value>உச்ச நேரம்</value>
+  </data>
+  <data name="InsightsPage_MostActiveDay" xml:space="preserve">
+    <value>மிகவும் சுறுசுறுப்பான நாள்</value>
+  </data>
+  <data name="InsightsPage_TopSongs" xml:space="preserve">
+    <value>சிறந்த பாடல்கள்</value>
+  </data>
+  <data name="InsightsPage_TopArtists" xml:space="preserve">
+    <value>சிறந்த கலைஞர்கள்</value>
+  </data>
+  <data name="InsightsPage_TopAlbums" xml:space="preserve">
+    <value>சிறந்த ஆல்பங்கள்</value>
+  </data>
+  <data name="InsightsPage_TopGenres" xml:space="preserve">
+    <value>சிறந்த வகைகள்</value>
+  </data>
+  <data name="InsightsPage_Sources" xml:space="preserve">
+    <value>இசைக்கும் மூலங்கள்</value>
+  </data>
+  <data name="InsightsPage_Empty_Title" xml:space="preserve">
+    <value>இதுவரை கேட்கும் தரவு இல்லை</value>
+  </data>
+  <data name="InsightsPage_Empty_Subtitle" xml:space="preserve">
+    <value>உங்கள் நுண்ணறிவுகளை இங்கு காண இசையை இயக்கவும்</value>
+  </data>
+  <data name="InsightsPage_Plays" xml:space="preserve">
+    <value>{0} இசைப்புகள்</value>
+  </data>
+  <data name="InsightsPage_Source_Albums" xml:space="preserve">
+    <value>ஆல்பங்கள்</value>
+  </data>
+  <data name="InsightsPage_Source_Artists" xml:space="preserve">
+    <value>கலைஞர்கள்</value>
+  </data>
+  <data name="InsightsPage_Source_Playlists" xml:space="preserve">
+    <value>பிளேலிஸ்ட்கள்</value>
+  </data>
+  <data name="InsightsPage_Source_SmartPlaylists" xml:space="preserve">
+    <value>ஸ்மார்ட் பிளேலிஸ்ட்கள்</value>
+  </data>
+  <data name="InsightsPage_Source_Folders" xml:space="preserve">
+    <value>கோப்புறைகள்</value>
+  </data>
+  <data name="InsightsPage_Source_Genres" xml:space="preserve">
+    <value>வகைகள்</value>
+  </data>
+  <data name="InsightsPage_Source_Search" xml:space="preserve">
+    <value>தேடல்</value>
+  </data>
+  <data name="InsightsPage_Source_Library" xml:space="preserve">
+    <value>நூலகம்</value>
+  </data>
+  <data name="InsightsPage_Source_Files" xml:space="preserve">
+    <value>கோப்புகள்</value>
+  </data>
+  <data name="InsightsPage_Reset_ToolTip" xml:space="preserve">
+    <value>கேட்கும் வரலாற்றை மீட்டமை</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Title" xml:space="preserve">
+    <value>கேட்கும் வரலாற்றை மீட்டமைக்கவா?</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Message" xml:space="preserve">
+    <value>இது அனைத்து கேட்கும் வரலாறு மற்றும் புள்ளிவிவரங்களை நிரந்தரமாக நீக்கும். இதை மாற்றியமைக்க முடியாது.</value>
+  </data>
+  <data name="InsightsPage_Reset_Confirm_Button" xml:space="preserve">
+    <value>மீட்டமை</value>
   </data>
 </root>
