@@ -130,7 +130,7 @@
         </DataTemplate>
     </Page.Resources>
 
-    <Grid KeyboardAcceleratorPlacementMode="Hidden">
+    <Grid KeyboardAcceleratorPlacementMode="Hidden" Padding="0,0,0,24">
         <Grid.KeyboardAccelerators>
             <KeyboardAccelerator Key="A" Modifiers="Control" Invoked="OnSelectAllAcceleratorInvoked" />
         </Grid.KeyboardAccelerators>
