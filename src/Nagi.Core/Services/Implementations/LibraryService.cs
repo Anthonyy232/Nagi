@@ -122,7 +122,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     public event EventHandler<PlaylistUpdatedEventArgs>? PlaylistUpdated;
 
     /// <inheritdoc />
-    public event EventHandler<bool>? ScanCompleted;
+    public event EventHandler? PlaylistsChanged;
 
     /// <inheritdoc />
     public event EventHandler<LibraryContentChangedEventArgs>? LibraryContentChanged;
@@ -927,7 +927,6 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 _logger.LogDebug("No folders found in the library to refresh.");
                 progress?.Report(
                     new ScanProgress { StatusText = Resources.Strings.Status_NoFoldersToRefresh, Percentage = 100 });
-                ScanCompleted?.Invoke(this, false);
                 return false;
             }
 
@@ -985,7 +984,6 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             }
 
             progress?.Report(new ScanProgress { StatusText = Resources.Strings.Status_LibraryRefreshComplete, Percentage = 100 });
-            ScanCompleted?.Invoke(this, anyChangesMade);
             if (anyChangesMade)
             {
                 LibraryContentChanged?.Invoke(this, new LibraryContentChangedEventArgs(LibraryChangeType.LibraryRescanned));
@@ -995,7 +993,6 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to refresh all library folders.");
-            ScanCompleted?.Invoke(this, false);
             return false;
         }
     }
@@ -1604,6 +1601,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         context.Playlists.Add(playlist);
         await context.SaveChangesAsync().ConfigureAwait(false);
+        PlaylistsChanged?.Invoke(this, EventArgs.Empty);
         return playlist;
     }
 
@@ -1623,6 +1621,10 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         // Delete from database
         context.Playlists.Remove(playlist);
         var rowsAffected = await context.SaveChangesAsync().ConfigureAwait(false);
+        if (rowsAffected > 0)
+        {
+            PlaylistsChanged?.Invoke(this, EventArgs.Empty);
+        }
         return rowsAffected > 0;
     }
 
@@ -1640,6 +1642,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         playlist.DateModified = DateTime.UtcNow;
         await context.SaveChangesAsync().ConfigureAwait(false);
         PlaylistUpdated?.Invoke(this, new PlaylistUpdatedEventArgs(playlist.Id, playlist.CoverImageUri));
+        PlaylistsChanged?.Invoke(this, EventArgs.Empty);
         return true;
     }
 
@@ -1710,6 +1713,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         context.PlaylistSongs.AddRange(playlistSongsToAdd);
         playlist.DateModified = DateTime.UtcNow;
         await context.SaveChangesAsync().ConfigureAwait(false);
+        PlaylistsChanged?.Invoke(this, EventArgs.Empty);
         return true;
     }
 
@@ -1722,14 +1726,16 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         var playlist = await context.Playlists.FindAsync(playlistId).ConfigureAwait(false);
         if (playlist is null) return false;
 
-        await context.PlaylistSongs
+        var rowsDeleted = await context.PlaylistSongs
             .Where(ps => ps.PlaylistId == playlistId && songIds.Contains(ps.SongId))
             .ExecuteDeleteAsync().ConfigureAwait(false);
 
-
-
         playlist.DateModified = DateTime.UtcNow;
         await context.SaveChangesAsync().ConfigureAwait(false);
+        if (rowsDeleted > 0)
+        {
+            PlaylistsChanged?.Invoke(this, EventArgs.Empty);
+        }
         return true;
     }
 

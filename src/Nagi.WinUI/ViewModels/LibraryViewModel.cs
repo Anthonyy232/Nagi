@@ -22,6 +22,7 @@ public partial class LibraryViewModel : SongListViewModelBase
     private static bool _isInitialScanTriggered;
     private readonly ILibraryService _libraryService;
     private CancellationTokenSource? _debouncer;
+    private bool _hasInitialized;
 
     public LibraryViewModel(
         ILibraryService libraryService,
@@ -57,11 +58,14 @@ public partial class LibraryViewModel : SongListViewModelBase
     protected override PlaybackContext GetPlaybackContext() =>
         IsSearchActive ? new(PlaybackContextType.Search, null) : new(PlaybackContextType.Library, null);
 
+    public bool HasInitialized => _hasInitialized;
+
     public async Task InitializeAsync()
     {
         _logger.LogDebug("Initializing LibraryViewModel");
         var shouldTriggerScan = !_isInitialScanTriggered;
         _isInitialScanTriggered = true;
+        _hasInitialized = true;
 
         CurrentSortOrder = await _settingsService.GetSortOrderAsync<SongSortOrder>(SortOrderHelper.LibrarySortOrderKey);
         await RefreshOrSortSongsCommand.ExecuteAsync(null);

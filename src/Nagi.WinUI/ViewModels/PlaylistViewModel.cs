@@ -104,7 +104,7 @@ public partial class PlaylistViewModelItem : ObservableObject
 /// <summary>
 ///     ViewModel for managing the collection of playlists.
 /// </summary>
-public partial class PlaylistViewModel : SearchableViewModelBase
+public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
 {
     private readonly NotifyCollectionChangedEventHandler _collectionChangedHandler;
     private readonly ILibraryService _libraryService;
@@ -115,6 +115,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase
     private bool _hasSortOrderLoaded;
     private List<PlaylistViewModelItem> _allPlaylists = new();
     private bool _isNavigating;
+    private int _isMutating;
 
     public PlaylistViewModel(ILibraryService libraryService, ISmartPlaylistService smartPlaylistService,
         IMusicPlaybackService musicPlaybackService, INavigationService navigationService,
@@ -133,6 +134,9 @@ public partial class PlaylistViewModel : SearchableViewModelBase
 
         _libraryService.PlaylistUpdated += OnPlaylistUpdated;
         _smartPlaylistService.PlaylistUpdated += OnPlaylistUpdated;
+
+        _libraryService.PlaylistsChanged += OnPlaylistsChanged;
+        _smartPlaylistService.PlaylistsChanged += OnPlaylistsChanged;
         
         UpdateSortOrderText();
     }
@@ -397,6 +401,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase
         if (string.IsNullOrWhiteSpace(playlistName) || IsAnyOperationInProgress) return;
 
         IsCreatingPlaylist = true;
+        Interlocked.Increment(ref _isMutating);
         StatusMessage = Nagi.WinUI.Resources.Strings.Playlist_Status_Creating;
 
         try
@@ -422,6 +427,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase
         }
         finally
         {
+            Interlocked.Decrement(ref _isMutating);
             IsCreatingPlaylist = false;
         }
     }
@@ -437,6 +443,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase
         if (string.IsNullOrWhiteSpace(newCoverImageUri) || IsAnyOperationInProgress) return;
 
         IsUpdatingCover = true;
+        Interlocked.Increment(ref _isMutating);
         StatusMessage = Nagi.WinUI.Resources.Strings.Playlist_Status_UpdatingCover;
 
         try
@@ -478,6 +485,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase
         }
         finally
         {
+            Interlocked.Decrement(ref _isMutating);
             IsUpdatingCover = false;
         }
     }
@@ -489,6 +497,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase
         if (IsAnyOperationInProgress || playlistId == Guid.Empty) return;
 
         IsUpdatingCover = true;
+        Interlocked.Increment(ref _isMutating);
         StatusMessage = Nagi.WinUI.Resources.Strings.Playlist_Status_RemovingCover;
 
         try
@@ -529,6 +538,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase
         }
         finally
         {
+            Interlocked.Decrement(ref _isMutating);
             IsUpdatingCover = false;
         }
     }
@@ -544,6 +554,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase
         if (string.IsNullOrWhiteSpace(newName) || IsAnyOperationInProgress) return;
 
         IsRenamingPlaylist = true;
+        Interlocked.Increment(ref _isMutating);
         StatusMessage = Nagi.WinUI.Resources.Strings.Playlist_Status_Renaming;
 
         try
@@ -579,6 +590,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase
         }
         finally
         {
+            Interlocked.Decrement(ref _isMutating);
             IsRenamingPlaylist = false;
         }
     }
@@ -594,6 +606,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase
         if (IsAnyOperationInProgress) return;
 
         IsDeletingPlaylist = true;
+        Interlocked.Increment(ref _isMutating);
         StatusMessage = Nagi.WinUI.Resources.Strings.Playlist_Status_Deleting;
 
         try
@@ -626,6 +639,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase
         }
         finally
         {
+            Interlocked.Decrement(ref _isMutating);
             IsDeletingPlaylist = false;
         }
     }
@@ -693,6 +707,16 @@ public partial class PlaylistViewModel : SearchableViewModelBase
         _logger.LogDebug("Cleaned up PlaylistViewModel search resources");
     }
 
+    public void Dispose()
+    {
+        Playlists.CollectionChanged -= _collectionChangedHandler;
+        _libraryService.PlaylistUpdated -= OnPlaylistUpdated;
+        _smartPlaylistService.PlaylistUpdated -= OnPlaylistUpdated;
+        _libraryService.PlaylistsChanged -= OnPlaylistsChanged;
+        _smartPlaylistService.PlaylistsChanged -= OnPlaylistsChanged;
+        GC.SuppressFinalize(this);
+    }
+
     private void OnPlaylistUpdated(object? sender, PlaylistUpdatedEventArgs e)
     {
         _dispatcherService.TryEnqueue(() =>
@@ -713,6 +737,22 @@ public partial class PlaylistViewModel : SearchableViewModelBase
                 // Force refresh by setting to null first, then apply cache-buster
                 backingItem.CoverImageUri = null;
                 backingItem.CoverImageUri = ImageUriHelper.GetUriWithCacheBuster(e.CoverImageUri);
+            }
+        });
+    }
+
+    private void OnPlaylistsChanged(object? sender, EventArgs e)
+    {
+        // Ignore events we ourselves triggered (e.g. create/delete/rename/cover update).
+        // Using an interlocked counter ensures thread-safety across the async boundary.
+        if (_isMutating > 0) return;
+
+        _dispatcherService.TryEnqueue(() =>
+        {
+            if (!IsAnyOperationInProgress)
+            {
+                _logger.LogDebug("External playlist change detected. Reloading playlists...");
+                _ = LoadPlaylistsCommand.ExecuteAsync(null);
             }
         });
     }
