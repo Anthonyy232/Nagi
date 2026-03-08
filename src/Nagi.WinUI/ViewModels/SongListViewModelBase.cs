@@ -34,6 +34,9 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
     private readonly IUIService _uiService;
     protected readonly IMusicNavigationService _musicNavigationService;
     protected bool _isDisposed;
+    private bool _hasLoadedPlaylists;
+
+    public bool HasLoadedPlaylists => _hasLoadedPlaylists;
 
     [ObservableProperty] public partial int CurrentPage { get; set; } = 1;
     [ObservableProperty] public partial int TotalPages { get; set; } = 1;
@@ -80,8 +83,24 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
         _uiService = uiService ?? throw new ArgumentNullException(nameof(uiService));
 
+        _playlistService.PlaylistsChanged += OnPlaylistsChanged;
+
         UpdateSortOrderButtonText(CurrentSortOrder);
         _ = InitializeSettingsAsync();
+    }
+
+    private void OnPlaylistsChanged(object? sender, EventArgs e)
+    {
+        // Only reload if we've already loaded once; ignore if never loaded (avoids loading when not needed).
+        if (!_hasLoadedPlaylists || _isDisposed) return;
+
+        _dispatcherService.TryEnqueue(() =>
+        {
+            if (!_isDisposed)
+            {
+                _ = LoadAvailablePlaylistsAsync();
+            }
+        });
     }
 
     private async Task InitializeSettingsAsync()
@@ -448,6 +467,7 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
         {
             var playlists = await _libraryReader.GetAllPlaylistsAsync();
             AvailablePlaylists = new ObservableCollection<Playlist>(playlists);
+            _hasLoadedPlaylists = true;
             AddSelectedSongsToPlaylistCommand.NotifyCanExecuteChanged();
         }
         catch (Exception ex)
@@ -849,6 +869,8 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
 
         ResetState();
         _stateLock.Dispose();
+        
+        _playlistService.PlaylistsChanged -= OnPlaylistsChanged;
         
         _isDisposed = true;
         GC.SuppressFinalize(this);

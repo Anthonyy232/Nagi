@@ -23,6 +23,9 @@ public class SmartPlaylistService : ISmartPlaylistService
     /// <inheritdoc />
     public event EventHandler<PlaylistUpdatedEventArgs>? PlaylistUpdated;
 
+    /// <inheritdoc />
+    public event EventHandler? PlaylistsChanged;
+
     public SmartPlaylistService(
         IDbContextFactory<MusicDbContext> contextFactory,
         IFileSystemService fileSystem,
@@ -137,6 +140,7 @@ public class SmartPlaylistService : ISmartPlaylistService
         await context.SaveChangesAsync().ConfigureAwait(false);
 
         _logger.LogInformation("Created smart playlist '{Name}' with ID {Id}", smartPlaylist.Name, smartPlaylist.Id);
+        PlaylistsChanged?.Invoke(this, EventArgs.Empty);
         return smartPlaylist;
     }
 
@@ -149,7 +153,10 @@ public class SmartPlaylistService : ISmartPlaylistService
             .ExecuteDeleteAsync().ConfigureAwait(false);
 
         if (rowsAffected > 0)
+        {
             _logger.LogInformation("Deleted smart playlist with ID {Id}", smartPlaylistId);
+            PlaylistsChanged?.Invoke(this, EventArgs.Empty);
+        }
 
         return rowsAffected > 0;
     }
@@ -175,6 +182,7 @@ public class SmartPlaylistService : ISmartPlaylistService
 
         await context.SaveChangesAsync().ConfigureAwait(false);
         PlaylistUpdated?.Invoke(this, new PlaylistUpdatedEventArgs(existing.Id, existing.CoverImageUri));
+        PlaylistsChanged?.Invoke(this, EventArgs.Empty);
         return true;
     }
 
@@ -224,6 +232,7 @@ public class SmartPlaylistService : ISmartPlaylistService
         smartPlaylist.DateModified = DateTime.UtcNow;
         await context.SaveChangesAsync().ConfigureAwait(false);
         PlaylistUpdated?.Invoke(this, new PlaylistUpdatedEventArgs(smartPlaylist.Id, smartPlaylist.CoverImageUri));
+        PlaylistsChanged?.Invoke(this, EventArgs.Empty);
         return true;
     }
 

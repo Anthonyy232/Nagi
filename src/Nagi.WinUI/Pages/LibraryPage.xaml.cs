@@ -49,13 +49,25 @@ public sealed partial class LibraryPage : Page
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
+
+        // Reset selection every time we navigate back to this cached page.
+        ViewModel.DeselectAll();
+        _isUpdatingSelection = true;
+        try { SongsListView.SelectedItems.Clear(); }
+        finally { _isUpdatingSelection = false; }
+
         try
         {
-            // Load playlists first for context menu availability.
-            await ViewModel.LoadAvailablePlaylistsAsync();
+            if (!ViewModel.HasLoadedPlaylists)
+            {
+                await ViewModel.LoadAvailablePlaylistsAsync();
+            }
 
-            // This handles the initial UI load and a background rescan.
-            await ViewModel.InitializeAsync();
+            if (!ViewModel.HasInitialized)
+            {
+                // Loads songs and triggers the initial background rescan (once per session).
+                await ViewModel.InitializeAsync();
+            }
         }
         catch (Exception ex)
         {

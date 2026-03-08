@@ -9,6 +9,7 @@ namespace Nagi.Core.Services.Abstractions;
 public interface IPlaylistService
 {
     event EventHandler<PlaylistUpdatedEventArgs>? PlaylistUpdated;
+    event EventHandler? PlaylistsChanged;
 
     Task<Playlist?> CreatePlaylistAsync(string name, string? description = null, string? coverImageUri = null);
     Task<bool> DeletePlaylistAsync(Guid playlistId);

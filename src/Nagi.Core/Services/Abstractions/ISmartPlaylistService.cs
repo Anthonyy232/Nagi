@@ -10,6 +10,7 @@ public interface ISmartPlaylistService
 {
     // Events
     event EventHandler<PlaylistUpdatedEventArgs>? PlaylistUpdated;
+    event EventHandler? PlaylistsChanged;
 
     // CRUD Operations
     Task<SmartPlaylist?> CreateSmartPlaylistAsync(string name, string? description = null, string? coverImageUri = null);

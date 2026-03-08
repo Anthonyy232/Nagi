@@ -262,62 +262,11 @@ public partial class FolderViewModel : ObservableObject
                 .ThenBy(item => item.Id)
                 .ToList();
 
-            // Update the UI collection efficiently without clearing and re-populating.
-            SynchronizeCollection(newItems);
+            Folders.ReplaceRange(newItems);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to load folders");
-        }
-    }
-
-    /// <summary>
-    ///     Efficiently updates the folder collection by calculating diffs rather than rebuilding,
-    ///     minimizing UI updates and preventing visual flicker.
-    /// </summary>
-    /// <param name="newItems">The authoritative, sorted list of items that should be in the collection.</param>
-    private void SynchronizeCollection(IReadOnlyList<FolderViewModelItem> newItems)
-    {
-        var currentFoldersMap = Folders.ToDictionary(f => f.Id);
-        var newItemIdSet = newItems.Select(f => f.Id).ToHashSet();
-
-        for (var i = Folders.Count - 1; i >= 0; i--)
-        {
-            var currentItem = Folders[i];
-            if (!newItemIdSet.Contains(currentItem.Id)) Folders.RemoveAt(i);
-        }
-
-        for (var i = 0; i < newItems.Count; i++)
-        {
-            var newItem = newItems[i];
-
-            if (i >= Folders.Count)
-            {
-                Folders.Add(newItem);
-                continue;
-            }
-
-            var currentItem = Folders[i];
-            if (currentItem.Id == newItem.Id)
-            {
-                currentItem.UpdateSongCount(newItem.SongCount);
-            }
-            else
-            {
-                if (currentFoldersMap.TryGetValue(newItem.Id, out var existingItemToMove))
-                {
-                    var oldIndex = Folders.IndexOf(existingItemToMove);
-                    if (oldIndex != -1)
-                    {
-                        Folders.Move(oldIndex, i);
-                        Folders[i].UpdateSongCount(newItem.SongCount);
-                    }
-                }
-                else
-                {
-                    Folders.Insert(i, newItem);
-                }
-            }
         }
     }
 
