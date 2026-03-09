@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  SignPath Artifact Configuration for Nagi MSIX Bundle
+
+  GitHub Actions wraps uploaded artifacts in a zip, so the structure SignPath
+  receives is: GitHub zip -> Nagi.msixbundle
+
+  Slug: msixbundle
+-->
+<artifact-configuration xmlns="http://signpath.io/artifact-configuration/v1">
+  <zip-file>
+    <msix-file path="Nagi.msixbundle">
+      <authenticode-sign/>
+    </msix-file>
+  </zip-file>
+</artifact-configuration>
