@@ -68,6 +68,7 @@ jobs:
     name: Run Benchmarks
     runs-on: windows-latest
     needs: test
+    if: github.ref == 'refs/heads/master'
     permissions:
       contents: read
     steps:
@@ -140,10 +141,10 @@ jobs:
 
       - name: Get version
         id: version
-        shell: bash
+        shell: pwsh
         run: |
-          v=$(grep -oP '(?<=<AppxPackageVersion>)[^<]+' Directory.Build.props)
-          echo "value=$v" >> $GITHUB_OUTPUT
+          $v = (Select-String -Path Directory.Build.props -Pattern '<AppxPackageVersion>([^<]+)').Matches[0].Groups[1].Value
+          echo "value=$v" >> $env:GITHUB_OUTPUT
 
       - name: Create appsettings.json
         shell: pwsh
@@ -185,13 +186,13 @@ jobs:
             Where-Object { $_.FullName -match "\\x64\\" } | Select-Object -First 1
           if (-not $makeappx) { throw "makeappx.exe not found" }
 
-          $input = "${{ github.workspace }}/bundle-input"
-          New-Item -ItemType Directory -Path $input -Force | Out-Null
+          $bundleInput = "${{ github.workspace }}/bundle-input"
+          New-Item -ItemType Directory -Path $bundleInput -Force | Out-Null
           Get-ChildItem "${{ github.workspace }}/msix" -Recurse -Filter *.msix |
-            ForEach-Object { Copy-Item $_.FullName $input }
+            ForEach-Object { Copy-Item $_.FullName $bundleInput }
 
           New-Item -ItemType Directory -Path "${{ github.workspace }}/bundle-output" -Force | Out-Null
-          & $makeappx.FullName bundle /d $input /p "${{ github.workspace }}/bundle-output/Nagi.msixbundle"
+          & $makeappx.FullName bundle /d $bundleInput /p "${{ github.workspace }}/bundle-output/Nagi.msixbundle"
           if ($LASTEXITCODE -ne 0) { throw "makeappx failed" }
 
       - name: Upload artifact
