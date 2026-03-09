@@ -176,6 +176,9 @@ jobs:
           -c Release -r win-x64
           -p:Platform=x64
           -p:GenerateAppxPackageOnBuild=false
+          -p:AppxPackageSigningEnabled=False
+          -p:PackageCertificateThumbprint=""
+          -p:GenerateTemporaryStoreCertificate=False
 
       - name: Pre-build ARM64 binaries
         run: >
@@ -183,6 +186,9 @@ jobs:
           -c Release -r win-arm64
           -p:Platform=ARM64
           -p:GenerateAppxPackageOnBuild=false
+          -p:AppxPackageSigningEnabled=False
+          -p:PackageCertificateThumbprint=""
+          -p:GenerateTemporaryStoreCertificate=False
 
       - name: Build MSIX bundle
         run: >

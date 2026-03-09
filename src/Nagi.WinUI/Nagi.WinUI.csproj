@@ -59,15 +59,15 @@
     <!-- == MSIX Publishing Properties                                  == -->
     <!-- =============================================================== -->
     <PropertyGroup>
-        <PackageCertificateThumbprint>3EBE28646614296DE51CCE9C9B6C6F75427D7C6C</PackageCertificateThumbprint>
-        <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
+        <AppxPackageSigningEnabled>False</AppxPackageSigningEnabled>
+        <PackageCertificateThumbprint></PackageCertificateThumbprint>
+        <GenerateTemporaryStoreCertificate>False</GenerateTemporaryStoreCertificate>
         <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
         <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
         <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
         <GenerateTestArtifacts>True</GenerateTestArtifacts>
         <AppxBundle>Always</AppxBundle>
         <AppxBundlePlatforms>x64|arm64</AppxBundlePlatforms>
-        <GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
         <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
     </PropertyGroup>
 
