@@ -191,6 +191,7 @@ jobs:
           /p:GenerateAppxPackageOnBuild=true
           /p:AppxBundle=Always /p:AppxBundlePlatforms="x64|ARM64"
           /p:AppxPackageSigningEnabled=False
+          /p:PackageCertificateThumbprint=""
           /p:GenerateTemporaryStoreCertificate=False
           /p:UapAppxPackageBuildMode=SideloadOnly
           /p:AppxPackageDir=${{ github.workspace }}/bundle-output/
