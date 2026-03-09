@@ -170,39 +170,38 @@ jobs:
           (Get-Content $manifest) -replace 'Publisher="[^"]*"', "Publisher=`"$env:CERT_SUBJECT`"" |
             Set-Content $manifest
 
-      - name: Build x64 MSIX
+      - name: Pre-build x64 binaries
+        run: >
+          dotnet publish src/Nagi.WinUI/Nagi.WinUI.csproj
+          -c Release -r win-x64
+          -p:Platform=x64
+          -p:GenerateAppxPackageOnBuild=false
+
+      - name: Pre-build ARM64 binaries
+        run: >
+          dotnet publish src/Nagi.WinUI/Nagi.WinUI.csproj
+          -c Release -r win-arm64
+          -p:Platform=ARM64
+          -p:GenerateAppxPackageOnBuild=false
+
+      - name: Build MSIX bundle
         run: >
           msbuild src/Nagi.WinUI/Nagi.WinUI.csproj
           /p:Configuration=Release /p:Platform=x64
-          /p:AppxBundle=Never /p:AppxPackageSigningEnabled=False
+          /p:GenerateAppxPackageOnBuild=true
+          /p:AppxBundle=Always /p:AppxBundlePlatforms="x64|ARM64"
+          /p:AppxPackageSigningEnabled=False
           /p:GenerateTemporaryStoreCertificate=False
           /p:UapAppxPackageBuildMode=SideloadOnly
-          /p:AppxPackageDir=${{ github.workspace }}/msix/x64/
+          /p:AppxPackageDir=${{ github.workspace }}/bundle-output/
 
-      - name: Build ARM64 MSIX
-        run: >
-          msbuild src/Nagi.WinUI/Nagi.WinUI.csproj
-          /p:Configuration=Release /p:Platform=ARM64
-          /p:AppxBundle=Never /p:AppxPackageSigningEnabled=False
-          /p:GenerateTemporaryStoreCertificate=False
-          /p:UapAppxPackageBuildMode=SideloadOnly
-          /p:AppxPackageDir=${{ github.workspace }}/msix/arm64/
-
-      - name: Create msixbundle
+      - name: Locate msixbundle
+        id: find_bundle
         shell: pwsh
         run: |
-          $makeappx = Get-ChildItem "C:\Program Files (x86)\Windows Kits\10\bin" -Recurse -Filter makeappx.exe |
-            Where-Object { $_.FullName -match "\\x64\\" } | Select-Object -First 1
-          if (-not $makeappx) { throw "makeappx.exe not found" }
-
-          $bundleInput = "${{ github.workspace }}/bundle-input"
-          New-Item -ItemType Directory -Path $bundleInput -Force | Out-Null
-          Get-ChildItem "${{ github.workspace }}/msix" -Recurse -Filter *.msix |
-            ForEach-Object { Copy-Item $_.FullName $bundleInput }
-
-          New-Item -ItemType Directory -Path "${{ github.workspace }}/bundle-output" -Force | Out-Null
-          & $makeappx.FullName bundle /d $bundleInput /p "${{ github.workspace }}/bundle-output/Nagi.msixbundle"
-          if ($LASTEXITCODE -ne 0) { throw "makeappx failed" }
+          $bundle = Get-ChildItem "${{ github.workspace }}/bundle-output" -Recurse -Filter *.msixbundle | Select-Object -First 1
+          if (-not $bundle) { throw "msixbundle not found in bundle-output" }
+          Copy-Item $bundle.FullName "${{ github.workspace }}/bundle-output/Nagi.msixbundle"
 
       - name: Upload artifact
         id: upload
@@ -210,6 +209,7 @@ jobs:
         with:
           name: Unsigned-MSIX
           path: ${{ github.workspace }}/bundle-output/Nagi.msixbundle
+          if-no-files-found: error
 
   sign-msix:
     name: Sign MSIX (SignPath)
