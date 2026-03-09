@@ -14,15 +14,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/cache@v4
-        with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '**/Directory.Build.props', '**/NuGet.config') }}
-          restore-keys: ${{ runner.os }}-nuget-
-
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
+          cache: true
+          cache-dependency-path: |
+            **/*.csproj
+            **/Directory.Build.props
+            **/NuGet.config
 
       - uses: FedericoCarboni/setup-ffmpeg@v3
 
@@ -50,6 +49,11 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
+          cache: true
+          cache-dependency-path: |
+            **/*.csproj
+            **/Directory.Build.props
+            **/NuGet.config
 
       - run: dotnet publish api/NagiAppFunctions/NagiAppFunctions.csproj -c Release -o ./functions-output
 
@@ -74,15 +78,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/cache@v4
-        with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '**/Directory.Build.props', '**/NuGet.config') }}
-          restore-keys: ${{ runner.os }}-nuget-
-
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
+          cache: true
+          cache-dependency-path: |
+            **/*.csproj
+            **/Directory.Build.props
+            **/NuGet.config
 
       - uses: FedericoCarboni/setup-ffmpeg@v3
 
@@ -127,15 +130,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/cache@v4
-        with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '**/Directory.Build.props', '**/NuGet.config') }}
-          restore-keys: ${{ runner.os }}-nuget-
-
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
+          cache: true
+          cache-dependency-path: |
+            **/*.csproj
+            **/Directory.Build.props
+            **/NuGet.config
 
       - uses: microsoft/setup-msbuild@v2
 
@@ -148,8 +150,11 @@ jobs:
 
       - name: Create appsettings.json
         shell: pwsh
+        env:
+          DISCORD_APP_ID: ${{ secrets.NAGI_DISCORD_KEY }}
+          API_KEY: ${{ secrets.NAGI_API_KEY }}
         run: |
-          @{ Discord = @{ AppId = '${{ secrets.NAGI_DISCORD_KEY }}' }; NagiApiServer = @{ Url = 'https://nagiflexapiserver.azurewebsites.net'; ApiKey = '${{ secrets.NAGI_API_KEY }}' } } |
+          @{ Discord = @{ AppId = $env:DISCORD_APP_ID }; NagiApiServer = @{ Url = 'https://nagiflexapiserver.azurewebsites.net'; ApiKey = $env:API_KEY } } |
             ConvertTo-Json -Depth 3 | Out-File src/Nagi.WinUI/appsettings.json -Encoding UTF8
 
       - run: dotnet restore src/Nagi.WinUI/Nagi.WinUI.csproj
@@ -157,8 +162,9 @@ jobs:
       - name: Patch manifest Publisher for sideload signing
         shell: pwsh
         run: |
+          $certSubject = '${{ vars.SIGNPATH_CERT_SUBJECT }}'.Replace('$', '$$')
           $manifest = "src/Nagi.WinUI/Package.appxmanifest"
-          (Get-Content $manifest) -replace 'Publisher="[^"]*"', 'Publisher="${{ vars.SIGNPATH_CERT_SUBJECT }}"' |
+          (Get-Content $manifest) -replace 'Publisher="[^"]*"', "Publisher=`"$certSubject`"" |
             Set-Content $manifest
 
       - name: Build x64 MSIX
