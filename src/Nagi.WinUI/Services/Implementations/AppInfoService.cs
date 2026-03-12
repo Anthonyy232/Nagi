@@ -1,5 +1,4 @@
-﻿using System;
-using Windows.ApplicationModel;
+﻿using Windows.ApplicationModel;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using Nagi.Core.Services.Abstractions;
@@ -22,18 +21,8 @@ public class AppInfoService : IAppInfoService
 
     public string GetAppVersion()
     {
-        try
-        {
-            var package = Package.Current;
-            var version = package.Id.Version;
-            return $"{version.Major}.{version.Minor}.{version.Build}";
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Could not get application version.");
-        }
-
-        return Resources.Strings.App_Version_Unknown;
+        var version = Package.Current.Id.Version;
+        return $"{version.Major}.{version.Minor}.{version.Build}";
     }
 
 
