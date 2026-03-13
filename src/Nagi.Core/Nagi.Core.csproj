@@ -19,8 +19,7 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.5" />
-        <PackageReference Include="SixLabors.ImageSharp" Version="$(SixLaborsImageSharpVersion)" />
+<PackageReference Include="SixLabors.ImageSharp" Version="$(SixLaborsImageSharpVersion)" />
 
         <!-- Core Utilities & Services -->
         <PackageReference Include="z440.atl.core" Version="$(Z440AtlCoreVersion)" />
