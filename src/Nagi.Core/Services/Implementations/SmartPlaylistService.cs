@@ -498,7 +498,7 @@ public class SmartPlaylistService : ISmartPlaylistService
     #region Query Execution
 
     /// <inheritdoc />
-    public async Task<IEnumerable<Song>> GetMatchingSongsAsync(Guid smartPlaylistId, string? searchTerm = null)
+    public async Task<IEnumerable<Song>> GetMatchingSongsAsync(Guid smartPlaylistId, string? searchTerm = null, SongSortOrder? sortOrder = null)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var smartPlaylist = await context.SmartPlaylists.AsNoTracking()
@@ -508,11 +508,11 @@ public class SmartPlaylistService : ISmartPlaylistService
         if (smartPlaylist is null)
             return Enumerable.Empty<Song>();
 
-        return await ExcludeHeavyFields(_queryBuilder.BuildQuery(context, smartPlaylist, searchTerm)).ToListAsync().ConfigureAwait(false);
+        return await ExcludeHeavyFields(_queryBuilder.BuildQuery(context, smartPlaylist, searchTerm, sortOrder)).ToListAsync().ConfigureAwait(false);
     }
 
     /// <inheritdoc />
-    public async Task<PagedResult<Song>> GetMatchingSongsPagedAsync(Guid smartPlaylistId, int pageNumber, int pageSize, string? searchTerm = null, CancellationToken token = default)
+    public async Task<PagedResult<Song>> GetMatchingSongsPagedAsync(Guid smartPlaylistId, int pageNumber, int pageSize, string? searchTerm = null, SongSortOrder? sortOrder = null, CancellationToken token = default)
     {
         SanitizePaging(ref pageNumber, ref pageSize);
 
@@ -532,7 +532,7 @@ public class SmartPlaylistService : ISmartPlaylistService
             };
         }
 
-        var query = ExcludeHeavyFields(_queryBuilder.BuildQuery(context, smartPlaylist, searchTerm));
+        var query = ExcludeHeavyFields(_queryBuilder.BuildQuery(context, smartPlaylist, searchTerm, sortOrder));
         var totalCount = await _queryBuilder.BuildCountQuery(context, smartPlaylist, searchTerm).CountAsync(token).ConfigureAwait(false);
 
         var pagedData = await query
@@ -571,7 +571,7 @@ public class SmartPlaylistService : ISmartPlaylistService
     }
 
     /// <inheritdoc />
-    public async Task<List<Guid>> GetMatchingSongIdsAsync(Guid smartPlaylistId, CancellationToken token = default)
+    public async Task<List<Guid>> GetMatchingSongIdsAsync(Guid smartPlaylistId, SongSortOrder? sortOrder = null, CancellationToken token = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var smartPlaylist = await context.SmartPlaylists.AsNoTracking()
@@ -581,7 +581,7 @@ public class SmartPlaylistService : ISmartPlaylistService
         if (smartPlaylist is null)
             return new List<Guid>();
 
-        return await _queryBuilder.BuildQuery(context, smartPlaylist)
+        return await _queryBuilder.BuildQuery(context, smartPlaylist, null, sortOrder)
             .Select(s => s.Id)
             .ToListAsync(token).ConfigureAwait(false);
     }

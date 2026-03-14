@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -801,8 +801,8 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
     {
         return sortOrder switch
         {
-            SongSortOrder.TitleAsc => songs.OrderBy(s => s.Title, StringComparer.OrdinalIgnoreCase).ThenBy(s => s.Id),
-            SongSortOrder.TitleDesc => songs.OrderByDescending(s => s.Title, StringComparer.OrdinalIgnoreCase).ThenByDescending(s => s.Id),
+            SongSortOrder.TitleAsc => songs.OrderBy(s => s.Title, StringComparer.OrdinalIgnoreCase).ThenBy(s => s.ArtistName, StringComparer.OrdinalIgnoreCase).ThenBy(s => s.Id),
+            SongSortOrder.TitleDesc => songs.OrderByDescending(s => s.Title, StringComparer.OrdinalIgnoreCase).ThenByDescending(s => s.ArtistName, StringComparer.OrdinalIgnoreCase).ThenByDescending(s => s.Id),
             SongSortOrder.YearAsc => songs.OrderBy(s => s.Year)
                 .ThenBy(s => s.ArtistName, StringComparer.OrdinalIgnoreCase)
                 .ThenBy(s => s.Album?.Title, StringComparer.OrdinalIgnoreCase)
@@ -839,7 +839,21 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
                 .ThenByDescending(s => s.TrackNumber)
                 .ThenByDescending(s => s.Title, StringComparer.OrdinalIgnoreCase)
                 .ThenByDescending(s => s.Id),
-            _ => songs.OrderBy(s => s.Title, StringComparer.OrdinalIgnoreCase).ThenBy(s => s.Id)
+            SongSortOrder.FileCreatedDateAsc => songs.OrderBy(s => s.FileCreatedDate)
+                .ThenBy(s => s.ArtistName, StringComparer.OrdinalIgnoreCase)
+                .ThenBy(s => s.Album?.Title, StringComparer.OrdinalIgnoreCase)
+                .ThenBy(s => s.DiscNumber ?? 0)
+                .ThenBy(s => s.TrackNumber)
+                .ThenBy(s => s.Title, StringComparer.OrdinalIgnoreCase)
+                .ThenBy(s => s.Id),
+            SongSortOrder.FileCreatedDateDesc => songs.OrderByDescending(s => s.FileCreatedDate)
+                .ThenByDescending(s => s.ArtistName, StringComparer.OrdinalIgnoreCase)
+                .ThenByDescending(s => s.Album?.Title, StringComparer.OrdinalIgnoreCase)
+                .ThenByDescending(s => s.DiscNumber ?? 0)
+                .ThenByDescending(s => s.TrackNumber)
+                .ThenByDescending(s => s.Title, StringComparer.OrdinalIgnoreCase)
+                .ThenByDescending(s => s.Id),
+            _ => songs.OrderBy(s => s.Title, StringComparer.OrdinalIgnoreCase).ThenBy(s => s.ArtistName, StringComparer.OrdinalIgnoreCase).ThenBy(s => s.Id)
         };
     }
 

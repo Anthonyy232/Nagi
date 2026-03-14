@@ -222,6 +222,12 @@
                                 <RadioMenuFlyoutItem GroupName="PlaylistSongSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
                                                 CommandParameter="AlbumDesc" Text="{x:Bind helpers:SortOrderHelper.AlbumDescLabel}"
                                                 IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=AlbumDesc}" />
+                                <RadioMenuFlyoutItem GroupName="PlaylistSongSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                                CommandParameter="FileCreatedDateAsc" Text="{x:Bind helpers:SortOrderHelper.DateCreatedOldestLabel}"
+                                                IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=FileCreatedDateAsc}" />
+                                <RadioMenuFlyoutItem GroupName="PlaylistSongSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                                CommandParameter="FileCreatedDateDesc" Text="{x:Bind helpers:SortOrderHelper.DateCreatedNewestLabel}"
+                                                IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=FileCreatedDateDesc}" />
                             </MenuFlyout>
                         </Button.Flyout>
                         <FontIcon FontSize="16" Glyph="&#xE8CB;" />

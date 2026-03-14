@@ -126,17 +126,15 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
     {
         if (!_currentSmartPlaylistId.HasValue) return new PagedResult<Song>();
 
-
-
         // Server-side search now supported
         return await _smartPlaylistService.GetMatchingSongsPagedAsync(
-            _currentSmartPlaylistId.Value, pageNumber, pageSize, IsSearchActive ? SearchTerm : null, cancellationToken);
+            _currentSmartPlaylistId.Value, pageNumber, pageSize, IsSearchActive ? SearchTerm : null, sortOrder, cancellationToken);
     }
 
     protected override async Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default)
     {
         if (!_currentSmartPlaylistId.HasValue) return new List<Guid>();
-        return await _smartPlaylistService.GetMatchingSongIdsAsync(_currentSmartPlaylistId.Value, token);
+        return await _smartPlaylistService.GetMatchingSongIdsAsync(_currentSmartPlaylistId.Value, sortOrder, token);
     }
 
     protected override PlaybackContext GetPlaybackContext() =>

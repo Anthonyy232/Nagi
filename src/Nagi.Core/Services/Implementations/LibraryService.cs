@@ -1,4 +1,4 @@
-﻿using System.Collections.Concurrent;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Threading.Channels;
 using Microsoft.EntityFrameworkCore;
@@ -5557,8 +5557,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     {
         return sortOrder switch
         {
-            SongSortOrder.TitleAsc => query.OrderBy(s => s.Title).ThenBy(s => s.Id),
-            SongSortOrder.TitleDesc => query.OrderByDescending(s => s.Title).ThenByDescending(s => s.Id),
+            SongSortOrder.TitleAsc => query.OrderBy(s => s.Title).ThenBy(s => s.PrimaryArtistName).ThenBy(s => s.Id),
+            SongSortOrder.TitleDesc => query.OrderByDescending(s => s.Title).ThenByDescending(s => s.PrimaryArtistName).ThenByDescending(s => s.Id),
             SongSortOrder.YearAsc => query.OrderBy(s => s.Year)
                 .ThenBy(s => s.PrimaryArtistName)
                 .ThenBy(s => s.Album != null ? s.Album.Title : string.Empty)
@@ -5567,6 +5567,20 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 .ThenBy(s => s.Title)
                 .ThenBy(s => s.Id),
             SongSortOrder.YearDesc => query.OrderByDescending(s => s.Year)
+                .ThenByDescending(s => s.PrimaryArtistName)
+                .ThenByDescending(s => s.Album != null ? s.Album.Title : string.Empty)
+                .ThenByDescending(s => s.DiscNumber ?? 0)
+                .ThenByDescending(s => s.TrackNumber)
+                .ThenByDescending(s => s.Title)
+                .ThenByDescending(s => s.Id),
+            SongSortOrder.FileCreatedDateAsc => query.OrderBy(s => s.FileCreatedDate)
+                .ThenBy(s => s.PrimaryArtistName)
+                .ThenBy(s => s.Album != null ? s.Album.Title : string.Empty)
+                .ThenBy(s => s.DiscNumber ?? 0)
+                .ThenBy(s => s.TrackNumber)
+                .ThenBy(s => s.Title)
+                .ThenBy(s => s.Id),
+            SongSortOrder.FileCreatedDateDesc => query.OrderByDescending(s => s.FileCreatedDate)
                 .ThenByDescending(s => s.PrimaryArtistName)
                 .ThenByDescending(s => s.Album != null ? s.Album.Title : string.Empty)
                 .ThenByDescending(s => s.DiscNumber ?? 0)
@@ -5609,7 +5623,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 .ThenByDescending(s => s.TrackNumber)
                 .ThenByDescending(s => s.Title)
                 .ThenByDescending(s => s.Id),
-            _ => query.OrderBy(s => s.Title).ThenBy(s => s.Id)
+            _ => query.OrderBy(s => s.Title).ThenBy(s => s.PrimaryArtistName).ThenBy(s => s.Id)
         };
     }
 
