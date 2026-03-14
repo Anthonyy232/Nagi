@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Nagi.Core.Data;
 using Nagi.Core.Models;
 using Nagi.Core.Helpers;
+using Nagi.Core.Services.Data;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -15,7 +16,7 @@ public class SmartPlaylistQueryBuilder
     /// <summary>
     ///     Builds a queryable for songs matching the smart playlist's rules.
     /// </summary>
-    public IQueryable<Song> BuildQuery(MusicDbContext context, SmartPlaylist smartPlaylist, string? searchTerm = null)
+    public IQueryable<Song> BuildQuery(MusicDbContext context, SmartPlaylist smartPlaylist, string? searchTerm = null, SongSortOrder? sortOrderOverride = null)
     {
         var query = context.Songs.AsNoTracking()
             .Include(s => s.Album)
@@ -27,7 +28,11 @@ public class SmartPlaylistQueryBuilder
         if (!string.IsNullOrWhiteSpace(searchTerm))
             query = ApplySearchFilter(query, searchTerm);
 
-        query = ApplySortOrder(query, smartPlaylist.SortOrder);
+        var finalSortOrder = sortOrderOverride.HasValue 
+            ? MapToSmartPlaylistSortOrder(sortOrderOverride.Value) 
+            : smartPlaylist.SortOrder;
+
+        query = ApplySortOrder(query, finalSortOrder);
 
         return query;
     }
@@ -333,8 +338,8 @@ public class SmartPlaylistQueryBuilder
     {
         return sortOrder switch
         {
-            SmartPlaylistSortOrder.TitleAsc => query.OrderBy(s => s.Title).ThenBy(s => s.Id),
-            SmartPlaylistSortOrder.TitleDesc => query.OrderByDescending(s => s.Title).ThenByDescending(s => s.Id),
+            SmartPlaylistSortOrder.TitleAsc => query.OrderBy(s => s.Title).ThenBy(s => s.PrimaryArtistName).ThenBy(s => s.Id),
+            SmartPlaylistSortOrder.TitleDesc => query.OrderByDescending(s => s.Title).ThenByDescending(s => s.PrimaryArtistName).ThenByDescending(s => s.Id),
             SmartPlaylistSortOrder.ArtistAsc => query.OrderBy(s => s.PrimaryArtistName)
                 .ThenBy(s => s.Album != null ? s.Album.Title : string.Empty)
                 .ThenBy(s => s.DiscNumber ?? 0)
@@ -371,12 +376,12 @@ public class SmartPlaylistQueryBuilder
                 .ThenByDescending(s => s.TrackNumber)
                 .ThenByDescending(s => s.Title)
                 .ThenByDescending(s => s.Id),
-            SmartPlaylistSortOrder.PlayCountAsc => query.OrderBy(s => s.PlayCount).ThenBy(s => s.Title).ThenBy(s => s.Id),
-            SmartPlaylistSortOrder.PlayCountDesc => query.OrderByDescending(s => s.PlayCount).ThenByDescending(s => s.Title).ThenByDescending(s => s.Id),
-            SmartPlaylistSortOrder.LastPlayedAsc => query.OrderBy(s => s.LastPlayedDate).ThenBy(s => s.Title).ThenBy(s => s.Id),
-            SmartPlaylistSortOrder.LastPlayedDesc => query.OrderByDescending(s => s.LastPlayedDate).ThenByDescending(s => s.Title).ThenByDescending(s => s.Id),
-            SmartPlaylistSortOrder.DateAddedAsc => query.OrderBy(s => s.DateAddedToLibrary).ThenBy(s => s.Title).ThenBy(s => s.Id),
-            SmartPlaylistSortOrder.DateAddedDesc => query.OrderByDescending(s => s.DateAddedToLibrary).ThenByDescending(s => s.Title).ThenByDescending(s => s.Id),
+            SmartPlaylistSortOrder.PlayCountAsc => query.OrderBy(s => s.PlayCount).ThenBy(s => s.PrimaryArtistName).ThenBy(s => s.Title).ThenBy(s => s.Id),
+            SmartPlaylistSortOrder.PlayCountDesc => query.OrderByDescending(s => s.PlayCount).ThenByDescending(s => s.PrimaryArtistName).ThenByDescending(s => s.Title).ThenByDescending(s => s.Id),
+            SmartPlaylistSortOrder.LastPlayedAsc => query.OrderBy(s => s.LastPlayedDate).ThenBy(s => s.PrimaryArtistName).ThenBy(s => s.Title).ThenBy(s => s.Id),
+            SmartPlaylistSortOrder.LastPlayedDesc => query.OrderByDescending(s => s.LastPlayedDate).ThenByDescending(s => s.PrimaryArtistName).ThenByDescending(s => s.Title).ThenByDescending(s => s.Id),
+            SmartPlaylistSortOrder.DateAddedAsc => query.OrderBy(s => s.DateAddedToLibrary).ThenBy(s => s.PrimaryArtistName).ThenBy(s => s.Title).ThenBy(s => s.Id),
+            SmartPlaylistSortOrder.DateAddedDesc => query.OrderByDescending(s => s.DateAddedToLibrary).ThenByDescending(s => s.PrimaryArtistName).ThenByDescending(s => s.Title).ThenByDescending(s => s.Id),
             SmartPlaylistSortOrder.TrackNumberAsc => query.OrderBy(s => s.Album != null ? s.Album.Title : string.Empty)
                 .ThenBy(s => s.DiscNumber ?? 0)
                 .ThenBy(s => s.TrackNumber)
@@ -387,12 +392,26 @@ public class SmartPlaylistQueryBuilder
                 .ThenByDescending(s => s.TrackNumber)
                 .ThenByDescending(s => s.Title)
                 .ThenByDescending(s => s.Id),
-            SmartPlaylistSortOrder.DurationAsc => query.OrderBy(s => s.DurationTicks).ThenBy(s => s.Title).ThenBy(s => s.Id),
-            SmartPlaylistSortOrder.DurationDesc => query.OrderByDescending(s => s.DurationTicks).ThenByDescending(s => s.Title).ThenByDescending(s => s.Id),
-            SmartPlaylistSortOrder.BpmAsc => query.OrderBy(s => s.Bpm ?? 0).ThenBy(s => s.Title).ThenBy(s => s.Id),
-            SmartPlaylistSortOrder.BpmDesc => query.OrderByDescending(s => s.Bpm ?? 0).ThenByDescending(s => s.Title).ThenByDescending(s => s.Id),
+            SmartPlaylistSortOrder.DurationAsc => query.OrderBy(s => s.DurationTicks).ThenBy(s => s.PrimaryArtistName).ThenBy(s => s.Title).ThenBy(s => s.Id),
+            SmartPlaylistSortOrder.DurationDesc => query.OrderByDescending(s => s.DurationTicks).ThenByDescending(s => s.PrimaryArtistName).ThenByDescending(s => s.Title).ThenByDescending(s => s.Id),
+            SmartPlaylistSortOrder.BpmAsc => query.OrderBy(s => s.Bpm ?? 0).ThenBy(s => s.PrimaryArtistName).ThenBy(s => s.Title).ThenBy(s => s.Id),
+            SmartPlaylistSortOrder.BpmDesc => query.OrderByDescending(s => s.Bpm ?? 0).ThenByDescending(s => s.PrimaryArtistName).ThenByDescending(s => s.Title).ThenByDescending(s => s.Id),
+            SmartPlaylistSortOrder.FileCreatedDateAsc => query.OrderBy(s => s.FileCreatedDate)
+                .ThenBy(s => s.PrimaryArtistName)
+                .ThenBy(s => s.Album != null ? s.Album.Title : string.Empty)
+                .ThenBy(s => s.DiscNumber ?? 0)
+                .ThenBy(s => s.TrackNumber)
+                .ThenBy(s => s.Title)
+                .ThenBy(s => s.Id),
+            SmartPlaylistSortOrder.FileCreatedDateDesc => query.OrderByDescending(s => s.FileCreatedDate)
+                .ThenByDescending(s => s.PrimaryArtistName)
+                .ThenByDescending(s => s.Album != null ? s.Album.Title : string.Empty)
+                .ThenByDescending(s => s.DiscNumber ?? 0)
+                .ThenByDescending(s => s.TrackNumber)
+                .ThenByDescending(s => s.Title)
+                .ThenByDescending(s => s.Id),
             SmartPlaylistSortOrder.Random => query.OrderBy(_ => EF.Functions.Random()),
-            _ => query.OrderBy(s => s.Title).ThenBy(s => s.Id)
+            _ => query.OrderBy(s => s.Title).ThenBy(s => s.PrimaryArtistName).ThenBy(s => s.Id)
         };
     }
 
@@ -459,6 +478,27 @@ public class SmartPlaylistQueryBuilder
     }
 
 
+
+    private static SmartPlaylistSortOrder MapToSmartPlaylistSortOrder(SongSortOrder songSortOrder)
+    {
+        return songSortOrder switch
+        {
+            SongSortOrder.TitleAsc => SmartPlaylistSortOrder.TitleAsc,
+            SongSortOrder.TitleDesc => SmartPlaylistSortOrder.TitleDesc,
+            SongSortOrder.ArtistAsc => SmartPlaylistSortOrder.ArtistAsc,
+            SongSortOrder.ArtistDesc => SmartPlaylistSortOrder.ArtistDesc,
+            SongSortOrder.AlbumAsc => SmartPlaylistSortOrder.AlbumAsc,
+            SongSortOrder.AlbumDesc => SmartPlaylistSortOrder.AlbumDesc,
+            SongSortOrder.YearAsc => SmartPlaylistSortOrder.YearAsc,
+            SongSortOrder.YearDesc => SmartPlaylistSortOrder.YearDesc,
+            SongSortOrder.FileCreatedDateAsc => SmartPlaylistSortOrder.FileCreatedDateAsc,
+            SongSortOrder.FileCreatedDateDesc => SmartPlaylistSortOrder.FileCreatedDateDesc,
+            SongSortOrder.TrackNumberAsc => SmartPlaylistSortOrder.TrackNumberAsc,
+            SongSortOrder.TrackNumberDesc => SmartPlaylistSortOrder.TrackNumberDesc,
+            SongSortOrder.PlaylistOrder => SmartPlaylistSortOrder.TitleAsc, // Fallback
+            _ => SmartPlaylistSortOrder.TitleAsc
+        };
+    }
 
     #endregion
 }
