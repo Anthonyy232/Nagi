@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.IO;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
@@ -11,6 +12,12 @@ namespace Nagi.WinUI.Helpers;
 public static class ImageUriHelper
 {
     private const string CacheBusterPrefix = "?v=";
+
+    // Short-lived cache to avoid repeated File.Exists + File.GetLastWriteTimeUtc calls
+    // when the same artwork path appears multiple times in a page load (e.g. album art shared
+    // across many tracks). Entries expire after 30 seconds so stale artwork is detected promptly.
+    private static readonly ConcurrentDictionary<string, (string? Uri, DateTime Expiry)> _uriCache = new();
+    private static readonly TimeSpan _cacheLifetime = TimeSpan.FromSeconds(30);
 
     /// <summary>
     ///     Appends a cache-busting query parameter to a local file URI based on its last write time.
@@ -27,31 +34,33 @@ public static class ImageUriHelper
         if (string.IsNullOrEmpty(path)) return null;
         if (HasCacheBuster(path)) return path;
 
-        try
+        // Only cache rooted physical paths — non-physical URIs skip disk I/O anyway.
+        if (IsRootedPhysicalPath(path))
         {
-            // Only perform disk I/O for rooted physical paths.
-            if (IsRootedPhysicalPath(path))
+            var now = DateTime.UtcNow;
+            if (_uriCache.TryGetValue(path, out var cached) && cached.Expiry > now)
+                return cached.Uri;
+
+            string? result;
+            try
             {
-                // Check if file exists first to prevent "path not found" errors
-                // when ImageEx tries to load non-existent files
                 if (!File.Exists(path))
                 {
-                    return null;
+                    result = null;
                 }
-
-                var lastWriteTime = File.GetLastWriteTimeUtc(path);
-
-                // File.GetLastWriteTimeUtc returns 1601-01-01 00:00:00 UTC if the file doesn't exist.
-                if (lastWriteTime.Year > 1601)
+                else
                 {
-                    return BuildCacheBustedUri(path, lastWriteTime.Ticks);
+                    var lastWriteTime = File.GetLastWriteTimeUtc(path);
+                    result = lastWriteTime.Year > 1601 ? BuildCacheBustedUri(path, lastWriteTime.Ticks) : null;
                 }
             }
-        }
-        catch
-        {
-            // Return null on any error to prevent ImageEx from trying to load invalid paths
-            return null;
+            catch
+            {
+                result = null;
+            }
+
+            _uriCache[path] = (result, now.Add(_cacheLifetime));
+            return result;
         }
 
         return path;

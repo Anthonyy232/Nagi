@@ -93,5 +93,7 @@ public enum SmartPlaylistSortOrder
     DurationDesc,
     BpmAsc,
     BpmDesc,
+    FileCreatedDateAsc,
+    FileCreatedDateDesc,
     Random
 }

@@ -40,7 +40,7 @@
         <MicrosoftWindowsSDKBuildToolsVersion>10.0.26100.4654</MicrosoftWindowsSDKBuildToolsVersion>
         <MicrosoftXamlBehaviorsWinUIManagedVersion>3.0.1</MicrosoftXamlBehaviorsWinUIManagedVersion>
         <MessageFormatVersion>8.0.0</MessageFormatVersion>
-        <VelopackVersion>0.0.1444-gc245055</VelopackVersion>
+
         <WindowsAppSdkVersion>2.0.0-preview1</WindowsAppSdkVersion>
         <!-- WinUI component package version (using component-based referencing to exclude unused ML/AI binaries) -->
         <WindowsAppSdkWinUIVersion>2.0.7-preview</WindowsAppSdkWinUIVersion>

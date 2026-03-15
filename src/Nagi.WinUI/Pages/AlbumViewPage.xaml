@@ -216,6 +216,12 @@
                                 <RadioMenuFlyoutItem GroupName="AlbumViewSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
                                                 CommandParameter="YearDesc" Text="{x:Bind helpers:SortOrderHelper.YearNewestLabel}"
                                                 IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=YearDesc}" />
+                                <RadioMenuFlyoutItem GroupName="AlbumViewSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                                CommandParameter="FileCreatedDateAsc" Text="{x:Bind helpers:SortOrderHelper.DateCreatedOldestLabel}"
+                                                IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=FileCreatedDateAsc}" />
+                                <RadioMenuFlyoutItem GroupName="AlbumViewSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                                CommandParameter="FileCreatedDateDesc" Text="{x:Bind helpers:SortOrderHelper.DateCreatedNewestLabel}"
+                                                IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=FileCreatedDateDesc}" />
                             </MenuFlyout>
                         </Button.Flyout>
                         <FontIcon FontSize="16" Glyph="&#xE8CB;" />

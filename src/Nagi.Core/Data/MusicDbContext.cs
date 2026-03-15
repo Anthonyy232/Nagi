@@ -18,7 +18,7 @@ public class MusicDbContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         base.OnConfiguring(optionsBuilder);
-        optionsBuilder.AddInterceptors(_interceptor);
+        optionsBuilder.AddInterceptors(_interceptor, Interceptors.SqlitePragmaInterceptor.Instance);
     }
 
     public DbSet<Song> Songs { get; set; } = null!;
@@ -114,6 +114,12 @@ public class MusicDbContext : DbContext
             entity.HasIndex(lh => lh.IsScrobbled);
             entity.HasIndex(lh => new { lh.ContextType, lh.ContextId });
             entity.HasIndex(lh => lh.EndReason);
+
+            // Composite index for statistics range queries.
+            // StatisticsService filters by ListenTimestampUtc, then aggregates SongId, EndReason,
+            // IsEligibleForScrobbling, and ListenDurationTicks. This index allows SQLite to satisfy
+            // the range filter and grouping without a full table scan.
+            entity.HasIndex(lh => new { lh.ListenTimestampUtc, lh.SongId });
         });
 
         // Configure the Folder entity.

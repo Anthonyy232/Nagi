@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 
@@ -203,9 +203,13 @@ public class PresenceManager : IPresenceManager, IAsyncDisposable, IDisposable
                     _logger.LogDebug("Activated '{ServiceName}' presence service.", service.Name);
 
                     // If a track is already playing, immediately update the newly activated service.
-                    if (_currentTrack is not null && _playbackService.CurrentListenHistoryId.HasValue)
+                    if (_currentTrack is not null)
                     {
-                        await service.OnTrackChangedAsync(_currentTrack, _playbackService.CurrentListenHistoryId.Value).ConfigureAwait(false);
+                        var sessionId = _playbackService.CurrentListenHistoryId;
+                        if (service.Name == "Discord" || sessionId.HasValue)
+                        {
+                            await service.OnTrackChangedAsync(_currentTrack, sessionId ?? 0).ConfigureAwait(false);
+                        }
                         await service.OnPlaybackStateChangedAsync(_playbackService.IsPlaying).ConfigureAwait(false);
                     }
                 }
@@ -256,11 +260,24 @@ public class PresenceManager : IPresenceManager, IAsyncDisposable, IDisposable
         FireAndForgetSafe(
             async () =>
             {
-                if (_currentTrack is not null && _currentListenSessionId.HasValue)
+                if (_currentTrack is not null)
+                {
                     await BroadcastAsync(s =>
-                        s.OnTrackChangedAsync(_currentTrack, _currentListenSessionId.Value)).ConfigureAwait(false);
+                    {
+                        // Discord needs to know about the track immediately (even at startup restoration)
+                        // Last.fm should only receive tracks that have a valid session ID to avoid scrobbling errors
+                        if (s.Name == "Discord" || _currentListenSessionId.HasValue)
+                        {
+                            return s.OnTrackChangedAsync(_currentTrack, _currentListenSessionId ?? 0);
+                        }
+                        
+                        return Task.CompletedTask;
+                    }).ConfigureAwait(false);
+                }
                 else
+                {
                     await BroadcastAsync(s => s.OnPlaybackStoppedAsync()).ConfigureAwait(false);
+                }
             },
             "Track change broadcast");
     }

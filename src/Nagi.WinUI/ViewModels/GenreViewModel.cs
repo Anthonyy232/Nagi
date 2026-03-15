@@ -211,8 +211,6 @@ public partial class GenreViewModel : SearchableViewModelBase
 
     private void ApplyFilter()
     {
-        Genres.Clear();
-
         IEnumerable<GenreViewModelItem> filtered = _allGenres;
         if (IsSearchActive)
             filtered = _allGenres.Where(g =>
@@ -227,8 +225,7 @@ public partial class GenreViewModel : SearchableViewModelBase
             _ => filtered.OrderBy(g => g.Name, StringComparer.OrdinalIgnoreCase).ThenBy(g => g.Id)
         };
 
-        foreach (var item in sorted)
-            Genres.Add(item);
+        Genres.ReplaceRange(sorted);
     }
 
     /// <summary>

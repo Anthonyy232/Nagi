@@ -413,16 +413,13 @@ public class LibraryServiceTests : IDisposable
 
         // Arrange: Mock the new state of the file system.
         _fileSystem.DirectoryExists(folder.Path).Returns(true);
-        _fileSystem.EnumerateFiles(folder.Path, "*.*", SearchOption.AllDirectories).Returns(new[]
+        _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, "*.*", SearchOption.AllDirectories).Returns(new[]
         {
-            "C:\\Music\\Scan\\unchanged.mp3", // Still exists, same timestamp
-            "C:\\Music\\Scan\\updated.mp3", // Still exists, new timestamp
-            "C:\\Music\\Scan\\new.mp3" // New file
+            ("C:\\Music\\Scan\\unchanged.mp3", new DateTime(2023, 1, 1)),       // Still exists, same timestamp
+            ("C:\\Music\\Scan\\updated.mp3",   new DateTime(2023, 2, 2)),       // Still exists, new timestamp
+            ("C:\\Music\\Scan\\new.mp3",       new DateTime(2023, 3, 3)),       // New file
         });
         _fileSystem.GetExtension(Arg.Any<string>()).Returns(".mp3");
-        _fileSystem.GetLastWriteTimeUtc("C:\\Music\\Scan\\unchanged.mp3").Returns(new DateTime(2023, 1, 1));
-        _fileSystem.GetLastWriteTimeUtc("C:\\Music\\Scan\\updated.mp3").Returns(new DateTime(2023, 2, 2)); // Modified
-        _fileSystem.GetLastWriteTimeUtc("C:\\Music\\Scan\\new.mp3").Returns(new DateTime(2023, 3, 3));
 
         // Arrange: Mock metadata extraction for the new and updated files.
         _metadataService.ExtractMetadataAsync("C:\\Music\\Scan\\updated.mp3", Arg.Any<string?>())
@@ -648,8 +645,8 @@ public class LibraryServiceTests : IDisposable
         }
 
         _fileSystem.DirectoryExists(folder.Path).Returns(true);
-        _fileSystem.EnumerateFiles(folder.Path, Arg.Any<string>(), Arg.Any<SearchOption>())
-            .Returns(new[] { "C:\\Music\\Scan\\file1.mp3" });
+        _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, Arg.Any<string>(), Arg.Any<SearchOption>())
+            .Returns(new[] { ("C:\\Music\\Scan\\file1.mp3", DateTime.UtcNow) });
         var cts = new CancellationTokenSource();
         cts.Cancel(); // Cancel before the operation starts.
 
@@ -688,10 +685,9 @@ public class LibraryServiceTests : IDisposable
         // Mock: File system has both the song and a matching .txt lyrics file.
         var lastWriteTime = DateTime.UtcNow;
         _fileSystem.DirectoryExists(folder.Path).Returns(true);
-        _fileSystem.EnumerateFiles(folder.Path, "*.*", SearchOption.AllDirectories)
-            .Returns(new[] { song.FilePath });
+        _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, "*.*", SearchOption.AllDirectories)
+            .Returns(new[] { (song.FilePath, lastWriteTime) });
         _fileSystem.GetExtension(Arg.Any<string>()).Returns(".mp3");
-        _fileSystem.GetLastWriteTimeUtc(song.FilePath).Returns(lastWriteTime);
         
         // Ensure the song in DB has the same modified date so it's not marked for update
         song.FileModifiedDate = lastWriteTime;
@@ -1110,10 +1106,9 @@ public class LibraryServiceTests : IDisposable
         }
 
         _fileSystem.DirectoryExists(folder.Path).Returns(true);
-        _fileSystem.EnumerateFiles(folder.Path, Arg.Any<string>(), Arg.Any<SearchOption>())
-            .Returns(new[] { "C:\\Music\\Concurrent\\song1.mp3" });
+        _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, Arg.Any<string>(), Arg.Any<SearchOption>())
+            .Returns(new[] { ("C:\\Music\\Concurrent\\song1.mp3", DateTime.UtcNow) });
         _fileSystem.GetExtension(Arg.Any<string>()).Returns(".mp3");
-        _fileSystem.GetLastWriteTimeUtc(Arg.Any<string>()).Returns(DateTime.UtcNow);
         
         _metadataService.ExtractMetadataAsync(Arg.Any<string>(), Arg.Any<string?>())
             .Returns(new SongFileMetadata 

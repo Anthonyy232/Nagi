@@ -4,10 +4,6 @@
       "commandName": "MsixPackage",
       "alwaysReinstallApp": false,
       "nativeDebugging": true
-    },
-    "Nagi (Unpackaged)": {
-      "commandName": "Project",
-      "nativeDebugging": true
     }
   }
 }
