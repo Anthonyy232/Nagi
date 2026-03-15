@@ -91,10 +91,11 @@ public partial class AlbumViewModel : SearchableViewModelBase
         if (e.ChangeType == LibraryChangeType.FolderAdded) return;
         
         // Debounce to prevent multiple refresh calls during rapid changes.
-        var oldCts = Interlocked.Exchange(ref _debouncer, new CancellationTokenSource());
+        var cts = new CancellationTokenSource();
+        var oldCts = Interlocked.Exchange(ref _debouncer, cts);
         try { oldCts?.Cancel(); oldCts?.Dispose(); } catch (ObjectDisposedException) { }
-        
-        var token = _debouncer.Token;
+
+        var token = cts.Token;
         _ = Task.Run(async () =>
         {
             try
