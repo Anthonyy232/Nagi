@@ -89,9 +89,9 @@ public class LibraryServiceBugTests : IDisposable
             await context.SaveChangesAsync();
         }
 
-        var songFiles = Enumerable.Range(1, 101).Select(i => $"C:\\Music\\LargeScan\\song{i}.mp3").ToList();
+        var songFiles = Enumerable.Range(1, 101).Select(i => ($"C:\\Music\\LargeScan\\song{i}.mp3", DateTime.UtcNow)).ToList();
         _fileSystem.DirectoryExists(folder.Path).Returns(true);
-        _fileSystem.EnumerateFiles(folder.Path, "*.*", SearchOption.AllDirectories).Returns(songFiles);
+        _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, "*.*", SearchOption.AllDirectories).Returns(songFiles);
         _fileSystem.GetExtension(Arg.Any<string>()).Returns(".mp3");
         
         _metadataService.ExtractMetadataAsync(Arg.Any<string>(), Arg.Any<string?>())
@@ -147,10 +147,9 @@ public class LibraryServiceBugTests : IDisposable
 
         // Mock file system finding the file with a NEW timestamp
         _fileSystem.DirectoryExists(folder.Path).Returns(true);
-        _fileSystem.EnumerateFiles(folder.Path, "*.*", SearchOption.AllDirectories)
-            .Returns(new[] { "C:\\Music\\Scan\\song.mp3" });
+        _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, "*.*", SearchOption.AllDirectories)
+            .Returns(new[] { ("C:\\Music\\Scan\\song.mp3", DateTime.UtcNow) });
         _fileSystem.GetExtension(Arg.Any<string>()).Returns(".mp3");
-        _fileSystem.GetLastWriteTimeUtc("C:\\Music\\Scan\\song.mp3").Returns(DateTime.UtcNow);
 
         // Mock metadata extraction returning NEW collaboration
         var collaboratorName = "Collaborator";
@@ -240,10 +239,9 @@ public class LibraryServiceBugTests : IDisposable
 
         // Mock file system
         _fileSystem.DirectoryExists(folder.Path).Returns(true);
-        _fileSystem.EnumerateFiles(folder.Path, "*.*", SearchOption.AllDirectories)
-            .Returns(new[] { "C:\\Music\\TrimTest\\song1.mp3", "C:\\Music\\TrimTest\\song2.mp3" });
+        _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, "*.*", SearchOption.AllDirectories)
+            .Returns(new[] { ("C:\\Music\\TrimTest\\song1.mp3", DateTime.UtcNow), ("C:\\Music\\TrimTest\\song2.mp3", DateTime.UtcNow) });
         _fileSystem.GetExtension(Arg.Any<string>()).Returns(".mp3");
-        _fileSystem.GetLastWriteTimeUtc(Arg.Any<string>()).Returns(DateTime.UtcNow);
 
         // Mock metadata extraction to return untrimmed names and mixed casing
         // Song 1: " Artist One " (untrimmed)

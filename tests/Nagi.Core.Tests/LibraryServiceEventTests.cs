@@ -143,10 +143,9 @@ public class LibraryServiceEventTests : IDisposable
 
         _fileSystem.DirectoryExists(folder.Path).Returns(true);
         // Simulate a new file
-        _fileSystem.EnumerateFiles(folder.Path, Arg.Any<string>(), Arg.Any<SearchOption>())
-            .Returns(new[] { "C:\\Music\\ScanChanges\\new.mp3" });
+        _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, Arg.Any<string>(), Arg.Any<SearchOption>())
+            .Returns(new[] { ("C:\\Music\\ScanChanges\\new.mp3", DateTime.UtcNow) });
         _fileSystem.GetExtension(Arg.Any<string>()).Returns(".mp3");
-        _fileSystem.GetLastWriteTimeUtc("C:\\Music\\ScanChanges\\new.mp3").Returns(DateTime.UtcNow);
         
         _metadataService.ExtractMetadataAsync(Arg.Any<string>(), Arg.Any<string?>())
             .Returns(new SongFileMetadata { FilePath = "C:\\Music\\ScanChanges\\new.mp3", Title = "New Song" });
@@ -175,10 +174,9 @@ public class LibraryServiceEventTests : IDisposable
         }
 
         _fileSystem.DirectoryExists(folder.Path).Returns(true);
-        _fileSystem.EnumerateFiles(folder.Path, Arg.Any<string>(), Arg.Any<SearchOption>())
-            .Returns(new[] { "C:\\Music\\ScanChanges\\new.mp3" });
+        _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, Arg.Any<string>(), Arg.Any<SearchOption>())
+            .Returns(new[] { ("C:\\Music\\ScanChanges\\new.mp3", DateTime.UtcNow) });
         _fileSystem.GetExtension(Arg.Any<string>()).Returns(".mp3");
-        _fileSystem.GetLastWriteTimeUtc(Arg.Any<string>()).Returns(DateTime.UtcNow);
         _metadataService.ExtractMetadataAsync(Arg.Any<string>(), Arg.Any<string?>())
             .Returns(new SongFileMetadata { FilePath = "C:\\Music\\ScanChanges\\new.mp3", Title = "New Song" });
 

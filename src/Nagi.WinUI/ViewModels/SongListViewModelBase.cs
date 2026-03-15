@@ -402,7 +402,7 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
             while (hasMore && !token.IsCancellationRequested)
             {
                 // A small delay to prevent overwhelming the system and to allow UI to remain responsive.
-                await Task.Delay(250, token);
+                await Task.Delay(100, token);
                 if (token.IsCancellationRequested) break;
 
                 var pagedResult = await LoadSongsPagedAsync(nextPageToLoad, SongsPerPage, CurrentSortOrder, token);

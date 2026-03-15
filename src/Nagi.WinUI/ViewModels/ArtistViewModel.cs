@@ -111,7 +111,7 @@ public partial class ArtistViewModel : SearchableViewModelBase
         }, token);
     }
 
-    [ObservableProperty] public partial ObservableCollection<ArtistViewModelItem> Artists { get; set; } = new();
+    [ObservableProperty] public partial ObservableRangeCollection<ArtistViewModelItem> Artists { get; set; } = new();
 
     [ObservableProperty] public partial bool IsLoading { get; set; }
 
@@ -230,7 +230,7 @@ public partial class ArtistViewModel : SearchableViewModelBase
                 var nextPage = _currentPage + 1;
                 await LoadNextPageAsync(nextPage, cancellationToken);
                 _currentPage = nextPage;
-                await Task.Delay(250, cancellationToken);
+                await Task.Delay(100, cancellationToken);
             }
         }
         catch (OperationCanceledException)
@@ -292,7 +292,7 @@ public partial class ArtistViewModel : SearchableViewModelBase
                     var nextPage = _currentPage + 1;
                     await LoadNextPageAsync(nextPage, cancellationToken);
                     _currentPage = nextPage;
-                    await Task.Delay(250, cancellationToken);
+                    await Task.Delay(100, cancellationToken);
                 }
             }
         }
@@ -326,6 +326,8 @@ public partial class ArtistViewModel : SearchableViewModelBase
         cancellationToken.ThrowIfCancellationRequested();
 
         if (pagedResult?.Items?.Any() == true)
+        {
+            var newItems = new List<ArtistViewModelItem>();
             foreach (var artist in pagedResult.Items)
             {
                 var artistVm = new ArtistViewModelItem
@@ -335,8 +337,10 @@ public partial class ArtistViewModel : SearchableViewModelBase
                     LocalImageCachePath = ImageUriHelper.GetUriWithCacheBuster(artist.LocalImageCachePath)
                 };
                 _artistLookup[artist.Id] = artistVm;
-                Artists.Add(artistVm);
+                newItems.Add(artistVm);
             }
+            Artists.AddRange(newItems);
+        }
 
         // Update the total items text.
         if (pagedResult != null)

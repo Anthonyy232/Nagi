@@ -131,6 +131,8 @@ public class LibraryScanBenchmarks
         public void DeleteFile(string path) => File.Delete(path);
         public bool DirectoryExists(string path) => Directory.Exists(path);
         public IEnumerable<string> EnumerateFiles(string path, string searchPattern, SearchOption searchOption) => Directory.EnumerateFiles(path, searchPattern, searchOption);
+        public IEnumerable<(string Path, DateTime LastWriteTimeUtc)> EnumerateFilesWithLastWriteTime(string path, string searchPattern, SearchOption searchOption) =>
+            new DirectoryInfo(path).EnumerateFiles(searchPattern, searchOption).Select(fi => (fi.FullName, fi.LastWriteTimeUtc));
         public bool FileExists(string path) => File.Exists(path);
         public string[] GetFiles(string path, string searchPattern) => Directory.GetFiles(path, searchPattern);
         public DateTime GetLastWriteTimeUtc(string path) => File.GetLastWriteTimeUtc(path);
