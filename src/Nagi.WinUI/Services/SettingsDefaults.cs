@@ -30,7 +30,6 @@ public static class SettingsDefaults
     public const bool MuteState = false;
     public const bool ShuffleState = false;
     public const RepeatMode DefaultRepeatMode = RepeatMode.Off;
-    public const bool CheckForUpdatesEnabled = true;
     public const bool LastFmScrobblingEnabled = false;
 
     public const string DefaultArtistSplitCharacters = ""; // No splitting by default

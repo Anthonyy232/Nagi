@@ -1,4 +1,4 @@
-﻿using Nagi.Core.Models;
+using Nagi.Core.Models;
 
 namespace Nagi.Core.Services.Abstractions;
 

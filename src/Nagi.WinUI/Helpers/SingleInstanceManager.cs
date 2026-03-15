@@ -11,7 +11,6 @@ namespace Nagi.WinUI.Helpers;
 
 /// <summary>
 ///     Manages single-instance enforcement using Mutex and Named Pipes for inter-process communication.
-///     This approach works reliably for both packaged (MSIX) and unpackaged (Velopack) builds.
 /// </summary>
 internal sealed class SingleInstanceManager : IDisposable
 {

@@ -162,8 +162,7 @@ public class LibraryServiceArtistImageTests : IDisposable
 
         // Scan sees the file but with the same timestamp → no update needed
         _fileSystem.DirectoryExists(FolderPath).Returns(true);
-        _fileSystem.EnumerateFiles(FolderPath, "*.*", SearchOption.AllDirectories).Returns(new[] { SongPath });
-        _fileSystem.GetLastWriteTimeUtc(SongPath).Returns(timestamp);
+        _fileSystem.EnumerateFilesWithLastWriteTime(FolderPath, "*.*", SearchOption.AllDirectories).Returns(new[] { (SongPath, timestamp) });
 
         return (folder, artist, song);
     }
@@ -415,9 +414,7 @@ public class LibraryServiceArtistImageTests : IDisposable
         }
 
         _fileSystem.DirectoryExists(FolderPath).Returns(true);
-        _fileSystem.EnumerateFiles(FolderPath, "*.*", SearchOption.AllDirectories).Returns(new[] { SongPath, song2Path });
-        _fileSystem.GetLastWriteTimeUtc(SongPath).Returns(timestamp);
-        _fileSystem.GetLastWriteTimeUtc(song2Path).Returns(timestamp);
+        _fileSystem.EnumerateFilesWithLastWriteTime(FolderPath, "*.*", SearchOption.AllDirectories).Returns(new[] { (SongPath, timestamp), (song2Path, timestamp) });
 
         // Distinct bytes per artist so we can wire processing behavior independently.
         var artist1Bytes = new byte[] { 0x01, 0x02 };
@@ -484,8 +481,7 @@ public class LibraryServiceArtistImageTests : IDisposable
         _fileSystem.FileExists(Arg.Any<string>()).Returns(false);
         _fileSystem.DirectoryExists(ArtistImageCachePath).Returns(true);
         _fileSystem.DirectoryExists(FolderPath).Returns(true);
-        _fileSystem.EnumerateFiles(FolderPath, "*.*", SearchOption.AllDirectories).Returns(new[] { SongPath });
-        _fileSystem.GetLastWriteTimeUtc(SongPath).Returns(new DateTime(2024, 6, 1, 0, 0, 0, DateTimeKind.Utc));
+        _fileSystem.EnumerateFilesWithLastWriteTime(FolderPath, "*.*", SearchOption.AllDirectories).Returns(new[] { (SongPath, new DateTime(2024, 6, 1, 0, 0, 0, DateTimeKind.Utc)) });
 
         var eventFired = false;
         _libraryService.ArtistMetadataUpdated += (_, _) => eventFired = true;
@@ -545,8 +541,7 @@ public class LibraryServiceArtistImageTests : IDisposable
         cts.Cancel(); // already cancelled before the scan starts
 
         _fileSystem.DirectoryExists(FolderPath).Returns(true);
-        _fileSystem.EnumerateFiles(FolderPath, "*.*", SearchOption.AllDirectories).Returns(new[] { SongPath });
-        _fileSystem.GetLastWriteTimeUtc(SongPath).Returns(timestamp);
+        _fileSystem.EnumerateFilesWithLastWriteTime(FolderPath, "*.*", SearchOption.AllDirectories).Returns(new[] { (SongPath, timestamp) });
 
         // Act — must NOT throw; the method catches OperationCanceledException internally
         var result = await _libraryService.RescanFolderForMusicAsync(folder.Id, cancellationToken: cts.Token);

@@ -1,80 +1,40 @@
-# Nagi CI/CD Pipeline
-#
-# Defines the continuous integration and deployment process for the Nagi application.
-# This workflow is triggered by pushes to the 'master' branch for CI validation
-# and by tag pushes (e.g., '1.2.3') to create and publish a new release.
-#
-# Workflow Execution Flow:
-# 1. Test: Compiles and runs unit tests as a quality gate.
-# 2. Benchmark: If tests pass, runs performance benchmarks to track regressions.
-# 3. Build & Pack: If tests pass, builds and packages the application for multiple platforms in parallel.
-# 4. Create GitHub Release: If triggered by a tag, collects all packages and publishes them to a GitHub Release.
-#
-# Triggers:
-# - Push to master branch: CI validation only. (git push origin master)
-# - Push tag '1.2.3': Full pipeline including release creation. (git tag 1.2.3 -> git push origin 1.2.3)
-
-name: Nagi CI/CD with Velopack
+name: Nagi CI/CD
 
 on:
   push:
-    branches:
-      - master
-    tags:
-      - '*.*.*'
+    branches: [master]
+    tags: ['*.*.*']
 
 jobs:
-  # ===================================================================
-  # JOB: test
-  # Purpose: Validates code integrity by running all .NET unit tests.
-  # This job acts as a quality gate; the pipeline will not proceed if tests fail.
-  # ===================================================================
   test:
     name: Run Unit Tests
     runs-on: windows-latest
     permissions:
       contents: read
-
     steps:
-      - name: Checkout repository source code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Cache NuGet packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '**/Directory.Build.props', '**/NuGet.config') }}
-          restore-keys: |
-            ${{ runner.os }}-nuget-
-
-      - name: Install .NET SDK
-        uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
+          cache: true
+          cache-dependency-path: |
+            **/*.csproj
+            **/Directory.Build.props
+            **/NuGet.config
 
-      - name: Setup FFmpeg
-        uses: FedericoCarboni/setup-ffmpeg@v3
+      - uses: FedericoCarboni/setup-ffmpeg@v3
 
-      - name: Run .NET Tests
-        # Executes tests and generates a TRX report for diagnostics.
-        run: >
-          dotnet test tests/Nagi.Core.Tests/Nagi.Core.Tests.csproj
-          --configuration Release
-          --logger "trx;logfilename=test-results.trx"
+      - name: Run tests
+        run: dotnet test tests/Nagi.Core.Tests/Nagi.Core.Tests.csproj -c Release --logger "trx;logfilename=test-results.trx"
 
-      - name: Upload test results on failure
-        # On failure, upload the TRX test results for easier debugging from the workflow summary.
+      - name: Upload test results
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: test-results
           path: '**/test-results.trx'
 
-  # ===================================================================
-  # JOB: deploy-functions
-  # Purpose: Deploys the NagiAppFunctions Azure Functions app after tests pass.
-  # This job only runs on pushes to master (not on tag pushes for releases).
-  # ===================================================================
   deploy-functions:
     name: Deploy Azure Functions
     runs-on: ubuntu-latest
@@ -83,276 +43,178 @@ jobs:
     permissions:
       contents: read
       id-token: write
-
     steps:
-      - name: Checkout repository source code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Install .NET SDK
-        uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
+          cache: true
+          cache-dependency-path: |
+            **/*.csproj
+            **/Directory.Build.props
+            **/NuGet.config
 
-      - name: Build and Publish Functions
-        run: >
-          dotnet publish api/NagiAppFunctions/NagiAppFunctions.csproj
-          -c Release
-          -o ./functions-output
+      - run: dotnet publish api/NagiAppFunctions/NagiAppFunctions.csproj -c Release -o ./functions-output
 
-      - name: Login to Azure
-        uses: azure/login@v2
+      - uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Deploy to Azure Functions
-        uses: Azure/functions-action@v1
+      - uses: Azure/functions-action@v1
         with:
-          app-name: 'nagiflexapiserver'
-          package: './functions-output'
+          app-name: nagiflexapiserver
+          package: ./functions-output
 
-  # ===================================================================
-  # JOB: benchmark
-  # Purpose: Tracks performance and memory usage of critical paths.
-  # This job runs after tests to ensure performance standards are met.
-  # ===================================================================
   benchmark:
-    name: Run Performance Benchmarks
+    name: Run Benchmarks
     runs-on: windows-latest
     needs: test
+    if: github.ref == 'refs/heads/master'
     permissions:
       contents: read
-
     steps:
-      - name: Checkout repository source code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Cache NuGet packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '**/Directory.Build.props', '**/NuGet.config') }}
-          restore-keys: |
-            ${{ runner.os }}-nuget-
-
-      - name: Install .NET SDK
-        uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
+          cache: true
+          cache-dependency-path: |
+            **/*.csproj
+            **/Directory.Build.props
+            **/NuGet.config
 
-      - name: Setup FFmpeg
-        uses: FedericoCarboni/setup-ffmpeg@v3
+      - uses: FedericoCarboni/setup-ffmpeg@v3
 
-      - name: Run Benchmarks
-        run: dotnet run -c Release --project benchmarks/Nagi.Benchmarks/Nagi.Benchmarks.csproj -- --filter *LibraryScanBenchmarks*
+      - run: dotnet run -c Release --project benchmarks/Nagi.Benchmarks/Nagi.Benchmarks.csproj -- --filter *LibraryScanBenchmarks*
 
-      - name: Upload Benchmark Results
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: Benchmark-Results
           path: BenchmarkDotNet.Artifacts/results/
 
-      - name: Write Benchmark Summary to Job Summary
+      - name: Write benchmark summary
         if: always()
         shell: pwsh
         run: |
-          $mdFile = Get-ChildItem -Path "BenchmarkDotNet.Artifacts/results/*.md" | Select-Object -First 1
-          if ($mdFile) {
-            Get-Content $mdFile.FullName | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
-          }
+          $md = Get-ChildItem "BenchmarkDotNet.Artifacts/results/*.md" | Select-Object -First 1
+          if ($md) { Get-Content $md.FullName | Out-File $env:GITHUB_STEP_SUMMARY -Append }
 
-  # ===================================================================
-  # JOB: verify-api-connectivity
-  # Purpose: Ensures the Nagi API key is valid by hitting a test endpoint.
-  # This prevents release builds with corrupted or invalid secret keys.
-  # ===================================================================
   verify-api-connectivity:
     name: Verify API Connectivity
     runs-on: ubuntu-latest
     needs: test
+    if: startsWith(github.ref, 'refs/tags/')
     steps:
-      - name: Smoke test Nagi API Server
+      - name: Smoke test API
         env:
           API_KEY: ${{ secrets.NAGI_API_KEY }}
         run: |
-          echo "API Key length: ${#API_KEY}"
-          echo "API Key preview: ${API_KEY:0:2}...${API_KEY: -2}"
           STATUS=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 5 --max-time 10 --retry 3 --retry-delay 5 \
-            -H 'X-API-KEY: ${{ secrets.NAGI_API_KEY }}' \
+            -H "X-API-KEY: ${API_KEY}" \
             "https://nagiflexapiserver.azurewebsites.net/api/lastfm-key")
-          
-          if [ "$STATUS" -ne 200 ]; then
-            echo "::error::API connectivity test failed with status $STATUS. Check if NAGI_API_KEY is valid and not corrupted."
-            exit 1
-          fi
-          echo "API connectivity verified (Status $STATUS)."
+          [ "$STATUS" -eq 200 ] || { echo "::error::API check failed (HTTP $STATUS)"; exit 1; }
+          echo "API OK (HTTP $STATUS)"
 
-  # ===================================================================
-  # JOB: build-and-pack
-  # Purpose: Builds, publishes, and packages the application for multiple target platforms.
-  # Utilizes a matrix strategy to run these steps in parallel for each platform.
-  # ===================================================================
-  build-and-pack:
-    name: Build & Pack (${{ matrix.platform }})
+  build-msix:
+    name: Build MSIX Bundle
     runs-on: windows-latest
-    needs: [test, verify-api-connectivity] # Ensures this job only runs if all tests and API verification pass.
+    needs: [test, verify-api-connectivity]
+    if: startsWith(github.ref, 'refs/tags/')
     permissions:
       contents: read
-      packages: read
-    strategy:
-      matrix:
-        platform: [win-x64, win-arm64]
-
+    outputs:
+      artifact-id: ${{ steps.upload.outputs.artifact-id }}
+      version: ${{ steps.version.outputs.value }}
     steps:
-      - name: Checkout repository source code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 # Fetches all history for accurate version detection.
+      - uses: actions/checkout@v4
 
-      - name: Cache NuGet packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '**/Directory.Build.props', '**/NuGet.config') }}
-          restore-keys: |
-            ${{ runner.os }}-nuget-
-
-      - name: Get and Format Application Version
-        id: get_version
-        shell: bash
-        # Extracts the 3-part version number (e.g., 1.2.3) from Directory.Build.props for Velopack.
-        run: |
-          four_part_version=$(grep -oE '<AppxPackageVersion>[^<]+' Directory.Build.props | sed 's/<AppxPackageVersion>//')
-          three_part_version=$(echo "$four_part_version" | sed 's/\.[0-9]\+$//')
-          echo "version=$three_part_version" >> $GITHUB_OUTPUT
-
-      - name: Install .NET SDK
-        uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
+          cache: true
+          cache-dependency-path: |
+            **/*.csproj
+            **/Directory.Build.props
+            **/NuGet.config
 
-      - name: Install/Update Velopack CLI (vpk)
-        run: dotnet tool update -g vpk --prerelease
+      - uses: microsoft/setup-msbuild@v2
 
-      - name: Create appsettings.json from repository secrets
-        # Dynamically generates the production appsettings.json using secrets to avoid committing sensitive keys.
+      - name: Get version
+        id: version
         shell: pwsh
         run: |
-          $appSettings = @{
-            Discord = @{
-              AppId = '${{ secrets.NAGI_DISCORD_KEY }}'
-            }
-            NagiApiServer = @{
-              Url = 'https://nagiflexapiserver.azurewebsites.net'
-              ApiKey = '${{ secrets.NAGI_API_KEY }}'
-            }
-          }
-          $appSettings | ConvertTo-Json -Depth 3 | Out-File -FilePath "src/Nagi.WinUI/appsettings.json" -Encoding UTF8
+          $v = (Select-String -Path Directory.Build.props -Pattern '<AppxPackageVersion>([^<]+)').Matches[0].Groups[1].Value
+          echo "value=$v" >> $env:GITHUB_OUTPUT
 
-      - name: Set runtime identifier
-        id: set_runtime
+      - name: Create appsettings.json
         shell: pwsh
-        run: |
-          $runtime = "${{ matrix.platform }}" -replace 'win-', ''
-          echo "rid=$runtime" >> $env:GITHUB_OUTPUT
-
-      - name: Build and Publish Application
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DISCORD_APP_ID: ${{ secrets.NAGI_DISCORD_KEY }}
+          API_KEY: ${{ secrets.NAGI_API_KEY }}
+        run: |
+          @{ Discord = @{ AppId = $env:DISCORD_APP_ID }; NagiApiServer = @{ Url = 'https://nagiflexapiserver.azurewebsites.net'; ApiKey = $env:API_KEY } } |
+            ConvertTo-Json -Depth 3 | Out-File src/Nagi.WinUI/appsettings.json -Encoding UTF8
+
+      - run: dotnet restore src/Nagi.WinUI/Nagi.WinUI.csproj
+
+      - name: Patch manifest Publisher for sideload signing
+        shell: pwsh
+        env:
+          CERT_SUBJECT: ${{ vars.SIGNPATH_CERT_SUBJECT }}
+        run: |
+          $manifest = "src/Nagi.WinUI/Package.appxmanifest"
+          (Get-Content $manifest) -replace 'Publisher="[^"]*"', "Publisher=`"$env:CERT_SUBJECT`"" |
+            Set-Content $manifest
+
+      - name: Pre-build x64 binaries
         run: >
           dotnet publish src/Nagi.WinUI/Nagi.WinUI.csproj
-          -c ReleaseUnpackaged
-          -r ${{ matrix.platform }}
-          --self-contained false
-          -o ./publish/${{ matrix.platform }}
+          -c Release -r win-x64
+          -p:Platform=x64
+          -p:GenerateAppxPackageOnBuild=false
+          -p:AppxPackageSigningEnabled=False
+          -p:PackageCertificateThumbprint=""
+          -p:GenerateTemporaryStoreCertificate=False
 
-      - name: Package with Velopack
-        # Packages the published output into a Velopack release for the specified channel and runtime.
+      - name: Pre-build ARM64 binaries
         run: >
-          vpk pack --packId Nagi
-          --packVersion ${{ steps.get_version.outputs.version }}
-          --mainExe Nagi.exe
-          --packDir ./publish/${{ matrix.platform }}
-          --outputDir ./Releases/${{ matrix.platform }}
-          --channel ${{ matrix.platform }}
-          --runtime ${{ matrix.platform }}
-          --framework net10.0-${{ steps.set_runtime.outputs.rid }}-desktop
+          dotnet publish src/Nagi.WinUI/Nagi.WinUI.csproj
+          -c Release -r win-arm64
+          -p:Platform=ARM64
+          -p:GenerateAppxPackageOnBuild=false
+          -p:AppxPackageSigningEnabled=False
+          -p:PackageCertificateThumbprint=""
+          -p:GenerateTemporaryStoreCertificate=False
 
-      - name: Upload Velopack release artifacts
-        # Uploads the generated Velopack release assets for this job's platform.
+      - name: Build MSIX bundle
+        run: >
+          msbuild src/Nagi.WinUI/Nagi.WinUI.csproj
+          /p:Configuration=Release /p:Platform=x64
+          /p:GenerateAppxPackageOnBuild=true
+          /p:AppxBundle=Always /p:AppxBundlePlatforms="x64|ARM64"
+          /p:AppxPackageSigningEnabled=False
+          /p:PackageCertificateThumbprint=""
+          /p:GenerateTemporaryStoreCertificate=False
+          /p:UapAppxPackageBuildMode=SideloadOnly
+          /p:AppxPackageDir=${{ github.workspace }}/bundle-output/
+
+      - name: Locate msixbundle
+        id: find_bundle
+        shell: pwsh
+        run: |
+          $bundle = Get-ChildItem "${{ github.workspace }}/bundle-output" -Recurse -Filter *.msixbundle | Select-Object -First 1
+          if (-not $bundle) { throw "msixbundle not found in bundle-output" }
+          Copy-Item $bundle.FullName "${{ github.workspace }}/bundle-output/Nagi.msixbundle"
+
+      - name: Upload artifact
+        id: upload
         uses: actions/upload-artifact@v4
         with:
-          name: VeloPack-Release-Assets-${{ matrix.platform }}
-          path: ./Releases/${{ matrix.platform }}/
+          name: Unsigned-MSIX
+          path: ${{ github.workspace }}/bundle-output/Nagi.msixbundle
+          if-no-files-found: error
 
-  # ===================================================================
-  # JOB: create-github-release
-  # Purpose: Gathers all platform-specific artifacts and publishes them to a single GitHub Release.
-  # This job is conditional and only runs when a new tag is pushed.
-  # ===================================================================
-  create-github-release:
-    name: Create GitHub Release
-    runs-on: windows-latest
-    needs: build-and-pack # Ensures this job only runs after all platform builds are complete.
-    permissions:
-      contents: write # Required to create/update GitHub Releases.
-    if: startsWith(github.ref, 'refs/tags/') # Condition: Only execute this job for tag pushes.
-
-    steps:
-      - name: Install/Update Velopack CLI (vpk)
-        run: dotnet tool update -g vpk --prerelease
-
-      - name: Download all Velopack artifacts
-        # Downloads all platform-specific release artifacts from the parallel build jobs.
-        uses: actions/download-artifact@v4
-        with:
-          path: ./Downloaded-Artifacts
-          pattern: VeloPack-Release-Assets-*
-
-      - name: Debug - List downloaded files
-        shell: pwsh
-        run: |
-          Write-Host "Contents of Downloaded-Artifacts:"
-          Get-ChildItem -Path "./Downloaded-Artifacts" -Recurse | ForEach-Object { Write-Host $_.FullName }
-
-      - name: Reorganize artifacts for upload
-        # The download-artifact action places artifacts in subdirectories. This step
-        # re-creates the flat './Releases/[platform]' structure required by the vpk upload tool.
-        shell: pwsh
-        run: |
-          $platforms = @("win-x64", "win-arm64")
-          foreach ($platform in $platforms) {
-            $platformDir = "./Releases/$platform"
-            New-Item -ItemType Directory -Path $platformDir -Force
-            $artifactDir = "./Downloaded-Artifacts/VeloPack-Release-Assets-$platform"
-            if (Test-Path $artifactDir) {
-              Copy-Item -Path "$artifactDir/*" -Destination $platformDir -Recurse -Force
-            }
-          }
-
-      - name: Publish assets to GitHub Release (Draft)
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        shell: pwsh
-        # Uses the Velopack CLI to upload all assets. It will create a new release named after the tag
-        # or merge assets into an existing draft release for that tag.
-        run: |
-          $platforms = @("win-x64", "win-arm64")
-          $repoUrl = "https://github.com/${{ github.repository }}"
-          $releaseName = "Version ${{ github.ref_name }}"
-
-          foreach ($platform in $platforms) {
-            $platformDir = "./Releases/$platform"
-            if ((Get-ChildItem -Path $platformDir -File).Count -gt 0) {
-              vpk upload github `
-                --repoUrl $repoUrl `
-                --token "${{ env.GITHUB_TOKEN }}" `
-                --releaseName $releaseName `
-                --channel $platform `
-                --outputDir $platformDir `
-                --merge
-            } else {
-              Write-Warning "No assets found for platform '$platform'. Skipping upload."
-            }
-          }

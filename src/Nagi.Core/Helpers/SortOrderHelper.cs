@@ -69,6 +69,8 @@ public static class SortOrderHelper
     public static string SortByDurationDesc => $"{Resources.Strings.SortByPrefix}{DurationDescLabel}";
     public static string SortByBpmAsc => $"{Resources.Strings.SortByPrefix}{BpmAscLabel}";
     public static string SortByBpmDesc => $"{Resources.Strings.SortByPrefix}{BpmDescLabel}";
+    public static string SortByDateCreatedAsc => $"{Resources.Strings.SortByPrefix}{DateCreatedOldestLabel}";
+    public static string SortByDateCreatedDesc => $"{Resources.Strings.SortByPrefix}{DateCreatedNewestLabel}";
     public static string SortByRandom => $"{Resources.Strings.SortByPrefix}{RandomLabel}";
 
     public static string GetDisplayName(SongSortOrder sortOrder) => sortOrder switch
@@ -79,6 +81,8 @@ public static class SortOrderHelper
         SongSortOrder.AlbumDesc => SortByAlbumDesc,
         SongSortOrder.YearAsc => SortByYearOldest,
         SongSortOrder.YearDesc => SortByYearNewest,
+        SongSortOrder.FileCreatedDateAsc => SortByDateCreatedAsc,
+        SongSortOrder.FileCreatedDateDesc => SortByDateCreatedDesc,
         SongSortOrder.ArtistAsc => SortByArtistAsc,
         SongSortOrder.ArtistDesc => SortByArtistDesc,
         SongSortOrder.TrackNumberAsc => SortByTrackNumberAsc,

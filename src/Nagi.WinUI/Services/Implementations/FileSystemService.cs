@@ -38,6 +38,52 @@ public class FileSystemService : IFileSystemService
         return SafeEnumerateFiles(path, searchPattern);
     }
 
+    public IEnumerable<(string Path, DateTime LastWriteTimeUtc)> EnumerateFilesWithLastWriteTime(
+        string path, string searchPattern, SearchOption searchOption)
+    {
+        if (searchOption == SearchOption.TopDirectoryOnly)
+        {
+            IEnumerable<FileInfo> topFiles = Enumerable.Empty<FileInfo>();
+            try { topFiles = new DirectoryInfo(path).EnumerateFiles(searchPattern); }
+            catch (UnauthorizedAccessException) { }
+            catch (DirectoryNotFoundException) { }
+            catch (IOException) { }
+            foreach (var fi in topFiles) yield return (fi.FullName, fi.LastWriteTimeUtc);
+            yield break;
+        }
+
+        foreach (var item in SafeEnumerateFilesWithLastWriteTime(path, searchPattern))
+            yield return item;
+    }
+
+    private IEnumerable<(string Path, DateTime LastWriteTimeUtc)> SafeEnumerateFilesWithLastWriteTime(
+        string rootPath, string searchPattern)
+    {
+        var dirs = new Stack<string>();
+        dirs.Push(rootPath);
+
+        while (dirs.Count > 0)
+        {
+            var currentDir = dirs.Pop();
+
+            IEnumerable<FileInfo> files = Enumerable.Empty<FileInfo>();
+            try { files = new DirectoryInfo(currentDir).EnumerateFiles(searchPattern); }
+            catch (UnauthorizedAccessException) { }
+            catch (DirectoryNotFoundException) { }
+            catch (IOException) { }
+
+            foreach (var fi in files) yield return (fi.FullName, fi.LastWriteTimeUtc);
+
+            IEnumerable<string> subDirs = Enumerable.Empty<string>();
+            try { subDirs = Directory.EnumerateDirectories(currentDir); }
+            catch (UnauthorizedAccessException) { }
+            catch (DirectoryNotFoundException) { }
+            catch (IOException) { }
+
+            foreach (var str in subDirs) dirs.Push(str);
+        }
+    }
+
     private IEnumerable<string> SafeEnumerateFiles(string rootPath, string searchPattern)
     {
         var dirs = new Stack<string>();

@@ -976,26 +976,10 @@
                     </controls:SettingsExpander.Items>
                 </controls:SettingsExpander>
 
-                <controls:SettingsCard
-                    Header="{x:Bind resources:Strings.SettingsPage_CheckForUpdates_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_CheckForUpdates_Description, Mode=OneTime}"
-                    Visibility="{x:Bind ViewModel.IsUpdateControlVisible, Mode=OneWay}">
-                    <controls:SettingsCard.HeaderIcon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE117;" />
-                    </controls:SettingsCard.HeaderIcon>
-                    <ToggleSwitch
-                        HorizontalAlignment="Right"
-                        IsOn="{x:Bind ViewModel.IsCheckForUpdatesEnabled, Mode=TwoWay}" />
-                </controls:SettingsCard>
-
                 <StackPanel
                     Margin="0,8,0,0"
                     Orientation="Horizontal"
                     Spacing="12">
-                    <HyperlinkButton
-                        Command="{x:Bind ViewModel.CheckForUpdatesManuallyCommand}"
-                        Content="{x:Bind resources:Strings.SettingsPage_About_CheckUpdates_Content, Mode=OneTime}"
-                        Style="{StaticResource AnimatedHyperlinkButtonStyle}"
-                        Visibility="{x:Bind ViewModel.IsUpdateControlVisible, Mode=OneWay}" />
                     <HyperlinkButton
                         Content="{x:Bind resources:Strings.SettingsPage_About_Feedback_Content, Mode=OneTime}"
                         Style="{StaticResource AnimatedHyperlinkButtonStyle}"

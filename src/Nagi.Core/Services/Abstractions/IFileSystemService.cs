@@ -9,6 +9,7 @@ public interface IFileSystemService
     void CreateDirectory(string path);
     void DeleteDirectory(string path, bool recursive);
     IEnumerable<string> EnumerateFiles(string path, string searchPattern, SearchOption searchOption);
+    IEnumerable<(string Path, DateTime LastWriteTimeUtc)> EnumerateFilesWithLastWriteTime(string path, string searchPattern, SearchOption searchOption);
     string[] GetFiles(string path, string searchPattern);
     Task WriteAllBytesAsync(string path, byte[] bytes);
     Task WriteAllTextAsync(string path, string contents);

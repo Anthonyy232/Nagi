@@ -10,9 +10,6 @@ using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Nagi.WinUI.Helpers;
 using WinRT;
-#if !MSIX_PACKAGE
-using Velopack;
-#endif
 
 namespace Nagi.WinUI;
 
@@ -26,13 +23,6 @@ public static class Program
     [STAThread]
     private static int Main(string[] args)
     {
-        #if !MSIX_PACKAGE
-                VelopackApp.Build().Run();
-                // Set the AppUserModelId for unpackaged runs to ensure Windows correctly identifies the app
-                // for features like the Taskbar and System Media Transport Controls (SMTC).
-                SetCurrentProcessExplicitAppUserModelID("Nagi.MusicPlayer");
-        #endif
-
         ComWrappersSupport.InitializeComWrappers();
 
         // Ensure COM initialization in release builds
@@ -43,6 +33,7 @@ public static class Program
         // Check for single instance
         var logger = CreateBootstrapLogger();
         _singleInstanceManager = new SingleInstanceManager(logger);
+
 
         if (!_singleInstanceManager.TryAcquire())
         {

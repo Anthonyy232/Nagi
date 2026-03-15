@@ -41,10 +41,7 @@ using LaunchActivatedEventArgs = Microsoft.UI.Xaml.LaunchActivatedEventArgs;
 using UnhandledExceptionEventArgs = Microsoft.UI.Xaml.UnhandledExceptionEventArgs;
 
 
-#if !MSIX_PACKAGE
-using Velopack;
-using Velopack.Sources;
-#endif
+
 
 namespace Nagi.WinUI;
 
@@ -74,59 +71,7 @@ public partial class App : Application
         CoreApplication.Suspending += OnSuspending;
     }
 
-    /// <summary>
-    ///     Generates the LibVLC plugin cache if it doesn't exist or if the LibVLC version has changed.
-    ///     This dramatically improves LibVLC initialization time on subsequent launches.
-    ///     Note: This is skipped for packaged (MSIX) builds as the installation directory is read-only.
-    /// </summary>
-    private static void EnsureLibVlcPluginCache()
-    {
-        // Skip for packaged builds - the installation directory is read-only in MSIX
-        if (PathConfiguration.IsRunningInPackage())
-        {
-            return;
-        }
 
-        try
-        {
-            var appDataPath = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "Nagi");
-
-            var cacheMarkerPath = Path.Combine(appDataPath, ".libvlc-cache-version");
-
-            // Check if we need to regenerate the cache
-            var needsRegeneration = true;
-            if (File.Exists(cacheMarkerPath))
-            {
-                var cachedVersion = File.ReadAllText(cacheMarkerPath).Trim();
-                needsRegeneration = cachedVersion != LibVlcVersion;
-            }
-
-            if (needsRegeneration)
-            {
-                // We use Log.Information here because the Microsoft.Extensions.Logging system 
-                // might not be fully wired up yet in the constructor sequence.
-                Log.Information("Regenerating LibVLC plugin cache for version {Version}...", LibVlcVersion);
-
-                // Generate the plugin cache - this creates plugins.dat in the libvlc plugins folder
-                // Note: Core.Initialize() is already called by the audioWarmupTask before this runs
-                using var tempVlc = new LibVLCSharp.LibVLC("--reset-plugins-cache");
-                
-                // Write the version marker so we don't regenerate unnecessarily
-                Directory.CreateDirectory(appDataPath);
-                File.WriteAllText(cacheMarkerPath, LibVlcVersion);
-                
-                Log.Information("LibVLC plugin cache generated successfully.");
-            }
-        }
-        catch (Exception ex)
-        {
-            // Silently fail - plugin cache is an optimization, not required for functionality.
-            // However, we log the failure if possible.
-            Log.Warning(ex, "Failed to generate LibVLC plugin cache. This is non-critical but may affect startup performance.");
-        }
-    }
 
 
     /// <summary>
@@ -378,8 +323,6 @@ public partial class App : Application
                     // Initialize LibVLC core first (registers native library paths)
                     LibVLCSharp.Core.Initialize();
 
-                    // Ensure plugin cache exists BEFORE creating LibVLC instance
-                    EnsureLibVlcPluginCache();
                     await Services.GetRequiredService<IAudioPlayer>().EnsureInitializedAsync().ConfigureAwait(false);
                 }
                 catch (Exception ex)
@@ -498,7 +441,6 @@ public partial class App : Application
         services.AddSingleton<IPresenceService, DiscordPresenceService>();
         services.AddSingleton<IPresenceService, LastFmPresenceService>();
         services.AddSingleton<ISmartPlaylistService, SmartPlaylistService>();
-        services.AddSingleton<IUpdateService, VelopackUpdateService>();
         services.AddSingleton<IOnlineLyricsService, LrcLibService>();
         services.AddSingleton<IPlaylistExportService, M3uPlaylistExportService>();
         services.AddSingleton<IBackupRestoreService, BackupRestoreService>();
@@ -509,13 +451,7 @@ public partial class App : Application
         services.AddSingleton<IPcmExtractor, FFmpegPcmExtractor>();
         services.AddSingleton<IReplayGainService, ReplayGainService>();
 
-#if !MSIX_PACKAGE
-        services.AddSingleton(_ =>
-        {
-            var source = new GithubSource("https://github.com/Anthonyy232/Nagi", null, false);
-            return new UpdateManager(source);
-        });
-#endif
+
     }
 
     private static void ConfigureWinUIServices(IServiceCollection services, Window window,
@@ -588,6 +524,12 @@ public partial class App : Application
             // This is more reliable than setting it in the connection string for Microsoft.Data.Sqlite.
             await dbContext.Database.ExecuteSqlRawAsync("PRAGMA journal_mode=WAL;").ConfigureAwait(false);
 
+            // Performance tuning PRAGMAs (safe for a local desktop database):
+            // - synchronous=NORMAL: safe with WAL, avoids unnecessary fsync calls on every write
+            // - cache_size=-32000: 32 MB page cache; drastically reduces repeated disk reads for paged queries
+            // - temp_store=MEMORY: keeps temporary tables/indices in RAM instead of a temp file
+            await dbContext.Database.ExecuteSqlRawAsync("PRAGMA synchronous=NORMAL; PRAGMA cache_size=-32000; PRAGMA temp_store=MEMORY;").ConfigureAwait(false);
+
             await dbContext.Database.MigrateAsync().ConfigureAwait(false);
         }
         catch (Exception ex)
@@ -632,7 +574,6 @@ public partial class App : Application
 
     private void PerformPostLaunchTasks()
     {
-        _ = CheckForUpdatesOnStartupAsync();
         EnqueuePostLaunchTasks();
     }
 
@@ -906,19 +847,16 @@ public partial class App : Application
         try
         {
             // 1. Packaged apps store settings in LocalSettings, not settings.json
-            if (PathConfiguration.IsRunningInPackage())
+            try
             {
-                try
-                {
-                    ApplicationData.Current.LocalSettings.Values.Clear();
-                }
-                catch (Exception ex)
-                {
-                    Log.Warning(ex, "Failed to clear LocalSettings in packaged mode.");
-                }
+                ApplicationData.Current.LocalSettings.Values.Clear();
+            }
+            catch (Exception ex)
+            {
+                Log.Warning(ex, "Failed to clear LocalSettings.");
             }
 
-            // 2. Clear known settings and state files (unpackaged uses these, packaged might have fallbacks)
+            // 2. Clear known settings and state files
             SafelyDeleteFile(pathConfig.SettingsFilePath);
             SafelyDeleteFile(pathConfig.PlaybackStateFilePath);
             
@@ -1200,21 +1138,4 @@ public partial class App : Application
         });
     }
 
-    private async Task CheckForUpdatesOnStartupAsync()
-    {
-        if (Services is null) return;
-        try
-        {
-            #if !MSIX_PACKAGE
-                var updateService = Services.GetRequiredService<IUpdateService>();
-                await updateService.CheckForUpdatesOnStartupAsync();
-            #else
-                await Task.CompletedTask;
-            #endif
-        }
-        catch (Exception ex)
-        {
-            _logger?.LogError(ex, "Failed during startup update check");
-        }
-    }
 }

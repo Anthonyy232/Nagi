@@ -1,4 +1,4 @@
-﻿namespace Nagi.Core.Services.Data;
+namespace Nagi.Core.Services.Data;
 
 /// <summary>
 ///     Defines the available sorting orders for a list of songs.
@@ -15,5 +15,7 @@ public enum SongSortOrder
     TrackNumberDesc,
     YearAsc,
     YearDesc,
+    FileCreatedDateAsc,
+    FileCreatedDateDesc,
     PlaylistOrder
 }

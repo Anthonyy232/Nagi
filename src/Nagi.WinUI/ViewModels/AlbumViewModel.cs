@@ -113,7 +113,7 @@ public partial class AlbumViewModel : SearchableViewModelBase
         }, token);
     }
 
-    [ObservableProperty] public partial ObservableCollection<AlbumViewModelItem> Albums { get; set; } = new();
+    [ObservableProperty] public partial ObservableRangeCollection<AlbumViewModelItem> Albums { get; set; } = new();
 
     [ObservableProperty] public partial bool IsLoading { get; set; }
 
@@ -246,7 +246,7 @@ public partial class AlbumViewModel : SearchableViewModelBase
                 var nextPage = _currentPage + 1;
                 await LoadNextPageAsync(nextPage, cancellationToken);
                 _currentPage = nextPage;
-                await Task.Delay(250, cancellationToken);
+                await Task.Delay(100, cancellationToken);
             }
         }
         catch (OperationCanceledException)
@@ -300,7 +300,7 @@ public partial class AlbumViewModel : SearchableViewModelBase
                     var nextPage = _currentPage + 1;
                     await LoadNextPageAsync(nextPage, cancellationToken);
                     _currentPage = nextPage;
-                    await Task.Delay(250, cancellationToken);
+                    await Task.Delay(100, cancellationToken);
                 }
             }
         }
@@ -336,8 +336,7 @@ public partial class AlbumViewModel : SearchableViewModelBase
         cancellationToken.ThrowIfCancellationRequested();
 
         if (pagedResult?.Items?.Any() == true)
-            foreach (var album in pagedResult.Items)
-                Albums.Add(new AlbumViewModelItem(album));
+            Albums.AddRange(pagedResult.Items.Select(album => new AlbumViewModelItem(album)));
 
         // Update the total items text.
         if (pagedResult != null)

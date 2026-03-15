@@ -1,0 +1,111 @@
+name: Create Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'The tag version to release (e.g., 1.0.0)'
+        required: true
+        type: string
+
+jobs:
+  sign-msix:
+    name: Sign MSIX (SignPath)
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Download unsigned MSIX from build workflow
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          workflow: build.yml
+          workflow_conclusion: success
+          branch: ${{ github.event.inputs.tag }}
+          name: Unsigned-MSIX
+
+      # We need the artifact-id for the SignPath action. 
+      # Since we downloaded it instead of producing it in this workflow, 
+      # we upload it again in this run to get a new artifact ID.
+      - name: Re-upload for SignPath
+        id: reupload
+        uses: actions/upload-artifact@v4
+        with:
+          name: Unsigned-MSIX-For-Signing
+          path: Nagi.msixbundle
+          if-no-files-found: error
+
+      - uses: signpath/github-action-submit-signing-request@v1
+        with:
+          api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
+          organization-id: '${{ secrets.SIGNPATH_ORGANIZATION_ID }}'
+          project-slug: Nagi
+          artifact-configuration-slug: msixbundle
+          signing-policy-slug: release-signing
+          github-artifact-id: '${{ steps.reupload.outputs.artifact-id }}'
+          wait-for-completion: true
+          output-artifact-directory: ./signed
+          github-token: '${{ secrets.GITHUB_TOKEN }}'
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Signed-MSIX
+          path: ./signed/
+
+  create-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: sign-msix
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.tag }}
+
+      - name: Download signed MSIX
+        uses: actions/download-artifact@v4
+        with:
+          name: Signed-MSIX
+          path: ./signed
+
+      - name: Get version
+        id: version
+        shell: pwsh
+        run: |
+          $v = (Select-String -Path Directory.Build.props -Pattern '<AppxPackageVersion>([^<]+)').Matches[0].Groups[1].Value
+          echo "value=$v" >> $env:GITHUB_OUTPUT
+
+      - name: Generate .appinstaller
+        shell: bash
+        env:
+          VERSION: ${{ steps.version.outputs.value }}
+          REPO: ${{ github.repository }}
+          CERT_SUBJECT: ${{ vars.SIGNPATH_CERT_SUBJECT }}
+        run: |
+          BASE_URL="https://github.com/${REPO}/releases/latest/download"
+          cat > signed/Nagi.appinstaller <<EOF
+          <?xml version="1.0" encoding="utf-8"?>
+          <AppInstaller Uri="${BASE_URL}/Nagi.appinstaller"
+                        Version="${VERSION}"
+                        xmlns="http://schemas.microsoft.com/appx/appinstaller/2018">
+            <MainBundle Name="48743Nagi.Nagi"
+                        Version="${VERSION}"
+                        Publisher="${CERT_SUBJECT}"
+                        Uri="${BASE_URL}/Nagi.msixbundle"/>
+            <UpdateSettings>
+              <OnLaunch HoursBetweenUpdateChecks="0"/>
+            </UpdateSettings>
+          </AppInstaller>
+          EOF
+
+      - name: Publish GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${{ github.event.inputs.tag }}" \
+            --repo "${{ github.repository }}" \
+            --title "Version ${{ github.event.inputs.tag }}" \
+            --draft \
+            signed/Nagi.msixbundle \
+            signed/Nagi.appinstaller
