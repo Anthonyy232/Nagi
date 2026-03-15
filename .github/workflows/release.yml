@@ -8,6 +8,9 @@ on:
         required: true
         type: string
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   sign-msix:
     name: Sign MSIX (SignPath)
@@ -21,7 +24,7 @@ jobs:
         with:
           workflow: build.yml
           workflow_conclusion: success
-          branch: ${{ github.event.inputs.tag }}
+          tag: ${{ github.event.inputs.tag }}
           name: Unsigned-MSIX
 
       # We need the artifact-id for the SignPath action. 
