@@ -23,6 +23,7 @@ public partial class LibraryViewModel : SongListViewModelBase
     private readonly ILibraryService _libraryService;
     private CancellationTokenSource? _debouncer;
     private bool _hasInitialized;
+    private bool _pendingLibraryRefresh;
 
     public LibraryViewModel(
         ILibraryService libraryService,
@@ -38,6 +39,14 @@ public partial class LibraryViewModel : SongListViewModelBase
     {
         _libraryService = libraryService;
         _libraryService.LibraryContentChanged += OnLibraryContentChanged;
+        PropertyChanged += (s, e) =>
+        {
+            if (e.PropertyName == nameof(IsOverallLoading) && !IsOverallLoading && _pendingLibraryRefresh)
+            {
+                _pendingLibraryRefresh = false;
+                _ = RefreshOrSortSongsAsync();
+            }
+        };
     }
 
     protected override Task<PagedResult<Song>> LoadSongsPagedAsync(int pageNumber, int pageSize,
@@ -85,19 +94,26 @@ public partial class LibraryViewModel : SongListViewModelBase
         if (e.ChangeType == LibraryChangeType.FolderAdded) return;
 
         // Debounce to prevent multiple refresh calls during rapid changes.
-        var oldCts = Interlocked.Exchange(ref _debouncer, new CancellationTokenSource());
+        var cts = new CancellationTokenSource();
+        var oldCts = Interlocked.Exchange(ref _debouncer, cts);
         try { oldCts?.Cancel(); } catch (ObjectDisposedException) { }
-        
-        var token = _debouncer.Token;
+
+        var token = cts.Token;
         _ = Task.Run(async () =>
         {
             try
             {
                 await Task.Delay(1000, token).ConfigureAwait(false);
                 if (token.IsCancellationRequested) return;
-                
+
                 _logger.LogDebug("Library content changed ({ChangeType}). Refreshing song list.", e.ChangeType);
-                await _dispatcherService.EnqueueAsync(() => RefreshOrSortSongsCommand.ExecuteAsync(null));
+                await _dispatcherService.EnqueueAsync(async () =>
+                {
+                    if (!IsOverallLoading)
+                        await RefreshOrSortSongsAsync();
+                    else
+                        _pendingLibraryRefresh = true;
+                });
             }
             catch (OperationCanceledException) { }
             catch (Exception ex)

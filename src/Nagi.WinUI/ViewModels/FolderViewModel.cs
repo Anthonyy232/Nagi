@@ -101,20 +101,12 @@ public partial class FolderViewModel : ObservableObject
         {
             // Debounce to prevent multiple refresh calls during rapid changes.
             // We exchange the CTS to ensure only the latest one survives.
-            var oldCts = Interlocked.Exchange(ref _debouncer, new CancellationTokenSource());
-            
-            try
-            {
-                oldCts?.Cancel();
-                // We do NOT dispose oldCts here immediately. 
-                // There is a race condition where the Task using the token might check .IsCancellationRequested 
-                // at the exact moment we dispose it, causing an ObjectDisposedException on a background thread.
-                // Letting GC handle the disposal is safer for this high-frequency transient object, 
-                // or we could schedule disposal, but suppressing finalization isn't critical for simple CTS.
-            }
+            var cts = new CancellationTokenSource();
+            var oldCts = Interlocked.Exchange(ref _debouncer, cts);
+            try { oldCts?.Cancel(); }
             catch (ObjectDisposedException) { }
 
-            var token = _debouncer.Token;
+            var token = cts.Token;
 
             Task.Run(async () =>
             {
