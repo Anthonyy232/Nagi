@@ -144,8 +144,6 @@ jobs:
             **/Directory.Build.props
             **/NuGet.config
 
-      - uses: microsoft/setup-msbuild@v2
-
       - name: Get version
         id: version
         shell: pwsh
@@ -195,7 +193,7 @@ jobs:
 
       - name: Build MSIX bundle
         run: >
-          msbuild src/Nagi.WinUI/Nagi.WinUI.csproj
+          dotnet msbuild src/Nagi.WinUI/Nagi.WinUI.csproj
           /p:Configuration=Release /p:Platform=x64
           /p:GenerateAppxPackageOnBuild=true
           /p:AppxBundle=Always /p:AppxBundlePlatforms="x64|ARM64"
