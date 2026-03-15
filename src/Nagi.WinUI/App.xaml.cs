@@ -524,6 +524,12 @@ public partial class App : Application
             // This is more reliable than setting it in the connection string for Microsoft.Data.Sqlite.
             await dbContext.Database.ExecuteSqlRawAsync("PRAGMA journal_mode=WAL;").ConfigureAwait(false);
 
+            // Performance tuning PRAGMAs (safe for a local desktop database):
+            // - synchronous=NORMAL: safe with WAL, avoids unnecessary fsync calls on every write
+            // - cache_size=-32000: 32 MB page cache; drastically reduces repeated disk reads for paged queries
+            // - temp_store=MEMORY: keeps temporary tables/indices in RAM instead of a temp file
+            await dbContext.Database.ExecuteSqlRawAsync("PRAGMA synchronous=NORMAL; PRAGMA cache_size=-32000; PRAGMA temp_store=MEMORY;").ConfigureAwait(false);
+
             await dbContext.Database.MigrateAsync().ConfigureAwait(false);
         }
         catch (Exception ex)

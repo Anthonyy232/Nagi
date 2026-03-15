@@ -103,9 +103,8 @@ public class MultiArtistTests : IDisposable
         }
 
         _fileSystem.DirectoryExists(folderPath).Returns(true);
-        _fileSystem.EnumerateFiles(folderPath, "*.*", SearchOption.AllDirectories).Returns(new[] { filePath });
+        _fileSystem.EnumerateFilesWithLastWriteTime(folderPath, "*.*", SearchOption.AllDirectories).Returns(new[] { (filePath, DateTime.UtcNow) });
         _fileSystem.GetExtension(Arg.Any<string>()).Returns(".mp3");
-        _fileSystem.GetLastWriteTimeUtc(Arg.Any<string>()).Returns(DateTime.UtcNow);
         _fileSystem.GetFileNameWithoutExtension(filePath).Returns("song");
 
         var metadata = new SongFileMetadata
@@ -174,9 +173,8 @@ public class MultiArtistTests : IDisposable
         }
 
         _fileSystem.DirectoryExists(folderPath).Returns(true);
-        _fileSystem.EnumerateFiles(folderPath, "*.*", SearchOption.AllDirectories).Returns(new[] { filePath });
+        _fileSystem.EnumerateFilesWithLastWriteTime(folderPath, "*.*", SearchOption.AllDirectories).Returns(new[] { (filePath, DateTime.UtcNow) });
         _fileSystem.GetExtension(Arg.Any<string>()).Returns(".mp3");
-        _fileSystem.GetLastWriteTimeUtc(Arg.Any<string>()).Returns(DateTime.UtcNow);
 
         var metadata = new SongFileMetadata
         {

@@ -216,7 +216,7 @@ public partial class InsightsViewModel : ObservableObject
         {
             try
             {
-                await Task.Delay(400, token);
+                await Task.Delay(300, token);
                 if (token.IsCancellationRequested) return;
 
                 if (IsSeeAllOpen)
@@ -721,22 +721,24 @@ public partial class InsightsViewModel : ObservableObject
         return dt.ToString("h tt", CultureInfo.CurrentCulture);
     }
 
+    private static readonly Dictionary<PlaybackContextType, Brush> _contextTypeBrushes = new()
+    {
+        [PlaybackContextType.Album] = new SolidColorBrush(ColorHelper.FromArgb(255, 239, 68, 68)),
+        [PlaybackContextType.Artist] = new SolidColorBrush(ColorHelper.FromArgb(255, 249, 115, 22)),
+        [PlaybackContextType.Playlist] = new SolidColorBrush(ColorHelper.FromArgb(255, 16, 185, 129)),
+        [PlaybackContextType.SmartPlaylist] = new SolidColorBrush(ColorHelper.FromArgb(255, 6, 182, 212)),
+        [PlaybackContextType.Folder] = new SolidColorBrush(ColorHelper.FromArgb(255, 139, 92, 246)),
+        [PlaybackContextType.Genre] = new SolidColorBrush(ColorHelper.FromArgb(255, 236, 72, 153)),
+        [PlaybackContextType.Search] = new SolidColorBrush(ColorHelper.FromArgb(255, 99, 102, 241)),
+        [PlaybackContextType.Library] = new SolidColorBrush(ColorHelper.FromArgb(255, 245, 158, 11)),
+        [PlaybackContextType.Transient] = new SolidColorBrush(ColorHelper.FromArgb(255, 107, 114, 128)),
+    };
+
+    private static readonly Brush _defaultContextBrush = new SolidColorBrush(ColorHelper.FromArgb(255, 156, 163, 175));
+
     private static Brush GetBrushForContextType(PlaybackContextType type)
     {
-        var color = type switch
-        {
-            PlaybackContextType.Album => ColorHelper.FromArgb(255, 239, 68, 68), // Red
-            PlaybackContextType.Artist => ColorHelper.FromArgb(255, 249, 115, 22), // Orange
-            PlaybackContextType.Playlist => ColorHelper.FromArgb(255, 16, 185, 129), // Emerald
-            PlaybackContextType.SmartPlaylist => ColorHelper.FromArgb(255, 6, 182, 212), // Cyan
-            PlaybackContextType.Folder => ColorHelper.FromArgb(255, 139, 92, 246), // Violet
-            PlaybackContextType.Genre => ColorHelper.FromArgb(255, 236, 72, 153), // Pink
-            PlaybackContextType.Search => ColorHelper.FromArgb(255, 99, 102, 241), // Indigo
-            PlaybackContextType.Library => ColorHelper.FromArgb(255, 245, 158, 11), // Amber
-            PlaybackContextType.Transient => ColorHelper.FromArgb(255, 107, 114, 128), // Gray
-            _ => ColorHelper.FromArgb(255, 156, 163, 175)
-        };
-        return new SolidColorBrush(color);
+        return _contextTypeBrushes.TryGetValue(type, out var brush) ? brush : _defaultContextBrush;
     }
 
     private static string FormatContextType(PlaybackContextType type) => type switch

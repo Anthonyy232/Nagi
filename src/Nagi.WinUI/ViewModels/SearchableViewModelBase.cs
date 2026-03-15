@@ -13,7 +13,7 @@ namespace Nagi.WinUI.ViewModels;
 /// </summary>
 public abstract partial class SearchableViewModelBase : ObservableObject
 {
-    protected const int DefaultSearchDebounceDelay = 400;
+    protected const int DefaultSearchDebounceDelay = 300;
     protected readonly IDispatcherService _dispatcherService;
     protected readonly ILogger _logger;
     private CancellationTokenSource? _debounceCts;

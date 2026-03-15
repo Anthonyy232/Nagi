@@ -46,7 +46,19 @@ public class Album
     public void SyncDenormalizedFields()
     {
         const int MaxArtistNameLength = 2000;
-        
+
+        // Fast path: single artist is the common case — skip LINQ, OrderBy, and GetDisplayName allocations.
+        if (AlbumArtists.Count == 1)
+        {
+            var name = AlbumArtists.First().Artist?.Name;
+            if (!string.IsNullOrEmpty(name))
+            {
+                ArtistName = name;
+                PrimaryArtistName = name;
+                return;
+            }
+        }
+
         var artists = AlbumArtists.OrderBy(aa => aa.Order).Select(aa => aa.Artist?.Name).Where(n => !string.IsNullOrEmpty(n)).ToList();
         if (artists.Count == 0)
         {
@@ -57,8 +69,8 @@ public class Album
         {
             var displayName = Artist.GetDisplayName(artists);
             // Truncate to MaxLength to prevent database overflow with many collaborators
-            ArtistName = displayName.Length > MaxArtistNameLength 
-                ? displayName[..(MaxArtistNameLength - 3)] + "..." 
+            ArtistName = displayName.Length > MaxArtistNameLength
+                ? displayName[..(MaxArtistNameLength - 3)] + "..."
                 : displayName;
             PrimaryArtistName = artists[0] ?? Artist.UnknownArtistName;
         }
