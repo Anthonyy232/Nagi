@@ -1428,9 +1428,616 @@ public class LibraryServiceTests : IDisposable
     {
         // Act
         var result = await _libraryService.MarkListenAsEligibleForScrobblingAsync(99999L);
-        
+
         // Assert
         result.Should().BeFalse();
+    }
+
+    #endregion
+
+    #region Song Rating and Loved Status Tests
+
+    [Fact]
+    public async Task SetSongRatingAsync_WithRatingBelowOne_ThrowsArgumentOutOfRangeException()
+    {
+        var folder = new Folder { Name = "F", Path = "C:\\Music" };
+        var song = new Song { Title = "S", Folder = folder, FilePath = "C:\\Music\\s.mp3" };
+        await using (var ctx = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            ctx.Folders.Add(folder);
+            ctx.Songs.Add(song);
+            await ctx.SaveChangesAsync();
+        }
+
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() =>
+            _libraryService.SetSongRatingAsync(song.Id, 0));
+    }
+
+    [Fact]
+    public async Task SetSongRatingAsync_WithRatingAboveFive_ThrowsArgumentOutOfRangeException()
+    {
+        var folder = new Folder { Name = "F", Path = "C:\\Music" };
+        var song = new Song { Title = "S", Folder = folder, FilePath = "C:\\Music\\s.mp3" };
+        await using (var ctx = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            ctx.Folders.Add(folder);
+            ctx.Songs.Add(song);
+            await ctx.SaveChangesAsync();
+        }
+
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() =>
+            _libraryService.SetSongRatingAsync(song.Id, 6));
+    }
+
+    [Fact]
+    public async Task SetSongRatingAsync_WithValidRating_PersistsRating()
+    {
+        var folder = new Folder { Name = "F", Path = "C:\\Music" };
+        var song = new Song { Title = "S", Folder = folder, FilePath = "C:\\Music\\s.mp3" };
+        await using (var ctx = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            ctx.Folders.Add(folder);
+            ctx.Songs.Add(song);
+            await ctx.SaveChangesAsync();
+        }
+
+        await _libraryService.SetSongRatingAsync(song.Id, 4);
+
+        await using var assertCtx = _dbHelper.ContextFactory.CreateDbContext();
+        var updated = await assertCtx.Songs.FindAsync(song.Id);
+        updated!.Rating.Should().Be(4);
+    }
+
+    [Fact]
+    public async Task SetSongRatingAsync_WithNullRating_ClearsRating()
+    {
+        var folder = new Folder { Name = "F", Path = "C:\\Music" };
+        var song = new Song { Title = "S", Folder = folder, FilePath = "C:\\Music\\s.mp3", Rating = 3 };
+        await using (var ctx = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            ctx.Folders.Add(folder);
+            ctx.Songs.Add(song);
+            await ctx.SaveChangesAsync();
+        }
+
+        await _libraryService.SetSongRatingAsync(song.Id, null);
+
+        await using var assertCtx = _dbHelper.ContextFactory.CreateDbContext();
+        var updated = await assertCtx.Songs.FindAsync(song.Id);
+        updated!.Rating.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task SetSongLovedStatusAsync_PersistsLovedStatus()
+    {
+        var folder = new Folder { Name = "F", Path = "C:\\Music" };
+        var song = new Song { Title = "S", Folder = folder, FilePath = "C:\\Music\\s.mp3", IsLoved = false };
+        await using (var ctx = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            ctx.Folders.Add(folder);
+            ctx.Songs.Add(song);
+            await ctx.SaveChangesAsync();
+        }
+
+        await _libraryService.SetSongLovedStatusAsync(song.Id, true);
+
+        await using var assertCtx = _dbHelper.ContextFactory.CreateDbContext();
+        var updated = await assertCtx.Songs.FindAsync(song.Id);
+        updated!.IsLoved.Should().BeTrue();
+    }
+
+    #endregion
+
+    #region Search and Query Tests
+
+    [Fact]
+    public async Task SearchArtistsAsync_WithEmptyTerm_ReturnsAllArtistsOrderedByName()
+    {
+        await using (var ctx = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            ctx.Artists.AddRange(
+                new Artist { Name = "Zeppelin" },
+                new Artist { Name = "AC/DC" },
+                new Artist { Name = "Beatles" });
+            await ctx.SaveChangesAsync();
+        }
+
+        var results = (await _libraryService.SearchArtistsAsync("   ")).ToList();
+
+        results.Should().HaveCount(3);
+        results[0].Name.Should().Be("AC/DC");
+        results[1].Name.Should().Be("Beatles");
+        results[2].Name.Should().Be("Zeppelin");
+    }
+
+    [Fact]
+    public async Task SearchArtistsAsync_WithMatchingTerm_ReturnsFilteredArtists()
+    {
+        await using (var ctx = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            ctx.Artists.AddRange(
+                new Artist { Name = "AC/DC" },
+                new Artist { Name = "Radiohead" });
+            await ctx.SaveChangesAsync();
+        }
+
+        var results = (await _libraryService.SearchArtistsAsync("radio")).ToList();
+
+        results.Should().ContainSingle(a => a.Name == "Radiohead");
+        results.Should().NotContain(a => a.Name == "AC/DC");
+    }
+
+    [Fact]
+    public async Task SearchAlbumsAsync_WithEmptyTerm_ReturnsAllAlbumsOrderedByPrimaryArtistThenTitle()
+    {
+        await using (var ctx = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            ctx.Albums.AddRange(
+                new Album { Title = "Zaire", PrimaryArtistName = "B Artist" },
+                new Album { Title = "Alpha", PrimaryArtistName = "A Artist" },
+                new Album { Title = "Beta", PrimaryArtistName = "A Artist" });
+            await ctx.SaveChangesAsync();
+        }
+
+        var results = (await _libraryService.SearchAlbumsAsync("   ")).ToList();
+
+        results.Should().HaveCount(3);
+        results[0].Title.Should().Be("Alpha");   // A Artist, Alpha
+        results[1].Title.Should().Be("Beta");    // A Artist, Beta
+        results[2].Title.Should().Be("Zaire");   // B Artist
+    }
+
+    [Fact]
+    public async Task SearchAlbumsAsync_WithMatchingTerm_ReturnsFilteredAlbums()
+    {
+        await using (var ctx = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            ctx.Albums.AddRange(
+                new Album { Title = "Back in Black" },
+                new Album { Title = "Dark Side of the Moon" });
+            await ctx.SaveChangesAsync();
+        }
+
+        var results = (await _libraryService.SearchAlbumsAsync("black")).ToList();
+
+        results.Should().ContainSingle(a => a.Title == "Back in Black");
+        results.Should().NotContain(a => a.Title == "Dark Side of the Moon");
+    }
+
+    [Fact]
+    public async Task GetArtistsForSongAsync_ReturnsArtistsInOrderSequence()
+    {
+        var folder = new Folder { Name = "F", Path = "C:\\Music" };
+        var artist1 = new Artist { Name = "Primary Artist" };
+        var artist2 = new Artist { Name = "Featured Artist" };
+        var song = new Song { Title = "S", Folder = folder, FilePath = "C:\\Music\\s.mp3" };
+        song.SongArtists.Add(new SongArtist { Song = song, Artist = artist2, Order = 1 });
+        song.SongArtists.Add(new SongArtist { Song = song, Artist = artist1, Order = 0 });
+
+        await using (var ctx = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            ctx.Folders.Add(folder);
+            ctx.Artists.AddRange(artist1, artist2);
+            ctx.Songs.Add(song);
+            await ctx.SaveChangesAsync();
+        }
+
+        var results = (await _libraryService.GetArtistsForSongAsync(song.Id)).ToList();
+
+        results.Should().HaveCount(2);
+        results[0].Name.Should().Be("Primary Artist", "order 0 comes first");
+        results[1].Name.Should().Be("Featured Artist", "order 1 comes second");
+    }
+
+    [Fact]
+    public async Task SearchSongsAsync_WithEmptySearchTerm_ReturnsAllSongs()
+    {
+        // SearchSongsAsync falls back to GetAllSongsAsync when term is empty/whitespace.
+        var folder = new Folder { Name = "F", Path = "C:\\Music" };
+        var song1 = new Song { Title = "Alpha", Folder = folder, FilePath = "C:\\Music\\a.mp3" };
+        var song2 = new Song { Title = "Beta", Folder = folder, FilePath = "C:\\Music\\b.mp3" };
+        await using (var ctx = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            ctx.Folders.Add(folder);
+            ctx.Songs.AddRange(song1, song2);
+            await ctx.SaveChangesAsync();
+        }
+
+        var results = await _libraryService.SearchSongsAsync("   ");
+
+        results.Should().HaveCount(2);
+    }
+
+    [Fact]
+    public async Task SearchSongsAsync_WithSearchTerm_ReturnsMatchingSongsOnly()
+    {
+        var folder = new Folder { Name = "F", Path = "C:\\Music" };
+        var song1 = new Song { Title = "Thunderstruck", Folder = folder, FilePath = "C:\\Music\\t.mp3" };
+        var song2 = new Song { Title = "Highway to Hell", Folder = folder, FilePath = "C:\\Music\\h.mp3" };
+        await using (var ctx = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            ctx.Folders.Add(folder);
+            ctx.Songs.AddRange(song1, song2);
+            await ctx.SaveChangesAsync();
+        }
+
+        var results = await _libraryService.SearchSongsAsync("thunder");
+
+        results.Should().ContainSingle(s => s.Title == "Thunderstruck");
+        results.Should().NotContain(s => s.Title == "Highway to Hell");
+    }
+
+    [Fact]
+    public async Task GetSongsByAlbumIdAsync_ReturnsSongsOrderedByTrackNumberThenTitle()
+    {
+        var folder = new Folder { Name = "F", Path = "C:\\Music" };
+        var album = new Album { Title = "Dark Side" };
+        var song1 = new Song { Title = "Z Title", TrackNumber = 2, Album = album, Folder = folder, FilePath = "C:\\Music\\z.mp3" };
+        var song2 = new Song { Title = "A Title", TrackNumber = 2, Album = album, Folder = folder, FilePath = "C:\\Music\\a.mp3" };
+        var song3 = new Song { Title = "First", TrackNumber = 1, Album = album, Folder = folder, FilePath = "C:\\Music\\f.mp3" };
+        await using (var ctx = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            ctx.Folders.Add(folder);
+            ctx.Albums.Add(album);
+            ctx.Songs.AddRange(song1, song2, song3);
+            await ctx.SaveChangesAsync();
+        }
+
+        var results = (await _libraryService.GetSongsByAlbumIdAsync(album.Id)).ToList();
+
+        // TrackNumber 1 comes first; within TrackNumber 2, alphabetical title order
+        results[0].Title.Should().Be("First");
+        results[1].Title.Should().Be("A Title");
+        results[2].Title.Should().Be("Z Title");
+    }
+
+    #endregion
+
+    #region History and Album Query Tests
+
+    [Fact]
+    public async Task ClearListenHistoryAsync_DeletesHistoryWithoutRemovingSongs()
+    {
+        var folder = new Folder { Name = "F", Path = "C:\\Music" };
+        var song = new Song { Title = "S", Folder = folder, FilePath = "C:\\Music\\s.mp3" };
+        await using (var ctx = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            ctx.Folders.Add(folder);
+            ctx.Songs.Add(song);
+            ctx.ListenHistory.AddRange(
+                new ListenHistory { Song = song },
+                new ListenHistory { Song = song }
+            );
+            await ctx.SaveChangesAsync();
+        }
+
+        await _libraryService.ClearListenHistoryAsync();
+
+        await using var assertCtx = _dbHelper.ContextFactory.CreateDbContext();
+        (await assertCtx.ListenHistory.CountAsync()).Should().Be(0, "history should be cleared");
+        (await assertCtx.Songs.CountAsync()).Should().Be(1, "songs should not be deleted");
+    }
+
+    [Fact]
+    public async Task GetSongsByArtistIdAsync_ReturnsSongsOrderedByAlbumTitleThenTrackNumber()
+    {
+        var folder = new Folder { Name = "F", Path = "C:\\Music" };
+        var artist = new Artist { Name = "AC/DC" };
+        var albumB = new Album { Title = "Back in Black" };
+        var albumH = new Album { Title = "Highway to Hell" };
+        // albumB comes before albumH alphabetically
+        var songB2 = new Song { Title = "Hells Bells", TrackNumber = 2, Album = albumB, Folder = folder, FilePath = "C:\\Music\\b2.mp3" };
+        var songB1 = new Song { Title = "Back in Black", TrackNumber = 1, Album = albumB, Folder = folder, FilePath = "C:\\Music\\b1.mp3" };
+        var songH1 = new Song { Title = "Highway to Hell", TrackNumber = 1, Album = albumH, Folder = folder, FilePath = "C:\\Music\\h1.mp3" };
+        foreach (var s in new[] { songB2, songB1, songH1 })
+            s.SongArtists.Add(new SongArtist { Song = s, Artist = artist, Order = 0 });
+
+        await using (var ctx = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            ctx.Folders.Add(folder);
+            ctx.Artists.Add(artist);
+            ctx.Albums.AddRange(albumB, albumH);
+            ctx.Songs.AddRange(songB2, songB1, songH1);
+            await ctx.SaveChangesAsync();
+        }
+
+        var results = (await _libraryService.GetSongsByArtistIdAsync(artist.Id)).ToList();
+
+        results[0].Title.Should().Be("Back in Black", "track 1 of albumB comes first");
+        results[1].Title.Should().Be("Hells Bells", "track 2 of albumB comes second");
+        results[2].Title.Should().Be("Highway to Hell", "albumH comes after albumB alphabetically");
+    }
+
+    [Fact]
+    public async Task GetAlbumTotalDurationAsync_SumsAllSongDurationsInAlbum()
+    {
+        var folder = new Folder { Name = "F", Path = "C:\\Music" };
+        var album = new Album { Title = "Test Album" };
+        var song1 = new Song { Title = "S1", DurationTicks = TimeSpan.FromMinutes(3).Ticks, Album = album, Folder = folder, FilePath = "C:\\Music\\s1.mp3" };
+        var song2 = new Song { Title = "S2", DurationTicks = TimeSpan.FromMinutes(4).Ticks, Album = album, Folder = folder, FilePath = "C:\\Music\\s2.mp3" };
+        await using (var ctx = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            ctx.Folders.Add(folder);
+            ctx.Albums.Add(album);
+            ctx.Songs.AddRange(song1, song2);
+            await ctx.SaveChangesAsync();
+        }
+
+        var duration = await _libraryService.GetAlbumTotalDurationAsync(album.Id);
+
+        duration.Should().Be(TimeSpan.FromMinutes(7));
+    }
+
+    [Fact]
+    public async Task SearchSongsPagedAsync_WithMatchingTerm_ReturnsFilteredResults()
+    {
+        var folder = new Folder { Name = "F", Path = "C:\\Music" };
+        var song1 = new Song { Title = "Thunderstruck", Folder = folder, FilePath = "C:\\Music\\t.mp3" };
+        var song2 = new Song { Title = "Highway to Hell", Folder = folder, FilePath = "C:\\Music\\h.mp3" };
+        await using (var ctx = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            ctx.Folders.Add(folder);
+            ctx.Songs.AddRange(song1, song2);
+            await ctx.SaveChangesAsync();
+        }
+
+        var result = await _libraryService.SearchSongsPagedAsync("thunder", 1, 10);
+
+        result.TotalCount.Should().Be(1);
+        result.Items.Should().ContainSingle(s => s.Title == "Thunderstruck");
+    }
+
+    [Fact]
+    public async Task SearchSongsPagedAsync_WithEmptyTerm_ReturnsAllSongs()
+    {
+        var folder = new Folder { Name = "F", Path = "C:\\Music" };
+        var song1 = new Song { Title = "Alpha", Folder = folder, FilePath = "C:\\Music\\a.mp3" };
+        var song2 = new Song { Title = "Beta", Folder = folder, FilePath = "C:\\Music\\b.mp3" };
+        await using (var ctx = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            ctx.Folders.Add(folder);
+            ctx.Songs.AddRange(song1, song2);
+            await ctx.SaveChangesAsync();
+        }
+
+        var result = await _libraryService.SearchSongsPagedAsync("", 1, 10);
+
+        result.TotalCount.Should().Be(2);
+    }
+
+    [Fact]
+    public async Task GetSearchTotalDurationInAlbumAsync_WithEmptyTerm_ReturnsTotalAlbumDuration()
+    {
+        var folder = new Folder { Name = "F", Path = "C:\\Music" };
+        var album = new Album { Title = "Test Album" };
+        var song1 = new Song { Title = "S1", DurationTicks = TimeSpan.FromMinutes(3).Ticks, Album = album, Folder = folder, FilePath = "C:\\Music\\s1.mp3" };
+        var song2 = new Song { Title = "S2", DurationTicks = TimeSpan.FromMinutes(4).Ticks, Album = album, Folder = folder, FilePath = "C:\\Music\\s2.mp3" };
+        await using (var ctx = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            ctx.Folders.Add(folder);
+            ctx.Albums.Add(album);
+            ctx.Songs.AddRange(song1, song2);
+            await ctx.SaveChangesAsync();
+        }
+
+        var duration = await _libraryService.GetSearchTotalDurationInAlbumAsync(album.Id, "   ");
+
+        duration.Should().Be(TimeSpan.FromMinutes(7), "empty term falls back to total album duration");
+    }
+
+    [Fact]
+    public async Task GetSearchTotalDurationInAlbumAsync_WithMatchingTerm_ReturnsSumOfMatchedSongs()
+    {
+        var folder = new Folder { Name = "F", Path = "C:\\Music" };
+        var album = new Album { Title = "Test Album" };
+        var songA = new Song { Title = "Alpha Song", DurationTicks = TimeSpan.FromMinutes(3).Ticks, Album = album, Folder = folder, FilePath = "C:\\Music\\a.mp3" };
+        var songB = new Song { Title = "Beta Song", DurationTicks = TimeSpan.FromMinutes(5).Ticks, Album = album, Folder = folder, FilePath = "C:\\Music\\b.mp3" };
+        await using (var ctx = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            ctx.Folders.Add(folder);
+            ctx.Albums.Add(album);
+            ctx.Songs.AddRange(songA, songB);
+            await ctx.SaveChangesAsync();
+        }
+
+        // "alpha" matches only songA
+        var duration = await _libraryService.GetSearchTotalDurationInAlbumAsync(album.Id, "alpha");
+
+        duration.Should().Be(TimeSpan.FromMinutes(3), "only the matched song's duration is summed");
+    }
+
+    [Fact]
+    public async Task GetTopAlbumsForArtistAsync_OrdersByPlayCountDescThenSongCount()
+    {
+        var artist = new Artist { Name = "Test Artist" };
+        var albumHigh = new Album { Title = "Popular Album" };
+        var albumLow = new Album { Title = "Obscure Album" };
+        var folder = new Folder { Name = "F", Path = "C:\\Music" };
+
+        // albumHigh has 2 songs with PlayCount 10 each → PlayCount sum = 20
+        // albumLow has 1 song with PlayCount 5 → PlayCount sum = 5
+        var s1 = new Song { Title = "Hit 1", PlayCount = 10, Album = albumHigh, Folder = folder, FilePath = "C:\\Music\\h1.mp3" };
+        var s2 = new Song { Title = "Hit 2", PlayCount = 10, Album = albumHigh, Folder = folder, FilePath = "C:\\Music\\h2.mp3" };
+        var s3 = new Song { Title = "Deep Cut", PlayCount = 5, Album = albumLow, Folder = folder, FilePath = "C:\\Music\\d1.mp3" };
+
+        albumHigh.AlbumArtists.Add(new AlbumArtist { Album = albumHigh, Artist = artist, Order = 0 });
+        albumLow.AlbumArtists.Add(new AlbumArtist { Album = albumLow, Artist = artist, Order = 0 });
+
+        await using (var ctx = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            ctx.Folders.Add(folder);
+            ctx.Artists.Add(artist);
+            ctx.Albums.AddRange(albumHigh, albumLow);
+            ctx.Songs.AddRange(s1, s2, s3);
+            await ctx.SaveChangesAsync();
+        }
+
+        var results = (await _libraryService.GetTopAlbumsForArtistAsync(artist.Id, 10)).ToList();
+
+        results.Should().HaveCount(2);
+        results[0]!.Title.Should().Be("Popular Album", "highest total PlayCount comes first");
+        results[1]!.Title.Should().Be("Obscure Album");
+    }
+
+    [Fact]
+    public async Task GetTopAlbumsForArtistAsync_RespectsLimitParameter()
+    {
+        var artist = new Artist { Name = "Prolific Artist" };
+        var folder = new Folder { Name = "F", Path = "C:\\Music" };
+        var albums = Enumerable.Range(1, 5).Select(i =>
+        {
+            var album = new Album { Title = $"Album {i}" };
+            album.AlbumArtists.Add(new AlbumArtist { Album = album, Artist = artist, Order = 0 });
+            return album;
+        }).ToList();
+
+        await using (var ctx = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            ctx.Folders.Add(folder);
+            ctx.Artists.Add(artist);
+            ctx.Albums.AddRange(albums);
+            await ctx.SaveChangesAsync();
+        }
+
+        var results = (await _libraryService.GetTopAlbumsForArtistAsync(artist.Id, 3)).ToList();
+
+        results.Should().HaveCount(3, "limit parameter must be respected");
+    }
+
+    #endregion
+
+    #region RemoveSongAsync Tests
+
+    [Fact]
+    public async Task RemoveSongAsync_WhenSongDoesNotExist_ReturnsFalse()
+    {
+        var result = await _libraryService.RemoveSongAsync(Guid.NewGuid());
+        result.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task RemoveSongAsync_WhenSongExists_RemovesSongAndReturnsTrue()
+    {
+        var folder = new Folder { Name = "F", Path = "C:\\Music" };
+        var song = new Song { Title = "S", Folder = folder, FilePath = "C:\\Music\\s.mp3" };
+        await using (var ctx = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            ctx.Folders.Add(folder);
+            ctx.Songs.Add(song);
+            await ctx.SaveChangesAsync();
+        }
+
+        var result = await _libraryService.RemoveSongAsync(song.Id);
+
+        result.Should().BeTrue();
+        await using var assertCtx = _dbHelper.ContextFactory.CreateDbContext();
+        (await assertCtx.Songs.FindAsync(song.Id)).Should().BeNull();
+    }
+
+    [Fact]
+    public async Task RemoveSongAsync_WhenSongHasLrcFileInCache_DeletesCachedLrcFile()
+    {
+        // The LrcCachePath is mocked to "C:\\cache\\lrc"
+        const string cachedLrcPath = "C:\\cache\\lrc\\test.lrc";
+        _fileSystem.FileExists(cachedLrcPath).Returns(true);
+
+        var folder = new Folder { Name = "F", Path = "C:\\Music" };
+        var song = new Song { Title = "S", Folder = folder, FilePath = "C:\\Music\\s.mp3", LrcFilePath = cachedLrcPath };
+        await using (var ctx = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            ctx.Folders.Add(folder);
+            ctx.Songs.Add(song);
+            await ctx.SaveChangesAsync();
+        }
+
+        await _libraryService.RemoveSongAsync(song.Id);
+
+        _fileSystem.Received(1).DeleteFile(cachedLrcPath);
+    }
+
+    [Fact]
+    public async Task RemoveSongAsync_WhenSongHasLrcFileOutsideCache_DoesNotDeleteLrcFile()
+    {
+        // An LRC file outside the cache directory (user's own file) should not be deleted
+        const string userLrcPath = "C:\\Users\\Music\\song.lrc";
+        _fileSystem.FileExists(userLrcPath).Returns(true);
+
+        var folder = new Folder { Name = "F", Path = "C:\\Music" };
+        var song = new Song { Title = "S", Folder = folder, FilePath = "C:\\Music\\s.mp3", LrcFilePath = userLrcPath };
+        await using (var ctx = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            ctx.Folders.Add(folder);
+            ctx.Songs.Add(song);
+            await ctx.SaveChangesAsync();
+        }
+
+        await _libraryService.RemoveSongAsync(song.Id);
+
+        _fileSystem.DidNotReceive().DeleteFile(userLrcPath);
+    }
+
+    #endregion
+
+    #region GetSongByFilePathAsync Tests
+
+    [Fact]
+    public async Task GetSongByFilePathAsync_WithEmptyPath_ReturnsNull()
+    {
+        var result = await _libraryService.GetSongByFilePathAsync("   ");
+        result.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task GetSongByFilePathAsync_WithMatchingPath_ReturnsSong()
+    {
+        var folder = new Folder { Name = "F", Path = "C:\\Music" };
+        var song = new Song { Title = "S", Folder = folder, FilePath = "C:\\Music\\unique.mp3" };
+        await using (var ctx = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            ctx.Folders.Add(folder);
+            ctx.Songs.Add(song);
+            await ctx.SaveChangesAsync();
+        }
+
+        var result = await _libraryService.GetSongByFilePathAsync("C:\\Music\\unique.mp3");
+
+        result.Should().NotBeNull();
+        result!.Title.Should().Be("S");
+    }
+
+    [Fact]
+    public async Task GetSongByFilePathAsync_WithNonMatchingPath_ReturnsNull()
+    {
+        var result = await _libraryService.GetSongByFilePathAsync("C:\\Music\\nonexistent.mp3");
+        result.Should().BeNull();
+    }
+
+    #endregion
+
+    #region Listen Count Tests
+
+    [Fact]
+    public async Task GetListenCountForSongAsync_CountsAllListensIncludingIneligible()
+    {
+        // Unlike statistics (which filters by scrobble eligibility), GetListenCountForSongAsync
+        // counts every ListenHistory row regardless of IsEligibleForScrobbling.
+        var folder = new Folder { Name = "F", Path = "C:\\Music" };
+        var song = new Song { Title = "S", Folder = folder, FilePath = "C:\\Music\\s.mp3" };
+        await using (var ctx = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            ctx.Folders.Add(folder);
+            ctx.Songs.Add(song);
+            ctx.ListenHistory.AddRange(
+                new ListenHistory { Song = song, IsEligibleForScrobbling = true },
+                new ListenHistory { Song = song, IsEligibleForScrobbling = false },
+                new ListenHistory { Song = song, IsEligibleForScrobbling = false }
+            );
+            await ctx.SaveChangesAsync();
+        }
+
+        var count = await _libraryService.GetListenCountForSongAsync(song.Id);
+
+        count.Should().Be(3, "all listen history rows should be counted, not just eligible ones");
     }
 
     #endregion
