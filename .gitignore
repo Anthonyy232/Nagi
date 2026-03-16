@@ -25,6 +25,7 @@ CLAUDE.md
 *.[Tt]rx
 *.coverage
 *.coveragexml
+coverage/
 *.log
 *.pdb
 *.tmp

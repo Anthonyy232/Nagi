@@ -198,6 +198,21 @@ public class LrcServiceTests
 
     #region GetCurrentLine Tests
 
+    [Fact]
+    public void GetCurrentLine_WithNullParsedLrc_ReturnsNull()
+    {
+        var result = _lrcService.GetCurrentLine(null!, TimeSpan.FromSeconds(5));
+        result.Should().BeNull();
+    }
+
+    [Fact]
+    public void GetCurrentLine_WithEmptyParsedLrc_ReturnsNull()
+    {
+        var empty = new ParsedLrc(Enumerable.Empty<LyricLine>());
+        var result = _lrcService.GetCurrentLine(empty, TimeSpan.FromSeconds(5));
+        result.Should().BeNull();
+    }
+
     /// <summary>
     ///     Creates a standard <see cref="ParsedLrc" /> object for use in current line tests.
     /// </summary>
@@ -430,6 +445,38 @@ public class LrcServiceTests
 
     #endregion
 
+    #region ParseLyrics Tests
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void ParseLyrics_WithNullOrWhitespace_ReturnsEmptyParsedLrc(string? content)
+    {
+        var result = _lrcService.ParseLyrics(content);
+
+        result.Should().NotBeNull();
+        result.IsEmpty.Should().BeTrue();
+        result.Lines.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void ParseLyrics_WithNetEaseThreeDigitMilliseconds_NormalizesToTwoDigits()
+    {
+        // NetEase uses [mm:ss.fff] (3-digit ms). The service strips the trailing digit
+        // to produce [mm:ss.ff] which the LRC parser can handle.
+        var content = "[00:01.123]First Line\n[00:05.456]Second Line";
+
+        var result = _lrcService.ParseLyrics(content);
+
+        // Should parse successfully (not return empty) because normalization succeeded
+        result.IsEmpty.Should().BeFalse();
+        result.Lines.Should().HaveCount(2);
+        result.Lines[0].Text.Should().Be("First Line");
+    }
+
+    #endregion
+
     #region LyricsLastChecked Tests
 
     /// <summary>
@@ -454,6 +501,20 @@ public class LrcServiceTests
     }
 
     #endregion
+
+    [Fact]
+    public async Task GetLyricsAsync_WhenLyricsAlreadyChecked_ReturnsNullWithoutFetching()
+    {
+        // When LyricsLastCheckedUtc is set, the service should not attempt to fetch again.
+        var song = new Song { Title = "Test", LrcFilePath = null, LyricsLastCheckedUtc = DateTime.UtcNow };
+        _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
+
+        var result = await _lrcService.GetLyricsAsync(song);
+
+        result.Should().BeNull();
+        await _onlineLyricsService.DidNotReceive().GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(),
+            Arg.Any<string?>(), Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>());
+    }
 
     #region Cancellation Tests
 
@@ -540,4 +601,68 @@ public class LrcServiceTests
     }
 
     #endregion
+
+    // -------------------------------------------------------------------------
+    // Settings Toggle Tests (OnFetchOnlineLyricsEnabledChanged)
+    // -------------------------------------------------------------------------
+
+    [Fact]
+    public async Task GetLyricsAsync_WhenFetchDisabledViaEvent_CancelsOngoingToken()
+    {
+        // Arrange: song with no local file, fetch enabled in settings
+        var song = new Song { Title = "Song" };
+        _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
+
+        // Fire the "disabled" event before the call — this cancels the internal CTS
+        _settingsService.FetchOnlineLyricsEnabledChanged += Raise.Event<Action<bool>>(false);
+
+        // Act: call GetLyricsAsync — the linked token is cancelled from the start, so it returns null
+        var result = await _lrcService.GetLyricsAsync(song);
+
+        // Assert: no online calls were made because the token was already cancelled
+        result.Should().BeNull();
+        await _onlineLyricsService.DidNotReceive().GetLyricsAsync(
+            Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(),
+            Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task GetLyricsAsync_WhenFetchReEnabledAfterDisable_AllowsNewFetch()
+    {
+        // Arrange: disable then re-enable via event
+        var song = new Song { Title = "Song" };
+        _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
+        _onlineLyricsService.GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(),
+            Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>()).Returns("[00:01.00]Lyric");
+
+        _settingsService.FetchOnlineLyricsEnabledChanged += Raise.Event<Action<bool>>(false);
+        _settingsService.FetchOnlineLyricsEnabledChanged += Raise.Event<Action<bool>>(true);
+
+        // Act: after re-enable, the new CTS is not cancelled — fetch should proceed
+        var result = await _lrcService.GetLyricsAsync(song);
+
+        result.Should().NotBeNull();
+        await _onlineLyricsService.Received(1).GetLyricsAsync(
+            Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(),
+            Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task GetLyricsAsync_WhenProvidersReturnEmpty_MarksLyricsAsChecked()
+    {
+        // Arrange: providers enabled but both return null (not found)
+        var song = new Song { Title = "Unknown Song" };
+        _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
+        _onlineLyricsService.GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(),
+            Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>()).Returns((string?)null);
+        _netEaseLyricsService.SearchLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>())
+            .Returns((string?)null);
+
+        // Act
+        var result = await _lrcService.GetLyricsAsync(song);
+
+        // Assert: no lyrics found, but the song is marked as checked so we don't retry indefinitely
+        result.Should().BeNull();
+        await _libraryWriter.Received(1).UpdateSongLyricsLastCheckedAsync(song.Id);
+    }
 }

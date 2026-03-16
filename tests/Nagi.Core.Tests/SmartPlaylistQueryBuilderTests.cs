@@ -1,6 +1,7 @@
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Nagi.Core.Models;
+using Nagi.Core.Services.Data;
 using Nagi.Core.Services.Implementations;
 using Nagi.Core.Tests.Utils;
 using Xunit;
@@ -1737,6 +1738,272 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
         results[2].PlayCount.Should().Be(50); // _song2
         results[3].PlayCount.Should().Be(100); // _song1
         results[4].PlayCount.Should().Be(200); // _song3
+    }
+
+    #endregion
+
+    #region Uncovered Operators and Parameters
+
+    [Fact]
+    public void BuildQuery_PlayCountNotEquals_ExcludesSongsWithExactCount()
+    {
+        var playlist = CreatePlaylist(new SmartPlaylistRule
+        {
+            Field = SmartPlaylistField.PlayCount,
+            Operator = SmartPlaylistOperator.NotEquals,
+            Value = "100"
+        });
+
+        using var context = _dbHelper.ContextFactory.CreateDbContext();
+        var results = _queryBuilder.BuildQuery(context, playlist).ToList();
+
+        results.Should().HaveCount(4, "only _song1 has PlayCount = 100 and should be excluded");
+        results.Should().NotContain(s => s.PlayCount == 100);
+    }
+
+    [Fact]
+    public void BuildQuery_ArtistStartsWith_MatchesByArtistNamePrefix()
+    {
+        // StartsWith and EndsWith for artists are separate code paths from Contains/Is.
+        var playlist = CreatePlaylist(new SmartPlaylistRule
+        {
+            Field = SmartPlaylistField.Artist,
+            Operator = SmartPlaylistOperator.StartsWith,
+            Value = "Pink"
+        });
+
+        using var context = _dbHelper.ContextFactory.CreateDbContext();
+        var results = _queryBuilder.BuildQuery(context, playlist).ToList();
+
+        results.Should().ContainSingle();
+        results[0].Title.Should().Be("Another Brick in the Wall");
+    }
+
+    [Fact]
+    public void BuildQuery_ArtistEndsWith_MatchesByArtistNameSuffix()
+    {
+        var playlist = CreatePlaylist(new SmartPlaylistRule
+        {
+            Field = SmartPlaylistField.Artist,
+            Operator = SmartPlaylistOperator.EndsWith,
+            Value = "Floyd"
+        });
+
+        using var context = _dbHelper.ContextFactory.CreateDbContext();
+        var results = _queryBuilder.BuildQuery(context, playlist).ToList();
+
+        results.Should().ContainSingle();
+        results[0].Title.Should().Be("Another Brick in the Wall");
+    }
+
+    [Fact]
+    public void BuildQuery_WithSortOrderOverride_UsesMappedSortOrderInsteadOfPlaylistDefault()
+    {
+        // The playlist is set to sort by TitleAsc, but the caller overrides with YearAsc.
+        // This tests both the sortOrderOverride path and MapToSmartPlaylistSortOrder.
+        var playlist = CreatePlaylist(sortOrder: SmartPlaylistSortOrder.TitleAsc);
+
+        using var context = _dbHelper.ContextFactory.CreateDbContext();
+        // Override with TitleDesc via SongSortOrder
+        var results = _queryBuilder.BuildQuery(context, playlist, sortOrderOverride: SongSortOrder.TitleDesc).ToList();
+
+        results.Should().HaveCount(5);
+        // TitleDesc: "Something", "Let It Be", "Fly Me to the Moon", "Come Together", "Another Brick in the Wall"
+        results[0].Title.Should().Be("Something");
+        results[4].Title.Should().Be("Another Brick in the Wall");
+    }
+
+    [Fact]
+    public void BuildCountQuery_WithSearchTerm_FiltersCount()
+    {
+        // BuildCountQuery + search term is a separate code path from BuildQuery + search.
+        var playlist = CreatePlaylist(new SmartPlaylistRule
+        {
+            Field = SmartPlaylistField.Genre,
+            Operator = SmartPlaylistOperator.Is,
+            Value = "Rock"
+        });
+
+        using var context = _dbHelper.ContextFactory.CreateDbContext();
+        var count = _queryBuilder.BuildCountQuery(context, playlist, searchTerm: "Together").Count();
+
+        count.Should().Be(1, "only 'Come Together' matches both the Rock genre rule and the search term");
+    }
+
+    [Fact]
+    public void BuildQuery_SortByDurationAsc_ReturnsShorterSongsFirst()
+    {
+        var playlist = CreatePlaylist(sortOrder: SmartPlaylistSortOrder.DurationAsc);
+
+        using var context = _dbHelper.ContextFactory.CreateDbContext();
+        var results = _queryBuilder.BuildQuery(context, playlist).ToList();
+
+        results.Should().HaveCount(5);
+        results[0].Title.Should().Be("Fly Me to the Moon"); // 2.5 min
+        results[4].Title.Should().Be("Another Brick in the Wall"); // 6.5 min
+    }
+
+    [Fact]
+    public void BuildQuery_SortByYearAsc_ReturnsOldestFirst()
+    {
+        var playlist = CreatePlaylist(sortOrder: SmartPlaylistSortOrder.YearAsc);
+
+        using var context = _dbHelper.ContextFactory.CreateDbContext();
+        var results = _queryBuilder.BuildQuery(context, playlist).ToList();
+
+        results.Should().HaveCount(5);
+        results[0].Year.Should().Be(1964, "Fly Me to the Moon (1964) is the oldest");
+        results.Last().Year.Should().Be(1979, "Another Brick in the Wall (1979) is the newest");
+    }
+
+    #endregion
+
+    #region Additional Sort Order Tests
+
+    [Fact]
+    public void BuildQuery_SortByDurationDesc_ReturnsLongestFirst()
+    {
+        var playlist = CreatePlaylist(sortOrder: SmartPlaylistSortOrder.DurationDesc);
+
+        using var context = _dbHelper.ContextFactory.CreateDbContext();
+        var results = _queryBuilder.BuildQuery(context, playlist).ToList();
+
+        results[0].Title.Should().Be("Another Brick in the Wall", "6.5 min is the longest");
+        results[0].DurationTicks.Should().BeGreaterThan(results[1].DurationTicks);
+    }
+
+    [Fact]
+    public void BuildQuery_SortByAlbumDesc_PutsHighestAlbumTitleFirst()
+    {
+        // "The Wall" > "Abbey Road" alphabetically descending
+        var playlist = CreatePlaylist(sortOrder: SmartPlaylistSortOrder.AlbumDesc);
+
+        using var context = _dbHelper.ContextFactory.CreateDbContext();
+        var results = _queryBuilder.BuildQuery(context, playlist).ToList();
+
+        results[0].Title.Should().Be("Another Brick in the Wall", "The Wall > Abbey Road descending");
+    }
+
+    [Fact]
+    public void BuildQuery_SortByYearDesc_ReturnsNewestFirst()
+    {
+        var playlist = CreatePlaylist(sortOrder: SmartPlaylistSortOrder.YearDesc);
+
+        using var context = _dbHelper.ContextFactory.CreateDbContext();
+        var results = _queryBuilder.BuildQuery(context, playlist).ToList();
+
+        results[0].Year.Should().Be(1979, "Another Brick in the Wall (1979) is newest");
+        results.Last().Year.Should().Be(1964, "Fly Me to the Moon (1964) is oldest");
+    }
+
+    [Fact]
+    public void BuildQuery_SortByTrackNumberAsc_OrdersByAlbumThenDiscThenTrack()
+    {
+        // Songs with no album (null → "") sort before "Abbey Road", which sorts before "The Wall"
+        var playlist = CreatePlaylist(sortOrder: SmartPlaylistSortOrder.TrackNumberAsc);
+
+        using var context = _dbHelper.ContextFactory.CreateDbContext();
+        var results = _queryBuilder.BuildQuery(context, playlist).ToList();
+
+        // The last two should be the Abbey Road songs in track order, then The Wall
+        var abbeyRoadSongs = results.Where(s => s.Album?.Title == "Abbey Road").ToList();
+        abbeyRoadSongs[0].TrackNumber.Should().Be(1, "track 1 comes before track 2 in Abbey Road");
+        abbeyRoadSongs[1].TrackNumber.Should().Be(2);
+
+        var wallIndex = results.FindIndex(s => s.Title == "Another Brick in the Wall");
+        var abbeyRoadFirstIndex = results.FindIndex(s => s.Album?.Title == "Abbey Road");
+        wallIndex.Should().BeGreaterThan(abbeyRoadFirstIndex, "'The Wall' should come after 'Abbey Road'");
+    }
+
+    [Fact]
+    public void BuildQuery_SortByLastPlayedAsc_PutsNullLastPlayedFirst()
+    {
+        // Null LastPlayedDate sorts before non-null in SQLite ascending order
+        var playlist = CreatePlaylist(sortOrder: SmartPlaylistSortOrder.LastPlayedAsc);
+
+        using var context = _dbHelper.ContextFactory.CreateDbContext();
+        var results = _queryBuilder.BuildQuery(context, playlist).ToList();
+
+        // song1 was played most recently (-1d), should come last
+        results.Last().Title.Should().Be("Come Together", "played most recently (-1 day) comes last in ascending");
+    }
+
+    #endregion
+
+    #region Additional Operator Tests
+
+    [Fact]
+    public void BuildQuery_DurationEquals_MatchesExactDuration()
+    {
+        // song2 = 3 min = 180 seconds
+        var playlist = CreatePlaylist(new SmartPlaylistRule
+        {
+            Field = SmartPlaylistField.Duration,
+            Operator = SmartPlaylistOperator.Equals,
+            Value = "180"
+        });
+
+        using var context = _dbHelper.ContextFactory.CreateDbContext();
+        var results = _queryBuilder.BuildQuery(context, playlist).ToList();
+
+        results.Should().ContainSingle(s => s.Title == "Something");
+    }
+
+    [Fact]
+    public void BuildQuery_DurationLessThan_ReturnsShorterSongs()
+    {
+        // song5 = 2.5 min = 150 sec only song shorter than 180 sec
+        var playlist = CreatePlaylist(new SmartPlaylistRule
+        {
+            Field = SmartPlaylistField.Duration,
+            Operator = SmartPlaylistOperator.LessThan,
+            Value = "180"
+        });
+
+        using var context = _dbHelper.ContextFactory.CreateDbContext();
+        var results = _queryBuilder.BuildQuery(context, playlist).ToList();
+
+        results.Should().ContainSingle(s => s.Title == "Fly Me to the Moon");
+    }
+
+    [Fact]
+    public void BuildQuery_BpmIsInRange_ReturnsMatchingSongs()
+    {
+        // song1 Bpm=82, song2 Bpm=66. Range 65-90 should match both.
+        var playlist = CreatePlaylist(new SmartPlaylistRule
+        {
+            Field = SmartPlaylistField.Bpm,
+            Operator = SmartPlaylistOperator.IsInRange,
+            Value = "65",
+            SecondValue = "90"
+        });
+
+        using var context = _dbHelper.ContextFactory.CreateDbContext();
+        var results = _queryBuilder.BuildQuery(context, playlist).ToList();
+
+        results.Should().HaveCount(2);
+        results.Should().Contain(s => s.Title == "Come Together");
+        results.Should().Contain(s => s.Title == "Something");
+    }
+
+    [Fact]
+    public void BuildQuery_DateAddedLessThan_ReturnsOlderSongs()
+    {
+        // Songs added before -20 days: song2 (-30d), song3 (-60d), song5 (-100d)
+        var threshold = DateTime.UtcNow.AddDays(-20).ToString("o");
+        var playlist = CreatePlaylist(new SmartPlaylistRule
+        {
+            Field = SmartPlaylistField.DateAdded,
+            Operator = SmartPlaylistOperator.LessThan,
+            Value = threshold
+        });
+
+        using var context = _dbHelper.ContextFactory.CreateDbContext();
+        var results = _queryBuilder.BuildQuery(context, playlist).ToList();
+
+        results.Should().HaveCount(3);
+        results.Should().NotContain(s => s.Title == "Come Together"); // -10d, newer
+        results.Should().NotContain(s => s.Title == "Let It Be");     // -5d, newer
     }
 
     #endregion
