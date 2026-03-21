@@ -11,6 +11,7 @@ public interface ILibraryReader
     Task<Folder?> GetFolderByIdAsync(Guid folderId);
     Task<Folder?> GetFolderByPathAsync(string path);
     Task<IEnumerable<Folder>> GetAllFoldersAsync(CancellationToken token = default);
+    Task<bool> HasAnyFolderAsync(CancellationToken token = default);
     Task<int> GetSongCountForFolderAsync(Guid folderId);
 
     // Folder Hierarchy Methods

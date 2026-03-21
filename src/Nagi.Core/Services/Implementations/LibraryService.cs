@@ -361,6 +361,13 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     }
 
     /// <inheritdoc />
+    public async Task<bool> HasAnyFolderAsync(CancellationToken token = default)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        return await context.Folders.AnyAsync(token).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
     public async Task<int> GetSongCountForFolderAsync(Guid folderId)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);

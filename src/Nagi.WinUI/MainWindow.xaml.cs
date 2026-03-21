@@ -132,7 +132,7 @@ public sealed partial class MainWindow : Window
         {
             ExtendsContentIntoTitleBar = true;
             SetTitleBar(titleBarElement);
-            var showSystemButtons = Content is not OnboardingPage;
+            var showSystemButtons = Content is not OnboardingPage && Content is not SplashPage;
             presenter.SetBorderAndTitleBar(true, showSystemButtons);
         }
         else

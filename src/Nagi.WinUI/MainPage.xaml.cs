@@ -334,6 +334,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
             _ = ApplyDynamicThemeForCurrentTrackAsync();
             UpdatePlayerVisualState(false);
+
         }
         catch (Exception ex)
         {

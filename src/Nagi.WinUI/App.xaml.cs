@@ -53,6 +53,10 @@ public partial class App : Application
 {
     private static Color? _systemAccentColor;
     private static string? _currentLogFilePath;
+    private static Task<MainPage>? _prebuiltMainPageTask;
+    private static bool? _cachedHasAnyFolder;
+    private static Task? _efWarmupTask;
+
 
     private readonly ConcurrentQueue<string> _fileActivationQueue = new();
     private volatile bool _isProcessingFileQueue;
@@ -141,34 +145,53 @@ public partial class App : Application
 
         try
         {
-
             InitializeWindowAndServices(configuration);
             _logger = Services!.GetRequiredService<ILogger<App>>();
             _logger.LogInformation("Application starting up.");
 
             InitializeSystemIntegration();
 
-            // Restore window state BEFORE showing the window to prevent flash of default position
+            // Set a Splash/Skeleton page immediately and restore layout
             if (_window is MainWindow mainWindow)
             {
+                mainWindow.Content = new Pages.SplashPage();
+                mainWindow.InitializeCustomTitleBar();
                 await mainWindow.RestoreWindowStateAsync();
             }
+            // Before doing heavy blocking initialization, show the window to the user
+            var isStartupLaunch = Environment.GetCommandLineArgs()
+                .Any(arg => arg.Equals("--startup", StringComparison.OrdinalIgnoreCase));
+            var uiSettings = Services!.GetRequiredService<IUISettingsService>();
+            var startMinimized = await uiSettings.GetStartMinimizedEnabledAsync();
 
+            if (!isStartupLaunch && !startMinimized)
+            {
+                _window?.AppWindow?.Show();
+                _window?.Activate();
+                if (_window?.AppWindow is not null) _window.AppWindow.IsShownInSwitchers = true;
+            }
             HandleInitialActivation(args.UWPLaunchActivatedEventArgs);
+
+            // Pre-build MainPage on the UI thread while core services initialize in background.
+            // MainPage's constructor only resolves already-registered DI singletons; it does not
+            // call any async init, so it is safe to construct before services are fully initialized.
+            var tcs = new TaskCompletionSource<MainPage>();
+            _window?.DispatcherQueue.TryEnqueue(DispatcherQueuePriority.Low, () =>
+            {
+                try { tcs.SetResult(new MainPage()); }
+                catch (Exception ex) { tcs.SetException(ex); }
+            });
+            _prebuiltMainPageTask = tcs.Task;
 
             var restoreSession = _fileActivationQueue.IsEmpty;
             await InitializeCoreServicesAsync(restoreSession);
-
             await CheckAndNavigateToMainContent();
 
             ProcessFileActivationQueue();
 
-            var isStartupLaunch = Environment.GetCommandLineArgs()
-                .Any(arg => arg.Equals("--startup", StringComparison.OrdinalIgnoreCase));
             await HandleWindowActivationAsync(isStartupLaunch);
 
             ShowElevationWarningIfNeededAsync();
-
             PerformPostLaunchTasks();
         }
         catch (Exception ex)
@@ -320,9 +343,7 @@ public partial class App : Application
             {
                 try
                 {
-                    // Initialize LibVLC core first (registers native library paths)
                     LibVLCSharp.Core.Initialize();
-
                     await Services.GetRequiredService<IAudioPlayer>().EnsureInitializedAsync().ConfigureAwait(false);
                 }
                 catch (Exception ex)
@@ -332,24 +353,30 @@ public partial class App : Application
             });
 
             // 1. Foundation Phase: Initialize Database and WindowService in parallel.
-            // These are independent and required for the next phase.
             var dbTask = InitializeDatabaseAsync(Services);
             var windowTask = Services.GetRequiredService<IWindowService>().InitializeAsync();
-            await Task.WhenAll(dbTask, windowTask).ConfigureAwait(false);
 
-            // 2. Services Phase: Parallelize independent service initializations.
-            var playbackTask = Services.GetRequiredService<IMusicPlaybackService>().InitializeAsync(restoreSession);
+            // Wait for windowTask first (~5ms), then start non-EF services immediately
+            // while dbTask (EF warmup) is still running in the background.
+            await windowTask;
+
+            // 2. Services Phase: start services that don't depend on EF or playback state.
             var presenceTask = Services.GetRequiredService<IPresenceManager>().InitializeAsync();
             var trayTask = Services.GetRequiredService<TrayIconViewModel>().InitializeAsync();
             var appInfoTask = Services.GetRequiredService<IAppInfoService>().InitializeAsync();
-            var settingsTask = Services.GetRequiredService<SettingsViewModel>().LoadSettingsAsync();
 
             var offlineScrobbleService = Services.GetRequiredService<IOfflineScrobbleService>();
             offlineScrobbleService.Start();
             var scrobbleTask = offlineScrobbleService.ProcessQueueAsync();
 
-            // Wait for all non-dependent services to finish initializing.
-            await Task.WhenAll(playbackTask, presenceTask, trayTask, scrobbleTask, appInfoTask, settingsTask).ConfigureAwait(false);
+            // playback and settings both need EF ready. LoadSettingsAsync also reads
+            // CurrentEqualizerSettings from the playback service, so settings starts after playback.
+            await dbTask;
+            var playbackTask = Services.GetRequiredService<IMusicPlaybackService>().InitializeAsync(restoreSession);
+            await playbackTask;
+            var settingsTask = Services.GetRequiredService<SettingsViewModel>().LoadSettingsAsync();
+
+            await Task.WhenAll(presenceTask, trayTask, scrobbleTask, appInfoTask, settingsTask);
 
             _logger?.LogInformation("Core services initialized successfully.");
         }
@@ -368,6 +395,8 @@ public partial class App : Application
 
         services.AddSingleton(configuration);
         services.AddSingleton<IPathConfiguration, PathConfiguration>();
+        // Register the pre-warmed ApplicationDataContainer so SettingsService doesn't pay
+        // the ~275ms first-access cost during its constructor.
         services.AddHttpClient();
         
         // Configure the default HTTP client with standardized settings:
@@ -517,20 +546,26 @@ public partial class App : Application
     {
         try
         {
-            var dbContextFactory = services.GetRequiredService<IDbContextFactory<MusicDbContext>>();
-            await using var dbContext = await dbContextFactory.CreateDbContextAsync().ConfigureAwait(false);
+            await Task.Run(async () =>
+            {
+                // Use EF to check for and apply any pending migrations, then set PRAGMAs.
+                var dbContextFactory = services.GetRequiredService<IDbContextFactory<MusicDbContext>>();
+                await using var dbContext = await dbContextFactory.CreateDbContextAsync().ConfigureAwait(false);
 
-            // Enable WAL mode for better concurrency and performance.
-            // This is more reliable than setting it in the connection string for Microsoft.Data.Sqlite.
-            await dbContext.Database.ExecuteSqlRawAsync("PRAGMA journal_mode=WAL;").ConfigureAwait(false);
+                await dbContext.Database.ExecuteSqlRawAsync("PRAGMA journal_mode=WAL;").ConfigureAwait(false);
+                await dbContext.Database.ExecuteSqlRawAsync("PRAGMA synchronous=NORMAL; PRAGMA cache_size=-32000; PRAGMA temp_store=MEMORY;").ConfigureAwait(false);
 
-            // Performance tuning PRAGMAs (safe for a local desktop database):
-            // - synchronous=NORMAL: safe with WAL, avoids unnecessary fsync calls on every write
-            // - cache_size=-32000: 32 MB page cache; drastically reduces repeated disk reads for paged queries
-            // - temp_store=MEMORY: keeps temporary tables/indices in RAM instead of a temp file
-            await dbContext.Database.ExecuteSqlRawAsync("PRAGMA synchronous=NORMAL; PRAGMA cache_size=-32000; PRAGMA temp_store=MEMORY;").ConfigureAwait(false);
+                var pending = await dbContext.Database.GetPendingMigrationsAsync().ConfigureAwait(false);
+                if (pending.Any())
+                {
+                    await dbContext.Database.MigrateAsync().ConfigureAwait(false);
+                }
 
-            await dbContext.Database.MigrateAsync().ConfigureAwait(false);
+                // EF warmup is running in _efWarmupTask (started right after DI build).
+                // Await it here so hasFolderCheck result is ready before Services phase.
+                if (_efWarmupTask != null)
+                    await _efWarmupTask.ConfigureAwait(false);
+            }).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -548,6 +583,19 @@ public partial class App : Application
             _window.Closed += OnWindowClosed;
 
             Services = ConfigureServices(_window, _window.DispatcherQueue, this, configuration);
+
+            // Kick off EF warmup immediately after DI is ready, but only if the DB already
+            // exists — on first launch the DB hasn't been created yet so the query would fail.
+            var pathConfig = Services.GetRequiredService<IPathConfiguration>();
+            if (File.Exists(pathConfig.DatabasePath))
+            {
+                _efWarmupTask = Task.Run(async () =>
+                {
+                    var efFactory = Services.GetRequiredService<IDbContextFactory<MusicDbContext>>();
+                    await using var ctx = await efFactory.CreateDbContextAsync().ConfigureAwait(false);
+                    _cachedHasAnyFolder = await ctx.Folders.AnyAsync().ConfigureAwait(false);
+                });
+            }
 
             if (_window is MainWindow mainWindow)
                 mainWindow.InitializeDependencies(Services.GetRequiredService<IUISettingsService>());
@@ -956,17 +1004,42 @@ public partial class App : Application
     {
         if (RootWindow is null || Services is null) return;
 
-        var libraryService = Services.GetRequiredService<ILibraryService>();
-        var hasFolders = (await libraryService.GetAllFoldersAsync()).Any();
+        // Use pre-fetched result if available (set during InitializeCoreServicesAsync Services phase).
+        bool hasFolders;
+        if (_cachedHasAnyFolder.HasValue)
+        {
+            hasFolders = _cachedHasAnyFolder.Value;
+            _cachedHasAnyFolder = null;
+        }
+        else
+        {
+            var libraryService = Services.GetRequiredService<ILibraryService>();
+            hasFolders = await libraryService.HasAnyFolderAsync();
+        }
 
         // This sequence is critical to prevent a theme flash on startup.
         // 1. Set the content, which temporarily uses the OS theme.
         if (hasFolders)
         {
-            if (RootWindow.Content is not MainPage) RootWindow.Content = new MainPage();
+            if (RootWindow.Content is not MainPage)
+            {
+                // Use the pre-built instance if available (built concurrently during core init).
+                MainPage mainPageInstance;
+                if (_prebuiltMainPageTask != null)
+                {
+                    mainPageInstance = await _prebuiltMainPageTask;
+                    _prebuiltMainPageTask = null;
+                }
+                else
+                {
+                    mainPageInstance = new MainPage();
+                }
+                RootWindow.Content = mainPageInstance;
+            }
         }
         else
         {
+            _prebuiltMainPageTask = null; // discard pre-built instance if onboarding needed
             if (RootWindow.Content is not OnboardingPage) RootWindow.Content = new OnboardingPage();
         }
 
