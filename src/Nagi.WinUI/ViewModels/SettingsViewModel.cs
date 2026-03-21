@@ -632,33 +632,12 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     {
         try
         {
-            // Discover supported languages by scanning for satellite assembly subdirectories.
-            // ResourceManager.GetResourceSet is unreliable in Release MSIX packages; probing
-            // the filesystem works consistently in both Debug and Release.
-            var candidates = await Task.Run(() =>
-            {
-                var results = new List<LanguageModel>();
-                var baseDir = AppContext.BaseDirectory;
-                var satelliteName = typeof(App).Assembly.GetName().Name + ".resources.dll";
-                _logger.LogDebug("Language scan: baseDir={BaseDir}, satellite={Satellite}", baseDir, satelliteName);
-                var options = new EnumerationOptions { RecurseSubdirectories = true, MaxRecursionDepth = 1 };
-                var found = Directory.EnumerateFiles(baseDir, satelliteName, options).ToList();
-                _logger.LogDebug("Language scan: found {Count} matches: {Files}", found.Count, string.Join(", ", found));
-                foreach (var dll in found)
-                {
-                    var dirName = Path.GetFileName(Path.GetDirectoryName(dll)!);
-                    try
-                    {
-                        var culture = new CultureInfo(dirName);
-                        results.Add(new LanguageModel(culture.Name, culture.NativeName));
-                    }
-                    catch (CultureNotFoundException ex)
-                    {
-                        _logger.LogDebug(ex, "Skipping directory {Dir} — not a valid culture name.", dirName);
-                    }
-                }
-                return results;
-            }).ConfigureAwait(false);
+            var languageCodes = await _appInfoService.GetAvailableLanguagesAsync().ConfigureAwait(false);
+            var candidates = languageCodes
+                .Select(code => { try { var c = new CultureInfo(code); return new LanguageModel(c.Name, c.NativeName); } catch { return null; } })
+                .Where(m => m != null)
+                .Cast<LanguageModel>()
+                .ToList();
 
             if (candidates.Count == 0) return;
 
