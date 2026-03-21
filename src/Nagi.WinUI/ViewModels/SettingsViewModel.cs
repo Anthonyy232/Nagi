@@ -462,11 +462,6 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             foreach (var item in MetadataProviders) item.PropertyChanged -= OnMetadataProviderPropertyChanged;
             MetadataProviders.Clear();
 
-            // CultureInfo.GetCultures is slow (~800ms first call).
-            // Start it on a background thread now so it runs concurrently, but don't wait for it here —
-            // language list population happens in a separate async continuation that doesn't block startup.
-            var allSpecificCulturesTask = Task.Run(() => CultureInfo.GetCultures(CultureTypes.SpecificCultures));
-
             var navItemsTask = _settingsService.GetNavigationItemsAsync();
             var playerButtonsTask = _settingsService.GetPlayerButtonSettingsAsync();
             var themeTask = _settingsService.GetThemeAsync();
@@ -575,7 +570,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             GenreSplitCharacters = genreSplitTask.Result;
 
             // Initialize AvailableLanguages with a minimal list synchronously so the binding is valid.
-            // The full list (requiring CultureInfo.GetCultures) is populated asynchronously after startup.
+            // The full language list is populated asynchronously after startup.
             AvailableLanguages.Clear();
             AvailableLanguages.Add(new LanguageModel(string.Empty, Nagi.WinUI.Resources.Strings.Language_Auto));
             AvailableLanguages.Add(new LanguageModel("en-US", "English"));
@@ -583,9 +578,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             var currentLangCode = languageTask.Result;
             SelectedLanguage = ResolveSelectedLanguage(currentLangCode);
 
-            // Populate the full language list asynchronously — doesn't block startup.
-            // allSpecificCulturesTask already started above; once it completes we fill AvailableLanguages.
-            _ = PopulateAvailableLanguagesAsync(allSpecificCulturesTask, currentLangCode);
+            _ = PopulateAvailableLanguagesAsync(currentLangCode);
 
             LoadEqualizerState();
             
@@ -632,33 +625,37 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         ?? AvailableLanguages.First(l => l.Code == string.Empty);
 
     /// <summary>
-    /// Populates AvailableLanguages asynchronously once CultureInfo.GetCultures completes.
+    /// Populates AvailableLanguages asynchronously by scanning for satellite resource assemblies.
     /// Does not block startup — fires and forgets. Updates SelectedLanguage when done.
     /// </summary>
-    private async Task PopulateAvailableLanguagesAsync(
-        Task<CultureInfo[]> allSpecificCulturesTask,
-        string currentLangCode)
+    private async Task PopulateAvailableLanguagesAsync(string currentLangCode)
     {
         try
         {
-            var allSpecificCultures = await allSpecificCulturesTask.ConfigureAwait(false);
-            var resourceManager = Nagi.WinUI.Resources.Strings.ResourceManager;
-
-            // Enumerate all specific cultures that have a satellite resource assembly.
-            // ManifestLanguages only covers WinRT (.resw) resources; the app uses .resx
-            // satellite assemblies, so we discover supported languages this way instead.
-            var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            var candidates = new List<LanguageModel>();
-            foreach (var culture in allSpecificCultures)
+            // Discover supported languages by scanning for satellite assembly subdirectories.
+            // ResourceManager.GetResourceSet is unreliable in Release MSIX packages; probing
+            // the filesystem works consistently in both Debug and Release.
+            var candidates = await Task.Run(() =>
             {
-                try
+                var results = new List<LanguageModel>();
+                var baseDir = AppContext.BaseDirectory;
+                var satelliteName = typeof(App).Assembly.GetName().Name + ".resources.dll";
+                var options = new EnumerationOptions { RecurseSubdirectories = true, MaxRecursionDepth = 1 };
+                foreach (var dll in Directory.EnumerateFiles(baseDir, satelliteName, options))
                 {
-                    if (resourceManager.GetResourceSet(culture, true, false) == null) continue;
-                    if (!seen.Add(culture.Name)) continue;
-                    candidates.Add(new LanguageModel(culture.Name, culture.NativeName));
+                    var dirName = Path.GetFileName(Path.GetDirectoryName(dll)!);
+                    try
+                    {
+                        var culture = new CultureInfo(dirName);
+                        results.Add(new LanguageModel(culture.Name, culture.NativeName));
+                    }
+                    catch (CultureNotFoundException ex)
+                    {
+                        _logger.LogDebug(ex, "Skipping directory {Dir} — not a valid culture name.", dirName);
+                    }
                 }
-                catch (Exception ex) { _logger.LogDebug(ex, "Skipping culture {Culture} — resource set unavailable.", culture.Name); }
-            }
+                return results;
+            }).ConfigureAwait(false);
 
             if (candidates.Count == 0) return;
 
