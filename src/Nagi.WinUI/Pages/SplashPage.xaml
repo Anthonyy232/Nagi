@@ -7,6 +7,82 @@
     mc:Ignorable="d"
     Background="Transparent">
 
+    <Page.Resources>
+        <!-- Logo entrance: scale up + fade in -->
+        <Storyboard x:Name="LogoEntrance">
+            <DoubleAnimationUsingKeyFrames
+                Storyboard.TargetName="LogoContainer"
+                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0.7"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="1.0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CubicEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames
+                Storyboard.TargetName="LogoContainer"
+                Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0.7"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="1.0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CubicEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames
+                Storyboard.TargetName="LogoContainer"
+                Storyboard.TargetProperty="Opacity">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="1.0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CubicEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
+        <!-- App name: slide up + fade in, delayed -->
+        <Storyboard x:Name="TitleEntrance">
+            <DoubleAnimationUsingKeyFrames
+                Storyboard.TargetName="TitlePanel"
+                Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)">
+                <EasingDoubleKeyFrame KeyTime="0" Value="16"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.6" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CubicEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames
+                Storyboard.TargetName="TitlePanel"
+                Storyboard.TargetProperty="Opacity">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.15" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.65" Value="1.0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CubicEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
+        <!-- Spinner + status: fade in last -->
+        <Storyboard x:Name="StatusEntrance">
+            <DoubleAnimationUsingKeyFrames
+                Storyboard.TargetName="StatusPanel"
+                Storyboard.TargetProperty="Opacity">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.35" Value="0"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0.85" Value="1.0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <CubicEase EasingMode="EaseOut"/>
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+    </Page.Resources>
+
     <Grid x:Name="RootGrid">
         <Grid.RowDefinitions>
             <RowDefinition x:Name="AppTitleBarRow" Height="48" />
@@ -16,10 +92,51 @@
         <TitleBar x:Name="AppTitleBar" Grid.Row="0" Background="Transparent" />
 
         <Grid Grid.Row="1">
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="24">
-                <Image Source="/Assets/AppLogo.png" Width="100" Height="100"/>
-                <ProgressRing IsActive="True" Width="40" Height="40" HorizontalAlignment="Center"/>
-                <TextBlock Text="Waking up Nagi..." Style="{ThemeResource SubtitleTextBlockStyle}" HorizontalAlignment="Center"/>
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="20">
+
+                <!-- Logo -->
+                <Border x:Name="LogoContainer"
+                        HorizontalAlignment="Center"
+                        Opacity="0"
+                        RenderTransformOrigin="0.5,0.5">
+                    <Border.RenderTransform>
+                        <ScaleTransform ScaleX="0.7" ScaleY="0.7"/>
+                    </Border.RenderTransform>
+                    <Image Source="/Assets/AppLogo.png" Width="108" Height="108"/>
+                </Border>
+
+                <!-- App name + tagline -->
+                <StackPanel x:Name="TitlePanel"
+                            HorizontalAlignment="Center"
+                            Spacing="6"
+                            Opacity="0">
+                    <StackPanel.RenderTransform>
+                        <TranslateTransform Y="16"/>
+                    </StackPanel.RenderTransform>
+                    <TextBlock Text="Nagi"
+                               Style="{ThemeResource TitleLargeTextBlockStyle}"
+                               HorizontalAlignment="Center"
+                               FontWeight="SemiBold"/>
+                    <TextBlock Text="Your music, beautifully organized"
+                               Style="{ThemeResource BodyTextBlockStyle}"
+                               HorizontalAlignment="Center"
+                               Opacity="0.6"/>
+                </StackPanel>
+
+                <!-- Spinner + status text -->
+                <StackPanel x:Name="StatusPanel"
+                            HorizontalAlignment="Center"
+                            Orientation="Horizontal"
+                            Spacing="10"
+                            Margin="0,8,0,0"
+                            Opacity="0">
+                    <ProgressRing IsActive="True" Width="20" Height="20" VerticalAlignment="Center"/>
+                    <TextBlock Text="Waking up Nagi…"
+                               Style="{ThemeResource BodyTextBlockStyle}"
+                               VerticalAlignment="Center"
+                               Opacity="0.5"/>
+                </StackPanel>
+
             </StackPanel>
         </Grid>
     </Grid>
