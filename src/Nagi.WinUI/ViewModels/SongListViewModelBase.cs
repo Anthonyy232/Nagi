@@ -83,6 +83,7 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
         _uiService = uiService ?? throw new ArgumentNullException(nameof(uiService));
 
+        Songs.CollectionChanged += OnSongsCollectionChanged;
         _playlistService.PlaylistsChanged += OnPlaylistsChanged;
 
         UpdateSortOrderButtonText(CurrentSortOrder);
@@ -184,6 +185,7 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(FirstSong))]
+    [NotifyPropertyChangedFor(nameof(ShowEmptyState))]
     public partial ObservableRangeCollection<Song> Songs { get; set; } = new();
 
     public Song? FirstSong => Songs?.FirstOrDefault();
@@ -195,6 +197,13 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
 
     protected virtual void OnSongsChangedInternal(ObservableRangeCollection<Song> oldValue, ObservableRangeCollection<Song> newValue)
     {
+        if (oldValue != null) oldValue.CollectionChanged -= OnSongsCollectionChanged;
+        if (newValue != null) newValue.CollectionChanged += OnSongsCollectionChanged;
+    }
+
+    private void OnSongsCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    {
+        OnPropertyChanged(nameof(ShowEmptyState));
     }
 
 
@@ -248,7 +257,11 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
     [NotifyCanExecuteChangedFor(nameof(RefreshOrSortSongsCommand))]
     [NotifyCanExecuteChangedFor(nameof(PlayAllSongsCommand))]
     [NotifyCanExecuteChangedFor(nameof(ShuffleAndPlayAllSongsCommand))]
+    [NotifyPropertyChangedFor(nameof(ShowEmptyState))]
     public partial bool IsOverallLoading { get; set; }
+
+    /// <summary>Shows the empty state only after loading has finished and the collection is empty.</summary>
+    public bool ShowEmptyState => !IsOverallLoading && Songs.Count == 0;
 
     private int _backgroundLoaders;
 
@@ -885,7 +898,8 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
         _stateLock.Dispose();
         
         _playlistService.PlaylistsChanged -= OnPlaylistsChanged;
-        
+        Songs.CollectionChanged -= OnSongsCollectionChanged;
+
         _isDisposed = true;
         GC.SuppressFinalize(this);
     }
