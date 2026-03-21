@@ -16,6 +16,7 @@
 
     <UserControl.Resources>
         <Style x:Key="BackButtonStyle" BasedOn="{StaticResource MediaControlButtonStyle}" TargetType="Button" />
+        <converters:VolumeToClipRectConverter x:Key="VolumeToClipRectConverter" />
     </UserControl.Resources>
 
     <!--
@@ -140,10 +141,20 @@
 
                             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Spacing="2">
                                 <Button Command="{x:Bind ViewModel.ToggleMuteCommand}"
+                                        PointerWheelChanged="VolumeButton_PointerWheelChanged"
                                         Style="{StaticResource VolumeButtonStyle}"
                                         ToolTipService.ToolTip="{x:Bind ViewModel.VolumeButtonToolTip, Mode=OneWay}">
-                                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                              Glyph="{x:Bind ViewModel.VolumeIconGlyph, Mode=OneWay}" />
+                                    <Grid Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                  FontSize="20"
+                                                  Foreground="{ThemeResource TextFillColorDisabledBrush}"
+                                                  Glyph="{x:Bind ViewModel.VolumeIconGlyph, Mode=OneWay}" />
+                                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                  FontSize="20"
+                                                  Foreground="{StaticResource AppPrimaryColorBrush}"
+                                                  Clip="{x:Bind ViewModel.CurrentVolume, Mode=OneWay, Converter={StaticResource VolumeToClipRectConverter}, ConverterParameter='20'}"
+                                                  Glyph="{x:Bind ViewModel.VolumeIconGlyph, Mode=OneWay}" />
+                                    </Grid>
                                 </Button>
                                 <Button Command="{x:Bind ViewModel.ToggleShuffleCommand}"
                                         Style="{StaticResource ShuffleButtonStyle}"

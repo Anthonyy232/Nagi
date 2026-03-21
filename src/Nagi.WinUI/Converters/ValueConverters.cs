@@ -508,3 +508,29 @@ public class DoubleToPercentageConverter : IValueConverter
         return 0.0;
     }
 }
+
+/// <summary>
+///     Converts a double volume value (0-100) into a RectangleGeometry clip bound for a FontIcon.
+///     Uses the ConverterParameter as the total width (e.g. "20").
+/// </summary>
+public class VolumeToClipRectConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        if (value is double volume && parameter is string paramString && double.TryParse(paramString, out var width))
+        {
+            var ratio = Math.Clamp(volume / 100.0, 0.0, 1.0);
+            return new RectangleGeometry
+            {
+                Rect = new Rect(0, 0, width * ratio, 100)
+            };
+        }
+
+        return new RectangleGeometry { Rect = new Rect(0, 0, 0, 100) };
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
+        throw new NotImplementedException();
+    }
+}

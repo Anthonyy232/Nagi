@@ -182,6 +182,16 @@ public sealed partial class TrayPopup : Window
         _settingsService.ShowCoverArtInTrayFlyoutSettingChanged -= OnShowCoverArtSettingChanged;
     }
 
+    private void VolumeButton_PointerWheelChanged(object sender, PointerRoutedEventArgs e)
+    {
+        var properties = e.GetCurrentPoint(sender as UIElement).Properties;
+        var delta = properties.MouseWheelDelta;
+        
+        double newVolume = ViewModel.CurrentVolume + (delta > 0 ? 5 : -5);
+        ViewModel.CurrentVolume = Math.Clamp(newVolume, 0, 100);
+        e.Handled = true;
+    }
+
     private void MediaSeekerSlider_PointerPressed(object sender, PointerRoutedEventArgs e)
     {
         ViewModel.IsUserDraggingSlider = true;
