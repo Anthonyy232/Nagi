@@ -228,6 +228,8 @@ namespace Nagi.Core.Data.Migrations
 
                     b.HasIndex("ContextType", "ContextId");
 
+                    b.HasIndex("ListenTimestampUtc", "SongId");
+
                     b.ToTable("ListenHistory");
                 });
 
