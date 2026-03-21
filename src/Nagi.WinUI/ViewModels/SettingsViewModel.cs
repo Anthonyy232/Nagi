@@ -640,8 +640,11 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
                 var results = new List<LanguageModel>();
                 var baseDir = AppContext.BaseDirectory;
                 var satelliteName = typeof(App).Assembly.GetName().Name + ".resources.dll";
+                _logger.LogDebug("Language scan: baseDir={BaseDir}, satellite={Satellite}", baseDir, satelliteName);
                 var options = new EnumerationOptions { RecurseSubdirectories = true, MaxRecursionDepth = 1 };
-                foreach (var dll in Directory.EnumerateFiles(baseDir, satelliteName, options))
+                var found = Directory.EnumerateFiles(baseDir, satelliteName, options).ToList();
+                _logger.LogDebug("Language scan: found {Count} matches: {Files}", found.Count, string.Join(", ", found));
+                foreach (var dll in found)
                 {
                     var dirName = Path.GetFileName(Path.GetDirectoryName(dll)!);
                     try
