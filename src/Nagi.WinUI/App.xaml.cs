@@ -11,7 +11,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
-using Windows.ApplicationModel.Core;
 using Windows.Storage;
 using Windows.UI;
 using Windows.Globalization;
@@ -72,7 +71,6 @@ public partial class App : Application
         InitializeComponent();
         
         UnhandledException += OnAppUnhandledException;
-        CoreApplication.Suspending += OnSuspending;
     }
 
 
@@ -623,35 +621,6 @@ public partial class App : Application
     private void PerformPostLaunchTasks()
     {
         EnqueuePostLaunchTasks();
-    }
-
-    private async void OnSuspending(object? sender, SuspendingEventArgs e)
-    {
-        var deferral = e.SuspendingOperation.GetDeferral();
-        try
-        {
-            if (Services is not null) await SaveApplicationStateAsync(Services);
-        }
-        catch (IOException ioEx)
-        {
-            _logger?.LogError(ioEx, "I/O error saving application state during suspension. User data may not be persisted.");
-        }
-        catch (UnauthorizedAccessException accessEx)
-        {
-            _logger?.LogError(accessEx, "Access denied saving application state during suspension. Check file permissions.");
-        }
-        catch (InvalidOperationException invalidOpEx)
-        {
-            _logger?.LogError(invalidOpEx, "Invalid operation during suspension. Services may already be disposed.");
-        }
-        catch (Exception ex)
-        {
-            _logger?.LogError(ex, "Unexpected error during application suspension.");
-        }
-        finally
-        {
-            deferral.Complete();
-        }
     }
 
     private async Task SaveApplicationStateAsync(IServiceProvider services)
