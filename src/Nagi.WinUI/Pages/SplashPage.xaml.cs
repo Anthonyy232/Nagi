@@ -8,6 +8,12 @@ public sealed partial class SplashPage : Page, ICustomTitleBarProvider
     public SplashPage()
     {
         this.InitializeComponent();
+        this.Loaded += (_, _) =>
+        {
+            LogoEntrance.Begin();
+            TitleEntrance.Begin();
+            StatusEntrance.Begin();
+        };
     }
 
     public TitleBar GetAppTitleBarElement()
