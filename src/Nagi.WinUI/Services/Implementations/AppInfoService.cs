@@ -48,20 +48,26 @@ public class AppInfoService : IAppInfoService
             // assemblies. StorageFolder is used instead of Directory.EnumerateFiles because MSIX's VFS
             // blocks Win32 filesystem enumeration inside WindowsApps install directories.
             var satelliteName = Assembly.GetEntryAssembly()?.GetName().Name + ".resources.dll";
-            var results = new List<string>();
             var installFolder = Package.Current.InstalledLocation;
+            _logger.LogDebug("Language scan: installFolder={Path}, satellite={Satellite}", installFolder.Path, satelliteName);
+
+            var results = new List<string>();
             var subFolders = await installFolder.GetFoldersAsync();
+            _logger.LogDebug("Language scan: {Count} subfolders found", subFolders.Count);
 
             foreach (var folder in subFolders)
             {
                 try { _ = new CultureInfo(folder.Name); }
                 catch (CultureNotFoundException) { continue; }
 
-                if (await folder.TryGetItemAsync(satelliteName) == null) continue;
+                var item = await folder.TryGetItemAsync(satelliteName);
+                _logger.LogDebug("Language scan: {Folder}/{Satellite} -> {Found}", folder.Name, satelliteName, item != null ? "found" : "missing");
+                if (item == null) continue;
 
                 results.Add(folder.Name);
             }
 
+            _logger.LogDebug("Language scan: completed with {Count} languages", results.Count);
             _cachedAvailableLanguages = results;
             return _cachedAvailableLanguages;
         }
