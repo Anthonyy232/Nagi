@@ -26,6 +26,7 @@
             d:DataContext="{d:DesignInstance Type=viewmodels:PlayerViewModel}">
 
         <Border.Resources>
+            <converters:VolumeToClipRectConverter x:Key="VolumeToClipRectConverter" />
         </Border.Resources>
 
         <Grid>
@@ -84,9 +85,19 @@
 
                     <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="8">
                         <Button Command="{Binding ToggleMuteCommand}" Style="{StaticResource VolumeButtonStyle}"
-                                ToolTipService.ToolTip="{Binding VolumeButtonToolTip}">
-                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                      Glyph="{Binding VolumeIconGlyph}" />
+                                ToolTipService.ToolTip="{Binding VolumeButtonToolTip}"
+                                PointerWheelChanged="VolumeButton_PointerWheelChanged">
+                            <Grid Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                          FontSize="20"
+                                          Foreground="{ThemeResource TextFillColorDisabledBrush}"
+                                          Glyph="{Binding VolumeIconGlyph}" />
+                                <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                          FontSize="20"
+                                          Foreground="{StaticResource AppPrimaryColorBrush}"
+                                          Clip="{Binding CurrentVolume, Converter={StaticResource VolumeToClipRectConverter}, ConverterParameter='20'}"
+                                          Glyph="{Binding VolumeIconGlyph}" />
+                            </Grid>
                         </Button>
                         <Button Command="{Binding ToggleShuffleCommand}" Style="{StaticResource ShuffleButtonStyle}"
                                 ToolTipService.ToolTip="{Binding ShuffleButtonToolTip}">

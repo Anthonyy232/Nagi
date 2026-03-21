@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Windows.System;
 using Windows.Graphics;
 using Microsoft.Extensions.DependencyInjection;
@@ -203,6 +203,16 @@ public sealed partial class MiniPlayerView : UserControl
     {
         if (_isUnloaded) return;
         _isDragging = false;
+    }
+
+    private void VolumeButton_PointerWheelChanged(object sender, PointerRoutedEventArgs e)
+    {
+        var properties = e.GetCurrentPoint(sender as UIElement).Properties;
+        var delta = properties.MouseWheelDelta;
+        
+        double newVolume = ViewModel.CurrentVolume + (delta > 0 ? 5 : -5);
+        ViewModel.CurrentVolume = Math.Clamp(newVolume, 0, 100);
+        e.Handled = true;
     }
 
     private void MediaSeekerSlider_PointerPressed(object sender, PointerRoutedEventArgs e)
