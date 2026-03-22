@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
     <!-- =============================================================== -->
     <!-- == Project Properties                                          == -->
     <!-- =============================================================== -->
@@ -20,6 +20,7 @@
         <ApplicationIcon>Assets\AppLogo.ico</ApplicationIcon>
         <StartupObject>Nagi.WinUI.Program</StartupObject>
         <ProjectGuid>57ABC68F-E3A9-42BD-ABDF-CE1B7E2ACE95</ProjectGuid>
+        <DefaultLanguage>en-US</DefaultLanguage>
     </PropertyGroup>
 
     <!-- =============================================================== -->
@@ -69,6 +70,7 @@
         <AppxBundle>Always</AppxBundle>
         <AppxBundlePlatforms>x64|arm64</AppxBundlePlatforms>
         <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
+        <AppxBundleAutoResourcePackageQualifiers>Scale;DXFeatureLevel</AppxBundleAutoResourcePackageQualifiers>
     </PropertyGroup>
 
     <!-- =============================================================== -->
