@@ -783,4 +783,20 @@ public static class Strings
     public static string SplashPage_AppName => GetString("SplashPage_AppName");
     public static string SplashPage_Tagline => GetString("SplashPage_Tagline");
     public static string SplashPage_Status => GetString("SplashPage_Status");
+    public static string InsightsPage_SeeAll_ToolTip => GetString("InsightsPage_SeeAll_ToolTip");
+    public static string PaginationControl_ItemsPerPage => GetString("PaginationControl_ItemsPerPage");
+    public static string PaginationControl_PreviousPage_ToolTip => GetString("PaginationControl_PreviousPage_ToolTip");
+    public static string PaginationControl_NextPage_ToolTip => GetString("PaginationControl_NextPage_ToolTip");
+    public static string CrashReport_CopyLog_ToolTip => GetString("CrashReport_CopyLog_ToolTip");
+    public static string SettingsPage_FolderExclusion_Placeholder => GetString("SettingsPage_FolderExclusion_Placeholder");
+    public static string SettingsPage_Unit_Milliseconds => GetString("SettingsPage_Unit_Milliseconds");
+    public static string SettingsPage_Unit_Decibels => GetString("SettingsPage_Unit_Decibels");
+    public static string Insights_TimeRange_Last1Day => GetString("Insights_TimeRange_Last1Day");
+    public static string Insights_TimeRange_Last7Days => GetString("Insights_TimeRange_Last7Days");
+    public static string Insights_TimeRange_Last30Days => GetString("Insights_TimeRange_Last30Days");
+    public static string Insights_TimeRange_Last90Days => GetString("Insights_TimeRange_Last90Days");
+    public static string Insights_TimeRange_LastYear => GetString("Insights_TimeRange_LastYear");
+    public static string Insights_TimeRange_AllTime => GetString("Insights_TimeRange_AllTime");
+    public static string Insights_Format_HoursMinutes => GetString("Insights_Format_HoursMinutes");
+    public static string Insights_Format_MinutesSeconds => GetString("Insights_Format_MinutesSeconds");
 }

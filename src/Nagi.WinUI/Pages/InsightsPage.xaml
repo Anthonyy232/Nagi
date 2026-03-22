@@ -243,7 +243,7 @@
                                         Style="{StaticResource SubtleButtonStyle}"
                                         Width="28" Height="28" Padding="0"
                                         VerticalAlignment="Center"
-                                        ToolTipService.ToolTip="See all">
+                                        ToolTipService.ToolTip="{x:Bind resources:Strings.InsightsPage_SeeAll_ToolTip, Mode=OneTime}">
                                     <FontIcon Glyph="&#xE76C;" FontSize="11" />
                                 </Button>
                             </Grid>
@@ -281,7 +281,7 @@
                                         Style="{StaticResource SubtleButtonStyle}"
                                         Width="28" Height="28" Padding="0"
                                         VerticalAlignment="Center"
-                                        ToolTipService.ToolTip="See all">
+                                        ToolTipService.ToolTip="{x:Bind resources:Strings.InsightsPage_SeeAll_ToolTip, Mode=OneTime}">
                                     <FontIcon Glyph="&#xE76C;" FontSize="11" />
                                 </Button>
                             </Grid>
@@ -331,7 +331,7 @@
                                         Style="{StaticResource SubtleButtonStyle}"
                                         Width="28" Height="28" Padding="0"
                                         VerticalAlignment="Center"
-                                        ToolTipService.ToolTip="See all">
+                                        ToolTipService.ToolTip="{x:Bind resources:Strings.InsightsPage_SeeAll_ToolTip, Mode=OneTime}">
                                     <FontIcon Glyph="&#xE76C;" FontSize="11" />
                                 </Button>
                             </Grid>
@@ -369,7 +369,7 @@
                                         Style="{StaticResource SubtleButtonStyle}"
                                         Width="28" Height="28" Padding="0"
                                         VerticalAlignment="Center"
-                                        ToolTipService.ToolTip="See all">
+                                        ToolTipService.ToolTip="{x:Bind resources:Strings.InsightsPage_SeeAll_ToolTip, Mode=OneTime}">
                                     <FontIcon Glyph="&#xE76C;" FontSize="11" />
                                 </Button>
                             </Grid>
