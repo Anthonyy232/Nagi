@@ -287,6 +287,9 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
          
          try
          {
+             var currentLanguage = await _settingsService.GetLanguageAsync();
+             if (string.Equals(value.Code, currentLanguage, StringComparison.OrdinalIgnoreCase)) return;
+
              await _settingsService.SetLanguageAsync(value.Code);
              
              var title = Strings.SettingsPage_RestartRequired_Title;
