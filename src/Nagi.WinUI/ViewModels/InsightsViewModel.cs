@@ -138,7 +138,15 @@ public partial class InsightsViewModel : ObservableObject
     ///     The available time range presets shown in the segmented control.
     /// </summary>
     public IReadOnlyList<string> TimeRangeLabels { get; } =
-        new[] { "Last 1 day", "Last 7 days", "Last 30 days", "Last 90 days", "Last year", "All time" };
+        new[]
+        {
+            Strings.Insights_TimeRange_Last1Day,
+            Strings.Insights_TimeRange_Last7Days,
+            Strings.Insights_TimeRange_Last30Days,
+            Strings.Insights_TimeRange_Last90Days,
+            Strings.Insights_TimeRange_LastYear,
+            Strings.Insights_TimeRange_AllTime
+        };
 
     [ObservableProperty] public partial int SelectedTimeRangeIndex { get; set; } = 2; // default 30D
 
@@ -710,8 +718,8 @@ public partial class InsightsViewModel : ObservableObject
     private static string FormatListenTime(TimeSpan ts)
     {
         if (ts.TotalHours >= 1)
-            return $"{(int)ts.TotalHours}h {ts.Minutes}m";
-        return $"{ts.Minutes}m {ts.Seconds}s";
+            return string.Format(CultureInfo.CurrentCulture, Strings.Insights_Format_HoursMinutes, (int)ts.TotalHours, ts.Minutes);
+        return string.Format(CultureInfo.CurrentCulture, Strings.Insights_Format_MinutesSeconds, ts.Minutes, ts.Seconds);
     }
 
     private static string FormatHour(int hour)

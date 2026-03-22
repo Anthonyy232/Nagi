@@ -386,7 +386,7 @@
                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                     Style="{ThemeResource CaptionTextBlockStyle}">
                                     <Run Text="{x:Bind ViewModel.FadeInDurationMs, Mode=OneWay}" />
-                                    <Run Text=" ms" />
+                                    <Run Text="{x:Bind resources:Strings.SettingsPage_Unit_Milliseconds, Mode=OneTime}" />
                                 </TextBlock>
                             </StackPanel>
                         </controls:SettingsCard>
@@ -406,7 +406,7 @@
                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                     Style="{ThemeResource CaptionTextBlockStyle}">
                                     <Run Text="{x:Bind ViewModel.FadeOutDurationMs, Mode=OneWay}" />
-                                    <Run Text=" ms" />
+                                    <Run Text="{x:Bind resources:Strings.SettingsPage_Unit_Milliseconds, Mode=OneTime}" />
                                 </TextBlock>
                             </StackPanel>
                         </controls:SettingsCard>
@@ -444,7 +444,7 @@
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 Style="{ThemeResource CaptionTextBlockStyle}">
                                 <Run Text="{x:Bind ViewModel.EqualizerPreamp, Mode=OneWay, Converter={StaticResource FloatToDecimalStringConverter}}" />
-                                <Run Text=" dB" />
+                                <Run Text="{x:Bind resources:Strings.SettingsPage_Unit_Decibels, Mode=OneTime}" />
                             </TextBlock>
                         </StackPanel>
 
@@ -740,7 +740,7 @@
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <TextBox
                             Width="150"
-                            PlaceholderText="e.g. ;/\"
+                            PlaceholderText="{x:Bind resources:Strings.SettingsPage_FolderExclusion_Placeholder, Mode=OneTime}"
                             Text="{x:Bind ViewModel.ArtistSplitCharacters, Mode=TwoWay}" />
                         <Button
                             Command="{x:Bind ViewModel.RescanMetadataCommand}"
@@ -756,7 +756,7 @@
                     <StackPanel Orientation="Horizontal" Spacing="8">
                         <TextBox
                             Width="150"
-                            PlaceholderText="e.g. ;/\"
+                            PlaceholderText="{x:Bind resources:Strings.SettingsPage_FolderExclusion_Placeholder, Mode=OneTime}"
                             Text="{x:Bind ViewModel.GenreSplitCharacters, Mode=TwoWay}" />
                         <Button
                             Command="{x:Bind ViewModel.RescanMetadataCommand}"

@@ -816,7 +816,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     {
         await _playbackService.ResetEqualizerAsync();
         // Resetting will result in all 0s, which matches "None".
-        SelectedEqualizerPreset = AvailableEqualizerPresets.FirstOrDefault(p => p.Name == "None");
+        SelectedEqualizerPreset = AvailableEqualizerPresets.FirstOrDefault(p => p.Name == Nagi.Core.Resources.Strings.EqPreset_None);
     }
 
     [RelayCommand]
