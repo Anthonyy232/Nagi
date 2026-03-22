@@ -176,6 +176,8 @@ jobs:
           dotnet publish src/Nagi.WinUI/Nagi.WinUI.csproj
           -c Release -r win-x64
           -p:Platform=x64
+          -p:PublishReadyToRun=true
+          -p:TieredPGO=true
           -p:GenerateAppxPackageOnBuild=false
           -p:AppxPackageSigningEnabled=False
           -p:PackageCertificateThumbprint=""
@@ -186,6 +188,8 @@ jobs:
           dotnet publish src/Nagi.WinUI/Nagi.WinUI.csproj
           -c Release -r win-arm64
           -p:Platform=ARM64
+          -p:PublishReadyToRun=true
+          -p:TieredPGO=true
           -p:GenerateAppxPackageOnBuild=false
           -p:AppxPackageSigningEnabled=False
           -p:PackageCertificateThumbprint=""
