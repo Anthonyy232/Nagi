@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
+    xmlns:resources="using:Nagi.WinUI.Resources"
     Background="Transparent">
 
     <Page.Resources>
@@ -113,11 +114,11 @@
                     <StackPanel.RenderTransform>
                         <TranslateTransform Y="16"/>
                     </StackPanel.RenderTransform>
-                    <TextBlock Text="Nagi"
+                    <TextBlock Text="{x:Bind resources:Strings.SplashPage_AppName, Mode=OneTime}"
                                Style="{ThemeResource TitleLargeTextBlockStyle}"
                                HorizontalAlignment="Center"
                                FontWeight="SemiBold"/>
-                    <TextBlock Text="Your music, beautifully organized"
+                    <TextBlock Text="{x:Bind resources:Strings.SplashPage_Tagline, Mode=OneTime}"
                                Style="{ThemeResource BodyTextBlockStyle}"
                                HorizontalAlignment="Center"
                                Opacity="0.6"/>
@@ -131,7 +132,7 @@
                             Margin="0,8,0,0"
                             Opacity="0">
                     <ProgressRing IsActive="True" Width="20" Height="20" VerticalAlignment="Center"/>
-                    <TextBlock Text="Waking up Nagi…"
+                    <TextBlock Text="{x:Bind resources:Strings.SplashPage_Status, Mode=OneTime}"
                                Style="{ThemeResource BodyTextBlockStyle}"
                                VerticalAlignment="Center"
                                Opacity="0.5"/>

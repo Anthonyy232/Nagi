@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -2044,5 +2044,14 @@ Error: {1}</value>
   </data>
   <data name="InsightsPage_Reset_Confirm_Button" xml:space="preserve">
     <value>Reset</value>
+  </data>
+  <data name="SplashPage_AppName" xml:space="preserve">
+    <value>Nagi</value>
+  </data>
+  <data name="SplashPage_Tagline" xml:space="preserve">
+    <value>Your music, beautifully organized</value>
+  </data>
+  <data name="SplashPage_Status" xml:space="preserve">
+    <value>Waking up Nagi…</value>
   </data>
 </root>
