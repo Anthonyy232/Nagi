@@ -778,4 +778,9 @@ public static class Strings
     public static string InsightsPage_Reset_Confirm_Title => GetString("InsightsPage_Reset_Confirm_Title");
     public static string InsightsPage_Reset_Confirm_Message => GetString("InsightsPage_Reset_Confirm_Message");
     public static string InsightsPage_Reset_Confirm_Button => GetString("InsightsPage_Reset_Confirm_Button");
+
+    // Splash Page
+    public static string SplashPage_AppName => GetString("SplashPage_AppName");
+    public static string SplashPage_Tagline => GetString("SplashPage_Tagline");
+    public static string SplashPage_Status => GetString("SplashPage_Status");
 }
