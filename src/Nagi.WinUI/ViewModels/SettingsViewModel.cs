@@ -499,7 +499,6 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
             var playerMaterialTask = _settingsService.GetPlayerBackgroundMaterialAsync();
             var playerTintTask = _settingsService.GetPlayerTintIntensityAsync();
-            var languagesTask = _appInfoService.GetAvailableLanguagesAsync();
 
             await Task.WhenAll(
                 navItemsTask, playerButtonsTask, themeTask, backdropTask, dynamicThemingTask,
@@ -508,7 +507,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
                 onlineLyricsTask, discordRpcTask, rememberWindowTask,
                 rememberPositionTask, rememberPaneTask, volumeNormTask, fadeTask, fadeInTask, fadeOutTask, lastFmCredsTask, lastFmAuthTokenTask,
                 scrobblingTask, nowPlayingTask, accentColorTask, artistSplitTask, genreSplitTask, languageTask, lyricsProvidersTask, metadataProvidersTask,
-                playerMaterialTask, playerTintTask, languagesTask);
+                playerMaterialTask, playerTintTask);
 
             foreach (var item in navItemsTask.Result)
             {
@@ -571,52 +570,16 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             ArtistSplitCharacters = artistSplitTask.Result;
             GenreSplitCharacters = genreSplitTask.Result;
 
-            // Load languages dynamically
+            // Initialize with a minimal list immediately so the binding is valid on first render.
+            // The full language list is populated asynchronously to avoid blocking startup.
             AvailableLanguages.Clear();
             AvailableLanguages.Add(new LanguageModel(string.Empty, Nagi.WinUI.Resources.Strings.Language_Auto));
             AvailableLanguages.Add(new LanguageModel("en-US", "English"));
 
-            var manifestLanguages = await languagesTask;
-            var allSpecificCultures = CultureInfo.GetCultures(CultureTypes.SpecificCultures);
-
-            foreach (var langCode in manifestLanguages)
-            {
-                try
-                {
-                    // Dynamic resolution:
-                    // The manifest might report a neutral culture (e.g., "ja"), but resources might only exist 
-                    // in a specific satellite assembly (e.g., "ja-JP").
-                    // We verify if resources exist for the reported code. If not, we search for a child/specific culture that has resources.
-                    var resolvedCode = ResolveCultureWithResources(langCode, allSpecificCultures);
-
-                    if (AvailableLanguages.Any(l => l.Code == resolvedCode))
-                    {
-                        continue;
-                    }
-                    
-                    var culture = new CultureInfo(resolvedCode);
-                    AvailableLanguages.Add(new LanguageModel(resolvedCode, culture.NativeName));
-                }
-                catch (CultureNotFoundException)
-                {
-                    if (AvailableLanguages.All(l => l.Code != langCode))
-                    {
-                        // Fallback if the system doesn't recognize the code
-                        AvailableLanguages.Add(new LanguageModel(langCode, langCode));
-                    }
-                }
-            }
-            
             var currentLangCode = languageTask.Result;
-            
-            // Robust matching:
-            // 1. Exact match (case-insensitive)
-            // 2. Setting is "ja" but list has "ja-JP" (StartsWith)
-            // 3. Setting is "ja-JP" but list has "ja" (StartsWith)
-            SelectedLanguage = AvailableLanguages.FirstOrDefault(l => string.Equals(l.Code, currentLangCode, StringComparison.OrdinalIgnoreCase))
-                               ?? AvailableLanguages.FirstOrDefault(l => !string.IsNullOrEmpty(l.Code) && !string.IsNullOrEmpty(currentLangCode) && 
-                                                                         (l.Code.StartsWith(currentLangCode + "-") || currentLangCode.StartsWith(l.Code + "-")))
-                               ?? AvailableLanguages.FirstOrDefault(l => l.Code == string.Empty)!;
+            SelectedLanguage = ResolveSelectedLanguage(currentLangCode);
+
+            _ = PopulateAvailableLanguagesAsync(currentLangCode);
 
             LoadEqualizerState();
             
@@ -652,6 +615,60 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         }
     }
     
+    /// <summary>
+    /// Resolves the best LanguageModel match for <paramref name="langCode"/> from AvailableLanguages.
+    /// Must be called on the UI thread (reads the ObservableCollection).
+    /// </summary>
+    private LanguageModel ResolveSelectedLanguage(string langCode) =>
+        AvailableLanguages.FirstOrDefault(l => string.Equals(l.Code, langCode, StringComparison.OrdinalIgnoreCase))
+        ?? AvailableLanguages.FirstOrDefault(l => !string.IsNullOrEmpty(l.Code) && !string.IsNullOrEmpty(langCode) &&
+                                                  (l.Code.StartsWith(langCode + "-") || langCode.StartsWith(l.Code + "-")))
+        ?? AvailableLanguages.First(l => l.Code == string.Empty);
+
+    /// <summary>
+    /// Populates AvailableLanguages asynchronously by scanning for satellite resource assemblies.
+    /// Fires and forgets from LoadSettingsAsync — does not block startup.
+    /// Updates SelectedLanguage once the full list is available.
+    /// </summary>
+    private async Task PopulateAvailableLanguagesAsync(string currentLangCode)
+    {
+        try
+        {
+            var languageCodes = await _appInfoService.GetAvailableLanguagesAsync().ConfigureAwait(false);
+            var allSpecificCultures = CultureInfo.GetCultures(CultureTypes.SpecificCultures);
+            var candidates = languageCodes
+                .Select(code =>
+                {
+                    try
+                    {
+                        var resolved = ResolveCultureWithResources(code, allSpecificCultures);
+                        var c = new CultureInfo(resolved);
+                        return new LanguageModel(c.Name, c.NativeName);
+                    }
+                    catch { return null; }
+                })
+                .Where(m => m != null)
+                .Cast<LanguageModel>()
+                .ToList();
+
+            if (candidates.Count == 0) return;
+
+            _dispatcherService.TryEnqueue(() =>
+            {
+                foreach (var item in candidates)
+                {
+                    if (AvailableLanguages.All(l => l.Code != item.Code))
+                        AvailableLanguages.Add(item);
+                }
+                SelectedLanguage = ResolveSelectedLanguage(currentLangCode);
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to populate available languages.");
+        }
+    }
+
     /// <summary>
     /// Attempts to find the best matching culture that actually has resources compiled.
     /// Solves the issue where "ja" is requested but only "ja-JP" resources exist.
