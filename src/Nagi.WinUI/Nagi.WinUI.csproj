@@ -49,8 +49,6 @@
     <!-- == Build Configuration: Release (AOT/Trimming)                 == -->
     <!-- =============================================================== -->
     <PropertyGroup Condition="'$(Configuration)' == 'Release'">
-        <PublishReadyToRun>true</PublishReadyToRun>
-        <TieredPGO>true</TieredPGO>
         <Optimize>true</Optimize>
         <JsonSerializerIsReflectionEnabledByDefault>true</JsonSerializerIsReflectionEnabledByDefault>
     </PropertyGroup>
