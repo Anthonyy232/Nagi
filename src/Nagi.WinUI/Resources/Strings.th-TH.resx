@@ -2036,25 +2036,25 @@
     <value>Nagi</value>
   </data>
   <data name="SplashPage_Tagline" xml:space="preserve">
-    <value>Your music, beautifully organized</value>
+    <value>เพลงของคุณ จัดระเบียบอย่างสวยงาม</value>
   </data>
   <data name="SplashPage_Status" xml:space="preserve">
-    <value>Waking up Nagi…</value>
+    <value>กำลังเริ่มต้น Nagi…</value>
   </data>
   <data name="InsightsPage_SeeAll_ToolTip" xml:space="preserve">
-    <value>See all</value>
+    <value>ดูทั้งหมด</value>
   </data>
   <data name="PaginationControl_ItemsPerPage" xml:space="preserve">
-    <value>Items per page:</value>
+    <value>รายการต่อหน้า:</value>
   </data>
   <data name="PaginationControl_PreviousPage_ToolTip" xml:space="preserve">
-    <value>Previous Page</value>
+    <value>หน้าก่อนหน้า</value>
   </data>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
-    <value>Next Page</value>
+    <value>หน้าถัดไป</value>
   </data>
   <data name="CrashReport_CopyLog_ToolTip" xml:space="preserve">
-    <value>Copy log content</value>
+    <value>คัดลอกบันทึก</value>
   </data>
   <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
     <value>e.g. ;/\\</value>
@@ -2066,27 +2066,27 @@
     <value> dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
-    <value>Last 1 day</value>
+    <value>1 วันที่ผ่านมา</value>
   </data>
   <data name="Insights_TimeRange_Last7Days" xml:space="preserve">
-    <value>Last 7 days</value>
+    <value>7 วันที่ผ่านมา</value>
   </data>
   <data name="Insights_TimeRange_Last30Days" xml:space="preserve">
-    <value>Last 30 days</value>
+    <value>30 วันที่ผ่านมา</value>
   </data>
   <data name="Insights_TimeRange_Last90Days" xml:space="preserve">
-    <value>Last 90 days</value>
+    <value>90 วันที่ผ่านมา</value>
   </data>
   <data name="Insights_TimeRange_LastYear" xml:space="preserve">
-    <value>Last year</value>
+    <value>ปีที่แล้ว</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
-    <value>All time</value>
+    <value>ตลอดกาล</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
-    <value>{0}h {1}m</value>
+    <value>{0}ชม. {1}น.</value>
   </data>
   <data name="Insights_Format_MinutesSeconds" xml:space="preserve">
-    <value>{0}m {1}s</value>
+    <value>{0}น. {1}ว.</value>
   </data>
 </root>

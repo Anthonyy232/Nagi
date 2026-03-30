@@ -2040,31 +2040,31 @@
     <value>রিসেট করুন</value>
   </data>
   <data name="SplashPage_AppName" xml:space="preserve">
-    <value>Nagi</value>
+    <value>নাগি</value>
   </data>
   <data name="SplashPage_Tagline" xml:space="preserve">
-    <value>Your music, beautifully organized</value>
+    <value>আপনার সঙ্গীত, সুন্দরভাবে সংগঠিত</value>
   </data>
   <data name="SplashPage_Status" xml:space="preserve">
-    <value>Waking up Nagi…</value>
+    <value>নাগি চালু হচ্ছে...</value>
   </data>
   <data name="InsightsPage_SeeAll_ToolTip" xml:space="preserve">
-    <value>See all</value>
+    <value>সব দেখুন</value>
   </data>
   <data name="PaginationControl_ItemsPerPage" xml:space="preserve">
-    <value>Items per page:</value>
+    <value>প্রতি পৃষ্ঠায় আইটেম:</value>
   </data>
   <data name="PaginationControl_PreviousPage_ToolTip" xml:space="preserve">
-    <value>Previous Page</value>
+    <value>পূর্ববর্তী পৃষ্ঠা</value>
   </data>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
-    <value>Next Page</value>
+    <value>পরবর্তী পৃষ্ঠা</value>
   </data>
   <data name="CrashReport_CopyLog_ToolTip" xml:space="preserve">
-    <value>Copy log content</value>
+    <value>লগ বিষয়বস্তু কপি করুন</value>
   </data>
   <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
-    <value>e.g. ;/\\</value>
+    <value>উদা. ;/\</value>
   </data>
   <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">
     <value> ms</value>
@@ -2073,27 +2073,27 @@
     <value> dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
-    <value>Last 1 day</value>
+    <value>গত ১ দিন</value>
   </data>
   <data name="Insights_TimeRange_Last7Days" xml:space="preserve">
-    <value>Last 7 days</value>
+    <value>গত ৭ দিন</value>
   </data>
   <data name="Insights_TimeRange_Last30Days" xml:space="preserve">
-    <value>Last 30 days</value>
+    <value>গত ৩০ দিন</value>
   </data>
   <data name="Insights_TimeRange_Last90Days" xml:space="preserve">
-    <value>Last 90 days</value>
+    <value>গত ৯০ দিন</value>
   </data>
   <data name="Insights_TimeRange_LastYear" xml:space="preserve">
-    <value>Last year</value>
+    <value>গত বছর</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
-    <value>All time</value>
+    <value>সর্বকালীন</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
-    <value>{0}h {1}m</value>
+    <value>{0}ঘ {1}মি</value>
   </data>
   <data name="Insights_Format_MinutesSeconds" xml:space="preserve">
-    <value>{0}m {1}s</value>
+    <value>{0}মি {1}সে</value>
   </data>
 </root>

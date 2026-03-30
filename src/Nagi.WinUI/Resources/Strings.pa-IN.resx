@@ -2036,28 +2036,28 @@
     <value>Nagi</value>
   </data>
   <data name="SplashPage_Tagline" xml:space="preserve">
-    <value>Your music, beautifully organized</value>
+    <value>ਤੁਹਾਡਾ ਸੰਗੀਤ, ਖੂਬਸੂਰਤੀ ਨਾਲ ਸੰਗਠਿਤ</value>
   </data>
   <data name="SplashPage_Status" xml:space="preserve">
-    <value>Waking up Nagi…</value>
+    <value>Nagi ਨੂੰ ਜਗਾ ਰਿਹਾ ਹੈ…</value>
   </data>
   <data name="InsightsPage_SeeAll_ToolTip" xml:space="preserve">
-    <value>See all</value>
+    <value>ਸਭ ਦੇਖੋ</value>
   </data>
   <data name="PaginationControl_ItemsPerPage" xml:space="preserve">
-    <value>Items per page:</value>
+    <value>ਪ੍ਰਤੀ ਪੰਨਾ ਆਈਟਮਾਂ:</value>
   </data>
   <data name="PaginationControl_PreviousPage_ToolTip" xml:space="preserve">
-    <value>Previous Page</value>
+    <value>ਪਿਛਲਾ ਪੰਨਾ</value>
   </data>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
-    <value>Next Page</value>
+    <value>ਅਗਲਾ ਪੰਨਾ</value>
   </data>
   <data name="CrashReport_CopyLog_ToolTip" xml:space="preserve">
-    <value>Copy log content</value>
+    <value>ਲੌਗ ਸਮੱਗਰੀ ਕਾਪੀ ਕਰੋ</value>
   </data>
   <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
-    <value>e.g. ;/\\</value>
+    <value>ਉਦਾਹਰਨ ਲਈ ;/\\</value>
   </data>
   <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">
     <value> ms</value>
@@ -2066,22 +2066,22 @@
     <value> dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
-    <value>Last 1 day</value>
+    <value>ਪਿਛਲਾ 1 ਦਿਨ</value>
   </data>
   <data name="Insights_TimeRange_Last7Days" xml:space="preserve">
-    <value>Last 7 days</value>
+    <value>ਪਿਛਲੇ 7 ਦਿਨ</value>
   </data>
   <data name="Insights_TimeRange_Last30Days" xml:space="preserve">
-    <value>Last 30 days</value>
+    <value>ਪਿਛਲੇ 30 ਦਿਨ</value>
   </data>
   <data name="Insights_TimeRange_Last90Days" xml:space="preserve">
-    <value>Last 90 days</value>
+    <value>ਪਿਛਲੇ 90 ਦਿਨ</value>
   </data>
   <data name="Insights_TimeRange_LastYear" xml:space="preserve">
-    <value>Last year</value>
+    <value>ਪਿਛਲਾ ਸਾਲ</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
-    <value>All time</value>
+    <value>ਸਾਰਾ ਸਮਾਂ</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0}h {1}m</value>
