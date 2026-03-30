@@ -25,10 +25,16 @@ public class TimeSpanToTimeStringConverter : IValueConverter
             _ => TimeSpan.Zero
         };
 
-        // Show hours if duration is 1 hour or longer
-        return timeSpan.TotalHours >= 1 
-            ? timeSpan.ToString(@"h\:mm\:ss") 
-            : timeSpan.ToString(@"m\:ss");
+        // >= 100 h: drop seconds (noise at that scale), show "Xh Ym"
+        if (timeSpan.TotalHours >= 100)
+            return $"{(int)timeSpan.TotalHours}h {timeSpan.Minutes}m";
+
+        // 1 h – 99 h: h:mm:ss. Use TotalHours cast to int so durations >= 24 h display correctly.
+        // The built-in 'h' specifier only returns the hours *component* (0-23), which wraps at 24 h.
+        if (timeSpan.TotalHours >= 1)
+            return $"{(int)timeSpan.TotalHours}:{timeSpan.Minutes:D2}:{timeSpan.Seconds:D2}";
+
+        return timeSpan.ToString(@"m\:ss");
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)
