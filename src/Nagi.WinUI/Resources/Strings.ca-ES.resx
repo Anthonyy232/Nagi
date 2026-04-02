@@ -2041,28 +2041,28 @@
     <value>Nagi</value>
   </data>
   <data name="SplashPage_Tagline" xml:space="preserve">
-    <value>Your music, beautifully organized</value>
+    <value>La teva música, bellament organitzada</value>
   </data>
   <data name="SplashPage_Status" xml:space="preserve">
-    <value>Waking up Nagi…</value>
+    <value>Despertant Nagi…</value>
   </data>
   <data name="InsightsPage_SeeAll_ToolTip" xml:space="preserve">
-    <value>See all</value>
+    <value>Veure-ho tot</value>
   </data>
   <data name="PaginationControl_ItemsPerPage" xml:space="preserve">
-    <value>Items per page:</value>
+    <value>Elements per pàgina:</value>
   </data>
   <data name="PaginationControl_PreviousPage_ToolTip" xml:space="preserve">
-    <value>Previous Page</value>
+    <value>Pàgina anterior</value>
   </data>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
-    <value>Next Page</value>
+    <value>Pàgina següent</value>
   </data>
   <data name="CrashReport_CopyLog_ToolTip" xml:space="preserve">
-    <value>Copy log content</value>
+    <value>Copia el contingut del registre</value>
   </data>
   <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
-    <value>e.g. ;/\\</value>
+    <value>p. ex. ;/\\</value>
   </data>
   <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">
     <value> ms</value>
@@ -2071,22 +2071,22 @@
     <value> dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
-    <value>Last 1 day</value>
+    <value>Últim 1 dia</value>
   </data>
   <data name="Insights_TimeRange_Last7Days" xml:space="preserve">
-    <value>Last 7 days</value>
+    <value>Últims 7 dies</value>
   </data>
   <data name="Insights_TimeRange_Last30Days" xml:space="preserve">
-    <value>Last 30 days</value>
+    <value>Últims 30 dies</value>
   </data>
   <data name="Insights_TimeRange_Last90Days" xml:space="preserve">
-    <value>Last 90 days</value>
+    <value>Últims 90 dies</value>
   </data>
   <data name="Insights_TimeRange_LastYear" xml:space="preserve">
-    <value>Last year</value>
+    <value>Últim any</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
-    <value>All time</value>
+    <value>Tot el temps</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
     <value>{0}h {1}m</value>

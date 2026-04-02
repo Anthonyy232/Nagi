@@ -2038,60 +2038,60 @@
     <value>초기화</value>
   </data>
   <data name="SplashPage_AppName" xml:space="preserve">
-    <value>Nagi</value>
+    <value>나기</value>
   </data>
   <data name="SplashPage_Tagline" xml:space="preserve">
-    <value>Your music, beautifully organized</value>
+    <value>아름답게 정리된 나만의 음악</value>
   </data>
   <data name="SplashPage_Status" xml:space="preserve">
-    <value>Waking up Nagi…</value>
+    <value>나기를 깨우는 중…</value>
   </data>
   <data name="InsightsPage_SeeAll_ToolTip" xml:space="preserve">
-    <value>See all</value>
+    <value>모두 보기</value>
   </data>
   <data name="PaginationControl_ItemsPerPage" xml:space="preserve">
-    <value>Items per page:</value>
+    <value>페이지당 항목 수:</value>
   </data>
   <data name="PaginationControl_PreviousPage_ToolTip" xml:space="preserve">
-    <value>Previous Page</value>
+    <value>이전 페이지</value>
   </data>
   <data name="PaginationControl_NextPage_ToolTip" xml:space="preserve">
-    <value>Next Page</value>
+    <value>다음 페이지</value>
   </data>
   <data name="CrashReport_CopyLog_ToolTip" xml:space="preserve">
-    <value>Copy log content</value>
+    <value>로그 내용 복사</value>
   </data>
   <data name="SettingsPage_FolderExclusion_Placeholder" xml:space="preserve">
-    <value>e.g. ;/\\</value>
+    <value>예: ;/\\</value>
   </data>
   <data name="SettingsPage_Unit_Milliseconds" xml:space="preserve">
-    <value> ms</value>
+    <value>ms</value>
   </data>
   <data name="SettingsPage_Unit_Decibels" xml:space="preserve">
-    <value> dB</value>
+    <value>dB</value>
   </data>
   <data name="Insights_TimeRange_Last1Day" xml:space="preserve">
-    <value>Last 1 day</value>
+    <value>지난 1일</value>
   </data>
   <data name="Insights_TimeRange_Last7Days" xml:space="preserve">
-    <value>Last 7 days</value>
+    <value>지난 7일</value>
   </data>
   <data name="Insights_TimeRange_Last30Days" xml:space="preserve">
-    <value>Last 30 days</value>
+    <value>지난 30일</value>
   </data>
   <data name="Insights_TimeRange_Last90Days" xml:space="preserve">
-    <value>Last 90 days</value>
+    <value>지난 90일</value>
   </data>
   <data name="Insights_TimeRange_LastYear" xml:space="preserve">
-    <value>Last year</value>
+    <value>지난 1년</value>
   </data>
   <data name="Insights_TimeRange_AllTime" xml:space="preserve">
-    <value>All time</value>
+    <value>전체 기간</value>
   </data>
   <data name="Insights_Format_HoursMinutes" xml:space="preserve">
-    <value>{0}h {1}m</value>
+    <value>{0}시간 {1}분</value>
   </data>
   <data name="Insights_Format_MinutesSeconds" xml:space="preserve">
-    <value>{0}m {1}s</value>
+    <value>{0}분 {1}초</value>
   </data>
 </root>
