@@ -784,6 +784,8 @@ public static class Strings
     public static string SplashPage_Tagline => GetString("SplashPage_Tagline");
     public static string SplashPage_Status => GetString("SplashPage_Status");
     public static string InsightsPage_SeeAll_ToolTip => GetString("InsightsPage_SeeAll_ToolTip");
+    public static string InsightsPage_SortBy_PlayCount => GetString("InsightsPage_SortBy_PlayCount");
+    public static string InsightsPage_SortBy_Duration => GetString("InsightsPage_SortBy_Duration");
     public static string PaginationControl_ItemsPerPage => GetString("PaginationControl_ItemsPerPage");
     public static string PaginationControl_PreviousPage_ToolTip => GetString("PaginationControl_PreviousPage_ToolTip");
     public static string PaginationControl_NextPage_ToolTip => GetString("PaginationControl_NextPage_ToolTip");

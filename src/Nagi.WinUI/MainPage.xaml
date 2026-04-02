@@ -649,13 +649,30 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0"
                                    Text="{x:Bind InsightsVm.SeeAllTitle, Mode=OneWay}"
                                    FontSize="16" FontWeight="SemiBold"
                                    VerticalAlignment="Center" />
 
-                        <Grid Grid.Column="1" Margin="0,0,8,0">
+                        <DropDownButton Grid.Column="1"
+                                        Content="{x:Bind InsightsVm.SeeAllSortLabel, Mode=OneWay}"
+                                        FontSize="11" Height="28" Padding="8,0"
+                                        VerticalAlignment="Center" Margin="0,0,8,0">
+                            <DropDownButton.Flyout>
+                                <MenuFlyout>
+                                    <RadioMenuFlyoutItem Text="Play count" GroupName="SeeAllSort"
+                                                         IsChecked="{x:Bind InsightsVm.IsSeeAllByPlayCount, Mode=OneWay}"
+                                                         Click="OnSeeAllSortByPlayCountClick" />
+                                    <RadioMenuFlyoutItem Text="Duration" GroupName="SeeAllSort"
+                                                         IsChecked="{x:Bind InsightsVm.IsSeeAllByDuration, Mode=OneWay}"
+                                                         Click="OnSeeAllSortByDurationClick" />
+                                </MenuFlyout>
+                            </DropDownButton.Flyout>
+                        </DropDownButton>
+
+                        <Grid Grid.Column="2" Margin="0,0,8,0">
                             <TextBox x:Name="SeeAllSearchTextBox"
                                      PlaceholderText="{x:Bind resources:Strings.FolderSongViewPage_SearchBox_Placeholder, Mode=OneTime}"
                                      Style="{StaticResource SearchTextBoxStyle}"
@@ -680,7 +697,7 @@
                             </Button>
                         </Grid>
 
-                        <Button Grid.Column="2"
+                        <Button Grid.Column="3"
                                 Click="OnCloseSeeAll"
                                 Style="{StaticResource SubtleButtonStyle}"
                                 Width="32" Height="32" Padding="0">

@@ -32,7 +32,7 @@ public interface IStatisticsService
     /// <summary>
     ///     Gets the top albums within a specific time range.
     /// </summary>
-    Task<IEnumerable<AlbumStats>> GetTopAlbumsAsync(TimeRange range, int limit = 50, int offset = 0, string? searchTerm = null, CancellationToken ct = default);
+    Task<IEnumerable<AlbumStats>> GetTopAlbumsAsync(TimeRange range, int limit = 50, SortMetric metric = SortMetric.PlayCount, int offset = 0, string? searchTerm = null, CancellationToken ct = default);
 
     /// <summary>
     ///     Gets the total number of distinct albums that have qualifying plays within a time range.
@@ -42,7 +42,7 @@ public interface IStatisticsService
     /// <summary>
     ///     Gets the top genres within a specific time range.
     /// </summary>
-    Task<IEnumerable<GenreStats>> GetTopGenresAsync(TimeRange range, int limit = 10, int offset = 0, string? searchTerm = null, CancellationToken ct = default);
+    Task<IEnumerable<GenreStats>> GetTopGenresAsync(TimeRange range, int limit = 10, SortMetric metric = SortMetric.PlayCount, int offset = 0, string? searchTerm = null, CancellationToken ct = default);
 
     /// <summary>
     ///     Gets the total number of distinct genres that have qualifying plays within a time range.

@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
+using Nagi.Core.Services.Abstractions;
 using Nagi.WinUI.ViewModels;
 
 namespace Nagi.WinUI.Pages;
@@ -60,4 +61,30 @@ public sealed partial class InsightsPage : Page
 
     private void OnSeeAllGenresClick(object sender, RoutedEventArgs e) =>
         ViewModel.OpenSeeAllGenresCommand.Execute(null);
+
+    // ── Sort metric toggles ──
+
+    private void OnSongsSortByPlayCountClick(object sender, RoutedEventArgs e) =>
+        ViewModel.SongsSortMetric = SortMetric.PlayCount;
+
+    private void OnSongsSortByDurationClick(object sender, RoutedEventArgs e) =>
+        ViewModel.SongsSortMetric = SortMetric.Duration;
+
+    private void OnArtistsSortByPlayCountClick(object sender, RoutedEventArgs e) =>
+        ViewModel.ArtistsSortMetric = SortMetric.PlayCount;
+
+    private void OnArtistsSortByDurationClick(object sender, RoutedEventArgs e) =>
+        ViewModel.ArtistsSortMetric = SortMetric.Duration;
+
+    private void OnAlbumsSortByPlayCountClick(object sender, RoutedEventArgs e) =>
+        ViewModel.AlbumsSortMetric = SortMetric.PlayCount;
+
+    private void OnAlbumsSortByDurationClick(object sender, RoutedEventArgs e) =>
+        ViewModel.AlbumsSortMetric = SortMetric.Duration;
+
+    private void OnGenresSortByPlayCountClick(object sender, RoutedEventArgs e) =>
+        ViewModel.GenresSortMetric = SortMetric.PlayCount;
+
+    private void OnGenresSortByDurationClick(object sender, RoutedEventArgs e) =>
+        ViewModel.GenresSortMetric = SortMetric.Duration;
 }

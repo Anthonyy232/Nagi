@@ -14,6 +14,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
+using Nagi.Core.Services.Abstractions;
 using Nagi.WinUI.Controls;
 using Nagi.WinUI.Pages;
 using Nagi.WinUI.Resources;
@@ -711,6 +712,12 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
             SeeAllSearchTextBox.Focus(FocusState.Programmatic);
         }
     }
+
+    private void OnSeeAllSortByPlayCountClick(object sender, RoutedEventArgs e) =>
+        InsightsVm.SetCurrentCategoryMetric(SortMetric.PlayCount);
+
+    private void OnSeeAllSortByDurationClick(object sender, RoutedEventArgs e) =>
+        InsightsVm.SetCurrentCategoryMetric(SortMetric.Duration);
 
     private void OnSeeAllSearchTextBoxKeyDown(object sender, KeyRoutedEventArgs e)
     {

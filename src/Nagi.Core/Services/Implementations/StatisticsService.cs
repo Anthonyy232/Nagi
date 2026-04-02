@@ -201,7 +201,7 @@ public class StatisticsService : IStatisticsService
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<AlbumStats>> GetTopAlbumsAsync(TimeRange range, int limit = 50, int offset = 0, string? searchTerm = null, CancellationToken ct = default)
+    public async Task<IEnumerable<AlbumStats>> GetTopAlbumsAsync(TimeRange range, int limit = 50, SortMetric metric = SortMetric.PlayCount, int offset = 0, string? searchTerm = null, CancellationToken ct = default)
     {
         await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
         var query = dbContext.ListenHistory.AsNoTracking().AsQueryable();
@@ -221,8 +221,12 @@ public class StatisticsService : IStatisticsService
                 TotalPlays = g.Sum(x => x.lh.IsEligibleForScrobbling || x.lh.EndReason == PlaybackEndReason.Finished ? 1 : 0),
                 TotalDurationTicks = g.Sum(x => x.lh.ListenDurationTicks)
             })
-            .Where(s => s.TotalPlays > 0)
-            .OrderByDescending(s => s.TotalPlays).ThenBy(s => s.AlbumId);
+            .Where(s => s.TotalPlays > 0);
+
+        if (metric == SortMetric.PlayCount)
+            statsQuery = statsQuery.OrderByDescending(s => s.TotalPlays).ThenBy(s => s.AlbumId);
+        else
+            statsQuery = statsQuery.OrderByDescending(s => s.TotalDurationTicks).ThenBy(s => s.AlbumId);
 
         List<(int GlobalRank, Guid AlbumId, int TotalPlays, long TotalDurationTicks)> page;
 
@@ -298,7 +302,7 @@ public class StatisticsService : IStatisticsService
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<GenreStats>> GetTopGenresAsync(TimeRange range, int limit = 10, int offset = 0, string? searchTerm = null, CancellationToken ct = default)
+    public async Task<IEnumerable<GenreStats>> GetTopGenresAsync(TimeRange range, int limit = 10, SortMetric metric = SortMetric.PlayCount, int offset = 0, string? searchTerm = null, CancellationToken ct = default)
     {
         await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
         var query = dbContext.ListenHistory.AsNoTracking().AsQueryable();
@@ -319,8 +323,12 @@ public class StatisticsService : IStatisticsService
                 TotalPlays = g.Sum(x => x.lh.IsEligibleForScrobbling || x.lh.EndReason == PlaybackEndReason.Finished ? 1 : 0),
                 TotalDurationTicks = g.Sum(x => x.lh.ListenDurationTicks)
             })
-            .Where(s => s.TotalPlays > 0)
-            .OrderByDescending(s => s.TotalPlays).ThenBy(s => s.GenreId);
+            .Where(s => s.TotalPlays > 0);
+
+        if (metric == SortMetric.PlayCount)
+            statsQuery = statsQuery.OrderByDescending(s => s.TotalPlays).ThenBy(s => s.GenreId);
+        else
+            statsQuery = statsQuery.OrderByDescending(s => s.TotalDurationTicks).ThenBy(s => s.GenreId);
 
         List<(int GlobalRank, Guid GenreId, int TotalPlays, long TotalDurationTicks)> page;
 
