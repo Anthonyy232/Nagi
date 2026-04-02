@@ -46,6 +46,7 @@ public partial class TopSongItem : ObservableObject
     public bool IsArtworkAvailable => !string.IsNullOrEmpty(ArtworkUri);
     public int PlayCount { get; init; }
     public string PlayCountText { get; init; } = string.Empty;
+    public string StatText { get; init; } = string.Empty;
     public TimeSpan Duration { get; init; }
     public int Skips { get; init; }
 }
@@ -61,6 +62,7 @@ public partial class TopArtistItem : ObservableObject
     public string? ImageUri { get; init; }
     public bool IsArtworkAvailable => !string.IsNullOrEmpty(ImageUri);
     public int PlayCount { get; init; }
+    public string StatText { get; init; } = string.Empty;
     public TimeSpan Duration { get; init; }
     public IRelayCommand<TopArtistItem>? Command { get; init; }
 }
@@ -78,6 +80,7 @@ public partial class TopAlbumItem : ObservableObject
     public bool IsArtworkAvailable => !string.IsNullOrEmpty(ArtworkUri);
     public int PlayCount { get; init; }
     public string PlayCountText { get; init; } = string.Empty;
+    public string StatText { get; init; } = string.Empty;
     public TimeSpan Duration { get; init; }
     public IRelayCommand<TopAlbumItem>? Command { get; init; }
 }
@@ -92,6 +95,7 @@ public partial class TopGenreItem : ObservableObject
     public string Name { get; init; } = string.Empty;
     public int PlayCount { get; init; }
     public string PlayCountText { get; init; } = string.Empty;
+    public string StatText { get; init; } = string.Empty;
     public TimeSpan Duration { get; init; }
     public IRelayCommand<TopGenreItem>? Command { get; init; }
 }
@@ -115,6 +119,10 @@ public partial class InsightsViewModel : ObservableObject
     private CancellationTokenSource? _seeAllSearchDebounceCts;
     private CancellationTokenSource? _seeAllCts;
     private CancellationTokenSource? _loadCts;
+    private CancellationTokenSource? _songsSortCts;
+    private CancellationTokenSource? _artistsSortCts;
+    private CancellationTokenSource? _albumsSortCts;
+    private CancellationTokenSource? _genresSortCts;
 
     public InsightsViewModel(
         IStatisticsService statisticsService,
@@ -176,6 +184,96 @@ public partial class InsightsViewModel : ObservableObject
     [ObservableProperty] public partial string PeakHourText { get; set; } = "—";
     [ObservableProperty] public partial string MostActiveDayText { get; set; } = "—";
 
+    // ── Sort metrics ─────────────────────────────────────────────
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsSongsByPlayCount), nameof(IsSongsByDuration), nameof(SongsSortLabel), nameof(SeeAllSortLabel), nameof(IsSeeAllByPlayCount), nameof(IsSeeAllByDuration))]
+    public partial SortMetric SongsSortMetric { get; set; } = SortMetric.PlayCount;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsArtistsByPlayCount), nameof(IsArtistsByDuration), nameof(ArtistsSortLabel), nameof(SeeAllSortLabel), nameof(IsSeeAllByPlayCount), nameof(IsSeeAllByDuration))]
+    public partial SortMetric ArtistsSortMetric { get; set; } = SortMetric.Duration;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsAlbumsByPlayCount), nameof(IsAlbumsByDuration), nameof(AlbumsSortLabel), nameof(SeeAllSortLabel), nameof(IsSeeAllByPlayCount), nameof(IsSeeAllByDuration))]
+    public partial SortMetric AlbumsSortMetric { get; set; } = SortMetric.PlayCount;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsGenresByPlayCount), nameof(IsGenresByDuration), nameof(GenresSortLabel), nameof(SeeAllSortLabel), nameof(IsSeeAllByPlayCount), nameof(IsSeeAllByDuration))]
+    public partial SortMetric GenresSortMetric { get; set; } = SortMetric.PlayCount;
+
+    public bool IsSongsByPlayCount => SongsSortMetric == SortMetric.PlayCount;
+    public bool IsSongsByDuration => SongsSortMetric == SortMetric.Duration;
+    public bool IsArtistsByPlayCount => ArtistsSortMetric == SortMetric.PlayCount;
+    public bool IsArtistsByDuration => ArtistsSortMetric == SortMetric.Duration;
+    public bool IsAlbumsByPlayCount => AlbumsSortMetric == SortMetric.PlayCount;
+    public bool IsAlbumsByDuration => AlbumsSortMetric == SortMetric.Duration;
+    public bool IsGenresByPlayCount => GenresSortMetric == SortMetric.PlayCount;
+    public bool IsGenresByDuration => GenresSortMetric == SortMetric.Duration;
+
+    public string SongsSortLabel => SongsSortMetric == SortMetric.PlayCount ? Strings.InsightsPage_SortBy_PlayCount : Strings.InsightsPage_SortBy_Duration;
+    public string ArtistsSortLabel => ArtistsSortMetric == SortMetric.PlayCount ? Strings.InsightsPage_SortBy_PlayCount : Strings.InsightsPage_SortBy_Duration;
+    public string AlbumsSortLabel => AlbumsSortMetric == SortMetric.PlayCount ? Strings.InsightsPage_SortBy_PlayCount : Strings.InsightsPage_SortBy_Duration;
+    public string GenresSortLabel => GenresSortMetric == SortMetric.PlayCount ? Strings.InsightsPage_SortBy_PlayCount : Strings.InsightsPage_SortBy_Duration;
+
+    // See All overlay sort state (reflects whichever category is currently open).
+    public string SeeAllSortLabel => CurrentSeeAllCategory switch
+    {
+        SeeAllCategory.Songs => SongsSortLabel,
+        SeeAllCategory.Artists => ArtistsSortLabel,
+        SeeAllCategory.Albums => AlbumsSortLabel,
+        SeeAllCategory.Genres => GenresSortLabel,
+        _ => Strings.InsightsPage_SortBy_PlayCount
+    };
+    public bool IsSeeAllByPlayCount => CurrentSeeAllCategory switch
+    {
+        SeeAllCategory.Songs => SongsSortMetric == SortMetric.PlayCount,
+        SeeAllCategory.Artists => ArtistsSortMetric == SortMetric.PlayCount,
+        SeeAllCategory.Albums => AlbumsSortMetric == SortMetric.PlayCount,
+        SeeAllCategory.Genres => GenresSortMetric == SortMetric.PlayCount,
+        _ => true
+    };
+    public bool IsSeeAllByDuration => !IsSeeAllByPlayCount;
+
+    public void SetCurrentCategoryMetric(SortMetric metric)
+    {
+        switch (CurrentSeeAllCategory)
+        {
+            case SeeAllCategory.Songs: SongsSortMetric = metric; break;
+            case SeeAllCategory.Artists: ArtistsSortMetric = metric; break;
+            case SeeAllCategory.Albums: AlbumsSortMetric = metric; break;
+            case SeeAllCategory.Genres: GenresSortMetric = metric; break;
+        }
+    }
+
+    async partial void OnSongsSortMetricChanged(SortMetric value)
+    {
+        if (IsSeeAllOpen && IsSeeAllSongs)
+            await OpenSeeAllAsync(SeeAllCategory.Songs);
+        await ReloadTopSongsAsync();
+    }
+
+    async partial void OnArtistsSortMetricChanged(SortMetric value)
+    {
+        if (IsSeeAllOpen && IsSeeAllArtists)
+            await OpenSeeAllAsync(SeeAllCategory.Artists);
+        await ReloadTopArtistsAsync();
+    }
+
+    async partial void OnAlbumsSortMetricChanged(SortMetric value)
+    {
+        if (IsSeeAllOpen && IsSeeAllAlbums)
+            await OpenSeeAllAsync(SeeAllCategory.Albums);
+        await ReloadTopAlbumsAsync();
+    }
+
+    async partial void OnGenresSortMetricChanged(SortMetric value)
+    {
+        if (IsSeeAllOpen && IsSeeAllGenres)
+            await OpenSeeAllAsync(SeeAllCategory.Genres);
+        await ReloadTopGenresAsync();
+    }
+
     // ── Top lists ───────────────────────────────────────────────
 
     [ObservableProperty]
@@ -204,7 +302,10 @@ public partial class InsightsViewModel : ObservableObject
         nameof(IsSeeAllSongs),
         nameof(IsSeeAllArtists),
         nameof(IsSeeAllAlbums),
-        nameof(IsSeeAllGenres))]
+        nameof(IsSeeAllGenres),
+        nameof(SeeAllSortLabel),
+        nameof(IsSeeAllByPlayCount),
+        nameof(IsSeeAllByDuration))]
     public partial SeeAllCategory CurrentSeeAllCategory { get; set; } = SeeAllCategory.None;
 
     [ObservableProperty] public partial bool IsSeeAllOpen { get; set; }
@@ -267,10 +368,14 @@ public partial class InsightsViewModel : ObservableObject
     [RelayCommand]
     public async Task LoadInsightsAsync()
     {
-        // Cancel any in-flight load.
+        // Cancel any in-flight load and any per-card sort reloads.
         var newCts = new CancellationTokenSource();
         var oldCts = Interlocked.Exchange(ref _loadCts, newCts);
         try { oldCts?.Cancel(); oldCts?.Dispose(); } catch (ObjectDisposedException) { }
+        try { Interlocked.Exchange(ref _songsSortCts, null)?.Cancel(); } catch (ObjectDisposedException) { }
+        try { Interlocked.Exchange(ref _artistsSortCts, null)?.Cancel(); } catch (ObjectDisposedException) { }
+        try { Interlocked.Exchange(ref _albumsSortCts, null)?.Cancel(); } catch (ObjectDisposedException) { }
+        try { Interlocked.Exchange(ref _genresSortCts, null)?.Cancel(); } catch (ObjectDisposedException) { }
 
         var ct = newCts.Token;
 
@@ -286,10 +391,10 @@ public partial class InsightsViewModel : ObservableObject
             var uniqueTask = _statisticsService.GetUniqueSongsPlayedAsync(range, ct);
             var peakHourTask = _statisticsService.GetPeakListeningHourAsync(range, ct);
             var activeDayTask = _statisticsService.GetMostActiveDayOfWeekAsync(range, ct);
-            var topSongsTask = _statisticsService.GetTopSongsAsync(range, 10, metric: SortMetric.PlayCount, ct: ct);
-            var topArtistsTask = _statisticsService.GetTopArtistsAsync(range, 10, metric: SortMetric.Duration, ct: ct);
-            var topAlbumsTask = _statisticsService.GetTopAlbumsAsync(range, 10, ct: ct);
-            var topGenresTask = _statisticsService.GetTopGenresAsync(range, 10, ct: ct);
+            var topSongsTask = _statisticsService.GetTopSongsAsync(range, 10, metric: SongsSortMetric, ct: ct);
+            var topArtistsTask = _statisticsService.GetTopArtistsAsync(range, 10, metric: ArtistsSortMetric, ct: ct);
+            var topAlbumsTask = _statisticsService.GetTopAlbumsAsync(range, 10, metric: AlbumsSortMetric, ct: ct);
+            var topGenresTask = _statisticsService.GetTopGenresAsync(range, 10, metric: GenresSortMetric, ct: ct);
             var sourcesTask = _statisticsService.GetPlaybackSourceDistributionAsync(range, ct);
 
             await Task.WhenAll(
@@ -317,6 +422,9 @@ public partial class InsightsViewModel : ObservableObject
                     ArtworkUri = ImageUriHelper.GetUriWithCacheBuster(s.Song.AlbumArtUriFromTrack),
                     PlayCount = s.TotalPlays,
                     PlayCountText = string.Format(CultureInfo.CurrentCulture, Strings.InsightsPage_Plays, s.TotalPlays),
+                    StatText = SongsSortMetric == SortMetric.PlayCount
+                        ? string.Format(CultureInfo.CurrentCulture, Strings.InsightsPage_Plays, s.TotalPlays)
+                        : FormatItemDuration(s.TotalDuration),
                     Duration = s.TotalDuration,
                     Skips = s.Skips
                 }));
@@ -329,6 +437,9 @@ public partial class InsightsViewModel : ObservableObject
                     Name = a.Artist.Name,
                     ImageUri = ImageUriHelper.GetUriWithCacheBuster(a.Artist.LocalImageCachePath ?? a.Artist.RemoteImageUrl),
                     PlayCount = a.TotalPlays,
+                    StatText = ArtistsSortMetric == SortMetric.PlayCount
+                        ? string.Format(CultureInfo.CurrentCulture, Strings.InsightsPage_Plays, a.TotalPlays)
+                        : FormatItemDuration(a.TotalDuration),
                     Duration = a.TotalDuration,
                     Command = GoToArtistCommand
                 }));
@@ -343,6 +454,9 @@ public partial class InsightsViewModel : ObservableObject
                     ArtworkUri = ImageUriHelper.GetUriWithCacheBuster(a.Album.CoverArtUri),
                     PlayCount = a.TotalPlays,
                     PlayCountText = string.Format(CultureInfo.CurrentCulture, Strings.InsightsPage_Plays, a.TotalPlays),
+                    StatText = AlbumsSortMetric == SortMetric.PlayCount
+                        ? string.Format(CultureInfo.CurrentCulture, Strings.InsightsPage_Plays, a.TotalPlays)
+                        : FormatItemDuration(a.TotalDuration),
                     Duration = a.TotalDuration,
                     Command = GoToAlbumCommand
                 }));
@@ -355,6 +469,9 @@ public partial class InsightsViewModel : ObservableObject
                     Name = g.Genre.Name,
                     PlayCount = g.TotalPlays,
                     PlayCountText = string.Format(CultureInfo.CurrentCulture, Strings.InsightsPage_Plays, g.TotalPlays),
+                    StatText = GenresSortMetric == SortMetric.PlayCount
+                        ? string.Format(CultureInfo.CurrentCulture, Strings.InsightsPage_Plays, g.TotalPlays)
+                        : FormatItemDuration(g.TotalDuration),
                     Duration = g.TotalDuration,
                     Command = GoToGenreCommand
                 }));
@@ -503,7 +620,7 @@ public partial class InsightsViewModel : ObservableObject
         {
             case SeeAllCategory.Songs:
             {
-                var songs = await _statisticsService.GetTopSongsAsync(range, SeeAllPageSize, metric: SortMetric.PlayCount, offset: offset, searchTerm: SearchTerm, ct: ct);
+                var songs = await _statisticsService.GetTopSongsAsync(range, SeeAllPageSize, metric: SongsSortMetric, offset: offset, searchTerm: SearchTerm, ct: ct);
                 await _dispatcherService.EnqueueAsync(() =>
                 {
                     SeeAllSongs.ReplaceRange(songs.Select(s => new TopSongItem
@@ -514,6 +631,9 @@ public partial class InsightsViewModel : ObservableObject
                         ArtworkUri = ImageUriHelper.GetUriWithCacheBuster(s.Song.AlbumArtUriFromTrack),
                         PlayCount = s.TotalPlays,
                         PlayCountText = string.Format(CultureInfo.CurrentCulture, Strings.InsightsPage_Plays, s.TotalPlays),
+                        StatText = SongsSortMetric == SortMetric.PlayCount
+                            ? string.Format(CultureInfo.CurrentCulture, Strings.InsightsPage_Plays, s.TotalPlays)
+                            : FormatItemDuration(s.TotalDuration),
                         Duration = s.TotalDuration,
                         Skips = s.Skips
                     }));
@@ -523,7 +643,7 @@ public partial class InsightsViewModel : ObservableObject
             }
             case SeeAllCategory.Artists:
             {
-                var artists = await _statisticsService.GetTopArtistsAsync(range, SeeAllPageSize, metric: SortMetric.Duration, offset: offset, searchTerm: SearchTerm, ct: ct);
+                var artists = await _statisticsService.GetTopArtistsAsync(range, SeeAllPageSize, metric: ArtistsSortMetric, offset: offset, searchTerm: SearchTerm, ct: ct);
                 await _dispatcherService.EnqueueAsync(() =>
                 {
                     SeeAllArtists.ReplaceRange(artists.Select(a => new TopArtistItem
@@ -533,6 +653,9 @@ public partial class InsightsViewModel : ObservableObject
                         Name = a.Artist.Name,
                         ImageUri = ImageUriHelper.GetUriWithCacheBuster(a.Artist.LocalImageCachePath ?? a.Artist.RemoteImageUrl),
                         PlayCount = a.TotalPlays,
+                        StatText = ArtistsSortMetric == SortMetric.PlayCount
+                            ? string.Format(CultureInfo.CurrentCulture, Strings.InsightsPage_Plays, a.TotalPlays)
+                            : FormatItemDuration(a.TotalDuration),
                         Duration = a.TotalDuration,
                         Command = GoToArtistCommand
                     }));
@@ -542,7 +665,7 @@ public partial class InsightsViewModel : ObservableObject
             }
             case SeeAllCategory.Albums:
             {
-                var albums = await _statisticsService.GetTopAlbumsAsync(range, SeeAllPageSize, offset: offset, searchTerm: SearchTerm, ct: ct);
+                var albums = await _statisticsService.GetTopAlbumsAsync(range, SeeAllPageSize, metric: AlbumsSortMetric, offset: offset, searchTerm: SearchTerm, ct: ct);
                 await _dispatcherService.EnqueueAsync(() =>
                 {
                     SeeAllAlbums.ReplaceRange(albums.Select(a => new TopAlbumItem
@@ -554,6 +677,9 @@ public partial class InsightsViewModel : ObservableObject
                         ArtworkUri = ImageUriHelper.GetUriWithCacheBuster(a.Album.CoverArtUri),
                         PlayCount = a.TotalPlays,
                         PlayCountText = string.Format(CultureInfo.CurrentCulture, Strings.InsightsPage_Plays, a.TotalPlays),
+                        StatText = AlbumsSortMetric == SortMetric.PlayCount
+                            ? string.Format(CultureInfo.CurrentCulture, Strings.InsightsPage_Plays, a.TotalPlays)
+                            : FormatItemDuration(a.TotalDuration),
                         Duration = a.TotalDuration,
                         Command = GoToAlbumCommand
                     }));
@@ -563,7 +689,7 @@ public partial class InsightsViewModel : ObservableObject
             }
             case SeeAllCategory.Genres:
             {
-                var genres = await _statisticsService.GetTopGenresAsync(range, SeeAllPageSize, offset: offset, searchTerm: SearchTerm, ct: ct);
+                var genres = await _statisticsService.GetTopGenresAsync(range, SeeAllPageSize, metric: GenresSortMetric, offset: offset, searchTerm: SearchTerm, ct: ct);
                 await _dispatcherService.EnqueueAsync(() =>
                 {
                     SeeAllGenres.ReplaceRange(genres.Select(g => new TopGenreItem
@@ -573,6 +699,9 @@ public partial class InsightsViewModel : ObservableObject
                         Name = g.Genre.Name,
                         PlayCount = g.TotalPlays,
                         PlayCountText = string.Format(CultureInfo.CurrentCulture, Strings.InsightsPage_Plays, g.TotalPlays),
+                        StatText = GenresSortMetric == SortMetric.PlayCount
+                            ? string.Format(CultureInfo.CurrentCulture, Strings.InsightsPage_Plays, g.TotalPlays)
+                            : FormatItemDuration(g.TotalDuration),
                         Duration = g.TotalDuration,
                         Command = GoToGenreCommand
                     }));
@@ -698,6 +827,143 @@ public partial class InsightsViewModel : ObservableObject
             GenreName = item.Name
         });
 
+    // ── Per-card sort reloads ────────────────────────────────────
+
+    private async Task ReloadTopSongsAsync()
+    {
+        var newCts = new CancellationTokenSource();
+        var oldCts = Interlocked.Exchange(ref _songsSortCts, newCts);
+        try { oldCts?.Cancel(); oldCts?.Dispose(); } catch (ObjectDisposedException) { }
+        var ct = newCts.Token;
+        try
+        {
+            var range = BuildTimeRange();
+            var songs = await _statisticsService.GetTopSongsAsync(range, 10, SongsSortMetric, ct: ct);
+            ct.ThrowIfCancellationRequested();
+            await _dispatcherService.EnqueueAsync(() =>
+            {
+                TopSongs.ReplaceRange(songs.Select(s => new TopSongItem
+                {
+                    Rank = s.GlobalRank,
+                    Title = s.Song.Title,
+                    Artist = s.Song.ArtistName,
+                    ArtworkUri = ImageUriHelper.GetUriWithCacheBuster(s.Song.AlbumArtUriFromTrack),
+                    PlayCount = s.TotalPlays,
+                    PlayCountText = string.Format(CultureInfo.CurrentCulture, Strings.InsightsPage_Plays, s.TotalPlays),
+                    StatText = SongsSortMetric == SortMetric.PlayCount
+                        ? string.Format(CultureInfo.CurrentCulture, Strings.InsightsPage_Plays, s.TotalPlays)
+                        : FormatItemDuration(s.TotalDuration),
+                    Duration = s.TotalDuration,
+                    Skips = s.Skips
+                }));
+                return Task.CompletedTask;
+            });
+        }
+        catch (OperationCanceledException) { }
+        catch (Exception ex) { _logger.LogError(ex, "Failed to reload top songs"); }
+    }
+
+    private async Task ReloadTopArtistsAsync()
+    {
+        var newCts = new CancellationTokenSource();
+        var oldCts = Interlocked.Exchange(ref _artistsSortCts, newCts);
+        try { oldCts?.Cancel(); oldCts?.Dispose(); } catch (ObjectDisposedException) { }
+        var ct = newCts.Token;
+        try
+        {
+            var range = BuildTimeRange();
+            var artists = await _statisticsService.GetTopArtistsAsync(range, 10, ArtistsSortMetric, ct: ct);
+            ct.ThrowIfCancellationRequested();
+            await _dispatcherService.EnqueueAsync(() =>
+            {
+                TopArtists.ReplaceRange(artists.Select(a => new TopArtistItem
+                {
+                    ArtistId = a.Artist.Id,
+                    Rank = a.GlobalRank,
+                    Name = a.Artist.Name,
+                    ImageUri = ImageUriHelper.GetUriWithCacheBuster(a.Artist.LocalImageCachePath ?? a.Artist.RemoteImageUrl),
+                    PlayCount = a.TotalPlays,
+                    StatText = ArtistsSortMetric == SortMetric.PlayCount
+                        ? string.Format(CultureInfo.CurrentCulture, Strings.InsightsPage_Plays, a.TotalPlays)
+                        : FormatItemDuration(a.TotalDuration),
+                    Duration = a.TotalDuration,
+                    Command = GoToArtistCommand
+                }));
+                return Task.CompletedTask;
+            });
+        }
+        catch (OperationCanceledException) { }
+        catch (Exception ex) { _logger.LogError(ex, "Failed to reload top artists"); }
+    }
+
+    private async Task ReloadTopAlbumsAsync()
+    {
+        var newCts = new CancellationTokenSource();
+        var oldCts = Interlocked.Exchange(ref _albumsSortCts, newCts);
+        try { oldCts?.Cancel(); oldCts?.Dispose(); } catch (ObjectDisposedException) { }
+        var ct = newCts.Token;
+        try
+        {
+            var range = BuildTimeRange();
+            var albums = await _statisticsService.GetTopAlbumsAsync(range, 10, AlbumsSortMetric, ct: ct);
+            ct.ThrowIfCancellationRequested();
+            await _dispatcherService.EnqueueAsync(() =>
+            {
+                TopAlbums.ReplaceRange(albums.Select(a => new TopAlbumItem
+                {
+                    AlbumId = a.Album.Id,
+                    Rank = a.GlobalRank,
+                    Title = a.Album.Title,
+                    ArtistName = a.Album.ArtistName ?? "",
+                    ArtworkUri = ImageUriHelper.GetUriWithCacheBuster(a.Album.CoverArtUri),
+                    PlayCount = a.TotalPlays,
+                    PlayCountText = string.Format(CultureInfo.CurrentCulture, Strings.InsightsPage_Plays, a.TotalPlays),
+                    StatText = AlbumsSortMetric == SortMetric.PlayCount
+                        ? string.Format(CultureInfo.CurrentCulture, Strings.InsightsPage_Plays, a.TotalPlays)
+                        : FormatItemDuration(a.TotalDuration),
+                    Duration = a.TotalDuration,
+                    Command = GoToAlbumCommand
+                }));
+                return Task.CompletedTask;
+            });
+        }
+        catch (OperationCanceledException) { }
+        catch (Exception ex) { _logger.LogError(ex, "Failed to reload top albums"); }
+    }
+
+    private async Task ReloadTopGenresAsync()
+    {
+        var newCts = new CancellationTokenSource();
+        var oldCts = Interlocked.Exchange(ref _genresSortCts, newCts);
+        try { oldCts?.Cancel(); oldCts?.Dispose(); } catch (ObjectDisposedException) { }
+        var ct = newCts.Token;
+        try
+        {
+            var range = BuildTimeRange();
+            var genres = await _statisticsService.GetTopGenresAsync(range, 10, GenresSortMetric, ct: ct);
+            ct.ThrowIfCancellationRequested();
+            await _dispatcherService.EnqueueAsync(() =>
+            {
+                TopGenres.ReplaceRange(genres.Select(g => new TopGenreItem
+                {
+                    GenreId = g.Genre.Id,
+                    Rank = g.GlobalRank,
+                    Name = g.Genre.Name,
+                    PlayCount = g.TotalPlays,
+                    PlayCountText = string.Format(CultureInfo.CurrentCulture, Strings.InsightsPage_Plays, g.TotalPlays),
+                    StatText = GenresSortMetric == SortMetric.PlayCount
+                        ? string.Format(CultureInfo.CurrentCulture, Strings.InsightsPage_Plays, g.TotalPlays)
+                        : FormatItemDuration(g.TotalDuration),
+                    Duration = g.TotalDuration,
+                    Command = GoToGenreCommand
+                }));
+                return Task.CompletedTask;
+            });
+        }
+        catch (OperationCanceledException) { }
+        catch (Exception ex) { _logger.LogError(ex, "Failed to reload top genres"); }
+    }
+
     // ── Helpers ─────────────────────────────────────────────────
 
     private TimeRange BuildTimeRange()
@@ -716,6 +982,13 @@ public partial class InsightsViewModel : ObservableObject
     }
 
     private static string FormatListenTime(TimeSpan ts)
+    {
+        if (ts.TotalHours >= 1)
+            return string.Format(CultureInfo.CurrentCulture, Strings.Insights_Format_HoursMinutes, (int)ts.TotalHours, ts.Minutes);
+        return string.Format(CultureInfo.CurrentCulture, Strings.Insights_Format_MinutesSeconds, ts.Minutes, ts.Seconds);
+    }
+
+    private static string FormatItemDuration(TimeSpan ts)
     {
         if (ts.TotalHours >= 1)
             return string.Format(CultureInfo.CurrentCulture, Strings.Insights_Format_HoursMinutes, (int)ts.TotalHours, ts.Minutes);

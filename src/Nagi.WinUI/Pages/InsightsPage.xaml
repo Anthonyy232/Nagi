@@ -227,18 +227,34 @@
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
-                            <!-- Header row: title (left) + see-all button (right) -->
+                            <!-- Header row: title (left) + sort toggle + see-all button (right) -->
                             <Grid Grid.Row="0" Margin="0,0,0,12">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Grid.Column="0"
                                            Text="{x:Bind resources:Strings.InsightsPage_TopSongs, Mode=OneTime}"
                                            FontSize="16" FontWeight="SemiBold"
                                            VerticalAlignment="Center" />
+                                <DropDownButton Grid.Column="1"
+                                               Content="{x:Bind ViewModel.SongsSortLabel, Mode=OneWay}"
+                                               FontSize="11" Height="28" Padding="8,0"
+                                               VerticalAlignment="Center" Margin="0,0,4,0">
+                                    <DropDownButton.Flyout>
+                                        <MenuFlyout>
+                                            <RadioMenuFlyoutItem Text="Play count" GroupName="SongsSort"
+                                                                 IsChecked="{x:Bind ViewModel.IsSongsByPlayCount, Mode=OneWay}"
+                                                                 Click="OnSongsSortByPlayCountClick" />
+                                            <RadioMenuFlyoutItem Text="Duration" GroupName="SongsSort"
+                                                                 IsChecked="{x:Bind ViewModel.IsSongsByDuration, Mode=OneWay}"
+                                                                 Click="OnSongsSortByDurationClick" />
+                                        </MenuFlyout>
+                                    </DropDownButton.Flyout>
+                                </DropDownButton>
                                 <Button x:Name="SeeAllSongsButton"
-                                        Grid.Column="1"
+                                        Grid.Column="2"
                                         Click="OnSeeAllSongsClick"
                                         Style="{StaticResource SubtleButtonStyle}"
                                         Width="28" Height="28" Padding="0"
@@ -265,18 +281,34 @@
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
-                            <!-- Header row: title (left) + see-all button (right) -->
+                            <!-- Header row: title (left) + sort toggle + see-all button (right) -->
                             <Grid Grid.Row="0" Margin="0,0,0,12">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Grid.Column="0"
                                            Text="{x:Bind resources:Strings.InsightsPage_TopArtists, Mode=OneTime}"
                                            FontSize="16" FontWeight="SemiBold"
                                            VerticalAlignment="Center" />
+                                <DropDownButton Grid.Column="1"
+                                               Content="{x:Bind ViewModel.ArtistsSortLabel, Mode=OneWay}"
+                                               FontSize="11" Height="28" Padding="8,0"
+                                               VerticalAlignment="Center" Margin="0,0,4,0">
+                                    <DropDownButton.Flyout>
+                                        <MenuFlyout>
+                                            <RadioMenuFlyoutItem Text="Play count" GroupName="ArtistsSort"
+                                                                 IsChecked="{x:Bind ViewModel.IsArtistsByPlayCount, Mode=OneWay}"
+                                                                 Click="OnArtistsSortByPlayCountClick" />
+                                            <RadioMenuFlyoutItem Text="Duration" GroupName="ArtistsSort"
+                                                                 IsChecked="{x:Bind ViewModel.IsArtistsByDuration, Mode=OneWay}"
+                                                                 Click="OnArtistsSortByDurationClick" />
+                                        </MenuFlyout>
+                                    </DropDownButton.Flyout>
+                                </DropDownButton>
                                 <Button x:Name="SeeAllArtistsButton"
-                                        Grid.Column="1"
+                                        Grid.Column="2"
                                         Click="OnSeeAllArtistsClick"
                                         Style="{StaticResource SubtleButtonStyle}"
                                         Width="28" Height="28" Padding="0"
@@ -315,18 +347,34 @@
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
-                            <!-- Header row: title (left) + see-all button (right) -->
+                            <!-- Header row: title (left) + sort toggle + see-all button (right) -->
                             <Grid Grid.Row="0" Margin="0,0,0,12">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Grid.Column="0"
                                            Text="{x:Bind resources:Strings.InsightsPage_TopAlbums, Mode=OneTime}"
                                            FontSize="16" FontWeight="SemiBold"
                                            VerticalAlignment="Center" />
+                                <DropDownButton Grid.Column="1"
+                                               Content="{x:Bind ViewModel.AlbumsSortLabel, Mode=OneWay}"
+                                               FontSize="11" Height="28" Padding="8,0"
+                                               VerticalAlignment="Center" Margin="0,0,4,0">
+                                    <DropDownButton.Flyout>
+                                        <MenuFlyout>
+                                            <RadioMenuFlyoutItem Text="Play count" GroupName="AlbumsSort"
+                                                                 IsChecked="{x:Bind ViewModel.IsAlbumsByPlayCount, Mode=OneWay}"
+                                                                 Click="OnAlbumsSortByPlayCountClick" />
+                                            <RadioMenuFlyoutItem Text="Duration" GroupName="AlbumsSort"
+                                                                 IsChecked="{x:Bind ViewModel.IsAlbumsByDuration, Mode=OneWay}"
+                                                                 Click="OnAlbumsSortByDurationClick" />
+                                        </MenuFlyout>
+                                    </DropDownButton.Flyout>
+                                </DropDownButton>
                                 <Button x:Name="SeeAllAlbumsButton"
-                                        Grid.Column="1"
+                                        Grid.Column="2"
                                         Click="OnSeeAllAlbumsClick"
                                         Style="{StaticResource SubtleButtonStyle}"
                                         Width="28" Height="28" Padding="0"
@@ -353,18 +401,34 @@
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
-                            <!-- Header row: title (left) + see-all button (right) -->
+                            <!-- Header row: title (left) + sort toggle + see-all button (right) -->
                             <Grid Grid.Row="0" Margin="0,0,0,12">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Grid.Column="0"
                                            Text="{x:Bind resources:Strings.InsightsPage_TopGenres, Mode=OneTime}"
                                            FontSize="16" FontWeight="SemiBold"
                                            VerticalAlignment="Center" />
+                                <DropDownButton Grid.Column="1"
+                                               Content="{x:Bind ViewModel.GenresSortLabel, Mode=OneWay}"
+                                               FontSize="11" Height="28" Padding="8,0"
+                                               VerticalAlignment="Center" Margin="0,0,4,0">
+                                    <DropDownButton.Flyout>
+                                        <MenuFlyout>
+                                            <RadioMenuFlyoutItem Text="Play count" GroupName="GenresSort"
+                                                                 IsChecked="{x:Bind ViewModel.IsGenresByPlayCount, Mode=OneWay}"
+                                                                 Click="OnGenresSortByPlayCountClick" />
+                                            <RadioMenuFlyoutItem Text="Duration" GroupName="GenresSort"
+                                                                 IsChecked="{x:Bind ViewModel.IsGenresByDuration, Mode=OneWay}"
+                                                                 Click="OnGenresSortByDurationClick" />
+                                        </MenuFlyout>
+                                    </DropDownButton.Flyout>
+                                </DropDownButton>
                                 <Button x:Name="SeeAllGenresButton"
-                                        Grid.Column="1"
+                                        Grid.Column="2"
                                         Click="OnSeeAllGenresClick"
                                         Style="{StaticResource SubtleButtonStyle}"
                                         Width="28" Height="28" Padding="0"

@@ -616,6 +616,74 @@ public class StatisticsServiceTests : IDisposable
     }
 
     // -------------------------------------------------------------------------
+    // Duration sort metric — Albums & Genres
+    // -------------------------------------------------------------------------
+
+    [Fact]
+    public async Task GetTopAlbumsAsync_WithDurationSortMetric_OrdersByTotalDurationDescending()
+    {
+        var folder = new Folder { Name = "F", Path = "C:\\Music" };
+        var artist = new Artist { Name = "A" };
+        var highPlaysAlbum = new Album { Title = "High Plays Album", ArtistName = "A", PrimaryArtistName = "A" };
+        var longDurationAlbum = new Album { Title = "Long Duration Album", ArtistName = "A", PrimaryArtistName = "A" };
+        var song1 = CreateSong(folder, artist, "Song 1", highPlaysAlbum, TimeSpan.FromMinutes(1));
+        var song2 = CreateSong(folder, artist, "Song 2", longDurationAlbum, TimeSpan.FromHours(1));
+
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.Add(folder);
+            context.Artists.Add(artist);
+            context.Albums.AddRange(highPlaysAlbum, longDurationAlbum);
+            context.Songs.AddRange(song1, song2);
+            // 5 listens × 1 min = 5 min total for highPlaysAlbum
+            for (var i = 0; i < 5; i++)
+                context.ListenHistory.Add(new ListenHistory { Song = song1, ListenTimestampUtc = DateTime.UtcNow, EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromMinutes(1).Ticks });
+            // 1 listen × 60 min = 60 min total for longDurationAlbum
+            context.ListenHistory.Add(new ListenHistory { Song = song2, ListenTimestampUtc = DateTime.UtcNow, EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromHours(1).Ticks });
+            await context.SaveChangesAsync();
+        }
+
+        var byPlayCount = (await _statisticsService.GetTopAlbumsAsync(new TimeRange(null, null), 10, SortMetric.PlayCount)).ToList();
+        var byDuration = (await _statisticsService.GetTopAlbumsAsync(new TimeRange(null, null), 10, SortMetric.Duration)).ToList();
+
+        byPlayCount[0].Album.Id.Should().Be(highPlaysAlbum.Id, "5 plays should rank first when sorting by play count");
+        byDuration[0].Album.Id.Should().Be(longDurationAlbum.Id, "60 min total should rank first when sorting by duration");
+    }
+
+    [Fact]
+    public async Task GetTopGenresAsync_WithDurationSortMetric_OrdersByTotalDurationDescending()
+    {
+        var folder = new Folder { Name = "F", Path = "C:\\Music" };
+        var artist = new Artist { Name = "A" };
+        var highPlaysGenre = new Genre { Name = "Pop" };
+        var longDurationGenre = new Genre { Name = "Classical" };
+        var song1 = CreateSong(folder, artist, "Song 1", null, TimeSpan.FromMinutes(1));
+        var song2 = CreateSong(folder, artist, "Song 2", null, TimeSpan.FromHours(1));
+
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.Add(folder);
+            context.Artists.Add(artist);
+            context.Genres.AddRange(highPlaysGenre, longDurationGenre);
+            context.Songs.AddRange(song1, song2);
+            song1.Genres.Add(highPlaysGenre);
+            song2.Genres.Add(longDurationGenre);
+            // 5 listens × 1 min = 5 min total for Pop
+            for (var i = 0; i < 5; i++)
+                context.ListenHistory.Add(new ListenHistory { Song = song1, ListenTimestampUtc = DateTime.UtcNow, EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromMinutes(1).Ticks });
+            // 1 listen × 60 min = 60 min total for Classical
+            context.ListenHistory.Add(new ListenHistory { Song = song2, ListenTimestampUtc = DateTime.UtcNow, EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromHours(1).Ticks });
+            await context.SaveChangesAsync();
+        }
+
+        var byPlayCount = (await _statisticsService.GetTopGenresAsync(new TimeRange(null, null), 10, SortMetric.PlayCount)).ToList();
+        var byDuration = (await _statisticsService.GetTopGenresAsync(new TimeRange(null, null), 10, SortMetric.Duration)).ToList();
+
+        byPlayCount[0].Genre.Id.Should().Be(highPlaysGenre.Id, "5 plays should rank first when sorting by play count");
+        byDuration[0].Genre.Id.Should().Be(longDurationGenre.Id, "60 min total should rank first when sorting by duration");
+    }
+
+    // -------------------------------------------------------------------------
     // Total listen time
     // -------------------------------------------------------------------------
 
