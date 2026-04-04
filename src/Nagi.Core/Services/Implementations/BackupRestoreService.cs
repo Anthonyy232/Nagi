@@ -41,8 +41,32 @@ public class BackupRestoreService : IBackupRestoreService
 
             try
             {
+                // Flush WAL to the main database file so the backup includes all recent writes.
+                // Without this, any data written since the last automatic checkpoint would be lost
+                // because .db-wal/.db-shm files are intentionally excluded from the backup.
+                try
+                {
+                    var dbPath = Path.Combine(sourcePath, "nagi.db");
+                    if (File.Exists(dbPath) && IsSqliteDatabase(dbPath))
+                    {
+                        using (var connection = new SqliteConnection($"Data Source={dbPath}"))
+                        {
+                            connection.Open();
+                            using var cmd = connection.CreateCommand();
+                            cmd.CommandText = "PRAGMA wal_checkpoint(TRUNCATE);";
+                            cmd.ExecuteNonQuery();
+                        }
+                        // Release all pooled handles so the file is not locked during backup copy
+                        SqliteConnection.ClearAllPools();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Failed to checkpoint WAL before backup. Backup may be missing recent data.");
+                }
+
                 var directoryInfo = new DirectoryInfo(sourcePath);
-                
+
                 // Exclusions
                 var excludedDirectories = new HashSet<string>(StringComparer.OrdinalIgnoreCase) 
                 { 
@@ -309,6 +333,21 @@ public class BackupRestoreService : IBackupRestoreService
         {
             string newDestinationDir = Path.Combine(destinationDir, subDir.Name);
             await CopyDirectoryAsync(subDir.FullName, newDestinationDir);
+        }
+    }
+
+    private static bool IsSqliteDatabase(string filePath)
+    {
+        try
+        {
+            // SQLite files start with the 16-byte magic string "SQLite format 3\000"
+            Span<byte> header = stackalloc byte[16];
+            using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            return fs.Read(header) == 16 && header.SequenceEqual("SQLite format 3\0"u8);
+        }
+        catch
+        {
+            return false;
         }
     }
 }
