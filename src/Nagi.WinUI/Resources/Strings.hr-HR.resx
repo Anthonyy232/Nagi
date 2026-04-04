@@ -2057,6 +2057,12 @@ Pogreška: {1}</value>
   <data name="InsightsPage_SeeAll_ToolTip" xml:space="preserve">
     <value>Vidi sve</value>
   </data>
+  <data name="InsightsPage_SortBy_PlayCount" xml:space="preserve">
+    <value>Plays</value>
+  </data>
+  <data name="InsightsPage_SortBy_Duration" xml:space="preserve">
+    <value>Time</value>
+  </data>
   <data name="PaginationControl_ItemsPerPage" xml:space="preserve">
     <value>Stavki po stranici:</value>
   </data>
