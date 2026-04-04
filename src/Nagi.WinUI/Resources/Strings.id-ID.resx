@@ -2045,10 +2045,10 @@
     <value>Lihat semua</value>
   </data>
   <data name="InsightsPage_SortBy_PlayCount" xml:space="preserve">
-    <value>Plays</value>
+    <value>Pemutaran</value>
   </data>
   <data name="InsightsPage_SortBy_Duration" xml:space="preserve">
-    <value>Time</value>
+    <value>Durasi</value>
   </data>
   <data name="PaginationControl_ItemsPerPage" xml:space="preserve">
     <value>Item per halaman:</value>

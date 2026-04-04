@@ -2050,10 +2050,10 @@ Je, unataka kuendelea?</value>
     <value>Angalia zote</value>
   </data>
   <data name="InsightsPage_SortBy_PlayCount" xml:space="preserve">
-    <value>Plays</value>
+    <value>Uchezaji</value>
   </data>
   <data name="InsightsPage_SortBy_Duration" xml:space="preserve">
-    <value>Time</value>
+    <value>Muda</value>
   </data>
   <data name="PaginationControl_ItemsPerPage" xml:space="preserve">
     <value>Vipengee kwa kila ukurasa:</value>

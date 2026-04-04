@@ -2045,10 +2045,10 @@
     <value>ดูทั้งหมด</value>
   </data>
   <data name="InsightsPage_SortBy_PlayCount" xml:space="preserve">
-    <value>Plays</value>
+    <value>ครั้งที่เล่น</value>
   </data>
   <data name="InsightsPage_SortBy_Duration" xml:space="preserve">
-    <value>Time</value>
+    <value>เวลา</value>
   </data>
   <data name="PaginationControl_ItemsPerPage" xml:space="preserve">
     <value>รายการต่อหน้า:</value>
