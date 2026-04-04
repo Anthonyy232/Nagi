@@ -2050,10 +2050,10 @@
     <value>모두 보기</value>
   </data>
   <data name="InsightsPage_SortBy_PlayCount" xml:space="preserve">
-    <value>Plays</value>
+    <value>재생 횟수</value>
   </data>
   <data name="InsightsPage_SortBy_Duration" xml:space="preserve">
-    <value>Time</value>
+    <value>재생 시간</value>
   </data>
   <data name="PaginationControl_ItemsPerPage" xml:space="preserve">
     <value>페이지당 항목 수:</value>

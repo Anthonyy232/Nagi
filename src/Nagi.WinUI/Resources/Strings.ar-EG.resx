@@ -2056,10 +2056,10 @@
     <value>شوف الكل</value>
   </data>
   <data name="InsightsPage_SortBy_PlayCount" xml:space="preserve">
-    <value>Plays</value>
+    <value>مرات التشغيل</value>
   </data>
   <data name="InsightsPage_SortBy_Duration" xml:space="preserve">
-    <value>Time</value>
+    <value>المدة</value>
   </data>
   <data name="PaginationControl_ItemsPerPage" xml:space="preserve">
     <value>العناصر في كل صفحة:</value>
