@@ -134,21 +134,23 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
 
     private void UpdatePresenceInternal()
     {
-        // Ensure we are initialized AND the Discord handshake has finished
-        if (_client == null || !_client.IsInitialized || !_isReady) return;
-
-        // If no song is loaded or playback is stopped, show idling
-        if (_currentSong == null)
-        {
-            _client.SetPresence(new RichPresence { Details = "Browsing Music Library", State = "Idling" });
-            return;
-        }
-
         try
         {
-            string stateText = _isPlaying 
+            // Ensure we are initialized AND the Discord handshake has finished.
+            // Guard is inside try-catch to handle the race where DisposeAsync nulls/disposes
+            // _client between our check and usage (timer callback can fire after Dispose).
+            if (_client == null || !_client.IsInitialized || !_isReady) return;
+
+            // If no song is loaded or playback is stopped, show idling
+            if (_currentSong == null)
+            {
+                _client.SetPresence(new RichPresence { Details = "Browsing Music Library", State = "Idling" });
+                return;
+            }
+
+            string stateText = _isPlaying
                 ? (string.IsNullOrWhiteSpace(_currentSong.ArtistName) ? "Unknown Artist" : $"by {_currentSong.ArtistName}")
-                : $"Paused | {_currentProgress:mm\\:ss} / {_currentSong.Duration:mm\\:ss}";
+                : $"Paused | {FormatTimeSpan(_currentProgress)} / {FormatTimeSpan(_currentSong.Duration)}";
 
             var presence = new RichPresence
             {
@@ -168,10 +170,21 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
             _logger.LogDebug("Sending Discord Presence Update: {Details}", presence.Details);
             _client.SetPresence(presence);
         }
+        catch (ObjectDisposedException)
+        {
+            // Expected if timer callback fires during/after DisposeAsync — safe to ignore.
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error building presence update.");
         }
+    }
+
+    private static string FormatTimeSpan(TimeSpan ts)
+    {
+        if (ts.TotalHours >= 1)
+            return $"{(int)ts.TotalHours}:{ts.Minutes:D2}:{ts.Seconds:D2}";
+        return ts.ToString(@"m\:ss");
     }
 
     public Task OnTrackProgressAsync(TimeSpan progress, TimeSpan duration)

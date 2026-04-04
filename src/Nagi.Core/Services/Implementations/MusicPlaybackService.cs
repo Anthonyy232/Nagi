@@ -746,19 +746,33 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
 
         using (BeginQueueUpdate())
         {
+            var removedPlaybackIndex = GetPlaybackQueueIndex(songId);
             _playbackQueue.Remove(songId);
-            if (IsShuffleEnabled) _shuffledQueue.Remove(songId);
-
-            var insertIndex = CurrentQueueIndex == -1 ? 0 : CurrentQueueIndex + 1;
-            insertIndex = Math.Min(insertIndex, _playbackQueue.Count);
-            _playbackQueue.Insert(insertIndex, songId);
-
             if (IsShuffleEnabled)
             {
-                var shuffledInsertIndex = CurrentShuffledIndex == -1 ? 0 : CurrentShuffledIndex + 1;
+                var removedShuffledIndex = GetShuffledQueueIndex(songId);
+                _shuffledQueue.Remove(songId);
+
+                // Adjust for the removal shifting indices: if the removed song was before
+                // the current position, the current track has shifted left by one.
+                var adjustedShuffledIndex = CurrentShuffledIndex;
+                if (removedShuffledIndex != -1 && removedShuffledIndex < CurrentShuffledIndex)
+                    adjustedShuffledIndex--;
+
+                var shuffledInsertIndex = adjustedShuffledIndex == -1 ? 0 : adjustedShuffledIndex + 1;
                 shuffledInsertIndex = Math.Min(shuffledInsertIndex, _shuffledQueue.Count);
                 _shuffledQueue.Insert(shuffledInsertIndex, songId);
             }
+
+            // Adjust for the removal shifting indices: if the removed song was before
+            // the current position, the current track has shifted left by one.
+            var adjustedQueueIndex = CurrentQueueIndex;
+            if (removedPlaybackIndex != -1 && removedPlaybackIndex < CurrentQueueIndex)
+                adjustedQueueIndex--;
+
+            var insertIndex = adjustedQueueIndex == -1 ? 0 : adjustedQueueIndex + 1;
+            insertIndex = Math.Min(insertIndex, _playbackQueue.Count);
+            _playbackQueue.Insert(insertIndex, songId);
         }
 
         return Task.CompletedTask;
@@ -1431,7 +1445,12 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
     /// </summary>
     private void FireAndForgetSafe(Func<Task> asyncAction, string operationName, bool trackForDisposal = false)
     {
-        var task = Task.Run(async () =>
+        var task = ExecuteAsync();
+
+        if (trackForDisposal)
+            TrackPendingFinalizationTask(task);
+
+        async Task ExecuteAsync()
         {
             try
             {
@@ -1441,10 +1460,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
             {
                 _logger.LogError(ex, "Error in fire-and-forget operation: {Operation}", operationName);
             }
-        });
-
-        if (trackForDisposal)
-            TrackPendingFinalizationTask(task);
+        }
     }
 
     private void TrackPendingFinalizationTask(Task task)
