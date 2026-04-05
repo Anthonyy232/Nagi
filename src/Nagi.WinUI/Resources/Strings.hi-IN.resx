@@ -2047,10 +2047,10 @@
     <value>सभी देखें</value>
   </data>
   <data name="InsightsPage_SortBy_PlayCount" xml:space="preserve">
-    <value>Plays</value>
+    <value>प्ले</value>
   </data>
   <data name="InsightsPage_SortBy_Duration" xml:space="preserve">
-    <value>Time</value>
+    <value>अवधि</value>
   </data>
   <data name="PaginationControl_ItemsPerPage" xml:space="preserve">
     <value>प्रति पृष्ठ आइटम:</value>

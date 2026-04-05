@@ -2058,10 +2058,10 @@ Error: {1}</value>
     <value>Ver todo</value>
   </data>
   <data name="InsightsPage_SortBy_PlayCount" xml:space="preserve">
-    <value>Plays</value>
+    <value>Reproducciones</value>
   </data>
   <data name="InsightsPage_SortBy_Duration" xml:space="preserve">
-    <value>Time</value>
+    <value>Duración</value>
   </data>
   <data name="PaginationControl_ItemsPerPage" xml:space="preserve">
     <value>Elementos por página:</value>
