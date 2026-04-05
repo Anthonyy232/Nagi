@@ -2058,10 +2058,10 @@
     <value>அனைத்தையும் காண்க</value>
   </data>
   <data name="InsightsPage_SortBy_PlayCount" xml:space="preserve">
-    <value>Plays</value>
+    <value>விளையாடல்கள்</value>
   </data>
   <data name="InsightsPage_SortBy_Duration" xml:space="preserve">
-    <value>Time</value>
+    <value>கால அளவு</value>
   </data>
   <data name="PaginationControl_ItemsPerPage" xml:space="preserve">
     <value>ஒரு பக்கத்திற்கு உருப்படிகள்:</value>
