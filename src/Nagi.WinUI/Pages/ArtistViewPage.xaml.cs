@@ -15,6 +15,7 @@ using Nagi.WinUI.ViewModels;
 using Windows.Storage.Pickers;
 using WinRT.Interop;
 using Nagi.Core.Constants;
+using Nagi.WinUI.Helpers;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
@@ -33,6 +34,7 @@ public sealed partial class ArtistViewPage : Page
     private bool _pendingLayoutUpdate;
     private ScrollViewer? _songsScrollViewer;
     private double _lastKnownAlbumsHeight;
+    private NowPlayingIndicatorBinder? _nowPlayingBinder;
 
     public ArtistViewPage()
     {
@@ -41,12 +43,33 @@ public sealed partial class ArtistViewPage : Page
         _logger = App.Services!.GetRequiredService<ILogger<ArtistViewPage>>();
         DataContext = ViewModel;
 
+        // Recreated on each Loaded so cached-page re-navigations get a fresh binder.
+        Loaded += OnNowPlayingBinderAttach;
+        Unloaded += OnNowPlayingBinderDetach;
+
         Loaded += OnPageLoaded;
-        
+
         // Ensure we hook up the scroll viewer once the list is loaded
         SongsListView.Loaded += OnSongsListViewLoaded;
-        
+
         _logger.LogDebug("ArtistViewPage initialized.");
+    }
+
+    private void OnNowPlayingBinderAttach(object sender, RoutedEventArgs e)
+    {
+        if (_nowPlayingBinder is not null) return;
+        _nowPlayingBinder = new NowPlayingIndicatorBinder(
+            SongsListView,
+            ViewModel,
+            App.Services!.GetRequiredService<PlayerViewModel>(),
+            (Brush)Application.Current.Resources["AppPrimaryColorBrush"]);
+        _nowPlayingBinder.Refresh();
+    }
+
+    private void OnNowPlayingBinderDetach(object sender, RoutedEventArgs e)
+    {
+        _nowPlayingBinder?.Dispose();
+        _nowPlayingBinder = null;
     }
 
     /// <summary>

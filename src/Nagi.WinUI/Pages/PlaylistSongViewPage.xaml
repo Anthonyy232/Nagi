@@ -305,8 +305,16 @@
                                     IsCacheEnabled="True" />
                             </Border>
                         </Button>
+                        <uicontrols:NowPlayingIndicator
+                            x:Name="NowPlayingIndicator"
+                            Grid.Column="0"
+                            Width="42"
+                            Height="42"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" />
 
-                        <TextBlock Grid.Column="1" Text="{x:Bind Title}" VerticalAlignment="Center"
+                        <TextBlock x:Name="SongTitle"
+                                   Grid.Column="1" Text="{x:Bind Title}" VerticalAlignment="Center"
                                    Style="{StaticResource SongListViewPageBodyStrongTextBlockStyle}"
                                    TextTrimming="CharacterEllipsis"
                                    TextWrapping="NoWrap" />

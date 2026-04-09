@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="Nagi.WinUI.Controls.NowPlayingIndicator"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    IsHitTestVisible="False">
+
+    <!--
+        A small "now playing" indicator: 3 vertical bars in the app accent color that
+        bounce like an audio equalizer when the row is the currently-playing track.
+        - IsActive controls visibility (hidden when this row isn't playing).
+        - IsPlaying controls whether the bars animate (paused = music paused).
+        Sized to overlay a small album-art tile (defaults to 24x24, scales with parent).
+    -->
+    <Grid x:Name="RootGrid"
+          Width="24"
+          Height="24"
+          Background="#80000000"
+          CornerRadius="4"
+          Visibility="Collapsed">
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Spacing="2">
+            <Rectangle x:Name="Bar1"
+                       Width="3"
+                       Height="14"
+                       RadiusX="1"
+                       RadiusY="1"
+                       Fill="{StaticResource AppPrimaryColorBrush}"
+                       RenderTransformOrigin="0.5,1">
+                <Rectangle.RenderTransform>
+                    <ScaleTransform x:Name="Bar1Scale" ScaleY="0.4" />
+                </Rectangle.RenderTransform>
+            </Rectangle>
+            <Rectangle x:Name="Bar2"
+                       Width="3"
+                       Height="14"
+                       RadiusX="1"
+                       RadiusY="1"
+                       Fill="{StaticResource AppPrimaryColorBrush}"
+                       RenderTransformOrigin="0.5,1">
+                <Rectangle.RenderTransform>
+                    <ScaleTransform x:Name="Bar2Scale" ScaleY="0.7" />
+                </Rectangle.RenderTransform>
+            </Rectangle>
+            <Rectangle x:Name="Bar3"
+                       Width="3"
+                       Height="14"
+                       RadiusX="1"
+                       RadiusY="1"
+                       Fill="{StaticResource AppPrimaryColorBrush}"
+                       RenderTransformOrigin="0.5,1">
+                <Rectangle.RenderTransform>
+                    <ScaleTransform x:Name="Bar3Scale" ScaleY="0.5" />
+                </Rectangle.RenderTransform>
+            </Rectangle>
+        </StackPanel>
+
+        <Grid.Resources>
+            <Storyboard x:Name="EqualizerStoryboard" RepeatBehavior="Forever">
+                <!-- Bar 1: ~700ms cycle -->
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Bar1Scale"
+                                               Storyboard.TargetProperty="ScaleY">
+                    <LinearDoubleKeyFrame KeyTime="0:0:0.00" Value="0.4" />
+                    <LinearDoubleKeyFrame KeyTime="0:0:0.18" Value="1.0" />
+                    <LinearDoubleKeyFrame KeyTime="0:0:0.36" Value="0.3" />
+                    <LinearDoubleKeyFrame KeyTime="0:0:0.54" Value="0.85" />
+                    <LinearDoubleKeyFrame KeyTime="0:0:0.70" Value="0.4" />
+                </DoubleAnimationUsingKeyFrames>
+                <!-- Bar 2: ~900ms cycle, offset start -->
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Bar2Scale"
+                                               Storyboard.TargetProperty="ScaleY">
+                    <LinearDoubleKeyFrame KeyTime="0:0:0.00" Value="0.7" />
+                    <LinearDoubleKeyFrame KeyTime="0:0:0.22" Value="0.3" />
+                    <LinearDoubleKeyFrame KeyTime="0:0:0.45" Value="1.0" />
+                    <LinearDoubleKeyFrame KeyTime="0:0:0.68" Value="0.5" />
+                    <LinearDoubleKeyFrame KeyTime="0:0:0.90" Value="0.7" />
+                </DoubleAnimationUsingKeyFrames>
+                <!-- Bar 3: ~600ms cycle -->
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Bar3Scale"
+                                               Storyboard.TargetProperty="ScaleY">
+                    <LinearDoubleKeyFrame KeyTime="0:0:0.00" Value="0.5" />
+                    <LinearDoubleKeyFrame KeyTime="0:0:0.15" Value="0.95" />
+                    <LinearDoubleKeyFrame KeyTime="0:0:0.30" Value="0.4" />
+                    <LinearDoubleKeyFrame KeyTime="0:0:0.45" Value="0.8" />
+                    <LinearDoubleKeyFrame KeyTime="0:0:0.60" Value="0.5" />
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
+        </Grid.Resources>
+    </Grid>
+</UserControl>

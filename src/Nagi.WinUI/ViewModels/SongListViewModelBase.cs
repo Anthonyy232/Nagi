@@ -43,6 +43,13 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
     [ObservableProperty] public partial int SongsPerPage { get; set; } = 50;
     [ObservableProperty] public partial bool HasNextPage { get; set; }
     [ObservableProperty] public partial bool HasPreviousPage { get; set; }
+
+    /// <summary>
+    ///     The Id of the song that is currently playing in the player, mirrored from
+    ///     <see cref="IMusicPlaybackService.CurrentTrack"/> so list rows can show a
+    ///     "now playing" indicator. Null when nothing is playing.
+    /// </summary>
+    [ObservableProperty] public partial Guid? CurrentPlayingSongId { get; set; }
     
     // Configures whether this view uses bounded pagination or infinite continuous scrolling.
     public bool IsPaginationEnabled { get; set; } = true;
@@ -86,8 +93,25 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
         Songs.CollectionChanged += OnSongsCollectionChanged;
         _playlistService.PlaylistsChanged += OnPlaylistsChanged;
 
+        // Mirror the playback service's current track Id so row "now playing" indicators
+        // can react. Initialize from the current state in case a track is already playing
+        // when this view model is constructed (e.g. navigating to a list while music plays).
+        CurrentPlayingSongId = _playbackService.CurrentTrack?.Id;
+        _playbackService.TrackChanged += OnPlaybackTrackChanged;
+
         UpdateSortOrderButtonText(CurrentSortOrder);
         _ = InitializeSettingsAsync();
+    }
+
+    private void OnPlaybackTrackChanged()
+    {
+        if (_isDisposed) return;
+        var newId = _playbackService.CurrentTrack?.Id;
+        _dispatcherService.TryEnqueue(() =>
+        {
+            if (_isDisposed) return;
+            CurrentPlayingSongId = newId;
+        });
     }
 
     private void OnPlaylistsChanged(object? sender, EventArgs e)
@@ -898,6 +922,7 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
         _stateLock.Dispose();
         
         _playlistService.PlaylistsChanged -= OnPlaylistsChanged;
+        _playbackService.TrackChanged -= OnPlaybackTrackChanged;
         Songs.CollectionChanged -= OnSongsCollectionChanged;
 
         _isDisposed = true;

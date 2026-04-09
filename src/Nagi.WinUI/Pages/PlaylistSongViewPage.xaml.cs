@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Core.Models;
 using Nagi.WinUI.Navigation;
@@ -26,6 +27,7 @@ public sealed partial class PlaylistSongViewPage : Page
     private bool _isSearchExpanded;
     private bool _isUpdatingSelection;
     private readonly Microsoft.UI.Dispatching.DispatcherQueue _dispatcherQueue;
+    private NowPlayingIndicatorBinder? _nowPlayingBinder;
 
     public PlaylistSongViewPage()
     {
@@ -33,11 +35,31 @@ public sealed partial class PlaylistSongViewPage : Page
         _dispatcherQueue = this.DispatcherQueue;
         ViewModel = App.Services!.GetRequiredService<PlaylistSongListViewModel>();
         _logger = App.Services!.GetRequiredService<ILogger<PlaylistSongViewPage>>();
-        _libraryReader = App.Services!.GetRequiredService<ILibraryReader>(); // Inject ILibraryReader
+        _libraryReader = App.Services!.GetRequiredService<ILibraryReader>();
         DataContext = ViewModel;
+
+        Loaded += OnNowPlayingBinderAttach;
+        Unloaded += OnNowPlayingBinderDetach;
 
         Loaded += OnPageLoaded;
         _logger.LogDebug("PlaylistSongViewPage initialized.");
+    }
+
+    private void OnNowPlayingBinderAttach(object sender, RoutedEventArgs e)
+    {
+        if (_nowPlayingBinder is not null) return;
+        _nowPlayingBinder = new NowPlayingIndicatorBinder(
+            SongsListView,
+            ViewModel,
+            App.Services!.GetRequiredService<PlayerViewModel>(),
+            (Brush)Application.Current.Resources["AppPrimaryColorBrush"]);
+        _nowPlayingBinder.Refresh();
+    }
+
+    private void OnNowPlayingBinderDetach(object sender, RoutedEventArgs e)
+    {
+        _nowPlayingBinder?.Dispose();
+        _nowPlayingBinder = null;
     }
 
     public PlaylistSongListViewModel ViewModel { get; }
@@ -202,7 +224,6 @@ public sealed partial class PlaylistSongViewPage : Page
         if (!SongsListView.SelectedItems.Contains(rightClickedSong))
             SongsListView.SelectedItem = rightClickedSong;
 
-        // NEW: Populate "Go to artist" submenu
         if (menuFlyout.Items.OfType<MenuFlyoutSubItem>()
                 .FirstOrDefault(item => item.Name == "GoToArtistSubMenu") is { } goToArtistSubMenu)
         {

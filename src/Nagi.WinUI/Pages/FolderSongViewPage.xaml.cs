@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.WinUI.Models;
 using Nagi.WinUI.Navigation;
@@ -27,6 +28,7 @@ public sealed partial class FolderSongViewPage : Page
     private bool _isSearchExpanded;
     private bool _isUpdatingSelection;
     private readonly Microsoft.UI.Dispatching.DispatcherQueue _dispatcherQueue;
+    private NowPlayingIndicatorBinder? _nowPlayingBinder;
 
     public FolderSongViewPage()
     {
@@ -34,10 +36,33 @@ public sealed partial class FolderSongViewPage : Page
         _dispatcherQueue = this.DispatcherQueue;
         ViewModel = App.Services!.GetRequiredService<FolderSongListViewModel>();
         _logger = App.Services!.GetRequiredService<ILogger<FolderSongViewPage>>();
-        _libraryReader = App.Services!.GetRequiredService<ILibraryReader>(); // Inject ILibraryReader
+        _libraryReader = App.Services!.GetRequiredService<ILibraryReader>();
         DataContext = ViewModel;
 
+        Loaded += OnNowPlayingBinderAttach;
+        Unloaded += OnNowPlayingBinderDetach;
+
         Loaded += OnPageLoaded;
+    }
+
+    private void OnNowPlayingBinderAttach(object sender, RoutedEventArgs e)
+    {
+        if (_nowPlayingBinder is not null) return;
+        // FolderContentsListView holds FolderContentItem (folders + songs); supply a custom
+        // extractor that pulls the underlying Song.Id from song-typed items.
+        _nowPlayingBinder = new NowPlayingIndicatorBinder(
+            FolderContentsListView,
+            ViewModel,
+            App.Services!.GetRequiredService<PlayerViewModel>(),
+            (Brush)Application.Current.Resources["AppPrimaryColorBrush"],
+            songIdExtractor: item => (item as FolderContentItem)?.Song?.Id);
+        _nowPlayingBinder.Refresh();
+    }
+
+    private void OnNowPlayingBinderDetach(object sender, RoutedEventArgs e)
+    {
+        _nowPlayingBinder?.Dispose();
+        _nowPlayingBinder = null;
     }
 
     /// <summary>
@@ -285,7 +310,6 @@ public sealed partial class FolderSongViewPage : Page
                 .FirstOrDefault(item => item.Name == "AddToPlaylistSubMenu") is { } addToPlaylistSubMenu)
             PopulatePlaylistSubMenu(addToPlaylistSubMenu);
 
-        // NEW: Populate "Go to artist" submenu
         if (menuFlyout.Items.OfType<MenuFlyoutSubItem>()
                 .FirstOrDefault(item => item.Name == "GoToArtistSubMenu") is { } goToArtistSubMenu
             && menuFlyout.Target?.DataContext is FolderContentItem { IsSong: true, Song: not null } songContentItem)

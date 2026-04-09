@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Core.Models;
 using Nagi.WinUI.Navigation;
@@ -54,6 +55,8 @@ public sealed partial class AlbumViewPage : Page
     private bool _isSearchExpanded;
     private bool _isUpdatingSelection;
     private readonly Microsoft.UI.Dispatching.DispatcherQueue _dispatcherQueue;
+    private NowPlayingIndicatorBinder? _flatBinder;
+    private NowPlayingIndicatorBinder? _groupedBinder;
 
     public AlbumViewPage()
     {
@@ -61,11 +64,34 @@ public sealed partial class AlbumViewPage : Page
         _dispatcherQueue = this.DispatcherQueue;
         ViewModel = App.Services!.GetRequiredService<AlbumViewViewModel>();
         _logger = App.Services!.GetRequiredService<ILogger<AlbumViewPage>>();
-        _libraryReader = App.Services!.GetRequiredService<ILibraryReader>(); // Inject ILibraryReader
+        _libraryReader = App.Services!.GetRequiredService<ILibraryReader>();
         DataContext = ViewModel;
+
+        // Recreated on each Loaded so cached-page re-navigations get a fresh binder.
+        Loaded += OnNowPlayingBinderAttach;
+        Unloaded += OnNowPlayingBinderDetach;
 
         Loaded += OnPageLoaded;
         _logger.LogDebug("AlbumViewPage initialized.");
+    }
+
+    private void OnNowPlayingBinderAttach(object sender, RoutedEventArgs e)
+    {
+        if (_flatBinder is not null || _groupedBinder is not null) return;
+        var playerViewModel = App.Services!.GetRequiredService<PlayerViewModel>();
+        var playingBrush = (Brush)Application.Current.Resources["AppPrimaryColorBrush"];
+        _flatBinder = new NowPlayingIndicatorBinder(SongsListView, ViewModel, playerViewModel, playingBrush);
+        _groupedBinder = new NowPlayingIndicatorBinder(GroupedSongsListView, ViewModel, playerViewModel, playingBrush);
+        _flatBinder.Refresh();
+        _groupedBinder.Refresh();
+    }
+
+    private void OnNowPlayingBinderDetach(object sender, RoutedEventArgs e)
+    {
+        _flatBinder?.Dispose();
+        _flatBinder = null;
+        _groupedBinder?.Dispose();
+        _groupedBinder = null;
     }
 
     /// <summary>
@@ -314,7 +340,6 @@ public sealed partial class AlbumViewPage : Page
             PopulatePlaylistSubMenu(addToPlaylistSubMenu);
         }
 
-        // NEW: Populate "Go to artist" submenu (supports both grouped and regular ListViews)
         if (menuFlyout.Items.OfType<MenuFlyoutSubItem>()
                 .FirstOrDefault(item => item.Name is "GoToArtistSubMenu" or "GoToArtistSubMenuGrouped") is { } goToArtistSubMenu
             && menuFlyout.Target?.DataContext is Song song)
