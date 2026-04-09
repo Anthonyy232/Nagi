@@ -422,13 +422,15 @@
                                         Visibility="{x:Bind ViewModel.IsArtworkAvailable, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}">
                                         <Border
                                             x:Name="AlbumArtBorder"
-                                            Width="56"
-                                            Height="56"
+                                            Width="{StaticResource FloatingPlayerArtSize}"
+                                            Height="{StaticResource FloatingPlayerArtSize}"
                                             CornerRadius="6">
                                             <imageEx:ImageEx
                                                 x:Name="AlbumArt"
                                                 IsCacheEnabled="True"
                                                 Source="{x:Bind ViewModel.AlbumArtUri, Mode=OneWay, Converter={StaticResource StringToImageSourceConverter}, FallbackValue=null}"
+                                                DecodePixelWidth="{StaticResource FloatingPlayerArtSize}"
+                                                DecodePixelType="Logical"
                                                 Stretch="UniformToFill" />
                                         </Border>
                                     </Button>

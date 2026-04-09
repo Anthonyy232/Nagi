@@ -26,6 +26,7 @@
                 <ResourceDictionary Source="ms-appx:///Styles/InsightsPageColors.xaml" />
                 <styles:InsightsTemplates />
                 <ResourceDictionary Source="ms-appx:///Styles/LyricsPageColors.xaml" />
+                <ResourceDictionary Source="ms-appx:///Styles/ImageExStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

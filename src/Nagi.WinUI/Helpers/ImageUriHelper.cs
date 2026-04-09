@@ -160,4 +160,40 @@ public static class ImageUriHelper
             return null;
         }
     }
+
+    /// <summary>
+    ///     Creates a BitmapImage with an explicit logical decode width. The decode hint must
+    ///     be set BEFORE the URI source so the framework decodes at the requested resolution
+    ///     instead of the source's native size — using new BitmapImage(uri) starts decoding
+    ///     immediately and ignores any subsequent DecodePixelWidth assignment.
+    /// </summary>
+    /// <param name="uriString">The URI string to load.</param>
+    /// <param name="decodePixelWidth">Logical pixel width to decode at. The framework
+    ///     multiplies this by the active DPI scale automatically.</param>
+    /// <returns>A configured BitmapImage, or null on invalid input.</returns>
+    public static ImageSource? GetDecodedBitmap(string? uriString, int decodePixelWidth)
+    {
+        if (string.IsNullOrWhiteSpace(uriString) || decodePixelWidth <= 0)
+            return null;
+
+        try
+        {
+            if (!Uri.TryCreate(uriString, UriKind.Absolute, out var uri))
+            {
+                uri = new Uri(uriString);
+            }
+
+            var bitmap = new BitmapImage
+            {
+                DecodePixelType = DecodePixelType.Logical,
+                DecodePixelWidth = decodePixelWidth,
+            };
+            bitmap.UriSource = uri;
+            return bitmap;
+        }
+        catch
+        {
+            return null;
+        }
+    }
 }

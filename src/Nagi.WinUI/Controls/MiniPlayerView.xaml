@@ -30,7 +30,7 @@
             <Border.Background>
                 <media:ImageBlendBrush
                     Mode="Multiply"
-                    Source="{x:Bind ViewModel.AlbumArtUri, Mode=OneWay, Converter={StaticResource StringToImageSourceConverter}}"
+                    Source="{x:Bind ViewModel.AlbumArtUri, Mode=OneWay, Converter={StaticResource StringToDecodedImageSourceConverter}, ConverterParameter=400}"
                     Stretch="UniformToFill" />
             </Border.Background>
         </Border>

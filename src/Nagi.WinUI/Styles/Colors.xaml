@@ -24,6 +24,8 @@
     <x:Double x:Key="HeaderImageSize">150</x:Double>
     <!-- Album cards (within artist view): Smaller for compact display -->
     <x:Double x:Key="AlbumCardImageSize">110</x:Double>
+    <!-- Floating player thumbnail: persistent dock art at the bottom of MainPage -->
+    <x:Double x:Key="FloatingPlayerArtSize">56</x:Double>
 
     <!-- Card Container Sizes -->
     <x:Double x:Key="ArtistGridCardWidth">180</x:Double>
