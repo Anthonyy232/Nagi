@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
@@ -24,6 +25,7 @@ public sealed partial class LibraryPage : Page
     private readonly ILibraryReader _libraryReader;
     private bool _isSearchExpanded;
     private readonly Microsoft.UI.Dispatching.DispatcherQueue _dispatcherQueue;
+    private NowPlayingIndicatorBinder? _nowPlayingBinder;
 
     public LibraryPage()
     {
@@ -31,11 +33,32 @@ public sealed partial class LibraryPage : Page
         _dispatcherQueue = this.DispatcherQueue;
         ViewModel = App.Services!.GetRequiredService<LibraryViewModel>();
         _logger = App.Services!.GetRequiredService<ILogger<LibraryPage>>();
-        _libraryReader = App.Services!.GetRequiredService<ILibraryReader>(); // Inject ILibraryReader
+        _libraryReader = App.Services!.GetRequiredService<ILibraryReader>();
         DataContext = ViewModel;
+
+        // Recreated on each Loaded so cached-page re-navigations get a fresh binder.
+        Loaded += OnNowPlayingBinderAttach;
+        Unloaded += OnNowPlayingBinderDetach;
 
         Loaded += OnPageLoaded;
         _logger.LogDebug("LibraryPage initialized.");
+    }
+
+    private void OnNowPlayingBinderAttach(object sender, RoutedEventArgs e)
+    {
+        if (_nowPlayingBinder is not null) return;
+        _nowPlayingBinder = new NowPlayingIndicatorBinder(
+            SongsListView,
+            ViewModel,
+            App.Services!.GetRequiredService<PlayerViewModel>(),
+            (Brush)Application.Current.Resources["AppPrimaryColorBrush"]);
+        _nowPlayingBinder.Refresh();
+    }
+
+    private void OnNowPlayingBinderDetach(object sender, RoutedEventArgs e)
+    {
+        _nowPlayingBinder?.Dispose();
+        _nowPlayingBinder = null;
     }
 
     /// <summary>
@@ -185,7 +208,6 @@ public sealed partial class LibraryPage : Page
 
         if (menuFlyout.Target?.DataContext is not Song rightClickedSong) return;
 
-        // NEW: Populate "Go to artist" submenu
         if (menuFlyout.Items.OfType<MenuFlyoutSubItem>()
                 .FirstOrDefault(item => item.Name == "GoToArtistSubMenu") is { } goToArtistSubMenu)
         {

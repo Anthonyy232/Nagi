@@ -302,8 +302,9 @@
                                                           Source="{x:Bind uihelpers:ImageUriHelper.GetUriWithCacheBuster(AlbumArtUriFromTrack, FileModifiedDate), Mode=OneTime}" />
                                     </Border>
                                 </Button>
+                                <uicontrols:NowPlayingIndicator x:Name="NowPlayingIndicator" Grid.Column="0" Width="42" Height="42" HorizontalAlignment="Center" VerticalAlignment="Center" />
                                 <TextBlock Grid.Column="1" MinWidth="30" HorizontalAlignment="Center" Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}" Text="{x:Bind TrackNumber}" />
-                                <TextBlock Grid.Column="2" Style="{StaticResource SongListViewPageBodyStrongTextBlockStyle}" Text="{x:Bind Title}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Center" />
+                                <TextBlock x:Name="SongTitle" Grid.Column="2" Style="{StaticResource SongListViewPageBodyStrongTextBlockStyle}" Text="{x:Bind Title}" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" VerticalAlignment="Center" />
                                 <TextBlock Grid.Column="3" Margin="0,0,12,0" HorizontalAlignment="Right" Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}" Text="{x:Bind Duration, Converter={StaticResource TimeSpanToTimeStringConverter}}" />
                             </Grid>
                         </DataTemplate>
@@ -382,12 +383,20 @@
                                     Source="{x:Bind uihelpers:ImageUriHelper.GetUriWithCacheBuster(AlbumArtUriFromTrack, FileModifiedDate), Mode=OneTime}" />
                             </Border>
                         </Button>
+                        <uicontrols:NowPlayingIndicator
+                            x:Name="NowPlayingIndicator"
+                            Grid.Column="0"
+                            Width="42"
+                            Height="42"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" />
 
                         <TextBlock Grid.Column="1" MinWidth="30" HorizontalAlignment="Center"
                                    Style="{StaticResource SongListViewPageSecondaryTextBlockStyle}"
                                    Text="{x:Bind TrackDisplay}" />
 
-                        <TextBlock Grid.Column="2"
+                        <TextBlock x:Name="SongTitle"
+                                   Grid.Column="2"
                                    Style="{StaticResource SongListViewPageBodyStrongTextBlockStyle}"
                                    Text="{x:Bind Title}" TextTrimming="CharacterEllipsis"
                                    TextWrapping="NoWrap"
