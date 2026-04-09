@@ -416,6 +416,32 @@ public class StringToImageSourceConverter : IValueConverter
 }
 
 /// <summary>
+///     Converts a URI string to a BitmapImage with an explicit logical decode width supplied
+///     via ConverterParameter. Use this for surfaces (e.g. brushes) that can't set
+///     DecodePixelWidth directly on the bitmap, when the source resolution is much larger
+///     than the rendered area and you want to control memory + sharpness.
+/// </summary>
+public class StringToDecodedImageSourceConverter : IValueConverter
+{
+    public object? Convert(object? value, Type targetType, object? parameter, string language)
+    {
+        var decodePixelWidth = parameter switch
+        {
+            int i => i,
+            double d => (int)d,
+            string s when int.TryParse(s, out var n) => n,
+            _ => 0,
+        };
+        return Helpers.ImageUriHelper.GetDecodedBitmap(value as string, decodePixelWidth);
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+/// <summary>
 ///     Converts a float or double to a formatted string with a fixed number of decimal places.
 ///     Default is 1 decimal place (e.g., "3.5" or "-12.0").
 /// </summary>

@@ -9,6 +9,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.Core.Constants;
 using Nagi.WinUI.Helpers;
@@ -159,7 +160,13 @@ public sealed partial class PlaylistPage : Page
             string? selectedCoverImageUriForDialog = null;
 
             var inputTextBox = new TextBox { PlaceholderText = Nagi.WinUI.Resources.Strings.PlaylistPage_CreateDialog_Placeholder };
-            var imagePreview = new ImageEx.ImageEx { Stretch = Stretch.UniformToFill, IsCacheEnabled = true };
+            var imagePreview = new ImageEx.ImageEx
+            {
+                Stretch = Stretch.UniformToFill,
+                IsCacheEnabled = true,
+                DecodePixelWidth = 80,
+                DecodePixelType = DecodePixelType.Logical
+            };
             var imagePlaceholder = new FontIcon { Glyph = "\uE91B", FontSize = 48 };
             var imageGrid = new Grid
             {

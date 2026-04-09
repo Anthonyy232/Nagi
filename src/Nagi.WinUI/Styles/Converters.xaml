@@ -14,6 +14,7 @@ to avoid duplicate declarations across pages and controls.
 
     <!-- String and collection converters -->
     <converters:StringToImageSourceConverter x:Key="StringToImageSourceConverter" />
+    <converters:StringToDecodedImageSourceConverter x:Key="StringToDecodedImageSourceConverter" />
     <converters:CollectionToVisibilityConverter x:Key="CollectionToVisibilityConverter" />
     <converters:CollectionCountToVisibilityConverter x:Key="CollectionCountToVisibilityConverter" />
     <converters:CollectionCountToVisibilityConverter x:Key="InverseCollectionCountToVisibilityConverter" Invert="True" />
