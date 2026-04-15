@@ -271,13 +271,38 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
                                      extension.Equals(".oga", StringComparison.OrdinalIgnoreCase);
 
                 _currentMedia = new Media(new Uri(song.FilePath));
-                
-                // Use native demuxer for Ogg containers (.opus/.ogg/.oga) to fix sync, force avcodec for others (MP3/FLAC/etc)
+
+                // Use native demuxer for Ogg containers (.opus/.ogg/.oga), force avcodec for others.
+                // The avcodec (FFmpeg) demuxer handles edge-case MP3s better than VLC's native 'es' demuxer,
+                // but can misdetect formats (e.g. some MP3s as h263 video), so we hint the format explicitly.
                 if (!isOggContainer)
                 {
                     _currentMedia.AddOption(":demux=avcodec");
+
+                    var formatHint = extension.ToLowerInvariant() switch
+                    {
+                        ".mp3" => "mp3",
+                        ".flac" => "flac",
+                        ".wav" => "wav",
+                        ".aac" => "aac",
+                        ".m4a" or ".m4b" or ".m4p" or ".mp4" or ".m4v" => "mp4",
+                        ".wma" or ".asf" => "asf",
+                        ".aiff" => "aiff",
+                        ".ape" => "ape",
+                        ".dsf" => "dsf",
+                        ".mpc" or ".mpp" => "mpc",
+                        ".wv" => "wv",
+                        ".webm" => "matroska",
+                        ".mpeg" or ".mpg" or ".mpe" or ".mpv" or ".m2v" => "mpeg",
+                        _ => (string?)null
+                    };
+
+                    if (formatHint != null)
+                    {
+                        _currentMedia.AddOption($":avformat-format={formatHint}");
+                    }
                 }
-                
+
                 _mediaPlayer!.Media = _currentMedia;
                 // Do NOT dispose the media immediately - let it be disposed when no longer needed
             }).ConfigureAwait(false);
