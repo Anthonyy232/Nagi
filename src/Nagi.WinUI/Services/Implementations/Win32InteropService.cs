@@ -230,6 +230,7 @@ public class Win32InteropService : IWin32InteropService, IDisposable
         public const int ICON_SMALL = 0;
         public const int ICON_BIG = 1;
 
+
         // Constants for GetDeviceCaps
         public const int LOGPIXELSX = 88; // Logical pixels/inch in X
 
