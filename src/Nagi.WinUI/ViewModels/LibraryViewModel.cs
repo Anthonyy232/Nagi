@@ -84,7 +84,27 @@ public partial class LibraryViewModel : SongListViewModelBase
         _logger.LogDebug("Starting initial background library refresh");
         // We don't await this because we want the UI to be responsive.
         // The LibraryContentChanged event will trigger a refresh when it finishes.
-        _ = _libraryService.RefreshAllFoldersAsync();
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                // Run the dedup pass before refresh so the UI doesn't briefly show duplicate
+                // entries from a prior (pre-canonicalization) run.
+                await _libraryService.DeduplicateLibraryAsync().ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Library deduplication pass failed during startup.");
+            }
+            try
+            {
+                await _libraryService.RefreshAllFoldersAsync().ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Initial background library refresh failed.");
+            }
+        });
     }
 
     private void OnLibraryContentChanged(object? sender, LibraryContentChangedEventArgs e)

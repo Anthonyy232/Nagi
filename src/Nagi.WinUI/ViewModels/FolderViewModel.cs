@@ -270,7 +270,14 @@ public partial class FolderViewModel : ObservableObject
     {
         if (string.IsNullOrWhiteSpace(folderPath) || IsAnyOperationInProgress) return;
 
-        if (Folders.Any(f => f.Path.Equals(folderPath, StringComparison.OrdinalIgnoreCase)))
+        // Pre-flight textual dedup using the shared canonicalizer. This won't collapse
+        // mapped-drive vs UNC (that requires platform resolution in LibraryService), but it
+        // catches case, separator, and Unicode variations so the user gets an immediate
+        // "already added" message instead of a silent no-op.
+        var canonicalNew = Nagi.Core.Helpers.PathCanonicalizer.Normalize(folderPath);
+        if (!string.IsNullOrEmpty(canonicalNew) &&
+            Folders.Any(f => Nagi.Core.Helpers.PathCanonicalizer.Normalize(f.Path)
+                .Equals(canonicalNew, StringComparison.OrdinalIgnoreCase)))
         {
             _playerViewModel.GlobalOperationStatusMessage = Nagi.WinUI.Resources.Strings.Folders_AddFolder_Exists;
             return;

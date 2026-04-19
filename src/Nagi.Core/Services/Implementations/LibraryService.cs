@@ -197,6 +197,23 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
     #region Folder Management
 
+    /// <summary>
+    ///     Canonicalizes a path using the platform-specific IFileSystemService when available,
+    ///     falling back to pure textual canonicalization. Keeps production behavior (full UNC
+    ///     resolution) and test behavior (mocks that return null) both correct.
+    /// </summary>
+    private string CanonicalizePath(string path)
+    {
+        if (string.IsNullOrWhiteSpace(path)) return string.Empty;
+        try
+        {
+            var result = _fileSystem.NormalizePath(path);
+            if (!string.IsNullOrEmpty(result)) return result;
+        }
+        catch { /* fall through */ }
+        return Nagi.Core.Helpers.PathCanonicalizer.Normalize(path);
+    }
+
     /// <inheritdoc />
     public async Task<Folder?> AddFolderAsync(string path, string? name = null)
     {
@@ -204,7 +221,11 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
 
-        var normalizedPath = path.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+        // Canonicalize so that Z:\X and \\server\share\X resolve to the same identity.
+        // Folder.Path is NOCASE-collated, but NOCASE only folds ASCII case — it doesn't
+        // collapse mapped-drive vs UNC or Unicode equivalence classes.
+        var normalizedPath = CanonicalizePath(path);
+        if (string.IsNullOrEmpty(normalizedPath)) return null;
 
         var existingFolder = await context.Folders.AsNoTracking()
             .FirstOrDefaultAsync(f => f.Path == normalizedPath).ConfigureAwait(false);
@@ -348,7 +369,9 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     {
         if (string.IsNullOrWhiteSpace(path)) return null;
 
-        var normalizedPath = path.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+        var normalizedPath = CanonicalizePath(path);
+        if (string.IsNullOrEmpty(normalizedPath)) return null;
+
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         return await context.Folders.AsNoTracking().FirstOrDefaultAsync(f => f.Path == normalizedPath).ConfigureAwait(false);
     }
@@ -557,7 +580,14 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     /// <param name="progress">Optional progress reporter for scan status updates.</param>
     /// <param name="cancellationToken">Optional cancellation token to cancel the scan.</param>
     /// <returns>True if changes were made to the library; otherwise, false.</returns>
-    public async Task<bool> RescanFolderForMusicAsync(Guid folderId, bool forceFullScan, IProgress<ScanProgress>? progress = null,
+    public Task<bool> RescanFolderForMusicAsync(Guid folderId, bool forceFullScan, IProgress<ScanProgress>? progress = null,
+        CancellationToken cancellationToken = default)
+    {
+        return RescanFolderForMusicAsync(folderId, forceFullScan, allowFolderRemovalOnMissing: true, progress, cancellationToken);
+    }
+
+    private async Task<bool> RescanFolderForMusicAsync(Guid folderId, bool forceFullScan, bool allowFolderRemovalOnMissing,
+        IProgress<ScanProgress>? progress = null,
         CancellationToken cancellationToken = default)
     {
         try
@@ -584,7 +614,10 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                     return false;
                 }
 
-                _logger.LogInformation("Scanning folder '{FolderName}'...", folder.Name);
+                var isNetwork = _fileSystem.IsNetworkPath(folder.Path);
+                _logger.LogInformation(
+                    "Scanning folder '{FolderName}' (path={FolderPath}, network={IsNetwork}, forceFull={ForceFull}).",
+                    folder.Name, folder.Path, isNetwork, forceFullScan);
 
                 try
                 {
@@ -592,6 +625,19 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
                     if (!_fileSystem.DirectoryExists(folder.Path))
                     {
+                        if (!allowFolderRemovalOnMissing)
+                        {
+                            // Auto-refresh/batch path: folder being unreachable (e.g., NAS not mounted
+                            // at app launch, removable drive not inserted) must NOT permanently remove
+                            // the user's folder from the library. Just warn and skip.
+                            _logger.LogWarning(
+                                "Folder path '{FolderPath}' not reachable during auto-refresh. Skipping folder {FolderId}; no changes will be made.",
+                                folder.Path, folder.Id);
+                            progress?.Report(new ScanProgress
+                                { StatusText = Resources.Strings.Status_ScanFailed, Percentage = 100 });
+                            return false;
+                        }
+
                         _logger.LogWarning(
                             "Folder path '{FolderPath}' no longer exists. Removing folder {FolderId} from library.",
                             folder.Path, folder.Id);
@@ -612,6 +658,27 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                     cancellationToken.ThrowIfCancellationRequested();
 
                     var allFilePathsToDelete = filesRemovedFromDisk.Distinct().ToList();
+
+                    // Safety guard: if the scan proposes to delete the majority of existing songs
+                    // while barely adding any, something upstream failed (e.g., a transient NAS
+                    // enumeration failure). Skip the delete pass to avoid data loss; the next
+                    // successful scan will reconcile correctly.
+                    if (allFilePathsToDelete.Count >= 50 || allFilePathsToDelete.Count * 2 > filesToAdd.Count + filesToUpdate.Count + 50)
+                    {
+                        await using var guardContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+                        var existingCount = await guardContext.Songs.AsNoTracking()
+                            .CountAsync(s => s.FolderId == folderId, cancellationToken).ConfigureAwait(false);
+                        if (existingCount > 0 &&
+                            allFilePathsToDelete.Count > Math.Max(50, existingCount / 2) &&
+                            filesToAdd.Count < allFilePathsToDelete.Count / 10)
+                        {
+                            _logger.LogError(
+                                "Scan safety guard tripped for folder {FolderId}: proposed to delete {DeleteCount}/{ExistingCount} songs while only adding {AddCount}. Skipping delete pass; likely a transient enumeration failure (NAS blip / unmounted drive).",
+                                folderId, allFilePathsToDelete.Count, existingCount, filesToAdd.Count);
+                            allFilePathsToDelete = new List<string>();
+                            filesRemovedFromDisk = new List<string>();
+                        }
+                    }
 
                     if (allFilePathsToDelete.Any())
                     {
@@ -944,7 +1011,11 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                         });
                     });
 
-                    var changes = await RescanFolderForMusicAsync(folder.Id, forceFullScan, newProgress, cancellationToken)
+                    // Auto-refresh path: never auto-remove folders that are momentarily unreachable
+                    // (e.g., NAS not mounted yet, external drive unplugged). Only explicit user
+                    // rescan (which calls the public overload) may trigger folder removal.
+                    var changes = await RescanFolderForMusicAsync(folder.Id, forceFullScan,
+                            allowFolderRemovalOnMissing: false, newProgress, cancellationToken)
                         .ConfigureAwait(false);
                     if (changes) anyChangesMade = true;
 
@@ -3774,11 +3845,18 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         // Producer: Extract metadata concurrently and write to channel using Parallel.ForEachAsync
         // This limits both concurrency AND task object allocation (unlike Task.WhenAll which creates all tasks upfront)
+        var isNetworkFolder = _fileSystem.IsNetworkPath(baseFolderPath);
+        var failureSummary = new ConcurrentDictionary<string, int>();
         var producerTask = Task.Run(async () =>
         {
             try
             {
-                var degreeOfParallelism = Environment.ProcessorCount;
+                // NAS/SMB serializes I/O per session; hammering it with ProcessorCount concurrent
+                // opens increases timeouts far more than it speeds up extraction. Cap at 4 for
+                // network paths; local disks keep the full CPU-count concurrency.
+                var degreeOfParallelism = isNetworkFolder
+                    ? Math.Min(4, Environment.ProcessorCount)
+                    : Environment.ProcessorCount;
 
                 await Parallel.ForEachAsync(
                     filesToProcess,
@@ -3792,7 +3870,17 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                         try
                         {
                             var metadata = await _metadataService.ExtractMetadataAsync(filePath, baseFolderPath).ConfigureAwait(false);
-                            
+
+                            // Retry once for transient failure classes. UnsupportedFormat / CorruptFile
+                            // are permanent — no point retrying. Timeouts and file-access errors are
+                            // often transient on network storage (brief SMB stall, renegotiation).
+                            if (metadata.ExtractionFailed &&
+                                (metadata.ErrorMessage == "ExtractionTimeout" || metadata.ErrorMessage == "FileAccessError"))
+                            {
+                                try { await Task.Delay(500, ct).ConfigureAwait(false); } catch (OperationCanceledException) { throw; }
+                                metadata = await _metadataService.ExtractMetadataAsync(filePath, baseFolderPath).ConfigureAwait(false);
+                            }
+
                             if (!metadata.ExtractionFailed)
                             {
                                 await channel.Writer.WriteAsync(metadata, ct).ConfigureAwait(false);
@@ -3800,7 +3888,9 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                             }
                             else
                             {
-                                _logger.LogWarning("Failed to extract metadata from file: {FilePath}", filePath);
+                                var code = metadata.ErrorMessage ?? "Unknown";
+                                failureSummary.AddOrUpdate(code, 1, (_, n) => n + 1);
+                                _logger.LogDebug("Failed to extract metadata ({ErrorCode}) from file: {FilePath}", code, filePath);
                             }
                         }
                         finally
@@ -3893,6 +3983,14 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         await Task.WhenAll(producerTask, consumerTask).ConfigureAwait(false);
         await scanTransaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+
+        if (!failureSummary.IsEmpty)
+        {
+            var breakdown = string.Join(", ", failureSummary.OrderByDescending(kv => kv.Value).Select(kv => $"{kv.Key}={kv.Value}"));
+            _logger.LogWarning("Metadata extraction completed with {TotalFailures} failures ({Breakdown}). Individual paths logged at Debug level.",
+                failureSummary.Values.Sum(), breakdown);
+        }
+
         return (totalSaved, discoveredDirectories);
     }
 
@@ -5659,6 +5757,150 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     {
         Dispose(true);
         GC.SuppressFinalize(this);
+    }
+
+    #endregion
+
+    #region Deduplication
+
+    /// <summary>
+    ///     Detects and collapses library rows that represent the same physical folder or file
+    ///     under different path representations (e.g., mapped drive vs UNC, pre-canonicalization
+    ///     differences). Safe to run at any time; no-ops if no duplicates exist.
+    ///     Returns the number of duplicate rows removed.
+    /// </summary>
+    public async Task<int> DeduplicateLibraryAsync(CancellationToken cancellationToken = default)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+
+        var foldersCollapsed = await CollapseDuplicateFoldersAsync(context, cancellationToken).ConfigureAwait(false);
+        var songsCollapsed = await CollapseDuplicateSongsAsync(context, cancellationToken).ConfigureAwait(false);
+
+        if (foldersCollapsed == 0 && songsCollapsed == 0)
+        {
+            _logger.LogDebug("Library deduplication pass: no duplicates found.");
+            return 0;
+        }
+
+        await CleanUpOrphanedEntitiesAsync(context, cancellationToken).ConfigureAwait(false);
+        LibraryContentChanged?.Invoke(this, new LibraryContentChangedEventArgs(LibraryChangeType.LibraryRescanned));
+
+        _logger.LogInformation(
+            "Library deduplication merged {FolderDupes} folder duplicates and removed {SongDupes} song duplicates.",
+            foldersCollapsed, songsCollapsed);
+
+        return foldersCollapsed + songsCollapsed;
+    }
+
+    private async Task<int> CollapseDuplicateFoldersAsync(MusicDbContext context, CancellationToken ct)
+    {
+        var folders = await context.Folders.ToListAsync(ct).ConfigureAwait(false);
+        if (folders.Count == 0) return 0;
+
+        // Group by canonical path so Z:\X and \\server\share\X (same physical dir) group together.
+        var groups = folders
+            .Where(f => !string.IsNullOrWhiteSpace(f.Path))
+            .GroupBy(f => CanonicalizePath(f.Path), StringComparer.OrdinalIgnoreCase)
+            .Where(g => g.Count() > 1)
+            .ToList();
+
+        if (groups.Count == 0)
+        {
+            // Still rewrite non-canonical Path strings to their canonical form.
+            var rewriteCount = 0;
+            foreach (var folder in folders)
+            {
+                var canon = CanonicalizePath(folder.Path);
+                if (!string.IsNullOrEmpty(canon) && !string.Equals(canon, folder.Path, StringComparison.Ordinal))
+                {
+                    folder.Path = canon;
+                    rewriteCount++;
+                }
+            }
+            if (rewriteCount > 0) await context.SaveChangesAsync(ct).ConfigureAwait(false);
+            return 0;
+        }
+
+        var removed = 0;
+        foreach (var group in groups)
+        {
+            // Keep the oldest row (smallest LastModifiedDate, then Id) as survivor so playlists/stats
+            // referencing its descendant Songs survive intact.
+            var survivor = group
+                .OrderBy(f => f.LastModifiedDate ?? DateTime.MaxValue)
+                .ThenBy(f => f.Id)
+                .First();
+            survivor.Path = group.Key;
+
+            foreach (var dup in group.Where(f => f.Id != survivor.Id))
+            {
+                // Re-point any subfolders.
+                var subFolders = await context.Folders
+                    .Where(f => f.ParentFolderId == dup.Id)
+                    .ToListAsync(ct).ConfigureAwait(false);
+                foreach (var sub in subFolders) sub.ParentFolderId = survivor.Id;
+
+                // Re-point songs. FilePath-collisions between folders are handled by the song dedup pass.
+                await context.Songs
+                    .Where(s => s.FolderId == dup.Id)
+                    .ExecuteUpdateAsync(setters => setters.SetProperty(s => s.FolderId, survivor.Id), ct)
+                    .ConfigureAwait(false);
+
+                context.Folders.Remove(dup);
+                removed++;
+            }
+        }
+
+        await context.SaveChangesAsync(ct).ConfigureAwait(false);
+        return removed;
+    }
+
+    private async Task<int> CollapseDuplicateSongsAsync(MusicDbContext context, CancellationToken ct)
+    {
+        // Project minimal columns; we only need Id + FilePath + a few fields to pick a survivor.
+        var songs = await context.Songs
+            .AsNoTracking()
+            .Select(s => new { s.Id, s.FilePath, s.FileModifiedDate, s.PlayCount, s.IsLoved, s.DateAddedToLibrary })
+            .ToListAsync(ct).ConfigureAwait(false);
+
+        if (songs.Count == 0) return 0;
+
+        var groups = songs
+            .Where(s => !string.IsNullOrWhiteSpace(s.FilePath))
+            .GroupBy(s => CanonicalizePath(s.FilePath), StringComparer.OrdinalIgnoreCase)
+            .Where(g => g.Count() > 1)
+            .ToList();
+
+        if (groups.Count == 0) return 0;
+
+        var idsToDelete = new List<Guid>();
+        foreach (var group in groups)
+        {
+            // Simple merge policy: keep the row with the most user signal (PlayCount first, then
+            // IsLoved, then most recently added). Drop the rest outright — no stat merging.
+            var survivor = group
+                .OrderByDescending(s => s.PlayCount)
+                .ThenByDescending(s => s.IsLoved)
+                .ThenByDescending(s => s.DateAddedToLibrary ?? DateTime.MinValue)
+                .First();
+            idsToDelete.AddRange(group.Where(s => s.Id != survivor.Id).Select(s => s.Id));
+        }
+
+        if (idsToDelete.Count == 0) return 0;
+
+        // ExecuteDeleteAsync cascades via the Song/ListenHistory/PlaylistSong relationships (Cascade).
+        // Process in chunks to keep the IN() clause manageable.
+        const int chunkSize = 500;
+        var totalDeleted = 0;
+        for (int i = 0; i < idsToDelete.Count; i += chunkSize)
+        {
+            var chunk = idsToDelete.GetRange(i, Math.Min(chunkSize, idsToDelete.Count - i));
+            totalDeleted += await context.Songs
+                .Where(s => chunk.Contains(s.Id))
+                .ExecuteDeleteAsync(ct).ConfigureAwait(false);
+        }
+
+        return totalDeleted;
     }
 
     #endregion
