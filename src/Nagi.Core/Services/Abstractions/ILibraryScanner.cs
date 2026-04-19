@@ -26,4 +26,11 @@ public interface ILibraryScanner
 
     Task<Artist?> GetArtistDetailsAsync(Guid artistId, bool allowOnlineFetch, CancellationToken cancellationToken = default);
     Task StartArtistMetadataBackgroundFetchAsync();
+
+    /// <summary>
+    ///     Collapses library rows that represent the same physical folder or file under different
+    ///     path representations (e.g., mapped drive vs UNC). Returns the number of duplicate rows
+    ///     removed. Safe to invoke repeatedly.
+    /// </summary>
+    Task<int> DeduplicateLibraryAsync(CancellationToken cancellationToken = default);
 }

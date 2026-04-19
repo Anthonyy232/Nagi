@@ -28,4 +28,17 @@ public interface IFileSystemService
     string? GetDirectoryName(string path);
     string GetExtension(string path);
     string Combine(params string[] paths);
+
+    /// <summary>
+    ///     Canonicalizes a folder/file path. Resolves mapped network drives to their UNC backing
+    ///     path when possible, applies Unicode NFC, normalizes separators, uppercases the drive
+    ///     letter, and trims trailing separators. Intended to produce a stable identity for a path
+    ///     so that semantically identical paths compare equal.
+    /// </summary>
+    string NormalizePath(string path);
+
+    /// <summary>
+    ///     Returns true if the path's root resolves to a network drive (UNC or a mapped network drive).
+    /// </summary>
+    bool IsNetworkPath(string path);
 }

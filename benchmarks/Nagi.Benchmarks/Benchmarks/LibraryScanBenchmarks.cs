@@ -153,5 +153,7 @@ public class LibraryScanBenchmarks
             var attributes = File.GetAttributes(path);
             return (attributes & (FileAttributes.Hidden | FileAttributes.System)) != 0;
         }
+        public string NormalizePath(string path) => Nagi.Core.Helpers.PathCanonicalizer.Normalize(path ?? string.Empty);
+        public bool IsNetworkPath(string path) => false;
     }
 }
