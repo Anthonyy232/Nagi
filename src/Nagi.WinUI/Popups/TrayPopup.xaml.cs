@@ -128,10 +128,11 @@ public sealed partial class TrayPopup : Window
         presenter.SetBorderAndTitleBar(true, false);
         AppWindow.SetPresenter(presenter);
 
+        AppWindow.IsShownInSwitchers = false;
+
         var windowHandle = WindowNative.GetWindowHandle(this);
 
         var exStyle = (int)GetWindowLongPtr(windowHandle, GWL_EXSTYLE);
-        exStyle |= WS_EX_TOOLWINDOW;
         exStyle |= WS_EX_LAYERED;
         SetWindowLongPtr(windowHandle, GWL_EXSTYLE, (IntPtr)exStyle);
 
@@ -226,7 +227,6 @@ public sealed partial class TrayPopup : Window
     #region Win32 Interop
 
     private const int GWL_EXSTYLE = -20;
-    private const int WS_EX_TOOLWINDOW = 0x00000080;
     private const int WS_EX_LAYERED = 0x00080000;
     private const uint LWA_ALPHA = 0x00000002;
     private const uint DWMWA_WINDOW_CORNER_PREFERENCE = 33;
