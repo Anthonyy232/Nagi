@@ -62,9 +62,6 @@ public partial class App : Application
     private ILogger<App>? _logger;
     private Window? _window;
 
-    // Current version of LibVLC.Windows package - update this when upgrading LibVLC
-    private const string LibVlcVersion = "4.0.0-alpha-20260125";
-
     public App()
     {
         CurrentApp = this;
