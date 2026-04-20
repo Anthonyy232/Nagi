@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -44,7 +44,7 @@ public partial class EqualizerBandViewModel : ObservableObject, IDisposable
 
     public uint Index { get; }
     public string FrequencyLabel { get; }
-    
+
     /// <summary>
     /// Indicates whether the update comes from an external source (e.g. service event).
     /// If true, we should skip saving changes back to the service.
@@ -52,7 +52,7 @@ public partial class EqualizerBandViewModel : ObservableObject, IDisposable
     public bool IsExternalUpdate { get; set; }
 
     [ObservableProperty] public partial float Gain { get; set; }
-    
+
     public event Action<EqualizerBandViewModel>? GainChanged;
     public event Action<EqualizerBandViewModel, float>? GainCommitted;
 
@@ -70,7 +70,7 @@ public partial class EqualizerBandViewModel : ObservableObject, IDisposable
     async partial void OnGainChanged(float value)
     {
         if (IsExternalUpdate) return;
-        
+
         GainChanged?.Invoke(this);
 
         _debounceCts?.Cancel();
@@ -178,11 +178,11 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         MetadataProviders.CollectionChanged += OnMetadataProvidersCollectionChanged;
         _playbackService.EqualizerChanged += OnPlaybackService_EqualizerChanged;
 
-        
+
         AvailableEqualizerPresets = _playbackService.AvailablePresets.ToList();
-        
+
         _isInitializing = true;
-        
+
         SelectedTheme = SettingsDefaults.Theme;
         SelectedBackdropMaterial = SettingsDefaults.DefaultBackdropMaterial;
         IsDynamicThemingEnabled = SettingsDefaults.DynamicThemingEnabled;
@@ -202,7 +202,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         IsVolumeNormalizationEnabled = SettingsDefaults.VolumeNormalizationEnabled;
         IsFadeOnPlayPauseEnabled = SettingsDefaults.FadeOnPlayPauseEnabled;
         EqualizerPreamp = SettingsDefaults.EqualizerPreamp;
-        
+
         _isInitializing = false;
     }
 
@@ -283,25 +283,25 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
     async partial void OnSelectedLanguageChanged(Nagi.WinUI.Models.LanguageModel value)
     {
-         if (_isInitializing || value == null) return;
-         
-         try
-         {
-             var currentLanguage = await _settingsService.GetLanguageAsync();
-             if (string.Equals(value.Code, currentLanguage, StringComparison.OrdinalIgnoreCase)) return;
+        if (_isInitializing || value == null) return;
 
-             await _settingsService.SetLanguageAsync(value.Code);
-             
-             var title = Strings.SettingsPage_RestartRequired_Title;
-             var message = Strings.SettingsPage_RestartRequired_Message;
-             
-             await _uiService.ShowMessageDialogAsync(title, message);
-             AppInstance.Restart("");
-         }
-         catch (Exception ex)
-         {
-             _logger.LogError(ex, "Failed to set language to {LanguageCode}", value.Code);
-         }
+        try
+        {
+            var currentLanguage = await _settingsService.GetLanguageAsync();
+            if (string.Equals(value.Code, currentLanguage, StringComparison.OrdinalIgnoreCase)) return;
+
+            await _settingsService.SetLanguageAsync(value.Code);
+
+            var title = Strings.SettingsPage_RestartRequired_Title;
+            var message = Strings.SettingsPage_RestartRequired_Message;
+
+            await _uiService.ShowMessageDialogAsync(title, message);
+            AppInstance.Restart("");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to set language to {LanguageCode}", value.Code);
+        }
     }
 
     [ObservableProperty] public partial EqualizerPreset? SelectedEqualizerPreset { get; set; }
@@ -334,7 +334,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     public List<ElementTheme> AvailableThemes { get; } = Enum.GetValues<ElementTheme>().ToList();
     public List<BackdropMaterial> AvailableBackdropMaterials { get; } = Enum.GetValues<BackdropMaterial>().ToList();
     public List<PlayerBackgroundMaterial> AvailablePlayerBackgroundMaterials { get; } = Enum.GetValues<PlayerBackgroundMaterial>().ToList();
-    
+
     [ObservableProperty] public partial PlayerBackgroundMaterial SelectedPlayerBackgroundMaterial { get; set; }
     [ObservableProperty] public partial double PlayerTintIntensity { get; set; }
 
@@ -374,9 +374,9 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             _logger.LogError(ex, "Failed to set player tint intensity");
         }
     }
-    
+
     public ObservableCollection<Nagi.WinUI.Models.LanguageModel> AvailableLanguages { get; } = new();
-    
+
     [ObservableProperty] public partial Nagi.WinUI.Models.LanguageModel SelectedLanguage { get; set; }
 
     public string ApplicationVersion => _appInfoService.GetAppVersion();
@@ -399,7 +399,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
         foreach (var item in MetadataProviders) item.PropertyChanged -= OnMetadataProviderPropertyChanged;
 
-        foreach (var bandVm in EqualizerBands) 
+        foreach (var bandVm in EqualizerBands)
         {
             bandVm.GainChanged -= OnBandGainChanged;
             bandVm.GainCommitted -= OnBandGainCommitted;
@@ -441,7 +441,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     public async Task LoadSettingsAsync()
     {
         if (_isDisposed) return;
-        
+
         // If already loaded, don't reload everything.
         // This ViewModel is a singleton, so we only need to load once per app session.
         if (_isLoaded) return;
@@ -544,7 +544,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             IsFadeOnPlayPauseEnabled = fadeTask.Result;
             FadeInDurationMs = fadeInTask.Result;
             FadeOutDurationMs = fadeOutTask.Result;
-            
+
             SelectedPlayerBackgroundMaterial = playerMaterialTask.Result;
             PlayerTintIntensity = playerTintTask.Result;
 
@@ -585,7 +585,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             _ = PopulateAvailableLanguagesAsync(currentLangCode);
 
             LoadEqualizerState();
-            
+
             // Load service providers
             var lyricsMapped = lyricsProvidersTask.Result
                 .Select(ServiceProviderSettingViewModel.FromSetting)
@@ -617,7 +617,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             _loadLock.Release();
         }
     }
-    
+
     /// <summary>
     /// Resolves the best LanguageModel match for <paramref name="langCode"/> from AvailableLanguages.
     /// Must be called on the UI thread (reads the ObservableCollection).
@@ -678,11 +678,11 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     /// </summary>
     private string ResolveCultureWithResources(string cultureCode, CultureInfo[] allSpecificCultures)
     {
-        try 
+        try
         {
             var culture = new CultureInfo(cultureCode);
             var resourceManager = Nagi.WinUI.Resources.Strings.ResourceManager;
-            
+
             // 1. Check if the exact requested culture has a resource set.
             // tryParents: false is crucial - we want to know if THIS specific culture has files.
             var resourceSet = resourceManager.GetResourceSet(culture, true, false);
@@ -704,13 +704,13 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
                     }
                 }
             }
-            
-            // 3. Fallback: If we still didn't find anything (or if it was already specific and missing), 
-            // return original. .NET's standard fallback might still pick something up, 
+
+            // 3. Fallback: If we still didn't find anything (or if it was already specific and missing),
+            // return original. .NET's standard fallback might still pick something up,
             // or it prevents us from crashing.
             return cultureCode;
         }
-        catch 
+        catch
         {
             // Safety net
             return cultureCode;
@@ -957,7 +957,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     {
         _logger.LogDebug("Loading Equalizer State...");
         var eqSettings = _playbackService.CurrentEqualizerSettings;
-        if (eqSettings == null) 
+        if (eqSettings == null)
         {
             _logger.LogWarning("Equalizer settings are null.");
             return;
@@ -989,14 +989,14 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
     private void OnBandGainCommitted(EqualizerBandViewModel sender, float gain)
     {
-         if (_isInitializing) return;
-         _playbackService.SetEqualizerBandAsync(sender.Index, gain);
+        if (_isInitializing) return;
+        _playbackService.SetEqualizerBandAsync(sender.Index, gain);
     }
 
     private void OnBandGainChanged(EqualizerBandViewModel sender)
     {
         if (_isApplyingPreset) return;
-        
+
         // If the user manually adjusted a valid "preset match", we might want to keep the preset selected?
         // No, user requested: "If a user selects another preset, it will overwrite what they currently have set."
         // And usually manual adjustment means "Custom" or deselecting current preset.
@@ -1011,7 +1011,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
         // Create a temporary array of current values
         var currentGains = EqualizerBands.Select(b => b.Gain).ToArray();
-        
+
         var matchingPreset = _playbackService.GetMatchingPreset(currentGains);
 
         if (SelectedEqualizerPreset != matchingPreset)
@@ -1113,7 +1113,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         var oldCts = _playerButtonSaveCts;
         _playerButtonSaveCts = new CancellationTokenSource();
         var token = _playerButtonSaveCts.Token;
-        
+
         // Cancel and dispose the old CTS after creating the new one
         oldCts?.Cancel();
         oldCts?.Dispose();
@@ -1176,7 +1176,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             });
 
             await _libraryScanner.ForceRescanMetadataAsync(progress);
-            
+
             await _uiService.ShowMessageDialogAsync(Nagi.WinUI.Resources.Strings.Settings_Dialog_RescanComplete_Title, Nagi.WinUI.Resources.Strings.Settings_Dialog_RescanComplete_Content);
         }
         catch (Exception ex)
@@ -1354,7 +1354,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     private void OnMetadataProviderPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (_isInitializing || e.PropertyName != nameof(ServiceProviderSettingViewModel.IsEnabled)) return;
- 
+
         if (sender is ServiceProviderSettingViewModel provider)
         {
             // If MusicBrainz is disabled, disable dependent services
@@ -1741,7 +1741,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         _isInitializing = true;
         AccentColor = App.SystemAccentColor;
         _isInitializing = false;
-        
+
         await _settingsService.SetAccentColorAsync(null);
         if (!IsDynamicThemingEnabled)
         {

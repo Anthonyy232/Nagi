@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -88,14 +88,14 @@ public partial class PlaylistViewModelItem : ObservableObject
         SongCount = newSongCount;
         if (IsSmart)
         {
-            SongCountText = newSongCount == 1 
-                ? ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Playlist_Smart_Count_Singular, newSongCount) 
+            SongCountText = newSongCount == 1
+                ? ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Playlist_Smart_Count_Singular, newSongCount)
                 : ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Playlist_Smart_Count_Plural, newSongCount);
         }
         else
         {
-            SongCountText = newSongCount == 1 
-                ? ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Playlist_Count_Singular, newSongCount) 
+            SongCountText = newSongCount == 1
+                ? ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Playlist_Count_Singular, newSongCount)
                 : ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Playlist_Count_Plural, newSongCount);
         }
     }
@@ -137,7 +137,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
 
         _libraryService.PlaylistsChanged += OnPlaylistsChanged;
         _smartPlaylistService.PlaylistsChanged += OnPlaylistsChanged;
-        
+
         UpdateSortOrderText();
     }
 
@@ -273,15 +273,15 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
             // 1. Get current counts directly from services (most accurate)
             // Even though we load them into memory, fetching count is cheap and ensures we don't pick from stale UI state if not refreshed
             // However, to keep it fast and consistent with what the user sees, we can try to use standard service calls.
-            
+
             // Actually, we need to know the RATIO to pick fairly.
             // Getting counts is fast.
             var regularCountTask = _libraryService.GetPlaylistCountAsync();
             var smartCountTask = _smartPlaylistService.GetSmartPlaylistCountAsync();
-            
+
             var regularCount = await regularCountTask;
             var smartCount = await smartCountTask;
-            
+
             var totalCount = regularCount + smartCount;
             if (totalCount == 0)
             {
@@ -369,7 +369,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
             // Load smart playlists with their match counts
             var smartPlaylistsFromDb = smartPlaylistsTask.Result;
             var matchCounts = matchCountsTask.Result;
-            
+
             foreach (var smartPlaylist in smartPlaylistsFromDb)
             {
                 var matchCount = matchCounts.GetValueOrDefault(smartPlaylist.Id, 0);
@@ -453,7 +453,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
                 success = await _smartPlaylistService.UpdateSmartPlaylistCoverAsync(playlistId, newCoverImageUri);
             else
                 success = await _libraryService.UpdatePlaylistCoverAsync(playlistId, newCoverImageUri);
-            
+
             if (success)
             {
                 var playlistItem = Playlists.FirstOrDefault(p => p.Id == playlistId);
@@ -507,7 +507,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
                 success = await _smartPlaylistService.UpdateSmartPlaylistCoverAsync(playlistId, null);
             else
                 success = await _libraryService.UpdatePlaylistCoverAsync(playlistId, null);
-            
+
             if (success)
             {
                 var playlistItem = Playlists.FirstOrDefault(p => p.Id == playlistId);
@@ -566,7 +566,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
                 success = await _smartPlaylistService.RenameSmartPlaylistAsync(playlistId, normalizedName);
             else
                 success = await _libraryService.RenamePlaylistAsync(playlistId, normalizedName);
-            
+
             if (success)
             {
                 var playlistItem = Playlists.FirstOrDefault(p => p.Id == playlistId);
@@ -616,7 +616,7 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
                 success = await _smartPlaylistService.DeleteSmartPlaylistAsync(playlistId);
             else
                 success = await _libraryService.DeletePlaylistAsync(playlistId);
-            
+
             if (success)
             {
                 var playlistItem = Playlists.FirstOrDefault(p => p.Id == playlistId);
@@ -674,9 +674,9 @@ public partial class PlaylistViewModel : SearchableViewModelBase, IDisposable
         // Replace collection in one operation to minimize CollectionChanged events
         // Must manage event subscription when swapping instances
         var newItems = sorted.ToList();
-        
+
         Playlists.ReplaceRange(newItems);
-        
+
         OnPropertyChanged(nameof(HasPlaylists));
     }
 

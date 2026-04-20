@@ -475,7 +475,7 @@ public class SettingsService : IUISettingsService, IDisposable
             // Deduplicate items to fix users with duplicate items saved in config file
             var distinctItems = new List<ServiceProviderSetting>();
             var seenIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            
+
             foreach (var item in items)
             {
                 if (seenIds.Add(item.Id))
@@ -494,10 +494,10 @@ public class SettingsService : IUISettingsService, IDisposable
             // Merge with defaults to handle new services added in updates
             var defaults = GetDefaultServiceProviders(category);
             var knownIds = defaults.Select(d => d.Id).ToHashSet();
-            
+
             // Filter out unknown providers (handles removal of providers in future versions)
             items = items.Where(i => knownIds.Contains(i.Id)).ToList();
-            
+
             var existingIds = items.Select(i => i.Id).ToHashSet();
             var newProviders = defaults.Where(d => !existingIds.Contains(d.Id)).ToList();
 
@@ -805,7 +805,7 @@ public class SettingsService : IUISettingsService, IDisposable
             // Deduplicate items to fix users with duplicate items saved in config file
             var distinctItems = new List<NavigationItemSetting>();
             var seenTags = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            
+
             foreach (var item in items)
             {
                 if (seenTags.Add(item.Tag))
@@ -850,7 +850,7 @@ public class SettingsService : IUISettingsService, IDisposable
             // Deduplicate items to fix users with duplicate items saved in config file
             var distinctSettings = new List<PlayerButtonSetting>();
             var seenIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            
+
             foreach (var setting in settings)
             {
                 if (seenIds.Add(setting.Id))
@@ -870,7 +870,7 @@ public class SettingsService : IUISettingsService, IDisposable
             if (!settings.Any(b => b.Id == "Separator"))
                 settings.Insert(5,
                     new PlayerButtonSetting
-                        { Id = "Separator", DisplayName = Resources.Strings.Settings_Button_Divider, IconGlyph = "\uE7A3", IsEnabled = true });
+                    { Id = "Separator", DisplayName = Resources.Strings.Settings_Button_Divider, IconGlyph = "\uE7A3", IsEnabled = true });
 
             // Refresh localization for all buttons
             foreach (var setting in settings) RefreshPlayerButtonLocalization(setting);

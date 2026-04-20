@@ -164,7 +164,7 @@
                     <FontIcon FontSize="16" Glyph="" />
                 </Button>
 
-                <Button Style="{StaticResource SongListViewPageIconButton}" 
+                <Button Style="{StaticResource SongListViewPageIconButton}"
                         ToolTipService.ToolTip="{x:Bind ViewModel.CurrentSortOrderText, Mode=OneWay}">
                     <Button.Flyout>
                         <MenuFlyout Placement="Bottom">
@@ -217,8 +217,8 @@
             ContainerContentChanging="OnSongsListViewContainerContentChanging"
             DoubleTapped="SongsListView_DoubleTapped">
             <ListView.Footer>
-                <uicontrols:PaginationControl 
-                    ViewModel="{x:Bind ViewModel}" 
+                <uicontrols:PaginationControl
+                    ViewModel="{x:Bind ViewModel}"
                     HorizontalAlignment="Right"
                     Margin="0,24,24,16" />
             </ListView.Footer>
@@ -348,6 +348,6 @@
                 HorizontalAlignment="Center"
                 Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
         </StackPanel>
-        
+
     </Grid>
 </Page>

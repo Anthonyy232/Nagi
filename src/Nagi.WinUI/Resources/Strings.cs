@@ -1,4 +1,4 @@
-using System.Resources;
+﻿using System.Resources;
 using System.Reflection;
 using System.Globalization;
 
@@ -374,7 +374,7 @@ public static class Strings
     public static string PlaylistPage_DeleteDialog_Title => GetString("PlaylistPage_DeleteDialog_Title");
     public static string PlaylistPage_DeleteDialog_Content_Format => GetString("PlaylistPage_DeleteDialog_Content_Format");
     public static string PlaylistPage_DeleteDialog_DeleteButton => GetString("PlaylistPage_DeleteDialog_DeleteButton");
-    
+
     // PlaylistSongViewPage
     public static string PlaylistSongViewPage_SearchButton_Close_ToolTip => GetString("PlaylistSongViewPage_SearchButton_Close_ToolTip");
     public static string PlaylistSongViewPage_SearchButton_Search_ToolTip => GetString("PlaylistSongViewPage_SearchButton_Search_ToolTip");

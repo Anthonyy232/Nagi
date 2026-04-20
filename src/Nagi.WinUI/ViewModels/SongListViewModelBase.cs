@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -50,7 +50,7 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
     ///     "now playing" indicator. Null when nothing is playing.
     /// </summary>
     [ObservableProperty] public partial Guid? CurrentPlayingSongId { get; set; }
-    
+
     // Configures whether this view uses bounded pagination or infinite continuous scrolling.
     public bool IsPaginationEnabled { get; set; } = true;
 
@@ -60,7 +60,7 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
     // Used to cancel any ongoing paged loading, e.g., when the user changes the sort order.
     protected CancellationTokenSource? _pagedLoadCts;
     protected int _totalItemCount;
-    
+
     // Navigation re-entry guards
     private bool _isNavigatingToArtist;
     private bool _isNavigatingToAlbum;
@@ -158,7 +158,7 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
         _dispatcherService.TryEnqueue(() =>
         {
             if (SongsPerPage == newSize) return;
-            
+
             _isSettingSongsPerPage = true;
             try
             {
@@ -263,7 +263,7 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
             }
         }
     }
-    
+
     [ObservableProperty] public partial SongSortOrder CurrentSortOrder { get; set; } = SongSortOrder.TitleAsc;
 
     partial void OnCurrentSortOrderChanged(SongSortOrder oldValue, SongSortOrder newValue)
@@ -360,8 +360,8 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
 
         try
         {
-            _pagedLoadCts = manualToken != default 
-                ? CancellationTokenSource.CreateLinkedTokenSource(manualToken) 
+            _pagedLoadCts = manualToken != default
+                ? CancellationTokenSource.CreateLinkedTokenSource(manualToken)
                 : new CancellationTokenSource();
             var token = _pagedLoadCts.Token;
 
@@ -777,11 +777,11 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
             // Use the page size baked into the result, not the current SongsPerPage property,
             // which may have changed between when the query ran and when this dispatch executes.
             TotalPages = Math.Max(1, pagedResult.TotalPages);
-            
-            TotalItemsText = pagedResult.TotalCount == 1 
-                ? ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.SongList_TotalItems_Format_Singular, pagedResult.TotalCount) 
+
+            TotalItemsText = pagedResult.TotalCount == 1
+                ? ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.SongList_TotalItems_Format_Singular, pagedResult.TotalCount)
                 : ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.SongList_TotalItems_Format_Plural, pagedResult.TotalCount);
-            
+
             UpdateSelectionStatus();
             PlayAllSongsCommand.NotifyCanExecuteChanged();
             ShuffleAndPlayAllSongsCommand.NotifyCanExecuteChanged();
@@ -791,8 +791,8 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
     protected void UpdateSelectionStatus()
     {
         var count = SelectedItemsCount;
-        SelectedItemsCountText = count > 0 
-            ? ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.SongList_SelectedCount_Format, count) 
+        SelectedItemsCountText = count > 0
+            ? ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.SongList_SelectedCount_Format, count)
             : string.Empty;
         IsSingleSongSelected = count == 1;
         OnPropertyChanged(nameof(SelectedItemsCount));
@@ -905,7 +905,7 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
         _pagedLoadCts?.Cancel();
         _pagedLoadCts?.Dispose();
         _pagedLoadCts = null;
-        
+
         _logger.LogDebug("Reset state for SongListViewModelBase");
     }
 
@@ -915,12 +915,12 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
     public virtual void Dispose()
     {
         if (_isDisposed) return;
-        
+
         _settingsService.SongsPerPageChanged -= OnSettingsSongsPerPageChanged;
 
         ResetState();
         _stateLock.Dispose();
-        
+
         _playlistService.PlaylistsChanged -= OnPlaylistsChanged;
         _playbackService.TrackChanged -= OnPlaybackTrackChanged;
         Songs.CollectionChanged -= OnSongsCollectionChanged;

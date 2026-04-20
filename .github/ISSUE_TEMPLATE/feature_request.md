@@ -9,25 +9,25 @@ assignees: ''
 
 ## 🌟 Feature Request
 
-### 📝 Summary  
+### 📝 Summary
 Briefly describe the feature you’d like to see.
 
 ---
 
-### 🤔 Why  
+### 🤔 Why
 What problem does it solve or what improvement does it offer?
 
 ---
 
-### 💡 What It Should Do  
+### 💡 What It Should Do
 Describe how it should work or behave.
 
 ---
 
-### 🎨 Visuals (Optional)  
+### 🎨 Visuals (Optional)
 Include any mockups, screenshots, or design ideas.
 
 ---
 
-### 📎 Extra Context (Optional)  
+### 📎 Extra Context (Optional)
 Anything else we should know? Workarounds, comparisons, or related ideas.

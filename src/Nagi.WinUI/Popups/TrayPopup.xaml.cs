@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Windows.System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
@@ -110,10 +110,10 @@ public sealed partial class TrayPopup : Window
     {
         var shouldBeVisible = _isCoverArtInFlyoutEnabled && !string.IsNullOrEmpty(ViewModel.AlbumArtUri);
         CoverArtBackground.Visibility = shouldBeVisible ? Visibility.Visible : Visibility.Collapsed;
-        
+
         // Update the brush source safely - SafeGetImageSource handles null/empty strings
         CoverArtBrush.Source = ImageUriHelper.SafeGetImageSource(ViewModel.AlbumArtUri)!;
-        
+
         _logger.LogTrace("Cover art visibility updated to {Visibility}", CoverArtBackground.Visibility);
     }
 
@@ -158,7 +158,7 @@ public sealed partial class TrayPopup : Window
         DispatcherQueue.TryEnqueue(() =>
         {
             if (_isClosed) return;
-            
+
             _logger.LogDebug("'ShowCoverArtInTrayFlyout' setting changed to {IsEnabled}. Updating visibility.",
                 isEnabled);
             _isCoverArtInFlyoutEnabled = isEnabled;
@@ -187,7 +187,7 @@ public sealed partial class TrayPopup : Window
     {
         var properties = e.GetCurrentPoint(sender as UIElement).Properties;
         var delta = properties.MouseWheelDelta;
-        
+
         double newVolume = ViewModel.CurrentVolume + (delta > 0 ? 5 : -5);
         ViewModel.CurrentVolume = Math.Clamp(newVolume, 0, 100);
         e.Handled = true;

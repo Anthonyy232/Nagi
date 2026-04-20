@@ -1,4 +1,4 @@
-namespace Nagi.Core.Services.Helpers;
+﻿namespace Nagi.Core.Services.Helpers;
 
 using System.Security.Cryptography;
 using System.Text;

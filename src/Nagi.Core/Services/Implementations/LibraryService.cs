@@ -1,4 +1,4 @@
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Threading.Channels;
 using Microsoft.EntityFrameworkCore;
@@ -333,7 +333,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         // Notify listeners that the library has changed (songs cascade-deleted with the folder)
         LibraryContentChanged?.Invoke(this, new LibraryContentChangedEventArgs(LibraryChangeType.FolderRemoved, folderId));
-        
+
         return true;
     }
 
@@ -543,7 +543,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         return await context.Folders.CountAsync(f => f.ParentFolderId == parentFolderId, token).ConfigureAwait(false);
     }
-    
+
 
 
     #endregion
@@ -634,7 +634,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                                 "Folder path '{FolderPath}' not reachable during auto-refresh. Skipping folder {FolderId}; no changes will be made.",
                                 folder.Path, folder.Id);
                             progress?.Report(new ScanProgress
-                                { StatusText = Resources.Strings.Status_ScanFailed, Percentage = 100 });
+                            { StatusText = Resources.Strings.Status_ScanFailed, Percentage = 100 });
                             return false;
                         }
 
@@ -642,12 +642,12 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                             "Folder path '{FolderPath}' no longer exists. Removing folder {FolderId} from library.",
                             folder.Path, folder.Id);
                         progress?.Report(new ScanProgress
-                            { StatusText = Resources.Strings.Status_ScanFailed, Percentage = 100 });
+                        { StatusText = Resources.Strings.Status_ScanFailed, Percentage = 100 });
                         return await RemoveFolderAsync(folderId).ConfigureAwait(false);
                     }
 
                     progress?.Report(new ScanProgress
-                        { StatusText = Resources.Strings.Status_PreparingScanCaches, IsIndeterminate = true });
+                    { StatusText = Resources.Strings.Status_PreparingScanCaches, IsIndeterminate = true });
                     var (filesToAdd, filesToUpdate, filesRemovedFromDisk) =
                         await AnalyzeFolderChangesAsync(folderId, folder.Path, forceFullScan, cancellationToken).ConfigureAwait(false);
 
@@ -683,7 +683,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                     if (allFilePathsToDelete.Any())
                     {
                         progress?.Report(new ScanProgress
-                            { StatusText = Resources.Strings.Status_CleaningUpLibrary, IsIndeterminate = true });
+                        { StatusText = Resources.Strings.Status_CleaningUpLibrary, IsIndeterminate = true });
                         await using var deleteContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
 
                         var songsToDeleteQuery = deleteContext.Songs
@@ -734,7 +734,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                         if (allFilePathsToDelete.Any())
                         {
                             progress?.Report(new ScanProgress
-                                { StatusText = Resources.Strings.Status_Finalizing, IsIndeterminate = true });
+                            { StatusText = Resources.Strings.Status_Finalizing, IsIndeterminate = true });
                             await using var cleanupContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
                             await CleanUpOrphanedEntitiesAsync(cleanupContext, cancellationToken).ConfigureAwait(false);
                         }
@@ -776,9 +776,9 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                         var statusMessage = updates.Any()
                             ? string.Format(Resources.Strings.Format_ScanCompleteResult, string.Join(andJoiner, updates), "")
                             : Resources.Strings.Status_ScanCompleteUpToDate;
-                        
+
                         progress?.Report(new ScanProgress
-                            { StatusText = statusMessage, Percentage = 100 });
+                        { StatusText = statusMessage, Percentage = 100 });
                         if (hasChanges)
                         {
                             LibraryContentChanged?.Invoke(this, new LibraryContentChangedEventArgs(LibraryChangeType.FolderRescanned, folderId));
@@ -813,7 +813,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                     await Task.WhenAll(postScanTasks).ConfigureAwait(false);
 
                     progress?.Report(new ScanProgress { StatusText = Resources.Strings.Status_Finalizing, IsIndeterminate = true });
-                    
+
                     // Only clean up orphaned entities if updates or removals may have created them.
                     // Pure adds (InitialScan) cannot produce orphans, so skip the expensive cleanup queries.
                     if (filesRemovedFromDisk.Count > 0 || filesToUpdate.Count > 0)
@@ -841,11 +841,11 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 {
                     _logger.LogCritical(ex, "FATAL: Rescan for folder ID {FolderId} failed.", folderId);
                     progress?.Report(new ScanProgress
-                        { StatusText = Resources.Strings.Status_ScanFailed, Percentage = 100 });
+                    { StatusText = Resources.Strings.Status_ScanFailed, Percentage = 100 });
                     return false;
                 }
             }, cancellationToken);
-            
+
             // Run ReplayGain analysis if enabled, but only for single folder scans
             // RefreshAllFoldersAsync sets _isBatchScanning=true and triggers once at the end
             if (scanResult && !_isBatchScanning && await _settingsService.GetVolumeNormalizationEnabledAsync().ConfigureAwait(false))
@@ -867,9 +867,9 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             _scanSemaphore.Release();
         }
     }
-    
 
-    
+
+
     /// <summary>
     ///     Efficiently selects a random ID from a queryable set using the O(log N) "Where Id >= Random" strategy.
     ///     This avoids the O(N) full table scan caused by "ORDER BY RANDOM()".
@@ -917,13 +917,13 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             _logger.LogDebug("ReplayGain analysis is already running. Skipping trigger.");
             return;
         }
-        
+
         // Link to the parent cancellation token so cancelling the folder scan also cancels ReplayGain
         using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, newCts.Token, _shutdownCts.Token);
-        
+
         _logger.LogInformation("Volume normalization is enabled. Starting ReplayGain analysis.");
-        
-        try 
+
+        try
         {
             await _replayGainService.ScanLibraryAsync(progress, linkedCts.Token).ConfigureAwait(false);
             _logger.LogInformation("ReplayGain analysis completed.");
@@ -993,13 +993,13 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                     {
                         // Scale progress: (foldersProcessed + p.Percentage/100) / totalFolders * 100
                         var totalPercentage = (foldersProcessed + p.Percentage / 100.0) / totalFolders * 100.0;
-                        
+
                         // Allow individual steps to show meaningful status text (e.g. "Reading songs...")
                         // but prefix with folder info if useful
                         var status = totalFolders > 1
                             ? string.Format(Resources.Strings.Format_ScanFolderProgress, foldersProcessed + 1, totalFolders, folder.Name, p.StatusText)
                             : p.StatusText;
-                            
+
                         progress?.Report(new ScanProgress
                         {
                             StatusText = status,
@@ -1007,7 +1007,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                             CurrentFilePath = p.CurrentFilePath,
                             IsIndeterminate = p.IsIndeterminate,
                             NewSongsFound = p.NewSongsFound, // This might be cumulative or not, UI handles it
-                            TotalFiles = p.TotalFiles 
+                            TotalFiles = p.TotalFiles
                         });
                     });
 
@@ -1127,13 +1127,13 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                         using var scope = _serviceScopeFactory.CreateScope();
                         var scopedContextFactory =
                             scope.ServiceProvider.GetRequiredService<IDbContextFactory<MusicDbContext>>();
-                        
+
                         // We need a context to fetch and update entities
                         await using var batchContext = await scopedContextFactory.CreateDbContextAsync().ConfigureAwait(false);
 
                         var artistsInBatch = await batchContext.Artists.Where(a => artistIdsToUpdate.Contains(a.Id))
                             .ToListAsync(token).ConfigureAwait(false);
-                            
+
                         var pendingUpdates = new List<ArtistMetadataUpdatedEventArgs>();
                         var stopwatch = Stopwatch.StartNew();
 
@@ -1145,18 +1145,18 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                                 // Pass saveChanges: false and suppressEvents: true to batch operations
                                 var (updated, newImagePath) = await FetchAndUpdateArtistFromRemoteAsync(
                                     batchContext, artist, token, saveChanges: false, suppressEvents: true).ConfigureAwait(false);
-                                    
+
                                 if (updated)
                                 {
                                     pendingUpdates.Add(new ArtistMetadataUpdatedEventArgs(artist.Id, newImagePath));
                                 }
-                                
+
                                 // Hybrid Flush Check: 10 items or 5 seconds
                                 if (pendingUpdates.Count >= 10 || (pendingUpdates.Count > 0 && stopwatch.Elapsed.TotalSeconds >= 5))
                                 {
                                     await batchContext.SaveChangesAsync(token).ConfigureAwait(false);
                                     _logger.LogInformation("Saved partial batch of {Count} artists metadata (Time: {Elapsed}s).", pendingUpdates.Count, stopwatch.Elapsed.TotalSeconds.ToString("F1"));
-                                    
+
                                     ArtistMetadataBatchUpdated?.Invoke(this, pendingUpdates.ToList());
                                     pendingUpdates.Clear();
                                     stopwatch.Restart();
@@ -1176,7 +1176,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                             // Throttle: Yield to UI and other threads to prevent CPU starvation
                             await Task.Delay(50, token).ConfigureAwait(false);
                         }
-                        
+
                         if (token.IsCancellationRequested) break;
 
                         // Final flush for remaining items in the batch
@@ -1184,7 +1184,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                         {
                             await batchContext.SaveChangesAsync(token).ConfigureAwait(false);
                             _logger.LogInformation("Saved final batch of {Count} artists metadata.", pendingUpdates.Count);
-                            
+
                             // Fire batch event
                             ArtistMetadataBatchUpdated?.Invoke(this, pendingUpdates);
                         }
@@ -1320,7 +1320,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             var count = Math.Min(chunkSize, uniqueIds.Count - i);
             var chunk = uniqueIds.GetRange(i, count);
             await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-            
+
             var query = context.Songs.AsNoTracking()
                 .Where(s => chunk.Contains(s.Id))
                 .Include(s => s.Album);
@@ -1343,20 +1343,20 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     {
         ArgumentNullException.ThrowIfNull(songToUpdate);
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        
+
         // Check if entity is already tracked (would cause Attach to throw)
         var existingEntry = context.ChangeTracker.Entries<Song>()
             .FirstOrDefault(e => e.Entity.Id == songToUpdate.Id);
-        
+
         if (existingEntry != null)
         {
             // Entity already tracked - detach it first to allow reattachment with new values
             existingEntry.State = EntityState.Detached;
         }
-        
+
         // Attach the entity to track it
         context.Songs.Attach(songToUpdate);
-        
+
         // Defensive loading: ensure SongArtists are loaded to prevent the interceptor
         // from seeing an empty collection and wiping artist data when syncing denormalized fields.
         // This is critical when songs passed in came from AsNoTracking() queries.
@@ -1366,7 +1366,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             .Include(sa => sa.Artist)
             .LoadAsync()
             .ConfigureAwait(false);
-        
+
         context.Entry(songToUpdate).State = EntityState.Modified;
         await context.SaveChangesAsync().ConfigureAwait(false);
         return true;
@@ -1520,15 +1520,15 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         // Since AlbumArtists is M:N, we want albums where this artist participates.
         // We order by the total song count of the album (assuming popular albums have more songs/are main albums).
         // Alternatively, order by PlayCount sum if available. Song has PlayCount.
-        
+
         return await context.AlbumArtists.AsNoTracking()
             .Where(aa => aa.ArtistId == artistId)
-            .Select(aa => new 
-            { 
-                Album = aa.Album, 
+            .Select(aa => new
+            {
+                Album = aa.Album,
                 // Order by Popularity (PlayCount) first, then Song Count
                 PlayCount = aa.Album!.Songs.Sum(s => s.PlayCount),
-                SongCount = aa.Album!.Songs.Count 
+                SongCount = aa.Album!.Songs.Count
             })
             .OrderByDescending(x => x.PlayCount)
             .ThenByDescending(x => x.SongCount)
@@ -1660,7 +1660,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     public async Task<bool> DeletePlaylistAsync(Guid playlistId)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        
+
         // Find playlist to get the cover URI before deleting
         var playlist = await context.Playlists.FindAsync(playlistId).ConfigureAwait(false);
         if (playlist is null) return false;
@@ -1711,7 +1711,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             var originalBytes = await _fileSystem.ReadAllBytesAsync(newCoverImageUri).ConfigureAwait(false);
             var processedBytes = await _imageProcessor.ProcessImageBytesAsync(originalBytes).ConfigureAwait(false);
             await ImageStorageHelper.SaveImageBytesAsync(_fileSystem, cachePath, playlistId.ToString(), ".custom", processedBytes).ConfigureAwait(false);
-            
+
             var newPath = ImageStorageHelper.FindImage(_fileSystem, cachePath, playlistId.ToString(), ".custom");
             playlist.CoverImageUri = newPath;
         }
@@ -1837,7 +1837,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     public async Task<bool> MovePlaylistSongAsync(Guid playlistId, Guid songId, double newOrder)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        
+
         var playlistSong = await context.PlaylistSongs
             .FirstOrDefaultAsync(ps => ps.PlaylistId == playlistId && ps.SongId == songId)
             .ConfigureAwait(false);
@@ -1846,7 +1846,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         playlistSong.Order = newOrder;
         _logger.LogDebug("Saving new order {Order} for song {SongId} in playlist {PlaylistId}", newOrder, songId, playlistId);
-        
+
         var playlist = await context.Playlists.FindAsync(playlistId).ConfigureAwait(false);
         if (playlist != null) playlist.DateModified = DateTime.UtcNow;
 
@@ -2073,7 +2073,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     public async Task<Guid?> GetRandomFolderIdAsync()
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        
+
         // Only select folders that actually contain songs to avoid playing empty directory structures
         var query = context.Folders.AsNoTracking().Where(f => f.Songs.Any());
         return await GetRandomEntityIdAsync(context, query).ConfigureAwait(false);
@@ -2100,7 +2100,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         await Task.WhenAll(countTask, dataTask).ConfigureAwait(false);
 
         return new PagedResult<Song>
-            { Items = dataTask.Result, TotalCount = countTask.Result, PageNumber = pageNumber, PageSize = pageSize };
+        { Items = dataTask.Result, TotalCount = countTask.Result, PageNumber = pageNumber, PageSize = pageSize };
     }
 
     /// <inheritdoc />
@@ -2119,7 +2119,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             .Skip((pageNumber - 1) * pageSize).Take(pageSize).AsSplitQuery().ToListAsync(token).ConfigureAwait(false);
 
         return new PagedResult<Song>
-            { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
+        { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
     }
 
     /// <inheritdoc />
@@ -2138,7 +2138,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         await Task.WhenAll(countTask, dataTask).ConfigureAwait(false);
 
         return new PagedResult<Song>
-            { Items = dataTask.Result, TotalCount = countTask.Result, PageNumber = pageNumber, PageSize = pageSize };
+        { Items = dataTask.Result, TotalCount = countTask.Result, PageNumber = pageNumber, PageSize = pageSize };
     }
 
     /// <inheritdoc />
@@ -2157,7 +2157,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         await Task.WhenAll(countTask, dataTask).ConfigureAwait(false);
 
         return new PagedResult<Song>
-            { Items = dataTask.Result, TotalCount = countTask.Result, PageNumber = pageNumber, PageSize = pageSize };
+        { Items = dataTask.Result, TotalCount = countTask.Result, PageNumber = pageNumber, PageSize = pageSize };
     }
 
     /// <inheritdoc />
@@ -2176,7 +2176,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         await Task.WhenAll(countTask, dataTask).ConfigureAwait(false);
 
         return new PagedResult<Song>
-            { Items = dataTask.Result, TotalCount = countTask.Result, PageNumber = pageNumber, PageSize = pageSize };
+        { Items = dataTask.Result, TotalCount = countTask.Result, PageNumber = pageNumber, PageSize = pageSize };
     }
 
     /// <inheritdoc />
@@ -2193,8 +2193,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             query = query.OrderBy(ps => ps.Order).ThenBy(ps => ps.SongId);
 
             var projectedQuery = query
-                .Select(ps => new 
-                { 
+                .Select(ps => new
+                {
                     ps.Order,
                     Song = new Song
                     {
@@ -2256,7 +2256,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             var pagedSongs = pagedResults.Select(r => r.Song).ToList();
 
             return new PagedResult<Song>
-                { Items = pagedSongs, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
+            { Items = pagedSongs, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
         }
         else
         {
@@ -2270,7 +2270,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 .ToListAsync(token).ConfigureAwait(false);
 
             return new PagedResult<Song>
-                { Items = pagedSongs, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
+            { Items = pagedSongs, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
         }
     }
 
@@ -2303,7 +2303,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             .Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync(token).ConfigureAwait(false);
 
         return new PagedResult<Artist>
-            { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
+        { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
     }
 
     /// <inheritdoc />
@@ -2321,7 +2321,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             .Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync(token).ConfigureAwait(false);
 
         return new PagedResult<Artist>
-            { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
+        { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
     }
 
     /// <inheritdoc />
@@ -2351,7 +2351,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             .Skip((pageNumber - 1) * pageSize).Take(pageSize).AsSplitQuery().ToListAsync(token).ConfigureAwait(false);
 
         return new PagedResult<Album>
-            { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
+        { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
     }
 
     /// <inheritdoc />
@@ -2370,7 +2370,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             .Skip((pageNumber - 1) * pageSize).Take(pageSize).AsSplitQuery().ToListAsync(token).ConfigureAwait(false);
 
         return new PagedResult<Album>
-            { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
+        { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
     }
 
     /// <inheritdoc />
@@ -2386,7 +2386,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             .Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync(token).ConfigureAwait(false);
 
         return new PagedResult<Playlist>
-            { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
+        { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
     }
 
     /// <inheritdoc />
@@ -2403,7 +2403,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             .Skip((pageNumber - 1) * pageSize).Take(pageSize).AsSplitQuery().ToListAsync(token).ConfigureAwait(false);
 
         return new PagedResult<Song>
-            { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
+        { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
     }
 
     /// <inheritdoc />
@@ -2472,7 +2472,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             .Skip((pageNumber - 1) * pageSize).Take(pageSize).AsSplitQuery().ToListAsync(token).ConfigureAwait(false);
 
         return new PagedResult<Song>
-            { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
+        { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
     }
 
     /// <inheritdoc />
@@ -2699,7 +2699,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         var baseQuery = context.Songs.AsNoTracking()
             .Where(s => s.FolderId == folderId);
-            
+
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
             var term = $"%{NormalizeString(searchTerm) ?? string.Empty}%";
@@ -2709,16 +2709,16 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         }
 
         var totalCount = await baseQuery.CountAsync(token).ConfigureAwait(false);
-        
+
         var queryWithIncludes = baseQuery
             .Include(s => s.SongArtists).ThenInclude(sa => sa.Artist)
             .Include(s => s.Album).ThenInclude(a => a!.AlbumArtists).ThenInclude(aa => aa.Artist);
-            
+
         var pagedData = await ApplySongSortOrder(ExcludeHeavyFields(queryWithIncludes), SongSortOrder.TitleAsc)
             .Skip((pageNumber - 1) * pageSize).Take(pageSize).AsSplitQuery().ToListAsync(token).ConfigureAwait(false);
 
         return new PagedResult<Song>
-            { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
+        { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
     }
 
     /// <inheritdoc />
@@ -2730,7 +2730,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         var baseQuery = context.Songs.AsNoTracking()
             .Where(s => s.AlbumId == albumId);
-            
+
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
             var term = $"%{NormalizeString(searchTerm) ?? string.Empty}%";
@@ -2739,16 +2739,16 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         }
 
         var totalCount = await baseQuery.CountAsync(token).ConfigureAwait(false);
-        
+
         var queryWithIncludes = baseQuery
             .Include(s => s.SongArtists).ThenInclude(sa => sa.Artist)
             .Include(s => s.Album).ThenInclude(a => a!.AlbumArtists).ThenInclude(aa => aa.Artist);
-            
+
         var pagedData = await ApplySongSortOrder(ExcludeHeavyFields(queryWithIncludes), SongSortOrder.TrackNumberAsc)
             .Skip((pageNumber - 1) * pageSize).Take(pageSize).AsSplitQuery().ToListAsync(token).ConfigureAwait(false);
 
         return new PagedResult<Song>
-            { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
+        { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
     }
 
     /// <inheritdoc />
@@ -2760,7 +2760,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         var baseQuery = context.Songs.AsNoTracking()
             .Where(s => s.SongArtists.Any(sa => sa.ArtistId == artistId));
-            
+
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
             var term = $"%{NormalizeString(searchTerm) ?? string.Empty}%";
@@ -2769,16 +2769,16 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         }
 
         var totalCount = await baseQuery.CountAsync(token).ConfigureAwait(false);
-        
+
         var queryWithIncludes = baseQuery
             .Include(s => s.SongArtists).ThenInclude(sa => sa.Artist)
             .Include(s => s.Album).ThenInclude(a => a!.AlbumArtists).ThenInclude(aa => aa.Artist);
-            
+
         var pagedData = await ApplySongSortOrder(ExcludeHeavyFields(queryWithIncludes), SongSortOrder.AlbumAsc)
             .Skip((pageNumber - 1) * pageSize).Take(pageSize).AsSplitQuery().ToListAsync(token).ConfigureAwait(false);
 
         return new PagedResult<Song>
-            { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
+        { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
     }
 
     /// <inheritdoc />
@@ -2811,7 +2811,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             .ToListAsync(token).ConfigureAwait(false);
 
         return new PagedResult<Song>
-            { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
+        { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
     }
 
     /// <inheritdoc />
@@ -2833,18 +2833,18 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         }
 
         var totalCount = await baseQuery.CountAsync(token).ConfigureAwait(false);
-        
+
         var queryWithIncludes = baseQuery
             .Include(s => s.SongArtists).ThenInclude(sa => sa.Artist)
             .Include(s => s.Album).ThenInclude(a => a!.AlbumArtists).ThenInclude(aa => aa.Artist);
-            
+
         var pagedData = await ApplySongSortOrder(ExcludeHeavyFields(queryWithIncludes), SongSortOrder.TitleAsc)
             .Skip((pageNumber - 1) * pageSize).Take(pageSize)
             .AsSplitQuery()
             .ToListAsync(token).ConfigureAwait(false);
 
         return new PagedResult<Song>
-            { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
+        { Items = pagedData, TotalCount = totalCount, PageNumber = pageNumber, PageSize = pageSize };
     }
 
     /// <inheritdoc />
@@ -3552,11 +3552,11 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         {
             // Enumerate files once and find matches - more efficient than checking each combination
             var files = _fileSystem.GetFiles(directory, "*.*");
-            
+
             // First pass: find all matching cover art files
             string? bestMatch = null;
             var bestPriority = int.MaxValue;
-            
+
             foreach (var filePath in files)
             {
                 if (_fileSystem.IsHiddenOrSystemFile(filePath))
@@ -3565,11 +3565,11 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 var extension = _fileSystem.GetExtension(filePath);
                 if (!FileExtensions.ImageFileExtensions.Contains(extension))
                     continue;
-                    
+
                 var fileNameWithoutExt = _fileSystem.GetFileNameWithoutExtension(filePath);
                 if (!FileExtensions.CoverArtFileNames.Contains(fileNameWithoutExt))
                     continue;
-                
+
                 // Determine priority based on position in the priority list
                 var priority = GetCoverArtPriority(fileNameWithoutExt);
                 if (priority < bestPriority)
@@ -3578,7 +3578,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                     bestMatch = filePath;
                 }
             }
-            
+
             return bestMatch;
         }
         catch (Exception)
@@ -3587,7 +3587,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             return null;
         }
     }
-    
+
     /// <summary>
     ///     Gets the priority of a cover art file name (lower = higher priority).
     ///     Delegates to <see cref="FileExtensions.GetCoverArtPriority"/> as the single source of truth.
@@ -3787,7 +3787,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         var discoveredDirectories = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         progress?.Report(new ScanProgress
-            { StatusText = Resources.Strings.Status_PreparingScanCaches, TotalFiles = totalFiles, Percentage = 0 });
+        { StatusText = Resources.Strings.Status_PreparingScanCaches, TotalFiles = totalFiles, Percentage = 0 });
 
         // Pre-load scan-scoped caches (names -> IDs) to prevent duplicate entity creation across batches
         var artistIdCache = new ConcurrentDictionary<string, Guid>(StringComparer.OrdinalIgnoreCase);
@@ -3839,7 +3839,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             artistIdCache.Count, albumIdCache.Count, genreIdCache.Count);
 
         progress?.Report(new ScanProgress
-            { StatusText = Resources.Strings.Status_ReadingSongDetails, TotalFiles = totalFiles, Percentage = 0 });
+        { StatusText = Resources.Strings.Status_ReadingSongDetails, TotalFiles = totalFiles, Percentage = 0 });
 
         var totalSaved = 0;
 
@@ -3962,7 +3962,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 if (batch.Count > 0)
                 {
                     batchNumber++;
-                     _logger.LogInformation("Consumer processing FINAL batch {BatchNumber} with {Count} items.", batchNumber, batch.Count);
+                    _logger.LogInformation("Consumer processing FINAL batch {BatchNumber} with {Count} items.", batchNumber, batch.Count);
                     progress?.Report(new ScanProgress
                     {
                         StatusText = Resources.Strings.Status_ReadingSongDetails,
@@ -4077,11 +4077,11 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         // may not be reflected in entity states until DetectChanges is called explicitly.
         context.ChangeTracker.DetectChanges();
         await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-        
+
         // Release all tracked entities immediately to reduce memory pressure during large scans.
         // This is safe here because we return immediately after - no further entity operations needed.
         context.ChangeTracker.Clear();
-        
+
         _logger.LogInformation("Batch saved successfully.");
 
         return metadataList.Length;
@@ -4185,7 +4185,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         IReadOnlyCollection<string> genreNames,
         ConcurrentDictionary<string, Guid> genreIdCache)
     {
-         _logger.LogInformation("ResolveGenresForBatchAsync entered. Genre count: {Count}", genreNames.Count);
+        _logger.LogInformation("ResolveGenresForBatchAsync entered. Genre count: {Count}", genreNames.Count);
         if (genreNames.Count == 0)
             return new Dictionary<string, Genre>(StringComparer.OrdinalIgnoreCase);
 
@@ -4236,8 +4236,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
     private static string GetHexRepresentation(string s)
     {
-        return string.IsNullOrEmpty(s) 
-            ? string.Empty 
+        return string.IsNullOrEmpty(s)
+            ? string.Empty
             : BitConverter.ToString(Encoding.Unicode.GetBytes(s)).Replace("-", "");
     }
 
@@ -4453,7 +4453,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         song.Bpm = metadata.Bpm;
         song.Lyrics = metadata.Lyrics;
         song.LrcFilePath = metadata.LrcFilePath;
-        
+
         // Use FK assignment for existing (Unchanged) albums; navigation property for new (Added) albums.
         // Setting song.Album = album for new albums lets EF Core wire up the relationship graph correctly,
         // enabling efficient dependency traversal in SaveChangesAsync without identity map lookups.
@@ -4687,7 +4687,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         try
         {
             var cachePath = _pathConfig.ArtistImageCachePath;
-            
+
             // Read, process, and save the image
             var originalBytes = await _fileSystem.ReadAllBytesAsync(localFilePath).ConfigureAwait(false);
             var processedBytes = await _imageProcessor.ProcessImageBytesAsync(originalBytes).ConfigureAwait(false);
@@ -4752,8 +4752,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     ///     Fetches metadata from remote sources and updates availability status.
     /// </summary>
     private async Task<(bool Updated, string? NewImagePath)> FetchAndUpdateArtistFromRemoteAsync(
-        MusicDbContext context, 
-        Artist artist, 
+        MusicDbContext context,
+        Artist artist,
         CancellationToken cancellationToken = default,
         bool saveChanges = true,
         bool suppressEvents = false)
@@ -4806,7 +4806,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             return (wasMetadataFoundAndUpdated, artist.LocalImageCachePath);
         }
 
-        _logger.LogDebug("Using metadata providers for '{ArtistName}': {Providers}", 
+        _logger.LogDebug("Using metadata providers for '{ArtistName}': {Providers}",
             artist.Name, string.Join(", ", enabledProviders.Select(p => p.Id)));
 
         var enabledIds = enabledProviders.Select(p => p.Id).ToHashSet();
@@ -4877,25 +4877,25 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         foreach (var provider in enabledProviders)
         {
             if (!tasks.TryGetValue(provider.Id, out var task)) continue;
-            
+
             try
             {
-                // Sequential await in priority order. If a higher priority task is still running, 
+                // Sequential await in priority order. If a higher priority task is still running,
                 // we wait for it. If it finishes and has data, we break early and ignore lower priority ones.
                 var (imageUrl, biography) = await task.ConfigureAwait(false);
-                
+
                 if (string.IsNullOrEmpty(finalImageUrl) && !string.IsNullOrEmpty(imageUrl))
                 {
                     finalImageUrl = imageUrl;
                     _logger.LogDebug("Using image from {Provider} for artist '{ArtistName}'.", provider.DisplayName, artist.Name);
                 }
-                
+
                 if (string.IsNullOrEmpty(finalBiography) && !string.IsNullOrEmpty(biography))
                 {
                     finalBiography = biography;
                     _logger.LogDebug("Using biography from {Provider} for artist '{ArtistName}'.", provider.DisplayName, artist.Name);
                 }
-                
+
                 // Early exit if we have both primary values
                 if (!string.IsNullOrEmpty(finalImageUrl) && !string.IsNullOrEmpty(finalBiography))
                     break;
@@ -5041,7 +5041,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                         if (t.IsFaulted && t.Exception != null)
                         {
                             // Log the actual exception from the download task
-                            _logger.LogWarning(t.Exception.InnerException ?? t.Exception, 
+                            _logger.LogWarning(t.Exception.InnerException ?? t.Exception,
                                 "Artist image download task failed for artist ID {ArtistId}.", artistId);
                             return null;
                         }
@@ -5076,7 +5076,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 _logger.LogDebug("Downloading artist image (Attempt {Attempt}/3): {ImageUrl}", attempt, imageUrl);
 
                 using var response = await httpClient.GetAsync(imageUrl, cancellationToken).ConfigureAwait(false);
-                
+
                 if (response.IsSuccessStatusCode)
                 {
                     var imageBytes = await response.Content.ReadAsByteArrayAsync(cancellationToken).ConfigureAwait(false);
@@ -5159,7 +5159,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             if (album is not null)
             {
                 // Update year if missing
-                if (album.Year is null && year.HasValue) 
+                if (album.Year is null && year.HasValue)
                 {
                     album.Year = year;
                 }
@@ -5324,13 +5324,13 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         {
             var idsToDelete = orphanedArtists.Select(a => a.Id).ToList();
             await context.Artists.Where(a => idsToDelete.Contains(a.Id)).ExecuteDeleteAsync(cancellationToken).ConfigureAwait(false);
-            
+
             foreach (var artist in orphanedArtists)
             {
                 // Delete all possible image variants for the orphaned artist
                 ImageStorageHelper.DeleteImage(_fileSystem, _pathConfig.ArtistImageCachePath, artist.Id.ToString(), ".fetched");
                 ImageStorageHelper.DeleteImage(_fileSystem, _pathConfig.ArtistImageCachePath, artist.Id.ToString(), ".custom");
-                
+
                 // Cleanup legacy legacy as well
                 ImageStorageHelper.DeleteImage(_fileSystem, _pathConfig.ArtistImageCachePath, artist.Id.ToString(), "");
             }

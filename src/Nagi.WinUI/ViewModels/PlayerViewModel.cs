@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -185,9 +185,9 @@ public partial class PlayerViewModel : ObservableObject
 
     private void UpdateButtonState(string buttonId, string icon, string toolTip)
     {
-        var button = MainTransportButtons.FirstOrDefault(b => b.Id == buttonId) 
+        var button = MainTransportButtons.FirstOrDefault(b => b.Id == buttonId)
                      ?? SecondaryControlsButtons.FirstOrDefault(b => b.Id == buttonId);
-        
+
         if (button != null)
         {
             button.DynamicIcon = icon;
@@ -305,7 +305,7 @@ public partial class PlayerViewModel : ObservableObject
             collection.ReplaceRange(newItems);
             return;
         }
-        
+
         // Check if all IDs match by index (avoids LINQ allocations)
         for (var i = 0; i < collection.Count; i++)
         {
@@ -438,7 +438,7 @@ public partial class PlayerViewModel : ObservableObject
     {
         // If parameter is present, we can navigate.
         if (parameter != null) return true;
-        
+
         // Otherwise fallback to checking if we have a current track.
         return CurrentPlayingTrack != null;
     }
@@ -462,7 +462,7 @@ public partial class PlayerViewModel : ObservableObject
     {
         var oldGlyph = VolumeIconGlyph;
         UpdateVolumeIconGlyph();
-        
+
         // If the glyph didn't change (e.g. toggling mute at volume 0),
         // we still need to update the button because the ToolTip changed.
         if (oldGlyph == VolumeIconGlyph)
@@ -493,8 +493,8 @@ public partial class PlayerViewModel : ObservableObject
         {
             _lastDisplayedSecond = currentSecond;
             var timeSpan = TimeSpan.FromSeconds(value);
-            CurrentTimeText = timeSpan.TotalHours >= 1 
-                ? timeSpan.ToString(@"h\:mm\:ss") 
+            CurrentTimeText = timeSpan.TotalHours >= 1
+                ? timeSpan.ToString(@"h\:mm\:ss")
                 : timeSpan.ToString(@"m\:ss");
         }
 
@@ -522,8 +522,8 @@ public partial class PlayerViewModel : ObservableObject
     partial void OnTotalDurationChanged(double value)
     {
         var timeSpan = TimeSpan.FromSeconds(value);
-        TotalDurationText = timeSpan.TotalHours >= 1 
-            ? timeSpan.ToString(@"h\:mm\:ss") 
+        TotalDurationText = timeSpan.TotalHours >= 1
+            ? timeSpan.ToString(@"h\:mm\:ss")
             : timeSpan.ToString(@"m\:ss");
     }
 
@@ -594,8 +594,8 @@ public partial class PlayerViewModel : ObservableObject
                 return;
             }
 
-            var currentTrackIndexInSource = isShuffleEnabled 
-                ? _playbackService.CurrentShuffledIndex 
+            var currentTrackIndexInSource = isShuffleEnabled
+                ? _playbackService.CurrentShuffledIndex
                 : _playbackService.CurrentQueueIndex;
 
             // For large libraries, we only show a window of the queue to keep the UI snappy

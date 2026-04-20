@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
@@ -103,14 +103,14 @@ public static class MultiArtistHyperlinkHelper
         // Quick escape if nothing changed to prevent rapid-fire redundant updates during virtualization/scrolling
         // Include Command in cache key to ensure we rebuild if command is late-bound!
         string cacheKey = $"{song?.Id ?? Guid.Empty}_{albumArtists?.GetHashCode() ?? 0}_{artistString ?? string.Empty}_{command?.GetHashCode() ?? 0}";
-        
+
         var lastCacheKey = (string)textBlock.GetValue(LastCacheKeyProperty);
         if (lastCacheKey == cacheKey)
         {
             return;
         }
         textBlock.SetValue(LastCacheKeyProperty, cacheKey);
-        
+
         if (textBlock.Parent is not Panel parentPanel)
         {
             // Fallback: if not in a supported container, just set text
@@ -129,7 +129,7 @@ public static class MultiArtistHyperlinkHelper
                 VerticalAlignment = textBlock.VerticalAlignment,
                 HorizontalAlignment = textBlock.HorizontalAlignment
             };
-            
+
             // If parent is Grid, copy positioning
             if (parentPanel is Grid)
             {
@@ -138,7 +138,7 @@ public static class MultiArtistHyperlinkHelper
                 Grid.SetColumnSpan(stackPanel, Grid.GetColumnSpan(textBlock));
                 Grid.SetRowSpan(stackPanel, Grid.GetRowSpan(textBlock));
             }
-            
+
             // Hide the original TextBlock
             textBlock.Visibility = Visibility.Collapsed;
 
@@ -152,7 +152,7 @@ public static class MultiArtistHyperlinkHelper
             {
                 parentPanel.Children.Add(stackPanel);
             }
-            
+
             textBlock.SetValue(AssociatedStackPanelProperty, stackPanel);
         }
 
@@ -172,8 +172,8 @@ public static class MultiArtistHyperlinkHelper
 
         if (string.IsNullOrEmpty(artistString))
         {
-            stackPanel.Children.Add(new TextBlock 
-            { 
+            stackPanel.Children.Add(new TextBlock
+            {
                 Text = Artist.UnknownArtistName,
                 Style = Application.Current.Resources["BodyTextBlockStyle"] as Style,
                 Foreground = secondaryBrush
@@ -183,7 +183,7 @@ public static class MultiArtistHyperlinkHelper
 
         // Prefer using structure data from SongArtists if available
         var artistParts = new List<string>();
-        
+
         if (song?.SongArtists?.Any() == true)
         {
             artistParts = song.SongArtists
@@ -206,7 +206,7 @@ public static class MultiArtistHyperlinkHelper
         for (int i = 0; i < artistParts.Count; i++)
         {
             var artistPart = artistParts[i];
-            
+
             var button = new HyperlinkButton
             {
                 Content = artistPart,
@@ -231,12 +231,12 @@ public static class MultiArtistHyperlinkHelper
                     VerticalAlignment = VerticalAlignment.Center,
                     FontSize = 13
                 };
-                
+
                 if (secondaryBrush != null)
                 {
                     separatorText.Foreground = secondaryBrush;
                 }
-                
+
                 stackPanel.Children.Add(separatorText);
             }
         }

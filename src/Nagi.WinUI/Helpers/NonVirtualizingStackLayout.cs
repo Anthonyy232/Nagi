@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Microsoft.UI.Xaml.Controls;
 using Windows.Foundation;
 
@@ -43,7 +43,7 @@ public sealed class NonVirtualizingStackLayout : NonVirtualizingLayout
         foreach (var child in context.Children)
         {
             var childHeight = Math.Round(child.DesiredSize.Height);
-            // Snap Y position and height to whole pixels to prevent text aliasing. 
+            // Snap Y position and height to whole pixels to prevent text aliasing.
             // Explicitly cast to float if the compiler requires it for the Rect constructor.
             child.Arrange(new Rect(0, (float)y, (float)finalSize.Width, (float)childHeight));
             y += childHeight;

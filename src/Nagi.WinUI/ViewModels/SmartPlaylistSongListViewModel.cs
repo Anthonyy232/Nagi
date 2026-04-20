@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -110,13 +110,13 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
         if (ruleCount == 0)
             return Nagi.WinUI.Resources.Strings.SmartPlaylist_RuleSummary_NoRules;
 
-        var matchType = smartPlaylist.MatchAllRules 
-            ? Nagi.WinUI.Resources.Strings.SmartPlaylist_MatchAll 
+        var matchType = smartPlaylist.MatchAllRules
+            ? Nagi.WinUI.Resources.Strings.SmartPlaylist_MatchAll
             : Nagi.WinUI.Resources.Strings.SmartPlaylist_MatchAny;
-        var ruleWord = ruleCount == 1 
-            ? Nagi.WinUI.Resources.Strings.SmartPlaylist_Rule_Singular 
+        var ruleWord = ruleCount == 1
+            ? Nagi.WinUI.Resources.Strings.SmartPlaylist_Rule_Singular
             : Nagi.WinUI.Resources.Strings.SmartPlaylist_Rule_Plural;
-        
+
         return ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.SmartPlaylist_RuleSummary_Format, matchType, ruleCount, ruleWord);
     }
 

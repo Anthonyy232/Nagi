@@ -1,4 +1,4 @@
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -93,13 +93,13 @@ public class LibraryServiceBugTests : IDisposable
         _fileSystem.DirectoryExists(folder.Path).Returns(true);
         _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, "*.*", SearchOption.AllDirectories).Returns(songFiles);
         _fileSystem.GetExtension(Arg.Any<string>()).Returns(".mp3");
-        
+
         _metadataService.ExtractMetadataAsync(Arg.Any<string>(), Arg.Any<string?>())
-            .Returns(x => Task.FromResult(new SongFileMetadata 
-            { 
-                FilePath = (string)x[0], 
-                Title = "Song", 
-                Artists = new List<string> { "Artist" } 
+            .Returns(x => Task.FromResult(new SongFileMetadata
+            {
+                FilePath = (string)x[0],
+                Title = "Song",
+                Artists = new List<string> { "Artist" }
             }));
 
         // Act & Assert
@@ -114,16 +114,16 @@ public class LibraryServiceBugTests : IDisposable
         // Arrange: Setup existing folder, song, and album with multiple artists
         var folderId = Guid.NewGuid();
         var folder = new Folder { Id = folderId, Path = "C:\\Music\\Scan", Name = "Scan" };
-        
+
         var mainArtist = new Artist { Name = "Main Artist" };
         var legacyArtist = new Artist { Name = "Legacy Artist" };
-        
+
         var album = new Album { Title = "Test Album" };
         album.AlbumArtists.Add(new AlbumArtist { Artist = mainArtist, Order = 0 });
-        
-        var song = new Song 
-        { 
-            Title = "Test Song", 
+
+        var song = new Song
+        {
+            Title = "Test Song",
             FilePath = "C:\\Music\\Scan\\song.mp3",
             DirectoryPath = "C:\\Music\\Scan",
             FolderId = folderId,
@@ -132,7 +132,7 @@ public class LibraryServiceBugTests : IDisposable
         };
         song.SongArtists.Add(new SongArtist { Artist = mainArtist, Order = 0 });
         song.SongArtists.Add(new SongArtist { Artist = legacyArtist, Order = 1 });
-        
+
         album.SyncDenormalizedFields();
         song.SyncDenormalizedFields();
 
@@ -154,10 +154,10 @@ public class LibraryServiceBugTests : IDisposable
         // Mock metadata extraction returning NEW collaboration
         var collaboratorName = "Collaborator";
         _metadataService.ExtractMetadataAsync("C:\\Music\\Scan\\song.mp3", Arg.Any<string?>())
-            .Returns(new SongFileMetadata 
-            { 
-                FilePath = "C:\\Music\\Scan\\song.mp3", 
-                Title = "Test Song", 
+            .Returns(new SongFileMetadata
+            {
+                FilePath = "C:\\Music\\Scan\\song.mp3",
+                Title = "Test Song",
                 Album = "Test Album",
                 Artists = new List<string> { "Main Artist", collaboratorName },
                 AlbumArtists = new List<string> { "Main Artist", collaboratorName },
@@ -180,7 +180,7 @@ public class LibraryServiceBugTests : IDisposable
 
         // Act
         var result = await _libraryService.RescanFolderForMusicAsync(folderId);
-        
+
         // If failed, throw the logged exception
         if (!result && loggedException != null)
         {
@@ -218,7 +218,7 @@ public class LibraryServiceBugTests : IDisposable
             // 3. Verify Orphans are cleaned up
             var legacyArtistFromDb = await context.Artists.FirstOrDefaultAsync(a => a.Name == "Legacy Artist");
             legacyArtistFromDb.Should().BeNull("Legacy Artist should be deleted because it is no longer referenced");
-            
+
             // 4. Verify new artist exists
             var collaboratorFromDb = await context.Artists.FirstOrDefaultAsync(a => a.Name == "Collaborator");
             collaboratorFromDb.Should().NotBeNull();
@@ -230,7 +230,7 @@ public class LibraryServiceBugTests : IDisposable
         // Arrange
         var folderId = Guid.NewGuid();
         var folder = new Folder { Id = folderId, Path = "C:\\Music\\TrimTest", Name = "TrimTest" };
-        
+
         await using (var context = _dbHelper.ContextFactory.CreateDbContext())
         {
             context.Folders.Add(folder);
@@ -248,19 +248,19 @@ public class LibraryServiceBugTests : IDisposable
         // Song 2: "Artist One" (trimmed)
         // These should resolve to the SAME artist entity
         _metadataService.ExtractMetadataAsync("C:\\Music\\TrimTest\\song1.mp3", Arg.Any<string?>())
-            .Returns(new SongFileMetadata 
-            { 
-                FilePath = "C:\\Music\\TrimTest\\song1.mp3", 
-                Title = "Song 1", 
+            .Returns(new SongFileMetadata
+            {
+                FilePath = "C:\\Music\\TrimTest\\song1.mp3",
+                Title = "Song 1",
                 Artists = new List<string> { " Artist One " },
                 AlbumArtists = new List<string> { " Artist One " }
             });
-            
+
         _metadataService.ExtractMetadataAsync("C:\\Music\\TrimTest\\song2.mp3", Arg.Any<string?>())
-            .Returns(new SongFileMetadata 
-            { 
-                FilePath = "C:\\Music\\TrimTest\\song2.mp3", 
-                Title = "Song 2", 
+            .Returns(new SongFileMetadata
+            {
+                FilePath = "C:\\Music\\TrimTest\\song2.mp3",
+                Title = "Song 2",
                 Artists = new List<string> { "Artist One" },
                 AlbumArtists = new List<string> { "Artist One" }
             });
@@ -270,7 +270,7 @@ public class LibraryServiceBugTests : IDisposable
 
         // Assert
         result.Should().BeTrue();
-        
+
         await using (var context = _dbHelper.ContextFactory.CreateDbContext())
         {
             // Verify only ONE artist was created
@@ -283,7 +283,7 @@ public class LibraryServiceBugTests : IDisposable
                 .Include(s => s.SongArtists)
                 .ThenInclude(sa => sa.Artist)
                 .ToListAsync();
-                
+
             songs.Should().HaveCount(2);
             songs[0].SongArtists.First().Artist.Name.Should().Be("Artist One");
             songs[1].SongArtists.First().Artist.Name.Should().Be("Artist One");

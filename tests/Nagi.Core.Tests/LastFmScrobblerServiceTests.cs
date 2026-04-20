@@ -287,7 +287,7 @@ public class LastFmScrobblerServiceTests : IDisposable
         var artist = new Artist { Name = "Test Artist" };
         var album = new Album { Title = "Test Album" };
         album.AlbumArtists.Add(new AlbumArtist { Artist = artist, Order = 0 });
-        
+
         var song = new Song
         {
             Title = "Test Title",

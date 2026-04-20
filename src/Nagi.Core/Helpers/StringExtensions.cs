@@ -1,4 +1,4 @@
-namespace Nagi.Core.Helpers;
+﻿namespace Nagi.Core.Helpers;
 
 /// <summary>
 ///     Provides helpful extension methods for string manipulation.

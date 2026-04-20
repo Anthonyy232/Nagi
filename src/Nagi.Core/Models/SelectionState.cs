@@ -1,11 +1,11 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Nagi.Core.Models;
 
 /// <summary>
-///     Encapsulates a logical selection state that efficiently handles both 
+///     Encapsulates a logical selection state that efficiently handles both
 ///     explicit selections and "Select All" with exceptions.
 /// </summary>
 public class SelectionState
@@ -76,7 +76,7 @@ public class SelectionState
     /// <summary>
     ///     Calculates the total number of selected items based on the total items in the view.
     /// </summary>
-    public int GetSelectedCount(int totalItems) => 
+    public int GetSelectedCount(int totalItems) =>
         IsSelectAllMode ? Math.Max(0, totalItems - _exceptions.Count) : _exceptions.Count;
 
     /// <summary>
@@ -90,8 +90,8 @@ public class SelectionState
     public IEnumerable<Guid> GetSelectedIds(IEnumerable<Guid> fullIdList)
     {
         if (fullIdList == null) return Enumerable.Empty<Guid>();
-        
-        return IsSelectAllMode 
+
+        return IsSelectAllMode
             ? fullIdList.Where(id => !_exceptions.Contains(id))
             : fullIdList.Where(id => _exceptions.Contains(id));
     }

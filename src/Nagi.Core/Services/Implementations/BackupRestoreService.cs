@@ -1,4 +1,4 @@
-using System.IO.Compression;
+﻿using System.IO.Compression;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
@@ -68,21 +68,21 @@ public class BackupRestoreService : IBackupRestoreService
                 var directoryInfo = new DirectoryInfo(sourcePath);
 
                 // Exclusions
-                var excludedDirectories = new HashSet<string>(StringComparer.OrdinalIgnoreCase) 
-                { 
-                    "Logs", 
-                    "EBWebView", 
-                    "Temp", 
+                var excludedDirectories = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    "Logs",
+                    "EBWebView",
+                    "Temp",
                     "Cache",
                     "crashdumps"
 
                 };
-                
+
                 // Copy all files in root
                 foreach (var file in directoryInfo.GetFiles())
                 {
                     // Skip temporary/lock files
-                    if (file.Extension.Equals(".tmp", StringComparison.OrdinalIgnoreCase) || 
+                    if (file.Extension.Equals(".tmp", StringComparison.OrdinalIgnoreCase) ||
                         file.Extension.Equals(".lock", StringComparison.OrdinalIgnoreCase))
                     {
                         continue;
@@ -110,7 +110,7 @@ public class BackupRestoreService : IBackupRestoreService
                 foreach (var dir in directoryInfo.GetDirectories())
                 {
                     if (excludedDirectories.Contains(dir.Name)) continue;
-                    
+
 
 
                     var destDir = Path.Combine(stagingPath, dir.Name);
@@ -171,11 +171,11 @@ public class BackupRestoreService : IBackupRestoreService
             try
             {
                 ZipFile.ExtractToDirectory(backupFilePath, stagingPath);
-                
+
                 // If extraction succeeded, we proceed to overwrite live data.
                 // NOTE: We cannot easily "close" the db connection from here if it's open by EF Core.
                 // The app restart requirement handles the final consistency, but replacing open files might fail on Windows.
-                try 
+                try
                 {
                     SqliteConnection.ClearAllPools();
                     // Force GC to finalize any lingering contexts/commands
@@ -194,8 +194,8 @@ public class BackupRestoreService : IBackupRestoreService
                 {
                     var fileName = Path.GetFileName(file);
                     var destFile = Path.Combine(destPath, fileName);
-                    
-                    try 
+
+                    try
                     {
                         await RetryFileOperationAsync(() => File.Copy(file, destFile, true));
                     }
@@ -204,11 +204,11 @@ public class BackupRestoreService : IBackupRestoreService
                         // If file is still locked (like nagi.db), try renaming it to .old and then copying
                         // This relies on the file being opened with FileShare.Delete which is common for SQLite
                         var oldFile = destFile + ".old." + Guid.NewGuid();
-                        try 
+                        try
                         {
                             await RetryFileOperationAsync(() => File.Move(destFile, oldFile));
                             await RetryFileOperationAsync(() => File.Copy(file, destFile, true));
-                            
+
                             // Try to delete the old file, ignore if it fails (it will be cleaned up later or left as garbage)
                             try { File.Delete(oldFile); } catch { }
                         }
@@ -216,11 +216,11 @@ public class BackupRestoreService : IBackupRestoreService
                         {
                             // If rename also fails, we can't restore this file
                             _logger.LogError(ex, "Failed to restore locked file: {FileName}", fileName);
-                            throw; // Abort restore to avoid partial state? Or continue? 
+                            throw; // Abort restore to avoid partial state? Or continue?
                                    // Better to abort and tell user to restart manually/close app.
                         }
                     }
-                    
+
                     restoredCount++;
                 }
 
@@ -228,12 +228,12 @@ public class BackupRestoreService : IBackupRestoreService
                 {
                     var dirName = Path.GetFileName(dir);
                     var destDir = Path.Combine(destPath, dirName);
-                    
+
                     if (Directory.Exists(destDir))
                     {
                         await RetryFileOperationAsync(() => Directory.Delete(destDir, true));
                     }
-                    
+
                     // MoveDirectory is atomic-ish on same volume, but CopyDirectory is safer across volumes/temp
                     // Since temp might be different volume, let's use recursive copy or move helper
                     // Here we can just move since it's staging
@@ -246,9 +246,9 @@ public class BackupRestoreService : IBackupRestoreService
             }
             finally
             {
-                 if (Directory.Exists(stagingPath))
+                if (Directory.Exists(stagingPath))
                 {
-                    try 
+                    try
                     {
                         Directory.Delete(stagingPath, true);
                     }
@@ -292,7 +292,7 @@ public class BackupRestoreService : IBackupRestoreService
                 if (!File.Exists(backupFilePath)) return false;
 
                 using var archive = ZipFile.OpenRead(backupFilePath);
-                
+
                 // Check for critical file
                 var hasDb = archive.Entries.Any(e => e.FullName.Equals("nagi.db", StringComparison.OrdinalIgnoreCase));
                 var hasSettings = archive.Entries.Any(e => e.FullName.Equals("settings.json", StringComparison.OrdinalIgnoreCase));
@@ -315,7 +315,7 @@ public class BackupRestoreService : IBackupRestoreService
         using var destStream = new FileStream(dest, FileMode.Create, FileAccess.Write, FileShare.None);
         await sourceStream.CopyToAsync(destStream);
     }
-    
+
     private async Task CopyDirectoryAsync(string sourceDir, string destinationDir)
     {
         var dir = new DirectoryInfo(sourceDir);

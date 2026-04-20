@@ -1,4 +1,4 @@
-namespace Nagi.Core.Services.Abstractions;
+﻿namespace Nagi.Core.Services.Abstractions;
 
 /// <summary>
 ///     Service for fetching synchronized lyrics from NetEase Cloud Music.

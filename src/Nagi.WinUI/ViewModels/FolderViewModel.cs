@@ -87,15 +87,15 @@ public partial class FolderViewModel : ObservableObject
         // Store handler reference to enable proper cleanup in Dispose
         _collectionChangedHandler = (s, e) => OnPropertyChanged(nameof(HasFolders));
         Folders.CollectionChanged += _collectionChangedHandler;
-        
+
         _libraryService.LibraryContentChanged += OnLibraryContentChanged;
     }
 
     private void OnLibraryContentChanged(object? sender, LibraryContentChangedEventArgs e)
     {
         // Refresh folders list on any folder-related change
-        if (e.ChangeType == LibraryChangeType.FolderAdded || 
-            e.ChangeType == LibraryChangeType.FolderRemoved || 
+        if (e.ChangeType == LibraryChangeType.FolderAdded ||
+            e.ChangeType == LibraryChangeType.FolderRemoved ||
             e.ChangeType == LibraryChangeType.FolderRescanned ||
             e.ChangeType == LibraryChangeType.LibraryRescanned)
         {
@@ -114,9 +114,9 @@ public partial class FolderViewModel : ObservableObject
                 {
                     // 1 second is enough to catch all events from a folder scan while still feeling responsive
                     await Task.Delay(1000, token).ConfigureAwait(false);
-                    
+
                     if (token.IsCancellationRequested) return;
-                    
+
                     await _dispatcherService.EnqueueAsync(() => LoadFoldersAsync());
                 }
                 catch (OperationCanceledException)

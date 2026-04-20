@@ -1,4 +1,4 @@
-using System.Net;
+﻿using System.Net;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Http;
@@ -17,7 +17,7 @@ public class HttpRetryHelperTests
     public void Success_CreatesSuccessResultWithValue()
     {
         var result = RetryResult<string>.Success("test");
-        
+
         result.IsSuccess.Should().BeTrue();
         result.ShouldRetry.Should().BeFalse();
         result.Value.Should().Be("test");
@@ -28,7 +28,7 @@ public class HttpRetryHelperTests
     public void SuccessEmpty_CreatesSuccessResultWithoutValue()
     {
         var result = RetryResult<string>.SuccessEmpty();
-        
+
         result.IsSuccess.Should().BeTrue();
         result.ShouldRetry.Should().BeFalse();
         result.Value.Should().BeNull();
@@ -38,7 +38,7 @@ public class HttpRetryHelperTests
     public void TransientFailure_CreatesRetryableResult()
     {
         var result = RetryResult<string>.TransientFailure();
-        
+
         result.IsSuccess.Should().BeFalse();
         result.ShouldRetry.Should().BeTrue();
         result.DelayMultiplierOverride.Should().BeNull();
@@ -48,7 +48,7 @@ public class HttpRetryHelperTests
     public void RateLimitFailure_CreatesRetryableResultWithDelayOverride()
     {
         var result = RetryResult<string>.RateLimitFailure(5);
-        
+
         result.IsSuccess.Should().BeFalse();
         result.ShouldRetry.Should().BeTrue();
         result.DelayMultiplierOverride.Should().Be(5);
@@ -58,7 +58,7 @@ public class HttpRetryHelperTests
     public void PermanentFailure_CreatesNonRetryableResult()
     {
         var result = RetryResult<string>.PermanentFailure();
-        
+
         result.IsSuccess.Should().BeFalse();
         result.ShouldRetry.Should().BeFalse();
     }
@@ -74,7 +74,7 @@ public class HttpRetryHelperTests
     public void FromHttpStatus_ReturnsCorrectRetryBehavior(HttpStatusCode statusCode, bool shouldRetry)
     {
         var result = RetryResult<string>.FromHttpStatus(statusCode);
-        
+
         result.ShouldRetry.Should().Be(shouldRetry);
         result.IsSuccess.Should().BeFalse();
     }
@@ -87,7 +87,7 @@ public class HttpRetryHelperTests
     public async Task ExecuteWithRetryAsync_ReturnsImmediatelyOnSuccess()
     {
         var callCount = 0;
-        
+
         var result = await HttpRetryHelper.ExecuteWithRetryAsync<string>(
             async attempt =>
             {
@@ -99,7 +99,7 @@ public class HttpRetryHelperTests
             CancellationToken.None,
             maxRetries: 3
         );
-        
+
         result.Should().Be("success");
         callCount.Should().Be(1);
     }
@@ -108,7 +108,7 @@ public class HttpRetryHelperTests
     public async Task ExecuteWithRetryAsync_RetriesOnTransientFailure()
     {
         var callCount = 0;
-        
+
         var result = await HttpRetryHelper.ExecuteWithRetryAsync<string>(
             async attempt =>
             {
@@ -123,7 +123,7 @@ public class HttpRetryHelperTests
             maxRetries: 3,
             baseDelaySeconds: 0 // No delay for testing
         );
-        
+
         result.Should().Be("success");
         callCount.Should().Be(3);
     }
@@ -132,7 +132,7 @@ public class HttpRetryHelperTests
     public async Task ExecuteWithRetryAsync_StopsOnPermanentFailure()
     {
         var callCount = 0;
-        
+
         var result = await HttpRetryHelper.ExecuteWithRetryAsync<string>(
             async attempt =>
             {
@@ -144,7 +144,7 @@ public class HttpRetryHelperTests
             CancellationToken.None,
             maxRetries: 3
         );
-        
+
         result.Should().BeNull();
         callCount.Should().Be(1);
     }
@@ -153,7 +153,7 @@ public class HttpRetryHelperTests
     public async Task ExecuteWithRetryAsync_ReturnsDefaultAfterMaxRetries()
     {
         var callCount = 0;
-        
+
         var result = await HttpRetryHelper.ExecuteWithRetryAsync<string>(
             async attempt =>
             {
@@ -166,7 +166,7 @@ public class HttpRetryHelperTests
             maxRetries: 3,
             baseDelaySeconds: 0
         );
-        
+
         result.Should().BeNull();
         callCount.Should().Be(3);
     }
@@ -176,7 +176,7 @@ public class HttpRetryHelperTests
     {
         using var cts = new CancellationTokenSource();
         cts.Cancel();
-        
+
         // When the operation itself doesn't check the cancellation token,
         // the helper will return the operation's result (not throw)
         var result = await HttpRetryHelper.ExecuteWithRetryAsync<string>(
@@ -185,7 +185,7 @@ public class HttpRetryHelperTests
             "TestOperation",
             cts.Token
         );
-        
+
         // The operation succeeds because it doesn't check the token
         result.Should().Be("success");
     }
@@ -195,7 +195,7 @@ public class HttpRetryHelperTests
     {
         using var cts = new CancellationTokenSource();
         cts.Cancel();
-        
+
         Func<Task> act = async () => await HttpRetryHelper.ExecuteWithRetryAsync<string>(
             async attempt =>
             {
@@ -206,7 +206,7 @@ public class HttpRetryHelperTests
             "TestOperation",
             cts.Token
         );
-        
+
         await act.Should().ThrowAsync<OperationCanceledException>();
     }
 

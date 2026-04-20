@@ -1,4 +1,4 @@
-using Nagi.Core.Services.Implementations;
+﻿using Nagi.Core.Services.Implementations;
 using Xunit;
 
 namespace Nagi.Core.Tests;
@@ -6,9 +6,9 @@ namespace Nagi.Core.Tests;
 /// <summary>
 ///     Tests for the LoudnessMeter EBU R128 implementation.
 ///     Test patterns aligned with sdroege/ebur128 and EBU TECH 3341/3342.
-///     
+///
 ///     Key reference values:
-///     - A 1kHz stereo sine-wave with peak level at -18 dBFS should measure -18.0 LUFS 
+///     - A 1kHz stereo sine-wave with peak level at -18 dBFS should measure -18.0 LUFS
 ///       (K-weighting gain at 1kHz compensates for the -0.691 offset).
 ///     - For a 440Hz stereo sine at full scale (amplitude 1.0), the reference library (sdroege/ebur128)
 ///       produces exactly -0.6500... LUFS for global loudness.
@@ -99,7 +99,7 @@ public class LoudnessMeterTests
     public void MeasureIntegratedLoudness_440Hz_FullScale_Stereo_ReferenceAlignment()
     {
         var samples = GenerateSineWave(440.0, 1.0, 48000, 5.0, channels: 2);
-        
+
         var result = _loudnessMeter.MeasureIntegratedLoudness(samples, 48000, 2);
         const double expected = -0.6500000000000054;
 
@@ -133,10 +133,10 @@ public class LoudnessMeterTests
     public void MeasureIntegratedLoudness_DualMono_HasCorrectWeight()
     {
         var monoSamples = GenerateSineWave(1000, 0.5, 48000, 3.0, channels: 1);
-        
+
         // Measure as Center channel (weight 1.0)
         var centerResult = _loudnessMeter.MeasureIntegratedLoudness(monoSamples, 48000, 1);
-        
+
         // Measure as Dual Mono (weight 2.0)
         var dualMonoMap = new[] { LoudnessMeter.Channel.DualMono };
         var dualMonoResult = _loudnessMeter.MeasureIntegratedLoudness(monoSamples, 48000, 1, dualMonoMap);
@@ -162,10 +162,10 @@ public class LoudnessMeterTests
         var samples = GenerateSineWave(1000, amplitude, sampleRate, 3.0);
 
         var result = _loudnessMeter.MeasureIntegratedLoudness(samples, sampleRate, 2);
-        
+
         // At 1kHz, pre-filter boost is ~0.7 dB. So result should be around -22.3 LUFS
         const double expected = -22.3;
-        
+
         Assert.True(Math.Abs(result - expected) < 0.2, // Tighter tolerance for consistency
             $"At {sampleRate} Hz: expected ~{expected:F1} LUFS, got {result:F2} LUFS");
     }

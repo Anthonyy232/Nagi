@@ -1,4 +1,4 @@
-namespace Nagi.Core.Services.Data;
+﻿namespace Nagi.Core.Services.Data;
 
 /// <summary>
 ///     Represents the result of a playlist export operation.

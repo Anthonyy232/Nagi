@@ -1,4 +1,4 @@
-namespace Nagi.Core.Services.Abstractions;
+﻿namespace Nagi.Core.Services.Abstractions;
 
 using Nagi.Core.Services.Data;
 
@@ -30,4 +30,3 @@ public interface IReplayGainService : IDisposable
     /// <param name="cancellationToken">A token to cancel the operation.</param>
     Task ScanLibraryAsync(IProgress<ScanProgress>? progress = null, CancellationToken cancellationToken = default);
 }
-

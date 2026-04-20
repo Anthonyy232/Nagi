@@ -243,8 +243,8 @@
             DoubleTapped="GroupedSongsListView_DoubleTapped"
             Visibility="{x:Bind ViewModel.IsGroupedByDisc, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
             <ListView.Footer>
-                <uicontrols:PaginationControl 
-                    ViewModel="{x:Bind ViewModel}" 
+                <uicontrols:PaginationControl
+                    ViewModel="{x:Bind ViewModel}"
                     HorizontalAlignment="Right"
                     Margin="0,24,24,16" />
             </ListView.Footer>
@@ -327,8 +327,8 @@
             DoubleTapped="SongsListView_DoubleTapped"
             Visibility="{x:Bind ViewModel.IsGroupedByDisc, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
             <ListView.Footer>
-                <uicontrols:PaginationControl 
-                    ViewModel="{x:Bind ViewModel}" 
+                <uicontrols:PaginationControl
+                    ViewModel="{x:Bind ViewModel}"
                     HorizontalAlignment="Right"
                     Margin="0,24,24,16" />
             </ListView.Footer>
@@ -409,7 +409,7 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        
+
         <!-- Empty State -->
         <StackPanel
             Grid.Row="1"
@@ -438,6 +438,6 @@
                 HorizontalAlignment="Center"
                 Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
         </StackPanel>
-        
+
     </Grid>
 </Page>

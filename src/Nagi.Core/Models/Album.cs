@@ -12,7 +12,7 @@ public class Album
     [Key] public Guid Id { get; set; } = Guid.NewGuid();
 
 
-    [Required] [MaxLength(500)] public string Title { get; set; } = string.Format(Resources.Strings.Format_Unknown, Resources.Strings.Label_Album);
+    [Required][MaxLength(500)] public string Title { get; set; } = string.Format(Resources.Strings.Format_Unknown, Resources.Strings.Label_Album);
 
     public int? Year { get; set; }
 
@@ -40,7 +40,7 @@ public class Album
 
 
     /// <summary>
-    ///     Updates the denormalized <see cref="ArtistName" /> and <see cref="PrimaryArtistName" /> 
+    ///     Updates the denormalized <see cref="ArtistName" /> and <see cref="PrimaryArtistName" />
     ///     fields based on the current <see cref="AlbumArtists" /> collection.
     /// </summary>
     public void SyncDenormalizedFields()

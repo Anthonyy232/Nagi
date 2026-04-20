@@ -83,7 +83,7 @@ public class LastFmScrobblerService : ILastFmScrobblerService
     ///     Sends a POST request to the Last.fm API with the provided parameters.
     /// </summary>
     private async Task<bool> PostToLastFmAsync(
-        Dictionary<string, string> parameters, 
+        Dictionary<string, string> parameters,
         string apiSecret,
         CancellationToken cancellationToken = default)
     {
@@ -95,21 +95,21 @@ public class LastFmScrobblerService : ILastFmScrobblerService
             async attempt =>
             {
                 using var formContent = new FormUrlEncodedContent(parameters);
-                _logger.LogDebug("Calling Last.fm method '{Method}' (Attempt {Attempt}/{MaxRetries})", 
+                _logger.LogDebug("Calling Last.fm method '{Method}' (Attempt {Attempt}/{MaxRetries})",
                     method, attempt, MaxRetries);
 
                 using var response = await _httpClient.PostAsync(LastFmApiBaseUrl, formContent, cancellationToken).ConfigureAwait(false);
-                if (response.IsSuccessStatusCode) 
+                if (response.IsSuccessStatusCode)
                     return RetryResult<bool>.Success(true);
 
                 var errorContent = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
                 _logger.LogWarning(
                     "Last.fm API call for method '{Method}' failed. Status: {StatusCode}, Response: {ResponseContent}. Attempt {Attempt}/{MaxRetries}",
                     method, response.StatusCode, errorContent, attempt, MaxRetries);
-                
+
                 if (HttpRetryHelper.IsRetryableStatusCode(response.StatusCode))
                     return RetryResult<bool>.TransientFailure();
-                
+
                 return RetryResult<bool>.Success(false);
             },
             _logger,

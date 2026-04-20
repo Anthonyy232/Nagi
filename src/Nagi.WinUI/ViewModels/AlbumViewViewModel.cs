@@ -51,7 +51,7 @@ public partial class AlbumViewViewModel : SongListViewModelBase
     [ObservableProperty] public partial string AlbumTitle { get; set; }
 
     [ObservableProperty] public partial string ArtistName { get; set; }
-    
+
     [ObservableProperty] public partial ICollection<AlbumArtist> AlbumArtists { get; set; } = new List<AlbumArtist>();
 
     [ObservableProperty]
@@ -106,14 +106,14 @@ public partial class AlbumViewViewModel : SongListViewModelBase
             _albumId = albumId;
             var albumTask = _libraryReader.GetAlbumByIdAsync(albumId);
             var sortOrderTask = _settingsService.GetSortOrderAsync<SongSortOrder>(SortOrderHelper.AlbumViewSortOrderKey);
-            
+
             // Wait for sort order first, as it is required for loading songs
             await sortOrderTask;
             CurrentSortOrder = sortOrderTask.Result;
-            
+
             // Start loading songs in parallel with album metadata
             var songsTask = RefreshOrSortSongsCommand.ExecuteAsync(null);
-            
+
             await albumTask;
             var album = albumTask.Result;
 
@@ -172,7 +172,7 @@ public partial class AlbumViewViewModel : SongListViewModelBase
         if (pagedResult?.Items == null) return;
 
         _totalSongCount = pagedResult.TotalCount;
-        
+
         // As an optimization, if all songs fit in the first page, we can calculate duration in-memory.
         // This is true for 99% of albums (PageSize is 250).
         if (!pagedResult.HasNextPage)
@@ -181,7 +181,7 @@ public partial class AlbumViewViewModel : SongListViewModelBase
             _durationFetchCts?.Cancel();
             _durationFetchCts?.Dispose();
             _durationFetchCts = null;
-            
+
             _totalDuration = TimeSpan.FromTicks(pagedResult.Items.Sum(s => s.DurationTicks));
             RefreshAlbumDetailsText();
         }
@@ -192,11 +192,11 @@ public partial class AlbumViewViewModel : SongListViewModelBase
             _durationFetchCts?.Cancel();
             _durationFetchCts?.Dispose();
             _durationFetchCts = new CancellationTokenSource();
-            
+
             // Capture current search term to avoid stale closures
             var currentSearchTerm = SearchTerm;
             _ = UpdateTotalDurationAsync(currentSearchTerm, _durationFetchCts.Token);
-            
+
             // Show partial duration for now to be responsive
             _totalDuration = TimeSpan.FromTicks(pagedResult.Items.Sum(s => s.DurationTicks));
             RefreshAlbumDetailsText();
@@ -208,7 +208,7 @@ public partial class AlbumViewViewModel : SongListViewModelBase
         try
         {
             var duration = await _libraryReader.GetSearchTotalDurationInAlbumAsync(_albumId, searchTerm, cancellationToken);
-            
+
             if (!cancellationToken.IsCancellationRequested)
             {
                 _totalDuration = duration;
@@ -228,19 +228,19 @@ public partial class AlbumViewViewModel : SongListViewModelBase
     private void RefreshAlbumDetailsText()
     {
         var detailsParts = new List<string>();
-        
-        if (_albumYear.HasValue) 
+
+        if (_albumYear.HasValue)
             detailsParts.Add(_albumYear.Value.ToString());
-            
-        var songCountText = _totalSongCount == 1 
+
+        var songCountText = _totalSongCount == 1
             ? ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.AlbumView_SongCount_Singular, _totalSongCount)
             : ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.AlbumView_SongCount_Plural, _totalSongCount);
         detailsParts.Add(songCountText);
-        
+
         if (_totalDuration > TimeSpan.Zero)
         {
-            var durationText = _totalDuration.TotalHours >= 1 
-                ? _totalDuration.ToString(@"h\:mm\:ss") 
+            var durationText = _totalDuration.TotalHours >= 1
+                ? _totalDuration.ToString(@"h\:mm\:ss")
                 : _totalDuration.ToString(@"m\:ss");
             detailsParts.Add(durationText);
         }
@@ -252,11 +252,11 @@ public partial class AlbumViewViewModel : SongListViewModelBase
     protected override void ProcessPagedResult(PagedResult<Song> pagedResult, CancellationToken token, bool append = false)
     {
         base.ProcessPagedResult(pagedResult, token, append);
-        
+
         // Update grouping after the songs collection has been updated
         _dispatcherService.TryEnqueue(() =>
         {
-             if (!token.IsCancellationRequested) UpdateGrouping();
+            if (!token.IsCancellationRequested) UpdateGrouping();
         });
     }
 
@@ -285,7 +285,7 @@ public partial class AlbumViewViewModel : SongListViewModelBase
                 // Add all songs in this disc group
                 tempList.AddRange(group);
             }
-            
+
             GroupedSongsFlat.ReplaceRange(tempList);
         }
         else

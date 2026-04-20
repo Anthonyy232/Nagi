@@ -59,7 +59,7 @@ public class PathConfiguration : IPathConfiguration
 
     /// <inheritdoc />
     public string ArtistImageCachePath { get; }
-    
+
     /// <inheritdoc />
     public string PlaylistImageCachePath { get; }
 

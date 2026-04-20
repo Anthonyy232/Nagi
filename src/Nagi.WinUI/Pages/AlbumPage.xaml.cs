@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.System;
@@ -51,7 +51,7 @@ public sealed partial class AlbumPage : Page
             {
                 _logger.LogDebug("Album collection is empty, loading albums...");
                 await ViewModel.LoadAlbumsAsync(cts.Token);
-                
+
                 if (cts.IsCancellationRequested)
                     _logger.LogDebug("Album loading was canceled.");
                 else if (!ViewModel.HasLoadError)
@@ -61,7 +61,7 @@ public sealed partial class AlbumPage : Page
             {
                 _logger.LogDebug("Albums partially loaded, resuming fetch.");
                 await ViewModel.ResumeLoadingAsync(cts.Token);
-                
+
                 if (cts.IsCancellationRequested)
                     _logger.LogDebug("Album resuming was canceled.");
                 else if (!ViewModel.HasLoadError)

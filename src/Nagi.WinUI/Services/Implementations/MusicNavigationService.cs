@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -34,7 +34,7 @@ public class MusicNavigationService : IMusicNavigationService
 
     public async Task NavigateToArtistAsync(object? parameter)
     {
-        _logger.LogDebug("NavigateToArtistAsync invoked with parameter type: {ParamType}", 
+        _logger.LogDebug("NavigateToArtistAsync invoked with parameter type: {ParamType}",
             parameter?.GetType().Name ?? "null");
 
         Song? targetSong = null;
@@ -48,7 +48,7 @@ public class MusicNavigationService : IMusicNavigationService
         {
             targetSong = request.Song;
             targetArtistName = request.ArtistName;
-            _logger.LogDebug("Request parsed: ArtistName='{ArtistName}', SongId={SongId}", 
+            _logger.LogDebug("Request parsed: ArtistName='{ArtistName}', SongId={SongId}",
                 targetArtistName, targetSong?.Id);
         }
         else if (parameter is string artistName)
@@ -77,7 +77,7 @@ public class MusicNavigationService : IMusicNavigationService
         if (targetSong != null)
         {
             _logger.LogDebug("Attempting to resolve artist via song: {SongId}", targetSong.Id);
-            
+
             // Ensure we have artist details. In list views, SongArtists is excluded for performance.
             if (targetSong.SongArtists == null || !targetSong.SongArtists.Any())
             {
@@ -94,15 +94,15 @@ public class MusicNavigationService : IMusicNavigationService
                 targetArtist = targetSong.SongArtists?
                     .FirstOrDefault(sa => sa.Artist?.Name?.Equals(targetArtistName, StringComparison.OrdinalIgnoreCase) == true)?
                     .Artist;
-                
-                if (targetArtist == null) 
+
+                if (targetArtist == null)
                     _logger.LogDebug("Artist '{ArtistName}' not found in SongArtists collection for this song.", targetArtistName);
                 else
                     _logger.LogDebug("Found artist '{ArtistName}' in SongArtists collection.", targetArtistName);
             }
 
-            // Fallback to primary artist ONLY if no name was specified. 
-            // If a name WAS specified but not found in this song's metadata, 
+            // Fallback to primary artist ONLY if no name was specified.
+            // If a name WAS specified but not found in this song's metadata,
             // we should proceed to a global name lookup instead of jumping to the song's primary artist.
             if (targetArtist == null && string.IsNullOrEmpty(targetArtistName))
             {
@@ -116,29 +116,29 @@ public class MusicNavigationService : IMusicNavigationService
                 return;
             }
         }
-        
+
         // Final fallback: Try looking up by name directly in the database
         if (!string.IsNullOrEmpty(targetArtistName))
         {
-             _logger.LogDebug("Attempting to resolve artist by global name lookup: '{ArtistName}'", targetArtistName);
-             var artist = await _libraryReader.GetArtistByNameAsync(targetArtistName);
-             if (artist != null)
-             {
-                 _logger.LogDebug("Artist found by name. Navigating.");
-                 Navigate(artist);
-                 return;
-             }
-             
-             _logger.LogWarning("Artist '{ArtistName}' not found in database via name lookup.", targetArtistName);
+            _logger.LogDebug("Attempting to resolve artist by global name lookup: '{ArtistName}'", targetArtistName);
+            var artist = await _libraryReader.GetArtistByNameAsync(targetArtistName);
+            if (artist != null)
+            {
+                _logger.LogDebug("Artist found by name. Navigating.");
+                Navigate(artist);
+                return;
+            }
+
+            _logger.LogWarning("Artist '{ArtistName}' not found in database via name lookup.", targetArtistName);
         }
 
-        _logger.LogWarning("Could not navigate to artist: No valid context or artist not found (Name: '{ArtistName}')", 
+        _logger.LogWarning("Could not navigate to artist: No valid context or artist not found (Name: '{ArtistName}')",
             targetArtistName ?? "null");
     }
 
     public async Task NavigateToAlbumAsync(object? parameter)
     {
-        _logger.LogDebug("NavigateToAlbumAsync invoked with parameter type: {ParamType}", 
+        _logger.LogDebug("NavigateToAlbumAsync invoked with parameter type: {ParamType}",
             parameter?.GetType().Name ?? "null");
 
         if (parameter is Album album)
@@ -169,7 +169,7 @@ public class MusicNavigationService : IMusicNavigationService
                 AlbumTitle = artistAlbumVm.Name,
                 // ArtistAlbumViewModelItem doesn't have ArtistName, but we can resolve it or the target page will load it.
                 // We'll leave it empty and let the target page load the full metadata.
-                ArtistName = string.Empty 
+                ArtistName = string.Empty
             };
             _navigationService.Navigate(typeof(AlbumViewPage), navParam);
             return;

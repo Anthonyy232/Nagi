@@ -37,7 +37,7 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         : base(libraryReader, playlistService, playbackService, navigationService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
     {
         IsPaginationEnabled = false;
-        
+
         // Subscribe to the initial collection.
         if (Songs != null) Songs.CollectionChanged += OnSongsCollectionChanged;
     }

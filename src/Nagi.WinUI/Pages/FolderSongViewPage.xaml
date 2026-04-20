@@ -260,7 +260,7 @@
             </Grid>
 
             <!-- Breadcrumb Bar -->
-            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" 
+            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                     Padding="16,8" CornerRadius="8"
                     Visibility="{x:Bind ViewModel.IsAtRootLevel, Converter={StaticResource InverseBooleanToVisibilityConverter}, Mode=OneWay}"
                     Margin="0,8,0,10">
@@ -409,8 +409,8 @@
             ContainerContentChanging="OnSongsListViewContainerContentChanging"
             DoubleTapped="FolderContentsListView_DoubleTapped">
             <ListView.Footer>
-                <uicontrols:PaginationControl 
-                    ViewModel="{x:Bind ViewModel}" 
+                <uicontrols:PaginationControl
+                    ViewModel="{x:Bind ViewModel}"
                     HorizontalAlignment="Right"
                     Margin="0,24,24,16" />
             </ListView.Footer>
@@ -444,6 +444,6 @@
                 HorizontalAlignment="Center"
                 Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
         </StackPanel>
-        
+
     </Grid>
 </Page>

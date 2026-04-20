@@ -1,4 +1,4 @@
-namespace Nagi.Core.Services.Data;
+﻿namespace Nagi.Core.Services.Data;
 
 /// <summary>
 ///     Defines the available sorting orders for the playlist list.
@@ -12,4 +12,3 @@ public enum PlaylistSortOrder
     DateModifiedDesc,
     DateModifiedAsc
 }
-

@@ -1,4 +1,4 @@
-namespace Nagi.Core.Models.Lyrics;
+﻿namespace Nagi.Core.Models.Lyrics;
 
 /// <summary>
 ///     Represents a single line of a lyric file, including its text and timing information.

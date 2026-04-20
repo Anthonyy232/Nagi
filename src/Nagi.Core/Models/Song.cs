@@ -10,7 +10,7 @@ public class Song
 {
     [Key] public Guid Id { get; set; } = Guid.NewGuid();
 
-    [Required] [MaxLength(500)] public string Title { get; set; } = string.Format(Resources.Strings.Format_Unknown, Resources.Strings.Label_Title);
+    [Required][MaxLength(500)] public string Title { get; set; } = string.Format(Resources.Strings.Format_Unknown, Resources.Strings.Label_Title);
 
     public Guid? AlbumId { get; set; }
 
@@ -42,7 +42,7 @@ public class Song
 
     [MaxLength(2000)] public string? AlbumArtUriFromTrack { get; set; }
 
-    [Required] [MaxLength(1000)] public string FilePath { get; set; } = string.Empty;
+    [Required][MaxLength(1000)] public string FilePath { get; set; } = string.Empty;
 
     /// <summary>
     ///     The directory path where the song file is located. This is used for efficient
@@ -215,7 +215,7 @@ public class Song
 
 
     /// <summary>
-    ///     Updates the denormalized <see cref="ArtistName" /> and <see cref="PrimaryArtistName" /> 
+    ///     Updates the denormalized <see cref="ArtistName" /> and <see cref="PrimaryArtistName" />
     ///     fields based on the current <see cref="SongArtists" /> collection.
     /// </summary>
     public void SyncDenormalizedFields()

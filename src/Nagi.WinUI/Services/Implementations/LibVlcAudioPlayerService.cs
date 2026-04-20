@@ -26,18 +26,18 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     private readonly CancellationTokenSource _disposeCts = new();
     private readonly SemaphoreSlim _vlcOperationLock = new(1, 1);
     private CancellationTokenSource? _loadCts;
-    
+
     // Lazy initialization support
     private readonly SemaphoreSlim _initSemaphore = new(1, 1);
     private Task? _initTask;
     private volatile bool _isInitialized;
-    
+
     // Deferred LibVLC components (nullable until initialized)
     private LibVLC? _libVlc;
     private MediaPlayer? _mediaPlayer;
     private Equalizer? _equalizer;
     private WinMediaPlayback.MediaPlayer? _dummyMediaPlayer;
-    
+
     private Media? _currentMedia;
     private Song? _currentSong;
     private SystemMediaTransportControls? _smtc;
@@ -58,7 +58,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     private int _fadeInDurationMs = 200;
     private int _fadeOutDurationMs = 150;
     private CancellationTokenSource? _fadeCts;
-    
+
     // Tracks if we are currently fading out to pause, so IsPlaying can return false early
     private volatile bool _isPausing;
 
@@ -88,11 +88,11 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     {
         // Fast-path: already initialized or disposed
         if (_isInitialized || _isDisposed) return Task.CompletedTask;
-        
+
         // Fast-path: if initialization is in progress, await the existing task
         var task = _initTask;
         if (task is not null) return task;
-        
+
         return EnsureInitializedCoreAsync();
     }
 
@@ -114,7 +114,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
             // Create a task that other callers can await while we hold the semaphore
             var tcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
             _initTask = tcs.Task;
-            
+
             try
             {
                 InitializeLibVlcCore();
@@ -183,7 +183,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         if (_isDisposed) return;
         EnsureInitialized();
         if (_isDisposed || _dummyMediaPlayer is null) return;
-        
+
         try
         {
             _logger.LogDebug("Initializing System Media Transport Controls (SMTC).");
@@ -222,7 +222,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         if (_isDisposed) return;
         EnsureInitialized();
         if (_isDisposed || _mediaPlayer is null) return;
-        
+
         // Cancel any previous in-flight load immediately (cancel-and-supersede pattern).
         // When user rapidly skips tracks, only the final destination's VLC work executes.
         _loadCts?.Cancel();
@@ -230,15 +230,15 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         var cts = new CancellationTokenSource();
         _loadCts = cts;
         var token = cts.Token;
-        
+
         _currentSong = song;
-        
+
         await _vlcOperationLock.WaitAsync().ConfigureAwait(false);
         try
         {
             // If a newer LoadAsync call superseded us while we waited for the lock, skip entirely.
             token.ThrowIfCancellationRequested();
-            
+
             _logger.LogDebug("Loading media for song '{SongTitle}' from path: {FilePath}", song.Title,
                 song.FilePath);
 
@@ -248,7 +248,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
             await Task.Run(() =>
             {
                 if (_isDisposed) return;
-                
+
                 // Dispose previous media if it exists
                 if (_currentMedia != null)
                 {
@@ -352,9 +352,9 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         oldPlayCts?.Cancel();
         oldPlayCts?.Dispose();
         var fadeCt = newPlayCts.Token;
-        
+
         _isPausing = false;
-        
+
         // Immediately broadcast state change so UI Play/Pause button switches
         // instantly to play (and registers that IsPausing is now false)
         _dispatcherService.TryEnqueue(() =>
@@ -505,7 +505,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
             await Task.Run(() =>
             {
                 if (_isDisposed) return;
-                
+
                 _mediaPlayer!.Stop();
                 _currentSong = null;
 
@@ -613,13 +613,13 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     {
         if (_isDisposed) return Array.Empty<(uint, float)>();
         EnsureInitialized();
-        
+
         if (_isDisposed || _equalizer is null)
         {
             _logger.LogWarning("GetEqualizerBands called but equalizer is unavailable (disposed: {IsDisposed}, initialized: {IsInitialized}).", _isDisposed, _isInitialized);
             return Array.Empty<(uint, float)>();
         }
-        
+
         var bandCount = _equalizer.BandCount;
         var bands = new List<(uint, float)>();
         for (uint i = 0; i < bandCount; i++) bands.Add((i, _equalizer.BandFrequency(i)));
@@ -636,10 +636,10 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
 
         // Store the user's base preamp setting
         _basePreamp = settings.Preamp;
-        
+
         // Apply combined preamp (base + ReplayGain offset)
         ApplyCombinedPreamp();
-        
+
         var bandCount = _equalizer.BandCount;
         for (var i = 0; i < settings.BandGains.Count; i++)
             if (i < bandCount)
@@ -670,7 +670,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     private void ApplyCombinedPreamp()
     {
         if (_isDisposed || !_isInitialized || _equalizer is null || _mediaPlayer is null) return;
-        
+
         // VLC equalizer preamp range: -20 to +20 dB
         // Combine user's base preamp with ReplayGain offset
         var combinedPreamp = (float)Math.Clamp(_basePreamp + _replayGainOffset, -20.0, 20.0);
@@ -749,7 +749,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         {
             _logger.LogWarning("Dispose timed out waiting for initialization semaphore. Proceeding with disposal.");
         }
-        
+
         // Wait for any in-flight VLC operations to complete before tearing down
         var acquiredVlc = _vlcOperationLock.Wait(millisecondsTimeout: 5000);
         if (!acquiredVlc)
@@ -878,10 +878,10 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     private void OnMediaPlayerEncounteredError(object? sender, EventArgs e)
     {
         if (_isDisposed || _libVlc is null) return;
-        
+
         // Mark as explicit stop to prevent double PlaybackEnded (error handler fires it below)
         _isExplicitStop = true;
-        
+
         var lastVlcError = _libVlc.LastLibVLCError;
         var errorMessage = string.IsNullOrEmpty(lastVlcError)
             ? Resources.Strings.Player_Error_LibVLC_Unspecified
@@ -898,24 +898,24 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     private void OnMediaPlayerStateChanged(object? sender, EventArgs e)
     {
         if (_isDisposed || _mediaPlayer is null) return;
-        
+
         // Capture volatile fields before enqueueing to prevent TOCTOU races.
         // Between the outer check and lambda execution, Dispose/Stop could null these fields.
         var currentSong = _currentSong;
         var isExplicitStop = _isExplicitStop;
-        
+
         _dispatcherService.TryEnqueue(() =>
         {
             if (_isDisposed) return;
             StateChanged?.Invoke();
-            
+
             // Only fire PlaybackEnded for natural end of playback, not explicit stops
             if (_mediaPlayer?.State == VLCState.Stopped && currentSong is not null && !isExplicitStop)
             {
                 _logger.LogDebug("Detected natural end of playback for song '{SongTitle}'.", currentSong.Title);
                 PlaybackEnded?.Invoke();
             }
-            
+
             // Reset flag when playback starts
             if (_mediaPlayer?.State == VLCState.Playing)
             {

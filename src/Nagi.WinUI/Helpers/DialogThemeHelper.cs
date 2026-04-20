@@ -1,4 +1,4 @@
-using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Windows.UI;
@@ -15,7 +15,7 @@ public static class DialogThemeHelper
     // Fallback stroke color matching WinUI's default ControlStrokeColorDefault (dark theme)
     // This is used when we can't retrieve the theme resource directly
     private static readonly Color DefaultStrokeColor = Color.FromArgb(0x12, 0xFF, 0xFF, 0xFF);
-    
+
     /// <summary>
     /// Applies the app's theme overrides to a ContentDialog to ensure consistent styling.
     /// This includes TextBox focused underline and accent button colors.
@@ -24,7 +24,7 @@ public static class DialogThemeHelper
     public static void ApplyThemeOverrides(ContentDialog dialog)
     {
         if (dialog == null) return;
-        
+
         // Get the app's primary color brush
         if (!Application.Current.Resources.TryGetValue("AppPrimaryColorBrush", out var accentBrushObj) ||
             accentBrushObj is not SolidColorBrush accentBrush)
@@ -37,7 +37,7 @@ public static class DialogThemeHelper
         ApplySelectionControlOverrides(dialog, accentBrush);
         ApplyProgressIndicatorOverrides(dialog, accentBrush);
     }
-    
+
     /// <summary>
     /// Applies TextBox focused underline overrides using the gradient trick.
     /// </summary>
@@ -52,11 +52,11 @@ public static class DialogThemeHelper
             EndPoint = new Windows.Foundation.Point(0, 2),
             RelativeTransform = new ScaleTransform { ScaleY = -1, CenterY = 0.5 }
         };
-        
+
         // First two stops create the colored underline (bottom 2 pixels)
         gradientBrush.GradientStops.Add(new GradientStop { Offset = 0.0, Color = accentBrush.Color });
         gradientBrush.GradientStops.Add(new GradientStop { Offset = 1.0, Color = accentBrush.Color });
-        
+
         // Third stop at offset 1.0 creates the transition to the normal border color
         // This is the "gradient trick" - both stops at 1.0 creates a sharp transition
         var strokeColor = GetControlStrokeColor();
@@ -66,11 +66,11 @@ public static class DialogThemeHelper
         dialog.Resources["TextControlElevationBorderFocusedBrush"] = gradientBrush;
         dialog.Resources["TextControlBorderBrushFocused"] = gradientBrush;
         dialog.Resources["TextBoxBorderBrushFocused"] = accentBrush;
-        
+
         // Apply text selection highlight color
         dialog.Resources["TextSelectionHighlightColor"] = accentBrush;
     }
-    
+
     /// <summary>
     /// Applies accent button background color overrides to use the app's primary color.
     /// </summary>
@@ -81,25 +81,25 @@ public static class DialogThemeHelper
         var normalBrush = new SolidColorBrush(accentBrush.Color);
         var pointerOverBrush = new SolidColorBrush(accentBrush.Color) { Opacity = 0.9 };
         var pressedBrush = new SolidColorBrush(accentBrush.Color) { Opacity = 0.8 };
-        
+
         // Apply accent button background overrides
         // These keys are used by the built-in AccentButtonStyle
         dialog.Resources["AccentButtonBackground"] = normalBrush;
         dialog.Resources["AccentButtonBackgroundPointerOver"] = pointerOverBrush;
         dialog.Resources["AccentButtonBackgroundPressed"] = pressedBrush;
-        
+
         // Also apply to the ContentDialog's own primary button (Save, Create, etc.)
         // These are the button-specific keys for ContentDialog
         dialog.Resources["ContentDialogButtonBackground"] = normalBrush;
         dialog.Resources["ContentDialogButtonBackgroundPointerOver"] = pointerOverBrush;
         dialog.Resources["ContentDialogButtonBackgroundPressed"] = pressedBrush;
-        
+
         // HyperlinkButton foreground
         dialog.Resources["HyperlinkButtonForeground"] = accentBrush;
         dialog.Resources["HyperlinkButtonForegroundPointerOver"] = accentBrush;
         dialog.Resources["HyperlinkButtonForegroundPressed"] = accentBrush;
     }
-    
+
     /// <summary>
     /// Applies accent colors to selection controls like ToggleSwitch, CheckBox, and RadioButton.
     /// </summary>
@@ -109,21 +109,21 @@ public static class DialogThemeHelper
         dialog.Resources["ToggleSwitchFillOn"] = accentBrush;
         dialog.Resources["ToggleSwitchFillOnPointerOver"] = accentBrush;
         dialog.Resources["ToggleSwitchFillOnPressed"] = accentBrush;
-        
+
         // CheckBox
         dialog.Resources["CheckBoxFillOn"] = accentBrush;
         dialog.Resources["CheckBoxFillOnPointerOver"] = accentBrush;
         dialog.Resources["CheckBoxFillOnPressed"] = accentBrush;
-        
+
         // RadioButton
         dialog.Resources["RadioButtonOuterEllipseCheckedFill"] = accentBrush;
         dialog.Resources["RadioButtonOuterEllipseCheckedFillPointerOver"] = accentBrush;
         dialog.Resources["RadioButtonOuterEllipseCheckedFillPressed"] = accentBrush;
-        
+
         // ComboBox selection indicator
         dialog.Resources["ComboBoxItemPillFillBrush"] = accentBrush;
     }
-    
+
     /// <summary>
     /// Applies accent colors to progress indicators.
     /// </summary>
@@ -133,7 +133,7 @@ public static class DialogThemeHelper
         dialog.Resources["ProgressBarIndeterminateForeground"] = accentBrush;
         dialog.Resources["ProgressRingForeground"] = accentBrush;
     }
-    
+
     /// <summary>
     /// Attempts to get the ControlStrokeColorDefault from theme resources, with a fallback.
     /// </summary>
@@ -145,7 +145,7 @@ public static class DialogThemeHelper
         {
             return color;
         }
-        
+
         // Fallback: use the default WinUI dark theme stroke color
         return DefaultStrokeColor;
     }

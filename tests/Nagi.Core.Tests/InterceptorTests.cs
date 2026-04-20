@@ -1,4 +1,4 @@
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Nagi.Core.Models;
 using Nagi.Core.Tests.Utils;
@@ -30,17 +30,17 @@ public class InterceptorTests : IDisposable
 
         var artist1 = new Artist { Name = "Artist A" };
         var artist2 = new Artist { Name = "Artist B" };
-        var song = new Song 
-        { 
-            Title = "New Song", 
+        var song = new Song
+        {
+            Title = "New Song",
             Folder = folder,
             FilePath = "C:\\Music\\song.mp3",
             DirectoryPath = "C:\\Music"
         };
-        
+
         song.SongArtists.Add(new SongArtist { Artist = artist1, Order = 0 });
         song.SongArtists.Add(new SongArtist { Artist = artist2, Order = 1 });
-        
+
         context.Artists.AddRange(artist1, artist2);
         context.Songs.Add(song);
 
@@ -63,8 +63,8 @@ public class InterceptorTests : IDisposable
             context.Folders.Add(folder);
 
             var artist1 = new Artist { Name = "Artist 1" };
-            var song = new Song 
-            { 
+            var song = new Song
+            {
                 Title = "Existing Song",
                 Folder = folder,
                 FilePath = "C:\\Music\\existing.mp3",
@@ -83,17 +83,17 @@ public class InterceptorTests : IDisposable
             var song = await context.Songs
                 .Include(s => s.SongArtists)
                 .FirstAsync(s => s.Id == songId);
-            
+
             var artist2 = new Artist { Name = "Artist 2" };
             context.Artists.Add(artist2);
-            
-            // Add relationship - this should not mark 'song' as Modified yet, 
+
+            // Add relationship - this should not mark 'song' as Modified yet,
             // but the Interceptor should find it anyway via the SongArtist entry.
             song.SongArtists.Add(new SongArtist { Artist = artist2, Order = 1 });
-            
+
             // Verify our assumption: the song itself is still 'Unchanged' in the change tracker
             context.Entry(song).State.Should().Be(EntityState.Unchanged);
-            
+
             await context.SaveChangesAsync();
         }
 
@@ -117,8 +117,8 @@ public class InterceptorTests : IDisposable
 
             var artist1 = new Artist { Name = "A" };
             var artist2 = new Artist { Name = "B" };
-            var song = new Song 
-            { 
+            var song = new Song
+            {
                 Title = "Multi",
                 Folder = folder,
                 FilePath = "C:\\Music\\multi.mp3",
@@ -138,10 +138,10 @@ public class InterceptorTests : IDisposable
             var song = await context.Songs
                 .Include(s => s.SongArtists)
                 .FirstAsync(s => s.Id == songId);
-            
+
             var saToRemove = song.SongArtists.First(sa => sa.Order == 1);
             song.SongArtists.Remove(saToRemove);
-            
+
             await context.SaveChangesAsync();
         }
 
@@ -155,7 +155,7 @@ public class InterceptorTests : IDisposable
 
     /// <summary>
     ///     Verifies that when a song is attached without its SongArtists navigation property loaded,
-    ///     marking it as Modified and saving does NOT wipe the ArtistName field when defensive 
+    ///     marking it as Modified and saving does NOT wipe the ArtistName field when defensive
     ///     loading is applied (as done in UpdateSongAsync).
     /// </summary>
     [Fact]
@@ -169,8 +169,8 @@ public class InterceptorTests : IDisposable
             context.Folders.Add(folder);
 
             var artist = new Artist { Name = "Test Artist" };
-            var song = new Song 
-            { 
+            var song = new Song
+            {
                 Title = "Test Song",
                 Folder = folder,
                 FilePath = "C:\\Music\\test.mp3",
@@ -190,10 +190,10 @@ public class InterceptorTests : IDisposable
             var song = await context.Songs
                 .AsNoTracking()
                 .FirstAsync(s => s.Id == songId);
-            
+
             // Verify the song loaded without artists
             song.SongArtists.Should().BeEmpty();
-            
+
             // Attach and apply defensive loading (as UpdateSongAsync does)
             context.Songs.Attach(song);
             await context.Entry(song)
@@ -201,11 +201,11 @@ public class InterceptorTests : IDisposable
                 .Query()
                 .Include(sa => sa.Artist)
                 .LoadAsync();
-            
+
             // Now modify the song
             song.Title = "Updated Title";
             context.Entry(song).State = EntityState.Modified;
-            
+
             await context.SaveChangesAsync();
         }
 
@@ -237,8 +237,8 @@ public class InterceptorTests : IDisposable
             context.Folders.Add(folder);
 
             var artist = new Artist { Name = "Original Artist" };
-            var song = new Song 
-            { 
+            var song = new Song
+            {
                 Title = "Original Song",
                 Folder = folder,
                 FilePath = "C:\\Music\\original.mp3",
@@ -249,7 +249,7 @@ public class InterceptorTests : IDisposable
             context.Songs.Add(song);
             await context.SaveChangesAsync();
             songId = song.Id;
-            
+
             // Verify setup
             song.ArtistName.Should().Be("Original Artist");
         }
@@ -260,7 +260,7 @@ public class InterceptorTests : IDisposable
         {
             var song = await context.Songs.FirstAsync(s => s.Id == songId);
             song.Title = "Modified Title";
-            
+
             await context.SaveChangesAsync();
         }
 
@@ -288,8 +288,8 @@ public class InterceptorTests : IDisposable
         context.Folders.Add(folder);
 
         var artistWithCombining = new Artist { Name = "Jose\u0301" }; // Combining form
-        var song = new Song 
-        { 
+        var song = new Song
+        {
             Title = "Spanish Song",
             Folder = folder,
             FilePath = "C:\\Music\\spanish.mp3",
@@ -320,8 +320,8 @@ public class InterceptorTests : IDisposable
 
         // Arabic artist name
         var arabicArtist = new Artist { Name = "فنان عربي" };
-        var song = new Song 
-        { 
+        var song = new Song
+        {
             Title = "Arabic Song",
             Folder = folder,
             FilePath = "C:\\Music\\arabic.mp3",
@@ -352,8 +352,8 @@ public class InterceptorTests : IDisposable
 
         var englishArtist = new Artist { Name = "English Artist" };
         var hebrewArtist = new Artist { Name = "אמן עברי" }; // Hebrew artist
-        var song = new Song 
-        { 
+        var song = new Song
+        {
             Title = "Collaboration",
             Folder = folder,
             FilePath = "C:\\Music\\collab.mp3",
@@ -372,4 +372,3 @@ public class InterceptorTests : IDisposable
         song.PrimaryArtistName.Should().Be("English Artist");
     }
 }
-

@@ -130,7 +130,7 @@ public partial class ArtistViewViewModel : SongListViewModelBase
             _artistId = artistId;
             var onlineMetadataTask = _settingsService.GetFetchOnlineMetadataEnabledAsync();
             var sortOrderTask = _settingsService.GetSortOrderAsync<SongSortOrder>(SortOrderHelper.ArtistViewSortOrderKey);
-            
+
             await Task.WhenAll(onlineMetadataTask, sortOrderTask);
 
             var shouldFetchOnline = onlineMetadataTask.Result;
@@ -253,7 +253,7 @@ public partial class ArtistViewViewModel : SongListViewModelBase
                 // Guard against updates after the page has been cleaned up.
                 // This prevents COMException crashes when navigating away quickly after an image update.
                 if (_pageCts.IsCancellationRequested) return;
-                
+
                 // Force refresh by setting to null first, then apply cache-buster
                 ArtistImageUri = null;
                 ArtistImageUri = ImageUriHelper.GetUriWithCacheBuster(e.NewLocalImageCachePath);
@@ -308,7 +308,7 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         if (string.IsNullOrWhiteSpace(localPath)) return;
 
         _logger.LogInformation("Updating custom image for current artist ({ArtistName}) from {Path}", ArtistName, localPath);
-        
+
         // Use the library scanner's writer capability (it usually wraps ILibraryService)
         if (_libraryScanner is ILibraryWriter writer)
         {
@@ -320,7 +320,7 @@ public partial class ArtistViewViewModel : SongListViewModelBase
     public async Task RemoveArtistImageAsync()
     {
         _logger.LogInformation("Removing custom image for current artist ({ArtistName})", ArtistName);
-        
+
         if (_libraryScanner is ILibraryWriter writer)
         {
             await writer.RemoveArtistImageAsync(_artistId);

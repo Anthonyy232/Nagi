@@ -1,4 +1,4 @@
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -57,7 +57,7 @@ public class PlaylistOrderingTests : IDisposable
         var folder = new Folder { Id = Guid.NewGuid(), Name = "F", Path = "C:\\" };
         var song1 = new Song { Id = Guid.NewGuid(), Title = "Song 1", FilePath = "1.mp3", FolderId = folder.Id, DirectoryPath = "C:\\" };
         var song2 = new Song { Id = Guid.NewGuid(), Title = "Song 2", FilePath = "2.mp3", FolderId = folder.Id, DirectoryPath = "C:\\" };
-        
+
         await using (var context = _dbHelper.ContextFactory.CreateDbContext())
         {
             context.Folders.Add(folder);

@@ -1,4 +1,4 @@
-using System.IO.Pipes;
+﻿using System.IO.Pipes;
 using System.Runtime.InteropServices;
 using DiscordRPC.IO;
 using DiscordRPC.Logging;
@@ -55,11 +55,11 @@ public sealed class SandboxAwareDiscordPipeClient : INamedPipeClient
         try
         {
             int bytesRead = 0, totalBytesAvail = 0, bytesLeftThisMessage = 0;
-            
-            // CRITICAL: We must not block infinitely. If we block here, the DiscordRPC 
+
+            // CRITICAL: We must not block infinitely. If we block here, the DiscordRPC
             // writer queue starves and Presence updates will never be sent.
             bool peekSuccess = PeekNamedPipe(_stream.SafePipeHandle, null, 0, ref bytesRead, ref totalBytesAvail, ref bytesLeftThisMessage);
-            
+
             if (!peekSuccess || totalBytesAvail == 0)
             {
                 return false; // No data available. Return immediately so the writer thread can run.
@@ -117,7 +117,7 @@ public sealed class SandboxAwareDiscordPipeClient : INamedPipeClient
         {
             Logger.Trace($"Attempting connection to pipe: {pipeName}");
             var client = new NamedPipeClientStream(".", pipeName, PipeDirection.InOut);
-            client.Connect(2000); 
+            client.Connect(2000);
 
             if (client.IsConnected)
             {

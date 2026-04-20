@@ -1,11 +1,11 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Nagi.Core.Models;
 
 namespace Nagi.Core.Data.Interceptors;
 
 /// <summary>
-///     An EF Core interceptor that automatically synchronizes denormalized artist fields 
+///     An EF Core interceptor that automatically synchronizes denormalized artist fields
 ///     (ArtistName and PrimaryArtistName) on Song and Album entities before they are saved to the database.
 /// </summary>
 public class DenormalizationInterceptor : SaveChangesInterceptor

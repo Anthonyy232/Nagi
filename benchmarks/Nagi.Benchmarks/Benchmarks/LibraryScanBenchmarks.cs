@@ -31,7 +31,7 @@ public class LibraryScanBenchmarks
         SyntheticAudioGenerator.GenerateLibrary(_testPath, SongCount);
 
         var services = new ServiceCollection();
-        
+
         // Use In-Memory SQLite for benchmarks to isolate file scanning + business logic performance
         var dbPath = Path.Combine(_testPath, "test.db");
         services.AddDbContextFactory<MusicDbContext>(options =>
@@ -49,11 +49,11 @@ public class LibraryScanBenchmarks
         services.AddSingleton<IImageProcessor>(Substitute.For<IImageProcessor>());
         services.AddSingleton<ILastFmMetadataService>(Substitute.For<ILastFmMetadataService>());
         services.AddSingleton<ISpotifyService>(Substitute.For<ISpotifyService>());
-        
+
         var settingsService = Substitute.For<ISettingsService>();
         settingsService.GetVolumeNormalizationEnabledAsync().Returns(false);
         services.AddSingleton<ISettingsService>(settingsService);
-        
+
         services.AddSingleton<IReplayGainService>(Substitute.For<IReplayGainService>());
         services.AddSingleton<IMusicBrainzService>(Substitute.For<IMusicBrainzService>());
         services.AddSingleton<IFanartTvService>(Substitute.For<IFanartTvService>());
@@ -64,7 +64,7 @@ public class LibraryScanBenchmarks
         services.AddLogging(b => b.AddProvider(NullLoggerProvider.Instance));
 
         _serviceProvider = services.BuildServiceProvider();
-        
+
         // Ensure database is created and migrated
         using var scope = _serviceProvider.CreateScope();
         var factory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<MusicDbContext>>();
@@ -81,14 +81,14 @@ public class LibraryScanBenchmarks
         {
             disposable.Dispose();
         }
-        
+
         // Ensure SQLite releases all file locks
         SqliteConnection.ClearAllPools();
-        
+
         // Give the OS a moment to release handles if needed, or just retry
         if (Directory.Exists(_testPath))
         {
-            try 
+            try
             {
                 Directory.Delete(_testPath, true);
             }

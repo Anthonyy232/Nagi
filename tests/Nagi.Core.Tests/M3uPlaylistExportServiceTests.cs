@@ -1,4 +1,4 @@
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
@@ -326,7 +326,7 @@ public class M3uPlaylistExportServiceTests
         var playlistId = Guid.NewGuid();
         var filePath = Path.Combine(Path.GetTempPath(), "test_playlist.m3u8");
         var playlist = new Playlist { Id = playlistId, Name = "Test Playlist" };
-        
+
         var song = new Song
         {
             Id = Guid.NewGuid(),

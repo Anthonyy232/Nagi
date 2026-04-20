@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.System;
@@ -59,7 +59,7 @@ public sealed partial class ArtistPage : Page
             {
                 _logger.LogDebug("Artist collection is empty, loading artists...");
                 await ViewModel.LoadArtistsAsync(cts.Token);
-                
+
                 if (cts.IsCancellationRequested)
                     _logger.LogDebug("Artist loading was canceled.");
                 else if (!ViewModel.HasLoadError)
@@ -69,7 +69,7 @@ public sealed partial class ArtistPage : Page
             {
                 _logger.LogDebug("Artists partially loaded, resuming fetch...");
                 await ViewModel.ResumeLoadingAsync(cts.Token);
-                
+
                 if (cts.IsCancellationRequested)
                     _logger.LogDebug("Artist resuming was canceled.");
                 else if (!ViewModel.HasLoadError)
@@ -234,7 +234,7 @@ public sealed partial class ArtistPage : Page
         var picker = new FileOpenPicker();
         var hwnd = WindowNative.GetWindowHandle(App.RootWindow);
         InitializeWithWindow.Initialize(picker, hwnd);
-        
+
         foreach (var ext in FileExtensions.ImageFileExtensions)
             picker.FileTypeFilter.Add(ext);
 

@@ -26,7 +26,7 @@
         <localConverters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <localConverters:PlayerBackgroundMaterialToStringConverter x:Key="PlayerBackgroundMaterialToStringConverter" />
         <localConverters:DoubleToPercentageConverter x:Key="DoubleToPercentageConverter" />
-        
+
         <!-- Shared template for service provider items in Lyrics and Metadata source lists -->
         <DataTemplate x:Key="ServiceProviderItemTemplate" x:DataType="viewmodels:ServiceProviderSettingViewModel">
             <Grid x:Name="ProviderItemRoot" Padding="12,8" VerticalAlignment="Center"
@@ -190,7 +190,7 @@
                     <controls:SettingsExpander.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE793;" />
                     </controls:SettingsExpander.HeaderIcon>
-                    
+
                     <ComboBox
                         MinWidth="300"
                         HorizontalAlignment="Right"
@@ -208,9 +208,9 @@
                             <controls:SettingsCard.Header>
                                 <StackPanel Orientation="Vertical" Spacing="4">
                                     <TextBlock Text="{x:Bind resources:Strings.SettingsPage_TintIntensity_Header, Mode=OneTime}" />
-                                    <TextBlock 
-                                        FontSize="12" 
-                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}" 
+                                    <TextBlock
+                                        FontSize="12"
+                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                         Text="{x:Bind resources:Strings.SettingsPage_TintIntensity_Description, Mode=OneTime}" />
                                 </StackPanel>
                             </controls:SettingsCard.Header>
@@ -224,7 +224,7 @@
                                     Style="{StaticResource EqualizerSliderStyle}"
                                     ThumbToolTipValueConverter="{StaticResource DoubleToPercentageConverter}"
                                     Value="{x:Bind ViewModel.PlayerTintIntensity, Mode=TwoWay}" />
-                                <TextBlock 
+                                <TextBlock
                                     Width="40"
                                     VerticalAlignment="Center"
                                     Style="{ThemeResource CaptionTextBlockStyle}"

@@ -1,4 +1,4 @@
-using System.IO;
+﻿using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
@@ -28,7 +28,7 @@ public static class HttpRetryHelper
     /// <typeparam name="T">The return type of the operation.</typeparam>
     /// <param name="operation">
     ///     The async operation to execute. Receives the current attempt number (1-based).
-    ///     Should return a tuple of (result, shouldRetry) where shouldRetry indicates if the 
+    ///     Should return a tuple of (result, shouldRetry) where shouldRetry indicates if the
     ///     operation encountered a retryable failure and should be attempted again.
     /// </param>
     /// <param name="logger">Logger for diagnostic messages.</param>
@@ -71,11 +71,11 @@ public static class HttpRetryHelper
             {
                 logger.LogWarning(ex, "Transient error in {OperationName}. Attempt {Attempt}/{MaxRetries}",
                     operationName, attempt, maxRetries);
-                
+
                 // On last attempt, don't retry - just return default
                 if (attempt >= maxRetries)
                     return default;
-                    
+
                 await Task.Delay(TimeSpan.FromSeconds(baseDelaySeconds * attempt), cancellationToken)
                     .ConfigureAwait(false);
             }

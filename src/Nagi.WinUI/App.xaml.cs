@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Globalization;
@@ -66,7 +66,7 @@ public partial class App : Application
     {
         CurrentApp = this;
         InitializeComponent();
-        
+
         UnhandledException += OnAppUnhandledException;
     }
 
@@ -393,7 +393,7 @@ public partial class App : Application
         // Register the pre-warmed ApplicationDataContainer so SettingsService doesn't pay
         // the ~275ms first-access cost during its constructor.
         services.AddHttpClient();
-        
+
         // Configure the default HTTP client with standardized settings:
         // - 10s timeout to fail fast on unresponsive servers
         // - HTTP/1.1 forced for compatibility
@@ -469,7 +469,7 @@ public partial class App : Application
         services.AddSingleton<IPlaylistExportService, M3uPlaylistExportService>();
         services.AddSingleton<IBackupRestoreService, BackupRestoreService>();
         services.AddSingleton<IStatisticsService, StatisticsService>();
-        
+
         // FFmpeg and ReplayGain services
         services.AddSingleton<IFFmpegService, FFmpegService>();
         services.AddSingleton<IPcmExtractor, FFmpegPcmExtractor>();
@@ -515,7 +515,7 @@ public partial class App : Application
         // Global singletons - persist for app lifetime
         services.AddSingleton<PlayerViewModel>();
         services.AddSingleton<TrayIconViewModel>();
-        
+
         // List/Grid ViewModels - Singleton for fast navigation, refresh on data changes
         services.AddSingleton<LibraryViewModel>();
         services.AddSingleton<PlaylistViewModel>();
@@ -663,7 +663,7 @@ public partial class App : Application
         }
 
         _isExiting = true;
-        
+
         // We need to handle this manually to ensure async tasks complete before the app exits.
         args.Handled = true;
 
@@ -679,14 +679,14 @@ public partial class App : Application
             if (Services is not null)
             {
                 _logger?.LogInformation("Window is closing. Shutting down services.");
-                
+
                 // Clean up singleton ViewModels
                 Services.GetRequiredService<PlayerViewModel>().Cleanup();
                 Services.GetRequiredService<TrayIconViewModel>().Cleanup();
-                
+
                 var presenceTask = Services.GetRequiredService<IPresenceManager>().ShutdownAsync();
                 var saveStateTask = SaveApplicationStateAsync(Services);
-                
+
                 await Task.WhenAll(presenceTask, saveStateTask);
             }
         }
@@ -700,7 +700,7 @@ public partial class App : Application
 
             if (Services is IAsyncDisposable asyncDisposableServices)
                 await asyncDisposableServices.DisposeAsync();
-            else if (Services is IDisposable disposableServices) 
+            else if (Services is IDisposable disposableServices)
                 disposableServices.Dispose();
 
             // Force process exit to ensure all threads (like VLC) are terminated.
@@ -842,7 +842,7 @@ public partial class App : Application
 
             // Restart the app cleanly
             ElevationHelper.RestartWithoutElevation();
-            
+
             // Just in case RestartWithoutElevation doesn't exit the process immediately
             Current.Exit();
             Process.GetCurrentProcess().Kill();
@@ -873,7 +873,7 @@ public partial class App : Application
             // 2. Clear known settings and state files
             SafelyDeleteFile(pathConfig.SettingsFilePath);
             SafelyDeleteFile(pathConfig.PlaybackStateFilePath);
-            
+
             // 3. Delete the database
             SafelyDeleteFile(pathConfig.DatabasePath);
 
@@ -882,7 +882,7 @@ public partial class App : Application
             SafelyDeleteDir(pathConfig.ArtistImageCachePath);
             SafelyDeleteDir(pathConfig.PlaylistImageCachePath);
             SafelyDeleteDir(pathConfig.LrcCachePath);
-            
+
             Log.Information("Manual file reset completed.");
         }
         catch (Exception ex)

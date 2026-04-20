@@ -1,4 +1,4 @@
-namespace Nagi.Core.Models;
+﻿namespace Nagi.Core.Models;
 
 /// <summary>
 ///     Represents a predefined equalizer preset with a display name and gain values for each band.

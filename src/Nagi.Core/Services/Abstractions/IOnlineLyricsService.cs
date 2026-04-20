@@ -1,4 +1,4 @@
-namespace Nagi.Core.Services.Abstractions;
+﻿namespace Nagi.Core.Services.Abstractions;
 
 /// <summary>
 ///     Defines a service for fetching lyrics from an online source.

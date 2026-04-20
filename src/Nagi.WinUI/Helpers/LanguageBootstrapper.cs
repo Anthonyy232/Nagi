@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Globalization;
 using Windows.Globalization;
 using Windows.Storage;

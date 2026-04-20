@@ -1,4 +1,4 @@
-namespace Nagi.Core.Models;
+﻿namespace Nagi.Core.Models;
 
 /// <summary>
 ///     Constants for service provider identifiers used throughout the application.

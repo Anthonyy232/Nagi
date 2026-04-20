@@ -1,4 +1,4 @@
-namespace Nagi.Core.Models;
+﻿namespace Nagi.Core.Models;
 
 /// <summary>
 ///     Specifies the reason why a track finished playing.

@@ -102,7 +102,7 @@ namespace Nagi.Core.Data.Migrations
                 });
 
             // --- DATA MIGRATION START ---
-            
+
             // Migrate Songs -> SongArtists
             migrationBuilder.Sql(@"
                 INSERT INTO SongArtists (SongId, ArtistId, [Order])
@@ -112,7 +112,7 @@ namespace Nagi.Core.Data.Migrations
             // Populate denormalized Song fields
             migrationBuilder.Sql(@"
                 UPDATE Songs
-                SET 
+                SET
                     ArtistName = (SELECT Name FROM Artists WHERE Id = Songs.ArtistId),
                     PrimaryArtistName = (SELECT Name FROM Artists WHERE Id = Songs.ArtistId)
                 WHERE ArtistId IS NOT NULL
@@ -127,7 +127,7 @@ namespace Nagi.Core.Data.Migrations
             // Populate denormalized Album fields
             migrationBuilder.Sql(@"
                 UPDATE Albums
-                SET 
+                SET
                     ArtistName = (SELECT Name FROM Artists WHERE Id = Albums.ArtistId),
                     PrimaryArtistName = (SELECT Name FROM Artists WHERE Id = Albums.ArtistId)
                 WHERE ArtistId IS NOT NULL

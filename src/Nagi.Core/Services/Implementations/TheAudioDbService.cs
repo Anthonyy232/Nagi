@@ -1,4 +1,4 @@
-using System.Net;
+﻿using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -129,7 +129,7 @@ public class TheAudioDbService : ITheAudioDbService, IDisposable
 
                         var url = $"{BaseUrl}/{apiKey}/artist-mb.php?i={musicBrainzId}";
                         var isoCode = languageCode?.Length > 2 ? languageCode[..2] : (languageCode ?? "Default");
-                        _logger.LogDebug("Fetching TheAudioDB metadata for MBID: {MBID} (Language: {LanguageCode}, Attempt {Attempt}/{MaxRetries})", 
+                        _logger.LogDebug("Fetching TheAudioDB metadata for MBID: {MBID} (Language: {LanguageCode}, Attempt {Attempt}/{MaxRetries})",
                             musicBrainzId, isoCode, attempt, MaxRetries);
 
                         using var response = await _httpClient.GetAsync(url, cancellationToken).ConfigureAwait(false);
@@ -146,9 +146,9 @@ public class TheAudioDbService : ITheAudioDbService, IDisposable
 
                         if (response.StatusCode == HttpStatusCode.TooManyRequests)
                         {
-                            _logger.LogWarning("TheAudioDB rate limit reached for MBID: {MBID}. Attempt {Attempt}/{MaxRetries}", 
+                            _logger.LogWarning("TheAudioDB rate limit reached for MBID: {MBID}. Attempt {Attempt}/{MaxRetries}",
                                 musicBrainzId, attempt, MaxRetries);
-                            
+
                             if (attempt >= MaxRetries)
                             {
                                 _logger.LogError("TheAudioDB rate limit reached repeatedly. Disabling for this session.");
@@ -162,9 +162,9 @@ public class TheAudioDbService : ITheAudioDbService, IDisposable
 
                         if (!response.IsSuccessStatusCode)
                         {
-                            _logger.LogWarning("TheAudioDB request failed with status {StatusCode} for MBID: {MBID}. Attempt {Attempt}/{MaxRetries}", 
+                            _logger.LogWarning("TheAudioDB request failed with status {StatusCode} for MBID: {MBID}. Attempt {Attempt}/{MaxRetries}",
                                 response.StatusCode, musicBrainzId, attempt, MaxRetries);
-                            
+
                             if (HttpRetryHelper.IsRetryableStatusCode(response.StatusCode))
                                 return RetryResult<ServiceResult<TheAudioDbArtistInfo>>.TransientFailure();
 
@@ -207,7 +207,7 @@ public class TheAudioDbService : ITheAudioDbService, IDisposable
                                 ServiceResult<TheAudioDbArtistInfo>.FromSuccessNotFound());
                         }
 
-                        _logger.LogInformation("Found TheAudioDB metadata for MBID: {MBID} (Language: {LanguageCode}): Bio={HasBio} ({BioSource}), Thumb={HasThumb}, Fanart={HasFanart}, WideThumb={HasWideThumb}, Logo={HasLogo}", 
+                        _logger.LogInformation("Found TheAudioDB metadata for MBID: {MBID} (Language: {LanguageCode}): Bio={HasBio} ({BioSource}), Thumb={HasThumb}, Fanart={HasFanart}, WideThumb={HasWideThumb}, Logo={HasLogo}",
                             musicBrainzId, isoCode, !string.IsNullOrEmpty(info.Biography), isLocalizedBio ? isoCode : "en", !string.IsNullOrEmpty(info.ThumbUrl), !string.IsNullOrEmpty(info.FanartUrl), !string.IsNullOrEmpty(info.WideThumbUrl), !string.IsNullOrEmpty(info.LogoUrl));
                         return RetryResult<ServiceResult<TheAudioDbArtistInfo>>.Success(
                             ServiceResult<TheAudioDbArtistInfo>.FromSuccess(info));
@@ -269,13 +269,13 @@ public class TheAudioDbService : ITheAudioDbService, IDisposable
 
         // Ensure we only use the 2-letter ISO 639-1 code (e.g. "de-DE" -> "DE")
         var isoCode = languageCode.Length > 2 ? languageCode[..2] : languageCode;
-        
+
         // API checks: strBiographyDE, strBiographyFR, etc.
         var targetKey = $"strBiography{isoCode.ToUpperInvariant()}";
-        
+
         // Use case-insensitive lookup
         var entry = extensionData.FirstOrDefault(x => x.Key.Equals(targetKey, StringComparison.OrdinalIgnoreCase));
-        
+
         // Check if struct is valid (Key is not null/empty when match found)
         if (!string.IsNullOrEmpty(entry.Key) && entry.Value.ValueKind == JsonValueKind.String)
         {

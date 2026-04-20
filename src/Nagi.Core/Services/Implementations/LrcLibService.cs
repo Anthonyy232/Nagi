@@ -1,4 +1,4 @@
-using System.Net;
+﻿using System.Net;
 using System.Text.Json;
 using System.Web;
 using Microsoft.Extensions.Logging;
@@ -20,7 +20,7 @@ public class LrcLibService : IOnlineLyricsService
     private const string UserAgent = "Nagi/1.0 (https://github.com/Anthonyy232/Nagi)";
     private const int MaxRetries = 3;
     private const int RateLimitDelayMultiplier = 5;
-    
+
     private readonly HttpClient _httpClient;
     private readonly ILogger<LrcLibService> _logger;
     private readonly JsonSerializerOptions _jsonOptions = new() { PropertyNameCaseInsensitive = true };
@@ -121,7 +121,7 @@ public class LrcLibService : IOnlineLyricsService
                 query["duration"] = duration.TotalSeconds.ToString("F0");
 
                 var requestUrl = $"{BaseUrl}?{query}";
-                _logger.LogDebug("Fetching lyrics strict lookup from LRCLIB for: {Artist} - {Track} (Attempt {Attempt}/{MaxRetries})", 
+                _logger.LogDebug("Fetching lyrics strict lookup from LRCLIB for: {Artist} - {Track} (Attempt {Attempt}/{MaxRetries})",
                     artistName, trackName, attempt, MaxRetries);
 
                 using var response = await _httpClient.GetAsync(requestUrl, cancellationToken).ConfigureAwait(false);
@@ -135,7 +135,7 @@ public class LrcLibService : IOnlineLyricsService
                         ? RetryResult<string>.Success(lrcResponse.SyncedLyrics)
                         : RetryResult<string>.SuccessEmpty();
                 }
-                
+
                 if (response.StatusCode == HttpStatusCode.TooManyRequests)
                 {
                     _logger.LogWarning("LRCLIB rate limit hit in strict lookup. Attempt {Attempt}/{MaxRetries}", attempt, MaxRetries);
@@ -150,9 +150,9 @@ public class LrcLibService : IOnlineLyricsService
                 if (response.StatusCode == HttpStatusCode.NotFound)
                     return RetryResult<string>.SuccessEmpty();
 
-                _logger.LogWarning("Strict lookup failed with status {Status}. Attempt {Attempt}/{MaxRetries}", 
+                _logger.LogWarning("Strict lookup failed with status {Status}. Attempt {Attempt}/{MaxRetries}",
                     response.StatusCode, attempt, MaxRetries);
-                
+
                 return RetryResult<string>.FromHttpStatus(response.StatusCode);
             },
             _logger,
@@ -176,13 +176,13 @@ public class LrcLibService : IOnlineLyricsService
                 query["track_name"] = normalizedTrack;
                 query["artist_name"] = normalizedArtist;
                 // Note: Not sending album_name to search to be more permissive, we will filter locally.
-                
+
                 var requestUrl = $"{SearchUrl}?{query}";
-                _logger.LogDebug("Searching lyrics on LRCLIB for: {Artist} - {Track} (Attempt {Attempt}/{MaxRetries})", 
+                _logger.LogDebug("Searching lyrics on LRCLIB for: {Artist} - {Track} (Attempt {Attempt}/{MaxRetries})",
                     artistName, trackName, attempt, MaxRetries);
 
                 using var response = await _httpClient.GetAsync(requestUrl, cancellationToken).ConfigureAwait(false);
-                
+
                 if (response.StatusCode == HttpStatusCode.TooManyRequests)
                 {
                     _logger.LogWarning("LRCLIB rate limit hit during search. Attempt {Attempt}/{MaxRetries}", attempt, MaxRetries);
@@ -193,12 +193,12 @@ public class LrcLibService : IOnlineLyricsService
                     }
                     return RetryResult<string>.RateLimitFailure(RateLimitDelayMultiplier);
                 }
-                
+
                 if (!response.IsSuccessStatusCode)
                 {
-                    _logger.LogWarning("LRCLIB search failed with status {Status}. Attempt {Attempt}/{MaxRetries}", 
+                    _logger.LogWarning("LRCLIB search failed with status {Status}. Attempt {Attempt}/{MaxRetries}",
                         response.StatusCode, attempt, MaxRetries);
-                    
+
                     return RetryResult<string>.FromHttpStatus(response.StatusCode);
                 }
 
@@ -226,7 +226,7 @@ public class LrcLibService : IOnlineLyricsService
                     {
                         if (string.IsNullOrWhiteSpace(albumName) || string.IsNullOrWhiteSpace(r.AlbumName))
                             return 1; // Treat as "no match" regarding sorting priority if info is missing
-                        
+
                         return string.Equals(r.AlbumName, albumName, StringComparison.OrdinalIgnoreCase) ? 0 : 1;
                     })
                     .ThenBy(r => Math.Abs(r.Duration - targetDurationSeconds)) // Secondary sort: Closest duration
@@ -234,11 +234,11 @@ public class LrcLibService : IOnlineLyricsService
 
                 if (bestMatch != null)
                 {
-                    _logger.LogDebug("Found fallback lyrics via search for: {Artist} - {Track} (Match: {MatchTrack}, Duration Diff: {Diff}s)", 
+                    _logger.LogDebug("Found fallback lyrics via search for: {Artist} - {Track} (Match: {MatchTrack}, Duration Diff: {Diff}s)",
                         artistName, trackName, bestMatch.TrackName, bestMatch.Duration - targetDurationSeconds);
                     return RetryResult<string>.Success(bestMatch.SyncedLyrics!);
                 }
-                
+
                 _logger.LogDebug("Search results found but none matched criteria for: {Artist} - {Track}", artistName, trackName);
                 return RetryResult<string>.SuccessEmpty();
             },

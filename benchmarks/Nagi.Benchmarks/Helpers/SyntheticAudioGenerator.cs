@@ -16,7 +16,7 @@ public static class SyntheticAudioGenerator
     {
         if (Directory.Exists(rootPath))
             Directory.Delete(rootPath, true);
-        
+
         Directory.CreateDirectory(rootPath);
 
         for (int i = 0; i < songCount; i++)
