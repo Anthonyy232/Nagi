@@ -111,16 +111,16 @@ public class SpotifyService : ISpotifyService, IDisposable
                     using var request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
                     request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-                    _logger.LogDebug("Searching Spotify for artist: {ArtistName} (Attempt {Attempt}/{MaxRetries})", 
+                    _logger.LogDebug("Searching Spotify for artist: {ArtistName} (Attempt {Attempt}/{MaxRetries})",
                         artistName, attempt, MaxRetries);
 
                     using var response = await _httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
 
                     if (response.StatusCode == HttpStatusCode.TooManyRequests)
                     {
-                        _logger.LogWarning("Spotify API rate limit hit for '{ArtistName}'. Attempt {Attempt}/{MaxRetries}", 
+                        _logger.LogWarning("Spotify API rate limit hit for '{ArtistName}'. Attempt {Attempt}/{MaxRetries}",
                             artistName, attempt, MaxRetries);
-                        
+
                         if (attempt >= MaxRetries)
                         {
                             _logger.LogError("Spotify rate limit reached repeatedly. Disabling for this session.");
@@ -138,7 +138,7 @@ public class SpotifyService : ISpotifyService, IDisposable
                         _logger.LogWarning(
                             "Spotify artist search failed. Status: {StatusCode}, Content: {ErrorContent}. Attempt {Attempt}/{MaxRetries}",
                             response.StatusCode, errorContent, attempt, MaxRetries);
-                        
+
                         if (HttpRetryHelper.IsRetryableStatusCode(response.StatusCode))
                             return RetryResult<ServiceResult<SpotifyImageResult>>.TransientFailure();
 
@@ -233,7 +233,7 @@ public class SpotifyService : ISpotifyService, IDisposable
                     _logger.LogError(
                         "Error fetching Spotify access token. Status: {StatusCode}, Content: {ErrorContent}. Attempt {Attempt}/{MaxRetries}",
                         response.StatusCode, errorContent, attempt, MaxRetries);
-                    
+
                     return RetryResult<string>.FromHttpStatus(response.StatusCode);
                 }
 

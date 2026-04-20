@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
@@ -23,7 +23,7 @@ public class SmartPlaylistServiceRandomTests : IDisposable
     public SmartPlaylistServiceRandomTests()
     {
         _dbHelper = new DbContextFactoryTestHelper();
-        
+
         // Mock dependencies
         var fileSystem = Substitute.For<IFileSystemService>();
         var pathConfig = Substitute.For<IPathConfiguration>();

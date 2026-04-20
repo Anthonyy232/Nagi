@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.System;
@@ -50,7 +50,7 @@ public sealed partial class GenrePage : Page
             {
                 _logger.LogDebug("Genre collection is empty, loading genres...");
                 await ViewModel.LoadGenresAsync(cts.Token);
-                
+
                 if (cts.IsCancellationRequested)
                     _logger.LogDebug("Genre loading was canceled.");
                 else if (!ViewModel.HasLoadError)

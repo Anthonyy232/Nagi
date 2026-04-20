@@ -1,4 +1,4 @@
-using Nagi.Core.Models;
+﻿using Nagi.Core.Models;
 
 namespace Nagi.Core.Services.Abstractions;
 
@@ -88,25 +88,25 @@ public interface IStatisticsService
 
 public record TimeRange(DateTime? StartUtc, DateTime? EndUtc);
 
-public enum SortMetric 
-{ 
+public enum SortMetric
+{
     /// <summary>
     ///     Sort by the number of times a track was marked as played.
     /// </summary>
-    PlayCount, 
+    PlayCount,
 
     /// <summary>
     ///     Sort by the total cumulative duration of listening.
     /// </summary>
-    Duration 
+    Duration
 }
 
-public enum ActivityInterval 
-{ 
-    Hour, 
-    Day, 
-    Week, 
-    Month 
+public enum ActivityInterval
+{
+    Hour,
+    Day,
+    Week,
+    Month
 }
 
 public record SongStats(Song Song, int TotalPlays, TimeSpan TotalDuration, int Skips, int GlobalRank = 0);

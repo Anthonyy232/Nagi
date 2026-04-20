@@ -1,4 +1,4 @@
-using System.Net;
+﻿using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
@@ -17,10 +17,10 @@ public class MusicBrainzService : IMusicBrainzService
     private const string BaseUrl = "https://musicbrainz.org/ws/2";
     private const string UserAgent = "Nagi/1.0 (+https://github.com/Anthonyy232/Nagi)";
     private const int MaxRetries = 3;
-    
+
     private static readonly SemaphoreSlim _rateLimitSemaphore = new(1, 1);
     private static DateTime _lastRequestTime = DateTime.MinValue;
-    
+
     private readonly HttpClient _httpClient;
     private readonly ILogger<MusicBrainzService> _logger;
     private volatile bool _isApiDisabled;
@@ -69,7 +69,7 @@ public class MusicBrainzService : IMusicBrainzService
                         var encodedName = Uri.EscapeDataString(quotedName);
                         var url = $"{BaseUrl}/artist?query=artist:{encodedName}&limit=1&fmt=json";
 
-                        _logger.LogDebug("Searching MusicBrainz for artist: {ArtistName} (Attempt {Attempt}/{MaxRetries})", 
+                        _logger.LogDebug("Searching MusicBrainz for artist: {ArtistName} (Attempt {Attempt}/{MaxRetries})",
                             artistName, attempt, MaxRetries);
 
                         using var response = await _httpClient.GetAsync(url, cancellationToken).ConfigureAwait(false);
@@ -81,14 +81,14 @@ public class MusicBrainzService : IMusicBrainzService
                         {
                             _logger.LogWarning("MusicBrainz search failed with status {StatusCode} for artist: {ArtistName}. Attempt {Attempt}/{MaxRetries}",
                                 response.StatusCode, artistName, attempt, MaxRetries);
-                            
+
                             if (response.StatusCode == HttpStatusCode.Unauthorized || response.StatusCode == HttpStatusCode.Forbidden)
                             {
                                 _logger.LogError("MusicBrainz API access denied (401/403). Disabling for this session.");
                                 _isApiDisabled = true;
                                 return RetryResult<string>.SuccessEmpty();
                             }
-                            
+
                             return RetryResult<string>.FromHttpStatus(response.StatusCode);
                         }
 

@@ -1,4 +1,4 @@
-using System.Text;
+﻿using System.Text;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
 using Nagi.Core.Services.Abstractions;
@@ -82,7 +82,7 @@ public class M3uPlaylistExportService : IPlaylistExportService
             }
 
             var m3uDirectory = Path.GetDirectoryName(filePath) ?? string.Empty;
-            
+
             // Read with UTF-8 encoding by default, but handle potential BOM detection
             // Most modern M3U8 files use UTF-8, .m3u files may use system default encoding
             string[] lines;
@@ -193,7 +193,7 @@ public class M3uPlaylistExportService : IPlaylistExportService
                 // Get songs to check if playlist is empty
                 var songs = await _libraryReader.GetSongsInPlaylistOrderedAsync(playlist.Id).ConfigureAwait(false);
                 var songCount = songs.Count();
-                
+
                 // Skip empty playlists
                 if (songCount == 0)
                 {

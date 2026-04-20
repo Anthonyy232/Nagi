@@ -112,11 +112,11 @@ public class ImageSharpProcessorTests
         var pictureData = CreateTestImageBytes();
         var contentHash = GenerateContentHash(pictureData);
         string? savedPath = null;
-        
+
         // First call - file doesn't exist, then it does after save
         _fileSystem.GetFiles(AlbumArtPath, $"{contentHash}.*.fetched.jpg")
             .Returns(_ => savedPath == null ? Array.Empty<string>() : new[] { savedPath });
-        
+
         // Capture the saved path when MoveFile is called
         _fileSystem.When(x => x.MoveFile(Arg.Any<string>(), Arg.Any<string>(), false))
             .Do(callInfo => savedPath = callInfo.ArgAt<string>(1));

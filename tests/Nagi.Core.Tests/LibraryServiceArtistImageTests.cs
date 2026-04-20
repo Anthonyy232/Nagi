@@ -1,4 +1,4 @@
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -23,50 +23,50 @@ public class LibraryServiceArtistImageTests : IDisposable
 {
     // ── paths used across tests ────────────────────────────────────────────────
     private const string ArtistImageCachePath = "C:\\cache\\artistimages";
-    private const string FolderPath           = "C:\\Music\\Artist";
-    private const string AlbumDir             = "C:\\Music\\Artist\\Album";
-    private const string SongPath             = "C:\\Music\\Artist\\Album\\song.mp3";
-    private const string ArtistImagePath      = "C:\\Music\\Artist\\artist.jpg";
+    private const string FolderPath = "C:\\Music\\Artist";
+    private const string AlbumDir = "C:\\Music\\Artist\\Album";
+    private const string SongPath = "C:\\Music\\Artist\\Album\\song.mp3";
+    private const string ArtistImagePath = "C:\\Music\\Artist\\artist.jpg";
     private const string AlbumArtistImagePath = "C:\\Music\\Artist\\Album\\artist.jpg";
 
-    private static readonly byte[] ImageBytes     = new byte[] { 0xFF, 0xD8, 0xFF, 0xE0 };
+    private static readonly byte[] ImageBytes = new byte[] { 0xFF, 0xD8, 0xFF, 0xE0 };
     private static readonly byte[] ProcessedBytes = new byte[] { 0x10, 0x20, 0x30 };
 
     private readonly DbContextFactoryTestHelper _dbHelper;
-    private readonly IFileSystemService         _fileSystem;
-    private readonly IHttpClientFactory         _httpClientFactory;
-    private readonly IImageProcessor            _imageProcessor;
-    private readonly ILastFmMetadataService     _lastFmService;
-    private readonly LibraryService             _libraryService;
-    private readonly ILogger<LibraryService>    _logger;
-    private readonly IMetadataService           _metadataService;
-    private readonly IPathConfiguration         _pathConfig;
-    private readonly IServiceScopeFactory       _serviceScopeFactory;
-    private readonly ISpotifyService            _spotifyService;
-    private readonly ISettingsService           _settingsService;
-    private readonly IReplayGainService         _replayGainService;
-    private readonly IMusicBrainzService        _musicBrainzService;
-    private readonly IFanartTvService           _fanartTvService;
-    private readonly ITheAudioDbService         _theAudioDbService;
-    private readonly IApiKeyService             _apiKeyService;
+    private readonly IFileSystemService _fileSystem;
+    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly IImageProcessor _imageProcessor;
+    private readonly ILastFmMetadataService _lastFmService;
+    private readonly LibraryService _libraryService;
+    private readonly ILogger<LibraryService> _logger;
+    private readonly IMetadataService _metadataService;
+    private readonly IPathConfiguration _pathConfig;
+    private readonly IServiceScopeFactory _serviceScopeFactory;
+    private readonly ISpotifyService _spotifyService;
+    private readonly ISettingsService _settingsService;
+    private readonly IReplayGainService _replayGainService;
+    private readonly IMusicBrainzService _musicBrainzService;
+    private readonly IFanartTvService _fanartTvService;
+    private readonly ITheAudioDbService _theAudioDbService;
+    private readonly IApiKeyService _apiKeyService;
 
     public LibraryServiceArtistImageTests()
     {
-        _fileSystem          = Substitute.For<IFileSystemService>();
-        _metadataService     = Substitute.For<IMetadataService>();
-        _lastFmService       = Substitute.For<ILastFmMetadataService>();
-        _spotifyService      = Substitute.For<ISpotifyService>();
-        _httpClientFactory   = Substitute.For<IHttpClientFactory>();
+        _fileSystem = Substitute.For<IFileSystemService>();
+        _metadataService = Substitute.For<IMetadataService>();
+        _lastFmService = Substitute.For<ILastFmMetadataService>();
+        _spotifyService = Substitute.For<ISpotifyService>();
+        _httpClientFactory = Substitute.For<IHttpClientFactory>();
         _serviceScopeFactory = Substitute.For<IServiceScopeFactory>();
-        _pathConfig          = Substitute.For<IPathConfiguration>();
-        _settingsService     = Substitute.For<ISettingsService>();
-        _replayGainService   = Substitute.For<IReplayGainService>();
-        _musicBrainzService  = Substitute.For<IMusicBrainzService>();
-        _fanartTvService     = Substitute.For<IFanartTvService>();
-        _theAudioDbService   = Substitute.For<ITheAudioDbService>();
-        _apiKeyService       = Substitute.For<IApiKeyService>();
-        _imageProcessor      = Substitute.For<IImageProcessor>();
-        _logger              = Substitute.For<ILogger<LibraryService>>();
+        _pathConfig = Substitute.For<IPathConfiguration>();
+        _settingsService = Substitute.For<ISettingsService>();
+        _replayGainService = Substitute.For<IReplayGainService>();
+        _musicBrainzService = Substitute.For<IMusicBrainzService>();
+        _fanartTvService = Substitute.For<IFanartTvService>();
+        _theAudioDbService = Substitute.For<ITheAudioDbService>();
+        _apiKeyService = Substitute.For<IApiKeyService>();
+        _imageProcessor = Substitute.For<IImageProcessor>();
+        _logger = Substitute.For<ILogger<LibraryService>>();
 
         _dbHelper = new DbContextFactoryTestHelper();
 
@@ -145,10 +145,10 @@ public class LibraryServiceArtistImageTests : IDisposable
         var artist = new Artist { Name = "Test Artist", LocalImageCachePath = localImageCachePath, MetadataLastCheckedUtc = null };
         var song = new Song
         {
-            Title        = "Song",
-            FilePath     = SongPath,
+            Title = "Song",
+            FilePath = SongPath,
             DirectoryPath = AlbumDir,
-            FolderId     = folder.Id,
+            FolderId = folder.Id,
             FileModifiedDate = timestamp
         };
         song.SongArtists.Add(new SongArtist { Artist = artist, Order = 0 });
@@ -313,10 +313,10 @@ public class LibraryServiceArtistImageTests : IDisposable
         var (folder, artist, _) = await SeedUpToDateSongAsync();
 
         var parentImagePath = ArtistImagePath;       // C:\Music\Artist\artist.jpg  (pass A)
-        var albumImagePath  = AlbumArtistImagePath;  // C:\Music\Artist\Album\artist.jpg (pass B)
+        var albumImagePath = AlbumArtistImagePath;  // C:\Music\Artist\Album\artist.jpg (pass B)
 
         var parentBytes = new byte[] { 0x01, 0x02 };
-        var albumBytes  = new byte[] { 0x03, 0x04 };
+        var albumBytes = new byte[] { 0x03, 0x04 };
 
         // Pass A dir (FolderPath) has an artist image
         _fileSystem.GetFiles(FolderPath, "*.*").Returns(new[] { parentImagePath });
@@ -388,13 +388,13 @@ public class LibraryServiceArtistImageTests : IDisposable
     public async Task RescanFolder_ImageProcessingThrows_LogsWarningAndContinues()
     {
         var timestamp = new DateTime(2024, 6, 1, 0, 0, 0, DateTimeKind.Utc);
-        var folder  = new Folder { Id = Guid.NewGuid(), Name = "Artist", Path = FolderPath };
+        var folder = new Folder { Id = Guid.NewGuid(), Name = "Artist", Path = FolderPath };
         var artist1 = new Artist { Name = "Artist One" };
         var artist2 = new Artist { Name = "Artist Two" };
 
         // Artist1 is in AlbumDir; artist2 is in a separate Album2Dir so they have distinct image files.
-        const string album2Dir       = "C:\\Music\\Artist\\Album2";
-        const string song2Path       = "C:\\Music\\Artist\\Album2\\song2.mp3";
+        const string album2Dir = "C:\\Music\\Artist\\Album2";
+        const string song2Path = "C:\\Music\\Artist\\Album2\\song2.mp3";
         const string album2ImagePath = "C:\\Music\\Artist\\Album2\\artist.jpg";
 
         var song1 = new Song { Title = "S1", FilePath = SongPath, DirectoryPath = AlbumDir, FolderId = folder.Id, FileModifiedDate = timestamp };
@@ -420,8 +420,8 @@ public class LibraryServiceArtistImageTests : IDisposable
         var artist1Bytes = new byte[] { 0x01, 0x02 };
         var artist2Bytes = new byte[] { 0x03, 0x04 };
 
-        _fileSystem.GetFiles(AlbumDir,   "*.*").Returns(new[] { AlbumArtistImagePath });
-        _fileSystem.GetFiles(album2Dir,  "*.*").Returns(new[] { album2ImagePath });
+        _fileSystem.GetFiles(AlbumDir, "*.*").Returns(new[] { AlbumArtistImagePath });
+        _fileSystem.GetFiles(album2Dir, "*.*").Returns(new[] { album2ImagePath });
         _fileSystem.ReadAllBytesAsync(AlbumArtistImagePath).Returns(Task.FromResult(artist1Bytes));
         _fileSystem.ReadAllBytesAsync(album2ImagePath).Returns(Task.FromResult(artist2Bytes));
 
@@ -522,7 +522,7 @@ public class LibraryServiceArtistImageTests : IDisposable
     public async Task RescanFolder_CancellationRequested_ReturnsFalseAndDoesNotSave()
     {
         var timestamp = new DateTime(2024, 6, 1, 0, 0, 0, DateTimeKind.Utc);
-        var folder  = new Folder { Id = Guid.NewGuid(), Name = "Artist", Path = FolderPath };
+        var folder = new Folder { Id = Guid.NewGuid(), Name = "Artist", Path = FolderPath };
         var artist1 = new Artist { Name = "Cancelable Artist" };
 
         var song1 = new Song { Title = "S1", FilePath = SongPath, DirectoryPath = AlbumDir, FolderId = folder.Id, FileModifiedDate = timestamp };
@@ -610,7 +610,7 @@ public class LibraryServiceArtistImageTests : IDisposable
     {
         // Arrange
         var (folder, artist, _) = await SeedUpToDateSongAsync();
-        
+
         var otherJpgPath = Path.Combine(FolderPath, "other.jpg");
         var artistJpgPath = Path.Combine(FolderPath, "artist.jpg");
         var artistBytes = new byte[] { 0x01, 0x02 };
@@ -618,7 +618,7 @@ public class LibraryServiceArtistImageTests : IDisposable
         _fileSystem.GetFiles(FolderPath, "*.*").Returns(new[] { otherJpgPath, artistJpgPath });
         _fileSystem.GetFileNameWithoutExtension(otherJpgPath).Returns("other");
         _fileSystem.GetFileNameWithoutExtension(artistJpgPath).Returns("artist");
-        
+
         _fileSystem.ReadAllBytesAsync(artistJpgPath).Returns(Task.FromResult(artistBytes));
         _imageProcessor.ProcessImageBytesAsync(artistBytes).Returns(Task.FromResult(ProcessedBytes));
 

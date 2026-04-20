@@ -1,4 +1,4 @@
-using System.IO;
+﻿using System.IO;
 using Nagi.Core.Models;
 
 namespace Nagi.Core.Helpers;

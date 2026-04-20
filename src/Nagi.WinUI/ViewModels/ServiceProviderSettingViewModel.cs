@@ -1,4 +1,4 @@
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Nagi.Core.Models;
 
 namespace Nagi.WinUI.ViewModels;
@@ -14,7 +14,7 @@ public partial class ServiceProviderSettingViewModel : ObservableObject
     public string DisplayName { get; init; } = string.Empty;
     public string? Description { get; init; }
     public ServiceCategory Category { get; init; }
- 
+
     public bool CanDrag => Id != ServiceProviderIds.MusicBrainz;
 
     /// <summary>

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
@@ -103,7 +103,7 @@ public class LibraryServiceRandomTests : IDisposable
 
         var result = await _libraryService.GetRandomAlbumIdAsync();
         result.Should().NotBeNull();
-        
+
         using (var context = _dbHelper.ContextFactory.CreateDbContext())
         {
             var exists = await context.Albums.AnyAsync(a => a.Id == result);
@@ -116,7 +116,7 @@ public class LibraryServiceRandomTests : IDisposable
     {
         // 1. Folder with no songs
         var emptyFolder = new Folder { Name = "Empty", Path = "C:\\Empty" };
-        
+
         // 2. Folder with songs
         var musicFolder = new Folder { Name = "Music", Path = "C:\\Music" };
         var song = new Song { Title = "Song", Folder = musicFolder, FilePath = "C:\\Music\\song.mp3", DirectoryPath = "C:\\Music" };
@@ -136,7 +136,7 @@ public class LibraryServiceRandomTests : IDisposable
             result.Should().Be(musicFolder.Id);
         }
     }
-    
+
     [Fact]
     public async Task GetPlaylistCountAsync_ReturnsCorrectCount()
     {

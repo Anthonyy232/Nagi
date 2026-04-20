@@ -48,14 +48,14 @@ public interface ILibraryReader
     Task<IEnumerable<Genre>> GetAllGenresAsync(CancellationToken token = default);
     Task<IEnumerable<Song>> GetSongsByGenreIdAsync(Guid genreId, CancellationToken token = default);
     Task<int> GetListenCountForSongAsync(Guid songId);
-    
+
     // Random Access Methods
     Task<Guid?> GetRandomAlbumIdAsync();
     Task<Guid?> GetRandomArtistIdAsync();
     Task<Guid?> GetRandomFolderIdAsync();
     Task<Guid?> GetRandomGenreIdAsync();
     Task<Guid?> GetRandomPlaylistIdAsync();
-    
+
     // Count Methods
     Task<int> GetPlaylistCountAsync();
 

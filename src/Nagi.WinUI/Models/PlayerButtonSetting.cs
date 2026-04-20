@@ -28,12 +28,12 @@ public partial class PlayerButtonSetting : ObservableObject
 
     // Dynamic properties for binding - ignored by JSON serializer as they are runtime state
     [JsonIgnore] public ICommand? Command { get; set; }
-    
-    [ObservableProperty] 
-    [property: JsonIgnore] 
+
+    [ObservableProperty]
+    [property: JsonIgnore]
     public partial string? DynamicIcon { get; set; }
-    
-    [ObservableProperty] 
-    [property: JsonIgnore] 
+
+    [ObservableProperty]
+    [property: JsonIgnore]
     public partial string? DynamicToolTip { get; set; }
 }

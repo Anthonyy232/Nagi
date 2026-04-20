@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading;
@@ -30,7 +30,7 @@ public sealed partial class MainWindow : Window
     // Minimum window size constraints when restoring saved dimensions.
     private const int MinMainWindowWidth = 400;
     private const int MinMainWindowHeight = 300;
-    
+
     // Core windowing and service references.
     private AppWindow? _appWindow;
 
@@ -199,29 +199,29 @@ public sealed partial class MainWindow : Window
         {
             var saveSizeTask = _settingsService.GetRememberWindowSizeEnabledAsync();
             var savePositionTask = _settingsService.GetRememberWindowPositionEnabledAsync();
-            
+
             await Task.WhenAll(saveSizeTask, savePositionTask);
 
             var saveSize = saveSizeTask.Result;
             var savePosition = savePositionTask.Result;
-            
+
             // Parallelize the actual save operations when both are enabled
             var saveTasks = new List<Task>();
-            
+
             if (saveSize)
             {
                 var size = _appWindow.Size;
                 saveTasks.Add(_settingsService.SetLastWindowSizeAsync(size.Width, size.Height));
                 _logger?.LogDebug("Saving window size: {Width}x{Height}", size.Width, size.Height);
             }
-            
+
             if (savePosition)
             {
                 var position = _appWindow.Position;
                 saveTasks.Add(_settingsService.SetLastWindowPositionAsync(position.X, position.Y));
                 _logger?.LogDebug("Saving window position: ({X}, {Y})", position.X, position.Y);
             }
-            
+
             if (saveTasks.Count > 0)
             {
                 await Task.WhenAll(saveTasks);
@@ -337,22 +337,22 @@ public sealed partial class MainWindow : Window
         {
             var restoreSizeTask = _settingsService.GetRememberWindowSizeEnabledAsync();
             var restorePositionTask = _settingsService.GetRememberWindowPositionEnabledAsync();
-            
+
             await Task.WhenAll(restoreSizeTask, restorePositionTask);
 
             var restoreSize = restoreSizeTask.Result;
             var restorePosition = restorePositionTask.Result;
-            
+
             // Parallelize fetching saved values when both are enabled
-            var savedSizeTask = restoreSize 
-                ? _settingsService.GetLastWindowSizeAsync() 
+            var savedSizeTask = restoreSize
+                ? _settingsService.GetLastWindowSizeAsync()
                 : Task.FromResult<(int Width, int Height)?>(null);
-            var savedPositionTask = restorePosition 
-                ? _settingsService.GetLastWindowPositionAsync() 
+            var savedPositionTask = restorePosition
+                ? _settingsService.GetLastWindowPositionAsync()
                 : Task.FromResult<(int X, int Y)?>(null);
-            
+
             await Task.WhenAll(savedSizeTask, savedPositionTask);
-            
+
             var savedSize = savedSizeTask.Result;
             var savedPosition = savedPositionTask.Result;
 
@@ -361,19 +361,19 @@ public sealed partial class MainWindow : Window
             {
                 var width = Math.Max(savedSize.Value.Width, MinMainWindowWidth);
                 var height = Math.Max(savedSize.Value.Height, MinMainWindowHeight);
-                
+
                 _appWindow.MoveAndResize(new RectInt32(
                     savedPosition.Value.X, savedPosition.Value.Y,
                     width, height));
-                    
-                _logger?.LogDebug("Restored window state: ({X}, {Y}) {Width}x{Height}", 
+
+                _logger?.LogDebug("Restored window state: ({X}, {Y}) {Width}x{Height}",
                     savedPosition.Value.X, savedPosition.Value.Y, width, height);
             }
             else if (savedSize.HasValue)
             {
                 var width = Math.Max(savedSize.Value.Width, MinMainWindowWidth);
                 var height = Math.Max(savedSize.Value.Height, MinMainWindowHeight);
-                
+
                 _appWindow.Resize(new SizeInt32(width, height));
                 _logger?.LogDebug("Restored window size: {Width}x{Height}", width, height);
             }
@@ -485,7 +485,7 @@ public sealed class MiniPlayerWindow : Window
 
         _appWindow.Title = Nagi.WinUI.Resources.Strings.MiniPlayer_Title;
         _appWindow.SetIcon(AppIconPath);
-        
+
         // Convert logical pixels to physical pixels for AppWindow.Resize()
         var initialSize = (int)(InitialWindowSizeDips * GetDpiScale());
         _appWindow.Resize(new SizeInt32(initialSize, initialSize));
@@ -598,13 +598,13 @@ public sealed class MiniPlayerWindow : Window
         // Simply scheduling the close via DisptacherQueue.TryEnqueue is not enough to prevent
         // E_UNEXPECTED (0x8000FFFF) crashes in WinUI 3 when closing a window from its own UI event.
         // We must ensure the window remains alive until the current input event cycle fully completes.
-        
+
         // 1. Hide the window immediately to make the UI feel responsive.
         _appWindow.Hide();
 
         // 2. Schedule the closure with a delay. This yields control back to the message pump,
         // allowing the current click event to finish bubbling and any internal XAML state to settle.
-        Task.Delay(50).ContinueWith(_ => 
+        Task.Delay(50).ContinueWith(_ =>
         {
             DispatcherQueue.TryEnqueue(() => Close());
         });

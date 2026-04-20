@@ -1,4 +1,4 @@
-namespace Nagi.Core.Services.Abstractions;
+﻿namespace Nagi.Core.Services.Abstractions;
 
 /// <summary>
 ///     Service for resolving artist identities via the MusicBrainz database.

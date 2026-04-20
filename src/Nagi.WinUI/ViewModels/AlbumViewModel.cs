@@ -78,18 +78,18 @@ public partial class AlbumViewModel : SearchableViewModelBase
         // Store the handler in a field so we can reliably unsubscribe from it later.
         _collectionChangedHandler = (sender, args) => OnPropertyChanged(nameof(HasAlbums));
         Albums.CollectionChanged += _collectionChangedHandler;
-        
+
         // Subscribe to library changes to refresh when folders are added/removed
         _libraryService.LibraryContentChanged += OnLibraryContentChanged;
-        
+
         UpdateSortOrderText();
     }
-    
+
     private void OnLibraryContentChanged(object? sender, LibraryContentChangedEventArgs e)
     {
         // We don't need to refresh the album list just because a folder container was added (it has no songs/albums yet).
         if (e.ChangeType == LibraryChangeType.FolderAdded) return;
-        
+
         // Debounce to prevent multiple refresh calls during rapid changes.
         var cts = new CancellationTokenSource();
         var oldCts = Interlocked.Exchange(ref _debouncer, cts);
@@ -102,7 +102,7 @@ public partial class AlbumViewModel : SearchableViewModelBase
             {
                 await Task.Delay(1000, token).ConfigureAwait(false);
                 if (token.IsCancellationRequested) return;
-                
+
                 _logger.LogDebug("Library content changed ({ChangeType}). Refreshing album list.", e.ChangeType);
                 await _dispatcherService.EnqueueAsync(() => LoadAlbumsCommand.ExecuteAsync(CancellationToken.None));
             }
@@ -279,7 +279,7 @@ public partial class AlbumViewModel : SearchableViewModelBase
         _currentPage = 1;
         IsFullyLoaded = false;
         Albums.Clear();
-        
+
         try
         {
             if (!_hasSortOrderLoaded)
@@ -343,7 +343,7 @@ public partial class AlbumViewModel : SearchableViewModelBase
         if (pagedResult != null)
         {
             var count = pagedResult.TotalCount;
-            TotalItemsText = count == 1 
+            TotalItemsText = count == 1
                 ? ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Albums_Count_Singular, count)
                 : ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Albums_Count_Plural, count);
         }

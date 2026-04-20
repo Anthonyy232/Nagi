@@ -1,4 +1,4 @@
-using System.Net;
+﻿using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
@@ -61,7 +61,7 @@ public class FanartTvService : IFanartTvService
                     }
 
                     var url = $"{BaseUrl}/{musicBrainzId}?api_key={apiKey}";
-                    _logger.LogDebug("Fetching Fanart.tv images for MBID: {MBID} (Attempt {Attempt}/{MaxRetries})", 
+                    _logger.LogDebug("Fetching Fanart.tv images for MBID: {MBID} (Attempt {Attempt}/{MaxRetries})",
                         musicBrainzId, attempt, MaxRetries);
 
                     using var response = await _httpClient.GetAsync(url, cancellationToken).ConfigureAwait(false);
@@ -75,9 +75,9 @@ public class FanartTvService : IFanartTvService
 
                     if (response.StatusCode == HttpStatusCode.TooManyRequests)
                     {
-                        _logger.LogWarning("Fanart.tv rate limit reached for MBID: {MBID}. Attempt {Attempt}/{MaxRetries}", 
+                        _logger.LogWarning("Fanart.tv rate limit reached for MBID: {MBID}. Attempt {Attempt}/{MaxRetries}",
                             musicBrainzId, attempt, MaxRetries);
-                        
+
                         if (attempt >= MaxRetries)
                         {
                             _logger.LogError("Fanart.tv rate limit reached repeatedly. Disabling for this session.");
@@ -91,9 +91,9 @@ public class FanartTvService : IFanartTvService
 
                     if (!response.IsSuccessStatusCode)
                     {
-                        _logger.LogWarning("Fanart.tv request failed with status {StatusCode} for MBID: {MBID}. Attempt {Attempt}/{MaxRetries}", 
+                        _logger.LogWarning("Fanart.tv request failed with status {StatusCode} for MBID: {MBID}. Attempt {Attempt}/{MaxRetries}",
                             response.StatusCode, musicBrainzId, attempt, MaxRetries);
-                        
+
                         if (HttpRetryHelper.IsRetryableStatusCode(response.StatusCode))
                             return RetryResult<ServiceResult<FanartTvArtistImages>>.TransientFailure();
 
@@ -116,7 +116,7 @@ public class FanartTvService : IFanartTvService
                     );
 
                     // Check if we actually got any usable images
-                    if (images.BackgroundUrl is null && images.LogoUrl is null && 
+                    if (images.BackgroundUrl is null && images.LogoUrl is null &&
                         images.BannerUrl is null && images.ThumbUrl is null)
                     {
                         _logger.LogDebug("Fanart.tv returned empty images for MBID: {MBID}", musicBrainzId);

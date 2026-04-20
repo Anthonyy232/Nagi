@@ -1,4 +1,4 @@
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
@@ -14,7 +14,7 @@ using Xunit;
 namespace Nagi.Core.Tests;
 
 /// <summary>
-///     Provides integration tests to verify that service provider enabling, disabling, 
+///     Provides integration tests to verify that service provider enabling, disabling,
 ///     and reordering (priority) logic works correctly across different services.
 /// </summary>
 public class ServiceProviderIntegrationTests
@@ -63,7 +63,7 @@ public class ServiceProviderIntegrationTests
         _dbHelper = new DbContextFactoryTestHelper();
 
         var loggerFactory = Substitute.For<ILoggerFactory>();
-        
+
         _lrcService = new LrcService(
             _fileSystem,
             _lrcLibService,
@@ -100,7 +100,7 @@ public class ServiceProviderIntegrationTests
         // Arrange
         var song = new Song { Title = "Test Song", Duration = TimeSpan.FromMinutes(3) };
         _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
-        
+
         // NetEase is first, LRCLIB is second
         _settingsService.GetEnabledServiceProvidersAsync(ServiceCategory.Lyrics)
             .Returns(new List<ServiceProviderSetting>
@@ -128,7 +128,7 @@ public class ServiceProviderIntegrationTests
         // Arrange
         var song = new Song { Title = "Test Song", Duration = TimeSpan.FromMinutes(3) };
         _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
-        
+
         // NetEase is disabled, LRCLIB is enabled
         _settingsService.GetEnabledServiceProvidersAsync(ServiceCategory.Lyrics)
             .Returns(new List<ServiceProviderSetting>
@@ -166,11 +166,11 @@ public class ServiceProviderIntegrationTests
                 new() { Id = ServiceProviderIds.Spotify, Order = 0, IsEnabled = true },
                 new() { Id = ServiceProviderIds.LastFm, Order = 1, IsEnabled = true }
             });
-        
+
         // Spotify returns image but no bio
         _spotifyService.GetArtistImageUrlAsync(artist.Name, Arg.Any<CancellationToken>())
             .Returns(ServiceResult<SpotifyImageResult>.FromSuccess(new SpotifyImageResult { ImageUrl = "http://spotify.com/img.jpg" }));
-        
+
         // Last.fm returns bio
         _lastFmService.GetArtistInfoAsync(artist.Name, Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(ServiceResult<ArtistInfo>.FromSuccess(new ArtistInfo { Biography = "Last.fm Bio", ImageUrl = "http://lastfm.com/img.jpg" }));
@@ -200,16 +200,16 @@ public class ServiceProviderIntegrationTests
                 new() { Id = ServiceProviderIds.Spotify, Order = 0, IsEnabled = true },
                 new() { Id = ServiceProviderIds.LastFm, Order = 1, IsEnabled = true }
             });
-        
+
         _spotifyService.GetArtistImageUrlAsync(artist.Name, Arg.Any<CancellationToken>())
             .Returns(ServiceResult<SpotifyImageResult>.FromSuccess(new SpotifyImageResult { ImageUrl = "http://spotify.com/img.jpg" }));
         _lastFmService.GetArtistInfoAsync(artist.Name, Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(ServiceResult<ArtistInfo>.FromSuccess(new ArtistInfo { ImageUrl = "http://lastfm.com/img.jpg" }));
 
-        // Setup image download failure for Spotify but success for Last.fm would be complex here, 
+        // Setup image download failure for Spotify but success for Last.fm would be complex here,
         // but the logic simply takes the first non-null URL if we don't mock download failures.
         // Actually, LibraryService waits for ALL tasks and then iterates.
-        
+
         // Act
         await _libraryService.GetArtistDetailsAsync(artist.Id, true);
 

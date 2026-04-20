@@ -1,4 +1,4 @@
-using System.Text;
+﻿using System.Text;
 using Nagi.Core.Models;
 
 namespace Nagi.Core.Helpers;
@@ -19,16 +19,16 @@ public static class ArtistNameHelper
     {
         if (string.IsNullOrWhiteSpace(s))
             return null;
-        
+
         // Apply Unicode NFC normalization to unify composed/decomposed characters
         // This ensures "é" (U+00E9) and "e\u0301" (e + combining accent) become identical
         // Normalize() already checks IsNormalized internally, so no need to do it manually
         var normalized = s.Normalize(NormalizationForm.FormC);
-        
+
         // Replace null terminators with a visible separator (double backslash) to prevent concatenation
         // and allow for splitting if configured.
         var cleaned = normalized.Replace("\0", "\\\\").Trim();
-        
+
         return string.IsNullOrEmpty(cleaned) ? null : cleaned;
     }
 

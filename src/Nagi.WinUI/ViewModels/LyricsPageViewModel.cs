@@ -89,7 +89,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ShowNoLyricsMessage))]
     public partial bool IsPlaying { get; set; }
-    
+
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ShowNoLyricsMessage))]
     public partial bool IsLoading { get; set; }
@@ -168,7 +168,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
             {
                 if (DateTime.UtcNow - _optimisticSetTimestamp < OptimisticUpdateGracePeriod)
                 {
-                    // If the "natural" current line is already the one we optimistically set, 
+                    // If the "natural" current line is already the one we optimistically set,
                     // we can clear the optimistic flag early as the seek has successfully caught up.
                     if (ReferenceEquals(newCurrentLine, _optimisticallySetLine))
                     {
@@ -238,7 +238,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
         if (song is null) return;
 
         _logger.LogDebug("Updating lyrics for track '{SongTitle}' ({SongId})", song.Title, song.Id);
-        
+
         // Start prefetch for next track immediately (runs in parallel with current fetch)
         _ = PrefetchNextTrackLyrics();
 
@@ -277,7 +277,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
             {
                 _logger.LogDebug("Using embedded lyrics for track '{SongTitle}'", song.Title);
                 var parsedEmbedded = _lrcService.ParseLyrics(fullSong.Lyrics);
-                
+
                 if (parsedEmbedded is not null && !parsedEmbedded.IsEmpty)
                 {
                     _dispatcherService.TryEnqueue(() =>
@@ -400,7 +400,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
             IsPlaying = _playbackService.IsPlaying;
         });
     }
-    
+
     /// <summary>
     ///     Pre-fetches lyrics for the next track in the queue to reduce perceived latency.
     ///     This is fire-and-forget - failures are silently logged and don't affect current playback.
@@ -457,7 +457,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
             prefetchCts?.Dispose();
         }
     }
-    
+
     [GeneratedRegex(@"\n{3,}")]
     private static partial Regex MultipleNewlines();
 

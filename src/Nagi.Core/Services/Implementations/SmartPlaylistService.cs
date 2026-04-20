@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Data;
 using Nagi.Core.Helpers;
@@ -90,7 +90,7 @@ public class SmartPlaylistService : ISmartPlaylistService
             MusicBrainzReleaseId = s.MusicBrainzReleaseId,
             ArtistName = s.ArtistName,
             PrimaryArtistName = s.PrimaryArtistName
-            // Collection navigations (Genres, PlaylistSongs, etc.) are excluded from projections 
+            // Collection navigations (Genres, PlaylistSongs, etc.) are excluded from projections
             // as EF Core cannot reliably hydrate them in entity-type Select() calls.
             // Use GetSongByIdAsync(id) for full data.
         });
@@ -111,7 +111,7 @@ public class SmartPlaylistService : ISmartPlaylistService
         var normalizedName = ArtistNameHelper.NormalizeStringCore(name) ?? name;
         var exists = await context.SmartPlaylists
             .AnyAsync(sp => sp.Name.ToLower() == normalizedName.ToLower()).ConfigureAwait(false);
-        
+
         if (exists)
         {
             _logger.LogWarning("Cannot create smart playlist: name '{Name}' already exists", normalizedName);
@@ -167,7 +167,7 @@ public class SmartPlaylistService : ISmartPlaylistService
         ArgumentNullException.ThrowIfNull(smartPlaylist);
 
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        
+
         // Fetch the existing entity to avoid tracking issues with detached entities
         var existing = await context.SmartPlaylists.FindAsync(smartPlaylist.Id).ConfigureAwait(false);
         if (existing is null) return false;
@@ -217,11 +217,11 @@ public class SmartPlaylistService : ISmartPlaylistService
         if (smartPlaylist is null) return false;
 
         var normalizedName = ArtistNameHelper.NormalizeStringCore(newName) ?? newName;
-        
+
         // Check if the new name already exists (case-insensitive), excluding the current playlist
         var nameExists = await context.SmartPlaylists
             .AnyAsync(sp => sp.Id != smartPlaylistId && sp.Name.ToLower() == normalizedName.ToLower()).ConfigureAwait(false);
-        
+
         if (nameExists)
         {
             _logger.LogWarning("Cannot rename smart playlist: name '{Name}' already exists", normalizedName);
@@ -250,7 +250,7 @@ public class SmartPlaylistService : ISmartPlaylistService
             var originalBytes = await _fileSystem.ReadAllBytesAsync(newCoverImageUri).ConfigureAwait(false);
             var processedBytes = await _imageProcessor.ProcessImageBytesAsync(originalBytes).ConfigureAwait(false);
             await ImageStorageHelper.SaveImageBytesAsync(_fileSystem, cachePath, smartPlaylistId.ToString(), ".custom", processedBytes).ConfigureAwait(false);
-            
+
             var newPath = ImageStorageHelper.FindImage(_fileSystem, cachePath, smartPlaylistId.ToString(), ".custom");
             smartPlaylist.CoverImageUri = newPath;
         }
@@ -285,7 +285,7 @@ public class SmartPlaylistService : ISmartPlaylistService
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         return await context.SmartPlaylists.CountAsync().ConfigureAwait(false);
     }
-    
+
     /// <summary>
     ///     Efficiently selects a random ID from a queryable set using the O(log N) "Where Id >= Random" strategy.
     ///     This avoids the O(N) full table scan caused by "ORDER BY RANDOM()".
@@ -312,7 +312,7 @@ public class SmartPlaylistService : ISmartPlaylistService
 
         return id == Guid.Empty ? null : id;
     }
-    
+
     #endregion
 
     #region Configuration

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Threading;
 using Windows.System;
 using System.Collections.Generic;
@@ -96,7 +96,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         _dispatcherService = App.Services!.GetRequiredService<IDispatcherService>();
         _win32InteropService = App.Services!.GetRequiredService<IWin32InteropService>();
         _logger = App.Services!.GetRequiredService<ILogger<MainPage>>();
-        
+
         InitializeComponent();
         DataContext = ViewModel;
 
@@ -213,7 +213,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         {
             var targetOpacity = shouldBeExpanded ? 1f : 0f;
             var duration = shouldBeExpanded ? 350 : 150;
-            var delay    = shouldBeExpanded ? 100 : 0;
+            var delay = shouldBeExpanded ? 100 : 0;
 
             AnimateOpacity(SeekBarGrid, targetOpacity, duration, delay);
             AnimateOpacity(ArtistNameHyperlink, targetOpacity, duration, delay);
@@ -361,7 +361,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
 
         // Dispose the tray icon control to prevent "Exception Processing Message 0xc0000005" errors on exit.
         AppTrayIconHost?.Dispose();
-        
+
         RemoveHandler(PointerPressedEvent, (PointerEventHandler)OnGlobalPointerPressed);
     }
 
@@ -398,10 +398,10 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         _dispatcherService.TryEnqueue(async () =>
         {
             if (_isUnloaded) return;
-            
+
             // 1. Update the brush (Material change)
             await SetPlatformSpecificBrushAsync();
-            
+
             // 2. Re-calculate the tint color (Intensity change)
             await _themeService.ReapplyCurrentDynamicThemeAsync();
         });
@@ -435,7 +435,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         _ = _dispatcherService.EnqueueAsync(async () =>
         {
             if (_isUnloaded) return;
-            
+
             _isUpdatingNavViewSelection = true;
             await PopulateNavigationAsync();
             if (ContentFrame.CurrentSourcePageType == typeof(SettingsPage)) NavView.SelectedItem = NavView.SettingsItem;
@@ -492,7 +492,7 @@ public sealed partial class MainPage : UserControl, ICustomTitleBarProvider
         {
             var isDetailPage = _detailPageToParentTagMap.ContainsKey(e.SourcePageType);
             var isLyricsPage = e.SourcePageType == typeof(LyricsPage);
-            
+
             if (AppTitleBar != null)
             {
                 AppTitleBar.IsBackButtonVisible = (ContentFrame.CanGoBack && isDetailPage) || isLyricsPage;

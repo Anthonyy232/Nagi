@@ -162,7 +162,7 @@
                         </Grid>
 
                         <Button Command="{x:Bind ViewModel.PlayAllSongsCommand}"
-                                Style="{StaticResource SongListViewPageIconButton}" 
+                                Style="{StaticResource SongListViewPageIconButton}"
                                 ToolTipService.ToolTip="{x:Bind resources:Strings.GenreViewPage_PlayAllButton_ToolTip, Mode=OneTime}">
                             <FontIcon FontSize="16" Glyph="" />
                         </Button>
@@ -226,8 +226,8 @@
             ContainerContentChanging="OnSongsListViewContainerContentChanging"
             DoubleTapped="SongsListView_DoubleTapped">
             <ListView.Footer>
-                <uicontrols:PaginationControl 
-                    ViewModel="{x:Bind ViewModel}" 
+                <uicontrols:PaginationControl
+                    ViewModel="{x:Bind ViewModel}"
                     HorizontalAlignment="Right"
                     Margin="0,24,24,16" />
             </ListView.Footer>
@@ -341,6 +341,6 @@
                 HorizontalAlignment="Center"
                 Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
         </StackPanel>
-        
+
     </Grid>
 </Page>

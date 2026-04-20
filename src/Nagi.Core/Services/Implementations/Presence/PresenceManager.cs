@@ -1,4 +1,4 @@
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 
@@ -117,7 +117,7 @@ public class PresenceManager : IPresenceManager, IAsyncDisposable, IDisposable
 
         var disposalTasks = disposables.Select(service => service.DisposeAsync().AsTask());
         await Task.WhenAll(disposalTasks).ConfigureAwait(false);
-        
+
         _isInitialized = false;
     }
 
@@ -225,7 +225,7 @@ public class PresenceManager : IPresenceManager, IAsyncDisposable, IDisposable
                 {
                     await service.OnPlaybackStoppedAsync().ConfigureAwait(false);
                     if (service is IAsyncDisposable asyncDisposable) await asyncDisposable.DisposeAsync().ConfigureAwait(false);
-                    
+
                     _logger.LogDebug("Deactivated '{ServiceName}' presence service.", service.Name);
                 }
                 catch (Exception ex)
@@ -244,7 +244,7 @@ public class PresenceManager : IPresenceManager, IAsyncDisposable, IDisposable
     {
         var newTrack = _playbackService.CurrentTrack;
         var newSessionId = _playbackService.CurrentListenHistoryId;
-        
+
         // Return if both track and session ID are unchanged (prevents redundant updates, but allows loops)
         if (_currentTrack?.Id == newTrack?.Id && _currentListenSessionId == newSessionId) return;
 
@@ -270,7 +270,7 @@ public class PresenceManager : IPresenceManager, IAsyncDisposable, IDisposable
                         {
                             return s.OnTrackChangedAsync(_currentTrack, _currentListenSessionId ?? 0);
                         }
-                        
+
                         return Task.CompletedTask;
                     }).ConfigureAwait(false);
                 }

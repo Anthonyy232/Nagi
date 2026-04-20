@@ -1,4 +1,4 @@
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
@@ -51,7 +51,7 @@ public class SmartPlaylistServiceTests : IDisposable
     private void SeedTestData()
     {
         using var context = _dbHelper.ContextFactory.CreateDbContext();
-        
+
         var folder = new Folder { Name = "Music", Path = "C:\\Music" };
         var artist = new Artist { Name = "Test Artist" };
         var genreRock = new Genre { Name = "Rock" };
@@ -843,7 +843,7 @@ public class SmartPlaylistServiceTests : IDisposable
         // Arrange
         var playlist = await _service.CreateSmartPlaylistAsync("Date Test");
         var originalModified = playlist!.DateModified;
-        
+
         // Wait a tiny bit to ensure different timestamp
         await Task.Delay(10);
 
@@ -1095,7 +1095,7 @@ public class SmartPlaylistServiceTests : IDisposable
         var playlist = await _service.CreateSmartPlaylistAsync("Duplicate Test");
         var rule1 = await _service.AddRuleAsync(playlist!.Id, SmartPlaylistField.Title, SmartPlaylistOperator.Contains, "a");
         var rule2 = await _service.AddRuleAsync(playlist.Id, SmartPlaylistField.Title, SmartPlaylistOperator.Contains, "b");
-        
+
         // Act - Include rule1's ID twice
         var duplicateOrderedIds = new[] { rule2!.Id, rule1!.Id, rule1.Id };
         await _service.ReorderRulesAsync(playlist.Id, duplicateOrderedIds);
@@ -1142,7 +1142,7 @@ public class SmartPlaylistServiceTests : IDisposable
         var playlist = await _service.CreateSmartPlaylistAsync("Empty Reorder Test");
         var rule1 = await _service.AddRuleAsync(playlist!.Id, SmartPlaylistField.Title, SmartPlaylistOperator.Contains, "a");
         var rule2 = await _service.AddRuleAsync(playlist.Id, SmartPlaylistField.Title, SmartPlaylistOperator.Contains, "b");
-        
+
         // Act
         await _service.ReorderRulesAsync(playlist.Id, Array.Empty<Guid>());
 

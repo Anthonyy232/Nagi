@@ -25,9 +25,9 @@ public static class Program
         ComWrappersSupport.InitializeComWrappers();
 
         // Ensure COM initialization in release builds
-        #if !DEBUG
+#if !DEBUG
                 Thread.Sleep(100);
-        #endif
+#endif
 
         // Check for single instance
         var logger = CreateBootstrapLogger();
@@ -39,7 +39,7 @@ public static class Program
             // Another instance is running, send activation message and exit
             logger?.LogInformation("Secondary instance detected, sending activation to primary");
             var filePath = TryGetFilePathFromArgs(args);
-            
+
             var sendTask = _singleInstanceManager.SendActivationAsync(filePath);
             sendTask.Wait(TimeSpan.FromSeconds(5));
 

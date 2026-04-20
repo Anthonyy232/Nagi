@@ -70,7 +70,7 @@ public class LastFmMetadataService : ILastFmMetadataService
                 try
                 {
                     var isoCode = languageCode?.Length > 2 ? languageCode[..2] : (languageCode ?? "Default");
-                    _logger.LogDebug("Fetching Last.fm metadata for artist: {ArtistName} (Language: {LanguageCode}, Attempt {Attempt}/{MaxRetries})", 
+                    _logger.LogDebug("Fetching Last.fm metadata for artist: {ArtistName} (Language: {LanguageCode}, Attempt {Attempt}/{MaxRetries})",
                         artistName, isoCode, attempt, MaxRetries);
 
                     using var response = await _httpClient.GetAsync(requestUrl, cancellationToken).ConfigureAwait(false);
@@ -83,11 +83,11 @@ public class LastFmMetadataService : ILastFmMetadataService
 
                         if (artistInfo != null)
                         {
-                            _logger.LogInformation("Found Last.fm metadata for {ArtistName} (Requested Language: {LanguageCode}): Bio={HasBio}, Image={HasImage}", 
+                            _logger.LogInformation("Found Last.fm metadata for {ArtistName} (Requested Language: {LanguageCode}): Bio={HasBio}, Image={HasImage}",
                                 artistName, isoCode, !string.IsNullOrEmpty(artistInfo.Biography), !string.IsNullOrEmpty(artistInfo.ImageUrl));
                             return RetryResult<ServiceResult<ArtistInfo>>.Success(ServiceResult<ArtistInfo>.FromSuccess(artistInfo));
                         }
-                        
+
                         return RetryResult<ServiceResult<ArtistInfo>>.Success(ServiceResult<ArtistInfo>.FromSuccessNotFound());
                     }
 
@@ -115,7 +115,7 @@ public class LastFmMetadataService : ILastFmMetadataService
 
                     var errorMessage =
                         $"API call for '{artistName}' failed. Status: {response.StatusCode}, Error: {errorResponse?.Message ?? "Unknown"}";
-                    
+
                     if (HttpRetryHelper.IsRetryableStatusCode(response.StatusCode))
                     {
                         _logger.LogWarning("Last.fm server error {StatusCode} for '{ArtistName}'. Retrying...", response.StatusCode, artistName);

@@ -1,4 +1,4 @@
-using DiscordRPC.Logging;
+﻿using DiscordRPC.Logging;
 using Microsoft.Extensions.Logging;
 using LogLevel = DiscordRPC.Logging.LogLevel;
 

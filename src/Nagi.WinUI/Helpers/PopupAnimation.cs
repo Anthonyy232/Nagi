@@ -237,7 +237,7 @@ internal static class PopupAnimation
     private static Task YieldToRendering(CancellationToken token)
     {
         var tcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        
+
         // If already cancelled, return immediately.
         if (token.IsCancellationRequested)
         {

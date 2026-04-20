@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Numerics;
@@ -399,7 +399,7 @@ public sealed partial class ArtistViewPage : Page
         var picker = new FileOpenPicker();
         var hwnd = WindowNative.GetWindowHandle(App.RootWindow);
         InitializeWithWindow.Initialize(picker, hwnd);
-        
+
         foreach (var ext in FileExtensions.ImageFileExtensions)
             picker.FileTypeFilter.Add(ext);
 
@@ -448,7 +448,7 @@ public sealed partial class ArtistViewPage : Page
     {
         // Only update if the height actually changed
         if (Math.Abs(e.NewSize.Height - _lastKnownAlbumsHeight) < 0.5) return;
-        
+
         _lastKnownAlbumsHeight = e.NewSize.Height;
         ScheduleAlbumsLayoutUpdate();
     }
@@ -468,7 +468,7 @@ public sealed partial class ArtistViewPage : Page
         // Coalesce multiple rapid requests - only schedule if not already pending
         if (_pendingLayoutUpdate) return;
         _pendingLayoutUpdate = true;
-        
+
         DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () =>
         {
             _pendingLayoutUpdate = false;
@@ -483,7 +483,7 @@ public sealed partial class ArtistViewPage : Page
         try
         {
             _isUpdatingAlbumsLayout = true;
-            
+
             // Calculate new height: Max - ScrollOffset, clamped to 0
             var scrollOffset = _songsScrollViewer.VerticalOffset;
             var newHeight = Math.Max(0, _lastKnownAlbumsHeight - scrollOffset);
@@ -493,7 +493,7 @@ public sealed partial class ArtistViewPage : Page
             {
                 AlbumsViewport.Height = newHeight;
             }
-            
+
             // Translate the content up to mimic scrolling naturally
             // We clamp the translation so it doesn't float away if we scroll way past
             var translationY = (float)-Math.Min(scrollOffset, _lastKnownAlbumsHeight);
@@ -505,10 +505,10 @@ public sealed partial class ArtistViewPage : Page
             if (_lastKnownAlbumsHeight > 0)
             {
                 var opacity = Math.Clamp(newHeight / _lastKnownAlbumsHeight, 0, 1);
-                
+
                 // Optimization: Snap to 0 if very low to save GPU composition effort
                 if (opacity < 0.05) opacity = 0;
-                
+
                 AlbumsViewport.Opacity = opacity;
             }
         }

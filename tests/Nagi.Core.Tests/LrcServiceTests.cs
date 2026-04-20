@@ -36,7 +36,7 @@ public class LrcServiceTests
         _libraryWriter = Substitute.For<ILibraryWriter>();
         _logger = Substitute.For<ILogger<LrcService>>();
         _netEaseLyricsService = Substitute.For<INetEaseLyricsService>();
-        
+
         // Default mock: return both providers enabled in standard priority order
         _settingsService.GetEnabledServiceProvidersAsync(ServiceCategory.Lyrics)
             .Returns(new List<ServiceProviderSetting>
@@ -44,7 +44,7 @@ public class LrcServiceTests
                 new() { Id = "lrclib", DisplayName = "LRCLIB", Category = ServiceCategory.Lyrics, IsEnabled = true, Order = 0 },
                 new() { Id = "netease", DisplayName = "NetEase", Category = ServiceCategory.Lyrics, IsEnabled = true, Order = 1 }
             });
-        
+
         _lrcService = new LrcService(
             _fileSystem,
             _onlineLyricsService,
@@ -329,7 +329,7 @@ public class LrcServiceTests
         // Arrange
         var song = new Song { Title = "Test", LrcFilePath = null, Duration = TimeSpan.FromMinutes(3) };
         _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
-        _onlineLyricsService.GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(), 
+        _onlineLyricsService.GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(),
             Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>()).Returns("[00:01.00]From LRCLIB");
         _netEaseLyricsService.SearchLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns("[00:01.00]From NetEase");
@@ -341,9 +341,9 @@ public class LrcServiceTests
         result.Should().NotBeNull();
         result!.Lines.Should().HaveCount(1);
         result.Lines[0].Text.Should().Be("From LRCLIB");
-        
+
         // Both services should be called (parallel fetching)
-        await _onlineLyricsService.Received(1).GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), 
+        await _onlineLyricsService.Received(1).GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(),
             Arg.Any<string?>(), Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>());
         await _netEaseLyricsService.Received(1).SearchLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>());
     }
@@ -357,7 +357,7 @@ public class LrcServiceTests
         // Arrange
         var song = new Song { Title = "Japanese Song", LrcFilePath = null, Duration = TimeSpan.FromMinutes(3) };
         _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
-        _onlineLyricsService.GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(), 
+        _onlineLyricsService.GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(),
             Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>()).Returns((string?)null);
         _netEaseLyricsService.SearchLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns("[00:01.00]From NetEase");
@@ -385,7 +385,7 @@ public class LrcServiceTests
 
         // Assert
         result.Should().BeNull();
-        await _onlineLyricsService.DidNotReceive().GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), 
+        await _onlineLyricsService.DidNotReceive().GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(),
             Arg.Any<string?>(), Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>());
         await _netEaseLyricsService.DidNotReceive().SearchLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>());
     }
@@ -407,7 +407,7 @@ public class LrcServiceTests
 
         // Assert
         result.Should().BeNull();
-        await _onlineLyricsService.DidNotReceive().GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), 
+        await _onlineLyricsService.DidNotReceive().GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(),
             Arg.Any<string?>(), Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>());
         await _netEaseLyricsService.DidNotReceive().SearchLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>());
     }
@@ -435,9 +435,9 @@ public class LrcServiceTests
         // Assert
         result.Should().NotBeNull();
         result!.Lines[0].Text.Should().Be("From NetEase");
-        
+
         // Verify LRCLIB was NOT called
-        await _onlineLyricsService.DidNotReceive().GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), 
+        await _onlineLyricsService.DidNotReceive().GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(),
             Arg.Any<string?>(), Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>());
         // Verify NetEase WAS called
         await _netEaseLyricsService.Received(1).SearchLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>());
@@ -527,7 +527,7 @@ public class LrcServiceTests
         // Arrange
         var song = new Song { Title = "Test", LrcFilePath = null, Duration = TimeSpan.FromMinutes(3) };
         _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
-        
+
         var cts = new CancellationTokenSource();
         cts.Cancel(); // Cancel BEFORE the call
 
@@ -536,7 +536,7 @@ public class LrcServiceTests
 
         // Assert - Should return null and NOT call any online services
         result.Should().BeNull();
-        await _onlineLyricsService.DidNotReceive().GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), 
+        await _onlineLyricsService.DidNotReceive().GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(),
             Arg.Any<string?>(), Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>());
         await _netEaseLyricsService.DidNotReceive().SearchLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>());
     }
@@ -559,7 +559,7 @@ public class LrcServiceTests
         // Assert
         result.Should().NotBeNull();
         result!.Lines[0].Text.Should().Be("Local Lyrics");
-        await _onlineLyricsService.DidNotReceive().GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), 
+        await _onlineLyricsService.DidNotReceive().GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(),
             Arg.Any<string?>(), Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>());
     }
 
@@ -579,7 +579,7 @@ public class LrcServiceTests
         song.SyncDenormalizedFields();
 
         _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
-        _onlineLyricsService.GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(), 
+        _onlineLyricsService.GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(),
             Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>()).Returns("[00:01.00]Found");
 
         // Act
@@ -593,7 +593,7 @@ public class LrcServiceTests
             Arg.Any<string?>(),
             Arg.Any<TimeSpan>(),
             Arg.Any<CancellationToken>());
-        
+
         await _netEaseLyricsService.Received(1).SearchLyricsAsync(
             Arg.Is("Multi Artist Track"),
             Arg.Is("Primary Artist"),

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -22,7 +22,7 @@ public class FFmpegPcmExtractor : IPcmExtractor
     private const int TargetChannels = 2;
     private const int BytesPerSample = 4; // F32LE
     private const int ReadBufferSize = 65536; // 64KB read buffer
-    
+
     private readonly ILogger<FFmpegPcmExtractor> _logger;
 
     public FFmpegPcmExtractor(ILogger<FFmpegPcmExtractor> logger)
@@ -79,12 +79,12 @@ public class FFmpegPcmExtractor : IPcmExtractor
 
     /// <inheritdoc />
     public async Task<(float[] Samples, int SampleRate, int Channels)?> ExtractAsync(
-        string filePath, 
+        string filePath,
         CancellationToken cancellationToken = default)
     {
         var startTime = DateTime.UtcNow;
         var samplesList = new List<float[]>();
-        
+
         await foreach (var chunk in ExtractStreamingAsync(filePath, cancellationToken))
         {
             // Defensive copy because the streaming chunk likely uses a pooled array
@@ -103,7 +103,7 @@ public class FFmpegPcmExtractor : IPcmExtractor
         }
 
         var duration = DateTime.UtcNow - startTime;
-        _logger.LogInformation("Successfully extracted {SampleCount} samples from {FilePath} in {Duration}ms", 
+        _logger.LogInformation("Successfully extracted {SampleCount} samples from {FilePath} in {Duration}ms",
             result.Length, filePath, (int)duration.TotalMilliseconds);
 
         return (result, TargetSampleRate, TargetChannels);
@@ -133,17 +133,17 @@ public class FFmpegPcmExtractor : IPcmExtractor
             byte[] buffer = ArrayPool<byte>.Shared.Rent(ReadBufferSize);
             byte[] leftovers = new byte[BytesPerSample];
             int leftoverCount = 0;
-            
+
             try
             {
                 using var stream = process.StandardOutput.BaseStream;
                 int bytesRead;
-                
+
                 while ((bytesRead = await stream.ReadAsync(buffer, 0, ReadBufferSize, cancellationToken).ConfigureAwait(false)) > 0)
                 {
                     int totalAvailable = bytesRead + leftoverCount;
                     int floatCount = totalAvailable / BytesPerSample;
-                    
+
                     if (floatCount > 0)
                     {
                         // Use ArrayPool for floats to minimize transient allocations
@@ -151,22 +151,22 @@ public class FFmpegPcmExtractor : IPcmExtractor
                         try
                         {
                             var byteSpan = floatArray.AsSpan(0, floatCount).AsBytes();
-                            
+
                             int bytesCopiedFromLeftovers = 0;
                             if (leftoverCount > 0)
                             {
                                 leftovers.AsSpan(0, leftoverCount).CopyTo(byteSpan);
                                 bytesCopiedFromLeftovers = leftoverCount;
                             }
-                            
+
                             int remainingSpaceInResult = byteSpan.Length - bytesCopiedFromLeftovers;
                             int bytesActuallyConsumedFromBuffer = Math.Min(bytesRead, remainingSpaceInResult);
-                            
+
                             buffer.AsSpan(0, bytesActuallyConsumedFromBuffer)
                                   .CopyTo(byteSpan.Slice(bytesCopiedFromLeftovers));
-                            
+
                             yield return new AudioChunk(floatArray, floatCount, TargetSampleRate, TargetChannels);
-                            
+
                             // Update leftovers
                             leftoverCount = bytesRead - bytesActuallyConsumedFromBuffer;
                             if (leftoverCount > 0)
@@ -210,6 +210,6 @@ public class FFmpegPcmExtractor : IPcmExtractor
 
 internal static class SpanExtensions
 {
-    public static Span<byte> AsBytes(this Span<float> floatSpan) 
+    public static Span<byte> AsBytes(this Span<float> floatSpan)
         => MemoryMarshal.AsBytes(floatSpan);
 }

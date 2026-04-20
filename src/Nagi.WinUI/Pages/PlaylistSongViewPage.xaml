@@ -374,6 +374,6 @@
                 HorizontalAlignment="Center"
                 Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
         </StackPanel>
-        
+
     </Grid>
 </Page>

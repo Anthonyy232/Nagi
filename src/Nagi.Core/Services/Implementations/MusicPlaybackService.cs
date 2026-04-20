@@ -1,4 +1,4 @@
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
@@ -25,7 +25,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
     private bool _isEligibilityMarked;
     private List<Guid> _playbackQueue = new();
     private List<Guid> _shuffledQueue = new();
-    
+
     // Reverse index dictionaries for O(1) lookups in large queues (500k+ songs)
     private Dictionary<Guid, int> _playbackQueueIndex = new();
     private Dictionary<Guid, int> _shuffledQueueIndex = new();
@@ -154,9 +154,9 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
             CurrentEqualizerSettings = eqTask.Result;
             if (CurrentEqualizerSettings != null && CurrentEqualizerSettings.BandGains.Count != EqualizerBands.Count)
             {
-                _logger.LogWarning("Equalizer settings band count ({SavedCount}) does not match available bands ({AvailableCount}). Resetting equalizer to default.", 
+                _logger.LogWarning("Equalizer settings band count ({SavedCount}) does not match available bands ({AvailableCount}). Resetting equalizer to default.",
                     CurrentEqualizerSettings.BandGains.Count, EqualizerBands.Count);
-                
+
                 CurrentEqualizerSettings = null; // Force recreation below
             }
 
@@ -167,7 +167,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
                     Preamp = 10.0f,
                     BandGains = Enumerable.Repeat(0.0f, EqualizerBands.Count).ToList()
                 };
-                
+
                 // Save the new default settings immediately.
                 // If we don't, the file remains empty/invalid, causing issues on next startup.
                 await _settingsService.SetEqualizerSettingsAsync(CurrentEqualizerSettings).ConfigureAwait(false);
@@ -228,7 +228,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         {
             _logger.LogTrace("Committing queue changes and rebuilding indices.");
             RebuildPlaybackQueueIndex();
-            
+
             if (IsShuffleEnabled)
             {
                 // Ensure shuffled queue is still in sync with playback queue length/content
@@ -272,7 +272,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
                 else
                 {
                     CurrentQueueIndex = Math.Clamp(CurrentQueueIndex, -1, _playbackQueue.Count - 1);
-                    CurrentShuffledIndex = IsShuffleEnabled 
+                    CurrentShuffledIndex = IsShuffleEnabled
                         ? Math.Clamp(CurrentShuffledIndex, -1, _shuffledQueue.Count - 1)
                         : -1;
                 }
@@ -400,11 +400,11 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         _currentContext = new PlaybackContext(PlaybackContextType.Library, null);
 
         _logger.LogDebug("Playing single song ID: {SongId}", songId);
-        
+
         using (BeginQueueUpdate())
         {
             _playbackQueue = new List<Guid> { songId };
-            
+
             if (IsShuffleEnabled)
             {
                 _shuffledQueue = new List<Guid> { songId };
@@ -661,7 +661,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
 
         IsShuffleEnabled = enable;
         _logger.LogDebug("Shuffle mode set to {ShuffleState}", IsShuffleEnabled);
-        
+
         using (BeginQueueUpdate())
         {
             if (IsShuffleEnabled)
@@ -796,7 +796,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         {
             _logger.LogDebug("Removing currently playing song ID '{SongId}' from queue.", songId);
             await _audioPlayer.StopAsync().ConfigureAwait(false);
-            
+
             using (BeginQueueUpdate())
             {
                 _playbackQueue.RemoveAt(originalIndex);
@@ -1005,7 +1005,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         if (!_playbackQueue.Any()) return;
         _logger.LogDebug("Clearing playback queue.");
         await StopAsync().ConfigureAwait(false);
-        
+
         using (BeginQueueUpdate())
         {
             ClearQueuesInternal();
@@ -1042,7 +1042,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
             Preamp = currentSettings.Preamp,
             BandGains = new List<float>(currentSettings.BandGains)
         };
-        
+
         newSettings.BandGains[(int)bandIndex] = gain;
 
         // Apply atomically
@@ -1055,10 +1055,10 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
     public async Task SetEqualizerGainsAsync(IEnumerable<float> gains)
     {
         if (CurrentEqualizerSettings == null) return;
-        
+
         var gainsList = gains.ToList();
         _logger.LogDebug("Setting bulk equalizer gains: {Gains}", string.Join(", ", gainsList));
-        
+
         // Create a new settings object (or deep copy) to ensure atomic update
         var newSettings = new EqualizerSettings
         {
@@ -1086,8 +1086,8 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         if (bandGains == null) return null;
         var currentGains = bandGains.ToArray();
 
-        return AvailablePresets.FirstOrDefault(preset => 
-            preset.Gains.Length == currentGains.Length && 
+        return AvailablePresets.FirstOrDefault(preset =>
+            preset.Gains.Length == currentGains.Length &&
             preset.Gains.Zip(currentGains).All(pair => Math.Abs(pair.First - pair.Second) <= 0.1f));
     }
 
@@ -1130,7 +1130,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
     public async ValueTask DisposeAsync()
     {
         if (_isDisposed) return;
-        
+
         // Await all in-flight fire-and-forget finalizations before checking for a remaining session.
         try
         {
@@ -1184,7 +1184,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         _settingsService.FadeOnPlayPauseEnabledChanged -= OnFadeOnPlayPauseEnabledChanged;
         _settingsService.FadeInDurationChanged -= OnFadeInDurationChanged;
         _settingsService.FadeOutDurationChanged -= OnFadeOutDurationChanged;
-        
+
         _isDisposed = true;
     }
 
@@ -1629,7 +1629,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         if (CurrentTrack == null) return;
 
         var isEnabled = isEnabledOverride ?? await _settingsService.GetVolumeNormalizationEnabledAsync().ConfigureAwait(false);
-        
+
         // If enabled but missing data in memory, attempt a database refresh.
         // Use the transient flag to avoid repeated lookups for songs without ReplayGain data.
         if (isEnabled && !CurrentTrack.ReplayGainTrackGain.HasValue && !CurrentTrack.ReplayGainCheckPerformed)
@@ -1647,7 +1647,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         if (isEnabled && CurrentTrack.ReplayGainTrackGain.HasValue)
         {
             var gainDb = CurrentTrack.ReplayGainTrackGain.Value;
-            
+
             // Apply peak-aware limiting to prevent clipping
             // If peak * gain > 1.0, reduce gain to prevent clipping
             if (CurrentTrack.ReplayGainTrackPeak.HasValue && CurrentTrack.ReplayGainTrackPeak.Value > 0)
@@ -1660,7 +1660,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
                     gainDb = maxGainBeforeClip;
                 }
             }
-            
+
             await _audioPlayer.SetReplayGainAsync(gainDb).ConfigureAwait(false);
             _logger.LogDebug("Applied ReplayGain {Gain:F2} dB for '{Title}'",
                 gainDb, CurrentTrack.Title);
@@ -1684,12 +1684,12 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
     {
         _audioPlayer.SetFadeOnPlayPauseEnabled(isEnabled);
     }
-    
+
     private void OnFadeInDurationChanged(int durationMs)
     {
         _audioPlayer.SetFadeInDuration(durationMs);
     }
-    
+
     private void OnFadeOutDurationChanged(int durationMs)
     {
         _audioPlayer.SetFadeOutDuration(durationMs);

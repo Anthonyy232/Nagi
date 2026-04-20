@@ -1,0 +1,16 @@
+root = true
+
+[*]
+indent_style = space
+trim_trailing_whitespace = true
+insert_final_newline = true
+end_of_line = lf
+
+[*.cs]
+indent_size = 4
+
+[*.{csproj,props,targets,config,xml}]
+indent_size = 4
+
+[*.{json,yml,yaml}]
+indent_size = 2

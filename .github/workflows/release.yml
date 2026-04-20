@@ -27,8 +27,8 @@ jobs:
           tag: ${{ github.event.inputs.tag }}
           name: Unsigned-MSIX
 
-      # We need the artifact-id for the SignPath action. 
-      # Since we downloaded it instead of producing it in this workflow, 
+      # We need the artifact-id for the SignPath action.
+      # Since we downloaded it instead of producing it in this workflow,
       # we upload it again in this run to get a new artifact ID.
       - name: Re-upload for SignPath
         id: reupload

@@ -1,4 +1,4 @@
-using ATL;
+﻿using ATL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Data;
@@ -45,7 +45,7 @@ public class ReplayGainService : IReplayGainService
             {
                 // Initialize session on first chunk
                 session ??= _loudnessMeter.CreateSession(chunk.SampleRate, chunk.Channels);
-                
+
                 session.ProcessChunk(chunk);
                 hasData = true;
             }
@@ -60,7 +60,7 @@ public class ReplayGainService : IReplayGainService
             var integratedLoudness = session.GetIntegratedLoudness();
             var peak = session.Peak;
             session.Dispose();
-            
+
             if (double.IsNegativeInfinity(integratedLoudness))
             {
                 _logger.LogWarning("Could not calculate loudness for: {FilePath} (possibly silent)", filePath);
@@ -110,7 +110,7 @@ public class ReplayGainService : IReplayGainService
             var track = new Track(song.FilePath);
             track.AdditionalFields["REPLAYGAIN_TRACK_GAIN"] = $"{gainDb:F2} dB";
             track.AdditionalFields["REPLAYGAIN_TRACK_PEAK"] = $"{peak:F6}";
-            
+
             if (!track.Save())
             {
                 _logger.LogError("Failed to save ReplayGain tags to file: {FilePath}", song.FilePath);
@@ -129,7 +129,7 @@ public class ReplayGainService : IReplayGainService
         {
             song.ReplayGainTrackGain = gainDb;
             song.ReplayGainTrackPeak = peak;
-            
+
             await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         }
         catch (DbUpdateConcurrencyException)
@@ -153,14 +153,14 @@ public class ReplayGainService : IReplayGainService
     public async Task ScanLibraryAsync(IProgress<ScanProgress>? progress = null, CancellationToken cancellationToken = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
-        
+
         var songsWithoutReplayGain = await context.Songs
             .Where(s => s.ReplayGainTrackGain == null)
             .Select(s => s.Id)
             .ToListAsync(cancellationToken).ConfigureAwait(false);
 
         var totalCount = songsWithoutReplayGain.Count;
-        
+
         if (totalCount == 0)
         {
             _logger.LogInformation("All songs already have ReplayGain data.");
@@ -180,7 +180,7 @@ public class ReplayGainService : IReplayGainService
         };
 
         var processed = 0;
-        
+
         // Use Chunks to allow batching within each parallel worker
         var songGroups = songsWithoutReplayGain.Chunk(BatchSize);
 
@@ -197,7 +197,7 @@ public class ReplayGainService : IReplayGainService
                     var song = await workerContext.Songs.FindAsync(new object[] { songId }, ct).ConfigureAwait(false);
                     if (song == null) continue;
 
-                    try 
+                    try
                     {
                         // Calculate - ensure we capture the session whether success or failure
                         var calcResult = await CalculateStreamingInternalAsync(song.FilePath, recycledSession, ct).ConfigureAwait(false);
@@ -256,7 +256,7 @@ public class ReplayGainService : IReplayGainService
     private record InternalCalculationResult(double? GainDb, double? Peak, LoudnessMeter.Session? SessionBuffer);
 
     private async Task<InternalCalculationResult> CalculateStreamingInternalAsync(
-        string filePath, 
+        string filePath,
         LoudnessMeter.Session? existingSession,
         CancellationToken ct)
     {
@@ -282,17 +282,17 @@ public class ReplayGainService : IReplayGainService
                     }
                     initialized = true;
                 }
-                
+
                 // Use ! because we know it's initialized after the block above
                 session!.ProcessChunk(chunk);
                 hasData = true;
             }
 
-            if (!hasData || session == null) 
+            if (!hasData || session == null)
                 return new InternalCalculationResult(null, null, session);
 
             var integratedLoudness = session.GetIntegratedLoudness();
-            if (double.IsNegativeInfinity(integratedLoudness)) 
+            if (double.IsNegativeInfinity(integratedLoudness))
                 return new InternalCalculationResult(null, null, session);
 
             var gainDb = ReplayGainReference - integratedLoudness;

@@ -1,4 +1,4 @@
-using Nagi.Core.Constants;
+﻿using Nagi.Core.Constants;
 using Nagi.Core.Services.Abstractions;
 
 namespace Nagi.Core.Helpers;
@@ -26,7 +26,7 @@ public static class ImageStorageHelper
                 return path;
             }
         }
-        
+
         return null;
     }
 

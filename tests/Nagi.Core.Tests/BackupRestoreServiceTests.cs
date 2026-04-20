@@ -1,4 +1,4 @@
-using System.IO.Compression;
+﻿using System.IO.Compression;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;

@@ -1,4 +1,4 @@
-namespace Nagi.Core.Services.Data;
+﻿namespace Nagi.Core.Services.Data;
 
 /// <summary>
 ///     Defines the available sorting orders for the album list.
@@ -14,4 +14,3 @@ public enum AlbumSortOrder
     SongCountDesc,
     SongCountAsc
 }
-

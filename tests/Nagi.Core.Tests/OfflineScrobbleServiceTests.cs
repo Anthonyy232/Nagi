@@ -437,7 +437,7 @@ public class OfflineScrobbleServiceTests : IDisposable
 
         // Assert
         await _scrobblerService.Received(1).ScrobbleAsync(
-            Arg.Is<Song>(s => s.ArtistName == "Artist 1 & Artist 2"), 
+            Arg.Is<Song>(s => s.ArtistName == "Artist 1 & Artist 2"),
             Arg.Any<DateTime>());
     }
 }

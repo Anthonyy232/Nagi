@@ -39,7 +39,7 @@
                                                Stretch="UniformToFill" />
                     </Border.Background>
                 </Border>
-                
+
                 <Border Background="{ThemeResource SolidBackgroundFillColorBaseAltBrush}" Opacity="0.3" />
             </Grid>
 

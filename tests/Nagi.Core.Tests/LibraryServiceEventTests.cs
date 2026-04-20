@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using System.Net.Http;
 using FluentAssertions;
@@ -94,7 +94,7 @@ public class LibraryServiceEventTests : IDisposable
         // Arrange
         var folderPath = "C:\\Music\\NewFolder";
         _fileSystem.GetLastWriteTimeUtc(folderPath).Returns(DateTime.UtcNow);
-        
+
         LibraryContentChangedEventArgs? eventArgs = null;
         _libraryService.LibraryContentChanged += (s, e) => eventArgs = e;
 
@@ -146,7 +146,7 @@ public class LibraryServiceEventTests : IDisposable
         _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, Arg.Any<string>(), Arg.Any<SearchOption>())
             .Returns(new[] { ("C:\\Music\\ScanChanges\\new.mp3", DateTime.UtcNow) });
         _fileSystem.GetExtension(Arg.Any<string>()).Returns(".mp3");
-        
+
         _metadataService.ExtractMetadataAsync(Arg.Any<string>(), Arg.Any<string?>())
             .Returns(new SongFileMetadata { FilePath = "C:\\Music\\ScanChanges\\new.mp3", Title = "New Song" });
 

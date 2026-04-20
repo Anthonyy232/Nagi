@@ -135,11 +135,11 @@
             </Grid>
 
             <!-- Rule Summary Bar -->
-            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" 
+            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                     Padding="16,8" CornerRadius="8" Margin="0,8,0,10">
                 <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                     <FontIcon Glyph="&#xE946;" FontSize="14" Foreground="{ThemeResource TextFillColorSecondary}" />
-                    <TextBlock Text="{x:Bind ViewModel.RuleSummary, Mode=OneWay}" 
+                    <TextBlock Text="{x:Bind ViewModel.RuleSummary, Mode=OneWay}"
                                Foreground="{ThemeResource TextFillColorSecondary}"
                                FontSize="13" />
                 </StackPanel>
@@ -193,7 +193,7 @@
                         </Button>
                     </Grid>
 
-                    <Button Style="{StaticResource SongListViewPageIconButton}" 
+                    <Button Style="{StaticResource SongListViewPageIconButton}"
                             ToolTipService.ToolTip="{x:Bind resources:Strings.SmartPlaylistSongViewPage_EditRulesButton_ToolTip, Mode=OneTime}"
                             Click="EditRulesButton_Click">
                         <FontIcon Glyph="&#xE70F;" FontSize="16" />
@@ -268,8 +268,8 @@
                   AllowDrop="False"
                   DoubleTapped="SongsListView_DoubleTapped">
             <ListView.Footer>
-                <uicontrols:PaginationControl 
-                    ViewModel="{x:Bind ViewModel}" 
+                <uicontrols:PaginationControl
+                    ViewModel="{x:Bind ViewModel}"
                     HorizontalAlignment="Right"
                     Margin="0,24,24,16" />
             </ListView.Footer>
@@ -397,7 +397,6 @@
                 Click="EditRulesButton_Click"
                 HorizontalAlignment="Center" />
         </StackPanel>
-        
+
     </Grid>
 </Page>
-

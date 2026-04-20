@@ -26,7 +26,7 @@ namespace Nagi.Core.Data.Migrations
                 nullable: true);
 
             migrationBuilder.Sql(@"
-                UPDATE Songs 
+                UPDATE Songs
                 SET DirectoryPath = FilePath
                 WHERE DirectoryPath = '' OR DirectoryPath IS NULL
             ");

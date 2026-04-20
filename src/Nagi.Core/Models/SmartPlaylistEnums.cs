@@ -1,4 +1,4 @@
-namespace Nagi.Core.Models;
+﻿namespace Nagi.Core.Models;
 
 /// <summary>
 ///     Fields that can be used in smart playlist rules.

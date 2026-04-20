@@ -39,10 +39,10 @@ public class TrayPopupService : ITrayPopupService, IDisposable
     {
         if (_isDisposed) return;
         _logger.LogDebug("Disposing TrayPopupService.");
-        
+
         // Cancel any ongoing animations first to prevent TaskCanceledException
         PopupAnimation.CancelAllAnimations();
-        
+
         // Explicitly unsubscribe before closing to prevent callbacks during disposal
         if (_popupWindow is not null)
         {

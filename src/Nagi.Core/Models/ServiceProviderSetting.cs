@@ -1,4 +1,4 @@
-namespace Nagi.Core.Models;
+﻿namespace Nagi.Core.Models;
 
 /// <summary>
 ///     Defines categories for external service providers.

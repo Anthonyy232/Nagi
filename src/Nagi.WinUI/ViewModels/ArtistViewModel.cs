@@ -76,18 +76,18 @@ public partial class ArtistViewModel : SearchableViewModelBase
         // Store the handler in a field so we can reliably unsubscribe from it later.
         _collectionChangedHandler = (s, e) => OnPropertyChanged(nameof(HasArtists));
         Artists.CollectionChanged += _collectionChangedHandler;
-        
+
         // Subscribe to library changes to refresh when folders are added/removed
         _libraryService.LibraryContentChanged += OnLibraryContentChanged;
-        
+
         UpdateSortOrderText();
     }
-    
+
     private void OnLibraryContentChanged(object? sender, LibraryContentChangedEventArgs e)
     {
         // We don't need to refresh the artist list just because a folder container was added (it has no songs/artists yet).
         if (e.ChangeType == LibraryChangeType.FolderAdded) return;
-        
+
         // Debounce to prevent multiple refresh calls during rapid changes.
         var cts = new CancellationTokenSource();
         var oldCts = Interlocked.Exchange(ref _debouncer, cts);
@@ -100,7 +100,7 @@ public partial class ArtistViewModel : SearchableViewModelBase
             {
                 await Task.Delay(1000, token).ConfigureAwait(false);
                 if (token.IsCancellationRequested) return;
-                
+
                 _logger.LogDebug("Library content changed ({ChangeType}). Refreshing artist list.", e.ChangeType);
                 await _dispatcherService.EnqueueAsync(() => LoadArtistsCommand.ExecuteAsync(CancellationToken.None));
             }
@@ -264,7 +264,7 @@ public partial class ArtistViewModel : SearchableViewModelBase
         IsFullyLoaded = false;
         _artistLookup.Clear();
         Artists.Clear();
-        
+
         try
         {
             if (!_hasSortOrderLoaded)
@@ -347,7 +347,7 @@ public partial class ArtistViewModel : SearchableViewModelBase
         if (pagedResult != null)
         {
             var count = pagedResult.TotalCount;
-            TotalItemsText = count == 1 
+            TotalItemsText = count == 1
                 ? ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Artists_Count_Singular, count)
                 : ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Artists_Count_Plural, count);
         }

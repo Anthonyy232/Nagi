@@ -1,4 +1,4 @@
-namespace Nagi.Core.Services.Abstractions;
+﻿namespace Nagi.Core.Services.Abstractions;
 
 /// <summary>
 ///     Represents a chunk of PCM audio samples for streaming extraction.

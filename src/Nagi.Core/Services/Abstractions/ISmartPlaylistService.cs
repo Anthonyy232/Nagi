@@ -1,4 +1,4 @@
-using Nagi.Core.Models;
+﻿using Nagi.Core.Models;
 using Nagi.Core.Services.Data;
 
 namespace Nagi.Core.Services.Abstractions;
@@ -38,7 +38,7 @@ public interface ISmartPlaylistService
 
     Task<bool> RemoveRuleAsync(Guid ruleId);
     Task<bool> ReorderRulesAsync(Guid smartPlaylistId, IEnumerable<Guid> orderedRuleIds);
-    
+
     /// <summary>
     ///     Replaces all rules for a smart playlist in a single transaction.
     ///     More efficient than removing and adding rules individually.
@@ -51,7 +51,7 @@ public interface ISmartPlaylistService
     Task<int> GetMatchingSongCountAsync(Guid smartPlaylistId, string? searchTerm = null);
     Task<int> GetMatchingSongCountAsync(SmartPlaylist smartPlaylist, string? searchTerm = null);
     Task<List<Guid>> GetMatchingSongIdsAsync(Guid smartPlaylistId, SongSortOrder? sortOrder = null, CancellationToken token = default);
-    
+
     /// <summary>
     ///     Gets the matching song counts for all smart playlists in a single batch operation.
     ///     This is more efficient than calling GetMatchingSongCountAsync for each playlist individually.

@@ -1,4 +1,4 @@
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Nagi.Core.Data;
 using Nagi.Core.Models;
@@ -28,8 +28,8 @@ public class SmartPlaylistQueryBuilder
         if (!string.IsNullOrWhiteSpace(searchTerm))
             query = ApplySearchFilter(query, searchTerm);
 
-        var finalSortOrder = sortOrderOverride.HasValue 
-            ? MapToSmartPlaylistSortOrder(sortOrderOverride.Value) 
+        var finalSortOrder = sortOrderOverride.HasValue
+            ? MapToSmartPlaylistSortOrder(sortOrderOverride.Value)
             : smartPlaylist.SortOrder;
 
         query = ApplySortOrder(query, finalSortOrder);

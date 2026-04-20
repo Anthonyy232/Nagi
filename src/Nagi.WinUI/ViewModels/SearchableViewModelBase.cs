@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -41,7 +41,7 @@ public abstract partial class SearchableViewModelBase : ObservableObject
     }
 
     /// <summary>
-    ///     Hook for derived classes to perform actions when the search term changes, 
+    ///     Hook for derived classes to perform actions when the search term changes,
     ///     such as clearing selection.
     /// </summary>
     protected virtual void OnSearchTermChangedInternal(string value)

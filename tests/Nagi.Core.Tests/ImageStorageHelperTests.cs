@@ -1,4 +1,4 @@
-using FluentAssertions;
+﻿using FluentAssertions;
 using Nagi.Core.Helpers;
 using Nagi.Core.Services.Abstractions;
 using NSubstitute;

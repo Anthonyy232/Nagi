@@ -142,7 +142,7 @@ public class ApiKeyService : IApiKeyService, IDisposable
 
                 var errorContent = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
 
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized || 
+                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized ||
                     response.StatusCode == System.Net.HttpStatusCode.Forbidden)
                 {
                     _globalAuthFailed = true;

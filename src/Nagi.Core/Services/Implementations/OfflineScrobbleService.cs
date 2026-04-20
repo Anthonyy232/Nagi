@@ -24,7 +24,7 @@ public class OfflineScrobbleService : IOfflineScrobbleService, IDisposable
     // A lock-free flag to ensure only one processing task runs at a time.
     // 0 = not processing, 1 = processing.
     private int _isProcessingQueue;
-    
+
     // Tracks consecutive failures for exponential backoff.
     private int _consecutiveFailures;
 
@@ -179,11 +179,11 @@ public class OfflineScrobbleService : IOfflineScrobbleService, IDisposable
                 var backoffMultiplier = Math.Pow(2, Math.Min(_consecutiveFailures, 4)); // Cap at 16x
                 var waitTime = TimeSpan.FromTicks((long)(BaseCheckInterval.Ticks * backoffMultiplier));
                 if (waitTime > MaxCheckInterval) waitTime = MaxCheckInterval;
-                
+
                 if (_consecutiveFailures > 0)
-                    _logger.LogDebug("Consecutive failures: {FailureCount}. Next check in {WaitTime}.", 
+                    _logger.LogDebug("Consecutive failures: {FailureCount}. Next check in {WaitTime}.",
                         _consecutiveFailures, waitTime);
-                
+
                 await Task.Delay(waitTime, cancellationToken).ConfigureAwait(false);
             }
         }

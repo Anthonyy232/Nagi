@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace Nagi.Core.Services.Data;
 
@@ -39,7 +39,7 @@ public enum LibraryChangeType
 public class LibraryContentChangedEventArgs : EventArgs
 {
     public LibraryChangeType ChangeType { get; }
-    
+
     /// <summary>
     ///     The ID of the folder involved in the change, if applicable (e.g. Added, Removed, Rescanned).
     ///     Will be null for full library refreshes.

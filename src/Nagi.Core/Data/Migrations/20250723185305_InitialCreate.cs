@@ -2,49 +2,59 @@
 
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Nagi.Core.Data.Migrations {
+namespace Nagi.Core.Data.Migrations
+{
     /// <inheritdoc />
-    public partial class InitialCreate : Migration {
+    public partial class InitialCreate : Migration
+    {
         /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder) {
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
             migrationBuilder.CreateTable(
                 name: "Artists",
-                columns: table => new {
+                columns: table => new
+                {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     Name = table.Column<string>(type: "TEXT", nullable: false, collation: "NOCASE"),
                     Biography = table.Column<string>(type: "TEXT", nullable: true),
                     RemoteImageUrl = table.Column<string>(type: "TEXT", nullable: true),
                     LocalImageCachePath = table.Column<string>(type: "TEXT", nullable: true)
                 },
-                constraints: table => {
+                constraints: table =>
+                {
                     table.PrimaryKey("PK_Artists", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Folders",
-                columns: table => new {
+                columns: table => new
+                {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     Name = table.Column<string>(type: "TEXT", nullable: false),
                     Path = table.Column<string>(type: "TEXT", nullable: false, collation: "NOCASE"),
                     LastModifiedDate = table.Column<DateTime>(type: "TEXT", nullable: true)
                 },
-                constraints: table => {
+                constraints: table =>
+                {
                     table.PrimaryKey("PK_Folders", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Genres",
-                columns: table => new {
+                columns: table => new
+                {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     Name = table.Column<string>(type: "TEXT", nullable: false, collation: "NOCASE")
                 },
-                constraints: table => {
+                constraints: table =>
+                {
                     table.PrimaryKey("PK_Genres", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Playlists",
-                columns: table => new {
+                columns: table => new
+                {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     Name = table.Column<string>(type: "TEXT", nullable: false, collation: "NOCASE"),
                     DateCreated = table.Column<DateTime>(type: "TEXT", nullable: false),
@@ -52,20 +62,23 @@ namespace Nagi.Core.Data.Migrations {
                     Description = table.Column<string>(type: "TEXT", nullable: true),
                     CoverImageUri = table.Column<string>(type: "TEXT", nullable: true)
                 },
-                constraints: table => {
+                constraints: table =>
+                {
                     table.PrimaryKey("PK_Playlists", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Albums",
-                columns: table => new {
+                columns: table => new
+                {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     Title = table.Column<string>(type: "TEXT", nullable: false, collation: "NOCASE"),
                     Year = table.Column<int>(type: "INTEGER", nullable: true),
                     CoverArtUri = table.Column<string>(type: "TEXT", nullable: true),
                     ArtistId = table.Column<Guid>(type: "TEXT", nullable: false)
                 },
-                constraints: table => {
+                constraints: table =>
+                {
                     table.PrimaryKey("PK_Albums", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Albums_Artists_ArtistId",
@@ -77,7 +90,8 @@ namespace Nagi.Core.Data.Migrations {
 
             migrationBuilder.CreateTable(
                 name: "Songs",
-                columns: table => new {
+                columns: table => new
+                {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     Title = table.Column<string>(type: "TEXT", nullable: false, collation: "NOCASE"),
                     AlbumId = table.Column<Guid>(type: "TEXT", nullable: true),
@@ -114,7 +128,8 @@ namespace Nagi.Core.Data.Migrations {
                     MusicBrainzTrackId = table.Column<string>(type: "TEXT", nullable: true),
                     MusicBrainzReleaseId = table.Column<string>(type: "TEXT", nullable: true)
                 },
-                constraints: table => {
+                constraints: table =>
+                {
                     table.PrimaryKey("PK_Songs", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Songs_Albums_AlbumId",
@@ -136,11 +151,13 @@ namespace Nagi.Core.Data.Migrations {
 
             migrationBuilder.CreateTable(
                 name: "GenreSong",
-                columns: table => new {
+                columns: table => new
+                {
                     GenresId = table.Column<Guid>(type: "TEXT", nullable: false),
                     SongsId = table.Column<Guid>(type: "TEXT", nullable: false)
                 },
-                constraints: table => {
+                constraints: table =>
+                {
                     table.PrimaryKey("PK_GenreSong", x => new { x.GenresId, x.SongsId });
                     table.ForeignKey(
                         name: "FK_GenreSong_Genres_GenresId",
@@ -158,7 +175,8 @@ namespace Nagi.Core.Data.Migrations {
 
             migrationBuilder.CreateTable(
                 name: "ListenHistory",
-                columns: table => new {
+                columns: table => new
+                {
                     Id = table.Column<long>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     SongId = table.Column<Guid>(type: "TEXT", nullable: false),
@@ -166,7 +184,8 @@ namespace Nagi.Core.Data.Migrations {
                     IsEligibleForScrobbling = table.Column<bool>(type: "INTEGER", nullable: false),
                     IsScrobbled = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
-                constraints: table => {
+                constraints: table =>
+                {
                     table.PrimaryKey("PK_ListenHistory", x => x.Id);
                     table.ForeignKey(
                         name: "FK_ListenHistory_Songs_SongId",
@@ -178,12 +197,14 @@ namespace Nagi.Core.Data.Migrations {
 
             migrationBuilder.CreateTable(
                 name: "PlaylistSongs",
-                columns: table => new {
+                columns: table => new
+                {
                     PlaylistId = table.Column<Guid>(type: "TEXT", nullable: false),
                     SongId = table.Column<Guid>(type: "TEXT", nullable: false),
                     Order = table.Column<int>(type: "INTEGER", nullable: false)
                 },
-                constraints: table => {
+                constraints: table =>
+                {
                     table.PrimaryKey("PK_PlaylistSongs", x => new { x.PlaylistId, x.SongId });
                     table.ForeignKey(
                         name: "FK_PlaylistSongs_Playlists_PlaylistId",
@@ -297,7 +318,8 @@ namespace Nagi.Core.Data.Migrations {
         }
 
         /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder) {
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
             migrationBuilder.DropTable(
                 name: "GenreSong");
 

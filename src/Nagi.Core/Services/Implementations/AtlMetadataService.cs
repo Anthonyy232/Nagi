@@ -1,4 +1,4 @@
-using System.Globalization;
+﻿using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 using ATL;
@@ -20,7 +20,7 @@ public class AtlMetadataService : IMetadataService, IDisposable
     private readonly ILogger<AtlMetadataService> _logger;
     private readonly IPathConfiguration _pathConfig;
     private readonly ISettingsService _settingsService;
-    
+
     // Cache for artist split characters to avoid repeated async calls during batch scanning
     private readonly object _splitCharactersLock = new();
     private string? _cachedSplitCharacters;
@@ -36,7 +36,7 @@ public class AtlMetadataService : IMetadataService, IDisposable
         _pathConfig = pathConfig ?? throw new ArgumentNullException(nameof(pathConfig));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
-        
+
         // Subscribe to settings changes to invalidate cache
         _settingsService.ArtistSplitCharactersChanged += OnArtistSplitCharactersChanged;
         _settingsService.GenreSplitCharactersChanged += OnGenreSplitCharactersChanged;
@@ -56,7 +56,7 @@ public class AtlMetadataService : IMetadataService, IDisposable
 
             // Use a timeout wrapper for ATL operations to prevent indefinite hangs
             using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
-            
+
             // Track does not implement IDisposable, using Task.Run for async-like behavior
             var track = await Task.Run(() => new Track(filePath), cts.Token).ConfigureAwait(false);
 
@@ -66,7 +66,7 @@ public class AtlMetadataService : IMetadataService, IDisposable
             // Check 3: Duration is 0 and no audio data detected
             var isUnknownFormat = track.AudioFormat.Name?.Equals("Unknown", StringComparison.OrdinalIgnoreCase) == true ||
                                   track.AudioFormat.ID == -1;
-            
+
             if (!track.AudioFormat.Readable || isUnknownFormat)
             {
                 metadata.ExtractionFailed = true;
@@ -198,7 +198,7 @@ public class AtlMetadataService : IMetadataService, IDisposable
             .FirstOrDefault(k => k.Equals("REPLAYGAIN_TRACK_GAIN", StringComparison.OrdinalIgnoreCase));
         if (gainKey != null && track.AdditionalFields.TryGetValue(gainKey, out var gainStr))
             metadata.ReplayGainTrackGain = ParseReplayGainValue(gainStr);
-        
+
         var peakKey = track.AdditionalFields.Keys
             .FirstOrDefault(k => k.Equals("REPLAYGAIN_TRACK_PEAK", StringComparison.OrdinalIgnoreCase));
         if (peakKey != null && track.AdditionalFields.TryGetValue(peakKey, out var peakStr))
@@ -208,7 +208,7 @@ public class AtlMetadataService : IMetadataService, IDisposable
     private List<string> SplitMetadataList(string? input, string splitCharacters)
     {
         if (string.IsNullOrWhiteSpace(input)) return [];
-        
+
         // If no split characters are provided, normalize and return the whole string
         if (string.IsNullOrEmpty(splitCharacters))
         {
@@ -529,7 +529,7 @@ public class AtlMetadataService : IMetadataService, IDisposable
         {
             cached = _cachedSplitCharacters;
         }
-        
+
         if (cached != null)
             return cached;
 
@@ -553,7 +553,7 @@ public class AtlMetadataService : IMetadataService, IDisposable
         {
             _cachedSplitCharacters = null;
         }
-        
+
         _logger.LogDebug("Artist split characters cache invalidated due to settings change.");
     }
 
@@ -561,7 +561,7 @@ public class AtlMetadataService : IMetadataService, IDisposable
     {
         if (_disposed) return;
         _disposed = true;
-        
+
         _settingsService.ArtistSplitCharactersChanged -= OnArtistSplitCharactersChanged;
         _settingsService.GenreSplitCharactersChanged -= OnGenreSplitCharactersChanged;
         GC.SuppressFinalize(this);

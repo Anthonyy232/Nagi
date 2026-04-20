@@ -237,7 +237,7 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    
+
                     <!-- Artist Image and Info Content (unchanged) -->
                     <Grid Grid.Column="0" Width="{StaticResource HeaderImageSize}" Height="{StaticResource HeaderImageSize}" CornerRadius="75"
                           PointerEntered="ArtistImage_PointerEntered" PointerExited="ArtistImage_PointerExited"
@@ -263,10 +263,10 @@
                         </Grid>
 
                         <!-- Edit Overlay -->
-                        <Grid x:Name="EditOverlay" 
-                              Background="#66000000" 
-                              CornerRadius="75" 
-                              Opacity="0" 
+                        <Grid x:Name="EditOverlay"
+                              Background="#66000000"
+                              CornerRadius="75"
+                              Opacity="0"
                               PointerPressed="EditOverlay_PointerPressed">
                             <FontIcon Glyph="&#xE70F;" Foreground="White" FontSize="32" />
                             <ToolTipService.ToolTip>
@@ -275,7 +275,7 @@
                             <Grid.ContextFlyout>
                                 <MenuFlyout x:Name="ImageEditFlyout">
                                     <MenuFlyoutItem Text="{x:Bind resources:Strings.ArtistViewPage_ImageMenu_ChangeImage, Mode=OneTime}" Click="ChangeImage_Click" />
-                                    <MenuFlyoutItem Text="{x:Bind resources:Strings.ArtistViewPage_ImageMenu_RemoveImage, Mode=OneTime}" Click="RemoveImage_Click" 
+                                    <MenuFlyoutItem Text="{x:Bind resources:Strings.ArtistViewPage_ImageMenu_RemoveImage, Mode=OneTime}" Click="RemoveImage_Click"
                                                     Visibility="{x:Bind ViewModel.IsCustomImage, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                 </MenuFlyout>
                             </Grid.ContextFlyout>
@@ -428,8 +428,8 @@
             ContainerContentChanging="OnSongsListViewContainerContentChanging"
             DoubleTapped="SongsListView_DoubleTapped">
             <ListView.Footer>
-                <uicontrols:PaginationControl 
-                    ViewModel="{x:Bind ViewModel}" 
+                <uicontrols:PaginationControl
+                    ViewModel="{x:Bind ViewModel}"
                     HorizontalAlignment="Right"
                     Margin="0,24,24,16" />
             </ListView.Footer>
@@ -548,6 +548,6 @@
                 HorizontalAlignment="Center"
                 Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
         </StackPanel>
-        
+
     </Grid>
 </Page>

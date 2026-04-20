@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Nagi.Core.Data;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;

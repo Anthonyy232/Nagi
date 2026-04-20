@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Windows.System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
@@ -133,7 +133,7 @@ public sealed partial class MiniPlayerView : UserControl
     {
         var properties = e.GetCurrentPoint(sender as UIElement).Properties;
         var delta = properties.MouseWheelDelta;
-        
+
         double newVolume = ViewModel.CurrentVolume + (delta > 0 ? 5 : -5);
         ViewModel.CurrentVolume = Math.Clamp(newVolume, 0, 100);
         e.Handled = true;

@@ -21,7 +21,7 @@
         <!-- Override ContentDialog width constraints -->
         <x:Double x:Key="ContentDialogMinWidth">1100</x:Double>
         <x:Double x:Key="ContentDialogMaxWidth">1400</x:Double>
-        
+
         <Style x:Key="RuleRowStyle" TargetType="Border">
             <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
             <Setter Property="CornerRadius" Value="8" />
@@ -31,19 +31,19 @@
     </ContentDialog.Resources>
 
     <Grid RowDefinitions="Auto,Auto,*,Auto" ColumnDefinitions="*" Margin="0,12,0,0">
-        
+
         <!-- Row 0: General Info with Cover Image -->
         <Grid Grid.Row="0" ColumnDefinitions="Auto, 24, *, 24, Auto" Margin="0,0,0,24">
             <!-- Cover Image Section -->
             <StackPanel Grid.Column="0" Spacing="8" VerticalAlignment="Top">
-                <Grid x:Name="CoverImageGrid" Width="100" Height="100" 
-                      Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" 
+                <Grid x:Name="CoverImageGrid" Width="100" Height="100"
+                      Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                       CornerRadius="12">
-                    <FontIcon x:Name="CoverImagePlaceholder" Glyph="&#xE91B;" FontSize="40" 
+                    <FontIcon x:Name="CoverImagePlaceholder" Glyph="&#xE91B;" FontSize="40"
                               HorizontalAlignment="Center" VerticalAlignment="Center"
                               Foreground="{ThemeResource TextFillColorSecondary}" />
-                    <controls:ImageEx x:Name="CoverImagePreview" 
-                                      Stretch="UniformToFill" 
+                    <controls:ImageEx x:Name="CoverImagePreview"
+                                      Stretch="UniformToFill"
                                       IsCacheEnabled="True"
                                       DecodePixelWidth="100"
                                       DecodePixelType="Logical"
@@ -65,7 +65,7 @@
                          TextChanged="OnPlaylistNameChanged"
                          MaxLength="200" />
             </StackPanel>
-            
+
             <!-- Sort Order Section -->
             <StackPanel Grid.Column="4" Spacing="4" MinWidth="200" VerticalAlignment="Top">
                 <TextBlock Text="{x:Bind resources:Strings.SmartPlaylist_SortOrderLabel, Mode=OneTime}" Style="{ThemeResource BodyStrongTextBlockStyle}"/>
@@ -117,11 +117,11 @@
         </Grid>
 
         <!-- Row 2: Rules List & Empty State -->
-        <Border Grid.Row="2" 
-                BorderThickness="1" 
-                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" 
-                CornerRadius="8" 
-                Padding="0" 
+        <Border Grid.Row="2"
+                BorderThickness="1"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                CornerRadius="8"
+                Padding="0"
                 Background="{ThemeResource LayerFillColorDefaultBrush}">
             <Grid>
                 <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="12">
@@ -148,7 +148,7 @@
                                                 <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
 
-                                            <ComboBox Grid.Column="0" 
+                                            <ComboBox Grid.Column="0"
                                                       ItemsSource="{x:Bind AvailableFieldsList}"
                                                       SelectedItem="{x:Bind SelectedField, Mode=TwoWay}"
                                                       DisplayMemberPath="DisplayName"
@@ -176,7 +176,7 @@
                                 </DataTemplate>
                             </ListView.ItemTemplate>
                         </ListView>
-                        
+
                         <!-- Empty State -->
                         <StackPanel x:Name="NoRulesPanel"
                                    Visibility="Collapsed"
@@ -202,14 +202,14 @@
         </Border>
 
         <!-- Row 3: Footer Status -->
-        <Border Grid.Row="3" Margin="0,16,0,0" Padding="12,8" 
-                Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}" 
-                CornerRadius="4" 
+        <Border Grid.Row="3" Margin="0,16,0,0" Padding="12,8"
+                Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+                CornerRadius="4"
                 HorizontalAlignment="Stretch">
             <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Left">
                 <FontIcon Glyph="&#xE946;" FontSize="14" Foreground="{ThemeResource TextFillColorSecondary}" VerticalAlignment="Center"/>
-                <TextBlock x:Name="MatchCountText" 
-                           Foreground="{ThemeResource TextFillColorSecondary}" 
+                <TextBlock x:Name="MatchCountText"
+                           Foreground="{ThemeResource TextFillColorSecondary}"
                            VerticalAlignment="Center"
                            Style="{ThemeResource CaptionTextBlockStyle}"/>
             </StackPanel>

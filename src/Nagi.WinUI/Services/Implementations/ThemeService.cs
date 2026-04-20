@@ -116,14 +116,14 @@ public class ThemeService : IThemeService
     {
         // 1. Set the global primary accent color (for buttons, text, etc.)
         _app.SetAppPrimaryColorBrushColor(primaryColor);
-        
+
         // 2. Calculate and set the player tint color based on intensity setting
         var intensity = await _settingsService.Value.GetPlayerTintIntensityAsync();
-        
+
         // Lerp functionality: Target = Color * Intensity + (Base) * (1 - Intensity)
         // For Dark theme, Base is Black (0,0,0)
         // For Light theme, Base is White (255,255,255)
-        
+
         byte r, g, b;
         if (theme == ElementTheme.Light)
         {

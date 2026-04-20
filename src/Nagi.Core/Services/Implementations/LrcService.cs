@@ -23,7 +23,7 @@ public class LrcService : ILrcService, IDisposable
     private readonly IPathConfiguration _pathConfig;
     private readonly ILibraryWriter _libraryWriter;
     private readonly LrcParser.Parser.Lrc.LrcParser _parser = new();
-    
+
     private readonly object _ctsLock = new();
     private CancellationTokenSource _settingsCts = new();
     private bool _disposed;
@@ -90,7 +90,7 @@ public class LrcService : ILrcService, IDisposable
                             song.Title, song.PrimaryArtistName, song.Album?.Title, song.Duration, token),
                         ServiceProviderIds.NetEase => _netEaseLyricsService.SearchLyricsAsync(
                             song.Title, song.PrimaryArtistName, token),
-                         _ => LogUnknownProviderAndReturnNull(provider.Id)
+                        _ => LogUnknownProviderAndReturnNull(provider.Id)
                     };
                 }
                 catch (Exception ex)
@@ -104,7 +104,7 @@ public class LrcService : ILrcService, IDisposable
             foreach (var provider in enabledProviders)
             {
                 if (!tasks.TryGetValue(provider.Id, out var task)) continue;
-                
+
                 try
                 {
                     var result = await task.ConfigureAwait(false);
@@ -154,7 +154,7 @@ public class LrcService : ILrcService, IDisposable
                 return ParseLyrics(lrcContent);
             }
         }
-        
+
         // Only mark as checked if providers were attempted AND operation wasn't cancelled.
         // This allows retry if providers are enabled later or if the fetch was cancelled.
         if (enabledProviders.Count > 0 && !token.IsCancellationRequested && anyProviderSuccess)
@@ -223,7 +223,7 @@ public class LrcService : ILrcService, IDisposable
             // Strip language prefixes like "eng||" at the start (common in some ID3 tag formats)
             content = Regex.Replace(content, @"^[a-z]{2,3}\|\|", string.Empty, RegexOptions.IgnoreCase);
 
-            // Normalize NetEase-style 3-digit milliseconds ([mm:ss.fff]) to 2-digit ([mm:ss.ff]) 
+            // Normalize NetEase-style 3-digit milliseconds ([mm:ss.fff]) to 2-digit ([mm:ss.ff])
             // for better compatibility with standard LRC parsers.
             content = Regex.Replace(content, @"\[(\d{2}:\d{2}\.\d{2})\d\]", "[$1]");
 
@@ -339,11 +339,11 @@ public class LrcService : ILrcService, IDisposable
     protected virtual void Dispose(bool disposing)
     {
         if (_disposed) return;
-        
+
         if (disposing)
         {
             _settingsService.FetchOnlineLyricsEnabledChanged -= OnFetchOnlineLyricsEnabledChanged;
-            
+
             lock (_ctsLock)
             {
                 _settingsCts.Cancel();

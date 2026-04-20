@@ -1,4 +1,4 @@
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Data;
@@ -438,7 +438,7 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
         var albumArtist2 = new Artist { Name = "Different Album Artist" };
         var albumWithDifferentArtist = new Album { Title = "Special Album" };
         albumWithDifferentArtist.AlbumArtists.Add(new AlbumArtist { Artist = albumArtist2, Order = 0 });
-        
+
         var songWithDifferentAlbumArtist = new Song
         {
             Title = "Album Track",

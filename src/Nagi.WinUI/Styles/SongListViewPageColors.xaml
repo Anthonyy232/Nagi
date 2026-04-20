@@ -183,7 +183,7 @@
                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                    IsHitTestVisible="False"
                                    VerticalAlignment="Center" />
-                        
+
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal">

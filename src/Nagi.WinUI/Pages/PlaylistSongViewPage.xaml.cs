@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using Windows.System;
 using Microsoft.Extensions.DependencyInjection;
@@ -249,7 +249,7 @@ public sealed partial class PlaylistSongViewPage : Page
         }
 
         _logger.LogDebug("Drag completed for song '{SongTitle}' to index {NewIndex}.", movedSong.Title, newIndex);
-        
+
         // Fire-and-forget with proper error handling - the async method handles its own exceptions internally
         _ = ViewModel.OnSongReorderedAsync(movedSong, newIndex);
     }

@@ -1,4 +1,4 @@
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -37,16 +37,16 @@ public class MultiArtistTests : IDisposable
         pathConfig.AlbumArtCachePath.Returns("C:\\cache\\albumart");
         pathConfig.ArtistImageCachePath.Returns("C:\\cache\\artistimages");
         pathConfig.LrcCachePath.Returns("C:\\cache\\lrc");
-        
+
         var serviceScopeFactory = Substitute.For<IServiceScopeFactory>();
 
         // Set up logger to capture exceptions
         var logger = Substitute.For<ILogger<LibraryService>>();
         logger.WhenForAnyArgs(x => x.Log(
-            Arg.Any<LogLevel>(), 
-            Arg.Any<EventId>(), 
-            Arg.Any<object>(), 
-            Arg.Any<Exception?>(), 
+            Arg.Any<LogLevel>(),
+            Arg.Any<EventId>(),
+            Arg.Any<object>(),
+            Arg.Any<Exception?>(),
             Arg.Any<Func<object, Exception?, string>>()))
             .Do(callInfo =>
             {
@@ -90,7 +90,7 @@ public class MultiArtistTests : IDisposable
     {
         // Reset captured exception from any previous test
         _capturedLoggerException = null;
-        
+
         // Arrange
         var folderId = Guid.NewGuid();
         var folderPath = "C:\\Music\\MultiArtist";
@@ -121,13 +121,13 @@ public class MultiArtistTests : IDisposable
 
         // Act
         var result = await _libraryService.RescanFolderForMusicAsync(folderId);
-        
+
         // If scan failed, re-throw the captured exception with context
         if (!result && _capturedLoggerException != null)
         {
             throw new Exception($"Scan failed with exception: {_capturedLoggerException.Message}", _capturedLoggerException);
         }
-        
+
         // Verify the scan succeeded
         result.Should().BeTrue("the scan should complete without errors");
 
@@ -143,7 +143,7 @@ public class MultiArtistTests : IDisposable
                 .FirstOrDefaultAsync(s => s.FilePath == filePath);
 
             song.Should().NotBeNull();
-            
+
             // Check Song denormalized fields
             song!.ArtistName.Should().Be("Primary Artist & Featured Artist");
             song.PrimaryArtistName.Should().Be("Primary Artist");
@@ -160,7 +160,7 @@ public class MultiArtistTests : IDisposable
     {
         // Reset captured exception from any previous test
         _capturedLoggerException = null;
-        
+
         // Arrange
         var folderId = Guid.NewGuid();
         var folderPath = "C:\\Music\\SingleArtist";
@@ -189,13 +189,13 @@ public class MultiArtistTests : IDisposable
 
         // Act
         var result = await _libraryService.RescanFolderForMusicAsync(folderId);
-        
+
         // If scan failed, re-throw the captured exception with context
         if (!result && _capturedLoggerException != null)
         {
             throw new Exception($"Scan failed with exception: {_capturedLoggerException.Message}", _capturedLoggerException);
         }
-        
+
         // Verify the scan succeeded (no exception caught)
         result.Should().BeTrue("the scan should complete without errors");
 
@@ -203,7 +203,7 @@ public class MultiArtistTests : IDisposable
         await using (var context = _dbHelper.ContextFactory.CreateDbContext())
         {
             var song = await context.Songs.FirstOrDefaultAsync(s => s.FilePath == filePath);
-            
+
             song.Should().NotBeNull();
             song!.ArtistName.Should().Be("Solo Artist");
             song.PrimaryArtistName.Should().Be("Solo Artist");
@@ -272,7 +272,7 @@ public class MultiArtistTests : IDisposable
         playbackService.CurrentTrack.Should().NotBeNull();
         playbackService.CurrentTrack!.ArtistName.Should().Be("Artist 1 & Artist 2");
         playbackService.CurrentTrack.PrimaryArtistName.Should().Be("Artist 1");
-        
+
         playbackService.CurrentTrack.Album.Should().NotBeNull();
         playbackService.CurrentTrack.Album!.ArtistName.Should().Be("Artist 1");
         playbackService.CurrentTrack.Album.PrimaryArtistName.Should().Be("Artist 1");

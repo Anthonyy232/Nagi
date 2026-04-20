@@ -1,4 +1,4 @@
-using FluentAssertions;
+﻿using FluentAssertions;
 using Nagi.Core.Constants;
 using Xunit;
 

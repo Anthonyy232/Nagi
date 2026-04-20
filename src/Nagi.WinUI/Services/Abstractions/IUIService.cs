@@ -111,7 +111,7 @@ public interface IUIService
     /// <param name="fileTypes">The file extensions to filter by (e.g., ".m3u", ".m3u8").</param>
     /// <returns>The paths of the selected files, or an empty list if the user cancelled.</returns>
     Task<IReadOnlyList<string>> PickOpenMultipleFilesAsync(IEnumerable<string> fileTypes);
-    
+
     /// <summary>
     ///     Shows a dialog for FFmpeg setup with a recheck button that doesn't close the dialog.
     /// </summary>

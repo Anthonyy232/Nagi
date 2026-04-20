@@ -1,4 +1,4 @@
-using ATL;
+﻿using ATL;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
@@ -29,7 +29,7 @@ public class AtlMetadataServiceTests : IDisposable
     private readonly IPathConfiguration _pathConfig;
     private readonly string _tempDirectory;
 
-    // A valid MP3 file with proper headers - this is the minimum valid MP3 structure 
+    // A valid MP3 file with proper headers - this is the minimum valid MP3 structure
     // that ATL.NET can read and write tags to
     private static readonly byte[] ValidMp3Bytes = CreateValidMp3Bytes();
 
@@ -71,13 +71,13 @@ public class AtlMetadataServiceTests : IDisposable
         // Create a minimal but valid MP3 file structure
         // This includes an ID3v2 header followed by a minimal audio frame
         using var ms = new MemoryStream();
-        
+
         // ID3v2.3 header (10 bytes)
         ms.Write(new byte[] { 0x49, 0x44, 0x33 }); // "ID3"
         ms.Write(new byte[] { 0x03, 0x00 }); // Version 2.3
         ms.Write(new byte[] { 0x00 }); // Flags
         ms.Write(new byte[] { 0x00, 0x00, 0x00, 0x00 }); // Size (syncsafe, 0 for now)
-        
+
         // Add some minimal MP3 audio frames (silent frames)
         // MP3 frame header: sync word + audio info
         for (var i = 0; i < 10; i++)
@@ -87,7 +87,7 @@ public class AtlMetadataServiceTests : IDisposable
             // Fill with zeros for the rest of the frame (417 bytes for this config)
             ms.Write(new byte[413]);
         }
-        
+
         return ms.ToArray();
     }
 
@@ -737,7 +737,7 @@ public class AtlMetadataServiceTests : IDisposable
     }
 
     /// <summary>
-    ///     Verifies that when custom split characters are NOT configured (default), 
+    ///     Verifies that when custom split characters are NOT configured (default),
     ///     no splitting occurs and the artist name remains intact.
     /// </summary>
     [Fact]

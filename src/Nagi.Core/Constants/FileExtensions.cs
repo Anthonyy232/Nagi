@@ -1,4 +1,4 @@
-namespace Nagi.Core.Constants;
+﻿namespace Nagi.Core.Constants;
 
 /// <summary>
 ///     Provides centralized file extension constants for music files and cover art images.

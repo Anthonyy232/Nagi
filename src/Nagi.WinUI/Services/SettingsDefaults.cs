@@ -1,4 +1,4 @@
-using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Data;
 using Nagi.WinUI.Models;
@@ -7,7 +7,7 @@ using Windows.UI;
 namespace Nagi.WinUI.Services;
 
 /// <summary>
-///     Provides centralized default values for application settings to ensure consistency 
+///     Provides centralized default values for application settings to ensure consistency
 ///     between the SettingsService and SettingsViewModels.
 /// </summary>
 public static class SettingsDefaults

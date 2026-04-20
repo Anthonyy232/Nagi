@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Nagi.Core.Models;
@@ -79,7 +79,7 @@ public class SelectionStateTests
         var state = new SelectionState();
         state.Select(Guid.NewGuid());
         state.SelectAll();
-        
+
         state.Clear();
 
         Assert.False(state.IsSelectAllMode);

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -308,7 +308,7 @@ public sealed class TaskbarService : ITaskbarService
             _dispatcherService.TryEnqueue(() =>
             {
                 if (_isDisposed) return;
-                
+
                 if (_buttons == null)
                 {
                     InitializeButtons();

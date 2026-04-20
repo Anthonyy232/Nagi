@@ -97,7 +97,7 @@ public partial class TrayIconViewModel : ObservableObject
         UpdateTrayIconVisibility();
         _logger.LogDebug("Initialized. HideToTray: {IsHideToTrayEnabled}, IsWindowVisible: {IsWindowVisible}",
             _isHideToTrayEnabled, IsWindowVisible);
-            
+
         _isInitialized = true;
     }
 

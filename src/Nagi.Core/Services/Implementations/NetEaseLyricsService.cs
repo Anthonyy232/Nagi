@@ -1,4 +1,4 @@
-using System.Net;
+﻿using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
@@ -29,13 +29,13 @@ public partial class NetEaseLyricsService : INetEaseLyricsService
     {
         _httpClient = httpClientFactory.CreateClient();
         _httpClient.DefaultRequestHeaders.Add("Referer", "https://music.163.com/");
-        _httpClient.DefaultRequestHeaders.Add("User-Agent", 
+        _httpClient.DefaultRequestHeaders.Add("User-Agent",
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36");
         _logger = logger;
     }
 
     /// <inheritdoc />
-    public async Task<string?> SearchLyricsAsync(string trackName, string? artistName, 
+    public async Task<string?> SearchLyricsAsync(string trackName, string? artistName,
         CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(trackName))
@@ -53,8 +53,8 @@ public partial class NetEaseLyricsService : INetEaseLyricsService
             var normalizedTrack = ArtistNameHelper.NormalizeStringCore(trackName) ?? trackName;
             var normalizedArtist = ArtistNameHelper.NormalizeStringCore(artistName) ?? artistName;
 
-            var query = string.IsNullOrWhiteSpace(normalizedArtist) 
-                ? normalizedTrack 
+            var query = string.IsNullOrWhiteSpace(normalizedArtist)
+                ? normalizedTrack
                 : $"{normalizedTrack} {normalizedArtist}";
 
             var songId = await SearchSongAsync(query, trackName, artistName, cancellationToken).ConfigureAwait(false);
@@ -116,7 +116,7 @@ public partial class NetEaseLyricsService : INetEaseLyricsService
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    _logger.LogWarning("NetEase search failed with status {Status}. Attempt {Attempt}/{MaxRetries}", 
+                    _logger.LogWarning("NetEase search failed with status {Status}. Attempt {Attempt}/{MaxRetries}",
                         response.StatusCode, attempt, MaxRetries);
                     return RetryResult<long?>.FromHttpStatus(response.StatusCode);
                 }
@@ -137,7 +137,7 @@ public partial class NetEaseLyricsService : INetEaseLyricsService
                         var trackExact = normalizedSongName != null && normalizedSongName.Equals(normalizedTrack, StringComparison.OrdinalIgnoreCase);
                         var trackContains = normalizedSongName != null && normalizedSongName.Contains(normalizedTrack, StringComparison.OrdinalIgnoreCase);
                         var artistMatch = !string.IsNullOrWhiteSpace(normalizedArtist) &&
-                                          s.Artists?.Any(a => 
+                                          s.Artists?.Any(a =>
                                           {
                                               var n = ArtistNameHelper.NormalizeStringCore(a.Name) ?? a.Name;
                                               return n != null && n.Contains(normalizedArtist, StringComparison.OrdinalIgnoreCase);
@@ -173,7 +173,7 @@ public partial class NetEaseLyricsService : INetEaseLyricsService
             async attempt =>
             {
                 var url = $"{LyricsUrl}?id={songId}&lv=1";
-                _logger.LogDebug("Fetching NetEase lyrics for song ID: {SongId} (Attempt {Attempt}/{MaxRetries})", 
+                _logger.LogDebug("Fetching NetEase lyrics for song ID: {SongId} (Attempt {Attempt}/{MaxRetries})",
                     songId, attempt, MaxRetries);
 
                 using var response = await _httpClient.GetAsync(url, cancellationToken).ConfigureAwait(false);
@@ -193,7 +193,7 @@ public partial class NetEaseLyricsService : INetEaseLyricsService
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    _logger.LogWarning("NetEase lyrics fetch failed with status {Status}. Attempt {Attempt}/{MaxRetries}", 
+                    _logger.LogWarning("NetEase lyrics fetch failed with status {Status}. Attempt {Attempt}/{MaxRetries}",
                         response.StatusCode, attempt, MaxRetries);
                     return RetryResult<string>.FromHttpStatus(response.StatusCode);
                 }

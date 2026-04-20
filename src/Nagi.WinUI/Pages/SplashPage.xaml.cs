@@ -1,4 +1,4 @@
-using Microsoft.UI.Xaml.Controls;
+﻿using Microsoft.UI.Xaml.Controls;
 using Nagi.WinUI.Controls;
 
 namespace Nagi.WinUI.Pages;

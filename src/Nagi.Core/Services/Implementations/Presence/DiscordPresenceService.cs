@@ -1,4 +1,4 @@
-using DiscordRPC;
+﻿using DiscordRPC;
 using DiscordRPC.Message;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -44,15 +44,15 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
             if (_client == null || _client.IsDisposed)
             {
                 _logger.LogDebug("Initializing new Discord RPC client.");
-                
+
                 var pipeClient = new SandboxAwareDiscordPipeClient { Logger = new DiscordLoggerAdapter(_logger) };
-                
+
                 // Set SkipIdenticalPresence to true to prevent redundant updates that trigger library bugs
                 _client = new DiscordRpcClient(_discordAppId, pipe: -1, logger: new DiscordLoggerAdapter(_logger), autoEvents: true, client: pipeClient)
                 {
-                    SkipIdenticalPresence = true 
+                    SkipIdenticalPresence = true
                 };
-                
+
                 _client.OnError += OnRpcError;
                 _client.OnReady += async (_, _) =>
                 {
@@ -69,7 +69,7 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
                 };
 
                 _client.OnConnectionFailed += (_, e) => _logger.LogWarning("Discord connection failed: {Pipe}", e.FailedPipe);
-                
+
                 _client.Initialize();
             }
             else if (!_client.IsInitialized)
@@ -97,7 +97,7 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
     public Task OnPlaybackStateChangedAsync(bool isPlaying)
     {
         _isPlaying = isPlaying;
-        
+
         if (isPlaying)
             _timestamps = new Timestamps { Start = DateTime.UtcNow - _currentProgress };
         else
@@ -123,7 +123,7 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
         // DiscordRPC natively queues presence updates if the pipe isn't ready, so we only need to check if _client exists
         if (_client == null) return;
 
-        // Increase debounce to 500ms. Discord's rate limit is 1 update per 15s, 
+        // Increase debounce to 500ms. Discord's rate limit is 1 update per 15s,
         // but the library specifically crashes if updates are sent within ~200ms of each other.
         lock (_timerLock)
         {

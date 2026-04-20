@@ -23,7 +23,7 @@ public class UIService : IUIService
     // Win32 MessageBox constants
     private const uint MB_OK = 0x00000000;
     private const uint MB_ICONERROR = 0x00000010;
-    
+
     private readonly IWin32InteropService _win32InteropService;
 
     public UIService(IWin32InteropService win32InteropService)
@@ -142,7 +142,7 @@ public class UIService : IUIService
         };
 
         DialogThemeHelper.ApplyThemeOverrides(dialog);
-        
+
         try
         {
             var result = await dialog.ShowAsync();
@@ -197,7 +197,7 @@ public class UIService : IUIService
         if (!TryGetXamlRoot(out var xamlRoot)) return false;
 
         var contentPanel = new StackPanel { Spacing = 12 };
-        
+
         var instructionsBlock = new TextBlock
         {
             Text = instructions,
@@ -228,15 +228,15 @@ public class UIService : IUIService
         {
             // Get a deferral to prevent the dialog from closing
             var deferral = args.GetDeferral();
-            
+
             // Update status to show we're checking
             statusBlock.Text = Resources.Strings.FFmpeg_Status_Checking;
             statusBlock.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Gray);
-            
+
             try
             {
                 var isInstalled = await checkAction();
-                
+
                 if (isInstalled)
                 {
                     // FFmpeg found - update status and allow dialog to close

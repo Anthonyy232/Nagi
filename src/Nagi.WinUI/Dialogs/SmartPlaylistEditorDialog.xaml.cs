@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -28,7 +28,7 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
     private CancellationTokenSource? _matchCountCts;
     private string? _selectedCoverImageUri;
     private bool _isInitialized;
-    
+
     /// <summary>
     ///     Gets or sets the smart playlist being edited (null for new playlists).
     /// </summary>
@@ -50,13 +50,13 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
         _logger = App.Services!.GetRequiredService<ILogger<SmartPlaylistEditorDialog>>();
 
         InitializeComponent();
-        
+
         // Apply app theme overrides for TextBox styling inside ContentDialog
         DialogThemeHelper.ApplyThemeOverrides(this);
-        
+
         Rules.CollectionChanged += OnRulesCollectionChanged;
         Unloaded += OnDialogUnloaded;
-        
+
         _isInitialized = true;
         MatchCountText.Text = Nagi.WinUI.Resources.Strings.SmartPlaylist_Status_Calculating;
     }
@@ -64,7 +64,7 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
     private void OnRulesCollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
     {
         UpdateNoRulesVisibility();
-        
+
         // Subscribe to PropertyChanged for new rules
         if (e.NewItems != null)
         {
@@ -73,7 +73,7 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
                 rule.PropertyChanged += OnRulePropertyChanged;
             }
         }
-        
+
         // Unsubscribe from removed rules
         if (e.OldItems != null)
         {
@@ -91,9 +91,9 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
     {
         // Update match count when any rule property changes
         // Debouncing is already handled in UpdateMatchCountAsync (300ms delay)
-        if (e.PropertyName is nameof(RuleViewModel.Value) or 
+        if (e.PropertyName is nameof(RuleViewModel.Value) or
             nameof(RuleViewModel.SecondValue) or
-            nameof(RuleViewModel.SelectedField) or 
+            nameof(RuleViewModel.SelectedField) or
             nameof(RuleViewModel.SelectedOperator))
         {
             _ = UpdateMatchCountAsync();
@@ -105,10 +105,10 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
         _matchCountCts?.Cancel();
         _matchCountCts?.Dispose();
         _matchCountCts = null;
-        
+
         // Unsubscribe from collection changed event
         Rules.CollectionChanged -= OnRulesCollectionChanged;
-        
+
         // Unsubscribe from all rule property changes
         foreach (var rule in Rules)
         {
@@ -261,8 +261,8 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
 
             if (token.IsCancellationRequested) return;
 
-            MatchCountText.Text = count >= 0 
-                ? ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.SmartPlaylist_Status_MatchCountFormat, count) 
+            MatchCountText.Text = count >= 0
+                ? ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.SmartPlaylist_Status_MatchCountFormat, count)
                 : Nagi.WinUI.Resources.Strings.SmartPlaylist_Status_EnterNameToSeeSongs;
         }
         catch (TaskCanceledException)
@@ -323,7 +323,7 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
     private async void OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
     {
         var deferral = args.GetDeferral();
-        
+
         try
         {
             var name = PlaylistNameTextBox.Text?.Trim();
@@ -337,7 +337,7 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
             }
 
             var isEditing = EditingPlaylist != null;
-            
+
             // Build rules list once for both paths
             var newRules = Rules
                 .Select(ruleVm => ruleVm.ToSmartPlaylistRule())
@@ -352,7 +352,7 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
                 EditingPlaylist.SortOrder = GetSelectedSortOrder();
 
                 await _smartPlaylistService.UpdateSmartPlaylistAsync(EditingPlaylist);
-                
+
                 // Update cover image separately if needed to handle cache properly
                 if (!string.Equals(_selectedCoverImageUri, EditingPlaylist.CoverImageUri, StringComparison.Ordinal))
                 {
@@ -587,17 +587,17 @@ public class RuleViewModel : INotifyPropertyChanged
         SmartPlaylistField.Title or SmartPlaylistField.Artist or SmartPlaylistField.Album or
         SmartPlaylistField.Genre or SmartPlaylistField.Comment or SmartPlaylistField.Composer or
         SmartPlaylistField.Grouping => FieldType.Text,
-        
+
         SmartPlaylistField.Year or SmartPlaylistField.PlayCount or SmartPlaylistField.SkipCount or
         SmartPlaylistField.Rating or SmartPlaylistField.Duration or SmartPlaylistField.Bpm or
         SmartPlaylistField.TrackNumber or SmartPlaylistField.DiscNumber or SmartPlaylistField.Bitrate or
         SmartPlaylistField.SampleRate => FieldType.Numeric,
-        
+
         SmartPlaylistField.DateAdded or SmartPlaylistField.LastPlayed or
         SmartPlaylistField.FileCreatedDate or SmartPlaylistField.FileModifiedDate => FieldType.Date,
-        
+
         SmartPlaylistField.IsLoved or SmartPlaylistField.HasLyrics => FieldType.Boolean,
-        
+
         _ => FieldType.Text
     };
 
