@@ -1,0 +1,80 @@
+<Project>
+    <PropertyGroup>
+        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <!-- MVVM & UI Toolkit -->
+        <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+        <PackageVersion Include="CommunityToolkit.WinUI.Controls.ColorPicker" Version="8.3.260402-preview2" />
+        <PackageVersion Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.3.260402-preview2" />
+        <PackageVersion Include="CommunityToolkit.WinUI.Media" Version="8.3.260402-preview2" />
+
+        <!-- WinAppSDK -->
+        <PackageVersion Include="Microsoft.WindowsAppSDK" Version="2.0.0-preview2" />
+        <PackageVersion Include="Microsoft.WindowsAppSDK.WinUI" Version="2.0.9-preview" />
+        <PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.4654" />
+        <PackageVersion Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="3.0.1" />
+
+        <!-- UI Controls -->
+        <PackageVersion Include="H.NotifyIcon.WinUI" Version="2.4.2-dev.11" />
+        <PackageVersion Include="ImageEx.WinUI" Version="4.0.0" />
+        <PackageVersion Include="MessageFormat" Version="8.0.0" />
+        <PackageVersion Include="Microsoft.Graphics.Win2D" Version="1.3.2" />
+
+        <!-- Entity Framework Core -->
+        <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.6" />
+        <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.6" />
+        <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.6" />
+
+        <!-- Microsoft Extensions -->
+        <PackageVersion Include="Microsoft.Extensions.Configuration" Version="10.0.2" />
+        <PackageVersion Include="Microsoft.Extensions.Configuration.FileExtensions" Version="10.0.6" />
+        <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="10.0.6" />
+        <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.2" />
+        <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.6" />
+        <PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.2" />
+
+        <!-- Media Playback -->
+        <PackageVersion Include="LibVLCSharp" Version="4.0.0-alpha-20260410-9830" />
+        <PackageVersion Include="VideoLAN.LibVLC.Windows" Version="4.0.0-alpha-20260419" />
+
+        <!-- Serilog -->
+        <PackageVersion Include="Serilog.Enrichers.Thread" Version="4.0.0" />
+        <PackageVersion Include="Serilog.Extensions.Logging" Version="10.0.0" />
+        <PackageVersion Include="Serilog.Settings.Configuration" Version="10.0.1-dev-02339" />
+        <PackageVersion Include="Serilog.Sinks.Debug" Version="3.0.0" />
+        <PackageVersion Include="Serilog.Sinks.File" Version="8.0.0-nblumhardt-02322" />
+
+        <!-- Audio & Metadata -->
+        <PackageVersion Include="LrcParser" Version="2025.623.0" />
+        <PackageVersion Include="z440.atl.core" Version="7.12.0" />
+
+        <!-- Image Processing -->
+        <PackageVersion Include="MaterialColorUtilities" Version="0.3.0" />
+        <PackageVersion Include="SixLabors.ImageSharp" Version="3.1.12" />
+
+        <!-- Presence -->
+        <PackageVersion Include="DiscordRichPresence" Version="1.6.1.70" />
+
+        <!-- Azure Functions -->
+        <PackageVersion Include="Microsoft.ApplicationInsights.WorkerService" Version="2.23.0" />
+        <PackageVersion Include="Microsoft.Azure.Functions.Worker" Version="2.51.0" />
+        <PackageVersion Include="Microsoft.Azure.Functions.Worker.ApplicationInsights" Version="2.50.0" />
+        <PackageVersion Include="Microsoft.Azure.Functions.Worker.Extensions.Http.AspNetCore" Version="2.1.0" />
+        <PackageVersion Include="Microsoft.Azure.Functions.Worker.Extensions.OpenApi" Version="2.0.0-preview2" />
+        <PackageVersion Include="Microsoft.Azure.Functions.Worker.Sdk" Version="2.0.7" />
+
+        <!-- Benchmarks -->
+        <PackageVersion Include="BenchmarkDotNet" Version="0.14.0" />
+
+        <!-- Testing -->
+        <PackageVersion Include="coverlet.collector" Version="6.0.4" />
+        <PackageVersion Include="FluentAssertions" Version="8.8.0" />
+        <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+        <PackageVersion Include="NSubstitute" Version="5.3.0" />
+        <PackageVersion Include="NSubstitute.Analyzers.CSharp" Version="1.0.17" />
+        <PackageVersion Include="xunit" Version="2.9.3" />
+        <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
+    </ItemGroup>
+</Project>

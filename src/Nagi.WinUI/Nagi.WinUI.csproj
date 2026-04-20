@@ -12,6 +12,7 @@
         <RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
         <UseWinUI>true</UseWinUI>
         <EnableMsixTooling>true</EnableMsixTooling>
+        <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
         <Configurations>Debug;Release</Configurations>
@@ -33,8 +34,6 @@
         <ApplicationVersion>$(AppxPackageVersion.Replace('.', ''))</ApplicationVersion>
         <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
     </PropertyGroup>
-
-
 
     <!-- =============================================================== -->
     <!-- == Build Configuration: Debug                                  == -->
@@ -88,39 +87,37 @@
 
         <!-- Core SDKs and Build Tools -->
         <!-- Exclude the transitive WinAppSDK 1.6 dependency from CommunityToolkit to prevent ML/AI binaries -->
-        <PackageReference Include="Microsoft.WindowsAppSDK" Version="$(WindowsAppSdkVersion)">
+        <PackageReference Include="Microsoft.WindowsAppSDK">
             <ExcludeAssets>all</ExcludeAssets>
         </PackageReference>
         <!-- Reference only the WinUI component package - excludes unused ML/AI components (~40MB saved) -->
-        <PackageReference Include="Microsoft.WindowsAppSDK.WinUI" Version="$(WindowsAppSdkWinUIVersion)">
+        <PackageReference Include="Microsoft.WindowsAppSDK.WinUI">
             <TreatAsUsed>true</TreatAsUsed>
         </PackageReference>
-        <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="$(MicrosoftWindowsSDKBuildToolsVersion)" />
+        <PackageReference Include="Microsoft.Windows.SDK.BuildTools" />
 
         <!-- Application Services (DI, Configuration) -->
-        <PackageReference Include="MessageFormat" Version="$(MessageFormatVersion)" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="$(MicrosoftExtensionsConfigurationFileExtensionsVersion)" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="$(MicrosoftExtensionsConfigurationJsonVersion)" />
+        <PackageReference Include="MessageFormat" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
 
         <!-- UI Controls and Media -->
-        <PackageReference Include="CommunityToolkit.WinUI.Controls.ColorPicker" Version="$(CommunityToolkitWinUIVersion)" />
-        <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="$(CommunityToolkitWinUIVersion)" />
-        <PackageReference Include="CommunityToolkit.WinUI.Media" Version="$(CommunityToolkitWinUIVersion)" />
-        <PackageReference Include="H.NotifyIcon.WinUI" Version="$(HNotifyIconWinUIVersion)" />
-        <PackageReference Include="ImageEx.WinUI" Version="$(ImageExWinUIVersion)" />
+        <PackageReference Include="CommunityToolkit.WinUI.Controls.ColorPicker" />
+        <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" />
+        <PackageReference Include="CommunityToolkit.WinUI.Media" />
+        <PackageReference Include="H.NotifyIcon.WinUI" />
+        <PackageReference Include="ImageEx.WinUI" />
 
         <!-- Video Playback -->
-        <PackageReference Include="LibVLCSharp" Version="$(LibVLCSharpVersion)" />
-        <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="$(MicrosoftXamlBehaviorsWinUIManagedVersion)" />
-        <PackageReference Include="Serilog.Enrichers.Thread" Version="$(SerilogEnrichersThreadVersion)" />
-        <PackageReference Include="Serilog.Extensions.Logging" Version="$(SerilogExtensionsLoggingVersion)" />
-        <PackageReference Include="Serilog.Settings.Configuration" Version="$(SerilogSettingsConfigurationVersion)" />
-        <PackageReference Include="Serilog.Sinks.Debug" Version="$(SerilogSinksDebugVersion)" />
-        <PackageReference Include="Serilog.Sinks.File" Version="$(SerilogSinksFileVersion)" />
-        <PackageReference Include="SixLabors.ImageSharp" Version="$(SixLaborsImageSharpVersion)" />
-        <PackageReference Include="VideoLAN.LibVLC.Windows" Version="$(LibVLCWindowsVersion)" />
-
-
+        <PackageReference Include="LibVLCSharp" />
+        <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" />
+        <PackageReference Include="Serilog.Enrichers.Thread" />
+        <PackageReference Include="Serilog.Extensions.Logging" />
+        <PackageReference Include="Serilog.Settings.Configuration" />
+        <PackageReference Include="Serilog.Sinks.Debug" />
+        <PackageReference Include="Serilog.Sinks.File" />
+        <PackageReference Include="SixLabors.ImageSharp" />
+        <PackageReference Include="VideoLAN.LibVLC.Windows" />
     </ItemGroup>
 
 

@@ -8,11 +8,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="BenchmarkDotNet" Version="$(BenchmarkDotNetVersion)" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="$(EntityFrameworkCoreVersion)" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="$(DependencyInjectionVersion)" />
-        <PackageReference Include="Microsoft.Extensions.Logging" Version="$(MicrosoftExtensionsLoggingVersion)" />
-        <PackageReference Include="NSubstitute" Version="$(NSubstituteVersion)" />
+        <PackageReference Include="BenchmarkDotNet" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+        <PackageReference Include="Microsoft.Extensions.Logging" />
+        <PackageReference Include="NSubstitute" />
     </ItemGroup>
 
     <ItemGroup>

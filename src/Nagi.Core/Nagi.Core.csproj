@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net$(NetVersion)</TargetFramework>
@@ -12,25 +12,25 @@
 
     <ItemGroup>
         <!-- Data Access: Entity Framework Core -->
-        <PackageReference Include="LrcParser" Version="$(LrcParserVersion)" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="$(EntityFrameworkCoreVersion)" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="$(EntityFrameworkCoreVersion)" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="$(EntityFrameworkCoreVersion)">
+        <PackageReference Include="LrcParser" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-<PackageReference Include="SixLabors.ImageSharp" Version="$(SixLaborsImageSharpVersion)" />
+        <PackageReference Include="SixLabors.ImageSharp" />
 
         <!-- Core Utilities & Services -->
-        <PackageReference Include="z440.atl.core" Version="$(Z440AtlCoreVersion)" />
+        <PackageReference Include="z440.atl.core" />
 
-        <PackageReference Include="MaterialColorUtilities" Version="$(MaterialColorUtilitiesVersion)" />
-        <PackageReference Include="DiscordRichPresence" Version="$(DiscordRichPresenceVersion)" />
+        <PackageReference Include="MaterialColorUtilities" />
+        <PackageReference Include="DiscordRichPresence" />
 
         <!-- MVVM & Dependency Injection -->
-        <PackageReference Include="CommunityToolkit.Mvvm" Version="$(CommunityToolkitMvvmVersion)" />
+        <PackageReference Include="CommunityToolkit.Mvvm" />
 
         <!-- HTTP -->
-        <PackageReference Include="Microsoft.Extensions.Http" Version="$(MicrosoftExtensionsHttpVersion)" />
+        <PackageReference Include="Microsoft.Extensions.Http" />
     </ItemGroup>
 </Project>
