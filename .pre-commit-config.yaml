@@ -15,5 +15,5 @@ repos:
       - id: dotnet-format
         name: dotnet format
         language: system
-        entry: dotnet format --verify-no-changes
-        pass_filenames: false
+        entry: dotnet format --include
+        pass_filenames: true

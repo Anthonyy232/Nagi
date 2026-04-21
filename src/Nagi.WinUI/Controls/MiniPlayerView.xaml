@@ -59,6 +59,7 @@
                     </Grid.ColumnDefinitions>
 
                     <Button
+                        x:Name="BackButton"
                         Grid.Column="0"
                         ToolTipService.ToolTip="{x:Bind resources:Strings.MiniPlayer_BackButton_ToolTip, Mode=OneTime}"
                         Command="{x:Bind ViewModel.ShowPlayerViewCommand}"
@@ -85,6 +86,7 @@
                             TextWrapping="NoWrap" />
                         <Grid HorizontalAlignment="Center">
                             <TextBlock
+                                x:Name="ArtistTextBlock"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 FontSize="12"
@@ -139,7 +141,7 @@
                                 KeyDown="MediaSeekerSlider_KeyDown"
                                 KeyUp="MediaSeekerSlider_KeyUp" />
 
-                            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Spacing="2">
+                            <StackPanel x:Name="MediaControlsPanel" HorizontalAlignment="Center" Orientation="Horizontal" Spacing="2">
                                 <Button Command="{x:Bind ViewModel.ToggleMuteCommand}"
                                         PointerWheelChanged="VolumeButton_PointerWheelChanged"
                                         Style="{StaticResource VolumeButtonStyle}"
@@ -195,6 +197,7 @@
 
                     <!--  Queue View -->
                     <ListView
+                        x:Name="QueueListView"
                         Padding="16,12,16,20"
                         ItemContainerStyle="{StaticResource QueueListViewItemStyle}"
                         ItemsSource="{x:Bind ViewModel.CurrentQueue}"
