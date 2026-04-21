@@ -1,6 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using Windows.Foundation;
+using Windows.Graphics;
 using Windows.System;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.UI.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -58,6 +63,16 @@ public sealed partial class MiniPlayerView : UserControl
         HoverDetector.PointerExited += OnPointerExited;
         HoverDetector.PointerCanceled += OnPointerExited;
 
+        MediaSeekerSlider.SizeChanged += OnInteractiveRegionChanged;
+        MediaControlsPanel.SizeChanged += OnInteractiveRegionChanged;
+        BackButton.SizeChanged += OnInteractiveRegionChanged;
+        RestoreButton.SizeChanged += OnInteractiveRegionChanged;
+        QueueListView.SizeChanged += OnInteractiveRegionChanged;
+        ArtistTextBlock.SizeChanged += OnInteractiveRegionChanged;
+        SizeChanged += OnInteractiveRegionChanged;
+
+        ViewModel.PropertyChanged += OnViewModelPropertyChanged;
+
         Loaded += OnLoaded;
         Unloaded += OnUnloaded;
     }
@@ -66,6 +81,8 @@ public sealed partial class MiniPlayerView : UserControl
     {
         // Initialize hover controls visual to ensure first hover works immediately.
         CompositionAnimationHelper.SetOpacityImmediate(HoverControlsContainer, 0f);
+
+        UpdateInteractiveRegions();
     }
 
     private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -82,8 +99,79 @@ public sealed partial class MiniPlayerView : UserControl
         HoverDetector.PointerExited -= OnPointerExited;
         HoverDetector.PointerCanceled -= OnPointerExited;
 
+        MediaSeekerSlider.SizeChanged -= OnInteractiveRegionChanged;
+        MediaControlsPanel.SizeChanged -= OnInteractiveRegionChanged;
+        BackButton.SizeChanged -= OnInteractiveRegionChanged;
+        RestoreButton.SizeChanged -= OnInteractiveRegionChanged;
+        QueueListView.SizeChanged -= OnInteractiveRegionChanged;
+        ArtistTextBlock.SizeChanged -= OnInteractiveRegionChanged;
+        SizeChanged -= OnInteractiveRegionChanged;
+
+        ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
+
         Loaded -= OnLoaded;
         Unloaded -= OnUnloaded;
+    }
+
+    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(PlayerViewModel.IsQueueViewVisible))
+        {
+            DispatcherQueue.TryEnqueue(UpdateInteractiveRegions);
+        }
+    }
+
+    private void OnInteractiveRegionChanged(object sender, SizeChangedEventArgs e)
+    {
+        UpdateInteractiveRegions();
+    }
+
+    /// <summary>
+    ///     Marks the interactive controls (slider, buttons, queue list) as passthrough regions
+    ///     so that the custom title-bar drag does not intercept their pointer / wheel input.
+    ///     WinUI 3's automatic exclusion for controls inside a custom title bar is unreliable
+    ///     for custom-styled buttons and scrollable content, so we register the regions explicitly.
+    /// </summary>
+    private void UpdateInteractiveRegions()
+    {
+        if (_isUnloaded) return;
+        if (XamlRoot is null) return;
+
+        try
+        {
+            var scale = XamlRoot.RasterizationScale;
+            var rects = new List<RectInt32>();
+
+            AddRectIfVisible(rects, MediaSeekerSlider, scale);
+            AddRectIfVisible(rects, MediaControlsPanel, scale);
+            AddRectIfVisible(rects, BackButton, scale);
+            AddRectIfVisible(rects, RestoreButton, scale);
+            AddRectIfVisible(rects, QueueListView, scale);
+            AddRectIfVisible(rects, ArtistTextBlock, scale);
+
+            var windowId = _parentWindow.AppWindow.Id;
+            var nonClientSource = InputNonClientPointerSource.GetForWindowId(windowId);
+            nonClientSource.SetRegionRects(NonClientRegionKind.Passthrough, rects.ToArray());
+        }
+        catch
+        {
+            // XamlRoot or AppWindow may be transiently unavailable during teardown; ignore.
+        }
+    }
+
+    private void AddRectIfVisible(List<RectInt32> rects, FrameworkElement element, double scale)
+    {
+        if (element.Visibility != Visibility.Visible) return;
+        if (element.ActualWidth <= 0 || element.ActualHeight <= 0) return;
+
+        var bounds = element.TransformToVisual(this).TransformBounds(
+            new Rect(0, 0, element.ActualWidth, element.ActualHeight));
+
+        rects.Add(new RectInt32(
+            (int)Math.Floor(bounds.X * scale),
+            (int)Math.Floor(bounds.Y * scale),
+            (int)Math.Ceiling(bounds.Width * scale),
+            (int)Math.Ceiling(bounds.Height * scale)));
     }
 
     private void OnWindowActivated(object sender, WindowActivatedEventArgs args)
