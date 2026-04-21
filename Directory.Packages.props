@@ -28,12 +28,12 @@
         <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.6" />
 
         <!-- Microsoft Extensions -->
-        <PackageVersion Include="Microsoft.Extensions.Configuration" Version="10.0.2" />
+        <PackageVersion Include="Microsoft.Extensions.Configuration" Version="10.0.6" />
         <PackageVersion Include="Microsoft.Extensions.Configuration.FileExtensions" Version="10.0.6" />
         <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="10.0.6" />
-        <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.2" />
+        <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.6" />
         <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.6" />
-        <PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.2" />
+        <PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.6" />
 
         <!-- Media Playback -->
         <PackageVersion Include="LibVLCSharp" Version="4.0.0-alpha-20260410-9830" />
