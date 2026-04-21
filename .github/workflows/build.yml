@@ -165,7 +165,7 @@ jobs:
       - name: Patch manifest Publisher for sideload signing
         shell: pwsh
         env:
-          CERT_SUBJECT: ${{ vars.SIGNPATH_TEST_CERT_SUBJECT || vars.SIGNPATH_CERT_SUBJECT }}
+          CERT_SUBJECT: ${{ startsWith(github.ref, 'refs/tags/') && vars.SIGNPATH_CERT_SUBJECT || vars.SIGNPATH_TEST_CERT_SUBJECT || vars.SIGNPATH_CERT_SUBJECT }}
         run: |
           $manifest = "src/Nagi.WinUI/Package.appxmanifest"
           (Get-Content $manifest) -replace 'Publisher="[^"]*"', "Publisher=`"$env:CERT_SUBJECT`"" |
