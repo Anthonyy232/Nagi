@@ -662,6 +662,8 @@ public static class Strings
     public static string SettingsPage_HideToTray_Header => GetString("SettingsPage_HideToTray_Header");
     public static string SettingsPage_HideToTray_Description => GetString("SettingsPage_HideToTray_Description");
     public static string SettingsPage_TrayCoverArt_Header => GetString("SettingsPage_TrayCoverArt_Header");
+    public static string SettingsPage_IgnoreLeadingArticles_Header => GetString("SettingsPage_IgnoreLeadingArticles_Header");
+    public static string SettingsPage_IgnoreLeadingArticles_Description => GetString("SettingsPage_IgnoreLeadingArticles_Description");
     public static string SettingsPage_TrayCoverArt_Description => GetString("SettingsPage_TrayCoverArt_Description");
     public static string SettingsPage_Section_Data => GetString("SettingsPage_Section_Data");
     public static string SettingsPage_ArtistSplitting_Header => GetString("SettingsPage_ArtistSplitting_Header");

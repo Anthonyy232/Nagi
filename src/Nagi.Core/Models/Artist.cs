@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Nagi.Core.Helpers;
 
 namespace Nagi.Core.Models;
 
@@ -23,6 +24,14 @@ public class Artist
     [MaxLength(500)]
     public string Name { get; set; } = string.Format(Resources.Strings.Format_Unknown, Resources.Strings.Label_Artist);
 
+    /// <summary>
+    ///     Denormalized sort key for <see cref="Name"/> with leading articles ("the", "a", "an") stripped.
+    ///     Populated by <see cref="SyncSortName"/>. Used by queries when the
+    ///     <c>IgnoreLeadingArticlesOnSort</c> setting is enabled.
+    /// </summary>
+    [Required]
+    [MaxLength(500)]
+    public string SortName { get; set; } = string.Empty;
 
     /// <summary>
     ///     A biography of the artist, typically fetched from an external service.
@@ -64,6 +73,14 @@ public class Artist
     ///     A collection of album-artist associations for this artist.
     /// </summary>
     public virtual ICollection<AlbumArtist> AlbumArtists { get; set; } = new List<AlbumArtist>();
+
+    /// <summary>
+    ///     Recomputes <see cref="SortName"/> from the current <see cref="Name"/>.
+    /// </summary>
+    public void SyncSortName()
+    {
+        SortName = SortKeyHelper.Normalize(Name);
+    }
 
     /// <summary>
     ///     Gets a display name for a list of artist names, joined by the standard separator.

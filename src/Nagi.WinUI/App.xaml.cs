@@ -543,6 +543,69 @@ public partial class App : Application
         services.AddTransient<LyricsPageViewModel>();
     }
 
+    /// <summary>
+    ///     One-shot population of sort keys for rows that pre-date the AddSortKeys migration.
+    ///     New writes are handled by <c>DenormalizationInterceptor</c>; this catches everything already in DB.
+    /// </summary>
+    private static async Task BackfillSortKeysAsync(Nagi.Core.Data.MusicDbContext dbContext)
+    {
+        const int batchSize = 500;
+
+        // Artists: load batches with empty SortName; the interceptor's backfill branch
+        // populates SortName and marks the column Modified on save.
+        while (true)
+        {
+            var artists = await dbContext.Artists
+                .Where(a => a.SortName == string.Empty || a.SortName == null)
+                .Take(batchSize)
+                .ToListAsync().ConfigureAwait(false);
+            if (artists.Count == 0) break;
+            foreach (var a in artists) a.SyncSortName();
+            await dbContext.SaveChangesAsync().ConfigureAwait(false);
+        }
+
+        // Albums: load with AlbumArtists so SyncDenormalizedFields can compute PrimaryArtistSortName.
+        // Call Sync directly (interceptor only syncs on AlbumArtist changes or Added state).
+        while (true)
+        {
+            var albums = await dbContext.Albums
+                .Include(a => a.AlbumArtists).ThenInclude(aa => aa.Artist)
+                .Where(a => a.SortTitle == string.Empty || a.SortTitle == null ||
+                            a.PrimaryArtistSortName == string.Empty || a.PrimaryArtistSortName == null)
+                .Take(batchSize)
+                .ToListAsync().ConfigureAwait(false);
+            if (albums.Count == 0) break;
+            foreach (var al in albums)
+            {
+                al.SyncDenormalizedFields();
+                var entry = dbContext.Entry(al);
+                entry.Property(x => x.SortTitle).IsModified = true;
+                entry.Property(x => x.PrimaryArtistSortName).IsModified = true;
+            }
+            await dbContext.SaveChangesAsync().ConfigureAwait(false);
+        }
+
+        // Songs: same pattern as albums.
+        while (true)
+        {
+            var songs = await dbContext.Songs
+                .Include(s => s.SongArtists).ThenInclude(sa => sa.Artist)
+                .Where(s => s.SortTitle == string.Empty || s.SortTitle == null ||
+                            s.PrimaryArtistSortName == string.Empty || s.PrimaryArtistSortName == null)
+                .Take(batchSize)
+                .ToListAsync().ConfigureAwait(false);
+            if (songs.Count == 0) break;
+            foreach (var s in songs)
+            {
+                s.SyncDenormalizedFields();
+                var entry = dbContext.Entry(s);
+                entry.Property(x => x.SortTitle).IsModified = true;
+                entry.Property(x => x.PrimaryArtistSortName).IsModified = true;
+            }
+            await dbContext.SaveChangesAsync().ConfigureAwait(false);
+        }
+    }
+
     private static async Task InitializeDatabaseAsync(IServiceProvider services)
     {
         try
@@ -561,6 +624,8 @@ public partial class App : Application
                 {
                     await dbContext.Database.MigrateAsync().ConfigureAwait(false);
                 }
+
+                await BackfillSortKeysAsync(dbContext).ConfigureAwait(false);
 
                 // EF warmup is running in _efWarmupTask (started right after DI build).
                 // Await it here so hasFolderCheck result is ready before Services phase.

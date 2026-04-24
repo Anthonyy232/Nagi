@@ -73,6 +73,7 @@ public class SettingsService : IUISettingsService, IDisposable
     private const string PlayerTintIntensityKey = "PlayerTintIntensity";
     private const string SongsPerPageKey = "SongsPerPage";
     private const string GenreSplitCharactersKey = "GenreSplitCharacters";
+    private const string IgnoreLeadingArticlesOnSortKey = "IgnoreLeadingArticlesOnSort";
 
     private static readonly JsonSerializerOptions _serializerOptions = new() { WriteIndented = true };
     private readonly ICredentialLockerService _credentialLockerService;
@@ -122,6 +123,7 @@ public class SettingsService : IUISettingsService, IDisposable
     public event Action? PlayerDesignSettingsChanged;
     public event Action<int>? SongsPerPageChanged;
     public event Action? GenreSplitCharactersChanged;
+    public event Action<bool>? IgnoreLeadingArticlesOnSortEnabledChanged;
 
     public bool IsTransparencyEffectsEnabled()
     {
@@ -178,7 +180,8 @@ public class SettingsService : IUISettingsService, IDisposable
             SetPlayerBackgroundMaterialAsync(SettingsDefaults.DefaultPlayerBackgroundMaterial),
             SetPlayerTintIntensityAsync(SettingsDefaults.DefaultPlayerTintIntensity),
             SetSongsPerPageAsync(SettingsDefaults.DefaultSongsPerPage),
-            SetGenreSplitCharactersAsync(SettingsDefaults.DefaultGenreSplitCharacters)
+            SetGenreSplitCharactersAsync(SettingsDefaults.DefaultGenreSplitCharacters),
+            SetIgnoreLeadingArticlesOnSortEnabledAsync(SettingsDefaults.IgnoreLeadingArticlesOnSortEnabled)
         };
 
         await Task.WhenAll(tasks).ConfigureAwait(false);
@@ -632,6 +635,12 @@ public class SettingsService : IUISettingsService, IDisposable
         await SetValueAsync(ArtistSplitCharactersKey, characters).ConfigureAwait(false);
         if (currentValue != characters) ArtistSplitCharactersChanged?.Invoke();
     }
+
+    public Task<bool> GetIgnoreLeadingArticlesOnSortEnabledAsync()
+        => Task.FromResult(GetValue(IgnoreLeadingArticlesOnSortKey, SettingsDefaults.IgnoreLeadingArticlesOnSortEnabled));
+
+    public Task SetIgnoreLeadingArticlesOnSortEnabledAsync(bool isEnabled)
+        => SetValueAndNotifyAsync(IgnoreLeadingArticlesOnSortKey, isEnabled, SettingsDefaults.IgnoreLeadingArticlesOnSortEnabled, IgnoreLeadingArticlesOnSortEnabledChanged);
 
     public Task<string> GetGenreSplitCharactersAsync() => Task.FromResult(GetValue(GenreSplitCharactersKey, SettingsDefaults.DefaultGenreSplitCharacters));
 

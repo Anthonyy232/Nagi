@@ -734,6 +734,16 @@
                 <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="{x:Bind resources:Strings.SettingsPage_Section_Data, Mode=OneTime}" />
 
                 <controls:SettingsCard
+                    Header="{x:Bind resources:Strings.SettingsPage_IgnoreLeadingArticles_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_IgnoreLeadingArticles_Description, Mode=OneTime}">
+                    <controls:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8CB;" />
+                    </controls:SettingsCard.HeaderIcon>
+                    <ToggleSwitch
+                        HorizontalAlignment="Right"
+                        IsOn="{x:Bind ViewModel.IsIgnoreLeadingArticlesOnSortEnabled, Mode=TwoWay}" />
+                </controls:SettingsCard>
+
+                <controls:SettingsCard
                     Header="{x:Bind resources:Strings.SettingsPage_ArtistSplitting_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_ArtistSplitting_Description, Mode=OneTime}">
                     <controls:SettingsCard.HeaderIcon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE713;" />

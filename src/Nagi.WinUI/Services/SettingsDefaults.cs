@@ -48,6 +48,7 @@ public static class SettingsDefaults
     public const PlayerBackgroundMaterial DefaultPlayerBackgroundMaterial = Models.PlayerBackgroundMaterial.Acrylic;
     public const double DefaultPlayerTintIntensity = 1.0;
     public const int DefaultSongsPerPage = 50;
+    public const bool IgnoreLeadingArticlesOnSortEnabled = true;
 
     // Default Sort Orders
     public const SongSortOrder LibrarySortOrder = SongSortOrder.TitleAsc;

@@ -197,6 +197,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         IsMinimizeToMiniPlayerEnabled = SettingsDefaults.MinimizeToMiniPlayerEnabled;
         IsShowCoverArtInTrayFlyoutEnabled = SettingsDefaults.ShowCoverArtInTrayFlyoutEnabled;
         IsFetchOnlineMetadataEnabled = SettingsDefaults.FetchOnlineMetadataEnabled;
+        IsIgnoreLeadingArticlesOnSortEnabled = SettingsDefaults.IgnoreLeadingArticlesOnSortEnabled;
         IsFetchOnlineLyricsEnabled = SettingsDefaults.FetchOnlineLyricsEnabled;
         IsDiscordRichPresenceEnabled = SettingsDefaults.DiscordRichPresenceEnabled;
         IsRememberWindowSizeEnabled = SettingsDefaults.RememberWindowSizeEnabled;
@@ -223,6 +224,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     [ObservableProperty] public partial bool IsMinimizeToMiniPlayerEnabled { get; set; }
     [ObservableProperty] public partial bool IsShowCoverArtInTrayFlyoutEnabled { get; set; }
     [ObservableProperty] public partial bool IsFetchOnlineMetadataEnabled { get; set; }
+    [ObservableProperty] public partial bool IsIgnoreLeadingArticlesOnSortEnabled { get; set; }
     [ObservableProperty] public partial bool IsFetchOnlineLyricsEnabled { get; set; }
     [ObservableProperty] public partial bool IsDiscordRichPresenceEnabled { get; set; }
     [ObservableProperty] public partial bool IsRememberWindowSizeEnabled { get; set; }
@@ -489,6 +491,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             var miniPlayerTask = _settingsService.GetMinimizeToMiniPlayerEnabledAsync();
             var trayFlyoutTask = _settingsService.GetShowCoverArtInTrayFlyoutAsync();
             var onlineMetadataTask = _settingsService.GetFetchOnlineMetadataEnabledAsync();
+            var ignoreArticlesTask = _settingsService.GetIgnoreLeadingArticlesOnSortEnabledAsync();
             var onlineLyricsTask = _settingsService.GetFetchOnlineLyricsEnabledAsync();
             var discordRpcTask = _settingsService.GetDiscordRichPresenceEnabledAsync();
             var rememberWindowTask = _settingsService.GetRememberWindowSizeEnabledAsync();
@@ -526,7 +529,8 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
                 rememberPositionTask, rememberPaneTask, volumeNormTask, fadeTask, fadeInTask, fadeOutTask, lastFmCredsTask, lastFmAuthTokenTask,
                 scrobblingTask, nowPlayingTask, accentColorTask, artistSplitTask, genreSplitTask, languageTask, lyricsProvidersTask, metadataProvidersTask,
                 playerMaterialTask, playerTintTask,
-                lbTokenTask, lbScrobblingTask, lbNowPlayingTask, lbServerUrlTask);
+                lbTokenTask, lbScrobblingTask, lbNowPlayingTask, lbServerUrlTask,
+                ignoreArticlesTask);
 
             foreach (var item in navItemsTask.Result)
             {
@@ -551,6 +555,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             IsMinimizeToMiniPlayerEnabled = miniPlayerTask.Result;
             IsShowCoverArtInTrayFlyoutEnabled = trayFlyoutTask.Result;
             IsFetchOnlineMetadataEnabled = onlineMetadataTask.Result;
+            IsIgnoreLeadingArticlesOnSortEnabled = ignoreArticlesTask.Result;
             IsFetchOnlineLyricsEnabled = onlineLyricsTask.Result;
             IsDiscordRichPresenceEnabled = discordRpcTask.Result;
             IsRememberWindowSizeEnabled = rememberWindowTask.Result;
@@ -1520,6 +1525,12 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     {
         if (_isInitializing) return;
         _ = _settingsService.SetFetchOnlineMetadataEnabledAsync(value);
+    }
+
+    partial void OnIsIgnoreLeadingArticlesOnSortEnabledChanged(bool value)
+    {
+        if (_isInitializing) return;
+        _ = _settingsService.SetIgnoreLeadingArticlesOnSortEnabledAsync(value);
     }
 
     partial void OnIsFetchOnlineLyricsEnabledChanged(bool value)

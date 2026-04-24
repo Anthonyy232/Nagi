@@ -45,12 +45,16 @@ public class MusicDbContext : DbContext
         modelBuilder.Entity<Song>(entity =>
         {
             entity.Property(s => s.Title).UseCollation("NOCASE");
+            entity.Property(s => s.SortTitle).UseCollation("NOCASE");
+            entity.Property(s => s.PrimaryArtistSortName).UseCollation("NOCASE");
             entity.Property(s => s.FilePath).UseCollation("NOCASE");
             entity.Property(s => s.DirectoryPath).UseCollation("NOCASE");
 
             entity.HasIndex(s => s.Title);
+            entity.HasIndex(s => s.SortTitle);
             entity.HasIndex(s => s.ArtistName);
             entity.HasIndex(s => s.PrimaryArtistName);
+            entity.HasIndex(s => s.PrimaryArtistSortName);
             entity.HasIndex(s => s.FilePath).IsUnique();
             entity.HasIndex(s => s.DirectoryPath);
             entity.HasIndex(s => s.AlbumId);
@@ -86,9 +90,13 @@ public class MusicDbContext : DbContext
         modelBuilder.Entity<Album>(entity =>
         {
             entity.Property(a => a.Title).UseCollation("NOCASE");
+            entity.Property(a => a.SortTitle).UseCollation("NOCASE");
+            entity.Property(a => a.PrimaryArtistSortName).UseCollation("NOCASE");
             entity.HasIndex(a => a.Title);
+            entity.HasIndex(a => a.SortTitle);
             entity.HasIndex(a => a.ArtistName);
             entity.HasIndex(a => a.PrimaryArtistName);
+            entity.HasIndex(a => a.PrimaryArtistSortName);
             entity.HasIndex(a => a.Year);
         });
 
@@ -96,7 +104,9 @@ public class MusicDbContext : DbContext
         modelBuilder.Entity<Artist>(entity =>
         {
             entity.Property(a => a.Name).UseCollation("NOCASE");
+            entity.Property(a => a.SortName).UseCollation("NOCASE");
             entity.HasIndex(a => a.Name).IsUnique();
+            entity.HasIndex(a => a.SortName);
         });
 
         // Configure the Genre entity.

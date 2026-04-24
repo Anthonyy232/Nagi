@@ -6,7 +6,9 @@ namespace Nagi.Core.Data.Interceptors;
 
 /// <summary>
 ///     An EF Core interceptor that automatically synchronizes denormalized artist fields
-///     (ArtistName and PrimaryArtistName) on Song and Album entities before they are saved to the database.
+///     (ArtistName and PrimaryArtistName) on Song and Album entities, and the sort key
+///     (SortName / SortTitle / PrimaryArtistSortName) on Artist, Album, and Song entities,
+///     before they are saved to the database.
 /// </summary>
 public class DenormalizationInterceptor : SaveChangesInterceptor
 {
@@ -84,7 +86,27 @@ public class DenormalizationInterceptor : SaveChangesInterceptor
         }
 
         foreach (var song in songsToSync)
+        {
+            var prevSortTitle = song.SortTitle;
+            var prevPrimaryArtistSortName = song.PrimaryArtistSortName;
+            var prevArtistName = song.ArtistName;
+            var prevPrimaryArtistName = song.PrimaryArtistName;
             song.SyncDenormalizedFields();
+
+            var songEntry = context.Entry(song);
+            if (songEntry.State == EntityState.Unchanged)
+            {
+                if (song.ArtistName != prevArtistName || song.PrimaryArtistName != prevPrimaryArtistName)
+                {
+                    songEntry.Property(s => s.ArtistName).IsModified = true;
+                    songEntry.Property(s => s.PrimaryArtistName).IsModified = true;
+                }
+                if (song.SortTitle != prevSortTitle)
+                    songEntry.Property(s => s.SortTitle).IsModified = true;
+                if (song.PrimaryArtistSortName != prevPrimaryArtistSortName)
+                    songEntry.Property(s => s.PrimaryArtistSortName).IsModified = true;
+            }
+        }
 
         // Same pattern for albums
         var nonAddedAlbumIds = albumsToSync
@@ -105,17 +127,39 @@ public class DenormalizationInterceptor : SaveChangesInterceptor
         {
             var prevArtistName = album.ArtistName;
             var prevPrimaryArtistName = album.PrimaryArtistName;
+            var prevSortTitle = album.SortTitle;
+            var prevPrimaryArtistSortName = album.PrimaryArtistSortName;
             album.SyncDenormalizedFields();
 
             // AutoDetectChangesEnabled=false: scalar changes on Unchanged albums are not auto-detected.
-            // Only mark the two properties that SyncDenormalizedFields touches, and only when they changed.
+            // Only mark properties that SyncDenormalizedFields touches, and only when they changed.
             var albumEntry = context.Entry(album);
-            if (albumEntry.State == EntityState.Unchanged &&
-                (album.ArtistName != prevArtistName || album.PrimaryArtistName != prevPrimaryArtistName))
+            if (albumEntry.State == EntityState.Unchanged)
             {
-                albumEntry.Property(a => a.ArtistName).IsModified = true;
-                albumEntry.Property(a => a.PrimaryArtistName).IsModified = true;
+                if (album.ArtistName != prevArtistName || album.PrimaryArtistName != prevPrimaryArtistName)
+                {
+                    albumEntry.Property(a => a.ArtistName).IsModified = true;
+                    albumEntry.Property(a => a.PrimaryArtistName).IsModified = true;
+                }
+                if (album.SortTitle != prevSortTitle)
+                    albumEntry.Property(a => a.SortTitle).IsModified = true;
+                if (album.PrimaryArtistSortName != prevPrimaryArtistSortName)
+                    albumEntry.Property(a => a.PrimaryArtistSortName).IsModified = true;
             }
+        }
+
+        // Sync Artist.SortName on Added artists and on Modified artists whose Name changed.
+        // Legacy rows with empty SortName are backfilled once by App.BackfillSortKeysAsync.
+        foreach (var entry in context.ChangeTracker.Entries<Artist>()
+                     .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified))
+        {
+            if (entry.State == EntityState.Modified && !entry.Property(a => a.Name).IsModified)
+                continue;
+
+            var prev = entry.Entity.SortName;
+            entry.Entity.SyncSortName();
+            if (entry.State == EntityState.Modified && entry.Entity.SortName != prev)
+                entry.Property(a => a.SortName).IsModified = true;
         }
     }
 }

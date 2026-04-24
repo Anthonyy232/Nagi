@@ -66,6 +66,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     private readonly IApiKeyService _apiKeyService;
     private readonly IImageProcessor _imageProcessor;
     private bool _disposed;
+    private volatile bool _ignoreArticlesOnSort = true;
     private volatile bool _isMetadataFetchRunning;
     private volatile bool _isBatchScanning; // Prevents ReplayGain trigger during batch operations
     private CancellationTokenSource _metadataFetchCts;
@@ -108,7 +109,17 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _metadataFetchCts = new CancellationTokenSource();
         _settingsService.FetchOnlineMetadataEnabledChanged += OnFetchOnlineMetadataEnabledChanged;
+        _settingsService.IgnoreLeadingArticlesOnSortEnabledChanged += OnIgnoreLeadingArticlesOnSortChanged;
+        _ = InitializeIgnoreArticlesFlagAsync();
     }
+
+    private async Task InitializeIgnoreArticlesFlagAsync()
+    {
+        try { _ignoreArticlesOnSort = await _settingsService.GetIgnoreLeadingArticlesOnSortEnabledAsync().ConfigureAwait(false); }
+        catch (Exception ex) { _logger.LogWarning(ex, "Failed to load IgnoreLeadingArticlesOnSort setting; using default ({Default}).", _ignoreArticlesOnSort); }
+    }
+
+    private void OnIgnoreLeadingArticlesOnSortChanged(bool value) => _ignoreArticlesOnSort = value;
 
     /// <summary>
     ///     Occurs when an artist's metadata (e.g., biography, image) has been successfully updated from a remote source.
@@ -1498,7 +1509,11 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     public async Task<IEnumerable<Artist>> GetAllArtistsAsync(CancellationToken token = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        return await context.Artists.AsNoTracking().OrderBy(a => a.Name).ThenBy(a => a.Id).ToListAsync(token).ConfigureAwait(false);
+        var query = context.Artists.AsNoTracking();
+        var ordered = _ignoreArticlesOnSort
+            ? query.OrderBy(a => a.SortName).ThenBy(a => a.Id)
+            : query.OrderBy(a => a.Name).ThenBy(a => a.Id);
+        return await ordered.ToListAsync(token).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -1508,8 +1523,11 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         var normalizedTerm = NormalizeString(searchTerm) ?? string.Empty;
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        return await BuildArtistSearchQuery(context, normalizedTerm).AsNoTracking().OrderBy(a => a.Name).ThenBy(a => a.Id)
-            .ToListAsync(token).ConfigureAwait(false);
+        var query = BuildArtistSearchQuery(context, normalizedTerm).AsNoTracking();
+        var ordered = _ignoreArticlesOnSort
+            ? query.OrderBy(a => a.SortName).ThenBy(a => a.Id)
+            : query.OrderBy(a => a.Name).ThenBy(a => a.Id);
+        return await ordered.ToListAsync(token).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -1597,13 +1615,12 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     public async Task<IEnumerable<Album>> GetAllAlbumsAsync(CancellationToken token = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        return await context.Albums.AsNoTracking()
-            .Include(al => al.AlbumArtists).ThenInclude(aa => aa.Artist)
-            .OrderBy(al => al.PrimaryArtistName)
-            .ThenBy(al => al.Title)
-            .ThenBy(al => al.Id)
-            .AsSplitQuery()
-            .ToListAsync(token).ConfigureAwait(false);
+        var query = context.Albums.AsNoTracking()
+            .Include(al => al.AlbumArtists).ThenInclude(aa => aa.Artist);
+        var ordered = _ignoreArticlesOnSort
+            ? query.OrderBy(al => al.PrimaryArtistSortName).ThenBy(al => al.SortTitle).ThenBy(al => al.Id)
+            : query.OrderBy(al => al.PrimaryArtistName).ThenBy(al => al.Title).ThenBy(al => al.Id);
+        return await ordered.AsSplitQuery().ToListAsync(token).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -1613,12 +1630,11 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         var normalizedTerm = NormalizeString(searchTerm) ?? string.Empty;
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        return await BuildAlbumSearchQuery(context, normalizedTerm)
-            .OrderBy(al => al.PrimaryArtistName)
-            .ThenBy(al => al.Title)
-            .ThenBy(al => al.Id)
-            .AsSplitQuery()
-            .ToListAsync(token).ConfigureAwait(false);
+        var query = BuildAlbumSearchQuery(context, normalizedTerm);
+        var ordered = _ignoreArticlesOnSort
+            ? query.OrderBy(al => al.PrimaryArtistSortName).ThenBy(al => al.SortTitle).ThenBy(al => al.Id)
+            : query.OrderBy(al => al.PrimaryArtistName).ThenBy(al => al.Title).ThenBy(al => al.Id);
+        return await ordered.AsSplitQuery().ToListAsync(token).ConfigureAwait(false);
     }
 
     #endregion
@@ -2295,20 +2311,27 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var query = context.Artists.AsNoTracking();
         var totalCount = await query.CountAsync(token).ConfigureAwait(false);
+        var ignoreArticles = _ignoreArticlesOnSort;
 
         // Apply sort order - for SongCountDesc, we need to join with songs and count
         IOrderedQueryable<Artist> orderedQuery = sortOrder switch
         {
-            ArtistSortOrder.NameDesc => query.OrderByDescending(a => a.Name).ThenByDescending(a => a.Id),
-            ArtistSortOrder.SongCountDesc => query
-                .OrderByDescending(a => context.SongArtists.Count(sa => sa.ArtistId == a.Id))
-                .ThenByDescending(a => a.Name)
-                .ThenByDescending(a => a.Id),
-            ArtistSortOrder.SongCountAsc => query
-                .OrderBy(a => context.SongArtists.Count(sa => sa.ArtistId == a.Id))
-                .ThenBy(a => a.Name)
-                .ThenBy(a => a.Id),
-            _ => query.OrderBy(a => a.Name).ThenBy(a => a.Id)
+            ArtistSortOrder.NameDesc => ignoreArticles
+                ? query.OrderByDescending(a => a.SortName).ThenByDescending(a => a.Id)
+                : query.OrderByDescending(a => a.Name).ThenByDescending(a => a.Id),
+            ArtistSortOrder.SongCountDesc => ignoreArticles
+                ? query.OrderByDescending(a => context.SongArtists.Count(sa => sa.ArtistId == a.Id))
+                    .ThenByDescending(a => a.SortName).ThenByDescending(a => a.Id)
+                : query.OrderByDescending(a => context.SongArtists.Count(sa => sa.ArtistId == a.Id))
+                    .ThenByDescending(a => a.Name).ThenByDescending(a => a.Id),
+            ArtistSortOrder.SongCountAsc => ignoreArticles
+                ? query.OrderBy(a => context.SongArtists.Count(sa => sa.ArtistId == a.Id))
+                    .ThenBy(a => a.SortName).ThenBy(a => a.Id)
+                : query.OrderBy(a => context.SongArtists.Count(sa => sa.ArtistId == a.Id))
+                    .ThenBy(a => a.Name).ThenBy(a => a.Id),
+            _ => ignoreArticles
+                ? query.OrderBy(a => a.SortName).ThenBy(a => a.Id)
+                : query.OrderBy(a => a.Name).ThenBy(a => a.Id)
         };
 
         var pagedData = await orderedQuery
@@ -2329,7 +2352,10 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             ? context.Artists
             : BuildArtistSearchQuery(context, normalizedTerm);
         var totalCount = await query.CountAsync(token).ConfigureAwait(false);
-        var pagedData = await query.AsNoTracking().OrderBy(a => a.Name).ThenBy(a => a.Id)
+        var sortedQuery = _ignoreArticlesOnSort
+            ? query.AsNoTracking().OrderBy(a => a.SortName).ThenBy(a => a.Id)
+            : query.AsNoTracking().OrderBy(a => a.Name).ThenBy(a => a.Id);
+        var pagedData = await sortedQuery
             .Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync(token).ConfigureAwait(false);
 
         return new PagedResult<Artist>
@@ -2345,18 +2371,37 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var query = context.Albums.AsNoTracking().Include(al => al.AlbumArtists).ThenInclude(aa => aa.Artist);
         var totalCount = await query.CountAsync(token).ConfigureAwait(false);
+        var ignoreArticles = _ignoreArticlesOnSort;
 
         IOrderedQueryable<Album> orderedQuery = sortOrder switch
         {
-            AlbumSortOrder.ArtistDesc => query.OrderByDescending(al => al.PrimaryArtistName).ThenByDescending(al => al.Title).ThenByDescending(al => al.Id),
-            AlbumSortOrder.ArtistAsc => query.OrderBy(al => al.PrimaryArtistName).ThenBy(al => al.Title).ThenBy(al => al.Id),
-            AlbumSortOrder.AlbumTitleAsc => query.OrderBy(al => al.Title).ThenBy(al => al.Id),
-            AlbumSortOrder.AlbumTitleDesc => query.OrderByDescending(al => al.Title).ThenByDescending(al => al.Id),
-            AlbumSortOrder.YearDesc => query.OrderByDescending(al => al.Year ?? 0).ThenByDescending(al => al.PrimaryArtistName).ThenByDescending(al => al.Title).ThenByDescending(al => al.Id),
-            AlbumSortOrder.YearAsc => query.OrderBy(al => al.Year ?? int.MaxValue).ThenBy(al => al.PrimaryArtistName).ThenBy(al => al.Title).ThenBy(al => al.Id),
-            AlbumSortOrder.SongCountDesc => query.OrderByDescending(al => context.Songs.Count(s => s.AlbumId == al.Id)).ThenByDescending(al => al.Title).ThenByDescending(al => al.Id),
-            AlbumSortOrder.SongCountAsc => query.OrderBy(al => context.Songs.Count(s => s.AlbumId == al.Id)).ThenBy(al => al.Title).ThenBy(al => al.Id),
-            _ => query.OrderBy(al => al.PrimaryArtistName).ThenBy(al => al.Title).ThenBy(al => al.Id)
+            AlbumSortOrder.ArtistDesc => ignoreArticles
+                ? query.OrderByDescending(al => al.PrimaryArtistSortName).ThenByDescending(al => al.SortTitle).ThenByDescending(al => al.Id)
+                : query.OrderByDescending(al => al.PrimaryArtistName).ThenByDescending(al => al.Title).ThenByDescending(al => al.Id),
+            AlbumSortOrder.ArtistAsc => ignoreArticles
+                ? query.OrderBy(al => al.PrimaryArtistSortName).ThenBy(al => al.SortTitle).ThenBy(al => al.Id)
+                : query.OrderBy(al => al.PrimaryArtistName).ThenBy(al => al.Title).ThenBy(al => al.Id),
+            AlbumSortOrder.AlbumTitleAsc => ignoreArticles
+                ? query.OrderBy(al => al.SortTitle).ThenBy(al => al.Id)
+                : query.OrderBy(al => al.Title).ThenBy(al => al.Id),
+            AlbumSortOrder.AlbumTitleDesc => ignoreArticles
+                ? query.OrderByDescending(al => al.SortTitle).ThenByDescending(al => al.Id)
+                : query.OrderByDescending(al => al.Title).ThenByDescending(al => al.Id),
+            AlbumSortOrder.YearDesc => ignoreArticles
+                ? query.OrderByDescending(al => al.Year ?? 0).ThenByDescending(al => al.PrimaryArtistSortName).ThenByDescending(al => al.SortTitle).ThenByDescending(al => al.Id)
+                : query.OrderByDescending(al => al.Year ?? 0).ThenByDescending(al => al.PrimaryArtistName).ThenByDescending(al => al.Title).ThenByDescending(al => al.Id),
+            AlbumSortOrder.YearAsc => ignoreArticles
+                ? query.OrderBy(al => al.Year ?? int.MaxValue).ThenBy(al => al.PrimaryArtistSortName).ThenBy(al => al.SortTitle).ThenBy(al => al.Id)
+                : query.OrderBy(al => al.Year ?? int.MaxValue).ThenBy(al => al.PrimaryArtistName).ThenBy(al => al.Title).ThenBy(al => al.Id),
+            AlbumSortOrder.SongCountDesc => ignoreArticles
+                ? query.OrderByDescending(al => context.Songs.Count(s => s.AlbumId == al.Id)).ThenByDescending(al => al.SortTitle).ThenByDescending(al => al.Id)
+                : query.OrderByDescending(al => context.Songs.Count(s => s.AlbumId == al.Id)).ThenByDescending(al => al.Title).ThenByDescending(al => al.Id),
+            AlbumSortOrder.SongCountAsc => ignoreArticles
+                ? query.OrderBy(al => context.Songs.Count(s => s.AlbumId == al.Id)).ThenBy(al => al.SortTitle).ThenBy(al => al.Id)
+                : query.OrderBy(al => context.Songs.Count(s => s.AlbumId == al.Id)).ThenBy(al => al.Title).ThenBy(al => al.Id),
+            _ => ignoreArticles
+                ? query.OrderBy(al => al.PrimaryArtistSortName).ThenBy(al => al.SortTitle).ThenBy(al => al.Id)
+                : query.OrderBy(al => al.PrimaryArtistName).ThenBy(al => al.Title).ThenBy(al => al.Id)
         };
 
         var pagedData = await orderedQuery
@@ -5601,75 +5646,108 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
     private IOrderedQueryable<Song> ApplySongSortOrder(IQueryable<Song> query, SongSortOrder sortOrder)
     {
+        var ia = _ignoreArticlesOnSort;
         return sortOrder switch
         {
-            SongSortOrder.TitleAsc => query.OrderBy(s => s.Title).ThenBy(s => s.PrimaryArtistName).ThenBy(s => s.Id),
-            SongSortOrder.TitleDesc => query.OrderByDescending(s => s.Title).ThenByDescending(s => s.PrimaryArtistName).ThenByDescending(s => s.Id),
-            SongSortOrder.YearAsc => query.OrderBy(s => s.Year)
-                .ThenBy(s => s.PrimaryArtistName)
-                .ThenBy(s => s.Album != null ? s.Album.Title : string.Empty)
-                .ThenBy(s => s.DiscNumber ?? 0)
-                .ThenBy(s => s.TrackNumber)
-                .ThenBy(s => s.Title)
-                .ThenBy(s => s.Id),
-            SongSortOrder.YearDesc => query.OrderByDescending(s => s.Year)
-                .ThenByDescending(s => s.PrimaryArtistName)
-                .ThenByDescending(s => s.Album != null ? s.Album.Title : string.Empty)
-                .ThenByDescending(s => s.DiscNumber ?? 0)
-                .ThenByDescending(s => s.TrackNumber)
-                .ThenByDescending(s => s.Title)
-                .ThenByDescending(s => s.Id),
-            SongSortOrder.FileCreatedDateAsc => query.OrderBy(s => s.FileCreatedDate)
-                .ThenBy(s => s.PrimaryArtistName)
-                .ThenBy(s => s.Album != null ? s.Album.Title : string.Empty)
-                .ThenBy(s => s.DiscNumber ?? 0)
-                .ThenBy(s => s.TrackNumber)
-                .ThenBy(s => s.Title)
-                .ThenBy(s => s.Id),
-            SongSortOrder.FileCreatedDateDesc => query.OrderByDescending(s => s.FileCreatedDate)
-                .ThenByDescending(s => s.PrimaryArtistName)
-                .ThenByDescending(s => s.Album != null ? s.Album.Title : string.Empty)
-                .ThenByDescending(s => s.DiscNumber ?? 0)
-                .ThenByDescending(s => s.TrackNumber)
-                .ThenByDescending(s => s.Title)
-                .ThenByDescending(s => s.Id),
-            SongSortOrder.AlbumAsc => query
-                .OrderBy(s => s.Album != null ? s.Album.Title : string.Empty)
-                .ThenBy(s => s.DiscNumber ?? 0)
-                .ThenBy(s => s.TrackNumber)
-                .ThenBy(s => s.Title)
-                .ThenBy(s => s.Id),
-            SongSortOrder.AlbumDesc => query
-                .OrderByDescending(s => s.Album != null ? s.Album.Title : string.Empty)
-                .ThenByDescending(s => s.DiscNumber ?? 0)
-                .ThenByDescending(s => s.TrackNumber)
-                .ThenByDescending(s => s.Title)
-                .ThenByDescending(s => s.Id),
-            SongSortOrder.TrackNumberAsc => query
-                .OrderBy(s => s.Album != null ? s.Album.Title : string.Empty)
-                .ThenBy(s => s.DiscNumber ?? 0)
-                .ThenBy(s => s.TrackNumber)
-                .ThenBy(s => s.Title)
-                .ThenBy(s => s.Id),
-            SongSortOrder.TrackNumberDesc => query
-                .OrderByDescending(s => s.Album != null ? s.Album.Title : string.Empty)
-                .ThenByDescending(s => s.DiscNumber ?? 0)
-                .ThenByDescending(s => s.TrackNumber)
-                .ThenByDescending(s => s.Title)
-                .ThenByDescending(s => s.Id),
-            SongSortOrder.ArtistAsc => query.OrderBy(s => s.PrimaryArtistName)
-                .ThenBy(s => s.Album != null ? s.Album.Title : string.Empty)
-                .ThenBy(s => s.DiscNumber ?? 0)
-                .ThenBy(s => s.TrackNumber)
-                .ThenBy(s => s.Title)
-                .ThenBy(s => s.Id),
-            SongSortOrder.ArtistDesc => query.OrderByDescending(s => s.PrimaryArtistName)
-                .ThenByDescending(s => s.Album != null ? s.Album.Title : string.Empty)
-                .ThenByDescending(s => s.DiscNumber ?? 0)
-                .ThenByDescending(s => s.TrackNumber)
-                .ThenByDescending(s => s.Title)
-                .ThenByDescending(s => s.Id),
-            _ => query.OrderBy(s => s.Title).ThenBy(s => s.PrimaryArtistName).ThenBy(s => s.Id)
+            SongSortOrder.TitleAsc => ia
+                ? query.OrderBy(s => s.SortTitle).ThenBy(s => s.PrimaryArtistSortName).ThenBy(s => s.Id)
+                : query.OrderBy(s => s.Title).ThenBy(s => s.PrimaryArtistName).ThenBy(s => s.Id),
+            SongSortOrder.TitleDesc => ia
+                ? query.OrderByDescending(s => s.SortTitle).ThenByDescending(s => s.PrimaryArtistSortName).ThenByDescending(s => s.Id)
+                : query.OrderByDescending(s => s.Title).ThenByDescending(s => s.PrimaryArtistName).ThenByDescending(s => s.Id),
+            SongSortOrder.YearAsc => ia
+                ? query.OrderBy(s => s.Year)
+                    .ThenBy(s => s.PrimaryArtistSortName)
+                    .ThenBy(s => s.Album != null ? s.Album.SortTitle : string.Empty)
+                    .ThenBy(s => s.DiscNumber ?? 0).ThenBy(s => s.TrackNumber)
+                    .ThenBy(s => s.SortTitle).ThenBy(s => s.Id)
+                : query.OrderBy(s => s.Year)
+                    .ThenBy(s => s.PrimaryArtistName)
+                    .ThenBy(s => s.Album != null ? s.Album.Title : string.Empty)
+                    .ThenBy(s => s.DiscNumber ?? 0).ThenBy(s => s.TrackNumber)
+                    .ThenBy(s => s.Title).ThenBy(s => s.Id),
+            SongSortOrder.YearDesc => ia
+                ? query.OrderByDescending(s => s.Year)
+                    .ThenByDescending(s => s.PrimaryArtistSortName)
+                    .ThenByDescending(s => s.Album != null ? s.Album.SortTitle : string.Empty)
+                    .ThenByDescending(s => s.DiscNumber ?? 0).ThenByDescending(s => s.TrackNumber)
+                    .ThenByDescending(s => s.SortTitle).ThenByDescending(s => s.Id)
+                : query.OrderByDescending(s => s.Year)
+                    .ThenByDescending(s => s.PrimaryArtistName)
+                    .ThenByDescending(s => s.Album != null ? s.Album.Title : string.Empty)
+                    .ThenByDescending(s => s.DiscNumber ?? 0).ThenByDescending(s => s.TrackNumber)
+                    .ThenByDescending(s => s.Title).ThenByDescending(s => s.Id),
+            SongSortOrder.FileCreatedDateAsc => ia
+                ? query.OrderBy(s => s.FileCreatedDate)
+                    .ThenBy(s => s.PrimaryArtistSortName)
+                    .ThenBy(s => s.Album != null ? s.Album.SortTitle : string.Empty)
+                    .ThenBy(s => s.DiscNumber ?? 0).ThenBy(s => s.TrackNumber)
+                    .ThenBy(s => s.SortTitle).ThenBy(s => s.Id)
+                : query.OrderBy(s => s.FileCreatedDate)
+                    .ThenBy(s => s.PrimaryArtistName)
+                    .ThenBy(s => s.Album != null ? s.Album.Title : string.Empty)
+                    .ThenBy(s => s.DiscNumber ?? 0).ThenBy(s => s.TrackNumber)
+                    .ThenBy(s => s.Title).ThenBy(s => s.Id),
+            SongSortOrder.FileCreatedDateDesc => ia
+                ? query.OrderByDescending(s => s.FileCreatedDate)
+                    .ThenByDescending(s => s.PrimaryArtistSortName)
+                    .ThenByDescending(s => s.Album != null ? s.Album.SortTitle : string.Empty)
+                    .ThenByDescending(s => s.DiscNumber ?? 0).ThenByDescending(s => s.TrackNumber)
+                    .ThenByDescending(s => s.SortTitle).ThenByDescending(s => s.Id)
+                : query.OrderByDescending(s => s.FileCreatedDate)
+                    .ThenByDescending(s => s.PrimaryArtistName)
+                    .ThenByDescending(s => s.Album != null ? s.Album.Title : string.Empty)
+                    .ThenByDescending(s => s.DiscNumber ?? 0).ThenByDescending(s => s.TrackNumber)
+                    .ThenByDescending(s => s.Title).ThenByDescending(s => s.Id),
+            SongSortOrder.AlbumAsc => ia
+                ? query.OrderBy(s => s.Album != null ? s.Album.SortTitle : string.Empty)
+                    .ThenBy(s => s.DiscNumber ?? 0).ThenBy(s => s.TrackNumber)
+                    .ThenBy(s => s.SortTitle).ThenBy(s => s.Id)
+                : query.OrderBy(s => s.Album != null ? s.Album.Title : string.Empty)
+                    .ThenBy(s => s.DiscNumber ?? 0).ThenBy(s => s.TrackNumber)
+                    .ThenBy(s => s.Title).ThenBy(s => s.Id),
+            SongSortOrder.AlbumDesc => ia
+                ? query.OrderByDescending(s => s.Album != null ? s.Album.SortTitle : string.Empty)
+                    .ThenByDescending(s => s.DiscNumber ?? 0).ThenByDescending(s => s.TrackNumber)
+                    .ThenByDescending(s => s.SortTitle).ThenByDescending(s => s.Id)
+                : query.OrderByDescending(s => s.Album != null ? s.Album.Title : string.Empty)
+                    .ThenByDescending(s => s.DiscNumber ?? 0).ThenByDescending(s => s.TrackNumber)
+                    .ThenByDescending(s => s.Title).ThenByDescending(s => s.Id),
+            SongSortOrder.TrackNumberAsc => ia
+                ? query.OrderBy(s => s.Album != null ? s.Album.SortTitle : string.Empty)
+                    .ThenBy(s => s.DiscNumber ?? 0).ThenBy(s => s.TrackNumber)
+                    .ThenBy(s => s.SortTitle).ThenBy(s => s.Id)
+                : query.OrderBy(s => s.Album != null ? s.Album.Title : string.Empty)
+                    .ThenBy(s => s.DiscNumber ?? 0).ThenBy(s => s.TrackNumber)
+                    .ThenBy(s => s.Title).ThenBy(s => s.Id),
+            SongSortOrder.TrackNumberDesc => ia
+                ? query.OrderByDescending(s => s.Album != null ? s.Album.SortTitle : string.Empty)
+                    .ThenByDescending(s => s.DiscNumber ?? 0).ThenByDescending(s => s.TrackNumber)
+                    .ThenByDescending(s => s.SortTitle).ThenByDescending(s => s.Id)
+                : query.OrderByDescending(s => s.Album != null ? s.Album.Title : string.Empty)
+                    .ThenByDescending(s => s.DiscNumber ?? 0).ThenByDescending(s => s.TrackNumber)
+                    .ThenByDescending(s => s.Title).ThenByDescending(s => s.Id),
+            SongSortOrder.ArtistAsc => ia
+                ? query.OrderBy(s => s.PrimaryArtistSortName)
+                    .ThenBy(s => s.Album != null ? s.Album.SortTitle : string.Empty)
+                    .ThenBy(s => s.DiscNumber ?? 0).ThenBy(s => s.TrackNumber)
+                    .ThenBy(s => s.SortTitle).ThenBy(s => s.Id)
+                : query.OrderBy(s => s.PrimaryArtistName)
+                    .ThenBy(s => s.Album != null ? s.Album.Title : string.Empty)
+                    .ThenBy(s => s.DiscNumber ?? 0).ThenBy(s => s.TrackNumber)
+                    .ThenBy(s => s.Title).ThenBy(s => s.Id),
+            SongSortOrder.ArtistDesc => ia
+                ? query.OrderByDescending(s => s.PrimaryArtistSortName)
+                    .ThenByDescending(s => s.Album != null ? s.Album.SortTitle : string.Empty)
+                    .ThenByDescending(s => s.DiscNumber ?? 0).ThenByDescending(s => s.TrackNumber)
+                    .ThenByDescending(s => s.SortTitle).ThenByDescending(s => s.Id)
+                : query.OrderByDescending(s => s.PrimaryArtistName)
+                    .ThenByDescending(s => s.Album != null ? s.Album.Title : string.Empty)
+                    .ThenByDescending(s => s.DiscNumber ?? 0).ThenByDescending(s => s.TrackNumber)
+                    .ThenByDescending(s => s.Title).ThenByDescending(s => s.Id),
+            _ => ia
+                ? query.OrderBy(s => s.SortTitle).ThenBy(s => s.PrimaryArtistSortName).ThenBy(s => s.Id)
+                : query.OrderBy(s => s.Title).ThenBy(s => s.PrimaryArtistName).ThenBy(s => s.Id)
         };
     }
 

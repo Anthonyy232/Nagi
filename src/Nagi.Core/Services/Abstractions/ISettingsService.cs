@@ -349,6 +349,22 @@ public interface ISettingsService
     Task SetFadeOutDurationMsAsync(int durationMs);
 
     /// <summary>
+    ///     Gets whether leading English articles ("the", "a", "an") should be ignored when
+    ///     sorting albums, artists, and songs alphabetically.
+    /// </summary>
+    Task<bool> GetIgnoreLeadingArticlesOnSortEnabledAsync();
+
+    /// <summary>
+    ///     Sets the preference for ignoring leading articles during alphabetical sort.
+    /// </summary>
+    Task SetIgnoreLeadingArticlesOnSortEnabledAsync(bool isEnabled);
+
+    /// <summary>
+    ///     Occurs when the "ignore leading articles on sort" setting has changed.
+    /// </summary>
+    event Action<bool>? IgnoreLeadingArticlesOnSortEnabledChanged;
+
+    /// <summary>
     ///     Resets all application-wide settings to their default values.
     /// </summary>
     Task ResetToDefaultsAsync();
