@@ -49,6 +49,12 @@ public class SettingsService : IUISettingsService, IDisposable
     private const string LastFmAuthTokenKey = "LastFmAuthToken";
     private const string LastFmScrobblingEnabledKey = "LastFmScrobblingEnabled";
     private const string LastFmNowPlayingEnabledKey = "LastFmNowPlayingEnabled";
+    private const string ListenBrainzScrobblingEnabledKey = "ListenBrainzScrobblingEnabled";
+    private const string ListenBrainzNowPlayingEnabledKey = "ListenBrainzNowPlayingEnabled";
+    private const string ListenBrainzServerUrlKey = "ListenBrainzServerUrl";
+    private const string ListenBrainzEnabledSinceUtcKey = "ListenBrainzEnabledSinceUtcTicks";
+    private const string ListenBrainzTokenResource = "Nagi/ListenBrainz";
+    private const string ListenBrainzTokenUserName = "token";
     private const string EqualizerSettingsKey = "EqualizerSettings";
     private const string RememberWindowSizeEnabledKey = "RememberWindowSizeEnabled";
     private const string LastWindowSizeKey = "LastWindowSize";
@@ -100,6 +106,7 @@ public class SettingsService : IUISettingsService, IDisposable
     public event Action? NavigationSettingsChanged;
     public event Action? PlayerButtonSettingsChanged;
     public event Action? LastFmSettingsChanged;
+    public event Action? ListenBrainzSettingsChanged;
     public event Action<bool>? DiscordRichPresenceSettingChanged;
     public event Action<bool>? VolumeNormalizationEnabledChanged;
     public event Action<bool>? FadeOnPlayPauseEnabledChanged;
@@ -152,6 +159,11 @@ public class SettingsService : IUISettingsService, IDisposable
             SetLastFmScrobblingEnabledAsync(SettingsDefaults.LastFmScrobblingEnabled),
             SetLastFmNowPlayingEnabledAsync(SettingsDefaults.LastFmNowPlayingEnabled),
             ClearLastFmCredentialsAsync(),
+            SetListenBrainzScrobblingEnabledAsync(false),
+            SetListenBrainzNowPlayingEnabledAsync(false),
+            ClearListenBrainzUserTokenAsync(),
+            SetListenBrainzServerUrlAsync(null),
+            SetListenBrainzEnabledSinceUtcAsync(null),
             SetEqualizerSettingsAsync(new EqualizerSettings()),
             SetRememberWindowSizeEnabledAsync(SettingsDefaults.RememberWindowSizeEnabled),
             SetRememberWindowPositionEnabledAsync(SettingsDefaults.RememberWindowPositionEnabled),
@@ -452,6 +464,73 @@ public class SettingsService : IUISettingsService, IDisposable
     public Task<string?> GetLastFmAuthTokenAsync()
     {
         return Task.FromResult(GetValue<string?>(LastFmAuthTokenKey, null));
+    }
+
+    public Task<bool> GetListenBrainzScrobblingEnabledAsync()
+    {
+        return Task.FromResult(GetValue(ListenBrainzScrobblingEnabledKey, false));
+    }
+
+    public async Task SetListenBrainzScrobblingEnabledAsync(bool isEnabled)
+    {
+        await SetValueAsync(ListenBrainzScrobblingEnabledKey, isEnabled).ConfigureAwait(false);
+        ListenBrainzSettingsChanged?.Invoke();
+    }
+
+    public Task<bool> GetListenBrainzNowPlayingEnabledAsync()
+    {
+        return Task.FromResult(GetValue(ListenBrainzNowPlayingEnabledKey, false));
+    }
+
+    public async Task SetListenBrainzNowPlayingEnabledAsync(bool isEnabled)
+    {
+        await SetValueAsync(ListenBrainzNowPlayingEnabledKey, isEnabled).ConfigureAwait(false);
+        ListenBrainzSettingsChanged?.Invoke();
+    }
+
+    public Task<string?> GetListenBrainzUserTokenAsync()
+    {
+        var credential = _credentialLockerService.RetrieveCredential(ListenBrainzTokenResource);
+        return Task.FromResult(credential?.Password);
+    }
+
+    public Task SaveListenBrainzUserTokenAsync(string token)
+    {
+        _credentialLockerService.SaveCredential(ListenBrainzTokenResource, ListenBrainzTokenUserName, token);
+        ListenBrainzSettingsChanged?.Invoke();
+        return Task.CompletedTask;
+    }
+
+    public Task ClearListenBrainzUserTokenAsync()
+    {
+        _credentialLockerService.RemoveCredential(ListenBrainzTokenResource);
+        ListenBrainzSettingsChanged?.Invoke();
+        return Task.CompletedTask;
+    }
+
+    public Task<string?> GetListenBrainzServerUrlAsync()
+    {
+        return Task.FromResult(GetValue<string?>(ListenBrainzServerUrlKey, null));
+    }
+
+    public async Task SetListenBrainzServerUrlAsync(string? url)
+    {
+        await SetValueAsync<string?>(ListenBrainzServerUrlKey, url).ConfigureAwait(false);
+        ListenBrainzSettingsChanged?.Invoke();
+    }
+
+    public Task<DateTime?> GetListenBrainzEnabledSinceUtcAsync()
+    {
+        var ticks = GetValue<long>(ListenBrainzEnabledSinceUtcKey, 0L);
+        if (ticks == 0L) return Task.FromResult<DateTime?>(null);
+        return Task.FromResult<DateTime?>(new DateTime(ticks, DateTimeKind.Utc));
+    }
+
+    public async Task SetListenBrainzEnabledSinceUtcAsync(DateTime? timestamp)
+    {
+        var ticks = timestamp.HasValue ? timestamp.Value.ToUniversalTime().Ticks : 0L;
+        await SetValueAsync(ListenBrainzEnabledSinceUtcKey, ticks).ConfigureAwait(false);
+        ListenBrainzSettingsChanged?.Invoke();
     }
 
     public Task<EqualizerSettings?> GetEqualizerSettingsAsync()

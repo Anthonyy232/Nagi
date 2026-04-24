@@ -105,6 +105,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     private readonly IAppInfoService _appInfoService;
     private readonly IApplicationLifecycle _applicationLifecycle;
     private readonly ILastFmAuthService _lastFmAuthService;
+    private readonly IListenBrainzScrobblerService _listenBrainzScrobblerService;
     private readonly ILogger<SettingsViewModel> _logger;
     private readonly IMusicPlaybackService _playbackService;
     private readonly IUISettingsService _settingsService;
@@ -143,6 +144,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         IApplicationLifecycle applicationLifecycle,
         IAppInfoService appInfoService,
         ILastFmAuthService lastFmAuthService,
+        IListenBrainzScrobblerService listenBrainzScrobblerService,
         IMusicPlaybackService playbackService,
         IPlaylistExportService playlistExportService,
         ILibraryReader libraryReader,
@@ -160,6 +162,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         _applicationLifecycle = applicationLifecycle ?? throw new ArgumentNullException(nameof(applicationLifecycle));
         _appInfoService = appInfoService ?? throw new ArgumentNullException(nameof(appInfoService));
         _lastFmAuthService = lastFmAuthService ?? throw new ArgumentNullException(nameof(lastFmAuthService));
+        _listenBrainzScrobblerService = listenBrainzScrobblerService ?? throw new ArgumentNullException(nameof(listenBrainzScrobblerService));
         _playbackService = playbackService ?? throw new ArgumentNullException(nameof(playbackService));
         _playlistExportService = playlistExportService ?? throw new ArgumentNullException(nameof(playlistExportService));
         _libraryReader = libraryReader ?? throw new ArgumentNullException(nameof(libraryReader));
@@ -321,6 +324,14 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     public partial string? LastFmUsername { get; set; }
     [ObservableProperty] public partial bool IsLastFmScrobblingEnabled { get; set; }
     [ObservableProperty] public partial bool IsLastFmNowPlayingEnabled { get; set; }
+
+    // ListenBrainz bindable state
+    [ObservableProperty] public partial string ListenBrainzUserToken { get; set; } = string.Empty;
+    [ObservableProperty] public partial bool ListenBrainzScrobblingEnabled { get; set; }
+    [ObservableProperty] public partial bool ListenBrainzNowPlayingEnabled { get; set; }
+    [ObservableProperty] public partial string ListenBrainzServerUrl { get; set; } = string.Empty;
+    [ObservableProperty] public partial string? ListenBrainzConnectionStatus { get; set; }
+    [ObservableProperty] public partial bool ListenBrainzIsConnected { get; set; }
 
     public ObservableCollection<EqualizerBandViewModel> EqualizerBands { get; } = new();
     public ObservableRangeCollection<PlayerButtonSetting> PlayerButtons { get; } = new();
@@ -491,6 +502,10 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             var lastFmAuthTokenTask = _settingsService.GetLastFmAuthTokenAsync();
             var scrobblingTask = _settingsService.GetLastFmScrobblingEnabledAsync();
             var nowPlayingTask = _settingsService.GetLastFmNowPlayingEnabledAsync();
+            var lbTokenTask = _settingsService.GetListenBrainzUserTokenAsync();
+            var lbScrobblingTask = _settingsService.GetListenBrainzScrobblingEnabledAsync();
+            var lbNowPlayingTask = _settingsService.GetListenBrainzNowPlayingEnabledAsync();
+            var lbServerUrlTask = _settingsService.GetListenBrainzServerUrlAsync();
 
             var accentColorTask = _settingsService.GetAccentColorAsync();
             var artistSplitTask = _settingsService.GetArtistSplitCharactersAsync();
@@ -510,7 +525,8 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
                 onlineLyricsTask, discordRpcTask, rememberWindowTask,
                 rememberPositionTask, rememberPaneTask, volumeNormTask, fadeTask, fadeInTask, fadeOutTask, lastFmCredsTask, lastFmAuthTokenTask,
                 scrobblingTask, nowPlayingTask, accentColorTask, artistSplitTask, genreSplitTask, languageTask, lyricsProvidersTask, metadataProvidersTask,
-                playerMaterialTask, playerTintTask);
+                playerMaterialTask, playerTintTask,
+                lbTokenTask, lbScrobblingTask, lbNowPlayingTask, lbServerUrlTask);
 
             foreach (var item in navItemsTask.Result)
             {
@@ -557,6 +573,13 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
             var authToken = lastFmAuthTokenTask.Result;
             IsConnectingToLastFm = !string.IsNullOrEmpty(authToken);
+
+            ListenBrainzUserToken = lbTokenTask.Result ?? string.Empty;
+            ListenBrainzIsConnected = !string.IsNullOrEmpty(ListenBrainzUserToken);
+            ListenBrainzScrobblingEnabled = lbScrobblingTask.Result;
+            ListenBrainzNowPlayingEnabled = lbNowPlayingTask.Result;
+            ListenBrainzServerUrl = lbServerUrlTask.Result ?? string.Empty;
+            ListenBrainzConnectionStatus = null;
 
             var accentColor = accentColorTask.Result;
             if (accentColor != null)
@@ -1682,6 +1705,139 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     {
         if (_isInitializing) return;
         _ = _settingsService.SetLastFmNowPlayingEnabledAsync(value);
+    }
+
+    async partial void OnListenBrainzScrobblingEnabledChanged(bool value)
+    {
+        if (_isInitializing) return;
+        try
+        {
+            await _settingsService.SetListenBrainzScrobblingEnabledAsync(value);
+            if (value) await StampListenBrainzEnabledSinceIfNeededAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to persist ListenBrainz scrobbling toggle");
+        }
+    }
+
+    async partial void OnListenBrainzNowPlayingEnabledChanged(bool value)
+    {
+        if (_isInitializing) return;
+        try
+        {
+            await _settingsService.SetListenBrainzNowPlayingEnabledAsync(value);
+            if (value) await StampListenBrainzEnabledSinceIfNeededAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to persist ListenBrainz now-playing toggle");
+        }
+    }
+
+    async partial void OnListenBrainzServerUrlChanged(string value)
+    {
+        if (_isInitializing) return;
+        try
+        {
+            var normalized = string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+            await _settingsService.SetListenBrainzServerUrlAsync(normalized);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to persist ListenBrainz server URL");
+        }
+    }
+
+    /// <summary>
+    ///     Stamps <see cref="ISettingsService.SetListenBrainzEnabledSinceUtcAsync"/> with the current UTC time
+    ///     the first time any ListenBrainz submission is enabled, so historic listens are not backfilled.
+    /// </summary>
+    private async Task StampListenBrainzEnabledSinceIfNeededAsync()
+    {
+        try
+        {
+            if (await _settingsService.GetListenBrainzEnabledSinceUtcAsync() is null)
+            {
+                await _settingsService.SetListenBrainzEnabledSinceUtcAsync(DateTime.UtcNow);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to stamp ListenBrainz EnabledSinceUtc");
+        }
+    }
+
+    [RelayCommand]
+    private async Task TestListenBrainzConnectionAsync()
+    {
+        try
+        {
+            var token = ListenBrainzUserToken;
+            var server = string.IsNullOrWhiteSpace(ListenBrainzServerUrl) ? null : ListenBrainzServerUrl;
+            var result = await _listenBrainzScrobblerService.ValidateTokenAsync(token, server);
+            if (result.IsValid)
+            {
+                await _settingsService.SaveListenBrainzUserTokenAsync(token);
+                if (server is not null)
+                {
+                    await _settingsService.SetListenBrainzServerUrlAsync(server);
+                }
+                await StampListenBrainzEnabledSinceIfNeededAsync();
+                ListenBrainzIsConnected = true;
+                ListenBrainzConnectionStatus = string.Format(
+                    Nagi.WinUI.Resources.Strings.SettingsPage_ListenBrainz_Connected,
+                    result.Username);
+            }
+            else
+            {
+                ListenBrainzIsConnected = false;
+                ListenBrainzConnectionStatus = string.Format(
+                    Nagi.WinUI.Resources.Strings.SettingsPage_ListenBrainz_ConnectionFailed,
+                    result.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "ListenBrainz token validation failed");
+            ListenBrainzIsConnected = false;
+            ListenBrainzConnectionStatus = string.Format(
+                Nagi.WinUI.Resources.Strings.SettingsPage_ListenBrainz_ConnectionFailed,
+                "Could not reach ListenBrainz.");
+        }
+    }
+
+    [RelayCommand]
+    private async Task DisconnectListenBrainzAsync()
+    {
+        var confirmed = await _uiService.ShowConfirmationDialogAsync(
+            Nagi.WinUI.Resources.Strings.SettingsPage_ListenBrainz_Disconnect_Title,
+            Nagi.WinUI.Resources.Strings.SettingsPage_ListenBrainz_Disconnect_Content,
+            Nagi.WinUI.Resources.Strings.SettingsPage_ListenBrainz_Disconnect_Button,
+            null);
+
+        if (!confirmed) return;
+
+        try
+        {
+            await _settingsService.ClearListenBrainzUserTokenAsync();
+            await _settingsService.SetListenBrainzScrobblingEnabledAsync(false);
+            await _settingsService.SetListenBrainzNowPlayingEnabledAsync(false);
+            await _settingsService.SetListenBrainzEnabledSinceUtcAsync(null);
+
+            _isInitializing = true;
+            ListenBrainzScrobblingEnabled = false;
+            ListenBrainzNowPlayingEnabled = false;
+            _isInitializing = false;
+
+            ListenBrainzUserToken = string.Empty;
+            ListenBrainzIsConnected = false;
+            ListenBrainzConnectionStatus = null;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to disconnect ListenBrainz");
+        }
     }
 
     async partial void OnEqualizerPreampChanged(float value)

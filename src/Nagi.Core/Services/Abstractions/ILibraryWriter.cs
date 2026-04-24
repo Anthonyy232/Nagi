@@ -24,6 +24,14 @@ public interface ILibraryWriter
     Task<long?> StartListenSessionAsync(Guid songId, PlaybackContext context);
     Task FinalizeListenSessionAsync(long listenHistoryId, TimeSpan finalDuration, PlaybackEndReason endReason);
     Task<bool> MarkListenAsScrobbledAsync(long listenHistoryId);
+
+    /// <summary>
+    ///     Marks the listen session identified by <paramref name="listenHistoryId" /> as successfully
+    ///     submitted to ListenBrainz.
+    /// </summary>
+    /// <returns>True if the row was updated; false if the id did not exist.</returns>
+    Task<bool> MarkListenAsSubmittedToListenBrainzAsync(long listenHistoryId);
+
     Task<bool> MarkListenAsEligibleForScrobblingAsync(long listenHistoryId);
     Task ClearListenHistoryAsync();
     Task ClearAllLibraryDataAsync();

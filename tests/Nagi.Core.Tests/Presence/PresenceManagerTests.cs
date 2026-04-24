@@ -338,6 +338,86 @@ public class PresenceManagerTests : IDisposable
         await _lastFmService.Received(1).InitializeAsync();
     }
 
+    /// <summary>
+    ///     Verifies that the ListenBrainz service is activated when the settings change so that a
+    ///     token is available and at least one of scrobbling / now-playing is enabled.
+    /// </summary>
+    /// <remarks>
+    ///     <b>Scenario:</b> The ListenBrainz service is initially disabled. The user pastes a token
+    ///     and enables scrobbling, triggering the <c>ListenBrainzSettingsChanged</c> event.
+    ///     <br />
+    ///     <b>Expected Result:</b> The manager calls the ListenBrainz service's <c>InitializeAsync</c>.
+    /// </remarks>
+    [Fact]
+    public async Task OnListenBrainzSettingsChanged_WhenCredsPresentAndScrobblingEnabled_ActivatesService()
+    {
+        // Arrange
+        var listenBrainzService = Substitute.For<IPresenceService, IAsyncDisposable>();
+        listenBrainzService.Name.Returns("ListenBrainz");
+
+        var services = new List<IPresenceService> { _discordService, _lastFmService, listenBrainzService };
+        using var manager = new PresenceManager(_playbackService, services, _settingsService, _logger);
+
+        // Initial state: LB disabled (no token)
+        _settingsService.GetDiscordRichPresenceEnabledAsync().Returns(false);
+        (string? Username, string? SessionKey)? noCreds = null;
+        _settingsService.GetLastFmCredentialsAsync().Returns(Task.FromResult(noCreds));
+        _settingsService.GetListenBrainzUserTokenAsync().Returns((string?)null);
+        _settingsService.GetListenBrainzScrobblingEnabledAsync().Returns(false);
+        _settingsService.GetListenBrainzNowPlayingEnabledAsync().Returns(false);
+
+        await manager.InitializeAsync();
+
+        // Now simulate the user enabling ListenBrainz with a token and scrobbling on.
+        _settingsService.GetListenBrainzUserTokenAsync().Returns("tok");
+        _settingsService.GetListenBrainzScrobblingEnabledAsync().Returns(true);
+        _settingsService.GetListenBrainzNowPlayingEnabledAsync().Returns(false);
+
+        // Act
+        _settingsService.ListenBrainzSettingsChanged += Raise.Event<Action>();
+        await Task.Delay(500); // Allow async fire-and-forget to complete
+
+        // Assert
+        await listenBrainzService.Received(1).InitializeAsync();
+    }
+
+    /// <summary>
+    ///     Verifies that the ListenBrainz service is NOT activated when settings change but the
+    ///     user token is still missing.
+    /// </summary>
+    /// <remarks>
+    ///     <b>Scenario:</b> Scrobbling is flipped on, but no user token is saved. The
+    ///     <c>ListenBrainzSettingsChanged</c> event fires.
+    ///     <br />
+    ///     <b>Expected Result:</b> The manager does not activate the ListenBrainz service.
+    /// </remarks>
+    [Fact]
+    public async Task OnListenBrainzSettingsChanged_WithoutToken_DoesNotActivateService()
+    {
+        // Arrange
+        var listenBrainzService = Substitute.For<IPresenceService, IAsyncDisposable>();
+        listenBrainzService.Name.Returns("ListenBrainz");
+
+        var services = new List<IPresenceService> { _discordService, _lastFmService, listenBrainzService };
+        using var manager = new PresenceManager(_playbackService, services, _settingsService, _logger);
+
+        _settingsService.GetDiscordRichPresenceEnabledAsync().Returns(false);
+        (string? Username, string? SessionKey)? noCreds = null;
+        _settingsService.GetLastFmCredentialsAsync().Returns(Task.FromResult(noCreds));
+        _settingsService.GetListenBrainzUserTokenAsync().Returns((string?)null);
+        _settingsService.GetListenBrainzScrobblingEnabledAsync().Returns(true);
+        _settingsService.GetListenBrainzNowPlayingEnabledAsync().Returns(false);
+
+        await manager.InitializeAsync();
+
+        // Act
+        _settingsService.ListenBrainzSettingsChanged += Raise.Event<Action>();
+        await Task.Delay(500); // Allow async fire-and-forget to complete
+
+        // Assert
+        await listenBrainzService.DidNotReceive().InitializeAsync();
+    }
+
     #endregion
 
     #region Edge Case and Error Handling Tests

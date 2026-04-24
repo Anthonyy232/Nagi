@@ -2028,6 +2028,18 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     }
 
     /// <inheritdoc />
+    public async Task<bool> MarkListenAsSubmittedToListenBrainzAsync(long listenHistoryId)
+    {
+        await using var dbContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
+        var historyEntry = await dbContext.ListenHistory.FindAsync(listenHistoryId).ConfigureAwait(false);
+        if (historyEntry is null) return false;
+
+        historyEntry.IsSubmittedToListenBrainz = true;
+        await dbContext.SaveChangesAsync().ConfigureAwait(false);
+        return true;
+    }
+
+    /// <inheritdoc />
     public async Task<int> GetListenCountForSongAsync(Guid songId)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);

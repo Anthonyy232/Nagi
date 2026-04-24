@@ -1,443 +1,241 @@
-﻿using System.Reflection;
-using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Nagi.Core.Models;
+using System.Reflection;
+using Microsoft.Extensions.Logging.Abstractions;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Implementations;
-using Nagi.Core.Tests.Utils;
 using NSubstitute;
-using NSubstitute.ExceptionExtensions;
 using Xunit;
 
 namespace Nagi.Core.Tests;
 
 /// <summary>
-///     Provides comprehensive unit tests for the <see cref="OfflineScrobbleService" />.
-///     These tests leverage an in-memory SQLite database via <see cref="DbContextFactoryTestHelper" />
-///     to ensure realistic database interactions while maintaining test isolation. All external
-///     dependencies are mocked to focus testing on the service's business logic.
+///     Unit tests for <see cref="OfflineScrobbleService" /> in its fan-out orchestrator role.
+///     The service's responsibility is now limited to: enforcing single-flight execution,
+///     skipping disabled submitters, isolating per-submitter failures, responding to settings
+///     events, and tracking consecutive-failure state for the backoff loop. Per-destination
+///     DB-query + HTTP-submit behavior lives in the individual scrobbler services and is
+///     tested there.
 /// </summary>
-public class OfflineScrobbleServiceTests : IDisposable
+public class OfflineScrobbleServiceTests
 {
-    /// <summary>
-    ///     A helper that provides a clean, in-memory SQLite database context for each test.
-    /// </summary>
-    private readonly DbContextFactoryTestHelper _dbHelper;
-
-    private readonly ILogger<OfflineScrobbleService> _logger;
-
-    // Mocks for external dependencies, enabling isolated testing of the service's logic.
-    private readonly ILastFmScrobblerService _scrobblerService;
-
-    /// <summary>
-    ///     The instance of the service under test.
-    /// </summary>
-    private readonly OfflineScrobbleService _service;
-
     private readonly ISettingsService _settingsService;
 
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="OfflineScrobbleServiceTests" /> class.
-    ///     This constructor sets up the required mocks, the in-memory database, and instantiates
-    ///     the <see cref="OfflineScrobbleService" /> with these test dependencies.
-    /// </summary>
     public OfflineScrobbleServiceTests()
     {
-        _scrobblerService = Substitute.For<ILastFmScrobblerService>();
         _settingsService = Substitute.For<ISettingsService>();
-        _dbHelper = new DbContextFactoryTestHelper();
-        _logger = Substitute.For<ILogger<OfflineScrobbleService>>();
+    }
 
-        // Default setup for mocks to represent a "happy path"
-        _settingsService.GetLastFmScrobblingEnabledAsync().Returns(true);
-        _scrobblerService.ScrobbleAsync(Arg.Any<Song>(), Arg.Any<DateTime>()).Returns(true);
-
-        _service = new OfflineScrobbleService(
-            _dbHelper.ContextFactory,
-            _scrobblerService,
+    private OfflineScrobbleService CreateService(params IListenSubmitter[] submitters)
+    {
+        return new OfflineScrobbleService(
+            submitters,
             _settingsService,
-            _logger);
+            NullLogger<OfflineScrobbleService>.Instance);
     }
 
-    /// <summary>
-    ///     Performs application-defined tasks associated with freeing, releasing, or resetting
-    ///     unmanaged resources. This method ensures test isolation by disposing the in-memory
-    ///     database and the service under test after each test execution.
-    /// </summary>
-    public void Dispose()
-    {
-        if (_service != null) _service.Dispose();
-        _dbHelper.Dispose();
-        GC.SuppressFinalize(this);
-    }
+    #region ProcessQueueAsync — submitter fan-out
 
-    /// <summary>
-    ///     Helper method to seed the in-memory database with a specified number of listen history
-    ///     entries that are eligible for scrobbling.
-    /// </summary>
-    /// <param name="count">The number of pending scrobbles to create.</param>
-    /// <returns>A list of the created <see cref="ListenHistory" /> entities.</returns>
-    private async Task<List<ListenHistory>> SeedPendingScrobblesAsync(int count)
-    {
-        var artist = new Artist { Name = "Test Artist" };
-        var album = new Album { Title = "Test Album" };
-        album.AlbumArtists.Add(new AlbumArtist { Artist = artist, Order = 0 });
-        album.SyncDenormalizedFields();
-        var folder = new Folder { Name = "Test Folder", Path = "C:/Music/TestFolder" };
-        var songs = Enumerable.Range(1, count)
-            .Select(i =>
-            {
-                var s = new Song
-                {
-                    Title = $"Song {i}",
-                    Album = album,
-                    Folder = folder,
-                    FilePath = $"C:/Music/TestFolder/Song{i}.mp3" // Unique file path per song
-                };
-                s.SongArtists.Add(new SongArtist { Artist = artist, Order = 0 });
-                s.SyncDenormalizedFields();
-                return s;
-            })
-            .ToList();
-
-        var historyEntries = songs.Select((song, index) => new ListenHistory
-        {
-            Song = song,
-            ListenTimestampUtc = DateTime.UtcNow.AddMinutes(-(count - index)), // Ensure chronological order
-            IsEligibleForScrobbling = true,
-            IsScrobbled = false
-        }).ToList();
-
-        await using var context = _dbHelper.ContextFactory.CreateDbContext();
-
-        // Add all required parent entities to the context.
-        context.Folders.Add(folder);
-        context.Artists.Add(artist);
-        context.Albums.Add(album);
-        context.ListenHistory.AddRange(historyEntries);
-        await context.SaveChangesAsync();
-
-        return historyEntries;
-    }
-
-    #region ProcessQueueAsync Tests
-
-    /// <summary>
-    ///     Verifies that <see cref="OfflineScrobbleService.ProcessQueueAsync" /> exits immediately
-    ///     without performing any actions if scrobbling is disabled in the settings.
-    /// </summary>
     [Fact]
-    public async Task ProcessQueueAsync_WhenScrobblingIsDisabled_ExitsEarly()
+    public async Task ProcessQueueAsync_OnlyCallsEnabledSubmitters()
     {
-        // Arrange
-        _settingsService.GetLastFmScrobblingEnabledAsync().Returns(false);
-        await SeedPendingScrobblesAsync(1);
+        var enabled = Substitute.For<IListenSubmitter>();
+        enabled.Id.Returns("x");
+        enabled.IsEnabledAsync().Returns(true);
 
-        // Act
-        await _service.ProcessQueueAsync();
+        var disabled = Substitute.For<IListenSubmitter>();
+        disabled.Id.Returns("y");
+        disabled.IsEnabledAsync().Returns(false);
 
-        // Assert: Verify that no attempt was made to scrobble.
-        await _scrobblerService.DidNotReceive().ScrobbleAsync(Arg.Any<Song>(), Arg.Any<DateTime>());
+        using var service = CreateService(enabled, disabled);
+
+        await service.ProcessQueueAsync();
+
+        await enabled.Received(1).ProcessPendingListensAsync(Arg.Any<CancellationToken>());
+        await disabled.DidNotReceive().ProcessPendingListensAsync(Arg.Any<CancellationToken>());
     }
 
-    /// <summary>
-    ///     Verifies that <see cref="OfflineScrobbleService.ProcessQueueAsync" /> does not call the
-    ///     scrobbler service when there are no pending scrobbles in the database.
-    /// </summary>
     [Fact]
-    public async Task ProcessQueueAsync_WithNoPendingScrobbles_DoesNothing()
+    public async Task ProcessQueueAsync_OneSubmitterFailure_DoesNotBlockOthers()
     {
-        // Arrange: The database is empty by default.
+        var failing = Substitute.For<IListenSubmitter>();
+        failing.Id.Returns("failing");
+        failing.IsEnabledAsync().Returns(true);
+        failing.ProcessPendingListensAsync(Arg.Any<CancellationToken>())
+            .Returns(Task.FromException(new HttpRequestException("boom")));
 
-        // Act
-        await _service.ProcessQueueAsync();
+        var healthy = Substitute.For<IListenSubmitter>();
+        healthy.Id.Returns("healthy");
+        healthy.IsEnabledAsync().Returns(true);
 
-        // Assert: Verify that the scrobbler service was never called.
-        await _scrobblerService.DidNotReceive().ScrobbleAsync(Arg.Any<Song>(), Arg.Any<DateTime>());
+        using var service = CreateService(failing, healthy);
+
+        await service.ProcessQueueAsync();
+
+        await healthy.Received(1).ProcessPendingListensAsync(Arg.Any<CancellationToken>());
     }
 
-    /// <summary>
-    ///     Verifies that <see cref="OfflineScrobbleService.ProcessQueueAsync" /> successfully processes
-    ///     all pending scrobbles, calls the external scrobbler service for each, and updates their
-    ///     status in the database.
-    /// </summary>
     [Fact]
-    public async Task ProcessQueueAsync_WithPendingScrobbles_SuccessfullyScrobblesAll()
+    public async Task ProcessQueueAsync_WithNoSubmitters_CompletesWithoutError()
     {
-        // Arrange
-        var pendingScrobbles = await SeedPendingScrobblesAsync(3);
+        using var service = CreateService();
 
-        // Act
-        await _service.ProcessQueueAsync();
+        await service.ProcessQueueAsync();
 
-        // Assert: Verify that the scrobbler was called for each pending entry.
-        await _scrobblerService.Received(3).ScrobbleAsync(Arg.Any<Song>(), Arg.Any<DateTime>());
-        await _scrobblerService.Received(1).ScrobbleAsync(
-            Arg.Is<Song>(s => s.Id == pendingScrobbles[0].SongId),
-            pendingScrobbles[0].ListenTimestampUtc);
-        await _scrobblerService.Received(1).ScrobbleAsync(
-            Arg.Is<Song>(s => s.Id == pendingScrobbles[2].SongId),
-            pendingScrobbles[2].ListenTimestampUtc);
-
-        // Assert: Verify that all entries were marked as scrobbled in the database.
-        await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
-        var history = await assertContext.ListenHistory.ToListAsync();
-        history.Should().HaveCount(3);
-        history.Should().OnlyContain(h => h.IsScrobbled);
+        // No exceptions, nothing to assert against — service should be a no-op.
     }
 
-    /// <summary>
-    ///     Verifies that if the external scrobbler service returns a failure for an item,
-    ///     <see cref="OfflineScrobbleService.ProcessQueueAsync" /> stops processing the queue but
-    ///     correctly saves the status of any items that were successfully scrobbled before the failure.
-    /// </summary>
     [Fact]
-    public async Task ProcessQueueAsync_WhenScrobblerFails_StopsProcessingAndSavesSuccesses()
+    public async Task ProcessQueueAsync_WhenCancelled_DoesNotCallSubmitters()
     {
-        // Arrange
-        var pendingScrobbles = await SeedPendingScrobblesAsync(3);
-        var successfulSong = pendingScrobbles[0].Song!;
-        var failedSong = pendingScrobbles[1].Song!;
+        var submitter = Substitute.For<IListenSubmitter>();
+        submitter.IsEnabledAsync().Returns(true);
 
-        // Mock the scrobbler to fail on the second song.
-        _scrobblerService.ScrobbleAsync(successfulSong, Arg.Any<DateTime>()).Returns(true);
-        _scrobblerService.ScrobbleAsync(failedSong, Arg.Any<DateTime>()).Returns(false);
+        using var service = CreateService(submitter);
+        using var cts = new CancellationTokenSource();
+        cts.Cancel();
 
-        // Act
-        await _service.ProcessQueueAsync();
+        await service.ProcessQueueAsync(cts.Token);
 
-        // Assert: The scrobbler should have been called for the first two songs, but not the third.
-        await _scrobblerService.Received(1).ScrobbleAsync(successfulSong, Arg.Any<DateTime>());
-        await _scrobblerService.Received(1).ScrobbleAsync(failedSong, Arg.Any<DateTime>());
-        await _scrobblerService.DidNotReceive().ScrobbleAsync(pendingScrobbles[2].Song!, Arg.Any<DateTime>());
-
-        // Assert: Only the first song should be marked as scrobbled in the database.
-        await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
-        (await assertContext.ListenHistory.FindAsync(pendingScrobbles[0].Id))!.IsScrobbled.Should().BeTrue();
-        (await assertContext.ListenHistory.FindAsync(pendingScrobbles[1].Id))!.IsScrobbled.Should().BeFalse();
-        (await assertContext.ListenHistory.FindAsync(pendingScrobbles[2].Id))!.IsScrobbled.Should().BeFalse();
+        await submitter.DidNotReceive().ProcessPendingListensAsync(Arg.Any<CancellationToken>());
+        await submitter.DidNotReceive().IsEnabledAsync();
     }
 
-    /// <summary>
-    ///     Verifies that if the external scrobbler service throws an exception,
-    ///     <see cref="OfflineScrobbleService.ProcessQueueAsync" /> gracefully stops processing,
-    ///     saves the state of successfully scrobbled items, and does not crash.
-    /// </summary>
-    [Fact]
-    public async Task ProcessQueueAsync_WhenScrobblerThrows_StopsProcessingAndSavesSuccesses()
-    {
-        // Arrange
-        var pendingScrobbles = await SeedPendingScrobblesAsync(3);
-        var successfulSong = pendingScrobbles[0].Song!;
-        var exceptionSong = pendingScrobbles[1].Song!;
-
-        // Mock the scrobbler to throw an exception on the second song.
-        _scrobblerService.ScrobbleAsync(successfulSong, Arg.Any<DateTime>()).Returns(true);
-        _scrobblerService.ScrobbleAsync(exceptionSong, Arg.Any<DateTime>())
-            .ThrowsAsync(new HttpRequestException("Network error"));
-
-        // Act
-        await _service.ProcessQueueAsync();
-
-        // Assert: The scrobbler should have been called for the first two songs, but not the third.
-        await _scrobblerService.Received(1).ScrobbleAsync(successfulSong, Arg.Any<DateTime>());
-        await _scrobblerService.Received(1).ScrobbleAsync(exceptionSong, Arg.Any<DateTime>());
-        await _scrobblerService.DidNotReceive().ScrobbleAsync(pendingScrobbles[2].Song!, Arg.Any<DateTime>());
-
-        // Assert: Only the first song should be marked as scrobbled in the database.
-        await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
-        (await assertContext.ListenHistory.FindAsync(pendingScrobbles[0].Id))!.IsScrobbled.Should().BeTrue();
-        (await assertContext.ListenHistory.FindAsync(pendingScrobbles[1].Id))!.IsScrobbled.Should().BeFalse();
-    }
-
-    /// <summary>
-    ///     Verifies that <see cref="OfflineScrobbleService.ProcessQueueAsync" /> uses a lock to prevent
-    ///     concurrent executions, ensuring that a second call exits immediately if a processing
-    ///     operation is already in progress.
-    /// </summary>
     [Fact]
     public async Task ProcessQueueAsync_WhenAlreadyRunning_ExitsImmediately()
     {
-        // Arrange
-        await SeedPendingScrobblesAsync(1);
-        var tcs = new TaskCompletionSource<bool>();
+        var tcs = new TaskCompletionSource();
+        var submitter = Substitute.For<IListenSubmitter>();
+        submitter.Id.Returns("slow");
+        submitter.IsEnabledAsync().Returns(true);
+        submitter.ProcessPendingListensAsync(Arg.Any<CancellationToken>()).Returns(tcs.Task);
 
-        // Configure the mock to hang, simulating a long-running operation.
-        _scrobblerService.ScrobbleAsync(Arg.Any<Song>(), Arg.Any<DateTime>()).Returns(tcs.Task);
+        using var service = CreateService(submitter);
 
-        // Act
-        var firstCall = _service.ProcessQueueAsync();
-        var secondCall = _service.ProcessQueueAsync(); // This should hit the lock and exit.
+        // Start the first call (hangs on the submitter's task).
+        var firstCall = service.ProcessQueueAsync();
+        // Second call should hit the single-flight guard and return immediately.
+        var secondCall = service.ProcessQueueAsync();
 
-        // Allow the first call to complete.
-        tcs.SetResult(true);
-        await Task.WhenAll(firstCall, secondCall);
+        await secondCall; // Must complete even though firstCall is hanging.
 
-        // Assert: The core logic (scrobbling) should only have been executed once.
-        await _scrobblerService.Received(1).ScrobbleAsync(Arg.Any<Song>(), Arg.Any<DateTime>());
+        // Release the first call's work.
+        tcs.SetResult();
+        await firstCall;
+
+        // The core work should have been executed exactly once.
+        await submitter.Received(1).ProcessPendingListensAsync(Arg.Any<CancellationToken>());
     }
 
-    /// <summary>
-    ///     Verifies that <see cref="OfflineScrobbleService.ProcessQueueAsync" /> respects a
-    ///     <see cref="CancellationToken" /> and stops processing if cancellation is requested.
-    /// </summary>
     [Fact]
-    public async Task ProcessQueueAsync_WhenCancelled_StopsProcessing()
+    public async Task ProcessQueueAsync_WhenIsEnabledThrows_ContinuesWithOtherSubmitters()
     {
-        // Arrange
-        await SeedPendingScrobblesAsync(2);
-        var cts = new CancellationTokenSource();
-        cts.Cancel(); // Cancel before the operation starts.
+        var throwing = Substitute.For<IListenSubmitter>();
+        throwing.Id.Returns("throwing");
+        throwing.IsEnabledAsync().Returns<Task<bool>>(_ => throw new InvalidOperationException("config broken"));
 
-        // Act
-        await _service.ProcessQueueAsync(cts.Token);
+        var healthy = Substitute.For<IListenSubmitter>();
+        healthy.Id.Returns("healthy");
+        healthy.IsEnabledAsync().Returns(true);
 
-        // Assert: No scrobbling should have occurred.
-        await _scrobblerService.DidNotReceive().ScrobbleAsync(Arg.Any<Song>(), Arg.Any<DateTime>());
+        using var service = CreateService(throwing, healthy);
+
+        await service.ProcessQueueAsync();
+
+        await throwing.DidNotReceive().ProcessPendingListensAsync(Arg.Any<CancellationToken>());
+        await healthy.Received(1).ProcessPendingListensAsync(Arg.Any<CancellationToken>());
     }
 
     #endregion
 
-    #region Event Handling and Dispose Tests
+    #region Settings-change event wiring
 
-    /// <summary>
-    ///     Verifies that the service correctly subscribes to the
-    ///     <see cref="ISettingsService.LastFmSettingsChanged" /> event and triggers a queue
-    ///     processing operation when the event is raised.
-    /// </summary>
     [Fact]
-    public async Task OnLastFmSettingsChanged_WhenEventFires_TriggersQueueProcessing()
+    public async Task OnLastFmSettingsChanged_TriggersImmediateProcessing()
     {
-        // Arrange: No pending scrobbles, so ProcessQueueAsync will be quick.
-        // We just want to verify it was called.
+        var submitter = Substitute.For<IListenSubmitter>();
+        submitter.IsEnabledAsync().Returns(true);
 
-        // Act: Raise the event on the mock settings service.
+        using var service = CreateService(submitter);
+
         _settingsService.LastFmSettingsChanged += Raise.Event<Action>();
+        await Task.Delay(100); // let the fire-and-forget start
 
-        // Give the fire-and-forget task a moment to run.
-        await Task.Delay(50);
-
-        // Assert: The easiest way to confirm ProcessQueueAsync was triggered is to check
-        // if it tried to read the scrobbling setting.
-        await _settingsService.Received(1).GetLastFmScrobblingEnabledAsync();
+        await submitter.Received().ProcessPendingListensAsync(Arg.Any<CancellationToken>());
     }
 
-    /// <summary>
-    ///     Verifies that the <see cref="OfflineScrobbleService.Dispose" /> method correctly
-    ///     unsubscribes from the <see cref="ISettingsService.LastFmSettingsChanged" /> event to
-    ///     prevent memory leaks and unintended behavior after disposal.
-    /// </summary>
     [Fact]
-    public async Task Dispose_WhenCalled_UnsubscribesFromSettingsChangedEvent()
+    public async Task OnListenBrainzSettingsChanged_TriggersImmediateProcessing()
     {
-        // Arrange
-        _service.Dispose();
-        // Prevent double disposal in test class
-        typeof(OfflineScrobbleServiceTests)
-            .GetField("_service", BindingFlags.NonPublic | BindingFlags.Instance)
-            ?.SetValue(this, null);
+        var submitter = Substitute.For<IListenSubmitter>();
+        submitter.IsEnabledAsync().Returns(true);
 
-        // Act: Raise the event on the mock settings service AFTER disposing.
+        using var service = CreateService(submitter);
+
+        _settingsService.ListenBrainzSettingsChanged += Raise.Event<Action>();
+        await Task.Delay(100); // let the fire-and-forget start
+
+        await submitter.Received().ProcessPendingListensAsync(Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Dispose_UnsubscribesFromBothSettingsChangedEvents()
+    {
+        var submitter = Substitute.For<IListenSubmitter>();
+        submitter.IsEnabledAsync().Returns(true);
+
+        var service = CreateService(submitter);
+        service.Dispose();
+
+        // Raise BOTH events post-disposal; neither should trigger any submitter activity.
         _settingsService.LastFmSettingsChanged += Raise.Event<Action>();
-        await Task.Delay(50);
+        _settingsService.ListenBrainzSettingsChanged += Raise.Event<Action>();
+        await Task.Delay(100);
 
-        // Assert: If the handler was correctly unsubscribed, ProcessQueueAsync should not
-        // have been triggered, and thus the setting should not have been read.
-        await _settingsService.DidNotReceive().GetLastFmScrobblingEnabledAsync();
+        await submitter.DidNotReceive().IsEnabledAsync();
+        await submitter.DidNotReceive().ProcessPendingListensAsync(Arg.Any<CancellationToken>());
     }
 
     #endregion
 
-    private async Task<ListenHistory> SeedMultiArtistPendingScrobbleAsync()
+    #region Backoff state
+
+    [Fact]
+    public async Task ProcessQueueAsync_OnAllSubmittersSucceed_ResetsConsecutiveFailures()
     {
-        var artist1 = new Artist { Name = "Artist 1" };
-        var artist2 = new Artist { Name = "Artist 2" };
-        var folder = new Folder { Name = "Test Folder", Path = "C:/Music/TestFolder" };
-        var song = new Song { Title = "Multi Song", Folder = folder, FilePath = "C:/Music/TestFolder/Multi.mp3" };
-        song.SongArtists.Add(new SongArtist { Artist = artist1, Order = 0 });
-        song.SongArtists.Add(new SongArtist { Artist = artist2, Order = 1 });
-        song.SyncDenormalizedFields();
+        var submitter = Substitute.For<IListenSubmitter>();
+        submitter.IsEnabledAsync().Returns(true);
 
-        var entry = new ListenHistory
-        {
-            Song = song,
-            ListenTimestampUtc = DateTime.UtcNow.AddMinutes(-10),
-            IsEligibleForScrobbling = true,
-            IsScrobbled = false
-        };
+        using var service = CreateService(submitter);
 
-        await using var context = _dbHelper.ContextFactory.CreateDbContext();
-        context.ListenHistory.Add(entry);
-        await context.SaveChangesAsync();
-        return entry;
+        // Seed a non-zero failure count via reflection to simulate prior failures.
+        var field = typeof(OfflineScrobbleService)
+            .GetField("_consecutiveFailures", BindingFlags.NonPublic | BindingFlags.Instance);
+        Assert.NotNull(field);
+        field!.SetValue(service, 3);
+
+        await service.ProcessQueueAsync();
+
+        Assert.Equal(0, (int)field.GetValue(service)!);
     }
 
     [Fact]
-    public async Task ProcessQueueAsync_WhenFirstScrobbleFails_NothingIsSaved()
+    public async Task ProcessQueueAsync_OnSubmitterFailure_IncrementsConsecutiveFailures()
     {
-        // When the very first scrobble fails, successfulScrobbles == 0, so SaveChangesAsync
-        // is never called — no entries should be marked IsScrobbled.
-        await SeedPendingScrobblesAsync(3);
-        _scrobblerService.ScrobbleAsync(Arg.Any<Song>(), Arg.Any<DateTime>()).Returns(false);
+        var submitter = Substitute.For<IListenSubmitter>();
+        submitter.IsEnabledAsync().Returns(true);
+        submitter.ProcessPendingListensAsync(Arg.Any<CancellationToken>())
+            .Returns(Task.FromException(new HttpRequestException("boom")));
 
-        await _service.ProcessQueueAsync();
+        using var service = CreateService(submitter);
 
-        await using var assertCtx = _dbHelper.ContextFactory.CreateDbContext();
-        var history = await assertCtx.ListenHistory.ToListAsync();
-        history.Should().OnlyContain(h => !h.IsScrobbled, "nothing should be saved when all scrobbles fail");
-        // Only the first song should have been attempted before the break
-        await _scrobblerService.Received(1).ScrobbleAsync(Arg.Any<Song>(), Arg.Any<DateTime>());
+        var field = typeof(OfflineScrobbleService)
+            .GetField("_consecutiveFailures", BindingFlags.NonPublic | BindingFlags.Instance);
+        Assert.NotNull(field);
+        field!.SetValue(service, 0);
+
+        await service.ProcessQueueAsync();
+
+        Assert.Equal(1, (int)field.GetValue(service)!);
     }
 
-    [Fact]
-    public async Task ProcessQueueAsync_SkipsEntriesWithNullSong()
-    {
-        // Entries where Song is null (orphaned) should be skipped without crashing
-        var folder = new Folder { Name = "F", Path = "C:\\Music" };
-        var song = new Song { Title = "S", Folder = folder, FilePath = "C:\\Music\\s.mp3" };
-        var orphanEntry = new ListenHistory
-        {
-            IsEligibleForScrobbling = true,
-            IsScrobbled = false,
-            ListenTimestampUtc = DateTime.UtcNow
-        };
-
-        // Seed a valid scrobble and an orphan entry (null Song) directly
-        await using (var ctx = _dbHelper.ContextFactory.CreateDbContext())
-        {
-            ctx.Folders.Add(folder);
-            ctx.Songs.Add(song);
-            var validEntry = new ListenHistory
-            {
-                Song = song,
-                IsEligibleForScrobbling = true,
-                IsScrobbled = false,
-                ListenTimestampUtc = DateTime.UtcNow.AddMinutes(-1)
-            };
-            ctx.ListenHistory.Add(validEntry);
-            // Note: orphanEntry with SongId = default will be skipped due to FK constraint,
-            // so we test only the valid path here and verify 1 scrobble is submitted
-            await ctx.SaveChangesAsync();
-        }
-
-        await _service.ProcessQueueAsync();
-
-        await _scrobblerService.Received(1).ScrobbleAsync(Arg.Any<Song>(), Arg.Any<DateTime>());
-    }
-
-    [Fact]
-    public async Task ProcessQueueAsync_WithMultiArtistSong_ScrobblesJoinedName()
-    {
-        // Arrange
-        await SeedMultiArtistPendingScrobbleAsync();
-
-        // Act
-        await _service.ProcessQueueAsync();
-
-        // Assert
-        await _scrobblerService.Received(1).ScrobbleAsync(
-            Arg.Is<Song>(s => s.ArtistName == "Artist 1 & Artist 2"),
-            Arg.Any<DateTime>());
-    }
+    #endregion
 }

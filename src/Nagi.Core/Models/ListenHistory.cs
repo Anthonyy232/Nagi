@@ -62,4 +62,9 @@ public class ListenHistory
     ///     to an external scrobbling service (e.g., Last.fm).
     /// </summary>
     public bool IsScrobbled { get; set; }
+
+    /// <summary>
+    ///     Indicates whether this listen event has been successfully submitted to ListenBrainz.
+    /// </summary>
+    public bool IsSubmittedToListenBrainz { get; set; }
 }

@@ -1438,6 +1438,48 @@ public class LibraryServiceTests : IDisposable
         result.Should().BeFalse();
     }
 
+    [Fact]
+    public async Task MarkListenAsSubmittedToListenBrainzAsync_WithExistingId_FlipsFlagAndReturnsTrue()
+    {
+        // Arrange
+        var folder = new Folder { Name = "Test Folder", Path = "C:\\Test" };
+        var song = new Song { Title = "Test Song", Folder = folder, FilePath = "C:\\Test\\song.mp3" };
+        var listenHistory = new ListenHistory
+        {
+            Song = song,
+            IsEligibleForScrobbling = true,
+            IsSubmittedToListenBrainz = false
+        };
+
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.Add(folder);
+            context.Songs.Add(song);
+            context.ListenHistory.Add(listenHistory);
+            await context.SaveChangesAsync();
+        }
+
+        // Act
+        var result = await _libraryService.MarkListenAsSubmittedToListenBrainzAsync(listenHistory.Id);
+
+        // Assert
+        result.Should().BeTrue();
+
+        await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
+        var updatedHistory = await assertContext.ListenHistory.FindAsync(listenHistory.Id);
+        updatedHistory!.IsSubmittedToListenBrainz.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task MarkListenAsSubmittedToListenBrainzAsync_WithMissingId_ReturnsFalse()
+    {
+        // Act
+        var result = await _libraryService.MarkListenAsSubmittedToListenBrainzAsync(99999L);
+
+        // Assert
+        result.Should().BeFalse();
+    }
+
     #endregion
 
     #region Song Rating and Loved Status Tests

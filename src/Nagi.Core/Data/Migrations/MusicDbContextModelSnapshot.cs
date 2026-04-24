@@ -15,7 +15,7 @@ namespace Nagi.Core.Data.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "10.0.2");
+            modelBuilder.HasAnnotation("ProductVersion", "10.0.6");
 
             modelBuilder.Entity("GenreSong", b =>
                 {
@@ -205,6 +205,9 @@ namespace Nagi.Core.Data.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsScrobbled")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsSubmittedToListenBrainz")
                         .HasColumnType("INTEGER");
 
                     b.Property<long>("ListenDurationTicks")
