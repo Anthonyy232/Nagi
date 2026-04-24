@@ -1673,6 +1673,12 @@ Error: {1}</value>
   <data name="SettingsPage_TrayCoverArt_Description" xml:space="preserve">
     <value>Display the cover art in the compact player that appears when clicking the tray icon.</value>
   </data>
+  <data name="SettingsPage_IgnoreLeadingArticles_Header" xml:space="preserve">
+    <value>Ignore articles when sorting</value>
+  </data>
+  <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
+    <value>Sort albums, artists, and songs by their first significant word (e.g. "The Beatles" sorts under B).</value>
+  </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>Data Management</value>
   </data>
