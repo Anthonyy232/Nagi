@@ -128,6 +128,7 @@ public class PresenceManager : IPresenceManager, IAsyncDisposable, IDisposable
         _playbackService.PositionChanged += OnPositionChanged;
         _playbackService.ScrobbleEligibilityReached += OnScrobbleEligibilityReached;
         _settingsService.LastFmSettingsChanged += OnLastFmSettingsChanged;
+        _settingsService.ListenBrainzSettingsChanged += OnListenBrainzSettingsChanged;
         _settingsService.DiscordRichPresenceSettingChanged += OnDiscordRichPresenceSettingChanged;
     }
 
@@ -138,6 +139,7 @@ public class PresenceManager : IPresenceManager, IAsyncDisposable, IDisposable
         _playbackService.PositionChanged -= OnPositionChanged;
         _playbackService.ScrobbleEligibilityReached -= OnScrobbleEligibilityReached;
         _settingsService.LastFmSettingsChanged -= OnLastFmSettingsChanged;
+        _settingsService.ListenBrainzSettingsChanged -= OnListenBrainzSettingsChanged;
         _settingsService.DiscordRichPresenceSettingChanged -= OnDiscordRichPresenceSettingChanged;
     }
 
@@ -163,12 +165,24 @@ public class PresenceManager : IPresenceManager, IAsyncDisposable, IDisposable
             "Last.fm settings change");
     }
 
+    private void OnListenBrainzSettingsChanged()
+    {
+        FireAndForgetSafe(
+            async () =>
+            {
+                if (_presenceServices.TryGetValue("ListenBrainz", out var service))
+                    await UpdateServiceActivationAsync(service).ConfigureAwait(false);
+            },
+            "ListenBrainz settings change");
+    }
+
     private async Task UpdateServiceActivationAsync(IPresenceService service)
     {
         var shouldActivate = service.Name switch
         {
             "Discord" => await _settingsService.GetDiscordRichPresenceEnabledAsync().ConfigureAwait(false),
             "Last.fm" => await IsLastFmServiceEnabledAsync().ConfigureAwait(false),
+            "ListenBrainz" => await IsListenBrainzServiceEnabledAsync().ConfigureAwait(false),
             _ => false
         };
 
@@ -182,6 +196,17 @@ public class PresenceManager : IPresenceManager, IAsyncDisposable, IDisposable
 
         var isScrobblingEnabled = await _settingsService.GetLastFmScrobblingEnabledAsync().ConfigureAwait(false);
         var isNowPlayingEnabled = await _settingsService.GetLastFmNowPlayingEnabledAsync().ConfigureAwait(false);
+
+        return isScrobblingEnabled || isNowPlayingEnabled;
+    }
+
+    private async Task<bool> IsListenBrainzServiceEnabledAsync()
+    {
+        var token = await _settingsService.GetListenBrainzUserTokenAsync().ConfigureAwait(false);
+        if (string.IsNullOrEmpty(token)) return false;
+
+        var isScrobblingEnabled = await _settingsService.GetListenBrainzScrobblingEnabledAsync().ConfigureAwait(false);
+        var isNowPlayingEnabled = await _settingsService.GetListenBrainzNowPlayingEnabledAsync().ConfigureAwait(false);
 
         return isScrobblingEnabled || isNowPlayingEnabled;
     }

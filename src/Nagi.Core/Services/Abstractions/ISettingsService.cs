@@ -15,6 +15,11 @@ public interface ISettingsService
     event Action? LastFmSettingsChanged;
 
     /// <summary>
+    ///     Occurs when ListenBrainz-related settings have changed.
+    /// </summary>
+    event Action? ListenBrainzSettingsChanged;
+
+    /// <summary>
     ///     Occurs when the Discord Rich Presence setting is changed.
     ///     The boolean parameter indicates whether Discord Rich Presence is enabled.
     /// </summary>
@@ -218,6 +223,42 @@ public interface ISettingsService
     /// </summary>
     /// <returns>The saved token, or null if not present.</returns>
     Task<string?> GetLastFmAuthTokenAsync();
+
+    /// <summary>Gets whether scrobbling to ListenBrainz is enabled.</summary>
+    Task<bool> GetListenBrainzScrobblingEnabledAsync();
+
+    /// <summary>Sets the preference for scrobbling to ListenBrainz.</summary>
+    Task SetListenBrainzScrobblingEnabledAsync(bool isEnabled);
+
+    /// <summary>Gets whether "Now Playing" updates to ListenBrainz are enabled.</summary>
+    Task<bool> GetListenBrainzNowPlayingEnabledAsync();
+
+    /// <summary>Sets the preference for "Now Playing" updates to ListenBrainz.</summary>
+    Task SetListenBrainzNowPlayingEnabledAsync(bool isEnabled);
+
+    /// <summary>Gets the saved ListenBrainz user token from secure storage, or null.</summary>
+    Task<string?> GetListenBrainzUserTokenAsync();
+
+    /// <summary>Saves the ListenBrainz user token to secure storage.</summary>
+    Task SaveListenBrainzUserTokenAsync(string token);
+
+    /// <summary>Removes the saved ListenBrainz user token from secure storage.</summary>
+    Task ClearListenBrainzUserTokenAsync();
+
+    /// <summary>Gets the configured ListenBrainz server URL, or null for the default (api.listenbrainz.org).</summary>
+    Task<string?> GetListenBrainzServerUrlAsync();
+
+    /// <summary>Sets the ListenBrainz server URL. Pass null to reset to default.</summary>
+    Task SetListenBrainzServerUrlAsync(string? url);
+
+    /// <summary>
+    ///     Gets the UTC timestamp at which ListenBrainz submission was first enabled. Listens with
+    ///     <c>ListenTimestampUtc</c> before this cutoff are ignored by the offline queue.
+    /// </summary>
+    Task<DateTime?> GetListenBrainzEnabledSinceUtcAsync();
+
+    /// <summary>Sets the ListenBrainz enabled-since cutoff. Pass null to clear.</summary>
+    Task SetListenBrainzEnabledSinceUtcAsync(DateTime? timestamp);
 
     /// <summary>
     ///     Gets the characters used to split multiple artists in a single string.

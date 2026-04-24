@@ -460,10 +460,16 @@ public partial class App : Application
         services.AddSingleton<IFanartTvService, FanartTvService>();
         services.AddSingleton<ITheAudioDbService, TheAudioDbService>();
         services.AddSingleton<INetEaseLyricsService, NetEaseLyricsService>();
-        services.AddSingleton<ILastFmScrobblerService, LastFmScrobblerService>();
+        services.AddSingleton<LastFmScrobblerService>();
+        services.AddSingleton<ILastFmScrobblerService>(sp => sp.GetRequiredService<LastFmScrobblerService>());
+        services.AddSingleton<IListenSubmitter>(sp => sp.GetRequiredService<LastFmScrobblerService>());
+        services.AddSingleton<ListenBrainzScrobblerService>();
+        services.AddSingleton<IListenBrainzScrobblerService>(sp => sp.GetRequiredService<ListenBrainzScrobblerService>());
+        services.AddSingleton<IListenSubmitter>(sp => sp.GetRequiredService<ListenBrainzScrobblerService>());
         services.AddSingleton<IPresenceManager, PresenceManager>();
         services.AddSingleton<IPresenceService, DiscordPresenceService>();
         services.AddSingleton<IPresenceService, LastFmPresenceService>();
+        services.AddSingleton<IPresenceService, ListenBrainzPresenceService>();
         services.AddSingleton<ISmartPlaylistService, SmartPlaylistService>();
         services.AddSingleton<IOnlineLyricsService, LrcLibService>();
         services.AddSingleton<IPlaylistExportService, M3uPlaylistExportService>();

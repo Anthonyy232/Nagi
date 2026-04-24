@@ -2,7 +2,9 @@
 using System.Security.Cryptography;
 using System.Text;
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Data;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Implementations;
@@ -23,6 +25,7 @@ public class LastFmScrobblerServiceTests : IDisposable
     private const string ApiSecret = "test-api-secret";
     private const string SessionKey = "test-session-key";
     private readonly IApiKeyService _apiKeyService;
+    private readonly DbContextFactoryTestHelper _dbHelper;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly TestHttpMessageHandler _httpMessageHandler;
     private readonly ILogger<LastFmScrobblerService> _logger;
@@ -38,17 +41,29 @@ public class LastFmScrobblerServiceTests : IDisposable
         _settingsService = Substitute.For<ISettingsService>();
         _httpMessageHandler = new TestHttpMessageHandler();
         _logger = Substitute.For<ILogger<LastFmScrobblerService>>();
+        _dbHelper = new DbContextFactoryTestHelper();
 
         var httpClient = new HttpClient(_httpMessageHandler);
         _httpClientFactory.CreateClient(Arg.Any<string>()).Returns(httpClient);
 
-        _scrobblerService = new LastFmScrobblerService(_httpClientFactory, _apiKeyService, _settingsService, _logger);
+        _scrobblerService = CreateService();
     }
 
     public void Dispose()
     {
         _httpMessageHandler.Dispose();
+        _dbHelper.Dispose();
         GC.SuppressFinalize(this);
+    }
+
+    private LastFmScrobblerService CreateService(IDbContextFactory<MusicDbContext>? contextFactory = null)
+    {
+        return new LastFmScrobblerService(
+            _httpClientFactory,
+            _apiKeyService,
+            _settingsService,
+            contextFactory ?? Substitute.For<IDbContextFactory<MusicDbContext>>(),
+            _logger);
     }
 
     /// <summary>
@@ -252,6 +267,152 @@ public class LastFmScrobblerServiceTests : IDisposable
         _capturedRequestParams.Should().NotBeNull();
         _capturedRequestParams!["artist"].Should().Be("Artist A");
     }
+
+    #region IListenSubmitter members
+
+    [Fact]
+    public void IListenSubmitter_Id_IsLastFm()
+    {
+        IListenSubmitter sut = _scrobblerService;
+        sut.Id.Should().Be("lastfm");
+    }
+
+    [Fact]
+    public async Task IListenSubmitter_IsEnabledAsync_GatesOnLastFmScrobblingSetting()
+    {
+        _settingsService.GetLastFmScrobblingEnabledAsync().Returns(true);
+        IListenSubmitter sut = _scrobblerService;
+        (await sut.IsEnabledAsync()).Should().BeTrue();
+
+        _settingsService.GetLastFmScrobblingEnabledAsync().Returns(false);
+        (await sut.IsEnabledAsync()).Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task ProcessPendingListensAsync_SubmitsUnscrobbledAndMarksScrobbled()
+    {
+        _settingsService.GetLastFmScrobblingEnabledAsync().Returns(true);
+        SetupValidCredentials();
+        _httpMessageHandler.RespondSequence(
+            (HttpStatusCode.OK, string.Empty),
+            (HttpStatusCode.OK, string.Empty));
+
+        var songId = Guid.NewGuid();
+        var folder = new Folder { Name = "F", Path = "C:/Music" };
+        var artist = new Artist { Name = "Artist" };
+        await using (var ctx = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            ctx.Folders.Add(folder);
+            ctx.Artists.Add(artist);
+            var song = new Song
+            {
+                Id = songId,
+                Title = "Song",
+                Folder = folder,
+                FilePath = "C:/Music/s.mp3"
+            };
+            song.SongArtists.Add(new SongArtist { Artist = artist, Order = 0 });
+            song.SyncDenormalizedFields();
+            ctx.Songs.Add(song);
+            ctx.ListenHistory.Add(new ListenHistory
+            {
+                Id = 1,
+                SongId = songId,
+                ListenTimestampUtc = DateTime.UtcNow.AddMinutes(-10),
+                IsEligibleForScrobbling = true,
+                IsScrobbled = false
+            });
+            ctx.ListenHistory.Add(new ListenHistory
+            {
+                Id = 2,
+                SongId = songId,
+                ListenTimestampUtc = DateTime.UtcNow.AddMinutes(-5),
+                IsEligibleForScrobbling = true,
+                IsScrobbled = false
+            });
+            await ctx.SaveChangesAsync();
+        }
+
+        IListenSubmitter sut = CreateService(_dbHelper.ContextFactory);
+        await sut.ProcessPendingListensAsync(CancellationToken.None);
+
+        await using var verify = _dbHelper.ContextFactory.CreateDbContext();
+        (await verify.ListenHistory.FindAsync(1L))!.IsScrobbled.Should().BeTrue();
+        (await verify.ListenHistory.FindAsync(2L))!.IsScrobbled.Should().BeTrue();
+        _httpMessageHandler.Requests.Should().HaveCount(2);
+    }
+
+    [Fact]
+    public async Task ProcessPendingListensAsync_StopsOnFirstFailureToPreserveOrder()
+    {
+        _settingsService.GetLastFmScrobblingEnabledAsync().Returns(true);
+        SetupValidCredentials();
+
+        // Submission for listen 100 succeeds (1 OK). Submission for listen 101 hits the retry helper:
+        // it retries transient 500s up to MaxRetries=3, so we need three 500 responses to exhaust
+        // the retries and have ScrobbleAsync return false. After that, the loop should break
+        // and listen 102 must NOT be submitted.
+        _httpMessageHandler.RespondSequence(
+            (HttpStatusCode.OK, string.Empty),
+            (HttpStatusCode.InternalServerError, "{}"),
+            (HttpStatusCode.InternalServerError, "{}"),
+            (HttpStatusCode.InternalServerError, "{}"));
+
+        var songId = Guid.NewGuid();
+        var folder = new Folder { Name = "F", Path = "C:/Music" };
+        var artist = new Artist { Name = "Artist" };
+        await using (var ctx = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            ctx.Folders.Add(folder);
+            ctx.Artists.Add(artist);
+            var song = new Song
+            {
+                Id = songId,
+                Title = "Song",
+                Folder = folder,
+                FilePath = "C:/Music/s.mp3"
+            };
+            song.SongArtists.Add(new SongArtist { Artist = artist, Order = 0 });
+            song.SyncDenormalizedFields();
+            ctx.Songs.Add(song);
+            ctx.ListenHistory.AddRange(
+                new ListenHistory
+                {
+                    Id = 100,
+                    SongId = songId,
+                    ListenTimestampUtc = DateTime.UtcNow.AddMinutes(-30),
+                    IsEligibleForScrobbling = true,
+                    IsScrobbled = false
+                },
+                new ListenHistory
+                {
+                    Id = 101,
+                    SongId = songId,
+                    ListenTimestampUtc = DateTime.UtcNow.AddMinutes(-20),
+                    IsEligibleForScrobbling = true,
+                    IsScrobbled = false
+                },
+                new ListenHistory
+                {
+                    Id = 102,
+                    SongId = songId,
+                    ListenTimestampUtc = DateTime.UtcNow.AddMinutes(-10),
+                    IsEligibleForScrobbling = true,
+                    IsScrobbled = false
+                });
+            await ctx.SaveChangesAsync();
+        }
+
+        IListenSubmitter sut = CreateService(_dbHelper.ContextFactory);
+        await sut.ProcessPendingListensAsync(CancellationToken.None);
+
+        await using var verify = _dbHelper.ContextFactory.CreateDbContext();
+        (await verify.ListenHistory.FindAsync(100L))!.IsScrobbled.Should().BeTrue();
+        (await verify.ListenHistory.FindAsync(101L))!.IsScrobbled.Should().BeFalse();
+        (await verify.ListenHistory.FindAsync(102L))!.IsScrobbled.Should().BeFalse();
+    }
+
+    #endregion
 
     #region Helper Methods
 

@@ -24,6 +24,7 @@
         <localConverters:FloatToDecimalStringConverter x:Key="FloatToDecimalStringConverter" />
         <localConverters:BooleanToOpacityConverter x:Key="BooleanToOpacityConverter" />
         <localConverters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <localConverters:StringToVisibilityConverter x:Key="StringToVisibilityConverter" />
         <localConverters:PlayerBackgroundMaterialToStringConverter x:Key="PlayerBackgroundMaterialToStringConverter" />
         <localConverters:DoubleToPercentageConverter x:Key="DoubleToPercentageConverter" />
 
@@ -931,6 +932,79 @@
                             </controls:SettingsCard.HeaderIcon>
                             <ToggleSwitch IsOn="{x:Bind ViewModel.IsLastFmNowPlayingEnabled, Mode=TwoWay}" />
                         </controls:SettingsCard>
+                    </controls:SettingsExpander.Items>
+                </controls:SettingsExpander>
+
+                <controls:SettingsExpander
+                    x:Name="ListenBrainzSettingsExpander"
+                    Header="{x:Bind resources:Strings.SettingsPage_ListenBrainz_Header, Mode=OneTime}" Description="{x:Bind resources:Strings.SettingsPage_ListenBrainz_Description, Mode=OneTime}">
+                    <controls:SettingsExpander.HeaderIcon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE9A1;" />
+                    </controls:SettingsExpander.HeaderIcon>
+
+                    <Button
+                        Command="{x:Bind ViewModel.DisconnectListenBrainzCommand}"
+                        Content="{x:Bind resources:Strings.SettingsPage_ListenBrainz_Disconnect_Button, Mode=OneTime}"
+                        Visibility="{x:Bind ViewModel.ListenBrainzIsConnected, Mode=OneWay}" />
+
+                    <controls:SettingsExpander.Items>
+                        <controls:SettingsCard
+                            Header="{x:Bind resources:Strings.SettingsPage_ListenBrainz_TokenLabel, Mode=OneTime}">
+                            <controls:SettingsCard.HeaderIcon>
+                                <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE192;" />
+                            </controls:SettingsCard.HeaderIcon>
+                            <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Right">
+                                <PasswordBox
+                                    Width="260"
+                                    PlaceholderText="{x:Bind resources:Strings.SettingsPage_ListenBrainz_TokenPlaceholder, Mode=OneTime}"
+                                    Password="{x:Bind ViewModel.ListenBrainzUserToken, Mode=TwoWay}" />
+                                <Button
+                                    Command="{x:Bind ViewModel.TestListenBrainzConnectionCommand}"
+                                    Content="{x:Bind resources:Strings.SettingsPage_ListenBrainz_TestConnection, Mode=OneTime}" />
+                            </StackPanel>
+                        </controls:SettingsCard>
+
+                        <controls:SettingsCard
+                            Visibility="{x:Bind ViewModel.ListenBrainzConnectionStatus, Mode=OneWay, Converter={StaticResource StringToVisibilityConverter}}">
+                            <TextBlock
+                                Text="{x:Bind ViewModel.ListenBrainzConnectionStatus, Mode=OneWay}"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                TextWrapping="Wrap" />
+                        </controls:SettingsCard>
+
+                        <controls:SettingsCard
+                            Header="{x:Bind resources:Strings.SettingsPage_ListenBrainz_ScrobblingToggle, Mode=OneTime}">
+                            <controls:SettingsCard.HeaderIcon>
+                                <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE121;" />
+                            </controls:SettingsCard.HeaderIcon>
+                            <ToggleSwitch IsOn="{x:Bind ViewModel.ListenBrainzScrobblingEnabled, Mode=TwoWay}" />
+                        </controls:SettingsCard>
+
+                        <controls:SettingsCard
+                            Header="{x:Bind resources:Strings.SettingsPage_ListenBrainz_NowPlayingToggle, Mode=OneTime}">
+                            <controls:SettingsCard.HeaderIcon>
+                                <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE9A8;" />
+                            </controls:SettingsCard.HeaderIcon>
+                            <ToggleSwitch IsOn="{x:Bind ViewModel.ListenBrainzNowPlayingEnabled, Mode=TwoWay}" />
+                        </controls:SettingsCard>
+
+                        <controls:SettingsExpander
+                            Header="{x:Bind resources:Strings.SettingsPage_ListenBrainz_AdvancedHeader, Mode=OneTime}"
+                            IsExpanded="False">
+                            <controls:SettingsExpander.HeaderIcon>
+                                <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE713;" />
+                            </controls:SettingsExpander.HeaderIcon>
+                            <controls:SettingsExpander.Items>
+                                <controls:SettingsCard
+                                    Header="{x:Bind resources:Strings.SettingsPage_ListenBrainz_ServerUrlLabel, Mode=OneTime}">
+                                    <TextBox
+                                        Width="300"
+                                        HorizontalAlignment="Right"
+                                        PlaceholderText="{x:Bind resources:Strings.SettingsPage_ListenBrainz_ServerUrlPlaceholder, Mode=OneTime}"
+                                        Text="{x:Bind ViewModel.ListenBrainzServerUrl, Mode=TwoWay}" />
+                                </controls:SettingsCard>
+                            </controls:SettingsExpander.Items>
+                        </controls:SettingsExpander>
                     </controls:SettingsExpander.Items>
                 </controls:SettingsExpander>
 

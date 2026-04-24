@@ -1,14 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Nagi.Core.Data;
 using Nagi.Core.Services.Abstractions;
 
 namespace Nagi.Core.Services.Implementations;
 
 /// <summary>
 ///     A background service that periodically submits pending scrobbles that were not
-///     successfully submitted in real-time. This service is designed to be resilient,
-///     handling intermittent network failures and ensuring no scrobbles are lost.
+///     successfully submitted in real-time. This service is a thin orchestrator that fans
+///     queue processing out to every registered <see cref="IListenSubmitter" />. Each
+///     submitter owns its own DB-query + HTTP-submit flow; failures in one submitter do
+///     not block the others.
 /// </summary>
 public class OfflineScrobbleService : IOfflineScrobbleService, IDisposable
 {
@@ -16,10 +16,10 @@ public class OfflineScrobbleService : IOfflineScrobbleService, IDisposable
     private static readonly TimeSpan BaseCheckInterval = TimeSpan.FromMinutes(15);
     private static readonly TimeSpan MaxCheckInterval = TimeSpan.FromHours(4);
     private readonly CancellationTokenSource _cancellationTokenSource = new();
-    private readonly IDbContextFactory<MusicDbContext> _contextFactory;
+
     private readonly ILogger<OfflineScrobbleService> _logger;
-    private readonly ILastFmScrobblerService _scrobblerService;
     private readonly ISettingsService _settingsService;
+    private readonly IReadOnlyList<IListenSubmitter> _submitters;
 
     // A lock-free flag to ensure only one processing task runs at a time.
     // 0 = not processing, 1 = processing.
@@ -29,23 +29,23 @@ public class OfflineScrobbleService : IOfflineScrobbleService, IDisposable
     private int _consecutiveFailures;
 
     public OfflineScrobbleService(
-        IDbContextFactory<MusicDbContext> contextFactory,
-        ILastFmScrobblerService scrobblerService,
+        IEnumerable<IListenSubmitter> submitters,
         ISettingsService settingsService,
         ILogger<OfflineScrobbleService> logger)
     {
-        _contextFactory = contextFactory;
-        _scrobblerService = scrobblerService;
+        _submitters = submitters.ToList();
         _settingsService = settingsService;
         _logger = logger;
-        _settingsService.LastFmSettingsChanged += OnLastFmSettingsChanged;
+        _settingsService.LastFmSettingsChanged += OnSettingsChanged;
+        _settingsService.ListenBrainzSettingsChanged += OnSettingsChanged;
     }
 
     /// <inheritdoc />
     public void Dispose()
     {
         _logger.LogDebug("Disposing OfflineScrobbleService.");
-        _settingsService.LastFmSettingsChanged -= OnLastFmSettingsChanged;
+        _settingsService.LastFmSettingsChanged -= OnSettingsChanged;
+        _settingsService.ListenBrainzSettingsChanged -= OnSettingsChanged;
         _cancellationTokenSource.Cancel();
         _cancellationTokenSource.Dispose();
         GC.SuppressFinalize(this);
@@ -64,12 +64,6 @@ public class OfflineScrobbleService : IOfflineScrobbleService, IDisposable
     {
         if (cancellationToken.IsCancellationRequested) return;
 
-        if (!await _settingsService.GetLastFmScrobblingEnabledAsync().ConfigureAwait(false))
-        {
-            _logger.LogDebug("Scrobbling is disabled; skipping queue processing.");
-            return;
-        }
-
         // Atomically check if processing is already running. If _isProcessingQueue is 0,
         // set it to 1 and proceed. If it's already 1, another thread is processing, so we exit.
         if (Interlocked.CompareExchange(ref _isProcessingQueue, 1, 0) != 0)
@@ -80,70 +74,48 @@ public class OfflineScrobbleService : IOfflineScrobbleService, IDisposable
 
         try
         {
-            _logger.LogDebug("Starting to process pending scrobbles...");
-            // Pass the token to all async EF Core operations for clean cancellation.
-            await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
+            _logger.LogDebug("Starting to process pending scrobbles across {SubmitterCount} submitter(s).",
+                _submitters.Count);
 
-            var pendingScrobbles = await context.ListenHistory
-                .AsTracking()
-                .Where(lh => lh.IsEligibleForScrobbling && !lh.IsScrobbled)
-                .Include(lh => lh.Song).ThenInclude(s => s!.Album)
-                .OrderBy(lh => lh.ListenTimestampUtc)
-                .ToListAsync(cancellationToken).ConfigureAwait(false);
+            var anyProcessed = false;
+            var anyFailure = false;
 
-            if (cancellationToken.IsCancellationRequested) return;
-
-            if (pendingScrobbles.Count == 0)
-            {
-                _logger.LogDebug("No pending scrobbles found.");
-                return;
-            }
-
-            _logger.LogDebug("Found {ScrobbleCount} pending scrobbles.", pendingScrobbles.Count);
-            var successfulScrobbles = 0;
-
-            foreach (var historyEntry in pendingScrobbles)
+            foreach (var submitter in _submitters)
             {
                 if (cancellationToken.IsCancellationRequested) break;
-                if (historyEntry.Song is null) continue;
+
+                bool enabled;
+                try
+                {
+                    enabled = await submitter.IsEnabledAsync().ConfigureAwait(false);
+                }
+                catch (Exception ex) when (ex is not OperationCanceledException)
+                {
+                    _logger.LogWarning(ex, "Submitter '{Id}' failed IsEnabledAsync check.", submitter.Id);
+                    anyFailure = true;
+                    continue;
+                }
+
+                if (!enabled)
+                {
+                    _logger.LogDebug("Submitter '{Id}' is disabled; skipping.", submitter.Id);
+                    continue;
+                }
 
                 try
                 {
-                    var success =
-                        await _scrobblerService.ScrobbleAsync(historyEntry.Song, historyEntry.ListenTimestampUtc).ConfigureAwait(false);
-                    if (success)
-                    {
-                        historyEntry.IsScrobbled = true;
-                        successfulScrobbles++;
-                    }
-                    else
-                    {
-                        _logger.LogWarning("Scrobble failed for song '{SongTitle}'. Will retry later.",
-                            historyEntry.Song.Title);
-                        // Stop processing on the first failure to maintain chronological order.
-                        break;
-                    }
+                    await submitter.ProcessPendingListensAsync(cancellationToken).ConfigureAwait(false);
+                    anyProcessed = true;
                 }
-                catch (Exception ex)
+                catch (Exception ex) when (ex is not OperationCanceledException)
                 {
-                    _logger.LogError(ex, "Exception while scrobbling song '{SongTitle}'. Will retry later.",
-                        historyEntry.Song.Title);
-                    break;
+                    _logger.LogWarning(ex, "Submitter '{Id}' raised during queue processing.", submitter.Id);
+                    anyFailure = true;
                 }
             }
 
-            if (successfulScrobbles > 0)
-            {
-                await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-                _logger.LogDebug("Successfully submitted {ScrobbleCount} scrobbles.", successfulScrobbles);
-                // Reset backoff counter on success.
-                _consecutiveFailures = 0;
-            }
-            else if (pendingScrobbles.Count > 0)
-            {
-                // We had pending scrobbles but submitted none - track as failure for backoff.
-                _consecutiveFailures++;
-            }
+            if (anyFailure) _consecutiveFailures++;
+            else if (anyProcessed) _consecutiveFailures = 0;
         }
         finally
         {
@@ -195,11 +167,12 @@ public class OfflineScrobbleService : IOfflineScrobbleService, IDisposable
     }
 
     /// <summary>
-    ///     Event handler that triggers an immediate queue processing when Last.fm settings change.
+    ///     Event handler that triggers an immediate queue processing when scrobbling-related
+    ///     settings change (Last.fm or ListenBrainz).
     /// </summary>
-    private void OnLastFmSettingsChanged()
+    private void OnSettingsChanged()
     {
-        _logger.LogDebug("Last.fm settings changed. Triggering immediate queue processing.");
+        _logger.LogDebug("Scrobbling settings changed. Triggering immediate queue processing.");
         // Pass the token to be a good citizen during shutdown.
         _ = ProcessQueueAsync(_cancellationTokenSource.Token);
     }
