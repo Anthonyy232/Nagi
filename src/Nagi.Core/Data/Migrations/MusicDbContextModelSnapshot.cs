@@ -149,6 +149,10 @@ namespace Nagi.Core.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("MetadataLastCheckedUtc")
+                        .HasDatabaseName("IX_Artists_MetadataLastCheckedUtc_NullOnly")
+                        .HasFilter("\"MetadataLastCheckedUtc\" IS NULL");
+
                     b.HasIndex("Name")
                         .IsUnique();
 

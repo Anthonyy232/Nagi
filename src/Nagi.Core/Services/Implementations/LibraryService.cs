@@ -1118,6 +1118,39 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 // Offload the entire loop to a background thread to ensure it doesn't block the caller context
                 await Task.Run(async () =>
                 {
+                    // Hoist provider lookup out of the per-artist loop. The settings-store read,
+                    // dedup, default-merge and ordering done by GetEnabledServiceProvidersAsync don't
+                    // change during a run, so doing it once saves N-1 reads for an N-artist run.
+                    var enabledProviders = await _settingsService
+                        .GetEnabledServiceProvidersAsync(Models.ServiceCategory.Metadata)
+                        .ConfigureAwait(false);
+
+                    // No remote providers enabled means the per-artist call would early-return
+                    // without stamping MetadataLastCheckedUtc — the same 50 IDs would be requeried
+                    // forever. Bail out cleanly here. Local-folder image scanning still happens
+                    // on demand via single-artist code paths (e.g. GetArtistDetailsAsync).
+                    if (enabledProviders.Count == 0)
+                    {
+                        _logger.LogDebug("Artist metadata background fetch: no providers enabled, exiting.");
+                        return;
+                    }
+
+                    var enabledProviderIds = enabledProviders.Select(p => p.Id).ToHashSet();
+
+                    // Pre-warm API keys once for the whole run. ApiKeyService caches via
+                    // Lazy<Task<string?>>, so subsequent per-artist calls are free dictionary hits.
+                    var warmupTasks = new List<Task>();
+                    if (enabledProviderIds.Contains(ServiceProviderIds.TheAudioDb))
+                        warmupTasks.Add(WarmupApiKeyAsync(ServiceProviderIds.TheAudioDb, token));
+                    if (enabledProviderIds.Contains(ServiceProviderIds.FanartTv))
+                        warmupTasks.Add(WarmupApiKeyAsync(ServiceProviderIds.FanartTv, token));
+                    if (enabledProviderIds.Contains(ServiceProviderIds.Spotify))
+                        warmupTasks.Add(WarmupApiKeyAsync(ServiceProviderIds.Spotify, token));
+                    if (enabledProviderIds.Contains(ServiceProviderIds.LastFm))
+                        warmupTasks.Add(WarmupApiKeyAsync(ServiceProviderIds.LastFm, token));
+                    if (warmupTasks.Count > 0)
+                        await Task.WhenAll(warmupTasks).ConfigureAwait(false);
+
                     const int batchSize = 50;
                     while (!token.IsCancellationRequested)
                     {
@@ -1145,6 +1178,19 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                         var artistsInBatch = await batchContext.Artists.Where(a => artistIdsToUpdate.Contains(a.Id))
                             .ToListAsync(token).ConfigureAwait(false);
 
+                        // Single grouped query for song directories instead of one query per artist.
+                        // Replaces the N+1 SELECT inside FindArtistImageInFoldersAsync.
+                        var directoryRows = await batchContext.SongArtists
+                            .AsNoTracking()
+                            .Where(sa => artistIdsToUpdate.Contains(sa.ArtistId))
+                            .Select(sa => new { sa.ArtistId, sa.Song.DirectoryPath })
+                            .Distinct()
+                            .ToListAsync(token).ConfigureAwait(false);
+
+                        var directoriesByArtist = directoryRows
+                            .GroupBy(r => r.ArtistId)
+                            .ToDictionary(g => g.Key, g => (IReadOnlyList<string?>)g.Select(r => r.DirectoryPath).ToList());
+
                         var pendingUpdates = new List<ArtistMetadataUpdatedEventArgs>();
                         var stopwatch = Stopwatch.StartNew();
 
@@ -1153,9 +1199,15 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                             if (token.IsCancellationRequested) break;
                             try
                             {
+                                if (!directoriesByArtist.TryGetValue(artist.Id, out var artistDirectories))
+                                    artistDirectories = Array.Empty<string?>();
+
                                 // Pass saveChanges: false and suppressEvents: true to batch operations
                                 var (updated, newImagePath) = await FetchAndUpdateArtistFromRemoteAsync(
-                                    batchContext, artist, token, saveChanges: false, suppressEvents: true).ConfigureAwait(false);
+                                    batchContext, artist, token, saveChanges: false, suppressEvents: true,
+                                    preloadedEnabledProviders: enabledProviders,
+                                    preloadedSongDirectories: artistDirectories,
+                                    skipWarmup: true).ConfigureAwait(false);
 
                                 if (updated)
                                 {
@@ -4813,7 +4865,10 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         Artist artist,
         CancellationToken cancellationToken = default,
         bool saveChanges = true,
-        bool suppressEvents = false)
+        bool suppressEvents = false,
+        IReadOnlyList<ServiceProviderSetting>? preloadedEnabledProviders = null,
+        IReadOnlyList<string?>? preloadedSongDirectories = null,
+        bool skipWarmup = false)
     {
         var wasMetadataFoundAndUpdated = false;
         var localImageFound = false;
@@ -4824,7 +4879,9 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         if (artist.LocalImageCachePath == null ||
             (!artist.LocalImageCachePath.Contains(".custom.") && !artist.LocalImageCachePath.Contains(".local.")))
         {
-            var localImageBytes = await FindArtistImageInFoldersAsync(artist, context, cancellationToken).ConfigureAwait(false);
+            var localImageBytes = preloadedSongDirectories is not null
+                ? await FindArtistImageInDirectoriesAsync(preloadedSongDirectories, artist.Name, cancellationToken).ConfigureAwait(false)
+                : await FindArtistImageInFoldersAsync(artist, context, cancellationToken).ConfigureAwait(false);
             if (localImageBytes != null)
             {
                 try
@@ -4850,8 +4907,10 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             }
         }
 
-        // Get enabled metadata providers in priority order
-        var enabledProviders = await _settingsService.GetEnabledServiceProvidersAsync(Models.ServiceCategory.Metadata).ConfigureAwait(false);
+        // Get enabled metadata providers in priority order. Callers in batch paths preload this
+        // once for the whole run to avoid repeated settings-store reads + list rebuilds per artist.
+        var enabledProviders = preloadedEnabledProviders
+            ?? await _settingsService.GetEnabledServiceProvidersAsync(Models.ServiceCategory.Metadata).ConfigureAwait(false);
 
         if (enabledProviders.Count == 0)
         {
@@ -4874,15 +4933,19 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         // Pre-warm API keys in parallel for enabled providers only.
         // Start warmup FIRST so it runs concurrently with all provider tasks.
         // Warmup failures are acceptable - the actual service calls handle missing keys gracefully.
+        // Batch callers warm up once for the whole run and pass skipWarmup: true.
         var warmupTasks = new List<Task>();
-        if (enabledIds.Contains(ServiceProviderIds.TheAudioDb))
-            warmupTasks.Add(WarmupApiKeyAsync(ServiceProviderIds.TheAudioDb, cancellationToken));
-        if (enabledIds.Contains(ServiceProviderIds.FanartTv))
-            warmupTasks.Add(WarmupApiKeyAsync(ServiceProviderIds.FanartTv, cancellationToken));
-        if (enabledIds.Contains(ServiceProviderIds.Spotify))
-            warmupTasks.Add(WarmupApiKeyAsync(ServiceProviderIds.Spotify, cancellationToken));
-        if (enabledIds.Contains(ServiceProviderIds.LastFm))
-            warmupTasks.Add(WarmupApiKeyAsync(ServiceProviderIds.LastFm, cancellationToken));
+        if (!skipWarmup)
+        {
+            if (enabledIds.Contains(ServiceProviderIds.TheAudioDb))
+                warmupTasks.Add(WarmupApiKeyAsync(ServiceProviderIds.TheAudioDb, cancellationToken));
+            if (enabledIds.Contains(ServiceProviderIds.FanartTv))
+                warmupTasks.Add(WarmupApiKeyAsync(ServiceProviderIds.FanartTv, cancellationToken));
+            if (enabledIds.Contains(ServiceProviderIds.Spotify))
+                warmupTasks.Add(WarmupApiKeyAsync(ServiceProviderIds.Spotify, cancellationToken));
+            if (enabledIds.Contains(ServiceProviderIds.LastFm))
+                warmupTasks.Add(WarmupApiKeyAsync(ServiceProviderIds.LastFm, cancellationToken));
+        }
 
         // Start MusicBrainz lookup in parallel with warmup (don't block other tasks)
         var mbid = artist.MusicBrainzId;
@@ -4898,17 +4961,35 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         if (enabledIds.Contains(ServiceProviderIds.LastFm))
             tasks[ServiceProviderIds.LastFm] = FetchFromLastFmAsync(artist.Name, cancellationToken);
 
+        // Track whether at least one network call returned (with or without data) so we
+        // only stamp MetadataLastCheckedUtc when the run actually reached the providers.
+        // A clean "no result" still counts; only a transient failure (network error, 5xx,
+        // 429, etc.) leaves the artist eligible for retry on a future run.
+        var anyProviderSucceeded = false;
+
         // Wait for MusicBrainz to complete (if started)
         // Note: Warmup tasks continue in background - they're best-effort cache warming
         if (musicBrainzTask != null)
         {
-            var resolvedMbid = await musicBrainzTask.ConfigureAwait(false);
-            if (!string.IsNullOrEmpty(resolvedMbid))
+            try
             {
-                mbid = resolvedMbid;
-                artist.MusicBrainzId = mbid;
-                wasMetadataFoundAndUpdated = true;
-                _logger.LogInformation("Resolved MusicBrainz ID {MBID} for artist '{ArtistName}'", mbid, artist.Name);
+                var resolvedMbid = await musicBrainzTask.ConfigureAwait(false);
+                anyProviderSucceeded = true;
+                if (!string.IsNullOrEmpty(resolvedMbid))
+                {
+                    mbid = resolvedMbid;
+                    artist.MusicBrainzId = mbid;
+                    wasMetadataFoundAndUpdated = true;
+                    _logger.LogInformation("Resolved MusicBrainz ID {MBID} for artist '{ArtistName}'", mbid, artist.Name);
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogDebug(ex, "MusicBrainz lookup failed for '{ArtistName}'.", artist.Name);
             }
         }
 
@@ -4940,6 +5021,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 // Sequential await in priority order. If a higher priority task is still running,
                 // we wait for it. If it finishes and has data, we break early and ignore lower priority ones.
                 var (imageUrl, biography) = await task.ConfigureAwait(false);
+                anyProviderSucceeded = true;
 
                 if (string.IsNullOrEmpty(finalImageUrl) && !string.IsNullOrEmpty(imageUrl))
                 {
@@ -5009,8 +5091,22 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             }
         }
 
-        artist.MetadataLastCheckedUtc = DateTime.UtcNow;
-        if (saveChanges)
+        // Only mark "checked" when we actually got a clean response from at least one source.
+        // If every provider call threw (network blip, 5xx, 429, DNS, etc.) and no local-folder
+        // image was found either, leave MetadataLastCheckedUtc null so the next run retries.
+        var stampChecked = anyProviderSucceeded || localImageFound;
+        if (stampChecked)
+        {
+            artist.MetadataLastCheckedUtc = DateTime.UtcNow;
+        }
+        else
+        {
+            _logger.LogDebug(
+                "All providers failed for '{ArtistName}'; leaving MetadataLastCheckedUtc null for retry.",
+                artist.Name);
+        }
+
+        if (saveChanges && (wasMetadataFoundAndUpdated || stampChecked))
         {
             await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         }
