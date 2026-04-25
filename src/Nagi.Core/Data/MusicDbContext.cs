@@ -107,6 +107,14 @@ public class MusicDbContext : DbContext
             entity.Property(a => a.SortName).UseCollation("NOCASE");
             entity.HasIndex(a => a.Name).IsUnique();
             entity.HasIndex(a => a.SortName);
+
+            // Filtered index for the metadata-fetch background loop, which repeatedly
+            // queries Artists.Where(a => a.MetadataLastCheckedUtc == null). Once most
+            // artists are checked, the unfiltered scan returns nothing useful;
+            // a partial index over the NULL rows turns the query O(matching rows).
+            entity.HasIndex(a => a.MetadataLastCheckedUtc)
+                .HasFilter("\"MetadataLastCheckedUtc\" IS NULL")
+                .HasDatabaseName("IX_Artists_MetadataLastCheckedUtc_NullOnly");
         });
 
         // Configure the Genre entity.

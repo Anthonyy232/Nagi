@@ -19,13 +19,13 @@ public static class SortKeyHelper
     {
         if (string.IsNullOrWhiteSpace(value)) return string.Empty;
 
-        var trimmed = value.TrimStart();
+        var trimmed = value.Trim();
         foreach (var article in LeadingArticles)
         {
             if (trimmed.Length > article.Length &&
                 trimmed.StartsWith(article, StringComparison.OrdinalIgnoreCase))
             {
-                trimmed = trimmed[article.Length..].TrimStart();
+                trimmed = trimmed[article.Length..].Trim();
                 break;
             }
         }
