@@ -58,22 +58,12 @@ public sealed partial class ArtistPage : Page
             if (ViewModel.Artists.Count == 0)
             {
                 _logger.LogDebug("Artist collection is empty, loading artists...");
-                await ViewModel.LoadArtistsAsync(cts.Token);
+                await ViewModel.LoadAsync(cts.Token);
 
                 if (cts.IsCancellationRequested)
                     _logger.LogDebug("Artist loading was canceled.");
                 else if (!ViewModel.HasLoadError)
                     _logger.LogDebug("Successfully loaded artists.");
-            }
-            else if (!ViewModel.IsFullyLoaded)
-            {
-                _logger.LogDebug("Artists partially loaded, resuming fetch...");
-                await ViewModel.ResumeLoadingAsync(cts.Token);
-
-                if (cts.IsCancellationRequested)
-                    _logger.LogDebug("Artist resuming was canceled.");
-                else if (!ViewModel.HasLoadError)
-                    _logger.LogDebug("Successfully resumed loading artists.");
             }
             else
             {

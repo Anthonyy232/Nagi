@@ -22,7 +22,7 @@ namespace Nagi.WinUI.ViewModels;
 ///     A base class for view models that display a list of songs.
 ///     Provides common functionality for loading, sorting, selection, and playback.
 /// </summary>
-public abstract partial class SongListViewModelBase : SearchableViewModelBase, IDisposable
+public abstract partial class SongListViewModelBase : SearchableViewModelBase, IPagedListViewModel, IDisposable
 {
     protected readonly ILibraryReader _libraryReader;
     protected readonly IUISettingsService _settingsService;
@@ -385,19 +385,11 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
 
             ProcessPagedResult(pagedResult, token);
 
-            bool hasMore;
-            _stateLock.EnterReadLock();
-            try
-            {
-                hasMore = HasNextPage;
-            }
-            finally
-            {
-                _stateLock.ExitReadLock();
-            }
-
-            // If there are more pages and pagination is disabled, start loading them automatically in the background.
-            if (hasMore && !IsPaginationEnabled && !token.IsCancellationRequested) _ = StartAutomaticPagedLoadingAsync(token);
+            // Read HasNextPage from the result, not the VM property — ProcessPagedResult sets the
+            // property inside a dispatcher lambda that may not have run yet, so the property would
+            // be stale here.
+            if (pagedResult.HasNextPage && !IsPaginationEnabled && !token.IsCancellationRequested)
+                _ = StartAutomaticPagedLoadingAsync(pagedResult.PageNumber + 1, token);
         }
         catch (Exception ex)
         {
@@ -418,25 +410,12 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
     /// <summary>
     ///     Transparently loads subsequent pages in the background to create a smooth "infinite scroll" experience.
     /// </summary>
-    private async Task StartAutomaticPagedLoadingAsync(CancellationToken token)
+    private async Task StartAutomaticPagedLoadingAsync(int nextPageToLoad, CancellationToken token)
     {
         Interlocked.Increment(ref _backgroundLoaders);
         try
         {
-            int nextPageToLoad;
-            bool hasMore;
-            _stateLock.EnterReadLock();
-            try
-            {
-                nextPageToLoad = CurrentPage + 1;
-                hasMore = HasNextPage;
-            }
-            finally
-            {
-                _stateLock.ExitReadLock();
-            }
-
-            while (hasMore && !token.IsCancellationRequested)
+            while (!token.IsCancellationRequested)
             {
                 // A small delay to prevent overwhelming the system and to allow UI to remain responsive.
                 await Task.Delay(100, token);
@@ -447,7 +426,7 @@ public abstract partial class SongListViewModelBase : SearchableViewModelBase, I
 
                 ProcessPagedResult(pagedResult, token, true);
 
-                hasMore = pagedResult.HasNextPage;
+                if (!pagedResult.HasNextPage) break;
                 nextPageToLoad++;
             }
         }

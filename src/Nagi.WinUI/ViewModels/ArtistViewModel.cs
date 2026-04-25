@@ -1,6 +1,5 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Threading;
@@ -12,7 +11,6 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.WinUI.Navigation;
-using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
 using Nagi.Core.Helpers;
 using Nagi.WinUI.Helpers;
@@ -29,7 +27,6 @@ public partial class ArtistViewModelItem : ObservableObject
     [ObservableProperty] public partial string? LocalImageCachePath { get; set; }
 
     public bool IsArtworkAvailable => !string.IsNullOrEmpty(LocalImageCachePath);
-
     public bool IsCustomImage => LocalImageCachePath?.Contains(".custom.") == true;
 
     partial void OnLocalImageCachePathChanged(string? value)
@@ -40,22 +37,18 @@ public partial class ArtistViewModelItem : ObservableObject
 }
 
 /// <summary>
-///     Manages the state and logic for the artist list page, including data fetching and live updates.
+///     Manages the artist list page. Only the current page is held in the VM; image
+///     metadata is fetched for the whole library out-of-band via the library service.
 /// </summary>
-public partial class ArtistViewModel : SearchableViewModelBase
+public partial class ArtistViewModel : PagedListViewModelBase
 {
-    private const int PageSize = 250;
     private readonly Dictionary<Guid, ArtistViewModelItem> _artistLookup = new();
     private readonly NotifyCollectionChangedEventHandler _collectionChangedHandler;
-    private readonly ILibraryService _libraryService;
     private readonly IMusicPlaybackService _musicPlaybackService;
     private readonly INavigationService _navigationService;
-    private readonly IUISettingsService _settingsService;
     private readonly IMusicNavigationService _musicNavigationService;
-    private int _currentPage = 1;
-    private bool _hasSortOrderLoaded;
+
     private bool _isNavigating;
-    private CancellationTokenSource? _debouncer;
 
     public ArtistViewModel(
         ILibraryService libraryService,
@@ -65,364 +58,149 @@ public partial class ArtistViewModel : SearchableViewModelBase
         INavigationService navigationService,
         IMusicNavigationService musicNavigationService,
         ILogger<ArtistViewModel> logger)
-        : base(dispatcherService, logger)
+        : base(libraryService, settingsService, dispatcherService, logger)
     {
-        _libraryService = libraryService;
-        _settingsService = settingsService;
         _musicPlaybackService = musicPlaybackService;
         _navigationService = navigationService;
         _musicNavigationService = musicNavigationService;
 
-        // Store the handler in a field so we can reliably unsubscribe from it later.
         _collectionChangedHandler = (s, e) => OnPropertyChanged(nameof(HasArtists));
         Artists.CollectionChanged += _collectionChangedHandler;
-
-        // Subscribe to library changes to refresh when folders are added/removed
-        _libraryService.LibraryContentChanged += OnLibraryContentChanged;
 
         UpdateSortOrderText();
     }
 
-    private void OnLibraryContentChanged(object? sender, LibraryContentChangedEventArgs e)
-    {
-        // We don't need to refresh the artist list just because a folder container was added (it has no songs/artists yet).
-        if (e.ChangeType == LibraryChangeType.FolderAdded) return;
-
-        // Debounce to prevent multiple refresh calls during rapid changes.
-        var cts = new CancellationTokenSource();
-        var oldCts = Interlocked.Exchange(ref _debouncer, cts);
-        try { oldCts?.Cancel(); oldCts?.Dispose(); } catch (ObjectDisposedException) { }
-
-        var token = cts.Token;
-        _ = Task.Run(async () =>
-        {
-            try
-            {
-                await Task.Delay(1000, token).ConfigureAwait(false);
-                if (token.IsCancellationRequested) return;
-
-                _logger.LogDebug("Library content changed ({ChangeType}). Refreshing artist list.", e.ChangeType);
-                await _dispatcherService.EnqueueAsync(() => LoadArtistsCommand.ExecuteAsync(CancellationToken.None));
-            }
-            catch (OperationCanceledException) { }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error refreshing artists after library content change");
-            }
-        }, token);
-    }
-
     [ObservableProperty] public partial ObservableRangeCollection<ArtistViewModelItem> Artists { get; set; } = new();
-
-    [ObservableProperty] public partial bool IsLoading { get; set; }
-
-    [ObservableProperty] public partial bool IsLoadingMore { get; set; }
-
-    [ObservableProperty] public partial bool IsFullyLoaded { get; private set; }
-
-    [ObservableProperty] public partial bool HasLoadError { get; set; }
-
-    [ObservableProperty] public partial string TotalItemsText { get; set; } = ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Artists_Count_Plural, 0);
 
     [ObservableProperty] public partial ArtistSortOrder CurrentSortOrder { get; set; } = ArtistSortOrder.NameAsc;
 
     [ObservableProperty] public partial string CurrentSortOrderText { get; set; } = string.Empty;
 
-    partial void OnCurrentSortOrderChanged(ArtistSortOrder value) => UpdateSortOrderText();
-
-
     public bool HasArtists => Artists.Any();
 
-    /// <summary>
-    ///     Navigates to the detailed view for the selected artist.
-    /// </summary>
-    [RelayCommand]
-    public async Task NavigateToArtistDetailAsync(object? parameter)
+    partial void OnCurrentSortOrderChanged(ArtistSortOrder value) => UpdateSortOrderText();
+
+    private void UpdateSortOrderText() => CurrentSortOrderText = SortOrderHelper.GetDisplayName(CurrentSortOrder);
+
+    protected override async Task LoadInitialSortOrderAsync() =>
+        CurrentSortOrder = await _settingsService.GetSortOrderAsync<ArtistSortOrder>(SortOrderHelper.ArtistsSortOrderKey);
+
+    protected override string FormatTotalItemsText(int count) =>
+        count == 1
+            ? ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Artists_Count_Singular, count)
+            : ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Artists_Count_Plural, count);
+
+    protected override async Task<int> LoadPageItemsAsync(int pageNumber, int pageSize, CancellationToken token)
     {
-        if (_isNavigating) return;
-        try
-        {
-            _isNavigating = true;
-            await _musicNavigationService.NavigateToArtistAsync(parameter);
-        }
-        finally
-        {
-            _isNavigating = false;
-        }
-    }
+        var pagedResult = IsSearchActive
+            ? await _libraryService.SearchArtistsPagedAsync(SearchTerm, pageNumber, pageSize)
+            : await _libraryService.GetAllArtistsPagedAsync(pageNumber, pageSize, CurrentSortOrder);
 
-    /// <summary>
-    ///     Clears the current queue and starts playing all songs by the selected artist.
-    /// </summary>
-    [RelayCommand]
-    private async Task PlayArtistAsync(Guid artistId)
-    {
-        if (IsLoading || artistId == Guid.Empty) return;
+        token.ThrowIfCancellationRequested();
 
-        try
-        {
-            await _musicPlaybackService.PlayArtistAsync(artistId);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogCritical(ex, "Error playing artist {ArtistId}", artistId);
-        }
-    }
-
-    /// <summary>
-    ///     Fetches a random artist ID effectively instantly and starts playback.
-    /// </summary>
-    [RelayCommand]
-    private async Task PlayRandomArtistAsync()
-    {
-        if (IsLoading) return;
-
-        try
-        {
-            var randomArtistId = await _libraryService.GetRandomArtistIdAsync();
-            if (randomArtistId.HasValue)
-            {
-                await _musicPlaybackService.PlayArtistAsync(randomArtistId.Value);
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogCritical(ex, "Error playing random artist");
-        }
-    }
-
-    /// <summary>
-    ///     Changes the sort order and reloads the artist list.
-    /// </summary>
-    [RelayCommand]
-    public async Task ChangeSortOrderAsync(string sortOrderString)
-    {
-        if (Enum.TryParse<ArtistSortOrder>(sortOrderString, out var newSortOrder)
-            && newSortOrder != CurrentSortOrder)
-        {
-            CurrentSortOrder = newSortOrder;
-            _ = _settingsService.SetSortOrderAsync(SortOrderHelper.ArtistsSortOrderKey, newSortOrder)
-                .ContinueWith(t => _logger.LogError(t.Exception, "Failed to save artist sort order"),
-                    TaskContinuationOptions.OnlyOnFaulted);
-            await LoadArtistsCommand.ExecuteAsync(CancellationToken.None);
-        }
-    }
-
-    private void UpdateSortOrderText()
-    {
-        CurrentSortOrderText = SortOrderHelper.GetDisplayName(CurrentSortOrder);
-    }
-
-    /// <summary>
-    ///     Asynchronously resumes loading artists from the current page with support for cancellation.
-    /// </summary>
-    /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
-    public async Task ResumeLoadingAsync(CancellationToken cancellationToken)
-    {
-        if (IsLoading || IsFullyLoaded || IsLoadingMore) return;
-
-        try
-        {
-            IsLoadingMore = true;
-            HasLoadError = false;
-
-            while (!IsFullyLoaded && !cancellationToken.IsCancellationRequested)
-            {
-                var nextPage = _currentPage + 1;
-                await LoadNextPageAsync(nextPage, cancellationToken);
-                _currentPage = nextPage;
-                await Task.Delay(100, cancellationToken);
-            }
-        }
-        catch (OperationCanceledException)
-        {
-            _logger.LogDebug("Artist resuming was canceled.");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An error occurred while resuming artists");
-            HasLoadError = true;
-        }
-        finally
-        {
-            IsLoadingMore = false;
-        }
-    }
-
-    /// <summary>
-    ///     Asynchronously loads artists with support for cancellation.
-    /// </summary>
-    /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
-    [RelayCommand]
-    public async Task LoadArtistsAsync(CancellationToken cancellationToken)
-    {
-        if (IsLoading) return;
-
-        IsLoading = true;
-        HasLoadError = false;
-        _currentPage = 1;
-        IsFullyLoaded = false;
         _artistLookup.Clear();
-        Artists.Clear();
-
-        try
+        var items = new List<ArtistViewModelItem>();
+        if (pagedResult?.Items != null)
         {
-            if (!_hasSortOrderLoaded)
-            {
-                CurrentSortOrder = await _settingsService.GetSortOrderAsync<ArtistSortOrder>(SortOrderHelper.ArtistsSortOrderKey);
-                _hasSortOrderLoaded = true;
-            }
-
-            await LoadNextPageAsync(1, cancellationToken);
-
-            if (cancellationToken.IsCancellationRequested) return;
-
-            // Optionally start background metadata fetching after initial load.
-            if (await _settingsService.GetFetchOnlineMetadataEnabledAsync())
-            {
-                // Fire-and-forget to prevent blocking UI loading
-                _ = _libraryService.StartArtistMetadataBackgroundFetchAsync();
-            }
-
-            // Continue loading subsequent pages in the background.
-            if (!IsFullyLoaded)
-            {
-                IsLoadingMore = true;
-                while (!IsFullyLoaded && !cancellationToken.IsCancellationRequested)
-                {
-                    var nextPage = _currentPage + 1;
-                    await LoadNextPageAsync(nextPage, cancellationToken);
-                    _currentPage = nextPage;
-                    await Task.Delay(100, cancellationToken);
-                }
-            }
-        }
-        catch (OperationCanceledException)
-        {
-            _logger.LogDebug("Artist loading was canceled.");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An error occurred while loading artists");
-            HasLoadError = true;
-        }
-        finally
-        {
-            IsLoading = false;
-            IsLoadingMore = false;
-        }
-    }
-
-    /// <summary>
-    ///     Fetches a single page of artists from the library service.
-    /// </summary>
-    private async Task LoadNextPageAsync(int pageToLoad, CancellationToken cancellationToken)
-    {
-        PagedResult<Artist>? pagedResult;
-        if (IsSearchActive)
-            pagedResult = await _libraryService.SearchArtistsPagedAsync(SearchTerm, pageToLoad, PageSize);
-        else
-            pagedResult = await _libraryService.GetAllArtistsPagedAsync(pageToLoad, PageSize, CurrentSortOrder);
-
-        cancellationToken.ThrowIfCancellationRequested();
-
-        if (pagedResult?.Items?.Any() == true)
-        {
-            var newItems = new List<ArtistViewModelItem>();
             foreach (var artist in pagedResult.Items)
             {
-                var artistVm = new ArtistViewModelItem
+                var vm = new ArtistViewModelItem
                 {
                     Id = artist.Id,
                     Name = artist.Name,
                     LocalImageCachePath = ImageUriHelper.GetUriWithCacheBuster(artist.LocalImageCachePath)
                 };
-                _artistLookup[artist.Id] = artistVm;
-                newItems.Add(artistVm);
+                _artistLookup[artist.Id] = vm;
+                items.Add(vm);
             }
-            Artists.AddRange(newItems);
         }
 
-        // Update the total items text.
-        if (pagedResult != null)
-        {
-            var count = pagedResult.TotalCount;
-            TotalItemsText = count == 1
-                ? ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Artists_Count_Singular, count)
-                : ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Artists_Count_Plural, count);
-        }
-
-        if (pagedResult == null || Artists.Count >= pagedResult.TotalCount) IsFullyLoaded = true;
+        Artists.ReplaceRange(items);
+        return pagedResult?.TotalCount ?? 0;
     }
 
-    protected override async Task ExecuteSearchAsync(CancellationToken token)
+    // Runs server-side over every artist in the DB, independent of what the VM paged in.
+    // The service's own semaphore dedupes concurrent runs.
+    protected override async Task OnPageLoadedAsync()
     {
-        await _dispatcherService.EnqueueAsync(async () =>
+        if (await _settingsService.GetFetchOnlineMetadataEnabledAsync())
+            _ = _libraryService.StartArtistMetadataBackgroundFetchAsync();
+    }
+
+    [RelayCommand]
+    public async Task NavigateToArtistDetailAsync(object? parameter)
+    {
+        if (_isNavigating) return;
+        try { _isNavigating = true; await _musicNavigationService.NavigateToArtistAsync(parameter); }
+        finally { _isNavigating = false; }
+    }
+
+    [RelayCommand]
+    private async Task PlayArtistAsync(Guid artistId)
+    {
+        if (IsLoading || artistId == Guid.Empty) return;
+        try { await _musicPlaybackService.PlayArtistAsync(artistId); }
+        catch (Exception ex) { _logger.LogCritical(ex, "Error playing artist {ArtistId}", artistId); }
+    }
+
+    [RelayCommand]
+    private async Task PlayRandomArtistAsync()
+    {
+        if (IsLoading) return;
+        try
         {
-            if (token.IsCancellationRequested) return;
-            await LoadArtistsAsync(token);
+            var id = await _libraryService.GetRandomArtistIdAsync();
+            if (id.HasValue) await _musicPlaybackService.PlayArtistAsync(id.Value);
+        }
+        catch (Exception ex) { _logger.LogCritical(ex, "Error playing random artist"); }
+    }
+
+    [RelayCommand]
+    public async Task ChangeSortOrderAsync(string sortOrderString)
+    {
+        if (!Enum.TryParse<ArtistSortOrder>(sortOrderString, out var newSortOrder) || newSortOrder == CurrentSortOrder)
+            return;
+
+        CurrentSortOrder = newSortOrder;
+        _ = _settingsService.SetSortOrderAsync(SortOrderHelper.ArtistsSortOrderKey, newSortOrder)
+            .ContinueWith(t => _logger.LogError(t.Exception, "Failed to save artist sort order"),
+                TaskContinuationOptions.OnlyOnFaulted);
+        CurrentPage = 1;
+        await LoadCommand.ExecuteAsync(CancellationToken.None);
+    }
+
+    private void OnArtistMetadataUpdated(object? sender, ArtistMetadataUpdatedEventArgs e)
+    {
+        if (!_artistLookup.TryGetValue(e.ArtistId, out var artistVm)) return;
+        _dispatcherService.TryEnqueue(() =>
+        {
+            artistVm.LocalImageCachePath = ImageUriHelper.GetUriWithCacheBuster(e.NewLocalImageCachePath, DateTime.UtcNow);
         });
     }
 
-    /// <summary>
-    ///     Handles updates to artist metadata, such as new images.
-    /// </summary>
-    private void OnArtistMetadataUpdated(object? sender, ArtistMetadataUpdatedEventArgs e)
-    {
-        if (_artistLookup.TryGetValue(e.ArtistId, out var artistVm))
-            // Ensure UI updates are performed on the main thread.
-            _dispatcherService.TryEnqueue(() =>
-            {
-                // Force unique cache buster using current time to ensure UI updates immediately
-                artistVm.LocalImageCachePath = ImageUriHelper.GetUriWithCacheBuster(e.NewLocalImageCachePath, DateTime.UtcNow);
-            });
-    }
-
-    /// <summary>
-    ///     Handles batched updates to artist metadata.
-    /// </summary>
     private void OnArtistMetadataBatchUpdated(object? sender, IEnumerable<ArtistMetadataUpdatedEventArgs> updates)
     {
-        // Ensure UI updates are performed on the main thread.
         _dispatcherService.TryEnqueue(() =>
         {
             var timestamp = DateTime.UtcNow;
             foreach (var update in updates)
             {
                 if (_artistLookup.TryGetValue(update.ArtistId, out var artistVm))
-                {
-                    // Force unique cache buster using current time to ensure UI updates immediately
                     artistVm.LocalImageCachePath = ImageUriHelper.GetUriWithCacheBuster(update.NewLocalImageCachePath, timestamp);
-                }
             }
         });
     }
 
-    /// <summary>
-    ///     Subscribes to necessary service events.
-    /// </summary>
     public void SubscribeToEvents()
     {
         _libraryService.ArtistMetadataUpdated += OnArtistMetadataUpdated;
         _libraryService.ArtistMetadataBatchUpdated += OnArtistMetadataBatchUpdated;
     }
 
-    /// <summary>
-    ///     Unsubscribes from service events to prevent memory leaks.
-    /// </summary>
     public void UnsubscribeFromEvents()
     {
         _libraryService.ArtistMetadataUpdated -= OnArtistMetadataUpdated;
         _libraryService.ArtistMetadataBatchUpdated -= OnArtistMetadataBatchUpdated;
-    }
-
-    /// <summary>
-    ///     Cleans up search state when navigating away from the page.
-    /// </summary>
-    public override void ResetState()
-    {
-        base.ResetState();
-        _logger.LogDebug("Cleaned up ArtistViewModel search resources");
     }
 
     [RelayCommand]
@@ -434,8 +212,6 @@ public partial class ArtistViewModel : SearchableViewModelBase
     }
 
     [RelayCommand]
-    public async Task RemoveArtistImageAsync(Guid artistId)
-    {
+    public async Task RemoveArtistImageAsync(Guid artistId) =>
         await _libraryService.RemoveArtistImageAsync(artistId);
-    }
 }
