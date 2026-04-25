@@ -40,7 +40,7 @@ public partial class ArtistViewModelItem : ObservableObject
 ///     Manages the artist list page. Only the current page is held in the VM; image
 ///     metadata is fetched for the whole library out-of-band via the library service.
 /// </summary>
-public partial class ArtistViewModel : PagedListViewModelBase
+public partial class ArtistViewModel : PagedListViewModelBase<Artist>
 {
     private readonly Dictionary<Guid, ArtistViewModelItem> _artistLookup = new();
     private readonly NotifyCollectionChangedEventHandler _collectionChangedHandler;
@@ -90,38 +90,39 @@ public partial class ArtistViewModel : PagedListViewModelBase
             ? ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Artists_Count_Singular, count)
             : ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Artists_Count_Plural, count);
 
-    protected override async Task<int> LoadPageItemsAsync(int pageNumber, int pageSize, CancellationToken token)
+    protected override async Task<PagedResult<Artist>> LoadPageItemsAsync(int pageNumber, int pageSize, CancellationToken token)
     {
         var pagedResult = IsSearchActive
             ? await _libraryService.SearchArtistsPagedAsync(SearchTerm, pageNumber, pageSize)
             : await _libraryService.GetAllArtistsPagedAsync(pageNumber, pageSize, CurrentSortOrder);
 
         token.ThrowIfCancellationRequested();
-
-        _artistLookup.Clear();
-        var items = new List<ArtistViewModelItem>();
-        if (pagedResult?.Items != null)
-        {
-            foreach (var artist in pagedResult.Items)
-            {
-                var vm = new ArtistViewModelItem
-                {
-                    Id = artist.Id,
-                    Name = artist.Name,
-                    LocalImageCachePath = ImageUriHelper.GetUriWithCacheBuster(artist.LocalImageCachePath)
-                };
-                _artistLookup[artist.Id] = vm;
-                items.Add(vm);
-            }
-        }
-
-        Artists.ReplaceRange(items);
-        return pagedResult?.TotalCount ?? 0;
+        return pagedResult ?? new PagedResult<Artist>();
     }
 
-    // Runs server-side over every artist in the DB, independent of what the VM paged in.
-    // The service's own semaphore dedupes concurrent runs.
-    protected override async Task OnPageLoadedAsync()
+    protected override void ApplyItemsToCollection(PagedResult<Artist> result, bool append)
+    {
+        if (result?.Items == null) return;
+
+        if (!append) _artistLookup.Clear();
+        var items = new List<ArtistViewModelItem>();
+        foreach (var artist in result.Items)
+        {
+            var vm = new ArtistViewModelItem
+            {
+                Id = artist.Id,
+                Name = artist.Name,
+                LocalImageCachePath = ImageUriHelper.GetUriWithCacheBuster(artist.LocalImageCachePath)
+            };
+            _artistLookup[artist.Id] = vm;
+            items.Add(vm);
+        }
+
+        Artists.AppendOrReplace(items, append);
+    }
+
+    // Service's own semaphore dedupes concurrent runs of the metadata fetch.
+    protected override async Task OnPageLoadedAsync(PagedResult<Artist> result, CancellationToken token)
     {
         if (await _settingsService.GetFetchOnlineMetadataEnabledAsync())
             _ = _libraryService.StartArtistMetadataBackgroundFetchAsync();

@@ -20,7 +20,6 @@ namespace Nagi.WinUI.ViewModels;
 public partial class LibraryViewModel : SongListViewModelBase
 {
     private static bool _isInitialScanTriggered;
-    private readonly ILibraryService _libraryService;
     private CancellationTokenSource? _debouncer;
     private bool _hasInitialized;
     private bool _pendingLibraryRefresh;
@@ -37,11 +36,9 @@ public partial class LibraryViewModel : SongListViewModelBase
         ILogger<LibraryViewModel> logger)
         : base(libraryService, playlistService, playbackService, navigationService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
     {
-        _libraryService = libraryService;
-        _libraryService.LibraryContentChanged += OnLibraryContentChanged;
         PropertyChanged += (s, e) =>
         {
-            if (e.PropertyName == nameof(IsOverallLoading) && !IsOverallLoading && _pendingLibraryRefresh)
+            if (e.PropertyName == nameof(IsLoading) && !IsLoading && _pendingLibraryRefresh)
             {
                 _pendingLibraryRefresh = false;
                 _ = RefreshOrSortSongsAsync();
@@ -107,7 +104,7 @@ public partial class LibraryViewModel : SongListViewModelBase
         });
     }
 
-    private void OnLibraryContentChanged(object? sender, LibraryContentChangedEventArgs e)
+    protected override void OnLibraryContentChanged(object? sender, LibraryContentChangedEventArgs e)
     {
         // We don't need to refresh the song list just because a folder container was added (it has no songs yet).
         // We wait for the subsequent scan to update us.
@@ -129,7 +126,7 @@ public partial class LibraryViewModel : SongListViewModelBase
                 _logger.LogDebug("Library content changed ({ChangeType}). Refreshing song list.", e.ChangeType);
                 await _dispatcherService.EnqueueAsync(async () =>
                 {
-                    if (!IsOverallLoading)
+                    if (!IsLoading)
                         await RefreshOrSortSongsAsync();
                     else
                         _pendingLibraryRefresh = true;

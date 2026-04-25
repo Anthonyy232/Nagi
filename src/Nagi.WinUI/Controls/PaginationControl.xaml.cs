@@ -62,6 +62,13 @@ public sealed partial class PaginationControl : UserControl
 
     public int[] PageSizeOptions { get; } = new[] { 25, 50, 100, 250, 500 };
 
+    /// <summary>
+    ///     Hide the entire control when the total item count fits within the smallest
+    ///     page-size tier — pagination is meaningless at that scale.
+    /// </summary>
+    public Visibility VisibleIfPaginates(int totalItemCount) =>
+        totalItemCount > PageSizeOptions[0] ? Visibility.Visible : Visibility.Collapsed;
+
     public IPagedListViewModel ViewModel
     {
         get => (IPagedListViewModel)GetValue(ViewModelProperty);

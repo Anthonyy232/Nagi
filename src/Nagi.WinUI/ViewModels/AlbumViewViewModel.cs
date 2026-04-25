@@ -29,7 +29,7 @@ public partial class AlbumViewViewModel : SongListViewModelBase
     private CancellationTokenSource? _durationFetchCts;
 
     public AlbumViewViewModel(
-        ILibraryReader libraryReader,
+        ILibraryService libraryService,
         IPlaylistService playlistService,
         IMusicPlaybackService playbackService,
         INavigationService navigationService,
@@ -38,7 +38,7 @@ public partial class AlbumViewViewModel : SongListViewModelBase
         IUISettingsService settingsService,
         IUIService uiService,
         ILogger<AlbumViewViewModel> logger)
-        : base(libraryReader, playlistService, playbackService, navigationService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
+        : base(libraryService, playlistService, playbackService, navigationService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
     {
         AlbumTitle = Nagi.WinUI.Resources.Strings.AlbumView_DefaultAlbumTitle;
         ArtistName = Nagi.WinUI.Resources.Strings.AlbumView_DefaultArtistName;
@@ -98,7 +98,7 @@ public partial class AlbumViewViewModel : SongListViewModelBase
     [RelayCommand]
     public async Task LoadAlbumDetailsAsync(Guid albumId)
     {
-        if (IsOverallLoading) return;
+        if (IsLoading) return;
 
         _logger.LogDebug("Loading details for album {AlbumId}", albumId);
         try
@@ -249,15 +249,10 @@ public partial class AlbumViewViewModel : SongListViewModelBase
     }
 
 
-    protected override void ProcessPagedResult(PagedResult<Song> pagedResult, CancellationToken token, bool append = false)
+    protected override void ApplyItemsToCollection(PagedResult<Song> result, bool append)
     {
-        base.ProcessPagedResult(pagedResult, token, append);
-
-        // Update grouping after the songs collection has been updated
-        _dispatcherService.TryEnqueue(() =>
-        {
-            if (!token.IsCancellationRequested) UpdateGrouping();
-        });
+        base.ApplyItemsToCollection(result, append);
+        UpdateGrouping();
     }
 
     private void UpdateGrouping()

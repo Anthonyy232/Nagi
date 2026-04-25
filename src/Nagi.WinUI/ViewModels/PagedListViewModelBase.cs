@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.WinUI.Helpers;
@@ -12,23 +13,24 @@ using Nagi.WinUI.Services.Abstractions;
 namespace Nagi.WinUI.ViewModels;
 
 /// <summary>
-///     Shared plumbing for list VMs that use bounded pagination: settings-backed page
-///     size, next/previous commands, library-change debounce, and the load envelope.
-///     Subclasses own their typed item collection and supply the page fetch + sort
-///     hydration + total-items formatting.
+///     Shared plumbing for paged list VMs: settings-backed page size, next/previous
+///     commands, library-change debounce, search reset, past-end clamp, and the load
+///     envelope. Subclasses own their typed item collection and override
+///     <see cref="ApplyItemsToCollection"/> to write into it on the UI thread.
 /// </summary>
-public abstract partial class PagedListViewModelBase : SearchableViewModelBase, IPagedListViewModel, IDisposable
+public abstract partial class PagedListViewModelBase<TItem> : SearchableViewModelBase, IPagedListViewModel, IDisposable
 {
     protected readonly ILibraryService _libraryService;
     protected readonly IUISettingsService _settingsService;
 
+    protected readonly object _loadLock = new();
     private readonly Debouncer _libraryChangeDebouncer = new(TimeSpan.FromSeconds(1));
-    private readonly object _loadLock = new();
 
     private bool _hasLoadedInitialSettings;
     private bool _hasLoadedInitialSortOrder;
     private bool _isSettingSongsPerPage;
-    private bool _isDisposed;
+    protected bool _pendingReload;
+    protected bool _isDisposed;
     private CancellationTokenSource? _pageLoadCts;
 
     [ObservableProperty] public partial bool IsLoading { get; set; }
@@ -38,8 +40,16 @@ public abstract partial class PagedListViewModelBase : SearchableViewModelBase, 
     [ObservableProperty] public partial int CurrentPage { get; set; } = 1;
     [ObservableProperty] public partial int TotalPages { get; set; } = 1;
     [ObservableProperty] public partial int SongsPerPage { get; set; } = 50;
+    [ObservableProperty] public partial int TotalItemCount { get; set; }
     [ObservableProperty] public partial bool HasNextPage { get; set; }
     [ObservableProperty] public partial bool HasPreviousPage { get; set; }
+
+    /// <summary>
+    ///     When true, Next/Previous commands are active and the load envelope drives a single
+    ///     page at a time. When false, the subclass is expected to drive an "infinite scroll"
+    ///     style load (e.g. via <see cref="OnPageLoadedAsync"/>).
+    /// </summary>
+    public bool IsPaginationEnabled { get; set; } = true;
 
     protected PagedListViewModelBase(
         ILibraryService libraryService,
@@ -51,26 +61,63 @@ public abstract partial class PagedListViewModelBase : SearchableViewModelBase, 
         _libraryService = libraryService;
         _settingsService = settingsService;
         _libraryService.LibraryContentChanged += OnLibraryContentChanged;
+        _settingsService.SongsPerPageChanged += OnSettingsSongsPerPageChanged;
     }
 
-    /// <summary>
-    ///     Fetch the items for a single page and replace the subclass's item collection.
-    ///     Return the total number of items across all pages.
-    /// </summary>
-    protected abstract Task<int> LoadPageItemsAsync(int pageNumber, int pageSize, CancellationToken token);
+    protected abstract Task<PagedResult<TItem>> LoadPageItemsAsync(int pageNumber, int pageSize, CancellationToken token);
 
-    /// <summary>Load the persisted sort order. Called once per VM lifetime inside the load envelope.</summary>
-    protected abstract Task LoadInitialSortOrderAsync();
+    /// <summary>Load the persisted sort order. Default no-op; override if your VM has a sort to hydrate.</summary>
+    protected virtual Task LoadInitialSortOrderAsync() => Task.CompletedTask;
 
-    /// <summary>Format the "N items" status text using the subclass's resource strings.</summary>
     protected abstract string FormatTotalItemsText(int count);
 
-    /// <summary>Hook run after each successful page load. Default no-op.</summary>
-    protected virtual Task OnPageLoadedAsync() => Task.CompletedTask;
+    /// <summary>Hook run after the page has been processed. Default no-op.</summary>
+    protected virtual Task OnPageLoadedAsync(PagedResult<TItem> result, CancellationToken token) => Task.CompletedTask;
+
+    /// <summary>
+    ///     Hook run in parallel with the page fetch. Default no-op. Subclasses (e.g. song lists
+    ///     that need a "Play All" ID list) override this to overlap fetches with the page query.
+    /// </summary>
+    protected virtual Task OnAuxiliaryLoadAsync(CancellationToken token) => Task.CompletedTask;
+
+    /// <summary>Notifies subclasses of <see cref="IsLoading"/> transitions for command can-execute updates.</summary>
+    protected virtual void OnLoadingStateChanged(bool isLoading) { }
 
     /// <summary>Whether a library content change should trigger a reload. Default: everything except FolderAdded.</summary>
     protected virtual bool ShouldReloadOnLibraryChange(LibraryChangeType changeType) =>
         changeType != LibraryChangeType.FolderAdded;
+
+    /// <summary>
+    ///     Write the page's items into the typed collection. Runs on the UI thread inside
+    ///     <see cref="ProcessPagedResult"/>'s single dispatcher hop, alongside pager-state
+    ///     assignment, so binding listeners see one coherent transition.
+    /// </summary>
+    protected virtual void ApplyItemsToCollection(PagedResult<TItem> result, bool append) { }
+
+    /// <summary>
+    ///     Async continuations must read continuation values from <paramref name="result"/>,
+    ///     not the VM properties — the dispatch hop may not have run yet.
+    /// </summary>
+    protected void ProcessPagedResult(PagedResult<TItem> result, CancellationToken token, bool append = false)
+    {
+        if (result is null || token.IsCancellationRequested || _isDisposed) return;
+
+        _dispatcherService.TryEnqueue(() =>
+        {
+            if (token.IsCancellationRequested || _isDisposed) return;
+
+            ApplyItemsToCollection(result, append);
+
+            CurrentPage = result.PageNumber > 0 ? result.PageNumber : CurrentPage;
+            TotalPages = Math.Max(1, result.TotalPages);
+            TotalItemCount = result.TotalCount;
+            HasNextPage = result.HasNextPage;
+            HasPreviousPage = CurrentPage > 1;
+            TotalItemsText = FormatTotalItemsText(result.TotalCount);
+        });
+    }
+
+    partial void OnIsLoadingChanged(bool value) => OnLoadingStateChanged(value);
 
     private void OnSettingsSongsPerPageChanged(int newSize)
     {
@@ -83,7 +130,7 @@ public abstract partial class PagedListViewModelBase : SearchableViewModelBase, 
             finally { _isSettingSongsPerPage = false; }
 
             CurrentPage = 1;
-            _ = LoadAsync(CancellationToken.None);
+            _ = RefreshAsync(CancellationToken.None);
         });
     }
 
@@ -98,35 +145,64 @@ public abstract partial class PagedListViewModelBase : SearchableViewModelBase, 
         _dispatcherService.TryEnqueue(() =>
         {
             CurrentPage = 1;
-            _ = LoadAsync(CancellationToken.None);
+            _ = RefreshAsync(CancellationToken.None);
         });
     }
 
-    private void OnLibraryContentChanged(object? sender, LibraryContentChangedEventArgs e)
+    protected virtual void OnLibraryContentChanged(object? sender, LibraryContentChangedEventArgs e)
     {
         if (!ShouldReloadOnLibraryChange(e.ChangeType)) return;
 
         _libraryChangeDebouncer.Trigger(async _ =>
         {
             _logger.LogDebug("Library content changed ({ChangeType}). Refreshing paged list.", e.ChangeType);
-            await _dispatcherService.EnqueueAsync(() => LoadCommand.ExecuteAsync(CancellationToken.None));
+            await _dispatcherService.EnqueueAsync(() => RefreshAsync(CancellationToken.None));
         });
     }
 
     [RelayCommand]
     public async Task NextPageAsync()
     {
-        if (!HasNextPage || IsLoading) return;
+        if (!HasNextPage || IsLoading || !IsPaginationEnabled) return;
         CurrentPage += 1;
-        await LoadAsync(CancellationToken.None);
+        await ReloadCurrentPageAsync(CancellationToken.None);
     }
 
     [RelayCommand]
     public async Task PreviousPageAsync()
     {
-        if (!HasPreviousPage || IsLoading) return;
+        if (!HasPreviousPage || IsLoading || !IsPaginationEnabled) return;
         CurrentPage -= 1;
-        await LoadAsync(CancellationToken.None);
+        await ReloadCurrentPageAsync(CancellationToken.None);
+    }
+
+    /// <summary>
+    ///     Reload the current page after a Next/Previous step. Default delegates to the full
+    ///     <see cref="LoadAsync"/>. Subclasses override to drop work that's stable across pages.
+    /// </summary>
+    protected virtual Task ReloadCurrentPageAsync(CancellationToken cancellationToken) => LoadAsync(cancellationToken);
+
+    /// <summary>
+    ///     Reload entry point for external triggers (page-size change, settings push, library
+    ///     content change). Defaults to <see cref="LoadAsync"/>. Subclasses with a non-standard
+    ///     load pipeline (e.g. <see cref="FolderSongListViewModel"/>'s combined folder+song
+    ///     paging) override this to route to their own envelope instead.
+    /// </summary>
+    protected virtual Task RefreshAsync(CancellationToken cancellationToken) => LoadAsync(cancellationToken);
+
+    /// <summary>
+    ///     Hydrates <see cref="SongsPerPage"/> from persisted user settings on first call; no-op
+    ///     thereafter. Subclasses with an overridden load pipeline should call this once before
+    ///     their first page query so they pick up the user's saved preference.
+    /// </summary>
+    protected async Task EnsureInitialSettingsLoadedAsync()
+    {
+        if (_hasLoadedInitialSettings) return;
+
+        _isSettingSongsPerPage = true;
+        try { SongsPerPage = await _settingsService.GetSongsPerPageAsync(); }
+        finally { _isSettingSongsPerPage = false; }
+        _hasLoadedInitialSettings = true;
     }
 
     /// <summary>
@@ -138,7 +214,10 @@ public abstract partial class PagedListViewModelBase : SearchableViewModelBase, 
     {
         lock (_loadLock)
         {
-            if (IsLoading) return;
+            // If a load is already in flight, queue a follow-up. The finally block
+            // re-runs LoadAsync once the current one completes, picking up whatever
+            // sort/page-size/search/library state the caller just applied.
+            if (IsLoading) { _pendingReload = true; return; }
             IsLoading = true;
         }
 
@@ -151,14 +230,7 @@ public abstract partial class PagedListViewModelBase : SearchableViewModelBase, 
 
         try
         {
-            if (!_hasLoadedInitialSettings)
-            {
-                _isSettingSongsPerPage = true;
-                try { SongsPerPage = await _settingsService.GetSongsPerPageAsync(); }
-                finally { _isSettingSongsPerPage = false; }
-                _settingsService.SongsPerPageChanged += OnSettingsSongsPerPageChanged;
-                _hasLoadedInitialSettings = true;
-            }
+            await EnsureInitialSettingsLoadedAsync();
 
             if (!_hasLoadedInitialSortOrder)
             {
@@ -166,11 +238,30 @@ public abstract partial class PagedListViewModelBase : SearchableViewModelBase, 
                 _hasLoadedInitialSortOrder = true;
             }
 
-            await LoadPageAsync(CurrentPage, token);
+            var pageToLoad = CurrentPage;
+            var pageSize = SongsPerPage;
+
+            var auxTask = OnAuxiliaryLoadAsync(token);
+            var pageTask = LoadPageItemsAsync(pageToLoad, pageSize, token);
+            await Task.WhenAll(auxTask, pageTask).ConfigureAwait(false);
+            token.ThrowIfCancellationRequested();
+
+            var pagedResult = pageTask.Result;
+
+            // Past-end clamp: if the requested page exceeds the result set (e.g. items removed),
+            // jump back to the last valid page and refetch.
+            var totalPages = Math.Max(1, pagedResult.TotalPages);
+            if (pageToLoad > totalPages && pagedResult.TotalCount > 0)
+            {
+                pagedResult = await LoadPageItemsAsync(totalPages, pageSize, token).ConfigureAwait(false);
+                token.ThrowIfCancellationRequested();
+            }
+
+            ProcessPagedResult(pagedResult, token);
 
             if (token.IsCancellationRequested) return;
 
-            await OnPageLoadedAsync();
+            await OnPageLoadedAsync(pagedResult, token);
         }
         catch (OperationCanceledException)
         {
@@ -183,29 +274,29 @@ public abstract partial class PagedListViewModelBase : SearchableViewModelBase, 
         }
         finally
         {
-            IsLoading = false;
+            EndLoadAndDrainPendingReload();
         }
     }
 
-    private async Task LoadPageAsync(int pageToLoad, CancellationToken token)
+    /// <summary>
+    ///     Subclasses that run their own load envelope (e.g. <c>LoadPageAsync</c>) must call this
+    ///     in their finally block instead of clearing <see cref="IsLoading"/> directly. It coalesces
+    ///     any reload that was queued via <see cref="_pendingReload"/> while this load was in flight,
+    ///     so a sort/search/page-size change racing against a Next/Previous step isn't dropped.
+    /// </summary>
+    protected void EndLoadAndDrainPendingReload()
     {
-        var totalCount = await LoadPageItemsAsync(pageToLoad, SongsPerPage, token);
-        token.ThrowIfCancellationRequested();
-
-        var totalPages = SongsPerPage > 0 ? Math.Max(1, (int)Math.Ceiling(totalCount / (double)SongsPerPage)) : 1;
-
-        // If the requested page is past the end (e.g. items removed), reload the last valid page.
-        if (pageToLoad > totalPages && totalCount > 0)
+        _dispatcherService.TryEnqueue(() =>
         {
-            CurrentPage = totalPages;
-            await LoadPageAsync(totalPages, token);
-            return;
-        }
-
-        TotalPages = totalPages;
-        HasPreviousPage = CurrentPage > 1;
-        HasNextPage = CurrentPage < TotalPages;
-        TotalItemsText = FormatTotalItemsText(totalCount);
+            bool rerun;
+            lock (_loadLock)
+            {
+                IsLoading = false;
+                rerun = _pendingReload;
+                _pendingReload = false;
+            }
+            if (rerun && !_isDisposed) _ = RefreshAsync(CancellationToken.None);
+        });
     }
 
     protected override async Task ExecuteSearchAsync(CancellationToken token)
@@ -218,6 +309,13 @@ public abstract partial class PagedListViewModelBase : SearchableViewModelBase, 
         });
     }
 
+    /// <summary>Cancels and disposes any in-flight page load. Safe to call from subclasses.</summary>
+    protected void CancelInflightPageLoad()
+    {
+        var cts = Interlocked.Exchange(ref _pageLoadCts, null);
+        try { cts?.Cancel(); cts?.Dispose(); } catch (ObjectDisposedException) { }
+    }
+
     public virtual void Dispose()
     {
         if (_isDisposed) return;
@@ -225,8 +323,7 @@ public abstract partial class PagedListViewModelBase : SearchableViewModelBase, 
 
         _libraryService.LibraryContentChanged -= OnLibraryContentChanged;
         _settingsService.SongsPerPageChanged -= OnSettingsSongsPerPageChanged;
-        _pageLoadCts?.Cancel();
-        _pageLoadCts?.Dispose();
+        CancelInflightPageLoad();
         _libraryChangeDebouncer.Dispose();
     }
 }

@@ -84,4 +84,14 @@ public class ObservableRangeCollection<T> : ObservableCollection<T>
         OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
         OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
     }
+
+    /// <summary>
+    /// Appends or replaces the collection contents based on <paramref name="append"/>.
+    /// Used by paged list loaders for the "infinite scroll" vs "page replace" branch.
+    /// </summary>
+    public void AppendOrReplace(IEnumerable<T> collection, bool append)
+    {
+        if (append) AddRange(collection);
+        else ReplaceRange(collection);
+    }
 }

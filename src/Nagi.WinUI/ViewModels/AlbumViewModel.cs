@@ -42,7 +42,7 @@ public partial class AlbumViewModelItem : ObservableObject
     partial void OnCoverArtUriChanged(string? value) => OnPropertyChanged(nameof(IsArtworkAvailable));
 }
 
-public partial class AlbumViewModel : PagedListViewModelBase
+public partial class AlbumViewModel : PagedListViewModelBase<Album>
 {
     private readonly NotifyCollectionChangedEventHandler _collectionChangedHandler;
     private readonly IMusicPlaybackService _musicPlaybackService;
@@ -86,7 +86,7 @@ public partial class AlbumViewModel : PagedListViewModelBase
             ? ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Albums_Count_Singular, count)
             : ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Albums_Count_Plural, count);
 
-    protected override async Task<int> LoadPageItemsAsync(int pageNumber, int pageSize, CancellationToken token)
+    protected override async Task<PagedResult<Album>> LoadPageItemsAsync(int pageNumber, int pageSize, CancellationToken token)
     {
         var pagedResult = IsSearchActive
             ? await _libraryService.SearchAlbumsPagedAsync(SearchTerm, pageNumber, pageSize)
@@ -94,10 +94,13 @@ public partial class AlbumViewModel : PagedListViewModelBase
 
         token.ThrowIfCancellationRequested();
 
-        var items = pagedResult?.Items?.Select(a => new AlbumViewModelItem(a)).ToList() ?? new List<AlbumViewModelItem>();
-        Albums.ReplaceRange(items);
+        return pagedResult ?? new PagedResult<Album>();
+    }
 
-        return pagedResult?.TotalCount ?? 0;
+    protected override void ApplyItemsToCollection(PagedResult<Album> result, bool append)
+    {
+        if (result?.Items == null) return;
+        Albums.AppendOrReplace(result.Items.Select(a => new AlbumViewModelItem(a)), append);
     }
 
     [RelayCommand]

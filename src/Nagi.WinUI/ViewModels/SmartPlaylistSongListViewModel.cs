@@ -25,7 +25,7 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
     private SmartPlaylist? _currentSmartPlaylist;
 
     public SmartPlaylistSongListViewModel(
-        ILibraryReader libraryReader,
+        ILibraryService libraryService,
         IPlaylistService playlistService,
         ISmartPlaylistService smartPlaylistService,
         IMusicPlaybackService playbackService,
@@ -35,7 +35,7 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
         IUISettingsService settingsService,
         IUIService uiService,
         ILogger<SmartPlaylistSongListViewModel> logger)
-        : base(libraryReader, playlistService, playbackService, navigationService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
+        : base(libraryService, playlistService, playbackService, navigationService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
     {
         _smartPlaylistService = smartPlaylistService;
     }
@@ -67,7 +67,7 @@ public partial class SmartPlaylistSongListViewModel : SongListViewModelBase
     /// </summary>
     public async Task InitializeAsync(string title, Guid? smartPlaylistId, string? coverImageUri = null)
     {
-        if (IsOverallLoading) return;
+        if (IsLoading) return;
         _logger.LogDebug("Initializing for smart playlist '{Title}' (ID: {SmartPlaylistId})", title, smartPlaylistId);
 
         try
