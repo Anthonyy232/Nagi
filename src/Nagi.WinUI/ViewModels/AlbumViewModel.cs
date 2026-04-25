@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.ObjectModel;
+using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Threading;
@@ -11,11 +11,9 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.WinUI.Navigation;
-using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
 using Nagi.Core.Helpers;
 using Nagi.WinUI.Helpers;
-using System.Collections.Generic;
 
 namespace Nagi.WinUI.ViewModels;
 
@@ -41,323 +39,114 @@ public partial class AlbumViewModelItem : ObservableObject
 
     public bool IsArtworkAvailable => !string.IsNullOrEmpty(CoverArtUri);
 
-    partial void OnCoverArtUriChanged(string? value)
-    {
-        OnPropertyChanged(nameof(IsArtworkAvailable));
-    }
+    partial void OnCoverArtUriChanged(string? value) => OnPropertyChanged(nameof(IsArtworkAvailable));
 }
 
-/// <summary>
-///     Manages the state and logic for the album list page, featuring gradual data fetching.
-/// </summary>
-public partial class AlbumViewModel : SearchableViewModelBase
+public partial class AlbumViewModel : PagedListViewModelBase
 {
-    private const int PageSize = 250;
     private readonly NotifyCollectionChangedEventHandler _collectionChangedHandler;
-    private readonly ILibraryService _libraryService;
     private readonly IMusicPlaybackService _musicPlaybackService;
-    private readonly IUISettingsService _settingsService;
     private readonly INavigationService _navigationService;
     private readonly IMusicNavigationService _musicNavigationService;
-    private int _currentPage = 1;
-    private bool _hasSortOrderLoaded;
+
     private bool _isNavigating;
-    private CancellationTokenSource? _debouncer;
 
     public AlbumViewModel(ILibraryService libraryService, IMusicPlaybackService musicPlaybackService,
         INavigationService navigationService, IMusicNavigationService musicNavigationService,
         IUISettingsService settingsService, IDispatcherService dispatcherService, ILogger<AlbumViewModel> logger)
-        : base(dispatcherService, logger)
+        : base(libraryService, settingsService, dispatcherService, logger)
     {
-        _libraryService = libraryService;
         _musicPlaybackService = musicPlaybackService;
         _navigationService = navigationService;
         _musicNavigationService = musicNavigationService;
-        _settingsService = settingsService;
 
-        // Store the handler in a field so we can reliably unsubscribe from it later.
         _collectionChangedHandler = (sender, args) => OnPropertyChanged(nameof(HasAlbums));
         Albums.CollectionChanged += _collectionChangedHandler;
-
-        // Subscribe to library changes to refresh when folders are added/removed
-        _libraryService.LibraryContentChanged += OnLibraryContentChanged;
 
         UpdateSortOrderText();
     }
 
-    private void OnLibraryContentChanged(object? sender, LibraryContentChangedEventArgs e)
-    {
-        // We don't need to refresh the album list just because a folder container was added (it has no songs/albums yet).
-        if (e.ChangeType == LibraryChangeType.FolderAdded) return;
-
-        // Debounce to prevent multiple refresh calls during rapid changes.
-        var cts = new CancellationTokenSource();
-        var oldCts = Interlocked.Exchange(ref _debouncer, cts);
-        try { oldCts?.Cancel(); oldCts?.Dispose(); } catch (ObjectDisposedException) { }
-
-        var token = cts.Token;
-        _ = Task.Run(async () =>
-        {
-            try
-            {
-                await Task.Delay(1000, token).ConfigureAwait(false);
-                if (token.IsCancellationRequested) return;
-
-                _logger.LogDebug("Library content changed ({ChangeType}). Refreshing album list.", e.ChangeType);
-                await _dispatcherService.EnqueueAsync(() => LoadAlbumsCommand.ExecuteAsync(CancellationToken.None));
-            }
-            catch (OperationCanceledException) { }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error refreshing albums after library content change");
-            }
-        }, token);
-    }
-
     [ObservableProperty] public partial ObservableRangeCollection<AlbumViewModelItem> Albums { get; set; } = new();
-
-    [ObservableProperty] public partial bool IsLoading { get; set; }
-
-    [ObservableProperty] public partial bool IsLoadingMore { get; set; }
-
-    [ObservableProperty] public partial bool IsFullyLoaded { get; private set; }
-
-    [ObservableProperty] public partial bool HasLoadError { get; set; }
 
     [ObservableProperty] public partial AlbumSortOrder CurrentSortOrder { get; set; } = AlbumSortOrder.ArtistAsc;
 
     [ObservableProperty] public partial string CurrentSortOrderText { get; set; } = string.Empty;
 
-    [ObservableProperty] public partial string TotalItemsText { get; set; } = ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Albums_Count_Plural, 0);
-
     partial void OnCurrentSortOrderChanged(AlbumSortOrder value) => UpdateSortOrderText();
 
     public bool HasAlbums => Albums.Any();
 
-    private void UpdateSortOrderText()
+    private void UpdateSortOrderText() => CurrentSortOrderText = SortOrderHelper.GetDisplayName(CurrentSortOrder);
+
+    protected override async Task LoadInitialSortOrderAsync() =>
+        CurrentSortOrder = await _settingsService.GetSortOrderAsync<AlbumSortOrder>(SortOrderHelper.AlbumsSortOrderKey);
+
+    protected override string FormatTotalItemsText(int count) =>
+        count == 1
+            ? ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Albums_Count_Singular, count)
+            : ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Albums_Count_Plural, count);
+
+    protected override async Task<int> LoadPageItemsAsync(int pageNumber, int pageSize, CancellationToken token)
     {
-        CurrentSortOrderText = SortOrderHelper.GetDisplayName(CurrentSortOrder);
+        var pagedResult = IsSearchActive
+            ? await _libraryService.SearchAlbumsPagedAsync(SearchTerm, pageNumber, pageSize)
+            : await _libraryService.GetAllAlbumsPagedAsync(pageNumber, pageSize, CurrentSortOrder);
+
+        token.ThrowIfCancellationRequested();
+
+        var items = pagedResult?.Items?.Select(a => new AlbumViewModelItem(a)).ToList() ?? new List<AlbumViewModelItem>();
+        Albums.ReplaceRange(items);
+
+        return pagedResult?.TotalCount ?? 0;
     }
 
-    /// <summary>
-    ///     Navigates to the detailed view for the selected album.
-    /// </summary>
     [RelayCommand]
     public async Task NavigateToAlbumDetailAsync(object? parameter)
     {
         if (_isNavigating) return;
-        try
-        {
-            _isNavigating = true;
-            await _musicNavigationService.NavigateToAlbumAsync(parameter);
-        }
-        finally
-        {
-            _isNavigating = false;
-        }
+        try { _isNavigating = true; await _musicNavigationService.NavigateToAlbumAsync(parameter); }
+        finally { _isNavigating = false; }
     }
 
-    /// <summary>
-    ///     Clears the current queue and starts playing all songs from the selected album.
-    /// </summary>
     [RelayCommand]
     private async Task PlayAlbumAsync(Guid albumId)
     {
         if (IsLoading || albumId == Guid.Empty) return;
-
-        try
-        {
-            await _musicPlaybackService.PlayAlbumAsync(albumId);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogCritical(ex, "Error playing album {AlbumId}", albumId);
-        }
+        try { await _musicPlaybackService.PlayAlbumAsync(albumId); }
+        catch (Exception ex) { _logger.LogCritical(ex, "Error playing album {AlbumId}", albumId); }
     }
 
-    /// <summary>
-    ///     Fetches a random album ID effectively instantly and starts playback.
-    /// </summary>
     [RelayCommand]
     private async Task PlayRandomAlbumAsync()
     {
         if (IsLoading) return;
-
         try
         {
-            var randomAlbumId = await _libraryService.GetRandomAlbumIdAsync();
-            if (randomAlbumId.HasValue)
-            {
-                await _musicPlaybackService.PlayAlbumAsync(randomAlbumId.Value);
-            }
+            var id = await _libraryService.GetRandomAlbumIdAsync();
+            if (id.HasValue) await _musicPlaybackService.PlayAlbumAsync(id.Value);
         }
-        catch (Exception ex)
-        {
-            _logger.LogCritical(ex, "Error playing random album");
-        }
+        catch (Exception ex) { _logger.LogCritical(ex, "Error playing random album"); }
     }
 
     [RelayCommand]
     public async Task GoToArtistAsync(object? parameter)
     {
         if (_isNavigating) return;
-        try
-        {
-            _isNavigating = true;
-            await _musicNavigationService.NavigateToArtistAsync(parameter);
-        }
-        finally
-        {
-            _isNavigating = false;
-        }
+        try { _isNavigating = true; await _musicNavigationService.NavigateToArtistAsync(parameter); }
+        finally { _isNavigating = false; }
     }
 
-    /// <summary>
-    ///     Changes the sort order and reloads the album list.
-    /// </summary>
     [RelayCommand]
     public async Task ChangeSortOrderAsync(string sortOrderString)
     {
-        if (Enum.TryParse<AlbumSortOrder>(sortOrderString, out var newSortOrder)
-            && newSortOrder != CurrentSortOrder)
-        {
-            CurrentSortOrder = newSortOrder;
-            _ = _settingsService.SetSortOrderAsync(SortOrderHelper.AlbumsSortOrderKey, newSortOrder)
-                .ContinueWith(t => _logger.LogError(t.Exception, "Failed to save album sort order"),
-                    TaskContinuationOptions.OnlyOnFaulted);
-            await LoadAlbumsAsync(CancellationToken.None);
-        }
-    }
+        if (!Enum.TryParse<AlbumSortOrder>(sortOrderString, out var newSortOrder) || newSortOrder == CurrentSortOrder)
+            return;
 
-    /// <summary>
-    ///     Asynchronously resumes loading albums from the current page with support for cancellation.
-    /// </summary>
-    /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
-    public async Task ResumeLoadingAsync(CancellationToken cancellationToken)
-    {
-        if (IsLoading || IsFullyLoaded || IsLoadingMore) return;
-
-        try
-        {
-            IsLoadingMore = true;
-            HasLoadError = false;
-
-            while (!IsFullyLoaded && !cancellationToken.IsCancellationRequested)
-            {
-                var nextPage = _currentPage + 1;
-                await LoadNextPageAsync(nextPage, cancellationToken);
-                _currentPage = nextPage;
-                await Task.Delay(100, cancellationToken);
-            }
-        }
-        catch (OperationCanceledException)
-        {
-            _logger.LogDebug("Album resuming was canceled.");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An error occurred while resuming albums");
-            HasLoadError = true;
-        }
-        finally
-        {
-            IsLoadingMore = false;
-        }
-    }
-
-    /// <summary>
-    ///     Asynchronously loads albums with support for cancellation.
-    /// </summary>
-    /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
-    [RelayCommand]
-    public async Task LoadAlbumsAsync(CancellationToken cancellationToken)
-    {
-        if (IsLoading) return;
-
-        IsLoading = true;
-        HasLoadError = false;
-        _currentPage = 1;
-        IsFullyLoaded = false;
-        Albums.Clear();
-
-        try
-        {
-            if (!_hasSortOrderLoaded)
-            {
-                CurrentSortOrder = await _settingsService.GetSortOrderAsync<AlbumSortOrder>(SortOrderHelper.AlbumsSortOrderKey);
-                _hasSortOrderLoaded = true;
-            }
-
-            await LoadNextPageAsync(1, cancellationToken);
-
-            if (cancellationToken.IsCancellationRequested) return;
-
-            // Continue loading subsequent pages in the background.
-            if (!IsFullyLoaded)
-            {
-                IsLoadingMore = true;
-                while (!IsFullyLoaded && !cancellationToken.IsCancellationRequested)
-                {
-                    var nextPage = _currentPage + 1;
-                    await LoadNextPageAsync(nextPage, cancellationToken);
-                    _currentPage = nextPage;
-                    await Task.Delay(100, cancellationToken);
-                }
-            }
-        }
-        catch (OperationCanceledException)
-        {
-            // Log that the operation was intentionally canceled.
-            _logger.LogDebug("Album loading was canceled.");
-        }
-        catch (Exception ex)
-        {
-            // Log any unexpected errors during the loading process.
-            _logger.LogError(ex, "An error occurred while loading albums");
-            HasLoadError = true;
-        }
-        finally
-        {
-            IsLoading = false;
-            IsLoadingMore = false;
-        }
-    }
-
-    /// <summary>
-    ///     Fetches a single page of albums from the library service.
-    /// </summary>
-    private async Task LoadNextPageAsync(int pageToLoad, CancellationToken cancellationToken)
-    {
-        PagedResult<Album>? pagedResult;
-        if (IsSearchActive)
-            pagedResult = await _libraryService.SearchAlbumsPagedAsync(SearchTerm, pageToLoad, PageSize);
-        else
-            pagedResult = await _libraryService.GetAllAlbumsPagedAsync(pageToLoad, PageSize, CurrentSortOrder);
-
-        cancellationToken.ThrowIfCancellationRequested();
-
-        if (pagedResult?.Items?.Any() == true)
-            Albums.AddRange(pagedResult.Items.Select(album => new AlbumViewModelItem(album)));
-
-        // Update the total items text.
-        if (pagedResult != null)
-        {
-            var count = pagedResult.TotalCount;
-            TotalItemsText = count == 1
-                ? ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Albums_Count_Singular, count)
-                : ResourceFormatter.Format(Nagi.WinUI.Resources.Strings.Albums_Count_Plural, count);
-        }
-
-        // Determine if all albums have been loaded.
-        if (pagedResult == null || Albums.Count >= pagedResult.TotalCount) IsFullyLoaded = true;
-    }
-
-    protected override async Task ExecuteSearchAsync(CancellationToken token)
-    {
-        await _dispatcherService.EnqueueAsync(async () =>
-        {
-            if (token.IsCancellationRequested) return;
-            await LoadAlbumsAsync(token);
-        });
+        CurrentSortOrder = newSortOrder;
+        _ = _settingsService.SetSortOrderAsync(SortOrderHelper.AlbumsSortOrderKey, newSortOrder)
+            .ContinueWith(t => _logger.LogError(t.Exception, "Failed to save album sort order"),
+                TaskContinuationOptions.OnlyOnFaulted);
+        CurrentPage = 1;
+        await LoadCommand.ExecuteAsync(CancellationToken.None);
     }
 }

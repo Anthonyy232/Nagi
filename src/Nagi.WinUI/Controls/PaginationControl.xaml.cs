@@ -62,12 +62,12 @@ public sealed partial class PaginationControl : UserControl
 
     public int[] PageSizeOptions { get; } = new[] { 25, 50, 100, 250, 500 };
 
-    public SongListViewModelBase ViewModel
+    public IPagedListViewModel ViewModel
     {
-        get => (SongListViewModelBase)GetValue(ViewModelProperty);
+        get => (IPagedListViewModel)GetValue(ViewModelProperty);
         set => SetValue(ViewModelProperty, value);
     }
 
     public static readonly DependencyProperty ViewModelProperty =
-        DependencyProperty.Register(nameof(ViewModel), typeof(SongListViewModelBase), typeof(PaginationControl), new PropertyMetadata(null));
+        DependencyProperty.Register(nameof(ViewModel), typeof(IPagedListViewModel), typeof(PaginationControl), new PropertyMetadata(null));
 }

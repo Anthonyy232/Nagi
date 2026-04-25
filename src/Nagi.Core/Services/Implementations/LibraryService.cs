@@ -5638,7 +5638,9 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             MusicBrainzTrackId = s.MusicBrainzTrackId,
             MusicBrainzReleaseId = s.MusicBrainzReleaseId,
             ArtistName = s.ArtistName,
-            PrimaryArtistName = s.PrimaryArtistName
+            PrimaryArtistName = s.PrimaryArtistName,
+            SortTitle = s.SortTitle,
+            PrimaryArtistSortName = s.PrimaryArtistSortName
             // Collection navigations excluded for EF Core compatibility:
             // Genres, PlaylistSongs, ListenHistory
         });

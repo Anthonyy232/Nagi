@@ -55,12 +55,14 @@ namespace Nagi.Core.Data.Migrations
                     b.Property<string>("PrimaryArtistSortName")
                         .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("TEXT")
+                        .UseCollation("NOCASE");
 
                     b.Property<string>("SortTitle")
                         .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("TEXT")
+                        .UseCollation("NOCASE");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -76,6 +78,10 @@ namespace Nagi.Core.Data.Migrations
                     b.HasIndex("ArtistName");
 
                     b.HasIndex("PrimaryArtistName");
+
+                    b.HasIndex("PrimaryArtistSortName");
+
+                    b.HasIndex("SortTitle");
 
                     b.HasIndex("Title");
 
@@ -138,12 +144,15 @@ namespace Nagi.Core.Data.Migrations
                     b.Property<string>("SortName")
                         .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("TEXT")
+                        .UseCollation("NOCASE");
 
                     b.HasKey("Id");
 
                     b.HasIndex("Name")
                         .IsUnique();
+
+                    b.HasIndex("SortName");
 
                     b.ToTable("Artists");
                 });
@@ -499,6 +508,12 @@ namespace Nagi.Core.Data.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("PrimaryArtistSortName")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT")
+                        .UseCollation("NOCASE");
+
                     b.Property<int?>("Rating")
                         .HasColumnType("INTEGER");
 
@@ -513,6 +528,12 @@ namespace Nagi.Core.Data.Migrations
 
                     b.Property<int>("SkipCount")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("SortTitle")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT")
+                        .UseCollation("NOCASE");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -554,6 +575,10 @@ namespace Nagi.Core.Data.Migrations
                     b.HasIndex("PlayCount");
 
                     b.HasIndex("PrimaryArtistName");
+
+                    b.HasIndex("PrimaryArtistSortName");
+
+                    b.HasIndex("SortTitle");
 
                     b.HasIndex("Title");
 
