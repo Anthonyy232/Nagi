@@ -52,7 +52,7 @@ public partial class ArtistViewViewModel : SongListViewModelBase
     private readonly NotifyCollectionChangedEventHandler _albumsChangedHandler;
 
     public ArtistViewViewModel(
-        ILibraryReader libraryReader,
+        ILibraryService libraryService,
         IPlaylistService playlistService,
         ILibraryScanner libraryScanner,
         IMusicPlaybackService playbackService,
@@ -62,7 +62,7 @@ public partial class ArtistViewViewModel : SongListViewModelBase
         IDispatcherService dispatcherService,
         IUIService uiService,
         ILogger<ArtistViewViewModel> logger)
-        : base(libraryReader, playlistService, playbackService, navigationService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
+        : base(libraryService, playlistService, playbackService, navigationService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
     {
         _libraryScanner = libraryScanner;
 
@@ -116,7 +116,7 @@ public partial class ArtistViewViewModel : SongListViewModelBase
     [RelayCommand]
     public async Task LoadArtistDetailsAsync(Guid artistId)
     {
-        if (IsOverallLoading) return;
+        if (IsLoading) return;
         _logger.LogDebug("Loading details for artist ID {ArtistId}", artistId);
 
         // Ensure we don't attach multiple handlers if this method is called again.

@@ -25,7 +25,7 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
     private CancellationTokenSource? _saveOrderCts;
 
     public PlaylistSongListViewModel(
-        ILibraryReader libraryReader,
+        ILibraryService libraryService,
         IPlaylistService playlistService,
         IMusicPlaybackService playbackService,
         INavigationService navigationService,
@@ -34,7 +34,7 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
         IUISettingsService settingsService,
         IUIService uiService,
         ILogger<PlaylistSongListViewModel> logger)
-        : base(libraryReader, playlistService, playbackService, navigationService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
+        : base(libraryService, playlistService, playbackService, navigationService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
     {
         IsPaginationEnabled = false;
 
@@ -320,7 +320,7 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
     {
         // This handler now only manages the _fullSongIdList for Remove operations.
         // Reordering is handled by OnSongReordered via DragItemsCompleted event.
-        if (!IsReorderingEnabled || IsOverallLoading) return;
+        if (!IsReorderingEnabled || IsLoading) return;
 
         if (e.Action == NotifyCollectionChangedAction.Remove)
         {

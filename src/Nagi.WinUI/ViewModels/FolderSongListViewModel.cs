@@ -46,7 +46,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
     private bool _isNavigating;
 
     public FolderSongListViewModel(
-        ILibraryReader libraryReader,
+        ILibraryService libraryService,
         IPlaylistService playlistService,
         IMusicPlaybackService playbackService,
         INavigationService navigationService,
@@ -55,7 +55,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         IUISettingsService settingsService,
         IUIService uiService,
         ILogger<FolderSongListViewModel> logger)
-        : base(libraryReader, playlistService, playbackService, navigationService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
+        : base(libraryService, playlistService, playbackService, navigationService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
     {
     }
 
@@ -97,7 +97,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
 
     public async Task InitializeAsync(string title, Guid? rootFolderId, string? directoryPath = null)
     {
-        if (IsOverallLoading) return;
+        if (IsLoading) return;
 
         try
         {
@@ -239,10 +239,6 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         var combinedTotal = totalFolderCount + songResult.TotalCount;
         var totalPages = SongsPerPage > 0 ? (int)Math.Ceiling(combinedTotal / (double)SongsPerPage) : 1;
 
-        _stateLock.EnterWriteLock();
-        try { _totalItemCount = songResult.TotalCount; }
-        finally { _stateLock.ExitWriteLock(); }
-
         // All UI updates in one dispatch to avoid partial-render states.
         _dispatcherService.TryEnqueue(() =>
         {
@@ -256,6 +252,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
 
             CurrentPage = pageNumber;
             TotalPages = Math.Max(1, totalPages);
+            TotalItemCount = combinedTotal;
             HasNextPage = pageNumber < TotalPages;
             HasPreviousPage = pageNumber > 1;
 
@@ -278,9 +275,13 @@ public partial class FolderSongListViewModel : SongListViewModelBase
     {
         lock (_loadLock)
         {
-            if (IsOverallLoading) return;
-            IsOverallLoading = true;
+            // Coalesce: if a refresh is already running, queue a follow-up. The finally block
+            // re-runs RefreshAsync once the current one finishes, picking up the new sort/page-size.
+            if (IsLoading) { _pendingReload = true; return; }
+            IsLoading = true;
         }
+
+        await EnsureInitialSettingsLoadedAsync();
 
         if (!string.IsNullOrEmpty(sortOrderString) &&
             Enum.TryParse<SongSortOrder>(sortOrderString, true, out var newSortOrder) &&
@@ -333,12 +334,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         }
         finally
         {
-            _dispatcherService.TryEnqueue(() =>
-            {
-                IsOverallLoading = false;
-                PlayAllSongsCommand.NotifyCanExecuteChanged();
-                ShuffleAndPlayAllSongsCommand.NotifyCanExecuteChanged();
-            });
+            EndLoadAndDrainPendingReload();
         }
     }
 
@@ -350,8 +346,8 @@ public partial class FolderSongListViewModel : SongListViewModelBase
     {
         lock (_loadLock)
         {
-            if (IsOverallLoading || !IsPaginationEnabled) return;
-            IsOverallLoading = true;
+            if (IsLoading || !IsPaginationEnabled) return;
+            IsLoading = true;
         }
 
         _pagedLoadCts?.Cancel();
@@ -374,9 +370,18 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         }
         finally
         {
-            _dispatcherService.TryEnqueue(() => IsOverallLoading = false);
+            EndLoadAndDrainPendingReload();
         }
     }
+
+    /// <summary>
+    ///     Folder paging uses combined folder+song slicing, so external triggers (page-size
+    ///     change, settings push, library content change) must route through the folder's own
+    ///     refresh envelope — not the base's <c>LoadAsync</c>, which would call the
+    ///     non-overridden <c>LoadSongsPagedAsync</c> and clobber <c>Songs</c> with an empty result.
+    /// </summary>
+    protected override Task RefreshAsync(CancellationToken cancellationToken)
+        => RefreshOrSortSongsAsync(null, cancellationToken);
 
     // LoadAllSongIdsAsync is still used by the base class for Play All.
     protected override Task<List<Guid>> LoadAllSongIdsAsync(SongSortOrder sortOrder, CancellationToken token = default)
@@ -397,7 +402,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
     [RelayCommand]
     private async Task NavigateToSubfolderAsync(Folder folder)
     {
-        if (IsOverallLoading || _isNavigating) return;
+        if (IsLoading || _isNavigating) return;
         if (folder == null || !_rootFolderId.HasValue) return;
 
         try
@@ -425,7 +430,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
     [RelayCommand]
     private async Task NavigateToBreadcrumbAsync(BreadcrumbItem breadcrumb)
     {
-        if (IsOverallLoading || _isNavigating) return;
+        if (IsLoading || _isNavigating) return;
         if (breadcrumb == null || breadcrumb.IsLast) return;
 
         try
@@ -456,7 +461,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
     [RelayCommand]
     private async Task NavigateUpAsync()
     {
-        if (IsOverallLoading || _isNavigating) return;
+        if (IsLoading || _isNavigating) return;
         if (!_rootFolderId.HasValue || IsAtRootLevel) return;
 
         try

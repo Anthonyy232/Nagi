@@ -23,7 +23,7 @@ public partial class GenreViewViewModel : SongListViewModelBase
     private Guid _genreId;
 
     public GenreViewViewModel(
-        ILibraryReader libraryReader,
+        ILibraryService libraryService,
         IPlaylistService playlistService,
         IMusicPlaybackService playbackService,
         INavigationService navigationService,
@@ -32,7 +32,7 @@ public partial class GenreViewViewModel : SongListViewModelBase
         IUISettingsService settingsService,
         IUIService uiService,
         ILogger<GenreViewViewModel> logger)
-        : base(libraryReader, playlistService, playbackService, navigationService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
+        : base(libraryService, playlistService, playbackService, navigationService, musicNavigationService, dispatcherService, settingsService, uiService, logger)
     {
         GenreName = Nagi.WinUI.Resources.Strings.GenreView_DefaultName;
 
@@ -71,7 +71,7 @@ public partial class GenreViewViewModel : SongListViewModelBase
     [RelayCommand]
     public async Task LoadGenreDetailsAsync(GenreViewNavigationParameter? navParam)
     {
-        if (IsOverallLoading || navParam is null) return;
+        if (IsLoading || navParam is null) return;
 
         _logger.LogDebug("Loading details for genre '{GenreName}' ({GenreId})", navParam.GenreName,
             navParam.GenreId);
