@@ -12,7 +12,8 @@ namespace Nagi.Core.Http.Pipelines;
 ///     Default <see cref="IProviderPipelineProvider"/>. Builds one circuit-breaker pipeline
 ///     per provider (shared across channels) and one rate-limit + retry pipeline per
 ///     (provider, channel). Each <see cref="ExecuteAsync"/> call layers them: the request
-///     enters the breaker first, then the channel pipeline, then the actual HTTP call.
+///     enters the channel pipeline first, then the breaker, then the actual HTTP call —
+///     so retry attempts pass through the breaker individually.
 /// </summary>
 internal sealed class ProviderPipelineProvider : IProviderPipelineProvider, IAsyncDisposable
 {
@@ -48,15 +49,21 @@ internal sealed class ProviderPipelineProvider : IProviderPipelineProvider, IAsy
             throw new InvalidOperationException(
                 $"Provider '{providerId}' is not registered with the pipeline provider.");
 
-        // Layer the breaker over the rate-limit/retry pipeline so the breaker counts every
-        // outcome the inner pipeline saw, not just what the caller observes.
-        return entry.CircuitBreakerPipeline.ExecuteAsync(
+        // Layer the channel pipeline (retry/concurrency/rate-limit) over the breaker so the
+        // breaker sees every individual attempt the retry strategy makes, not just the
+        // aggregated outcome the caller observes. Without this ordering a 3-attempt retry
+        // sequence ending in success registers as a single success on the breaker, and one
+        // ending in failure registers as a single failure — both delay tripping by the full
+        // backoff window. With the breaker innermost, each attempt's outcome counts, and a
+        // tripped breaker short-circuits subsequent retries via BrokenCircuitException
+        // (which the retry predicate doesn't handle, so retry stops immediately).
+        return entry.ChannelPipeline.ExecuteAsync(
             static async (state, ct) =>
             {
-                var (channelPipeline, httpCall) = state;
-                return await channelPipeline.ExecuteAsync(httpCall, ct).ConfigureAwait(false);
+                var (breakerPipeline, httpCall) = state;
+                return await breakerPipeline.ExecuteAsync(httpCall, ct).ConfigureAwait(false);
             },
-            (entry.ChannelPipeline, httpCall),
+            (entry.CircuitBreakerPipeline, httpCall),
             cancellationToken);
     }
 

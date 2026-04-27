@@ -221,10 +221,21 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
             IsLoading = true;
         }
 
-        _pageLoadCts?.Cancel();
-        _pageLoadCts?.Dispose();
-        _pageLoadCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-        var token = _pageLoadCts.Token;
+        var newCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        var oldCts = Interlocked.Exchange(ref _pageLoadCts, newCts);
+        try { oldCts?.Cancel(); oldCts?.Dispose(); } catch (ObjectDisposedException) { }
+
+        // Dispose may have raced past CancelInflightPageLoad between our swap-in and now.
+        // Reclaim the slot if it's still ours and tear down so the new CTS doesn't leak.
+        if (_isDisposed)
+        {
+            var reclaimed = Interlocked.CompareExchange(ref _pageLoadCts, null, newCts);
+            if (reclaimed == newCts) { newCts.Cancel(); newCts.Dispose(); }
+            EndLoadAndDrainPendingReload();
+            return;
+        }
+
+        var token = newCts.Token;
 
         HasLoadError = false;
 
