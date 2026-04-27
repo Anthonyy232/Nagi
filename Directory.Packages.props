@@ -29,12 +29,16 @@
         <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.7" />
 
         <!-- Microsoft Extensions -->
-        <PackageVersion Include="Microsoft.Extensions.Configuration" Version="10.0.6" />
-        <PackageVersion Include="Microsoft.Extensions.Configuration.FileExtensions" Version="10.0.6" />
-        <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="10.0.6" />
-        <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.6" />
-        <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.6" />
-        <PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.6" />
+        <PackageVersion Include="Microsoft.Extensions.Configuration" Version="10.0.7" />
+        <PackageVersion Include="Microsoft.Extensions.Configuration.FileExtensions" Version="10.0.7" />
+        <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="10.0.7" />
+        <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.7" />
+        <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.7" />
+        <PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.7" />
+
+        <!-- Resilience (rate limiting, retry, circuit breaker) -->
+        <PackageVersion Include="Polly" Version="8.5.2" />
+        <PackageVersion Include="Polly.RateLimiting" Version="8.5.2" />
 
         <!-- Media Playback -->
         <PackageVersion Include="LibVLCSharp" Version="4.0.0-alpha-20260410-9830" />

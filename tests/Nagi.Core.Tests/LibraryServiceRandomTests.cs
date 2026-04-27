@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
+using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Implementations;
@@ -21,6 +22,7 @@ public class LibraryServiceRandomTests : IDisposable
     private readonly DbContextFactoryTestHelper _dbHelper;
     private readonly LibraryService _libraryService;
     private readonly IFileSystemService _fileSystem;
+    private readonly ProviderPipelineProvider _pipelines;
 
     public LibraryServiceRandomTests()
     {
@@ -28,7 +30,6 @@ public class LibraryServiceRandomTests : IDisposable
         _fileSystem = Substitute.For<IFileSystemService>();
         var metadataService = Substitute.For<IMetadataService>();
         var lastFmService = Substitute.For<ILastFmMetadataService>();
-        var spotifyService = Substitute.For<ISpotifyService>();
         var musicBrainzService = Substitute.For<IMusicBrainzService>();
         var fanartTvService = Substitute.For<IFanartTvService>();
         var driveService = Substitute.For<ITheAudioDbService>();
@@ -42,13 +43,13 @@ public class LibraryServiceRandomTests : IDisposable
         var apiKeyService = Substitute.For<IApiKeyService>();
         var imageProcessor = Substitute.For<IImageProcessor>();
         var logger = Substitute.For<ILogger<LibraryService>>();
+        _pipelines = TestProviderPipeline.Build(ServiceProviderIds.ImageDownload);
 
         _libraryService = new LibraryService(
             _dbHelper.ContextFactory,
             _fileSystem,
             metadataService,
             lastFmService,
-            spotifyService,
             musicBrainzService,
             fanartTvService,
             driveService,
@@ -59,12 +60,14 @@ public class LibraryServiceRandomTests : IDisposable
             replayGainService,
             apiKeyService,
             imageProcessor,
+            _pipelines,
             logger);
     }
 
     public void Dispose()
     {
         _libraryService.Dispose();
+        _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _dbHelper.Dispose();
     }
 

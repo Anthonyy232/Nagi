@@ -5,6 +5,7 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Data;
+using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
@@ -32,6 +33,8 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
 
     private string? _capturedRequestBody;
 
+    private readonly ProviderPipelineProvider _pipelines;
+
     public ListenBrainzScrobblerServiceTests()
     {
         _httpClientFactory = Substitute.For<IHttpClientFactory>();
@@ -45,10 +48,13 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
 
         _settingsService.GetListenBrainzUserTokenAsync().Returns(Task.FromResult<string?>(Token));
         _settingsService.GetListenBrainzServerUrlAsync().Returns(Task.FromResult<string?>(null));
+
+        _pipelines = TestProviderPipeline.Build(ServiceProviderIds.ListenBrainz);
     }
 
     public void Dispose()
     {
+        _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _httpMessageHandler.Dispose();
         _dbHelper.Dispose();
         GC.SuppressFinalize(this);
@@ -58,6 +64,7 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
     {
         return new ListenBrainzScrobblerService(
             _httpClientFactory,
+            _pipelines,
             contextFactory ?? Substitute.For<IDbContextFactory<MusicDbContext>>(),
             _settingsService,
             _logger);
@@ -227,15 +234,13 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task ProcessPendingListensAsync_SubmitsPendingListensAndMarksSubmitted()
+    public async Task ProcessPendingListensAsync_BatchesPendingListensIntoOneRequest()
     {
         _settingsService.GetListenBrainzUserTokenAsync().Returns(Task.FromResult<string?>("tok"));
         _settingsService.GetListenBrainzScrobblingEnabledAsync().Returns(true);
         _settingsService.GetListenBrainzEnabledSinceUtcAsync()
             .Returns(Task.FromResult<DateTime?>(DateTime.UtcNow.AddDays(-1)));
-        _httpMessageHandler.RespondSequence(
-            (HttpStatusCode.OK, "{\"status\":\"ok\"}"),
-            (HttpStatusCode.OK, "{\"status\":\"ok\"}"));
+        SetupHttpResponse(HttpStatusCode.OK, "{\"status\":\"ok\"}");
 
         var songId = Guid.NewGuid();
         var folder = new Folder { Name = "F", Path = "C:/Music" };
@@ -279,7 +284,13 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
         await using var verify = _dbHelper.ContextFactory.CreateDbContext();
         (await verify.ListenHistory.FindAsync(1L))!.IsSubmittedToListenBrainz.Should().BeTrue();
         (await verify.ListenHistory.FindAsync(2L))!.IsSubmittedToListenBrainz.Should().BeTrue();
-        _httpMessageHandler.Requests.Should().HaveCount(2);
+
+        // Two pending listens should ship as a single import batch, not two separate calls.
+        _httpMessageHandler.Requests.Should().HaveCount(1);
+        _capturedRequestBody.Should().NotBeNull();
+        var body = JsonSerializer.Deserialize<ListenBrainzSubmitPayload>(_capturedRequestBody!);
+        body!.ListenType.Should().Be("import");
+        body.Payload.Should().HaveCount(2);
     }
 
     [Fact]
@@ -327,19 +338,18 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task ProcessPendingListensAsync_StopsOnFirstFailureToPreserveOrder()
+    public async Task ProcessPendingListensAsync_TransientBatchFailureLeavesAllPending()
     {
         _settingsService.GetListenBrainzUserTokenAsync().Returns(Task.FromResult<string?>("tok"));
         _settingsService.GetListenBrainzScrobblingEnabledAsync().Returns(true);
         _settingsService.GetListenBrainzEnabledSinceUtcAsync()
             .Returns(Task.FromResult<DateTime?>(DateTime.UtcNow.AddDays(-1)));
 
-        // Submission for listen 100 succeeds (1 OK). Submission for listen 101 hits the retry helper:
-        // it retries transient 500s up to MaxRetries=3, so we need three 500 responses to exhaust
-        // the retries and have SubmitListenAsync return false. After that, the loop should break
-        // and listen 102 must NOT be submitted.
+        // Three pending listens fit in a single batch. The pipeline retries transient 500s
+        // up to MaxRetries=3, so four 500s exhaust retries and the batch returns transient
+        // failure. The whole batch must remain unsubmitted (atomic batch semantics).
         _httpMessageHandler.RespondSequence(
-            (HttpStatusCode.OK, "{\"status\":\"ok\"}"),
+            (HttpStatusCode.InternalServerError, "{}"),
             (HttpStatusCode.InternalServerError, "{}"),
             (HttpStatusCode.InternalServerError, "{}"),
             (HttpStatusCode.InternalServerError, "{}"));
@@ -393,7 +403,7 @@ public class ListenBrainzScrobblerServiceTests : IDisposable
         await sut.ProcessPendingListensAsync(CancellationToken.None);
 
         await using var verify = _dbHelper.ContextFactory.CreateDbContext();
-        (await verify.ListenHistory.FindAsync(100L))!.IsSubmittedToListenBrainz.Should().BeTrue();
+        (await verify.ListenHistory.FindAsync(100L))!.IsSubmittedToListenBrainz.Should().BeFalse();
         (await verify.ListenHistory.FindAsync(101L))!.IsSubmittedToListenBrainz.Should().BeFalse();
         (await verify.ListenHistory.FindAsync(102L))!.IsSubmittedToListenBrainz.Should().BeFalse();
     }

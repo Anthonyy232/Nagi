@@ -736,20 +736,11 @@ public class SettingsService : IUISettingsService, IDisposable
                 },
                 new()
                 {
-                    Id = ServiceProviderIds.Spotify,
-                    DisplayName = "Spotify",
-                    Category = ServiceCategory.Metadata,
-                    IsEnabled = true,
-                    Order = 3,
-                    Description = Resources.Strings.Settings_Provider_Spotify_Desc
-                },
-                new()
-                {
                     Id = ServiceProviderIds.LastFm,
                     DisplayName = "Last.fm",
                     Category = ServiceCategory.Metadata,
                     IsEnabled = true,
-                    Order = 4,
+                    Order = 3,
                     Description = Resources.Strings.Settings_Provider_LastFm_Desc
                 }
             },

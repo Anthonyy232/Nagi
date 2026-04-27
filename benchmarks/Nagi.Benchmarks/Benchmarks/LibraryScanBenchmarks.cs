@@ -48,7 +48,6 @@ public class LibraryScanBenchmarks
 
         services.AddSingleton<IImageProcessor>(Substitute.For<IImageProcessor>());
         services.AddSingleton<ILastFmMetadataService>(Substitute.For<ILastFmMetadataService>());
-        services.AddSingleton<ISpotifyService>(Substitute.For<ISpotifyService>());
 
         var settingsService = Substitute.For<ISettingsService>();
         settingsService.GetVolumeNormalizationEnabledAsync().Returns(false);

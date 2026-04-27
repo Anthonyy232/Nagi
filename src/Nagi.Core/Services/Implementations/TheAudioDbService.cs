@@ -1,13 +1,13 @@
-﻿using System.Net;
+using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
-using Nagi.Core.Http;
+using Nagi.Core.Helpers;
+using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
-using Nagi.Core.Helpers;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -46,41 +46,34 @@ file class TheAudioDbArtist
 }
 
 /// <summary>
-///     Service for fetching artist metadata from TheAudioDB.
-///     Rate-limited to 30 requests per minute (free tier).
+///     Service for fetching artist metadata from TheAudioDB. Rate limiting (free tier
+///     is 30 req/min), retry, and circuit breaker are handled by
+///     <see cref="IProviderPipelineProvider"/>.
 /// </summary>
 public class TheAudioDbService : ITheAudioDbService, IDisposable
 {
     private const string BaseUrl = "https://www.theaudiodb.com/api/v1/json";
     private const string ApiKeyName = ServiceProviderIds.TheAudioDb;
-    private const int MaxRetries = 3;
-    private const int RateLimitDelayMultiplier = 5;
-
-    // Rate limiting: 30 req/min = 1 request per 2 seconds
-    private static readonly SemaphoreSlim _rateLimitSemaphore = new(1, 1);
-    private static DateTime _lastRequestTime = DateTime.MinValue;
-    private static readonly TimeSpan _minRequestInterval = TimeSpan.FromSeconds(2);
 
     private readonly HttpClient _httpClient;
+    private readonly IProviderPipelineProvider _pipelines;
     private readonly IApiKeyService _apiKeyService;
     private readonly ILogger<TheAudioDbService> _logger;
 
-    private volatile bool _isApiDisabled;
     private bool _isDisposed;
 
     public TheAudioDbService(
         IHttpClientFactory httpClientFactory,
+        IProviderPipelineProvider pipelines,
         IApiKeyService apiKeyService,
         ILogger<TheAudioDbService> logger)
     {
         _httpClient = httpClientFactory.CreateClient();
+        _pipelines = pipelines;
         _apiKeyService = apiKeyService;
         _logger = logger;
     }
 
-    /// <summary>
-    ///     Releases the resources used by the <see cref="TheAudioDbService" />.
-    /// </summary>
     public void Dispose()
     {
         if (_isDisposed) return;
@@ -98,138 +91,83 @@ public class TheAudioDbService : ITheAudioDbService, IDisposable
         if (string.IsNullOrWhiteSpace(musicBrainzId))
             return ServiceResult<TheAudioDbArtistInfo>.FromSuccessNotFound();
 
-        if (_isApiDisabled)
-            return ServiceResult<TheAudioDbArtistInfo>.FromPermanentError("API is disabled for this session.");
+        if (_pipelines.IsCircuitOpen(ServiceProviderIds.TheAudioDb))
+            return ServiceResult<TheAudioDbArtistInfo>.FromTemporaryError("Provider is temporarily unavailable.");
 
-        var operationName = $"TheAudioDB metadata for MBID {musicBrainzId}";
-
-        try
+        var apiKey = await _apiKeyService.GetApiKeyAsync(ApiKeyName, cancellationToken).ConfigureAwait(false);
+        if (string.IsNullOrEmpty(apiKey))
         {
-            var result = await HttpRetryHelper.ExecuteWithRetryAsync<ServiceResult<TheAudioDbArtistInfo>>(
-                async attempt =>
+            _logger.LogWarning("TheAudioDB API key not available.");
+            return ServiceResult<TheAudioDbArtistInfo>.FromTemporaryError("API key not available.");
+        }
+
+        var url = $"{BaseUrl}/{apiKey}/artist-mb.php?i={musicBrainzId}";
+        var isoCode = languageCode?.Length > 2 ? languageCode[..2] : (languageCode ?? "Default");
+
+        return await _pipelines.ExecuteWithFallbackAsync(
+            ServiceProviderIds.TheAudioDb,
+            async ct =>
+            {
+                _logger.LogDebug("Fetching TheAudioDB metadata for MBID: {MBID} (Language: {LanguageCode})",
+                    musicBrainzId, isoCode);
+                return await _httpClient.GetAsync(url, ct).ConfigureAwait(false);
+            },
+            async (response, ct) =>
+            {
+                if (response.StatusCode == HttpStatusCode.NotFound)
                 {
-                    // Acquire semaphore for rate limiting - only held during HTTP request
-                    await _rateLimitSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
-                    try
-                    {
-                        // Enforce minimum delay between requests
-                        var elapsed = DateTime.UtcNow - _lastRequestTime;
-                        if (elapsed < _minRequestInterval)
-                        {
-                            await Task.Delay(_minRequestInterval - elapsed, cancellationToken).ConfigureAwait(false);
-                        }
+                    _logger.LogDebug("No TheAudioDB data found for MBID: {MBID}", musicBrainzId);
+                    return ServiceResult<TheAudioDbArtistInfo>.FromSuccessNotFound();
+                }
 
-                        var apiKey = await _apiKeyService.GetApiKeyAsync(ApiKeyName, cancellationToken).ConfigureAwait(false);
-                        if (string.IsNullOrEmpty(apiKey))
-                        {
-                            _logger.LogWarning("TheAudioDB API key not available.");
-                            return RetryResult<ServiceResult<TheAudioDbArtistInfo>>.Success(
-                                ServiceResult<TheAudioDbArtistInfo>.FromTemporaryError("API key not available."));
-                        }
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogWarning("TheAudioDB request failed with status {StatusCode} for MBID: {MBID}",
+                        response.StatusCode, musicBrainzId);
+                    return ServiceResult<TheAudioDbArtistInfo>.FromTemporaryError($"HTTP {response.StatusCode}");
+                }
 
-                        var url = $"{BaseUrl}/{apiKey}/artist-mb.php?i={musicBrainzId}";
-                        var isoCode = languageCode?.Length > 2 ? languageCode[..2] : (languageCode ?? "Default");
-                        _logger.LogDebug("Fetching TheAudioDB metadata for MBID: {MBID} (Language: {LanguageCode}, Attempt {Attempt}/{MaxRetries})",
-                            musicBrainzId, isoCode, attempt, MaxRetries);
+                var apiResult = await response.Content.ReadFromJsonAsync<TheAudioDbResponse>(cancellationToken: ct)
+                    .ConfigureAwait(false);
 
-                        using var response = await _httpClient.GetAsync(url, cancellationToken).ConfigureAwait(false);
+                var artist = apiResult?.Artists?.FirstOrDefault();
+                if (artist is null)
+                {
+                    _logger.LogDebug("TheAudioDB returned null/empty artist data for MBID: {MBID}", musicBrainzId);
+                    return ServiceResult<TheAudioDbArtistInfo>.FromSuccessNotFound();
+                }
 
-                        // Update timestamp AFTER request completes
-                        _lastRequestTime = DateTime.UtcNow;
+                var fanartUrl = GetFirstNonEmpty(artist.ArtistFanart, artist.ArtistFanart2, artist.ArtistFanart3);
 
-                        if (response.StatusCode == HttpStatusCode.NotFound)
-                        {
-                            _logger.LogDebug("No TheAudioDB data found for MBID: {MBID}", musicBrainzId);
-                            return RetryResult<ServiceResult<TheAudioDbArtistInfo>>.Success(
-                                ServiceResult<TheAudioDbArtistInfo>.FromSuccessNotFound());
-                        }
+                var bio = GetLocalizedBiography(artist.ExtensionData, languageCode);
+                var isLocalizedBio = !string.IsNullOrEmpty(bio);
+                bio ??= artist.BiographyEN;
 
-                        if (response.StatusCode == HttpStatusCode.TooManyRequests)
-                        {
-                            _logger.LogWarning("TheAudioDB rate limit reached for MBID: {MBID}. Attempt {Attempt}/{MaxRetries}",
-                                musicBrainzId, attempt, MaxRetries);
+                var info = new TheAudioDbArtistInfo(
+                    Biography: SanitizeBiography(bio),
+                    ThumbUrl: NullIfEmpty(artist.ArtistThumb),
+                    FanartUrl: fanartUrl,
+                    WideThumbUrl: NullIfEmpty(artist.ArtistWideThumb),
+                    LogoUrl: NullIfEmpty(artist.ArtistLogo)
+                );
 
-                            if (attempt >= MaxRetries)
-                            {
-                                _logger.LogError("TheAudioDB rate limit reached repeatedly. Disabling for this session.");
-                                _isApiDisabled = true;
-                                return RetryResult<ServiceResult<TheAudioDbArtistInfo>>.Success(
-                                    ServiceResult<TheAudioDbArtistInfo>.FromPermanentError("Rate limited."));
-                            }
+                if (info.Biography is null && info.ThumbUrl is null && info.FanartUrl is null &&
+                    info.WideThumbUrl is null && info.LogoUrl is null)
+                {
+                    _logger.LogDebug("TheAudioDB returned empty metadata for MBID: {MBID}", musicBrainzId);
+                    return ServiceResult<TheAudioDbArtistInfo>.FromSuccessNotFound();
+                }
 
-                            return RetryResult<ServiceResult<TheAudioDbArtistInfo>>.RateLimitFailure(RateLimitDelayMultiplier);
-                        }
-
-                        if (!response.IsSuccessStatusCode)
-                        {
-                            _logger.LogWarning("TheAudioDB request failed with status {StatusCode} for MBID: {MBID}. Attempt {Attempt}/{MaxRetries}",
-                                response.StatusCode, musicBrainzId, attempt, MaxRetries);
-
-                            if (HttpRetryHelper.IsRetryableStatusCode(response.StatusCode))
-                                return RetryResult<ServiceResult<TheAudioDbArtistInfo>>.TransientFailure();
-
-                            return RetryResult<ServiceResult<TheAudioDbArtistInfo>>.Success(
-                                ServiceResult<TheAudioDbArtistInfo>.FromTemporaryError($"HTTP {response.StatusCode}"));
-                        }
-
-                        var apiResult = await response.Content.ReadFromJsonAsync<TheAudioDbResponse>(
-                            cancellationToken: cancellationToken).ConfigureAwait(false);
-
-                        var artist = apiResult?.Artists?.FirstOrDefault();
-                        if (artist is null)
-                        {
-                            _logger.LogDebug("TheAudioDB returned null/empty artist data for MBID: {MBID}", musicBrainzId);
-                            return RetryResult<ServiceResult<TheAudioDbArtistInfo>>.Success(
-                                ServiceResult<TheAudioDbArtistInfo>.FromSuccessNotFound());
-                        }
-
-                        // Select the best available fanart image
-                        var fanartUrl = GetFirstNonEmpty(artist.ArtistFanart, artist.ArtistFanart2, artist.ArtistFanart3);
-
-                        var bio = GetLocalizedBiography(artist.ExtensionData, languageCode);
-                        var isLocalizedBio = !string.IsNullOrEmpty(bio);
-                        bio ??= artist.BiographyEN;
-
-                        var info = new TheAudioDbArtistInfo(
-                            Biography: SanitizeBiography(bio),
-                            ThumbUrl: NullIfEmpty(artist.ArtistThumb),
-                            FanartUrl: fanartUrl,
-                            WideThumbUrl: NullIfEmpty(artist.ArtistWideThumb),
-                            LogoUrl: NullIfEmpty(artist.ArtistLogo)
-                        );
-
-                        // Check if we actually got any usable data
-                        if (info.Biography is null && info.ThumbUrl is null && info.FanartUrl is null &&
-                            info.WideThumbUrl is null && info.LogoUrl is null)
-                        {
-                            _logger.LogDebug("TheAudioDB returned empty metadata for MBID: {MBID}", musicBrainzId);
-                            return RetryResult<ServiceResult<TheAudioDbArtistInfo>>.Success(
-                                ServiceResult<TheAudioDbArtistInfo>.FromSuccessNotFound());
-                        }
-
-                        _logger.LogInformation("Found TheAudioDB metadata for MBID: {MBID} (Language: {LanguageCode}): Bio={HasBio} ({BioSource}), Thumb={HasThumb}, Fanart={HasFanart}, WideThumb={HasWideThumb}, Logo={HasLogo}",
-                            musicBrainzId, isoCode, !string.IsNullOrEmpty(info.Biography), isLocalizedBio ? isoCode : "en", !string.IsNullOrEmpty(info.ThumbUrl), !string.IsNullOrEmpty(info.FanartUrl), !string.IsNullOrEmpty(info.WideThumbUrl), !string.IsNullOrEmpty(info.LogoUrl));
-                        return RetryResult<ServiceResult<TheAudioDbArtistInfo>>.Success(
-                            ServiceResult<TheAudioDbArtistInfo>.FromSuccess(info));
-                    }
-                    finally
-                    {
-                        _rateLimitSemaphore.Release();
-                    }
-                },
-                _logger,
-                operationName,
-                cancellationToken,
-                MaxRetries
-            ).ConfigureAwait(false);
-
-            return result ?? ServiceResult<TheAudioDbArtistInfo>.FromTemporaryError("Failed after exhausting retries.");
-        }
-        catch (Exception ex) when (ex is not OperationCanceledException)
-        {
-            _logger.LogError(ex, "Error fetching TheAudioDB metadata for MBID: {MBID} after exhausting retries.", musicBrainzId);
-            return ServiceResult<TheAudioDbArtistInfo>.FromTemporaryError(ex.Message);
-        }
+                _logger.LogInformation("Found TheAudioDB metadata for MBID: {MBID} (Language: {LanguageCode}): Bio={HasBio} ({BioSource}), Thumb={HasThumb}, Fanart={HasFanart}, WideThumb={HasWideThumb}, Logo={HasLogo}",
+                    musicBrainzId, isoCode, !string.IsNullOrEmpty(info.Biography), isLocalizedBio ? isoCode : "en",
+                    !string.IsNullOrEmpty(info.ThumbUrl), !string.IsNullOrEmpty(info.FanartUrl),
+                    !string.IsNullOrEmpty(info.WideThumbUrl), !string.IsNullOrEmpty(info.LogoUrl));
+                return ServiceResult<TheAudioDbArtistInfo>.FromSuccess(info);
+            },
+            fallback: ServiceResult<TheAudioDbArtistInfo>.FromTemporaryError("Provider is temporarily unavailable."),
+            _logger,
+            $"fetch metadata for MBID {musicBrainzId}",
+            cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -276,7 +214,6 @@ public class TheAudioDbService : ITheAudioDbService, IDisposable
         // Use case-insensitive lookup
         var entry = extensionData.FirstOrDefault(x => x.Key.Equals(targetKey, StringComparison.OrdinalIgnoreCase));
 
-        // Check if struct is valid (Key is not null/empty when match found)
         if (!string.IsNullOrEmpty(entry.Key) && entry.Value.ValueKind == JsonValueKind.String)
         {
             var bio = entry.Value.GetString();

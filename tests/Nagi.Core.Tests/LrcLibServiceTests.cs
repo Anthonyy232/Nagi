@@ -2,6 +2,8 @@
 using System.Text.Json;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Http.Pipelines;
+using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Implementations;
 using Nagi.Core.Tests.Utils;
@@ -23,6 +25,8 @@ public class LrcLibServiceTests : IDisposable
     private readonly LrcLibService _service;
     private readonly ILogger<LrcLibService> _logger;
 
+    private readonly ProviderPipelineProvider _pipelines;
+
     public LrcLibServiceTests()
     {
         _httpHandler = new TestHttpMessageHandler();
@@ -31,11 +35,13 @@ public class LrcLibServiceTests : IDisposable
         httpClientFactory.CreateClient(Arg.Any<string>()).Returns(httpClient);
         _logger = Substitute.For<ILogger<LrcLibService>>();
 
-        _service = new LrcLibService(httpClientFactory, _logger);
+        _pipelines = TestProviderPipeline.Build(ServiceProviderIds.LrcLib);
+        _service = new LrcLibService(httpClientFactory, _pipelines, _logger);
     }
 
     public void Dispose()
     {
+        _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _httpHandler.Dispose();
         GC.SuppressFinalize(this);
     }
@@ -179,27 +185,17 @@ public class LrcLibServiceTests : IDisposable
     #region Rate Limiting Tests
 
     [Fact]
-    public async Task GetLyricsAsync_WhenRateLimited_DisablesServiceForSession()
+    public async Task GetLyricsAsync_WhenRateLimited_ReturnsNull()
     {
-        // Arrange
+        // The pipeline retries 429s and the service returns null on failure. Service is no
+        // longer permanently disabled on a single 429 — sustained 429s trip the breaker
+        // (covered by pipeline tests) which then short-circuits subsequent calls.
         _httpHandler.SendAsyncFunc = (_, _) =>
             Task.FromResult(new HttpResponseMessage(HttpStatusCode.TooManyRequests));
 
-        // Act - First call triggers rate limit
-        var result1 = await _service.GetLyricsAsync("Track1", "Artist", "Album", TimeSpan.FromMinutes(3));
+        var result = await _service.GetLyricsAsync("Track1", "Artist", "Album", TimeSpan.FromMinutes(3));
 
-        // Reset handler to return success (but service should be disabled)
-        _httpHandler.SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
-        {
-            Content = new StringContent("{\"syncedLyrics\": \"[00:01.00]Lyrics\"}")
-        });
-
-        // Act - Second call should be short-circuited
-        var result2 = await _service.GetLyricsAsync("Track2", "Artist", "Album", TimeSpan.FromMinutes(3));
-
-        // Assert
-        result1.Should().BeNull();
-        result2.Should().BeNull(); // Should still be null because service is disabled
+        result.Should().BeNull();
     }
 
     #endregion

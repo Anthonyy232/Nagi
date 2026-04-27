@@ -4,6 +4,7 @@ using System.Text.Json;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Implementations;
 using Nagi.Core.Tests.Utils;
@@ -24,6 +25,7 @@ public class ApiKeyServiceTests : IDisposable
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly TestHttpMessageHandler _httpMessageHandler;
     private readonly ILogger<ApiKeyService> _logger;
+    private readonly ProviderPipelineProvider _pipelines;
 
     public ApiKeyServiceTests()
     {
@@ -36,12 +38,14 @@ public class ApiKeyServiceTests : IDisposable
         _httpClientFactory.CreateClient(Arg.Any<string>())
             .Returns(_ => new HttpClient(_httpMessageHandler));
 
-        _apiKeyService = new ApiKeyService(_httpClientFactory, _configuration, _logger);
+        _pipelines = TestProviderPipeline.Build(ServiceProviderIds.NagiApi);
+        _apiKeyService = new ApiKeyService(_httpClientFactory, _pipelines, _configuration, _logger);
     }
 
     public void Dispose()
     {
         _apiKeyService.Dispose();
+        _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _httpMessageHandler.Dispose();
         GC.SuppressFinalize(this);
     }
@@ -124,7 +128,7 @@ public class ApiKeyServiceTests : IDisposable
     public async Task RefreshApiKeyAsync_ForcesNewFetchFromServer_AndUpdatesCache()
     {
         // Arrange
-        const string keyName = ServiceProviderIds.Spotify;
+        const string keyName = ServiceProviderIds.TheAudioDb;
         const string initialApiKey = "initial-key";
         const string refreshedApiKey = "refreshed-key";
         SetupValidConfiguration();
@@ -161,7 +165,7 @@ public class ApiKeyServiceTests : IDisposable
 
         // Assert
         result.Should().BeNull();
-        _httpMessageHandler.Requests.Should().HaveCount(3);
+        _httpMessageHandler.Requests.Should().HaveCount(1); // pipeline retry count is configured at the policy level
     }
 
 
@@ -241,7 +245,7 @@ public class ApiKeyServiceTests : IDisposable
         _httpMessageHandler.SendAsyncFunc = (_, _) => tcs.Task;
 
         // Act
-        var apiTask = _apiKeyService.GetApiKeyAsync(ServiceProviderIds.Spotify, cts.Token);
+        var apiTask = _apiKeyService.GetApiKeyAsync(ServiceProviderIds.TheAudioDb, cts.Token);
         cts.Cancel();
 
         // Assert

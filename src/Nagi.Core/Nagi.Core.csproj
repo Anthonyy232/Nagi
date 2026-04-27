@@ -36,5 +36,9 @@
 
         <!-- HTTP -->
         <PackageReference Include="Microsoft.Extensions.Http" />
+
+        <!-- Resilience pipelines (rate limiting, retry, circuit breaker) -->
+        <PackageReference Include="Polly" />
+        <PackageReference Include="Polly.RateLimiting" />
     </ItemGroup>
 </Project>

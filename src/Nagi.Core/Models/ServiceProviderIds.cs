@@ -27,14 +27,27 @@ public static class ServiceProviderIds
     /// <summary>Fanart.tv - Fan-contributed artist artwork. Requires MusicBrainz ID.</summary>
     public const string FanartTv = "fanarttv";
 
-    /// <summary>Spotify - Artist images via Spotify Web API.</summary>
-    public const string Spotify = "spotify";
-
     /// <summary>Last.fm - Fallback for artist images and biographies.</summary>
     public const string LastFm = "lastfm";
 
     /// <summary>Last.fm API Secret name for retrieval.</summary>
     public const string LastFmSecret = "lastfm-secret";
+
+    /// <summary>ListenBrainz - Open scrobbling service from MetaBrainz.</summary>
+    public const string ListenBrainz = "listenbrainz";
+
+    #endregion
+
+    #region Internal Providers
+
+    /// <summary>Nagi's own API server (key bootstrap). Not a third-party provider.</summary>
+    public const string NagiApi = "nagi-api";
+
+    /// <summary>
+    ///     Generic bucket for cover-art / artist-image downloads from third-party CDNs.
+    ///     Used when the originating provider is not knowable at download time.
+    /// </summary>
+    public const string ImageDownload = "image-download";
 
     #endregion
 }

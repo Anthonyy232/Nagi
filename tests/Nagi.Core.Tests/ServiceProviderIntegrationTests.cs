@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
+using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Models;
 using Nagi.Core.Models.Lyrics;
 using Nagi.Core.Services.Abstractions;
@@ -17,8 +18,9 @@ namespace Nagi.Core.Tests;
 ///     Provides integration tests to verify that service provider enabling, disabling,
 ///     and reordering (priority) logic works correctly across different services.
 /// </summary>
-public class ServiceProviderIntegrationTests
+public class ServiceProviderIntegrationTests : IDisposable
 {
+    private readonly ProviderPipelineProvider _pipelines;
     private readonly IFileSystemService _fileSystem;
     private readonly ISettingsService _settingsService;
     private readonly IPathConfiguration _pathConfig;
@@ -26,7 +28,6 @@ public class ServiceProviderIntegrationTests
     private readonly IOnlineLyricsService _lrcLibService;
     private readonly INetEaseLyricsService _netEaseLyricsService;
     private readonly ILastFmMetadataService _lastFmService;
-    private readonly ISpotifyService _spotifyService;
     private readonly IMusicBrainzService _musicBrainzService;
     private readonly IFanartTvService _fanartTvService;
     private readonly ITheAudioDbService _theAudioDbService;
@@ -50,7 +51,6 @@ public class ServiceProviderIntegrationTests
         _lrcLibService = Substitute.For<IOnlineLyricsService>();
         _netEaseLyricsService = Substitute.For<INetEaseLyricsService>();
         _lastFmService = Substitute.For<ILastFmMetadataService>();
-        _spotifyService = Substitute.For<ISpotifyService>();
         _musicBrainzService = Substitute.For<IMusicBrainzService>();
         _fanartTvService = Substitute.For<IFanartTvService>();
         _theAudioDbService = Substitute.For<ITheAudioDbService>();
@@ -73,12 +73,13 @@ public class ServiceProviderIntegrationTests
             _libraryWriter,
             Substitute.For<ILogger<LrcService>>());
 
+        _pipelines = TestProviderPipeline.Build(ServiceProviderIds.ImageDownload);
+
         _libraryService = new LibraryService(
             _dbHelper.ContextFactory,
             _fileSystem,
             _metadataService,
             _lastFmService,
-            _spotifyService,
             _musicBrainzService,
             _fanartTvService,
             _theAudioDbService,
@@ -89,9 +90,17 @@ public class ServiceProviderIntegrationTests
             _replayGainService,
             _apiKeyService,
             _imageProcessor,
+            _pipelines,
             Substitute.For<ILogger<LibraryService>>());
 
         _pathConfig.ArtistImageCachePath.Returns("C:\\cache\\artistimages");
+    }
+
+    public void Dispose()
+    {
+        _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
+        _dbHelper.Dispose();
+        GC.SuppressFinalize(this);
     }
 
     [Fact]
@@ -146,75 +155,6 @@ public class ServiceProviderIntegrationTests
         result.Should().NotBeNull();
         result!.Lines[0].Text.Should().Be("From LRCLIB");
         await _netEaseLyricsService.DidNotReceive().SearchLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
-    public async Task LibraryService_RespectsProviderOrderForBiography()
-    {
-        // Arrange
-        var artist = new Artist { Id = Guid.NewGuid(), Name = "Test Artist" };
-        using (var context = _dbHelper.ContextFactory.CreateDbContext())
-        {
-            context.Artists.Add(artist);
-            context.SaveChanges();
-        }
-
-        // Spotify is first (no bio), Last.fm is second (has bio)
-        _settingsService.GetEnabledServiceProvidersAsync(ServiceCategory.Metadata)
-            .Returns(new List<ServiceProviderSetting>
-            {
-                new() { Id = ServiceProviderIds.Spotify, Order = 0, IsEnabled = true },
-                new() { Id = ServiceProviderIds.LastFm, Order = 1, IsEnabled = true }
-            });
-
-        // Spotify returns image but no bio
-        _spotifyService.GetArtistImageUrlAsync(artist.Name, Arg.Any<CancellationToken>())
-            .Returns(ServiceResult<SpotifyImageResult>.FromSuccess(new SpotifyImageResult { ImageUrl = "http://spotify.com/img.jpg" }));
-
-        // Last.fm returns bio
-        _lastFmService.GetArtistInfoAsync(artist.Name, Arg.Any<string?>(), Arg.Any<CancellationToken>())
-            .Returns(ServiceResult<ArtistInfo>.FromSuccess(new ArtistInfo { Biography = "Last.fm Bio", ImageUrl = "http://lastfm.com/img.jpg" }));
-
-        // Act
-        var result = await _libraryService.GetArtistDetailsAsync(artist.Id, true);
-
-        // Assert
-        result!.Biography.Should().Be("Last.fm Bio");
-    }
-
-    [Fact]
-    public async Task LibraryService_RespectsProviderOrderForImage()
-    {
-        // Arrange
-        var artist = new Artist { Id = Guid.NewGuid(), Name = "Test Artist" };
-        using (var context = _dbHelper.ContextFactory.CreateDbContext())
-        {
-            context.Artists.Add(artist);
-            context.SaveChanges();
-        }
-
-        // Spotify is first, Last.fm is second
-        _settingsService.GetEnabledServiceProvidersAsync(ServiceCategory.Metadata)
-            .Returns(new List<ServiceProviderSetting>
-            {
-                new() { Id = ServiceProviderIds.Spotify, Order = 0, IsEnabled = true },
-                new() { Id = ServiceProviderIds.LastFm, Order = 1, IsEnabled = true }
-            });
-
-        _spotifyService.GetArtistImageUrlAsync(artist.Name, Arg.Any<CancellationToken>())
-            .Returns(ServiceResult<SpotifyImageResult>.FromSuccess(new SpotifyImageResult { ImageUrl = "http://spotify.com/img.jpg" }));
-        _lastFmService.GetArtistInfoAsync(artist.Name, Arg.Any<string?>(), Arg.Any<CancellationToken>())
-            .Returns(ServiceResult<ArtistInfo>.FromSuccess(new ArtistInfo { ImageUrl = "http://lastfm.com/img.jpg" }));
-
-        // Setup image download failure for Spotify but success for Last.fm would be complex here,
-        // but the logic simply takes the first non-null URL if we don't mock download failures.
-        // Actually, LibraryService waits for ALL tasks and then iterates.
-
-        // Act
-        await _libraryService.GetArtistDetailsAsync(artist.Id, true);
-
-        // Assert - it should have used the Spotify URL (first in list)
-        _httpClientFactory.Received().CreateClient(Arg.Any<string>());
     }
 
     [Fact]

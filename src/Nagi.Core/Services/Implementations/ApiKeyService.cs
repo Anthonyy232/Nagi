@@ -1,11 +1,10 @@
-﻿using System.Collections.Concurrent;
+using System.Collections.Concurrent;
 using System.Text.Json;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Nagi.Core.Helpers;
+using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
-using Nagi.Core.Http;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -25,13 +24,18 @@ public class ApiKeyService : IApiKeyService, IDisposable
     private readonly ConcurrentDictionary<string, Lazy<Task<string?>>> _cachedApiKeys = new();
     private readonly IConfiguration _configuration;
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly IProviderPipelineProvider _pipelines;
     private readonly ILogger<ApiKeyService> _logger;
     private volatile bool _globalAuthFailed;
 
-    public ApiKeyService(IHttpClientFactory httpClientFactory, IConfiguration configuration,
+    public ApiKeyService(
+        IHttpClientFactory httpClientFactory,
+        IProviderPipelineProvider pipelines,
+        IConfiguration configuration,
         ILogger<ApiKeyService> logger)
     {
         _httpClientFactory = httpClientFactory;
+        _pipelines = pipelines;
         _configuration = configuration;
         _logger = logger;
     }
@@ -100,7 +104,6 @@ public class ApiKeyService : IApiKeyService, IDisposable
         var route = keyName switch
         {
             ServiceProviderIds.TheAudioDb => "theaudiodb-key",
-            ServiceProviderIds.Spotify => "spotify-key",
             ServiceProviderIds.LastFm => "lastfm-key",
             ServiceProviderIds.LastFmSecret => "lastfm-secret-key",
             ServiceProviderIds.FanartTv => "fanarttv-key",
@@ -108,25 +111,24 @@ public class ApiKeyService : IApiKeyService, IDisposable
         };
 
         var requestUri = $"{serverUrl.TrimEnd('/')}/api/{route}";
-        var operationName = $"API key fetch for {keyName}";
         using var httpClient = _httpClientFactory.CreateClient();
 
-        return await HttpRetryHelper.ExecuteWithRetryAsync<string>(
-            async attempt =>
+        return await _pipelines.ExecuteWithFallbackAsync<string?>(
+            ServiceProviderIds.NagiApi,
+            async ct =>
             {
                 using var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
                 request.Headers.Add("X-API-KEY", serverKey);
-
                 if (!string.IsNullOrEmpty(subscriptionKey))
                     request.Headers.Add("Ocp-Apim-Subscription-Key", subscriptionKey);
-
-                _logger.LogDebug("Fetching API key '{ApiKeyName}' from server (Attempt {Attempt}/3)", keyName, attempt);
-
-                using var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
-
+                _logger.LogDebug("Fetching API key '{ApiKeyName}' from server.", keyName);
+                return await httpClient.SendAsync(request, ct).ConfigureAwait(false);
+            },
+            async (response, ct) =>
+            {
                 if (response.IsSuccessStatusCode)
                 {
-                    var jsonContent = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+                    var jsonContent = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
                     var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
                     var apiKeyResponse = JsonSerializer.Deserialize<ApiKeyResponse>(jsonContent, options);
                     var key = apiKeyResponse?.Value;
@@ -134,36 +136,29 @@ public class ApiKeyService : IApiKeyService, IDisposable
                     if (string.IsNullOrWhiteSpace(key))
                     {
                         _logger.LogError("API key response for '{ApiKeyName}' is invalid (missing 'Value').", keyName);
-                        return RetryResult<string>.PermanentFailure();
+                        return null;
                     }
-
-                    return RetryResult<string>.Success(key);
+                    return key;
                 }
 
-                var errorContent = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+                var errorContent = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
 
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized ||
-                    response.StatusCode == System.Net.HttpStatusCode.Forbidden)
+                if (response.StatusCode is System.Net.HttpStatusCode.Unauthorized or System.Net.HttpStatusCode.Forbidden)
                 {
                     _globalAuthFailed = true;
                     _logger.LogCritical(
                         "Authentication failed for Nagi API Server. All future requests disabled. Status: {StatusCode}. Response: {ErrorContent}",
                         response.StatusCode, errorContent);
-                    return RetryResult<string>.PermanentFailure();
+                    return null;
                 }
 
                 _logger.LogError("Error fetching API key '{ApiKeyName}'. Status: {StatusCode}. Response: {ErrorContent}",
                     keyName, response.StatusCode, errorContent);
-
-                if (HttpRetryHelper.IsRetryableStatusCode(response.StatusCode))
-                    return RetryResult<string>.TransientFailure();
-
-                return RetryResult<string>.PermanentFailure();
+                return null;
             },
+            fallback: null,
             _logger,
-            operationName,
-            cancellationToken,
-            3
-        ).ConfigureAwait(false);
+            $"fetch API key '{keyName}'",
+            cancellationToken).ConfigureAwait(false);
     }
 }

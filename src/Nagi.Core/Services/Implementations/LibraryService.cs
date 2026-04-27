@@ -1,4 +1,4 @@
-﻿using System.Collections.Concurrent;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Threading.Channels;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +10,8 @@ using Nagi.Core.Helpers;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
-using Nagi.Core.Http;
+using Nagi.Core.Http.Pipelines;
+using Polly.CircuitBreaker;
 using System.IO;
 using System.Text;
 using System.Globalization;
@@ -60,11 +61,11 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     private readonly IPathConfiguration _pathConfig;
     private readonly SemaphoreSlim _scanSemaphore = new(1, 1);
     private readonly IServiceScopeFactory _serviceScopeFactory;
-    private readonly ISpotifyService _spotifyService;
     private readonly ISettingsService _settingsService;
     private readonly IReplayGainService _replayGainService;
     private readonly IApiKeyService _apiKeyService;
     private readonly IImageProcessor _imageProcessor;
+    private readonly IProviderPipelineProvider _pipelines;
     private bool _disposed;
     private volatile bool _ignoreArticlesOnSort = true;
     private volatile bool _isMetadataFetchRunning;
@@ -78,7 +79,6 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         IFileSystemService fileSystem,
         IMetadataService metadataService,
         ILastFmMetadataService lastFmService,
-        ISpotifyService spotifyService,
         IMusicBrainzService musicBrainzService,
         IFanartTvService fanartTvService,
         ITheAudioDbService theAudioDbService,
@@ -89,13 +89,13 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         IReplayGainService replayGainService,
         IApiKeyService apiKeyService,
         IImageProcessor imageProcessor,
+        IProviderPipelineProvider pipelines,
         ILogger<LibraryService> logger)
     {
         _contextFactory = contextFactory ?? throw new ArgumentNullException(nameof(contextFactory));
         _fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
         _metadataService = metadataService ?? throw new ArgumentNullException(nameof(metadataService));
         _lastFmService = lastFmService ?? throw new ArgumentNullException(nameof(lastFmService));
-        _spotifyService = spotifyService ?? throw new ArgumentNullException(nameof(spotifyService));
         _musicBrainzService = musicBrainzService ?? throw new ArgumentNullException(nameof(musicBrainzService));
         _fanartTvService = fanartTvService ?? throw new ArgumentNullException(nameof(fanartTvService));
         _theAudioDbService = theAudioDbService ?? throw new ArgumentNullException(nameof(theAudioDbService));
@@ -106,6 +106,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         _replayGainService = replayGainService ?? throw new ArgumentNullException(nameof(replayGainService));
         _apiKeyService = apiKeyService ?? throw new ArgumentNullException(nameof(apiKeyService));
         _imageProcessor = imageProcessor ?? throw new ArgumentNullException(nameof(imageProcessor));
+        _pipelines = pipelines ?? throw new ArgumentNullException(nameof(pipelines));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _metadataFetchCts = new CancellationTokenSource();
         _settingsService.FetchOnlineMetadataEnabledChanged += OnFetchOnlineMetadataEnabledChanged;
@@ -1144,8 +1145,6 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                         warmupTasks.Add(WarmupApiKeyAsync(ServiceProviderIds.TheAudioDb, token));
                     if (enabledProviderIds.Contains(ServiceProviderIds.FanartTv))
                         warmupTasks.Add(WarmupApiKeyAsync(ServiceProviderIds.FanartTv, token));
-                    if (enabledProviderIds.Contains(ServiceProviderIds.Spotify))
-                        warmupTasks.Add(WarmupApiKeyAsync(ServiceProviderIds.Spotify, token));
                     if (enabledProviderIds.Contains(ServiceProviderIds.LastFm))
                         warmupTasks.Add(WarmupApiKeyAsync(ServiceProviderIds.LastFm, token));
                     if (warmupTasks.Count > 0)
@@ -1193,6 +1192,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
                         var pendingUpdates = new List<ArtistMetadataUpdatedEventArgs>();
                         var stopwatch = Stopwatch.StartNew();
+                        int processedCount = 0;
 
                         foreach (var artist in artistsInBatch)
                         {
@@ -1215,13 +1215,18 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                                 }
 
                                 // Hybrid Flush Check: 10 items or 5 seconds
-                                if (pendingUpdates.Count >= 10 || (pendingUpdates.Count > 0 && stopwatch.Elapsed.TotalSeconds >= 5))
+                                if (++processedCount >= 10 || stopwatch.Elapsed.TotalSeconds >= 5)
                                 {
                                     await batchContext.SaveChangesAsync(token).ConfigureAwait(false);
-                                    _logger.LogInformation("Saved partial batch of {Count} artists metadata (Time: {Elapsed}s).", pendingUpdates.Count, stopwatch.Elapsed.TotalSeconds.ToString("F1"));
 
-                                    ArtistMetadataBatchUpdated?.Invoke(this, pendingUpdates.ToList());
-                                    pendingUpdates.Clear();
+                                    if (pendingUpdates.Count > 0)
+                                    {
+                                        _logger.LogInformation("Saved partial batch of {Count} artists metadata (Time: {Elapsed}s).", pendingUpdates.Count, stopwatch.Elapsed.TotalSeconds.ToString("F1"));
+                                        ArtistMetadataBatchUpdated?.Invoke(this, pendingUpdates.ToList());
+                                        pendingUpdates.Clear();
+                                    }
+
+                                    processedCount = 0;
                                     stopwatch.Restart();
                                 }
                             }
@@ -1243,9 +1248,11 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                         if (token.IsCancellationRequested) break;
 
                         // Final flush for remaining items in the batch
+                        // Always save to ensure MetadataLastCheckedUtc stamps persist even if no content was updated
+                        await batchContext.SaveChangesAsync(token).ConfigureAwait(false);
+
                         if (pendingUpdates.Count > 0)
                         {
-                            await batchContext.SaveChangesAsync(token).ConfigureAwait(false);
                             _logger.LogInformation("Saved final batch of {Count} artists metadata.", pendingUpdates.Count);
 
                             // Fire batch event
@@ -4941,8 +4948,6 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 warmupTasks.Add(WarmupApiKeyAsync(ServiceProviderIds.TheAudioDb, cancellationToken));
             if (enabledIds.Contains(ServiceProviderIds.FanartTv))
                 warmupTasks.Add(WarmupApiKeyAsync(ServiceProviderIds.FanartTv, cancellationToken));
-            if (enabledIds.Contains(ServiceProviderIds.Spotify))
-                warmupTasks.Add(WarmupApiKeyAsync(ServiceProviderIds.Spotify, cancellationToken));
             if (enabledIds.Contains(ServiceProviderIds.LastFm))
                 warmupTasks.Add(WarmupApiKeyAsync(ServiceProviderIds.LastFm, cancellationToken));
         }
@@ -4956,8 +4961,6 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         }
 
         // Start MBID-independent tasks immediately (in parallel with warmup and MusicBrainz)
-        if (enabledIds.Contains(ServiceProviderIds.Spotify))
-            tasks[ServiceProviderIds.Spotify] = FetchFromSpotifyAsync(artist.Name, cancellationToken);
         if (enabledIds.Contains(ServiceProviderIds.LastFm))
             tasks[ServiceProviderIds.LastFm] = FetchFromLastFmAsync(artist.Name, cancellationToken);
 
@@ -5159,16 +5162,6 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         return (null, null);
     }
 
-    private async Task<(string? ImageUrl, string? Biography)> FetchFromSpotifyAsync(string artistName, CancellationToken ct)
-    {
-        var result = await _spotifyService.GetArtistImageUrlAsync(artistName, ct).ConfigureAwait(false);
-        if (result.Status == ServiceResultStatus.Success && result.Data?.ImageUrl is not null)
-        {
-            return (result.Data.ImageUrl, null); // Spotify doesn't provide biography
-        }
-        return (null, null);
-    }
-
     private async Task<(string? ImageUrl, string? Biography)> FetchFromLastFmAsync(string artistName, CancellationToken ct)
     {
         var result = await _lastFmService.GetArtistInfoAsync(artistName, CultureInfo.CurrentCulture.TwoLetterISOLanguageName, ct).ConfigureAwait(false);
@@ -5220,38 +5213,34 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     {
         if (_fileSystem.FileExists(localPath)) return localPath;
 
-        var operationName = $"Image download from {imageUrl}";
         using var httpClient = _httpClientFactory.CreateClient("ImageDownloader");
 
-        var result = await HttpRetryHelper.ExecuteWithRetryAsync<string>(
-            async attempt =>
+        return await _pipelines.ExecuteWithFallbackAsync<string?>(
+            ServiceProviderIds.ImageDownload,
+            async ct =>
             {
-                _logger.LogDebug("Downloading artist image (Attempt {Attempt}/3): {ImageUrl}", attempt, imageUrl);
-
-                using var response = await httpClient.GetAsync(imageUrl, cancellationToken).ConfigureAwait(false);
-
-                if (response.IsSuccessStatusCode)
+                _logger.LogDebug("Downloading artist image: {ImageUrl}", imageUrl);
+                return await httpClient.GetAsync(imageUrl, ct).ConfigureAwait(false);
+            },
+            async (response, ct) =>
+            {
+                if (!response.IsSuccessStatusCode)
                 {
-                    var imageBytes = await response.Content.ReadAsByteArrayAsync(cancellationToken).ConfigureAwait(false);
-                    // Process image to standardized size (600px max, preserves aspect ratio)
-                    // Offload heavy image processing to a background thread to prevent blocking
-                    var processedBytes = await Task.Run(() => _imageProcessor.ProcessImageBytesAsync(imageBytes), cancellationToken).ConfigureAwait(false);
-                    await _fileSystem.WriteAllBytesAsync(localPath, processedBytes).ConfigureAwait(false);
-                    return RetryResult<string>.Success(localPath);
+                    _logger.LogDebug("Image download returned {Status} for {ImageUrl}", response.StatusCode, imageUrl);
+                    return null;
                 }
 
-                if (HttpRetryHelper.IsRetryableStatusCode(response.StatusCode))
-                    return RetryResult<string>.TransientFailure();
-
-                return RetryResult<string>.SuccessEmpty();
+                var imageBytes = await response.Content.ReadAsByteArrayAsync(ct).ConfigureAwait(false);
+                // Process image to standardized size (600px max, preserves aspect ratio).
+                // Offload heavy image processing to a background thread to prevent blocking.
+                var processedBytes = await Task.Run(() => _imageProcessor.ProcessImageBytesAsync(imageBytes), ct).ConfigureAwait(false);
+                await _fileSystem.WriteAllBytesAsync(localPath, processedBytes).ConfigureAwait(false);
+                return localPath;
             },
+            fallback: null,
             _logger,
-            operationName,
-            cancellationToken,
-            3
-        ).ConfigureAwait(false);
-
-        return result;
+            $"image download {imageUrl}",
+            cancellationToken).ConfigureAwait(false);
     }
 
     private async Task<Artist> GetOrCreateArtistAsync(MusicDbContext context, string? name)

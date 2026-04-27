@@ -60,35 +60,6 @@ public class KeyProviderFunctions
         return CreateKeyResponse(req, "LastFm:SharedSecret", "Last.fm Shared Secret");
     }
 
-    [Function("GetSpotifyKey")]
-    [OpenApiOperation("GetSpotifyKey", "Keys",
-        Summary = "Gets the Spotify Client ID and Secret, concatenated.")]
-    [OpenApiSecurity("ApiKey", SecuritySchemeType.ApiKey, Name = "X-API-KEY", In = OpenApiSecurityLocationType.Header)]
-    [OpenApiResponseWithBody(HttpStatusCode.OK, "application/json", typeof(KeyResponse),
-        Description = "A JSON object containing the Spotify credentials in the format 'ClientId:ClientSecret'.")]
-    [OpenApiResponseWithBody(HttpStatusCode.ServiceUnavailable, "text/plain", typeof(string),
-        Description = "The requested key is not configured on the server.")]
-    public IActionResult GetSpotifyKey(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "spotify-key")]
-        HttpRequest req)
-    {
-        // The client expects a single string "ClientId:ClientSecret".
-        var clientId = _config["Spotify:ClientId"];
-        var clientSecret = _config["Spotify:ClientSecret"];
-        const string keyName = "Spotify ClientId/Secret";
-
-        if (string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(clientSecret))
-        {
-            _logger.LogError("{KeyName} is not configured correctly on the server.", keyName);
-            return new ObjectResult($"{keyName} is not configured on the server.")
-            {
-                StatusCode = (int)HttpStatusCode.ServiceUnavailable
-            };
-        }
-
-        return new OkObjectResult(new KeyResponse { Value = $"{clientId}:{clientSecret}" });
-    }
-
     [Function("GetFanartTvKey")]
     [OpenApiOperation("GetFanartTvKey", "Keys", Summary = "Gets the Fanart.tv API Key")]
     [OpenApiSecurity("ApiKey", SecuritySchemeType.ApiKey, Name = "X-API-KEY", In = OpenApiSecurityLocationType.Header)]

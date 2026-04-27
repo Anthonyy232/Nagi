@@ -2,6 +2,9 @@
 using System.Text.Json;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+using Nagi.Core.Http.Pipelines;
+using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Implementations;
 using Nagi.Core.Tests.Utils;
@@ -17,22 +20,51 @@ namespace Nagi.Core.Tests;
 public class MusicBrainzServiceTests : IDisposable
 {
     private readonly TestHttpMessageHandler _httpHandler;
-    private readonly MusicBrainzService _service;
+    private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger<MusicBrainzService> _logger;
+    private readonly MusicBrainzService _service;
+    private readonly List<ProviderPipelineProvider> _pipelinesToDispose = new();
 
     public MusicBrainzServiceTests()
     {
         _httpHandler = new TestHttpMessageHandler();
         var httpClient = new HttpClient(_httpHandler) { BaseAddress = new Uri("https://musicbrainz.org") };
-        var httpClientFactory = Substitute.For<IHttpClientFactory>();
-        httpClientFactory.CreateClient(Arg.Any<string>()).Returns(httpClient);
+        _httpClientFactory = Substitute.For<IHttpClientFactory>();
+        _httpClientFactory.CreateClient(Arg.Any<string>()).Returns(httpClient);
         _logger = Substitute.For<ILogger<MusicBrainzService>>();
 
-        _service = new MusicBrainzService(httpClientFactory, _logger);
+        // Default service uses a fast, no-retry pipeline so happy-path tests don't pay
+        // real-world rate-limit or backoff delays.
+        _service = BuildService(permitsPerWindow: 1000, retries: 0);
+    }
+
+    private MusicBrainzService BuildService(int permitsPerWindow, int retries, TimeSpan? window = null)
+    {
+        var pipelines = new ProviderPipelineProvider(
+            new[]
+            {
+                new ProviderPolicy
+                {
+                    ProviderId = ServiceProviderIds.MusicBrainz,
+                    Channel = new ChannelPolicy
+                    {
+                        PermitsPerWindow = permitsPerWindow,
+                        Window = window ?? TimeSpan.FromSeconds(1),
+                        MaxConcurrent = 4,
+                        MaxRetries = retries,
+                        BaseRetryDelay = TimeSpan.FromMilliseconds(20),
+                        MaxRetryDelay = TimeSpan.FromMilliseconds(100),
+                    },
+                },
+            },
+            NullLogger<ProviderPipelineProvider>.Instance);
+        _pipelinesToDispose.Add(pipelines);
+        return new MusicBrainzService(_httpClientFactory, pipelines, _logger);
     }
 
     public void Dispose()
     {
+        foreach (var p in _pipelinesToDispose) p.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _httpHandler.Dispose();
         GC.SuppressFinalize(this);
     }
@@ -247,7 +279,8 @@ public class MusicBrainzServiceTests : IDisposable
     [Fact]
     public async Task SearchArtistAsync_MultipleRapidCalls_RespectRateLimit()
     {
-        // Arrange
+        // Arrange — 1 permit per 1s, no retries; verifies the pipeline rate limiter is wired.
+        var service = BuildService(permitsPerWindow: 1, retries: 0);
         var callTimestamps = new List<DateTime>();
         _httpHandler.SendAsyncFunc = (_, _) =>
         {
@@ -259,16 +292,14 @@ public class MusicBrainzServiceTests : IDisposable
         };
 
         // Act - Make two rapid calls
-        var task1 = _service.SearchArtistAsync("Artist 1");
-        var task2 = _service.SearchArtistAsync("Artist 2");
+        var task1 = service.SearchArtistAsync("Artist 1");
+        var task2 = service.SearchArtistAsync("Artist 2");
         await Task.WhenAll(task1, task2);
 
         // Assert - Second call should be delayed by at least ~1 second
-        if (callTimestamps.Count == 2)
-        {
-            var timeDiff = callTimestamps[1] - callTimestamps[0];
-            timeDiff.TotalMilliseconds.Should().BeGreaterThanOrEqualTo(900); // Allow some tolerance
-        }
+        callTimestamps.Should().HaveCount(2);
+        var timeDiff = callTimestamps[1] - callTimestamps[0];
+        timeDiff.TotalMilliseconds.Should().BeGreaterThanOrEqualTo(900);
     }
 
     #endregion
