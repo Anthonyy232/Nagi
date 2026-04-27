@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
+using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
@@ -18,18 +19,19 @@ public class PlaylistOrderingTests : IDisposable
     private readonly DbContextFactoryTestHelper _dbHelper;
     private readonly LibraryService _libraryService;
     private readonly ILogger<LibraryService> _logger;
+    private readonly ProviderPipelineProvider _pipelines;
 
     public PlaylistOrderingTests()
     {
         _dbHelper = new DbContextFactoryTestHelper();
         _logger = Substitute.For<ILogger<LibraryService>>();
+        _pipelines = TestProviderPipeline.Build(ServiceProviderIds.ImageDownload);
 
         _libraryService = new LibraryService(
             _dbHelper.ContextFactory,
             Substitute.For<IFileSystemService>(),
             Substitute.For<IMetadataService>(),
             Substitute.For<ILastFmMetadataService>(),
-            Substitute.For<ISpotifyService>(),
             Substitute.For<IMusicBrainzService>(),
             Substitute.For<IFanartTvService>(),
             Substitute.For<ITheAudioDbService>(),
@@ -40,12 +42,14 @@ public class PlaylistOrderingTests : IDisposable
             Substitute.For<IReplayGainService>(),
             Substitute.For<IApiKeyService>(),
             Substitute.For<IImageProcessor>(),
+            _pipelines,
             _logger);
     }
 
     public void Dispose()
     {
         _libraryService.Dispose();
+        _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _dbHelper.Dispose();
     }
 

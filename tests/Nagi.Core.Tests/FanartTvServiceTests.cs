@@ -2,6 +2,9 @@
 using System.Text.Json;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+using Nagi.Core.Http.Pipelines;
+using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Core.Services.Implementations;
@@ -24,6 +27,8 @@ public class FanartTvServiceTests : IDisposable
     private readonly IApiKeyService _apiKeyService;
     private readonly ILogger<FanartTvService> _logger;
 
+    private readonly ProviderPipelineProvider _pipelines;
+
     public FanartTvServiceTests()
     {
         _httpHandler = new TestHttpMessageHandler();
@@ -36,11 +41,13 @@ public class FanartTvServiceTests : IDisposable
 
         _logger = Substitute.For<ILogger<FanartTvService>>();
 
-        _service = new FanartTvService(httpClientFactory, _apiKeyService, _logger);
+        _pipelines = TestProviderPipeline.Build(ServiceProviderIds.FanartTv);
+        _service = new FanartTvService(httpClientFactory, _pipelines, _apiKeyService, _logger);
     }
 
     public void Dispose()
     {
+        _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _httpHandler.Dispose();
         GC.SuppressFinalize(this);
     }
@@ -189,27 +196,17 @@ public class FanartTvServiceTests : IDisposable
     #region Rate Limiting Tests
 
     [Fact]
-    public async Task GetArtistImagesAsync_When429RateLimited_DisablesServiceForSession()
+    public async Task GetArtistImagesAsync_When429RateLimited_ReturnsTemporaryError()
     {
-        // Arrange
+        // Arrange — the pipeline retries 429, then surfaces it; the service maps that to a
+        // temporary error. After enough consecutive 429s the breaker trips (covered by the
+        // pipeline's own tests), but a single 429 does NOT permanently disable the service.
         _httpHandler.SendAsyncFunc = (_, _) =>
             Task.FromResult(new HttpResponseMessage(HttpStatusCode.TooManyRequests));
 
-        // Act - First call triggers rate limit
-        var result1 = await _service.GetArtistImagesAsync(ValidMbid);
+        var result = await _service.GetArtistImagesAsync(ValidMbid);
 
-        // Reset handler to return success
-        _httpHandler.SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
-        {
-            Content = new StringContent("{\"artistthumb\": [{\"url\": \"https://test.jpg\"}]}")
-        });
-
-        // Act - Second call should be short-circuited
-        var result2 = await _service.GetArtistImagesAsync(ValidMbid);
-
-        // Assert
-        result1.Status.Should().Be(ServiceResultStatus.PermanentError);
-        result2.Status.Should().Be(ServiceResultStatus.PermanentError);
+        result.Status.Should().Be(ServiceResultStatus.TemporaryError);
     }
 
     #endregion

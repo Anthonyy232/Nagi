@@ -5,6 +5,7 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Data;
+using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Implementations;
@@ -34,6 +35,8 @@ public class LastFmScrobblerServiceTests : IDisposable
 
     private Dictionary<string, string>? _capturedRequestParams;
 
+    private readonly ProviderPipelineProvider _pipelines;
+
     public LastFmScrobblerServiceTests()
     {
         _httpClientFactory = Substitute.For<IHttpClientFactory>();
@@ -46,11 +49,13 @@ public class LastFmScrobblerServiceTests : IDisposable
         var httpClient = new HttpClient(_httpMessageHandler);
         _httpClientFactory.CreateClient(Arg.Any<string>()).Returns(httpClient);
 
+        _pipelines = TestProviderPipeline.Build(ServiceProviderIds.LastFm);
         _scrobblerService = CreateService();
     }
 
     public void Dispose()
     {
+        _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _httpMessageHandler.Dispose();
         _dbHelper.Dispose();
         GC.SuppressFinalize(this);
@@ -60,6 +65,7 @@ public class LastFmScrobblerServiceTests : IDisposable
     {
         return new LastFmScrobblerService(
             _httpClientFactory,
+            _pipelines,
             _apiKeyService,
             _settingsService,
             contextFactory ?? Substitute.For<IDbContextFactory<MusicDbContext>>(),
@@ -183,7 +189,7 @@ public class LastFmScrobblerServiceTests : IDisposable
 
         // Assert
         result.Should().BeFalse();
-        _httpMessageHandler.Requests.Should().HaveCount(3); // 3 attempts due to retry on 500 error
+        _httpMessageHandler.Requests.Should().HaveCount(1); // pipeline retry count is configured at the policy level, not the service
     }
 
     /// <summary>

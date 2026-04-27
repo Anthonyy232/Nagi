@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
+using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
@@ -42,20 +43,19 @@ public class LibraryServiceArtistImageTests : IDisposable
     private readonly IMetadataService _metadataService;
     private readonly IPathConfiguration _pathConfig;
     private readonly IServiceScopeFactory _serviceScopeFactory;
-    private readonly ISpotifyService _spotifyService;
     private readonly ISettingsService _settingsService;
     private readonly IReplayGainService _replayGainService;
     private readonly IMusicBrainzService _musicBrainzService;
     private readonly IFanartTvService _fanartTvService;
     private readonly ITheAudioDbService _theAudioDbService;
     private readonly IApiKeyService _apiKeyService;
+    private readonly ProviderPipelineProvider _pipelines;
 
     public LibraryServiceArtistImageTests()
     {
         _fileSystem = Substitute.For<IFileSystemService>();
         _metadataService = Substitute.For<IMetadataService>();
         _lastFmService = Substitute.For<ILastFmMetadataService>();
-        _spotifyService = Substitute.For<ISpotifyService>();
         _httpClientFactory = Substitute.For<IHttpClientFactory>();
         _serviceScopeFactory = Substitute.For<IServiceScopeFactory>();
         _pathConfig = Substitute.For<IPathConfiguration>();
@@ -103,12 +103,13 @@ public class LibraryServiceArtistImageTests : IDisposable
         _settingsService.GetEnabledServiceProvidersAsync(Arg.Any<ServiceCategory>())
             .Returns(Task.FromResult(new List<ServiceProviderSetting>()));
 
+        _pipelines = TestProviderPipeline.Build(ServiceProviderIds.ImageDownload);
+
         _libraryService = new LibraryService(
             _dbHelper.ContextFactory,
             _fileSystem,
             _metadataService,
             _lastFmService,
-            _spotifyService,
             _musicBrainzService,
             _fanartTvService,
             _theAudioDbService,
@@ -119,12 +120,14 @@ public class LibraryServiceArtistImageTests : IDisposable
             _replayGainService,
             _apiKeyService,
             _imageProcessor,
+            _pipelines,
             _logger);
     }
 
     public void Dispose()
     {
         _libraryService.Dispose();
+        _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _dbHelper.Dispose();
         GC.SuppressFinalize(this);
     }

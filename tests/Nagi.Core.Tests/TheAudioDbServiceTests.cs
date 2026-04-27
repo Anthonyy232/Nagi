@@ -2,6 +2,8 @@
 using System.Text.Json;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Http.Pipelines;
+using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Core.Services.Implementations;
@@ -24,6 +26,8 @@ public class TheAudioDbServiceTests : IDisposable
     private readonly IApiKeyService _apiKeyService;
     private readonly ILogger<TheAudioDbService> _logger;
 
+    private readonly ProviderPipelineProvider _pipelines;
+
     public TheAudioDbServiceTests()
     {
         _httpHandler = new TestHttpMessageHandler();
@@ -36,12 +40,15 @@ public class TheAudioDbServiceTests : IDisposable
 
         _logger = Substitute.For<ILogger<TheAudioDbService>>();
 
-        _service = new TheAudioDbService(httpClientFactory, _apiKeyService, _logger);
+        _pipelines = TestProviderPipeline.Build(ServiceProviderIds.TheAudioDb);
+
+        _service = new TheAudioDbService(httpClientFactory, _pipelines, _apiKeyService, _logger);
     }
 
     public void Dispose()
     {
         _service.Dispose();
+        _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _httpHandler.Dispose();
         GC.SuppressFinalize(this);
     }
@@ -295,27 +302,16 @@ public class TheAudioDbServiceTests : IDisposable
     #region Rate Limiting Tests
 
     [Fact]
-    public async Task GetArtistMetadataAsync_When429RateLimited_DisablesServiceForSession()
+    public async Task GetArtistMetadataAsync_When429RateLimited_ReturnsTemporaryError()
     {
-        // Arrange
+        // The pipeline retries 429 (with backoff), then surfaces it; the service maps it to
+        // a temporary error. Sustained 429 trips the breaker (covered by pipeline tests).
         _httpHandler.SendAsyncFunc = (_, _) =>
             Task.FromResult(new HttpResponseMessage(HttpStatusCode.TooManyRequests));
 
-        // Act - First call triggers rate limit
-        var result1 = await _service.GetArtistMetadataAsync(ValidMbid);
+        var result = await _service.GetArtistMetadataAsync(ValidMbid);
 
-        // Reset handler to return success
-        _httpHandler.SendAsyncFunc = (_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
-        {
-            Content = new StringContent("{\"artists\": [{\"strBiographyEN\": \"Bio\"}]}")
-        });
-
-        // Act - Second call should be short-circuited
-        var result2 = await _service.GetArtistMetadataAsync(ValidMbid);
-
-        // Assert
-        result1.Status.Should().Be(ServiceResultStatus.PermanentError);
-        result2.Status.Should().Be(ServiceResultStatus.PermanentError);
+        result.Status.Should().Be(ServiceResultStatus.TemporaryError);
     }
 
     #endregion

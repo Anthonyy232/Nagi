@@ -1,9 +1,6 @@
-﻿using System.IO;
-using System.Net.Http;
-using System.Net.Sockets;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using Nagi.Core.Http;
+using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 
@@ -16,17 +13,21 @@ public class LastFmAuthService : ILastFmAuthService
 {
     private const string LastFmApiBaseUrl = "https://ws.audioscrobbler.com/2.0/";
 
-
     private static readonly JsonSerializerOptions _jsonOptions = new() { PropertyNameCaseInsensitive = true };
 
     private readonly IApiKeyService _apiKeyService;
     private readonly HttpClient _httpClient;
+    private readonly IProviderPipelineProvider _pipelines;
     private readonly ILogger<LastFmAuthService> _logger;
 
-    public LastFmAuthService(IHttpClientFactory httpClientFactory, IApiKeyService apiKeyService,
+    public LastFmAuthService(
+        IHttpClientFactory httpClientFactory,
+        IProviderPipelineProvider pipelines,
+        IApiKeyService apiKeyService,
         ILogger<LastFmAuthService> logger)
     {
         _httpClient = httpClientFactory.CreateClient();
+        _pipelines = pipelines;
         _apiKeyService = apiKeyService;
         _logger = logger;
     }
@@ -52,43 +53,37 @@ public class LastFmAuthService : ILastFmAuthService
         var signature = CreateSignature(parameters, apiSecret);
         var requestUrl = $"{LastFmApiBaseUrl}?method=auth.getToken&api_key={apiKey}&api_sig={signature}&format=json";
 
-        const int maxRetries = 3;
-        var operationName = "Last.fm auth token fetch";
-
-        return await HttpRetryHelper.ExecuteWithRetryAsync<(string Token, string AuthUrl)?>(
-            async attempt =>
+        return await _pipelines.ExecuteWithFallbackAsync<(string Token, string AuthUrl)?>(
+            ServiceProviderIds.LastFm,
+            async ct =>
             {
-                _logger.LogDebug("Getting Last.fm auth token (Attempt {Attempt}/{MaxRetries})", attempt, maxRetries);
-
-                using var response = await _httpClient.GetAsync(requestUrl).ConfigureAwait(false);
-                var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                _logger.LogDebug("Getting Last.fm auth token.");
+                return await _httpClient.GetAsync(requestUrl, ct).ConfigureAwait(false);
+            },
+            async (response, ct) =>
+            {
+                var content = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    _logger.LogError("Failed to get Last.fm auth token. Status: {StatusCode}, Response: {ResponseContent}. Attempt {Attempt}/{MaxRetries}",
-                        response.StatusCode, content, attempt, maxRetries);
-
-                    if (HttpRetryHelper.IsRetryableStatusCode(response.StatusCode))
-                        return RetryResult<(string Token, string AuthUrl)?>.TransientFailure();
-
-                    return RetryResult<(string Token, string AuthUrl)?>.Success(null);
+                    _logger.LogError("Failed to get Last.fm auth token. Status: {StatusCode}, Response: {ResponseContent}",
+                        response.StatusCode, content);
+                    return null;
                 }
 
                 var tokenResponse = JsonSerializer.Deserialize<LastFmTokenResponse>(content, _jsonOptions);
                 if (string.IsNullOrEmpty(tokenResponse?.Token))
                 {
                     _logger.LogError("Failed to extract token from the Last.fm auth response.");
-                    return RetryResult<(string Token, string AuthUrl)?>.Success(null);
+                    return null;
                 }
 
                 var authUrl = $"https://www.last.fm/api/auth/?api_key={apiKey}&token={tokenResponse.Token}";
-                return RetryResult<(string Token, string AuthUrl)?>.Success((tokenResponse.Token, authUrl));
+                return (tokenResponse.Token, authUrl);
             },
+            fallback: null,
             _logger,
-            operationName,
-            CancellationToken.None,
-            maxRetries
-        ).ConfigureAwait(false);
+            "auth token fetch").ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -114,26 +109,22 @@ public class LastFmAuthService : ILastFmAuthService
         var requestUrl =
             $"{LastFmApiBaseUrl}?method=auth.getSession&api_key={apiKey}&token={token}&api_sig={signature}&format=json";
 
-        const int maxRetries = 3;
-        var operationName = "Last.fm session fetch";
-
-        return await HttpRetryHelper.ExecuteWithRetryAsync<(string Username, string SessionKey)?>(
-            async attempt =>
+        return await _pipelines.ExecuteWithFallbackAsync<(string Username, string SessionKey)?>(
+            ServiceProviderIds.LastFm,
+            async ct =>
             {
-                _logger.LogDebug("Getting Last.fm session (Attempt {Attempt}/{MaxRetries})", attempt, maxRetries);
-
-                using var response = await _httpClient.GetAsync(requestUrl).ConfigureAwait(false);
-                var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                _logger.LogDebug("Getting Last.fm session.");
+                return await _httpClient.GetAsync(requestUrl, ct).ConfigureAwait(false);
+            },
+            async (response, ct) =>
+            {
+                var content = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    _logger.LogError("Failed to get Last.fm session. Status: {StatusCode}, Response: {ResponseContent}. Attempt {Attempt}/{MaxRetries}",
-                        response.StatusCode, content, attempt, maxRetries);
-
-                    if (HttpRetryHelper.IsRetryableStatusCode(response.StatusCode))
-                        return RetryResult<(string Username, string SessionKey)?>.TransientFailure();
-
-                    return RetryResult<(string Username, string SessionKey)?>.Success(null);
+                    _logger.LogError("Failed to get Last.fm session. Status: {StatusCode}, Response: {ResponseContent}",
+                        response.StatusCode, content);
+                    return null;
                 }
 
                 var sessionResponse = JsonSerializer.Deserialize<LastFmSessionResponse>(content, _jsonOptions);
@@ -142,17 +133,15 @@ public class LastFmAuthService : ILastFmAuthService
                 if (session != null && !string.IsNullOrEmpty(session.Key) && !string.IsNullOrEmpty(session.Name))
                 {
                     _logger.LogInformation("Successfully retrieved Last.fm session for user {Username}.", session.Name);
-                    return RetryResult<(string Username, string SessionKey)?>.Success((session.Name, session.Key));
+                    return (session.Name, session.Key);
                 }
 
                 _logger.LogError("Failed to deserialize or extract session details from the Last.fm response.");
-                return RetryResult<(string Username, string SessionKey)?>.Success(null);
+                return null;
             },
+            fallback: null,
             _logger,
-            operationName,
-            CancellationToken.None,
-            maxRetries
-        ).ConfigureAwait(false);
+            "session fetch").ConfigureAwait(false);
     }
 
     private static string CreateSignature(IDictionary<string, string> parameters, string secret)

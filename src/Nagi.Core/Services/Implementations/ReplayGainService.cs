@@ -13,7 +13,7 @@ namespace Nagi.Core.Services.Implementations;
 /// </summary>
 public class ReplayGainService : IReplayGainService
 {
-    private const double ReplayGainReference = -14.0; // -14 LUFS: matches streaming platforms (Spotify, YouTube, Apple) and RG1
+    private const double ReplayGainReference = -14.0; // -14 LUFS: matches streaming platforms (YouTube, Apple) and RG1
     private readonly IDbContextFactory<MusicDbContext> _contextFactory;
     private readonly ILogger<ReplayGainService> _logger;
     private readonly LoudnessMeter _loudnessMeter;

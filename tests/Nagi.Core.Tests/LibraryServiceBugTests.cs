@@ -1,14 +1,17 @@
-﻿using FluentAssertions;
+using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
+using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Implementations;
 using Nagi.Core.Tests.Utils;
 using NSubstitute;
 using Xunit;
+using Nagi.Core.Services.Data;
+using Nagi.Core.Data;
 
 namespace Nagi.Core.Tests;
 
@@ -23,7 +26,6 @@ public class LibraryServiceBugTests : IDisposable
     private readonly IMetadataService _metadataService;
     private readonly IPathConfiguration _pathConfig;
     private readonly IServiceScopeFactory _serviceScopeFactory;
-    private readonly ISpotifyService _spotifyService;
     private readonly ISettingsService _settingsService;
     private readonly IReplayGainService _replayGainService;
     private readonly IMusicBrainzService _musicBrainzService;
@@ -31,13 +33,13 @@ public class LibraryServiceBugTests : IDisposable
     private readonly ITheAudioDbService _theAudioDbService;
     private readonly IApiKeyService _apiKeyService;
     private readonly IImageProcessor _imageProcessor;
+    private readonly ProviderPipelineProvider _pipelines;
 
     public LibraryServiceBugTests()
     {
         _fileSystem = Substitute.For<IFileSystemService>();
         _metadataService = Substitute.For<IMetadataService>();
         _lastFmService = Substitute.For<ILastFmMetadataService>();
-        _spotifyService = Substitute.For<ISpotifyService>();
         _httpClientFactory = Substitute.For<IHttpClientFactory>();
         _serviceScopeFactory = Substitute.For<IServiceScopeFactory>();
         _pathConfig = Substitute.For<IPathConfiguration>();
@@ -51,13 +53,13 @@ public class LibraryServiceBugTests : IDisposable
         _logger = Substitute.For<ILogger<LibraryService>>();
 
         _dbHelper = new DbContextFactoryTestHelper();
+        _pipelines = TestProviderPipeline.Build(ServiceProviderIds.ImageDownload);
 
         _libraryService = new LibraryService(
             _dbHelper.ContextFactory,
             _fileSystem,
             _metadataService,
             _lastFmService,
-            _spotifyService,
             _musicBrainzService,
             _fanartTvService,
             _theAudioDbService,
@@ -68,12 +70,14 @@ public class LibraryServiceBugTests : IDisposable
             _replayGainService,
             _apiKeyService,
             _imageProcessor,
+            _pipelines,
             _logger);
     }
 
     public void Dispose()
     {
         _libraryService.Dispose();
+        _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _dbHelper.Dispose();
         GC.SuppressFinalize(this);
     }
@@ -287,6 +291,64 @@ public class LibraryServiceBugTests : IDisposable
             songs.Should().HaveCount(2);
             songs[0].SongArtists.First().Artist.Name.Should().Be("Artist One");
             songs[1].SongArtists.First().Artist.Name.Should().Be("Artist One");
+        }
+    }
+    [Fact]
+    public async Task StartArtistMetadataBackgroundFetchAsync_WithNoUpdates_SavesTimestamps()
+    {
+        // Arrange
+        // We create 15 artists with MetadataLastCheckedUtc = null
+        var artists = Enumerable.Range(1, 15).Select(i => new Artist
+        {
+            Id = Guid.NewGuid(),
+            Name = $"Test Artist {i}",
+            MetadataLastCheckedUtc = null
+        }).ToList();
+
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Artists.AddRange(artists);
+            await context.SaveChangesAsync();
+        }
+
+        // Enable one provider so the loop doesn't early-exit
+        _settingsService.GetEnabledServiceProvidersAsync(ServiceCategory.Metadata)
+            .Returns(new List<ServiceProviderSetting>
+            {
+                new() { Id = ServiceProviderIds.LastFm, Order = 0, IsEnabled = true }
+            });
+
+        // Mock IServiceScopeFactory so background loop can resolve IDbContextFactory
+        var scope = Substitute.For<IServiceScope>();
+        var serviceProvider = Substitute.For<IServiceProvider>();
+        scope.ServiceProvider.Returns(serviceProvider);
+        serviceProvider.GetService(typeof(IDbContextFactory<MusicDbContext>)).Returns(_dbHelper.ContextFactory);
+        _serviceScopeFactory.CreateScope().Returns(scope);
+
+        // Mock the provider to return empty metadata (simulate the condition where no new data is found)
+        _lastFmService.GetArtistInfoAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(ServiceResult<ArtistInfo>.FromSuccess(new ArtistInfo())));
+
+        // Act
+        var fetchTask = _libraryService.StartArtistMetadataBackgroundFetchAsync();
+
+        // Give the loop time to process the 15 items and flush.
+        // The throttling is Task.Delay(50) per item, so 15 items * 50ms = 750ms minimum.
+        await Task.Delay(2000);
+
+        // Cancel the background fetch loop
+        _libraryService.Dispose();
+
+        // Wait for the background task to complete gracefully
+        await fetchTask;
+
+        // Assert
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            var dbArtists = await context.Artists.ToListAsync();
+            dbArtists.Should().HaveCount(15);
+            // Verify ALL 15 artists had their timestamps updated despite having no new metadata
+            dbArtists.Should().AllSatisfy(a => a.MetadataLastCheckedUtc.Should().NotBeNull());
         }
     }
 }

@@ -310,7 +310,6 @@ public static class Strings
     public static string Settings_Provider_MusicBrainz_Desc => GetString("Settings_Provider_MusicBrainz_Desc");
     public static string Settings_Provider_TheAudioDB_Desc => GetString("Settings_Provider_TheAudioDB_Desc");
     public static string Settings_Provider_FanartTv_Desc => GetString("Settings_Provider_FanartTv_Desc");
-    public static string Settings_Provider_Spotify_Desc => GetString("Settings_Provider_Spotify_Desc");
     public static string Settings_Provider_LastFm_Desc => GetString("Settings_Provider_LastFm_Desc");
 
     // App Info

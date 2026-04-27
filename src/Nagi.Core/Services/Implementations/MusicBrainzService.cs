@@ -1,35 +1,35 @@
-﻿using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
-using Nagi.Core.Http;
+using Nagi.Core.Http.Pipelines;
+using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
-using Nagi.Core.Helpers;
 
 namespace Nagi.Core.Services.Implementations;
 
 /// <summary>
 ///     Service for resolving artist identities via the MusicBrainz database.
-///     Rate-limited to 1 request per second as per MusicBrainz API requirements.
+///     Rate limiting (1 req/s as MusicBrainz requires), retry, and circuit-breaker policy
+///     are handled by <see cref="IProviderPipelineProvider"/>.
 /// </summary>
 public class MusicBrainzService : IMusicBrainzService
 {
     private const string BaseUrl = "https://musicbrainz.org/ws/2";
     private const string UserAgent = "Nagi/1.0 (+https://github.com/Anthonyy232/Nagi)";
-    private const int MaxRetries = 3;
-
-    private static readonly SemaphoreSlim _rateLimitSemaphore = new(1, 1);
-    private static DateTime _lastRequestTime = DateTime.MinValue;
 
     private readonly HttpClient _httpClient;
+    private readonly IProviderPipelineProvider _pipelines;
     private readonly ILogger<MusicBrainzService> _logger;
-    private volatile bool _isApiDisabled;
 
-    public MusicBrainzService(IHttpClientFactory httpClientFactory, ILogger<MusicBrainzService> logger)
+    public MusicBrainzService(
+        IHttpClientFactory httpClientFactory,
+        IProviderPipelineProvider pipelines,
+        ILogger<MusicBrainzService> logger)
     {
         _httpClient = httpClientFactory.CreateClient();
         _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(UserAgent);
         _httpClient.DefaultRequestHeaders.Accept.ParseAdd("application/json");
+        _pipelines = pipelines;
         _logger = logger;
     }
 
@@ -39,98 +39,57 @@ public class MusicBrainzService : IMusicBrainzService
         if (string.IsNullOrWhiteSpace(artistName))
             return null;
 
-        if (_isApiDisabled)
+        if (_pipelines.IsCircuitOpen(ServiceProviderIds.MusicBrainz))
         {
-            _logger.LogDebug("MusicBrainz API is disabled for this session.");
+            _logger.LogDebug("MusicBrainz circuit is open; skipping lookup for {ArtistName}.", artistName);
             return null;
         }
 
-        var normalizedName = ArtistNameHelper.Normalize(artistName);
-        var operationName = $"MusicBrainz search for {normalizedName}";
+        // Quote the artist name for multi-word names (Lucene syntax)
+        var encodedName = Uri.EscapeDataString($"\"{artistName}\"");
+        var url = $"{BaseUrl}/artist?query=artist:{encodedName}&limit=1&fmt=json";
 
-        try
-        {
-            return await HttpRetryHelper.ExecuteWithRetryAsync<string>(
-                async attempt =>
+        return await _pipelines.ExecuteWithFallbackAsync<string?>(
+            ServiceProviderIds.MusicBrainz,
+            async ct =>
+            {
+                _logger.LogDebug("Searching MusicBrainz for artist: {ArtistName}", artistName);
+                return await _httpClient.GetAsync(url, ct).ConfigureAwait(false);
+            },
+            async (response, ct) =>
+            {
+                if (!response.IsSuccessStatusCode)
                 {
-                    // Acquire semaphore for rate limiting - only held during HTTP request
-                    await _rateLimitSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
-                    try
-                    {
-                        // Enforce minimum 1 second between requests (per MusicBrainz requirements)
-                        var elapsed = DateTime.UtcNow - _lastRequestTime;
-                        if (elapsed < TimeSpan.FromSeconds(1))
-                        {
-                            await Task.Delay(TimeSpan.FromSeconds(1) - elapsed, cancellationToken).ConfigureAwait(false);
-                        }
+                    _logger.LogWarning("MusicBrainz search failed with status {StatusCode} for artist: {ArtistName}",
+                        response.StatusCode, artistName);
+                    return null;
+                }
 
-                        // Quote the artist name for multi-word names (Lucene syntax)
-                        var quotedName = $"\"{artistName}\"";
-                        var encodedName = Uri.EscapeDataString(quotedName);
-                        var url = $"{BaseUrl}/artist?query=artist:{encodedName}&limit=1&fmt=json";
+                var result = await response.Content.ReadFromJsonAsync<MusicBrainzSearchResult>(cancellationToken: ct)
+                    .ConfigureAwait(false);
 
-                        _logger.LogDebug("Searching MusicBrainz for artist: {ArtistName} (Attempt {Attempt}/{MaxRetries})",
-                            artistName, attempt, MaxRetries);
+                var artist = result?.Artists?.FirstOrDefault();
+                if (artist is null)
+                {
+                    _logger.LogDebug("No MusicBrainz match found for artist: {ArtistName}", artistName);
+                    return null;
+                }
 
-                        using var response = await _httpClient.GetAsync(url, cancellationToken).ConfigureAwait(false);
+                // Verify the match is reasonably close (score > 80).
+                if (artist.Score < 80)
+                {
+                    _logger.LogDebug("MusicBrainz match score too low ({Score}) for artist: {ArtistName}",
+                        artist.Score, artistName);
+                    return null;
+                }
 
-                        // Update timestamp AFTER request completes
-                        _lastRequestTime = DateTime.UtcNow;
-
-                        if (!response.IsSuccessStatusCode)
-                        {
-                            _logger.LogWarning("MusicBrainz search failed with status {StatusCode} for artist: {ArtistName}. Attempt {Attempt}/{MaxRetries}",
-                                response.StatusCode, artistName, attempt, MaxRetries);
-
-                            if (response.StatusCode == HttpStatusCode.Unauthorized || response.StatusCode == HttpStatusCode.Forbidden)
-                            {
-                                _logger.LogError("MusicBrainz API access denied (401/403). Disabling for this session.");
-                                _isApiDisabled = true;
-                                return RetryResult<string>.SuccessEmpty();
-                            }
-
-                            return RetryResult<string>.FromHttpStatus(response.StatusCode);
-                        }
-
-                        var result = await response.Content.ReadFromJsonAsync<MusicBrainzSearchResult>(
-                            cancellationToken: cancellationToken).ConfigureAwait(false);
-
-                        var artist = result?.Artists?.FirstOrDefault();
-                        if (artist is null)
-                        {
-                            _logger.LogDebug("No MusicBrainz match found for artist: {ArtistName}", artistName);
-                            return RetryResult<string>.SuccessEmpty();
-                        }
-
-                        // Verify the match is reasonably close (score > 80)
-                        if (artist.Score < 80)
-                        {
-                            _logger.LogDebug("MusicBrainz match score too low ({Score}) for artist: {ArtistName}",
-                                artist.Score, artistName);
-                            return RetryResult<string>.SuccessEmpty();
-                        }
-
-                        _logger.LogInformation("Found MusicBrainz ID {MBID} for artist: {ArtistName}",
-                            artist.Id, artistName);
-
-                        return RetryResult<string>.Success(artist.Id);
-                    }
-                    finally
-                    {
-                        _rateLimitSemaphore.Release();
-                    }
-                },
-                _logger,
-                operationName,
-                cancellationToken,
-                MaxRetries
-            ).ConfigureAwait(false);
-        }
-        catch (Exception ex) when (ex is not OperationCanceledException)
-        {
-            _logger.LogError(ex, "Error searching MusicBrainz for artist: {ArtistName} after exhausting retries.", artistName);
-            return null;
-        }
+                _logger.LogInformation("Found MusicBrainz ID {MBID} for artist: {ArtistName}", artist.Id, artistName);
+                return artist.Id;
+            },
+            fallback: null,
+            _logger,
+            $"search for {artistName}",
+            cancellationToken).ConfigureAwait(false);
     }
 
     // DTOs for JSON deserialization

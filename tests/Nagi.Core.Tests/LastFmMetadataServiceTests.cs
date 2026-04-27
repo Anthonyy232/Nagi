@@ -4,6 +4,8 @@ using System.Text.Json;
 using System.Web;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Http.Pipelines;
+using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 using Nagi.Core.Services.Implementations;
@@ -29,6 +31,8 @@ public class LastFmMetadataServiceTests : IDisposable
     private readonly ILogger<LastFmMetadataService> _logger;
     private readonly LastFmMetadataService _metadataService;
 
+    private readonly ProviderPipelineProvider _pipelines;
+
     public LastFmMetadataServiceTests()
     {
         _httpClientFactory = Substitute.For<IHttpClientFactory>();
@@ -39,11 +43,13 @@ public class LastFmMetadataServiceTests : IDisposable
         var httpClient = new HttpClient(_httpMessageHandler);
         _httpClientFactory.CreateClient(Arg.Any<string>()).Returns(httpClient);
 
-        _metadataService = new LastFmMetadataService(_httpClientFactory, _apiKeyService, _logger);
+        _pipelines = TestProviderPipeline.Build(ServiceProviderIds.LastFm);
+        _metadataService = new LastFmMetadataService(_httpClientFactory, _pipelines, _apiKeyService, _logger);
     }
 
     public void Dispose()
     {
+        _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _httpMessageHandler.Dispose();
         GC.SuppressFinalize(this);
     }

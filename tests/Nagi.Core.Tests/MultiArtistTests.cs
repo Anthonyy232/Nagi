@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
+using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Implementations;
@@ -21,6 +22,7 @@ public class MultiArtistTests : IDisposable
     private readonly IMetadataService _metadataService;
     private readonly LibraryService _libraryService;
     private readonly ITestOutputHelper _output;
+    private readonly ProviderPipelineProvider _pipelines;
     private Exception? _capturedLoggerException;
 
     public MultiArtistTests(ITestOutputHelper output)
@@ -59,12 +61,13 @@ public class MultiArtistTests : IDisposable
                 }
             });
 
+        _pipelines = TestProviderPipeline.Build(ServiceProviderIds.ImageDownload);
+
         _libraryService = new LibraryService(
             _dbHelper.ContextFactory,
             _fileSystem,
             _metadataService,
             Substitute.For<ILastFmMetadataService>(),
-            Substitute.For<ISpotifyService>(),
             Substitute.For<IMusicBrainzService>(),
             Substitute.For<IFanartTvService>(),
             Substitute.For<ITheAudioDbService>(),
@@ -75,6 +78,7 @@ public class MultiArtistTests : IDisposable
             Substitute.For<IReplayGainService>(),
             Substitute.For<IApiKeyService>(),
             Substitute.For<IImageProcessor>(),
+            _pipelines,
             logger
         );
     }
@@ -82,6 +86,7 @@ public class MultiArtistTests : IDisposable
     public void Dispose()
     {
         _libraryService.Dispose();
+        _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _dbHelper.Dispose();
     }
 

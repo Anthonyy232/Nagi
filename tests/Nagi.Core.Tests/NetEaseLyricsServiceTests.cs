@@ -2,6 +2,8 @@
 using System.Text.Json;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
+using Nagi.Core.Http.Pipelines;
+using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Implementations;
 using Nagi.Core.Tests.Utils;
@@ -20,6 +22,8 @@ public class NetEaseLyricsServiceTests : IDisposable
     private readonly NetEaseLyricsService _service;
     private readonly ILogger<NetEaseLyricsService> _logger;
 
+    private readonly ProviderPipelineProvider _pipelines;
+
     public NetEaseLyricsServiceTests()
     {
         _httpHandler = new TestHttpMessageHandler();
@@ -28,11 +32,13 @@ public class NetEaseLyricsServiceTests : IDisposable
         httpClientFactory.CreateClient(Arg.Any<string>()).Returns(httpClient);
         _logger = Substitute.For<ILogger<NetEaseLyricsService>>();
 
-        _service = new NetEaseLyricsService(httpClientFactory, _logger);
+        _pipelines = TestProviderPipeline.Build(ServiceProviderIds.NetEase);
+        _service = new NetEaseLyricsService(httpClientFactory, _pipelines, _logger);
     }
 
     public void Dispose()
     {
+        _pipelines.DisposeAsync().AsTask().GetAwaiter().GetResult();
         _httpHandler.Dispose();
         GC.SuppressFinalize(this);
     }

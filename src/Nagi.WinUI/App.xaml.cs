@@ -25,6 +25,8 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Nagi.Core.Data;
 using Nagi.Core.Helpers;
+using Nagi.Core.Http.Pipelines;
+using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Implementations;
 using Nagi.Core.Services.Implementations.Presence;
@@ -414,6 +416,19 @@ public partial class App : Application
                 KeepAlivePingTimeout = TimeSpan.FromSeconds(5)
             });
 
+        // Image downloads are larger payloads and tolerate slower CDNs; use a longer timeout.
+        services.AddHttpClient("ImageDownloader")
+            .ConfigureHttpClient(client =>
+            {
+                client.Timeout = TimeSpan.FromSeconds(30);
+                client.DefaultRequestHeaders.UserAgent.ParseAdd("Nagi/1.0 (+https://github.com/Anthonyy232/Nagi)");
+            })
+            .ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
+            {
+                PooledConnectionLifetime = TimeSpan.FromMinutes(2),
+                ConnectTimeout = TimeSpan.FromSeconds(10),
+            });
+
         ConfigureAppSettingsServices(services);
         ConfigureCoreLogicServices(services);
         ConfigureWinUIServices(services, window, dispatcherQueue, appInstance);
@@ -453,9 +468,142 @@ public partial class App : Application
         services.AddSingleton<ILrcService, LrcService>();
 
         services.AddSingleton<IApiKeyService, ApiKeyService>();
+
+        services.AddProviderPipelines(builder =>
+        {
+            builder.AddProvider(new ProviderPolicy
+            {
+                ProviderId = ServiceProviderIds.MusicBrainz,
+                // MusicBrainz mandates 1 req/s per IP with a UA identifying the client.
+                // Excess traffic returns 503 until the rate falls back under 1 RPS.
+                Channel = new ChannelPolicy
+                {
+                    PermitsPerWindow = 1,
+                    Window = TimeSpan.FromSeconds(1),
+                    MaxConcurrent = 1,
+                    MaxRetries = 3,
+                    BaseRetryDelay = TimeSpan.FromSeconds(1),
+                },
+            });
+
+            builder.AddProvider(new ProviderPolicy
+            {
+                ProviderId = ServiceProviderIds.TheAudioDb,
+                // Free tier: 30 req/min. Once breached, the key is locked out for a full
+                // minute — short retry delays just waste calls. Wait the full minute, once.
+                Channel = new ChannelPolicy
+                {
+                    PermitsPerWindow = 1,
+                    Window = TimeSpan.FromSeconds(2),
+                    MaxConcurrent = 2,
+                    MaxRetries = 1,
+                    BaseRetryDelay = TimeSpan.FromSeconds(60),
+                    MaxRetryDelay = TimeSpan.FromSeconds(75),
+                },
+            });
+
+            // Last.fm: metadata, auth, and scrobbling all run through a single provider so an
+            // auth-trip on one of them pauses the others (shared breaker). Last.fm's limits
+            // are undisclosed/dynamic; 5 RPS/IP is the long-standing convention.
+            builder.AddProvider(new ProviderPolicy
+            {
+                ProviderId = ServiceProviderIds.LastFm,
+                Channel = new ChannelPolicy
+                {
+                    PermitsPerWindow = 5,
+                    Window = TimeSpan.FromSeconds(1),
+                    MaxConcurrent = 4,
+                    MaxRetries = 3,
+                    BaseRetryDelay = TimeSpan.FromSeconds(5),
+                },
+            });
+
+            // Fanart.tv: effectively unlimited for normal use (token bucket, 429 rare). The
+            // pipeline auto-honors Retry-After if the service ever pushes back.
+            builder.AddProvider(new ProviderPolicy
+            {
+                ProviderId = ServiceProviderIds.FanartTv,
+                Channel = new ChannelPolicy
+                {
+                    PermitsPerWindow = 10,
+                    Window = TimeSpan.FromSeconds(1),
+                    MaxConcurrent = 8,
+                    MaxRetries = 3,
+                },
+            });
+
+            // LRCLIB: no rate limit documented. Keep concurrency reasonable to be polite.
+            builder.AddProvider(new ProviderPolicy
+            {
+                ProviderId = ServiceProviderIds.LrcLib,
+                Channel = new ChannelPolicy
+                {
+                    PermitsPerWindow = 20,
+                    Window = TimeSpan.FromSeconds(1),
+                    MaxConcurrent = 8,
+                    MaxRetries = 3,
+                },
+            });
+
+            // NetEase: unofficial API; treat aggressively-rate-limited and back off fast.
+            builder.AddProvider(new ProviderPolicy
+            {
+                ProviderId = ServiceProviderIds.NetEase,
+                Channel = new ChannelPolicy
+                {
+                    PermitsPerWindow = 2,
+                    Window = TimeSpan.FromSeconds(1),
+                    MaxConcurrent = 2,
+                    MaxRetries = 3,
+                    BaseRetryDelay = TimeSpan.FromSeconds(3),
+                },
+            });
+
+            // ListenBrainz: dynamic limit advertised via X-RateLimit-* headers. The pipeline
+            // honors X-RateLimit-Reset-In on 429 (alongside Retry-After), so we can run at a
+            // healthy steady-state and let the server tell us when to back off.
+            builder.AddProvider(new ProviderPolicy
+            {
+                ProviderId = ServiceProviderIds.ListenBrainz,
+                Channel = new ChannelPolicy
+                {
+                    PermitsPerWindow = 5,
+                    Window = TimeSpan.FromSeconds(1),
+                    MaxConcurrent = 4,
+                    MaxRetries = 3,
+                },
+            });
+
+            // Nagi's own API server (key bootstrap). Internal infra; conservative retry.
+            builder.AddProvider(new ProviderPolicy
+            {
+                ProviderId = ServiceProviderIds.NagiApi,
+                Channel = new ChannelPolicy
+                {
+                    PermitsPerWindow = 5,
+                    Window = TimeSpan.FromSeconds(1),
+                    MaxConcurrent = 4,
+                    MaxRetries = 3,
+                },
+            });
+
+            // Generic CDN image downloads. Provider id is shared by all artist/album image
+            // fetches because the source CDN isn't always knowable from the URL.
+            builder.AddProvider(new ProviderPolicy
+            {
+                ProviderId = ServiceProviderIds.ImageDownload,
+                Channel = new ChannelPolicy
+                {
+                    PermitsPerWindow = 10,
+                    Window = TimeSpan.FromSeconds(1),
+                    MaxConcurrent = 4,
+                    MaxRetries = 3,
+                },
+            });
+        });
+
         services.AddSingleton<ILastFmMetadataService, LastFmMetadataService>();
         services.AddSingleton<ILastFmAuthService, LastFmAuthService>();
-        services.AddSingleton<ISpotifyService, SpotifyService>();
         services.AddSingleton<IMusicBrainzService, MusicBrainzService>();
         services.AddSingleton<IFanartTvService, FanartTvService>();
         services.AddSingleton<ITheAudioDbService, TheAudioDbService>();
@@ -557,6 +705,7 @@ public partial class App : Application
         {
             var artists = await dbContext.Artists
                 .Where(a => a.SortName == string.Empty || a.SortName == null)
+                .OrderBy(a => a.Id)
                 .Take(batchSize)
                 .ToListAsync().ConfigureAwait(false);
             if (artists.Count == 0) break;
@@ -572,6 +721,7 @@ public partial class App : Application
                 .Include(a => a.AlbumArtists).ThenInclude(aa => aa.Artist)
                 .Where(a => a.SortTitle == string.Empty || a.SortTitle == null ||
                             a.PrimaryArtistSortName == string.Empty || a.PrimaryArtistSortName == null)
+                .OrderBy(a => a.Id)
                 .Take(batchSize)
                 .ToListAsync().ConfigureAwait(false);
             if (albums.Count == 0) break;
@@ -592,6 +742,7 @@ public partial class App : Application
                 .Include(s => s.SongArtists).ThenInclude(sa => sa.Artist)
                 .Where(s => s.SortTitle == string.Empty || s.SortTitle == null ||
                             s.PrimaryArtistSortName == string.Empty || s.PrimaryArtistSortName == null)
+                .OrderBy(s => s.Id)
                 .Take(batchSize)
                 .ToListAsync().ConfigureAwait(false);
             if (songs.Count == 0) break;

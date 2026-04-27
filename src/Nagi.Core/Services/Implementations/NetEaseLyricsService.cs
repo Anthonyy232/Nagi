@@ -1,10 +1,10 @@
-﻿using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
-using Nagi.Core.Http;
 using Nagi.Core.Helpers;
+using Nagi.Core.Http.Pipelines;
+using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 
 namespace Nagi.Core.Services.Implementations;
@@ -17,20 +17,21 @@ public partial class NetEaseLyricsService : INetEaseLyricsService
 {
     private const string SearchUrl = "https://music.163.com/api/search/get";
     private const string LyricsUrl = "https://music.163.com/api/song/lyric";
-    private const int MaxRetries = 3;
-    private const int RateLimitDelayMultiplier = 5;
 
     private readonly HttpClient _httpClient;
+    private readonly IProviderPipelineProvider _pipelines;
     private readonly ILogger<NetEaseLyricsService> _logger;
 
-    private volatile bool _isApiDisabled;
-
-    public NetEaseLyricsService(IHttpClientFactory httpClientFactory, ILogger<NetEaseLyricsService> logger)
+    public NetEaseLyricsService(
+        IHttpClientFactory httpClientFactory,
+        IProviderPipelineProvider pipelines,
+        ILogger<NetEaseLyricsService> logger)
     {
         _httpClient = httpClientFactory.CreateClient();
         _httpClient.DefaultRequestHeaders.Add("Referer", "https://music.163.com/");
         _httpClient.DefaultRequestHeaders.Add("User-Agent",
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36");
+        _pipelines = pipelines;
         _logger = logger;
     }
 
@@ -41,15 +42,14 @@ public partial class NetEaseLyricsService : INetEaseLyricsService
         if (string.IsNullOrWhiteSpace(trackName))
             return null;
 
-        if (_isApiDisabled)
+        if (_pipelines.IsCircuitOpen(ServiceProviderIds.NetEase))
         {
-            _logger.LogDebug("NetEase API is disabled for this session.");
+            _logger.LogDebug("NetEase circuit is open; skipping search.");
             return null;
         }
 
         try
         {
-            // Build search query
             var normalizedTrack = ArtistNameHelper.NormalizeStringCore(trackName) ?? trackName;
             var normalizedArtist = ArtistNameHelper.NormalizeStringCore(artistName) ?? artistName;
 
@@ -85,50 +85,36 @@ public partial class NetEaseLyricsService : INetEaseLyricsService
     {
         var normalizedTrack = ArtistNameHelper.NormalizeStringCore(trackName) ?? trackName;
         var normalizedArtist = ArtistNameHelper.NormalizeStringCore(artistName) ?? artistName;
-        var operationName = $"NetEase search for {query}";
 
-        return await HttpRetryHelper.ExecuteWithRetryAsync<long?>(
-            async attempt =>
+        return await _pipelines.ExecuteWithFallbackAsync<long?>(
+            ServiceProviderIds.NetEase,
+            async ct =>
             {
                 using var content = new FormUrlEncodedContent(new Dictionary<string, string>
                 {
                     ["s"] = query,
                     ["type"] = "1", // 1 = songs
-                    ["limit"] = "10", // Request more results for better matching
+                    ["limit"] = "10",
                     ["offset"] = "0"
                 });
-
-                _logger.LogDebug("Searching NetEase for: {Query} (Attempt {Attempt}/{MaxRetries})", query, attempt, MaxRetries);
-
-                using var response = await _httpClient.PostAsync(SearchUrl, content, cancellationToken).ConfigureAwait(false);
-
-                if (response.StatusCode == HttpStatusCode.TooManyRequests ||
-                    response.StatusCode == HttpStatusCode.Forbidden)
-                {
-                    _logger.LogWarning("NetEase rate limited or blocked. Attempt {Attempt}/{MaxRetries}", attempt, MaxRetries);
-                    if (attempt >= MaxRetries)
-                    {
-                        _logger.LogError("NetEase blocked repeatedly. Disabling for this session.");
-                        _isApiDisabled = true;
-                    }
-                    return RetryResult<long?>.RateLimitFailure(RateLimitDelayMultiplier);
-                }
-
+                _logger.LogDebug("Searching NetEase for: {Query}", query);
+                return await _httpClient.PostAsync(SearchUrl, content, ct).ConfigureAwait(false);
+            },
+            async (response, ct) =>
+            {
                 if (!response.IsSuccessStatusCode)
                 {
-                    _logger.LogWarning("NetEase search failed with status {Status}. Attempt {Attempt}/{MaxRetries}",
-                        response.StatusCode, attempt, MaxRetries);
-                    return RetryResult<long?>.FromHttpStatus(response.StatusCode);
+                    _logger.LogWarning("NetEase search failed with status {Status}.", response.StatusCode);
+                    return null;
                 }
 
-                var result = await response.Content.ReadFromJsonAsync<NetEaseSearchResult>(
-                    cancellationToken: cancellationToken).ConfigureAwait(false);
+                var result = await response.Content.ReadFromJsonAsync<NetEaseSearchResult>(cancellationToken: ct)
+                    .ConfigureAwait(false);
 
                 var songs = result?.Result?.Songs;
                 if (songs is null || songs.Count == 0)
-                    return RetryResult<long?>.SuccessEmpty();
+                    return null;
 
-                // Find best match in a single pass - O(n) with only one allocation per song
                 // Score breakdown: TrackExact=4, TrackContains=2, ArtistMatch=1
                 var bestMatch = songs
                     .Select(s =>
@@ -143,7 +129,6 @@ public partial class NetEaseLyricsService : INetEaseLyricsService
                                               return n != null && n.Contains(normalizedArtist, StringComparison.OrdinalIgnoreCase);
                                           }) == true;
 
-                        // Skip songs with no track match at all
                         if (!trackExact && !trackContains)
                             return (Song: (NetEaseSong?)null, Score: -1);
 
@@ -154,68 +139,50 @@ public partial class NetEaseLyricsService : INetEaseLyricsService
                     .OrderByDescending(x => x.Score)
                     .FirstOrDefault();
 
-                return bestMatch.Song != null
-                    ? RetryResult<long?>.Success(bestMatch.Song.Id)
-                    : RetryResult<long?>.SuccessEmpty();
+                return bestMatch.Song?.Id;
             },
+            fallback: null,
             _logger,
-            operationName,
-            cancellationToken,
-            MaxRetries
-        ).ConfigureAwait(false);
+            $"search for {query}",
+            cancellationToken).ConfigureAwait(false);
     }
 
     private async Task<string?> GetLyricsAsync(long songId, CancellationToken cancellationToken)
     {
-        var operationName = $"NetEase lyrics fetch for ID {songId}";
+        var url = $"{LyricsUrl}?id={songId}&lv=1";
 
-        return await HttpRetryHelper.ExecuteWithRetryAsync<string>(
-            async attempt =>
+        return await _pipelines.ExecuteWithFallbackAsync<string?>(
+            ServiceProviderIds.NetEase,
+            async ct =>
             {
-                var url = $"{LyricsUrl}?id={songId}&lv=1";
-                _logger.LogDebug("Fetching NetEase lyrics for song ID: {SongId} (Attempt {Attempt}/{MaxRetries})",
-                    songId, attempt, MaxRetries);
-
-                using var response = await _httpClient.GetAsync(url, cancellationToken).ConfigureAwait(false);
-
-                // Check for rate limiting on lyrics endpoint too
-                if (response.StatusCode == HttpStatusCode.TooManyRequests ||
-                    response.StatusCode == HttpStatusCode.Forbidden)
-                {
-                    _logger.LogWarning("NetEase rate limited on lyrics fetch. Attempt {Attempt}/{MaxRetries}", attempt, MaxRetries);
-                    if (attempt >= MaxRetries)
-                    {
-                        _logger.LogError("NetEase rate limited repeatedly on lyrics fetch. Disabling for this session.");
-                        _isApiDisabled = true;
-                    }
-                    return RetryResult<string>.RateLimitFailure(RateLimitDelayMultiplier);
-                }
-
+                _logger.LogDebug("Fetching NetEase lyrics for song ID: {SongId}", songId);
+                return await _httpClient.GetAsync(url, ct).ConfigureAwait(false);
+            },
+            async (response, ct) =>
+            {
                 if (!response.IsSuccessStatusCode)
                 {
-                    _logger.LogWarning("NetEase lyrics fetch failed with status {Status}. Attempt {Attempt}/{MaxRetries}",
-                        response.StatusCode, attempt, MaxRetries);
-                    return RetryResult<string>.FromHttpStatus(response.StatusCode);
+                    _logger.LogWarning("NetEase lyrics fetch failed with status {Status}.", response.StatusCode);
+                    return null;
                 }
 
-                var result = await response.Content.ReadFromJsonAsync<NetEaseLyricsResult>(
-                    cancellationToken: cancellationToken).ConfigureAwait(false);
+                var result = await response.Content.ReadFromJsonAsync<NetEaseLyricsResult>(cancellationToken: ct)
+                    .ConfigureAwait(false);
 
                 var lrcContent = result?.Lrc?.Lyric;
                 if (string.IsNullOrWhiteSpace(lrcContent))
-                    return RetryResult<string>.SuccessEmpty();
+                    return null;
 
-                // Validate that it's actually LRC format (has timestamps)
+                // Validate that it's actually LRC format (has timestamps).
                 if (!LrcTimestampRegex().IsMatch(lrcContent))
-                    return RetryResult<string>.SuccessEmpty();
+                    return null;
 
-                return RetryResult<string>.Success(lrcContent);
+                return lrcContent;
             },
+            fallback: null,
             _logger,
-            operationName,
-            cancellationToken,
-            MaxRetries
-        ).ConfigureAwait(false);
+            $"lyrics fetch for song ID {songId}",
+            cancellationToken).ConfigureAwait(false);
     }
 
     [GeneratedRegex(@"\[\d{2}:\d{2}")]

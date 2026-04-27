@@ -1,11 +1,10 @@
-﻿using System.Net;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using Nagi.Core.Http;
+using Nagi.Core.Helpers;
+using Nagi.Core.Http.Pipelines;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
-using Nagi.Core.Helpers;
 
 namespace Nagi.Core.Services.Implementations;
 
@@ -15,7 +14,6 @@ namespace Nagi.Core.Services.Implementations;
 public class LastFmMetadataService : ILastFmMetadataService
 {
     private const string LastFmApiBaseUrl = "https://ws.audioscrobbler.com/2.0/";
-    private const int MaxRetries = 3;
     private const int InvalidApiKeyErrorCode = 10;
     private const string ApiKeyName = ServiceProviderIds.LastFm;
 
@@ -28,13 +26,17 @@ public class LastFmMetadataService : ILastFmMetadataService
 
     private readonly IApiKeyService _apiKeyService;
     private readonly HttpClient _httpClient;
+    private readonly IProviderPipelineProvider _pipelines;
     private readonly ILogger<LastFmMetadataService> _logger;
-    private volatile bool _isApiDisabled;
 
-    public LastFmMetadataService(IHttpClientFactory httpClientFactory, IApiKeyService apiKeyService,
+    public LastFmMetadataService(
+        IHttpClientFactory httpClientFactory,
+        IProviderPipelineProvider pipelines,
+        IApiKeyService apiKeyService,
         ILogger<LastFmMetadataService> logger)
     {
         _httpClient = httpClientFactory.CreateClient();
+        _pipelines = pipelines;
         _apiKeyService = apiKeyService;
         _logger = logger;
     }
@@ -47,8 +49,8 @@ public class LastFmMetadataService : ILastFmMetadataService
         if (string.IsNullOrWhiteSpace(artistName))
             return ServiceResult<ArtistInfo>.FromSuccessNotFound();
 
-        if (_isApiDisabled)
-            return ServiceResult<ArtistInfo>.FromPermanentError("API is disabled for this session.");
+        if (_pipelines.IsCircuitOpen(ServiceProviderIds.LastFm))
+            return ServiceResult<ArtistInfo>.FromTemporaryError("Provider is temporarily unavailable.");
 
         var apiKey = await _apiKeyService.GetApiKeyAsync(ApiKeyName, cancellationToken).ConfigureAwait(false);
         if (string.IsNullOrEmpty(apiKey))
@@ -57,103 +59,94 @@ public class LastFmMetadataService : ILastFmMetadataService
             return ServiceResult<ArtistInfo>.FromPermanentError($"API key '{ApiKeyName}' is unavailable.");
         }
 
-        var normalizedName = ArtistNameHelper.Normalize(artistName);
-        var currentApiKey = apiKey;
-        var operationName = $"Last.fm metadata fetch for {normalizedName}";
+        var (result, errorCode) = await TryFetchAsync(artistName, apiKey, languageCode, cancellationToken)
+            .ConfigureAwait(false);
 
-        var result = await HttpRetryHelper.ExecuteWithRetryAsync<ServiceResult<ArtistInfo>>(
-            async attempt =>
+        if (result is not null) return result;
+
+        // Error code 10 = invalid API key. Refresh the key and retry once.
+        if (errorCode == InvalidApiKeyErrorCode)
+        {
+            _logger.LogWarning("Last.fm API key invalid. Refreshing and retrying for '{ArtistName}'.", artistName);
+            apiKey = await _apiKeyService.RefreshApiKeyAsync(ApiKeyName, cancellationToken).ConfigureAwait(false);
+            if (string.IsNullOrEmpty(apiKey))
             {
-                cancellationToken.ThrowIfCancellationRequested();
-                var requestUrl = BuildRequestUrl(artistName, currentApiKey, languageCode);
+                _logger.LogError("Failed to refresh Last.fm API key. Aborting fetch for '{ArtistName}'.", artistName);
+                return ServiceResult<ArtistInfo>.FromPermanentError("API key refresh failed.");
+            }
 
-                try
+            var (retryResult, _) = await TryFetchAsync(artistName, apiKey, languageCode, cancellationToken)
+                .ConfigureAwait(false);
+            return retryResult ?? ServiceResult<ArtistInfo>.FromTemporaryError("Failed after key refresh.");
+        }
+
+        return ServiceResult<ArtistInfo>.FromTemporaryError("Last.fm request failed.");
+    }
+
+    /// <summary>
+    ///     One pipeline call. Returns a final result if one can be produced (success, not-found,
+    ///     auth-disabled, or deserialization failure); otherwise returns the API error code so
+    ///     the caller can decide whether to refresh credentials and retry.
+    /// </summary>
+    private async Task<(ServiceResult<ArtistInfo>? Result, int? ErrorCode)> TryFetchAsync(
+        string artistName, string apiKey, string? languageCode, CancellationToken cancellationToken)
+    {
+        var requestUrl = BuildRequestUrl(artistName, apiKey, languageCode);
+        var isoCode = languageCode?.Length > 2 ? languageCode[..2] : (languageCode ?? "Default");
+
+        return await _pipelines.ExecuteWithFallbackAsync<(ServiceResult<ArtistInfo>? Result, int? ErrorCode)>(
+            ServiceProviderIds.LastFm,
+            async ct =>
+            {
+                _logger.LogDebug("Fetching Last.fm metadata for artist: {ArtistName} (Language: {LanguageCode})",
+                    artistName, isoCode);
+                return await _httpClient.GetAsync(requestUrl, ct).ConfigureAwait(false);
+            },
+            async (response, ct) =>
+            {
+                var content = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
+
+                if (response.IsSuccessStatusCode)
                 {
-                    var isoCode = languageCode?.Length > 2 ? languageCode[..2] : (languageCode ?? "Default");
-                    _logger.LogDebug("Fetching Last.fm metadata for artist: {ArtistName} (Language: {LanguageCode}, Attempt {Attempt}/{MaxRetries})",
-                        artistName, isoCode, attempt, MaxRetries);
-
-                    using var response = await _httpClient.GetAsync(requestUrl, cancellationToken).ConfigureAwait(false);
-                    var content = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
-
-                    if (response.IsSuccessStatusCode)
+                    try
                     {
                         var lastFmResponse = JsonSerializer.Deserialize<LastFmArtistResponse>(content, _jsonOptions);
                         var artistInfo = lastFmResponse?.Artist != null ? ToArtistInfo(lastFmResponse.Artist) : null;
 
                         if (artistInfo != null)
                         {
-                            _logger.LogInformation("Found Last.fm metadata for {ArtistName} (Requested Language: {LanguageCode}): Bio={HasBio}, Image={HasImage}",
-                                artistName, isoCode, !string.IsNullOrEmpty(artistInfo.Biography), !string.IsNullOrEmpty(artistInfo.ImageUrl));
-                            return RetryResult<ServiceResult<ArtistInfo>>.Success(ServiceResult<ArtistInfo>.FromSuccess(artistInfo));
+                            _logger.LogInformation(
+                                "Found Last.fm metadata for {ArtistName} (Requested Language: {LanguageCode}): Bio={HasBio}, Image={HasImage}",
+                                artistName, isoCode, !string.IsNullOrEmpty(artistInfo.Biography),
+                                !string.IsNullOrEmpty(artistInfo.ImageUrl));
+                            return (ServiceResult<ArtistInfo>.FromSuccess(artistInfo), null);
                         }
 
-                        return RetryResult<ServiceResult<ArtistInfo>>.Success(ServiceResult<ArtistInfo>.FromSuccessNotFound());
+                        return (ServiceResult<ArtistInfo>.FromSuccessNotFound(), null);
                     }
-
-                    // Handle API-specific errors
-                    LastFmErrorResponse? errorResponse = null;
-                    if (!string.IsNullOrEmpty(content))
-                        errorResponse = JsonSerializer.Deserialize<LastFmErrorResponse>(content, _jsonOptions);
-
-                    if (errorResponse?.ErrorCode == InvalidApiKeyErrorCode && attempt < MaxRetries)
+                    catch (JsonException ex)
                     {
-                        _logger.LogWarning(
-                            "Last.fm API key is invalid. Refreshing and retrying request for artist '{ArtistName}'.",
-                            artistName);
-                        currentApiKey = await _apiKeyService.RefreshApiKeyAsync(ApiKeyName, cancellationToken).ConfigureAwait(false);
-                        if (string.IsNullOrEmpty(currentApiKey))
-                        {
-                            _logger.LogError(
-                                "Failed to refresh Last.fm API key. Aborting metadata fetch for '{ArtistName}'.",
-                                artistName);
-                            return RetryResult<ServiceResult<ArtistInfo>>.Success(
-                                ServiceResult<ArtistInfo>.FromPermanentError("API key refresh failed."));
-                        }
-                        return RetryResult<ServiceResult<ArtistInfo>>.TransientFailure();
+                        _logger.LogError(ex, "Failed to deserialize Last.fm response for '{ArtistName}'.", artistName);
+                        return (ServiceResult<ArtistInfo>.FromPermanentError(
+                            $"Failed to deserialize Last.fm response for '{artistName}'."), null);
                     }
-
-                    var errorMessage =
-                        $"API call for '{artistName}' failed. Status: {response.StatusCode}, Error: {errorResponse?.Message ?? "Unknown"}";
-
-                    if (HttpRetryHelper.IsRetryableStatusCode(response.StatusCode))
-                    {
-                        _logger.LogWarning("Last.fm server error {StatusCode} for '{ArtistName}'. Retrying...", response.StatusCode, artistName);
-                        return RetryResult<ServiceResult<ArtistInfo>>.TransientFailure();
-                    }
-
-
-                    if (response.StatusCode == HttpStatusCode.Unauthorized || response.StatusCode == HttpStatusCode.Forbidden)
-                    {
-                        _logger.LogError("Last.fm API access denied (401/403). Disabling for this session.");
-                        _isApiDisabled = true;
-                        return RetryResult<ServiceResult<ArtistInfo>>.Success(
-                            ServiceResult<ArtistInfo>.FromPermanentError(errorMessage));
-                    }
-
-                    _logger.LogWarning("Error fetching Last.fm metadata: {ErrorMessage}", errorMessage);
-                    return RetryResult<ServiceResult<ArtistInfo>>.Success(
-                        ServiceResult<ArtistInfo>.FromTemporaryError(errorMessage));
                 }
-                catch (JsonException ex)
+
+                LastFmErrorResponse? errorResponse = null;
+                if (!string.IsNullOrEmpty(content))
                 {
-                    var errorMessage = $"Failed to deserialize Last.fm response for '{artistName}'.";
-                    _logger.LogError(ex, "{ErrorMessage}", errorMessage);
-                    return RetryResult<ServiceResult<ArtistInfo>>.Success(
-                        ServiceResult<ArtistInfo>.FromPermanentError(errorMessage));
+                    try { errorResponse = JsonSerializer.Deserialize<LastFmErrorResponse>(content, _jsonOptions); }
+                    catch (JsonException) { /* non-JSON error body — ignore */ }
                 }
+
+                var errorMessage = $"API call for '{artistName}' failed. Status: {response.StatusCode}, Error: {errorResponse?.Message ?? "Unknown"}";
+                _logger.LogWarning("Error fetching Last.fm metadata: {ErrorMessage}", errorMessage);
+                return ((ServiceResult<ArtistInfo>?)null, errorResponse?.ErrorCode);
             },
+            fallback: (ServiceResult<ArtistInfo>.FromTemporaryError("Provider is temporarily unavailable."), null),
             _logger,
-            operationName,
-            cancellationToken,
-            MaxRetries
-        ).ConfigureAwait(false);
-
-        if (result != null)
-            return result;
-
-        _logger.LogWarning("Max retries exceeded for Last.fm request for artist '{ArtistName}'.", artistName);
-        return ServiceResult<ArtistInfo>.FromTemporaryError("Failed after exhausting retries.");
+            $"metadata fetch for {artistName}",
+            cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
