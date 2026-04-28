@@ -52,7 +52,7 @@
         <PackageVersion Include="Serilog.Sinks.File" Version="8.0.0-nblumhardt-02322" />
 
         <!-- Audio & Metadata -->
-        <PackageVersion Include="LrcParser" Version="2025.623.0" />
+        <PackageVersion Include="ModernLrc" Version="1.0.0" />
         <PackageVersion Include="z440.atl.core" Version="7.12.0" />
 
         <!-- Image Processing -->

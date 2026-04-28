@@ -1,6 +1,7 @@
 ﻿using System.Linq;
-using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
+using ModernLrc;
+using ModernLrc.Model;
 using Nagi.Core.Data;
 using Nagi.Core.Helpers;
 using Nagi.Core.Models;
@@ -22,7 +23,6 @@ public class LrcService : ILrcService, IDisposable
     private readonly ISettingsService _settingsService;
     private readonly IPathConfiguration _pathConfig;
     private readonly ILibraryWriter _libraryWriter;
-    private readonly LrcParser.Parser.Lrc.LrcParser _parser = new();
 
     private readonly object _ctsLock = new();
     private CancellationTokenSource _settingsCts = new();
@@ -220,26 +220,13 @@ public class LrcService : ILrcService, IDisposable
 
         try
         {
-            // Strip language prefixes like "eng||" at the start (common in some ID3 tag formats)
-            content = Regex.Replace(content, @"^[a-z]{2,3}\|\|", string.Empty, RegexOptions.IgnoreCase);
-
-            // Normalize NetEase-style 3-digit milliseconds ([mm:ss.fff]) to 2-digit ([mm:ss.ff])
-            // for better compatibility with standard LRC parsers.
-            content = Regex.Replace(content, @"\[(\d{2}:\d{2}\.\d{2})\d\]", "[$1]");
-
-            var parsedSongFromLrc = _parser.Decode(content);
-            if (parsedSongFromLrc?.Lyrics == null || !parsedSongFromLrc.Lyrics.Any())
-                return new ParsedLrc(Enumerable.Empty<LyricLine>(), content);
-
-            var lyricLines = parsedSongFromLrc.Lyrics
-                .Select(lyric => new LyricLine
-                {
-                    StartTime = TimeSpan.FromMilliseconds(lyric.StartTime),
-                    Text = lyric.Text
-                })
-                .OrderBy(l => l.StartTime)
-                .ToList();
-
+            var lyricLines = new List<LyricLine>();
+            foreach (var line in LrcParser.Parse(content).Document.Lines)
+            {
+                var text = line.GetText();
+                foreach (var ts in line.Timestamps)
+                    lyricLines.Add(new LyricLine { StartTime = ts.ToTimeSpan(), Text = text });
+            }
             return new ParsedLrc(lyricLines, content);
         }
         catch (Exception ex)
