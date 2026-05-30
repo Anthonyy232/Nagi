@@ -5,7 +5,13 @@
     xmlns:animation="using:Microsoft.UI.Xaml.Media.Animation">
 
     <!-- App Primary Color Brush - used throughout the app for accent color -->
-    <SolidColorBrush x:Key="AppPrimaryColorBrush" Color="{ThemeResource SystemAccentColor}" />
+    <SolidColorBrush x:Key="AppPrimaryColorBrush" Color="#FF21944B" />
+
+    <!-- Accent color adjusted for controls displayed on cover art or dark media overlays. -->
+    <SolidColorBrush x:Key="MediaOnImageAccentBrush" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="MediaOnImageTextPrimaryBrush" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="MediaOnImageControlSecondaryBrush" Color="#80FFFFFF" />
+    <SolidColorBrush x:Key="MediaOnImageControlTrackBrush" Color="#66FFFFFF" />
 
     <!-- Consolidated page title style used by all pages -->
     <Style x:Key="PageTitleTextStyle" TargetType="TextBlock">
@@ -66,7 +72,7 @@
     <x:Double x:Key="AlbumCardMinHeightLarge">170</x:Double>
 
     <!-- Specific brush for the player background tint. Defaults to primary color but can be overridden. -->
-    <SolidColorBrush x:Key="PlayerTintColorBrush" Color="{ThemeResource SystemAccentColor}" />
+    <SolidColorBrush x:Key="PlayerTintColorBrush" Color="#FF21944B" />
 
     <!-- Windows 11 style acrylic brush. -->
     <media:AcrylicBrush

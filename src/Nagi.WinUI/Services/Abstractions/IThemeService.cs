@@ -24,7 +24,7 @@ public interface IThemeService
     Task ApplyDynamicThemeFromSwatchesAsync(string? lightSwatchId, string? darkSwatchId);
 
     /// <summary>
-    ///     Resets the application's primary color to the default system accent color.
+    ///     Applies the configured accent color, or the default app accent color when none is configured.
     /// </summary>
     /// <param name="theme">The optional theme context to avoid redundant UI thread dispatches.</param>
     Task ActivateDefaultPrimaryColorAsync(ElementTheme? theme = null);
@@ -32,6 +32,6 @@ public interface IThemeService
     /// <summary>
     ///     Applies the specified accent color to the application's primary color.
     /// </summary>
-    /// <param name="color">The accent color to apply, or null to use the system default.</param>
+    /// <param name="color">The accent color to apply, or null to use the app default.</param>
     Task ApplyAccentColorAsync(Windows.UI.Color? color);
 }

@@ -5,6 +5,7 @@ using System.Windows.Input;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Media;
 using Nagi.Core.Models;
 
 namespace Nagi.WinUI.Helpers;
@@ -159,16 +160,7 @@ public static class MultiArtistHyperlinkHelper
         // Clear and rebuild (this is efficient - only happens when content actually changes due to cache check above)
         stackPanel.Children.Clear();
 
-        // Get the secondary text brush for the separator/fallback
-        Microsoft.UI.Xaml.Media.Brush? secondaryBrush = null;
-        if (Application.Current.Resources.TryGetValue("TextFillColorSecondaryBrush", out var secRes) && secRes is Microsoft.UI.Xaml.Media.Brush secBrush)
-        {
-            secondaryBrush = secBrush;
-        }
-        else if (Application.Current.Resources.TryGetValue("TextFillColorSecondary", out var secRes2) && secRes2 is Microsoft.UI.Xaml.Media.Brush secBrush2)
-        {
-            secondaryBrush = secBrush2;
-        }
+        var foreground = GetForegroundBrush(textBlock);
 
         if (string.IsNullOrEmpty(artistString))
         {
@@ -176,7 +168,7 @@ public static class MultiArtistHyperlinkHelper
             {
                 Text = Artist.UnknownArtistName,
                 Style = Application.Current.Resources["BodyTextBlockStyle"] as Style,
-                Foreground = secondaryBrush
+                Foreground = foreground
             });
             return;
         }
@@ -220,6 +212,11 @@ public static class MultiArtistHyperlinkHelper
                 button.Style = style;
             }
 
+            if (foreground != null)
+            {
+                button.Foreground = foreground;
+            }
+
             stackPanel.Children.Add(button);
 
             if (i < artistParts.Count - 1)
@@ -232,14 +229,28 @@ public static class MultiArtistHyperlinkHelper
                     FontSize = 13
                 };
 
-                if (secondaryBrush != null)
+                if (foreground != null)
                 {
-                    separatorText.Foreground = secondaryBrush;
+                    separatorText.Foreground = foreground;
                 }
 
                 stackPanel.Children.Add(separatorText);
             }
         }
+    }
+
+    private static Brush? GetForegroundBrush(TextBlock textBlock)
+    {
+        return textBlock.ReadLocalValue(TextBlock.ForegroundProperty) is Brush foreground
+            ? foreground
+            : GetResourceBrush("TextFillColorSecondaryBrush") ?? GetResourceBrush("TextFillColorSecondary");
+    }
+
+    private static Brush? GetResourceBrush(string resourceKey)
+    {
+        return Application.Current.Resources.TryGetValue(resourceKey, out var resource) && resource is Brush brush
+            ? brush
+            : null;
     }
 }
 

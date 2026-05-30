@@ -266,7 +266,7 @@ public class ImageSharpProcessor : IImageProcessor
                 return (null, null);
             }
 
-            var corePalette = CorePalette.Of(seedColor);
+            var corePalette = CorePalette.ContentOf(seedColor);
             var lightScheme = new LightSchemeMapper().Map(corePalette);
             var darkScheme = new DarkSchemeMapper().Map(corePalette);
 
