@@ -1672,10 +1672,10 @@ Chyba: {1}</value>
     <value>Zobrazit obal alba v kompaktním přehrávači, který se objeví po kliknutí na ikonu v oznamovací oblasti.</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Header" xml:space="preserve">
-    <value>Ignore articles when sorting</value>
+    <value>Ignorovat členy při řazení</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Sort albums, artists, and songs by their first significant word (e.g. "The Beatles" sorts under B).</value>
+    <value>Seřadit alba, interprety a skladby podle jejich prvního významného slova (např. „The Beatles“ se seřadí pod B).</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>Správa dat</value>
@@ -1723,52 +1723,52 @@ Chyba: {1}</value>
     <value>Přetáhněte pro změnu pořadí zdrojů textů. Pro podrobnosti najeďte myší na každý zdroj.</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Header" xml:space="preserve">
-    <value>Show romanized lyrics</value>
+    <value>Zobrazit romanizované texty</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Description" xml:space="preserve">
-    <value>Show a smaller romanized line under supported lyrics when an installed pack matches the script.</value>
+    <value>Zobrazit menší romanizovaný řádek pod podporovanými texty, pokud nainstalovaný balíček odpovídá skriptu.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Header" xml:space="preserve">
-    <value>Language packs</value>
+    <value>Jazykové balíčky</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Description" xml:space="preserve">
-    <value>Install the languages you want romanized. Packs are signed, data-only, and stored locally.</value>
+    <value>Nainstalujte jazyky, které chcete romanizovat. Balíčky jsou podepsané, obsahují pouze data a jsou uloženy lokálně.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Refresh" xml:space="preserve">
-    <value>Refresh</value>
+    <value>Obnovit</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Install" xml:space="preserve">
-    <value>Install</value>
+    <value>Nainstalovat</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Update" xml:space="preserve">
-    <value>Update</value>
+    <value>Aktualizovat</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Remove" xml:space="preserve">
-    <value>Remove</value>
+    <value>Odebrat</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
-    <value>No compatible romanization packs are available.</value>
+    <value>Nejsou k dispozici žádné kompatibilní romanizační balíčky.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_LoadFailedFormat" xml:space="preserve">
-    <value>Could not load romanization packs: {0}</value>
+    <value>Nepodařilo se načíst romanizační balíčky: {0}</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
-    <value>Pack install failed.</value>
+    <value>Instalace balíčku selhala.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_RemoveFailed" xml:space="preserve">
-    <value>Pack removal failed.</value>
+    <value>Odstranění balíčku selhalo.</value>
   </data>
   <data name="SettingsPage_RomanizationPack_UpdateAvailable" xml:space="preserve">
-    <value>Update available</value>
+    <value>Aktualizace k dispozici</value>
   </data>
   <data name="SettingsPage_RomanizationPack_InstalledFormat" xml:space="preserve">
-    <value>Installed {0}</value>
+    <value>Nainstalováno {0}</value>
   </data>
   <data name="SettingsPage_RomanizationPack_NotInstalled" xml:space="preserve">
-    <value>Not installed</value>
+    <value>Nenainstalováno</value>
   </data>
   <data name="SettingsPage_RomanizationPack_LicenseFormat" xml:space="preserve">
-    <value>{0} license</value>
+    <value>Licence {0}</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Header" xml:space="preserve">
     <value>Export/Import seznamů skladeb</value>
@@ -1834,46 +1834,46 @@ Chyba: {1}</value>
     <value>ListenBrainz</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Description" xml:space="preserve">
-    <value>Submit your listens to ListenBrainz (an open alternative to Last.fm).</value>
+    <value>Odesílat vaše poslechy na ListenBrainz (otevřená alternativa k Last.fm).</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TokenLabel" xml:space="preserve">
-    <value>User Token</value>
+    <value>Uživatelský token</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TokenPlaceholder" xml:space="preserve">
-    <value>Paste your token from listenbrainz.org/settings</value>
+    <value>Vložte svůj token z listenbrainz.org/settings</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TestConnection" xml:space="preserve">
-    <value>Test connection</value>
+    <value>Test připojení</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Connected" xml:space="preserve">
-    <value>Connected as {0}</value>
+    <value>Připojeno jako {0}</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ConnectionFailed" xml:space="preserve">
-    <value>Connection failed: {0}</value>
+    <value>Připojení selhalo: {0}</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ScrobblingToggle" xml:space="preserve">
-    <value>Submit listens (scrobbling)</value>
+    <value>Odesílat poslechy (scrobbling)</value>
   </data>
   <data name="SettingsPage_ListenBrainz_NowPlayingToggle" xml:space="preserve">
-    <value>Submit "now playing" updates</value>
+    <value>Odesílat aktualizace "právě hraje"</value>
   </data>
   <data name="SettingsPage_ListenBrainz_AdvancedHeader" xml:space="preserve">
-    <value>Advanced</value>
+    <value>Pokročilé</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ServerUrlLabel" xml:space="preserve">
-    <value>Server URL</value>
+    <value>URL serveru</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ServerUrlPlaceholder" xml:space="preserve">
     <value>https://api.listenbrainz.org</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Disconnect_Title" xml:space="preserve">
-    <value>Disconnect from ListenBrainz?</value>
+    <value>Odpojit se od ListenBrainz?</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Disconnect_Content" xml:space="preserve">
-    <value>This will remove your saved token. You can reconnect at any time.</value>
+    <value>Tímto odstraníte uložený token. Kdykoli se můžete znovu připojit.</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Disconnect_Button" xml:space="preserve">
-    <value>Disconnect</value>
+    <value>Odpojit</value>
   </data>
   <data name="SettingsPage_Discord_Header" xml:space="preserve">
     <value>Discord</value>

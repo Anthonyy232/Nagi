@@ -1661,10 +1661,10 @@
     <value>แสดงหน้าปกในเครื่องเล่นขนาดเล็กที่ปรากฏขึ้นเมื่อคลิกไอคอนถาดระบบ</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Header" xml:space="preserve">
-    <value>Ignore articles when sorting</value>
+    <value>ละเว้นคำนำหน้านามเมื่อจัดเรียง</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Sort albums, artists, and songs by their first significant word (e.g. "The Beatles" sorts under B).</value>
+    <value>จัดเรียงอัลบั้ม, ศิลปิน และเพลงตามคำสำคัญแรก (เช่น "The Beatles" จะถูกจัดเรียงภายใต้ตัวอักษร B)</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>การจัดการข้อมูล</value>
@@ -1712,52 +1712,52 @@
     <value>ลากเพื่อจัดลำดับแหล่งที่มาของเนื้อเพลงใหม่ เลื่อนเมาส์ไปที่แต่ละแหล่งที่มาเพื่อดูรายละเอียด</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Header" xml:space="preserve">
-    <value>Show romanized lyrics</value>
+    <value>แสดงเนื้อเพลงโรมาไนซ์</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Description" xml:space="preserve">
-    <value>Show a smaller romanized line under supported lyrics when an installed pack matches the script.</value>
+    <value>แสดงบรรทัดโรมาไนซ์ที่เล็กกว่าใต้เนื้อเพลงที่รองรับเมื่อมีการติดตั้งแพ็กที่ตรงกับสคริปต์</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Header" xml:space="preserve">
-    <value>Language packs</value>
+    <value>ชุดภาษา</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Description" xml:space="preserve">
-    <value>Install the languages you want romanized. Packs are signed, data-only, and stored locally.</value>
+    <value>ติดตั้งภาษาที่คุณต้องการให้เป็นโรมาไนซ์ ชุดภาษาจะถูกลงนาม เป็นข้อมูลเท่านั้น และจัดเก็บไว้ในเครื่อง</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Refresh" xml:space="preserve">
-    <value>Refresh</value>
+    <value>รีเฟรช</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Install" xml:space="preserve">
-    <value>Install</value>
+    <value>ติดตั้ง</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Update" xml:space="preserve">
-    <value>Update</value>
+    <value>อัปเดต</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Remove" xml:space="preserve">
-    <value>Remove</value>
+    <value>ลบ</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
-    <value>No compatible romanization packs are available.</value>
+    <value>ไม่มีชุดภาษาโรมาไนซ์ที่เข้ากันได้</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_LoadFailedFormat" xml:space="preserve">
-    <value>Could not load romanization packs: {0}</value>
+    <value>ไม่สามารถโหลดชุดภาษาโรมาไนซ์ได้: {0}</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
-    <value>Pack install failed.</value>
+    <value>การติดตั้งชุดภาษาล้มเหลว</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_RemoveFailed" xml:space="preserve">
-    <value>Pack removal failed.</value>
+    <value>การลบชุดภาษาล้มเหลว</value>
   </data>
   <data name="SettingsPage_RomanizationPack_UpdateAvailable" xml:space="preserve">
-    <value>Update available</value>
+    <value>มีการอัปเดต</value>
   </data>
   <data name="SettingsPage_RomanizationPack_InstalledFormat" xml:space="preserve">
-    <value>Installed {0}</value>
+    <value>ติดตั้งแล้ว {0}</value>
   </data>
   <data name="SettingsPage_RomanizationPack_NotInstalled" xml:space="preserve">
-    <value>Not installed</value>
+    <value>ยังไม่ได้ติดตั้ง</value>
   </data>
   <data name="SettingsPage_RomanizationPack_LicenseFormat" xml:space="preserve">
-    <value>{0} license</value>
+    <value>ใบอนุญาต {0}</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Header" xml:space="preserve">
     <value>ส่งออก/นำเข้าเพลย์ลิสต์</value>
@@ -1820,49 +1820,49 @@
     <value>แสดงให้เพื่อนของคุณบน Last.fm เห็นสิ่งที่คุณกำลังฟังอยู่ในปัจจุบันแบบเรียลไทม์</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Header" xml:space="preserve">
-    <value>ListenBrainz</value>
+    <value>ลิสเทนเบรนซ์</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Description" xml:space="preserve">
-    <value>Submit your listens to ListenBrainz (an open alternative to Last.fm).</value>
+    <value>ส่งข้อมูลการฟังของคุณไปยัง ListenBrainz (ทางเลือกโอเพ่นซอร์สของ Last.fm)</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TokenLabel" xml:space="preserve">
-    <value>User Token</value>
+    <value>โทเค็นผู้ใช้</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TokenPlaceholder" xml:space="preserve">
-    <value>Paste your token from listenbrainz.org/settings</value>
+    <value>วางโทเค็นของคุณจาก listenbrainz.org/settings</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TestConnection" xml:space="preserve">
-    <value>Test connection</value>
+    <value>ทดสอบการเชื่อมต่อ</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Connected" xml:space="preserve">
-    <value>Connected as {0}</value>
+    <value>เชื่อมต่อในฐานะ {0}</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ConnectionFailed" xml:space="preserve">
-    <value>Connection failed: {0}</value>
+    <value>การเชื่อมต่อล้มเหลว: {0}</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ScrobblingToggle" xml:space="preserve">
-    <value>Submit listens (scrobbling)</value>
+    <value>ส่งข้อมูลการฟัง (scrobbling)</value>
   </data>
   <data name="SettingsPage_ListenBrainz_NowPlayingToggle" xml:space="preserve">
-    <value>Submit "now playing" updates</value>
+    <value>ส่งการอัปเดต "กำลังเล่น"</value>
   </data>
   <data name="SettingsPage_ListenBrainz_AdvancedHeader" xml:space="preserve">
-    <value>Advanced</value>
+    <value>ขั้นสูง</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ServerUrlLabel" xml:space="preserve">
-    <value>Server URL</value>
+    <value>URL เซิร์ฟเวอร์</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ServerUrlPlaceholder" xml:space="preserve">
     <value>https://api.listenbrainz.org</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Disconnect_Title" xml:space="preserve">
-    <value>Disconnect from ListenBrainz?</value>
+    <value>ยกเลิกการเชื่อมต่อจาก ListenBrainz?</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Disconnect_Content" xml:space="preserve">
-    <value>This will remove your saved token. You can reconnect at any time.</value>
+    <value>การดำเนินการนี้จะลบโทเค็นที่บันทึกไว้ของคุณ คุณสามารถเชื่อมต่อใหม่ได้ตลอดเวลา</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Disconnect_Button" xml:space="preserve">
-    <value>Disconnect</value>
+    <value>ยกเลิกการเชื่อมต่อ</value>
   </data>
   <data name="SettingsPage_Discord_Header" xml:space="preserve">
     <value>Discord</value>

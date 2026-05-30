@@ -1674,10 +1674,10 @@
     <value>ட்ரே ஐகானைக் கிளிக் செய்யும்போது தோன்றும் சிறிய பிளேயரில் அட்டைப் படத்தைக் காண்பி.</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Header" xml:space="preserve">
-    <value>Ignore articles when sorting</value>
+    <value>வரிசைப்படுத்தும் போது அடைமொழிகளைப் புறக்கணிக்கவும்</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Sort albums, artists, and songs by their first significant word (e.g. "The Beatles" sorts under B).</value>
+    <value>ஆல்பங்கள், கலைஞர்கள் மற்றும் பாடல்களை அவற்றின் முதல் குறிப்பிடத்தக்க வார்த்தையின்படி வரிசைப்படுத்தவும் (எ.கா., "தி பீட்டில்ஸ்" B இன் கீழ் வரிசைப்படுத்தப்படும்).</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>தரவு மேலாண்மை</value>
@@ -1725,52 +1725,52 @@
     <value>பாடல் வரிகளின் ஆதாரங்களை மறுவரிசைப்படுத்த இழுக்கவும். விவரங்களுக்கு ஒவ்வொரு ஆதாரத்தின் மீதும் வட்டமிடுங்கள்.</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Header" xml:space="preserve">
-    <value>Show romanized lyrics</value>
+    <value>ரோமனியப்படுத்தப்பட்ட வரிகளைக் காட்டு</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Description" xml:space="preserve">
-    <value>Show a smaller romanized line under supported lyrics when an installed pack matches the script.</value>
+    <value>நிறுவப்பட்ட தொகுப்பு ஸ்கிரிப்டுடன் பொருந்தும்போது, ஆதரிக்கப்படும் வரிகளுக்குக் கீழ் ஒரு சிறிய ரோமனியப்படுத்தப்பட்ட வரியைக் காட்டு.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Header" xml:space="preserve">
-    <value>Language packs</value>
+    <value>மொழித் தொகுப்புகள்</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Description" xml:space="preserve">
-    <value>Install the languages you want romanized. Packs are signed, data-only, and stored locally.</value>
+    <value>நீங்கள் ரோமனியப்படுத்த விரும்பும் மொழிகளை நிறுவவும். தொகுப்புகள் கையொப்பமிடப்பட்டவை, தரவு-மட்டும், மற்றும் உள்நாட்டில் சேமிக்கப்படும்.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Refresh" xml:space="preserve">
-    <value>Refresh</value>
+    <value>புதுப்பி</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Install" xml:space="preserve">
-    <value>Install</value>
+    <value>நிறுவு</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Update" xml:space="preserve">
-    <value>Update</value>
+    <value>புதுப்பி</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Remove" xml:space="preserve">
-    <value>Remove</value>
+    <value>நீக்கு</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
-    <value>No compatible romanization packs are available.</value>
+    <value>இணக்கமான ரோமனியப்படுத்தல் தொகுப்புகள் எதுவும் இல்லை.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_LoadFailedFormat" xml:space="preserve">
-    <value>Could not load romanization packs: {0}</value>
+    <value>ரோமனியப்படுத்தல் தொகுப்புகளை ஏற்ற முடியவில்லை: {0}</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
-    <value>Pack install failed.</value>
+    <value>தொகுப்பு நிறுவல் தோல்வியடைந்தது.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_RemoveFailed" xml:space="preserve">
-    <value>Pack removal failed.</value>
+    <value>தொகுப்பு நீக்குதல் தோல்வியடைந்தது.</value>
   </data>
   <data name="SettingsPage_RomanizationPack_UpdateAvailable" xml:space="preserve">
-    <value>Update available</value>
+    <value>புதுப்பிப்பு உள்ளது</value>
   </data>
   <data name="SettingsPage_RomanizationPack_InstalledFormat" xml:space="preserve">
-    <value>Installed {0}</value>
+    <value>நிறுவப்பட்டது {0}</value>
   </data>
   <data name="SettingsPage_RomanizationPack_NotInstalled" xml:space="preserve">
-    <value>Not installed</value>
+    <value>நிறுவப்படவில்லை</value>
   </data>
   <data name="SettingsPage_RomanizationPack_LicenseFormat" xml:space="preserve">
-    <value>{0} license</value>
+    <value>{0} உரிமம்</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Header" xml:space="preserve">
     <value>பிளேலிஸ்ட்களை ஏற்றுமதி/இறக்குமதி செய்</value>
@@ -1833,49 +1833,49 @@
     <value>Last.fm இல் உங்கள் நண்பர்களுக்கு நீங்கள் தற்போது எதைக் கேட்கிறீர்கள் என்பதை உண்மையான நேரத்தில் காட்டுங்கள்.</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Header" xml:space="preserve">
-    <value>ListenBrainz</value>
+    <value>லிசன் பிரைன்ஸ்</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Description" xml:space="preserve">
-    <value>Submit your listens to ListenBrainz (an open alternative to Last.fm).</value>
+    <value>உங்கள் கேட்புகளை லிசன் பிரைன்ஸ்-க்குச் சமர்ப்பிக்கவும் (Last.fm-க்கு ஒரு திறந்த மாற்று).</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TokenLabel" xml:space="preserve">
-    <value>User Token</value>
+    <value>பயனர் டோக்கன்</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TokenPlaceholder" xml:space="preserve">
-    <value>Paste your token from listenbrainz.org/settings</value>
+    <value>listenbrainz.org/settings இலிருந்து உங்கள் டோக்கனை ஒட்டவும்</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TestConnection" xml:space="preserve">
-    <value>Test connection</value>
+    <value>இணைப்பைச் சோதிக்கவும்</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Connected" xml:space="preserve">
-    <value>Connected as {0}</value>
+    <value>{0} ஆக இணைக்கப்பட்டுள்ளது</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ConnectionFailed" xml:space="preserve">
-    <value>Connection failed: {0}</value>
+    <value>இணைப்பு தோல்வியடைந்தது: {0}</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ScrobblingToggle" xml:space="preserve">
-    <value>Submit listens (scrobbling)</value>
+    <value>கேட்புகளைச் சமர்ப்பி (ஸ்க்ரோப்லிங்)</value>
   </data>
   <data name="SettingsPage_ListenBrainz_NowPlayingToggle" xml:space="preserve">
-    <value>Submit "now playing" updates</value>
+    <value>"தற்போது இயங்கிக் கொண்டிருக்கிறது" புதுப்பிப்புகளைச் சமர்ப்பி</value>
   </data>
   <data name="SettingsPage_ListenBrainz_AdvancedHeader" xml:space="preserve">
-    <value>Advanced</value>
+    <value>மேம்பட்டது</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ServerUrlLabel" xml:space="preserve">
-    <value>Server URL</value>
+    <value>சேவையக URL</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ServerUrlPlaceholder" xml:space="preserve">
     <value>https://api.listenbrainz.org</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Disconnect_Title" xml:space="preserve">
-    <value>Disconnect from ListenBrainz?</value>
+    <value>லிசன் பிரைன்ஸ்-லிருந்து துண்டிக்கவா?</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Disconnect_Content" xml:space="preserve">
-    <value>This will remove your saved token. You can reconnect at any time.</value>
+    <value>இது உங்கள் சேமித்த டோக்கனை அகற்றும். நீங்கள் எந்த நேரத்திலும் மீண்டும் இணைக்கலாம்.</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Disconnect_Button" xml:space="preserve">
-    <value>Disconnect</value>
+    <value>துண்டி</value>
   </data>
   <data name="SettingsPage_Discord_Header" xml:space="preserve">
     <value>டிஸ்கார்ட்</value>

@@ -1674,10 +1674,10 @@ Pogreška: {1}</value>
     <value>Prikažite naslovnicu u kompaktnom reproduktoru koji se pojavljuje kada kliknete ikonu u sistemskoj traci.</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Header" xml:space="preserve">
-    <value>Ignore articles when sorting</value>
+    <value>Zanemari članke prilikom sortiranja</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Sort albums, artists, and songs by their first significant word (e.g. "The Beatles" sorts under B).</value>
+    <value>Sortiraj albume, izvođače i pjesme prema prvoj značajnoj riječi (npr. "The Beatles" sortira se pod B).</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>Upravljanje podacima</value>
@@ -1725,52 +1725,52 @@ Pogreška: {1}</value>
     <value>Povucite za preuređivanje izvora stihova. Zadržite pokazivač miša iznad svakog izvora za detalje.</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Header" xml:space="preserve">
-    <value>Show romanized lyrics</value>
+    <value>Prikaži romanizirane tekstove pjesama</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Description" xml:space="preserve">
-    <value>Show a smaller romanized line under supported lyrics when an installed pack matches the script.</value>
+    <value>Prikažite manji romanizirani redak ispod podržanih tekstova pjesama kada instalirani paket odgovara pismu.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Header" xml:space="preserve">
-    <value>Language packs</value>
+    <value>Jezični paketi</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Description" xml:space="preserve">
-    <value>Install the languages you want romanized. Packs are signed, data-only, and stored locally.</value>
+    <value>Instalirajte jezike koje želite romanizirati. Paketi su potpisani, sadrže samo podatke i pohranjuju se lokalno.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Refresh" xml:space="preserve">
-    <value>Refresh</value>
+    <value>Osvježi</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Install" xml:space="preserve">
-    <value>Install</value>
+    <value>Instaliraj</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Update" xml:space="preserve">
-    <value>Update</value>
+    <value>Ažuriraj</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Remove" xml:space="preserve">
-    <value>Remove</value>
+    <value>Ukloni</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
-    <value>No compatible romanization packs are available.</value>
+    <value>Nema dostupnih kompatibilnih paketa za romanizaciju.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_LoadFailedFormat" xml:space="preserve">
-    <value>Could not load romanization packs: {0}</value>
+    <value>Nije moguće učitati pakete za romanizaciju: {0}</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
-    <value>Pack install failed.</value>
+    <value>Instalacija paketa nije uspjela.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_RemoveFailed" xml:space="preserve">
-    <value>Pack removal failed.</value>
+    <value>Uklanjanje paketa nije uspjelo.</value>
   </data>
   <data name="SettingsPage_RomanizationPack_UpdateAvailable" xml:space="preserve">
-    <value>Update available</value>
+    <value>Dostupno ažuriranje</value>
   </data>
   <data name="SettingsPage_RomanizationPack_InstalledFormat" xml:space="preserve">
-    <value>Installed {0}</value>
+    <value>Instalirano {0}</value>
   </data>
   <data name="SettingsPage_RomanizationPack_NotInstalled" xml:space="preserve">
-    <value>Not installed</value>
+    <value>Nije instalirano</value>
   </data>
   <data name="SettingsPage_RomanizationPack_LicenseFormat" xml:space="preserve">
-    <value>{0} license</value>
+    <value>Licenca za {0}</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Header" xml:space="preserve">
     <value>Izvoz/Uvoz popisa za reprodukciju</value>
@@ -1833,49 +1833,49 @@ Pogreška: {1}</value>
     <value>Prikažite svojim prijateljima na Last.fm-u što trenutno slušate u stvarnom vremenu.</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Header" xml:space="preserve">
-    <value>ListenBrainz</value>
+    <value>Postavke ListenBrainz</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Description" xml:space="preserve">
-    <value>Submit your listens to ListenBrainz (an open alternative to Last.fm).</value>
+    <value>Pošaljite svoja slušanja na ListenBrainz (otvorena alternativa Last.fm-u).</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TokenLabel" xml:space="preserve">
-    <value>User Token</value>
+    <value>Korisnički token</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TokenPlaceholder" xml:space="preserve">
-    <value>Paste your token from listenbrainz.org/settings</value>
+    <value>Zalijepite svoj token s listenbrainz.org/settings</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TestConnection" xml:space="preserve">
-    <value>Test connection</value>
+    <value>Testiraj vezu</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Connected" xml:space="preserve">
-    <value>Connected as {0}</value>
+    <value>Povezano kao {0}</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ConnectionFailed" xml:space="preserve">
-    <value>Connection failed: {0}</value>
+    <value>Veza nije uspjela: {0}</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ScrobblingToggle" xml:space="preserve">
-    <value>Submit listens (scrobbling)</value>
+    <value>Pošalji slušanja (scrobbling)</value>
   </data>
   <data name="SettingsPage_ListenBrainz_NowPlayingToggle" xml:space="preserve">
-    <value>Submit "now playing" updates</value>
+    <value>Pošalji ažuriranja "trenutno se svira"</value>
   </data>
   <data name="SettingsPage_ListenBrainz_AdvancedHeader" xml:space="preserve">
-    <value>Advanced</value>
+    <value>Napredno</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ServerUrlLabel" xml:space="preserve">
-    <value>Server URL</value>
+    <value>URL poslužitelja</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ServerUrlPlaceholder" xml:space="preserve">
     <value>https://api.listenbrainz.org</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Disconnect_Title" xml:space="preserve">
-    <value>Disconnect from ListenBrainz?</value>
+    <value>Želite se odspojiti s ListenBrainz-a?</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Disconnect_Content" xml:space="preserve">
-    <value>This will remove your saved token. You can reconnect at any time.</value>
+    <value>Ovo će ukloniti vaš spremljeni token. Možete se ponovno povezati bilo kada.</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Disconnect_Button" xml:space="preserve">
-    <value>Disconnect</value>
+    <value>Odspoji</value>
   </data>
   <data name="SettingsPage_Discord_Header" xml:space="preserve">
     <value>Discord</value>

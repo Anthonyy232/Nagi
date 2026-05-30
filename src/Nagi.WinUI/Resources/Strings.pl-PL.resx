@@ -1661,10 +1661,10 @@
     <value>Wyświetl okładkę albumu w kompaktowym odtwarzaczu, który pojawia się po kliknięciu ikony w zasobniku.</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Header" xml:space="preserve">
-    <value>Ignore articles when sorting</value>
+    <value>Ignoruj artykuły podczas sortowania</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Sort albums, artists, and songs by their first significant word (e.g. "The Beatles" sorts under B).</value>
+    <value>Sortuj albumy, artystów i utwory według ich pierwszego znaczącego słowa (np. "The Beatles" jest sortowane pod literą B).</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>Zarządzanie danymi</value>
@@ -1712,52 +1712,52 @@
     <value>Przeciągnij, aby zmienić kolejność źródeł tekstów piosenek. Najedź kursorem na każde źródło, aby uzyskać szczegóły.</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Header" xml:space="preserve">
-    <value>Show romanized lyrics</value>
+    <value>Pokaż zromanizowane teksty</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Description" xml:space="preserve">
-    <value>Show a smaller romanized line under supported lyrics when an installed pack matches the script.</value>
+    <value>Pokaż mniejszą zromanizowaną linię pod obsługiwanymi tekstami, gdy zainstalowany pakiet pasuje do skryptu.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Header" xml:space="preserve">
-    <value>Language packs</value>
+    <value>Pakiety językowe</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Description" xml:space="preserve">
-    <value>Install the languages you want romanized. Packs are signed, data-only, and stored locally.</value>
+    <value>Zainstaluj języki, które chcesz zromanizować. Pakiety są podpisane, zawierają tylko dane i są przechowywane lokalnie.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Refresh" xml:space="preserve">
-    <value>Refresh</value>
+    <value>Odśwież</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Install" xml:space="preserve">
-    <value>Install</value>
+    <value>Zainstaluj</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Update" xml:space="preserve">
-    <value>Update</value>
+    <value>Aktualizuj</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Remove" xml:space="preserve">
-    <value>Remove</value>
+    <value>Usuń</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
-    <value>No compatible romanization packs are available.</value>
+    <value>Brak dostępnych zgodnych pakietów romanizacji.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_LoadFailedFormat" xml:space="preserve">
-    <value>Could not load romanization packs: {0}</value>
+    <value>Nie można załadować pakietów romanizacji: {0}</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
-    <value>Pack install failed.</value>
+    <value>Instalacja pakietu nie powiodła się.</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_RemoveFailed" xml:space="preserve">
-    <value>Pack removal failed.</value>
+    <value>Usunięcie pakietu nie powiodło się.</value>
   </data>
   <data name="SettingsPage_RomanizationPack_UpdateAvailable" xml:space="preserve">
-    <value>Update available</value>
+    <value>Dostępna aktualizacja</value>
   </data>
   <data name="SettingsPage_RomanizationPack_InstalledFormat" xml:space="preserve">
-    <value>Installed {0}</value>
+    <value>Zainstalowano {0}</value>
   </data>
   <data name="SettingsPage_RomanizationPack_NotInstalled" xml:space="preserve">
-    <value>Not installed</value>
+    <value>Nie zainstalowano</value>
   </data>
   <data name="SettingsPage_RomanizationPack_LicenseFormat" xml:space="preserve">
-    <value>{0} license</value>
+    <value>Licencja {0}</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Header" xml:space="preserve">
     <value>Eksport/Import playlist</value>
@@ -1823,46 +1823,46 @@
     <value>ListenBrainz</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Description" xml:space="preserve">
-    <value>Submit your listens to ListenBrainz (an open alternative to Last.fm).</value>
+    <value>Prześlij swoje odsłuchania do ListenBrainz (otwarta alternatywa dla Last.fm).</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TokenLabel" xml:space="preserve">
-    <value>User Token</value>
+    <value>Token użytkownika</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TokenPlaceholder" xml:space="preserve">
-    <value>Paste your token from listenbrainz.org/settings</value>
+    <value>Wklej swój token z listenbrainz.org/settings</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TestConnection" xml:space="preserve">
-    <value>Test connection</value>
+    <value>Testuj połączenie</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Connected" xml:space="preserve">
-    <value>Connected as {0}</value>
+    <value>Połączono jako {0}</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ConnectionFailed" xml:space="preserve">
-    <value>Connection failed: {0}</value>
+    <value>Połączenie nie powiodło się: {0}</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ScrobblingToggle" xml:space="preserve">
-    <value>Submit listens (scrobbling)</value>
+    <value>Prześlij odsłuchania (scrobblowanie)</value>
   </data>
   <data name="SettingsPage_ListenBrainz_NowPlayingToggle" xml:space="preserve">
-    <value>Submit "now playing" updates</value>
+    <value>Przesyłaj aktualizacje "teraz odtwarzane"</value>
   </data>
   <data name="SettingsPage_ListenBrainz_AdvancedHeader" xml:space="preserve">
-    <value>Advanced</value>
+    <value>Zaawansowane</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ServerUrlLabel" xml:space="preserve">
-    <value>Server URL</value>
+    <value>Adres URL serwera</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ServerUrlPlaceholder" xml:space="preserve">
     <value>https://api.listenbrainz.org</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Disconnect_Title" xml:space="preserve">
-    <value>Disconnect from ListenBrainz?</value>
+    <value>Odłączyć się od ListenBrainz?</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Disconnect_Content" xml:space="preserve">
-    <value>This will remove your saved token. You can reconnect at any time.</value>
+    <value>Spowoduje to usunięcie zapisanego tokenu. Możesz ponownie połączyć się w dowolnym momencie.</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Disconnect_Button" xml:space="preserve">
-    <value>Disconnect</value>
+    <value>Odłącz</value>
   </data>
   <data name="SettingsPage_Discord_Header" xml:space="preserve">
     <value>Discord</value>
