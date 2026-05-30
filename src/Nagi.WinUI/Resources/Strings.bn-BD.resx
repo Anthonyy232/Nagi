@@ -1668,10 +1668,10 @@
     <value>ট্রে আইকনে ক্লিক করলে প্রদর্শিত কম্প্যাক্ট প্লেয়ারে কভার আর্ট দেখান।</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Header" xml:space="preserve">
-    <value>Ignore articles when sorting</value>
+    <value>সাজানোর সময় আর্টিকেল উপেক্ষা করুন</value>
   </data>
   <data name="SettingsPage_IgnoreLeadingArticles_Description" xml:space="preserve">
-    <value>Sort albums, artists, and songs by their first significant word (e.g. "The Beatles" sorts under B).</value>
+    <value>অ্যালবাম, শিল্পী এবং গান তাদের প্রথম গুরুত্বপূর্ণ শব্দ দ্বারা সাজান (যেমন, "The Beatles" B এর অধীনে সাজানো হবে)।</value>
   </data>
   <data name="SettingsPage_Section_Data" xml:space="preserve">
     <value>ডেটা ব্যবস্থাপনা</value>
@@ -1719,52 +1719,52 @@
     <value>লিরিক্স উত্সগুলির ক্রম পরিবর্তন করতে টেনে আনুন। বিস্তারিত জানার জন্য প্রতিটি উত্সের উপর হোভার করুন।</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Header" xml:space="preserve">
-    <value>Show romanized lyrics</value>
+    <value>রোমানীকৃত লিরিক্স দেখান</value>
   </data>
   <data name="SettingsPage_RomanizedLyrics_Description" xml:space="preserve">
-    <value>Show a smaller romanized line under supported lyrics when an installed pack matches the script.</value>
+    <value>ইনস্টল করা প্যাক স্ক্রিপ্টের সাথে মেলে গেলে সমর্থিত লিরিক্সের নিচে একটি ছোট রোমানীকৃত লাইন দেখান।</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Header" xml:space="preserve">
-    <value>Language packs</value>
+    <value>ভাষা প্যাক</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Description" xml:space="preserve">
-    <value>Install the languages you want romanized. Packs are signed, data-only, and stored locally.</value>
+    <value>আপনি যে ভাষাগুলি রোমানীকৃত করতে চান তা ইনস্টল করুন। প্যাকগুলি স্বাক্ষরিত, ডেটা-শুধুমাত্র এবং স্থানীয়ভাবে সংরক্ষিত।</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Refresh" xml:space="preserve">
-    <value>Refresh</value>
+    <value>রিফ্রেশ</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Install" xml:space="preserve">
-    <value>Install</value>
+    <value>ইনস্টল করুন</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Update" xml:space="preserve">
-    <value>Update</value>
+    <value>আপডেট</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_Remove" xml:space="preserve">
-    <value>Remove</value>
+    <value>সরান</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_None" xml:space="preserve">
-    <value>No compatible romanization packs are available.</value>
+    <value>কোনো সামঞ্জস্যপূর্ণ রোমানাইজেশন প্যাক উপলব্ধ নেই।</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_LoadFailedFormat" xml:space="preserve">
-    <value>Could not load romanization packs: {0}</value>
+    <value>রোমানাইজেশন প্যাক লোড করা যায়নি: {0}</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_InstallFailed" xml:space="preserve">
-    <value>Pack install failed.</value>
+    <value>প্যাক ইনস্টল ব্যর্থ হয়েছে।</value>
   </data>
   <data name="SettingsPage_RomanizationPacks_RemoveFailed" xml:space="preserve">
-    <value>Pack removal failed.</value>
+    <value>প্যাক অপসারণ ব্যর্থ হয়েছে।</value>
   </data>
   <data name="SettingsPage_RomanizationPack_UpdateAvailable" xml:space="preserve">
-    <value>Update available</value>
+    <value>আপডেট উপলব্ধ</value>
   </data>
   <data name="SettingsPage_RomanizationPack_InstalledFormat" xml:space="preserve">
-    <value>Installed {0}</value>
+    <value>ইনস্টল করা হয়েছে {0}</value>
   </data>
   <data name="SettingsPage_RomanizationPack_NotInstalled" xml:space="preserve">
-    <value>Not installed</value>
+    <value>ইনস্টল করা হয়নি</value>
   </data>
   <data name="SettingsPage_RomanizationPack_LicenseFormat" xml:space="preserve">
-    <value>{0} license</value>
+    <value>{0} লাইসেন্স</value>
   </data>
   <data name="SettingsPage_PlaylistsIO_Header" xml:space="preserve">
     <value>প্লেলিস্ট রপ্তানি/আমদানি করুন</value>
@@ -1827,49 +1827,49 @@
     <value>Last.fm-এ আপনার বন্ধুদের দেখান যে আপনি বর্তমানে রিয়েল-টাইমে কী শুনছেন।</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Header" xml:space="preserve">
-    <value>ListenBrainz</value>
+    <value>লিসেনব্রেইঞ্জ</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Description" xml:space="preserve">
-    <value>Submit your listens to ListenBrainz (an open alternative to Last.fm).</value>
+    <value>আপনার শোনাগুলো লিসেনব্রেইঞ্জে জমা দিন (Last.fm এর একটি উন্মুক্ত বিকল্প)।</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TokenLabel" xml:space="preserve">
-    <value>User Token</value>
+    <value>ব্যবহারকারী টোকেন</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TokenPlaceholder" xml:space="preserve">
-    <value>Paste your token from listenbrainz.org/settings</value>
+    <value>আপনার টোকেন listenbrainz.org/settings থেকে পেস্ট করুন</value>
   </data>
   <data name="SettingsPage_ListenBrainz_TestConnection" xml:space="preserve">
-    <value>Test connection</value>
+    <value>সংযোগ পরীক্ষা করুন</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Connected" xml:space="preserve">
-    <value>Connected as {0}</value>
+    <value>{0} হিসাবে সংযুক্ত</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ConnectionFailed" xml:space="preserve">
-    <value>Connection failed: {0}</value>
+    <value>সংযোগ ব্যর্থ হয়েছে: {0}</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ScrobblingToggle" xml:space="preserve">
-    <value>Submit listens (scrobbling)</value>
+    <value>শোনা জমা দিন (স্ক্রবলিং)</value>
   </data>
   <data name="SettingsPage_ListenBrainz_NowPlayingToggle" xml:space="preserve">
-    <value>Submit "now playing" updates</value>
+    <value>"এখন চলছে" আপডেট জমা দিন</value>
   </data>
   <data name="SettingsPage_ListenBrainz_AdvancedHeader" xml:space="preserve">
-    <value>Advanced</value>
+    <value>উন্নত</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ServerUrlLabel" xml:space="preserve">
-    <value>Server URL</value>
+    <value>সার্ভার ইউআরএল</value>
   </data>
   <data name="SettingsPage_ListenBrainz_ServerUrlPlaceholder" xml:space="preserve">
     <value>https://api.listenbrainz.org</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Disconnect_Title" xml:space="preserve">
-    <value>Disconnect from ListenBrainz?</value>
+    <value>লিসেনব্রেইঞ্জ থেকে সংযোগ বিচ্ছিন্ন করবেন?</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Disconnect_Content" xml:space="preserve">
-    <value>This will remove your saved token. You can reconnect at any time.</value>
+    <value>এটি আপনার সংরক্ষিত টোকেন মুছে ফেলবে। আপনি যেকোনো সময় পুনরায় সংযোগ করতে পারবেন।</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Disconnect_Button" xml:space="preserve">
-    <value>Disconnect</value>
+    <value>সংযোগ বিচ্ছিন্ন করুন</value>
   </data>
   <data name="SettingsPage_Discord_Header" xml:space="preserve">
     <value>ডিসকর্ড</value>
