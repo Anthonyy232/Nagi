@@ -463,16 +463,29 @@ public class LrcServiceTests
     [Fact]
     public void ParseLyrics_WithNetEaseThreeDigitMilliseconds_NormalizesToTwoDigits()
     {
-        // NetEase uses [mm:ss.fff] (3-digit ms). The service strips the trailing digit
-        // to produce [mm:ss.ff] which the LRC parser can handle.
         var content = "[00:01.123]First Line\n[00:05.456]Second Line";
 
         var result = _lrcService.ParseLyrics(content);
 
-        // Should parse successfully (not return empty) because normalization succeeded
         result.IsEmpty.Should().BeFalse();
         result.Lines.Should().HaveCount(2);
         result.Lines[0].Text.Should().Be("First Line");
+        result.Lines[0].StartTime.Should().Be(TimeSpan.FromMilliseconds(1123));
+        result.Lines[1].StartTime.Should().Be(TimeSpan.FromMilliseconds(5456));
+    }
+
+    [Fact]
+    public void ParseLyrics_WithRepeatedTimestampsAndOffset_ExpandsAndAppliesOffset()
+    {
+        var content = "[offset:250]\n[00:01.00][00:02.00]Same Line";
+
+        var result = _lrcService.ParseLyrics(content);
+
+        result.Lines.Should().HaveCount(2);
+        result.Lines.Select(line => line.Text).Should().Equal("Same Line", "Same Line");
+        result.Lines.Select(line => line.StartTime).Should().Equal(
+            TimeSpan.FromMilliseconds(1250),
+            TimeSpan.FromMilliseconds(2250));
     }
 
     #endregion

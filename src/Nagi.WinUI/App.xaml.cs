@@ -352,13 +352,14 @@ public partial class App : Application
             var trayTask = Services.GetRequiredService<TrayIconViewModel>().InitializeAsync();
             var appInfoTask = Services.GetRequiredService<IAppInfoService>().InitializeAsync();
 
+            // playback and settings both need EF ready. LoadSettingsAsync also reads
+            // CurrentEqualizerSettings from the playback service, so settings starts after playback.
+            // Offline scrobbling queries ListenHistory, including columns added by recent migrations,
+            // so start it only after database migration/backfill has completed.
+            await dbTask;
             var offlineScrobbleService = Services.GetRequiredService<IOfflineScrobbleService>();
             offlineScrobbleService.Start();
             var scrobbleTask = offlineScrobbleService.ProcessQueueAsync();
-
-            // playback and settings both need EF ready. LoadSettingsAsync also reads
-            // CurrentEqualizerSettings from the playback service, so settings starts after playback.
-            await dbTask;
             var playbackTask = Services.GetRequiredService<IMusicPlaybackService>().InitializeAsync(restoreSession);
             await playbackTask;
             var settingsTask = Services.GetRequiredService<SettingsViewModel>().LoadSettingsAsync();

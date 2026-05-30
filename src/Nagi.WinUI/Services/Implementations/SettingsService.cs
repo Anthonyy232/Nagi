@@ -239,6 +239,12 @@ public class SettingsService : IUISettingsService, IDisposable
 
     private Task SetValueAsync<T>(string key, T value)
     {
+        if (value is null)
+        {
+            _localSettings!.Values.Remove(key);
+            return Task.CompletedTask;
+        }
+
         if (typeof(T).IsClass && typeof(T) != typeof(string))
             _localSettings!.Values[key] = JsonSerializer.Serialize(value, _serializerOptions);
         else

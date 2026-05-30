@@ -6,6 +6,8 @@ using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Implementations;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 using Xunit;
 
 namespace Nagi.Core.Tests;
@@ -32,7 +34,7 @@ public class ImageSharpProcessorTests
         _pathConfig.AlbumArtCachePath.Returns(AlbumArtPath);
 
         _fileSystem.Combine(Arg.Any<string>(), Arg.Any<string>())
-            .Returns(callInfo => Path.Combine(callInfo.Arg<string[]>()));
+            .Returns(callInfo => Path.Combine(callInfo.ArgAt<string[]>(0)));
 
         _imageProcessor = new ImageSharpProcessor(_pathConfig, _fileSystem, _logger);
     }
@@ -198,6 +200,29 @@ public class ImageSharpProcessorTests
         await _fileSystem.DidNotReceive().WriteAllBytesAsync(Arg.Any<string>(), Arg.Any<byte[]>());
     }
 
+    [Fact]
+    public async Task ProcessImageBytesAsync_WhenImageIsWithinBounds_ReturnsOriginalBytes()
+    {
+        var imageData = CreateTestImageBytes();
+
+        var result = await _imageProcessor.ProcessImageBytesAsync(imageData);
+
+        result.Should().Equal(imageData);
+    }
+
+    [Fact]
+    public async Task ProcessImageBytesAsync_WhenImageExceedsBounds_ResizesToMaxDimension()
+    {
+        var imageData = CreateTestImageBytes(width: 1200, height: 600);
+
+        var result = await _imageProcessor.ProcessImageBytesAsync(imageData, maxDimension: 300);
+
+        result.Should().NotEqual(imageData);
+        using var image = Image.Load<Rgba32>(result);
+        image.Width.Should().Be(300);
+        image.Height.Should().Be(150);
+    }
+
     #region Helper Methods
 
     /// <summary>
@@ -207,6 +232,14 @@ public class ImageSharpProcessorTests
     {
         return Convert.FromBase64String(
             "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==");
+    }
+
+    private static byte[] CreateTestImageBytes(int width, int height)
+    {
+        using var image = new Image<Rgba32>(width, height, new Rgba32(255, 0, 0));
+        using var stream = new MemoryStream();
+        image.SaveAsPng(stream);
+        return stream.ToArray();
     }
 
     /// <summary>
