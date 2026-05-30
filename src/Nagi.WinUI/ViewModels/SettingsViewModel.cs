@@ -119,6 +119,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     private readonly IFFmpegService _ffmpegService;
     private readonly IBackupRestoreService _backupRestoreService;
     private readonly IDispatcherService _dispatcherService;
+    private readonly IRomanizationPackManager _romanizationPackManager;
     private readonly SemaphoreSlim _loadLock = new(1, 1);
 
     private const int SettingsSaveDebounceMs = 300;
@@ -136,6 +137,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     private CancellationTokenSource? _genreSplitSaveCts;
     private CancellationTokenSource? _playerTintSaveCts;
     private CancellationTokenSource? _accentColorSaveCts;
+    private CancellationTokenSource? _romanizationPackCts;
 
     public SettingsViewModel(
         IUISettingsService settingsService,
@@ -154,6 +156,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         IFFmpegService ffmpegService,
         IBackupRestoreService backupRestoreService,
         IDispatcherService dispatcherService,
+        IRomanizationPackManager romanizationPackManager,
         ILogger<SettingsViewModel> logger)
     {
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
@@ -173,6 +176,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         _ffmpegService = ffmpegService ?? throw new ArgumentNullException(nameof(ffmpegService));
         _backupRestoreService = backupRestoreService ?? throw new ArgumentNullException(nameof(backupRestoreService));
         _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
+        _romanizationPackManager = romanizationPackManager ?? throw new ArgumentNullException(nameof(romanizationPackManager));
         _logger = logger;
 
         NavigationItems.CollectionChanged += OnNavigationItemsCollectionChanged;
@@ -199,6 +203,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         IsFetchOnlineMetadataEnabled = SettingsDefaults.FetchOnlineMetadataEnabled;
         IsIgnoreLeadingArticlesOnSortEnabled = SettingsDefaults.IgnoreLeadingArticlesOnSortEnabled;
         IsFetchOnlineLyricsEnabled = SettingsDefaults.FetchOnlineLyricsEnabled;
+        IsLyricsRomanizationEnabled = SettingsDefaults.LyricsRomanizationEnabled;
         IsDiscordRichPresenceEnabled = SettingsDefaults.DiscordRichPresenceEnabled;
         IsRememberWindowSizeEnabled = SettingsDefaults.RememberWindowSizeEnabled;
         IsRememberWindowPositionEnabled = SettingsDefaults.RememberWindowPositionEnabled;
@@ -226,6 +231,9 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     [ObservableProperty] public partial bool IsFetchOnlineMetadataEnabled { get; set; }
     [ObservableProperty] public partial bool IsIgnoreLeadingArticlesOnSortEnabled { get; set; }
     [ObservableProperty] public partial bool IsFetchOnlineLyricsEnabled { get; set; }
+    [ObservableProperty] public partial bool IsLyricsRomanizationEnabled { get; set; }
+    [ObservableProperty] public partial bool IsLoadingRomanizationPacks { get; set; }
+    [ObservableProperty] public partial string? RomanizationPacksStatus { get; set; }
     [ObservableProperty] public partial bool IsDiscordRichPresenceEnabled { get; set; }
     [ObservableProperty] public partial bool IsRememberWindowSizeEnabled { get; set; }
     [ObservableProperty] public partial bool IsRememberWindowPositionEnabled { get; set; }
@@ -342,6 +350,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     public ObservableRangeCollection<NavigationItemSetting> NavigationItems { get; } = new();
     public ObservableRangeCollection<ServiceProviderSettingViewModel> LyricsProviders { get; } = new();
     public ObservableRangeCollection<ServiceProviderSettingViewModel> MetadataProviders { get; } = new();
+    public ObservableRangeCollection<RomanizationPackViewModel> RomanizationPacks { get; } = new();
 
 
     public List<ElementTheme> AvailableThemes { get; } = Enum.GetValues<ElementTheme>().ToList();
@@ -439,6 +448,8 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         _playerTintSaveCts?.Dispose();
         _accentColorSaveCts?.Cancel();
         _accentColorSaveCts?.Dispose();
+        _romanizationPackCts?.Cancel();
+        _romanizationPackCts?.Dispose();
 
         _loadLock.Dispose();
         _isDisposed = true;
@@ -477,6 +488,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
             foreach (var item in MetadataProviders) item.PropertyChanged -= OnMetadataProviderPropertyChanged;
             MetadataProviders.Clear();
+            RomanizationPacks.Clear();
 
             var navItemsTask = _settingsService.GetNavigationItemsAsync();
             var playerButtonsTask = _settingsService.GetPlayerButtonSettingsAsync();
@@ -493,6 +505,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             var onlineMetadataTask = _settingsService.GetFetchOnlineMetadataEnabledAsync();
             var ignoreArticlesTask = _settingsService.GetIgnoreLeadingArticlesOnSortEnabledAsync();
             var onlineLyricsTask = _settingsService.GetFetchOnlineLyricsEnabledAsync();
+            var lyricsRomanizationTask = _settingsService.GetLyricsRomanizationEnabledAsync();
             var discordRpcTask = _settingsService.GetDiscordRichPresenceEnabledAsync();
             var rememberWindowTask = _settingsService.GetRememberWindowSizeEnabledAsync();
             var rememberPositionTask = _settingsService.GetRememberWindowPositionEnabledAsync();
@@ -525,7 +538,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
                 navItemsTask, playerButtonsTask, themeTask, backdropTask, dynamicThemingTask,
                 playerAnimationTask, restorePlaybackTask, autoLaunchTask, startMinimizedTask,
                 hideToTrayTask, miniPlayerTask, trayFlyoutTask, onlineMetadataTask,
-                onlineLyricsTask, discordRpcTask, rememberWindowTask,
+                onlineLyricsTask, lyricsRomanizationTask, discordRpcTask, rememberWindowTask,
                 rememberPositionTask, rememberPaneTask, volumeNormTask, fadeTask, fadeInTask, fadeOutTask, lastFmCredsTask, lastFmAuthTokenTask,
                 scrobblingTask, nowPlayingTask, accentColorTask, artistSplitTask, genreSplitTask, languageTask, lyricsProvidersTask, metadataProvidersTask,
                 playerMaterialTask, playerTintTask,
@@ -557,6 +570,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             IsFetchOnlineMetadataEnabled = onlineMetadataTask.Result;
             IsIgnoreLeadingArticlesOnSortEnabled = ignoreArticlesTask.Result;
             IsFetchOnlineLyricsEnabled = onlineLyricsTask.Result;
+            IsLyricsRomanizationEnabled = lyricsRomanizationTask.Result;
             IsDiscordRichPresenceEnabled = discordRpcTask.Result;
             IsRememberWindowSizeEnabled = rememberWindowTask.Result;
             IsRememberWindowPositionEnabled = rememberPositionTask.Result;
@@ -655,6 +669,108 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         ?? AvailableLanguages.FirstOrDefault(l => !string.IsNullOrEmpty(l.Code) && !string.IsNullOrEmpty(langCode) &&
                                                   (l.Code.StartsWith(langCode + "-") || langCode.StartsWith(l.Code + "-")))
         ?? AvailableLanguages.First(l => l.Code == string.Empty);
+
+    [RelayCommand]
+    private Task RefreshRomanizationPacksAsync()
+    {
+        return LoadRomanizationPacksAsync(forceRefresh: true);
+    }
+
+    public Task LoadRomanizationPacksAsync()
+    {
+        return LoadRomanizationPacksAsync(forceRefresh: false);
+    }
+
+    private async Task LoadRomanizationPacksAsync(bool forceRefresh)
+    {
+        _romanizationPackCts?.Cancel();
+        _romanizationPackCts?.Dispose();
+        _romanizationPackCts = new CancellationTokenSource();
+        var token = _romanizationPackCts.Token;
+
+        IsLoadingRomanizationPacks = true;
+        RomanizationPacksStatus = null;
+
+        try
+        {
+            var packs = await _romanizationPackManager.GetAvailablePacksAsync(forceRefresh, token).ConfigureAwait(false);
+            _dispatcherService.TryEnqueue(() =>
+            {
+                if (token.IsCancellationRequested || _isDisposed) return;
+                RomanizationPacks.ReplaceRange(packs.Select(p => new RomanizationPackViewModel(p)));
+                RomanizationPacksStatus = RomanizationPacks.Count == 0
+                    ? Nagi.WinUI.Resources.Strings.SettingsPage_RomanizationPacks_None
+                    : null;
+            });
+        }
+        catch (OperationCanceledException)
+        {
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to refresh romanization packs.");
+            _dispatcherService.TryEnqueue(() =>
+            {
+                if (token.IsCancellationRequested || _isDisposed) return;
+                RomanizationPacksStatus = string.Format(Nagi.WinUI.Resources.Strings.SettingsPage_RomanizationPacks_LoadFailedFormat, ex.Message);
+            });
+        }
+        finally
+        {
+            _dispatcherService.TryEnqueue(() =>
+            {
+                if (!token.IsCancellationRequested && !_isDisposed) IsLoadingRomanizationPacks = false;
+            });
+        }
+    }
+
+    [RelayCommand]
+    private async Task InstallRomanizationPackAsync(RomanizationPackViewModel? pack)
+    {
+        if (pack is null) return;
+
+        pack.IsBusy = true;
+        RomanizationPacksStatus = null;
+        try
+        {
+            var result = await _romanizationPackManager.InstallPackAsync(pack.Id);
+            if (!result.Succeeded)
+            {
+                RomanizationPacksStatus = result.ErrorMessage ?? Nagi.WinUI.Resources.Strings.SettingsPage_RomanizationPacks_InstallFailed;
+                return;
+            }
+
+            await LoadRomanizationPacksAsync(forceRefresh: false);
+        }
+        finally
+        {
+            pack.IsBusy = false;
+        }
+    }
+
+    [RelayCommand]
+    private async Task RemoveRomanizationPackAsync(RomanizationPackViewModel? pack)
+    {
+        if (pack is null) return;
+
+        pack.IsBusy = true;
+        RomanizationPacksStatus = null;
+        try
+        {
+            var result = await _romanizationPackManager.RemovePackAsync(pack.Id);
+            if (!result.Succeeded)
+            {
+                RomanizationPacksStatus = result.ErrorMessage ?? Nagi.WinUI.Resources.Strings.SettingsPage_RomanizationPacks_RemoveFailed;
+                return;
+            }
+
+            await LoadRomanizationPacksAsync(forceRefresh: false);
+        }
+        finally
+        {
+            pack.IsBusy = false;
+        }
+    }
 
     /// <summary>
     /// Populates AvailableLanguages asynchronously by scanning for satellite resource assemblies.
@@ -1537,6 +1653,12 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     {
         if (_isInitializing) return;
         _ = _settingsService.SetFetchOnlineLyricsEnabledAsync(value);
+    }
+
+    partial void OnIsLyricsRomanizationEnabledChanged(bool value)
+    {
+        if (_isInitializing) return;
+        _ = _settingsService.SetLyricsRomanizationEnabledAsync(value);
     }
 
     partial void OnIsDiscordRichPresenceEnabledChanged(bool value)

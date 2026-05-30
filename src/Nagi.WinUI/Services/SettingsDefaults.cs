@@ -20,6 +20,7 @@ public static class SettingsDefaults
     public const bool ShowCoverArtInTrayFlyoutEnabled = true;
     public const bool FetchOnlineMetadataEnabled = false;
     public const bool FetchOnlineLyricsEnabled = false;
+    public const bool LyricsRomanizationEnabled = false;
     public const bool DiscordRichPresenceEnabled = false;
     public const ElementTheme Theme = ElementTheme.Default;
     public const BackdropMaterial DefaultBackdropMaterial = BackdropMaterial.Mica;

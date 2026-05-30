@@ -17,6 +17,17 @@
         <Setter Property="LineHeight" Value="42" />
     </Style>
 
+    <Style x:Key="RomanizedLyricLineTextBlockStyle" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="Segoe UI Variable Text" />
+        <Setter Property="FontSize" Value="18" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}" />
+        <Setter Property="TextAlignment" Value="Center" />
+        <Setter Property="TextTrimming" Value="None" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="LineHeight" Value="26" />
+    </Style>
+
     <!-- Style for unsynced (plain text) lyrics ListView -->
     <Style x:Key="InactiveLyricLineStyle" TargetType="TextBlock">
         <Setter Property="FontSize" Value="20" />
@@ -28,6 +39,18 @@
         <Setter Property="TextWrapping" Value="Wrap" />
         <Setter Property="Opacity" Value="0.7" />
         <Setter Property="LineHeight" Value="28" />
+    </Style>
+
+    <Style x:Key="RomanizedInactiveLyricLineStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="Foreground" Value="{ThemeResource TextFillColorTertiaryBrush}" />
+        <Setter Property="TextAlignment" Value="Center" />
+        <Setter Property="Margin" Value="0,-6,0,10" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="TextTrimming" Value="None" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="Opacity" Value="0.75" />
+        <Setter Property="LineHeight" Value="22" />
     </Style>
 
     <Style x:Key="LyricsListViewItemStyle" TargetType="ListViewItem">

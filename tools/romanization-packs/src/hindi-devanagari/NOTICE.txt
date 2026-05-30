@@ -1,0 +1,6 @@
+Hindi (Devanagari) romanization pack for Nagi.
+
+License: CC0-1.0
+Attribution: Curated by Nagi. Devanagari transliteration rules are based on common Hindi romanization conventions with IAST-style long vowels and retroflex consonants.
+
+This pack contains only data files: manifest metadata, romanization rules, notice text, and golden self-test cases.

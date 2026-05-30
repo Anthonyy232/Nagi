@@ -4,9 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.WinUI.ViewModels;
 using Nagi.Core.Models;
@@ -41,6 +38,9 @@ public sealed partial class SettingsPage : Page
             case nameof(ViewModel.IsFetchOnlineLyricsEnabled):
                 LyricsSettingsExpander.IsExpanded = ViewModel.IsFetchOnlineLyricsEnabled;
                 break;
+            case nameof(ViewModel.IsLyricsRomanizationEnabled):
+                RomanizedLyricsSettingsExpander.IsExpanded = ViewModel.IsLyricsRomanizationEnabled;
+                break;
             case nameof(ViewModel.IsLastFmConnected):
                 LastFmSettingsExpander.IsExpanded = ViewModel.IsLastFmConnected;
                 break;
@@ -61,9 +61,12 @@ public sealed partial class SettingsPage : Page
             // Set initial expander states after settings are loaded (no animation)
             MetadataSettingsExpander.IsExpanded = ViewModel.IsFetchOnlineMetadataEnabled;
             LyricsSettingsExpander.IsExpanded = ViewModel.IsFetchOnlineLyricsEnabled;
+            RomanizedLyricsSettingsExpander.IsExpanded = ViewModel.IsLyricsRomanizationEnabled;
             LastFmSettingsExpander.IsExpanded = ViewModel.IsLastFmConnected;
+            _ = ViewModel.LoadRomanizationPacksAsync();
 
             // Subscribe to property changes for reactive updates (these will animate)
+            ViewModel.PropertyChanged -= OnViewModelPropertyChanged;
             ViewModel.PropertyChanged += OnViewModelPropertyChanged;
         }
         catch (Exception ex)
@@ -85,5 +88,17 @@ public sealed partial class SettingsPage : Page
         {
             e.Cancel = true;
         }
+    }
+
+    private async void RomanizationPackInstall_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { Tag: RomanizationPackViewModel pack })
+            await ViewModel.InstallRomanizationPackCommand.ExecuteAsync(pack);
+    }
+
+    private async void RomanizationPackRemove_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { Tag: RomanizationPackViewModel pack })
+            await ViewModel.RemoveRomanizationPackCommand.ExecuteAsync(pack);
     }
 }

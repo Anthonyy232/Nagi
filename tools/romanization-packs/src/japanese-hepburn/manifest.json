@@ -1,0 +1,10 @@
+{
+  "Id": "japanese-hepburn",
+  "DisplayName": "Japanese (Hepburn)",
+  "Language": "Japanese",
+  "Script": "Kana and common kanji",
+  "EngineId": "japanese-v1",
+  "Version": "1.0.0",
+  "License": "CC0-1.0",
+  "Attribution": "Curated by Nagi. Kana romanization rules are based on standard Hepburn conventions."
+}

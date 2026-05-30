@@ -1,0 +1,10 @@
+{
+  "Id": "korean-revised",
+  "DisplayName": "Korean (Revised Romanization)",
+  "Language": "Korean",
+  "Script": "Hangul",
+  "EngineId": "hangul-v1",
+  "Version": "1.0.0",
+  "License": "CC0-1.0",
+  "Attribution": "Curated by Nagi. Hangul romanization rules are based on Revised Romanization of Korean."
+}

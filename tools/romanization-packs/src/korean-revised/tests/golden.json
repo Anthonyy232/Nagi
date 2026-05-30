@@ -1,0 +1,30 @@
+[
+  {
+    "Input": "안녕하세요",
+    "Expected": "annyeonghaseyo"
+  },
+  {
+    "Input": "사랑해",
+    "Expected": "saranghae"
+  },
+  {
+    "Input": "한국어",
+    "Expected": "hangugeo"
+  },
+  {
+    "Input": "너의 이름은?",
+    "Expected": "neoui ireumeun?"
+  },
+  {
+    "Input": "좋아 같이 가자",
+    "Expected": "joa gachi gaja"
+  },
+  {
+    "Input": "빛나는 밤",
+    "Expected": "binnaneun bam"
+  },
+  {
+    "Input": "K-pop 사랑해!",
+    "Expected": "K-pop saranghae!"
+  }
+]
