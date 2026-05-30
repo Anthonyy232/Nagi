@@ -33,6 +33,7 @@ public class PathConfiguration : IPathConfiguration
         ArtistImageCachePath = Path.Combine(AppDataRoot, "ArtistImages");
         PlaylistImageCachePath = Path.Combine(AppDataRoot, "PlaylistImages");
         LrcCachePath = Path.Combine(AppDataRoot, "LrcCache");
+        RomanizationPacksPath = Path.Combine(AppDataRoot, "RomanizationPacks");
         DatabasePath = Path.Combine(AppDataRoot, "nagi.db");
         LogsDirectory = Path.Combine(AppDataRoot, "Logs");
 
@@ -42,6 +43,7 @@ public class PathConfiguration : IPathConfiguration
         Directory.CreateDirectory(ArtistImageCachePath);
         Directory.CreateDirectory(PlaylistImageCachePath);
         Directory.CreateDirectory(LrcCachePath);
+        Directory.CreateDirectory(RomanizationPacksPath);
         Directory.CreateDirectory(LogsDirectory);
     }
 
@@ -65,6 +67,9 @@ public class PathConfiguration : IPathConfiguration
 
     /// <inheritdoc />
     public string LrcCachePath { get; }
+
+    /// <inheritdoc />
+    public string RomanizationPacksPath { get; }
 
     /// <inheritdoc />
     public string DatabasePath { get; }

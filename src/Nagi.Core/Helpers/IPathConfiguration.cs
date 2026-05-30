@@ -43,6 +43,11 @@ public interface IPathConfiguration
     string LrcCachePath { get; }
 
     /// <summary>
+    ///     Gets the full path to the directory where optional romanization data packs are installed.
+    /// </summary>
+    string RomanizationPacksPath { get; }
+
+    /// <summary>
     ///     Gets the full path to the SQLite database file.
     /// </summary>
     string DatabasePath { get; }

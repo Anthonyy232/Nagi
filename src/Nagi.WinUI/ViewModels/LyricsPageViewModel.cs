@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -26,9 +25,12 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
     private static readonly TimeSpan OptimisticUpdateGracePeriod = TimeSpan.FromSeconds(2);
     private readonly IDispatcherService _dispatcherService;
     private readonly ILibraryReader _libraryReader;
+    private readonly ILyricRomanizationService _lyricRomanizationService;
     private readonly ILogger<LyricsPageViewModel> _logger;
     private readonly ILrcService _lrcService;
     private readonly IMusicPlaybackService _playbackService;
+    private readonly IRomanizationPackManager _romanizationPackManager;
+    private readonly ISettingsService _settingsService;
     private static readonly TimeSpan _seekTimeOffset = TimeSpan.FromSeconds(0.2);
     private readonly object _lyricsFetchLock = new();
 
@@ -45,18 +47,26 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
         IDispatcherService dispatcherService,
         ILrcService lrcService,
         ILibraryReader libraryReader,
+        ILyricRomanizationService lyricRomanizationService,
+        ISettingsService settingsService,
+        IRomanizationPackManager romanizationPackManager,
         ILogger<LyricsPageViewModel> logger)
     {
         _playbackService = playbackService;
         _dispatcherService = dispatcherService;
         _lrcService = lrcService;
         _libraryReader = libraryReader;
+        _lyricRomanizationService = lyricRomanizationService;
+        _settingsService = settingsService;
+        _romanizationPackManager = romanizationPackManager;
         _logger = logger;
 
         _playbackService.TrackChanged += OnPlaybackServiceTrackChanged;
         _playbackService.PositionChanged += OnPlaybackServicePositionChanged;
         _playbackService.DurationChanged += OnPlaybackServiceDurationChanged;
         _playbackService.PlaybackStateChanged += OnPlaybackServicePlaybackStateChanged;
+        _settingsService.LyricsRomanizationEnabledChanged += OnLyricsRomanizationEnabledChanged;
+        _romanizationPackManager.PacksChanged += OnRomanizationPacksChanged;
 
         _ = UpdateForTrack(_playbackService.CurrentTrack);
         IsPlaying = _playbackService.IsPlaying;
@@ -110,7 +120,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
     /// <summary>
     ///     Collection of unsynchronized lyric lines for display in a ListView-like format.
     /// </summary>
-    public ObservableRangeCollection<string> UnsyncedLyricLines { get; } = new();
+    public ObservableRangeCollection<LyricLine> UnsyncedLyricLines { get; } = new();
 
     public void Dispose()
     {
@@ -120,6 +130,8 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
         _playbackService.PositionChanged -= OnPlaybackServicePositionChanged;
         _playbackService.DurationChanged -= OnPlaybackServiceDurationChanged;
         _playbackService.PlaybackStateChanged -= OnPlaybackServicePlaybackStateChanged;
+        _settingsService.LyricsRomanizationEnabledChanged -= OnLyricsRomanizationEnabledChanged;
+        _romanizationPackManager.PacksChanged -= OnRomanizationPacksChanged;
 
         // Cancel any pending lyrics fetch operation
         lock (_lyricsFetchLock)
@@ -260,11 +272,12 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
             if (localLrc is not null && !localLrc.IsEmpty)
             {
                 _logger.LogDebug("Using local .lrc for track '{SongTitle}'", song.Title);
+                var displayLrc = await ApplyRomanizationAsync(localLrc, cancellationToken).ConfigureAwait(false);
                 _dispatcherService.TryEnqueue(() =>
                 {
                     if (cancellationToken.IsCancellationRequested || _isDisposed) return;
-                    _parsedLrc = localLrc;
-                    LyricLines.AddRange(localLrc.Lines);
+                    _parsedLrc = displayLrc;
+                    LyricLines.AddRange(displayLrc.Lines);
                     HasLyrics = true;
                     IsLoading = false;
                     UpdateCurrentLineFromPosition(_playbackService.CurrentPosition);
@@ -280,18 +293,21 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
 
                 if (parsedEmbedded is not null && !parsedEmbedded.IsEmpty)
                 {
+                    var displayLrc = await ApplyRomanizationAsync(parsedEmbedded, cancellationToken).ConfigureAwait(false);
                     _dispatcherService.TryEnqueue(() =>
                     {
                         if (cancellationToken.IsCancellationRequested || _isDisposed) return;
-                        _parsedLrc = parsedEmbedded;
-                        LyricLines.AddRange(parsedEmbedded.Lines);
+                        _parsedLrc = displayLrc;
+                        LyricLines.AddRange(displayLrc.Lines);
                         HasLyrics = true;
                         IsLoading = false;
                         UpdateCurrentLineFromPosition(_playbackService.CurrentPosition);
                     });
                     return;
                 }
-                var embeddedLines = ParseUnsyncedLyricsToLines(parsedEmbedded?.RawUnsyncedLyrics ?? fullSong.Lyrics);
+                var embeddedLines = await ApplyRomanizationAsync(
+                    ParseUnsyncedLyricsToLines(parsedEmbedded?.RawUnsyncedLyrics ?? fullSong.Lyrics),
+                    cancellationToken).ConfigureAwait(false);
                 _dispatcherService.TryEnqueue(() =>
                 {
                     if (cancellationToken.IsCancellationRequested || _isDisposed) return;
@@ -309,11 +325,12 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
             if (parsedLrc is not null && !parsedLrc.IsEmpty)
             {
                 _logger.LogDebug("Fetched synced lyrics for track '{SongTitle}'", song.Title);
+                var displayLrc = await ApplyRomanizationAsync(parsedLrc, cancellationToken).ConfigureAwait(false);
                 _dispatcherService.TryEnqueue(() =>
                 {
                     if (cancellationToken.IsCancellationRequested || _isDisposed) return;
-                    _parsedLrc = parsedLrc;
-                    LyricLines.AddRange(parsedLrc.Lines);
+                    _parsedLrc = displayLrc;
+                    LyricLines.AddRange(displayLrc.Lines);
                     HasLyrics = true;
                     IsLoading = false;
                     UpdateCurrentLineFromPosition(_playbackService.CurrentPosition);
@@ -322,7 +339,9 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
             else if (parsedLrc is not null && !string.IsNullOrWhiteSpace(parsedLrc.RawUnsyncedLyrics))
             {
                 _logger.LogDebug("Fetched unsynced lyrics for track '{SongTitle}'", song.Title);
-                var unsyncedLines = ParseUnsyncedLyricsToLines(parsedLrc.RawUnsyncedLyrics);
+                var unsyncedLines = await ApplyRomanizationAsync(
+                    ParseUnsyncedLyricsToLines(parsedLrc.RawUnsyncedLyrics),
+                    cancellationToken).ConfigureAwait(false);
                 _dispatcherService.TryEnqueue(() =>
                 {
                     if (cancellationToken.IsCancellationRequested || _isDisposed) return;
@@ -353,6 +372,17 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
         }
     }
 
+    private async Task<ParsedLrc> ApplyRomanizationAsync(ParsedLrc parsedLrc, CancellationToken cancellationToken)
+    {
+        var lines = await _lyricRomanizationService.ApplyRomanizationAsync(parsedLrc.Lines, cancellationToken).ConfigureAwait(false);
+        return new ParsedLrc(lines, parsedLrc.RawUnsyncedLyrics);
+    }
+
+    private Task<IReadOnlyList<LyricLine>> ApplyRomanizationAsync(IEnumerable<string> lines, CancellationToken cancellationToken)
+    {
+        return _lyricRomanizationService.ApplyRomanizationAsync(lines, cancellationToken);
+    }
+
     /// <summary>
     ///     Parses unsynchronized lyrics text into individual lines for display,
     ///     normalizing line breaks and preserving verse structure with blank lines.
@@ -379,6 +409,16 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
     }
 
     private void OnPlaybackServiceTrackChanged()
+    {
+        _ = UpdateForTrack(_playbackService.CurrentTrack);
+    }
+
+    private void OnLyricsRomanizationEnabledChanged(bool isEnabled)
+    {
+        _ = UpdateForTrack(_playbackService.CurrentTrack);
+    }
+
+    private void OnRomanizationPacksChanged()
     {
         _ = UpdateForTrack(_playbackService.CurrentTrack);
     }

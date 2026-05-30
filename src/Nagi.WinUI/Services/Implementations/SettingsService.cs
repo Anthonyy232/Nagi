@@ -42,6 +42,7 @@ public class SettingsService : IUISettingsService, IDisposable
     private const string ShowCoverArtInTrayFlyoutKey = "ShowCoverArtInTrayFlyout";
     private const string FetchOnlineMetadataKey = "FetchOnlineMetadataEnabled";
     private const string FetchOnlineLyricsEnabledKey = "FetchOnlineLyricsEnabled";
+    private const string LyricsRomanizationEnabledKey = "LyricsRomanizationEnabled";
     private const string DiscordRichPresenceEnabledKey = "DiscordRichPresenceEnabled";
     private const string NavigationItemsKey = "NavigationItems";
     private const string PlayerButtonSettingsKey = "PlayerButtonSettings";
@@ -117,6 +118,7 @@ public class SettingsService : IUISettingsService, IDisposable
     public event Action<BackdropMaterial>? BackdropMaterialChanged;
     public event Action<bool>? FetchOnlineMetadataEnabledChanged;
     public event Action<bool>? FetchOnlineLyricsEnabledChanged;
+    public event Action<bool>? LyricsRomanizationEnabledChanged;
     public event Action<ServiceCategory>? ServiceProvidersChanged;
     public event Action? ArtistSplitCharactersChanged;
     public event Action<string>? LanguageChanged;
@@ -146,6 +148,7 @@ public class SettingsService : IUISettingsService, IDisposable
             SetShowCoverArtInTrayFlyoutAsync(SettingsDefaults.ShowCoverArtInTrayFlyoutEnabled),
             SetFetchOnlineMetadataEnabledAsync(SettingsDefaults.FetchOnlineMetadataEnabled),
             SetFetchOnlineLyricsEnabledAsync(SettingsDefaults.FetchOnlineLyricsEnabled),
+            SetLyricsRomanizationEnabledAsync(SettingsDefaults.LyricsRomanizationEnabled),
             SetDiscordRichPresenceEnabledAsync(SettingsDefaults.DiscordRichPresenceEnabled),
             SetThemeAsync(SettingsDefaults.Theme),
             SetBackdropMaterialAsync(SettingsDefaults.DefaultBackdropMaterial),
@@ -352,6 +355,16 @@ public class SettingsService : IUISettingsService, IDisposable
     public Task SetFetchOnlineLyricsEnabledAsync(bool isEnabled)
     {
         return SetValueAndNotifyAsync(FetchOnlineLyricsEnabledKey, isEnabled, SettingsDefaults.FetchOnlineLyricsEnabled, FetchOnlineLyricsEnabledChanged);
+    }
+
+    public Task<bool> GetLyricsRomanizationEnabledAsync()
+    {
+        return Task.FromResult(GetValue(LyricsRomanizationEnabledKey, SettingsDefaults.LyricsRomanizationEnabled));
+    }
+
+    public Task SetLyricsRomanizationEnabledAsync(bool isEnabled)
+    {
+        return SetValueAndNotifyAsync(LyricsRomanizationEnabledKey, isEnabled, SettingsDefaults.LyricsRomanizationEnabled, LyricsRomanizationEnabledChanged);
     }
 
     public Task<bool> GetDiscordRichPresenceEnabledAsync()

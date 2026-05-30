@@ -1,0 +1,6 @@
+Japanese (Hepburn) romanization pack for Nagi.
+
+License: CC0-1.0
+Attribution: Curated by Nagi. Kana romanization rules are based on standard Hepburn conventions.
+
+This pack contains only data files: manifest metadata, romanization rules, notice text, and golden self-test cases.

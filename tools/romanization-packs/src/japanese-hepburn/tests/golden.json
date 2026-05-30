@@ -1,0 +1,22 @@
+[
+  {
+    "Input": "さよなら",
+    "Expected": "sayonara"
+  },
+  {
+    "Input": "きっと大丈夫",
+    "Expected": "kitto daijoubu"
+  },
+  {
+    "Input": "キャッチーなメロディー",
+    "Expected": "kyacchii na merodii"
+  },
+  {
+    "Input": "君の名は。",
+    "Expected": "kimi no na wa."
+  },
+  {
+    "Input": "愛してる",
+    "Expected": "aishiteru"
+  }
+]

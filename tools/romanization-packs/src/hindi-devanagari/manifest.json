@@ -1,0 +1,10 @@
+{
+  "Id": "hindi-devanagari",
+  "DisplayName": "Hindi (Devanagari)",
+  "Language": "Hindi",
+  "Script": "Devanagari",
+  "EngineId": "devanagari-v1",
+  "Version": "1.0.0",
+  "License": "CC0-1.0",
+  "Attribution": "Curated by Nagi. Devanagari transliteration rules are based on common Hindi romanization conventions with IAST-style long vowels and retroflex consonants."
+}

@@ -1,0 +1,22 @@
+[
+  {
+    "Input": "हिन्दी",
+    "Expected": "hindī"
+  },
+  {
+    "Input": "नमस्ते",
+    "Expected": "namaste"
+  },
+  {
+    "Input": "दिल धड़कने दो",
+    "Expected": "dil dhaṛakne do"
+  },
+  {
+    "Input": "प्यार किया तो डरना क्या?",
+    "Expected": "pyār kiyā to ḍarnā kyā?"
+  },
+  {
+    "Input": "भारत",
+    "Expected": "bhārat"
+  }
+]

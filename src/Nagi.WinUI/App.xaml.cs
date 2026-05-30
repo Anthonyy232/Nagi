@@ -30,6 +30,7 @@ using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Implementations;
 using Nagi.Core.Services.Implementations.Presence;
+using Nagi.Core.Services.Implementations.Romanization;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.Pages;
 using Nagi.WinUI.Services.Abstractions;
@@ -114,7 +115,7 @@ public partial class App : Application
     {
         var configuration = new ConfigurationBuilder()
             .SetBasePath(AppContext.BaseDirectory)
-            .AddJsonFile("appsettings.json", false, true)
+            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
             .Build();
         var tempPathConfig = new PathConfiguration(configuration);
 
@@ -620,6 +621,12 @@ public partial class App : Application
         services.AddSingleton<IPresenceService, ListenBrainzPresenceService>();
         services.AddSingleton<ISmartPlaylistService, SmartPlaylistService>();
         services.AddSingleton<IOnlineLyricsService, LrcLibService>();
+        services.AddSingleton<IRomanizationProvider, JapaneseRomanizationProvider>();
+        services.AddSingleton<IRomanizationProvider, DevanagariRomanizationProvider>();
+        services.AddSingleton<IRomanizationProvider, KoreanRomanizationProvider>();
+        services.AddSingleton<IRomanizationCatalogVerifier, EcdsaRomanizationCatalogVerifier>();
+        services.AddSingleton<IRomanizationPackManager, RomanizationPackManager>();
+        services.AddSingleton<ILyricRomanizationService, LyricRomanizationService>();
         services.AddSingleton<IPlaylistExportService, M3uPlaylistExportService>();
         services.AddSingleton<IBackupRestoreService, BackupRestoreService>();
         services.AddSingleton<IStatisticsService, StatisticsService>();
@@ -1104,6 +1111,7 @@ public partial class App : Application
             SafelyDeleteDir(pathConfig.ArtistImageCachePath);
             SafelyDeleteDir(pathConfig.PlaylistImageCachePath);
             SafelyDeleteDir(pathConfig.LrcCachePath);
+            SafelyDeleteDir(pathConfig.RomanizationPacksPath);
 
             Log.Information("Manual file reset completed.");
         }

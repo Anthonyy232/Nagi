@@ -60,6 +60,11 @@ public interface ISettingsService
     event Action<bool>? FetchOnlineLyricsEnabledChanged;
 
     /// <summary>
+    ///     Occurs when the romanized lyrics display setting is changed.
+    /// </summary>
+    event Action<bool>? LyricsRomanizationEnabledChanged;
+
+    /// <summary>
     ///     Gets the initial volume level for the media player.
     /// </summary>
     /// <returns>A volume level between 0.0 and 1.0.</returns>
@@ -169,6 +174,16 @@ public interface ISettingsService
     ///     Sets the preference for fetching lyrics from online sources.
     /// </summary>
     Task SetFetchOnlineLyricsEnabledAsync(bool isEnabled);
+
+    /// <summary>
+    ///     Gets whether romanized lyric display is enabled.
+    /// </summary>
+    Task<bool> GetLyricsRomanizationEnabledAsync();
+
+    /// <summary>
+    ///     Sets whether romanized lyric display is enabled.
+    /// </summary>
+    Task SetLyricsRomanizationEnabledAsync(bool isEnabled);
 
     /// <summary>
     ///     Gets whether scrobbling to Last.fm is enabled.

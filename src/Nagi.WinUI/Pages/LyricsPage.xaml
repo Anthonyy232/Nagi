@@ -86,14 +86,27 @@
                                 PointerExited="LyricItem_PointerExited"
                                 Tapped="LyricItem_Tapped">
                                 <!-- Base (inactive) text -->
-                                <TextBlock
-                                    Text="{x:Bind Text}"
-                                    Style="{StaticResource LyricLineTextBlockStyle}" />
+                                <StackPanel Spacing="6">
+                                    <TextBlock
+                                        Text="{x:Bind Text}"
+                                        Style="{StaticResource LyricLineTextBlockStyle}" />
+                                    <TextBlock
+                                        Text="{x:Bind RomanizedText}"
+                                        Style="{StaticResource RomanizedLyricLineTextBlockStyle}"
+                                        Visibility="{x:Bind HasRomanizedText, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                </StackPanel>
                                 <!-- Active color overlay (opacity controlled entirely via Composition) -->
-                                <TextBlock
-                                    Text="{x:Bind Text}"
-                                    Style="{StaticResource LyricLineTextBlockStyle}"
-                                    Foreground="{StaticResource AppPrimaryColorBrush}" />
+                                <StackPanel Spacing="6">
+                                    <TextBlock
+                                        Text="{x:Bind Text}"
+                                        Style="{StaticResource LyricLineTextBlockStyle}"
+                                        Foreground="{StaticResource AppPrimaryColorBrush}" />
+                                    <TextBlock
+                                        Text="{x:Bind RomanizedText}"
+                                        Style="{StaticResource RomanizedLyricLineTextBlockStyle}"
+                                        Foreground="{StaticResource AppPrimaryColorBrush}"
+                                        Visibility="{x:Bind HasRomanizedText, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                </StackPanel>
                             </Grid>
                         </DataTemplate>
                     </ItemsRepeater.ItemTemplate>
@@ -114,11 +127,17 @@
             ItemContainerStyle="{StaticResource LyricsListViewItemStyle}"
             Visibility="{x:Bind ViewModel.HasUnsyncedLyrics, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
             <ListView.ItemTemplate>
-                <DataTemplate x:DataType="x:String">
-                    <TextBlock
-                        Text="{x:Bind}"
-                        Style="{StaticResource InactiveLyricLineStyle}"
-                        Opacity="1.0" />
+                <DataTemplate x:DataType="core:LyricLine">
+                    <StackPanel>
+                        <TextBlock
+                            Text="{x:Bind Text}"
+                            Style="{StaticResource InactiveLyricLineStyle}"
+                            Opacity="1.0" />
+                        <TextBlock
+                            Text="{x:Bind RomanizedText}"
+                            Style="{StaticResource RomanizedInactiveLyricLineStyle}"
+                            Visibility="{x:Bind HasRomanizedText, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    </StackPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>

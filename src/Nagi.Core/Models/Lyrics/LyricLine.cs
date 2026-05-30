@@ -24,4 +24,11 @@ public class LyricLine
     ///     The text content of the lyric line.
     /// </summary>
     public string Text { get; set; } = string.Empty;
+
+    /// <summary>
+    ///     Optional romanized display text. This is UI-only derived data and is never written back to lyric sources.
+    /// </summary>
+    public string? RomanizedText { get; set; }
+
+    public bool HasRomanizedText => !string.IsNullOrWhiteSpace(RomanizedText);
 }

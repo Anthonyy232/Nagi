@@ -168,7 +168,7 @@ public sealed partial class LyricsPage : Page
     ///     Called when an ItemsRepeater element is prepared (created or recycled).
     ///     Sets the initial Composition visual state so the overlay starts hidden
     ///     and the correct opacity/scale is applied based on whether it's the active line.
-    ///     IMPORTANT: Opacity is set on individual TextBlocks, NOT the Grid container,
+    ///     IMPORTANT: Opacity is set on individual TextBlocks, NOT container elements,
     ///     because sub-1.0 opacity on a container forces WinUI to render to an intermediate
     ///     bitmap surface which breaks ClearType text anti-aliasing.
     /// </summary>
@@ -188,13 +188,13 @@ public sealed partial class LyricsPage : Page
         var scale = isActive ? ActiveScale : InactiveScale;
         visual.Scale = new Vector3(scale, scale, 1.0f);
 
-        // Set opacity on individual TextBlocks, NOT the grid
+        // Set opacity on the two lyric text layers, NOT the grid.
         if (grid.Children.Count >= 2)
         {
-            if (grid.Children[0] is TextBlock baseText)
-                CompositionAnimationHelper.SetOpacityImmediate(baseText, (float)targetOpacity);
-            if (grid.Children[1] is TextBlock overlayText)
-                CompositionAnimationHelper.SetOpacityImmediate(overlayText, isActive ? 1.0f : 0.0f);
+            if (grid.Children[0] is UIElement baseLayer)
+                SetLayerOpacityImmediate(baseLayer, (float)targetOpacity);
+            if (grid.Children[1] is UIElement overlayLayer)
+                SetLayerOpacityImmediate(overlayLayer, isActive ? 1.0f : 0.0f);
         }
     }
 
@@ -210,20 +210,16 @@ public sealed partial class LyricsPage : Page
         visual.StopAnimation("Scale");
         visual.Scale = new Vector3(1.0f, 1.0f, 1.0f);
 
-        // Reset opacity on individual TextBlocks and stop animations
+        // Reset opacity on lyric text layers and stop animations
         if (grid.Children.Count >= 2)
         {
-            if (grid.Children[0] is TextBlock baseText)
+            if (grid.Children[0] is UIElement baseLayer)
             {
-                var baseVisual = ElementCompositionPreview.GetElementVisual(baseText);
-                baseVisual.StopAnimation("Opacity");
-                baseVisual.Opacity = 1.0f;
+                StopLayerOpacityAnimationsAndSet(baseLayer, 1.0f);
             }
-            if (grid.Children[1] is TextBlock overlayText)
+            if (grid.Children[1] is UIElement overlayLayer)
             {
-                var overlayVisual = ElementCompositionPreview.GetElementVisual(overlayText);
-                overlayVisual.StopAnimation("Opacity");
-                overlayVisual.Opacity = 0.0f;
+                StopLayerOpacityAnimationsAndSet(overlayLayer, 0.0f);
             }
         }
     }
@@ -335,23 +331,23 @@ public sealed partial class LyricsPage : Page
             var targetOpacity = GetOpacityForDistance(distance);
             var isActive = i == currentIndex;
 
-            // Update opacity on text blocks
+            // Update opacity on the inactive and active text layers.
             if (grid.Children.Count >= 2)
             {
-                if (grid.Children[0] is TextBlock baseText)
+                if (grid.Children[0] is UIElement baseLayer)
                 {
                     if (animate)
-                        CompositionAnimationHelper.AnimateOpacity(baseText, (float)targetOpacity, AnimationDurationMs);
+                        AnimateLayerOpacity(baseLayer, (float)targetOpacity);
                     else
-                        CompositionAnimationHelper.SetOpacityImmediate(baseText, (float)targetOpacity);
+                        SetLayerOpacityImmediate(baseLayer, (float)targetOpacity);
                 }
 
-                if (grid.Children[1] is TextBlock overlayText)
+                if (grid.Children[1] is UIElement overlayLayer)
                 {
                     if (animate)
-                        CompositionAnimationHelper.AnimateOpacity(overlayText, isActive ? 1.0f : 0.0f, AnimationDurationMs);
+                        AnimateLayerOpacity(overlayLayer, isActive ? 1.0f : 0.0f);
                     else
-                        CompositionAnimationHelper.SetOpacityImmediate(overlayText, isActive ? 1.0f : 0.0f);
+                        SetLayerOpacityImmediate(overlayLayer, isActive ? 1.0f : 0.0f);
                 }
             }
 
@@ -371,6 +367,45 @@ public sealed partial class LyricsPage : Page
                 visual.Scale = new Vector3(targetScale, targetScale, 1.0f);
             }
         }
+    }
+
+    private static void AnimateLayerOpacity(UIElement layer, float opacity)
+    {
+        foreach (var element in GetOpacityTargets(layer))
+        {
+            CompositionAnimationHelper.AnimateOpacity(element, opacity, AnimationDurationMs);
+        }
+    }
+
+    private static void SetLayerOpacityImmediate(UIElement layer, float opacity)
+    {
+        foreach (var element in GetOpacityTargets(layer))
+        {
+            CompositionAnimationHelper.SetOpacityImmediate(element, opacity);
+        }
+    }
+
+    private static void StopLayerOpacityAnimationsAndSet(UIElement layer, float opacity)
+    {
+        foreach (var element in GetOpacityTargets(layer))
+        {
+            var visual = ElementCompositionPreview.GetElementVisual(element);
+            visual.StopAnimation("Opacity");
+            visual.Opacity = opacity;
+        }
+    }
+
+    private static IEnumerable<UIElement> GetOpacityTargets(UIElement layer)
+    {
+        if (layer is Panel panel)
+        {
+            foreach (var child in panel.Children.OfType<UIElement>())
+                yield return child;
+
+            yield break;
+        }
+
+        yield return layer;
     }
 
     /// <summary>

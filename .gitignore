@@ -49,6 +49,8 @@ ehthumbs.db
 
 # Secrets
 *.key
+tools/romanization-packs/.signing/
+tools/romanization-packs/dist/catalog.unsigned.json
 [Aa]ppsettings.json
 [Ll]ocal.settings.json
 
