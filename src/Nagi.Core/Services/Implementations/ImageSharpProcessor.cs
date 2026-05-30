@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
 using Nagi.Core.Services.Abstractions;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Memory;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
@@ -33,6 +34,8 @@ public class ImageSharpProcessor : IImageProcessor
     /// </summary>
     private const int ColorExtractionDimension = 112;
 
+    private const int MaxImageSharpActiveAllocationMegabytes = 128;
+
     private readonly string _albumArtStoragePath;
     private readonly IFileSystemService _fileSystem;
     private readonly ILogger<ImageSharpProcessor> _logger;
@@ -55,7 +58,8 @@ public class ImageSharpProcessor : IImageProcessor
         Configuration.Default.MemoryAllocator = MemoryAllocator.Create(new MemoryAllocatorOptions
         {
             // Limit maximum pool size to prevent excessive memory retention
-            MaximumPoolSizeMegabytes = 32
+            MaximumPoolSizeMegabytes = 32,
+            AccumulativeAllocationLimitMegabytes = MaxImageSharpActiveAllocationMegabytes
         });
     }
 
@@ -190,8 +194,9 @@ public class ImageSharpProcessor : IImageProcessor
         if (existingFile != null)
             return existingFile;
 
-        // Load image ONCE
-        using var image = Image.Load<Rgba32>(pictureData);
+        // Decode directly toward the cached size. ImageSharp v4 can apply this during decode for
+        // supported formats, avoiding large transient buffers for oversized embedded art.
+        using var image = LoadImage(pictureData, CachedImageMaxDimension);
 
         // Extract colors from the loaded image (resize to small size for speed)
         var (lightHex, darkHex) = ExtractColorsFromLoadedImage(image);
@@ -296,24 +301,27 @@ public class ImageSharpProcessor : IImageProcessor
     /// <inheritdoc />
     public async Task<byte[]> ProcessImageBytesAsync(byte[] imageData, int maxDimension = 600)
     {
-        if (imageData.Length == 0) return imageData;
+        if (imageData.Length == 0 || maxDimension <= 0) return imageData;
 
         try
         {
-            using var image = Image.Load<Rgba32>(imageData);
-
-            // Only resize if larger than max dimension
-            if (image.Width <= maxDimension && image.Height <= maxDimension)
+            var imageInfo = Image.Identify(CreateDecoderOptions(), imageData);
+            if (imageInfo.Width <= maxDimension && imageInfo.Height <= maxDimension)
                 return imageData;
 
-            var originalWidth = image.Width;
-            var originalHeight = image.Height;
+            using var image = LoadImage(imageData, maxDimension);
+            var originalWidth = imageInfo.Width;
+            var originalHeight = imageInfo.Height;
 
-            image.Mutate(x => x.Resize(new ResizeOptions
+            // TargetSize is a decode hint. Keep this guard for formats that still decode full-size.
+            if (image.Width > maxDimension || image.Height > maxDimension)
             {
-                Size = new Size(maxDimension, maxDimension),
-                Mode = ResizeMode.Max // Preserves aspect ratio, fits within bounds
-            }));
+                image.Mutate(x => x.Resize(new ResizeOptions
+                {
+                    Size = new Size(maxDimension, maxDimension),
+                    Mode = ResizeMode.Max // Preserves aspect ratio, fits within bounds
+                }));
+            }
 
             _logger.LogDebug("Resized image from {OrigWidth}x{OrigHeight} to {Width}x{Height}",
                 originalWidth, originalHeight, image.Width, image.Height);
@@ -327,5 +335,20 @@ public class ImageSharpProcessor : IImageProcessor
             _logger.LogWarning(ex, "Failed to process image, returning original bytes.");
             return imageData;
         }
+    }
+
+    private static Image<Rgba32> LoadImage(byte[] imageData, int maxDimension)
+    {
+        return Image.Load<Rgba32>(CreateDecoderOptions(maxDimension), imageData);
+    }
+
+    private static DecoderOptions CreateDecoderOptions(int? maxDimension = null)
+    {
+        return new DecoderOptions
+        {
+            ColorProfileHandling = ColorProfileHandling.Convert,
+            MaxFrames = 1,
+            TargetSize = maxDimension.HasValue ? new Size(maxDimension.Value, maxDimension.Value) : null
+        };
     }
 }

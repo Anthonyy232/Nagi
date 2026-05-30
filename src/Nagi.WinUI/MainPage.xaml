@@ -353,6 +353,7 @@
                 x:Name="AppTitleBar"
                 Grid.Row="0"
                 Background="Transparent"
+                AutoRefreshDragRegions="True"
                 IsBackButtonVisible="False"
                 IsPaneToggleButtonVisible="True"
                 PaneToggleRequested="AppTitleBar_PaneToggleRequested"

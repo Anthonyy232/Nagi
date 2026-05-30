@@ -220,13 +220,8 @@ public class LrcService : ILrcService, IDisposable
 
         try
         {
-            var lyricLines = new List<LyricLine>();
-            foreach (var line in LrcParser.Parse(content).Document.Lines)
-            {
-                var text = line.GetText();
-                foreach (var ts in line.Timestamps)
-                    lyricLines.Add(new LyricLine { StartTime = ts.ToTimeSpan(), Text = text });
-            }
+            var document = LrcParser.Parse(content).Document;
+            var lyricLines = document.Lines.Select(line => new LyricLine(document.GetEffectiveTime(line.Timestamp), line.GetText()));
             return new ParsedLrc(lyricLines, content);
         }
         catch (Exception ex)
