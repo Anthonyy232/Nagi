@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
 using Nagi.Core.Services.Abstractions;
 using Nagi.WinUI.Services.Abstractions;
+using Color = Windows.UI.Color;
 
 namespace Nagi.WinUI.Services.Implementations;
 
@@ -13,6 +14,11 @@ namespace Nagi.WinUI.Services.Implementations;
 /// </summary>
 public class ThemeService : IThemeService
 {
+    // Roughly 4.5:1 contrast against the dark media overlay surface (#303030).
+    private const double MinimumMediaOnImageLuminance = 0.31;
+    private const byte OpaqueAlpha = byte.MaxValue;
+    private static readonly Color White = Color.FromArgb(OpaqueAlpha, byte.MaxValue, byte.MaxValue, byte.MaxValue);
+
     private readonly App _app;
     private readonly ILogger<ThemeService> _logger;
     private readonly Lazy<IMusicPlaybackService> _playbackService;
@@ -68,13 +74,17 @@ public class ThemeService : IThemeService
 
         var actualTheme = await GetActualThemeAsync();
 
-        var swatchToUse = actualTheme == ElementTheme.Dark ? darkSwatchId : lightSwatchId;
+        var swatchId = actualTheme == ElementTheme.Dark ? darkSwatchId : lightSwatchId;
 
-        if (!string.IsNullOrEmpty(swatchToUse) && _app.TryParseHexColor(swatchToUse, out var targetColor))
+        if (TryParseSwatch(swatchId, out var targetColor))
         {
             _logger.LogDebug("Applying dynamic theme using {ThemeMode} swatch: {Swatch}", actualTheme,
-                swatchToUse);
-            await SetAppColorsAsync(targetColor, actualTheme);
+                swatchId);
+            var mediaSourceColor = TryParseSwatch(darkSwatchId, out var darkSwatchColor)
+                ? darkSwatchColor
+                : targetColor;
+
+            await SetAppColorsAsync(targetColor, actualTheme, mediaSourceColor);
         }
         else
         {
@@ -85,61 +95,112 @@ public class ThemeService : IThemeService
 
     public async Task ActivateDefaultPrimaryColorAsync(ElementTheme? theme = null)
     {
-        _logger.LogDebug("Activating default primary color.");
+        _logger.LogDebug("Activating configured primary color.");
         var actualTheme = theme ?? await GetActualThemeAsync();
-        var accentColor = await _settingsService.Value.GetAccentColorAsync();
-        if (accentColor != null)
-        {
-            await SetAppColorsAsync(accentColor.Value, actualTheme);
-        }
-        else
-        {
-            await SetAppColorsAsync(App.SystemAccentColor, actualTheme);
-        }
+        await SetAppColorsAsync(await GetConfiguredAccentColorAsync(), actualTheme);
     }
 
-    public async Task ApplyAccentColorAsync(Windows.UI.Color? color)
+    public async Task ApplyAccentColorAsync(Color? color)
     {
         var theme = await GetActualThemeAsync();
-        if (color == null)
-        {
-            await ActivateDefaultPrimaryColorAsync();
-        }
-        else
+        if (color is not null)
         {
             _logger.LogDebug("Applying manual accent color: {Color}", color);
-            await SetAppColorsAsync(color.Value, theme);
         }
+
+        await SetAppColorsAsync(color ?? App.DefaultAccentColor, theme);
     }
 
-    private async Task SetAppColorsAsync(Windows.UI.Color primaryColor, ElementTheme theme)
+    private async Task SetAppColorsAsync(
+        Color primaryColor,
+        ElementTheme theme,
+        Color? mediaOnImageSourceColor = null)
     {
         // 1. Set the global primary accent color (for buttons, text, etc.)
         _app.SetAppPrimaryColorBrushColor(primaryColor);
 
-        // 2. Calculate and set the player tint color based on intensity setting
+        // 2. Set the accent for controls displayed over dark cover-art surfaces.
+        var mediaOnImageAccentColor = GetMediaOnImageAccentColor(mediaOnImageSourceColor ?? primaryColor);
+        _app.SetMediaOnImageAccentBrushColor(mediaOnImageAccentColor);
+
+        // 3. Calculate and set the player tint color based on intensity setting
         var intensity = await _settingsService.Value.GetPlayerTintIntensityAsync();
-
-        // Lerp functionality: Target = Color * Intensity + (Base) * (1 - Intensity)
-        // For Dark theme, Base is Black (0,0,0)
-        // For Light theme, Base is White (255,255,255)
-
-        byte r, g, b;
-        if (theme == ElementTheme.Light)
-        {
-            r = (byte)((primaryColor.R * intensity) + (255 * (1 - intensity)));
-            g = (byte)((primaryColor.G * intensity) + (255 * (1 - intensity)));
-            b = (byte)((primaryColor.B * intensity) + (255 * (1 - intensity)));
-        }
-        else
-        {
-            r = (byte)(primaryColor.R * intensity);
-            g = (byte)(primaryColor.G * intensity);
-            b = (byte)(primaryColor.B * intensity);
-        }
-
-        var playerTintColor = Windows.UI.Color.FromArgb(255, r, g, b);
+        var baseChannel = theme == ElementTheme.Light ? byte.MaxValue : byte.MinValue;
+        var playerTintColor = Color.FromArgb(
+            OpaqueAlpha,
+            BlendChannel(baseChannel, primaryColor.R, intensity),
+            BlendChannel(baseChannel, primaryColor.G, intensity),
+            BlendChannel(baseChannel, primaryColor.B, intensity));
         _app.SetPlayerTintColorBrushColor(playerTintColor);
+    }
+
+    private async Task<Color> GetConfiguredAccentColorAsync()
+    {
+        return await _settingsService.Value.GetAccentColorAsync() ?? App.DefaultAccentColor;
+    }
+
+    private bool TryParseSwatch(string? swatchId, out Color color)
+    {
+        color = default;
+        return !string.IsNullOrWhiteSpace(swatchId) && _app.TryParseHexColor(swatchId, out color);
+    }
+
+    private static Color GetMediaOnImageAccentColor(Color color)
+    {
+        var opaqueColor = Color.FromArgb(OpaqueAlpha, color.R, color.G, color.B);
+        if (GetRelativeLuminance(opaqueColor) >= MinimumMediaOnImageLuminance)
+        {
+            return opaqueColor;
+        }
+
+        var low = 0.0;
+        var high = 1.0;
+
+        for (var i = 0; i < 8; i++)
+        {
+            var amount = (low + high) / 2;
+            var candidate = BlendColors(opaqueColor, White, amount);
+
+            if (GetRelativeLuminance(candidate) >= MinimumMediaOnImageLuminance)
+            {
+                high = amount;
+            }
+            else
+            {
+                low = amount;
+            }
+        }
+
+        return BlendColors(opaqueColor, White, high);
+    }
+
+    private static Color BlendColors(Color from, Color to, double amount)
+    {
+        return Color.FromArgb(
+            OpaqueAlpha,
+            BlendChannel(from.R, to.R, amount),
+            BlendChannel(from.G, to.G, amount),
+            BlendChannel(from.B, to.B, amount));
+    }
+
+    private static byte BlendChannel(byte from, byte to, double amount)
+    {
+        return (byte)(from + ((to - from) * amount));
+    }
+
+    private static double GetRelativeLuminance(Color color)
+    {
+        return (0.2126 * GetLinearChannelValue(color.R)) +
+               (0.7152 * GetLinearChannelValue(color.G)) +
+               (0.0722 * GetLinearChannelValue(color.B));
+    }
+
+    private static double GetLinearChannelValue(byte value)
+    {
+        var channel = value / 255d;
+        return channel <= 0.04045
+            ? channel / 12.92
+            : Math.Pow((channel + 0.055) / 1.055, 2.4);
     }
 
     private async Task<ElementTheme> GetActualThemeAsync()

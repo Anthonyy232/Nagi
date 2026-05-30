@@ -12,8 +12,6 @@ across the application's media player interface.
     xmlns:animation="using:Microsoft.UI.Xaml.Media.Animation"
     xmlns:primitives="using:Microsoft.UI.Xaml.Controls.Primitives">
 
-
-
     <!--
     Base style for all circular media control buttons.
     It defines a common appearance and interaction behavior (pointer over, pressed).
@@ -21,6 +19,10 @@ across the application's media player interface.
     -->
     <Style x:Key="MediaControlButtonStyle" TargetType="Button" BasedOn="{StaticResource AnimatedIconButtonStyle}">
         <Setter Property="Foreground" Value="{StaticResource AppPrimaryColorBrush}" />
+    </Style>
+
+    <Style x:Key="MediaOnImageControlButtonStyle" TargetType="Button" BasedOn="{StaticResource MediaControlButtonStyle}">
+        <Setter Property="Foreground" Value="{StaticResource MediaOnImageAccentBrush}" />
     </Style>
 
     <!-- Styles for specific media buttons, inheriting from the base style. -->
@@ -219,6 +221,7 @@ across the application's media player interface.
                                        Fill="{TemplateBinding Foreground}" />
                             <primitives:Thumb x:Name="HorizontalThumb"
                                               Grid.Column="1" Grid.Row="1"
+                                              Background="{TemplateBinding Foreground}"
                                               Style="{StaticResource MediaSliderThumbStyle}"
                                               DataContext="{TemplateBinding Value}"
                                               AutomationProperties.AccessibilityView="Raw" />
@@ -227,6 +230,11 @@ across the application's media player interface.
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <Style x:Key="MediaOnImageSeekerSliderStyle" TargetType="controls:Slider" BasedOn="{StaticResource MediaSeekerSliderStyle}">
+        <Setter Property="Background" Value="{StaticResource MediaOnImageControlTrackBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource MediaOnImageAccentBrush}" />
     </Style>
 
     <!--
@@ -288,6 +296,7 @@ across the application's media player interface.
                                        Fill="{TemplateBinding Foreground}" />
                             <primitives:Thumb x:Name="HorizontalThumb"
                                               Grid.Column="1" Grid.Row="1"
+                                              Background="{TemplateBinding Foreground}"
                                               Style="{StaticResource VolumeSliderThumbStyle}"
                                               DataContext="{TemplateBinding Value}"
                                               AutomationProperties.AccessibilityView="Raw" />

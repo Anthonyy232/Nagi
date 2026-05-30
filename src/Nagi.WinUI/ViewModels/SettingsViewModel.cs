@@ -607,9 +607,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             }
             else
             {
-                AccentColor = _dispatcherService.HasThreadAccess
-                    ? App.SystemAccentColor
-                    : await _dispatcherService.EnqueueAsync(() => App.SystemAccentColor);
+                AccentColor = App.DefaultAccentColor;
             }
 
             ArtistSplitCharacters = artistSplitTask.Result;
@@ -2028,7 +2026,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     private async Task ResetAccentColorAsync()
     {
         _isInitializing = true;
-        AccentColor = App.SystemAccentColor;
+        AccentColor = App.DefaultAccentColor;
         _isInitializing = false;
 
         await _settingsService.SetAccentColorAsync(null);

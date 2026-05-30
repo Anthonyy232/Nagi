@@ -53,7 +53,6 @@ namespace Nagi.WinUI;
 /// </summary>
 public partial class App : Application
 {
-    private static Color? _systemAccentColor;
     private static string? _currentLogFilePath;
     private static Task<MainPage>? _prebuiltMainPageTask;
     private static bool? _cachedHasAnyFolder;
@@ -97,19 +96,9 @@ public partial class App : Application
     public static DispatcherQueue? MainDispatcherQueue => CurrentApp?._window?.DispatcherQueue;
 
     /// <summary>
-    ///     Gets the system's current accent color, with a fallback.
+    ///     Gets Nagi's default brand accent color, derived from the app logo.
     /// </summary>
-    public static Color SystemAccentColor
-    {
-        get
-        {
-            _systemAccentColor ??= Current.Resources.TryGetValue("SystemAccentColor", out var value) &&
-                                   value is Color color
-                ? color
-                : Colors.SlateGray;
-            return _systemAccentColor.Value;
-        }
-    }
+    public static Color DefaultAccentColor { get; } = Color.FromArgb(255, 0x21, 0x94, 0x4B);
 
     protected override async void OnLaunched(LaunchActivatedEventArgs args)
     {
@@ -1269,44 +1258,47 @@ public partial class App : Application
 
     public void SetAppPrimaryColorBrushColor(Color newColor)
     {
+        SetSolidColorBrushColor(
+            "AppPrimaryColorBrush",
+            newColor,
+            nameof(SetAppPrimaryColorBrushColor),
+            refreshTaskbarIcons: true);
+    }
+
+    public void SetPlayerTintColorBrushColor(Color newColor)
+    {
+        SetSolidColorBrushColor("PlayerTintColorBrush", newColor, nameof(SetPlayerTintColorBrushColor));
+    }
+
+    public void SetMediaOnImageAccentBrushColor(Color newColor)
+    {
+        SetSolidColorBrushColor("MediaOnImageAccentBrush", newColor, nameof(SetMediaOnImageAccentBrushColor));
+    }
+
+    private void SetSolidColorBrushColor(
+        string resourceKey,
+        Color newColor,
+        string methodName,
+        bool refreshTaskbarIcons = false)
+    {
         EnsureOnUIThread(() =>
         {
-            if (Resources.TryGetValue("AppPrimaryColorBrush", out var brushObject) &&
-                brushObject is SolidColorBrush appPrimaryColorBrush)
+            if (Resources.TryGetValue(resourceKey, out var brushObject) &&
+                brushObject is SolidColorBrush brush)
             {
-                if (appPrimaryColorBrush.Color != newColor)
-                {
-                    appPrimaryColorBrush.Color = newColor;
+                if (brush.Color == newColor) return;
 
-                    // Refresh taskbar icons to match the new primary color.
-                    // The service handles debouncing internally.
+                brush.Color = newColor;
+                if (refreshTaskbarIcons)
+                {
                     _ = (RootWindow as MainWindow)?.TaskbarService?.RefreshIconsAsync();
                 }
             }
             else
             {
-                _logger?.LogCritical("AppPrimaryColorBrush resource not found");
+                _logger?.LogCritical("{ResourceKey} resource not found", resourceKey);
             }
-        }, nameof(SetAppPrimaryColorBrushColor));
-    }
-
-    public void SetPlayerTintColorBrushColor(Color newColor)
-    {
-        EnsureOnUIThread(() =>
-        {
-            if (Resources.TryGetValue("PlayerTintColorBrush", out var brushObject) &&
-                brushObject is SolidColorBrush playerTintColorBrush)
-            {
-                if (playerTintColorBrush.Color != newColor)
-                {
-                    playerTintColorBrush.Color = newColor;
-                }
-            }
-            else
-            {
-                _logger?.LogCritical("PlayerTintColorBrush resource not found");
-            }
-        }, nameof(SetPlayerTintColorBrushColor));
+        }, methodName);
     }
 
     private void EnsureOnUIThread(Action action, string methodName)

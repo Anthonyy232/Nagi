@@ -353,7 +353,7 @@ public sealed class TaskbarService : ITaskbarService
     /// </summary>
     private static Color GetCurrentThemeForegroundColor()
     {
-        // Try to get the app's primary color brush (system accent color)
+        // Try to get the app's primary color brush.
         if (Application.Current.Resources.TryGetValue("AppPrimaryColorBrush", out var resource)
             && resource is SolidColorBrush brush)
         {
