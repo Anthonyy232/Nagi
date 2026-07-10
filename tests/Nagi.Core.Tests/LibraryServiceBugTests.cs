@@ -113,6 +113,104 @@ public class LibraryServiceBugTests : IDisposable
     }
 
     [Fact]
+    public async Task RemoveFolderAsync_WhenBackgroundRefreshIsScanning_CancelsScanAndRemovesFolder()
+    {
+        var folder = new Folder { Id = Guid.NewGuid(), Path = "C:\\Music\\BusyScan", Name = "BusyScan" };
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.Add(folder);
+            await context.SaveChangesAsync();
+        }
+
+        var filePath = "C:\\Music\\BusyScan\\song.mp3";
+        _fileSystem.DirectoryExists(folder.Path).Returns(true);
+        _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, "*.*", SearchOption.AllDirectories)
+            .Returns(new[] { (filePath, DateTime.UtcNow) });
+        _fileSystem.GetExtension(Arg.Any<string>()).Returns(".mp3");
+
+        var extractionStarted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var allowExtractionToFinish = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        _metadataService.ExtractMetadataAsync(filePath, Arg.Any<string?>())
+            .Returns(async _ =>
+            {
+                extractionStarted.TrySetResult();
+                await allowExtractionToFinish.Task;
+                return new SongFileMetadata
+                {
+                    FilePath = filePath,
+                    Title = "Song",
+                    Artists = new List<string> { "Artist" }
+                };
+            });
+
+        var refreshTask = _libraryService.RefreshAllFoldersAsync();
+        await extractionStarted.Task.WaitAsync(TimeSpan.FromSeconds(5));
+
+        var removeTask = _libraryService.RemoveFolderAsync(folder.Id);
+        await Task.Delay(100);
+        allowExtractionToFinish.TrySetResult();
+        var removed = await removeTask.WaitAsync(TimeSpan.FromSeconds(5));
+        var refreshResult = await refreshTask.WaitAsync(TimeSpan.FromSeconds(5));
+
+        removed.Should().BeTrue();
+        refreshResult.Should().BeFalse("the in-flight refresh was cancelled by folder removal");
+
+        await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
+        (await assertContext.Folders.CountAsync()).Should().Be(0);
+        (await assertContext.Songs.CountAsync()).Should().Be(0);
+    }
+
+    [Fact]
+    public async Task RemoveFolderAsync_WhenManualRescanIsQueued_CancelsRunningAndQueuedScans()
+    {
+        var folder = new Folder { Id = Guid.NewGuid(), Path = "C:\\Music\\QueuedScan", Name = "QueuedScan" };
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.Add(folder);
+            await context.SaveChangesAsync();
+        }
+
+        var filePath = "C:\\Music\\QueuedScan\\song.mp3";
+        _fileSystem.DirectoryExists(folder.Path).Returns(true);
+        _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, "*.*", SearchOption.AllDirectories)
+            .Returns(new[] { (filePath, DateTime.UtcNow) });
+        _fileSystem.GetExtension(Arg.Any<string>()).Returns(".mp3");
+
+        var extractionStarted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var allowExtractionToFinish = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var extractionCount = 0;
+        _metadataService.ExtractMetadataAsync(filePath, Arg.Any<string?>())
+            .Returns(async _ =>
+            {
+                Interlocked.Increment(ref extractionCount);
+                extractionStarted.TrySetResult();
+                await allowExtractionToFinish.Task;
+                return new SongFileMetadata
+                {
+                    FilePath = filePath,
+                    Title = "Song",
+                    Artists = new List<string> { "Artist" }
+                };
+            });
+
+        var refreshTask = _libraryService.RefreshAllFoldersAsync();
+        await extractionStarted.Task.WaitAsync(TimeSpan.FromSeconds(5));
+
+        var queuedRescanTask = _libraryService.RescanFolderForMusicAsync(folder.Id);
+        var removeTask = _libraryService.RemoveFolderAsync(folder.Id);
+        allowExtractionToFinish.TrySetResult();
+
+        var removed = await removeTask.WaitAsync(TimeSpan.FromSeconds(5));
+        var refreshResult = await refreshTask.WaitAsync(TimeSpan.FromSeconds(5));
+        var queuedRescanResult = await queuedRescanTask.WaitAsync(TimeSpan.FromSeconds(5));
+
+        removed.Should().BeTrue();
+        refreshResult.Should().BeFalse();
+        queuedRescanResult.Should().BeFalse();
+        extractionCount.Should().Be(1, "the queued rescan should be cancelled before it starts extracting metadata");
+    }
+
+    [Fact]
     public async Task RescanFolderForMusicAsync_WithChangedArtists_UpdatesRelationshipsAndCleansUpOrphans()
     {
         // Arrange: Setup existing folder, song, and album with multiple artists
