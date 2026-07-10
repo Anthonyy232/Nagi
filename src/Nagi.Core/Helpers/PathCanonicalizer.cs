@@ -39,8 +39,15 @@ public static class PathCanonicalizer
                 normalized = normalized.Replace(@"\\", @"\");
         }
 
-        // Trim trailing separators (but never strip the lone root "\\server\share" separator between tokens).
-        normalized = normalized.TrimEnd('\\', '/');
+        // A drive-relative path such as "C:" has different Windows semantics from the
+        // drive root "C:\\". Preserve the separator for drive roots while continuing to
+        // collapse trailing separators everywhere else.
+        var isDriveRoot = normalized.Length == 3
+                          && char.IsLetter(normalized[0])
+                          && normalized[1] == ':'
+                          && normalized[2] == '\\';
+        if (!isDriveRoot)
+            normalized = normalized.TrimEnd('\\', '/');
 
         // Uppercase the drive letter for stability ("c:\..." -> "C:\..."). NOCASE collation would
         // compare equal anyway, but this avoids noise in UI and logs.
