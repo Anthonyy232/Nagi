@@ -214,6 +214,7 @@ public class StatisticsService : IStatisticsService
         // Aggregate WITHOUT search filter so global ranks are based on the full dataset.
         var statsQuery = query
             .Join(dbContext.Songs, lh => lh.SongId, s => s.Id, (lh, s) => new { lh, s })
+            .Where(x => x.s.AlbumId != null)
             .GroupBy(x => x.s.AlbumId)
             .Select(g => new
             {

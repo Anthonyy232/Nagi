@@ -125,6 +125,59 @@ public class StatisticsServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task GetTopAlbumsAsync_AlbumlessListensDoNotConsumePageSlots()
+    {
+        var folder = new Folder { Name = "Test Folder", Path = "C:\\Music" };
+        var artist = new Artist { Name = "Artist A" };
+        var firstAlbum = new Album { Title = "Album A", ArtistName = artist.Name, PrimaryArtistName = artist.Name };
+        var secondAlbum = new Album { Title = "Album B", ArtistName = artist.Name, PrimaryArtistName = artist.Name };
+        var firstSong = CreateSong(folder, artist, "Song A", firstAlbum, TimeSpan.FromMinutes(3));
+        var secondSong = CreateSong(folder, artist, "Song B", secondAlbum, TimeSpan.FromMinutes(3));
+        var albumlessSong = CreateSong(folder, artist, "Loose Track", null, TimeSpan.FromMinutes(3));
+
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.Add(folder);
+            context.Artists.Add(artist);
+            context.Albums.AddRange(firstAlbum, secondAlbum);
+            context.Songs.AddRange(firstSong, secondSong, albumlessSong);
+            context.ListenHistory.AddRange(
+                new ListenHistory
+                {
+                    Song = firstSong,
+                    ListenTimestampUtc = DateTime.UtcNow,
+                    EndReason = PlaybackEndReason.Finished,
+                    ListenDurationTicks = firstSong.DurationTicks
+                },
+                new ListenHistory
+                {
+                    Song = secondSong,
+                    ListenTimestampUtc = DateTime.UtcNow,
+                    EndReason = PlaybackEndReason.Finished,
+                    ListenDurationTicks = secondSong.DurationTicks
+                });
+            for (var i = 0; i < 10; i++)
+            {
+                context.ListenHistory.Add(new ListenHistory
+                {
+                    Song = albumlessSong,
+                    ListenTimestampUtc = DateTime.UtcNow.AddSeconds(i),
+                    EndReason = PlaybackEndReason.Finished,
+                    ListenDurationTicks = albumlessSong.DurationTicks
+                });
+            }
+            await context.SaveChangesAsync();
+        }
+
+        var result = (await _statisticsService.GetTopAlbumsAsync(
+            new TimeRange(null, null), limit: 2, metric: SortMetric.PlayCount)).ToList();
+        var count = await _statisticsService.GetTopAlbumsCountAsync(new TimeRange(null, null));
+
+        result.Select(item => item.Album.Id).Should().BeEquivalentTo(new[] { firstAlbum.Id, secondAlbum.Id });
+        result.Should().HaveCount(count);
+    }
+
+    [Fact]
     public async Task GetUniqueSongsPlayedAsync_CountsFinishedListen_WhenNotScrobbleEligible()
     {
         var folder = new Folder { Name = "Test Folder", Path = "C:\\Music" };
