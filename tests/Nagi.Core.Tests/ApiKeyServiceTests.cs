@@ -168,6 +168,26 @@ public class ApiKeyServiceTests : IDisposable
         _httpMessageHandler.Requests.Should().HaveCount(1); // pipeline retry count is configured at the policy level
     }
 
+    [Fact]
+    public async Task GetApiKeyAsync_AfterTransientFailure_RetriesOnNextCall()
+    {
+        // Arrange
+        const string expectedApiKey = "recovered-key";
+        SetupValidConfiguration();
+        _httpMessageHandler.RespondSequence(
+            (HttpStatusCode.InternalServerError, "{}"),
+            (HttpStatusCode.OK, JsonSerializer.Serialize(new { Value = expectedApiKey })));
+
+        // Act
+        var failedResult = await _apiKeyService.GetApiKeyAsync(ServiceProviderIds.LastFm);
+        var recoveredResult = await _apiKeyService.GetApiKeyAsync(ServiceProviderIds.LastFm);
+
+        // Assert
+        failedResult.Should().BeNull();
+        recoveredResult.Should().Be(expectedApiKey);
+        _httpMessageHandler.Requests.Should().HaveCount(2);
+    }
+
 
     /// <summary>
     ///     Verifies that <see cref="ApiKeyService.GetApiKeyAsync" /> returns null when the API returns a
@@ -268,6 +288,34 @@ public class ApiKeyServiceTests : IDisposable
 
         // Assert
         result.Should().BeNull();
+    }
+
+    /// <summary>
+    ///     Verifies that an HttpClient-owned timeout degrades to the configured fallback instead of
+    ///     escaping as TaskCanceledException and terminating an async UI command.
+    /// </summary>
+    [Fact]
+    public async Task GetApiKeyAsync_WhenHttpClientTimesOut_ReturnsNull()
+    {
+        // Arrange
+        SetupValidConfiguration();
+        _httpClientFactory.CreateClient(Arg.Any<string>())
+            .Returns(_ => new HttpClient(_httpMessageHandler)
+            {
+                Timeout = TimeSpan.FromMilliseconds(25)
+            });
+        _httpMessageHandler.SendAsyncFunc = async (_, cancellationToken) =>
+        {
+            await Task.Delay(Timeout.InfiniteTimeSpan, cancellationToken);
+            return new HttpResponseMessage(HttpStatusCode.OK);
+        };
+
+        // Act
+        var result = await _apiKeyService.GetApiKeyAsync(ServiceProviderIds.LastFm);
+
+        // Assert
+        result.Should().BeNull();
+        _httpMessageHandler.Requests.Should().HaveCount(1);
     }
 
     /// <summary>

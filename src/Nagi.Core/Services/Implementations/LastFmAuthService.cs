@@ -35,14 +35,13 @@ public class LastFmAuthService : ILastFmAuthService
     /// <inheritdoc />
     public async Task<(string Token, string AuthUrl)?> GetAuthenticationTokenAsync()
     {
-        var apiKey = await _apiKeyService.GetApiKeyAsync(ServiceProviderIds.LastFm).ConfigureAwait(false);
-        var apiSecret = await _apiKeyService.GetApiKeyAsync(ServiceProviderIds.LastFmSecret).ConfigureAwait(false);
-
-        if (string.IsNullOrEmpty(apiKey) || string.IsNullOrEmpty(apiSecret))
+        var credentials = await GetCredentialsAsync().ConfigureAwait(false);
+        if (credentials is null)
         {
             _logger.LogError("Cannot get Last.fm auth token; API key or secret is unavailable.");
             return null;
         }
+        var (apiKey, apiSecret) = credentials.Value;
 
         var parameters = new Dictionary<string, string>
         {
@@ -89,14 +88,13 @@ public class LastFmAuthService : ILastFmAuthService
     /// <inheritdoc />
     public async Task<(string Username, string SessionKey)?> GetSessionAsync(string token)
     {
-        var apiKey = await _apiKeyService.GetApiKeyAsync(ServiceProviderIds.LastFm).ConfigureAwait(false);
-        var apiSecret = await _apiKeyService.GetApiKeyAsync(ServiceProviderIds.LastFmSecret).ConfigureAwait(false);
-
-        if (string.IsNullOrEmpty(apiKey) || string.IsNullOrEmpty(apiSecret))
+        var credentials = await GetCredentialsAsync().ConfigureAwait(false);
+        if (credentials is null)
         {
             _logger.LogError("Cannot get Last.fm session; API key or secret is unavailable.");
             return null;
         }
+        var (apiKey, apiSecret) = credentials.Value;
 
         var parameters = new Dictionary<string, string>
         {
@@ -147,6 +145,20 @@ public class LastFmAuthService : ILastFmAuthService
     private static string CreateSignature(IDictionary<string, string> parameters, string secret)
     {
         return Helpers.LastFmApiHelper.CreateSignature(parameters, secret);
+    }
+
+    private async Task<(string ApiKey, string ApiSecret)?> GetCredentialsAsync()
+    {
+        var apiKeyTask = _apiKeyService.GetApiKeyAsync(ServiceProviderIds.LastFm);
+        var apiSecretTask = _apiKeyService.GetApiKeyAsync(ServiceProviderIds.LastFmSecret);
+
+        await Task.WhenAll(apiKeyTask, apiSecretTask).ConfigureAwait(false);
+        var apiKey = await apiKeyTask.ConfigureAwait(false);
+        var apiSecret = await apiSecretTask.ConfigureAwait(false);
+
+        return string.IsNullOrEmpty(apiKey) || string.IsNullOrEmpty(apiSecret)
+            ? null
+            : (apiKey, apiSecret);
     }
 
     // Helper classes for deserializing Last.fm API responses.

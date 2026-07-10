@@ -49,15 +49,23 @@ public class ApiKeyService : IApiKeyService, IDisposable
         }
 
         // GetOrAdd ensures the factory function is only executed once for a given key.
-        // The Lazy<Task<T>> wrapper caches the task, so the fetch operation only runs once.
-        // We now cache failures (null) to prevent repeated attempts.
+        // The Lazy<Task<T>> wrapper caches successful fetches and coalesces concurrent callers.
         var lazyTask = _cachedApiKeys.GetOrAdd(keyName,
             _ => new Lazy<Task<string?>>(() => FetchKeyFromServerAsync(keyName, CancellationToken.None)));
 
         try
         {
             // Use WaitAsync to respect the caller's cancellation token without affecting the cached task.
-            return await lazyTask.Value.WaitAsync(cancellationToken).ConfigureAwait(false);
+            var result = await lazyTask.Value.WaitAsync(cancellationToken).ConfigureAwait(false);
+            if (result is null)
+            {
+                // Transient transport failures must remain retryable. Remove only this exact Lazy;
+                // a concurrent forced refresh may already have installed a newer value.
+                ((ICollection<KeyValuePair<string, Lazy<Task<string?>>>>)_cachedApiKeys)
+                    .Remove(new KeyValuePair<string, Lazy<Task<string?>>>(keyName, lazyTask));
+            }
+
+            return result;
         }
         catch (OperationCanceledException)
         {
