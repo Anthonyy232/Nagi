@@ -16,9 +16,9 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7.0.0
 
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v5.4.0
         with:
           dotnet-version: 10.0.x
           cache: true
@@ -27,14 +27,14 @@ jobs:
             **/Directory.Build.props
             **/NuGet.config
 
-      - uses: FedericoCarboni/setup-ffmpeg@v3
+      - uses: FedericoCarboni/setup-ffmpeg@v3.1
 
       - name: Run tests
         run: dotnet test tests/Nagi.Core.Tests/Nagi.Core.Tests.csproj -c Release --logger "trx;logfilename=test-results.trx"
 
       - name: Upload test results
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7.0.1
         with:
           name: test-results
           path: '**/test-results.trx'
@@ -48,9 +48,9 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7.0.0
 
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v5.4.0
         with:
           dotnet-version: 10.0.x
           cache: true
@@ -61,13 +61,13 @@ jobs:
 
       - run: dotnet publish api/NagiAppFunctions/NagiAppFunctions.csproj -c Release -o ./functions-output
 
-      - uses: azure/login@v2
+      - uses: azure/login@v3.0.0
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - uses: Azure/functions-action@v1
+      - uses: Azure/functions-action@v1.5.6
         with:
           app-name: nagiflexapiserver
           package: ./functions-output
@@ -80,9 +80,9 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7.0.0
 
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v5.4.0
         with:
           dotnet-version: 10.0.x
           cache: true
@@ -91,11 +91,11 @@ jobs:
             **/Directory.Build.props
             **/NuGet.config
 
-      - uses: FedericoCarboni/setup-ffmpeg@v3
+      - uses: FedericoCarboni/setup-ffmpeg@v3.1
 
       - run: dotnet run -c Release --project benchmarks/Nagi.Benchmarks/Nagi.Benchmarks.csproj -- --filter *LibraryScanBenchmarks*
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7.0.1
         with:
           name: Benchmark-Results
           path: BenchmarkDotNet.Artifacts/results/
@@ -134,9 +134,9 @@ jobs:
       artifact-id: ${{ steps.upload.outputs.artifact-id }}
       version: ${{ steps.version.outputs.value }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7.0.0
 
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v5.4.0
         with:
           dotnet-version: 10.0.x
           cache: true
@@ -218,7 +218,7 @@ jobs:
 
       - name: Upload artifact
         id: upload
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7.0.1
         with:
           name: Unsigned-MSIX
           path: ${{ github.workspace }}/bundle-output/Nagi.msixbundle
@@ -233,7 +233,7 @@ jobs:
       id-token: write
       contents: read
     steps:
-      - uses: signpath/github-action-submit-signing-request@v1
+      - uses: signpath/github-action-submit-signing-request@v2.2
         with:
           api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
           organization-id: '${{ secrets.SIGNPATH_ORGANIZATION_ID }}'
@@ -246,7 +246,7 @@ jobs:
           output-artifact-directory: ./signed
           github-token: '${{ secrets.GITHUB_TOKEN }}'
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7.0.1
         with:
           name: Signed-MSIX
           path: ./signed/

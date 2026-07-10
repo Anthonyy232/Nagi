@@ -20,11 +20,11 @@ jobs:
       contents: read
     steps:
       - name: Download unsigned MSIX from build workflow
-        uses: dawidd6/action-download-artifact@v3
+        uses: dawidd6/action-download-artifact@v21
         with:
           workflow: build.yml
           workflow_conclusion: success
-          tag: ${{ github.event.inputs.tag }}
+          ref: ${{ github.event.inputs.tag }}
           name: Unsigned-MSIX
 
       # We need the artifact-id for the SignPath action.
@@ -32,13 +32,13 @@ jobs:
       # we upload it again in this run to get a new artifact ID.
       - name: Re-upload for SignPath
         id: reupload
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7.0.1
         with:
           name: Unsigned-MSIX-For-Signing
           path: Nagi.msixbundle
           if-no-files-found: error
 
-      - uses: signpath/github-action-submit-signing-request@v1
+      - uses: signpath/github-action-submit-signing-request@v2.2
         with:
           api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
           organization-id: '${{ secrets.SIGNPATH_ORGANIZATION_ID }}'
@@ -50,7 +50,7 @@ jobs:
           output-artifact-directory: ./signed
           github-token: '${{ secrets.GITHUB_TOKEN }}'
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7.0.1
         with:
           name: Signed-MSIX
           path: ./signed/
@@ -62,12 +62,12 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7.0.0
         with:
           ref: ${{ github.event.inputs.tag }}
 
       - name: Download signed MSIX
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8.0.1
         with:
           name: Signed-MSIX
           path: ./signed
