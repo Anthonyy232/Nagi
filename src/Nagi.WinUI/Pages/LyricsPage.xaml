@@ -93,7 +93,7 @@
                                     <TextBlock
                                         Text="{x:Bind RomanizedText}"
                                         Style="{StaticResource RomanizedLyricLineTextBlockStyle}"
-                                        Visibility="{x:Bind HasRomanizedText, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                        Visibility="{x:Bind HasRomanizedText, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                 </StackPanel>
                                 <!-- Active color overlay (opacity controlled entirely via Composition) -->
                                 <StackPanel Spacing="6">
@@ -105,7 +105,7 @@
                                         Text="{x:Bind RomanizedText}"
                                         Style="{StaticResource RomanizedLyricLineTextBlockStyle}"
                                         Foreground="{StaticResource AppPrimaryColorBrush}"
-                                        Visibility="{x:Bind HasRomanizedText, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                        Visibility="{x:Bind HasRomanizedText, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                 </StackPanel>
                             </Grid>
                         </DataTemplate>
@@ -136,7 +136,7 @@
                         <TextBlock
                             Text="{x:Bind RomanizedText}"
                             Style="{StaticResource RomanizedInactiveLyricLineStyle}"
-                            Visibility="{x:Bind HasRomanizedText, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            Visibility="{x:Bind HasRomanizedText, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverter}}" />
                     </StackPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>
