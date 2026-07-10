@@ -654,10 +654,67 @@ public class StatisticsService : IStatisticsService
     }
 
     /// <inheritdoc />
-    public Task<IEnumerable<ActivityDataPoint>> GetListeningActivityTimelineAsync(TimeRange range, ActivityInterval interval, CancellationToken ct = default)
+    public async Task<IEnumerable<ActivityDataPoint>> GetListeningActivityTimelineAsync(TimeRange range, ActivityInterval interval, CancellationToken ct = default)
     {
-        // TODO: Requires SQLite strftime grouping by interval (Hour/Day/Week/Month).
-        throw new NotImplementedException("GetListeningActivityTimelineAsync is not yet implemented.");
+        if (!Enum.IsDefined(interval))
+            throw new ArgumentOutOfRangeException(nameof(interval), interval, "Unknown activity interval.");
+
+        await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
+        var query = ApplyTimeRange(dbContext.ListenHistory.AsNoTracking(), range)
+            .Select(history => new
+            {
+                history.ListenTimestampUtc,
+                history.ListenDurationTicks,
+                history.IsEligibleForScrobbling,
+                history.EndReason
+            });
+        var buckets = new Dictionary<DateTime, (int Plays, long DurationTicks)>();
+
+        await foreach (var history in query.AsAsyncEnumerable().WithCancellation(ct).ConfigureAwait(false))
+        {
+            var bucket = GetActivityBucket(history.ListenTimestampUtc.ToLocalTime(), interval);
+            var current = buckets.GetValueOrDefault(bucket);
+            var qualifyingPlay = history.IsEligibleForScrobbling || history.EndReason == PlaybackEndReason.Finished
+                ? 1
+                : 0;
+            buckets[bucket] = (
+                current.Plays + qualifyingPlay,
+                current.DurationTicks + history.ListenDurationTicks);
+        }
+
+        return buckets
+            .OrderBy(entry => entry.Key)
+            .Select(entry => new ActivityDataPoint(
+                entry.Key,
+                entry.Value.Plays,
+                TimeSpan.FromTicks(entry.Value.DurationTicks)))
+            .ToList();
+    }
+
+    private static DateTime GetActivityBucket(DateTime localTimestamp, ActivityInterval interval)
+    {
+        return interval switch
+        {
+            ActivityInterval.Hour => new DateTime(
+                localTimestamp.Year,
+                localTimestamp.Month,
+                localTimestamp.Day,
+                localTimestamp.Hour,
+                0,
+                0,
+                localTimestamp.Kind),
+            ActivityInterval.Day => localTimestamp.Date,
+            ActivityInterval.Week => localTimestamp.Date.AddDays(-(((int)localTimestamp.DayOfWeek + 6) % 7)),
+            ActivityInterval.Month => new DateTime(
+                localTimestamp.Year,
+                localTimestamp.Month,
+                1,
+                0,
+                0,
+                0,
+                localTimestamp.Kind),
+            _ => throw new ArgumentOutOfRangeException(nameof(interval), interval, "Unknown activity interval.")
+        };
     }
 
     /// <inheritdoc />

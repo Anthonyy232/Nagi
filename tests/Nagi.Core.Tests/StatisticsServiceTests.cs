@@ -795,6 +795,50 @@ public class StatisticsServiceTests : IDisposable
     // -------------------------------------------------------------------------
 
     [Fact]
+    public async Task GetListeningActivityTimelineAsync_GroupsQualifyingPlaysAndAllDurationByLocalHour()
+    {
+        var folder = new Folder { Name = "F", Path = "C:\\Music" };
+        var artist = new Artist { Name = "A" };
+        var song = CreateSong(folder, artist, "Song", null, TimeSpan.FromMinutes(3));
+        var firstLocalHour = new DateTime(2024, 6, 18, 10, 0, 0, DateTimeKind.Local);
+        var secondLocalHour = firstLocalHour.AddHours(1);
+
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.Add(folder);
+            context.Artists.Add(artist);
+            context.Songs.Add(song);
+            context.ListenHistory.AddRange(
+                new ListenHistory { Song = song, ListenTimestampUtc = firstLocalHour.AddMinutes(5).ToUniversalTime(), EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromMinutes(3).Ticks },
+                new ListenHistory { Song = song, ListenTimestampUtc = firstLocalHour.AddMinutes(25).ToUniversalTime(), EndReason = PlaybackEndReason.PausedAndAbandoned, ListenDurationTicks = TimeSpan.FromMinutes(1).Ticks },
+                new ListenHistory { Song = song, ListenTimestampUtc = secondLocalHour.AddMinutes(10).ToUniversalTime(), EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromMinutes(2).Ticks });
+            await context.SaveChangesAsync();
+        }
+
+        var result = (await _statisticsService.GetListeningActivityTimelineAsync(
+            new TimeRange(null, null),
+            ActivityInterval.Hour)).ToList();
+
+        result.Should().HaveCount(2);
+        result[0].Timestamp.Should().Be(firstLocalHour);
+        result[0].Plays.Should().Be(1);
+        result[0].Duration.Should().Be(TimeSpan.FromMinutes(4));
+        result[1].Timestamp.Should().Be(secondLocalHour);
+        result[1].Plays.Should().Be(1);
+        result[1].Duration.Should().Be(TimeSpan.FromMinutes(2));
+    }
+
+    [Fact]
+    public async Task GetListeningActivityTimelineAsync_WithInvalidInterval_Throws()
+    {
+        var act = () => _statisticsService.GetListeningActivityTimelineAsync(
+            new TimeRange(null, null),
+            (ActivityInterval)999);
+
+        await act.Should().ThrowAsync<ArgumentOutOfRangeException>();
+    }
+
+    [Fact]
     public async Task GetMostActiveDayOfWeekAsync_WithNoHistory_ReturnsMonday()
     {
         var result = await _statisticsService.GetMostActiveDayOfWeekAsync(new TimeRange(null, null));
