@@ -187,6 +187,7 @@ public class M3uPlaylistExportService : IPlaylistExportService
 
             var exportedCount = 0;
             var totalSongs = 0;
+            var reservedFileNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             foreach (var playlist in playlistList)
             {
@@ -201,9 +202,7 @@ public class M3uPlaylistExportService : IPlaylistExportService
                     continue;
                 }
 
-                // Sanitize playlist name for use as filename
-                var safeName = FileNameHelper.SanitizeFileName(playlist.Name, "playlist");
-                var filePath = Path.Combine(directoryPath, $"{safeName}.m3u8");
+                var filePath = GetUniqueBatchExportPath(directoryPath, playlist.Name, reservedFileNames);
 
                 var result = await ExportPlaylistAsync(playlist.Id, filePath).ConfigureAwait(false);
                 if (result.Success)
@@ -222,6 +221,34 @@ public class M3uPlaylistExportService : IPlaylistExportService
         {
             _logger.LogError(ex, "Failed to batch export playlists to {DirectoryPath}", directoryPath);
             return new BatchExportResult(false, 0, 0, ex.Message);
+        }
+    }
+
+    private static string GetUniqueBatchExportPath(
+        string directoryPath,
+        string playlistName,
+        HashSet<string> reservedFileNames)
+    {
+        var safeName = FileNameHelper.SanitizeFileName(playlistName, "playlist");
+        const int maxBaseNameLength = 200;
+        if (safeName.Length > maxBaseNameLength)
+        {
+            safeName = safeName[..maxBaseNameLength].TrimEnd();
+        }
+
+        var fileName = $"{safeName}.m3u8";
+        if (reservedFileNames.Add(fileName))
+        {
+            return Path.Combine(directoryPath, fileName);
+        }
+
+        for (var suffix = 2; ; suffix++)
+        {
+            fileName = $"{safeName} ({suffix}).m3u8";
+            if (reservedFileNames.Add(fileName))
+            {
+                return Path.Combine(directoryPath, fileName);
+            }
         }
     }
 
