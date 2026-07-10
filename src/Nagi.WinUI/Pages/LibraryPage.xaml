@@ -276,7 +276,7 @@
                                     Stretch="UniformToFill"
                                     DecodePixelWidth="48"
                                     DecodePixelType="Logical"
-                                    Source="{x:Bind uihelpers:ImageUriHelper.GetUriWithCacheBuster(AlbumArtUriFromTrack, FileModifiedDate), Mode=OneWay}" />
+                                    Source="{x:Bind uihelpers:ImageUriHelper.GetUriWithCacheBuster(AlbumArtUriFromTrack, FileModifiedDate), Mode=OneTime}" />
                             </Border>
                         </Button>
                         <uicontrols:NowPlayingIndicator
