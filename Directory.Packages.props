@@ -50,6 +50,7 @@
     <!-- Presence -->
     <PackageVersion Include="DiscordRichPresence" Version="1.6.1.70" />
     <!-- Azure Functions -->
+    <PackageVersion Include="Azure.Identity" Version="1.17.2" />
     <PackageVersion Include="Microsoft.ApplicationInsights.WorkerService" Version="3.1.2" />
     <PackageVersion Include="Microsoft.Azure.Functions.Worker" Version="2.52.0" />
     <PackageVersion Include="Microsoft.Azure.Functions.Worker.ApplicationInsights" Version="2.51.0" />
