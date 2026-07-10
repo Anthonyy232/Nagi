@@ -40,10 +40,13 @@ public static class Program
             logger?.LogInformation("Secondary instance detected, sending activation to primary");
             var filePath = TryGetFilePathFromArgs(args);
 
-            var sendTask = _singleInstanceManager.SendActivationAsync(filePath);
-            sendTask.Wait(TimeSpan.FromSeconds(5));
+            using var activationTimeout = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+            var activationSent = _singleInstanceManager
+                .SendActivationAsync(filePath, activationTimeout.Token)
+                .GetAwaiter()
+                .GetResult();
 
-            if (sendTask.Result)
+            if (activationSent)
             {
                 logger?.LogInformation("Activation message sent successfully, exiting");
             }
