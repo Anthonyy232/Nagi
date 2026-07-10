@@ -795,6 +795,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         if (isRemovingCurrentTrack)
         {
             _logger.LogDebug("Removing currently playing song ID '{SongId}' from queue.", songId);
+            FinalizeCurrentListenBeforeQueueRemoval();
             await _audioPlayer.StopAsync().ConfigureAwait(false);
 
             using (BeginQueueUpdate())
@@ -839,6 +840,23 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         }
     }
 
+    private void FinalizeCurrentListenBeforeQueueRemoval()
+    {
+        if (!CurrentListenHistoryId.HasValue) return;
+
+        // LibVLC resets its reported time when Stop is called, so capture the listen state
+        // synchronously before the queue-removal path stops the underlying player.
+        var sessionId = CurrentListenHistoryId.Value;
+        var position = _audioPlayer.CurrentPosition;
+        CurrentListenHistoryId = null;
+        FireAndForgetSafe(
+            async () => await _libraryService
+                .FinalizeListenSessionAsync(sessionId, position, PlaybackEndReason.Skipped)
+                .ConfigureAwait(false),
+            "Finalizing session removed from queue",
+            trackForDisposal: true);
+    }
+
     /// <inheritdoc />
     public async Task RemoveRangeFromQueueAsync(IEnumerable<Guid> songIds)
     {
@@ -851,6 +869,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         if (isRemovingCurrentTrack)
         {
             _logger.LogDebug("Removing range that includes current track from queue.");
+            FinalizeCurrentListenBeforeQueueRemoval();
             await _audioPlayer.StopAsync().ConfigureAwait(false);
         }
 
