@@ -572,25 +572,7 @@ public partial class InsightsViewModel : ObservableObject
 
         try
         {
-            var range = BuildTimeRange();
-
-            // Fetch total count from DB so we can compute pages without loading all data.
-            int totalCount = category switch
-            {
-                SeeAllCategory.Songs => await _statisticsService.GetTopSongsCountAsync(range, SearchTerm, ct),
-                SeeAllCategory.Artists => await _statisticsService.GetTopArtistsCountAsync(range, SearchTerm, ct),
-                SeeAllCategory.Albums => await _statisticsService.GetTopAlbumsCountAsync(range, SearchTerm, ct),
-                SeeAllCategory.Genres => await _statisticsService.GetTopGenresCountAsync(range, SearchTerm, ct),
-                _ => 0
-            };
-
-            await _dispatcherService.EnqueueAsync(() =>
-            {
-                SeeAllTotalPages = Math.Max(1, (int)Math.Ceiling(totalCount / (double)SeeAllPageSize));
-                return Task.CompletedTask;
-            });
-
-            await LoadSeeAllPageAsync(category, 1, ct);
+            await LoadSeeAllPageAsync(category, 1, ct, refreshTotalCount: true);
         }
         catch (OperationCanceledException)
         {
@@ -610,7 +592,11 @@ public partial class InsightsViewModel : ObservableObject
         }
     }
 
-    private async Task LoadSeeAllPageAsync(SeeAllCategory category, int page, CancellationToken ct)
+    private async Task LoadSeeAllPageAsync(
+        SeeAllCategory category,
+        int page,
+        CancellationToken ct,
+        bool refreshTotalCount = false)
     {
         var range = BuildTimeRange();
         var offset = (page - 1) * SeeAllPageSize;
@@ -619,9 +605,22 @@ public partial class InsightsViewModel : ObservableObject
         {
             case SeeAllCategory.Songs:
                 {
-                    var songs = await _statisticsService.GetTopSongsAsync(range, SeeAllPageSize, metric: SongsSortMetric, offset: offset, searchTerm: SearchTerm, ct: ct);
+                    IEnumerable<SongStats> songs;
+                    int? totalCount = null;
+                    if (refreshTotalCount)
+                    {
+                        var result = await _statisticsService.GetTopSongsPageAsync(range, SeeAllPageSize, SongsSortMetric, offset, SearchTerm, ct);
+                        songs = result.Items;
+                        totalCount = result.TotalCount;
+                    }
+                    else
+                    {
+                        songs = await _statisticsService.GetTopSongsAsync(range, SeeAllPageSize, metric: SongsSortMetric, offset: offset, searchTerm: SearchTerm, ct: ct);
+                    }
                     await _dispatcherService.EnqueueAsync(() =>
                     {
+                        if (totalCount.HasValue)
+                            SeeAllTotalPages = Math.Max(1, (int)Math.Ceiling(totalCount.Value / (double)SeeAllPageSize));
                         SeeAllSongs.ReplaceRange(songs.Select(s => new TopSongItem
                         {
                             Rank = s.GlobalRank,
@@ -642,9 +641,22 @@ public partial class InsightsViewModel : ObservableObject
                 }
             case SeeAllCategory.Artists:
                 {
-                    var artists = await _statisticsService.GetTopArtistsAsync(range, SeeAllPageSize, metric: ArtistsSortMetric, offset: offset, searchTerm: SearchTerm, ct: ct);
+                    IEnumerable<ArtistStats> artists;
+                    int? totalCount = null;
+                    if (refreshTotalCount)
+                    {
+                        var result = await _statisticsService.GetTopArtistsPageAsync(range, SeeAllPageSize, ArtistsSortMetric, offset, SearchTerm, ct);
+                        artists = result.Items;
+                        totalCount = result.TotalCount;
+                    }
+                    else
+                    {
+                        artists = await _statisticsService.GetTopArtistsAsync(range, SeeAllPageSize, metric: ArtistsSortMetric, offset: offset, searchTerm: SearchTerm, ct: ct);
+                    }
                     await _dispatcherService.EnqueueAsync(() =>
                     {
+                        if (totalCount.HasValue)
+                            SeeAllTotalPages = Math.Max(1, (int)Math.Ceiling(totalCount.Value / (double)SeeAllPageSize));
                         SeeAllArtists.ReplaceRange(artists.Select(a => new TopArtistItem
                         {
                             ArtistId = a.Artist.Id,
@@ -664,9 +676,22 @@ public partial class InsightsViewModel : ObservableObject
                 }
             case SeeAllCategory.Albums:
                 {
-                    var albums = await _statisticsService.GetTopAlbumsAsync(range, SeeAllPageSize, metric: AlbumsSortMetric, offset: offset, searchTerm: SearchTerm, ct: ct);
+                    IEnumerable<AlbumStats> albums;
+                    int? totalCount = null;
+                    if (refreshTotalCount)
+                    {
+                        var result = await _statisticsService.GetTopAlbumsPageAsync(range, SeeAllPageSize, AlbumsSortMetric, offset, SearchTerm, ct);
+                        albums = result.Items;
+                        totalCount = result.TotalCount;
+                    }
+                    else
+                    {
+                        albums = await _statisticsService.GetTopAlbumsAsync(range, SeeAllPageSize, metric: AlbumsSortMetric, offset: offset, searchTerm: SearchTerm, ct: ct);
+                    }
                     await _dispatcherService.EnqueueAsync(() =>
                     {
+                        if (totalCount.HasValue)
+                            SeeAllTotalPages = Math.Max(1, (int)Math.Ceiling(totalCount.Value / (double)SeeAllPageSize));
                         SeeAllAlbums.ReplaceRange(albums.Select(a => new TopAlbumItem
                         {
                             AlbumId = a.Album.Id,
@@ -688,9 +713,22 @@ public partial class InsightsViewModel : ObservableObject
                 }
             case SeeAllCategory.Genres:
                 {
-                    var genres = await _statisticsService.GetTopGenresAsync(range, SeeAllPageSize, metric: GenresSortMetric, offset: offset, searchTerm: SearchTerm, ct: ct);
+                    IEnumerable<GenreStats> genres;
+                    int? totalCount = null;
+                    if (refreshTotalCount)
+                    {
+                        var result = await _statisticsService.GetTopGenresPageAsync(range, SeeAllPageSize, GenresSortMetric, offset, SearchTerm, ct);
+                        genres = result.Items;
+                        totalCount = result.TotalCount;
+                    }
+                    else
+                    {
+                        genres = await _statisticsService.GetTopGenresAsync(range, SeeAllPageSize, metric: GenresSortMetric, offset: offset, searchTerm: SearchTerm, ct: ct);
+                    }
                     await _dispatcherService.EnqueueAsync(() =>
                     {
+                        if (totalCount.HasValue)
+                            SeeAllTotalPages = Math.Max(1, (int)Math.Ceiling(totalCount.Value / (double)SeeAllPageSize));
                         SeeAllGenres.ReplaceRange(genres.Select(g => new TopGenreItem
                         {
                             GenreId = g.Genre.Id,

@@ -958,6 +958,42 @@ public class StatisticsServiceTests : IDisposable
         page2[1].GlobalRank.Should().Be(4, "second item on page 2 should have global rank 4");
     }
 
+    [Fact]
+    public async Task GetTopSongsPageAsync_SearchReturnsCountAndPreservesGlobalRank()
+    {
+        var folder = new Folder { Name = "F", Path = "C:\\Music" };
+        var artist = new Artist { Name = "A" };
+        var songs = new[]
+        {
+            CreateSong(folder, artist, "Other", null, TimeSpan.FromMinutes(3)),
+            CreateSong(folder, artist, "MÄTCH A", null, TimeSpan.FromMinutes(3)),
+            CreateSong(folder, artist, "MÄTCH B", null, TimeSpan.FromMinutes(3))
+        };
+
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.Add(folder);
+            context.Artists.Add(artist);
+            context.Songs.AddRange(songs);
+            for (var songIndex = 0; songIndex < songs.Length; songIndex++)
+                for (var play = 0; play < 5 - songIndex; play++)
+                    context.ListenHistory.Add(new ListenHistory { Song = songs[songIndex], ListenTimestampUtc = DateTime.UtcNow, EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromMinutes(3).Ticks });
+            await context.SaveChangesAsync();
+        }
+
+        var result = await _statisticsService.GetTopSongsPageAsync(
+            new TimeRange(null, null),
+            limit: 1,
+            metric: SortMetric.PlayCount,
+            offset: 1,
+            searchTerm: "mätch");
+
+        result.TotalCount.Should().Be(2);
+        result.Items.Should().ContainSingle();
+        result.Items[0].Song.Title.Should().Be("MÄTCH B");
+        result.Items[0].GlobalRank.Should().Be(3);
+    }
+
     // -------------------------------------------------------------------------
     // Unique songs played — time range filter
     // -------------------------------------------------------------------------
