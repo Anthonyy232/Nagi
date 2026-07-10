@@ -1033,6 +1033,37 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
     }
 
     [Fact]
+    public void BuildQuery_SearchTreatsPercentAndUnderscoreAsLiteralCharacters()
+    {
+        var songs = new[]
+        {
+            new Song { Title = "100% Real", FolderId = _folder.Id, FilePath = @"C:\Music\percent.mp3" },
+            new Song { Title = "100X Real", FolderId = _folder.Id, FilePath = @"C:\Music\letter.mp3" },
+            new Song { Title = "Under_score", FolderId = _folder.Id, FilePath = @"C:\Music\underscore.mp3" },
+            new Song { Title = "UnderXscore", FolderId = _folder.Id, FilePath = @"C:\Music\other.mp3" },
+            new Song { Title = "Bang! Now", FolderId = _folder.Id, FilePath = @"C:\Music\bang.mp3" },
+            new Song { Title = "BangX Now", FolderId = _folder.Id, FilePath = @"C:\Music\bang-other.mp3" }
+        };
+        foreach (var song in songs) song.SyncDenormalizedFields();
+
+        using (var seedContext = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            seedContext.Songs.AddRange(songs);
+            seedContext.SaveChanges();
+        }
+
+        var playlist = CreatePlaylist();
+        using var context = _dbHelper.ContextFactory.CreateDbContext();
+
+        _queryBuilder.BuildQuery(context, playlist, searchTerm: "%").Select(song => song.Title)
+            .Should().Equal("100% Real");
+        _queryBuilder.BuildQuery(context, playlist, searchTerm: "_").Select(song => song.Title)
+            .Should().Equal("Under_score");
+        _queryBuilder.BuildQuery(context, playlist, searchTerm: "!").Select(song => song.Title)
+            .Should().Equal("Bang! Now");
+    }
+
+    [Fact]
     public void BuildCountQuery_ReturnsCorrectCount()
     {
         // Arrange

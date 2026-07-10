@@ -469,12 +469,12 @@ public class SmartPlaylistQueryBuilder
     private static IQueryable<Song> ApplySearchFilter(IQueryable<Song> query, string searchTerm)
     {
         var normalizedTerm = ArtistNameHelper.NormalizeStringCore(searchTerm) ?? searchTerm;
-        var term = $"%{normalizedTerm}%";
+        var term = LikePatternHelper.CreateContainsPattern(normalizedTerm);
         return query.Where(s =>
-            EF.Functions.Like(s.Title, term)
-            || EF.Functions.Like(s.ArtistName, term)
-            || s.SongArtists.Any(sa => EF.Functions.Like(sa.Artist.Name, term))
-            || (s.Album != null && (EF.Functions.Like(s.Album.Title, term) || EF.Functions.Like(s.Album.ArtistName, term) || s.Album.AlbumArtists.Any(aa => EF.Functions.Like(aa.Artist.Name, term)))));
+            EF.Functions.Like(s.Title, term, LikePatternHelper.EscapeCharacter)
+            || EF.Functions.Like(s.ArtistName, term, LikePatternHelper.EscapeCharacter)
+            || s.SongArtists.Any(sa => EF.Functions.Like(sa.Artist.Name, term, LikePatternHelper.EscapeCharacter))
+            || (s.Album != null && (EF.Functions.Like(s.Album.Title, term, LikePatternHelper.EscapeCharacter) || EF.Functions.Like(s.Album.ArtistName, term, LikePatternHelper.EscapeCharacter) || s.Album.AlbumArtists.Any(aa => EF.Functions.Like(aa.Artist.Name, term, LikePatternHelper.EscapeCharacter)))));
     }
 
     #endregion
