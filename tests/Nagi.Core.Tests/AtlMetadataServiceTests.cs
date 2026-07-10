@@ -323,7 +323,7 @@ public class AtlMetadataServiceTests : IDisposable
         });
         var expectedLrcPath = Path.Combine(_tempDirectory, "external.lrc");
 
-        _fileSystem.FileExists(Arg.Is<string>(s => s.Contains(LrcCachePath))).Returns(false);
+        _fileSystem.FileExists(Arg.Is<string>(s => s != null && s.Contains(LrcCachePath))).Returns(false);
         _fileSystem.GetFiles(_tempDirectory, "*.lrc").Returns(new[] { expectedLrcPath });
         _fileSystem.GetFileNameWithoutExtension(expectedLrcPath).Returns("external");
 
@@ -348,7 +348,7 @@ public class AtlMetadataServiceTests : IDisposable
         });
         var expectedTxtPath = Path.Combine(_tempDirectory, "externaltxt.txt");
 
-        _fileSystem.FileExists(Arg.Is<string>(s => s.Contains(LrcCachePath))).Returns(false);
+        _fileSystem.FileExists(Arg.Is<string>(s => s != null && s.Contains(LrcCachePath))).Returns(false);
         _fileSystem.GetFiles(_tempDirectory, "*.lrc").Returns(Array.Empty<string>()); // No LRC file
         _fileSystem.GetFiles(_tempDirectory, "*.txt").Returns(new[] { expectedTxtPath });
         _fileSystem.GetFileNameWithoutExtension(expectedTxtPath).Returns("externaltxt");
@@ -658,7 +658,7 @@ public class AtlMetadataServiceTests : IDisposable
             FileNameHelper.GenerateLrcCacheFileName(audioFilePath, "Synced Artist", null, "Synced Song"));
 
         // Mock: cache file doesn't exist yet
-        _fileSystem.FileExists(Arg.Is<string>(s => s.Contains(LrcCachePath))).Returns(false);
+        _fileSystem.FileExists(Arg.Is<string>(s => s != null && s.Contains(LrcCachePath))).Returns(false);
         // Mock: cache directory doesn't exist
         _fileSystem.DirectoryExists(LrcCachePath).Returns(false);
 

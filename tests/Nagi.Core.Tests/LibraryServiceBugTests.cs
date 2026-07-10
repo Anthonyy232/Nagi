@@ -101,7 +101,7 @@ public class LibraryServiceBugTests : IDisposable
         _metadataService.ExtractMetadataAsync(Arg.Any<string>(), Arg.Any<string?>())
             .Returns(x => Task.FromResult(new SongFileMetadata
             {
-                FilePath = (string)x[0],
+                FilePath = x.ArgAt<string>(0),
                 Title = "Song",
                 Artists = new List<string> { "Artist" }
             }));

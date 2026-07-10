@@ -155,7 +155,7 @@ public class M3uPlaylistExportServiceTests
             result.MatchedSongs.Should().Be(1);
             result.UnmatchedSongs.Should().Be(1);
             result.UnmatchedPaths.Should().Contain(@"C:\music\missing.mp3");
-            await _playlistService.Received(1).AddSongsToPlaylistAsync(newPlaylist.Id, Arg.Is<IEnumerable<Guid>>(ids => ids.Contains(knownSong.Id)));
+            await _playlistService.Received(1).AddSongsToPlaylistAsync(newPlaylist.Id, Arg.Is<IEnumerable<Guid>>(ids => ids != null && ids.Contains(knownSong.Id)));
         }
         finally
         {
