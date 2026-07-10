@@ -279,6 +279,39 @@ public class M3uPlaylistExportServiceTests
         }
     }
 
+    [Fact]
+    public async Task ExportAllPlaylistsAsync_WhenNamesSanitizeToSameFile_PreservesBothPlaylists()
+    {
+        var tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+        var first = new Playlist { Id = Guid.NewGuid(), Name = "Road/Trip" };
+        var second = new Playlist { Id = Guid.NewGuid(), Name = "Road\\Trip" };
+        var firstSong = CreateSong("First song", @"C:\music\first.mp3");
+        var secondSong = CreateSong("Second song", @"C:\music\second.mp3");
+
+        _libraryReader.GetAllPlaylistsAsync().Returns(new[] { first, second });
+        _libraryReader.GetPlaylistByIdAsync(first.Id).Returns(first);
+        _libraryReader.GetPlaylistByIdAsync(second.Id).Returns(second);
+        _libraryReader.GetSongsInPlaylistOrderedAsync(first.Id).Returns(new[] { firstSong });
+        _libraryReader.GetSongsInPlaylistOrderedAsync(second.Id).Returns(new[] { secondSong });
+
+        try
+        {
+            var result = await _service.ExportAllPlaylistsAsync(tempDir);
+
+            result.PlaylistsExported.Should().Be(2);
+            var exportedFiles = Directory.GetFiles(tempDir, "*.m3u8");
+            exportedFiles.Should().HaveCount(2);
+            exportedFiles.Select(Path.GetFileName).Should().OnlyHaveUniqueItems();
+            var contents = await Task.WhenAll(exportedFiles.Select(path => File.ReadAllTextAsync(path)));
+            contents.Should().Contain(content => content.Contains("#PLAYLIST:Road/Trip"));
+            contents.Should().Contain(content => content.Contains("#PLAYLIST:Road\\Trip"));
+        }
+        finally
+        {
+            if (Directory.Exists(tempDir)) Directory.Delete(tempDir, recursive: true);
+        }
+    }
+
     // -------------------------------------------------------------------------
     // ImportMultiplePlaylistsAsync
     // -------------------------------------------------------------------------
@@ -360,5 +393,23 @@ public class M3uPlaylistExportServiceTests
         {
             if (File.Exists(filePath)) File.Delete(filePath);
         }
+    }
+
+    private static Song CreateSong(string title, string filePath)
+    {
+        var song = new Song
+        {
+            Title = title,
+            FilePath = filePath,
+            DurationTicks = TimeSpan.FromMinutes(3).Ticks
+        };
+        song.SongArtists.Add(new SongArtist
+        {
+            Song = song,
+            Artist = new Artist { Name = "Artist" },
+            Order = 0
+        });
+        song.SyncDenormalizedFields();
+        return song;
     }
 }
