@@ -11,6 +11,10 @@
     <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App" />
 
+        <!-- Override Worker Application Insights' deprecated Azure.Identity 1.17.0 dependency. -->
+        <PackageReference Include="Azure.Identity">
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
         <PackageReference Include="Microsoft.Azure.Functions.Worker" />
         <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" />
         <PackageReference Include="Microsoft.ApplicationInsights.WorkerService" />
