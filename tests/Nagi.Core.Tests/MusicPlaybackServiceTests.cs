@@ -1398,6 +1398,42 @@ public class MusicPlaybackServiceTests
         _service.CurrentListenHistoryId.Should().Be(2102L);
     }
 
+    [Fact]
+    public async Task RemoveRangeFromQueueAsync_WhenCurrentAndFollowingTrackAreRemoved_PlaysNextSurvivor()
+    {
+        await _service.InitializeAsync();
+        await _service.PlayAsync(_testSongs, 1);
+
+        await _service.RemoveRangeFromQueueAsync(new[] { _testSongs[1].Id, _testSongs[2].Id });
+
+        _service.CurrentTrack.Should().Be(_testSongs[3]);
+        await _audioPlayer.Received(1).LoadAsync(_testSongs[3]);
+    }
+
+    [Fact]
+    public async Task RemoveRangeFromQueueAsync_WhenLastCurrentTrackIsRemovedWithoutRepeat_Stops()
+    {
+        await _service.InitializeAsync();
+        await _service.PlayAsync(_testSongs, _testSongs.Count - 1);
+
+        await _service.RemoveRangeFromQueueAsync(new[] { _testSongs[^1].Id });
+
+        _service.CurrentTrack.Should().BeNull();
+        _service.PlaybackQueue.Should().NotBeEmpty();
+    }
+
+    [Fact]
+    public async Task RemoveRangeFromQueueAsync_WhenLastCurrentTrackIsRemovedWithRepeatAll_WrapsToFirstSurvivor()
+    {
+        await _service.InitializeAsync();
+        await _service.SetRepeatModeAsync(RepeatMode.RepeatAll);
+        await _service.PlayAsync(_testSongs, _testSongs.Count - 1);
+
+        await _service.RemoveRangeFromQueueAsync(new[] { _testSongs[^1].Id });
+
+        _service.CurrentTrack.Should().Be(_testSongs[0]);
+    }
+
     /// <summary>
     ///     Verifies that removing a song that appeared before the current track correctly
     ///     decrements the CurrentQueueIndex to maintain the correct position.

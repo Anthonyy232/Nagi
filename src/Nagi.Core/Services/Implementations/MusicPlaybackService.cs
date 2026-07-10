@@ -857,6 +857,27 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
             trackForDisposal: true);
     }
 
+    private Guid? GetNextSurvivingSongId(HashSet<Guid> idsToRemove)
+    {
+        var activeQueue = IsShuffleEnabled ? _shuffledQueue : _playbackQueue;
+        var currentIndex = IsShuffleEnabled ? CurrentShuffledIndex : CurrentQueueIndex;
+        if (currentIndex < 0 || currentIndex >= activeQueue.Count) return null;
+
+        for (var i = currentIndex + 1; i < activeQueue.Count; i++)
+        {
+            if (!idsToRemove.Contains(activeQueue[i])) return activeQueue[i];
+        }
+
+        if (CurrentRepeatMode != RepeatMode.RepeatAll) return null;
+
+        for (var i = 0; i < currentIndex; i++)
+        {
+            if (!idsToRemove.Contains(activeQueue[i])) return activeQueue[i];
+        }
+
+        return null;
+    }
+
     /// <inheritdoc />
     public async Task RemoveRangeFromQueueAsync(IEnumerable<Guid> songIds)
     {
@@ -865,6 +886,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         var idsToRemove = songIds.ToHashSet();
         var currentTrackId = CurrentTrack?.Id;
         var isRemovingCurrentTrack = currentTrackId.HasValue && idsToRemove.Contains(currentTrackId.Value);
+        var nextSurvivingSongId = isRemovingCurrentTrack ? GetNextSurvivingSongId(idsToRemove) : null;
 
         if (isRemovingCurrentTrack)
         {
@@ -884,18 +906,23 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
 
         if (isRemovingCurrentTrack)
         {
-            if (_playbackQueue.Any())
+            if (nextSurvivingSongId.HasValue)
             {
-                // Play from current index (which has been clamped in CommitQueueChanges)
-                var indexToPlay = Math.Clamp(CurrentQueueIndex, 0, _playbackQueue.Count - 1);
-                await PlayQueueItemAsync(indexToPlay).ConfigureAwait(false);
+                var indexToPlay = GetPlaybackQueueIndex(nextSurvivingSongId.Value);
+                if (indexToPlay >= 0)
+                    await PlayQueueItemAsync(indexToPlay).ConfigureAwait(false);
+                else
+                    await StopAsync().ConfigureAwait(false);
             }
             else
             {
                 await StopAsync().ConfigureAwait(false);
-                ClearQueuesInternal();
-                QueueChanged?.Invoke();
-                UpdateSmtcControls();
+                if (!_playbackQueue.Any())
+                {
+                    ClearQueuesInternal();
+                    QueueChanged?.Invoke();
+                    UpdateSmtcControls();
+                }
             }
         }
     }
