@@ -16,6 +16,7 @@ using Windows.Storage.Pickers;
 using WinRT.Interop;
 using Nagi.Core.Constants;
 using Nagi.WinUI.Helpers;
+using Nagi.WinUI.Services.Abstractions;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
@@ -39,7 +40,7 @@ public sealed partial class ArtistViewPage : Page
     public ArtistViewPage()
     {
         InitializeComponent();
-        ViewModel = App.Services!.GetRequiredService<ArtistViewViewModel>();
+        ViewModel = App.Services!.GetRequiredService<IViewModelFactory>().Create<ArtistViewViewModel>();
         _logger = App.Services!.GetRequiredService<ILogger<ArtistViewPage>>();
         DataContext = ViewModel;
 

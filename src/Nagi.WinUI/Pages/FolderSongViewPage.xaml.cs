@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.WinUI.Helpers;
+using Nagi.WinUI.Services.Abstractions;
 
 namespace Nagi.WinUI.Pages;
 
@@ -34,7 +35,7 @@ public sealed partial class FolderSongViewPage : Page
     {
         InitializeComponent();
         _dispatcherQueue = this.DispatcherQueue;
-        ViewModel = App.Services!.GetRequiredService<FolderSongListViewModel>();
+        ViewModel = App.Services!.GetRequiredService<IViewModelFactory>().Create<FolderSongListViewModel>();
         _logger = App.Services!.GetRequiredService<ILogger<FolderSongViewPage>>();
         _libraryReader = App.Services!.GetRequiredService<ILibraryReader>();
         DataContext = ViewModel;

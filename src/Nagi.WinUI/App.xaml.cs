@@ -650,6 +650,7 @@ public partial class App : Application
         services.AddSingleton<INavigationService, NavigationService>();
         services.AddSingleton<IMusicNavigationService, MusicNavigationService>();
         services.AddSingleton<ITrayPopupService, TrayPopupService>();
+        services.AddSingleton<IViewModelFactory, ViewModelFactory>();
         services.AddSingleton<IAudioPlayer>(provider =>
             new LibVlcAudioPlayerService(provider.GetRequiredService<IDispatcherService>(),
                 provider.GetRequiredService<ILogger<LibVlcAudioPlayerService>>()));
@@ -679,13 +680,6 @@ public partial class App : Application
         // Detail/Context ViewModels
         services.AddSingleton<SettingsViewModel>();
         services.AddTransient<OnboardingViewModel>();
-        services.AddTransient<PlaylistSongListViewModel>();
-        services.AddTransient<SmartPlaylistSongListViewModel>();
-        services.AddTransient<FolderSongListViewModel>();
-        services.AddTransient<ArtistViewViewModel>();
-        services.AddTransient<AlbumViewViewModel>();
-        services.AddTransient<GenreViewViewModel>();
-        services.AddTransient<LyricsPageViewModel>();
     }
 
     /// <summary>
