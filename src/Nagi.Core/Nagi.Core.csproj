@@ -25,6 +25,7 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="SixLabors.ImageSharp" />
+        <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" />
 
         <!-- Core Utilities & Services -->
         <PackageReference Include="z440.atl.core" />
