@@ -154,6 +154,9 @@ public class BackupRestoreService : IBackupRestoreService
 
     public async Task<RestoreResult> RestoreFromBackupAsync(string backupFilePath)
     {
+        string? transactionPath = null;
+        var preserveTransaction = false;
+
         try
         {
             if (!await ValidateBackupAsync(backupFilePath))
@@ -161,16 +164,25 @@ public class BackupRestoreService : IBackupRestoreService
                 return new RestoreResult(false, 0, false, "Invalid backup file.");
             }
 
-            var destPath = _pathConfiguration.AppDataRoot;
+            var destinationDirectory = new DirectoryInfo(Path.GetFullPath(_pathConfiguration.AppDataRoot));
+            var destPath = destinationDirectory.FullName;
             Directory.CreateDirectory(destPath); // Ensure it exists
 
-            // Extract to temp first to verify integrity and structure
-            var stagingPath = Path.Combine(Path.GetTempPath(), $"NagiRestoreStaging_{Guid.NewGuid()}");
-            Directory.CreateDirectory(stagingPath);
+            // Keep staging and rollback data beside AppDataRoot so every move stays on the
+            // same volume. This lets us reverse the complete restore if any item fails.
+            var destinationParent = destinationDirectory.Parent?.FullName
+                ?? throw new InvalidOperationException("The application data directory must have a parent directory.");
+            transactionPath = Path.Combine(
+                destinationParent,
+                $".{destinationDirectory.Name}.restore-{Guid.NewGuid():N}");
+            var incomingPath = Path.Combine(transactionPath, "incoming");
+            var rollbackPath = Path.Combine(transactionPath, "rollback");
+            Directory.CreateDirectory(incomingPath);
+            Directory.CreateDirectory(rollbackPath);
 
             try
             {
-                ZipFile.ExtractToDirectory(backupFilePath, stagingPath);
+                ZipFile.ExtractToDirectory(backupFilePath, incomingPath);
 
                 // If extraction succeeded, we proceed to overwrite live data.
                 // NOTE: We cannot easily "close" the db connection from here if it's open by EF Core.
@@ -178,67 +190,56 @@ public class BackupRestoreService : IBackupRestoreService
                 try
                 {
                     SqliteConnection.ClearAllPools();
-                    // Force GC to finalize any lingering contexts/commands
-                    GC.Collect();
-                    GC.WaitForPendingFinalizers();
                 }
                 catch (Exception ex)
                 {
                     _logger.LogWarning(ex, "Failed to clear SQLite connection pools. Restore may fail if DB is locked.");
                 }
 
+                var journal = new List<RestoreJournalEntry>();
                 var restoredCount = 0;
 
-                // Move files from staging to dest
-                foreach (var file in Directory.GetFiles(stagingPath, "*", SearchOption.TopDirectoryOnly))
+                try
                 {
-                    var fileName = Path.GetFileName(file);
-                    var destFile = Path.Combine(destPath, fileName);
-
-                    try
+                    // A stable order makes failures and rollback behavior deterministic.
+                    foreach (var incomingItem in Directory
+                        .EnumerateFileSystemEntries(incomingPath, "*", SearchOption.TopDirectoryOnly)
+                        .OrderBy(item => Path.GetFileName(item), StringComparer.OrdinalIgnoreCase))
                     {
-                        await RetryFileOperationAsync(() => File.Copy(file, destFile, true));
-                    }
-                    catch (IOException)
-                    {
-                        // If file is still locked (like nagi.db), try renaming it to .old and then copying
-                        // This relies on the file being opened with FileShare.Delete which is common for SQLite
-                        var oldFile = destFile + ".old." + Guid.NewGuid();
-                        try
-                        {
-                            await RetryFileOperationAsync(() => File.Move(destFile, oldFile));
-                            await RetryFileOperationAsync(() => File.Copy(file, destFile, true));
+                        var itemName = Path.GetFileName(incomingItem);
+                        var destinationItem = Path.Combine(destPath, itemName);
+                        string? originalItem = null;
 
-                            // Try to delete the old file, ignore if it fails (it will be cleaned up later or left as garbage)
-                            try { File.Delete(oldFile); } catch { }
-                        }
-                        catch (Exception ex)
+                        if (EntryExists(destinationItem))
                         {
-                            // If rename also fails, we can't restore this file
-                            _logger.LogError(ex, "Failed to restore locked file: {FileName}", fileName);
-                            throw; // Abort restore to avoid partial state? Or continue?
-                                   // Better to abort and tell user to restart manually/close app.
+                            originalItem = Path.Combine(rollbackPath, itemName);
+                            await RetryFileOperationAsync(() => MoveEntry(destinationItem, originalItem));
                         }
-                    }
 
-                    restoredCount++;
+                        // Record the original before installing the replacement so this item
+                        // participates in rollback even if the second move fails.
+                        journal.Add(new RestoreJournalEntry(destinationItem, originalItem));
+                        await RetryFileOperationAsync(() => MoveEntry(incomingItem, destinationItem));
+                        restoredCount++;
+                    }
                 }
-
-                foreach (var dir in Directory.GetDirectories(stagingPath, "*", SearchOption.TopDirectoryOnly))
+                catch (Exception restoreException)
                 {
-                    var dirName = Path.GetFileName(dir);
-                    var destDir = Path.Combine(destPath, dirName);
-
-                    if (Directory.Exists(destDir))
+                    var rollbackErrors = await RollbackRestoreAsync(journal);
+                    if (rollbackErrors.Count > 0)
                     {
-                        await RetryFileOperationAsync(() => Directory.Delete(destDir, true));
+                        preserveTransaction = true;
+                        var rollbackMessage = $"Restore failed and rollback was incomplete. Recovery data was preserved at '{transactionPath}'.";
+                        _logger.LogCritical(
+                            restoreException,
+                            "{Message} Rollback errors: {RollbackErrors}",
+                            rollbackMessage,
+                            string.Join(" | ", rollbackErrors.Select(error => error.Message)));
+                        return new RestoreResult(false, 0, false, rollbackMessage);
                     }
 
-                    // MoveDirectory is atomic-ish on same volume, but CopyDirectory is safer across volumes/temp
-                    // Since temp might be different volume, let's use recursive copy or move helper
-                    // Here we can just move since it's staging
-                    await RetryFileOperationAsync(() => Directory.Move(dir, destDir));
-                    restoredCount++; // Counting directories as "items"
+                    _logger.LogError(restoreException, "Restore failed; all replaced items were rolled back.");
+                    return new RestoreResult(false, 0, false, restoreException.Message);
                 }
 
                 _logger.LogInformation("Restore completed successfully. {Count} items restored.", restoredCount);
@@ -246,15 +247,15 @@ public class BackupRestoreService : IBackupRestoreService
             }
             finally
             {
-                if (Directory.Exists(stagingPath))
+                if (!preserveTransaction && Directory.Exists(transactionPath))
                 {
                     try
                     {
-                        Directory.Delete(stagingPath, true);
+                        Directory.Delete(transactionPath, true);
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogWarning(ex, "Failed to clean up staging directory {Path}", stagingPath);
+                        _logger.LogWarning(ex, "Failed to clean up restore transaction directory {Path}", transactionPath);
                     }
                 }
             }
@@ -265,6 +266,62 @@ public class BackupRestoreService : IBackupRestoreService
             return new RestoreResult(false, 0, false, ex.Message);
         }
     }
+
+    private async Task<List<Exception>> RollbackRestoreAsync(List<RestoreJournalEntry> journal)
+    {
+        var errors = new List<Exception>();
+
+        foreach (var entry in journal.AsEnumerable().Reverse())
+        {
+            try
+            {
+                if (EntryExists(entry.DestinationPath))
+                {
+                    await RetryFileOperationAsync(() => DeleteEntry(entry.DestinationPath));
+                }
+
+                if (entry.OriginalPath is not null && EntryExists(entry.OriginalPath))
+                {
+                    await RetryFileOperationAsync(() => MoveEntry(entry.OriginalPath, entry.DestinationPath));
+                }
+            }
+            catch (Exception ex)
+            {
+                errors.Add(ex);
+                _logger.LogError(ex, "Failed to roll back restored item {Path}", entry.DestinationPath);
+            }
+        }
+
+        return errors;
+    }
+
+    private static bool EntryExists(string path) => File.Exists(path) || Directory.Exists(path);
+
+    private static void MoveEntry(string sourcePath, string destinationPath)
+    {
+        if (Directory.Exists(sourcePath))
+        {
+            Directory.Move(sourcePath, destinationPath);
+        }
+        else
+        {
+            File.Move(sourcePath, destinationPath);
+        }
+    }
+
+    private static void DeleteEntry(string path)
+    {
+        if (Directory.Exists(path))
+        {
+            Directory.Delete(path, recursive: true);
+        }
+        else if (File.Exists(path))
+        {
+            File.Delete(path);
+        }
+    }
+
+    private sealed record RestoreJournalEntry(string DestinationPath, string? OriginalPath);
 
     private async Task RetryFileOperationAsync(Action action, int maxRetries = 3, int delayMs = 100)
     {
