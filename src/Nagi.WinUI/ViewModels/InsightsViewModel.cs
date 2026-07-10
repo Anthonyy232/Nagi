@@ -389,8 +389,7 @@ public partial class InsightsViewModel : ObservableObject
             // Fire independent queries in parallel.
             var totalTimeTask = _statisticsService.GetTotalListenTimeAsync(range, ct);
             var uniqueTask = _statisticsService.GetUniqueSongsPlayedAsync(range, ct);
-            var peakHourTask = _statisticsService.GetPeakListeningHourAsync(range, ct);
-            var activeDayTask = _statisticsService.GetMostActiveDayOfWeekAsync(range, ct);
+            var listeningPatternsTask = _statisticsService.GetListeningPatternsAsync(range, ct);
             var topSongsTask = _statisticsService.GetTopSongsAsync(range, 10, metric: SongsSortMetric, ct: ct);
             var topArtistsTask = _statisticsService.GetTopArtistsAsync(range, 10, metric: ArtistsSortMetric, ct: ct);
             var topAlbumsTask = _statisticsService.GetTopAlbumsAsync(range, 10, metric: AlbumsSortMetric, ct: ct);
@@ -398,7 +397,7 @@ public partial class InsightsViewModel : ObservableObject
             var sourcesTask = _statisticsService.GetPlaybackSourceDistributionAsync(range, ct);
 
             await Task.WhenAll(
-                totalTimeTask, uniqueTask, peakHourTask, activeDayTask,
+                totalTimeTask, uniqueTask, listeningPatternsTask,
                 topSongsTask, topArtistsTask, topAlbumsTask, topGenresTask,
                 sourcesTask).ConfigureAwait(false);
 
@@ -410,8 +409,8 @@ public partial class InsightsViewModel : ObservableObject
                 // Hero stats
                 TotalListenTimeText = FormatListenTime(totalTimeTask.Result);
                 UniqueSongsPlayed = uniqueTask.Result;
-                PeakHourText = FormatHour(peakHourTask.Result);
-                MostActiveDayText = CultureInfo.CurrentCulture.DateTimeFormat.GetDayName(activeDayTask.Result);
+                PeakHourText = FormatHour(listeningPatternsTask.Result.PeakHour);
+                MostActiveDayText = CultureInfo.CurrentCulture.DateTimeFormat.GetDayName(listeningPatternsTask.Result.MostActiveDay);
 
                 // Top songs
                 TopSongs.ReplaceRange(topSongsTask.Result.Select(s => new TopSongItem

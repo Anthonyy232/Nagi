@@ -439,7 +439,7 @@ public class StatisticsService : IStatisticsService
     }
 
     /// <inheritdoc />
-    public async Task<DayOfWeek> GetMostActiveDayOfWeekAsync(TimeRange range, CancellationToken ct = default)
+    public async Task<ListeningPatternStats> GetListeningPatternsAsync(TimeRange range, CancellationToken ct = default)
     {
         await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
         var query = dbContext.ListenHistory.AsNoTracking().AsQueryable();
@@ -457,38 +457,33 @@ public class StatisticsService : IStatisticsService
             .ToListAsync(ct)
             .ConfigureAwait(false);
 
-        if (timestamps.Count == 0) return DayOfWeek.Monday;
+        if (timestamps.Count == 0) return new ListeningPatternStats(DayOfWeek.Monday, 12);
 
-        return timestamps
-            .GroupBy(t => t.ToLocalTime().DayOfWeek)
-            .OrderByDescending(g => g.Count())
-            .First()
-            .Key;
+        var dayCounts = new Dictionary<DayOfWeek, int>();
+        var hourCounts = new Dictionary<int, int>();
+        foreach (var timestamp in timestamps)
+        {
+            var localTimestamp = timestamp.ToLocalTime();
+            dayCounts[localTimestamp.DayOfWeek] = dayCounts.GetValueOrDefault(localTimestamp.DayOfWeek) + 1;
+            hourCounts[localTimestamp.Hour] = hourCounts.GetValueOrDefault(localTimestamp.Hour) + 1;
+        }
+
+        var mostActiveDay = dayCounts.MaxBy(entry => entry.Value).Key;
+        var peakHour = hourCounts.MaxBy(entry => entry.Value).Key;
+
+        return new ListeningPatternStats(mostActiveDay, peakHour);
+    }
+
+    /// <inheritdoc />
+    public async Task<DayOfWeek> GetMostActiveDayOfWeekAsync(TimeRange range, CancellationToken ct = default)
+    {
+        return (await GetListeningPatternsAsync(range, ct).ConfigureAwait(false)).MostActiveDay;
     }
 
     /// <inheritdoc />
     public async Task<int> GetPeakListeningHourAsync(TimeRange range, CancellationToken ct = default)
     {
-        await using var dbContext = await _contextFactory.CreateDbContextAsync(ct).ConfigureAwait(false);
-        var query = dbContext.ListenHistory.AsNoTracking().AsQueryable();
-
-        if (range.StartUtc.HasValue)
-            query = query.Where(lh => lh.ListenTimestampUtc >= range.StartUtc.Value);
-        if (range.EndUtc.HasValue)
-            query = query.Where(lh => lh.ListenTimestampUtc <= range.EndUtc.Value);
-
-        var timestamps = await query
-            .Select(lh => lh.ListenTimestampUtc)
-            .ToListAsync(ct)
-            .ConfigureAwait(false);
-
-        if (timestamps.Count == 0) return 12;
-
-        return timestamps
-            .GroupBy(t => t.ToLocalTime().Hour)
-            .OrderByDescending(g => g.Count())
-            .First()
-            .Key;
+        return (await GetListeningPatternsAsync(range, ct).ConfigureAwait(false)).PeakHour;
     }
 
     /// <inheritdoc />

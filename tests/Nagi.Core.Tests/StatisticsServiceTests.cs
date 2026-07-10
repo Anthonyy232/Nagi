@@ -864,6 +864,32 @@ public class StatisticsServiceTests : IDisposable
         result.Should().Be(expectedHour, "the hour with 3 listens should win over the hour with 1 listen");
     }
 
+    [Fact]
+    public async Task GetListeningPatternsAsync_ComputesDayAndHourFromTheSameHistory()
+    {
+        var folder = new Folder { Name = "F", Path = "C:\\Music" };
+        var artist = new Artist { Name = "A" };
+        var song = CreateSong(folder, artist, "Song", null, TimeSpan.FromMinutes(3));
+        var majorityUtc = new DateTime(2024, 6, 18, 21, 0, 0, DateTimeKind.Utc);
+        var minorityUtc = majorityUtc.AddDays(3).AddHours(12);
+
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.Add(folder);
+            context.Artists.Add(artist);
+            context.Songs.Add(song);
+            for (var i = 0; i < 3; i++)
+                context.ListenHistory.Add(new ListenHistory { Song = song, ListenTimestampUtc = majorityUtc, EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromMinutes(3).Ticks });
+            context.ListenHistory.Add(new ListenHistory { Song = song, ListenTimestampUtc = minorityUtc, EndReason = PlaybackEndReason.Finished, ListenDurationTicks = TimeSpan.FromMinutes(3).Ticks });
+            await context.SaveChangesAsync();
+        }
+
+        var result = await _statisticsService.GetListeningPatternsAsync(new TimeRange(null, null));
+
+        result.MostActiveDay.Should().Be(majorityUtc.ToLocalTime().DayOfWeek);
+        result.PeakHour.Should().Be(majorityUtc.ToLocalTime().Hour);
+    }
+
     // -------------------------------------------------------------------------
     // Playback source distribution
     // -------------------------------------------------------------------------
