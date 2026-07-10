@@ -14,6 +14,7 @@ using Nagi.WinUI.ViewModels;
 using System.Threading.Tasks;
 using Nagi.Core.Services.Abstractions;
 using Nagi.WinUI.Helpers;
+using Nagi.WinUI.Services.Abstractions;
 
 namespace Nagi.WinUI.Pages;
 
@@ -62,7 +63,7 @@ public sealed partial class AlbumViewPage : Page
     {
         InitializeComponent();
         _dispatcherQueue = this.DispatcherQueue;
-        ViewModel = App.Services!.GetRequiredService<AlbumViewViewModel>();
+        ViewModel = App.Services!.GetRequiredService<IViewModelFactory>().Create<AlbumViewViewModel>();
         _logger = App.Services!.GetRequiredService<ILogger<AlbumViewPage>>();
         _libraryReader = App.Services!.GetRequiredService<ILibraryReader>();
         DataContext = ViewModel;

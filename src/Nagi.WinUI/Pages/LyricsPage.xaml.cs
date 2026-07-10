@@ -11,6 +11,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Nagi.Core.Models.Lyrics;
 using Nagi.WinUI.Helpers;
+using Nagi.WinUI.Services.Abstractions;
 using Nagi.WinUI.ViewModels;
 
 namespace Nagi.WinUI.Pages;
@@ -62,7 +63,7 @@ public sealed partial class LyricsPage : Page
 
     public LyricsPage()
     {
-        ViewModel = App.Services!.GetRequiredService<LyricsPageViewModel>();
+        ViewModel = App.Services!.GetRequiredService<IViewModelFactory>().Create<LyricsPageViewModel>();
         _logger = App.Services!.GetRequiredService<ILogger<LyricsPage>>();
         InitializeComponent();
 

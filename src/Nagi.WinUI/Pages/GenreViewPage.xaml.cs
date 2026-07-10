@@ -14,6 +14,7 @@ using Nagi.WinUI.ViewModels;
 using System.Threading.Tasks;
 using Nagi.Core.Services.Abstractions;
 using Nagi.WinUI.Helpers;
+using Nagi.WinUI.Services.Abstractions;
 
 namespace Nagi.WinUI.Pages;
 
@@ -33,7 +34,7 @@ public sealed partial class GenreViewPage : Page
     {
         InitializeComponent();
         _dispatcherQueue = this.DispatcherQueue;
-        ViewModel = App.Services!.GetRequiredService<GenreViewViewModel>();
+        ViewModel = App.Services!.GetRequiredService<IViewModelFactory>().Create<GenreViewViewModel>();
         _logger = App.Services!.GetRequiredService<ILogger<GenreViewPage>>();
         _libraryReader = App.Services!.GetRequiredService<ILibraryReader>();
         DataContext = ViewModel;
