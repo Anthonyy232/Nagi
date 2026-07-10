@@ -1346,6 +1346,58 @@ public class MusicPlaybackServiceTests
         await _audioPlayer.Received(1).LoadAsync(_testSongs[2]);
     }
 
+    [Fact]
+    public async Task RemoveFromQueueAsync_WhenRemovingCurrentTrack_CapturesPositionBeforePlayerStops()
+    {
+        await _service.InitializeAsync();
+        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(2001L);
+        await _service.PlayAsync(_testSongs, 1);
+
+        var position = TimeSpan.FromSeconds(73);
+        _audioPlayer.CurrentPosition.Returns(_ => position);
+        _audioPlayer.StopAsync().Returns(_ =>
+        {
+            position = TimeSpan.Zero;
+            return Task.CompletedTask;
+        });
+        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(2002L);
+
+        await _service.RemoveFromQueueAsync(_testSongs[1]);
+        await _service.FlushPendingFinalizationAsync();
+
+        await _libraryService.Received(1).FinalizeListenSessionAsync(
+            2001L,
+            TimeSpan.FromSeconds(73),
+            PlaybackEndReason.Skipped);
+        _service.CurrentListenHistoryId.Should().Be(2002L);
+    }
+
+    [Fact]
+    public async Task RemoveRangeFromQueueAsync_WhenRemovingCurrentTrack_CapturesPositionBeforePlayerStops()
+    {
+        await _service.InitializeAsync();
+        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(2101L);
+        await _service.PlayAsync(_testSongs, 1);
+
+        var position = TimeSpan.FromSeconds(91);
+        _audioPlayer.CurrentPosition.Returns(_ => position);
+        _audioPlayer.StopAsync().Returns(_ =>
+        {
+            position = TimeSpan.Zero;
+            return Task.CompletedTask;
+        });
+        _libraryService.StartListenSessionAsync(Arg.Any<Guid>(), Arg.Any<PlaybackContext>()).Returns(2102L);
+
+        await _service.RemoveRangeFromQueueAsync(new[] { _testSongs[1].Id });
+        await _service.FlushPendingFinalizationAsync();
+
+        await _libraryService.Received(1).FinalizeListenSessionAsync(
+            2101L,
+            TimeSpan.FromSeconds(91),
+            PlaybackEndReason.Skipped);
+        _service.CurrentListenHistoryId.Should().Be(2102L);
+    }
+
     /// <summary>
     ///     Verifies that removing a song that appeared before the current track correctly
     ///     decrements the CurrentQueueIndex to maintain the correct position.
