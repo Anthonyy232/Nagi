@@ -109,7 +109,7 @@ public class MusicPlaybackServiceTests
         _service.CurrentTrack!.Title.Should().Be("Transient Song");
         _service.CurrentTrack!.ArtistName.Should().Be("Temp Artist");
         _service.CurrentQueueIndex.Should().Be(-1);
-        await _audioPlayer.Received(1).LoadAsync(Arg.Is<Song>(s => s.FilePath == filePath));
+        await _audioPlayer.Received(1).LoadAsync(Arg.Is<Song>(s => s != null && s.FilePath == filePath));
         await _audioPlayer.Received(1).PlayAsync();
     }
 
@@ -219,7 +219,7 @@ public class MusicPlaybackServiceTests
         };
         _settingsService.GetRestorePlaybackStateEnabledAsync().Returns(true);
         _settingsService.GetPlaybackStateAsync().Returns(savedState);
-        _libraryService.GetSongsByIdsAsync(Arg.Is<IEnumerable<Guid>>(ids => ids.SequenceEqual(songIds)))
+        _libraryService.GetSongsByIdsAsync(Arg.Is<IEnumerable<Guid>>(ids => ids != null && ids.SequenceEqual(songIds)))
             .Returns(_testSongs.ToDictionary(s => s.Id));
 
         // Configure the mock to raise DurationChanged after LoadAsync is called.
@@ -613,7 +613,7 @@ public class MusicPlaybackServiceTests
         _service.CurrentListenHistoryId.Should().Be(100L);
         await _libraryService.Received(1).StartListenSessionAsync(
             _testSongs[0].Id,
-            Arg.Is<PlaybackContext>(c => c.Type == PlaybackContextType.Library && c.ContextId == null));
+            Arg.Is<PlaybackContext>(c => c != null && c.Type == PlaybackContextType.Library && c.ContextId == null));
     }
 
     [Fact]
@@ -731,7 +731,7 @@ public class MusicPlaybackServiceTests
         // Assert
         await _libraryService.Received(1).StartListenSessionAsync(
             _testSongs[0].Id,
-            Arg.Is<PlaybackContext>(c => c.Type == PlaybackContextType.Album && c.ContextId == albumId));
+            Arg.Is<PlaybackContext>(c => c != null && c.Type == PlaybackContextType.Album && c.ContextId == albumId));
     }
 
     [Fact]
@@ -820,7 +820,7 @@ public class MusicPlaybackServiceTests
         _service.CurrentListenHistoryId.Should().Be(777L);
         await _libraryService.Received(1).StartListenSessionAsync(
             mappedSong.Id,
-            Arg.Is<PlaybackContext>(c => c.Type == PlaybackContextType.Transient && c.ContextId == null));
+            Arg.Is<PlaybackContext>(c => c != null && c.Type == PlaybackContextType.Transient && c.ContextId == null));
     }
 
     [Fact]
@@ -966,7 +966,7 @@ public class MusicPlaybackServiceTests
         // Assert
         await _libraryService.Received(1).StartListenSessionAsync(
             _testSongs[0].Id,
-            Arg.Is<PlaybackContext>(c => c.Type == PlaybackContextType.Playlist && c.ContextId == playlistId));
+            Arg.Is<PlaybackContext>(c => c != null && c.Type == PlaybackContextType.Playlist && c.ContextId == playlistId));
 
         _service.CurrentListenHistoryId.Should().Be(1100L);
     }
@@ -987,7 +987,7 @@ public class MusicPlaybackServiceTests
         // Assert
         await _libraryService.Received(1).StartListenSessionAsync(
             _testSongs[0].Id,
-            Arg.Is<PlaybackContext>(c => c.Type == PlaybackContextType.Artist && c.ContextId == artistId));
+            Arg.Is<PlaybackContext>(c => c != null && c.Type == PlaybackContextType.Artist && c.ContextId == artistId));
         _service.CurrentListenHistoryId.Should().Be(1200L);
     }
 
@@ -1007,7 +1007,7 @@ public class MusicPlaybackServiceTests
         // Assert
         await _libraryService.Received(1).StartListenSessionAsync(
             _testSongs[0].Id,
-            Arg.Is<PlaybackContext>(c => c.Type == PlaybackContextType.Folder && c.ContextId == folderId));
+            Arg.Is<PlaybackContext>(c => c != null && c.Type == PlaybackContextType.Folder && c.ContextId == folderId));
         _service.CurrentListenHistoryId.Should().Be(1300L);
     }
 
@@ -1027,7 +1027,7 @@ public class MusicPlaybackServiceTests
         // Assert
         await _libraryService.Received(1).StartListenSessionAsync(
             _testSongs[0].Id,
-            Arg.Is<PlaybackContext>(c => c.Type == PlaybackContextType.Genre && c.ContextId == genreId));
+            Arg.Is<PlaybackContext>(c => c != null && c.Type == PlaybackContextType.Genre && c.ContextId == genreId));
         _service.CurrentListenHistoryId.Should().Be(1400L);
     }
 
@@ -1046,7 +1046,7 @@ public class MusicPlaybackServiceTests
         // Assert
         await _libraryService.Received(1).StartListenSessionAsync(
             _testSongs[0].Id,
-            Arg.Is<PlaybackContext>(c => c.Type == PlaybackContextType.SmartPlaylist && c.ContextId == smartPlaylistId));
+            Arg.Is<PlaybackContext>(c => c != null && c.Type == PlaybackContextType.SmartPlaylist && c.ContextId == smartPlaylistId));
         _service.CurrentListenHistoryId.Should().Be(1500L);
     }
 
@@ -1063,7 +1063,7 @@ public class MusicPlaybackServiceTests
         // Assert
         await _libraryService.Received(1).StartListenSessionAsync(
             _testSongs[0].Id,
-            Arg.Is<PlaybackContext>(c => c.Type == PlaybackContextType.Library && c.ContextId == null));
+            Arg.Is<PlaybackContext>(c => c != null && c.Type == PlaybackContextType.Library && c.ContextId == null));
     }
 
     #endregion
@@ -1561,6 +1561,7 @@ public class MusicPlaybackServiceTests
 
         // Assert
         await _settingsService.Received(1).SavePlaybackStateAsync(Arg.Is<PlaybackState>(state =>
+            state != null &&
             state.CurrentTrackId == _testSongs[2].Id &&
             state.PlaybackQueueTrackIds.SequenceEqual(_testSongs.Select(s => s.Id)) &&
             state.CurrentPlaybackQueueIndex == 2
@@ -1590,7 +1591,7 @@ public class MusicPlaybackServiceTests
         // Assert
         _service.CurrentEqualizerSettings.Should().NotBeNull();
         _service.CurrentEqualizerSettings!.BandGains[1].Should().Be(3.5f);
-        _audioPlayer.Received(1).ApplyEqualizerSettings(Arg.Is<EqualizerSettings>(s => s.BandGains[1] == 3.5f));
+        _audioPlayer.Received(1).ApplyEqualizerSettings(Arg.Is<EqualizerSettings>(s => s != null && s.BandGains[1] == 3.5f));
         await _settingsService.Received(1).SetEqualizerSettingsAsync(Arg.Any<EqualizerSettings>());
         eventTracker.EqualizerChangedCount.Should().Be(1);
     }
@@ -1614,7 +1615,7 @@ public class MusicPlaybackServiceTests
         // Assert
         _service.CurrentEqualizerSettings.Should().NotBeNull();
         _service.CurrentEqualizerSettings!.Preamp.Should().Be(5.0f);
-        _audioPlayer.Received(1).ApplyEqualizerSettings(Arg.Is<EqualizerSettings>(s => s.Preamp == 5.0f));
+        _audioPlayer.Received(1).ApplyEqualizerSettings(Arg.Is<EqualizerSettings>(s => s != null && s.Preamp == 5.0f));
         await _settingsService.Received(1).SetEqualizerSettingsAsync(Arg.Any<EqualizerSettings>());
         eventTracker.EqualizerChangedCount.Should().Be(1);
     }
@@ -1640,7 +1641,7 @@ public class MusicPlaybackServiceTests
         _service.CurrentEqualizerSettings.BandGains.Should().AllSatisfy(g => g.Should().Be(0.0f));
         _audioPlayer.Received(1)
             .ApplyEqualizerSettings(
-                Arg.Is<EqualizerSettings>(s => s.Preamp == 10.0f && s.BandGains.All(g => g == 0.0f)));
+                Arg.Is<EqualizerSettings>(s => s != null && s.Preamp == 10.0f && s.BandGains.All(g => g == 0.0f)));
         await _settingsService.Received(1).SetEqualizerSettingsAsync(Arg.Any<EqualizerSettings>());
     }
 
