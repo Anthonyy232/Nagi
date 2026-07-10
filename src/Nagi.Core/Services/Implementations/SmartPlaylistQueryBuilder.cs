@@ -29,7 +29,7 @@ public class SmartPlaylistQueryBuilder
             query = ApplySearchFilter(query, searchTerm);
 
         var finalSortOrder = sortOrderOverride.HasValue
-            ? MapToSmartPlaylistSortOrder(sortOrderOverride.Value)
+            ? SortOrderHelper.MapToSmartPlaylistSortOrder(sortOrderOverride.Value)
             : smartPlaylist.SortOrder;
 
         query = ApplySortOrder(query, finalSortOrder);
@@ -475,29 +475,6 @@ public class SmartPlaylistQueryBuilder
             || EF.Functions.Like(s.ArtistName, term)
             || s.SongArtists.Any(sa => EF.Functions.Like(sa.Artist.Name, term))
             || (s.Album != null && (EF.Functions.Like(s.Album.Title, term) || EF.Functions.Like(s.Album.ArtistName, term) || s.Album.AlbumArtists.Any(aa => EF.Functions.Like(aa.Artist.Name, term)))));
-    }
-
-
-
-    private static SmartPlaylistSortOrder MapToSmartPlaylistSortOrder(SongSortOrder songSortOrder)
-    {
-        return songSortOrder switch
-        {
-            SongSortOrder.TitleAsc => SmartPlaylistSortOrder.TitleAsc,
-            SongSortOrder.TitleDesc => SmartPlaylistSortOrder.TitleDesc,
-            SongSortOrder.ArtistAsc => SmartPlaylistSortOrder.ArtistAsc,
-            SongSortOrder.ArtistDesc => SmartPlaylistSortOrder.ArtistDesc,
-            SongSortOrder.AlbumAsc => SmartPlaylistSortOrder.AlbumAsc,
-            SongSortOrder.AlbumDesc => SmartPlaylistSortOrder.AlbumDesc,
-            SongSortOrder.YearAsc => SmartPlaylistSortOrder.YearAsc,
-            SongSortOrder.YearDesc => SmartPlaylistSortOrder.YearDesc,
-            SongSortOrder.FileCreatedDateAsc => SmartPlaylistSortOrder.FileCreatedDateAsc,
-            SongSortOrder.FileCreatedDateDesc => SmartPlaylistSortOrder.FileCreatedDateDesc,
-            SongSortOrder.TrackNumberAsc => SmartPlaylistSortOrder.TrackNumberAsc,
-            SongSortOrder.TrackNumberDesc => SmartPlaylistSortOrder.TrackNumberDesc,
-            SongSortOrder.PlaylistOrder => SmartPlaylistSortOrder.TitleAsc, // Fallback
-            _ => SmartPlaylistSortOrder.TitleAsc
-        };
     }
 
     #endregion

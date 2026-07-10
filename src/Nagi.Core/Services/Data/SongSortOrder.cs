@@ -15,7 +15,18 @@ public enum SongSortOrder
     TrackNumberDesc,
     YearAsc,
     YearDesc,
+    PlayCountAsc,
+    PlayCountDesc,
+    LastPlayedAsc,
+    LastPlayedDesc,
+    DateAddedAsc,
+    DateAddedDesc,
+    DurationAsc,
+    DurationDesc,
+    BpmAsc,
+    BpmDesc,
     FileCreatedDateAsc,
     FileCreatedDateDesc,
+    Random,
     PlaylistOrder
 }

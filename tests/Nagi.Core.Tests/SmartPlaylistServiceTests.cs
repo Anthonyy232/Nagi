@@ -759,6 +759,27 @@ public class SmartPlaylistServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task GetMatchingSongIdsAsync_WithSearchTerm_FiltersMatchingIds()
+    {
+        // Arrange
+        var playlist = await _service.CreateSmartPlaylistAsync("Search IDs Test");
+        await _service.AddRuleAsync(playlist!.Id, SmartPlaylistField.Genre, SmartPlaylistOperator.Is, "Rock");
+
+        // Act
+        var ids = await _service.GetMatchingSongIdsAsync(playlist.Id, "Three");
+
+        // Assert
+        ids.Should().HaveCount(1);
+
+        await using var context = _dbHelper.ContextFactory.CreateDbContext();
+        var expectedId = await context.Songs
+            .Where(s => s.Title == "Song Three")
+            .Select(s => s.Id)
+            .SingleAsync();
+        ids.Single().Should().Be(expectedId);
+    }
+
+    [Fact]
     public async Task GetMatchingSongIdsAsync_NonExistingPlaylist_ReturnsEmptyList()
     {
         // Act

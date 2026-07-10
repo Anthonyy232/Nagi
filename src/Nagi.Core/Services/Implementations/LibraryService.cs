@@ -13,6 +13,7 @@ using Nagi.Core.Services.Data;
 using Nagi.Core.Http.Pipelines;
 using Polly.CircuitBreaker;
 using System.IO;
+using System.Linq.Expressions;
 using System.Text;
 using System.Globalization;
 
@@ -5861,6 +5862,16 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                     .ThenByDescending(s => s.Album != null ? s.Album.Title : string.Empty)
                     .ThenByDescending(s => s.DiscNumber ?? 0).ThenByDescending(s => s.TrackNumber)
                     .ThenByDescending(s => s.Title).ThenByDescending(s => s.Id),
+            SongSortOrder.PlayCountAsc => OrderByMetric(s => s.PlayCount),
+            SongSortOrder.PlayCountDesc => OrderByMetricDescending(s => s.PlayCount),
+            SongSortOrder.LastPlayedAsc => OrderByMetric(s => s.LastPlayedDate),
+            SongSortOrder.LastPlayedDesc => OrderByMetricDescending(s => s.LastPlayedDate),
+            SongSortOrder.DateAddedAsc => OrderByMetric(s => s.DateAddedToLibrary),
+            SongSortOrder.DateAddedDesc => OrderByMetricDescending(s => s.DateAddedToLibrary),
+            SongSortOrder.DurationAsc => OrderByMetric(s => s.DurationTicks),
+            SongSortOrder.DurationDesc => OrderByMetricDescending(s => s.DurationTicks),
+            SongSortOrder.BpmAsc => OrderByMetric(s => s.Bpm ?? 0),
+            SongSortOrder.BpmDesc => OrderByMetricDescending(s => s.Bpm ?? 0),
             SongSortOrder.FileCreatedDateAsc => ia
                 ? query.OrderBy(s => s.FileCreatedDate)
                     .ThenBy(s => s.PrimaryArtistSortName)
@@ -5929,10 +5940,21 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                     .ThenByDescending(s => s.Album != null ? s.Album.Title : string.Empty)
                     .ThenByDescending(s => s.DiscNumber ?? 0).ThenByDescending(s => s.TrackNumber)
                     .ThenByDescending(s => s.Title).ThenByDescending(s => s.Id),
+            SongSortOrder.Random => query.OrderBy(_ => EF.Functions.Random()),
             _ => ia
                 ? query.OrderBy(s => s.SortTitle).ThenBy(s => s.PrimaryArtistSortName).ThenBy(s => s.Id)
                 : query.OrderBy(s => s.Title).ThenBy(s => s.PrimaryArtistName).ThenBy(s => s.Id)
         };
+
+        IOrderedQueryable<Song> OrderByMetric<TKey>(Expression<Func<Song, TKey>> keySelector) =>
+            ia
+                ? query.OrderBy(keySelector).ThenBy(s => s.PrimaryArtistSortName).ThenBy(s => s.SortTitle).ThenBy(s => s.Id)
+                : query.OrderBy(keySelector).ThenBy(s => s.PrimaryArtistName).ThenBy(s => s.Title).ThenBy(s => s.Id);
+
+        IOrderedQueryable<Song> OrderByMetricDescending<TKey>(Expression<Func<Song, TKey>> keySelector) =>
+            ia
+                ? query.OrderByDescending(keySelector).ThenByDescending(s => s.PrimaryArtistSortName).ThenByDescending(s => s.SortTitle).ThenByDescending(s => s.Id)
+                : query.OrderByDescending(keySelector).ThenByDescending(s => s.PrimaryArtistName).ThenByDescending(s => s.Title).ThenByDescending(s => s.Id);
     }
 
     private IQueryable<Song> BuildSongSearchQuery(MusicDbContext context, string searchTerm)

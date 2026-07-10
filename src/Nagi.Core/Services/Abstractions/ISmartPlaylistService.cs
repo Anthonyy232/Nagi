@@ -50,7 +50,7 @@ public interface ISmartPlaylistService
     Task<PagedResult<Song>> GetMatchingSongsPagedAsync(Guid smartPlaylistId, int pageNumber, int pageSize, string? searchTerm = null, SongSortOrder? sortOrder = null, CancellationToken token = default);
     Task<int> GetMatchingSongCountAsync(Guid smartPlaylistId, string? searchTerm = null);
     Task<int> GetMatchingSongCountAsync(SmartPlaylist smartPlaylist, string? searchTerm = null);
-    Task<List<Guid>> GetMatchingSongIdsAsync(Guid smartPlaylistId, SongSortOrder? sortOrder = null, CancellationToken token = default);
+    Task<List<Guid>> GetMatchingSongIdsAsync(Guid smartPlaylistId, string? searchTerm = null, SongSortOrder? sortOrder = null, CancellationToken token = default);
 
     /// <summary>
     ///     Gets the matching song counts for all smart playlists in a single batch operation.
