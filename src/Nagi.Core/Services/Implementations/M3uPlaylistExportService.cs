@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
+using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Data;
 
@@ -39,29 +40,7 @@ public class M3uPlaylistExportService : IPlaylistExportService
 
             var songs = await _libraryReader.GetSongsInPlaylistOrderedAsync(playlistId).ConfigureAwait(false);
             var songList = songs.ToList();
-
-            var sb = new StringBuilder();
-            sb.AppendLine("#EXTM3U");
-            sb.AppendLine($"#PLAYLIST:{playlist.Name}");
-
-            foreach (var song in songList)
-            {
-                var durationSeconds = (int)song.Duration.TotalSeconds;
-                var artistName = song.ArtistName;
-                var title = song.Title;
-
-                // Extended info line: #EXTINF:{duration},{artist} - {title}
-                sb.AppendLine($"#EXTINF:{durationSeconds},{artistName} - {title}");
-                sb.AppendLine(song.FilePath);
-            }
-
-            // Write as UTF-8 (M3U8 format) for better international character support
-            await File.WriteAllTextAsync(filePath, sb.ToString(), Encoding.UTF8).ConfigureAwait(false);
-
-            _logger.LogInformation("Exported playlist '{PlaylistName}' with {SongCount} songs to {FilePath}",
-                playlist.Name, songList.Count, filePath);
-
-            return new PlaylistExportResult(true, songList.Count);
+            return await ExportLoadedPlaylistAsync(playlist, songList, filePath).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -191,12 +170,12 @@ public class M3uPlaylistExportService : IPlaylistExportService
 
             foreach (var playlist in playlistList)
             {
-                // Get songs to check if playlist is empty
-                var songs = await _libraryReader.GetSongsInPlaylistOrderedAsync(playlist.Id).ConfigureAwait(false);
-                var songCount = songs.Count();
+                // Load once for both the empty check and the export body.
+                var songs = (await _libraryReader.GetSongsInPlaylistOrderedAsync(playlist.Id).ConfigureAwait(false))
+                    .ToList();
 
                 // Skip empty playlists
-                if (songCount == 0)
+                if (songs.Count == 0)
                 {
                     _logger.LogDebug("Skipping empty playlist '{PlaylistName}'", playlist.Name);
                     continue;
@@ -204,7 +183,7 @@ public class M3uPlaylistExportService : IPlaylistExportService
 
                 var filePath = GetUniqueBatchExportPath(directoryPath, playlist.Name, reservedFileNames);
 
-                var result = await ExportPlaylistAsync(playlist.Id, filePath).ConfigureAwait(false);
+                var result = await ExportLoadedPlaylistAsync(playlist, songs, filePath).ConfigureAwait(false);
                 if (result.Success)
                 {
                     exportedCount++;
@@ -221,6 +200,37 @@ public class M3uPlaylistExportService : IPlaylistExportService
         {
             _logger.LogError(ex, "Failed to batch export playlists to {DirectoryPath}", directoryPath);
             return new BatchExportResult(false, 0, 0, ex.Message);
+        }
+    }
+
+    private async Task<PlaylistExportResult> ExportLoadedPlaylistAsync(
+        Playlist playlist,
+        IReadOnlyList<Song> songs,
+        string filePath)
+    {
+        try
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine("#EXTM3U");
+            sb.AppendLine($"#PLAYLIST:{playlist.Name}");
+
+            foreach (var song in songs)
+            {
+                var durationSeconds = (int)song.Duration.TotalSeconds;
+                sb.AppendLine($"#EXTINF:{durationSeconds},{song.ArtistName} - {song.Title}");
+                sb.AppendLine(song.FilePath);
+            }
+
+            await File.WriteAllTextAsync(filePath, sb.ToString(), Encoding.UTF8).ConfigureAwait(false);
+
+            _logger.LogInformation("Exported playlist '{PlaylistName}' with {SongCount} songs to {FilePath}",
+                playlist.Name, songs.Count, filePath);
+            return new PlaylistExportResult(true, songs.Count);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to export playlist {PlaylistId} to {FilePath}", playlist.Id, filePath);
+            return new PlaylistExportResult(false, 0, ex.Message);
         }
     }
 

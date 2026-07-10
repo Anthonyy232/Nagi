@@ -272,6 +272,8 @@ public class M3uPlaylistExportServiceTests
             result.Success.Should().BeTrue();
             result.PlaylistsExported.Should().Be(1, "the empty playlist should be skipped");
             result.TotalSongs.Should().Be(1);
+            await _libraryReader.Received(1).GetSongsInPlaylistOrderedAsync(filledPlaylist.Id);
+            await _libraryReader.DidNotReceive().GetPlaylistByIdAsync(filledPlaylist.Id);
         }
         finally
         {
