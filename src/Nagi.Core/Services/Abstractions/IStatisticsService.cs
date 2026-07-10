@@ -69,6 +69,11 @@ public interface IStatisticsService
     // --- Habit Queries ---
 
     /// <summary>
+    ///     Gets the most active local day and peak local hour from one history scan.
+    /// </summary>
+    Task<ListeningPatternStats> GetListeningPatternsAsync(TimeRange range, CancellationToken ct = default);
+
+    /// <summary>
     ///     Identifies the day of the week with the most listening activity.
     /// </summary>
     Task<DayOfWeek> GetMostActiveDayOfWeekAsync(TimeRange range, CancellationToken ct = default);
@@ -115,3 +120,4 @@ public record AlbumStats(Album Album, int TotalPlays, TimeSpan TotalDuration, in
 public record GenreStats(Genre Genre, int TotalPlays, TimeSpan TotalDuration, int GlobalRank = 0);
 public record ActivityDataPoint(DateTime Timestamp, int Plays, TimeSpan Duration);
 public record ContextStats(PlaybackContextType Type, int Count, TimeSpan Duration);
+public record ListeningPatternStats(DayOfWeek MostActiveDay, int PeakHour);
