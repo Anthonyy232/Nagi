@@ -9,15 +9,14 @@
     <PackageVersion Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.3.260402-preview2" />
     <PackageVersion Include="CommunityToolkit.WinUI.Media" Version="8.3.260402-preview2" />
     <!-- WinAppSDK -->
-    <PackageVersion Include="Microsoft.WindowsAppSDK" Version="2.1.4-experimental8" />
-    <PackageVersion Include="Microsoft.WindowsAppSDK.WinUI" Version="2.1.1-experimental" />
+    <PackageVersion Include="Microsoft.WindowsAppSDK.Runtime" Version="2.2.0" />
+    <PackageVersion Include="Microsoft.WindowsAppSDK.WinUI" Version="2.2.1" />
     <PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.28000.2270" />
     <PackageVersion Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="3.0.1" />
     <!-- UI Controls -->
-    <PackageVersion Include="H.NotifyIcon.WinUI" Version="2.4.2-dev.17" />
+    <PackageVersion Include="H.NotifyIcon.WinUI" Version="2.5.0-dev.2" />
     <PackageVersion Include="ImageEx.WinUI" Version="5.0.0" />
     <PackageVersion Include="MessageFormat" Version="8.0.0" />
-    <PackageVersion Include="Microsoft.Graphics.Win2D" Version="1.3.2" />
     <!-- Entity Framework Core -->
     <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.9" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.9" />
@@ -33,8 +32,8 @@
     <PackageVersion Include="Polly" Version="8.7.0" />
     <PackageVersion Include="Polly.RateLimiting" Version="8.7.0" />
     <!-- Media Playback -->
-    <PackageVersion Include="LibVLCSharp" Version="4.0.0-alpha-20260410-9830" />
-    <PackageVersion Include="VideoLAN.LibVLC.Windows" Version="4.0.0-alpha-20260530" />
+    <PackageVersion Include="LibVLCSharp" Version="4.0.0-alpha-20260709-10120" />
+    <PackageVersion Include="VideoLAN.LibVLC.Windows" Version="4.0.0-alpha-20260709" />
     <!-- Serilog -->
     <PackageVersion Include="Serilog.Enrichers.Thread" Version="4.0.0" />
     <PackageVersion Include="Serilog.Extensions.Logging" Version="10.0.0" />

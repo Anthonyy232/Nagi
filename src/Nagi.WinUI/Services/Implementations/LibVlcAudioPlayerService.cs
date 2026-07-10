@@ -174,8 +174,12 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     public event Action? SmtcNextButtonPressed, SmtcPreviousButtonPressed;
 
     public bool IsPlaying => !_isDisposed && _isInitialized && !_isPausing && (_mediaPlayer?.IsPlaying ?? false);
-    public TimeSpan CurrentPosition => _isDisposed || !_isInitialized ? TimeSpan.Zero : TimeSpan.FromMilliseconds(Math.Max(0, _mediaPlayer?.Time ?? 0));
-    public TimeSpan Duration => _isDisposed || !_isInitialized ? TimeSpan.Zero : TimeSpan.FromMilliseconds(Math.Max(0, _mediaPlayer?.Length ?? 0));
+    public TimeSpan CurrentPosition => _isDisposed || !_isInitialized
+        ? TimeSpan.Zero
+        : FromVlcMicroseconds(_mediaPlayer?.Time ?? 0);
+    public TimeSpan Duration => _isDisposed || !_isInitialized
+        ? TimeSpan.Zero
+        : FromVlcMicroseconds(_mediaPlayer?.Length ?? 0);
     public double Volume => _isDisposed || !_isInitialized ? 0 : _userVolume;
     public bool IsMuted => !_isDisposed && _isInitialized && (_mediaPlayer?.Mute ?? false);
 
@@ -557,10 +561,20 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         }
 
         if (_mediaPlayer.IsSeekable)
-            _mediaPlayer.SetTime((long)position.TotalMilliseconds, true);
+            _mediaPlayer.SeekTo(position, true);
         else
             _logger.LogWarning("Seek command received, but media is not seekable.");
         return Task.CompletedTask;
+    }
+
+    private static TimeSpan FromVlcMicroseconds(long microseconds)
+    {
+        if (microseconds <= 0) return TimeSpan.Zero;
+
+        const long ticksPerMicrosecond = TimeSpan.TicksPerMillisecond / 1000;
+        return microseconds > TimeSpan.MaxValue.Ticks / ticksPerMicrosecond
+            ? TimeSpan.MaxValue
+            : TimeSpan.FromTicks(microseconds * ticksPerMicrosecond);
     }
 
     public Task SetVolumeAsync(double volume)
@@ -1006,7 +1020,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
             VLCState.Playing => MediaPlaybackStatus.Playing,
             VLCState.Paused => MediaPlaybackStatus.Paused,
             VLCState.Stopped or VLCState.Error => MediaPlaybackStatus.Stopped,
-            VLCState.Opening or VLCState.Buffering or VLCState.Stopping => MediaPlaybackStatus.Changing,
+            VLCState.Opening or VLCState.Stopping => MediaPlaybackStatus.Changing,
             _ => MediaPlaybackStatus.Closed
         };
 
