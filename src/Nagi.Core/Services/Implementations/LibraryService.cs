@@ -525,10 +525,10 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             return await GetSubFolderCountAsync(parentFolderId, token).ConfigureAwait(false);
 
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        var term = $"%{NormalizeString(searchTerm) ?? string.Empty}%";
+        var term = LikePatternHelper.CreateContainsPattern(NormalizeString(searchTerm) ?? string.Empty);
         return await context.Folders.AsNoTracking()
             .CountAsync(f => f.ParentFolderId == parentFolderId &&
-                             EF.Functions.Like(f.Name, term), token).ConfigureAwait(false);
+                             EF.Functions.Like(f.Name, term, LikePatternHelper.EscapeCharacter), token).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -541,8 +541,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
-            var term = $"%{NormalizeString(searchTerm) ?? string.Empty}%";
-            query = query.Where(f => EF.Functions.Like(f.Name, term));
+            var term = LikePatternHelper.CreateContainsPattern(NormalizeString(searchTerm) ?? string.Empty);
+            query = query.Where(f => EF.Functions.Like(f.Name, term, LikePatternHelper.EscapeCharacter));
         }
 
         return await query
@@ -2729,11 +2729,11 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
-            var term = $"%{NormalizeString(searchTerm) ?? string.Empty}%";
-            baseQuery = baseQuery.Where(s => EF.Functions.Like(s.Title, term)
-                                     || EF.Functions.Like(s.ArtistName, term)
-                                     || (s.Album != null && (EF.Functions.Like(s.Album.Title, term)
-                                                             || EF.Functions.Like(s.Album.ArtistName, term))));
+            var term = LikePatternHelper.CreateContainsPattern(NormalizeString(searchTerm) ?? string.Empty);
+            baseQuery = baseQuery.Where(s => EF.Functions.Like(s.Title, term, LikePatternHelper.EscapeCharacter)
+                                     || EF.Functions.Like(s.ArtistName, term, LikePatternHelper.EscapeCharacter)
+                                     || (s.Album != null && (EF.Functions.Like(s.Album.Title, term, LikePatternHelper.EscapeCharacter)
+                                                             || EF.Functions.Like(s.Album.ArtistName, term, LikePatternHelper.EscapeCharacter))));
         }
 
         var totalCount = await baseQuery.CountAsync(token).ConfigureAwait(false);
@@ -2815,12 +2815,12 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         if (string.IsNullOrWhiteSpace(searchTerm)) return await GetSongsByFolderIdAsync(folderId, token).ConfigureAwait(false);
 
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        var term = $"%{NormalizeString(searchTerm) ?? string.Empty}%";
+        var term = LikePatternHelper.CreateContainsPattern(NormalizeString(searchTerm) ?? string.Empty);
         var query = context.Songs.AsNoTracking().Where(s => s.FolderId == folderId
-                                                             && (EF.Functions.Like(s.Title, term)
-                                                                 || EF.Functions.Like(s.ArtistName, term)
+                                                             && (EF.Functions.Like(s.Title, term, LikePatternHelper.EscapeCharacter)
+                                                                 || EF.Functions.Like(s.ArtistName, term, LikePatternHelper.EscapeCharacter)
                                                                  || (s.Album != null &&
-                                                                     (EF.Functions.Like(s.Album.Title, term) || EF.Functions.Like(s.Album.ArtistName, term)))))
+                                                                     (EF.Functions.Like(s.Album.Title, term, LikePatternHelper.EscapeCharacter) || EF.Functions.Like(s.Album.ArtistName, term, LikePatternHelper.EscapeCharacter)))))
             .Include(s => s.SongArtists).ThenInclude(sa => sa.Artist)
             .Include(s => s.Album).ThenInclude(a => a!.AlbumArtists).ThenInclude(aa => aa.Artist)
             .OrderBy(s => s.Title).ThenBy(s => s.Id);
@@ -2834,10 +2834,10 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         if (string.IsNullOrWhiteSpace(searchTerm)) return await GetSongsByAlbumIdAsync(albumId, token).ConfigureAwait(false);
 
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        var term = $"%{NormalizeString(searchTerm) ?? string.Empty}%";
+        var term = LikePatternHelper.CreateContainsPattern(NormalizeString(searchTerm) ?? string.Empty);
         var query = context.Songs.AsNoTracking().Where(s => s.AlbumId == albumId
-                                                             && (EF.Functions.Like(s.Title, term) ||
-                                                                 EF.Functions.Like(s.ArtistName, term)))
+                                                             && (EF.Functions.Like(s.Title, term, LikePatternHelper.EscapeCharacter) ||
+                                                                 EF.Functions.Like(s.ArtistName, term, LikePatternHelper.EscapeCharacter)))
             .Include(s => s.SongArtists).ThenInclude(sa => sa.Artist)
             .Include(s => s.Album).ThenInclude(a => a!.AlbumArtists).ThenInclude(aa => aa.Artist)
             .OrderBy(s => s.TrackNumber).ThenBy(s => s.Id);
@@ -2851,12 +2851,12 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         if (string.IsNullOrWhiteSpace(searchTerm)) return await GetSongsByArtistIdAsync(artistId, token).ConfigureAwait(false);
 
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        var term = $"%{NormalizeString(searchTerm) ?? string.Empty}%";
+        var term = LikePatternHelper.CreateContainsPattern(NormalizeString(searchTerm) ?? string.Empty);
         var query = context.Songs.AsNoTracking().Where(s => s.SongArtists.Any(sa => sa.ArtistId == artistId)
-                                                             && (EF.Functions.Like(s.Title, term) ||
-                                                                 EF.Functions.Like(s.ArtistName, term) ||
+                                                             && (EF.Functions.Like(s.Title, term, LikePatternHelper.EscapeCharacter) ||
+                                                                 EF.Functions.Like(s.ArtistName, term, LikePatternHelper.EscapeCharacter) ||
                                                                  (s.Album != null &&
-                                                                  (EF.Functions.Like(s.Album.Title, term) || EF.Functions.Like(s.Album.ArtistName, term)))))
+                                                                  (EF.Functions.Like(s.Album.Title, term, LikePatternHelper.EscapeCharacter) || EF.Functions.Like(s.Album.ArtistName, term, LikePatternHelper.EscapeCharacter)))))
             .Include(s => s.SongArtists).ThenInclude(sa => sa.Artist)
             .Include(s => s.Album).ThenInclude(a => a!.AlbumArtists).ThenInclude(aa => aa.Artist)
             .OrderBy(s => s.Album != null ? s.Album.Title : string.Empty).ThenBy(s => s.TrackNumber).ThenBy(s => s.Id);
@@ -2870,12 +2870,12 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         if (string.IsNullOrWhiteSpace(searchTerm)) return await GetSongsInPlaylistOrderedAsync(playlistId, token).ConfigureAwait(false);
 
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        var term = $"%{NormalizeString(searchTerm) ?? string.Empty}%";
+        var term = LikePatternHelper.CreateContainsPattern(NormalizeString(searchTerm) ?? string.Empty);
         var query = context.PlaylistSongs.AsNoTracking()
             .Where(ps => ps.PlaylistId == playlistId && ps.Song != null &&
-                         (EF.Functions.Like(ps.Song.Title, term)
-                          || EF.Functions.Like(ps.Song.ArtistName, term)
-                          || (ps.Song.Album != null && (EF.Functions.Like(ps.Song.Album.Title, term) || EF.Functions.Like(ps.Song.Album.ArtistName, term)))));
+                         (EF.Functions.Like(ps.Song.Title, term, LikePatternHelper.EscapeCharacter)
+                          || EF.Functions.Like(ps.Song.ArtistName, term, LikePatternHelper.EscapeCharacter)
+                          || (ps.Song.Album != null && (EF.Functions.Like(ps.Song.Album.Title, term, LikePatternHelper.EscapeCharacter) || EF.Functions.Like(ps.Song.Album.ArtistName, term, LikePatternHelper.EscapeCharacter)))));
 
         var songsQuery = ApplySongSortOrder(ExcludeHeavyFields(query
             .Include(ps => ps.Song).ThenInclude(s => s!.SongArtists).ThenInclude(sa => sa.Artist)
@@ -2891,12 +2891,12 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         if (string.IsNullOrWhiteSpace(searchTerm)) return await GetSongsByGenreIdAsync(genreId, token).ConfigureAwait(false);
 
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        var term = $"%{NormalizeString(searchTerm) ?? string.Empty}%";
+        var term = LikePatternHelper.CreateContainsPattern(NormalizeString(searchTerm) ?? string.Empty);
         var query = context.Songs.AsNoTracking()
             .Where(s => s.Genres.Any(g => g.Id == genreId)
-                        && (EF.Functions.Like(s.Title, term)
-                            || EF.Functions.Like(s.ArtistName, term)
-                            || (s.Album != null && (EF.Functions.Like(s.Album.Title, term) || EF.Functions.Like(s.Album.ArtistName, term)))))
+                        && (EF.Functions.Like(s.Title, term, LikePatternHelper.EscapeCharacter)
+                            || EF.Functions.Like(s.ArtistName, term, LikePatternHelper.EscapeCharacter)
+                            || (s.Album != null && (EF.Functions.Like(s.Album.Title, term, LikePatternHelper.EscapeCharacter) || EF.Functions.Like(s.Album.ArtistName, term, LikePatternHelper.EscapeCharacter)))))
             .Include(s => s.SongArtists).ThenInclude(sa => sa.Artist)
             .Include(s => s.Album).ThenInclude(a => a!.AlbumArtists).ThenInclude(aa => aa.Artist)
             .OrderBy(s => s.Title).ThenBy(s => s.Id);
@@ -2916,10 +2916,10 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
-            var term = $"%{NormalizeString(searchTerm) ?? string.Empty}%";
-            baseQuery = baseQuery.Where(s => EF.Functions.Like(s.Title, term)
-                                     || EF.Functions.Like(s.ArtistName, term)
-                                     || (s.Album != null && (EF.Functions.Like(s.Album.Title, term) || EF.Functions.Like(s.Album.ArtistName, term))));
+            var term = LikePatternHelper.CreateContainsPattern(NormalizeString(searchTerm) ?? string.Empty);
+            baseQuery = baseQuery.Where(s => EF.Functions.Like(s.Title, term, LikePatternHelper.EscapeCharacter)
+                                     || EF.Functions.Like(s.ArtistName, term, LikePatternHelper.EscapeCharacter)
+                                     || (s.Album != null && (EF.Functions.Like(s.Album.Title, term, LikePatternHelper.EscapeCharacter) || EF.Functions.Like(s.Album.ArtistName, term, LikePatternHelper.EscapeCharacter))));
         }
 
         var totalCount = await baseQuery.CountAsync(token).ConfigureAwait(false);
@@ -2947,9 +2947,9 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
-            var term = $"%{NormalizeString(searchTerm) ?? string.Empty}%";
+            var term = LikePatternHelper.CreateContainsPattern(NormalizeString(searchTerm) ?? string.Empty);
             baseQuery = baseQuery.Where(s =>
-                EF.Functions.Like(s.Title, term) || EF.Functions.Like(s.ArtistName, term));
+                EF.Functions.Like(s.Title, term, LikePatternHelper.EscapeCharacter) || EF.Functions.Like(s.ArtistName, term, LikePatternHelper.EscapeCharacter));
         }
 
         var totalCount = await baseQuery.CountAsync(token).ConfigureAwait(false);
@@ -2977,9 +2977,9 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
-            var term = $"%{NormalizeString(searchTerm) ?? string.Empty}%";
+            var term = LikePatternHelper.CreateContainsPattern(NormalizeString(searchTerm) ?? string.Empty);
             baseQuery = baseQuery.Where(s =>
-                EF.Functions.Like(s.Title, term) || EF.Functions.Like(s.ArtistName, term) || (s.Album != null && (EF.Functions.Like(s.Album.Title, term) || EF.Functions.Like(s.Album.ArtistName, term))));
+                EF.Functions.Like(s.Title, term, LikePatternHelper.EscapeCharacter) || EF.Functions.Like(s.ArtistName, term, LikePatternHelper.EscapeCharacter) || (s.Album != null && (EF.Functions.Like(s.Album.Title, term, LikePatternHelper.EscapeCharacter) || EF.Functions.Like(s.Album.ArtistName, term, LikePatternHelper.EscapeCharacter))));
         }
 
         var totalCount = await baseQuery.CountAsync(token).ConfigureAwait(false);
@@ -3007,12 +3007,12 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
-            var term = $"%{NormalizeString(searchTerm) ?? string.Empty}%";
+            var term = LikePatternHelper.CreateContainsPattern(NormalizeString(searchTerm) ?? string.Empty);
             query = query.Where(ps => ps.Song != null &&
-                                      (EF.Functions.Like(ps.Song.Title, term)
-                                       || EF.Functions.Like(ps.Song.ArtistName, term)
-                                       || ps.Song.SongArtists.Any(sa => EF.Functions.Like(sa.Artist.Name, term))
-                                       || (ps.Song.Album != null && (EF.Functions.Like(ps.Song.Album.Title, term) || EF.Functions.Like(ps.Song.Album.ArtistName, term)))));
+                                      (EF.Functions.Like(ps.Song.Title, term, LikePatternHelper.EscapeCharacter)
+                                       || EF.Functions.Like(ps.Song.ArtistName, term, LikePatternHelper.EscapeCharacter)
+                                       || ps.Song.SongArtists.Any(sa => EF.Functions.Like(sa.Artist.Name, term, LikePatternHelper.EscapeCharacter))
+                                       || (ps.Song.Album != null && (EF.Functions.Like(ps.Song.Album.Title, term, LikePatternHelper.EscapeCharacter) || EF.Functions.Like(ps.Song.Album.ArtistName, term, LikePatternHelper.EscapeCharacter)))));
         }
 
         var songQuery = query.Select(ps => ps.Song!);
@@ -3040,10 +3040,10 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
-            var term = $"%{NormalizeString(searchTerm) ?? string.Empty}%";
-            baseQuery = baseQuery.Where(s => EF.Functions.Like(s.Title, term)
-                                     || EF.Functions.Like(s.ArtistName, term)
-                                     || (s.Album != null && (EF.Functions.Like(s.Album.Title, term) || EF.Functions.Like(s.Album.ArtistName, term))));
+            var term = LikePatternHelper.CreateContainsPattern(NormalizeString(searchTerm) ?? string.Empty);
+            baseQuery = baseQuery.Where(s => EF.Functions.Like(s.Title, term, LikePatternHelper.EscapeCharacter)
+                                     || EF.Functions.Like(s.ArtistName, term, LikePatternHelper.EscapeCharacter)
+                                     || (s.Album != null && (EF.Functions.Like(s.Album.Title, term, LikePatternHelper.EscapeCharacter) || EF.Functions.Like(s.Album.ArtistName, term, LikePatternHelper.EscapeCharacter))));
         }
 
         var totalCount = await baseQuery.CountAsync(token).ConfigureAwait(false);
@@ -3070,10 +3070,10 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
-            var term = $"%{NormalizeString(searchTerm) ?? string.Empty}%";
-            query = query.Where(s => EF.Functions.Like(s.Title, term)
-                                     || EF.Functions.Like(s.ArtistName, term)
-                                     || (s.Album != null && (EF.Functions.Like(s.Album.Title, term) || EF.Functions.Like(s.Album.ArtistName, term))));
+            var term = LikePatternHelper.CreateContainsPattern(NormalizeString(searchTerm) ?? string.Empty);
+            query = query.Where(s => EF.Functions.Like(s.Title, term, LikePatternHelper.EscapeCharacter)
+                                     || EF.Functions.Like(s.ArtistName, term, LikePatternHelper.EscapeCharacter)
+                                     || (s.Album != null && (EF.Functions.Like(s.Album.Title, term, LikePatternHelper.EscapeCharacter) || EF.Functions.Like(s.Album.ArtistName, term, LikePatternHelper.EscapeCharacter))));
         }
 
         return await ApplySongSortOrder(query, sortOrder).Select(s => s.Id).ToListAsync(token).ConfigureAwait(false);
@@ -3088,10 +3088,10 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
-            var term = $"%{NormalizeString(searchTerm) ?? string.Empty}%";
-            query = query.Where(s => EF.Functions.Like(s.Title, term)
-                                     || EF.Functions.Like(s.ArtistName, term)
-                                     || (s.Album != null && (EF.Functions.Like(s.Album.Title, term) || EF.Functions.Like(s.Album.ArtistName, term))));
+            var term = LikePatternHelper.CreateContainsPattern(NormalizeString(searchTerm) ?? string.Empty);
+            query = query.Where(s => EF.Functions.Like(s.Title, term, LikePatternHelper.EscapeCharacter)
+                                     || EF.Functions.Like(s.ArtistName, term, LikePatternHelper.EscapeCharacter)
+                                     || (s.Album != null && (EF.Functions.Like(s.Album.Title, term, LikePatternHelper.EscapeCharacter) || EF.Functions.Like(s.Album.ArtistName, term, LikePatternHelper.EscapeCharacter))));
         }
 
         return await ApplySongSortOrder(query, sortOrder).Select(s => s.Id).ToListAsync(token).ConfigureAwait(false);
@@ -3105,10 +3105,10 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
-            var term = $"%{NormalizeString(searchTerm) ?? string.Empty}%";
-            query = query.Where(s => EF.Functions.Like(s.Title, term)
-                                     || EF.Functions.Like(s.ArtistName, term)
-                                     || (s.Album != null && (EF.Functions.Like(s.Album.Title, term) || EF.Functions.Like(s.Album.ArtistName, term))));
+            var term = LikePatternHelper.CreateContainsPattern(NormalizeString(searchTerm) ?? string.Empty);
+            query = query.Where(s => EF.Functions.Like(s.Title, term, LikePatternHelper.EscapeCharacter)
+                                     || EF.Functions.Like(s.ArtistName, term, LikePatternHelper.EscapeCharacter)
+                                     || (s.Album != null && (EF.Functions.Like(s.Album.Title, term, LikePatternHelper.EscapeCharacter) || EF.Functions.Like(s.Album.ArtistName, term, LikePatternHelper.EscapeCharacter))));
         }
 
         return await ApplySongSortOrder(query, sortOrder).Select(s => s.Id).ToListAsync(token).ConfigureAwait(false);
@@ -3123,12 +3123,12 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
-            var term = $"%{NormalizeString(searchTerm) ?? string.Empty}%";
+            var term = LikePatternHelper.CreateContainsPattern(NormalizeString(searchTerm) ?? string.Empty);
             query = query.Where(ps => ps.Song != null &&
-                                      (EF.Functions.Like(ps.Song.Title, term)
-                                       || EF.Functions.Like(ps.Song.ArtistName, term)
-                                       || ps.Song.SongArtists.Any(sa => EF.Functions.Like(sa.Artist.Name, term))
-                                       || (ps.Song.Album != null && (EF.Functions.Like(ps.Song.Album.Title, term) || EF.Functions.Like(ps.Song.Album.ArtistName, term)))));
+                                      (EF.Functions.Like(ps.Song.Title, term, LikePatternHelper.EscapeCharacter)
+                                       || EF.Functions.Like(ps.Song.ArtistName, term, LikePatternHelper.EscapeCharacter)
+                                       || ps.Song.SongArtists.Any(sa => EF.Functions.Like(sa.Artist.Name, term, LikePatternHelper.EscapeCharacter))
+                                       || (ps.Song.Album != null && (EF.Functions.Like(ps.Song.Album.Title, term, LikePatternHelper.EscapeCharacter) || EF.Functions.Like(ps.Song.Album.ArtistName, term, LikePatternHelper.EscapeCharacter)))));
         }
 
         var songQuery = query.Select(ps => ps.Song!);
@@ -3146,10 +3146,10 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
-            var term = $"%{NormalizeString(searchTerm) ?? string.Empty}%";
-            query = query.Where(s => EF.Functions.Like(s.Title, term)
-                                     || EF.Functions.Like(s.ArtistName, term)
-                                     || (s.Album != null && (EF.Functions.Like(s.Album.Title, term) || EF.Functions.Like(s.Album.ArtistName, term))));
+            var term = LikePatternHelper.CreateContainsPattern(NormalizeString(searchTerm) ?? string.Empty);
+            query = query.Where(s => EF.Functions.Like(s.Title, term, LikePatternHelper.EscapeCharacter)
+                                     || EF.Functions.Like(s.ArtistName, term, LikePatternHelper.EscapeCharacter)
+                                     || (s.Album != null && (EF.Functions.Like(s.Album.Title, term, LikePatternHelper.EscapeCharacter) || EF.Functions.Like(s.Album.ArtistName, term, LikePatternHelper.EscapeCharacter))));
         }
 
         return await ApplySongSortOrder(query, sortOrder).Select(s => s.Id).ToListAsync(token).ConfigureAwait(false);
@@ -5960,31 +5960,31 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     private IQueryable<Song> BuildSongSearchQuery(MusicDbContext context, string searchTerm)
     {
         // Leading wildcards prevent index usage; consider full-text search for large datasets
-        var term = $"%{searchTerm}%";
+        var term = LikePatternHelper.CreateContainsPattern(searchTerm);
         return context.Songs
             .Where(s =>
-                EF.Functions.Like(s.Title, term)
-                || EF.Functions.Like(s.ArtistName, term)
-                || s.SongArtists.Any(sa => EF.Functions.Like(sa.Artist.Name, term))
-                || (s.Album != null && (EF.Functions.Like(s.Album.Title, term) || EF.Functions.Like(s.Album.ArtistName, term) || s.Album.AlbumArtists.Any(aa => EF.Functions.Like(aa.Artist.Name, term))))
-                || (s.Year != null && EF.Functions.Like(s.Year.ToString(), term))
-                || s.Genres.Any(g => EF.Functions.Like(g.Name, term))
+                EF.Functions.Like(s.Title, term, LikePatternHelper.EscapeCharacter)
+                || EF.Functions.Like(s.ArtistName, term, LikePatternHelper.EscapeCharacter)
+                || s.SongArtists.Any(sa => EF.Functions.Like(sa.Artist.Name, term, LikePatternHelper.EscapeCharacter))
+                || (s.Album != null && (EF.Functions.Like(s.Album.Title, term, LikePatternHelper.EscapeCharacter) || EF.Functions.Like(s.Album.ArtistName, term, LikePatternHelper.EscapeCharacter) || s.Album.AlbumArtists.Any(aa => EF.Functions.Like(aa.Artist.Name, term, LikePatternHelper.EscapeCharacter))))
+                || (s.Year != null && EF.Functions.Like(s.Year.ToString(), term, LikePatternHelper.EscapeCharacter))
+                || s.Genres.Any(g => EF.Functions.Like(g.Name, term, LikePatternHelper.EscapeCharacter))
             );
     }
 
     private IQueryable<Artist> BuildArtistSearchQuery(MusicDbContext context, string searchTerm)
     {
-        var term = $"%{searchTerm}%";
-        return context.Artists.Where(a => EF.Functions.Like(a.Name, term));
+        var term = LikePatternHelper.CreateContainsPattern(searchTerm);
+        return context.Artists.Where(a => EF.Functions.Like(a.Name, term, LikePatternHelper.EscapeCharacter));
     }
 
     private IQueryable<Album> BuildAlbumSearchQuery(MusicDbContext context, string searchTerm)
     {
-        var term = $"%{searchTerm}%";
+        var term = LikePatternHelper.CreateContainsPattern(searchTerm);
         return context.Albums
-            .Where(al => EF.Functions.Like(al.Title, term)
-                         || EF.Functions.Like(al.ArtistName, term)
-                         || al.AlbumArtists.Any(aa => EF.Functions.Like(aa.Artist.Name, term)));
+            .Where(al => EF.Functions.Like(al.Title, term, LikePatternHelper.EscapeCharacter)
+                         || EF.Functions.Like(al.ArtistName, term, LikePatternHelper.EscapeCharacter)
+                         || al.AlbumArtists.Any(aa => EF.Functions.Like(aa.Artist.Name, term, LikePatternHelper.EscapeCharacter)));
     }
 
     private bool IsUniqueConstraintViolation(DbUpdateException ex)
