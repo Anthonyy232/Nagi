@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,125 +32,15 @@ public class FileSystemService : IFileSystemService
 
     public IEnumerable<string> EnumerateFiles(string path, string searchPattern, SearchOption searchOption)
     {
-        if (searchOption == SearchOption.TopDirectoryOnly)
-        {
-            return Directory.EnumerateFiles(path, searchPattern, SearchOption.TopDirectoryOnly);
-        }
-
-        return SafeEnumerateFiles(path, searchPattern);
+        return SafeFileEnumerator
+            .EnumerateFilesWithLastWriteTime(path, searchPattern, searchOption)
+            .Select(entry => entry.Path);
     }
 
     public IEnumerable<(string Path, DateTime LastWriteTimeUtc)> EnumerateFilesWithLastWriteTime(
         string path, string searchPattern, SearchOption searchOption)
     {
-        if (searchOption == SearchOption.TopDirectoryOnly)
-        {
-            IEnumerable<FileInfo> topFiles = Enumerable.Empty<FileInfo>();
-            try { topFiles = new DirectoryInfo(path).EnumerateFiles(searchPattern); }
-            catch (UnauthorizedAccessException) { }
-            catch (DirectoryNotFoundException) { }
-            catch (IOException) { }
-            foreach (var fi in topFiles) yield return (fi.FullName, fi.LastWriteTimeUtc);
-            yield break;
-        }
-
-        foreach (var item in SafeEnumerateFilesWithLastWriteTime(path, searchPattern))
-            yield return item;
-    }
-
-    // Directory names that commonly contain trash / filesystem metadata, never music.
-    // Matched case-insensitively by exact name.
-    private static readonly HashSet<string> ExcludedDirectoryNames = new(StringComparer.OrdinalIgnoreCase)
-    {
-        "$RECYCLE.BIN",
-        "RECYCLED",
-        "RECYCLER",
-        "System Volume Information",
-        "@eaDir",       // Synology metadata sidecars — critical for NAS users
-        "@Recycle",     // QNAP
-        "#recycle",     // Synology
-        ".Trashes",     // macOS via SMB
-        ".Trash",
-        ".Trash-1000",  // Linux freedesktop
-        "lost+found",
-        ".fseventsd",
-        ".Spotlight-V100",
-    };
-
-    private static bool IsExcludedDirectory(DirectoryInfo di)
-    {
-        if (ExcludedDirectoryNames.Contains(di.Name)) return true;
-        // Names starting with "$" are typically Windows system dirs ($WinREAgent, $RECYCLE.BIN, etc.)
-        if (di.Name.Length > 0 && di.Name[0] == '$') return true;
-        try
-        {
-            var attrs = di.Attributes;
-            // Skip any hidden+system combination (Windows protected/OS dirs). Hidden alone is OK
-            // (e.g., user-hidden music folders); System alone is OK; the combination is a strong signal.
-            if ((attrs & FileAttributes.Hidden) != 0 && (attrs & FileAttributes.System) != 0)
-                return true;
-        }
-        catch { /* attribute lookup can fail on broken network paths; assume not excluded */ }
-        return false;
-    }
-
-    private IEnumerable<(string Path, DateTime LastWriteTimeUtc)> SafeEnumerateFilesWithLastWriteTime(
-        string rootPath, string searchPattern)
-    {
-        var dirs = new Stack<string>();
-        dirs.Push(rootPath);
-
-        while (dirs.Count > 0)
-        {
-            var currentDir = dirs.Pop();
-
-            // Iterate with a manual enumerator so a mid-iteration IOException (common on NAS/SMB
-            // when the connection blips) doesn't abort the entire scan — we just stop enumerating
-            // this directory and continue with the next one on the stack.
-            IEnumerator<FileInfo>? fileEnum = null;
-            try { fileEnum = new DirectoryInfo(currentDir).EnumerateFiles(searchPattern).GetEnumerator(); }
-            catch (UnauthorizedAccessException) { }
-            catch (DirectoryNotFoundException) { }
-            catch (IOException) { }
-
-            if (fileEnum != null)
-            {
-                try
-                {
-                    while (true)
-                    {
-                        FileInfo? fi = null;
-                        try
-                        {
-                            if (!fileEnum.MoveNext()) break;
-                            fi = fileEnum.Current;
-                        }
-                        catch (UnauthorizedAccessException) { continue; }
-                        catch (IOException) { break; } // Give up on this directory; carry on with others.
-                        if (fi != null) yield return (fi.FullName, fi.LastWriteTimeUtc);
-                    }
-                }
-                finally { fileEnum.Dispose(); }
-            }
-
-            IEnumerable<DirectoryInfo> subDirs = Enumerable.Empty<DirectoryInfo>();
-            try { subDirs = new DirectoryInfo(currentDir).EnumerateDirectories(); }
-            catch (UnauthorizedAccessException) { }
-            catch (DirectoryNotFoundException) { }
-            catch (IOException) { }
-
-            foreach (var sub in subDirs)
-            {
-                if (IsExcludedDirectory(sub)) continue;
-                dirs.Push(sub.FullName);
-            }
-        }
-    }
-
-    private IEnumerable<string> SafeEnumerateFiles(string rootPath, string searchPattern)
-    {
-        foreach (var entry in SafeEnumerateFilesWithLastWriteTime(rootPath, searchPattern))
-            yield return entry.Path;
+        return SafeFileEnumerator.EnumerateFilesWithLastWriteTime(path, searchPattern, searchOption);
     }
 
     public string[] GetFiles(string path, string searchPattern)
