@@ -295,7 +295,8 @@ public class AtlMetadataServiceTests : IDisposable
         _fileSystem.GetFileInfo(audioFilePath).Returns(new FileInfo(audioFilePath));
 
         // Use the same helper as the production code to generate the expected cache path
-        var expectedCachePath = Path.Combine(LrcCachePath, FileNameHelper.GenerateLrcCacheFileName("Cache Artist", null, "Cached Song"));
+        var expectedCachePath = Path.Combine(LrcCachePath,
+            FileNameHelper.GenerateLrcCacheFileName(audioFilePath, "Cache Artist", null, "Cached Song"));
 
         _fileSystem.FileExists(expectedCachePath).Returns(true);
         _fileSystem.GetLastWriteTimeUtc(expectedCachePath).Returns(cacheFileTime);
@@ -653,7 +654,8 @@ public class AtlMetadataServiceTests : IDisposable
             track.Lyrics.Add(lyricsInfo);
         });
 
-        var expectedCachePath = Path.Combine(LrcCachePath, FileNameHelper.GenerateLrcCacheFileName("Synced Artist", null, "Synced Song"));
+        var expectedCachePath = Path.Combine(LrcCachePath,
+            FileNameHelper.GenerateLrcCacheFileName(audioFilePath, "Synced Artist", null, "Synced Song"));
 
         // Mock: cache file doesn't exist yet
         _fileSystem.FileExists(Arg.Is<string>(s => s.Contains(LrcCachePath))).Returns(false);
@@ -721,7 +723,8 @@ public class AtlMetadataServiceTests : IDisposable
 
         _settingsService.GetArtistSplitCharactersAsync().Returns(";/\\");
 
-        var expectedCacheFileName = FileNameHelper.GenerateLrcCacheFileName("Artist A", "Multi Album", "Multi Artist Song");
+        var expectedCacheFileName = FileNameHelper.GenerateLrcCacheFileName(
+            filePath, "Artist A", "Multi Album", "Multi Artist Song");
         var expectedCachePath = Path.Combine(LrcCachePath, expectedCacheFileName);
 
         _fileSystem.FileExists(expectedCachePath).Returns(true);

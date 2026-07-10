@@ -402,7 +402,7 @@ public class AtlMetadataService : IMetadataService, IDisposable
     /// </summary>
     private async Task<string?> GetLrcPathAsync(string audioFilePath, DateTime audioFileLastWriteTime, string? artist, string? album, string? title, Track track)
     {
-        var cacheFileName = FileNameHelper.GenerateLrcCacheFileName(artist, album, title);
+        var cacheFileName = FileNameHelper.GenerateLrcCacheFileName(audioFilePath, artist, album, title);
         var cachedLrcPath = _fileSystem.Combine(_pathConfig.LrcCachePath, cacheFileName);
 
         // Check for a valid cache entry. It's valid if it exists and is newer than the audio file.
