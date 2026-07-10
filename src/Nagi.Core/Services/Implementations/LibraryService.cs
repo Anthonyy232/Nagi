@@ -60,6 +60,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     private readonly IMetadataService _metadataService;
     private readonly IPathConfiguration _pathConfig;
     private readonly SemaphoreSlim _scanSemaphore = new(1, 1);
+    private readonly object _activeScanLock = new();
     private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly ISettingsService _settingsService;
     private readonly IReplayGainService _replayGainService;
@@ -71,6 +72,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     private volatile bool _isMetadataFetchRunning;
     private volatile bool _isBatchScanning; // Prevents ReplayGain trigger during batch operations
     private CancellationTokenSource _metadataFetchCts;
+    private CancellationTokenSource? _activeScanCts;
     private CancellationTokenSource? _replayGainScanCts;
     private readonly CancellationTokenSource _shutdownCts = new();
 
@@ -122,6 +124,45 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
     private void OnIgnoreLeadingArticlesOnSortChanged(bool value) => _ignoreArticlesOnSort = value;
 
+    private void CancelActiveScan(string reason)
+    {
+        CancellationTokenSource? activeScan;
+        lock (_activeScanLock)
+        {
+            activeScan = _activeScanCts;
+        }
+
+        if (activeScan is null || activeScan.IsCancellationRequested)
+            return;
+
+        _logger.LogInformation("Cancelling active library scan before {Reason}.", reason);
+        try
+        {
+            activeScan.Cancel();
+        }
+        catch (ObjectDisposedException)
+        {
+            // The scan finished while the caller was trying to cancel it.
+        }
+    }
+
+    private void SetActiveScanCancellationSource(CancellationTokenSource cts)
+    {
+        lock (_activeScanLock)
+        {
+            _activeScanCts = cts;
+        }
+    }
+
+    private void ClearActiveScanCancellationSource(CancellationTokenSource cts)
+    {
+        lock (_activeScanLock)
+        {
+            if (ReferenceEquals(_activeScanCts, cts))
+                _activeScanCts = null;
+        }
+    }
+
     /// <summary>
     ///     Occurs when an artist's metadata (e.g., biography, image) has been successfully updated from a remote source.
     /// </summary>
@@ -151,6 +192,20 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     }
 
     public async Task ClearAllLibraryDataAsync()
+    {
+        CancelActiveScan("library data reset");
+        await _scanSemaphore.WaitAsync(_shutdownCts.Token).ConfigureAwait(false);
+        try
+        {
+            await ClearAllLibraryDataCoreAsync().ConfigureAwait(false);
+        }
+        finally
+        {
+            _scanSemaphore.Release();
+        }
+    }
+
+    private async Task ClearAllLibraryDataCoreAsync()
     {
         _logger.LogInformation("Starting to clear all library data and cache files.");
         _metadataFetchCts.Cancel();
@@ -268,8 +323,22 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     /// <inheritdoc />
     public async Task<bool> RemoveFolderAsync(Guid folderId)
     {
+        CancelActiveScan("folder removal");
+        await _scanSemaphore.WaitAsync(_shutdownCts.Token).ConfigureAwait(false);
+        try
+        {
+            return await RemoveFolderCoreAsync(folderId, _shutdownCts.Token).ConfigureAwait(false);
+        }
+        finally
+        {
+            _scanSemaphore.Release();
+        }
+    }
+
+    private async Task<bool> RemoveFolderCoreAsync(Guid folderId, CancellationToken cancellationToken = default)
+    {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-        var folder = await context.Folders.FindAsync(folderId).ConfigureAwait(false);
+        var folder = await context.Folders.FindAsync(new object[] { folderId }, cancellationToken).ConfigureAwait(false);
         if (folder is null)
         {
             _logger.LogWarning("Could not remove folder: Folder with ID {FolderId} not found.", folderId);
@@ -279,7 +348,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         List<string> albumArtPathsToDelete;
         List<string> lrcPathsToDelete;
 
-        await using var transaction = await context.Database.BeginTransactionAsync().ConfigureAwait(false);
+        await using var transaction = await context.Database.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
         try
         {
             if (folder.ParentFolderId == null)
@@ -290,14 +359,14 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                     .Where(s => s.AlbumArtUriFromTrack != null)
                     .Select(s => s.AlbumArtUriFromTrack!)
                     .Distinct()
-                    .ToListAsync().ConfigureAwait(false);
+                    .ToListAsync(cancellationToken).ConfigureAwait(false);
 
                 lrcPathsToDelete = await songsInFolder
                     .Where(s => s.LrcFilePath != null)
                     .Select(s => s.LrcFilePath!)
-                    .ToListAsync().ConfigureAwait(false);
+                    .ToListAsync(cancellationToken).ConfigureAwait(false);
 
-                await songsInFolder.ExecuteDeleteAsync().ConfigureAwait(false);
+                await songsInFolder.ExecuteDeleteAsync(cancellationToken).ConfigureAwait(false);
             }
             else
             {
@@ -306,17 +375,17 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             }
 
             context.Folders.Remove(folder);
-            await context.SaveChangesAsync().ConfigureAwait(false);
+            await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
-            await CleanUpOrphanedEntitiesAsync(context).ConfigureAwait(false);
+            await CleanUpOrphanedEntitiesAsync(context, cancellationToken).ConfigureAwait(false);
 
-            await transaction.CommitAsync().ConfigureAwait(false);
+            await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
             _logger.LogInformation("Removed folder '{FolderName}' and associated data.", folder.Name);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Folder removal for ID {FolderId} failed and was rolled back.", folderId);
-            await transaction.RollbackAsync().ConfigureAwait(false);
+            await transaction.RollbackAsync(cancellationToken).ConfigureAwait(false);
             return false;
         }
 
@@ -595,20 +664,30 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     public Task<bool> RescanFolderForMusicAsync(Guid folderId, bool forceFullScan, IProgress<ScanProgress>? progress = null,
         CancellationToken cancellationToken = default)
     {
+        CancelActiveScan("manual folder rescan");
         return RescanFolderForMusicAsync(folderId, forceFullScan, allowFolderRemovalOnMissing: true, progress, cancellationToken);
     }
 
     private async Task<bool> RescanFolderForMusicAsync(Guid folderId, bool forceFullScan, bool allowFolderRemovalOnMissing,
         IProgress<ScanProgress>? progress = null,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default,
+        bool registerAsActiveScan = true)
     {
+        using var operationCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _shutdownCts.Token);
+        var operationToken = operationCts.Token;
+
+        if (registerAsActiveScan)
+            SetActiveScanCancellationSource(operationCts);
+
         try
         {
             // Wait to acquire the semaphore. If the operation is cancelled while waiting, it will throw.
-            await _scanSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
+            await _scanSemaphore.WaitAsync(operationToken).ConfigureAwait(false);
         }
         catch (OperationCanceledException)
         {
+            if (registerAsActiveScan)
+                ClearActiveScanCancellationSource(operationCts);
             _logger.LogDebug("Scan for folder ID {FolderId} was cancelled before acquiring semaphore.", folderId);
             progress?.Report(new ScanProgress { StatusText = Resources.Strings.Status_ScanCancelled, Percentage = 100 });
             return false;
@@ -633,7 +712,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
 
                 try
                 {
-                    cancellationToken.ThrowIfCancellationRequested();
+                    operationToken.ThrowIfCancellationRequested();
 
                     if (!_fileSystem.DirectoryExists(folder.Path))
                     {
@@ -655,19 +734,19 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                             folder.Path, folder.Id);
                         progress?.Report(new ScanProgress
                         { StatusText = Resources.Strings.Status_ScanFailed, Percentage = 100 });
-                        return await RemoveFolderAsync(folderId).ConfigureAwait(false);
+                        return await RemoveFolderCoreAsync(folderId, operationToken).ConfigureAwait(false);
                     }
 
                     progress?.Report(new ScanProgress
                     { StatusText = Resources.Strings.Status_PreparingScanCaches, IsIndeterminate = true });
                     var (filesToAdd, filesToUpdate, filesRemovedFromDisk) =
-                        await AnalyzeFolderChangesAsync(folderId, folder.Path, forceFullScan, cancellationToken).ConfigureAwait(false);
+                        await AnalyzeFolderChangesAsync(folderId, folder.Path, forceFullScan, operationToken).ConfigureAwait(false);
 
                     if (filesToAdd.Any() || filesToUpdate.Any() || filesRemovedFromDisk.Any())
                         _logger.LogInformation("Changes detected: +{New} ~{Updated} -{Removed}",
                             filesToAdd.Count, filesToUpdate.Count, filesRemovedFromDisk.Count);
 
-                    cancellationToken.ThrowIfCancellationRequested();
+                    operationToken.ThrowIfCancellationRequested();
 
                     var allFilePathsToDelete = filesRemovedFromDisk.Distinct().ToList();
 
@@ -679,7 +758,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                     {
                         await using var guardContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
                         var existingCount = await guardContext.Songs.AsNoTracking()
-                            .CountAsync(s => s.FolderId == folderId, cancellationToken).ConfigureAwait(false);
+                            .CountAsync(s => s.FolderId == folderId, operationToken).ConfigureAwait(false);
                         if (existingCount > 0 &&
                             allFilePathsToDelete.Count > Math.Max(50, existingCount / 2) &&
                             filesToAdd.Count < allFilePathsToDelete.Count / 10)
@@ -704,15 +783,15 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                         var lrcPathsToDelete = await songsToDeleteQuery
                             .Where(s => s.LrcFilePath != null)
                             .Select(s => s.LrcFilePath!)
-                            .ToListAsync(cancellationToken).ConfigureAwait(false);
+                            .ToListAsync(operationToken).ConfigureAwait(false);
 
                         var albumArtPathsToDelete = await songsToDeleteQuery
                             .Where(s => s.AlbumArtUriFromTrack != null)
                             .Select(s => s.AlbumArtUriFromTrack!)
                             .Distinct()
-                            .ToListAsync(cancellationToken).ConfigureAwait(false);
+                            .ToListAsync(operationToken).ConfigureAwait(false);
 
-                        await songsToDeleteQuery.ExecuteDeleteAsync(cancellationToken).ConfigureAwait(false);
+                        await songsToDeleteQuery.ExecuteDeleteAsync(operationToken).ConfigureAwait(false);
 
                         // Clean up associated files
                         foreach (var lrcPath in lrcPathsToDelete)
@@ -748,14 +827,14 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                             progress?.Report(new ScanProgress
                             { StatusText = Resources.Strings.Status_Finalizing, IsIndeterminate = true });
                             await using var cleanupContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
-                            await CleanUpOrphanedEntitiesAsync(cleanupContext, cancellationToken).ConfigureAwait(false);
+                            await CleanUpOrphanedEntitiesAsync(cleanupContext, operationToken).ConfigureAwait(false);
                         }
 
                         // Run all independent post-scan checks in parallel (each manages its own DbContext).
                         // No new files were added, so no new directories exist — skip EnsureSubFolders.
-                        var lrcTask = UpdateMissingLrcPathsAsync(folderId, cancellationToken);
-                        var coverArtTask = UpdateMissingCoverArtAsync(folderId, folder.Path, cancellationToken);
-                        var artistImageTask = UpdateMissingArtistImagesFromFoldersAsync(folderId, cancellationToken);
+                        var lrcTask = UpdateMissingLrcPathsAsync(folderId, operationToken);
+                        var coverArtTask = UpdateMissingCoverArtAsync(folderId, folder.Path, operationToken);
+                        var artistImageTask = UpdateMissingArtistImagesFromFoldersAsync(folderId, operationToken);
 
                         await Task.WhenAll(lrcTask, coverArtTask, artistImageTask).ConfigureAwait(false);
 
@@ -801,9 +880,9 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                     // Use streaming extraction for better memory efficiency
                     var filePathsBeingUpdated = filesToUpdate.ToHashSet(StringComparer.OrdinalIgnoreCase);
                     var (newSongsFound, discoveredDirs) = await ExtractAndSaveMetadataStreamingAsync(
-                        folderId, filesToProcess, folder.Path, filePathsBeingUpdated, progress, cancellationToken).ConfigureAwait(false);
+                        folderId, filesToProcess, folder.Path, filePathsBeingUpdated, progress, operationToken).ConfigureAwait(false);
 
-                    cancellationToken.ThrowIfCancellationRequested();
+                    operationToken.ThrowIfCancellationRequested();
 
                     // For pure-add scans, LRC and cover art were already checked during metadata extraction
                     // (AtlMetadataService.GetLrcPathAsync / ProcessCoverArtFromDirectoryAsync) — skip redundant
@@ -814,13 +893,13 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                     // Pass discoveredDirs directly to skip the internal SELECT DISTINCT DirectoryPath query.
                     var postScanTasks = new List<Task>
                     {
-                        UpdateMissingArtistImagesFromFoldersAsync(folderId, cancellationToken),
-                        EnsureSubFoldersExistAsync(folderId, folder.Path, discoveredDirs, cancellationToken)
+                        UpdateMissingArtistImagesFromFoldersAsync(folderId, operationToken),
+                        EnsureSubFoldersExistAsync(folderId, folder.Path, discoveredDirs, operationToken)
                     };
                     if (!isPureAddScan)
                     {
-                        postScanTasks.Add(UpdateMissingLrcPathsAsync(folderId, cancellationToken));
-                        postScanTasks.Add(UpdateMissingCoverArtAsync(folderId, folder.Path, cancellationToken));
+                        postScanTasks.Add(UpdateMissingLrcPathsAsync(folderId, operationToken));
+                        postScanTasks.Add(UpdateMissingCoverArtAsync(folderId, folder.Path, operationToken));
                     }
                     await Task.WhenAll(postScanTasks).ConfigureAwait(false);
 
@@ -832,7 +911,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                     {
                         await using (var finalContext = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false))
                         {
-                            await CleanUpOrphanedEntitiesAsync(finalContext, cancellationToken).ConfigureAwait(false);
+                            await CleanUpOrphanedEntitiesAsync(finalContext, operationToken).ConfigureAwait(false);
                         }
                     }
 
@@ -856,13 +935,13 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                     { StatusText = Resources.Strings.Status_ScanFailed, Percentage = 100 });
                     return false;
                 }
-            }, cancellationToken);
+            }, operationToken);
 
             // Run ReplayGain analysis if enabled, but only for single folder scans
             // RefreshAllFoldersAsync sets _isBatchScanning=true and triggers once at the end
             if (scanResult && !_isBatchScanning && await _settingsService.GetVolumeNormalizationEnabledAsync().ConfigureAwait(false))
             {
-                await RunReplayGainAnalysisAsync(progress, cancellationToken).ConfigureAwait(false);
+                await RunReplayGainAnalysisAsync(progress, operationToken).ConfigureAwait(false);
             }
 
             return scanResult;
@@ -875,6 +954,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         }
         finally
         {
+            if (registerAsActiveScan)
+                ClearActiveScanCancellationSource(operationCts);
             // CRITICAL: Release the semaphore so other scans can proceed.
             _scanSemaphore.Release();
         }
@@ -976,9 +1057,15 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     public async Task<bool> RefreshAllFoldersAsync(bool forceFullScan, IProgress<ScanProgress>? progress = null,
         CancellationToken cancellationToken = default)
     {
+        CancelActiveScan(forceFullScan ? "forced library refresh" : "library refresh");
+        using var operationCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _shutdownCts.Token);
+        var operationToken = operationCts.Token;
+
         try
         {
-            var folders = (await GetRootFoldersAsync(cancellationToken).ConfigureAwait(false)).ToList();
+            SetActiveScanCancellationSource(operationCts);
+
+            var folders = (await GetRootFoldersAsync(operationToken).ConfigureAwait(false)).ToList();
             var totalFolders = folders.Count;
 
             if (totalFolders == 0)
@@ -999,7 +1086,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             {
                 foreach (var folder in folders)
                 {
-                    cancellationToken.ThrowIfCancellationRequested();
+                    operationToken.ThrowIfCancellationRequested();
 
                     var newProgress = new Progress<ScanProgress>(p =>
                     {
@@ -1027,7 +1114,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                     // (e.g., NAS not mounted yet, external drive unplugged). Only explicit user
                     // rescan (which calls the public overload) may trigger folder removal.
                     var changes = await RescanFolderForMusicAsync(folder.Id, forceFullScan,
-                            allowFolderRemovalOnMissing: false, newProgress, cancellationToken)
+                            allowFolderRemovalOnMissing: false, newProgress, operationToken, registerAsActiveScan: false)
                         .ConfigureAwait(false);
                     if (changes) anyChangesMade = true;
 
@@ -1043,7 +1130,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             // Run ReplayGain analysis ONCE after all folders are scanned (if enabled and changes were made)
             if (anyChangesMade && await _settingsService.GetVolumeNormalizationEnabledAsync().ConfigureAwait(false))
             {
-                await RunReplayGainAnalysisAsync(progress, cancellationToken).ConfigureAwait(false);
+                await RunReplayGainAnalysisAsync(progress, operationToken).ConfigureAwait(false);
             }
 
             progress?.Report(new ScanProgress { StatusText = Resources.Strings.Status_LibraryRefreshComplete, Percentage = 100 });
@@ -1053,10 +1140,20 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             }
             return anyChangesMade;
         }
+        catch (OperationCanceledException)
+        {
+            _logger.LogDebug("Library refresh was cancelled.");
+            progress?.Report(new ScanProgress { StatusText = Resources.Strings.Status_ScanCancelled, Percentage = 100 });
+            return false;
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to refresh all library folders.");
             return false;
+        }
+        finally
+        {
+            ClearActiveScanCancellationSource(operationCts);
         }
     }
 
