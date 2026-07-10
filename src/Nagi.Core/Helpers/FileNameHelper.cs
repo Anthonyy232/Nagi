@@ -1,4 +1,6 @@
 ﻿using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 using Nagi.Core.Models;
 
 namespace Nagi.Core.Helpers;
@@ -27,18 +29,32 @@ public static class FileNameHelper
     }
 
     /// <summary>
-    ///     Generates a cache file name for LRC files using the "Artist - Album - Title.lrc" format.
+    ///     Generates a deterministic, collision-resistant cache file name for an audio file's lyrics.
     /// </summary>
+    /// <param name="audioFileIdentity">The audio file path, or another stable per-song identity.</param>
     /// <param name="artist">The artist name.</param>
     /// <param name="album">The album name.</param>
     /// <param name="title">The song title.</param>
-    /// <returns>A sanitized file name in the format "Artist - Album - Title.lrc".</returns>
-    public static string GenerateLrcCacheFileName(string? artist, string? album, string? title)
+    /// <returns>A sanitized filename with a stable identity hash.</returns>
+    public static string GenerateLrcCacheFileName(
+        string audioFileIdentity,
+        string? artist,
+        string? album,
+        string? title)
     {
         var sanitizedArtist = SanitizeFileName(artist ?? string.Empty, Artist.UnknownArtistName);
         var sanitizedAlbum = SanitizeFileName(album ?? string.Empty, Album.UnknownAlbumName);
         var sanitizedTitle = SanitizeFileName(title ?? string.Empty, string.Format(Resources.Strings.Format_Unknown, Resources.Strings.Label_Title));
 
-        return $"{sanitizedArtist} - {sanitizedAlbum} - {sanitizedTitle}.lrc";
+        var descriptivePrefix = $"{sanitizedArtist} - {sanitizedAlbum} - {sanitizedTitle}";
+        const int maxPrefixLength = 140;
+        if (descriptivePrefix.Length > maxPrefixLength)
+            descriptivePrefix = descriptivePrefix[..maxPrefixLength].TrimEnd();
+
+        var normalizedIdentity = PathCanonicalizer.Normalize(audioFileIdentity).ToUpperInvariant();
+        var identityHash = SHA256.HashData(Encoding.UTF8.GetBytes(normalizedIdentity));
+        var hashSuffix = Convert.ToHexString(identityHash.AsSpan(0, 12));
+
+        return $"{descriptivePrefix} - {hashSuffix}.lrc";
     }
 }

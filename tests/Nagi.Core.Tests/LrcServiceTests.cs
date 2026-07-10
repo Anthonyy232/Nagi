@@ -348,6 +348,69 @@ public class LrcServiceTests
         await _netEaseLyricsService.Received(1).SearchLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>());
     }
 
+    [Fact]
+    public async Task GetLyricsAsync_WithLegacyCachePath_InvalidatesAndRefreshesCollisionProneFile()
+    {
+        const string cacheRoot = @"C:\cache\lrc";
+        const string legacyPath = @"C:\cache\lrc\Artist - Album - Song.lrc";
+        var song = new Song
+        {
+            Title = "Song",
+            PrimaryArtistName = "Artist",
+            FilePath = @"C:\Music\Song.flac",
+            LrcFilePath = legacyPath,
+            LyricsLastCheckedUtc = DateTime.UtcNow,
+            Duration = TimeSpan.FromMinutes(3),
+            Album = new Album { Title = "Album" }
+        };
+        _pathConfig.LrcCachePath.Returns(cacheRoot);
+        _fileSystem.Combine(Arg.Any<string[]>())
+            .Returns(call => Path.Combine(call.Arg<string[]>()!));
+        _fileSystem.FileExists(legacyPath).Returns(true);
+        _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
+        _onlineLyricsService.GetLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(),
+                Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>())
+            .Returns("[00:01.00]Fresh Lyrics");
+        _netEaseLyricsService.SearchLyricsAsync(Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<CancellationToken>())
+            .Returns((string?)null);
+
+        var result = await _lrcService.GetLyricsAsync(song);
+
+        result!.Lines.Single().Text.Should().Be("Fresh Lyrics");
+        await _fileSystem.DidNotReceive().ReadAllTextAsync(legacyPath);
+        await _libraryWriter.Received(1).UpdateSongLrcPathAsync(
+            song.Id,
+            Arg.Is<string?>(path => path != null && path != legacyPath && path.EndsWith(".lrc")));
+    }
+
+    [Fact]
+    public async Task GetLyricsAsync_WithIdentityBasedCachePath_UsesLocalFile()
+    {
+        const string cacheRoot = @"C:\cache\lrc";
+        var song = new Song
+        {
+            Title = "Song",
+            PrimaryArtistName = "Artist",
+            FilePath = @"C:\Music\Song.flac",
+            Album = new Album { Title = "Album" }
+        };
+        var cachePath = Path.Combine(cacheRoot, FileNameHelper.GenerateLrcCacheFileName(
+            song.FilePath, song.PrimaryArtistName, song.Album.Title, song.Title));
+        song.LrcFilePath = cachePath;
+        _pathConfig.LrcCachePath.Returns(cacheRoot);
+        _fileSystem.Combine(Arg.Any<string[]>())
+            .Returns(call => Path.Combine(call.Arg<string[]>()!));
+        _fileSystem.FileExists(cachePath).Returns(true);
+        _fileSystem.ReadAllTextAsync(cachePath).Returns("[00:01.00]Local Lyrics");
+
+        var result = await _lrcService.GetLyricsAsync(song);
+
+        result!.Lines.Single().Text.Should().Be("Local Lyrics");
+        await _libraryWriter.DidNotReceive().UpdateSongLrcPathAsync(Arg.Any<Guid>(), Arg.Any<string?>());
+        await _onlineLyricsService.DidNotReceive().GetLyricsAsync(
+            Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>());
+    }
+
     /// <summary>
     ///     Verifies that when LRCLIB returns no results, the NetEase result (fetched in parallel) is used.
     /// </summary>

@@ -50,12 +50,27 @@ public class LrcService : ILrcService, IDisposable
     /// <inheritdoc />
     public async Task<ParsedLrc?> GetLyricsAsync(Song song, CancellationToken cancellationToken = default)
     {
-        // 1. Try local file path from Song object
-        if (!string.IsNullOrWhiteSpace(song.LrcFilePath) && _fileSystemService.FileExists(song.LrcFilePath))
-            return await GetLyricsAsync(song.LrcFilePath).ConfigureAwait(false);
+        var forceOnlineRefresh = false;
+
+        // 1. Try the local path from the Song object. Cache files created before identity hashes
+        // are not safe to reuse: two songs may already point at the same metadata-derived file.
+        if (!string.IsNullOrWhiteSpace(song.LrcFilePath))
+        {
+            var isLegacyCachePath = IsLegacyCachePath(song);
+            if (!isLegacyCachePath && _fileSystemService.FileExists(song.LrcFilePath))
+                return await GetLyricsAsync(song.LrcFilePath).ConfigureAwait(false);
+
+            forceOnlineRefresh = true;
+            _logger.LogInformation(
+                isLegacyCachePath
+                    ? "Ignoring legacy collision-prone lyrics cache path while refreshing song {SongId}."
+                    : "Ignoring missing lyrics path while refreshing song {SongId}.",
+                song.Id);
+        }
 
         // 2. Try online fallback if enabled AND never checked before
-        if (song.LyricsLastCheckedUtc != null || !await _settingsService.GetFetchOnlineLyricsEnabledAsync().ConfigureAwait(false))
+        if ((!forceOnlineRefresh && song.LyricsLastCheckedUtc != null)
+            || !await _settingsService.GetFetchOnlineLyricsEnabledAsync().ConfigureAwait(false))
             return null;
 
         CancellationToken settingsToken;
@@ -159,6 +174,14 @@ public class LrcService : ILrcService, IDisposable
         // This allows retry if providers are enabled later or if the fetch was cancelled.
         if (enabledProviders.Count > 0 && !token.IsCancellationRequested && anyProviderSuccess)
         {
+            // A provider completed successfully but returned no lyrics. Remove the invalid local
+            // reference now; successful lyric results already replace it in CacheLyricsAsync.
+            if (forceOnlineRefresh && !string.IsNullOrWhiteSpace(song.LrcFilePath))
+            {
+                song.LrcFilePath = null;
+                await _libraryWriter.UpdateSongLrcPathAsync(song.Id, null).ConfigureAwait(false);
+            }
+
             await _libraryWriter.UpdateSongLyricsLastCheckedAsync(song.Id).ConfigureAwait(false);
             song.LyricsLastCheckedUtc = DateTime.UtcNow;
         }
@@ -187,7 +210,12 @@ public class LrcService : ILrcService, IDisposable
     {
         try
         {
-            var cacheFileName = FileNameHelper.GenerateLrcCacheFileName(song.PrimaryArtistName, song.Album?.Title, song.Title);
+            var cacheIdentity = string.IsNullOrWhiteSpace(song.FilePath) ? song.Id.ToString("N") : song.FilePath;
+            var cacheFileName = FileNameHelper.GenerateLrcCacheFileName(
+                cacheIdentity,
+                song.PrimaryArtistName,
+                song.Album?.Title,
+                song.Title);
             var cachedLrcPath = _fileSystemService.Combine(_pathConfig.LrcCachePath, cacheFileName);
 
             await _fileSystemService.WriteAllTextAsync(cachedLrcPath, lrcContent).ConfigureAwait(false);
@@ -206,6 +234,28 @@ public class LrcService : ILrcService, IDisposable
         {
             _logger.LogError(ex, "Failed to cache lyrics for song {SongId}", song.Id);
         }
+    }
+
+    private bool IsLegacyCachePath(Song song)
+    {
+        if (string.IsNullOrWhiteSpace(song.LrcFilePath)
+            || string.IsNullOrWhiteSpace(_pathConfig.LrcCachePath))
+            return false;
+
+        var cacheRoot = PathCanonicalizer.Normalize(_pathConfig.LrcCachePath).TrimEnd('\\') + "\\";
+        var candidate = PathCanonicalizer.Normalize(song.LrcFilePath);
+        if (!candidate.StartsWith(cacheRoot, StringComparison.OrdinalIgnoreCase)) return false;
+
+        var cacheIdentity = string.IsNullOrWhiteSpace(song.FilePath) ? song.Id.ToString("N") : song.FilePath;
+        var expectedPath = PathCanonicalizer.Normalize(_fileSystemService.Combine(
+            _pathConfig.LrcCachePath,
+            FileNameHelper.GenerateLrcCacheFileName(
+                cacheIdentity,
+                song.PrimaryArtistName,
+                song.Album?.Title,
+                song.Title)));
+
+        return !candidate.Equals(expectedPath, StringComparison.OrdinalIgnoreCase);
     }
 
     private Task<string?> LogUnknownProviderAndReturnNull(string providerId)
