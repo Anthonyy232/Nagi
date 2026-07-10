@@ -20,7 +20,7 @@ public class MusicPlaybackServiceScrobblingTests
     private readonly ILibraryService _libraryService;
     private readonly MusicPlaybackService _service;
     private readonly List<Song> _testSongs;
-    private readonly List<(Song Song, long SessionId)> _raisedEvents = new();
+    private readonly List<(Song Song, long SessionId, DateTime ListenStartedUtc)> _raisedEvents = new();
 
     public MusicPlaybackServiceScrobblingTests()
     {
@@ -54,7 +54,8 @@ public class MusicPlaybackServiceScrobblingTests
         foreach (var song in _testSongs)
             _libraryService.GetSongByIdAsync(song.Id).Returns(song);
 
-        _service.ScrobbleEligibilityReached += (s, id) => _raisedEvents.Add((s, id));
+        _service.ScrobbleEligibilityReached +=
+            (song, sessionId, listenStartedUtc) => _raisedEvents.Add((song, sessionId, listenStartedUtc));
     }
 
     /// <summary>
@@ -87,6 +88,7 @@ public class MusicPlaybackServiceScrobblingTests
         _raisedEvents.Should().ContainSingle();
         _raisedEvents[0].Song.Id.Should().Be(_testSongs[0].Id);
         _raisedEvents[0].SessionId.Should().Be(1L);
+        _raisedEvents[0].ListenStartedUtc.Should().NotBe(default);
     }
 
     [Fact]
@@ -194,6 +196,36 @@ public class MusicPlaybackServiceScrobblingTests
         // Assert — only one DB call and one event despite two position events
         await _libraryService.Received(1).MarkListenAsEligibleForScrobblingAsync(5L);
         _raisedEvents.Should().ContainSingle();
+    }
+
+    [Fact]
+    public async Task EligibilityEvent_WhenDatabaseMarkIsDelayed_KeepsOriginalSessionStartTime()
+    {
+        await _service.InitializeAsync();
+        _libraryService.StartListenSessionAsync(_testSongs[0].Id, Arg.Any<PlaybackContext>()).Returns(20L);
+        _libraryService.StartListenSessionAsync(_testSongs[1].Id, Arg.Any<PlaybackContext>()).Returns(21L);
+        var markStarted = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var releaseMark = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        _libraryService.MarkListenAsEligibleForScrobblingAsync(20L).Returns(_ =>
+        {
+            markStarted.TrySetResult(true);
+            return releaseMark.Task;
+        });
+
+        await _service.PlayAsync(_testSongs, startIndex: 0);
+        var firstSessionStartedBy = DateTime.UtcNow;
+        _audioPlayer.Duration.Returns(TimeSpan.FromMinutes(3));
+        _audioPlayer.CurrentPosition.Returns(TimeSpan.FromSeconds(91));
+        RaisePositionChanged();
+        await markStarted.Task.WaitAsync(TimeSpan.FromSeconds(2));
+
+        await _service.NextAsync();
+        releaseMark.TrySetResult(true);
+        await _service.FlushPendingFinalizationAsync();
+
+        _raisedEvents.Should().ContainSingle();
+        _raisedEvents[0].SessionId.Should().Be(20L);
+        _raisedEvents[0].ListenStartedUtc.Should().BeOnOrBefore(firstSessionStartedBy);
     }
 
     // ──────────────────────────────────────────────────────────────────────────

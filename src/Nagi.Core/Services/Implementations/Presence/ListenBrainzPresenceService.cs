@@ -20,7 +20,6 @@ public class ListenBrainzPresenceService : IPresenceService, IAsyncDisposable
 
     private bool _isNowPlayingEnabled;
     private bool _isScrobblingEnabled;
-    private DateTime _playbackStartTime;
 
     public ListenBrainzPresenceService(
         IListenBrainzScrobblerService scrobblerService,
@@ -63,8 +62,6 @@ public class ListenBrainzPresenceService : IPresenceService, IAsyncDisposable
 
     public async Task OnTrackChangedAsync(Song song, long listenHistoryId)
     {
-        _playbackStartTime = DateTime.UtcNow;
-
         if (_isNowPlayingEnabled)
             try
             {
@@ -93,7 +90,10 @@ public class ListenBrainzPresenceService : IPresenceService, IAsyncDisposable
     ///     On success, marks the session as submitted in the database. On failure, the session
     ///     remains eligible so a background service can retry later.
     /// </summary>
-    public async Task OnTrackEligibleForScrobblingAsync(Song song, long listenHistoryId)
+    public async Task OnTrackEligibleForScrobblingAsync(
+        Song song,
+        long listenHistoryId,
+        DateTime listenStartedUtc)
     {
         if (!_isScrobblingEnabled) return;
 
@@ -102,7 +102,7 @@ public class ListenBrainzPresenceService : IPresenceService, IAsyncDisposable
 
         try
         {
-            if (await _scrobblerService.SubmitListenAsync(song, _playbackStartTime).ConfigureAwait(false))
+            if (await _scrobblerService.SubmitListenAsync(song, listenStartedUtc).ConfigureAwait(false))
             {
                 _logger.LogDebug(
                     "Successfully submitted '{TrackTitle}' to ListenBrainz in real-time.", song.Title);

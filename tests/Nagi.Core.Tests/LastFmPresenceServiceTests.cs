@@ -97,9 +97,9 @@ public class LastFmPresenceServiceTests : IAsyncDisposable
         await _service.InitializeAsync();
 
         var song = new Song { Title = "Song" };
-        await _service.OnTrackEligibleForScrobblingAsync(song, 42L);
+        await _service.OnTrackEligibleForScrobblingAsync(song, 42L, DateTime.UnixEpoch);
 
-        await _scrobblerService.Received(1).ScrobbleAsync(song, Arg.Any<DateTime>());
+        await _scrobblerService.Received(1).ScrobbleAsync(song, DateTime.UnixEpoch);
         await _libraryWriter.Received(1).MarkListenAsScrobbledAsync(42L);
     }
 
@@ -109,7 +109,8 @@ public class LastFmPresenceServiceTests : IAsyncDisposable
         _settingsService.GetLastFmScrobblingEnabledAsync().Returns(false);
         await _service.InitializeAsync();
 
-        await _service.OnTrackEligibleForScrobblingAsync(new Song { Title = "Song" }, 1L);
+        await _service.OnTrackEligibleForScrobblingAsync(
+            new Song { Title = "Song" }, 1L, DateTime.UnixEpoch);
 
         await _scrobblerService.DidNotReceive().ScrobbleAsync(Arg.Any<Song>(), Arg.Any<DateTime>());
     }
@@ -120,7 +121,8 @@ public class LastFmPresenceServiceTests : IAsyncDisposable
         _scrobblerService.ScrobbleAsync(Arg.Any<Song>(), Arg.Any<DateTime>()).Returns(false);
         await _service.InitializeAsync();
 
-        await _service.OnTrackEligibleForScrobblingAsync(new Song { Title = "Song" }, 1L);
+        await _service.OnTrackEligibleForScrobblingAsync(
+            new Song { Title = "Song" }, 1L, DateTime.UnixEpoch);
 
         await _libraryWriter.DidNotReceive().MarkListenAsScrobbledAsync(Arg.Any<long>());
     }
@@ -132,7 +134,8 @@ public class LastFmPresenceServiceTests : IAsyncDisposable
         await _service.InitializeAsync();
 
         // Should not throw
-        await _service.OnTrackEligibleForScrobblingAsync(new Song { Title = "Song" }, 1L);
+        await _service.OnTrackEligibleForScrobblingAsync(
+            new Song { Title = "Song" }, 1L, DateTime.UnixEpoch);
     }
 
     // -------------------------------------------------------------------------

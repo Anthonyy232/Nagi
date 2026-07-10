@@ -123,10 +123,10 @@ public class ListenBrainzPresenceServiceTests : IDisposable
         await _service.OnTrackChangedAsync(song, 1);
 
         // Act
-        await _service.OnTrackEligibleForScrobblingAsync(song, 1);
+        await _service.OnTrackEligibleForScrobblingAsync(song, 1, DateTime.UnixEpoch);
 
         // Assert
-        await _scrobblerService.Received(1).SubmitListenAsync(song, Arg.Any<DateTime>());
+        await _scrobblerService.Received(1).SubmitListenAsync(song, DateTime.UnixEpoch);
     }
 
     /// <summary>
@@ -141,7 +141,7 @@ public class ListenBrainzPresenceServiceTests : IDisposable
         await _service.OnTrackChangedAsync(song, 1);
 
         // Act
-        await _service.OnTrackEligibleForScrobblingAsync(song, 1);
+        await _service.OnTrackEligibleForScrobblingAsync(song, 1, DateTime.UnixEpoch);
 
         // Assert
         await _scrobblerService.DidNotReceive().SubmitListenAsync(Arg.Any<Song>(), Arg.Any<DateTime>());
@@ -161,7 +161,7 @@ public class ListenBrainzPresenceServiceTests : IDisposable
         _scrobblerService.SubmitListenAsync(song, Arg.Any<DateTime>()).Returns(true);
 
         // Act
-        await _service.OnTrackEligibleForScrobblingAsync(song, 1);
+        await _service.OnTrackEligibleForScrobblingAsync(song, 1, DateTime.UnixEpoch);
 
         // Assert
         await _libraryWriter.Received(1).MarkListenAsSubmittedToListenBrainzAsync(1);
@@ -181,7 +181,7 @@ public class ListenBrainzPresenceServiceTests : IDisposable
         _scrobblerService.SubmitListenAsync(song, Arg.Any<DateTime>()).Returns(false);
 
         // Act
-        await _service.OnTrackEligibleForScrobblingAsync(song, 1);
+        await _service.OnTrackEligibleForScrobblingAsync(song, 1, DateTime.UnixEpoch);
 
         // Assert
         await _libraryWriter.DidNotReceive().MarkListenAsSubmittedToListenBrainzAsync(Arg.Any<long>());
@@ -200,7 +200,7 @@ public class ListenBrainzPresenceServiceTests : IDisposable
         _scrobblerService.SubmitListenAsync(song, Arg.Any<DateTime>()).ThrowsAsync(new Exception("Network error"));
 
         // Act
-        await _service.OnTrackEligibleForScrobblingAsync(song, 1);
+        await _service.OnTrackEligibleForScrobblingAsync(song, 1, DateTime.UnixEpoch);
 
         // Assert
         await _libraryWriter.DidNotReceive().MarkListenAsSubmittedToListenBrainzAsync(Arg.Any<long>());

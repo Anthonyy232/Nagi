@@ -19,7 +19,6 @@ public class LastFmPresenceService : IPresenceService, IAsyncDisposable
 
     private bool _isNowPlayingEnabled;
     private bool _isScrobblingEnabled;
-    private DateTime _playbackStartTime;
 
     public LastFmPresenceService(
         ILastFmScrobblerService scrobblerService,
@@ -62,8 +61,6 @@ public class LastFmPresenceService : IPresenceService, IAsyncDisposable
 
     public async Task OnTrackChangedAsync(Song song, long listenHistoryId)
     {
-        _playbackStartTime = DateTime.UtcNow;
-
         if (_isNowPlayingEnabled)
             try
             {
@@ -91,7 +88,10 @@ public class LastFmPresenceService : IPresenceService, IAsyncDisposable
     ///     On success, marks the session as scrobbled in the database. On failure, the session
     ///     remains eligible so a background service can retry later.
     /// </summary>
-    public async Task OnTrackEligibleForScrobblingAsync(Song song, long listenHistoryId)
+    public async Task OnTrackEligibleForScrobblingAsync(
+        Song song,
+        long listenHistoryId,
+        DateTime listenStartedUtc)
     {
         if (!_isScrobblingEnabled) return;
 
@@ -99,7 +99,7 @@ public class LastFmPresenceService : IPresenceService, IAsyncDisposable
 
         try
         {
-            if (await _scrobblerService.ScrobbleAsync(song, _playbackStartTime).ConfigureAwait(false))
+            if (await _scrobblerService.ScrobbleAsync(song, listenStartedUtc).ConfigureAwait(false))
             {
                 _logger.LogDebug("Successfully scrobbled track '{TrackTitle}' in real-time.", song.Title);
                 await _libraryWriter.MarkListenAsScrobbledAsync(listenHistoryId).ConfigureAwait(false);

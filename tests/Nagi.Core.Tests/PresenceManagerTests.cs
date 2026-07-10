@@ -276,10 +276,13 @@ public class PresenceManagerTests : IAsyncDisposable
         await _manager.InitializeAsync();
 
         var song = new Song { Title = "Eligible Song" };
-        _playbackService.ScrobbleEligibilityReached += Raise.Event<Action<Song, long>>(song, 42L);
+        var listenStartedUtc = new DateTime(2025, 1, 2, 3, 4, 5, DateTimeKind.Utc);
+        _playbackService.ScrobbleEligibilityReached +=
+            Raise.Event<Action<Song, long, DateTime>>(song, 42L, listenStartedUtc);
 
         await Task.Delay(200);
 
-        await _discordService.Received(1).OnTrackEligibleForScrobblingAsync(song, 42L);
+        await _discordService.Received(1)
+            .OnTrackEligibleForScrobblingAsync(song, 42L, listenStartedUtc);
     }
 }

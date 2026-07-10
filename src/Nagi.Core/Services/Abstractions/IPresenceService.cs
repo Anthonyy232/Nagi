@@ -54,5 +54,6 @@ public interface IPresenceService : IAsyncDisposable
     /// </summary>
     /// <param name="song">The song that is now eligible.</param>
     /// <param name="listenHistoryId">The listen session ID to associate with the submission.</param>
-    Task OnTrackEligibleForScrobblingAsync(Song song, long listenHistoryId);
+    /// <param name="listenStartedUtc">The immutable UTC start time for this listening session.</param>
+    Task OnTrackEligibleForScrobblingAsync(Song song, long listenHistoryId, DateTime listenStartedUtc);
 }
