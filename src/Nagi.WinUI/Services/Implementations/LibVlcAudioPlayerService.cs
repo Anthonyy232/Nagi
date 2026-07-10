@@ -140,7 +140,8 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         var vlcOptions = new[]
         {
             "--no-video", "--no-spu", "--no-osd", "--no-stats", "--ignore-config",
-            "--no-one-instance", "--no-lua", "--verbose=-1", "--audio-filter=equalizer"
+            "--no-one-instance", "--no-lua", "--no-volume-save", "--user-agent=Nagi",
+            "--verbose=-1", "--audio-filter=equalizer"
         };
 
         _logger.LogDebug("Initializing LibVLC with options: {VlcOptions}", string.Join(" ", vlcOptions));
@@ -939,6 +940,15 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     private void OnMediaPlayerVolumeChanged(object? sender, MediaPlayerVolumeChangedEventArgs e)
     {
         if (_isDisposed || _isFading) return;
+
+        // LibVLC 4 uses the Windows audio-session volume. A change made in Windows Settings
+        // therefore arrives here just like a change made through Nagi. Keep our user-volume
+        // snapshot in sync so the next track does not restore a stale value over the user's
+        // Windows mixer adjustment.
+        var reportedVolume = _mediaPlayer?.Volume ?? -1;
+        if (reportedVolume >= 0)
+            Interlocked.Exchange(ref _userVolume, Math.Clamp(reportedVolume / 100.0, 0.0, 1.0));
+
         _dispatcherService.TryEnqueue(() =>
         {
             if (_isDisposed || _isFading) return;
