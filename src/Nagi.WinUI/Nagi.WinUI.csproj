@@ -86,11 +86,10 @@
         <ProjectReference Include="..\Nagi.Core\Nagi.Core.csproj" />
 
         <!-- Core SDKs and Build Tools -->
-        <!-- Exclude the transitive WinAppSDK 1.6 dependency from CommunityToolkit to prevent ML/AI binaries -->
-        <PackageReference Include="Microsoft.WindowsAppSDK">
-            <ExcludeAssets>all</ExcludeAssets>
+        <!-- Reference only the runtime and WinUI components, excluding unused AI/ML components. -->
+        <PackageReference Include="Microsoft.WindowsAppSDK.Runtime">
+            <TreatAsUsed>true</TreatAsUsed>
         </PackageReference>
-        <!-- Reference only the WinUI component package - excludes unused ML/AI components (~40MB saved) -->
         <PackageReference Include="Microsoft.WindowsAppSDK.WinUI">
             <TreatAsUsed>true</TreatAsUsed>
         </PackageReference>
