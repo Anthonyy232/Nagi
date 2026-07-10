@@ -68,22 +68,23 @@ internal sealed class SingleInstanceManager : IDisposable
     ///     Sends an activation message to the existing primary instance.
     /// </summary>
     /// <param name="filePath">Optional file path from activation arguments.</param>
+    /// <param name="cancellationToken">Cancels the complete connect/write operation.</param>
     /// <returns>True if message was sent successfully; false otherwise.</returns>
-    public async Task<bool> SendActivationAsync(string? filePath)
+    public async Task<bool> SendActivationAsync(string? filePath, CancellationToken cancellationToken = default)
     {
         try
         {
             _logger?.LogDebug("Sending activation message to primary instance. FilePath: {FilePath}", filePath ?? "None");
 
             await using var pipe = new NamedPipeClientStream(".", PipeName, PipeDirection.Out);
-            await pipe.ConnectAsync(PipeTimeoutMs);
+            await pipe.ConnectAsync(PipeTimeoutMs, cancellationToken);
 
             var message = new ActivationMessage { FilePath = filePath };
             var json = JsonSerializer.Serialize(message);
             var bytes = Encoding.UTF8.GetBytes(json);
 
-            await pipe.WriteAsync(bytes, 0, bytes.Length);
-            await pipe.FlushAsync();
+            await pipe.WriteAsync(bytes, cancellationToken);
+            await pipe.FlushAsync(cancellationToken);
 
             _logger?.LogInformation("Activation message sent successfully");
             return true;
@@ -91,6 +92,11 @@ internal sealed class SingleInstanceManager : IDisposable
         catch (TimeoutException)
         {
             _logger?.LogWarning("Timeout connecting to primary instance pipe");
+            return false;
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            _logger?.LogWarning("Timed out sending activation message to primary instance");
             return false;
         }
         catch (Exception ex)
