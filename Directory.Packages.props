@@ -48,6 +48,7 @@
     <!-- Image Processing -->
     <PackageVersion Include="MaterialColorUtilities" Version="0.3.0" />
     <PackageVersion Include="SixLabors.ImageSharp" Version="4.0.0" />
+    <PackageVersion Include="SQLitePCLRaw.bundle_e_sqlite3" Version="3.0.3" />
     <!-- Presence -->
     <PackageVersion Include="DiscordRichPresence" Version="1.6.1.70" />
     <!-- Azure Functions -->
