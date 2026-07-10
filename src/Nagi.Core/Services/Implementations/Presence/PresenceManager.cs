@@ -332,10 +332,11 @@ public class PresenceManager : IPresenceManager, IAsyncDisposable, IDisposable
             "Position change broadcast");
     }
 
-    private void OnScrobbleEligibilityReached(Song song, long listenHistoryId)
+    private void OnScrobbleEligibilityReached(Song song, long listenHistoryId, DateTime listenStartedUtc)
     {
         FireAndForgetSafe(
-            async () => await BroadcastAsync(s => s.OnTrackEligibleForScrobblingAsync(song, listenHistoryId)).ConfigureAwait(false),
+            async () => await BroadcastAsync(s => s
+                .OnTrackEligibleForScrobblingAsync(song, listenHistoryId, listenStartedUtc)).ConfigureAwait(false),
             "Scrobble eligibility broadcast");
     }
 

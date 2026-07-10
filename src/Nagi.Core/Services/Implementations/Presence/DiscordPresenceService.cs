@@ -193,7 +193,10 @@ public class DiscordPresenceService : IPresenceService, IAsyncDisposable
         return Task.CompletedTask;
     }
 
-    public Task OnTrackEligibleForScrobblingAsync(Song song, long listenHistoryId) => Task.CompletedTask;
+    public Task OnTrackEligibleForScrobblingAsync(
+        Song song,
+        long listenHistoryId,
+        DateTime listenStartedUtc) => Task.CompletedTask;
 
     public ValueTask DisposeAsync()
     {

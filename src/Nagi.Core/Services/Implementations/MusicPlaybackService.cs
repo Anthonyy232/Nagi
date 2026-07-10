@@ -23,6 +23,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
     private bool _isDisposed;
     private bool _isInitialized;
     private bool _isEligibilityMarked;
+    private DateTime? _currentListenStartedUtc;
     private List<Guid> _playbackQueue = new();
     private List<Guid> _shuffledQueue = new();
 
@@ -114,7 +115,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
     public event Action? PositionChanged;
     public event Action? DurationChanged;
     public event Action? EqualizerChanged;
-    public event Action<Song, long>? ScrobbleEligibilityReached;
+    public event Action<Song, long, DateTime>? ScrobbleEligibilityReached;
 
     public async Task InitializeAsync(bool restoreLastSession = true)
     {
@@ -376,9 +377,11 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         var existingLibrarySong = await _libraryService.GetSongByFilePathAsync(filePath).ConfigureAwait(false);
         if (existingLibrarySong != null)
         {
+            var listenStartedUtc = DateTime.UtcNow;
             CurrentListenHistoryId = await _libraryService
                 .StartListenSessionAsync(existingLibrarySong.Id, _currentContext)
                 .ConfigureAwait(false);
+            _currentListenStartedUtc = CurrentListenHistoryId.HasValue ? listenStartedUtc : null;
         }
 
         await _audioPlayer.LoadAsync(CurrentTrack).ConfigureAwait(false);
@@ -540,6 +543,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         // This is crucial for Next/Previous commands to work correctly from a stopped state.
         CurrentTrack = null;
         CurrentListenHistoryId = null;
+        _currentListenStartedUtc = null;
         IsTransitioningTrack = false;
         TrackChanged?.Invoke();
         PositionChanged?.Invoke();
@@ -1018,9 +1022,11 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
 
         // Start and assign the listen session before media load can raise MediaOpened/TrackChanged.
         // This guarantees presence listeners can observe a non-null CurrentListenHistoryId.
+        var listenStartedUtc = DateTime.UtcNow;
         CurrentListenHistoryId = await _libraryService
             .StartListenSessionAsync(CurrentTrack.Id, _currentContext)
             .ConfigureAwait(false);
+        _currentListenStartedUtc = CurrentListenHistoryId.HasValue ? listenStartedUtc : null;
 
         if (IsShuffleEnabled)
         {
@@ -1325,6 +1331,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         CurrentQueueIndex = -1;
         CurrentShuffledIndex = -1;
         CurrentListenHistoryId = null;
+        _currentListenStartedUtc = null;
     }
 
     private void GenerateShuffledQueue()
@@ -1617,11 +1624,12 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         _isEligibilityMarked = true;
         var sessionId = CurrentListenHistoryId.Value;
         var song = CurrentTrack!;
+        var listenStartedUtc = _currentListenStartedUtc ?? DateTime.UtcNow - progress;
         FireAndForgetSafe(
             async () =>
             {
                 await _libraryService.MarkListenAsEligibleForScrobblingAsync(sessionId).ConfigureAwait(false);
-                ScrobbleEligibilityReached?.Invoke(song, sessionId);
+                ScrobbleEligibilityReached?.Invoke(song, sessionId, listenStartedUtc);
             },
             "Mark listen eligible for scrobbling",
             trackForDisposal: true);
