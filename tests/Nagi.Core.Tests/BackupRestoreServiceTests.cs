@@ -3,6 +3,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Nagi.Core.Helpers;
 using Nagi.Core.Services.Abstractions;
+using Nagi.Core.Services.Data;
 using Nagi.Core.Services.Implementations;
 using NSubstitute;
 using Xunit;
@@ -282,6 +283,31 @@ public class BackupRestoreServiceTests : IDisposable
         File.Exists(Path.Combine(destDir, "settings.json")).Should().BeTrue("settings.json should be restored to AppDataRoot");
         var restoredDbContent = await File.ReadAllTextAsync(Path.Combine(destDir, "nagi.db"));
         restoredDbContent.Should().Be("restored db content");
+    }
+
+    [Fact]
+    public async Task RestoreFromBackupAsync_WhenLaterItemIsLocked_RollsBackEveryEarlierItem()
+    {
+        var zipPath = CreateTempZip(
+            ("a.txt", "new first item"),
+            ("settings.json", "new locked item"));
+        var destDir = CreateTempDir();
+        var firstPath = Path.Combine(destDir, "a.txt");
+        var lockedPath = Path.Combine(destDir, "settings.json");
+        await File.WriteAllTextAsync(firstPath, "original first item");
+        await File.WriteAllTextAsync(lockedPath, "original locked item");
+        _pathConfig.AppDataRoot.Returns(destDir);
+
+        RestoreResult result;
+        using (File.Open(lockedPath, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
+        {
+            result = await _service.RestoreFromBackupAsync(zipPath);
+        }
+
+        result.Success.Should().BeFalse();
+        result.RestoredFileCount.Should().Be(0);
+        (await File.ReadAllTextAsync(firstPath)).Should().Be("original first item");
+        (await File.ReadAllTextAsync(lockedPath)).Should().Be("original locked item");
     }
 
     // -------------------------------------------------------------------------
