@@ -1814,6 +1814,63 @@ public class SmartPlaylistQueryBuilderTests : IDisposable
     }
 
     [Fact]
+    public void BuildQuery_WithTrackNumberSortOrderOverride_SortsSameAlbumNameAcrossDifferentArtists()
+    {
+        var compilationArtist1 = new Artist { Name = "Compilation Artist 1" };
+        var compilationArtist2 = new Artist { Name = "Compilation Artist 2" };
+        var compilationAlbum1 = new Album { Title = "Compilation" };
+        compilationAlbum1.AlbumArtists.Add(new AlbumArtist { Artist = compilationArtist1, Order = 0 });
+        var compilationAlbum2 = new Album { Title = "Compilation" };
+        compilationAlbum2.AlbumArtists.Add(new AlbumArtist { Artist = compilationArtist2, Order = 0 });
+
+        var track2 = new Song
+        {
+            Title = "Compilation Track 2",
+            Album = compilationAlbum1,
+            FolderId = _folder.Id,
+            FilePath = "C:\\Music\\compilation-track-2.mp3",
+            TrackNumber = 2,
+            DiscNumber = 1
+        };
+        track2.SongArtists.Add(new SongArtist { Artist = compilationArtist1, Order = 0 });
+
+        var track1 = new Song
+        {
+            Title = "Compilation Track 1",
+            Album = compilationAlbum2,
+            FolderId = _folder.Id,
+            FilePath = "C:\\Music\\compilation-track-1.mp3",
+            TrackNumber = 1,
+            DiscNumber = 1
+        };
+        track1.SongArtists.Add(new SongArtist { Artist = compilationArtist2, Order = 0 });
+
+        compilationAlbum1.SyncDenormalizedFields();
+        compilationAlbum2.SyncDenormalizedFields();
+        track1.SyncDenormalizedFields();
+        track2.SyncDenormalizedFields();
+
+        using (var seedContext = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            seedContext.Songs.AddRange(track2, track1);
+            seedContext.SaveChanges();
+        }
+
+        var playlist = CreatePlaylist(sortOrder: SmartPlaylistSortOrder.TitleDesc);
+        playlist.Rules.Add(new SmartPlaylistRule
+        {
+            Field = SmartPlaylistField.Album,
+            Operator = SmartPlaylistOperator.Is,
+            Value = "Compilation"
+        });
+
+        using var context = _dbHelper.ContextFactory.CreateDbContext();
+        var results = _queryBuilder.BuildQuery(context, playlist, sortOrderOverride: SongSortOrder.TrackNumberAsc).ToList();
+
+        results.Select(s => s.Title).Should().ContainInOrder("Compilation Track 1", "Compilation Track 2");
+    }
+
+    [Fact]
     public void BuildCountQuery_WithSearchTerm_FiltersCount()
     {
         // BuildCountQuery + search term is a separate code path from BuildQuery + search.

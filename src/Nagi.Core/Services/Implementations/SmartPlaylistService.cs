@@ -571,7 +571,7 @@ public class SmartPlaylistService : ISmartPlaylistService
     }
 
     /// <inheritdoc />
-    public async Task<List<Guid>> GetMatchingSongIdsAsync(Guid smartPlaylistId, SongSortOrder? sortOrder = null, CancellationToken token = default)
+    public async Task<List<Guid>> GetMatchingSongIdsAsync(Guid smartPlaylistId, string? searchTerm = null, SongSortOrder? sortOrder = null, CancellationToken token = default)
     {
         await using var context = await _contextFactory.CreateDbContextAsync().ConfigureAwait(false);
         var smartPlaylist = await context.SmartPlaylists.AsNoTracking()
@@ -581,7 +581,7 @@ public class SmartPlaylistService : ISmartPlaylistService
         if (smartPlaylist is null)
             return new List<Guid>();
 
-        return await _queryBuilder.BuildQuery(context, smartPlaylist, null, sortOrder)
+        return await _queryBuilder.BuildQuery(context, smartPlaylist, searchTerm, sortOrder)
             .Select(s => s.Id)
             .ToListAsync(token).ConfigureAwait(false);
     }

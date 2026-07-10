@@ -87,6 +87,17 @@ public static class SortOrderHelper
         SongSortOrder.ArtistDesc => SortByArtistDesc,
         SongSortOrder.TrackNumberAsc => SortByTrackNumberAsc,
         SongSortOrder.TrackNumberDesc => SortByTrackNumberDesc,
+        SongSortOrder.PlayCountAsc => SortByPlayCountAsc,
+        SongSortOrder.PlayCountDesc => SortByPlayCountDesc,
+        SongSortOrder.LastPlayedAsc => SortByLastPlayedAsc,
+        SongSortOrder.LastPlayedDesc => SortByLastPlayedDesc,
+        SongSortOrder.DateAddedAsc => SortByDateAddedAsc,
+        SongSortOrder.DateAddedDesc => SortByDateAddedDesc,
+        SongSortOrder.DurationAsc => SortByDurationAsc,
+        SongSortOrder.DurationDesc => SortByDurationDesc,
+        SongSortOrder.BpmAsc => SortByBpmAsc,
+        SongSortOrder.BpmDesc => SortByBpmDesc,
+        SongSortOrder.Random => SortByRandom,
         SongSortOrder.PlaylistOrder => Resources.Strings.Label_ManualOrder,
         _ => SortByTitleAsc
     };
@@ -155,7 +166,29 @@ public static class SortOrderHelper
         SmartPlaylistSortOrder.DurationDesc => SortByDurationDesc,
         SmartPlaylistSortOrder.BpmAsc => SortByBpmAsc,
         SmartPlaylistSortOrder.BpmDesc => SortByBpmDesc,
+        SmartPlaylistSortOrder.FileCreatedDateAsc => SortByDateCreatedAsc,
+        SmartPlaylistSortOrder.FileCreatedDateDesc => SortByDateCreatedDesc,
         SmartPlaylistSortOrder.Random => SortByRandom,
         _ => SortByTitleAsc
     };
+
+    /// <summary>
+    ///     Maps a <see cref="SongSortOrder" /> to the equivalent <see cref="SmartPlaylistSortOrder" /> by matching
+    ///     enum member names. Falls back to <see cref="SmartPlaylistSortOrder.TitleAsc" /> for members without a
+    ///     counterpart (e.g. <see cref="SongSortOrder.PlaylistOrder" />).
+    /// </summary>
+    public static SmartPlaylistSortOrder MapToSmartPlaylistSortOrder(SongSortOrder sortOrder) =>
+        sortOrder != SongSortOrder.PlaylistOrder &&
+        Enum.TryParse<SmartPlaylistSortOrder>(sortOrder.ToString(), out var mapped)
+            ? mapped
+            : SmartPlaylistSortOrder.TitleAsc;
+
+    /// <summary>
+    ///     Maps a <see cref="SmartPlaylistSortOrder" /> to the equivalent <see cref="SongSortOrder" /> by matching
+    ///     enum member names. Falls back to <see cref="SongSortOrder.TitleAsc" /> when no counterpart exists.
+    /// </summary>
+    public static SongSortOrder MapToSongSortOrder(SmartPlaylistSortOrder sortOrder) =>
+        Enum.TryParse<SongSortOrder>(sortOrder.ToString(), out var mapped)
+            ? mapped
+            : SongSortOrder.TitleAsc;
 }

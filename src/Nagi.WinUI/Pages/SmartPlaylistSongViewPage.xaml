@@ -240,11 +240,50 @@
                                                 CommandParameter="AlbumDesc" Text="{x:Bind helpers:SortOrderHelper.AlbumDescLabel}"
                                                 IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=AlbumDesc}" />
                                 <RadioMenuFlyoutItem GroupName="SmartPlaylistSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                                CommandParameter="TrackNumberAsc" Text="{x:Bind helpers:SortOrderHelper.TrackNumberAscLabel}"
+                                                IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=TrackNumberAsc}" />
+                                <RadioMenuFlyoutItem GroupName="SmartPlaylistSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                                CommandParameter="TrackNumberDesc" Text="{x:Bind helpers:SortOrderHelper.TrackNumberDescLabel}"
+                                                IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=TrackNumberDesc}" />
+                                <RadioMenuFlyoutItem GroupName="SmartPlaylistSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                                CommandParameter="PlayCountAsc" Text="{x:Bind helpers:SortOrderHelper.PlayCountAscLabel}"
+                                                IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=PlayCountAsc}" />
+                                <RadioMenuFlyoutItem GroupName="SmartPlaylistSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                                CommandParameter="PlayCountDesc" Text="{x:Bind helpers:SortOrderHelper.PlayCountDescLabel}"
+                                                IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=PlayCountDesc}" />
+                                <RadioMenuFlyoutItem GroupName="SmartPlaylistSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                                CommandParameter="LastPlayedAsc" Text="{x:Bind helpers:SortOrderHelper.LastPlayedAscLabel}"
+                                                IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=LastPlayedAsc}" />
+                                <RadioMenuFlyoutItem GroupName="SmartPlaylistSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                                CommandParameter="LastPlayedDesc" Text="{x:Bind helpers:SortOrderHelper.LastPlayedDescLabel}"
+                                                IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=LastPlayedDesc}" />
+                                <RadioMenuFlyoutItem GroupName="SmartPlaylistSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                                CommandParameter="DateAddedAsc" Text="{x:Bind helpers:SortOrderHelper.DateAddedAscLabel}"
+                                                IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=DateAddedAsc}" />
+                                <RadioMenuFlyoutItem GroupName="SmartPlaylistSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                                CommandParameter="DateAddedDesc" Text="{x:Bind helpers:SortOrderHelper.DateAddedDescLabel}"
+                                                IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=DateAddedDesc}" />
+                                <RadioMenuFlyoutItem GroupName="SmartPlaylistSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                                CommandParameter="DurationAsc" Text="{x:Bind helpers:SortOrderHelper.DurationAscLabel}"
+                                                IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=DurationAsc}" />
+                                <RadioMenuFlyoutItem GroupName="SmartPlaylistSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                                CommandParameter="DurationDesc" Text="{x:Bind helpers:SortOrderHelper.DurationDescLabel}"
+                                                IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=DurationDesc}" />
+                                <RadioMenuFlyoutItem GroupName="SmartPlaylistSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                                CommandParameter="BpmAsc" Text="{x:Bind helpers:SortOrderHelper.BpmAscLabel}"
+                                                IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=BpmAsc}" />
+                                <RadioMenuFlyoutItem GroupName="SmartPlaylistSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                                CommandParameter="BpmDesc" Text="{x:Bind helpers:SortOrderHelper.BpmDescLabel}"
+                                                IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=BpmDesc}" />
+                                <RadioMenuFlyoutItem GroupName="SmartPlaylistSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
                                                 CommandParameter="FileCreatedDateAsc" Text="{x:Bind helpers:SortOrderHelper.DateCreatedOldestLabel}"
                                                 IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=FileCreatedDateAsc}" />
                                 <RadioMenuFlyoutItem GroupName="SmartPlaylistSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
                                                 CommandParameter="FileCreatedDateDesc" Text="{x:Bind helpers:SortOrderHelper.DateCreatedNewestLabel}"
                                                 IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=FileCreatedDateDesc}" />
+                                <RadioMenuFlyoutItem GroupName="SmartPlaylistSort" Command="{x:Bind ViewModel.RefreshOrSortSongsCommand}"
+                                                CommandParameter="Random" Text="{x:Bind helpers:SortOrderHelper.RandomLabel}"
+                                                IsChecked="{x:Bind ViewModel.CurrentSortOrder, Mode=OneWay, Converter={StaticResource SortOrderEqualsConverter}, ConverterParameter=Random}" />
                             </MenuFlyout>
                         </Button.Flyout>
                         <FontIcon FontSize="16" Glyph="&#xE8CB;" />

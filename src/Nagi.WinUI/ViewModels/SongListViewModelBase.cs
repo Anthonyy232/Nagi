@@ -672,6 +672,16 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
                 .ThenByDescending(s => s.TrackNumber)
                 .ThenByDescending(s => s.Title, StringComparer.OrdinalIgnoreCase)
                 .ThenByDescending(s => s.Id),
+            SongSortOrder.PlayCountAsc => OrderByMetric(s => s.PlayCount),
+            SongSortOrder.PlayCountDesc => OrderByMetricDescending(s => s.PlayCount),
+            SongSortOrder.LastPlayedAsc => OrderByMetric(s => s.LastPlayedDate),
+            SongSortOrder.LastPlayedDesc => OrderByMetricDescending(s => s.LastPlayedDate),
+            SongSortOrder.DateAddedAsc => OrderByMetric(s => s.DateAddedToLibrary),
+            SongSortOrder.DateAddedDesc => OrderByMetricDescending(s => s.DateAddedToLibrary),
+            SongSortOrder.DurationAsc => OrderByMetric(s => s.DurationTicks),
+            SongSortOrder.DurationDesc => OrderByMetricDescending(s => s.DurationTicks),
+            SongSortOrder.BpmAsc => OrderByMetric(s => s.Bpm ?? 0),
+            SongSortOrder.BpmDesc => OrderByMetricDescending(s => s.Bpm ?? 0),
             SongSortOrder.AlbumAsc or SongSortOrder.TrackNumberAsc => songs.OrderBy(s => s.Album?.Title, StringComparer.OrdinalIgnoreCase)
                 .ThenBy(s => s.DiscNumber ?? 0)
                 .ThenBy(s => s.TrackNumber)
@@ -708,8 +718,21 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
                 .ThenByDescending(s => s.TrackNumber)
                 .ThenByDescending(s => s.Title, StringComparer.OrdinalIgnoreCase)
                 .ThenByDescending(s => s.Id),
+            SongSortOrder.Random => songs.OrderBy(_ => Guid.NewGuid()),
             _ => songs.OrderBy(s => s.Title, StringComparer.OrdinalIgnoreCase).ThenBy(s => s.ArtistName, StringComparer.OrdinalIgnoreCase).ThenBy(s => s.Id)
         };
+
+        IOrderedEnumerable<Song> OrderByMetric<TKey>(Func<Song, TKey> keySelector) =>
+            songs.OrderBy(keySelector)
+                .ThenBy(s => s.ArtistName, StringComparer.OrdinalIgnoreCase)
+                .ThenBy(s => s.Title, StringComparer.OrdinalIgnoreCase)
+                .ThenBy(s => s.Id);
+
+        IOrderedEnumerable<Song> OrderByMetricDescending<TKey>(Func<Song, TKey> keySelector) =>
+            songs.OrderByDescending(keySelector)
+                .ThenByDescending(s => s.ArtistName, StringComparer.OrdinalIgnoreCase)
+                .ThenByDescending(s => s.Title, StringComparer.OrdinalIgnoreCase)
+                .ThenByDescending(s => s.Id);
     }
 
     /// <summary>
