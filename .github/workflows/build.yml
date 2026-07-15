@@ -156,7 +156,11 @@ jobs:
     name: Build MSIX Bundle
     runs-on: windows-latest
     needs: [test, verify-api-connectivity]
-    if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/')
+    if: >-
+      always() &&
+      needs.test.result == 'success' &&
+      needs.verify-api-connectivity.result == 'success' &&
+      (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/'))
     permissions:
       contents: read
     outputs:
