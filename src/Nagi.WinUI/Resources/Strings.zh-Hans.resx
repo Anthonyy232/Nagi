@@ -1833,7 +1833,7 @@
     <value>在 Last.fm 上实时向您的朋友显示您当前正在收听的内容。</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Header" xml:space="preserve">
-    <value>利森布雷恩茨</value>
+    <value>ListenBrainz</value>
   </data>
   <data name="SettingsPage_ListenBrainz_Description" xml:space="preserve">
     <value>将您的收听记录提交到 ListenBrainz（Last.fm 的一个开放替代方案）。</value>
