@@ -34,7 +34,6 @@ jobs:
           workflow: build.yml
           workflow_conclusion: success
           commit: ${{ steps.tag.outputs.sha }}
-          branch: ${{ github.event.inputs.tag }}
           event: push
           name: Unsigned-MSIX
 
