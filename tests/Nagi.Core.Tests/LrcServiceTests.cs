@@ -411,6 +411,34 @@ public class LrcServiceTests
             Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>());
     }
 
+    [Fact]
+    public async Task GetLyricsAsync_WithIdentityBasedCachePathAfterMetadataEdit_UsesLocalFile()
+    {
+        const string cacheRoot = @"C:\cache\lrc";
+        const string audioFilePath = @"C:\Music\Song.flac";
+        var cachePath = Path.Combine(cacheRoot, FileNameHelper.GenerateLrcCacheFileName(
+            audioFilePath, "Original Artist", "Original Album", "Original Title"));
+        var song = new Song
+        {
+            Title = "Corrected Title",
+            PrimaryArtistName = "Corrected Artist",
+            FilePath = audioFilePath,
+            LrcFilePath = cachePath,
+            LyricsLastCheckedUtc = DateTime.UtcNow,
+            Album = new Album { Title = "Corrected Album" }
+        };
+        _pathConfig.LrcCachePath.Returns(cacheRoot);
+        _fileSystem.FileExists(cachePath).Returns(true);
+        _fileSystem.ReadAllTextAsync(cachePath).Returns("[00:01.00]Cached Lyrics");
+
+        var result = await _lrcService.GetLyricsAsync(song);
+
+        result!.Lines.Single().Text.Should().Be("Cached Lyrics");
+        await _settingsService.DidNotReceive().GetFetchOnlineLyricsEnabledAsync();
+        await _onlineLyricsService.DidNotReceive().GetLyricsAsync(
+            Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>());
+    }
+
     /// <summary>
     ///     Verifies that when LRCLIB returns no results, the NetEase result (fetched in parallel) is used.
     /// </summary>

@@ -247,15 +247,7 @@ public class LrcService : ILrcService, IDisposable
         if (!candidate.StartsWith(cacheRoot, StringComparison.OrdinalIgnoreCase)) return false;
 
         var cacheIdentity = string.IsNullOrWhiteSpace(song.FilePath) ? song.Id.ToString("N") : song.FilePath;
-        var expectedPath = PathCanonicalizer.Normalize(_fileSystemService.Combine(
-            _pathConfig.LrcCachePath,
-            FileNameHelper.GenerateLrcCacheFileName(
-                cacheIdentity,
-                song.PrimaryArtistName,
-                song.Album?.Title,
-                song.Title)));
-
-        return !candidate.Equals(expectedPath, StringComparison.OrdinalIgnoreCase);
+        return !FileNameHelper.MatchesLrcCacheIdentity(candidate, cacheIdentity);
     }
 
     private Task<string?> LogUnknownProviderAndReturnNull(string providerId)
