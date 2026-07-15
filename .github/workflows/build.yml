@@ -71,6 +71,7 @@ jobs:
           if ($output -notmatch 'HostEndpoint') {
             throw "Functions worker did not reach the expected host configuration boundary:`n$output"
           }
+          exit 0
 
       - uses: azure/login@v3.0.0
         with:
