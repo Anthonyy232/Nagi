@@ -4,6 +4,7 @@ using Nagi.Core.Services.Abstractions;
 using Nagi.Core.Services.Implementations.Presence;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
+using NSubstitute.Exceptions;
 using Xunit;
 
 namespace Nagi.Core.Tests.Presence;
@@ -65,6 +66,25 @@ public class PresenceManagerTests : IDisposable
         _settingsService.GetLastFmNowPlayingEnabledAsync().Returns(false);
 
         await _manager.InitializeAsync();
+    }
+
+    private static async Task AssertEventuallyAsync(Action assertion)
+    {
+        var deadline = DateTime.UtcNow + TimeSpan.FromSeconds(5);
+        while (DateTime.UtcNow < deadline)
+        {
+            try
+            {
+                assertion();
+                return;
+            }
+            catch (ReceivedCallsException)
+            {
+                await Task.Delay(25);
+            }
+        }
+
+        assertion();
     }
 
     #endregion
@@ -185,11 +205,11 @@ public class PresenceManagerTests : IDisposable
 
         // Act
         _playbackService.TrackChanged += Raise.Event<Action>();
-        await Task.Delay(500); // Allow async fire-and-forget to complete
-
-        // Assert
-        await _discordService.Received(1).OnTrackChangedAsync(_testSong, 42L);
-        await _lastFmService.Received(1).OnTrackChangedAsync(_testSong, 42L);
+        await AssertEventuallyAsync(() =>
+        {
+            _discordService.Received(1).OnTrackChangedAsync(_testSong, 42L);
+            _lastFmService.Received(1).OnTrackChangedAsync(_testSong, 42L);
+        });
     }
 
     /// <summary>
@@ -212,10 +232,9 @@ public class PresenceManagerTests : IDisposable
 
         // Act
         _playbackService.PlaybackStateChanged += Raise.Event<Action>();
-        await Task.Delay(500); // Allow async fire-and-forget to complete
+        await AssertEventuallyAsync(() => _discordService.Received(1).OnPlaybackStateChangedAsync(true));
 
         // Assert
-        await _discordService.Received(1).OnPlaybackStateChangedAsync(true);
         await _lastFmService.DidNotReceive().OnPlaybackStateChangedAsync(Arg.Any<bool>());
     }
 
@@ -245,13 +264,13 @@ public class PresenceManagerTests : IDisposable
 
         // Act
         _playbackService.TrackChanged += Raise.Event<Action>();
-        await Task.Delay(500); // Allow async fire-and-forget to complete
+        await AssertEventuallyAsync(() => _discordService.Received(1).OnTrackChangedAsync(_testSong, 42L));
         _playbackService.PositionChanged += Raise.Event<Action>();
-        await Task.Delay(500); // Allow async fire-and-forget to complete
-
-        // Assert
-        await _discordService.Received(1).OnTrackProgressAsync(currentPosition, duration);
-        await _lastFmService.Received(1).OnTrackProgressAsync(currentPosition, duration);
+        await AssertEventuallyAsync(() =>
+        {
+            _discordService.Received(1).OnTrackProgressAsync(currentPosition, duration);
+            _lastFmService.Received(1).OnTrackProgressAsync(currentPosition, duration);
+        });
     }
 
     #endregion
@@ -276,10 +295,7 @@ public class PresenceManagerTests : IDisposable
 
         // Act
         _settingsService.DiscordRichPresenceSettingChanged += Raise.Event<Action<bool>>(true);
-        await Task.Delay(500); // Allow async fire-and-forget to complete
-
-        // Assert
-        await _discordService.Received(1).InitializeAsync();
+        await AssertEventuallyAsync(() => _discordService.Received(1).InitializeAsync());
     }
 
     /// <summary>
@@ -301,11 +317,11 @@ public class PresenceManagerTests : IDisposable
 
         // Act
         _settingsService.DiscordRichPresenceSettingChanged += Raise.Event<Action<bool>>(false);
-        await Task.Delay(500); // Allow async fire-and-forget to complete
-
-        // Assert
-        await _discordService.Received(1).OnPlaybackStoppedAsync();
-        await ((IAsyncDisposable)_discordService).Received(1).DisposeAsync();
+        await AssertEventuallyAsync(() =>
+        {
+            _discordService.Received(1).OnPlaybackStoppedAsync();
+            ((IAsyncDisposable)_discordService).Received(1).DisposeAsync();
+        });
     }
 
     /// <summary>
@@ -332,10 +348,7 @@ public class PresenceManagerTests : IDisposable
 
         // Act
         _settingsService.LastFmSettingsChanged += Raise.Event<Action>();
-        await Task.Delay(500); // Allow async fire-and-forget to complete
-
-        // Assert
-        await _lastFmService.Received(1).InitializeAsync();
+        await AssertEventuallyAsync(() => _lastFmService.Received(1).InitializeAsync());
     }
 
     /// <summary>
@@ -375,10 +388,7 @@ public class PresenceManagerTests : IDisposable
 
         // Act
         _settingsService.ListenBrainzSettingsChanged += Raise.Event<Action>();
-        await Task.Delay(500); // Allow async fire-and-forget to complete
-
-        // Assert
-        await listenBrainzService.Received(1).InitializeAsync();
+        await AssertEventuallyAsync(() => listenBrainzService.Received(1).InitializeAsync());
     }
 
     /// <summary>
@@ -409,10 +419,16 @@ public class PresenceManagerTests : IDisposable
         _settingsService.GetListenBrainzNowPlayingEnabledAsync().Returns(false);
 
         await manager.InitializeAsync();
+        var tokenChecked = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        _settingsService.GetListenBrainzUserTokenAsync().Returns(_ =>
+        {
+            tokenChecked.TrySetResult();
+            return Task.FromResult<string?>(null);
+        });
 
         // Act
         _settingsService.ListenBrainzSettingsChanged += Raise.Event<Action>();
-        await Task.Delay(500); // Allow async fire-and-forget to complete
+        await tokenChecked.Task.WaitAsync(TimeSpan.FromSeconds(5));
 
         // Assert
         await listenBrainzService.DidNotReceive().InitializeAsync();
@@ -478,19 +494,18 @@ public class PresenceManagerTests : IDisposable
 
         // Act
         _playbackService.TrackChanged += Raise.Event<Action>();
-        await Task.Delay(500); // Allow async fire-and-forget to complete
-
-        // Assert
-        _logger.Received(1).Log(
-            LogLevel.Error,
-            Arg.Any<EventId>(),
-            Arg.Is<object>(o =>
-                o != null &&
-                o.ToString()!.Contains("An error occurred while broadcasting an event to the 'Discord' service.")),
-            Arg.Any<InvalidOperationException>(),
-            Arg.Any<Func<object, Exception?, string>>());
-
-        await _lastFmService.Received(1).OnTrackChangedAsync(_testSong, 42L);
+        await AssertEventuallyAsync(() =>
+        {
+            _logger.Received(1).Log(
+                LogLevel.Error,
+                Arg.Any<EventId>(),
+                Arg.Is<object>(o =>
+                    o != null &&
+                    o.ToString()!.Contains("An error occurred while broadcasting an event to the 'Discord' service.")),
+                Arg.Any<InvalidOperationException>(),
+                Arg.Any<Func<object, Exception?, string>>());
+            _lastFmService.Received(1).OnTrackChangedAsync(_testSong, 42L);
+        });
     }
 
     #endregion
