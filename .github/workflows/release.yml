@@ -19,12 +19,23 @@ jobs:
       id-token: write
       contents: read
     steps:
+      - name: Resolve tag commit
+        id: tag
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.event.inputs.tag }}
+        run: |
+          SHA=$(gh api "repos/${GITHUB_REPOSITORY}/commits/${TAG}" --jq .sha)
+          echo "sha=$SHA" >> "$GITHUB_OUTPUT"
+
       - name: Download unsigned MSIX from build workflow
         uses: dawidd6/action-download-artifact@v21
         with:
           workflow: build.yml
           workflow_conclusion: success
-          ref: ${{ github.event.inputs.tag }}
+          commit: ${{ steps.tag.outputs.sha }}
+          branch: ${{ github.event.inputs.tag }}
+          event: push
           name: Unsigned-MSIX
 
       # We need the artifact-id for the SignPath action.
