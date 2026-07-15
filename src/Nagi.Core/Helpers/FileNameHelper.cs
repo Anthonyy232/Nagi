@@ -51,10 +51,28 @@ public static class FileNameHelper
         if (descriptivePrefix.Length > maxPrefixLength)
             descriptivePrefix = descriptivePrefix[..maxPrefixLength].TrimEnd();
 
-        var normalizedIdentity = PathCanonicalizer.Normalize(audioFileIdentity).ToUpperInvariant();
-        var identityHash = SHA256.HashData(Encoding.UTF8.GetBytes(normalizedIdentity));
-        var hashSuffix = Convert.ToHexString(identityHash.AsSpan(0, 12));
+        var hashSuffix = GenerateLrcCacheIdentityHash(audioFileIdentity);
 
         return $"{descriptivePrefix} - {hashSuffix}.lrc";
+    }
+
+    /// <summary>
+    ///     Determines whether a lyrics cache filename belongs to the specified audio file identity.
+    ///     Descriptive metadata is intentionally ignored so cached lyrics survive tag edits.
+    /// </summary>
+    public static bool MatchesLrcCacheIdentity(string filePath, string audioFileIdentity)
+    {
+        if (string.IsNullOrWhiteSpace(filePath) || string.IsNullOrWhiteSpace(audioFileIdentity))
+            return false;
+
+        var expectedSuffix = $" - {GenerateLrcCacheIdentityHash(audioFileIdentity)}.lrc";
+        return Path.GetFileName(filePath).EndsWith(expectedSuffix, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static string GenerateLrcCacheIdentityHash(string audioFileIdentity)
+    {
+        var normalizedIdentity = PathCanonicalizer.Normalize(audioFileIdentity).ToUpperInvariant();
+        var identityHash = SHA256.HashData(Encoding.UTF8.GetBytes(normalizedIdentity));
+        return Convert.ToHexString(identityHash.AsSpan(0, 12));
     }
 }
