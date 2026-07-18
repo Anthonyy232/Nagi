@@ -43,7 +43,7 @@ public static class SettingsDefaults
     public const bool FadeOnPlayPauseEnabled = false;
     public const int DefaultFadeInDurationMs = 200;
     public const int DefaultFadeOutDurationMs = 150;
-    public const float EqualizerPreamp = 10.0f;
+    public const float EqualizerPreamp = EqualizerSettings.DefaultPreampDb;
     public static readonly Color? AccentColor = null;
 
     public const PlayerBackgroundMaterial DefaultPlayerBackgroundMaterial = Models.PlayerBackgroundMaterial.Acrylic;
