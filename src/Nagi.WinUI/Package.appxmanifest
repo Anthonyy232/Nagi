@@ -60,7 +60,6 @@
                         <uap:SupportedFileTypes>
                             <!-- Audio Formats -->
                             <uap:FileType>.aa</uap:FileType>
-                            <uap:FileType>.aax</uap:FileType>
                             <uap:FileType>.aac</uap:FileType>
                             <uap:FileType>.aiff</uap:FileType>
                             <uap:FileType>.ape</uap:FileType>
@@ -68,15 +67,16 @@
                             <uap:FileType>.flac</uap:FileType>
                             <uap:FileType>.m4a</uap:FileType>
                             <uap:FileType>.m4b</uap:FileType>
-                            <uap:FileType>.m4p</uap:FileType>
                             <uap:FileType>.mp3</uap:FileType>
                             <uap:FileType>.mpc</uap:FileType>
                             <uap:FileType>.mpp</uap:FileType>
                             <uap:FileType>.ogg</uap:FileType>
                             <uap:FileType>.oga</uap:FileType>
+                            <uap:FileType>.opus</uap:FileType>
                             <uap:FileType>.wav</uap:FileType>
                             <uap:FileType>.wma</uap:FileType>
                             <uap:FileType>.wv</uap:FileType>
+                            <uap:FileType>.asf</uap:FileType>
                             <uap:FileType>.webm</uap:FileType>
                         </uap:SupportedFileTypes>
                         <uap:EditFlags OpenIsSafe="true"/>
