@@ -330,7 +330,6 @@ public partial class App : Application
             {
                 try
                 {
-                    LibVLCSharp.Core.Initialize();
                     await Services.GetRequiredService<IAudioPlayer>().EnsureInitializedAsync().ConfigureAwait(false);
                 }
                 catch (Exception ex)
@@ -653,6 +652,7 @@ public partial class App : Application
         services.AddSingleton<IViewModelFactory, ViewModelFactory>();
         services.AddSingleton<IAudioPlayer>(provider =>
             new LibVlcAudioPlayerService(provider.GetRequiredService<IDispatcherService>(),
+                provider.GetRequiredService<IAppInfoService>(),
                 provider.GetRequiredService<ILogger<LibVlcAudioPlayerService>>()));
         services.AddTransient<ITaskbarService>(provider =>
             new TaskbarService(
