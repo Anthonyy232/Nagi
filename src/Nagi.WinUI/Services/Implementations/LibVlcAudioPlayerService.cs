@@ -21,6 +21,9 @@ namespace Nagi.WinUI.Services.Implementations;
 /// </summary>
 public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
 {
+    private static readonly TimeSpan NativeStopTimeout = TimeSpan.FromSeconds(5);
+
+    private readonly IAppInfoService _appInfoService;
     private readonly IDispatcherService _dispatcherService;
     private readonly ILogger<LibVlcAudioPlayerService> _logger;
     private readonly CancellationTokenSource _disposeCts = new();
@@ -46,9 +49,9 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     private bool _isExplicitStop; // Prevents false PlaybackEnded events on user/error stop
     private double _replayGainOffset; // Separate tracking of ReplayGain adjustment
 
-    // Default preamp of 10.0f is a safe neutral value within VLC's -20 to +20 dB range.
-    // This gets overwritten by Equalizer.Preamp (typically 12.0f) once LibVLC initializes.
-    private float _basePreamp = 10.0f;
+    // Nagi intentionally keeps approximately 2 dB of headroom below LibVLC's
+    // nominal 12 dB flat/unity preset.
+    private float _basePreamp = EqualizerSettings.DefaultPreampDb;
 
     // Fade support: tracks user-set volume separately from the live VLC volume so that
     // fade animations do not propagate to the UI or persist to settings.
@@ -65,10 +68,14 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     /// <summary>
     ///     Creates a new instance. LibVLC initialization is deferred until first use.
     /// </summary>
-    public LibVlcAudioPlayerService(IDispatcherService dispatcherService, ILogger<LibVlcAudioPlayerService> logger)
+    public LibVlcAudioPlayerService(
+        IDispatcherService dispatcherService,
+        IAppInfoService appInfoService,
+        ILogger<LibVlcAudioPlayerService> logger)
     {
         _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
-        _logger = logger;
+        _appInfoService = appInfoService ?? throw new ArgumentNullException(nameof(appInfoService));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     /// <inheritdoc />
@@ -137,20 +144,37 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     {
         _logger.LogDebug("Initializing LibVLC core (deferred).");
 
-        var vlcOptions = new[]
-        {
-            "--no-video", "--no-spu", "--no-osd", "--no-stats", "--ignore-config",
-            "--no-one-instance", "--no-lua", "--no-volume-save", "--user-agent=Nagi",
-            "--verbose=-1", "--audio-filter=equalizer"
-        };
+        // Register the native library resolver in the same serialized path that creates
+        // LibVLC. Callers can reach this method before the background audio warm-up runs
+        // (for example, while DI constructs MusicPlaybackService for the taskbar service),
+        // so initialization cannot safely live in App.InitializeCoreServicesAsync.
+        LibVLCSharp.Core.Initialize();
+
+        // LibVLC explicitly does not guarantee compatibility for constructor options.
+        // Keep only the two behaviors that currently lack a suitable public LibVLC API.
+        var vlcOptions = new[] { "--no-video", "--no-volume-save" };
 
         _logger.LogDebug("Initializing LibVLC with options: {VlcOptions}", string.Join(" ", vlcOptions));
         _libVlc = new LibVLC(false, vlcOptions);
+
+        // Subscribe before MediaPlayer construction so native audio-output diagnostics are captured.
+        _libVlc.Log += OnLibVlcLog;
+
+        var httpUserAgent = GetHttpUserAgent();
+        _libVlc.SetUserAgent("Nagi", httpUserAgent);
+        _logger.LogInformation(
+            "LibVLC runtime: Version={Version}; Changeset={Changeset}; ABI={Abi}; Compiler={Compiler}; UserAgent={UserAgent}",
+            _libVlc.Version,
+            _libVlc.Changeset,
+            _libVlc.ABI,
+            _libVlc.LibVLCCompiler,
+            httpUserAgent);
+
         _mediaPlayer = new MediaPlayer(_libVlc);
         _dummyMediaPlayer = new WinMediaPlayback.MediaPlayer { CommandManager = { IsEnabled = false } };
 
         _equalizer = new Equalizer();
-        _basePreamp = _equalizer.Preamp;
+        _equalizer.SetPreamp(_basePreamp);
         _mediaPlayer.SetEqualizer(_equalizer);
 
         // Register event handlers
@@ -167,6 +191,72 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
 
         _isInitialized = true;
         _logger.LogDebug("LibVLC initialization complete.");
+    }
+
+    private string GetHttpUserAgent()
+    {
+        try
+        {
+            var version = _appInfoService.GetAppVersion();
+            if (!string.IsNullOrWhiteSpace(version)) return $"Nagi/{version.Trim()}";
+        }
+        catch (Exception ex)
+        {
+            // Package identity can be unavailable in some development-host scenarios.
+            // User-agent metadata is useful but must never make playback initialization fatal.
+            _logger.LogWarning(ex, "Could not determine the package version for LibVLC's HTTP user agent.");
+        }
+
+        return "Nagi";
+    }
+
+    private void OnLibVlcLog(object? sender, LogEventArgs e)
+    {
+        if (_isDisposed) return;
+
+        var message = string.IsNullOrWhiteSpace(e.FormattedLog) ? e.Message : e.FormattedLog;
+        switch (e.Level)
+        {
+            case LibVLCSharp.LogLevel.Error:
+                _logger.LogError("LibVLC [{Module}] {Message}", e.Module, message);
+                break;
+            case LibVLCSharp.LogLevel.Warning:
+                _logger.LogWarning("LibVLC [{Module}] {Message}", e.Module, message);
+                break;
+            case LibVLCSharp.LogLevel.Notice:
+                _logger.LogDebug("LibVLC [{Module}] {Message}", e.Module, message);
+                break;
+            default:
+                _logger.LogTrace("LibVLC [{Module}] {Message}", e.Module, message);
+                break;
+        }
+    }
+
+    private static bool UsesNativeDemuxer(string extension)
+    {
+        return extension is ".opus" or ".ogg" or ".oga" or ".webm";
+    }
+
+    private static string? GetAvFormatHint(string extension)
+    {
+        return extension switch
+        {
+            ".mp3" => "mp3",
+            ".flac" => "flac",
+            ".wav" => "wav",
+            ".aac" => "aac",
+            ".m4a" or ".m4b" or ".mp4" or ".m4v" => "mp4",
+            ".wma" or ".asf" => "asf",
+            ".aiff" => "aiff",
+            ".ape" => "ape",
+            ".dsf" => "dsf",
+            // Musepack SV7 and SV8 use separate FFmpeg demuxers. Content probing is
+            // required so an SV8 file is not forced through the SV7-only "mpc" demuxer.
+            ".mpc" or ".mpp" => null,
+            ".wv" => "wv",
+            ".mpeg" or ".mpg" or ".mpe" => "mpeg",
+            _ => null
+        };
     }
 
     public event Action? PlaybackEnded, PositionChanged, StateChanged, VolumeChanged, MediaOpened, DurationChanged;
@@ -254,53 +344,22 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
             {
                 if (_isDisposed) return;
 
-                // Dispose previous media if it exists
-                if (_currentMedia != null)
-                {
-                    try
-                    {
-                        _currentMedia.Dispose();
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogWarning(ex, "Error disposing previous media");
-                    }
-
-                    _currentMedia = null;
-                }
+                DisposeCurrentMedia("replacement load");
 
                 // Create new media and store reference
-                var extension = System.IO.Path.GetExtension(song.FilePath);
-                var isOggContainer = extension.Equals(".opus", StringComparison.OrdinalIgnoreCase) ||
-                                     extension.Equals(".ogg", StringComparison.OrdinalIgnoreCase) ||
-                                     extension.Equals(".oga", StringComparison.OrdinalIgnoreCase);
+                var extension = System.IO.Path.GetExtension(song.FilePath).ToLowerInvariant();
+                var useNativeDemuxer = UsesNativeDemuxer(extension);
 
-                _currentMedia = new Media(new Uri(song.FilePath));
+                _currentMedia = new Media(song.FilePath, FromType.FromPath);
 
-                // Use native demuxer for Ogg containers (.opus/.ogg/.oga), force avcodec for others.
-                // The avcodec (FFmpeg) demuxer handles edge-case MP3s better than VLC's native 'es' demuxer,
-                // but can misdetect formats (e.g. some MP3s as h263 video), so we hint the format explicitly.
-                if (!isOggContainer)
+                // Native Ogg and Matroska demuxers integrate more safely with VLC's player clock.
+                // FFmpeg remains preferred for the other formats because it handles edge-case MP3s
+                // better than VLC's native elementary-stream demuxer.
+                if (!useNativeDemuxer)
                 {
                     _currentMedia.AddOption(":demux=avcodec");
 
-                    var formatHint = extension.ToLowerInvariant() switch
-                    {
-                        ".mp3" => "mp3",
-                        ".flac" => "flac",
-                        ".wav" => "wav",
-                        ".aac" => "aac",
-                        ".m4a" or ".m4b" or ".m4p" or ".mp4" or ".m4v" => "mp4",
-                        ".wma" or ".asf" => "asf",
-                        ".aiff" => "aiff",
-                        ".ape" => "ape",
-                        ".dsf" => "dsf",
-                        ".mpc" or ".mpp" => "mpc",
-                        ".wv" => "wv",
-                        ".webm" => "matroska",
-                        ".mpeg" or ".mpg" or ".mpe" or ".mpv" or ".m2v" => "mpeg",
-                        _ => (string?)null
-                    };
+                    var formatHint = GetAvFormatHint(extension);
 
                     if (formatHint != null)
                     {
@@ -324,20 +383,16 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
             _dispatcherService.TryEnqueue(() => ErrorOccurred?.Invoke(errorMessage));
             _currentSong = null;
 
-            // Clean up media on error
-            if (_currentMedia != null)
+            try
             {
-                try
-                {
-                    _currentMedia.Dispose();
-                }
-                catch (Exception disposeEx)
-                {
-                    _logger.LogWarning(disposeEx, "Error disposing media after load failure");
-                }
-
-                _currentMedia = null;
+                if (_mediaPlayer is not null) _mediaPlayer.Media = null;
             }
+            catch (Exception detachEx)
+            {
+                _logger.LogWarning(detachEx, "Failed to detach media after a load failure.");
+            }
+
+            DisposeCurrentMedia("load failure");
         }
         finally
         {
@@ -357,6 +412,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         oldPlayCts?.Cancel();
         oldPlayCts?.Dispose();
         var fadeCt = newPlayCts.Token;
+        var startFadeIn = false;
 
         _isPausing = false;
 
@@ -370,27 +426,34 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         await _vlcOperationLock.WaitAsync().ConfigureAwait(false);
         try
         {
-            if (_mediaPlayer.Media is not null)
+            if (_currentMedia is not null)
             {
-                // Offload to thread pool to prevent blocking the UI thread.
-                // VLC's Play() blocks while opening the file and starting the decode pipeline,
-                // which can take seconds for large FLAC files.
-                await Task.Run(() =>
+                if (_isDisposed) return;
+
+                if (_isFadeOnPlayPauseEnabled)
                 {
-                    if (_isDisposed) return;
-                    if (_isFadeOnPlayPauseEnabled)
-                    {
-                        // Silence before playing so fade-in starts from zero
-                        _isFading = true;
-                        _mediaPlayer!.SetVolume(0);
-                    }
-                    else
-                    {
-                        // Ensure VLC volume matches user volume; a prior fade-out could have left it at 0
-                        _mediaPlayer!.SetVolume((int)Math.Clamp(_userVolume * 100, 0, 100));
-                    }
-                    _mediaPlayer!.Play();
-                }).ConfigureAwait(false);
+                    // Silence before playing so fade-in starts from zero.
+                    _isFading = true;
+                    _mediaPlayer.SetVolume(0);
+                }
+                else
+                {
+                    // Ensure VLC volume matches user volume; a prior fade-out could have left it at 0.
+                    _mediaPlayer.SetVolume((int)Math.Clamp(_userVolume * 100, 0, 100));
+                }
+
+                // LibVLC 4 queues the start command and returns immediately.
+                if (_mediaPlayer.Play())
+                {
+                    startFadeIn = _isFadeOnPlayPauseEnabled;
+                }
+                else
+                {
+                    _isFading = false;
+                    _mediaPlayer.SetVolume((int)Math.Clamp(_userVolume * 100, 0, 100));
+                    _logger.LogWarning("LibVLC rejected the play command. Last error: {LastError}",
+                        _libVlc?.LastLibVLCError);
+                }
             }
             else
             {
@@ -402,7 +465,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
             _vlcOperationLock.Release();
         }
 
-        if (_isFadeOnPlayPauseEnabled)
+        if (startFadeIn)
             _ = FadeAsync(0.0, _userVolume, TimeSpan.FromMilliseconds(_fadeInDurationMs), fadeCt);
     }
 
@@ -504,31 +567,23 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         await _vlcOperationLock.WaitAsync().ConfigureAwait(false);
         try
         {
-            // Offload VLC stop and media disposal to thread pool.
-            // _mediaPlayer.Stop() blocks while VLC flushes internal buffers,
-            // which can be slow for large files that were mid-stream.
-            await Task.Run(() =>
+            if (_isDisposed || _mediaPlayer is null) return;
+
+            // LibVLC 4 stop is asynchronous. Wait for the native Stopped event before
+            // releasing the media so a subsequent load cannot race the old pipeline.
+            await StopNativePlaybackAsync(_mediaPlayer).ConfigureAwait(false);
+            _currentSong = null;
+
+            try
             {
-                if (_isDisposed) return;
+                _mediaPlayer.Media = null;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Failed to detach media after stopping LibVLC playback.");
+            }
 
-                _mediaPlayer!.Stop();
-                _currentSong = null;
-
-                // Clean up current media when stopping
-                if (_currentMedia != null)
-                {
-                    try
-                    {
-                        _currentMedia.Dispose();
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogWarning(ex, "Error disposing media during stop");
-                    }
-
-                    _currentMedia = null;
-                }
-            }).ConfigureAwait(false);
+            DisposeCurrentMedia("stop");
         }
         finally
         {
@@ -547,6 +602,57 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
             {
                 _logger.LogDebug("SMTC already disposed during stop.");
             }
+        }
+    }
+
+    private async Task StopNativePlaybackAsync(MediaPlayer player)
+    {
+        var stopped = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        void OnStopped(object? sender, EventArgs args) => stopped.TrySetResult(true);
+
+        player.Stopped += OnStopped;
+        try
+        {
+            if (!player.Stop())
+            {
+                _logger.LogTrace("LibVLC stop was a no-op because no playback pipeline was active.");
+                return;
+            }
+
+            try
+            {
+                await stopped.Task.WaitAsync(NativeStopTimeout, _disposeCts.Token).ConfigureAwait(false);
+            }
+            catch (TimeoutException)
+            {
+                _logger.LogWarning("Timed out after {TimeoutMs} ms waiting for LibVLC to stop.",
+                    NativeStopTimeout.TotalMilliseconds);
+            }
+            catch (OperationCanceledException) when (_disposeCts.IsCancellationRequested)
+            {
+                _logger.LogDebug("Stopped waiting for LibVLC because the audio service is being disposed.");
+            }
+        }
+        finally
+        {
+            player.Stopped -= OnStopped;
+        }
+    }
+
+    private void DisposeCurrentMedia(string context)
+    {
+        var media = _currentMedia;
+        _currentMedia = null;
+        if (media is null) return;
+
+        try
+        {
+            media.Dispose();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Error disposing media during {Context}.", context);
         }
     }
 
@@ -807,27 +913,17 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
                 }
             }
 
-            // Clean up current media before disposing other components
-            if (_currentMedia != null)
-            {
-                try
-                {
-                    _currentMedia.Dispose();
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogWarning(ex, "Error disposing media during LibVlcAudioPlayerService disposal");
-                }
-
-                _currentMedia = null;
-            }
+            // Release Nagi's media reference. MediaPlayer retains its own reference until
+            // it is disposed below, so this ordering is safe even during shutdown.
+            DisposeCurrentMedia("audio service disposal");
 
             // Dispose LibVLC components if initialized
             if (_isInitialized)
             {
-                _equalizer?.Dispose();
                 _mediaPlayer?.Stop();
                 _mediaPlayer?.Dispose();
+                _equalizer?.Dispose();
+                if (_libVlc is not null) _libVlc.Log -= OnLibVlcLog;
                 _libVlc?.Dispose();
             }
 
