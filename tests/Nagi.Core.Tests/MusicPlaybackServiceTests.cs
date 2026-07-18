@@ -1637,11 +1637,13 @@ public class MusicPlaybackServiceTests
         await _service.ResetEqualizerAsync();
 
         // Assert
-        _service.CurrentEqualizerSettings!.Preamp.Should().Be(10.0f);
+        _service.CurrentEqualizerSettings!.Preamp.Should().Be(EqualizerSettings.DefaultPreampDb);
         _service.CurrentEqualizerSettings.BandGains.Should().AllSatisfy(g => g.Should().Be(0.0f));
         _audioPlayer.Received(1)
             .ApplyEqualizerSettings(
-                Arg.Is<EqualizerSettings>(s => s != null && s.Preamp == 10.0f && s.BandGains.All(g => g == 0.0f)));
+                Arg.Is<EqualizerSettings>(s => s != null &&
+                                                     s.Preamp == EqualizerSettings.DefaultPreampDb &&
+                                                     s.BandGains.All(g => g == 0.0f)));
         await _settingsService.Received(1).SetEqualizerSettingsAsync(Arg.Any<EqualizerSettings>());
     }
 

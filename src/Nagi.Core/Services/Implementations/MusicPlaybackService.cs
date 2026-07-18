@@ -165,7 +165,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
             {
                 CurrentEqualizerSettings = new EqualizerSettings
                 {
-                    Preamp = 10.0f,
+                    Preamp = EqualizerSettings.DefaultPreampDb,
                     BandGains = Enumerable.Repeat(0.0f, EqualizerBands.Count).ToList()
                 };
 
@@ -1169,7 +1169,7 @@ public class MusicPlaybackService : IMusicPlaybackService, IDisposable
         // Create new settings object (deep copy) for atomic update - matches SetEqualizerBandAsync pattern
         var newSettings = new EqualizerSettings
         {
-            Preamp = 10.0f,
+            Preamp = EqualizerSettings.DefaultPreampDb,
             BandGains = Enumerable.Repeat(0.0f, CurrentEqualizerSettings.BandGains.Count).ToList()
         };
 
