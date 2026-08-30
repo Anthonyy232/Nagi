@@ -19,6 +19,7 @@
         LeftClickCommand="{x:Bind ViewModel.ShowPopupCommand}"
         LeftClickCommandParameter="{Binding RelativeSource={RelativeSource Self}}"
         NoLeftClickDelay="True"
+        DoubleClickCommand="{x:Bind ViewModel.RestoreWindowCommand}"
         ToolTipText="{x:Bind ViewModel.ToolTipText, Mode=OneWay}"
         ContextMenuMode="SecondWindow">
 

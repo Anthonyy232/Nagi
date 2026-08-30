@@ -169,6 +169,12 @@ public partial class TrayIconViewModel : ObservableObject
     [RelayCommand]
     private void ShowPopup(object? parameter)
     {
+        if (_windowService.IsVisible)
+        {
+            _trayPopupService.HidePopup();
+            return;
+        }
+
         RectInt32? iconRect = null;
         if (parameter != null)
         {
