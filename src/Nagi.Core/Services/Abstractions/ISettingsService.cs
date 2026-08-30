@@ -334,6 +334,16 @@ public interface ISettingsService
     Task SetVolumeNormalizationEnabledAsync(bool isEnabled);
 
     /// <summary>
+    ///     Gets whether VLC should request exclusive access to the Windows audio device.
+    /// </summary>
+    Task<bool> GetWasapiExclusiveModeEnabledAsync();
+
+    /// <summary>
+    ///     Sets whether VLC should request exclusive access to the Windows audio device.
+    /// </summary>
+    Task SetWasapiExclusiveModeEnabledAsync(bool isEnabled);
+
+    /// <summary>
     ///     Gets whether fade on play/pause is enabled.
     /// </summary>
     Task<bool> GetFadeOnPlayPauseEnabledAsync();

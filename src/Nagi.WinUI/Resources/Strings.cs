@@ -635,6 +635,8 @@ public static class Strings
     public static string SettingsPage_Section_Player => GetString("SettingsPage_Section_Player");
     public static string SettingsPage_VolumeNormalization_Header => GetString("SettingsPage_VolumeNormalization_Header");
     public static string SettingsPage_VolumeNormalization_Description => GetString("SettingsPage_VolumeNormalization_Description");
+    public static string SettingsPage_WasapiExclusive_Header => GetString("SettingsPage_WasapiExclusive_Header");
+    public static string SettingsPage_WasapiExclusive_Description => GetString("SettingsPage_WasapiExclusive_Description");
     public static string SettingsPage_FadeOnPlayPause_Header => GetString("SettingsPage_FadeOnPlayPause_Header");
     public static string SettingsPage_FadeOnPlayPause_Description => GetString("SettingsPage_FadeOnPlayPause_Description");
     public static string SettingsPage_FadeInDuration_Header => GetString("SettingsPage_FadeInDuration_Header");
