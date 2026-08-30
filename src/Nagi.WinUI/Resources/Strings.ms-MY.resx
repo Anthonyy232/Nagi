@@ -1591,6 +1591,12 @@
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
     <value>Laraskan kelantangan secara automatik ke tahap standard (-14 LUFS) untuk mengelakkan perubahan kelantangan secara tiba-tiba.</value>
   </data>
+  <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
+    <value>WASAPI exclusive mode</value>
+  </data>
+  <data name="SettingsPage_WasapiExclusive_Description" xml:space="preserve">
+    <value>Give Nagi exclusive control of the Windows audio device. Other apps may be silent. Restart Nagi after changing this setting.</value>
+  </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
     <value>Pudar Semasa Main / Jeda</value>
   </data>

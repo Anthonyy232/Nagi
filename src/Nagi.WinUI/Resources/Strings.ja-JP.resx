@@ -1591,6 +1591,12 @@
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
     <value>急な音量変化を避けるため、音量を標準レベル (-14 LUFS) に自動調整します。</value>
   </data>
+  <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
+    <value>WASAPI exclusive mode</value>
+  </data>
+  <data name="SettingsPage_WasapiExclusive_Description" xml:space="preserve">
+    <value>Give Nagi exclusive control of the Windows audio device. Other apps may be silent. Restart Nagi after changing this setting.</value>
+  </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
     <value>再生/一時停止時のフェード</value>
   </data>

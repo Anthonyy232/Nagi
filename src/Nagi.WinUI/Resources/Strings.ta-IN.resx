@@ -1604,6 +1604,12 @@
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
     <value>திடீர் சத்த மாற்றங்களைத் தவிர்க்க, ஒலியை தானாகவே நிலையான அளவிற்கு (-14 LUFS) சரிசெய்யவும்.</value>
   </data>
+  <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
+    <value>WASAPI exclusive mode</value>
+  </data>
+  <data name="SettingsPage_WasapiExclusive_Description" xml:space="preserve">
+    <value>Give Nagi exclusive control of the Windows audio device. Other apps may be silent. Restart Nagi after changing this setting.</value>
+  </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
     <value>பிளே / இடைநிறுத்தத்தில் மங்கச் செய்</value>
   </data>

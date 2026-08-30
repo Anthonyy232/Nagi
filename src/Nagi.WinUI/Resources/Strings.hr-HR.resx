@@ -1604,6 +1604,12 @@ Pogreška: {1}</value>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
     <value>Automatski prilagodite glasnoću na standardnu razinu (-14 LUFS) kako biste izbjegli nagle promjene glasnoće.</value>
   </data>
+  <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
+    <value>WASAPI exclusive mode</value>
+  </data>
+  <data name="SettingsPage_WasapiExclusive_Description" xml:space="preserve">
+    <value>Give Nagi exclusive control of the Windows audio device. Other apps may be silent. Restart Nagi after changing this setting.</value>
+  </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
     <value>Blijedi pri reprodukciji / pauzi</value>
   </data>
