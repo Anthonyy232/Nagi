@@ -1591,6 +1591,12 @@
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
     <value>Keto dwon i kare ne me nongo ma rom ( -14 LUFS) me gwoko dwon ki me cito malit onyo ma gin nongo.</value>
   </data>
+  <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
+    <value>WASAPI exclusive mode</value>
+  </data>
+  <data name="SettingsPage_WasapiExclusive_Description" xml:space="preserve">
+    <value>Give Nagi exclusive control of the Windows audio device. Other apps may be silent. Restart Nagi after changing this setting.</value>
+  </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
     <value>Ywen i Kany/Juk</value>
   </data>

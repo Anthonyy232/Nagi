@@ -1591,6 +1591,12 @@
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
     <value>Автоматично регулиране на силата на звука до стандартното ниво (-14 LUFS), за да се избегнат внезапни промени в силата.</value>
   </data>
+  <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
+    <value>WASAPI exclusive mode</value>
+  </data>
+  <data name="SettingsPage_WasapiExclusive_Description" xml:space="preserve">
+    <value>Give Nagi exclusive control of the Windows audio device. Other apps may be silent. Restart Nagi after changing this setting.</value>
+  </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
     <value>Затихване при пускане/пауза</value>
   </data>
