@@ -129,6 +129,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     private bool _isLoaded;
     private CancellationTokenSource? _preampDebounceCts;
     private CancellationTokenSource? _replayGainScanCts;
+    private CancellationTokenSource? _metadataRescanCts;
     private CancellationTokenSource? _playerButtonSaveCts;
     private CancellationTokenSource? _navigationItemSaveCts;
     private CancellationTokenSource? _lyricsProviderSaveCts;
@@ -433,6 +434,8 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         _preampDebounceCts?.Dispose();
         _replayGainScanCts?.Cancel();
         _replayGainScanCts?.Dispose();
+        _metadataRescanCts?.Cancel();
+        _metadataRescanCts?.Dispose();
         _playerButtonSaveCts?.Cancel();
         _playerButtonSaveCts?.Dispose();
         _navigationItemSaveCts?.Cancel();
@@ -1308,12 +1311,20 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
         if (!confirmed) return;
 
+        _metadataRescanCts?.Cancel();
+        _metadataRescanCts?.Dispose();
+        var rescanCts = new CancellationTokenSource();
+        _metadataRescanCts = rescanCts;
+
         _playerViewModel.IsGlobalOperationInProgress = true;
         _playerViewModel.GlobalOperationStatusMessage = Nagi.WinUI.Resources.Strings.Settings_Status_Rescan_Preparing;
         _playerViewModel.IsGlobalOperationIndeterminate = true;
+        _playerViewModel.SetGlobalOperationCancellation(rescanCts.Cancel);
 
         try
         {
+            await SaveMetadataSplitSettingsAsync();
+
             var progress = new Progress<ScanProgress>(p =>
             {
                 _playerViewModel.GlobalOperationStatusMessage = p.StatusText;
@@ -1321,9 +1332,14 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
                 _playerViewModel.GlobalOperationProgressValue = p.Percentage;
             });
 
-            await _libraryScanner.ForceRescanMetadataAsync(progress);
+            await _libraryScanner.ForceRescanMetadataAsync(progress, rescanCts.Token);
+            rescanCts.Token.ThrowIfCancellationRequested();
 
             await _uiService.ShowMessageDialogAsync(Nagi.WinUI.Resources.Strings.Settings_Dialog_RescanComplete_Title, Nagi.WinUI.Resources.Strings.Settings_Dialog_RescanComplete_Content);
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.LogInformation("Metadata rescan cancelled.");
         }
         catch (Exception ex)
         {
@@ -1332,9 +1348,27 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         }
         finally
         {
+            _playerViewModel.SetGlobalOperationCancellation(null);
             _playerViewModel.IsGlobalOperationInProgress = false;
             _playerViewModel.IsGlobalOperationIndeterminate = false;
+            if (ReferenceEquals(_metadataRescanCts, rescanCts))
+                _metadataRescanCts = null;
+            rescanCts.Dispose();
         }
+    }
+
+    private async Task SaveMetadataSplitSettingsAsync()
+    {
+        _artistSplitSaveCts?.Cancel();
+        _artistSplitSaveCts?.Dispose();
+        _artistSplitSaveCts = null;
+        _genreSplitSaveCts?.Cancel();
+        _genreSplitSaveCts?.Dispose();
+        _genreSplitSaveCts = null;
+
+        await Task.WhenAll(
+            _settingsService.SetArtistSplitCharactersAsync(ArtistSplitCharacters),
+            _settingsService.SetGenreSplitCharactersAsync(GenreSplitCharacters));
     }
 
     private async Task SavePlayerButtonSettingsAsync(List<PlayerButtonSetting> settings)

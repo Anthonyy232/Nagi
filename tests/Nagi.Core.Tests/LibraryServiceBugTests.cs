@@ -113,6 +113,37 @@ public class LibraryServiceBugTests : IDisposable
     }
 
     [Fact]
+    public async Task RescanFolderForMusicAsync_WhenConsumerFails_DoesNotDeadlock()
+    {
+        var folder = new Folder { Id = Guid.NewGuid(), Path = "C:\\Music\\BrokenScan", Name = "BrokenScan" };
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.Add(folder);
+            await context.SaveChangesAsync();
+        }
+
+        var songFiles = Enumerable.Range(1, 200)
+            .Select(i => ($"C:\\Music\\BrokenScan\\song{i}.mp3", DateTime.UtcNow))
+            .ToList();
+        _fileSystem.DirectoryExists(folder.Path).Returns(true);
+        _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, "*.*", SearchOption.AllDirectories)
+            .Returns(songFiles);
+        _fileSystem.GetExtension(Arg.Any<string>()).Returns(".mp3");
+        _metadataService.ExtractMetadataAsync(Arg.Any<string>(), folder.Path)
+            .Returns(call => new SongFileMetadata
+            {
+                FilePath = call.ArgAt<string>(0),
+                Title = "Song",
+                Artists = null!
+            });
+
+        var result = await _libraryService.RescanFolderForMusicAsync(folder.Id)
+            .WaitAsync(TimeSpan.FromSeconds(5));
+
+        result.Should().BeFalse();
+    }
+
+    [Fact]
     public async Task RemoveFolderAsync_WhenBackgroundRefreshIsScanning_CancelsScanAndRemovesFolder()
     {
         var folder = new Folder { Id = Guid.NewGuid(), Path = "C:\\Music\\BusyScan", Name = "BusyScan" };
@@ -147,10 +178,9 @@ public class LibraryServiceBugTests : IDisposable
         await extractionStarted.Task.WaitAsync(TimeSpan.FromSeconds(5));
 
         var removeTask = _libraryService.RemoveFolderAsync(folder.Id);
-        await Task.Delay(100);
-        allowExtractionToFinish.TrySetResult();
         var removed = await removeTask.WaitAsync(TimeSpan.FromSeconds(5));
         var refreshResult = await refreshTask.WaitAsync(TimeSpan.FromSeconds(5));
+        allowExtractionToFinish.TrySetResult();
 
         removed.Should().BeTrue();
         refreshResult.Should().BeFalse("the in-flight refresh was cancelled by folder removal");
@@ -326,6 +356,86 @@ public class LibraryServiceBugTests : IDisposable
             collaboratorFromDb.Should().NotBeNull();
         }
     }
+
+    [Fact]
+    public async Task ForceRescanMetadataAsync_PreservesMediaAssetsWhileUpdatingGenres()
+    {
+        var folder = new Folder { Id = Guid.NewGuid(), Path = "C:\\Music\\Genres", Name = "Genres" };
+        var artist = new Artist { Name = "Artist" };
+        var existingGenre = new Genre { Name = "Electronic" };
+        var oldGenre = new Genre { Name = "Electronic\\Techno" };
+        var filePath = "C:\\Music\\Genres\\song.mp3";
+        var modified = DateTime.UtcNow.AddDays(-1);
+        var song = new Song
+        {
+            Title = "Song",
+            FilePath = filePath,
+            DirectoryPath = folder.Path,
+            FolderId = folder.Id,
+            FileModifiedDate = modified,
+            AlbumArtUriFromTrack = "cached-cover.jpg",
+            LightSwatchId = "light",
+            DarkSwatchId = "dark",
+            LrcFilePath = "cached-lyrics.lrc"
+        };
+        song.SongArtists.Add(new SongArtist { Artist = artist, Order = 0 });
+        song.Genres.Add(existingGenre);
+        song.Genres.Add(oldGenre);
+        song.SyncDenormalizedFields();
+
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.Add(folder);
+            context.Songs.Add(song);
+            await context.SaveChangesAsync();
+        }
+
+        _fileSystem.DirectoryExists(folder.Path).Returns(true);
+        _fileSystem.EnumerateFilesWithLastWriteTime(folder.Path, "*.*", SearchOption.AllDirectories)
+            .Returns(new[] { (filePath, modified) });
+        _fileSystem.GetExtension(filePath).Returns(".mp3");
+        _metadataService.ExtractMetadataAsync(filePath, folder.Path, false)
+            .Returns(new SongFileMetadata
+            {
+                FilePath = filePath,
+                FileModifiedDate = modified,
+                Title = "Song",
+                Artists = ["Artist"],
+                AlbumArtists = ["Artist"],
+                Genres = ["Electronic", "Techno"]
+            });
+
+        var result = await _libraryService.ForceRescanMetadataAsync().WaitAsync(TimeSpan.FromSeconds(5));
+
+        result.Should().BeTrue();
+        await _metadataService.Received(1).ExtractMetadataAsync(filePath, folder.Path, false);
+        await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
+        var updated = await assertContext.Songs.Include(s => s.Genres).SingleAsync();
+        updated.Genres.Select(g => g.Name).Should().BeEquivalentTo("Electronic", "Techno");
+        updated.AlbumArtUriFromTrack.Should().Be("cached-cover.jpg");
+        updated.LightSwatchId.Should().Be("light");
+        updated.DarkSwatchId.Should().Be("dark");
+        updated.LrcFilePath.Should().Be("cached-lyrics.lrc");
+    }
+
+    [Fact]
+    public async Task ForceRescanMetadataAsync_WhenFolderIsUnavailable_ReportsFailure()
+    {
+        var folder = new Folder { Id = Guid.NewGuid(), Path = "Z:\\Offline", Name = "Offline" };
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.Add(folder);
+            await context.SaveChangesAsync();
+        }
+        _fileSystem.DirectoryExists(folder.Path).Returns(false);
+
+        var act = () => _libraryService.ForceRescanMetadataAsync();
+
+        await act.Should().ThrowAsync<DirectoryNotFoundException>();
+        await using var assertContext = _dbHelper.ContextFactory.CreateDbContext();
+        (await assertContext.Folders.CountAsync()).Should().Be(1);
+    }
+
     [Fact]
     public async Task RescanFolderForMusicAsync_WithUntrimmedArtistNames_DoesNotThrow()
     {
