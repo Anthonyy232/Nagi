@@ -64,6 +64,7 @@ public class SettingsService : IUISettingsService, IDisposable
     private const string RememberPaneStateEnabledKey = "RememberPaneStateEnabled";
     private const string LastPaneOpenKey = "LastPaneOpen";
     private const string VolumeNormalizationEnabledKey = "VolumeNormalizationEnabled";
+    private const string WasapiExclusiveModeEnabledKey = "WasapiExclusiveModeEnabled";
     private const string FadeOnPlayPauseEnabledKey = "FadeOnPlayPauseEnabled";
     private const string AccentColorKey = "AccentColor";
     private const string LyricsServiceProvidersKey = "LyricsServiceProviders";
@@ -174,6 +175,7 @@ public class SettingsService : IUISettingsService, IDisposable
             SetRememberWindowPositionEnabledAsync(SettingsDefaults.RememberWindowPositionEnabled),
             SetRememberPaneStateEnabledAsync(SettingsDefaults.RememberPaneStateEnabled),
             SetVolumeNormalizationEnabledAsync(SettingsDefaults.VolumeNormalizationEnabled),
+            SetWasapiExclusiveModeEnabledAsync(SettingsDefaults.WasapiExclusiveModeEnabled),
             SetFadeOnPlayPauseEnabledAsync(SettingsDefaults.FadeOnPlayPauseEnabled),
             SetFadeInDurationMsAsync(SettingsDefaults.DefaultFadeInDurationMs),
             SetFadeOutDurationMsAsync(SettingsDefaults.DefaultFadeOutDurationMs),
@@ -1088,6 +1090,12 @@ public class SettingsService : IUISettingsService, IDisposable
         return SetValueAndNotifyAsync(VolumeNormalizationEnabledKey, isEnabled, SettingsDefaults.VolumeNormalizationEnabled,
             VolumeNormalizationEnabledChanged);
     }
+
+    public Task<bool> GetWasapiExclusiveModeEnabledAsync() =>
+        Task.FromResult(GetValue(WasapiExclusiveModeEnabledKey, SettingsDefaults.WasapiExclusiveModeEnabled));
+
+    public Task SetWasapiExclusiveModeEnabledAsync(bool isEnabled) =>
+        SetValueAsync(WasapiExclusiveModeEnabledKey, isEnabled);
 
     public Task<bool> GetFadeOnPlayPauseEnabledAsync() => Task.FromResult(GetValue(FadeOnPlayPauseEnabledKey, SettingsDefaults.FadeOnPlayPauseEnabled));
 

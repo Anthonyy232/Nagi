@@ -653,6 +653,7 @@ public partial class App : Application
         services.AddSingleton<IAudioPlayer>(provider =>
             new LibVlcAudioPlayerService(provider.GetRequiredService<IDispatcherService>(),
                 provider.GetRequiredService<IAppInfoService>(),
+                provider.GetRequiredService<ISettingsService>(),
                 provider.GetRequiredService<ILogger<LibVlcAudioPlayerService>>()));
         services.AddTransient<ITaskbarService>(provider =>
             new TaskbarService(
