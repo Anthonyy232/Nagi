@@ -87,13 +87,21 @@ public class TrayPopupService : ITrayPopupService, IDisposable
 
     public async Task HidePopup()
     {
-        if (_popupWindow != null && _popupWindow.AppWindow.IsVisible && !_isAnimating)
+        if (_popupWindow == null || !_popupWindow.AppWindow.IsVisible) return;
+
+        _logger.LogDebug("Hiding tray popup.");
+        if (_isAnimating)
         {
-            _logger.LogDebug("Hiding tray popup.");
-            _isAnimating = true;
-            await PopupAnimation.AnimateOut(_popupWindow);
+            PopupAnimation.CancelAllAnimations();
+            _popupWindow.AppWindow.Hide();
+            _popupWindow.SetWindowOpacity(255);
             _isAnimating = false;
+            return;
         }
+
+        _isAnimating = true;
+        await PopupAnimation.AnimateOut(_popupWindow);
+        _isAnimating = false;
     }
 
     private async Task ShowPopup(RectInt32? targetRect = null)
