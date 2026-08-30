@@ -220,6 +220,7 @@
                 IsItemClickEnabled="True"
                 ItemClick="PlaylistsGridView_ItemClick"
                 Padding="{StaticResource SongListViewPadding}"
+                Margin="{StaticResource SongListViewMargin}"
                 ItemContainerStyle="{StaticResource PlaylistPageGridViewItemStyle}"
                 ItemsSource="{x:Bind ViewModel.Playlists, Mode=OneWay}"
                 SelectionMode="None"

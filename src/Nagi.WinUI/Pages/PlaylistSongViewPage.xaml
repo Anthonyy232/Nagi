@@ -241,6 +241,7 @@
                   SelectionMode="Extended"
                   IsItemClickEnabled="True"
                   Padding="{StaticResource SongListViewPadding}"
+                  Margin="{StaticResource SongListViewMargin}"
                   ItemsSource="{x:Bind ViewModel.Songs, Mode=OneWay}"
                   ItemContainerStyle="{StaticResource SongListViewPageListViewItemStyle}"
                   CanDragItems="{x:Bind ViewModel.IsReorderingEnabled, Mode=OneWay}"

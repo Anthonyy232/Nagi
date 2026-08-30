@@ -54,8 +54,9 @@
     <Thickness x:Key="PageHeaderMarginIndented">24,0,24,24</Thickness>
 
     <!-- ListView/GridView Padding -->
-    <Thickness x:Key="SongListViewPadding">24,0,24,132</Thickness>
-    <Thickness x:Key="SongListViewPaddingNoHorizontal">0,0,0,132</Thickness>
+    <Thickness x:Key="SongListViewPadding">24,0,24,0</Thickness>
+    <Thickness x:Key="SongListViewPaddingNoHorizontal">0</Thickness>
+    <Thickness x:Key="SongListViewMargin">0,0,0,132</Thickness>
 
     <!-- Search Box Sizing -->
     <x:Double x:Key="SearchBoxExpandedWidth">300</x:Double>

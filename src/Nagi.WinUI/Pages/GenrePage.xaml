@@ -169,6 +169,7 @@
                 SelectionMode="None"
                 Visibility="{x:Bind ViewModel.HasGenres, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}"
                 Padding="{StaticResource SongListViewPadding}"
+                Margin="{StaticResource SongListViewMargin}"
                 ItemContainerStyle="{StaticResource GenrePageGridViewItemStyle}">
                 <GridView.ItemsPanel>
                     <ItemsPanelTemplate>
