@@ -263,7 +263,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     public event Action<string>? ErrorOccurred;
     public event Action? SmtcNextButtonPressed, SmtcPreviousButtonPressed;
 
-    public bool IsPlaying => !_isDisposed && _isInitialized && !_isPausing && (_mediaPlayer?.IsPlaying ?? false);
+    public bool IsPlaying => !_isDisposed && _isInitialized && !_isPausing && _mediaPlayer?.State == VLCState.Playing;
     public TimeSpan CurrentPosition => _isDisposed || !_isInitialized
         ? TimeSpan.Zero
         : FromVlcMicroseconds(_mediaPlayer?.Time ?? 0);
