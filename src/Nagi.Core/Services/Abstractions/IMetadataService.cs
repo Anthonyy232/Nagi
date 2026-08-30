@@ -16,6 +16,8 @@ public interface IMetadataService
     ///     for cover art files in the directory hierarchy up to (and including) this folder if no
     ///     embedded art is found.
     /// </param>
+    /// <param name="includeMediaAssets">Whether to process cover art and synchronized lyrics.</param>
     /// <returns>A <see cref="SongFileMetadata" /> object containing the extracted data and file properties.</returns>
-    Task<SongFileMetadata> ExtractMetadataAsync(string filePath, string? baseFolderPath = null);
+    Task<SongFileMetadata> ExtractMetadataAsync(string filePath, string? baseFolderPath = null,
+        bool includeMediaAssets = true);
 }

@@ -194,4 +194,43 @@ public class LibraryServiceEventTests : IDisposable
         eventArgs!.ChangeType.Should().Be(LibraryChangeType.LibraryRescanned);
         eventArgs.FolderId.Should().BeNull();
     }
+
+    [Fact]
+    public async Task ForceRescanMetadataAsync_CancelledInFinalFolder_DoesNotFireLibraryRescanned()
+    {
+        var firstFolder = new Folder { Id = Guid.NewGuid(), Path = "C:\\Music\\A", Name = "A" };
+        var finalFolder = new Folder { Id = Guid.NewGuid(), Path = "C:\\Music\\B", Name = "B" };
+        await using (var context = _dbHelper.ContextFactory.CreateDbContext())
+        {
+            context.Folders.AddRange(firstFolder, finalFolder);
+            await context.SaveChangesAsync();
+        }
+
+        var firstFile = "C:\\Music\\A\\first.mp3";
+        var finalFile = "C:\\Music\\B\\final.mp3";
+        _fileSystem.DirectoryExists(Arg.Any<string>()).Returns(true);
+        _fileSystem.EnumerateFilesWithLastWriteTime(firstFolder.Path, "*.*", SearchOption.AllDirectories)
+            .Returns(new[] { (firstFile, DateTime.UtcNow) });
+        _fileSystem.EnumerateFilesWithLastWriteTime(finalFolder.Path, "*.*", SearchOption.AllDirectories)
+            .Returns(new[] { (finalFile, DateTime.UtcNow) });
+        _fileSystem.GetExtension(Arg.Any<string>()).Returns(".mp3");
+
+        using var cts = new CancellationTokenSource();
+        _metadataService.ExtractMetadataAsync(firstFile, firstFolder.Path)
+            .Returns(new SongFileMetadata { FilePath = firstFile, Title = "First" });
+        _metadataService.ExtractMetadataAsync(finalFile, finalFolder.Path)
+            .Returns(_ =>
+            {
+                cts.Cancel();
+                return Task.FromResult(new SongFileMetadata { FilePath = finalFile, Title = "Final" });
+            });
+
+        var changeTypes = new List<LibraryChangeType>();
+        _libraryService.LibraryContentChanged += (_, e) => changeTypes.Add(e.ChangeType);
+
+        var result = await _libraryService.ForceRescanMetadataAsync(cancellationToken: cts.Token);
+
+        result.Should().BeFalse();
+        changeTypes.Should().NotContain(LibraryChangeType.LibraryRescanned);
+    }
 }
