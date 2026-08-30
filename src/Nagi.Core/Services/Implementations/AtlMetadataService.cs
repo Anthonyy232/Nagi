@@ -43,7 +43,8 @@ public class AtlMetadataService : IMetadataService, IDisposable
     }
 
     /// <inheritdoc />
-    public async Task<SongFileMetadata> ExtractMetadataAsync(string filePath, string? baseFolderPath = null)
+    public async Task<SongFileMetadata> ExtractMetadataAsync(string filePath, string? baseFolderPath = null,
+        bool includeMediaAssets = true)
     {
         var metadata = new SongFileMetadata { FilePath = filePath };
 
@@ -54,11 +55,9 @@ public class AtlMetadataService : IMetadataService, IDisposable
             metadata.FileModifiedDate = fileInfo.LastWriteTimeUtc;
             metadata.Title = ArtistNameHelper.NormalizeStringCore(_fileSystem.GetFileNameWithoutExtension(filePath)) ?? _fileSystem.GetFileNameWithoutExtension(filePath);
 
-            // Use a timeout wrapper for ATL operations to prevent indefinite hangs
+            // ATL parsing is synchronous, so enforce the timeout while awaiting it.
             using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
-
-            // Track does not implement IDisposable, using Task.Run for async-like behavior
-            var track = await Task.Run(() => new Track(filePath), cts.Token).ConfigureAwait(false);
+            var track = await Task.Run(() => new Track(filePath)).WaitAsync(cts.Token).ConfigureAwait(false);
 
             // Check if the file is valid - ATL is lenient so we need multiple checks
             // Check 1: AudioFormat.Readable flag
@@ -78,31 +77,35 @@ public class AtlMetadataService : IMetadataService, IDisposable
             var genreSplitCharacters = await GetCachedGenreSplitCharactersAsync().ConfigureAwait(false);
             PopulateMetadataFromTrack(metadata, track, splitCharacters, genreSplitCharacters);
 
-            // Get cached or extract new synchronized lyrics (after parsing track so we have artist/title).
-            using var lrcCts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
-            try
+            if (includeMediaAssets)
             {
-                metadata.LrcFilePath = await GetLrcPathAsync(filePath, fileInfo.LastWriteTimeUtc, metadata.Artists?.FirstOrDefault() ?? Artist.UnknownArtistName, metadata.Album, metadata.Title, track)
+                // Get cached or extract new synchronized lyrics.
+                using var lrcCts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+                try
+                {
+                    metadata.LrcFilePath = await GetLrcPathAsync(filePath, fileInfo.LastWriteTimeUtc,
+                            metadata.Artists?.FirstOrDefault() ?? Artist.UnknownArtistName, metadata.Album,
+                            metadata.Title, track)
+                        .WaitAsync(lrcCts.Token).ConfigureAwait(false);
+                }
+                catch (OperationCanceledException)
+                {
+                    _logger.LogWarning("LRC extraction timed out for file: {FilePath}", filePath);
+                }
 
-                    .WaitAsync(lrcCts.Token).ConfigureAwait(false);
-            }
-            catch (OperationCanceledException)
-            {
-                _logger.LogWarning("LRC extraction timed out for file: {FilePath}", filePath);
-            }
+                if (string.IsNullOrWhiteSpace(metadata.LrcFilePath))
+                    metadata.LrcFilePath = FindLrcFilePath(filePath);
 
-            // As a fallback, look for an external .lrc file if no embedded lyrics were found.
-            if (string.IsNullOrWhiteSpace(metadata.LrcFilePath)) metadata.LrcFilePath = FindLrcFilePath(filePath);
-
-            // Process album art with timeout protection
-            using var albumArtCts = new CancellationTokenSource(TimeSpan.FromSeconds(15));
-            try
-            {
-                await ProcessAlbumArtAsync(metadata, track, baseFolderPath).WaitAsync(albumArtCts.Token).ConfigureAwait(false);
-            }
-            catch (OperationCanceledException)
-            {
-                _logger.LogWarning("Album art extraction timed out for file: {FilePath}", filePath);
+                using var albumArtCts = new CancellationTokenSource(TimeSpan.FromSeconds(15));
+                try
+                {
+                    await ProcessAlbumArtAsync(metadata, track, baseFolderPath).WaitAsync(albumArtCts.Token)
+                        .ConfigureAwait(false);
+                }
+                catch (OperationCanceledException)
+                {
+                    _logger.LogWarning("Album art extraction timed out for file: {FilePath}", filePath);
+                }
             }
         }
         catch (OperationCanceledException)

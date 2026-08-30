@@ -63,6 +63,7 @@ public partial class PlayerViewModel : ObservableObject
     // Navigation re-entry guards
     private bool _isNavigatingToArtist;
     private bool _isNavigatingToAlbum;
+    private Action? _cancelGlobalOperation;
 
     public PlayerViewModel(IMusicPlaybackService playbackService, INavigationService navigationService,
         IMusicNavigationService musicNavigationService,
@@ -138,6 +139,9 @@ public partial class PlayerViewModel : ObservableObject
     [ObservableProperty] public partial string GlobalOperationStatusMessage { get; set; }
     [ObservableProperty] public partial double GlobalOperationProgressValue { get; set; }
     [ObservableProperty] public partial bool IsGlobalOperationIndeterminate { get; set; }
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(CancelGlobalOperationCommand))]
+    public partial bool IsGlobalOperationCancellable { get; set; }
     [ObservableProperty] public partial bool IsQueueViewVisible { get; set; }
 
     [ObservableProperty] public partial bool IsVolumeControlVisible { get; set; }
@@ -157,6 +161,22 @@ public partial class PlayerViewModel : ObservableObject
         RepeatMode.RepeatOne => RepeatOneIconGlyph,
         _ => RepeatOffIconGlyph
     };
+
+    public void SetGlobalOperationCancellation(Action? cancel)
+    {
+        Interlocked.Exchange(ref _cancelGlobalOperation, cancel);
+        IsGlobalOperationCancellable = cancel != null;
+    }
+
+    private bool CanCancelGlobalOperation() => IsGlobalOperationCancellable;
+
+    [RelayCommand(CanExecute = nameof(CanCancelGlobalOperation))]
+    private void CancelGlobalOperation()
+    {
+        var cancel = Interlocked.Exchange(ref _cancelGlobalOperation, null);
+        IsGlobalOperationCancellable = false;
+        cancel?.Invoke();
+    }
 
     public string RepeatButtonToolTip => CurrentRepeatMode switch
     {

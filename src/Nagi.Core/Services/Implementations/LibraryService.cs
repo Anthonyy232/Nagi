@@ -672,7 +672,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     private async Task<bool> RescanFolderForMusicAsync(Guid folderId, bool forceFullScan, bool allowFolderRemovalOnMissing,
         IProgress<ScanProgress>? progress = null,
         CancellationToken cancellationToken = default,
-        bool registerAsActiveScan = true)
+        bool registerAsActiveScan = true,
+        bool throwOnFailure = false)
     {
         using var operationCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _shutdownCts.Token);
         var operationToken = operationCts.Token;
@@ -703,6 +704,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 {
                     _logger.LogWarning("Cannot rescan folder: Folder with ID {FolderId} not found.", folderId);
                     progress?.Report(new ScanProgress { StatusText = string.Format(Resources.Strings.Format_NotFound, Resources.Strings.Label_Folder), Percentage = 100 });
+                    if (throwOnFailure)
+                        throw new InvalidOperationException($"Folder {folderId} was not found.");
                     return false;
                 }
 
@@ -727,6 +730,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                                 folder.Path, folder.Id);
                             progress?.Report(new ScanProgress
                             { StatusText = Resources.Strings.Status_ScanFailed, Percentage = 100 });
+                            if (throwOnFailure)
+                                throw new DirectoryNotFoundException($"Library folder was not found: {folder.Path}");
                             return false;
                         }
 
@@ -881,7 +886,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                     // Use streaming extraction for better memory efficiency
                     var filePathsBeingUpdated = filesToUpdate.ToHashSet(StringComparer.OrdinalIgnoreCase);
                     var (newSongsFound, discoveredDirs) = await ExtractAndSaveMetadataStreamingAsync(
-                        folderId, filesToProcess, folder.Path, filePathsBeingUpdated, progress, operationToken).ConfigureAwait(false);
+                        folderId, filesToProcess, folder.Path, filePathsBeingUpdated, progress, operationToken,
+                        skipMediaAssetsForUpdates: forceFullScan).ConfigureAwait(false);
 
                     operationToken.ThrowIfCancellationRequested();
 
@@ -934,6 +940,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                     _logger.LogCritical(ex, "FATAL: Rescan for folder ID {FolderId} failed.", folderId);
                     progress?.Report(new ScanProgress
                     { StatusText = Resources.Strings.Status_ScanFailed, Percentage = 100 });
+                    if (throwOnFailure)
+                        throw;
                     return false;
                 }
             }, operationToken);
@@ -1051,12 +1059,18 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
     public Task<bool> ForceRescanMetadataAsync(IProgress<ScanProgress>? progress = null,
         CancellationToken cancellationToken = default)
     {
-        return RefreshAllFoldersAsync(true, progress, cancellationToken);
+        return RefreshAllFoldersCoreAsync(true, true, progress, cancellationToken);
     }
 
     /// <inheritdoc />
-    public async Task<bool> RefreshAllFoldersAsync(bool forceFullScan, IProgress<ScanProgress>? progress = null,
+    public Task<bool> RefreshAllFoldersAsync(bool forceFullScan, IProgress<ScanProgress>? progress = null,
         CancellationToken cancellationToken = default)
+    {
+        return RefreshAllFoldersCoreAsync(forceFullScan, false, progress, cancellationToken);
+    }
+
+    private async Task<bool> RefreshAllFoldersCoreAsync(bool forceFullScan, bool throwOnFailure,
+        IProgress<ScanProgress>? progress, CancellationToken cancellationToken)
     {
         CancelActiveScan(forceFullScan ? "forced library refresh" : "library refresh");
         using var operationCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _shutdownCts.Token);
@@ -1115,8 +1129,10 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                     // (e.g., NAS not mounted yet, external drive unplugged). Only explicit user
                     // rescan (which calls the public overload) may trigger folder removal.
                     var changes = await RescanFolderForMusicAsync(folder.Id, forceFullScan,
-                            allowFolderRemovalOnMissing: false, newProgress, operationToken, registerAsActiveScan: false)
+                            allowFolderRemovalOnMissing: false, newProgress, operationToken, registerAsActiveScan: false,
+                            throwOnFailure: throwOnFailure)
                         .ConfigureAwait(false);
+                    operationToken.ThrowIfCancellationRequested();
                     if (changes) anyChangesMade = true;
 
                     foldersProcessed++;
@@ -1150,6 +1166,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to refresh all library folders.");
+            if (throwOnFailure)
+                throw;
             return false;
         }
         finally
@@ -3984,7 +4002,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         string baseFolderPath,
         IReadOnlySet<string> filePathsBeingUpdated,
         IProgress<ScanProgress>? progress,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        bool skipMediaAssetsForUpdates = false)
     {
         const int channelCapacity = 100; // ~2 batches of buffer for backpressure
         var channel = Channel.CreateBounded<SongFileMetadata>(new BoundedChannelOptions(channelCapacity)
@@ -3993,6 +4012,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
             SingleReader = true,
             SingleWriter = false
         });
+        using var pipelineCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        var pipelineToken = pipelineCts.Token;
 
         var totalFiles = filesToProcess.Count;
         var processedCount = 0;
@@ -4077,13 +4098,17 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                     new ParallelOptions
                     {
                         MaxDegreeOfParallelism = degreeOfParallelism,
-                        CancellationToken = cancellationToken
+                        CancellationToken = pipelineToken
                     },
                     async (filePath, ct) =>
                     {
                         try
                         {
-                            var metadata = await _metadataService.ExtractMetadataAsync(filePath, baseFolderPath).ConfigureAwait(false);
+                            var includeMediaAssets = !skipMediaAssetsForUpdates || !filePathsBeingUpdated.Contains(filePath);
+                            var extractionTask = includeMediaAssets
+                                ? _metadataService.ExtractMetadataAsync(filePath, baseFolderPath)
+                                : _metadataService.ExtractMetadataAsync(filePath, baseFolderPath, false);
+                            var metadata = await extractionTask.WaitAsync(ct).ConfigureAwait(false);
 
                             // Retry once for transient failure classes. UnsupportedFormat / CorruptFile
                             // are permanent — no point retrying. Timeouts and file-access errors are
@@ -4092,7 +4117,10 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                                 (metadata.ErrorMessage == "ExtractionTimeout" || metadata.ErrorMessage == "FileAccessError"))
                             {
                                 try { await Task.Delay(500, ct).ConfigureAwait(false); } catch (OperationCanceledException) { throw; }
-                                metadata = await _metadataService.ExtractMetadataAsync(filePath, baseFolderPath).ConfigureAwait(false);
+                                extractionTask = includeMediaAssets
+                                    ? _metadataService.ExtractMetadataAsync(filePath, baseFolderPath)
+                                    : _metadataService.ExtractMetadataAsync(filePath, baseFolderPath, false);
+                                metadata = await extractionTask.WaitAsync(ct).ConfigureAwait(false);
                             }
 
                             if (!metadata.ExtractionFailed)
@@ -4133,7 +4161,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 channel.Writer.TryComplete(ex);
                 throw;
             }
-        }, cancellationToken);
+        }, pipelineToken);
 
         // Single explicit transaction wrapping all batches — reduces SQLite fsyncs from N to 1.
         // Each SaveChangesAsync writes SQL to the WAL without committing; CommitAsync() does a single fsync.
@@ -4148,7 +4176,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 var batch = new List<SongFileMetadata>(500);
                 var batchNumber = 0;
 
-                await foreach (var metadata in channel.Reader.ReadAllAsync(cancellationToken).ConfigureAwait(false))
+                await foreach (var metadata in channel.Reader.ReadAllAsync(pipelineToken).ConfigureAwait(false))
                 {
                     batch.Add(metadata);
                     var dir = _fileSystem.GetDirectoryName(metadata.FilePath);
@@ -4165,7 +4193,9 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                         });
 
                         _logger.LogInformation("Consumer processing batch {BatchNumber}...", batchNumber);
-                        var saved = await ProcessSingleBatchAsync(folderId, batch.ToArray(), batchContext, artistIdCache, albumIdCache, genreIdCache, filePathsBeingUpdated, cancellationToken).ConfigureAwait(false);
+                        var saved = await ProcessSingleBatchAsync(folderId, batch.ToArray(), batchContext, artistIdCache,
+                            albumIdCache, genreIdCache, filePathsBeingUpdated, skipMediaAssetsForUpdates,
+                            pipelineToken).ConfigureAwait(false);
                         _logger.LogInformation("Consumer finished batch {BatchNumber}. Saved {Count} items.", batchNumber, saved);
                         totalSaved += saved;
                         batch.Clear();
@@ -4184,16 +4214,20 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                         NewSongsFound = extractedCount
                     });
 
-                    var saved = await ProcessSingleBatchAsync(folderId, batch.ToArray(), batchContext, artistIdCache, albumIdCache, genreIdCache, filePathsBeingUpdated, cancellationToken).ConfigureAwait(false);
+                    var saved = await ProcessSingleBatchAsync(folderId, batch.ToArray(), batchContext, artistIdCache,
+                        albumIdCache, genreIdCache, filePathsBeingUpdated, skipMediaAssetsForUpdates,
+                        pipelineToken).ConfigureAwait(false);
                     totalSaved += saved;
                 }
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
+                pipelineCts.Cancel();
+                channel.Writer.TryComplete(ex);
                 _logger.LogError(ex, "Consumer failed in streaming metadata extraction for folder {FolderId}", folderId);
                 throw;
             }
-        }, cancellationToken);
+        }, pipelineToken);
 
         await Task.WhenAll(producerTask, consumerTask).ConfigureAwait(false);
         await scanTransaction.CommitAsync(cancellationToken).ConfigureAwait(false);
@@ -4223,6 +4257,7 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         ConcurrentDictionary<string, Guid> albumIdCache,
         ConcurrentDictionary<string, Guid> genreIdCache,
         IReadOnlySet<string> filePathsBeingUpdated,
+        bool preserveMediaAssetsForUpdates,
         CancellationToken cancellationToken)
     {
         if (metadataList.Length == 0)
@@ -4283,7 +4318,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         foreach (var metadata in metadataList)
         {
             existingSongs.TryGetValue(metadata.FilePath, out var existingSong);
-            AddSongWithDetailsCached(context, folderId, metadata, artistLookup, albumLookup, genreLookup, existingSong);
+            AddSongWithDetailsCached(context, folderId, metadata, artistLookup, albumLookup, genreLookup, existingSong,
+                preserveMediaAssetsForUpdates && existingSong != null);
         }
 
         _logger.LogInformation("Saving changes for batch...");
@@ -4417,13 +4453,19 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
                 uncachedNames.Add(name);
         }
 
-        // Step 2: Attach stub entities for cached genres — we already know Id + Name so no DB round-trip needed.
-        // context.Attach marks them as Unchanged; EF uses the Id for FK references without hitting the DB.
+        var trackedGenres = context.ChangeTracker.Entries<Genre>()
+            .Select(entry => entry.Entity)
+            .ToDictionary(genre => genre.Id);
+
+        // Reuse genres loaded with existing songs before attaching stubs.
         foreach (var (id, name) in cachedEntries)
         {
-            var stub = new Genre { Id = id, Name = name };
-            context.Attach(stub);
-            genreLookup[name] = stub;
+            if (!trackedGenres.TryGetValue(id, out var genre))
+            {
+                genre = new Genre { Id = id, Name = name };
+                context.Attach(genre);
+            }
+            genreLookup[name] = genre;
         }
 
         // Step 3: Create new genres directly — no DB double-check needed (same rationale as artists).
@@ -4601,7 +4643,8 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         Dictionary<string, Artist> artistLookup,
         Dictionary<string, Album> albumLookup,
         Dictionary<string, Genre> genreLookup,
-        Song? existingSong = null)
+        Song? existingSong = null,
+        bool preserveMediaAssets = false)
     {
         // Filter and validate artist names with consistent normalization
         var trackArtistNames = metadata.Artists.Select(ArtistNameHelper.Normalize).ToList();
@@ -4649,9 +4692,13 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         song.DirectoryPath = directoryPath;
         song.Title = metadata.Title;
         song.DurationTicks = metadata.Duration.Ticks;
-        song.AlbumArtUriFromTrack = metadata.CoverArtUri;
-        song.LightSwatchId = metadata.LightSwatchId;
-        song.DarkSwatchId = metadata.DarkSwatchId;
+        if (!preserveMediaAssets)
+        {
+            song.AlbumArtUriFromTrack = metadata.CoverArtUri;
+            song.LightSwatchId = metadata.LightSwatchId;
+            song.DarkSwatchId = metadata.DarkSwatchId;
+            song.LrcFilePath = metadata.LrcFilePath;
+        }
         song.Year = metadata.Year;
         song.TrackNumber = metadata.TrackNumber;
         song.TrackCount = metadata.TrackCount;
@@ -4666,7 +4713,6 @@ public class LibraryService : ILibraryService, ILibraryReader, IDisposable
         song.Composer = metadata.Composer;
         song.Bpm = metadata.Bpm;
         song.Lyrics = metadata.Lyrics;
-        song.LrcFilePath = metadata.LrcFilePath;
 
         // Use FK assignment for existing (Unchanged) albums; navigation property for new (Added) albums.
         // Setting song.Album = album for new albums lets EF Core wire up the relationship graph correctly,
