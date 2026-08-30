@@ -194,6 +194,80 @@ public class LrcServiceTests
         result.Should().BeNull();
     }
 
+    [Fact]
+    public async Task RemoveCachedLyricsAsync_DeletesOnlyManagedFileAndPreventsRedownload()
+    {
+        const string cacheRoot = @"C:\cache\lrc";
+        var cachedPath = Path.Combine(cacheRoot, "song.lrc");
+        var song = new Song { Id = Guid.NewGuid(), LrcFilePath = cachedPath };
+        _pathConfig.LrcCachePath.Returns(cacheRoot);
+        _fileSystem.FileExists(cachedPath).Returns(true);
+        _settingsService.GetFetchOnlineLyricsEnabledAsync().Returns(true);
+
+        var removed = await _lrcService.RemoveCachedLyricsAsync(song);
+        var result = await _lrcService.GetLyricsAsync(song);
+
+        removed.Should().BeTrue();
+        result.Should().BeNull();
+        _fileSystem.Received(1).DeleteFile(cachedPath);
+        await _libraryWriter.Received(1).UpdateSongLrcPathAsync(song.Id, null);
+        await _libraryWriter.Received(1).UpdateSongLyricsLastCheckedAsync(song.Id);
+        await _onlineLyricsService.DidNotReceive().GetLyricsAsync(
+            Arg.Any<string>(), Arg.Any<string?>(), Arg.Any<string?>(), Arg.Any<TimeSpan>(), Arg.Any<CancellationToken>());
+        song.LrcFilePath.Should().BeNull();
+        song.LyricsLastCheckedUtc.Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task SaveAndRemoveLyrics_WithExternalSidecar_RestoresSidecar()
+    {
+        const string cacheRoot = @"C:\cache\lrc";
+        const string externalPath = @"C:\Music\Song.lrc";
+        const string content = "[00:01.00]Correct lyrics";
+        var song = new Song
+        {
+            Id = Guid.NewGuid(),
+            FilePath = @"C:\Music\Song.flac",
+            Title = "Song",
+            PrimaryArtistName = "Artist",
+            LrcFilePath = externalPath,
+            Album = new Album { Title = "Album" }
+        };
+        var expectedPath = Path.Combine(cacheRoot, FileNameHelper.GenerateLrcOverrideFileName(song.FilePath));
+        _pathConfig.LrcCachePath.Returns(cacheRoot);
+        _fileSystem.Combine(Arg.Any<string[]>()).Returns(call => Path.Combine(call.Arg<string[]>()!));
+        _fileSystem.GetDirectoryName(song.FilePath).Returns(@"C:\Music");
+        _fileSystem.GetFileNameWithoutExtension(song.FilePath).Returns("Song");
+        _fileSystem.GetFileNameWithoutExtension(externalPath).Returns("Song");
+        _fileSystem.GetFiles(@"C:\Music", "*.lrc").Returns([externalPath]);
+        _fileSystem.FileExists(expectedPath).Returns(true);
+
+        await _lrcService.SaveLyricsAsync(song, content);
+        var removed = await _lrcService.RemoveCachedLyricsAsync(song);
+
+        removed.Should().BeTrue();
+        await _fileSystem.Received(1).WriteAllTextAsync(expectedPath, content);
+        await _fileSystem.DidNotReceive().WriteAllTextAsync(externalPath, Arg.Any<string>());
+        _fileSystem.Received(1).DeleteFile(expectedPath);
+        _fileSystem.DidNotReceive().DeleteFile(externalPath);
+        await _libraryWriter.Received(1).UpdateSongLrcPathAsync(song.Id, expectedPath);
+        await _libraryWriter.Received(1).UpdateSongLrcPathAsync(song.Id, externalPath);
+        song.LrcFilePath.Should().Be(externalPath);
+    }
+
+    [Fact]
+    public async Task RemoveCachedLyricsAsync_WithExternalSidecar_DoesNotDeleteFile()
+    {
+        var song = new Song { Id = Guid.NewGuid(), LrcFilePath = @"C:\Music\Song.lrc" };
+        _pathConfig.LrcCachePath.Returns(@"C:\cache\lrc");
+
+        var removed = await _lrcService.RemoveCachedLyricsAsync(song);
+
+        removed.Should().BeFalse();
+        _fileSystem.DidNotReceive().DeleteFile(Arg.Any<string>());
+        await _libraryWriter.DidNotReceive().UpdateSongLrcPathAsync(Arg.Any<Guid>(), Arg.Any<string?>());
+    }
+
     #endregion
 
     #region GetCurrentLine Tests
