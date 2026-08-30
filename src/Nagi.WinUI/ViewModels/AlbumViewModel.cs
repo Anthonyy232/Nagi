@@ -89,8 +89,8 @@ public partial class AlbumViewModel : PagedListViewModelBase<Album>
     protected override async Task<PagedResult<Album>> LoadPageItemsAsync(int pageNumber, int pageSize, CancellationToken token)
     {
         var pagedResult = IsSearchActive
-            ? await _libraryService.SearchAlbumsPagedAsync(SearchTerm, pageNumber, pageSize)
-            : await _libraryService.GetAllAlbumsPagedAsync(pageNumber, pageSize, CurrentSortOrder);
+            ? await _libraryService.SearchAlbumsPagedAsync(SearchTerm, pageNumber, pageSize, token)
+            : await _libraryService.GetAllAlbumsPagedAsync(pageNumber, pageSize, CurrentSortOrder, token);
 
         token.ThrowIfCancellationRequested();
 

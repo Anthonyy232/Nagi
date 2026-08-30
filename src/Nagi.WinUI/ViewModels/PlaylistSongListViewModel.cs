@@ -21,6 +21,8 @@ namespace Nagi.WinUI.ViewModels;
 /// </summary>
 public partial class PlaylistSongListViewModel : SongListViewModelBase
 {
+    protected override bool PrefetchSongIds => true;
+
     private Guid? _currentPlaylistId;
     private CancellationTokenSource? _saveOrderCts;
 
@@ -275,8 +277,7 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
             movedSong.Order = newOrder;
 
             // Update the master ID list for playback consistency
-            _stateLock.EnterWriteLock();
-            try
+            lock (_fullSongIdsLock)
             {
                 var oldIndex = _fullSongIdList.IndexOf(movedSong.Id);
                 if (oldIndex >= 0 && oldIndex != newIndex)
@@ -285,10 +286,6 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
                     var insertIndex = Math.Min(newIndex, _fullSongIdList.Count);
                     _fullSongIdList.Insert(insertIndex, movedSong.Id);
                 }
-            }
-            finally
-            {
-                _stateLock.ExitWriteLock();
             }
 
             // Save to database with proper error handling
@@ -324,8 +321,7 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
 
         if (e.Action == NotifyCollectionChangedAction.Remove)
         {
-            _stateLock.EnterWriteLock();
-            try
+            lock (_fullSongIdsLock)
             {
                 if (e.OldItems != null)
                 {
@@ -334,10 +330,6 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
                         if (item is Song song) _fullSongIdList.Remove(song.Id);
                     }
                 }
-            }
-            finally
-            {
-                _stateLock.ExitWriteLock();
             }
         }
     }
@@ -372,7 +364,10 @@ public partial class PlaylistSongListViewModel : SongListViewModelBase
                         _logger.LogDebug("Playlist order normalization aborted: Active playlist changed.");
                         return;
                     }
-                    songIds = _fullSongIdList.ToList();
+                    lock (_fullSongIdsLock)
+                    {
+                        songIds = _fullSongIdList.ToList();
+                    }
                 }
                 finally
                 {
