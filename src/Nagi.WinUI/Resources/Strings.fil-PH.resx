@@ -1604,6 +1604,12 @@ Error: {1}</value>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
     <value>Awtomatikong ayusin ang volume sa standard na antas (-14 LUFS) upang maiwasan ang biglaang pagbabago sa lakas ng tunog.</value>
   </data>
+  <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
+    <value>WASAPI exclusive mode</value>
+  </data>
+  <data name="SettingsPage_WasapiExclusive_Description" xml:space="preserve">
+    <value>Give Nagi exclusive control of the Windows audio device. Other apps may be silent. Restart Nagi after changing this setting.</value>
+  </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
     <value>Fade sa Play / Pause</value>
   </data>

@@ -1598,6 +1598,12 @@
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
     <value>হঠাৎ শব্দের পরিবর্তন এড়াতে স্বয়ংক্রিয়ভাবে ভলিউমকে স্ট্যান্ডার্ড লেভেলে (-14 LUFS) সামঞ্জস্য করুন।</value>
   </data>
+  <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
+    <value>WASAPI exclusive mode</value>
+  </data>
+  <data name="SettingsPage_WasapiExclusive_Description" xml:space="preserve">
+    <value>Give Nagi exclusive control of the Windows audio device. Other apps may be silent. Restart Nagi after changing this setting.</value>
+  </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
     <value>প্লে / পজে ফেড</value>
   </data>

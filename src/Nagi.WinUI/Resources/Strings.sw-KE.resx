@@ -1596,6 +1596,12 @@ Je, unataka kuendelea?</value>
   <data name="SettingsPage_VolumeNormalization_Description" xml:space="preserve">
     <value>Rekebisha sauti kiotomatiki hadi kiwango cha kawaida (-14 LUFS) ili kuepuka mabadiliko ya ghafla ya sauti.</value>
   </data>
+  <data name="SettingsPage_WasapiExclusive_Header" xml:space="preserve">
+    <value>WASAPI exclusive mode</value>
+  </data>
+  <data name="SettingsPage_WasapiExclusive_Description" xml:space="preserve">
+    <value>Give Nagi exclusive control of the Windows audio device. Other apps may be silent. Restart Nagi after changing this setting.</value>
+  </data>
   <data name="SettingsPage_FadeOnPlayPause_Header" xml:space="preserve">
     <value>Fifisha wakati wa Cheza / Sitisha</value>
   </data>
