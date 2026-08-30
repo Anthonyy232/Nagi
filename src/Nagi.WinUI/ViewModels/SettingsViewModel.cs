@@ -209,6 +209,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         IsRememberWindowPositionEnabled = SettingsDefaults.RememberWindowPositionEnabled;
         IsRememberPaneStateEnabled = SettingsDefaults.RememberPaneStateEnabled;
         IsVolumeNormalizationEnabled = SettingsDefaults.VolumeNormalizationEnabled;
+        IsWasapiExclusiveModeEnabled = SettingsDefaults.WasapiExclusiveModeEnabled;
         IsFadeOnPlayPauseEnabled = SettingsDefaults.FadeOnPlayPauseEnabled;
         EqualizerPreamp = SettingsDefaults.EqualizerPreamp;
 
@@ -239,6 +240,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     [ObservableProperty] public partial bool IsRememberWindowPositionEnabled { get; set; }
     [ObservableProperty] public partial bool IsRememberPaneStateEnabled { get; set; }
     [ObservableProperty] public partial bool IsVolumeNormalizationEnabled { get; set; }
+    [ObservableProperty] public partial bool IsWasapiExclusiveModeEnabled { get; set; }
     [ObservableProperty] public partial bool IsFadeOnPlayPauseEnabled { get; set; }
     [ObservableProperty] public partial double FadeInDurationMs { get; set; }
     [ObservableProperty] public partial double FadeOutDurationMs { get; set; }
@@ -511,6 +513,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             var rememberPositionTask = _settingsService.GetRememberWindowPositionEnabledAsync();
             var rememberPaneTask = _settingsService.GetRememberPaneStateEnabledAsync();
             var volumeNormTask = _settingsService.GetVolumeNormalizationEnabledAsync();
+            var wasapiExclusiveTask = _settingsService.GetWasapiExclusiveModeEnabledAsync();
             var fadeTask = _settingsService.GetFadeOnPlayPauseEnabledAsync();
             var fadeInTask = _settingsService.GetFadeInDurationMsAsync();
             var fadeOutTask = _settingsService.GetFadeOutDurationMsAsync();
@@ -539,7 +542,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
                 playerAnimationTask, restorePlaybackTask, autoLaunchTask, startMinimizedTask,
                 hideToTrayTask, miniPlayerTask, trayFlyoutTask, onlineMetadataTask,
                 onlineLyricsTask, lyricsRomanizationTask, discordRpcTask, rememberWindowTask,
-                rememberPositionTask, rememberPaneTask, volumeNormTask, fadeTask, fadeInTask, fadeOutTask, lastFmCredsTask, lastFmAuthTokenTask,
+                rememberPositionTask, rememberPaneTask, volumeNormTask, wasapiExclusiveTask, fadeTask, fadeInTask, fadeOutTask, lastFmCredsTask, lastFmAuthTokenTask,
                 scrobblingTask, nowPlayingTask, accentColorTask, artistSplitTask, genreSplitTask, languageTask, lyricsProvidersTask, metadataProvidersTask,
                 playerMaterialTask, playerTintTask,
                 lbTokenTask, lbScrobblingTask, lbNowPlayingTask, lbServerUrlTask,
@@ -576,6 +579,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
             IsRememberWindowPositionEnabled = rememberPositionTask.Result;
             IsRememberPaneStateEnabled = rememberPaneTask.Result;
             IsVolumeNormalizationEnabled = volumeNormTask.Result;
+            IsWasapiExclusiveModeEnabled = wasapiExclusiveTask.Result;
             IsFadeOnPlayPauseEnabled = fadeTask.Result;
             FadeInDurationMs = fadeInTask.Result;
             FadeOutDurationMs = fadeOutTask.Result;
@@ -1741,6 +1745,12 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         {
             _logger.LogError(ex, "Error toggling volume normalization to {Value}", value);
         }
+    }
+
+    partial void OnIsWasapiExclusiveModeEnabledChanged(bool value)
+    {
+        if (_isInitializing) return;
+        _ = _settingsService.SetWasapiExclusiveModeEnabledAsync(value);
     }
 
     async partial void OnIsFadeOnPlayPauseEnabledChanged(bool value)

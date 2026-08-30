@@ -333,6 +333,12 @@ public interface ISettingsService
     /// <param name="isEnabled">The preference to save.</param>
     Task SetVolumeNormalizationEnabledAsync(bool isEnabled);
 
+    /// <summary>Gets whether VLC should use WASAPI exclusive mode.</summary>
+    Task<bool> GetWasapiExclusiveModeEnabledAsync();
+
+    /// <summary>Sets whether VLC should use WASAPI exclusive mode.</summary>
+    Task SetWasapiExclusiveModeEnabledAsync(bool isEnabled);
+
     /// <summary>
     ///     Gets whether fade on play/pause is enabled.
     /// </summary>
