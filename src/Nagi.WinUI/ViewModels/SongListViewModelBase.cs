@@ -19,10 +19,7 @@ using Nagi.WinUI.Helpers;
 namespace Nagi.WinUI.ViewModels;
 
 /// <summary>
-///     Base class for song list view models. Adds selection, playback commands, the
-///     full ID list (used for "Play All" without holding every <see cref="Song"/> in
-///     memory), and infinite-scroll auto-loading when
-///     <see cref="PagedListViewModelBase{TItem}.IsPaginationEnabled"/> is false.
+///     Adds selection, playback, and infinite scrolling to song lists.
 /// </summary>
 public abstract partial class SongListViewModelBase : PagedListViewModelBase<Song>
 {
@@ -44,7 +41,7 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     /// </summary>
     [ObservableProperty] public partial Guid? CurrentPlayingSongId { get; set; }
 
-    // For paged views, this holds all song IDs to enable "Play All" without loading all song objects into memory.
+    // Search results load this list on demand.
     protected List<Guid> _fullSongIdList = new();
 
     // Owned by the song-base's <see cref="LoadPageAsync"/> envelope (Next/Previous reload that skips
@@ -160,7 +157,7 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
             _stateLock.EnterReadLock();
             try
             {
-                return SelectionState.GetSelectedCount(_fullSongIdList.Count);
+                return SelectionState.GetSelectedCount(TotalItemCount);
             }
             finally
             {
@@ -209,6 +206,7 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     protected override void OnSearchTermChangedInternal(string value)
     {
         if (HasSelectedSongs) DeselectAll();
+        ClearFullSongIds();
     }
 
     protected override async Task ExecuteSearchAsync(CancellationToken token)
@@ -226,14 +224,42 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         return LoadSongsPagedAsync(pageNumber, pageSize, CurrentSortOrder, token);
     }
 
-    /// <summary>Run the full ID fetch (used by Play All) in parallel with the page query.</summary>
+    /// <summary>Refreshes the playback ID cache for non-search loads.</summary>
     protected override async Task OnAuxiliaryLoadAsync(CancellationToken token)
     {
+        if (IsSearchActive)
+        {
+            ClearFullSongIds();
+            return;
+        }
+
         var ids = await LoadAllSongIdsAsync(CurrentSortOrder, token).ConfigureAwait(false);
         token.ThrowIfCancellationRequested();
+
         _stateLock.EnterWriteLock();
         try { _fullSongIdList = ids; }
         finally { _stateLock.ExitWriteLock(); }
+    }
+
+    private void ClearFullSongIds()
+    {
+        _stateLock.EnterWriteLock();
+        try { _fullSongIdList = new List<Guid>(); }
+        finally { _stateLock.ExitWriteLock(); }
+    }
+
+    private async Task<List<Guid>> GetFullSongIdsAsync()
+    {
+        _stateLock.EnterReadLock();
+        try
+        {
+            if (_fullSongIdList.Count > 0) return _fullSongIdList.ToList();
+        }
+        finally { _stateLock.ExitReadLock(); }
+
+        var sortOrder = CurrentSortOrder;
+        return await Task.Run(() => LoadAllSongIdsAsync(sortOrder, CancellationToken.None))
+            .ConfigureAwait(false);
     }
 
     /// <summary>
@@ -299,7 +325,8 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
                 await Task.Delay(100, token);
                 if (token.IsCancellationRequested) break;
 
-                var pagedResult = await LoadSongsPagedAsync(nextPageToLoad, SongsPerPage, CurrentSortOrder, token);
+                var pagedResult = await Task.Run(
+                    () => LoadSongsPagedAsync(nextPageToLoad, SongsPerPage, CurrentSortOrder, token), token);
                 if (pagedResult == null) break;
 
                 ProcessPagedResult(pagedResult, token, true);
@@ -338,7 +365,8 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
             _pagedLoadCts = new CancellationTokenSource();
             var token = _pagedLoadCts.Token;
 
-            var pagedResult = await LoadSongsPagedAsync(pageNumber, SongsPerPage, CurrentSortOrder, token);
+            var pagedResult = await Task.Run(
+                () => LoadSongsPagedAsync(pageNumber, SongsPerPage, CurrentSortOrder, token), token);
             ProcessPagedResult(pagedResult, token);
         }
         catch (Exception ex)
@@ -426,34 +454,16 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     [RelayCommand(CanExecute = nameof(CanExecutePlayAllCommands))]
     private async Task PlayAllSongsAsync()
     {
-        // Always use the pre-fetched full ID list for memory efficiency and consistency.
-        List<Guid> ids;
-        _stateLock.EnterReadLock();
-        try
-        {
-            ids = _fullSongIdList.ToList();
-        }
-        finally
-        {
-            _stateLock.ExitReadLock();
-        }
+        var ids = await GetFullSongIdsAsync();
+        if (ids.Count == 0) return;
         await _playbackService.PlayAsync(ids, 0, null, GetPlaybackContext());
     }
 
     [RelayCommand(CanExecute = nameof(CanExecutePlayAllCommands))]
     private async Task ShuffleAndPlayAllSongsAsync()
     {
-        // Always use the pre-fetched full ID list for memory efficiency and consistency.
-        List<Guid> ids;
-        _stateLock.EnterReadLock();
-        try
-        {
-            ids = _fullSongIdList.ToList();
-        }
-        finally
-        {
-            _stateLock.ExitReadLock();
-        }
+        var ids = await GetFullSongIdsAsync();
+        if (ids.Count == 0) return;
         await _playbackService.PlayAsync(ids, 0, true, GetPlaybackContext());
     }
 
@@ -462,19 +472,8 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     {
         if (song == null) return;
 
-        // Always use the pre-fetched full ID list to find the song's position.
-        int startIndex;
-        List<Guid> ids;
-        _stateLock.EnterReadLock();
-        try
-        {
-            startIndex = _fullSongIdList.IndexOf(song.Id);
-            ids = _fullSongIdList.ToList();
-        }
-        finally
-        {
-            _stateLock.ExitReadLock();
-        }
+        var ids = await GetFullSongIdsAsync();
+        var startIndex = ids.IndexOf(song.Id);
 
         if (startIndex == -1)
         {
@@ -579,16 +578,7 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
 
     private bool CanExecutePlayAllCommands()
     {
-        // Always use the pre-fetched full ID list for consistency.
-        _stateLock.EnterReadLock();
-        try
-        {
-            return !IsLoading && _fullSongIdList.Any();
-        }
-        finally
-        {
-            _stateLock.ExitReadLock();
-        }
+        return !IsLoading && Songs.Any();
     }
 
     private bool CanExecuteSelectedSongsCommands()
@@ -618,12 +608,13 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
         UpdateSelectionDependentCommands();
     }
 
-    protected virtual Task<List<Guid>> GetCurrentSelectionIdsAsync()
+    protected virtual async Task<List<Guid>> GetCurrentSelectionIdsAsync()
     {
+        var ids = await GetFullSongIdsAsync();
         _stateLock.EnterReadLock();
         try
         {
-            return Task.FromResult(SelectionState.GetSelectedIds(_fullSongIdList).ToList());
+            return SelectionState.GetSelectedIds(ids).ToList();
         }
         finally
         {
@@ -743,6 +734,7 @@ public abstract partial class SongListViewModelBase : PagedListViewModelBase<Son
     {
         base.ResetState();
         SelectionState.DeselectAll();
+        ClearFullSongIds();
         CancelInflightPageLoad();
         _pagedLoadCts?.Cancel();
         _pagedLoadCts?.Dispose();
