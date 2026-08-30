@@ -59,6 +59,7 @@ public partial class PlayerViewModel : ObservableObject
 
     // Queue display update cancellation
     private CancellationTokenSource? _queueDisplayCts;
+    private Action? _cancelGlobalOperation;
 
     // Navigation re-entry guards
     private bool _isNavigatingToArtist;
@@ -138,6 +139,9 @@ public partial class PlayerViewModel : ObservableObject
     [ObservableProperty] public partial string GlobalOperationStatusMessage { get; set; }
     [ObservableProperty] public partial double GlobalOperationProgressValue { get; set; }
     [ObservableProperty] public partial bool IsGlobalOperationIndeterminate { get; set; }
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(CancelGlobalOperationCommand))]
+    public partial bool CanCancelGlobalOperation { get; set; }
     [ObservableProperty] public partial bool IsQueueViewVisible { get; set; }
 
     [ObservableProperty] public partial bool IsVolumeControlVisible { get; set; }
@@ -167,6 +171,28 @@ public partial class PlayerViewModel : ObservableObject
     };
 
     public string VolumeButtonToolTip => IsMuted ? Strings.Tooltip_Unmute : Strings.Tooltip_Mute;
+
+    public void SetGlobalOperationCancellation(Action? cancel)
+    {
+        Interlocked.Exchange(ref _cancelGlobalOperation, cancel);
+        CanCancelGlobalOperation = cancel is not null;
+    }
+
+    [RelayCommand(CanExecute = nameof(CanCancelGlobalOperation))]
+    private void CancelGlobalOperation()
+    {
+        var cancel = Interlocked.Exchange(ref _cancelGlobalOperation, null);
+        CanCancelGlobalOperation = false;
+
+        try
+        {
+            cancel?.Invoke();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to cancel the active global operation");
+        }
+    }
 
     partial void OnIsPlayingChanged(bool value)
     {
@@ -208,6 +234,8 @@ public partial class PlayerViewModel : ObservableObject
         _queueDisplayCts?.Cancel();
         _queueDisplayCts?.Dispose();
         _queueDisplayCts = null;
+        Interlocked.Exchange(ref _cancelGlobalOperation, null);
+        CanCancelGlobalOperation = false;
     }
 
 

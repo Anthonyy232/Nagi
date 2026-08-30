@@ -252,21 +252,29 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
             var pageToLoad = CurrentPage;
             var pageSize = SongsPerPage;
 
-            var auxTask = OnAuxiliaryLoadAsync(token);
-            var pageTask = LoadPageItemsAsync(pageToLoad, pageSize, token);
-            await Task.WhenAll(auxTask, pageTask).ConfigureAwait(false);
-            token.ThrowIfCancellationRequested();
-
-            var pagedResult = pageTask.Result;
-
-            // Past-end clamp: if the requested page exceeds the result set (e.g. items removed),
-            // jump back to the last valid page and refetch.
-            var totalPages = Math.Max(1, pagedResult.TotalPages);
-            if (pageToLoad > totalPages && pagedResult.TotalCount > 0)
+            // Microsoft.Data.Sqlite performs native I/O synchronously even through its async APIs.
+            // Keep that work off the UI thread so large-library searches and counts do not freeze
+            // the rest of the app.
+            var pagedResult = await Task.Run(async () =>
             {
-                pagedResult = await LoadPageItemsAsync(totalPages, pageSize, token).ConfigureAwait(false);
+                var auxTask = OnAuxiliaryLoadAsync(token);
+                var pageTask = LoadPageItemsAsync(pageToLoad, pageSize, token);
+                await Task.WhenAll(auxTask, pageTask).ConfigureAwait(false);
                 token.ThrowIfCancellationRequested();
-            }
+
+                var result = pageTask.Result;
+
+                // Past-end clamp: if the requested page exceeds the result set (e.g. items removed),
+                // jump back to the last valid page and refetch.
+                var totalPages = Math.Max(1, result.TotalPages);
+                if (pageToLoad > totalPages && result.TotalCount > 0)
+                {
+                    result = await LoadPageItemsAsync(totalPages, pageSize, token).ConfigureAwait(false);
+                    token.ThrowIfCancellationRequested();
+                }
+
+                return result;
+            }, token);
 
             ProcessPagedResult(pagedResult, token);
 

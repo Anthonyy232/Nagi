@@ -608,6 +608,11 @@
                     TextAlignment="Center"
                     TextTrimming="CharacterEllipsis"
                     TextWrapping="NoWrap" />
+                <Button
+                    HorizontalAlignment="Center"
+                    Command="{x:Bind ViewModel.CancelGlobalOperationCommand}"
+                    Content="{x:Bind resources:Strings.Generic_Cancel, Mode=OneTime}"
+                    Visibility="{x:Bind ViewModel.CanCancelGlobalOperation, Converter={StaticResource BooleanToVisibilityConverter}, Mode=OneWay}" />
             </StackPanel>
         </Grid>
 

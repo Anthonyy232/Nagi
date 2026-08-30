@@ -128,6 +128,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
     private bool _isInitializing;
     private bool _isLoaded;
     private CancellationTokenSource? _preampDebounceCts;
+    private CancellationTokenSource? _metadataRescanCts;
     private CancellationTokenSource? _replayGainScanCts;
     private CancellationTokenSource? _playerButtonSaveCts;
     private CancellationTokenSource? _navigationItemSaveCts;
@@ -431,8 +432,11 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         }
         _preampDebounceCts?.Cancel();
         _preampDebounceCts?.Dispose();
+        _metadataRescanCts?.Cancel();
+        _metadataRescanCts?.Dispose();
         _replayGainScanCts?.Cancel();
         _replayGainScanCts?.Dispose();
+        _playerViewModel.SetGlobalOperationCancellation(null);
         _playerButtonSaveCts?.Cancel();
         _playerButtonSaveCts?.Dispose();
         _navigationItemSaveCts?.Cancel();
@@ -1308,22 +1312,33 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
 
         if (!confirmed) return;
 
+        _metadataRescanCts?.Cancel();
+        _metadataRescanCts?.Dispose();
+        _metadataRescanCts = new CancellationTokenSource();
+        var scanCts = _metadataRescanCts;
+
         _playerViewModel.IsGlobalOperationInProgress = true;
         _playerViewModel.GlobalOperationStatusMessage = Nagi.WinUI.Resources.Strings.Settings_Status_Rescan_Preparing;
         _playerViewModel.IsGlobalOperationIndeterminate = true;
+        _playerViewModel.SetGlobalOperationCancellation(scanCts.Cancel);
 
         try
         {
             var progress = new Progress<ScanProgress>(p =>
             {
                 _playerViewModel.GlobalOperationStatusMessage = p.StatusText;
-                _playerViewModel.IsGlobalOperationIndeterminate = p.IsIndeterminate || p.Percentage < 5;
+                _playerViewModel.IsGlobalOperationIndeterminate = p.IsIndeterminate;
                 _playerViewModel.GlobalOperationProgressValue = p.Percentage;
             });
 
-            await _libraryScanner.ForceRescanMetadataAsync(progress);
+            await _libraryScanner.ForceRescanMetadataAsync(progress, scanCts.Token);
+            if (scanCts.IsCancellationRequested) return;
 
             await _uiService.ShowMessageDialogAsync(Nagi.WinUI.Resources.Strings.Settings_Dialog_RescanComplete_Title, Nagi.WinUI.Resources.Strings.Settings_Dialog_RescanComplete_Content);
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.LogDebug("Metadata rescan was cancelled.");
         }
         catch (Exception ex)
         {
@@ -1332,8 +1347,12 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         }
         finally
         {
+            _playerViewModel.SetGlobalOperationCancellation(null);
             _playerViewModel.IsGlobalOperationInProgress = false;
             _playerViewModel.IsGlobalOperationIndeterminate = false;
+            if (ReferenceEquals(_metadataRescanCts, scanCts))
+                _metadataRescanCts = null;
+            scanCts.Dispose();
         }
     }
 
@@ -1803,11 +1822,13 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         _replayGainScanCts?.Cancel();
         _replayGainScanCts?.Dispose();
         _replayGainScanCts = new CancellationTokenSource();
-        var cancellationToken = _replayGainScanCts.Token;
+        var scanCts = _replayGainScanCts;
+        var cancellationToken = scanCts.Token;
 
         _playerViewModel.IsGlobalOperationInProgress = true;
         _playerViewModel.GlobalOperationStatusMessage = Nagi.WinUI.Resources.Strings.Settings_Status_VolumeNorm_Preparing;
         _playerViewModel.IsGlobalOperationIndeterminate = true;
+        _playerViewModel.SetGlobalOperationCancellation(scanCts.Cancel);
 
         try
         {
@@ -1831,6 +1852,7 @@ public partial class SettingsViewModel : ObservableObject, IDisposable
         }
         finally
         {
+            _playerViewModel.SetGlobalOperationCancellation(null);
             _playerViewModel.IsGlobalOperationInProgress = false;
             _playerViewModel.IsGlobalOperationIndeterminate = false;
         }
