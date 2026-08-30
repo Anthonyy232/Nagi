@@ -50,8 +50,8 @@ public class MusicDbContext : DbContext
             entity.Property(s => s.FilePath).UseCollation("NOCASE");
             entity.Property(s => s.DirectoryPath).UseCollation("NOCASE");
 
-            entity.HasIndex(s => s.Title);
-            entity.HasIndex(s => s.SortTitle);
+            entity.HasIndex(s => new { s.Title, s.PrimaryArtistName, s.Id });
+            entity.HasIndex(s => new { s.SortTitle, s.PrimaryArtistSortName, s.Id });
             entity.HasIndex(s => s.ArtistName);
             entity.HasIndex(s => s.PrimaryArtistName);
             entity.HasIndex(s => s.PrimaryArtistSortName);

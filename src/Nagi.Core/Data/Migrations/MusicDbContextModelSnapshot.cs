@@ -582,10 +582,6 @@ namespace Nagi.Core.Data.Migrations
 
                     b.HasIndex("PrimaryArtistSortName");
 
-                    b.HasIndex("SortTitle");
-
-                    b.HasIndex("Title");
-
                     b.HasIndex("TotalListenTimeTicks");
 
                     b.HasIndex("Year");
@@ -593,6 +589,10 @@ namespace Nagi.Core.Data.Migrations
                     b.HasIndex("FolderId", "DirectoryPath");
 
                     b.HasIndex("AlbumId", "DiscNumber", "TrackNumber");
+
+                    b.HasIndex("SortTitle", "PrimaryArtistSortName", "Id");
+
+                    b.HasIndex("Title", "PrimaryArtistName", "Id");
 
                     b.ToTable("Songs");
                 });

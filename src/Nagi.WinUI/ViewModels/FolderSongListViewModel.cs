@@ -68,29 +68,6 @@ public partial class FolderSongListViewModel : SongListViewModelBase
     [ObservableProperty]
     public partial bool IsAtRootLevel { get; set; } = true;
 
-    public override int SelectedItemsCount
-    {
-        get
-        {
-            try
-            {
-                _stateLock.EnterReadLock();
-                try
-                {
-                    return SelectionState.GetSelectedCount(_fullSongIdList.Count + _totalFolderCount);
-                }
-                finally
-                {
-                    _stateLock.ExitReadLock();
-                }
-            }
-            catch (ObjectDisposedException)
-            {
-                return 0;
-            }
-        }
-    }
-
     // -------------------------------------------------------------------------
     // Initialization
     // -------------------------------------------------------------------------
@@ -267,10 +244,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
     // Base class overrides
     // -------------------------------------------------------------------------
 
-    /// <summary>
-    ///     Overrides the base refresh to resolve the parent folder, fetch counts and song IDs in parallel,
-    ///     then load page 1 using the combined math.
-    /// </summary>
+    /// <summary>Loads page 1 after resolving the current folder and item counts.</summary>
     public override async Task RefreshOrSortSongsAsync(string? sortOrderString = null, CancellationToken manualToken = default)
     {
         lock (_loadLock)
@@ -295,6 +269,7 @@ public partial class FolderSongListViewModel : SongListViewModelBase
         }
 
         UpdateSortOrderButtonText(CurrentSortOrder);
+        ClearFullSongIds();
 
         _pagedLoadCts?.Cancel();
         _pagedLoadCts?.Dispose();
@@ -309,17 +284,8 @@ public partial class FolderSongListViewModel : SongListViewModelBase
             var parentFolderId = await ResolveCurrentParentFolderIdAsync().ConfigureAwait(false);
             if (!parentFolderId.HasValue || token.IsCancellationRequested) return;
 
-            // Parallel: total folder count + all song IDs (for Play All). Both are cheap COUNT/ID queries.
-            var countTask = FetchTotalFolderCountAsync(parentFolderId.Value, token);
-            var idsTask = LoadAllSongIdsAsync(CurrentSortOrder, token);
-            await Task.WhenAll(countTask, idsTask).ConfigureAwait(false);
+            _totalFolderCount = await FetchTotalFolderCountAsync(parentFolderId.Value, token).ConfigureAwait(false);
             if (token.IsCancellationRequested) return;
-
-            _totalFolderCount = countTask.Result;
-
-            _stateLock.EnterWriteLock();
-            try { _fullSongIdList = idsTask.Result; }
-            finally { _stateLock.ExitWriteLock(); }
 
             await LoadCombinedPageAsync(1, parentFolderId.Value, _totalFolderCount, token).ConfigureAwait(false);
         }
@@ -563,9 +529,8 @@ public partial class FolderSongListViewModel : SongListViewModelBase
 
     protected override async Task<List<Guid>> GetCurrentSelectionIdsAsync()
     {
-        // SelectionState.GetSelectedIds already handles both select-all and explicit-selection modes
-        // correctly for songs. We start from the full song ID list (all pages).
-        var selectedIds = SelectionState.GetSelectedIds(_fullSongIdList).ToList();
+        var allSongIds = await GetFullSongIdsAsync();
+        var selectedIds = SelectionState.GetSelectedIds(allSongIds).ToList();
         var resultSet = new HashSet<Guid>(selectedIds);
 
         // For explicitly selected folders (non-select-all mode), we expand them into their song IDs.

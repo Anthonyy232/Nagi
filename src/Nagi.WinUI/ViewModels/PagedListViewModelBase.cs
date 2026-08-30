@@ -252,21 +252,26 @@ public abstract partial class PagedListViewModelBase<TItem> : SearchableViewMode
             var pageToLoad = CurrentPage;
             var pageSize = SongsPerPage;
 
-            var auxTask = OnAuxiliaryLoadAsync(token);
-            var pageTask = LoadPageItemsAsync(pageToLoad, pageSize, token);
-            await Task.WhenAll(auxTask, pageTask).ConfigureAwait(false);
-            token.ThrowIfCancellationRequested();
-
-            var pagedResult = pageTask.Result;
-
-            // Past-end clamp: if the requested page exceeds the result set (e.g. items removed),
-            // jump back to the last valid page and refetch.
-            var totalPages = Math.Max(1, pagedResult.TotalPages);
-            if (pageToLoad > totalPages && pagedResult.TotalCount > 0)
+            // SQLite's async APIs still perform native I/O, so keep page loads off the UI thread.
+            var pagedResult = await Task.Run(async () =>
             {
-                pagedResult = await LoadPageItemsAsync(totalPages, pageSize, token).ConfigureAwait(false);
+                var auxTask = OnAuxiliaryLoadAsync(token);
+                var pageTask = LoadPageItemsAsync(pageToLoad, pageSize, token);
+                await Task.WhenAll(auxTask, pageTask).ConfigureAwait(false);
                 token.ThrowIfCancellationRequested();
-            }
+
+                var result = pageTask.Result;
+
+                // Clamp pages past the end after items are removed.
+                var totalPages = Math.Max(1, result.TotalPages);
+                if (pageToLoad > totalPages && result.TotalCount > 0)
+                {
+                    result = await LoadPageItemsAsync(totalPages, pageSize, token).ConfigureAwait(false);
+                    token.ThrowIfCancellationRequested();
+                }
+
+                return result;
+            }, token);
 
             ProcessPagedResult(pagedResult, token);
 

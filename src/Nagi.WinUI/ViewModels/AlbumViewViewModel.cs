@@ -77,7 +77,8 @@ public partial class AlbumViewViewModel : SongListViewModelBase
         else
             result = await _libraryReader.GetSongsByAlbumIdPagedAsync(_albumId, pageNumber, pageSize, sortOrder, cancellationToken);
 
-        if (pageNumber == 1) UpdateAlbumDetails(result);
+        if (pageNumber == 1)
+            _dispatcherService.TryEnqueue(() => UpdateAlbumDetails(result));
 
         return result;
     }
@@ -207,7 +208,9 @@ public partial class AlbumViewViewModel : SongListViewModelBase
     {
         try
         {
-            var duration = await _libraryReader.GetSearchTotalDurationInAlbumAsync(_albumId, searchTerm, cancellationToken);
+            var duration = await Task.Run(
+                () => _libraryReader.GetSearchTotalDurationInAlbumAsync(_albumId, searchTerm, cancellationToken),
+                cancellationToken).ConfigureAwait(false);
 
             if (!cancellationToken.IsCancellationRequested)
             {

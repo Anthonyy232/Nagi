@@ -93,8 +93,8 @@ public partial class ArtistViewModel : PagedListViewModelBase<Artist>
     protected override async Task<PagedResult<Artist>> LoadPageItemsAsync(int pageNumber, int pageSize, CancellationToken token)
     {
         var pagedResult = IsSearchActive
-            ? await _libraryService.SearchArtistsPagedAsync(SearchTerm, pageNumber, pageSize)
-            : await _libraryService.GetAllArtistsPagedAsync(pageNumber, pageSize, CurrentSortOrder);
+            ? await _libraryService.SearchArtistsPagedAsync(SearchTerm, pageNumber, pageSize, token)
+            : await _libraryService.GetAllArtistsPagedAsync(pageNumber, pageSize, CurrentSortOrder, token);
 
         token.ThrowIfCancellationRequested();
         return pagedResult ?? new PagedResult<Artist>();
