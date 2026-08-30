@@ -35,18 +35,29 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <TextBlock
+        <Grid
             Grid.Row="0"
-            Margin="0,32,0,8"
-            Style="{StaticResource TitleTextBlockStyle}"
-            Text="{x:Bind ViewModel.SongTitle, Mode=OneWay}"
-            Foreground="{StaticResource AppPrimaryColorBrush}"
-            FontWeight="SemiBold"
-            HorizontalAlignment="Center"
-            TextTrimming="CharacterEllipsis"
-            TextWrapping="NoWrap"
-            MaxLines="1"
-            MaxWidth="1200" />
+            Margin="24,32,24,8">
+            <TextBlock
+                Style="{StaticResource TitleTextBlockStyle}"
+                Text="{x:Bind ViewModel.SongTitle, Mode=OneWay}"
+                Foreground="{StaticResource AppPrimaryColorBrush}"
+                FontWeight="SemiBold"
+                HorizontalAlignment="Center"
+                TextTrimming="CharacterEllipsis"
+                TextWrapping="NoWrap"
+                MaxLines="1"
+                MaxWidth="1200" />
+            <Button
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Style="{StaticResource SubtleButtonStyle}"
+                IsEnabled="{x:Bind ViewModel.CanEditLyrics, Mode=OneWay}"
+                Click="EditLyricsButton_Click"
+                ToolTipService.ToolTip="{x:Bind resources:Strings.LyricsPage_EditLyrics_ToolTip, Mode=OneTime}">
+                <FontIcon Glyph="&#xE70F;" />
+            </Button>
+        </Grid>
 
         <ProgressBar
             x:Name="LyricsProgressBar"

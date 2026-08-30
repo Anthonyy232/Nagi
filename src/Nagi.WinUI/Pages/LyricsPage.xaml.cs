@@ -95,6 +95,62 @@ public sealed partial class LyricsPage : Page
         }
     }
 
+    private async void EditLyricsButton_Click(object sender, RoutedEventArgs e)
+    {
+        var originalLyrics = ViewModel.EditableLyrics;
+        var editor = new TextBox
+        {
+            Text = originalLyrics,
+            PlaceholderText = Nagi.WinUI.Resources.Strings.LyricsPage_EditLyrics_Placeholder,
+            AcceptsReturn = true,
+            TextWrapping = TextWrapping.Wrap,
+            MinWidth = 520,
+            Height = 360
+        };
+        ScrollViewer.SetVerticalScrollBarVisibility(editor, ScrollBarVisibility.Auto);
+        var dialog = new ContentDialog
+        {
+            Title = Nagi.WinUI.Resources.Strings.LyricsPage_EditLyrics_Title,
+            Content = editor,
+            PrimaryButtonText = Nagi.WinUI.Resources.Strings.LyricsPage_EditLyrics_Save,
+            SecondaryButtonText = ViewModel.CanRemoveLyrics
+                ? Nagi.WinUI.Resources.Strings.LyricsPage_EditLyrics_Remove
+                : string.Empty,
+            CloseButtonText = Nagi.WinUI.Resources.Strings.Generic_Cancel,
+            DefaultButton = ContentDialogButton.Primary,
+            XamlRoot = XamlRoot
+        };
+
+        void UpdateSaveButton() => dialog.IsPrimaryButtonEnabled =
+            !string.IsNullOrWhiteSpace(editor.Text) && editor.Text != originalLyrics;
+
+        editor.TextChanged += (_, _) => UpdateSaveButton();
+        UpdateSaveButton();
+        DialogThemeHelper.ApplyThemeOverrides(dialog);
+
+        try
+        {
+            var result = await dialog.ShowAsync();
+            if (result == ContentDialogResult.Primary)
+                await ViewModel.SaveLyricsAsync(editor.Text);
+            else if (result == ContentDialogResult.Secondary)
+                await ViewModel.RemoveLyricsAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to update lyrics.");
+            var errorDialog = new ContentDialog
+            {
+                Title = Nagi.WinUI.Resources.Strings.LyricsPage_EditLyrics_Error_Title,
+                Content = Nagi.WinUI.Resources.Strings.LyricsPage_EditLyrics_Error_Message,
+                CloseButtonText = Nagi.WinUI.Resources.Strings.Generic_OK,
+                XamlRoot = XamlRoot
+            };
+            DialogThemeHelper.ApplyThemeOverrides(errorDialog);
+            await errorDialog.ShowAsync();
+        }
+    }
+
     private void OnPageUnloaded(object sender, RoutedEventArgs e)
     {
         _isUnloaded = true;

@@ -557,6 +557,13 @@ public static class Strings
     public static string LibraryPage_EmptyState_Subtitle => GetString("LibraryPage_EmptyState_Subtitle");
     public static string LyricsPage_NoLyrics_Title => GetString("LyricsPage_NoLyrics_Title");
     public static string LyricsPage_NoLyrics_Subtitle => GetString("LyricsPage_NoLyrics_Subtitle");
+    public static string LyricsPage_EditLyrics_ToolTip => GetString("LyricsPage_EditLyrics_ToolTip");
+    public static string LyricsPage_EditLyrics_Title => GetString("LyricsPage_EditLyrics_Title");
+    public static string LyricsPage_EditLyrics_Placeholder => GetString("LyricsPage_EditLyrics_Placeholder");
+    public static string LyricsPage_EditLyrics_Save => GetString("LyricsPage_EditLyrics_Save");
+    public static string LyricsPage_EditLyrics_Remove => GetString("LyricsPage_EditLyrics_Remove");
+    public static string LyricsPage_EditLyrics_Error_Title => GetString("LyricsPage_EditLyrics_Error_Title");
+    public static string LyricsPage_EditLyrics_Error_Message => GetString("LyricsPage_EditLyrics_Error_Message");
     public static string OnboardingPage_Welcome_Title => GetString("OnboardingPage_Welcome_Title");
     public static string OnboardingPage_AddFolderButton_ToolTip => GetString("OnboardingPage_AddFolderButton_ToolTip");
     public static string OnboardingPage_AddFolderButton_Content => GetString("OnboardingPage_AddFolderButton_Content");
