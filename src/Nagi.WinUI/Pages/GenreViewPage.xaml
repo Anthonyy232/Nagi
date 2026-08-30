@@ -133,6 +133,7 @@
                                    Foreground="{ThemeResource TextFillColorSecondary}"
                                    Text="{x:Bind ViewModel.TotalItemsText, Mode=OneWay}"
                                    Visibility="{x:Bind ViewModel.HasSelectedSongs, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                        <uicontrols:PaginationControl ViewModel="{x:Bind ViewModel}" />
                     </StackPanel>
                     <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
                         <!-- Search functionality -->
@@ -218,6 +219,7 @@
             x:Name="SongsListView"
             Grid.Row="1"
             Padding="{StaticResource SongListViewPadding}"
+            Margin="{StaticResource SongListViewMargin}"
             IsItemClickEnabled="True"
             ItemContainerStyle="{StaticResource SongListViewPageListViewItemStyle}"
             ItemsSource="{x:Bind ViewModel.Songs, Mode=OneWay}"
@@ -225,12 +227,6 @@
             SelectionMode="Extended"
             ContainerContentChanging="OnSongsListViewContainerContentChanging"
             DoubleTapped="SongsListView_DoubleTapped">
-            <ListView.Footer>
-                <uicontrols:PaginationControl
-                    ViewModel="{x:Bind ViewModel}"
-                    HorizontalAlignment="Right"
-                    Margin="0,24,24,16" />
-            </ListView.Footer>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="models:Song">
                     <Grid Height="54" ColumnSpacing="12" Background="Transparent">

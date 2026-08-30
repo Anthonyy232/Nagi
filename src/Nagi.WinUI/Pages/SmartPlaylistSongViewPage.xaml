@@ -164,6 +164,7 @@
                                Foreground="{ThemeResource TextFillColorSecondary}" VerticalAlignment="Center"
                                FontSize="13"
                                Visibility="{x:Bind ViewModel.HasSelectedSongs, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                    <uicontrols:PaginationControl ViewModel="{x:Bind ViewModel}" />
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
@@ -298,6 +299,7 @@
                   SelectionMode="Extended"
                   IsItemClickEnabled="True"
                   Padding="{StaticResource SongListViewPadding}"
+                  Margin="{StaticResource SongListViewMargin}"
                   ItemsSource="{x:Bind ViewModel.Songs, Mode=OneWay}"
                   ItemContainerStyle="{StaticResource SongListViewPageListViewItemStyle}"
                   SelectionChanged="SongsListView_SelectionChanged"
@@ -306,12 +308,6 @@
                   CanReorderItems="False"
                   AllowDrop="False"
                   DoubleTapped="SongsListView_DoubleTapped">
-            <ListView.Footer>
-                <uicontrols:PaginationControl
-                    ViewModel="{x:Bind ViewModel}"
-                    HorizontalAlignment="Right"
-                    Margin="0,24,24,16" />
-            </ListView.Footer>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="models:Song">
                     <Grid Height="54" ColumnSpacing="12" Background="Transparent">
