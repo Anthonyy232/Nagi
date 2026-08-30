@@ -25,6 +25,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
 
     private readonly IAppInfoService _appInfoService;
     private readonly IDispatcherService _dispatcherService;
+    private readonly ISettingsService _settingsService;
     private readonly ILogger<LibVlcAudioPlayerService> _logger;
     private readonly CancellationTokenSource _disposeCts = new();
     private readonly SemaphoreSlim _vlcOperationLock = new(1, 1);
@@ -71,10 +72,12 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
     public LibVlcAudioPlayerService(
         IDispatcherService dispatcherService,
         IAppInfoService appInfoService,
+        ISettingsService settingsService,
         ILogger<LibVlcAudioPlayerService> logger)
     {
         _dispatcherService = dispatcherService ?? throw new ArgumentNullException(nameof(dispatcherService));
         _appInfoService = appInfoService ?? throw new ArgumentNullException(nameof(appInfoService));
+        _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -124,7 +127,8 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
 
             try
             {
-                InitializeLibVlcCore();
+                var useWasapiExclusive = await _settingsService.GetWasapiExclusiveModeEnabledAsync().ConfigureAwait(false);
+                InitializeLibVlcCore(useWasapiExclusive);
                 tcs.SetResult();
             }
             catch (Exception ex)
@@ -140,7 +144,7 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
         }
     }
 
-    private void InitializeLibVlcCore()
+    private void InitializeLibVlcCore(bool useWasapiExclusive)
     {
         _logger.LogDebug("Initializing LibVLC core (deferred).");
 
@@ -152,10 +156,11 @@ public sealed class LibVlcAudioPlayerService : IAudioPlayer, IDisposable
 
         // LibVLC explicitly does not guarantee compatibility for constructor options.
         // Keep only the two behaviors that currently lack a suitable public LibVLC API.
-        var vlcOptions = new[] { "--no-video", "--no-volume-save" };
+        var vlcOptions = new List<string> { "--no-video", "--no-volume-save" };
+        if (useWasapiExclusive) vlcOptions.Add("--wasapi-exclusive");
 
         _logger.LogDebug("Initializing LibVLC with options: {VlcOptions}", string.Join(" ", vlcOptions));
-        _libVlc = new LibVLC(false, vlcOptions);
+        _libVlc = new LibVLC(false, vlcOptions.ToArray());
 
         // Subscribe before MediaPlayer construction so native audio-output diagnostics are captured.
         _libVlc.Log += OnLibVlcLog;

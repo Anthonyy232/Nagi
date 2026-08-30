@@ -40,6 +40,7 @@ public static class SettingsDefaults
     public const bool RememberWindowPositionEnabled = false;
     public const bool RememberPaneStateEnabled = true;
     public const bool VolumeNormalizationEnabled = false;
+    public const bool WasapiExclusiveModeEnabled = false;
     public const bool FadeOnPlayPauseEnabled = false;
     public const int DefaultFadeInDurationMs = 200;
     public const int DefaultFadeOutDurationMs = 150;
