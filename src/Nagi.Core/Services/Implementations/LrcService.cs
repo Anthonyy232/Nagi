@@ -206,34 +206,65 @@ public class LrcService : ILrcService, IDisposable
         }
     }
 
+    /// <inheritdoc />
+    public Task SaveLyricsAsync(Song song, string lrcContent)
+    {
+        ArgumentNullException.ThrowIfNull(song);
+        ArgumentException.ThrowIfNullOrWhiteSpace(lrcContent);
+        return WriteLyricsCacheAsync(song, lrcContent);
+    }
+
+    /// <inheritdoc />
+    public async Task<bool> RemoveCachedLyricsAsync(Song song)
+    {
+        ArgumentNullException.ThrowIfNull(song);
+        if (!HasCachedLyrics(song)) return false;
+
+        var cachedPath = song.LrcFilePath!;
+        if (_fileSystemService.FileExists(cachedPath)) _fileSystemService.DeleteFile(cachedPath);
+
+        song.LrcFilePath = null;
+        song.LyricsLastCheckedUtc = DateTime.UtcNow;
+        await _libraryWriter.UpdateSongLrcPathAsync(song.Id, null).ConfigureAwait(false);
+        await _libraryWriter.UpdateSongLyricsLastCheckedAsync(song.Id).ConfigureAwait(false);
+        return true;
+    }
+
+    /// <inheritdoc />
+    public bool HasCachedLyrics(Song song)
+    {
+        ArgumentNullException.ThrowIfNull(song);
+        return IsCachePath(song.LrcFilePath);
+    }
+
     private async Task CacheLyricsAsync(Song song, string lrcContent)
     {
         try
         {
-            var cacheIdentity = string.IsNullOrWhiteSpace(song.FilePath) ? song.Id.ToString("N") : song.FilePath;
-            var cacheFileName = FileNameHelper.GenerateLrcCacheFileName(
-                cacheIdentity,
-                song.PrimaryArtistName,
-                song.Album?.Title,
-                song.Title);
-            var cachedLrcPath = _fileSystemService.Combine(_pathConfig.LrcCachePath, cacheFileName);
-
-            await _fileSystemService.WriteAllTextAsync(cachedLrcPath, lrcContent).ConfigureAwait(false);
-            _logger.LogDebug("Cached online lyrics for song {SongId} to {Path}", song.Id, cachedLrcPath);
-
-            // Update the database only if the path has changed
-            if (song.LrcFilePath != cachedLrcPath)
-            {
-                song.LrcFilePath = cachedLrcPath;
-                // We don't persist the full text to 'Lyrics' column here to keep the DB light,
-                // as we rely on the LRC file. The 'Lyrics' column is mostly for unsynced lyrics.
-                await _libraryWriter.UpdateSongLrcPathAsync(song.Id, cachedLrcPath).ConfigureAwait(false);
-            }
+            await WriteLyricsCacheAsync(song, lrcContent).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to cache lyrics for song {SongId}", song.Id);
         }
+    }
+
+    private async Task WriteLyricsCacheAsync(Song song, string lrcContent)
+    {
+        var cacheIdentity = string.IsNullOrWhiteSpace(song.FilePath) ? song.Id.ToString("N") : song.FilePath;
+        var cacheFileName = FileNameHelper.GenerateLrcCacheFileName(
+            cacheIdentity,
+            song.PrimaryArtistName,
+            song.Album?.Title,
+            song.Title);
+        var cachedLrcPath = _fileSystemService.Combine(_pathConfig.LrcCachePath, cacheFileName);
+
+        await _fileSystemService.WriteAllTextAsync(cachedLrcPath, lrcContent).ConfigureAwait(false);
+        _logger.LogDebug("Cached lyrics for song {SongId} to {Path}", song.Id, cachedLrcPath);
+
+        if (song.LrcFilePath == cachedLrcPath) return;
+        song.LrcFilePath = cachedLrcPath;
+        await _libraryWriter.UpdateSongLrcPathAsync(song.Id, cachedLrcPath).ConfigureAwait(false);
     }
 
     private bool IsLegacyCachePath(Song song)
@@ -242,12 +273,20 @@ public class LrcService : ILrcService, IDisposable
             || string.IsNullOrWhiteSpace(_pathConfig.LrcCachePath))
             return false;
 
-        var cacheRoot = PathCanonicalizer.Normalize(_pathConfig.LrcCachePath).TrimEnd('\\') + "\\";
-        var candidate = PathCanonicalizer.Normalize(song.LrcFilePath);
-        if (!candidate.StartsWith(cacheRoot, StringComparison.OrdinalIgnoreCase)) return false;
+        if (!IsCachePath(song.LrcFilePath)) return false;
 
         var cacheIdentity = string.IsNullOrWhiteSpace(song.FilePath) ? song.Id.ToString("N") : song.FilePath;
+        var candidate = PathCanonicalizer.Normalize(song.LrcFilePath);
         return !FileNameHelper.MatchesLrcCacheIdentity(candidate, cacheIdentity);
+    }
+
+    private bool IsCachePath(string? path)
+    {
+        if (string.IsNullOrWhiteSpace(path) || string.IsNullOrWhiteSpace(_pathConfig.LrcCachePath)) return false;
+
+        var cacheRoot = PathCanonicalizer.Normalize(_pathConfig.LrcCachePath).TrimEnd('\\') + "\\";
+        var candidate = PathCanonicalizer.Normalize(path);
+        return candidate.StartsWith(cacheRoot, StringComparison.OrdinalIgnoreCase);
     }
 
     private Task<string?> LogUnknownProviderAndReturnNull(string providerId)

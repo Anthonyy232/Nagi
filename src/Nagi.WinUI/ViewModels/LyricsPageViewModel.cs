@@ -41,6 +41,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
     private LyricLine? _optimisticallySetLine;
     private DateTime _optimisticSetTimestamp;
     private ParsedLrc? _parsedLrc;
+    private Song? _currentSong;
 
     public LyricsPageViewModel(
         IMusicPlaybackService playbackService,
@@ -104,6 +105,10 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
     [NotifyPropertyChangedFor(nameof(ShowNoLyricsMessage))]
     public partial bool IsLoading { get; set; }
 
+    [ObservableProperty] public partial bool CanEditLyrics { get; set; }
+    [ObservableProperty] public partial bool CanRemoveLyrics { get; set; }
+    [ObservableProperty] public partial string EditableLyrics { get; set; } = string.Empty;
+
     /// <summary>
     ///     True when the timed lyrics ListView should be displayed.
     /// </summary>
@@ -161,6 +166,23 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
         await _playbackService.SeekAsync(targetTime);
     }
 
+    public async Task SaveLyricsAsync(string lyrics)
+    {
+        var song = _currentSong;
+        if (song is null || string.IsNullOrWhiteSpace(lyrics)) return;
+
+        await _lrcService.SaveLyricsAsync(song, lyrics).ConfigureAwait(false);
+        if (_currentSong?.Id == song.Id) await UpdateForTrack(song).ConfigureAwait(false);
+    }
+
+    public async Task RemoveLyricsAsync()
+    {
+        var song = _currentSong;
+        if (song is null || !await _lrcService.RemoveCachedLyricsAsync(song).ConfigureAwait(false)) return;
+
+        if (_currentSong?.Id == song.Id) await UpdateForTrack(song).ConfigureAwait(false);
+    }
+
     private void OnPlaybackServicePositionChanged()
     {
         UpdateCurrentLineFromPosition(_playbackService.CurrentPosition);
@@ -206,6 +228,8 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
 
     private async Task UpdateForTrack(Song? song)
     {
+        _currentSong = song;
+
         // Cancel any previous lyrics fetch operation to prevent stale data when skipping songs
         CancellationToken cancellationToken;
         lock (_lyricsFetchLock)
@@ -230,6 +254,9 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
             CurrentPosition = TimeSpan.Zero;
             HasLyrics = false;
             HasUnsyncedLyrics = false;
+            CanEditLyrics = false;
+            CanRemoveLyrics = song is not null && _lrcService.HasCachedLyrics(song);
+            EditableLyrics = string.Empty;
 
             if (song is null)
             {
@@ -277,6 +304,9 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
                 {
                     if (cancellationToken.IsCancellationRequested || _isDisposed) return;
                     _parsedLrc = displayLrc;
+                    EditableLyrics = localLrc.RawUnsyncedLyrics ?? string.Empty;
+                    CanEditLyrics = true;
+                    CanRemoveLyrics = _lrcService.HasCachedLyrics(song);
                     LyricLines.AddRange(displayLrc.Lines);
                     HasLyrics = true;
                     IsLoading = false;
@@ -298,6 +328,9 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
                     {
                         if (cancellationToken.IsCancellationRequested || _isDisposed) return;
                         _parsedLrc = displayLrc;
+                        EditableLyrics = fullSong.Lyrics;
+                        CanEditLyrics = true;
+                        CanRemoveLyrics = _lrcService.HasCachedLyrics(song);
                         LyricLines.AddRange(displayLrc.Lines);
                         HasLyrics = true;
                         IsLoading = false;
@@ -312,6 +345,9 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
                 {
                     if (cancellationToken.IsCancellationRequested || _isDisposed) return;
                     UnsyncedLyricLines.AddRange(embeddedLines);
+                    EditableLyrics = fullSong.Lyrics;
+                    CanEditLyrics = true;
+                    CanRemoveLyrics = _lrcService.HasCachedLyrics(song);
                     HasUnsyncedLyrics = true;
                     IsLoading = false;
                 });
@@ -330,6 +366,9 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
                 {
                     if (cancellationToken.IsCancellationRequested || _isDisposed) return;
                     _parsedLrc = displayLrc;
+                    EditableLyrics = parsedLrc.RawUnsyncedLyrics ?? string.Empty;
+                    CanEditLyrics = true;
+                    CanRemoveLyrics = _lrcService.HasCachedLyrics(song);
                     LyricLines.AddRange(displayLrc.Lines);
                     HasLyrics = true;
                     IsLoading = false;
@@ -346,6 +385,9 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
                 {
                     if (cancellationToken.IsCancellationRequested || _isDisposed) return;
                     UnsyncedLyricLines.AddRange(unsyncedLines);
+                    EditableLyrics = parsedLrc.RawUnsyncedLyrics;
+                    CanEditLyrics = true;
+                    CanRemoveLyrics = _lrcService.HasCachedLyrics(song);
                     HasUnsyncedLyrics = true;
                     IsLoading = false;
                 });
@@ -356,6 +398,7 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
                 _dispatcherService.TryEnqueue(() =>
                 {
                     if (cancellationToken.IsCancellationRequested || _isDisposed) return;
+                    CanEditLyrics = true;
                     IsLoading = false;
                 });
             }
@@ -368,7 +411,11 @@ public partial class LyricsPageViewModel : ObservableObject, IDisposable
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to fetch lyrics for track '{SongTitle}'", song.Title);
-            _dispatcherService.TryEnqueue(() => IsLoading = false);
+            _dispatcherService.TryEnqueue(() =>
+            {
+                CanEditLyrics = true;
+                IsLoading = false;
+            });
         }
     }
 
