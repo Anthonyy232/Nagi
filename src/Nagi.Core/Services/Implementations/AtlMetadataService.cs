@@ -402,6 +402,10 @@ public class AtlMetadataService : IMetadataService, IDisposable
     /// </summary>
     private async Task<string?> GetLrcPathAsync(string audioFilePath, DateTime audioFileLastWriteTime, string? artist, string? album, string? title, Track track)
     {
+        var overrideFileName = FileNameHelper.GenerateLrcOverrideFileName(audioFilePath);
+        var overridePath = _fileSystem.Combine(_pathConfig.LrcCachePath, overrideFileName);
+        if (_fileSystem.FileExists(overridePath)) return overridePath;
+
         var cacheFileName = FileNameHelper.GenerateLrcCacheFileName(audioFilePath, artist, album, title);
         var cachedLrcPath = _fileSystem.Combine(_pathConfig.LrcCachePath, cacheFileName);
 

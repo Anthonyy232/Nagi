@@ -56,6 +56,9 @@ public static class FileNameHelper
         return $"{descriptivePrefix} - {hashSuffix}.lrc";
     }
 
+    public static string GenerateLrcOverrideFileName(string audioFileIdentity) =>
+        $"{GenerateLrcCacheIdentityHash(audioFileIdentity)}.override.lrc";
+
     /// <summary>
     ///     Determines whether a lyrics cache filename belongs to the specified audio file identity.
     ///     Descriptive metadata is intentionally ignored so cached lyrics survive tag edits.
@@ -65,8 +68,10 @@ public static class FileNameHelper
         if (string.IsNullOrWhiteSpace(filePath) || string.IsNullOrWhiteSpace(audioFileIdentity))
             return false;
 
-        var expectedSuffix = $" - {GenerateLrcCacheIdentityHash(audioFileIdentity)}.lrc";
-        return Path.GetFileName(filePath).EndsWith(expectedSuffix, StringComparison.OrdinalIgnoreCase);
+        var hash = GenerateLrcCacheIdentityHash(audioFileIdentity);
+        var fileName = Path.GetFileName(filePath);
+        return fileName.EndsWith($" - {hash}.lrc", StringComparison.OrdinalIgnoreCase)
+               || fileName.Equals($"{hash}.override.lrc", StringComparison.OrdinalIgnoreCase);
     }
 
     private static string GenerateLrcCacheIdentityHash(string audioFileIdentity)
