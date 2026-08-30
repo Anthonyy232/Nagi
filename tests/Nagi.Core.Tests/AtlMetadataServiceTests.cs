@@ -309,6 +309,25 @@ public class AtlMetadataServiceTests : IDisposable
         await _fileSystem.DidNotReceive().WriteAllTextAsync(Arg.Any<string>(), Arg.Any<string>());
     }
 
+    [Fact]
+    public async Task GetLrcPathAsync_WithOlderOverride_ReturnsOverride()
+    {
+        var audioFilePath = CreateTestAudioFile("override.mp3", track =>
+        {
+            track.Title = "Override Song";
+            track.Artist = "Override Artist";
+        });
+        _fileSystem.GetFileInfo(audioFilePath).Returns(new FileInfo(audioFilePath));
+        var expectedPath = Path.Combine(LrcCachePath,
+            FileNameHelper.GenerateLrcOverrideFileName(audioFilePath));
+        _fileSystem.FileExists(expectedPath).Returns(true);
+
+        var result = await _metadataService.ExtractMetadataAsync(audioFilePath);
+
+        result.LrcFilePath.Should().Be(expectedPath);
+        _fileSystem.DidNotReceive().GetLastWriteTimeUtc(expectedPath);
+    }
+
     /// <summary>
     ///     Verifies that the service can find an external LRC file located in the same
     ///     directory as the audio file when no embedded or cached lyrics are available.
