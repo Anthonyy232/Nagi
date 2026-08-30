@@ -154,7 +154,9 @@
         </local:FolderContentItemTemplateSelector>
     </Page.Resources>
 
-    <Grid KeyboardAcceleratorPlacementMode="Hidden" Padding="0,0,0,24">
+    <Grid KeyboardAcceleratorPlacementMode="Hidden"
+          Padding="0,0,0,24"
+          Margin="{StaticResource SongListViewMargin}">
         <Grid.KeyboardAccelerators>
             <KeyboardAccelerator Key="A" Modifiers="Control" Invoked="OnSelectAllAcceleratorInvoked" />
         </Grid.KeyboardAccelerators>
@@ -230,6 +232,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <!-- Header Content -->
@@ -408,13 +411,13 @@
             SelectionMode="Extended"
             ContainerContentChanging="OnSongsListViewContainerContentChanging"
             DoubleTapped="FolderContentsListView_DoubleTapped">
-            <ListView.Footer>
-                <uicontrols:PaginationControl
-                    ViewModel="{x:Bind ViewModel}"
-                    HorizontalAlignment="Right"
-                    Margin="0,24,24,16" />
-            </ListView.Footer>
         </ListView>
+
+        <uicontrols:PaginationControl
+            Grid.Row="2"
+            ViewModel="{x:Bind ViewModel}"
+            HorizontalAlignment="Right"
+            Margin="0,16,24,16" />
 
         <!-- Empty State -->
         <StackPanel

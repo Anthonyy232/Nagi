@@ -130,7 +130,9 @@
         </DataTemplate>
     </Page.Resources>
 
-    <Grid KeyboardAcceleratorPlacementMode="Hidden" Padding="0,0,0,24">
+    <Grid KeyboardAcceleratorPlacementMode="Hidden"
+          Padding="0,0,0,24"
+          Margin="{StaticResource SongListViewMargin}">
         <Grid.KeyboardAccelerators>
             <KeyboardAccelerator Key="A" Modifiers="Control" Invoked="OnSelectAllAcceleratorInvoked" />
         </Grid.KeyboardAccelerators>
@@ -228,6 +230,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
@@ -427,12 +430,6 @@
             SelectionMode="Extended"
             ContainerContentChanging="OnSongsListViewContainerContentChanging"
             DoubleTapped="SongsListView_DoubleTapped">
-            <ListView.Footer>
-                <uicontrols:PaginationControl
-                    ViewModel="{x:Bind ViewModel}"
-                    HorizontalAlignment="Right"
-                    Margin="0,24,24,16" />
-            </ListView.Footer>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="models:Song">
                     <Grid Height="54" ColumnSpacing="12" Background="Transparent">
@@ -519,6 +516,12 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+
+        <uicontrols:PaginationControl
+            Grid.Row="2"
+            ViewModel="{x:Bind ViewModel}"
+            HorizontalAlignment="Right"
+            Margin="0,16,24,16" />
 
         <!-- Empty State -->
         <StackPanel

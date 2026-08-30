@@ -18,7 +18,8 @@
 
 
 
-    <Grid Padding="{StaticResource PageContainerPaddingVertical}">
+    <Grid Padding="{StaticResource PageContainerPaddingVertical}"
+          Margin="{StaticResource SongListViewMargin}">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="SearchStates">
                 <VisualState x:Name="SearchCollapsed">
@@ -104,6 +105,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <!-- Page Header -->
@@ -277,12 +279,6 @@
                         </Grid>
                     </DataTemplate>
                 </GridView.ItemTemplate>
-                <GridView.Footer>
-                    <uicontrols:PaginationControl
-                        ViewModel="{x:Bind ViewModel}"
-                        HorizontalAlignment="Right"
-                        Margin="0,24,24,16" />
-                </GridView.Footer>
             </GridView>
 
             <!-- Message shown when the library is empty -->
@@ -313,5 +309,11 @@
                     Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
             </StackPanel>
         </Grid>
+
+        <uicontrols:PaginationControl
+            Grid.Row="2"
+            ViewModel="{x:Bind ViewModel}"
+            HorizontalAlignment="Right"
+            Margin="0,16,24,16" />
     </Grid>
 </Page>
