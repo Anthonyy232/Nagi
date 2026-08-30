@@ -155,6 +155,7 @@
                                Foreground="{ThemeResource TextFillColorSecondary}" VerticalAlignment="Center"
                                FontSize="13"
                                Visibility="{x:Bind ViewModel.HasSelectedSongs, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}" />
+                    <uicontrols:PaginationControl ViewModel="{x:Bind ViewModel}" />
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
@@ -235,6 +236,7 @@
             Grid.Row="1"
             x:Name="GroupedSongsListView"
             Padding="{StaticResource SongListViewPadding}"
+            Margin="{StaticResource SongListViewMargin}"
             IsItemClickEnabled="True"
             ItemsSource="{x:Bind ViewModel.GroupedSongsFlat, Mode=OneWay}"
             SelectionChanged="GroupedSongsListView_SelectionChanged"
@@ -242,12 +244,6 @@
             ContainerContentChanging="OnSongsListViewContainerContentChanging"
             DoubleTapped="GroupedSongsListView_DoubleTapped"
             Visibility="{x:Bind ViewModel.IsGroupedByDisc, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <ListView.Footer>
-                <uicontrols:PaginationControl
-                    ViewModel="{x:Bind ViewModel}"
-                    HorizontalAlignment="Right"
-                    Margin="0,24,24,16" />
-            </ListView.Footer>
             <ListView.ItemContainerStyleSelector>
                 <local:DiscGroupStyleSelector>
                     <local:DiscGroupStyleSelector.HeaderStyle>
@@ -318,6 +314,7 @@
             Grid.Row="1"
             x:Name="SongsListView"
             Padding="{StaticResource SongListViewPadding}"
+            Margin="{StaticResource SongListViewMargin}"
             IsItemClickEnabled="True"
             ItemContainerStyle="{StaticResource SongListViewPageListViewItemStyle}"
             ItemsSource="{x:Bind ViewModel.Songs, Mode=OneWay}"
@@ -326,12 +323,6 @@
             ContainerContentChanging="OnSongsListViewContainerContentChanging"
             DoubleTapped="SongsListView_DoubleTapped"
             Visibility="{x:Bind ViewModel.IsGroupedByDisc, Mode=OneWay, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
-            <ListView.Footer>
-                <uicontrols:PaginationControl
-                    ViewModel="{x:Bind ViewModel}"
-                    HorizontalAlignment="Right"
-                    Margin="0,24,24,16" />
-            </ListView.Footer>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="models:Song">
                     <Grid Height="54" ColumnSpacing="12" Background="Transparent">

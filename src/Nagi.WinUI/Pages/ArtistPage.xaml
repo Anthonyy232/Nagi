@@ -121,6 +121,7 @@
                     FontSize="13"
                     Foreground="{ThemeResource TextFillColorSecondary}"
                     Text="{x:Bind ViewModel.TotalItemsText, Mode=OneWay}" />
+                <uicontrols:PaginationControl ViewModel="{x:Bind ViewModel}" />
             </StackPanel>
 
             <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
@@ -186,6 +187,7 @@
                 IsItemClickEnabled="True"
                 ItemClick="ArtistsGridView_ItemClick"
                 Padding="{StaticResource SongListViewPadding}"
+                Margin="{StaticResource SongListViewMargin}"
                 ItemContainerStyle="{StaticResource ArtistPageGridViewItemStyle}"
                 ItemsSource="{x:Bind ViewModel.Artists, Mode=OneWay}"
                 SelectionMode="None"
@@ -259,12 +261,6 @@
                         </Grid>
                     </DataTemplate>
                 </GridView.ItemTemplate>
-                <GridView.Footer>
-                    <uicontrols:PaginationControl
-                        ViewModel="{x:Bind ViewModel}"
-                        HorizontalAlignment="Right"
-                        Margin="0,24,24,16" />
-                </GridView.Footer>
             </GridView>
 
             <!-- Message shown when the library is empty -->
