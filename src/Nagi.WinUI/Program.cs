@@ -7,6 +7,7 @@ using Windows.ApplicationModel.Activation;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Settings;
 using Nagi.WinUI.Helpers;
 using WinRT;
 
@@ -65,6 +66,11 @@ public static class Program
         logger?.LogInformation("Primary instance starting");
 
         LanguageBootstrapper.Bootstrap();
+
+        XamlOptionalChanges.EnableChange(XamlChangeId.DefaultStyleOptimizations);
+        XamlOptionalChanges.EnableChange(XamlChangeId.DeferContextFlyoutInit);
+        XamlOptionalChanges.EnableChange(XamlChangeId.IconNoGridOptimization);
+        XamlOptionalChanges.EnableChange(XamlChangeId.OptimizeApplyStyles);
 
         Application.Start(p =>
         {

@@ -9,8 +9,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.WinUI.ViewModels;
-using Windows.Storage.Pickers;
-using WinRT.Interop;
+using Microsoft.Windows.Storage.Pickers;
 using Nagi.Core.Constants;
 
 namespace Nagi.WinUI.Pages;
@@ -221,9 +220,7 @@ public sealed partial class ArtistPage : Page
     private async Task<string?> PickImageAsync()
     {
         _logger.LogDebug("Opening file picker for artist image.");
-        var picker = new FileOpenPicker();
-        var hwnd = WindowNative.GetWindowHandle(App.RootWindow);
-        InitializeWithWindow.Initialize(picker, hwnd);
+        var picker = new FileOpenPicker(App.RootWindow!.AppWindow.Id);
 
         foreach (var ext in FileExtensions.ImageFileExtensions)
             picker.FileTypeFilter.Add(ext);

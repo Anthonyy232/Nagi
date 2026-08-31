@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Windows.Storage.Pickers;
+using Microsoft.Windows.Storage.Pickers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
@@ -8,7 +8,6 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.ViewModels;
-using WinRT.Interop;
 
 namespace Nagi.WinUI.Pages;
 
@@ -86,10 +85,7 @@ public sealed partial class FolderPage : Page
         try
         {
             _logger.LogDebug("Add folder button clicked. Opening folder picker.");
-            var folderPicker = new FolderPicker();
-            var hwnd = WindowNative.GetWindowHandle(App.RootWindow);
-            InitializeWithWindow.Initialize(folderPicker, hwnd);
-            folderPicker.FileTypeFilter.Add("*");
+            var folderPicker = new FolderPicker(App.RootWindow!.AppWindow.Id);
 
             var folder = await folderPicker.PickSingleFolderAsync();
             if (folder != null)
