@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Windows.Storage.Pickers;
+using Microsoft.Windows.Storage.Pickers;
 using Windows.System;
 using ImageEx;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,7 +14,6 @@ using Microsoft.UI.Xaml.Navigation;
 using Nagi.Core.Constants;
 using Nagi.WinUI.Helpers;
 using Nagi.WinUI.ViewModels;
-using WinRT.Interop;
 
 namespace Nagi.WinUI.Pages;
 
@@ -388,9 +387,7 @@ public sealed partial class PlaylistPage : Page
     private async Task<string?> PickCoverImageAsync()
     {
         _logger.LogDebug("Opening file picker for cover image.");
-        var picker = new FileOpenPicker();
-        var hwnd = WindowNative.GetWindowHandle(App.RootWindow);
-        InitializeWithWindow.Initialize(picker, hwnd);
+        var picker = new FileOpenPicker(App.RootWindow!.AppWindow.Id);
         foreach (var ext in FileExtensions.ImageFileExtensions)
             picker.FileTypeFilter.Add(ext);
 

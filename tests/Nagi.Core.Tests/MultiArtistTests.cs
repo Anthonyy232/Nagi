@@ -10,7 +10,6 @@ using Nagi.Core.Services.Implementations;
 using Nagi.Core.Tests.Utils;
 using NSubstitute;
 using Xunit;
-using Xunit.Abstractions;
 using System.IO;
 
 namespace Nagi.Core.Tests;
