@@ -1388,6 +1388,27 @@ Pogreška: {1}</value>
   <data name="LyricsPage_NoLyrics_Subtitle" xml:space="preserve">
     <value>Pokušajte s drugom pjesmom</value>
   </data>
+  <data name="LyricsPage_EditLyrics_ToolTip" xml:space="preserve">
+    <value>Edit or replace lyrics</value>
+  </data>
+  <data name="LyricsPage_EditLyrics_Title" xml:space="preserve">
+    <value>Edit lyrics</value>
+  </data>
+  <data name="LyricsPage_EditLyrics_Placeholder" xml:space="preserve">
+    <value>Paste plain text or timestamped LRC lyrics</value>
+  </data>
+  <data name="LyricsPage_EditLyrics_Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="LyricsPage_EditLyrics_Remove" xml:space="preserve">
+    <value>Remove saved lyrics</value>
+  </data>
+  <data name="LyricsPage_EditLyrics_Error_Title" xml:space="preserve">
+    <value>Lyrics could not be updated</value>
+  </data>
+  <data name="LyricsPage_EditLyrics_Error_Message" xml:space="preserve">
+    <value>Nagi could not save the lyrics. Check the log for details and try again.</value>
+  </data>
   <data name="OnboardingPage_Welcome_Title" xml:space="preserve">
     <value>Dobrodošli u Nagi</value>
   </data>
