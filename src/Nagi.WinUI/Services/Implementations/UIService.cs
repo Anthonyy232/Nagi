@@ -4,8 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
-using Windows.Storage.Pickers;
 using Windows.System;
+using Microsoft.Windows.Storage.Pickers;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Nagi.WinUI.Controls;
@@ -55,10 +55,7 @@ public class UIService : IUIService
     {
         if (App.RootWindow is null) return null;
 
-        var folderPicker = new FolderPicker();
-        var hwnd = WindowNative.GetWindowHandle(App.RootWindow);
-        InitializeWithWindow.Initialize(folderPicker, hwnd);
-        folderPicker.FileTypeFilter.Add("*");
+        var folderPicker = new FolderPicker(App.RootWindow.AppWindow.Id);
 
         var selectedFolder = await folderPicker.PickSingleFolderAsync();
         return selectedFolder?.Path;
@@ -162,9 +159,7 @@ public class UIService : IUIService
     {
         if (App.RootWindow is null) return null;
 
-        var filePicker = new FileOpenPicker();
-        var hwnd = WindowNative.GetWindowHandle(App.RootWindow);
-        InitializeWithWindow.Initialize(filePicker, hwnd);
+        var filePicker = new FileOpenPicker(App.RootWindow.AppWindow.Id);
 
         foreach (var ext in fileTypes)
         {
@@ -179,9 +174,7 @@ public class UIService : IUIService
     {
         if (App.RootWindow is null) return [];
 
-        var filePicker = new FileOpenPicker();
-        var hwnd = WindowNative.GetWindowHandle(App.RootWindow);
-        InitializeWithWindow.Initialize(filePicker, hwnd);
+        var filePicker = new FileOpenPicker(App.RootWindow.AppWindow.Id);
 
         foreach (var ext in fileTypes)
         {

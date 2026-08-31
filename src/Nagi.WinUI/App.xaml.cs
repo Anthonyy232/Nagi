@@ -178,7 +178,6 @@ public partial class App : Application
 
             await HandleWindowActivationAsync(isStartupLaunch);
 
-            ShowElevationWarningIfNeededAsync();
             PerformPostLaunchTasks();
         }
         catch (Exception ex)
@@ -1128,54 +1127,6 @@ public partial class App : Application
         {
             Log.Warning(ex, "Failed to delete directory: {Path}", path);
         }
-    }
-
-    /// <summary>
-    ///     Shows a warning dialog if the application is running with administrator privileges.
-    ///     The FolderPicker API doesn't work properly when running elevated.
-    /// </summary>
-    private void ShowElevationWarningIfNeededAsync()
-    {
-        if (!ElevationHelper.IsRunningAsAdministrator()) return;
-
-        // Use the dispatcher to ensure the UI is fully loaded before showing the dialog.
-        MainDispatcherQueue?.TryEnqueue(DispatcherQueuePriority.Low, async () =>
-        {
-            // Wait briefly for XamlRoot to become available after page load.
-            const int maxRetries = 10;
-            for (var i = 0; i < maxRetries && RootWindow?.Content?.XamlRoot is null; i++)
-                await Task.Delay(100);
-
-            if (RootWindow?.Content?.XamlRoot is null)
-            {
-                _logger?.LogWarning("Could not show elevation warning: XamlRoot is not available.");
-                return;
-            }
-
-            _logger?.LogWarning("Application is running with administrator privileges. FolderPicker may not work.");
-
-            var dialog = new ContentDialog
-            {
-                Title = Nagi.WinUI.Resources.Strings.ElevationWarning_Title,
-                Content = Nagi.WinUI.Resources.Strings.ElevationWarning_Message,
-                PrimaryButtonText = Nagi.WinUI.Resources.Strings.ElevationWarning_Restart,
-                CloseButtonText = Nagi.WinUI.Resources.Strings.ElevationWarning_Continue,
-                DefaultButton = ContentDialogButton.Primary,
-                XamlRoot = RootWindow.Content.XamlRoot
-            };
-
-            DialogThemeHelper.ApplyThemeOverrides(dialog);
-            var result = await dialog.ShowAsync();
-            if (result == ContentDialogResult.Primary)
-            {
-                _logger?.LogInformation("User chose to restart without elevation.");
-                ElevationHelper.RestartWithoutElevation();
-            }
-            else
-            {
-                _logger?.LogInformation("User chose to continue running as administrator.");
-            }
-        });
     }
 
     /// <summary>

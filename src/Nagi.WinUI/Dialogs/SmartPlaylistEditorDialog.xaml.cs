@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Windows.Storage.Pickers;
+using Microsoft.Windows.Storage.Pickers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.UI.Xaml;
@@ -14,7 +14,6 @@ using Nagi.Core.Constants;
 using Nagi.Core.Models;
 using Nagi.Core.Services.Abstractions;
 using Nagi.WinUI.Helpers;
-using WinRT.Interop;
 
 namespace Nagi.WinUI.Dialogs;
 
@@ -182,9 +181,7 @@ public sealed partial class SmartPlaylistEditorDialog : ContentDialog
         try
         {
             _logger.LogDebug("Opening file picker for cover image.");
-            var picker = new FileOpenPicker();
-            var hwnd = WindowNative.GetWindowHandle(App.RootWindow);
-            InitializeWithWindow.Initialize(picker, hwnd);
+            var picker = new FileOpenPicker(App.RootWindow!.AppWindow.Id);
             foreach (var ext in FileExtensions.ImageFileExtensions)
                 picker.FileTypeFilter.Add(ext);
 

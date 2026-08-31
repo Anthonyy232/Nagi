@@ -31,7 +31,7 @@ jobs:
       - uses: FedericoCarboni/setup-ffmpeg@v3.1
 
       - name: Run tests
-        run: dotnet test tests/Nagi.Core.Tests/Nagi.Core.Tests.csproj -c Release --logger "trx;logfilename=test-results.trx"
+        run: dotnet test --project tests/Nagi.Core.Tests/Nagi.Core.Tests.csproj -c Release --report-xunit-trx --report-xunit-trx-filename test-results.trx
 
       - name: Upload test results
         if: failure()
