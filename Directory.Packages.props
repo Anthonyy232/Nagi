@@ -32,8 +32,8 @@
     <PackageVersion Include="Polly" Version="8.7.0" />
     <PackageVersion Include="Polly.RateLimiting" Version="8.7.0" />
     <!-- Media Playback -->
-    <PackageVersion Include="LibVLCSharp" Version="4.0.0-alpha-20260828-10280" />
-    <PackageVersion Include="VideoLAN.LibVLC.Windows" Version="4.0.0-alpha-20260830" />
+    <PackageVersion Include="LibVLCSharp" Version="4.0.0-alpha-20260901-10290" />
+    <PackageVersion Include="VideoLAN.LibVLC.Windows" Version="4.0.0-alpha-20260901" />
     <!-- Serilog -->
     <PackageVersion Include="Serilog.Enrichers.Thread" Version="4.0.0" />
     <PackageVersion Include="Serilog.Extensions.Logging" Version="10.0.0" />
